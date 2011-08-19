@@ -66,7 +66,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     parser.add_option("-m", "--mini_home",
       #default=path.join( path.expanduser("~"), "mini"),
       default= path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'rosetta_source'),
-      help="Directory where Mini is found (default: ../../)",
+      help="Directory where Mini is found (default: ../../rosetta_source/)",
     )
     parser.add_option("-j", "--num_procs",
       default=1,
@@ -119,6 +119,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
 
     (options, args) = parser.parse_args(args=argv)
 
+    options.mini_home = path.abspath( options.mini_home )
     print 'Using Rosetta source dir at:', options.mini_home
 
     if options.digs > 0:
