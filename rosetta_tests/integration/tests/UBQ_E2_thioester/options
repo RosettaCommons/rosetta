@@ -1,0 +1,48 @@
+#-database /ifs1/home/smlewis/minirosetta_database/
+#extra_res_fa for CYX residue critical, or else CYX residue type will not be present and cysteine linkage is impossible
+#-extra_res_fa /ifs1/home/smlewis/minirosetta_database/chemical/residue_type_sets/fa_standard/residue_types/CYX.params
+
+
+-UBQpdb 1UBQ.pdb.gz
+-E2pdb 2OB4_trimmed.pdb.gz
+-E2_residue 85
+
+-nstruct 1
+
+#in production runs, set GOOD values.  Here, it is set to bad values, because it won't find a good conformation in a reasonable amount of time for the integration test.
+-scorefilter 5000
+-SASAfilter 0
+
+#-scorefilter 0
+#-SASAfilter 1000
+
+#used in production runs
+#-AnchoredDesign::refine_repack_cycles 100
+#-AnchoredDesign::refine_cycles 20000
+
+-AnchoredDesign::refine_repack_cycles 50
+-AnchoredDesign::refine_cycles 100
+
+-run::min_type dfpmin_armijo
+-nblist_autoupdate
+
+-packing::repack_only
+
+#used in production runs
+#-ex1
+#-ex2
+#-extrachi_cutoff 10
+
+-mute core.pack.task protocols.toolbox.PoseMetricCalculators.NeighborsByDistanceCalculator core.util.prof
+
+-generic_job_name UBQ_E2
+
+#used in production runs
+#-nstruct 9999
+#-run::max_retry_job 99999999
+
+#-run::version
+#-options::user
+
+#-pdb_gz
+

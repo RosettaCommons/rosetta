@@ -1,0 +1,6 @@
+-s inputs/1a53_nohet_1.pdb inputs/1a53_ligand_1.pdb
+-ignore_unrecognized_res
+-grid_delta 0.5
+-grid_lig_cutoff 4.0
+-grid_bb_cutoff 2.25
+-grid_active_res_cutoff 5.0

@@ -1,0 +1,4 @@
+AtomPair O 21 ND1 71 BOUNDED 0 2.9 1 HBOND ; b2-5/O a2-1/ND1 H-Bond
+AtomPair NE2 71 CB 102 BOUNDED 0 3.4 1 HBOND ; a2-1/NE2 -2/CB Pseudo H-Bond
+AtomPair O 19 N 102 BOUNDED 0 2.8 1 HBOND ; b2-3/O -2/N H-Bond
+AtomPair N 19 O 102 BOUNDED 0 3.0 1 HBOND ; b2-3/N -2/O H-Bond

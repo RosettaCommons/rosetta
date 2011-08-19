@@ -1,0 +1,3 @@
+-extra_res_fa inputs/CTP_match.params
+-match:geometric_constraint_file inputs/CTP_RKRE_1acid2acid.cst
+

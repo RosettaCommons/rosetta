@@ -1,0 +1,56 @@
+## Keywords that are replace are listed in ~mtyka/homo_bench/help_keywords.txt
+-no_prof_info_in_silentout
+-cm:aln_format grishin
+
+-out:file:scorefile output.fsc
+-in:file:template_pdb input/1vyhA.pdb input/1fxwF.pdb
+-out:file:silent_struct_type protein
+-in:file:alignment input/T0286.all0.T20.aln.filt
+-broker:setup input/setup_broker.tpb
+-run:intermediate_structures
+-out:file:silent all
+#out:level 500 --> to get starting_model.pdb as output
+-out:level 500
+-mute core.chemical 
+-mute protocols.jumping
+
+-frag3 input/boinc_aat286_03_05.200_v1_3.gz
+-frag9 input/boinc_aat286_09_05.200_v1_3.gz
+
+-in:file:fasta input/t286_.fasta
+-in:file:native input/native.pdb
+
+#-abinitio:close_loops
+-short_frag_cycles 1
+-scored_frag_cycles 1
+-non_ideal_loop_closing
+-alternative_closure_protocol
+-fast_loops:window_accept_ratio .01
+-fast_loops:nr_scored_sampling_passes 4
+-fast_loops:min_breakout_good_loops 5
+-fast_loops:min_breakout_fast_loops 80
+-fast_loops:min_fast_loops 3
+-fast_loops:min_good_loops 0
+-fast_loops:nr_scored_fragments 20
+-fast_loops:vdw_delta 0.5
+-fast_loops:give_up 1000
+
+
+-bGDT
+-mute protocols.abinitio.FragmentMover
+#don't have prove that this actually helps.. maybe in the refinement stage..
+-increase_cycles 1
+#-cst_weight 0.01
+#-fold_cst:constraint_skip_rate 0.99
+-fold_cst:no_minimize
+
+
+#-sample_ss_jumps
+-jumps:ramp_chainbreaks
+-sep_switch_accelerate 0.8
+#-jump_residues_move
+-skip_convergence_check
+-overlap_chainbreak
+
+-nstruct 1
+-run:test_cycles

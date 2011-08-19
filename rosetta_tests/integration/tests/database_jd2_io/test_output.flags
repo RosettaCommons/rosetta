@@ -1,0 +1,17 @@
+-ignore_unrecognized_res
+-overwrite
+-correct
+-in
+ -file
+  -fullatom
+  -silent_struct_type binary
+  -silent ../../tests/cluster/t288_.score.50.out
+  -tags S_56 S_73 S_84 S_93 S_107
+-inout
+ -database_filename structures.db3
+-out
+ -use_database
+-parser
+ -protocol script.xml
+-mute core.conformation
+-mute core.pack

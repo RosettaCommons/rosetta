@@ -1,0 +1,3 @@
+-run:benchmark
+-ignore_unrecognized_res
+-mute core.io.database

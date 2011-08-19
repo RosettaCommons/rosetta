@@ -1,0 +1,36 @@
+-run:protocol broker
+-broker:setup input/setup_init.tpb
+-symmetry:symmetry_definition ./input/symm_def_trimer.dat
+-symmetry:initialize_rigid_body_dofs
+-fold_and_dock:rigid_body_cycles 1
+-fold_and_dock:rigid_body_frequency 5
+-fold_and_dock:rotate_anchor_to_x
+-run:test_cycles ## Remove to run a real case prediction
+-run:reinitialize_mover_for_each_job
+-score:weights score13_env_hb
+-abinitio::recover_low_in_stages 0
+-abinitio:rg_reweight 0.001
+-abinitio:use_filters false
+-packing:ex1
+-packing:ex1:level 1
+-packing:ex2
+-packing:ex2:level 1
+-packing:extrachi_cutoff 0
+-in:file:fasta ./input/2akf_.fasta
+-in:file:frag9 ./input/aa2akf_09_05.200_v1_3
+-in:file:frag3 ./input/aa2akf_03_05.200_v1_3
+-evaluation:rmsd_target input/2akf.pdb
+-evaluation:rmsd_column _
+-evaluation:symmetric_rmsd
+-nstruct 1
+-out:file:silent_struct_type binary
+-relax:quick
+-relax:jump_move
+-out:path:pdb ./
+-out:pdb
+-out:file:output_virtual
+-out:file:silent 2akf.out
+-no_prof_info_in_silentout
+-mute core.io.database
+-out:level 500
+-out:file:scorefile score.sc

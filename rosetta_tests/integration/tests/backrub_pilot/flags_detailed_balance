@@ -1,0 +1,7 @@
+-s input/1MFG.pdb
+-ignore_unrecognized_res
+
+-backrub:ntrials 500
+-backrub:detailed_balance
+-backrub:trajectory
+-out:user_tag db

@@ -1,0 +1,14 @@
+-in:file:fullatom
+-loops:input_pdb inputs/1onc.model2.pdb
+-loops:loop_file inputs/1onc.loopfile
+-loops:frag_sizes 9 3 1
+-loops:frag_files  inputs/aa1onc_09_05.200_v1_3.gz inputs/aa1onc_03_05.200_v1_3 none
+-loops:remodel quick_ccd
+-loops:relax relax
+-relax:quick
+-relax:jump_move true
+-relax:default_repeats 1
+-edensity:mapfile inputs/1onc_8A.mrc
+-edensity:mapreso 8.0
+-edensity:grid_spacing 4.0
+-edensity:whole_structure_allatom_wt 0.05

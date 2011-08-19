@@ -1,0 +1,50 @@
+-parser:protocol lite_enzdes.xml
+-s 2p09.pdb
+-extra_res_fa 2p09.params
+#-resfile 2p09.resfile
+-out::overwrite true
+#-database /work/mdsmith/minirosetta_database/
+-motif_filename 2p09.motifs
+-score::weights ./enzdes_2.5.wts
+-dtest 2
+-r2 0.4
+-r1 0.6
+-z1 1.0
+-z2 0.97
+-dump_motifs true
+-output_file output.file
+-data_file data.file
+-motifs::minimize false
+-minimize_dna false
+-enzdes::run_ligand_motifs true
+-patch_selectors SPECIAL_ROT
+-rotlevel 1
+#-motif_build_positions 30
+-enzdes::detect_design_interface
+-enzdes::cut1 4.0
+-enzdes::cut2 6.0
+-enzdes::cut3 6.0
+-enzdes::cut4 6.0
+-enzdes::design_min_cycles 1
+-enzdes::chi_min
+-in::ignore_unrecognized_res true
+-enzdes::cstfile null.cst
+-ex1
+#-ex2
+-extrachi_cutoff 1
+#-use_input_sc
+-out::file::o ./enz_score.out
+-jd2:enzdes_out true
+-soft_rep_design
+-ex1aro
+-ex1aro:level 6
+-ex2aro
+-extrachi_cutoff 1
+-soft_rep_design
+-flip_HNQ
+-nstruct 1
+-enzdes::no_unconstrained_repack
+#-enzdes::favor_native_res 1.0
+-linmem_ig 10
+-enzdes::lig_packer_weight 2.5
+

@@ -1,0 +1,3 @@
+-in:file:silent_struct_type binary
+-out:file:residue_type_set centroid
+-in:file:silent t288_.cen.out

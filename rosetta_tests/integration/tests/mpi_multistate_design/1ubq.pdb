@@ -1,0 +1,743 @@
+HEADER    CHROMOSOMAL PROTEIN                     02-JAN-87   1UBQ      1UBQ   3
+COMPND    UBIQUITIN                                                     1UBQ   4
+SOURCE    HUMAN (HOMO $SAPIENS) ERYTHROCYTES                            1UBQ   5
+AUTHOR    S.VIJAY-*KUMAR,C.E.BUGG,W.J.COOK                              1UBQ   6
+REVDAT   2   16-JUL-87 1UBQA   1       JRNL   REMARK                    1UBQA  1
+REVDAT   1   16-APR-87 1UBQ    0                                        1UBQ   7
+JRNL        AUTH   S.VIJAY-*KUMAR,C.E.BUGG,W.J.COOK                     1UBQ   8
+JRNL        TITL   STRUCTURE OF UBIQUITIN REFINED AT 1.8 ANGSTROMS      1UBQ   9
+JRNL        TITL 2 RESOLUTION                                           1UBQ  10
+JRNL        REF    J.MOL.BIOL.                   V. 194   531 1987      1UBQA  2
+JRNL        REFN   ASTM JMOBAK  UK ISSN 0022-2836                  070  1UBQA  3
+REMARK   1                                                              1UBQ  13
+REMARK   1 REFERENCE 1                                                  1UBQA  4
+REMARK   1  AUTH   S.VIJAY-*KUMAR,C.E.BUGG,K.D.WILKINSON,R.D.VIERSTRA,  1UBQA  5
+REMARK   1  AUTH 2 P.M.HATFIELD,W.J.COOK                                1UBQA  6
+REMARK   1  TITL   COMPARISON OF THE THREE-DIMENSIONAL STRUCTURES OF    1UBQA  7
+REMARK   1  TITL 2 HUMAN, YEAST, AND OAT UBIQUITIN                      1UBQA  8
+REMARK   1  REF    J.BIOL.CHEM.                  V. 262  6396 1987      1UBQA  9
+REMARK   1  REFN   ASTM JBCHA3  US ISSN 0021-9258                  071  1UBQA 10
+REMARK   1 REFERENCE 2                                                  1UBQA 11
+REMARK   1  AUTH   S.VIJAY-*KUMAR,C.E.BUGG,K.D.WILKINSON,W.J.COOK       1UBQ  15
+REMARK   1  TITL   THREE-DIMENSIONAL STRUCTURE OF UBIQUITIN AT 2.8      1UBQ  16
+REMARK   1  TITL 2 ANGSTROMS RESOLUTION                                 1UBQ  17
+REMARK   1  REF    PROC.NAT.ACAD.SCI.USA         V.  82  3582 1985      1UBQ  18
+REMARK   1  REFN   ASTM PNASA6  US ISSN 0027-8424                  040  1UBQ  19
+REMARK   1 REFERENCE 3                                                  1UBQA 12
+REMARK   1  AUTH   W.J.COOK,F.L.SUDDATH,C.E.BUGG,G.GOLDSTEIN            1UBQ  21
+REMARK   1  TITL   CRYSTALLIZATION AND PRELIMINARY X-RAY                1UBQ  22
+REMARK   1  TITL 2 INVESTIGATION OF UBIQUITIN, A NON-HISTONE            1UBQ  23
+REMARK   1  TITL 3 CHROMOSOMAL PROTEIN                                  1UBQ  24
+REMARK   1  REF    J.MOL.BIOL.                   V. 130   353 1979      1UBQ  25
+REMARK   1  REFN   ASTM JMOBAK  UK ISSN 0022-2836                  070  1UBQ  26
+REMARK   1 REFERENCE 4                                                  1UBQA 13
+REMARK   1  AUTH   D.H.SCHLESINGER,G.GOLDSTEIN                          1UBQ  28
+REMARK   1  TITL   MOLECULAR CONSERVATION OF 74 AMINO ACID SEQUENCE     1UBQ  29
+REMARK   1  TITL 2 OF UBIQUITIN BETWEEN CATTLE AND MAN                  1UBQ  30
+REMARK   1  REF    NATURE                        V. 255   423 1975      1UBQ  31
+REMARK   1  REFN   ASTM NATUAS  UK ISSN 0028-0836                  006  1UBQ  32
+REMARK   2                                                              1UBQ  33
+REMARK   2 RESOLUTION. 1.8 ANGSTROMS.                                   1UBQ  34
+REMARK   3                                                              1UBQ  35
+REMARK   3 REFINEMENT. BY THE RESTRAINED LEAST-SQUARES PROCEDURE OF     1UBQ  36
+REMARK   3  J. KONNERT AND W. HENDRICKSON (PROGRAM *PROLSQ*).  THE      1UBQ  37
+REMARK   3  R-VALUE IS 0.176.  THE RMS DEVIATION FROM IDEALITY OF THE   1UBQ  38
+REMARK   3  BOND LENGTHS IS 0.016 ANGSTROMS.  THE RMS DEVIATION FROM    1UBQ  39
+REMARK   3  IDEALITY OF THE BOND ANGLES IS 1.5 DEGREES.                 1UBQ  40
+REMARK   4                                                              1UBQA 14
+REMARK   4 CORRECTION. UPDATE JRNL REFERENCE TO REFLECT PUBLICATION.    1UBQA 15
+REMARK   4  INSERT NEW PUBLICATION AS REFERENCE 1 AND RENUMBER THE      1UBQA 16
+REMARK   4  THE OTHERS.  16-JUL-87.                                     1UBQA 17
+SEQRES   1     76  MET GLN ILE PHE VAL LYS THR LEU THR GLY LYS THR ILE  1UBQ  41
+SEQRES   2     76  THR LEU GLU VAL GLU PRO SER ASP THR ILE GLU ASN VAL  1UBQ  42
+SEQRES   3     76  LYS ALA LYS ILE GLN ASP LYS GLU GLY ILE PRO PRO ASP  1UBQ  43
+SEQRES   4     76  GLN GLN ARG LEU ILE PHE ALA GLY LYS GLN LEU GLU ASP  1UBQ  44
+SEQRES   5     76  GLY ARG THR LEU SER ASP TYR ASN ILE GLN LYS GLU SER  1UBQ  45
+SEQRES   6     76  THR LEU HIS LEU VAL LEU ARG LEU ARG GLY GLY          1UBQ  46
+FORMUL   2  HOH   *58(H2 O1)                                            1UBQ  47
+HELIX    1  H1 ILE     23  GLU     34  1                                1UBQ  48
+HELIX    2  H2 LEU     56  TYR     59  5                                1UBQ  49
+SHEET    1 BET 5 GLY    10  VAL    17  0                                1UBQ  50
+SHEET    2 BET 5 MET     1  THR     7 -1                                1UBQ  51
+SHEET    3 BET 5 GLU    64  ARG    72  1                                1UBQ  52
+SHEET    4 BET 5 GLN    40  PHE    45 -1                                1UBQ  53
+SHEET    5 BET 5 LYS    48  LEU    50 -1                                1UBQ  54
+TURN     1  T1 THR     7  GLY    10     TYPE I                          1UBQ  55
+TURN     2  T2 GLU    18  ASP    21     TYPE I                          1UBQ  56
+TURN     3  T3 PRO    37  GLN    40     TYPE III                        1UBQ  57
+TURN     4  T4 PHE    45  LYS    48     TYPE III(PRIME)                 1UBQ  58
+TURN     5  T5 GLU    51  ARG    54     TYPE I                          1UBQ  59
+TURN     6  T6 THR    55  ASP    58     TYPE III                        1UBQ  60
+TURN     7  T7 LEU    56  TYR    59     TYPE III                        1UBQ  61
+TURN     8  T8 SER    57  ASN    60     TYPE I                          1UBQ  62
+TURN     9  T9 GLN    62  SER    65     TYPE II                         1UBQ  63
+CRYST1   50.840   42.770   28.950  90.00  90.00  90.00 P 21 21 21    4  1UBQ  64
+ORIGX1      1.000000  0.000000  0.000000        0.00000                 1UBQ  65
+ORIGX2      0.000000  1.000000  0.000000        0.00000                 1UBQ  66
+ORIGX3      0.000000  0.000000  1.000000        0.00000                 1UBQ  67
+SCALE1       .019670  0.000000  0.000000        0.00000                 1UBQ  68
+SCALE2      0.000000   .023381  0.000000        0.00000                 1UBQ  69
+SCALE3      0.000000  0.000000   .034542        0.00000                 1UBQ  70
+ATOM      1  N   MET     1      27.340  24.430   2.614  1.00  9.67      1UBQ  71
+ATOM      2  CA  MET     1      26.266  25.413   2.842  1.00 10.38      1UBQ  72
+ATOM      3  C   MET     1      26.913  26.639   3.531  1.00  9.62      1UBQ  73
+ATOM      4  O   MET     1      27.886  26.463   4.263  1.00  9.62      1UBQ  74
+ATOM      5  CB  MET     1      25.112  24.880   3.649  1.00 13.77      1UBQ  75
+ATOM      6  CG  MET     1      25.353  24.860   5.134  1.00 16.29      1UBQ  76
+ATOM      7  SD  MET     1      23.930  23.959   5.904  1.00 17.17      1UBQ  77
+ATOM      8  CE  MET     1      24.447  23.984   7.620  1.00 16.11      1UBQ  78
+ATOM      9  N   GLN     2      26.335  27.770   3.258  1.00  9.27      1UBQ  79
+ATOM     10  CA  GLN     2      26.850  29.021   3.898  1.00  9.07      1UBQ  80
+ATOM     11  C   GLN     2      26.100  29.253   5.202  1.00  8.72      1UBQ  81
+ATOM     12  O   GLN     2      24.865  29.024   5.330  1.00  8.22      1UBQ  82
+ATOM     13  CB  GLN     2      26.733  30.148   2.905  1.00 14.46      1UBQ  83
+ATOM     14  CG  GLN     2      26.882  31.546   3.409  1.00 17.01      1UBQ  84
+ATOM     15  CD  GLN     2      26.786  32.562   2.270  1.00 20.10      1UBQ  85
+ATOM     16  OE1 GLN     2      27.783  33.160   1.870  1.00 21.89      1UBQ  86
+ATOM     17  NE2 GLN     2      25.562  32.733   1.806  1.00 19.49      1UBQ  87
+ATOM     18  N   ILE     3      26.849  29.656   6.217  1.00  5.87      1UBQ  88
+ATOM     19  CA  ILE     3      26.235  30.058   7.497  1.00  5.07      1UBQ  89
+ATOM     20  C   ILE     3      26.882  31.428   7.862  1.00  4.01      1UBQ  90
+ATOM     21  O   ILE     3      27.906  31.711   7.264  1.00  4.61      1UBQ  91
+ATOM     22  CB  ILE     3      26.344  29.050   8.645  1.00  6.55      1UBQ  92
+ATOM     23  CG1 ILE     3      27.810  28.748   8.999  1.00  4.72      1UBQ  93
+ATOM     24  CG2 ILE     3      25.491  27.771   8.287  1.00  5.58      1UBQ  94
+ATOM     25  CD1 ILE     3      27.967  28.087  10.417  1.00 10.83      1UBQ  95
+ATOM     26  N   PHE     4      26.214  32.097   8.771  1.00  4.55      1UBQ  96
+ATOM     27  CA  PHE     4      26.772  33.436   9.197  1.00  4.68      1UBQ  97
+ATOM     28  C   PHE     4      27.151  33.362  10.650  1.00  5.30      1UBQ  98
+ATOM     29  O   PHE     4      26.350  32.778  11.395  1.00  5.58      1UBQ  99
+ATOM     30  CB  PHE     4      25.695  34.498   8.946  1.00  4.83      1UBQ 100
+ATOM     31  CG  PHE     4      25.288  34.609   7.499  1.00  7.97      1UBQ 101
+ATOM     32  CD1 PHE     4      24.147  33.966   7.038  1.00  6.69      1UBQ 102
+ATOM     33  CD2 PHE     4      26.136  35.346   6.640  1.00  8.34      1UBQ 103
+ATOM     34  CE1 PHE     4      23.812  34.031   5.677  1.00  9.10      1UBQ 104
+ATOM     35  CE2 PHE     4      25.810  35.392   5.267  1.00 10.61      1UBQ 105
+ATOM     36  CZ  PHE     4      24.620  34.778   4.853  1.00  8.90      1UBQ 106
+ATOM     37  N   VAL     5      28.260  33.943  11.096  1.00  4.44      1UBQ 107
+ATOM     38  CA  VAL     5      28.605  33.965  12.503  1.00  3.87      1UBQ 108
+ATOM     39  C   VAL     5      28.638  35.461  12.900  1.00  4.93      1UBQ 109
+ATOM     40  O   VAL     5      29.522  36.103  12.320  1.00  6.84      1UBQ 110
+ATOM     41  CB  VAL     5      29.963  33.317  12.814  1.00  2.99      1UBQ 111
+ATOM     42  CG1 VAL     5      30.211  33.394  14.304  1.00  5.28      1UBQ 112
+ATOM     43  CG2 VAL     5      29.957  31.838  12.352  1.00  9.13      1UBQ 113
+ATOM     44  N   LYS     6      27.751  35.867  13.740  1.00  6.04      1UBQ 114
+ATOM     45  CA  LYS     6      27.691  37.315  14.143  1.00  6.12      1UBQ 115
+ATOM     46  C   LYS     6      28.469  37.475  15.420  1.00  6.57      1UBQ 116
+ATOM     47  O   LYS     6      28.213  36.753  16.411  1.00  5.76      1UBQ 117
+ATOM     48  CB  LYS     6      26.219  37.684  14.307  1.00  7.45      1UBQ 118
+ATOM     49  CG  LYS     6      25.884  39.139  14.615  1.00 11.12      1UBQ 119
+ATOM     50  CD  LYS     6      24.348  39.296  14.642  1.00 14.54      1UBQ 120
+ATOM     51  CE  LYS     6      23.865  40.723  14.749  1.00 18.84      1UBQ 121
+ATOM     52  NZ  LYS     6      22.375  40.720  14.907  1.00 20.55      1UBQ 122
+ATOM     53  N   THR     7      29.426  38.430  15.446  1.00  7.41      1UBQ 123
+ATOM     54  CA  THR     7      30.225  38.643  16.662  1.00  7.48      1UBQ 124
+ATOM     55  C   THR     7      29.664  39.839  17.434  1.00  8.75      1UBQ 125
+ATOM     56  O   THR     7      28.850  40.565  16.859  1.00  8.58      1UBQ 126
+ATOM     57  CB  THR     7      31.744  38.879  16.299  1.00  9.61      1UBQ 127
+ATOM     58  OG1 THR     7      31.737  40.257  15.824  1.00 11.78      1UBQ 128
+ATOM     59  CG2 THR     7      32.260  37.969  15.171  1.00  9.17      1UBQ 129
+ATOM     60  N   LEU     8      30.132  40.069  18.642  1.00  9.84      1UBQ 130
+ATOM     61  CA  LEU     8      29.607  41.180  19.467  1.00 14.15      1UBQ 131
+ATOM     62  C   LEU     8      30.075  42.538  18.984  1.00 17.37      1UBQ 132
+ATOM     63  O   LEU     8      29.586  43.570  19.483  1.00 17.01      1UBQ 133
+ATOM     64  CB  LEU     8      29.919  40.890  20.938  1.00 16.63      1UBQ 134
+ATOM     65  CG  LEU     8      29.183  39.722  21.581  1.00 18.88      1UBQ 135
+ATOM     66  CD1 LEU     8      29.308  39.750  23.095  1.00 19.31      1UBQ 136
+ATOM     67  CD2 LEU     8      27.700  39.721  21.228  1.00 18.59      1UBQ 137
+ATOM     68  N   THR     9      30.991  42.571  17.998  1.00 18.33      1UBQ 138
+ATOM     69  CA  THR     9      31.422  43.940  17.553  1.00 19.24      1UBQ 139
+ATOM     70  C   THR     9      30.755  44.351  16.277  1.00 19.48      1UBQ 140
+ATOM     71  O   THR     9      31.207  45.268  15.566  1.00 23.14      1UBQ 141
+ATOM     72  CB  THR     9      32.979  43.918  17.445  1.00 18.97      1UBQ 142
+ATOM     73  OG1 THR     9      33.174  43.067  16.265  1.00 20.24      1UBQ 143
+ATOM     74  CG2 THR     9      33.657  43.319  18.672  1.00 19.70      1UBQ 144
+ATOM     75  N   GLY    10      29.721  43.673  15.885  1.00 19.43      1UBQ 145
+ATOM     76  CA  GLY    10      28.978  43.960  14.678  1.00 18.74      1UBQ 146
+ATOM     77  C   GLY    10      29.604  43.507  13.393  1.00 17.62      1UBQ 147
+ATOM     78  O   GLY    10      29.219  43.981  12.301  1.00 19.74      1UBQ 148
+ATOM     79  N   LYS    11      30.563  42.623  13.495  1.00 13.56      1UBQ 149
+ATOM     80  CA  LYS    11      31.191  42.012  12.331  1.00 11.91      1UBQ 150
+ATOM     81  C   LYS    11      30.459  40.666  12.130  1.00 10.18      1UBQ 151
+ATOM     82  O   LYS    11      30.253  39.991  13.133  1.00  9.10      1UBQ 152
+ATOM     83  CB  LYS    11      32.672  41.717  12.505  1.00 13.43      1UBQ 153
+ATOM     84  CG  LYS    11      33.280  41.086  11.227  1.00 16.69      1UBQ 154
+ATOM     85  CD  LYS    11      34.762  40.799  11.470  1.00 17.92      1UBQ 155
+ATOM     86  CE  LYS    11      35.614  40.847  10.240  1.00 20.81      1UBQ 156
+ATOM     87  NZ  LYS    11      35.100  40.073   9.101  1.00 21.93      1UBQ 157
+ATOM     88  N   THR    12      30.163  40.338  10.886  1.00  9.63      1UBQ 158
+ATOM     89  CA  THR    12      29.542  39.020  10.653  1.00  9.85      1UBQ 159
+ATOM     90  C   THR    12      30.494  38.261   9.729  1.00 11.66      1UBQ 160
+ATOM     91  O   THR    12      30.849  38.850   8.706  1.00 12.33      1UBQ 161
+ATOM     92  CB  THR    12      28.113  39.049  10.015  1.00 10.85      1UBQ 162
+ATOM     93  OG1 THR    12      27.280  39.722  10.996  1.00 10.91      1UBQ 163
+ATOM     94  CG2 THR    12      27.588  37.635   9.715  1.00  9.63      1UBQ 164
+ATOM     95  N   ILE    13      30.795  37.015  10.095  1.00 10.42      1UBQ 165
+ATOM     96  CA  ILE    13      31.720  36.289   9.176  1.00 11.84      1UBQ 166
+ATOM     97  C   ILE    13      30.955  35.211   8.459  1.00 10.55      1UBQ 167
+ATOM     98  O   ILE    13      30.025  34.618   9.040  1.00 11.92      1UBQ 168
+ATOM     99  CB  ILE    13      32.995  35.883   9.934  1.00 14.86      1UBQ 169
+ATOM    100  CG1 ILE    13      33.306  34.381   9.840  1.00 14.87      1UBQ 170
+ATOM    101  CG2 ILE    13      33.109  36.381  11.435  1.00 17.08      1UBQ 171
+ATOM    102  CD1 ILE    13      34.535  34.028  10.720  1.00 16.46      1UBQ 172
+ATOM    103  N   THR    14      31.244  34.986   7.197  1.00  9.39      1UBQ 173
+ATOM    104  CA  THR    14      30.505  33.884   6.512  1.00  9.63      1UBQ 174
+ATOM    105  C   THR    14      31.409  32.680   6.446  1.00 11.20      1UBQ 175
+ATOM    106  O   THR    14      32.619  32.812   6.125  1.00 11.63      1UBQ 176
+ATOM    107  CB  THR    14      30.091  34.393   5.078  1.00 10.38      1UBQ 177
+ATOM    108  OG1 THR    14      31.440  34.513   4.487  1.00 16.30      1UBQ 178
+ATOM    109  CG2 THR    14      29.420  35.756   5.119  1.00 11.66      1UBQ 179
+ATOM    110  N   LEU    15      30.884  31.485   6.666  1.00  8.29      1UBQ 180
+ATOM    111  CA  LEU    15      31.677  30.275   6.639  1.00  9.03      1UBQ 181
+ATOM    112  C   LEU    15      31.022  29.288   5.665  1.00  8.59      1UBQ 182
+ATOM    113  O   LEU    15      29.809  29.395   5.545  1.00  7.79      1UBQ 183
+ATOM    114  CB  LEU    15      31.562  29.686   8.045  1.00 11.08      1UBQ 184
+ATOM    115  CG  LEU    15      32.631  29.444   9.060  1.00 15.79      1UBQ 185
+ATOM    116  CD1 LEU    15      33.814  30.390   9.030  1.00 15.88      1UBQ 186
+ATOM    117  CD2 LEU    15      31.945  29.449  10.436  1.00 15.27      1UBQ 187
+ATOM    118  N   GLU    16      31.834  28.412   5.125  1.00 11.04      1UBQ 188
+ATOM    119  CA  GLU    16      31.220  27.341   4.275  1.00 11.50      1UBQ 189
+ATOM    120  C   GLU    16      31.440  26.079   5.080  1.00 10.13      1UBQ 190
+ATOM    121  O   GLU    16      32.576  25.802   5.461  1.00  9.83      1UBQ 191
+ATOM    122  CB  GLU    16      31.827  27.262   2.894  1.00 17.22      1UBQ 192
+ATOM    123  CG  GLU    16      31.363  28.410   1.962  1.00 23.33      1UBQ 193
+ATOM    124  CD  GLU    16      31.671  28.291    .498  1.00 26.99      1UBQ 194
+ATOM    125  OE1 GLU    16      30.869  28.621   -.366  1.00 28.86      1UBQ 195
+ATOM    126  OE2 GLU    16      32.835  27.861    .278  1.00 28.90      1UBQ 196
+ATOM    127  N   VAL    17      30.310  25.458   5.384  1.00  8.99      1UBQ 197
+ATOM    128  CA  VAL    17      30.288  24.245   6.193  1.00  8.85      1UBQ 198
+ATOM    129  C   VAL    17      29.279  23.227   5.641  1.00  8.04      1UBQ 199
+ATOM    130  O   VAL    17      28.478  23.522   4.725  1.00  8.99      1UBQ 200
+ATOM    131  CB  VAL    17      29.903  24.590   7.665  1.00  9.78      1UBQ 201
+ATOM    132  CG1 VAL    17      30.862  25.496   8.389  1.00 12.05      1UBQ 202
+ATOM    133  CG2 VAL    17      28.476  25.135   7.705  1.00 10.54      1UBQ 203
+ATOM    134  N   GLU    18      29.380  22.057   6.232  1.00  7.29      1UBQ 204
+ATOM    135  CA  GLU    18      28.468  20.940   5.980  1.00  7.08      1UBQ 205
+ATOM    136  C   GLU    18      27.819  20.609   7.316  1.00  6.45      1UBQ 206
+ATOM    137  O   GLU    18      28.449  20.674   8.360  1.00  5.28      1UBQ 207
+ATOM    138  CB  GLU    18      29.213  19.697   5.506  1.00 10.28      1UBQ 208
+ATOM    139  CG  GLU    18      29.728  19.755   4.060  1.00 12.65      1UBQ 209
+ATOM    140  CD  GLU    18      28.754  20.061   2.978  1.00 14.15      1UBQ 210
+ATOM    141  OE1 GLU    18      27.546  19.992   2.985  1.00 14.33      1UBQ 211
+ATOM    142  OE2 GLU    18      29.336  20.423   1.904  1.00 18.17      1UBQ 212
+ATOM    143  N   PRO    19      26.559  20.220   7.288  1.00  7.24      1UBQ 213
+ATOM    144  CA  PRO    19      25.829  19.825   8.494  1.00  7.07      1UBQ 214
+ATOM    145  C   PRO    19      26.541  18.732   9.251  1.00  6.65      1UBQ 215
+ATOM    146  O   PRO    19      26.333  18.536  10.457  1.00  6.37      1UBQ 216
+ATOM    147  CB  PRO    19      24.469  19.332   7.952  1.00  7.61      1UBQ 217
+ATOM    148  CG  PRO    19      24.299  20.134   6.704  1.00  8.16      1UBQ 218
+ATOM    149  CD  PRO    19      25.714  20.108   6.073  1.00  7.49      1UBQ 219
+ATOM    150  N   SER    20      27.361  17.959   8.559  1.00  6.80      1UBQ 220
+ATOM    151  CA  SER    20      28.054  16.835   9.210  1.00  6.28      1UBQ 221
+ATOM    152  C   SER    20      29.258  17.318   9.984  1.00  8.45      1UBQ 222
+ATOM    153  O   SER    20      29.930  16.477  10.606  1.00  7.26      1UBQ 223
+ATOM    154  CB  SER    20      28.523  15.820   8.182  1.00  8.57      1UBQ 224
+ATOM    155  OG  SER    20      28.946  16.445   6.967  1.00 11.13      1UBQ 225
+ATOM    156  N   ASP    21      29.599  18.599   9.828  1.00  7.50      1UBQ 226
+ATOM    157  CA  ASP    21      30.796  19.083  10.566  1.00  7.70      1UBQ 227
+ATOM    158  C   ASP    21      30.491  19.162  12.040  1.00  7.08      1UBQ 228
+ATOM    159  O   ASP    21      29.367  19.523  12.441  1.00  8.11      1UBQ 229
+ATOM    160  CB  ASP    21      31.155  20.515  10.048  1.00 11.00      1UBQ 230
+ATOM    161  CG  ASP    21      31.923  20.436   8.755  1.00 15.32      1UBQ 231
+ATOM    162  OD1 ASP    21      32.493  19.374   8.456  1.00 18.03      1UBQ 232
+ATOM    163  OD2 ASP    21      31.838  21.402   7.968  1.00 14.36      1UBQ 233
+ATOM    164  N   THR    22      31.510  18.936  12.852  1.00  5.37      1UBQ 234
+ATOM    165  CA  THR    22      31.398  19.064  14.286  1.00  6.01      1UBQ 235
+ATOM    166  C   THR    22      31.593  20.553  14.655  1.00  8.01      1UBQ 236
+ATOM    167  O   THR    22      32.159  21.311  13.861  1.00  8.11      1UBQ 237
+ATOM    168  CB  THR    22      32.492  18.193  14.995  1.00  8.92      1UBQ 238
+ATOM    169  OG1 THR    22      33.778  18.739  14.516  1.00 10.22      1UBQ 239
+ATOM    170  CG2 THR    22      32.352  16.700  14.630  1.00  9.65      1UBQ 240
+ATOM    171  N   ILE    23      31.113  20.863  15.860  1.00  8.32      1UBQ 241
+ATOM    172  CA  ILE    23      31.288  22.201  16.417  1.00  9.92      1UBQ 242
+ATOM    173  C   ILE    23      32.776  22.519  16.577  1.00 10.01      1UBQ 243
+ATOM    174  O   ILE    23      33.233  23.659  16.384  1.00  8.71      1UBQ 244
+ATOM    175  CB  ILE    23      30.520  22.300  17.764  1.00 10.78      1UBQ 245
+ATOM    176  CG1 ILE    23      29.006  22.043  17.442  1.00 11.38      1UBQ 246
+ATOM    177  CG2 ILE    23      30.832  23.699  18.358  1.00 10.90      1UBQ 247
+ATOM    178  CD1 ILE    23      28.407  22.948  16.366  1.00 12.30      1UBQ 248
+ATOM    179  N   GLU    24      33.548  21.526  16.950  1.00  9.54      1UBQ 249
+ATOM    180  CA  GLU    24      35.031  21.722  17.069  1.00 11.81      1UBQ 250
+ATOM    181  C   GLU    24      35.615  22.190  15.759  1.00 11.14      1UBQ 251
+ATOM    182  O   GLU    24      36.532  23.046  15.724  1.00 10.62      1UBQ 252
+ATOM    183  CB  GLU    24      35.667  20.383  17.447  1.00 19.24      1UBQ 253
+ATOM    184  CG  GLU    24      37.128  20.293  17.872  1.00 27.76      1UBQ 254
+ATOM    185  CD  GLU    24      37.561  18.851  18.082  1.00 32.92      1UBQ 255
+ATOM    186  OE1 GLU    24      37.758  18.024  17.195  1.00 34.80      1UBQ 256
+ATOM    187  OE2 GLU    24      37.628  18.599  19.313  1.00 36.51      1UBQ 257
+ATOM    188  N   ASN    25      35.139  21.624  14.662  1.00  9.43      1UBQ 258
+ATOM    189  CA  ASN    25      35.590  21.945  13.302  1.00 10.96      1UBQ 259
+ATOM    190  C   ASN    25      35.238  23.382  12.920  1.00  9.68      1UBQ 260
+ATOM    191  O   ASN    25      36.066  24.109  12.333  1.00  9.33      1UBQ 261
+ATOM    192  CB  ASN    25      35.064  20.957  12.255  1.00 16.78      1UBQ 262
+ATOM    193  CG  ASN    25      35.541  21.418  10.871  1.00 22.31      1UBQ 263
+ATOM    194  OD1 ASN    25      36.772  21.623  10.676  1.00 25.66      1UBQ 264
+ATOM    195  ND2 ASN    25      34.628  21.595   9.920  1.00 24.70      1UBQ 265
+ATOM    196  N   VAL    26      34.007  23.745  13.250  1.00  6.52      1UBQ 266
+ATOM    197  CA  VAL    26      33.533  25.097  12.978  1.00  5.53      1UBQ 267
+ATOM    198  C   VAL    26      34.441  26.099  13.684  1.00  4.42      1UBQ 268
+ATOM    199  O   VAL    26      34.883  27.090  13.093  1.00  3.40      1UBQ 269
+ATOM    200  CB  VAL    26      32.060  25.257  13.364  1.00  3.86      1UBQ 270
+ATOM    201  CG1 VAL    26      31.684  26.749  13.342  1.00  7.25      1UBQ 271
+ATOM    202  CG2 VAL    26      31.152  24.421  12.477  1.00  8.12      1UBQ 272
+ATOM    203  N   LYS    27      34.734  25.822  14.949  1.00  2.64      1UBQ 273
+ATOM    204  CA  LYS    27      35.596  26.715  15.736  1.00  4.14      1UBQ 274
+ATOM    205  C   LYS    27      36.975  26.826  15.107  1.00  5.58      1UBQ 275
+ATOM    206  O   LYS    27      37.579  27.926  15.159  1.00  4.11      1UBQ 276
+ATOM    207  CB  LYS    27      35.715  26.203  17.172  1.00  3.97      1UBQ 277
+ATOM    208  CG  LYS    27      34.343  26.445  17.898  1.00  7.45      1UBQ 278
+ATOM    209  CD  LYS    27      34.509  26.077  19.360  1.00  9.02      1UBQ 279
+ATOM    210  CE  LYS    27      33.206  26.311  20.122  1.00 12.90      1UBQ 280
+ATOM    211  NZ  LYS    27      33.455  25.910  21.546  1.00 15.47      1UBQ 281
+ATOM    212  N   ALA    28      37.499  25.743  14.571  1.00  6.61      1UBQ 282
+ATOM    213  CA  ALA    28      38.794  25.761  13.880  1.00  7.74      1UBQ 283
+ATOM    214  C   ALA    28      38.728  26.591  12.611  1.00  9.17      1UBQ 284
+ATOM    215  O   ALA    28      39.704  27.346  12.277  1.00 11.45      1UBQ 285
+ATOM    216  CB  ALA    28      39.285  24.336  13.566  1.00  7.68      1UBQ 286
+ATOM    217  N   LYS    29      37.633  26.543  11.867  1.00  8.96      1UBQ 287
+ATOM    218  CA  LYS    29      37.471  27.391  10.668  1.00  7.90      1UBQ 288
+ATOM    219  C   LYS    29      37.441  28.882  11.052  1.00  6.92      1UBQ 289
+ATOM    220  O   LYS    29      38.020  29.772  10.382  1.00  6.87      1UBQ 290
+ATOM    221  CB  LYS    29      36.193  27.058   9.911  1.00 10.28      1UBQ 291
+ATOM    222  CG  LYS    29      36.153  25.620   9.409  1.00 14.94      1UBQ 292
+ATOM    223  CD  LYS    29      34.758  25.280   8.900  1.00 19.69      1UBQ 293
+ATOM    224  CE  LYS    29      34.793  24.264   7.767  1.00 22.63      1UBQ 294
+ATOM    225  NZ  LYS    29      34.914  24.944   6.441  1.00 24.98      1UBQ 295
+ATOM    226  N   ILE    30      36.811  29.170  12.192  1.00  4.57      1UBQ 296
+ATOM    227  CA  ILE    30      36.731  30.570  12.645  1.00  5.58      1UBQ 297
+ATOM    228  C   ILE    30      38.148  30.981  13.069  1.00  7.26      1UBQ 298
+ATOM    229  O   ILE    30      38.544  32.150  12.856  1.00  9.46      1UBQ 299
+ATOM    230  CB  ILE    30      35.708  30.776  13.806  1.00  5.36      1UBQ 300
+ATOM    231  CG1 ILE    30      34.228  30.630  13.319  1.00  2.94      1UBQ 301
+ATOM    232  CG2 ILE    30      35.874  32.138  14.512  1.00  2.78      1UBQ 302
+ATOM    233  CD1 ILE    30      33.284  30.504  14.552  1.00  2.00      1UBQ 303
+ATOM    234  N   GLN    31      38.883  30.110  13.713  1.00  7.06      1UBQ 304
+ATOM    235  CA  GLN    31      40.269  30.508  14.115  1.00  8.67      1UBQ 305
+ATOM    236  C   GLN    31      41.092  30.808  12.851  1.00 10.90      1UBQ 306
+ATOM    237  O   GLN    31      41.828  31.808  12.681  1.00  9.63      1UBQ 307
+ATOM    238  CB  GLN    31      40.996  29.399  14.865  1.00  9.12      1UBQ 308
+ATOM    239  CG  GLN    31      42.445  29.848  15.182  1.00 10.76      1UBQ 309
+ATOM    240  CD  GLN    31      43.090  28.828  16.095  1.00 13.78      1UBQ 310
+ATOM    241  OE1 GLN    31      42.770  27.655  15.906  1.00 14.48      1UBQ 311
+ATOM    242  NE2 GLN    31      43.898  29.252  17.050  1.00 14.76      1UBQ 312
+ATOM    243  N   ASP    32      41.001  29.878  11.931  1.00 10.93      1UBQ 313
+ATOM    244  CA  ASP    32      41.718  30.022  10.643  1.00 14.01      1UBQ 314
+ATOM    245  C   ASP    32      41.399  31.338   9.967  1.00 14.04      1UBQ 315
+ATOM    246  O   ASP    32      42.260  32.036   9.381  1.00 13.39      1UBQ 316
+ATOM    247  CB  ASP    32      41.398  28.780   9.810  1.00 18.01      1UBQ 317
+ATOM    248  CG  ASP    32      42.626  28.557   8.928  1.00 24.33      1UBQ 318
+ATOM    249  OD1 ASP    32      43.666  28.262   9.539  1.00 26.29      1UBQ 319
+ATOM    250  OD2 ASP    32      42.430  28.812   7.728  1.00 25.17      1UBQ 320
+ATOM    251  N   LYS    33      40.117  31.750   9.988  1.00 14.22      1UBQ 321
+ATOM    252  CA  LYS    33      39.808  32.994   9.233  1.00 14.00      1UBQ 322
+ATOM    253  C   LYS    33      39.837  34.271   9.995  1.00 12.37      1UBQ 323
+ATOM    254  O   LYS    33      40.164  35.323   9.345  1.00 12.17      1UBQ 324
+ATOM    255  CB  LYS    33      38.615  32.801   8.320  1.00 18.62      1UBQ 325
+ATOM    256  CG  LYS    33      37.220  32.822   8.827  1.00 24.00      1UBQ 326
+ATOM    257  CD  LYS    33      36.351  33.613   7.838  1.00 27.61      1UBQ 327
+ATOM    258  CE  LYS    33      36.322  32.944   6.477  1.00 27.64      1UBQ 328
+ATOM    259  NZ  LYS    33      35.768  33.945   5.489  1.00 30.06      1UBQ 329
+ATOM    260  N   GLU    34      39.655  34.335  11.285  1.00 10.11      1UBQ 330
+ATOM    261  CA  GLU    34      39.676  35.547  12.072  1.00 10.07      1UBQ 331
+ATOM    262  C   GLU    34      40.675  35.527  13.200  1.00  9.32      1UBQ 332
+ATOM    263  O   GLU    34      40.814  36.528  13.911  1.00 11.61      1UBQ 333
+ATOM    264  CB  GLU    34      38.290  35.814  12.698  1.00 14.77      1UBQ 334
+ATOM    265  CG  GLU    34      37.156  35.985  11.688  1.00 18.75      1UBQ 335
+ATOM    266  CD  GLU    34      37.192  37.361  11.033  1.00 22.28      1UBQ 336
+ATOM    267  OE1 GLU    34      37.519  38.360  11.645  1.00 21.95      1UBQ 337
+ATOM    268  OE2 GLU    34      36.861  37.320   9.822  1.00 25.19      1UBQ 338
+ATOM    269  N   GLY    35      41.317  34.393  13.432  1.00  7.22      1UBQ 339
+ATOM    270  CA  GLY    35      42.345  34.269  14.431  1.00  6.29      1UBQ 340
+ATOM    271  C   GLY    35      41.949  34.076  15.842  1.00  6.93      1UBQ 341
+ATOM    272  O   GLY    35      42.829  34.000  16.739  1.00  7.41      1UBQ 342
+ATOM    273  N   ILE    36      40.642  33.916  16.112  1.00  5.86      1UBQ 343
+ATOM    274  CA  ILE    36      40.226  33.716  17.509  1.00  6.07      1UBQ 344
+ATOM    275  C   ILE    36      40.449  32.278  17.945  1.00  6.36      1UBQ 345
+ATOM    276  O   ILE    36      39.936  31.336  17.315  1.00  6.18      1UBQ 346
+ATOM    277  CB  ILE    36      38.693  34.106  17.595  1.00  7.47      1UBQ 347
+ATOM    278  CG1 ILE    36      38.471  35.546  17.045  1.00  8.52      1UBQ 348
+ATOM    279  CG2 ILE    36      38.146  33.932  19.027  1.00  7.36      1UBQ 349
+ATOM    280  CD1 ILE    36      36.958  35.746  16.680  1.00  9.49      1UBQ 350
+ATOM    281  N   PRO    37      41.189  32.085  19.031  1.00  8.65      1UBQ 351
+ATOM    282  CA  PRO    37      41.461  30.751  19.594  1.00  9.18      1UBQ 352
+ATOM    283  C   PRO    37      40.168  30.026  19.918  1.00  9.85      1UBQ 353
+ATOM    284  O   PRO    37      39.264  30.662  20.521  1.00  8.51      1UBQ 354
+ATOM    285  CB  PRO    37      42.195  31.142  20.913  1.00 11.42      1UBQ 355
+ATOM    286  CG  PRO    37      42.904  32.414  20.553  1.00  9.27      1UBQ 356
+ATOM    287  CD  PRO    37      41.822  33.188  19.813  1.00  8.33      1UBQ 357
+ATOM    288  N   PRO    38      40.059  28.758  19.607  1.00  8.71      1UBQ 358
+ATOM    289  CA  PRO    38      38.817  28.020  19.889  1.00  9.08      1UBQ 359
+ATOM    290  C   PRO    38      38.421  28.048  21.341  1.00  9.28      1UBQ 360
+ATOM    291  O   PRO    38      37.213  28.036  21.704  1.00  6.50      1UBQ 361
+ATOM    292  CB  PRO    38      39.090  26.629  19.325  1.00 10.31      1UBQ 362
+ATOM    293  CG  PRO    38      40.082  26.904  18.198  1.00 10.81      1UBQ 363
+ATOM    294  CD  PRO    38      41.035  27.909  18.879  1.00 12.00      1UBQ 364
+ATOM    295  N   ASP    39      39.374  28.090  22.240  1.00 11.20      1UBQ 365
+ATOM    296  CA  ASP    39      39.063  28.063  23.695  1.00 14.96      1UBQ 366
+ATOM    297  C   ASP    39      38.365  29.335  24.159  1.00 13.99      1UBQ 367
+ATOM    298  O   ASP    39      37.684  29.390  25.221  1.00 13.75      1UBQ 368
+ATOM    299  CB  ASP    39      40.340  27.692  24.468  1.00 24.16      1UBQ 369
+ATOM    300  CG  ASP    39      40.559  28.585  25.675  1.00 31.06      1UBQ 370
+ATOM    301  OD1 ASP    39      40.716  29.809  25.456  1.00 35.55      1UBQ 371
+ATOM    302  OD2 ASP    39      40.549  28.090  26.840  1.00 34.22      1UBQ 372
+ATOM    303  N   GLN    40      38.419  30.373  23.341  1.00 11.60      1UBQ 373
+ATOM    304  CA  GLN    40      37.738  31.637  23.712  1.00 10.76      1UBQ 374
+ATOM    305  C   GLN    40      36.334  31.742  23.087  1.00  8.01      1UBQ 375
+ATOM    306  O   GLN    40      35.574  32.618  23.483  1.00  8.96      1UBQ 376
+ATOM    307  CB  GLN    40      38.528  32.854  23.182  1.00 11.14      1UBQ 377
+ATOM    308  CG  GLN    40      39.919  32.854  23.840  1.00 14.85      1UBQ 378
+ATOM    309  CD  GLN    40      40.760  34.036  23.394  1.00 16.11      1UBQ 379
+ATOM    310  OE1 GLN    40      41.975  34.008  23.624  1.00 20.52      1UBQ 380
+ATOM    311  NE2 GLN    40      40.140  35.007  22.775  1.00 18.16      1UBQ 381
+ATOM    312  N   GLN    41      36.000  30.860  22.172  1.00  6.52      1UBQ 382
+ATOM    313  CA  GLN    41      34.738  30.875  21.473  1.00  3.87      1UBQ 383
+ATOM    314  C   GLN    41      33.589  30.189  22.181  1.00  4.79      1UBQ 384
+ATOM    315  O   GLN    41      33.580  29.009  22.499  1.00  6.34      1UBQ 385
+ATOM    316  CB  GLN    41      34.876  30.237  20.066  1.00  4.20      1UBQ 386
+ATOM    317  CG  GLN    41      36.012  30.860  19.221  1.00  3.20      1UBQ 387
+ATOM    318  CD  GLN    41      36.083  30.194  17.875  1.00  4.89      1UBQ 388
+ATOM    319  OE1 GLN    41      35.048  29.702  17.393  1.00  5.21      1UBQ 389
+ATOM    320  NE2 GLN    41      37.228  30.126  17.233  1.00  7.13      1UBQ 390
+ATOM    321  N   ARG    42      32.478  30.917  22.269  1.00  5.73      1UBQ 391
+ATOM    322  CA  ARG    42      31.200  30.329  22.780  1.00  6.97      1UBQ 392
+ATOM    323  C   ARG    42      30.210  30.509  21.650  1.00  7.15      1UBQ 393
+ATOM    324  O   ARG    42      29.978  31.726  21.269  1.00  7.33      1UBQ 394
+ATOM    325  CB  ARG    42      30.847  30.931  24.118  1.00 13.23      1UBQ 395
+ATOM    326  CG  ARG    42      29.412  30.796  24.598  1.00 21.27      1UBQ 396
+ATOM    327  CD  ARG    42      29.271  31.314  26.016  1.00 26.14      1UBQ 397
+ATOM    328  NE  ARG    42      27.875  31.317  26.443  1.00 32.26      1UBQ 398
+ATOM    329  CZ  ARG    42      27.132  32.423  26.574  1.00 34.32      1UBQ 399
+ATOM    330  NH1 ARG    42      27.630  33.656  26.461  1.00 35.30      1UBQ 400
+ATOM    331  NH2 ARG    42      25.810  32.299  26.732  1.00 36.39      1UBQ 401
+ATOM    332  N   LEU    43      29.694  29.436  21.054  1.00  4.65      1UBQ 402
+ATOM    333  CA  LEU    43      28.762  29.573  19.906  1.00  3.51      1UBQ 403
+ATOM    334  C   LEU    43      27.331  29.317  20.364  1.00  5.56      1UBQ 404
+ATOM    335  O   LEU    43      27.101  28.346  21.097  1.00  4.19      1UBQ 405
+ATOM    336  CB  LEU    43      29.151  28.655  18.755  1.00  3.74      1UBQ 406
+ATOM    337  CG  LEU    43      30.416  28.912  17.980  1.00  6.32      1UBQ 407
+ATOM    338  CD1 LEU    43      30.738  27.693  17.122  1.00  9.55      1UBQ 408
+ATOM    339  CD2 LEU    43      30.205  30.168  17.129  1.00  6.41      1UBQ 409
+ATOM    340  N   ILE    44      26.436  30.232  20.004  1.00  4.58      1UBQ 410
+ATOM    341  CA  ILE    44      25.034  30.170  20.401  1.00  5.55      1UBQ 411
+ATOM    342  C   ILE    44      24.101  30.149  19.196  1.00  5.46      1UBQ 412
+ATOM    343  O   ILE    44      24.196  30.948  18.287  1.00  6.04      1UBQ 413
+ATOM    344  CB  ILE    44      24.639  31.426  21.286  1.00  6.80      1UBQ 414
+ATOM    345  CG1 ILE    44      25.646  31.670  22.421  1.00 10.31      1UBQ 415
+ATOM    346  CG2 ILE    44      23.181  31.309  21.824  1.00  7.39      1UBQ 416
+ATOM    347  CD1 ILE    44      25.778  30.436  23.356  1.00 13.90      1UBQ 417
+ATOM    348  N   PHE    45      23.141  29.187  19.241  1.00  6.75      1UBQ 418
+ATOM    349  CA  PHE    45      22.126  29.062  18.183  1.00  4.70      1UBQ 419
+ATOM    350  C   PHE    45      20.835  28.629  18.904  1.00  6.34      1UBQ 420
+ATOM    351  O   PHE    45      20.821  27.734  19.749  1.00  5.45      1UBQ 421
+ATOM    352  CB  PHE    45      22.494  28.057  17.109  1.00  5.51      1UBQ 422
+ATOM    353  CG  PHE    45      21.447  27.869  16.026  1.00  5.98      1UBQ 423
+ATOM    354  CD1 PHE    45      21.325  28.813  15.005  1.00  6.86      1UBQ 424
+ATOM    355  CD2 PHE    45      20.638  26.735  16.053  1.00  5.87      1UBQ 425
+ATOM    356  CE1 PHE    45      20.369  28.648  14.001  1.00  6.68      1UBQ 426
+ATOM    357  CE2 PHE    45      19.677  26.539  15.051  1.00  6.64      1UBQ 427
+ATOM    358  CZ  PHE    45      19.593  27.465  14.021  1.00  6.84      1UBQ 428
+ATOM    359  N   ALA    46      19.810  29.378  18.578  1.00  6.53      1UBQ 429
+ATOM    360  CA  ALA    46      18.443  29.143  19.083  1.00  7.15      1UBQ 430
+ATOM    361  C   ALA    46      18.453  28.941  20.591  1.00  9.00      1UBQ 431
+ATOM    362  O   ALA    46      17.860  27.994  21.128  1.00 11.15      1UBQ 432
+ATOM    363  CB  ALA    46      17.864  27.977  18.346  1.00  8.99      1UBQ 433
+ATOM    364  N   GLY    47      19.172  29.808  21.243  1.00  9.35      1UBQ 434
+ATOM    365  CA  GLY    47      19.399  29.894  22.655  1.00 11.68      1UBQ 435
+ATOM    366  C   GLY    47      20.083  28.729  23.321  1.00 11.14      1UBQ 436
+ATOM    367  O   GLY    47      19.991  28.584  24.561  1.00 13.93      1UBQ 437
+ATOM    368  N   LYS    48      20.801  27.931  22.578  1.00 10.47      1UBQ 438
+ATOM    369  CA  LYS    48      21.550  26.796  23.133  1.00  8.82      1UBQ 439
+ATOM    370  C   LYS    48      23.046  27.087  22.913  1.00  7.68      1UBQ 440
+ATOM    371  O   LYS    48      23.383  27.627  21.870  1.00  6.47      1UBQ 441
+ATOM    372  CB  LYS    48      21.242  25.519  22.391  1.00  9.74      1UBQ 442
+ATOM    373  CG  LYS    48      19.762  25.077  22.455  1.00 14.14      1UBQ 443
+ATOM    374  CD  LYS    48      19.634  23.885  21.531  1.00 16.32      1UBQ 444
+ATOM    375  CE  LYS    48      18.791  24.221  20.313  1.00 20.04      1UBQ 445
+ATOM    376  NZ  LYS    48      17.440  24.655  20.827  1.00 23.92      1UBQ 446
+ATOM    377  N   GLN    49      23.880  26.727  23.851  1.00  8.89      1UBQ 447
+ATOM    378  CA  GLN    49      25.349  26.872  23.643  1.00  7.18      1UBQ 448
+ATOM    379  C   GLN    49      25.743  25.586  22.922  1.00  8.23      1UBQ 449
+ATOM    380  O   GLN    49      25.325  24.489  23.378  1.00  9.70      1UBQ 450
+ATOM    381  CB  GLN    49      26.070  27.025  24.960  1.00 11.67      1UBQ 451
+ATOM    382  CG  GLN    49      27.553  27.356  24.695  1.00 15.82      1UBQ 452
+ATOM    383  CD  GLN    49      28.262  27.576  26.020  1.00 20.21      1UBQ 453
+ATOM    384  OE1 GLN    49      29.189  26.840  26.335  1.00 23.23      1UBQ 454
+ATOM    385  NE2 GLN    49      27.777  28.585  26.739  1.00 20.67      1UBQ 455
+ATOM    386  N   LEU    50      26.465  25.689  21.833  1.00  6.51      1UBQ 456
+ATOM    387  CA  LEU    50      26.826  24.521  21.012  1.00  7.41      1UBQ 457
+ATOM    388  C   LEU    50      27.994  23.781  21.643  1.00  8.27      1UBQ 458
+ATOM    389  O   LEU    50      28.904  24.444  22.098  1.00  8.34      1UBQ 459
+ATOM    390  CB  LEU    50      27.043  24.992  19.571  1.00  7.13      1UBQ 460
+ATOM    391  CG  LEU    50      25.931  25.844  18.959  1.00  7.53      1UBQ 461
+ATOM    392  CD1 LEU    50      26.203  26.083  17.471  1.00  8.14      1UBQ 462
+ATOM    393  CD2 LEU    50      24.577  25.190  19.079  1.00  9.11      1UBQ 463
+ATOM    394  N   GLU    51      27.942  22.448  21.648  1.00  9.43      1UBQ 464
+ATOM    395  CA  GLU    51      29.015  21.657  22.288  1.00 11.90      1UBQ 465
+ATOM    396  C   GLU    51      29.942  21.106  21.240  1.00 11.49      1UBQ 466
+ATOM    397  O   GLU    51      29.470  20.677  20.190  1.00  9.88      1UBQ 467
+ATOM    398  CB  GLU    51      28.348  20.540  23.066  1.00 16.56      1UBQ 468
+ATOM    399  CG  GLU    51      29.247  19.456  23.705  1.00 26.06      1UBQ 469
+ATOM    400  CD  GLU    51      28.722  19.047  25.066  1.00 29.86      1UBQ 470
+ATOM    401  OE1 GLU    51      29.139  18.132  25.746  1.00 32.13      1UBQ 471
+ATOM    402  OE2 GLU    51      27.777  19.842  25.367  1.00 33.44      1UBQ 472
+ATOM    403  N   ASP    52      31.233  21.090  21.459  1.00 12.71      1UBQ 473
+ATOM    404  CA  ASP    52      32.262  20.670  20.514  1.00 16.56      1UBQ 474
+ATOM    405  C   ASP    52      32.128  19.364  19.750  1.00 15.83      1UBQ 475
+ATOM    406  O   ASP    52      32.546  19.317  18.558  1.00 17.21      1UBQ 476
+ATOM    407  CB  ASP    52      33.638  20.716  21.242  1.00 21.05      1UBQ 477
+ATOM    408  CG  ASP    52      34.174  22.129  21.354  1.00 25.12      1UBQ 478
+ATOM    409  OD1 ASP    52      35.252  22.322  21.958  1.00 28.37      1UBQ 479
+ATOM    410  OD2 ASP    52      33.544  23.086  20.883  1.00 25.82      1UBQ 480
+ATOM    411  N   GLY    53      31.697  18.311  20.406  1.00 15.00      1UBQ 481
+ATOM    412  CA  GLY    53      31.568  16.962  19.825  1.00 11.77      1UBQ 482
+ATOM    413  C   GLY    53      30.320  16.698  19.051  1.00 11.10      1UBQ 483
+ATOM    414  O   GLY    53      30.198  15.657  18.366  1.00 11.25      1UBQ 484
+ATOM    415  N   ARG    54      29.340  17.594  19.076  1.00  8.53      1UBQ 485
+ATOM    416  CA  ARG    54      28.108  17.439  18.276  1.00  9.05      1UBQ 486
+ATOM    417  C   ARG    54      28.375  17.999  16.887  1.00  8.96      1UBQ 487
+ATOM    418  O   ARG    54      29.326  18.786  16.690  1.00 11.60      1UBQ 488
+ATOM    419  CB  ARG    54      26.926  18.191  18.892  1.00  7.97      1UBQ 489
+ATOM    420  CG  ARG    54      26.621  17.799  20.352  1.00  9.62      1UBQ 490
+ATOM    421  CD  ARG    54      26.010  16.370  20.280  1.00 12.20      1UBQ 491
+ATOM    422  NE  ARG    54      26.975  15.521  20.942  1.00 18.23      1UBQ 492
+ATOM    423  CZ  ARG    54      27.603  14.423  20.655  1.00 22.08      1UBQ 493
+ATOM    424  NH1 ARG    54      27.479  13.733  19.537  1.00 23.38      1UBQ 494
+ATOM    425  NH2 ARG    54      28.519  13.967  21.550  1.00 25.50      1UBQ 495
+ATOM    426  N   THR    55      27.510  17.689  15.954  1.00  9.05      1UBQ 496
+ATOM    427  CA  THR    55      27.574  18.192  14.563  1.00  9.03      1UBQ 497
+ATOM    428  C   THR    55      26.482  19.280  14.432  1.00  8.15      1UBQ 498
+ATOM    429  O   THR    55      25.609  19.388  15.287  1.00  5.91      1UBQ 499
+ATOM    430  CB  THR    55      27.299  17.055  13.533  1.00 11.15      1UBQ 500
+ATOM    431  OG1 THR    55      25.925  16.611  13.913  1.00 11.95      1UBQ 501
+ATOM    432  CG2 THR    55      28.236  15.864  13.558  1.00 11.71      1UBQ 502
+ATOM    433  N   LEU    56      26.585  20.063  13.378  1.00  6.91      1UBQ 503
+ATOM    434  CA  LEU    56      25.594  21.109  13.072  1.00  8.29      1UBQ 504
+ATOM    435  C   LEU    56      24.241  20.436  12.857  1.00  8.05      1UBQ 505
+ATOM    436  O   LEU    56      23.264  20.951  13.329  1.00 10.17      1UBQ 506
+ATOM    437  CB  LEU    56      26.084  21.888  11.833  1.00  6.60      1UBQ 507
+ATOM    438  CG  LEU    56      27.426  22.616  11.902  1.00  7.73      1UBQ 508
+ATOM    439  CD1 LEU    56      27.718  23.341  10.578  1.00  9.85      1UBQ 509
+ATOM    440  CD2 LEU    56      27.380  23.721  12.955  1.00  8.64      1UBQ 510
+ATOM    441  N   SER    57      24.240  19.233  12.246  1.00  8.92      1UBQ 511
+ATOM    442  CA  SER    57      22.924  18.583  12.025  1.00  9.00      1UBQ 512
+ATOM    443  C   SER    57      22.229  18.244  13.325  1.00  9.44      1UBQ 513
+ATOM    444  O   SER    57      20.963  18.253  13.395  1.00 10.91      1UBQ 514
+ATOM    445  CB  SER    57      23.059  17.326  11.154  1.00 10.32      1UBQ 515
+ATOM    446  OG  SER    57      23.914  16.395  11.755  1.00 13.59      1UBQ 516
+ATOM    447  N   ASP    58      22.997  17.978  14.366  1.00  9.11      1UBQ 517
+ATOM    448  CA  ASP    58      22.418  17.638  15.693  1.00  7.91      1UBQ 518
+ATOM    449  C   ASP    58      21.460  18.737  16.163  1.00  9.12      1UBQ 519
+ATOM    450  O   ASP    58      20.497  18.506  16.900  1.00  8.61      1UBQ 520
+ATOM    451  CB  ASP    58      23.461  17.331  16.741  1.00  8.41      1UBQ 521
+ATOM    452  CG  ASP    58      24.184  16.016  16.619  1.00 11.50      1UBQ 522
+ATOM    453  OD1 ASP    58      25.303  15.894  17.152  1.00 10.05      1UBQ 523
+ATOM    454  OD2 ASP    58      23.572  15.107  15.975  1.00 11.70      1UBQ 524
+ATOM    455  N   TYR    59      21.846  19.954  15.905  1.00  7.97      1UBQ 525
+ATOM    456  CA  TYR    59      21.079  21.149  16.251  1.00  8.45      1UBQ 526
+ATOM    457  C   TYR    59      20.142  21.590  15.149  1.00 10.98      1UBQ 527
+ATOM    458  O   TYR    59      19.499  22.645  15.321  1.00 12.95      1UBQ 528
+ATOM    459  CB  TYR    59      22.085  22.254  16.581  1.00  7.94      1UBQ 529
+ATOM    460  CG  TYR    59      22.945  21.951  17.785  1.00  6.91      1UBQ 530
+ATOM    461  CD1 TYR    59      24.272  21.544  17.644  1.00  4.59      1UBQ 531
+ATOM    462  CD2 TYR    59      22.437  22.157  19.065  1.00  6.98      1UBQ 532
+ATOM    463  CE1 TYR    59      25.052  21.285  18.776  1.00  5.39      1UBQ 533
+ATOM    464  CE2 TYR    59      23.204  21.907  20.192  1.00  6.52      1UBQ 534
+ATOM    465  CZ  TYR    59      24.517  21.470  20.030  1.00  6.76      1UBQ 535
+ATOM    466  OH  TYR    59      25.248  21.302  21.191  1.00  7.63      1UBQ 536
+ATOM    467  N   ASN    60      19.993  20.884  14.049  1.00 12.38      1UBQ 537
+ATOM    468  CA  ASN    60      19.065  21.352  12.999  1.00 13.94      1UBQ 538
+ATOM    469  C   ASN    60      19.442  22.745  12.510  1.00 14.16      1UBQ 539
+ATOM    470  O   ASN    60      18.571  23.610  12.289  1.00 14.26      1UBQ 540
+ATOM    471  CB  ASN    60      17.586  21.282  13.461  1.00 19.23      1UBQ 541
+ATOM    472  CG  ASN    60      16.576  21.258  12.315  1.00 22.65      1UBQ 542
+ATOM    473  OD1 ASN    60      15.440  21.819  12.378  1.00 25.45      1UBQ 543
+ATOM    474  ND2 ASN    60      16.924  20.586  11.216  1.00 24.09      1UBQ 544
+ATOM    475  N   ILE    61      20.717  22.964  12.260  1.00 11.08      1UBQ 545
+ATOM    476  CA  ILE    61      21.184  24.263  11.690  1.00 11.78      1UBQ 546
+ATOM    477  C   ILE    61      21.110  24.111  10.173  1.00 13.74      1UBQ 547
+ATOM    478  O   ILE    61      21.841  23.198   9.686  1.00 14.60      1UBQ 548
+ATOM    479  CB  ILE    61      22.650  24.516  12.172  1.00 11.80      1UBQ 549
+ATOM    480  CG1 ILE    61      22.662  24.819  13.699  1.00 11.56      1UBQ 550
+ATOM    481  CG2 ILE    61      23.376  25.645  11.409  1.00 13.29      1UBQ 551
+ATOM    482  CD1 ILE    61      24.123  24.981  14.195  1.00 11.42      1UBQ 552
+ATOM    483  N   GLN    62      20.291  24.875   9.507  1.00 13.97      1UBQ 553
+ATOM    484  CA  GLN    62      20.081  24.773   8.033  1.00 15.52      1UBQ 554
+ATOM    485  C   GLN    62      20.822  25.914   7.332  1.00 13.94      1UBQ 555
+ATOM    486  O   GLN    62      21.323  26.830   8.008  1.00 12.15      1UBQ 556
+ATOM    487  CB  GLN    62      18.599  24.736   7.727  1.00 19.53      1UBQ 557
+ATOM    488  CG  GLN    62      17.819  23.434   7.900  1.00 26.38      1UBQ 558
+ATOM    489  CD  GLN    62      16.509  23.529   7.116  1.00 30.61      1UBQ 559
+ATOM    490  OE1 GLN    62      15.446  22.980   7.433  1.00 33.23      1UBQ 560
+ATOM    491  NE2 GLN    62      16.539  24.293   6.009  1.00 32.71      1UBQ 561
+ATOM    492  N   LYS    63      20.924  25.862   6.006  1.00 11.73      1UBQ 562
+ATOM    493  CA  LYS    63      21.656  26.847   5.240  1.00 11.97      1UBQ 563
+ATOM    494  C   LYS    63      21.127  28.240   5.574  1.00 10.41      1UBQ 564
+ATOM    495  O   LYS    63      19.958  28.465   5.842  1.00  9.59      1UBQ 565
+ATOM    496  CB  LYS    63      21.631  26.642   3.731  1.00 13.73      1UBQ 566
+ATOM    497  CG  LYS    63      20.210  26.423   3.175  1.00 16.98      1UBQ 567
+ATOM    498  CD  LYS    63      20.268  26.589   1.656  1.00 20.19      1UBQ 568
+ATOM    499  CE  LYS    63      19.202  25.857    .891  1.00 23.42      1UBQ 569
+ATOM    500  NZ  LYS    63      17.884  26.544   1.075  1.00 25.97      1UBQ 570
+ATOM    501  N   GLU    64      22.099  29.163   5.605  1.00 10.04      1UBQ 571
+ATOM    502  CA  GLU    64      21.907  30.563   5.881  1.00 10.94      1UBQ 572
+ATOM    503  C   GLU    64      21.466  30.953   7.261  1.00  9.74      1UBQ 573
+ATOM    504  O   GLU    64      21.066  32.112   7.533  1.00  9.42      1UBQ 574
+ATOM    505  CB  GLU    64      21.023  31.223   4.784  1.00 18.31      1UBQ 575
+ATOM    506  CG  GLU    64      21.861  31.342   3.474  1.00 24.16      1UBQ 576
+ATOM    507  CD  GLU    64      21.156  30.726   2.311  1.00 29.00      1UBQ 577
+ATOM    508  OE1 GLU    64      19.942  30.793   2.170  1.00 31.72      1UBQ 578
+ATOM    509  OE2 GLU    64      21.954  30.152   1.535  1.00 32.61      1UBQ 579
+ATOM    510  N   SER    65      21.674  30.034   8.191  1.00  6.85      1UBQ 580
+ATOM    511  CA  SER    65      21.419  30.253   9.620  1.00  6.90      1UBQ 581
+ATOM    512  C   SER    65      22.504  31.228  10.136  1.00  4.72      1UBQ 582
+ATOM    513  O   SER    65      23.579  31.321   9.554  1.00  3.91      1UBQ 583
+ATOM    514  CB  SER    65      21.637  28.923  10.353  1.00  7.28      1UBQ 584
+ATOM    515  OG  SER    65      20.544  28.047  10.059  1.00 10.56      1UBQ 585
+ATOM    516  N   THR    66      22.241  31.873  11.241  1.00  4.48      1UBQ 586
+ATOM    517  CA  THR    66      23.212  32.762  11.891  1.00  3.80      1UBQ 587
+ATOM    518  C   THR    66      23.509  32.224  13.290  1.00  4.60      1UBQ 588
+ATOM    519  O   THR    66      22.544  31.942  14.034  1.00  5.33      1UBQ 589
+ATOM    520  CB  THR    66      22.699  34.267  11.985  1.00  2.85      1UBQ 590
+ATOM    521  OG1 THR    66      22.495  34.690  10.589  1.00  2.15      1UBQ 591
+ATOM    522  CG2 THR    66      23.727  35.131  12.722  1.00  3.40      1UBQ 592
+ATOM    523  N   LEU    67      24.790  32.021  13.618  1.00  4.17      1UBQ 593
+ATOM    524  CA  LEU    67      25.149  31.609  14.980  1.00  3.85      1UBQ 594
+ATOM    525  C   LEU    67      25.698  32.876  15.669  1.00  3.80      1UBQ 595
+ATOM    526  O   LEU    67      26.158  33.730  14.894  1.00  5.54      1UBQ 596
+ATOM    527  CB  LEU    67      26.310  30.594  14.967  1.00  7.18      1UBQ 597
+ATOM    528  CG  LEU    67      26.290  29.480  13.960  1.00  9.67      1UBQ 598
+ATOM    529  CD1 LEU    67      27.393  28.442  14.229  1.00  8.12      1UBQ 599
+ATOM    530  CD2 LEU    67      24.942  28.807  13.952  1.00 11.66      1UBQ 600
+ATOM    531  N   HIS    68      25.621  32.945  16.950  1.00  2.94      1UBQ 601
+ATOM    532  CA  HIS    68      26.179  34.127  17.650  1.00  4.17      1UBQ 602
+ATOM    533  C   HIS    68      27.475  33.651  18.304  1.00  5.32      1UBQ 603
+ATOM    534  O   HIS    68      27.507  32.587  18.958  1.00  7.70      1UBQ 604
+ATOM    535  CB  HIS    68      25.214  34.565  18.780  1.00  5.57      1UBQ 605
+ATOM    536  CG  HIS    68      23.978  35.121  18.126  1.00  9.95      1UBQ 606
+ATOM    537  ND1 HIS    68      23.853  36.432  17.781  1.00 13.74      1UBQ 607
+ATOM    538  CD2 HIS    68      22.824  34.514  17.782  1.00 12.79      1UBQ 608
+ATOM    539  CE1 HIS    68      22.674  36.627  17.200  1.00 14.75      1UBQ 609
+ATOM    540  NE2 HIS    68      22.045  35.455  17.173  1.00 16.30      1UBQ 610
+ATOM    541  N   LEU    69      28.525  34.447  18.189  1.00  5.29      1UBQ 611
+ATOM    542  CA  LEU    69      29.801  34.145  18.829  1.00  3.97      1UBQ 612
+ATOM    543  C   LEU    69      30.052  35.042  20.004  1.00  5.07      1UBQ 613
+ATOM    544  O   LEU    69      30.105  36.305  19.788  1.00  4.34      1UBQ 614
+ATOM    545  CB  LEU    69      30.925  34.304  17.753  1.00  6.08      1UBQ 615
+ATOM    546  CG  LEU    69      32.345  34.183  18.358  1.00  7.37      1UBQ 616
+ATOM    547  CD1 LEU    69      32.555  32.783  18.870  1.00  6.87      1UBQ 617
+ATOM    548  CD2 LEU    69      33.361  34.491  17.245  1.00  9.96      1UBQ 618
+ATOM    549  N   VAL    70      30.124  34.533  21.191  1.00  4.29      1UBQ 619
+ATOM    550  CA  VAL    70      30.479  35.369  22.374  1.00  6.26      1UBQ 620
+ATOM    551  C   VAL    70      31.901  34.910  22.728  1.00  9.22      1UBQ 621
+ATOM    552  O   VAL    70      32.190  33.696  22.635  1.00  9.36      1UBQ 622
+ATOM    553  CB  VAL    70      29.472  35.181  23.498  1.00  8.69      1UBQ 623
+ATOM    554  CG1 VAL    70      29.821  35.957  24.765  1.00  9.76      1UBQ 624
+ATOM    555  CG2 VAL    70      28.049  35.454  23.071  1.00  8.54      1UBQ 625
+ATOM    556  N   LEU    71      32.763  35.831  23.090  1.00 12.71      1UBQ 626
+ATOM    557  CA  LEU    71      34.145  35.472  23.481  1.00 16.06      1UBQ 627
+ATOM    558  C   LEU    71      34.239  35.353  24.979  1.00 18.09      1UBQ 628
+ATOM    559  O   LEU    71      33.707  36.197  25.728  1.00 19.26      1UBQ 629
+ATOM    560  CB  LEU    71      35.114  36.564  22.907  1.00 17.10      1UBQ 630
+ATOM    561  CG  LEU    71      35.926  35.979  21.737  1.00 19.37      1UBQ 631
+ATOM    562  CD1 LEU    71      35.003  35.084  20.920  1.00 17.51      1UBQ 632
+ATOM    563  CD2 LEU    71      36.533  37.087  20.917  1.00 19.57      1UBQ 633
+ATOM    564  N   ARG    72      34.930  34.384  25.451  1.00 21.47      1UBQ 634
+ATOM    565  CA  ARG    72      35.161  34.174  26.896  1.00 25.83      1UBQ 635
+ATOM    566  C   ARG    72      36.671  34.296  27.089  1.00 27.74      1UBQ 636
+ATOM    567  O   ARG    72      37.305  33.233  26.795  1.00 30.65      1UBQ 637
+ATOM    568  CB  ARG    72      34.717  32.760  27.286  1.00 28.49      1UBQ 638
+ATOM    569  CG  ARG    72      35.752  32.054  28.160  1.00 31.79      1UBQ 639
+ATOM    570  CD  ARG    72      35.612  30.577  28.044  1.00 34.05      1UBQ 640
+ATOM    571  NE  ARG    72      35.040  30.252  26.730  1.00 35.08      1UBQ 641
+ATOM    572  CZ  ARG    72      34.338  29.103  26.650  1.00 34.67      1UBQ 642
+ATOM    573  NH1 ARG    72      34.110  28.437  27.768  1.00 35.02      1UBQ 643
+ATOM    574  NH2 ARG    72      34.014  28.657  25.457  1.00 34.97      1UBQ 644
+ATOM    575  N   LEU    73      37.197  35.397  27.513   .45 28.93      1UBQ 645
+ATOM    576  CA  LEU    73      38.668  35.502  27.680   .45 30.76      1UBQ 646
+ATOM    577  C   LEU    73      39.076  34.931  29.031   .45 32.18      1UBQ 647
+ATOM    578  O   LEU    73      38.297  34.946  29.996   .45 32.31      1UBQ 648
+ATOM    579  CB  LEU    73      39.080  36.941  27.406   .45 30.53      1UBQ 649
+ATOM    580  CG  LEU    73      39.502  37.340  26.002   .45 30.16      1UBQ 650
+ATOM    581  CD1 LEU    73      38.684  36.647  24.923   .45 29.57      1UBQ 651
+ATOM    582  CD2 LEU    73      39.337  38.854  25.862   .45 29.11      1UBQ 652
+ATOM    583  N   ARG    74      40.294  34.412  29.045   .45 33.82      1UBQ 653
+ATOM    584  CA  ARG    74      40.873  33.802  30.253   .45 35.33      1UBQ 654
+ATOM    585  C   ARG    74      41.765  34.829  30.944   .45 36.22      1UBQ 655
+ATOM    586  O   ARG    74      42.945  34.994  30.583   .45 36.70      1UBQ 656
+ATOM    587  CB  ARG    74      41.651  32.529  29.923   .45 36.91      1UBQ 657
+ATOM    588  CG  ARG    74      41.608  31.444  30.989   .45 38.62      1UBQ 658
+ATOM    589  CD  ARG    74      41.896  30.080  30.456   .45 39.75      1UBQ 659
+ATOM    590  NE  ARG    74      43.311  29.735  30.563   .45 41.13      1UBQ 660
+ATOM    591  CZ  ARG    74      44.174  29.905  29.554   .45 41.91      1UBQ 661
+ATOM    592  NH1 ARG    74      43.754  30.312  28.356   .45 42.75      1UBQ 662
+ATOM    593  NH2 ARG    74      45.477  29.726  29.763   .45 41.93      1UBQ 663
+ATOM    594  N   GLY    75      41.165  35.531  31.898   .25 36.31      1UBQ 664
+ATOM    595  CA  GLY    75      41.845  36.550  32.686   .25 36.07      1UBQ 665
+ATOM    596  C   GLY    75      41.251  37.941  32.588   .25 36.16      1UBQ 666
+ATOM    597  O   GLY    75      41.102  38.523  31.500   .25 36.26      1UBQ 667
+ATOM    598  N   GLY    76      40.946  38.472  33.757   .25 36.05      1UBQ 668
+ATOM    599  CA  GLY    76      40.373  39.813  33.944   .25 36.19      1UBQ 669
+ATOM    600  C   GLY    76      40.031  39.992  35.432   .25 36.20      1UBQ 670
+ATOM    601  O   GLY    76      38.933  40.525  35.687   .25 36.13      1UBQ 671
+ATOM    602  OXT GLY    76      40.862  39.575  36.251   .25 36.27      1UBQ 672
+TER     603      GLY    76                                              1UBQ 673
+HETATM  604  O   HOH     1      45.747  30.081  19.708  1.00 12.43      1UBQ 674
+HETATM  605  O   HOH     2      19.168  31.868  17.050  1.00 12.65      1UBQ 675
+HETATM  606  O   HOH     3      32.010  38.387  19.636  1.00 12.83      1UBQ 676
+HETATM  607  O   HOH     4      42.084  27.361  21.953  1.00 22.27      1UBQ 677
+HETATM  608  O   HOH     5      21.314  20.644   8.719  1.00 18.33      1UBQ 678
+HETATM  609  O   HOH     6      31.965  38.637   3.699  1.00 31.69      1UBQ 679
+HETATM  610  O   HOH     7      27.707  15.908   4.653  1.00 20.30      1UBQ 680
+HETATM  611  O   HOH     8      19.969  32.720  14.769  1.00 10.14      1UBQ 681
+HETATM  612  O   HOH     9      29.847  13.577  10.864  1.00 29.65      1UBQ 682
+HETATM  613  O   HOH    10      23.893  27.864   1.501  1.00 23.48      1UBQ 683
+HETATM  614  O   HOH    11      19.638  23.312   4.775  1.00 18.40      1UBQ 684
+HETATM  615  O   HOH    12      34.628  29.369   4.779  1.00 26.17      1UBQ 685
+HETATM  616  O   HOH    13      42.240  24.744  25.707  1.00 31.34      1UBQ 686
+HETATM  617  O   HOH    14      30.290  42.500   8.820  1.00 16.49      1UBQ 687
+HETATM  618  O   HOH    15      24.512  39.162  10.841  1.00 13.14      1UBQ 688
+HETATM  619  O   HOH    16      26.557  43.450  19.940  1.00 19.38      1UBQ 689
+HETATM  620  O   HOH    17      42.535  22.385  13.872  1.00 29.35      1UBQ 690
+HETATM  621  O   HOH    18      42.440  26.381  12.686  1.00 29.46      1UBQ 691
+HETATM  622  O   HOH    19      22.651  14.457  13.085  1.00 22.07      1UBQ 692
+HETATM  623  O   HOH    20      35.325  26.551  23.202  1.00 15.20      1UBQ 693
+HETATM  624  O   HOH    21      23.629  20.940   3.146  1.00 15.45      1UBQ 694
+HETATM  625  O   HOH    22      25.928  21.774   2.325  1.00 13.70      1UBQ 695
+HETATM  626  O   HOH    23      33.388  21.973   5.659  1.00 24.89      1UBQ 696
+HETATM  627  O   HOH    24      18.326  23.911  17.697  1.00 24.10      1UBQ 697
+HETATM  628  O   HOH    25      18.160  27.072  10.662  1.00 20.76      1UBQ 698
+HETATM  629  O   HOH    26      34.746  17.167  18.219  1.00 32.86      1UBQ 699
+HETATM  630  O   HOH    27      19.801  32.364  20.210  1.00 21.09      1UBQ 700
+HETATM  631  O   HOH    28      30.285  26.829  22.191  1.00  8.56      1UBQ 701
+HETATM  632  O   HOH    29      44.612  32.306  16.961  1.00  7.69      1UBQ 702
+HETATM  633  O   HOH    30      16.287  25.999  13.142   .78 28.90      1UBQ 703
+HETATM  634  O   HOH    31      27.101  42.135  15.494   .51 23.36      1UBQ 704
+HETATM  635  O   HOH    32      37.209  23.795  21.367   .74 27.88      1UBQ 705
+HETATM  636  O   HOH    33      19.582  32.034   -.685   .49 22.24      1UBQ 706
+HETATM  637  O   HOH    34      28.824  25.094    .886   .77 36.99      1UBQ 707
+HETATM  638  O   HOH    35      25.146  19.162  25.323   .87 36.70      1UBQ 708
+HETATM  639  O   HOH    36      20.747  37.769  14.674   .85 29.64      1UBQ 709
+HETATM  640  O   HOH    37      16.035  17.841   8.765   .61 23.89      1UBQ 710
+HETATM  641  O   HOH    38      35.712  46.814  12.926   .48 27.11      1UBQ 711
+HETATM  642  O   HOH    39      15.570  27.475   7.482   .51 24.18      1UBQ 712
+HETATM  643  O   HOH    40      33.447  21.075   2.918   .59 26.03      1UBQ 713
+HETATM  644  O   HOH    41      41.116  39.021  13.061   .63 22.39      1UBQ 714
+HETATM  645  O   HOH    42      32.346  13.689  18.912   .48 24.09      1UBQ 715
+HETATM  646  O   HOH    43      31.197  13.048   7.920   .71 29.54      1UBQ 716
+HETATM  647  O   HOH    44      42.853  39.375  29.308   .64 46.90      1UBQ 717
+HETATM  648  O   HOH    45      39.646  23.959   9.699   .41 18.25      1UBQ 718
+HETATM  649  O   HOH    46      34.405  45.181  13.420   .87 26.13      1UBQ 719
+HETATM  650  O   HOH    47      26.517  24.300  27.592   .41 21.02      1UBQ 720
+HETATM  651  O   HOH    48      40.740  38.734   9.602   .45 16.60      1UBQ 721
+HETATM  652  O   HOH    49      31.494  18.276  23.170   .67 26.53      1UBQ 722
+HETATM  653  O   HOH    50      37.752  30.947   1.059   .87 32.52      1UBQ 723
+HETATM  654  O   HOH    51      31.771  16.941   7.511   .64 15.94      1UBQ 724
+HETATM  655  O   HOH    52      41.628  24.537  10.145   .57 22.53      1UBQ 725
+HETATM  656  O   HOH    53      28.988  22.175  -1.744   .56 29.32      1UBQ 726
+HETATM  657  O   HOH    54      14.882  16.539  10.692   .53 24.82      1UBQ 727
+HETATM  658  O   HOH    55      32.589  40.385   7.523   .36 26.01      1UBQ 728
+HETATM  659  O   HOH    56      38.363  30.369   5.579   .49 35.45      1UBQ 729
+HETATM  660  O   HOH    57      27.841  46.062  17.589   .81 32.15      1UBQ 730
+HETATM  661  O   HOH    58      37.667  43.421  17.000   .50 33.32      1UBQ 731
+MASTER       39    0    0    2    5    9    0    6  660    1    0    6  1UBQA 18
+END                                                                     1UBQ 733

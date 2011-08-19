@@ -1,0 +1,10 @@
+-s input/1N7T_01.pdb
+-resfile input/1N7T_seqtol.resfile
+-ms:generations 5
+-ms:pop_size 20
+-ms:pop_from_ss 1
+-ms:checkpoint:prefix 1N7T_0001
+-ms:checkpoint:interval 200
+-seq_tol:fitness_master_weights 1 1 1 2
+-score:weights input/standard_NO_HB_ENV_DEP.wts
+-score:ref_offsets HIS 1.2

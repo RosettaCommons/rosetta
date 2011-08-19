@@ -1,0 +1,4 @@
+-s input/1MFG.pdb
+-ignore_unrecognized_res
+
+-backrub:ntrials 500

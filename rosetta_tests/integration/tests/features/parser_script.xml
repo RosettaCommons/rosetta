@@ -1,0 +1,34 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<s weights=score12_w_corrections/>
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+		<ReadResfileFromDB name=all db=resfiles.db3 db_mode=sqlite3 table=resfiles/>
+	</TASKOPERATIONS>
+	<MOVERS>
+		<SavePoseMover name=init_struct reference_name=init_struct/>
+		<ReportToDB name=features_reporter db="features_IntegrationTest.db3" sample_source="Test the whole feature generation code stack." task_operations=all>
+			<feature name=HBondFeatures scorefxn=s/>
+                  	<feature name=GeometricSolvationFeatures/>
+			<feature name=HBondParameterFeatures scorefxn=s/>
+			<feature name=OrbitalsFeatures/>
+			<feature name=PairFeatures/>
+			<feature name=PoseCommentsFeatures/>
+			<feature name=PoseConformationFeatures/>
+			<feature name=ProteinBackboneTorsionAngleFeatures/>
+			<feature name=ProteinResidueConformationFeatures/>
+			<feature name=ProteinRMSDFeatures reference_name=init_struct/>
+			<feature name=RadiusOfGyrationFeatures/>
+			<feature name=ResidueFeatures/>
+			<feature name=ResidueBurialFeatures/>
+			<feature name=ResidueSecondaryStructureFeatures/>
+			<feature name=RotamerRecoveryFeatures scorefxn=s/>
+			<feature name=StructureScoresFeatures scorefxn=s/>
+                </ReportToDB>
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover_name=init_struct/>
+		<Add mover_name=features_reporter/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>
+

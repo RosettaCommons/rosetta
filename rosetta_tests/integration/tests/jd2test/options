@@ -1,0 +1,8 @@
+-s 1UBQ.pdb 1EM7.pdb 1NLO.pdb
+-resfile resfile
+
+-ex1 
+-ex2
+-extrachi_cutoff 0
+
+-nstruct 3

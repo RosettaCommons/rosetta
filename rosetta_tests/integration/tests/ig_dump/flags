@@ -1,0 +1,3 @@
+-s input/1MFG.pdb
+-resfile input/1MFG.resfile
+-ignore_unrecognized_res

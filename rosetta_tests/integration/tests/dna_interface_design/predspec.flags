@@ -1,0 +1,21 @@
+-in:ignore_unrecognized_res
+-file:s msoleft.pdb
+-score:weights dna
+-use_input_sc
+-ex1
+-ex2
+-ex2:operate
+-ex3
+-ex3:operate
+-ex4
+-ex4:operate
+-extrachi_cutoff 1
+-sparse_pdb_output
+-adducts dna_major_groove_water
+-mute all
+-unmute protocols.dna.RestrictDesignToProteinDNAInterface protocols.dna.DnaInterfacePacker protocols.dna.Specificity apps protocols.loops core.io.pdb
+-mute core.io.database
+-jd2:dd_parser
+-parser:protocol predspec.script
+-overwrite
+-out:prefix predspec_

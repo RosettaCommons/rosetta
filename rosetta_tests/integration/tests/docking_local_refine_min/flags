@@ -1,0 +1,12 @@
+-s input/1brs.pdb
+-ex1
+-ex2aro
+-use_input_sc
+-no_filters
+-docking_local_refine
+-dock_min # don't do mcm, only do one cycle of minimization
+-mute core.util.prof ## dont show timing info
+-out:overwrite
+-out:file:scorefile 1brs.fasc
+-out:file:fullatom #output in fullatom scorefile
+-mute core.io.database

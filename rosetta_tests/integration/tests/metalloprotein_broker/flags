@@ -1,0 +1,36 @@
+-broker:setup input/broker_setup.tpb 
+-abrelax
+-abinitio:fastrelax
+-relax:jump_move
+-run:test_cycles
+-score:weights score13_env_hb
+-abinitio:rg_reweight 0.5
+-abinitio:rsd_wt_helix 0.5
+-abinitio:rsd_wt_loop 0.5
+-abinitio:use_filters false
+-fold_cst:no_minimize
+#-jumps:residue_pair_jump_file ./input/1dsvA.residue_pair_jump_cst
+-packing:ex1
+-packing:ex1:level 1
+-packing:ex2
+-packing:ex2:level 1
+-packing:extrachi_cutoff 0
+-in:file:native ./input/1dsvA.pdb
+#-in:file:fasta ./input/1dsvA.fasta
+-in:file:psipred_ss2 ./input/1dsvA.psipred_ss2
+-in:file:frag9 ./input/aa1dsvA09_05.200_v1_3
+-in:file:frag3 ./input/aa1dsvA03_05.200_v1_3
+#-constraints:cst_file ./input/1dsvA.cen_cst
+#-constraints:cst_weight 1.0
+#-constraints:cst_fa_file ./input/1dsvA.tetraL.fa_cst
+#-constraints:cst_fa_weight 1.0
+-out:nstruct 1
+-out:path:pdb ./
+-out:pdb
+-out:file:output_virtual
+-out:file:silent LL1dsvA.out
+-no_prof_info_in_silentout
+-mute core.io.database
+-out:level 500
+
+-out:file:scorefile score.sc

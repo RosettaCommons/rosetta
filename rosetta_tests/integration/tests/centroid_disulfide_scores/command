@@ -1,0 +1,77 @@
+# Tests Disulfide scoring functions
+# Primarily focuses of on core/scoring/CentroidDisulfideEnergy, but tests the full atom version
+# a bit too.
+#
+# @author Spencer Bliven
+# @date April 17, 2009
+
+# Available variables include:
+#   workdir	 the directory where test input files have been copied,
+#            and where test output files should end up.
+#   minidir	 the base directory where Mini lives
+#   database	where the Mini database lives
+#   bin	     where the Mini binaries live
+#   binext	  the extension on binary files, like ".linuxgccrelease"
+#   python	  the full path to the Python interpretter
+
+cd %(workdir)s
+
+#
+# After that, do whatever you want.
+# It's nice to test that the executable exists first, to ensure the test actually runs:
+#
+## [ -x %(bin)s/MY_MINI_PROGRAM.%(binext)s ] || exit 1
+#
+# Files will be diffed verbatim, so if you want to log output and compare it,
+# you'll need to filter out lines that change randomly (e.g. timings).
+# Prefixing your tests with "nice" is probably good form as well.
+# Don't forget to use -constant_seed -nodelay  so results are reproducible.
+# Here's a typical test for a Mini binary, assuming there's a "flags" file
+# in this directory too:
+#
+## %(bin)s/MY_MINI_PROGRAM.%(binext)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+##	 | egrep -v 'Finished.+in [0-9]+ seconds.' \
+##	 | egrep -v 'Dunbrack library took .+ seconds to load' \
+##	 | egrep -v 'core.init: command' \
+##	 > log
+#
+# Or if you don't care whether the logging output changes:
+#
+## %(bin)s/MY_MINI_PROGRAM.%(binext)s @flags -database %(database)s -run:constant_seed -nodelay  2>&1 \
+##	 > /dev/null
+#
+
+test -x %(bin)s/score.%(binext)s || exit 1
+
+#Test centroid disulfide scores
+%(bin)s/score.%(binext)s -database %(database)s \
+	-score:weights centroid.wts \
+	-in:file:centroid_input \
+	-rescore:verbose \
+	-detect_disulf false\
+	-fix_disulf 1IMX.disulf \
+	-s 1IMX_cen.pdb 2>&1 \
+	-nooutput true \
+    | egrep -vf ../../ignore_list \
+	>centroid.log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+
+#Test full atom too, since they're interrelated
+%(bin)s/score.%(binext)s -database %(database)s \
+	-score:weights fa.wts \
+	-rescore:verbose \
+	-detect_disulf false \
+	-fix_disulf 1IMX.disulf \
+	-s 1IMX.pdb 2>&1 \
+	-nooutput true \
+    | egrep -vf ../../ignore_list \
+	>fa.log
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+
+#No idea why this is created despite -nooutput setting
+rm default.sc
+

@@ -1,0 +1,18 @@
+<dock_design>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<FILTERS>
+		<Sasa name=sasa confidence=%%sasaconf%%/>
+		<AlaScan name=scan partner1=1 partner2=1 scorefxn=%%dock_sf%% interface_distance_cutoff=%%inter_cutoff%% repeats=%%ala_rep%%/> Test multiple on same line
+	</FILTERS>
+	<MOVERS>
+		<Docking name=dock1 fullatom=1 local_refine=1 score_high=%%dock_sf%%/> Test repeated use
+		<Subroutine name=sub xml_fname="sub%%%%file.xml"/> Test nullstring pasting
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add />
+	</PROTOCOLS>
+	 %%ignore%% unspecified
+</dock_design>

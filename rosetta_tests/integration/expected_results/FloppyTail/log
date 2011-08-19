@@ -1,0 +1,281 @@
+core.init: Constant seed mode, seed=1111111 seed_offset=0 real_seed=1111111
+core.init.random: RandomGenerator:init: Normal mode, seed=1111111 RG_type=mt19937
+protocols.jd2.PDBJobInputter: Instantiate PDBJobInputter
+protocols.jd2.PDBJobInputter: PDBJobInputter::fill_jobs
+protocols.jd2.PDBJobInputter: pushing complex_readytail_final_nozn.pdb.gz nstruct index 1
+protocols.jd2.FileJobOutputter: FileJobOutputter ctor
+protocols.jd2.PDBJobOutputter: Using PDBJobOutputter (base class) for JobDistributor
+core.io.database: Database file opened: /users/smlewis/minirosetta_database/env_log.txt
+core.io.database: Database file opened: /users/smlewis/minirosetta_database/cbeta_den.txt
+core.io.database: Database file opened: /users/smlewis/minirosetta_database/pair_log.txt
+core.io.database: Database file opened: /users/smlewis/minirosetta_database/cenpack_log.txt
+core.io.database: Database file opened: /users/smlewis/minirosetta_database/Rama_smooth_dyn.dat_ss_6.4
+apps.pilot.smlewis.FloppyTail: Using centroid scorefunction
+ScoreFunction::show():
+weights: (vdw 1) (cenpack 1) (hbond_sr_bb 1) (hbond_lr_bb 1) (pair 1) (rama 1) (env 1) (cbeta 1)
+energy_method_options: EnergyMethodOptions::show: etable_type: FA_STANDARD_DEFAULT
+EnergyMethodOptions::show: atom_vdw_atom_type_set_name: centroid
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: exclude_protein_protein_hack_elec: false
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: exclude_DNA_DNA: true
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: use_hb_env_dep: true
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: use_hb_env_dep_DNA: true
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: smooth_hb_env_dep: true
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: decompose_bb_hb_into_pair_energies: false
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: bond_angle_central_atoms_to_score:
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+core.io.database: Database file opened: /users/smlewis/minirosetta_database/pdb_pair_stats_fine
+core.io.database: Database file opened: /users/smlewis/minirosetta_database/P_AA
+core.io.database: Database file opened: /users/smlewis/minirosetta_database/P_AA_n
+core.io.database: Database file opened: /users/smlewis/minirosetta_database/P_AA_pp
+apps.pilot.smlewis.FloppyTail: 
+Using fullatom scorefunction (STANDARD_WTS, SCORE12_PATCH), pair may be modified
+ScoreFunction::show():
+weights: (fa_atr 0.8) (fa_rep 0.44) (fa_sol 0.65) (fa_intra_rep 0.004) (pro_close 1) (fa_pair 0.49) (hbond_sr_bb 0.585) (hbond_lr_bb 1.17) (hbond_bb_sc 1.17) (hbond_sc 1.1) (dslf_ss_dst 1) (dslf_cs_ang 1) (dslf_ss_dih 1) (dslf_ca_dih 1) (rama 0.2) (omega 0.5) (fa_dun 0.56) (p_aa_pp 0.32) (ref 1)
+energy_method_options: EnergyMethodOptions::show: etable_type: FA_STANDARD_DEFAULT
+EnergyMethodOptions::show: method_weights: ref 0.16 1.7 -0.67 -0.81 0.63 -0.17 0.56 0.24 -0.65 -0.1 -0.34 -0.89 0.02 -0.97 -0.98 -0.37 -0.27 0.29 0.91 0.51
+EnergyMethodOptions::show: atom_vdw_atom_type_set_name: centroid
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: exclude_protein_protein_hack_elec: false
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: exclude_DNA_DNA: true
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: use_hb_env_dep: true
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: use_hb_env_dep_DNA: true
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: smooth_hb_env_dep: true
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: decompose_bb_hb_into_pair_energies: false
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: bond_angle_central_atoms_to_score:
+protocols.jd2.PDBJobInputter: PDBJobInputter::pose_from_job
+core.pack.task: Packer task: initialize from command line() 
+protocols.jd2.PDBJobInputter: filling pose from PDB complex_readytail_final_nozn.pdb.gz
+apps.pilot.smlewis.FloppyTail: 
+Using centroid scorefunction
+ScoreFunction::show():
+weights: (vdw 1) (cenpack 1) (hbond_sr_bb 1) (hbond_lr_bb 1) (pair 1) (rama 1) (env 1) (cbeta 1)
+energy_method_options: EnergyMethodOptions::show: etable_type: FA_STANDARD_DEFAULT
+EnergyMethodOptions::show: atom_vdw_atom_type_set_name: centroid
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: exclude_protein_protein_hack_elec: false
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: exclude_DNA_DNA: true
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: use_hb_env_dep: true
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: use_hb_env_dep_DNA: true
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: smooth_hb_env_dep: true
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: decompose_bb_hb_into_pair_energies: false
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: bond_angle_central_atoms_to_score:
+apps.pilot.smlewis.FloppyTail: 
+Using fullatom scorefunction (STANDARD_WTS, SCORE12_PATCH), pair may be modified
+ScoreFunction::show():
+weights: (fa_atr 0.8) (fa_rep 0.44) (fa_sol 0.65) (fa_intra_rep 0.004) (pro_close 1) (fa_pair 0.49) (hbond_sr_bb 0.585) (hbond_lr_bb 1.17) (hbond_bb_sc 1.17) (hbond_sc 1.1) (dslf_ss_dst 1) (dslf_cs_ang 1) (dslf_ss_dih 1) (dslf_ca_dih 1) (rama 0.2) (omega 0.5) (fa_dun 0.56) (p_aa_pp 0.32) (ref 1)
+energy_method_options: EnergyMethodOptions::show: etable_type: FA_STANDARD_DEFAULT
+EnergyMethodOptions::show: method_weights: ref 0.16 1.7 -0.67 -0.81 0.63 -0.17 0.56 0.24 -0.65 -0.1 -0.34 -0.89 0.02 -0.97 -0.98 -0.37 -0.27 0.29 0.91 0.51
+EnergyMethodOptions::show: atom_vdw_atom_type_set_name: centroid
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: exclude_protein_protein_hack_elec: false
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: exclude_DNA_DNA: true
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: use_hb_env_dep: true
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: use_hb_env_dep_DNA: true
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: smooth_hb_env_dep: true
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: decompose_bb_hb_into_pair_energies: false
+apps.pilot.smlewis.FloppyTail: EnergyMethodOptions::show: bond_angle_central_atoms_to_score:
+apps.pilot.smlewis.FloppyTail: 
+Tail is from 610 to 666
+apps.pilot.smlewis.FloppyTail: foldtree, movemap: 
+apps.pilot.smlewis.FloppyTail: 
+1/2****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************C1**************************************************************************************C2******************************************************************************************************************************************************************************************************************C
+x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx*********************************************************
+apps.pilot.smlewis.FloppyTail: foldtree, movemap for first part of refine: 
+apps.pilot.smlewis.FloppyTail: 
+1/2****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************C1**************************************************************************************C2******************************************************************************************************************************************************************************************************************C
+x.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx********************************************************
+apps.pilot.smlewis.FloppyTail: entering perturb steps
+apps.pilot.smlewis.FloppyTail: centroid score of starting PDB: 818.375
+apps.pilot.smlewis.FloppyTail: ------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ vdw                          1.000       9.335       9.335
+ cenpack                      1.000     -80.490     -80.490
+ hbond_sr_bb                  1.000    -238.054    -238.054
+ hbond_lr_bb                  1.000     -55.895     -55.895
+ pair                         1.000    -122.388    -122.388
+ rama                         1.000    1221.772    1221.772
+ env                          1.000    -177.955    -177.955
+ cbeta                        1.000     262.050     262.050
+---------------------------------------------------
+ Total weighted score:                      818.375
+apps.pilot.smlewis.FloppyTail: shear on at 33
+apps.pilot.smlewis.FloppyTail:    Current     Low    total cycles =100
+apps.pilot.smlewis.FloppyTail: 1  818.375  818.375
+apps.pilot.smlewis.FloppyTail: 2  816.63  816.63
+apps.pilot.smlewis.FloppyTail: 3  817.167  816.63
+apps.pilot.smlewis.FloppyTail: 4  816.933  816.63
+apps.pilot.smlewis.FloppyTail: 5  815.442  815.442
+apps.pilot.smlewis.FloppyTail: 6  815.442  815.442
+apps.pilot.smlewis.FloppyTail: 7  814.122  814.122
+apps.pilot.smlewis.FloppyTail: 8  813.916  813.916
+apps.pilot.smlewis.FloppyTail: 9  813.667  813.667
+apps.pilot.smlewis.FloppyTail: 10  809.162  809.162
+apps.pilot.smlewis.FloppyTail: 11  808.684  808.684
+apps.pilot.smlewis.FloppyTail: 12  806.676  806.676
+apps.pilot.smlewis.FloppyTail: 13  805.168  805.168
+apps.pilot.smlewis.FloppyTail: 14  804.079  804.079
+apps.pilot.smlewis.FloppyTail: 15  802.823  802.823
+apps.pilot.smlewis.FloppyTail: 16  802.823  802.823
+apps.pilot.smlewis.FloppyTail: 17  787.411  787.411
+apps.pilot.smlewis.FloppyTail: 18  787.117  787.117
+apps.pilot.smlewis.FloppyTail: 19  787.117  787.117
+apps.pilot.smlewis.FloppyTail: 20  787.085  787.085
+apps.pilot.smlewis.FloppyTail: 21  787.085  787.085
+apps.pilot.smlewis.FloppyTail: 22  787.085  787.085
+apps.pilot.smlewis.FloppyTail: 23  787.085  787.085
+apps.pilot.smlewis.FloppyTail: 24  787.085  787.085
+apps.pilot.smlewis.FloppyTail: 25  787.085  787.085
+apps.pilot.smlewis.FloppyTail: 26  786.258  786.258
+apps.pilot.smlewis.FloppyTail: 27  786.258  786.258
+apps.pilot.smlewis.FloppyTail: 28  786.258  786.258
+apps.pilot.smlewis.FloppyTail: 29  786.258  786.258
+apps.pilot.smlewis.FloppyTail: 30  784.099  784.099
+apps.pilot.smlewis.FloppyTail: 31  781.953  781.953
+apps.pilot.smlewis.FloppyTail: 32  781.953  781.953
+apps.pilot.smlewis.FloppyTail: 33  781.953  781.953
+apps.pilot.smlewis.FloppyTail: 34  781.953  781.953
+apps.pilot.smlewis.FloppyTail: 35  781.881  781.881
+apps.pilot.smlewis.FloppyTail: 36  781.881  781.881
+apps.pilot.smlewis.FloppyTail: 37  781.738  781.738
+apps.pilot.smlewis.FloppyTail: 38  781.738  781.738
+apps.pilot.smlewis.FloppyTail: 39  777.076  777.076
+core.optimization.LineMinimizer: Inaccurate G! step= 7.62939e-08 Deriv= -1.5132 Finite Diff= 56.9384
+apps.pilot.smlewis.FloppyTail: 40  776.637  776.637
+apps.pilot.smlewis.FloppyTail: 41  776.452  776.452
+apps.pilot.smlewis.FloppyTail: 42  776.452  776.452
+apps.pilot.smlewis.FloppyTail: 43  776.452  776.452
+apps.pilot.smlewis.FloppyTail: 44  776.453  776.452
+apps.pilot.smlewis.FloppyTail: 45  775.668  775.668
+apps.pilot.smlewis.FloppyTail: 46  775.687  775.668
+apps.pilot.smlewis.FloppyTail: 47  775.332  775.332
+apps.pilot.smlewis.FloppyTail: 48  775.332  775.332
+apps.pilot.smlewis.FloppyTail: 49  775.332  775.332
+apps.pilot.smlewis.FloppyTail: 50  775.332  775.332
+apps.pilot.smlewis.FloppyTail: 51  775.332  775.332
+apps.pilot.smlewis.FloppyTail: 52  775.332  775.332
+apps.pilot.smlewis.FloppyTail: 53  775.332  775.332
+apps.pilot.smlewis.FloppyTail: 54  775.332  775.332
+apps.pilot.smlewis.FloppyTail: 55  775.332  775.332
+apps.pilot.smlewis.FloppyTail: 56  775.332  775.332
+apps.pilot.smlewis.FloppyTail: 57  775.332  775.332
+apps.pilot.smlewis.FloppyTail: 58  775.332  775.332
+apps.pilot.smlewis.FloppyTail: 59  775.332  775.332
+apps.pilot.smlewis.FloppyTail: 60  775.332  775.332
+apps.pilot.smlewis.FloppyTail: 61  775.704  775.332
+apps.pilot.smlewis.FloppyTail: 62  775.342  775.332
+apps.pilot.smlewis.FloppyTail: 63  775.342  775.332
+apps.pilot.smlewis.FloppyTail: 64  775.342  775.332
+apps.pilot.smlewis.FloppyTail: 65  775.342  775.332
+apps.pilot.smlewis.FloppyTail: 66  776  775.332
+apps.pilot.smlewis.FloppyTail: 67  776  775.332
+apps.pilot.smlewis.FloppyTail: 68  776  775.332
+apps.pilot.smlewis.FloppyTail: 69  776  775.332
+apps.pilot.smlewis.FloppyTail: 70  776.27  775.332
+apps.pilot.smlewis.FloppyTail: 71  776.27  775.332
+apps.pilot.smlewis.FloppyTail: 72  776.27  775.332
+apps.pilot.smlewis.FloppyTail: 73  776.27  775.332
+apps.pilot.smlewis.FloppyTail: 74  776.121  775.332
+apps.pilot.smlewis.FloppyTail: 75  775.426  775.332
+apps.pilot.smlewis.FloppyTail: 76  775.426  775.332
+apps.pilot.smlewis.FloppyTail: 77  775.426  775.332
+apps.pilot.smlewis.FloppyTail: 78  775.426  775.332
+apps.pilot.smlewis.FloppyTail: 79  775.426  775.332
+core.optimization.LineMinimizer: Inaccurate G! step= 4.76837e-09 Deriv= -18.2756 Finite Diff= 242.351
+apps.pilot.smlewis.FloppyTail: 80  773.324  773.324
+apps.pilot.smlewis.FloppyTail: 81  769.753  769.753
+apps.pilot.smlewis.FloppyTail: 82  769.753  769.753
+apps.pilot.smlewis.FloppyTail: 83  769.753  769.753
+apps.pilot.smlewis.FloppyTail: 84  769.753  769.753
+apps.pilot.smlewis.FloppyTail: 85  769.753  769.753
+apps.pilot.smlewis.FloppyTail: 86  769.753  769.753
+apps.pilot.smlewis.FloppyTail: 87  769.753  769.753
+apps.pilot.smlewis.FloppyTail: 88  769.753  769.753
+apps.pilot.smlewis.FloppyTail: 89  769.753  769.753
+apps.pilot.smlewis.FloppyTail: 90  769.753  769.753
+apps.pilot.smlewis.FloppyTail: 91  769.753  769.753
+apps.pilot.smlewis.FloppyTail: 92  769.874  769.753
+apps.pilot.smlewis.FloppyTail: 93  769.874  769.753
+apps.pilot.smlewis.FloppyTail: 94  769.874  769.753
+apps.pilot.smlewis.FloppyTail: 95  769.77  769.753
+apps.pilot.smlewis.FloppyTail: 96  769.77  769.753
+apps.pilot.smlewis.FloppyTail: 97  769.77  769.753
+apps.pilot.smlewis.FloppyTail: 98  769.77  769.753
+apps.pilot.smlewis.FloppyTail: 99  769.961  769.753
+core.optimization.LineMinimizer: Inaccurate G! step= 9.53674e-09 Deriv= -7.09549 Finite Diff= 17.1005
+apps.pilot.smlewis.FloppyTail: 100  770.715  769.753
+apps.pilot.smlewis.FloppyTail: centroid score of final perturbed PDB: 769.753
+apps.pilot.smlewis.FloppyTail: ------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ vdw                          1.000       9.831       9.831
+ cenpack                      1.000     -85.331     -85.331
+ hbond_sr_bb                  1.000    -238.183    -238.183
+ hbond_lr_bb                  1.000     -55.916     -55.916
+ pair                         1.000    -140.126    -140.126
+ rama                         1.000    1201.495    1201.495
+ env                          1.000    -180.005    -180.005
+ cbeta                        1.000     257.987     257.987
+---------------------------------------------------
+ Total weighted score:                      769.753
+apps.pilot.smlewis.FloppyTail: perturb steps complete
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 768 rotamers at 89 positions.
+core.pack.pack_rotamers: IG: 243696 bytes
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail:    Current     Low    total cycles =20
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail: 1  881.923  881.916
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail: 2  881.897  881.897
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail: 3  881.987  881.897
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail: 4  881.996  881.897
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail: 5  881.921  881.897
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail: 6  882.008  881.897
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail: 7  881.996  881.897
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail: 8  882.01  881.897
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail: 9  881.91  881.897
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 623 rotamers at 68 positions.
+core.pack.pack_rotamers: IG: 153180 bytes
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail: 10  880.238  880.238
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail: 11  880.24  880.238
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail: 12  880.33  880.238
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail: 13  880.33  880.238
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail: 14  880.368  880.238
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail: 15  880.295  880.238
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail: 16  880.349  880.238
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail: 17  880.352  880.238
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail: 18  880.4  880.238
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail: 19  880.426  880.238
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 622 rotamers at 68 positions.
+core.pack.pack_rotamers: IG: 152424 bytes
+core.pack.task: Packer task: initialize from command line() 
+apps.pilot.smlewis.FloppyTail: 20  880.354  880.238
+core.pack.task: Packer task: initialize from command line() 
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::final_pose
+protocols.jd2.FileJobOutputter: FileJobOutputter scorefile
+protocols.jd2.JobDistributor: no more batches to process... 
+apps.pilot.smlewis.FloppyTail: ************************d**o**n**e**************************************

@@ -1,0 +1,9 @@
+-in:ignore_unrecognized_res
+-file:s msoleft.pdb
+-score:weights dna
+-sparse_pdb_output
+-mute all
+-unmute apps core.io.pdb
+-out:prefix MSA_
+-packing:resfile msoleft.resfile
+-in:file:pssm sequence_profile

@@ -1,0 +1,20 @@
+<dock_design>
+	<TASKOPERATIONS>
+		<ReadResfile name=RRF/>
+		<OperateOnCertainResidues name=fixDNA>
+			<PreventRepackingRLT/>
+			<ResidueHasProperty property=DNA/>
+		</OperateOnCertainResidues>
+	</TASKOPERATIONS>
+	<SCOREFXNS>
+		<DNA weights=dna/>
+	</SCOREFXNS>
+	<MOVERS>
+		<ConstraintSetMover name=cstloader cst_file=constraints/>
+		<PackRotamersMover name=packrot scorefxn=DNA task_operations=RRF,fixDNA/>
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover_name=cstloader/>
+		<Add mover_name=packrot/>
+	</PROTOCOLS>
+</dock_design>

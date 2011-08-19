@@ -1,0 +1,11 @@
+-in:ignore_unrecognized_res
+-file:s msoleft.pdb
+-score:weights dna
+-sparse_pdb_output
+-mute all
+-unmute apps protocols.jd2.DockDesignParser
+-jd2:dd_parser
+-parser:protocol jd2.xml
+-overwrite
+-out:prefix jd2_
+-packing:resfile msoleft.resfile

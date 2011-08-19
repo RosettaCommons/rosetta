@@ -1,0 +1,29 @@
+# generated from msoleft.pdb
+AUTO
+start
+28 A PIKAA L
+83 A PIKAA R
+-12 C NATRO # g
+-11 C NATRO #   c
+-10 C NATRO #   a
+-9 C NATRO # g
+-8 C NATRO #   a
+-7 C NATAA #   a
+-6 C TARGET GUA #   c
+-5 C NATAA # g
+-4 C NATRO # t
+-3 C NATRO #   c
+-2 C NATRO # g
+-1 C NATRO # t
+1 D NATRO #   a
+2 D NATRO #   c
+3 D NATRO # g
+4 D NATRO #   a
+5 D NATAA #   c
+6 D TARGET CYT # g
+7 D NATAA # t
+8 D NATRO # t
+9 D NATRO #   c
+10 D NATRO # t
+11 D NATRO # g
+12 D NATRO #   c

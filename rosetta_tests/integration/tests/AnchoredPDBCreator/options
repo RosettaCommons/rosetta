@@ -1,0 +1,16 @@
+#-database /ifs1/home/smlewis/minirosetta_database 
+
+#-mpi_work_partition_job_distributor
+-mpi_tracer_to_file proc
+
+-nstruct 1
+#-nstruct 500
+
+-anchor_pdb anchor.pdb.gz
+-target_pdb target.pdb.gz
+-scaffold_pdb 1FNA_22.27del_noFGdel.pdb.gz
+-scaffold_loop sc_loop_insertBC_1
+-generic_job_name sc_loop_insertBC_1_noFGdel
+#-APDBC_cycles 100000
+-APDBC_cycles 100
+

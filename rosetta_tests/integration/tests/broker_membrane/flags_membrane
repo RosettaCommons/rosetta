@@ -1,0 +1,23 @@
+-broker:setup input/setup_membrane.tpb
+-stage2_patch  input/membrane/score_membrane_s2.wts_patch
+-stage3a_patch input/membrane/score_membrane_s3a.wts_patch
+-stage3b_patch input/membrane/score_membrane_s3b.wts_patch
+-stage4_patch  input/membrane/score_membrane_s4.wts_patch
+
+-score:weights membrane_highres_Menv_smooth.wts
+
+-in:file:spanfile input/membrane/tm_region.span
+-in:file:lipofile input/membrane/lipid_exposure.lips4
+
+-rg_reweight 0.01
+-run:reinitialize_mover_for_each_job
+
+-score:find_neighbors_3dgrid
+
+-abinitio:membrane
+-membrane:fixed_membrane
+-membrane:no_interpolate_Mpair
+-membrane:Menv_penalties
+-membrane:Membed_init
+-relax:membrane
+

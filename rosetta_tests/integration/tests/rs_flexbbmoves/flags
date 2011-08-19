@@ -1,0 +1,9 @@
+-s input/1elwAC.pdb.gz
+-mute core.util.prof ## dont show timing info
+-out:file:fullatom
+-mute core.io.database
+-jd2:ntrials 1
+-parser:protocol frag_small_shear.xml
+-overwrite
+-use_input_sc
+-ignore_unrecognized_res

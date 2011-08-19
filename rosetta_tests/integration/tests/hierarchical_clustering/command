@@ -1,0 +1,50 @@
+#
+# This is a command file.
+#
+# To make a new test, all you have to do is:
+#   1.  Make a new directory under tests/
+#   2.  Put a file like this (named "command") into that directory.
+#
+# The contents of this file will be passed to the shell (Bash or SSH),
+# so any legal shell commands can go in this file.
+# Or comments like this one, for that matter.
+#
+# Variable substiution is done using Python's printf format,
+# meaning you need a percent sign, the variable name in parentheses,
+# and the letter 's' (for 'string').
+#
+# Available variables include:
+#   workdir     the directory where test input files have been copied,
+#               and where test output files should end up.
+#   minidir     the base directory where Mini lives
+#   database    where the Mini database lives
+#   bin         where the Mini binaries live
+#   binext      the extension on binary files, like ".linuxgccrelease"
+#
+# The most important thing is that the test execute in the right directory.
+# This is especially true when we're using SSH to execute on other hosts.
+# All command files should start with this line:
+#
+
+cd %(workdir)s
+
+[ -x %(bin)s/hierarchical_clustering.%(binext)s ] || exit 1
+
+#./letters_clustering_data.py > dm
+%(bin)s/hierarchical_clustering.%(binext)s @flags -database %(database)s -nodelay  -clustering:n 3 2>&1 \
+    | egrep -vf ../../ignore_list \
+    | egrep -A 5 members | grep -v "#" > raw_clusters
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+echo "Letters: ABCFGHJKXYZ divided into 3 clusters:" > final_clusters
+awk 'BEGIN{split("A B C F G H J K X Y Z",ch)} {for(i=5;i<=NF;i++) print ch[$i]; print ""}' < raw_clusters >> final_clusters
+
+echo "Letters: ABCFGHJKXYZ divided into 4 clusters:" >> final_clusters
+%(bin)s/hierarchical_clustering.%(binext)s @flags -database %(database)s -nodelay  -clustering:n 4 2>&1 \
+    | egrep -vf ../../ignore_list \
+    | egrep -A 5 members | grep -v "#" > raw_clusters
+    
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so    
+    
+awk 'BEGIN{split("A B C F G H J K X Y Z",ch)} {for(i=5;i<=NF;i++) print ch[$i]; print ""}' < raw_clusters >> final_clusters

@@ -1,0 +1,13 @@
+-s input/1l6x.min.pdb
+-mute core.util.prof ## dont show timing info
+-out:file:fullatom
+-mute core.io.database
+-jd2:ntrials 1
+-parser:protocol centroid_docking.xml
+-overwrite
+-use_input_sc
+-out:file:silent_struct_type score
+-out:file:silent default.out
+-out:file:scorefile score.fasc
+-run:no_prof_info_in_silentout
+-docking:no_filters

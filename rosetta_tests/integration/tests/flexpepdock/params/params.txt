@@ -1,0 +1,13 @@
+nres_scaffold 328
+scaffold_anchor_pos 219
+
+nres_peptide 8
+# nres_peptide 9 #
+
+peptide_cutpoint 1 5
+
+peptide_anchor 1 5
+# peptide_anchor 1 2 #
+# peptide_anchor 2 8 #
+
+# debug_rb_trans_magnitude -1

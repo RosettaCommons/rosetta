@@ -1,0 +1,39 @@
+# nonlocal
+-nonlocal:builder star
+-nonlocal:mode semirigid
+-nonlocal:search refine
+-nonlocal:min_chunk_size 9
+-nonlocal:max_chunk_size 21
+-abinitio:relax true
+
+# target options
+-frag3 cs_frags.3mers.gz
+-frag9 cs_frags.9mers.gz
+-fasta casd_rhodopsin.fasta
+
+# template
+-in:file:template_pdb 3ddlB_63.pdb
+-in:file:alignment combined.filt
+-cm:aln_format grishin
+
+# constraints
+-constraints:cst_file 3ddlB_63.filt.fixed.dist_csts
+-constraints:cst_weight 1.5
+-constraints:cst_fa_file 3ddlB_63.filt.fixed.dist_csts
+-constraints:cst_fa_weight 1.5
+
+# multiplicative factors
+-jumps:increase_chainbreak 1.0
+-constraints:increase_constraints 0.5
+
+# sampling
+-abinitio:temperature 2.0
+-abinitio:increase_cycles 0.5
+-abinitio:rg_reweight 0.25
+
+# evaluation
+-bGDT
+-evaluation:gdtmm
+-evaluation:contact_map
+-evaluation:jscore_evaluator score12_full fa_standard
+-in:file:native native.pdb

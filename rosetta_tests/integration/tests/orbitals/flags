@@ -1,0 +1,3 @@
+-in:file:s input/1thfD.pdb 
+-packing:repack_only
+-output_orbitals

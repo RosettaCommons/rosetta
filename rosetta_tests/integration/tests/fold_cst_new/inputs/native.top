@@ -1,0 +1,9 @@
+PAIRING_STATISTICS 1
+STRAND_TOPOLOGY  6 14 SINGLE_TOP
+PAIRSTAT_ENTRY:  00   . A 3-105 to 9-99 reg: 108 pleating: 2 1 2 1 2 1 2 
+PAIRSTAT_ENTRY:  00   . A 57-73 to 61-69 reg: 130 pleating: 2 1 2 1 2 
+PAIRSTAT_ENTRY:  00   . A 40-91 to 43-88 reg: 131 pleating: 1 2 1 2 
+PAIRSTAT_ENTRY:  00   . A 59-88 to 60-87 reg: 147 pleating: 1 2 
+PAIRSTAT_ENTRY:  00   . P 9-42 to 9-42 reg: 33 pleating: 1 
+PAIRSTAT_ENTRY:  00   . P 68-105 to 68-105 reg: 37 pleating: 2 
+PAIRSTAT_ENTRY: 

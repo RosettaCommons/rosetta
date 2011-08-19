@@ -1,0 +1,14 @@
+-s input/1acb.pdb
+-dock_pert 3 8
+-spin
+-ex1
+-ex2aro
+-ensemble1 input/pdblist1
+-ensemble2 input/pdblist2
+-run:debug
+-no_filters
+-mute core.util.prof ## dont show timing info
+-out:overwrite
+-out:file:scorefile ensemble_1abc.fasc
+-out:file:fullatom #output in fullatom scorefile
+-mute core.io.database

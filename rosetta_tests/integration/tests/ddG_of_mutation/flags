@@ -1,0 +1,22 @@
+-in:file:s 2ci2.pdb 
+-ddg:weight_file standard_plus_score12 
+-ddg:iterations 2
+-ddg:dump_pdbs true 
+-ddg:mut_file 2ci2.mutfile 
+#-database /home/andrew/minirosetta_database 
+-ignore_unrecognized_res 
+-ddg:local_opt_only true 
+-ddg:min_cst true
+-ddg:suppress_checkpointing true 
+-in:file:fullatom 
+-ddg:mean false 
+-ddg:min true 
+-ddg:sc_min_only false 
+#-mute all 
+#-ddg:ramp_repulsive false 
+-ddg:ramp_repulsive true 
+-unmute core.optimization.LineMinimizer 
+-constraints:cst_file 2ci2.cst  
+-ddg:output_silent true 
+-ddg:opt_radius 12.0
+-score:fa_max_dis 9.0

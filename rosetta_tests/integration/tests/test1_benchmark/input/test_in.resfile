@@ -1,0 +1,69 @@
+# MiniRosetta resfile
+# Comments start with a # and go to the end of a line.  Comments may be placed anywhere.
+# Blank lines are ignored.  
+#
+# A residue record starts with the pose residue number and is followed by commands.  
+# Resfiles recognize the following commands (in arbitrary order, whitespace-delimited):
+# ALLAA -- All canonical amino acids except CYS.
+#          Deprecated.  Matches existing meaning of ALLAA in rosetta++.
+#          In the future, its behavior will be to include CYS.
+#
+# ALLAAxc -- All canonical amino acids except CYS
+#
+# ALLAAwc -- All canonical amino acids including CYS
+#
+# PIKAA <AASTRING> -- Include only the canonical amino acids given in the AASTRING
+#
+# NOTAA <AASTRING> -- Exclude the canonical amino acids given in the AASTRING
+#
+# POLAR  -- Include canonical amino acids that are polar
+#
+# APOLAR -- Include canonical amino acids that are non-polar
+#
+# APOLA  -- Include canonical amino acids that are non-polar.  Deprecated.
+#
+# NATRO  -- Do not pack or design this position (native rotamer).  
+#
+# NATAA  -- Do not design this position but do allow repacking.  
+#
+# EX (ARO) <CHIID> (LEVEL <SAMPLELEVEL>) -- Increase the rotamer sampling level.
+#                                           ARO is optional.  LEVEL is optional.
+#
+# Resfiles begin with a set of default behaviors.  Any residue that does not have a 
+# specific behavior specified has the default behavior specified.
+#
+# The 'start' token tells the resfile reader that default behavior has finished and that
+# residue-specific behavior has begun.  Residue specific behaviors must all be on one line.
+# The first token on that line must be the residue number.
+#
+# If a resfile specifies a default behavior but does not specify any residue-specific behavior,
+# then the 'start' token may be left off, though it is not advised.  If it is left off, 
+# a warning will be sent to the screen.  If it is put in (even in the absence of any 
+# residue specific behavior) the warning will not be sent to the screen and the default
+# behavior will be applied to all residues.
+#
+
+# default behaviors
+NATAA  #keep the sequence fixed for all residues that do not have residue-specific behavior given.
+EX 1 EX 2 #use extra rotamers
+
+start
+49 _ ALLAAxc # a comment on a line with a command
+50 _ ALLAAxc # residue numbering starts at 1 reguardless of what resid is given in the input PDB.
+51 _ ALLAAxc
+52 _ ALLAAxc  EX 1 LEVEL 3 EX 2 #setting ex1 level to 3, and ex2 level to the default EX_ONE_STDDEV
+53 _ ALLAAxc
+54 _ ALLAAxc  EX 1
+55 _ ALLAAxc
+56 _ ALLAAxc  EX ARO 2 LEVEL 5
+57 _ PIKAA ACDEFG
+58 _ ALLAAxc
+59 _ NOTAA C #same as ALLAAxc
+60 _ POLAR
+61 _     NATAA EX 1 # indentation is irrelevant.  
+
+# Residue 61 will use fewer rotamers than those residues that have no residue-sepcific behavior given.
+
+
+
+# this residue file redesigns 12 amino acids, and when used for test_in.pdb, repacks the other 104 residues.

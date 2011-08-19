@@ -1,0 +1,10 @@
+-mute protocols.jobdist
+-mute core.io
+-mute core.conformation
+-mute core.pack
+-in:file:alignment  input/alignment.filt
+-in:file:alignment2 input/cross.aln
+-cm:aln_format grishin 
+-out:file:alignment  remapped.filt 
+-aln_length_filter_quantile 0.75  
+

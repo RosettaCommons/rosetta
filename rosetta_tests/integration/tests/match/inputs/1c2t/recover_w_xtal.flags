@@ -1,0 +1,16 @@
+-s inputs/1c2t/1c2t_9_nohet.pdb
+-match:lig_name 1c1
+-match:grid_boundary inputs/1c2t/1c2t.grid
+-match:scaffold_active_site_residues_for_geomcsts inputs/1c2t/1c2t_by_geomcst.pos
+-match:geometric_constraint_file inputs/1c2t/1c2t_xtal_BUHis.cst
+-extra_res_fa inputs/1c2t/1c1.params
+-consolidate_matches
+-output_matches_per_group 10
+-ex1
+-ex2
+-euclid_bin_size 0.5
+-euler_bin_size 5.0
+-bump_tolerance 0.3
+-active_site_definition_by_gridlig inputs/1c2t/1c2t_9.gridlig
+-use_input_sc
+-match:output_format KinWriter

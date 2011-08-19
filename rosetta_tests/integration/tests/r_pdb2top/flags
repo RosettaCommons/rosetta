@@ -1,0 +1,7 @@
+-out:top beta_lowE.top
+-in:file:silent ../../tests/cluster/t288_.score.50.out
+-in:file:silent_struct_type binary
+-mute protocols.jobdist
+-mute core.io
+-mute core.conformation
+-mute core.pack

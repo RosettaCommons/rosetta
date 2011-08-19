@@ -1,0 +1,7 @@
+-s input/test_in.pdb
+-fast
+-o idl
+-no_optH
+-mute all
+-unmute protocols.idealize
+-mute core.io.database

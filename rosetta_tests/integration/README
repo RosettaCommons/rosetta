@@ -1,0 +1,68 @@
+(c) Copyright Rosetta Commons Member Institutions.
+(c) This file is part of the Rosetta software suite and is made available under license.
+(c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+(c) For more information, see http://www.rosettacommons.org. Questions about this can be
+(c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+
+    Run "./integration.py --help" for instructions!
+    
+    See also:  tests/HOW_TO_MAKE_TESTS/command
+
+The top part of this document explains how to make a new test.  The bottom part explains about checking in.
+
+
+In your command files, it is a good idea to explicitly strip certain types of output from your log files.  In particular, file paths and timing info are not relevant to the integration test and case faux failures (the former when testing, the latter on the test server).  It's a good idea to remove them.  Here's how:
+
+This is what the basic execute command looks like:
+%(bin)s/AnchoredDesign.%(binext)s @options -database %(database)s 2>&1 > log
+
+This will put the output in a log file.  Next, there are some flags that should be in EVERY run, which are more convenient to put in the command file over the options file:
+
+%(bin)s/AnchoredDesign.%(binext)s @options -database %(database)s -run:constant_seed -nodelay  2>&1 \
+    > log
+
+nodelay and constant_seed prevent spurious failures and runtime inefficiencies.  Note the \ to continue the command on the next line.
+
+The next thing you need to do is strip out irrelevant output.  egrep -v stands for "remove all lines matching this" before putting it in the log file:
+
+%(bin)s/AnchoredDesign.%(binext)s @options -database %(database)s -run:constant_seed -nodelay  2>&1 \
+    | egrep -v 'reported success in' \
+    | egrep -v 'jobs attempted in' \
+    | egrep -v 'core.init: command' \
+    | egrep -v 'seconds' \
+    > log
+
+These lines remove all jd2-based references to TIME (number of seconds for jobs) and PATH (the core.init line).  This prevents failures due to different runtimes and different directory sets (when copying results from one installation to another for testing).
+
+Here are some other egrep -v lines that may be of use.
+
+-for the Dunbrack library
+    | egrep -v 'Dunbrack library took .+ seconds to load' \
+
+-for the old job distributor
+    | egrep -v 'Finished.+in [0-9]+ seconds.' \
+    | egrep -v 'time' \
+    | egrep -v 'TIMING' \
+
+-for the RNG
+    | egrep -v "core.init: 'RNG device'" \
+    | egrep -v 'core.init.random: ' \
+
+Several of the most common egrep lines are in the ignore_list file, and you can make use of these using this
+command:
+    | egrep -vf ../../ignore_list \
+
+You should WATCH THE SERVER after your test is committed - when your test newly runs, it fails automatically (no old input) - but WATCH IT carefully for the next 10 commits or so to check that you haven't got rogue unstable timing information left in!  Everybody hates it when *all* commits cause "integration test changed" emails because YOU forgot to strip your timing information!
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+When you make or modify a test, you don't check in the ref or new directories - just the tests directory.  All clients (the developers, the server) maintain independent ref and new directories.
+
+The integration tests are long enough to accumulate numerical noise and be affected by precision differences on 32/64 bits, etc.  So, it would be impossible to maintain one single set of test results that are true for all machines.  (The unit tests are shorter and less affected; they use explicit uncertainties in their comparisons so you can control how much variance is allowed for those differences).
+
+So, if you think the test results will change - just mark it in your checkin log so that when Sergey's server email goes out, we all know it was intentional.  (Presumably it is changing due to changes in the actual code; but this holds true if you modify the test itself by changing what's in test/test_idealize).
+
+There is an expected_results directory if you want a reference copy of the results, but it's not meant to be numerically perfect, just a general idea of what a run 'should' look like - approximately how much output and what files.

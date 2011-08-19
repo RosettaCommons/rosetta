@@ -1,0 +1,35 @@
+## Keywords that are replace are listed in ~mtyka/homo_bench/help_keywords.txt
+-out:file:silent_print_all_score_headers
+-abinitio:debug
+-abinitio:debug_structures
+
+# never again problems with columns  because of stupid SETPOSE EXTRA FUCK
+-abinitio:clear_pose_cache
+
+#don't have prove that this actually helps.. maybe in the refinement stage..
+-increase_cycles 1
+
+-templates::topology_rank_cutoff 0.8
+-jumps:ramp_chainbreaks
+-sep_switch_accelerate 0.8
+-skip_convergence_check
+-overlap_chainbreak
+
+-rsd_wt_helix 0.5
+-rsd_wt_loop 0.5
+-rg_reweight 0.5
+
+# for loop closing
+-overwrite_filter_scorefxn score3 
+
+-score:weights score13_env_hb
+-detect_disulf false
+#loop-closing filter in SlidingWindow 
+-fast_loops:overwrite_filter_scorefxn score3
+
+-abrelax:fail_unclosed
+
+-mute_warning core.chemical
+-mute_warning core.io.pdb
+-mute_warning core.conformation
+-mute_warning  protocols.jobdist

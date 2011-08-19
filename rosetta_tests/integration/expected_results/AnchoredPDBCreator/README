@@ -1,0 +1,9 @@
+(c) Copyright Rosetta Commons Member Institutions.
+(c) This file is part of the Rosetta software suite and is made available under license.
+(c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+(c) For more information, see http://www.rosettacommons.org. Questions about this can be
+(c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+AnchoredPDBCreator should produce a single output file, sc_loop_insertBC_1_noFGdel_0001.pdb, plus score.sc and the log file.
+
+Don't expect the pdb to be any good - there aren't enough cycles to get a good result.  If you want to demo it for yourself, use many more cycles.  There may still be sidechain clashes and chainA-chainB clashes - these are ironed out in AnchoredDesign instead.

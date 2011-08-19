@@ -1,0 +1,6 @@
+-msd:fitness_file ubqsurf.fitness
+-entity_resfile entity.resfile
+-ms:generations 10
+-ms:pop_size 100
+-ms:fraction_by_recombination 0.02
+-ignore_unrecognized_res

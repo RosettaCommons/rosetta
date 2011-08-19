@@ -1,0 +1,12 @@
+BEGIN
+jump_def: 5 32 31 31
+aa: CYS ZN
+cst_atoms: SG CB CA ZN V1 V2
+jump_atoms: N CA C ZN V1 V2
+disAB: 2.20
+angleA: 68.0
+angleB: 70.5
+dihedralA: -150.0 -120.0 -90.0 -60.0 -30.0 0.0 30.0 60.0 90.0 120.0 150.0 180.0
+dihedralAB: -150.0 -120.0 -90.0 -60.0 -30.0 0.0 30.0 60.0 90.0 120.0 150.0 180.0
+dihedralB: 120.0
+END

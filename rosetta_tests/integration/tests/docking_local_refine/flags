@@ -1,0 +1,10 @@
+-s input/1brs.pdb
+-ex1
+-ex2aro
+-use_input_sc
+-docking_local_refine
+-mute core.util.prof ## dont show timing info
+-out:overwrite
+-out:file:scorefile 1brs.fasc
+-out:file:fullatom #output in fullato scorefile
+-mute core.io.database

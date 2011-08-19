@@ -1,0 +1,8 @@
+-s 1acb.pdb
+-mute core.util.prof ## dont show timing info
+-out:overwrite
+-out:file:fullatom #output in fullatom scorefile
+-out:nooutput # don't write a pdb file
+-mute core.io.database
+-ensemble1 pdblist1
+-ensemble2 pdblist2

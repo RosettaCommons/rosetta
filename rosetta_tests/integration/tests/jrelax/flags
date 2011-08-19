@@ -1,0 +1,7 @@
+-in:file:s input/short.pdb
+
+-score:weights standard
+-score:patch score12
+-relax:quick
+-relax:default_repeats 2
+-run:test_cycles

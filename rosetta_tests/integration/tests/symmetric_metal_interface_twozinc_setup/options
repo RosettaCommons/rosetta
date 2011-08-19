@@ -1,0 +1,11 @@
+#-database <path to database>
+-s 1YZM_WT.pdb
+-match1 1YZM_1_H12H16_1_ZNX.pdb
+-match2 1YZM_1_H35H39_1_ZNX.pdb
+
+-angle_rotation_increment 20.0
+-ddG_centroid_cutoff 0.0
+-zn_zn_distance_cutoff 10.0
+-tetrahedral_angle_sumsq_cutoff 3600
+
+-jd2:no_output

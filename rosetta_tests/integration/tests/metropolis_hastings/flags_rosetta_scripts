@@ -1,0 +1,6 @@
+-s input/1MFG.pdb
+-ignore_unrecognized_res
+
+-overwrite
+-parser:protocol input/metropolis_hastings.xml
+-out:user_tag rs

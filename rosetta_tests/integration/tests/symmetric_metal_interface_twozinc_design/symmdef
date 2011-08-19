@@ -1,0 +1,20 @@
+symmetry_name 1YZM_1_H12H16_1_ZNX.1YZM_1_H35H39_1_ZNX_360__2
+E = 2*VRT0_base + 1*(VRT0_base:VRT1_base)
+anchor_residue 34
+virtual_coordinates_start
+xyz VRT0  0.9181,0.3763,-0.1242  -0.3792,0.9253,0.0000  6.7761,2.5721,-0.7550
+xyz VRT0_base  0.9181,0.3763,-0.1242  -0.3792,0.9253,0.0000  -0.0535,-0.2270,0.1692
+xyz VRT1  -0.9181,-0.3763,0.1242  -0.1236,0.5698,0.8125  6.7761,2.5721,-0.7550
+xyz VRT1_base  -0.9181,-0.3763,0.1242  -0.1236,0.5698,0.8125  13.6057,5.3712,-1.6791
+xyz VRT  1.0000,0.0000,0.0000  0.0000,1.0000,0.0000  7.7761,2.5721,-0.7550
+virtual_coordinates_stop
+connect_virtual JUMP0_to_com VRT0 VRT0_base
+connect_virtual JUMP0_to_subunit VRT0_base SUBUNIT
+connect_virtual JUMP1_to_com VRT1 VRT1_base
+connect_virtual JUMP1_to_subunit VRT1_base SUBUNIT
+connect_virtual JUMP0 VRT VRT0
+connect_virtual JUMP1 VRT0 VRT1
+set_dof JUMP0_to_com x(7.43861012249291) angle_x
+set_dof JUMP0_to_subunit angle_x angle_y angle_z
+set_jump_group JUMPGROUP2 JUMP0_to_com JUMP1_to_com
+set_jump_group JUMPGROUP3 JUMP1_to_subunit JUMP0_to_subunit

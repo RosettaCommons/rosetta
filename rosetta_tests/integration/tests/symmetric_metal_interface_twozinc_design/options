@@ -1,0 +1,12 @@
+#-database <path to database>
+
+-symmetry:symmetry_definition symmdef
+-s 1YZM_1_H12H16_1_ZNX.1YZM_1_H35H39_1_ZNX_360_INPUT.pdb
+-repackmin_iterations 1
+-fav_nat_bonus 1.5
+-nstruct_iterations 2
+-jd2:no_output
+
+#-ex1
+#-ex2
+#-use_input_sc

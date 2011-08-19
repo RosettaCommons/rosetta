@@ -1,0 +1,62 @@
+
+-in
+ -path
+  ## On a large cluster, the database should be on a local scratch disk
+  ## to avoid over-taxing NFS.
+  #-database /scratch/USERS/davis/minirosetta_database
+  ## "Fallback" database locations can also be specified,
+  ## in case the primary database is missing on some nodes:
+  #-database /work/davis/minirosetta_database
+  ## Location provided by user:
+ -file
+  ## You must supply .params files for any residue types (ligands)
+  ## that are not present in the standard Rosetta database.
+  ## Centroid residues are not needed for docking,
+  ## but may be needed for other Rosetta protocols.
+  #-extra_res_cen ligand/cen/CP1.cen.params
+  -extra_res_fa inputs/CP1.fa.params
+  -silent inputs/7cpa_no_ligand_CP1_silent.out
+-out
+ ## These channels generate a LOT of output,
+ ## especially with -improve_orientation.
+ -mute protocols.geometry.RB_geometry core.scoring.dunbrack.SingleLigandRotamerLibrary core.scoring.rms_util
+ -file
+  ## I prefer output structures with Rosetta numbering, from 1 to N residues.
+  ## To keep the original PDB numbering, omit this flag:
+  -renumber_pdb
+  -silent default.out
+-run
+ ## Recording the SVN revision of the code in your output files
+ ## makes it easier to figure out what you did later.
+ -version
+ ## MT is now the default random number generator, actually.
+ #-rng mt19937
+ ## Rosetta's default behavior was to pretend that atoms with zero occupancy
+ ## don't exist at all, which can lead to whole residues disappearing...
+ -ignore_zero_occupancy false
+-packing
+ ## Includes the input sidechain conformations as rotamers when repacking,
+ ## but they can be "lost" if any other rotamer is chosen at that position.
+ #-use_input_sc
+ ## Instead, use -unboundrot to permanently add the rotamers from one or more
+ ## PDB files.  Their rotamer ("Dunbrack") energies are also adjusted to be
+ ## equal to the best rotamer at that position, thereby favoring the native.
+ ## Since most sidechains do not change position much upon ligand binding,
+ ## including this knowledge generally improves docking results:
+ #-unboundrot ...
+ ## Controls the number of (protein) rotamers used.
+ -ex1
+ -ex1aro
+ -ex2
+ ## Ensures that extra rotamers are used for surface residues too.
+ -extrachi_cutoff 1
+-docking
+ -ligand
+  ## Use soft-repulsive scoring during search (but not final minimization).
+  ## This slightly improves search.  Hard-rep is used for final scoring,
+  ## however, because it gives better discrimination.
+  -soft_rep
+  ## Like Rosetta++, only evaluate the Coloumb term between protein and ligand.
+  -old_estat
+  -max_poses 10
+  -min_rms 1.0

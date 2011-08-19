@@ -1,0 +1,19 @@
+-run:protocol broker
+-run:test_cycles
+
+-frag3 input/boinc_aacasd_pgr122a_03_05.200_v1_3.gz
+-frag9 input/boinc_aacasd_pgr122a_09_05.200_v1_3.gz
+-in:file:fasta input/pgr122.fasta
+-combine 2
+-cst_file input/assigned.cst.centroid
+-cst_fa_file input/assigned.cst
+-relax:fast
+-residues::patch_selectors CENTROID_HA
+
+-no_prof_info_in_silentout
+-mute core.io.database
+
+-out:file:silent result3.out
+-run:intermediate_structures
+-nstruct 1
+-out:level 300

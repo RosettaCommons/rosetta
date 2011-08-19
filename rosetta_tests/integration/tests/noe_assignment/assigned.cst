@@ -1,0 +1,667 @@
+AmbiguousNMRConstraint BOUNDED     1.5 3.11308 3.04138   automatic NOE Peak 943 
+AmbiguousNMRDistance 2HB 2 2HG 4 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.51881 3.04138  automatic NOE Peak 2291 
+AmbiguousNMRDistance HA 2 2HB 63 BOUNDED     1.5     5.5   1    VC 0.5722247532007032 
+AmbiguousNMRDistance HA 2 1HB 63 BOUNDED     1.5     5.5   1    VC 0.4277752467992968 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.04376 3.04138   automatic NOE Peak 511 
+AmbiguousNMRDistance H 3 H 5 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5  5.8501 3.04138   automatic NOE Peak 951 
+AmbiguousNMRDistance 2HG 4 QE 6 BOUNDED     1.5     5.5   1    VC 0.1618521764300086 
+AmbiguousNMRDistance 2HG 4 HZ 6 BOUNDED     1.5     5.5   1    VC 0.1132590945368939 
+AmbiguousNMRDistance 1HG 4 QE 6 BOUNDED     1.5     5.5   1    VC 0.4238497486035726 
+AmbiguousNMRDistance 1HG 4 HZ 6 BOUNDED     1.5     5.5   1     VC 0.301038980429525 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.71278 3.04138   automatic NOE Peak 949 
+AmbiguousNMRDistance 2HG 4 1HG 14 BOUNDED     1.5     5.5   1    VC 0.5362463850700082 
+AmbiguousNMRDistance 1HG 4 1HG 14 BOUNDED     1.5     5.5   1    VC 0.4637536149299918 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.47352 3.04138   automatic NOE Peak 953 
+AmbiguousNMRDistance 1HG 4 1HG 14 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.04228 3.04138  automatic NOE Peak 2115 
+AmbiguousNMRDistance HA 4 HA 26 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.35936 3.04138  automatic NOE Peak 1077 
+AmbiguousNMRDistance 2HB 4 H 55 BOUNDED     1.5     5.5   1    VC 0.5148679605448474 
+AmbiguousNMRDistance 1HB 4 H 55 BOUNDED     1.5     5.5   1    VC 0.4851320394551525 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.05409 3.04138   automatic NOE Peak 919 
+AmbiguousNMRDistance H 4 H 55 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.90689 3.04138   automatic NOE Peak 541 
+AmbiguousNMRDistance 2HB 6 H 11 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.69718 3.04138   automatic NOE Peak 843 
+AmbiguousNMRDistance QE 6 2HB 72 BOUNDED     1.5     5.5   1    VC 0.5264238891954885 
+AmbiguousNMRDistance QE 6 1HB 72 BOUNDED     1.5     5.5   1    VC 0.4735761108045116 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.14358 3.04138   automatic NOE Peak 837 
+AmbiguousNMRDistance QE 6 2HB 73 BOUNDED     1.5     5.5   1    VC 0.4025191758798478 
+AmbiguousNMRDistance HZ 6 2HB 73 BOUNDED     1.5     5.5   1   VC 0.06233559313024033 
+AmbiguousNMRDistance QE 6 1HB 73 BOUNDED     1.5     5.5   1    VC 0.4580200109507724 
+AmbiguousNMRDistance HZ 6 1HB 73 BOUNDED     1.5     5.5   1   VC 0.07712522003913945 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.06494 3.04138  automatic NOE Peak 2341 
+AmbiguousNMRDistance HB 7 H 9 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.38115 3.04138  automatic NOE Peak 2303 
+AmbiguousNMRDistance HA 8 H 10 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.84903 3.04138   automatic NOE Peak 107 
+AmbiguousNMRDistance HA 8 2HE2 57 BOUNDED     1.5     5.5   1    VC 0.5273165233795691 
+AmbiguousNMRDistance 2HD 8 2HE2 57 BOUNDED     1.5     5.5   1    VC 0.4726834766204309 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.92434 3.04138  automatic NOE Peak 1017 
+AmbiguousNMRDistance HA 8 H 58 BOUNDED     1.5     5.5   1    VC 0.4726834766204353 
+AmbiguousNMRDistance 2HD 8 H 58 BOUNDED     1.5     5.5   1    VC 0.5273165233795648 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.19535 3.04138   automatic NOE Peak 875 
+AmbiguousNMRDistance HA 8 H 60 BOUNDED     1.5     5.5   1    VC 0.4198769908113316 
+AmbiguousNMRDistance 2HD 8 H 60 BOUNDED     1.5     5.5   1    VC 0.5801230091886684 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.59768 3.04138   automatic NOE Peak 275 
+AmbiguousNMRDistance 1HB 9 H 54 BOUNDED     1.5     5.5   1    VC 0.3791878017390236 
+AmbiguousNMRDistance QD 9 H 54 BOUNDED     1.5     5.5   1    VC 0.6208121982609766 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.20145 3.04138  automatic NOE Peak 2177 
+AmbiguousNMRDistance HA 12 HA 60 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.65891 3.04138  automatic NOE Peak 1123 
+AmbiguousNMRDistance QB 13 H 15 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5  5.8452 3.04138   automatic NOE Peak 689 
+AmbiguousNMRDistance 2HD 13 QE 24 BOUNDED     1.5     5.5   1    VC 0.4561580606649303 
+AmbiguousNMRDistance 1HD 13 QE 24 BOUNDED     1.5     5.5   1    VC 0.5438419393350697 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.19141 3.04138   automatic NOE Peak 697 
+AmbiguousNMRDistance 2HD 13 H 48 BOUNDED     1.5     5.5   1    VC 0.8528226448113628 
+AmbiguousNMRDistance 1HD 13 H 48 BOUNDED     1.5     5.5   1    VC 0.1471773551886373 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.40798 3.04138   automatic NOE Peak 703 
+AmbiguousNMRDistance 2HD 13 HA 48 BOUNDED     1.5     5.5   1     VC 0.953483696036816 
+AmbiguousNMRDistance 1HD 13 HA 48 BOUNDED     1.5     5.5   1   VC 0.03423460842706189 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.26264 3.04138   automatic NOE Peak 925 
+AmbiguousNMRDistance 1HG 14 1HB 16 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.72275 3.04138  automatic NOE Peak 1649 
+AmbiguousNMRDistance QD 14 2HD 16 BOUNDED     1.5     5.5   1    VC 0.7904079923357331 
+AmbiguousNMRDistance QD 14 1HD 16 BOUNDED     1.5     5.5   1    VC 0.2095920076642669 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.33656 3.04138   automatic NOE Peak 747 
+AmbiguousNMRDistance QD1 15 2HB 17 BOUNDED     1.5     5.5   1    VC 0.5081359709177439 
+AmbiguousNMRDistance QD1 15 1HB 17 BOUNDED     1.5     5.5   1    VC 0.4818400446187686 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 3.89117 3.04138  automatic NOE Peak 2021 
+AmbiguousNMRDistance QD1 15 HA 17 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.27601 3.04138   automatic NOE Peak 417 
+AmbiguousNMRDistance QD2 15 HA 24 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.45184 3.04138  automatic NOE Peak 2165 
+AmbiguousNMRDistance QD2 15 HA 24 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.50086 3.04138  automatic NOE Peak 1707 
+AmbiguousNMRDistance H 17 HA 19 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.63633 3.04138   automatic NOE Peak 647 
+AmbiguousNMRDistance H 17 H 20 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 3.71018 3.04138  automatic NOE Peak 2251 
+AmbiguousNMRDistance HA 20 HA 51 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.32817 3.04138   automatic NOE Peak 405 
+AmbiguousNMRDistance H 23 HA 45 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.35709 3.04138  automatic NOE Peak 2157 
+AmbiguousNMRDistance HA 24 H 27 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.14888 3.04138  automatic NOE Peak 2161 
+AmbiguousNMRDistance HA 24 QB 27 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.60747 3.04138   automatic NOE Peak 181 
+AmbiguousNMRDistance QE 24 QG1 58 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.29332 3.04138   automatic NOE Peak 189 
+AmbiguousNMRDistance QD 24 QG1 58 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.49064 3.04138  automatic NOE Peak 2227 
+AmbiguousNMRDistance H 25 QB 27 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.86921 3.04138  automatic NOE Peak 1365 
+AmbiguousNMRDistance 1HB 28 H 48 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.76503 3.04138  automatic NOE Peak 1431 
+AmbiguousNMRDistance HA 28 QE 64 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.98167 3.04138   automatic NOE Peak 515 
+AmbiguousNMRDistance H 38 QQD 61 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.02103 3.04138   automatic NOE Peak 969 
+AmbiguousNMRDistance H 38 H 61 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.47684 3.04138   automatic NOE Peak 281 
+AmbiguousNMRDistance QB 39 QG2 41 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.02596 3.04138   automatic NOE Peak 989 
+AmbiguousNMRDistance H 39 H 61 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.81264 3.04138   automatic NOE Peak 703 
+AmbiguousNMRDistance HA 40 H 44 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.58831 3.04138   automatic NOE Peak 549 
+AmbiguousNMRDistance 2HG 40 HA 45 BOUNDED     1.5     5.5   1    VC 0.7732332947032629 
+AmbiguousNMRDistance 1HG 40 HA 45 BOUNDED     1.5     5.5   1    VC 0.2267667052967372 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.95495 3.04138  automatic NOE Peak 1177 
+AmbiguousNMRDistance 1HB 40 HA 45 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.54008 3.04138   automatic NOE Peak 351 
+AmbiguousNMRDistance H 40 QG2 60 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.27984 3.04138  automatic NOE Peak 1129 
+AmbiguousNMRDistance H 41 2HB 44 BOUNDED     1.5     5.5   1     VC 0.867056536435925 
+AmbiguousNMRDistance H 41 1HB 44 BOUNDED     1.5     5.5   1     VC 0.132943463564075 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.50044 3.04138  automatic NOE Peak 1131 
+AmbiguousNMRDistance H 41 2HB 44 BOUNDED     1.5     5.5   1    VC 0.8965647475717989 
+AmbiguousNMRDistance H 41 1HB 44 BOUNDED     1.5     5.5   1     VC 0.103435252428201 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.95046 3.04138  automatic NOE Peak 1795 
+AmbiguousNMRDistance H 41 HA 44 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.82439 3.04138   automatic NOE Peak 707 
+AmbiguousNMRDistance QG1 41 H 44 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.66745 3.04138   automatic NOE Peak 855 
+AmbiguousNMRDistance H 41 HA 45 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.96054 3.04138  automatic NOE Peak 1447 
+AmbiguousNMRDistance 2HD2 42 QE 44 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.65299 3.04138   automatic NOE Peak 711 
+AmbiguousNMRDistance 1HB 42 H 44 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.43999 3.04138   automatic NOE Peak 885 
+AmbiguousNMRDistance H 42 2HB 57 BOUNDED     1.5     5.5   1    VC 0.5350751770243062 
+AmbiguousNMRDistance H 42 1HB 57 BOUNDED     1.5     5.5   1    VC 0.4649248229756939 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.63057 3.04138  automatic NOE Peak 2193 
+AmbiguousNMRDistance H 42 HA 58 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.31505 3.04138  automatic NOE Peak 2195 
+AmbiguousNMRDistance HA 42 HA 58 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5  5.2435 3.04138  automatic NOE Peak 1457 
+AmbiguousNMRDistance QE 44 QG1 46 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.15013 3.04138   automatic NOE Peak 697 
+AmbiguousNMRDistance H 44 QG1 46 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 10.0854 3.04138    automatic NOE Peak 83 
+AmbiguousNMRDistance QG1 46 QD 50 BOUNDED     1.5     5.5   1    VC 0.6265321613599282 
+AmbiguousNMRDistance QG2 46 QD 50 BOUNDED     1.5     5.5   1    VC 0.3734678386400719 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.25368 3.04138  automatic NOE Peak 2271 
+AmbiguousNMRDistance 1HB 47 2HB 49 BOUNDED     1.5     5.5   1                   VC 0.5 
+AmbiguousNMRDistance 2HG 47 2HB 49 BOUNDED     1.5     5.5   1                   VC 0.5 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.79619 3.04138   automatic NOE Peak 525 
+AmbiguousNMRDistance QD2 48 1HB 50 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 3.94579 3.04138   automatic NOE Peak 475 
+AmbiguousNMRDistance H 49 H 68 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.84191 3.04138  automatic NOE Peak 1379 
+AmbiguousNMRDistance 1HB 56 QG2 58 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.00901 3.04138  automatic NOE Peak 1387 
+AmbiguousNMRDistance 2HB 56 QG2 58 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.32867 3.04138   automatic NOE Peak 257 
+AmbiguousNMRDistance QG1 58 QG2 60 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.20521 3.04138   automatic NOE Peak 877 
+AmbiguousNMRDistance QG1 58 H 60 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.92852 3.04138   automatic NOE Peak 777 
+AmbiguousNMRDistance 1HB 62 H 64 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.25807 3.04138   automatic NOE Peak 225 
+AmbiguousNMRDistance 2HB 63 H 65 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.29723 3.04138  automatic NOE Peak 2043 
+AmbiguousNMRDistance HA 65 QG 67 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.00355 3.04138   automatic NOE Peak 101 
+AmbiguousNMRDistance QG1 5 QB 25 BOUNDED     1.5     5.5   1   VC 0.01453307749507096 
+AmbiguousNMRDistance QD2 22 QB 25 BOUNDED     1.5     5.5   1    VC 0.2077620707817757 
+AmbiguousNMRDistance QB 25 QD1 37 BOUNDED     1.5     5.5   1    VC 0.3455475594770909 
+AmbiguousNMRDistance QB 25 QG1 41 BOUNDED     1.5     5.5   1    VC 0.1186567703213257 
+AmbiguousNMRDistance QB 25 QG1 51 BOUNDED     1.5     5.5   1    VC 0.2464018527225105 
+AmbiguousNMRDistance QB 25 QD1 52 BOUNDED     1.5     5.5   1   VC 0.06709866920222619 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.84077 3.04138   automatic NOE Peak 107 
+AmbiguousNMRDistance HA 11 QG2 37 BOUNDED     1.5     5.5   1     VC 0.681769621407977 
+AmbiguousNMRDistance HA 12 QG2 37 BOUNDED     1.5     5.5   1     VC 0.318230378592023 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.36708 3.04138   automatic NOE Peak 133 
+AmbiguousNMRDistance QG2 3 HA 7 BOUNDED     1.5     5.5   1   VC 0.09862692126046049 
+AmbiguousNMRDistance QG2 3 HA 14 BOUNDED     1.5     5.5   1    VC 0.9013730787395394 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.09319 3.04138   automatic NOE Peak 183 
+AmbiguousNMRDistance 1HB 24 QG1 58 BOUNDED     1.5     5.5   1    VC 0.6735384689337539 
+AmbiguousNMRDistance 1HB 42 QG1 58 BOUNDED     1.5     5.5   1   VC 0.08407453310894969 
+AmbiguousNMRDistance 2HB 56 QG1 58 BOUNDED     1.5     5.5   1    VC 0.2423869979572965 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5   4.646 3.04138   automatic NOE Peak 191 
+AmbiguousNMRDistance HA 24 QG1 58 BOUNDED     1.5     5.5   1    VC 0.7908531162264638 
+AmbiguousNMRDistance HA 42 QG1 58 BOUNDED     1.5     5.5   1    VC 0.2091468837735362 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.94946 3.04138   automatic NOE Peak 193 
+AmbiguousNMRDistance 1HD 16 QG1 58 BOUNDED     1.5     5.5   1   VC 0.01581758219193662 
+AmbiguousNMRDistance 2HB 24 QG1 58 BOUNDED     1.5     5.5   1    VC 0.9841824178080634 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.03138 3.04138   automatic NOE Peak 259 
+AmbiguousNMRDistance HA 57 QG2 60 BOUNDED     1.5     5.5   1    VC 0.2732329756627464 
+AmbiguousNMRDistance QG2 60 HA 62 BOUNDED     1.5     5.5   1    VC 0.7267670243372536 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.10158 3.04138   automatic NOE Peak 263 
+AmbiguousNMRDistance HA 25 QG2 60 BOUNDED     1.5     5.5   1    VC 0.1620619686330678 
+AmbiguousNMRDistance QG2 60 2HB 62 BOUNDED     1.5     5.5   1    VC 0.6856821125698012 
+AmbiguousNMRDistance QG2 60 1HB 63 BOUNDED     1.5     5.5   1     VC 0.152255918797131 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.11959 3.04138   automatic NOE Peak 351 
+AmbiguousNMRDistance QB 39 QG2 41 BOUNDED     1.5     5.5   1    VC 0.9844319584073793 
+AmbiguousNMRDistance QG2 41 QG1 60 BOUNDED     1.5     5.5   1    VC 0.0155680415926208 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.13365 3.04138   automatic NOE Peak 419 
+AmbiguousNMRDistance QD2 15 2HE2 17 BOUNDED     1.5     5.5   1     VC 0.463511417425691 
+AmbiguousNMRDistance QD2 15 QD 24 BOUNDED     1.5     5.5   1     VC 0.536488582574309 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.58376 3.04138   automatic NOE Peak 551 
+AmbiguousNMRDistance 2HG 40 2HB 44 BOUNDED     1.5     5.5   1    VC 0.1454310049264756 
+AmbiguousNMRDistance 2HG 40 1HB 59 BOUNDED     1.5     5.5   1     VC 0.263992434855713 
+AmbiguousNMRDistance QD 9 1HG 40 BOUNDED     1.5     5.5   1   VC 0.01680361697547676 
+AmbiguousNMRDistance 1HG 40 2HB 44 BOUNDED     1.5     5.5   1    VC 0.4214319392563541 
+AmbiguousNMRDistance 1HG 40 1HB 59 BOUNDED     1.5     5.5   1    VC 0.1481041696071858 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 3.23433 3.04138   automatic NOE Peak 693 
+AmbiguousNMRDistance 2HD 13 2HB 15 BOUNDED     1.5     5.5   1    VC 0.3721000773006505 
+AmbiguousNMRDistance 2HD 13 1HB 48 BOUNDED     1.5     5.5   1    VC 0.2920239576953325 
+AmbiguousNMRDistance 1HD 13 2HB 15 BOUNDED     1.5     5.5   1    VC 0.2855775950905742 
+AmbiguousNMRDistance 1HD 13 1HB 48 BOUNDED     1.5     5.5   1   VC 0.05029836991344282 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.72699 3.04138   automatic NOE Peak 705 
+AmbiguousNMRDistance 2HD 13 1HB 24 BOUNDED     1.5     5.5   1     VC 0.436160449254029 
+AmbiguousNMRDistance 2HD 13 1HB 42 BOUNDED     1.5     5.5   1    VC 0.1119165977317623 
+AmbiguousNMRDistance 1HD 13 1HB 24 BOUNDED     1.5     5.5   1    VC 0.3587534360070875 
+AmbiguousNMRDistance 1HD 13 1HB 42 BOUNDED     1.5     5.5   1   VC 0.09316951700712109 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.94375 3.04138   automatic NOE Peak 771 
+AmbiguousNMRDistance QD2 15 1HB 35 BOUNDED     1.5     5.5   1   VC 0.07040295255909532 
+AmbiguousNMRDistance QD1 32 1HB 35 BOUNDED     1.5     5.5   1    VC 0.1265063685880087 
+AmbiguousNMRDistance QD2 32 1HB 35 BOUNDED     1.5     5.5   1   VC 0.04235734046612307 
+AmbiguousNMRDistance 1HB 35 QG2 37 BOUNDED     1.5     5.5   1    VC 0.7607333383867729 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.24198 3.04138   automatic NOE Peak 883 
+AmbiguousNMRDistance H 43 2HB 57 BOUNDED     1.5     5.5   1     VC 0.161092467712727 
+AmbiguousNMRDistance 2HB 57 H 59 BOUNDED     1.5     5.5   1    VC 0.2541136424301919 
+AmbiguousNMRDistance 2HB 57 H 60 BOUNDED     1.5     5.5   1    VC 0.1392810804905377 
+AmbiguousNMRDistance H 43 1HB 57 BOUNDED     1.5     5.5   1   VC 0.02586771838276214 
+AmbiguousNMRDistance 1HB 57 H 59 BOUNDED     1.5     5.5   1    VC 0.2708998854289228 
+AmbiguousNMRDistance 1HB 57 H 60 BOUNDED     1.5     5.5   1    VC 0.1487452055548583 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.64366 3.04138   automatic NOE Peak 947 
+AmbiguousNMRDistance H 2 1HG 4 BOUNDED     1.5     5.5   1    VC 0.6952966693475598 
+AmbiguousNMRDistance 1HG 4 H 15 BOUNDED     1.5     5.5   1    VC 0.3047033306524401 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.08405 3.04138   automatic NOE Peak 965 
+AmbiguousNMRDistance 2HG 4 HA 14 BOUNDED     1.5     5.5   1   VC 0.02890355014509732 
+AmbiguousNMRDistance 1HG 4 HA 7 BOUNDED     1.5     5.5   1    VC 0.0525204563035052 
+AmbiguousNMRDistance 1HG 4 HA 14 BOUNDED     1.5     5.5   1      VC 0.90951331609909 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.78767 3.04138   automatic NOE Peak 967 
+AmbiguousNMRDistance 2HG 4 HA 7 BOUNDED     1.5     5.5   1   VC 0.05827640768375225 
+AmbiguousNMRDistance 2HG 4 HA 14 BOUNDED     1.5     5.5   1    VC 0.1858606444538744 
+AmbiguousNMRDistance 1HG 4 HA 7 BOUNDED     1.5     5.5   1   VC 0.04126494106906607 
+AmbiguousNMRDistance 1HG 4 HA 14 BOUNDED     1.5     5.5   1    VC 0.7145980067933073 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.64462 3.04138  automatic NOE Peak 1059 
+AmbiguousNMRDistance QG 13 HB 46 BOUNDED     1.5     5.5   1    VC 0.1025189292516508 
+AmbiguousNMRDistance 1HB 15 HB 46 BOUNDED     1.5     5.5   1   VC 0.07984182238082778 
+AmbiguousNMRDistance 1HB 40 HB 46 BOUNDED     1.5     5.5   1    VC 0.3363199676081425 
+AmbiguousNMRDistance 2HG 40 HB 46 BOUNDED     1.5     5.5   1     VC 0.172853276020397 
+AmbiguousNMRDistance HB 41 HB 46 BOUNDED     1.5     5.5   1    VC 0.3084660047389818 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.53715 3.04138  automatic NOE Peak 1063 
+AmbiguousNMRDistance QD 14 HB 46 BOUNDED     1.5     5.5   1    VC 0.2395372740419145 
+AmbiguousNMRDistance HB 46 2HB 50 BOUNDED     1.5     5.5   1    VC 0.3267555332697432 
+AmbiguousNMRDistance HB 46 QB 71 BOUNDED     1.5     5.5   1   VC 0.04019427559293529 
+AmbiguousNMRDistance HB 46 2HB 72 BOUNDED     1.5     5.5   1   VC 0.03872808529564611 
+AmbiguousNMRDistance HB 46 1HB 72 BOUNDED     1.5     5.5   1    VC 0.1651159052489465 
+AmbiguousNMRDistance HB 46 1HB 73 BOUNDED     1.5     5.5   1    VC 0.1896689265508145 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.51053 3.04138  automatic NOE Peak 1191 
+AmbiguousNMRDistance QG1 41 2HG 59 BOUNDED     1.5     5.5   1   VC 0.02818732467212634 
+AmbiguousNMRDistance QD1 52 2HG 59 BOUNDED     1.5     5.5   1   VC 0.01949590497780999 
+AmbiguousNMRDistance 2HG 59 QQD 61 BOUNDED     1.5     5.5   1    VC 0.2376496645366588 
+AmbiguousNMRDistance QG1 41 1HG 59 BOUNDED     1.5     5.5   1     VC 0.072319559089754 
+AmbiguousNMRDistance QG1 51 1HG 59 BOUNDED     1.5     5.5   1   VC 0.01268726885316697 
+AmbiguousNMRDistance QD1 52 1HG 59 BOUNDED     1.5     5.5   1   VC 0.05002018703269152 
+AmbiguousNMRDistance 1HG 59 QQD 61 BOUNDED     1.5     5.5   1    VC 0.5746950915752423 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.43999 3.04138  automatic NOE Peak 1293 
+AmbiguousNMRDistance QD2 15 2HB 34 BOUNDED     1.5     5.5   1   VC 0.08730736405327398 
+AmbiguousNMRDistance QD1 32 2HB 34 BOUNDED     1.5     5.5   1    VC 0.2375948815858527 
+AmbiguousNMRDistance 2HB 34 QG2 37 BOUNDED     1.5     5.5   1    VC 0.2865580358749084 
+AmbiguousNMRDistance 2HB 34 1HG 40 BOUNDED     1.5     5.5   1     VC 0.029440637784198 
+AmbiguousNMRDistance QD2 15 1HB 34 BOUNDED     1.5     5.5   1   VC 0.05889179595564539 
+AmbiguousNMRDistance QD1 32 1HB 34 BOUNDED     1.5     5.5   1    VC 0.1265385097316109 
+AmbiguousNMRDistance 1HB 34 QG2 37 BOUNDED     1.5     5.5   1    VC 0.1619465446685202 
+AmbiguousNMRDistance 1HB 34 1HG 40 BOUNDED     1.5     5.5   1   VC 0.01172223034599051 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5  4.3713 3.04138  automatic NOE Peak 1357 
+AmbiguousNMRDistance 1HG1 12 1HB 28 BOUNDED     1.5     5.5   1    VC 0.1165198010310735 
+AmbiguousNMRDistance QG2 12 1HB 28 BOUNDED     1.5     5.5   1    VC 0.1341134689035853 
+AmbiguousNMRDistance 1HB 28 QD1 48 BOUNDED     1.5     5.5   1     VC 0.749366730065341 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 3.47161 3.04138  automatic NOE Peak 1477 
+AmbiguousNMRDistance QG2 20 1HB 61 BOUNDED     1.5     5.5   1    VC 0.1017181731443172 
+AmbiguousNMRDistance 1HB 52 1HB 61 BOUNDED     1.5     5.5   1    VC 0.8982818268556828 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.15895 3.04138  automatic NOE Peak 1479 
+AmbiguousNMRDistance 2HA 38 2HB 61 BOUNDED     1.5     5.5   1   VC 0.03985955454889175 
+AmbiguousNMRDistance HA 50 2HB 61 BOUNDED     1.5     5.5   1   VC 0.07228026882579786 
+AmbiguousNMRDistance HA 52 2HB 61 BOUNDED     1.5     5.5   1    VC 0.2862526823709813 
+AmbiguousNMRDistance 2HA 38 1HB 61 BOUNDED     1.5     5.5   1   VC 0.05930600854323059 
+AmbiguousNMRDistance HA 50 1HB 61 BOUNDED     1.5     5.5   1    VC 0.5423014857110986 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.30389 3.04138  automatic NOE Peak 1485 
+AmbiguousNMRDistance QD 24 2HB 61 BOUNDED     1.5     5.5   1   VC 0.03727364394328213 
+AmbiguousNMRDistance QD 50 2HB 61 BOUNDED     1.5     5.5   1   VC 0.05049487394999542 
+AmbiguousNMRDistance QE 50 2HB 61 BOUNDED     1.5     5.5   1   VC 0.06025052714694937 
+AmbiguousNMRDistance QD 24 1HB 61 BOUNDED     1.5     5.5   1   VC 0.08812276725008894 
+AmbiguousNMRDistance QD 50 1HB 61 BOUNDED     1.5     5.5   1    VC 0.3562438859325597 
+AmbiguousNMRDistance QE 50 1HB 61 BOUNDED     1.5     5.5   1    VC 0.4076143017771245 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.06104 3.04138  automatic NOE Peak 1607 
+AmbiguousNMRDistance QG2 3 QA 33 BOUNDED     1.5     5.5   1    VC 0.0462064439893738 
+AmbiguousNMRDistance QD1 28 QA 33 BOUNDED     1.5     5.5   1    VC 0.5926944982939656 
+AmbiguousNMRDistance QA 33 QD1 37 BOUNDED     1.5     5.5   1    VC 0.3132226988613901 
+AmbiguousNMRDistance QA 33 QG1 51 BOUNDED     1.5     5.5   1   VC 0.04787635885527038 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.28601 3.04138  automatic NOE Peak 1687 
+AmbiguousNMRDistance 2HD 13 HA 39 BOUNDED     1.5     5.5   1    VC 0.4225046348141864 
+AmbiguousNMRDistance HA 39 1HB 64 BOUNDED     1.5     5.5   1    VC 0.5774953651858137 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.68305 3.04138  automatic NOE Peak 1705 
+AmbiguousNMRDistance HA 19 2HB 23 BOUNDED     1.5     5.5   1    VC 0.2273152849507653 
+AmbiguousNMRDistance HA 19 2HB 68 BOUNDED     1.5     5.5   1    VC 0.2211231719871574 
+AmbiguousNMRDistance HA 19 QB 69 BOUNDED     1.5     5.5   1   VC 0.05905403862507919 
+AmbiguousNMRDistance HA 19 QB 70 BOUNDED     1.5     5.5   1   VC 0.02789369374330267 
+AmbiguousNMRDistance HA 19 QB 71 BOUNDED     1.5     5.5   1   VC 0.06376803953260911 
+AmbiguousNMRDistance HA 19 2HB 72 BOUNDED     1.5     5.5   1    VC 0.2828487124319278 
+AmbiguousNMRDistance HA 19 2HB 73 BOUNDED     1.5     5.5   1    VC 0.1179970587291585 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.57904 3.04138  automatic NOE Peak 1773 
+AmbiguousNMRDistance HA 40 H 44 BOUNDED     1.5     5.5   1    VC 0.7774818370165716 
+AmbiguousNMRDistance HA 40 H 50 BOUNDED     1.5     5.5   1    VC 0.2225181629834284 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5  5.5714 3.04138  automatic NOE Peak 1789 
+AmbiguousNMRDistance 1HG 4 HA 14 BOUNDED     1.5     5.5   1    VC 0.9619494984639216 
+AmbiguousNMRDistance HA 14 HB 60 BOUNDED     1.5     5.5   1   VC 0.03805050153607833 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.13666 3.04138  automatic NOE Peak 1873 
+AmbiguousNMRDistance QB 21 HA 25 BOUNDED     1.5     5.5   1    VC 0.2240717303326505 
+AmbiguousNMRDistance 1HB 22 HA 25 BOUNDED     1.5     5.5   1    VC 0.2735352388753326 
+AmbiguousNMRDistance HG 22 HA 25 BOUNDED     1.5     5.5   1    VC 0.2602049185468627 
+AmbiguousNMRDistance HA 25 1HB 28 BOUNDED     1.5     5.5   1    VC 0.2421881122451542 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.68739 3.04138  automatic NOE Peak 1889 
+AmbiguousNMRDistance QB 1 HA 6 BOUNDED     1.5     5.5   1   VC 0.09174208683266979 
+AmbiguousNMRDistance 1HG 4 HA 6 BOUNDED     1.5     5.5   1    VC 0.9082579131673303 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5  4.5728 3.04138  automatic NOE Peak 1975 
+AmbiguousNMRDistance H 44 HA 48 BOUNDED     1.5     5.5   1    VC 0.3610152526521316 
+AmbiguousNMRDistance HA 48 H 50 BOUNDED     1.5     5.5   1    VC 0.6389847473478684 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5  4.7938 3.04138  automatic NOE Peak 2077 
+AmbiguousNMRDistance QD1 12 HA 20 BOUNDED     1.5     5.5   1    VC 0.1163941502149455 
+AmbiguousNMRDistance HA 20 1HG1 37 BOUNDED     1.5     5.5   1    VC 0.1256638913838294 
+AmbiguousNMRDistance HA 20 QG2 51 BOUNDED     1.5     5.5   1    VC 0.1980427258416528 
+AmbiguousNMRDistance HA 20 QD1 66 BOUNDED     1.5     5.5   1    VC 0.5598992325595722 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.62212 3.04138  automatic NOE Peak 2085 
+AmbiguousNMRDistance HA 20 QD2 22 BOUNDED     1.5     5.5   1    VC 0.3675871715759098 
+AmbiguousNMRDistance HA 20 QD1 37 BOUNDED     1.5     5.5   1   VC 0.07896369019904219 
+AmbiguousNMRDistance HA 20 QG1 51 BOUNDED     1.5     5.5   1      VC 0.16949016023388 
+AmbiguousNMRDistance HA 20 QD2 66 BOUNDED     1.5     5.5   1     VC 0.383958977991168 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.88966 3.04138  automatic NOE Peak 2089 
+AmbiguousNMRDistance HA 20 H 22 BOUNDED     1.5     5.5   1    VC 0.6291941176060717 
+AmbiguousNMRDistance HA 20 H 65 BOUNDED     1.5     5.5   1     VC 0.183360246991198 
+AmbiguousNMRDistance HA 20 H 66 BOUNDED     1.5     5.5   1    VC 0.1465324341267287 
+AmbiguousNMRDistance HA 20 H 67 BOUNDED     1.5     5.5   1   VC 0.04091320127600157 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.36289 3.04138  automatic NOE Peak 2117 
+AmbiguousNMRDistance 2HB 4 HA 26 BOUNDED     1.5     5.5   1    VC 0.5578287293806428 
+AmbiguousNMRDistance HA 26 2HB 57 BOUNDED     1.5     5.5   1    VC 0.1674509678136971 
+AmbiguousNMRDistance HA 26 1HB 57 BOUNDED     1.5     5.5   1    VC 0.1373601514028302 
+AmbiguousNMRDistance HA 26 1HG 57 BOUNDED     1.5     5.5   1    VC 0.1373601514028302 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.77468 3.04138  automatic NOE Peak 2119 
+AmbiguousNMRDistance HA 3 HA 17 BOUNDED     1.5     5.5   1                   VC 0.5 
+AmbiguousNMRDistance HA 3 1HB 54 BOUNDED     1.5     5.5   1                   VC 0.5 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.67387 3.04138  automatic NOE Peak 2141 
+AmbiguousNMRDistance HB 3 HA 54 BOUNDED     1.5     5.5   1    VC 0.1548534569513784 
+AmbiguousNMRDistance 1HB 9 HA 54 BOUNDED     1.5     5.5   1    VC 0.1617786867641833 
+AmbiguousNMRDistance QD 9 HA 54 BOUNDED     1.5     5.5   1    VC 0.6833678562844383 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.18461 3.04138  automatic NOE Peak 2159 
+AmbiguousNMRDistance QG1 5 HA 24 BOUNDED     1.5     5.5   1    VC 0.1414580161922308 
+AmbiguousNMRDistance QD1 15 HA 24 BOUNDED     1.5     5.5   1    VC 0.3327036734045893 
+AmbiguousNMRDistance QD1 22 HA 24 BOUNDED     1.5     5.5   1    VC 0.4616629717830186 
+AmbiguousNMRDistance HA 24 QD2 45 BOUNDED     1.5     5.5   1   VC 0.06417533862016141 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.37563 3.04138  automatic NOE Peak 2191 
+AmbiguousNMRDistance HA 5 HA 58 BOUNDED     1.5     5.5   1    VC 0.1926631465213401 
+AmbiguousNMRDistance HA 41 HA 58 BOUNDED     1.5     5.5   1    VC 0.8073368534786599 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.96559 3.04138  automatic NOE Peak 2247 
+AmbiguousNMRDistance QG1 3 2HB 54 BOUNDED     1.5     5.5   1   VC 0.06614320542058656 
+AmbiguousNMRDistance QG2 3 2HB 54 BOUNDED     1.5     5.5   1   VC 0.07129471281155672 
+AmbiguousNMRDistance QG1 5 2HB 54 BOUNDED     1.5     5.5   1    VC 0.1561029454797647 
+AmbiguousNMRDistance QD2 52 2HB 54 BOUNDED     1.5     5.5   1    VC 0.1851824821118973 
+AmbiguousNMRDistance 2HB 54 QD2 66 BOUNDED     1.5     5.5   1    VC 0.1932946990273646 
+AmbiguousNMRDistance QG1 5 1HB 54 BOUNDED     1.5     5.5   1   VC 0.02577617098125997 
+AmbiguousNMRDistance QD2 52 1HB 54 BOUNDED     1.5     5.5   1    VC 0.1484660523880678 
+AmbiguousNMRDistance 1HB 54 QD2 66 BOUNDED     1.5     5.5   1    VC 0.1537397317795024 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.10217 3.04138  automatic NOE Peak 2257 
+AmbiguousNMRDistance HB 20 HA 51 BOUNDED     1.5     5.5   1    VC 0.7119791896904093 
+AmbiguousNMRDistance HA 30 HA 51 BOUNDED     1.5     5.5   1    VC 0.2763284091437928 
+AmbiguousNMRDistance HA 41 HA 51 BOUNDED     1.5     5.5   1   VC 0.01169240116579792 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 3.80358 3.04138  automatic NOE Peak 2265 
+AmbiguousNMRDistance 1HB 49 QG1 51 BOUNDED     1.5     5.5   1    VC 0.8896637916044473 
+AmbiguousNMRDistance 1HB 49 QD1 52 BOUNDED     1.5     5.5   1    VC 0.1103362083955527 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.72204 3.04138  automatic NOE Peak 2287 
+AmbiguousNMRDistance QG1 3 2HB 63 BOUNDED     1.5     5.5   1    VC 0.0452745013530849 
+AmbiguousNMRDistance QG2 3 2HB 63 BOUNDED     1.5     5.5   1    VC 0.3168617524195725 
+AmbiguousNMRDistance QD1 37 2HB 63 BOUNDED     1.5     5.5   1   VC 0.07621147677585552 
+AmbiguousNMRDistance 2HB 63 QD2 66 BOUNDED     1.5     5.5   1   VC 0.08370193246383709 
+AmbiguousNMRDistance QG1 3 1HB 63 BOUNDED     1.5     5.5   1   VC 0.07895288610942597 
+AmbiguousNMRDistance QG2 3 1HB 63 BOUNDED     1.5     5.5   1    VC 0.3989974508782241 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5  4.3438 3.04138  automatic NOE Peak 2311 
+AmbiguousNMRDistance QD1 32 2HB 62 BOUNDED     1.5     5.5   1    VC 0.2203076181960562 
+AmbiguousNMRDistance QD2 32 2HB 62 BOUNDED     1.5     5.5   1    VC 0.2023300594572084 
+AmbiguousNMRDistance QG2 51 2HB 62 BOUNDED     1.5     5.5   1   VC 0.08158059210734414 
+AmbiguousNMRDistance QD1 32 1HB 62 BOUNDED     1.5     5.5   1    VC 0.2559290663856702 
+AmbiguousNMRDistance QD2 32 1HB 62 BOUNDED     1.5     5.5   1     VC 0.239852663853721 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 13.6135 3.04138    automatic NOE Peak 39 
+AmbiguousNMRDistance QG 13 QE 24 BOUNDED     1.5     5.5   1    VC 0.1429243856559098 
+AmbiguousNMRDistance 1HB 15 QE 24 BOUNDED     1.5     5.5   1   VC 0.05108217212177714 
+AmbiguousNMRDistance QE 24 1HB 40 BOUNDED     1.5     5.5   1    VC 0.2992430898716794 
+AmbiguousNMRDistance QE 24 2HG 40 BOUNDED     1.5     5.5   1    VC 0.1651061688233637 
+AmbiguousNMRDistance QE 24 HB 41 BOUNDED     1.5     5.5   1    VC 0.2724017389473192 
+AmbiguousNMRDistance QE 24 1HB 61 BOUNDED     1.5     5.5   1   VC 0.06924244457995099 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 11.1387 3.04138    automatic NOE Peak 43 
+AmbiguousNMRDistance QG2 5 QE 24 BOUNDED     1.5     5.5   1   VC 0.04123752236842712 
+AmbiguousNMRDistance 1HG1 12 QE 24 BOUNDED     1.5     5.5   1     VC 0.150948014257081 
+AmbiguousNMRDistance QG2 12 QE 24 BOUNDED     1.5     5.5   1    VC 0.1236099123539412 
+AmbiguousNMRDistance QD2 22 QE 24 BOUNDED     1.5     5.5   1    VC 0.1532097572186707 
+AmbiguousNMRDistance QE 24 QG1 41 BOUNDED     1.5     5.5   1    VC 0.2284586973391567 
+AmbiguousNMRDistance QE 24 QD1 52 BOUNDED     1.5     5.5   1   VC 0.03495003696307961 
+AmbiguousNMRDistance QE 24 QQD 61 BOUNDED     1.5     5.5   1    VC 0.2675860594996436 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 10.3539 3.04138    automatic NOE Peak 53 
+AmbiguousNMRDistance QD1 15 QE 24 BOUNDED     1.5     5.5   1    VC 0.2625052310633583 
+AmbiguousNMRDistance QD2 22 QE 24 BOUNDED     1.5     5.5   1     VC 0.285192948191941 
+AmbiguousNMRDistance QE 24 QD1 37 BOUNDED     1.5     5.5   1     VC 0.280829313827591 
+AmbiguousNMRDistance QE 24 QG1 51 BOUNDED     1.5     5.5   1    VC 0.1714725069171096 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5  9.4141 3.04138    automatic NOE Peak 87 
+AmbiguousNMRDistance QD1 12 QD 50 BOUNDED     1.5     5.5   1   VC 0.03050009521265495 
+AmbiguousNMRDistance QD1 22 QD 50 BOUNDED     1.5     5.5   1   VC 0.06277735068572136 
+AmbiguousNMRDistance QD2 45 QD 50 BOUNDED     1.5     5.5   1    VC 0.2245141630449532 
+AmbiguousNMRDistance QD2 48 QD 50 BOUNDED     1.5     5.5   1   VC 0.08160118561212822 
+AmbiguousNMRDistance QD 50 QD2 52 BOUNDED     1.5     5.5   1    VC 0.6006072054445423 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 10.9703 3.04138    automatic NOE Peak 93 
+AmbiguousNMRDistance HB 46 QD 50 BOUNDED     1.5     5.5   1    VC 0.9440546506995099 
+AmbiguousNMRDistance 1HB 47 QD 50 BOUNDED     1.5     5.5   1   VC 0.02797267465024508 
+AmbiguousNMRDistance 2HG 47 QD 50 BOUNDED     1.5     5.5   1   VC 0.02797267465024508 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.07219 3.04138    automatic NOE Peak 93 
+AmbiguousNMRDistance 2HG 2 H 7 BOUNDED     1.5     5.5   1   VC 0.02116484619872774 
+AmbiguousNMRDistance HB 5 H 7 BOUNDED     1.5     5.5   1    VC 0.9788351538012723 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.92811 3.04138   automatic NOE Peak 105 
+AmbiguousNMRDistance H 7 1HB 40 BOUNDED     1.5     5.5   1    VC 0.4237842633871564 
+AmbiguousNMRDistance H 7 2HG 40 BOUNDED     1.5     5.5   1    VC 0.3654521206215801 
+AmbiguousNMRDistance H 7 HB 41 BOUNDED     1.5     5.5   1    VC 0.2107636159912635 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.04114 3.04138   automatic NOE Peak 357 
+AmbiguousNMRDistance H 40 HA 60 BOUNDED     1.5     5.5   1    VC 0.9613830988691577 
+AmbiguousNMRDistance H 40 HA 67 BOUNDED     1.5     5.5   1   VC 0.03861690113084223 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.95046 3.04138   automatic NOE Peak 431 
+AmbiguousNMRDistance QG2 20 H 22 BOUNDED     1.5     5.5   1    VC 0.7037073530150858 
+AmbiguousNMRDistance QG 13 H 46 BOUNDED     1.5     5.5   1   VC 0.01784705248194343 
+AmbiguousNMRDistance 1HB 40 H 46 BOUNDED     1.5     5.5   1    VC 0.1561243007203655 
+AmbiguousNMRDistance 2HG 40 H 46 BOUNDED     1.5     5.5   1   VC 0.08201048469993713 
+AmbiguousNMRDistance HB 41 H 46 BOUNDED     1.5     5.5   1   VC 0.04031080908266817 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.29443 3.04138   automatic NOE Peak 447 
+AmbiguousNMRDistance QG2 20 H 22 BOUNDED     1.5     5.5   1   VC 0.02380013878055457 
+AmbiguousNMRDistance QG 13 H 46 BOUNDED     1.5     5.5   1    VC 0.1190581043453089 
+AmbiguousNMRDistance 1HB 40 H 46 BOUNDED     1.5     5.5   1    VC 0.4234459028537766 
+AmbiguousNMRDistance 2HG 40 H 46 BOUNDED     1.5     5.5   1    VC 0.1647815042214896 
+AmbiguousNMRDistance HB 41 H 46 BOUNDED     1.5     5.5   1    VC 0.2689143497988704 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.57981 3.04138   automatic NOE Peak 489 
+AmbiguousNMRDistance H 3 HA 17 BOUNDED     1.5     5.5   1    VC 0.4295735372511895 
+AmbiguousNMRDistance H 3 1HA 38 BOUNDED     1.5     5.5   1     VC 0.140852925497621 
+AmbiguousNMRDistance H 3 1HB 54 BOUNDED     1.5     5.5   1    VC 0.4295735372511895 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.77094 3.04138   automatic NOE Peak 497 
+AmbiguousNMRDistance H 3 HA 7 BOUNDED     1.5     5.5   1   VC 0.08778839443357452 
+AmbiguousNMRDistance H 3 HA 14 BOUNDED     1.5     5.5   1    VC 0.9122116055664254 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.53643 3.04138   automatic NOE Peak 543 
+AmbiguousNMRDistance HA 6 H 11 BOUNDED     1.5     5.5   1    VC 0.6431553445223248 
+AmbiguousNMRDistance HG1 7 H 11 BOUNDED     1.5     5.5   1    VC 0.3568446554776751 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.62486 3.04138   automatic NOE Peak 577 
+AmbiguousNMRDistance 2HD 13 H 39 BOUNDED     1.5     5.5   1     VC 0.495271268888828 
+AmbiguousNMRDistance H 39 HG 48 BOUNDED     1.5     5.5   1   VC 0.06765337037763297 
+AmbiguousNMRDistance H 39 1HB 64 BOUNDED     1.5     5.5   1     VC 0.437075360733539 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.28142 3.04138   automatic NOE Peak 591 
+AmbiguousNMRDistance H 43 H 57 BOUNDED     1.5     5.5   1   VC 0.02194045406482275 
+AmbiguousNMRDistance H 57 H 59 BOUNDED     1.5     5.5   1    VC 0.6942151593725902 
+AmbiguousNMRDistance H 57 H 60 BOUNDED     1.5     5.5   1    VC 0.2838443865625873 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.13976 3.04138   automatic NOE Peak 631 
+AmbiguousNMRDistance 2HB 15 H 17 BOUNDED     1.5     5.5   1    VC 0.5921185450746921 
+AmbiguousNMRDistance H 17 QB 19 BOUNDED     1.5     5.5   1    VC 0.3161465960860018 
+AmbiguousNMRDistance 2HB 15 H 24 BOUNDED     1.5     5.5   1   VC 0.06326344340282307 
+AmbiguousNMRDistance QB 19 H 24 BOUNDED     1.5     5.5   1   VC 0.02847141543648314 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.42559 3.04138   automatic NOE Peak 641 
+AmbiguousNMRDistance QD2 15 H 17 BOUNDED     1.5     5.5   1   VC 0.05910028029815203 
+AmbiguousNMRDistance QD2 15 H 24 BOUNDED     1.5     5.5   1     VC 0.932992530746675 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.21522 3.04138   automatic NOE Peak 701 
+AmbiguousNMRDistance 1HB 40 H 44 BOUNDED     1.5     5.5   1    VC 0.4455288620898769 
+AmbiguousNMRDistance 2HG 40 H 44 BOUNDED     1.5     5.5   1    VC 0.3196298106555372 
+AmbiguousNMRDistance HB 41 H 44 BOUNDED     1.5     5.5   1    VC 0.2348413272545859 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.56383 3.04138   automatic NOE Peak 803 
+AmbiguousNMRDistance 2HB 16 H 19 BOUNDED     1.5     5.5   1    VC 0.2016656182683808 
+AmbiguousNMRDistance QG 17 H 19 BOUNDED     1.5     5.5   1    VC 0.7983343817316191 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.36534 3.04138   automatic NOE Peak 805 
+AmbiguousNMRDistance H 19 2HB 23 BOUNDED     1.5     5.5   1    VC 0.2305656228304405 
+AmbiguousNMRDistance H 19 2HB 68 BOUNDED     1.5     5.5   1    VC 0.1637050598689918 
+AmbiguousNMRDistance H 19 QB 69 BOUNDED     1.5     5.5   1    VC 0.1181499531262165 
+AmbiguousNMRDistance H 19 QB 71 BOUNDED     1.5     5.5   1    VC 0.1207138168551374 
+AmbiguousNMRDistance H 19 2HB 72 BOUNDED     1.5     5.5   1    VC 0.2177918204778248 
+AmbiguousNMRDistance H 19 2HB 73 BOUNDED     1.5     5.5   1    VC 0.1490737268413889 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.39682 3.04138   automatic NOE Peak 813 
+AmbiguousNMRDistance 1HB 16 H 19 BOUNDED     1.5     5.5   1    VC 0.2645316347287633 
+AmbiguousNMRDistance 1HB 17 H 19 BOUNDED     1.5     5.5   1    VC 0.6780253828923656 
+AmbiguousNMRDistance H 19 QB 67 BOUNDED     1.5     5.5   1   VC 0.05744298237887119 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.66316 3.04138   automatic NOE Peak 841 
+AmbiguousNMRDistance H 41 2HB 44 BOUNDED     1.5     5.5   1    VC 0.9788940895931334 
+AmbiguousNMRDistance H 41 1HB 59 BOUNDED     1.5     5.5   1   VC 0.02110591040686654 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.13034 3.04138   automatic NOE Peak 847 
+AmbiguousNMRDistance H 41 H 44 BOUNDED     1.5     5.5   1    VC 0.8115866618074628 
+AmbiguousNMRDistance H 41 H 50 BOUNDED     1.5     5.5   1    VC 0.1884133381925374 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.92434 3.04138   automatic NOE Peak 863 
+AmbiguousNMRDistance QG1 5 H 25 BOUNDED     1.5     5.5   1    VC 0.0131946674826815 
+AmbiguousNMRDistance QD2 22 H 25 BOUNDED     1.5     5.5   1    VC 0.2644971747293691 
+AmbiguousNMRDistance H 25 QD1 37 BOUNDED     1.5     5.5   1    VC 0.3039070290438678 
+AmbiguousNMRDistance H 25 QG1 41 BOUNDED     1.5     5.5   1    VC 0.0152874993875035 
+AmbiguousNMRDistance H 25 QG1 51 BOUNDED     1.5     5.5   1    VC 0.2661381870700253 
+AmbiguousNMRDistance H 25 QD1 52 BOUNDED     1.5     5.5   1   VC 0.03332886451734542 
+AmbiguousNMRDistance H 25 QD2 66 BOUNDED     1.5     5.5   1    VC 0.1036465777692073 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5  6.1833 3.04138   automatic NOE Peak 865 
+AmbiguousNMRDistance QG1 46 H 60 BOUNDED     1.5     5.5   1   VC 0.04446528211244612 
+AmbiguousNMRDistance QG2 58 H 60 BOUNDED     1.5     5.5   1    VC 0.9555347178875538 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.08831 3.04138   automatic NOE Peak 933 
+AmbiguousNMRDistance 1HG 4 H 15 BOUNDED     1.5     5.5   1    VC 0.8368984960202548 
+AmbiguousNMRDistance QB 11 H 15 BOUNDED     1.5     5.5   1   VC 0.08559438587673382 
+AmbiguousNMRDistance H 15 HB 60 BOUNDED     1.5     5.5   1   VC 0.07750711810301131 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.79593 3.04138   automatic NOE Peak 967 
+AmbiguousNMRDistance HA 57 H 59 BOUNDED     1.5     5.5   1    VC 0.9570736265575081 
+AmbiguousNMRDistance H 59 HA 62 BOUNDED     1.5     5.5   1   VC 0.04292637344249188 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.69091 3.04138  automatic NOE Peak 1019 
+AmbiguousNMRDistance HA 5 H 58 BOUNDED     1.5     5.5   1    VC 0.3980598839512977 
+AmbiguousNMRDistance HA 41 H 58 BOUNDED     1.5     5.5   1    VC 0.6019401160487022 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.99059 3.04138  automatic NOE Peak 1041 
+AmbiguousNMRDistance H 42 H 44 BOUNDED     1.5     5.5   1     VC 0.952535898097896 
+AmbiguousNMRDistance H 42 H 50 BOUNDED     1.5     5.5   1     VC 0.047464101902104 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.41436 3.04138  automatic NOE Peak 1057 
+AmbiguousNMRDistance HB 20 H 51 BOUNDED     1.5     5.5   1    VC 0.7239769005725987 
+AmbiguousNMRDistance HA 30 H 51 BOUNDED     1.5     5.5   1    VC 0.2760230994274012 
+End_AmbiguousNMRConstraint

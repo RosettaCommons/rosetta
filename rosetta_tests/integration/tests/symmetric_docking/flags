@@ -1,0 +1,11 @@
+-in:file:s input/test_in.pdb
+-in:file:native input/native_test_in.pdb
+-symmetry:symmetry_definition input/sym_def_dimer.dat
+-packing:ex1
+-packing:ex2aro
+-out:nstruct 1
+-out:file:fullatom
+-symmetry:initialize_rigid_body_dofs
+-symmetry:symmetric_rmsd
+-ignore_unrecognized_res
+

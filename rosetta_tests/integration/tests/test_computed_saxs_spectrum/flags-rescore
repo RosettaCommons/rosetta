@@ -1,0 +1,9 @@
+-in:file:s 			1a62A-ideal.pdb  
+-score:saxs:ref_spectrum 	1a62A.saxs 
+-out:level 			301 
+-in:file:residue_type_set 	centroid 
+-score:weights 			score3
+-mute 				core.conformation.Conformation 
+-mute 				core.io.silent
+-mute				core.io.pdb
+

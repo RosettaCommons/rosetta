@@ -1,0 +1,13 @@
+Finished.+in [0-9]+ seconds.
+time
+Time
+seconds
+library took .+ seconds to load
+core.init: command
+protocols.jd2.JobDistributor: .+ reported success in [0-9]+ seconds
+protocols.jd2.JobDistributor: [0-9]+ jobs considered, [0-9]+ jobs attempted in [0-9]+ seconds
+core.init: 'RNG device' seed mode, using
+TIMING
+core.init.random: RandomGenerator:init: Normal mode, seed=
+version
+Warning: Unable to locate database file Dunbrack08.lib.bin

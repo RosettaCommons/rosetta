@@ -1,0 +1,21 @@
+-ignore_unrecognized_res
+-overwrite
+-correct
+-in
+ -file
+  -fullatom
+  -silent_struct_type binary
+  -silent ../../tests/cluster/t288_.score.50.out
+  -tags S_56 S_73 S_84 S_93 S_107
+-out
+ -nooutput
+-out:file:rotamer_recovery rotamer_recovery.results
+-rotamer_recovery:comparer RRComparerAutomorphicRMSD
+-rotamer_recovery:reporter RRReporterHuman
+-run
+ -constant_seed
+-nodelay
+-mute protocols.jobdist
+-mute core.io
+-mute core.conformation
+-mute core.pack

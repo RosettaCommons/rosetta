@@ -1,0 +1,12 @@
+-in:file:residue_type_set		fa_standard
+-score:weights				score13
+#-saxs:show_pddf
+-in:file:native			1igdA-idealized.pdb
+-in:file:s				1igdA-idealized.pdb
+-out:file:silent			out
+-score:saxs:ref_pddf			1igdA-fa-hist.pddf
+-mute 	core.chemical
+
+
+
+

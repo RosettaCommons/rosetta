@@ -1,0 +1,16 @@
+-loops:input_pdb input/4fxn.start.pdb
+-loops:loop_file input/4fxn.loop
+-loops:remodel perturb_kic
+-loops:refine refine_kic
+-in:file:fullatom
+-in:file:native input/4fxn.start.pdb
+-out:file:fullatom
+-out:overwrite
+-out:prefix 4fxn
+-out:path ./
+-ex1
+-ex2
+-nstruct 1
+-mute core.util.prof ## don't show timing info
+-mute core.io.database ## don't show database info
+-run:test_cycles ## to make integration test fast

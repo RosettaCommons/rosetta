@@ -1,0 +1,13 @@
+-native 2jsvX.pdb 
+-in:file:checkpoint 2jsvX.checkpoint 
+-frags:scoring:config psi_L1.cfg 
+-in:file:vall vall.dat.apr24.combo.test10E5 
+-in:file:psipred_ss2 2jsvX.psipred.ss2
+-frags:describe_fragments frags.fsc
+-frags:frag_sizes 	9 3
+-frags:n_candidates	200
+-frags:n_frags		50
+-out:file:frag_prefix	frags
+-mute			core.util.prof
+-mute			core.chemical
+-mute			protocols.jumping

@@ -1,0 +1,29 @@
+-s inputs/1q91_CHGW_d1_mod.pdb
+-extra_res_fa inputs/D2N_aX.params
+-enzdes
+ -detect_design_interface
+ -cut1 6.0
+ -cut2 8.0
+ -cut3 10.0
+ -cut4 12.0
+ -cst_opt
+ -cst_design
+ -cst_min
+ -cstfile inputs/Est_CHba_d2n.cst
+ -bb_min
+ -chi_min
+ -lig_packer_weight 1.8
+ -final_repack_without_ligand
+ -additional_packing_ligand_rb_confs 4 
+ #-ex_catalytic_rot 5
+ #-design_min_cycles 2
+ -include_catres_in_interface_detection
+-packing:soft_rep_design
+-out:file:o enz_score.out
+-nblist_autoupdate
+-unboundrot inputs/1q91_CHGW_d1_mod.pdb
+-mute core.io.database core.scoring.NeighborList
+
+
+
+

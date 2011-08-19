@@ -1,0 +1,9 @@
+-s input/1brs.pdb
+-dock_pert 3 8
+-spin
+-docking:low_res_protocol_only
+-mute core.util.prof ## dont show timing info
+-out:overwrite
+-out:file:scorefile 1brs.sc
+-mute core.io.database
+-no_filters

@@ -1,0 +1,12 @@
+-s input/1ER8_rb1_tor10_5.pdb
+-native input/1ER8.pdb
+#-rbMCM # replaced by pep_refine
+#-torsionsMCM # replaced by pep_refine
+-pep_refine
+-rep_ramp_cycles 2 # remove from production runs
+-nstruct 1 # use 100-1000 in production runs
+-ex1
+-ex2aro
+-mute core.io.database
+-mute core.util.prof
+-mute protocols.jd2.JobDistributor

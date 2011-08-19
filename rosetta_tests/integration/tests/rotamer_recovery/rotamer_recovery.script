@@ -1,0 +1,10 @@
+<dock_design>
+	<SCOREFXNS>
+	</SCOREFXNS>		
+	<MOVERS>
+		<RotamerRecoveryMover name=rotamer_recovery comparer="RRComparerRotBins"  reporter="RRReporterHuman" />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover_name=rotamer_recovery />
+	</PROTOCOLS>
+</dock_design>

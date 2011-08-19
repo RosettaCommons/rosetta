@@ -1,0 +1,23 @@
+-constant_seed
+-patch_selectors SPECIAL_ROT
+-output_residue_energies
+-run_motifs
+-expand_motifs
+-ndruns 1
+-dtest 2.0
+-z1 0.97
+-r1 1.0
+-num_repacks 2
+-special_rotweight -10.0
+-dna::design::z_cutoff 6.0
+-z2 0.97
+-r2 1.0
+-motifs::rotlevel 2
+-motifs::BPData anii.-9.motifs
+-motifs::clear_bprots
+-dna::design::dna_defs X.-9.GUA
+-s anii.pdb
+-nstruct 1
+-dna::specificity::score_function phil_dna_nodnabp_hackelecpink.wts
+-ignore_unrecognized_res
+-extrachi_cutoff 0

@@ -1,0 +1,667 @@
+AmbiguousNMRConstraint BOUNDED     1.5 5.30566 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  2  CB  4 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.35452 0.760345 CB mapped automatic NOE: 
+AtomPair  HA  2  CB  63 BOUNDED     1.5     5.5   1    VC 0.5722247532007032 
+AtomPair  HA  2  CB  63 BOUNDED     1.5     5.5   1    VC 0.4277752467992968 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.78389 0.760345 CB mapped automatic NOE: 
+AtomPair  H   3  H   5 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.72172 3.80173 CB mapped automatic NOE: 
+AtomPair  CB  4  CB  6 BOUNDED     1.5     5.5   1    VC 0.1618521764300086 
+AtomPair  CB  4  CB  6 BOUNDED     1.5     5.5   1    VC 0.1132590945368939 
+AtomPair  CB  4  CB  6 BOUNDED     1.5     5.5   1    VC 0.4238497486035726 
+AtomPair  CB  4  CB  6 BOUNDED     1.5     5.5   1     VC 0.301038980429525 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.82863 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  4  CB  14 BOUNDED     1.5     5.5   1    VC 0.5362463850700082 
+AtomPair  CB  4  CB  14 BOUNDED     1.5     5.5   1    VC 0.4637536149299918 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5  7.8962 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  4  CB  14 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.04228 0.760345 CB mapped automatic NOE: 
+AtomPair  HA  4  HA  26 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.80481 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  4  H   55 BOUNDED     1.5     5.5   1    VC 0.5148679605448474 
+AtomPair  CB  4  H   55 BOUNDED     1.5     5.5   1    VC 0.4851320394551525 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.67302 0.760345 CB mapped automatic NOE: 
+AtomPair  H   4  H   55 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 9.17013 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  6  H   11 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5  6.2724 3.80173 CB mapped automatic NOE: 
+AtomPair  CB  6  CB  72 BOUNDED     1.5     5.5   1    VC 0.5264238891954885 
+AtomPair  CB  6  CB  72 BOUNDED     1.5     5.5   1    VC 0.4735761108045116 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.60616 3.80173 CB mapped automatic NOE: 
+AtomPair  CB  6  CB  73 BOUNDED     1.5     5.5   1    VC 0.4025191758798478 
+AtomPair  CB  6  CB  73 BOUNDED     1.5     5.5   1   VC 0.06233559313024033 
+AtomPair  CB  6  CB  73 BOUNDED     1.5     5.5   1    VC 0.4580200109507724 
+AtomPair  CB  6  CB  73 BOUNDED     1.5     5.5   1   VC 0.07712522003913945 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.88142 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  7  H   9 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.44261 0.760345 CB mapped automatic NOE: 
+AtomPair  HA  8  H   10 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.45918 0.760345 CB mapped automatic NOE: 
+AtomPair  HA  8  CB  57 BOUNDED     1.5     5.5   1    VC 0.5273165233795691 
+AtomPair  CB  8  CB  57 BOUNDED     1.5     5.5   1    VC 0.4726834766204309 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.93067 0.760345 CB mapped automatic NOE: 
+AtomPair  HA  8  H   58 BOUNDED     1.5     5.5   1    VC 0.4726834766204353 
+AtomPair  CB  8  H   58 BOUNDED     1.5     5.5   1    VC 0.5273165233795648 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.43534 0.760345 CB mapped automatic NOE: 
+AtomPair  HA  8  H   60 BOUNDED     1.5     5.5   1    VC 0.4198769908113316 
+AtomPair  CB  8  H   60 BOUNDED     1.5     5.5   1    VC 0.5801230091886684 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.70351 2.28104 CB mapped automatic NOE: 
+AtomPair  CB  9  H   54 BOUNDED     1.5     5.5   1    VC 0.3791878017390236 
+AtomPair  CB  9  H   54 BOUNDED     1.5     5.5   1    VC 0.6208121982609766 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.49407 0.760345 CB mapped automatic NOE: 
+AtomPair  HA  12  HA  60 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 10.8441 2.28104 CB mapped automatic NOE: 
+AtomPair  CB  13  H   15 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 8.36448 3.80173 CB mapped automatic NOE: 
+AtomPair  CB  13  CB  24 BOUNDED     1.5     5.5   1    VC 0.4561580606649303 
+AtomPair  CB  13  CB  24 BOUNDED     1.5     5.5   1    VC 0.5438419393350697 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5  5.7263 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  13  H   48 BOUNDED     1.5     5.5   1    VC 0.8528226448113628 
+AtomPair  CB  13  H   48 BOUNDED     1.5     5.5   1    VC 0.1471773551886373 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.99915 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  13  HA  48 BOUNDED     1.5     5.5   1     VC 0.953483696036816 
+AtomPair  CB  13  HA  48 BOUNDED     1.5     5.5   1   VC 0.03423460842706189 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 9.35393 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  14  CB  16 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 8.49691 3.80173 CB mapped automatic NOE: 
+AtomPair  CB  14  CB  16 BOUNDED     1.5     5.5   1    VC 0.7904079923357331 
+AtomPair  CB  14  CB  16 BOUNDED     1.5     5.5   1    VC 0.2095920076642669 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 10.4769 4.17418 CB mapped automatic NOE: 
+AtomPair  CB  15  CB  17 BOUNDED     1.5     5.5   1    VC 0.5081359709177439 
+AtomPair  CB  15  CB  17 BOUNDED     1.5     5.5   1    VC 0.4818400446187686 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.34018 2.46726 CB mapped automatic NOE: 
+AtomPair  CB  15  HA  17 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.52278 2.46726 CB mapped automatic NOE: 
+AtomPair  CB  15  HA  24 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.59171 2.46726 CB mapped automatic NOE: 
+AtomPair  CB  15  HA  24 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.60619 0.760345 CB mapped automatic NOE: 
+AtomPair  H   17  HA  19 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5  7.5978 0.760345 CB mapped automatic NOE: 
+AtomPair  H   17  H   20 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 3.71018 0.760345 CB mapped automatic NOE: 
+AtomPair  HA  20  HA  51 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5  7.1824 0.760345 CB mapped automatic NOE: 
+AtomPair  H   23  HA  45 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.01313 0.760345 CB mapped automatic NOE: 
+AtomPair  HA  24  H   27 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.42864 2.28104 CB mapped automatic NOE: 
+AtomPair  HA  24  CB  27 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 8.31951 2.74889 CB mapped automatic NOE: 
+AtomPair  CB  24  CB  58 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 8.63969 2.74889 CB mapped automatic NOE: 
+AtomPair  CB  24  CB  58 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 9.31065 2.28104 CB mapped automatic NOE: 
+AtomPair  H   25  CB  27 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.63482 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  28  H   48 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 8.71421 2.28104 CB mapped automatic NOE: 
+AtomPair  HA  28  CB  64 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 9.72478 2.74889 CB mapped automatic NOE: 
+AtomPair  H   38  CB  61 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.63591 0.760345 CB mapped automatic NOE: 
+AtomPair  H   38  H   61 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 8.95138 2.74889 CB mapped automatic NOE: 
+AtomPair  CB  39  CB  41 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.42702 0.760345 CB mapped automatic NOE: 
+AtomPair  H   39  H   61 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.81264 0.760345 CB mapped automatic NOE: 
+AtomPair  HA  40  H   44 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.15665 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  40  HA  45 BOUNDED     1.5     5.5   1    VC 0.7732332947032629 
+AtomPair  CB  40  HA  45 BOUNDED     1.5     5.5   1    VC 0.2267667052967372 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.45495 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  40  HA  45 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 8.06853 2.46726 CB mapped automatic NOE: 
+AtomPair  H   40  CB  60 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.72529 0.760345 CB mapped automatic NOE: 
+AtomPair  H   41  CB  44 BOUNDED     1.5     5.5   1     VC 0.867056536435925 
+AtomPair  H   41  CB  44 BOUNDED     1.5     5.5   1     VC 0.132943463564075 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.94588 0.760345 CB mapped automatic NOE: 
+AtomPair  H   41  CB  44 BOUNDED     1.5     5.5   1    VC 0.8965647475717989 
+AtomPair  H   41  CB  44 BOUNDED     1.5     5.5   1     VC 0.103435252428201 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.95046 0.760345 CB mapped automatic NOE: 
+AtomPair  H   41  HA  44 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 10.2748 2.46726 CB mapped automatic NOE: 
+AtomPair  CB  41  H   44 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.60532 0.760345 CB mapped automatic NOE: 
+AtomPair  H   41  HA  45 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 9.15731 2.28104 CB mapped automatic NOE: 
+AtomPair  CB  42  CB  44 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.62232 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  42  H   44 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.88544 0.760345 CB mapped automatic NOE: 
+AtomPair  H   42  CB  57 BOUNDED     1.5     5.5   1    VC 0.5350751770243062 
+AtomPair  H   42  CB  57 BOUNDED     1.5     5.5   1    VC 0.4649248229756939 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.63057 0.760345 CB mapped automatic NOE: 
+AtomPair  H   42  HA  58 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.81671 0.760345 CB mapped automatic NOE: 
+AtomPair  HA  42  HA  58 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 9.28187 2.74889 CB mapped automatic NOE: 
+AtomPair  CB  44  CB  46 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.54288 2.46726 CB mapped automatic NOE: 
+AtomPair  H   44  CB  46 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 15.7467 4.73744 CB mapped automatic NOE: 
+AtomPair  CB  46  CB  50 BOUNDED     1.5     5.5   1    VC 0.6265321613599282 
+AtomPair  CB  46  CB  50 BOUNDED     1.5     5.5   1    VC 0.3734678386400719 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 8.17639 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  47  CB  49 BOUNDED     1.5     5.5   1                   VC 0.5 
+AtomPair  CB  47  CB  49 BOUNDED     1.5     5.5   1                   VC 0.5 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 9.65535 2.46726 CB mapped automatic NOE: 
+AtomPair  CB  48  CB  50 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5   4.429 0.760345 CB mapped automatic NOE: 
+AtomPair  H   49  H   68 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.72786 2.46726 CB mapped automatic NOE: 
+AtomPair  CB  56  CB  58 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.95312 2.46726 CB mapped automatic NOE: 
+AtomPair  CB  56  CB  58 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.68528 2.91093 CB mapped automatic NOE: 
+AtomPair  CB  58  CB  60 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.85159 2.46726 CB mapped automatic NOE: 
+AtomPair  CB  58  H   60 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.31658 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  62  H   64 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.58791 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  63  H   65 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 10.3375 2.28104 CB mapped automatic NOE: 
+AtomPair  HA  65  CB  67 BOUNDED     1.5     5.5   1                     VC 1 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.77412 12.6916 CB mapped automatic NOE: 
+AtomPair  CB  5  CB  25 BOUNDED     1.5     5.5   1   VC 0.01453307749507096 
+AtomPair  CB  22  CB  25 BOUNDED     1.5     5.5   1    VC 0.2077620707817757 
+AtomPair  CB  25  CB  37 BOUNDED     1.5     5.5   1    VC 0.3455475594770909 
+AtomPair  CB  25  CB  41 BOUNDED     1.5     5.5   1    VC 0.1186567703213257 
+AtomPair  CB  25  CB  51 BOUNDED     1.5     5.5   1    VC 0.2464018527225105 
+AtomPair  CB  25  CB  52 BOUNDED     1.5     5.5   1   VC 0.06709866920222619 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.85946 4.17418 CB mapped automatic NOE: 
+AtomPair  HA  11  CB  37 BOUNDED     1.5     5.5   1     VC 0.681769621407977 
+AtomPair  HA  12  CB  37 BOUNDED     1.5     5.5   1     VC 0.318230378592023 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 8.18141 4.17418 CB mapped automatic NOE: 
+AtomPair  CB  3  HA  7 BOUNDED     1.5     5.5   1   VC 0.09862692126046049 
+AtomPair  CB  3  HA  14 BOUNDED     1.5     5.5   1    VC 0.9013730787395394 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.41701 5.8811 CB mapped automatic NOE: 
+AtomPair  CB  24  CB  58 BOUNDED     1.5     5.5   1    VC 0.6735384689337539 
+AtomPair  CB  42  CB  58 BOUNDED     1.5     5.5   1   VC 0.08407453310894969 
+AtomPair  CB  56  CB  58 BOUNDED     1.5     5.5   1    VC 0.2423869979572965 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.23564 4.17418 CB mapped automatic NOE: 
+AtomPair  HA  24  CB  58 BOUNDED     1.5     5.5   1    VC 0.7908531162264638 
+AtomPair  HA  42  CB  58 BOUNDED     1.5     5.5   1    VC 0.2091468837735362 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.01391 4.17418 CB mapped automatic NOE: 
+AtomPair  CB  16  CB  58 BOUNDED     1.5     5.5   1   VC 0.01581758219193662 
+AtomPair  CB  24  CB  58 BOUNDED     1.5     5.5   1    VC 0.9841824178080634 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.31729 4.17418 CB mapped automatic NOE: 
+AtomPair  HA  57  CB  60 BOUNDED     1.5     5.5   1    VC 0.2732329756627464 
+AtomPair  CB  60  HA  62 BOUNDED     1.5     5.5   1    VC 0.7267670243372536 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.16336 5.8811 CB mapped automatic NOE: 
+AtomPair  HA  25  CB  60 BOUNDED     1.5     5.5   1    VC 0.1620619686330678 
+AtomPair  CB  60  CB  62 BOUNDED     1.5     5.5   1    VC 0.6856821125698012 
+AtomPair  CB  60  CB  63 BOUNDED     1.5     5.5   1     VC 0.152255918797131 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.96255 4.89947 CB mapped automatic NOE: 
+AtomPair  CB  39  CB  41 BOUNDED     1.5     5.5   1    VC 0.9844319584073793 
+AtomPair  CB  41  CB  60 BOUNDED     1.5     5.5   1    VC 0.0155680415926208 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 8.38254 4.45581 CB mapped automatic NOE: 
+AtomPair  CB  15  CB  17 BOUNDED     1.5     5.5   1     VC 0.463511417425691 
+AtomPair  CB  15  CB  24 BOUNDED     1.5     5.5   1     VC 0.536488582574309 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.35366 2.28104 CB mapped automatic NOE: 
+AtomPair  CB  40  CB  44 BOUNDED     1.5     5.5   1    VC 0.1454310049264756 
+AtomPair  CB  40  CB  59 BOUNDED     1.5     5.5   1     VC 0.263992434855713 
+AtomPair  CB  9  CB  40 BOUNDED     1.5     5.5   1   VC 0.01680361697547676 
+AtomPair  CB  40  CB  44 BOUNDED     1.5     5.5   1    VC 0.4214319392563541 
+AtomPair  CB  40  CB  59 BOUNDED     1.5     5.5   1    VC 0.1481041696071858 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.94949 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  13  CB  15 BOUNDED     1.5     5.5   1    VC 0.3721000773006505 
+AtomPair  CB  13  CB  48 BOUNDED     1.5     5.5   1    VC 0.2920239576953325 
+AtomPair  CB  13  CB  15 BOUNDED     1.5     5.5   1    VC 0.2855775950905742 
+AtomPair  CB  13  CB  48 BOUNDED     1.5     5.5   1   VC 0.05029836991344282 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.92109 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  13  CB  24 BOUNDED     1.5     5.5   1     VC 0.436160449254029 
+AtomPair  CB  13  CB  42 BOUNDED     1.5     5.5   1    VC 0.1119165977317623 
+AtomPair  CB  13  CB  24 BOUNDED     1.5     5.5   1    VC 0.3587534360070875 
+AtomPair  CB  13  CB  42 BOUNDED     1.5     5.5   1   VC 0.09316951700712109 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5  8.5903 7.58802 CB mapped automatic NOE: 
+AtomPair  CB  15  CB  35 BOUNDED     1.5     5.5   1   VC 0.07040295255909532 
+AtomPair  CB  32  CB  35 BOUNDED     1.5     5.5   1    VC 0.1265063685880087 
+AtomPair  CB  32  CB  35 BOUNDED     1.5     5.5   1   VC 0.04235734046612307 
+AtomPair  CB  35  CB  37 BOUNDED     1.5     5.5   1    VC 0.7607333383867729 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.55964 0.760345 CB mapped automatic NOE: 
+AtomPair  H   43  CB  57 BOUNDED     1.5     5.5   1     VC 0.161092467712727 
+AtomPair  CB  57  H   59 BOUNDED     1.5     5.5   1    VC 0.2541136424301919 
+AtomPair  CB  57  H   60 BOUNDED     1.5     5.5   1    VC 0.1392810804905377 
+AtomPair  H   43  CB  57 BOUNDED     1.5     5.5   1   VC 0.02586771838276214 
+AtomPair  CB  57  H   59 BOUNDED     1.5     5.5   1    VC 0.2708998854289228 
+AtomPair  CB  57  H   60 BOUNDED     1.5     5.5   1    VC 0.1487452055548583 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.85528 0.760345 CB mapped automatic NOE: 
+AtomPair  H   2  CB  4 BOUNDED     1.5     5.5   1    VC 0.6952966693475598 
+AtomPair  CB  4  H   15 BOUNDED     1.5     5.5   1    VC 0.3047033306524401 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.79921 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  4  HA  14 BOUNDED     1.5     5.5   1   VC 0.02890355014509732 
+AtomPair  CB  4  HA  7 BOUNDED     1.5     5.5   1    VC 0.0525204563035052 
+AtomPair  CB  4  HA  14 BOUNDED     1.5     5.5   1      VC 0.90951331609909 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.18452 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  4  HA  7 BOUNDED     1.5     5.5   1   VC 0.05827640768375225 
+AtomPair  CB  4  HA  14 BOUNDED     1.5     5.5   1    VC 0.1858606444538744 
+AtomPair  CB  4  HA  7 BOUNDED     1.5     5.5   1   VC 0.04126494106906607 
+AtomPair  CB  4  HA  14 BOUNDED     1.5     5.5   1    VC 0.7145980067933073 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.70012 2.28104 CB mapped automatic NOE: 
+AtomPair  CB  13  CB  46 BOUNDED     1.5     5.5   1    VC 0.1025189292516508 
+AtomPair  CB  15  CB  46 BOUNDED     1.5     5.5   1   VC 0.07984182238082778 
+AtomPair  CB  40  CB  46 BOUNDED     1.5     5.5   1    VC 0.3363199676081425 
+AtomPair  CB  40  CB  46 BOUNDED     1.5     5.5   1     VC 0.172853276020397 
+AtomPair  CB  41  CB  46 BOUNDED     1.5     5.5   1    VC 0.3084660047389818 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.67158 3.80173 CB mapped automatic NOE: 
+AtomPair  CB  14  CB  46 BOUNDED     1.5     5.5   1    VC 0.2395372740419145 
+AtomPair  CB  46  CB  50 BOUNDED     1.5     5.5   1    VC 0.3267555332697432 
+AtomPair  CB  46  CB  71 BOUNDED     1.5     5.5   1   VC 0.04019427559293529 
+AtomPair  CB  46  CB  72 BOUNDED     1.5     5.5   1   VC 0.03872808529564611 
+AtomPair  CB  46  CB  72 BOUNDED     1.5     5.5   1    VC 0.1651159052489465 
+AtomPair  CB  46  CB  73 BOUNDED     1.5     5.5   1    VC 0.1896689265508145 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.39621 13.272 CB mapped automatic NOE: 
+AtomPair  CB  41  CB  59 BOUNDED     1.5     5.5   1   VC 0.02818732467212634 
+AtomPair  CB  52  CB  59 BOUNDED     1.5     5.5   1   VC 0.01949590497780999 
+AtomPair  CB  59  CB  61 BOUNDED     1.5     5.5   1    VC 0.2376496645366588 
+AtomPair  CB  41  CB  59 BOUNDED     1.5     5.5   1     VC 0.072319559089754 
+AtomPair  CB  51  CB  59 BOUNDED     1.5     5.5   1   VC 0.01268726885316697 
+AtomPair  CB  52  CB  59 BOUNDED     1.5     5.5   1   VC 0.05002018703269152 
+AtomPair  CB  59  CB  61 BOUNDED     1.5     5.5   1    VC 0.5746950915752423 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.13125 11.0019 CB mapped automatic NOE: 
+AtomPair  CB  15  CB  34 BOUNDED     1.5     5.5   1   VC 0.08730736405327398 
+AtomPair  CB  32  CB  34 BOUNDED     1.5     5.5   1    VC 0.2375948815858527 
+AtomPair  CB  34  CB  37 BOUNDED     1.5     5.5   1    VC 0.2865580358749084 
+AtomPair  CB  34  CB  40 BOUNDED     1.5     5.5   1     VC 0.029440637784198 
+AtomPair  CB  15  CB  34 BOUNDED     1.5     5.5   1   VC 0.05889179595564539 
+AtomPair  CB  32  CB  34 BOUNDED     1.5     5.5   1    VC 0.1265385097316109 
+AtomPair  CB  34  CB  37 BOUNDED     1.5     5.5   1    VC 0.1619465446685202 
+AtomPair  CB  34  CB  40 BOUNDED     1.5     5.5   1   VC 0.01172223034599051 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.33002 4.17418 CB mapped automatic NOE: 
+AtomPair  CB  12  CB  28 BOUNDED     1.5     5.5   1    VC 0.1165198010310735 
+AtomPair  CB  12  CB  28 BOUNDED     1.5     5.5   1    VC 0.1341134689035853 
+AtomPair  CB  28  CB  48 BOUNDED     1.5     5.5   1     VC 0.749366730065341 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.41385 2.46726 CB mapped automatic NOE: 
+AtomPair  CB  20  CB  61 BOUNDED     1.5     5.5   1    VC 0.1017181731443172 
+AtomPair  CB  52  CB  61 BOUNDED     1.5     5.5   1    VC 0.8982818268556828 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.50711 0.760345 CB mapped automatic NOE: 
+AtomPair 2HA  38  CB  61 BOUNDED     1.5     5.5   1   VC 0.03985955454889175 
+AtomPair  HA  50  CB  61 BOUNDED     1.5     5.5   1   VC 0.07228026882579786 
+AtomPair  HA  52  CB  61 BOUNDED     1.5     5.5   1    VC 0.2862526823709813 
+AtomPair 2HA  38  CB  61 BOUNDED     1.5     5.5   1   VC 0.05930600854323059 
+AtomPair  HA  50  CB  61 BOUNDED     1.5     5.5   1    VC 0.5423014857110986 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 8.25609 9.88449 CB mapped automatic NOE: 
+AtomPair  CB  24  CB  61 BOUNDED     1.5     5.5   1   VC 0.03727364394328213 
+AtomPair  CB  50  CB  61 BOUNDED     1.5     5.5   1   VC 0.05049487394999542 
+AtomPair  CB  50  CB  61 BOUNDED     1.5     5.5   1   VC 0.06025052714694937 
+AtomPair  CB  24  CB  61 BOUNDED     1.5     5.5   1   VC 0.08812276725008894 
+AtomPair  CB  50  CB  61 BOUNDED     1.5     5.5   1    VC 0.3562438859325597 
+AtomPair  CB  50  CB  61 BOUNDED     1.5     5.5   1    VC 0.4076143017771245 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 8.34456 8.71453 CB mapped automatic NOE: 
+AmbiguousNMRDistance CB 3 QA 33 BOUNDED     1.5     5.5   1    VC 0.0462064439893738 
+AmbiguousNMRDistance CB 28 QA 33 BOUNDED     1.5     5.5   1    VC 0.5926944982939656 
+AmbiguousNMRDistance QA 33 CB 37 BOUNDED     1.5     5.5   1    VC 0.3132226988613901 
+AmbiguousNMRDistance QA 33 CB 51 BOUNDED     1.5     5.5   1   VC 0.04787635885527038 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 8.19102 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  13  HA  39 BOUNDED     1.5     5.5   1    VC 0.4225046348141864 
+AtomPair  HA  39  CB  64 BOUNDED     1.5     5.5   1    VC 0.5774953651858137 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.25145 5.32242 CB mapped automatic NOE: 
+AtomPair  HA  19  CB  23 BOUNDED     1.5     5.5   1    VC 0.2273152849507653 
+AtomPair  HA  19  CB  68 BOUNDED     1.5     5.5   1    VC 0.2211231719871574 
+AtomPair  HA  19  CB  69 BOUNDED     1.5     5.5   1   VC 0.05905403862507919 
+AtomPair  HA  19  CB  70 BOUNDED     1.5     5.5   1   VC 0.02789369374330267 
+AtomPair  HA  19  CB  71 BOUNDED     1.5     5.5   1   VC 0.06376803953260911 
+AtomPair  HA  19  CB  72 BOUNDED     1.5     5.5   1    VC 0.2828487124319278 
+AtomPair  HA  19  CB  73 BOUNDED     1.5     5.5   1    VC 0.1179970587291585 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.96909 0.760345 CB mapped automatic NOE: 
+AtomPair  HA  40  H   44 BOUNDED     1.5     5.5   1    VC 0.7774818370165716 
+AtomPair  HA  40  H   50 BOUNDED     1.5     5.5   1    VC 0.2225181629834284 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.31047 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  4  HA  14 BOUNDED     1.5     5.5   1    VC 0.9619494984639216 
+AtomPair  HA  14  CB  60 BOUNDED     1.5     5.5   1   VC 0.03805050153607833 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.41811 2.28104 CB mapped automatic NOE: 
+AtomPair  CB  21  HA  25 BOUNDED     1.5     5.5   1    VC 0.2240717303326505 
+AtomPair  CB  22  HA  25 BOUNDED     1.5     5.5   1    VC 0.2735352388753326 
+AtomPair  CB  22  HA  25 BOUNDED     1.5     5.5   1    VC 0.2602049185468627 
+AtomPair  HA  25  CB  28 BOUNDED     1.5     5.5   1    VC 0.2421881122451542 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.16475 2.28104 CB mapped automatic NOE: 
+AtomPair  CB  1  HA  6 BOUNDED     1.5     5.5   1   VC 0.09174208683266979 
+AtomPair  CB  4  HA  6 BOUNDED     1.5     5.5   1    VC 0.9082579131673303 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.13279 0.760345 CB mapped automatic NOE: 
+AtomPair  H   44  HA  48 BOUNDED     1.5     5.5   1    VC 0.3610152526521316 
+AtomPair  HA  48  H   50 BOUNDED     1.5     5.5   1    VC 0.6389847473478684 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.60499 5.8811 CB mapped automatic NOE: 
+AtomPair  CB  12  HA  20 BOUNDED     1.5     5.5   1    VC 0.1163941502149455 
+AtomPair  HA  20  CB  37 BOUNDED     1.5     5.5   1    VC 0.1256638913838294 
+AtomPair  HA  20  CB  51 BOUNDED     1.5     5.5   1    VC 0.1980427258416528 
+AtomPair  HA  20  CB  66 BOUNDED     1.5     5.5   1    VC 0.5598992325595722 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.83076 7.58802 CB mapped automatic NOE: 
+AtomPair  HA  20  CB  22 BOUNDED     1.5     5.5   1    VC 0.3675871715759098 
+AtomPair  HA  20  CB  37 BOUNDED     1.5     5.5   1   VC 0.07896369019904219 
+AtomPair  HA  20  CB  51 BOUNDED     1.5     5.5   1      VC 0.16949016023388 
+AtomPair  HA  20  CB  66 BOUNDED     1.5     5.5   1     VC 0.383958977991168 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.88966 0.760345 CB mapped automatic NOE: 
+AtomPair  HA  20  H   22 BOUNDED     1.5     5.5   1    VC 0.6291941176060717 
+AtomPair  HA  20  H   65 BOUNDED     1.5     5.5   1     VC 0.183360246991198 
+AtomPair  HA  20  H   66 BOUNDED     1.5     5.5   1    VC 0.1465324341267287 
+AtomPair  HA  20  H   67 BOUNDED     1.5     5.5   1   VC 0.04091320127600157 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.13467 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  4  HA  26 BOUNDED     1.5     5.5   1    VC 0.5578287293806428 
+AtomPair  HA  26  CB  57 BOUNDED     1.5     5.5   1    VC 0.1674509678136971 
+AtomPair  HA  26  CB  57 BOUNDED     1.5     5.5   1    VC 0.1373601514028302 
+AtomPair  HA  26  CB  57 BOUNDED     1.5     5.5   1    VC 0.1373601514028302 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.07784 0.760345 CB mapped automatic NOE: 
+AtomPair  HA  3  HA  17 BOUNDED     1.5     5.5   1                   VC 0.5 
+AtomPair  HA  3  CB  54 BOUNDED     1.5     5.5   1                   VC 0.5 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.65756 2.28104 CB mapped automatic NOE: 
+AtomPair  CB  3  HA  54 BOUNDED     1.5     5.5   1    VC 0.1548534569513784 
+AtomPair  CB  9  HA  54 BOUNDED     1.5     5.5   1    VC 0.1617786867641833 
+AtomPair  CB  9  HA  54 BOUNDED     1.5     5.5   1    VC 0.6833678562844383 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.59289 7.58802 CB mapped automatic NOE: 
+AtomPair  CB  5  HA  24 BOUNDED     1.5     5.5   1    VC 0.1414580161922308 
+AtomPair  CB  15  HA  24 BOUNDED     1.5     5.5   1    VC 0.3327036734045893 
+AtomPair  CB  22  HA  24 BOUNDED     1.5     5.5   1    VC 0.4616629717830186 
+AtomPair  HA  24  CB  45 BOUNDED     1.5     5.5   1   VC 0.06417533862016141 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.68155 0.760345 CB mapped automatic NOE: 
+AtomPair  HA  5  HA  58 BOUNDED     1.5     5.5   1    VC 0.1926631465213401 
+AtomPair  HA  41  HA  58 BOUNDED     1.5     5.5   1    VC 0.8073368534786599 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.79646 14.4157 CB mapped automatic NOE: 
+AtomPair  CB  3  CB  54 BOUNDED     1.5     5.5   1   VC 0.06614320542058656 
+AtomPair  CB  3  CB  54 BOUNDED     1.5     5.5   1   VC 0.07129471281155672 
+AtomPair  CB  5  CB  54 BOUNDED     1.5     5.5   1    VC 0.1561029454797647 
+AtomPair  CB  52  CB  54 BOUNDED     1.5     5.5   1    VC 0.1851824821118973 
+AtomPair  CB  54  CB  66 BOUNDED     1.5     5.5   1    VC 0.1932946990273646 
+AtomPair  CB  5  CB  54 BOUNDED     1.5     5.5   1   VC 0.02577617098125997 
+AtomPair  CB  52  CB  54 BOUNDED     1.5     5.5   1    VC 0.1484660523880678 
+AtomPair  CB  54  CB  66 BOUNDED     1.5     5.5   1    VC 0.1537397317795024 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5  5.8443 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  20  HA  51 BOUNDED     1.5     5.5   1    VC 0.7119791896904093 
+AtomPair  HA  30  HA  51 BOUNDED     1.5     5.5   1    VC 0.2763284091437928 
+AtomPair  HA  41  HA  51 BOUNDED     1.5     5.5   1   VC 0.01169240116579792 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.93914 4.17418 CB mapped automatic NOE: 
+AtomPair  CB  49  CB  51 BOUNDED     1.5     5.5   1    VC 0.8896637916044473 
+AtomPair  CB  49  CB  52 BOUNDED     1.5     5.5   1    VC 0.1103362083955527 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.70125 11.0019 CB mapped automatic NOE: 
+AtomPair  CB  3  CB  63 BOUNDED     1.5     5.5   1    VC 0.0452745013530849 
+AtomPair  CB  3  CB  63 BOUNDED     1.5     5.5   1    VC 0.3168617524195725 
+AtomPair  CB  37  CB  63 BOUNDED     1.5     5.5   1   VC 0.07621147677585552 
+AtomPair  CB  63  CB  66 BOUNDED     1.5     5.5   1   VC 0.08370193246383709 
+AtomPair  CB  3  CB  63 BOUNDED     1.5     5.5   1   VC 0.07895288610942597 
+AtomPair  CB  3  CB  63 BOUNDED     1.5     5.5   1    VC 0.3989974508782241 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.37652 9.29493 CB mapped automatic NOE: 
+AtomPair  CB  32  CB  62 BOUNDED     1.5     5.5   1    VC 0.2203076181960562 
+AtomPair  CB  32  CB  62 BOUNDED     1.5     5.5   1    VC 0.2023300594572084 
+AtomPair  CB  51  CB  62 BOUNDED     1.5     5.5   1   VC 0.08158059210734414 
+AtomPair  CB  32  CB  62 BOUNDED     1.5     5.5   1    VC 0.2559290663856702 
+AtomPair  CB  32  CB  62 BOUNDED     1.5     5.5   1     VC 0.239852663853721 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 16.3487 10.1901 CB mapped automatic NOE: 
+AtomPair  CB  13  CB  24 BOUNDED     1.5     5.5   1    VC 0.1429243856559098 
+AtomPair  CB  15  CB  24 BOUNDED     1.5     5.5   1   VC 0.05108217212177714 
+AtomPair  CB  24  CB  40 BOUNDED     1.5     5.5   1    VC 0.2992430898716794 
+AtomPair  CB  24  CB  40 BOUNDED     1.5     5.5   1    VC 0.1651061688233637 
+AtomPair  CB  24  CB  41 BOUNDED     1.5     5.5   1    VC 0.2724017389473192 
+AtomPair  CB  24  CB  61 BOUNDED     1.5     5.5   1   VC 0.06924244457995099 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 16.1024 14.4916 CB mapped automatic NOE: 
+AtomPair  CB  5  CB  24 BOUNDED     1.5     5.5   1   VC 0.04123752236842712 
+AtomPair  CB  12  CB  24 BOUNDED     1.5     5.5   1     VC 0.150948014257081 
+AtomPair  CB  12  CB  24 BOUNDED     1.5     5.5   1    VC 0.1236099123539412 
+AtomPair  CB  22  CB  24 BOUNDED     1.5     5.5   1    VC 0.1532097572186707 
+AtomPair  CB  24  CB  41 BOUNDED     1.5     5.5   1    VC 0.2284586973391567 
+AtomPair  CB  24  CB  52 BOUNDED     1.5     5.5   1   VC 0.03495003696307961 
+AtomPair  CB  24  CB  61 BOUNDED     1.5     5.5   1    VC 0.2675860594996436 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 17.0468 8.71453 CB mapped automatic NOE: 
+AtomPair  CB  15  CB  24 BOUNDED     1.5     5.5   1    VC 0.2625052310633583 
+AtomPair  CB  22  CB  24 BOUNDED     1.5     5.5   1     VC 0.285192948191941 
+AtomPair  CB  24  CB  37 BOUNDED     1.5     5.5   1     VC 0.280829313827591 
+AtomPair  CB  24  CB  51 BOUNDED     1.5     5.5   1    VC 0.1714725069171096 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 15.2752 10.7031 CB mapped automatic NOE: 
+AtomPair  CB  12  CB  50 BOUNDED     1.5     5.5   1   VC 0.03050009521265495 
+AtomPair  CB  22  CB  50 BOUNDED     1.5     5.5   1   VC 0.06277735068572136 
+AtomPair  CB  45  CB  50 BOUNDED     1.5     5.5   1    VC 0.2245141630449532 
+AtomPair  CB  48  CB  50 BOUNDED     1.5     5.5   1   VC 0.08160118561212822 
+AtomPair  CB  50  CB  52 BOUNDED     1.5     5.5   1    VC 0.6006072054445423 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 15.4352 5.32242 CB mapped automatic NOE: 
+AtomPair  CB  46  CB  50 BOUNDED     1.5     5.5   1    VC 0.9440546506995099 
+AtomPair  CB  47  CB  50 BOUNDED     1.5     5.5   1   VC 0.02797267465024508 
+AtomPair  CB  47  CB  50 BOUNDED     1.5     5.5   1   VC 0.02797267465024508 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.73776 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  2  H   7 BOUNDED     1.5     5.5   1   VC 0.02116484619872774 
+AtomPair  CB  5  H   7 BOUNDED     1.5     5.5   1    VC 0.9788351538012723 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.07042 0.760345 CB mapped automatic NOE: 
+AtomPair  H   7  CB  40 BOUNDED     1.5     5.5   1    VC 0.4237842633871564 
+AtomPair  H   7  CB  40 BOUNDED     1.5     5.5   1    VC 0.3654521206215801 
+AtomPair  H   7  CB  41 BOUNDED     1.5     5.5   1    VC 0.2107636159912635 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.65848 0.760345 CB mapped automatic NOE: 
+AtomPair  H   40  HA  60 BOUNDED     1.5     5.5   1    VC 0.9613830988691577 
+AtomPair  H   40  HA  67 BOUNDED     1.5     5.5   1   VC 0.03861690113084223 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.38719 3.98795 CB mapped automatic NOE: 
+AtomPair  CB  20  H   22 BOUNDED     1.5     5.5   1    VC 0.7037073530150858 
+AtomPair  CB  13  H   46 BOUNDED     1.5     5.5   1   VC 0.01784705248194343 
+AtomPair  CB  40  H   46 BOUNDED     1.5     5.5   1    VC 0.1561243007203655 
+AtomPair  CB  40  H   46 BOUNDED     1.5     5.5   1   VC 0.08201048469993713 
+AtomPair  CB  41  H   46 BOUNDED     1.5     5.5   1   VC 0.04031080908266817 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.80321 3.98795 CB mapped automatic NOE: 
+AtomPair  CB  20  H   22 BOUNDED     1.5     5.5   1   VC 0.02380013878055457 
+AtomPair  CB  13  H   46 BOUNDED     1.5     5.5   1    VC 0.1190581043453089 
+AtomPair  CB  40  H   46 BOUNDED     1.5     5.5   1    VC 0.4234459028537766 
+AtomPair  CB  40  H   46 BOUNDED     1.5     5.5   1    VC 0.1647815042214896 
+AtomPair  CB  41  H   46 BOUNDED     1.5     5.5   1    VC 0.2689143497988704 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.54556 0.760345 CB mapped automatic NOE: 
+AtomPair  H   3  HA  17 BOUNDED     1.5     5.5   1    VC 0.4295735372511895 
+AtomPair  H   3 1HA  38 BOUNDED     1.5     5.5   1     VC 0.140852925497621 
+AtomPair  H   3  CB  54 BOUNDED     1.5     5.5   1    VC 0.4295735372511895 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.77094 0.760345 CB mapped automatic NOE: 
+AtomPair  H   3  HA  7 BOUNDED     1.5     5.5   1   VC 0.08778839443357452 
+AtomPair  H   3  HA  14 BOUNDED     1.5     5.5   1    VC 0.9122116055664254 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.72929 0.760345 CB mapped automatic NOE: 
+AtomPair  HA  6  H   11 BOUNDED     1.5     5.5   1    VC 0.6431553445223248 
+AtomPair  CB  7  H   11 BOUNDED     1.5     5.5   1    VC 0.3568446554776751 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.73003 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  13  H   39 BOUNDED     1.5     5.5   1     VC 0.495271268888828 
+AtomPair  H   39  CB  48 BOUNDED     1.5     5.5   1   VC 0.06765337037763297 
+AtomPair  H   39  CB  64 BOUNDED     1.5     5.5   1     VC 0.437075360733539 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.83963 0.760345 CB mapped automatic NOE: 
+AtomPair  H   43  H   57 BOUNDED     1.5     5.5   1   VC 0.02194045406482275 
+AtomPair  H   57  H   59 BOUNDED     1.5     5.5   1    VC 0.6942151593725902 
+AtomPair  H   57  H   60 BOUNDED     1.5     5.5   1    VC 0.2838443865625873 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 8.53188 3.80173 CB mapped automatic NOE: 
+AtomPair  CB  15  H   17 BOUNDED     1.5     5.5   1    VC 0.5921185450746921 
+AtomPair  H   17  CB  19 BOUNDED     1.5     5.5   1    VC 0.3161465960860018 
+AtomPair  CB  15  H   24 BOUNDED     1.5     5.5   1   VC 0.06326344340282307 
+AtomPair  CB  19  H   24 BOUNDED     1.5     5.5   1   VC 0.02847141543648314 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 9.93235 4.17418 CB mapped automatic NOE: 
+AtomPair  CB  15  H   17 BOUNDED     1.5     5.5   1   VC 0.05910028029815203 
+AtomPair  CB  15  H   24 BOUNDED     1.5     5.5   1     VC 0.932992530746675 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 5.14776 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  40  H   44 BOUNDED     1.5     5.5   1    VC 0.4455288620898769 
+AtomPair  CB  40  H   44 BOUNDED     1.5     5.5   1    VC 0.3196298106555372 
+AtomPair  CB  41  H   44 BOUNDED     1.5     5.5   1    VC 0.2348413272545859 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.01925 2.28104 CB mapped automatic NOE: 
+AtomPair  CB  16  H   19 BOUNDED     1.5     5.5   1    VC 0.2016656182683808 
+AtomPair  CB  17  H   19 BOUNDED     1.5     5.5   1    VC 0.7983343817316191 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.11486 3.80173 CB mapped automatic NOE: 
+AtomPair  H   19  CB  23 BOUNDED     1.5     5.5   1    VC 0.2305656228304405 
+AtomPair  H   19  CB  68 BOUNDED     1.5     5.5   1    VC 0.1637050598689918 
+AtomPair  H   19  CB  69 BOUNDED     1.5     5.5   1    VC 0.1181499531262165 
+AtomPair  H   19  CB  71 BOUNDED     1.5     5.5   1    VC 0.1207138168551374 
+AtomPair  H   19  CB  72 BOUNDED     1.5     5.5   1    VC 0.2177918204778248 
+AtomPair  H   19  CB  73 BOUNDED     1.5     5.5   1    VC 0.1490737268413889 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.83632 2.28104 CB mapped automatic NOE: 
+AtomPair  CB  16  H   19 BOUNDED     1.5     5.5   1    VC 0.2645316347287633 
+AtomPair  CB  17  H   19 BOUNDED     1.5     5.5   1    VC 0.6780253828923656 
+AtomPair  H   19  CB  67 BOUNDED     1.5     5.5   1   VC 0.05744298237887119 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.04299 0.760345 CB mapped automatic NOE: 
+AtomPair  H   41  CB  44 BOUNDED     1.5     5.5   1    VC 0.9788940895931334 
+AtomPair  H   41  CB  59 BOUNDED     1.5     5.5   1   VC 0.02110591040686654 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 4.63615 0.760345 CB mapped automatic NOE: 
+AtomPair  H   41  H   44 BOUNDED     1.5     5.5   1    VC 0.8115866618074628 
+AtomPair  H   41  H   50 BOUNDED     1.5     5.5   1    VC 0.1884133381925374 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.60094 12.7088 CB mapped automatic NOE: 
+AtomPair  CB  5  H   25 BOUNDED     1.5     5.5   1    VC 0.0131946674826815 
+AtomPair  CB  22  H   25 BOUNDED     1.5     5.5   1    VC 0.2644971747293691 
+AtomPair  H   25  CB  37 BOUNDED     1.5     5.5   1    VC 0.3039070290438678 
+AtomPair  H   25  CB  41 BOUNDED     1.5     5.5   1    VC 0.0152874993875035 
+AtomPair  H   25  CB  51 BOUNDED     1.5     5.5   1    VC 0.2661381870700253 
+AtomPair  H   25  CB  52 BOUNDED     1.5     5.5   1   VC 0.03332886451734542 
+AtomPair  H   25  CB  66 BOUNDED     1.5     5.5   1    VC 0.1036465777692073 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.96071 4.17418 CB mapped automatic NOE: 
+AtomPair  CB  46  H   60 BOUNDED     1.5     5.5   1   VC 0.04446528211244612 
+AtomPair  CB  58  H   60 BOUNDED     1.5     5.5   1    VC 0.9555347178875538 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.65727 2.28104 CB mapped automatic NOE: 
+AtomPair  CB  4  H   15 BOUNDED     1.5     5.5   1    VC 0.8368984960202548 
+AtomPair  CB  11  H   15 BOUNDED     1.5     5.5   1   VC 0.08559438587673382 
+AtomPair  H   15  CB  60 BOUNDED     1.5     5.5   1   VC 0.07750711810301131 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.50571 0.760345 CB mapped automatic NOE: 
+AtomPair  HA  57  H   59 BOUNDED     1.5     5.5   1    VC 0.9570736265575081 
+AtomPair  H   59  HA  62 BOUNDED     1.5     5.5   1   VC 0.04292637344249188 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.08878 0.760345 CB mapped automatic NOE: 
+AtomPair  HA  5  H   58 BOUNDED     1.5     5.5   1    VC 0.3980598839512977 
+AtomPair  HA  41  H   58 BOUNDED     1.5     5.5   1    VC 0.6019401160487022 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 6.40941 0.760345 CB mapped automatic NOE: 
+AtomPair  H   42  H   44 BOUNDED     1.5     5.5   1     VC 0.952535898097896 
+AtomPair  H   42  H   50 BOUNDED     1.5     5.5   1     VC 0.047464101902104 
+End_AmbiguousNMRConstraint
+AmbiguousNMRConstraint BOUNDED     1.5 7.39934 0.760345 CB mapped automatic NOE: 
+AtomPair  CB  20  H   51 BOUNDED     1.5     5.5   1    VC 0.7239769005725987 
+AtomPair  HA  30  H   51 BOUNDED     1.5     5.5   1    VC 0.2760230994274012 
+End_AmbiguousNMRConstraint

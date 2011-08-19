@@ -1,0 +1,4 @@
+-noesy:out:cst assign_cycle1.cst
+-noesy:out:peaks peaks_cycle1.dat
+-cycle 2
+-noesy:in:decoys input_decoys.out

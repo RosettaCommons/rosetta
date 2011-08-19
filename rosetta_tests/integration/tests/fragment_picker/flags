@@ -1,0 +1,17 @@
+-native 			2jsvX.pdb 
+-in:file:checkpoint 		2jsvX.checkpoint 
+-in:file:vall 			vall.dat.apr24.combo.test10E5  vall.dat.apr24.combo.test10E5
+-frags:describe_fragments 	frags.fsc
+-frags:frag_sizes 		9 3
+-frags:n_candidates		200
+-frags:n_frags			50
+-out:file:frag_prefix		frags
+-in:file:s 			2jsvX.pdb
+-frags:picking:query_pos	10 11 12 13
+-frags:ss_pred			2jsvX.psipred.ss2 psipred 2jsvX.sam.ss2 sam 2jsvX.jufo.ss2 jufo
+-frags:scoring:config		psi_sam_jufo_L1.cfg
+-frags:bounded_protocol	true
+-frags:denied_pdb 		2jsvX.homolog_vall
+-mute				core.util.prof
+-mute 				core.conformation
+-mute				core.chemical

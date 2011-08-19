@@ -1,0 +1,16 @@
+-in:ignore_unrecognized_res
+-file:s msoleft.pdb
+-score:weights dna
+-sparse_pdb_output
+-use_input_sc
+-run:min_type dfpmin_armijo
+-run:min_tolerance 0.0001
+-adducts dna_major_groove_water
+-mute all
+-unmute protocols.dna apps protocols.loops core.io.pdb
+-mute core.io.database
+-jd2:dd_parser
+-parser:protocol resfile.script
+-packing:resfile msoleft.resfile
+-overwrite
+-out:prefix resfile_

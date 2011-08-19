@@ -1,0 +1,12 @@
+<dock_design>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<MOVERS>
+		<DumpPdb name=dump fname="dumped.pdb"/>
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+          <Add />
+	</PROTOCOLS>
+</dock_design>

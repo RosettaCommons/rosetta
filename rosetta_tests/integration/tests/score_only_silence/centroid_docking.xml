@@ -1,0 +1,16 @@
+<dock_design>
+				<SCOREFXNS>
+				</SCOREFXNS>
+        <FILTERS>
+					<Sasa name=sasa confidence=0/>
+        </FILTERS>
+        <MOVERS>
+            <Docking name=dock fullatom=0 local_refine=0/>
+        </MOVERS>
+        <APPLY_TO_POSE>
+        </APPLY_TO_POSE>
+        <PROTOCOLS>
+		  		<Add mover_name=dock/>
+				<Add filter_name=sasa/>
+        </PROTOCOLS>
+</dock_design>

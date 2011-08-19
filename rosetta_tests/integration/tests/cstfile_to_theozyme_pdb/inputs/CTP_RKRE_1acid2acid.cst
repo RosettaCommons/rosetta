@@ -1,0 +1,158 @@
+# cst constraint descriptor for chorismate mutase
+# F. Richter, Baker lab, UW,   floric@u.washington.edu
+ 
+# NOTE
+
+block 1 for arginine to grab carboxylate that's moving
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name:  O3 C9 C8 
+  #TEMPLATE::   ATOM_MAP: 1 atom_name:  O4 C9 C8 
+  TEMPLATE::   ATOM_MAP: 1 residue3: CTP
+
+  #TEMPLATE::   ATOM_MAP: 2 atom_name: NH2 CZ NE
+  TEMPLATE::   ATOM_MAP: 2 atom_name: NH2 CZ NH1
+  TEMPLATE::   ATOM_MAP: 2 residue1:  R
+ 
+  CONSTRAINT:: distanceAB:   2.80  0.20  100.  0   0
+  CONSTRAINT::    angle_A:  120.0 15.0  50.00  360. 0
+  CONSTRAINT::    angle_B:  120.0 15.0  50.00  360. 0
+  CONSTRAINT::  torsion_A:  180.0 20.0  30.00  360. 0
+  CONSTRAINT:: torsion_AB:   0.00 20.0  30.00  360. 0 
+  CONSTRAINT::  torsion_B:   0.00 20.0  30.00  360. 0
+
+  ALGORITHM_INFO:: match
+   MAX_DUNBRACK_ENERGY 4.4
+  ALGORITHM_INFO::END
+
+  ALGORITHM_INFO:: match_positions
+    num_neighbors min_neighbors 20 max_com_vector_ang 60
+  ALGORITHM_INFO::END
+
+CST::END
+
+
+#block 2 for arginine to grab other carboxylate
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name:  O5 C7 C2 
+  #TEMPLATE::   ATOM_MAP: 1 atom_name:  O6 C7 C2 
+  TEMPLATE::   ATOM_MAP: 1 residue3: CTP
+
+  #TEMPLATE::   ATOM_MAP: 2 atom_name: NH2 CZ NE
+  TEMPLATE::   ATOM_MAP: 2 atom_name: NH2 CZ NH1
+  TEMPLATE::   ATOM_MAP: 2 residue1:  R
+ 
+  CONSTRAINT:: distanceAB:   2.80  0.20  100.  0   0
+  CONSTRAINT::    angle_A:  120.0 15.0  50.00  360. 0
+  CONSTRAINT::    angle_B:  120.0 15.0  50.00  360. 0
+  CONSTRAINT::  torsion_A:  180.0 20.0  30.00  360. 0
+  CONSTRAINT:: torsion_AB:   0.00 20.0  30.00  360. 0 
+  CONSTRAINT::  torsion_B:   0.00 20.0  30.00  360. 0
+
+  ALGORITHM_INFO:: match
+   MAX_DUNBRACK_ENERGY 4.4
+  ALGORITHM_INFO::END
+
+  ALGORITHM_INFO:: match_positions
+    num_neighbors min_neighbors 16 max_com_vector_ang 90
+  ALGORITHM_INFO::END
+
+CST::END
+
+#block 3: DE to back up first arginine
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name: NH2 CZ NE
+  #TEMPLATE::   ATOM_MAP: 1 atom_name: NH2 CZ NH1
+  TEMPLATE::   ATOM_MAP: 1 residue1: R
+
+  TEMPLATE::   ATOM_MAP: 2 atom_type: OOC ,
+  TEMPLATE::   ATOM_MAP: 2 residue1: DE
+
+  CONSTRAINT:: distanceAB:    2.80   0.30  80.00  0 0
+  CONSTRAINT::    angle_A:  119.10  20.00  50.00  360.00 0
+  CONSTRAINT::    angle_B:  120.00  20.00  50.00  360.00 0
+  CONSTRAINT::  torsion_A:    0.00  30.00  30.00  360.00 0
+  CONSTRAINT::  torsion_B:  180.00  30.00  30.00  360.00 0
+  CONSTRAINT::  torsion_AB:   0.00  30.0   30.00  360.00 0
+
+  ALGORITHM_INFO:: match
+    SECONDARY_MATCH: UPSTREAM_CST 1
+    MAX_DUNBRACK_ENERGY 4.0
+  ALGORITHM_INFO::END
+
+CST::END
+
+
+#block 4: DE to back up second arginine
+#VARIABLE_CST::BEGIN
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name: NH2 CZ NE
+  #TEMPLATE::   ATOM_MAP: 1 atom_name: NH2 CZ NH1
+  TEMPLATE::   ATOM_MAP: 1 residue1: R
+
+  TEMPLATE::   ATOM_MAP: 2 atom_type: OOC ,
+  TEMPLATE::   ATOM_MAP: 2 residue1: DE
+
+  CONSTRAINT:: distanceAB:    2.80   0.30  80.00  0 0
+  CONSTRAINT::    angle_A:  119.10  20.00  50.00  360.00 0
+  CONSTRAINT::    angle_B:  120.00  20.00  50.00  360.00 0
+  CONSTRAINT::  torsion_A:    0.00  30.00  30.00  360.00 0
+  CONSTRAINT::  torsion_B:  180.00  30.00  30.00  360.00 0
+  CONSTRAINT:: torsion_AB:    0.00  30.00  30.00  360.00 0
+
+  ALGORITHM_INFO:: match
+    MAX_DUNBRACK_ENERGY 4.0  
+    SECONDARY_MATCH: UPSTREAM_CST 2
+  ALGORITHM_INFO::END
+
+CST::END
+
+# block 5 for lysine or arg polarize O2
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name:  O2 C8 C9 
+  TEMPLATE::   ATOM_MAP: 1 residue3: CTP
+
+  TEMPLATE::   ATOM_MAP: 2 atom_type: Nlys,
+  TEMPLATE::   ATOM_MAP: 2 residue1:  K 
+ 
+  CONSTRAINT:: distanceAB:   3.00  0.40  100.0  0    0
+  CONSTRAINT::    angle_A:  130.0  30.0   50.0  360. 0
+  CONSTRAINT::    angle_B:  130.0  40.0   50.0  360. 0
+  CONSTRAINT::  torsion_A:  -55.0  25.0  30.00  360. 0
+  CONSTRAINT:: torsion_AB:  180.0  60.0   0.00  360. 0
+  CONSTRAINT::  torsion_B:  180.0  25.0   0.00  360. 0
+
+  ALGORITHM_INFO:: match
+     SECONDARY_MATCH: DOWNSTREAM
+     MAX_DUNBRACK_ENERGY 4.5
+  ALGORITHM_INFO::END
+
+  ALGORITHM_INFO:: match_positions
+    num_neighbors min_neighbors 20 max_com_vector_ang 60
+  ALGORITHM_INFO::END
+CST::END
+
+
+#block 6 for asp/glu to interact with hydroxyl
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name:  O1 C5 C6 
+  TEMPLATE::   ATOM_MAP: 1 residue3: CTP
+
+  TEMPLATE::   ATOM_MAP: 2 atom_type: OOC ,
+  TEMPLATE::   ATOM_MAP: 2 residue1:  DE
+ 
+  CONSTRAINT:: distanceAB:   2.80  0.40  80.0  0    0
+  CONSTRAINT::    angle_A:  109.0  20.0   50.0  360. 0
+  CONSTRAINT::    angle_B:  120.0  30.0   50.0  360. 0
+  CONSTRAINT::  torsion_A:  -66.0 120.0   0.00  360. 0
+  CONSTRAINT::  torsion_B:  180.0  40.0   0.00  360. 0
+  CONSTRAINT:: torsion_AB:  180.0  20.0   0.00  360. 0
+
+  ALGORITHM_INFO:: match
+     SECONDARY_MATCH: DOWNSTREAM
+     MAX_DUNBRACK_ENERGY 3.0
+  ALGORITHM_INFO::END
+
+  ALGORITHM_INFO:: match_positions
+    num_neighbors min_neighbors 16 max_com_vector_ang 90
+  ALGORITHM_INFO::END
+CST::END

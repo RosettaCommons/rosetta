@@ -1,0 +1,4 @@
+-in:file:template_pdb input/2osoA.pdb 
+-in:file:alignment input/alignment.filt 
+-out:file:alignment result.filt 
+-cm:aln_format grishin

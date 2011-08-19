@@ -1,0 +1,8 @@
+-in:file:s 			1a62A-ideal.pdb  
+-score:saxs:ref_spectrum 	1a62A-fa.saxs 
+-out:level 			301 
+-in:file:residue_type_set 	fa_standard
+-score:weights 			score13
+-mute 				core.conformation.Conformation 
+-mute 				core.io.silent
+

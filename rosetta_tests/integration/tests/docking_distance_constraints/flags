@@ -1,0 +1,13 @@
+-s input/1brs.pdb
+-dock_pert 3 8
+-spin
+-run:debug
+#-no_filters #filters needed for constraints
+-constraints:cst_file input/distance_constraint
+-mute core.util.prof ## dont show timing info
+-out:prefix distance_constraints
+-out:overwrite
+-out:file:scorefile distance_constraints1brs.fasc
+-out:file:fullatom #output in fullatom scorefile
+-mute core.io.database
+#-docking:use_legacy_protocol

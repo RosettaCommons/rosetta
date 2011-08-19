@@ -1,0 +1,8 @@
+NATAA
+start
+
+#picking a few residues near the interface to NOT repack, to see what it will do
+26	D	NATRO
+27	D	NATRO
+28	D	NATRO
+29	D	NATRO

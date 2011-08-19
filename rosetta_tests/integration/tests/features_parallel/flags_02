@@ -1,0 +1,30 @@
+-ignore_unrecognized_res
+#
+# Why not use energy method corrections?
+-correct
+#
+# Use as input, structures S_84, S_93, and S_107 from the collection of
+# structures stored in the binary silent file for the cluster test:
+-in
+ -file
+  -fullatom
+  -silent_struct_type binary
+  -silent ../../tests/cluster/t288_.score.50.out
+  -tags S_84 S_93 S_107
+#
+# Since the important output is the feature database,
+# ignore the job distributor output.
+-out
+ -nooutput
+#
+# Select the features to be output to the features database using
+# the parser.  See for details
+# https://wiki.rosettacommons.org/index.php/Scripter_Documentation#ReportToDB
+-parser
+ -protocol parser_script_02.xml
+#
+# Mute some tracers...
+-mute protocols.jobdist
+-mute core.io
+-mute core.conformation
+-mute core.pack

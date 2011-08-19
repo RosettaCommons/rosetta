@@ -1,0 +1,8 @@
+-target input/2dsrI.pdb
+-mute core.util.prof ## dont show timing info
+-residue TRP
+-o testTRP.stubs
+-mute core.io.database
+-run:n_cycles 10
+-norepack1
+-overwrite

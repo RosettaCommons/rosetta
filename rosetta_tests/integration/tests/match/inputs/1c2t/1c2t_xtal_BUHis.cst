@@ -1,0 +1,106 @@
+# cst constraint descriptor for 1c2t formyltransferase
+# F. Richter, Baker lab, UW,   floric@u.washington.edu
+ 
+# NOTE
+
+# block 1 for asn 106 to h-bond formyl-O
+
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name:  O7 C22 N4
+  TEMPLATE::   ATOM_MAP: 1 residue3: 1c1
+
+  TEMPLATE::   ATOM_MAP: 2 atom_type: NH2O,
+  TEMPLATE::   ATOM_MAP: 2 residue1:  N 
+
+  CONSTRAINT:: distanceAB:   2.84  0.1  100.  0     0
+  CONSTRAINT::    angle_A:   141.  2.0   60.0  360. 0
+  CONSTRAINT::    angle_B:   132.  2.0   60.0  360. 1
+  CONSTRAINT::  torsion_A:   1.70  5.0   70.0  360. 1
+  CONSTRAINT:: torsion_AB:   29.2  5.0   0.00  360. 1
+  CONSTRAINT::  torsion_B: -162.7  5.0   60.0  360. 1
+
+  ALGORITHM_INFO:: match
+    CHI_STRATEGY:: CHI 1 STEP_WITHIN_SD_RANGE STEP 2.0 SD_RANGE 2.0
+    CHI_STRATEGY:: CHI 2 STEP_WITHIN_SD_RANGE STEP 2.0 SD_RANGE 2.0
+  ALGORITHM_INFO::END
+
+CST::END
+
+
+#block 2 for his108, to hbond formyl-O
+
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name:  O7 C22 N7
+  TEMPLATE::   ATOM_MAP: 1 residue3: 1c1
+
+  TEMPLATE::   ATOM_MAP: 2 atom_type: Nhis,
+  TEMPLATE::   ATOM_MAP: 2 residue1:  H 
+ 
+  CONSTRAINT:: distanceAB:   2.84  0.10  100.  0    0
+  CONSTRAINT::    angle_A:   98.1  2.0   60.0  360. 0
+  CONSTRAINT::    angle_B:   117.  2.0   60.0  360. 1
+  CONSTRAINT::  torsion_A:   57.1  5.0   20.0  360. 1
+  CONSTRAINT:: torsion_AB: -175.6  5.0   0.00  360. 1 
+  CONSTRAINT::  torsion_B: -162.6  5.0   80.0  360. 1
+
+  ALGORITHM_INFO:: match
+    CHI_STRATEGY:: CHI 1 STEP_WITHIN_SD_RANGE STEP 2.0 SD_RANGE 2.0
+    CHI_STRATEGY:: CHI 2 STEP_WITHIN_SD_RANGE STEP 2.0 SD_RANGE 2.0
+  ALGORITHM_INFO::END
+
+CST::END
+
+#block 3 -- acceptor to the his, backbone from 115
+CST::BEGIN
+
+  TEMPLATE::   ATOM_MAP: 1 atom_type: Ntrp,
+  TEMPLATE::   ATOM_MAP: 1 residue1:  H
+  TEMPLATE::  ATOM_MAP: 1 identical 2 2
+
+  TEMPLATE::   ATOM_MAP: 2 atom_type: OCbb
+  TEMPLATE::   ATOM_MAP: 2 is_backbone
+  TEMPLATE::   ATOM_MAP: 2 residue1: ACDEFGHIKLMNQRSTVWY
+
+  #TOR U3D1 148.557
+  #TOR U2D2 92.2314
+  #TOR U1D3 -168.367
+  #ANG U2D1 149.002
+  #ANG U1D2 127.078
+  #DIS U1D1 2.70138
+
+  CONSTRAINT:: distanceAB:   2.7   0.3   100.  0    0
+  CONSTRAINT::    angle_A:   140. 40.0   60.0  360. 0
+  CONSTRAINT::    angle_B:   120. 30.0   60.0  360. 0
+  CONSTRAINT::  torsion_A:     0. 30.0   5.00  180. 0
+  # NO TOR-AB! CONSTRAINT:: torsion_AB:  -38.0  5.0   0.00  360. 0
+  CONSTRAINT::  torsion_B:     0. 30.0   70.0  180. 0
+
+  ALGORITHM_INFO:: match
+     SECONDARY_MATCH: UPSTREAM_CST 2
+  ALGORITHM_INFO::END
+
+CST::END
+
+#block 3 for asp144, to hbond formyl O
+
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name:  O7 C22 N4
+  TEMPLATE::   ATOM_MAP: 1 residue3: 1c1
+
+  TEMPLATE::   ATOM_MAP: 2 atom_type: OOC ,
+  TEMPLATE::   ATOM_MAP: 2 residue1:  D 
+ 
+  CONSTRAINT:: distanceAB:   2.36  0.10  100.  0    0
+  CONSTRAINT::    angle_A:   119.  2.0   60.0  360. 0
+  CONSTRAINT::    angle_B:   121.  2.0   60.0  360. 1
+  CONSTRAINT::  torsion_A:  -111.  5.0   5.00  360. 1
+  CONSTRAINT:: torsion_AB:  -38.0  5.0   0.00  360. 1 
+  CONSTRAINT::  torsion_B:   170.  5.0   70.0  360. 1
+
+  ALGORITHM_INFO:: match
+    CHI_STRATEGY:: CHI 1 STEP_WITHIN_SD_RANGE STEP 2.0 SD_RANGE 2.0
+    CHI_STRATEGY:: CHI 2 STEP_WITHIN_SD_RANGE STEP 2.0 SD_RANGE 2.0
+  ALGORITHM_INFO::END
+
+CST::END
+

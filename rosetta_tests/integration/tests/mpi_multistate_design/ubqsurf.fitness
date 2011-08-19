@@ -1,0 +1,4 @@
+STATE ubq 1ubq.pdb ubqsurf.corr ubqsurf.2res
+
+# simply optimize the total energy
+FITNESS ubq

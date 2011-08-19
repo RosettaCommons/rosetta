@@ -1,0 +1,17 @@
+-in:ignore_unrecognized_res
+-file:s msoleft.pdb
+-score:weights dna
+-use_input_sc
+-run:output_hbond_info
+-sparse_pdb_output
+-score:output_residue_energies
+-run:min_type dfpmin_armijo
+-run:min_tolerance 0.0001
+-adducts dna_major_groove_water
+-mute all
+-unmute protocols.dna protocols.multistate_design protocols.genetic_algorithm apps protocols.loops core.io.pdb
+-mute core.io.database
+-jd2:dd_parser
+-parser:protocol design.script
+-overwrite
+-out:prefix design_

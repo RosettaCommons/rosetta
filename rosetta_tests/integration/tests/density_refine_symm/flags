@@ -1,0 +1,16 @@
+-in:file:fullatom
+-loops:input_pdb inputs/1afo_INPUT.pdb
+-loops:loop_file inputs/1afo.loopfile
+-symmetry_definition inputs/1afo.symm
+-loops:frag_sizes 9 3 1
+-loops:frag_files  inputs/aa1afo_09_05.200_v1_3.gz inputs/aa1afo_03_05.200_v1_3 none
+-loops:remodel quick_ccd
+-loops:relax relax
+-relax:quick
+-relax:default_repeats 1
+-relax:jump_move true
+-edensity:mapfile inputs/1afo_8A.mrc
+-edensity:mapreso 8.0
+-edensity:grid_spacing 4.0
+-edensity:sliding_window_wt 0.5
+-edensity:sliding_window 3

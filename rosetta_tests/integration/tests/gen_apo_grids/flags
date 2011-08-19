@@ -1,0 +1,12 @@
+-s inputs/1a53_nohet_1.pdb
+-mute all
+-unmute apps.public.match.gen_apo_grids
+-chname off
+-constant_seed
+-ignore_unrecognized_res
+-packstat:surface_accessibility
+-packstat:cavity_burial_probe_radius 3.0
+-packstat:cluster_min_volume 30
+-packstat:min_cluster_overlap 1.0 
+-packstat:min_cav_ball_radius 1.0
+-packstat:min_surface_accessibility 1.4

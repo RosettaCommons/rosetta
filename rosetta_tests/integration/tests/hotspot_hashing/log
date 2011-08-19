@@ -1,0 +1,1455 @@
+core.init: command: /Users/jcorn/svn/mini/bin/hotspot_hash.macosgccrelease @flags -database /Users/jcorn/minirosetta_database/ -run:constant_seed -nodelay
+core.init: Constant seed mode, seed=1111111 seed_offset=0 real_seed=1111111
+core.init.random: RandomGenerator:init: Normal mode, seed=1111111 RG_type=mt19937
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OXT on residue LEU_p:CtermProteinFull 60
+core.conformation.Conformation: Found disulfide between residues 5 44
+core.conformation.Conformation: Found disulfide between residues 17 57
+core.conformation.Conformation: Found disulfide between residues 43 48
+core.pack.task: Packer task: initialize from command line() 
+pilot_apps.jcorn.hotspot_hash: Writing stubs to testTRP.stubs
+pilot_apps.jcorn.hotspot_hash: Finding hotspots using residues TRP .
+pilot_apps.jcorn.hotspot_hash: Hash contains 0 TRP stubs.
+pilot_apps.jcorn.hotspot_hash: Finding 10 TRP hotspots.
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+core.scoring.dunbrack: Dunbrack library took 0.070957 seconds to load from binary
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 3 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 460 bytes
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT 0.750337 -0.507278 -0.423866 0.638704 0.721647 0.26699 0.170444 -0.471057 0.865479 3.64487 -8.44808 -21.0043  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 7.64685 6.0253 21.8387
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 355.383 psi: 310.037 theta: 71.3193
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT 0.407875 -0.282961 0.868085 -0.0104801 0.949252 0.314342 -0.912977 -0.13731 0.384211 -21.2835 -4.17096 -1.84435  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): 7.64685 6.0253 21.8387
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT 0.407875 -0.282961 0.868085 -0.0104801 0.949252 0.314342 -0.912977 -0.13731 0.384211 -21.2835 -4.17096 -1.84435  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 1.85859 0.815942 -2.72943
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 220.895 psi: 145.169 theta: 129.435
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 2.64814 2.42129 -55.4487  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): 4.46541 7.57917 -36.1535
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 2.64814 2.42129 -55.4487  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 2.53869 2.19194 -53.4649  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 2.53869 2.19194 -53.4649  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 2.42925 1.96259 -51.4811  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 2.42925 1.96259 -51.4811  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 2.3198 1.73324 -49.4973  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 2.3198 1.73324 -49.4973  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 2.21035 1.50389 -47.5135  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 2.21035 1.50389 -47.5135  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 2.1009 1.27455 -45.5297  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 2.1009 1.27455 -45.5297  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 1.99146 1.0452 -43.5459  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 1.99146 1.0452 -43.5459  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 1.88201 0.81585 -41.5621  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 1.88201 0.81585 -41.5621  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 1.77256 0.586501 -39.5783  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 1.77256 0.586501 -39.5783  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 1.66311 0.357153 -37.5946  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 1.66311 0.357153 -37.5946  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 1.55367 0.127805 -35.6108  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 1.55367 0.127805 -35.6108  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 1.44422 -0.101544 -33.627  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 1.44422 -0.101544 -33.627  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 1.33477 -0.330892 -31.6432  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 1.33477 -0.330892 -31.6432  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 1.22532 -0.56024 -29.6594  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 1.22532 -0.56024 -29.6594  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 1.11587 -0.789589 -27.6756  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 1.11587 -0.789589 -27.6756  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 1.00643 -1.01894 -25.6918  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 1.00643 -1.01894 -25.6918  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.89698 -1.24829 -23.708  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.89698 -1.24829 -23.708  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.787532 -1.47763 -21.7242  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.787532 -1.47763 -21.7242  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.678084 -1.70698 -19.7404  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.678084 -1.70698 -19.7404  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.568637 -1.93633 -17.7567  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.568637 -1.93633 -17.7567  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.459189 -2.16568 -15.7729  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.459189 -2.16568 -15.7729  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.349742 -2.39503 -13.7891  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.349742 -2.39503 -13.7891  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.459189 -2.16568 -15.7729  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.459189 -2.16568 -15.7729  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.404465 -2.28035 -14.781  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.404465 -2.28035 -14.781  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.459189 -2.16568 -15.7729  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.459189 -2.16568 -15.7729  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.431827 -2.22302 -15.2769  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.431827 -2.22302 -15.2769  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.459189 -2.16568 -15.7729  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.459189 -2.16568 -15.7729  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.445508 -2.19435 -15.5249  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.445508 -2.19435 -15.5249  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.431827 -2.22302 -15.2769  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.431827 -2.22302 -15.2769  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.445508 -2.19435 -15.5249  
+protocols.docking.DockingInitialPerturbation: Reading options...
+protocols.docking.DockingInitialPerturbation: sliding into contact
+protocols.docking.DockingInitialPerturbation: Moving away
+protocols.docking.DockingInitialPerturbation: Moving together
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.445508 -2.19435 -15.5249  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.498248 -2.25949 -14.5284  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.498248 -2.25949 -14.5284  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.550988 -2.32462 -13.5319  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.550988 -2.32462 -13.5319  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.603729 -2.38976 -12.5354  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.603729 -2.38976 -12.5354  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.656469 -2.4549 -11.539  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.656469 -2.4549 -11.539  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.709209 -2.52004 -10.5425  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.709209 -2.52004 -10.5425  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.761949 -2.58518 -9.546  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.761949 -2.58518 -9.546  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.814689 -2.65032 -8.54952  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.814689 -2.65032 -8.54952  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.449783 0.2798 -0.848179 -0.187279 0.958096 0.216747 0.873282 0.0613568 0.483336 0.761949 -2.58518 -9.546  
+protocols.docking.DockingProtocol: finished initial perturbation
+protocols.TrialMover: Acceptance rate: 0.78
+protocols.TrialMover: Acceptance rate: 0.54
+protocols.TrialMover: Acceptance rate: 0.28
+protocols.TrialMover: Acceptance rate: 0.42
+protocols.TrialMover: Acceptance rate: 0.18
+protocols.TrialMover: Acceptance rate: 0.38
+protocols.TrialMover: Acceptance rate: 0.12
+protocols.TrialMover: Acceptance rate: 0.44
+protocols.TrialMover: Acceptance rate: 0.14
+protocols.TrialMover: Acceptance rate: 0.54
+protocols.docking.DockingLowRes: in DockingLowRes.apply
+::::::::::::::::::Centroid Rigid Body Adaptive:::::::::::::::::::
+protocols.docking.DockingProtocol: Doing initial repack of sidechains
+core.pack.task: Packer task: initialize from command line() 
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 2 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 456 bytes
+protocols.docking.DockingHighRes: in DockingHighRes.apply
+core.pack.task: Packer task: initialize from command line() 
+protocols.docking.DockingHighRes: ::::::::::::::::::DOCK_MCM:::::::::::::::::::
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 28 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 560 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 28 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 560 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 28 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 560 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 31 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 572 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 28 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 560 bytes
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.0936713 -0.992187 0.0824043 0.961185 0.0685482 -0.267253 0.259517 0.10424 0.960096 -4.14625 1.2734 -3.65758  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.0936713 -0.992187 0.0824043 0.961185 0.0685482 -0.267253 0.259517 0.10424 0.960096 -645.018 327.594 -698.494  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.0936713 -0.992187 0.0824043 0.961185 0.0685482 -0.267253 0.259517 0.10424 0.960096 -4.14625 1.2734 -3.65758  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.0936713 -0.992187 0.0824043 0.961185 0.0685482 -0.267253 0.259517 0.10424 0.960096 -645.018 327.594 -698.494  
+protocols.hotspot_hashing: Stub score: -0.682894. Reject.
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 3 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 460 bytes
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT 0.750337 -0.507278 -0.423866 0.638704 0.721647 0.26699 0.170444 -0.471057 0.865479 3.64487 -8.44808 -21.0043  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 7.64685 6.0253 21.8387
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 323.216 psi: 87.4047 theta: 94.9458
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT 0.599588 -0.151914 -0.785759 0.410598 -0.784362 0.464958 -0.686953 -0.601414 -0.407918 14.5386 -19.9632 11.4787  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): 7.64685 6.0253 21.8387
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT 0.599588 -0.151914 -0.785759 0.410598 -0.784362 0.464958 -0.686953 -0.601414 -0.407918 14.5386 -19.9632 11.4787  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 1.85859 0.815942 -2.72943
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 59.9499 psi: 271.259 theta: 75.8396
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 27.9162 -36.3349 -32.3914  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): -1.93566 -37.2469 -12.5564
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 27.9162 -36.3349 -32.3914  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 27.0288 -35.1056 -31.087  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 27.0288 -35.1056 -31.087  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 26.1414 -33.8763 -29.7827  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 26.1414 -33.8763 -29.7827  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 25.2539 -32.647 -28.4784  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 25.2539 -32.647 -28.4784  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 24.3665 -31.4176 -27.174  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 24.3665 -31.4176 -27.174  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 23.4791 -30.1883 -25.8697  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 23.4791 -30.1883 -25.8697  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 22.5917 -28.959 -24.5654  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 22.5917 -28.959 -24.5654  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 21.7043 -27.7297 -23.2611  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 21.7043 -27.7297 -23.2611  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 20.8168 -26.5004 -21.9567  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 20.8168 -26.5004 -21.9567  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 19.9294 -25.2711 -20.6524  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 19.9294 -25.2711 -20.6524  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 19.042 -24.0418 -19.3481  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 19.042 -24.0418 -19.3481  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 18.1546 -22.8125 -18.0437  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 18.1546 -22.8125 -18.0437  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 17.2672 -21.5832 -16.7394  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 17.2672 -21.5832 -16.7394  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 16.3797 -20.3539 -15.4351  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 16.3797 -20.3539 -15.4351  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 15.4923 -19.1245 -14.1307  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 15.4923 -19.1245 -14.1307  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 14.6049 -17.8952 -12.8264  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 14.6049 -17.8952 -12.8264  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 13.7175 -16.6659 -11.5221  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 13.7175 -16.6659 -11.5221  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 12.8301 -15.4366 -10.2177  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 12.8301 -15.4366 -10.2177  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 11.9426 -14.2073 -8.9134  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 11.9426 -14.2073 -8.9134  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 11.0552 -12.978 -7.60907  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 11.0552 -12.978 -7.60907  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 10.1678 -11.7487 -6.30474  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 10.1678 -11.7487 -6.30474  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 11.0552 -12.978 -7.60907  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 11.0552 -12.978 -7.60907  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 10.6115 -12.3633 -6.9569  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 10.6115 -12.3633 -6.9569  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 11.0552 -12.978 -7.60907  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 11.0552 -12.978 -7.60907  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 10.8334 -12.6707 -7.28299  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 10.8334 -12.6707 -7.28299  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 11.0552 -12.978 -7.60907  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 11.0552 -12.978 -7.60907  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 10.9443 -12.8243 -7.44603  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 10.9443 -12.8243 -7.44603  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 10.8334 -12.6707 -7.28299  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 10.8334 -12.6707 -7.28299  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 10.9443 -12.8243 -7.44603  
+protocols.docking.DockingInitialPerturbation: Reading options...
+protocols.docking.DockingInitialPerturbation: sliding into contact
+protocols.docking.DockingInitialPerturbation: Moving away
+protocols.docking.DockingInitialPerturbation: Moving together
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 10.9443 -12.8243 -7.44603  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 10.4041 -12.2033 -6.87806  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 10.4041 -12.2033 -6.87806  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 9.86395 -11.5824 -6.31009  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 9.86395 -11.5824 -6.31009  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 9.32378 -10.9614 -5.74212  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 9.32378 -10.9614 -5.74212  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0465617 -0.915945 -0.398593 0.885557 -0.222476 0.40779 -0.462191 -0.33399 0.821481 9.86395 -11.5824 -6.31009  
+protocols.docking.DockingProtocol: finished initial perturbation
+protocols.TrialMover: Acceptance rate: 0.56
+protocols.TrialMover: Acceptance rate: 0.48
+protocols.TrialMover: Acceptance rate: 0.74
+protocols.TrialMover: Acceptance rate: 0.48
+protocols.TrialMover: Acceptance rate: 0.78
+protocols.TrialMover: Acceptance rate: 0.46
+protocols.TrialMover: Acceptance rate: 0.46
+protocols.TrialMover: Acceptance rate: 0.44
+protocols.TrialMover: Acceptance rate: 0.58
+protocols.TrialMover: Acceptance rate: 0.62
+protocols.docking.DockingLowRes: in DockingLowRes.apply
+::::::::::::::::::Centroid Rigid Body Adaptive:::::::::::::::::::
+protocols.docking.DockingProtocol: Doing initial repack of sidechains
+core.pack.task: Packer task: initialize from command line() 
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 22 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 536 bytes
+protocols.docking.DockingHighRes: in DockingHighRes.apply
+core.pack.task: Packer task: initialize from command line() 
+protocols.docking.DockingHighRes: ::::::::::::::::::DOCK_MCM:::::::::::::::::::
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 24 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 544 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 26 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 552 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 19 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 524 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 27 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 556 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 37 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 596 bytes
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.296447 -0.928774 -0.222479 0.564837 -0.358344 0.743336 -0.770115 0.0946954 0.630837 10.3855 -11.2956 -5.50952  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.296447 -0.928774 -0.222479 0.564837 -0.358344 0.743336 -0.770115 0.0946954 0.630837 458.639 -693.945 -582.622  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.296447 -0.928774 -0.222479 0.564837 -0.358344 0.743336 -0.770115 0.0946954 0.630837 10.3855 -11.2956 -5.50952  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.296447 -0.928774 -0.222479 0.564837 -0.358344 0.743336 -0.770115 0.0946954 0.630837 458.639 -693.945 -582.622  
+protocols.hotspot_hashing: Stub score: -1.16076. Accept.
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 3 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 460 bytes
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT 0.750337 -0.507278 -0.423866 0.638704 0.721647 0.26699 0.170444 -0.471057 0.865479 3.64487 -8.44808 -21.0043  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 7.64685 6.0253 21.8387
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 239.985 psi: 241.954 theta: 90.478
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT -0.894371 -0.447325 -0.000854001 -0.248198 0.497828 -0.831003 0.372153 -0.743013 -0.556268 4.89077 19.8388 7.36936  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): 7.64685 6.0253 21.8387
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT -0.894371 -0.447325 -0.000854001 -0.248198 0.497828 -0.831003 0.372153 -0.743013 -0.556268 4.89077 19.8388 7.36936  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 1.85859 0.815942 -2.72943
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 59.2119 psi: 159.105 theta: 51.7216
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -4.64919 -44.3856 -8.06459  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): -24.661 -23.9456 19.6632
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -4.64919 -44.3856 -8.06459  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -4.44628 -42.4326 -7.68416  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -4.44628 -42.4326 -7.68416  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -4.24337 -40.4796 -7.30373  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -4.24337 -40.4796 -7.30373  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -4.04045 -38.5267 -6.92329  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -4.04045 -38.5267 -6.92329  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -3.83754 -36.5737 -6.54286  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -3.83754 -36.5737 -6.54286  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -3.63463 -34.6207 -6.16243  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -3.63463 -34.6207 -6.16243  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -3.43171 -32.6677 -5.782  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -3.43171 -32.6677 -5.782  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -3.2288 -30.7148 -5.40156  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -3.2288 -30.7148 -5.40156  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -3.02589 -28.7618 -5.02113  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -3.02589 -28.7618 -5.02113  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.82297 -26.8088 -4.6407  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.82297 -26.8088 -4.6407  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.62006 -24.8559 -4.26027  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.62006 -24.8559 -4.26027  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.41715 -22.9029 -3.87983  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.41715 -22.9029 -3.87983  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.21423 -20.9499 -3.4994  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.21423 -20.9499 -3.4994  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.41715 -22.9029 -3.87983  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.41715 -22.9029 -3.87983  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.31569 -21.9264 -3.68962  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.31569 -21.9264 -3.68962  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.21423 -20.9499 -3.4994  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.21423 -20.9499 -3.4994  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.31569 -21.9264 -3.68962  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.31569 -21.9264 -3.68962  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.26496 -21.4382 -3.59451  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.26496 -21.4382 -3.59451  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.31569 -21.9264 -3.68962  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.31569 -21.9264 -3.68962  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.29033 -21.6823 -3.64206  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.29033 -21.6823 -3.64206  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.31569 -21.9264 -3.68962  
+protocols.docking.DockingInitialPerturbation: Reading options...
+protocols.docking.DockingInitialPerturbation: sliding into contact
+protocols.docking.DockingInitialPerturbation: Moving away
+protocols.docking.DockingInitialPerturbation: Moving together
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.31569 -21.9264 -3.68962  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.14077 -20.9751 -3.43577  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -2.14077 -20.9751 -3.43577  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -1.96585 -20.0238 -3.18192  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -1.96585 -20.0238 -3.18192  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -1.79094 -19.0725 -2.92808  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -1.79094 -19.0725 -2.92808  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -1.61602 -18.1212 -2.67423  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -1.61602 -18.1212 -2.67423  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -1.4411 -17.1699 -2.42039  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -1.4411 -17.1699 -2.42039  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -1.26618 -16.2186 -2.16654  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -1.26618 -16.2186 -2.16654  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -1.09127 -15.2673 -1.91269  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -1.09127 -15.2673 -1.91269  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -0.916348 -14.316 -1.65885  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -0.916348 -14.316 -1.65885  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -0.74143 -13.3647 -1.405  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -0.74143 -13.3647 -1.405  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.194242 0.979364 -0.0558149 0.328822 0.118613 0.936914 0.9242 0.163635 -0.345076 -0.916348 -14.316 -1.65885  
+protocols.docking.DockingProtocol: finished initial perturbation
+protocols.TrialMover: Acceptance rate: 0.68
+protocols.TrialMover: Acceptance rate: 0.42
+protocols.TrialMover: Acceptance rate: 0.42
+protocols.TrialMover: Acceptance rate: 0.62
+protocols.TrialMover: Acceptance rate: 0.54
+protocols.TrialMover: Acceptance rate: 0.6
+protocols.TrialMover: Acceptance rate: 0.28
+protocols.TrialMover: Acceptance rate: 0.46
+protocols.TrialMover: Acceptance rate: 0.5
+protocols.TrialMover: Acceptance rate: 0.28
+protocols.docking.DockingLowRes: in DockingLowRes.apply
+::::::::::::::::::Centroid Rigid Body Adaptive:::::::::::::::::::
+protocols.docking.DockingProtocol: Doing initial repack of sidechains
+core.pack.task: Packer task: initialize from command line() 
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 2 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 456 bytes
+protocols.docking.DockingHighRes: in DockingHighRes.apply
+core.pack.task: Packer task: initialize from command line() 
+protocols.docking.DockingHighRes: ::::::::::::::::::DOCK_MCM:::::::::::::::::::
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 9 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 484 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 12 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 496 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 19 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 524 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 29 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 564 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 25 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 548 bytes
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.745831 -0.293587 -0.597948 0.348972 0.592399 -0.726141 0.56741 -0.750247 -0.339376 -2.64556 -18.6055 1.71839  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.745831 -0.293587 -0.597948 0.348972 0.592399 -0.726141 0.56741 -0.750247 -0.339376 -323.131 -954.185 149.976  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.745831 -0.293587 -0.597948 0.348972 0.592399 -0.726141 0.56741 -0.750247 -0.339376 -2.64556 -18.6055 1.71839  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.745831 -0.293587 -0.597948 0.348972 0.592399 -0.726141 0.56741 -0.750247 -0.339376 -323.131 -954.185 149.976  
+protocols.hotspot_hashing: Stub score: -1.31702. Accept.
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 3 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 460 bytes
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT 0.750337 -0.507278 -0.423866 0.638704 0.721647 0.26699 0.170444 -0.471057 0.865479 3.64487 -8.44808 -21.0043  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 7.64685 6.0253 21.8387
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 321.733 psi: 317.947 theta: 124.769
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT -0.383389 -0.681268 0.623608 -0.515035 0.718174 0.467938 -0.76665 -0.141777 -0.626216 -13.2971 -5.73347 19.3787  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): 7.64685 6.0253 21.8387
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT -0.383389 -0.681268 0.623608 -0.515035 0.718174 0.467938 -0.76665 -0.141777 -0.626216 -13.2971 -5.73347 19.3787  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 1.85859 0.815942 -2.72943
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 306.624 psi: 106.84 theta: 100.452
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -35.8103 7.91605 -42.2444  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): -24.0789 37.5281 -19.3643
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -35.8103 7.91605 -42.2444  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -34.5061 7.62097 -40.7571  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -34.5061 7.62097 -40.7571  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -33.202 7.32589 -39.2698  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -33.202 7.32589 -39.2698  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -31.8978 7.03082 -37.7825  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -31.8978 7.03082 -37.7825  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -30.5936 6.73574 -36.2952  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -30.5936 6.73574 -36.2952  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -29.2894 6.44066 -34.8079  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -29.2894 6.44066 -34.8079  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -27.9852 6.14559 -33.3206  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -27.9852 6.14559 -33.3206  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -26.681 5.85051 -31.8333  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -26.681 5.85051 -31.8333  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -25.3769 5.55543 -30.346  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -25.3769 5.55543 -30.346  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -24.0727 5.26036 -28.8587  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -24.0727 5.26036 -28.8587  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -22.7685 4.96528 -27.3715  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -22.7685 4.96528 -27.3715  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -21.4643 4.6702 -25.8842  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -21.4643 4.6702 -25.8842  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -20.1601 4.37513 -24.3969  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -20.1601 4.37513 -24.3969  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -18.8559 4.08005 -22.9096  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -18.8559 4.08005 -22.9096  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -17.5518 3.78497 -21.4223  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -17.5518 3.78497 -21.4223  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -16.2476 3.4899 -19.935  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -16.2476 3.4899 -19.935  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -14.9434 3.19482 -18.4477  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -14.9434 3.19482 -18.4477  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -13.6392 2.89974 -16.9604  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -13.6392 2.89974 -16.9604  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -12.335 2.60467 -15.4731  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -12.335 2.60467 -15.4731  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -11.0308 2.30959 -13.9858  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -11.0308 2.30959 -13.9858  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -9.72665 2.01451 -12.4985  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -9.72665 2.01451 -12.4985  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -8.42247 1.71944 -11.0113  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -8.42247 1.71944 -11.0113  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -7.11828 1.42436 -9.52396  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -7.11828 1.42436 -9.52396  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -5.8141 1.12928 -8.03667  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -5.8141 1.12928 -8.03667  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -4.50992 0.834207 -6.54938  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -4.50992 0.834207 -6.54938  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -3.20573 0.539131 -5.06209  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -3.20573 0.539131 -5.06209  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -4.50992 0.834207 -6.54938  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -4.50992 0.834207 -6.54938  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -3.85782 0.686669 -5.80573  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -3.85782 0.686669 -5.80573  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -4.50992 0.834207 -6.54938  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -4.50992 0.834207 -6.54938  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -4.18387 0.760438 -6.17756  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -4.18387 0.760438 -6.17756  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -4.50992 0.834207 -6.54938  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -4.50992 0.834207 -6.54938  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -4.34689 0.797323 -6.36347  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -4.34689 0.797323 -6.36347  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -4.50992 0.834207 -6.54938  
+protocols.docking.DockingInitialPerturbation: Reading options...
+protocols.docking.DockingInitialPerturbation: sliding into contact
+protocols.docking.DockingInitialPerturbation: Moving away
+protocols.docking.DockingInitialPerturbation: Moving together
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -4.50992 0.834207 -6.54938  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -3.92647 0.520761 -5.80015  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -3.92647 0.520761 -5.80015  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -3.34302 0.207315 -5.05093  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -3.34302 0.207315 -5.05093  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.101275 -0.0216934 0.994622 -0.794184 -0.603895 0.0676944 0.599178 -0.796769 -0.0783879 -3.92647 0.520761 -5.80015  
+protocols.docking.DockingProtocol: finished initial perturbation
+protocols.TrialMover: Acceptance rate: 0.54
+protocols.TrialMover: Acceptance rate: 0.6
+protocols.TrialMover: Acceptance rate: 0.54
+protocols.TrialMover: Acceptance rate: 0.58
+protocols.TrialMover: Acceptance rate: 0.26
+protocols.TrialMover: Acceptance rate: 0.18
+protocols.TrialMover: Acceptance rate: 0.5
+protocols.TrialMover: Acceptance rate: 0.54
+protocols.TrialMover: Acceptance rate: 0.26
+protocols.TrialMover: Acceptance rate: 0.2
+protocols.docking.DockingLowRes: in DockingLowRes.apply
+::::::::::::::::::Centroid Rigid Body Adaptive:::::::::::::::::::
+protocols.docking.DockingProtocol: Doing initial repack of sidechains
+core.pack.task: Packer task: initialize from command line() 
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 2 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 456 bytes
+protocols.docking.DockingHighRes: in DockingHighRes.apply
+core.pack.task: Packer task: initialize from command line() 
+protocols.docking.DockingHighRes: ::::::::::::::::::DOCK_MCM:::::::::::::::::::
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 7 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 476 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 10 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 488 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 10 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 488 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 10 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 488 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 19 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 524 bytes
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.83712 -0.300901 -0.456825 -0.120857 -0.916215 0.382026 -0.533502 -0.264591 -0.803348 -5.59071 3.49823 -7.33853  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.83712 -0.300901 -0.456825 -0.120857 -0.916215 0.382026 -0.533502 -0.264591 -0.803348 -609.74 322.157 -737.722  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.83712 -0.300901 -0.456825 -0.120857 -0.916215 0.382026 -0.533502 -0.264591 -0.803348 -5.59071 3.49823 -7.33853  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.83712 -0.300901 -0.456825 -0.120857 -0.916215 0.382026 -0.533502 -0.264591 -0.803348 -609.74 322.157 -737.722  
+protocols.hotspot_hashing: Stub score: -1.63683. Accept.
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 3 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 460 bytes
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT 0.750337 -0.507278 -0.423866 0.638704 0.721647 0.26699 0.170444 -0.471057 0.865479 3.64487 -8.44808 -21.0043  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 7.64685 6.0253 21.8387
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 234.945 psi: 15.1387 theta: 146.163
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT 0.903147 -0.0728233 0.42311 -0.115602 -0.990361 0.076302 0.413475 -0.117824 -0.90286 -13.3943 -9.35959 18.2773  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): 7.64685 6.0253 21.8387
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT 0.903147 -0.0728233 0.42311 -0.115602 -0.990361 0.076302 0.413475 -0.117824 -0.90286 -13.3943 -9.35959 18.2773  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 1.85859 0.815942 -2.72943
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 128.535 psi: 43.0456 theta: 120.256
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 21.9006 32.6377 -35.123  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): 39.8594 19.0852 -24.0413
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 21.9006 32.6377 -35.123  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 21.1755 31.3721 -33.7546  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 21.1755 31.3721 -33.7546  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 20.4503 30.1064 -32.3863  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 20.4503 30.1064 -32.3863  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 19.7252 28.8407 -31.018  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 19.7252 28.8407 -31.018  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 19 27.5751 -29.6497  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 19 27.5751 -29.6497  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 18.2749 26.3094 -28.2814  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 18.2749 26.3094 -28.2814  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 17.5498 25.0437 -26.9131  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 17.5498 25.0437 -26.9131  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 16.8246 23.7781 -25.5448  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 16.8246 23.7781 -25.5448  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 16.0995 22.5124 -24.1765  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 16.0995 22.5124 -24.1765  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 15.3743 21.2468 -22.8082  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 15.3743 21.2468 -22.8082  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 14.6492 19.9811 -21.4399  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 14.6492 19.9811 -21.4399  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 13.924 18.7154 -20.0716  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 13.924 18.7154 -20.0716  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 13.1989 17.4498 -18.7032  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 13.1989 17.4498 -18.7032  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 12.4738 16.1841 -17.3349  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 12.4738 16.1841 -17.3349  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 11.7486 14.9184 -15.9666  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 11.7486 14.9184 -15.9666  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 11.0235 13.6528 -14.5983  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 11.0235 13.6528 -14.5983  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 10.2983 12.3871 -13.23  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 10.2983 12.3871 -13.23  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 9.5732 11.1215 -11.8617  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 9.5732 11.1215 -11.8617  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 8.84806 9.8558 -10.4934  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 8.84806 9.8558 -10.4934  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 8.12292 8.59013 -9.12508  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 8.12292 8.59013 -9.12508  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 7.39778 7.32447 -7.75677  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 7.39778 7.32447 -7.75677  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 8.12292 8.59013 -9.12508  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 8.12292 8.59013 -9.12508  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 7.76035 7.9573 -8.44093  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 7.76035 7.9573 -8.44093  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 7.39778 7.32447 -7.75677  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 7.39778 7.32447 -7.75677  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 7.76035 7.9573 -8.44093  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 7.76035 7.9573 -8.44093  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 7.57906 7.64089 -8.09885  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 7.57906 7.64089 -8.09885  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 7.76035 7.9573 -8.44093  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 7.76035 7.9573 -8.44093  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 7.66971 7.7991 -8.26989  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 7.66971 7.7991 -8.26989  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 7.57906 7.64089 -8.09885  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 7.57906 7.64089 -8.09885  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 7.66971 7.7991 -8.26989  
+protocols.docking.DockingInitialPerturbation: Reading options...
+protocols.docking.DockingInitialPerturbation: sliding into contact
+protocols.docking.DockingInitialPerturbation: Moving away
+protocols.docking.DockingInitialPerturbation: Moving together
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 7.66971 7.7991 -8.26989  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 7.28204 7.13162 -7.63413  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 7.28204 7.13162 -7.63413  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 6.89437 6.46415 -6.99836  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 6.89437 6.46415 -6.99836  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 6.5067 5.79668 -6.3626  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 6.5067 5.79668 -6.3626  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.879363 0.160052 -0.448447 0.36571 -0.3761 -0.851355 -0.304922 -0.912651 0.272196 6.89437 6.46415 -6.99836  
+protocols.docking.DockingProtocol: finished initial perturbation
+protocols.TrialMover: Acceptance rate: 0.22
+protocols.TrialMover: Acceptance rate: 0.28
+protocols.TrialMover: Acceptance rate: 0.36
+protocols.TrialMover: Acceptance rate: 0.34
+protocols.TrialMover: Acceptance rate: 0.5
+protocols.TrialMover: Acceptance rate: 0.5
+protocols.TrialMover: Acceptance rate: 0.26
+protocols.TrialMover: Acceptance rate: 0.4
+protocols.TrialMover: Acceptance rate: 0.44
+protocols.TrialMover: Acceptance rate: 0.48
+protocols.docking.DockingLowRes: in DockingLowRes.apply
+::::::::::::::::::Centroid Rigid Body Adaptive:::::::::::::::::::
+protocols.docking.DockingProtocol: Doing initial repack of sidechains
+core.pack.task: Packer task: initialize from command line() 
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 28 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 560 bytes
+protocols.docking.DockingHighRes: in DockingHighRes.apply
+core.pack.task: Packer task: initialize from command line() 
+protocols.docking.DockingHighRes: ::::::::::::::::::DOCK_MCM:::::::::::::::::::
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 32 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 576 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 34 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 584 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 28 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 560 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 30 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 568 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 32 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 576 bytes
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.869394 0.00400206 -0.494103 0.429442 -0.488488 -0.759578 -0.244403 -0.872561 0.42297 7.8319 6.33673 -7.67044  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.869394 0.00400206 -0.494103 0.429442 -0.488488 -0.759578 -0.244403 -0.872561 0.42297 311.532 743.514 -611.273  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.869394 0.00400206 -0.494103 0.429442 -0.488488 -0.759578 -0.244403 -0.872561 0.42297 7.8319 6.33673 -7.67044  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.869394 0.00400206 -0.494103 0.429442 -0.488488 -0.759578 -0.244403 -0.872561 0.42297 311.532 743.514 -611.273  
+protocols.hotspot_hashing: Stub score: -1.55922. Accept.
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 3 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 460 bytes
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT 0.750337 -0.507278 -0.423866 0.638704 0.721647 0.26699 0.170444 -0.471057 0.865479 3.64487 -8.44808 -21.0043  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 7.64685 6.0253 21.8387
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 225.041 psi: 279.975 theta: 89.5252
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT -0.527767 -0.694958 0.48836 -0.62594 -0.0704371 -0.776684 0.574161 -0.715592 -0.397828 -9.51622 17.7458 2.80161  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): 7.64685 6.0253 21.8387
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT -0.527767 -0.694958 0.48836 -0.62594 -0.0704371 -0.776684 0.574161 -0.715592 -0.397828 -9.51622 17.7458 2.80161  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 1.85859 0.815942 -2.72943
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 331.921 psi: 236.802 theta: 40.689
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 27.3538 -37.7382 -21.1376  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): 3.01046 -39.0706 0.71553
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 27.3538 -37.7382 -21.1376  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 26.2226 -36.3614 -20.2292  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 26.2226 -36.3614 -20.2292  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 25.0915 -34.9847 -19.3208  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 25.0915 -34.9847 -19.3208  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 23.9604 -33.608 -18.4124  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 23.9604 -33.608 -18.4124  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 22.8292 -32.2313 -17.504  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 22.8292 -32.2313 -17.504  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 21.6981 -30.8546 -16.5956  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 21.6981 -30.8546 -16.5956  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 20.5669 -29.4779 -15.6872  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 20.5669 -29.4779 -15.6872  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 19.4358 -28.1011 -14.7788  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 19.4358 -28.1011 -14.7788  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 18.3046 -26.7244 -13.8704  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 18.3046 -26.7244 -13.8704  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 17.1735 -25.3477 -12.9621  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 17.1735 -25.3477 -12.9621  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 16.0424 -23.971 -12.0537  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 16.0424 -23.971 -12.0537  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 14.9112 -22.5943 -11.1453  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 14.9112 -22.5943 -11.1453  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 13.7801 -21.2176 -10.2369  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 13.7801 -21.2176 -10.2369  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 12.6489 -19.8409 -9.32848  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 12.6489 -19.8409 -9.32848  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 11.5178 -18.4641 -8.42009  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 11.5178 -18.4641 -8.42009  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 10.3867 -17.0874 -7.5117  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 10.3867 -17.0874 -7.5117  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 9.25553 -15.7107 -6.6033  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 9.25553 -15.7107 -6.6033  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 10.3867 -17.0874 -7.5117  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 10.3867 -17.0874 -7.5117  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 9.8211 -16.3991 -7.0575  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 9.8211 -16.3991 -7.0575  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 9.25553 -15.7107 -6.6033  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 9.25553 -15.7107 -6.6033  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 9.8211 -16.3991 -7.0575  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 9.8211 -16.3991 -7.0575  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 9.53831 -16.0549 -6.8304  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 9.53831 -16.0549 -6.8304  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 9.25553 -15.7107 -6.6033  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 9.25553 -15.7107 -6.6033  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 9.53831 -16.0549 -6.8304  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 9.53831 -16.0549 -6.8304  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 9.39692 -15.8828 -6.71685  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 9.39692 -15.8828 -6.71685  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 9.25553 -15.7107 -6.6033  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 9.25553 -15.7107 -6.6033  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 9.39692 -15.8828 -6.71685  
+protocols.docking.DockingInitialPerturbation: Reading options...
+protocols.docking.DockingInitialPerturbation: sliding into contact
+protocols.docking.DockingInitialPerturbation: Moving away
+protocols.docking.DockingInitialPerturbation: Moving together
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 9.39692 -15.8828 -6.71685  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 8.9245 -15.1476 -6.23067  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 8.9245 -15.1476 -6.23067  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 8.45209 -14.4125 -5.74449  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 8.45209 -14.4125 -5.74449  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 7.97967 -13.6773 -5.25832  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 7.97967 -13.6773 -5.25832  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 7.50726 -12.9422 -4.77214  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 7.50726 -12.9422 -4.77214  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.105128 0.574255 -0.811899 -0.0520353 0.818481 0.572173 0.993096 -0.0179041 0.115927 7.97967 -13.6773 -5.25832  
+protocols.docking.DockingProtocol: finished initial perturbation
+protocols.TrialMover: Acceptance rate: 0.46
+protocols.TrialMover: Acceptance rate: 0.54
+protocols.TrialMover: Acceptance rate: 0.42
+protocols.TrialMover: Acceptance rate: 0.64
+protocols.TrialMover: Acceptance rate: 0.76
+protocols.TrialMover: Acceptance rate: 0.4
+protocols.TrialMover: Acceptance rate: 0.48
+protocols.TrialMover: Acceptance rate: 0.4
+protocols.TrialMover: Acceptance rate: 0.54
+protocols.TrialMover: Acceptance rate: 0.58
+protocols.docking.DockingLowRes: in DockingLowRes.apply
+::::::::::::::::::Centroid Rigid Body Adaptive:::::::::::::::::::
+protocols.docking.DockingProtocol: Doing initial repack of sidechains
+core.pack.task: Packer task: initialize from command line() 
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 2 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 456 bytes
+protocols.docking.DockingHighRes: in DockingHighRes.apply
+core.pack.task: Packer task: initialize from command line() 
+protocols.docking.DockingHighRes: ::::::::::::::::::DOCK_MCM:::::::::::::::::::
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 8 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 480 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 9 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 484 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 17 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 516 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 26 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 552 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 33 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 580 bytes
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0194935 -0.669165 -0.742858 0.708874 0.514712 -0.482254 0.705065 -0.535994 0.464321 9.89009 -18.8602 -1.05556  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0194935 -0.669165 -0.742858 0.708874 0.514712 -0.482254 0.705065 -0.535994 0.464321 529.585 -869.848 -76.7931  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0194935 -0.669165 -0.742858 0.708874 0.514712 -0.482254 0.705065 -0.535994 0.464321 9.89009 -18.8602 -1.05556  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0194935 -0.669165 -0.742858 0.708874 0.514712 -0.482254 0.705065 -0.535994 0.464321 529.585 -869.848 -76.7931  
+protocols.hotspot_hashing: Stub score: -1.93643. Accept.
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 3 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 460 bytes
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT 0.750337 -0.507278 -0.423866 0.638704 0.721647 0.26699 0.170444 -0.471057 0.865479 3.64487 -8.44808 -21.0043  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 7.64685 6.0253 21.8387
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 131.879 psi: 319.26 theta: 116.434
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT 0.224651 -0.248218 0.942295 0.657474 -0.675116 -0.334585 0.719208 0.694699 0.0115312 -21.5786 -3.3378 0.969066  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): 7.64685 6.0253 21.8387
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT 0.224651 -0.248218 0.942295 0.657474 -0.675116 -0.334585 0.719208 0.694699 0.0115312 -21.5786 -3.3378 0.969066  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 1.85859 0.815942 -2.72943
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 163.961 psi: 292.615 theta: 49.9518
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 14.0203 -39.8646 -14.2547  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): -10.2165 -33.23 9.80991
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 14.0203 -39.8646 -14.2547  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 13.4161 -38.0946 -13.546  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 13.4161 -38.0946 -13.546  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 12.8119 -36.3247 -12.8372  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 12.8119 -36.3247 -12.8372  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 12.2078 -34.5548 -12.1285  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 12.2078 -34.5548 -12.1285  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 11.6036 -32.7849 -11.4197  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 11.6036 -32.7849 -11.4197  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 10.9994 -31.0149 -10.711  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 10.9994 -31.0149 -10.711  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 10.3952 -29.245 -10.0022  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 10.3952 -29.245 -10.0022  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 9.79103 -27.4751 -9.29347  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 9.79103 -27.4751 -9.29347  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 9.18685 -25.7052 -8.58472  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 9.18685 -25.7052 -8.58472  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 8.58266 -23.9352 -7.87597  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 8.58266 -23.9352 -7.87597  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 7.97848 -22.1653 -7.16722  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 7.97848 -22.1653 -7.16722  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 7.3743 -20.3954 -6.45847  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 7.3743 -20.3954 -6.45847  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.77012 -18.6255 -5.74972  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.77012 -18.6255 -5.74972  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.16594 -16.8555 -5.04097  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.16594 -16.8555 -5.04097  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.77012 -18.6255 -5.74972  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.77012 -18.6255 -5.74972  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.46803 -17.7405 -5.39535  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.46803 -17.7405 -5.39535  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.77012 -18.6255 -5.74972  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.77012 -18.6255 -5.74972  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.61907 -18.183 -5.57253  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.61907 -18.183 -5.57253  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.46803 -17.7405 -5.39535  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.46803 -17.7405 -5.39535  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.61907 -18.183 -5.57253  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.61907 -18.183 -5.57253  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.54355 -17.9617 -5.48394  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.54355 -17.9617 -5.48394  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.46803 -17.7405 -5.39535  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.46803 -17.7405 -5.39535  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.54355 -17.9617 -5.48394  
+protocols.docking.DockingInitialPerturbation: Reading options...
+protocols.docking.DockingInitialPerturbation: sliding into contact
+protocols.docking.DockingInitialPerturbation: Moving away
+protocols.docking.DockingInitialPerturbation: Moving together
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.54355 -17.9617 -5.48394  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.25264 -17.0942 -5.08057  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 6.25264 -17.0942 -5.08057  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 5.96173 -16.2266 -4.6772  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 5.96173 -16.2266 -4.6772  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 5.67082 -15.359 -4.27383  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 5.67082 -15.359 -4.27383  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 5.37991 -14.4915 -3.87046  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 5.37991 -14.4915 -3.87046  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 5.08899 -13.6239 -3.46709  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 5.08899 -13.6239 -3.46709  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.224963 0.943979 0.241444 -0.246405 -0.294857 0.923225 0.942696 0.148198 0.298933 5.37991 -14.4915 -3.87046  
+protocols.docking.DockingProtocol: finished initial perturbation
+protocols.TrialMover: Acceptance rate: 0.5
+protocols.TrialMover: Acceptance rate: 0.48
+protocols.TrialMover: Acceptance rate: 0.44
+protocols.TrialMover: Acceptance rate: 0.62
+protocols.TrialMover: Acceptance rate: 0.64
+protocols.TrialMover: Acceptance rate: 0.54
+protocols.TrialMover: Acceptance rate: 0.56
+protocols.TrialMover: Acceptance rate: 0.5
+protocols.TrialMover: Acceptance rate: 0.5
+protocols.TrialMover: Acceptance rate: 0.42
+protocols.docking.DockingLowRes: in DockingLowRes.apply
+::::::::::::::::::Centroid Rigid Body Adaptive:::::::::::::::::::
+protocols.docking.DockingProtocol: Doing initial repack of sidechains
+core.pack.task: Packer task: initialize from command line() 
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 2 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 456 bytes
+protocols.docking.DockingHighRes: in DockingHighRes.apply
+core.pack.task: Packer task: initialize from command line() 
+protocols.docking.DockingHighRes: ::::::::::::::::::DOCK_MCM:::::::::::::::::::
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 37 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 596 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 37 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 596 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 37 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 596 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 37 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 596 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 37 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 596 bytes
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.354086 0.838744 0.413681 -0.929797 -0.363257 -0.0593415 0.1005 -0.405652 0.908486 9.99421 -25.6715 1.17288  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.354086 0.838744 0.413681 -0.929797 -0.363257 -0.0593415 0.1005 -0.405652 0.908486 355.851 -956.102 -119.995  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.354086 0.838744 0.413681 -0.929797 -0.363257 -0.0593415 0.1005 -0.405652 0.908486 9.99421 -25.6715 1.17288  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.354086 0.838744 0.413681 -0.929797 -0.363257 -0.0593415 0.1005 -0.405652 0.908486 355.851 -956.102 -119.995  
+protocols.hotspot_hashing: Stub score: 0. Reject.
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 3 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 460 bytes
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT 0.750337 -0.507278 -0.423866 0.638704 0.721647 0.26699 0.170444 -0.471057 0.865479 3.64487 -8.44808 -21.0043  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 7.64685 6.0253 21.8387
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 192.033 psi: 240.544 theta: 41.1632
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT -0.421846 -0.806718 -0.413825 0.595904 0.0973035 -0.797139 0.683333 -0.58287 0.43968 8.97198 11.5888 -15.4801  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): 7.64685 6.0253 21.8387
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT -0.421846 -0.806718 -0.413825 0.595904 0.0973035 -0.797139 0.683333 -0.58287 0.43968 8.97198 11.5888 -15.4801  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 1.85859 0.815942 -2.72943
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 205.457 psi: 65.703 theta: 126.693
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 16.6665 6.7565 -14.4144  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): 23.0919 0.584458 3.58895
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 16.6665 6.7565 -14.4144  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 15.2634 6.09552 -13.1518  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 15.2634 6.09552 -13.1518  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 13.8602 5.43455 -11.8892  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 13.8602 5.43455 -11.8892  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 12.457 4.77357 -10.6266  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 12.457 4.77357 -10.6266  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 11.0538 4.11259 -9.36394  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 11.0538 4.11259 -9.36394  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 12.457 4.77357 -10.6266  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 12.457 4.77357 -10.6266  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 11.7554 4.44308 -9.99525  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 11.7554 4.44308 -9.99525  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 11.0538 4.11259 -9.36394  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 11.0538 4.11259 -9.36394  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 11.7554 4.44308 -9.99525  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 11.7554 4.44308 -9.99525  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 11.4046 4.27784 -9.6796  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 11.4046 4.27784 -9.6796  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 11.7554 4.44308 -9.99525  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 11.7554 4.44308 -9.99525  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 11.58 4.36046 -9.83742  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 11.58 4.36046 -9.83742  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 11.4046 4.27784 -9.6796  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 11.4046 4.27784 -9.6796  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 11.58 4.36046 -9.83742  
+protocols.docking.DockingInitialPerturbation: Reading options...
+protocols.docking.DockingInitialPerturbation: sliding into contact
+protocols.docking.DockingInitialPerturbation: Moving away
+protocols.docking.DockingInitialPerturbation: Moving together
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 11.58 4.36046 -9.83742  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 10.9669 3.94977 -9.16257  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 10.9669 3.94977 -9.16257  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 10.3538 3.53909 -8.48772  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 10.3538 3.53909 -8.48772  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 9.74068 3.1284 -7.81286  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 9.74068 3.1284 -7.81286  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.650485 0.536328 -0.537793 0.6716 -0.736851 0.077488 -0.354714 -0.411587 -0.839508 10.3538 3.53909 -8.48772  
+protocols.docking.DockingProtocol: finished initial perturbation
+protocols.TrialMover: Acceptance rate: 0.46
+protocols.TrialMover: Acceptance rate: 0.72
+protocols.TrialMover: Acceptance rate: 0.34
+protocols.TrialMover: Acceptance rate: 0.74
+protocols.TrialMover: Acceptance rate: 0.38
+protocols.TrialMover: Acceptance rate: 0.7
+protocols.TrialMover: Acceptance rate: 0.34
+protocols.TrialMover: Acceptance rate: 0.2
+protocols.TrialMover: Acceptance rate: 0.44
+protocols.TrialMover: Acceptance rate: 0.62
+protocols.docking.DockingLowRes: in DockingLowRes.apply
+::::::::::::::::::Centroid Rigid Body Adaptive:::::::::::::::::::
+protocols.docking.DockingProtocol: Doing initial repack of sidechains
+core.pack.task: Packer task: initialize from command line() 
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 2 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 456 bytes
+protocols.docking.DockingHighRes: in DockingHighRes.apply
+core.pack.task: Packer task: initialize from command line() 
+protocols.docking.DockingHighRes: ::::::::::::::::::DOCK_MCM:::::::::::::::::::
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 21 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 532 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 8 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 480 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 13 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 500 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 16 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 512 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 10 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 488 bytes
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.00420367 0.783736 -0.62108 0.995777 0.0602403 0.0692771 0.091709 -0.618166 -0.78068 8.87567 2.22347 -10.6454  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.00420367 0.783736 -0.62108 0.995777 0.0602403 0.0692771 0.091709 -0.618166 -0.78068 494.373 484.124 -740.073  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.00420367 0.783736 -0.62108 0.995777 0.0602403 0.0692771 0.091709 -0.618166 -0.78068 8.87567 2.22347 -10.6454  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.00420367 0.783736 -0.62108 0.995777 0.0602403 0.0692771 0.091709 -0.618166 -0.78068 494.373 484.124 -740.073  
+protocols.hotspot_hashing: Stub score: -1.07085. Accept.
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 3 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 460 bytes
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT 0.750337 -0.507278 -0.423866 0.638704 0.721647 0.26699 0.170444 -0.471057 0.865479 3.64487 -8.44808 -21.0043  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 7.64685 6.0253 21.8387
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 166.804 psi: 290.099 theta: 117.387
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT 0.401085 -0.758359 0.513831 -0.136316 -0.604092 -0.78517 0.905842 0.244876 -0.345668 -16.1847 11.8591 5.08122  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): 7.64685 6.0253 21.8387
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT 0.401085 -0.758359 0.513831 -0.136316 -0.604092 -0.78517 0.905842 0.244876 -0.345668 -16.1847 11.8591 5.08122  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 1.85859 0.815942 -2.72943
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 41.1124 psi: 332.231 theta: 122.517
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 30.3531 21.7224 -17.5681  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): 43.9305 4.69636 -2.62451
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 30.3531 21.7224 -17.5681  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 28.9431 20.565 -16.7483  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 28.9431 20.565 -16.7483  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 27.5331 19.4075 -15.9284  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 27.5331 19.4075 -15.9284  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 26.1231 18.25 -15.1086  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 26.1231 18.25 -15.1086  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 24.7131 17.0926 -14.2888  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 24.7131 17.0926 -14.2888  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 23.303 15.9351 -13.4689  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 23.303 15.9351 -13.4689  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 21.893 14.7777 -12.6491  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 21.893 14.7777 -12.6491  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 20.483 13.6202 -11.8293  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 20.483 13.6202 -11.8293  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 19.073 12.4627 -11.0094  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 19.073 12.4627 -11.0094  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 17.663 11.3053 -10.1896  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 17.663 11.3053 -10.1896  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 16.253 10.1478 -9.36976  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 16.253 10.1478 -9.36976  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 14.8429 8.99033 -8.54993  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 14.8429 8.99033 -8.54993  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 13.4329 7.83286 -7.73009  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 13.4329 7.83286 -7.73009  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 12.0229 6.6754 -6.91026  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 12.0229 6.6754 -6.91026  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 13.4329 7.83286 -7.73009  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 13.4329 7.83286 -7.73009  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 12.7279 7.25413 -7.32018  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 12.7279 7.25413 -7.32018  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 12.0229 6.6754 -6.91026  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 12.0229 6.6754 -6.91026  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 12.7279 7.25413 -7.32018  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 12.7279 7.25413 -7.32018  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 12.3754 6.96476 -7.11522  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 12.3754 6.96476 -7.11522  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 12.0229 6.6754 -6.91026  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 12.0229 6.6754 -6.91026  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 12.3754 6.96476 -7.11522  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 12.3754 6.96476 -7.11522  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 12.1992 6.82008 -7.01274  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 12.1992 6.82008 -7.01274  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 12.3754 6.96476 -7.11522  
+protocols.docking.DockingInitialPerturbation: Reading options...
+protocols.docking.DockingInitialPerturbation: sliding into contact
+protocols.docking.DockingInitialPerturbation: Moving away
+protocols.docking.DockingInitialPerturbation: Moving together
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 12.3754 6.96476 -7.11522  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 11.7261 6.37756 -6.63194  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 11.7261 6.37756 -6.63194  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 11.0767 5.79036 -6.14866  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 11.0767 5.79036 -6.14866  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 10.4274 5.20315 -5.66538  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 10.4274 5.20315 -5.66538  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.548197 0.78807 -0.280046 0.197188 -0.447192 -0.872431 -0.812771 0.423043 -0.400547 11.0767 5.79036 -6.14866  
+protocols.docking.DockingProtocol: finished initial perturbation
+protocols.TrialMover: Acceptance rate: 0.56
+protocols.TrialMover: Acceptance rate: 0.52
+protocols.TrialMover: Acceptance rate: 0.46
+protocols.TrialMover: Acceptance rate: 0.46
+protocols.TrialMover: Acceptance rate: 0.46
+protocols.TrialMover: Acceptance rate: 0.36
+protocols.TrialMover: Acceptance rate: 0.54
+protocols.TrialMover: Acceptance rate: 0.36
+protocols.TrialMover: Acceptance rate: 0.24
+protocols.TrialMover: Acceptance rate: 0.6
+protocols.docking.DockingLowRes: in DockingLowRes.apply
+::::::::::::::::::Centroid Rigid Body Adaptive:::::::::::::::::::
+protocols.docking.DockingProtocol: Doing initial repack of sidechains
+core.pack.task: Packer task: initialize from command line() 
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 10 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 488 bytes
+protocols.docking.DockingHighRes: in DockingHighRes.apply
+core.pack.task: Packer task: initialize from command line() 
+protocols.docking.DockingHighRes: ::::::::::::::::::DOCK_MCM:::::::::::::::::::
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 10 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 488 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 10 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 488 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 13 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 500 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 10 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 488 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 10 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 488 bytes
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.478735 0.784252 0.394667 0.386428 0.215421 -0.896809 -0.788344 0.581845 -0.199928 6.51754 5.86055 -8.80123  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.478735 0.784252 0.394667 0.386428 0.215421 -0.896809 -0.788344 0.581845 -0.199928 312.174 748.591 -604.558  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.478735 0.784252 0.394667 0.386428 0.215421 -0.896809 -0.788344 0.581845 -0.199928 6.51754 5.86055 -8.80123  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.478735 0.784252 0.394667 0.386428 0.215421 -0.896809 -0.788344 0.581845 -0.199928 312.174 748.591 -604.558  
+protocols.hotspot_hashing: Stub score: -1.85128. Accept.
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 3 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 460 bytes
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT 0.750337 -0.507278 -0.423866 0.638704 0.721647 0.26699 0.170444 -0.471057 0.865479 3.64487 -8.44808 -21.0043  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 7.64685 6.0253 21.8387
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 347.725 psi: 266.642 theta: 96.2674
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT -0.121836 0.36725 0.922108 0.084534 0.929493 -0.359022 -0.988944 0.0342078 -0.144291 -15.4826 9.89224 11.1914  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): 7.64685 6.0253 21.8387
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT -0.121836 0.36725 0.922108 0.084534 0.929493 -0.359022 -0.988944 0.0342078 -0.144291 -15.4826 9.89224 11.1914  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 1.85859 0.815942 -2.72943
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 348.077 psi: 87.0272 theta: 36.3782
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -34.9446 -4.27359 -4.4073  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): -24.4365 29.8223 19.1322
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -34.9446 -4.27359 -4.4073  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -32.9832 -4.16908 -4.03042  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -32.9832 -4.16908 -4.03042  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -31.0218 -4.06458 -3.65354  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -31.0218 -4.06458 -3.65354  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -29.0605 -3.96008 -3.27667  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -29.0605 -3.96008 -3.27667  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -27.0991 -3.85558 -2.89979  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -27.0991 -3.85558 -2.89979  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -25.1377 -3.75108 -2.52291  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -25.1377 -3.75108 -2.52291  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -23.1763 -3.64658 -2.14604  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -23.1763 -3.64658 -2.14604  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -21.2149 -3.54208 -1.76916  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -21.2149 -3.54208 -1.76916  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -19.2535 -3.43758 -1.39228  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -19.2535 -3.43758 -1.39228  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -17.2921 -3.33308 -1.01541  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -17.2921 -3.33308 -1.01541  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -15.3307 -3.22858 -0.638532  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -15.3307 -3.22858 -0.638532  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -13.3693 -3.12408 -0.261655  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -13.3693 -3.12408 -0.261655  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -11.408 -3.01958 0.115222  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -11.408 -3.01958 0.115222  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -13.3693 -3.12408 -0.261655  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -13.3693 -3.12408 -0.261655  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -12.3887 -3.07183 -0.0732167  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -12.3887 -3.07183 -0.0732167  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -13.3693 -3.12408 -0.261655  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -13.3693 -3.12408 -0.261655  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -12.879 -3.09796 -0.167436  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -12.879 -3.09796 -0.167436  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -13.3693 -3.12408 -0.261655  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -13.3693 -3.12408 -0.261655  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -13.1242 -3.11102 -0.214545  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -13.1242 -3.11102 -0.214545  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -13.3693 -3.12408 -0.261655  
+protocols.docking.DockingInitialPerturbation: Reading options...
+protocols.docking.DockingInitialPerturbation: sliding into contact
+protocols.docking.DockingInitialPerturbation: Moving away
+protocols.docking.DockingInitialPerturbation: Moving together
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -13.3693 -3.12408 -0.261655  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -12.3773 -3.11526 -0.136363  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -12.3773 -3.11526 -0.136363  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -11.3852 -3.10644 -0.0110714  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -11.3852 -3.10644 -0.0110714  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -10.3931 -3.09763 0.11422  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -10.3931 -3.09763 0.11422  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -9.40102 -3.08881 0.239512  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -9.40102 -3.08881 0.239512  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.391721 -0.56255 0.728074 -0.575448 0.467653 0.670939 -0.717923 -0.68179 -0.140529 -10.3931 -3.09763 0.11422  
+protocols.docking.DockingProtocol: finished initial perturbation
+protocols.TrialMover: Acceptance rate: 0.42
+protocols.TrialMover: Acceptance rate: 0.48
+protocols.TrialMover: Acceptance rate: 0.5
+protocols.TrialMover: Acceptance rate: 0.46
+protocols.TrialMover: Acceptance rate: 0.64
+protocols.TrialMover: Acceptance rate: 0.32
+protocols.TrialMover: Acceptance rate: 0.56
+protocols.TrialMover: Acceptance rate: 0.64
+protocols.TrialMover: Acceptance rate: 0.42
+protocols.TrialMover: Acceptance rate: 0.48
+protocols.docking.DockingLowRes: in DockingLowRes.apply
+::::::::::::::::::Centroid Rigid Body Adaptive:::::::::::::::::::
+protocols.docking.DockingProtocol: Doing initial repack of sidechains
+core.pack.task: Packer task: initialize from command line() 
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 2 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 456 bytes
+protocols.docking.DockingHighRes: in DockingHighRes.apply
+core.pack.task: Packer task: initialize from command line() 
+protocols.docking.DockingHighRes: ::::::::::::::::::DOCK_MCM:::::::::::::::::::
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 24 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 544 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 16 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 512 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 10 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 488 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 23 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 540 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 27 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 556 bytes
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0375425 -0.590618 0.806077 -0.0554474 0.806635 0.588444 -0.997756 -0.0226032 -0.0630313 -9.96974 -3.48809 4.33164  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0375425 -0.590618 0.806077 -0.0554474 0.806635 0.588444 -0.997756 -0.0226032 -0.0630313 -998.217 -153.447 34.0077  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.0375425 -0.590618 0.806077 -0.0554474 0.806635 0.588444 -0.997756 -0.0226032 -0.0630313 -9.96974 -3.48809 4.33164  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.0375425 -0.590618 0.806077 -0.0554474 0.806635 0.588444 -0.997756 -0.0226032 -0.0630313 -998.217 -153.447 34.0077  
+protocols.hotspot_hashing: Stub score: -1.58795. Accept.
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 3 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 460 bytes
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT 0.750337 -0.507278 -0.423866 0.638704 0.721647 0.26699 0.170444 -0.471057 0.865479 3.64487 -8.44808 -21.0043  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 7.64685 6.0253 21.8387
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 292.102 psi: 338.852 theta: 51.1498
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT 0.565801 0.10326 0.81805 -0.75491 0.463908 0.463573 -0.331631 -0.879845 0.340432 -18.9619 -5.60286 -8.71578  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): 7.64685 6.0253 21.8387
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT 0.565801 0.10326 0.81805 -0.75491 0.463908 0.463573 -0.331631 -0.879845 0.340432 -18.9619 -5.60286 -8.71578  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 1.85859 0.815942 -2.72943
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 109.899 psi: 248.575 theta: 65.0707
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -11.6481 -25.4312 -10.529  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): -19.7324 -0.0631695 13.208
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -11.6481 -25.4312 -10.529  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -10.5849 -24.0009 -9.62123  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -10.5849 -24.0009 -9.62123  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -9.52176 -22.5707 -8.71348  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -9.52176 -22.5707 -8.71348  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -8.45861 -21.1404 -7.80574  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -8.45861 -21.1404 -7.80574  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -7.39546 -19.7101 -6.898  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -7.39546 -19.7101 -6.898  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -6.33232 -18.2798 -5.99025  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -6.33232 -18.2798 -5.99025  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -5.26917 -16.8495 -5.08251  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -5.26917 -16.8495 -5.08251  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -4.20602 -15.4192 -4.17477  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -4.20602 -15.4192 -4.17477  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -3.14287 -13.9889 -3.26702  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -3.14287 -13.9889 -3.26702  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -2.07972 -12.5587 -2.35928  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -2.07972 -12.5587 -2.35928  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -3.14287 -13.9889 -3.26702  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -3.14287 -13.9889 -3.26702  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -2.6113 -13.2738 -2.81315  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -2.6113 -13.2738 -2.81315  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -3.14287 -13.9889 -3.26702  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -3.14287 -13.9889 -3.26702  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -2.87709 -13.6314 -3.04009  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -2.87709 -13.6314 -3.04009  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -2.6113 -13.2738 -2.81315  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -2.6113 -13.2738 -2.81315  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -2.87709 -13.6314 -3.04009  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -2.87709 -13.6314 -3.04009  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -2.74419 -13.4526 -2.92662  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -2.74419 -13.4526 -2.92662  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -2.6113 -13.2738 -2.81315  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -2.6113 -13.2738 -2.81315  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -2.74419 -13.4526 -2.92662  
+protocols.docking.DockingInitialPerturbation: Reading options...
+protocols.docking.DockingInitialPerturbation: sliding into contact
+protocols.docking.DockingInitialPerturbation: Moving away
+protocols.docking.DockingInitialPerturbation: Moving together
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -2.74419 -13.4526 -2.92662  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -2.33601 -12.6175 -2.55771  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -2.33601 -12.6175 -2.55771  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -1.92783 -11.7825 -2.1888  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -1.92783 -11.7825 -2.1888  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -1.51965 -10.9475 -1.81989  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -1.51965 -10.9475 -1.81989  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -1.11147 -10.1124 -1.45098  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -1.11147 -10.1124 -1.45098  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -0.703286 -9.27738 -1.08207  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -0.703286 -9.27738 -1.08207  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -0.295105 -8.44234 -0.713165  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -0.295105 -8.44234 -0.713165  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.354015 -0.203029 0.912936 0.0747991 0.979172 0.188754 -0.932244 0.0014652 0.361828 -0.703286 -9.27738 -1.08207  
+protocols.docking.DockingProtocol: finished initial perturbation
+protocols.TrialMover: Acceptance rate: 0.64
+protocols.TrialMover: Acceptance rate: 0.46
+protocols.TrialMover: Acceptance rate: 0.3
+protocols.TrialMover: Acceptance rate: 0.34
+protocols.TrialMover: Acceptance rate: 0.54
+protocols.TrialMover: Acceptance rate: 0.52
+protocols.TrialMover: Acceptance rate: 0.28
+protocols.TrialMover: Acceptance rate: 0.4
+protocols.TrialMover: Acceptance rate: 0.3
+protocols.TrialMover: Acceptance rate: 0.34
+protocols.docking.DockingLowRes: in DockingLowRes.apply
+::::::::::::::::::Centroid Rigid Body Adaptive:::::::::::::::::::
+protocols.docking.DockingProtocol: Doing initial repack of sidechains
+core.pack.task: Packer task: initialize from command line() 
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 2 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 456 bytes
+protocols.docking.DockingHighRes: in DockingHighRes.apply
+core.pack.task: Packer task: initialize from command line() 
+protocols.docking.DockingHighRes: ::::::::::::::::::DOCK_MCM:::::::::::::::::::
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 17 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 516 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 17 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 516 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 17 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 516 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 9 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 484 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 9 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 484 bytes
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.648548 -0.518618 0.557154 0.0263944 -0.716204 -0.697392 0.760716 0.466998 -0.450804 2.61819 8.11966 -13.0776  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.648548 -0.518618 0.557154 0.0263944 -0.716204 -0.697392 0.760716 0.466998 -0.450804 -80.0575 685.487 -744.062  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.648548 -0.518618 0.557154 0.0263944 -0.716204 -0.697392 0.760716 0.466998 -0.450804 2.61819 8.11966 -13.0776  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.648548 -0.518618 0.557154 0.0263944 -0.716204 -0.697392 0.760716 0.466998 -0.450804 -80.0575 685.487 -744.062  
+protocols.hotspot_hashing: Stub score: -1.37075. Accept.
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT -0.251965 -0.703827 -0.664185 -0.679778 0.617212 -0.396171 0.688778 0.351677 -0.633962 1.79587 19.012 23.371  
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 3 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 460 bytes
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT 0.750337 -0.507278 -0.423866 0.638704 0.721647 0.26699 0.170444 -0.471057 0.865479 3.64487 -8.44808 -21.0043  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 7.64685 6.0253 21.8387
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 205.898 psi: 250.999 theta: 25.2232
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT -0.748262 -0.600334 -0.282317 0.547248 -0.318015 -0.7742 0.374998 -0.733802 0.56649 9.28538 9.01913 -17.2128  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): 7.64685 6.0253 21.8387
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Randomize: Jump (before): RT -0.748262 -0.600334 -0.282317 0.547248 -0.318015 -0.7742 0.374998 -0.733802 0.56649 9.28538 9.01913 -17.2128  
+protocols.moves.RigidBodyMover: Randomize: Rot (before): 1.85859 0.815942 -2.72943
+protocols.geometry.RB_geometry: random_reorientation_matrix phi: 261.677 psi: 0.539088 theta: 68.5783
+protocols.moves.RigidBodyMover: Randomize: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 19.5215 -15.5352 -27.6986  
+protocols.moves.RigidBodyMover: Randomize: Rot  (after): 5.93478 -15.6255 -9.7313
+protocols.moves.RigidBodyMover: Randomize: ---
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 19.5215 -15.5352 -27.6986  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 18.6657 -14.8346 -26.0322  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 18.6657 -14.8346 -26.0322  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 17.8099 -14.134 -24.3659  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 17.8099 -14.134 -24.3659  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 16.9541 -13.4334 -22.6995  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 16.9541 -13.4334 -22.6995  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 16.0983 -12.7328 -21.0331  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 16.0983 -12.7328 -21.0331  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 15.2425 -12.0322 -19.3668  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 15.2425 -12.0322 -19.3668  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 14.3867 -11.3316 -17.7004  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 14.3867 -11.3316 -17.7004  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 13.531 -10.631 -16.0341  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 13.531 -10.631 -16.0341  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 12.6752 -9.93039 -14.3677  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 12.6752 -9.93039 -14.3677  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 11.8194 -9.22979 -12.7013  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 11.8194 -9.22979 -12.7013  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 10.9636 -8.52919 -11.035  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 10.9636 -8.52919 -11.035  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 11.8194 -9.22979 -12.7013  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 11.8194 -9.22979 -12.7013  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 11.3915 -8.87949 -11.8681  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 11.3915 -8.87949 -11.8681  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 11.8194 -9.22979 -12.7013  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 11.8194 -9.22979 -12.7013  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 11.6054 -9.05464 -12.2847  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 11.6054 -9.05464 -12.2847  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 11.8194 -9.22979 -12.7013  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 11.8194 -9.22979 -12.7013  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 11.7124 -9.14221 -12.493  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 11.7124 -9.14221 -12.493  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 11.6054 -9.05464 -12.2847  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 11.6054 -9.05464 -12.2847  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 11.7124 -9.14221 -12.493  
+protocols.docking.DockingInitialPerturbation: Reading options...
+protocols.docking.DockingInitialPerturbation: sliding into contact
+protocols.docking.DockingInitialPerturbation: Moving away
+protocols.docking.DockingInitialPerturbation: Moving together
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 11.7124 -9.14221 -12.493  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 11.1947 -8.79455 -11.7113  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 11.1947 -8.79455 -11.7113  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 10.677 -8.44689 -10.9296  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 10.677 -8.44689 -10.9296  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 10.1593 -8.09922 -10.1478  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 10.1593 -8.09922 -10.1478  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.588679 -0.802568 -0.0966481 0.552463 0.312155 0.77288 -0.59012 -0.508373 0.627149 10.677 -8.44689 -10.9296  
+protocols.docking.DockingProtocol: finished initial perturbation
+protocols.TrialMover: Acceptance rate: 0.58
+protocols.TrialMover: Acceptance rate: 0.64
+protocols.TrialMover: Acceptance rate: 0.36
+protocols.TrialMover: Acceptance rate: 0.68
+protocols.TrialMover: Acceptance rate: 0.56
+protocols.TrialMover: Acceptance rate: 0.68
+protocols.TrialMover: Acceptance rate: 0.4
+protocols.TrialMover: Acceptance rate: 0.4
+protocols.TrialMover: Acceptance rate: 0.22
+protocols.TrialMover: Acceptance rate: 0.3
+protocols.docking.DockingLowRes: in DockingLowRes.apply
+::::::::::::::::::Centroid Rigid Body Adaptive:::::::::::::::::::
+protocols.docking.DockingProtocol: Doing initial repack of sidechains
+core.pack.task: Packer task: initialize from command line() 
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 2 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 456 bytes
+protocols.docking.DockingHighRes: in DockingHighRes.apply
+core.pack.task: Packer task: initialize from command line() 
+protocols.docking.DockingHighRes: ::::::::::::::::::DOCK_MCM:::::::::::::::::::
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 25 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 548 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 26 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 552 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 25 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 548 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 28 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 560 bytes
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 27 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 556 bytes
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.119224 0.992432 -0.029414 0.399818 -0.0208721 0.916357 0.908808 -0.121012 -0.39928 12.8194 -4.31483 -3.33435  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.119224 0.992432 -0.029414 0.399818 -0.0208721 0.916357 0.908808 -0.121012 -0.39928 905.959 -295.34 -346.273  
+protocols.moves.RigidBodyMover: Translate: Jump (before): RT 0.119224 0.992432 -0.029414 0.399818 -0.0208721 0.916357 0.908808 -0.121012 -0.39928 12.8194 -4.31483 -3.33435  
+protocols.moves.RigidBodyMover: Translate: Jump (after):  RT 0.119224 0.992432 -0.029414 0.399818 -0.0208721 0.916357 0.908808 -0.121012 -0.39928 905.959 -295.34 -346.273  
+protocols.hotspot_hashing: Stub score: -2.00563. Accept.
+protocols.hotspot_hashing: Wrote 10 stubs to testTRP.stubs

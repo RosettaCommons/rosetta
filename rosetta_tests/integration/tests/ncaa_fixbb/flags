@@ -1,0 +1,3 @@
+-s 1l2y.pdb
+-resfile 1l2y.resfile
+-score:weights mm_std

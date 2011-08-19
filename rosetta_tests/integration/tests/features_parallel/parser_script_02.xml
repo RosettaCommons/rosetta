@@ -1,0 +1,14 @@
+<dock_design>
+	<SCOREFXNS>
+		<s weights=score12_w_corrections/>
+	</SCOREFXNS>		
+	<MOVERS>
+		<ReportToDB name=features_reporter db="features_IntegrationTest.db3_02" sample_source="second node" first_struct_id=200 protocol_id=200>
+			<feature name=ResidueFeatures/>
+                </ReportToDB>
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover_name=features_reporter/>
+	</PROTOCOLS>
+</dock_design>
+

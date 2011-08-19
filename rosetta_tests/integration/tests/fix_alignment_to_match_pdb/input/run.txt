@@ -1,0 +1,1 @@
+~/src/mini/bin/fix_alignment_to_match_pdb.linuxgccrelease -in:file:template_pdb 2osoA.pdb -in:file:alignment alignment.filt -out:file:alignment temp.filt -database ~/minirosetta_database -cm:aln_format grishin

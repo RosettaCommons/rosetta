@@ -1,0 +1,4 @@
+-in:file:silent input/test.out
+-in:file:native input/native.pdb
+-in:file:silent_struct_type binary
+-in:file:residue_type_set fa_standard

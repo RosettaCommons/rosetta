@@ -1,0 +1,9 @@
+-target input/4akea.mrtm12.pdb
+-s input/in.stubs
+-mute core.util.prof ## dont show timing info
+-residue ILE
+-o testILE.stubs
+-mute core.io.database
+-density test.density
+-scorecut 0.2
+-weighted_density test.wt_density

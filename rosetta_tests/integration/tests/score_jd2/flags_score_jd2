@@ -1,0 +1,5 @@
+-in:file:s 1l2y.pdb 1l2y.pdb
+-out:file:silent output/rescore_jd2.out
+-out:file:scorefile output/rescore_jd2.fsc
+-out:suffix _bla
+-out:prefix mew_ 

@@ -1,0 +1,11 @@
+-s 1brs.pdb
+
+#-resfile resfile
+
+#-tracer_data_print
+#-pack_input
+#-pack_separated
+-add_regular_scores_to_scorefile
+#-use_resfile
+
+-out:file:score_only allscores.sc

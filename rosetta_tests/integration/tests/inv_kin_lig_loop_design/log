@@ -1,0 +1,198 @@
+core.init: command: /work/murphp/src/mini/mini/bin/inv_kin_lig_loop_design.linuxgccrelease -database /work/murphp/src/minirosetta_database -in:file:extra_res_fa URA1.params -in:file:extra_res_fa HPY1.params -murphp:inv_kin_lig_loop_design_filename run.tag
+core.init: 'RNG device' seed mode, using '/dev/urandom', seed=-716077248 seed_offset=0 real_seed=-716077248
+core.init.random: RandomGenerator:init: Normal mode, seed=-716077248 RG_type=mt19937
+loop_design_filename=run.tag
+<loop_design>
+	<io infile=bCD_UR1.pdb nstruct=1/>
+	<param max_cycles=1 max_cycles_1mer=1 max_cycles_design=2 max_cycles_design_sm=1 max_cycles_design_sm_min=1 max_cycles_ramp=1 max_cycles_ramp_sm=1 max_cycles_ramp_sm_min=1 max_cycles_rand=1 max_cycles_rep=1 max_cycles_start=1 max_cycles_start_1mer=1 max_cycles_start_3mer=1 max_cycles_start_3mer_1mer=1 max_cycles_start_3mer_anchor=1/>
+	<anchored_loop name=x nres_post=3 nres_pre=3 ss=LLLLLLL vary_post=2 vary_pre=2>
+		<begin res_id=A:150/>
+		<end res_id=A:156/>
+		<from atom=O1 res_id=L:1/>
+		<to atom=1HE2 res_type=GLN/>
+		<hbond/>
+	</anchored_loop>
+</loop_design>
+
+core.io.pose_io: read file: bCD_UR1.pdb
+core.io.pdb.file_data: build_pose...
+core.conformation: [ WARNING ] missing heavyatom:  NV  on residue PRO 11
+core.conformation: [ WARNING ] missing heavyatom:  NV  on residue PRO 37
+core.conformation: [ WARNING ] missing heavyatom:  NV  on residue PRO 52
+core.conformation: [ WARNING ] missing heavyatom:  NV  on residue PRO 53
+core.conformation: [ WARNING ] missing heavyatom:  NV  on residue PRO 57
+core.conformation: [ WARNING ] missing heavyatom:  NV  on residue PRO 70
+core.conformation: [ WARNING ] missing heavyatom:  NV  on residue PRO 142
+core.conformation: [ WARNING ] missing heavyatom:  NV  on residue PRO 152
+core.conformation: [ WARNING ] missing heavyatom:  NV  on residue PRO 160
+core.conformation: [ WARNING ] missing heavyatom:  NV  on residue PRO 181
+core.conformation: [ WARNING ] missing heavyatom:  NV  on residue PRO 273
+core.conformation: [ WARNING ] missing heavyatom:  NV  on residue PRO 287
+core.conformation: [ WARNING ] missing heavyatom:  NV  on residue PRO 315
+core.conformation: [ WARNING ] missing heavyatom:  NV  on residue PRO 318
+core.conformation: [ WARNING ] missing heavyatom:  NV  on residue PRO 377
+core.conformation: [ WARNING ] missing heavyatom:  NV  on residue PRO 390
+core.conformation: [ WARNING ] missing heavyatom:  NV  on residue PRO 406
+core.conformation: [ WARNING ] missing heavyatom:  NV  on residue PRO 416
+core.conformation: [ WARNING ] missing heavyatom:  OXT on residue ARG_p:CtermProteinFull 423
+core.io.pdb.file_data: original fold tree: FOLD_TREE  EDGE 1 423 -1  EDGE 1 424 1  X X  END 
+core.io.pdb.file_data: 
+core.io.pdb.file_data: new fold tree FOLD_TREE  EDGE 1 423 -1  EDGE 1 424 1  X X  END 
+core.io.pdb.file_data: 
+core.io.pdb.file_data: set fold tree: FOLD_TREE  EDGE 1 423 -1  EDGE 1 424 1  X X  END 
+core.io.pdb.file_data: 
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+core.io.database: Database file opened: /work/murphp/src/minirosetta_database/pdb_pair_stats_fine
+core.io.database: Database file opened: /work/murphp/src/minirosetta_database/P_AA
+core.io.database: Database file opened: /work/murphp/src/minirosetta_database/P_AA_n
+core.io.database: Database file opened: /work/murphp/src/minirosetta_database/P_AA_pp
+core.io.database: Database file opened: /work/murphp/src/minirosetta_database/Rama_smooth_dyn.dat_ss_6.4
+core.scoring.dunbrack: Dunbrack flat file timestamp: 1204141746 binary timestamp: 1206579313
+core.scoring.dunbrack: Reading Dunbrack library from binary file /work/murphp/src/minirosetta_database/bbdep02.May.sortlib.bin...done
+core.scoring.dunbrack: Dunbrack library took 0.07 seconds to load from binary
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 541 rotamers at 424 positions.
+core.pack.pack_rotamers: IG: 1323812 bytes
+core.io.pdb.file_data: [ OPT-H WARNING ] proton chi angle change: chidev=   119.990 chino=  2 position:   27 SER SER
+core.io.pdb.file_data: [ OPT-H WARNING ] proton chi angle change: chidev=   120.006 chino=  2 position:   39 THR THR
+core.io.pdb.file_data: [ OPT-H WARNING ] proton chi angle change: chidev=   120.012 chino=  2 position:   42 SER SER
+core.io.pdb.file_data: [ OPT-H WARNING ] proton chi angle change: chidev=   119.975 chino=  2 position:   64 THR THR
+core.io.pdb.file_data: [ OPT-H WARNING ] proton chi angle change: chidev=   120.000 chino=  2 position:   66 THR THR
+core.io.pdb.file_data: [ OPT-H WARNING ] proton chi angle change: chidev=   119.970 chino=  2 position:  104 THR THR
+core.io.pdb.file_data: [ OPT-H WARNING ] proton chi angle change: chidev=   179.987 chino=  3 position:  189 TYR TYR
+core.io.pdb.file_data: [ OPT-H WARNING ] proton chi angle change: chidev=   119.966 chino=  2 position:  225 THR THR
+core.io.pdb.file_data: [ OPT-H WARNING ] proton chi angle change: chidev=   120.002 chino=  2 position:  245 THR THR
+core.io.pdb.file_data: [ OPT-H WARNING ] proton chi angle change: chidev=   119.977 chino=  2 position:  256 SER SER
+core.io.pdb.file_data: [ OPT-H WARNING ] proton chi angle change: chidev=   119.994 chino=  2 position:  301 SER SER
+core.io.pdb.file_data: [ OPT-H WARNING ] proton chi angle change: chidev=   179.992 chino=  3 position:  340 TYR TYR
+core.io.pdb.file_data: [ OPT-H WARNING ] proton chi angle change: chidev=   179.968 chino=  3 position:  393 TYR TYR
+core.io.pdb.file_data: [ OPT-H WARNING ] proton chi angle change: chidev=   120.023 chino=  2 position:  409 THR THR
+core.io.pdb.file_data: [ OPT-H WARNING ] proton chi angle change: chidev=   179.993 chino=  3 position:  412 TYR TYR
+core.io.pdb.file_data: build_pose... Ok.
+protocols.jobdist.JobDistributors: Looking for an available job: 1 1
+Starting xxx_0001 ...
+inv_kin_lig_loop_design::instantiating cloner
+InvKinLig:LoopDesign::set_nres - setting anchored_loop-x 3 => 3
+InvKinLig:LoopDesign::set_nres - setting anchored_loop-x 3 => 3
+InvKinLig:LoopDesign::set_nres - setting anchored_loop-x 2 => 2
+InvKinLig:LoopDesign::set_nres - setting anchored_loop-x 2 => 2
+after random options collapsed: 
+<loop_design>
+	<io infile=bCD_UR1.pdb nstruct=1/>
+	<param max_cycles=1 max_cycles_1mer=1 max_cycles_design=2 max_cycles_design_sm=1 max_cycles_design_sm_min=1 max_cycles_ramp=1 max_cycles_ramp_sm=1 max_cycles_ramp_sm_min=1 max_cycles_rand=1 max_cycles_rep=1 max_cycles_start=1 max_cycles_start_1mer=1 max_cycles_start_3mer=1 max_cycles_start_3mer_1mer=1 max_cycles_start_3mer_anchor=1/>
+	<anchored_loop name=x nres_post=3 nres_pre=3 ss=LLLLLLL vary_post=2 vary_pre=2>
+		<begin res_id=A:150/>
+		<end res_id=A:156/>
+		<from atom=O1 res_id=L:1/>
+		<to atom=1HE2 res_type=GLN/>
+		<hbond/>
+	</anchored_loop>
+</loop_design>
+
+inv_kin_lig_loop_design::cloning pose0
+InvKinLigLoopDesign::Cloner:: number of indels = 1
+InvKinLigLoopDesign: creating a pose of sequence: ALQTIINARLPGEEGLWQIHLQDGKISAIDAQSGVMPITENSLDAEQGLVIPPFVEPHIHLDTTQTAGQPNWNQSGTLFEGIERWAERKALLTHDDVKQRAWQTLKWQIANGIQHVRTHVDVSDATLTALKAMLEVKQEVAPWIDLQIV
+InvKinLigLoopDesign: creating a pose of sequence: AAAQAAA
+InvKinLigLoopDesign: creating a pose of sequence: ILSYPNGEALLEEALRLGADVVGAIPHFEFTREYGVESLHKTFALAQKYDRLIDVHCDEIDDEQSRFVETVAALAHHEGMGARVTASHTTAMHSYNGAYTSRLFRLLKMSGINFVANPLVNIHLQGRFDTYPKRRGITRVKEMLESGINVCFGHDDVFDPWYPLGTANMLQVLHMGLHVCQLMGYGQINDGLNLITHHSARTLNLQDYGIAAGNSANLIILPAENGFDALRRQVPVRYSVRGGKVIASTQPAQTTVYLEQPEAIDYKR
+InvKinLigLoopDesign: creating a pose of sequence: 1
+core.chemical: make_variant: missing: OVR1
+core.chemical: make_variant: missing: OVR2
+core.chemical: make_variant: missing: OVR1
+core.chemical: make_variant: missing: OVR1
+core.chemical: make_variant: missing: OVR2
+core.chemical: make_variant: missing: OVR1
+inv_kin_lig_loop_design::dumping clone
+inv_kin_lig_loop_design::getting fold tree
+InvKinLigLoopDesign::Cloner::creating anchored loop jump edge
+InvKinLigLoopDesign::Cloner::jump edge: O1=4 1HE2=16
+cout is allowable 425 4
+get_jump_atom_for_hbond = 425 4=>4
+cout is allowable 153 16
+cout is allowable 153 9
+cout is allowable 153 7
+get_jump_atom_for_hbond = 153 16=>7
+InvKinLigLoopDesign::Cloner::edge.has_atom_info() 1 start= O1  stop= CD 
+InvKinLigLoopDesign::Cloner::jump between 425 153
+InvKinLigLoopDesign::Cloner::edge between 150 425
+InvKinLigLoopDesign::Cloner::edge between 425 156
+InvKinLigLoopDesign::Cloner::jump between 149 157
+InvKinLigLoopDesign::Cloner::before reorder: FOLD_TREE  EDGE 1 149 -1  EDGE 425 153 1  O1   CD   END  EDGE 153 150 -1  EDGE 153 156 -1  EDGE 149 157 2  X X  END  EDGE 157 424 -1  EDGE 1 425 3  X X  END 
+
+InvKinLigLoopDesign::Cloner::reordering fold tree... 
+InvKinLigLoopDesign::Cloner::after reorder: FOLD_TREE  EDGE 1 149 -1  EDGE 149 157 2  X X  END  EDGE 157 424 -1  EDGE 1 425 3  X X  END  EDGE 425 153 1  O1   CD   END  EDGE 153 150 -1  EDGE 153 156 -1 
+
+FOLD_TREE  EDGE 1 149 -1  EDGE 149 157 2  X X  END  EDGE 157 424 -1  EDGE 1 425 3  X X  END  EDGE 425 153 1  O1   CD   END  EDGE 153 150 -1  EDGE 153 156 -1 
+
+calling pose->fold_tree
+inv_kin_lig_loop_design::setting initial configuration
+InvKinLigLoopDesign::Cloner::setting jumpno 1 to initial value
+h2a=0
+getting stub for 425 4 3 2  O1   C1   N1 
+getting stub for 153 16 9 7 1HE2  NE2  CD 
+InvKinLigLoopDesign::Cloner::setting secondary structure of 150,156 to LLLLLLL
+InvKinLigLoopDesign::Cloner::secstruct= 
+LLLEEELEEEELLLLEEEEEEELLLLLEEEEELEEEEEEELEEELLLEEEEEEEEELEEEHHHLLLLLLLEEELLLLHHHHHHHHHHHHHLLLHHHHHHHHHHHHHHHHHLLLLEEEEEEEEEELLLHHHHHHHHHHHHLHHHEEEEEELLLLLLLLLLLLLHHHHHHHHHHHLLLEEEEEHHHLLLHHHHHHHHHHHHHHHHHLLEEEEEEELEEEELLLLHHHHHHHHHHHLLLLLLEEEELLHHHHLLLHHHHHHHHHHHHHHLEEEEEEHHHHHHHLLLLLLEEEELLEEEHHHHHHLLEEEEEELLLLLLLLLLLLLLLHHHHHHHHHHHLLLLLHHHHHLHHHHLLHHHHHHLLLLLLLEEELEEEEEEEEEELLHHHHHHLLEEELEEEELLLLLEEEEEEEEEEELLEEEEELLLLL
+inv_kin_lig_loop_design::dumping clone with initial configuration
+inv_kin_lig_loop_design::creating protocol
+inv_kin_lig_loop_design::applying protocol
+Protocol::apply: running lo_res phase
+>>> StageI / start -  Cycles:	0/1
+>>> StageI / start / 3mer - inserting 3mers 
+start_3mer:  Cycles:	0/1	0/1
+Mover::getFragmentFile - getting frag file 'L' for 150
+Mover::getFragmentFile - getting frag file 'L' for 151
+Mover::getFragmentFile - getting frag file 'L' for 152
+Mover::getFragmentFile - getting frag file 'L' for 153
+Mover::getFragmentFile - getting frag file 'L' for 154
+Mover::getFragmentFile - getting frag file 'L' for 155
+Mover::getFragmentFile - getting frag file 'L' for 156
+Mover::getFragmentFile - getting frag file 'LLL' for 150
+Fragment::getFragmentFile - trying to open 'ss_fragfiles/LLL.fragfile'
+Fragment::getFragmentFile - successfully opened 'ss_fragfiles/LLL.fragfile'
+Mover::getFragmentFile - getting frag file 'LLL' for 153
+inserting a random rotamer into GLN:153
+h2a=0
+getting stub for 425 4 3 2  O1   C1   N1 
+getting stub for 153 16 9 7 1HE2  NE2  CD 
+inserting a random rotamer into GLN:153
+start_3mer_1mer:  Cycles:	0/1	0/1	0/1
+fa_rep rama fa_dun chainbreak 
+      15749.835         17.532        820.480        172.723
+>>> StageI / start / 1mer - inserting 1mers
+Stage I / start / 1mer  Cycles:	0/1	0/1
+fa_rep rama fa_dun chainbreak 
+      15749.835         17.532        820.480        172.723
+fa_rep rama fa_dun chainbreak 
+      12599.072          5.493        825.316          0.641
+fa_rep rama fa_dun chainbreak 
+      12509.864          5.428        825.163          0.541
+Protocol::apply: running hi_res_phase
+>>> Stage II / start / ramp -  Cycles:	0/1
+hi: 150 156
+fdev=1.80426e-14 rdev=1.55198e-14 tdelta=4.26326e-13 rdelta=-5.55112e-15
+fdev=0.0903911 rdev=0.474367 tdelta=4.49478 rdelta=0.0878507
+>>> Stage II / start / ramp -  Cycles:	1/1
+hi: 150 156
+fdev=4.46864e-14 rdev=1.38833e-14 tdelta=5.44453e-13 rdelta=1.15463e-14
+fdev=0.0903947 rdev=0.474393 tdelta=4.49844 rdelta=0.0880236
+Protocol::execute - DESIGN - starting cycle #0 / 2
+calling pack_rotamers...
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 133 rotamers at 6 positions.
+core.pack.pack_rotamers: IG: 45852 bytes
+done calling pack_rotamers
+Protocol::execute - DESIGN - small moves + min after design cycle# 0 small moves + insertions into loop#0
+Protocol::execute - DESIGN - starting cycle #1 / 2
+calling pack_rotamers...
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 133 rotamers at 6 positions.
+core.pack.pack_rotamers: IG: 45852 bytes
+done calling pack_rotamers
+Protocol::execute - DESIGN - small moves + min after design cycle# 1 small moves + insertions into loop#0
+Finished xxx_0001 in 6 seconds.
+protocols.jobdist.JobDistributors: Looking for an available job: 2 1

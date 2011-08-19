@@ -1,0 +1,10 @@
+cd %(workdir)s
+
+[ -x %(pyapps)s/public/molfile_to_params.py ] || exit 1
+
+for f in *.{mol,mol2}; do
+    %(python)s %(pyapps)s/public/molfile_to_params.py -p $(basename $f) -k $f.kin $f 2>&1 >> log
+    
+    test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+done
+

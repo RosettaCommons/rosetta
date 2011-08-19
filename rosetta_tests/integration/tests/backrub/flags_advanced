@@ -1,0 +1,15 @@
+-s input/1MFGft.pdb
+-ignore_unrecognized_res
+
+-backrub:ntrials 500
+-cst_fa_weight 1
+-cst_fa_file input/1MFG.constraints
+
+-pivot_residues 9 10 11 12 13 14 15 16 17 18 19 20 21 22 24 25 26 27 28 29 30 31 38 39 40 41 42 43 69 70 71 72 73 74 75 76 77 78 79 80 81 96 97 98 99 100 101 102 103 104
+-pivot_atoms N CA C
+
+-resfile input/1MFG.resfile
+-backrub::sc_prob_uniform 0.05
+
+-movemap input/1MFG.movemap
+-sm_prob .25

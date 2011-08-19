@@ -1,0 +1,22 @@
+(c) Copyright Rosetta Commons Member Institutions.
+(c) This file is part of the Rosetta software suite and is made available under license.
+(c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+(c) For more information, see http://www.rosettacommons.org. Questions about this can be
+(c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+This directory is for storing a copy of the "expected" results from the
+integration tests.  This directory does NOT need to be updated after every
+little change - it is not meant to be line-for-line accurate or have correct
+numbers.  It is meant to capture the structure of the expected results, so that
+changes like early aborts can be more readily identified by coders other than
+the original test author.  You should include, at the very least:
+
+1) copies of what the expected log files should look like (ignoring
+small/numerical changes)
+2) at least a list of what files should exist, if not copies of the files
+themselves
+3) a short README on what the test is supposed to test and anything known to be
+odd but okay, like error messages
+
+You should update the expected results when there are major changes, but not
+with every checkin.

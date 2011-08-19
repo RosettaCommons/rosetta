@@ -1,0 +1,5 @@
+-native 			1a62A-ideal.pdb  
+-in:file:s 			1a62A-ideal.pdb 
+-in:file:residue_type_set 	fa_standard
+-out:level		 	0
+

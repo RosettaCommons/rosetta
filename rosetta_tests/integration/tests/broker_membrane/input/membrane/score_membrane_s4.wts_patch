@@ -1,0 +1,10 @@
+pair = 0.0
+Mpair = 1.0
+env = 0.0
+Menv = 2.019
+cbeta = 0.0
+Mcbeta = 2.5
+Menv_non_helix = 2.019
+Menv_termini = 2.019
+Menv_tm_proj = 2.019
+Mlipo = 1.0

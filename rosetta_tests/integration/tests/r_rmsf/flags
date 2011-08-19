@@ -1,0 +1,9 @@
+-wRMSD 1.5
+-rigid:cutoff 1.5 
+-rigid:out core_lowE_t288_size.txt
+-in:file:silent_struct_type binary
+-in:file:silent ../../tests/cluster/t288_.score.50.out
+-mute protocols.jobdist
+-mute core.io
+-mute core.conformation
+-mute core.pack

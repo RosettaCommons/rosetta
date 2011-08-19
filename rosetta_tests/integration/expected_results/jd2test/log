@@ -1,0 +1,501 @@
+core.init: Constant seed mode, seed=1111111 seed_offset=0 real_seed=1111111
+core.init.random: RandomGenerator:init: Normal mode, seed=1111111 RG_type=mt19937
+jd2test: JDtestmover ctor
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: standard
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION PATCH: score12
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+core.io.database: Database file opened: /users/smlewis/minirosetta_database/pdb_pair_stats_fine
+core.io.database: Database file opened: /users/smlewis/minirosetta_database/P_AA
+core.io.database: Database file opened: /users/smlewis/minirosetta_database/P_AA_n
+core.io.database: Database file opened: /users/smlewis/minirosetta_database/P_AA_pp
+core.io.database: Database file opened: /users/smlewis/minirosetta_database/Rama_smooth_dyn.dat_ss_6.4
+protocols.jd2.PDBJobInputter: Instantiate PDBJobInputter
+protocols.jd2.FileJobOutputter: FileJobOutputter ctor
+protocols.jd2.PDBJobOutputter: Using PDBJobOutputter (base class) for JobDistributor
+protocols.jd2.PDBJobInputter: PDBJobInputter::fill_jobs
+protocols.jd2.Job: Using InnerJob (base class) for JobDistributor
+protocols.jd2.Job: Using Job (base class) for JobDistributor
+protocols.jd2.PDBJobInputter: pushing 1UBQ.pdb nstruct index 1
+protocols.jd2.Job: Using Job (base class) for JobDistributor
+protocols.jd2.PDBJobInputter: pushing 1UBQ.pdb nstruct index 2
+protocols.jd2.Job: Using Job (base class) for JobDistributor
+protocols.jd2.PDBJobInputter: pushing 1UBQ.pdb nstruct index 3
+protocols.jd2.Job: Using InnerJob (base class) for JobDistributor
+protocols.jd2.Job: Using Job (base class) for JobDistributor
+protocols.jd2.PDBJobInputter: pushing 1EM7.pdb nstruct index 1
+protocols.jd2.Job: Using Job (base class) for JobDistributor
+protocols.jd2.PDBJobInputter: pushing 1EM7.pdb nstruct index 2
+protocols.jd2.Job: Using Job (base class) for JobDistributor
+protocols.jd2.PDBJobInputter: pushing 1EM7.pdb nstruct index 3
+protocols.jd2.Job: Using InnerJob (base class) for JobDistributor
+protocols.jd2.Job: Using Job (base class) for JobDistributor
+protocols.jd2.PDBJobInputter: pushing 1NLO.pdb nstruct index 1
+protocols.jd2.Job: Using Job (base class) for JobDistributor
+protocols.jd2.PDBJobInputter: pushing 1NLO.pdb nstruct index 2
+protocols.jd2.Job: Using Job (base class) for JobDistributor
+protocols.jd2.PDBJobInputter: pushing 1NLO.pdb nstruct index 3
+protocols.jd2.JobDistributor: Starting job 1UBQ_0001
+protocols.jd2.PDBJobInputter: PDBJobInputter::pose_from_job
+core.pack.task: Packer task: initialize from command line() 
+protocols.jd2.PDBJobInputter: filling pose from PDB 1UBQ.pdb
+protocols.jd2.JobDistributor: new input detected, is: 1UBQ.pdb, last was: 
+protocols.jd2.JobDistributor: not reinitializing mover
+jd2test: starting a job, JD says it is: 1UBQ_0001
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 14 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 2472 bytes
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: standard
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION PATCH: score12
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::other_pose
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::file
+jd2test: next line will be odd-looking Job construction
+protocols.jd2.Job: Using Job (base class) for JobDistributor
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::other_pose
+core.pack.task: Packer task: initialize from command line() 
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::final_pose
+protocols.jd2.FileJobOutputter: FileJobOutputter scorefile
+protocols.jd2.JobDistributor: Starting job 1UBQ_0002
+protocols.jd2.PDBJobInputter: PDBJobInputter::pose_from_job
+protocols.jd2.PDBJobInputter: filling pose from saved copy 1UBQ.pdb
+protocols.jd2.JobDistributor: not reinitializing mover
+jd2test: starting a job, JD says it is: 1UBQ_0002
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 14 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 2472 bytes
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: standard
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION PATCH: score12
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::other_pose
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::file
+jd2test: next line will be odd-looking Job construction
+protocols.jd2.Job: Using Job (base class) for JobDistributor
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::other_pose
+protocols.jd2.JobDistributor: 1UBQ_0002 reported failure and will NOT retry
+protocols.jd2.JobDistributor: Starting job 1UBQ_0003
+protocols.jd2.PDBJobInputter: PDBJobInputter::pose_from_job
+protocols.jd2.PDBJobInputter: filling pose from saved copy 1UBQ.pdb
+protocols.jd2.JobDistributor: not reinitializing mover
+jd2test: starting a job, JD says it is: 1UBQ_0003
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 14 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 2472 bytes
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: standard
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION PATCH: score12
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::other_pose
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::file
+jd2test: next line will be odd-looking Job construction
+protocols.jd2.Job: Using Job (base class) for JobDistributor
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::other_pose
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::final_pose
+protocols.jd2.FileJobOutputter: FileJobOutputter scorefile
+protocols.jd2.JobDistributor: Starting job 1EM7_0001
+protocols.jd2.PDBJobInputter: PDBJobInputter::pose_from_job
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CD  on residue GLU 32
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OE1 on residue GLU 32
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  OE2 on residue GLU 32
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CE  on residue LYS 35
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_missing_sidechains: packing residue number 32 because of missing atom number 7 atom name  CD 
+core.pack.pack_missing_sidechains: packing residue number 35 because of missing atom number 8 atom name  CE 
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: standard
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION PATCH: score12
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+core.pack.pack_rotamers: built 400 rotamers at 2 positions.
+core.pack.pack_rotamers: IG: 141184 bytes
+protocols.jd2.PDBJobInputter: filling pose from PDB 1EM7.pdb
+protocols.jd2.JobDistributor: new input detected, is: 1EM7.pdb, last was: 1UBQ.pdb
+protocols.jd2.JobDistributor: not reinitializing mover
+jd2test: starting a job, JD says it is: 1EM7_0001
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 30 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 2664 bytes
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: standard
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION PATCH: score12
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::other_pose
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::file
+jd2test: next line will be odd-looking Job construction
+protocols.jd2.Job: Using Job (base class) for JobDistributor
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::other_pose
+core.pack.task: Packer task: initialize from command line() 
+protocols.jd2.Job: Using Job (base class) for JobDistributor
+protocols.jd2.JobDistributor: 1EM7_0001 reported failure and will retry
+protocols.jd2.JobDistributor: Starting job 1EM7_0001
+protocols.jd2.PDBJobInputter: PDBJobInputter::pose_from_job
+protocols.jd2.PDBJobInputter: filling pose from saved copy 1EM7.pdb
+protocols.jd2.JobDistributor: not reinitializing mover
+jd2test: starting a job, JD says it is: 1EM7_0001
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 30 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 2664 bytes
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: standard
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION PATCH: score12
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::other_pose
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::file
+jd2test: next line will be odd-looking Job construction
+protocols.jd2.Job: Using Job (base class) for JobDistributor
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::other_pose
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::final_pose
+protocols.jd2.FileJobOutputter: FileJobOutputter scorefile
+protocols.jd2.JobDistributor: Starting job 1EM7_0002
+protocols.jd2.PDBJobInputter: PDBJobInputter::pose_from_job
+protocols.jd2.PDBJobInputter: filling pose from saved copy 1EM7.pdb
+protocols.jd2.JobDistributor: not reinitializing mover
+jd2test: starting a job, JD says it is: 1EM7_0002
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 30 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 2664 bytes
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: standard
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION PATCH: score12
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::other_pose
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::file
+jd2test: next line will be odd-looking Job construction
+protocols.jd2.Job: Using Job (base class) for JobDistributor
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::other_pose
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::final_pose
+protocols.jd2.FileJobOutputter: FileJobOutputter scorefile
+protocols.jd2.JobDistributor: Starting job 1EM7_0003
+protocols.jd2.PDBJobInputter: PDBJobInputter::pose_from_job
+protocols.jd2.PDBJobInputter: filling pose from saved copy 1EM7.pdb
+protocols.jd2.JobDistributor: not reinitializing mover
+jd2test: starting a job, JD says it is: 1EM7_0003
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 30 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 2664 bytes
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: standard
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION PATCH: score12
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::other_pose
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::file
+jd2test: next line will be odd-looking Job construction
+protocols.jd2.Job: Using Job (base class) for JobDistributor
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::other_pose
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::final_pose
+protocols.jd2.FileJobOutputter: FileJobOutputter scorefile
+protocols.jd2.JobDistributor: Starting job 1NLO_0001
+protocols.jd2.PDBJobInputter: PDBJobInputter::pose_from_job
+core.io.pdb.file_data: [ WARNING ] discarding 3 atoms at position 1 in file 1NLO.pdb. Best match rsd_type:  THR_p:NtermProteinFull
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 2 in file 1NLO.pdb. Best match rsd_type:  PHE
+core.io.pdb.file_data: [ WARNING ] discarding 6 atoms at position 3 in file 1NLO.pdb. Best match rsd_type:  VAL
+core.io.pdb.file_data: [ WARNING ] discarding 3 atoms at position 4 in file 1NLO.pdb. Best match rsd_type:  ALA
+core.io.pdb.file_data: [ WARNING ] discarding 8 atoms at position 5 in file 1NLO.pdb. Best match rsd_type:  LEU
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 6 in file 1NLO.pdb. Best match rsd_type:  TYR
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 7 in file 1NLO.pdb. Best match rsd_type:  ASP
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 8 in file 1NLO.pdb. Best match rsd_type:  TYR
+core.io.pdb.file_data: [ WARNING ] discarding 4 atoms at position 9 in file 1NLO.pdb. Best match rsd_type:  GLU
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 10 in file 1NLO.pdb. Best match rsd_type:  SER
+core.io.pdb.file_data: [ WARNING ] discarding 10 atoms at position 11 in file 1NLO.pdb. Best match rsd_type:  ARG
+core.io.pdb.file_data: [ WARNING ] discarding 3 atoms at position 12 in file 1NLO.pdb. Best match rsd_type:  THR
+core.io.pdb.file_data: [ WARNING ] discarding 4 atoms at position 13 in file 1NLO.pdb. Best match rsd_type:  GLU
+core.io.pdb.file_data: [ WARNING ] discarding 3 atoms at position 14 in file 1NLO.pdb. Best match rsd_type:  THR
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 15 in file 1NLO.pdb. Best match rsd_type:  ASP
+core.io.pdb.file_data: [ WARNING ] discarding 8 atoms at position 16 in file 1NLO.pdb. Best match rsd_type:  LEU
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 17 in file 1NLO.pdb. Best match rsd_type:  SER
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 18 in file 1NLO.pdb. Best match rsd_type:  PHE
+core.io.pdb.file_data: [ WARNING ] discarding 11 atoms at position 19 in file 1NLO.pdb. Best match rsd_type:  LYS
+core.io.pdb.file_data: [ WARNING ] discarding 11 atoms at position 20 in file 1NLO.pdb. Best match rsd_type:  LYS
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 21 in file 1NLO.pdb. Best match rsd_type:  GLY
+core.io.pdb.file_data: [ WARNING ] discarding 4 atoms at position 22 in file 1NLO.pdb. Best match rsd_type:  GLU
+core.io.pdb.file_data: [ WARNING ] discarding 10 atoms at position 23 in file 1NLO.pdb. Best match rsd_type:  ARG
+core.io.pdb.file_data: [ WARNING ] discarding 8 atoms at position 24 in file 1NLO.pdb. Best match rsd_type:  LEU
+core.io.pdb.file_data: [ WARNING ] discarding 6 atoms at position 25 in file 1NLO.pdb. Best match rsd_type:  GLN
+core.io.pdb.file_data: [ WARNING ] discarding 8 atoms at position 26 in file 1NLO.pdb. Best match rsd_type:  ILE
+core.io.pdb.file_data: [ WARNING ] discarding 6 atoms at position 27 in file 1NLO.pdb. Best match rsd_type:  VAL
+core.io.pdb.file_data: [ WARNING ] discarding 4 atoms at position 28 in file 1NLO.pdb. Best match rsd_type:  ASN
+core.io.pdb.file_data: [ WARNING ] discarding 4 atoms at position 29 in file 1NLO.pdb. Best match rsd_type:  ASN
+core.io.pdb.file_data: [ WARNING ] discarding 3 atoms at position 30 in file 1NLO.pdb. Best match rsd_type:  THR
+core.io.pdb.file_data: [ WARNING ] discarding 4 atoms at position 31 in file 1NLO.pdb. Best match rsd_type:  GLU
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 32 in file 1NLO.pdb. Best match rsd_type:  GLY
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 33 in file 1NLO.pdb. Best match rsd_type:  ASP
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 34 in file 1NLO.pdb. Best match rsd_type:  TRP
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 35 in file 1NLO.pdb. Best match rsd_type:  TRP
+core.io.pdb.file_data: [ WARNING ] discarding 8 atoms at position 36 in file 1NLO.pdb. Best match rsd_type:  LEU
+core.io.pdb.file_data: [ WARNING ] discarding 3 atoms at position 37 in file 1NLO.pdb. Best match rsd_type:  ALA
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 38 in file 1NLO.pdb. Best match rsd_type:  HIS_D
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 39 in file 1NLO.pdb. Best match rsd_type:  SER
+core.io.pdb.file_data: [ WARNING ] discarding 8 atoms at position 40 in file 1NLO.pdb. Best match rsd_type:  LEU
+core.io.pdb.file_data: [ WARNING ] discarding 3 atoms at position 41 in file 1NLO.pdb. Best match rsd_type:  THR
+core.io.pdb.file_data: [ WARNING ] discarding 3 atoms at position 42 in file 1NLO.pdb. Best match rsd_type:  THR
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 43 in file 1NLO.pdb. Best match rsd_type:  GLY
+core.io.pdb.file_data: [ WARNING ] discarding 6 atoms at position 44 in file 1NLO.pdb. Best match rsd_type:  GLN
+core.io.pdb.file_data: [ WARNING ] discarding 3 atoms at position 45 in file 1NLO.pdb. Best match rsd_type:  THR
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 46 in file 1NLO.pdb. Best match rsd_type:  GLY
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 47 in file 1NLO.pdb. Best match rsd_type:  TYR
+core.io.pdb.file_data: [ WARNING ] discarding 8 atoms at position 48 in file 1NLO.pdb. Best match rsd_type:  ILE
+core.io.pdb.file_data: [ WARNING ] discarding 6 atoms at position 49 in file 1NLO.pdb. Best match rsd_type:  PRO
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 50 in file 1NLO.pdb. Best match rsd_type:  SER
+core.io.pdb.file_data: [ WARNING ] discarding 4 atoms at position 51 in file 1NLO.pdb. Best match rsd_type:  ASN
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 52 in file 1NLO.pdb. Best match rsd_type:  TYR
+core.io.pdb.file_data: [ WARNING ] discarding 6 atoms at position 53 in file 1NLO.pdb. Best match rsd_type:  VAL
+core.io.pdb.file_data: [ WARNING ] discarding 3 atoms at position 54 in file 1NLO.pdb. Best match rsd_type:  ALA
+core.io.pdb.file_data: [ WARNING ] discarding 6 atoms at position 55 in file 1NLO.pdb. Best match rsd_type:  PRO
+core.io.pdb.file_data: [ WARNING ] discarding 2 atoms at position 56 in file 1NLO.pdb. Best match rsd_type:  SER_p:CtermProteinFull
+core.pack.task: Packer task: initialize from command line() 
+core.io.pdb.file_data: WARNING can't find atom for res 1 atom HG21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 1 atom HG22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 1 atom HG23 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 2 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 2 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 3 atom HG11 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 3 atom HG12 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 3 atom HG13 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 3 atom HG21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 3 atom HG22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 3 atom HG23 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 4 atom  HB1 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 4 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 4 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 5 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 5 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 5 atom HD11 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 5 atom HD12 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 5 atom HD13 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 5 atom HD21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 5 atom HD22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 5 atom HD23 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 6 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 6 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 7 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 7 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 8 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 8 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 9 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 9 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 9 atom  HG2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 9 atom  HG3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 10 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 10 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 11 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 11 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 11 atom  HD2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 11 atom  HD3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 11 atom  HG2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 11 atom  HG3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 11 atom HH11 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 11 atom HH12 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 11 atom HH21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 11 atom HH22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 12 atom HG21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 12 atom HG22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 12 atom HG23 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 13 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 13 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 13 atom  HG2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 13 atom  HG3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 14 atom HG21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 14 atom HG22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 14 atom HG23 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 15 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 15 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 16 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 16 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 16 atom HD11 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 16 atom HD12 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 16 atom HD13 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 16 atom HD21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 16 atom HD22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 16 atom HD23 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 17 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 17 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 18 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 18 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 19 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 19 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 19 atom  HD2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 19 atom  HD3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 19 atom  HE2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 19 atom  HE3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 19 atom  HG2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 19 atom  HG3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 19 atom  HZ1 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 19 atom  HZ2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 19 atom  HZ3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 20 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 20 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 20 atom  HD2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 20 atom  HD3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 20 atom  HE2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 20 atom  HE3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 20 atom  HG2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 20 atom  HG3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 20 atom  HZ1 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 20 atom  HZ2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 20 atom  HZ3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 21 atom  HA2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 21 atom  HA3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 22 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 22 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 22 atom  HG2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 22 atom  HG3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 23 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 23 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 23 atom  HD2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 23 atom  HD3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 23 atom  HG2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 23 atom  HG3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 23 atom HH11 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 23 atom HH12 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 23 atom HH21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 23 atom HH22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 24 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 24 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 24 atom HD11 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 24 atom HD12 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 24 atom HD13 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 24 atom HD21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 24 atom HD22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 24 atom HD23 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 25 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 25 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 25 atom  HG2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 25 atom  HG3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 25 atom HE21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 25 atom HE22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 26 atom HD11 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 26 atom HD12 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 26 atom HD13 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 26 atom HG12 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 26 atom HG13 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 26 atom HG21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 26 atom HG22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 26 atom HG23 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 27 atom HG11 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 27 atom HG12 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 27 atom HG13 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 27 atom HG21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 27 atom HG22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 27 atom HG23 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 28 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 28 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 28 atom HD21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 28 atom HD22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 29 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 29 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 29 atom HD21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 29 atom HD22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 30 atom HG21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 30 atom HG22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 30 atom HG23 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 31 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 31 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 31 atom  HG2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 31 atom  HG3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 32 atom  HA2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 32 atom  HA3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 33 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 33 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 34 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 34 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 35 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 35 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 36 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 36 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 36 atom HD11 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 36 atom HD12 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 36 atom HD13 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 36 atom HD21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 36 atom HD22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 36 atom HD23 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 37 atom  HB1 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 37 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 37 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 38 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 38 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 39 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 39 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 40 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 40 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 40 atom HD11 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 40 atom HD12 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 40 atom HD13 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 40 atom HD21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 40 atom HD22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 40 atom HD23 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 41 atom HG21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 41 atom HG22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 41 atom HG23 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 42 atom HG21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 42 atom HG22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 42 atom HG23 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 43 atom  HA2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 43 atom  HA3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 44 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 44 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 44 atom  HG2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 44 atom  HG3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 44 atom HE21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 44 atom HE22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 45 atom HG21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 45 atom HG22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 45 atom HG23 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 46 atom  HA2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 46 atom  HA3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 47 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 47 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 48 atom HD11 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 48 atom HD12 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 48 atom HD13 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 48 atom HG12 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 48 atom HG13 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 48 atom HG21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 48 atom HG22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 48 atom HG23 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 49 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 49 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 49 atom  HD2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 49 atom  HD3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 49 atom  HG2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 49 atom  HG3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 50 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 50 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 51 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 51 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 51 atom HD21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 51 atom HD22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 52 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 52 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 53 atom HG11 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 53 atom HG12 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 53 atom HG13 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 53 atom HG21 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 53 atom HG22 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 53 atom HG23 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 54 atom  HB1 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 54 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 54 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 55 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 55 atom  HB3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 55 atom  HD2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 55 atom  HD3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 55 atom  HG2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 55 atom  HG3 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 56 atom  HB2 (trying to set temp)
+core.io.pdb.file_data: WARNING can't find atom for res 56 atom  HB3 (trying to set temp)
+protocols.jd2.PDBJobInputter: filling pose from PDB 1NLO.pdb
+protocols.jd2.JobDistributor: new input detected, is: 1NLO.pdb, last was: 1EM7.pdb
+protocols.jd2.JobDistributor: not reinitializing mover
+jd2test: starting a job, JD says it is: 1NLO_0001
+core.pack.task: Packer task: initialize from command line() 
+core.pack.interaction_graph.interaction_graph_factory: Instantiating PDInteractionGraph
+core.pack.pack_rotamers: built 1 rotamers at 1 positions.
+core.pack.pack_rotamers: IG: 2316 bytes
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: standard
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION PATCH: score12
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::other_pose
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::file
+jd2test: next line will be odd-looking Job construction
+protocols.jd2.Job: Using Job (base class) for JobDistributor
+protocols.jd2.PDBJobOutputter: PDBJobOutputter::other_pose
+protocols.jd2.JobDistributor: 1NLO_0001 reported that its input was bad and will not retry
+protocols.jd2.FileSystemJobDistributor: job failed, reporting bad input; other jobs of same input will be canceled: 1NLO_0001
+protocols.jd2.FileSystemJobDistributor: job canceled without trying due to previous bad input: 1NLO_0002
+protocols.jd2.FileSystemJobDistributor: job canceled without trying due to previous bad input: 1NLO_0003
+jd2test: *********************successful completion**************************

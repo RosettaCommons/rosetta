@@ -1,0 +1,6 @@
+-in:file:fasta input/sample.fasta
+-out:file:o outPeptide.pdb
+
+-mute core.io.database
+-mute core.util.prof
+-mute protocols.jd2.JobDistributor

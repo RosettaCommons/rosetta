@@ -1,0 +1,81 @@
+# cst constraint descriptor for carboxy peptidase
+# F. Richter, Baker lab, UW,   floric@u.washington.edu
+ 
+# NOTE
+
+# block 1 for his69 to coordinate zinc
+
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name:  ZN1 O3 C4 
+  TEMPLATE::   ATOM_MAP: 1 residue3: 6c1
+
+  TEMPLATE::   ATOM_MAP: 2 atom_type: Nhis,
+  TEMPLATE::   ATOM_MAP: 2 residue1:  H 
+ 
+  CONSTRAINT:: distanceAB:   2.14  0.20  100.  1    1
+  CONSTRAINT::    angle_A:   91.9  5.0   50.0  360. 1
+  CONSTRAINT::    angle_B:  109.9  5.0   50.0  360. 1
+  CONSTRAINT::  torsion_A:  154.5  5.0   0.00  360. 1
+  CONSTRAINT:: torsion_AB:  120.8  5.0   0.00  360. 1 
+  CONSTRAINT::  torsion_B: -168.7  5.0   50.0  360. 1
+
+CST::END
+
+
+#block 2 for glu72, interaction with zinc
+
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name: ZN1 O3 C4 
+  TEMPLATE::   ATOM_MAP: 1 residue3: 6c1
+
+  TEMPLATE::   ATOM_MAP: 2 atom_type: OOC ,
+  TEMPLATE::   ATOM_MAP: 2 residue1:  DE 
+ 
+  CONSTRAINT:: distanceAB:   2.17  0.20  100.  1    1
+  CONSTRAINT::    angle_A:   86.0  5.0   80.0  360. 1
+  CONSTRAINT::    angle_B:   96.4  5.0   80.0  360. 1
+  CONSTRAINT::  torsion_A:  -90.4  5.0   0.00  360. 1
+  CONSTRAINT:: torsion_AB:  162.0  5.0   0.00  360. 1 
+  CONSTRAINT::  torsion_B:  172.9  5.0   0.00  360. 1
+
+    ALGORITHM_INFO:: match_positions
+      ss ss_motif helix_nterm
+    ALGORITHM_INFO::END
+ 
+CST::END
+
+#block 3 for his196, intearction with zinc
+
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name:  ZN1 O3 C4 
+  TEMPLATE::   ATOM_MAP: 1 residue3: 6c1
+
+  TEMPLATE::   ATOM_MAP: 2 atom_type: Nhis,
+  TEMPLATE::   ATOM_MAP: 2 residue1:  H 
+ 
+  CONSTRAINT:: distanceAB:   2.15  0.20  100.  1    1
+  CONSTRAINT::    angle_A:  110.0  5.0   50.0  360. 1
+  CONSTRAINT::    angle_B:  124.5  5.0   50.0  360. 1
+  CONSTRAINT::  torsion_A:   60.0  5.0   0.00  360. 1
+  CONSTRAINT:: torsion_AB: -121.7  5.0   0.00  360. 1 
+  CONSTRAINT::  torsion_B: -142.2  5.0   50.0  360. 1
+CST::END
+
+
+#block 4 for glu270, interaction with oxyanion and protonation of NH
+
+CST::BEGIN
+  TEMPLATE::   ATOM_MAP: 1 atom_name:  O4 C4 O3
+  TEMPLATE::   ATOM_MAP: 1 residue3: 6c1
+
+  TEMPLATE::   ATOM_MAP: 2 atom_type: OOC ,
+  TEMPLATE::   ATOM_MAP: 2 residue1:  DE 
+ 
+  CONSTRAINT:: distanceAB:   2.21  0.20  100.  1    1
+  CONSTRAINT::    angle_A:  136.8  5.0   70.0  360. 1
+  CONSTRAINT::    angle_B:  128.5  5.0   50.0  360. 1
+  CONSTRAINT::  torsion_A: -158.6  5.0   0.00  360. 1
+  CONSTRAINT:: torsion_AB:   60.2  5.0   0.00  360. 1  
+  CONSTRAINT::  torsion_B: -155.6  5.0   70.0  360. 1
+CST::END
+

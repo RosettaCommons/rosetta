@@ -1,0 +1,9 @@
+-s 2OVO.pdb
+-pH_mode
+-pka_for_resno 52
+-pka_for_chainno A      
+-ex1
+-ex2
+-ignore_unrecognized_res
+-score:weights pH_standard.wts
+-no_output

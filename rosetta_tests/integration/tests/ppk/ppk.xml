@@ -1,0 +1,24 @@
+<dock_design>
+        <SCOREFXNS>
+        </SCOREFXNS>
+        <FILTERS>
+					<ScoreType name=total_score score_type=total_score threshold=100/>
+					<Delta name=delta_score upper=1 lower=0 range=1 filter=total_score unbound=1 jump=1 confidence=0/>
+        </FILTERS>
+        <MOVERS>
+                <Prepack name=ppk jump_number=1 scorefxn=score12/>
+								<MinMover name=min bb=1>
+									<MoveMap>
+										<Chain number=1 bb=0 chi=0/>
+										<Chain number=2 bb=0 chi=1/>
+									</MoveMap>
+								</MinMover>
+        </MOVERS>
+        <APPLY_TO_POSE>
+        </APPLY_TO_POSE>
+        <PROTOCOLS>
+                <Add mover_name=ppk/>
+								<Add mover=min/>
+								<Add filter=delta_score/>
+        </PROTOCOLS>
+</dock_design>

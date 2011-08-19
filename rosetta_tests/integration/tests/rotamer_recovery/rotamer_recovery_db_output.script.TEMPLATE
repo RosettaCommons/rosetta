@@ -1,0 +1,10 @@
+<dock_design>
+	<SCOREFXNS>
+	</SCOREFXNS>		
+	<MOVERS>
+		<RotamerRecoveryMover name=rotamer_recovery comparer="RRComparerAutomorphicRMSD"  reporter="RRReporterSQLite" output_fname="BASE_DIR/rotamer_recovery.db3" />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover_name=rotamer_recovery />
+	</PROTOCOLS>
+</dock_design>

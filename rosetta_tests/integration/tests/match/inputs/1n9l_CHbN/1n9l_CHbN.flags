@@ -1,0 +1,15 @@
+-s inputs/1n9l_CHbN/1n9l_11.pdb
+-match:lig_name D2N
+-match:grid_boundary inputs/1n9l_CHbN/1n9l_11.gridlig
+-match:scaffold_active_site_residues_for_geomcsts inputs/1n9l_CHbN/1n9l_11_4all.pos
+-match:geometric_constraint_file inputs/1n9l_CHbN/Est_CHbkupb_d2n_match.cst
+-extra_res_fa inputs/1n9l_CHbN/D2N_aX.params
+-use_input_sc
+-match:output_format CloudPDB
+-match:active_site_definition_by_gridlig inputs/1n9l_CHbN/1n9l_11.gridlig 
+-match_grouper SameSequenceAndDSPositionGrouper 
+-output_format CloudPDB 
+-output_matchres_only false 
+-enumerate_ligand_rotamers 
+-only_enumerate_non_match_redundant_ligand_rotamers 
+-required_active_site_atom_names inputs/1n9l_CHbN/D2N_active_site_atoms.txt
