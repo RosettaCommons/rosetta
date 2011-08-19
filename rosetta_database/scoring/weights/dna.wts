@@ -1,0 +1,21 @@
+METHOD_WEIGHTS ref  -1.58548 -1.18225 3.39 1.61782 0.10405 -2.19778 0.838118 -1.81735 -1.53824 -1.26583 -1.40187 1.06144 -2.58097 -0.20752 9.93689 -2.59427 -1.18434 -1.42293 1.82099 0.209525
+pro_close 1.0
+fa_atr 0.947733
+fa_rep 0.577238
+fa_sol 0.507356
+fa_intra_rep 0
+fa_pair 0
+fa_plane 0
+fa_dun 0.68229
+ref 1
+hbond_lr_bb 2.80253
+hbond_sr_bb 2.80253
+hbond_bb_sc 2.80253
+hbond_sc 1.59624
+p_aa_pp 0.612065
+dslf_ss_dst 0.5
+dslf_cs_ang 2
+dslf_ss_dih 5
+dslf_ca_dih 5
+res_type_constraint 1.0
+NO_HB_ENV_DEP_DNA

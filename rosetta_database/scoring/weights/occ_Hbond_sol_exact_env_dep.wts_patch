@@ -1,0 +1,8 @@
+fa_sol = 0
+occ_sol_fitted = 0
+occ_sol_exact = 0.65
+lk_nonpolar = 0.65
+hbond_lr_bb = 0
+hbond_sr_bb = 0
+hbond_bb_sc = 0
+hbond_sc = 0

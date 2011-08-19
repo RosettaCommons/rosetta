@@ -1,0 +1,15 @@
+# dna interface weight set with the gb_elec term and without the pair term
+# trained (single pass) in mini by J. Ashworth 2008
+# ps. warning: gb_elec is very slow (expect 5-10x slowdown for packing)
+fa_atr 0.8
+fa_rep 0.36951
+fa_sol 0.36134
+hbond_sr_bb 1.86669
+hbond_lr_bb 1.86669
+hbond_bb_sc 1.86669
+hbond_sc 2.70257
+gb_elec 0.00401135
+fa_dun 0.650036
+p_aa_pp 0.72704
+ref 1
+METHOD_WEIGHTS ref -0.286414 1.16916 -0.105629 -0.0156537 1.16175 -0.901743 0.7968 -0.485314 -1.86652 -0.336164 0.2495 -0.764421 0.126844 -0.546804 -1.25858 -0.6433 -0.724977 -0.161847 2.98895 1.60436

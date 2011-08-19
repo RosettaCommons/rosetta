@@ -1,0 +1,6 @@
+1,hbw_NONE,unknown hbond weight type
+2,hbw_SR_BB,short range backbone-backbone
+3,hbw_LR_BB,long range backbone-backbone
+4,hbw_SR_BB_SC,short range backbone-sidechain
+5,hbw_LR_BB_SC,long range backbone-sidechain
+6,hbw_SC,sidechain-sidechain

@@ -1,0 +1,9 @@
+
+VARS   RESNAME PHI_R1 PHI_R2 PHI_R3 PSI_R1 PSI_R2 PSI_R3 CHI1_R1 CHI1_R2 CHI1_R3 HOMO_R1 HOMO_R2 HOMO_R3
+FORMAT %s %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f %.4f
+N       4 16  1 32  4  1  1  1  0  9 16  1
+HA      1 64  3  4 32  1  0  1  0  3 16  3
+C       1 32 32  1 32 16  0  1  1  1 16  4
+CA      1 96  6  1 96  1  0  1  0  9 96  2
+CB      1 96  6  1 96  1  0  1  0  1 32  3
+H       9 32  4 16  4  1  0  1  0  4 16  1

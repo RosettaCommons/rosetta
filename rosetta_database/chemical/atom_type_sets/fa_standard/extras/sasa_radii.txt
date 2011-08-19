@@ -1,0 +1,57 @@
+NAME SASA_RADIUS
+CNH2      1.8900
+COO       1.8900
+CH1       2.1285
+CH2       2.0115
+CH3       1.9485
+aroC      1.6650
+Ntrp      1.4400
+Nhis      1.4400
+NH2O      1.4400
+Nlys      1.4400
+Narg      1.4400
+Npro      1.4400
+OH        1.4400
+ONH2      1.4400
+OOC       1.4400
+Oaro      1.4400
+S         1.7010
+Nbb       1.4400
+CAbb      2.1285
+CObb      1.8900
+OCbb      1.4400
+Phos      2.0425
+Hpol      0.5400
+Hapo      1.0800
+Haro      1.0800
+HNbb      0.5400
+HOH       1.4400
+F         1.7100  # taken from MM3 forcefield
+Cl        2.0700  # taken from MM3 forcefield
+Br        2.2200  # taken from MM3 forcefield
+I         2.3600  # taken from MM3 forcefield
+Zn2p      1.0900  # ion radius CHARMM27
+Fe2p      0.7800  # ion radius CHARMM27
+Fe3p      0.6500  # ion radius CHARMM27
+Mg2p      1.1850  # ion radius CHARMM27
+Ca2p      1.2986  # ion radius CHARMM27,kosta makrodimitris(*0.95)
+Pha       2.0425  # ion radius CHARMM27,kosta makrodimitris(*0.95)
+OPha      1.6150  # ion radius CHARMM27,kosta makrodimitris(*0.95) 
+OHha      1.6815  # ion radius CHARMM27,kosta makrodimitris(*0.95)
+Hha       0.2133  # ion radius CHARMM27,kosta makrodimitris(*0.95)
+CO3       1.6150  # CO3 lj_rad*.95 #@Robin 
+OC3       1.5200  # O3C lj_rad*.95 #@Robin
+Si        2.0401  # Si in alpha Quartz #@Robin
+OSi       1.6625  # O in alpha Quartz #@Robin
+Oice      1.5200  # O in ice #@Robin
+Hice      0.7600  # H in ice #@Robin 
+Na1p      1.3638  # ion radius CHARMM27
+K1p       1.7638  # ion radius CHARMM27
+SUCK	    0.0000
+REPL      0.0000
+REPLS     0.0000
+HREPS     0.0000
+VIRT      0.0000
+#
+# SASA_RADIUS copied from Rosetta++ fullatom_extra_props.cc (?)
+#

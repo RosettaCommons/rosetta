@@ -1,0 +1,16 @@
+REMARK "_ERROR": The fitting parameters between std.dev. and estimated prediction error
+REMARK           prediction error = (std.dev.)*$SLOPE + $INTERCEPT
+REMARK "_HBOND": The fitting parameters between H-bond length and shift correction
+REMARK           shift correction = (1/r^-3)*$SLOPE + $INTERCEPT
+
+VARS   NAME SLOPE INTERCEPT 
+FORMAT %8s %8.4f %8.4f
+
+ N_ERROR   0.4616   1.3390
+CA_ERROR   0.6266   0.3790
+CB_ERROR   0.6126   0.4473
+ C_ERROR   0.3792   0.6890
+HA_ERROR   0.4501   0.1371
+ H_ERROR   0.4598   0.2841
+ H_HBOND  -7.2290   0.8509
+HA_HBOND  -8.2337   0.3892

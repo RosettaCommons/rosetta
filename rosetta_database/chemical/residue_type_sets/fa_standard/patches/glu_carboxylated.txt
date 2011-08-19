@@ -1,0 +1,108 @@
+## fullatom protein C(3)-carboxylation patch for glutamate
+## By Andy M. Chen, June 2009, achen39@jhu.edu
+
+NAME carboxylated
+TYPES CARBOXYLATION
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+AA GLU
+NOT VARIANT_TYPE CARBOXYLATION
+NOT VARIANT_TYPE PROTONATED
+NOT VARIANT_TYPE DEPROTONATED
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+## these are the operations involved
+DELETE_ATOM 2HG ## One of the hydrogens bonded to the gamma carbon is now replaced
+ADD_ATOM  CD2 COO  CC   0.62
+ADD_ATOM  OE3 OOC  OC   -0.76
+ADD_ATOM  OE4 OOC  OC   -0.76
+
+ADD_BOND  CG   CD2
+ADD_BOND  CD2  OE3 
+ADD_BOND  CD2  OE4
+
+
+## Note on atom naming by Andy M. Chen:
+##
+## Technically, the carboxyl oxygens in most files containing gamma-carboxy-glutamate ("CGU")
+##   are called OE11/12 for the first carboxyl group and OE21/22 for the second carboxyl group.
+##   However, earlier testing shows that using the names OE21 and OE22 may result in 
+##   oddies when displaying this residue in certain molecular visualization application such as PyMol
+##   (e.g. missing bonds or oxygen showing up as white atoms) due to the second letter not being 
+##   "O" (for oxygen). [This occurs because dumped pdb structures from Rosetta may exclude the element symbol 
+##   in Column 78-- and as a result, PyMol would treat OE21, etc. as atoms of the non-existent element "Oe,"
+##   which could cause problems in future processing. This is confirmed by exporting the file.]
+##
+##  Hence, OE21/22 are renamed to OE3/4 here. Note that this does have a known negative side-effect:
+##    automatic re-packing of the residue upon loading a CGU-containing residue for the first time
+##    would be inevitable (unless, of course, a global find/replace on the PDB file in advance to 
+##    rename the atoms). But even if the naming convention of OE21/22 didn't suffer from the possibility 
+##    of not being identified as oxygens, there is another problem: three atoms of the first carboxyl group
+##    are also renamed in CGU. Namely, CD is now CD1, OE1 is now OE11, and OE2 is now OE12.
+##
+##  [Renaming the 3 atoms that exist in regular glutamate is certainly an option, but currently this 
+##    can only be done by adding new atoms, redefining the chi angles, and then deleting the old atoms--
+##    which would also force automatic re-packing. Therefore, I see the OE3/OE4 solution as the least of two evils.]
+##
+
+
+## The carboxyl group adds an extra chi angle
+ADD_CHI 4  CB   CG   CD2   OE3 
+
+
+## Use the data from GLU.params to re-pack the atoms around CG:
+## CD is kept in place, while CD2 is placed using the torsion 
+##   and bond angles originally meant for placing 1HG. (This approximation 
+##   is applied because the sp3 geometry around CG is not expected 
+##   to change significantly when one C-H bond is replaced by a C-C bond.)
+##
+## The CG-CD2 bond length is the arithmetic mean of 210 data points taken from RCSB's PDB files. 
+##   (with NMR structures and homologues with a similarity >70% excluded). 
+##   Finally, 1HG is placed where 2HG was in GLU.params. 
+##
+SET_ICOOR  CD2 123.926323  66.551559  1.520  CG   CB   CD 
+SET_ICOOR 1HG  118.538139  76.395332  1.089  CG   CB   CD2
+
+
+## Place the two oxygens of the added carboxyl group 
+##   using information from crystal structures. Again, the average value of the 
+##   CG-CD-OE bond angles and CD-OE bond lengths from actual PDB files are used here.
+##
+## The dihedral angle for placing OE3 was taken from the mean value of the bin
+##   with the highest frequency. The 180 degrees used for OE4 is meant to 
+##   generate ideal geometry around the sp2 carbon CG.
+##
+
+SET_ICOOR  OE3  -69.57  61.71  1.250  CD2   CG   CB 
+SET_ICOOR  OE4  180.00  61.71  1.250  CD2   CG   OE3
+
+
+SET_ATOM_TYPE CG CH1
+SET_MM_ATOM_TYPE CG CT1
+SET_ATOMIC_CHARGE CG -0.19
+## Was -0.28, but one C-H bond was replaced with a C-C bond (net +0.09)
+
+
+## Manually define rotamer bins for chi 4 using data from the 210 samples.
+##   Note: The rotamers are listed in the order of decreasing frequency.
+##   The percentages may not add up to 100% due to rounding.
+ADD_CHI_ROTAMER 4  -69.57  15.09  #28.1% 
+ADD_CHI_ROTAMER 4  -16.69  11.05  #18.1%, lower half of the bi-modal distribution around 0 degrees
+ADD_CHI_ROTAMER 4   24.22  15.39  #17.6%, upper half of the bi-modal distribution around 0 degrees 
+ADD_CHI_ROTAMER 4 -160.56  10.60  #17.1%, upper half of the bi-modal distribution around +/- 180 degrees
+ADD_CHI_ROTAMER 4  161.66  10.87  #11.9%, lower half of the bi-modal distribution around +/- 180 degrees
+ADD_CHI_ROTAMER 4  110.41   9.08  # 2.9%
+## The 110.41 bin was included despite the appearance of an outlier because of symmetry in the carboxyl group: 
+##   namely, one can rotate the CG-CD bond by 180 degrees without changing the chemistry at all. 
+##   Since 110.41-180 = -69.59, this merits its inclusion.
+      
+
+END_CASE

@@ -1,0 +1,21 @@
+1,hbacc_NONE,,
+2,hbacc_PBA,hbacc_PROTEIN_BB_AMIDE,ex: protein backbone OCbb
+3,hbacc_CXA,hbacc_CARBOXAMIDE,ex: Asn OD1; Gln OE1
+4,hbacc_CXL,hbacc_CARBOXYL,ex: Asp OD{1 2}; Glu OE{1 2}
+5,hbacc_IMD,hbacc_IMIDAZOL_DELTA,ex: His(HIS res_type) ND1 -- tautomer state with hydrogen on nitrogen closer to backbone
+6,hbacc_IME,hbacc_IMIDAZOL_EPSILON,ex: His(HIS_D res_type) NE2 -- tautomer state with hydrogen on nitrogen farther from backbone
+7,hbacc_AHX,hbacc_AROMATIC_HYDROXYL,ex: Tyr OH
+8,hbacc_HXL,hbacc_HYDROXY,ex: Ser OG; Thr OG1
+9,hbacc_PCA_DNA,hbacc_PHOSPHATE_CARBONYL_DNA,ex: nucleic acid O{1 2}P  WARNING: dna and rna backbone are handled differently!
+10,hbacc_PES_DNA,hbacc_PHOSPHATE_ESTER_DNA,ex: nucleic acid O{3 5}*
+11,hbacc_RRI_DNA,hbacc_RIBOSE_RING_DNA,ex: nucleic acid O4*
+12,hbacc_PCA_RNA,hbacc_PHOSPHATE_CARBONYL_RNA,ex: nucleic acid O{1 2}P
+13,hbacc_PES_RNA,hbacc_PHOSPHATE_ESTER_RNA,ex: nucleic acid O{3 5}*
+14,hbacc_RRI_RNA,hbacc_RIBOSE_RING_RNA,ex: nucleic acid O4*
+15,hbacc_H2O,hbacc_WATER,H2O(TP5/TP3 res types) O
+16,hbacc_GENERIC_SP2BB,,for backwards compatibility; prefer above types
+17,hbacc_GENERIC_SP2SC,,for backwards compatibility; prefer above types
+18,hbacc_GENERIC_SP3BB,,for backwards compatibility; prefer above types
+19,hbacc_GENERIC_SP3SC,,for backwards compatibility; prefer above types
+20,hbacc_GENERIC_RINGBB,,for backwards compatibility; prefer above types
+21,hbacc_GENERIC_RINGSC,,for backwards compatibility; prefer above types

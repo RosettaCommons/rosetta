@@ -1,0 +1,179 @@
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+SPARTA+: Shifts Predicted from Analogy in Residue type and Torsion Angle 
+with neural network
+
+Version 1.00 (Build 2010.0607.00)
+ 
+As described in the paper: 
+
+SPARTA+: a modest improvement in empirical NMR chemical shift prediction by 
+means of an artificial neural network 
+Yang Shen and Ad Bax
+Submitted 
+
+Contact:  shenyang@niddk.nih.gov
+Web:      http://spin.niddk.nih.gov/bax/software/SPARTA+/index.html
+
+--------------------------------------------------------------------------------
+DOWNLOAD
+
+RedHat Linux (Fedora Core)/Mac/Win32 version (last updated@June 6th, 2010)
+
+http://spin.niddk.nih.gov/bax/software/SPARTA+/sparta+.tar.Z
+
+The download archive can be unpacked in unix with a command like the following: 
+
+   zcat sparta+.linux.tar.Z | tar xvf -
+
+The archive can also be unpacked with a traditional Windows zip software. 
+Users are encouraged to email the author regarding updates and related software. 
+
+
+--------------------------------------------------------------------------------
+What is SPARTA+?
+
+SPARTA+ employs a well-trained neural network algorithm to make rapid chemical 
+shift prediction on the basis of known structure. The input parameters for the 
+neural network training procedure are similar to those used by the previous 
+program SPARTA, hence the naming of this new program. The neural network is 
+trained on a large carefully pruned database, containing 580 proteins for which 
+high-resolution X-ray structures and nearly complete backbone and 13CB chemical 
+shifts are available. The neural network is well trained to establish 
+quantitative relations between chemical shifts and protein structures, 
+including backbone and side-chain conformation, H-bonding, electric fields and 
+ring-current effects. The trained neural network yields rapid and accurate 
+chemical shift prediction for backbone and 13CB atoms.
+
+
+--------------------------------------------------------------------------------
+Reliability of SPARTA+
+
+The reliability of SPARTA+ approach was tested by a three-fold 
+training-and-validation procedure during the neural network training procedure, 
+as well as by a second validation of eleven proteins which are not present in  
+the training database, for which the RMS deviations between the SPARTA+ 
+predicted and experimental shifts are 2.45, 1.09, 0.94, 1.14, 0.25 and 0.49 ppm 
+for 15N, 13C', 13CA, 13CB, 1HA and 1HN, respectively.   
+
+
+--------------------------------------------------------------------------------
+Components of the SPARTA+ Package
+
+The SPARTA+ program is implemented using C++. The compiled executable files 
+($SPARTAP_DIR/bin/SPARTA+.linux for Linux, $SPARTAP_DIR/bin/SPARTA+.winxp for 
+Windows, $SPARTAP_DIR/bin/SPARTA+.mac for Mac) or the starting script 
+("$SPARTAP_DIR/sparta+" for Linux/Mac) can be invoked with command-line arguments. 
+A complete list of options can be invoked and generated with a "-help" 
+command-line argument. 
+
+Use of SPARTA+ requires definition of an environment variable "SPARTAP_DIR" or a 
+command-line argument "-spartaDir" to specify the SPARTA installation directory; 
+it will be established automatically if run SPARTA from the starting script 
+("$SPARTAP_DIR/sparta+" in Linux/Mac), which includes the following lines: 
+
+   setenv SPARTAP_DIR /disk1/SPARTA+/
+   $SPARTAP_DIR/bin/SPARTA+ $argv[1-$#argv]
+
+Note that the definition of $SPARTAP_DIR in the starting script MUST be modified 
+by users according to their SPARTA installation directory and the default 
+"$SPARTA_DIR" is the current directory if not specified. 
+
+Other files of the SPARTA+ package include: 
+
+
+$SPARTAP_DIR/bin/SPARTA+.* 
+The compiled SPARTA+ binary files for multiple platforms, such as Linux 
+(SPARTA+.linux), MacOS (SPARTA+.mac), SGI (SPARTA+.sgi6x) and WindowsXP 
+(SPARTA+.winxp). 
+
+$SPARTAP_DIR/tab/randcoil.tab, rcadj.tab
+The tables of random coil shifts and adjustments values used in the shifts 
+prediction process. (The same tables as used in TALOS, 
+http://spin.niddk.nih.gov/NMRPipe/talos/) 
+
+$SPARTAP_DIR/tab/*level*.tab 
+The weighting factors and biases of the neural network used in the prediction 
+process. 
+
+
+--------------------------------------------------------------------------------
+How to Use SPARTA+
+
+
+Use of SPARTA+ to predict backbone chemical shifts for one protein involves the 
+following steps
+
+1. Create a directory for the prediction session; all subsequent commands will 
+be executed from this directory. 
+
+2, Prepare an input PDB coordinate file (for example "protein.pdb"), according 
+to the format given below. 
+
+3. Run SPARTA+ to perform the chemical shifts calculation. Most commonly, this 
+will simply require a command such as: 
+
+   sparta+ -in protein.pdb
+
+SPARTA+ will first generate in "pred" directory (defined by "-predDir" option) 
+a "pred/protein_in.tab" file from PDB coordinates, which contains of the phi, 
+psi, chi1 angles, H-bonding information and ring current shifts. Before exiting,
+ a file "pred.tab" (defined by "-sum" option) will be created, this file 
+includes a summary of the prediction results. The chemical shift calculation 
+will typically take <1 second for a 100-residue protein on a Linux PC with a 
+2.4GHz CPU. 
+ 
+
+Use of SPARTA+ to predict backbone chemical shifts for multiple proteins 
+involves the following steps
+
+1. Create a directory for the prediction session; all subsequent commands will 
+be executed from this directory. 
+
+2. Prepare input PDB coordinate files (for example "protein1.pdb", ..., 
+"proteinN.pdb"), according to the format given below. 
+
+3. Run the following SPARTA+ command line 
+
+   sparta+ -ins protein1.pdb protein2.pdb ... proteinN.pdb
+
+to perform the chemical shifts calculation for each of the input proteins.
+
+ 
+
+3. Use of SPARTA+ to identify possible chemical shift referencing offsets and 
+chemical shift outliers
+
+If the experimental chemical shifts for the target protein are available (with 
+a name "ref.tab", for example, and with TALOS format), SPARTA+ prediction can 
+be performed by a command such as: 
+
+   sparta+ -in protein.pdb -ref ref.tab
+
+SPARTA would compare the predicted chemical shifts and experimental shifts before 
+exiting, and a prediction summary file "pred/pred.tab" will be generated to store 
+both the experimental and SPARTA+ predicted shifts, along with the prediction 
+errors. If the average prediction error for a given chemical shift type exceeds 
+3 times expected errors (the standard deviation of the prediction errors divide 
+the square root of the number of shifts), a warning will be printed and a 
+reference correction will be applied to the experimental chemical shifts. The 
+corrected experimental chemical shifts are stored into a new file "pred/ref.tab". 
+A chemical shift outlier can also be identified if the predicted chemical shift 
+(listed as column "SHIFT" in pred/pred.tab file) deviates its experimental shift 
+(column "CS_OBS") by more than five standard deviation or prediction error 
+(column "SIGMA").
+
+
+--------------------------------------------------------------------------------
+Preparing the Input PDB Coordinates
+
+The input PDB coordinates should be prepared carefully, so that it has the proper 
+format and naming conventions. SPARTA+ accepts standard PDB coordinates file, but
+ ONLY the FIRST conformer/chain will be used if more than one exist. For the PDB 
+coordinates without hydrogen atoms, the hydrogen atoms are required to be added 
+(by using the programs such as DYNAMO, REDUCE, MOLMOL, or any other similar 
+programs) in order to get the hydrogen bonding information and ring current 
+shifts. The standard "HA2/HA3" names are required for the GLY HA atoms. 
+
+last updated:  June 2010 / Webmaster 
+

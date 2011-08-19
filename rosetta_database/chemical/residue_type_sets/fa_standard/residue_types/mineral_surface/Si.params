@@ -1,0 +1,17 @@
+# I think right now that Mini has to have at least three atoms per residue,
+# hence the virtual atoms.
+NAME Si
+IO_STRING  Si Z
+TYPE LIGAND
+AA UNK
+ATOM  Si   Si  VIRT 2.00
+ATOM  V1  VIRT  VIRT 0.00
+ATOM  V2  VIRT  VIRT 0.00
+BOND Si    V1
+BOND Si    V2
+BOND  V1   V2
+NBR_ATOM Si
+NBR_RADIUS 0.01 # Correct later
+ICOOR_INTERNAL    Si      0.000000    0.000000    0.000000  Si     V1    V2
+ICOOR_INTERNAL    V1     0.000000  180.000000    1.493765  Si     V1    V2
+ICOOR_INTERNAL    V2     0.000000   62.060678    1.415324   V1   Si     V2

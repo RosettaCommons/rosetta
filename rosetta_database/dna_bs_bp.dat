@@ -1,0 +1,562 @@
+PARAM-NAMES BS Twst Roll Tilt Shft Slid Rise
+total-culled: BS AA 110 99 11
+SD: BS AA Twst 1   -34.678     4.587
+SD: BS AA Roll 2    -0.825     4.935
+SD: BS AA Tilt 3    -3.472     3.774
+SD: BS AA Shft 4     0.788     0.488
+SD: BS AA Slid 5     0.385     0.550
+SD: BS AA Rise 6    -3.385     0.087
+
+cov-scaled: BS AA Twst 1     1.000    -0.159    -0.247    -0.186     0.132    -0.263
+cov-scaled: BS AA Roll 2    -0.159     1.000     0.065     0.424     0.325     0.586
+cov-scaled: BS AA Tilt 3    -0.247     0.065     1.000     0.351     0.057    -0.053
+cov-scaled: BS AA Shft 4    -0.186     0.424     0.351     1.000    -0.052     0.249
+cov-scaled: BS AA Slid 5     0.132     0.325     0.057    -0.052     1.000     0.356
+cov-scaled: BS AA Rise 6    -0.263     0.586    -0.053     0.249     0.356     1.000
+
+covariance: BS AA Twst 1    21.038    -3.599    -4.280    -0.417     0.333    -0.105
+covariance: BS AA Roll 2    -3.599    24.352     1.217     1.020     0.882     0.252
+covariance: BS AA Tilt 3    -4.280     1.217    14.240     0.645     0.118    -0.017
+covariance: BS AA Shft 4    -0.417     1.020     0.645     0.238    -0.014     0.011
+covariance: BS AA Slid 5     0.333     0.882     0.118    -0.014     0.302     0.017
+covariance: BS AA Rise 6    -0.105     0.252    -0.017     0.011     0.017     0.008
+
+stiffness:  BS AA Twst 1     0.060     0.002     0.022    -0.023    -0.148     1.183
+stiffness:  BS AA Roll 2     0.002     0.076     0.005    -0.262    -0.135    -1.798
+stiffness:  BS AA Tilt 3     0.022     0.005     0.092    -0.290    -0.149     1.085
+stiffness:  BS AA Shft 4    -0.023    -0.262    -0.290     6.354     1.441    -4.399
+stiffness:  BS AA Slid 5    -0.148    -0.135    -0.149     1.441     4.565   -10.183
+stiffness:  BS AA Rise 6     1.183    -1.798     1.085    -4.399   -10.183   238.754
+total-culled: BS AC 119 109 10
+SD: BS AC Twst 1   -10.227     4.845
+SD: BS AC Roll 2    -1.550     5.038
+SD: BS AC Tilt 3    -3.682     4.185
+SD: BS AC Shft 4     0.064     0.474
+SD: BS AC Slid 5    -0.976     0.351
+SD: BS AC Rise 6    -3.422     0.109
+
+cov-scaled: BS AC Twst 1     1.000    -0.089    -0.131    -0.032    -0.088    -0.118
+cov-scaled: BS AC Roll 2    -0.089     1.000     0.178     0.184     0.067     0.305
+cov-scaled: BS AC Tilt 3    -0.131     0.178     1.000     0.089     0.480     0.109
+cov-scaled: BS AC Shft 4    -0.032     0.184     0.089     1.000     0.039    -0.071
+cov-scaled: BS AC Slid 5    -0.088     0.067     0.480     0.039     1.000     0.236
+cov-scaled: BS AC Rise 6    -0.118     0.305     0.109    -0.071     0.236     1.000
+
+covariance: BS AC Twst 1    23.471    -2.160    -2.654    -0.074    -0.149    -0.062
+covariance: BS AC Roll 2    -2.160    25.380     3.748     0.439     0.118     0.167
+covariance: BS AC Tilt 3    -2.654     3.748    17.518     0.176     0.706     0.049
+covariance: BS AC Shft 4    -0.074     0.439     0.176     0.225     0.006    -0.004
+covariance: BS AC Slid 5    -0.149     0.118     0.706     0.006     0.123     0.009
+covariance: BS AC Rise 6    -0.062     0.167     0.049    -0.004     0.009     0.012
+
+stiffness:  BS AC Twst 1     0.044     0.002     0.005     0.010     0.007     0.185
+stiffness:  BS AC Roll 2     0.002     0.047    -0.010    -0.097     0.067    -0.696
+stiffness:  BS AC Tilt 3     0.005    -0.010     0.077    -0.025    -0.437     0.166
+stiffness:  BS AC Shft 4     0.010    -0.097    -0.025     4.719    -0.229     3.167
+stiffness:  BS AC Slid 5     0.007     0.067    -0.437    -0.229    11.116    -7.621
+stiffness:  BS AC Rise 6     0.185    -0.696     0.166     3.167    -7.621   101.514
+total-culled: BS GT 119 105 14
+SD: BS GT Twst 1   -13.281     4.040
+SD: BS GT Roll 2    -0.780     4.194
+SD: BS GT Tilt 3    -2.997     3.526
+SD: BS GT Shft 4     0.597     0.551
+SD: BS GT Slid 5    -0.681     0.399
+SD: BS GT Rise 6    -3.480     0.083
+
+cov-scaled: BS GT Twst 1     1.000    -0.269    -0.171     0.145    -0.142     0.057
+cov-scaled: BS GT Roll 2    -0.269     1.000     0.405     0.022     0.091     0.189
+cov-scaled: BS GT Tilt 3    -0.171     0.405     1.000     0.219     0.475     0.106
+cov-scaled: BS GT Shft 4     0.145     0.022     0.219     1.000     0.409    -0.071
+cov-scaled: BS GT Slid 5    -0.142     0.091     0.475     0.409     1.000    -0.084
+cov-scaled: BS GT Rise 6     0.057     0.189     0.106    -0.071    -0.084     1.000
+
+covariance: BS GT Twst 1    16.324    -4.552    -2.429     0.322    -0.229     0.019
+covariance: BS GT Roll 2    -4.552    17.591     5.989     0.052     0.153     0.066
+covariance: BS GT Tilt 3    -2.429     5.989    12.436     0.425     0.668     0.031
+covariance: BS GT Shft 4     0.322     0.052     0.425     0.303     0.090    -0.003
+covariance: BS GT Slid 5    -0.229     0.153     0.668     0.090     0.159    -0.003
+covariance: BS GT Rise 6     0.019     0.066     0.031    -0.003    -0.003     0.007
+
+stiffness:  BS GT Twst 1     0.072     0.018     0.003    -0.129     0.138    -0.393
+stiffness:  BS GT Roll 2     0.018     0.075    -0.036    -0.019     0.107    -0.573
+stiffness:  BS GT Tilt 3     0.003    -0.036     0.127    -0.038    -0.477    -0.444
+stiffness:  BS GT Shft 4    -0.129    -0.019    -0.038     4.205    -2.347     1.744
+stiffness:  BS GT Slid 5     0.138     0.107    -0.477    -2.347     9.751     3.607
+stiffness:  BS GT Rise 6    -0.393    -0.573    -0.444     1.744     3.607   157.312
+total-culled: BS AG 101 96 5
+SD: BS AG Twst 1   -31.300     5.105
+SD: BS AG Roll 2    -3.305     6.682
+SD: BS AG Tilt 3    -2.350     4.432
+SD: BS AG Shft 4     0.940     0.701
+SD: BS AG Slid 5     0.635     0.634
+SD: BS AG Rise 6    -3.462     0.123
+
+cov-scaled: BS AG Twst 1     1.000    -0.100    -0.396    -0.098    -0.199    -0.254
+cov-scaled: BS AG Roll 2    -0.100     1.000     0.028     0.443     0.249     0.248
+cov-scaled: BS AG Tilt 3    -0.396     0.028     1.000     0.323     0.172     0.352
+cov-scaled: BS AG Shft 4    -0.098     0.443     0.323     1.000     0.043     0.174
+cov-scaled: BS AG Slid 5    -0.199     0.249     0.172     0.043     1.000     0.016
+cov-scaled: BS AG Rise 6    -0.254     0.248     0.352     0.174     0.016     1.000
+
+covariance: BS AG Twst 1    26.063    -3.411    -8.960    -0.349    -0.645    -0.160
+covariance: BS AG Roll 2    -3.411    44.645     0.821     2.076     1.056     0.205
+covariance: BS AG Tilt 3    -8.960     0.821    19.642     1.004     0.484     0.192
+covariance: BS AG Shft 4    -0.349     2.076     1.004     0.492     0.019     0.015
+covariance: BS AG Slid 5    -0.645     1.056     0.484     0.019     0.402     0.001
+covariance: BS AG Rise 6    -0.160     0.205     0.192     0.015     0.001     0.015
+
+stiffness:  BS AG Twst 1     0.048     0.002     0.019    -0.024     0.048     0.249
+stiffness:  BS AG Roll 2     0.002     0.034     0.014    -0.152    -0.093    -0.449
+stiffness:  BS AG Tilt 3     0.019     0.014     0.078    -0.177    -0.089    -0.791
+stiffness:  BS AG Shft 4    -0.024    -0.152    -0.177     2.969     0.427     1.053
+stiffness:  BS AG Slid 5     0.048    -0.093    -0.089     0.427     2.889     2.224
+stiffness:  BS AG Rise 6     0.249    -0.449    -0.791     1.053     2.224    83.268
+total-culled: BS CC 83 77 6
+SD: BS CC Twst 1   -33.654     5.085
+SD: BS CC Roll 2    -5.957     7.150
+SD: BS CC Tilt 3     0.373     6.582
+SD: BS CC Shft 4     1.657     0.535
+SD: BS CC Slid 5     0.816     0.696
+SD: BS CC Rise 6    -3.510     0.155
+
+cov-scaled: BS CC Twst 1     1.000    -0.150    -0.296     0.121     0.056    -0.202
+cov-scaled: BS CC Roll 2    -0.150     1.000     0.120     0.450     0.048     0.252
+cov-scaled: BS CC Tilt 3    -0.296     0.120     1.000     0.347     0.627     0.441
+cov-scaled: BS CC Shft 4     0.121     0.450     0.347     1.000     0.132     0.187
+cov-scaled: BS CC Slid 5     0.056     0.048     0.627     0.132     1.000     0.513
+cov-scaled: BS CC Rise 6    -0.202     0.252     0.441     0.187     0.513     1.000
+
+covariance: BS CC Twst 1    25.857    -5.460    -9.911     0.328     0.198    -0.158
+covariance: BS CC Roll 2    -5.460    51.128     5.627     1.723     0.240     0.278
+covariance: BS CC Tilt 3    -9.911     5.627    43.319     1.222     2.871     0.449
+covariance: BS CC Shft 4     0.328     1.723     1.222     0.287     0.049     0.016
+covariance: BS CC Slid 5     0.198     0.240     2.871     0.049     0.484     0.055
+covariance: BS CC Rise 6    -0.158     0.278     0.449     0.016     0.055     0.024
+
+stiffness:  BS CC Twst 1     0.059     0.010     0.030    -0.238    -0.228     0.394
+stiffness:  BS CC Roll 2     0.010     0.028     0.008    -0.196    -0.017    -0.237
+stiffness:  BS CC Tilt 3     0.030     0.008     0.059    -0.274    -0.333    -0.061
+stiffness:  BS CC Shft 4    -0.238    -0.196    -0.274     5.935     1.337    -1.095
+stiffness:  BS CC Slid 5    -0.228    -0.017    -0.333     1.337     4.801    -6.997
+stiffness:  BS CC Rise 6     0.394    -0.237    -0.061    -1.095    -6.997    65.264
+total-culled: BS CA 97 91 6
+SD: BS CA Twst 1   -56.509     4.667
+SD: BS CA Roll 2    -4.775     5.237
+SD: BS CA Tilt 3    -2.026     5.875
+SD: BS CA Shft 4     2.262     0.524
+SD: BS CA Slid 5     1.689     0.927
+SD: BS CA Rise 6    -3.507     0.163
+
+cov-scaled: BS CA Twst 1     1.000    -0.404    -0.182     0.008     0.209     0.014
+cov-scaled: BS CA Roll 2    -0.404     1.000    -0.127     0.391    -0.312     0.109
+cov-scaled: BS CA Tilt 3    -0.182    -0.127     1.000     0.258     0.306    -0.094
+cov-scaled: BS CA Shft 4     0.008     0.391     0.258     1.000    -0.060     0.126
+cov-scaled: BS CA Slid 5     0.209    -0.312     0.306    -0.060     1.000     0.280
+cov-scaled: BS CA Rise 6     0.014     0.109    -0.094     0.126     0.280     1.000
+
+covariance: BS CA Twst 1    21.778    -9.872    -4.981     0.019     0.904     0.011
+covariance: BS CA Roll 2    -9.872    27.430    -3.911     1.074    -1.514     0.093
+covariance: BS CA Tilt 3    -4.981    -3.911    34.515     0.794     1.669    -0.090
+covariance: BS CA Shft 4     0.019     1.074     0.794     0.275    -0.029     0.011
+covariance: BS CA Slid 5     0.904    -1.514     1.669    -0.029     0.859     0.042
+covariance: BS CA Rise 6     0.011     0.093    -0.090     0.011     0.042     0.027
+
+stiffness:  BS CA Twst 1     0.068     0.031     0.022    -0.203    -0.073     0.136
+stiffness:  BS CA Roll 2     0.031     0.064     0.016    -0.288     0.047    -0.143
+stiffness:  BS CA Tilt 3     0.022     0.016     0.045    -0.218    -0.107     0.348
+stiffness:  BS CA Shft 4    -0.203    -0.288    -0.218     5.556     0.447    -2.610
+stiffness:  BS CA Slid 5    -0.073     0.047    -0.107     0.447     1.715    -3.412
+stiffness:  BS CA Rise 6     0.136    -0.143     0.348    -2.610    -3.412    45.817
+total-culled: BS CG 102 92 10
+SD: BS CG Twst 1   -53.202     4.908
+SD: BS CG Roll 2    -4.245     5.681
+SD: BS CG Tilt 3    -3.275     6.181
+SD: BS CG Shft 4     2.360     0.721
+SD: BS CG Slid 5     1.671     0.733
+SD: BS CG Rise 6    -3.491     0.138
+
+cov-scaled: BS CG Twst 1     1.000    -0.306    -0.263     0.075    -0.045    -0.059
+cov-scaled: BS CG Roll 2    -0.306     1.000    -0.116     0.174    -0.141     0.200
+cov-scaled: BS CG Tilt 3    -0.263    -0.116     1.000     0.381     0.294     0.126
+cov-scaled: BS CG Shft 4     0.075     0.174     0.381     1.000    -0.150     0.307
+cov-scaled: BS CG Slid 5    -0.045    -0.141     0.294    -0.150     1.000     0.061
+cov-scaled: BS CG Rise 6    -0.059     0.200     0.126     0.307     0.061     1.000
+
+covariance: BS CG Twst 1    24.085    -8.522    -7.969     0.266    -0.164    -0.040
+covariance: BS CG Roll 2    -8.522    32.271    -4.066     0.714    -0.589     0.157
+covariance: BS CG Tilt 3    -7.969    -4.066    38.203     1.696     1.332     0.108
+covariance: BS CG Shft 4     0.266     0.714     1.696     0.520    -0.079     0.031
+covariance: BS CG Slid 5    -0.164    -0.589     1.332    -0.079     0.537     0.006
+covariance: BS CG Rise 6    -0.040     0.157     0.108     0.031     0.006     0.019
+
+stiffness:  BS CG Twst 1     0.057     0.020     0.021    -0.132    -0.033     0.063
+stiffness:  BS CG Roll 2     0.020     0.041     0.013    -0.095     0.007    -0.221
+stiffness:  BS CG Tilt 3     0.021     0.013     0.045    -0.194    -0.119     0.034
+stiffness:  BS CG Shft 4    -0.132    -0.095    -0.194     3.096     0.835    -3.630
+stiffness:  BS CG Slid 5    -0.033     0.007    -0.119     0.835     2.294    -1.536
+stiffness:  BS CG Rise 6     0.063    -0.221     0.034    -3.630    -1.536    60.459
+total-culled: BS TT 110 96 14
+SD: BS TT Twst 1   -33.683     4.666
+SD: BS TT Roll 2    -0.744     5.277
+SD: BS TT Tilt 3    -5.151     4.124
+SD: BS TT Shft 4     1.788     0.312
+SD: BS TT Slid 5     0.531     0.472
+SD: BS TT Rise 6    -3.481     0.097
+
+cov-scaled: BS TT Twst 1     1.000    -0.211    -0.206     0.133     0.041    -0.117
+cov-scaled: BS TT Roll 2    -0.211     1.000     0.141     0.440     0.565     0.224
+cov-scaled: BS TT Tilt 3    -0.206     0.141     1.000    -0.219     0.183     0.141
+cov-scaled: BS TT Shft 4     0.133     0.440    -0.219     1.000     0.261     0.114
+cov-scaled: BS TT Slid 5     0.041     0.565     0.183     0.261     1.000     0.327
+cov-scaled: BS TT Rise 6    -0.117     0.224     0.141     0.114     0.327     1.000
+
+covariance: BS TT Twst 1    21.768    -5.184    -3.961     0.194     0.090    -0.053
+covariance: BS TT Roll 2    -5.184    27.844     3.076     0.724     1.407     0.115
+covariance: BS TT Tilt 3    -3.961     3.076    17.009    -0.281     0.357     0.057
+covariance: BS TT Shft 4     0.194     0.724    -0.281     0.098     0.038     0.003
+covariance: BS TT Slid 5     0.090     1.407     0.357     0.038     0.223     0.015
+covariance: BS TT Rise 6    -0.053     0.115     0.057     0.003     0.015     0.009
+
+stiffness:  BS TT Twst 1     0.056     0.021     0.008    -0.193    -0.157     0.326
+stiffness:  BS TT Roll 2     0.021     0.071    -0.008    -0.445    -0.370     0.052
+stiffness:  BS TT Tilt 3     0.008    -0.008     0.070     0.290    -0.102    -0.224
+stiffness:  BS TT Shft 4    -0.193    -0.445     0.290    14.865     0.055    -2.915
+stiffness:  BS TT Slid 5    -0.157    -0.370    -0.102     0.055     7.572    -7.814
+stiffness:  BS TT Rise 6     0.326     0.052    -0.224    -2.915    -7.814   122.117
+total-culled: BS GG 83 80 3
+SD: BS GG Twst 1   -33.528     4.528
+SD: BS GG Roll 2    -2.469     5.286
+SD: BS GG Tilt 3    -0.616     5.068
+SD: BS GG Shft 4     1.152     0.730
+SD: BS GG Slid 5     0.712     0.852
+SD: BS GG Rise 6    -3.432     0.102
+
+cov-scaled: BS GG Twst 1     1.000    -0.053    -0.269    -0.224     0.014    -0.043
+cov-scaled: BS GG Roll 2    -0.053     1.000     0.293     0.070    -0.210    -0.175
+cov-scaled: BS GG Tilt 3    -0.269     0.293     1.000     0.558     0.050    -0.165
+cov-scaled: BS GG Shft 4    -0.224     0.070     0.558     1.000    -0.063     0.134
+cov-scaled: BS GG Slid 5     0.014    -0.210     0.050    -0.063     1.000    -0.026
+cov-scaled: BS GG Rise 6    -0.043    -0.175    -0.165     0.134    -0.026     1.000
+
+covariance: BS GG Twst 1    20.504    -1.264    -6.167    -0.742     0.055    -0.020
+covariance: BS GG Roll 2    -1.264    27.937     7.853     0.271    -0.945    -0.094
+covariance: BS GG Tilt 3    -6.167     7.853    25.687     2.065     0.214    -0.085
+covariance: BS GG Shft 4    -0.742     0.271     2.065     0.533    -0.039     0.010
+covariance: BS GG Slid 5     0.055    -0.945     0.214    -0.039     0.726    -0.002
+covariance: BS GG Rise 6    -0.020    -0.094    -0.085     0.010    -0.002     0.010
+
+stiffness:  BS GG Twst 1     0.053    -0.001     0.011     0.027    -0.006     0.162
+stiffness:  BS GG Roll 2    -0.001     0.043    -0.016     0.041     0.064     0.229
+stiffness:  BS GG Tilt 3     0.011    -0.016     0.071    -0.268    -0.056     0.703
+stiffness:  BS GG Shft 4     0.027     0.041    -0.268     3.042     0.281    -4.642
+stiffness:  BS GG Slid 5    -0.006     0.064    -0.056     0.281     1.492     0.162
+stiffness:  BS GG Rise 6     0.162     0.229     0.703    -4.642     0.162   109.398
+total-culled: BS GC 92 81 11
+SD: BS GC Twst 1   -12.439     6.400
+SD: BS GC Roll 2    -1.553     4.146
+SD: BS GC Tilt 3    -3.728     5.153
+SD: BS GC Shft 4     0.466     0.683
+SD: BS GC Slid 5    -1.065     0.547
+SD: BS GC Rise 6    -3.421     0.106
+
+cov-scaled: BS GC Twst 1     1.000    -0.221    -0.352    -0.006    -0.118    -0.008
+cov-scaled: BS GC Roll 2    -0.221     1.000     0.340     0.430     0.050     0.003
+cov-scaled: BS GC Tilt 3    -0.352     0.340     1.000     0.270     0.491    -0.217
+cov-scaled: BS GC Shft 4    -0.006     0.430     0.270     1.000     0.016     0.130
+cov-scaled: BS GC Slid 5    -0.118     0.050     0.491     0.016     1.000    -0.057
+cov-scaled: BS GC Rise 6    -0.008     0.003    -0.217     0.130    -0.057     1.000
+
+covariance: BS GC Twst 1    40.956    -5.860   -11.610    -0.027    -0.414    -0.005
+covariance: BS GC Roll 2    -5.860    17.192     7.264     1.219     0.114     0.002
+covariance: BS GC Tilt 3   -11.610     7.264    26.552     0.951     1.385    -0.119
+covariance: BS GC Shft 4    -0.027     1.219     0.951     0.467     0.006     0.009
+covariance: BS GC Slid 5    -0.414     0.114     1.385     0.006     0.299    -0.003
+covariance: BS GC Rise 6    -0.005     0.002    -0.119     0.009    -0.003     0.011
+
+stiffness:  BS GC Twst 1     0.029     0.008     0.015    -0.053    -0.029     0.208
+stiffness:  BS GC Roll 2     0.008     0.079    -0.015    -0.177     0.052     0.002
+stiffness:  BS GC Tilt 3     0.015    -0.015     0.071    -0.118    -0.292     0.770
+stiffness:  BS GC Shft 4    -0.053    -0.177    -0.118     2.906     0.443    -3.543
+stiffness:  BS GC Slid 5    -0.029     0.052    -0.292     0.443     4.604    -2.110
+stiffness:  BS GC Rise 6     0.208     0.002     0.770    -3.543    -2.110    99.159
+total-culled: BS AT 138 124 14
+SD: BS AT Twst 1   -10.338     5.602
+SD: BS AT Roll 2    -0.283     4.653
+SD: BS AT Tilt 3    -5.054     3.834
+SD: BS AT Shft 4     0.356     0.501
+SD: BS AT Slid 5    -0.881     0.343
+SD: BS AT Rise 6    -3.430     0.111
+
+cov-scaled: BS AT Twst 1     1.000    -0.226    -0.036    -0.010    -0.197    -0.118
+cov-scaled: BS AT Roll 2    -0.226     1.000     0.145     0.341    -0.002     0.235
+cov-scaled: BS AT Tilt 3    -0.036     0.145     1.000     0.050     0.306    -0.030
+cov-scaled: BS AT Shft 4    -0.010     0.341     0.050     1.000     0.093    -0.050
+cov-scaled: BS AT Slid 5    -0.197    -0.002     0.306     0.093     1.000     0.013
+cov-scaled: BS AT Rise 6    -0.118     0.235    -0.030    -0.050     0.013     1.000
+
+covariance: BS AT Twst 1    31.384    -5.882    -0.763    -0.028    -0.380    -0.073
+covariance: BS AT Roll 2    -5.882    21.652     2.586     0.794    -0.003     0.121
+covariance: BS AT Tilt 3    -0.763     2.586    14.697     0.096     0.403    -0.013
+covariance: BS AT Shft 4    -0.028     0.794     0.096     0.251     0.016    -0.003
+covariance: BS AT Slid 5    -0.380    -0.003     0.403     0.016     0.118     0.000
+covariance: BS AT Rise 6    -0.073     0.121    -0.013    -0.003     0.000     0.012
+
+stiffness:  BS AT Twst 1     0.036     0.011    -0.003    -0.037     0.131     0.087
+stiffness:  BS AT Roll 2     0.011     0.061    -0.012    -0.202     0.109    -0.603
+stiffness:  BS AT Tilt 3    -0.003    -0.012     0.078     0.030    -0.282     0.201
+stiffness:  BS AT Shft 4    -0.037    -0.202     0.030     4.698    -0.874     2.895
+stiffness:  BS AT Slid 5     0.131     0.109    -0.282    -0.874     9.994    -1.184
+stiffness:  BS AT Rise 6     0.087    -0.603     0.201     2.895    -1.184    88.586
+total-culled: BS GA 110 103 7
+SD: BS GA Twst 1   -37.275     5.600
+SD: BS GA Roll 2    -0.912     4.277
+SD: BS GA Tilt 3    -2.202     4.432
+SD: BS GA Shft 4     1.011     0.546
+SD: BS GA Slid 5     0.505     0.622
+SD: BS GA Rise 6    -3.413     0.090
+
+cov-scaled: BS GA Twst 1     1.000    -0.095    -0.271    -0.129     0.020    -0.091
+cov-scaled: BS GA Roll 2    -0.095     1.000     0.082     0.157    -0.043     0.123
+cov-scaled: BS GA Tilt 3    -0.271     0.082     1.000     0.589    -0.009     0.075
+cov-scaled: BS GA Shft 4    -0.129     0.157     0.589     1.000    -0.275     0.136
+cov-scaled: BS GA Slid 5     0.020    -0.043    -0.009    -0.275     1.000     0.169
+cov-scaled: BS GA Rise 6    -0.091     0.123     0.075     0.136     0.169     1.000
+
+covariance: BS GA Twst 1    31.363    -2.276    -6.720    -0.396     0.069    -0.046
+covariance: BS GA Roll 2    -2.276    18.296     1.563     0.368    -0.113     0.047
+covariance: BS GA Tilt 3    -6.720     1.563    19.641     1.425    -0.024     0.030
+covariance: BS GA Shft 4    -0.396     0.368     1.425     0.298    -0.093     0.007
+covariance: BS GA Slid 5     0.069    -0.113    -0.024    -0.093     0.387     0.009
+covariance: BS GA Rise 6    -0.046     0.047     0.030     0.007     0.009     0.008
+
+stiffness:  BS GA Twst 1     0.035     0.003     0.014    -0.033    -0.017     0.174
+stiffness:  BS GA Roll 2     0.003     0.057     0.002    -0.066     0.007    -0.274
+stiffness:  BS GA Tilt 3     0.014     0.002     0.087    -0.438    -0.108     0.235
+stiffness:  BS GA Shft 4    -0.033    -0.066    -0.438     6.080     1.548    -5.009
+stiffness:  BS GA Slid 5    -0.017     0.007    -0.108     1.548     3.068    -4.600
+stiffness:  BS GA Rise 6     0.174    -0.274     0.235    -5.009    -4.600   134.764
+total-culled: BS TG 97 90 7
+SD: BS TG Twst 1   -53.634     5.699
+SD: BS TG Roll 2    -4.792     4.853
+SD: BS TG Tilt 3    -2.411     5.030
+SD: BS TG Shft 4     2.401     0.636
+SD: BS TG Slid 5     1.635     0.872
+SD: BS TG Rise 6    -3.411     0.161
+
+cov-scaled: BS TG Twst 1     1.000    -0.424    -0.160    -0.138     0.402     0.075
+cov-scaled: BS TG Roll 2    -0.424     1.000     0.133     0.373    -0.262     0.141
+cov-scaled: BS TG Tilt 3    -0.160     0.133     1.000     0.316     0.337     0.186
+cov-scaled: BS TG Shft 4    -0.138     0.373     0.316     1.000    -0.136     0.257
+cov-scaled: BS TG Slid 5     0.402    -0.262     0.337    -0.136     1.000     0.480
+cov-scaled: BS TG Rise 6     0.075     0.141     0.186     0.257     0.480     1.000
+
+covariance: BS TG Twst 1    32.482   -11.724    -4.587    -0.501     1.999     0.069
+covariance: BS TG Roll 2   -11.724    23.552     3.251     1.150    -1.110     0.110
+covariance: BS TG Tilt 3    -4.587     3.251    25.305     1.010     1.480     0.150
+covariance: BS TG Shft 4    -0.501     1.150     1.010     0.404    -0.075     0.026
+covariance: BS TG Slid 5     1.999    -1.110     1.480    -0.075     0.760     0.067
+covariance: BS TG Rise 6     0.069     0.110     0.150     0.026     0.067     0.026
+
+stiffness:  BS TG Twst 1     0.047     0.016     0.018    -0.074    -0.160     0.192
+stiffness:  BS TG Roll 2     0.016     0.062    -0.003    -0.110     0.074    -0.371
+stiffness:  BS TG Tilt 3     0.018    -0.003     0.061    -0.190    -0.222     0.379
+stiffness:  BS TG Shft 4    -0.074    -0.110    -0.190     3.740     1.238    -5.252
+stiffness:  BS TG Slid 5    -0.160     0.074    -0.222     1.238     3.102    -7.931
+stiffness:  BS TG Rise 6     0.192    -0.371     0.379    -5.252    -7.931    63.609
+total-culled: BS TA 150 142 8
+SD: BS TA Twst 1   -56.430     7.198
+SD: BS TA Roll 2    -1.812     6.188
+SD: BS TA Tilt 3    -2.462     5.207
+SD: BS TA Shft 4     2.354     0.577
+SD: BS TA Slid 5     1.703     1.005
+SD: BS TA Rise 6    -3.452     0.142
+
+cov-scaled: BS TA Twst 1     1.000    -0.499    -0.158    -0.237     0.375    -0.056
+cov-scaled: BS TA Roll 2    -0.499     1.000     0.007     0.454    -0.413     0.108
+cov-scaled: BS TA Tilt 3    -0.158     0.007     1.000     0.188     0.400     0.117
+cov-scaled: BS TA Shft 4    -0.237     0.454     0.188     1.000    -0.234     0.375
+cov-scaled: BS TA Slid 5     0.375    -0.413     0.400    -0.234     1.000     0.165
+cov-scaled: BS TA Rise 6    -0.056     0.108     0.117     0.375     0.165     1.000
+
+covariance: BS TA Twst 1    51.814   -22.218    -5.941    -0.986     2.711    -0.058
+covariance: BS TA Roll 2   -22.218    38.287     0.225     1.622    -2.567     0.094
+covariance: BS TA Tilt 3    -5.941     0.225    27.116     0.566     2.093     0.086
+covariance: BS TA Shft 4    -0.986     1.622     0.566     0.333    -0.136     0.031
+covariance: BS TA Slid 5     2.711    -2.567     2.093    -0.136     1.009     0.024
+covariance: BS TA Rise 6    -0.058     0.094     0.086     0.031     0.024     0.020
+
+stiffness:  BS TA Twst 1     0.030     0.013     0.014    -0.046    -0.085     0.134
+stiffness:  BS TA Roll 2     0.013     0.044     0.002    -0.157     0.050     0.006
+stiffness:  BS TA Tilt 3     0.014     0.002     0.056    -0.156    -0.174     0.232
+stiffness:  BS TA Shft 4    -0.046    -0.157    -0.156     4.923     0.879    -7.265
+stiffness:  BS TA Slid 5    -0.085     0.050    -0.174     0.879     1.901    -3.296
+stiffness:  BS TA Rise 6     0.134     0.006     0.232    -7.265    -3.296    63.887
+total-culled: BS TC 110 96 14
+SD: BS TC Twst 1   -34.220     4.970
+SD: BS TC Roll 2    -2.790     5.976
+SD: BS TC Tilt 3    -4.537     5.471
+SD: BS TC Shft 4     1.662     0.466
+SD: BS TC Slid 5     0.535     0.465
+SD: BS TC Rise 6    -3.513     0.169
+
+cov-scaled: BS TC Twst 1     1.000    -0.382    -0.223    -0.069     0.093    -0.008
+cov-scaled: BS TC Roll 2    -0.382     1.000    -0.042     0.321     0.035     0.202
+cov-scaled: BS TC Tilt 3    -0.223    -0.042     1.000     0.076     0.366     0.300
+cov-scaled: BS TC Shft 4    -0.069     0.321     0.076     1.000     0.031     0.244
+cov-scaled: BS TC Slid 5     0.093     0.035     0.366     0.031     1.000     0.500
+cov-scaled: BS TC Rise 6    -0.008     0.202     0.300     0.244     0.500     1.000
+
+covariance: BS TC Twst 1    24.703   -11.343    -6.053    -0.159     0.215    -0.006
+covariance: BS TC Roll 2   -11.343    35.710    -1.367     0.896     0.097     0.203
+covariance: BS TC Tilt 3    -6.053    -1.367    29.928     0.193     0.929     0.277
+covariance: BS TC Shft 4    -0.159     0.896     0.193     0.217     0.007     0.019
+covariance: BS TC Slid 5     0.215     0.097     0.929     0.007     0.216     0.039
+covariance: BS TC Rise 6    -0.006     0.203     0.277     0.019     0.039     0.028
+
+stiffness:  BS TC Twst 1     0.054     0.020     0.017    -0.044    -0.115    -0.105
+stiffness:  BS TC Roll 2     0.020     0.040     0.010    -0.135    -0.033    -0.238
+stiffness:  BS TC Tilt 3     0.017     0.010     0.045    -0.042    -0.169    -0.244
+stiffness:  BS TC Shft 4    -0.044    -0.135    -0.042     5.431     0.716    -3.291
+stiffness:  BS TC Slid 5    -0.115    -0.033    -0.169     0.716     6.960    -8.213
+stiffness:  BS TC Rise 6    -0.105    -0.238    -0.244    -3.291    -8.213    52.697
+total-culled: BS CT 101 98 3
+SD: BS CT Twst 1   -33.585     4.841
+SD: BS CT Roll 2    -5.744     5.789
+SD: BS CT Tilt 3    -3.376     5.338
+SD: BS CT Shft 4     1.774     0.464
+SD: BS CT Slid 5     0.686     0.625
+SD: BS CT Rise 6    -3.623     0.155
+
+cov-scaled: BS CT Twst 1     1.000    -0.169    -0.189     0.096    -0.148    -0.036
+cov-scaled: BS CT Roll 2    -0.169     1.000     0.074     0.182     0.429     0.374
+cov-scaled: BS CT Tilt 3    -0.189     0.074     1.000     0.064     0.391    -0.113
+cov-scaled: BS CT Shft 4     0.096     0.182     0.064     1.000     0.358    -0.080
+cov-scaled: BS CT Slid 5    -0.148     0.429     0.391     0.358     1.000     0.247
+cov-scaled: BS CT Rise 6    -0.036     0.374    -0.113    -0.080     0.247     1.000
+
+covariance: BS CT Twst 1    23.431    -4.741    -4.896     0.216    -0.447    -0.027
+covariance: BS CT Roll 2    -4.741    33.511     2.279     0.490     1.553     0.336
+covariance: BS CT Tilt 3    -4.896     2.279    28.490     0.159     1.303    -0.094
+covariance: BS CT Shft 4     0.216     0.490     0.159     0.215     0.104    -0.006
+covariance: BS CT Slid 5    -0.447     1.553     1.303     0.104     0.390     0.024
+covariance: BS CT Rise 6    -0.027     0.336    -0.094    -0.006     0.024     0.024
+
+stiffness:  BS CT Twst 1     0.047     0.007     0.006    -0.084     0.033    -0.068
+stiffness:  BS CT Roll 2     0.007     0.042     0.002    -0.056    -0.123    -0.458
+stiffness:  BS CT Tilt 3     0.006     0.002     0.046     0.056    -0.191     0.356
+stiffness:  BS CT Shft 4    -0.084    -0.056     0.056     5.826    -1.866     4.159
+stiffness:  BS CT Slid 5     0.033    -0.123    -0.191    -1.866     4.457    -3.862
+stiffness:  BS CT Rise 6    -0.068    -0.458     0.356     4.159    -3.862    54.067
+PARAM-NAMES BP Prop Buck Open Sher Strc Stag
+total-culled: BP CG 426 373 53
+SD: BP CG Prop 1    -7.419     6.626
+SD: BP CG Buck 2     1.701     8.455
+SD: BP CG Open 3     4.810     3.012
+SD: BP CG Sher 4    -0.004     0.199
+SD: BP CG Strc 5     5.551     0.132
+SD: BP CG Stag 6    -0.067     0.202
+
+cov-scaled: BP CG Prop 1     1.000    -0.055    -0.110     0.095     0.090    -0.101
+cov-scaled: BP CG Buck 2    -0.055     1.000     0.135     0.093    -0.015    -0.243
+cov-scaled: BP CG Open 3    -0.110     0.135     1.000    -0.089     0.080    -0.188
+cov-scaled: BP CG Sher 4     0.095     0.093    -0.089     1.000     0.030    -0.142
+cov-scaled: BP CG Strc 5     0.090    -0.015     0.080     0.030     1.000    -0.078
+cov-scaled: BP CG Stag 6    -0.101    -0.243    -0.188    -0.142    -0.078     1.000
+
+covariance: BP CG Prop 1    43.909    -3.109    -2.205     0.125     0.079    -0.135
+covariance: BP CG Buck 2    -3.109    71.488     3.428     0.155    -0.017    -0.414
+covariance: BP CG Open 3    -2.205     3.428     9.074    -0.053     0.032    -0.114
+covariance: BP CG Sher 4     0.125     0.155    -0.053     0.039     0.001    -0.006
+covariance: BP CG Strc 5     0.079    -0.017     0.032     0.001     0.018    -0.002
+covariance: BP CG Stag 6    -0.135    -0.414    -0.114    -0.006    -0.002     0.041
+
+stiffness:  BP CG Prop 1     0.024     0.001     0.007    -0.056    -0.104     0.098
+stiffness:  BP CG Buck 2     0.001     0.015    -0.004    -0.050     0.035     0.143
+stiffness:  BP CG Open 3     0.007    -0.004     0.120     0.209    -0.222     0.334
+stiffness:  BP CG Sher 4    -0.056    -0.050     0.209    26.556    -0.946     3.565
+stiffness:  BP CG Strc 5    -0.104     0.035    -0.222    -0.946    58.365     2.258
+stiffness:  BP CG Stag 6     0.098     0.143     0.334     3.565     2.258    27.939
+total-culled: BP GC 426 373 53
+SD: BP GC Prop 1    -7.419     6.626
+SD: BP GC Buck 2    -1.701     8.455
+SD: BP GC Open 3     4.810     3.012
+SD: BP GC Sher 4     0.004     0.199
+SD: BP GC Strc 5     5.551     0.132
+SD: BP GC Stag 6    -0.067     0.202
+
+cov-scaled: BP GC Prop 1     1.000     0.055    -0.110    -0.095     0.090    -0.101
+cov-scaled: BP GC Buck 2     0.055     1.000    -0.135     0.093     0.015     0.243
+cov-scaled: BP GC Open 3    -0.110    -0.135     1.000     0.089     0.080    -0.188
+cov-scaled: BP GC Sher 4    -0.095     0.093     0.089     1.000    -0.030     0.142
+cov-scaled: BP GC Strc 5     0.090     0.015     0.080    -0.030     1.000    -0.078
+cov-scaled: BP GC Stag 6    -0.101     0.243    -0.188     0.142    -0.078     1.000
+
+covariance: BP GC Prop 1    43.909     3.109    -2.205    -0.125     0.079    -0.135
+covariance: BP GC Buck 2     3.109    71.488    -3.428     0.155     0.017     0.414
+covariance: BP GC Open 3    -2.205    -3.428     9.074     0.053     0.032    -0.114
+covariance: BP GC Sher 4    -0.125     0.155     0.053     0.039    -0.001     0.006
+covariance: BP GC Strc 5     0.079     0.017     0.032    -0.001     0.018    -0.002
+covariance: BP GC Stag 6    -0.135     0.414    -0.114     0.006    -0.002     0.041
+
+stiffness:  BP GC Prop 1     0.024    -0.001     0.007     0.056    -0.104     0.098
+stiffness:  BP GC Buck 2    -0.001     0.015     0.004    -0.050    -0.035    -0.143
+stiffness:  BP GC Open 3     0.007     0.004     0.120    -0.209    -0.222     0.334
+stiffness:  BP GC Sher 4     0.056    -0.050    -0.209    26.556     0.946    -3.565
+stiffness:  BP GC Strc 5    -0.104    -0.035    -0.222     0.946    58.365     2.258
+stiffness:  BP GC Stag 6     0.098    -0.143     0.334    -3.565     2.258    27.939
+total-culled: BP AT 496 434 62
+SD: BP AT Prop 1    -9.570     6.552
+SD: BP AT Buck 2    -0.009     7.100
+SD: BP AT Open 3     8.669     3.902
+SD: BP AT Sher 4     0.164     0.217
+SD: BP AT Strc 5     5.466     0.143
+SD: BP AT Stag 6    -0.074     0.221
+
+cov-scaled: BP AT Prop 1     1.000    -0.305    -0.029    -0.097     0.109     0.229
+cov-scaled: BP AT Buck 2    -0.305     1.000    -0.122     0.125     0.040    -0.175
+cov-scaled: BP AT Open 3    -0.029    -0.122     1.000     0.026    -0.262    -0.035
+cov-scaled: BP AT Sher 4    -0.097     0.125     0.026     1.000    -0.095    -0.017
+cov-scaled: BP AT Strc 5     0.109     0.040    -0.262    -0.095     1.000     0.042
+cov-scaled: BP AT Stag 6     0.229    -0.175    -0.035    -0.017     0.042     1.000
+
+covariance: BP AT Prop 1    42.926   -14.198    -0.754    -0.138     0.102     0.332
+covariance: BP AT Buck 2   -14.198    50.404    -3.384     0.193     0.041    -0.275
+covariance: BP AT Open 3    -0.754    -3.384    15.227     0.022    -0.146    -0.030
+covariance: BP AT Sher 4    -0.138     0.193     0.022     0.047    -0.003    -0.001
+covariance: BP AT Strc 5     0.102     0.041    -0.146    -0.003     0.020     0.001
+covariance: BP AT Stag 6     0.332    -0.275    -0.030    -0.001     0.001     0.049
+
+stiffness:  BP AT Prop 1     0.027     0.007     0.001     0.040    -0.125    -0.140
+stiffness:  BP AT Buck 2     0.007     0.023     0.005    -0.079    -0.061     0.086
+stiffness:  BP AT Open 3     0.001     0.005     0.072    -0.020     0.490     0.050
+stiffness:  BP AT Sher 4     0.040    -0.079    -0.020    21.827     3.011    -0.433
+stiffness:  BP AT Strc 5    -0.125    -0.061     0.490     3.011    53.802    -0.612
+stiffness:  BP AT Stag 6    -0.140     0.086     0.050    -0.433    -0.612    21.961
+total-culled: BP TA 496 434 62
+SD: BP TA Prop 1    -9.570     6.552
+SD: BP TA Buck 2     0.009     7.100
+SD: BP TA Open 3     8.669     3.902
+SD: BP TA Sher 4    -0.164     0.217
+SD: BP TA Strc 5     5.466     0.143
+SD: BP TA Stag 6    -0.074     0.221
+
+cov-scaled: BP TA Prop 1     1.000     0.305    -0.029     0.097     0.109     0.229
+cov-scaled: BP TA Buck 2     0.305     1.000     0.122     0.125    -0.040     0.175
+cov-scaled: BP TA Open 3    -0.029     0.122     1.000    -0.026    -0.262    -0.035
+cov-scaled: BP TA Sher 4     0.097     0.125    -0.026     1.000     0.095     0.017
+cov-scaled: BP TA Strc 5     0.109    -0.040    -0.262     0.095     1.000     0.042
+cov-scaled: BP TA Stag 6     0.229     0.175    -0.035     0.017     0.042     1.000
+
+covariance: BP TA Prop 1    42.926    14.198    -0.754     0.138     0.102     0.332
+covariance: BP TA Buck 2    14.198    50.404     3.384     0.193    -0.041     0.275
+covariance: BP TA Open 3    -0.754     3.384    15.227    -0.022    -0.146    -0.030
+covariance: BP TA Sher 4     0.138     0.193    -0.022     0.047     0.003     0.001
+covariance: BP TA Strc 5     0.102    -0.041    -0.146     0.003     0.020     0.001
+covariance: BP TA Stag 6     0.332     0.275    -0.030     0.001     0.001     0.049
+
+stiffness:  BP TA Prop 1     0.027    -0.007     0.001    -0.040    -0.125    -0.140
+stiffness:  BP TA Buck 2    -0.007     0.023    -0.005    -0.079     0.061    -0.086
+stiffness:  BP TA Open 3     0.001    -0.005     0.072     0.020     0.490     0.050
+stiffness:  BP TA Sher 4    -0.040    -0.079     0.020    21.827    -3.011     0.433
+stiffness:  BP TA Strc 5    -0.125     0.061     0.490    -3.011    53.802    -0.612
+stiffness:  BP TA Stag 6    -0.140    -0.086     0.050     0.433    -0.612    21.961

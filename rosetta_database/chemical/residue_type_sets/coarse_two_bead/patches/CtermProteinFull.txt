@@ -1,0 +1,40 @@
+## fullatom protein c-terminus patch
+
+NAME CtermProteinFull
+TYPES UPPER_TERMINUS
+
+## general requirements for this patch
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NOT VARIANT_TYPE UPPER_TERMINUS
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+## these are the operations involved
+
+ADD_ATOM  OXT OCbb  X -0.67
+ADD_BOND C OXT
+SET_BACKBONE_HEAVYATOM OXT
+SET_POLYMER_CONNECT UPPER NONE
+
+## making these up:
+
+SET_ICOOR O    80.0 60 1.2 C CA N
+SET_ICOOR OXT 180.0 60 1.2 C CA O ## phi == 180 --> planar
+
+## modify properties of existing atoms
+
+#SET_ATOM_TYPE O OOC
+#SET_ATOM_TYPE C COO
+SET_ATOMIC_CHARGE C 0.34
+SET_ATOMIC_CHARGE O -0.67
+
+ADD_PROPERTY UPPER_TERMINUS ## implies terminus
+
+END_CASE
+

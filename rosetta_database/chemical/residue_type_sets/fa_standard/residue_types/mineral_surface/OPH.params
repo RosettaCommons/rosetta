@@ -1,0 +1,20 @@
+# created by liza lee (Graylab@JHU)
+# For oxygen of phosphate in hydroxyapatite
+NAME OPH
+IO_STRING OPH Z 
+TYPE LIGAND 
+AA UNK
+ATOM OPha OPha  X   -1.40 
+ATOM  V1  VIRT  X    0.00
+ATOM  V2  VIRT  X    0.00
+ATOM  V3  VIRT  X    0.00
+BOND OPha  V1
+BOND V1    V2
+BOND  V2   V3
+NBR_ATOM OPha
+NBR_RADIUS 0.10
+ICOOR_INTERNAL    OPha   0.000000    0.000000    0.000000   OPha  V1    V2
+ICOOR_INTERNAL    V1     0.000000  180.000000    1.493765   OPha  V1    V2
+ICOOR_INTERNAL    V2     0.000000   62.060678    1.415324   V1    OPha  V2
+ICOOR_INTERNAL    V3     0.000000   62.060678    1.415324   V2    V1    OPha
+

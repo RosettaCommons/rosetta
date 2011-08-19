@@ -1,0 +1,26 @@
+Z  SYMBOL NAME      WEIGHT MASS
+0  RP     Repl           0    0
+0  X      Virt           0    0
+0  Z      Suck           0    0
+1  H      Hydrogen   1.008    1
+6  C      Carbon     12.01   12 
+7  N      Nitrogen   14.01   14
+8  O      Oxygen     16.00   16
+9  F      Fluorine   19.00   19
+11 NA     Sodium     22.99   23
+12 MG     Magnesium  24.31   24
+15 P      Phosphorus 30.97   31
+16 S      Sulfur     32.07   32
+17 CL     Chlorine   35.45   35
+19 K      Potassium  39.10   39
+20 CA     Calcium    40.08   40
+26 FE     Iron       55.84   56
+30 ZN     Zinc       65.39   64
+35 BR     Bromine    79.90   79
+53 I      Iodine    126.90  127
+14 Si     Silicon    28.09   28 
+
+# Z is the atomic number (# of protons)
+# WEIGHT is the average weight of all isotopes
+# MASS is for the most common isotope
+

@@ -1,0 +1,34 @@
+IT IS NOT A COMMERCIAL LICENSE AGREEMENT FOR 2010 BACKBONE-DEPENDENT ROTAMER LIBRARY
+
+For a commercial license agreement and pricing, please contact Dr. Roland Dunbrack at
+
+Roland.Dunbrack@fccc.edu
+
+or
+
+Dr. Roland L. Dunbrack
+333 Cottman Avenue
+Fox Chase Cancer Center
+Philadelphia PA 19111
+USA
+
+
+
+ACADEMIC LICENSE AGREEMENT FOR 2010 BACKBONE-DEPENDENT ROTAMER LIBRARY
+
+Fox Chase Cancer Center (hereinafter known as FCCC) agrees to provide to Licensee a proprietary tool known as 2010 Backbone-Dependent Rotamer Library (hereinafter, BDRL) to use in various side-chain conformation prediction programs and to evaluate the likelihood that predicted or experimentally observed conformations of side-chains are correct. FCCC wishes to preserve to itself all of the property rights in and to BDRL, its related documentation and such enhancements thereto as may, from time to time, be made.
+
+Accordingly, FCCC and Licensee agree as follows:
+
+1. It is understood that BDRL and its component parts, transferred to Licensee pursuant to this Agreement, comprise patented subject matter that is proprietary to FCCC and, as such, is extremely valuable to FCCC, so that its use by or on behalf of Licensee must be carefully and continuously controlled.
+2. Licensee shall have the right and license to use BDRL for research purposes only. The license to use BDRL is non-transferable and without the right to sublicense.
+3. Licensee shall have no rights in BDRL other than as is specifically provided in this Agreement. Licensee specifically agrees that nothing herein shall be deemed to grant to Licensee any rights to use BDRL for any commercial purpose. "Commercial Purpose" shall mean the sale, lease, license, or other transfer of BDRL to a for-profit organization. Commercial Purpose shall also include uses of BDRL by any organization, including Licensee, to perform contract research, to produce or manufacture products for general sale, or to conduct research activities that result in any sale, lease, license, or transfer of BDRL to a for-profit organization. However, industrially sponsored academic research shall not be considered a use of BDRL for Commercial Purpose per se, unless any of the above conditions of this definition are met.
+4. Licensee agrees to acknowledge the author(s) of BDRL in any scientific publication of results based in part on the use of BDRL.
+5. Licensee shall not distribute, release, or otherwise distribute BDRL to any person, corporation, or institution without FCCC's prior written consent. All copies of BDRL are to remain under Licensee's immediate and direct control unless such prior written consent is obtained. FCCC may grant permission to Licensee to distribute BDRL to non-for-profit institutions only provided that said institutions will sign a document stating that they will use BDRL for research purposes only and that they not transfer BDRL to either for-profit or non-for-profit organizations. FCCC shall receive a copy of said document within thirty (30) days or its execution.
+6. Licensee will take all reasonable precautions to avoid any unauthorized disclosure of BDRL.
+7. Licensee shall not copy or reproduce, or permit others to copy or reproduce BDRL or any component thereof except as required during the authorized use of BDRL by Licensee.
+8. Licensee agrees not to modify, reverse engineer, disassemble, or decompile BDRL, or any portion thereof.
+9. FCCC does not have the resources to offer technical support, although FCCC would appreciate being notified of problems experienced by Licensee in using BDRL. Licensee may report technical problems by providing a brief description thereof in writing to the developers of BDRL.
+10. From time to time, FCCC may incorporate certain features, enhancements or modifications into BDRL. At its sole discretion, FCCC may undertake to incorporate such changes and distribute BDRL so modified to all or any of FCCC's licensees. All such error corrections, bug fixes, patches, updates or other modifications shall be the sole property of FCCC.
+11. FCCC provides BDRL "as is" to Licensee. NO WARRANTY, EITHER EXPRESSED OR IMPLIED, IS GRANTED UNDER THIS AGREEMENT, INCLUDING IMPLIED WARRANTIES OF (a) FREEDOM FROM COPYRIGHT INFRINGEMENT, (b) COMMERCIAL UTILITY, (c) VALID COPYRIGHT, (d) MERCHANTABILITY, (e) FITNESS FOR A PARTICULAR PURPOSE, OR (f) USAGE IN THE TRADE OR COURSE OF DEALING, BETWEEN THE PARTIES.
+12. If BDRL is installed on computers owned by a corporation or other legal entity, then this agreement is formed by and between FCCC and such entity ("Licensee"). You represent and warrant to FCCC that you have the authority to bind Licensee to this Agreement.

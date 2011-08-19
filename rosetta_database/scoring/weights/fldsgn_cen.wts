@@ -1,0 +1,8 @@
+vdw 1.0
+rg 1.0
+rama 0.1
+hs_pair 1.0
+ss_pair 1.0
+rsigma 1.0
+
+STRAND_STRAND_WEIGHTS 1 11

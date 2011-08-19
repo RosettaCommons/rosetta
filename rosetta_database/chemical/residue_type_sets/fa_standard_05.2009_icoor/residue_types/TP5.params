@@ -1,0 +1,36 @@
+# rosetta residue topology file
+# version 0.1
+#
+# taken from TP5 params in amber: dat/leap/lib/solvents.cmd
+#
+NAME TP5
+IO_STRING TP5 w
+TYPE LIGAND
+AA UNK
+
+ATOM  O   OH   OH1  0.0 ## HACK: USING OH ATOMTYPE, amber uses OW atomtype
+ATOM  H1  Hpol H    0.241
+ATOM  H2  Hpol H    0.241
+ATOM  EP1 VIRT VIRT -0.2410
+ATOM  EP2 VIRT VIRT -0.2410
+
+BOND O H1
+BOND O H2
+BOND O EP1
+BOND O EP2
+
+## amber puts a bond between H1 and H2
+
+PROPERTIES
+
+NBR_ATOM O
+
+NBR_RADIUS 0.0 ## distance from O to farthest heavyatom
+
+FIRST_SIDECHAIN_ATOM ALL
+
+ICOOR_INTERNAL  O      0.00    0.00  0.0000  O H1 H2
+ICOOR_INTERNAL  H1     0.00  180.00  0.9572  O H1 H2
+ICOOR_INTERNAL  H2     0.00   75.48  0.9572  O H1 H2   ## 180 - 104.52 = 75.48
+ICOOR_INTERNAL  EP1  -90.00   70.53  0.7000  O H1 H2   ## 180 - 109.47 = 70.53
+ICOOR_INTERNAL  EP2   90.00   70.53  0.7000  O H1 H2   ## 180 - 109.47 = 70.53

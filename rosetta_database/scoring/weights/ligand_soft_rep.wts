@@ -1,0 +1,26 @@
+ETABLE FA_STANDARD_SOFT
+METHOD_WEIGHTS ref  -0.21 -0.21 -0.41 -0.12 1.24 -0.81 1.3 -0.49 -0.42 -0.53 -0.21 -0.65 0.02 -0.2 -0.27 -0.32 -0.58 -0.39 2.5 0.76
+pro_close 1.0
+fa_atr 0.8
+fa_rep 0.6
+fa_sol 0.5
+fa_intra_rep 0.3
+fa_pair 0.5
+fa_plane 0
+fa_dun 0.32
+ref 1
+hbond_lr_bb 1.2
+hbond_sr_bb 1.2
+hbond_bb_sc 1.2
+hbond_sc 1.2
+p_aa_pp 0.32
+dslf_ss_dst 0.5
+dslf_cs_ang 2
+dslf_ss_dih 5
+dslf_ca_dih 5
+omega 0.5
+coordinate_constraint 1.0
+atom_pair_constraint 1.0
+angle_constraint 1.0
+dihedral_constraint 1.0
+chainbreak 1.0

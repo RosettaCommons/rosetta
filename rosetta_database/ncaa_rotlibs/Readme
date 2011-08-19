@@ -1,0 +1,3 @@
+The NCAA rotamer libraries are quite large (~450MB as of 03/10/2010) and are a seperate checkout. The ones here are used in the intigration tests. 
+
+https://svn.rosettacommons.org/source/trunk/ncaa_rotamer_libraries

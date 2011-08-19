@@ -1,0 +1,9 @@
+# loop_fragsample  used in SlidingWindowLoopClosure
+#
+env     1.0
+pair    1.0
+vdw     1.0
+linear_chainbreak 1.0
+overlap_chainbreak 1.0
+
+

@@ -1,0 +1,22 @@
+METHOD_WEIGHTS ref  0.16 1.7 -0.67 -0.81 0.63 -0.17 0.56 0.24 -0.65 -0.1 -0.34 -0.89 0.02 -0.97 -0.98 -0.37 -0.27 0.29 0.91 0.51
+fa_atr 0.6921
+fa_rep 0.1754     
+fa_sol 0.5253
+fa_intra_rep -0.00764
+fa_pair 0.53
+fa_plane 0 
+fa_dun 0.63
+ref 1
+hbond_lr_bb 1.322
+hbond_sr_bb 0.336
+hbond_bb_sc 2.00 
+hbond_sc 1.883
+p_aa_pp                   0.345            
+envsmooth                 0.571
+rama  0.182124
+omega  0.5
+dslf_ss_dst 0.5
+dslf_cs_ang 2
+dslf_ss_dih 5
+dslf_ca_dih 5
+pro_close 1.0

@@ -1,0 +1,58 @@
+NAME   LJ_RADIUS_SOFT
+CNH2           2.0000
+COO            2.0000
+CH1            2.1400
+CH2            2.1400
+CH3            2.1400
+aroC           2.1400
+Ntrp           1.7500
+Nhis           1.7500
+NH2O           1.7500
+Nlys           1.7500
+Narg           1.7500
+Npro           1.8725
+OH             1.6585
+ONH2           1.5500
+OOC            1.5500
+Oaro           1.6585
+S              2.0330
+Nbb            1.8725
+CAbb           2.1400
+CObb           2.1400
+OCbb           1.6585
+Phos           2.1500
+Hpol           1.0700
+Hapo           1.2840
+Haro           1.2840
+HNbb           1.0700
+HOH            1.6585
+F              1.7100  # taken from MM3 forcefield
+Cl             2.0700  # taken from MM3 forcefield
+Br             2.2200  # taken from MM3 forcefield
+I              2.3600  # taken from MM3 forcefield
+Zn2p           1.0900  # ion radius CHARMM27
+Fe2p           0.7800  # ion radius CHARMM27
+Fe3p           0.6500  # ion radius CHARMM27
+Mg2p           1.1850  # ion radius CHARMM27
+Ca2p           1.4630  # Marchard 1998 Proteins;CHARMM27, MacKerell 2004;kosta makrodimitris
+Pha            2.3000  # CHARMM27 for DNA, MacKerell 2004; kosta makrodimitris @Robin
+OPha           1.8200  # CHARMM27 for DNA, MacKerell 2004; kosta makrodimitris @Robin
+OHha           1.8900  # CHARMM27 for DNA, MacKerell 2004; kosta makrodimitris @Robin
+Hha            0.2400  # CHARMM27 for DNA, MacKerell 2004; kosta makrodimitris @Robin
+CO3            1.8200  # CO3   lj_radius/0.935 Calcite @Robin 
+OC3            1.7100  # O3C   lj_radius/0.935 Calcite @Robin
+Si             2.3000  # Si in quartz; UFF table J. Am. Chem. Soc. 1992, 114 @Robin
+OSi            1.8700  # O in quartz; UFF table J. Am. Chem. Soc. 1992, 114  @Robin
+Oice           1.7120; # O in ice; Modified TIP3P Neria et al @Robin
+Hice           0.8560; # H in ice; Modified TIP3P Neria et al @Robin
+Na1p           1.3638  # ion radius CHARMM27
+K1p            1.7638  # ion radius CHARMM27
+SUCK	       0.0000
+REPL           1.3000
+REPLS          1.6585
+HREPS          1.2840
+VIRT           0.0000
+
+#
+# LJ_RADIUS copied from Rosetta++ etable.cc fa_lj_soft_initializer
+#

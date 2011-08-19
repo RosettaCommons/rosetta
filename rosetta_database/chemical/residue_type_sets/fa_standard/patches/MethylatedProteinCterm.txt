@@ -1,0 +1,63 @@
+## Methylated C Terminus Patch by Doug Renfrew (renfrew@unc.edu)
+
+NAME MethylatedCtermProteinFull
+TYPES METHYLATED_CTERMINUS
+
+############################################################################################
+## general requirements
+##   protein
+##   anything that is already C terminally patched
+############################################################################################
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NOT VARIANT_TYPE UPPER_TERMINUS
+NOT VARIANT_TYPE LOWER_TERMINUS
+NOT VARIANT_TYPE METHYLATED_CTERMINUS
+NOT VARIANT_TYPE SHOVE_BB
+NOT VARIANT_TYPE VIRTUAL_BB
+NOT VARIANT_TYPE SPECIAL_ROT
+NOT VARIANT_TYPE CUTPOINT_LOWER
+NOT VARIANT_TYPE CUTPOINT_UPPER
+NOT VARIANT_TYPE VIRTUAL_NTERM
+NOT VARIANT_TYPE REPLONLY
+NOT VARIANT_TYPE CTERM_CONNECT
+NOT VARIANT_TYPE N_ACETYLATION
+NOT VARIANT_TYPE C_METHYLAMIDATION
+END_SELECTOR
+
+#############################################################################################
+## general case
+## internal coordinates are from a HF/6-31G* geometry optimization of a ACE-NLU-NME dipeptide
+#############################################################################################
+BEGIN_CASE
+
+ADD_ATOM  NM  Nbb   NH1   -0.47
+ADD_ATOM  CN  CH3   CT3   -0.27
+ADD_ATOM 1HN  Hapo  HA    0.09
+ADD_ATOM 2HN  Hapo  HA    0.09
+ADD_ATOM 3HN  Hapo  HA    0.09
+ADD_ATOM  HM  HNbb  H     0.43
+
+SET_BACKBONE_HEAVYATOM NM
+SET_BACKBONE_HEAVYATOM CN
+
+#APPEND_MAINCHAIN_ATOM NM
+
+ADD_BOND  C   NM
+ADD_BOND  HM  NM
+ADD_BOND  NM  CN
+ADD_BOND 1HN  CN
+ADD_BOND 2HN  CN
+ADD_BOND 3HN  CN
+
+SET_ICOOR  NM  -178.525514   65.210767    1.349313   C     CA    O  
+SET_ICOOR  CN   173.715548   58.286172    1.449020   NM    C     CA 
+SET_ICOOR 1HN   -72.124155   68.240467    1.083554   CN    NM    C  
+SET_ICOOR 2HN   120.381913   70.210033    1.080230   CN    NM   1HN
+SET_ICOOR 3HN   119.184435   71.274589    1.081917   CN    NM   2HN
+SET_ICOOR  HM  -171.079691   60.804865    0.993263   NM    C     CN 
+
+SET_POLYMER_CONNECT UPPER NONE
+ADD_PROPERTY METHYLATED_CTERMINUS
+
+END_CASE

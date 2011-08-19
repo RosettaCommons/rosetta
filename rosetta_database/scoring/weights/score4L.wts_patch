@@ -1,0 +1,5 @@
+hbond_lr_bb = 1.0
+hbond_sr_bb = 1.0
+rama = 0.1
+chainbreak = 1.0
+rg = 2.0

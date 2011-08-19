@@ -1,0 +1,20 @@
+METHOD_WEIGHTS ref  0.05 0.09 -0.65 -0.27 1.88 -0.55 1.17 -0.73 -0.42 -0.66 -0.29 -0.76 -0.33 -0.29 -0.77 0 -0.57 -0.57 2.88 0.81
+pro_close 1.0
+fa_rep 1.0
+fa_intra_rep 0
+fa_dun 1.0
+hbond_lr_bb 2.0
+hbond_sr_bb 1.0
+hbond_bb_sc 1.0
+hbond_sc 1.0
+dslf_ss_dst 0.5
+dslf_cs_ang 2
+dslf_ss_dih 5
+dslf_ca_dih 5
+coordinate_constraint 1.0
+atom_pair_constraint 1.0
+angle_constraint 1.0
+dihedral_constraint 1.0
+rama 0.2
+omega 0.5
+chainbreak 1.0

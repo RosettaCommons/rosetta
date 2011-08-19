@@ -1,0 +1,39 @@
+#rosetta residue topology file
+#version 0.1
+NAME CYS
+IO_STRING CYS C
+TYPE POLYMER #residue type
+AA CYS
+ATOM  N   Nbb  NH1  -0.47
+ATOM  CA  CAbb CT1  0.07
+ATOM  C   CObb C    0.51
+ATOM  O   OCbb O    -0.51
+ATOM  CB  CB    CT2  -0.11
+ATOM  H   HNbb H    0.31
+LOWER_CONNECT N
+UPPER_CONNECT C
+BOND  N    CA 
+BOND  N    H  
+BOND  CA   C  
+BOND  CA   CB 
+BOND  C    O  
+PROPERTIES PROTEIN
+NBR_ATOM CEN
+NBR_RADIUS 3.025 # 6.025 - 3 (3 now included in atomic_interaction_cutoff) ## 0.5 * sqrt( cen_dist_cutoff2 + cen_dist12_pad ) 
+FIRST_SIDECHAIN_ATOM CB
+ICOOR_INTERNAL    N      0.000000    0.000000    0.000000   N     CA    C  
+ICOOR_INTERNAL    CA     0.000000  180.000000    1.458001   N     CA    C  
+ICOOR_INTERNAL    C      0.000000   68.800003    1.523258   CA    N     C  
+ICOOR_INTERNAL  UPPER  150.000000   63.800018    1.328685   C     CA    N  
+ICOOR_INTERNAL    O    180.000000   59.200008    1.231015   C     CA  UPPER
+ICOOR_INTERNAL    CB  -118.371758   77.240662    1.528861   CA    N     C  
+ICOOR_INTERNAL  LOWER -150.000000   58.299995    1.328685   N     CA    C  
+ICOOR_INTERNAL    H    180.000000   60.849998    1.010000   N     CA  LOWER
+
+
+
+
+##centroid-specific
+ATOM  CEN CEN_CYS H 0.0
+BOND CA CEN
+ICOOR_INTERNAL    CEN -138.079712   71.626686    2.324530    CA     N     C

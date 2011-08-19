@@ -1,0 +1,14 @@
+# score0 from rosetta++, used in stage 1 of the
+# ClassicAbinitio protocol.
+# Score 0 has a vdw weight of 1, in R++, but then it divides
+# the vdw score by 10 and rounds down to nearest integer.
+# Mini does not round down to the nearest integer.
+env     0.0
+pair    0.0
+cbeta   0.0
+vdw     0.1
+rg      0.0
+cenpack 0.0
+hs_pair 0.0
+ss_pair 0.0
+rsigma  0.0

@@ -1,0 +1,45 @@
+REMARK Talos Random Coil Table 2005.032.16.15
+REMARK Cornilescu, Delaglio and Bax
+REMARK CA/CB from Spera, Bax, JACS 91.
+REMARK Others from Wishart et al. J. Biomol. NMR, 5(1995), 67-81
+REMARK Pro N shift is the current database average (7 residues).
+REMARK HIS = Wishart's val - 0.5*(diff between prot./non-prot. Howarth&Lilley)
+
+DATA RESNAMES  A C c D E F G H h I K L M N P Q R S T V W Y
+DATA ATOMNAMES HA CA CB C N HN
+
+REMARK Values for C are CYS-reduced.
+REMARK Values for c are CYS-oxidized.
+REMARK Values for H are HIS-unprotonated.
+REMARK Values for h are for HIS-protonated.
+REMARK    CA shift was modified to  53.5ppm @2009/09 according to the SPARTA prediction difference between CA shift of H and h
+REMARK    CB shift was modified to  26.8ppm @2009/09 ......
+REMARK    C' shift was modified to 172.7ppm @2009/09 ......
+REMARK Values for D and E are for protonated forms.
+
+VARS   RESCODE RESNAME HA    CA    CB    C     N     HN
+FORMAT %4s     %s      %8.3f %8.3f %8.3f %8.3f %8.3f %8.3f
+
+ ALA A    4.320   52.300   19.000  177.800  123.800    8.150
+ ARG R    4.340   56.100   30.300  176.300  120.500    8.270
+ ASN N    4.740   52.800   37.900  175.200  118.700    8.380
+ ASP D    4.640   54.000   40.800  176.300  120.400    8.370
+ CYS C    4.550   56.900   28.900  174.600  118.800    8.230
+ cys c    4.710   55.400   43.700  174.600  118.600    8.230
+ GLN Q    4.340   56.100   28.400  176.000  119.800    8.270
+ GLU E    4.350   56.400   29.700  176.600  120.200    8.360
+ GLY G    3.960   45.100 9999.000  174.900  108.800    8.290
+ HIS H    4.730   54.500   27.900  173.300  118.200    8.280
+ HIH #    4.730   54.500   27.900  173.300  118.200    8.280
+ his h    4.730   53.500   26.800  172.700  118.200    8.280
+ ILE I    4.170   61.300   38.000  176.400  119.900    8.210
+ LEU L    4.340   55.100   42.300  177.600  121.800    8.230
+ LYS K    4.320   56.500   32.500  176.600  120.400    8.250
+ MET M    4.480   55.300   32.600  176.300  119.600    8.290
+ PHE F    4.620   58.000   39.000  175.800  120.300    8.300
+ PRO P    4.420   63.100   31.700  177.300  135.800 9999.000
+ SER S    4.470   58.200   63.200  174.600  115.700    8.310
+ THR T    4.350   62.100   69.200  174.700  113.600    8.240
+ TRP W    4.660   57.700   30.300  176.100  121.300    8.180
+ TYR Y    4.550   58.100   38.800  175.900  120.300    8.280
+ VAL V    4.120   62.300   32.100  176.300  119.200    8.190

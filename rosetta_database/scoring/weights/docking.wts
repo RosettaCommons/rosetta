@@ -1,0 +1,15 @@
+fa_atr 0.338
+fa_rep 0.044
+fa_dun 0.036
+fa_sol 0.242
+fa_pair 0.164
+hbond_lr_bb 0.245 
+hbond_sr_bb 0.245 
+hbond_bb_sc 0.245 
+hbond_sc 0.245
+hack_elec 0.026
+dslf_ss_dst 0.5
+dslf_cs_ang 2
+dslf_ss_dih 5
+dslf_ca_dih 5
+

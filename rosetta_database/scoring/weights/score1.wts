@@ -1,0 +1,14 @@
+# score1 from rosetta++, used in stage 2 of ClassicAbinitio
+# protocol from Rosetta++.
+env     1.0
+pair    1.0
+cbeta   0.0
+vdw     1.0
+rg      0.0
+cenpack 0.0
+hs_pair 1.0
+ss_pair 0.3
+rsigma  0.0
+sheet   1.0
+
+STRAND_STRAND_WEIGHTS 1 11

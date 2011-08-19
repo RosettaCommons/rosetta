@@ -1,0 +1,18 @@
+# created by liza lee (Graylab@JHU)
+# For hydroxyapatite surface
+# parameters are from Kosta Makrodimitris's Ca2p.params
+NAME CAL
+IO_STRING  CAL Z
+TYPE LIGAND
+AA UNK
+ATOM Ca2p Ca2p  VIRT 2.00
+ATOM  V1  VIRT  VIRT 0.00
+ATOM  V2  VIRT  VIRT 0.00
+BOND Ca2p    V1
+BOND Ca2p    V2
+BOND  V1   V2
+NBR_ATOM Ca2p
+NBR_RADIUS 0.50
+ICOOR_INTERNAL   Ca2p    0.000000    0.000000    0.000000  Ca2p   V1    V2
+ICOOR_INTERNAL    V1     0.000000  180.000000    1.493765  Ca2p   V1    V2
+ICOOR_INTERNAL    V2     0.000000   62.060678    1.415324   V1   Ca2p   V2

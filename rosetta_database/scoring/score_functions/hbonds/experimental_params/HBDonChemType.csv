@@ -1,0 +1,14 @@
+1,hbdon_NONE,,
+2,hbdon_PBA,hbdon_PROTEIN_BB_AMIDE,ex: protein backbone Nbb--HNbb
+3,hbdon_CXA,hbdon_CARBOXAMIDE,ex: Asn ND2--{1 2}HD2; Gln NE2--{1 2}HE2 
+4,hbdon_IMD,hbdon_IMIDAZOL_DELTA,ex: His(HIS_D res_type) ND1--HE2 -- tautomer state with hydrogen on nitrogen closer to backbone
+5,hbdon_IME,hbdon_IMIDAZOL_EPSILON,ex: His(HIS res_type) NE2--HE2 -- tautomer state with hydrogen on nitrogen farther from backbone
+6,hbdon_IND,hbdon_INDOL,ex: Trp NE1--HE1 
+7,hbdon_AMO,hbdon_AMINO,ex: Lys NZ--{1 2 3}HZ
+8,hbdon_GDE,hbdon_GUANIDINIUM_EPSILON,ex: Arg NE--HE
+9,hbdon_GDH,hbdon_DIHYDRO_GUANIDINIUM,ex: Arg NH{1 2}--{1 2}HH{1 2} 
+10,hbdon_AHX,hbdon_AROMATIC_HYDROXYL,ex: Tyr OH--HH
+11,hbdon_HXL,hbdon_HYDROXYL,ex: Ser OG--HG; Thr OG1--HG1
+12,hbdon_H2O,hbdon_WATER,ex: H2O(TP5/TP3 res types) O--H{1 2}
+13,hbdon_GENERIC_BB,,for backwards compatibility; prefer above types
+14,hbdon_GENERIC_SC,,for backwards compatibility; prefer above types

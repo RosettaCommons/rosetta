@@ -1,0 +1,20 @@
+ETABLE FA_STANDARD_SOFT
+METHOD_WEIGHTS ref  -1.79 -1.3 1.73 0.92 0.39 -2.02 1.05 -1.33 -0.42 -0.88 -0.93 0.71 -1.63 0.14 7.09 -2.02 -1.08 -1.3 1.86 0.8
+pro_close 1.0
+fa_atr 0.8
+fa_rep 0.75
+fa_sol 0.44
+fa_intra_rep 0.3
+fa_pair 0
+fa_plane 0
+fa_dun 0.29
+ref 1
+hbond_lr_bb 1.27
+hbond_sr_bb 1.27
+hbond_bb_sc 1.27
+hbond_sc 1.35
+p_aa_pp 0.4
+dslf_ss_dst 0.5
+dslf_cs_ang 2
+dslf_ss_dih 5
+dslf_ca_dih 5

@@ -1,0 +1,6 @@
+hbond_sr_bb *= 0.5
+p_aa_pp *= 0.5
+rama = 0.2
+omega = 0.5
+ch_bond_bb_bb = 0.5
+fa_cust_pair_dist = 1.0

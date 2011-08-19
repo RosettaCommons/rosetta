@@ -1,0 +1,4 @@
+hbond_sr_bb *= 0.5
+p_aa_pp *= 0.5
+rama = 0.2
+omega = 0.5

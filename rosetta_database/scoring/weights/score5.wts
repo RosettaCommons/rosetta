@@ -1,0 +1,13 @@
+# score5.wts, used in stage 3 of ClassicAbinitio protocol
+env     1.0
+pair    1.0
+cbeta   0.25
+cenpack 0.5
+hs_pair 1.0
+ss_pair 1.0
+rsigma  0.0
+sheet   1.0
+rg      0.0
+vdw     1.0
+
+STRAND_STRAND_WEIGHTS 1 11

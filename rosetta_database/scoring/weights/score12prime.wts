@@ -1,0 +1,23 @@
+# Standard.wts + score12 patch weights, refit reference energies
+# with optE for sequence profile recovery.
+# Reference energies normalized so that they sum to one.
+METHOD_WEIGHTS ref 0.149742 -0.000206398 -0.47402 -0.604935 1.15537 -0.310674 0.954298 0.396603 -0.442574 0.207128 -0.204523 -0.74518 -0.654485 -0.781173 -0.76836 -0.298617 -0.22266 0.325644 1.39013 0.928496 
+fa_atr 0.8
+fa_rep 0.44
+fa_intra_rep 0.004
+fa_sol 0.65
+pro_close 1
+fa_pair 0.49
+hbond_sr_bb 0.585
+hbond_lr_bb 1.17
+hbond_bb_sc 1.17
+hbond_sc 1.1
+dslf_ss_dst 0.5
+dslf_cs_ang 2
+dslf_ss_dih 5
+dslf_ca_dih 5
+rama 0.2
+omega 0.5
+fa_dun 0.56
+p_aa_pp 0.32
+ref 1

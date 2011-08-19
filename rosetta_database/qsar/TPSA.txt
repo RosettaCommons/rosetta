@@ -1,0 +1,23 @@
+#Topological Polar Surface Area was calculated for each amino acid independently
+#Amino acid conformations were generated using CORINA
+#TPSA values were normalized with the highest value set to 100 and rounded to the nearest 1
+ALA 51
+ARG 82
+ASN 83
+ASP 100
+CYS 51
+GLN 83
+GLU 100
+GLY 51
+HIS 75
+ILE 51
+LEU 51
+LYS 54
+MET 82
+PHE 51
+PRO 50
+SER 67
+THR 67
+TRP 60
+TYR 67
+VAL 51

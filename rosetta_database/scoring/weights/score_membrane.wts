@@ -1,0 +1,15 @@
+Mpair 1.0
+Menv 2.019
+Mcbeta 2.5
+Menv_non_helix 2.019
+Menv_termini 2.019
+Menv_tm_proj 2.019
+rama 0.15
+vdw 3.0
+rsigma 1.0
+sheet 1.0
+ss_pair 1.0
+hs_pair 1.0
+Mlipo 1.0
+
+STRAND_STRAND_WEIGHTS 0 6

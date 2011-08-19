@@ -1,0 +1,112 @@
+## fullatom protein n-terminus patch
+## I would like to redo this in YAML! no begin_ end_ blocks!
+
+NAME NtermProteinFull
+TYPES LOWER_TERMINUS
+
+## general requirements for this patch
+## require protein, ignore anything that's already nterm patched:
+
+BEGIN_SELECTOR
+PROPERTY PROTEIN
+NOT VARIANT_TYPE LOWER_TERMINUS
+END_SELECTOR
+
+## now we search for a case that matches the residue, take the first one
+## so put generic case last
+
+BEGIN_CASE ## PROLINE #################################################
+
+## these define which residues match this case
+BEGIN_SELECTOR
+AA PRO
+END_SELECTOR
+
+## these are the operations involved
+ADD_ATOM 1H   Hpol HC 0.24
+ADD_ATOM 2H   Hpol HC 0.24
+ADD_BOND N 1H
+ADD_BOND N 2H
+SET_POLYMER_CONNECT LOWER NONE
+
+## totally making these up:
+SET_ICOOR 1H 120 70.5 1 N CA C ## like to use CD but CD's parent is CG
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NP
+SET_ATOMIC_CHARGE N -0.07
+SET_ATOMIC_CHARGE CA 0.16
+SET_ATOMIC_CHARGE HA 0.09
+SET_ATOMIC_CHARGE CD 0.16
+SET_ATOMIC_CHARGE 1HD 0.09
+SET_ATOMIC_CHARGE 2HD 0.09
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+BEGIN_CASE #### glycine ################################################
+
+## these define which residues match this case
+
+BEGIN_SELECTOR
+AA GLY
+END_SELECTOR
+
+## these are the operations involved
+DELETE_ATOM H ## deletes all bonds to this atom
+ADD_ATOM 1H   Hpol HC 0.33
+ADD_ATOM 2H   Hpol HC 0.33
+ADD_ATOM 3H   Hpol HC 0.33
+ADD_BOND N 1H
+ADD_BOND N 2H
+ADD_BOND N 3H
+SET_POLYMER_CONNECT LOWER NONE
+
+## totally making these up:
+SET_ICOOR 1H 120 70.5 1.01 N CA C
+SET_ICOOR 2H 120 70.5 1.01 N CA 1H
+SET_ICOOR 3H 120 70.5 1.01 N CA 2H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NH3
+SET_ATOMIC_CHARGE N -0.3
+SET_ATOMIC_CHARGE CA 0.13
+SET_ATOMIC_CHARGE 1HA 0.09
+SET_ATOMIC_CHARGE 2HA 0.09
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+
+BEGIN_CASE ### THE GENERAL CASE ##########################################
+
+## these are the operations involved
+DELETE_ATOM H ## deletes all bonds to this atom
+ADD_ATOM 1H   Hpol HC 0.33
+ADD_ATOM 2H   Hpol HC 0.33
+ADD_ATOM 3H   Hpol HC 0.33
+ADD_BOND N 1H
+ADD_BOND N 2H
+ADD_BOND N 3H
+SET_POLYMER_CONNECT LOWER NONE
+
+## totally making these up:
+SET_ICOOR 1H 120 70.5 1 N CA C
+SET_ICOOR 2H 120 70.5 1 N CA 1H
+SET_ICOOR 3H 120 70.5 1 N CA 2H
+
+## modify properties of existing atoms
+SET_ATOM_TYPE N Nlys
+SET_MM_ATOM_TYPE N NH3
+SET_ATOMIC_CHARGE N -0.3
+SET_ATOMIC_CHARGE CA 0.21
+SET_ATOMIC_CHARGE HA 0.10
+
+ADD_PROPERTY LOWER_TERMINUS ## implies terminus
+
+END_CASE
+

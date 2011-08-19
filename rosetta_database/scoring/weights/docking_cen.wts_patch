@@ -1,0 +1,4 @@
+interchain_env = 1.0
+interchain_pair = 1.0
+interchain_vdw = 1.0
+interchain_contact = 2.0

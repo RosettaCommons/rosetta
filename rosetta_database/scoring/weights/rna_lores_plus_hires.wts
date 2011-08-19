@@ -1,0 +1,20 @@
+NO_HB_ENV_DEP
+fa_atr          0.8
+fa_rep          0.44
+fa_sol         0.65
+#fa_sol          0.24
+#geom_sol        0.65
+#fa_stack       0.2
+hbond_sc        1.1
+rna_torsion     1.0
+#ch_bond         1.0
+rna_repulsive    1.0
+rna_backbone_backbone 1.0
+rna_vdw 1.0
+rna_rg 1.0
+rna_base_backbone 1.0
+rna_base_pair 1.0
+rna_base_axis 0.2
+rna_base_stagger  1.0
+rna_base_stack_axis 0.2
+rna_base_stack 1.0
