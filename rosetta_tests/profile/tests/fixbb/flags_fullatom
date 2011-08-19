@@ -1,0 +1,8 @@
+-s 1l2y.pdb
+-ex1
+-ex2
+-ex3
+-ex4
+-nstruct 10
+-ndruns 10
+-out:prefix output/

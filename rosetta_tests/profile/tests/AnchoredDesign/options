@@ -1,0 +1,41 @@
+#-database /ifs1/home/smlewis/minirosetta_database/
+#-mute core.chemical core.scoring.etable core.io.database core.io.pdb.file_data core.conformation core.pack.pack_rotamers core.pack.task
+#-run::version
+#-options::user
+
+-unmute protocols.loops.CcdLoopClosureMover
+
+-s 1FNA_2DF6a_BC1_start.pdb.gz
+-loops::loop_file loopsfile
+-resfile resfile
+
+#-no_frags #for speed in the integration test
+#-in::file::frag3
+
+-ex1
+-ex2
+-use_input_sc
+-extrachi_cutoff 8
+-run::min_type dfpmin_armijo
+
+-AnchoredDesign::anchor anchor
+#-AnchoredDesign::debug
+#-AnchoredDesign::refine_only
+#-AnchoredDesign::perturb_show
+#-AnchoredDesign::perturb_temp
+#-AnchoredDesign::refine_temp
+-AnchoredDesign::refine_repack_cycles 50
+
+#-AnchoredDesign::perturb_cycles 5000
+#-AnchoredDesign::refine_cycles 10000
+#-nstruct 50
+
+-AnchoredDesign::perturb_cycles 250
+-AnchoredDesign::refine_cycles 100
+-nstruct 3
+
+#-AnchoredDesign::vary_cutpoints
+
+-unmute core.util.prof
+
+-out::prefix output/

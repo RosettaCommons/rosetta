@@ -1,0 +1,43 @@
+#-database /ifs1/home/smlewis/minirosetta_database
+#-options::user
+#-show_accessed_options
+#-run::version
+
+-s complex_readytail_final_nozn.pdb.gz
+
+#-ex1
+#-ex2
+-use_input_sc
+-packing::repack_only
+
+-run::min_type dfpmin_armijo_nonmonotone
+#-in::file::frag3 complex_readytail_final_nozn_fragset3mer.gz #frags are too big to include w/mini
+
+#local
+-flexible_start_resnum 180
+#-flexible_stop_resnum 
+-flexible_chain C
+-short_tail_off 0
+-short_tail_fraction 1.0
+-shear_on .33333333333333333333
+
+#borrowed from AnchoredDesign
+#-AnchoredDesign::perturb_show
+#-AnchoredDesign::perturb_temp
+#-AnchoredDesign::refine_temp
+#-AnchoredDesign::debug
+-AnchoredDesign::refine_repack_cycles 30
+
+#-constant_seed
+#-jran !!!
+#-AnchoredDesign::perturb_cycles 5000
+#-AnchoredDesign::refine_cycles 3000
+#-nstruct 5000
+
+-AnchoredDesign::perturb_cycles 1000
+-AnchoredDesign::refine_cycles 100
+-nstruct 20
+
+-unmute core.util.prof
+
+-out::prefix output/

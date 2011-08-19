@@ -1,0 +1,28 @@
+-run
+ -constant_seed
+ -rng mt19937
+-in
+ -file
+  -s inputs/7cpa_7cpa_input.pdb
+  -native inputs/7cpa_7cpa_native.pdb
+  -extra_res_fa inputs/7cpa.params inputs/ZN1.params
+-out
+ -prefix output/
+ -nstruct 25
+ -file
+  -renumber_pdb
+-packing
+ -no_optH
+ -ex1
+ -ex1aro
+ -ex2
+-docking
+ -randomize2
+ -uniform_trans 5
+ -ligand
+  -start_from  -1.731  32.589  -5.039
+  -minimize_ligand
+  -harmonic_torsions 10
+
+-mute core.util.prof ## dont show timing info
+-mute core.io.database

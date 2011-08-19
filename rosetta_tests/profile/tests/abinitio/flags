@@ -1,0 +1,7 @@
+-in:file:native inputs/1l2y.pdb
+-in:file:frag3 inputs/aa1l2yA03_05.200_v1_3
+-in:file:frag9 inputs/aa1l2yA09_05.200_v1_3
+-out:nstruct 40
+-out:file:silent output/1l2y_silent.out
+-run:no_prof_info_in_silentout
+-mute core.io.database

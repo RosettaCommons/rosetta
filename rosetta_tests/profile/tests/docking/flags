@@ -1,0 +1,13 @@
+-s input/1brs.pdb
+-dock_pert 3 8
+-spin
+-no_filters
+-mute core.util.prof ## dont show timing info
+-out:overwrite
+-out:file:scorefile output/1brs.fasc
+-out:file:fullatom #output in fullatom scorefile
+-out::prefix output/
+-mute core.io.database
+-out:nstruct 30
+
+

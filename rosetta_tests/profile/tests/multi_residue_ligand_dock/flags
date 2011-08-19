@@ -1,0 +1,24 @@
+-run
+	-constant_seed
+	-rng mt19937
+-in
+	-file
+		-s inputs/7cpa_7cpa_input.pdb
+		-native inputs/7cpa_7cpa_native.pdb
+		-extra_res_fa inputs/7cpa.params inputs/ZN1.params
+-out
+	-prefix output/
+	-nstruct 30
+	-file 
+		-renumber_pdb
+		-atom_tree_diff silent.out 
+-packing
+	-no_optH
+	-ex1
+	-ex1aro
+	-ex2
+-parser
+	-protocol ligand_dock.xml
+
+-mute core.util.prof # don't show timing info
+-mute core.io.database

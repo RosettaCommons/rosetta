@@ -1,0 +1,10 @@
+-s 1l2y.pdb
+-dun08
+-out:file:o 1l2y_dun08_0001.pdb
+-ex1
+-ex2
+-ex3
+-ex4
+-nstruct 20
+-ndruns 10
+-out:prefix output/

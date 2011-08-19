@@ -1,0 +1,11 @@
+-s ../../../integration/tests/jd2test/1EM7.pdb.gz ../../../integration/tests/jd2test/1NLO.pdb.gz ../../../integration/tests/jd2test/1UBQ.pdb.gz
+
+-resfile resfile
+
+-ex1 
+-ex2
+-extrachi_cutoff 0
+
+-nstruct 300
+
+-overwrite
