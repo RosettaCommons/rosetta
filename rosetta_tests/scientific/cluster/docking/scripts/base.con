@@ -1,0 +1,26 @@
+#!/bin/bash
+# Condor script file for running rosetta runs
+# Mike Daily 3/05
+
+
+########
+# setup
+########
+
+universe     = vanilla
+Requirements = Arch == "INTEL"
+GetEnv       = True
+
+Notify_user  = <your email>
+notification = Error
+
+Log          = $(pdb).log
+
+Output       = $(pdb)/outerr/$(pdb).out.$(Process)
+Error        = $(pdb)/outerr/$(pdb).err.$(Process)
+
+Arguments    = $(Process) 
+InitialDir   = ./
+
+Nice_User     = FALSE
+

@@ -1,0 +1,46 @@
+#
+# This is a command file.
+#
+# To make a new test, all you have to do is:
+#   1.  Make a new directory under tests/
+#   2.  Put a file like this (named "command") into that directory.
+#
+# The contents of this file will be passed to the shell (Bash or SSH),
+# so any legal shell commands can go in this file.
+# Or comments like this one, for that matter.
+#
+# Variable substiution is done using Python's printf format,
+# meaning you need a percent sign, the variable name in parentheses,
+# and the letter 's' (for 'string').
+#
+# Available variables include:
+#   workdir     the directory where test input files have been copied,
+#               and where test output files should end up.
+#   minidir     the base directory where Mini lives
+#   database    where the Mini database lives
+#   bin         where the Mini binaries live
+#   binext      the extension on binary files, like ".linuxgccrelease"
+#
+# The most important thing is that the test execute in the right directory.
+# This is especially true when we're using SSH to execute on other hosts.
+# All command files should start with this line:
+#
+
+cd %(workdir)s
+
+mkdir -p tmp/
+
+# Concatenate silent out files from different processors
+for dir in tmp/work/*; do
+    d=$(basename $dir)
+    f="tmp/${d}_silent.out"
+    # Remove old file first
+    [ -f $f ] && rm $f
+    find $dir -name '*silent*.out' -print0 | xargs -0 cat >> $f
+    # Remove new file if it is contains no data (0 size)
+    [ -s $f ] || rm $f
+done
+
+python postprocess.py tmp/*.out
+
+cp staResult .results.log

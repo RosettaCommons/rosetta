@@ -1,0 +1,33 @@
+# ashworth
+# weights fit for sequence and rotamer recovery in new_interface_set 2008-09-30, using optE_parallel
+# fitting included amino acids contacting DNA backbone
+ETABLE FA_STANDARD_SOFT
+METHOD_WEIGHTS ref -0.040739 0.553527 -0.902243 -1.06179 3.19435 -0.569937 1.05644 -1.17793 -2.52907 -0.885782 0.293621 -1.68261 -1.20689 -1.39007 -2.26728 -0.811256 -1.31214 -0.866446 7.42462 2.98162
+# fa_atr was fixed at 0.8 during fitting
+fa_atr 0.8
+fa_rep 0.713864
+fa_sol 0.666284
+# fa_intra_rep is generally recommended when using soft repulsive potential
+fa_intra_rep 0.29296
+hack_elec 0.366937
+pro_close 1
+# backbone-backbone weights are set equal to sc_bb weights in order to ensure that backbone-backbone hbonds are not competed out during flexible-backbone protocols
+hbond_sr_bb 1.82203
+hbond_lr_bb 1.82203
+hbond_bb_sc 1.82203
+hbond_sc 1.42597
+dslf_ss_dst 1
+dslf_cs_ang 1
+dslf_ss_dih 1
+dslf_ca_dih 1
+fa_dun 0.391496
+p_aa_pp 0.75995
+envsmooth 0.0606269
+ref 1
+# h2o weights adding ad-hoc after weight-fitting, and are manually-tuned
+# h2o_hbond weight should be high enough to favor water-mediated hbonds, but not high enough to compete out direct hbonds to nucleotide bases
+h2o_hbond 0.3
+# the cost of adding a water -- intuitively, hydration should not be unfavorable?
+h2o_intra 0.0
+atom_pair_constraint 1
+NO_HB_ENV_DEP_DNA

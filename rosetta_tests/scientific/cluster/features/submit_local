@@ -1,0 +1,45 @@
+#!/bin/bash
+#
+# This is a command file.
+#
+# The contents of this file will be used to create a Bash shell script
+# so any legal shell commands can go in this file.
+# Or comments like this one, for that matter.
+#
+# Variable substiution is done using Python's printf format,
+# meaning you need a percent sign, the variable name in parentheses,
+# and the letter 's' (for 'string').
+#
+# Available variables include:
+#   workdir     the directory where test input files have been copied,
+#               and where test output files should end up.
+#   minidir     the base directory where Mini lives
+#   database    where the Mini database lives
+#   bin         where the Mini binaries live
+#   binext      the extension on binary files, like ".linuxgccrelease"
+#
+# The most important thing is that the test execute in the right directory.
+# This is especially true when we're using SSH to execute on other hosts.
+# All command files should start with this line:
+#
+# This command files is used for two cluster scripts: submit and analyze
+# 'submit' script should prepare all input files and submit them to a condor.
+#          After execution of 'submit' is finished root level script will wait until condor queue is
+#          empty and create and call 'analyze' script.
+#
+# 'analyze' script should assume that all condor jobs are finished and can perform all post process
+#           calculations thats are necessary. The end result of analyze script is at least two
+#           files: results.log and results.yaml. In addition to that all files that was left in
+#           output/ directory will be also saved by root script for future references.
+
+sample_sources_fname="%(workdir)s/sample_sources/benchmark.list"
+
+while read sample_source; do
+	echo $sample_source | grep -q -e '^#' -e '^$' && continue
+
+	sample_source_path=%(workdir)s/sample_sources/$sample_source
+	echo submitting sample source, $sample_source, to condor server
+
+	cd $sample_source_path
+	python submit.py --local
+done < $sample_sources_fname

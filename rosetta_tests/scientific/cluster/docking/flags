@@ -1,0 +1,7 @@
+-dock_pert 3 8 
+-spin 
+-ex1 
+-ex2aro 
+-nstruct 1000 
+-mute core 
+-out:file:fullatom

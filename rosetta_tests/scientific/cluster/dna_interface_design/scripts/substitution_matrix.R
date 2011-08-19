@@ -1,0 +1,8 @@
+pdf("dna_interface_design_substitution_matrix.pdf")
+data = read.csv("design_mutations.matrix")
+heatmap(as.matrix(data),Rowv=NA,Colv=NA,col=gray(seq(1,0,len=256)),xlab="Predicted",ylab="Native",main="DNA interface design substitution matrix")
+dev.off()
+pdf("DNA_design_substitution_matrix.pdf")
+dna = read.csv("DNA_seq_recov.matrix")
+heatmap(as.matrix(dna),Rowv=NA,Colv=NA,col=gray(seq(1,0,len=256)),xlab="Predicted",ylab="Native",main="DNA design substitution matrix")
+dev.off()

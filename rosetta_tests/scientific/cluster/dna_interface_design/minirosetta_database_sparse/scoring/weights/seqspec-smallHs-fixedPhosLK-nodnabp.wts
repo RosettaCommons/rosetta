@@ -1,0 +1,34 @@
+# ashworth
+# weights fit for sequence and rotamer recovery in sequence-specific set 2008-10-27, using optE_parallel
+# this weight set was trained with small hydrogen radii (requires non-standard atom_properties.txt)
+# solvation DGFREE for Phosphorus was corrected from -24 to -4 in atom_properties.txt
+ETABLE FA_STANDARD_SOFT
+METHOD_WEIGHTS ref -0.0643689 0.548044 -1.04257 -1.15026 3.38476 -0.745952 1.02294 -0.981927 -2.50493 -0.709194 0.421835 -1.83296 -1.06536 -1.46441 -2.37323 -0.926987 -1.32493 -0.727744 7.36403 2.97322
+# fa_atr was fixed at 0.8 during fitting
+fa_atr 0.8
+fa_rep 0.674134
+fa_sol 0.712511
+# fa_intra_rep is generally recommended when using soft repulsive potential
+fa_intra_rep 0.312924
+hack_elec 0.375274
+pro_close 1
+# backbone-backbone weights are set equal to sc_bb weights in order to ensure that backbone-backbone hbonds are not competed out during flexible-backbone protocols
+hbond_sr_bb 1.7911
+hbond_lr_bb 1.7911
+hbond_bb_sc 1.7911
+hbond_sc 1.29508
+dslf_ss_dst 1
+dslf_cs_ang 1
+dslf_ss_dih 1
+dslf_ca_dih 1
+fa_dun 0.382929
+p_aa_pp 0.74915
+envsmooth 0.0388517
+ref 1
+# h2o weights adding ad-hoc after weight-fitting, and are manually-tuned
+# h2o_hbond weight should be high enough to favor water-mediated hbonds, but not high enough to compete out direct hbonds to nucleotide bases
+h2o_hbond 0.3
+# the cost of adding a water -- intuitively, hydration should not be unfavorable?
+h2o_intra 0.0
+atom_pair_constraint 1
+NO_HB_ENV_DEP_DNA

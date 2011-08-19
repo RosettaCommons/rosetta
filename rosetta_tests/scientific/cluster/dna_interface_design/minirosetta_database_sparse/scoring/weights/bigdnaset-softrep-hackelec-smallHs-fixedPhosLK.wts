@@ -1,0 +1,35 @@
+# ashworth
+# weights fit for sequence and rotamer recovery in large set (189 DNA interfaces < 2.5 A resol.) 2008-10-22, using optE_parallel
+# this training set contained at least as many "nonspecific" interfaces as "specific" ones; fitting included amino acids contacting DNA backbone
+# this weight set was trained with small hydrogen radii (requires non-standard atom_properties.txt)
+# also, solvation DGFREE for Phosphorus was corrected from -24 to -4 in atom_properties.txt
+ETABLE FA_STANDARD_SOFT
+METHOD_WEIGHTS ref -0.056616 0.421594 -0.772342 -1.12801 3.23924 -0.609869 1.20036 -1.10103 -2.47668 -0.951444 0.272747 -1.67475 -1.28448 -1.43716 -2.18145 -0.759969 -1.18684 -0.931043 7.22162 2.99613
+# fa_atr was fixed at 0.8 during fitting
+fa_atr 0.8
+fa_rep 0.713329
+fa_sol 0.677752
+# fa_intra_rep is generally recommended when using soft repulsive potential
+fa_intra_rep 0.350656
+hack_elec 0.434003
+pro_close 1
+# backbone-backbone weights are set equal to sc_bb weights in order to ensure that backbone-backbone hbonds are not competed out during flexible-backbone protocols
+hbond_sr_bb 1.83904
+hbond_lr_bb 1.83904
+hbond_bb_sc 1.83904
+hbond_sc 1.34203
+dslf_ss_dst 1
+dslf_cs_ang 1
+dslf_ss_dih 1
+dslf_ca_dih 1
+fa_dun 0.438197
+p_aa_pp 0.688782
+envsmooth 0.113252
+ref 1
+# h2o weights adding ad-hoc after weight-fitting, and are manually-tuned
+# h2o_hbond weight should be high enough to favor water-mediated hbonds, but not high enough to compete out direct hbonds to nucleotide bases
+h2o_hbond 0.3
+# the cost of adding a water -- intuitively, hydration should not be unfavorable?
+h2o_intra 0.0
+atom_pair_constraint 1
+NO_HB_ENV_DEP_DNA

@@ -1,0 +1,28 @@
+# dna interface weights re-trained in new rosetta by J. Ashworth 2008
+# non-gb_elec version (faster, charge-charge intxns approximated by the pair term)
+fa_atr 0.8
+fa_rep 0.371367
+fa_sol 0.363442
+hbond_sr_bb 1.82603
+hbond_lr_bb 1.82603
+hbond_bb_sc 1.82603
+hbond_sc 2.62474
+fa_dun 0.650469
+p_aa_pp 0.72579
+ref 1
+pro_close 1
+h2o_hbond 0.3
+h2o_intra 0.2
+chainbreak 1.0
+rama 0.2
+# this term should not be necessary unless nucleotides are allowed to repack/minimize (and otherwise will bias specificity results)
+#dna_bp 0.5
+#dna_bp 4.0 # debug
+#fa_pair 0.379441
+# fa_pair lowered to account for hack_elec addition
+fa_pair 0.3
+# small hack_elec weight to introduce (hopefully not overpowerful) electrostatics
+hack_elec 0.2
+res_type_constraint 1.0
+NO_HB_ENV_DEP_DNA
+METHOD_WEIGHTS ref -0.300837 1.06599 0.113486 0.257071 1.09918 -0.908278 0.850225 -0.522615 -1.82649 -0.392759 0.21717 -0.703367 0.111407 -0.500611 -1.44839 -0.571004 -0.732169 -0.218776 2.9118 1.49897

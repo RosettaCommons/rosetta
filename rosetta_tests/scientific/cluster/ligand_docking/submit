@@ -1,0 +1,69 @@
+#
+# This is a command file.
+#
+# To make a new test, all you have to do is:
+#   1.  Make a new directory under tests/
+#   2.  Put a file like this (named "command") into that directory.
+#
+# The contents of this file will be passed to the shell (Bash or SSH),
+# so any legal shell commands can go in this file.
+# Or comments like this one, for that matter.
+#
+# Variable substiution is done using Python's printf format,
+# meaning you need a percent sign, the variable name in parentheses,
+# and the letter 's' (for 'string').
+#
+# Available variables include:
+#   workdir     the directory where test input files have been copied,
+#               and where test output files should end up.
+#   minidir     the base directory where Mini lives
+#   database    where the Mini database lives
+#   bin         where the Mini binaries live
+#   binext      the extension on binary files, like ".linuxgccrelease"
+#
+# The most important thing is that the test execute in the right directory.
+# This is especially true when we're using SSH to execute on other hosts.
+# All command files should start with this line:
+#
+
+cd %(workdir)s
+
+rm -rf tmp
+mkdir -p tmp/log
+
+dockfile="CONDOR.dock"
+
+cat > "$dockfile" <<'HEREDOC'
+Executable = %(bin)s/ligand_dock.%(binext)s
+Universe = vanilla
+Requirements = Memory > 256
+Notification = Never
+MaxHosts = 80
+
+Initialdir = .
+
+Error =  tmp/log/err.$(Process).log
+Log =    tmp/log/condor.$(Process).log
+Output = tmp/log/out.$(Process).log
+
+
+HEREDOC
+
+for f in input/????_????.pdb.gz; do
+    f=$(basename $f)
+    d=$(basename $f .pdb.gz)
+    # First, run with ligand in correct place, to encourage finding correct binding mode
+    mkdir -p "tmp/work/$d/0"
+    echo "Arguments = @FLAGS.txt -nstruct 100 -database %(database)s -in:file:s input/$f -in:file:native native/$f -packing:unboundrot unbound_from_kwk/$f -out:prefix ${d}_ -out:suffix _0 -out:path:pdb tmp/work/$d/0"  >> "$dockfile"
+    echo "Queue" >> "$dockfile"
+    # Second, do sparer sampling of entire pocket, to try to find some decoy binding modes
+    for((i=1;i<=3;i++)); do
+        mkdir -p "tmp/work/$d/$i"
+        echo "Arguments = @FLAGS.txt -docking:uniform_trans 5 -nstruct 200 -database %(database)s -in:file:s input/$f -in:file:native native/$f -packing:unboundrot unbound_from_kwk/$f -out:prefix ${d}_ -out:suffix _$i -run:seed_offset $i -out:path:pdb tmp/work/$d/$i"  >> "$dockfile"
+        echo "Queue" >> "$dockfile"
+    done
+    echo >> "$dockfile"
+done
+
+condor_submit "$dockfile"
+

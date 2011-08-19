@@ -1,0 +1,707 @@
+HEADER    IMMUNOGLOBULIN BINDING PROTEIN          05-AUG-94   1IGD      1IGD   2
+COMPND    PROTEIN G                                                     1IGD   3
+SOURCE    PROTEIN G: (STREPTOCOCCUS, LANCEFIELD GROUP G)                1IGD   4
+SOURCE   2 STRAIN: G148, EXPRESSION SYSTEM: (ESCHERICHIA COLI)          1IGD   5
+SOURCE   3 STRAIN: K12 JM101, PLASMID: PUC18                            1IGD   6
+AUTHOR    J.P.DERRICK,D.B.WIGLEY                                        1IGD   7
+REVDAT   1   01-NOV-94 1IGD    0                                        1IGD   8
+JRNL        AUTH   J.P.DERRICK,D.B.WIGLEY                               1IGD   9
+JRNL        TITL   THE THIRD IGG-BINDING DOMAIN FROM STREPTOCOCCAL      1IGD  10
+JRNL        TITL 2 PROTEIN G: AN ANALYSIS BY X-RAY CRYSTALLOGRAPHY OF   1IGD  11
+JRNL        TITL 3 THE STRUCTURE ALONE AND IN A COMPLEX WITH FAB        1IGD  12
+JRNL        REF    J.MOL.BIOL.                   V. 243   906 1994      1IGD  13
+JRNL        REFN   ASTM JMOBAK  UK ISSN 0022-2836                 0070  1IGD  14
+REMARK   1                                                              1IGD  15
+REMARK   1 REFERENCE 1                                                  1IGD  16
+REMARK   1  AUTH   T.GALLAGHER,P.ALEXANDER,P.BRYAN,G.L.GILLILAND        1IGD  17
+REMARK   1  TITL   TWO CRYSTAL STRUCTURES OF THE B1                     1IGD  18
+REMARK   1  TITL 2 IMMUNOGLOBULIN-BINDING DOMAIN OF STREPTOCOCCAL       1IGD  19
+REMARK   1  TITL 3 PROTEIN G AND COMPARISON WITH NMR                    1IGD  20
+REMARK   1  REF    BIOCHEMISTRY                  V.  33  4721 1994      1IGD  21
+REMARK   1  REFN   ASTM BICHAW  US ISSN 0006-2960                 0033  1IGD  22
+REMARK   1 REFERENCE 2                                                  1IGD  23
+REMARK   1  AUTH   J.P.DERRICK,D.B.WIGLEY                               1IGD  24
+REMARK   1  TITL   CRYSTAL STRUCTURE OF A STREPTOCOCCAL PROTEIN G       1IGD  25
+REMARK   1  TITL 2 DOMAIN BOUND TO AN FAB FRAGMENT                      1IGD  26
+REMARK   1  REF    NATURE                        V. 359   752 1992      1IGD  27
+REMARK   1  REFN   ASTM NATUAS  UK ISSN 0028-0836                 0006  1IGD  28
+REMARK   1 REFERENCE 3                                                  1IGD  29
+REMARK   1  AUTH   A.ACHARI,S.P.HALE,A.J.HOWARD,G.M.CLORE,              1IGD  30
+REMARK   1  AUTH 2 A.M.GRONENBORN,K.D.HARDMAN,M.WHITLOW                 1IGD  31
+REMARK   1  TITL   1.67 ANGSTROMS X-RAY STRUCTURE OF THE B2             1IGD  32
+REMARK   1  TITL 2 IMMUNOGLOBULIN-BINDING DOMAIN OF STREPTOCOCCAL       1IGD  33
+REMARK   1  TITL 3 PROTEIN G AND COMPARISON TO THE NMR STRUCTURE OF     1IGD  34
+REMARK   1  TITL 4 THE B1 DOMAIN                                        1IGD  35
+REMARK   1  REF    BIOCHEMISTRY                  V.  31 10449 1992      1IGD  36
+REMARK   1  REFN   ASTM BICHAW  US ISSN 0006-2960                 0033  1IGD  37
+REMARK   1 REFERENCE 4                                                  1IGD  38
+REMARK   1  AUTH   L.Y.LIAN,J.P.DERRICK,M.J.SUTCLIFFE,J.C.YANG,         1IGD  39
+REMARK   1  AUTH 2 G.C.K.ROBERTS                                        1IGD  40
+REMARK   1  TITL   DETERMINATION OF THE SOLUTION STRUCTURES OF DOMAINS  1IGD  41
+REMARK   1  TITL 2 II AND III OF PROTEIN G FROM STREPTOCOCCUS BY 1H     1IGD  42
+REMARK   1  TITL 3 NUCLEAR MAGNETIC RESONANCE                           1IGD  43
+REMARK   1  REF    J.MOL.BIOL.                   V. 228  1219 1992      1IGD  44
+REMARK   1  REFN   ASTM JMOBAK  UK ISSN 0022-2836                 0070  1IGD  45
+REMARK   1 REFERENCE 5                                                  1IGD  46
+REMARK   1  AUTH   A.M.GRONENBORN,D.R.FILPULA,N.Z.ESSIG,A.ACHARI,       1IGD  47
+REMARK   1  AUTH 2 M.WHITLOW,P.T.WINGFIELD,G.M.CLORE                    1IGD  48
+REMARK   1  TITL   A NOVEL, HIGHLY STABLE FOLD OF THE IMMUNOGLOBULIN    1IGD  49
+REMARK   1  TITL 2 BINDING DOMAIN OF STREPTOCOCCAL PROTEIN G            1IGD  50
+REMARK   1  REF    SCIENCE                       V. 253   657 1991      1IGD  51
+REMARK   1  REFN   ASTM SCIEAS  US ISSN 0036-8075                 0038  1IGD  52
+REMARK   2                                                              1IGD  53
+REMARK   2 RESOLUTION. 1.1  ANGSTROMS.                                  1IGD  54
+REMARK   3                                                              1IGD  55
+REMARK   3 REFINEMENT.                                                  1IGD  56
+REMARK   3   PROGRAM 1                  PROLSQ                          1IGD  57
+REMARK   3   AUTHORS 1                  KONNERT,HENDRICKSON             1IGD  58
+REMARK   3   PROGRAM 2                  X-PLOR                          1IGD  59
+REMARK   3   AUTHORS 2                  BRUNGER                         1IGD  60
+REMARK   3   R VALUE                    0.193                           1IGD  61
+REMARK   3   MEAN B VALUE               17.7   ANGSTROMS**2             1IGD  62
+REMARK   3   ESD FROM LUZZATI PLOT      0.05   ANGSTROMS                1IGD  63
+REMARK   3   RESOLUTION RANGE       25. - 1.1  ANGSTROMS                1IGD  64
+REMARK   3                                                              1IGD  65
+REMARK   3  DATA COLLECTION.                                            1IGD  66
+REMARK   3   NUMBER OF UNIQUE REFLECTIONS      23530                    1IGD  67
+REMARK   3   COMPLETENESS OF DATA              95.0   %                 1IGD  68
+REMARK   3                                                              1IGD  69
+REMARK   3  NUMBER OF ATOMS PRESENT IN ENTRY.                           1IGD  70
+REMARK   3   NUMBER OF PROTEIN ATOMS                        468         1IGD  71
+REMARK   3   NUMBER OF NUCLEIC ACID ATOMS                     0         1IGD  72
+REMARK   3   NUMBER OF SOLVENT ATOMS                        120         1IGD  73
+REMARK   3   NUMBER OF HETEROGEN ATOMS                        0         1IGD  74
+REMARK   3                                                              1IGD  75
+REMARK   3  RMS DEVIATIONS FROM IDEAL VALUES (THE VALUES OF             1IGD  76
+REMARK   3      SIGMA, IN PARENTHESES, ARE THE INPUT ESTIMATED          1IGD  77
+REMARK   3      STANDARD DEVIATIONS THAT DETERMINE THE RELATIVE         1IGD  78
+REMARK   3      WEIGHTS OF THE CORRESPONDING RESTRAINTS).               1IGD  79
+REMARK   3    DISTANCE RESTRAINTS (ANGSTROMS).                          1IGD  80
+REMARK   3      BOND DISTANCE                            0.011(0.020)   1IGD  81
+REMARK   3      ANGLE DISTANCE                           0.032(0.040)   1IGD  82
+REMARK   3      PLANAR 1-4 DISTANCE                      0.042(0.060)   1IGD  83
+REMARK   3    PLANE RESTRAINT (ANGSTROMS)                0.015(0.020)   1IGD  84
+REMARK   3    CHIRAL-CENTER RESTRAINT (ANGSTROMS**3)     0.105(0.120)   1IGD  85
+REMARK   3    NON-BONDED CONTACT RESTRAINTS (ANGSTROMS).                1IGD  86
+REMARK   3      SINGLE TORSION CONTACT                   0.170(0.500)   1IGD  87
+REMARK   3      MULTIPLE TORSION CONTACT                 0.200(0.500)   1IGD  88
+REMARK   3      POSSIBLE HYDROGEN BOND                   0.268(0.500)   1IGD  89
+REMARK   3    CONFORMATIONAL TORSION ANGLE RESTRAINT (DEGREES).         1IGD  90
+REMARK   3      PLANAR                                    3.08(5.00)    1IGD  91
+REMARK   3      STAGGERED                                17.96(15.00)   1IGD  92
+REMARK   3      ORTHONORMAL                              26.15(20.00)   1IGD  93
+REMARK   4                                                              1IGD  94
+REMARK   4 PDB ADVISORY NOTICE:  WATER MOLECULES HOH 8 AND HOH 9 HAVE   1IGD  95
+REMARK   4 CLOSE CONTACTS OF 2.1 ANGSTROMS WITH HOH 9 AND HOH 54,       1IGD  96
+REMARK   4 RESPECTIVELY.  HOH 70 IS 1.89 ANGSTROMS FROM SYMMETRY        1IGD  97
+REMARK   4 RELATED HOH 81; HOH 28 IS 2.01 ANGSTROMS FROM SYMMETRY       1IGD  98
+REMARK   4 RELATED HOH 53; HOH 43 AND HOH 71 ARE 2.1 ANGSTROMS FROM     1IGD  99
+REMARK   4 SYMMETRY RELATED HOH 79 AND HOH 105, RESPECTIVELY.           1IGD 100
+REMARK   5                                                              1IGD 101
+REMARK   5 CROSS REFERENCE TO SEQUENCE DATABASE                         1IGD 102
+REMARK   5 SWISS-PROT ENTRY NAME       PDB ENTRY CHAIN NAME             1IGD 103
+REMARK   5    IGGG_STRSP                                                1IGD 104
+SEQRES   1     61  MET THR PRO ALA VAL THR THR TYR LYS LEU VAL ILE ASN  1IGD 105
+SEQRES   2     61  GLY LYS THR LEU LYS GLY GLU THR THR THR LYS ALA VAL  1IGD 106
+SEQRES   3     61  ASP ALA GLU THR ALA GLU LYS ALA PHE LYS GLN TYR ALA  1IGD 107
+SEQRES   4     61  ASN ASP ASN GLY VAL ASP GLY VAL TRP THR TYR ASP ASP  1IGD 108
+SEQRES   5     61  ALA THR LYS THR PHE THR VAL THR GLU                  1IGD 109
+FORMUL   2  HOH   *120(H2 O1)                                           1IGD 110
+CRYST1   34.900   40.300   42.200  90.00  90.00  90.00 P 21 21 21    4  1IGD 111
+ORIGX1      1.000000  0.000000  0.000000        0.00000                 1IGD 112
+ORIGX2      0.000000  1.000000  0.000000        0.00000                 1IGD 113
+ORIGX3      0.000000  0.000000  1.000000        0.00000                 1IGD 114
+SCALE1      0.028653  0.000000  0.000000        0.00000                 1IGD 115
+SCALE2      0.000000  0.024814  0.000000        0.00000                 1IGD 116
+SCALE3      0.000000  0.000000  0.023697        0.00000                 1IGD 117
+ATOM      1  N   MET     1       1.482   2.881   4.315  1.00 10.85      1IGD 118
+ATOM      2  CA  MET     1       1.504   3.440   5.674  1.00  9.28      1IGD 119
+ATOM      3  C   MET     1       1.417   4.966   5.566  1.00  7.23      1IGD 120
+ATOM      4  O   MET     1       1.828   5.536   4.548  1.00 10.61      1IGD 121
+ATOM      5  CB  MET     1       2.786   3.039   6.438  1.00 13.17      1IGD 122
+ATOM      6  CG  MET     1       4.008   3.686   5.823  1.00 23.31      1IGD 123
+ATOM      7  SD  MET     1       5.553   3.396   6.808  1.00 28.10      1IGD 124
+ATOM      8  CE  MET     1       5.224   4.534   8.175  1.00 29.75      1IGD 125
+ATOM      9  N   THR     2       0.914   5.587   6.600  1.00  9.74      1IGD 126
+ATOM     10  CA  THR     2       0.874   7.070   6.635  1.00 12.11      1IGD 127
+ATOM     11  C   THR     2       2.218   7.455   7.275  1.00 10.05      1IGD 128
+ATOM     12  O   THR     2       2.738   6.701   8.119  1.00 11.94      1IGD 129
+ATOM     13  CB  THR     2      -0.383   7.617   7.388  1.00 11.93      1IGD 130
+ATOM     14  OG1 THR     2      -0.311   7.067   8.745  1.00 15.11      1IGD 131
+ATOM     15  CG2 THR     2      -1.708   7.242   6.691  1.00 15.80      1IGD 132
+ATOM     16  N   PRO     3       2.801   8.584   6.911  1.00 11.27      1IGD 133
+ATOM     17  CA  PRO     3       4.095   8.990   7.462  1.00 10.61      1IGD 134
+ATOM     18  C   PRO     3       4.034   9.213   8.958  1.00 10.79      1IGD 135
+ATOM     19  O   PRO     3       2.984   9.622   9.495  1.00 12.88      1IGD 136
+ATOM     20  CB  PRO     3       4.431  10.282   6.745  1.00 16.64      1IGD 137
+ATOM     21  CG  PRO     3       3.461  10.409   5.623  1.00 16.76      1IGD 138
+ATOM     22  CD  PRO     3       2.263   9.541   5.932  1.00 15.11      1IGD 139
+ATOM     23  N   ALA     4       5.128   8.958   9.642  1.00 11.76      1IGD 140
+ATOM     24  CA  ALA     4       5.217   9.211  11.085  1.00 11.96      1IGD 141
+ATOM     25  C   ALA     4       5.342  10.736  11.248  1.00 11.38      1IGD 142
+ATOM     26  O   ALA     4       6.179  11.398  10.580  1.00 15.50      1IGD 143
+ATOM     27  CB  ALA     4       6.441   8.510  11.664  1.00 18.44      1IGD 144
+ATOM     28  N   VAL     5       4.499  11.292  12.076  1.00 11.20      1IGD 145
+ATOM     29  CA  VAL     5       4.507  12.752  12.313  1.00 12.02      1IGD 146
+ATOM     30  C   VAL     5       4.904  12.986  13.763  1.00 14.92      1IGD 147
+ATOM     31  O   VAL     5       4.600  12.186  14.669  1.00 16.58      1IGD 148
+ATOM     32  CB  VAL     5       3.131  13.281  11.879  1.00 20.23      1IGD 149
+ATOM     33  CG1 VAL     5       2.694  14.572  12.531  1.00 27.13      1IGD 150
+ATOM     34  CG2 VAL     5       3.084  13.467  10.362  1.00 17.42      1IGD 151
+ATOM     35  N   THR     6       5.617  14.087  13.963  1.00  9.65      1IGD 152
+ATOM     36  CA  THR     6       6.073  14.501  15.282  1.00  9.37      1IGD 153
+ATOM     37  C   THR     6       5.410  15.841  15.630  1.00  8.30      1IGD 154
+ATOM     38  O   THR     6       5.177  16.665  14.749  1.00  9.25      1IGD 155
+ATOM     39  CB  THR     6       7.638  14.673  15.285  1.00 11.08      1IGD 156
+ATOM     40  OG1 THR     6       8.178  13.340  15.081  1.00 16.06      1IGD 157
+ATOM     41  CG2 THR     6       8.204  15.342  16.536  1.00 15.33      1IGD 158
+ATOM     42  N   THR     7       5.136  16.021  16.901  1.00  8.55      1IGD 159
+ATOM     43  CA  THR     7       4.600  17.292  17.383  1.00  7.26      1IGD 160
+ATOM     44  C   THR     7       5.807  18.148  17.822  1.00  7.85      1IGD 161
+ATOM     45  O   THR     7       6.607  17.708  18.675  1.00  9.32      1IGD 162
+ATOM     46  CB  THR     7       3.632  17.191  18.619  1.00 11.45      1IGD 163
+ATOM     47  OG1 THR     7       2.503  16.374  18.190  1.00 14.19      1IGD 164
+ATOM     48  CG2 THR     7       3.158  18.567  19.076  1.00 13.69      1IGD 165
+ATOM     49  N   TYR     8       5.919  19.292  17.183  1.00  5.99      1IGD 166
+ATOM     50  CA  TYR     8       7.006  20.232  17.534  1.00  5.67      1IGD 167
+ATOM     51  C   TYR     8       6.380  21.389  18.303  1.00  6.16      1IGD 168
+ATOM     52  O   TYR     8       5.227  21.749  18.027  1.00  7.05      1IGD 169
+ATOM     53  CB  TYR     8       7.679  20.779  16.271  1.00  7.09      1IGD 170
+ATOM     54  CG  TYR     8       8.404  19.676  15.525  1.00  7.01      1IGD 171
+ATOM     55  CD1 TYR     8       7.707  18.883  14.602  1.00  7.00      1IGD 172
+ATOM     56  CD2 TYR     8       9.754  19.429  15.759  1.00  7.38      1IGD 173
+ATOM     57  CE1 TYR     8       8.365  17.871  13.900  1.00  8.97      1IGD 174
+ATOM     58  CE2 TYR     8      10.422  18.418  15.067  1.00  9.12      1IGD 175
+ATOM     59  CZ  TYR     8       9.722  17.650  14.148  1.00  9.69      1IGD 176
+ATOM     60  OH  TYR     8      10.390  16.660  13.473  1.00 12.34      1IGD 177
+ATOM     61  N   LYS     9       7.147  21.939  19.220  1.00  5.41      1IGD 178
+ATOM     62  CA  LYS     9       6.690  23.052  20.037  1.00  5.25      1IGD 179
+ATOM     63  C   LYS     9       7.474  24.304  19.721  1.00  4.47      1IGD 180
+ATOM     64  O   LYS     9       8.672  24.224  19.409  1.00  5.60      1IGD 181
+ATOM     65  CB  LYS     9       6.914  22.687  21.503  1.00  6.47      1IGD 182
+ATOM     66  CG  LYS     9       6.523  23.782  22.468  1.00  8.78      1IGD 183
+ATOM     67  CD  LYS     9       6.526  23.281  23.887  1.00 11.11      1IGD 184
+ATOM     68  CE  LYS     9       5.329  22.390  24.153  1.00 15.47      1IGD 185
+ATOM     69  NZ  LYS     9       5.397  21.926  25.582  1.00 17.02      1IGD 186
+ATOM     70  N   LEU    10       6.835  25.444  19.796  1.00  4.98      1IGD 187
+ATOM     71  CA  LEU    10       7.444  26.753  19.641  1.00  4.92      1IGD 188
+ATOM     72  C   LEU    10       7.211  27.534  20.949  1.00  6.08      1IGD 189
+ATOM     73  O   LEU    10       6.044  27.711  21.364  1.00  6.34      1IGD 190
+ATOM     74  CB  LEU    10       6.872  27.536  18.452  1.00  5.73      1IGD 191
+ATOM     75  CG  LEU    10       7.428  28.954  18.323  1.00  6.19      1IGD 192
+ATOM     76  CD1 LEU    10       8.925  28.931  17.978  1.00  7.47      1IGD 193
+ATOM     77  CD2 LEU    10       6.650  29.697  17.231  1.00  8.18      1IGD 194
+ATOM     78  N   VAL    11       8.293  27.978  21.539  1.00  5.03      1IGD 195
+ATOM     79  CA  VAL    11       8.253  28.823  22.735  1.00  4.74      1IGD 196
+ATOM     80  C   VAL    11       8.509  30.218  22.177  1.00  5.82      1IGD 197
+ATOM     81  O   VAL    11       9.536  30.422  21.511  1.00  6.67      1IGD 198
+ATOM     82  CB  VAL    11       9.289  28.384  23.767  1.00  6.32      1IGD 199
+ATOM     83  CG1 VAL    11       9.412  29.345  24.930  1.00  7.97      1IGD 200
+ATOM     84  CG2 VAL    11       9.013  26.956  24.227  1.00  8.60      1IGD 201
+ATOM     85  N   ILE    12       7.593  31.123  22.403  1.00  6.08      1IGD 202
+ATOM     86  CA  ILE    12       7.702  32.483  21.877  1.00  6.55      1IGD 203
+ATOM     87  C   ILE    12       7.859  33.523  22.969  1.00  7.21      1IGD 204
+ATOM     88  O   ILE    12       6.989  33.680  23.820  1.00  8.01      1IGD 205
+ATOM     89  CB  ILE    12       6.416  32.910  21.083  1.00 11.19      1IGD 206
+ATOM     90  CG1 ILE    12       6.004  31.805  20.105  1.00 16.59      1IGD 207
+ATOM     91  CG2 ILE    12       6.625  34.245  20.327  1.00 12.84      1IGD 208
+ATOM     92  CD1 ILE    12       4.461  31.571  20.147  1.00 28.79      1IGD 209
+ATOM     93  N   ASN    13       8.966  34.225  22.908  1.00  8.48      1IGD 210
+ATOM     94  CA  ASN    13       9.277  35.307  23.868  1.00 11.08      1IGD 211
+ATOM     95  C   ASN    13       9.339  36.569  23.028  1.00 11.28      1IGD 212
+ATOM     96  O   ASN    13      10.472  37.071  22.812  1.00 12.19      1IGD 213
+ATOM     97  CB  ASN    13      10.560  35.001  24.636  1.00 13.21      1IGD 214
+ATOM     98  CG  ASN    13      10.451  33.798  25.537  1.00 17.08      1IGD 215
+ATOM     99  OD1 ASN    13      11.299  32.894  25.516  1.00 21.58      1IGD 216
+ATOM    100  ND2 ASN    13       9.373  33.779  26.318  1.00 20.87      1IGD 217
+ATOM    101  N   GLY    14       8.248  37.062  22.530  1.00 10.67      1IGD 218
+ATOM    102  CA  GLY    14       8.171  38.243  21.680  1.00 10.70      1IGD 219
+ATOM    103  C   GLY    14       7.905  39.477  22.548  1.00  9.51      1IGD 220
+ATOM    104  O   GLY    14       7.652  39.383  23.739  1.00 13.02      1IGD 221
+ATOM    105  N   LYS    15       7.976  40.595  21.853  1.00 12.18      1IGD 222
+ATOM    106  CA  LYS    15       7.722  41.895  22.494  1.00 13.87      1IGD 223
+ATOM    107  C   LYS    15       6.257  42.012  22.914  1.00 12.01      1IGD 224
+ATOM    108  O   LYS    15       5.922  42.500  24.010  1.00 14.85      1IGD 225
+ATOM    109  CB  LYS    15       8.024  43.027  21.526  1.00 14.43      1IGD 226
+ATOM    110  CG  LYS    15       9.522  43.368  21.427  1.00 34.94      1IGD 227
+ATOM    111  CD  LYS    15       9.812  43.862  20.001  1.00 40.25      1IGD 228
+ATOM    112  CE  LYS    15      10.353  45.269  19.943  1.00 50.15      1IGD 229
+ATOM    113  NZ  LYS    15      10.532  45.712  18.526  1.00 53.82      1IGD 230
+ATOM    114  N   THR    16       5.434  41.537  22.002  1.00  9.17      1IGD 231
+ATOM    115  CA  THR    16       3.965  41.592  22.218  1.00 10.83      1IGD 232
+ATOM    116  C   THR    16       3.297  40.244  22.268  1.00 10.54      1IGD 233
+ATOM    117  O   THR    16       2.274  40.089  22.988  1.00 13.75      1IGD 234
+ATOM    118  CB  THR    16       3.593  42.574  21.019  1.00 19.15      1IGD 235
+ATOM    119  OG1 THR    16       3.393  43.856  21.741  1.00 32.70      1IGD 236
+ATOM    120  CG2 THR    16       2.542  42.122  20.065  1.00 16.96      1IGD 237
+ATOM    121  N   LEU    17       3.857  39.251  21.606  1.00  7.17      1IGD 238
+ATOM    122  CA  LEU    17       3.298  37.895  21.552  1.00  7.46      1IGD 239
+ATOM    123  C   LEU    17       4.107  36.991  22.444  1.00  6.30      1IGD 240
+ATOM    124  O   LEU    17       5.354  36.939  22.225  1.00  9.04      1IGD 241
+ATOM    125  CB  LEU    17       3.330  37.448  20.089  1.00  7.63      1IGD 242
+ATOM    126  CG  LEU    17       2.952  35.998  19.819  1.00  8.14      1IGD 243
+ATOM    127  CD1 LEU    17       1.537  35.713  20.320  1.00 11.04      1IGD 244
+ATOM    128  CD2 LEU    17       3.017  35.723  18.326  1.00 11.49      1IGD 245
+ATOM    129  N   LYS    18       3.499  36.288  23.344  1.00  5.66      1IGD 246
+ATOM    130  CA  LYS    18       4.253  35.392  24.224  1.00  6.02      1IGD 247
+ATOM    131  C   LYS    18       3.449  34.131  24.485  1.00  5.62      1IGD 248
+ATOM    132  O   LYS    18       2.207  34.195  24.556  1.00  7.15      1IGD 249
+ATOM    133  CB  LYS    18       4.490  36.017  25.600  1.00  9.45      1IGD 250
+ATOM    134  CG  LYS    18       5.262  37.337  25.474  1.00 14.80      1IGD 251
+ATOM    135  CD  LYS    18       5.566  37.869  26.860  1.00 22.28      1IGD 252
+ATOM    136  CE  LYS    18       6.180  39.262  26.808  1.00 31.00      1IGD 253
+ATOM    137  NZ  LYS    18       6.180  39.786  28.222  1.00 45.21      1IGD 254
+ATOM    138  N   GLY    19       4.155  33.030  24.661  1.00  5.35      1IGD 255
+ATOM    139  CA  GLY    19       3.525  31.772  25.017  1.00  5.14      1IGD 256
+ATOM    140  C   GLY    19       4.122  30.629  24.243  1.00  4.83      1IGD 257
+ATOM    141  O   GLY    19       5.348  30.605  24.015  1.00  5.70      1IGD 258
+ATOM    142  N   GLU    20       3.273  29.685  23.899  1.00  4.45      1IGD 259
+ATOM    143  CA  GLU    20       3.687  28.508  23.161  1.00  4.57      1IGD 260
+ATOM    144  C   GLU    20       2.618  28.099  22.168  1.00  5.41      1IGD 261
+ATOM    145  O   GLU    20       1.416  28.339  22.381  1.00  5.79      1IGD 262
+ATOM    146  CB  GLU    20       3.848  27.293  24.079  1.00  6.91      1IGD 263
+ATOM    147  CG  GLU    20       4.886  27.453  25.164  1.00  8.47      1IGD 264
+ATOM    148  CD  GLU    20       5.060  26.224  26.029  1.00 11.07      1IGD 265
+ATOM    149  OE1 GLU    20       4.197  25.345  25.941  1.00 13.80      1IGD 266
+ATOM    150  OE2 GLU    20       6.020  26.132  26.768  1.00 12.90      1IGD 267
+ATOM    151  N   THR    21       3.085  27.491  21.100  1.00  5.43      1IGD 268
+ATOM    152  CA  THR    21       2.162  26.919  20.099  1.00  5.79      1IGD 269
+ATOM    153  C   THR    21       2.815  25.622  19.623  1.00  5.65      1IGD 270
+ATOM    154  O   THR    21       3.948  25.289  20.034  1.00  6.20      1IGD 271
+ATOM    155  CB  THR    21       1.797  27.936  18.984  1.00  7.02      1IGD 272
+ATOM    156  OG1 THR    21       0.753  27.294  18.215  1.00  6.98      1IGD 273
+ATOM    157  CG2 THR    21       2.996  28.344  18.122  1.00  8.14      1IGD 274
+ATOM    158  N   THR    22       2.135  24.888  18.775  1.00  5.88      1IGD 275
+ATOM    159  CA  THR    22       2.646  23.609  18.294  1.00  5.73      1IGD 276
+ATOM    160  C   THR    22       2.259  23.397  16.846  1.00  7.14      1IGD 277
+ATOM    161  O   THR    22       1.327  24.033  16.325  1.00  7.26      1IGD 278
+ATOM    162  CB  THR    22       2.066  22.396  19.121  1.00  7.66      1IGD 279
+ATOM    163  OG1 THR    22       0.625  22.383  18.811  1.00  8.85      1IGD 280
+ATOM    164  CG2 THR    22       2.316  22.453  20.621  1.00  9.24      1IGD 281
+ATOM    165  N   THR    23       2.968  22.456  16.239  1.00  5.97      1IGD 282
+ATOM    166  CA  THR    23       2.651  22.082  14.854  1.00  6.63      1IGD 283
+ATOM    167  C   THR    23       3.056  20.619  14.700  1.00  9.07      1IGD 284
+ATOM    168  O   THR    23       3.915  20.150  15.468  1.00 10.56      1IGD 285
+ATOM    169  CB  THR    23       3.351  23.029  13.827  1.00 11.01      1IGD 286
+ATOM    170  OG1 THR    23       2.639  22.885  12.562  1.00 11.34      1IGD 287
+ATOM    171  CG2 THR    23       4.852  22.714  13.647  1.00 10.26      1IGD 288
+ATOM    172  N   LYS    24       2.470  19.948  13.720  1.00  8.44      1IGD 289
+ATOM    173  CA  LYS    24       2.813  18.533  13.499  1.00  8.78      1IGD 290
+ATOM    174  C   LYS    24       3.525  18.503  12.139  1.00  8.27      1IGD 291
+ATOM    175  O   LYS    24       3.074  19.176  11.198  1.00  9.33      1IGD 292
+ATOM    176  CB  LYS    24       1.614  17.616  13.428  1.00 17.32      1IGD 293
+ATOM    177  CG  LYS    24       0.342  17.945  14.215  1.00 28.78      1IGD 294
+ATOM    178  CD  LYS    24       0.414  17.278  15.562  1.00 28.01      1IGD 295
+ATOM    179  CE  LYS    24       0.618  15.788  15.471  1.00 33.46      1IGD 296
+ATOM    180  NZ  LYS    24      -0.500  15.026  16.106  1.00 43.50      1IGD 297
+ATOM    181  N   ALA    25       4.606  17.725  12.076  1.00  7.65      1IGD 298
+ATOM    182  CA  ALA    25       5.323  17.635  10.791  1.00  8.12      1IGD 299
+ATOM    183  C   ALA    25       6.103  16.338  10.700  1.00  7.07      1IGD 300
+ATOM    184  O   ALA    25       6.414  15.719  11.717  1.00  9.20      1IGD 301
+ATOM    185  CB  ALA    25       6.267  18.828  10.597  1.00 10.14      1IGD 302
+ATOM    186  N   VAL    26       6.436  15.990   9.462  1.00  7.38      1IGD 303
+ATOM    187  CA  VAL    26       7.228  14.757   9.285  1.00  9.17      1IGD 304
+ATOM    188  C   VAL    26       8.696  14.988   9.648  1.00  9.68      1IGD 305
+ATOM    189  O   VAL    26       9.383  13.980   9.913  1.00 12.01      1IGD 306
+ATOM    190  CB  VAL    26       7.119  14.188   7.845  1.00 12.15      1IGD 307
+ATOM    191  CG1 VAL    26       5.707  13.708   7.548  1.00 15.87      1IGD 308
+ATOM    192  CG2 VAL    26       7.639  15.185   6.835  1.00 11.75      1IGD 309
+ATOM    193  N   ASP    27       9.197  16.205   9.648  1.00  8.00      1IGD 310
+ATOM    194  CA  ASP    27      10.610  16.449   9.979  1.00  8.29      1IGD 311
+ATOM    195  C   ASP    27      10.716  17.861  10.537  1.00  8.01      1IGD 312
+ATOM    196  O   ASP    27       9.784  18.671  10.435  1.00  8.37      1IGD 313
+ATOM    197  CB  ASP    27      11.517  16.187   8.790  1.00  8.65      1IGD 314
+ATOM    198  CG  ASP    27      11.200  17.053   7.595  1.00 10.37      1IGD 315
+ATOM    199  OD1 ASP    27      10.792  18.211   7.759  1.00  8.85      1IGD 316
+ATOM    200  OD2 ASP    27      11.332  16.609   6.448  1.00 14.41      1IGD 317
+ATOM    201  N   ALA    28      11.882  18.124  11.109  1.00  8.68      1IGD 318
+ATOM    202  CA  ALA    28      12.101  19.437  11.758  1.00  7.92      1IGD 319
+ATOM    203  C   ALA    28      12.128  20.571  10.769  1.00  8.01      1IGD 320
+ATOM    204  O   ALA    28      11.678  21.679  11.128  1.00  8.94      1IGD 321
+ATOM    205  CB  ALA    28      13.383  19.378  12.582  1.00  9.81      1IGD 322
+ATOM    206  N   GLU    29      12.633  20.360   9.572  1.00  8.03      1IGD 323
+ATOM    207  CA  GLU    29      12.698  21.484   8.624  1.00  8.29      1IGD 324
+ATOM    208  C   GLU    29      11.287  21.924   8.237  1.00  8.70      1IGD 325
+ATOM    209  O   GLU    29      11.041  23.128   8.099  1.00  8.64      1IGD 326
+ATOM    210  CB  GLU    29      13.590  21.168   7.468  1.00 13.85      1IGD 327
+ATOM    211  CG  GLU    29      13.091  20.677   6.160  1.00 39.72      1IGD 328
+ATOM    212  CD  GLU    29      14.032  20.790   4.979  1.00 45.06      1IGD 329
+ATOM    213  OE1 GLU    29      14.166  21.829   4.337  1.00 49.12      1IGD 330
+ATOM    214  OE2 GLU    29      14.607  19.698   4.763  1.00 34.98      1IGD 331
+ATOM    215  N   THR    30      10.359  20.996   8.120  1.00  8.33      1IGD 332
+ATOM    216  CA  THR    30       8.984  21.368   7.765  1.00  8.62      1IGD 333
+ATOM    217  C   THR    30       8.364  22.143   8.928  1.00  7.85      1IGD 334
+ATOM    218  O   THR    30       7.626  23.115   8.675  1.00  8.28      1IGD 335
+ATOM    219  CB  THR    30       8.104  20.117   7.406  1.00  9.15      1IGD 336
+ATOM    220  OG1 THR    30       8.773  19.473   6.281  1.00  9.69      1IGD 337
+ATOM    221  CG2 THR    30       6.666  20.523   7.083  1.00 10.79      1IGD 338
+ATOM    222  N   ALA    31       8.631  21.682  10.145  1.00  6.30      1IGD 339
+ATOM    223  CA  ALA    31       8.081  22.391  11.323  1.00  7.76      1IGD 340
+ATOM    224  C   ALA    31       8.684  23.788  11.385  1.00  6.77      1IGD 341
+ATOM    225  O   ALA    31       7.974  24.758  11.668  1.00  8.47      1IGD 342
+ATOM    226  CB  ALA    31       8.360  21.610  12.607  1.00  7.69      1IGD 343
+ATOM    227  N   GLU    32       9.986  23.895  11.138  1.00  6.72      1IGD 344
+ATOM    228  CA  GLU    32      10.660  25.207  11.172  1.00  7.49      1IGD 345
+ATOM    229  C   GLU    32      10.020  26.202  10.209  1.00  8.99      1IGD 346
+ATOM    230  O   GLU    32       9.784  27.370  10.554  1.00  7.47      1IGD 347
+ATOM    231  CB  GLU    32      12.134  25.086  10.796  1.00  7.83      1IGD 348
+ATOM    232  CG  GLU    32      12.865  26.445  10.908  1.00  8.71      1IGD 349
+ATOM    233  CD  GLU    32      14.278  26.363  10.406  1.00 35.43      1IGD 350
+ATOM    234  OE1 GLU    32      14.921  25.505  11.051  1.00 31.25      1IGD 351
+ATOM    235  OE2 GLU    32      14.685  27.041   9.475  1.00 42.79      1IGD 352
+ATOM    236  N   LYS    33       9.746  25.756   8.994  1.00  6.97      1IGD 353
+ATOM    237  CA  LYS    33       9.109  26.607   7.993  1.00  8.72      1IGD 354
+ATOM    238  C   LYS    33       7.733  27.084   8.497  1.00  8.39      1IGD 355
+ATOM    239  O   LYS    33       7.424  28.271   8.350  1.00  9.62      1IGD 356
+ATOM    240  CB  LYS    33       8.908  25.905   6.646  1.00 10.80      1IGD 357
+ATOM    241  CG  LYS    33      10.189  25.894   5.808  1.00 20.51      1IGD 358
+ATOM    242  CD  LYS    33      10.087  24.955   4.603  1.00 28.98      1IGD 359
+ATOM    243  CE  LYS    33      11.479  24.790   4.000  1.00 42.39      1IGD 360
+ATOM    244  NZ  LYS    33      11.773  23.371   3.639  1.00 46.31      1IGD 361
+ATOM    245  N   ALA    34       6.954  26.184   9.086  1.00  8.21      1IGD 362
+ATOM    246  CA  ALA    34       5.619  26.568   9.590  1.00  8.52      1IGD 363
+ATOM    247  C   ALA    34       5.761  27.592  10.704  1.00  7.30      1IGD 364
+ATOM    248  O   ALA    34       4.987  28.563  10.742  1.00  8.10      1IGD 365
+ATOM    249  CB  ALA    34       4.846  25.346  10.093  1.00  8.99      1IGD 366
+ATOM    250  N   PHE    35       6.706  27.371  11.606  1.00  5.86      1IGD 367
+ATOM    251  CA  PHE    35       6.902  28.312  12.731  1.00  5.83      1IGD 368
+ATOM    252  C   PHE    35       7.468  29.644  12.250  1.00  6.17      1IGD 369
+ATOM    253  O   PHE    35       7.077  30.657  12.830  1.00  6.93      1IGD 370
+ATOM    254  CB  PHE    35       7.749  27.685  13.824  1.00  6.01      1IGD 371
+ATOM    255  CG  PHE    35       7.077  26.640  14.660  1.00  5.99      1IGD 372
+ATOM    256  CD1 PHE    35       5.718  26.706  14.988  1.00  7.03      1IGD 373
+ATOM    257  CD2 PHE    35       7.847  25.570  15.152  1.00  6.21      1IGD 374
+ATOM    258  CE1 PHE    35       5.147  25.754  15.811  1.00  7.31      1IGD 375
+ATOM    259  CE2 PHE    35       7.269  24.602  15.964  1.00  6.96      1IGD 376
+ATOM    260  CZ  PHE    35       5.910  24.707  16.299  1.00  7.13      1IGD 377
+ATOM    261  N   LYS    36       8.379  29.633  11.312  1.00  6.38      1IGD 378
+ATOM    262  CA  LYS    36       8.924  30.912  10.795  1.00  8.04      1IGD 379
+ATOM    263  C   LYS    36       7.786  31.668  10.093  1.00  7.81      1IGD 380
+ATOM    264  O   LYS    36       7.739  32.890  10.221  1.00  9.06      1IGD 381
+ATOM    265  CB  LYS    36      10.092  30.672   9.843  1.00  9.92      1IGD 382
+ATOM    266  CG  LYS    36      11.311  30.018  10.514  1.00 18.85      1IGD 383
+ATOM    267  CD  LYS    36      12.370  31.036  10.824  1.00 22.95      1IGD 384
+ATOM    268  CE  LYS    36      13.522  30.498  11.634  1.00 23.69      1IGD 385
+ATOM    269  NZ  LYS    36      14.703  30.174  10.805  1.00 35.70      1IGD 386
+ATOM    270  N   GLN    37       6.897  30.967   9.388  1.00  7.12      1IGD 387
+ATOM    271  CA  GLN    37       5.761  31.631   8.723  1.00  8.49      1IGD 388
+ATOM    272  C   GLN    37       4.838  32.233   9.794  1.00  8.06      1IGD 389
+ATOM    273  O   GLN    37       4.392  33.385   9.671  1.00  9.30      1IGD 390
+ATOM    274  CB  GLN    37       5.000  30.656   7.845  1.00  9.44      1IGD 391
+ATOM    275  CG  GLN    37       3.875  31.427   7.126  1.00 17.37      1IGD 392
+ATOM    276  CD  GLN    37       4.479  32.374   6.105  1.00 36.47      1IGD 393
+ATOM    277  OE1 GLN    37       5.010  31.936   5.078  1.00 32.04      1IGD 394
+ATOM    278  NE2 GLN    37       4.450  33.687   6.345  1.00 31.45      1IGD 395
+ATOM    279  N   TYR    38       4.540  31.484  10.839  1.00  6.37      1IGD 396
+ATOM    280  CA  TYR    38       3.715  31.964  11.939  1.00  6.97      1IGD 397
+ATOM    281  C   TYR    38       4.318  33.214  12.562  1.00  6.79      1IGD 398
+ATOM    282  O   TYR    38       3.635  34.201  12.856  1.00  7.00      1IGD 399
+ATOM    283  CB  TYR    38       3.609  30.820  12.979  1.00  7.32      1IGD 400
+ATOM    284  CG  TYR    38       3.096  31.236  14.329  1.00  6.92      1IGD 401
+ATOM    285  CD1 TYR    38       1.728  31.265  14.610  1.00  7.81      1IGD 402
+ATOM    286  CD2 TYR    38       3.967  31.567  15.370  1.00  7.18      1IGD 403
+ATOM    287  CE1 TYR    38       1.259  31.603  15.867  1.00  7.62      1IGD 404
+ATOM    288  CE2 TYR    38       3.523  31.914  16.630  1.00  8.50      1IGD 405
+ATOM    289  CZ  TYR    38       2.148  31.927  16.874  1.00  7.46      1IGD 406
+ATOM    290  OH  TYR    38       1.739  32.268  18.136  1.00  9.27      1IGD 407
+ATOM    291  N   ALA    39       5.633  33.198  12.820  1.00  6.97      1IGD 408
+ATOM    292  CA  ALA    39       6.302  34.348  13.425  1.00  7.52      1IGD 409
+ATOM    293  C   ALA    39       6.184  35.539  12.462  1.00  7.96      1IGD 410
+ATOM    294  O   ALA    39       5.845  36.649  12.934  1.00  8.58      1IGD 411
+ATOM    295  CB  ALA    39       7.756  34.045  13.790  1.00  9.90      1IGD 412
+ATOM    296  N   ASN    40       6.429  35.319  11.197  1.00  8.16      1IGD 413
+ATOM    297  CA  ASN    40       6.334  36.406  10.194  1.00 10.58      1IGD 414
+ATOM    298  C   ASN    40       4.903  36.971  10.164  1.00 12.32      1IGD 415
+ATOM    299  O   ASN    40       4.752  38.206  10.147  1.00 12.58      1IGD 416
+ATOM    300  CB  ASN    40       6.729  35.988   8.791  1.00 14.30      1IGD 417
+ATOM    301  CG  ASN    40       8.216  35.731   8.590  1.00 42.35      1IGD 418
+ATOM    302  OD1 ASN    40       9.101  35.878   9.465  1.00 46.55      1IGD 419
+ATOM    303  ND2 ASN    40       8.543  35.308   7.356  1.00 45.28      1IGD 420
+ATOM    304  N   ASP    41       3.938  36.067  10.141  1.00  9.25      1IGD 421
+ATOM    305  CA  ASP    41       2.518  36.467  10.103  1.00 10.70      1IGD 422
+ATOM    306  C   ASP    41       2.161  37.350  11.296  1.00 11.35      1IGD 423
+ATOM    307  O   ASP    41       1.279  38.225  11.170  1.00 13.17      1IGD 424
+ATOM    308  CB  ASP    41       1.625  35.221  10.026  1.00  9.36      1IGD 425
+ATOM    309  CG  ASP    41       1.642  34.522   8.669  1.00 11.80      1IGD 426
+ATOM    310  OD1 ASP    41       2.198  35.123   7.722  1.00 16.76      1IGD 427
+ATOM    311  OD2 ASP    41       1.135  33.397   8.569  1.00 14.76      1IGD 428
+ATOM    312  N   ASN    42       2.763  37.134  12.452  1.00  8.50      1IGD 429
+ATOM    313  CA  ASN    42       2.509  37.865  13.676  1.00  8.19      1IGD 430
+ATOM    314  C   ASN    42       3.502  38.993  13.930  1.00  8.76      1IGD 431
+ATOM    315  O   ASN    42       3.462  39.537  15.042  1.00 13.21      1IGD 432
+ATOM    316  CB  ASN    42       2.468  36.879  14.843  1.00  9.62      1IGD 433
+ATOM    317  CG  ASN    42       1.195  36.073  14.728  1.00 11.29      1IGD 434
+ATOM    318  OD1 ASN    42       0.086  36.630  14.953  1.00 13.21      1IGD 435
+ATOM    319  ND2 ASN    42       1.300  34.813  14.342  1.00 10.77      1IGD 436
+ATOM    320  N   GLY    43       4.342  39.308  12.973  1.00  9.88      1IGD 437
+ATOM    321  CA  GLY    43       5.294  40.417  13.141  1.00 12.66      1IGD 438
+ATOM    322  C   GLY    43       6.444  40.162  14.092  1.00 13.00      1IGD 439
+ATOM    323  O   GLY    43       7.039  41.153  14.545  1.00 16.17      1IGD 440
+ATOM    324  N   VAL    44       6.748  38.914  14.402  1.00 10.29      1IGD 441
+ATOM    325  CA  VAL    44       7.868  38.587  15.321  1.00 10.80      1IGD 442
+ATOM    326  C   VAL    44       9.152  38.474  14.494  1.00 12.52      1IGD 443
+ATOM    327  O   VAL    44       9.175  37.743  13.496  1.00 17.04      1IGD 444
+ATOM    328  CB  VAL    44       7.549  37.341  16.164  1.00 11.29      1IGD 445
+ATOM    329  CG1 VAL    44       8.783  36.888  16.944  1.00 13.90      1IGD 446
+ATOM    330  CG2 VAL    44       6.365  37.553  17.093  1.00 11.81      1IGD 447
+ATOM    331  N   ASP    45      10.165  39.207  14.885  1.00 11.76      1IGD 448
+ATOM    332  CA  ASP    45      11.491  39.241  14.239  1.00 13.78      1IGD 449
+ATOM    333  C   ASP    45      12.534  38.996  15.353  1.00 14.77      1IGD 450
+ATOM    334  O   ASP    45      12.965  39.983  16.008  1.00 16.91      1IGD 451
+ATOM    335  CB  ASP    45      11.722  40.577  13.530  1.00 19.72      1IGD 452
+ATOM    336  CG  ASP    45      13.115  40.591  12.892  1.00 44.17      1IGD 453
+ATOM    337  OD1 ASP    45      13.618  39.538  12.428  1.00 38.42      1IGD 454
+ATOM    338  OD2 ASP    45      13.700  41.709  12.887  1.00 49.08      1IGD 455
+ATOM    339  N   GLY    46      12.863  37.728  15.575  1.00 11.48      1IGD 456
+ATOM    340  CA  GLY    46      13.803  37.441  16.684  1.00 10.92      1IGD 457
+ATOM    341  C   GLY    46      14.896  36.459  16.241  1.00  8.85      1IGD 458
+ATOM    342  O   GLY    46      15.101  36.213  15.048  1.00 10.67      1IGD 459
+ATOM    343  N   VAL    47      15.543  35.929  17.254  1.00  6.62      1IGD 460
+ATOM    344  CA  VAL    47      16.613  34.921  17.021  1.00  6.35      1IGD 461
+ATOM    345  C   VAL    47      16.031  33.594  17.523  1.00  6.30      1IGD 462
+ATOM    346  O   VAL    47      15.213  33.568  18.443  1.00  6.66      1IGD 463
+ATOM    347  CB  VAL    47      17.954  35.327  17.632  1.00  9.12      1IGD 464
+ATOM    348  CG1 VAL    47      18.467  36.613  16.988  1.00 11.76      1IGD 465
+ATOM    349  CG2 VAL    47      17.848  35.476  19.130  1.00 10.98      1IGD 466
+ATOM    350  N   TRP    48      16.500  32.538  16.886  1.00  5.29      1IGD 467
+ATOM    351  CA  TRP    48      15.962  31.210  17.099  1.00  5.23      1IGD 468
+ATOM    352  C   TRP    48      16.922  30.140  17.555  1.00  4.95      1IGD 469
+ATOM    353  O   TRP    48      18.097  30.172  17.163  1.00  5.30      1IGD 470
+ATOM    354  CB  TRP    48      15.496  30.747  15.675  1.00  5.85      1IGD 471
+ATOM    355  CG  TRP    48      14.357  31.539  15.133  1.00  6.51      1IGD 472
+ATOM    356  CD1 TRP    48      14.366  32.807  14.617  1.00  8.19      1IGD 473
+ATOM    357  CD2 TRP    48      12.994  31.076  15.031  1.00  6.47      1IGD 474
+ATOM    358  NE1 TRP    48      13.094  33.165  14.216  1.00  8.64      1IGD 475
+ATOM    359  CE2 TRP    48      12.248  32.131  14.468  1.00  7.73      1IGD 476
+ATOM    360  CE3 TRP    48      12.350  29.885  15.385  1.00  7.72      1IGD 477
+ATOM    361  CZ2 TRP    48      10.875  32.006  14.234  1.00  9.68      1IGD 478
+ATOM    362  CZ3 TRP    48      10.988  29.766  15.146  1.00 10.22      1IGD 479
+ATOM    363  CH2 TRP    48      10.276  30.823  14.589  1.00  9.66      1IGD 480
+ATOM    364  N   THR    49      16.360  29.206  18.301  1.00  4.56      1IGD 481
+ATOM    365  CA  THR    49      17.087  27.992  18.645  1.00  5.24      1IGD 482
+ATOM    366  C   THR    49      16.169  26.802  18.280  1.00  5.12      1IGD 483
+ATOM    367  O   THR    49      14.924  26.934  18.203  1.00  5.79      1IGD 484
+ATOM    368  CB  THR    49      17.537  27.817  20.128  1.00  6.10      1IGD 485
+ATOM    369  OG1 THR    49      16.342  27.788  20.967  1.00  6.20      1IGD 486
+ATOM    370  CG2 THR    49      18.477  28.934  20.577  1.00  6.81      1IGD 487
+ATOM    371  N   TYR    50      16.806  25.668  18.098  1.00  5.46      1IGD 488
+ATOM    372  CA  TYR    50      16.092  24.419  17.890  1.00  5.26      1IGD 489
+ATOM    373  C   TYR    50      16.829  23.372  18.745  1.00  6.42      1IGD 490
+ATOM    374  O   TYR    50      18.078  23.278  18.656  1.00  5.98      1IGD 491
+ATOM    375  CB  TYR    50      15.992  24.002  16.427  1.00  7.00      1IGD 492
+ATOM    376  CG  TYR    50      15.370  22.623  16.325  1.00  6.65      1IGD 493
+ATOM    377  CD1 TYR    50      14.065  22.404  16.751  1.00  6.60      1IGD 494
+ATOM    378  CD2 TYR    50      16.119  21.553  15.833  1.00  9.49      1IGD 495
+ATOM    379  CE1 TYR    50      13.492  21.143  16.687  1.00  8.49      1IGD 496
+ATOM    380  CE2 TYR    50      15.565  20.266  15.783  1.00 10.05      1IGD 497
+ATOM    381  CZ  TYR    50      14.255  20.093  16.200  1.00  9.56      1IGD 498
+ATOM    382  OH  TYR    50      13.721  18.824  16.146  1.00 12.65      1IGD 499
+ATOM    383  N   ASP    51      16.090  22.627  19.536  1.00  5.69      1IGD 500
+ATOM    384  CA  ASP    51      16.668  21.546  20.354  1.00  6.92      1IGD 501
+ATOM    385  C   ASP    51      16.039  20.246  19.822  1.00  7.56      1IGD 502
+ATOM    386  O   ASP    51      14.832  20.019  20.018  1.00  7.87      1IGD 503
+ATOM    387  CB  ASP    51      16.408  21.716  21.832  1.00  9.48      1IGD 504
+ATOM    388  CG  ASP    51      17.122  20.602  22.584  1.00 16.64      1IGD 505
+ATOM    389  OD1 ASP    51      17.252  19.460  22.134  1.00 20.65      1IGD 506
+ATOM    390  OD2 ASP    51      17.626  20.953  23.675  1.00 23.29      1IGD 507
+ATOM    391  N   ASP    52      16.848  19.450  19.166  1.00  7.77      1IGD 508
+ATOM    392  CA  ASP    52      16.351  18.192  18.597  1.00  8.34      1IGD 509
+ATOM    393  C   ASP    52      15.986  17.196  19.695  1.00 11.03      1IGD 510
+ATOM    394  O   ASP    52      15.162  16.288  19.424  1.00 13.68      1IGD 511
+ATOM    395  CB  ASP    52      17.364  17.672  17.571  1.00 11.90      1IGD 512
+ATOM    396  CG  ASP    52      16.709  16.645  16.646  1.00 25.01      1IGD 513
+ATOM    397  OD1 ASP    52      15.696  16.847  15.951  1.00 18.43      1IGD 514
+ATOM    398  OD2 ASP    52      17.283  15.527  16.642  1.00 29.01      1IGD 515
+ATOM    399  N   ALA    53      16.496  17.340  20.896  1.00  8.62      1IGD 516
+ATOM    400  CA  ALA    53      16.176  16.397  21.979  1.00 14.44      1IGD 517
+ATOM    401  C   ALA    53      14.747  16.552  22.476  1.00 14.14      1IGD 518
+ATOM    402  O   ALA    53      14.131  15.568  22.916  1.00 16.20      1IGD 519
+ATOM    403  CB  ALA    53      17.150  16.581  23.144  1.00 13.97      1IGD 520
+ATOM    404  N   THR    54      14.247  17.781  22.454  1.00  9.22      1IGD 521
+ATOM    405  CA  THR    54      12.898  18.078  22.954  1.00  8.53      1IGD 522
+ATOM    406  C   THR    54      11.973  18.503  21.815  1.00  7.53      1IGD 523
+ATOM    407  O   THR    54      10.808  18.834  22.151  1.00 10.77      1IGD 524
+ATOM    408  CB  THR    54      12.953  19.159  24.094  1.00 11.38      1IGD 525
+ATOM    409  OG1 THR    54      13.487  20.373  23.453  1.00 11.67      1IGD 526
+ATOM    410  CG2 THR    54      13.807  18.759  25.311  1.00 16.48      1IGD 527
+ATOM    411  N   LYS    55      12.427  18.520  20.600  1.00  6.34      1IGD 528
+ATOM    412  CA  LYS    55      11.639  18.921  19.437  1.00  7.33      1IGD 529
+ATOM    413  C   LYS    55      10.991  20.299  19.680  1.00  6.72      1IGD 530
+ATOM    414  O   LYS    55       9.804  20.521  19.359  1.00  7.48      1IGD 531
+ATOM    415  CB  LYS    55      10.545  17.901  19.148  1.00  7.91      1IGD 532
+ATOM    416  CG  LYS    55      11.041  16.461  19.153  1.00 11.18      1IGD 533
+ATOM    417  CD  LYS    55      12.047  16.224  18.047  1.00 11.41      1IGD 534
+ATOM    418  CE  LYS    55      12.677  14.830  18.243  1.00 14.27      1IGD 535
+ATOM    419  NZ  LYS    55      13.656  14.637  17.145  1.00 19.11      1IGD 536
+ATOM    420  N   THR    56      11.787  21.198  20.239  1.00  5.74      1IGD 537
+ATOM    421  CA  THR    56      11.328  22.535  20.573  1.00  5.13      1IGD 538
+ATOM    422  C   THR    56      12.160  23.631  19.938  1.00  4.97      1IGD 539
+ATOM    423  O   THR    56      13.399  23.590  20.046  1.00  5.48      1IGD 540
+ATOM    424  CB  THR    56      11.362  22.754  22.137  1.00  7.71      1IGD 541
+ATOM    425  OG1 THR    56      10.526  21.739  22.738  1.00  9.31      1IGD 542
+ATOM    426  CG2 THR    56      10.861  24.144  22.546  1.00  8.87      1IGD 543
+ATOM    427  N   PHE    57      11.462  24.554  19.322  1.00  4.28      1IGD 544
+ATOM    428  CA  PHE    57      12.045  25.743  18.732  1.00  4.37      1IGD 545
+ATOM    429  C   PHE    57      11.731  26.871  19.731  1.00  4.82      1IGD 546
+ATOM    430  O   PHE    57      10.666  26.862  20.380  1.00  5.31      1IGD 547
+ATOM    431  CB  PHE    57      11.378  26.122  17.433  1.00  5.52      1IGD 548
+ATOM    432  CG  PHE    57      11.604  25.180  16.309  1.00  5.42      1IGD 549
+ATOM    433  CD1 PHE    57      10.849  24.019  16.185  1.00  6.79      1IGD 550
+ATOM    434  CD2 PHE    57      12.609  25.477  15.381  1.00  7.06      1IGD 551
+ATOM    435  CE1 PHE    57      11.061  23.145  15.101  1.00  7.40      1IGD 552
+ATOM    436  CE2 PHE    57      12.830  24.626  14.309  1.00  8.91      1IGD 553
+ATOM    437  CZ  PHE    57      12.041  23.473  14.167  1.00  8.91      1IGD 554
+ATOM    438  N   THR    58      12.642  27.843  19.793  1.00  4.59      1IGD 555
+ATOM    439  CA  THR    58      12.395  28.995  20.670  1.00  5.03      1IGD 556
+ATOM    440  C   THR    58      12.729  30.232  19.863  1.00  5.47      1IGD 557
+ATOM    441  O   THR    58      13.756  30.217  19.167  1.00  7.25      1IGD 558
+ATOM    442  CB  THR    58      13.293  28.964  21.969  1.00  6.16      1IGD 559
+ATOM    443  OG1 THR    58      13.107  27.674  22.595  1.00  7.14      1IGD 560
+ATOM    444  CG2 THR    58      12.990  30.110  22.945  1.00  6.18      1IGD 561
+ATOM    445  N   VAL    59      11.924  31.261  19.956  1.00  5.23      1IGD 562
+ATOM    446  CA  VAL    59      12.220  32.534  19.296  1.00  5.94      1IGD 563
+ATOM    447  C   VAL    59      12.118  33.635  20.362  1.00  5.68      1IGD 564
+ATOM    448  O   VAL    59      11.153  33.673  21.151  1.00  7.43      1IGD 565
+ATOM    449  CB  VAL    59      11.310  32.842  18.115  1.00  7.18      1IGD 566
+ATOM    450  CG1 VAL    59       9.819  32.884  18.502  1.00  7.95      1IGD 567
+ATOM    451  CG2 VAL    59      11.746  34.150  17.452  1.00  8.12      1IGD 568
+ATOM    452  N   THR    60      13.113  34.500  20.369  1.00  5.84      1IGD 569
+ATOM    453  CA  THR    60      13.100  35.625  21.294  1.00  6.83      1IGD 570
+ATOM    454  C   THR    60      13.388  36.905  20.513  1.00  7.85      1IGD 571
+ATOM    455  O   THR    60      14.208  36.963  19.588  1.00  9.72      1IGD 572
+ATOM    456  CB  THR    60      14.118  35.480  22.499  1.00 10.78      1IGD 573
+ATOM    457  OG1 THR    60      13.929  36.657  23.355  1.00 10.48      1IGD 574
+ATOM    458  CG2 THR    60      15.580  35.352  22.087  1.00 10.01      1IGD 575
+ATOM    459  N   GLU    61      12.695  37.944  20.927  1.00  8.60      1IGD 576
+ATOM    460  CA  GLU    61      12.905  39.298  20.415  1.00  9.61      1IGD 577
+ATOM    461  C   GLU    61      13.685  40.031  21.510  1.00 14.91      1IGD 578
+ATOM    462  O   GLU    61      14.015  39.414  22.535  1.00 16.51      1IGD 579
+ATOM    463  CB  GLU    61      11.616  40.059  20.142  1.00 10.98      1IGD 580
+ATOM    464  CG  GLU    61      10.955  39.530  18.861  1.00 12.85      1IGD 581
+ATOM    465  CD  GLU    61       9.702  40.297  18.502  1.00 12.29      1IGD 582
+ATOM    466  OE1 GLU    61       8.785  40.414  19.291  1.00 17.53      1IGD 583
+ATOM    467  OE2 GLU    61       9.778  40.731  17.350  1.00 14.05      1IGD 584
+ATOM    468  OXT GLU    61      13.953  41.227  21.322  1.00 21.76      1IGD 585
+TER     469      GLU    61                                              1IGD 586
+HETATM  470  O   HOH     1       3.533   7.434   3.610  1.00 10.56      1IGD 587
+HETATM  471  O   HOH     2       1.363   8.790   2.274  1.00  9.30      1IGD 588
+HETATM  472  O   HOH     3       0.944  11.640   2.494  1.00  9.40      1IGD 589
+HETATM  473  O   HOH     4       8.404  12.409  12.568  1.00 26.52      1IGD 590
+HETATM  474  O   HOH     5       7.557   7.966   7.830  1.00 29.16      1IGD 591
+HETATM  475  O   HOH     6       2.166  15.834   7.751  1.00 15.11      1IGD 592
+HETATM  476  O   HOH     7       4.522  17.262   7.495  1.00 13.34      1IGD 593
+HETATM  477  O   HOH     8       6.088  18.202   5.948  1.00 83.80      1IGD 594
+HETATM  478  O   HOH     9       7.258  18.100   4.245  1.00 17.88      1IGD 595
+HETATM  479  O   HOH    10       2.024  13.260   4.414  1.00 12.84      1IGD 596
+HETATM  480  O   HOH    11       1.847  15.567   2.841  1.00 16.55      1IGD 597
+HETATM  481  O   HOH    12       1.263  13.217   7.159  1.00 11.66      1IGD 598
+HETATM  482  O   HOH    13       0.793  11.112   8.751  1.00 13.09      1IGD 599
+HETATM  483  O   HOH    14       2.383  13.126  16.389  1.00 43.46      1IGD 600
+HETATM  484  O   HOH    15      14.083  16.194  11.418  1.00 22.17      1IGD 601
+HETATM  485  O   HOH    16       7.448  19.037  21.331  1.00 29.66      1IGD 602
+HETATM  486  O   HOH    17       7.396  19.474  25.242  1.00 36.36      1IGD 603
+HETATM  487  O   HOH    18      12.625  26.746  25.131  1.00 12.04      1IGD 604
+HETATM  488  O   HOH    19       6.953  31.830  26.369  1.00 20.58      1IGD 605
+HETATM  489  O   HOH    20       7.375  42.230  17.435  1.00 21.20      1IGD 606
+HETATM  490  O   HOH    21       5.874  40.244  19.548  1.00 15.91      1IGD 607
+HETATM  491  O   HOH    22       2.173  39.254  25.444  1.00 27.06      1IGD 608
+HETATM  492  O   HOH    23       3.987  21.707  10.402  1.00 15.26      1IGD 609
+HETATM  493  O   HOH    24       8.498  29.676   6.359  1.00 20.63      1IGD 610
+HETATM  494  O   HOH    25      14.340  33.310  10.582  1.00 49.19      1IGD 611
+HETATM  495  O   HOH    26       0.823  31.324   9.959  1.00 17.76      1IGD 612
+HETATM  496  O   HOH    27      11.886  35.708  13.528  1.00 26.52      1IGD 613
+HETATM  497  O   HOH    28      18.305  33.140  14.636  1.00 15.84      1IGD 614
+HETATM  498  O   HOH    29      17.332  37.253  13.260  1.00 61.95      1IGD 615
+HETATM  499  O   HOH    30      15.599  40.675  17.408  1.00 36.81      1IGD 616
+HETATM  500  O   HOH    31      17.616  40.483  15.942  1.00 47.85      1IGD 617
+HETATM  501  O   HOH    32      16.573  39.686  13.805  1.00 56.61      1IGD 618
+HETATM  502  O   HOH    33      10.372  34.296  11.014  1.00 30.03      1IGD 619
+HETATM  503  O   HOH    34      20.101  35.715  13.712  1.00 29.55      1IGD 620
+HETATM  504  O   HOH    35      17.568  42.738  12.937  1.00 48.97      1IGD 621
+HETATM  505  O   HOH    36      16.231  31.989  20.737  1.00  8.29      1IGD 622
+HETATM  506  O   HOH    37      15.551  27.075  14.588  1.00 40.01      1IGD 623
+HETATM  507  O   HOH    38      14.747  25.618  21.479  1.00  7.69      1IGD 624
+HETATM  508  O   HOH    39       1.316   9.416  12.471  1.00 45.23      1IGD 625
+HETATM  509  O   HOH    40       3.349  -0.674   6.766  1.00 33.31      1IGD 626
+HETATM  510  O   HOH    41       4.820  -3.240   4.709  1.00 69.34      1IGD 627
+HETATM  511  O   HOH    42      -2.290   8.676  10.949  1.00 21.60      1IGD 628
+HETATM  512  O   HOH    43       0.224   3.672   8.665  1.00 26.49      1IGD 629
+HETATM  513  O   HOH    44       5.383  13.880  18.710  1.00 25.15      1IGD 630
+HETATM  514  O   HOH    45      10.782  12.564  15.832  1.00 48.33      1IGD 631
+HETATM  515  O   HOH    46      12.061  13.160  11.516  1.00 38.25      1IGD 632
+HETATM  516  O   HOH    47      15.296  12.866  10.306  1.00 83.47      1IGD 633
+HETATM  517  O   HOH    48      12.740  15.741  14.548  1.00 20.91      1IGD 634
+HETATM  518  O   HOH    49       7.476   6.059  14.487  1.00 53.28      1IGD 635
+HETATM  519  O   HOH    50       3.079  43.867  18.114  1.00 60.58      1IGD 636
+HETATM  520  O   HOH    51       2.257  40.584  17.863  1.00 48.60      1IGD 637
+HETATM  521  O   HOH    52      12.153  42.496  17.291  1.00 51.53      1IGD 638
+HETATM  522  O   HOH    53       2.188  28.582  26.752  1.00 38.96      1IGD 639
+HETATM  523  O   HOH    54       1.450  30.361  27.627  1.00 27.73      1IGD 640
+HETATM  524  O   HOH    55      -0.672  21.425  22.479  1.00 33.60      1IGD 641
+HETATM  525  O   HOH    56      -2.417  17.993  23.056  1.00 41.00      1IGD 642
+HETATM  526  O   HOH    57       5.120  16.314   4.823  1.00 17.21      1IGD 643
+HETATM  527  O   HOH    58       1.508  17.408   9.738  1.00 39.18      1IGD 644
+HETATM  528  O   HOH    59       3.115  18.063   4.022  1.00 20.14      1IGD 645
+HETATM  529  O   HOH    60       3.092  19.498   7.491  1.00 22.77      1IGD 646
+HETATM  530  O   HOH    61      14.595  18.113   8.994  1.00 22.75      1IGD 647
+HETATM  531  O   HOH    62       5.688  23.814   6.808  1.00 14.38      1IGD 648
+HETATM  532  O   HOH    63       3.567  22.448   7.670  1.00 17.17      1IGD 649
+HETATM  533  O   HOH    64      11.629  29.819   6.335  1.00 31.85      1IGD 650
+HETATM  534  O   HOH    65      16.376  24.677  12.816  1.00 46.18      1IGD 651
+HETATM  535  O   HOH    66       9.382  37.959  10.842  1.00 45.55      1IGD 652
+HETATM  536  O   HOH    67      18.459  26.500  14.870  1.00 22.71      1IGD 653
+HETATM  537  O   HOH    68      14.728  12.858  22.538  1.00 56.37      1IGD 654
+HETATM  538  O   HOH    69       2.529   0.566   3.849  1.00 36.92      1IGD 655
+HETATM  539  O   HOH    70       0.445   0.769   8.329  1.00 28.39      1IGD 656
+HETATM  540  O   HOH    71       7.655   0.328   4.770  1.00 76.50      1IGD 657
+HETATM  541  O   HOH    72       7.338  15.394  20.378  1.00 27.59      1IGD 658
+HETATM  542  O   HOH    73       4.891  18.759  22.485  1.00 42.99      1IGD 659
+HETATM  543  O   HOH    74       4.044  29.918  27.951  1.00 68.03      1IGD 660
+HETATM  544  O   HOH    75       0.477  20.481   9.675  1.00 43.70      1IGD 661
+HETATM  545  O   HOH    76      16.813  19.180   9.988  1.00 64.50      1IGD 662
+HETATM  546  O   HOH    77       6.707  29.076   4.622  1.00 49.01      1IGD 663
+HETATM  547  O   HOH    78       6.056  26.724   1.670  1.00 61.54      1IGD 664
+HETATM  548  O   HOH    79       1.403  25.037  11.927  1.00 55.11      1IGD 665
+HETATM  549  O   HOH    80       7.535  39.373   8.883  1.00 60.17      1IGD 666
+HETATM  550  O   HOH    81       1.944  40.527   9.344  1.00 38.28      1IGD 667
+HETATM  551  O   HOH    82       6.013  44.668  11.628  1.00 73.53      1IGD 668
+HETATM  552  O   HOH    83       3.474  42.342  10.246  1.00 55.56      1IGD 669
+HETATM  553  O   HOH    84       4.658  40.748  17.433  1.00 37.79      1IGD 670
+HETATM  554  O   HOH    85      13.031  37.738   9.877  1.00 66.94      1IGD 671
+HETATM  555  O   HOH    86      16.311  13.220  15.267  1.00 51.11      1IGD 672
+HETATM  556  O   HOH    87       6.743   9.701  15.209  1.00 43.13      1IGD 673
+HETATM  557  O   HOH    88      -0.376  12.482  14.836  1.00 31.62      1IGD 674
+HETATM  558  O   HOH    89       0.434   5.127  11.624  1.00 71.44      1IGD 675
+HETATM  559  O   HOH    90       9.829  43.115  15.467  1.00 51.13      1IGD 676
+HETATM  560  O   HOH    91       6.310  33.773  28.793  1.00 65.14      1IGD 677
+HETATM  561  O   HOH    92      19.529  17.475  14.097  1.00 42.40      1IGD 678
+HETATM  562  O   HOH    93      16.556  17.771  12.889  1.00 40.64      1IGD 679
+HETATM  563  O   HOH    94      19.700  12.475  14.704  1.00 72.21      1IGD 680
+HETATM  564  O   HOH    95       2.474  35.297   3.299  1.00 77.74      1IGD 681
+HETATM  565  O   HOH    96       5.478  43.521  14.595  1.00 44.07      1IGD 682
+HETATM  566  O   HOH    97      -2.158   7.313  13.529  1.00 37.83      1IGD 683
+HETATM  567  O   HOH    98       8.588  10.465   8.991  1.00 43.81      1IGD 684
+HETATM  568  O   HOH    99       0.539   0.067   1.651  1.00 31.72      1IGD 685
+HETATM  569  O   HOH   100       9.290  14.623  12.808  1.00 40.29      1IGD 686
+HETATM  570  O   HOH   101       7.960  35.831  27.588  1.00 37.38      1IGD 687
+HETATM  571  O   HOH   102      11.120  39.941  27.801  1.00 72.87      1IGD 688
+HETATM  572  O   HOH   103       8.898  38.503  29.490  1.00 74.54      1IGD 689
+HETATM  573  O   HOH   104       9.182  37.551  26.163  1.00 41.01      1IGD 690
+HETATM  574  O   HOH   105      11.552  39.268  24.873  1.00 37.17      1IGD 691
+HETATM  575  O   HOH   106       2.211  20.428  22.830  1.00 64.45      1IGD 692
+HETATM  576  O   HOH   107       4.902  26.462   5.538  1.00 60.84      1IGD 693
+HETATM  577  O   HOH   108       1.399  19.085   5.695  1.00 43.65      1IGD 694
+HETATM  578  O   HOH   109      13.412  25.063   7.224  1.00 31.17      1IGD 695
+HETATM  579  O   HOH   110      18.195  14.442  12.693  1.00 72.69      1IGD 696
+HETATM  580  O   HOH   111      17.866  20.909  13.137  1.00 72.18      1IGD 697
+HETATM  581  O   HOH   112      15.492  22.569  10.240  1.00 42.65      1IGD 698
+HETATM  582  O   HOH   113       8.676  32.888   6.878  1.00 46.06      1IGD 699
+HETATM  583  O   HOH   114      12.239  34.977   9.660  1.00 51.64      1IGD 700
+HETATM  584  O   HOH   115      16.923  29.385  12.319  1.00 47.02      1IGD 701
+HETATM  585  O   HOH   116      16.762  32.719  12.074  1.00 59.93      1IGD 702
+HETATM  586  O   HOH   117      22.008  32.986  12.243  1.00 54.70      1IGD 703
+HETATM  587  O   HOH   118       1.020  24.027   6.215  1.00 51.47      1IGD 704
+HETATM  588  O   HOH   119       2.624  45.545  10.835  1.00 55.58      1IGD 705
+HETATM  589  O   HOH   120      16.665  22.966  24.809  1.00 45.26      1IGD 706
+MASTER       90    0    0    0    0    0    0    6  588    1    0    5  1IGD 707
+END                                                                     1IGD 708

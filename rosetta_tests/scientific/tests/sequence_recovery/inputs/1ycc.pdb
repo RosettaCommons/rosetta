@@ -1,0 +1,1186 @@
+HEADER    ELECTRON TRANSPORT (CYTOCHROME)         09-MAY-90   1YCC      1YCC   2
+COMPND    CYTOCHROME C (ISOZYME 1) (REDUCED)                            1YCC   3
+SOURCE    BAKER'S YEAST (SACCHAROMYCES $CEREVISIAE)                     1YCC   4
+AUTHOR    G.V.LOUIE,G.D.BRAYER                                          1YCC   5
+REVDAT   2   15-JAN-93 1YCCA   1       SEQRES                           1YCCA  1
+REVDAT   1   15-JUL-91 1YCC    0                                        1YCC   6
+JRNL        AUTH   G.V.LOUIE,G.D.BRAYER                                 1YCC   7
+JRNL        TITL   HIGH-RESOLUTION REFINEMENT OF YEAST                  1YCC   8
+JRNL        TITL 2 ISO-1-*CYTOCHROME $C AND COMPARISONS WITH OTHER      1YCC   9
+JRNL        TITL 3 EUKARYOTIC CYTOCHROMES $C                            1YCC  10
+JRNL        REF    J.MOL.BIOL.                   V. 214   527 1990      1YCC  11
+JRNL        REFN   ASTM JMOBAK  UK ISSN 0022-2836                  070  1YCC  12
+REMARK   1                                                              1YCC  13
+REMARK   1 REFERENCE 1                                                  1YCC  14
+REMARK   1  AUTH   G.V.LOUIE,G.D.BRAYER                                 1YCC  15
+REMARK   1  TITL   A POLYPEPTIDE CHAIN-REFOLDING EVENT OCCURS IN THE    1YCC  16
+REMARK   1  TITL 2 GLY82 VARIANT OF YEAST ISO-1-CYTOCHROME $C           1YCC  17
+REMARK   1  REF    J.MOL.BIOL.                   V. 210   313 1989      1YCC  18
+REMARK   1  REFN   ASTM JMOBAK  UK ISSN 0022-2836                  070  1YCC  19
+REMARK   1 REFERENCE 2                                                  1YCC  20
+REMARK   1  AUTH   G.V.LOUIE,W.L.B.HUTCHEON,G.D.BRAYER                  1YCC  21
+REMARK   1  TITL   YEAST ISO-1-*CYTOCHROME $C. A 2.8 ANGSTROM           1YCC  22
+REMARK   1  TITL 2 RESOLUTION THREE-DIMENSIONAL STRUCTURE               1YCC  23
+REMARK   1  TITL 3 DETERMINATION.                                       1YCC  24
+REMARK   1  REF    J.MOL.BIOL.                   V. 199   295 1988      1YCC  25
+REMARK   1  REFN   ASTM JMOBAK  UK ISSN 0022-2836                  070  1YCC  26
+REMARK   1 REFERENCE 3                                                  1YCC  27
+REMARK   1  AUTH   G.V.LOUIE,G.J.PIELAK,M.SMITH,G.D.BRAYER              1YCC  28
+REMARK   1  TITL   ROLE OF PHENYLALANINE-82 IN YEAST                    1YCC  29
+REMARK   1  TITL 2 ISO-1-CYTOCHROME $C AND REMOTE CONFORMATIONAL        1YCC  30
+REMARK   1  TITL 3 CHANGES INDUCED BY A SERINE RESIDUE AT THIS          1YCC  31
+REMARK   1  TITL 4 POSITION                                             1YCC  32
+REMARK   1  REF    BIOCHEMISTRY                  V.  27  7870 1988      1YCC  33
+REMARK   1  REFN   ASTM BICHAW  US ISSN 0006-2960                  033  1YCC  34
+REMARK   2                                                              1YCC  35
+REMARK   2 RESOLUTION. 1.23 ANGSTROMS.                                  1YCC  36
+REMARK   3                                                              1YCC  37
+REMARK   3 REFINEMENT. BY THE RESTRAINED LEAST-SQUARES PROCEDURE OF J.  1YCC  38
+REMARK   3  KONNERT AND W. HENDRICKSON (PROGRAM *PROLSQ*).  THE R       1YCC  39
+REMARK   3  VALUE IS 0.192.  THE STRUCTURE WAS REFINED WITH HYDROGEN    1YCC  40
+REMARK   3  ATOMS IN PLACE BUT THEY ARE NOT INCLUDED IN THIS ENTRY.     1YCC  41
+REMARK   3                                                              1YCC  42
+REMARK   3  RMS DEVIATIONS FROM IDEAL VALUES (THE VALUES OF             1YCC  43
+REMARK   3      SIGMA, IN PARENTHESES, ARE THE INPUT ESTIMATED          1YCC  44
+REMARK   3      STANDARD DEVIATIONS THAT DETERMINE THE RELATIVE         1YCC  45
+REMARK   3      WEIGHTS OF THE CORRESPONDING RESTRAINTS)                1YCC  46
+REMARK   3    DISTANCE RESTRAINTS (ANGSTROMS)                           1YCC  47
+REMARK   3      BOND DISTANCE                            0.026(0.020)   1YCC  48
+REMARK   3      ANGLE DISTANCE                           0.050(0.030)   1YCC  49
+REMARK   3      PLANAR 1-4 DISTANCE                      0.062(0.050)   1YCC  50
+REMARK   3    PLANE RESTRAINT (ANGSTROMS)                0.024(0.020)   1YCC  51
+REMARK   3    CHIRAL-CENTER RESTRAINT (ANGSTROMS**3)     0.179(0.150)   1YCC  52
+REMARK   3    NON-BONDED CONTACT RESTRAINTS (ANGSTROMS)                 1YCC  53
+REMARK   3      SINGLE TORSION CONTACT                   0.173(0.250)   1YCC  54
+REMARK   3      MULTIPLE TORSION CONTACT                 0.185(0.250)   1YCC  55
+REMARK   3      POSSIBLE HYDROGEN BOND                   0.261(0.250)   1YCC  56
+REMARK   3    CONFORMATIONAL TORSION ANGLE RESTRAINT (DEGREES)          1YCC  57
+REMARK   3      PLANAR (OMEGA)                             4.3(3.0)     1YCC  58
+REMARK   3      STAGGERED                                 19.3(19.0)    1YCC  59
+REMARK   3    ISOTROPIC THERMAL FACTOR RESTRAINTS (ANGSTROMS**2)        1YCC  60
+REMARK   3      MAIN-CHAIN BOND                            1.7(1.20)    1YCC  61
+REMARK   3      MAIN-CHAIN ANGLE                           2.3(1.50)    1YCC  62
+REMARK   3      SIDE-CHAIN BOND                            2.9(1.70)    1YCC  63
+REMARK   3      SIDE-CHAIN ANGLE                           4.4(2.00)    1YCC  64
+REMARK   4                                                              1YCC  65
+REMARK   4 THE AMINO ACID NUMBERING SCHEME IS BASED ON AN ALIGNMENT TO  1YCC  66
+REMARK   4 THE SEQUENCE OF VERTEBRATE CYTOCHROME C'S.  THE N-TERMINAL   1YCC  67
+REMARK   4 RESIDUE IS NUMBERED -5 AND THE C-TERMINAL RESIDUE IS         1YCC  68
+REMARK   4 NUMBERED 103.                                                1YCC  69
+REMARK   5                                                              1YCC  70
+REMARK   5 RESIDUE 72 IS EPSILON-N-TRIMETHYLLYSINE.  THE THREE METHYL   1YCC  71
+REMARK   5 CARBONS FOR THIS RESIDUE ARE PRESENT AS HETATMS WITH         1YCC  72
+REMARK   5 RESIDUE NAME TML (FOLLOWING THE HEME).  RESIDUE 72 IS        1YCC  73
+REMARK   5 IDENTIFIED AS LYS ON THE ATOM AND SEQRES RECORDS.            1YCC  74
+REMARK   6                                                              1YCC  75
+REMARK   6 COMPLETE HYDROGEN BONDING AND WATER NETWORK TABLES ARE       1YCC  76
+REMARK   6 GIVEN IN THE PAPER CITED ON THE 'JRNL' RECORDS ABOVE.        1YCC  77
+REMARK   7                                                              1YCCA  2
+REMARK   7 CORRECTION. INSERT MISSING RESIDUE IN SEQRES RECORDS.        1YCCA  3
+REMARK   7  15-JAN-93.                                                  1YCCA  4
+SEQRES   1    107  THR GLU PHE LYS ALA GLY SER ALA LYS LYS GLY ALA THR  1YCC  78
+SEQRES   2    107  LEU PHE LYS THR ARG CYS LEU GLN CYS HIS THR VAL GLU  1YCC  79
+SEQRES   3    107  LYS GLY GLY PRO HIS LYS VAL GLY PRO ASN LEU HIS GLY  1YCC  80
+SEQRES   4    107  ILE PHE GLY ARG HIS SER GLY GLN ALA GLU GLY TYR SER  1YCC  81
+SEQRES   5    107  TYR THR ASP ALA ASN ILE LYS LYS ASN VAL LEU TRP ASP  1YCC  82
+SEQRES   6    107  GLU ASN ASN MET SER GLU TYR LEU THR ASN PRO LYS LYS  1YCCA  5
+SEQRES   7    107  TYR ILE PRO GLY THR LYS MET ALA PHE GLY GLY LEU LYS  1YCCA  6
+SEQRES   8    107  LYS GLU LYS ASP ARG ASN ASP LEU ILE THR TYR LEU LYS  1YCCA  7
+SEQRES   9    107  LYS ALA CYS GLU                                      1YCCA  8
+FTNOTE   1                                                              1YCC  87
+FTNOTE   1 RESIDUE LYS 72 AND TML 72 FORM EPSILON-N-TRIMETHYLLYSINE.    1YCC  88
+FTNOTE   1 SEE REMARK 5 ABOVE.                                          1YCC  89
+HET    HEM      1      43     IRON PROTOPROPHYRIN IX                    1YCC  90
+HET    TML     72       3     METHYL PART OF EPS-N-TRIMETHYLLYSINE 72   1YCC  91
+HET    SO4    117       5     SULFATE GROUP                             1YCC  92
+FORMUL   2  HEM    C34 H32 N4 O4 FE1 ++                                 1YCC  93
+FORMUL   3  TML    C3 H9                                                1YCC  94
+FORMUL   4  SO4    O4 S1                                                1YCC  95
+FORMUL   5  HOH   *116(H2 O1)                                           1YCC  96
+HELIX    1  NT SER      2  CYS     14  1                                1YCC  97
+HELIX    2  50 THR     49  LYS     55  1                                1YCC  98
+HELIX    3  60 ASP     60  ASN     70  1                                1YCC  99
+HELIX    4  70 ASN     70  ILE     75  1                                1YCC 100
+HELIX    5  CT LYS     87  CYS    102  1                                1YCC 101
+SHEET    1 CYT 2 GLY    37  SER    40  0                                1YCC 102
+SHEET    2 CYT 2 VAL    57  TRP    59 -1  O  VAL    57   N  SER    40   1YCC 103
+TURN     1  T1 GLU    21  GLY    24     TYPE II                         1YCC 104
+TURN     2  T2 LYS    27  GLY    29     REVERSED CLASSICAL GAMMA TURN   1YCC 105
+TURN     3  T3 LEU    32  ILE    35     TYPE II                         1YCC 106
+TURN     4  T4 ILE    35  ARG    38     TYPE II                         1YCC 107
+TURN     5  T5 ALA    43  TYR    46     TYPE II (DISTORTED)             1YCC 108
+TURN     6  T6 ILE    75  THR    78     TYPE II                         1YCC 109
+CRYST1   36.460   36.460  136.860  90.00  90.00  90.00 P 43 21 2     8  1YCC 110
+ORIGX1      1.000000  0.000000  0.000000        0.00000                 1YCC 111
+ORIGX2      0.000000  1.000000  0.000000        0.00000                 1YCC 112
+ORIGX3      0.000000  0.000000  1.000000        0.00000                 1YCC 113
+SCALE1      0.027427  0.000000  0.000000        0.00000                 1YCC 114
+SCALE2      0.000000  0.027427  0.000000        0.00000                 1YCC 115
+SCALE3      0.000000  0.000000  0.007307        0.00000                 1YCC 116
+ATOM      1  N   THR    -5       4.753  11.979  -8.972  1.00 55.35      1YCC 117
+ATOM      2  CA  THR    -5       4.539  11.450  -7.559  1.00 53.94      1YCC 118
+ATOM      3  C   THR    -5       3.046  11.066  -7.543  1.00 52.67      1YCC 119
+ATOM      4  O   THR    -5       2.583  10.363  -8.470  1.00 52.68      1YCC 120
+ATOM      5  CB  THR    -5       5.030  12.491  -6.557  1.00 54.53      1YCC 121
+ATOM      6  OG1 THR    -5       4.353  13.743  -6.639  1.00 54.56      1YCC 122
+ATOM      7  CG2 THR    -5       6.518  12.807  -6.683  1.00 55.02      1YCC 123
+ATOM      8  N   GLU    -4       2.356  11.639  -6.593  1.00 50.40      1YCC 124
+ATOM      9  CA  GLU    -4       0.885  11.557  -6.412  1.00 48.10      1YCC 125
+ATOM     10  C   GLU    -4       0.543  12.896  -5.726  1.00 46.15      1YCC 126
+ATOM     11  O   GLU    -4      -0.414  13.032  -4.931  1.00 47.00      1YCC 127
+ATOM     12  CB  GLU    -4       0.494  10.400  -5.535  1.00 50.22      1YCC 128
+ATOM     13  CG  GLU    -4       0.958   9.007  -6.011  1.00 51.36      1YCC 129
+ATOM     14  CD  GLU    -4       0.424   7.857  -5.207  1.00 50.62      1YCC 130
+ATOM     15  OE1 GLU    -4       1.127   6.878  -5.062  1.00 51.61      1YCC 131
+ATOM     16  OE2 GLU    -4      -0.787   8.104  -4.752  1.00 50.14      1YCC 132
+ATOM     17  N   PHE    -3       1.408  13.846  -6.031  1.00 42.47      1YCC 133
+ATOM     18  CA  PHE    -3       1.536  15.207  -5.550  1.00 39.31      1YCC 134
+ATOM     19  C   PHE    -3       1.949  16.079  -6.750  1.00 39.20      1YCC 135
+ATOM     20  O   PHE    -3       2.985  15.659  -7.356  1.00 40.93      1YCC 136
+ATOM     21  CB  PHE    -3       2.722  15.309  -4.517  1.00 33.35      1YCC 137
+ATOM     22  CG  PHE    -3       3.105  16.732  -4.350  1.00 28.65      1YCC 138
+ATOM     23  CD1 PHE    -3       2.252  17.599  -3.644  1.00 29.50      1YCC 139
+ATOM     24  CD2 PHE    -3       4.224  17.259  -4.956  1.00 29.39      1YCC 140
+ATOM     25  CE1 PHE    -3       2.542  18.952  -3.519  1.00 26.85      1YCC 141
+ATOM     26  CE2 PHE    -3       4.522  18.623  -4.902  1.00 28.76      1YCC 142
+ATOM     27  CZ  PHE    -3       3.648  19.476  -4.163  1.00 28.84      1YCC 143
+ATOM     28  N   LYS    -2       1.295  17.203  -6.966  1.00 36.28      1YCC 144
+ATOM     29  CA  LYS    -2       1.652  18.104  -8.067  1.00 32.45      1YCC 145
+ATOM     30  C   LYS    -2       1.650  19.520  -7.493  1.00 30.94      1YCC 146
+ATOM     31  O   LYS    -2       0.879  19.794  -6.563  1.00 28.80      1YCC 147
+ATOM     32  CB  LYS    -2       0.727  18.108  -9.250  1.00 34.33      1YCC 148
+ATOM     33  CG  LYS    -2       0.979  16.955 -10.243  1.00 36.96      1YCC 149
+ATOM     34  CD  LYS    -2       0.218  17.160 -11.578  1.00 36.94      1YCC 150
+ATOM     35  CE  LYS    -2      -1.287  17.132 -11.417  1.00 36.72      1YCC 151
+ATOM     36  NZ  LYS    -2      -1.781  15.747 -11.158  1.00 37.87      1YCC 152
+ATOM     37  N   ALA    -1       2.474  20.348  -8.120  1.00 28.29      1YCC 153
+ATOM     38  CA  ALA    -1       2.669  21.736  -7.685  1.00 25.99      1YCC 154
+ATOM     39  C   ALA    -1       1.367  22.539  -7.820  1.00 24.60      1YCC 155
+ATOM     40  O   ALA    -1       0.628  22.328  -8.806  1.00 23.81      1YCC 156
+ATOM     41  CB  ALA    -1       3.771  22.482  -8.399  1.00 26.50      1YCC 157
+ATOM     42  N   GLY     1       1.280  23.525  -6.925  1.00 21.08      1YCC 158
+ATOM     43  CA  GLY     1       0.160  24.411  -6.856  1.00 18.86      1YCC 159
+ATOM     44  C   GLY     1       0.735  25.794  -6.789  1.00 18.10      1YCC 160
+ATOM     45  O   GLY     1       1.788  26.182  -7.372  1.00 21.27      1YCC 161
+ATOM     46  N   SER     2       0.036  26.620  -6.068  1.00 16.94      1YCC 162
+ATOM     47  CA  SER     2       0.309  28.022  -5.884  1.00 15.46      1YCC 163
+ATOM     48  C   SER     2       1.073  28.161  -4.550  1.00 17.29      1YCC 164
+ATOM     49  O   SER     2       0.492  28.041  -3.458  1.00 14.74      1YCC 165
+ATOM     50  CB  SER     2      -0.992  28.837  -5.832  1.00 15.04      1YCC 166
+ATOM     51  OG  SER     2      -0.614  30.132  -5.577  1.00 12.33      1YCC 167
+ATOM     52  N   ALA     3       2.314  28.619  -4.733  1.00 15.93      1YCC 168
+ATOM     53  CA  ALA     3       3.142  28.944  -3.549  1.00 16.01      1YCC 169
+ATOM     54  C   ALA     3       2.535  30.154  -2.852  1.00 16.08      1YCC 170
+ATOM     55  O   ALA     3       2.707  30.317  -1.620  1.00 14.52      1YCC 171
+ATOM     56  CB  ALA     3       4.583  29.253  -3.870  1.00 16.76      1YCC 172
+ATOM     57  N   LYS     4       1.977  31.088  -3.540  1.00 13.55      1YCC 173
+ATOM     58  CA  LYS     4       1.448  32.275  -2.866  1.00 13.72      1YCC 174
+ATOM     59  C   LYS     4       0.245  31.764  -2.051  1.00 14.64      1YCC 175
+ATOM     60  O   LYS     4       0.003  32.268  -0.985  1.00 11.80      1YCC 176
+ATOM     61  CB  LYS     4       0.910  33.417  -3.696  1.00 17.95      1YCC 177
+ATOM     62  CG  LYS     4       2.060  33.892  -4.617  1.00 24.29      1YCC 178
+ATOM     63  CD  LYS     4       1.581  34.951  -5.568  1.00 25.98      1YCC 179
+ATOM     64  CE  LYS     4       2.865  35.283  -6.359  1.00 30.98      1YCC 180
+ATOM     65  NZ  LYS     4       2.543  36.418  -7.268  1.00 34.01      1YCC 181
+ATOM     66  N   LYS     5      -0.600  30.985  -2.711  1.00 13.28      1YCC 182
+ATOM     67  CA  LYS     5      -1.802  30.491  -1.978  1.00 13.71      1YCC 183
+ATOM     68  C   LYS     5      -1.387  29.714  -0.738  1.00 10.86      1YCC 184
+ATOM     69  O   LYS     5      -1.984  29.796   0.372  1.00 10.04      1YCC 185
+ATOM     70  CB  LYS     5      -2.518  29.540  -2.912  1.00 15.97      1YCC 186
+ATOM     71  CG  LYS     5      -3.911  29.089  -2.594  1.00 23.90      1YCC 187
+ATOM     72  CD  LYS     5      -4.963  29.655  -3.542  1.00 25.67      1YCC 188
+ATOM     73  CE  LYS     5      -6.355  29.602  -2.894  1.00 28.85      1YCC 189
+ATOM     74  NZ  LYS     5      -6.345  29.785  -1.418  1.00 31.87      1YCC 190
+ATOM     75  N   GLY     6      -0.359  28.955  -0.915  1.00  9.27      1YCC 191
+ATOM     76  CA  GLY     6       0.341  28.060   0.111  1.00  9.82      1YCC 192
+ATOM     77  C   GLY     6       0.887  28.928   1.197  1.00  7.70      1YCC 193
+ATOM     78  O   GLY     6       0.673  28.461   2.383  1.00  9.28      1YCC 194
+ATOM     79  N   ALA     7       1.399  30.087   0.961  1.00  5.28      1YCC 195
+ATOM     80  CA  ALA     7       1.925  31.019   1.984  1.00  8.27      1YCC 196
+ATOM     81  C   ALA     7       0.781  31.426   2.881  1.00  8.78      1YCC 197
+ATOM     82  O   ALA     7       1.121  31.471   4.088  1.00 12.41      1YCC 198
+ATOM     83  CB  ALA     7       2.639  32.268   1.477  1.00  9.91      1YCC 199
+ATOM     84  N   THR     8      -0.349  31.732   2.356  1.00  8.47      1YCC 200
+ATOM     85  CA  THR     8      -1.494  32.216   3.180  1.00 10.88      1YCC 201
+ATOM     86  C   THR     8      -2.164  31.068   3.922  1.00  9.81      1YCC 202
+ATOM     87  O   THR     8      -2.738  31.321   4.992  1.00 10.03      1YCC 203
+ATOM     88  CB  THR     8      -2.481  33.148   2.446  1.00 14.89      1YCC 204
+ATOM     89  OG1 THR     8      -3.176  32.320   1.512  1.00 13.31      1YCC 205
+ATOM     90  CG2 THR     8      -1.882  34.317   1.650  1.00 17.07      1YCC 206
+ATOM     91  N   LEU     9      -2.010  29.901   3.345  1.00  7.65      1YCC 207
+ATOM     92  CA  LEU     9      -2.490  28.709   4.043  1.00  8.02      1YCC 208
+ATOM     93  C   LEU     9      -1.596  28.577   5.261  1.00  7.19      1YCC 209
+ATOM     94  O   LEU     9      -2.072  28.323   6.402  1.00  9.00      1YCC 210
+ATOM     95  CB  LEU     9      -2.422  27.397   3.261  1.00 12.85      1YCC 211
+ATOM     96  CG  LEU     9      -3.639  26.473   3.460  1.00 19.44      1YCC 212
+ATOM     97  CD1 LEU     9      -4.854  27.127   2.866  1.00 18.74      1YCC 213
+ATOM     98  CD2 LEU     9      -3.493  25.076   2.887  1.00 20.76      1YCC 214
+ATOM     99  N   PHE    10      -0.335  28.667   5.088  1.00  6.18      1YCC 215
+ATOM    100  CA  PHE    10       0.660  28.547   6.225  1.00  7.23      1YCC 216
+ATOM    101  C   PHE    10       0.327  29.472   7.330  1.00  6.06      1YCC 217
+ATOM    102  O   PHE    10       0.131  29.213   8.520  1.00  7.49      1YCC 218
+ATOM    103  CB  PHE    10       2.083  28.617   5.780  1.00  6.83      1YCC 219
+ATOM    104  CG  PHE    10       3.039  28.307   6.947  1.00  7.27      1YCC 220
+ATOM    105  CD1 PHE    10       3.459  29.271   7.835  1.00 11.10      1YCC 221
+ATOM    106  CD2 PHE    10       3.383  26.990   7.154  1.00 10.03      1YCC 222
+ATOM    107  CE1 PHE    10       4.406  28.950   8.801  1.00  8.92      1YCC 223
+ATOM    108  CE2 PHE    10       4.263  26.607   8.196  1.00 12.40      1YCC 224
+ATOM    109  CZ  PHE    10       4.758  27.608   9.012  1.00  9.11      1YCC 225
+ATOM    110  N   LYS    11       0.138  30.766   6.936  1.00  6.86      1YCC 226
+ATOM    111  CA  LYS    11      -0.175  31.848   7.878  1.00  7.42      1YCC 227
+ATOM    112  C   LYS    11      -1.419  31.560   8.621  1.00 10.64      1YCC 228
+ATOM    113  O   LYS    11      -1.455  31.594   9.864  1.00 10.82      1YCC 229
+ATOM    114  CB  LYS    11      -0.210  33.186   7.239  1.00 12.31      1YCC 230
+ATOM    115  CG  LYS    11       1.202  33.697   6.896  1.00 18.09      1YCC 231
+ATOM    116  CD  LYS    11       1.066  35.094   6.217  1.00 22.11      1YCC 232
+ATOM    117  CE  LYS    11       1.742  35.114   4.861  1.00 20.48      1YCC 233
+ATOM    118  NZ  LYS    11       2.037  36.465   4.385  1.00 24.13      1YCC 234
+ATOM    119  N   THR    12      -2.503  31.221   8.001  1.00 10.20      1YCC 235
+ATOM    120  CA  THR    12      -3.745  30.939   8.735  1.00 10.70      1YCC 236
+ATOM    121  C   THR    12      -3.808  29.624   9.440  1.00  9.71      1YCC 237
+ATOM    122  O   THR    12      -4.693  29.482  10.291  1.00 11.07      1YCC 238
+ATOM    123  CB  THR    12      -4.943  31.164   7.763  1.00 14.66      1YCC 239
+ATOM    124  OG1 THR    12      -4.817  30.298   6.622  1.00 19.03      1YCC 240
+ATOM    125  CG2 THR    12      -5.153  32.579   7.264  1.00 15.12      1YCC 241
+ATOM    126  N   ARG    13      -3.100  28.589   9.054  1.00  7.61      1YCC 242
+ATOM    127  CA  ARG    13      -3.224  27.241   9.633  1.00  8.03      1YCC 243
+ATOM    128  C   ARG    13      -2.038  26.664  10.344  1.00  7.44      1YCC 244
+ATOM    129  O   ARG    13      -2.215  25.780  11.226  1.00  9.92      1YCC 245
+ATOM    130  CB  ARG    13      -3.584  26.171   8.541  1.00 13.55      1YCC 246
+ATOM    131  CG  ARG    13      -4.738  26.674   7.655  1.00 22.79      1YCC 247
+ATOM    132  CD  ARG    13      -5.999  26.194   8.333  1.00 31.17      1YCC 248
+ATOM    133  NE  ARG    13      -6.334  24.881   7.774  1.00 37.54      1YCC 249
+ATOM    134  CZ  ARG    13      -7.291  24.124   8.293  1.00 39.34      1YCC 250
+ATOM    135  NH1 ARG    13      -7.626  23.023   7.632  1.00 41.51      1YCC 251
+ATOM    136  NH2 ARG    13      -7.832  24.381   9.486  1.00 41.06      1YCC 252
+ATOM    137  N   CYS    14      -0.854  27.109  10.064  1.00  4.84      1YCC 253
+ATOM    138  CA  CYS    14       0.358  26.597  10.695  1.00  4.65      1YCC 254
+ATOM    139  C   CYS    14       1.212  27.560  11.560  1.00  2.89      1YCC 255
+ATOM    140  O   CYS    14       1.941  27.067  12.395  1.00  4.22      1YCC 256
+ATOM    141  CB  CYS    14       1.300  25.970   9.727  1.00  2.67      1YCC 257
+ATOM    142  SG  CYS    14       0.573  25.095   8.293  1.00  4.01      1YCC 258
+ATOM    143  N   LEU    15       1.210  28.820  11.265  1.00  4.96      1YCC 259
+ATOM    144  CA  LEU    15       2.001  29.900  11.851  1.00  7.20      1YCC 260
+ATOM    145  C   LEU    15       1.751  30.001  13.408  1.00  5.52      1YCC 261
+ATOM    146  O   LEU    15       2.735  30.352  14.077  1.00  5.22      1YCC 262
+ATOM    147  CB  LEU    15       1.755  31.216  11.149  1.00  7.71      1YCC 263
+ATOM    148  CG  LEU    15       2.567  32.380  11.680  1.00  8.93      1YCC 264
+ATOM    149  CD1 LEU    15       3.932  32.177  11.158  1.00 11.34      1YCC 265
+ATOM    150  CD2 LEU    15       1.929  33.664  11.269  1.00 10.24      1YCC 266
+ATOM    151  N   GLN    16       0.602  29.594  13.777  1.00  5.43      1YCC 267
+ATOM    152  CA  GLN    16       0.280  29.620  15.246  1.00  7.75      1YCC 268
+ATOM    153  C   GLN    16       1.303  28.768  15.978  1.00  7.24      1YCC 269
+ATOM    154  O   GLN    16       1.586  29.240  17.148  1.00  8.93      1YCC 270
+ATOM    155  CB  GLN    16      -1.126  29.168  15.499  1.00  9.55      1YCC 271
+ATOM    156  CG  GLN    16      -1.493  28.923  16.963  1.00 14.39      1YCC 272
+ATOM    157  CD  GLN    16      -2.686  27.952  16.985  1.00 13.91      1YCC 273
+ATOM    158  OE1 GLN    16      -3.286  27.616  15.931  1.00 14.00      1YCC 274
+ATOM    159  NE2 GLN    16      -3.032  27.574  18.189  1.00 14.51      1YCC 275
+ATOM    160  N   CYS    17       1.836  27.744  15.351  1.00  5.47      1YCC 276
+ATOM    161  CA  CYS    17       2.710  26.846  16.049  1.00  3.27      1YCC 277
+ATOM    162  C   CYS    17       4.123  26.680  15.616  1.00  4.04      1YCC 278
+ATOM    163  O   CYS    17       4.997  26.000  16.162  1.00  6.88      1YCC 279
+ATOM    164  CB  CYS    17       2.014  25.453  16.046  1.00  5.21      1YCC 280
+ATOM    165  SG  CYS    17       0.494  25.489  17.078  1.00  6.83      1YCC 281
+ATOM    166  N   HIS    18       4.362  27.143  14.337  1.00  5.06      1YCC 282
+ATOM    167  CA  HIS    18       5.633  26.927  13.618  1.00  5.13      1YCC 283
+ATOM    168  C   HIS    18       6.141  28.126  12.830  1.00  4.96      1YCC 284
+ATOM    169  O   HIS    18       5.413  28.988  12.358  1.00  7.64      1YCC 285
+ATOM    170  CB  HIS    18       5.463  25.842  12.545  1.00  4.26      1YCC 286
+ATOM    171  CG  HIS    18       5.090  24.429  12.906  1.00  3.60      1YCC 287
+ATOM    172  ND1 HIS    18       5.995  23.508  13.296  1.00  2.99      1YCC 288
+ATOM    173  CD2 HIS    18       3.868  23.788  12.857  1.00  2.00      1YCC 289
+ATOM    174  CE1 HIS    18       5.407  22.428  13.522  1.00  2.00      1YCC 290
+ATOM    175  NE2 HIS    18       4.073  22.504  13.233  1.00  3.76      1YCC 291
+ATOM    176  N   THR    19       7.442  28.112  12.741  1.00  6.61      1YCC 292
+ATOM    177  CA  THR    19       8.219  29.067  11.877  1.00  5.61      1YCC 293
+ATOM    178  C   THR    19       8.869  28.233  10.744  1.00  7.61      1YCC 294
+ATOM    179  O   THR    19       8.987  27.036  10.872  1.00  6.13      1YCC 295
+ATOM    180  CB  THR    19       9.252  29.874  12.693  1.00  8.68      1YCC 296
+ATOM    181  OG1 THR    19      10.171  28.961  13.203  1.00  8.15      1YCC 297
+ATOM    182  CG2 THR    19       8.522  30.617  13.806  1.00  9.18      1YCC 298
+ATOM    183  N   VAL    20       9.173  28.910   9.634  1.00  7.75      1YCC 299
+ATOM    184  CA  VAL    20       9.823  28.199   8.531  1.00  9.27      1YCC 300
+ATOM    185  C   VAL    20      11.224  28.668   8.163  1.00  8.57      1YCC 301
+ATOM    186  O   VAL    20      11.992  27.958   7.483  1.00  9.74      1YCC 302
+ATOM    187  CB  VAL    20       8.920  28.223   7.276  1.00 11.31      1YCC 303
+ATOM    188  CG1 VAL    20       7.590  27.624   7.290  1.00 11.96      1YCC 304
+ATOM    189  CG2 VAL    20       8.671  29.654   6.851  1.00 12.71      1YCC 305
+ATOM    190  N   GLU    21      11.537  29.811   8.624  1.00 10.52      1YCC 306
+ATOM    191  CA  GLU    21      12.804  30.461   8.281  1.00 14.12      1YCC 307
+ATOM    192  C   GLU    21      14.017  29.836   8.930  1.00 12.47      1YCC 308
+ATOM    193  O   GLU    21      14.046  29.366  10.027  1.00  8.69      1YCC 309
+ATOM    194  CB  GLU    21      12.755  31.936   8.684  1.00 19.96      1YCC 310
+ATOM    195  CG  GLU    21      12.337  32.076  10.169  1.00 28.28      1YCC 311
+ATOM    196  CD  GLU    21      10.849  32.291  10.379  1.00 29.96      1YCC 312
+ATOM    197  OE1 GLU    21      10.057  32.038   9.471  1.00 30.67      1YCC 313
+ATOM    198  OE2 GLU    21      10.637  32.823  11.577  1.00 31.70      1YCC 314
+ATOM    199  N   LYS    22      15.124  29.937   8.212  1.00 13.47      1YCC 315
+ATOM    200  CA  LYS    22      16.425  29.452   8.766  1.00 13.91      1YCC 316
+ATOM    201  C   LYS    22      16.744  30.347   9.932  1.00 12.36      1YCC 317
+ATOM    202  O   LYS    22      16.719  31.546   9.790  1.00 12.22      1YCC 318
+ATOM    203  CB  LYS    22      17.447  29.713   7.689  1.00 16.49      1YCC 319
+ATOM    204  CG  LYS    22      18.907  29.873   8.020  1.00 19.00      1YCC 320
+ATOM    205  CD  LYS    22      19.531  28.568   7.647  1.00 22.53      1YCC 321
+ATOM    206  CE  LYS    22      21.013  28.516   8.084  1.00 26.70      1YCC 322
+ATOM    207  NZ  LYS    22      21.334  27.098   8.341  1.00 29.79      1YCC 323
+ATOM    208  N   GLY    23      17.017  29.777  11.114  1.00 14.77      1YCC 324
+ATOM    209  CA  GLY    23      17.277  30.701  12.252  1.00 13.41      1YCC 325
+ATOM    210  C   GLY    23      16.040  31.173  12.969  1.00 12.16      1YCC 326
+ATOM    211  O   GLY    23      16.104  32.106  13.815  1.00 13.52      1YCC 327
+ATOM    212  N   GLY    24      14.897  30.597  12.598  1.00 11.86      1YCC 328
+ATOM    213  CA  GLY    24      13.582  30.803  13.187  1.00  8.73      1YCC 329
+ATOM    214  C   GLY    24      13.591  29.878  14.463  1.00  8.07      1YCC 330
+ATOM    215  O   GLY    24      14.205  28.801  14.474  1.00 10.31      1YCC 331
+ATOM    216  N   PRO    25      12.868  30.375  15.434  1.00  7.47      1YCC 332
+ATOM    217  CA  PRO    25      12.749  29.589  16.645  1.00  8.10      1YCC 333
+ATOM    218  C   PRO    25      11.696  28.543  16.639  1.00  5.67      1YCC 334
+ATOM    219  O   PRO    25      10.656  28.516  15.971  1.00  4.57      1YCC 335
+ATOM    220  CB  PRO    25      12.392  30.688  17.710  1.00  8.56      1YCC 336
+ATOM    221  CG  PRO    25      11.502  31.613  16.965  1.00  8.99      1YCC 337
+ATOM    222  CD  PRO    25      12.153  31.647  15.541  1.00  7.23      1YCC 338
+ATOM    223  N   HIS    26      11.862  27.575  17.589  1.00  5.49      1YCC 339
+ATOM    224  CA  HIS    26      10.827  26.611  17.941  1.00  4.13      1YCC 340
+ATOM    225  C   HIS    26       9.759  27.414  18.642  1.00  6.33      1YCC 341
+ATOM    226  O   HIS    26      10.149  28.313  19.480  1.00  9.21      1YCC 342
+ATOM    227  CB  HIS    26      11.325  25.446  18.765  1.00  7.27      1YCC 343
+ATOM    228  CG  HIS    26      12.441  24.635  18.179  1.00  9.57      1YCC 344
+ATOM    229  ND1 HIS    26      12.395  24.276  16.811  1.00  9.93      1YCC 345
+ATOM    230  CD2 HIS    26      13.579  24.085  18.716  1.00 10.51      1YCC 346
+ATOM    231  CE1 HIS    26      13.461  23.615  16.581  1.00 11.12      1YCC 347
+ATOM    232  NE2 HIS    26      14.243  23.399  17.738  1.00 12.40      1YCC 348
+ATOM    233  N   LYS    27       8.531  26.968  18.433  1.00  6.71      1YCC 349
+ATOM    234  CA  LYS    27       7.414  27.551  19.257  1.00  8.16      1YCC 350
+ATOM    235  C   LYS    27       6.750  26.400  19.942  1.00  4.19      1YCC 351
+ATOM    236  O   LYS    27       7.426  25.487  20.501  1.00  6.44      1YCC 352
+ATOM    237  CB  LYS    27       6.624  28.488  18.365  1.00  7.19      1YCC 353
+ATOM    238  CG  LYS    27       7.484  29.609  17.803  1.00  8.28      1YCC 354
+ATOM    239  CD  LYS    27       6.633  30.714  17.188  1.00 14.74      1YCC 355
+ATOM    240  CE  LYS    27       5.542  30.249  16.284  1.00 14.32      1YCC 356
+ATOM    241  NZ  LYS    27       5.125  31.363  15.403  1.00 15.92      1YCC 357
+ATOM    242  N   VAL    28       5.392  26.317  19.787  1.00  5.01      1YCC 358
+ATOM    243  CA  VAL    28       4.648  25.124  20.175  1.00  4.68      1YCC 359
+ATOM    244  C   VAL    28       5.193  23.923  19.447  1.00  7.57      1YCC 360
+ATOM    245  O   VAL    28       5.431  22.800  19.968  1.00  6.30      1YCC 361
+ATOM    246  CB  VAL    28       3.111  25.350  19.911  1.00  6.22      1YCC 362
+ATOM    247  CG1 VAL    28       2.396  24.055  20.100  1.00  6.40      1YCC 363
+ATOM    248  CG2 VAL    28       2.581  26.478  20.753  1.00  9.15      1YCC 364
+ATOM    249  N   GLY    29       5.307  24.173  18.100  1.00  7.35      1YCC 365
+ATOM    250  CA  GLY    29       5.957  23.239  17.208  1.00  7.02      1YCC 366
+ATOM    251  C   GLY    29       7.360  23.682  16.811  1.00  4.90      1YCC 367
+ATOM    252  O   GLY    29       7.786  24.810  16.981  1.00  8.61      1YCC 368
+ATOM    253  N   PRO    30       8.134  22.696  16.248  1.00  5.73      1YCC 369
+ATOM    254  CA  PRO    30       9.487  22.980  15.869  1.00  5.43      1YCC 370
+ATOM    255  C   PRO    30       9.622  23.841  14.599  1.00  6.53      1YCC 371
+ATOM    256  O   PRO    30       8.704  23.804  13.839  1.00  5.59      1YCC 372
+ATOM    257  CB  PRO    30      10.122  21.659  15.576  1.00  6.75      1YCC 373
+ATOM    258  CG  PRO    30       9.005  20.734  15.286  1.00  7.22      1YCC 374
+ATOM    259  CD  PRO    30       7.783  21.296  16.020  1.00  5.52      1YCC 375
+ATOM    260  N   ASN    31      10.684  24.544  14.575  1.00  3.82      1YCC 376
+ATOM    261  CA  ASN    31      11.020  25.311  13.344  1.00  5.38      1YCC 377
+ATOM    262  C   ASN    31      11.103  24.218  12.256  1.00  7.24      1YCC 378
+ATOM    263  O   ASN    31      11.623  23.122  12.485  1.00  9.48      1YCC 379
+ATOM    264  CB  ASN    31      12.274  26.140  13.482  1.00  7.07      1YCC 380
+ATOM    265  CG  ASN    31      12.810  26.611  12.089  1.00  7.26      1YCC 381
+ATOM    266  OD1 ASN    31      13.701  25.906  11.536  1.00  8.60      1YCC 382
+ATOM    267  ND2 ASN    31      12.237  27.750  11.738  1.00  6.77      1YCC 383
+ATOM    268  N   LEU    32      10.528  24.519  11.066  1.00  7.22      1YCC 384
+ATOM    269  CA  LEU    32      10.606  23.556   9.993  1.00  8.56      1YCC 385
+ATOM    270  C   LEU    32      11.661  23.788   8.888  1.00  8.53      1YCC 386
+ATOM    271  O   LEU    32      11.633  23.031   7.877  1.00 10.09      1YCC 387
+ATOM    272  CB  LEU    32       9.207  23.473   9.340  1.00  7.70      1YCC 388
+ATOM    273  CG  LEU    32       7.980  23.094  10.147  1.00  6.42      1YCC 389
+ATOM    274  CD1 LEU    32       6.704  23.514   9.474  1.00  5.26      1YCC 390
+ATOM    275  CD2 LEU    32       7.905  21.662  10.572  1.00  8.87      1YCC 391
+ATOM    276  N   HIS    33      12.538  24.742   9.035  1.00  8.37      1YCC 392
+ATOM    277  CA  HIS    33      13.579  24.877   7.977  1.00  9.69      1YCC 393
+ATOM    278  C   HIS    33      14.284  23.570   7.819  1.00 12.01      1YCC 394
+ATOM    279  O   HIS    33      14.640  22.877   8.841  1.00 11.16      1YCC 395
+ATOM    280  CB  HIS    33      14.547  25.925   8.271  1.00 12.04      1YCC 396
+ATOM    281  CG  HIS    33      15.048  26.602   6.991  1.00 14.93      1YCC 397
+ATOM    282  ND1 HIS    33      14.280  27.522   6.334  1.00 15.98      1YCC 398
+ATOM    283  CD2 HIS    33      16.262  26.420   6.340  1.00 14.37      1YCC 399
+ATOM    284  CE1 HIS    33      15.026  27.899   5.310  1.00 12.72      1YCC 400
+ATOM    285  NE2 HIS    33      16.199  27.210   5.256  1.00 10.84      1YCC 401
+ATOM    286  N   GLY    34      14.543  23.214   6.527  1.00 11.56      1YCC 402
+ATOM    287  CA  GLY    34      15.206  21.995   6.157  1.00 11.76      1YCC 403
+ATOM    288  C   GLY    34      14.498  20.720   6.395  1.00 11.27      1YCC 404
+ATOM    289  O   GLY    34      15.147  19.704   6.324  1.00 15.51      1YCC 405
+ATOM    290  N   ILE    35      13.196  20.718   6.589  1.00 13.11      1YCC 406
+ATOM    291  CA  ILE    35      12.392  19.542   6.875  1.00 14.66      1YCC 407
+ATOM    292  C   ILE    35      12.422  18.494   5.783  1.00 13.96      1YCC 408
+ATOM    293  O   ILE    35      12.403  17.272   5.983  1.00 12.82      1YCC 409
+ATOM    294  CB  ILE    35      10.979  19.867   7.333  1.00 17.38      1YCC 410
+ATOM    295  CG1 ILE    35      10.344  18.633   7.926  1.00 20.21      1YCC 411
+ATOM    296  CG2 ILE    35      10.086  20.477   6.299  1.00 20.95      1YCC 412
+ATOM    297  CD1 ILE    35      10.501  18.420   9.445  1.00 20.78      1YCC 413
+ATOM    298  N   PHE    36      12.448  18.997   4.577  1.00 16.66      1YCC 414
+ATOM    299  CA  PHE    36      12.481  18.066   3.399  1.00 17.58      1YCC 415
+ATOM    300  C   PHE    36      13.756  17.269   3.346  1.00 18.20      1YCC 416
+ATOM    301  O   PHE    36      14.835  17.855   3.422  1.00 20.74      1YCC 417
+ATOM    302  CB  PHE    36      12.146  18.887   2.153  1.00 21.86      1YCC 418
+ATOM    303  CG  PHE    36      10.705  19.246   2.211  1.00 20.94      1YCC 419
+ATOM    304  CD1 PHE    36       9.763  18.249   2.119  1.00 20.93      1YCC 420
+ATOM    305  CD2 PHE    36      10.371  20.560   2.485  1.00 23.34      1YCC 421
+ATOM    306  CE1 PHE    36       8.415  18.563   2.126  1.00 24.33      1YCC 422
+ATOM    307  CE2 PHE    36       8.995  20.904   2.528  1.00 24.22      1YCC 423
+ATOM    308  CZ  PHE    36       8.041  19.900   2.334  1.00 22.02      1YCC 424
+ATOM    309  N   GLY    37      13.606  15.981   3.268  1.00 18.90      1YCC 425
+ATOM    310  CA  GLY    37      14.750  15.047   3.270  1.00 21.26      1YCC 426
+ATOM    311  C   GLY    37      15.265  14.589   4.644  1.00 22.12      1YCC 427
+ATOM    312  O   GLY    37      16.131  13.714   4.729  1.00 24.09      1YCC 428
+ATOM    313  N   ARG    38      14.809  15.221   5.688  1.00 23.68      1YCC 429
+ATOM    314  CA  ARG    38      15.225  14.895   7.102  1.00 22.11      1YCC 430
+ATOM    315  C   ARG    38      14.186  13.963   7.617  1.00 21.29      1YCC 431
+ATOM    316  O   ARG    38      13.064  13.864   7.025  1.00 20.68      1YCC 432
+ATOM    317  CB  ARG    38      15.500  16.167   7.870  1.00 26.26      1YCC 433
+ATOM    318  CG  ARG    38      15.422  16.253   9.364  1.00 27.82      1YCC 434
+ATOM    319  CD  ARG    38      15.822  17.568   9.940  1.00 27.30      1YCC 435
+ATOM    320  NE  ARG    38      14.680  18.413  10.236  1.00 27.42      1YCC 436
+ATOM    321  CZ  ARG    38      14.684  19.732  10.178  1.00 27.82      1YCC 437
+ATOM    322  NH1 ARG    38      13.593  20.451  10.416  1.00 24.66      1YCC 438
+ATOM    323  NH2 ARG    38      15.837  20.384   9.919  1.00 30.58      1YCC 439
+ATOM    324  N   HIS    39      14.551  13.184   8.629  1.00 17.60      1YCC 440
+ATOM    325  CA  HIS    39      13.578  12.252   9.225  1.00 17.05      1YCC 441
+ATOM    326  C   HIS    39      12.907  13.050  10.362  1.00 14.16      1YCC 442
+ATOM    327  O   HIS    39      13.417  14.113  10.811  1.00 13.69      1YCC 443
+ATOM    328  CB  HIS    39      14.248  10.979   9.757  1.00 18.80      1YCC 444
+ATOM    329  CG  HIS    39      14.824  10.073   8.700  1.00 21.12      1YCC 445
+ATOM    330  ND1 HIS    39      16.089  10.263   8.167  1.00 22.53      1YCC 446
+ATOM    331  CD2 HIS    39      14.302   8.920   8.143  1.00 22.51      1YCC 447
+ATOM    332  CE1 HIS    39      16.250   9.280   7.314  1.00 19.03      1YCC 448
+ATOM    333  NE2 HIS    39      15.245   8.434   7.272  1.00 17.00      1YCC 449
+ATOM    334  N   SER    40      11.769  12.520  10.745  1.00 14.42      1YCC 450
+ATOM    335  CA  SER    40      10.967  13.092  11.840  1.00  9.82      1YCC 451
+ATOM    336  C   SER    40      11.741  12.984  13.195  1.00 11.00      1YCC 452
+ATOM    337  O   SER    40      12.556  12.101  13.387  1.00 11.28      1YCC 453
+ATOM    338  CB  SER    40       9.635  12.452  11.950  1.00  9.92      1YCC 454
+ATOM    339  OG  SER    40       9.766  11.046  12.157  1.00 14.93      1YCC 455
+ATOM    340  N   GLY    41      11.504  13.993  14.024  1.00 10.61      1YCC 456
+ATOM    341  CA  GLY    41      12.151  14.020  15.359  1.00 14.28      1YCC 457
+ATOM    342  C   GLY    41      13.586  14.434  15.444  1.00 15.64      1YCC 458
+ATOM    343  O   GLY    41      14.263  14.100  16.450  1.00 16.85      1YCC 459
+ATOM    344  N   GLN    42      14.148  15.205  14.547  1.00 16.65      1YCC 460
+ATOM    345  CA  GLN    42      15.590  15.501  14.510  1.00 17.65      1YCC 461
+ATOM    346  C   GLN    42      16.052  16.940  14.612  1.00 17.74      1YCC 462
+ATOM    347  O   GLN    42      17.274  17.310  14.494  1.00 19.31      1YCC 463
+ATOM    348  CB  GLN    42      16.305  14.869  13.314  1.00 22.79      1YCC 464
+ATOM    349  CG  GLN    42      16.143  13.396  13.098  1.00 27.02      1YCC 465
+ATOM    350  CD  GLN    42      16.800  12.319  13.856  1.00 29.54      1YCC 466
+ATOM    351  OE1 GLN    42      16.230  11.185  13.958  1.00 32.43      1YCC 467
+ATOM    352  NE2 GLN    42      18.019  12.550  14.310  1.00 30.04      1YCC 468
+ATOM    353  N   ALA    43      15.081  17.851  14.693  1.00 16.13      1YCC 469
+ATOM    354  CA  ALA    43      15.405  19.267  14.958  1.00 15.19      1YCC 470
+ATOM    355  C   ALA    43      15.986  19.324  16.426  1.00 15.95      1YCC 471
+ATOM    356  O   ALA    43      15.455  18.855  17.470  1.00 15.59      1YCC 472
+ATOM    357  CB  ALA    43      14.158  20.110  14.950  1.00 14.78      1YCC 473
+ATOM    358  N   GLU    44      17.159  19.988  16.561  1.00 16.71      1YCC 474
+ATOM    359  CA  GLU    44      17.713  20.004  17.933  1.00 16.16      1YCC 475
+ATOM    360  C   GLU    44      17.071  21.092  18.777  1.00 15.16      1YCC 476
+ATOM    361  O   GLU    44      16.633  22.131  18.280  1.00 12.80      1YCC 477
+ATOM    362  CB  GLU    44      19.202  20.024  18.144  1.00 23.57      1YCC 478
+ATOM    363  CG  GLU    44      20.200  20.805  17.362  1.00 30.90      1YCC 479
+ATOM    364  CD  GLU    44      21.581  20.625  18.000  1.00 33.99      1YCC 480
+ATOM    365  OE1 GLU    44      21.716  20.555  19.217  1.00 35.55      1YCC 481
+ATOM    366  OE2 GLU    44      22.476  20.473  17.052  1.00 38.14      1YCC 482
+ATOM    367  N   GLY    45      16.916  20.745  20.113  1.00 13.15      1YCC 483
+ATOM    368  CA  GLY    45      16.361  21.655  21.055  1.00 11.80      1YCC 484
+ATOM    369  C   GLY    45      14.859  21.618  21.173  1.00 12.59      1YCC 485
+ATOM    370  O   GLY    45      14.321  22.543  21.795  1.00 14.51      1YCC 486
+ATOM    371  N   TYR    46      14.256  20.639  20.531  1.00 11.61      1YCC 487
+ATOM    372  CA  TYR    46      12.826  20.450  20.590  1.00 11.01      1YCC 488
+ATOM    373  C   TYR    46      12.498  19.100  21.216  1.00 11.01      1YCC 489
+ATOM    374  O   TYR    46      13.008  18.050  20.956  1.00 10.55      1YCC 490
+ATOM    375  CB  TYR    46      12.204  20.510  19.173  1.00 13.52      1YCC 491
+ATOM    376  CG  TYR    46      10.691  20.557  19.282  1.00 10.84      1YCC 492
+ATOM    377  CD1 TYR    46      10.047  21.764  19.570  1.00  8.09      1YCC 493
+ATOM    378  CD2 TYR    46       9.957  19.363  19.171  1.00  7.80      1YCC 494
+ATOM    379  CE1 TYR    46       8.688  21.812  19.789  1.00  4.10      1YCC 495
+ATOM    380  CE2 TYR    46       8.587  19.421  19.345  1.00  7.53      1YCC 496
+ATOM    381  CZ  TYR    46       7.934  20.627  19.658  1.00  2.00      1YCC 497
+ATOM    382  OH  TYR    46       6.596  20.581  19.876  1.00  7.34      1YCC 498
+ATOM    383  N   SER    47      11.469  19.205  22.111  1.00  9.77      1YCC 499
+ATOM    384  CA  SER    47      10.952  18.038  22.767  1.00 10.01      1YCC 500
+ATOM    385  C   SER    47       9.804  17.348  22.083  1.00  9.42      1YCC 501
+ATOM    386  O   SER    47       8.570  17.508  22.212  1.00 13.34      1YCC 502
+ATOM    387  CB  SER    47      10.641  18.473  24.294  1.00 13.03      1YCC 503
+ATOM    388  OG  SER    47       9.967  17.358  24.730  1.00 19.54      1YCC 504
+ATOM    389  N   TYR    48      10.175  16.467  21.128  1.00 12.00      1YCC 505
+ATOM    390  CA  TYR    48       9.167  15.682  20.373  1.00 10.69      1YCC 506
+ATOM    391  C   TYR    48       8.497  14.623  21.262  1.00 13.32      1YCC 507
+ATOM    392  O   TYR    48       9.179  14.191  22.199  1.00 16.82      1YCC 508
+ATOM    393  CB  TYR    48       9.880  14.884  19.282  1.00  9.99      1YCC 509
+ATOM    394  CG  TYR    48      10.393  15.847  18.209  1.00  5.05      1YCC 510
+ATOM    395  CD1 TYR    48       9.514  16.137  17.141  1.00  9.56      1YCC 511
+ATOM    396  CD2 TYR    48      11.711  16.117  18.084  1.00  8.13      1YCC 512
+ATOM    397  CE1 TYR    48      10.012  16.895  16.077  1.00  8.93      1YCC 513
+ATOM    398  CE2 TYR    48      12.231  16.952  17.085  1.00 12.08      1YCC 514
+ATOM    399  CZ  TYR    48      11.326  17.301  16.053  1.00  9.47      1YCC 515
+ATOM    400  OH  TYR    48      11.849  17.999  14.996  1.00 12.58      1YCC 516
+ATOM    401  N   THR    49       7.371  14.093  20.898  1.00 13.19      1YCC 517
+ATOM    402  CA  THR    49       6.742  12.972  21.460  1.00 13.63      1YCC 518
+ATOM    403  C   THR    49       7.547  11.690  21.005  1.00 15.07      1YCC 519
+ATOM    404  O   THR    49       8.302  11.759  20.077  1.00 10.99      1YCC 520
+ATOM    405  CB  THR    49       5.285  12.736  21.016  1.00 14.12      1YCC 521
+ATOM    406  OG1 THR    49       5.259  12.483  19.613  1.00 12.79      1YCC 522
+ATOM    407  CG2 THR    49       4.338  13.833  21.457  1.00 11.07      1YCC 523
+ATOM    408  N   ASP    50       7.348  10.640  21.837  1.00 14.50      1YCC 524
+ATOM    409  CA  ASP    50       7.946   9.348  21.610  1.00 17.80      1YCC 525
+ATOM    410  C   ASP    50       7.494   8.886  20.166  1.00 16.96      1YCC 526
+ATOM    411  O   ASP    50       8.422   8.370  19.574  1.00 18.71      1YCC 527
+ATOM    412  CB  ASP    50       7.534   8.273  22.623  1.00 19.12      1YCC 528
+ATOM    413  CG  ASP    50       8.341   8.183  23.887  1.00 23.06      1YCC 529
+ATOM    414  OD1 ASP    50       8.074   7.390  24.848  1.00 27.32      1YCC 530
+ATOM    415  OD2 ASP    50       9.408   8.915  24.070  1.00 23.31      1YCC 531
+ATOM    416  N   ALA    51       6.235   9.052  19.915  1.00 16.57      1YCC 532
+ATOM    417  CA  ALA    51       5.495   8.710  18.697  1.00 19.59      1YCC 533
+ATOM    418  C   ALA    51       6.076   9.252  17.406  1.00 19.19      1YCC 534
+ATOM    419  O   ALA    51       6.275   8.545  16.372  1.00 18.51      1YCC 535
+ATOM    420  CB  ALA    51       4.042   9.174  18.797  1.00 21.29      1YCC 536
+ATOM    421  N   ASN    52       6.393  10.545  17.437  1.00 17.49      1YCC 537
+ATOM    422  CA  ASN    52       7.000  11.143  16.212  1.00 17.56      1YCC 538
+ATOM    423  C   ASN    52       8.364  10.592  15.908  1.00 18.33      1YCC 539
+ATOM    424  O   ASN    52       8.737  10.194  14.753  1.00 19.34      1YCC 540
+ATOM    425  CB  ASN    52       6.983  12.658  16.338  1.00 13.87      1YCC 541
+ATOM    426  CG  ASN    52       7.864  13.369  15.309  1.00 14.81      1YCC 542
+ATOM    427  OD1 ASN    52       9.128  13.297  15.312  1.00 15.07      1YCC 543
+ATOM    428  ND2 ASN    52       7.208  14.130  14.504  1.00 12.52      1YCC 544
+ATOM    429  N   ILE    53       9.195  10.542  16.889  1.00 18.38      1YCC 545
+ATOM    430  CA  ILE    53      10.557  10.045  16.729  1.00 21.78      1YCC 546
+ATOM    431  C   ILE    53      10.729   8.624  16.181  1.00 21.62      1YCC 547
+ATOM    432  O   ILE    53      11.727   8.390  15.488  1.00 22.98      1YCC 548
+ATOM    433  CB  ILE    53      11.140  10.057  18.181  1.00 22.45      1YCC 549
+ATOM    434  CG1 ILE    53      11.315  11.484  18.685  1.00 23.64      1YCC 550
+ATOM    435  CG2 ILE    53      12.425   9.318  18.280  1.00 24.72      1YCC 551
+ATOM    436  CD1 ILE    53      12.260  11.798  19.867  1.00 21.97      1YCC 552
+ATOM    437  N   LYS    54       9.924   7.719  16.639  1.00 23.07      1YCC 553
+ATOM    438  CA  LYS    54       9.952   6.279  16.395  1.00 26.98      1YCC 554
+ATOM    439  C   LYS    54       9.229   5.933  15.090  1.00 26.41      1YCC 555
+ATOM    440  O   LYS    54       9.410   4.840  14.605  1.00 27.63      1YCC 556
+ATOM    441  CB  LYS    54       9.191   5.521  17.513  1.00 29.57      1YCC 557
+ATOM    442  CG  LYS    54       9.673   5.714  18.931  1.00 34.05      1YCC 558
+ATOM    443  CD  LYS    54      10.407   4.583  19.660  1.00 35.71      1YCC 559
+ATOM    444  CE  LYS    54       9.810   4.462  21.058  1.00 38.35      1YCC 560
+ATOM    445  NZ  LYS    54      10.254   3.270  21.830  1.00 39.71      1YCC 561
+ATOM    446  N   LYS    55       8.494   6.898  14.648  1.00 26.53      1YCC 562
+ATOM    447  CA  LYS    55       7.750   6.809  13.394  1.00 27.48      1YCC 563
+ATOM    448  C   LYS    55       8.790   6.942  12.255  1.00 27.05      1YCC 564
+ATOM    449  O   LYS    55       8.686   6.289  11.205  1.00 28.01      1YCC 565
+ATOM    450  CB  LYS    55       6.564   7.766  13.395  1.00 28.42      1YCC 566
+ATOM    451  CG  LYS    55       6.091   8.094  12.003  1.00 25.58      1YCC 567
+ATOM    452  CD  LYS    55       5.201   7.006  11.447  1.00 26.39      1YCC 568
+ATOM    453  CE  LYS    55       4.884   7.255   9.994  1.00 23.08      1YCC 569
+ATOM    454  NZ  LYS    55       3.566   6.623   9.724  1.00 25.17      1YCC 570
+ATOM    455  N   ASN    56       9.872   7.626  12.495  1.00 25.67      1YCC 571
+ATOM    456  CA  ASN    56      11.019   7.858  11.671  1.00 24.96      1YCC 572
+ATOM    457  C   ASN    56      10.607   8.132  10.228  1.00 25.56      1YCC 573
+ATOM    458  O   ASN    56      11.297   7.540   9.437  1.00 24.87      1YCC 574
+ATOM    459  CB  ASN    56      12.124   6.767  11.742  1.00 26.34      1YCC 575
+ATOM    460  CG  ASN    56      13.557   7.079  11.335  1.00 25.95      1YCC 576
+ATOM    461  OD1 ASN    56      14.360   6.186  10.856  1.00 27.81      1YCC 577
+ATOM    462  ND2 ASN    56      14.066   8.294  11.502  1.00 25.75      1YCC 578
+ATOM    463  N   VAL    57       9.610   8.989  10.023  1.00 25.60      1YCC 579
+ATOM    464  CA  VAL    57       9.291   9.378   8.645  1.00 25.56      1YCC 580
+ATOM    465  C   VAL    57      10.357  10.197   7.912  1.00 25.52      1YCC 581
+ATOM    466  O   VAL    57      11.014  11.142   8.429  1.00 24.83      1YCC 582
+ATOM    467  CB  VAL    57       8.000  10.232   8.684  1.00 26.33      1YCC 583
+ATOM    468  CG1 VAL    57       7.434  10.385   7.287  1.00 27.74      1YCC 584
+ATOM    469  CG2 VAL    57       7.048   9.610   9.674  1.00 27.53      1YCC 585
+ATOM    470  N   LEU    58      10.589   9.815   6.618  1.00 23.83      1YCC 586
+ATOM    471  CA  LEU    58      11.488  10.619   5.806  1.00 22.76      1YCC 587
+ATOM    472  C   LEU    58      10.484  11.591   5.114  1.00 21.96      1YCC 588
+ATOM    473  O   LEU    58       9.568  11.243   4.336  1.00 23.62      1YCC 589
+ATOM    474  CB  LEU    58      12.404   9.876   4.911  1.00 26.01      1YCC 590
+ATOM    475  CG  LEU    58      13.595  10.459   4.173  1.00 28.69      1YCC 591
+ATOM    476  CD1 LEU    58      13.378  11.178   2.878  1.00 27.86      1YCC 592
+ATOM    477  CD2 LEU    58      14.516  11.363   4.981  1.00 30.60      1YCC 593
+ATOM    478  N   TRP    59      10.700  12.859   5.389  1.00 19.86      1YCC 594
+ATOM    479  CA  TRP    59       9.807  13.889   4.906  1.00 19.67      1YCC 595
+ATOM    480  C   TRP    59      10.112  14.289   3.450  1.00 20.16      1YCC 596
+ATOM    481  O   TRP    59      11.128  14.875   3.171  1.00 19.14      1YCC 597
+ATOM    482  CB  TRP    59       9.830  15.101   5.813  1.00 19.09      1YCC 598
+ATOM    483  CG  TRP    59       9.304  14.967   7.228  1.00 14.01      1YCC 599
+ATOM    484  CD1 TRP    59      10.004  15.086   8.394  1.00 15.73      1YCC 600
+ATOM    485  CD2 TRP    59       7.994  14.608   7.570  1.00 15.73      1YCC 601
+ATOM    486  NE1 TRP    59       9.165  14.863   9.454  1.00 12.91      1YCC 602
+ATOM    487  CE2 TRP    59       7.935  14.589   9.022  1.00 12.63      1YCC 603
+ATOM    488  CE3 TRP    59       6.839  14.265   6.834  1.00 16.32      1YCC 604
+ATOM    489  CZ2 TRP    59       6.756  14.260   9.699  1.00 11.94      1YCC 605
+ATOM    490  CZ3 TRP    59       5.694  13.962   7.521  1.00 18.85      1YCC 606
+ATOM    491  CH2 TRP    59       5.656  13.972   8.960  1.00 13.76      1YCC 607
+ATOM    492  N   ASP    60       9.153  13.960   2.654  1.00 22.25      1YCC 608
+ATOM    493  CA  ASP    60       9.219  14.232   1.149  1.00 24.27      1YCC 609
+ATOM    494  C   ASP    60       7.891  14.919   0.882  1.00 23.51      1YCC 610
+ATOM    495  O   ASP    60       7.009  14.753   1.775  1.00 24.15      1YCC 611
+ATOM    496  CB  ASP    60       9.469  12.950   0.358  1.00 25.46      1YCC 612
+ATOM    497  CG  ASP    60       8.281  12.112   0.394  1.00 26.21      1YCC 613
+ATOM    498  OD1 ASP    60       7.168  12.533   0.300  1.00 31.42      1YCC 614
+ATOM    499  OD2 ASP    60       8.449  10.858   0.571  1.00 32.01      1YCC 615
+ATOM    500  N   GLU    61       7.771  15.666  -0.181  1.00 21.68      1YCC 616
+ATOM    501  CA  GLU    61       6.467  16.346  -0.519  1.00 20.17      1YCC 617
+ATOM    502  C   GLU    61       5.326  15.417  -0.478  1.00 16.87      1YCC 618
+ATOM    503  O   GLU    61       4.095  15.662  -0.171  1.00 17.44      1YCC 619
+ATOM    504  CB  GLU    61       6.623  16.994  -1.925  1.00 24.80      1YCC 620
+ATOM    505  CG  GLU    61       7.382  16.153  -2.972  1.00 29.21      1YCC 621
+ATOM    506  CD  GLU    61       7.162  16.179  -4.458  1.00 30.99      1YCC 622
+ATOM    507  OE1 GLU    61       6.626  15.326  -5.179  1.00 31.33      1YCC 623
+ATOM    508  OE2 GLU    61       7.692  17.293  -4.920  1.00 32.11      1YCC 624
+ATOM    509  N   ASN    62       5.576  14.121  -0.656  1.00 19.05      1YCC 625
+ATOM    510  CA  ASN    62       4.542  13.084  -0.728  1.00 17.93      1YCC 626
+ATOM    511  C   ASN    62       3.950  12.521   0.597  1.00 19.17      1YCC 627
+ATOM    512  O   ASN    62       2.779  12.170   0.768  1.00 17.03      1YCC 628
+ATOM    513  CB  ASN    62       5.044  11.961  -1.626  1.00 24.37      1YCC 629
+ATOM    514  CG  ASN    62       5.315  12.151  -3.110  1.00 26.67      1YCC 630
+ATOM    515  OD1 ASN    62       5.176  13.207  -3.760  1.00 29.64      1YCC 631
+ATOM    516  ND2 ASN    62       5.809  11.077  -3.738  1.00 26.19      1YCC 632
+ATOM    517  N   ASN    63       4.794  12.255   1.565  1.00 18.44      1YCC 633
+ATOM    518  CA  ASN    63       4.607  11.777   2.940  1.00 20.09      1YCC 634
+ATOM    519  C   ASN    63       3.832  12.844   3.749  1.00 18.08      1YCC 635
+ATOM    520  O   ASN    63       2.892  12.709   4.495  1.00 17.97      1YCC 636
+ATOM    521  CB  ASN    63       6.052  11.737   3.540  1.00 19.63      1YCC 637
+ATOM    522  CG  ASN    63       6.298  10.396   4.118  1.00 26.38      1YCC 638
+ATOM    523  OD1 ASN    63       5.746   9.992   5.214  1.00 30.44      1YCC 639
+ATOM    524  ND2 ASN    63       7.113   9.587   3.453  1.00 27.13      1YCC 640
+ATOM    525  N   MET    64       4.408  14.014   3.428  1.00 18.54      1YCC 641
+ATOM    526  CA  MET    64       3.892  15.310   3.950  1.00 17.06      1YCC 642
+ATOM    527  C   MET    64       2.451  15.489   3.605  1.00 15.82      1YCC 643
+ATOM    528  O   MET    64       1.671  15.925   4.442  1.00 14.59      1YCC 644
+ATOM    529  CB  MET    64       4.747  16.494   3.527  1.00 15.41      1YCC 645
+ATOM    530  CG  MET    64       4.118  17.699   4.253  1.00 19.76      1YCC 646
+ATOM    531  SD  MET    64       4.766  17.923   5.866  1.00 19.95      1YCC 647
+ATOM    532  CE  MET    64       6.518  18.194   5.566  1.00 18.80      1YCC 648
+ATOM    533  N   SER    65       2.056  15.100   2.404  1.00 14.77      1YCC 649
+ATOM    534  CA  SER    65       0.638  15.231   1.991  1.00 14.05      1YCC 650
+ATOM    535  C   SER    65      -0.297  14.337   2.792  1.00 12.28      1YCC 651
+ATOM    536  O   SER    65      -1.380  14.755   3.209  1.00 11.38      1YCC 652
+ATOM    537  CB  SER    65       0.409  14.987   0.460  1.00 14.06      1YCC 653
+ATOM    538  OG  SER    65      -0.853  15.237   0.002  1.00 14.74      1YCC 654
+ATOM    539  N   GLU    66       0.186  13.100   3.018  1.00 14.08      1YCC 655
+ATOM    540  CA  GLU    66      -0.608  12.106   3.702  1.00 14.01      1YCC 656
+ATOM    541  C   GLU    66      -0.688  12.528   5.220  1.00  9.97      1YCC 657
+ATOM    542  O   GLU    66      -1.701  12.437   5.812  1.00 11.93      1YCC 658
+ATOM    543  CB  GLU    66      -0.085  10.693   3.657  1.00 18.80      1YCC 659
+ATOM    544  CG  GLU    66      -0.508   9.539   2.727  1.00 27.02      1YCC 660
+ATOM    545  CD  GLU    66       0.456   9.369   1.585  1.00 30.86      1YCC 661
+ATOM    546  OE1 GLU    66       1.184  10.346   1.246  1.00 34.41      1YCC 662
+ATOM    547  OE2 GLU    66       0.418   8.253   0.878  1.00 34.14      1YCC 663
+ATOM    548  N   TYR    67       0.460  12.990   5.677  1.00 13.56      1YCC 664
+ATOM    549  CA  TYR    67       0.533  13.512   7.072  1.00 11.17      1YCC 665
+ATOM    550  C   TYR    67      -0.507  14.604   7.283  1.00 11.18      1YCC 666
+ATOM    551  O   TYR    67      -1.423  14.618   8.189  1.00 12.14      1YCC 667
+ATOM    552  CB  TYR    67       1.969  13.911   7.409  1.00 12.34      1YCC 668
+ATOM    553  CG  TYR    67       2.187  14.492   8.808  1.00 13.53      1YCC 669
+ATOM    554  CD1 TYR    67       2.708  15.778   8.930  1.00 14.10      1YCC 670
+ATOM    555  CD2 TYR    67       1.811  13.778   9.963  1.00 12.99      1YCC 671
+ATOM    556  CE1 TYR    67       2.820  16.375  10.208  1.00 15.15      1YCC 672
+ATOM    557  CE2 TYR    67       2.054  14.332  11.226  1.00 11.28      1YCC 673
+ATOM    558  CZ  TYR    67       2.524  15.606  11.321  1.00 13.08      1YCC 674
+ATOM    559  OH  TYR    67       2.784  16.105  12.613  1.00 13.02      1YCC 675
+ATOM    560  N   LEU    68      -0.469  15.661   6.455  1.00 10.49      1YCC 676
+ATOM    561  CA  LEU    68      -1.357  16.795   6.532  1.00 12.44      1YCC 677
+ATOM    562  C   LEU    68      -2.809  16.485   6.374  1.00 13.59      1YCC 678
+ATOM    563  O   LEU    68      -3.736  17.164   6.900  1.00 15.22      1YCC 679
+ATOM    564  CB  LEU    68      -0.925  18.008   5.621  1.00  9.49      1YCC 680
+ATOM    565  CG  LEU    68       0.412  18.579   6.034  1.00 12.44      1YCC 681
+ATOM    566  CD1 LEU    68       0.824  19.706   5.105  1.00 12.94      1YCC 682
+ATOM    567  CD2 LEU    68       0.499  19.059   7.447  1.00 13.33      1YCC 683
+ATOM    568  N   THR    69      -3.105  15.296   5.803  1.00 16.00      1YCC 684
+ATOM    569  CA  THR    69      -4.498  14.904   5.709  1.00 15.96      1YCC 685
+ATOM    570  C   THR    69      -5.146  14.668   7.052  1.00 15.30      1YCC 686
+ATOM    571  O   THR    69      -6.314  14.885   7.250  1.00 16.64      1YCC 687
+ATOM    572  CB  THR    69      -4.682  13.616   4.818  1.00 16.50      1YCC 688
+ATOM    573  OG1 THR    69      -4.033  13.991   3.675  1.00 18.51      1YCC 689
+ATOM    574  CG2 THR    69      -6.179  13.383   4.676  1.00 19.20      1YCC 690
+ATOM    575  N   ASN    70      -4.332  14.094   7.936  1.00 15.51      1YCC 691
+ATOM    576  CA  ASN    70      -4.741  13.644   9.264  1.00 15.99      1YCC 692
+ATOM    577  C   ASN    70      -3.514  13.163  10.008  1.00 14.46      1YCC 693
+ATOM    578  O   ASN    70      -3.168  11.947   9.965  1.00 14.39      1YCC 694
+ATOM    579  CB  ASN    70      -5.764  12.524   9.082  1.00 21.49      1YCC 695
+ATOM    580  CG  ASN    70      -6.591  12.458  10.343  1.00 26.22      1YCC 696
+ATOM    581  OD1 ASN    70      -6.044  12.398  11.460  1.00 27.93      1YCC 697
+ATOM    582  ND2 ASN    70      -7.912  12.563  10.152  1.00 30.61      1YCC 698
+ATOM    583  N   PRO    71      -2.883  14.149  10.659  1.00 14.91      1YCC 699
+ATOM    584  CA  PRO    71      -1.670  13.981  11.422  1.00 12.17      1YCC 700
+ATOM    585  C   PRO    71      -1.681  12.807  12.419  1.00 11.96      1YCC 701
+ATOM    586  O   PRO    71      -0.764  12.008  12.344  1.00 11.64      1YCC 702
+ATOM    587  CB  PRO    71      -1.466  15.385  12.029  1.00 12.21      1YCC 703
+ATOM    588  CG  PRO    71      -2.008  16.342  10.975  1.00 14.92      1YCC 704
+ATOM    589  CD  PRO    71      -3.284  15.571  10.589  1.00 15.42      1YCC 705
+ATOM    590  N   LYS    72      -2.731  12.760  13.224  1.00 13.10      1YCC 706
+ATOM    591  CA  LYS    72      -2.884  11.709  14.252  1.00 16.58      1YCC 707
+ATOM    592  C   LYS    72      -3.161  10.315  13.755  1.00 17.62      1YCC 708
+ATOM    593  O   LYS    72      -2.830   9.326  14.356  1.00 17.01      1YCC 709
+ATOM    594  CB  LYS    72      -4.042  12.102  15.191  1.00 17.61      1YCC 710
+ATOM    595  CG  LYS    72      -3.433  13.184  16.084  1.00 18.96      1YCC 711
+ATOM    596  CD  LYS    72      -4.401  13.642  17.191  1.00 21.65      1YCC 712
+ATOM    597  CE  LYS    72      -3.652  14.731  17.984  1.00 21.67      1YCC 713
+ATOM    598  NZ  LYS    72      -4.176  14.880  19.350  1.00 21.10      1YCC 714
+ATOM    599  N   LYS    73      -3.721  10.270  12.520  1.00 19.57      1YCC 715
+ATOM    600  CA  LYS    73      -4.002   8.979  11.842  1.00 19.73      1YCC 716
+ATOM    601  C   LYS    73      -2.639   8.544  11.364  1.00 20.12      1YCC 717
+ATOM    602  O   LYS    73      -2.387   7.339  11.595  1.00 24.16      1YCC 718
+ATOM    603  CB  LYS    73      -5.081   9.067  10.793  1.00 21.07      1YCC 719
+ATOM    604  CG  LYS    73      -5.622   7.794  10.160  1.00 23.01      1YCC 720
+ATOM    605  CD  LYS    73      -6.082   6.670  11.041  1.00 25.17      1YCC 721
+ATOM    606  CE  LYS    73      -6.529   5.410  10.278  1.00 26.03      1YCC 722
+ATOM    607  NZ  LYS    73      -6.338   4.110  10.945  1.00 22.86      1YCC 723
+ATOM    608  N   TYR    74      -1.817   9.418  10.851  1.00 20.60      1YCC 724
+ATOM    609  CA  TYR    74      -0.465   9.124  10.341  1.00 19.70      1YCC 725
+ATOM    610  C   TYR    74       0.583   8.815  11.404  1.00 19.18      1YCC 726
+ATOM    611  O   TYR    74       1.404   7.906  11.266  1.00 16.89      1YCC 727
+ATOM    612  CB  TYR    74      -0.055  10.351   9.442  1.00 20.36      1YCC 728
+ATOM    613  CG  TYR    74       1.092   9.936   8.551  1.00 23.72      1YCC 729
+ATOM    614  CD1 TYR    74       0.857   9.130   7.394  1.00 24.53      1YCC 730
+ATOM    615  CD2 TYR    74       2.416  10.249   8.856  1.00 23.67      1YCC 731
+ATOM    616  CE1 TYR    74       1.884   8.558   6.699  1.00 25.04      1YCC 732
+ATOM    617  CE2 TYR    74       3.444   9.758   8.079  1.00 25.53      1YCC 733
+ATOM    618  CZ  TYR    74       3.181   8.920   7.002  1.00 25.90      1YCC 734
+ATOM    619  OH  TYR    74       4.212   8.469   6.264  1.00 28.21      1YCC 735
+ATOM    620  N   ILE    75       0.608   9.625  12.486  1.00 18.36      1YCC 736
+ATOM    621  CA  ILE    75       1.507   9.437  13.683  1.00 17.64      1YCC 737
+ATOM    622  C   ILE    75       0.678   9.408  14.931  1.00 18.12      1YCC 738
+ATOM    623  O   ILE    75       0.354  10.384  15.683  1.00 16.41      1YCC 739
+ATOM    624  CB  ILE    75       2.629  10.413  13.848  1.00 18.35      1YCC 740
+ATOM    625  CG1 ILE    75       3.193  10.778  12.449  1.00 19.38      1YCC 741
+ATOM    626  CG2 ILE    75       3.675   9.809  14.746  1.00 18.58      1YCC 742
+ATOM    627  CD1 ILE    75       4.531  11.550  12.447  1.00 19.78      1YCC 743
+ATOM    628  N   PRO    76       0.160   8.209  15.225  1.00 18.05      1YCC 744
+ATOM    629  CA  PRO    76      -0.763   8.065  16.327  1.00 16.40      1YCC 745
+ATOM    630  C   PRO    76       0.126   8.383  17.617  1.00 15.35      1YCC 746
+ATOM    631  O   PRO    76       1.178   7.793  17.812  1.00 14.45      1YCC 747
+ATOM    632  CB  PRO    76      -1.288   6.674  16.241  1.00 18.40      1YCC 748
+ATOM    633  CG  PRO    76      -0.780   6.147  14.902  1.00 19.66      1YCC 749
+ATOM    634  CD  PRO    76       0.464   6.923  14.505  1.00 18.24      1YCC 750
+ATOM    635  N   GLY    77      -0.481   9.292  18.361  1.00 14.78      1YCC 751
+ATOM    636  CA  GLY    77       0.200   9.764  19.586  1.00 15.32      1YCC 752
+ATOM    637  C   GLY    77       0.912  11.080  19.453  1.00 15.61      1YCC 753
+ATOM    638  O   GLY    77       1.601  11.585  20.364  1.00 15.74      1YCC 754
+ATOM    639  N   THR    78       0.910  11.716  18.243  1.00 14.02      1YCC 755
+ATOM    640  CA  THR    78       1.639  12.976  18.027  1.00 10.16      1YCC 756
+ATOM    641  C   THR    78       0.955  13.993  18.842  1.00  9.22      1YCC 757
+ATOM    642  O   THR    78      -0.267  13.822  18.984  1.00 12.30      1YCC 758
+ATOM    643  CB  THR    78       1.726  13.305  16.492  1.00  9.85      1YCC 759
+ATOM    644  OG1 THR    78       2.438  14.526  16.456  1.00 11.66      1YCC 760
+ATOM    645  CG2 THR    78       0.352  13.327  15.928  1.00 12.27      1YCC 761
+ATOM    646  N   LYS    79       1.604  14.981  19.397  1.00  8.52      1YCC 762
+ATOM    647  CA  LYS    79       0.969  16.016  20.109  1.00  7.80      1YCC 763
+ATOM    648  C   LYS    79       0.636  17.218  19.303  1.00  9.62      1YCC 764
+ATOM    649  O   LYS    79       0.197  18.246  19.797  1.00 10.91      1YCC 765
+ATOM    650  CB  LYS    79       1.832  16.585  21.258  1.00 10.06      1YCC 766
+ATOM    651  CG  LYS    79       3.132  17.175  20.865  1.00 10.93      1YCC 767
+ATOM    652  CD  LYS    79       3.973  17.522  22.114  1.00 10.64      1YCC 768
+ATOM    653  CE  LYS    79       5.387  17.782  21.761  1.00 12.16      1YCC 769
+ATOM    654  NZ  LYS    79       6.232  18.502  22.746  1.00 14.41      1YCC 770
+ATOM    655  N   MET    80       0.855  17.029  17.971  1.00  8.04      1YCC 771
+ATOM    656  CA  MET    80       0.408  18.119  17.010  1.00 10.18      1YCC 772
+ATOM    657  C   MET    80      -1.101  18.099  16.919  1.00 10.61      1YCC 773
+ATOM    658  O   MET    80      -1.592  17.116  16.333  1.00 10.82      1YCC 774
+ATOM    659  CB  MET    80       1.017  17.952  15.599  1.00  6.06      1YCC 775
+ATOM    660  CG  MET    80       0.423  18.793  14.441  1.00  4.97      1YCC 776
+ATOM    661  SD  MET    80       1.482  19.034  13.122  1.00  5.64      1YCC 777
+ATOM    662  CE  MET    80       0.274  19.322  11.825  1.00  4.00      1YCC 778
+ATOM    663  N   ALA    81      -1.683  19.111  17.554  1.00 11.53      1YCC 779
+ATOM    664  CA  ALA    81      -3.121  19.289  17.577  1.00 11.45      1YCC 780
+ATOM    665  C   ALA    81      -3.691  20.057  16.369  1.00 12.64      1YCC 781
+ATOM    666  O   ALA    81      -4.142  21.232  16.406  1.00 14.83      1YCC 782
+ATOM    667  CB  ALA    81      -3.688  19.962  18.847  1.00  9.33      1YCC 783
+ATOM    668  N   PHE    82      -3.717  19.342  15.235  1.00 13.54      1YCC 784
+ATOM    669  CA  PHE    82      -4.200  19.882  13.967  1.00 15.67      1YCC 785
+ATOM    670  C   PHE    82      -5.048  18.788  13.338  1.00 15.64      1YCC 786
+ATOM    671  O   PHE    82      -4.582  17.652  13.191  1.00 16.11      1YCC 787
+ATOM    672  CB  PHE    82      -3.015  20.354  13.079  1.00 15.82      1YCC 788
+ATOM    673  CG  PHE    82      -3.440  20.777  11.667  1.00 15.92      1YCC 789
+ATOM    674  CD1 PHE    82      -3.170  19.916  10.591  1.00 18.53      1YCC 790
+ATOM    675  CD2 PHE    82      -4.105  21.949  11.469  1.00 16.89      1YCC 791
+ATOM    676  CE1 PHE    82      -3.485  20.317   9.300  1.00 18.58      1YCC 792
+ATOM    677  CE2 PHE    82      -4.458  22.380  10.181  1.00 16.96      1YCC 793
+ATOM    678  CZ  PHE    82      -4.134  21.546   9.123  1.00 15.55      1YCC 794
+ATOM    679  N   GLY    83      -6.288  19.092  13.019  1.00 16.72      1YCC 795
+ATOM    680  CA  GLY    83      -7.197  18.154  12.457  1.00 16.65      1YCC 796
+ATOM    681  C   GLY    83      -6.795  17.637  11.101  1.00 19.77      1YCC 797
+ATOM    682  O   GLY    83      -7.065  16.442  10.899  1.00 22.95      1YCC 798
+ATOM    683  N   GLY    84      -6.318  18.530  10.242  1.00 18.30      1YCC 799
+ATOM    684  CA  GLY    84      -5.979  18.026   8.871  1.00 18.75      1YCC 800
+ATOM    685  C   GLY    84      -6.511  18.973   7.771  1.00 16.38      1YCC 801
+ATOM    686  O   GLY    84      -7.463  19.729   7.999  1.00 16.14      1YCC 802
+ATOM    687  N   LEU    85      -5.967  18.784   6.615  1.00 14.06      1YCC 803
+ATOM    688  CA  LEU    85      -6.274  19.531   5.378  1.00 14.63      1YCC 804
+ATOM    689  C   LEU    85      -6.784  18.442   4.392  1.00 13.42      1YCC 805
+ATOM    690  O   LEU    85      -5.974  17.724   3.847  1.00 13.26      1YCC 806
+ATOM    691  CB  LEU    85      -4.999  20.235   4.923  1.00 15.67      1YCC 807
+ATOM    692  CG  LEU    85      -4.717  21.673   5.295  1.00 15.87      1YCC 808
+ATOM    693  CD1 LEU    85      -3.322  22.067   4.914  1.00 18.44      1YCC 809
+ATOM    694  CD2 LEU    85      -5.637  22.602   4.537  1.00 21.58      1YCC 810
+ATOM    695  N   LYS    86      -8.084  18.361   4.337  1.00 15.35      1YCC 811
+ATOM    696  CA  LYS    86      -8.724  17.316   3.526  1.00 16.90      1YCC 812
+ATOM    697  C   LYS    86      -8.649  17.509   2.060  1.00 16.31      1YCC 813
+ATOM    698  O   LYS    86      -8.648  16.420   1.456  1.00 17.85      1YCC 814
+ATOM    699  CB  LYS    86     -10.209  17.130   3.882  1.00 19.57      1YCC 815
+ATOM    700  CG  LYS    86     -10.416  17.080   5.382  1.00 23.76      1YCC 816
+ATOM    701  CD  LYS    86      -9.299  16.262   6.058  1.00 30.07      1YCC 817
+ATOM    702  CE  LYS    86      -9.256  16.160   7.564  1.00 31.14      1YCC 818
+ATOM    703  NZ  LYS    86      -8.588  14.874   7.982  1.00 34.19      1YCC 819
+ATOM    704  N   LYS    87      -8.576  18.679   1.542  1.00 15.95      1YCC 820
+ATOM    705  CA  LYS    87      -8.535  18.865   0.075  1.00 15.37      1YCC 821
+ATOM    706  C   LYS    87      -7.122  18.785  -0.392  1.00 13.58      1YCC 822
+ATOM    707  O   LYS    87      -6.203  19.430   0.114  1.00 12.88      1YCC 823
+ATOM    708  CB  LYS    87      -9.098  20.271  -0.206  1.00 18.25      1YCC 824
+ATOM    709  CG  LYS    87     -10.600  20.252   0.145  1.00 23.35      1YCC 825
+ATOM    710  CD  LYS    87     -11.263  21.604  -0.021  1.00 27.29      1YCC 826
+ATOM    711  CE  LYS    87     -12.757  21.596   0.201  1.00 30.30      1YCC 827
+ATOM    712  NZ  LYS    87     -13.188  20.545   1.144  1.00 33.81      1YCC 828
+ATOM    713  N   GLU    88      -6.956  17.889  -1.372  1.00 11.53      1YCC 829
+ATOM    714  CA  GLU    88      -5.685  17.734  -2.014  1.00 11.52      1YCC 830
+ATOM    715  C   GLU    88      -5.183  19.088  -2.600  1.00  9.08      1YCC 831
+ATOM    716  O   GLU    88      -3.998  19.357  -2.616  1.00 10.87      1YCC 832
+ATOM    717  CB  GLU    88      -5.698  16.698  -3.134  1.00 15.20      1YCC 833
+ATOM    718  CG  GLU    88      -4.444  16.330  -3.888  1.00 18.34      1YCC 834
+ATOM    719  CD  GLU    88      -4.847  15.416  -5.045  1.00 23.27      1YCC 835
+ATOM    720  OE1 GLU    88      -5.903  14.893  -5.177  1.00 23.49      1YCC 836
+ATOM    721  OE2 GLU    88      -3.918  15.370  -5.993  1.00 30.74      1YCC 837
+ATOM    722  N   LYS    89      -6.065  19.885  -3.108  1.00 10.70      1YCC 838
+ATOM    723  CA  LYS    89      -5.616  21.134  -3.740  1.00 11.79      1YCC 839
+ATOM    724  C   LYS    89      -4.959  22.083  -2.733  1.00 10.54      1YCC 840
+ATOM    725  O   LYS    89      -3.995  22.736  -3.065  1.00 13.10      1YCC 841
+ATOM    726  CB  LYS    89      -6.610  21.878  -4.549  1.00 15.83      1YCC 842
+ATOM    727  CG  LYS    89      -7.908  22.242  -3.856  1.00 18.32      1YCC 843
+ATOM    728  CD  LYS    89      -8.337  23.636  -4.282  1.00 23.94      1YCC 844
+ATOM    729  CE  LYS    89      -9.791  23.604  -4.722  1.00 24.38      1YCC 845
+ATOM    730  NZ  LYS    89     -10.139  24.889  -5.325  1.00 27.35      1YCC 846
+ATOM    731  N   ASP    90      -5.516  22.078  -1.569  1.00 12.05      1YCC 847
+ATOM    732  CA  ASP    90      -4.978  22.878  -0.379  1.00 11.02      1YCC 848
+ATOM    733  C   ASP    90      -3.614  22.411   0.055  1.00  8.83      1YCC 849
+ATOM    734  O   ASP    90      -2.672  23.164   0.260  1.00  8.85      1YCC 850
+ATOM    735  CB  ASP    90      -6.005  22.655   0.734  1.00 12.64      1YCC 851
+ATOM    736  CG  ASP    90      -7.200  23.502   0.509  1.00 14.51      1YCC 852
+ATOM    737  OD1 ASP    90      -8.206  23.286   1.160  1.00 14.99      1YCC 853
+ATOM    738  OD2 ASP    90      -7.099  24.452  -0.379  1.00 17.25      1YCC 854
+ATOM    739  N   ARG    91      -3.527  21.074   0.232  1.00  9.76      1YCC 855
+ATOM    740  CA  ARG    91      -2.255  20.444   0.510  1.00  7.46      1YCC 856
+ATOM    741  C   ARG    91      -1.217  20.743  -0.598  1.00  8.37      1YCC 857
+ATOM    742  O   ARG    91      -0.075  21.053  -0.181  1.00 11.79      1YCC 858
+ATOM    743  CB  ARG    91      -2.471  18.945   0.692  1.00  9.57      1YCC 859
+ATOM    744  CG  ARG    91      -3.407  18.562   1.807  1.00 10.77      1YCC 860
+ATOM    745  CD  ARG    91      -3.236  17.158   2.273  1.00 13.93      1YCC 861
+ATOM    746  NE  ARG    91      -3.370  16.139   1.200  1.00 13.05      1YCC 862
+ATOM    747  CZ  ARG    91      -4.508  15.595   0.829  1.00 15.02      1YCC 863
+ATOM    748  NH1 ARG    91      -4.522  14.709  -0.132  1.00 15.40      1YCC 864
+ATOM    749  NH2 ARG    91      -5.679  15.924   1.325  1.00 18.55      1YCC 865
+ATOM    750  N   ASN    92      -1.614  20.664  -1.873  1.00  9.71      1YCC 866
+ATOM    751  CA  ASN    92      -0.630  20.917  -2.950  1.00  8.51      1YCC 867
+ATOM    752  C   ASN    92      -0.122  22.332  -2.860  1.00  5.61      1YCC 868
+ATOM    753  O   ASN    92       1.120  22.441  -2.959  1.00  9.49      1YCC 869
+ATOM    754  CB  ASN    92      -1.188  20.586  -4.340  1.00 13.12      1YCC 870
+ATOM    755  CG  ASN    92      -1.419  19.096  -4.490  1.00 15.70      1YCC 871
+ATOM    756  OD1 ASN    92      -0.851  18.294  -3.720  1.00 15.80      1YCC 872
+ATOM    757  ND2 ASN    92      -2.344  18.778  -5.404  1.00 15.46      1YCC 873
+ATOM    758  N   ASP    93      -1.032  23.293  -2.701  1.00  6.03      1YCC 874
+ATOM    759  CA  ASP    93      -0.661  24.629  -2.486  1.00  6.40      1YCC 875
+ATOM    760  C   ASP    93       0.335  24.750  -1.268  1.00  7.08      1YCC 876
+ATOM    761  O   ASP    93       1.413  25.315  -1.424  1.00  8.02      1YCC 877
+ATOM    762  CB  ASP    93      -1.854  25.548  -2.321  1.00  9.56      1YCC 878
+ATOM    763  CG  ASP    93      -2.638  25.748  -3.625  1.00 10.92      1YCC 879
+ATOM    764  OD1 ASP    93      -2.088  25.450  -4.715  1.00  9.65      1YCC 880
+ATOM    765  OD2 ASP    93      -3.854  26.063  -3.495  1.00 13.35      1YCC 881
+ATOM    766  N   LEU    94      -0.054  24.259  -0.139  1.00  7.38      1YCC 882
+ATOM    767  CA  LEU    94       0.790  24.424   1.068  1.00  6.63      1YCC 883
+ATOM    768  C   LEU    94       2.124  23.795   0.909  1.00  5.08      1YCC 884
+ATOM    769  O   LEU    94       3.153  24.427   1.188  1.00  8.18      1YCC 885
+ATOM    770  CB  LEU    94       0.038  23.918   2.292  1.00  9.54      1YCC 886
+ATOM    771  CG  LEU    94       0.921  24.074   3.548  1.00  9.33      1YCC 887
+ATOM    772  CD1 LEU    94       1.014  25.512   3.805  1.00 10.64      1YCC 888
+ATOM    773  CD2 LEU    94       0.368  23.333   4.729  1.00 12.72      1YCC 889
+ATOM    774  N   ILE    95       2.228  22.592   0.445  1.00  7.65      1YCC 890
+ATOM    775  CA  ILE    95       3.495  21.889   0.253  1.00  8.47      1YCC 891
+ATOM    776  C   ILE    95       4.391  22.606  -0.769  1.00  9.44      1YCC 892
+ATOM    777  O   ILE    95       5.643  22.644  -0.716  1.00 10.20      1YCC 893
+ATOM    778  CB  ILE    95       3.252  20.451  -0.121  1.00  8.80      1YCC 894
+ATOM    779  CG1 ILE    95       2.562  19.820   1.088  1.00  9.86      1YCC 895
+ATOM    780  CG2 ILE    95       4.589  19.729  -0.370  1.00  8.93      1YCC 896
+ATOM    781  CD1 ILE    95       2.049  18.417   0.882  1.00 10.08      1YCC 897
+ATOM    782  N   THR    96       3.706  23.201  -1.763  1.00 10.52      1YCC 898
+ATOM    783  CA  THR    96       4.417  23.983  -2.796  1.00 11.61      1YCC 899
+ATOM    784  C   THR    96       5.200  25.115  -2.087  1.00 12.13      1YCC 900
+ATOM    785  O   THR    96       6.335  25.434  -2.463  1.00 15.43      1YCC 901
+ATOM    786  CB  THR    96       3.539  24.412  -4.014  1.00 10.79      1YCC 902
+ATOM    787  OG1 THR    96       3.102  23.156  -4.482  1.00 12.29      1YCC 903
+ATOM    788  CG2 THR    96       4.364  25.276  -4.926  1.00 12.48      1YCC 904
+ATOM    789  N   TYR    97       4.570  25.810  -1.165  1.00  7.32      1YCC 905
+ATOM    790  CA  TYR    97       5.063  26.890  -0.333  1.00 11.42      1YCC 906
+ATOM    791  C   TYR    97       6.103  26.365   0.665  1.00 10.84      1YCC 907
+ATOM    792  O   TYR    97       7.256  26.909   0.729  1.00  9.69      1YCC 908
+ATOM    793  CB  TYR    97       3.898  27.528   0.525  1.00  9.77      1YCC 909
+ATOM    794  CG  TYR    97       4.487  28.532   1.465  1.00 13.60      1YCC 910
+ATOM    795  CD1 TYR    97       5.088  29.720   1.039  1.00 13.46      1YCC 911
+ATOM    796  CD2 TYR    97       4.603  28.184   2.814  1.00 13.71      1YCC 912
+ATOM    797  CE1 TYR    97       5.651  30.598   1.967  1.00 16.85      1YCC 913
+ATOM    798  CE2 TYR    97       5.219  28.983   3.723  1.00 13.99      1YCC 914
+ATOM    799  CZ  TYR    97       5.754  30.211   3.320  1.00 16.69      1YCC 915
+ATOM    800  OH  TYR    97       6.346  30.980   4.278  1.00 16.36      1YCC 916
+ATOM    801  N   LEU    98       5.786  25.209   1.236  1.00 12.27      1YCC 917
+ATOM    802  CA  LEU    98       6.843  24.652   2.148  1.00 13.51      1YCC 918
+ATOM    803  C   LEU    98       8.110  24.237   1.408  1.00 14.39      1YCC 919
+ATOM    804  O   LEU    98       9.217  24.587   1.949  1.00 15.35      1YCC 920
+ATOM    805  CB  LEU    98       6.296  23.565   3.039  1.00 15.99      1YCC 921
+ATOM    806  CG  LEU    98       5.239  23.909   4.096  1.00 19.02      1YCC 922
+ATOM    807  CD1 LEU    98       4.717  22.617   4.696  1.00 21.49      1YCC 923
+ATOM    808  CD2 LEU    98       5.757  24.774   5.205  1.00 19.27      1YCC 924
+ATOM    809  N   LYS    99       7.958  23.533   0.297  1.00 11.94      1YCC 925
+ATOM    810  CA  LYS    99       9.106  23.131  -0.545  1.00 15.38      1YCC 926
+ATOM    811  C   LYS    99      10.067  24.276  -0.764  1.00 11.19      1YCC 927
+ATOM    812  O   LYS    99      11.294  24.203  -0.762  1.00 14.67      1YCC 928
+ATOM    813  CB  LYS    99       8.620  22.702  -1.963  1.00 19.09      1YCC 929
+ATOM    814  CG  LYS    99       9.688  22.644  -3.077  1.00 26.34      1YCC 930
+ATOM    815  CD  LYS    99       9.337  22.487  -4.548  1.00 27.79      1YCC 931
+ATOM    816  CE  LYS    99       7.972  23.014  -4.942  1.00 30.97      1YCC 932
+ATOM    817  NZ  LYS    99       8.035  24.503  -5.064  1.00 32.26      1YCC 933
+ATOM    818  N   LYS   100       9.481  25.418  -1.071  1.00 12.85      1YCC 934
+ATOM    819  CA  LYS   100      10.214  26.656  -1.298  1.00 13.76      1YCC 935
+ATOM    820  C   LYS   100      10.773  27.390  -0.099  1.00 16.23      1YCC 936
+ATOM    821  O   LYS   100      11.919  27.852  -0.258  1.00 15.97      1YCC 937
+ATOM    822  CB  LYS   100       9.328  27.648  -2.087  1.00 19.93      1YCC 938
+ATOM    823  CG  LYS   100       8.843  26.899  -3.338  1.00 22.13      1YCC 939
+ATOM    824  CD  LYS   100      10.081  26.856  -4.295  1.00 26.44      1YCC 940
+ATOM    825  CE  LYS   100      10.080  28.116  -5.163  1.00 28.65      1YCC 941
+ATOM    826  NZ  LYS   100      11.288  28.182  -6.022  1.00 32.84      1YCC 942
+ATOM    827  N   ALA   101       9.965  27.536   0.938  1.00 10.90      1YCC 943
+ATOM    828  CA  ALA   101      10.394  28.361   2.085  1.00 12.86      1YCC 944
+ATOM    829  C   ALA   101      11.270  27.646   3.064  1.00 11.53      1YCC 945
+ATOM    830  O   ALA   101      12.052  28.326   3.761  1.00 13.07      1YCC 946
+ATOM    831  CB  ALA   101       9.229  28.904   2.912  1.00 14.14      1YCC 947
+ATOM    832  N   CYS   102      11.175  26.378   3.020  1.00 12.12      1YCC 948
+ATOM    833  CA  CYS   102      12.063  25.546   3.934  1.00 14.77      1YCC 949
+ATOM    834  C   CYS   102      13.416  25.155   3.394  1.00 14.15      1YCC 950
+ATOM    835  O   CYS   102      14.228  24.479   4.005  1.00 13.98      1YCC 951
+ATOM    836  CB  CYS   102      11.364  24.271   4.417  1.00 17.68      1YCC 952
+ATOM    837  SG  CYS   102       9.788  24.563   5.214  1.00 17.29      1YCC 953
+ATOM    838  N   GLU   103      13.791  25.614   2.232  1.00 15.06      1YCC 954
+ATOM    839  CA  GLU   103      15.112  25.234   1.692  1.00 17.93      1YCC 955
+ATOM    840  C   GLU   103      16.163  26.240   2.161  1.00 17.47      1YCC 956
+ATOM    841  O   GLU   103      17.335  25.777   2.205  1.00 16.57      1YCC 957
+ATOM    842  CB  GLU   103      15.032  25.365   0.187  1.00 22.76      1YCC 958
+ATOM    843  CG  GLU   103      16.100  24.732  -0.708  1.00 28.70      1YCC 959
+ATOM    844  CD  GLU   103      16.236  23.285  -0.333  1.00 32.94      1YCC 960
+ATOM    845  OE1 GLU   103      17.259  22.676  -0.132  1.00 36.94      1YCC 961
+ATOM    846  OE2 GLU   103      15.054  22.757  -0.087  1.00 36.52      1YCC 962
+ATOM    847  OXT GLU   103      15.764  27.419   2.008  1.00 15.67      1YCC 963
+TER     848      GLU   103                                              1YCC 964
+HETATM  849 FE   HEM     1       2.804  20.977  13.203  1.00  5.88      1YCC 965
+HETATM  850  CHA HEM     1       5.106  18.702  14.237  1.00  5.87      1YCC 966
+HETATM  851  CHB HEM     1       3.970  20.651  10.030  1.00  4.22      1YCC 967
+HETATM  852  CHC HEM     1       0.209  22.809  12.141  1.00  3.38      1YCC 968
+HETATM  853  CHD HEM     1       2.105  21.734  16.357  1.00  3.69      1YCC 969
+HETATM  854  N A HEM     1       4.231  19.906  12.368  1.00  4.19      1YCC 970
+HETATM  855  C1A HEM     1       5.101  19.026  12.888  1.00  5.95      1YCC 971
+HETATM  856  C2A HEM     1       5.794  18.232  11.845  1.00  6.45      1YCC 972
+HETATM  857  C3A HEM     1       5.473  18.820  10.692  1.00  3.89      1YCC 973
+HETATM  858  C4A HEM     1       4.516  19.811  10.917  1.00  6.01      1YCC 974
+HETATM  859  CMA HEM     1       5.975  18.374   9.266  1.00  6.73      1YCC 975
+HETATM  860  CAA HEM     1       6.810  17.182  12.193  1.00  5.78      1YCC 976
+HETATM  861  CBA HEM     1       8.215  17.854  12.326  1.00  7.08      1YCC 977
+HETATM  862  CGA HEM     1       9.431  16.948  12.446  1.00  5.97      1YCC 978
+HETATM  863  O1A HEM     1      10.497  17.561  12.574  1.00  9.31      1YCC 979
+HETATM  864  O2A HEM     1       9.302  15.705  12.427  1.00  8.41      1YCC 980
+HETATM  865  N B HEM     1       2.192  21.629  11.411  1.00  2.15      1YCC 981
+HETATM  866  C1B HEM     1       2.942  21.560  10.243  1.00  3.21      1YCC 982
+HETATM  867  C2B HEM     1       2.153  22.255   9.230  1.00  3.58      1YCC 983
+HETATM  868  C3B HEM     1       1.049  22.820   9.779  1.00  2.63      1YCC 984
+HETATM  869  C4B HEM     1       1.152  22.442  11.163  1.00  3.20      1YCC 985
+HETATM  870  CMB HEM     1       2.678  22.418   7.757  1.00  5.37      1YCC 986
+HETATM  871  CAB HEM     1      -0.025  23.701   9.197  1.00  5.49      1YCC 987
+HETATM  872  CBB HEM     1      -1.172  22.933   8.520  1.00 10.72      1YCC 988
+HETATM  873  N C HEM     1       1.422  22.066  14.130  1.00  3.42      1YCC 989
+HETATM  874  C1C HEM     1       0.391  22.773  13.590  1.00  2.81      1YCC 990
+HETATM  875  C2C HEM     1      -0.404  23.540  14.466  1.00  3.38      1YCC 991
+HETATM  876  C3C HEM     1       0.103  23.199  15.669  1.00  3.06      1YCC 992
+HETATM  877  C4C HEM     1       1.283  22.361  15.466  1.00  4.09      1YCC 993
+HETATM  878  CMC HEM     1      -1.580  24.417  14.163  1.00  5.12      1YCC 994
+HETATM  879  CAC HEM     1      -0.143  23.797  17.089  1.00  4.88      1YCC 995
+HETATM  880  CBC HEM     1      -1.643  23.796  17.461  1.00  5.17      1YCC 996
+HETATM  881  N D HEM     1       3.478  20.351  14.983  1.00  5.48      1YCC 997
+HETATM  882  C1D HEM     1       3.057  20.792  16.232  1.00  4.18      1YCC 998
+HETATM  883  C2D HEM     1       3.746  20.112  17.228  1.00  4.11      1YCC 999
+HETATM  884  C3D HEM     1       4.570  19.231  16.638  1.00  5.10      1YCC1000
+HETATM  885  C4D HEM     1       4.345  19.327  15.198  1.00  5.93      1YCC1001
+HETATM  886  CMD HEM     1       3.526  20.275  18.801  1.00  3.91      1YCC1002
+HETATM  887  CAD HEM     1       5.424  18.169  17.375  1.00  5.11      1YCC1003
+HETATM  888  CBD HEM     1       4.819  16.786  17.314  1.00  6.82      1YCC1004
+HETATM  889  CGD HEM     1       5.321  15.740  18.292  1.00  7.97      1YCC1005
+HETATM  890  O1D HEM     1       6.473  15.913  18.774  1.00  9.10      1YCC1006
+HETATM  891  O2D HEM     1       4.596  14.724  18.384  1.00  9.11      1YCC1007
+HETATM  892  CH1 TML    72      -3.564  13.718  20.038  1.00 22.59   1  1YCC1008
+HETATM  893  CH2 TML    72      -3.698  16.161  19.910  1.00 20.22   1  1YCC1009
+HETATM  894  CH3 TML    72      -5.647  14.826  19.373  1.00 22.17   1  1YCC1010
+HETATM  895  O   HOH   105     -13.170  21.124   8.157  1.00 44.51      1YCC1011
+HETATM  896  O   HOH   106      19.103  13.672   5.526  1.00 31.49      1YCC1012
+HETATM  897  O   HOH   107      -9.369  19.508   9.563  1.00 35.60      1YCC1013
+HETATM  898  O   HOH   108      18.041  21.544  11.559  1.00 38.27      1YCC1014
+HETATM  899  O   HOH   109      18.864  15.710  15.876  1.00 27.42      1YCC1015
+HETATM  900  O   HOH   110       8.544  26.800  15.257  1.00 15.73      1YCC1016
+HETATM  901  O   HOH   111      17.076  17.554   5.111  1.00 54.67      1YCC1017
+HETATM  902  O   HOH   112       7.266  15.563  24.158  1.00 26.27      1YCC1018
+HETATM  903  O   HOH   113      10.517  21.944  23.334  1.00 21.66      1YCC1019
+HETATM  904  O   HOH   114       0.042   4.355  -9.411  1.00 43.27      1YCC1020
+HETATM  905  O   HOH   115      -6.472  27.157  -9.747  1.00 46.22      1YCC1021
+HETATM  906  O   HOH   116      -1.384   5.403  -7.798  1.00 36.44      1YCC1022
+HETATM  907  S   SO4   117       2.258  31.111  -7.667  1.00 33.34      1YCC1023
+HETATM  908  O1  SO4   117       3.023  31.565  -6.486  1.00 33.49      1YCC1024
+HETATM  909  O2  SO4   117       0.789  31.044  -7.447  1.00 34.69      1YCC1025
+HETATM  910  O3  SO4   117       2.467  32.095  -8.812  1.00 34.95      1YCC1026
+HETATM  911  O4  SO4   117       2.815  29.760  -8.052  1.00 35.03      1YCC1027
+HETATM  912  O   HOH   118     -11.208  20.770  -5.743  1.00 23.56      1YCC1028
+HETATM  913  O   HOH   119       6.794  33.344  14.115  1.00 26.65      1YCC1029
+HETATM  914  O   HOH   120       5.344  35.207   3.097  1.00 43.60      1YCC1030
+HETATM  915  O   HOH   121      13.130  16.804  11.955  1.00 17.18      1YCC1031
+HETATM  916  O   HOH   122      -0.458  20.955  19.066  1.00 11.07      1YCC1032
+HETATM  917  O   HOH   123      11.056   0.528  18.153  1.00 48.24      1YCC1033
+HETATM  918  O   HOH   124      12.335  13.357   0.822  1.00 24.39      1YCC1034
+HETATM  919  O   HOH   125       3.598  29.535  19.060  1.00 44.24      1YCC1035
+HETATM  920  O   HOH   126      -3.683  27.512  13.652  1.00 32.79      1YCC1036
+HETATM  921  O   HOH   127      -1.132   6.950   5.271  1.00 27.97      1YCC1037
+HETATM  922  O   HOH   128       7.741  21.099  23.049  1.00 29.44      1YCC1038
+HETATM  923  O   HOH   129      17.689  17.892  21.693  1.00 31.97      1YCC1039
+HETATM  924  O   HOH   130      17.874  15.975  17.959  1.00 36.25      1YCC1040
+HETATM  925  O   HOH   131      14.462  19.170  -0.649  1.00 50.40      1YCC1041
+HETATM  926  O   HOH   132      -9.178  23.197   5.677  1.00 33.60      1YCC1042
+HETATM  927  O   HOH   133      16.715  27.066  11.433  1.00 29.39      1YCC1043
+HETATM  928  O   HOH   134      21.774  18.498  20.544  1.00 42.64      1YCC1044
+HETATM  929  O   HOH   135      -8.972  18.807  -3.675  1.00 14.25      1YCC1045
+HETATM  930  O   HOH   136      -9.049  13.531   2.446  1.00 18.61      1YCC1046
+HETATM  931  O   HOH   137      -3.157  20.820 -11.697  1.00 31.25      1YCC1047
+HETATM  932  O   HOH   138       6.636  11.508  24.785  1.00 37.68      1YCC1048
+HETATM  933  O   HOH   139     -10.734   8.877   6.821  1.00 39.18      1YCC1049
+HETATM  934  O   HOH   140      14.683  16.561  19.624  1.00 36.02      1YCC1050
+HETATM  935  O   HOH   141      19.387  18.198  13.808  1.00 35.85      1YCC1051
+HETATM  936  O   HOH   142      -5.415  12.167  -4.819  1.00 24.54      1YCC1052
+HETATM  937  O   HOH   143       7.137  31.799  21.134  1.00 53.21      1YCC1053
+HETATM  938  O   HOH   144      -3.555  20.681  -6.594  1.00 45.48      1YCC1054
+HETATM  939  O   HOH   145      17.266   6.556   9.064  1.00 48.56      1YCC1055
+HETATM  940  O   HOH   146      -7.523  29.775  -6.071  1.00 39.55      1YCC1056
+HETATM  941  O   HOH   147       4.995   5.078  23.765  1.00 37.74      1YCC1057
+HETATM  942  O   HOH   148       6.889  32.700   6.568  1.00 40.40      1YCC1058
+HETATM  943  O   HOH   149      -2.638   4.750  12.449  1.00 35.46      1YCC1059
+HETATM  944  O   HOH   150      -2.896   9.885  -4.828  1.00 36.78      1YCC1060
+HETATM  945  O   HOH   151     -11.201  24.946   1.149  1.00 30.47      1YCC1061
+HETATM  946  O   HOH   152       9.076  19.828  -6.463  1.00 32.67      1YCC1062
+HETATM  947  O   HOH   153      14.403  14.187  19.236  1.00 29.74      1YCC1063
+HETATM  948  O   HOH   154      14.443  29.171   0.608  1.00 12.90      1YCC1064
+HETATM  949  O   HOH   155      20.612  12.991  14.223  1.00 39.42      1YCC1065
+HETATM  950  O   HOH   156      -5.489  25.589  11.659  1.00 45.36      1YCC1066
+HETATM  951  O   HOH   157     -15.288  15.241   6.488  1.00 57.29      1YCC1067
+HETATM  952  O   HOH   158      -8.906  21.130   2.972  1.00 13.29      1YCC1068
+HETATM  953  O   HOH   159     -12.951  19.292   9.991  1.00 58.68      1YCC1069
+HETATM  954  O   HOH   160      -5.562  26.593  -1.910  1.00 24.28      1YCC1070
+HETATM  955  O   HOH   161      -3.116   9.279   0.550  1.00 46.85      1YCC1071
+HETATM  956  O   HOH   162       6.675   3.050  10.555  1.00 46.37      1YCC1072
+HETATM  957  O   HOH   163      16.442  14.329   0.449  1.00 26.77      1YCC1073
+HETATM  958  O   HOH   164       5.686  32.864  -5.612  1.00 62.11      1YCC1074
+HETATM  959  O   HOH   165      10.371  32.995  20.382  1.00 24.18      1YCC1075
+HETATM  960  O   HOH   166       4.122  14.655  14.327  1.00 12.20      1YCC1076
+HETATM  961  O   HOH   167      -1.885  29.746  12.288  1.00 10.11      1YCC1077
+HETATM  962  O   HOH   168      11.773  20.072  12.178  1.00 23.96      1YCC1078
+HETATM  963  O   HOH   169      -2.211   5.522   8.645  1.00 64.71      1YCC1079
+HETATM  964  O   HOH   170      -2.926   8.339   7.241  1.00 37.45      1YCC1080
+HETATM  965  O   HOH   171      12.237  24.383  -3.922  1.00 55.78      1YCC1081
+HETATM  966  O   HOH   172      -5.230  14.483  13.548  1.00 28.38      1YCC1082
+HETATM  967  O   HOH   173      -4.795  10.520   2.136  1.00 48.12      1YCC1083
+HETATM  968  O   HOH   174      17.402  21.986  14.310  1.00 48.97      1YCC1084
+HETATM  969  O   HOH   175      22.034   8.990  11.965  1.00 33.31      1YCC1085
+HETATM  970  O   HOH   176       4.418   5.600  18.286  1.00 50.43      1YCC1086
+HETATM  971  O   HOH   177       0.034  10.120  -1.048  1.00 28.16      1YCC1087
+HETATM  972  O   HOH   178       6.852  31.878  -1.140  1.00 42.70      1YCC1088
+HETATM  973  O   HOH   179       3.430  36.234   1.140  1.00 46.22      1YCC1089
+HETATM  974  O   HOH   180       7.488   8.981  -3.399  1.00 41.40      1YCC1090
+HETATM  975  O   HOH   181       9.837  25.133  21.892  1.00 44.30      1YCC1091
+HETATM  976  O   HOH   182      16.504  19.284   0.969  1.00 24.70      1YCC1092
+HETATM  977  O   HOH   183      -9.828  21.008   5.830  1.00 29.63      1YCC1093
+HETATM  978  O   HOH   184       9.440  18.122  -3.603  1.00 48.51      1YCC1094
+HETATM  979  O   HOH   185      13.108  15.182  21.365  1.00 29.92      1YCC1095
+HETATM  980  O   HOH   186      16.628  20.159  25.057  1.00 48.42      1YCC1096
+HETATM  981  O   HOH   187       1.717   2.467  14.731  1.00 49.42      1YCC1097
+HETATM  982  O   HOH   188      11.604  31.769  21.486  1.00 32.77      1YCC1098
+HETATM  983  O   HOH   189      11.621  27.088  22.399  1.00 32.27      1YCC1099
+HETATM  984  O   HOH   190      -2.194  19.927  -9.989  1.00 38.75      1YCC1100
+HETATM  985  O   HOH   191      -2.088  30.658  19.578  1.00 34.87      1YCC1101
+HETATM  986  O   HOH   192      -6.067  25.680  -5.076  1.00 33.52      1YCC1102
+HETATM  987  O   HOH   193      -8.474  26.913   5.430  1.00 35.99      1YCC1103
+HETATM  988  O   HOH   194      -3.198  31.247  21.770  1.00 48.34      1YCC1104
+HETATM  989  O   HOH   195       7.697  31.154   9.731  1.00 25.97      1YCC1105
+HETATM  990  O   HOH   196      13.908  21.787   3.208  1.00 25.31      1YCC1106
+HETATM  991  O   HOH   197      18.538  12.236   8.546  1.00 36.19      1YCC1107
+HETATM  992  O   HOH   198      11.988  23.583  22.648  1.00 34.96      1YCC1108
+HETATM  993  O   HOH   199      19.033  20.217  -2.490  1.00 46.26      1YCC1109
+HETATM  994  O   HOH   200       2.985   4.910  15.345  1.00 36.82      1YCC1110
+HETATM  995  O   HOH   201       4.050  19.556 -10.063  1.00 38.28      1YCC1111
+HETATM  996  O   HOH   202       4.941  34.416   0.117  1.00 40.46      1YCC1112
+HETATM  997  O   HOH   203     -12.093  19.903   5.349  1.00 42.51      1YCC1113
+HETATM  998  O   HOH   204      17.973  23.314   3.035  1.00 28.89      1YCC1114
+HETATM  999  O   HOH   205      -4.057  11.541   0.240  1.00 48.61      1YCC1115
+HETATM 1000  O   HOH   206       7.426   5.846   8.775  1.00 42.92      1YCC1116
+HETATM 1001  O   HOH   207      -3.538  10.714   7.740  1.00 66.65      1YCC1117
+HETATM 1002  O   HOH   208      -1.315  15.855  -2.372  1.00 37.03      1YCC1118
+HETATM 1003  O   HOH   209      -2.489  13.248  -2.040  1.00 40.30      1YCC1119
+HETATM 1004  O   HOH   210      -8.119  33.916   8.923  1.00 58.14      1YCC1120
+HETATM 1005  O   HOH   211      16.358  27.273  14.202  1.00 32.13      1YCC1121
+HETATM 1006  O   HOH   212       8.007  33.868  22.322  1.00 35.66      1YCC1122
+HETATM 1007  O   HOH   213      20.948  10.904  13.009  1.00 63.27      1YCC1123
+HETATM 1008  O   HOH   214      -0.963  11.377  -2.832  1.00 36.55      1YCC1124
+HETATM 1009  O   HOH   215      -2.764  10.031  19.279  1.00 39.01      1YCC1125
+HETATM 1010  O   HOH   216      -2.007  13.530 -12.209  1.00 29.09      1YCC1126
+HETATM 1011  O   HOH   217      -8.241  27.034   1.058  1.00 34.52      1YCC1127
+HETATM 1012  O   HOH   218       7.813  33.942  11.269  1.00 42.80      1YCC1128
+HETATM 1013  O   HOH   219       5.928  26.811  -7.605  1.00 47.38      1YCC1129
+HETATM 1014  O   HOH   220       9.094  34.375  18.339  1.00 60.67      1YCC1130
+HETATM 1015  O   HOH   221      -2.415  15.961  -8.378  1.00 47.03      1YCC1131
+CONECT  142  141  871                                                   1YCC1132
+CONECT  165  164  879                                                   1YCC1133
+CONECT  849  854  865  873  881                                         1YCC1134
+CONECT  850  855  885                                                   1YCC1135
+CONECT  851  858  866                                                   1YCC1136
+CONECT  852  869  874                                                   1YCC1137
+CONECT  853  877  882                                                   1YCC1138
+CONECT  854  849  855  858                                              1YCC1139
+CONECT  855  850  854  856                                              1YCC1140
+CONECT  856  855  857  860                                              1YCC1141
+CONECT  857  856  858  859                                              1YCC1142
+CONECT  858  851  854  857                                              1YCC1143
+CONECT  859  857                                                        1YCC1144
+CONECT  860  856  861                                                   1YCC1145
+CONECT  861  860  862                                                   1YCC1146
+CONECT  862  861  863  864                                              1YCC1147
+CONECT  863  862                                                        1YCC1148
+CONECT  864  862                                                        1YCC1149
+CONECT  865  849  866  869                                              1YCC1150
+CONECT  866  851  865  867                                              1YCC1151
+CONECT  867  866  868  870                                              1YCC1152
+CONECT  868  867  869  871                                              1YCC1153
+CONECT  869  852  865  868                                              1YCC1154
+CONECT  870  867                                                        1YCC1155
+CONECT  871  142  868  872                                              1YCC1156
+CONECT  872  871                                                        1YCC1157
+CONECT  873  849  874  877                                              1YCC1158
+CONECT  874  852  873  875                                              1YCC1159
+CONECT  875  874  876  878                                              1YCC1160
+CONECT  876  875  877  879                                              1YCC1161
+CONECT  877  853  873  876                                              1YCC1162
+CONECT  878  875                                                        1YCC1163
+CONECT  879  165  876  880                                              1YCC1164
+CONECT  880  879                                                        1YCC1165
+CONECT  881  849  882  885                                              1YCC1166
+CONECT  882  853  881  883                                              1YCC1167
+CONECT  883  882  884  886                                              1YCC1168
+CONECT  884  883  885  887                                              1YCC1169
+CONECT  885  850  881  884                                              1YCC1170
+CONECT  886  883                                                        1YCC1171
+CONECT  887  884  888                                                   1YCC1172
+CONECT  888  887  889                                                   1YCC1173
+CONECT  889  888  890  891                                              1YCC1174
+CONECT  890  889                                                        1YCC1175
+CONECT  891  889                                                        1YCC1176
+CONECT  907  908  909  910  911                                         1YCC1177
+CONECT  908  907                                                        1YCC1178
+CONECT  909  907                                                        1YCC1179
+CONECT  910  907                                                        1YCC1180
+CONECT  911  907                                                        1YCC1181
+MASTER       68    3    3    5    2    6    0    6 1014    1   50    9  1YCCA  9
+END                                                                     1YCC1183

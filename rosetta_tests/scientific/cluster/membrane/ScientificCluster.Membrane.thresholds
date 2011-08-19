@@ -1,0 +1,12 @@
+3aqp: {lowest_rmsd: 5.8776666666666664, rmsd_of_the_lowest_energy_structure: 9.7533333333333339}
+AcrB: {lowest_rmsd: 6.0368666666666684, rmsd_of_the_lowest_energy_structure: 10.304800000000002}
+BRD4: {lowest_rmsd: 3.4878666666666662, rmsd_of_the_lowest_energy_structure: 6.9729999999999999}
+BRD7: {lowest_rmsd: 7.2801999999999998, rmsd_of_the_lowest_energy_structure: 11.490133333333334}
+HCle: {lowest_rmsd: 14.395399999999999, rmsd_of_the_lowest_energy_structure: 19.096600000000002}
+NACR: {lowest_rmsd: 4.9895333333333323, rmsd_of_the_lowest_energy_structure: 8.1091333333333342}
+RHOD: {lowest_rmsd: 9.6133333333333333, rmsd_of_the_lowest_energy_structure: 14.222933333333332}
+SecY: {lowest_rmsd: 9.6037333333333326, rmsd_of_the_lowest_energy_structure: 12.823933333333335}
+VATP: {lowest_rmsd: 3.1792666666666674, rmsd_of_the_lowest_energy_structure: 5.0224666666666673}
+ctc5: {lowest_rmsd: 7.1777333333333342, rmsd_of_the_lowest_energy_structure: 10.633999999999999}
+fmr5: {lowest_rmsd: 8.720466666666665, rmsd_of_the_lowest_energy_structure: 12.873333333333333}
+ltpA: {lowest_rmsd: 7.982266666666666, rmsd_of_the_lowest_energy_structure: 11.843533333333333}

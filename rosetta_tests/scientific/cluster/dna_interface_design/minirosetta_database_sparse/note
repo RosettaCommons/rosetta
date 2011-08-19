@@ -1,0 +1,2 @@
+Because the command line option -database accepts a list of multiple database paths, this path is specified first in order to provide files that are additional or that would otherwise conflict with standard database files.
+The main differences between this "sparse" database are changes to atom type properties (reduced hydrogen radii, different solvation parameters for phosphate). But the entire chemical directory is copied here because of a a way in which minirosetta sometimes reads entire database directories instead of single files.

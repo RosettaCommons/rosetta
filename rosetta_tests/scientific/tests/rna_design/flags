@@ -1,0 +1,6 @@
+-s inputs/2r8s_RNA.pdb
+-nstruct 3
+-ex1:level 1
+-dump
+-score:weights rna_hires.wts
+

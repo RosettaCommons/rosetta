@@ -1,0 +1,17 @@
+-mute all
+-unmute core.init protocols.dna.RestrictDesignToProteinDNAInterface protocols.dna.DnaInterfacePacker protocols.jd2.JobDistributor apps.pilot.ashworth.jd2_parser core.scoring.dna
+#-out:level 400
+-in::ignore_unrecognized_res
+-dont_rewrite_dunbrack_database
+-fail_on_bad_hbond false
+-out::pdb_gz
+-extrachi_cutoff 1
+-sparse_pdb_output
+-ex1
+-ex2
+-packing::dunbrack_prob_buried 0.999
+-packing::dunbrack_prob_nonburied 0.999
+#-adducts dna_major_groove_water
+-overwrite
+-jd2:dd_parser
+-score::weights phil_dnabp_hackelec

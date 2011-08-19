@@ -1,0 +1,17 @@
+# weights trained by optE
+# fixed params: fa_atr pro_close
+# free params: fa_rep fa_sol fa_pair hbond_bb_sc hbond_sc fa_dun p_aa_pp
+fa_atr 0.8
+pro_close 1
+fa_rep 0.260065
+fa_sol 0.429703
+fa_pair 0.406881
+hbond_bb_sc 1.61586
+hbond_sc 2.50592
+fa_dun 0.560854
+p_aa_pp 0.658417
+hbond_lr_bb 1.61586
+hbond_sr_bb 1.61586
+ref 1
+METHOD_WEIGHTS ref -0.00141818 1.06021 0.175336 0.154179 1.65078 -0.675109 0.741968 -0.558005 -2.08519 -0.295794 0.354559 -0.997039 -1.2483 -0.698196 -1.85388 -0.5617 -0.999807 -0.176639 4.18819 1.82585
+NO_HB_ENV_DEP_DNA

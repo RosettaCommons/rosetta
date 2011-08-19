@@ -1,0 +1,79 @@
+#
+# This is a command file.
+#
+# To make a new test, all you have to do is:
+#   1.  Make a new directory under tests/
+#   2.  Put a file like this (named "command") into that directory.
+#
+# The contents of this file will be passed to the shell (Bash or SSH),
+# so any legal shell commands can go in this file.
+# Or comments like this one, for that matter.
+#
+# Variable substiution is done using Python's printf format,
+# meaning you need a percent sign, the variable name in parentheses,
+# and the letter 's' (for 'string').
+#
+# Available variables include:
+#   workdir     the directory where test input files have been copied,
+#               and where test output files should end up.
+#   minidir     the base directory where Mini lives
+#   database    where the Mini database lives
+#   bin         where the Mini binaries live
+#   binext      the extension on binary files, like ".linuxgccrelease"
+#
+# The most important thing is that the test execute in the right directory.
+# This is especially true when we're using SSH to execute on other hosts.
+# All command files should start with this line:
+#
+
+cd %(workdir)s
+
+#clean up generated files
+rm -f list.txt
+rm -f *out
+rm -f outputs/*
+
+
+# Generate list of input structures
+ls inputs | sed 's&^&inputs/&' > list.txt
+if [ ! -s list.txt ]
+then
+        echo No structures found in \'inputs\' directory
+        echo To retrieve the structure execute the following:
+        echo
+        echo "    " cd %(minidir)s/test/scientific/tests/rotamer_recovery
+        echo "    " svn checkout https://svn.rosettacommons.org/source/trunk/mini.data/tests/scientific/tests/rotamer_recovery/inputs inputs
+        echo
+        echo Then run the test again.
+        exit 1      
+fi
+
+
+nice %(bin)s/rotamer_recovery.%(binext)s @rotamer_recovery.flags -database %(database)s >&1\
+    | egrep -v 'TIMING' \
+    | egrep -v 'Finished.+in [0-9]+ seconds.' \
+    >rotamer_recovery.log.out
+
+sqlite3 outputs/rotamer_recovery_results.db3 "select aa, avg(recovered) from rotamer_recovery group by aa;" > outputs/rotamer_recovery_by_amino_acid.out
+sqlite3 outputs/rotamer_recovery_results.db3 "select avg(recovered) from rotamer_recovery;" | sed "s/^/\{ 'RTMin_rotamer_recovery_rate' : /" | sed "s/$/, '_isTestPassed' : True \}/"  > .results.yaml
+
+
+
+
+
+#Attach feature statistics database to explore dependence on structural context. 
+#nice %(bin)s/rosetta_scripts.%(binext)s @feat_stats.flags -database %(database)s >&1\
+#    | egrep -v 'TIMING' \
+#    | egrep -v 'Finished.+in [0-9]+ seconds.' \
+#    >feature_statistics.log.out
+
+
+# Use crystallographic resolution as a predictor of rotamer recovery
+#echo "pdbFileName, nativeResolution" | join outputs/rotamer_recovery_results.out - -t "," > outputs/rotamer_recovery_results_with_resolutions.out
+#cat list.txt | xargs grep 'REMARK   2 RESOLUTION.' | sed 's/:/ /' | awk '{print $1 ", " $5}' | sort -k 1b,1 >> outputs/input_resolutions.out
+#sed 1,1d outputs/rotamer_recovery_results.out | sort -k 1b,1 > outputs/rotamer_recovery_results_sorted.out
+#join outputs/rotamer_recovery_results_sorted.out outputs/input_resolutions.out -t "," >> outputs/rotamer_recovery_results_with_resolutions.out
+#rm -rf outputs/rotamer_recovery_results_sorted.out outputs/input_resolutions.out
+
+
+R CMD BATCH rotamer_recovery_analysis.R outputs/rotamer_recovery_analysis.Rout

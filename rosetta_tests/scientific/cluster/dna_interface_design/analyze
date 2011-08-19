@@ -1,0 +1,79 @@
+#
+# This is a command file.
+#
+# To make a new test, all you have to do is:
+#   1.  Make a new directory under tests/
+#   2.  Put a file like this (named "command") into that directory.
+#
+# The contents of this file will be passed to the shell (Bash or SSH),
+# so any legal shell commands can go in this file.
+# Or comments like this one, for that matter.
+#
+# Variable substiution is done using Python's printf format,
+# meaning you need a percent sign, the variable name in parentheses,
+# and the letter 's' (for 'string').
+#
+# Available variables include:
+#   workdir     the directory where test input files have been copied,
+#               and where test output files should end up.
+#   minidir     the base directory where Mini lives
+#   database    where the Mini database lives
+#   bin         where the Mini binaries live
+#   binext      the extension on binary files, like ".linuxgccrelease"
+#
+# The most important thing is that the test execute in the right directory.
+# This is especially true when we're using SSH to execute on other hosts.
+# All command files should start with this line:
+#
+
+cd %(workdir)s
+
+# clean up old files to prevent reporting of stale results
+rm -f .results.log
+rm -f .results.yaml
+rm -rf files
+rm -f scripts/design_mutations.*
+rm -f scripts/DNA_seq_recov.*
+rm -f scripts/*pdf
+rm -f scripts/*png
+rm -rf tmp/all
+rm -rf tmp/DNA_seq_recov/all
+
+# amino acid sequence design analysis
+mkdir -p tmp/all
+cd tmp/all
+ln -s ../????/*pdb.gz .
+cd %(workdir)s
+
+cd scripts
+python design_mutations_multi.py -p ../tmp/all -n ../input
+cp design_mutations.stats ../.results.log
+mkdir ../files
+cp design_mutations.* ../files
+cd %(workdir)s
+
+# DNA sequence design analysis
+mkdir -p tmp/DNA_seq_recov/all
+cd tmp/DNA_seq_recov/all
+ln -s ../????/*pdb.gz .
+cd %(workdir)s
+
+cd scripts
+python design_mutations_multi.py -p ../tmp/DNA_seq_recov/all -n ../input -o DNA_seq_recov
+cat DNA_seq_recov.stats >> ../.results.log
+cp DNA_seq_recov.* ../files
+cd %(workdir)s
+
+# yaml output
+cd scripts
+python design_mutations_to_yaml.py design_mutations.stats DNA_seq_recov.stats > ../.results.yaml
+cd %(workdir)s
+
+# substitution matrix plots
+cd scripts
+R --vanilla < substitution_matrix.R
+convert dna_interface_design_substitution_matrix.pdf dna_interface_design_substitution_matrix.png
+convert DNA_design_substitution_matrix.pdf DNA_design_substitution_matrix.png
+cp dna_interface_design_substitution_matrix* ../files
+cp DNA_design_substitution_matrix* ../files
+cd %(workdir)s

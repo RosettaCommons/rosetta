@@ -1,0 +1,16 @@
+-in
+ # -path:database is specified on the command line
+ -file
+  -extra_res_fa input/1aq1.params input/1dbj.params input/1dm2.params input/1dwc.params input/1dwd.params input/1fm9.params input/1p8d.params input/1ppc.params input/1pph.params input/1pq6.params input/1pqc.params input/2ctc.params input/2dbl.params input/2prg.params input/4tim.params input/6tim.params input/7cpa.params input/ZN1.params
+-out
+ -mute protocols.geometry.RB_geometry core.pack.dunbrack.SingleLigandRotamerLibrary core.scoring.rms_util
+-run
+ -version
+-packing
+ -no_optH
+ -ex1
+ -ex1aro
+ -ex2
+ -extrachi_cutoff 1
+#-parser
+# -protocol ligand_dock.xml # specified in submit script

@@ -1,0 +1,12 @@
+#rosetta residue topology file
+#version 0.1
+NAME VRT1
+IO_STRING XXX X
+TYPE LIGAND #residue type
+AA VRT
+ATOM ORIG VIRT H    0.0
+
+PROPERTIES
+NBR_ATOM ORIG
+NBR_RADIUS -100000.0 ## dont interact with anyone
+FIRST_SIDECHAIN_ATOM ALL

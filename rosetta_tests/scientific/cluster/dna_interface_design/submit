@@ -1,0 +1,83 @@
+#
+# This is a command file.
+#
+# To make a new test, all you have to do is:
+#   1.  Make a new directory under tests/
+#   2.  Put a file like this (named "command") into that directory.
+#
+# The contents of this file will be passed to the shell (Bash or SSH),
+# so any legal shell commands can go in this file.
+# Or comments like this one, for that matter.
+#
+# Variable substiution is done using Python's printf format,
+# meaning you need a percent sign, the variable name in parentheses,
+# and the letter 's' (for 'string').
+#
+# Available variables include:
+#   workdir     the directory where test input files have been copied,
+#               and where test output files should end up.
+#   minidir     the base directory where Mini lives
+#   database    where the Mini database lives
+#   bin         where the Mini binaries live
+#   binext      the extension on binary files, like ".linuxgccrelease"
+#
+# The most important thing is that the test execute in the right directory.
+# This is especially true when we're using SSH to execute on other hosts.
+# All command files should start with this line:
+#
+
+cd %(workdir)s
+
+# remove old pdb files
+rm -rf tmp
+
+condorscript="condor"
+
+cat > "$condorscript" <<'ARBITRARYSTRING'
+Universe = vanilla
+Requirements = ( Memory > 1000 )
+Notification = Never
+Output = $(root).out
+Error  = $(root).err
+Log    = $(root).log
+Executable = %(bin)s/rosettaDNA.%(binext)s
+copy_to_spool = False
+Initialdir = tmp/$(root)
+Arguments = -database ../../minirosetta_database_sparse %(database)s @../../flags -in:file:s ../../input/$(root).pdb -parser:protocol ../../dna.script
+
+ARBITRARYSTRING
+
+for f in input/*.pdb.gz; do
+    fileroot=$(basename $f .pdb.gz)
+		mkdir -p tmp/$fileroot
+    echo "root = $fileroot" >> "$condorscript"
+    echo "Queue" >> "$condorscript"
+done
+
+condor_submit "$condorscript"
+
+# DNA sequence recovery test
+condorscript="condor.DNA_seq_recov"
+
+cat > "$condorscript" <<'ARBITRARYSTRING'
+Universe = vanilla
+Requirements = ( Memory > 1000 )
+Notification = Never
+Output = $(root).out
+Error  = $(root).err
+Log    = $(root).log
+Executable = %(bin)s/rosettaDNA.%(binext)s
+copy_to_spool = False
+Initialdir = tmp/DNA_seq_recov/$(root)
+Arguments = -database ../../../minirosetta_database_sparse %(database)s @../../../flags.DNA_seq_recov -in:file:s ../../../input/$(root).pdb -parser:protocol ../../../DNA_seq_recov.script
+
+ARBITRARYSTRING
+
+for f in input/*.pdb.gz; do
+    fileroot=$(basename $f .pdb.gz)
+		mkdir -p tmp/DNA_seq_recov/$fileroot
+    echo "root = $fileroot" >> "$condorscript"
+    echo "Queue" >> "$condorscript"
+done
+
+condor_submit "$condorscript"

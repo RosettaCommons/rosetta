@@ -1,0 +1,9 @@
+-s inputs/pdb2lzm.pdb
+-resfile pdb2lzm.resfile
+-ddg::weight_file ddg.wts
+-ddg::out outputs/ddg.sim
+-fa_max_dis 9.0
+-ignore_unrecognized_res
+-out:path:pdb outputs/
+-mute all
+-unmute apps.pilot.yiliu.ddg

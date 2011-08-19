@@ -1,0 +1,26 @@
+<dock_design>
+	<TASKOPERATIONS>
+		<InitializeFromCommandline name=IFC/>
+		<OperateOnCertainResidues name=nodesignDNA>
+			<RestrictToRepackingRLT/>
+			<ResidueHasProperty property=DNA/>
+		</OperateOnCertainResidues>
+		<OperateOnCertainResidues name=AUTOprot>
+			<AddBehaviorRLT behavior=AUTO/>
+			<ResidueHasProperty property=PROTEIN/>
+		</OperateOnCertainResidues>
+		<RestrictDesignToProteinDNAInterface name=RDTPDI/>
+	</TASKOPERATIONS>
+	<SCOREFXNS>
+		<dna_elec_nobp weights=dna_elec_nobp/>
+		<dnasoftrep_hackelec weights=phil_dna_nodnabp_hackelec/>
+		<ddg weights=ddg/>
+		<interface weights=interface/>
+	</SCOREFXNS>
+	<MOVERS>
+		<PackRotamersMover name=design scorefxn=dnasoftrep_hackelec task_operations=IFC,AUTOprot,RDTPDI,nodesignDNA nloop=100/>
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover_name=design/>
+	</PROTOCOLS>
+</dock_design>
