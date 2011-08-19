@@ -65,7 +65,8 @@ rm -r ref/; ./ScoreVersion.py    # create reference results using only default s
 
     parser.add_option("-m", "--mini_home",
       #default=path.join( path.expanduser("~"), "mini"),
-      default=path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ),
+      #default=path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ),
+      default= path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'rosetta_source'),
       help="Directory where Mini is found (default: ../../)",
     )
     parser.add_option("--data",
