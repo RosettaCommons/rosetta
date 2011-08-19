@@ -1,0 +1,21 @@
+(c) Copyright Rosetta Commons Member Institutions.
+(c) This file is part of the Rosetta software suite and is made available under license.
+(c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+(c) For more information, see http://www.rosettacommons.org. Questions about this can be
+(c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+src/python/apps/curated/
+	A directory with published protocols and curated applications.
+	Must contain tutorial on the use of the protocol.
+	Must describe the scientific benchmark performed to validate the
+	protocol.
+	Must report the svn revision number used in the benchmark.
+
+src/python/apps/public/
+	A directory with protocols people are playing around with and have
+	found useful but aren't quite ready to move into the curated section.
+	Must contain tutorial on the purpose and use of the protocol.
+
+src/python/apps/pilot/
+	An area where people can put anything that they are working on but
+	haven't completely finished yet.

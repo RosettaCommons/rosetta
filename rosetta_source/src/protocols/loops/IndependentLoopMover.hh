@@ -1,0 +1,104 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file protocols/loops/IndependentLoopMover.hh
+/// @brief
+/// @author Mike Tyka
+/// @author James Thompson
+
+#ifndef INCLUDED_protocols_loops_IndependentLoopMover_hh
+#define INCLUDED_protocols_loops_IndependentLoopMover_hh
+
+#include <protocols/loops/LoopMover.hh>
+
+#include <core/types.hh>
+#include <core/pose/Pose.fwd.hh>
+
+#include <protocols/loops/LoopMover.hh>
+#include <protocols/loops/Loops.hh>
+
+///////////////////////////////////////////////////////////////////////////////
+namespace protocols {
+namespace loops {
+
+// A subclass where all the loops are modelled independently from each
+// other.  Deriving classes should not overload apply but instead
+// model_loop. This is an unfortunate design decision, because there's no
+// way to guarantee that deriving classes do the right thing and don't
+// override the apply method.
+class IndependentLoopMover : public LoopMover {
+public:
+	IndependentLoopMover(
+		protocols::loops::Loops loops_in
+	) : LoopMover( loops_in )
+	{
+		Mover::type("IndependentLoopMover");
+		set_defaults();
+	}
+
+	void set_defaults();
+
+	/// @brief Apply the loop-build protocol to the input pose
+	virtual void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const;
+
+	virtual LoopResult model_loop(
+		core::pose::Pose & pose, protocols::loops::Loop const & loop
+	) = 0;
+
+	/// Accessors:
+
+  void set_build_attempts_( int value ) { build_attempts_ =  value; }
+  void set_grow_attempts_( int value )  { grow_attempts_ =  value; }
+  void set_accept_aborted_loops_( bool value ) {   accept_aborted_loops_ =  value; }
+  void set_strict_loops( bool value ) { strict_loops_ =  value; }
+  void set_random_order_( bool value ) { random_order_ =  value; }
+  void set_build_all_loops_( bool value ) {   build_all_loops_ =  value; }
+  void set_loop_combine_rate_( core::Real value ) {   loop_combine_rate_ =  value; }
+
+  int  get_build_attempts() const { return build_attempts_; }
+  int  get_grow_attempts() const { return grow_attempts_; }
+  bool get_accept_aborted_loops() const { return accept_aborted_loops_; }
+  bool get_strict_loops() const { return strict_loops_; }
+  bool get_random_order() const { return random_order_; }
+  bool get_build_all_loops() const { return build_all_loops_; }
+  bool get_loop_combine_rate() const { return loop_combine_rate_; }
+
+private:
+
+	/// select loops to be built
+	void select_loops( Loops & selected_loops );
+
+	/// Try loopbuilding n times before extending
+	int build_attempts_;
+
+	/// Try extending n times
+	int grow_attempts_;
+
+	/// danger - can lead to infinite loops !
+	bool accept_aborted_loops_;
+
+	/// Grow loops outwards if building fails.
+	bool strict_loops_;
+
+	/// Randomise loop build order
+	bool random_order_;
+
+	/// Force to build all loops (i.e. ignore skiprate)
+	bool build_all_loops_;
+
+	/// Loop combine rate
+	core::Real loop_combine_rate_;
+
+};
+
+} //namespace loops
+} //namespace protocols
+
+#endif //INCLUDED_protocols_loops_LoopMover_HH

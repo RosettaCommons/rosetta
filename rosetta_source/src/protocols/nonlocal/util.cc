@@ -1,0 +1,315 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file protocols/nonlocal/util.cc
+/// @author Christopher Miles (cmiles@uw.edu)
+
+// Unit headers
+#include <protocols/nonlocal/util.hh>
+
+// C/C++ headers
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <iterator>
+#include <string>
+
+// Utility headers
+#include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/abinitio.OptionKeys.gen.hh>
+#include <basic/options/keys/cm.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/nonlocal.OptionKeys.gen.hh>
+#include <numeric/random/random.hh>
+#include <utility/exit.hh>
+#include <utility/vector1.hh>
+
+// Project headers
+#include <core/types.hh>
+#include <core/conformation/Conformation.hh>
+#include <core/fragment/SecondaryStructure.hh>
+#include <core/id/NamedAtomID.hh>
+#include <core/import_pose/import_pose.hh>
+#include <core/id/SequenceMapping.hh>
+#include <core/io/pdb/pose_io.hh>
+#include <core/pose/Pose.hh>
+#include <core/sequence/SequenceAlignment.hh>
+#include <core/sequence/util.hh>
+#include <protocols/comparative_modeling/util.hh>
+#include <protocols/loops/Loop.hh>
+#include <protocols/loops/Loops.hh>
+
+// Package headers
+#include <protocols/nonlocal/CutFinder.hh>
+#include <protocols/nonlocal/NLGrouping.hh>
+
+namespace protocols {
+namespace nonlocal {
+
+static basic::Tracer TR("protocols.nonlocal.util");
+static numeric::random::RandomGenerator RG(156144120);
+
+void nonlocal_groupings_from_alignment(utility::vector1<NLGrouping>* groupings) {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  using core::id::SequenceMapping;
+  using core::pose::PoseOP;
+  using core::sequence::SequenceAlignment;
+  using core::sequence::SequenceAlignmentOP;
+  using protocols::loops::Loops;
+  using std::string;
+  using utility::vector1;
+
+  // ensure that required options have been specified
+  const string prefix = "Failed to specify required option ";
+  if (!option[cm::aln_format].user())
+    utility_exit_with_message(prefix + "-cm:aln_format");
+
+  if (!option[in::file::alignment].user())
+    utility_exit_with_message(prefix + "-in:file:alignment");
+
+  if (!option[in::file::template_pdb].user())
+    utility_exit_with_message(prefix + "-in:file:template_pdb");
+
+  // Assumes multiple alignments (if present) are contained in a single file
+  string alignment_file = option[in::file::alignment]()[1];
+  vector1<SequenceAlignment> alignments = core::sequence::read_aln(option[cm::aln_format](), alignment_file);
+  assert(alignments.size() > 0);
+
+  SequenceAlignmentOP alignment = alignments[1].clone();
+  PoseOP template_pose = core::import_pose::pose_from_pdb(option[in::file::template_pdb]()[1]);
+
+  // Identify stretches of aligned and unaligned residues in the alignment.
+  // Elements are stored in increasing order of (residue) position. Explicitly
+  // limit the length of the aligned regions to enhance conformational sampling.
+  Loops aligned_regions, unaligned_regions;
+  find_regions(*alignment, alignment->length(), &aligned_regions, &unaligned_regions);
+  limit_chunk_size(&aligned_regions);
+  TR.Debug << "Aligned:" << std::endl << aligned_regions << std::endl;
+  TR.Debug << "Unaligned:" << std::endl << unaligned_regions << std::endl;
+
+  // Generate non-local groupings by iterating over the regions identified
+  // above. Backbone torsions and coordinates are taken from the template
+  NLGrouping grouping;
+  generate_nonlocal_grouping(aligned_regions,
+                             unaligned_regions,
+                             alignment->sequence_mapping(1, 2),
+                             *template_pose,
+                             &grouping);
+
+  // update the output parameter
+  groupings->push_back(grouping);
+  TR << grouping.provenance() << std::endl;
+}
+
+/// @brief Enforces restrictions on min/max chunk size in <regions> by applying
+/// recursive decomposition
+void limit_chunk_size(protocols::loops::Loops* regions) {
+  using core::Size;
+  using protocols::loops::Loop;
+  using protocols::loops::Loops;
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  assert(regions);
+
+  Loops output;
+  const Size min_length = option[OptionKeys::nonlocal::min_chunk_size]();
+  const Size max_length = option[OptionKeys::nonlocal::max_chunk_size]();
+
+  for (Size i = 1; i <= regions->num_loop(); ++i) {
+    const Loop& loop = (*regions)[i];
+
+    // Note: minimum length guaranteed because of gap extension code
+    if (loop.length() >= min_length &&
+        loop.length() <= max_length) {
+      output.push_back(loop);
+      continue;
+    }
+
+    // Recursively decompose <loop> until each piece has length <= max_length
+    utility::vector1<Loop> pieces;
+    decompose(max_length, loop, &pieces);
+
+    for (utility::vector1<Loop>::const_iterator j = pieces.begin(); j != pieces.end(); ++j) {
+      const Loop& loop = *j;
+      if (loop.length() >= min_length)
+        output.push_back(loop);
+    }
+  }
+  *regions = output;
+}
+
+void decompose(core::Size max_length,
+               const protocols::loops::Loop& loop,
+               utility::vector1<protocols::loops::Loop>* pieces) {
+  using core::Size;
+  using protocols::loops::Loop;
+  using utility::vector1;
+  assert(pieces);
+
+  // base case
+  if (loop.length() <= max_length) {
+    pieces->push_back(loop);
+    return;
+  }
+
+  // TODO(cmiles) improve pivot selection using secondary structure, structural
+  // conservation or some other reasonable metric
+  core::fragment::SecondaryStructureCOP ss;
+  Size pivot = CutFinder::choose_cutpoint(loop.start(), loop.stop(), ss);
+
+  // recursively decompose the left-hand side
+  Size left_start = loop.start();
+  Size left_stop = pivot;
+
+  if (left_start < left_stop) {
+    vector1<Loop> pieces_left;
+    Loop left(loop.start(), pivot);
+    decompose(max_length, left, &pieces_left);
+    std::copy(pieces_left.begin(), pieces_left.end(), std::back_inserter(*pieces));
+  }
+
+  // recursively decompose the right-hand side
+  Size right_start = pivot + 1;
+  Size right_stop = loop.stop();
+
+  if (right_start < right_stop) {
+      vector1<Loop> pieces_right;
+      Loop right(right_start, loop.stop());
+      decompose(max_length, right, &pieces_right);
+      std::copy(pieces_right.begin(), pieces_right.end(), std::back_inserter(*pieces));
+    }
+}
+
+void find_regions(const core::sequence::SequenceAlignment& alignment,
+                  const core::Size num_residues,
+                  protocols::loops::Loops* aligned_regions,
+                  protocols::loops::Loops* unaligned_regions) {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  using core::Size;
+
+  assert(aligned_regions);
+  assert(unaligned_regions);
+  TR.Debug << alignment << std::endl;
+
+  // Due to the inherent ambiguity of sequence alignments, sample gapped regions
+  // stochastically. Set the minimum gap extension to 3 and the maximum to
+  // <extension_requested>
+  Size min_extension = 3;
+  Size extension_requested = option[OptionKeys::nonlocal::gap_sampling_extension]();
+  runtime_assert(extension_requested >= min_extension);
+  Size extension_actual = RG.random_range(min_extension, extension_requested);
+  TR.Debug << "Gap sampling extension: " << extension_actual << std::endl;
+
+  core::id::SequenceMapping map = alignment.sequence_mapping(1, 2);
+  map.show(TR.Debug);
+
+  // identify the unaligned regions, which will subsequently be inverted
+  utility::vector1<int> unaligned_residues;
+  for (Size i = 1; i <= num_residues; ++i) {
+    if (map[i] == 0) {
+      unaligned_residues.push_back(i);
+
+      // extend the gap to the left. don't forget that Size is an unsigned type.
+      // if we make <idx> a Size, we run the risk of getting back a very large
+      // (overflowed) positive number.
+      for (Size j = 1; j <= extension_actual; ++j) {
+        int idx = i - j;
+        if (idx > 0)
+          unaligned_residues.push_back(idx);
+      }
+
+      // extend the gap to the right
+      for (Size j = 1; j <= extension_actual; ++j) {
+        int idx = i + j;
+        int n = num_residues;
+        if (idx <= n)
+          unaligned_residues.push_back(idx);
+      }
+    }
+  }
+
+  // The algorithm for gap extension used above is very simple. If it encounters
+  // a gap in the alignment, it adds the position and its immediate predecessors
+  // and successors. This simplicity, comes at the cost of duplicates. Any
+  // contiguous sequence of gap characters with length > 1 contains duplicates.
+  // These are eliminated by the call to unique().
+  //
+  // Note: unique() assumes its input is sorted.
+  std::sort(unaligned_residues.begin(), unaligned_residues.end());
+  std::unique(unaligned_residues.begin(), unaligned_residues.end());
+
+  *unaligned_regions = protocols::comparative_modeling::pick_loops_unaligned(
+      num_residues, unaligned_residues, option[cm::min_loop_size]());
+
+  // find the aligned regions by inversion
+  *aligned_regions = unaligned_regions->invert(num_residues);
+}
+
+void generate_nonlocal_grouping(const protocols::loops::Loops& aligned_regions,
+                                const protocols::loops::Loops& unaligned_regions,
+                                const core::id::SequenceMapping& mapping,
+                                const core::pose::Pose& template_pose,
+                                NLGrouping* grouping) {
+  using core::Real;
+  using core::Size;
+  assert(grouping);
+
+  bool unalignedBegin = false, unalignedEnd = false;
+  if (unaligned_regions.size() > 0) {
+    unalignedBegin = unaligned_regions[1].start() < aligned_regions[1].start();
+    unalignedEnd = unaligned_regions[unaligned_regions.size()].start() > aligned_regions[aligned_regions.size()].start();
+  }
+  TR.Debug << "Unaligned begin: " << unalignedBegin << std::endl;
+  TR.Debug << "Unaligned end: " << unalignedEnd << std::endl;
+
+  for (Size i = 1; i <= aligned_regions.num_loop(); ++i) {
+    NLFragmentGroup group;
+
+    const protocols::loops::Loop& region = aligned_regions[i];
+    for (Size j = region.start(); j <= region.stop(); ++j) {
+      Size mapped_index = mapping[j];
+
+      // torsions
+      Real phi = template_pose.phi(mapped_index);
+      Real psi = template_pose.psi(mapped_index);
+      Real omega = template_pose.omega(mapped_index);
+
+      // CA coordinates
+      const core::PointPosition& coords = template_pose.xyz(core::id::NamedAtomID("CA", mapped_index));
+      group.add_entry(NLFragment(j, phi, psi, omega, coords.x(), coords.y(), coords.z()));
+    }
+    grouping->add_group(group);
+  }
+  grouping->sort();
+}
+
+bool has_chainbreaks(core::pose::Pose& pose) {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+
+  protocols::loops::Loops loops =
+      protocols::comparative_modeling::pick_loops_chainbreak(pose, option[cm::min_loop_size]());
+  loops.verify_against(pose);
+  return loops.num_loop() > 0;
+}
+
+void emit_intermediate(const core::pose::Pose& pose,
+                       const std::string& filename) {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  if (option[OptionKeys::abinitio::debug]())
+    core::io::pdb::dump_pdb(pose, filename);
+}
+
+}  // namespace nonlocal
+}  // namespace protocols

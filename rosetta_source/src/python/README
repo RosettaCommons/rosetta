@@ -1,0 +1,23 @@
+(c) Copyright Rosetta Commons Member Institutions.
+(c) This file is part of the Rosetta software suite and is made available under license.
+(c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+(c) For more information, see http://www.rosettacommons.org. Questions about this can be
+(c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+This directory is intended for Python scripts that act as Rosetta executables
+(under apps/) or provide common functionality for such scripts (under the other
+directories).  
+
+Most application scripts contain code to make sure the Rosetta Python libraries
+are on the PYTHONPATH, but if you get an error that says "ImportError: No
+module named ..." or you want to use these libs in your own scripts, add the
+following to your ~/.bash_profile:
+
+    export PYTHONPATH="$HOME/mini/src/python:$PYTHONPATH"
+
+Make the appropriate changes for where your copy of Rosetta actually lives.
+Syntax is similar but not identical if you use csh or tcsh instead of Bash.
+
+Developers:  if you create new lib directories, the __init__.py files are
+required for Python to treat them as modules.
+

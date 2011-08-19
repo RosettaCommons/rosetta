@@ -1,0 +1,472 @@
+  // //#ifdef USE_OPENMP
+  // //#pragma omp parallel for schedule(dynamic,1)
+  // //#endif
+  // for(Size ixr = 1; ixr <= rgrid.size1(); ++ixr) {
+  //   ScoreFunctionOP sf = new core::scoring::ScoreFunction();
+  //   sf->set_weight(core::scoring::fa_atr,1.0);
+  //   sf->set_weight(core::scoring::fa_rep,1.0);
+  //   sf->set_weight(core::scoring::fa_dun,1.0);
+  //   sf->set_weight(core::scoring::hbond_sc,10.0);
+  //   sf->set_weight(core::scoring::atom_pair_constraint,1.0);
+  //   sf->set_weight(core::scoring::    angle_constraint,1.0);
+  //   core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+  //   movemap->set_bb(false);
+  //   movemap->set_chi(true);
+  //   movemap->set_jump(false);
+  //   movemap->set_jump(4,true);
+  //   protocols::moves::MinMover minm( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+
+  //   TR << ixr << std::endl;
+  //   for(Size iyr = 1; iyr <= rgrid.size2(); ++iyr) {
+  //     for(Size izr = 1; izr <= rgrid.size3(); ++izr) {
+  //       vector1<HitOP> const & rtmphit( rgrid(ixr,iyr,izr) );
+  //       for(Size irh = 1; irh <= rtmphit.size(); ++irh) {
+  //         Hit const & rhit(*rtmphit[irh]);
+  //         Vec rcom = rhit.stub.local2global(ccom);
+  //         Pose lg1(lg);
+  //         for(Size i = 1; i <= lg1.residue_type(1).natoms(); ++i) lg1.set_xyz(AtomID(i,1), rhit.stub.local2global(lg1.xyz(AtomID(i,1))));
+  //         Vec lg1O1(lg1.residue(1).xyz(iO1)),lg1C7(lg1.residue(1).xyz(iC7)),lg1C9(lg1.residue(1).xyz(iC9));
+
+  //         for(Size ixs = max(ixr-1,1ul); ixs <= min(ixr+1ul,rgrid.size1()); ++ixs) {
+  //           for(Size iys = max(iyr-1,1ul); iys <= min(iyr+1ul,rgrid.size2()); ++iys) {
+  //             for(Size izs = max(izr-1,1ul); izs <= min(izr+1ul,rgrid.size3()); ++izs) {
+  //               vector1<HitOP> const & stmphit( sgrid(ixs,iys,izs) );
+  //               //TR << ixr << " " << ixs << " " << rtmphit.size() << " " << stmphit.size() << std::endl;
+  //               for(Size ish = 1; ish <= stmphit.size(); ++ish) {
+  //                 Hit const & shit(*stmphit[ish]);
+  //                 if(rhit.rsd1==shit.rsd1||rhit.rsd1==shit.rsd2||rhit.rsd2==shit.rsd1||rhit.rsd2==shit.rsd2) continue;
+  //                 Vec scom = shit.stub.local2global(ccomB);
+
+  //                 Pose lg2(lgB);
+  //                 for(Size i = 1; i <= lg2.residue_type(1).natoms(); ++i) lg2.set_xyz(AtomID(i,1), shit.stub.local2global(lg2.xyz(AtomID(i,1))));
+
+  //                 if(lg1O1.distance_squared(shit.stub.local2global(lgBO1)) > 4.25) continue;
+  //                 if(lg1C7.distance_squared(shit.stub.local2global(lgBC7)) > 4.25) continue;
+  //                 nhit++; TR << nhit << std::endl;
+  //                 if(lg1C9.distance_squared(shit.stub.local2global(lgBC9)) > 4.25) continue;
+
+  //                 continue;
+  //                 rhit.apply(wp);
+  //                 shit.apply(wp);
+  //                 // check & refine
+  //                 Pose tmp;
+  //                 tmp.append_residue_by_jump(wp.residue(rhit.rsd1),1);
+  //                 tmp.append_residue_by_jump(wp.residue(rhit.rsd2),1);
+  //                 tmp.append_residue_by_jump(wp.residue(shit.rsd1),1);
+  //                 tmp.append_residue_by_jump(wp.residue(shit.rsd2),1);
+  //                 tmp.append_residue_by_jump(lg1.residue(1),1);
+
+  //                 Size n11 = rhit.frnt?8:10, n12 = 11, n1a = rhit.frnt?10:8;
+  //                 Size n21 = shit.frnt?8:10, n22 = 11, n2a = shit.frnt?10:8;
+  //                 Size c11 = rhit.nego ? ctp.residue(1).atom_index("O6"): ctp.residue(1).atom_index("O5");
+  //                 Size c12 = rhit.nego ? ctp.residue(1).atom_index("O5"): ctp.residue(1).atom_index("O6");
+  //                 Size c21 = shit.nego ? ctp.residue(1).atom_index("O3"): ctp.residue(1).atom_index("O4");
+  //                 Size c22 = shit.nego ? ctp.residue(1).atom_index("O4"): ctp.residue(1).atom_index("O3");
+  //                 using namespace core::scoring::constraints;
+  //                 tmp.add_constraint( new AtomPairConstraint( AtomID(n11,1), AtomID(c11,5), new HarmonicFunc(2.8,0.1)) );
+  //                 tmp.add_constraint( new AtomPairConstraint( AtomID(n12,1), AtomID(c12,5), new HarmonicFunc(2.8,0.1)) );
+  //                 tmp.add_constraint( new AtomPairConstraint( AtomID(n21,3), AtomID(c21,5), new HarmonicFunc(2.8,0.1)) );
+  //                 tmp.add_constraint( new AtomPairConstraint( AtomID(n22,3), AtomID(c22,5), new HarmonicFunc(2.8,0.1)) );
+  //                 // TR << "n11 " << tmp.residue(1).atom_name(n11) << " c11 " << tmp.residue(5).atom_name(c11) << std::endl;
+  //                 // TR << "n12 " << tmp.residue(1).atom_name(n12) << " c12 " << tmp.residue(5).atom_name(c12) << std::endl;
+  //                 // TR << "n21 " << tmp.residue(3).atom_name(n21) << " c21 " << tmp.residue(5).atom_name(c21) << std::endl;
+  //                 // TR << "n22 " << tmp.residue(3).atom_name(n22) << " c22 " << tmp.residue(5).atom_name(c22) << std::endl;
+  //                 tmp.add_constraint( new AngleConstraint( AtomID(tmp.residue(5).atom_index("C2"),5),AtomID(tmp.residue(5).atom_index("C7"),5),AtomID(9,1),               new HarmonicFunc(3.14159,0.2)) );
+  //                 tmp.add_constraint( new AngleConstraint(                                           AtomID(tmp.residue(5).atom_index("C7"),5),AtomID(9,1),AtomID(n1a,1), new HarmonicFunc(3.14159,0.2)) );
+  //                 tmp.add_constraint( new AngleConstraint( AtomID(tmp.residue(5).atom_index("C8"),5),AtomID(tmp.residue(5).atom_index("C9"),5),AtomID(9,3),               new HarmonicFunc(3.14159,0.2)) );
+  //                 tmp.add_constraint( new AngleConstraint(                                           AtomID(tmp.residue(5).atom_index("C9"),5),AtomID(9,3),AtomID(n2a,3), new HarmonicFunc(3.14159,0.2)) );
+  //                 // TR << "C2 C7 " << tmp.residue(1).atom_name(9) << " " << tmp.residue(1).atom_name(n1a) << std::endl;
+  //                 // TR << "C8 C9 " << tmp.residue(3).atom_name(9) << " " << tmp.residue(3).atom_name(n2a) << std::endl;
+  //                 Size bk11 = (tmp.residue(2).aa()==core::chemical::aa_glu)?6:5, bk12 = (tmp.residue(2).aa()==core::chemical::aa_glu)?7:6, bk13 = 9, bk14=n11;
+  //                 tmp.add_constraint( new AngleConstraint( AtomID(bk11,2),AtomID(bk12,2),AtomID(bk13,1),                new HarmonicFunc(3.14159,0.2)) );
+  //                 tmp.add_constraint( new AngleConstraint(                AtomID(bk12,2),AtomID(bk13,1),AtomID(bk14,1), new HarmonicFunc(3.14159,0.2)) );
+  //                 Size bk21 = (tmp.residue(4).aa()==core::chemical::aa_glu)?6:5, bk22 = (tmp.residue(4).aa()==core::chemical::aa_glu)?7:6, bk23 = 9, bk24=n21;
+  //                 tmp.add_constraint( new AngleConstraint( AtomID(bk21,4),AtomID(bk22,4),AtomID(bk23,3),                new HarmonicFunc(3.14159,0.2)) );
+  //                 tmp.add_constraint( new AngleConstraint(                AtomID(bk22,4),AtomID(bk23,3),AtomID(bk24,3), new HarmonicFunc(3.14159,0.2)) );
+
+  //                 static vector1<bool> seenit(16,false);
+  //                 int type = 1 + 1*(int)rhit.frnt + 2*(int)rhit.nego + 4*(int)shit.frnt + 8*(int)shit.nego;
+  //                 if( !seenit[type] ) {
+  //                   seenit[type] = true;
+  //                   minm.apply(tmp);
+  //                   tmp.dump_pdb("test"+lzs(type,2)+".pdb");
+  //                   int sum = 0; for(Size i = 1; i <= 16; i++) sum += seenit[i];
+  //                   TR << "SUM " << sum << std::endl;
+  //                   if(sum==16) utility_exit_with_message("lasdfj");
+  //                 }
+  //                 continue;
+  //                 for(Size ix = max(ixr-1,1ul); ix <= min(ixr+1ul,rgrid.size1()); ++ix) {
+  //                   for(Size iy = max(iyr-1,1ul); iy <= min(iyr+1ul,rgrid.size2()); ++iy) {
+  //                     for(Size iz = max(izr-1,1ul); iz <= min(izr+1ul,rgrid.size3()); ++iz) {
+  //                       vector1<HitOP> const & ktmphit( kgrid(ix,iy,iz) );
+  //                       for(Size ikh = 1; ikh <= ktmphit.size(); ++ikh) {
+  //                         Hit const & khit(*ktmphit[ikh]);
+  //                         if(khit.rsd1==rhit.rsd1||khit.rsd1==rhit.rsd2||khit.rsd2==rhit.rsd1||khit.rsd2==rhit.rsd2) continue;
+  //                         if(khit.rsd1==shit.rsd1||khit.rsd1==shit.rsd2||khit.rsd2==shit.rsd1||khit.rsd2==shit.rsd2) continue;
+  //                         Vec kcom = shit.stub.local2global(ccom);
+  //                         if( rcom.distance_squared(kcom) > 2.25 ) continue;
+  //                         if( scom.distance_squared(kcom) > 2.25 ) continue;
+  //                         khit.apply(wp);
+
+  //                         nhit++;
+  //                         Pose tmp;
+  //                         tmp.append_residue_by_jump(wp.residue(rhit.rsd1),1);
+  //                         tmp.append_residue_by_jump(wp.residue(rhit.rsd2),1);
+  //                         tmp.append_residue_by_jump(wp.residue(shit.rsd1),1);
+  //                         tmp.append_residue_by_jump(wp.residue(shit.rsd2),1);
+  //                         tmp.append_residue_by_jump(wp.residue(khit.rsd1),1);
+  //                         tmp.append_residue_by_jump(wp.residue(khit.rsd2),1);
+  //                         tmp.dump_pdb("test.pdb");
+  //                         utility_exit_with_message("las;dfj");
+
+  //                       }
+  //                     }
+  //                   }
+  //                 }
+  //               }
+  //             }
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+
+  // TR << "matching bkarg pairs & ring COO" << std::endl;
+  // Size nhit=0;
+  // //#ifdef USE_OPENMP
+  // //#pragma omp parallel for schedule(dynamic,1)
+  // //#endif
+  // for(Size ih = 1; ih <= hits.size(); ih+=1) {
+  //   //    ;    findhits_ih(frs, sasa, pose, asp, glu, ifc, hits, ih, dhit);
+  //   Real DTH =  1.5;
+  //   Real ATH = 25.0;
+
+  //   if(ih%100==0) TR << ih << " " << rhit << " " << dhit << std::endl;
+  //   Hit hi(*hits[ih]);
+
+  //   Pose wp(pose);
+  //   core::pack::dunbrack::SingleResidueRotamerLibraryCAP dlib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( asp.residue(1).type() );
+  //   core::pack::dunbrack::SingleResidueRotamerLibraryCAP elib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( glu.residue(1).type() );
+  //   core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
+  //   ScoreFunctionOP sf = new core::scoring::ScoreFunction();
+  //   sf->set_weight(core::scoring::fa_atr,1.0);
+  //   sf->set_weight(core::scoring::fa_rep,1.0);
+  //   sf->set_weight(core::scoring::fa_dun,1.0);
+  //   sf->set_weight(core::scoring::hbond_sc,10.0);
+  //   sf->set_weight(core::scoring::atom_pair_constraint,1.0);
+  //   sf->set_weight(core::scoring::    angle_constraint,1.0);
+  //   core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+  //   movemap->set_bb(false);
+  //   movemap->set_chi(true);
+  //   movemap->set_jump(false);
+  //   movemap->set_jump(4,true);
+  //   protocols::moves::MinMover minm( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+
+  //   Pose ctp; pose_from_pdb(ctp,"inrut/ctp.pdb");
+  //   Size iO2=ctp.residue(1).atom_index("O2"), iC5=ctp.residue(1).atom_index("C5"), iO1=ctp.residue(1).atom_index("O1");
+
+  //   Vec or2 = hi.ori.cross(hi.axs);
+
+  //   for(Size negori = 0; negori < 2; negori++) {
+  //     Vec ctp_axs = (ctp.residue(1).xyz("C2")-ctp.residue(1).xyz("C7")).normalized();
+  //     Vec ctp_ori = ctp_axs.cross( (ctp.residue(1).xyz("O5") - ctp.residue(1).xyz("C7")).normalized() );
+  //     if(negori) ctp_ori = -1.0 * ctp_ori;
+  //     Mat R = numeric::alignVectorSets( ctp_axs, ctp_ori, hi.axs, hi.ori );
+  //     rot_pose(ctp,R);
+  //     trans_pose(ctp, hi.cen + 4.05*hi.axs - ctp.residue(1).xyz("C7") );
+  //     // {
+  //     //  bool clash = false;
+  //     //  for(Size ia = 1; ia <= ctp.residue(1).nheavyatoms(); ia++) {
+  //     //    if(!ifc.clash_check( ctp.residue(1).xyz(ia) ) ) clash = true;
+  //     //  }
+  //     //  if(clash) continue;
+  //     // }
+
+  //     for(Size jh = 1; jh <= hits.size(); jh+=1) {
+  //       Hit hj(*hits[jh]);
+
+  //       //if( hi.cen.distance_squared(hj.cen) > (13.6)*(13.6) ) continue;
+  //       //if( hi.cen.distance_squared(hj.cen) < (10.5)*(10.5) ) continue;
+  //       if( fabs( hi.axs.dot(hj.cen-hi.cen) - 10.455 ) > DTH ) continue;
+  //       Real z = hi.ori.dot(hj.cen-hi.cen);
+  //       Real y = or2   .dot(hj.cen-hi.cen);
+  //       bool up = true;
+  //       if( fabs(y-3.256) < DTH && fabs(z+4.945) < DTH ) up = false;
+  //       if((fabs(y+3.256) > DTH || fabs(z-4.945) > DTH) && up ) continue;
+
+  //       if( ctp.residue(1).xyz("C9").distance_squared(hj.cen+4.05*hj.axs) > DTH*DTH ) continue;
+
+  //       Vec ctp_axs2 = (ctp.residue(1).xyz("C8")-ctp.residue(1).xyz("C9")).normalized();
+  //       if( numeric::angle_degrees(ctp_axs2,Vec(0,0,0),hj.axs) > ATH ) continue;
+  //       //Vec ctp_ori2 = ctp_axs.cross( (ctp.residue(1).xyz("O3") - ctp.residue(1).xyz("C9")).normalized() );
+
+  //       Vec ctp_ori2 = ctp_axs2.cross( ctp.residue(1).xyz("O3") - ctp.residue(1).xyz("C9") );
+  //       Real ooang = numeric::angle_degrees(ctp_ori2,Vec(0,0,0),hj.ori);
+
+  //       if( ooang > ATH && 180.0-ooang > ATH ) continue;
+  //       bool negori2 = ooang > ATH;
+
+  //       Pose tmp;
+  //       tmp.append_residue_by_jump(hi.rsd1,1);
+  //       tmp.append_residue_by_jump(hi.rsd2,1);
+  //       tmp.append_residue_by_jump(hj.rsd1,1);
+  //       tmp.append_residue_by_jump(hj.rsd2,1);
+  //       tmp.append_residue_by_jump(ctp.residue(1),1);
+  //       //minimize
+  //       Size n11 = hi.frnt?8:10, n12 = 11, n1a = hi.frnt?10:8;
+  //       Size n21 = hj.frnt?8:10, n22 = 11, n2a = hj.frnt?10:8;
+  //       Size c11 = negori ? ctp.residue(1).atom_index("O6"): ctp.residue(1).atom_index("O5");
+  //       Size c12 = negori ? ctp.residue(1).atom_index("O5"): ctp.residue(1).atom_index("O6");
+  //       Size c21 = negori2? ctp.residue(1).atom_index("O4"): ctp.residue(1).atom_index("O3");
+  //       Size c22 = negori2? ctp.residue(1).atom_index("O3"): ctp.residue(1).atom_index("O4");
+  //       using namespace core::scoring::constraints;
+  //       tmp.add_constraint( new AtomPairConstraint( AtomID(n11,1), AtomID(c11,5), new HarmonicFunc(2.8,0.1)) );
+  //       tmp.add_constraint( new AtomPairConstraint( AtomID(n12,1), AtomID(c12,5), new HarmonicFunc(2.8,0.1)) );
+  //       tmp.add_constraint( new AtomPairConstraint( AtomID(n21,3), AtomID(c21,5), new HarmonicFunc(2.8,0.1)) );
+  //       tmp.add_constraint( new AtomPairConstraint( AtomID(n22,3), AtomID(c22,5), new HarmonicFunc(2.8,0.1)) );
+  //       // TR << "n11 " << tmp.residue(1).atom_name(n11) << " c11 " << tmp.residue(5).atom_name(c11) << std::endl;
+  //       // TR << "n12 " << tmp.residue(1).atom_name(n12) << " c12 " << tmp.residue(5).atom_name(c12) << std::endl;
+  //       // TR << "n21 " << tmp.residue(3).atom_name(n21) << " c21 " << tmp.residue(5).atom_name(c21) << std::endl;
+  //       // TR << "n22 " << tmp.residue(3).atom_name(n22) << " c22 " << tmp.residue(5).atom_name(c22) << std::endl;
+  //       tmp.add_constraint( new AngleConstraint( AtomID(tmp.residue(5).atom_index("C2"),5),AtomID(tmp.residue(5).atom_index("C7"),5),AtomID(9,1),               new HarmonicFunc(3.14159,0.2)) );
+  //       tmp.add_constraint( new AngleConstraint(                                           AtomID(tmp.residue(5).atom_index("C7"),5),AtomID(9,1),AtomID(n1a,1), new HarmonicFunc(3.14159,0.2)) );
+  //       tmp.add_constraint( new AngleConstraint( AtomID(tmp.residue(5).atom_index("C8"),5),AtomID(tmp.residue(5).atom_index("C9"),5),AtomID(9,3),               new HarmonicFunc(3.14159,0.2)) );
+  //       tmp.add_constraint( new AngleConstraint(                                           AtomID(tmp.residue(5).atom_index("C9"),5),AtomID(9,3),AtomID(n2a,3), new HarmonicFunc(3.14159,0.2)) );
+  //       //        TR << "C2 C7 " << tmp.residue(1).atom_name(9) << " " << tmp.residue(1).atom_name(n1a) << std::endl;
+  //       //        TR << "C8 C9 " << tmp.residue(3).atom_name(9) << " " << tmp.residue(3).atom_name(n2a) << std::endl;
+  //       Size bk11 = (tmp.residue(2).aa()==core::chemical::aa_glu)?6:5, bk12 = (tmp.residue(2).aa()==core::chemical::aa_glu)?7:6, bk13 = 9, bk14=n11;
+  //       tmp.add_constraint( new AngleConstraint( AtomID(bk11,2),AtomID(bk12,2),AtomID(bk13,1),                new HarmonicFunc(3.14159,0.2)) );
+  //       tmp.add_constraint( new AngleConstraint(                AtomID(bk12,2),AtomID(bk13,1),AtomID(bk14,1), new HarmonicFunc(3.14159,0.2)) );
+  //       Size bk21 = (tmp.residue(4).aa()==core::chemical::aa_glu)?6:5, bk22 = (tmp.residue(4).aa()==core::chemical::aa_glu)?7:6, bk23 = 9, bk24=n21;
+  //       tmp.add_constraint( new AngleConstraint( AtomID(bk21,4),AtomID(bk22,4),AtomID(bk23,3),                new HarmonicFunc(3.14159,0.2)) );
+  //       tmp.add_constraint( new AngleConstraint(                AtomID(bk22,4),AtomID(bk23,3),AtomID(bk24,3), new HarmonicFunc(3.14159,0.2)) );
+  //       minm.apply(tmp);
+  //       {
+  //         bool clash = false;
+  //         for(Size ia = 1; ia <= tmp.residue(5).nheavyatoms(); ia++) {
+  //           if(!ifc.clash_check( tmp.residue(5).xyz(ia) ) ) clash = true;
+  //         }
+  //         if(clash) continue;
+  //       }
+  //       rhit++;
+
+  //       Vec OCpose = tmp.residue(5).xyz(iO2);
+  //       Vec COpose = tmp.residue(5).xyz(iC5);
+  //       Vec OHpose = tmp.residue(5).xyz(iO1);
+  //       Size ixr = std::ceil( COpose.x() - lb.x() );
+  //       Size iyr = std::ceil( COpose.y() - lb.y() );
+  //       Size izr = std::ceil( COpose.z() - lb.z() );
+
+  //       for(Size ix = max(ixr-1,1ul); ix <= min(ixr+1ul,grid.size1()); ++ix) {
+  //         for(Size iy = max(iyr-1,1ul); iy <= min(iyr+1ul,grid.size2()); ++iy) {
+  //           for(Size iz = max(izr-1,1ul); iz <= min(izr+1ul,grid.size3()); ++iz) {
+  //             vector1<HitOP> & hitlst(grid(ix,iy,iz));
+  //             for(Size ig = 1; ig <= hitlst.size(); ++ig) {
+  //               Hit & hk(*hitlst[ig]);
+  //               // Vec const & CO(hk.ori); if(COpose.distance_squared(CO) > 1.6) continue;
+  //               // Vec const & OC(hk.cen); if(OCpose.distance_squared(OC) > 1.6) continue;
+  //               // Vec const & OH(hk.axs); if(OHpose.distance_squared(OH) > 1.6) continue;
+  //               // Pose tmp2(tmp);
+  //               utility_exit_with_message("lasdfkj");
+  //               //                 tmp2.append_residue_by_jump(hk.rsd1,1);
+  //               //                 tmp2.append_residue_by_jump(hk.rsd2,1);
+  //               //                 string fn = "IKM_"+lzs(hi.rsd1.seqpos(),4)+"_"+lzs(hj.rsd1.seqpos(),4)+"_"+lzs(hk.rsd1.seqpos(),4)+"_";
+  //               //                 fn += lzs(hi.rsd2.seqpos(),4)+"_"+lzs(hj.rsd2.seqpos(),4)+"_"+lzs(hk.rsd2.seqpos(),4)+"_";
+  //               //                 fn += (hi.frnt?"s":"f");fn += (negori ?"d":"u");fn += "_";
+  //               //                 fn += (hj.frnt?"s":"f");fn += (negori2?"d":"u");fn += "_"+lzs(ih,5)+"_"+lzs(jh,5)+"_";
+  //               //                 fn += lzs(ix,3)+"-"+lzs(iy,3)+"-"+lzs(iz,3);
+
+  //               //                 dhit++;
+
+  //               //                 {
+  //               //                   sf->score(tmp2);
+  //               //                   core::io::silent::SilentStructOP ss_out_all( new core::io::silent::ScoreFileSilentStruct );
+  //               //                   ss_out_all->fill_struct(tmp2,fn);
+  //               //                   ss_out_all->add_energy( "frntside1" , hi.frnt );
+  //               //                   ss_out_all->add_energy( "frntside2" , hj.frnt );
+  //               //                   sfd.write_silent_struct( *ss_out_all, option[ basic::options::OptionKeys::out::file::silent ]() );
+  //               //                   tmp2.dump_pdb(fn+".pdb");
+  //               //                 }
+  //               // tmp.add_constraint( new AtomPairConstraint( AtomID(iO2,5), AtomID(9,6), new HarmonicFunc(3.0,0.1)) );
+  //               //                if(pose.residue(7).name3()=="ASP") tmp.add_constraint( new AtomPairConstraint( AtomID(iO1,5), AtomID(7,6), new HarmonicFunc(3.0,0.1)) );
+  //               //                if(pose.residue(7).name3()=="GLU") tmp.add_constraint( new AtomPairConstraint( AtomID(iO1,5), AtomID(8,6), new HarmonicFunc(3.0,0.1)) );
+  //               //                 minm.apply(tmp2);
+  //               //                 {
+  //               //                   sf->score(tmp2);
+  //               //                   core::io::silent::SilentStructOP ss_out_all( new core::io::silent::ScoreFileSilentStruct );
+  //               //                   ss_out_all->fill_struct(tmp2,fn+"_min");
+  //               //                   ss_out_all->add_energy( "frntside1" , hi.frnt );
+  //               //                   ss_out_all->add_energy( "frntside2" , hj.frnt );
+  //               //                   sfd.write_silent_struct( *ss_out_all, option[ basic::options::OptionKeys::out::file::silent ]() );
+  //               //                   tmp2.dump_pdb(fn+"_min.pdb");
+  //               //                }
+  //             }
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  //  }
+
+
+
+
+
+
+// if(hits.size()){
+//  Hit & h(*hits[hits.size()]);
+//   ozstream out("test.pdb");
+//   Size ano = 0;
+//   core::io::pdb::dump_pdb_residue(h.rsd2,ano,out);
+//   core::io::pdb::dump_pdb_residue(h.rsd1,ano,out);
+//  {Vec V=h.cen      ;out<<"HETATM"<<I(5,11)<<' '<<" VIZ"<<' '<<"VIZ"<<' '<<"A"<<I(4,6)<<"    "<<F(8,3,V.x())<<F(8,3,V.y())<<F(8,3,V.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';}
+//  {Vec V=h.axs+h.cen;out<<"HETATM"<<I(5,11)<<' '<<" VIZ"<<' '<<"VIZ"<<' '<<"A"<<I(4,6)<<"    "<<F(8,3,V.x())<<F(8,3,V.y())<<F(8,3,V.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';}
+//  {Vec V=h.ori+h.cen;out<<"HETATM"<<I(5,11)<<' '<<" VIZ"<<' '<<"VIZ"<<' '<<"A"<<I(4,6)<<"    "<<F(8,3,V.x())<<F(8,3,V.y())<<F(8,3,V.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';}
+//   out.close();
+//  utility_exit_with_message("asl;dfj");
+// }
+
+// TR << "precalc glu " << std::endl;
+// vector1<Real> CHI1,CHI2;
+// for(Real x = 4.5; x <=360.0; x += 5.0) CHI1.push_back(x);
+// for(Real x = 4.5; x <=360.0; x += 9.0) CHI2.push_back(x);
+// // precompute acceptable chis
+// ObjexxFCL::FArray1D<Real> eallow0(                        pose.n_residue(),9e9);
+// ObjexxFCL::FArray2D<Real> eallow1(            CHI1.size(),pose.n_residue(),9e9);
+// ObjexxFCL::FArray3D<Real> eallow2(CHI2.size(),CHI1.size(),pose.n_residue(),9e9);
+// {
+//   Pose wp(pose);
+//   core::pack::dunbrack::SingleResidueRotamerLibraryCAP dlib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( asp.residue(1).type() );
+//   core::pack::dunbrack::SingleResidueRotamerLibraryCAP elib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( glu.residue(1).type() );
+//   core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
+//   for(Size ir = 1; ir <= pose.n_residue(); ++ir) {
+//     if(sasa[ir] > 0) continue;
+//     wp.replace_residue(ir,asp.residue(1),true); asp.replace_residue(1,wp.residue(ir),false);
+//     wp.replace_residue(ir,glu.residue(1),true); glu.replace_residue(1,wp.residue(ir),false);
+//     for(Real i1 = 1; i1 <= CHI1.size(); i1++) {
+//       Real kch1 = CHI1[i1];
+//       for(Size i2 = 1; i2 <= CHI2.size(); i2++) {
+//         Real kch2 = CHI2[i2];
+//         glu.set_chi(2,1,i2);
+//         bool clash = false;
+//         for(Size ia = 6; ia <= glu.residue(1).nheavyatoms(); ia++) {
+//           if(!ifc.clash_check(glu.residue(1).xyz(ia),ir)) clash=true;
+//         }
+//         if(clash) {
+//           eallow2(i2,i1,ir) = 9e9;
+//         } else {
+//           Real mndn = 9e9;
+//           for(Size i3 = 1; i3 <= CHI2.size(); i3++) {
+//             Real kch3 = CHI2[i3];
+//             glu.set_chi(3,1,i3);
+//             Real tmp = elib->rotamer_energy(glu.residue(1),scratch);
+//             if( tmp < mndn ) mndn = tmp;
+//           }
+//           eallow2(i2,i1,ir) = mndn;
+//         }
+//         if( eallow1(i1,ir) > eallow2(i2,i1,ir) ) eallow1(i1,ir) = eallow2(i2,i1,ir);
+//       }
+//       if( eallow0(ir) > eallow1(i1,ir) ) eallow0(ir) = eallow1(i1,ir);
+//     }
+//   }
+// }
+
+// Vec const OH(tmp.residue(5).xyz("O1"));
+//         Vec const C5(tmp.residue(5).xyz("C5"));
+//         for(Size kr = 1; kr <= wp.n_residue(); ++kr) {
+//           if(sasa[kr] > 0) continue;
+//           //if(eallow0(kr) > 10.0) continue;
+//           if( wp.residue(kr).xyz(5).distance_squared(OH) > 36.0 ) continue;
+//           wp.replace_residue(kr,asp.residue(1),true); asp.replace_residue(1,wp.residue(kr),false);
+//           wp.replace_residue(kr,glu.residue(1),true); glu.replace_residue(1,wp.residue(kr),false);
+//           bool asphit=false,gluhit=false;
+//           for(Real ikch1 = 1; ikch1 <= CHI1.size(); ikch1++) {
+//             Real kch1 = CHI1[ikch1];
+//             { // asp check
+//               if(asphit) goto gluchk;
+//               asp.set_chi(1,1,kch1);
+//               if( asp.residue(1).xyz(6).distance_squared(OH) > 21.0 ) goto gluchk;
+//               Vec const CG(asp.residue(1).xyz(6));
+//               Real const gd2 = OH.distance_squared(CG);
+//               if( 11.15 > gd2 || gd2 > 18.9 ) goto gluchk;
+//               asp.set_chi(2,1, numeric::dihedral_degrees(OH,CG,asp.residue(1).xyz(5),asp.residue(1).xyz(2)) );
+//               Vec OD(asp.residue(1).xyz(7));
+//               Real od2 = OH.distance_squared(OD);
+//               if( 2.3*2.3 > od2 || od2 > 3.3*3.3 ) goto gluchk;
+//               Real tmpa1 = numeric::angle_degrees(C5,OH,OD);
+//               if( fabs(tmpa1-105.3) > 12.0 ) goto gluchk;
+//               Real tmpa2 = numeric::angle_degrees(OH,OD,CG);
+//               if( fabs(tmpa2-120.0) > 12.0 ) goto gluchk;
+//               bool clash = false;
+//               for(Size ia = 1; ia <= tmp.residue(5).nheavyatoms(); ia++) {
+//                 if( tmp.residue(5).xyz(ia).distance_squared(asp.residue(1).xyz(5)) < 3.2*3.2 ) clash = true;
+//                 if( tmp.residue(5).xyz(ia).distance_squared(asp.residue(1).xyz(6)) < 3.2*3.2 ) clash = true;
+//                 if( tmp.residue(5).xyz(ia).distance_squared(asp.residue(1).xyz(7)) < 2.8*2.8 ) clash = true;
+//                 if( tmp.residue(5).xyz(ia).distance_squared(asp.residue(1).xyz(8)) < 2.8*2.8 ) clash = true;
+//               }
+//               if(clash) goto gluchk;
+//               if( dlib->rotamer_energy(asp.residue(1),scratch) > 4.0 ) continue;
+//               asphit=true;
+//               dhit++;
+//               Pose tmp2(tmp);
+//               Vec const H5(tmp2.residue(5).xyz("H5"));
+//               Mat Rtmp = numeric::rotation_matrix_degrees( C5-OH, numeric::dihedral_degrees(H5,OH,C5,OD) );
+//               tmp2.set_xyz(AtomID(tmp2.residue(5).atom_index("H5"),5), Rtmp*(H5-OH)+OH );
+//               tmp2.append_residue_by_jump(asp.residue(1),1);
+//               tmp2.dump_pdb(fn+"_d"+lzs(kr,4)+"_"+lzs(Size(kch1),3)+".pdb");
+//               sf->score(tmp2);
+//               core::io::silent::SilentStructOP ss_out_all( new core::io::silent::ScoreFileSilentStruct );
+//               ss_out_all->fill_struct(tmp2,fn+"_e"+lzs(kr,4)+"_"+lzs(Size(kch1),3)+".pdb");
+//               ss_out_all->add_energy( "frntside1" , hi.frnt );
+//               ss_out_all->add_energy( "frntside2" , hj.frnt );
+//               sfd.write_silent_struct( *ss_out_all, option[ basic::options::OptionKeys::out::file::silent ]() );
+//             }
+//           gluchk:
+//             //if(eallow1(ikch1,kr) > 6.0) continue;
+//             if(gluhit) continue;
+//             glu.set_chi(1,1,kch1);
+//             for(Size ikch2 = 1; ikch2 <= CHI2.size(); ikch2++) {
+//               //if(eallow2(ikch2,ikch1,kr) > 10.0) continue;
+//               Real kch2 = CHI2[ikch2];
+//               glu.set_chi(2,1,kch2);
+//               // check E
+//               if( glu.residue(1).xyz(7).distance_squared(OH) > 21.0 ) continue;
+//               Vec const CD(glu.residue(1).xyz(7));
+//               Real const dd2 = OH.distance_squared(CD);
+//               if( 11.15 > dd2 || dd2 > 18.9 ) continue;
+//               glu.set_chi(3,1, numeric::dihedral_degrees(OH,CD,glu.residue(1).xyz(6),glu.residue(1).xyz(5)) );
+//               Vec OE(glu.residue(1).xyz(8));
+//               Real od2 = OH.distance_squared(OE);
+//               if( 2.3*2.3 > od2 || od2 > 3.3*3.3 ) continue;
+//               Real tmpa1 = numeric::angle_degrees(C5,OH,OE);
+//               if( fabs(tmpa1-105.3) > 12.0 ) continue;
+//               Real tmpa2 = numeric::angle_degrees(OH,OE,CD);
+//               if( fabs(tmpa2-120.0) > 12.0 ) continue;
+//               if( elib->rotamer_energy(glu.residue(1),scratch) > 6.0 ) continue;
+//               bool clash = false;
+//               for(Size ia = 1; ia <= tmp.residue(5).nheavyatoms(); ia++) {
+//                 if( tmp.residue(5).xyz(ia).distance_squared(glu.residue(1).xyz(5)) < 3.2*3.2 ) clash = true;
+//                 if( tmp.residue(5).xyz(ia).distance_squared(glu.residue(1).xyz(6)) < 3.2*3.2 ) clash = true;
+//                 if( tmp.residue(5).xyz(ia).distance_squared(glu.residue(1).xyz(7)) < 3.2*3.2 ) clash = true;
+//                 if( tmp.residue(5).xyz(ia).distance_squared(glu.residue(1).xyz(8)) < 2.8*2.8 ) clash = true;
+//                 if( tmp.residue(5).xyz(ia).distance_squared(glu.residue(1).xyz(9)) < 2.8*2.8 ) clash = true;
+//               }
+//               if(clash) continue;
+//               gluhit=true;
+//               dhit++;
+//               Pose tmp2(tmp);
+//               Vec const H5(tmp2.residue(5).xyz("H5"));
+//               Mat Rtmp = numeric::rotation_matrix_degrees( C5-OH, numeric::dihedral_degrees(H5,OH,C5,OE) );
+//               tmp2.set_xyz(AtomID(tmp2.residue(5).atom_index("H5"),5), Rtmp*(H5-OH)+OH );
+//               tmp2.append_residue_by_jump(glu.residue(1),1);
+//               tmp2.dump_pdb(fn+"_e"+lzs(kr,4)+"_"+lzs(Size(kch1),3)+"_"+lzs(Size(kch2),3)+".pdb");
+//               sf->score(tmp2);
+//               core::io::silent::SilentStructOP ss_out_all( new core::io::silent::ScoreFileSilentStruct );
+//               ss_out_all->fill_struct(tmp2,fn+"_e"+lzs(kr,4)+"_"+lzs(Size(kch1),3)+"_"+lzs(Size(kch2),3)+".pdb");
+//               ss_out_all->add_energy( "frntside1" , hi.frnt );
+//               ss_out_all->add_energy( "frntside2" , hj.frnt );
+//               sfd.write_silent_struct( *ss_out_all, option[ basic::options::OptionKeys::out::file::silent ]() );
+//             }
+//           }
+//         }

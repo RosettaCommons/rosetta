@@ -1,0 +1,69 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file devel/protein_interface_design/movers/SetupHotspotConstraintsMover.hh
+/// @brief Derived classes from DockDesign for dock design
+/// @author Sarel Fleishman (sarelf@u.washington.edu)
+
+#ifndef INCLUDED_protocols_protein_interface_design_movers_SetupHotspotConstraintsMover_hh
+#define INCLUDED_protocols_protein_interface_design_movers_SetupHotspotConstraintsMover_hh
+
+// Project Headers
+#include <protocols/moves/Mover.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/types.hh>
+#include <protocols/hotspot_hashing/HotspotStubSet.fwd.hh>
+
+namespace protocols {
+namespace protein_interface_design {
+namespace movers {
+
+class SetupHotspotConstraintsMover : public protocols::moves::Mover {
+
+public:
+
+	SetupHotspotConstraintsMover();
+	SetupHotspotConstraintsMover(
+		protocols::hotspot_hashing::HotspotStubSetCOP hotspot_stub_set,
+		core::Size const chain_to_design,
+		core::Real const & CB_force_constant,
+		core::Real const & worst_allowed_stub_bonus,
+		bool const apply_self_energies,
+		core::Real const & bump_cutoff,
+		bool const apply_ambiguous_constraints,
+		bool const colonyE
+	);
+	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP fresh_instance() const;
+
+	SetupHotspotConstraintsMover( SetupHotspotConstraintsMover const & init );
+
+	void apply( core::pose::Pose & pose );
+	virtual std::string get_name() const;
+
+	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	~SetupHotspotConstraintsMover();
+
+private:
+	protocols::hotspot_hashing::HotspotStubSetOP hotspot_stub_set_;
+	core::Size chain_to_design_;
+	core::Real CB_force_constant_;
+	core::Real worst_allowed_stub_bonus_;
+	bool apply_self_energies_;
+	core::Real bump_cutoff_;
+	bool apply_ambiguous_constraints_;
+	bool colonyE_;
+};
+
+} // movers
+} // protein_interface_design
+} // devel
+
+#endif /*INCLUDED_protocols_protein_interface_design_movers_SetupHotspotConstraintsMover_HH*/
+

@@ -1,0 +1,84 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/*!
+
+@page preparing_structures How to prepare structures for use in Rosetta
+
+@author Coallated by Steven Lewis and Ramesh Jha
+
+@section purpose Why prepare structures?
+Structures derived straight from the PDB are not always perfectly compatible with Rosetta - it is common for them to have clashes (atom overlaps) or other minor errors.  It is often beneficial to prepare the structures before doing real work on them to get these errors out of the way beforehand.  This provides several benefits:
+@li Less time spent in each trajectory independently re-relaxing the same errors in the input
+@li Less noise in the results caused by errors being handled in different ways in different trajectories
+@li Lower overall scores (you should never have positive score12 scores for a well folded protein)
+
+@section how_to_prepare How do I prepare structures?
+How to prepare your structures is unfortunately closely linked to what you want to do with them.  In other words, your main protocol dictates your preparation protocol.  Remember that all you're really doing here is relaxing into Rosetta's energy function - you're not necessarily making it objectively more correct (although clashes are generally wrong), you're really just making Rosetta like it better.  What follows is advice from many of the Rosetta developers on how to best prepare structures.
+
+@section original_question Original question from Ramesh Jha
+Is there a consensus protocol to create the starting PDBs to be used in mini? It is not unknown that the PDBs right from the Protein Data Bank are composed of artifacts and defects that can give an exceptional jump in energy if happened to be altered during a design protocol. In order to minimize this problem, there are a few things which can be tried and that I am aware of:
+@li 1) Repack (with or without -use_input_sc)
+@li 2) Repack w/ sc_min
+@li 3) Relax (fast relax w/ or w/o use_input_sc)
+@li 4) Idealize
+
+Having tried all of them, I thought the option 3, was the best one, where I used fast relax while using -use_input_sc flag. But recently I observed that though 'relax' is able to substantially decrease the energy of starting PDBs, also result in subtle movements in the backbones and a PDB which could accommodate a ligand could not anymore after being relaxed.
+
+@section james_thompson James's reply
+Try adding the -constrain_relax_to_start_coords option to your protocol #3.
+
+@section ben_stranges Ben's reply
+I've been using a protocol that does sc & bb minimization, full packing with -use_input_sc, then minimization of bb, rb, and sc.  It's located in: src/apps/pilot/stranges/InterfaceStructMaker.cc  The idea with this is that it keeps things from moving too far from the starting structure. There's no backbone sampling so I typically find rmsd to the xtal structure to be < 1.0. Relax actually will do explicit bb sampling thus gives a lower energy structure than my protocol but can also introduce the changes that you observed. I'm pasting my typical options file below:
+@code
+-database /Users/stranges/rosetta/minirosetta_database
+-nstruct 20
+-ndruns 10
+-no_his_his_pairE
+-run::min_type dfpmin_armijo_nonmonotone
+-ignore_unrecognized_res
+-use_input_sc
+-ex1
+-ex2
+-no_optH false
+-overwrite
+-allow_rbmin true
+-min_all_jumps true
+-mute protocols.moves.RigidBodyMover protocols.moves.RigidBodyMover core.scoring.etable core.pack.task protocols.docking.DockingInitialPerturbation protocols.TrialMover core.io.database
+@endcode
+
+@section sagar_khare Sagar's reply
+I just use repack with sc_min, and include the ligand in the process.
+
+@section rocco_moretti Rocco's reply
+There is a fixed-backbone minimization program that's part of the ligand docking application, ligand_rpkmin (See section "Preparing the protein receptor for docking" of http://www.rosettacommons.org/manuals/archive/rosetta3.1_user_guide/app_ligand_docking.html).
+
+It won't relieve any backbone strain, though, so you may still have issues if the downstream protocol allows for backbone movement.
+
+@section steven_combs Steven C.'s reply
+In general, the Meiler lab does the following:
+@li 1) Obtain the protein using a script (see attached python scripts. (scripts were written by I believe James Thompson from the Baker lab and edited by me to work with the Meiler lab configuration) The script cleans, renumbers, and removes multiple conformations of residues from the protein.
+@li 2) relax.linuxgccrelease -ex1 -ex2 -ex1aro -relax:sequence
+
+This will alleviate clashes in the protein and give a good starting structure for any of the Rosetta applications...unless the protein blows up for some reason.
+
+With an addendum from James Thompson:
+Thanks Steven! That's a very reasonable way to gently structures from the PDB, although there are a lot of different ways that you might try this.
+
+Here are two more things that come to mind:
+@li If you notice that your protein is moving too much, try adding the -constrain_relax_to_start_coords option. This will use coordinate constraints to make your protein stay closer to your input model.
+@li Also, Mike Tyka wrote that script for cleaning up PDBs. One of the most useful parts of that script is that it matches non-canonical amino acids (such as selenomethionines) with the appropriate canonical amino acid.
+
+With a second addendum from Andrew Leaver-Fay:
+I thought I might point out two things:
+@li 1) ex1aro doesn't do anything extra if you already have ex1 on your command line. You can however set the sampling level for ex1aro to be higher than for ex1; e.g. -ex1 -ex1aro:level 4. This is stated very explicitly in the option documentation, yet still surprises a lot of people. In Rosetta++, -ex1aro behaved as if it were -ex1aro:level 4.
+@li 2) Mike has observed that extra rotamers will not yield better energy structures out of relax; they will however slow it down.
+
+
+*/

@@ -1,0 +1,130 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/*!
+
+@mainpage Mini Rosetta Documentation
+
+This is the main page for Mini Rosetta Documentation. It is the first
+page that users see when they go to the Doxygen documentation. We should
+put links to commonly referred to documentation pages here.
+
+
+@section mainpage_guidelines Developer Guides
+	-	@ref symmetry
+	- @ref rosetta_library_structure
+	- @ref mini_overview
+	- @ref a_guide_to_developing_in_rosetta
+	- @ref doxygen_tips
+	- Coding Guidelines
+		- @ref before_commit_check "List of things you should check in your code before committing it in to svn"
+		- @ref owning_pointer_usage_guidlines "Guidelines on Owning pointers usage"
+		- @ref options "Option list with description/range/default values"
+	- @ref robust "How to make mini 'robust' against badly formatted PDBs"
+	- @ref RNA_protein_changes "How to use combined RNA-protein poses (not possible by default!)"
+	- @ref preparing_structures "How to prepare structures for use in Rosetta"
+
+@section docs_core Core Tutorial and Reference
+	- kinematics
+		- @ref atomtree_overview "AtomTree overview and concepts"
+		- @ref foldtree_overview "FoldTree overview and concepts"
+	- optimization
+		- @ref minimization_overview "Minimization overview and concepts"
+	- pack
+		- @ref packer_task "How to use the PackerTask"
+		- @ref resfiles "Resfile syntax and conventions"
+		- @ref resfile_reader "How to write new resfile commands"
+	- scoring
+		- @ref new_energy_method "How to add a new scoring term"
+		- @ref constraint_file  "Constraints file formats"
+		- @ref density_map_scoring  "How to score structures using electron density data"
+	- util
+		- @ref tracer "Tracer, tool for debug IO"
+	- fragment
+		- @ref fragment_picking_old
+  - symmetry
+		- @ref symmetry
+	- io
+	  - @ref extract_atomtree_diffs "brief summary of atomtree diff format and silent file extraction"
+		- @ref database_support "Support for database input and output"
+
+@section docs_protocol Protocol Library Tutorial and Reference
+	- @ref jd2 "New job distributor README"
+
+@section docs_numeric Numeric Library Tutorial and Reference
+	- @ref numeric_library page has a (very) brief introduction to the %numeric library
+
+@section docs_test Tests Tutorial and Reference
+	- @ref test "Unit test and Performance test Mini Rosetta Documentation"
+	- @ref MoverTest "Mover test HOWTO"
+	- @ref RunUnitTest "Different way to run unit tests"
+	- @ref ScientificTest "How to create and run scientific tests"
+
+@section docs_apps Documentations for applications
+	- @ref pilot_apps_info "Index Page for Pilot Application Documentation"
+	- @ref ligand_dock "Documentation for the ligand_dock application"
+	- @ref rna_denovo "Documentation for the RNA 3D modeling applications"
+	- @ref rna_design "Documentation for RNA fixed backbone design"
+	- @ref extract_atomtree_diffs "Documentation for the extract_atomtree_diffs application (use with ligand_dock)"
+	- @ref kinematic_loopmodel "Documentation for kinematic loop modeling"
+	- @ref loopmodeling "Documentation for CCD / fragment loop modeling"
+	- @ref boinc_minirosetta_usage "Boinc minirosetta application usage and overview"
+	- @ref docking_protocol "Documentation for the docking application"
+	- @ref docking_prepack_protocol "Documentation for docking prepack application"
+	- @ref fixed_backbone "Documentation for the fixed backbone design application"
+	- @ref fixbb_with_hpatch "Documentation for the fixed backbone design application with the hpatch score term"
+	- @ref fragment_picking "Documentation for the fragment picker application"
+	- @ref relax_commands "Commands for the relax application"
+	- @ref cluster_commands "Commands for the cluster application"
+	- @ref score_commands "Commands for the scoring application"
+	- @ref commands_collection "Commands collection for pilot and public applications"
+	- @ref backrub "Backrub application documentation"
+	- @ref app_dock_design "Docking Design Scripting documentation"
+	- @ref enzyme_design "Documentation for the enzyme design application"
+        - @ref matcher "Documentation for the matcher"
+	- @ref membrane_abinitio "Documentation for the membrane ab initio application"
+	- @ref FlexPepDock "Documentation for the Flexible Peptide Docking Refinement and \em ab-initio protocols"
+	- @ref sequence_tolerance "Documentation for the sequence_tolerance application"
+	- @ref symmetric_docking "Documentation for the symmetric docking application"
+	- @ref fold_and_dock "Documentation for the Fold-and-Dock application"
+	- @ref InterfaceAnalyzer_doc "Documentation for the InterfaceAnalyzer application"
+	- @ref ddg_monomer_application "Documentation for the ddg_monomer application"
+	- @ref multistate_design "Documentation for the multistate design application"
+	- @ref sequence_recovery "Documentation for the sequence recovery application"
+	- @ref FloppyTail "Documentation for the FloppyTail application"
+	- @ref AnchoredDesign "Documentation for the AnchoredDesign application"
+	      - @ref AnchoredPDBCreator "Documentation for the AnchoredPDBCreator application (part of AnchoredDesign)"
+	      - @ref AnchorFinder "Documentation for the AnchorFinder application (part of AnchoredDesign)"
+	- @ref UBQ_E2_thioester "Documentation for the UBQ_E2_thioester application"
+	- @ref pepspec "Documentation for the pepspec application"
+	- @ref comparative_modeling "Documentation for the comparative modeling application"
+
+@section mainpage_namespaces Important Namespaces
+
+	- core
+		- core::pose
+		- core::chemical
+	- utility
+	- numeric
+
+
+@section mainpage_classes Important Classes
+
+	- core::pose::Pose
+	- core::conformation::Residue
+	- core::chemical::ResidueType
+
+
+
+To create a new additional page, just make a .dox file with a "@page ..."
+command in it, somewhere under the doc/ directory.
+These pages will show up under the "Related Pages" tab automatically,
+but you may add a "@ref" to them here also.
+
+*/

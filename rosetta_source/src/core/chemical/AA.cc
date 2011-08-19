@@ -1,0 +1,278 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   core/chemical/AA.cc
+/// @brief  translation between amino acid enum and string name/one letter char codes
+/// @author Phil Bradley
+
+// Rosetta headers
+#include <core/chemical/AA.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
+
+// Utility headers
+#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/vector1.hh>
+
+// C++ headers
+#include <map>
+#include <string>
+
+//Auto Headers
+#include <utility/vector1_bool.hh>
+#include <sstream>
+
+
+
+namespace core {
+namespace chemical {
+
+
+/* BEGIN: the following functions are local to this file */
+
+
+/// @brief setup the map that converts string name to AA enum
+std::map< std::string, AA > setup_name2aa() {
+
+	std::map< std::string, AA > n2aa;
+
+	n2aa[ "ALA" ] = aa_ala;
+	n2aa[ "CYS" ] = aa_cys;
+	n2aa[ "ASP" ] = aa_asp;
+	n2aa[ "GLU" ] = aa_glu;
+	n2aa[ "PHE" ] = aa_phe;
+	n2aa[ "GLY" ] = aa_gly;
+	n2aa[ "HIS" ] = aa_his;
+	n2aa[ "ILE" ] = aa_ile;
+	n2aa[ "LYS" ] = aa_lys;
+	n2aa[ "LEU" ] = aa_leu;
+	n2aa[ "MET" ] = aa_met;
+	n2aa[ "ASN" ] = aa_asn;
+	n2aa[ "PRO" ] = aa_pro;
+	n2aa[ "GLN" ] = aa_gln;
+	n2aa[ "ARG" ] = aa_arg;
+	n2aa[ "SER" ] = aa_ser;
+	n2aa[ "THR" ] = aa_thr;
+	n2aa[ "VAL" ] = aa_val;
+	n2aa[ "TRP" ] = aa_trp;
+	n2aa[ "TYR" ] = aa_tyr;
+
+	n2aa[ "ADE" ] = na_ade;
+	n2aa[ "CYT" ] = na_cyt;
+	n2aa[ "GUA" ] = na_gua;
+	n2aa[ "THY" ] = na_thy;
+
+	n2aa[ "RAD" ] = na_rad;
+	n2aa[ "RCY" ] = na_rcy;
+	n2aa[ "RGU" ] = na_rgu;
+	n2aa[ "URA" ] = na_ura;
+
+	n2aa[ "VRT" ] = aa_vrt;
+
+	n2aa[ "UNK" ] = aa_unk;
+
+	return n2aa;
+}
+
+
+/// @brief setup the map the converts one letter char to AA enum
+std::map< char, AA > setup_oneletter2aa() {
+
+	std::map< char, AA > l2aa;
+
+	l2aa[ 'A' ] = aa_ala;
+	l2aa[ 'C' ] = aa_cys;
+	l2aa[ 'D' ] = aa_asp;
+	l2aa[ 'E' ] = aa_glu;
+	l2aa[ 'F' ] = aa_phe;
+	l2aa[ 'G' ] = aa_gly;
+	l2aa[ 'H' ] = aa_his;
+	l2aa[ 'I' ] = aa_ile;
+	l2aa[ 'K' ] = aa_lys;
+	l2aa[ 'L' ] = aa_leu;
+	l2aa[ 'M' ] = aa_met;
+	l2aa[ 'N' ] = aa_asn;
+	l2aa[ 'P' ] = aa_pro;
+	l2aa[ 'Q' ] = aa_gln;
+	l2aa[ 'R' ] = aa_arg;
+	l2aa[ 'S' ] = aa_ser;
+	l2aa[ 'T' ] = aa_thr;
+	l2aa[ 'V' ] = aa_val;
+	l2aa[ 'W' ] = aa_trp;
+	l2aa[ 'Y' ] = aa_tyr;
+	l2aa[ 'a' ] = na_ade;
+	l2aa[ 'c' ] = na_cyt;
+	l2aa[ 'g' ] = na_gua;
+	l2aa[ 't' ] = na_thy;
+
+	//rhiju RNA. Hmmm. The conflict with DNA seems like it could be a serious issue.
+	l2aa[ 'a' ] = na_rad;
+	l2aa[ 'c' ] = na_rcy;
+	l2aa[ 'g' ] = na_rgu;
+	l2aa[ 'u' ] = na_ura;
+
+	l2aa[ 'Z' ] = aa_unk;
+	l2aa[ 'X' ] = aa_vrt;
+
+	return l2aa;
+}
+
+
+/// @brief map that converts string name to AA enum
+inline
+std::map< std::string, AA > & name2aa() {
+	// static initialization only happens once
+	static std::map< std::string, AA > * name2aa_ = new std::map< std::string, AA >( setup_name2aa() );
+	return *name2aa_;
+}
+
+
+/// @brief map that converts one letter char to AA enum
+inline
+std::map< char, AA > & oneletter2aa() {
+	// static initialization only happens once
+	static std::map< char, AA > * oneletter2aa_ = new std::map< char, AA >( setup_oneletter2aa() );
+	return *oneletter2aa_;
+}
+
+
+/// @brief setup the vector that maps AA enum to string name
+utility::vector1< std::string > setup_aa2name() {
+
+	utility::vector1< std::string > aa2n( num_aa_types );
+
+	for ( std::map< std::string, AA >::const_iterator iter = name2aa().begin(),
+		iter_end = name2aa().end(); iter != iter_end; ++iter ) {
+		aa2n[ iter->second ] = iter->first;
+	}
+
+	return aa2n;
+}
+
+
+/// @brief vector that maps AA enum to string name
+inline
+utility::vector1< std::string > & aa2name() {
+	// static initialization only happens once
+	static utility::vector1< std::string > * aa2name_ = new utility::vector1< std::string >( setup_aa2name() );
+	return *aa2name_;
+}
+
+
+/// @brief setup the vector that maps AA enum to one letter char
+utility::vector1< char > setup_aa2oneletter() {
+
+	utility::vector1< char > aa2l( num_aa_types );
+
+	for ( std::map< char, AA >::const_iterator iter = oneletter2aa().begin(),
+		iter_end = oneletter2aa().end(); iter != iter_end; ++iter ) {
+		aa2l[ iter->second ] = iter->first;
+	}
+
+	return aa2l;
+}
+
+
+/// @brief vector that maps AA enum to one letter char
+inline
+utility::vector1< char > & aa2oneletter() {
+	// static initialization only happens once
+	static utility::vector1< char > * aa2oneletter_ = new utility::vector1< char >( setup_aa2oneletter() );
+	return *aa2oneletter_;
+}
+
+
+/* END: the following functions are local to this file */
+
+
+AA
+aa_from_name( std::string const & name )
+{
+	std::map< std::string, AA >::const_iterator iter = name2aa().find( name );
+	if ( iter == name2aa().end() ) {
+		utility_exit_with_message( "unrecognized aa type " + name );
+	}
+	return iter->second;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+/// @brief input operator for AA enum type
+///
+/// @details read in a string name from a file or std::cin and directly convert
+/// it to an AA enum type, for example, std::cin >> AA. This will first check
+/// if the lookup map has been set up already. If the string name cannot be
+/// converted properly, it will flag the input stream as failure
+/// (e.g., istream.fail() is true) and set AA enum type to aa_unk.
+////////////////////////////////////////////////////////////////////////////////
+std::istream &
+operator >>(
+	std::istream & is,
+	AA & aa
+)
+{
+	std::string name;
+	is >> name;
+	std::map< std::string, AA >::const_iterator iter = name2aa().find( name );
+	if ( iter == name2aa().end() ) {
+ 		//std::cout << "aaextract failed: " << name << std::endl;
+		aa = aa_unk;
+		is.setstate( std::ios_base::failbit );
+	} else {
+		//std::cout << "aaextract succeeded " << name << std::endl;
+		aa = iter->second;
+	}
+	return is;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+/// @brief output operator for AA enum type
+///
+/// @details example usage: std::cout << aa_gly << std::endl;
+//////////////////////////////////////////////////////////////////////////////
+std::ostream &
+operator <<(
+	std::ostream & os,
+	AA const & aa
+)
+{
+	os << name_from_aa( aa );
+	return os;
+}
+
+
+std::string
+name_from_aa( AA aa ) {
+	if( aa > num_aa_types ) return "AAOutOfRange";
+	return aa2name()[ aa ];
+}
+
+
+char
+oneletter_code_from_aa( AA aa ) {
+	assert( aa <= chemical::num_canonical_aas );
+	return aa2oneletter()[ aa ];
+}
+
+
+AA
+aa_from_oneletter_code( char onelettercode )
+{
+	return oneletter2aa().find( onelettercode )->second;
+}
+
+
+bool
+oneletter_code_specifies_aa( char onelettercode ) {
+	return oneletter2aa().find( onelettercode ) != oneletter2aa().end();
+}
+
+
+} // namespace chemical
+} // namespace core

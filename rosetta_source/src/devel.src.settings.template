@@ -1,0 +1,18 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# Project settings for rosetta sources
+
+#Do Not Modify This File
+#Rather copy this file to devel.src.settings.my
+#then add the source files that you want compiled
+
+sources = {
+        "devel" : [
+                "init",
+        ],
+}
+
+include_path = [ ]
+library_path = [ ]
+libraries    = [ ]
+subprojects  = [ "protocols", "core.5", "core.4", "core.3", "core.2", "core.1", "basic", "numeric", "utility", "ObjexxFCL", "z"]

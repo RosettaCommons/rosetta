@@ -1,0 +1,13 @@
+(c) Copyright Rosetta Commons Member Institutions.
+(c) This file is part of the Rosetta software suite and is made available under license.
+(c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+(c) For more information, see http://www.rosettacommons.org. Questions about this can be
+(c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+<< Forge README >>
+
+** DISCLAIMER **
+The code and protocols in protocols/forge has not yet been vetted.  It is
+currently not published, not benchmarked, and not seen extensive use.  Use at
+your own risk.  Please direct any questions or requests for further information
+to Bill Schief's lab (schief@u.washington.edu).

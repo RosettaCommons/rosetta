@@ -1,0 +1,181 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file protocols/moves/FavorSequenceProfile.cc
+/// @brief Add a SequenceProfileConstraint to a pose.
+/// @author Rocco Moretti (rmoretti@u.washington.edu)
+
+// Unit Headers
+#include <protocols/moves/FavorSequenceProfile.hh>
+#include <protocols/moves/FavorSequenceProfileCreator.hh>
+
+#include <core/scoring/ScoreFunction.hh>
+#include <core/pose/Pose.hh>
+#include <core/id/AtomID.hh> // needed for Windows build
+#include <core/import_pose/import_pose.hh>
+#include <core/sequence/Sequence.hh>
+#include <core/sequence/SequenceProfile.hh>
+
+#include <protocols/constraints_additional/SequenceProfileConstraint.hh>
+
+#include <protocols/moves/DataMap.hh>
+#include <utility/tag/Tag.hh>
+
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
+
+#include <utility/string_util.hh>
+#include <utility/exit.hh>
+
+// #include <boost/foreach.hpp>
+// #define foreach BOOST_FOREACH
+
+
+namespace protocols {
+namespace moves {
+
+using namespace core;
+using namespace std;
+using namespace core::scoring;
+
+static basic::Tracer TR( "protocols.moves.FavorSequenceProfile" );
+
+std::string FavorSequenceProfileCreator::keyname() const
+{
+        return FavorSequenceProfileCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+FavorSequenceProfileCreator::create_mover() const {
+        return new FavorSequenceProfile;
+}
+
+std::string
+FavorSequenceProfileCreator::mover_name() {
+        return "FavorSequenceProfile";
+}
+
+
+FavorSequenceProfile::FavorSequenceProfile( ) :
+	protocols::moves::Mover( "FavorSequenceProfile" ),
+	weight_( 1.0 ),
+	use_current_(false),
+	matrix_("BLOSUM62")
+{}
+
+void
+FavorSequenceProfile::set_weight( core::Real weight ) {
+	weight_ = weight;
+}
+
+void
+FavorSequenceProfile::set_sequence( core::sequence::Sequence & seq, std::string matrix) {
+	if (ref_profile_) {
+		TR.Warning << "Overwriting existing profile in FavorSequenceProfile." << std::endl;
+	}
+	ref_profile_ = new core::sequence::SequenceProfile;
+	ref_profile_->generate_from_sequence(seq, matrix);
+}
+
+void
+FavorSequenceProfile::set_profile( core::sequence::SequenceProfile & profile) {
+	if (ref_profile_) {
+		TR.Warning << "Overwriting existing profile in FavorSequenceProfile." << std::endl;
+	}
+	ref_profile_ = new core::sequence::SequenceProfile( profile );
+}
+
+void
+FavorSequenceProfile::apply( core::pose::Pose & pose )
+{
+	core::sequence::SequenceProfileOP profile;
+	if( use_current_ ) {
+		core::sequence::Sequence seq(pose);
+		profile = new core::sequence::SequenceProfile;
+		profile->generate_from_sequence(seq, matrix_);
+	} else {
+		runtime_assert( ref_profile_ );
+		profile = new core::sequence::SequenceProfile( *ref_profile_);
+	}
+	if( weight_ != 1.0 ) {
+		profile->rescale(weight_);
+	}
+
+	for( core::Size seqpos( 1 ), end( pose.total_residue() ); seqpos <= end; ++seqpos ) {
+		pose.add_constraint( new protocols::constraints_additional::SequenceProfileConstraint( pose, seqpos, profile ) );
+	}
+}
+
+void
+FavorSequenceProfile::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose)
+{
+	weight_ = tag->getOption<core::Real>( "weight", 1 );
+
+	if ( tag->hasOption("scorefxns") ) {
+		std::string const sf_val( tag->getOption<std::string>("scorefxns") );
+		typedef utility::vector1< std::string > StringVec;
+		StringVec const sf_keys( utility::string_split( sf_val, ',' ) );
+		for ( StringVec::const_iterator it( sf_keys.begin() ), end( sf_keys.end() ); it != end; ++it ) {
+			ScoreFunctionOP scorefxn( *data.get< ScoreFunction * >( "scorefxns", *it ) );
+			if( scorefxn->get_weight( res_type_constraint ) == 0.0 ){
+				scorefxn->set_weight( res_type_constraint, 1 );
+				TR<<"Turning on res_type_constraint weight in scorefxn "<<*it<<std::endl;
+			}
+		}
+	}
+
+	core::Size num_struct(0);
+	if( tag->getOption< bool >( "use_native", false ) ) ++num_struct;
+	if( tag->getOption< bool >( "use_starting", false ) ) ++num_struct;
+	if( tag->getOption< bool >( "use_current", false ) ) ++num_struct;
+	if( tag->hasOption("pdbname") ) ++num_struct;
+
+	if( ! num_struct &&  ! tag->hasOption("pssm") ) {
+		utility_exit_with_message("Must set one of 'pssm', 'use_native', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
+	}
+	if( num_struct && tag->hasOption("pssm") ) {
+		utility_exit_with_message("Cannot set both 'pssm' and one of 'use_native', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
+	}
+	if( num_struct > 1 ) {
+		utility_exit_with_message("Can only set one of 'use_native', 'use_starting', 'use_current', or 'pdbname' in FavorSequenceProfile");
+	}
+	if( tag->hasOption("matrix") && tag->hasOption("pssm")  ) {
+		TR.Warning << "WARNING In option matrix not used with pssm specification." << std::endl;
+	}
+
+	matrix_ = tag->getOption< std::string >( "matrix", "BLOSUM62" );
+	if( tag->getOption< bool >( "use_native", false ) ) {
+		core::pose::Pose nat_pose;
+		core::import_pose::pose_from_pdb( nat_pose, basic::options::option[ basic::options::OptionKeys::in::file::native ] );
+		core::sequence::Sequence seq(nat_pose.sequence(), basic::options::option[ basic::options::OptionKeys::in::file::native ]);
+		set_sequence( seq, matrix_ );
+	}
+	if( tag->getOption< bool >( "use_starting", false ) ) {
+		core::sequence::Sequence seq(pose);
+		set_sequence( seq, matrix_ );
+	}
+	if( tag->getOption< bool >( "use_current", false ) ) {
+		use_current_ = true;
+	}
+	if( tag->hasOption("pdbname") ) {
+		core::pose::Pose ref_pose;
+		core::import_pose::pose_from_pdb( ref_pose, tag->getOption<std::string>( "pdbname" ) );
+		core::sequence::Sequence seq(ref_pose.sequence(), tag->getOption<std::string>( "pdbname" ) );
+		set_sequence( seq, matrix_ );
+	}
+	if( tag->hasOption("pssm") ) {
+		ref_profile_ = new core::sequence::SequenceProfile;
+		ref_profile_->read_from_file( tag->getOption< std::string >( "pssm" ) );
+	}
+}
+
+} //moves
+} //protocols
+

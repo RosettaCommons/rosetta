@@ -1,0 +1,5 @@
+-database /Users/Uadmin/minirosetta_database/
+-RBSegmentRelax::input_pdb ./4fxn.start_0001.pdb
+-RBSegmentRelax::rb_file ./4fxn.rb_file
+-RBSegmentRelax::viewer
+-out::file::o ./4fxn_shift.pdb

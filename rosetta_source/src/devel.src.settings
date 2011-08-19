@@ -1,0 +1,132 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# Project settings for rosetta sources
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+sources = {
+    "devel" : [
+        "init",
+    ],
+
+	"devel/cartesian_frags" : [
+		"SafeID",
+		"CartesianFragment",
+		"DNA_FragLib",
+		"dna_util",
+	],
+
+        "devel/cstEnergyBalance" : [
+		"minimalCstRelaxUtil",
+	],
+
+	"devel/dna" : [
+		"protocols",
+		"ProteinDNA_Relax",
+		"util",
+		"base_movers",
+		"relax_util",
+   ],
+
+	"devel/domain_assembly" : [
+		"DomainAssemblyReader",
+		"domain_assembly",
+		"domain_assembly_setup",
+	],
+
+    "devel/denovo_protein_design" : [
+      "util",
+      "SequenceFitnessMover",
+      "DesignRelaxMover",
+      "CreateStartingStructureMover",
+      "SSClass",
+	],
+
+    "devel/enzdes" : [
+		"DesignSilentStruct",
+		"EnzdesRemodelProtocol",
+	],
+
+#        "path_rover" : [
+#                "pathrover_DOFs_manager",
+#        ],
+
+#	"devel/integrated_loop" : [
+#		"LoopModeler",
+#		"CcdCloseMover",
+#		"LoopManager"
+#	],
+
+	"devel/inv_kin_lig_loop_design" : [
+		"Ints",
+		"ResID",
+		"Fragment",
+		"Loop",
+		"Cloner",
+		"Mover",
+		"Protocol",
+		"JumpManager",
+	],
+    "devel/loop_extend" : [
+        "LoopExtendMover",
+    ],
+	"devel/metal_interface" : [
+		"DualMonteCarlo",
+		"MetalInterfaceDesignMover",
+                "FindClosestAtom",
+                "AddMetalSiteConstraints",
+                "MatchGrafter",
+                "MetalSiteResidue",
+                "ParseMetalSite",
+	],
+
+#	"devel/pose_metric_calculators" : [
+#		"SasaCalculator",
+#		"InterfaceDefinitionCalculatorBase",
+#		"InterfaceNeighborDefinitionCalculator",
+#		"InterfaceSasaDefinitionCalculator",
+#		"InterfaceDeltaEnergeticsCalculator",
+#	],
+
+	"devel/residual_dipolar_coupling" : [
+		"RDC_main",
+		"RDC_energies",
+	],
+
+	"devel/simple_options" : [
+		"option",
+	],
+
+#	"devel/ssrbrelax" : [
+#		"SSrbrelax",
+#		"SSRbClass"
+#	],
+
+    "devel/optest" : [
+        "A",
+        "B1",
+        "B2",
+        "C1",
+        "C2",
+	],
+
+	"devel/fold_from_loops" : [
+		"FoldFromLoopsMover",
+		"FoldFromLoops_functions",
+	],
+	"devel/loop_grids" : [
+		"LoopGrid",
+	],
+	"devel/vardist_solaccess" : [
+		"VarSolDRotamerDots",
+	],
+
+}
+
+include_path = [ ]
+library_path = [ ]
+libraries    = [ ]
+subprojects  = [ "protocols", "core.5","core.4","core.3","core.2","core.1","basic", "numeric", "utility", "ObjexxFCL", "z","sqlite3", "cppdb"]

@@ -1,0 +1,26 @@
+After checking out a fresh version run these commands to
+get a full release build of mini:
+
+
+./make_project.py all
+cd build_release
+cmake .
+make
+
+
+you can also make individual executables by typing, for example
+
+make score_jd2
+make relax
+make minirosetta
+
+or individual sub libraries:
+
+make core
+
+
+
+If you want to see the actual g++ commands the make issues (good for debugging)
+issue the command like this
+
+make VERBOSE=1

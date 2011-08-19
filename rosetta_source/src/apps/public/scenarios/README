@@ -1,0 +1,3 @@
+README for apps/public/scenarios
+
+The scenarios folder is intended for applications that need to be released (for publication purposes, etc) but are not necessarily so generic as to be of general use.  Apps in this folder need to be documented with both how to use them and what their explicit original purpose was, so that other users can judge if their particular need is similar enough to make the application useful.  Citations are strongly suggested once available!

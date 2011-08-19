@@ -1,0 +1,88 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   basic/options/keys/score.OptionKeys.gen.hh
+/// @brief  basic::options::OptionKeys collection
+/// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
+/// @author James M. Thompson (tex@u.washington.edu)
+
+#ifndef INCLUDED_basic_options_keys_score_OptionKeys_gen_HH
+#define INCLUDED_basic_options_keys_score_OptionKeys_gen_HH
+
+// Unit headers
+#include <basic/options/keys/OptionKeys.hh>
+
+namespace basic {
+namespace options {
+namespace OptionKeys {
+
+namespace score { extern BooleanOptionKey const score; }
+namespace score { extern StringOptionKey const weights; }
+namespace score { extern StringOptionKey const custom_atom_pair; }
+namespace score { extern StringOptionKey const patch; }
+namespace score { extern BooleanOptionKey const empty; }
+namespace score { extern RealOptionKey const fa_max_dis; }
+namespace score { extern BooleanOptionKey const fa_Hatr; }
+namespace score { extern BooleanOptionKey const no_smooth_etables; }
+namespace score { extern RealOptionKey const etable_lr; }
+namespace score { extern BooleanOptionKey const no_lk_polar_desolvation; }
+namespace score { extern StringOptionKey const input_etables; }
+namespace score { extern StringOptionKey const output_etables; }
+namespace score { extern RealOptionKey const rms_target; }
+namespace score { extern BooleanOptionKey const ramaneighbors; }
+namespace score { extern StringOptionKey const optH_weights; }
+namespace score { extern StringOptionKey const optH_patch; }
+namespace score { extern StringOptionKey const hbond_params; }
+namespace score { extern IntegerOptionKey const symE_units; }
+namespace score { extern RealOptionKey const symE_bonus; }
+namespace score { extern RealOptionKey const NV_lbound; }
+namespace score { extern RealOptionKey const NV_ubound; }
+namespace score { extern StringOptionKey const NV_table; }
+namespace score { extern BooleanOptionKey const disable_orientation_dependent_rna_ch_o_bonds; }
+namespace score { extern BooleanOptionKey const find_neighbors_3dgrid; }
+namespace score { extern StringOptionKey const seqdep_refene_fname; }
+namespace score { extern StringOptionKey const secondary_seqdep_refene_fname; }
+namespace score { extern BooleanOptionKey const exact_occ_pairwise; }
+namespace score { extern BooleanOptionKey const exact_occ_skip_Hbonders; }
+namespace score { extern BooleanOptionKey const exact_occ_include_Hbond_contribution; }
+namespace score { extern BooleanOptionKey const exact_occ_pairwise_by_res; }
+namespace score { extern BooleanOptionKey const exact_occ_split_between_res; }
+namespace score { extern BooleanOptionKey const exact_occ_self_res_no_occ; }
+namespace score { extern RealOptionKey const exact_occ_radius_scaling; }
+namespace score { extern StringVectorOptionKey const ref_offsets; }
+namespace score { extern BooleanOptionKey const output_residue_energies; }
+namespace score { extern StringOptionKey const fa_custom_pair_distance_file; }
+namespace score { extern RealOptionKey const disulf_matching_probe; }
+namespace score { extern RealVectorOptionKey const bonded_params; }
+namespace score { namespace saxs { extern BooleanOptionKey const saxs; } }
+namespace score { namespace saxs { extern RealOptionKey const min_score; } }
+namespace score { namespace saxs { extern StringOptionKey const custom_ff; } }
+namespace score { namespace saxs { extern StringOptionKey const print_i_calc; } }
+namespace score { namespace saxs { extern FileOptionKey const ref_fa_spectrum; } }
+namespace score { namespace saxs { extern FileOptionKey const ref_cen_spectrum; } }
+namespace score { namespace saxs { extern FileOptionKey const ref_spectrum; } }
+namespace score { namespace saxs { extern FileOptionKey const ref_pddf; } }
+namespace score { namespace saxs { extern BooleanOptionKey const skip_hydrogens; } }
+namespace score { namespace saxs { extern RealOptionKey const d_min; } }
+namespace score { namespace saxs { extern RealOptionKey const d_max; } }
+namespace score { namespace saxs { extern RealOptionKey const d_step; } }
+namespace score { namespace saxs { extern RealOptionKey const q_min; } }
+namespace score { namespace saxs { extern RealOptionKey const q_max; } }
+namespace score { namespace saxs { extern RealOptionKey const q_step; } }
+namespace score { namespace saxs { extern BooleanOptionKey const fit_pddf_area; } }
+namespace score { extern IntegerVectorOptionKey const sidechain_buried; }
+namespace score { extern IntegerVectorOptionKey const sidechain_exposed; }
+namespace score { extern RealOptionKey const hackelec_max_dis; }
+namespace score { extern RealOptionKey const hackelec_die; }
+namespace score { extern BooleanOptionKey const hackelec_r_option; }
+
+} // namespace OptionKeys
+} // namespace options
+} // namespace basic
+
+#endif

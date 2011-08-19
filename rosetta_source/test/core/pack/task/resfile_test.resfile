@@ -1,0 +1,21 @@
+#this is the test resfile for the unit tests, the protein has 30 residues to play with
+#it is deliberately out of order to test that feature
+
+NATRO
+
+start
+5 _ NATAA
+1 _ ALLAAwc
+8 _ ALLAAxc
+7 _ PIKAA ACDEF
+4 _ NOTAA QRSTVWYI
+11 _ POLAR
+15 _ APOLAR
+17 _ NATRO
+2 _ PIKAA E
+21 _ PIKAA ADH
+22 _ PIKAA QWERYIPLHGDSACNM #out of order    
+23 _ NOTAA NVCLHTREWQ #also out of order	     
+24 _ PIKAA QWIPGLDSACVNM #histidine removed
+25 _ NOTAA NVCLTREWQ #H removed                
+26 _ NATAA USE_INPUT_SC 

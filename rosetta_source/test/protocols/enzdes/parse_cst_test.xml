@@ -1,0 +1,7 @@
+<RANDOM_WRAPPER> 
+<MOVERS>
+              <AddOrRemoveMatchCsts name=cstaddnew cst_instruction="add_new" cstfile="protocols/enzdes/ligtest_it.cst"/> //add enzdes style csts,
+	      <AddOrRemoveMatchCsts name=cstremove cst_instruction="remove" cstfile="protocols/enzdes/ligtest_it.cst"/>
+	      <AddOrRemoveMatchCsts name=cstaddpreg cst_instruction="add_pregenerated" cstfile="protocols/enzdes/ligtest_it.cst"/>	
+ </MOVERS>
+</RANDOM_WRAPPER>

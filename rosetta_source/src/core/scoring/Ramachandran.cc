@@ -1,0 +1,517 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   core/scoring/Ramachandran.cc
+/// @brief  Ramachandran potential class implementation
+/// @author Andrew Leaver-Fay (leaverfa@email.unc.edu)
+
+// Unit Headers
+#include <core/scoring/Ramachandran.hh>
+
+// Package Headers
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/Energies.hh>
+
+// Project Headers
+#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
+#include <basic/database/open.hh>
+#include <basic/options/option.hh>
+
+// Numeric Headers
+#include <numeric/angle.functions.hh>
+#include <numeric/interpolation/periodic_range/half/interpolation.hh>
+#include <numeric/random/random.hh>
+
+// Utility Headers
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/io/izstream.hh>
+
+// ObjexxFCL Headers
+#include <ObjexxFCL/FArray1D.hh>
+#include <ObjexxFCL/FArray2D.hh>
+#include <ObjexxFCL/FArray2A.hh>
+#include <ObjexxFCL/FArray4D.hh>
+#include <ObjexxFCL/string.functions.hh>
+
+// option key includes
+
+// Auto-header: duplicate removed #include <basic/options/option.hh>
+#include <basic/options/keys/loops.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/OptionKeys.hh>
+
+
+
+using namespace ObjexxFCL;
+
+namespace core {
+namespace scoring {
+
+typedef Ramachandran R;
+
+bool R::rama_initialized_( false );
+Real const R::binw_( 10.0 );
+Real const R::rama_sampling_thold_( 0.00075 ); // only sample torsions with Rama prob above this value
+Real const R::rama_sampling_factor_( 10.0 ); // factor for increased precision of Rama sampling table
+ObjexxFCL::FArray4D< Real > R::ram_probabil_( R::n_phi_, R::n_psi_, 3, R::n_aa_ );
+ObjexxFCL::FArray4D_int R::ram_counts_( R::n_phi_, R::n_psi_, 3, R::n_aa_ );
+ObjexxFCL::FArray4D< Real > R::ram_energ_( R::n_phi_, R::n_psi_, 3, R::n_aa_);
+ObjexxFCL::FArray2D< Real > R::ram_entropy_( 3, R::n_aa_ );
+
+Ramachandran::Ramachandran()
+{
+	read_rama();
+	//if (basic::options::option[ basic::options::OptionKeys::loops::nonpivot_torsion_sampling ]()) {
+	//	init_rama_sampling_table();
+	//}
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+
+/// @brief evaluate rama score for each (protein) residue and store that score
+/// in the pose.energies() object
+void
+Ramachandran::eval_rama_score_all(
+	pose::Pose & pose,
+	ScoreFunction const & scorefxn
+) const
+{
+	if ( scorefxn.has_zero_weight( rama ) ) return; // unnecessary, righ?
+
+	//double rama_sum = 0.0;
+
+	// in pose mode, we use fold_tree.cutpoint info to exclude terminus
+	// residues from rama calculation. A cutpoint could be either an artificial
+	// cutpoint such as loop cutpoint or a real physical chain break such as
+	// multiple-chain complex. For the artificial cutpoint, we may need to
+	// calculate rama scores for cutpoint residues, but for the real chain break
+	// cutpoint, we don't want to do that. So here we first loop over all the
+	// residue in the protein and exclude those ones which are the cutpoints.
+	// Then we loop over the cutpoint residues and add rama score for residues
+	// at artificial cutpoints, i.e., cut_weight != 0.0, which means that
+	// jmp_chainbreak_score is also calculated for this cutpoint. Note that the
+	// default value for cut_weight here is dependent on whether
+	// jmp_chainbreak_weight is set. This is to ensure that rama score for
+	// termini residues are not calculated when jmp_chainbreak_weight is 0.0,
+	// e.g normal pose docking.
+
+	int const total_residue = pose.total_residue();
+
+	// retrieve cutpoint info // apl do we actually need this data?
+	// if so, Pose must provide it 'cause we're offing all global data
+	//
+	//kinematics::FoldTree const & fold_tree(
+	//		pose.fold_tree() );
+	//int const n_cut( fold_tree.num_cutpoint() );
+
+	//FArray1D< Real > cut_weight( n_cut,
+	//	scorefxns::jmp_chainbreak_weight == 0.0 ? 0.0 : 1.0 ); // apl need to handle
+
+	//if( cut_weight.size1() == scorefxns::cut_weight.size1() )
+	//	cut_weight = scorefxns::cut_weight;
+
+	// exclude chain breaks
+
+	Energies & pose_energies( pose.energies() );
+
+	for ( int ii = 1; ii <= total_residue; ++ii )
+	{
+		if ( pose.residue(ii).is_protein()  && ! pose.residue(ii).is_terminus()  )
+		{
+			Real rama_score,dphi,dpsi;
+			eval_rama_score_residue(pose.residue(ii),rama_score,dphi,dpsi);
+			//std::cout << "Rama: residue " << ii << " = " << rama_score << std::endl;
+			pose_energies.onebody_energies( ii )[rama] = rama_score;
+		}
+	}
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+void
+Ramachandran::write_rama_score_all( Pose const & /*pose*/ ) const
+{}
+
+
+///////////////////////////////////////////////////////////////////////////////
+/// Initialize the table holding the sample-able torsion space for each residue
+/// with each torsion given indices proportionate to its probability
+void
+Ramachandran::init_rama_sampling_table()
+{
+	rama_sampling_table_.resize(n_aa_);
+	int ss_type=3;
+	FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
+	for (int aa=1; aa<=n_aa_; aa++) { // loop over all residue types
+		FArray2A< Real > const rama_for_res( ram_probabil_(1, 1, ss_type, aa), zero_index, zero_index );
+		Size max_allowed = n_phi_ * n_psi_;
+		Size actual_allowed = 0;
+		Real min_val = 1.0; // minimum probability (above rama_sampling_thold_) observed for this residue
+		Real max_val = 0.0; // maximum probability (above rama_sampling_thold_) observed for this residue
+		utility::vector1< utility::vector1< Real> > res_torsions( max_allowed ); // double vector of allowed torsions for this residue
+		utility::vector1< Real > res_probs( max_allowed ); // rama probs of allowed torsions for this residue (coupled to res_torsions by index)
+		//rama_sampling_table_[aa].resize(max_allowed);
+		for (int i=0; i<n_phi_; i++) {
+			for (int j=0; j<n_psi_; j++) {
+				Real res_prob = rama_for_res(i,j);
+				if ( res_prob > rama_sampling_thold_ ) {
+					actual_allowed++;
+					if (res_prob < min_val) min_val = res_prob;
+					else if (res_prob > max_val) max_val = res_prob;
+					//std::cout << res_prob << std::endl;
+					res_probs[actual_allowed] = res_prob;
+
+					utility::vector1< Real > torsion(2);
+					Real cur_phi, cur_psi;
+					if (i <= n_phi_ / 2) {
+						cur_phi = i;
+					}
+					else {
+						cur_phi = 0 - (n_phi_ - i);
+					}
+					if (j <= n_psi_ / 2) {
+						cur_psi = j;
+					}
+					else {
+						cur_psi = 0 - (n_psi_ - j);
+					}
+
+					torsion[1] = static_cast <Real> (/*i*/ cur_phi * binw_);  // phi
+					torsion[2] = static_cast <Real> (/*j*/ cur_psi * binw_);  // psi
+					res_torsions[actual_allowed] = torsion;
+					//rama_sampling_table_[aa][++actual_allowed] = torsion;
+				}
+			}
+		}
+
+		if( ((int)aa < (int)1) || ((int)aa > (int)rama_sampling_table_.size()) ){
+			std::cerr << "AA exceeded size of rama_sampling_table_ AA=" + ObjexxFCL::string_of( aa ) + " size()=" + ObjexxFCL::string_of( rama_sampling_table_.size() );
+			continue; // Avoid death.
+		}
+
+		// now populate the rama_sampling_table_ so the torsions are given index space proporionate to their probs
+		rama_sampling_table_[aa].resize(Size(actual_allowed * (max_val / min_val) * rama_sampling_factor_));
+		Size index=0; // to increment the index into the aa's rama_sampling_table_ vector
+		//std::cout << "for aa " << aa << ":" << std::endl;
+		for (Size tor = 1; tor <= actual_allowed; tor++) {
+			Size n_indices = Size(( res_probs[tor] / min_val ) * rama_sampling_factor_);
+			//std::cout << "n_indices for torsion " << tor << ": " << n_indices << std::endl;
+			for (Size ind=1; ind<=n_indices; ind++) {
+				index++;
+				if( (int(index) < 1) || (int(index) > (int)rama_sampling_table_[aa].size()) ){
+					std::cerr <<  "index exceeded size of rama_sampling_table_[aa] index=" +
+						ObjexxFCL::string_of( (index) ) +
+						" rama_sampling_table_[aa].size()=" +
+						ObjexxFCL::string_of( rama_sampling_table_[aa].size() ) +
+						" AA=" + ObjexxFCL::string_of( aa );
+
+					continue; // avoid certain death - we dont yet understand why its failing here occasionally
+				}
+				if( ((int)tor < 1) || ((int)tor > (int)res_torsions.size()) ){
+					std::cerr << "tor exceeded size of rama_sampling_table_[aa] index=" +
+						ObjexxFCL::string_of( tor ) +
+						" res_torsions.size()=" + ObjexxFCL::string_of( res_torsions.size() ) +
+						" AA=" + ObjexxFCL::string_of( aa );
+					continue; // avoid certain death - we dont yet understand why its failing here occasionally
+				}
+
+				rama_sampling_table_[aa][index] = res_torsions[tor];
+			}
+		}
+		rama_sampling_table_[aa].resize(index);
+	}
+
+	// DJM: test the rama sampling table
+	//AA test_aa(core::chemical::aa_gly);
+	//for (Size jj = 1; jj <= 500; jj++) {
+	//	Real new_phi, new_psi;
+	//	random_phipsi_from_rama(test_aa, new_phi, new_psi);
+	//	std::cout << new_phi << " " << new_psi << std::endl;
+	//}
+}
+
+///////////////////////////////////////////////////////////////////////////////
+/// Sample phi/psi torsions with probabilities proportionate to their
+/// Ramachandran probabilities
+/// Note -- this function had previously required that the option
+/// loops::nonpivot_torsion_sampling be active.  This function now
+/// performs a just-in-time check to initialize these tables the first
+/// time they are requested -- To properly multi-thread this code, the
+/// function should nab a mutex so that no two threads try to execute
+/// the code at once.
+void
+Ramachandran::random_phipsi_from_rama(
+	AA const res_aa,
+	Real & phi,
+	Real & psi
+) const
+{
+
+	if ( rama_sampling_table_.size() == 0 ) {
+		/// Danger -- not threadsafe.
+		const_cast< Ramachandran * > (this)->init_rama_sampling_table();
+	}
+
+	Size n_torsions = rama_sampling_table_[res_aa].size();
+	Size index = numeric::random::random_range(1, n_torsions);
+	// following lines set phi and set to values drawn proportionately from Rama space
+	// plus or minus uniform noise equal to half the bin width.
+	phi = rama_sampling_table_[res_aa][index][1] +
+		(numeric::random::uniform() * binw_ * 0.5 * (numeric::random::uniform() < 0.5 ? -1 : 1));
+	psi = rama_sampling_table_[res_aa][index][2] +
+		(numeric::random::uniform() * binw_ * 0.5 * (numeric::random::uniform() < 0.5 ? -1 : 1));
+	// DJM: debug
+	//std::cout << "res_aa: " << res_aa << std::endl;
+	//std::cout << "phi: " << phi << std::endl;
+	//std::cout << "psi: " << psi << std::endl;
+
+/*
+	for (Size i=1; i<= rama_sampling_table_.size(); i++) {
+		std::cout << "number of allowed torsions for " << AA(i) << ": " << rama_sampling_table_[i].size() << std::endl;
+	}
+
+	for (Size i=1; i <= n_torsions; i++) {
+		std::cout << rama_sampling_table_[res_aa][i][1] << " " << rama_sampling_table_[res_aa][i][2] << std::endl;
+	}
+*/
+}
+
+///////////////////////////////////////////////////////////////////////////////
+void
+Ramachandran::eval_rama_score_residue(
+	conformation::Residue const & rsd,
+	Real & rama,
+	Real & drama_dphi,
+	Real & drama_dpsi
+) const
+{
+	using namespace numeric;
+
+	//assert( pose.residue(res).is_protein() );
+	assert( rsd.is_protein() );
+
+	Real const phi
+		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1)));
+	Real const psi
+		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2)));
+
+	if ( phi == 0.0 || psi == 0.0 || rsd.is_terminus() ) { // begin or end of chain
+		rama = 0.0;
+		drama_dphi = 0.0;
+		drama_dpsi = 0.0;
+		return;
+	}
+
+	eval_rama_score_residue( rsd.aa(), phi, psi, rama, drama_dphi, drama_dpsi );
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+///
+Real
+Ramachandran::eval_rama_score_residue(
+	AA const res_aa,
+	Real const phi,
+	Real const psi
+) const
+{
+
+	Real rama, drama_dphi, drama_dpsi;
+	eval_rama_score_residue( res_aa, phi, psi, rama, drama_dphi, drama_dpsi );
+	return rama;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+///
+void
+Ramachandran::eval_rama_score_residue(
+	AA const res_aa,
+	Real const phi,
+	Real const psi,
+	Real & rama,
+	Real & drama_dphi,
+	Real & drama_dpsi
+) const
+{
+	using namespace numeric;
+
+//db
+//db secondary structure dependent tables favor helix slightly.
+//db only use if have predicted all alpha protein
+//db
+// rhiju and db: no longer use alpha-specific rama, after
+//  tests on 1yrf and other all alpha proteins. 2-8-07
+
+// apl -- removing ss dependence on rama in first implementation of mini
+// after reading rhiju and david's comment above.  We will need a structural annotation
+// obect (structure.cc, maybe a class SecStruct) at some point.  The question
+// remains whether a pose should hold that object and be responsible for its upkeep,
+// or whether such an object could be created as needed to sit alongside a pose.
+//
+//	std::string protein_sstype = get_protein_sstype();
+//	int ss_type;
+//	if ( use_alpha_rama_flag() && get_protein_sstype() == "a" ) {
+//		ss_type = ( ( ss == 'H' ) ? 1 : ( ( ss == 'E' ) ? 2 : 3 ) );
+//	} else {
+	int ss_type = 3;
+//	}
+
+//     do I (?cems/cj/cdb?) want to interpolate probabilities or log probs???
+//     currently am interpolating  probs then logging.
+
+	//int const res_aa( rsd.aa() );
+	// 	int const res_aa( pose.residue( res ).aa() );
+	FArray2A< Real >::IR const zero_index( 0, n_phi_ - 1);
+	FArray2A< Real > const rama_for_res( ram_probabil_(1, 1, ss_type, res_aa), zero_index, zero_index );
+	Real interp_p,dp_dphi,dp_dpsi;
+
+	using namespace numeric::interpolation::periodic_range::half;
+	interp_p = bilinearly_interpolated( phi, psi, binw_, n_phi_, rama_for_res, dp_dphi, dp_dpsi );
+
+	if ( interp_p > 0.0 ) {
+		rama = ram_entropy_(ss_type, res_aa ) - std::log( static_cast< double >( interp_p ) );
+		double const interp_p_inv_neg = -1.0 / interp_p;
+		drama_dphi = interp_p_inv_neg * dp_dphi;
+		drama_dpsi = interp_p_inv_neg * dp_dpsi;
+	} else {
+		//if ( runlevel > silent ) { //apl fix this
+		//	std::cout << "rama prob = 0. in eval_rama_score_residue!" << std::endl;
+		//	std::cout << "phi" << SS( phi ) << " psi" << SS( psi ) <<
+		//	 " ss " << SS( ss ) << std::endl;
+		//}
+		drama_dphi = 0.0;
+		drama_dpsi = 0.0;
+		rama = 20.0;
+	}
+
+	if ( ! basic::options::option[basic::options::OptionKeys::corrections::score::rama_not_squared] ) {
+		if ( rama > 1.0 ) {
+			Real const rama_squared = rama * rama;
+			if ( rama_squared > 20.0 ) {
+				////  limit the score, but give the true derivative
+				////   as guidance out of the flat section of map
+				drama_dphi = 0.0;
+				drama_dpsi = 0.0;
+				rama = 20.0;
+			} else {
+				drama_dphi = 2 * rama * drama_dphi;
+				drama_dpsi = 2 * rama * drama_dpsi;
+				rama = rama_squared;
+			}
+		}
+	}
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+void Ramachandran::eval_procheck_rama(
+	Pose const & /*pose*/,
+	Real & /*favorable*/,
+	Real & /*allowed*/,
+	Real & /*generous*/
+) const
+{}
+
+
+void
+Ramachandran::read_rama()
+{
+
+	int aa_num,phi_bin,psi_bin,ss_type;
+	Real check,min_prob,max_prob;
+	double entropy;
+	char line[60];
+	int scan_count;
+	float pval, eval; // vars for sscanf float I/O
+
+	utility::io::izstream  iunit;
+
+  // search in the local directory first
+  iunit.open( basic::options::option[ basic::options::OptionKeys::corrections::score::rama_map ]().name() );
+
+  if ( !iunit.good() ) {
+    iunit.close();
+    basic::database::open( iunit, basic::options::option[ basic::options::OptionKeys::corrections::score::rama_map ]().name() );
+  }
+
+//cj      std::cout << "index" << "aa" << "ramachandran entropy" << std::endl;
+//KMa add_phospho_ser 2006-01
+	for ( int i = 1; i <= n_aa_ ; ++i ) {
+		for ( int ii = 1; ii <= 3; ++ii ) {
+			entropy = 0.0;
+			check = 0.0;
+			min_prob = 1e36;
+			max_prob = -min_prob;
+			for ( int j = 1; j <= 36; ++j ) {
+				for ( int k = 1; k <= 36; ++k ) {
+					iunit.getline( line, 60 );
+					if ( iunit.eof() ) {
+						goto L100;
+					} else if ( iunit.fail() ) { // Clear and continue: NO ERROR DETECTION
+						iunit.clear();
+					}
+					std::sscanf( line, "%5d", &aa_num );
+					std::sscanf( line+6, "%5d", &ss_type );
+					std::sscanf( line+12, "%5d", &phi_bin );
+					std::sscanf( line+18, "%5d", &psi_bin );
+					std::sscanf( line+24, "%5d", &ram_counts_(j,k,ii,i) );
+					std::sscanf( line+30, "%12f", &pval );
+					ram_probabil_(j,k,ii,i) = pval;
+					scan_count = std::sscanf( line+43, "%12f", &eval );
+					ram_energ_(j,k,ii,i) = eval;
+
+					if ( scan_count == EOF ) continue; // Read problem: NO ERROR DETECTION
+
+// This is the Slick & Slow (S&S) stream-based method that is too slow for large
+// files like this one, at least under the GCC 3.3.1 stream implementation.
+// It should be retried on future releases and target compilers because there is
+// no reason it cannot be competitive with good optimization and inlining.
+// If this is used the <cstdio> can be removed.
+//
+//					iunit >> bite( 5, aa_num ) >> skip( 1 ) >>
+//					 bite( 5, ss_type ) >> skip( 1 ) >>
+//					 bite( 5, phi_bin ) >> skip( 1 ) >>
+//					 bite( 5, psi_bin ) >> skip( 1 ) >>
+//					 bite( 5, ram_counts(j,k,ii,i) ) >> skip( 1 ) >>
+//					 bite( 12, ram_probabil(j,k,ii,i) ) >> skip( 1 ) >>
+//					 bite( 12, ram_energ(j,k,ii,i) ) >> skip;
+//					if ( iunit.eof() ) {
+//						goto L100;
+//					} else if ( iunit.fail() ) { // Clear and continue: NO ERROR DETECTION
+//						iunit.clear();
+//						iunit >> skip;
+//					}
+
+					check += ram_probabil_(j,k,ii,i);
+					entropy += ram_probabil_(j,k,ii,i) *
+					 std::log( static_cast< double >( ram_probabil_(j,k,ii,i) ) );
+					min_prob = std::min(ram_probabil_(j,k,ii,i),min_prob);
+					max_prob = std::max(ram_probabil_(j,k,ii,i),max_prob);
+				}
+			}
+			ram_entropy_(ii,i) = entropy;
+		}
+//cj		std::cout << SS( check ) << SS( std::log(min_prob) ) <<
+//cj		 SS( std::log(max_prob) ) << SS( entropy ) << std::endl;
+	}
+L100:
+	iunit.close();
+	iunit.clear();
+
+//cj      std::cout << "========================================" << std::endl;
+}
+
+
+}
+}

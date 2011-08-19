@@ -1,0 +1,217 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file
+/// @brief
+/// @author
+
+#ifndef INCLUDED_protocols_moves_Mover_hh
+#define INCLUDED_protocols_moves_Mover_hh
+
+// Unit Headers
+#include <protocols/moves/Mover.fwd.hh>
+
+// Package headers
+// AUTO-REMOVED #include <protocols/moves/MoverStatistics.hh>
+#include <protocols/moves/MoverStatus.hh>
+
+// Project headers
+#include <core/types.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <protocols/filters/Filter.fwd.hh>
+
+#include <protocols/jobdist/Jobs.hh>
+#include <protocols/moves/DataMap.fwd.hh>
+// ObjexxFCL Headers
+
+// Utility Headers
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/vector1.fwd.hh>
+
+// C++ Headers
+#include <string>
+#include <map>
+#include <list>
+
+//Auto Headers
+#include <sstream>
+
+
+namespace protocols {
+namespace moves {
+
+///////////////////////////////////////////////////////////////////////////////
+/// @brief:
+/// 	A mover is an object that can apply a conformational change to a pose
+///
+/// @detailed:
+/// 	Each derived class should define its own apply() statement
+///   DO NOT JUST GO ADDING FUNCTIONS TO THIS CLASS.  YOU IMPLY EVERYONE WHO
+///   DERIVES FROM IT IS OBLIGATED TO IMPLEMENT THAT FUNCTION, OR, IF THEY
+///   DON'T, THAT THEY ARE IMPLICTLY AGREEING THAT THE BASE CLASS IMPLEMENTATION
+///   IS CORRECT.
+///
+/// @authors Monica Berrondo, Jeff Gray, Steven Lewis, Sarel Fleishman
+///
+/// @last_modified
+///////////////////////////////////////////////////////////////////////////////
+
+class Mover : public utility::pointer::ReferenceCount {
+public:
+	typedef utility::tag::TagPtr TagPtr;
+	typedef core::pose::Pose Pose;
+	typedef core::pose::PoseCOP PoseCOP;
+	typedef protocols::filters::Filters_map Filters_map;
+	typedef std::list< std::string > Strings; // should match jd2::Job::Strings
+
+public:
+	Mover();
+	virtual ~Mover();
+
+	/// @brief sets the type for a mover; name_ has been removed (2010/05/14)
+	Mover( std::string const & type_name );
+
+	Mover( Mover const & other );
+
+
+	virtual core::Real last_proposal_density_ratio() {return 1;} //ek added 2/25/10
+
+	///@brief overload this static method if you access options within the mover.
+	/// these options will end up in -help of your application if users of this mover call register_options. do this recursively!
+	/// if you use movers within your mover, call their register_options in your register_options() method.
+	static void register_options() {}
+
+	virtual void apply( Pose & ) = 0;
+
+	std::string const & type() const { return type_; }
+
+	/// @brief A tag is a unique identifier used to identify structures produced
+	/// by this Mover. get_current_tag() returns the tag, and set_current_tag( std::string tag )
+	/// sets the tag.  This functionality is not intended for use with the 2008 job distributor.
+	std::string get_current_tag() const {
+		//		if ( jd2::jd2_used() ) return jd2::current_output_name();
+		return current_tag_;
+	}
+
+	void set_current_tag( std::string const & new_tag ) { current_tag_ = new_tag; }
+
+	///@brief setter for poses contained for rms
+	virtual void set_input_pose( PoseCOP pose );
+
+	///@brief setter for native poses contained for rms ---- we should get rid of this method? it is widely used, but a bit unsafe
+	virtual void set_native_pose( PoseCOP pose );
+
+	PoseCOP get_input_pose() const;
+	PoseCOP get_native_pose() const; // ---- we should get rid of this method? it is widely used, but a bit unsafe
+
+	///@brief: Unit test support function.  Apply one move to a given pose.
+	///  			 Allows extra test specific functions to be called before applying
+	virtual void test_move( Pose & pose ) {
+		apply( pose );
+	}
+
+	//protected:
+	//OL 4/23/08 made this public. it is not really a safety issue to have that
+	//protected and it allows more detail in MC diagnosis
+	void type( const std::string & type_in ) { type_ = type_in; }
+
+	/// @brief clone has to be overridden only if clone invocation is expected.
+	virtual MoverOP clone() const;
+
+	//////////////////////////////////begin parser interface////////////////////////////
+
+	/// @brief Called by MoverFactory when constructing new Movers. Takes care of the specific mover's parsing.
+	virtual
+	void parse_my_tag(
+		TagPtr const tag,
+		DataMap & data,
+		Filters_map const & filters,
+		Movers_map const & movers,
+		Pose const & pose
+	);
+
+	/// @brief Each derived class must specify its name.  The class name.
+	virtual std::string get_name() const = 0;
+	std::string get_type() const { return( type_ ); }
+
+	///end parser interface, start Job Distributor interface/////////////
+	//void output_intermediate_pose( Pose const & pose, std::string const & stage_tag );
+
+	///@brief returns status after an apply().  The job distributor (august 08 vintage) will check this function to see if your protocol wants to filter its results - if your protocol wants to say "that run was no good, skip it" then use the protected last_move_status(MoverStatus) to change the value that this function will return.
+	MoverStatus get_last_move_status() const;
+
+	///@brief resets status to SUCCESS, meant to be used before an apply().  The job distributor (august 08 vintage) uses this to ensure non-accumulation of status across apply()s.
+	void reset_status();
+
+	///fpd
+	///@brief Mechanism by which a mover may return multiple output poses from a single input pose.
+	virtual
+	core::pose::PoseOP get_additional_output();
+
+	///@brief Strings container can be used to return miscellaneous info (as std::string) from a mover, such as notes about the results of apply(). The job distributor (Apr 09 vintage) will check this function to see if your protocol wants to add string info to the Job that ran this mover. One way this can be useful is that later, a JobOutputter may include/append this info to an output file.
+	///@brief clear_info is called by jd2 before calling apply
+	virtual void clear_info() { info_.clear(); }
+	///@brief non-const accessor
+	virtual Strings & info() { return info_; }
+	///@brief const accessor
+	virtual Strings const & info() const { return info_; }
+
+	///@brief this function informs the job distributor (august 08 vintage) whether this object needs to be freshly regenerated on each use.
+	virtual
+	bool
+	reinitialize_for_each_job() const;
+
+	///@brief this function informs the job distributor (august 08 vintage) whether this object needs to be regenerated when the input pose is about to change (for example, if the mover has special code on the first apply() that is only valid for that one input pose).
+	virtual
+	bool
+	reinitialize_for_new_input() const;
+
+	///@brief this is like clone(), except it generates a new mover object freshly created with the default ctor.  This function _should_ be pure virtual but that would disrupt the code base; MAKE SURE YOU DEFINE IT if you want to have your mover be a protocol handed to the job distributor (august 08 vintage).
+	virtual
+	MoverOP
+	fresh_instance() const;
+
+	///////////////////////////////end Job Distributor interface////////////////////////////////////////
+
+	void set_current_job( protocols::jobdist::BasicJobCOP job );
+
+	jobdist::BasicJobCOP get_current_job() const;
+
+protected:
+	///@brief nonvirtual setter for MoverStatus last_status_.  Protected means that only the mover itself will be able to change its own status.  The job distributor (august 08 vintage) is aware of status set with this function and will do what the MoverStatus says.
+	void
+	set_last_move_status( MoverStatus status );
+
+private:
+
+	std::string type_;
+	std::string current_tag_;
+
+	PoseCOP input_pose_;
+	PoseCOP native_pose_;
+
+	///@brief used to track if movers fail their filters - jobdist::BasicJob Distributor queries for this value
+	MoverStatus last_status_;
+	///@brief miscellaneous info: optional notes about mover results. Fed to Job by JobDistributor (jd2), allowing JobOutputters to optionally report this information in some way.
+	Strings info_;
+
+	///@brief this field can be NULL or it refers to the current JOB this mover is working on.
+	jobdist::BasicJobCOP current_job_;
+
+}; // end Mover base class
+
+/// @brief Test IO operator for debug and Python bindings
+std::ostream & operator << ( std::ostream & os, Mover const & mover);
+
+
+} // moves
+} // protocols
+
+#endif //INCLUDED_protocols_moves_Mover_HH

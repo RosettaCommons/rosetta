@@ -1,0 +1,9 @@
+<dock_design>
+  <MOVERS>
+    <ExtendedPoseMover name=ExtendedPoseMover sequence="KKAVINGEQIRSISDLHQTLKKELALPEYYGENLDALWDCLTGWVEYPLVLEWRQFEQSKQLTENGAESVLQVFREAKAEGADITIILS" residue_type_set="fa_standard"/>
+  </MOVERS>
+  <PROTOCOLS>
+    <Add mover_name=ExtendedPoseMover/>
+  </PROTOCOLS>
+</dock_design>
+

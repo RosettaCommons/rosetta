@@ -1,0 +1,28 @@
+#this is the test resfile for the unit tests, the protein has 30 residues to play with
+
+NATAA
+EX 1 EX 2
+
+start
+1 _ EX 1
+2 _ EX 1 EX 2
+3 _ EX 2 EX 1
+4 _ EX 1 EX 2 EX 3
+5 _ EX 3 EX 4
+6 _ EX 1 EX 2 EX 4 EX 3
+7 _ EX ARO 1
+8 _ EX ARO 2
+9 _ EX ARO 1 EX ARO 2
+10 _ EX ARO 1 EX 2 EX 4
+11 _ EX 1 LEVEL 4
+12 _ EX 2 LEVEL 2
+13 _ EX 3 LEVEL 5
+14 _ EX ARO 1 LEVEL 3 EX 3 LEVEL 2 EX 2 EX ARO 2 LEVEL 4 EX 4
+15 _ EX 1 LEVEL 2 EX 1 LEVEL 3 #ought to increase to 3
+16 _ EX ARO 1 LEVEL 2 EX 1
+17 _ EX 4 LEVEL 6
+#EX_CUTOFF 18 is default
+25 _ EX_CUTOFF 3
+26 _ EX_CUTOFF 0
+27 _ EX_CUTOFF 99999999 #should leave at 18
+51 _ EX 1 #testing that reader is tracking PDB numbering

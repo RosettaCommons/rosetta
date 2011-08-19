@@ -1,0 +1,188 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file
+/// @brief
+
+
+#include <basic/database/open.hh>
+#include <basic/datacache/BasicDataCache.hh>
+#include <basic/datacache/CacheableString.hh>
+#include <basic/options/keys/holes.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/parser.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+#include <basic/Tracer.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/util.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/symmetry/SymDof.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/conformation/symmetry/util.hh>
+#include <core/id/AtomID_Map.hh>
+#include <core/import_pose/import_pose.hh>
+#include <core/init.hh>
+#include <core/io/pdb/pose_io.hh>
+#include <core/io/silent/ScoreFileSilentStruct.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/kinematics/Jump.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/pack/make_symmetric_task.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/scoring/packing/compute_holes_score.hh>
+#include <core/scoring/packing/HolesParams.hh>
+#include <core/scoring/packstat/compute_sasa.hh>
+#include <core/scoring/rms_util.hh>
+#include <core/scoring/sasa.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/types.hh>
+#include <fstream>
+#include <iostream>
+#include <math.h>
+#include <numeric/random/random.hh>
+#include <ObjexxFCL/FArray2D.hh>
+#include <ObjexxFCL/format.hh>
+#include <protocols/docking/util.hh>
+#include <protocols/jobdist/not_universal_main.hh>
+#include <protocols/moves/Mover.hh>
+#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/moves/symmetry/SymMinMover.hh>
+#include <protocols/viewer/viewers.hh>
+#include <sstream>
+#include <string>
+#include <utility/io/izstream.hh>
+#include <utility/io/ozstream.hh>
+#include <utility/io/mpistream.hh>
+#include <utility/string_util.hh>
+#include <core/scoring/sc/ShapeComplementarityCalculator.hh>
+#include <protocols/relax/FastRelax.hh>
+#include <core/scoring/constraints/ResidueTypeConstraint.hh>
+#include <protocols/protein_interface_design/movers/ddG.hh>
+// Added 100922
+// Added 101102
+// Added 101103
+// AUTO-REMOVED #include <basic/prof.hh>
+// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
+// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
+// AUTO-REMOVED #include <protocols/jumping/Dssp.hh>
+// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <pstream.h>
+// AUTO-REMOVED #include <time.h>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
+//Auto Headers
+
+static basic::Tracer TR("design_symm");
+
+using std::string;
+using ObjexxFCL::string_of;
+using namespace core;
+using utility::vector1;
+using core::id::AtomID;
+using namespace core::scoring::packing;
+using namespace ObjexxFCL::fmt;
+using core::scoring::ScoreFunctionOP;
+using core::pose::Pose;
+typedef vector1<Size> Sizes;
+
+void
+*dostuff(void*) {
+	using namespace core;
+	using namespace basic;
+	using namespace options;
+	using namespace OptionKeys;
+	using namespace pose;
+	using namespace core::conformation::symmetry;
+	using namespace scoring;
+	using namespace utility;
+	using basic::options::option;
+	
+	chemical::ResidueTypeSetCAP resi_set = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
+	core::io::silent::SilentFileData sfd;	
+
+	utility::vector1<std::string> files = option[in::file::s]();
+	for(Size ifile = 1; ifile <= files.size(); ++ifile) {
+		std::string file = files[ifile];
+		
+		// Read in pose
+		Pose pose;
+		import_pose::pose_from_pdb(pose, file, resi_set);
+	
+		// Handle all of the symmetry stuff
+		core::pose::symmetry::make_symmetric_pose(pose);
+		SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
+		std::map<Size,SymDof> dofs = sym_info->get_dofs();
+	 	int sym_jump = 0;
+	 	for(std::map<Size,SymDof>::iterator i = dofs.begin(); i != dofs.end(); i++) {
+	   	Size jump_num = i->first;
+	   	if (sym_jump == 0) {
+		 		sym_jump = jump_num;
+	   	} else {
+	   		utility_exit_with_message("Can only handle one subunit!");
+	   	}
+	 	}
+	 	if (sym_jump == 0) {
+	   	utility_exit_with_message("No jump defined!");
+	 	}
+
+		// Get score12
+		ScoreFunctionOP score12 = ScoreFunctionFactory::create_score_function("standard", "score12");	
+		score12->score(pose);
+
+		// Calculate binding energy
+		protocols::protein_interface_design::movers::ddG ddG_mover = protocols::protein_interface_design::movers::ddG::ddG(score12, 1, true);
+		ddG_mover.calculate(pose);
+		Real ddG = ddG_mover.sum_ddG();
+		TR << files[ifile] << " ddG = " << ddG << std::endl;
+		//ddG_mover.report_ddG(TR);
+
+		// Write the pdb file of the design
+		/*
+		utility::io::ozstream out( files[ifile] + ".ddG" );
+		pose.dump_pdb(out);
+		out.close();
+		*/
+			
+	} // ifile
+
+	return NULL;
+
+}
+
+int
+main (int argc, char *argv[])
+{
+
+	core::init(argc,argv);
+
+	void* (*func)(void*) = &dostuff;
+
+	if (basic::options::option[ basic::options::OptionKeys::parser::view ]()) {
+		protocols::viewer::viewer_main( func );
+	} else {
+		func(NULL);
+	}
+
+
+}
+
+
+

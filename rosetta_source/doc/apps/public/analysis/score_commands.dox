@@ -1,0 +1,59 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (C) 199x-2009 University of Washington
+// (C) 199x-2009 University of California Santa Cruz
+// (C) 199x-2009 University of California San Francisco
+// (C) 199x-2009 Johns Hopkins University
+// (C) 199x-2009 University of North Carolina, Chapel Hill
+// (C) 199x-2009 Vanderbilt University
+
+/*!
+
+@page score_commands Commands for the scoring application
+
+@section metadata Metadata
+This document was edited Nov 1st 2008 by Yi Liu. This application in mini was created and documented by Mike Tyka,et al.
+
+@section purpose_algorithm  Purpose and Algorithm
+This application simply rescores PDBs and silent files. It also can be used to extract PDBs from silent files,
+assemble PDBs into silent files.
+
+@section commands Command lines
+@verbatim
+** Sample command:  score.linuxgccrelease @flags > score.log
+
+PDB input:      -in:file:s *.pdb   or
+                -in:file:l  list_of_pdbs
+                -no_optH                                    Dont change positions of Hydrogen atoms! (default true, specify false if you want optH)
+                -score:optH_weights                         Weights file for optH (default standard.wts w/ sc12 patch)
+                -score:optH_patch                           Weights patch file for optH
+Silent input:   -in:file:silent silent.out                  silent input filesname
+                -in:file:tags                               specify specific tags to be extracted, if left out all will be taken
+                -in:file:fullatom                           for full atom structures
+                -in:file:nonideal_silentfile                for non-ideal structures (such as from looprelax)
+                -in:file:silent_optH               ** Sample command:  relax.linuxgccrelease @flags > relax.log
+** Options in flag file:  
+   -database                 Path to minirosetta databases
+   -s                        Input file paths and name
+   -relax:fast               Invokes a fast mode, which is almost as effective as a normal relax but 5-10 faster(optional)
+   
+** Normal IO and Score Function flags also apply         Call optH when reading silent files (useful for HisD/HisE determination)
+                -score_app:linmin                           Run a quick linmin before scoring
+Native:         -in:file:native                             native PDB if CaRMS is required
+Scorefunction:  -score:weights  weights                     weight set or weights file
+                -score:patch  patch                         patch set
+                -rescore:verbose                            display score breakdown
+                -rescore:output_only                        don't rescore
+Output:         -nooutput                                   don't print PDB structures (default now)
+                -output                                     force printing of PDB structures
+                -out:file:silent                            write silent-out file
+                -out:prefix  myprefix                       prefix the output structures with a string
+@endverbatim
+
+*/

@@ -1,0 +1,30 @@
+# -*- Mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# Project settings for core rosetta tests.
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+sources = {
+    "public/ligand_docking" : [
+        "ligand_dock",
+    ],
+}
+
+include_path = [ "#external/cxxtest", "#" ]
+library_path = []
+libraries    = [ "sqlite3", "cppdb", "protocols", "core.5","core.4", "core.3", "core.2", "core.1", "basic","utility", "numeric", "ObjexxFCL", "z"]
+subprojects  = []
+testinputfiles = [
+    "public/ligand_docking/ZN1.params",
+    "public/ligand_docking/1aq1.params",
+    "public/ligand_docking/7cpa.params",
+    "public/ligand_docking/7cpa_confs.pdb",
+    "public/ligand_docking/7cpa_7cpa_input.pdb",
+    "public/ligand_docking/7cpa_7cpa_native.pdb",
+    "public/ligand_docking/silent.out.ref",
+    "public/ligand_docking/1dm2_1aq1_10poses.out",
+]
+

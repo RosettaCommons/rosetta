@@ -1,0 +1,76 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file DesignProteinBackboneAroundDNA.hh
+/// @brief performs a round flexible backbone sampling/design.  (Interim(?) encapsulation of some loose code in a mover class.)
+/// @author ashworth
+
+#ifndef INCLUDED_protocols_dna_DesignProteinBackboneAroundDNA_hh
+#define INCLUDED_protocols_dna_DesignProteinBackboneAroundDNA_hh
+
+#include <protocols/dna/DesignProteinBackboneAroundDNA.fwd.hh>
+#include <protocols/moves/PackRotamersMover.hh>
+
+#include <protocols/dna/DnaDesignDef.fwd.hh>
+#include <protocols/loops/Loops.fwd.hh>
+#include <protocols/filters/Filter.fwd.hh>
+
+#include <utility/vector1.fwd.hh>
+
+#include <string>
+
+namespace protocols {
+namespace dna {
+
+// conceptually this not really a PackRotamersMover, but deriving this way makes sense on a practical level
+class DesignProteinBackboneAroundDNA : public moves::PackRotamersMover {
+public:
+	typedef loops::Loops Loops;
+
+public:
+	DesignProteinBackboneAroundDNA();
+	virtual ~DesignProteinBackboneAroundDNA();
+
+	DesignProteinBackboneAroundDNA( std::string const &, ScoreFunctionCOP );
+
+	void targeted_dna( DnaDesignDefOPs const & );
+	DnaDesignDefOPs const & targeted_dna() const;
+
+	virtual void apply( Pose & );
+	virtual std::string get_name() const;
+
+	///@brief parse XML (specifically in the context of the parser/scripting scheme)
+	virtual void parse_my_tag(
+		TagPtr const,
+		moves::DataMap &,
+		protocols::filters::Filters_map const &,
+		moves::Movers_map const &,
+		Pose const & );
+	///@brief required in the context of the parser/scripting scheme
+	virtual moves::MoverOP fresh_instance() const;
+	///@brief required in the context of the parser/scripting scheme
+	virtual moves::MoverOP clone() const;
+
+private: // methods
+	void set_loop_info( Pose const &, Loops const & );
+	void ccd( Pose &, Loops const &, TaskFactoryCOP );
+	void backrub( Pose &, Loops const &, TaskFactoryCOP );
+
+private: // data
+	std::string type_;
+	DnaDesignDefOPs targeted_dna_;
+	core::Size gapspan_, spread_, cycles_outer_, cycles_inner_, repack_rate_;
+	core::Real temp_initial_, temp_final_;
+	bool designable_second_shell_;
+};
+
+} // namespace dna
+} // namespace protocols
+
+#endif

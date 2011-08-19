@@ -1,0 +1,7 @@
+-database /home/yiliu/Programing/branches/minirosetta_database/
+-in:file:s mini1.pdb mini2.pdb
+-out:file:silent test.out.silent.protein
+-in:file:silent_struct_type ProteinSilentStruct
+-mute all
+-unmute apps.pilot.yiliu.silent
+-unmute core.io.silent.yiliu

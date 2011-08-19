@@ -1,0 +1,30 @@
+-run
+ -constant_seed
+ -rng mt19937
+-in
+ -file
+  -s ligand_dock/7cpa_input.pdb
+  -native ligand_dock/7cpa_native.pdb
+-out
+ -file
+  -renumber_pdb
+-packing
+ -no_optH
+ #-ex1
+ #-ex1aro
+ #-ex2
+-docking
+ -uniform_trans 5
+ -ligand
+  -start_from  -1.731  32.589  -5.039
+  -improve_orientation 10
+  -minimize_ligand
+  -harmonic_torsions 10
+  -minimize_backbone
+  -harmonic_Calphas 0.2
+  -mutate_same_name3
+  -soft_rep
+  -protocol abbrev2
+
+-mute core.util.prof ## dont show timing info
+-mute core.io.database

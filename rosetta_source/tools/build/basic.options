@@ -1,0 +1,34 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# The following options that can be set on the command-line for SCons.
+# These are the default options for the Rosetta build system.
+# Do NOT modify these: if you want to make different choices for site
+# or user specific defaults, use site.options or user.options.
+#
+# Note: "*" options are wildcards and determined by querying the system.
+# You shouldn't usually need to override them unless the system is
+# generating incorrect results.
+
+# C++ compiler.
+# Defaults to whatever is "g++" on the system.
+cxx     = "gcc"
+cxx_ver = "*"
+
+# OS
+os      = "*"
+os_ver  = "*"
+
+# Processor architecture
+arch    = "*"
+arch_size = "*"
+
+# Mode
+mode    = "debug"
+
+# Source, test, or documentation builds.
+cat     = "src,external"
+
+# Extra features
+extras  = "none"
+
+log     = ""

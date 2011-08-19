@@ -1,0 +1,79 @@
+/*
+ * OrbitalsAssigned.hh
+ *
+ *  Created on: Jun 2, 2010
+ *      Author: combss
+ */
+
+#ifndef ORBITALSASSIGNED_HH_
+#define ORBITALSASSIGNED_HH_
+
+#include <utility/vector1.hh>
+#include <numeric/xyzVector.hh>
+#include <core/conformation/Residue.hh>
+#include <core/types.hh>
+
+namespace core{
+namespace scoring{
+namespace orbitals{
+
+class OrbitalsAssigned {
+
+public:
+
+	utility::vector1< numeric::xyzVector< core::Real > > get_lp_xyz(
+			core::conformation::Residue const & residue
+	);
+
+	utility::vector1< numeric::xyzVector<core::Real> >  CoordinatesDihedral(
+			std::string atom1,
+			std::string atom2,
+			std::string atom3,
+			core::Real distance_xa,
+			core::conformation::Residue const & residue
+	);
+
+	utility::vector1< numeric::xyzVector<core::Real> >  CoordinatesTetrahedral(
+			std::string atom1,
+			std::string atom2,
+			std::string atom3,
+			core::Real distance,
+			core::conformation::Residue const & residue
+
+	);
+
+	utility::vector1< numeric::xyzVector<core::Real> > aromatic_ring_center(
+			numeric::xyzVector<core::Real> vector_d,
+			numeric::xyzVector<core::Real> vector_f,
+			core::conformation::Residue const & residue,
+			core::Real dist
+
+);
+
+	utility::vector1< numeric::xyzVector<core::Real> > cp_function(
+			std::string atomtype,
+			numeric::xyzVector<core::Real> vector_d,
+			numeric::xyzVector<core::Real> vector_f,
+			core::conformation::Residue const & residue,
+			core::Real dist
+
+	);
+
+	utility::vector1< std::pair< numeric::xyzVector<core::Real>,  std::string > >  get_hydrogens(
+			core::conformation::Residue const & resid1
+	);
+
+private:
+
+
+};//OrbitalsAssigned
+
+
+
+}//namespace orbitals
+}//namespace scoring
+}//namespace core
+
+
+
+#endif /* ORBITALSASSIGNED_HH_ */

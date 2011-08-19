@@ -1,0 +1,44 @@
+# :noTabs=true:
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+## @author Sergey Lyskov
+
+from rosetta import *
+rosetta.init()
+
+
+print 'Loop building --------------------------------------------------'
+
+
+#loop functions
+loop_p =  pose_from_pdb("test/data/test_in.pdb")
+
+loop = Loop(70,80,75)
+loops = Loops()
+loops.add_loop(loop)
+
+set_single_loop_fold_tree(loop_p, loop)
+
+print loop_p.fold_tree()
+
+#recover_sidechain = ReturnSidechainMover(loop_p)
+#to_centroid.apply(loop_p)
+
+#fragset3mer = ConstantLengthFragSet(3, "test_in3_fragments")
+#scorefxn = create_score_function_ws_patch('cen_std', 'score4L')
+#scorefxn(loop_p)
+#loop_perturb = LoopMover_Perturb_CCD(loops, scorefxn, fragset3mer)
+#loop_perturb.apply(p)
+#loop_perturb.model_loop(loop_p, loop)
+
+#recover_sidechain.apply(loop_p)
+
+scorefxn = create_score_function_ws_patch('standard', 'score12')
+scorefxn(loop_p)
+loop_refine = LoopMover_Refine_CCD( loops, scorefxn )
+loop_refine.max_inner_cycles(10)
+loop_refine.apply(loop_p)

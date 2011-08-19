@@ -1,0 +1,14 @@
+# A sample histogram, used by Histogram.cxxtest
+
+@minimum	-5.0
+@maximum	5.0
+@step  2.0
+@periodic	false
+@bins left
+@interpolator	flat
+
+1.0
+0.0
+2.0
+2.0
+-3.5

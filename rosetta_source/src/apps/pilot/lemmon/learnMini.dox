@@ -1,0 +1,34 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   src/apps/pilot/lemmon/LearnMini.dox
+/// @brief  This page demonstrates simple tasks in MiniRosetta
+/// @author Gordon Lemmon (glemmon@gmail.com)
+///
+/// @example
+/// <h1> Simple Tasks in MiniRosetta, shown with simple code</h1>
+/// <h2> Let's learn some basic mini code!</h2>
+/// <ol>
+/// <li>
+/// Read in a PDB file and print it right back out. <br> 
+/// @ref readAndWrite "readAndWrite.cc" 
+/// </li>
+/// <li>
+/// Score a PDB file and print it out. <br> 
+/// @ref simpleScore "simpleScore.cc" 
+/// </li>
+/// <li>
+/// Pack a rotamers and print the PDB. <br> 
+/// @ref pack "pack.cc" 
+/// </li>
+/// <li>
+/// Move a chain/ligand and print the results. <br> 
+/// @ref deepMove "deepMove.cc" 
+/// </li>
+/// </ol>

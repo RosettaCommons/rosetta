@@ -1,0 +1,177 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   utility/options/keys/OptionKey.hh
+/// @brief  Abstract automatic hidden index key for options
+/// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
+
+
+#ifndef INCLUDED_utility_options_keys_OptionKey_hh
+#define INCLUDED_utility_options_keys_OptionKey_hh
+
+
+// Unit headers
+#include <utility/options/keys/OptionKey.fwd.hh>
+
+// Package headers
+#include <utility/options/Option.fwd.hh>
+
+// Project headers
+#include <utility/keys/AutoKey.hh>
+#include <utility/keys/SmallKeyVector.fwd.hh>
+
+
+namespace utility {
+namespace options {
+
+
+/// @brief Abstract automatic hidden index key for options
+class OptionKey :
+	public utility::keys::AutoKey< Option >
+{
+
+
+private: // Types
+
+
+	typedef  utility::keys::AutoKey< Option >  Super;
+
+
+protected: // Types
+
+
+	typedef  utility::keys::Key  Key;
+
+
+public: // Types
+
+
+	typedef  utility::keys::KeyLookup< OptionKey >  Lookup;
+
+
+private: // Friends
+
+
+#if !(defined _MSC_VER) || (defined __INTEL_COMPILER) // Visual C++ 2005 bug work-around
+	template< typename K, typename T > friend class utility::keys::SmallKeyVector;
+#endif
+
+
+protected: // Creation
+
+
+	/// @brief Default constructor
+	inline
+	OptionKey()
+	{}
+
+
+	/// @brief Copy constructor
+	inline
+	OptionKey( OptionKey const & key ) :
+		Super( key )
+	{}
+
+
+	/// @brief Copy + identifier constructor
+	inline
+	OptionKey(
+		OptionKey const & key,
+		std::string const & id_a,
+		std::string const & identifier_a = std::string(),
+		std::string const & code_a = std::string()
+	) :
+		Super( key, id_a, identifier_a, code_a )
+	{}
+
+
+	/// @brief Key constructor
+	inline
+	explicit
+	OptionKey( Key const & key ) :
+		Super( key )
+	{}
+
+
+	/// @brief Key + identifier constructor
+	inline
+	OptionKey(
+		Key const & key,
+		std::string const & id_a,
+		std::string const & identifier_a = std::string(),
+		std::string const & code_a = std::string()
+	) :
+		Super( key, id_a, identifier_a, code_a )
+	{}
+
+
+	/// @brief Identifier constructor
+	inline
+	explicit
+	OptionKey(
+		std::string const & id_a,
+		std::string const & identifier_a = std::string(),
+		std::string const & code_a = std::string()
+	) :
+		Super( id_a, identifier_a, code_a )
+	{}
+
+
+public: // Creation
+
+
+	/// @brief Clone this
+	virtual
+	OptionKey *
+	clone() const = 0;
+
+
+	/// @brief Destructor
+	inline
+	virtual
+	~OptionKey()
+	{}
+
+
+public: // Assignment
+
+
+	/// @brief Key assignment
+	inline
+	OptionKey &
+	operator =( Key const & key )
+	{
+		assign_Key( key );
+		return *this;
+	}
+
+
+public: // Properties
+
+
+	/// @brief Scalar option key?
+	virtual
+	bool
+	scalar() const = 0;
+
+
+	/// @brief Vector option key?
+	virtual
+	bool
+	vector() const = 0;
+
+
+}; // OptionKey
+
+
+} // namespace options
+} // namespace utility
+
+
+#endif // INCLUDED_utility_options_keys_OptionKey_HH

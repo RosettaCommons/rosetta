@@ -1,0 +1,102 @@
+/*
+ * CycPepProtocol.h
+ *
+ *  Created on: Nov 18, 2009
+ *      Author: Lior Zimmerman
+ */
+
+#ifndef CYCPEPPROTOCOL_H_
+#define CYCPEPPROTOCOL_H_
+#include <numeric/constants.hh>
+
+#include <core/pose/Pose.hh>
+#include <protocols/evaluation/RmsdEvaluator.hh>
+
+#include <core/graph/Graph.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/CoordinateConstraint.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/constraints/BoundConstraint.hh>
+#include <core/scoring/constraints/DihedralConstraint.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <protocols/moves/MinMover.hh>
+#include <protocols/moves/PackRotamersMover.hh>
+#include <core/pack/task/operation/NoRepackDisulfides.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
+//#include <core/optimization/MinimizerMap.hh>
+#include <core/scoring/Energies.fwd.hh>
+#include <core/scoring/EnergyMap.hh>
+#include <core/scoring/Energies.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <basic/Tracer.hh>
+#include <devel/init.hh>
+#include <core/init.hh>
+#include <core/conformation/Residue.hh>
+#include <core/io/pdb/pose_io.hh>
+#include <basic/options/util.hh>//option.hh>
+#include <protocols/loops/LoopRelaxMover.fwd.hh>
+#include <protocols/loops/LoopRelaxMover.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <numeric/random/random.hh>
+#include <protocols/loops/Loops.hh>
+#include <core/chemical/VariantType.hh>
+#include <core/pack/task/operation/NoRepackDisulfides.hh>
+#include <core/pose/disulfide_util.hh>
+#include <protocols/loops/LoopRelaxMover.fwd.hh>
+#include <devel/init.hh>
+#include <core/scoring/rms_util.hh>
+#include <protocols/loops/loops_main.hh>
+#include <protocols/loops/Loop.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/loops.OptionKeys.gen.hh>
+#include <basic/options/keys/relax.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/cm.OptionKeys.gen.hh>
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
+#include <core/types.hh>
+#include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
+
+#include <core/scoring/ScoreFunction.hh>
+#include <core/kinematics/Edge.hh>
+#include <core/kinematics/Edge.fwd.hh>
+#include <core/conformation/Conformation.hh>
+#include <utility/vector1.hh>
+#include <basic/basic.hh>
+#include <basic/Tracer.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/scoring/disulfides/FullatomDisulfidePotential.hh>
+using namespace core;
+namespace protocols {
+namespace CycPepMover {
+class CycPepMover;
+typedef utility::pointer::owning_ptr< CycPepMover > CycPepMoverOP;
+typedef utility::pointer::owning_ptr< CycPepMover const > CycPepMoverCOP;
+class CycPepMover : public moves::Mover {
+public:
+	CycPepMover();
+	virtual ~CycPepMover();
+	void minimize(pose::Pose& workpose);
+	void packRotamers(pose::Pose& workpose);
+	void apply(pose::Pose& workpose);
+private:
+	void rotateUntilCys(pose::Pose& workpose, Size untilCys);
+	void updateSSAtoms(pose::Pose& workpose, Size upNum, utility::vector1_int& vec, Size pepsize);
+	core::scoring::constraints::ConstraintSetOP createDihedralConstraint(pose::Pose& workpose);
+	void modelSSLoop(Size startCys, Size endCys, pose::Pose& workpose);
+	protocols::loops::LoopRelaxMover _loop_relax_mover;
+	core::scoring::ScoreFunctionOP _scorefxn;
+	pack::task::PackerTaskOP _packTask;
+	//prevents repacking of disulfides bonds
+	pack::task::operation::NoRepackDisulfides _noRepackDisulf;
+	//prevents the repacking of N-C terminal (repacking of these residues disconnects the structures)
+	pack::task::operation::PreventRepacking _preventer;
+};
+}
+}
+#endif /* CYCPEPPROTOCOL_H_ */

@@ -1,0 +1,62 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# Project setting for utility sources
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+sources = {
+	"utility" : [
+		"basic_sys_util",
+		"string_util",
+		"heap",
+		"integer_mapping",
+        #"noop",
+        "mpi_util",
+		"exit",
+		"LexicographicalIterator",
+	],
+	"utility/boinc" : [
+		"boinc_util"
+	],
+	"utility/file" : [
+		"file_sys_util",
+		"FileName",
+		"gzip_util",
+		"PathName"
+	],
+	"utility/io" : [
+		"icstream",
+		"izstream",
+		"ocstream",
+		"ozstream"
+	],
+	"utility/options" : [
+		"OptionCollection",
+		"mpi_stderr"
+	],
+	"utility/options/keys" : [
+		"OptionKeys"
+	],
+	"utility/pointer" : [
+		"ReferenceCount",
+		"ReferenceCountMI_"
+	],
+	"utility/excn" : [
+		"Exceptions",
+	],
+	"utility/sql_database" : [
+                "DatabaseSessionManager",
+#		"sqlite3_interface",
+#		"sqlite3_connection_manager"
+        ],
+	"utility/tag" : [
+		"Tag"
+	],
+}
+include_path = []
+library_path = []
+libraries    = [ ]
+subprojects  = [ "ObjexxFCL", "z","cppdb","sqlite3" ]

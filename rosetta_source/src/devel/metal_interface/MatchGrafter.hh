@@ -1,0 +1,52 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   devel/metal_interface/MatchGrafter.hh
+/// @brief  Takes two protein and two match poses, grafting match onto protein, then combines the two grafted poses by overlaying the zinc atoms.
+/// @author Bryan Der
+
+#ifndef INCLUDED_devel_metal_interface_MatchGrafter_HH
+#define INCLUDED_devel_metal_interface_MatchGrafter_HH
+
+#include <devel/metal_interface/MatchGrafter.fwd.hh>
+#include <core/pose/Pose.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/vector1.hh>
+
+
+namespace devel {
+namespace metal_interface {
+
+
+///@details
+class MatchGrafter : public utility::pointer::ReferenceCount {
+
+public:
+
+	typedef core::pose::Pose Pose;
+
+  ///@brief
+  MatchGrafter();
+
+  virtual ~MatchGrafter();
+
+  virtual Pose graft( Pose & match, Pose & partner_ungrafted );
+  virtual Pose build_combined_pose_with_zinc_overlay( Pose & partner1, Pose & partner2 );
+  virtual void ensure_proper_his_tautomers( Pose & combined, utility::vector1< core::Size > metalsite_seqpos );
+
+private:
+
+
+};//end MatchGrafter
+
+
+}//namespace metal_interface
+}//namespace devel
+
+#endif // INCLUDED_devel_metal_interface_MatchGrafter_HH

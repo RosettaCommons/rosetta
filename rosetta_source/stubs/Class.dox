@@ -1,0 +1,160 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+// Doxygen comment for a class
+//
+// NOTES:
+// - @fn lines may get long but they have to stay on one line.
+// - @note, @remarks, @see tags all follow the description.
+// - @examples tags should go in a separate block at the bottom.
+// - @file is the .hh explicitly documented since it is the interface.
+//   It is alright to put internal details if they should be published.
+//
+// You can delete this comment block from an actual .dox file.
+
+
+
+
+/// @file Class.hh
+///
+/// [Description of file contents].
+
+
+
+
+/// @class project::subproject::Class
+///
+/// [Detailed description of class].
+
+
+
+
+// Types
+
+/// @typedef project::subproject::Class::Type
+///
+/// [Public type].
+
+
+/// @typedef project::subproject::Class::NestedClass
+///
+/// [Public nested class].
+
+
+/// @enum project::subproject::Class::Enumeration
+///
+/// [Public enumerated type].
+
+
+
+
+// Constants
+
+/// @var project::subproject::Class::constant
+///
+/// [Public constant].
+
+
+/// @var project::subproject::Class::constant_
+///
+/// [Private or protected constant].
+
+
+
+
+// Variables
+
+/// @var project::subproject::Class::variable
+///
+/// [Public variable].
+
+
+/// @var project::subproject::Class::variable_
+///
+/// [Private or protected variable].
+
+
+
+
+// Creation
+
+/// @fn project::subproject::Class::Class()
+///
+/// [Constructor].
+
+
+/// @fn project::subproject::Class::~Class()
+///
+/// [Destructor].
+
+
+/// @fn project::subproject::Class::Class(Class const &)
+///
+/// [Copy constructor].
+
+
+
+
+// Methods
+
+/// @fn project::subproject::Class::operator=(Class const &)
+///
+/// [Assignment operator].
+
+
+/// @fn project::subproject::Class::operator==(Class const &)
+///
+/// [Comparison operator].
+
+
+/// @fn project::subproject::Class::method(T1 t1, T2 const & t2, T3 & t3)
+///
+/// @param[in] t1    [Description].
+/// @param[in] t2    [Description].
+/// @param[out] t3   [Description].
+///
+/// @return          [Description].
+///
+/// [Public method with parameters].
+
+
+/// @fn project::subproject::Class::method()
+///
+/// [Public method].
+
+
+/// @fn project::subproject::Class::method_()
+///
+/// [Private or protected method].
+
+
+
+
+// Properties
+
+/// @fn project::subproject::Class::property(T const & value)
+///
+/// @param[in] value [Description]
+///
+/// @return          None
+///
+/// [Public property - setter].
+
+
+/// @fn project::subproject::Class::property()
+///
+/// @return          [Description].
+///
+/// [Public property - getter].
+
+
+
+
+
+// Examples

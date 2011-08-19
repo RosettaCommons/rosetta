@@ -1,0 +1,153 @@
+
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# Project settings for rosetta sources
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+#This source settings file is for public and curated applications only
+#For pilot apps please see pilot_apps.src.settings.template
+#for instructions
+
+#NOTE public and curated apps cannot depend on sources in the devel project.
+#Sources in the devel project are experimental protocols and thus may be
+#unstable
+
+#Each time you add a source for an application to this list please add
+#a comment giving the location of the documentation for this application.
+#Public applications require an command line and tutorial.
+#Curated applications require a command line, tutorial, a description of
+#the scientific benchmark, a literature reference if the application has
+#been published, and the revision number from trunk with which the
+#benchmark was completed..
+
+
+sources = {
+	"" : [
+	],
+
+	#"curated": [],
+	"benchmark": [ "benchmark" ],
+	"benchmark/scientific": [
+		"design_contrast_and_statistic",
+		"ddg_benchmark",
+		"rotamer_recovery",
+        ],
+        "public/analysis" : [ "score",
+                              "score_jd2",
+                              "InterfaceAnalyzer"
+        ],
+
+        "public/antibody" : [
+			"antibody_mode",
+        ],
+
+	"public/boinc" : [ "minirosetta", "minirosetta_graphics" ],
+	"public/ligand_docking" : [
+		"ligand_rpkmin",
+		"ligand_dock",
+		"extract_atomtree_diffs",
+	],
+	"public/docking" : [
+		"docking_protocol",
+		"docking_prepack_protocol",
+	],
+	"public/ddg" : [
+		"ddg_monomer",
+		"minimize_with_cst",
+	],
+	"public/flexpep_docking" : [
+                "BuildPeptide",        
+		"FlexPepDocking",
+	],   # /* Barak,doc/public/flexpep_docking/barak/FlexPepDocking.dox, test/integration/tests/flexpepdock/ */
+	"public/enzdes" : [
+		"enzyme_design",
+		"CstfileToTheozymePDB"
+	],
+	"public/design" : [
+		"fixbb",
+                "mpi_msd",
+		"sequence_recovery",
+	],
+        "public/interface_design/anchored_design" : [
+                "AnchoredDesign", # /* Steven Lewis, doc/apps/pilot/smlewis/anchored_design.dox, test/integration/tests/anchored_design/ */
+                "AnchoredPDBCreator", # /* Steven Lewis, doc/apps/pilot/smlewis/AnchoredPDBCreator.dox, test/integration/tests/AnchoredPDBCreator/ */
+                "AnchorFinder", # /* Steven Lewis, doc/apps/pilot/smlewis/AnchorFinder.dox, test/integration/tests/AnchorFinder/ */
+        ],
+	"public/loop_modeling" : [
+		"loopmodel"
+	],
+	"public/match" : [
+		"match",
+		"gen_lig_grids",
+		"gen_apo_grids"
+	],
+	"public/rna" : [
+		"rna_denovo",
+		"rna_extract",
+		"rna_database",
+		"rna_design"
+		],
+	"public/membrane_abinitio" : [
+		"membrane_abinitio2"
+	],
+
+	"public/comparative_modeling" : [
+		"score_aln",
+		"score_aln2",
+		"super_aln",
+		"full_length_model",
+		"cluster_alns",
+                "fix_alignment_to_match_pdb",
+	],
+
+	"public/electron_density" : [
+        "mr_protocols",
+		"loops_from_density",
+	],
+
+	"public" : [
+		"relax",
+		"idealize",
+		"idealize_jd2",
+		"minimize",
+		"cluster",
+		"packstat",
+		"combine_silent",
+		"extract_pdbs",
+		"AbinitioRelax",
+		"backrub",
+		"sequence_tolerance",
+		"SymDock",
+		"fragment_picker"
+	],
+	"public/rosettaDNA" : [
+		"rosettaDNA",
+	],
+	"public/rosetta_scripts" : [
+		"rosetta_scripts",
+		"revert_design_to_native"
+	],
+	"public/scenarios" : [
+		"FloppyTail", # /* Steven Lewis, doc/apps/public/scenarios/FloppyTail.dox, test/integration/tests/FloppyTail/ */
+#       		"FloppyTailACAT", # /* Barak Raveh */
+		"ca_to_allatom", # /* Frank DiMaio, doc/apps/public/scenarios/ca_to_allatom.dox */
+                "UBQ_E2_thioester", # /* Steven Lewis, doc/apps/public/scenarios/UBQ_E2_thioester.dox, test/integration/tests/UBQ_E2_thioester/ */
+                "doug_dock_design_min_mod2_cal_cal"
+	],
+        "public/ncaa_utilities" : [
+               "make_rot_lib",
+               "UnfoldedStateEnergyCalculator"
+        ],
+	"public/pepspec" : [
+		"pepspec",
+		"pepspec_anchor_dock",
+	],
+}
+include_path = [  ]
+library_path = [  ]
+libraries    = [  ]
+subprojects  = [  "devel", "protocols","core.5", "core.4","core.3","core.2","core.1","basic", "numeric", "utility", "ObjexxFCL", "z", "cppdb","sqlite3" ]

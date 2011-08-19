@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Minirosetta!</title>
+
+  <script type="text/javascript">
+    MinirosettaModule = null;  // Global application object.
+    statusText = 'NO-STATUS';
+
+    function moduleDidLoad() {
+      MinirosettaModule = document.getElementById('minirosetta');
+      updateStatus('SUCCESS');
+		}
+
+    // If the page loads before the Native Client module loads, then set the
+    // status message indicating that the module is still loading.  Otherwise,
+    // do not change the status message.
+    function pageDidLoad() {
+      if (MinirosettaModule == null) {
+        updateStatus('LOADING...');
+      } else {
+        // It's possible that the Native Client module onload event fired
+        // before the page's onload event.  In this case, the status message
+        // will reflect 'SUCCESS', but won't be displayed.  This call will
+        // display the current message.
+        updateStatus();
+			}
+    }
+
+    // Set the global status message.  If the element with id 'statusField'
+    // exists, then set its HTML to the status message as well.
+    // opt_message The message test.  If this is null or undefined, then
+    // attempt to set the element with id 'statusField' to the value of
+    // |statusText|.
+    function updateStatus(opt_message) {
+      if (opt_message)
+        statusText = opt_message;
+      var statusField = document.getElementById('status_field');
+      if (statusField) {
+        statusField.innerHTML = statusText;
+      }
+		}
+
+		var t;
+
+		function getURL(url) {
+			var logElt = document.getElementById('urlrequest');
+			logElt.textContent += 'URLREQUEST:\n' + url + '\n';
+		}
+
+		function get_stdout() {
+			var stdoutText =  MinirosettaModule.getStdout();
+      var stdoutField = document.getElementById('stdout_field');
+      if (stdoutField) {
+				if( stdoutField.innerHTML != stdoutText){
+					stdoutField.innerHTML = stdoutText;
+					stdoutField.scrollTop = stdoutField.scrollHeight; 
+				}
+			}
+			t=setTimeout("get_stdout()", 10 );
+		}
+
+
+    function run_rosetta() {
+			try {
+				updateStatus( MinirosettaModule.runRosetta( this.input_form.params.value ) );
+			} catch(e) {
+				alert(e.message);
+			}
+			get_stdout();
+		}
+  </script>
+</head>
+<body onload="pageDidLoad()">
+
+<table><tr valign=top><td valign=top>
+<h1>Minirosetta in a browser</h1>
+<h3>(using Google Native Client)</h1>
+
+
+<p>
+  <!-- Load the published .nexe.  This includes the 'nacl' attribute which
+  shows how to load multi-architecture modules.  Each entry in the "nexes"
+  object in the .nmf manifest file is a key-value pair: the key is the
+  instruction set architecture ('x86-32', 'x86-64', etc.); the value is a URL
+  for the desired NaCl module.
+  To load the debug versions of your .nexes, set the 'nacl' attribute to the
+  _dbg.nmf version of the manifest file.
+
+  Note: Since this NaCl module does not use any real-estate in the browser,
+  it's width and height are set to 0, and the 'dimensions' attribute is not
+  set (see the pi_generator example for use of the 'dimensions' attribute).
+  -->
+  <embed name="nacl_module"
+         id="minirosetta"
+         width=0 height=0
+         nacl="mini_rosetta_native_client.nmf"
+         type="application/x-nacl"
+         onload="moduleDidLoad();" />
+
+
+<p>
+
+
+<p>
+Rosetta Commandline Parameters
+
+<form name="input_form" action="" method="get">
+<input type="text" id="params" name="inputbox" value="-in:file:s S_00015_7_0001_0001_0001.pdb -in:file:silent" size=120><p>
+<input type="button" value="Run!" onclick="run_rosetta()">
+
+<div id="status_field">Loading...</div>
+<textarea rows="40" cols="80" width="*" height="600" id="stdout_field" >
+Tracer output will appear here
+</textarea>
+</form>
+</td>
+<td>
+
+<h3> Native Client Sandboxing C++ code:</h3>
+<img src="nacl_diagram.png" >
+<h3> Porting to Native Client: </h3>
+<ul>
+<li> Zlib, native code rather then library
+<li> No file I/O. Alternatives: URLS (via JavaScript or NC Api), UserInterface, Hard compiled
+<li> InlineDatabase:
+<pre>
+> make_static_database.py ---> static_database.hh
+-rw-r--r--  1 mtyka  staff  61277174 May 12 15:27 static_database.hh
+> 
+-rwxr-xr-x  1 mtyka  staff  95636532 May 12 18:46 mini_rosetta_native_client.nexe
+</pre>
+<li>NC Sandboxing allows to run code on Google's data Farms like David Kim is doing on Microsoft's Azure cloud.
+</ul>
+</td>
+</tr>
+</table>
+
+</body>
+</html>

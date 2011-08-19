@@ -1,0 +1,80 @@
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file CrossPeakList.hh
+/// @author Oliver Lange
+
+#ifndef INCLUDED_protocols_noesy_assign_PeakFileFormat_Sparky_hh
+#define INCLUDED_protocols_noesy_assign_PeakFileFormat_Sparky_hh
+
+
+// Unit Headers
+#include <protocols/noesy_assign/PeakFileFormat.hh>
+
+// Package Headers
+
+// Project Headers
+#include <core/types.hh>
+//#include <core/id/NamedAtomID.fwd.hh>
+//#include <core/chemical/AA.hh>
+
+// Utility headers
+#include <utility/exit.hh>
+// #include <utility/excn/Exceptions.hh>
+#include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.hh>
+// #include <numeric/numeric.functions.hh>
+// #include <basic/prof.hh>
+//#include <basic/Tracer.hh>
+// #include <basic/options/option.hh>
+// #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
+// #include <basic/options/keys/run.OptionKeys.gen.hh>
+//#include <basic/options/keys/templates.OptionKeys.gen.hh>
+
+//// C++ headers
+#include <cstdlib>
+#include <string>
+#include <list>
+#include <map>
+
+namespace protocols {
+namespace noesy_assign {
+
+class PeakFileFormat_Sparky : public PeakFileFormat {
+public:
+  PeakFileFormat_Sparky() {};
+  PeakFileFormat_Sparky( ResonanceListOP const& );
+  //  virtual ~PeakFileFormat_Sparky();
+
+  virtual void set_format_from_peak( CrossPeak const& );
+  virtual void write_peak( std::ostream&, core::Size ct, CrossPeak const& ) const;
+  //  virtual void write_resonances( std::ostream&, CrossPeak const& ) const;
+  //  virtual void write_strength( std::ostream&, CrossPeak const& ) const;
+  //  virtual void write_assignments( std::ostream&, CrossPeak const&, std::string const& first_line_end ) const;
+  virtual void write_assignment( std::ostream&, PeakAssignment const& ) const;
+  virtual void write_assignment_indent( std::ostream&, CrossPeak const& ) const;
+  virtual void write_assignment_stats( std::ostream&, PeakAssignment& ) const {}; //don't write these
+  virtual void write_nil_assignment( std::ostream& ) const;
+//   virtual void read_resonances( std::istream&, CrossPeak& ) const;
+//   virtual void read_assignments( std::istream& is, std::istream& rest_line, CrossPeak& ) const;
+//   virtual void read_strength( std::istream&, CrossPeak& ) const;
+
+//   virtual CrossPeakOP read_peak( std::istream& ) const;
+//   virtual void read_header( std::istream& );
+  //  virtual void write_header( std::ostream& );
+
+//   virtual void output_diagnosis( std::ostream& ) const;
+
+//   virtual void set_format_from_peak( CrossPeak const& );
+  virtual void write_header( std::ostream& );
+//   virtual bool compatible_with_current_format( CrossPeak const& ) const;
+
+  //static void register_options();
+};
+
+}
+}
+
+#endif

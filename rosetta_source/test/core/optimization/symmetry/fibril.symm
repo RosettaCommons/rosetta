@@ -1,0 +1,101 @@
+symmetry_name 3dg1_fiber_r_helix_C1
+E = 1*VRT_0_0_0_base + 1*(VRT_0_0_0_base:VRT_0_1_0_base) + 1*(VRT_0_0_0_base:VRT_0_6_0_base) + 1*(VRT_0_0_0_base:VRT_0_3_0_base) + 1*(VRT_0_0_0_base:VRT_0_5_0_base) + 1*(VRT_0_0_0_base:VRT_0_4_0_base) + 1*(VRT_0_0_0_base:VRT_0_2_0_base)
+anchor_residue 1
+virtual_coordinates_start
+xyz VRT_0 1.000,0.000,0.000 0.000,1.000,0.000 6.292,0.167,8.365
+xyz VRT_0_n9_0 0.584,0.000,-0.812 0.812,-0.000,0.584 6.292,21.692,8.366
+xyz VRT_0_n9_0_base -1.000,0.000,0.000 0.000,1.000,0.000 6.292,21.692,8.366
+xyz VRT_0_n8_0 -0.584,-0.000,0.812 -0.812,0.000,-0.584 6.292,19.301,8.366
+xyz VRT_0_n8_0_base 1.000,0.000,-0.000 -0.000,1.000,0.000 6.292,19.301,8.366
+xyz VRT_0_n7_0 0.584,0.000,-0.812 0.812,-0.000,0.584 6.292,16.909,8.366
+xyz VRT_0_n7_0_base -1.000,0.000,0.000 0.000,1.000,0.000 6.292,16.909,8.366
+xyz VRT_0_n6_0 -0.584,-0.000,0.812 -0.812,0.000,-0.584 6.292,14.517,8.366
+xyz VRT_0_n6_0_base 1.000,0.000,-0.000 -0.000,1.000,0.000 6.292,14.517,8.366
+xyz VRT_0_n5_0 0.584,0.000,-0.812 0.812,-0.000,0.584 6.292,12.126,8.366
+xyz VRT_0_n5_0_base -1.000,0.000,0.000 0.000,1.000,0.000 6.292,12.126,8.366
+xyz VRT_0_n4_0 -0.584,-0.000,0.812 -0.812,0.000,-0.584 6.292,9.734,8.365
+xyz VRT_0_n4_0_base 1.000,0.000,-0.000 -0.000,1.000,0.000 6.292,9.734,8.365
+xyz VRT_0_n3_0 0.584,0.000,-0.812 0.812,-0.000,0.584 6.292,7.342,8.365
+xyz VRT_0_n3_0_base -1.000,0.000,0.000 0.000,1.000,0.000 6.292,7.342,8.365
+xyz VRT_0_n2_0 -0.584,-0.000,0.812 -0.812,0.000,-0.584 6.292,4.950,8.365
+xyz VRT_0_n2_0_base 1.000,0.000,-0.000 -0.000,1.000,0.000 6.292,4.950,8.365
+xyz VRT_0_n1_0 0.584,0.000,-0.812 0.812,-0.000,0.584 6.292,2.559,8.365
+xyz VRT_0_n1_0_base -1.000,0.000,0.000 0.000,1.000,0.000 6.292,2.559,8.365
+xyz VRT_0_0_0 -0.584,-0.000,0.812 -0.812,0.000,-0.584 6.292,0.167,8.365
+xyz VRT_0_0_0_base 1.000,0.000,0.000 0.000,1.000,0.000 6.292,0.167,8.365
+xyz VRT_0_1_0 0.584,0.000,-0.812 0.812,-0.000,0.584 6.292,-2.225,8.364
+xyz VRT_0_1_0_base -1.000,0.000,-0.000 0.000,1.000,0.000 6.292,-2.225,8.364
+xyz VRT_0_2_0 -0.584,-0.000,0.812 -0.812,0.000,-0.584 6.292,-4.616,8.364
+xyz VRT_0_2_0_base 1.000,-0.000,0.000 0.000,1.000,-0.000 6.292,-4.616,8.364
+xyz VRT_0_3_0 0.584,0.000,-0.812 0.812,-0.000,0.584 6.292,-7.008,8.364
+xyz VRT_0_3_0_base -1.000,0.000,-0.000 0.000,1.000,0.000 6.292,-7.008,8.364
+xyz VRT_0_4_0 -0.584,-0.000,0.812 -0.812,0.000,-0.584 6.292,-9.400,8.364
+xyz VRT_0_4_0_base 1.000,-0.000,0.000 0.000,1.000,-0.000 6.292,-9.400,8.364
+xyz VRT_0_5_0 0.584,0.000,-0.812 0.812,-0.000,0.584 6.292,-11.791,8.364
+xyz VRT_0_5_0_base -1.000,0.000,-0.000 0.000,1.000,0.000 6.292,-11.791,8.364
+xyz VRT_0_6_0 -0.584,-0.000,0.812 -0.812,0.000,-0.584 6.292,-14.183,8.363
+xyz VRT_0_6_0_base 1.000,-0.000,0.000 0.000,1.000,-0.000 6.292,-14.183,8.363
+xyz VRT_0_7_0 0.584,0.000,-0.812 0.812,-0.000,0.584 6.292,-16.575,8.363
+xyz VRT_0_7_0_base -1.000,0.000,-0.000 0.000,1.000,0.000 6.292,-16.575,8.363
+xyz VRT_0_8_0 -0.584,-0.000,0.812 -0.812,0.000,-0.584 6.292,-18.966,8.363
+xyz VRT_0_8_0_base 1.000,-0.000,0.000 0.000,1.000,-0.000 6.292,-18.966,8.363
+xyz VRT_0_9_0 0.584,0.000,-0.812 0.812,-0.000,0.584 6.292,-21.358,8.363
+xyz VRT_0_9_0_base -1.000,0.000,-0.000 0.000,1.000,0.000 6.292,-21.358,8.363
+virtual_coordinates_stop
+connect_virtual JUMP_0 VRT_0 VRT_0_n9_0
+connect_virtual JUMP_0_n9_0 VRT_0_n9_0 VRT_0_n8_0
+connect_virtual JUMP_0_n8_0 VRT_0_n8_0 VRT_0_n7_0
+connect_virtual JUMP_0_n7_0 VRT_0_n7_0 VRT_0_n6_0
+connect_virtual JUMP_0_n6_0 VRT_0_n6_0 VRT_0_n5_0
+connect_virtual JUMP_0_n5_0 VRT_0_n5_0 VRT_0_n4_0
+connect_virtual JUMP_0_n4_0 VRT_0_n4_0 VRT_0_n3_0
+connect_virtual JUMP_0_n3_0 VRT_0_n3_0 VRT_0_n2_0
+connect_virtual JUMP_0_n2_0 VRT_0_n2_0 VRT_0_n1_0
+connect_virtual JUMP_0_n1_0 VRT_0_n1_0 VRT_0_0_0
+connect_virtual JUMP_0_0_0 VRT_0_0_0 VRT_0_1_0
+connect_virtual JUMP_0_1_0 VRT_0_1_0 VRT_0_2_0
+connect_virtual JUMP_0_2_0 VRT_0_2_0 VRT_0_3_0
+connect_virtual JUMP_0_3_0 VRT_0_3_0 VRT_0_4_0
+connect_virtual JUMP_0_4_0 VRT_0_4_0 VRT_0_5_0
+connect_virtual JUMP_0_5_0 VRT_0_5_0 VRT_0_6_0
+connect_virtual JUMP_0_6_0 VRT_0_6_0 VRT_0_7_0
+connect_virtual JUMP_0_7_0 VRT_0_7_0 VRT_0_8_0
+connect_virtual JUMP_0_8_0 VRT_0_8_0 VRT_0_9_0
+connect_virtual JUMP_0_n9_0_to_com VRT_0_n9_0 VRT_0_n9_0_base
+connect_virtual JUMP_0_n8_0_to_com VRT_0_n8_0 VRT_0_n8_0_base
+connect_virtual JUMP_0_n7_0_to_com VRT_0_n7_0 VRT_0_n7_0_base
+connect_virtual JUMP_0_n6_0_to_com VRT_0_n6_0 VRT_0_n6_0_base
+connect_virtual JUMP_0_n5_0_to_com VRT_0_n5_0 VRT_0_n5_0_base
+connect_virtual JUMP_0_n4_0_to_com VRT_0_n4_0 VRT_0_n4_0_base
+connect_virtual JUMP_0_n3_0_to_com VRT_0_n3_0 VRT_0_n3_0_base
+connect_virtual JUMP_0_n2_0_to_com VRT_0_n2_0 VRT_0_n2_0_base
+connect_virtual JUMP_0_n1_0_to_com VRT_0_n1_0 VRT_0_n1_0_base
+connect_virtual JUMP_0_0_0_to_com VRT_0_0_0 VRT_0_0_0_base
+connect_virtual JUMP_0_1_0_to_com VRT_0_1_0 VRT_0_1_0_base
+connect_virtual JUMP_0_2_0_to_com VRT_0_2_0 VRT_0_2_0_base
+connect_virtual JUMP_0_3_0_to_com VRT_0_3_0 VRT_0_3_0_base
+connect_virtual JUMP_0_4_0_to_com VRT_0_4_0 VRT_0_4_0_base
+connect_virtual JUMP_0_5_0_to_com VRT_0_5_0 VRT_0_5_0_base
+connect_virtual JUMP_0_6_0_to_com VRT_0_6_0 VRT_0_6_0_base
+connect_virtual JUMP_0_7_0_to_com VRT_0_7_0 VRT_0_7_0_base
+connect_virtual JUMP_0_8_0_to_com VRT_0_8_0 VRT_0_8_0_base
+connect_virtual JUMP_0_9_0_to_com VRT_0_9_0 VRT_0_9_0_base
+connect_virtual JUMP_0_n6_0_to_subunit VRT_0_n6_0_base SUBUNIT
+connect_virtual JUMP_0_n5_0_to_subunit VRT_0_n5_0_base SUBUNIT
+connect_virtual JUMP_0_n4_0_to_subunit VRT_0_n4_0_base SUBUNIT
+connect_virtual JUMP_0_n3_0_to_subunit VRT_0_n3_0_base SUBUNIT
+connect_virtual JUMP_0_n2_0_to_subunit VRT_0_n2_0_base SUBUNIT
+connect_virtual JUMP_0_n1_0_to_subunit VRT_0_n1_0_base SUBUNIT
+connect_virtual JUMP_0_0_0_to_subunit VRT_0_0_0_base SUBUNIT
+connect_virtual JUMP_0_1_0_to_subunit VRT_0_1_0_base SUBUNIT
+connect_virtual JUMP_0_2_0_to_subunit VRT_0_2_0_base SUBUNIT
+connect_virtual JUMP_0_3_0_to_subunit VRT_0_3_0_base SUBUNIT
+connect_virtual JUMP_0_4_0_to_subunit VRT_0_4_0_base SUBUNIT
+connect_virtual JUMP_0_5_0_to_subunit VRT_0_5_0_base SUBUNIT
+connect_virtual JUMP_0_6_0_to_subunit VRT_0_6_0_base SUBUNIT
+set_dof JUMP_0_0_0 z(-2.39168845201177) angle_z
+set_dof JUMP_0_0_0_to_com x(0)
+set_dof JUMP_0_0_0_to_subunit angle_x angle_y angle_z
+set_jump_group JUMPGROUP1  JUMP_0_0_0:1  JUMP_0_1_0:2  JUMP_0_n1_0  JUMP_0_2_0:3  JUMP_0_n2_0  JUMP_0_3_0:4  JUMP_0_n3_0  JUMP_0_4_0:5  JUMP_0_n4_0  JUMP_0_5_0:6  JUMP_0_n5_0  JUMP_0_6_0:7  JUMP_0_n6_0  JUMP_0_7_0:8  JUMP_0_n7_0  JUMP_0_8_0:9  JUMP_0_n8_0  JUMP_0_n9_0
+set_jump_group JUMPGROUP2 JUMP_0_0_0_to_com JUMP_0_1_0_to_com  JUMP_0_n1_0_to_com JUMP_0_2_0_to_com  JUMP_0_n2_0_to_com JUMP_0_3_0_to_com  JUMP_0_n3_0_to_com JUMP_0_4_0_to_com  JUMP_0_n4_0_to_com JUMP_0_5_0_to_com  JUMP_0_n5_0_to_com JUMP_0_6_0_to_com  JUMP_0_n6_0_to_com JUMP_0_7_0_to_com  JUMP_0_n7_0_to_com JUMP_0_8_0_to_com  JUMP_0_n8_0_to_com JUMP_0_9_0_to_com  JUMP_0_n9_0_to_com
+set_jump_group JUMPGROUP3 JUMP_0_0_0_to_subunit JUMP_0_1_0_to_subunit JUMP_0_n1_0_to_subunit JUMP_0_2_0_to_subunit JUMP_0_n2_0_to_subunit JUMP_0_3_0_to_subunit JUMP_0_n3_0_to_subunit JUMP_0_4_0_to_subunit JUMP_0_n4_0_to_subunit JUMP_0_5_0_to_subunit JUMP_0_n5_0_to_subunit JUMP_0_6_0_to_subunit JUMP_0_n6_0_to_subunit

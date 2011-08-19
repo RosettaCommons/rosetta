@@ -1,0 +1,82 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file
+/// @brief
+
+
+// libRosetta headers
+
+#include <protocols/jobdist/standard_mains.hh>
+#include <basic/options/option.hh>
+
+#include <devel/init.hh>
+
+// C++ headers
+#include <iostream>
+#include <string>
+
+#include <basic/Tracer.hh>
+
+// option key includes
+#include <basic/options/keys/relax.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+
+//Auto Headers
+#include <protocols/relax/ClassicRelax.hh>
+#include <protocols/relax/util.hh>
+#include <protocols/relax/relax_main.hh>
+#include <protocols/viewer/viewers.hh>
+#include <basic/options/option_macros.hh>
+
+using basic::T;
+using basic::Error;
+using basic::Warning;
+
+
+using namespace core;
+using namespace protocols;
+
+using utility::vector1;
+
+// add options
+OPT_1GRP_KEY( Boolean, relax_app, viewer )
+
+
+///////////////////////////////////////////////////////////////////////////////
+void *
+relax_main_local( void* ) {
+	relax::Relax_main( false );
+	return 0;
+}
+
+////////////////////////////////////////////////////////
+int
+main( int argc, char * argv [] )
+{
+	using namespace protocols::jobdist;
+	using namespace protocols::moves;
+	using namespace scoring;
+	using namespace basic::options;
+
+
+	relax::ClassicRelax::register_options();
+	register_options_universal_main();
+	option.add_relevant( OptionKeys::in::file::fullatom );
+	option.add_relevant( OptionKeys::relax::sequence );
+	devel::init(argc, argv);
+
+	// use viewer if flag given
+		protocols::viewer::viewer_main( relax_main_local );
+		relax_main_local(NULL);
+
+	return 0;
+}
+
+

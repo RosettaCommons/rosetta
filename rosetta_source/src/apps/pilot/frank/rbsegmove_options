@@ -1,0 +1,22 @@
+-database /Users/dimaio/minirosetta_database/
+-in:file:s dec01.pdb
+#-in:file:fullatom
+-RBSegmentRelax::cst_wt 0.1
+-RBSegmentRelax::cst_width 1.0
+#-RBSegmentRelax::rb_scorefxn score13_env_hb
+-RBSegmentRelax::rb_scorefxn ./rb.wts
+-RBSegmentRelax::rb_file t263.rb_file
+-RBSegmentRelax::nrbmoves 500
+-RBSegmentRelax::helical_movement_params 60.0 2.0 5.0 0.5
+-RBSegmentRelax::default_movement_params 6.0 1.0
+-RBSegmentRelax::skip_seqshift_moves
+-loops::frag_sizes 9 3 1 
+-loops::frag_files aat263_09_05.200_v1_3.gz aat263_03_05.200_v1_3.gz none
+-out::nstruct 1
+-overwrite
+
+#-run::constant_seed
+#-run::seed_offset 2
+#-loops::frag_sizes 9 3 1 
+#-loops::frag_files aat263_09_05.200_v1_3.gz aat263_03_05.200_v1_3.gz none
+#-RBSegmentRelax::rb_scorefxn ./rb.wts

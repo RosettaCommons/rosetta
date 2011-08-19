@@ -1,0 +1,151 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# Project settings for rosetta sources
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+sources = {
+
+	"core/optimization" : [
+		"atom_tree_minimize",
+		"AtomTreeMinimizer",
+		"AtomTreeMultifunc",
+		"SingleResidueMultifunc",
+		"LineMinimizer",
+		"Minimizer",
+		"MinimizerMap",
+		"MinimizerOptions",
+		"NumericalDerivCheckResult",
+		"GA_Minimizer",
+		"ParticleSwarmMinimizer",
+		"cartesian_minimize",
+		"CartesianMinimizer",
+		"CartesianMultifunc",
+		"CartesianMinimizerMap",
+	],
+
+	"core/optimization/symmetry" : [
+		"sym_atom_tree_minimize",
+		"SymAtomTreeMinimizer",
+		"SymAtomTreeMultifunc",
+		"SymMinimizerMap",
+	],
+
+	"core/pack" : [
+		"make_symmetric_task",
+		"min_pack",
+		"optimizeH",
+		"packer_neighbors",
+		"pack_rotamers",
+		"pack_missing_sidechains",
+		"rotamer_trials",
+		"rtmin",
+	],
+	"core/pack/annealer" : [
+		"AnnealerFactory",
+		"FASTERAnnealer",
+		"FixbbCoupledRotamerSimAnnealer",
+		"FixbbSimAnnealer",
+		"MultiCoolAnnealer",
+		"RotamerAssigningAnnealer",
+		"SimAnnealerBase",
+	],
+	"core/pack/dunbrack" : [
+		#XRW_B_T1
+		#"CoarseRotamer",
+		#"CoarseSingleResidueLibrary",
+		#XRW_B_T1
+		"DunbrackConstraint",
+		"DunbrackEnergy",
+		"DunbrackRotamer",
+		"RotamerConstraint",
+		"RotamerLibrary",
+		"RotamerLibraryScratchSpace",
+		"SemiRotamericSingleResidueDunbrackLibrary",
+		"SingleResidueDunbrackLibrary",
+		"SingleLigandRotamerLibrary",
+	],
+	"core/pack/interaction_graph" : [
+		"DensePDInteractionGraph",
+		"DoubleDensePDInteractionGraph",
+		"DoubleLazyInteractionGraph",
+		"FASTERInteractionGraph",
+		"FixedBBInteractionGraph",
+		"InteractionGraphBase",
+		"InteractionGraphFactory",
+		"LazyInteractionGraph",
+		"LinearMemoryInteractionGraph",
+		"OnTheFlyInteractionGraph",
+		"PrecomputedPairEnergiesInteractionGraph",
+		"PDInteractionGraph",
+		"RotamerDots",
+		"SimpleInteractionGraph",
+		"SurfacePotential",
+		"SurfaceEnergy",
+		"HPatchEnergy",
+	],
+	"core/pack/rotamer_set" : [
+		"BumpSelector",
+		"ContinuousRotamerSet",
+		"FixbbRotamerSets",
+		"RotamerSet",
+		"RotamerSet_",
+		"RotamerSetFactory",
+		"RotamerSetOperation",
+		"RotamerSets",
+		"RotamerSetsBase",
+		"RotamerSubset",
+		"RotamerSubsets",
+		"rotamer_building_functions",
+		"UnboundRotamersOperation",
+		"WaterAnchorInfo",
+		"WaterPackingInfo",
+	],
+	"core/pack/scmin" : [
+		"AtomTreeCollection",
+		"SCMinMinimizerMap",
+		"SCMinMultifunc",
+		"SidechainStateAssignment",
+	],
+
+	"core/pack/rotamer_set/symmetry" : [
+		"SymmetricRotamerSet_",
+		"SymmetricRotamerSetFactory",
+		"SymmetricRotamerSets",
+	],
+
+	"core/pack/task" : [
+		"PackerTask",
+		"PackerTask_",
+		"RotamerSampleOptions",
+		"TaskFactory",
+		"ResfileReader",
+		"IGEdgeReweightContainer",
+	],
+	"core/pack/task/operation" : [
+		"OperateOnCertainResidues",
+		"TaskOperationFactory",
+		"TaskOperation",
+		"TaskOperations",
+		"ReplicateTask",
+		"ResLvlTaskOperationFactory",
+		"ResLvlTaskOperations",
+		"ResFilterFactory",
+		"ResFilters",
+		"NoRepackDisulfides",
+		"OptCysHG",
+		"OptH",
+	],
+        "core/util" : [
+                "ABEGOManager",
+                "disulfide_util",
+                "SwitchResidueTypeSet",
+        ],
+}
+include_path = [ ]
+library_path = [ ]
+libraries    = [ ]
+subprojects  = [ "basic","numeric", "core.1","core.2","core.3","utility", "ObjexxFCL", "z","sqlite3", "cppdb" ]

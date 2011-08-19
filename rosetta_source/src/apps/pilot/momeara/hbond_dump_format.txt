@@ -1,0 +1,41 @@
+Hbonds dump format:
+
+One HBond per line, tab separated columns:
+1 hbond type : int
+2 donor x : float
+3 donor y : float
+4 donor z : float
+5 h atom x : float
+6 h atom y : float
+7 h atom z : float
+8 acc atom x : float
+9 acc atom y : float
+10 acc atom z : float
+11 base x : float
+12 base y : float
+13 base z : float
+14 base of base x : float
+15 base of base y : float
+16 base of base z : float
+17 base2 x : float
+18 base2 y : float
+19 base2 z : float
+* donor residue 3 letter code : string
+20 donor res sequence num : int
+21 donor chemical type : int
+* donor atom name : string
+22 donor element num : int : 7 for N, 8 for O, 16 for S, -1 for other
+23  acc residue 3 letter code : string
+24 acc res sequence num : int
+25 acc chemical type : int
+25 acc atom name : string
+27 acc element num : int : 7 for N, 8 for O, 16 for S, -1 for other
+28 unweighted energy : float
+29 weight : float
+30 deriv.first[0] : float
+31 deriv.first[1] : float
+32 deriv.first[2] : float
+33 deriv.second[0] : float
+34 deriv.second[1] : float
+35 deriv.second[2] : float
+36 pdb file : string

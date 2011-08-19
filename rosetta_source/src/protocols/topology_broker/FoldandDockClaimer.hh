@@ -1,0 +1,81 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// This file is part of the Rosetta software suite and is made available under license.
+// The Rosetta software is developed by the contributing members of the Rosetta Commons consortium.
+// (C) 199x-2009 Rosetta Commons participating institutions and developers.
+// For more information, see http://www.rosettacommons.org/.
+
+/// @file TopologyBroker
+/// @brief  top-class (Organizer) of the TopologyBroker mechanism
+/// @detailed responsibilities:
+/// @author Oliver Lange
+
+
+#ifndef INCLUDED_protocols_topology_broker_FoldandDockClaimer_hh
+#define INCLUDED_protocols_topology_broker_FoldandDockClaimer_hh
+
+
+// Unit Headers
+#include <protocols/topology_broker/FoldandDockClaimer.fwd.hh>
+
+// Package Headers
+#include <protocols/topology_broker/DofClaim.fwd.hh>
+#include <protocols/topology_broker/TopologyClaimer.hh>
+
+// Project Headers
+#include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/types.hh>
+#include <utility/pointer/ReferenceCount.hh>
+
+// AUTO-REMOVED #include <utility/vector1.hh>
+
+// option key includes
+
+
+namespace protocols {
+namespace topology_broker {
+
+class FoldandDockClaimer : public TopologyClaimer {
+	typedef TopologyClaimer Parent;
+
+public:
+
+	//c'stor
+	FoldandDockClaimer();
+	FoldandDockClaimer( core::pose::Pose const& input_pose );
+
+	//clone
+	virtual TopologyClaimerOP clone() const;
+
+	///@brief type() is specifying the output name of the TopologyClaimer
+	virtual std::string type() const;
+
+	static std::string _static_type_name();
+
+	virtual void add_mover(
+    moves::RandomMover& random_mover,
+		core::pose::Pose const& pose,
+		abinitio::StageID stageID,
+		core::scoring::ScoreFunction const& scorefxn,
+		core::Real progress
+	);
+
+	virtual void initialize_dofs( core::pose::Pose&,
+																DofClaims const& init_claims,
+																DofClaims& /*failed_to_init*/ );
+
+  virtual void generate_claims( DofClaims& new_claims );
+
+private:
+
+	///@brief starting pose
+  core::pose::Pose input_pose_;
+
+};
+
+}
+}
+
+#endif

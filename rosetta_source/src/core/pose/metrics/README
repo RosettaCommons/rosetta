@@ -1,0 +1,63 @@
+(c) Copyright Rosetta Commons Member Institutions.
+(c) This file is part of the Rosetta software suite and is made available under license.
+(c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+(c) For more information, see http://www.rosettacommons.org. Questions about this can be
+(c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+Notes on Pose Metrics (this file is src/core/pose/metrics/README):
+
+Pose "metrics" is a general framework for holding data which is returned when asked for. Space for this data is allocated 
+the first time the data is requested, and the data is computed. The data is then cached, and recomputed as needed.
+
+The PoseMetricContainer holds a series of named PoseMetricCalculators - each calculator contains functionality to compute 
+data corresponding to one or more "metrics". Before it is used, a calculator must be "registered" (ie. given a name). 
+This registration process allows multiple instances of the same calculator type (eg. a "distance" calculator which operates 
+on a pair of atoms predefined in the constructor of the calculator).
+
+Important note: a calculator should only be registered ONCE for a given Rosetta run. Upon registration, it is accessible 
+to all Pose instances indefinitely.
+
+Sample usage:
+
+// Register a "SasaCalculator", giving it the name "sasa"
+core::pose::metrics::PoseMetricCalculatorOP sasa_calculator = new devel::PoseMetricCalculators::SasaCalculator;
+core::pose::metrics::CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
+
+// Use this Calculator to report the total sasa for a given Pose
+basic::MetricValue<Real> mr;			// instantiate a "MetricValue" object of type Real
+pose.metric("sasa","total_sasa",mr);        // invoke the pose.metric method, to use the "sasa" calculator to compute the total sasa
+std::cout << "Total SASA is: " << mr.value() << std::endl;     // report the value
+
+The "MetricValue" object is a wrapper which allows the pose.metric function to data of any type. In the example above, 
+the "total_sasa" metric expects to return a "Real" - for this reason, a "MetricValue<Real>" must be passed in. Failure 
+to pass in the correct type will produce an assert failure in a debug build (and unpredictably wrong results in a release 
+build). The value is retrieved from the MetricValue object through the "value()" method.
+
+This framework is intended to be extensible, and adding new metrics / new calculators is straightforward. The steps for each are outlined below:
+
+
+Instructions on adding a new metric to an existing calculator:
+
+1) Include the data as private member data of the appropriate calculator (eg. src/protocols/toolbox/PoseMetricCalculators/SasaCalculator.hh).
+
+2) Write code to fill this data in the "recompute" function of the calculator (eg. src/protocols/toolbox/PoseMetricCalculators/SasaCalculator.cc).
+
+3) Write code to report this data in the "lookup" and "print" functions of the calculator (eg. src/protocols/toolbox/PoseMetricCalculators/SasaCalculator.cc).
+
+
+Instructions on adding a new type of calculator (see src/protocols/toolbox/PoseMetricCalculators/SasaCalculator for an example):
+
+1) Decide whether the data stored by the calculator needs to be recomputed when the structure (conformation) changes, 
+the energy changes, or the sequence changes (the latter is not yet fully implemented). Write a new class for the calculator 
+which derives from the appropriate base class (StructureDependentCalculator, EnergyDependentCalculator, etc.) in 
+PoseMetricCalculatorBase.hh.
+
+2) The new calculator class should define its own "lookup", "print", and "recompute" methods, but NOT anything else from 
+the base class. Any values returned by "lookup" (and "print") should be stored as private member data.
+
+3) Make sure to include assert statements with function calls to "check_cast" for each lookup metric.
+
+
+
+
+

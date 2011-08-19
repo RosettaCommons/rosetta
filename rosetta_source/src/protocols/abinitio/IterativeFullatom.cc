@@ -1,0 +1,210 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// This file is part of the Rosetta software suite and is made available under license.
+// The Rosetta software is developed by the contributing members of the Rosetta Commons consortium.
+// (C) 199x-2009 Rosetta Commons participating institutions and developers.
+// For more information, see http://www.rosettacommons.org/.
+
+/// @file IterativeAbrelax
+/// @brief iterative protocol starting with abinitio and getting progressively more concerned with full-atom relaxed structures
+/// @detailed
+///
+///
+/// @author Oliver Lange
+
+
+// Unit Headers
+#include <protocols/abinitio/IterativeFullatom.hh>
+#include <protocols/jd2/archive/ArchiveManager.hh>
+
+// Package Headers
+
+// Project Headers
+#include <core/types.hh>
+#include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+
+// ObjexxFCL Headers
+
+// Utility headers
+#include <utility/io/ozstream.hh>
+#include <utility/file/FileName.hh>
+
+// Option Headers
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#include <basic/Tracer.hh>
+#include <basic/MemTracer.hh>
+
+//// C++ headers
+#include <cstdlib>
+#include <string>
+
+// Utility headers
+#include <basic/options/option_macros.hh>
+
+static basic::Tracer tr("protocols.iterative");
+using basic::mem_tr;
+
+using core::Real;
+using namespace core;
+using namespace basic;
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
+
+OPT_1GRP_KEY( Real, iterative, perturb_fa_resampling )
+OPT_1GRP_KEY( Real, iterative, fapool_noesy_cst_weight )
+OPT_1GRP_KEY( Real, iterative, fapool_chemicalshift_weight )
+OPT_1GRP_KEY( Real, iterative, fapool_first_noesy_cycle_nr )
+
+bool protocols::abinitio::IterativeFullatom::options_registered_( false );
+
+void protocols::abinitio::IterativeFullatom::register_options() {
+	IterativeBase::register_options();
+	if ( !options_registered_ ) {
+		NEW_OPT( iterative::perturb_fa_resampling, "perturb resample_stage2 start structures by this amount", 2.0 );
+		NEW_OPT( iterative::fapool_noesy_cst_weight, "weight to apply to fullatom pool for noesy-autoassigned constraints", 5);
+		NEW_OPT( iterative::fapool_chemicalshift_weight, "weight to apply to chemical shifts in centroid pool rescoring", 5 );
+		NEW_OPT( iterative::fapool_first_noesy_cycle_nr, "start noesy assignment with this cycle selector", 6.0);
+		options_registered_ = true;
+	}
+}
+
+namespace protocols {
+namespace abinitio {
+using namespace jd2::archive;
+
+IterativeFullatom::IterativeFullatom( jd2::archive::ArchiveManagerAP ptr )
+	: IterativeBase( ptr, "fullatom_pool" )
+{
+	set_stage( LAST_CENTROID_START );
+	set_finish_stage( FINISHED );
+	mem_tr << "before setup fa-score function" << std::endl;
+
+	core::scoring::ScoreFunctionOP scorefxn =
+		core::scoring::ScoreFunctionFactory::create_score_function( fa_score(), fa_score_patch() );
+
+	// if local evaluation done by cmdline_cst evaluator
+	set_scorefxn( scorefxn );
+	perturb_start_structures_ = option[ iterative::perturb_fa_resampling ];
+
+	mem_tr << "after setup fa-score function" << std::endl;
+	//Base class sets chainbreak scores as convenience if not in patches..
+	// this will go wrong in fullatom mode, since chainbreaks not returned ... remove here
+	if ( !evaluate_local() ) {
+		remove_evaluation( "linear_chainbreak");
+		remove_evaluation( "overlap_chainbreak" );
+
+		if ( noesy_assign::NoesyModule::cmdline_options_activated() ) {
+			set_weight( "noesy_autoassign_cst", option[ iterative::fapool_noesy_cst_weight ]() );
+		}
+		if ( option[ iterative::fapool_chemicalshift_weight ].user() ) {
+			set_weight( chemshift_column(), option[ iterative::fapool_chemicalshift_weight ]() );
+		}
+	}
+	set_noesy_assign_float_cycle( option[ iterative::fapool_first_noesy_cycle_nr ]() );
+	scored_core_initialized_ = true;
+	if ( super_quick_relax_of_centroids_ ) {
+		set_weight( "score_fa", 1.0 );
+		set_weight( "prefa_centroid_score", 0.0 );
+	}
+}
+
+ bool IterativeFullatom::ready_for_batch() const {
+ 	return ( stage() > LAST_CENTROID_START );
+ }
+
+///@details generate new batch...
+/// type of batch depends on stage_. we switch to next stage based on some convergence criteria:
+/// right now it is how many decoys were accepted from last batch.. if this number drops sufficiently ---> next stage...
+///    (maybe need to put a safeguard in here: ratio small but at least XXX decoys proposed since last batch... )
+///
+void IterativeFullatom::generate_batch() {
+
+	//start new batch
+	Batch& batch( manager().start_new_batch() );
+	tr.Info << "\ngenerate batch from " <<name() << " " << batch.batch() << "\n";
+	mem_tr << "IterativeFullatom::generate_batch " << stage() << " " << batch.batch() << std::endl;
+	batch.set_intermediate_structs( false );
+
+	cluster();
+
+	gen_noe_assignments( batch );
+	gen_resample_fragments( batch );
+	gen_evaluation_output( batch, true /*fullatom*/ );
+// 	if ( stage() == FLEX_CORE_RESAMPLING ) {
+// 		gen_resample_core( batch, true /*flex*/ );
+// 	}
+	if ( stage() == RIGID_CORE_RESAMPLING ) {
+		gen_resample_core( batch, false /*flex*/ );
+	}
+
+
+	tr.Info << std::endl;
+	//finalize
+	manager().finalize_batch( batch );
+	// don't want to reset counters too often... if we run out of steam the QUEUE EMPTY pathway will make sure that we do more runs
+	if ( proposed_since_last_batch() > 500 ) {
+		reset_accept_counter();
+	}
+	mem_tr << "IterativeFullatom::generated_batch " << std::endl;
+	//now it is best time to do this... JobQueue is definitely filled up....
+	reassign_noesy_data( batch );
+
+
+
+}
+
+
+/// ============================================================================
+/// -----------           methods to make new batches               ------------
+/// -----          each method should only "append" to broker and flags    -----
+/// ============================================================================
+
+
+void IterativeFullatom::gen_resample_core( Batch& batch, bool flex ) {
+	//copy pool as input decoys
+	batch.set_has_silent_in();
+	io::silent::SilentFileData sfd;
+	for ( SilentStructs::const_iterator it = decoys().begin(); it != decoys().end(); ++it ) {
+		sfd.add_structure( *it ); //only add OP to sfd
+	}
+	sfd.write_all( batch.silent_in() );
+
+	//take rigid-core definition that has most individual loops --- most jumps
+	Size most_jumps( 0 ), nr_jumps( 0 );
+	for ( Size i = 2; i<=4; ++i ) {
+		if ( core( i ).num_loop() > nr_jumps ) {
+			nr_jumps = core( i ).num_loop();
+			most_jumps = i;
+		}
+	}
+
+	utility::io::ozstream broker( batch.broker_file(), std::ios::app );
+	broker << "\nUSE_INPUT_POSE" << std::endl;
+
+	if ( most_jumps ) {
+		core( most_jumps ).write_loops_to_file( batch.dir()+"core.rigid", "RIGID" );
+		broker << "\nCLAIMER RigidChunkClaimer \n"
+					 << "REGION_FILE "<< batch.dir() << "core.rigid\n"
+					 << ( flex ? "KEEP_FLEXIBLE\n" : "" )
+					 << "END_CLAIMER\n\n" << std::endl;
+	}
+
+	broker << "\nCLAIMER StartStructClaimer\n"
+				 << "PERTURB " << perturb_start_structures_ << "\n"
+				 << "END_CLAIMER\n\n" << std::endl;
+
+	broker.close();
+
+	utility::io::ozstream flags( batch.flag_file(), std::ios::app );
+	flags << "-abinitio::skip_stages 1 2" << std::endl;
+
+	add_fullatom_flags( batch );
+	batch.nstruct() = std::max( 1, int( 1.0*batch.nstruct() / ( 1.0*decoys().size() ) ) );
+}
+
+} //abinitio
+} //protocols

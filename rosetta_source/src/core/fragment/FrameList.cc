@@ -1,0 +1,77 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+// :noTabs=false:tabSize=4:indentSize=4:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   core/fragments/FragData.cc
+/// @brief  a collection classes of the FragData and SingleResidueFragData class hirachy
+/// @author Oliver Lange (olange@u.washington.edu)
+/// @date   Wed Oct 20 12:08:31 2007
+///
+
+// Unit Headers
+#include <core/fragment/FrameList.hh>
+
+// Package Headers
+#include <core/fragment/FragData.hh>
+#include <core/fragment/Frame.hh>
+
+// Project Headers
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
+
+// ObjexxFCL Headers
+
+// Utility headers
+#include <utility/vector1.fwd.hh>
+#include <basic/Tracer.hh>
+
+//Auto Headers
+#include <core/fragment/FragID.hh>
+#include <utility/exit.hh>
+
+
+namespace core {
+namespace fragment {
+
+static basic::Tracer tr("core.fragment");
+
+FragID FrameList::fragID ( Size flat_nr ) {
+  Size frags( 0 );
+  iterator it = begin(), eit=end();
+  for ( ; it!=eit && frags<flat_nr ; ++it) {
+    frags += (*it)->nr_frags();
+  }
+  if ( it!=eit ) {
+    if ( frags >= flat_nr ) {
+      frags -= (*it)->nr_frags();
+      it--;
+    }
+    return FragID( *it, flat_nr-frags );
+  }
+	runtime_assert( 0 ); //out of bounds
+	return FragID();
+}
+
+Size FrameList::flat_size() const {
+  Size frags( 0 );
+  for (const_iterator it=begin(), eit=end(); it!=eit ; ++it) {
+    frags += (*it)->nr_frags();
+  }
+  return frags;
+}
+
+std::ostream& operator<< ( std::ostream& out, FrameList const& frags) {
+  for ( FrameList::const_iterator it=frags.begin(), eit=frags.end(); it!=eit; ++it ) {
+    (*it)->show( out );
+  }
+	return out;
+}
+
+} //fragment
+} //core

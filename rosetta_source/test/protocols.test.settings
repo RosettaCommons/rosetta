@@ -1,0 +1,275 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# Project settings for protocols tests.
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+sources = {
+        "loops" : [
+          "Loop",
+        ],
+        "nonlocal" : [
+          "BoundaryFinder",
+          "Chunk",
+          "NonlocalAbinitio",
+          "NonlocalAbinitioReader",
+          "Region",
+        ],
+	"abinitio" : [
+		"FragmentMover",
+		"GunnCost",
+		"PseudocontactShiftEnergy",
+		"WobbleMover",
+	],
+
+	"branch_angle" : [
+		"BranchAngleOptimizer",
+	],
+
+	"cluster" : [
+		"APCluster",
+	],
+
+	"sparta" : [
+		"Sparta",
+	],
+
+	"comparative_modeling" : [
+		"util",
+		"ThreadingMover",
+		"ExtraThreadingMover",
+	],
+
+	"docking" : [
+		"DockingTest",
+	],
+
+	"enzdes" : [
+		"LigInterfaceConstraints",
+		"HBondCalculatorsTest",
+		"PredockRotCenter",
+		"MatchConstraintFileInfo",
+		"ResfileAutoRemap",
+	],
+
+	"frag_picker" : [
+		"TorsionBinIO",
+		"FragmentCandidatesTests",
+	],
+
+	"forge/build" : [
+		"Bridge",
+		"BuildManager",
+		"ConnectRight",
+		"GrowLeft",
+		"GrowRight",
+		"RelativeConnectRight",
+		"SegmentInsert",
+		"SegmentRebuild",
+		"SegmentSwap",
+	],
+
+	"forge/methods" :[
+		"fold_tree_functions",
+	],
+	"genetic_algorithm" : [
+		"Entity",
+	],
+
+	"jobdist" : [
+		"PlainSilentFileJobDistributor",
+	],
+
+	"jumping" : [
+		"JumpSetup",
+		"Dssp",
+	],
+
+	"ligand_docking": [
+		"ResidueTorsionRestraints",
+ 	],
+
+	"match" : [
+		"BumpGrid",
+		"ExternalGeomSampler",
+		"Hasher",
+		"LigandConformer",
+		"MatchConsolidator",
+		"OccupiedSpaceHash",
+		"ProteinSCSampler",
+		"ProteinUpstreamBuilder",
+		"ScaffoldBuildPoint",
+		"RigidLigandBuilder",
+		"VoxelSetIterator",
+	],
+
+	"moves" : [
+		"BackrubMover",
+		"MoverContainer",
+		"MoversTest",
+		"RigidBodyMover",
+		"ScoreTest",
+		"SmallMover",
+		"ShearMover",
+		"TypesetMovers",
+		"TaskAwareMinMover",
+	],
+
+	"moves/kinematic_closure" : [
+		"TorsionSamplingKinematicPerturber",
+	],
+
+	"optimize_weights" : [
+		"Arithmetic",
+		"DDGBindOptEData",
+	],
+	"pack_daemon" : [
+		"DynamicAggregateFunction",
+		"EntityCorrespondence",
+		"PackDaemon",
+	],
+	"rotamer_recovery" : [
+		"RRComparer",
+		"RRReporter",
+		"RotamerRecovery"
+	],
+
+	"features" : [
+		"FeaturesReporterTests",
+		"ProteinSilentReportTests"
+        ],
+
+#	"qsar" : [
+#		"qsarMap"
+#	],
+	"toolbox/pose_metric_calculators" : [
+		"Neighbor_Calculators",
+#		SolubilityCalculator",
+	],
+
+	"toolbox/task_operations" : [
+		"RestrictOperations",
+		"RestrictNonSurfaceToRepackingOperation",
+		"ProteinInterfaceDesignOperation",
+	],
+
+	"util": [
+		"cout",
+	],
+
+	"scoring" : [
+    "InterchainEnvEnergy",
+    "InterchainPairEnergy",
+		"Interface",
+	],
+
+}
+include_path = [ "#external/cxxtest", "#" ]
+library_path = []
+libraries    = [ "sqlite3", "cppdb", "protocols","core.5","core.4","core.3","core.2","core.1","basic", "utility", "numeric", "ObjexxFCL", "z" ]
+subprojects  = []
+testinputfiles = [
+	"abinitio/2GB3.pdb",
+	"abinitio/mfr_aa2GB3_03_05.200_v1_3",
+	"abinitio/mfr_aa2GB3_09_05.200_v1_3",
+	"abinitio/valid_ss.dat",
+	"abinitio/pdb_idealized_for_pcs_test.pdb",
+	"abinitio/pcs_data1.npc",
+	"abinitio/pcs_data2.npc",
+	"abinitio/frag3_for_pcs_test.tab.gz",
+	"abinitio/frag9_for_pcs_test.tab.gz",
+	"abinitio/pcs_broker_setup.txt",
+	"abinitio/score0_pcs_only.wts_patch",
+	"abinitio/score1_pcs_only.wts_patch",
+	"abinitio/score2_pcs_only.wts_patch",
+	"abinitio/score5_pcs_only.wts_patch",
+	"abinitio/score3_pcs_only.wts_patch",
+	"branch_angle/BranchAngleOptimizer.u",
+	"branch_angle/branch_angle_1.txt",
+	"branch_angle/branch_angle_2.txt",
+#	"core/conformation/dock_in.pdb", # RestrictToInterfaceOperation and others in toolbox use this pdb file
+	"comparative_modeling/1f4pA.pdb",
+	"comparative_modeling/4gat_all.pdb",
+	"comparative_modeling/4gat_protein.pdb",
+	"docking/DockingTest.pdb",
+	"docking/DockingDecoy.pdb",
+	"docking/DockingMultiChain.pdb",
+	"docking/DockingProtocolFunctions.u",
+	"docking/DockingSlideIntoContact.pdb",
+	"docking/DockingPacking.pdb",
+	"docking/DockingRigidBodyMinimize.pdb",
+	"enzdes/D2N.params",
+	"enzdes/ligtest_it.pdb",
+	"enzdes/ligtest_it.cst",
+	"enzdes/D2MX.params",
+	"enzdes/mcfi_test.cst",
+	"enzdes/parse_cst_test.xml",
+	"enzdes/resfile_remap.resfile",
+	"frag_picker/t286_.6.csts",
+	"frag_picker/1a32A-H1.vall",
+	"frag_picker/1a32A-H1.9mers",
+	"jobdist/PlainSilentFileJobDistributor_test.out",
+	"jumping/jump_test.pdb",
+	"jumping/gb3_secondary_structure.dat",
+	"jumping/pairings.dat",
+	"jumping/gold_distance_jump1.dat",
+	"jumping/gold_distance_jump2.dat",
+	"jumping/test_in.pdb",
+	"jumping/jumps.def",
+	"ligand_docking/7cpa.params",
+	"ligand_docking/7cpa_7cpa_native.pdb",
+	"ligand_docking/7cpa_confs.pdb",
+	"ligand_docking/ZN1.params",
+	"match/carbaryl_LG1.params",
+	"match/E1cb_carbaryl_1his_oxy_1bb_10_2.pdb",
+	"match/MBH_LG.params",
+	"match/mbh_lg_0001.pdb",
+	"moves/test_in.pdb",
+	"match/carbaryl_LG1.params",
+	"match/E1cb_carbaryl_1his_oxy_1bb_10_2.pdb",
+	"match/MBH_LG.params",
+	"match/mbh_lg_0001.pdb",
+	"moves/test_in.pdb",
+	"moves/test_in_short.pdb",
+	"moves/fullatom_typeset.test_in_short.pdb",
+	"moves/centroid_typeset.test_in_short.pdb",
+	"moves/RigidBodyMover.pdb",
+	"moves/RigidBodyPerturbMover_no_int.pdb",
+	"moves/RigidBodyPerturbMover_int.pdb",
+	"moves/RigidBodyPerturbNoCenterMover.pdb",
+	"moves/RigidBodyRandomizeMover.pdb",
+	"moves/RigidBodySpinMover.pdb",
+	"moves/RigidBodyTransMover.pdb",
+	"moves/smallmoves_out.pdb",
+	"moves/shearmoves_out.pdb",
+	"moves/score12.pdb",
+	"moves/score12.u",
+	"nonlocal/2GB3.pdb",
+	"nonlocal/mfr_aa2GB3_03_05.200_v1_3",
+	"nonlocal/mfr_aa2GB3_09_05.200_v1_3",
+	"nonlocal/test.pairings",
+	"nonlocal/test2.pairings",
+	"nonlocal/unordered.pairings",
+	"optimize_weights/1UAD.wt_complex.pdb",
+	"optimize_weights/1UAD.wt_unbounded.pdb",
+	"optimize_weights/1UAD.E38A.mut_complex.pdb",
+	"optimize_weights/1UAD.E38A.mut_unbounded.pdb",
+	"toolbox/task_operations/RestrictToInterfaceOperation.u",
+	"toolbox/task_operations/RestrictToInterfaceVectorOperation.u",
+	"toolbox/task_operations/RestrictToNeighborhoodOperation.u",
+	"toolbox/task_operations/RestrictByCalculatorsOperation.u",
+	"toolbox/task_operations/ProteinInterfaceDesignOperation.u",
+	"toolbox/task_operations/ProteinInterfaceDesignOperation_all.u",
+	"util/test_in.pdb",
+	"scoring/Interface.u",
+	"scoring/dock_in.pdb",
+	"sparta/2kywA.pdb",
+	"sparta/data_16988.tab",
+	"sparta/data_17280.tab",
+	"sparta/solution_0022372568.ir_solution.pdb",
+	"sparta/SAM-T08-server_TS3.pdb",
+	"sparta/17280_trim.tab",
+]

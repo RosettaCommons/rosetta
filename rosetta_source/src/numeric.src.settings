@@ -1,0 +1,60 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# Project settings for numeric sources
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+sources = {
+	"numeric" : [
+		"constants",
+		"random.functions",
+		"statistics.functions",
+		"ClusteringTreeNode",
+		"agglomerative_hierarchical_clustering",
+		"MultiDimensionalHistogram",
+		"util",
+	],
+	"numeric/random" : [
+		"random",
+		"WeightedSampler",
+	],
+	"numeric/model_quality" : [
+		"rms",
+		"maxsub",
+		"RmsData",
+	],
+	"numeric/kdtree" : [
+		"util",
+		"construct_kdtree",
+		"calc_distance",
+		"nearest_neighbors",
+		"KDTree",
+		"KDNode",
+		"KDPoint",
+		"KDPointList",
+		"HyperRectangle"
+	],
+	"numeric/interpolation" : [
+		"util"
+	],
+	"numeric/interpolation/spline" : [
+		"SplineGenerator",
+		"CompoundInterpolator",
+		"SimpleInterpolator",
+		"spline_functions",
+		"Bicubic_spline",
+		"Cubic_spline",
+	],
+	"numeric/fourier" : [
+		"kiss_fft_state",
+		"kiss_fft",
+		"FFT",
+	],
+}
+include_path = []
+library_path = []
+libraries    = []
+subprojects  = [ "utility" , "ObjexxFCL", "z", "sqlite3", "cppdb"]

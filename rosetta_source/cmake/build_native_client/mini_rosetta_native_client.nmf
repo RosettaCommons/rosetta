@@ -1,0 +1,5 @@
+{
+  "nexes": {
+    "x86-32": "mini_rosetta_native_client.nexe",
+  }
+}

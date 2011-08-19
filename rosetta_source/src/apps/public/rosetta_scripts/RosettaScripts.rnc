@@ -1,0 +1,416 @@
+default namespace = ""
+
+start =
+  notAllowed
+  | element dock_design {
+      element TASKOPERATIONS {
+        (element InitializeFromCommandline {
+           attribute name { xsd:string }
+         }
+         | empty
+         | element IncludeCurrent {
+             attribute name { xsd:string }
+           }
+         | element RestrictDesignToProteinDNAInterface {
+             attribute dna_defs { xsd:string }?,
+             attribute z_cutoff { xsd:decimal }?,
+             attribute base_only { xsd:unsignedByte }?,
+             attribute name { xsd:string }
+           }
+         | element OperateOnCertainResidues {
+             attribute name { xsd:string },
+             element PreventRepackingRLT { anyType }?,
+             element RestrictToRepackingRLT { anyType }?,
+             element AddBehaviorRLT {
+               attribute behavior { xsd:string }
+             }?,
+             element ResidueHasProperty {
+               attribute property { xsd:string }
+             }
+           }+
+         | element ReadResfile {
+             attribute name { xsd:string }
+           })+
+      }?,
+      element SCOREFXNS {
+        (element interface {
+           attribute weights { xsd:string }
+         }+
+         | element stub_docking_low {
+             attribute hs_hash { xsd:decimal },
+             attribute weights { xsd:string }
+           }
+         | element ddg_scorefxn {
+             attribute hs_hash { xsd:decimal },
+             attribute patch { xsd:string },
+             attribute weights { xsd:string }
+           }
+         | element DNA {
+             attribute weights { xsd:string }
+           }
+         | element DNAGB {
+             attribute weights { xsd:string }
+           }
+         | element dna_elec_nobp {
+             attribute weights { xsd:string }
+           }
+         | element dnasoftrep_hackelec {
+             attribute weights { xsd:string }
+           }
+         | element ddg {
+             attribute weights { xsd:string }
+           }
+         | element dnasoftrep_hackelec_dnabp {
+             attribute weights { xsd:string }
+           }
+         | element encourage_hbonds {
+             attribute patch { xsd:string },
+             attribute weights { xsd:string }
+           }
+         | element geom_sol {
+             attribute patch { xsd:string },
+             attribute weights { xsd:string }
+           }
+         | element stub_score12 {
+             attribute hs_hash { xsd:decimal },
+             attribute patch { xsd:string },
+             attribute weights { xsd:string }
+           }
+         | element score13 {
+             attribute weights { xsd:string }
+           })+
+      },
+      element FILTERS {
+        (element ResInInterface {
+           attribute confidence { xsd:decimal }?,
+           attribute residues { xsd:unsignedByte },
+           attribute name { xsd:string }
+         }
+         | element Ddg {
+             attribute confidence { xsd:decimal }?,
+             attribute scorefxn { xsd:string }?,
+             attribute threshold { xsd:decimal }?,
+             attribute name { xsd:string }
+           }+
+         | element Sasa {
+             attribute confidence { xsd:decimal }?,
+             attribute threshold { xsd:unsignedShort }?,
+             attribute name { xsd:string }
+           }
+         | element NeighborType {
+             attribute pdb_num { xsd:string },
+             attribute distance { xsd:decimal },
+             attribute name { xsd:string },
+             element Neighbor {
+               attribute type { xsd:string }
+             }+
+           }
+         | element HbondsToResidue {
+             attribute bacbkone { xsd:unsignedByte }?,
+             attribute res_num { xsd:unsignedByte }?,
+             attribute bb_hbond { xsd:unsignedByte }?,
+             attribute energy_threshold { xsd:decimal }?,
+             attribute sidechain { xsd:unsignedByte }?,
+             attribute backbone { xsd:unsignedByte }?,
+             attribute confidence { xsd:unsignedByte }?,
+             attribute energy_cutoff { xsd:decimal }?,
+             attribute sc_hbond { xsd:unsignedByte }?,
+             attribute pdb_num { xsd:string }?,
+             attribute partners { xsd:unsignedByte }?,
+             attribute name { xsd:string }
+           }
+         | element AlaScan {
+             attribute repeats { xsd:unsignedByte },
+             attribute interface_distance_cutoff { xsd:decimal },
+             attribute scorefxn { xsd:string },
+             attribute partner2 { xsd:unsignedByte },
+             attribute partner1 { xsd:unsignedByte },
+             attribute name { xsd:string }
+           }
+         | element CompoundStatement {
+             attribute confidence { xsd:decimal }?,
+             attribute name { xsd:string },
+             element OR {
+               attribute filter_name { xsd:string }
+             }*,
+             element AND {
+               attribute filter_name { xsd:string }
+             }*,
+             element NAND {
+               attribute filter_name { xsd:string }
+             }?
+           }
+         | element FalseFilter {
+             attribute name { xsd:string }
+           }
+         | element ResidueBurial {
+             attribute res_num { xsd:string }?,
+             attribute confidence { xsd:unsignedByte }?,
+             attribute pdb_num { xsd:string }?,
+             attribute name { xsd:string }
+           }
+         | element HbondToResidue {
+             attribute pdb_num { xsd:string },
+             attribute energy_cutoff { xsd:decimal },
+             attribute partners { xsd:unsignedByte },
+             attribute name { xsd:string }
+           }
+         | element ResidueDistance {
+             attribute res2_pdb_num { xsd:string }?,
+             attribute res1_pdb_num { xsd:string }?,
+             attribute distance { xsd:decimal },
+             attribute res2_res_num { xsd:unsignedShort }?,
+             attribute res1_res_num { xsd:unsignedByte }?,
+             attribute name { xsd:string }
+           }
+         | element ScoreType {
+             attribute confidence { xsd:unsignedByte },
+             attribute threshold { xsd:unsignedByte },
+             attribute score_type { xsd:string },
+             attribute scorefxn { xsd:string },
+             attribute name { xsd:string }
+           }
+         | element EnergyPerResidue {
+             attribute confidence { xsd:unsignedByte }?,
+             attribute score_type { xsd:string }?,
+             attribute res_num { xsd:unsignedByte }?,
+             attribute energy_cutoff { xsd:decimal }?,
+             attribute pdb_num { xsd:string }?,
+             attribute name { xsd:string }
+           }
+         | element TerminusDistance {
+             attribute distance { xsd:unsignedByte }?,
+             attribute name { xsd:string }
+           }
+         | element BuriedUnsatHbonds {
+             attribute confidence { xsd:decimal },
+             attribute cutoff { xsd:unsignedByte },
+             attribute name { xsd:string }
+           })+
+      },
+      element MOVERS {
+        (element Docking {
+           attribute score_hi { xsd:string }?,
+           attribute rb_jump { xsd:unsignedByte }?,
+           attribute optimize_fold_tree { xsd:unsignedByte }?,
+           attribute score_low { xsd:string }?,
+           attribute score_high { xsd:string }?,
+           attribute view { xsd:unsignedByte }?,
+           attribute local_refine { xsd:unsignedByte },
+           attribute fullatom { xsd:unsignedByte },
+           attribute name { xsd:string }
+         }
+         | element RepackMinimize {
+             attribute minimize_b { xsd:unsignedByte }?,
+             attribute repack_partner2 { xsd:unsignedByte }?,
+             attribute repack_non_ala { xsd:unsignedByte }?,
+             attribute optimize_fold_tree { xsd:unsignedByte }?,
+             attribute design { xsd:unsignedByte }?,
+             attribute repack_partner1 { xsd:unsignedByte }?,
+             attribute interface_cutoff_distance { xsd:decimal }?,
+             attribute minimize_rb { xsd:unsignedByte }?,
+             attribute minimize_bb { xsd:unsignedByte }?,
+             attribute scorefxn_design { xsd:string }?,
+             attribute scorefxn_minimize { xsd:string }?,
+             attribute scorefxn_repack { xsd:string }?,
+             attribute name { xsd:string },
+             element residue {
+               attribute pdb_num { xsd:string }
+             }*
+           }+
+         | element PlaceStub {
+             attribute repack_non_ala { xsd:unsignedByte }?,
+             attribute max_cb_dist { xsd:decimal }?,
+             attribute score_threshold { xsd:unsignedByte }?,
+             attribute place_scaffold { xsd:unsignedByte }?,
+             attribute hurry { xsd:unsignedByte }?,
+             attribute minimize_rb { xsd:unsignedByte }?,
+             attribute after_placement_filter { xsd:string }?,
+             attribute add_constraints { xsd:unsignedByte }?,
+             attribute cb_force { xsd:decimal }?,
+             attribute stubfile { xsd:string }?,
+             attribute final_filter { xsd:string }?,
+             attribute self_energy_trials { xsd:unsignedShort }?,
+             attribute two_sided_trials { xsd:unsignedShort }?,
+             attribute name { xsd:string },
+             (element StubMinimize {
+                element Add {
+                  attribute mover_name { xsd:string }
+                }
+              }
+              | element DesignMovers {
+                  element Add {
+                    attribute use_constraints { xsd:unsignedByte }?,
+                    attribute user_constraints { xsd:unsignedByte }?,
+                    attribute coord_cst_std { xsd:decimal }?,
+                    attribute mover_name { xsd:string }
+                  }+
+                }
+              | element Add {
+                  attribute use_constraints { xsd:unsignedByte }?,
+                  attribute coord_cst_std { xsd:decimal }?,
+                  attribute minimize_rb { xsd:unsignedByte }?,
+                  attribute mover_name { xsd:string }
+                })*
+           }
+         | element build_Ala_pose {
+             attribute partner2 { xsd:unsignedByte }?,
+             attribute partner1 { xsd:unsignedByte }?,
+             attribute name { xsd:string }
+           }
+         | element SaveAndRetrieveSidechains {
+             attribute name { xsd:string }
+           }
+         | element Backrub {
+             attribute scorefxn { xsd:string }?,
+             attribute moves { xsd:unsignedShort }?,
+             attribute partner2 { xsd:unsignedByte }?,
+             attribute partner1 { xsd:unsignedByte }?,
+             attribute interface_distance_cutoff { xsd:decimal }?,
+             attribute name { xsd:string },
+             element span {
+               attribute end { xsd:unsignedByte },
+               attribute begin { xsd:unsignedByte }
+             }*
+           }
+         | element DnaInterfaceMultiStateDesign {
+             attribute generations { xsd:unsignedByte },
+             attribute mutate_rate { xsd:decimal },
+             attribute anchor_offset { xsd:unsignedByte },
+             attribute boltz_temp { xsd:unsignedByte },
+             attribute numresults { xsd:unsignedByte },
+             attribute num_packs { xsd:unsignedByte },
+             attribute pop_size { xsd:unsignedByte },
+             attribute task_operations { xsd:string },
+             attribute scorefxn { xsd:string },
+             attribute name { xsd:string }
+           }
+         | element DesignProteinBackboneAroundDNA {
+             attribute temp_final { xsd:decimal },
+             attribute temp_initial { xsd:unsignedByte },
+             attribute cycles_inner { xsd:unsignedByte },
+             attribute cycles_outer { xsd:unsignedByte },
+             attribute spread { xsd:unsignedByte },
+             attribute gapspan { xsd:unsignedByte },
+             attribute type { xsd:string },
+             attribute task_operations { xsd:string },
+             attribute scorefxn { xsd:string },
+             attribute name { xsd:string }
+           }
+         | element DnaInterfacePacker {
+             attribute minimize { xsd:unsignedByte }?,
+             attribute probe_specificity { xsd:unsignedByte },
+             attribute binding { xsd:unsignedByte },
+             attribute task_operations { xsd:string },
+             attribute scorefxn { xsd:string },
+             attribute name { xsd:string }
+           }
+         | element DockDesign {
+             attribute name { xsd:string },
+             element Add {
+               attribute mover_name { xsd:string }
+             }+
+           }
+         | element LoopOver {
+             attribute iterations { xsd:unsignedByte },
+             attribute filter_name { xsd:string },
+             attribute mover_name { xsd:string },
+             attribute name { xsd:string }
+           }
+         | element PackRotamersMover {
+             attribute task_operations { xsd:string },
+             attribute scorefxn { xsd:string },
+             attribute name { xsd:string }
+           }
+         | element AtomTree {
+             attribute host_chain { xsd:unsignedByte }?,
+             attribute connect_to { xsd:string },
+             attribute pdb_num { xsd:string },
+             attribute name { xsd:string }
+           }
+         | element DumpPdb {
+             attribute fname { xsd:string }?,
+             attribute name { xsd:string }
+           }
+         | element DesignMinimizeHbonds {
+             attribute repack_non_ala { xsd:unsignedByte }?,
+             attribute design_partner2 { xsd:unsignedByte }?,
+             attribute design_partner1 { xsd:unsignedByte }?,
+             attribute sc_hbond { xsd:unsignedByte },
+             attribute bb_hbond { xsd:unsignedByte },
+             attribute acceptors { xsd:unsignedByte },
+             attribute donors { xsd:unsignedByte },
+             attribute scorefxn_minimize { xsd:string }?,
+             attribute scorefxn_design { xsd:string }?,
+             attribute hbond_weight { xsd:decimal }?,
+             attribute name { xsd:string },
+             element residue {
+               attribute pdb_num { xsd:string }
+             }+
+           }
+         | element PlaceSimultaneously {
+             attribute after_placement_filter { xsd:string },
+             attribute explosion { xsd:unsignedByte },
+             attribute stub_energy_threshold { xsd:decimal },
+             attribute minimize_rb { xsd:unsignedByte },
+             attribute name { xsd:string },
+             element StubSets {
+               element StubSet {
+                 attribute file { xsd:string }
+               }+
+             },
+             element StubMinimize {
+               element Add {
+                 attribute mover_name { xsd:string }
+               }
+             },
+             element DesignMovers {
+               element Add {
+                 attribute coord_cst_std { xsd:decimal }?,
+                 attribute mover_name { xsd:string }
+               }+
+             }
+           }
+         | element ConstraintSetMover {
+             attribute cst_file { xsd:string },
+             attribute name { xsd:string }
+           }
+         | element Prepack {
+             attribute jump_number { xsd:unsignedByte },
+             attribute scorefxn { xsd:string },
+             attribute name { xsd:string }
+           }
+         | element InterfaceRecapitulation {
+             attribute mover_name { xsd:string },
+             attribute name { xsd:string }
+           })+
+      },
+      element APPLY_TO_POSE {
+        (element favor_native_residue {
+           attribute bonus { xsd:decimal }
+         }
+         | element hashing_constraints {
+             attribute cb_force { xsd:decimal }?,
+             attribute stubfile { xsd:string }
+           })+
+      },
+      element PROTOCOLS {
+        element Add {
+          attribute filter_name { xsd:string }?,
+          attribute mover_name { xsd:string }?
+        }+
+      }
+    }
+anyType =
+  mixed {
+    (attribute * { text }
+     | element0)*
+  },
+  empty
+element0 =
+  element * {
+    mixed {
+      (attribute * { text }
+       | element0)*
+    }
+  }

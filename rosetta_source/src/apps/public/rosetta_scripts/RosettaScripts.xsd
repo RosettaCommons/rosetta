@@ -1,0 +1,628 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="dock_design">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="TASKOPERATIONS" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:choice maxOccurs="unbounded">
+                <xs:element name="InitializeFromCommandline" minOccurs="0">
+                  <xs:annotation>
+                    <xs:documentation>This is my element that I like a lot</xs:documentation>
+                  </xs:annotation>
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" >
+                      <xs:annotation>
+                        <xs:documentation>This is my attribute that I like a lot</xs:documentation>
+                      </xs:annotation>
+                    </xs:attribute>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="IncludeCurrent">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="RestrictDesignToProteinDNAInterface">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="base_only" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="z_cutoff" type="xs:decimal" use="optional" />
+                    <xs:attribute name="dna_defs" type="xs:string" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element maxOccurs="unbounded" name="OperateOnCertainResidues">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element minOccurs="0" name="PreventRepackingRLT" />
+                      <xs:element minOccurs="0" name="RestrictToRepackingRLT" />
+                      <xs:element minOccurs="0" name="AddBehaviorRLT">
+                        <xs:complexType>
+                          <xs:attribute name="behavior" type="xs:string" use="required" />
+                        </xs:complexType>
+                      </xs:element>
+                      <xs:element name="ResidueHasProperty">
+                        <xs:complexType>
+                          <xs:attribute name="property" type="xs:string" use="required" />
+                        </xs:complexType>
+                      </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="ReadResfile">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+              </xs:choice>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="SCOREFXNS">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:choice maxOccurs="unbounded">
+                <xs:element maxOccurs="unbounded" name="interface">
+                  <xs:complexType>
+                    <xs:attribute name="weights" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="stub_docking_low">
+                  <xs:complexType>
+                    <xs:attribute name="weights" type="xs:string" use="required" />
+                    <xs:attribute name="hs_hash" type="xs:decimal" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="ddg_scorefxn">
+                  <xs:complexType>
+                    <xs:attribute name="weights" type="xs:string" use="required" />
+                    <xs:attribute name="patch" type="xs:string" use="required" />
+                    <xs:attribute name="hs_hash" type="xs:decimal" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="DNA">
+                  <xs:complexType>
+                    <xs:attribute name="weights" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="DNAGB">
+                  <xs:complexType>
+                    <xs:attribute name="weights" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="dna_elec_nobp">
+                  <xs:complexType>
+                    <xs:attribute name="weights" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="dnasoftrep_hackelec">
+                  <xs:complexType>
+                    <xs:attribute name="weights" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="ddg">
+                  <xs:complexType>
+                    <xs:attribute name="weights" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="dnasoftrep_hackelec_dnabp">
+                  <xs:complexType>
+                    <xs:attribute name="weights" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="encourage_hbonds">
+                  <xs:complexType>
+                    <xs:attribute name="weights" type="xs:string" use="required" />
+                    <xs:attribute name="patch" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="geom_sol">
+                  <xs:complexType>
+                    <xs:attribute name="weights" type="xs:string" use="required" />
+                    <xs:attribute name="patch" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="stub_score12">
+                  <xs:complexType>
+                    <xs:attribute name="weights" type="xs:string" use="required" />
+                    <xs:attribute name="patch" type="xs:string" use="required" />
+                    <xs:attribute name="hs_hash" type="xs:decimal" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="score13">
+                  <xs:complexType>
+                    <xs:attribute name="weights" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+              </xs:choice>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="FILTERS">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:choice maxOccurs="unbounded">
+                <xs:element name="ResInInterface">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="residues" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="confidence" type="xs:decimal" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element maxOccurs="unbounded" name="Ddg">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="threshold" type="xs:decimal" use="optional" />
+                    <xs:attribute name="scorefxn" type="xs:string" use="optional" />
+                    <xs:attribute name="confidence" type="xs:decimal" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="Sasa">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="threshold" type="xs:unsignedShort" use="optional" />
+                    <xs:attribute name="confidence" type="xs:decimal" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="NeighborType">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element maxOccurs="unbounded" name="Neighbor">
+                        <xs:complexType>
+                          <xs:attribute name="type" type="xs:string" use="required" />
+                        </xs:complexType>
+                      </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="distance" type="xs:decimal" use="required" />
+                    <xs:attribute name="pdb_num" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="HbondsToResidue">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="partners" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="pdb_num" type="xs:string" use="optional" />
+                    <xs:attribute name="sc_hbond" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="energy_cutoff" type="xs:decimal" use="optional" />
+                    <xs:attribute name="confidence" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="backbone" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="sidechain" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="energy_threshold" type="xs:decimal" use="optional" />
+                    <xs:attribute name="bb_hbond" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="res_num" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="bacbkone" type="xs:unsignedByte" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="AlaScan">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="partner1" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="partner2" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="scorefxn" type="xs:string" use="required" />
+                    <xs:attribute name="interface_distance_cutoff" type="xs:decimal" use="required" />
+                    <xs:attribute name="repeats" type="xs:unsignedByte" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="CompoundStatement">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element minOccurs="0" maxOccurs="unbounded" name="OR">
+                        <xs:complexType>
+                          <xs:attribute name="filter_name" type="xs:string" use="required" />
+                        </xs:complexType>
+                      </xs:element>
+                      <xs:element minOccurs="0" maxOccurs="unbounded" name="AND">
+                        <xs:complexType>
+                          <xs:attribute name="filter_name" type="xs:string" use="required" />
+                        </xs:complexType>
+                      </xs:element>
+                      <xs:element minOccurs="0" name="NAND">
+                        <xs:complexType>
+                          <xs:attribute name="filter_name" type="xs:string" use="required" />
+                        </xs:complexType>
+                      </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="confidence" type="xs:decimal" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="FalseFilter">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="ResidueBurial">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="pdb_num" type="xs:string" use="optional" />
+                    <xs:attribute name="confidence" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="res_num" type="xs:string" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="HbondToResidue">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="partners" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="energy_cutoff" type="xs:decimal" use="required" />
+                    <xs:attribute name="pdb_num" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="ResidueDistance">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="res1_res_num" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="res2_res_num" type="xs:unsignedShort" use="optional" />
+                    <xs:attribute name="distance" type="xs:decimal" use="required" />
+                    <xs:attribute name="res1_pdb_num" type="xs:string" use="optional" />
+                    <xs:attribute name="res2_pdb_num" type="xs:string" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="ScoreType">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="scorefxn" type="xs:string" use="required" />
+                    <xs:attribute name="score_type" type="xs:string" use="required" />
+                    <xs:attribute name="threshold" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="confidence" type="xs:unsignedByte" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="EnergyPerResidue">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="pdb_num" type="xs:string" use="optional" />
+                    <xs:attribute name="energy_cutoff" type="xs:decimal" use="optional" />
+                    <xs:attribute name="res_num" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="score_type" type="xs:string" use="optional" />
+                    <xs:attribute name="confidence" type="xs:unsignedByte" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="TerminusDistance">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="distance" type="xs:unsignedByte" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="BuriedUnsatHbonds">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="cutoff" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="confidence" type="xs:decimal" use="required" />
+                  </xs:complexType>
+                </xs:element>
+              </xs:choice>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="MOVERS">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:choice maxOccurs="unbounded">
+                <xs:element name="Docking">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="fullatom" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="local_refine" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="view" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="score_high" type="xs:string" use="optional" />
+                    <xs:attribute name="score_low" type="xs:string" use="optional" />
+                    <xs:attribute name="optimize_fold_tree" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="rb_jump" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="score_hi" type="xs:string" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element maxOccurs="unbounded" name="RepackMinimize">
+                  <xs:complexType>
+                    <xs:sequence minOccurs="0">
+                      <xs:element maxOccurs="unbounded" name="residue">
+                        <xs:complexType>
+                          <xs:attribute name="pdb_num" type="xs:string" use="required" />
+                        </xs:complexType>
+                      </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="scorefxn_repack" type="xs:string" use="optional" />
+                    <xs:attribute name="scorefxn_minimize" type="xs:string" use="optional" />
+                    <xs:attribute name="scorefxn_design" type="xs:string" use="optional" />
+                    <xs:attribute name="minimize_bb" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="minimize_rb" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="interface_cutoff_distance" type="xs:decimal" use="optional" />
+                    <xs:attribute name="repack_partner1" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="design" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="optimize_fold_tree" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="repack_non_ala" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="repack_partner2" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="minimize_b" type="xs:unsignedByte" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="PlaceStub">
+                  <xs:complexType>
+                    <xs:sequence minOccurs="0">
+                      <xs:choice maxOccurs="unbounded">
+                        <xs:element name="StubMinimize">
+                          <xs:complexType>
+                            <xs:sequence>
+                              <xs:element name="Add">
+                                <xs:complexType>
+                                  <xs:attribute name="mover_name" type="xs:string" use="required" />
+                                </xs:complexType>
+                              </xs:element>
+                            </xs:sequence>
+                          </xs:complexType>
+                        </xs:element>
+                        <xs:element name="DesignMovers">
+                          <xs:complexType>
+                            <xs:sequence>
+                              <xs:element maxOccurs="unbounded" name="Add">
+                                <xs:complexType>
+                                  <xs:attribute name="mover_name" type="xs:string" use="required" />
+                                  <xs:attribute name="coord_cst_std" type="xs:decimal" use="optional" />
+                                  <xs:attribute name="user_constraints" type="xs:unsignedByte" use="optional" />
+                                  <xs:attribute name="use_constraints" type="xs:unsignedByte" use="optional" />
+                                </xs:complexType>
+                              </xs:element>
+                            </xs:sequence>
+                          </xs:complexType>
+                        </xs:element>
+                        <xs:element name="Add">
+                          <xs:complexType>
+                            <xs:attribute name="mover_name" type="xs:string" use="required" />
+                            <xs:attribute name="minimize_rb" type="xs:unsignedByte" use="optional" />
+                            <xs:attribute name="coord_cst_std" type="xs:decimal" use="optional" />
+                            <xs:attribute name="use_constraints" type="xs:unsignedByte" use="optional" />
+                          </xs:complexType>
+                        </xs:element>
+                      </xs:choice>
+                    </xs:sequence>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="two_sided_trials" type="xs:unsignedShort" use="optional" />
+                    <xs:attribute name="self_energy_trials" type="xs:unsignedShort" use="optional" />
+                    <xs:attribute name="final_filter" type="xs:string" use="optional" />
+                    <xs:attribute name="stubfile" type="xs:string" use="optional" />
+                    <xs:attribute name="cb_force" type="xs:decimal" use="optional" />
+                    <xs:attribute name="add_constraints" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="after_placement_filter" type="xs:string" use="optional" />
+                    <xs:attribute name="minimize_rb" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="hurry" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="place_scaffold" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="score_threshold" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="max_cb_dist" type="xs:decimal" use="optional" />
+                    <xs:attribute name="repack_non_ala" type="xs:unsignedByte" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="build_Ala_pose">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="partner1" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="partner2" type="xs:unsignedByte" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="SaveAndRetrieveSidechains">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="Backrub">
+                  <xs:complexType>
+                    <xs:sequence minOccurs="0">
+                      <xs:element maxOccurs="unbounded" name="span">
+                        <xs:complexType>
+                          <xs:attribute name="begin" type="xs:unsignedByte" use="required" />
+                          <xs:attribute name="end" type="xs:unsignedByte" use="required" />
+                        </xs:complexType>
+                      </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="interface_distance_cutoff" type="xs:decimal" use="optional" />
+                    <xs:attribute name="partner1" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="partner2" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="moves" type="xs:unsignedShort" use="optional" />
+                    <xs:attribute name="scorefxn" type="xs:string" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="DnaInterfaceMultiStateDesign">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="scorefxn" type="xs:string" use="required" />
+                    <xs:attribute name="task_operations" type="xs:string" use="required" />
+                    <xs:attribute name="pop_size" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="num_packs" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="numresults" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="boltz_temp" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="anchor_offset" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="mutate_rate" type="xs:decimal" use="required" />
+                    <xs:attribute name="generations" type="xs:unsignedByte" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="DesignProteinBackboneAroundDNA">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="scorefxn" type="xs:string" use="required" />
+                    <xs:attribute name="task_operations" type="xs:string" use="required" />
+                    <xs:attribute name="type" type="xs:string" use="required" />
+                    <xs:attribute name="gapspan" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="spread" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="cycles_outer" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="cycles_inner" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="temp_initial" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="temp_final" type="xs:decimal" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="DnaInterfacePacker">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="scorefxn" type="xs:string" use="required" />
+                    <xs:attribute name="task_operations" type="xs:string" use="required" />
+                    <xs:attribute name="binding" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="probe_specificity" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="minimize" type="xs:unsignedByte" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="DockDesign">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element maxOccurs="unbounded" name="Add">
+                        <xs:complexType>
+                          <xs:attribute name="mover_name" type="xs:string" use="required" />
+                        </xs:complexType>
+                      </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="LoopOver">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="mover_name" type="xs:string" use="required" />
+                    <xs:attribute name="filter_name" type="xs:string" use="required" />
+                    <xs:attribute name="iterations" type="xs:unsignedByte" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="PackRotamersMover">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="scorefxn" type="xs:string" use="required" />
+                    <xs:attribute name="task_operations" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="AtomTree">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="pdb_num" type="xs:string" use="required" />
+                    <xs:attribute name="connect_to" type="xs:string" use="required" />
+                    <xs:attribute name="host_chain" type="xs:unsignedByte" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="DumpPdb">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="fname" type="xs:string" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="DesignMinimizeHbonds">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element maxOccurs="unbounded" name="residue">
+                        <xs:complexType>
+                          <xs:attribute name="pdb_num" type="xs:string" use="required" />
+                        </xs:complexType>
+                      </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="hbond_weight" type="xs:decimal" use="optional" />
+                    <xs:attribute name="scorefxn_design" type="xs:string" use="optional" />
+                    <xs:attribute name="scorefxn_minimize" type="xs:string" use="optional" />
+                    <xs:attribute name="donors" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="acceptors" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="bb_hbond" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="sc_hbond" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="design_partner1" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="design_partner2" type="xs:unsignedByte" use="optional" />
+                    <xs:attribute name="repack_non_ala" type="xs:unsignedByte" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="PlaceSimultaneously">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="StubSets">
+                        <xs:complexType>
+                          <xs:sequence>
+                            <xs:element maxOccurs="unbounded" name="StubSet">
+                              <xs:complexType>
+                                <xs:attribute name="file" type="xs:string" use="required" />
+                              </xs:complexType>
+                            </xs:element>
+                          </xs:sequence>
+                        </xs:complexType>
+                      </xs:element>
+                      <xs:element name="StubMinimize">
+                        <xs:complexType>
+                          <xs:sequence>
+                            <xs:element name="Add">
+                              <xs:complexType>
+                                <xs:attribute name="mover_name" type="xs:string" use="required" />
+                              </xs:complexType>
+                            </xs:element>
+                          </xs:sequence>
+                        </xs:complexType>
+                      </xs:element>
+                      <xs:element name="DesignMovers">
+                        <xs:complexType>
+                          <xs:sequence>
+                            <xs:element maxOccurs="unbounded" name="Add">
+                              <xs:complexType>
+                                <xs:attribute name="mover_name" type="xs:string" use="required" />
+                                <xs:attribute name="coord_cst_std" type="xs:decimal" use="optional" />
+                              </xs:complexType>
+                            </xs:element>
+                          </xs:sequence>
+                        </xs:complexType>
+                      </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="minimize_rb" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="stub_energy_threshold" type="xs:decimal" use="required" />
+                    <xs:attribute name="explosion" type="xs:unsignedByte" use="required" />
+                    <xs:attribute name="after_placement_filter" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="ConstraintSetMover">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="cst_file" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="Prepack">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="scorefxn" type="xs:string" use="required" />
+                    <xs:attribute name="jump_number" type="xs:unsignedByte" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="InterfaceRecapitulation">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required" />
+                    <xs:attribute name="mover_name" type="xs:string" use="required" />
+                  </xs:complexType>
+                </xs:element>
+              </xs:choice>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="APPLY_TO_POSE">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:choice maxOccurs="unbounded">
+                <xs:element name="favor_native_residue">
+                  <xs:complexType>
+                    <xs:attribute name="bonus" type="xs:decimal" use="required" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="hashing_constraints">
+                  <xs:complexType>
+                    <xs:attribute name="stubfile" type="xs:string" use="required" />
+                    <xs:attribute name="cb_force" type="xs:decimal" use="optional" />
+                  </xs:complexType>
+                </xs:element>
+              </xs:choice>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="PROTOCOLS">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="Add">
+                <xs:complexType>
+                  <xs:attribute name="mover_name" type="xs:string" use="optional" />
+                  <xs:attribute name="filter_name" type="xs:string" use="optional" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

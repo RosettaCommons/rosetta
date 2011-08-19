@@ -1,0 +1,91 @@
+CLAIMER PseudocontactShiftEnergyController
+
+# The flag NPC_INPUT_FILE is used to give the input file name. Use 1 per lanthanide, followed by a weight value (positif)
+# (the weight has an influence only if multiple lanthanide are used)
+
+
+PCS_INPUT_FILE protocols/abinitio/pcs_data1.npc
+PCS_INPUT_FILE protocols/abinitio/pcs_data2.npc
+
+
+# The size of the edge of the cube that determine the grid search.
+# 4 strictly positif numbers (int or float) for the 4 stages.
+# If not set, default value is 50.0 for all stages
+
+GRID_EDGE_SIZE 12 12 12 12
+
+
+
+# The size of the step of the grid search.
+# 4 strictly positif numbers (int or float) for the 4 stages.
+# If not set, default value is 3.0 for all stages
+
+GRID_STEP_SIZE 5 5 5 5
+
+
+
+# A spherical cutoff: skip points of the grid search within that sphere (centered on the center of the grid search)
+# 4 positif numbers (int or float) for the 4 stages.
+# If not set, default value is 0.0 for all stages
+
+GRID_SMALL_CUTOFF 3 3 3 3
+
+
+
+# A spherical cutoff: skip points of the grid search outside that sphere (centered on the center of the grid search)
+# 4 strictly positif numbers (int or float) for the 4 stages.
+# If not set, default value is 25.0 for all stages
+
+GRID_LARGE_CUTOFF 6 6 6 6
+
+
+# A conic cutoff: skip points of the grid search that are outside the cone (axis determined by the 2 Atom points)
+# 4 numbers betwwen 0 and 180 (int or float) for the 4 stages.
+# Typicall values are 180 (full space) or 90 (half space)
+# If not set, default value is 180.0 for all stages
+
+GRID_CONE_ANGLE_CUTOFF 180 180 180 180
+
+
+
+# The first atom that will determine the vector (used as axes of GRID_CONE_ANGLE_CUTOFF)
+# Must be specified
+
+VECTOR_ATOM1_NAME CA CA CA CA
+VECTOR_ATOM1_RESIDUE_NUM 68 68 68 68
+
+
+
+# The first atom that will determine the vector (used as axes of GRID_CONE_ANGLE_CUTOFF)
+# Must be specified
+
+VECTOR_ATOM2_NAME CB CB CB CB
+VECTOR_ATOM2_RESIDUE_NUM 68 68 68 68
+
+
+
+# The center C of the grid search (which is also the center of the spheres) is specified by the following vector equality
+# ATOM2_C = K_vector * ATOM1_ATOM2
+# Example, if you defined ATOM1 as CA 68 and ATOM2 as CB 68, and if you want to center the grid search on the point C that is on the line (ATOM1, ATOM2) such that the distance (ATOM2, C) is equal to twice the distance (ATOM1, ATOM2), then you would chose K_VECTOR = 2.
+# or, if you want to center the grid search on ATOM2, chose K_VECTOR = 0.
+# If not set, default value is 0.0 for all stages
+
+K_VECTOR 0 0 0 0
+
+
+
+# At the end of the grid search, the best tensor found can be further minimize (including the lanthanide coordinate)
+# 4 boolean (0 for false, 1 for true) for the 4 stages.
+# If not set, default value is 0 (false) for all stages
+
+MINIMIZE_BEST_TENSOR 0 0 0 1
+
+
+
+# The weight to use for the PCS score.
+# 4 positif numbers (int or float) for the 4 stages.
+# If not set, default value is 10 for all stages
+
+PCS_WEIGHT 1 1 1 1
+
+END_CLAIMER

@@ -1,0 +1,73 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# Project settings for utility tests.
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+sources = {
+	"" : [
+		"BitSet",
+		"BitVector",
+                "heap",
+                "in_place_list",
+                "integer_mapping",
+                "LexicographicalIterator",
+                "minmax",
+                "OrderedTuple",
+                #"TopScoreSelector",
+		"UTools",
+		"vector0",
+		"vector1",
+		"vector1_bool",
+		"vectorL",
+		"string_util",
+	],
+	"factory" : [
+		"Factory",
+	],
+	"file" : [
+		"file_sys_util",
+		"PathName",
+	],
+	"io" : [
+		"izstream",
+		"zipstream",
+	],
+	"keys" : [
+		"AutoKey",
+		"ClassKeyMap",
+		"ClassKeyVector",
+		"Key4Tuple",
+		"Key4Vector",
+		"SmallKeyMap",
+		"SmallKeyVector",
+		"UserKey",
+	],
+	"pointer" : [
+		"access_ptr",
+		"owning_ptr",
+		"owning_ptr_MI",
+	],
+	"signals" : [
+		"BufferedSignalHub",
+		"PausableSignalHub",
+		"SignalHub",
+		"TokenHub",
+	],
+
+        "sql_database" : [
+        	"DatabaseSessionManagerTests",
+	],
+
+}
+include_path = [ "#external/cxxtest", "#" ]
+library_path = []
+libraries    = [ "sqlite3", "cppdb", "utility", "ObjexxFCL", "z", ]
+subprojects  = []
+testinputfiles = [
+    "io/no_final_newline.txt",
+]
+

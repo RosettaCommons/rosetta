@@ -1,0 +1,122 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   core/scoring/P_AA.hh
+/// @brief  Amino acid probability arrays and functions
+/// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
+/// @author Andrew Leaver-Fay -- porting Stuart's code
+
+#ifndef INCLUDED_core_scoring_P_AA_hh
+#define INCLUDED_core_scoring_P_AA_hh
+
+// Unit Headers
+#include <core/scoring/P_AA.fwd.hh>
+
+// Package headers
+#include <core/scoring/types.hh>
+
+// Project headers
+#include <core/types.hh>
+#include <core/chemical/AA.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/id/TorsionID.fwd.hh>
+
+// Utility headers
+// AUTO-REMOVED #include <utility/vector1.hh>
+
+//Auto Headers
+#include <utility/vector1_bool.hh>
+
+
+
+
+namespace core {
+namespace scoring {
+
+class P_AA
+{
+
+private:
+
+	/// @brief Amino acid probability array: P(aa)
+	//typedef  utility::keys::SmallKeyVector< conformation::amino::AminoAcidKey, Probability >  Probability_AA;
+	//extern Probability_AA P_AA;
+	typedef utility::vector1< Probability > Probability_AA;
+	Probability_AA P_AA_;
+
+	/// @brief Amino acid conditional probability wrt number of neighbors array: P(aa|neighbors)
+	//typedef  utility::keys::SmallKeyVector< conformation::amino::AminoAcidKey, FArray1D_Probability >  Probability_AA_n;
+	//extern Probability_AA_n P_AA_n;
+	typedef utility::vector1< utility::vector1< Probability > > Probability_AA_n;
+	Probability_AA_n P_AA_n_;
+
+	/// @brief Amino acid conditional probability wrt (phi,psi) array: P(aa|phi,psi)
+	//typedef  utility::keys::SmallKeyVector< conformation::amino::AminoAcidKey, FArray2D_Probability >  Probability_AA_pp;
+	//extern Probability_AA_pp P_AA_pp;
+	typedef utility::vector1< FArray2D_Probability > Probability_AA_pp;
+	Probability_AA_pp P_AA_pp_;
+
+public:
+	P_AA();
+
+	virtual ~P_AA();
+private:
+
+
+	/// @brief Initialize the amino acid probability data structures
+	void
+	P_AA_initialize();
+
+
+	/// @brief Read the amino acid probability file into P_AA
+	void
+	read_P_AA();
+
+
+	/// @brief Read the amino acid conditional probability wrt (neighbors) file into P_AA_n
+	void
+	read_P_AA_n();
+
+
+	/// @brief Read the amino acid conditional probability wrt (phi,psi) file into P_AA_pp
+	void
+	read_P_AA_pp();
+
+public:
+	/// @brief Probability energies from P(aa|phi,psi)
+	//Energy
+	//P_AA_pp_energy( conformation::amino::AminoAcid const & aa );
+	Energy
+	P_AA_pp_energy( conformation::Residue const & ) const;
+
+	/// @brief Low-level probability energies from P(aa|phi,psi)
+	/// @brief Probability energies from P(aa|phi,psi): Low level calculation for non-terminus position
+	//Energy
+	//P_AA_pp_energy( conformation::amino::AminoAcidKey const & key, Angle const phi, Angle const psi );
+	Energy
+	P_AA_pp_energy( chemical::AA aa, Angle const phi, Angle const psi ) const;
+
+	EnergyDerivative
+	get_Paa_pp_deriv(
+		conformation::Residue const & res,
+		id::TorsionID const & tor_id
+	) const;
+
+	/// @brief Probability energies for P(aa)
+	Energy
+	P_AA_energy( conformation::Residue const & ) const;
+
+
+};
+
+} // namespace scoring
+} // namespace core
+
+
+#endif // INCLUDED_core_scoring_P_AA_HH

@@ -1,0 +1,115 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+///@author Oliver Lange
+/*!
+
+last updated 5/31/11
+
+@page jd2 Automatic NOESY assignment  Module (noesy_assign)
+
+@section Overview
+
+In your code (application/protocol-level) you will probably only include the "NoesyModule" which exports the most important high-level funktions...
+@li  NoesyModule   -- (top-level class) use one of these in your module/application to use the automatic NOESY assignment....
+
+The NoesyModule class will read the input data: (assigned resonances and peak lists),
+    assign them based on provided models or model-free and generate constraints.
+
+The most important classes are:
+    @li PeakFileFormat  --- handles input/output of CrossPeakLists (peak-lists)
+    @li CrossPeakList    --- a peaklist ( peakID -- resonances -- assignments )
+    @li ResonanceList  ---  list of all resonances ( atomID - chemical shift value )
+    @li ConstraintSet   --- holds all constraints generated
+
+@section ResonanceList
+	 - provides input/output of files with chemical shift assignment (.prot)
+	 - each resonance has a unique identifier (ID / integer)
+	 - each resonance combines a single resonance frequency, a tolerance with an atom (NamedAtomID)
+	 - the list object also has the sequence information of protein
+
+	 -- resonance accessors:
+	 	    by ID, by resid (list)
+	 -- sequence accesors:
+	      full sequence (string), at single position (AA)
+
+a  Resonance
+	 - ID (unsigned integer)
+	 - frequency + tolerance
+	 - NamedAtomID
+
+@section NOESY Assignment
+	 the top-level procedure is found in NoesyModule.impl.hh:  NoesyModule::assign()
+
+	 @li find_assignments  --- initial assignments by chemical shift matching
+	 @li delete_diagonal_peaks  --- delete peaks from list that have at least 1 assignment that is diagonal
+	 @li update assignment scores:
+	  update_chemicalshiftscore --- compute score for chemical shift match
+	  update_symmetry_score
+	  update_upperdistance_score
+	  update_decoy_compatibility_score
+	 @li network_analysis  --> yields network-score
+	 @li calibrate -- peak-intensities -> distance bound
+	 @li peak-elimination ---> heuristics to remove assignments that might be spurious
+
+@subsection Assignment Data Structure
+	    @li CrossPeakList
+	    @li CrossPeak, CrossPeak3D, CrossPeak4D
+	    @li Spin
+	    @li PeakAssignment
+	    @li CrossPeakInfo
+
+	    The CrossPeakList is simpy the list of all CrossPeaks
+
+	    A CrossPeak is a 2D peak that is extended two 3D and 4D by inheritance
+	    The CrossPeak has two proton "Spin" and for 3D and 4D it has one or two label "Spin", respectively.
+	    Moreover the CrossPeak has a volume (Real), an peak_id (integer), and for the two protons with/without label it has a CrossPeakInfo field each: info1, info2.
+	    The CrossPeak further provides fields to store some computed values:
+	    	-assignments
+		-cumulative_peak_volume ( ess. the sum of all assignment scores used for normalization of these )
+		-distance_bound  ( computed after peak-calibration )
+		-eliminated ( bool -- various heuristics can cause elimination )
+		-elimination-reason
+
+      The assignments of a CrossPeak are stored in a distributed fashion:
+      	  each Spin ( which a CrossPeak can have 2,3, or 4 )
+	  has a list of possible assignments (i.e., ResonanceIDs)
+
+	  a PeakAssignment stores indices into the lists of spin of proton1 and spin of proton2
+
+	  example:
+	      Spin proton1  -- assigns to  ( 15, 100  /  H 3; H 23  )
+	      Spin label 1 -- assign to ( 16, 101  / N 3; N 23 )
+	      Spin proton 2 -- assigns to ( 18, 23, 50, 123, 211 / HA 3; QB 10; QD 15; HA 20; H 44 )
+
+	      PeakAssignments:
+	      		       1 -- 1  ( H 3 -- HA 3 )
+			       1 -- 2  ( H 3 -- QB 10 )
+			       1 -- 3
+			       1 -- 4
+			       1 -- 5
+			       2 -- 1  ( H 23 -- HA 3 )
+			       2 -- 2  ( H 23 -- QB 10 )
+			       2 -- 3
+			       2 -- 4
+			       2 -- 5
+
+	the individual assignments are created by "assign_spin" (which is polymorph and calls assigned_labelled_spin if necessary )
+	the PeakAssignments are subsequently created by an all2all combination between the assignments for proton1 and proton2.
+
+
+
+@subsection find_assignments()
+	 generate all possible initial assignments by chemical shift matching
+	 this uses the information about the experiment type:
+	      3D 15N edited, 4D 15N-HN 15N-HN, etc.
+
+
+
+*/

@@ -1,0 +1,126 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# SCons build script for sources.
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+# SCons imports
+Import("build", "project")
+
+# Python imports
+from tools.build.settings import Settings, ProjectSettings
+from tools.build import utility
+
+# Load the project settings.
+if ( "my" in map(str, BUILD_TARGETS) or "my_pilot_apps" in map(str, BUILD_TARGETS) ) and project == "pilot_apps" :
+  #for compiling only pilot_apps listed in pilot_apps.src.settings
+  requested  = Settings.load(build.toplevel + "/src/" + project + ".src.settings.my")
+  if "my" in map(str, BUILD_TARGETS) :
+    BUILD_TARGETS.remove("my")
+  else :
+    BUILD_TARGETS.remove("my_pilot_apps")
+elif "pilot_apps_all" in map(str, BUILD_TARGETS) and project == "pilot_apps" :
+  #for backwards compatibility
+  requested  = Settings.load(build.toplevel + "/src/" + project + ".src.settings.all")
+  BUILD_TARGETS.remove("pilot_apps_all")
+else :
+  if project == "pilot_apps" :
+    #for default pilot_apps.src.settings.all
+    requested = Settings.load(build.toplevel + "/src/" + project + ".src.settings.all")
+  else :
+    #for apps.src.settings
+    requested = Settings.load(build.toplevel + "/src/" + project + ".src.settings")
+
+requested = ProjectSettings(project, requested)
+
+# Add the default settings for source builds.
+actual = ProjectSettings(project)
+
+# Subprojects are used to determine dependencies on other projects
+actual.subprojects = requested.subprojects
+
+# Sources.  Currently we assume they are all C++.  If this ever changes
+# we will need to differentiate language types in the .src.settings files.
+for package, modules in requested.sources.items():
+    for module in modules:
+        source = module + ".cc"
+        if package:
+            actual.sources += [ "apps/%s/%s" % ( package, source) ]
+        else:
+            actual.sources += [ "apps/%s/%s" % ( project, source) ]
+# Include paths.  Gives priority to user defined paths.
+actual.include_path = \
+    requested.include_path + \
+    [ "#src" ] + \
+    [ "#external/include" ] + \
+    [ "#src/platform/" + "/".join(build.platform_includes) ]
+
+# Searches the platform paths by moving up from most specific to most general.
+# This makes more specific platforms take priority.
+for last in range(1, len(build.platform_includes)):
+    platform_include_path = "#src/platform/" + \
+                            "/".join(build.platform_includes[:-last])
+    actual.include_path += [ platform_include_path ]
+
+# Library paths.  Gives priority to user defined paths.
+actual.library_path = \
+    requested.library_path + \
+    [ "#lib" ] + \
+    [ "#external/lib" ] + \
+    [ "#build/src/" + build.platform ] + \
+    [ "#build/external/" + build.platform ]
+
+
+# Libraries.  Gives priority to user defined libraries.
+actual.libraries = \
+    requested.libraries + \
+    requested.subprojects
+
+# The Boost library extensions vary by OS which is a huge nuisance.
+# XXX: This is a temporary solution: the right answer is a Boost
+# XXX: build script which does the work of selecting the extension.
+boost_ext = {
+    "linux" : "-gcc",
+    # "macos" : "",
+    # "windows" : "",
+    }.get(build.options.os, "")
+if "mingw" in build.options.extras and build.options.os == "windows":
+    boost_ext = "-mgw"
+pre_boostified = actual.libraries
+actual.libraries = []
+for lib in pre_boostified:
+    if lib.startswith("boost_"):
+        lib += boost_ext
+    actual.libraries += [ lib ]
+
+
+
+# Transform the modified settings into SCons Environment variables.
+# Gives priority to project settings over global settings.
+env = build.environment.Clone()
+env.Prepend(**actual.symbols())
+if "static" not in build.options.extras:
+  env["RPATH"] = [
+      build.toplevel + "/build/src/" + build.platform,
+      build.toplevel + "/build/external/" + build.platform ]
+
+for entry in actual.sources:
+  list_entry = entry.split('/')
+  last_list_entry=list_entry[len(list_entry)-1]
+  target = ""
+  if len(build.options.extras) == 0:
+    target =  last_list_entry[0:len(last_list_entry)-3] + ".default." + build.options.os + build.options.cxx + build.options.mode
+  else:
+    target =  last_list_entry[0:len(last_list_entry)-3] + "." + "".join(build.options.extras)+ "." + build.options.os + build.options.cxx + build.options.mode
+  last_target = last_list_entry[0:len(last_list_entry)-3] + "." + build.options.os + build.options.cxx + build.options.mode
+  exe = env.Program( target, entry )
+  default_exe = env.Program(last_target, entry)
+  Alias("#bin/" + target, "#build/src/" + build.platform + "/" + target)
+  Alias("#bin/" + last_target, "#build/src/" + build.platform+ "/" + target)
+  env["INSTALL"] = utility.install_links
+  install_bin = env.Install("#bin", exe)
+  install_bin = env.Install("#bin",default_exe)
+

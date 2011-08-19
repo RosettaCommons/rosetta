@@ -1,0 +1,10 @@
+# These paramaters are nonsence and only for testing the
+# functionality of the MMTorsionLibrary class in the Unit Test
+C	CA	CC	CP1	0.2000	1	180.00
+X	CP2	CP3	X	0.2000	1	180.00
+CPH1	CP3	CC	C	0.2000	1	180.00
+CPH1	CP3	CC	C	0.2000	2	180.00
+CPH1	CP3	CC	C	0.2000	3	180.00
+X	C	CA	X	0.2000	1	180.00
+X	C	CA	X	0.2000	2	180.00
+X	C	CA	X	0.2000	3	180.00

@@ -1,0 +1,61 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file
+/// @author Jim Havranek
+
+
+#ifndef INCLUDED_core_chemical_adduct_util_hh
+#define INCLUDED_core_chemical_adduct_util_hh
+
+// ObjexxFCL Headers
+// Commented by inclean daemon #include <ObjexxFCL/string.functions.hh>
+
+// Unit headers
+#include <core/chemical/ResidueType.fwd.hh>
+
+// Project headers
+
+// Utility headers
+// AUTO-REMOVED #include <utility/options/StringVectorOption.hh>
+
+//Auto Headers
+#include <utility/options/keys/StringVectorOptionKey.hh>
+#include <iostream>
+
+
+// C++ headers
+// Commented by inclean daemon #include <string>
+
+namespace core {
+namespace chemical {
+
+	/// @brief Convert input string to map of adducts->max usage
+	std::map< std::string, int >
+	parse_adduct_string(
+		utility::options::StringVectorOption & add_vec
+	);
+
+	/// @brief Make sure requested adducts exist in some residue
+	void
+	error_check_requested_adducts( std::map< std::string, int > const & add_map,
+		ResidueTypeCAPs const & rsd_types );
+
+	/// @brief Apply adducts to residue using a boolean mask
+	ResidueTypeOP apply_adducts_to_residue(
+			ResidueType const & rsd,
+			utility::vector1< bool > & add_mask
+	);
+
+} // chemical
+} // core
+
+
+
+#endif

@@ -1,0 +1,53 @@
+(c) Copyright Rosetta Commons Member Institutions.
+(c) This file is part of the Rosetta software suite and is made available under license.
+(c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+(c) For more information, see http://www.rosettacommons.org. Questions about this can be
+(c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+The platform/ "project" contains the platform specific code for other projects.
+It also contains portable file for system types that are not supported equally
+on all platforms.  It contains subdirectories of the form:
+
+        os/os(arch)-size/compiler[/compiler-version]
+
+where "os" is the operating system, and "arch" is the processor architecture.
+
+Examples:
+
+        linux/32/icc
+        macos/32/gcc
+        windows/64/msvc
+
+Each of these directories may contain the project subdirectories and headers
+named similarly to the file they are part of but with a .platform.hh extension.
+For example a platform specific header for utility/io/ostream.cc might be in:
+
+        linux/32/gcc/utility/io/ostream.platform.cc
+        windows/32/msvc/utility/io/ostream.platform.cc
+
+The build system searches up these directories for platform
+specific headers.
+
+        os/os(arch)-size/compiler/compiler-version
+        os/os(arch)-size
+        os
+
+This allows general headers to be defined for certain platforms
+(such as for each OS) that can be superceded by more specific headers.
+
+Note that we don't replicate all projects under all platforms, only the ones
+that actually HAVE platform specific code.
+
+
+Notes:
+
+Formerly the directories were of the form:
+
+        os/os-version/os(arch)-size/arch/compiler[/compiler-version]
+
+but the source specializations were found not to depend on the specific OS
+version or hardware architecture so the tree was simplified to avoid the need
+for duplicate headers (those could be eliminated by a more elaborate search
+scheme but that would increase the number of include paths to search and slow
+compiles).  This could be readily amended to include those specializations if
+needed.

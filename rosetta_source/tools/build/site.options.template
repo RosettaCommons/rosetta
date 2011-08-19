@@ -1,0 +1,25 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# Copy this file into site.options:
+#
+#   cp site.options.template site.options
+#
+# and customize to fit your site's environment
+# DO NOT make changes to this template
+# DO NOT try and check in site.options
+
+
+# Options
+#
+# Override the default.options.  Can be overriden by the user.options
+# and in turn by the command-line options.
+
+# cxx     =
+# cxx_ver =
+# os      =
+# os_ver  =
+# arch    =
+# arch_size =
+# mode    =
+# cat     =
+# extras  =

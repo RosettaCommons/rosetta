@@ -1,0 +1,3 @@
+-in:file:silent test.out.silent.protein 
+-in:file:tags mini1, mini2
+-database /home/yiliu/Programing/branches/minirosetta_database/

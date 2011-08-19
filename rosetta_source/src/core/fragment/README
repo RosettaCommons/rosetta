@@ -1,0 +1,72 @@
+(c) Copyright Rosetta Commons Member Institutions.
+(c) This file is part of the Rosetta software suite and is made available under license.
+(c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+(c) For more information, see http://www.rosettacommons.org. Questions about this can be
+(c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+general remarks:
+
+A FragID uses validity when elements are deleted from a frame
+
+FragID_Iterator loose validity if frames are deleted from fragset during iteration, or if fragments are deteleted from frames...
+( This is also the case with std:: containers, so it shouldn't be surprising )
+
+FragID_Iterator will run into troubles if empty frames are contained in FragSet
+		( --> make sure that no empty frames are stored in FragSet,
+		 an assertion is in place )
+
+In the moment frag_id.id() refers to the frag_num, i.e., the index of the respective fragment in its frame.
+index and frag_id are identical ( might be changed later, but would involve a considerable overhead within the frames )
+
+Instead of deleting fragments --> make a new frame that does only contain fragments you want !
+
+a good advice: never delete fragments from a frame but make a new frame with a subset of your fragments.
+
+if you delete fragments individually make sure that:
+   you don't loose FragStore/FragCache data that you require
+   you don't create empty frames in FragSets
+
+
+---------------------------------------------
+
+How about a FragData or Frame Factory.
+The file reader should create AnnotatedFragData objects if wished, otherwise FragData.
+Howto access annotations ? dynamic_cast ? virtual functions that return false if no annotation ?
+---
+Todo:
+
+fragment to pose or conformation ? is that cheaper ?
+fragment quality --> rms between fragments as poses
+	 	           ---> other distance measures ? can these be implemented by SRFD ?
+numerical check of gunn values against rosetta++
+
+a possible strategy for file-reading:
+BaseFragSet --> FragSet
+BaseFragSet --> FrameList
+shared interface:
+add_frame
+
+file-reading could be
+read_file( BaseFragSet& fragset )  for constant_length: could determine its frame_length from first added frame!
+( there is something particular about ConstantLength : it is actually a one frame per position FragSet! )
+
+alternatively:
+FragSetOP file_read( FragSet const& )
+FrameListOP file_read ( FrameList const& );
+call:
+
+FragSetOP my_frags = read_file( ConstantLengthFragSet() , AnnotatedFragData() );
+
+having the "pack" functionality of the FragSet more general available ?
+Any add_fragment/add_frame to a BaseFragSet might be handled in such a way, that first a compatible
+frame is searched ?
+With a fast add_frame_() to add without checking... ?
+
+----
+
+Todo next:
+
+for fragment_to_pose() use a constant 3mer and 9mer pose ( static for now ) that provides the "geruest" until
+we can make a pose.
+
+test gunn-cost

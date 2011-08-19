@@ -1,0 +1,73 @@
+Hydrogen Bond Types
+
+HBondWeightType:
+	hbw_NONE
+	hbw_SR_BB
+	hbw_LR_BB
+	hbw_SR_BB_SC
+	hbw_LR_BB_SC
+	hbw_SC
+
+HBDerivType:
+	hbderiv_NONE
+	hbderiv_ABE_GO
+	hbderiv_ABE_GO_NO_xD
+	hbderiv_ABE_GO_NO_xH
+
+HBDonChemType:
+	hbdon_NONE
+	hbdon_PBA
+	hbdon_CXA
+	hbdon_IMD
+	hbdon_IME
+	hbdon_IND
+	hbdon_AMO
+	hbdon_GDE
+	hbdon_GDH
+	hbdon_AHX
+	hbdon_HXL
+	hbdon_H2O
+	hbdon_GENERIC_BB
+	hbdon_GENERIC_SC
+
+HBAccChemType:
+	hbacc_NONE
+	hbacc_PBA
+	hbacc_CXA
+	hbacc_CXL
+	hbacc_IMD
+	hbacc_IME
+	hbacc_AHX
+	hbacc_HXL
+	hbacc_PCA_DNA
+	hbacc_PES_DNA
+	hbacc_RRI_DNA
+	hbacc_PCA_RNA
+	hbacc_PES_RNA
+	hbacc_RRI_RNA
+	hbacc_H2O
+	hbacc_GENERIC_SP2BB
+	hbacc_GENERIC_SP2SC
+	hbacc_GENERIC_SP3BB
+	hbacc_GENERIC_SP3SC
+	hbacc_GENERIC_RINGBB
+	hbacc_GENERIC_RINGSC
+
+HBSeqSep:
+	seq_sep_other
+	seq_sep_M4
+	seq_sep_M3
+	seq_sep_M2
+	seq_sep_PM1
+	seq_sep_P2
+	seq_sep_P3
+	seq_sep_P4
+
+HBGeoDimType:
+	hbgd_NONE
+	hbgd_AHdist
+	hbgd_cosBAH
+	hbgd_cosAHD
+	hbgd_chi
+
+

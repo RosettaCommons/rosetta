@@ -1,0 +1,505 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// This file is part of the Rosetta software suite and is made available under license.
+// The Rosetta software is developed by the contributing members of the Rosetta Commons consortium.
+// (C) 199x-2009 Rosetta Commons participating institutions and developers.
+// For more information, see http://www.rosettacommons.org/.
+
+/// @file
+/// @brief
+
+
+// libRosetta headers
+#include <core/scoring/rms_util.hh>
+#include <core/scoring/rna/RNA_Util.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
+#include <core/sequence/Sequence.hh>
+#include <core/sequence/util.hh>
+#include <core/types.hh>
+#include <core/chemical/AA.hh>
+#include <core/conformation/Residue.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+
+#include <core/chemical/ChemicalManager.hh>
+
+#include <core/scoring/ScoringManager.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/rms_util.hh>
+
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Jump.hh>
+#include <core/kinematics/MoveMap.hh>
+
+#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/RNA_SilentStruct.hh>
+
+#include <core/pack/pack_rotamers.hh>
+#include <core/pack/rotamer_trials.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
+
+
+#include <basic/options/option.hh>
+#include <basic/options/after_opts.hh>
+#include <basic/options/util.hh>
+
+#include <basic/options/option_macros.hh>
+#include <protocols/idealize/idealize.hh>
+#include <protocols/viewer/viewers.hh>
+
+#include <protocols/rna/RNA_StructureParameters.fwd.hh>
+#include <protocols/rna/RNA_StructureParameters.hh>
+#include <protocols/rna/RNA_ChunkLibrary.hh>
+#include <protocols/rna/RNA_ChunkLibrary.fwd.hh>
+#include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/rna/RNA_HelixAssembler.hh>
+#include <protocols/rna/RNA_LoopCloser.hh>
+#include <protocols/rna/RNA_Minimizer.hh>
+
+//Minimizer stuff
+#include <core/kinematics/MoveMap.hh>
+#include <core/optimization/AtomTreeMinimizer.hh>
+#include <core/optimization/MinimizerOptions.hh>
+
+#include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <basic/basic.hh>
+#include <basic/database/open.hh>
+#include <core/init.hh>
+#include <core/io/pdb/pose_io.hh>
+
+#include <utility/vector1.hh>
+#include <utility/io/ozstream.hh>
+#include <utility/io/izstream.hh>
+#include <utility/exit.hh>
+
+#include <numeric/xyzVector.hh>
+#include <numeric/conversions.hh>
+
+#include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/string.functions.hh>
+
+#include <core/scoring/EnergyGraph.hh>
+#include <core/scoring/EnergyMap.hh> //for EnergyMap
+#include <core/scoring/EnergyMap.fwd.hh> //for EnergyMap
+
+#include <core/scoring/Energies.hh> //for EnergyMap
+
+
+// C++ headers
+//#include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <string>
+
+//silly using/typedef
+
+#include <basic/Tracer.hh>
+using basic::T;
+
+// option key includes
+
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+
+//Auto Headers
+#include <core/import_pose/import_pose.hh>
+#include <core/pose/annotated_sequence.hh>
+
+
+
+using basic::Error;
+using basic::Warning;
+
+using namespace core;
+using namespace protocols;
+using namespace basic::options::OptionKeys;
+
+using utility::vector1;
+
+using io::pdb::dump_pdb;
+
+typedef  numeric::xyzMatrix< Real > Matrix;
+
+//Definition of new OptionKeys
+// these will be available in the top-level OptionKey namespace:
+// i.e., OPT_KEY( Type, key ) -->  OptionKey::key
+// to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
+OPT_KEY( Boolean, build_helix_test )
+OPT_KEY( Boolean, all_combinations )
+OPT_KEY( Boolean, minimize )
+OPT_KEY( String,  params_file )
+OPT_KEY( String,  seq )
+OPT_KEY( String,  cst_file )
+OPT_KEY( Integer, job_number )
+OPT_KEY( Integer, total_jobs )
+
+using core::pose::ResMap;
+
+
+/////////////////////////////////////////////////////////////////////////////////
+void
+rna_assemble_test()
+{
+ 	using namespace core::scoring;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core::io::silent;
+	using namespace protocols::rna;
+	using namespace core::kinematics;
+	using namespace core::scoring::constraints;
+
+	// setup residue types
+	core::chemical::ResidueTypeSetCAP rsd_set;
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA );
+
+	core::pose::Pose pose;
+
+	/////////////////////////////////////////////////////////////////////////////
+	// Initialize an RNA with extended sequence + base pairs.
+	//  Perhaps use RNA_StructureParameters class.
+	//Prepare starting structure from scratch --> read from fasta.
+
+	std::string seq_in;
+	if ( option[ in::file::fasta ].user() ) {
+		std::string const fasta_file = option[ in::file::fasta ]()[1];
+		core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
+		seq_in = fasta_sequence->sequence();
+	} else if ( option[ seq ].user() ){
+		seq_in = option[ seq ]();
+	} else {
+		utility_exit_with_message( "Need to specify -fasta <fasta file> or -seq <sequence>." );
+	}
+
+	core::pose::make_pose_from_sequence( pose,	seq_in,	*rsd_set );
+
+	RNA_StructureParametersOP rna_structure_parameters( new RNA_StructureParameters );
+	std::string jump_library_file( basic::database::full_name("1jj2_RNA_jump_library.dat" ) );
+	std::string rna_params_file( 	option[ params_file ] );
+
+	rna_structure_parameters->initialize( pose, rna_params_file, jump_library_file, false );
+
+	// Fill in helical segments with A-form jumps and torsion angles.
+	// This will be new!!! Can do it last.
+	rna_structure_parameters->setup_jumps( pose, true /*initialize_jumps*/ );
+
+	pose.dump_pdb( "init.pdb");
+
+	if ( option[ cst_file ].user() ) {
+		ConstraintSetOP cst_set = ConstraintIO::get_instance()->read_constraints( option[cst_file], new ConstraintSet, pose );
+		pose.constraint_set( cst_set );
+	}
+
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
+
+	utility::vector1< std::string > const silent_files(  option[ in::file::silent ]() );
+	RNA_ChunkLibrary rna_chunk_library( silent_files, pose.sequence(), rna_structure_parameters->connections() );
+
+	for ( Size n = 1; n <= rna_chunk_library.num_chunk_sets(); n++ ) {
+		//		std::cout << "Inserting chunk from library " << n << " into pose. " << std::endl;
+		rna_chunk_library.insert_chunk_into_pose( pose, n, 1 );
+		pose.dump_pdb( "blah"+string_of(n)+".pdb" );
+	}
+	// output.
+
+	pose.dump_pdb( "chimera.pdb" );
+
+
+	protocols::rna::RNA_LoopCloser rna_loop_closer;
+
+	//	ScoreFunctionOP const lores_scorefxn = ScoreFunctionFactory::create_score_function( RNA_LORES_WTS );
+	rna_loop_closer.close_loops_carefully( pose, rna_structure_parameters->connections() );
+
+	pose.dump_pdb( "closed.pdb" );
+
+	/////////////////////////////////////////////////
+	if ( option[ out::file::silent ].user() ) {
+		std::string tag( "blah" );
+		std::string const silent_file = option[ out::file::silent  ]();
+		SilentFileData silent_file_data;
+		BinaryRNASilentStruct s( pose, tag );
+		silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
+	}
+
+
+}
+
+
+/////////////////////////////////////////////////
+std::string
+get_tag( utility::vector1< Size > const & chunk_numbers ) {
+	std::string tag( "S" );
+
+	for ( Size i = 1; i <= chunk_numbers.size(); i++ ) {
+		tag += "_";
+		tag += string_of( chunk_numbers[i] );
+	}
+
+	//tag += ".pdb";
+	return tag;
+}
+
+/////////////////////////////////////////////////
+void
+score_and_minimize( pose::Pose & pose, pose::Pose const & native_pose,
+										std::string const & tag,
+										std::string const & silent_file,
+										protocols::rna::RNA_ChunkLibrary const & //rna_chunk_library
+										)
+{
+
+	using namespace core::io::silent;
+	using namespace core::scoring;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	static ScoreFunctionOP lores_scorefxn = ScoreFunctionFactory::create_score_function( RNA_LORES_WTS );
+	lores_scorefxn->set_weight( atom_pair_constraint, 1.0 );
+
+	(*lores_scorefxn)( pose );
+	Real const atom_pair_constraint_score = (pose.energies()).total_energies()[ atom_pair_constraint ];
+	//	std::cout << tag << " --> " << atom_pair_constraint_score << std::endl;
+
+	static SilentFileData silent_file_data;
+	static protocols::rna::RNA_Minimizer rna_minimizer;
+	rna_minimizer.skip_o2star_trials( true );
+	//	rna_minimizer.set_allow_insert( rna_chunk_library.allow_insert() );
+
+	if ( option[ minimize ]() ) {
+		if ( atom_pair_constraint_score < 0.0 ) { /*arbitrary cutoff!!!*/
+
+			pose::Pose pose_save( pose );
+
+			rna_minimizer.apply( pose );
+
+			BinaryRNASilentStruct s( pose, tag );
+			Real const rmsd = all_atom_rmsd( native_pose, pose );
+			s.add_energy( "rms", rmsd );
+			silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
+
+			pose = pose_save;
+		}
+	} else {
+		BinaryRNASilentStruct s( pose, tag );
+		Real const rmsd = all_atom_rmsd( native_pose, pose );
+		s.add_energy( "rms", rmsd );
+		silent_file_data.write_silent_struct( s, silent_file, true /*write score only*/ );
+	}
+
+
+}
+
+/////////////////////////////////////////////////
+void
+insert_chunk( pose::Pose & pose, protocols::rna::RNA_ChunkLibrary const & rna_chunk_library,
+							Size const chunk_set_index,
+							utility::vector1 < Size > const & chunk_numbers_in,
+							std::string const & silent_file,
+							pose::Pose const & native_pose )
+{
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+
+	static Size const total_jobs_user = option[ total_jobs ];
+	static Size const job_number_user = option[ job_number ];
+
+	for ( Size n = 1; n <= rna_chunk_library.num_chunks( chunk_set_index ); n++ ) {
+
+		if (chunk_set_index == 1 && ( n % total_jobs_user != job_number_user ) ) continue;
+
+		//		std::cout << "Inserting chunk " << n << " from library " << chunk_set_index << " into pose. " << std::endl;
+		rna_chunk_library.insert_chunk_into_pose( pose, chunk_set_index, n );
+
+		utility::vector1 < Size > chunk_numbers( chunk_numbers_in );
+		chunk_numbers.push_back( n );
+
+		if ( chunk_set_index < rna_chunk_library.num_chunk_sets() ) {
+			insert_chunk( pose, rna_chunk_library, chunk_set_index + 1, chunk_numbers, silent_file, native_pose );
+		} else {
+
+			std::string const tag = get_tag( chunk_numbers );
+			//			std::cout << "Dumping: " << tag << std::endl;
+			//			pose.dump_pdb( tag+".pdb" );
+
+			score_and_minimize( pose, native_pose, tag, silent_file, rna_chunk_library );
+
+		}
+	}
+
+}
+
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+void
+rna_assemble_all_combinations_test()
+{
+ 	using namespace core::scoring;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core::io::silent;
+	using namespace protocols::rna;
+
+	// setup residue types
+	core::chemical::ResidueTypeSetCAP rsd_set;
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::RNA );
+
+	core::pose::Pose pose;
+
+	/////////////////////////////////////////////////////////////////////////////
+	// Initialize an RNA with extended sequence + base pairs.
+	//  Perhaps use RNA_StructureParameters class.
+	//Prepare starting structure from scratch --> read from fasta.
+	std::string const fasta_file = option[ in::file::fasta ]()[1];
+	core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
+	core::pose::make_pose_from_sequence( pose,	fasta_sequence->sequence(),	*rsd_set );
+
+	RNA_StructureParametersOP rna_structure_parameters( new RNA_StructureParameters );
+	std::string jump_library_file( basic::database::full_name("1jj2_RNA_jump_library.dat" ) );
+	std::string rna_params_file( 	option[ params_file ] );
+
+	rna_structure_parameters->initialize( pose, rna_params_file, jump_library_file, false );
+
+	// Fill in helical segments with A-form jumps and torsion angles.
+	// This will be new!!! Can do it last.
+	rna_structure_parameters->setup_jumps( pose, true /*initialize_jumps*/ );
+
+	pose.dump_pdb( "init.pdb");
+
+	utility::vector1< std::string > const silent_files(  option[ in::file::silent ]() );
+	RNA_ChunkLibrary rna_chunk_library( silent_files, pose.sequence(), rna_structure_parameters->connections() );
+
+	pose::Pose native_pose;
+	std::string native_pdb_file  = option[ in::file::native ];
+	core::import_pose::pose_from_pdb( native_pose, *rsd_set, native_pdb_file );
+
+	using namespace core::scoring::constraints;
+	if ( option[ cst_file ].user() ) {
+		ConstraintSetOP cst_set = ConstraintIO::get_instance()->read_constraints( option[cst_file], new ConstraintSet, pose );
+		pose.constraint_set( cst_set );
+	}
+
+	std::string const silent_file = option[ out::file::silent  ]();
+
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
+
+	// RECURSIVELY TRY ALL COMBINATIONS!
+	Size chunk_set_index( 1 );
+	utility::vector1< Size > chunk_numbers;
+	insert_chunk( pose, rna_chunk_library, chunk_set_index, chunk_numbers, silent_file, native_pose );
+
+	pose.dump_pdb( "chimera1.pdb" );
+
+}
+
+/////////////////////////////////////////////////
+void
+rna_build_helix_test(){
+
+ 	using namespace core::scoring;
+ 	using namespace core::chemical;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	using namespace core::pose;
+	using namespace core::kinematics;
+	using namespace core::io::silent;
+	using namespace protocols::rna;
+
+	std::string full_sequence;
+	if ( option[ in::file::fasta ].user() ) {
+		std::string const fasta_file = option[ in::file::fasta ]()[1];
+		core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
+		full_sequence = fasta_sequence->sequence();
+	} else if ( option[ seq ].user() ){
+		full_sequence = option[ seq ]();
+	} else {
+		utility_exit_with_message( "Need to specify -fasta <fasta file> or -seq <sequence>." );
+	}
+
+	std::string silent_file = "";
+	bool output_silent( false );
+	if ( option[ out::file::silent ].user() ) {
+		silent_file = option[ out::file::silent  ]();
+		output_silent = true;
+	}
+	SilentFileData silent_file_data;
+
+	ResidueTypeSetCAP rsd_set;
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+
+	pose::Pose pose;
+	core::pose::make_pose_from_sequence( pose, full_sequence,	*rsd_set );
+
+	RNA_HelixAssembler rna_helix_assembler;
+	//rna_helix_assembler.random_perturbation( true );
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
+
+	Size const nstruct = option[ out::nstruct ];
+
+	for (Size n = 1; n <= nstruct; n++ ) {
+		rna_helix_assembler.apply( pose, full_sequence );
+
+		std::string const tag( "S_"+lead_zero_string_of(n, 3) );
+		if ( output_silent ) {
+			RNA_SilentStruct s( pose, tag );
+			silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
+		}
+		pose.dump_pdb( full_sequence+".pdb" );
+	}
+
+}
+
+///////////////////////////////////////////////////////////////
+void*
+my_main( void* )
+{
+
+	using namespace basic::options;
+
+	if ( option[ build_helix_test ] ){
+		rna_build_helix_test();
+	}	else if ( option[ all_combinations ] ){
+			rna_assemble_all_combinations_test();
+	} else {
+		rna_assemble_test();
+	}
+	exit( 0 );
+
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+int
+main( int argc, char * argv [] )
+{
+	using namespace basic::options;
+
+	//Uh, options?
+	NEW_OPT( build_helix_test, "build_helix_test", false );
+	NEW_OPT( minimize, "minimize", false );
+	NEW_OPT( params_file, "Input file for pairings", "default.prm" );
+	NEW_OPT( seq, "Input sequence", "" );
+	NEW_OPT( all_combinations, "Systematically try all combinations", false );
+	NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
+	NEW_OPT( job_number, "Job number", 0 );
+	NEW_OPT( total_jobs, "Total jobs", 1 );
+
+	////////////////////////////////////////////////////////////////////////////
+	// setup
+	////////////////////////////////////////////////////////////////////////////
+	core::init(argc, argv);
+
+
+	////////////////////////////////////////////////////////////////////////////
+	// end of setup
+	////////////////////////////////////////////////////////////////////////////
+
+	protocols::viewer::viewer_main( my_main );
+
+}

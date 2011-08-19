@@ -1,0 +1,4 @@
+-in:file:pdb_silentfile 
+-in:file:silent test.out.silent.default 
+-in:file:tags 1hoe
+-database /home/yiliu/Programing/branches/minirosetta_database/

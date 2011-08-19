@@ -1,0 +1,11 @@
+env *= 0.0
+pair *= 0.0
+cbeta *= 0.0
+cenpack *= 0.0
+vdw *= 0.0
+rg *= 0.0
+hs_pair *= 0.0
+ss_pair *= 0.0
+rsigma *= 0.0
+sheet *= 0.0
+pcs = 1.0

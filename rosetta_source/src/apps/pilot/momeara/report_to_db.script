@@ -1,0 +1,10 @@
+<dock_design>
+	<SCOREFXNS>
+	</SCOREFXNS>		
+        <MOVERS>
+		<ReportToDB name=reporter db="/Users/momeara/workspace_momeara/hbonds/mini_git/structure_data_db.sqlite" schema="/Users/momeara/workspace_momeara/hbonds/mini_git/src/apps/pilot/momeara/schema.sql" />
+        </MOVERS>
+        <PROTOCOLS>
+		<Add mover_name=reporter />
+        </PROTOCOLS>
+</dock_design>

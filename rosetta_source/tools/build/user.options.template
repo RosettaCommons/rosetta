@@ -1,0 +1,25 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# Copy this file into user.options:
+#
+#   cp user.options.template user.options
+#
+# and customize to fit your personal environment
+# DO NOT make changes to this template
+# DO NOT try and check in user.options
+
+
+# Options
+#
+# Override the default.options and site.options.
+# Can be overriden by the the command-line options.
+
+# cxx     =
+# cxx_ver =
+# os      =
+# os_ver  =
+# arch    =
+# arch_size =
+# mode    =
+# cat     =
+# extras  =

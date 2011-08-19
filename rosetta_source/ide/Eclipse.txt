@@ -1,0 +1,3 @@
+Instructions for building with Eclipse are posted on the wiki:
+
+https://wiki.rosettacommons.org/index.php/Eclipse_Setup

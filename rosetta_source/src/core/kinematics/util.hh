@@ -1,0 +1,102 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   core/kinematics/util.hh
+/// @brief  Kinematics utility functions
+/// @author Phil Bradley
+
+
+#ifndef INCLUDED_core_kinematics_util_hh
+#define INCLUDED_core_kinematics_util_hh
+
+
+// Package headers
+#include <core/kinematics/tree/Atom.fwd.hh>
+#include <core/kinematics/Edge.fwd.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
+#include <core/kinematics/AtomTree.fwd.hh>
+#include <core/kinematics/AtomPointer.fwd.hh>
+#include <core/id/AtomID.fwd.hh>
+// AUTO-REMOVED #include <core/id/AtomID_Map.hh> // FWD doesnt get AtomMap for slice
+#include <core/id/DOF_ID_Map.fwd.hh>
+#include <core/id/DOF_ID_Mask.fwd.hh>
+#include <core/id/TorsionID.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/types.hh>
+
+// ObjexxFCL headers
+// AUTO-REMOVED #include <ObjexxFCL/FArray.all.fwd.hh>
+#include <ObjexxFCL/FArray1D.fwd.hh>
+
+// Numeric headers
+// AUTO-REMOVED #include <numeric/xyzMatrix.fwd.hh>
+
+//Auto Headers
+#include <core/types.hh>
+#include <ostream>
+
+
+
+
+namespace core {
+namespace kinematics {
+
+typedef utility::vector1< utility::vector1< Size > > Links;
+
+/// @brief creat an atom and add it to the residue atom-tree based on information stored in links.
+tree::Atom*
+add_atom(
+	int const atomno,
+	int const seqpos,
+	utility::vector1< utility::vector1< Size > > const & links,
+	AtomPointer1D & atom_ptr,
+	bool const add_jump_atom
+);
+
+int
+pick_loopy_cutpoint(
+	Size const n_res,
+	ObjexxFCL::FArray1D_float const & cut_bias_sum
+);
+
+tree::Atom*
+setup_backrub_atom_tree(
+	utility::vector1< id::AtomID > mainchain, // make our own local copy
+	id::AtomID const & downstream_id, // mainchain child of last mainchain atom
+	AtomPointer2D const & old_atom_pointer,
+	utility::vector1< std::pair< Size, Size > > const & edges,
+	Size const first_new_pseudo_residue
+);
+
+
+/// @brief prints something like this ***1***C***1*********2***C********3****C****2********3*****
+void
+simple_visualize_fold_tree( FoldTree const & fold_tree, std::ostream& out );
+
+/// @brief prints something like this ***1***C***1*********2***C********3****C****2********3*****
+///                                   **********xxxxxxxxxxxxx************************************
+void
+simple_visualize_fold_tree_and_movemap( FoldTree const & fold_tree,  MoveMap const& mm, std::ostream& out );
+
+/// @brief prints something like this ***1***C***1*********2***C********3****C****2********3*****
+///                                   **********xxxxxxxxxxxxx************************************
+void
+simple_visualize_fold_tree_and_movemap_bb_chi( FoldTree const & fold_tree, MoveMap const& mm, std::ostream& out );
+
+///@brief linearizes (or defoliates, if you prefer) a FoldTree.  "default" FoldTrees produced by the PDB reader have all chains (peptide edges) starting from jumps relative to residue 1.  This code modifies the tree to instead have all the jumps be relative to the preceding edge.  It is not tested with ligands and will not work with "functional" jumps.  From A to B:
+///A:FOLD_TREE  EDGE 1 78 -1  EDGE 1 79 1   EDGE 79 454 -1  EDGE 1 455 2    EDGE 455 540 -1  EDGE 1 541 3    EDGE 541 697 -1
+///B:FOLD_TREE  EDGE 1 78 -1  EDGE 78 79 1  EDGE 79 454 -1  EDGE 454 455 2  EDGE 455 540 -1  EDGE 540 541 3  EDGE 541 697 -1
+core::kinematics::FoldTree
+linearize_fold_tree( core::kinematics::FoldTree const & tree );
+
+} // namespace kinematics
+} // namespace core
+
+
+#endif // INCLUDED_core_kinematics_util_HH

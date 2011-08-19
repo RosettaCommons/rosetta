@@ -1,0 +1,716 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   core/kinematics/tree/Atom.hh
+/// @brief  Kinematics Atom interface class
+/// @author Phil Bradley
+
+
+#ifndef INCLUDED_core_kinematics_tree_Atom_hh
+#define INCLUDED_core_kinematics_tree_Atom_hh
+
+
+// Unit headers
+#include <core/kinematics/tree/Atom.fwd.hh>
+
+// Package headers
+// AUTO-REMOVED #include <core/kinematics/types.hh>
+#include <core/id/AtomID.fwd.hh>
+#include <core/id/AtomID_Mask.fwd.hh>
+#include <core/kinematics/AtomPointer.fwd.hh>
+#include <core/kinematics/AtomWithDOFChange.fwd.hh>
+#include <core/kinematics/Jump.fwd.hh>
+#include <core/kinematics/Stub.fwd.hh>
+#include <core/kinematics/DomainMap.fwd.hh>
+#include <core/kinematics/ResidueCoordinateChangeList.fwd.hh>
+#include <core/kinematics/MinimizerMapBase.fwd.hh>
+#include <core/id/DOF_ID.fwd.hh>
+#include <core/id/DOF_ID_Mask.fwd.hh>
+
+// Numeric headers
+#include <numeric/xyzMatrix.fwd.hh>
+
+// ObjexxFCL headers
+#include <ObjexxFCL/FArray1D.fwd.hh>
+
+// Utility headers
+// AUTO-REMOVED #include <utility/vector0.hh>
+// AUTO-REMOVED #include <utility/vector1.hh> // DOH! switch all to vector1
+#include <utility/pointer/ReferenceCount.hh>
+
+//Auto Headers
+#include <core/id/types.hh>
+#include <utility/vector0_bool.hh>
+
+
+
+namespace core {
+namespace kinematics {
+namespace tree {
+
+/// Kinematics Atom interface class
+class Atom : public utility::pointer::ReferenceCount // So we can hold it in owning_ptr
+{
+
+
+public: // Types
+
+
+	typedef  PointPosition  Position;
+	typedef  utility::vector0< Atom * >  Atoms;
+	typedef  Atoms::ConstIterator  Atoms_ConstIterator;
+	typedef  Atoms::Iterator  Atoms_Iterator;
+
+	typedef  numeric::xyzMatrix< Real > Matrix;
+
+
+	// ids
+	typedef  id::DOF_Type DOF_Type;
+	typedef  id::DOF_ID DOF_ID;
+	typedef  id::AtomID AtomID;
+	typedef  id::AtomID_Mask AtomID_Mask;
+	typedef  id::DOF_ID_Mask DOF_ID_Mask;
+
+
+	// Types to prevent compile failure when std::distance is in scope
+	typedef  void  iterator_category;
+	typedef  void  difference_type;
+
+
+private: // Friends
+
+
+	//friend class AtomTree;
+
+
+protected: // Creation
+
+
+	/// @brief Default constructor
+	inline
+	Atom()
+	{}
+
+
+	/// @brief Copy constructor
+	inline
+	Atom( Atom const & /*atom*/ ) : // PBHACK!!!
+		ReferenceCount()
+	{}
+
+
+public: // Creation
+
+
+	/// @brief Destructor
+	virtual
+	~Atom()
+	{}
+
+
+protected: // Assignment
+
+
+	/// @brief Copy assignment
+	inline
+	Atom &
+	operator =( Atom const & )
+	{
+		return *this;
+	}
+
+
+public: // Methods
+
+	/// @brief Perform a depth-first traversal of the tree that would be effected by
+	/// a DOF change from this atom.  Stop at atoms that have already been traversed.
+	virtual
+	void
+	dfs(
+		AtomDOFChangeSet & changeset,
+		ResidueCoordinateChangeList & res_change_list,
+		Size const start_atom_index
+	) const = 0;
+
+
+	/// @brief The atom must retrieve an appropriate stub from its parent; it is the root
+	/// of the subtree being refolded
+	virtual
+	void
+	update_xyz_coords() = 0;
+
+	///////////////////////////////////////////////////////////////////////////
+	// go back and forth between internal coords (DOF's)  and xyz coords
+	///\brief update xyz coords from stub and internal coords and
+	virtual
+	void
+	update_xyz_coords(
+		Stub & stub
+	) = 0;
+
+	///\brief update internal coords from stub and xyz coords
+	virtual
+	void
+	update_internal_coords(
+		Stub & stub,
+		bool const recursive = true
+	) = 0;
+
+
+	///\brief calculate my input_stub from the current xyz's and use that input_stub to update my torsions
+	virtual
+	void
+	update_internal_coords(
+		bool const recursive
+	) = 0;
+
+	///\brief update atom_pointer map for AtomTree
+// 	virtual
+// 	void
+// 	update_atom_pointer(
+// 		AtomPointers & atom_pointer,
+// 		bool const allow_overwriting = false
+// 	) = 0;
+
+
+	/// @brief update the stub without actually updating coordinates
+	//Useful helper function for manipulating stubs
+	virtual
+	void
+	update_stub(
+		Stub & stub
+	) const = 0;
+
+
+	///////////////////////////////////////////////////////////////////////////
+	///\brief copy DOFs and xyz coords from src Atom
+	virtual
+	void
+	copy_coords( Atom const & src ) = 0;
+
+
+	///////////////////////////////////////////////////////////////////////////
+	// access DOFs
+
+
+	/// get dof
+	virtual
+	Real
+	dof(
+		DOF_Type const type
+	) const = 0;
+
+
+	/// set dof, use "set_" syntax since we have multiple dof's
+	virtual
+	void
+	set_dof(
+		DOF_Type const type,
+		Real const value
+	) = 0;
+
+
+	/// set dof, use "set_" syntax since we have multiple dof's -- for use in output-sensitive refold routine
+	virtual
+	void
+	set_dof(
+		DOF_Type const type,
+		Real const value,
+		AtomDOFChangeSet & set
+	) = 0;
+
+
+	/// get Jump
+	virtual
+	Jump const &
+	jump() const = 0;
+
+
+	/// @brief set Jump
+	virtual
+	void
+	jump(
+		Jump const & jump_in
+	) = 0;
+
+
+	/// set Jump -- for use in output-sensitive refolding
+	virtual
+	void
+	jump(
+		Jump const & jump_in,
+		AtomDOFChangeSet & set
+	) = 0;
+
+
+	/// copy atom with new memory allocation
+	virtual
+	Atom *
+	clone( Atom * parent_in, AtomPointer2D & atom_pointer ) const = 0;
+
+
+	///////////////////////////////////////////////////////////////////////////
+	// for minimizing
+	virtual
+	void
+	setup_min_map(
+		DOF_ID & last_torsion,
+		DOF_ID_Mask const & move_map,
+		MinimizerMapBase & min_map
+	) const = 0;
+
+
+	virtual
+	void
+	get_dof_axis_and_end_pos(
+		Vector & axis,
+		Position & end_pos,
+		DOF_Type const type
+	) const = 0;
+
+
+	///////////////////////////////////////////////////////////////////////////
+	// miscellaneous inspection
+	///\brief atom is a jump atom?
+	virtual
+	bool
+	is_jump() const = 0;
+
+	///\brief when other atoms are inserted insert after 1st child if available.
+	/// --> this enables us to keep a stub of Downstream Jump atoms inside a single residue
+	virtual
+	bool
+	keep_1st_child_pos() const = 0;
+
+
+	///\brief DOF should be fixed for this atom?
+	///
+	/// for DOFs which must be kept fixed due to topology of tree
+	/// eg, phi of stub_atoms for jump_atoms
+	inline
+	virtual
+	bool
+	keep_dof_fixed(
+		DOF_Type const  //type
+	) const
+	{
+		return false;
+	}
+
+	///\brief dump out AtomID for this atom, its parent and all its offspring
+	virtual
+	void
+	show() const = 0;
+
+	///\brief dump out AtomID for this atom, its parent and all its offspring up to n_level
+	virtual
+	void
+	show(int const &) const = 0;
+
+	///\brief dihedral angle between two bonded children to this atom
+	virtual
+	Real
+	dihedral_between_bonded_children(
+		Atom const * child1,
+		Atom const * child2
+	) const = 0;
+
+
+	///////////////////////////////////////////////////////////////////////////
+	// update domain map
+	virtual
+	void
+	update_domain_map(
+		int & current_color,
+		int & biggest_color,
+		DomainMap & domain_map,
+		AtomID_Mask const & dof_moved,
+		AtomID_Mask const & atom_moved
+	) const = 0;
+
+
+	///////////////////////////////////////////////////////////////////////////
+	// manage atom_list
+
+	virtual
+	Atoms_ConstIterator
+	atoms_begin() const = 0;
+
+
+	virtual
+	Atoms_ConstIterator
+	atoms_end() const = 0;
+
+
+	virtual
+	Atoms_Iterator
+	atoms_begin() = 0;
+
+
+	virtual
+	Atoms_Iterator
+	atoms_end() = 0;
+
+
+	virtual
+	Size
+	n_atom() const = 0;
+
+
+	// adds to the end, modulo the rule (which applies to the other methods
+	// as well) that all the JumpAtoms come before the BondedAtoms
+	virtual
+	void
+	append_atom( Atom * ) = 0;
+
+
+	virtual
+	void
+	delete_atom( Atom * ) = 0;
+
+
+	// inserts at the beginning
+	virtual
+	void
+	insert_atom( Atom * ) = 0;
+
+
+	// tries to insert at the position specified by the second argument
+	virtual
+	void
+	insert_atom( Atom *, int const /*index*/ ) = 0;
+
+
+	virtual
+	void
+	replace_atom(
+		Atom * const old_atom,
+		Atom * const new_atom
+	) = 0;
+
+
+	virtual
+	Atom const *
+	get_nonjump_atom(
+		Size const i
+	) const = 0;
+
+
+// 	virtual
+// 	void
+// 	erase() = 0;
+
+	virtual
+	Size
+	n_children() const = 0;
+
+
+	virtual
+	Size
+	n_nonjump_children() const = 0;
+
+
+	virtual
+	Atom const *
+	child( Size const k ) const = 0;
+
+
+	virtual
+	Atom *
+	child( Size const k ) = 0;
+
+
+	/// the atom-index of this child
+	virtual
+	Size
+	child_index( Atom const * child ) const = 0;
+
+	virtual
+	bool
+	downstream( Atom const * atom1 ) const = 0;
+
+
+public: // Properties
+
+
+	/// @brief Atom identifier
+	virtual
+	AtomID const &
+	id() const = 0;
+
+
+	/// AtomID assignment
+	virtual
+	void
+	id( AtomID const & id_in ) = 0;
+
+
+	/// @brief Atom identifier
+	virtual
+	AtomID const &
+	atom_id() const = 0;
+
+
+	/// @brief Position
+	virtual
+	Position const &
+	position() const = 0;
+
+
+	/// @brief Position assignment
+	virtual
+	void
+	position( Position const & position_a ) = 0;
+
+
+	/// @brief Position
+	virtual
+	Position const &
+	xyz() const = 0;
+
+
+	/// @brief Position assignment
+	virtual
+	void
+	xyz( Position const & position_a ) = 0;
+
+
+	/// @brief x coordinate
+	virtual
+	Length const &
+	x() const = 0;
+
+
+	/// @brief y coordinate
+	virtual
+	Length const &
+	y() const = 0;
+
+
+	/// @brief z coordinate
+	virtual
+	Length const &
+	z() const = 0;
+
+
+	/// @brief Distance to an Atom
+	virtual
+	Length
+	distance( Atom const & atom ) const = 0;
+
+
+	/// @brief Distance squared to an Atom
+	virtual
+	Length
+	distance_squared( Atom const & atom ) const = 0;
+
+
+	/// @brief Distance between two Atoms
+	friend
+	inline
+	Length
+	distance( Atom const & atom1, Atom const & atom2 );
+
+
+	/// @brief Distance squared between two Atoms
+	friend
+	inline
+	Length
+	distance_squared( Atom const & atom1, Atom const & atom2 );
+
+	/// @brief Transform atom and children by linear transformation
+	//virtual
+	//void
+	//transform_Ax_plus_b_recursive( Matrix const & A, Vector const & b ) = 0;
+
+	/// @brief Transform atom and children by linear transformation
+	virtual
+	void
+	transform_Ax_plus_b_recursive( Matrix const & A, Vector const & b, ResidueCoordinateChangeList & res_change_list ) = 0;
+
+	/// @brief Parent atom pointer, NULL for root atom
+	virtual
+	Atom const *
+	parent() const = 0;
+
+	///
+	virtual
+	void
+	get_path_from_root( utility::vector1< Atom const * > & path ) const = 0;
+
+	///
+	virtual
+	bool
+	atom_is_on_path_from_root( Atom const * atm ) const = 0;
+
+	/// parent assignment
+	virtual
+	void
+	parent( Atom* parent_in ) = 0;
+
+
+	/// @brief Parent atom pointer, NULL for root atom
+	virtual
+	Atom *
+	parent() = 0;
+
+
+	/// @brief Get stub information
+	virtual
+	Stub
+	get_stub() const = 0;
+
+
+	virtual
+	Stub
+	get_input_stub() const = 0;
+
+
+	virtual
+	Atom const *
+	stub_atom1() const = 0;
+
+
+	virtual
+	Atom const *
+	stub_atom2() const = 0;
+
+
+	virtual
+	Atom const *
+	stub_atom3() const = 0;
+
+
+	virtual
+	AtomID const &
+	stub_atom1_id() const = 0;
+
+
+	virtual
+	AtomID const &
+	stub_atom2_id() const = 0;
+
+
+	virtual
+	AtomID const &
+	stub_atom3_id() const = 0;
+
+
+	virtual
+	Atom const *
+	input_stub_atom0() const = 0;
+
+
+	virtual
+	Atom const *
+	input_stub_atom1() const = 0;
+
+
+	virtual
+	Atom const *
+	input_stub_atom2() const = 0;
+
+
+	virtual
+	Atom const *
+	input_stub_atom3() const = 0;
+
+
+	virtual
+	AtomID const &
+	input_stub_atom0_id() const = 0;
+
+
+	virtual
+	AtomID const &
+	input_stub_atom1_id() const = 0;
+
+
+	virtual
+	AtomID const &
+	input_stub_atom2_id() const = 0;
+
+
+	virtual
+	AtomID const &
+	input_stub_atom3_id() const = 0;
+
+
+	// routines for navigating the tree
+	virtual
+	Atom const *
+	previous_sibling() const = 0;
+
+	virtual
+	Atom const *
+	previous_child(
+		Atom const * child
+	) const = 0;
+
+
+	virtual
+	Atom *
+	next_child(
+		Atom const * child
+	) = 0;
+
+
+	virtual
+	bool
+	stub_defined() const = 0;
+
+
+protected: // Methods
+
+
+	// when subtrees have changed their coordinates
+	virtual
+	void
+	update_child_torsions(
+		Atom * const child
+	) = 0;
+
+
+	virtual
+	Atoms_ConstIterator
+	nonjump_atoms_begin() const = 0;
+
+
+	virtual
+	Atoms_Iterator
+	nonjump_atoms_begin() = 0;
+
+
+}; // Atom
+
+
+/// @brief Distance between two Atoms
+inline
+Length
+distance( Atom const & atom1, Atom const & atom2 )
+{
+	return atom1.distance( atom2 );
+}
+
+/// @brief Distance squared between two Atoms
+inline
+Length
+distance_squared( Atom const & atom1, Atom const & atom2 )
+{
+	return atom1.distance_squared( atom2 );
+}
+
+
+
+} // namespace tree
+} // namespace kinematics
+} // namespace core
+
+
+#endif // INCLUDED_core_kinematics_Atom_HH

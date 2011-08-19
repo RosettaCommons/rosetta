@@ -1,0 +1,411 @@
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/gpu.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+#include <basic/options/util.hh>
+#include <basic/Tracer.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/util.hh>
+#include <core/chemical/VariantType.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/ResidueFactory.hh>
+#include <core/import_pose/import_pose.hh>
+#include <core/init.hh>
+#include <core/io/pdb/pose_io.hh>
+#include <core/io/silent/ScoreFileSilentStruct.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/Stub.hh>
+#include <core/pack/optimizeH.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/RotamerSampleOptions.hh>
+#include <core/pack/task/TaskFactory.hh>
+#include <core/pose/annotated_sequence.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/scoring/rms_util.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoringManager.hh>
+#include <core/util/SwitchResidueTypeSet.hh>
+#include <numeric/conversions.hh>
+#include <numeric/model_quality/rms.hh>
+#include <numeric/random/random.hh>
+#include <numeric/xyz.functions.hh>
+#include <numeric/xyz.io.hh>
+#include <ObjexxFCL/FArray2D.hh>
+#include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/string.functions.hh>
+#include <protocols/scoring/ImplicitFastClashCheck.hh>
+#include <protocols/moves/MinMover.hh>
+#include <sstream>
+#include <utility/io/izstream.hh>
+#include <utility/io/ozstream.hh>
+
+#include "apps/pilot/will/will_util.hh"
+#include "mynamespaces.hh"
+
+#include <sys/stat.h>
+
+static basic::Tracer TR("gpu_test");
+
+// // #ifdef MAC
+// // #include <OpenCL/cl.h>
+// // #else
+// // #include <CL/cl.h>
+// // #endif
+
+// // #include <apps/pilot/will/CL.hh>
+// // // #include <apps/pilot/will/gpu_pack14.h>
+// // // #include <apps/pilot/will/dump_unique_atoms.hh>
+// // #include <apps/pilot/will/gpu_test_k_square.hh>
+
+typedef numeric::xyzVector<float> Vecf;
+typedef numeric::xyzMatrix<float> Matf;
+
+struct VEC {
+  float x,y,z;
+  VEC() {}
+  VEC(float _x, float _y, float _z) { x=_x; y=_y; z=_z; }
+  VEC(Vecf v) {
+    x = v.x();
+    y = v.y();
+    z = v.z();
+  }
+  numeric::xyzVector<float> xyzVector() { return numeric::xyzVector<float>(x,y,z); }
+};
+std::ostream & operator<<(std::ostream & out, VEC v) {
+  out << v.x << " " << v.y << " " << v.z;
+  return out;;
+}
+
+struct MAT {
+  float xx,xy,xz,
+    yx,yy,yz,
+    zx,zy,zz;
+  MAT() {}
+  MAT(Mat m) {
+    xx = m.xx();
+    yx = m.yx();
+    zx = m.zx();
+    xy = m.xy();
+    yy = m.yy();
+    zy = m.zy();
+    xz = m.xz();
+    yz = m.yz();
+    zz = m.zz();
+  }
+  Mat xyzMatrix() { return numeric::xyzMatrix<float>::cols(xx,xy,xz,yx,yy,yz,zx,zy,zz); };
+};
+std::ostream & operator<<(std::ostream & out, MAT m) {
+  out << m.xx << " " << m.xy << " " << m.xz << std::endl;
+  out << m.yx << " " << m.yy << " " << m.yz << std::endl;
+  out << m.zx << " " << m.zy << " " << m.zz << std::endl;
+  return out;
+}
+inline struct MAT MATrows(float xx, float xy, float xz, float yx, float yy, float yz, float zx, float zy, float zz) {
+  MAT m;
+  m.xx=xx; m.xy=xy; m.xz=xz;
+  m.yx=yx; m.yy=yy; m.yz=yz;
+  m.zx=zx; m.zy=zy; m.zz=zz;
+  return m;
+}
+inline struct MAT MATcols(float xx, float yx, float zx, float xy, float yy, float zy, float xz, float yz, float zz) {
+  MAT m;
+  m.xx=xx; m.xy=xy; m.xz=xz;
+  m.yx=yx; m.yy=yy; m.yz=yz;
+  m.zx=zx; m.zy=zy; m.zz=zz;
+  return m;
+}
+inline struct MAT mult(struct MAT const a, struct MAT const b) {
+  MAT c;
+  c.xx = a.xx*b.xx + a.xy*b.yx + a.xz*b.zx;
+  c.xy = a.xx*b.xy + a.xy*b.yy + a.xz*b.zy;
+  c.xz = a.xx*b.xz + a.xy*b.yz + a.xz*b.zz;
+  c.yx = a.yx*b.xx + a.yy*b.yx + a.yz*b.zx;
+  c.yy = a.yx*b.xy + a.yy*b.yy + a.yz*b.zy;
+  c.yz = a.yx*b.xz + a.yy*b.yz + a.yz*b.zz;
+  c.zx = a.zx*b.xx + a.zy*b.yx + a.zz*b.zx;
+  c.zy = a.zx*b.xy + a.zy*b.yy + a.zz*b.zy;
+  c.zz = a.zx*b.xz + a.zy*b.yz + a.zz*b.zz;
+  return c;
+}
+inline struct VEC mult(struct MAT const a, struct VEC const b) {
+  VEC c;
+  c.x = a.xx*b.x + a.xy*b.y + a.xz*b.z;
+  c.y = a.yx*b.x + a.yy*b.y + a.yz*b.z;
+  c.z = a.zx*b.x + a.zy*b.y + a.zz*b.z;
+  return c;
+}
+inline struct VEC mult(float const a, VEC const v) {
+  return VEC(a*v.x,a*v.y,a*v.z);
+}
+inline struct VEC cross(struct VEC const a, struct VEC const b) {
+  return VEC( a.y*b.z - a.z*b.y, a.z*b.x - a.x*b.z, a.x*b.y - a.y*b.x );
+}
+inline float dot(struct VEC const a, struct VEC const b) {
+  return a.x*b.x + a.y*b.y + a.z*b.z;
+}
+inline float length_squared(VEC v) {
+  return v.x*v.x + v.y*v.y + v.z*v.z;
+}
+inline float length(VEC v) {
+  return sqrt(v.x*v.x+v.y*v.y+v.z*v.z);
+}
+inline struct VEC normalized(VEC v) {
+  return mult(1.0/length(v),v);
+}
+inline VEC proj(VEC const a, VEC const v) {
+  float d = dot(a,v) / length_squared(a);
+  TR << d << std::endl;
+  VEC r;
+  r.x = d*a.x;
+  r.y = d*a.y;
+  r.z = d*a.z;
+  return r;
+}
+inline VEC pproj(VEC const a, VEC const v) {
+  float d = dot(a,v) / length_squared(a);
+  VEC r;
+  r.x = v.x-d*a.x;
+  r.y = v.y-d*a.y;
+  r.z = v.z-d*a.z;
+  return r;
+}
+
+inline bool eq(float u, float v) {
+  return fabs(u-v) < 0.000001;
+}
+inline bool eq(VEC u, VEC v) {
+  return ( eq(u.x,v.x) && eq(u.y,v.y) && eq(u.z,v.z) );
+}
+inline bool eq(Vecf u, VEC  v) { eq(VEC(u),v); }
+inline bool eq(VEC  u, Vecf v) { eq(u,VEC(v)); }
+
+inline bool eq(MAT  u, MAT  v) {
+  return ( eq(u.xx,v.xx) && eq(u.yx,v.yx) && eq(u.zx,v.zx) &&
+           eq(u.xy,v.xy) && eq(u.yy,v.yy) && eq(u.zy,v.zy) &&
+           eq(u.xz,v.xz) && eq(u.yz,v.yz) && eq(u.zz,v.zz) );
+}
+inline bool eq(Matf u, MAT  v) { eq(MAT(u),v); }
+inline bool eq(MAT  u, Matf v) { eq(u,MAT(v)); }
+
+void myasserteq(float u, float v, string s) {
+  if( !eq(u,v) ) {
+    TR << u << std::endl;
+    TR << v << std::endl;
+    utility_exit_with_message(s);
+  }
+}
+void myasserteq(VEC u, VEC v, string s) {
+  if( !eq(u,v) ) {
+    TR << u.xyzVector() << std::endl;
+    TR << v.xyzVector() << std::endl;
+    utility_exit_with_message(s);
+  }
+}
+inline bool myasserteq(Vecf u, VEC  v, string s) { myasserteq(VEC(u),v,s); }
+inline bool myasserteq(VEC  u, Vecf v, string s) { myasserteq(u,VEC(v),s); }
+
+void myasserteq(MAT u, MAT v, string s) {
+  if( !eq(u,v) ) {
+    TR << u.xyzMatrix() << std::endl;
+    TR << v.xyzMatrix() << std::endl;
+    utility_exit_with_message(s);
+  }
+}
+inline bool myasserteq(Matf u, MAT  v, string s) { myasserteq(MAT(u),v,s); }
+inline bool myasserteq(MAT  u, Matf v, string s) { myasserteq(u,MAT(v),s); }
+
+void test_MAT_VEC() {
+  xyzMatrix<float> m(xyzMatrix<float>::cols(10.0f*uniform()-5.0f,10.0f*uniform()-5.0f,10.0f*uniform()-5.0f,10.0f*uniform()-5.0f,10.0f*uniform()-5.0f,10.0f*uniform()-5.0f,10.0f*uniform()-5.0f,10.0f*uniform()-5.0f,10.0f*uniform()-5.0f));
+  xyzMatrix<float> n(xyzMatrix<float>::cols(10.0f*uniform()-5.0f,10.0f*uniform()-5.0f,10.0f*uniform()-5.0f,10.0f*uniform()-5.0f,10.0f*uniform()-5.0f,10.0f*uniform()-5.0f,10.0f*uniform()-5.0f,10.0f*uniform()-5.0f,10.0f*uniform()-5.0f));
+  xyzVector<float> u(xyzVector<float>(10.0f*uniform()-5.0f,10.0f*uniform()-5.0f,10.0f*uniform()-5.0f));
+  xyzVector<float> v(xyzVector<float>(10.0f*uniform()-5.0f,10.0f*uniform()-5.0f,10.0f*uniform()-5.0f));
+  MAT M(m),N(n);
+  VEC U(u),V(v);
+
+  myasserteq(  M                    ,       m                 , "conversion" );
+  myasserteq(  N                    ,       n                 , "conversion" );
+  myasserteq(  U                    ,       u                 , "conversion" );
+  myasserteq(  V                    ,       v                 , "conversion" );
+  myasserteq(  length_squared(V)    ,       dot(V,V)          , "dot/len2" );
+  myasserteq(  mult(M,N)            ,       m*n               , "mult MM" );
+  //myasserteq(  mult(M,V)            ,       m*v               , "mult MV" );
+  myasserteq(   proj(U,U)           ,       projection_matrix(u)*u     , "proj" );
+  myasserteq(  pproj(U,V)           ,     projperp(u,v)     , "projperp" );
+  myasserteq(  cross(U,V)           ,     u.cross(v)     , "cross" );
+  myasserteq(  normalized(V)           ,     v.normalized()     , "normalize" );
+  
+  TR << "PASS!" << std::endl;
+}
+
+
+int main (int argc, char *argv[]) {
+  using namespace basic::options::OptionKeys;
+  core::init(argc,argv);
+
+  test_MAT_VEC();
+  //  exit(0);
+
+  // using numeric::random::uniform;
+  // xyzMatrix<double> mr1 = Mat::cols(uniform(),uniform(),uniform(),uniform(),uniform(),uniform(),uniform(),uniform(),uniform());
+  // xyzMatrix<double> mr2 = Mat::cols(uniform(),uniform(),uniform(),uniform(),uniform(),uniform(),uniform(),uniform(),uniform());
+  // xyzMatrix<float>  mf1(mr1);
+  // xyzMatrix<float>  mf2(mr2);
+  //TR << mf1*mf2*mf1*mf2*mf1*mf2*mf1*mf2*mf1*mf2 - xyzMatrix<float>(mr1*mr2*mr1*mr2*mr1*mr2*mr1*mr2*mr1*mr2) << std::endl;
+
+  //test_k_square();
+  //dump_unique_atoms();
+  //test_pack14(999999);
+  //test_pack14(1);
+  {
+    core::pose::Pose p;
+    core::pose::make_pose_from_sequence(p,"N","fa_standard",false);
+    remove_lower_terminus_type_from_pose_residue(p,1);
+    remove_upper_terminus_type_from_pose_residue(p,1);
+
+    core::pose::Pose tgt(p);
+    core::kinematics::Stub s( p.residue(1).xyz("CB"), p.residue(1).xyz("CG"), p.residue(1).xyz("CB"), p.residue(1).xyz("CA") );
+    xform_pose_rev(tgt,s);
+    Vec  n0 = tgt.residue(1).xyz( "N");
+    Vec ca0 = tgt.residue(1).xyz("CA");
+    tgt.dump_pdb("out/tgt.pdb");
+    rot_pose(tgt, Vec(1,0,0), -35.0);
+    tgt.set_chi(2,1,35);
+    Vec ca = rotation_matrix_degrees(Vec(1,0,0),-35.0) * ca0;
+    Vec  n = rotation_matrix_degrees(Vec(1,0,0),-35.0) *  n0;
+    Vec uca = ca.normalized();
+    rot_pose(tgt, uca, 25.0 );
+    tgt.set_chi(1,1,25);
+    n = rotation_matrix_degrees(uca,25.0) * n0;
+    tgt.dump_pdb("out/tgt_chi.pdb");
+
+    core::pose::Pose src(p);
+    trans_pose(src,-src.residue(1).xyz("CB"));
+    src.set_chi(1,1,25.0);
+    src.set_chi(2,1,35.0);
+    src.dump_pdb("out/src.pdb");
+
+    VEC tx( tgt.residue(1).xyz("N").normalized() );
+    VEC ty( normalized(pproj(tx,VEC(tgt.residue(1).xyz("CA")))) );
+    VEC tz ( cross(tx,ty) );
+    VEC sx( src.residue(1).xyz("N").normalized() );
+    VEC sy( normalized(pproj(sx,VEC(src.residue(1).xyz("CA")))) );
+    VEC sz( cross(sx,sy) );
+    MAT tr(MATrows(tx.x,tx.y,tx.z,ty.x,ty.y,ty.z,tz.x,tz.y,tz.z));
+    MAT sr(MATrows(sx.x,sx.y,sx.z,sy.x,sy.y,sy.z,sz.x,sz.y,sz.z));
+
+    rot_pose(src,mult(tr,sr).xyzMatrix());
+    src.dump_pdb("out/test.pdb");
+
+    utility_exit_with_message("TESTING");
+
+  }
+
+
+  // for(int ifn = 1; ifn <= option[in::file::s].size(); ++ifn) {
+  //   core::pose::Pose p;
+  //   core::import_pose::pose_from_pdb(p,option[in::file::s]()[ifn]);
+  //   int count = 0;
+  //   for(Size ir = 1; ir <= p.n_residue(); ++ir) if(p.residue(ir).name3()!="GLY"&&p.residue(ir).name3()!="PRO") count++;
+  //   cl_float16 bb[count];
+  //   count = 0;
+  //   for(Size ir = 1; ir <= p.n_residue(); ++ir) {
+  //     if(p.residue(ir).name3()=="GLY"||p.residue(ir).name3()=="PRO") continue;
+  //     if(p.residue(ir).aa() > 20) utility_exit_with_message("wierd aa! "+str(p.residue(ir).aa()));
+  //     cl_float16 crd;
+  //     for(Size ia = 1; ia <= 5; ++ia) {
+  //       crd.s0=p.residue(ir).xyz( "N").x(); crd.s1=p.residue(ir).xyz( "N").y(); crd.s2=p.residue(ir).xyz( "N").z();
+  //       crd.s3=p.residue(ir).xyz("CA").x(); crd.s4=p.residue(ir).xyz("CA").y(); crd.s5=p.residue(ir).xyz("CA").z();
+  //       crd.s6=p.residue(ir).xyz( "C").x(); crd.s7=p.residue(ir).xyz( "C").y(); crd.s8=p.residue(ir).xyz( "C").z();
+  //       crd.s9=p.residue(ir).xyz( "O").x(); crd.sa=p.residue(ir).xyz( "O").y(); crd.sb=p.residue(ir).xyz( "O").z();
+  //       crd.sc=p.residue(ir).xyz("CB").x(); crd.sd=p.residue(ir).xyz("CB").y(); crd.se=p.residue(ir).xyz("CB").z();
+  //       crd.sf = ir; // sf holds metadata
+  //     }
+  //     bb[count++] = crd;;
+  //   }
+  //   CL cl((std::ofstream&)TR);
+  //   cl.make_kernel("testbb");
+  //   cl_uint nrslt = count*Nchi1;
+  //   cl_mem clbb  = cl.makeROmem(sizeof(cl_float16)*count); // TODO: sanity check on GPU
+  //   cl.cpu2gpu(bb,clbb,sizeof(cl_float16)*count);
+  //   cl_mem clout = cl.makeWOmem(sizeof(cl_float16)*nrslt); // CPU doesn't respect RO vs. WO!
+  //   cl.setargs("testbb",clbb,clout);
+  //   cl.q2d("testbb",Nchi1,count,Nchi1,1);
+  //   cl.finish();
+  //   cl_float16 rslt[nrslt];
+  //   cl.gpu2cpu(clout,rslt,sizeof(cl_float16)*nrslt);
+  //   for(uint ir = 0; ir < count; ++ir) {
+  //     for(uint ic = 0; ic < Nchi1; ++ic) {
+  //       TR << ir << " " << rslt[ir*Nchi1+ic].s0 << std::endl;
+  //     }
+  //     break;
+  //   }
+  // }
+
+
+
+
+}
+
+// point in POI octree x,y,z 8/8/5/11
+
+/*
+  ILE CG1 -> CG
+  THR OG1 -> OG CG2 -> CG
+  VAL CG1 <-> CG2 so that CG & CG2 are same as others
+  LEU CD1 -> CD
+  ILE CD1 -> CD
+
+  GLY N CA C O
+  ALA N CA C O  CB
+  CYS N CA C O  CB                            SG
+  ASN N CA C O -CB- CG      OD1               ND2
+  ASP N CA C O -CB- CG      OD1               OD2
+  GLN N CA C O -CB- CG  CD-                                             OE1          NE2
+  GLU N CA C O -CB- CG  CD-                                             OE1          OE2
+  VAL N CA C O -CB- CG               CG2
+  LEU N CA C O -CB- CG  CD                    CD2
+  ILE N CA C O -CB- CG  CD           CG2
+  THR N CA C O -CB-           OG     CG2
+  SER N CA C O -CB-           OG
+  ARG N CA C O -CB- CG  CD                                                     NE  CZ NH1 NH2
+  LYS N CA C O -CB- CG  CD                                                     CE  NZ
+  MET N CA C O -CB- CG                        SD                               CE
+  HIS N CA C O -CB- CG                        ND1 CD2 CE1 NE2
+  TRP N CA C O -CB- CG                        CD1 CD2 NE1 CE2 CE3 CZ2 CZ3 CH2
+  PHE N CA C O -CB- CG  CD1 CE1 CZ CD2 CE2
+  TYR N CA C O -CB- CG  CD1 CE1 CZ CD2 CE2    OH
+
+  CG
+  CD
+  OD1
+  OG
+  CG2
+  CD1
+  CE1
+  CZ
+  CD2
+  CE2
+  SG
+  ND2
+  OD2
+  CD2_L
+  SD
+  ND1_H
+  CD2_H
+  CE1_N
+  NE2_H
+  OH
+  CD1_W
+  CD2_W
+  NE1_W
+  CE2_W
+  CE3_W
+  CZ2_W
+  CZ3_W
+  CH2_W
+*/

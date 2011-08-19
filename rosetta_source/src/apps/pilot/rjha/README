@@ -1,0 +1,73 @@
+(c) Copyright Rosetta Commons Member Institutions.
+(c) This file is part of the Rosetta software suite and is made available under license.
+(c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+(c) For more information, see http://www.rosettacommons.org. Questions about this can be
+(c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/apps/pilot/rjha/README – this file describes the MetalInterfaceStructureCreator application
+
+This app is meant to model metal-seeded interfaces.  It takes as input:
+
+1) a match pdb - the output of RosettaMatch, after cleaning by the perl script in this directory match_alter.pl.  This is a tetrahedrally coordinated metal (Zinc) atom with four ligands. 
+2) Partner 1 pdb, originally ankyrin.  This is a protein being designed to bind with some known partner.  Three of the residues in the match pdb map onto positions in this protein; these residues are replaced with the metal site from the match pdb.  Plan on this protein being extensively mutated to accommodate the metal site and interface.
+3) Partner 2 pdb, originally ubc12.  This is the other partner in the intended interface.  One residue from the match pdb matches a residue in this protein (and will be replaced).  The alignment of that residue into the metal binding orientation is what brings the proteins into contact to form an initial interface.
+4) a resfile
+
+The atomic positions for the first three match residues, the metal atom, and whatever residue coordinates the metal in the final (partner2) residue are never altered anywhere in the protocol, to ensure that the designed metal interface is maintained.  This protocol does not have a scorefunction capable of properly modeling metal binding so it leaves the site alone.
+
+Other valid inputs to the protocol include:
+
+Local options:
+-match <string> path to the match
+- partner1 <string> this option takes a path to partner 1's pdb
+- partner2 <string> this option takes a path to partner 2's pdb
+- partner2_res <int> this option specifies which residue in partner2 is to be replaced with the last residue in the match
+- skip_sitegraft_repack <bool> this debugging option skips the repack step after grafting the metal site into partner 1
+-RMS_mode activates the RMS-searching mode (see below).  DO NOT use in::file::native with this option.
+
+general rosetta options:
+-s <string> should be used to pass in a single pdb as the match pdb
+-run::min_type <string> controls which minimizer is used
+-pose_metrics::interface_cutoff <int> controls the angstrom cutoff when defining where the interface is; try 8
+Generally, options that control PDB IO and packing are obeyed (including ex1, etc)
+
+overloaded protocol options:
+This protocol was coauthored by Steven Lewis and (ab)uses some options from the AnchoredDesign protocol to avoid introducing more option-cruft into core
+-AnchoredDesign::perturb_temp <real> controls perturbation-stage monte carlo temperature, default 0.8
+-AnchoredDesign::perturb_cycles <int> how many perturb cycles should run?
+-AnchoredDesign::perturb_show <bool> activates debugging output after each attempted move
+-AnchoredDesign::refine_cycles <int>  how many refine cycles should run?  overrides the normal default; if nothing is specified only one
+
+-AnchoredDesign::refine_temp <real> controls RMS scorefunction monte carlo temperature
+-dna::design::more_stats <boolean> if true, do an RMS only search (ignoring scorefunction).  If false (or unspecified), do centroid + RMSD searching.  No option for original centroid scorefunction only behavior.
+
+The protocol has two stages.  
+
+The first centroid stage is a conformational space search to try to form an interface with reasonable shape complementarity and surface area.  This proceeds by A) changing the dihedral angle of the bond connecting the metal atom and partner2's liganding residue (this bond has no energy change as it rotates), and B) changing rotamers on that same residue.  These changes together introduce large changes in the rigid-body orientation between the two proteins without disrupting the metal site.  This stage can also try to optimize the RMSD between a pose and a given optimally shape-complementary pose using an RMSD scorefunction.
+
+The second stage is currently just a repack/design + sidechain minimize of the area near the interface.
+
+RMS_mode triggers a different centroid search style.  In this mode, the code assumes that the input partner1 and partner2 structures are docked in 3-D space with a good conformation.  The centroid search will favor structures with low RMSD to these inputs; beyond a threshold (3 angstroms RMSD) this flattens to zero so that only the normal centroid scorefunction matters.  This will save a file RMS_t.pdb as the RMS template and attempt to re-read it later through the in::file::native flag; do not use that flag for something else.  
+
+updates:
+9/1/08: compatible with cysteine matches.  Should be compatible with ANY residue matches, but not tested.  Still retains HG (sulfur's hydrogen) on cysteines; this is a flaw.  
+9/4/08: cysteine residue patch now removes terminal HG from cysteines.  Similar system can be put in for other liganding residues.
+11/24/08 RMS stuff added
+
+
+~~~~~~~~~~~~~~~~~~~~~
+MatchFilter.cc
+
+This application is designed to help filter through the matches from RosettaMatch.  It calculates some of the geometry about the metal atom (currently the metal-ligand atom distances and the tetrahedral coordinations six ligand-metal-ligand angles (all of which should be 109.5).  It also outputs a sum of squares for those values.
+
+~~~~~~~~~~~~~~~~~~~~~~
+match_alter.pl
+
+This script tweaks the format of raw matches from RosettaMatch to make them legal PDBs for the purposes of using MatchFilter/MetalInterface.
+
+
+~~~~~~~~~~~~~~~~~~~~~~
+
+SurfaceGroups.cc
+
+This application identifies all surface resdidues defined by a number-of-neighbors cutoff (default 18).  For each of these surface residues, the residue and its neighbors within a cutoff distance (default 7 Angstroms) are printed as output.

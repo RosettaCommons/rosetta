@@ -1,0 +1,102 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file ./protocols/moves/DsspMover.cc
+/// @brief performs dssp and set secondary structure to pose
+/// @author Nobuyasu Koga ( nobuyasu@uw.edu )
+
+// Unit headers
+#include <protocols/moves/DsspMover.hh>
+#include <protocols/moves/DsspMoverCreator.hh>
+
+// Project Headers
+#include <core/scoring/dssp/Dssp.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+#include <protocols/moves/Mover.hh>
+#include <basic/Tracer.hh>
+
+// Parser headers
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// Auto-header: duplicate removed #include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/filters/Filter.hh>
+#include <utility/tag/Tag.hh>  // REQUIRED FOR WINDOWS
+
+//
+#include <string>
+
+//Auto Headers
+#include <iostream>
+
+
+static basic::Tracer TR( "protocols.DsspMover" );
+
+namespace protocols {
+namespace moves {
+
+std::string
+DsspMoverCreator::keyname() const
+{
+	return DsspMoverCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+DsspMoverCreator::create_mover() const {
+	return new DsspMover;
+}
+
+std::string
+DsspMoverCreator::mover_name()
+{
+	return "Dssp";
+}
+
+DsspMover::DsspMover():
+	Mover( DsspMoverCreator::mover_name() )
+{}
+
+DsspMover::~DsspMover()
+{}
+
+/// @brief clone this object
+DsspMover::MoverOP DsspMover::clone() const {
+	return new DsspMover( *this );
+}
+
+/// @brief create this type of object
+DsspMover::MoverOP DsspMover::fresh_instance() const {
+	return new DsspMover();
+}
+
+/// @details virtual main
+void DsspMover::apply( Pose & pose )
+{
+	core::scoring::dssp::Dssp dssp( pose );
+	dssp.insert_ss_into_pose( pose );
+	TR << dssp.get_dssp_secstruct() << std::endl;
+}
+
+std::string
+DsspMover::get_name() const {
+	return DsspMoverCreator::mover_name();
+}
+
+/// @brief parse xml
+void
+DsspMover::parse_my_tag(
+	TagPtr const,
+	DataMap &,
+	Filters_map const &,
+	Movers_map const &,
+	Pose const & )
+{
+	TR << "DsspMover loaded." << std::endl;
+}
+
+}  // namespace moves
+}  // namespace protocols

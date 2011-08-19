@@ -1,0 +1,117 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file	protocols/toolbox/PyReturnValuePolicyTest.hh
+/// @brief	A few functions test how PyRosetta handle boost ReturnValuePolicy
+/// @author	Sergey Lyskov
+
+#ifndef INCLUDED_protocols_toolbox_PyReturnValuePolicyTest_hh
+#define INCLUDED_protocols_toolbox_PyReturnValuePolicyTest_hh
+
+#include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+
+#include <utility/pointer/owning_ptr.fwd.hh>
+
+namespace protocols {
+namespace toolbox {
+
+class DummyClass;
+
+typedef utility::pointer::owning_ptr< DummyClass > DummyClassOP;
+typedef utility::pointer::owning_ptr< DummyClass const > DummyClassCOP;
+
+typedef utility::pointer::access_ptr< DummyClass > DummyClassAP;
+typedef utility::pointer::access_ptr< DummyClass const > DummyClassCAP;
+
+
+class DummyClass : public utility::pointer::ReferenceCount {
+public:
+	DummyClass() {};
+	DummyClass(int) {};
+	~DummyClass() {};
+
+	DummyClass(DummyClass const &) {};
+
+	DummyClass & operator=( DummyClass const & ) { return *this; };
+
+	static DummyClass * create() { return new DummyClass(); };
+
+	virtual DummyClassOP clone() const { return new DummyClass(); };
+
+	void test() {};
+
+private:
+};
+
+DummyClassOP PyReturnValuePolicyTest_DummyClassOP(void) { return DummyClass::create(); };
+DummyClassCOP PyReturnValuePolicyTest_DummyClassCOP(void) { return DummyClass::create(); };
+DummyClassAP PyReturnValuePolicyTest_DummyClassAP(void)  { return DummyClass::create(); };
+DummyClassCAP PyReturnValuePolicyTest_DummyClassCAP(void)  { return DummyClass::create(); };
+
+
+class SF_Replica;
+
+typedef utility::pointer::owning_ptr< SF_Replica > SF_ReplicaOP;
+typedef utility::pointer::owning_ptr< SF_Replica const > SF_ReplicaCOP;
+
+typedef utility::pointer::access_ptr< SF_Replica > SF_ReplicaAP;
+typedef utility::pointer::access_ptr< SF_Replica const > SF_ReplicaCAP;
+
+
+// SF_Replica
+class SF_Replica : public utility::pointer::ReferenceCount
+{
+public:
+
+	SF_Replica() {};
+
+	~SF_Replica() {};
+
+	SF_Replica &
+	operator=( SF_Replica const & ) { return *this; };
+
+	SF_Replica( SF_Replica const & ) {};
+
+	virtual SF_ReplicaOP clone() const { return 0; };
+
+	virtual Real operator ()( pose::Pose & pose ) const {};
+
+	//Real operator []( ScoreType const & t ) const
+	//{ return weights_[ t ]; }
+
+	//void show( std::ostream & out ) const;
+
+private:
+	int some_private_int_;
+};
+
+SF_ReplicaOP PyReturnValuePolicyTest_SF_ReplicaOP(void) { return new SF_Replica; };
+SF_ReplicaCOP PyReturnValuePolicyTest_SF_ReplicaCOP(void) { return new SF_Replica; };
+SF_ReplicaAP PyReturnValuePolicyTest_SF_ReplicaAP(void)  { return new SF_Replica; };
+SF_ReplicaCAP PyReturnValuePolicyTest_SF_ReplicaCAP(void)  { return new SF_Replica; };
+
+
+core::pose::PoseOP PyReturnValuePolicyTest_PoseOP(void) { return new core::pose::Pose(); };
+core::pose::PoseCOP PyReturnValuePolicyTest_PoseCOP(void) { return new core::pose::Pose(); };
+core::pose::PoseAP PyReturnValuePolicyTest_PoseAP(void)  { return new core::pose::Pose(); };
+core::pose::PoseCAP PyReturnValuePolicyTest_PoseCAP(void)  { return new core::pose::Pose(); };
+
+core::scoring::ScoreFunctionOP PyReturnValuePolicyTest_ScoreFunctionOP(void) { return core::scoring::ScoreFunctionFactory::create_score_function("standard"); };
+core::scoring::ScoreFunctionCOP PyReturnValuePolicyTest_ScoreFunctionCOP(void) { return core::scoring::ScoreFunctionFactory::create_score_function("standard"); };
+core::scoring::ScoreFunctionCOP PyReturnValuePolicyTest_ScoreFunctionCOP2(void) { return new core::scoring::ScoreFunction(); };
+
+//core::scoring::ScoreFunctionAP PyReturnValuePolicyTest_ScoreFunctionAP(void) { return core::scoring::ScoreFunctionFactory::create_score_function("standard"); };
+//core::scoring::ScoreFunctionCAP PyReturnValuePolicyTest_ScoreFunctionCOP(void) { return core::scoring::ScoreFunctionFactory::create_score_function("standard"); };
+
+} //toolbox
+} //protocols
+
+#endif  // INCLUDED_protocols_toolbox_PyReturnValuePolicyTest_hh

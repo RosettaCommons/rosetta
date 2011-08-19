@@ -1,0 +1,60 @@
+Testing docking low-res scoring function...
+------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ interchain_pair              1.000       2.213       2.213
+ interchain_vdw               1.000       0.000       0.000
+ interchain_env               1.000     -21.316     -21.316
+ interchain_contact           2.000      -8.000     -16.000
+---------------------------------------------------
+ Total weighted score:                      -35.103
+Testing docking high-res scoring function...
+------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ fa_atr                       0.338   -1404.492    -474.718
+ fa_rep                       0.044    1643.965      72.334
+ fa_sol                       0.242     879.488     212.836
+ hack_elec                    0.026     -66.597      -1.732
+ fa_pair                      0.164     -40.686      -6.673
+ hbond_sr_bb                  0.245     -37.346      -9.150
+ hbond_lr_bb                  0.245     -68.252     -16.722
+ hbond_bb_sc                  0.245     -19.044      -4.666
+ hbond_sc                     0.245      -5.364      -1.314
+ dslf_ss_dst                  0.500       8.405       4.202
+ dslf_cs_ang                  2.000      10.116      20.233
+ dslf_ss_dih                  5.000       5.678      28.391
+ dslf_ca_dih                  5.000       0.449       2.243
+ fa_dun                       0.036    1432.978      51.587
+---------------------------------------------------
+ Total weighted score:                     -123.147
+Testing DockingProtocol.setup_foldtree()...
+FOLD_TREE  EDGE 1 197 -1  EDGE 197 245 -1  EDGE 197 282 1  EDGE 282 301 -1  EDGE 282 246 -1 
+
+Testing DockingProtocol.setup_foldtree()for multichain...
+FOLD_TREE  EDGE 1 214 -1  EDGE 214 215 2  EDGE 215 384 -1  EDGE 384 432 -1  EDGE 384 488 1  EDGE 488 561 -1  EDGE 488 433 -1 
+
+Testing interface-dependant scoring for multichain docking...
+------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ interchain_pair              1.000      -0.815      -0.815
+ interchain_vdw               1.000       0.000       0.000
+ interchain_env               1.000     -56.857     -56.857
+ interchain_contact           2.000      -3.500      -7.000
+---------------------------------------------------
+ Total weighted score:                      -64.672
+Testing DockingProtocol.calc_interaction_energy()...
+-14.234
+Testing DockingProtocol.recover_sidechains()...
+Testing DockingProtocol.calc_Lrmsd()...
+13.6911
+Testing DockingProtocol.calc_Irmsd()...
+5.86001
+Testing DockingProtocol.calc_Fnat()...
+0.0409836
+Testing DockingProtocol.docking_lowres_filter()...
+1
+Testing DockingProtocol.docking_highres_filter()...
+1
+

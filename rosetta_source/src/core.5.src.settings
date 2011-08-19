@@ -1,0 +1,98 @@
+# -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
+#
+# Project settings for rosetta sources
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+sources = {
+	"core" : [
+		"init",
+	],
+
+#XRW_B_T1
+#	"core/coarse" : [
+#		"Translator",
+#		"TranslatorSet",
+#		"Rules",
+#		"CoarseEtable",
+#	],
+#XRW_E_T1
+
+	"core/fragment" : [
+		"Frame",
+		"FrameIterator",
+		"FragID",
+		"FragID_Iterator",
+		"JumpingFrame",
+		"FragSet",
+		"FragSetCollection",
+		"FragData",
+		"FrameList",
+		"BBTorsionSRFD",
+		"BBTorsionAndAnglesSRFD",
+		"IndependentBBTorsionSRFD",
+		"SingleResidueFragData",
+		"SecstructSRFD",
+		"JumpSRFD",
+		"ConstantLengthFragSet",
+		"OrderedFragSet",
+		"util",
+		"FragmentIO",
+		"SecondaryStructure",
+	],
+
+	"core/fragment/picking_old" : [
+		"FragmentLibraryManager",
+	],
+
+	"core/fragment/picking_old/vall" : [
+		"util",
+		"vall_io",
+		"VallLibrarian",
+		"VallResidue",
+	],
+
+	"core/fragment/picking_old/vall/eval" : [
+                "ABEGOEval",
+		"EnergyEval",
+		"IdentityEval",
+		"VallFragmentEval",
+	],
+
+	"core/fragment/picking_old/vall/gen" : [
+		"LengthGen",
+		"SecStructGen",
+		"VallFragmentGen",
+	],
+
+	"core/import_pose" : [
+		"import_pose",
+		"PDBSilentStruct",
+		"PDBSilentStructCreator",
+	],
+
+	"core/import_pose/atom_tree_diffs" : [
+		"atom_tree_diff"
+	],
+
+	"core/import_pose/pose_stream" : [
+		"util",
+		"PoseInputStream",
+		"PDBPoseInputStream",
+		"MetaPoseInputStream",
+		"ExtendedPoseInputStream",
+		"SilentFilePoseInputStream",
+		"LazySilentFilePoseInputStream",
+	],
+
+}
+include_path = []
+library_path = []
+libraries    = []
+subprojects  = [
+	"core.1","core.2","core.3","core.4",
+	"basic","numeric", "utility", "ObjexxFCL", "z","sqlite3", "cppdb"
+]
