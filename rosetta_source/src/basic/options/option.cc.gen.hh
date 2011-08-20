@@ -5,7 +5,8 @@
 #include <utility/options/OptionCollection.hh>
 inline void add_rosetta_options_0( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::in::in, "Input option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::in::termini, "Put full N and C termini on input structures" ).def(true);
-option.add( basic::options::OptionKeys::in::ignore_unrecognized_res, "Do not abort if unknown residues are found in PDB file;  instead, ignore them." ).def(false);
+option.add( basic::options::OptionKeys::in::ignore_unrecognized_res, "Do not abort if unknown residues are found in PDB file;  instead, ignore them. Note this implies -in:ignore_waters" ).def(false);
+option.add( basic::options::OptionKeys::in::ignore_waters, "Do not abort if HOH water residues are found in PDB file;  instead, ignore them." ).def(false);
 option.add( basic::options::OptionKeys::in::remember_unrecognized_res, "Ignore unrecognized residues, but remember them in PDBInfo." ).def(false);
 option.add( basic::options::OptionKeys::in::remember_unrecognized_water, "Remember waters along with other unrecognized residues." ).def(false);
 option.add( basic::options::OptionKeys::in::detect_disulf, "Forcably enable or disable disulfide detection. When unspecified, rosetta conservatively detects disulfides in full atom input based on SG distance, but will not form centroid disulfides. Setting `-detect_disulf true` will force  aggressive disulfide detection in centroid poses based on CB distance. Setting `-detect_disulf false` disables all detection, even in full atom poses. Note that disabling disulfides causes severe clashes for native disulfides." ).legal(true).legal(false);
@@ -564,10 +565,10 @@ option.add( basic::options::OptionKeys::abinitio::recover_low_in_stages, "say de
 option.add( basic::options::OptionKeys::abinitio::skip_stages, "say: 2 3 4, and it will skip stages 2 3 4" ).def(0);
 option.add( basic::options::OptionKeys::abinitio::close_chbrk, "Chain break closure during classic abinito " ).def(false);
 option.add( basic::options::OptionKeys::abinitio::include_stage5, "stage5 contains small moves only" ).def(false);
-option.add( basic::options::OptionKeys::abinitio::close_loops_by_idealizing, "close loops by idealizing the structure after stage 4" ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_using_kic, "optimize around cutpoints using kinematic relax" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::close_loops_by_idealizing, "close loops by idealizing the structure after stage 4" ).def(false);
+option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_using_kic, "optimize around cutpoints using kinematic relax" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_margin, "" ).def(5);
 option.add( basic::options::OptionKeys::abinitio::HD_EX_Info, "input list of residues with low amide protection " );
 option.add( basic::options::OptionKeys::abinitio::HD_penalty, "penatlty for each inconsistent pairing with HD data " ).def(0.1);
@@ -1128,10 +1129,10 @@ option.add( basic::options::OptionKeys::packing::minpack_disable_bumpcheck, "Dis
 option.add( basic::options::OptionKeys::phil::phil, "phil option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::phil::nloop, "No description" ).def(10);
 option.add( basic::options::OptionKeys::phil::vall_file, "No description" );
-option.add( basic::options::OptionKeys::phil::align_file, "No description" );
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::wum::wum, "wum option group" ).legal(true).def(true);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::phil::align_file, "No description" );
+option.add( basic::options::OptionKeys::wum::wum, "wum option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::wum::n_slaves_per_master, "A value between 32 and 128 is usually recommended" ).def(64);
 option.add( basic::options::OptionKeys::wum::n_masters, "Manual override for -n_slaves_per_master. How many master nodes should be spawned ? 1 by default. generall 1 for eery 256-512 cores is recommended depending on master workload" ).def(1);
 option.add( basic::options::OptionKeys::wum::memory_limit, "Memory limit for queues (in kB) " ).def(0);
@@ -1692,10 +1693,10 @@ option.add( basic::options::OptionKeys::AnchoredDesign::filters::sasa, "do not p
 option.add( basic::options::OptionKeys::AnchoredDesign::filters::omega, "filter out non-trans omegas" ).def(false);
 option.add( basic::options::OptionKeys::AnchoredDesign::akash::akash, "akash option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::AnchoredDesign::akash::dyepos, "dye position" ).def(0);
-option.add( basic::options::OptionKeys::AnchoredDesign::testing::testing, "testing option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::AnchoredDesign::testing::VDW_weight, "centroid VDW weight; testing if 2 better than 1" ).lower(0).def(1.0);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::AnchoredDesign::testing::testing, "testing option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::AnchoredDesign::testing::VDW_weight, "centroid VDW weight; testing if 2 better than 1" ).lower(0).def(1.0);
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_via_constraints, "allow anchor&jump to move; anchor held in place via constraints - you must specify constraints!" ).def(false);
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::delete_interface_native_sidechains, "benchmarking option.  delete input sidechains as prepacking step before running centroid or fullatom phases.  use if also using use_input_sc and doing benchmarking.  use_input_sc is used because of sidechain minimization, not to maintain input sidechains." );
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::RMSD_only_this, "Perform only RMSD calculations without modifying input.  Only used for re-running metrics during benchmarking/debugging." );

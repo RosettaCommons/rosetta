@@ -24,6 +24,7 @@ namespace OptionKeys {
 namespace in { extern BooleanOptionKey const in; }
 namespace in { extern BooleanOptionKey const termini; }
 namespace in { extern BooleanOptionKey const ignore_unrecognized_res; }
+namespace in { extern BooleanOptionKey const ignore_waters; }
 namespace in { extern BooleanOptionKey const remember_unrecognized_res; }
 namespace in { extern BooleanOptionKey const remember_unrecognized_water; }
 namespace in { extern BooleanOptionKey const detect_disulf; }

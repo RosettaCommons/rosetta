@@ -1,6 +1,7 @@
 namespace in { BooleanOptionKey const in( "in" );  }
 namespace in { BooleanOptionKey const termini( "in:termini" );  }
 namespace in { BooleanOptionKey const ignore_unrecognized_res( "in:ignore_unrecognized_res" );  }
+namespace in { BooleanOptionKey const ignore_waters( "in:ignore_waters" );  }
 namespace in { BooleanOptionKey const remember_unrecognized_res( "in:remember_unrecognized_res" );  }
 namespace in { BooleanOptionKey const remember_unrecognized_water( "in:remember_unrecognized_water" );  }
 namespace in { BooleanOptionKey const detect_disulf( "in:detect_disulf" );  }
@@ -559,4 +560,3 @@ namespace abinitio { IntegerVectorOptionKey const recover_low_in_stages( "abinit
 namespace abinitio { IntegerVectorOptionKey const skip_stages( "abinitio:skip_stages" );  }
 namespace abinitio { BooleanOptionKey const close_chbrk( "abinitio:close_chbrk" );  }
 namespace abinitio { BooleanOptionKey const include_stage5( "abinitio:include_stage5" );  }
-namespace abinitio { BooleanOptionKey const close_loops_by_idealizing( "abinitio:close_loops_by_idealizing" );  }

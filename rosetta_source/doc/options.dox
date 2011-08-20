@@ -14,7 +14,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-ignore_unrecognized_res</b> \<Boolean\><dt>
-<dd>Do not abort if unknown residues are found in PDB file;  instead, ignore them.</dd><br>
+<dd>Do not abort if unknown residues are found in PDB file;  instead, ignore them. Note this implies -in:ignore_waters</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-ignore_waters</b> \<Boolean\><dt>
+<dd>Do not abort if HOH water residues are found in PDB file;  instead, ignore them.</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>

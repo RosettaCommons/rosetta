@@ -1,3 +1,4 @@
+namespace abinitio { BooleanOptionKey const close_loops_by_idealizing( "abinitio:close_loops_by_idealizing" );  }
 namespace abinitio { BooleanOptionKey const optimize_cutpoints_using_kic( "abinitio:optimize_cutpoints_using_kic" );  }
 namespace abinitio { IntegerOptionKey const optimize_cutpoints_margin( "abinitio:optimize_cutpoints_margin" );  }
 namespace abinitio { FileOptionKey const HD_EX_Info( "abinitio:HD_EX_Info" );  }
@@ -559,4 +560,3 @@ namespace packing { BooleanOptionKey const minpack_disable_bumpcheck( "packing:m
 namespace phil { BooleanOptionKey const phil( "phil" );  }
 namespace phil { IntegerOptionKey const nloop( "phil:nloop" );  }
 namespace phil { StringOptionKey const vall_file( "phil:vall_file" );  }
-namespace phil { StringOptionKey const align_file( "phil:align_file" );  }

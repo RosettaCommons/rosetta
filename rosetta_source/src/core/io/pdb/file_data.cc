@@ -653,7 +653,8 @@ build_pose_as_is1(
 		if ( rsd_type_list.empty() ) {
 			using namespace basic::options;
 			if( !(option[ OptionKeys::in::  ignore_unrecognized_res ]() ||
-					option[ OptionKeys::in::remember_unrecognized_res ]()) ) {
+					option[ OptionKeys::in::remember_unrecognized_res ]() ||
+					(pdb_name == "HOH" && option[OptionKeys::in::ignore_waters ]())) ) {
 				// We should fail fast on unrecognized input rather than produce bad results!
 				utility_exit_with_message(" unrecognized aa " + pdb_name );
 			}
