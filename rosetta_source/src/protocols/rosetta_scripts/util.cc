@@ -166,6 +166,18 @@ get_resnum_list( std::string const str, core::pose::Pose const & pose )
 	vector1< string> const str_residues( utility::string_split( str , ',' ) );
 	foreach( string const res, str_residues ){
 		if( res == "" ) continue;
+		if( res.find('-') != string::npos) {
+			// Handle residue range
+			vector1< string> const str_limits( utility::string_split( res , '-' ) );
+			if ( str_limits.size() == 2) {
+				core::Size const start ( parse_resnum( str_limits[1], pose ) );
+				core::Size const end ( parse_resnum( str_limits[2], pose ) );
+				runtime_assert( start && end && start <= end );
+				for(core::Size i = start; i <= end; ++i )
+					resid.insert( i );
+				continue;
+			}
+		}
 		core::Size const num( parse_resnum( res, pose ) );
 		runtime_assert( num );
 		resid.insert( num );
