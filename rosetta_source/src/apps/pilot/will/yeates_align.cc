@@ -69,8 +69,8 @@ main (int argc, char *argv[]){
 
   core::init( argc, argv );
   pose::Pose ccpp,ccap;
-  import_pose::pose_from_pdb(ccpp,"input/ccpp.pdb"); strip_termini(ccpp);
-  import_pose::pose_from_pdb(ccap,"input/ccap.pdb"); strip_termini(ccap);
+  import_pose::pose_from_pdb(ccpp,"input/ccpp.pdb"); remove_termini(ccpp);
+  import_pose::pose_from_pdb(ccap,"input/ccap.pdb"); remove_termini(ccap);
   ccpp.set_xyz(AtomID(ccpp.residue(1).atom_index("H"),1),Vec(0,0,0));
   ccpp.set_xyz(AtomID(ccpp.residue(2).atom_index("H"),2),Vec(0,0,1));
   ccap.set_xyz(AtomID(ccap.residue(1).atom_index("H"),1),Vec(0,0,0));
@@ -80,7 +80,7 @@ main (int argc, char *argv[]){
     string fname = option[in::file::s]()[ifile];
     //TR << fname << std::endl;
     pose::Pose pose;
-    import_pose::pose_from_pdb(pose,fname); strip_termini(pose);
+    import_pose::pose_from_pdb(pose,fname); remove_termini(pose);
 
     core::scoring::dssp::Dssp dssp(pose);
     Size nstart=0,nstop=0,cstart=0,cstop=0;
