@@ -114,28 +114,28 @@ struct MAT {
   Mat xyzMatrix() { return Mat::rows(xx,xy,xz,yx,yy,yz,zx,zy,zz); };
 #endif
 };
-inline struct MAT MATrowsf(float xx, float xy, float xz, float yx, float yy, float yz, float zx, float zy, float zz) {
+inline struct MAT rowsf(float xx, float xy, float xz, float yx, float yy, float yz, float zx, float zy, float zz) {
   struct MAT m;
   m.xx=xx; m.xy=xy; m.xz=xz;
   m.yx=yx; m.yy=yy; m.yz=yz;
   m.zx=zx; m.zy=zy; m.zz=zz;
   return m;
 }
-inline struct MAT MATcolsf(float xx, float yx, float zx, float xy, float yy, float zy, float xz, float yz, float zz) {
+inline struct MAT colsf(float xx, float yx, float zx, float xy, float yy, float zy, float xz, float yz, float zz) {
   struct MAT m;
   m.xx=xx; m.xy=xy; m.xz=xz;
   m.yx=yx; m.yy=yy; m.yz=yz;
   m.zx=zx; m.zy=zy; m.zz=zz;
   return m;
 }
-inline struct MAT MATrows(struct VEC const rx, struct VEC const ry, struct VEC const rz) {
+inline struct MAT rows(struct VEC const rx, struct VEC const ry, struct VEC const rz) {
   struct MAT m;
   m.xx=rx.x; m.xy=rx.y; m.xz=rx.z;
   m.yx=ry.x; m.yy=ry.y; m.yz=ry.z;
   m.zx=rz.x; m.zy=rz.y; m.zz=rz.z;
   return m;
 }
-inline struct MAT MATcols(struct VEC const cx, struct VEC const cy, struct VEC const cz) {
+inline struct MAT cols(struct VEC const cx, struct VEC const cy, struct VEC const cz) {
   struct MAT m;
   m.xx=cx.x; m.xy=cy.x; m.xz=cz.x;
   m.yx=cx.y; m.yy=cy.y; m.yz=cz.y;

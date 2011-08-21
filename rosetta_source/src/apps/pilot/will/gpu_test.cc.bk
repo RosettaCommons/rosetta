@@ -105,14 +105,14 @@ std::ostream & operator<<(std::ostream & out, MAT m) {
   out << m.zx << " " << m.zy << " " << m.zz << std::endl;
   return out;
 }
-inline struct MAT MATrows(float xx, float xy, float xz, float yx, float yy, float yz, float zx, float zy, float zz) {
+inline struct MAT rows(float xx, float xy, float xz, float yx, float yy, float yz, float zx, float zy, float zz) {
   MAT m;
   m.xx=xx; m.xy=xy; m.xz=xz;
   m.yx=yx; m.yy=yy; m.yz=yz;
   m.zx=zx; m.zy=zy; m.zz=zz;
   return m;
 }
-inline struct MAT MATcols(float xx, float yx, float zx, float xy, float yy, float zy, float xz, float yz, float zz) {
+inline struct MAT cols(float xx, float yx, float zx, float xy, float yy, float zy, float xz, float yz, float zz) {
   MAT m;
   m.xx=xx; m.xy=xy; m.xz=xz;
   m.yx=yx; m.yy=yy; m.yz=yz;
@@ -295,8 +295,8 @@ int main (int argc, char *argv[]) {
     VEC sx( src.residue(1).xyz("N").normalized() );
     VEC sy( normalized(pproj(sx,VEC(src.residue(1).xyz("CA")))) );
     VEC sz( cross(sx,sy) );
-    MAT tr(MATrows(tx.x,tx.y,tx.z,ty.x,ty.y,ty.z,tz.x,tz.y,tz.z));
-    MAT sr(MATrows(sx.x,sx.y,sx.z,sy.x,sy.y,sy.z,sz.x,sz.y,sz.z));
+    MAT tr(rows(tx.x,tx.y,tx.z,ty.x,ty.y,ty.z,tz.x,tz.y,tz.z));
+    MAT sr(rows(sx.x,sx.y,sx.z,sy.x,sy.y,sy.z,sz.x,sz.y,sz.z));
 
     rot_pose(src,mult(tr,sr).xyzMatrix());
     src.dump_pdb("out/test.pdb");

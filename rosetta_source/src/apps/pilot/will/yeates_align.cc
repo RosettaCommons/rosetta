@@ -61,13 +61,6 @@ using namespace ObjexxFCL::fmt;
 typedef numeric::xyzVector<Real> Vec;
 typedef numeric::xyzMatrix<Real> Mat;
 
-void strip_termini(core::pose::Pose & pose) {
-  for(Size i = 1; i <= pose.n_residue(); ++i) {
-    if(pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
-    if(pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
-  }
-}
-
 int
 main (int argc, char *argv[]){
   using namespace core;

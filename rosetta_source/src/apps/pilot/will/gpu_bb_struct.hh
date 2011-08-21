@@ -50,9 +50,9 @@ struct BB {
 };
 
 
-inline struct VEC get_BB__N(float16 const f) { return makeVEC(f.s0,f.s1,f.s2); }
-inline struct VEC get_BB_CA(float16 const f) { return makeVEC(f.s3,f.s4,f.s5); }
-inline struct VEC get_BB__C(float16 const f) { return makeVEC(f.s6,f.s7,f.s8); }
-inline struct VEC get_BB__O(float16 const f) { return makeVEC(f.s9,f.sa,f.sb); }
-inline struct VEC get_BB_CB(float16 const f) { return makeVEC(f.sc,f.sd,f.se); }
+inline struct VEC get_BB__N(float16 const f) { return vec(f.s0,f.s1,f.s2); }
+inline struct VEC get_BB_CA(float16 const f) { return vec(f.s3,f.s4,f.s5); }
+inline struct VEC get_BB__C(float16 const f) { return vec(f.s6,f.s7,f.s8); }
+inline struct VEC get_BB__O(float16 const f) { return vec(f.s9,f.sa,f.sb); }
+inline struct VEC get_BB_CB(float16 const f) { return vec(f.sc,f.sd,f.se); }
 

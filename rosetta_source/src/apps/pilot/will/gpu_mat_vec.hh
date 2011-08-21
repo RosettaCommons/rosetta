@@ -1,3 +1,5 @@
+
+
 inline float native_sin(float x) { return std::sin(x); }
 inline float native_cos(float x) { return std::cos(x); }
 inline float native_divide(float a, float b) { return a/b; }
@@ -44,29 +46,34 @@ struct MAT {
   Mat xyzMatrix() { return Mat::rows(xx,xy,xz,yx,yy,yz,zx,zy,zz); };
 #endif
 };
-inline struct VEC makeVEC(float x, float y, float z) { VEC v; v.x=x; v.y=y; v.z=z; return v; }
-inline struct MAT MATrows(float xx, float xy, float xz, float yx, float yy, float yz, float zx, float zy, float zz) {
+struct XFORM {
+  struct MAT R;
+  struct VEC t;
+};
+inline struct VEC vec(float x, float y, float z) { VEC v; v.x=x; v.y=y; v.z=z; return v; }
+inline struct XFORM makeXFORM(struct MAT const R, struct VEC const t) {  struct XFORM x;  x.R = R;  x.t = t;  return x; }
+inline struct MAT rows(float xx, float xy, float xz, float yx, float yy, float yz, float zx, float zy, float zz) {
   struct MAT m;
   m.xx=xx; m.xy=xy; m.xz=xz;
   m.yx=yx; m.yy=yy; m.yz=yz;
   m.zx=zx; m.zy=zy; m.zz=zz;
   return m;
 }
-inline struct MAT MATcols(float xx, float yx, float zx, float xy, float yy, float zy, float xz, float yz, float zz) {
+inline struct MAT cols(float xx, float yx, float zx, float xy, float yy, float zy, float xz, float yz, float zz) {
   struct MAT m;
   m.xx=xx; m.xy=xy; m.xz=xz;
   m.yx=yx; m.yy=yy; m.yz=yz;
   m.zx=zx; m.zy=zy; m.zz=zz;
   return m;
 }
-inline struct MAT MATrows(struct VEC const rx, struct VEC const ry, struct VEC const rz) {
+inline struct MAT rows(struct VEC const rx, struct VEC const ry, struct VEC const rz) {
   struct MAT m;
   m.xx=rx.x; m.xy=rx.y; m.xz=rx.z;
   m.yx=ry.x; m.yy=ry.y; m.yz=ry.z;
   m.zx=rz.x; m.zy=rz.y; m.zz=rz.z;
   return m;
 }
-inline struct MAT MATcols(struct VEC const cx, struct VEC const cy, struct VEC const cz) {
+inline struct MAT cols(struct VEC const cx, struct VEC const cy, struct VEC const cz) {
   struct MAT m;
   m.xx=cx.x; m.xy=cy.x; m.xz=cz.x;
   m.yx=cx.y; m.yy=cy.y; m.yz=cz.y;
@@ -284,8 +291,8 @@ void test_MAT_VEC() {
   myasserteq(  pproj(U,V)           ,     projperp(u,v)     , "projperp" );
   myasserteq(  crossvv(U,V)           ,     u.cross(v)     , "cross" );
   myasserteq(  normalizedv(V)        ,     v.normalized()     , "normalize" );
-  myasserteq(  MATrows(U,V,W)       ,     Mat::rows(u,v,w)     , "rows" );
-  myasserteq(  MATcols(U,V,W)       ,     Mat::cols(u,v,w)     , "cols" );
+  myasserteq(  rows(U,V,W)       ,     Mat::rows(u,v,w)     , "rows" );
+  myasserteq(  cols(U,V,W)       ,     Mat::cols(u,v,w)     , "cols" );
   myasserteq(  rotationMAT(U,123.0),   rotation_matrix(Vec(u),123.0)     , "rotation" );
   myasserteq(  projectionMAT(U),   projection_matrix(Vec(u))     , "projection" );
   
@@ -338,7 +345,7 @@ void test_chi_xform() {
     VEC SX( normalizedv(Ng) );
     VEC SY( normalizedv(pproj(SX,CAg)) );
     VEC SZ( crossvv(SX,SY) );
-    MAT R = multmm(MATcols(TX,TY,TZ),MATrows(SX,SY,SZ));
+    MAT R = multmm(cols(TX,TY,TZ),rows(SX,SY,SZ));
 
     Vec tx( tgt.residue(1).xyz("N").normalized() );
     Vec ty( projperp(tx,tgt.residue(1).xyz("CA")).normalized() );
@@ -401,86 +408,93 @@ void test_chi_xform() {
 // }
 
 // xform between stubs
-inline MAT tform(struct VEC const _x1, struct VEC const _y1, struct VEC const _x2, struct VEC const _y2) {
-  struct VEC x1 = normalizedv(_x1);
-  struct VEC y1 = normalizedv(pproj(_x1,_y1));
-  struct VEC z1 = crossvv(x1,y1);
-  struct VEC x2 = normalizedv(_x2);
-  struct VEC y2 = normalizedv(pproj(_x2,_y2));
-  struct VEC z2 = crossvv(x2,y2);
-  struct MAT Rto = MATcols(x1,y1,z1);
-  struct MAT Rfr = MATrows(x2,y2,z2);
-  return multmm(Rto,Rfr);
+inline struct XFORM const
+tform(struct VEC const _x1, struct VEC const _y1, 
+      struct VEC const _x2, struct VEC const _y2,
+      struct VEC const _c1, struct VEC const _c2)
+{
+  struct VEC const x1 = normalizedv(_x1);
+  struct VEC const y1 = normalizedv(pproj(_x1,_y1));
+  struct VEC const z1 = crossvv(x1,y1);
+  struct VEC const x2 = normalizedv(_x2);
+  struct VEC const y2 = normalizedv(pproj(_x2,_y2));
+  struct VEC const z2 = crossvv(x2,y2);
+  struct MAT const Rto = cols(x2,y2,z2);
+  struct MAT const Rfr = rows(x1,y1,z1);
+  struct XFORM x;
+  x.R = multmm(Rto,Rfr);
+  x.t = subvv(_c2,_c1);
+  return x;
 }
 
 
 
-////  code for packing xform+32bits metadata into float8
-struct TRANS {
-  float xx,xy,xz,yx,yy,yz,zx,zy,zz,x,y,z;
-  uint meta;
-};
+// ////  code for packing xform+32bits metadata into float8
+// struct TRANS {
+//   float xx,xy,xz,yx,yy,yz,zx,zy,zz,x,y,z;
+//   uint meta;
+// };
 
 
-inline float8 packtrans(struct TRANS const t) {
-  float8 f;
-  f.s0 = t.xx;
-  f.s1 = t.yx;
-  f.s2 = t.xy;
-  f.s3 = t.yy;
-  f.s4 = t.x;
-  f.s5 = t.y;
-  f.s6 = t.z;
-  uint tmp = ((t.meta & 4294967293u) | ((t.zx<0.0f)?0u:1u)) | ((t.zy<0.0f)?0u:2u);
-  f.s7 = *((float*)(&tmp));
-  return f;
-}
+// inline float8 packtrans(struct TRANS const t) {
+//   float8 f;
+//   f.s0 = t.xx;
+//   f.s1 = t.yx;
+//   f.s2 = t.xy;
+//   f.s3 = t.yy;
+//   f.s4 = t.x;
+//   f.s5 = t.y;
+//   f.s6 = t.z;
+//   uint tmp = ((t.meta & 4294967293u) | ((t.zx<0.0f)?0u:1u)) | ((t.zy<0.0f)?0u:2u);
+//   f.s7 = *((float*)(&tmp));
+//   return f;
+// }
 
-inline struct TRANS unpacktrans(float8 const f) {
-  struct TRANS t;
-  t.meta = *((uint*)&f.s7);
-  t.xx = f.s0;
-  t.yx = f.s1;
-  t.xy = f.s2;
-  t.yy = f.s3;
-  t.zx = native_sqrt(-mad(t.xx,t.xx,mad(t.yx,t.yx,-1.0f))) * ((t.meta&1u) ? 1.0f : -1.0f);
-  t.zy = native_sqrt(-mad(t.xy,t.xy,mad(t.yy,t.yy,-1.0f))) * ((t.meta&2u) ? 1.0f : -1.0f);
-  t.xz = mad(t.xy,t.yz,-t.xz*t.yy);
-  t.yz = mad(t.xz,t.yx,-t.xx*t.yz);
-  t.zz = mad(t.xx,t.yy,-t.xy*t.yx);
-  t.x = f.s4;
-  t.y = f.s5;
-  t.z = f.s6;
-  return t;
-}
+// inline struct TRANS unpacktrans(float8 const f) {
+//   struct TRANS t;
+//   t.meta = *((uint*)&f.s7);
+//   t.xx = f.s0;
+//   t.yx = f.s1;
+//   t.xy = f.s2;
+//   t.yy = f.s3;
+//   t.zx = native_sqrt(-mad(t.xx,t.xx,mad(t.yx,t.yx,-1.0f))) * ((t.meta&1u) ? 1.0f : -1.0f);
+//   t.zy = native_sqrt(-mad(t.xy,t.xy,mad(t.yy,t.yy,-1.0f))) * ((t.meta&2u) ? 1.0f : -1.0f);
+//   t.xz = mad(t.xy,t.yz,-t.xz*t.yy);
+//   t.yz = mad(t.xz,t.yx,-t.xx*t.yz);
+//   t.zz = mad(t.xx,t.yy,-t.xy*t.yx);
+//   t.x = f.s4;
+//   t.y = f.s5;
+//   t.z = f.s6;
+//   return t;
+// }
 
-inline float8 packmvm(Mat const R, Vec const t, uint const meta) { // first 2 bits of meta cleared
-  float8 f;
-  f.s0 = R.xx();
-  f.s1 = R.yx();
-  f.s2 = R.xy();
-  f.s3 = R.yy();
-  f.s4 = t.x();
-  f.s5 = t.y();
-  f.s6 = t.z();
-  uint tmp = ((meta & 4294967293u) | ((R.zx()<0.0f)?0u:1u)) | ((R.zy()<0.0f)?0u:2u);
-  f.s7 = *((float*)(&tmp));
-  return f;
-}
-inline uint unpackmvm(float8 const f, Mat &R, Vec &t) {
-  uint meta = *((uint*)&f.s7);
-  R.xx() = f.s0;
-  R.yx() = f.s1;
-  R.xy() = f.s2;
-  R.yy() = f.s3;
-  R.zx() = native_sqrt(-mad(R.xx(),R.xx(),mad(R.yx(),R.yx(),-1.0f))) * ((meta&1u) ? 1.0f : -1.0f);
-  R.zy() = native_sqrt(-mad(R.xy(),R.xy(),mad(R.yy(),R.yy(),-1.0f))) * ((meta&2u) ? 1.0f : -1.0f);
-  R.xz() = mad(R.yx(),R.zy(),-R.zx()*R.yy());
-  R.yz() = mad(R.zx(),R.xy(),-R.xx()*R.zy());
-  R.zz() = mad(R.xx(),R.yy(),-R.yx()*R.xy());
-  t.x() = f.s4;
-  t.y() = f.s5;
-  t.z() = f.s6;
-  return meta;
-}
+// inline float8 packmvm(Mat const R, Vec const t, uint const meta) { // first 2 bits of meta cleared
+//   float8 f;
+//   f.s0 = R.xx();
+//   f.s1 = R.yx();
+//   f.s2 = R.xy();
+//   f.s3 = R.yy();
+//   f.s4 = t.x();
+//   f.s5 = t.y();
+//   f.s6 = t.z();
+//   uint tmp = ((meta & 4294967293u) | ((R.zx()<0.0f)?0u:1u)) | ((R.zy()<0.0f)?0u:2u);
+//   f.s7 = *((float*)(&tmp));
+//   return f;
+// }
+// inline uint unpackmvm(float8 const f, Mat &R, Vec &t) {
+//   uint meta = *((uint*)&f.s7);
+//   R.xx() = f.s0;
+//   R.yx() = f.s1;
+//   R.xy() = f.s2;
+//   R.yy() = f.s3;
+//   R.zx() = native_sqrt(-mad(R.xx(),R.xx(),mad(R.yx(),R.yx(),-1.0f))) * ((meta&1u) ? 1.0f : -1.0f);
+//   R.zy() = native_sqrt(-mad(R.xy(),R.xy(),mad(R.yy(),R.yy(),-1.0f))) * ((meta&2u) ? 1.0f : -1.0f);
+//   R.xz() = mad(R.yx(),R.zy(),-R.zx()*R.yy());
+//   R.yz() = mad(R.zx(),R.xy(),-R.xx()*R.zy());
+//   R.zz() = mad(R.xx(),R.yy(),-R.yx()*R.xy());
+//   t.x() = f.s4;
+//   t.y() = f.s5;
+//   t.z() = f.s6;
+//   return meta;
+// }
 

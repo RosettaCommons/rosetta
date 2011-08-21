@@ -172,16 +172,16 @@ void refold_gpu_test(uint N, float const *tor, float *bb, float *b2) {
       uint const i9 = 9u*(i);
       MAT R;
       if(c<4u) { // skip "to" if 1st iter
-        VEC const az = normalizedv(         makeVEC(bb[i9+6u]-bb[i9+3u],bb[i9+7u]-bb[i9+4u],bb[i9+8u]-bb[i9+5u]) );
-        VEC const ay = normalizedv(pproj(az,makeVEC(bb[i9+0u]-bb[i9+3u],bb[i9+1u]-bb[i9+4u],bb[i9+2u]-bb[i9+5u])));
-        R = MATcols(crossvv(ay,az),ay,az);
+        VEC const az = normalizedv(         vec(bb[i9+6u]-bb[i9+3u],bb[i9+7u]-bb[i9+4u],bb[i9+8u]-bb[i9+5u]) );
+        VEC const ay = normalizedv(pproj(az,vec(bb[i9+0u]-bb[i9+3u],bb[i9+1u]-bb[i9+4u],bb[i9+2u]-bb[i9+5u])));
+        R = cols(crossvv(ay,az),ay,az);
       } else {
-        VEC       az = normalizedv(         makeVEC(bb[i9+6u]-bb[i9+3u],bb[i9+7u]-bb[i9+4u],bb[i9+8u]-bb[i9+5u]) );
-        VEC       ay = normalizedv(pproj(az,makeVEC(bb[i9+0u]-bb[i9+3u],bb[i9+1u]-bb[i9+4u],bb[i9+2u]-bb[i9+5u])));
-        MAT const to = MATcols(crossvv(ay,az),ay,az);
-        az = normalizedv(                   makeVEC(b2[i9+6u]-b2[i9+3u],b2[i9+7u]-b2[i9+4u],b2[i9+8u]-b2[i9+5u]) );
-        ay = normalizedv(pproj(az,          makeVEC(b2[i9+0u]-b2[i9+3u],b2[i9+1u]-b2[i9+4u],b2[i9+2u]-b2[i9+5u])));
-        R = multmm(to,MATrows(crossvv(ay,az),ay,az));
+        VEC       az = normalizedv(         vec(bb[i9+6u]-bb[i9+3u],bb[i9+7u]-bb[i9+4u],bb[i9+8u]-bb[i9+5u]) );
+        VEC       ay = normalizedv(pproj(az,vec(bb[i9+0u]-bb[i9+3u],bb[i9+1u]-bb[i9+4u],bb[i9+2u]-bb[i9+5u])));
+        MAT const to = cols(crossvv(ay,az),ay,az);
+        az = normalizedv(                   vec(b2[i9+6u]-b2[i9+3u],b2[i9+7u]-b2[i9+4u],b2[i9+8u]-b2[i9+5u]) );
+        ay = normalizedv(pproj(az,          vec(b2[i9+0u]-b2[i9+3u],b2[i9+1u]-b2[i9+4u],b2[i9+2u]-b2[i9+5u])));
+        R = multmm(to,rows(crossvv(ay,az),ay,az));
       }
       VEC T(b2[i9+0u],b2[i9+1u],b2[i9+2u]);
       T = multmv(R,T);  T.x = bb[i9+0u]-T.x;  T.y = bb[i9+1u]-T.y;  T.z = bb[i9+2u]-T.z;
@@ -193,9 +193,9 @@ void refold_gpu_test(uint N, float const *tor, float *bb, float *b2) {
       uint const j9 = 9u*j;
       float *XX = ((j==i-c/2u&&j!=0u) ? bb : b2);
       //TR << "join " << c << " at " << i << " xform " << start <<"-"<< i <<" @ "<< j << " " << ((j==i-c/2u&&j!=0u)?"bb":"b2") << " " << endl;;
-      VEC v1 = multmv(R,makeVEC(XX[j9+0u],XX[j9+1u],XX[j9+2u]));
-      VEC v2 = multmv(R,makeVEC(XX[j9+3u],XX[j9+4u],XX[j9+5u]));
-      VEC v3 = multmv(R,makeVEC(XX[j9+6u],XX[j9+7u],XX[j9+8u]));
+      VEC v1 = multmv(R,vec(XX[j9+0u],XX[j9+1u],XX[j9+2u]));
+      VEC v2 = multmv(R,vec(XX[j9+3u],XX[j9+4u],XX[j9+5u]));
+      VEC v3 = multmv(R,vec(XX[j9+6u],XX[j9+7u],XX[j9+8u]));
       XX[j9+0u]=v1.x+T.x; XX[j9+1u]=v1.y+T.y; XX[j9+2u]=v1.z+T.z;
       XX[j9+3u]=v2.x+T.x; XX[j9+4u]=v2.y+T.y; XX[j9+5u]=v2.z+T.z;
       XX[j9+6u]=v3.x+T.x; XX[j9+7u]=v3.y+T.y; XX[j9+8u]=v3.z+T.z;
@@ -370,27 +370,27 @@ void refold_second(
     uint const i9 = 9u*(i);
     struct MAT R;
     if(c<4u) { // skip "to" if 1st iter
-      struct VEC const az = normalizedv(         makeVEC(bb[i9+6u]-bb[i9+3u],bb[i9+7u]-bb[i9+4u],bb[i9+8u]-bb[i9+5u]) );
-      struct VEC const ay = normalizedv(pproj(az,makeVEC(bb[i9+0u]-bb[i9+3u],bb[i9+1u]-bb[i9+4u],bb[i9+2u]-bb[i9+5u])));
-      R = MATcols(crossvv(ay,az),ay,az);
+      struct VEC const az = normalizedv(         vec(bb[i9+6u]-bb[i9+3u],bb[i9+7u]-bb[i9+4u],bb[i9+8u]-bb[i9+5u]) );
+      struct VEC const ay = normalizedv(pproj(az,vec(bb[i9+0u]-bb[i9+3u],bb[i9+1u]-bb[i9+4u],bb[i9+2u]-bb[i9+5u])));
+      R = cols(crossvv(ay,az),ay,az);
     } else {
-      struct VEC       az = normalizedv(         makeVEC(bb[i9+6u]-bb[i9+3u],bb[i9+7u]-bb[i9+4u],bb[i9+8u]-bb[i9+5u]) );
-      struct VEC       ay = normalizedv(pproj(az,makeVEC(bb[i9+0u]-bb[i9+3u],bb[i9+1u]-bb[i9+4u],bb[i9+2u]-bb[i9+5u])));
-      struct MAT const to = MATcols(crossvv(ay,az),ay,az);
-      az = normalizedv(                   makeVEC(b2[i9+6u]-b2[i9+3u],b2[i9+7u]-b2[i9+4u],b2[i9+8u]-b2[i9+5u]) );
-      ay = normalizedv(pproj(az,          makeVEC(b2[i9+0u]-b2[i9+3u],b2[i9+1u]-b2[i9+4u],b2[i9+2u]-b2[i9+5u])));
-      R = multmm(to,MATrows(crossvv(ay,az),ay,az));
+      struct VEC       az = normalizedv(         vec(bb[i9+6u]-bb[i9+3u],bb[i9+7u]-bb[i9+4u],bb[i9+8u]-bb[i9+5u]) );
+      struct VEC       ay = normalizedv(pproj(az,vec(bb[i9+0u]-bb[i9+3u],bb[i9+1u]-bb[i9+4u],bb[i9+2u]-bb[i9+5u])));
+      struct MAT const to = cols(crossvv(ay,az),ay,az);
+      az = normalizedv(                   vec(b2[i9+6u]-b2[i9+3u],b2[i9+7u]-b2[i9+4u],b2[i9+8u]-b2[i9+5u]) );
+      ay = normalizedv(pproj(az,          vec(b2[i9+0u]-b2[i9+3u],b2[i9+1u]-b2[i9+4u],b2[i9+2u]-b2[i9+5u])));
+      R = multmm(to,rows(crossvv(ay,az),ay,az));
     }
-    struct VEC T = makeVEC(b2[i9+0u],b2[i9+1u],b2[i9+2u]);
+    struct VEC T = vec(b2[i9+0u],b2[i9+1u],b2[i9+2u]);
     T = multmv(R,T);  T.x = bb[i9+0u]-T.x;  T.y = bb[i9+1u]-T.y;  T.z = bb[i9+2u]-T.z;
     uint const start = max((int)i-(int)c/2,0);
     //barrier(CLK_LOCAL_MEM_FENCE);
     uint const j9 = 9u*j;
     /*__local*/ float *XX = ((j==i-c/2u&&j!=0u) ? bb : b2);
     //TR << "join " << c << " at " << i << " xform " << start <<"-"<< i <<" @ "<< j << " " << ((j==i-c/2u&&j!=0u)?"bb":"b2") << " " << endl;;
-    struct VEC v1 = multmv(R,makeVEC(XX[j9+0u],XX[j9+1u],XX[j9+2u]));
-    struct VEC v2 = multmv(R,makeVEC(XX[j9+3u],XX[j9+4u],XX[j9+5u]));
-    struct VEC v3 = multmv(R,makeVEC(XX[j9+6u],XX[j9+7u],XX[j9+8u]));
+    struct VEC v1 = multmv(R,vec(XX[j9+0u],XX[j9+1u],XX[j9+2u]));
+    struct VEC v2 = multmv(R,vec(XX[j9+3u],XX[j9+4u],XX[j9+5u]));
+    struct VEC v3 = multmv(R,vec(XX[j9+6u],XX[j9+7u],XX[j9+8u]));
     XX[j9+0u]=v1.x+T.x; XX[j9+1u]=v1.y+T.y; XX[j9+2u]=v1.z+T.z;
     XX[j9+3u]=v2.x+T.x; XX[j9+4u]=v2.y+T.y; XX[j9+5u]=v2.z+T.z;
     XX[j9+6u]=v3.x+T.x; XX[j9+7u]=v3.y+T.y; XX[j9+8u]=v3.z+T.z;

@@ -273,7 +273,7 @@ Size pose_natom(core::pose::Pose const& p){
   return natom;
 }
 
-void remove_tremini(core::pose::Pose & p) {
+void remove_termini(core::pose::Pose & p) {
   for(Size i = 1; i <= p.n_residue(); ++i) {
     if(p.residue(i).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(p,i);
     if(p.residue(i).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(p,i);
@@ -285,3 +285,83 @@ Vec safe_xyz(core::pose::Pose const & p, int ano, int rsd) {
   return p.xyz(AtomID(ano,rsd));
 }
 
+void to_canonical_bb_frame(core::pose::Pose & pose) {
+	core::conformation::Residue const & r(pose.residue(1));
+	if(!r.has( "N")) utility_exit_with_message("to_canonical_frame: res must have N");
+	if(!r.has("CA")) utility_exit_with_message("to_canonical_frame: res must have CA");
+	if(!r.has( "C")) utility_exit_with_message("to_canonical_frame: res must have C");
+	Vec  n = r.xyz( "N");
+	Vec ca = r.xyz("CA");
+	Vec  c = r.xyz( "C");
+	Vec X0 = (n-ca).normalized();
+	Vec Y0 = projperp(X0,(c-ca)).normalized();
+	Vec Z0 = X0.cross(Y0);
+	rot_pose(pose,Mat::rows(X0,Y0,Z0));
+	trans_pose(pose,-r.xyz("CA"));
+	{
+		Vec n = r.xyz("N");
+		Vec ca = r.xyz("CA");
+		Vec c = r.xyz("C");
+		Vec X0 = (n-ca).normalized();
+		Vec Y0 = projperp(X0,(c-ca)).normalized();
+		Vec Z0 = X0.cross(Y0);
+		std::cout << " N " << X0 << std::endl;
+		std::cout << "CA " << Y0 << std::endl;
+		std::cout << " C " << Z0 << std::endl;
+	}
+}
+
+void to_canonical_sc_frame(core::pose::Pose & pose) {
+	core::conformation::Residue const & r(pose.residue(1));
+	if(!(r.has("CG")||r.has("SG"))) utility_exit_with_message("to_canonical_frame: res must have CG/SG");
+	if(!r.has("CB")) utility_exit_with_message("to_canonical_frame: res must have CB");
+	if(!r.has("CA")) utility_exit_with_message("to_canonical_frame: res must have CA");
+	Vec cg = r.has("CG") ? r.xyz("CG") : r.xyz("SG");
+	Vec cb = r.xyz("CB");
+	Vec ca = r.xyz("CA");
+	Vec Z0 = (cg-cb).normalized();
+	Vec X0 = projperp(Z0,(ca-cb)).normalized();
+	Vec Y0 = Z0.cross(X0);
+	rot_pose(pose,Mat::rows(X0,Y0,Z0));
+	trans_pose(pose,-r.xyz("CB"));
+	// {
+	// 	Vec n = r.xyz("N");
+	// 	Vec ca = r.xyz("CA");
+	// 	Vec c = r.xyz("C");
+	// 	Vec X0 = (n-ca).normalized();
+	// 	Vec Y0 = projperp(X0,(c-ca)).normalized();
+	// 	Vec Z0 = X0.cross(Y0);
+	// 	std::cout << " N " <<  n << std::endl;
+	// 	std::cout << "CA " << ca << std::endl;
+	// 	std::cout << " C " <<  c << std::endl;
+	// 	std::cout << " X " << X0 << std::endl;
+	// 	std::cout << " Y " << Y0 << std::endl;
+	// 	std::cout << " Z " << Z0 << std::endl;
+	// }
+}
+
+void to_canonical_sc_frame_from_bb(core::pose::Pose & pose) {
+	core::conformation::Residue const & r(pose.residue(1));
+	Vec n =  r.xyz("N");
+	Vec ca = r.xyz("CA");
+	Vec c =  r.xyz("C");
+	Vec X0 = (n-ca).normalized();
+	Vec Y0 = projperp(X0,(c-ca)).normalized();
+	Vec Z0 = X0.cross(Y0);
+	Mat fr = Mat::rows(X0,Y0,Z0);
+	Vec X1(  0.6876640316337246,0.0000000000000000, 0.7260290487282527); // from above,
+	Vec Y1(  0.3873006764891879,0.8458311837980901,-0.3668348327323059); // only for
+	Vec Z1( -0.6140980097576192,0.5334506617436343, 0.5816476819321206); // homogeneous res!
+	Mat to = Mat::cols(X1,Y1,Z1);
+	rot_pose(pose,to*fr);
+	trans_pose(pose,Vec(1.408444490011426,0,-0.5963368684732249) - r.xyz("CA"));
+}
+
+std::string
+strip(std::string StringToModify) {
+   if(StringToModify.empty()) return "";
+   int startIndex = StringToModify.find_first_not_of(" ");
+   int endIndex = StringToModify.find_last_not_of(" ");
+	 std::string tempString = StringToModify;
+   return tempString.substr(startIndex, (endIndex-startIndex+ 1) );
+}

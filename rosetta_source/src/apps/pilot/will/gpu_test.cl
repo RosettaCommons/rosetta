@@ -242,10 +242,10 @@ enum UATOM {
 
 struct VEC;
 struct MAT;
-struct MAT MATrowsf(float xx, float xy, float xz, float yx, float yy, float yz, float zx, float zy, float zz) ;
-struct MAT MATcolsf(float xx, float yx, float zx, float xy, float yy, float zy, float xz, float yz, float zz) ;
-struct MAT MATrows(struct VEC const rx, struct VEC const ry, struct VEC const rz) ;
-struct MAT MATcols(struct VEC const cx, struct VEC const cy, struct VEC const cz) ;
+struct MAT rowsf(float xx, float xy, float xz, float yx, float yy, float yz, float zx, float zy, float zz) ;
+struct MAT colsf(float xx, float yx, float zx, float xy, float yy, float zy, float xz, float yz, float zz) ;
+struct MAT rows(struct VEC const rx, struct VEC const ry, struct VEC const rz) ;
+struct MAT cols(struct VEC const cx, struct VEC const cy, struct VEC const cz) ;
 struct MAT multmm(struct MAT const a, struct MAT const b) ;
 struct VEC multmv(struct MAT const a, struct VEC const b) ;
 struct VEC multfv(float const a, struct VEC const v) ;
@@ -323,7 +323,7 @@ struct VEC {
   Vec xyzVector() { return Vec(x,y,z); }
 #endif
 };
-inline struct VEC makeVEC(float x, float y, float z) { struct VEC v; v.x=x; v.y=y; v.z=z; return v; }
+inline struct VEC vec(float x, float y, float z) { struct VEC v; v.x=x; v.y=y; v.z=z; return v; }
 struct MAT {
   float xx,xy,xz,
     yx,yy,yz,
@@ -344,28 +344,28 @@ struct MAT {
   Mat xyzMatrix() { return Mat::rows(xx,xy,xz,yx,yy,yz,zx,zy,zz); };
 #endif
 };
-inline struct MAT MATrowsf(float xx, float xy, float xz, float yx, float yy, float yz, float zx, float zy, float zz) {
+inline struct MAT rowsf(float xx, float xy, float xz, float yx, float yy, float yz, float zx, float zy, float zz) {
   struct MAT m;
   m.xx=xx; m.xy=xy; m.xz=xz;
   m.yx=yx; m.yy=yy; m.yz=yz;
   m.zx=zx; m.zy=zy; m.zz=zz;
   return m;
 }
-inline struct MAT MATcolsf(float xx, float yx, float zx, float xy, float yy, float zy, float xz, float yz, float zz) {
+inline struct MAT colsf(float xx, float yx, float zx, float xy, float yy, float zy, float xz, float yz, float zz) {
   struct MAT m;
   m.xx=xx; m.xy=xy; m.xz=xz;
   m.yx=yx; m.yy=yy; m.yz=yz;
   m.zx=zx; m.zy=zy; m.zz=zz;
   return m;
 }
-inline struct MAT MATrows(struct VEC const rx, struct VEC const ry, struct VEC const rz) {
+inline struct MAT rows(struct VEC const rx, struct VEC const ry, struct VEC const rz) {
   struct MAT m;
   m.xx=rx.x; m.xy=rx.y; m.xz=rx.z;
   m.yx=ry.x; m.yy=ry.y; m.yz=ry.z;
   m.zx=rz.x; m.zy=rz.y; m.zz=rz.z;
   return m;
 }
-inline struct MAT MATcols(struct VEC const cx, struct VEC const cy, struct VEC const cz) {
+inline struct MAT cols(struct VEC const cx, struct VEC const cy, struct VEC const cz) {
   struct MAT m;
   m.xx=cx.x; m.xy=cy.x; m.xz=cz.x;
   m.yx=cx.y; m.yy=cy.y; m.yz=cz.y;
@@ -668,26 +668,26 @@ __kernel void refold(
       struct MAT R;
 //barrier(CLK_LOCAL_MEM_FENCE);
       if(c<4u) { // skip "to" if 1st iter
-        struct VEC const az = normalizedv(         makeVEC(bb[i9+6u]-bb[i9+3u],bb[i9+7u]-bb[i9+4u],bb[i9+8u]-bb[i9+5u]) );
-        struct VEC const ay = normalizedv(pproj(az,makeVEC(bb[i9+0u]-bb[i9+3u],bb[i9+1u]-bb[i9+4u],bb[i9+2u]-bb[i9+5u])));
-        R = MATcols(crossvv(ay,az),ay,az);
+        struct VEC const az = normalizedv(         vec(bb[i9+6u]-bb[i9+3u],bb[i9+7u]-bb[i9+4u],bb[i9+8u]-bb[i9+5u]) );
+        struct VEC const ay = normalizedv(pproj(az,vec(bb[i9+0u]-bb[i9+3u],bb[i9+1u]-bb[i9+4u],bb[i9+2u]-bb[i9+5u])));
+        R = cols(crossvv(ay,az),ay,az);
       } else {
-        struct VEC       az = normalizedv(         makeVEC(bb[i9+6u]-bb[i9+3u],bb[i9+7u]-bb[i9+4u],bb[i9+8u]-bb[i9+5u]) );
-        struct VEC       ay = normalizedv(pproj(az,makeVEC(bb[i9+0u]-bb[i9+3u],bb[i9+1u]-bb[i9+4u],bb[i9+2u]-bb[i9+5u])));
-        struct MAT const to = MATcols(crossvv(ay,az),ay,az);
-        az = normalizedv(                   makeVEC(b2[i9+6u]-b2[i9+3u],b2[i9+7u]-b2[i9+4u],b2[i9+8u]-b2[i9+5u]) );
-        ay = normalizedv(pproj(az,          makeVEC(b2[i9+0u]-b2[i9+3u],b2[i9+1u]-b2[i9+4u],b2[i9+2u]-b2[i9+5u])));
-        R = multmm(to,MATrows(crossvv(ay,az),ay,az));
+        struct VEC       az = normalizedv(         vec(bb[i9+6u]-bb[i9+3u],bb[i9+7u]-bb[i9+4u],bb[i9+8u]-bb[i9+5u]) );
+        struct VEC       ay = normalizedv(pproj(az,vec(bb[i9+0u]-bb[i9+3u],bb[i9+1u]-bb[i9+4u],bb[i9+2u]-bb[i9+5u])));
+        struct MAT const to = cols(crossvv(ay,az),ay,az);
+        az = normalizedv(                   vec(b2[i9+6u]-b2[i9+3u],b2[i9+7u]-b2[i9+4u],b2[i9+8u]-b2[i9+5u]) );
+        ay = normalizedv(pproj(az,          vec(b2[i9+0u]-b2[i9+3u],b2[i9+1u]-b2[i9+4u],b2[i9+2u]-b2[i9+5u])));
+        R = multmm(to,rows(crossvv(ay,az),ay,az));
       }
-      struct VEC T = makeVEC(b2[i9+0u],b2[i9+1u],b2[i9+2u]);
+      struct VEC T = vec(b2[i9+0u],b2[i9+1u],b2[i9+2u]);
       T = multmv(R,T);  T.x = bb[i9+0u]-T.x;  T.y = bb[i9+1u]-T.y;  T.z = bb[i9+2u]-T.z;
       uint const start = max((int)i-(int)c/2,0);
 //barrier(CLK_LOCAL_MEM_FENCE);
       uint const j9 = 9u*j;
       __local float *XX = ((j==i-c/2u&&j!=0u) ? bb : b2);
-      struct VEC v1 = multmv(R,makeVEC(XX[j9+0u],XX[j9+1u],XX[j9+2u]));
-      struct VEC v2 = multmv(R,makeVEC(XX[j9+3u],XX[j9+4u],XX[j9+5u]));
-      struct VEC v3 = multmv(R,makeVEC(XX[j9+6u],XX[j9+7u],XX[j9+8u]));
+      struct VEC v1 = multmv(R,vec(XX[j9+0u],XX[j9+1u],XX[j9+2u]));
+      struct VEC v2 = multmv(R,vec(XX[j9+3u],XX[j9+4u],XX[j9+5u]));
+      struct VEC v3 = multmv(R,vec(XX[j9+6u],XX[j9+7u],XX[j9+8u]));
       XX[j9+0u]=v1.x+T.x; XX[j9+1u]=v1.y+T.y; XX[j9+2u]=v1.z+T.z;
       XX[j9+3u]=v2.x+T.x; XX[j9+4u]=v2.y+T.y; XX[j9+5u]=v2.z+T.z;
       XX[j9+6u]=v3.x+T.x; XX[j9+7u]=v3.y+T.y; XX[j9+8u]=v3.z+T.z;
