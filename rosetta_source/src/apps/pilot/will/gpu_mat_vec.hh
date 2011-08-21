@@ -1,3 +1,6 @@
+#include <numeric/IOTraits.hh>
+#include <iostream>
+#include <iomanip>
 
 
 inline float native_sin(float x) { return std::sin(x); }
@@ -51,7 +54,7 @@ struct XFORM {
   struct VEC t;
 };
 inline struct VEC vec(float x, float y, float z) { VEC v; v.x=x; v.y=y; v.z=z; return v; }
-inline struct XFORM makeXFORM(struct MAT const R, struct VEC const t) {  struct XFORM x;  x.R = R;  x.t = t;  return x; }
+inline struct XFORM xform(struct MAT const R, struct VEC const t) {  struct XFORM x;  x.R = R;  x.t = t;  return x; }
 inline struct MAT rows(float xx, float xy, float xz, float yx, float yy, float yz, float zx, float zy, float zz) {
   struct MAT m;
   m.xx=xx; m.xy=xy; m.xz=xz;
@@ -239,8 +242,16 @@ std::ostream & operator<<(std::ostream & out, struct MAT m) {
   return out;
 }
 std::ostream & operator<<(std::ostream & out, struct VEC v) {
-  out << v.x << " " << v.y << " " << v.z;
-  return out;;
+	using std::setw;
+	typedef numeric::IOTraits<float> Traits;
+	std::ios_base::fmtflags const old_flags = out.flags();
+	int const old_precision = out.precision( Traits::precision() );
+	out << std::right << std::showpoint << std::uppercase;
+	int const w = Traits::width();
+	out << setw(w) << v.x << ' ' << setw(w) << v.y << ' ' << setw(w) << v.z;
+	out.precision( old_precision );
+	out.flags( old_flags );
+	return out;
 }
 void myasserteq(float u, float v, string s) {
   if( !eq(u,v) ) {

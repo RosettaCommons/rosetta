@@ -89,6 +89,7 @@ int main(int argc, char *argv[]) {
   make_pose_from_sequence(his,"H[HIS_DE]","fa_standard",false); remove_termini(his); to_canonical_sc_frame(his);
   his.set_dof(DOF_ID(AtomID(his.residue(1).atom_index("HD1"),1),core::id::D),2.1);
   his.set_dof(DOF_ID(AtomID(his.residue(1).atom_index("HE2"),1),core::id::D),2.1);
+  his.dump_pdb("his0.pdb");
   // cys.set_phi(  1,uniform()*360.0); asp.set_phi(  1,uniform()*360.0); glu.set_phi(  1,uniform()*360.0); his.set_phi(  1,uniform()*360.0); 
   // cys.set_psi(  1,uniform()*360.0); asp.set_psi(  1,uniform()*360.0); glu.set_psi(  1,uniform()*360.0); his.set_psi(  1,uniform()*360.0); 
   // cys.set_omega(1,uniform()*360.0); asp.set_omega(1,uniform()*360.0); glu.set_omega(1,uniform()*360.0); his.set_omega(1,uniform()*360.0); 
@@ -114,12 +115,46 @@ int main(int argc, char *argv[]) {
     cout << "#define HIS_" << strip(his.residue(1).atom_name(ia)) << " " << "vec("<<his.residue(1).xyz(ia).x()<<","<<his.residue(1).xyz(ia).y()<<","<<his.residue(1).xyz(ia).z()<<")"<<endl;
   }
 
-  cys.dump_pdb("cys_canon.pdb");
-  asp.dump_pdb("asp_canon.pdb");
-  //glu.dump_pdb("glu_canon.pdb");
-  his.dump_pdb("his_canon.pdb");
-  his.set_chi(1,1,0);
-  his.dump_pdb("his_0.pdb");
-  his.set_chi(1,1,20);
-  his.dump_pdb("his_20.pdb");
+  // cys.dump_pdb("cys_canon.pdb");
+  // asp.dump_pdb("asp_canon.pdb");
+  // //glu.dump_pdb("glu_canon.pdb");
+  // his.dump_pdb("his_canon.pdb");
+
+  float c1 = uniform()*360.0;
+  float c2 = uniform()*360.0;
+  float c3 = uniform()*360.0;
+
+  {
+  hisd_b2m(numeric::conversions::radians(c1),numeric::conversions::radians(c2),numeric::conversions::radians(c3));
+  his.set_chi(1,1,c1);
+  his.set_chi(2,1,c2);
+  //alignaxis(his,Vec(0,0,1),his.residue(1).xyz("CB")-his.residue(1).xyz("CA"),Vec(0,0,0));
+  //his.dump_pdb("test.pdb");
+  Vecf X = (his.residue(1).xyz("HD1")-his.residue(1).xyz("ND1")).normalized();
+  Vecf Y = projperp(X, his.residue(1).xyz("ND1")-his.residue(1).xyz("CE1") ).normalized();
+  Y = (Matf)rotation_matrix_degrees((Vec)X,90.0+c3) * Y;
+  Vecf Z = X.cross(Y);
+  Vecf M = his.residue(1).xyz("HD1");
+  cout << std::setprecision(8) << std::fixed;
+  cout << "MAIN:      " << X << std::endl;
+  cout << "MAIN:      " << Y << std::endl;
+  cout << "MAIN:      " << Z << std::endl;
+  cout << "MAIN:      " << M << std::endl;
+  }{
+  hise_b2m(numeric::conversions::radians(c1),numeric::conversions::radians(c2),numeric::conversions::radians(c3));
+  his.set_chi(1,1,c1);
+  his.set_chi(2,1,c2);
+  //alignaxis(his,Vec(0,0,1),his.residue(1).xyz("CB")-his.residue(1).xyz("CA"),Vec(0,0,0));
+  //his.dump_pdb("test.pdb");
+  Vecf X = (his.residue(1).xyz("HE2")-his.residue(1).xyz("NE2")).normalized();
+  Vecf Y = projperp(X, his.residue(1).xyz("NE2")-his.residue(1).xyz("CD2") ).normalized();
+  Y = (Matf)rotation_matrix_degrees((Vec)X,90.0+c3) * Y;
+  Vecf Z = X.cross(Y);
+  Vecf M = his.residue(1).xyz("HE2");
+  cout << std::setprecision(8) << std::fixed;
+  cout << "MAIN:      " << X << std::endl;
+  cout << "MAIN:      " << Y << std::endl;
+  cout << "MAIN:      " << Z << std::endl;
+  cout << "MAIN:      " << M << std::endl;
+  }
 }
