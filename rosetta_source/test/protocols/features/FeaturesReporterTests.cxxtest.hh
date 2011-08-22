@@ -26,6 +26,7 @@
 #include <protocols/features/PoseCommentsFeatures.hh>
 #include <protocols/features/PoseConformationFeatures.hh>
 #include <protocols/features/ProteinBackboneTorsionAngleFeatures.hh>
+#include <protocols/features/ProteinBackboneAtomAtomPairFeatures.hh>
 #include <protocols/features/ProteinResidueConformationFeatures.hh>
 #include <protocols/features/ProteinRMSDFeatures.hh>
 #include <protocols/features/ProtocolFeatures.hh>
@@ -88,6 +89,7 @@ public:
 		features_reporters_.push_back(new PoseConformationFeatures());
 		features_reporters_.push_back(new ProtocolFeatures());
 		features_reporters_.push_back(new ProteinBackboneTorsionAngleFeatures());
+		features_reporters_.push_back(new ProteinBackboneAtomAtomPairFeatures());
 		features_reporters_.push_back(new ProteinResidueConformationFeatures());
 		features_reporters_.push_back(new ProteinRMSDFeatures(pose_1ten_));
 		features_reporters_.push_back(new RadiusOfGyrationFeatures());

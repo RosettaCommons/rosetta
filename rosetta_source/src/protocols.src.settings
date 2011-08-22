@@ -294,6 +294,7 @@ sources = {
 		"PoseConformationFeatures",
 		"ProteinSilentReport",
 		"ProteinBackboneTorsionAngleFeatures",
+		"ProteinBackboneAtomAtomPairFeatures",
 		"ProteinResidueConformationFeatures",
 		"ProteinRMSDFeatures",
 		"ProtocolFeatures",

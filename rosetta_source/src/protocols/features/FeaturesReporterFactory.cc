@@ -28,6 +28,7 @@
 #include <protocols/features/PoseCommentsFeatures.hh>
 #include <protocols/features/PoseConformationFeatures.hh>
 #include <protocols/features/ProteinBackboneTorsionAngleFeatures.hh>
+#include <protocols/features/ProteinBackboneAtomAtomPairFeatures.hh>
 #include <protocols/features/ProteinResidueConformationFeatures.hh>
 #include <protocols/features/ProtocolFeatures.hh>
 #include <protocols/features/RadiusOfGyrationFeatures.hh>
@@ -82,6 +83,8 @@ namespace features {
 			return new PoseConformationFeatures();
 		} else if (name == "ProteinBackboneTorsionAngleFeatures") {
 			return new ProteinBackboneTorsionAngleFeatures();
+		} else if (name == "ProteinBackboneAtomAtomPairFeatures") {
+			return new ProteinBackboneAtomAtomPairFeatures();
 		} else if (name == "ProteinResidueConformationFeatures") {
 			return new ProteinResidueConformationFeatures();
 		} else if (name == "ProtocolFeatures") {
