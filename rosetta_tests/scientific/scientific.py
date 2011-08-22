@@ -55,14 +55,14 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
     #   metavar="PLACE",
     # )
     parser.add_option("-d", "--database",
-      default=path.join( path.expanduser("~"), "minirosetta_database"),
-      help="Path to Rosetta database. (default: $ROSETTA_DB, ~/minirosetta_database)",
+      default=path.join( path.expanduser("~"), "rosetta_database"),
+      help="Path to Rosetta database. (default: $ROSETTA_DB, ~/rosetta_database)",
     )
 
     parser.add_option("-m", "--mini_home",
       #default=path.join( path.expanduser("~"), "mini"),
-      default=path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ),
-      help="Directory where Mini is found (default: ../../)",
+      default= path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'rosetta_source'),
+      help="Directory where Mini is found (default: ../../rosetta_source/)",
     )
     parser.add_option("-j", "--num_procs",
       default=1,
@@ -123,8 +123,8 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
         if os.environ.get('ROSETTA3_DB') is not None and \
                 path.isdir(os.environ.get('ROSETTA3_DB')):
             options.database = os.environ.get('ROSETTA3_DB')
-        elif path.isdir( path.join( path.expanduser("~"), "minirosetta_database") ):
-            options.database = path.join( path.expanduser("~"), "minirosetta_database")
+        elif path.isdir( path.join( path.expanduser("~"), "rosetta_database") ):
+            options.database = path.join( path.expanduser("~"), "rosetta_database")
         else:
             print "Can't find database at %s; please set $ROSETTA3_DB or use -d" % options.database
             return 1
@@ -135,7 +135,7 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
     # Using argv[] here causes problems when people try to run the script as "python scientific.py ..."
     #os.chdir( path.dirname(sys.argv[0]) ) # argv[0] is the script name
     if not path.isdir("tests"):
-        print "You must run this script from mini/tests/scientific/"
+        print "You must run this script from rosetta/rosetta_tests/scientific/"
         return 2
 
     #If the "statistics" directory doesn't exist, create one;

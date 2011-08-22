@@ -147,7 +147,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     # Using argv[] here causes problems when people try to run the script as "python integration.py ..."
     #os.chdir( path.dirname(sys.argv[0]) ) # argv[0] is the script name
     if not path.isdir("tests"):
-        print "You must run this script from mini/tests/integration/"
+        print "You must run this script from rosetta/rosetta_tests/integration/"
         return 2
 
     # If the "ref" directory doesn't exist, compute that;
