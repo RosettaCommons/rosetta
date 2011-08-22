@@ -10286,19 +10286,9 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>optimization option group</dd><br>
 </dl>
 <dl>
-<dt><b>-dfpmin_max_cycles</b> \<Integer\><dt>
-<dd>max cycles for dfpmin</dd><br>
-<dd>Default: 200</dd><br>
-</dl>
-<dl>
 <dt><b>-armijo_min_stepsize</b> \<Real\><dt>
 <dd>min stepsize in armijo minimizer</dd><br>
 <dd>Default: 1e-8</dd><br>
-</dl>
-<dl>
-<dt><b>-lbfgs_max_cycles</b> \<Integer\><dt>
-<dd>max cycles for l-BFGS</dd><br>
-<dd>Default: 200</dd><br>
 </dl>
 <dl>
 <dt><b>-lbfgs_M</b> \<Integer\><dt>

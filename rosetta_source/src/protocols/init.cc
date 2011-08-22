@@ -113,6 +113,7 @@
 #include <protocols/moves/MatcherMoverCreator.hh>
 #include <protocols/moves/MakePolyXMoverCreator.hh>
 #include <protocols/moves/MinMoverCreator.hh>
+#include <protocols/moves/SaneMinMoverCreator.hh>
 #include <protocols/moves/MinPackMoverCreator.hh>
 #include <protocols/moves/ScoreMoverCreator.hh>
 #include <protocols/moves/ConsensusDesignMoverCreator.hh>
@@ -336,6 +337,7 @@ static MoverRegistrator< moves::DsspMoverCreator > reg_DsspMoverCreator;
 static MoverRegistrator< moves::MakePolyXMoverCreator > reg_MakePolyXMoverCreator;
 static MoverRegistrator< moves::MatcherMoverCreator > reg_MatcherMoverCreator;
 static MoverRegistrator< moves::MinMoverCreator > reg_MinMoverCreator;
+static MoverRegistrator< moves::SaneMinMoverCreator > reg_SaneMinMoverCreator;
 static MoverRegistrator< moves::MinPackMoverCreator > reg_MinPackMoverCreator;
 static MoverRegistrator< moves::ScoreMoverCreator > reg_ScoreMoverCreator;
 static MoverRegistrator< moves::ConsensusDesignMoverCreator > reg_ConsensusDesignMoverCreator;

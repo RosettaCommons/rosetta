@@ -2124,9 +2124,7 @@ option.add( basic::options::OptionKeys::archive::archive, "archive option group"
 option.add( basic::options::OptionKeys::archive::reread_all_structures, "ignore pool file... reread from batches" ).def(false);
 option.add( basic::options::OptionKeys::archive::completion_notify_frequency, "tell Archive every X completed decoys" ).def(100);
 option.add( basic::options::OptionKeys::optimization::optimization, "optimization option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::optimization::dfpmin_max_cycles, "max cycles for dfpmin" ).def(200);
 option.add( basic::options::OptionKeys::optimization::armijo_min_stepsize, "min stepsize in armijo minimizer" ).def(1e-8);
-option.add( basic::options::OptionKeys::optimization::lbfgs_max_cycles, "max cycles for l-BFGS" ).def(200);
 option.add( basic::options::OptionKeys::optimization::lbfgs_M, "number of corrections to approximate the inverse hessian matrix." ).def(64);
 option.add( basic::options::OptionKeys::ufv::ufv, "ufv option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::ufv::left, "left endpoint" );

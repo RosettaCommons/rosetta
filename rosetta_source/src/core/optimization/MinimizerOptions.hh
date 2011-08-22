@@ -22,18 +22,13 @@
 // C++ headers
 #include <string>
 
-
-
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 namespace core {
 namespace optimization {
 
-
-
-class MinimizerOptions : public utility::pointer::ReferenceCount
-{
+class MinimizerOptions : public utility::pointer::ReferenceCount {
 
 public:
 	/////////////////////////////////////////////////////////////////////////////
@@ -72,11 +67,9 @@ public:
 	void
 	deriv_check_to_stdout( bool setting );
 
-	//
 	bool
 	deriv_check() const;
 
-	//
 	bool
 	deriv_check_verbose() const;
 
@@ -87,14 +80,11 @@ public:
 	Real
 	minimize_tolerance() const;
 
-
 	Real &
 	minimize_tolerance();
 
-
 	void
 	minimize_tolerance( Real minimize_tolerance_in );
-
 
 	bool
 	use_nblist() const;
@@ -127,10 +117,8 @@ public:
 	Real
 	brent_abs_tolerance() const;
 
-
 	int max_iter() const;
 	void max_iter(int n);
-
 
 	Real ga_mutation_probability() const;
 	void ga_mutation_probability(Real p);

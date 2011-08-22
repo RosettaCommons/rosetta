@@ -847,6 +847,7 @@ sources = {
 		"MatcherMover",
 		"MakePolyXMover",
 		"MinMover",
+		"SaneMinMover",
 		"MissingDensityToJumpMover",
 		"MonteCarlo",
 		"ReplicaExchangeMC",

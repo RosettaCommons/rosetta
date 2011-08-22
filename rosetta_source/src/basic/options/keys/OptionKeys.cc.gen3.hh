@@ -427,9 +427,7 @@ namespace archive { BooleanOptionKey const archive( "archive" );  }
 namespace archive { BooleanOptionKey const reread_all_structures( "archive:reread_all_structures" );  }
 namespace archive { IntegerOptionKey const completion_notify_frequency( "archive:completion_notify_frequency" );  }
 namespace optimization { BooleanOptionKey const optimization( "optimization" );  }
-namespace optimization { IntegerOptionKey const dfpmin_max_cycles( "optimization:dfpmin_max_cycles" );  }
 namespace optimization { RealOptionKey const armijo_min_stepsize( "optimization:armijo_min_stepsize" );  }
-namespace optimization { IntegerOptionKey const lbfgs_max_cycles( "optimization:lbfgs_max_cycles" );  }
 namespace optimization { IntegerOptionKey const lbfgs_M( "optimization:lbfgs_M" );  }
 namespace ufv { BooleanOptionKey const ufv( "ufv" );  }
 namespace ufv { IntegerOptionKey const left( "ufv:left" );  }

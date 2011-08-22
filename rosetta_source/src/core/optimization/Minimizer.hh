@@ -72,7 +72,7 @@ private:
 // concrete convergence test class - "atol" dfpmin
 class DFPMinConvergedAbsolute : public ConvergenceTest {
 public:
-	DFPMinConvergedAbsolute( Real _tol ) : tolerance( _tol ) {};
+	DFPMinConvergedAbsolute( Real _tol ) : tolerance( _tol ) {}
 	virtual ~DFPMinConvergedAbsolute() {}
 	virtual bool operator()( Real Fnew, Real Fold );
 private:
@@ -90,36 +90,12 @@ private:
 // base convergence test class
 class DescentDirectionAlgorithm {
 public:
-	DescentDirectionAlgorithm( Multifunc const & in_func_ ): func_( in_func_ ){};
+	DescentDirectionAlgorithm( Multifunc const & in_func_ ): func_( in_func_ ) {}
 //	Multivec operator()(){};
 	void initialize(){};
 private:
 	Multifunc const & func_;
 };
-
-// concrete descent direction algorithm
-/* // Non defince class, commenting out so Python bindings can be build
-class BFGSDirection: public DescentDirectionAlgorithm
-{
-public:
-	BFGSDirection( int const ps );
-	//void initialize();    // Non defince function, commenting out so Python bindings can be build
-	//void get_direction(); // Non defince function, commenting out so Python bindings can be build
-private:
-	Multifunc const & func_;
-	int const _problem_size;
-	ObjexxFCL::FArray2D<Real> hessian;
-	Multivec current_position;
-	Multivec descent_direction;
-	Multivec gradient;
-	Multivec hessian_update;
-	Real Fold, Fnew;
-};
-*/
-
-//***************************************
-//***  End  descent direction section ***
-//***************************************
 
 //********************************************
 //*** Begin multivariate minimizer section ***
@@ -133,7 +109,7 @@ public:
 		ConvergenceTest & converge_test,
 		DescentDirectionAlgorithm & desc_dir ):
 		_func( score_fxn ), _line_min( line_min_alg ),
-		_converged( converge_test ), _get_direction( desc_dir ){};
+		_converged( converge_test ), _get_direction( desc_dir ){}
 	Real run( Multivec & angles );
 private:
 	Multifunc const & _func;
@@ -150,10 +126,10 @@ private:
 // Data stored at each LBFGS iteration
 class lbfgs_iteration_data {
 public:
-    core::Real alpha;
-    Multivec s;
-    Multivec y;
-    core::Real ys;     // = dot(y,s)
+	core::Real alpha;
+	Multivec s;
+	Multivec y;
+	core::Real ys; // = dot(y,s)
 };
 
 
@@ -161,29 +137,18 @@ public:
 class Minimizer {
 
 public:
-
 	Minimizer( Multifunc & func_in, MinimizerOptions const & options_in );
 
 	Real
 	run( Multivec & phipsi_inout );
 
-
 private:
-
-	// cut and paste from minimize.cc:
 	void
 	linmin(
 		Multivec & P,
 		Multivec & XI,
-		Real & FRET
-	) const;
-
-
-	void
-	dfpmin(
-		Multivec & P,
 		Real & FRET,
-		ConvergenceTest & converge_test
+		int const ITMAX
 	) const;
 
 	void
@@ -199,7 +164,8 @@ private:
 		Multivec & P,
 		Real & FRET,
 		ConvergenceTest & converge_test,
-		LineMinimizationAlgorithmOP line_min
+		LineMinimizationAlgorithmOP line_min,
+		int const ITMAX
 	) const;
 
 	void
@@ -207,11 +173,9 @@ private:
 		Multivec & P,
 		Real & FRET,
 		ConvergenceTest & converge_test,
-		LineMinimizationAlgorithmOP line_min
+		LineMinimizationAlgorithmOP line_min,
+		int const ITMAX
 	) const;
-
-	/////////////////////////////////////////////////////////////////////////////
-	// data
 
 	Multifunc & func_;
 	MinimizerOptions options_;
