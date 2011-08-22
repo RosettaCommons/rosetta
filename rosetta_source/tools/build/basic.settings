@@ -1063,6 +1063,15 @@ settings = {
             "cxx" : "clang++",
         }
     },
+    "clang, mpi" : {
+        "appends" : {
+            "defines"       : [ "USEMPI" ],
+        },
+        "overrides" : {
+            "cc"            : "mpicc",
+            "cxx"           : "mpiCC",
+        },
+    },
     "clang, linux" : {
         "prepends" : {
             # This makes clang use libstdc++ 4.4.0 on CentOS (requires gcc44-c++ and libstdc++44-devel)
