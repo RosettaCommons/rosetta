@@ -34,17 +34,17 @@ def run(test, options):
     print 'Running test %s...' % test
 
     workdir = os.path.abspath( os.path.join("tests", test) )
-    print ' Test working dir is: %s' % workdir
+    print '  Test working dir is: %s' % workdir
 
     # Running tests
     platform = Platform
-    minidir = os.path.abspath( './../../' );         print '    Mini home dir is: %s' % minidir
+    minidir = os.path.abspath( './../../rosetta_source' );  print '  Rosetta home dir is: %s' % minidir
     bin = os.path.join(minidir, "bin")
     compiler = 'gcc'
     mode = 'release'
     binext = platform+compiler+mode
 
-    database = os.path.abspath( options.database );  print 'Mini database dir is: %s' % database
+    database = os.path.abspath( options.database );  print '  Rosetta database dir is: %s' % database
 
     templates = dict(minidir=minidir, database=database, workdir=workdir, platform=platform, bin=bin, compiler=compiler, mode=mode, binext=binext)
 
@@ -114,8 +114,8 @@ def main(argv):
     parser.set_description(main.__doc__)
 
     parser.add_option("-d", "--database",
-      default=os.path.join( os.path.expanduser("~"), "minirosetta_database"),
-      help="Directory where Mini database is found (default: ~/minirosetta_database)",
+      default=os.path.join( os.path.expanduser("~"), "rosetta_database"),
+      help="Directory where Mini database is found (default: ~/rosetta_database)",
     )
 
     parser.add_option("-t", "--timeout",
@@ -138,7 +138,7 @@ def main(argv):
     # Using argv[] here causes problems when people try to run the script as "python integration.py ..."
     #os.chdir( path.dirname(sys.argv[0]) ) # argv[0] is the script name
     if not os.path.isdir("tests"):
-        print "You must run this script from mini/test/profile/"
+        print "You must run this script from rosetta/rosetta_tests/profile/"
         return 2
 
     # Each test consists of a directory with a "command" file in it.
