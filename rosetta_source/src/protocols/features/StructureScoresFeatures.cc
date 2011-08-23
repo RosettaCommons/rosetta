@@ -73,12 +73,18 @@ StructureScoresFeatures::StructureScoresFeatures() :
 {}
 
 StructureScoresFeatures::StructureScoresFeatures(
-	ScoreFunctionOP scfxn) :
+	ScoreFunctionOP scfxn
+) :
 	scfxn_(scfxn)
-{}
+{
+	if ( scfxn_ == 0 ) {
+		utility_exit_with_message( "StructureScoresFeatures may not be constructed with a null-pointer ScoreFunctionOP" );
+	}
+}
 
 StructureScoresFeatures::StructureScoresFeatures(
-	StructureScoresFeatures const & src ) :
+	StructureScoresFeatures const & src
+) :
 	FeaturesReporter(),
 	initialized_score_types_(src.initialized_score_types_),
 	scfxn_(src.scfxn_)

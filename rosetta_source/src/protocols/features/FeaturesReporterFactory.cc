@@ -47,73 +47,98 @@
 namespace protocols {
 namespace features {
 
-	using std::endl;
-	using std::string;
-	using std::stringstream;
-	using core::scoring::ScoreFunctionOP;
+using std::endl;
+using std::string;
+using std::stringstream;
+using core::scoring::ScoreFunctionOP;
 
-	FeaturesReporterFactory::FeaturesReporterFactory() {}
+FeaturesReporterFactory::FeaturesReporterFactory() {}
 
-	FeaturesReporterFactory::FeaturesReporterFactory(
-		const FeaturesReporterFactory &
-	) {}
+FeaturesReporterFactory::FeaturesReporterFactory(
+	const FeaturesReporterFactory &
+) {}
 
-	FeaturesReporterFactory::~FeaturesReporterFactory() {}
+FeaturesReporterFactory::~FeaturesReporterFactory() {}
 
-	FeaturesReporterOP
-	FeaturesReporterFactory::create_features_reporter(
-		string const & name,
-		ScoreFunctionOP scfxn) {
+FeaturesReporterOP
+FeaturesReporterFactory::create_features_reporter(
+	string const & name,
+	ScoreFunctionOP scfxn
+) {
 
-		if(name == "AtomAtomPairFeatures"){
-			return new AtomAtomPairFeatures();
-		} else if(name == "GeometricSolvationFeatures") {
-			return new GeometricSolvationFeatures();
-		} else if(name == "HBondFeatures") {
-			return new HBondFeatures(scfxn);
-		} else if(name == "HBondParameterFeatures") {
-			return new HBondParameterFeatures();
-		} else if (name == "OrbitalsFeatures") {
-			return new OrbitalsFeatures();
-		} else if (name == "PairFeatures") {
-			return new PairFeatures();
-		} else if (name == "PoseCommentsFeatures") {
-			return new PoseCommentsFeatures();
-		} else if (name == "PoseConformationFeatures") {
-			return new PoseConformationFeatures();
-		} else if (name == "ProteinBackboneTorsionAngleFeatures") {
-			return new ProteinBackboneTorsionAngleFeatures();
-		} else if (name == "ProteinBackboneAtomAtomPairFeatures") {
-			return new ProteinBackboneAtomAtomPairFeatures();
-		} else if (name == "ProteinResidueConformationFeatures") {
-			return new ProteinResidueConformationFeatures();
-		} else if (name == "ProtocolFeatures") {
-			return new ProtocolFeatures();
-		} else if (name == "RadiusOfGyrationFeatures") {
-			return new RadiusOfGyrationFeatures();
-		} else if (name == "ResidueFeatures") {
-			return new ResidueFeatures();
-		} else if (name == "ResidueTypesFeatures") {
-			return new ResidueTypesFeatures();
-		} else if (name == "RotamerBoltzmannWeightFeatures") {
-			return new RotamerBoltzmannWeightFeatures(scfxn);
-		} else if (name == "RotamerRecoveryFeatures") {
-			return new RotamerRecoveryFeatures(scfxn);
-		} else if (name == "ResidueBurialFeatures") {
-			return new ResidueBurialFeatures();
-		} else if (name == "ResidueSecondaryStructureFeatures") {
-			return new ResidueSecondaryStructureFeatures();
-		} else if (name == "StructureFeatures") {
-			return new StructureFeatures();
-		} else if (name == "StructureScoresFeatures") {
-			return new StructureScoresFeatures(scfxn);
-		} else {
-			stringstream error_message;
-			error_message << "Attempting to create unrecognized FeaturesReporter '" << name << "'." << endl;
-			utility_exit_with_message(error_message.str());
+	if(name == "AtomAtomPairFeatures"){
+		return new AtomAtomPairFeatures;
+	} else if(name == "GeometricSolvationFeatures") {
+		return new GeometricSolvationFeatures;
+	} else if(name == "HBondFeatures") {
+		if ( scfxn == 0 ) {
+			utility_exit_with_message( "HBondFeatures requires a ScoreFunctionOP in its constructor, but was given a null pointer.\n"
+				"If you are using the HBondFeatures with Rosetta Scripts, the tag must be of the following form:\n"
+				"\n"
+				"     <feature name=HBondFeatures scorefxn=(name_of_score_function) />\n" );
 		}
-		return NULL;
+		return new HBondFeatures(scfxn);
+	} else if(name == "HBondParameterFeatures") {
+		return new HBondParameterFeatures;
+	} else if (name == "OrbitalsFeatures") {
+		return new OrbitalsFeatures;
+	} else if (name == "PairFeatures") {
+		return new PairFeatures;
+	} else if (name == "PoseCommentsFeatures") {
+		return new PoseCommentsFeatures;
+	} else if (name == "PoseConformationFeatures") {
+		return new PoseConformationFeatures;
+	} else if (name == "ProteinBackboneTorsionAngleFeatures") {
+		return new ProteinBackboneTorsionAngleFeatures;
+	} else if (name == "ProteinBackboneAtomAtomPairFeatures") {
+		return new ProteinBackboneAtomAtomPairFeatures;
+	} else if (name == "ProteinResidueConformationFeatures") {
+		return new ProteinResidueConformationFeatures;
+	} else if (name == "ProtocolFeatures") {
+		return new ProtocolFeatures;
+	} else if (name == "RadiusOfGyrationFeatures") {
+		return new RadiusOfGyrationFeatures;
+	} else if (name == "ResidueFeatures") {
+		return new ResidueFeatures;
+	} else if (name == "ResidueTypesFeatures") {
+		return new ResidueTypesFeatures;
+	} else if (name == "RotamerBoltzmannWeightFeatures") {
+		if ( scfxn == 0 ) {
+			utility_exit_with_message( "RotamerBoltzmannWeightFeatures requires a ScoreFunctionOP in its constructor, but was given a null pointer\n"
+				"If you are using the RotamerBoltzmannWeightFeatures with Rosetta Scripts, the tag must be of the following form:\n"
+				"\n"
+				"     <feature name=RotamerBoltzmannWeightFeatures scorefxn=(name_of_score_function) />\n" );
+		}
+		return new RotamerBoltzmannWeightFeatures(scfxn);
+	} else if (name == "RotamerRecoveryFeatures") {
+		if ( scfxn == 0 ) {
+			utility_exit_with_message( "RotamerRecoveryFeatures requires a ScoreFunctionOP in its constructor, but was given a null pointer\n"
+				"If you are using the RotamerRecoveryFeatures with Rosetta Scripts, the tag must be of the following form:\n"
+				"\n"
+				"     <feature name=RotamerRecoveryFeatures scorefxn=(name_of_score_function) />\n" );
+		}
+		return new RotamerRecoveryFeatures(scfxn);
+	} else if (name == "ResidueBurialFeatures") {
+		return new ResidueBurialFeatures;
+	} else if (name == "ResidueSecondaryStructureFeatures") {
+		return new ResidueSecondaryStructureFeatures;
+	} else if (name == "StructureFeatures") {
+		return new StructureFeatures;
+	} else if (name == "StructureScoresFeatures") {
+		if ( scfxn == 0 ) {
+			utility_exit_with_message( "StructureScoresFeatures requires a ScoreFunctionOP in its constructor, but was given a null pointer\n"
+				"If you are using the StructureScoresFeatures with Rosetta Scripts, the tag must be of the following form:\n"
+				"\n"
+				"     <feature name=StructureScoresFeatures scorefxn=(name_of_score_function) />\n" );
+		}
+		return new StructureScoresFeatures(scfxn);
+	} else {
+		stringstream error_message;
+		error_message << "Attempting to create unrecognized FeaturesReporter '" << name << "'." << endl;
+		utility_exit_with_message(error_message.str());
 	}
+	return NULL;
+}
 
 } // namespace
 } // namespace
