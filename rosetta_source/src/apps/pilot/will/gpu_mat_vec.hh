@@ -14,10 +14,11 @@ inline float sqr(float const & x) {
 }
 
 
+/////////////////////// VEC ///////////////////////
 
 struct VEC {
   float x,y,z;
-#ifdef __cplusplus  
+#ifdef __cplusplus
   VEC() {}
   VEC(float _x, float _y, float _z) { x=_x; y=_y; z=_z; }
   VEC(Vec v) {
@@ -25,15 +26,18 @@ struct VEC {
     y = v.y();
     z = v.z();
   }
-  Vec xyzVector() { return Vec(x,y,z); }
+  Vec xyzVector() const { return Vec(x,y,z); }
 #endif
 };
+inline struct VEC vec(float x, float y, float z) { VEC v; v.x=x; v.y=y; v.z=z; return v; }
+
+/////////////////////// MAT ///////////////////////
 
 struct MAT {
   float xx,xy,xz,
     yx,yy,yz,
     zx,zy,zz;
-#ifdef __cplusplus  
+#ifdef __cplusplus
   MAT() {}
   MAT(Mat m) {
     xx = m.xx();
@@ -46,15 +50,9 @@ struct MAT {
     yz = m.yz();
     zz = m.zz();
   }
-  Mat xyzMatrix() { return Mat::rows(xx,xy,xz,yx,yy,yz,zx,zy,zz); };
+  Mat xyzMatrix() const { return Mat::rows(xx,xy,xz,yx,yy,yz,zx,zy,zz); };
 #endif
 };
-struct XFORM {
-  struct MAT R;
-  struct VEC t;
-};
-inline struct VEC vec(float x, float y, float z) { VEC v; v.x=x; v.y=y; v.z=z; return v; }
-inline struct XFORM xform(struct MAT const R, struct VEC const t) {  struct XFORM x;  x.R = R;  x.t = t;  return x; }
 inline struct MAT rows(float xx, float xy, float xz, float yx, float yy, float yz, float zx, float zy, float zz) {
   struct MAT m;
   m.xx=xx; m.xy=xy; m.xz=xz;
@@ -83,6 +81,22 @@ inline struct MAT cols(struct VEC const cx, struct VEC const cy, struct VEC cons
   m.zx=cx.z; m.zy=cy.z; m.zz=cz.z;
   return m;
 }
+
+/////////////////////// XFORM ///////////////////////
+
+struct XFORM {
+  struct MAT R;
+  struct VEC t;
+#ifdef __cplusplus
+  core::kinematics::Stub stub() const { return core::kinematics::Stub(R.xyzMatrix(),t.xyzVector()); }
+#endif
+};
+inline struct XFORM xform(struct MAT const R, struct VEC const t) { struct XFORM x; x.R = R;  x.t = t;  return x; }
+
+
+////////////////////// operations //////////////////////
+
+
 inline struct MAT multmm(struct MAT const a, struct MAT const b) {
   struct MAT c;
   c.xx = mad(a.xx,b.xx,mad(a.xy,b.yx,a.xz*b.zx));
@@ -216,7 +230,43 @@ inline struct MAT rotationMAT(float const x, float const y, float const z, float
   R.zx -= sin_t * n.y; R.zy += sin_t * n.x; R.zz += cos_t;
   return R;
 }
+inline struct MAT transposed(struct MAT const m) {
+  return cols(m.xx,m.xy,m.xz,m.yx,m.yy,m.yz,m.zx,m.zy,m.zz);
+}
 
+// XFORM
+inline struct XFORM multxx(struct XFORM const x2, struct XFORM const x1) {
+  //x2.R*( x1.R*v + x1.t )+x2.t
+  //x2.R*x1.R*v + x2.R*x1.t + x2.t
+  struct XFORM x;
+  x.R = multmm(x2.R,x1.R);
+  x.t = addvv(multmv(x2.R,x1.t),x2.t);
+  return x;
+}
+inline struct XFORM xrev(struct XFORM const x){
+  struct XFORM r;
+  r.R = transposed(x.R);
+  r.t = multmv(r.R,multfv(-1.0f,x.t));
+  return r;
+}
+inline struct XFORM const
+vvcxform(struct VEC const _x1, struct VEC const _y1,
+         struct VEC const _x2, struct VEC const _y2,
+         struct VEC const _c1, struct VEC const _c2)
+{
+  struct VEC const x1 = normalizedv(_x1);
+  struct VEC const y1 = normalizedv(pproj(_x1,_y1));
+  struct VEC const z1 = crossvv(x1,y1);
+  struct VEC const x2 = normalizedv(_x2);
+  struct VEC const y2 = normalizedv(pproj(_x2,_y2));
+  struct VEC const z2 = crossvv(x2,y2);
+  struct MAT const Rto = cols(x2,y2,z2);
+  struct MAT const Rfr = rows(x1,y1,z1);
+  struct XFORM x;
+  x.R = multmm(Rto,Rfr);
+  x.t = subvv(_c2,multmv(x.R,_c1));
+  return x;
+}
 
 
 ///////////////////////////////////
@@ -242,16 +292,16 @@ std::ostream & operator<<(std::ostream & out, struct MAT m) {
   return out;
 }
 std::ostream & operator<<(std::ostream & out, struct VEC v) {
-	using std::setw;
-	typedef numeric::IOTraits<float> Traits;
-	std::ios_base::fmtflags const old_flags = out.flags();
-	int const old_precision = out.precision( Traits::precision() );
-	out << std::right << std::showpoint << std::uppercase;
-	int const w = Traits::width();
-	out << setw(w) << v.x << ' ' << setw(w) << v.y << ' ' << setw(w) << v.z;
-	out.precision( old_precision );
-	out.flags( old_flags );
-	return out;
+  using std::setw;
+  typedef numeric::IOTraits<float> Traits;
+  std::ios_base::fmtflags const old_flags = out.flags();
+  int const old_precision = out.precision( Traits::precision() );
+  out << std::right << std::showpoint << std::uppercase;
+  int const w = Traits::width();
+  out << setw(w) << v.x << ' ' << setw(w) << v.y << ' ' << setw(w) << v.z;
+  out.precision( old_precision );
+  out.flags( old_flags );
+  return out;
 }
 void myasserteq(float u, float v, string s) {
   if( !eq(u,v) ) {
@@ -306,8 +356,8 @@ void test_MAT_VEC() {
   myasserteq(  cols(U,V,W)       ,     Mat::cols(u,v,w)     , "cols" );
   myasserteq(  rotationMAT(U,123.0),   rotation_matrix(Vec(u),123.0)     , "rotation" );
   myasserteq(  projectionMAT(U),   projection_matrix(Vec(u))     , "projection" );
-  
-//  TR << "PASS!" << std::endl;
+
+  //  TR << "PASS!" << std::endl;
 }
 
 
@@ -349,7 +399,7 @@ void test_chi_xform() {
     VEC Nl  = multmv( rotationMAT(CAl,CHI1), multmv( rotationMAT(1.0f,0.0f,0.0f,-CHI2),  N0 ) );
     VEC  Ng( src.residue(1).xyz( "N") );
     VEC CAg( src.residue(1).xyz("CA") );
-    
+
     VEC TX( normalizedv(Nl) );
     VEC TY( normalizedv(pproj(TX,CAl)) );
     VEC TZ (crossvv(TX,TY) );
@@ -419,24 +469,6 @@ void test_chi_xform() {
 // }
 
 // xform between stubs
-inline struct XFORM const
-tform(struct VEC const _x1, struct VEC const _y1, 
-      struct VEC const _x2, struct VEC const _y2,
-      struct VEC const _c1, struct VEC const _c2)
-{
-  struct VEC const x1 = normalizedv(_x1);
-  struct VEC const y1 = normalizedv(pproj(_x1,_y1));
-  struct VEC const z1 = crossvv(x1,y1);
-  struct VEC const x2 = normalizedv(_x2);
-  struct VEC const y2 = normalizedv(pproj(_x2,_y2));
-  struct VEC const z2 = crossvv(x2,y2);
-  struct MAT const Rto = cols(x2,y2,z2);
-  struct MAT const Rfr = rows(x1,y1,z1);
-  struct XFORM x;
-  x.R = multmm(Rto,Rfr);
-  x.t = subvv(_c2,_c1);
-  return x;
-}
 
 
 

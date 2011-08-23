@@ -28,11 +28,11 @@ bb2bb(struct VEC const n1, struct VEC const ca1, struct VEC const c1,
   struct VEC const y1 = subvv(c1,ca1);
   struct VEC const x2 = subvv(n2,ca2);
   struct VEC const y2 = subvv(c2,ca2);
-  return tform(x1,y1,x2,y2,ca1,ca2);
+  return vvcxform(x1,y1,x2,y2,ca1,ca2);
 }
 
 inline struct XFORM const
-his_m2bb(float const chi1, float const chi2, float const chi3, bool DorE){
+his_bb2m(float const chi1, float const chi2, float const chi3, bool DorE){
   // return xform from bb in canonical to metal FOR
   float const cos1 = native_cos(chi1);
   float const cos2 = native_cos(chi2);
@@ -83,20 +83,30 @@ his_m2bb(float const chi1, float const chi2, float const chi3, bool DorE){
   { float const x=M.x, z=M.z;
     M.x =  COS_CA_CB_CG*x - SIN_CA_CB_CG*z;
     M.z =  SIN_CA_CB_CG*x + COS_CA_CB_CG*z;  }
-  VEC Z = crossvv(X,Y);
+  struct VEC const Z = crossvv(X,Y);
   std::cout << "hisd_m2bb: " << X << std::endl;
   std::cout << "hisd_m2bb: " << Y << std::endl;
-  std::cout << "hisd_m2bb: " << Z << std::endl;
+  // std::cout << "hisd_m2bb: " << Z << std::endl;
   std::cout << "hisd_m2bb: " << M << std::endl;
-  return xform(cols(X,Y,Z),M);
+
+  struct MAT const R = multmm( cols(X,Y,Z), rows(vec(0.6876640316337250,0.0,0.7260290487282525),vec(0.1124134291172747,0.7885885444652520,-0.6045587882847050),vec(-0.5725381907761041,0.4973487487177556,0.5422839777871462)) );
+  return xform(R,multmv(R,M));
 }
 
 inline struct XFORM const
-            hisd_m2bb(float const chi1, float const chi2, float const chi3){
-  return his_m2bb(chi1,chi2,chi3,true);
+hisd_bb2m(float const chi1, float const chi2, float const chi3){
+  return his_bb2m(chi1,chi2,chi3,true);
+}
+inline struct XFORM const
+hise_bb2m(float const chi1, float const chi2, float const chi3){
+  return his_bb2m(chi1,chi2,chi3,false);
+}
+inline struct XFORM const
+hisd_m2bb(float const chi1, float const chi2, float const chi3){
+  return xrev( his_bb2m(chi1,chi2,chi3,true) );
 }
 inline struct XFORM const
 hise_m2bb(float const chi1, float const chi2, float const chi3){
-  return his_m2bb(chi1,chi2,chi3,false);
+  return xrev( his_bb2m(chi1,chi2,chi3,false) );
 }
 

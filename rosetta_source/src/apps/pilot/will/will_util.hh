@@ -285,6 +285,11 @@ Vec safe_xyz(core::pose::Pose const & p, int ano, int rsd) {
   return p.xyz(AtomID(ano,rsd));
 }
 
+Vec orb_xyz(core::pose::Pose const & p, int oi, int rsd) {
+  if(rsd<1 || rsd>p.n_residue()) return Vec(NAN,NAN,NAN);
+  return p.residue(rsd).orbital_xyz(oi);
+}
+
 void to_canonical_bb_frame(core::pose::Pose & pose) {
 	core::conformation::Residue const & r(pose.residue(1));
 	if(!r.has( "N")) utility_exit_with_message("to_canonical_frame: res must have N");
