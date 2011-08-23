@@ -36,6 +36,7 @@
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/optimization/MinimizerOptions.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -46,7 +47,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <protocols/abinitio/MaxSeqSepConstraintSet.hh>
 #include <protocols/filters/Filter.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/moves/SaneMinMover.hh>
 
 namespace protocols {
 namespace nonlocal {
@@ -181,7 +182,9 @@ core::scoring::ScoreFunctionOP BrokenBase::score_function(int stage, int num_res
 protocols::moves::MoverOP BrokenBase::make_minimizer(core::scoring::ScoreFunctionOP score) {
   using core::kinematics::MoveMap;
   using core::kinematics::MoveMapOP;
-  using protocols::moves::MinMover;
+  using core::optimization::MinimizerOptions;
+  using core::optimization::MinimizerOptionsOP;
+  using protocols::moves::SaneMinMover;
   assert(score);
 
   // define minimizable degrees of freedom
@@ -190,7 +193,12 @@ protocols::moves::MoverOP BrokenBase::make_minimizer(core::scoring::ScoreFunctio
   movable->set_chi(false);
   movable->set_jump(true);
 
-  return new MinMover(movable, score, "dfpmin", 1e-10, false, false, false);
+  // minimizer options
+  MinimizerOptionsOP options = new MinimizerOptions("dfpmin", 1e-20, false, false, false);
+  options->nblist_auto_update(true);
+  options->max_iter(10e5);
+
+  return new SaneMinMover(movable, score, options);
 }
 
 }  // namespace nonlocal
