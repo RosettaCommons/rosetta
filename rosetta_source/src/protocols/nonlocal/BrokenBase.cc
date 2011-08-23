@@ -178,14 +178,18 @@ core::scoring::ScoreFunctionOP BrokenBase::score_function(int stage, int num_res
   return score;
 }
 
-// TODO(cmiles) consider how to define a more optimizable gradient
 protocols::moves::MoverOP BrokenBase::make_minimizer(core::scoring::ScoreFunctionOP score) {
   using core::kinematics::MoveMap;
   using core::kinematics::MoveMapOP;
   using core::optimization::MinimizerOptions;
   using core::optimization::MinimizerOptionsOP;
   using protocols::moves::SaneMinMover;
+
   assert(score);
+  score->set_weight(core::scoring::chainbreak, 1);
+  score->set_weight(core::scoring::linear_chainbreak, 1);
+  score->set_weight(core::scoring::overlap_chainbreak, 1);
+  score->set_weight(core::scoring::distance_chainbreak, 1);
 
   // define minimizable degrees of freedom
   MoveMapOP movable = new MoveMap();
@@ -194,9 +198,9 @@ protocols::moves::MoverOP BrokenBase::make_minimizer(core::scoring::ScoreFunctio
   movable->set_jump(true);
 
   // minimizer options
-  MinimizerOptionsOP options = new MinimizerOptions("dfpmin", 1e-20, false, false, false);
+  MinimizerOptionsOP options = new MinimizerOptions("dfpmin", 1e-10, true);
   options->nblist_auto_update(true);
-  options->max_iter(10e5);
+  options->max_iter(10e3);
 
   return new SaneMinMover(movable, score, options);
 }
