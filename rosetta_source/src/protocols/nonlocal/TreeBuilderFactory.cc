@@ -23,7 +23,6 @@
 #include <utility/exit.hh>
 
 // Package headers
-#include <protocols/nonlocal/ConsecutiveTreeBuilder.hh>
 #include <protocols/nonlocal/SimpleTreeBuilder.hh>
 #include <protocols/nonlocal/StarTreeBuilder.hh>
 #include <protocols/nonlocal/TreeBuilder.fwd.hh>
@@ -36,9 +35,7 @@ TreeBuilderOP TreeBuilderFactory::get_builder(const std::string& builder_name) {
   std::string type = builder_name;
   boost::to_lower(type);
 
-  if (type == "consecutive") {
-    return new ConsecutiveTreeBuilder();
-  } else if (type == "star") {
+  if (type == "star") {
     return new StarTreeBuilder();
   } else if (type == "simple") {
     return new SimpleTreeBuilder();
