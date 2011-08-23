@@ -200,7 +200,7 @@ protocols::moves::MoverOP BrokenBase::make_minimizer(core::scoring::ScoreFunctio
   // minimizer options
   MinimizerOptionsOP options = new MinimizerOptions("dfpmin", 1e-10, true);
   options->nblist_auto_update(true);
-  options->max_iter(10e3);
+  options->max_iter(10000);
 
   return new SaneMinMover(movable, score, options);
 }
