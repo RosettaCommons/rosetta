@@ -341,9 +341,10 @@ HBondDatabase::initialize_HBEval()
 
 	izstream s;
 	open(s, HBEval_fname);
-
+	Size line_number(0);
 	vector1<string> tokens;
 	string line;
+	vector1<bool> initialized_hbe_types(hbe_MAX,false);
 	string AHdist_poly_name, cosBAH_short_poly_name, cosBAH_long_poly_name,
 		cosAHD_short_poly_name, cosAHD_long_poly_name, chi_poly_name,
 		don_chem_type_name, acc_chem_type_name, seq_sep_type_name,
@@ -359,6 +360,7 @@ HBondDatabase::initialize_HBEval()
 	HBondWeightType weight_type;
 
 	while (getline(s, line)) {
+		++line_number;
 		tokens = string_split( line, ',');
 		if (tokens.size() != 15){
 			stringstream message;
@@ -389,6 +391,12 @@ HBondDatabase::initialize_HBEval()
 		}
 
 		HBEvalType hbe_type = HBEval_lookup(don_chem_type, acc_chem_type, seq_sep_type);
+		if( initialized_hbe_types[hbe_type]){
+			tr << "Duplicate parameter specification in HBEval.csv:" << endl;
+			tr << "  hbe_type: " << hbe_type << " line :" << line_number << endl;
+		} else {
+			initialized_hbe_types[hbe_type] = true;
+		}
 
 		if( hbe_type > static_cast<int>(HB_EVAL_TYPE_COUNT) ){
 			stringstream message;
@@ -473,7 +481,7 @@ HBondDatabase::initialize_HBEval()
 			cosBAH_short_poly = HBPoly1D_from_name(cosBAH_short_poly_name);
 			if(cosBAH_short_poly_lookup_[hbe_type]){
 				assert(cosBAH_short_poly_lookup_[hbe_type] == cosBAH_short_poly);
-			}{
+			} else {
 				cosBAH_short_poly_lookup_[hbe_type] = cosBAH_short_poly;
 			}
 		}
@@ -534,7 +542,13 @@ HBondDatabase::initialize_HBEval()
 			}
 		}
 	}
+	for(Size i=1; i <= hbe_MAX; ++i){
+		if(!initialized_hbe_types[i]){
+			tr << "hbe_type: " << i << " is not initialized in HBEval.csv" << endl;
+		}
+	}
 }
+
 FadeIntervalCOP
 HBondDatabase::HBFadeInterval_from_name(
 	string const name
