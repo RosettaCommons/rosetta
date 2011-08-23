@@ -111,6 +111,7 @@ ProteinBackboneAtomAtomPairFeatures::report_features(
 	for(Size resNum1=1; resNum1 <= pose.total_residue(); ++resNum1){
 		if(!relevant_residues[resNum1]) continue;
 		Residue const & res1 = pose.residue(resNum1);
+		if(!res1.is_protein()) continue;
 
 		Vector const & N1(res1.xyz("N"));
 		Vector const & Ca1(res1.xyz("CA"));
@@ -124,6 +125,7 @@ ProteinBackboneAtomAtomPairFeatures::report_features(
 			Size resNum2( (*ir)->get_other_ind(resNum1) );
 			if(!relevant_residues[resNum2] || (resNum1 >= resNum2)) continue;
 			Residue const & res2 = pose.residue(resNum2);
+			if(!res2.is_protein()) continue;
 
 			Vector const & N2(res2.xyz("N"));
 			Vector const & Ca2(res2.xyz("CA"));
@@ -152,6 +154,7 @@ ProteinBackboneAtomAtomPairFeatures::report_features(
 			stmt.exec();
 		} //res2
 	} //res1
+	return 0;
 }
 } // namesapce
 } // namespace
