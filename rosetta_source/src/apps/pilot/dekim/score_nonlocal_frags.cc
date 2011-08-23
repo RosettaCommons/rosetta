@@ -147,6 +147,8 @@ void MyScoreMover::apply( core::pose::Pose& pose ) {
 		utility_exit_with_message( "Pose " + input_tag + " total_residue() % 2 != 0" );
 	Size frag_size = pose.total_residue() / 2;
 
+	TR.Debug << "scoring: " << input_tag << std::endl;
+
 	if ( !pose.is_fullatom() )
 		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
 
@@ -197,23 +199,36 @@ void MyScoreMover::apply( core::pose::Pose& pose ) {
 	core::pose::setPoseExtraScores( pose, "nlf_ddg", relaxed_ddg_score );
 
 	if ( has_rdc_ ) {
+		Size weight = 1;
+		Size max = 6*frag_size; // 3 rdcs per residue (maximum) should be given a weight of 1
 		core::scoring::ResidualDipolarCoupling::RDC_lines rdc_data_given_fragment_lines;
 		for ( core::scoring::ResidualDipolarCoupling::RDC_lines::const_iterator it = rdc_raw_data_.begin(); it != rdc_raw_data_.end(); ++it ) {
 			if ( it->res1() >= frag1_start && it->res1() <= frag1_start + frag_size - 1 && it->res2() >= frag1_start && it->res2() <= frag1_start + frag_size - 1 ) {
+				// first fragment of pair
 				core::scoring::RDC selected ( it->res1() - frag1_start + 1, it->atom1(), it->res2() - frag1_start + 1, it->atom2(), it->Jdipolar());
 				rdc_data_given_fragment_lines.push_back( selected );
 			} else if ( it->res1() >= frag2_start && it->res1() <= frag2_start + frag_size - 1 && it->res2() >= frag2_start && it->res2() <= frag2_start + frag_size - 1 ) {
-				core::scoring::RDC selected ( it->res1() - frag2_start + 1, it->atom1(), it->res2() - frag2_start + 1, it->atom2(), it->Jdipolar());
+				// second fragment of pair
+				core::scoring::RDC selected ( it->res1() - frag2_start + 1 + frag_size, it->atom1(), it->res2() - frag2_start + 1 + frag_size, it->atom2(), it->Jdipolar());
 				rdc_data_given_fragment_lines.push_back( selected );
 			}
 		}
-		pose::Pose rdc_pose = orig_pose;
-		core::scoring::ResidualDipolarCouplingOP rdc_data_given_fragment =
-				new core::scoring::ResidualDipolarCoupling ( rdc_data_given_fragment_lines );
-		core::scoring::store_RDC_in_pose( rdc_data_given_fragment, rdc_pose );
 		Real rdc_score = 0.0;
-		rdc_score = rdc_data_given_fragment->compute_dipscore( rdc_pose );
-		core::pose::setPoseExtraScores( rdc_pose, "rdc", rdc_score );
+		if (rdc_data_given_fragment_lines.size() < frag_size) {
+			rdc_score = 30.0; // if there's only 0.5 rdcs per residue, give it a big penalty
+		} else {
+			weight = ((-29/max)*rdc_data_given_fragment_lines.size()) + 30;  // linear weight
+			if (weight > 30) weight = 30;
+			pose::Pose rdc_pose = orig_pose;
+			core::scoring::ResidualDipolarCouplingOP rdc_data_given_fragment =
+				new core::scoring::ResidualDipolarCoupling ( rdc_data_given_fragment_lines );
+			//rdc_data_given_fragment->show(std::cout);
+			//std::cout << std::endl;
+			core::scoring::store_RDC_in_pose( rdc_data_given_fragment, rdc_pose );
+			rdc_score = weight*rdc_data_given_fragment->compute_dipscore( rdc_pose );
+		}
+		core::pose::setPoseExtraScores( pose, "rdc", rdc_score );
+		core::pose::setPoseExtraScores( pose, "rdcs", rdc_data_given_fragment_lines.size() );
 	}
 
 	// rmsd to native
