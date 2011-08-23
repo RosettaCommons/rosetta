@@ -67,14 +67,14 @@ The user will need:
   various ligand residue conformations. If utilized these ligand rotamer libraries 
 	will be sampled with side chain rotamers during packing steps.
 
-@section Demo_files_location demo/lemmon/multi_residue_ligand_dock
+@section Demo_files_location rosetta/rosetta_demos/lemmon/multi_residue_ligand_dock
 
 See @ref readme_for_multi_ligand_dock_demos within the demo directory shown above.
 
 @section Preprocessing Preprocessing of input files
 
-src/apps/public/ligand_docking/pdb_to_molfile can be used to create a mol file for your ligand
-Next python/apps/public/molfile2params can be used to create the necessary ligand .params files.
+rosetta/rosetta_source/src/apps/public/ligand_docking/pdb_to_molfile can be used to create a mol file for your ligand
+Next rosetta/rosetta_source/python/apps/public/molfile2params can be used to create the necessary ligand .params files.
 
 @section Running Running the Application
 

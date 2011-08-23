@@ -63,7 +63,7 @@ the examples below.  Most users will want to use the default behaviour.
 
 @subsection db_location Database location - REQUIRED
 @verbatim
--database <path/to//database>   Specifies the location of the minirosetta_database
+-database <path/to//database>   Specifies the location of the rosetta_database
 @endverbatim
 
 @subsection other Other options
@@ -76,13 +76,13 @@ the examples below.  Most users will want to use the default behaviour.
 
 A sample command line for running the sequence_recovery application would be as follows:
 @verbatim
-sequencerecovery.macosgccrelease -database ~/minidb/ -native_pdb_list seqrecovery.list -redesign_pdb_list redesigned.list
+sequencerecovery.macosgccrelease -database ~/rosetta_database/ -native_pdb_list seqrecovery.list -redesign_pdb_list redesigned.list
 -ignore_unrecognized_res
 @endverbatim
 
 A sample command line for running the sequence_recovery application using a tagfile to restrict the calculation to only surface residues (even though this is done by default) would be as follows:
 @verbatim
-sequencerecovery.macosgccrelease -database ~/minidb/ -native_pdb_list seqrecovery.list -redesign_pdb_list redesigned.list
+sequencerecovery.macosgccrelease -database ~/rosetta_database -native_pdb_list seqrecovery.list -redesign_pdb_list redesigned.list
 -parse_tagfile taskoperations.tagfile -ignore_unrecognized_res
 @endverbatim
 
@@ -110,38 +110,38 @@ The sequence_recovery application outputs two text files: 1) a file containing t
 Example output of using the standard Rosetta energy function "score12" on a set of 32 proteins is shown below.  The first line denotes what each column represents.
 @verbatim
 Residue | No.correct core | No.native core | No.designed core | No.correct/No.native core | No.correct/No.designed core | No.correct | No.native | No.designed | No.correct/No.native | No.correct/No.designed | Residue | No.correct surface | No.native surface | No.designed surface | No.correct/No.native surface | No.correct/No.designed surface
-ALA	57	103	94	0.55	0.61	118	385	259	0.31	0.46	ALA	9	144	30	0.06	0.30	
-CYS	0	12	0	0.00	---	0	27	0	0.00	---	CYS	0	2	0	0.00	---	
-ASP	10	20	29	0.50	0.34	80	268	354	0.30	0.23	ASP	49	167	221	0.29	0.22	
-GLU	2	7	16	0.29	0.12	54	289	308	0.19	0.18	GLU	31	180	158	0.17	0.20	
-PHE	37	60	69	0.62	0.54	98	193	302	0.51	0.32	PHE	6	23	68	0.26	0.09	
-GLY	56	69	66	0.81	0.85	302	400	368	0.75	0.82	GLY	164	210	205	0.78	0.80	
-HIS	10	18	41	0.56	0.24	30	118	176	0.25	0.17	HIS	5	37	32	0.14	0.16	
-ILE	41	83	70	0.49	0.59	105	242	231	0.43	0.45	ILE	7	33	39	0.21	0.18	
-LYS	2	11	9	0.18	0.22	62	325	285	0.19	0.22	LYS	30	193	148	0.16	0.20	
-LEU	66	122	92	0.54	0.72	180	378	454	0.48	0.40	LEU	18	54	174	0.33	0.10	
-MET	10	31	25	0.32	0.40	20	90	70	0.22	0.29	MET	1	20	5	0.05	0.20	
-ASN	3	14	11	0.21	0.27	33	206	158	0.16	0.21	ASN	20	110	120	0.18	0.17	
-PRO	6	18	7	0.33	0.86	61	229	77	0.27	0.79	PRO	29	144	40	0.20	0.73	
-GLN	3	17	6	0.18	0.50	18	186	172	0.10	0.10	GLN	10	94	110	0.11	0.09	
-ARG	4	14	20	0.29	0.20	37	185	262	0.20	0.14	ARG	10	85	76	0.12	0.13	
-SER	20	37	106	0.54	0.19	79	258	348	0.31	0.23	SER	25	119	128	0.21	0.20	
-THR	19	41	62	0.46	0.31	61	291	225	0.21	0.27	THR	30	145	110	0.21	0.27	
-VAL	47	98	67	0.48	0.70	107	308	194	0.35	0.55	VAL	8	60	37	0.13	0.22	
-TRP	10	23	21	0.43	0.48	32	76	145	0.42	0.22	TRP	4	12	56	0.33	0.07	
-TYR	9	40	27	0.22	0.33	39	158	224	0.25	0.17	TYR	6	23	98	0.26	0.06	
+ALA	57	103	94	0.55	0.61	118	385	259	0.31	0.46	ALA	9	144	30	0.06	0.30
+CYS	0	12	0	0.00	---	0	27	0	0.00	---	CYS	0	2	0	0.00	---
+ASP	10	20	29	0.50	0.34	80	268	354	0.30	0.23	ASP	49	167	221	0.29	0.22
+GLU	2	7	16	0.29	0.12	54	289	308	0.19	0.18	GLU	31	180	158	0.17	0.20
+PHE	37	60	69	0.62	0.54	98	193	302	0.51	0.32	PHE	6	23	68	0.26	0.09
+GLY	56	69	66	0.81	0.85	302	400	368	0.75	0.82	GLY	164	210	205	0.78	0.80
+HIS	10	18	41	0.56	0.24	30	118	176	0.25	0.17	HIS	5	37	32	0.14	0.16
+ILE	41	83	70	0.49	0.59	105	242	231	0.43	0.45	ILE	7	33	39	0.21	0.18
+LYS	2	11	9	0.18	0.22	62	325	285	0.19	0.22	LYS	30	193	148	0.16	0.20
+LEU	66	122	92	0.54	0.72	180	378	454	0.48	0.40	LEU	18	54	174	0.33	0.10
+MET	10	31	25	0.32	0.40	20	90	70	0.22	0.29	MET	1	20	5	0.05	0.20
+ASN	3	14	11	0.21	0.27	33	206	158	0.16	0.21	ASN	20	110	120	0.18	0.17
+PRO	6	18	7	0.33	0.86	61	229	77	0.27	0.79	PRO	29	144	40	0.20	0.73
+GLN	3	17	6	0.18	0.50	18	186	172	0.10	0.10	GLN	10	94	110	0.11	0.09
+ARG	4	14	20	0.29	0.20	37	185	262	0.20	0.14	ARG	10	85	76	0.12	0.13
+SER	20	37	106	0.54	0.19	79	258	348	0.31	0.23	SER	25	119	128	0.21	0.20
+THR	19	41	62	0.46	0.31	61	291	225	0.21	0.27	THR	30	145	110	0.21	0.27
+VAL	47	98	67	0.48	0.70	107	308	194	0.35	0.55	VAL	8	60	37	0.13	0.22
+TRP	10	23	21	0.43	0.48	32	76	145	0.42	0.22	TRP	4	12	56	0.33	0.07
+TYR	9	40	27	0.22	0.33	39	158	224	0.25	0.17	TYR	6	23	98	0.26	0.06
 Total	412	838		0.492		1516	4612		0.329		Total	462	1855		0.249
 @endverbatim
 
 As can be seen from the native sequence recovery table, the standard Rosetta energy function "score12" obtains an overall native sequence recovery of 32.9% on a set of 32 proteins.  Core recovery is much higher with 49.2% of the native residues being recovered.  In addition to providing the
 core, overall, and surface native sequence recoveries, users can see which residue types Rosetta is recovering best and worst.  For example, Rosetta designed less than one-third as many prolines as are present in the native structures overall, and nearly twice as many tryptophans.  These tryptophans
 appear to be getting placed on the surface as the number of tryptophans on the surface is nearly four times the number in the native proteins.  Serine is overrepresented in the core, with there being nearly three times as many serines in the core of the redesigns as in the core
-of the native structures.  This implies that either Rosetta is having trouble fitting other residues in the core (perhaps due to clashes from the Lennard-Jones term), the hydrogen bond energy terms are weighted too heavily and favoring too many serines, or the desolvation penalty for serine 
+of the native structures.  This implies that either Rosetta is having trouble fitting other residues in the core (perhaps due to clashes from the Lennard-Jones term), the hydrogen bond energy terms are weighted too heavily and favoring too many serines, or the desolvation penalty for serine
 is not high enough.
 
 The corresponding substitution matrix for the above run is below:
 @verbatim
-AA_TYPE	nat_ALA	nat_CYS	nat_ASP	nat_GLU	nat_PHE	nat_GLY	nat_HIS	nat_ILE	nat_LYS	nat_LEU	nat_MET	nat_ASN	nat_PRO	nat_GLN	nat_ARG	nat_SER	nat_THR	nat_VAL	nat_TRP	nat_TYR	
+AA_TYPE	nat_ALA	nat_CYS	nat_ASP	nat_GLU	nat_PHE	nat_GLY	nat_HIS	nat_ILE	nat_LYS	nat_LEU	nat_MET	nat_ASN	nat_PRO	nat_GLN	nat_ARG	nat_SER	nat_THR	nat_VAL	nat_TRP	nat_TYR
 sub_ALA	118	6	6	2	5	8	1	8	6	7	7	5	15	9	7	19	9	15	6	0
 sub_CYS	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 sub_ASP	29	3	80	22	4	14	7	6	28	19	4	34	31	13	8	20	12	12	0	8

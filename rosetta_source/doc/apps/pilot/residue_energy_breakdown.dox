@@ -58,11 +58,11 @@ SCORE:  input.pdb       1          MET           3          MET      -0.430     
 @section commands Command lines
 Sample command:
 @verbatim
-residue_energy_breakdown.linuxgccrelease -database ~/minirosetta_database -in:file:s input.pdb -out:file:silent energy_breakdown.out
+residue_energy_breakdown.linuxgccrelease -database ~/rosetta_database -in:file:s input.pdb -out:file:silent energy_breakdown.out
 @endverbatim
 
 @section example Example
 
-See the integration test at test/integration/tests/residue_energy_breakdown for an example.
+See the integration test at rosetta/rosetta_tests/integration/tests/residue_energy_breakdown for an example.
 
 */

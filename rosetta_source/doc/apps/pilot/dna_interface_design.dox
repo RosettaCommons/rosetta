@@ -27,6 +27,6 @@
 Optimal performance depends upon a few minor modifications of the code and database files.
 @li increasing the rotamer probability cutoff in SingleResidueDunbrackLibrary::probability_to_accumulate_while_building_rotamers (-dunbrack_prob_buried and -dunbrack_prob_nonburied options)
 @li eliminating protein-DNA hydrogen bond strength attenuation on the basis of number of neighbors (use NO_ENV_HB_DEP_DNA option in weights files)
-@li reducing the hydrogen radii in minirosetta_database_sparse/chemical/atom_type_sets/fa_standard/atom_properties.txt to 0.1/0.7 (polar/nonpolar). Still requires manually/ changing/customizing database files.
+@li reducing the hydrogen radii in rosetta_database_sparse/chemical/atom_type_sets/fa_standard/atom_properties.txt to 0.1/0.7 (polar/nonpolar). Still requires manually/ changing/customizing database files.
 
 */

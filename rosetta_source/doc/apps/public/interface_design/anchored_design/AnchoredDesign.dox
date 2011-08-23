@@ -17,7 +17,7 @@ Code and documentation by Steven Lewis smlewi@gmail.com.  This document was last
 
 
 @section examples Examples
-The code is at <code>mini/src/apps/public/interface_design/anchored_design/AnchoredDesign.cc</code>; there's an integration test at <code>mini/test/integration/tests/AnchoredDesign/</code>.  There is a more extensive demo with more documentation at demo/AnchoredDesign, or in the demo section of the release.
+The code is at <code>rosetta/rosetta_source/src/apps/public/interface_design/anchored_design/AnchoredDesign.cc</code>; there's an integration test at <code>rosetta/rosetta_tests/integration/tests/AnchoredDesign/</code>.  There is a more extensive demo with more documentation at rosetta/rosetta_demos/AnchoredDesign, or in the demo section of the release.
 
 @section refs References
 @li Lewis SM, Kuhlman BA. Anchored design of protein-protein interfaces. PLoS One. 2011;6(6):e20872. Epub 2011 Jun 17.
@@ -27,7 +27,7 @@ The code is at <code>mini/src/apps/public/interface_design/anchored_design/Ancho
 AnchoredDesign is the main protocol discussed here. This protocol is meant to design interfaces between known target structures and new binding partners, using an "anchor" consisting of residues grafted from a known binding partner of the target onto the new scaffold.  The idea is that this will reduce the conformational space we need to search and preclude the docking problem, while still leaving freedom to design the interface as necessary.  The anchor should be grafted into a surface loop of the scaffold (see @ref AnchoredPDBCreator).  Loop remodeling of the anchor loop will move the scaffold with respect to the target, exposing different parts of their surfaces to one another.  Loop remodeling of other (unanchored) surface loops is also implemented.  This lets us design a new, flexible-backbone interface between new binding partners.
 
 @section inputs Input Files
-See test/integration/tests/AnchoredDesign/ for example usage.
+See rosetta/rosetta_tests/integration/tests/AnchoredDesign/ for example usage.
 
 AnchoredDesign requires as inputs a starting structure, an anchor specification, and a loops specification (@ref loopmodeling).  The starting structure needs to have the anchor grafted into the scaffold (see @ref AnchoredPDBCreator and its documentation), and the anchor needs to be docked properly relative to the target.  The anchor/target interaction WILL NOT CHANGE, since it was drawn from a crystal structure.  The relationship between the scaffold and rest of the system is treated flexibly; the scaffold does need to be connected to the anchor but it's fine if the scaffold crashes horribly into the target (that will be worked out by the protocol).
 
@@ -40,7 +40,7 @@ The anchor file specification is a one-line file with three whitespace-delimited
 It's going to assume PDBInfo exists, so if you have silent files try numbering from 1.
 
 @section anch_des_options Options
-AnchoredDesign has its own namespace of options, and also supports general minirosetta options (packing, etc.)
+AnchoredDesign has its own namespace of options, and also supports general Rosetta options (packing, etc.)
 
 AnchoredDesign options
 @li anchor - string - anchor file

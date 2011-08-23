@@ -18,12 +18,12 @@
 @page loopmodeling Documentation for the loop modeling application
 
 @section metadata Metadata
-This document was edited Nov 1st 2008 by Yi Liu. This application in mini was created by Michael Tyka, et al. Most of the contents are still based on the Rosetta++ loop tutorial written by Chu Wang 2007.
+This document was edited Nov 1st 2008 by Yi Liu. This application in Rosetta3 was created by Michael Tyka, et al. Most of the contents are still based on the Rosetta++ loop tutorial written by Chu Wang 2007.
 
 
 @section examples Examples
 This file only contents loop relax example at this moment.
-See <code>mini/test/integration/tests/loop_modeling</code> for an example loop relax run and input files.
+See <code>rosetta/rosetta_tests/integration/tests/loop_modeling</code> for an example loop relax run and input files.
 
 @section refs References
 @li Qian, B., Raman, S., Das, R., Bradley, P., McCoy, A.J., Read, R.J. and Baker D. (2007). High resolution protein structure prediction and the crystallographic phase problem. Nature. manuscript accepted.

@@ -11,10 +11,10 @@ Last edited 4/22/11.  Corresponding PI Dominik Gront (dgront@chem.uw.edu.pl).
  
 
 @section code_demos Code and Demo
-@li Application source code: <code>src/apps/public/fragment_picker.cc</code>
+@li Application source code: <code>rosetta/rosetta_source/src/apps/public/fragment_picker.cc</code>
 
 @li Try-me examples
-The examples are located in demo/fragment_picker directory:
+The examples are located in rosetta/rosetta_demos/fragment_picker directory:
     - BestFragmentsProtocol : basic example demonstrates how to select fragments that maximize a given score function
     - QuotaProtocol : quota protocol demo shows how to pick fragments for an ab-initio protein prediction
     - Quota_with_restraints : demonstrates how to incorporate distance restraints to a fragment picking run

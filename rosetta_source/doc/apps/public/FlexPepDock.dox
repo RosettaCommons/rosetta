@@ -16,10 +16,10 @@
 Last updated July 24, 2011 ; PI: Ora Schueler-Furman oraf@ekmd.huji.ac.il.
 
 @section code_demos Code and Demo
-@li Application source code: <code>src/apps/public/flexpep_docking/FlexPepDocking.cc</code>
-@li Main mover source code: <code>protocols/flexpep_docking/FlexPepDockingProtocol.cc</code>
-@li For a demonstration of a basic run of the refinement protocol and of a run with an alternative anchor with low-resolution optimization, see integration folder (<code>test/integration/tests/flexpepdock/</code>) and demo folder (<code>mini/demo/FlexPepDock_Refinement</code>). <br>
-@li For a demonstration of a basic run of the ab-initio protocol see the protocol capture folder <code>protocol_capture/FlexPepDock_AbInitio</code>. The README file contains all the information that is needed in order to make a new run on a query peptide-protein interaction.
+@li Application source code: <code>rosetta/rosetta_source/src/apps/public/flexpep_docking/FlexPepDocking.cc</code>
+@li Main mover source code: <code>rosetta/rosetta_source/src/protocols/flexpep_docking/FlexPepDockingProtocol.cc</code>
+@li For a demonstration of a basic run of the refinement protocol and of a run with an alternative anchor with low-resolution optimization, see integration folder (<code>rosetta/rosetta_tests/integration/tests/flexpepdock/</code>) and demo folder (<code>rosetta/rosetta_demos/FlexPepDock_Refinement</code>). <br>
+@li For a demonstration of a basic run of the ab-initio protocol see the protocol capture folder <code>rosetta/rosetta_demos/protocol_capture/FlexPepDock_AbInitio</code>. The README file contains all the information that is needed in order to make a new run on a query peptide-protein interaction.
 
 @section fpdock_refs References
 The main references for the FlexPepDock Refinement protocol and the FlexPepDock <i>ab-initio</i> protocol include additional scientific background, in-depth technical details about the protocols, and large-scale assessment of their performance over a large dataset of peptide-protein complexes:
@@ -49,7 +49,7 @@ A wide range of regulatory processes in the cell are mediated by flexible peptid
 
 @section fpdock_algorithm Algorithm
 <b>Refinement protocol:</b>
-The input to the protocol is an initial coarse model of the peptide-protein complex in PDB format (approximate backbone coordinates for peptide in the receptor binding site). Initial side-chain coordinates (such as the crystallographic side-chains of an unbound receptor) can be optionally provided as part of the input model. A preliminary step in the Refinement protocol involves the pre-packing of the input structure, to remove internal clashes in the protein monomer and the peptide (see prepack mode below). In the main part of the protocol, the peptide backbone and its rigid-body orientation are optimized relative to the receptor protein using the Monte-Carlo with Minimization approach, in addition to on-the-fly side-chain optimization. An optional low-resolution (centroid) pre-optimization may improve performance further. The main part of the protocol is repeated \em k times. The output models are then ranked by the user based on their energy score. The Refinement protocol is described in detail in the Methods section in Raveh, London et al., Proteins 2010 (see \ref fpdock_refs). 
+The input to the protocol is an initial coarse model of the peptide-protein complex in PDB format (approximate backbone coordinates for peptide in the receptor binding site). Initial side-chain coordinates (such as the crystallographic side-chains of an unbound receptor) can be optionally provided as part of the input model. A preliminary step in the Refinement protocol involves the pre-packing of the input structure, to remove internal clashes in the protein monomer and the peptide (see prepack mode below). In the main part of the protocol, the peptide backbone and its rigid-body orientation are optimized relative to the receptor protein using the Monte-Carlo with Minimization approach, in addition to on-the-fly side-chain optimization. An optional low-resolution (centroid) pre-optimization may improve performance further. The main part of the protocol is repeated \em k times. The output models are then ranked by the user based on their energy score. The Refinement protocol is described in detail in the Methods section in Raveh, London et al., Proteins 2010 (see \ref fpdock_refs).
 
 <b>\em ab-initio protocol:</b>
 The input to the <i>ab-initio</i> protocol is: (1) A model of the peptide-protein complex in PDB format similar to the Refinement protocol, but starting from arbitrary (e.g., extended) peptide backbone conformation. It is required that the peptide is initially positioned in some proximity to the true binding pocket, but the exact starting orientation may vary. A preiminary step for the \em ab-initio protocol is the generation of fragment libraries for the peptide sequence, with 3-mer, 5-mer and 9-mer fragments (these can be generated automatically via a script from the starting structure, as shown in <code>protocol_capture/FlexPepDock_AbInitio/</code> demo files). Another preliminary step is pre-packing, as in the Refinement protocol. The first step in the main part of the protocol involves a Monte-Carlo simulation for \em de-novo folding and docking of the peptide over the protein surface in low-resolution (centroid) mode, using a combination of fragment insertions, random backbone perturbations and rigid-body transformation moves. In the second step, the resulting low-resolution model is refined with FlexPepDock Refinement. As in the independent refinement protocol, the output models are then ranked by the used based on their energy score, or also subjected to clustering for improved performance. Our \em ab-initio protocol is described in detail in the Methods section in Raveh, London, Zimmerman et al., PLoS ONE 2011 (see \ref fpdock_refs).
@@ -157,7 +157,7 @@ Note that the \ref ppk "-flexpep_prepack" and \ref minOnly "-flexPepDockingMinim
   \anchor pep_refine -pep_refine
  </td>
  <td>
-  Refinement mode. (equivalent to obsolete 
+  Refinement mode. (equivalent to obsolete
   -rbMCM -torsionsMCM flags)
  </td>
  <td>
@@ -220,7 +220,7 @@ Note that the \ref ppk "-flexpep_prepack" and \ref minOnly "-flexPepDockingMinim
  -ref_startstruct
   </td>
 <td> Alternative start structure for scoring statistics,
-  instead of the original start structure (useful as reference 
+  instead of the original start structure (useful as reference
   for rescoring previous runs with the flexpep_score_only flag.)
   </td>
  <td>
@@ -292,8 +292,8 @@ More information on common Rosetta flags can be found in the <A href="https://ww
 					<P STYLE="margin-top: 0.02in; margin-bottom: 0in">-native
 				</TD>
 				<TD>
-					Specify the native structure for which to compare in 
-          RMSD calculations. This is a required flag. When the native 
+					Specify the native structure for which to compare in
+          RMSD calculations. This is a required flag. When the native
           is not given, the starting structure is used
           for reference.
 				</TD>
@@ -322,11 +322,11 @@ More information on common Rosetta flags can be found in the <A href="https://ww
 					-use_input_sc
 				</TD>
 				<TD>
-					Include rotamer conformations from the input structure 
-          during side-chain repacking. Unlike the -unboundrot flag, 
-					not all rotamers from the input structure are added each 
-					time to the rotamer library, only those conformations accepted 
-					at the end of each round are kept and the remaining 
+					Include rotamer conformations from the input structure
+          during side-chain repacking. Unlike the -unboundrot flag,
+					not all rotamers from the input structure are added each
+					time to the rotamer library, only those conformations accepted
+					at the end of each round are kept and the remaining
 					conformations are lost.
 				</TD>
 			</TR>
@@ -353,7 +353,7 @@ More information on common Rosetta flags can be found in the <A href="https://ww
          -frag3 / -frag5 / -frag9
         </TD>
         <TD>
-          3mer / 5mer / 9mer fragments files for ab-initio peptide docking 
+          3mer / 5mer / 9mer fragments files for ab-initio peptide docking
           (9mer fragments for peptides longer than 9).
         </TD>
      </TR>
@@ -475,7 +475,7 @@ More information on common Rosetta flags can be found in the <A href="https://ww
  -frag3/5/9_weight
   </td>
   <td>
- Relative weight of different fragment libraries in 
+ Relative weight of different fragment libraries in
  ab-initio fragment insertion cycles.
   </td>
  <td>
@@ -497,7 +497,7 @@ More information on common Rosetta flags can be found in the <A href="https://ww
 
 \verbatim
  FlexPepDocking.{ext}
--database ${mini_db} -s input.pdb -native native.pdb -flexpep_prepack
+-database ${rosetta_db} -s input.pdb -native native.pdb -flexpep_prepack
  -ex1 -ex2aro [-unboundrot unbound.pdb]
 \endverbatim
 
@@ -505,7 +505,7 @@ More information on common Rosetta flags can be found in the <A href="https://ww
 
 \verbatim
 FlexPepDocking.{ext}
--database ${minidb} -s start.pdb -native native.pdb
+-database ${rosetta_db} -s start.pdb -native native.pdb
 -out:file:silent decoys.silent -out:file:silent_struct_type binary
 -pep_refine -ex1 -ex2aro -use_input_sc
 -nstruct 100 -unboundrot unbound_receptor.pdb [ -lowres_preoptimize ]
@@ -537,22 +537,22 @@ awk '{if ( substr ( $0,1,3 ) == "pos" ) {print substr ( $0,0,18 ) sprintf ("%4d"
 
 \verbatim
 FlexPepDocking.{ext}
--database ${minidb} -s start.pdb -native native.pdb
+-database ${rosetta_db} -s start.pdb -native native.pdb
 -out:file:silent decoys.silent -out:file:silent_struct_type binary
 -lowres_abinitio -pep_refine -ex1 -ex2aro -use_input_sc
 -frag3 <frag3 file> -frag5 <frag5 file> -frag9 <frag9 file>
 -nstruct 50000 -unboundrot unbound_receptor.pdb
 \endverbatim
 
-<li> You may rank the model according to the default score (second column in score file). However, our benchmarks indicate that ranking the models according to a new score, called \em rewighted-score, may be helpful (look for the column labeled "reweighted_sc" in the score file). 
+<li> You may rank the model according to the default score (second column in score file). However, our benchmarks indicate that ranking the models according to a new score, called \em rewighted-score, may be helpful (look for the column labeled "reweighted_sc" in the score file).
 
-<li> We also found that clustering of the top-500 models using the Rosetta clustering application and choosing the clusters with lowest-energy representatives is helpful, and that good solutions are often found within the top 1-10 clusters. Clustering can be done (in UNIX) using the script <code>protocol_capture/FlexPepDock_AbInitio/scripts/clustering/cluster.sh</code>, assuming the models are stored in a silent file, as follows. 
+<li> We also found that clustering of the top-500 models using the Rosetta clustering application and choosing the clusters with lowest-energy representatives is helpful, and that good solutions are often found within the top 1-10 clusters. Clustering can be done (in UNIX) using the script <code>protocol_capture/FlexPepDock_AbInitio/scripts/clustering/cluster.sh</code>, assuming the models are stored in a silent file, as follows.
 
 \verbatim
 cluster.sh pdb-id 500 2 <scorefile> <reference-pdb> <models-silent-file> <score-type-column>
 \endverbatim
 
-The last parameter is the column number of the score according to which you wish to choose the top-500 models. We recommend using the column labeled "reweighted_sc" for this, as described above. 
+The last parameter is the column number of the score according to which you wish to choose the top-500 models. We recommend using the column labeled "reweighted_sc" for this, as described above.
 
 </ol>
 
@@ -584,7 +584,7 @@ Our benchmark of the Refinement protocol indicates that side-chains peptide moti
 Neither of the provided protocols are intended for fully blind docking. The \em ab-initio protocol assumes that the peptide is located at the vicinity of the binding site, but does not assume anything about the initial peptide backbone conformation. The Refinement protocol is more restricted - it is intended for obtaining high-resolution peptide models given a coarse-grain starting structure, which should resemble the native solution to some extent (about 5A backbone-RMSD for the native peptide, even though in some cases, the protocol works well for starting structures with up to 12A bb-RMSD from the native). In general, the approximate binding site can be estimated from available computational methods for interface prediction, or from experimental procedures such as site-directed mutagenesis or known homologues. For Refinement, a coarse model can be often obtained from e.g., interactions of homologue receptors or peptides with similar sequences. It may be useful to use a constraint file to force the peptide to reach the vicinity of a known binding site or to force specific interactions.
 
 @li <b> Secondary structure assignment: </b> <br>
-Formally, neither protocol requires initial secondary structure assignment. The \em ab-initio protocol may benefit implicitly from accurate secondary structure prediction when building the fragment libraris, but this is not necessary. In contrast, while the Refinement protocol is designed to allow substantial peptide backbone flexibility, it does not switch well between secondary structures (from strand to helix conformation, etc.). Hence for refinement, it may be useful to initially assign a canonical secondary structure to the peptide based on prior information (computational predictions, homologue structures, etc.), and experimental information (CD experiments, etc.). Of course the \em ab-initio protocol can be used in cases where such information is not available. 
+Formally, neither protocol requires initial secondary structure assignment. The \em ab-initio protocol may benefit implicitly from accurate secondary structure prediction when building the fragment libraris, but this is not necessary. In contrast, while the Refinement protocol is designed to allow substantial peptide backbone flexibility, it does not switch well between secondary structures (from strand to helix conformation, etc.). Hence for refinement, it may be useful to initially assign a canonical secondary structure to the peptide based on prior information (computational predictions, homologue structures, etc.), and experimental information (CD experiments, etc.). Of course the \em ab-initio protocol can be used in cases where such information is not available.
 
 @li <b> Receptor model: </b><br>
 Our protocol allows full receptor side-chain flexibility, and was shown to perform quite well when docking to unbound receptors or to alternative confomrations. However, it is assumed that the receptor backbone does not change too much at the interface, as we do not yet model receptor backbone flexibility. We expect receptor backbone flexibility would be added in future extensions to the protocol.
@@ -599,7 +599,7 @@ In our tests, producing 200 models with the Refinement protocol typically takes 
 
 @section fpdock_outputs Expected Outputs
 
-The output of a FlexPepDock run is a score file (score.sc by default) and k model structures (as specified by the -nstruct flag and the other common Rosetta input and output flags). The score of each model is the second column of the score file. Model selection should be made based on either the score or reweighted-score columns (which exhibited superior performance in the \em ab-initio benchmarks). 
+The output of a FlexPepDock run is a score file (score.sc by default) and k model structures (as specified by the -nstruct flag and the other common Rosetta input and output flags). The score of each model is the second column of the score file. Model selection should be made based on either the score or reweighted-score columns (which exhibited superior performance in the \em ab-initio benchmarks).
 
 <div class="fragment"><pre class="fragment">
 <b>Interpretation of FlexPepDock-specific score terms:</b> (for the common Rosetta scoring terms, please also see <a href="https://www.rosettacommons.org/manuals/rosetta3_user_guide/score_types.html">the relevant manual page</a>).
@@ -712,5 +712,5 @@ The output of a FlexPepDock run is a score file (score.sc by default) and k mode
 
 @section postprocess Post Processing
 
-Except for model selection by total score or reweighted score, and possibly clustering (see \ref tips "Tips" section), no special post-processing steps are needed. For the \em ab-initio protocol, the protocol capture README file in <code>protocol_capture/FlexPepDock_AbInitio/</code> contains all the information needed for clustering. However, advanced users may optionally use Rosetta \ref cluster_commands directly for assessing whether top-scoring models converge to a consensus solution. For FlexPepDock Refinement, clustering is an optional step, and is not considered an integral part of the Refinement protocol, as described and tested in Raveh <EM>et al.</EM> 
+Except for model selection by total score or reweighted score, and possibly clustering (see \ref tips "Tips" section), no special post-processing steps are needed. For the \em ab-initio protocol, the protocol capture README file in <code>protocol_capture/FlexPepDock_AbInitio/</code> contains all the information needed for clustering. However, advanced users may optionally use Rosetta \ref cluster_commands directly for assessing whether top-scoring models converge to a consensus solution. For FlexPepDock Refinement, clustering is an optional step, and is not considered an integral part of the Refinement protocol, as described and tested in Raveh <EM>et al.</EM>
 */

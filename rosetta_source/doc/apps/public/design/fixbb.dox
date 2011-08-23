@@ -23,18 +23,18 @@ This document was edited Nov 1st 2008 by Yi Liu and again on May 11th, 2010 by A
 The <code>fixbb</code> application is maintained by Brian Kuhlman's lab.  Send questions to bkuhlman@email.unc.edu
 
 @section code_demos Code and Demos
-See <code>mini/test/integration/tests/fixbb</code> for an example of fixed backbone design protocol and input files.
+See <code>rosetta/rosetta_tests/integration/tests/fixbb</code> for an example of fixed backbone design protocol and input files.
 A production run can be made from the <code>command</code> file by adding the flags -ex1 and -ex2 for the fullatom
 run.  The centroid-mode run is already a "production run" in that it cannot be made to take more time than it does already.
 
-The majority of the classes for the fixbb application live in <code>src/core/pack</code>.
-The main interface class is the <code>PackerTask</code> which lives in <code>src/core/pack/task</code>.
+The majority of the classes for the fixbb application live in <code>rosetta/rosetta_source/src/core/pack</code>.
+The main interface class is the <code>PackerTask</code> which lives in <code>rosetta/rosetta_source/src/core/pack/task</code>.
 Rotamers are held in instances of class <core>RotamerSet</code> which are in turn held in an instance of class
-<code>RotamerSets</code>; these classes live in <code>src/core/pack/rotamer_set</code>.  Rotamer-pair
+<code>RotamerSets</code>; these classes live in <code>rosetta/rosetta_source/src/core/pack/rotamer_set</code>.  Rotamer-pair
 energies are held in one of several "interaction graph" classes, which live in namespace
-<code>core::pack::interaction_graph</code>.  The annealer classes live in <code>src/core/pack/annealer</code>
-The application itself lives in <code>src/apps/public/design/fixbb.cc</code> and invokes the <code>PackRotamersMover</code>
-that lives in <code>src/protocols/moves/PackRotamersMover.cc</code>
+<code>core::pack::interaction_graph</code>.  The annealer classes live in <code>rosetta/rosetta_source/src/core/pack/annealer</code>
+The application itself lives in <code>rosetta/rosetta_source/src/apps/public/design/fixbb.cc</code> and invokes the <code>PackRotamersMover</code>
+that lives in <code>rosetta/rosetta_source/src/protocols/moves/PackRotamersMover.cc</code>
 
 @section refs References
 We recommend the following articles for further studies of RosettaDesign methodology and applications:
@@ -49,7 +49,7 @@ We recommend the following articles for further studies of RosettaDesign methodo
 
 This application will attempt to optimize sidechain-rotamer placement on a fixed backbone.
 It may be used to optimize the sidechain positions of an input structure, or to create a new
-sequence of amino acids that fit upon the original backbone. 
+sequence of amino acids that fit upon the original backbone.
 
 @section algorithm Algorithm
 
@@ -171,7 +171,7 @@ Annealer
 Other
 
 @verbatim
--database <path/to/minirosetta_database>     Specify the location of the minirosetta_database (required)
+-database <path/to/rosetta/rosetta_database>     Specify the location of the rosetta_database (required)
 
 -overwrite             Overwrite the output files, even if they already exist.
 
@@ -181,7 +181,7 @@ Other
 -min_type <string>     When combined with the -minimize_sidechains flag, specifies the line-search algorithm to use
                        in the gradient-based minimization . "dfpmin" by default.
 
--score:weights <wts_file>           Set the weights file to be used. 
+-score:weights <wts_file>           Set the weights file to be used.
 -score:weights_patch <patch_file>   Set the weights patch file to be used.
 @endverbatim
 

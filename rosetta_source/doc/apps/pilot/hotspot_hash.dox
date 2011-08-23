@@ -18,10 +18,10 @@
 @page hotspot_hash Documentation for hotspot_hashing application
 
 @section examples Examples
-See <code>mini/test/integration/tests/hotspot_hashing</code> for an example hotspot hashing run and input files.
+See <code>rosetta/rosetta_tests/integration/tests/hotspot_hashing</code> for an example hotspot hashing run and input files.
 
 @section inputs Input Files
-See test/integration/tests/hotspot_hashing/ for example usage.
+See rosetta/rosetta_tests/integration/tests/hotspot_hashing/ for example usage.
 
 @section tips Tips
 @li use docking's -norepack1 flag to turn off packing on target side

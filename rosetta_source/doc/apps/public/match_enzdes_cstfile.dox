@@ -23,9 +23,9 @@ Richter F, Leaver-Fay A, Khare SD, Bjelic S, Baker D (2011) De Novo Enzyme Desig
 The match / enzdes geometric constraint file ( from hereon referred to as 'cstfile' ) format is used to specify a desired binding/active site arrangement in Rosetta. Such an arrangement usually consists of <br>
 1. a number of amino acids and a small molecule ligand or substrate and <br>
 2. how these different amino acids and the ligand are spatially/geometrically positioned with respect to each other. <br>
-This information in the cstfile is used by the matcher to try to graft the desired site into a protein structure, and by the enzyme_design code (from hereon referred to as 'enzdes' ) to constrain active sites to the desired geometry during rotamer packing and minimization. Example cstfiles can be found in the integration tests for the matcher ( <code>mini/test/integration/tests/match/inputs/1n9l_CHbN/Est_CHbkupb_d2n_match.cst</code>, <code>mini/test/integration/tests/match/inputs/1c2t/1c2t_xtal_BUHis.cst</code>, <code>mini/test/integration/tests/match/inputs/6cpa/6cpa_xtal.cst</code> ), enzdes ( <code>mini/test/integration/tests/enzdes/inputs/Est_CHba_d2n.cst</code>), and cstfile_to_theozyme_pdb <cdoe>mini/test/integration/tests/cstfile_to_theozyme_pdb/inputs/CTP_RKRE_1acid2acid.cst</code> <br>
+This information in the cstfile is used by the matcher to try to graft the desired site into a protein structure, and by the enzyme_design code (from hereon referred to as 'enzdes' ) to constrain active sites to the desired geometry during rotamer packing and minimization. Example cstfiles can be found in the integration tests for the matcher ( <code>rosetta/rosetta_tests/integration/tests/match/inputs/1n9l_CHbN/Est_CHbkupb_d2n_match.cst</code>, <code>rosetta/rosetta_tests/integration/tests/match/inputs/1c2t/1c2t_xtal_BUHis.cst</code>, <code>rosetta/rosetta_tests/integration/tests/match/inputs/6cpa/6cpa_xtal.cst</code> ), enzdes ( <code>rosetta/rosetta_tests/integration/tests/enzdes/inputs/Est_CHba_d2n.cst</code>), and cstfile_to_theozyme_pdb <cdoe>rosetta/rosetta_tests/integration/tests/cstfile_to_theozyme_pdb/inputs/CTP_RKRE_1acid2acid.cst</code> <br>
 While the matcher is only able to find sites that contain one ligand and a number of protein residues interacting with this ligand or with another protein residue, in enzdes a cstfile can be used to also constrain geometries between a protein protein interface, two ligands, or within a single protein.
-The public app src/apps/public/enzdes/CstfileToTheozymePDB.cc can create a .pdb model of the theozyme geometry specified in a cstfile. When developing a theozyme it is recommended to run this app to confirm that the desired geometry is correctly encoded by the cstfile. Details about using this app can be found below in Section "Using the CstfileToTheozymePDB executable". <br>
+The public app rosetta/rosetta_source/src/apps/public/enzdes/CstfileToTheozymePDB.cc can create a .pdb model of the theozyme geometry specified in a cstfile. When developing a theozyme it is recommended to run this app to confirm that the desired geometry is correctly encoded by the cstfile. Details about using this app can be found below in Section "Using the CstfileToTheozymePDB executable". <br>
 
 
 @section file_format Description of the cstfile format
@@ -112,7 +112,7 @@ Generally the protein rotamer sampling level of in the matcher is determined by 
   ALGORITHM_INFO::END
 @endverbatim
 <br>
-Detailed documentation about how to specify rotamer sampling for individual match residues can be found in the detailed comments in src/protocols/match/Matcher.cc, preceding function 'initialize_from_file'. The 'IGNORE_UPSTREAM_PROTON_CHI' instruction can be very helpful when matching a SER, THR, CYS, or TYR sidechain, if the interaction is defined through the O/S heavyatom and not the proton.
+Detailed documentation about how to specify rotamer sampling for individual match residues can be found in the detailed comments in rosetta/rosetta_source/src/protocols/match/Matcher.cc, preceding function 'initialize_from_file'. The 'IGNORE_UPSTREAM_PROTON_CHI' instruction can be very helpful when matching a SER, THR, CYS, or TYR sidechain, if the interaction is defined through the O/S heavyatom and not the proton.
 It should be noted that the matcher can sample rotameric conformations not available in the standard Rosetta rotamer libraries. When using this feature, one should be aware that the catalytic rotamers might then not be available in the post-processing stages when matches are designed.
 <br>
 
@@ -152,7 +152,7 @@ all these options can be combined, i.e. if you add the following to a block in y
 @endverbatim
 <br>
 
-Only positions in the posfile that are at the n terminus of a helix, are relatively rigid, are not too exposed but also not too buried will be matched. The code for these exclusions resides in <code>src/protocols/match/MatchPositionModifiers.hh/cc</code><br>
+Only positions in the posfile that are at the n terminus of a helix, are relatively rigid, are not too exposed but also not too buried will be matched. The code for these exclusions resides in <code>rosetta/rosetta_source/src/protocols/match/MatchPositionModifiers.hh/cc</code><br>
 
 
 @section Using the CstfileToTheozymePDB executable <br>

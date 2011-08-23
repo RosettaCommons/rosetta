@@ -38,14 +38,14 @@ This protocol will only generate low-resolution centroid models.  The protocol i
 
 @section inputs Input Files
 
-Membrane ab initio protocol specific input files (BRD4.span and BRD4.lips4 in the above example) are generated using octopus2span.pl, run_lips.pl, and alignblast.pl scripts located in /mini/src/apps/public/membrane_abinitio/ .
+Membrane ab initio protocol specific input files (BRD4.span and BRD4.lips4 in the above example) are generated using octopus2span.pl, run_lips.pl, and alignblast.pl scripts located in path/to/rosetta/rosetta_source/src/apps/public/membrane_abinitio/ .
 Note that blastpgp and nr database are necessary to run run_lips.pl script.
 
 @li BRD4.span - transmembrane topology prediction file generated using octopus2span.pl script as follows:
 @verbatim
 octopus2span.pl <OCTOPUS topology file>
 
-example: <path to mini>/mini/src/apps/public/membrane_abinitio/octopus2span.pl BRD4.octopus
+example: <path to rosetta>/rosetta_source/src/apps/public/membrane_abinitio/octopus2span.pl BRD4.octopus
 @endverbatim
 
 Input OCTOPUS topology file is generated at http://octopus.cbr.su.se/ using protein sequence as input.
@@ -93,7 +93,7 @@ n2c
 @verbatim
 run_lips.pl <fasta file> <span file> <path to blastpgp> <path to nr database> <path to alignblast.pl script>
 
-example: <path to mini>/mini/src/apps/public/membrane_abinitio/run_lips.pl BRD4.fasta BRD4.span /work/bjornw/Apps/blast/bin/blastpgp /scratch/shared/genomes/nr ~bjornw/mini/src/apps/public/membrane_abinitio/alignblast.pl
+example: <path to rosetta>/rosetta_source/src/apps/public/membrane_abinitio/run_lips.pl BRD4.fasta BRD4.span /work/bjornw/Apps/blast/bin/blastpgp /scratch/shared/genomes/nr ~bjornw/rosetta/rosetta_source/src/apps/public/membrane_abinitio/alignblast.pl
 @endverbatim
 
 Sample lips4 file:
@@ -121,7 +121,7 @@ You can run membrane ab initio application with the following flags:
 -in:file:lipofile BRD4.lips4              Lipophilicity prediction (see above)
 -in:file:frag3 aaBRD4_03_05.200_v1_3      3-residue fragments
 -in:file:frag9 aaBRD4_09_05.200_v1_3      9-residue fragments
--in:path:database ~minirosetta_database   Path to rosetta database
+-in:path:database ~rosetta_database       Path to rosetta database
 -abinitio:membrane                        Membrane ab initio application
 -score:find_neighbors_3dgrid              Use a 3D lookup table for residue neighbors calculations
 -membrane:no_interpolate_Mpair            Switch off the interpolation between the two layers for the Mpair term

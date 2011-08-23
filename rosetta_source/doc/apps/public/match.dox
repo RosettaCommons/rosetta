@@ -17,7 +17,7 @@ This document was written by Florian Richter and Andrew Leaver-Fay in August 201
 
 @section code_demos Code and Demo
 
-The matcher executable is compiled from src/apps/public/match/match.cc.  The classes that constitute the matcher live in the directory (and subdirectories of) src/protocols/match/ and src/protocols/toolbox/match_enzdes_util/.  The details for many of the classes are described in greater detail within the doxygen tags, and are recommended as a source for more details than can be given in this document.  Demos for the matcher are given in test/integration/tests/match/.
+The matcher executable is compiled from rosetta/rosetta_source/src/apps/public/match/match.cc.  The classes that constitute the matcher live in the directory (and subdirectories of) rosetta/rosetta_source/src/protocols/match/ and rosetta/rosetta_source/src/protocols/toolbox/match_enzdes_util/.  The details for many of the classes are described in greater detail within the doxygen tags, and are recommended as a source for more details than can be given in this document.  Demos for the matcher are given in rosetta/rosetta_tests/integration/tests/match/.
 
 @section refs References
 
@@ -104,7 +104,8 @@ consists of 6 double-precision values representing the coordinate of the downstr
 The first three values are the x,y and z coordinates of a particular atom in the downstream partner.
 The second three values are the phi, psi, and theta values describing the coordinate frame at this atom.
 These three "Euler angle" parameters describe three rotations: Z(psi) * X(theta) * Z(phi) * I.
-They are described in greater detail in src/numeric/HomogeneousTransform.hh, and the hit class is in src/protocols/match/Hit.hh
+They are described in greater detail in rosetta/rosetta_source/src/numeric/HomogeneousTransform.hh, and the
+hit class is in rosetta/rosetta_source/src/protocols/match/Hit.hh
 "Phi" and "psi" here have nothing to do with the protein-backbone angles.  When a hit is binned, there
 are two sets of parameters that describe how wide the bins in each dimension should be: the Euclidean
 bin widths are for the xyz coordinates, and the Euler bin widths are for the Euler angles.  The
@@ -402,7 +403,7 @@ These files can be generated from a pdb with a ligand (gen_lig_grids; the files 
 1) gen_lig_grids <br>
 
 A full working example can be found in the associated integration test:<br>
-mini/test/integration/tests/gen_lig_grids/<br>
+rosetta/rosetta_tests/integration/tests/gen_lig_grids/<br>
 
 Starting from a scaffold pdb (1a53.pdb), first split out one scaffold chain and its associated ligand. The scaffold (without any HETATM lines) should be a single chain with no other lines, only the ATOM lines of that chain, scaffold.pdb  (1a53_nohet_1.pdb). The ligand should be the ligand from that chain, with only the HETATM lines and no other lines, ligand.pdb (1a53_ligand_1.pdb). <br>
 
@@ -411,8 +412,8 @@ The gen_lig_grids app will generate a set of grids  around the ligand binding po
 A generic command line:<br>
 gen_lig_grids -s scaffold.pdb ligand.pdb -database [database_path] \@flags<br>
 
-A real example command line used for the mini/test/integration/tests/gen_lig_grids example: <br>
-~/mini/bin/gen_lig_grids.linuxiccrelease -s 1a53_nohet_1.pdb 1a53_ligand_1.pdb \@flags<br>
+A real example command line used for the rosetta/rosetta_tests/integration/tests/gen_lig_grids example: <br>
+/path/to/rosetta/rosetta_source/bin/gen_lig_grids.linuxiccrelease -s 1a53_nohet_1.pdb 1a53_ligand_1.pdb \@flags<br>
 
 A detailed flags example (\@flags): <br>
 /// -ignore_unrecognized_res        # ignore any ligands already present in the scaffold.pdb<br>
@@ -424,7 +425,7 @@ A detailed flags example (\@flags): <br>
 2) gen_apo_grids<br>
 
 A full working example can be found in the associated integration test:<br>
-mini/test/integration/tests/gen_apo_grids/<br>
+rosetta/rosetta_tests/integration/tests/gen_apo_grids/<br>
 
 With gen_apo_grids the scaffold pdb should not have a ligand. In gen_apo_grids Rosetta will identify the most likely locations for a ligand binding site and create corresponding gridlig/pos files, using the RosettaHoles algorithm. If there is a ligand the user should, in general, use gen_lig_grids unless the crystal structure ligand binding site is undesirable/untrustworthy. Starting from a scaffold pdb (1a53.pdb) first split out one scaffold chain, which presumably does not contain a ligand. The scaffold (without any HETATM lines) should be a single chain with no other lines, only the ATOM lines of that chain, scaffold.pdb  (1a53_nohet_1.pdb). <br>
 
@@ -433,8 +434,8 @@ The gen_apo_grids app will generate a set of gridlig/pos files around the larges
 A generic command line:<br>
 gen_apo_grids -s scaffold.pdb -database [database_path] \@flags <br>
 
-A real example command line used for mini/test/integration/tests/gen_apo_grids example: <br>
-~/mini/bin/gen_apo_grids.linuxiccrelease -s 1a53_nohet_1.pdb \@flags <br>
+A real example command line used for rosetta/rosetta_tests/integration/tests/gen_apo_grids example: <br>
+/path/to/rosetta/rosetta_source/bin/gen_apo_grids.linuxiccrelease -s 1a53_nohet_1.pdb \@flags <br>
 
 A detailed flags example (\@flags):<br>
 /// -mute all <br>
@@ -449,7 +450,7 @@ A detailed flags example (\@flags):<br>
 /// -packstat:min_cav_ball_radius 1.0             # radius of smallest void-ball to consider <br>
 /// -packstat:min_surface_accessibility 1.4     # voids-balls must be at least this exposed <br>
 
-troubleshooting: These apps should be in mini/bin. If it is not make sure that src/pilot_apps.src.settings.all has the pilot app turned on under user wendao. <br>
+troubleshooting: These apps should be in rosetta/rosetta_source/bin. If it is not make sure that src/pilot_apps.src.settings.all has the pilot app turned on under user wendao. <br>
 
 @subsection manual_gen_input Manual generation of pos files
 

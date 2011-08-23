@@ -16,7 +16,7 @@
 Code and documentation by Steven Lewis smlewi@gmail.com.  This document was last updated 6/24/11 by Steven Lewis.  The PI was Brian Kuhlman, bkuhlman@email.unc.edu.
 
 @section code_demos Code and Demo
-The code for this application lives in src/apps/public/interface_design/anchored_design/AnchorFinder.cc.  Its mover is embedded in the application file.  There is a demo in the integration tests (test/integration/tests/AnchorFinder).  There is a more extensive demo with more documentation at demo/AnchoredDesign, or in the demo section of the release.
+The code for this application lives in rosetta/rosetta_source/src/apps/public/interface_design/anchored_design/AnchorFinder.cc.  Its mover is embedded in the application file.  There is a demo in the integration tests (rosetta/rosetta_tests/integration/tests/AnchorFinder).  There is a more extensive demo with more documentation at rosetta/rosetta_demos/AnchoredDesign, or in the demo section of the release.
 
 @section refs References
 @li Lewis SM, Kuhlman BA. Anchored design of protein-protein interfaces. PLoS One. 2011;6(6):e20872. Epub 2011 Jun 17.

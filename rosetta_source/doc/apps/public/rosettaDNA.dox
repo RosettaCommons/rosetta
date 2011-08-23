@@ -80,10 +80,10 @@ The following general Rosetta command-line options are currently used in demos:
 @section tips Tips
 The demos (integration tests) are designs to run quickly. For higher quality results, additional rotamer sampling can be enabled using the -ex1 and -ex2 command line options. Also, see the scientific tests (mentioned earlier in this documentation under Files) for more useful parameters.
 
-Optimal performance depends upon a few minor modifications of the code and database files. For this reason, alternative database files are provided in test/scientific/cluster/dna_interface_design/minirosetta_database_sparse/. The modifications are summarized below:
+Optimal performance depends upon a few minor modifications of the code and database files. For this reason, alternative database files are provided in test/scientific/cluster/dna_interface_design/rosetta_database_sparse/. The modifications are summarized below:
 @li increasing the rotamer probability cutoff in SingleResidueDunbrackLibrary::probability_to_accumulate_while_building_rotamers (-dunbrack_prob_buried and -dunbrack_prob_nonburied options)
 @li eliminating protein-DNA hydrogen bond strength attenuation on the basis of number of neighbors (use NO_ENV_HB_DEP_DNA option in weights files)
-@li reducing the hydrogen radii in minirosetta_database_sparse/chemical/atom_type_sets/fa_standard/atom_properties.txt to 0.1/0.7 (polar/nonpolar). Still requires manually/ changing/customizing database files.
+@li reducing the hydrogen radii in rosetta_database_sparse/chemical/atom_type_sets/fa_standard/atom_properties.txt to 0.1/0.7 (polar/nonpolar). Still requires manually/ changing/customizing database files.
 
 @section outputs Expected Outputs
 These protocols output files through the JobDistributor scheme. Normally, this results in a PDB file. Often, this PDB file will contain header information that describes the results of the analysis.

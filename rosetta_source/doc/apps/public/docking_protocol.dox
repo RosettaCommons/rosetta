@@ -20,18 +20,18 @@
 
 @page docking_protocol Docking Protocol (RosettaDock)
 
- 
+
 
 @section metadata Metadata
 
 Last edited 7/18/2011.  Corresponding PI Jeffrey Gray (jgray@jhu.edu).
 
- 
+
 
 @section code_demos Code and Demo
-@li Application source code: <code>src/apps/public/docking/docking_protocol.cc</code>
-@li Main mover source code: <code>src/protocols/docking/DockingProtocol.cc</code>
-@li To see demos of some different use cases see integration tests located in <code>src/test/integration/docking*</code> (docking_full_protocol, docking_local_refine, docking_local_refine_min, docking_low_res, docking_distance_constraint, docking_site_constraint).  
+@li Application source code: <code>rosetta/rosetta_source/src/apps/public/docking/docking_protocol.cc</code>
+@li Main mover source code: <code>rosetta/rosetta_source/src/protocols/docking/DockingProtocol.cc</code>
+@li To see demos of some different use cases see integration tests located in <code>rosetta/rosetta_tests/integration/docking*</code> (docking_full_protocol, docking_local_refine, docking_local_refine_min, docking_low_res, docking_distance_constraint, docking_site_constraint).
 
 
 To run docking, type the following in a commandline:
@@ -39,9 +39,9 @@ To run docking, type the following in a commandline:
 [path to executable]/docking_protocol.[platform|linux/mac][compile|gcc/ixx]release –database [path to database] @options
 \endverbatim
 
-Note: these demos will only generate one decoy.   To generate a large number of decoys you will need to add –nstruct N (where N is the number of decoys to build) to the list of flags.  
+Note: these demos will only generate one decoy.   To generate a large number of decoys you will need to add –nstruct N (where N is the number of decoys to build) to the list of flags.
 
- 
+
 
 @section refs References
 
@@ -51,12 +51,12 @@ optimization of rigid-body displacement and side-chain conformations. Journal of
 @li Wang, C., Schueler-Furman, O., Baker, D. (2005). Improved side-chain modeling for protein-protein docking Protein Sci 14, 1328-1339.
 @li Wang, C., Bradley, P. and Baker, D. (2007) Protein-protein docking with backbone flexibility. Journal of Molecular Biology, 2007 Oct 19;373(2):503-19. Epub 2007 Aug 2.
 @li Chaudhury, S., Berrondo, M., Weitzner, B. D., Muthu, P., Bergman, H., Gray, J. J.; (2011) Benchmarking and analysis of protein docking performance in RosettaDock v3.2. PLoS One, Accepted for Publication
- 
+
 @section purpose Purpose
 
- 
 
-Determine the structure of protein-protein complexes by using rigid body perturbations of the protein chains.  
+
+Determine the structure of protein-protein complexes by using rigid body perturbations of the protein chains.
 
 
 @section algorithm Algorithm
@@ -64,56 +64,56 @@ Determine the structure of protein-protein complexes by using rigid body perturb
 The following description has been adapted from Chaudhury, et al., 2011, PLoS One:
 </b>
 <p>
-RosettaDock is a Monte Carlo (MC) based multi-scale docking algorithm that incorporates both a 
-low-resolution, centroid-mode, coarse-grain stage and a high-resolution, all-atom refinement stage 
-that optimizes both rigid-body orientation and side-chain conformation. The algorithm roughly follows 
-the biophysical theory of an encounter complex formation followed by a transition to a bound state. 
-Typically the algorithm starts from either a random initial orientation of the two partners (global docking), 
-or an initial orientation that is randomly perturbed from a user-defined starting pose (local 
-perturbation). From there, the partner proteins are represented coarsely, where side chains are replaced 
-by a single unified pseudo-atom, or centroid. During this phase, a 500-step Monte Carlo search is made 
-with adaptive rotation and translational steps adjusted dynamically to achieve an acceptance rate of 25%. 
-The ScoreFunction used in this stage primarily consists of a ‘bump’ term, a contact term, and 
+RosettaDock is a Monte Carlo (MC) based multi-scale docking algorithm that incorporates both a
+low-resolution, centroid-mode, coarse-grain stage and a high-resolution, all-atom refinement stage
+that optimizes both rigid-body orientation and side-chain conformation. The algorithm roughly follows
+the biophysical theory of an encounter complex formation followed by a transition to a bound state.
+Typically the algorithm starts from either a random initial orientation of the two partners (global docking),
+or an initial orientation that is randomly perturbed from a user-defined starting pose (local
+perturbation). From there, the partner proteins are represented coarsely, where side chains are replaced
+by a single unified pseudo-atom, or centroid. During this phase, a 500-step Monte Carlo search is made
+with adaptive rotation and translational steps adjusted dynamically to achieve an acceptance rate of 25%.
+The ScoreFunction used in this stage primarily consists of a ‘bump’ term, a contact term, and
 docking-specific statistical residue environment and residue-residue pair-wise potentials.
-</p> 
+</p>
 <p>
-Once the centroid-mode stage is complete, the lowest energy structure accessed during that stage is 
-selected for high-resolution refinement. During high-resolution refinement, centroid pseudo-atoms 
-are replaced with the side-chain atoms at their initial unbound conformations. Then 50 Monte Carlo+Minimization (MCM) steps are 
+Once the centroid-mode stage is complete, the lowest energy structure accessed during that stage is
+selected for high-resolution refinement. During high-resolution refinement, centroid pseudo-atoms
+are replaced with the side-chain atoms at their initial unbound conformations. Then 50 Monte Carlo+Minimization (MCM) steps are
 made in which:
 <ol><li>
-The rigid-body position is perturbed by a random direction and magnitude specified 
+The rigid-body position is perturbed by a random direction and magnitude specified
 by a Gaussian distribution around 0.1 Å and 3.0˚
 </li><li>
-The rigid-body orientation is energy-minimized 
+The rigid-body orientation is energy-minimized
 </li><li>
 The side-chain conformations are optimized with RotamerTrials, followed by a test of the Metropolis criteria.
 </li></ol>
 
-Every eight steps, an additional combinatorial side-chain optimization is carried 
-out using the full side-chain packing algorithm, followed by an additional Metropolis criteria check. 
-To reduce the time devoted to the computationally expensive energy-minimization for unproductive 
-rigid-body moves, minimization is skipped if a rigid-body move results in a change in score of greater than +15.  
-The all-atom score function used in this stage  primarily consists of Van der Waals attractive and 
-repulsive terms, a solvation term, an explicit hydrogen bonding term, a statistical residue-residue 
-pair-wise interaction term, an internal side-chain conformational energy term, and an electrostatic 
+Every eight steps, an additional combinatorial side-chain optimization is carried
+out using the full side-chain packing algorithm, followed by an additional Metropolis criteria check.
+To reduce the time devoted to the computationally expensive energy-minimization for unproductive
+rigid-body moves, minimization is skipped if a rigid-body move results in a change in score of greater than +15.
+The all-atom score function used in this stage  primarily consists of Van der Waals attractive and
+repulsive terms, a solvation term, an explicit hydrogen bonding term, a statistical residue-residue
+pair-wise interaction term, an internal side-chain conformational energy term, and an electrostatic
 term.
-</p>  	
+</p>
 <p>
-For particular targets, a variety of RosettaDock sampling strategies are often used to improve the 
-chance of achieving an accurate structure prediction. If no prior structural or biochemical 
-information is known about the protein interaction of interest, global docking is used to randomize 
-the initial docking poses. From there, score filters and clustering are used to identify clusters of 
-acceptable low-energy structures for further docking and refinement. In most cases, there is some known 
-information about the complex, either in the form of related protein complexes or in biochemical or 
-bioinformatics data which identify probable regions of interaction on the protein partners. In these 
-cases users manually arrange the starting docking pose to a configuration that is compatible with the 
-information and carry out a local docking perturbation. Additionally, users can set distance-based filters 
-that bias sampling towards those docking poses that are compatible with specified constraints. 
+For particular targets, a variety of RosettaDock sampling strategies are often used to improve the
+chance of achieving an accurate structure prediction. If no prior structural or biochemical
+information is known about the protein interaction of interest, global docking is used to randomize
+the initial docking poses. From there, score filters and clustering are used to identify clusters of
+acceptable low-energy structures for further docking and refinement. In most cases, there is some known
+information about the complex, either in the form of related protein complexes or in biochemical or
+bioinformatics data which identify probable regions of interaction on the protein partners. In these
+cases users manually arrange the starting docking pose to a configuration that is compatible with the
+information and carry out a local docking perturbation. Additionally, users can set distance-based filters
+that bias sampling towards those docking poses that are compatible with specified constraints.
 </p>
 
 
- 
+
 
 @subsection modes Modes
 @li <b>\ref full_protocol "Full protocol"</b> -  The full protocol involved first exploring the conformational space of
@@ -138,7 +138,7 @@ The only required input file is a \ref docking_prepack_protocol "prepacked pdb f
 <b>Note:</b> The following flags should be given to every docking simulation: -ex1 -ex2aro.<br/>
 If you are using a starting structure with more than two polypeptide chains, you should include the -partners flag.  If this flag is omitted, docking will dock the first two polypeptide chains in the strucutre.
 
-@section options_docking Options 
+@section options_docking Options
 
 <table cellspacing=0 cellpadding=5 width=80% border="1">
   <tr>
@@ -372,7 +372,7 @@ Default mode of docking. No additional flags necessary.
 	-database [P]
     </td>
     <td width=60%>
-	The path to the Rosetta database (e.g. ~/minirosetta_database).
+	The path to the Rosetta database (e.g. ~/rosetta_database).
     </td>
     <td width=10%>
 	String
@@ -462,7 +462,7 @@ Default mode of docking. No additional flags necessary.
   </tr>
 </table>
 
-	 
+
 @section tips Tips
 
 @li The docking run can take two forms.  Sometimes biochemical and
@@ -477,9 +477,9 @@ exploring all the conformational space of both partners.
 
 @li Note that one should always run the \ref docking_prepack_protocol "Docking Prepack application" on the starting structure in order to remove high-energy rotamers that could cause erroneous decoy ranking.
 
-@li There are two scores that one should inspect: 
+@li There are two scores that one should inspect:
 <ol><li>
-total: The total score is an overall measure of the energy of the complex 
+total: The total score is an overall measure of the energy of the complex
 </li><li>
 I_sc (interface score): I_sc is the total score of the complex minus the total score of each partner in isolation.  Typcial values for I_sc of good decoys are in the range of -5 to -10.
 </li></ol>
@@ -494,8 +494,8 @@ See the docking_distance_constraint and docking_site_constraint integration test
 SiteConstraint CA 4A D FLAT_HARMONIC 0 1 5
 \endverbatim
 
-This will add a FLAT_HARMONIC potential with the parameters 0 1 5 (recommended; 
-see \ref constraint_file "this page" for more on constraint files) around the distance between the 
+This will add a FLAT_HARMONIC potential with the parameters 0 1 5 (recommended;
+see \ref constraint_file "this page" for more on constraint files) around the distance between the
 CA of residue 4 (PDB numbering) on chain A and the closest CA on chain D to the ScoreFunction.
 
 
@@ -503,15 +503,15 @@ CA of residue 4 (PDB numbering) on chain A and the closest CA on chain D to the 
 
         1 PDB file for each candidate docked model generated and a 1 scorefile for each run summarizing all generated models.
 
- 
+
 
 @section postprocess Post Processing
 
-Sort scorefile by score using commandline sort function.  For global docking simualations, one should 
-generate at least 10,000 decoys and ideally 100,000 decoys should be produced.  Sort by score (pay 
-attention to I_sc and total!) and cluster the top 200 decoys by pairwise RMSD.  Since global docking 
-in Rosetta 3 has not been thoroughly tested, we do not have scripts available to automate this process.  
-We recommend using the scripts as mentioned in our <a href=http://graylab.jhu.edu/~mdaily/tutorial/postprocess.html>Rosetta++ tutorial</a>.  
+Sort scorefile by score using commandline sort function.  For global docking simualations, one should
+generate at least 10,000 decoys and ideally 100,000 decoys should be produced.  Sort by score (pay
+attention to I_sc and total!) and cluster the top 200 decoys by pairwise RMSD.  Since global docking
+in Rosetta 3 has not been thoroughly tested, we do not have scripts available to automate this process.
+We recommend using the scripts as mentioned in our <a href=http://graylab.jhu.edu/~mdaily/tutorial/postprocess.html>Rosetta++ tutorial</a>.
 Some scripts may require some modification.
 
 

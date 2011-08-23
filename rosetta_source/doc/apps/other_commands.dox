@@ -23,7 +23,7 @@ This document was edited Nov 10th 2008 by Yi Liu. Credits go to developers who h
 
 
 @section instruction Instructions
-@li There is no specific examples for every pilot applications in the mini trunk yet.
+@li There is no specific examples for every pilot applications in the rosetta trunk yet.
 @li Make sure that you have the application in the pilot_apps.src.settings.
 @li Or, you can build all pilot applications with the scons flag pilot_apps_all
 
@@ -31,26 +31,26 @@ This document was edited Nov 10th 2008 by Yi Liu. Credits go to developers who h
 Please read the options list to find the descriptions for each option in the commands
 @li backrub:
 @verbatim
-~/src/mini/bin/backrub.linuxgccrelease -s 1cc8_model15.pdb -ex1 -ex2aro -ex1aro -backrub:pivot_residues 10 11 12 13 14 15 -packing:resfile Resfile -backrub:ntrials 5000 -backrub:mc_kt 1.0 -database ~/minirosetta_database/ -out:nstruct 1000
+path/to/rosetta/rosetta_source/bin/backrub.linuxgccrelease -s 1cc8_model15.pdb -ex1 -ex2aro -ex1aro -backrub:pivot_residues 10 11 12 13 14 15 -packing:resfile Resfile -backrub:ntrials 5000 -backrub:mc_kt 1.0 -database path/to/rosetta/rosetta_database/ -out:nstruct 1000
 @endverbatim
 
-@li scoring with mini:
+@li scoring with rosetta:
 @verbatim
-~/src/mini/bin/backrub.linuxgccrelease -s 1cc8_model15.pdb -ex1 -ex2aro -ex1aro -backrub:pivot_residues 10 11 12 13 14 15 -packing:resfile Resfile -backrub:ntrials 5000 -backrub:mc_kt 1.0 -database ~/minirosetta_database/ -out:nstruct 1000
+path/to/rosetta/rosetta_source/bin/backrub.linuxgccrelease -s 1cc8_model15.pdb -ex1 -ex2aro -ex1aro -backrub:pivot_residues 10 11 12 13 14 15 -packing:resfile Resfile -backrub:ntrials 5000 -backrub:mc_kt 1.0 -database path/to/rosetta/rosetta_database/ -out:nstruct 1000
 @endverbatim
 
-@li scoring with mini:
+@li scoring with rosetta:
 @verbatim
-~/src/mini/bin/backrub.linuxgccrelease -s 1cc8_model15.pdb -ex1 -ex2aro -ex1aro -backrub:pivot_residues 10 11 12 13 14 15 -packing:resfile Resfile -backrub:ntrials 5000 -backrub:mc_kt 1.0 -database ~/minirosetta_database/ -out:nstruct 1000
+path/to/rosetta/rosetta_source/bin/backrub.linuxgccrelease -s 1cc8_model15.pdb -ex1 -ex2aro -ex1aro -backrub:pivot_residues 10 11 12 13 14 15 -packing:resfile Resfile -backrub:ntrials 5000 -backrub:mc_kt 1.0 -database path/to/rosetta/rosetta_database/ -out:nstruct 1000
 @endverbatim
 
-@li relax with mini:
+@li relax with rosetta:
 @verbatim
-~/src/mini/bin/relax.linuxgccrelease -database ~/minirosetta_database/  -score:weights score13_env_hb -out:pdb -out:prefix relaxed -out:nstruct 100 -in:file:s 1utg_model39.pdb @endverbatim
+path/to/rosetta/rosetta_source/bin/relax.linuxgccrelease -database /path/to/rosetta/rosetta_database/  -score:weights score13_env_hb -out:pdb -out:prefix relaxed -out:nstruct 100 -in:file:s 1utg_model39.pdb @endverbatim
 
-@li relax with constraints in mini:
+@li relax with constraints in rosetta:
 @verbatim
-~/src/mini/bin/relax.linuxgccrelease -database ~/minirosetta_database/  -score:weights score13_env_hb -out:pdb -out:prefix constrained -constraints:cst_file constraints_file -constraints:cst_weight 2.0 -out:nstruct 100 -in:file:s 1utg_model39f.pdb
+/path/to/rosetta/rosetta_source/bin/relax.linuxgccrelease -database path/to/rosetta/rosetta_database/  -score:weights score13_env_hb -out:pdb -out:prefix constrained -constraints:cst_file constraints_file -constraints:cst_weight 2.0 -out:nstruct 100 -in:file:s 1utg_model39f.pdb
 @endverbatim
 
 @li loop modeling with constraints:
@@ -62,13 +62,13 @@ AtomPair CZ 64 CA 8 GAUSSIANFUNC 6.39 2.0
 
 @li make a loop
 @verbatim
- ~/src/mini/bin/minirosetta.linuxgccrelease @args
+ path/to/rosetta/rosetta_source/bin/minirosetta.linuxgccrelease @args
 
 with args file:
 
 -loops::input_pdb  threaded-model.pdb
 
--database /work/firas/minirosetta_database/
+-database /path/to/rosetta/rosetta_database/
 
 -loops::frag_sizes 9 3 1
 
@@ -97,14 +97,14 @@ with args file:
 
 @li packstate:
 @verbatim
-~/src/mini//bin/packstat.linuxgccrelease -database /work/firas/minirosetta_database -packstat:packstat_pdb -s 1shf.pdb
+/path/to/rosetta/rosetta_source/bin/packstat.linuxgccrelease -database /path/to/rosetta/rosetta_database -packstat:packstat_pdb -s 1shf.pdb
 @endverbatim
 
 @section commands_steven Command lines collected from Steven Lewis
 Please read the options list to find the descriptions for each option in the commands
 @li options file for pilot/rjha/MatchFilter.cc
 @verbatim
--database /scratch/smlewis/minirosetta_database
+-database /path/to/rosetta/rosetta_database
 -options::user
 -run::version
 -mute core
@@ -113,7 +113,7 @@ Please read the options list to find the descriptions for each option in the com
 
 @li options file for pilot/rjha/MetalInterfaceStructureCreator.cc
 @verbatim
--database /scratch/smlewis/minirosetta_database
+-database /path/to/rosetta/rosetta_database
 -s NE2.pdb
 -run::version
 -options::user
@@ -122,7 +122,7 @@ Please read the options list to find the descriptions for each option in the com
 
 @li options file for pilot/rjha/MetalInterfaceStructureCreator.cc
 @verbatim
--database /scratch/smlewis/minirosetta_database
+-database /path/to/rosetta/rosetta_database
 -s NE2.pdb
 -run::version
 -options::user
@@ -147,7 +147,7 @@ local options:
 
 @li options file for pilot/smlewis/AnchoredDesign.cc
 @verbatim
--database /netscr/smlewis/minirosetta_database
+-database /path/to/rosetta/rosetta_database
 -mute core.chemical core.scoring.etable core.io.database
 core.io.pdb.file_data core.conformation core.pack.pack_rotamers
 core.pack.task

@@ -26,8 +26,8 @@ The Rosetta comparative modeling protocol was developed primarily by the followi
 @li James Thompson
 
 @section code_demos Code and Demo
-The code for running comparative modeling is in <code>src/protocols/comparative_modeling</code> and <code>src/protocols/loops</code>.
-See the <code>test/integration/tests/threading</code> directory for an example command-line and input files.
+The code for running comparative modeling is in <code>rosetta/rosetta_source/src/protocols/comparative_modeling</code> and <code>rosetta/rosetta_source/src/protocols/loops</code>.
+See the <code>rosetta/rosetta_tests/integration/tests/threading</code> directory for an example command-line and input files.
 
 @section refs references
 
@@ -86,7 +86,7 @@ Comparative modeling can be run using the minirosetta application with the follo
 -in:file:alignment t288_.result.filt.valid                                    Alignment file
 -cm:aln_format grishin                                                        Alignment file format
 -in:file:template_pdb 1be9A.pdb                                               List of template PDBs
--database ../minirosetta_database                                             Path to rosetta database
+-database path/to/rosetta/rosetta_database                                    Path to rosetta database
 -nstruct 1                                                                    Number of output structures
 -out:file:silent t288_.silent.out                                             Use silent file output, use filename after this flag, default=default.out
 (or -out:pdb)                                                                 Use PDB file output, default=false

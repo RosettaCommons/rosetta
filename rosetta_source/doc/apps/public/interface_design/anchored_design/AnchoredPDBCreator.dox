@@ -16,7 +16,7 @@
 Code and documentation by Steven Lewis smlewi@gmail.com.  This document was last updated 6/24/11 by Steven Lewis.  The PI was Brian Kuhlman, bkuhlman@email.unc.edu.
 
 @section examples Examples
-The code is at <code>mini/src/apps/public/interface_design/anchored_design/AnchoredPDBCreator.cc</code>; there's an integration test at <code>mini/test/integration/tests/AnchoredDesign/</code>.  There is a more extensive demo with more documentation at demo/AnchoredDesign, or in the demo section of the release.
+The code is at <code>rosetta/rosetta_source/src/apps/public/interface_design/anchored_design/AnchoredPDBCreator.cc</code>; there's an integration test at <code>rosetta/rosetta_tests/integration/tests/AnchoredDesign/</code>.  There is a more extensive demo with more documentation at rosetta/rosetta_demos/AnchoredDesign, or in the demo section of the release.
 
 @section refs References
 @li Lewis SM, Kuhlman BA. Anchored design of protein-protein interfaces. PLoS One. 2011;6(6):e20872. Epub 2011 Jun 17.

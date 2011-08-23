@@ -23,14 +23,14 @@ This document was created Apr 14th 2008 by Andrew Leaver-Fay
 The <code>mpi_msd</code> application is maintained by Brian Kuhlman's lab.  Send questions to bkuhlman@email.unc.edu
 
 @section code_demos Code and Demos
-See <code>mini/test/integration/tests/mpi_multistate_design</code> for a quick example of a multistate design trajectory.
+See <code>rosetta/rosetta_tests/integration/tests/mpi_multistate_design</code> for a quick example of a multistate design trajectory.
 This example performs single state design using the multistate design framework.
-See also <code>demo/andrew/multistate</code> for a more involved example.  In this directory, the "README" file
+See also <code>rosetta/rosetta_demos/andrew/multistate</code> for a more involved example.  In this directory, the "README" file
 directs your attention to a set of input files for a fairly involved multistate design problem of redesigning
 the interface of a homodimer so that it forms a heterodimer.  This example takes about 80 minutes to run when
 using 10 CPUs and MPI.
 
-The majority of the classes for the mpi_msd application live in <code>src/protocols/pack_daeomon</code>.
+The majority of the classes for the mpi_msd application live in <code>rosetta/rosetta_source/src/protocols/pack_daeomon</code>.
 
 @section refs References
 

@@ -17,10 +17,10 @@
 
 @page FlexPepDocking Documentation for the Flexible Peptide Docking application (initial version)
 
-@section metadata Metadata                                                                                          This document was edited May 26th 2009 by Barak Raveh. This application in mini was created by Barak Raveh and Nir London.
+@section metadata Metadata                                                                                          This document was edited May 26th 2009 by Barak Raveh. This application in rosetta was created by Barak Raveh and Nir London.
 
 @section examples Examples
-See <code>mini/test/integration/tests/flexpepdocking</code> for an example of Flexible Peptide Docking and input files.
+See <code>rosetta/rosetta_tests/integration/tests/flexpepdocking</code> for an example of Flexible Peptide Docking and input files.
 
 @section refs References
 @li Publication is underway, please contact Barak, Nir or Ora for updated details (barak.raveh@mail.huji.ac.il / londonir@gmail.com / oraf@ekmd.huji.ac.il)
@@ -29,7 +29,7 @@ See <code>mini/test/integration/tests/flexpepdocking</code> for an example of Fl
 This is a pilot version for a flexible peptide docking protocol. The current version is intended mainly for refinement. It is most effective when the starting peptide is up to 5-6 Angstroms from the native. In these cases, predicted models are often below 1 Angstrom RMSD from native.
 
 @section inputs Input Files
-See test/integration/tests/flexpepdock/ for example usage.
+See rosetta/rosetta_tests/integration/tests/flexpepdock/ for example usage.
 
 @section tips Tips
 We are still working on the final tuning, it is best to contact us before any application. Some tips

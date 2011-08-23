@@ -39,7 +39,7 @@ This scoring function may be used like any other scoring function in rosetta wit
 Sample 1: relax a structure 1cid.pdb into a map 1cid_5A.mrc using the hi-res scoring function (with a sliding window width of 5):
 @verbatim
 bin/relax.linuxgccrelease \
- -database ~/minirosetta_database \
+ -database ~/rosetta_database \
  -in:file:s 1cid.pdb \
  -score:weights score13_env_hb \
  -relax:fast \
@@ -58,7 +58,7 @@ bin/relax.linuxgccrelease \
 Sample 2: remodel the loops specified in 1cid.loopfile in structure 1cid.pdb into map 1cid_5A.mrc, using the medium-res scoring function:
 @verbatim
 bin/loopmodel.linuxgccrelease \
- -database ~/minirosetta_database \
+ -database ~/rosetta_database \
  -loops:input_pdb 1cid.pdb \
  -score:weights score13_env_hb \
  -loops::frag_sizes 9 3 1 \

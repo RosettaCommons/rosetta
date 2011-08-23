@@ -16,25 +16,25 @@
 This document was last updated August 11, 2010 by TJ Brunette & Sinisa Bjelic. The corresponding PIs for this application are David Baker <dbaker@u.washington.edu>.
 
 @section kic_code_demos Code and Demo
-The application for this method is <code>bin/loopmodel.*</code>. The main ccd loop movers are perturb_ccd which exists in <code>src/protocols/loops/LoopMover_CCD.cc</code> and quick_ccd which exists in <code>LoopMover_QuickCCD.cc</code>. Both protocols generate loops by assembling them from fragments by Monte Carlo sampling and uses CCD to close the loops. The most commonly used method for fragment-based loop modeling is currently quick_ccd. Option -loops:remodel quick_ccd_moves is no longer in widespread use, but exists for backward compatibility.
+The application for this method is <code>rosetta/rosetta_source/bin/loopmodel.*</code>. The main ccd loop movers are perturb_ccd which exists in <code>rosetta/rosetta_source/src/protocols/loops/LoopMover_CCD.cc</code> and quick_ccd which exists in <code>LoopMover_QuickCCD.cc</code>. Both protocols generate loops by assembling them from fragments by Monte Carlo sampling and uses CCD to close the loops. The most commonly used method for fragment-based loop modeling is currently quick_ccd. Option -loops:remodel quick_ccd_moves is no longer in widespread use, but exists for backward compatibility.
 
 A usage example that remodels 10 and 5-residue loops is in the loop_modeling integration test, found here:
 
 @verbatim
-test/integration/tests/loop_modeling
+rosetta/rosetta_tests/integration/tests/loop_modeling
 @endverbatim
 
 @section ccd_refs References
 For CCD loop modeling (flags containing 'ccd') please cite
 
-@verbatim 
-Wang C, Bradley P, Baker D (2007). 
+@verbatim
+Wang C, Bradley P, Baker D (2007).
 Protein-protein docking with backbone flexibility. J. Mol. Biol. 373, 503.
 @endverbatim
 
 The original CCD algorithm is described in
 @verbatim
-Canutescu A, Dunbrack R., Jr (2003). 
+Canutescu A, Dunbrack R., Jr (2003).
 Cyclic coordinate descent: A robotics algorithm for protein loop closure. Protein Sci. 12, 963.
 @endverbatim
 
@@ -51,7 +51,7 @@ The centroid stage of loop-modeling generates loops by performing fragment inser
 -loops:frag_files    (defines the name of each fragment file)
 @endverbatim
 
-An alternative option exists, -loops:vall_file, that lets the user pick fragments on the fly using a sequence-identity based scoring method for selecting fragments. In most cases, this option will lead to less suboptimal results for a given input sequence, as the fragments picked will not take advantage of sequence profile and secondary structure information. 
+An alternative option exists, -loops:vall_file, that lets the user pick fragments on the fly using a sequence-identity based scoring method for selecting fragments. In most cases, this option will lead to less suboptimal results for a given input sequence, as the fragments picked will not take advantage of sequence profile and secondary structure information.
 
 
 
@@ -75,7 +75,7 @@ column5  "float":    Skip rate. default - never skip
 column6  "boolean":  Extend loop. Default false
 @endverbatim
 
-An example loop definition file can be found at test/integration/tests/kinematic_looprelax/input/4fxn.loop, which looks like this:
+An example loop definition file can be found at rosetta/rosetta_tests/integration/tests/kinematic_looprelax/input/4fxn.loop, which looks like this:
 @verbatim
 LOOP 88 95 92 0 1
 @endverbatim
@@ -89,30 +89,30 @@ A series of string options control what sorts of loop modeling you get. The exec
 
 @subsection obligate_opt Necessary options to invoke CCD loop modeling
 
-@verbatim  
+@verbatim
 -loops:input_pdb
 input pdb file that loop modelling is done on (-in:file:s is not supported)
 default='input_pdb'
-	
+
 -loops:remodel
-legal=['no', 'perturb_ccd', 'perturb_kic', 'quick_ccd', 
+legal=['no', 'perturb_ccd', 'perturb_kic', 'quick_ccd',
        'quick_ccd_moves', 'old_loop_relax', 'sdwindow']
-Centroid version of loopmodeling. 
-	peturb_kic: for the kic loopclosure   
+Centroid version of loopmodeling.
+	peturb_kic: for the kic loopclosure
 	perturb_ccd:  original fragment/ccd loop closure method
 	quick_ccd: faster fragment/ccd loop closure method
 
-older unused methods: quick_ccd_moves, old_loop_relax, sdwindow    
+older unused methods: quick_ccd_moves, old_loop_relax, sdwindow
 
 The preferred method CCD looprelax is quick_ccd
-   
+
 -loops:refine
 legal=['no','refine_ccd','refine_kic']
 Method for performing full-atom refinement on loops.
 The preferred method for full-atom refinment is refine_kic
 
 -loops:loop_file
-Loop definition file(s). When multiple files are given a *random* one will be picked 
+Loop definition file(s). When multiple files are given a *random* one will be picked
 each time when this parameter is requested.
 @endverbatim
 
@@ -120,7 +120,7 @@ each time when this parameter is requested.
 
 @verbatim
 -loops:vall_file
-vall database file for picking crude fragments on the fly 
+vall database file for picking crude fragments on the fly
 without inputting pregenerated fragments
 default='vall_file'
 
@@ -137,13 +137,13 @@ default=['frag9', 'frag3', 'frag1']
 Additional flags that set structure and loop sampling.
 
 @verbatim
--loops:relax                        
+-loops:relax
 legal=['no','fastrelax','shortrelax','fullrelax','seqrelax','minirelax']
 does a relax on the structure - minimization in the torsion space
 default = 'no'
 
 -loops:extended
-force extended on loops (phi-psi angles set to 180 degrees), 
+force extended on loops (phi-psi angles set to 180 degrees),
 independent of loop input file
 legal=['true','false']
 default='false'
@@ -151,10 +151,10 @@ default='false'
 
 @subsection general_opt General options for a ROSETTA run
 @verbatim
--nstruct                  
+-nstruct
 number of outputs. [Integer]
 
--database                 
+-database
 Path to Rosetta databases. [PathVector]
 @endverbatim
 

@@ -19,11 +19,11 @@ Last edited 8-16-10.  Documentation by Caleb Cassidy cacassidy@gmail.com
 Currently, Rosetta can easily handle poses that have both protein and DNA.  However, poses with RNA and protein will cause Rosetta to crash.  By making a few simple database changes, it is possible to get compatability between RNA and protein in Rosetta.
 
 @section how_to_compatability How to achieve compatability?
-All the files necessary for RNA/protein compatability already exist in the minirosetta database.  All that we'll be doing is copying the RNA parameter files and patch files from the rna residue type set to the full atom standard residue type set.
-@li 1. Copy the RNA parameter files (RAD.params, RCY.params, etc) from (minirosetta_database path)/chemical/residue_type_sets/rna/residue_types/ to (minirosetta_database path)/chemical/residue_type_sets/fa_standard/residue_types/nucleic/
-@li 2. Copy the RNA patch files (LowerRNA.txt and UpperRNA.txt) from (minirosetta_database path)/chemical/residue_type_sets/rna/patches/ to (minirosetta_database path)/chemical/residue_type_sets/fa_standard/patches/
-@li 3. Open (minirosetta_database path)/chemical/residue_type_sets/fa_standard/residue_types.txt and add the RNA parameter files' names under the Nucleic Acid Types heading
-@li 4. Open (minirosetta_database path)/chemical/residue_type_sets/fa_standard/patches.txt and add the RNA patch files' names
+All the files necessary for RNA/protein compatability already exist in the rosetta database.  All that we'll be doing is copying the RNA parameter files and patch files from the rna residue type set to the full atom standard residue type set.
+@li 1. Copy the RNA parameter files (RAD.params, RCY.params, etc) from (rosetta_database path)/chemical/residue_type_sets/rna/residue_types/ to (rosetta_database path)/chemical/residue_type_sets/fa_standard/residue_types/nucleic/
+@li 2. Copy the RNA patch files (LowerRNA.txt and UpperRNA.txt) from (rosetta_database path)/chemical/residue_type_sets/rna/patches/ to (rosetta_database path)/chemical/residue_type_sets/fa_standard/patches/
+@li 3. Open (rosetta_database path)/chemical/residue_type_sets/fa_standard/residue_types.txt and add the RNA parameter files' names under the Nucleic Acid Types heading
+@li 4. Open (rosetta_database path)/chemical/residue_type_sets/fa_standard/patches.txt and add the RNA patch files' names
 @li With these 4 simple changes, we have achieved compatablity between RNA and protein in full atom mode
 
 @section useful_tips Useful Tips

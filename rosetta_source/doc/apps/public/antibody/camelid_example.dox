@@ -17,9 +17,9 @@ Last edited 7/20/2011.  Corresponding PI Jeffrey Gray (jgray@jhu.edu).
 
 
 @section code_demos Code and Demo
-@li Application source code: <code>src/apps/public/antibody/antibody_mode.cc</code>
-@li Main mover source code: <code>src/protocols/antibody/AntibodyModeler.hh</code>
-@li To see demos of some different use cases see integration tests located in <code>test/integration/tests/antibody*</code> .
+@li Application source code: <code>rosetta/rosetta_source/src/apps/public/antibody/antibody_mode.cc</code>
+@li Main mover source code: <code>rosetta/rosetta_source/src/protocols/antibody/AntibodyModeler.hh</code>
+@li To see demos of some different use cases see integration tests located in <code>rosetta/rosetta_tests/integration/tests/antibody*</code> .
 
 
 To run Antibody modeler, perform the following:

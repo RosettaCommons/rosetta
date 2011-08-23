@@ -18,7 +18,7 @@ This document was last updated August 10, 2010, by Colin A. Smith. The correspon
 
 @section code_demos Code and Demo
 
-The code for the sequence_tolerance application is in src/apps/public/sequence_tolerance.cc. An %integration %test and demo is located in test/integration/tests/sequence_tolerance. The abstract genetic algorithm classes are located in the protocols::genetic_algorithm namespace. The concrete subclasses are located in the protocols::multistate_design namespace.
+The code for the sequence_tolerance application is in src/apps/public/sequence_tolerance.cc. An %integration %test and demo is located in rosetta/rosetta_tests/integration/tests/sequence_tolerance. The abstract genetic algorithm classes are located in the protocols::genetic_algorithm namespace. The concrete subclasses are located in the protocols::multistate_design namespace.
 
 @section refs References
 
@@ -28,7 +28,7 @@ The code for the sequence_tolerance application is in src/apps/public/sequence_t
 
 @section purpose Purpose
 
-The general uses of this application are specificity prediction and library design (i.e. for phage display, yeast display, or other selection techniques). To do so, this application determines the scores of a large number of sequences on a given input structure. The scores can be reweighted to emphasize inter or intramolecular interactions. 
+The general uses of this application are specificity prediction and library design (i.e. for phage display, yeast display, or other selection techniques). To do so, this application determines the scores of a large number of sequences on a given input structure. The scores can be reweighted to emphasize inter or intramolecular interactions.
 
 @section algorithm Algorithm
 
@@ -109,7 +109,7 @@ In the fitness function above, the interactions between chain A and B are upweig
 
 @li -ms:fraction_by_recombination [real] - fraction of sequences to generate by recombination of sequences from the previous generation (default 0.5)
 
-@li -ms:num_packs [integer] - number of times to call the simulated annealer to find the best rotamer configuration for a given %sequence (default 1) 
+@li -ms:num_packs [integer] - number of times to call the simulated annealer to find the best rotamer configuration for a given %sequence (default 1)
 
 @subsection options_output Output Options
 
@@ -202,10 +202,10 @@ AA:106:F AA:107:D AA:108:T AA:109:W AA:110:V
 This is the command line that would be used to run sequence_tolerance:
 
 @verbatim
-sequence_tolerance -database minirosetta_database -s mystructure_0001_low.pdb 
--resfile myresfile.resfile -ex1 -ex2 -ex1aro -ex2aro -extrachi_cutoff 0 
--seq_tol:fitness_master_weights 1 1 1 2 -ms:generations 1 -ms:pop_size 3 
--ms:checkpoint:prefix myprefix -ms:checkpoint:interval 200 
+sequence_tolerance -database rosetta_database -s mystructure_0001_low.pdb
+-resfile myresfile.resfile -ex1 -ex2 -ex1aro -ex2aro -extrachi_cutoff 0
+-seq_tol:fitness_master_weights 1 1 1 2 -ms:generations 1 -ms:pop_size 3
+-ms:checkpoint:prefix myprefix -ms:checkpoint:interval 200
 -out:prefix myprefix -ms:numresults 3
 @endverbatim
 
@@ -229,7 +229,7 @@ It produces several output files:
 @li specificity_boxplot.png - all boxplots on a single image for all residues
 @li specificity_boxplot_resnum.png - one boxplot per image for each residue
 @li specificity_pwm.txt - a position weight matrix (PWM) for all residues
-@li specificity_sequences.fasta - a FASTA file with 100 sequences that can be used to produce a %sequence logo using WebLogo or another program 
+@li specificity_sequences.fasta - a FASTA file with 100 sequences that can be used to produce a %sequence logo using WebLogo or another program
 
 The process_specificity() function has several parameters, which default to those found to work well for wild-type PDZ-peptide specificity prediction. The fitness function weights can be changed with "fitness_coef". The Boltzmann temperature (default 0.228) or %sequence cutoff can be changed with "temp_or_thresh". The type of %sequence weighting can be changed by specifying the string "boltzmann" (default) or "cutoff" for the "type" parameter. Finally, the percentile cutoff for merging PWMs from different backbone structures (default 0.5) can be changed with "percentile". A more detailed explanation of the parameters and analysis performed is given in Smith and Kortemme (2010).
 

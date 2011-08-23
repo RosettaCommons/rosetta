@@ -12,9 +12,9 @@
 ///
 /// @page rosetta_library_structure A Guide to the Structure of the Rosetta Library
 ///
-///The rosetta library contains seven top level directories of which every developer should be aware.
+///The rosetta/rosetta_source directory contains seven top level directories of which every developer should be aware.
 ///- src/ The src directory contains all the source files for the rosetta library. See \ref src_index_page for more information.
-///- test/ The test directory contains source files and scripts for unit, integration, and scientific tests used to verify that the rosetta library is functioning correctly. See \ref rosetta_tests for more information on Rosetta Tests.
+///- test/ The test directory contains source files for rosetta's unit tests.  The integration, and scientific tests now live in rosetta/rosetta_tests.  Together, these two sets of tests are used to verify that the rosetta library is functioning correctly. See \ref rosetta_tests for more information on Rosetta Tests.
 ///- bin/ The bin directory contains soft links to all the rosetta applications. Currently seperate softlinks are stored for each combination of operating system (linux,moacos), compiler(gcc,icc), and build mode (debug, release, release_debug). See the \ref using_scons page for further information of the build system.
 ///- build/ The build directory is where all the object files and shared libraries for build configuration are stored. The directory structure is automatically created by the scons build system. See \ref using_scons page for further information of the build system.
 ///- doc/ The doc directory contains all the stand alone doxygen pages. See \ref doxygen_tips for tips on writing documentation using Doxygen.

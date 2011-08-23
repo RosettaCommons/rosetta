@@ -16,7 +16,7 @@
 Last edited 4/5/11.  Code by Steven Lewis.  Corresponding PI Brian Kuhlman bkuhlman@email.unc.edu.
 
 @section code_demos Code and Demo
-The code is at <code>mini/src/apps/public/scenarios/UBQ_E2_thioester/</code>; there's an integration test+demo at <code>mini/test/integration/tests/UBQ_E2_thioester/</code>.  Note that the integration test is vastly under-cycled relative to getting it to do anything useful: the number of cycles it demonstrates should be sufficient to show some remodeling but not enough to get anywhere useful.  To run that demo, go to that directory and run <code> [path to executeable] -database [path to database] (at-symbol)options</code>
+The code is at <code>rosetta/rosetta_source/src/apps/public/scenarios/UBQ_E2_thioester/</code>; there's an integration test+demo at <code>rosetta/rosetta_source/test/integration/tests/UBQ_E2_thioester/</code>.  Note that the integration test is vastly under-cycled relative to getting it to do anything useful: the number of cycles it demonstrates should be sufficient to show some remodeling but not enough to get anywhere useful.  To run that demo, go to that directory and run <code> [path to executeable] -database [path to database] (at-symbol)options</code>
 
 @section refs References
 @li Saha A, Kleiger G, Lewis S, Kuhlman B, Deshaies RJ. Essential role for ubiquitin-ubiquitin-conjugating enzyme interaction in ubiquitin discharge from Cdc34 to substrate. Molecular Cell.  In press.
@@ -50,7 +50,7 @@ See test/integration/tests/UBQ_E2_thioester/ for example usage.  Basically all y
 @li The code has an unsupported mode allowing for KIC loop modeling.  This was intended to be used with the E2 loop absent in PDB 2OB4.  The loop was too long for KIC to solve effectively so we took a different path; the code is still present but senescent if you don't pass a loops file.
 
 @section ft_options Options
-UBQ_E2_thioester supports three types of options: general minirosetta options (packing, etc.), generic protocol options like "how many cycles" borrowed from the AnchoredDesign application, and UBQ_E2_thioester specific options.
+UBQ_E2_thioester supports three types of options: general rosetta options (packing, etc.), generic protocol options like "how many cycles" borrowed from the AnchoredDesign application, and UBQ_E2_thioester specific options.
 
 UBQ_E2_thioester options
 @li UBQpdb - File - input UBQ PDB, we used 1UBQ.

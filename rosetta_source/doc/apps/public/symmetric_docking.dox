@@ -22,7 +22,7 @@
 This document was edited Aug 20th 2010 by Ingemar Andre. This application in rosetta was created by Ingemar André.
 
 @section code_demos Code and Demo
-The code for the symmetric docking application is in src/apps/pilot/andre/SymDock.cc. See <code>mini/test/integration/tests/symmetric_docking</code> for an example of symmetric docking protocol and input files.
+The code for the symmetric docking application is in rosetta/rosetta_source/src/apps/pilot/andre/SymDock.cc. See <code>rosetta/rosetta_tests/integration/tests/symmetric_docking</code> for an example of symmetric docking protocol and input files.
 
 @section refs References
 Andre I, Bradley P, Wang C, Baker D. Prediction of the structure of symmetrical protein assemblies. Proc Natl Acad Sci U S A. 2007 Nov 6;104(45):17656-61.

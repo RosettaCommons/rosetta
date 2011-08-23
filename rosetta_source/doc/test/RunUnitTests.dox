@@ -33,7 +33,7 @@ python test/run.py <optional command line args>
 @endverbatim
 
 Important optional command line arguments include:
-@li <b>-d, --database</b> Specifies the path to the minirosetta_database.
+@li <b>-d, --database</b> Specifies the path to the rosetta_database.
 
 @li <b>-j, --jobs</b> Specifies the number of jobs (unit tests) to run
 simultaneously.  For example if the machine has 8 cores use -j 8 to
@@ -76,7 +76,7 @@ needed using relative path. Example of command to run only core test executable:
 <code>
 cd build/test/debug/linux/2.6/32/x86/gcc
 
-./core.test --database ~/minirosetta_database --mute core
+./core.test --database ~/rosetta_database --mute core
 </code>
 
 If you want to run only one test or just one suite - you will need to
@@ -87,13 +87,13 @@ test_simple_min and suite MyTestSuite from core tests:
 <code>
 cd build/test/debug/linux/2.6/32/x86/gcc
 
-./core.test test_simple_min --database ~/minirosetta_database --mute core
+./core.test test_simple_min --database ~/rosetta_database --mute core
 </code>
 
 <code>
 cd build/test/debug/linux/2.6/32/x86/gcc
 
-./core.test MyTestSuite --database ~/minirosetta_database --mute core
+./core.test MyTestSuite --database ~/rosetta_database --mute core
 </code>
 
 */

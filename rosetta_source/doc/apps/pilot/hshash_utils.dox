@@ -18,10 +18,10 @@
 @page hshash_utils Documentation for hotspot hashing utility application
 
 @section examples Examples
-See <code>mini/test/integration/tests/hshash_utils</code> for an example util usage and input files.
+See <code>rosetta/rosetta_tests/integration/tests/hshash_utils</code> for an example util usage and input files.
 
 @section inputs Input Files
-See test/integration/tests/hshash_utils/ for example usage.
+See rosetta/rosetta_tests/integration/tests/hshash_utils/ for example usage.
 
 @section tips Tips
 @li Can do all kinds of things. Run with --help for options.

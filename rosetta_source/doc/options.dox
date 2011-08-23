@@ -1950,7 +1950,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-sparta_dir</b> \<String\><dt>
-<dd>[optional] point to an external resource for the sparta directory (instead of minirosetta_database)</dd><br>
+<dd>[optional] point to an external resource for the sparta directory (instead of rosetta_database)</dd><br>
 <dd>Default: "SPARTA+"</dd><br>
 </dl>
 <dl>

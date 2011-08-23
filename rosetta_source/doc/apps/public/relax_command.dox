@@ -34,11 +34,11 @@ As always -nstruct regulates the number of outputs per input structure.
 @section commands Command lines
 *Sample command* 
 @verbatim
-relax.linuxgccrelease -database ~/minirosetta_database -in:file:s input.pdb -in:file:fullatom -native 1a19.pdb -out:file:silent default.out -relax:quick  
+relax.linuxgccrelease -database ~/rosetta_database -in:file:s input.pdb -in:file:fullatom -native 1a19.pdb -out:file:silent default.out -relax:quick  
 @endverbatim
 Relax can take all general file IO options common to all Rosetta pplication writen with JD2: (see JD2 documentation for details)
 @verbatim
-   -database                 Path to minirosetta databases
+   -database                 Path to rosetta databases
    -in:file:s                Input pdb file(s)  
    -in:file:silent           Input silent file
    -in:file:fullatom         Read as fullatom input structure

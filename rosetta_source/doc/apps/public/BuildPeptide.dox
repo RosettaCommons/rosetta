@@ -16,8 +16,8 @@
 Last updated July 24, 2011 ; PI: Ora Schueler-Furman oraf@ekmd.huji.ac.il.
 
 @section code_demos Code and Demo
-@li Application source code: <code>src/apps/public/flexpep_docking/BuildPeptide.cc</code>
-@li For a demonstration of a basic run of the BuildPeptide utility application, see <code>test/integration/tests/BuildPeptide</code>
+@li Application source code: <code>rosetta/rosetta_source/src/apps/public/flexpep_docking/BuildPeptide.cc</code>
+@li For a demonstration of a basic run of the BuildPeptide utility application, see <code>rosetta/rosetta_tests/integration/tests/BuildPeptide</code>
 
 @section purpose Purpose
 Building an extended peptide or protein structure from a FASTA file (to help preparing input for peptide docking protocol, etc.).

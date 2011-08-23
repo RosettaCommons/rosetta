@@ -16,7 +16,7 @@
 Last edited Aug 20 2010 by Ingemar André.  Code by Ingemar Andre.
 
 @section code_demos Code and Demo
-All the code is contained in the Python script src/apps/pilot_apps/andre/make_symmdef_file_denovo.py.
+All the code is contained in the Python script rosetta/rosetta_source/src/apps/pilot_apps/andre/make_symmdef_file_denovo.py.
 
 @section purpose Purpose
 This script automatically creates symmetry definition files corresponding to the specified symmetry. It currently covers cyclical and dihedral symmetry.
@@ -54,7 +54,7 @@ common options:
 @endverbatim
 
 @section outputs "Expected Outputs"
-A sample command line to generate a trimer. The same command was used to create the symmetry definition for the symmetric docking integration test (mini/test/integration/tests/symmetric_docking):
+A sample command line to generate a trimer. The same command was used to create the symmetry definition for the symmetric docking integration test (rosetta/rosetta_tests/integration/tests/symmetric_docking):
 @verbatim
 make_symmdef_file_denovo.py -symm_type cn -nsub 3
 @endverbatim

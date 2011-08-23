@@ -21,12 +21,12 @@
 This document was last edited on June 22, 2011 by Ron Jacak. The code was written by Ron Jacak and Andrew Leaver-Fay. The corresponding PI is Brian Kuhlman (bkuhlman@email.unc.edu).
 
 @section code_demos Code and Demos
-The hpatch score is meant to be used primarily with fixed backbone design, using the \ref fixed_backbone "fixbb application". See <code>mini/test/integration/tests/fixbb/</code> for an example of a fixed backbone design simulation and all the necessary input files.
+The hpatch score is meant to be used primarily with fixed backbone design, using the \ref fixed_backbone "fixbb application". See <code>rosetta/rosetta_tests/integration/tests/fixbb/</code> for an example of a fixed backbone design simulation and all the necessary input files.
 To activate the hpatch score during a fixed backbone design simulation, one additional flag needs to be added on the command line (described below).
 
 Because the hpatch score is a nonpairwise-decomposable score term, the logic for evaluating the score is contained inside InteractionGraph classes.  These classes serve two purposes: they hold the rotamer-pair energies that are used during sequence optimization, and they evaluate the non-pairwise
-decomposable score terms. Most of the code is contained in <code>src/core/pack/interaction_graph/</code>.  The hpatch score can be optimized using any application that performs design, but the most common way to use the score is via the fixbb application.  The 
-\ref fixed_backbone "fixbb application" lives in <code>src/apps/public/design/fixbb.cc</code> and invokes the <code>PackRotamersMover</code> that lives in <code>src/protocols/moves/PackRotamersMover.cc</code>
+decomposable score terms. Most of the code is contained in <code>rosetta/rosetta_source/src/core/pack/interaction_graph/</code>.  The hpatch score can be optimized using any application that performs design, but the most common way to use the score is via the fixbb application.  The
+\ref fixed_backbone "fixbb application" lives in <code>rosett/rosetta_source/src/apps/public/design/fixbb.cc</code> and invokes the <code>PackRotamersMover</code> that lives in <code>rosetta/rosetta_source/src/protocols/moves/PackRotamersMover.cc</code>
 
 @section refs References
 We recommend the following articles for further studies of RosettaDesign methodology and applications:
@@ -37,11 +37,11 @@ We recommend the following articles for further studies of RosettaDesign methodo
 @section purpose  Purpose
 
 The surfaces of most native proteins do not expose large amounts of hydrophobic surface area even though, generally, about 30% of the surface-exposed residues are hydrophobic. Proteins designed with the current Rosetta energy function do tend to expose large amounts of hydrophobic surface area,
-despite having a native-like percentage of hydrophobic amino acids for the surface positions. The purpose of the hpatch score is to prevent the formation of these surface hydrophobic patches during design simulations. 
+despite having a native-like percentage of hydrophobic amino acids for the surface positions. The purpose of the hpatch score is to prevent the formation of these surface hydrophobic patches during design simulations.
 
 @section algorithm Algorithm
 
-Protein design simulations generally start by reading in a set of backbone coordinates and building conformations, or rotamers, of all possible amino acids at evey changeable position.  Rosetta makes use of the Dunbrack backbone-dependent rotamer library when making rotamers.  Once rotamers 
+Protein design simulations generally start by reading in a set of backbone coordinates and building conformations, or rotamers, of all possible amino acids at evey changeable position.  Rosetta makes use of the Dunbrack backbone-dependent rotamer library when making rotamers.  Once rotamers
 have been built for the desired structure, sequence optimization can begin.  This phase of design usually begins with the
 calculation of rotamer-pair energies (RPE) - interaction energies between all possible rotamer pairs.  These energies are stored in large tables in a graph data structure.  Once these energies are computed, the Rosetta search algorithm tries millions of substitutions and rapidly calculates
 the change in energy for every substitution using the stored RPEs. The conformation with the best/lowest energy is output as the final design model at the end of the simulation.
@@ -86,12 +86,12 @@ A single resfile may be specified on the command line with the resfile flag. Thi
 
 @subsection db_location Database location - REQUIRED
 @verbatim
--database <path/to//database>     Specifies the location of the minirosetta_database
+-database <path/to/rosetta/rosetta_database>     Specifies the location of the rosetta_database
 @endverbatim
 
 @subsection weights Weights file - REQUIRED
 The hpatch score is activated by giving the term a nonzero weight in the energy function.  The score:weights flag can be used to specify a different set of weights for a simulation.  By default, the option will look for weights files in the database directory
-minirosetta_database/scoring/weights/ or in the current directory.  The file design_hpatch.wts is distributed with Rosetta and has the standard Rosetta energy function weights with the hpatch score turned on and reweighted reference energies.
+rosetta/rosetta_database/scoring/weights/ or in the current directory.  The file design_hpatch.wts is distributed with Rosetta and has the standard Rosetta energy function weights with the hpatch score turned on and reweighted reference energies.
 @verbatim
 -score:weights design_hpatch.wts  This flag instructs the application to use the weights specified in the database file 'design_hpatch.wts'
 @endverbatim
@@ -104,7 +104,7 @@ minirosetta_database/scoring/weights/ or in the current directory.  The file des
 -linmem_ig 10                     Activate the linear-memory interaction graph [Leaver-Fay et al. 2008]
 @endverbatim
 
-@subsection rotamers Rotamers 
+@subsection rotamers Rotamers
 @verbatim
 -ex1                              Increase chi1 rotamer sampling for buried* residues +/- 1 standard deviation - RECOMMENDED
 -ex1_aro                          Increase chi1 rotamer sampling for buried* aromatic** residues +/- 1 standard deviation
@@ -127,7 +127,7 @@ minirosetta_database/scoring/weights/ or in the current directory.  The file des
 -preserve_input_cb                Do not idealize the CA-CB bond vector -- instead, use the CB coordinates of the input PDB
 -use_input_sc                     Include the side chain from the input PDB.  Default: false
                                   Including the input sidechain is "cheating" if your goal is to measure sequence recovery,
-                                  but a good idea if your goal is to eventually synthesize the designed sequence 
+                                  but a good idea if your goal is to eventually synthesize the designed sequence
 
 -no_his_his_pairE                 Exclude the favorable pair term energy for HIS-HIS residue pairs - RECOMMENDED
 @endverbatim
@@ -153,7 +153,7 @@ By default, fixbb uses the standard annealer used in [Kuhlman et al. Science, 20
 
 @subsection other Other options
 @verbatim
--nstruct <int>                    The number of iterations to perform per input structure; e.g. with 10 input structures and an -nstruct 
+-nstruct <int>                    The number of iterations to perform per input structure; e.g. with 10 input structures and an -nstruct
                                   of 10, 100 trajectories will be performed. Default: 1.
 -overwrite                        Overwrite the output files, if they already exist. Not used by default.
 

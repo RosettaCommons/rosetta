@@ -16,7 +16,7 @@
 Last updated 4/7/11 by Steven Lewis.  The PI is Brian Kuhlman, bkuhlman@email.unc.edu.
 
 @section code_demos Code and Demo
-InterfaceAnalyzer has a suite of integration test/demos at test/integration/tests/InterfaceAnalyzer.  The application resides at src/apps/public/analysis/InterfaceAnalyzer.cc, and its mover at src/protocols/anchored_design/InterfaceAnalyzerMover.*
+InterfaceAnalyzer has a suite of integration test/demos at rosetta/rosetta_tests/integration/tests/InterfaceAnalyzer.  The application resides at rosetta/rosetta_source/src/apps/public/analysis/InterfaceAnalyzer.cc, and its mover at rosetta/rosetta_source/src/protocols/anchored_design/InterfaceAnalyzerMover.*
 
 @section refs References
 No references are directly associated with this protocol.  It was used with @ref AnchoredDesign (see that app's documentation) and CAPRI21 interface descrimination.

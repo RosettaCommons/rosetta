@@ -35,9 +35,9 @@ Having tried all of them, I thought the option 3, was the best one, where I used
 Try adding the -constrain_relax_to_start_coords option to your protocol #3.
 
 @section ben_stranges Ben's reply
-I've been using a protocol that does sc & bb minimization, full packing with -use_input_sc, then minimization of bb, rb, and sc.  It's located in: src/apps/pilot/stranges/InterfaceStructMaker.cc  The idea with this is that it keeps things from moving too far from the starting structure. There's no backbone sampling so I typically find rmsd to the xtal structure to be < 1.0. Relax actually will do explicit bb sampling thus gives a lower energy structure than my protocol but can also introduce the changes that you observed. I'm pasting my typical options file below:
+I've been using a protocol that does sc & bb minimization, full packing with -use_input_sc, then minimization of bb, rb, and sc.  It's located in: rosetta/rosetta_source/src/apps/pilot/stranges/InterfaceStructMaker.cc  The idea with this is that it keeps things from moving too far from the starting structure. There's no backbone sampling so I typically find rmsd to the xtal structure to be < 1.0. Relax actually will do explicit bb sampling thus gives a lower energy structure than my protocol but can also introduce the changes that you observed. I'm pasting my typical options file below:
 @code
--database /Users/stranges/rosetta/minirosetta_database
+-database /Users/stranges/rosetta/rosetta_database
 -nstruct 20
 -ndruns 10
 -no_his_his_pairE

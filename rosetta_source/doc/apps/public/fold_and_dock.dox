@@ -22,7 +22,7 @@
 This document was edited Aug 22th 2010 by Ingemar André. This application in rosetta was created by Ingemar André. The original fold-and-dock protocol in rosetta++ was written by Rhiju Das and Ingemar André.
 
 @section code_demos Code and Demo
-The code for the fold-and-dock application is in <code>src/protocols/topology_broker/FoldAndDockClaimer.cc</code>. See <code>mini/test/integration/tests/fold_and_dock</code> for an example of fold-and/dock protocol and input files. Run without the -run:test_cycles for a real case prediction example. Fold-and-dock uses the topology broker framework and the actual excecutable is the minirosetta application, <code>src/apps/public/boinc/minirosetta.cc</code>
+The code for the fold-and-dock application is in <code>rosetta/rosetta_source/src/protocols/topology_broker/FoldAndDockClaimer.cc</code>. See <code>rosetta/rosetta_tests/integration/tests/fold_and_dock</code> for an example of fold-and/dock protocol and input files. Run without the -run:test_cycles for a real case prediction example. Fold-and-dock uses the topology broker framework and the actual excecutable is the minirosetta application, <code>rosetta/rosetta_source/src/apps/public/boinc/minirosetta.cc</code>
 
 @section refs References
 Das R, André I, Shen Y, Wu Y, Lemak A, Bansal S, Arrowsmith CH, Szyperski T, Baker D. Simultaneous prediction of protein folding and docking at high resolution. Proc Natl Acad Sci U S A. 2009 Nov 10;106(45):18978-83. Epub 2009 Oct 28.
@@ -62,7 +62,7 @@ The fasta file and fragments is most easily supplied through command line option
 
 @subsection options_general General/Packing Options
 
-@li -database [file path] - the Rosetta 3 database location
+@li -database [file path] - the Rosetta3 database location
 
 @li -in:%file:fasta [file path] - The protein sequence of a single subunit
 

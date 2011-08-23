@@ -16,7 +16,7 @@
 Last edited 2/1/11.  Code by Steven Lewis.  Corresponding PI Brian Kuhlman bkuhlman@email.unc.edu.
 
 @section code_demos Code and Demo
-The code is at <code>mini/src/apps/public/scenarios/FloppyTail/</code>; there's an integration test+demo at <code>mini/test/integration/tests/FloppyTail/</code>.  Note that the integration test is vastly under-cycled relative to getting it to do anything useful: the number of cycles it demonstrates should be sufficient to show some remodeling but not enough to get anywhere useful.  To run that demo, go to that directory and run <code> [path to executeable] -database [path to database] (at-symbol)options</code>
+The code is at <code>rosetta/rosetta_source/src/apps/public/scenarios/FloppyTail/</code>; there's an integration test+demo at <code>rosetta/rosetta_source/test/integration/tests/FloppyTail/</code>.  Note that the integration test is vastly under-cycled relative to getting it to do anything useful: the number of cycles it demonstrates should be sufficient to show some remodeling but not enough to get anywhere useful.  To run that demo, go to that directory and run <code> [path to executeable] -database [path to database] (at-symbol)options</code>
 
 @section refs References
 @li Kleiger G, Saha A, Lewis S, Kuhlman B, Deshaies RJ. Rapid E2-E3 assembly and disassembly enable processive ubiquitylation of cullin-RING ubiquitin ligase substrates. Cell. 2009 Nov 25;139(5):957-68. PubMed PMID: 19945379.
@@ -58,7 +58,7 @@ This code was intended for a single purpose, but it may work if you have a simil
 @li FloppyTail now fully supports modeling internal linker regions (to do domain assembly).  It detects interfaces between the internally rigid portions and packs accordingly.
 
 @section ft_options Options
-FloppyTail supports three types of options: general minirosetta options (packing, etc.), generic protocol options like "how many cycles" borrowed from the (unreleased) AnchoredDesign application, and FloppyTail specific options.
+FloppyTail supports three types of options: general rosetta options (packing, etc.), generic protocol options like "how many cycles" borrowed from the (unreleased) AnchoredDesign application, and FloppyTail specific options.
 
 FloppyTail options
 @li flexible_start_resnum - integer - this is the start of the flexible tail in PDB numbering.
