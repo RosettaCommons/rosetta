@@ -227,6 +227,10 @@ ResidueTypesFeatures::report_residue_type(
 
 	stringstream name1; name1 << res_type.name1();
 
+	int lower_terminus(-1), upper_terminus(-1);
+	if(!res_type.is_lower_terminus()) lower_terminus = res_type.lower_connect_atom();
+	if(!res_type.is_lower_terminus()) lower_terminus = res_type.upper_connect_atom();
+
 	statement stmt = (*db_session)
 		<< "INSERT INTO residue_type VALUES (?,?,?,?,?,?,?,?,?,?);"
 		<< residue_type_set_name
@@ -235,8 +239,8 @@ ResidueTypesFeatures::report_residue_type(
 		<< res_type.name3()
 		<< name1.str()
 		<< res_type.aa()
-		<< (res_type.is_lower_terminus() ? -1 : res_type.lower_connect_atom())
-		<< (res_type.is_upper_terminus() ? -1 : res_type.upper_connect_atom())
+		<< lower_terminus
+		<< upper_terminus
 		<< res_type.nbr_atom()
 		<< res_type.nbr_radius();
 	stmt.exec();
