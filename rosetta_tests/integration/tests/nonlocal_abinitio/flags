@@ -1,7 +1,5 @@
 # nonlocal
 -nonlocal:builder star
--nonlocal:mode semirigid
--nonlocal:search refine
 -nonlocal:min_chunk_size 9
 -nonlocal:max_chunk_size 21
 -abinitio:relax true
@@ -28,7 +26,7 @@
 
 # sampling
 -abinitio:temperature 2.0
--abinitio:increase_cycles 0.5
+-abinitio:increase_cycles 0.1
 -abinitio:rg_reweight 0.25
 
 # evaluation
