@@ -1966,5 +1966,15 @@ add_monte_carlo_silent_viewer(
 	silent_observers.push_back( viewer2 );
 }
 
+///////////////////////////////////////
+void
+clear_conformation_viewers()
+{
+
+#ifdef GL_GRAPHICS
+	conformation_viewers.clear();
+#endif
+}
+
 } // viewer
 } // protocols

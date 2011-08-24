@@ -161,6 +161,10 @@ add_monte_carlo_silent_viewer(
 	bool fullatom
 );
 
+/// @brief Allows for graceful exit of graphics viewers.
+void
+clear_conformation_viewers();
+
 
 } // viewer
 } // protocols
