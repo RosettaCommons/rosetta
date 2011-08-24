@@ -20,7 +20,6 @@
 // Non-traditional main() function due to inclusion in BOINC.
 // See protocols/abinitio/NonlocalAbinitioMain.cc.
 int main(int argc, char* argv[]) {
-  protocols::nonlocal::NonlocalAbinitio::register_options();
   devel::init(argc, argv);
   protocols::viewer::viewer_main(
       protocols::nonlocal::NonlocalAbinitio_main);

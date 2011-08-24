@@ -79,24 +79,6 @@ typedef utility::vector1<NLGrouping> NonlocalGroupings;
 static basic::Tracer TR("protocols.nonlocal.NonlocalAbinitio");
 static numeric::random::RandomGenerator RG(764443637);
 
-void NonlocalAbinitio::register_options() {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  option.add_relevant(OptionKeys::nonlocal::builder);
-  option.add_relevant(OptionKeys::nonlocal::gap_sampling_extension);
-  option.add_relevant(OptionKeys::nonlocal::max_chunk_size);
-  option.add_relevant(OptionKeys::nonlocal::min_chunk_size);
-  option.add_relevant(OptionKeys::nonlocal::mode);
-  option.add_relevant(OptionKeys::nonlocal::moves);
-  option.add_relevant(OptionKeys::nonlocal::ramp_constraints_cycles);
-  option.add_relevant(OptionKeys::nonlocal::ramp_chainbreaks);
-  option.add_relevant(OptionKeys::nonlocal::ramp_constraints);
-  option.add_relevant(OptionKeys::nonlocal::ramp_constraints_cycles);
-  option.add_relevant(OptionKeys::nonlocal::randomize_missing);
-  option.add_relevant(OptionKeys::nonlocal::rdc_weight);
-  option.add_relevant(OptionKeys::nonlocal::search);
-}
-
 void NonlocalAbinitio::check_required_options() const {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;

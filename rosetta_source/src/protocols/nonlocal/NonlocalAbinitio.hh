@@ -95,9 +95,6 @@ public:
   /// @brief Returns a pointer to the small fragment library
   core::fragment::FragSetOP fragments_small() const;
 
-  /// @brief Registers applicable options
-  static void register_options();
-
 private:
   /// --- Utility Methods --- ///
   void initialize(const NonlocalGroupings& groupings,
