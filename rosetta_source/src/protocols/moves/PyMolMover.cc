@@ -69,7 +69,7 @@ UDPSocketClient::UDPSocketClient() : sentCount_(0)
 	#endif
 
 	// generating random uuid by hands
-	for(unsigned int i=0; i<sizeof(uuid_.shorts_)/sizeof(uuid_.shorts_[0]); i++) uuid_.shorts_[i] = getRG()->getRandom()*65536;  //RG.random_range(0, 65536);
+		for(unsigned int i=0; i<sizeof(uuid_.shorts_)/sizeof(uuid_.shorts_[0]); i++) uuid_.shorts_[i] = (ushort)getRG()->getRandom()*65536;  //RG.random_range(0, 65536);
 
 	memset(&socket_addr_, '\0', sizeof(sockaddr_in));
 

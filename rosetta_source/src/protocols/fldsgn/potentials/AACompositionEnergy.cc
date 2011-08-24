@@ -126,8 +126,8 @@ AACompositionEnergy::residue_energy(
 	while( itr != comp_constraint_aas_.end() ) {
 
 		std::pair< Real, Real > thresholds( itr->second );
-		Size const lower = round( thresholds.first * pose.total_residue() );
-		Size const upper = round( thresholds.second * pose.total_residue() );
+		Size const lower = (Size)round( thresholds.first * pose.total_residue() );
+		Size const upper = (Size)round( thresholds.second * pose.total_residue() );
 
 		if( hist[ itr->first ] < lower ) {
 			e += numeric::square( hist[ itr->first ] - lower );

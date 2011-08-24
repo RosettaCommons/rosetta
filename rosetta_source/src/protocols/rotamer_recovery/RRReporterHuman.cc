@@ -86,6 +86,7 @@ PerNativeRRReporterHuman::PerNativeRRReporterHuman() :
 	native_pose_(),
 	nat_bb_bins_(),
 	nat_rots_(),
+	nat_chis_(),
 	res_scores_(),
 	res_recovered_()
 {}
@@ -97,6 +98,7 @@ PerNativeRRReporterHuman::PerNativeRRReporterHuman(
 	native_pose_(),
 	nat_bb_bins_(),
 	nat_rots_(),
+	nat_chis_(),
 	res_scores_(),
 	res_recovered_()
 {
@@ -113,6 +115,7 @@ PerNativeRRReporterHuman::PerNativeRRReporterHuman(
 	native_pose_( src.native_pose_ ),
 	nat_bb_bins_( src.nat_bb_bins_ ),
 	nat_rots_( src.nat_rots_ ),
+	nat_chis_( src.nat_chis_ ),
 	res_scores_(src.res_scores_),
 	res_recovered_(src.res_recovered_)
 {}

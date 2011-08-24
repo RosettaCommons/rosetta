@@ -70,7 +70,7 @@ FragmentAllAtomCrmsd::FragmentAllAtomCrmsd(Size priority, Real lowest_acceptable
 	total_ref_resids_ = reference_pose_->total_residue();
 	reference_coordinates_.redimension(3, 4 * total_ref_resids_, 0.0);
 	fill_coords(*reference_pose_, reference_coordinates_, total_ref_resids_, reference_pose_->sequence());
-	weights_.redimension(reference_pose_->total_residue() * 4.0, 1.0);
+	weights_.redimension(reference_pose_->total_residue() * 4, 1.0);
 	
 	core::pose::make_pose_from_sequence(*fragment_pose_, reference_pose_->sequence(), *(chemical::ChemicalManager::get_instance()->residue_type_set("centroid")));	
 }

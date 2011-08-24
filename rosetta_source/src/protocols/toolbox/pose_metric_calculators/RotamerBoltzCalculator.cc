@@ -157,7 +157,7 @@ namespace pose_metric_calculators {
     if( unbound ) // the complex was split, don't minimize rb dof
       mm->set_jump( false );
     else // minimize rb if bound
-      mm->set_jump( rb_jump(), true );
+      mm->set_jump( (int)(rb_jump()), true );
     for( core::Size i=1; i<=pose.total_residue(); ++i ){
       if( task->being_designed( i ) ){
         task->nonconst_residue_task( i ).restrict_to_repacking(); // mark all des around to repacking only

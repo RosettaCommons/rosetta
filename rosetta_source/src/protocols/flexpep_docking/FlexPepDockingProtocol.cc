@@ -1349,7 +1349,7 @@ void FlexPepDockingProtocol::parse_my_tag(
 	flags_.lowres_preoptimize = tag->getOption<bool>( "lowres_preoptimize", flags_.lowres_preoptimize ) ;
 	flags_.min_only = tag->getOption<bool>( "min_only", flags_.min_only ) ;
 	flags_.random_phi_psi_pert = tag->getOption<bool>( "random_phi_psi_pert", flags_.random_phi_psi_pert ) ;
-	flags_.random_phi_psi_pert_size  = tag->getOption<core::Size>( "random_phi_psi_pert_size", flags_.random_phi_psi_pert_size ) ;
+	flags_.random_phi_psi_pert_size  = tag->getOption<core::Size>( "random_phi_psi_pert_size", (Size)(flags_.random_phi_psi_pert_size) ) ;
 	flags_.extend = tag->getOption<bool>( "random_phi_psi_pert", flags_.random_phi_psi_pert ) ;
 	flags_.rb_trans_size = tag->getOption<float>( "rb_trans_size", flags_.rb_trans_size) ;
 	flags_.rb_rot_size = tag->getOption<float>( "rb_rot_size", flags_.rb_rot_size) ;

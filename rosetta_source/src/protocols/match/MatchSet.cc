@@ -791,7 +791,7 @@ MatchCounter::count_n_matches() const
 	Size grand_total = 0;
 	Size last_grand_total = 0;
 	for ( HitHash::const_iterator iter = hash_.begin(), iter_end = hash_.end(); iter != iter_end; ++iter ) {
-		for ( Size ii = 1; ii <= three_to_the_sixth; ++ii ) std::fill( neighbor_bin_hit_counts[ ii ].begin(), neighbor_bin_hit_counts[ ii ].end(), 0.0 );
+		for ( Size ii = 1; ii <= three_to_the_sixth; ++ii ) std::fill( neighbor_bin_hit_counts[ ii ].begin(), neighbor_bin_hit_counts[ ii ].end(), 0 );
 
 		HitCounts const & center_hits = iter->second;
 		Size const halfbin_center_first_geom_cst_nhits = center_hits[ 1 ];
