@@ -60,7 +60,7 @@ sources = {
 		"minimize_with_cst",
 	],
 	"public/flexpep_docking" : [
-                "BuildPeptide",        
+                "BuildPeptide",
 		"FlexPepDocking",
 	],   # /* Barak,doc/public/flexpep_docking/barak/FlexPepDocking.dox, test/integration/tests/flexpepdock/ */
 	"public/enzdes" : [
@@ -89,7 +89,8 @@ sources = {
 		"rna_denovo",
 		"rna_extract",
 		"rna_database",
-		"rna_design"
+		"rna_design",
+                "rna_helix"
 		],
 	"public/membrane_abinitio" : [
 		"membrane_abinitio2"
