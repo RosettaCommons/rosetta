@@ -62,7 +62,7 @@ public:
 	void max_rms( Real const max_rms );
 
 	Size max_nstruct() const;
-	void max_nstruct( Real const max_nstruct );
+	void max_nstruct( Size const max_nstruct );
 
 	utility::vector1< Size > loop_sizes() const;
 	void add_loop_size( Size const loop_size );

@@ -1597,7 +1597,7 @@ RunPepSpec()
 	protocols::toolbox::pose_metric_calculators::ResidueDecompositionByChainCalculatorOP res_decomp_calculator(new protocols::toolbox::pose_metric_calculators::ResidueDecompositionByChainCalculator());
 	calculator_factory.register_calculator("residue_decomposition", res_decomp_calculator);
 	protocols::toolbox::pose_metric_calculators::DecomposeAndReweightEnergiesCalculatorOP decomp_reweight_calculator( new protocols::toolbox::pose_metric_calculators::DecomposeAndReweightEnergiesCalculator( "residue_decomposition" ) );
-	vector1< Real > reweight_vector( 1.0, 3 ); reweight_vector.push_back( 2.0 );
+	vector1< Real > reweight_vector( 1, 3.0 ); reweight_vector.push_back( 2.0 );
 	decomp_reweight_calculator->master_weight_vector( reweight_vector );
 	decomp_reweight_calculator->num_sets( ( Size ) 2 );
 	calculator_factory.register_calculator("energy_decomposition", decomp_reweight_calculator);

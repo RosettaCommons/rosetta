@@ -95,15 +95,15 @@ std::pair<Size,Size> makesplitwork_3bpy(Size total) {
   if( option[willmatch::splitwork].user() ) {
     Size part   = option[willmatch::splitwork]()[1];
     Size nparts = option[willmatch::splitwork]()[2];
-    size1 = (part-1)*std::ceil(((Real)total)/(Real)nparts)+1;
-    size2 = (part  )*std::ceil(((Real)total)/(Real)nparts);
+    size1 = (part-1)*(Size)(std::ceil(((Real)total)/(Real)nparts))+1;
+    size2 = (part  )*(Size)(std::ceil(((Real)total)/(Real)nparts));
     if( option[in::file::s]().size() == 1 ) {
       Real frac1 = ((Real)part-1)/(Real)nparts;
       Real frac2 = ((Real)part  )/(Real)nparts;
       frac1 = 1.0 - sqrt(1.0-frac1);
       frac2 = 1.0 - sqrt(1.0-frac2);
-      size1 = std::ceil(frac1*(Real)total)+1;
-      size2 = std::ceil(frac2*(Real)total);
+      size1 = (Size)(std::ceil(frac1*(Real)total))+1;
+      size2 = (Size)(std::ceil(frac2*(Real)total));
     }
   }
   TR << "SIZE " << size1 << " " << size2 << std::endl;
@@ -182,7 +182,7 @@ void run() {
       ImplicitFastClashCheck ifc(pose,option[willmatch::clash_dis]());
 
       for(Size ichi = max((Size)1,split.first); ichi <= min(chis.size(),split.second); ichi++) {
-        Size irsd = chis[ichi].x();
+        Size irsd = (Size)chis[ichi].x();
         if( ichi % (chis.size()/10) == 0 ) TR << "progress: " << irsd << std::endl;
         if( pose.residue(irsd).name3()=="GLY" || pose.residue(irsd).name3()=="PRO" || pose.residue(irsd).name3()=="DPR" ) continue;
         Real chi1 = chis[ichi].y();

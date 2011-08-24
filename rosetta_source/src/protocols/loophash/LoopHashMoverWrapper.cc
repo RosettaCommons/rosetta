@@ -407,7 +407,7 @@ LoopHashMoverWrapper::max_nstruct() const {
 }
 
 void
-LoopHashMoverWrapper::max_nstruct( Real const max_nstruct ) {
+LoopHashMoverWrapper::max_nstruct( Size const max_nstruct ) {
 	max_nstruct_ = max_nstruct;
 }
 
