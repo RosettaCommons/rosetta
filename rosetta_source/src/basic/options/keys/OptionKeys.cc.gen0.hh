@@ -490,7 +490,6 @@ namespace nonlocal { BooleanOptionKey const nonlocal( "nonlocal" );  }
 namespace nonlocal { FileOptionKey const moves( "nonlocal:moves" );  }
 namespace nonlocal { StringOptionKey const mode( "nonlocal:mode" );  }
 namespace nonlocal { StringOptionKey const builder( "nonlocal:builder" );  }
-namespace nonlocal { StringOptionKey const search( "nonlocal:search" );  }
 namespace nonlocal { BooleanOptionKey const randomize_missing( "nonlocal:randomize_missing" );  }
 namespace nonlocal { IntegerOptionKey const gap_sampling_extension( "nonlocal:gap_sampling_extension" );  }
 namespace nonlocal { IntegerOptionKey const min_chunk_size( "nonlocal:min_chunk_size" );  }

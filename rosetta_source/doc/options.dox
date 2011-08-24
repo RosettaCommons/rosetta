@@ -1950,7 +1950,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-sparta_dir</b> \<String\><dt>
-<dd>[optional] point to an external resource for the sparta directory (instead of rosetta_database)</dd><br>
+<dd>[optional] point to an external resource for the sparta directory (instead of minirosetta_database)</dd><br>
 <dd>Default: "SPARTA+"</dd><br>
 </dl>
 <dl>
@@ -2341,11 +2341,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-builder</b> \<String\><dt>
 <dd>One of {consecutive, simple, star}. Specifies how non-local abinitio should construct the fold tree</dd><br>
 <dd>Default: "simple"</dd><br>
-</dl>
-<dl>
-<dt><b>-search</b> \<String\><dt>
-<dd>One of {refine, explore}. Specifies the search strategy to be applied. In refinement mode, conformational search does not wander too far from the starting structure. This is achieved by using small fragments and a low temperature. In exploration mode, search is allowed to traverse a much larger swath of conformational space.</dd><br>
-<dd>Default: "refine"</dd><br>
 </dl>
 <dl>
 <dt><b>-randomize_missing</b> \<Boolean\><dt>

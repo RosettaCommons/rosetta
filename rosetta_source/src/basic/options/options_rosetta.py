@@ -1290,7 +1290,6 @@ Options = Option_Group( '',
 		Option( 'moves', 'File', desc="Enable non-local moves in the early stages of abinitio. File specifying groups of fragments to be applied simultaneously"),
 		Option( 'mode', 'String', desc="One of {rigid, semirigid}. Specifies how non-local abinitio should treat fragments", default="RIGID"),
 		Option( 'builder', 'String', desc="One of {consecutive, simple, star}. Specifies how non-local abinitio should construct the fold tree", default="simple"),
-		Option( 'search', 'String', desc="One of {refine, explore}. Specifies the search strategy to be applied. In refinement mode, conformational search does not wander too far from the starting structure. This is achieved by using small fragments and a low temperature. In exploration mode, search is allowed to traverse a much larger swath of conformational space.", default = 'refine'),
 
     # Comparative modeling extensions
 		Option( 'randomize_missing', 'Boolean', desc = 'Randomize the coordinates of missing loops. This occurs often in broken-chain folding from a sequence alignment and template pdb. Default value is false to preserve existing behavior in ThreadingJobInputter', default = 'false'),

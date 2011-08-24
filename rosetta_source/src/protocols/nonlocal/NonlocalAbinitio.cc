@@ -60,7 +60,6 @@
 // Package headers
 #include <protocols/nonlocal/BoundaryFinder.hh>
 #include <protocols/nonlocal/BrokenBase.hh>
-#include <protocols/nonlocal/BrokenFold.hh>
 #include <protocols/nonlocal/BrokenRefine.hh>
 #include <protocols/nonlocal/NLFragment.hh>
 #include <protocols/nonlocal/NLFragmentGroup.hh>
@@ -91,8 +90,7 @@ void NonlocalAbinitio::check_required_options() const {
     utility_exit_with_message(prefix + "in:file:frag9");
 }
 
-NonlocalAbinitio::NonlocalAbinitio(KinematicPolicy policy,
-                                   SearchStrategy strategy) {
+NonlocalAbinitio::NonlocalAbinitio(KinematicPolicy policy) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
 
@@ -104,18 +102,14 @@ NonlocalAbinitio::NonlocalAbinitio(KinematicPolicy policy,
   NonlocalGroupings groupings;
   NonlocalAbinitioReader::read(option[OptionKeys::nonlocal::moves](), &groupings);
 
-  initialize(groupings, policy, strategy);
+  initialize(groupings, policy);
 }
 
-NonlocalAbinitio::NonlocalAbinitio(const NonlocalGroupings& groupings,
-                                   KinematicPolicy policy,
-                                   SearchStrategy strategy) {
-  initialize(groupings, policy, strategy);
+NonlocalAbinitio::NonlocalAbinitio(const NonlocalGroupings& groupings, KinematicPolicy policy) {
+  initialize(groupings, policy);
 }
 
-void NonlocalAbinitio::initialize(const NonlocalGroupings& groupings,
-                                  KinematicPolicy policy,
-                                  SearchStrategy strategy) {
+void NonlocalAbinitio::initialize(const NonlocalGroupings& groupings, KinematicPolicy policy) {
   using core::fragment::FragmentIO;
   using core::fragment::FragSetOP;
   using core::fragment::SecondaryStructure;
@@ -135,7 +129,6 @@ void NonlocalAbinitio::initialize(const NonlocalGroupings& groupings,
 
   // Initialize members
   kinematic_policy_ = policy;
-  search_strategy_ = strategy;
   groupings_ = groupings;
 }
 
@@ -181,7 +174,6 @@ void NonlocalAbinitio::apply(core::pose::Pose& pose) {
     builder = make_fold_tree(grouping, &pose);
     superimpose(grouping, &pose);
   }
-  emit_intermediate(pose, "nla_pre_abinitio.pdb");
 
   // If we're operating in RIGID mode, enforce user-defined restrictions on
   // backbone torsion modification
@@ -189,17 +181,8 @@ void NonlocalAbinitio::apply(core::pose::Pose& pose) {
   prepare_movemap(grouping, pose, movable);
 
   // Perform fragment-based assembly
-  BrokenBaseOP mover;
-  switch (search_strategy()) {
-    case REFINE:
-      mover = new BrokenRefine(fragments_small(), movable);
-      break;
-    case EXPLORE:
-      mover = new BrokenFold(fragments_large(), fragments_small(), movable);
-      break;
-    default:
-      utility_exit_with_message("Invalid option to -nonlocal:search => " + search_strategy());
-  }
+	emit_intermediate(pose, "nla_pre_abinitio.pdb");
+  MoverOP mover = new BrokenRefine(fragments_small(), movable);
   mover->apply(pose);
   emit_intermediate(pose, "nla_post_abinitio.pdb");
 
@@ -394,17 +377,7 @@ void NonlocalAbinitio::relax(core::pose::Pose* pose) const {
 
   // Relax into constraints according to the search strategy in use
   Real base_wt = option[OptionKeys::constraints::cst_fa_weight]();
-  Real constraint_wt;
-  switch (search_strategy()) {
-    case REFINE:
-      constraint_wt = base_wt / 2;
-      break;
-    case EXPLORE:
-      constraint_wt = base_wt / 4;
-      break;
-    default:
-      constraint_wt = 1;
-  }
+  Real constraint_wt = base_wt / 2;
 
   // Optionally relax
   if (option[OptionKeys::abinitio::relax]()) {
@@ -453,10 +426,6 @@ const NonlocalGroupings& NonlocalAbinitio::groupings() const {
 
 NonlocalAbinitio::KinematicPolicy NonlocalAbinitio::kinematic_policy() const {
   return kinematic_policy_;
-}
-
-NonlocalAbinitio::SearchStrategy NonlocalAbinitio::search_strategy() const {
-  return search_strategy_;
 }
 
 core::fragment::FragSetOP NonlocalAbinitio::fragments_large() const {

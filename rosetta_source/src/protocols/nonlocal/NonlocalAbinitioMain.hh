@@ -24,9 +24,6 @@ void* NonlocalAbinitio_main(void*);
 /// @brief Translates policy specification from options or die
 NonlocalAbinitio::KinematicPolicy get_policy_or_die();
 
-/// @brief Translates strategy specification from options or die
-NonlocalAbinitio::SearchStrategy get_strategy_or_die();
-
 }  // namespace nonlocal
 }  // namespace protocols
 

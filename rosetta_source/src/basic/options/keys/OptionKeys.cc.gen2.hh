@@ -1,3 +1,4 @@
+namespace phil { StringOptionKey const vall_file( "phil:vall_file" );  }
 namespace phil { StringOptionKey const align_file( "phil:align_file" );  }
 namespace wum { BooleanOptionKey const wum( "wum" );  }
 namespace wum { IntegerOptionKey const n_slaves_per_master( "wum:n_slaves_per_master" );  }
@@ -558,5 +559,3 @@ namespace AnchoredDesign { namespace filters { BooleanOptionKey const filters( "
 namespace AnchoredDesign { namespace filters { RealOptionKey const score( "AnchoredDesign:filters:score" );  } }
 namespace AnchoredDesign { namespace filters { RealOptionKey const sasa( "AnchoredDesign:filters:sasa" );  } }
 namespace AnchoredDesign { namespace filters { BooleanOptionKey const omega( "AnchoredDesign:filters:omega" );  } }
-namespace AnchoredDesign { namespace akash { BooleanOptionKey const akash( "AnchoredDesign:akash" );  } }
-namespace AnchoredDesign { namespace akash { IntegerOptionKey const dyepos( "AnchoredDesign:akash:dyepos" );  } }

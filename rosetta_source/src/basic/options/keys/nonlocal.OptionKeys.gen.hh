@@ -25,7 +25,6 @@ namespace nonlocal { extern BooleanOptionKey const nonlocal; }
 namespace nonlocal { extern FileOptionKey const moves; }
 namespace nonlocal { extern StringOptionKey const mode; }
 namespace nonlocal { extern StringOptionKey const builder; }
-namespace nonlocal { extern StringOptionKey const search; }
 namespace nonlocal { extern BooleanOptionKey const randomize_missing; }
 namespace nonlocal { extern IntegerOptionKey const gap_sampling_extension; }
 namespace nonlocal { extern IntegerOptionKey const min_chunk_size; }

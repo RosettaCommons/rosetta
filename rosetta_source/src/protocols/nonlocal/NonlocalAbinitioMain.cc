@@ -52,7 +52,6 @@ void* NonlocalAbinitio_main(void*) {
 
   // optional configuration
   NonlocalAbinitio::KinematicPolicy policy = get_policy_or_die();
-  NonlocalAbinitio::SearchStrategy strategy = get_strategy_or_die();
 
   MoverOP mover;
   if (option[in::file::alignment].user() &&
@@ -66,10 +65,10 @@ void* NonlocalAbinitio_main(void*) {
 
     vector1<NLGrouping> groupings;
     protocols::nonlocal::nonlocal_groupings_from_alignment(&groupings);
-    mover = new NonlocalAbinitio(groupings, policy, strategy);
+    mover = new NonlocalAbinitio(groupings, policy);
   } else {
     // read groupings from options
-    mover = new NonlocalAbinitio(policy, strategy);
+    mover = new NonlocalAbinitio(policy);
   }
 
   // hand the configured mover to the job distributor for execution
@@ -95,19 +94,6 @@ NonlocalAbinitio::KinematicPolicy get_policy_or_die() {
 
   return (mode == "rigid")
       ? NonlocalAbinitio::RIGID : NonlocalAbinitio::SEMI_RIGID;
-}
-
-NonlocalAbinitio::SearchStrategy get_strategy_or_die() {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-
-  std::string mode = option[OptionKeys::nonlocal::search]();
-  boost::to_lower(mode);
-  if (!(mode == "refine" || mode == "explore"))
-    utility_exit_with_message("Invalid setting for option nonlocal:search");
-
-  return (mode == "refine")
-      ? NonlocalAbinitio::REFINE : NonlocalAbinitio::EXPLORE;
 }
 
 }  // namespace nonlocal

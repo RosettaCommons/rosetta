@@ -495,7 +495,6 @@ option.add( basic::options::OptionKeys::nonlocal::nonlocal, "nonlocal option gro
 option.add( basic::options::OptionKeys::nonlocal::moves, "Enable non-local moves in the early stages of abinitio. File specifying groups of fragments to be applied simultaneously" );
 option.add( basic::options::OptionKeys::nonlocal::mode, "One of {rigid, semirigid}. Specifies how non-local abinitio should treat fragments" ).def("RIGID");
 option.add( basic::options::OptionKeys::nonlocal::builder, "One of {consecutive, simple, star}. Specifies how non-local abinitio should construct the fold tree" ).def("simple");
-option.add( basic::options::OptionKeys::nonlocal::search, "One of {refine, explore}. Specifies the search strategy to be applied. In refinement mode, conformational search does not wander too far from the starting structure. This is achieved by using small fragments and a low temperature. In exploration mode, search is allowed to traverse a much larger swath of conformational space." ).def("refine");
 option.add( basic::options::OptionKeys::nonlocal::randomize_missing, "Randomize the coordinates of missing loops. This occurs often in broken-chain folding from a sequence alignment and template pdb. Default value is false to preserve existing behavior in ThreadingJobInputter" ).def(false);
 option.add( basic::options::OptionKeys::nonlocal::gap_sampling_extension, "When constructing NLGrouping's from SequenceAlignments, extend gapped regions by at least 3 and at most N positions to enhance sampling" ).def(5);
 option.add( basic::options::OptionKeys::nonlocal::min_chunk_size, "Minimum allowable chunk size for comparative modeling inputs. At the very minimum, should be set to the smallest fragments used during the simulation." ).def(3);
@@ -1128,10 +1127,10 @@ option.add( basic::options::OptionKeys::packing::minpack_inner_iteration_scale, 
 option.add( basic::options::OptionKeys::packing::minpack_disable_bumpcheck, "Disable bump check in min pack (i.e. include rotamers that collide with the background." );
 option.add( basic::options::OptionKeys::phil::phil, "phil option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::phil::nloop, "No description" ).def(10);
-option.add( basic::options::OptionKeys::phil::vall_file, "No description" );
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::phil::align_file, "No description" );
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::phil::vall_file, "No description" );
+option.add( basic::options::OptionKeys::phil::align_file, "No description" );
 option.add( basic::options::OptionKeys::wum::wum, "wum option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::wum::n_slaves_per_master, "A value between 32 and 128 is usually recommended" ).def(64);
 option.add( basic::options::OptionKeys::wum::n_masters, "Manual override for -n_slaves_per_master. How many master nodes should be spawned ? 1 by default. generall 1 for eery 256-512 cores is recommended depending on master workload" ).def(1);
@@ -1691,11 +1690,11 @@ option.add( basic::options::OptionKeys::AnchoredDesign::filters::filters, "filte
 option.add( basic::options::OptionKeys::AnchoredDesign::filters::score, "do not print trajectories with scores greater than this total scorefunction value" ).def(0);
 option.add( basic::options::OptionKeys::AnchoredDesign::filters::sasa, "do not print trajectories with sasas less than this interface delta sasa value" ).def(500);
 option.add( basic::options::OptionKeys::AnchoredDesign::filters::omega, "filter out non-trans omegas" ).def(false);
-option.add( basic::options::OptionKeys::AnchoredDesign::akash::akash, "akash option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::AnchoredDesign::akash::dyepos, "dye position" ).def(0);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::AnchoredDesign::testing::testing, "testing option group" ).legal(true).def(true);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::AnchoredDesign::akash::akash, "akash option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::AnchoredDesign::akash::dyepos, "dye position" ).def(0);
+option.add( basic::options::OptionKeys::AnchoredDesign::testing::testing, "testing option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::VDW_weight, "centroid VDW weight; testing if 2 better than 1" ).lower(0).def(1.0);
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_via_constraints, "allow anchor&jump to move; anchor held in place via constraints - you must specify constraints!" ).def(false);
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::delete_interface_native_sidechains, "benchmarking option.  delete input sidechains as prepacking step before running centroid or fullatom phases.  use if also using use_input_sc and doing benchmarking.  use_input_sc is used because of sidechain minimization, not to maintain input sidechains." );

@@ -559,4 +559,3 @@ namespace packing { IntegerOptionKey const minpack_inner_iteration_scale( "packi
 namespace packing { BooleanOptionKey const minpack_disable_bumpcheck( "packing:minpack_disable_bumpcheck" );  }
 namespace phil { BooleanOptionKey const phil( "phil" );  }
 namespace phil { IntegerOptionKey const nloop( "phil:nloop" );  }
-namespace phil { StringOptionKey const vall_file( "phil:vall_file" );  }

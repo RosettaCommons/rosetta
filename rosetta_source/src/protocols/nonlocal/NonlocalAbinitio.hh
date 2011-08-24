@@ -44,26 +44,14 @@ public:
   /// @brief Enumeration type representing the high-level kinematic modes.
   enum KinematicPolicy { RIGID, SEMI_RIGID };
 
-  /// @brief Enumeration type representing the conformational space search
-  /// strategies. In refinement mode, conformational search does not wander far
-  /// from the starting structure. This is useful for inputs where only a small
-  /// number of residues need to be modified. Conversely, in exploration mode
-  /// conformational search is allowed to wander away from the starting point,
-  /// guided by the kinematics of the system and (optionally) any user-specified
-  /// restraints.
-  enum SearchStrategy { REFINE, EXPLORE };
-
   /// @brief Constructs a new mover with the specified mode and search strategy
   /// by reading non-local pairings information from the filename specified by
   /// -nonlocal:moves.
-  NonlocalAbinitio(KinematicPolicy policy = RIGID,
-                   SearchStrategy strategy = REFINE);
+  explicit NonlocalAbinitio(KinematicPolicy policy = RIGID);
 
   /// @brief Constructs a new mover with the specified mode, search strategy,
   /// and non-local pairings.
-  NonlocalAbinitio(const NonlocalGroupings& groupings,
-                   KinematicPolicy policy = RIGID,
-                   SearchStrategy strategy = REFINE);
+  NonlocalAbinitio(const NonlocalGroupings& groupings, KinematicPolicy policy = RIGID);
 
   /// @brief Chooses a non-local grouping at random as the starting point for
   /// the simulation, then proceeds with kinematic ab initio.
@@ -86,9 +74,6 @@ public:
   /// @brief Returns the kinematic policy in effect
   KinematicPolicy kinematic_policy() const;
 
-  /// @brief Returns the search strategy in effect
-  SearchStrategy search_strategy() const;
-
   /// @brief Returns a pointer to the large fragment library
   core::fragment::FragSetOP fragments_large() const;
 
@@ -97,9 +82,7 @@ public:
 
 private:
   /// --- Utility Methods --- ///
-  void initialize(const NonlocalGroupings& groupings,
-                  KinematicPolicy policy,
-                  SearchStrategy strategy);
+  void initialize(const NonlocalGroupings& groupings, KinematicPolicy policy);
 
   /// @brief Determines whether the caller has specified all required options.
   /// If a required option is missing, exits with an error message.
@@ -136,9 +119,6 @@ private:
 
   /// @brief Specifies how to treat residues in the selected NLGrouping
   KinematicPolicy kinematic_policy_;
-
-  /// @brief Specifies how conformational search should proceed
-  SearchStrategy search_strategy_;
 
   /// @brief Large fragment library
   core::fragment::FragSetOP fragments_lg_;
