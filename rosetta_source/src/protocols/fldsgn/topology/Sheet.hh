@@ -58,7 +58,7 @@ public:// construct/destruct
 	Sheet();
 
 	/// @brief value constructor
-	Sheet( VecSize order_strands,	VecInt orient_strands, bool is_barrel );
+	Sheet( VecSize const & order_strands,	VecInt const & orient_strands, bool is_barrel );
 
 	/// @brief copy constructor
 	Sheet( Sheet const & s );
@@ -163,6 +163,7 @@ public:
 
 	typedef core::Size Size;
 	typedef core::Real Real;
+	typedef utility::vector1< int > VecInt;
 	typedef utility::vector1< Size > VecSize;
 	typedef utility::vector1< Real > VecReal;
 	typedef protocols::fldsgn::topology::StrandPairingSet StrandPairingSet;

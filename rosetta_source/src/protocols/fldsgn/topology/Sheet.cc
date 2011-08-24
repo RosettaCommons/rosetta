@@ -52,7 +52,7 @@ Sheet::Sheet() :
 }
 
 /// @brief value constructor
-Sheet::Sheet( VecSize order_strands, VecInt orient_strands, bool is_barrel ):
+Sheet::Sheet( VecSize const & order_strands, VecInt const & orient_strands, bool is_barrel ):
 	num_strands_( order_strands.size() ),
 	is_barrel_( is_barrel ),
 	order_strands_( order_strands ),
@@ -476,7 +476,7 @@ SheetSet::initialize( SS_Info2_COP const ssinfo, StrandPairingSetCOP const spair
 		}
 
 		// set orient of strands in sheet
-		VecReal orient_strands;
+		VecInt orient_strands; // Sergey: was declared as 'VecReal' seems to be a typo, converting to VecInt to fix wanrning
 		orient_strands.push_back( 1 );
 		for( Size i=1; i<=order_strands.size()-1; i++ ){
 			Size s1( order_strands[ i ] );

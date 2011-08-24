@@ -178,9 +178,11 @@ PerNativeRRReporterHuman::set_native(
 		rotamer_from_chi( res, rot );
 		nat_rots_.push_back( rot );
 
-		vector1< Real > chi_vec;
+		//vector1< Real > chi_vec;
+		core::pack::dunbrack::RotVector chi_vec;
+
 		for ( Size jj = 1; jj <= res.nchi(); ++jj ) {
-			chi_vec.push_back( native_pose.chi(jj,ii) );
+			chi_vec.push_back( core::Size( native_pose.chi(jj,ii) ) );
 		}
 		nat_chis_.push_back( chi_vec );
 
