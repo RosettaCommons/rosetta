@@ -1,0 +1,7 @@
+README
+
+How to get these scripts to be useful in building a native xcode project for mini.
+
+3) run rosetta_source/xcode/make_project.py all
+
+That should be it! 
