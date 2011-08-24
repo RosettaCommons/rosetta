@@ -92,8 +92,11 @@ RNA_HelixAssembler::RNA_HelixAssembler():
 	scorefxn( core::scoring::ScoreFunctionFactory::create_score_function( core::scoring::RNA_HIRES_WTS ) )
 {
 	Mover::type("RNA_HelixAssembler");
-	scorefxn->set_weight( core::scoring::atom_pair_constraint, 0.01 );
-	scorefxn->set_weight( core::scoring::rna_torsion, 5.0 );
+	// scorefxn->set_weight( core::scoring::atom_pair_constraint, 0.01 );
+	// scorefxn->set_weight( core::scoring::rna_torsion, 5.0 );
+	scorefxn->set_weight( core::scoring::atom_pair_constraint, 5.0 );
+	scorefxn->set_weight( core::scoring::rna_torsion, 20.0 );
+	scorefxn->set_weight( core::scoring::fa_stack, 1.0 );
 }
 
 
