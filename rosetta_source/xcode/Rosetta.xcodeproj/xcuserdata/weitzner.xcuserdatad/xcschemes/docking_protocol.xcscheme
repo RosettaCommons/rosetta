@@ -14,7 +14,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3DFB7A801405746F00EA18CE"
-               BuildableName = "docking_protocol copy"
+               BuildableName = "docking_protocol"
                BlueprintName = "docking_protocol"
                ReferencedContainer = "container:Rosetta.xcodeproj">
             </BuildableReference>
