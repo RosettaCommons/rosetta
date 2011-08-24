@@ -13,6 +13,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3DFB7A801405746F00EA18CE"
+               BuildableName = "docking_protocol copy"
+               BlueprintName = "docking_protocol"
+               ReferencedContainer = "container:Rosetta.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "NO"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "3D3A99E613ECDF980081959A"
                BuildableName = "docking_protocol"
                BlueprintName = "docking_protocol"
@@ -38,16 +52,16 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3D3A99E613ECDF980081959A"
+            BlueprintIdentifier = "3DFB7A801405746F00EA18CE"
             BuildableName = "docking_protocol"
             BlueprintName = "docking_protocol"
-            ReferencedContainer = "container:mini-native.xcodeproj">
+            ReferencedContainer = "container:Rosetta.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "ROSETTA3_DB"
-            value = "/Volumes/Home/Users/weitzner/Rosetta/minirosetta_database"
+            value = "/home/weitzner/Rosetta/rosetta/rosetta_database"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>
