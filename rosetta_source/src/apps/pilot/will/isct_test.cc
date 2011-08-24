@@ -109,23 +109,23 @@ struct IsctFast {
 			zmx = max(zmx,ib->z()); zmn = min(zmn,ib->z());
 		}
 
-		xlb = floor(xmn/BIN)-2; int xub = ceil(xmx/BIN)+2; // one extra on each side for correctness,pppp
-		ylb = floor(ymn/BIN)-2; int yub = ceil(ymx/BIN)+2; // and one extra for outside atoms
-		zlb = floor(zmn/BIN)-2; int zub = ceil(zmx/BIN)+2; // and one extra for outside atoms
+		xlb = (int)floor(xmn/BIN)-2; int xub = (int)ceil(xmx/BIN)+2; // one extra on each side for correctness,pppp
+		ylb = (int)floor(ymn/BIN)-2; int yub = (int)ceil(ymx/BIN)+2; // and one extra for outside atoms
+		zlb = (int)floor(zmn/BIN)-2; int zub = (int)ceil(zmx/BIN)+2; // and one extra for outside atoms
 
 		xsz = xub-xlb+1;
 		ysz = yub-ylb+1;
 		zsz = zub-zlb+1;
-		gxl.dimension(ysz,zsz); qxl.dimension(ysz,zsz);
-		gxu.dimension(ysz,zsz);	qxu.dimension(ysz,zsz);
-		gyl.dimension(zsz,xsz);	qyl.dimension(zsz,xsz);
-		gyu.dimension(zsz,xsz);	qyu.dimension(zsz,xsz);
-		gzl.dimension(xsz,ysz);	qzl.dimension(xsz,ysz);
-		gzu.dimension(xsz,ysz);	qzu.dimension(xsz,ysz);
+		gxl.dimension((Size)ysz,(Size)zsz); qxl.dimension((Size)ysz,(Size)zsz);
+		gxu.dimension((Size)ysz,(Size)zsz);	qxu.dimension((Size)ysz,(Size)zsz);
+		gyl.dimension((Size)zsz,(Size)xsz);	qyl.dimension((Size)zsz,(Size)xsz);
+		gyu.dimension((Size)zsz,(Size)xsz);	qyu.dimension((Size)zsz,(Size)xsz);
+		gzl.dimension((Size)xsz,(Size)ysz);	qzl.dimension((Size)xsz,(Size)ysz);
+		gzu.dimension((Size)xsz,(Size)ysz);	qzu.dimension((Size)xsz,(Size)ysz);
 		for(vector1<Vec>::const_iterator ia = pnt.begin(); ia != pnt.end(); ++ia) {
-			int const ix = (int)ceil(ia->x()/BIN)-xlb;
-			int const iy = (int)ceil(ia->y()/BIN)-ylb;
-			int const iz = (int)ceil(ia->z()/BIN)-zlb;
+			int const ix = (int)ceil(ia->x()/BIN)-(int)xlb;
+			int const iy = (int)ceil(ia->y()/BIN)-(int)ylb;
+			int const iz = (int)ceil(ia->z()/BIN)-(int)zlb;
 			if( 1 < iy && iy < ysz && 1 < iz && iz < zsz ) {
 				if( gxl(iy,iz).x() > ia->x() ) gxl(iy,iz) = *ia;
 				if( gxu(iy,iz).x() < ia->x() ) gxu(iy,iz) = *ia;

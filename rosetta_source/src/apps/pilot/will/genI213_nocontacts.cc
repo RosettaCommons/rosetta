@@ -372,8 +372,8 @@ sicfast(
   ymx = min(ymx,ymx1); ymn = max(ymn,ymn1);
 
 
-  int xlb = floor(xmn/BIN)-2; int xub = ceil(xmx/BIN)+2; // one extra on each side for correctness,
-  int ylb = floor(ymn/BIN)-2; int yub = ceil(ymx/BIN)+2; // and one extra for outside atoms
+  int xlb = (int)floor(xmn/BIN)-2; int xub = (int)ceil(xmx/BIN)+2; // one extra on each side for correctness,
+  int ylb = (int)floor(ymn/BIN)-2; int yub = (int)ceil(ymx/BIN)+2; // and one extra for outside atoms
 
   // TR << "BOUNDS " << xmn << " " << xmx << " " << ymn << " " << ymx << std::endl;
   // TR << "BOUNDS " << xlb << " " << xub << " " << ylb << " " << yub << std::endl;

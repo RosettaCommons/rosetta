@@ -1344,12 +1344,12 @@ int main (int argc, char *argv[]) {
     Vec com  = khits[i]->stub.local2global(ccom );  lb.min( com -3.0 ); ub.max( com +3.0 );
   }
   if(rhits.size()==0) { lb = 0; ub = 1; }
-  ObjexxFCL::FArray3D<vector1<HitOP> > kgrid(std::ceil(ub.x()-lb.x()),std::ceil(ub.y()-lb.y()),std::ceil(ub.z()-lb.z()));
+  ObjexxFCL::FArray3D<vector1<HitOP> > kgrid((int)std::ceil(ub.x()-lb.x()),(int)std::ceil(ub.y()-lb.y()),(int)std::ceil(ub.z()-lb.z()));
   for(Size i = 1; i <= khits.size(); ++i) {
     Vec com  = khits[i]->stub.local2global(ccom );
-    Size ix = std::ceil( com.x() - lb.x() );
-    Size iy = std::ceil( com.y() - lb.y() );
-    Size iz = std::ceil( com.z() - lb.z() );
+    Size ix = (int)std::ceil( com.x() - lb.x() );
+    Size iy = (int)std::ceil( com.y() - lb.y() );
+    Size iz = (int)std::ceil( com.z() - lb.z() );
     kgrid(ix,iy,iz).push_back(khits[i]);
   }
 
@@ -1463,9 +1463,9 @@ for(int ir = 1; ir <= (int)rhits.size(); ++ir) {
       Vec const lg12C7(tmp.residue(5).xyz(iC7));
       Vec const lg12C9(tmp.residue(5).xyz(iC9));
       Vec ccom12(0,0,0); for(Size i=1; i <= tmp.residue(5).nheavyatoms(); ++i) ccom12 += tmp.residue(5).xyz(i); ccom12 /= tmp.residue(5).nheavyatoms();
-      Size ixr = std::ceil( ccom12.x() - lb.x() );
-      Size iyr = std::ceil( ccom12.y() - lb.y() );
-      Size izr = std::ceil( ccom12.z() - lb.z() );
+      Size ixr = (int)std::ceil( ccom12.x() - lb.x() );
+      Size iyr = (int)std::ceil( ccom12.y() - lb.y() );
+      Size izr = (int)std::ceil( ccom12.z() - lb.z() );
 
       for(Size ix = max(ixr-1,((Size)1)); ix <= min(ixr+((Size)1),kgrid.size1()); ++ix) {
         for(Size iy = max(iyr-1,((Size)1)); iy <= min(iyr+((Size)1),kgrid.size2()); ++iy) {

@@ -164,8 +164,8 @@ sicfast(
   ymx = min(ymx,ymx1); ymn = max(ymn,ymn1);
 
 
-  int xlb = floor(xmn/BIN)-2; int xub = ceil(xmx/BIN)+2; // one extra on each side for correctness,
-  int ylb = floor(ymn/BIN)-2; int yub = ceil(ymx/BIN)+2; // and one extra for outside atoms
+  int xlb = (int)floor(xmn/BIN)-2; int xub = (int)ceil(xmx/BIN)+2; // one extra on each side for correctness,
+  int ylb = (int)floor(ymn/BIN)-2; int yub = (int)ceil(ymx/BIN)+2; // and one extra for outside atoms
 
   // TR << "BOUNDS " << xmn << " " << xmx << " " << ymn << " " << ymx << std::endl;
   // TR << "BOUNDS " << xlb << " " << xub << " " << ylb << " " << yub << std::endl;
@@ -552,8 +552,8 @@ void run(  ) {
         // for(iori = 0; iori < 360; iori+=ANGLE_INCR)
         while(ori_stage < 5) {
           if(newstage) {
-            if( ori_stage == 1 || ori_stage == 2 ) iori = ( 90.0+double(ANGLE_INCR)/2.0+angle_degrees(taxs,Vecf(0,0,0),paxs));
-            if( ori_stage == 3 || ori_stage == 4 ) iori = (270.0+double(ANGLE_INCR)/2.0+angle_degrees(taxs,Vecf(0,0,0),paxs));
+            if( ori_stage == 1 || ori_stage == 2 ) iori = (int)( 90.0+double(ANGLE_INCR)/2.0+angle_degrees(taxs,Vecf(0,0,0),paxs));
+            if( ori_stage == 3 || ori_stage == 4 ) iori = (int)(270.0+double(ANGLE_INCR)/2.0+angle_degrees(taxs,Vecf(0,0,0),paxs));
             iori = (iori / ANGLE_INCR) * ANGLE_INCR; // round to closest multiple of angle incr
             if( ori_stage == 2 || ori_stage == 4 ) iori -= ANGLE_INCR;
             newstage = false;
@@ -577,8 +577,8 @@ void run(  ) {
           if( w > 0 ) {
             pntmn = pntmnpos[ipnt/ANGLE_INCR+1];
             trimn = trimnpos[itri/ANGLE_INCR+1];
-            int dp = (dpnt-pntmn)*10+1;
-            int dt = (dtri-trimn)*10+1;
+            int dp = (int)(dpnt-pntmn)*10+1;
+            int dt = (int)(dtri-trimn)*10+1;
             if( dp < 1 )  { ori_stage++; newstage=true; continue; };
             if( dt < 1 )  { ori_stage++; newstage=true; continue; };
             // if(ipnt==18 && itri==72 && iori==276)
@@ -590,8 +590,8 @@ void run(  ) {
           } else {
             pntmn = pntmnneg[ipnt/ANGLE_INCR+1];
             trimn = trimnneg[itri/ANGLE_INCR+1];
-            int dp = (-dpnt+pntmn)*10+1;
-            int dt = (-dtri+trimn)*10+1;
+            int dp = (int)(-dpnt+pntmn)*10+1;
+            int dt = (int)(-dtri+trimn)*10+1;
             if( dp < 1 )  { ori_stage++; newstage=true; continue; };
             if( dt < 1 )  { ori_stage++; newstage=true; continue; };
             // if(ipnt==18 && itri==72 && iori==276)
@@ -620,7 +620,7 @@ void run(  ) {
   }
 
   ObjexxFCL::FArray3D<int> cbcount_local((Size)floor(72.0/ANGLE_INCR),(Size)floor(120.0/ANGLE_INCR),(Size)floor(360.0/ANGLE_INCR),0);
-  int delta = ceil(5.0/(Real)ANGLE_INCR);
+  int delta = (int)ceil(5.0/(Real)ANGLE_INCR);
   TR << "scanning results for local maxima +- " << delta*ANGLE_INCR << "°" << std::endl;
   for(int ipnt = 1; ipnt <=  72/ANGLE_INCR; ++ipnt) {
     for(int itri = 1; itri <= 120/ANGLE_INCR; ++itri) {
