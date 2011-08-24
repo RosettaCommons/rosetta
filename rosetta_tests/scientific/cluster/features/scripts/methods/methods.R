@@ -134,6 +134,18 @@ estimate_density_1d <-function(
   n_pts=200,
   histogram=FALSE,
   ...){
+	if(!(class(data) == "data.frame")){
+		stop(paste("The data argument must be a data.frame, instead it is of class '", class(data), "'"))
+	}
+	for(id in ids){
+		if(!(id %in% names(data))){
+			stop(paste("The id variable '", id, "' is not a column name of the data. The ids are used to group the data instances for computing the density estimation.", sep=""))
+		}
+	}
+	if(!(variable %in% names(data))){
+		stop(paste("The value variable '", variable, "' is not a column name of the data. The value variable is used to compute the density estimation.", sep=""))
+	}
+
   xlim <- range(data[,variable])
   compute_density <- function(factor_df){
     if (nrow(factor_df) < min_count){
@@ -165,6 +177,18 @@ estimate_density_1d_wrap <-function(
   n_pts=200,
 	xlim=c(0,360),
   ...){
+	if(!(class(data) == "data.frame")){
+		stop(paste("The data argument must be a data.frame, instead it is of class '", class(data), "'"))
+	}
+	for(id in ids){
+		if(!(id %in% names(data))){
+			stop(paste("The id variable '", id, "' is not a column name of the data. The ids are used to group the data instances for computing the density estimation.", sep=""))
+		}
+	}
+	if(!(variable %in% names(data))){
+		stop(paste("The value variable '", variable, "' is not a column name of the data. The value variable is used to compute the density estimation.", sep=""))
+	}
+
 	extended_data <- mdply(
 		c(xlim[1]-xlim[2], 0, xlim[2]-xlim[1]),function(s){
 		y <- data;
@@ -202,6 +226,18 @@ estimate_density_1d_logspline <-function(
   n_pts=200,
   weight_fun=NULL,
   ...){
+
+	if(!(class(data) == "data.frame")){
+		stop(paste("The data argument must be a data.frame, instead it is of class '", class(data), "'", sep=""))
+	}
+	for(id in ids){
+		if(!(id %in% names(data))){
+			stop(paste("The id variable '", id, "' is not a column name of the data. The ids are used to group the data instances for computing the density estimation.", sep=""))
+		}
+	}
+	if(!(variable %in% names(data))){
+		stop(paste("The value variable '", variable, "' is not a column name of the data. The value variable is used to compute the density estimation.", sep=""))
+	}
 
   xlim <- range(data[,variable])
   if(!is.null(weight_fun)){
@@ -246,7 +282,22 @@ estimate_density_2d <-function(
   n_pts=200,
   histogram=FALSE,
   ...){
-  xlim <- range(data[,xvariable])
+	if(!(class(data) == "data.frame")){
+		stop(paste("The data argument must be a data.frame, instead it is of class '", class(data), "'", sep=""))
+	}
+	for(id in ids){
+		if(!(id %in% names(data))){
+			stop(paste("The id variable '", id, "' is not a column name of the data. The ids are used to group the data instances for computing the density estimation.", sep=""))
+		}
+	}
+	if(!(xvariable %in% names(data))){
+		stop(paste("The value variable '", xvariable, "' is not a column name of the data. The xvariable and yvariable are used to compute the density estimation.", sep=""))
+	}
+	if(!(yvariable %in% names(data))){
+		stop(paste("The value variable '", yvariable, "' is not a column name of the data. The xvariable and yvariable are used to compute the density estimation.", sep=""))
+	}
+
+	xlim <- range(data[,xvariable])
   xlim <- range(data[,yvariable])
 	ddply(data, ids, function(df){
 	  if (nrow(df) < min_count){
