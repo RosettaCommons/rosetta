@@ -57,7 +57,8 @@ public:
 	// for SQLite the database_url is the file path for the database
 	sessionOP
 	get_session(
-		std::string const & db_fname);
+		std::string const & db_fname,
+		bool const readonly=false);
 
 	// overloaded get_session function for mysql
 	sessionOP

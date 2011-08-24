@@ -97,7 +97,7 @@ ReadResfileFromDB::apply( Pose const &, PackerTask & task ) const {
 	string tag(JobDistributor::get_instance()->current_job()->input_tag());
 
 	sessionOP db_session(
-		get_db_session(database_filename_, database_mode_));
+		get_db_session(database_filename_, database_mode_, true));
 
 	stringstream sql_stmt;
 	sql_stmt

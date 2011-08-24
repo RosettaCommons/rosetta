@@ -65,19 +65,25 @@ using std::stringstream;
   // Currently only supports SQLite3 and mysqldatabase databases
   sessionOP
   DatabaseSessionManager::get_session(
-		std::string const & db_fname
+	  std::string const & db_fname,
+	  bool const readonly
 	){
 		sessionOP s(new session());
+		if(readonly){
+			s->open("sqlite3:mode=readonly;db="+FileName(db_fname).name());
+		} else {
+			// for non-readonly databases, each node writes connects to it's own database file indexed by rank
 #ifdef USEMPI
-		stringstream part_db_fname;
-		int mpi_rank(0);
-		MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+			stringstream part_db_fname;
+			int mpi_rank(0);
+			MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
 
-		part_db_fname << FileName(db_fname).name() << "_" << mpi_rank;
-		s->open("sqlite3:db="+part_db_fname.str());
+			part_db_fname << FileName(db_fname).name() << "_" << mpi_rank;
+			s->open("sqlite3:db="+part_db_fname.str());
 #else
-		s->open("sqlite3:db="+FileName(db_fname).name());
+			s->open("sqlite3:db="+FileName(db_fname).name());
 #endif
+		}
 		return s;
   }
 

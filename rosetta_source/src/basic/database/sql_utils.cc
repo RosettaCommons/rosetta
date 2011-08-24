@@ -15,41 +15,52 @@
 #include <basic/options/keys/mysql.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
+
+using std::string;
+
 namespace basic {
 namespace database {
 
-utility::sql_database::sessionOP get_db_session(std::string const & db_name)
-{
+utility::sql_database::sessionOP get_db_session(
+	string const & db_name,
+	bool const readonly
+){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	std::string db_mode(option[inout::database_mode]);
-	return get_db_session(db_name,db_mode);
+	string db_mode(option[inout::database_mode]);
+	return get_db_session(db_name, db_mode, readonly);
 }
 
-utility::sql_database::sessionOP get_db_session(std::string const & db_name, std::string const & db_mode)
-{
+utility::sql_database::sessionOP get_db_session(
+	string const & db_name,
+	string const & db_mode,
+	bool const readonly
+){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	//std::string db_mode(option[inout::database_mode]);
+	//string db_mode(option[inout::database_mode]);
 	if(db_mode == "sqlite3"){
 
 		if(option[mysql::host].user() || option[mysql::user].user() || option[mysql::password].user() || option[mysql::port].user())
 		{
 			utility_exit_with_message("you have specified mysql server options, but are running in sqlite3 mode, spefcify -inout:database_mode mysql to rectify this.");
 		}
-		utility::sql_database::sessionOP db_session(utility::sql_database::DatabaseSessionManager::get_instance()->get_session(db_name));
+		utility::sql_database::sessionOP db_session(utility::sql_database::DatabaseSessionManager::get_instance()->get_session(db_name, readonly));
 		return db_session;
 	}else if(db_mode == "mysql")
 	{
 #ifndef USEMYSQL
 		utility_exit_with_message("if you want to use a mysql database, build with extras=mysql");
 #endif
+		if(readonly){
+			utility_exit_with_message("Restricting access to a mysql database is done at the user level rather that the connection level. So requesting a readonly connection cannot fullfilled.");
+		}
 		if(option[mysql::host].user() && option[mysql::user].user() && option[mysql::password].user() && option[mysql::port].user())
 		{
-			std::string host(option[mysql::host]);
-			std::string user(option[mysql::user]);
-			std::string password(option[mysql::password]);
+			string host(option[mysql::host]);
+			string user(option[mysql::user]);
+			string password(option[mysql::password]);
 			platform::Size port(option[mysql::port]);
 
 

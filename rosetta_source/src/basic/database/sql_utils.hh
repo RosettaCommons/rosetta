@@ -18,8 +18,14 @@
 namespace basic {
 namespace database {
 
-utility::sql_database::sessionOP get_db_session(std::string const & db_name);
-utility::sql_database::sessionOP get_db_session(std::string const & db_name, std::string const & db_mode);
+utility::sql_database::sessionOP get_db_session(
+	std::string const & db_name,
+	bool const readonly = false);
+
+utility::sql_database::sessionOP get_db_session(
+	std::string const & db_name,
+	std::string const & db_mode,
+	bool const readonly = false);
 }
 }
 
