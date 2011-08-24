@@ -145,9 +145,9 @@ struct IsctFast {
 	bool test(core::kinematics::Stub const & s) {
 		for(vector1<Vec>::const_iterator ia = pnt.begin(); ia != pnt.end(); ++ia) {
 			Vec const V = s.local2global(*ia);
-			int const ix = (int)ceil(V.x()/BIN)-xlb;
-			int const iy = (int)ceil(V.y()/BIN)-ylb;
-			int const iz = (int)ceil(V.z()/BIN)-zlb;
+			int const ix = (int)ceil(V.x()/BIN)-(int)xlb;
+			int const iy = (int)ceil(V.y()/BIN)-(int)ylb;
+			int const iz = (int)ceil(V.z()/BIN)-(int)zlb;
 			if( 1 < iy && iy < ysz && 1 < iz && iz < zsz ) {
 				if( gxl(iy,iz).x() > V.x() ) gxl(iy,iz) = V;
 				if( gxu(iy,iz).x() < V.x() ) gxu(iy,iz) = V;
@@ -199,8 +199,8 @@ sicfast(
   ymx = min(ymx,ymx1); ymn = max(ymn,ymn1);
 
 
-  int xlb = floor(xmn/BIN)-2; int xub = ceil(xmx/BIN)+2; // one extra on each side for correctness,pppp
-  int ylb = floor(ymn/BIN)-2; int yub = ceil(ymx/BIN)+2; // and one extra for outside atoms
+  int xlb = (int)floor(xmn/BIN)-2; int xub = (int)ceil(xmx/BIN)+2; // one extra on each side for correctness,pppp
+  int ylb = (int)floor(ymn/BIN)-2; int yub = (int)ceil(ymx/BIN)+2; // and one extra for outside atoms
 
   // TR << "BOUNDS " << xmn << " " << xmx << " " << ymn << " " << ymx << std::endl;
   // TR << "BOUNDS " << xlb << " " << xub << " " << ylb << " " << yub << std::endl;

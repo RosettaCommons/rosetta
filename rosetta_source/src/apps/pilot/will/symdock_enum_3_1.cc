@@ -924,8 +924,8 @@ void run( Size itrifile, Size ipntfile ) {
               } else {
                 pntmn = pntmnneg[ipnt/ANGLE_INCR+1];
                 trimn = trimnneg[itri/ANGLE_INCR+1];
-                int dp = (-dpnt+pntmn)*10+1;
-                int dt = (-dtri+trimn)*10+1;
+                int dp = (int)(-dpnt+pntmn)*10+1;
+                int dt = (int)(-dtri+trimn)*10+1;
                 if( dp < 1 ) { continue; };
                 if( dt < 1 ) { continue; };
                 // if(ipnt==18 && itri==72 && iori==276)
