@@ -199,7 +199,7 @@ estimate_density_1d_wrap <-function(
 	extended_min_count=min_count*3
   compute_density <- function(factor_df){
     if (nrow(factor_df) < extended_min_count){
-      return( data.frame(x=seq(xlim[1], xlim[2], n_pts), y=0))
+      return( data.frame(x=seq(xlim[1], xlim[2], length.out=n_pts), y=0))
     } else {
       weights <- weight_fun(factor_df[,variable])
 			d <- density(x=factor_df[,variable], from=xlim[1], to=xlim[2], n=extended_n_pts,
@@ -215,7 +215,69 @@ estimate_density_1d_wrap <-function(
 }
 
 
+estimate_density_1d_reflect_boundary <-function(
+  data,
+  ids,
+  variable,
+  weight_fun=uniform_normalization,
+  min_count=20,
+  n_pts=200,
+	reflect_left=FALSE,
+	reflect_right=FALSE,
+  left_boundary=NULL,
+	right_boundary=NULL,
+  ...){
+	if(!(class(data) == "data.frame")){
+		stop(paste("The data argument must be a data.frame, instead it is of class '", class(data), "'"))
+	}
+	for(id in ids){
+		if(!(id %in% names(data))){
+			stop(paste("The id variable '", id, "' is not a column name of the data. The ids are used to group the data instances for computing the density estimation.", sep=""))
+		}
+	}
+	if(!(variable %in% names(data))){
+		stop(paste("The value variable '", variable, "' is not a column name of the data. The value variable is used to compute the density estimation.", sep=""))
+	}
 
+	if(is.null(left_boundary)){
+		left_boundary=min(data[,variable])
+	}
+	if(is.null(right_boundary)){
+		right_boundary=max(data[,variable])
+	}
+
+	extended_factor = 1
+
+	if(reflect_left==TRUE){
+		data_lower <- data
+		data_lower[,variable] <- 2*left_boundary - data[,variable]
+		data <- rbind(data, data_lower)
+		extended_factor = extended_factor + 1
+	}
+
+	if(reflect_right==TRUE){
+		data_upper <- data
+		data_upper[,variable] <- 2*right_boundary - data[,variable]
+		data <- rbind(data, data_upper)
+		extended_factor = extended_factor + 1
+	}
+  compute_density <- function(factor_df){
+			if (nrow(factor_df) < min_count*extended_factor){
+				return(data.frame(x=seq(left_boundary, right_boundary, length.out=n_pts), y=0, counts=nrow(factor_df)))
+    } else {
+      weights <- weight_fun(factor_df[,variable])
+			d <- density(x=factor_df[,variable], from=left_boundary, to=right_boundary, n=n_pts*extended_factor,
+				weights=weights,
+        ...)
+
+			return(data.frame(
+				x=d$x[left_boundary <= d$x & d$x <= right_boundary],
+				y=d$y[left_boundary <= d$x & d$x <= right_boundary]*extended_factor,
+				counts=nrow(factor_df)/extended_factor))
+    }
+  }
+	ddply(data, ids, compute_density)
+}
 
 
 estimate_density_1d_logspline <-function(
