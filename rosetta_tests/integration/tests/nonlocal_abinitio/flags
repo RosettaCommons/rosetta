@@ -1,8 +1,7 @@
 # nonlocal
--nonlocal:builder star
 -nonlocal:min_chunk_size 9
 -nonlocal:max_chunk_size 21
--abinitio:relax true
+-abinitio:relax false
 
 # target options
 -frag3 cs_frags.3mers.gz
@@ -26,7 +25,7 @@
 
 # sampling
 -abinitio:temperature 2.0
--abinitio:increase_cycles 0.1
+-abinitio:increase_cycles 0.05
 -abinitio:rg_reweight 0.25
 
 # evaluation
