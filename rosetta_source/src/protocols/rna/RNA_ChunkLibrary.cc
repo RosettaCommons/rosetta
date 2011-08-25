@@ -89,7 +89,7 @@ namespace rna{
 		core::pose::MiniPose const & scratch_pose ( *(mini_pose_list_[ chunk_pose_index ]) );
 
 		//		TR << "SCRATCH_POSE " << scratch_pose.sequence() << ' ' << scratch_pose.fold_tree() << std::endl;
-		copy_dofs( pose, scratch_pose, res_map_, false  /*copy_dofs_for_junction_residues*/ );
+		copy_dofs( pose, scratch_pose, res_map_ ); //, false  /*copy_dofs_for_junction_residues*/ );
 
 	}
 
