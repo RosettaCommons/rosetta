@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/nonlocal/BrokenRefine.hh
+/// @file protocols/nonlocal/BrokenFold.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_BROKENREFINE_HH_
-#define PROTOCOLS_NONLOCAL_BROKENREFINE_HH_
+#ifndef PROTOCOLS_NONLOCAL_BROKENFOLD_HH_
+#define PROTOCOLS_NONLOCAL_BROKENFOLD_HH_
 
 // Unit header
-#include <protocols/nonlocal/BrokenRefine.fwd.hh>
+#include <protocols/nonlocal/BrokenFold.fwd.hh>
 
 // C/C++ headers
 #include <string>
@@ -30,13 +30,13 @@
 namespace protocols {
 namespace nonlocal {
 
-/// @class Broken-chain refinement protocol specialized for NonlocalAbinitio.
-/// Movers are enqueued in the constructor and executed in order in the base
+/// @class Broken-chain protocol for NonlocalAbinitio. Movers are
+/// enqueued in the constructor and executed in order in the base
 /// class. If specialization is required, simply override apply().
-class BrokenRefine : public BrokenBase {
+class BrokenFold : public BrokenBase {
  public:
-  BrokenRefine(core::fragment::FragSetOP fragments_small,
-               core::kinematics::MoveMapOP movable);
+  BrokenFold(core::fragment::FragSetOP fragments_small,
+						 core::kinematics::MoveMapOP movable);
 
   /// @brief Returns the name of this mover
   std::string get_name() const;
@@ -49,4 +49,4 @@ class BrokenRefine : public BrokenBase {
 }  // namespace nonlocal
 }  // namespace protocols
 
-#endif  // PROTOCOLS_NONLOCAL_BROKENREFINE_HH_
+#endif  // PROTOCOLS_NONLOCAL_BROKENFOLD_HH_

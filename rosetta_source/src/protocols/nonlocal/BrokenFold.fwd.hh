@@ -7,22 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/nonlocal/BrokenRefine.fwd.hh
+/// @file protocols/nonlocal/BrokenFold.fwd.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_BROKENREFINE_FWD_HH_
-#define PROTOCOLS_NONLOCAL_BROKENREFINE_FWD_HH_
+#ifndef PROTOCOLS_NONLOCAL_BROKENFOLD_FWD_HH_
+#define PROTOCOLS_NONLOCAL_BROKENFOLD_FWD_HH_
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace protocols {
 namespace nonlocal {
 
-class BrokenRefine;
-typedef utility::pointer::owning_ptr<BrokenRefine> BrokenRefineOP;
-typedef utility::pointer::owning_ptr<BrokenRefine const> BrokenRefineCOP;
+class BrokenFold;
+typedef utility::pointer::owning_ptr<BrokenFold> BrokenFoldOP;
+typedef utility::pointer::owning_ptr<BrokenFold const> BrokenFoldCOP;
 
 }  // namespace nonlocal
 }  // namespace protocols
 
-#endif  // PROTOCOLS_NONLOCAL_BROKENREFINE_FWD_HH_
+#endif  // PROTOCOLS_NONLOCAL_BROKENFOLD_FWD_HH_

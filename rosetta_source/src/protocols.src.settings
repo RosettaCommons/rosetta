@@ -17,7 +17,7 @@ sources = {
 	"protocols/nonlocal" : [
 		"BoundaryFinder",
 		"BrokenBase",
-		"BrokenRefine",
+		"BrokenFold",
 		"Chunk",
 		"CutFinder",
 		"ExtendedPoseMover",

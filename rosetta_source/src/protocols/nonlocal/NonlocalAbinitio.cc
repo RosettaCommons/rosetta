@@ -60,7 +60,7 @@
 // Package headers
 #include <protocols/nonlocal/BoundaryFinder.hh>
 #include <protocols/nonlocal/BrokenBase.hh>
-#include <protocols/nonlocal/BrokenRefine.hh>
+#include <protocols/nonlocal/BrokenFold.hh>
 #include <protocols/nonlocal/NLFragment.hh>
 #include <protocols/nonlocal/NLFragmentGroup.hh>
 #include <protocols/nonlocal/NLGrouping.hh>
@@ -181,7 +181,7 @@ void NonlocalAbinitio::apply(core::pose::Pose& pose) {
 
   // Perform fragment-based assembly
   emit_intermediate(pose, "nla_pre_abinitio.pdb");
-  MoverOP mover = new BrokenRefine(fragments_small(), movable);
+  MoverOP mover = new BrokenFold(fragments_small(), movable);
   mover->apply(pose);
   emit_intermediate(pose, "nla_post_abinitio.pdb");
 

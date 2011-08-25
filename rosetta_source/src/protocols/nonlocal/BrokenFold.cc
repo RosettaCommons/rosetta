@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/nonlocal/BrokenRefine.cc
+/// @file protocols/nonlocal/BrokenFold.cc
 /// @author Christopher Miles (cmiles@uw.edu)
 
 // Unit headers
-#include <protocols/nonlocal/BrokenRefine.hh>
+#include <protocols/nonlocal/BrokenFold.hh>
 
 // C/C++ headers
 #include <string>
@@ -40,7 +40,7 @@
 namespace protocols {
 namespace nonlocal {
 
-BrokenRefine::BrokenRefine(core::fragment::FragSetOP fragments,
+BrokenFold::BrokenFold(core::fragment::FragSetOP fragments,
                            core::kinematics::MoveMapOP movable) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
@@ -66,7 +66,7 @@ BrokenRefine::BrokenRefine(core::fragment::FragSetOP fragments,
   }
 }
 
-core::Size BrokenRefine::num_cycles(int stage) {
+core::Size BrokenFold::num_cycles(int stage) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   assert(stage >= 0);
@@ -76,8 +76,8 @@ core::Size BrokenRefine::num_cycles(int stage) {
   return static_cast<core::Size>(cycles);
 }
 
-std::string BrokenRefine::get_name() const {
-  return "BrokenRefine";
+std::string BrokenFold::get_name() const {
+  return "BrokenFold";
 }
 
 }  // namespace nonlocal
