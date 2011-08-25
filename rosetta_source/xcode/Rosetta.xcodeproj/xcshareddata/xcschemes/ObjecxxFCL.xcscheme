@@ -16,20 +16,6 @@
                BlueprintIdentifier = "BEDC3F980CA84E43000FAD97"
                BuildableName = "libObjecxxFCL.a"
                BlueprintName = "ObjecxxFCL"
-               ReferencedContainer = "container:mini-native.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "BEDC3F980CA84E43000FAD97"
-               BuildableName = "libObjecxxFCL.a"
-               BlueprintName = "ObjecxxFCL"
                ReferencedContainer = "container:Rosetta.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

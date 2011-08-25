@@ -16,20 +16,6 @@
                BlueprintIdentifier = "D1FD035B0E2851B800B3C702"
                BuildableName = "libprotocols.a"
                BlueprintName = "protocols"
-               ReferencedContainer = "container:mini-native.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D1FD035B0E2851B800B3C702"
-               BuildableName = "libprotocols.a"
-               BlueprintName = "protocols"
                ReferencedContainer = "container:Rosetta.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

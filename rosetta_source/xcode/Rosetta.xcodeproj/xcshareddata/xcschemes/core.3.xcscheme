@@ -16,20 +16,6 @@
                BlueprintIdentifier = "D139B7E213687E0F0030829C"
                BuildableName = "libcore.3.a"
                BlueprintName = "core.3"
-               ReferencedContainer = "container:mini-native.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D139B7E213687E0F0030829C"
-               BuildableName = "libcore.3.a"
-               BlueprintName = "core.3"
                ReferencedContainer = "container:Rosetta.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

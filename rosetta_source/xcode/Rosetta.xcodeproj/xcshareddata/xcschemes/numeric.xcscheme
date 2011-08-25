@@ -16,20 +16,6 @@
                BlueprintIdentifier = "BEDC40E70CA8592F000FAD97"
                BuildableName = "libnumeric.a"
                BlueprintName = "numeric"
-               ReferencedContainer = "container:mini-native.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "BEDC40E70CA8592F000FAD97"
-               BuildableName = "libnumeric.a"
-               BlueprintName = "numeric"
                ReferencedContainer = "container:Rosetta.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

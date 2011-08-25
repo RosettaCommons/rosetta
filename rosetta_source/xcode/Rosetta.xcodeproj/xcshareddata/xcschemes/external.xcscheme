@@ -16,20 +16,6 @@
                BlueprintIdentifier = "D1120FFF136B62F3000B9DB5"
                BuildableName = "libexternal.a"
                BlueprintName = "external"
-               ReferencedContainer = "container:mini-native.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D1120FFF136B62F3000B9DB5"
-               BuildableName = "libexternal.a"
-               BlueprintName = "external"
                ReferencedContainer = "container:Rosetta.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

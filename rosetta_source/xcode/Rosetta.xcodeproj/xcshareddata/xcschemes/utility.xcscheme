@@ -16,20 +16,6 @@
                BlueprintIdentifier = "BEDC3FBA0CA84F63000FAD97"
                BuildableName = "libutility.a"
                BlueprintName = "utility"
-               ReferencedContainer = "container:mini-native.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "BEDC3FBA0CA84F63000FAD97"
-               BuildableName = "libutility.a"
-               BlueprintName = "utility"
                ReferencedContainer = "container:Rosetta.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

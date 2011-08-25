@@ -6,6 +6,20 @@
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
+            buildForTesting = "NO"
+            buildForRunning = "NO"
+            buildForProfiling = "YES"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3D3A99E613ECDF980081959A"
+               BuildableName = "docking_protocol"
+               BlueprintName = "docking_protocol"
+               ReferencedContainer = "container:mini-native.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "YES"
             buildForProfiling = "YES"
@@ -17,20 +31,6 @@
                BuildableName = "docking_protocol"
                BlueprintName = "docking_protocol"
                ReferencedContainer = "container:Rosetta.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "NO"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3D3A99E613ECDF980081959A"
-               BuildableName = "docking_protocol"
-               BlueprintName = "docking_protocol"
-               ReferencedContainer = "container:mini-native.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
