@@ -11,7 +11,6 @@
 /// @brief HelixAssemblyMover methods implemented
 /// @author Tim Jacobs
 
-
 //Unit headers
 #include <devel/init.hh>
 #include <apps/pilot/tjacobs/HelixAssemblyMover.hh>
@@ -63,6 +62,7 @@
 #include <utility/excn/EXCN_Base.hh>
 #include <utility/vector1.functions.hh>
 #include <utility/vector1.hh>
+#include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 #include <numeric/xyzVector.hh>
 
@@ -105,14 +105,20 @@ static basic::Tracer TR("HelixAssemblyMover");
 
 //application specific options
 namespace HelixAssembly{
-        basic::options::FileOptionKey const query_structure_path( "query_structure" ); //
-        basic::options::FileOptionKey const frag1_path( "frag1" ); //
-        basic::options::FileOptionKey const frag2_path( "frag2" ); //
-        basic::options::RealOptionKey const single_helix_rmsd_cutoff( "single_helix_rmsd_cutoff" );
-        basic::options::RealOptionKey const helix_pair_rmsd_cutoff( "helix_pair_rmsd_cutoff" );
-        basic::options::RealOptionKey const helix_cap_distance_cutoff( "helix_cap_distance_cutoff" );
-        basic::options::RealOptionKey const helix_contact_distance_cutoff( "helix_contact_distance_cutoff" );
-        basic::options::IntegerOptionKey const minimum_helix_contacts( "minimum_helix_contacts" );
+  basic::options::FileOptionKey const foobar( "foobar" ); //
+
+  basic::options::FileOptionKey const query_structure_path( "query_structure" ); //
+  basic::options::IntegerOptionKey const frag1_start( "frag1_start" ); //
+  basic::options::IntegerOptionKey const frag1_end( "frag1_end" ); //
+  basic::options::IntegerOptionKey const frag2_start( "frag2_start" ); //
+  basic::options::IntegerOptionKey const frag2_end( "frag2_end" ); //
+  basic::options::FileOptionKey const frag2_path( "frag2" ); //
+  basic::options::RealOptionKey const single_helix_rmsd_cutoff( "single_helix_rmsd_cutoff" );
+  basic::options::RealOptionKey const helix_pair_rmsd_cutoff( "helix_pair_rmsd_cutoff" );
+  basic::options::RealOptionKey const helix_cap_distance_cutoff( "helix_cap_distance_cutoff" );
+  basic::options::RealOptionKey const helix_contact_distance_cutoff( "helix_contact_distance_cutoff" );
+  basic::options::IntegerOptionKey const minimum_helix_contacts( "minimum_helix_contacts" );
+  basic::options::IntegerOptionKey const helices_to_add("helices_to_add");
 }
 
 ///@brief
@@ -128,14 +134,24 @@ HelixAssemblyMover::HelixAssemblyMover() :
 
 HelixAssemblyMover::~HelixAssemblyMover(){}
 
-std::string HelixAssemblyMover::get_frag1_path() const
+core::Size HelixAssemblyMover::get_frag1_start() const
 {
-    return frag1_path_;
+    return frag1_start_;
 }
 
-std::string HelixAssemblyMover::get_frag2_path() const
+core::Size HelixAssemblyMover::get_frag2_start() const
 {
-    return frag2_path_;
+    return frag2_start_;
+}
+
+core::Size HelixAssemblyMover::get_frag1_end() const
+{
+    return frag1_end_;
+}
+
+core::Size HelixAssemblyMover::get_frag2_end() const
+{
+    return frag2_end_;
 }
 
 Real HelixAssemblyMover::get_helix_cap_distance_cutoff() const
@@ -163,19 +179,34 @@ std::string HelixAssemblyMover::get_query_structure_path() const
     return query_structure_path_;
 }
 
+std::string HelixAssemblyMover::get_query_structure_string() const
+{
+    return query_structure_string_;
+}
+
 Real HelixAssemblyMover::get_single_helix_rmsd_cutoff() const
 {
     return single_helix_rmsd_cutoff_;
 }
 
-void HelixAssemblyMover::set_frag1_path(std::string frag1_path_)
+void HelixAssemblyMover::set_frag1_start(core::Size frag1_start_)
 {
-    this->frag1_path_ = frag1_path_;
+    this->frag1_start_ = frag1_start_;
 }
 
-void HelixAssemblyMover::set_frag2_path(std::string frag2_path_)
+void HelixAssemblyMover::set_frag2_start(core::Size frag2_start_)
 {
-    this->frag2_path_ = frag2_path_;
+    this->frag2_start_ = frag2_start_;
+}
+
+void HelixAssemblyMover::set_frag1_end(core::Size frag1_end_)
+{
+    this->frag1_end_ = frag1_end_;
+}
+
+void HelixAssemblyMover::set_frag2_end(core::Size frag2_end_)
+{
+    this->frag2_end_ = frag2_end_;
 }
 
 void HelixAssemblyMover::set_helix_cap_distance_cutoff(Real helix_cap_distance_cutoff_)
@@ -203,6 +234,11 @@ void HelixAssemblyMover::set_query_structure_path(std::string query_structure_pa
     this->query_structure_path_ = query_structure_path_;
 }
 
+void HelixAssemblyMover::set_query_structure_string(std::string query_structure_string_)
+{
+    this->query_structure_string_ = query_structure_string_;
+}
+
 void HelixAssemblyMover::set_single_helix_rmsd_cutoff(Real single_helix_rmsd_cutoff_)
 {
     this->single_helix_rmsd_cutoff_ = single_helix_rmsd_cutoff_;
@@ -210,8 +246,10 @@ void HelixAssemblyMover::set_single_helix_rmsd_cutoff(Real single_helix_rmsd_cut
 
 void HelixAssemblyMover::init_from_options(){
   set_query_structure_path(basic::options::option[HelixAssembly::query_structure_path]);
-  set_frag1_path(basic::options::option[HelixAssembly::frag1_path]);
-  set_frag2_path(basic::options::option[HelixAssembly::frag2_path]);
+  set_frag1_start(basic::options::option[HelixAssembly::frag1_start]);
+  set_frag2_start(basic::options::option[HelixAssembly::frag2_start]);
+  set_frag1_end(basic::options::option[HelixAssembly::frag1_end]);
+  set_frag2_end(basic::options::option[HelixAssembly::frag2_end]);
   set_single_helix_rmsd_cutoff(basic::options::option[HelixAssembly::single_helix_rmsd_cutoff]);
   set_query_structure_path(basic::options::option[HelixAssembly::query_structure_path]);
   set_minimum_helix_contacts(basic::options::option[HelixAssembly::minimum_helix_contacts]);
@@ -480,19 +518,37 @@ void HelixAssemblyMover::superimposeBundles(Pose & pose1, Pose const & pose2){
 }
 
 ///@details
-void HelixAssemblyMover::apply( Pose & pose ){
+utility::vector1<std::string> HelixAssemblyMover::apply( Pose & pose ){
+
+  cout << "In apply!" << endl;
+
+  utility::vector1<std::string> returnPdbs;
+///DEBUG////
+//  stringstream foo;
+//  pose.dump_pdb(foo, "");
+//  std::string bar = foo.str();
+//  returnPdbs.push_back(bar);
+//  return returnPdbs;
+////END DEBUG////
 
   utility::file::FileName filename (pose.pdb_info()->name());
   TR << "working on file: " << filename << "\n";
   std::string baseOutputName = filename.base() + "_hit_";
 
   Pose fullQueryStructure;
-  Pose helixFragment1;
-  Pose helixFragment2;
 
-  core::import_pose::pose_from_pdb(fullQueryStructure, get_query_structure_path(), false);
-  core::import_pose::pose_from_pdb(helixFragment1, get_frag1_path(), false);
-  core::import_pose::pose_from_pdb(helixFragment2, get_frag2_path(), false);
+//  core::import_pose::pose_from_pdb(fullQueryStructure, get_query_structure_path(), false);
+//  core::import_pose::pose_from_pdb(helixFragment1, get_frag1_path(), false);
+//  core::import_pose::pose_from_pdb(helixFragment2, get_frag2_path(), false);
+
+//  if(get_query_structure_string() != "" ){
+      core::import_pose::pose_from_pdbstring(fullQueryStructure, get_query_structure_string());
+//  }
+//  else{
+//      core::import_pose::pose_from_pdb(fullQueryStructure, get_query_structure_path(), false);
+//  }
+  Pose helixFragment1(fullQueryStructure, get_frag1_start(), get_frag1_end());
+  Pose helixFragment2(fullQueryStructure, get_frag2_start(), get_frag2_end());
 
   //set up dssp info - necessary in order to find helices based on secondary structure
   core::scoring::dssp::Dssp dssp( pose );
@@ -526,19 +582,6 @@ void HelixAssemblyMover::apply( Pose & pose ){
 
           Real carmsd;
 
-//          TR << "fragment 1: " << fragment1Results[i] << endl;
-//          TR << "fragment 2: " << fragment2Results[j] << endl;
-//          fragment1.dump_pdb("fragment1.pdb");
-//          fragment2.dump_pdb("fragment2.pdb");
-//          combinedResultFragments.dump_pdb("combined.pdb");
-//          exit(1);
-
-//          TR << "fragment 1: " << fragment1Results[i] << endl;
-//          TR << "fragment 2: " << fragment2Results[j] << endl;
-
-
-          //Do the combined fragments match the full query structure
-//          if(bbrmsd <= rmsd_cutoff_){
           if(bbrmsd <= helix_pair_rmsd_cutoff_){
 
               TR << "combined bb_atom RMSD(" << i << ", " << j << "): " << bbrmsd << endl;
@@ -557,40 +600,84 @@ void HelixAssemblyMover::apply( Pose & pose ){
                   Pose threeHelixBundle = combinePoses(fullQueryStructure, thirdHelix);
 
                   //output
-                  std::string threeHelixOutput = baseOutputName + utility::to_string(resultsCounter) +
-                      "_threeHelix_" + utility::to_string(threeHelixCounter) +".pdb";
-                  TR << "outputting file: " << threeHelixOutput << "\n";
-                  threeHelixBundle.dump_pdb(threeHelixOutput);
-                  threeHelixCounter++;
+//                  std::string threeHelixOutput = baseOutputName + utility::to_string(resultsCounter) +
+//                      "_threeHelix_" + utility::to_string(threeHelixCounter) +".pdb";
+//                  TR << "outputting file: " << threeHelixOutput << "\n";
+                  stringstream tempStream;
+                  threeHelixBundle.dump_pdb(tempStream, "");
+                  std::string outputPdbString = tempStream.str();
+                  returnPdbs.push_back(outputPdbString);
+//                  threeHelixCounter++;
               }
 
               resultsCounter++;
           }
       }
   }
-
+  return returnPdbs;
 }//apply
 
 // run protocol
-int
-main( int argc, char * argv [] )
-{
-        using namespace basic::options;
-        using namespace basic::options::OptionKeys;
-
-        option.add( HelixAssembly::query_structure_path, "" );
-        option.add( HelixAssembly::frag1_path, "" );
-        option.add( HelixAssembly::frag2_path, "" );
-        option.add( HelixAssembly::single_helix_rmsd_cutoff, "");
-        option.add( HelixAssembly::helix_pair_rmsd_cutoff, "");
-        option.add( HelixAssembly::helix_cap_distance_cutoff, "");
-        option.add( HelixAssembly::helix_contact_distance_cutoff, "");
-        option.add( HelixAssembly::minimum_helix_contacts, "");
-
-        // initialize core
-        devel::init(argc, argv);
-
-        protocols::jd2::JobDistributor::get_instance()->go( new HelixAssemblyMover() );
-
-        std::cout << "Done! -------------------------------\n";
-}
+//int
+//main( int argc, char * argv [] )
+//{
+//        using namespace basic::options;
+//        using namespace basic::options::OptionKeys;
+//        using namespace core;
+//        using namespace std;
+//
+//        option.add( HelixAssembly::query_structure_path, "" );
+//        option.add( HelixAssembly::frag1_start, "" );
+//        option.add( HelixAssembly::frag1_end, "" );
+//        option.add( HelixAssembly::frag2_start, "" );
+//        option.add( HelixAssembly::frag2_end, "" );
+//        option.add( HelixAssembly::single_helix_rmsd_cutoff, "");
+//        option.add( HelixAssembly::helix_pair_rmsd_cutoff, "");
+//        option.add( HelixAssembly::helix_cap_distance_cutoff, "");
+//        option.add( HelixAssembly::helix_contact_distance_cutoff, "");
+//        option.add( HelixAssembly::minimum_helix_contacts, "");
+//
+//        option.add( HelixAssembly::foobar, "");
+//
+//        // initialize core
+//        devel::init(argc, argv);
+//
+//        utility::vector1< std::string > inputFile( option[ HelixAssembly::foobar ].value() );
+//
+//        utility::vector1<std::string> pdbsToSearch;
+//
+//        for ( size_t i=1; i<= inputFile.size(); ++i ) {
+//            utility::io::izstream data( inputFile[i].c_str() );
+//            if ( !data.good() ) {
+//                utility_exit_with_message("unable to open input file file: "+inputFile[i]+"\n");
+//            }
+//            while ( data.good() ) {
+//                std::string name;
+//                data.getline(name);
+//                if ( data.good() ) pdbsToSearch.push_back( name );
+//            }
+//        }
+//
+//        TR << "TEST: " << pdbsToSearch[1];
+//
+//        Pose temp;
+//        core::import_pose::pose_from_pdb(temp, pdbsToSearch[1], false);
+//
+//        HelixAssemblyMover helixAssembler;
+//        utility::vector1<std::string> outputPdbs = helixAssembler.apply(temp);
+//
+//        std::TR << "number of pdbs to output: " << outputPdbs.size() << std::endl;
+//        for(core::Size i=1; i<=outputPdbs.size(); i++){
+//            utility::io::ozstream outputFile("horrayHelixes_" + utility::to_string(i) + ".pdb");
+//            outputFile << outputPdbs[i];
+//            outputFile.close();
+//        }
+//        std::TR << "Done! -------------------------------\n";
+////
+//        // initialize core
+//        devel::init(argc, argv);
+////
+////        protocols::jd2::JobDistributor::get_instance()->go( new HelixAssemblyMover() );
+////
+////        std::TR << "Done! -------------------------------\n";
+//}

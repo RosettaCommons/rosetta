@@ -19,7 +19,8 @@
 #include <protocols/moves/Mover.hh>
 
 //mover definition
-class HelixAssemblyMover : public protocols::moves::Mover {
+//class HelixAssemblyMover : public protocols::moves::Mover {
+class HelixAssemblyMover {
 public:
 
         ///@brief
@@ -31,21 +32,27 @@ public:
           return "HelixAssemblyMover";
         }
 
-        std::string get_frag1_path() const;
-        std::string get_frag2_path() const;
+        core::Size get_frag1_start() const;
+        core::Size get_frag1_end() const;
+        core::Size get_frag2_start() const;
+        core::Size get_frag2_end() const;
         core::Real get_helix_cap_distance_cutoff() const;
         core::Real get_helix_contact_distance_cutoff() const;
         core::Real get_helix_pair_rmsd_cutoff() const;
         core::Size get_minimum_helix_contacts() const;
         std::string get_query_structure_path() const;
+        std::string get_query_structure_string() const;
         core::Real get_single_helix_rmsd_cutoff() const;
-        void set_frag1_path(std::string frag1_path_);
-        void set_frag2_path(std::string frag2_path_);
+        void set_frag1_start(core::Size frag1_start_);
+        void set_frag2_start(core::Size frag2_start_);
+        void set_frag1_end(core::Size frag1_end_);
+        void set_frag2_end(core::Size frag2_end_);
         void set_helix_cap_distance_cutoff(core::Real helix_cap_distance_cutoff_);
         void set_helix_contact_distance_cutoff(core::Real helix_contact_distance_cutoff_);
         void set_helix_pair_rmsd_cutoff(core::Real helix_pair_rmsd_cutoff_);
         void set_minimum_helix_contacts(core::Size minimum_helix_contacts_);
         void set_query_structure_path(std::string query_structure_path_);
+        void set_query_structure_string(std::string query_structure_string_);
         void set_single_helix_rmsd_cutoff(core::Real single_helix_rmsd_cutoff_);
 
         void init_from_options();
@@ -62,14 +69,17 @@ public:
 
         void superimposeBundles(core::pose::Pose & pose1, const core::pose::Pose & pose2);
 
-        virtual void apply(core::pose::Pose & pose);
+        utility::vector1<std::string> apply(core::pose::Pose & pose);
 
 
 private:
 
-        std::string frag1_path_;
-        std::string frag2_path_;
+        core::Size frag1_start_;
+        core::Size frag1_end_;
+        core::Size frag2_start_;
+        core::Size frag2_end_;
         std::string query_structure_path_;
+        std::string query_structure_string_;
         core::Real single_helix_rmsd_cutoff_;
         core::Real helix_pair_rmsd_cutoff_;
         core::Real helix_cap_distance_cutoff_;
