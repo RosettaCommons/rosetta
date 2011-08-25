@@ -9,9 +9,11 @@
 
 check_setup()
 
-plot_id <- "SSDists_Helix"
+plot_id <- "SSDists_Helix_seqsep_gte1"
 
+# new idiom: union select
 sele <-"
+CREATE TEMPORARY TABLE ee_atpair_dists AS
 SELECT
   dist.N_N_dist,   dist.N_Ca_dist,  dist.N_C_dist,   dist.N_O_dist,
   dist.Ca_N_dist,  dist.Ca_Ca_dist, dist.Ca_C_dist,  dist.Ca_O_dist,
@@ -26,70 +28,79 @@ WHERE
   dist.struct_id = r2ss.struct_id AND
   dist.resNum1 = r1ss.resNum AND
   dist.resNum2 = r2ss.resNum AND
+  dist.resNum1 + 1 != dist.resNum2 AND
   r1ss.dssp = 'H' AND r2ss.dssp = 'H'
-LIMIT 10000;"
+LIMIT 1000000;
+SELECT
+  'N' as at1, 'N' as at2, N_N_dist as dist FROM ee_atpair_dists
+UNION
+SELECT
+  'N' as at1, 'CA' as at2, N_Ca_dist as dist FROM ee_atpair_dists
+UNION
+SELECT
+  'N' as at1, 'CA' as at2, Ca_N_dist as dist FROM ee_atpair_dists
+UNION
+SELECT
+  'N' as at1, 'C' as at2, N_C_dist as dist FROM ee_atpair_dists
+UNION
+SELECT
+  'N' as at1, 'C' as at2, C_N_dist as dist FROM ee_atpair_dists
+UNION
+SELECT
+  'N' as at1, 'O' as at2, N_O_dist as dist FROM ee_atpair_dists
+UNION
+SELECT
+  'N' as at1, 'O' as at2, O_N_dist as dist FROM ee_atpair_dists
+UNION
+SELECT
+  'CA' as at1, 'CA' as at2, Ca_Ca_dist as dist FROM ee_atpair_dists
+UNION
+SELECT
+  'CA' as at1, 'C' as at2, Ca_C_dist as dist FROM ee_atpair_dists
+UNION
+SELECT
+  'CA' as at1, 'C' as at2, C_Ca_dist as dist FROM ee_atpair_dists
+UNION
+SELECT
+  'CA' as at1, 'O' as at2, Ca_O_dist as dist FROM ee_atpair_dists
+UNION
+SELECT
+  'CA' as at1, 'O' as at2, O_Ca_dist as dist FROM ee_atpair_dists
+UNION
+SELECT
+  'C' as at1, 'C' as at2, C_C_dist as dist FROM ee_atpair_dists
+UNION
+SELECT
+  'C' as at1, 'O' as at2, C_O_dist as dist FROM ee_atpair_dists
+UNION
+SELECT
+  'C' as at1, 'O' as at2, O_C_dist as dist FROM ee_atpair_dists
+UNION
+SELECT
+  'O' as at1, 'O' as at2, O_O_dist as dist FROM ee_atpair_dists;"
 
 f <- query_sample_sources(sample_sources, sele)
 
+print("factoring atom name labels")
+
+f$at1 <- factor(f$at1,
+  levels = c("N", "CA", "C", "O") )
+f$at2 <- factor(f$at2,
+  levels = c("N", "CA", "C", "O") )
+
 print(summary(f))
 
-n_n_dists <- function( df ) {
-  data.frame( sample_source=c(df$sample_source), at1=c("N"), at2=c("N"), dist=c(df$N_N_dist) )
-}
-n_ca_dists <- function( df ) {
-  data.frame( sample_source=c(df$sample_source,df$sample_source), at1=c("N","N"), at2=c("CA","CA"), dist=c(df$N_Ca_dist, df$Ca_N_dist) )
-}
-n_c_dists <- function( df ) {
-  data.frame( sample_source=c(df$sample_source,df$sample_source), at1=c("N","N"), at2=c("C","C"), dist=c(df$N_C_dist, df$C_N_dist) )
-}
-n_o_dists <- function( df ) {
-  data.frame( sample_source=c(df$sample_source,df$sample_source), at1=c("N","N"), at2=c("O","O"), dist=c(df$N_O_dist, df$O_N_dist) )
-}
-ca_ca_dists <- function( df ) {
-  data.frame( sample_source=c(df$sample_source), at1=c("CA"), at2=c("CA"), dist=c(df$Ca_Ca_dist) )
-}
-ca_c_dists <- function( df ) {
-  data.frame( sample_source=c(df$sample_source,df$sample_source), at1=c("CA","CA"), at2=c("C","C"), dist=c(df$Ca_C_dist, df$C_Ca_dist) )
-}
-ca_o_dists <- function( df ) {
-  data.frame( sample_source=c(df$sample_source,df$sample_source), at1=c("CA","CA"), at2=c("O","O"), dist=c(df$Ca_O_dist, df$O_Ca_dist) )
-}
-c_c_dists <- function( df ) {
-  data.frame( sample_source=c(df$sample_source), at1=c("C"), at2=c("C"), dist=c(df$C_C_dist) )
-}
-c_o_dists <- function( df ) {
-  data.frame( sample_source=c(df$sample_source,df$sample_source), at1=c("C","C"), at2=c("O","O"), dist=c(df$C_O_dist, df$O_C_dist) )
-}
-o_o_dists <- function( df ) {
-  data.frame( sample_source=c(df$sample_source), at1=c("O"), at2=c("O"), dist=c(df$O_O_dist) )
-}
-
-f1 = adply( f, 1, n_n_dists )
-f2 = adply( f, 1, n_ca_dists )
-f3 = adply( f, 1, n_c_dists )
-f4 = adply( f, 1, n_o_dists )
-f5 = adply( f, 1, ca_ca_dists )
-f6 = adply( f, 1, ca_c_dists )
-f7 = adply( f, 1, ca_o_dists )
-f8 = adply( f, 1, c_c_dists )
-f9 = adply( f, 1, c_o_dists )
-f10 = adply( f, 1, o_o_dists )
-
-g = rbind( f1, f2, f3, f4, f5, f6, f7, f8, f9, f10 )
-
-print(summary(g))
-
 dens <- estimate_density_1d(
-  g, c("sample_source", "at1", "at2"),
+  f, c("sample_source", "at1", "at2"),
   "dist", weight_fun = radial_3d_normalization)
 
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +
 	facet_grid(at1 ~ at2) +
-	opts(title = "Backbone atom atom distances involving helical residues\nnormalized for equal weight per unit distance") +
-	scale_y_log10("FeatureDensity", limits=c(1e-4,1e0)) +
-	scale_x_continuous(expression(paste('Atom Atom Distances (', ring(A), ')')), limits=c(1.5,8), breaks=2:8)
+	opts(title = "Backbone atom atom distances involving helix residues\nnormalized for equal weight per unit distance") +
+	scale_y_log10("FeatureDensity", limits=c(1e-3,1e0)) +
+	scale_x_continuous(expression(paste('Atom Atom Distances (', ring(A), ')')), limits=c(1.5,7), breaks=2:7)
 
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")

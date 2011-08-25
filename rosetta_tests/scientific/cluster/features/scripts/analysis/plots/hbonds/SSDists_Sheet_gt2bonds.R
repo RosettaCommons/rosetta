@@ -9,12 +9,14 @@
 
 check_setup()
 
-plot_id <- "SSDists_Sheet_seqsep_gte1"
+plot_id <- "SSDists_Sheet_gt2bonds"
 
 # new idiom: union select
 sele <-"
-CREATE TEMPORARY TABLE ee_atpair_dists AS
+CREATE TEMPORARY TABLE bbdists AS
 SELECT
+  dist.resNum1,
+	dist.resNum2,
   dist.N_N_dist,   dist.N_Ca_dist,  dist.N_C_dist,   dist.N_O_dist,
   dist.Ca_N_dist,  dist.Ca_Ca_dist, dist.Ca_C_dist,  dist.Ca_O_dist,
   dist.C_N_dist,   dist.C_Ca_dist,  dist.C_C_dist,   dist.C_O_dist,
@@ -28,55 +30,55 @@ WHERE
   dist.struct_id = r2ss.struct_id AND
   dist.resNum1 = r1ss.resNum AND
   dist.resNum2 = r2ss.resNum AND
-  dist.resNum1 + 1 != dist.resNum2 AND
-  r1ss.dssp = 'E' AND r2ss.dssp = 'E';
+  r1ss.dssp = 'H' AND r2ss.dssp = 'H'
+LIMIT 1000000;
 SELECT
-  'N' as at1, 'N' as at2, N_N_dist as dist FROM ee_atpair_dists
+  'N' as at1, 'N' as at2, N_N_dist as dist FROM bbdists
 UNION
 SELECT
-  'N' as at1, 'CA' as at2, N_Ca_dist as dist FROM ee_atpair_dists
+  'N' as at1, 'CA' as at2, N_Ca_dist as dist FROM bbdists
 UNION
 SELECT
-  'N' as at1, 'CA' as at2, Ca_N_dist as dist FROM ee_atpair_dists
+  'N' as at1, 'CA' as at2, Ca_N_dist as dist FROM bbdists WHERE bbdists.resNum1 + 1 != bbdists.resNum2
 UNION
 SELECT
-  'N' as at1, 'C' as at2, N_C_dist as dist FROM ee_atpair_dists
+  'N' as at1, 'C' as at2, N_C_dist as dist FROM bbdists
 UNION
 SELECT
-  'N' as at1, 'C' as at2, C_N_dist as dist FROM ee_atpair_dists
+  'N' as at1, 'C' as at2, C_N_dist as dist FROM bbdists WHERE bbdists.resNum1 + 1 != bbdists.resNum2
 UNION
 SELECT
-  'N' as at1, 'O' as at2, N_O_dist as dist FROM ee_atpair_dists
+  'N' as at1, 'O' as at2, N_O_dist as dist FROM bbdists
 UNION
 SELECT
-  'N' as at1, 'O' as at2, O_N_dist as dist FROM ee_atpair_dists
+  'N' as at1, 'O' as at2, O_N_dist as dist FROM bbdists WHERE bbdists.resNum1 + 1 != bbdists.resNum2
 UNION
 SELECT
-  'CA' as at1, 'CA' as at2, Ca_Ca_dist as dist FROM ee_atpair_dists
+  'CA' as at1, 'CA' as at2, Ca_Ca_dist as dist FROM bbdists
 UNION
 SELECT
-  'CA' as at1, 'C' as at2, Ca_C_dist as dist FROM ee_atpair_dists
+  'CA' as at1, 'C' as at2, Ca_C_dist as dist FROM bbdists
 UNION
 SELECT
-  'CA' as at1, 'C' as at2, C_Ca_dist as dist FROM ee_atpair_dists
+  'CA' as at1, 'C' as at2, C_Ca_dist as dist FROM bbdists WHERE bbdists.resNum1 + 1 != bbdists.resNum2
 UNION
 SELECT
-  'CA' as at1, 'O' as at2, Ca_O_dist as dist FROM ee_atpair_dists
+  'CA' as at1, 'O' as at2, Ca_O_dist as dist FROM bbdists
 UNION
 SELECT
-  'CA' as at1, 'O' as at2, O_Ca_dist as dist FROM ee_atpair_dists
+  'CA' as at1, 'O' as at2, O_Ca_dist as dist FROM bbdists
 UNION
 SELECT
-  'C' as at1, 'C' as at2, C_C_dist as dist FROM ee_atpair_dists
+  'C' as at1, 'C' as at2, C_C_dist as dist FROM bbdists
 UNION
 SELECT
-  'C' as at1, 'O' as at2, C_O_dist as dist FROM ee_atpair_dists
+  'C' as at1, 'O' as at2, C_O_dist as dist FROM bbdists
 UNION
 SELECT
-  'C' as at1, 'O' as at2, O_C_dist as dist FROM ee_atpair_dists
+  'C' as at1, 'O' as at2, O_C_dist as dist FROM bbdists
 UNION
 SELECT
-  'O' as at1, 'O' as at2, O_O_dist as dist FROM ee_atpair_dists;"
+  'O' as at1, 'O' as at2, O_O_dist as dist FROM bbdists;"
 
 f <- query_sample_sources(sample_sources, sele)
 
@@ -95,7 +97,7 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +
 	facet_grid(at1 ~ at2) +
-	opts(title = "Backbone atom atom distances involving beta-sheet residues\nnormalized for equal weight per unit distance") +
+	opts(title = "Backbone atom atom distances involving sheet residues (w/ > 2 bond separation)\nnormalized for equal weight per unit distance") +
 	scale_y_log10("FeatureDensity", limits=c(1e-3,1e0)) +
 	scale_x_continuous(expression(paste('Atom Atom Distances (', ring(A), ')')), limits=c(1.5,7), breaks=2:7)
 
