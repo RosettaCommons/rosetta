@@ -175,7 +175,7 @@ void DockingHighResLegacy::set_min_type( std::string min_type_in ) { min_type_ =
 
 void DockingHighResLegacy::set_repack( bool repack_switch){ repack_switch_ = repack_switch;}
 
-void DockingHighResLegacy::set_init_task_factory( core::pack::task::TaskFactoryOP task )
+void DockingHighResLegacy::set_task_factory( core::pack::task::TaskFactoryOP task )
 {
 	init_task_factory_ = task;
 }
@@ -683,7 +683,7 @@ void DockingHighResLegacy::setup_packing( core::pose::Pose & pose ) {
 
 	// note that RestrictToInterfaceOperation is added during set_dock_mcm_protocol
 
-	set_task_factory( local_tf );
+    DockingHighRes::set_task_factory( local_tf );
 }
 
 std::string

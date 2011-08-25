@@ -29,6 +29,7 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <protocols/toolbox/task_operations/RestrictToInterface.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>  // Needs to be the full header so the scorefxn can default to NULL
 #include <core/kinematics/FoldTree.hh>
@@ -129,7 +130,7 @@ public:
 	void set_use_legacy_protocol( bool const use_legacy_protocol );
 	void set_cst_weight( core::Real const cst_weight );
 	void set_use_constraints( bool const use_csts );
-
+    void set_interface_definition_task_operation( protocols::toolbox::task_operations::RestrictToInterfaceOP interface_definition );
 	virtual void apply( core::pose::Pose & pose );
 
 	// score_only is no longer implemented.  It remains here until a decision is made about what to do with it.

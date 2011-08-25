@@ -75,7 +75,7 @@ public:
 	void set_min_type( std::string min_type_in );
 	void set_repack( bool repack_switch);
 	void set_protocol( core::pose::Pose & pose );
-	void set_init_task_factory( core::pack::task::TaskFactoryOP task );
+	virtual void set_task_factory( core::pack::task::TaskFactoryOP task );
 
 	void define_loops( core::pose::Pose const & pose, loops::Loops & loop_set, Real & interface_dist );
 

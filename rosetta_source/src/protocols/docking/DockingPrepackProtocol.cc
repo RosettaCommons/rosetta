@@ -140,7 +140,7 @@ void DockingPrepackProtocol::finalize_setup( pose::Pose & pose ) {
 	// jumps based on the partner flag!!!!
 	// Possible breaking of code, needs to get changed later
 	docking::setup_foldtree( pose, partners(), movable_jumps() );
-	tf2()->set_restrict2interface(false);
+	tf2()->set_prepack_only(true);
 	tf2()->create_and_attach_task_factory( this, pose );
 	setup_pack_operation_movers();
 }

@@ -73,7 +73,8 @@ DockTaskFactory::DockTaskFactory( DockTaskFactory const & old_instance ) : utili
 	norepack1_ = old_instance.norepack1_;
 	norepack2_ = old_instance.norepack2_;
 	design_chains_ = old_instance.design_chains_;
-	restrict_2_interface_ = true;
+	prepack_only_ = old_instance.prepack_only_;
+    restrict_to_interface_ = old_instance.restrict_to_interface_;
 }
 //destructor
 DockTaskFactory::~DockTaskFactory() {}
@@ -81,19 +82,21 @@ DockTaskFactory::~DockTaskFactory() {}
 void
 DockTaskFactory::set_default()
 {
-	restrict_2_interface_ = true;
+	prepack_only_ = false;
 	norepack1_ = false;
 	norepack2_ = false;
 	resfile_ = false;
 	//design_chains_ = utility::tools::make_vector1( NULL );
 	design_chains_.clear();
-
+    
+    restrict_to_interface_ = new toolbox::task_operations::RestrictToInterface();
+    
 	// @TODO needs to change so that these options can be set through setters and
 	// do not have to be called from the commandline
 	// the following should default to true always for docking
-//	ex1_ = true;
-//	ex2aro_ = true;
-//	include_input_sc_ = true;
+    //	ex1_ = true;
+    //	ex2aro_ = true;
+    //	include_input_sc_ = true;
 }
 
 void
@@ -132,6 +135,12 @@ DockTaskFactory::register_options()
 	option.add_relevant( OptionKeys::packing::resfile );
 }
 
+
+void DockTaskFactory::set_interface_definition_task_operation(  protocols::toolbox::task_operations::RestrictToInterfaceOP interface_definition )
+{
+    //restrict_to_interface_ = interface_definition;
+    return;
+}
 void
 DockTaskFactory::create_and_attach_task_factory(
 	DockingHighResOP docker,
@@ -183,8 +192,11 @@ DockTaskFactory::create_and_attach_task_factory(
 	//	core::pack::dunbrack::load_unboundrot(pose); // adds scoring bonuses for the "unbound" rotamers, if any
 
 	// note that RestrictToInterfaceOperation is added during set_dock_mcm_protocol
-	if(restrict_2_interface_) tf->push_back( new RestrictToInterface( docker->movable_jumps() ) );  //JQX: add restrict to interface, the Legacy code used this in the initial packing as well
-	docker->set_task_factory(tf);
+	if( !prepack_only_ ){
+        restrict_to_interface_->set_movable_jumps( docker->movable_jumps() );
+        tf->push_back( restrict_to_interface_ );  //JQX: add restrict to interface, the Legacy code used this in the initial packing as well
+	}
+    docker->set_task_factory(tf);
 }
 
 

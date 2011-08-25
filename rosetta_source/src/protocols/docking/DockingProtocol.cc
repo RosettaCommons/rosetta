@@ -518,10 +518,9 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 
 	// set relevant information to legacy high res mover
 	if ( docking_highres_mover_ ) {
-		if ( docking_highres_mover_->get_name() == "DockingHighResLegacy" ) {
+		if ( docking_highres_mover_->get_name() == "DockingHighResLegacy" && design_ ) {
 			DockingHighResLegacy* legacy_mover = dynamic_cast< DockingHighResLegacy* >(docking_highres_mover_.get());
-			if ( init_task_factory_  ) legacy_mover->set_init_task_factory( init_task_factory_ );
-			if ( design_ ) legacy_mover->design( design_ );
+			legacy_mover->design( design_ );
 		}
 		// passes the task factory down the chain and allows setting of the default docking task
 		if ( init_task_factory_  ){
@@ -654,6 +653,14 @@ void DockingProtocol::set_use_constraints( bool const use_csts )
 	}
 }
 
+void DockingProtocol::set_interface_definition_task_operation( protocols::toolbox::task_operations::RestrictToInterfaceOP interface_definition )
+{
+    assert ( !low_res_protocol_only_ );
+    if ( !docking_highres_mover_ ){
+        sync_objects_with_flags();
+    }
+    docking_highres_mover_->set_interface_definition_task_operation( interface_definition );
+}
 /// @brief setup the constrainta for each application of the docking protocol
 void DockingProtocol::setup_constraints( pose::Pose & pose )
 {

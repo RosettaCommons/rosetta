@@ -219,6 +219,9 @@ void RestrictToInterface::rb_jump( int jump_in ) {
 	rb_jump_.push_back( jump_in );
 }
 
+void RestrictToInterface::set_movable_jumps( utility::vector1_size const movable_jumps ) {
+    rb_jump_ = movable_jumps;
+}
 void RestrictToInterface::distance( core::Real const distance_in ) {
 	distance_ = distance_in;
 }

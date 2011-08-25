@@ -138,7 +138,7 @@ void DockingEnsemblePrepackProtocol::setup_pack_operation_movers()
 
 void DockingEnsemblePrepackProtocol::finalize_setup( pose::Pose & pose ) {
 	setup_foldtree( pose, partners(), movable_jumps() );
-	tf2()->set_restrict2interface(false);
+	tf2()->set_prepack_only(true);
 	tf2()->create_and_attach_task_factory( this, pose );
 	setup_pack_operation_movers();
 

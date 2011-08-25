@@ -146,6 +146,7 @@ public:
 
 	virtual TaskOperationOP clone() const;
 	void rb_jump( int jump_in );
+    void set_movable_jumps( utility::vector1_size const movable_jumps );
 	void distance( core::Real const distance_in );
 	void symmetric_task( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
 

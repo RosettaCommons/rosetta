@@ -23,6 +23,8 @@
 // Package headers
 #include <protocols/docking/DockingHighRes.hh>
 
+
+#include <protocols/toolbox/task_operations/RestrictToInterface.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -67,9 +69,10 @@ public:
 	void set_norepack1( bool norepack1 ) { norepack1_=norepack1; }
 	void set_norepack2( bool norepack2 ) { norepack2_=norepack2; }
 	void set_design_chains( utility::vector1< char > design_chains ) { design_chains_ = design_chains; }
+    void set_interface_definition_task_operation( protocols::toolbox::task_operations::RestrictToInterfaceOP interface_definition );
 	bool get_norepack1() const { return norepack1_; }
 	bool get_norepack2() const { return norepack2_; }
-	void set_restrict2interface(bool restrict_2_interface) {restrict_2_interface_ = restrict_2_interface ;} //JQX: add this function, one can decide to do restrict2interface
+	void set_prepack_only( bool prepack_only ) { prepack_only_ = prepack_only;} //JQX: add this function, one can decide to do restrict2interface
 
 private:
 	// commandline args
@@ -77,7 +80,9 @@ private:
 	bool norepack1_;
 	bool norepack2_;
 	utility::vector1< char > design_chains_;
-	bool restrict_2_interface_;  //JQX
+	bool prepack_only_;  //JQX
+    
+    toolbox::task_operations::RestrictToInterfaceOP restrict_to_interface_;
 
 //	core::pack::task::TaskFactoryOP init_tf_;
 };
