@@ -12,6 +12,7 @@
 			<feature name=PairFeatures/>
 			<feature name=PoseCommentsFeatures/>
 			<feature name=PoseConformationFeatures/>
+			<feature name=ProteinBackboneAtomAtomPairFeatures/>
 			<feature name=ProteinResidueConformationFeatures/>
 			<feature name=ProteinRMSDFeatures reference_name=init_struct/>
 			<feature name=RadiusOfGyrationFeatures/>
@@ -20,7 +21,7 @@
 			<feature name=ResidueSecondaryStructureFeatures/>
 			<feature name=ResidueTypesFeatures/>
 			<feature name=RotamerRecoveryFeatures scorefxn=s/>
-			<feature name=StructureScoresFeatures/>
+			<feature name=StructureScoresFeatures scorefxn=s/>
                 </ReportToDB>
         </MOVERS>
         <PROTOCOLS>

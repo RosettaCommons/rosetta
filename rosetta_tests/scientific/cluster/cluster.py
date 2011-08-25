@@ -31,13 +31,13 @@ Please note that this script is for debuging/testing purposes only, it is not us
     parser.set_description(main.__doc__)
     parser.add_option("-d", "--database",
       default="", # processed below
-      help="Path to Rosetta database. (default: $ROSETTA3_DB, ~/minirosetta_database)",
+      help="Path to Rosetta database. (default: $ROSETTA3_DB, ~/rosetta_database)",
     )
 
     parser.add_option("-m", "--mini_home",
       #default=path.join( path.expanduser("~"), "mini"),
-      default = path.dirname( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ) ),
-      help="Directory where Mini is found (default: ../)",
+      default = path.dirname( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ) ) + "/rosetta_source",
+      help="Directory where Mini is found (default: ../../../rosetta_source)",
     )
 
     parser.add_option("--mode",
@@ -78,8 +78,8 @@ Please note that this script is for debuging/testing purposes only, it is not us
         if environ.get('ROSETTA3_DB') is not None and \
                 path.isdir(environ.get('ROSETTA3_DB')):
             options.database = environ.get('ROSETTA3_DB')
-        elif path.isdir( path.join( path.expanduser("~"), "minirosetta_database") ):
-            options.database = path.join( path.expanduser("~"), "minirosetta_database")
+        elif path.isdir( path.join( path.expanduser("~"), "rosetta_database") ):
+            options.database = path.join( path.expanduser("~"), "rosetta_database")
         else:
             print "Can't find database at %s; please set $ROSETTA3_DB or use -d" % options.database
             return 1

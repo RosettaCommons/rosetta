@@ -15,6 +15,12 @@ top4400
 # The top4400 chains dataset where each structure is FastRelaxed
 top4400_relax
 
+# The top8000 chains dataset
+#top8000
+
+# The top8000 chains dataset where each structure is FastRelaxed
+#top8000_relax
+
 # Rosetta ab initio structure predictions with lr5 rmsd to native normalizationn with score12prime weight set
 abrelax
 
@@ -22,7 +28,7 @@ abrelax
 abrelax_correct
 
 # Rosetta Kinimatic Loop Closure structure predictions with the score12prime weight set
-kic
+#kic
 
 # Rosetta FlexPepDock structure predictions with score12prime weight set
 #flex_pep_dock
