@@ -700,7 +700,7 @@ void init(int argc, char * argv [])
 		char * descr = getenv("ROSETTA3_DB");
 		if (descr) {
 			TR << "found database environment variable ROSETTA3_DB: "<< descr << std::endl;
-			basic::options::option[ basic::options::OptionKeys::in::path::database ].def( descr );
+			basic::options::option[ basic::options::OptionKeys::in::path::database ].value( descr );
 		} else {
 			TR << "ROSETTA3_DB not defined" << std::endl;
 		}
