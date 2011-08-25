@@ -1010,7 +1010,7 @@ Residue::set_chi( int const chino, Real const setting )
 void
 Residue::set_all_chi( utility::vector1< Real > const & chis )
 {
-	// This works for now, but there's probably a faster implementation which only runs the coordinate update once.	
+	// This works for now, but there's probably a faster implementation which only runs the coordinate update once.
 	for(Size i=1; i<= nchi(); i++) {
 		set_chi( i, chis[i] );
 	}
@@ -1104,6 +1104,14 @@ std::ostream & operator << ( std::ostream & os, Atom const & atom )
 {
 	os << "Atom type:" << atom.type() << " xyz:" << atom.xyz().x() << ' ' << atom.xyz().y() << ' ' << atom.xyz().z();
 	return os;
+}
+
+////////////////////////////////////////////////
+bool
+Residue::is_virtual( Size const & atomno ) const
+{
+	assert( atom_type_set().atom_type_index( "VIRT" )  == atom_type_set().n_atomtypes() );
+	return ( (int)atom( atomno ).type() == (int)atom_type_set().n_atomtypes() );
 }
 
 } // conformation

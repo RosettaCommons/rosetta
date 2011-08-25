@@ -177,6 +177,9 @@ public:
 		return rsd_type_.atomic_charge( atomno );
 	}
 
+	/// @brief  Check atom is virtual based on number of atom type.
+	bool
+	is_virtual( Size const & atomno ) const;
 
 	/// @brief Returns the index number of the  <atm>  in this residue
 	/// example: residue.atom_index("CA") returns 2 for a normal amino acid
@@ -782,7 +785,7 @@ public:
 	/// @brief Returns the index number of this residue's atom connected to the  <other>  Residue
 	///
 	/// example(s):
-	/// 
+	///
 	/// See also:
 	///     Residue
 	///     Residue.atom
@@ -797,7 +800,7 @@ public:
 	/// @brief Returns the shortest path distance from  <atom>  to any other atom in this residue
 	///
 	/// example(s):
-	/// 
+	///
 	/// See also:
 	///     Residue
 	///     Residue.atom
@@ -813,7 +816,7 @@ public:
 	/// example: path_distances()[atom1][atom2]
 	///
 	/// example(s):
-	/// 
+	///
 	/// See also:
 	///     Residue
 	///     Residue.atom
@@ -828,7 +831,7 @@ public:
 	/// @brief Returns the number of bonds separating atom  <at1>  from  <at2>
 	///
 	/// example(s):
-	/// 
+	///
 	/// See also:
 	///     Residue
 	///     Residue.atom
@@ -1371,9 +1374,9 @@ public:
 
 	/// @brief Sets the chi torsion angles of this residue
 	///
-	/// CAUTION: This function does not cause updating to any internal coordinate data. 
-	/// See Residue::set_chi() and Residue::set_all_chi() functions for 
-	/// versions which handle coordinate updates.  
+	/// CAUTION: This function does not cause updating to any internal coordinate data.
+	/// See Residue::set_chi() and Residue::set_all_chi() functions for
+	/// versions which handle coordinate updates.
 	///
 	/// example(s):
 	///
@@ -1614,6 +1617,13 @@ public:
 	is_aromatic() const
 	{
 		return rsd_type_.is_aromatic();
+	}
+
+	///@brief residue is coarse (used for RNA right now)
+	bool
+	is_coarse() const
+	{
+		return rsd_type_.is_coarse();
 	}
 
 	/// @brief Returns true if the residue has a terminus variant
