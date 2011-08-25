@@ -420,7 +420,8 @@ StepWiseRNA_PoseSetup::get_name() const {
 			}
 			//		std::cout <<  pose.annotated_sequence( true ) << " " << start_pose.annotated_sequence( true ) << std::endl;
 
-			copy_dofs( pose, start_pose, res_map, true /*copy_dofs_for_junction_residues*/ );
+			//copy_dofs( pose, start_pose, res_map, true /*copy_dofs_for_junction_residues*/ );
+			copy_dofs( pose, start_pose, res_map );
 
 			//		pose.dump_pdb( "copy_dof.pdb" );
 			std::cout << pose.fold_tree() << std::endl;

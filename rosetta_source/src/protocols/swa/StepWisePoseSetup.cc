@@ -187,7 +187,8 @@ namespace swa {
 
 			if ( verbose_ )		start_pose.dump_pdb( "MATCH_END.pdb" );
 
-			copy_dofs( pose, start_pose, res_map, true /*copy_dofs_for_junction_residues*/ );
+			//copy_dofs( pose, start_pose, res_map, true /*copy_dofs_for_junction_residues*/ );
+			copy_dofs( pose, start_pose, res_map );
 
 			fix_end_phi_psi( pose, start_pose, start_res, end_res );
 
