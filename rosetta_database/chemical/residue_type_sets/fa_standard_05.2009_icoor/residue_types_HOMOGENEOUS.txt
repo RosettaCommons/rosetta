@@ -1,0 +1,28 @@
+## the atom_type_set and mm-atom_type_set to be used for the subsequent parameter files
+ATOM_TYPE_SET fa_standard
+ELEMENT_SET fa_standard
+MM_ATOM_TYPE_SET fa_standard
+#CSD_ATOM_TYPE_SET fa_standard
+##
+residue_types/ALA.params
+residue_types/ARG.params
+residue_types/ASN.params
+residue_types/ASP.params
+residue_types/CYS.params
+residue_types/GLN.params
+residue_types/GLU.params
+residue_types/GLY.params
+residue_types/HIS.params
+residue_types/HIS_D.params
+residue_types/HIS_DE.params
+residue_types/ILE.params
+residue_types/LEU.params
+residue_types/LYS.params
+residue_types/MET.params
+residue_types/PHE.params
+residue_types/PRO.params
+residue_types/SER.params
+residue_types/THR.params
+residue_types/TRP.params
+residue_types/TYR.params
+residue_types/VAL.params
