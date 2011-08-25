@@ -12,11 +12,12 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_core_pose_MiniPose_hh
-#define INCLUDED_core_pose_MiniPose_hh
+#ifndef INCLUDED_core_pose_MiniPose_HH
+#define INCLUDED_core_pose_MiniPose_HH
 
 
 // type headers
+#include <core/pose/MiniPose.fwd.hh>
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <numeric/xyzVector.fwd.hh>
@@ -44,6 +45,10 @@ namespace pose {
 
 		MiniPose( core::pose::Pose const & pose );
 
+		MiniPose( utility::vector1< utility::vector1< PointPosition > > const & coords,
+							core::kinematics::FoldTree const & fold_tree,
+							std::string const & sequence );
+
 		~MiniPose(){};
 
 		core::kinematics::FoldTree const & fold_tree() const;
@@ -51,6 +56,8 @@ namespace pose {
 		utility::vector1< utility::vector1< PointPosition > > const & coords() const;
 
 		Size size() const;
+
+		Size total_residue() const;
 
 		std::string const & sequence() const;
 

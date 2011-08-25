@@ -254,22 +254,58 @@ bool compare_atom_coordinates(
 ///@brief A very useful function that copies degrees of freedom from one pose to another. res_map defines how to map residue numbers from the large pose to the smaller "scratch" pose.
 ///@author rhiju, 2009.
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+void
+copy_dofs(
+					pose::Pose & pose,
+					MiniPose const & scratch_pose,
+					core::pose::ResMap const & res_map );
+
 void
 copy_dofs(
 					pose::Pose & pose,
 					pose::Pose const & scratch_pose,
+					core::pose::ResMap const & res_map );
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+void
+copy_dofs_match_atom_names(
+					pose::Pose & pose,
+					Pose const & scratch_pose,
 					core::pose::ResMap const & res_map,
-					bool const copy_dofs_for_junction_residues = true
-					);
+					bool const backbone_only = false,
+					bool const ignore_virtual = true );
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+void
+copy_dofs(
+					pose::Pose & pose,
+					Pose const & scratch_pose,
+					std::map < id::AtomID , id::AtomID > const & atom_id_map);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
 copy_dofs(
 					pose::Pose & pose,
 					MiniPose const & scratch_pose,
-					core::pose::ResMap const & res_map,
-					bool const copy_dofs_for_junction_residues  = true
-					);
+					std::map < id::AtomID , id::AtomID > const & atom_id_map);
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+void
+copy_dofs(
+					pose::Pose & pose,
+					MiniPose const & scratch_pose,
+					std::map < id::AtomID , id::AtomID > const & atom_id_map );
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+void
+copy_dofs(
+					pose::Pose & pose,
+					MiniPose const & scratch_pose,
+					std::map < id::AtomID , id::AtomID > const & atom_id_map,
+					std::map< id::AtomID, Size > const & atom_id_domain_map  );
+
 
 ///////////////////////////////////////////////////////////////////
 bool
@@ -282,7 +318,17 @@ void
 setup_atom_id_map(
 									std::map < core::id::AtomID , core::id::AtomID > & atom_id_map,
 									core::pose::ResMap const & res_map,
-									core::pose::Pose & pose );
+									core::pose::Pose const & pose );
+
+///////////////////////////////////////////////////////////////////
+void
+setup_atom_id_map_match_atom_names(
+									std::map < core::id::AtomID , core::id::AtomID > & atom_id_map,
+									ResMap const & res_map,
+									core::pose::Pose const & pose,
+									core::pose::Pose const & reference_pose,
+									bool const backbone_only = false,
+									bool const ignore_virtual = true);
 
 id::NamedAtomID
 atom_id_to_named_atom_id(

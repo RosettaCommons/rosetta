@@ -43,7 +43,16 @@ namespace pose {
 		fold_tree_ = pose.fold_tree();
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////
+	MiniPose::MiniPose( utility::vector1< utility::vector1< PointPosition > > const & coords,
+											core::kinematics::FoldTree const & fold_tree,
+											std::string const & sequence ):
+		coords_( coords ),
+		fold_tree_( fold_tree ),
+		sequence_( sequence )
+	{}
 
+	//////////////////////////////////////////////////////////////////////////////////
 	core::kinematics::FoldTree const &
 	MiniPose::fold_tree() const{
 		return fold_tree_;
@@ -56,6 +65,11 @@ namespace pose {
 
 	Size
 	MiniPose::size() const {
+		return coords_.size();
+	}
+
+	Size
+	MiniPose::total_residue() const {
 		return coords_.size();
 	}
 

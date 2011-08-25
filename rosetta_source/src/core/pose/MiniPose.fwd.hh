@@ -11,8 +11,8 @@
 /// @brief  MiniPose forward declarations header
 /// @author Rhiju Das
 
-#ifndef INCLUDED_core_pose_MiniPose_fwd_hh
-#define INCLUDED_core_pose_MiniPose_fwd_hh
+#ifndef INCLUDED_core_pose_MiniPose_FWD_HH
+#define INCLUDED_core_pose_MiniPose_FWD_HH
 
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
