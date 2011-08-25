@@ -109,6 +109,15 @@ Size chi1_torsion_atom_index( conformation::Residue const & rsd ) {
 	return atom_indices[ 4 ]; /* C2' ... C1' ... first base atom ... chi1 torsion atom*/
 }
 
+
+///////////////////////////////////////////////////////////////////////////////
+std::string const	default_jump_atom( conformation::Residue const & rsd ) {
+	if ( rsd.is_RNA() && !rsd.is_coarse() ){
+		return chi1_torsion_atom( rsd );
+	}
+	return " Y  ";
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 bool
 possibly_canonical( chemical::AA const & aa1,  chemical::AA const & aa2 ) {
@@ -117,6 +126,17 @@ possibly_canonical( chemical::AA const & aa1,  chemical::AA const & aa2 ) {
 					 (aa1 == na_rcy && aa2 == na_rgu ) ||
 					 (aa1 == na_rgu && aa2 == na_ura ) ||
 					 (aa1 == na_ura && aa2 == na_rgu ) ||
+					 (aa1 == na_rad && aa2 == na_ura ) ||
+					 (aa1 == na_ura && aa2 == na_rad )  );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//no G-U
+bool
+possibly_canonical_strict( chemical::AA const & aa1,  chemical::AA const & aa2 ) {
+	using namespace core::chemical;
+	return ( (aa1 == na_rgu && aa2 == na_rcy ) ||
+					 (aa1 == na_rcy && aa2 == na_rgu ) ||
 					 (aa1 == na_rad && aa2 == na_ura ) ||
 					 (aa1 == na_ura && aa2 == na_rad )  );
 }

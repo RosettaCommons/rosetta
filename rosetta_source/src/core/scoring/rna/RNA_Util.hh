@@ -53,8 +53,13 @@ Size first_base_atom_index( conformation::Residue const & rsd );
 std::string const	chi1_torsion_atom( conformation::Residue const & rsd );
 Size chi1_torsion_atom_index( conformation::Residue const & rsd );
 
+std::string const	default_jump_atom( conformation::Residue const & rsd );
+
 bool
 possibly_canonical( chemical::AA const & aa1,  chemical::AA const & aa2 );
+
+bool
+possibly_canonical_strict( chemical::AA const & aa1,  chemical::AA const & aa2 );
 
 void
 get_watson_crick_base_pair_atoms(
