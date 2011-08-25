@@ -90,7 +90,7 @@ void NonlocalAbinitio::check_required_options() const {
     utility_exit_with_message(prefix + "in:file:frag9");
 }
 
-NonlocalAbinitio::NonlocalAbinitio(KinematicPolicy policy) {
+NonlocalAbinitio::NonlocalAbinitio() {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
 
@@ -102,14 +102,14 @@ NonlocalAbinitio::NonlocalAbinitio(KinematicPolicy policy) {
   NonlocalGroupings groupings;
   NonlocalAbinitioReader::read(option[OptionKeys::nonlocal::moves](), &groupings);
 
-  initialize(groupings, policy);
+  initialize(groupings);
 }
 
-NonlocalAbinitio::NonlocalAbinitio(const NonlocalGroupings& groupings, KinematicPolicy policy) {
-  initialize(groupings, policy);
+NonlocalAbinitio::NonlocalAbinitio(const NonlocalGroupings& groupings) {
+  initialize(groupings);
 }
 
-void NonlocalAbinitio::initialize(const NonlocalGroupings& groupings, KinematicPolicy policy) {
+void NonlocalAbinitio::initialize(const NonlocalGroupings& groupings) {
   using core::fragment::FragmentIO;
   using core::fragment::FragSetOP;
   using core::fragment::SecondaryStructure;
@@ -128,7 +128,6 @@ void NonlocalAbinitio::initialize(const NonlocalGroupings& groupings, KinematicP
   secondary_struct_ = new SecondaryStructure(*fragments_sm_);
 
   // Initialize members
-  kinematic_policy_ = policy;
   groupings_ = groupings;
 }
 
@@ -181,7 +180,7 @@ void NonlocalAbinitio::apply(core::pose::Pose& pose) {
   prepare_movemap(grouping, pose, movable);
 
   // Perform fragment-based assembly
-	emit_intermediate(pose, "nla_pre_abinitio.pdb");
+  emit_intermediate(pose, "nla_pre_abinitio.pdb");
   MoverOP mover = new BrokenRefine(fragments_small(), movable);
   mover->apply(pose);
   emit_intermediate(pose, "nla_post_abinitio.pdb");
@@ -236,16 +235,8 @@ void NonlocalAbinitio::prepare_movemap(const NLGrouping& grouping,
     }
   }
 
-  if (kinematic_policy() == RIGID) {
-    for (Size i = 1; i <= grouping.num_groups(); ++i) {
-      const NLFragmentGroup& group = grouping.groups(i);
-      for (Size j = group.start(); j <= group.stop(); ++j)
-        movable->set_bb(j, false);
-    }
-  }
-  movable->show(TR.Debug, pose.total_residue());
-
   // Explicitly flush the tracer's buffer
+  movable->show(TR.Debug, pose.total_residue());
   TR.Debug << std::endl;
 }
 
@@ -422,10 +413,6 @@ protocols::moves::MoverOP NonlocalAbinitio::fresh_instance() const {
 
 const NonlocalGroupings& NonlocalAbinitio::groupings() const {
   return groupings_;
-}
-
-NonlocalAbinitio::KinematicPolicy NonlocalAbinitio::kinematic_policy() const {
-  return kinematic_policy_;
 }
 
 core::fragment::FragSetOP NonlocalAbinitio::fragments_large() const {

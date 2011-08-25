@@ -493,16 +493,12 @@ option.add( basic::options::OptionKeys::chunk::pdb2, "file for chunk2" );
 option.add( basic::options::OptionKeys::chunk::loop2, "rigid region for chunk2" );
 option.add( basic::options::OptionKeys::nonlocal::nonlocal, "nonlocal option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::nonlocal::moves, "Enable non-local moves in the early stages of abinitio. File specifying groups of fragments to be applied simultaneously" );
-option.add( basic::options::OptionKeys::nonlocal::mode, "One of {rigid, semirigid}. Specifies how non-local abinitio should treat fragments" ).def("RIGID");
-option.add( basic::options::OptionKeys::nonlocal::builder, "One of {consecutive, simple, star}. Specifies how non-local abinitio should construct the fold tree" ).def("simple");
+option.add( basic::options::OptionKeys::nonlocal::builder, "One of {simple, star}. Specifies how non-local abinitio should construct the fold tree" ).def("star");
 option.add( basic::options::OptionKeys::nonlocal::randomize_missing, "Randomize the coordinates of missing loops. This occurs often in broken-chain folding from a sequence alignment and template pdb. Default value is false to preserve existing behavior in ThreadingJobInputter" ).def(false);
 option.add( basic::options::OptionKeys::nonlocal::gap_sampling_extension, "When constructing NLGrouping's from SequenceAlignments, extend gapped regions by at least 3 and at most N positions to enhance sampling" ).def(5);
 option.add( basic::options::OptionKeys::nonlocal::min_chunk_size, "Minimum allowable chunk size for comparative modeling inputs. At the very minimum, should be set to the smallest fragments used during the simulation." ).def(3);
 option.add( basic::options::OptionKeys::nonlocal::max_chunk_size, "Maximum allowable chunk size for comparative modeling inputs. If the chunk exceeds this threshold, it is recursively decomposed into smaller pieces." ).def(20);
 option.add( basic::options::OptionKeys::nonlocal::rdc_weight, "Weight for the rdc energy term in nonlocal abinitio protocol" ).def(5);
-option.add( basic::options::OptionKeys::nonlocal::ramp_constraints_cycles, "Ramp maximum sequence separation, linear chainbreak weight, and atom_pair_constraint weight every N cycles" ).def(100);
-option.add( basic::options::OptionKeys::nonlocal::ramp_chainbreaks, "Ramps the linear chainbreak term up within a stage of the simulation (intra) and up across stages of the simulation (inter)" ).def(true);
-option.add( basic::options::OptionKeys::nonlocal::ramp_constraints, "Ramps the atom pair constraint term up within a stage of the simulation (intra) and down across stages of the simulation (inter)" ).def(true);
 option.add( basic::options::OptionKeys::abinitio::prob_perturb_weights, "Probability of perturbing score function weights" ).lower(0).upper(1).def(0);
 option.add( basic::options::OptionKeys::abinitio::abinitio, "Ab initio mode" );
 option.add( basic::options::OptionKeys::abinitio::membrane, "will use the membrane abinitio protocol. sequential insertion of TMH" ).def(false);
@@ -564,12 +560,12 @@ option.add( basic::options::OptionKeys::abinitio::recover_low_in_stages, "say de
 option.add( basic::options::OptionKeys::abinitio::skip_stages, "say: 2 3 4, and it will skip stages 2 3 4" ).def(0);
 option.add( basic::options::OptionKeys::abinitio::close_chbrk, "Chain break closure during classic abinito " ).def(false);
 option.add( basic::options::OptionKeys::abinitio::include_stage5, "stage5 contains small moves only" ).def(false);
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::close_loops_by_idealizing, "close loops by idealizing the structure after stage 4" ).def(false);
+option.add( basic::options::OptionKeys::abinitio::close_loops_by_idealizing, "close loops by idealizing the structure after stage 4" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_using_kic, "optimize around cutpoints using kinematic relax" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_margin, "" ).def(5);
-option.add( basic::options::OptionKeys::abinitio::HD_EX_Info, "input list of residues with low amide protection " );
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::HD_EX_Info, "input list of residues with low amide protection " );
 option.add( basic::options::OptionKeys::abinitio::HD_penalty, "penatlty for each inconsistent pairing with HD data " ).def(0.1);
 option.add( basic::options::OptionKeys::abinitio::HD_fa_penalty, "penalty for each Hbond donor inconsistent with HD donor" ).def(0.1);
 option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with interior/exterior predictions for strands" );
@@ -1127,11 +1123,11 @@ option.add( basic::options::OptionKeys::packing::minpack_inner_iteration_scale, 
 option.add( basic::options::OptionKeys::packing::minpack_disable_bumpcheck, "Disable bump check in min pack (i.e. include rotamers that collide with the background." );
 option.add( basic::options::OptionKeys::phil::phil, "phil option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::phil::nloop, "No description" ).def(10);
+option.add( basic::options::OptionKeys::phil::vall_file, "No description" );
+option.add( basic::options::OptionKeys::phil::align_file, "No description" );
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::phil::vall_file, "No description" );
-option.add( basic::options::OptionKeys::phil::align_file, "No description" );
-option.add( basic::options::OptionKeys::wum::wum, "wum option group" ).legal(true).def(true);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::wum::wum, "wum option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::wum::n_slaves_per_master, "A value between 32 and 128 is usually recommended" ).def(64);
 option.add( basic::options::OptionKeys::wum::n_masters, "Manual override for -n_slaves_per_master. How many master nodes should be spawned ? 1 by default. generall 1 for eery 256-512 cores is recommended depending on master workload" ).def(1);
 option.add( basic::options::OptionKeys::wum::memory_limit, "Memory limit for queues (in kB) " ).def(0);
@@ -1690,10 +1686,10 @@ option.add( basic::options::OptionKeys::AnchoredDesign::filters::filters, "filte
 option.add( basic::options::OptionKeys::AnchoredDesign::filters::score, "do not print trajectories with scores greater than this total scorefunction value" ).def(0);
 option.add( basic::options::OptionKeys::AnchoredDesign::filters::sasa, "do not print trajectories with sasas less than this interface delta sasa value" ).def(500);
 option.add( basic::options::OptionKeys::AnchoredDesign::filters::omega, "filter out non-trans omegas" ).def(false);
+option.add( basic::options::OptionKeys::AnchoredDesign::akash::akash, "akash option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::AnchoredDesign::akash::akash, "akash option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::AnchoredDesign::akash::dyepos, "dye position" ).def(0);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::AnchoredDesign::akash::dyepos, "dye position" ).def(0);
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::testing, "testing option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::VDW_weight, "centroid VDW weight; testing if 2 better than 1" ).lower(0).def(1.0);
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_via_constraints, "allow anchor&jump to move; anchor held in place via constraints - you must specify constraints!" ).def(false);

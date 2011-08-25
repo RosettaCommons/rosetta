@@ -28,12 +28,8 @@
 #include <utility/excn/EXCN_Base.hh>
 #include <utility/vector1.hh>
 
-// External headers
-#include <boost/algorithm/string/case_conv.hpp>
-
 // C/C++ headers
 #include <iostream>
-#include <string>
 
 namespace protocols  {
 namespace nonlocal {
@@ -50,9 +46,6 @@ void* NonlocalAbinitio_main(void*) {
   using utility::vector1;
   using utility::excn::EXCN_Base;
 
-  // optional configuration
-  NonlocalAbinitio::KinematicPolicy policy = get_policy_or_die();
-
   MoverOP mover;
   if (option[in::file::alignment].user() &&
       option[in::file::template_pdb].user() &&
@@ -65,10 +58,10 @@ void* NonlocalAbinitio_main(void*) {
 
     vector1<NLGrouping> groupings;
     protocols::nonlocal::nonlocal_groupings_from_alignment(&groupings);
-    mover = new NonlocalAbinitio(groupings, policy);
+    mover = new NonlocalAbinitio(groupings);
   } else {
     // read groupings from options
-    mover = new NonlocalAbinitio(policy);
+    mover = new NonlocalAbinitio();
   }
 
   // hand the configured mover to the job distributor for execution
@@ -81,19 +74,6 @@ void* NonlocalAbinitio_main(void*) {
 
   // prevent "control may reach end of non-void function" warning
   return 0;
-}
-
-NonlocalAbinitio::KinematicPolicy get_policy_or_die() {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-
-  std::string mode = option[OptionKeys::nonlocal::mode]();
-  boost::to_lower(mode);
-  if (!(mode == "rigid" || mode == "semirigid"))
-    utility_exit_with_message("Invalid setting for option nonlocal:mode");
-
-  return (mode == "rigid")
-      ? NonlocalAbinitio::RIGID : NonlocalAbinitio::SEMI_RIGID;
 }
 
 }  // namespace nonlocal

@@ -1288,8 +1288,7 @@ Options = Option_Group( '',
   # Non-local information
   Option_Group('nonlocal',
 		Option( 'moves', 'File', desc="Enable non-local moves in the early stages of abinitio. File specifying groups of fragments to be applied simultaneously"),
-		Option( 'mode', 'String', desc="One of {rigid, semirigid}. Specifies how non-local abinitio should treat fragments", default="RIGID"),
-		Option( 'builder', 'String', desc="One of {consecutive, simple, star}. Specifies how non-local abinitio should construct the fold tree", default="simple"),
+		Option( 'builder', 'String', desc="One of {simple, star}. Specifies how non-local abinitio should construct the fold tree", default="star"),
 
     # Comparative modeling extensions
 		Option( 'randomize_missing', 'Boolean', desc = 'Randomize the coordinates of missing loops. This occurs often in broken-chain folding from a sequence alignment and template pdb. Default value is false to preserve existing behavior in ThreadingJobInputter', default = 'false'),
@@ -1299,11 +1298,6 @@ Options = Option_Group( '',
 
     # Experimental data extensions
 	  Option( 'rdc_weight', 'Real', desc = 'Weight for the rdc energy term in nonlocal abinitio protocol', default = '5'),
-
-    # Allows the user to specify whether and how various terms should be ramped during the simulation
-		Option( 'ramp_constraints_cycles', 'Integer', desc='Ramp maximum sequence separation, linear chainbreak weight, and atom_pair_constraint weight every N cycles', default='100'),
-    Option( 'ramp_chainbreaks', 'Boolean', desc='Ramps the linear chainbreak term up within a stage of the simulation (intra) and up across stages of the simulation (inter)', default='true'),
-    Option( 'ramp_constraints', 'Boolean', desc='Ramps the atom pair constraint term up within a stage of the simulation (intra) and down across stages of the simulation (inter)', default='true'),
   ),
 
 	# Ab initio mode -----------------------------------------------------------

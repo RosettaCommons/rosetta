@@ -2333,14 +2333,9 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Enable non-local moves in the early stages of abinitio. File specifying groups of fragments to be applied simultaneously</dd><br>
 </dl>
 <dl>
-<dt><b>-mode</b> \<String\><dt>
-<dd>One of {rigid, semirigid}. Specifies how non-local abinitio should treat fragments</dd><br>
-<dd>Default: "RIGID"</dd><br>
-</dl>
-<dl>
 <dt><b>-builder</b> \<String\><dt>
-<dd>One of {consecutive, simple, star}. Specifies how non-local abinitio should construct the fold tree</dd><br>
-<dd>Default: "simple"</dd><br>
+<dd>One of {simple, star}. Specifies how non-local abinitio should construct the fold tree</dd><br>
+<dd>Default: "star"</dd><br>
 </dl>
 <dl>
 <dt><b>-randomize_missing</b> \<Boolean\><dt>
@@ -2366,21 +2361,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-rdc_weight</b> \<Real\><dt>
 <dd>Weight for the rdc energy term in nonlocal abinitio protocol</dd><br>
 <dd>Default: 5</dd><br>
-</dl>
-<dl>
-<dt><b>-ramp_constraints_cycles</b> \<Integer\><dt>
-<dd>Ramp maximum sequence separation, linear chainbreak weight, and atom_pair_constraint weight every N cycles</dd><br>
-<dd>Default: 100</dd><br>
-</dl>
-<dl>
-<dt><b>-ramp_chainbreaks</b> \<Boolean\><dt>
-<dd>Ramps the linear chainbreak term up within a stage of the simulation (intra) and up across stages of the simulation (inter)</dd><br>
-<dd>Default: true</dd><br>
-</dl>
-<dl>
-<dt><b>-ramp_constraints</b> \<Boolean\><dt>
-<dd>Ramps the atom pair constraint term up within a stage of the simulation (intra) and down across stages of the simulation (inter)</dd><br>
-<dd>Default: true</dd><br>
 </dl>
  </li>
 <li><h2>abinitio</h2>

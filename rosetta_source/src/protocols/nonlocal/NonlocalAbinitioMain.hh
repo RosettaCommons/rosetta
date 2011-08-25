@@ -21,9 +21,6 @@ namespace nonlocal {
 /// @brief Primary entry point for NonlocalAbinitio protocol
 void* NonlocalAbinitio_main(void*);
 
-/// @brief Translates policy specification from options or die
-NonlocalAbinitio::KinematicPolicy get_policy_or_die();
-
 }  // namespace nonlocal
 }  // namespace protocols
 

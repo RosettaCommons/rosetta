@@ -1,4 +1,3 @@
-namespace AnchoredDesign { namespace akash { BooleanOptionKey const akash( "AnchoredDesign:akash" );  } }
 namespace AnchoredDesign { namespace akash { IntegerOptionKey const dyepos( "AnchoredDesign:akash:dyepos" );  } }
 namespace AnchoredDesign { namespace testing { BooleanOptionKey const testing( "AnchoredDesign:testing" );  } }
 namespace AnchoredDesign { namespace testing { RealOptionKey const VDW_weight( "AnchoredDesign:testing:VDW_weight" );  } }

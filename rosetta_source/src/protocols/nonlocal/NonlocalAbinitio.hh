@@ -41,17 +41,12 @@ class NonlocalAbinitio : public protocols::moves::Mover {
   typedef utility::vector1<NLGrouping> NonlocalGroupings;
 
 public:
-  /// @brief Enumeration type representing the high-level kinematic modes.
-  enum KinematicPolicy { RIGID, SEMI_RIGID };
+  /// @brief Constructs a new mover by reading non-local pairings from the
+  /// filename specified by -nonlocal:moves.
+  NonlocalAbinitio();
 
-  /// @brief Constructs a new mover with the specified mode and search strategy
-  /// by reading non-local pairings information from the filename specified by
-  /// -nonlocal:moves.
-  explicit NonlocalAbinitio(KinematicPolicy policy = RIGID);
-
-  /// @brief Constructs a new mover with the specified mode, search strategy,
-  /// and non-local pairings.
-  NonlocalAbinitio(const NonlocalGroupings& groupings, KinematicPolicy policy = RIGID);
+  /// @brief Constructs a new mover with the specified non-local pairings.
+  explicit NonlocalAbinitio(const NonlocalGroupings& groupings);
 
   /// @brief Chooses a non-local grouping at random as the starting point for
   /// the simulation, then proceeds with kinematic ab initio.
@@ -71,9 +66,6 @@ public:
   /// @brief Returns the set of non-local pairings
   const NonlocalGroupings& groupings() const;
 
-  /// @brief Returns the kinematic policy in effect
-  KinematicPolicy kinematic_policy() const;
-
   /// @brief Returns a pointer to the large fragment library
   core::fragment::FragSetOP fragments_large() const;
 
@@ -82,7 +74,7 @@ public:
 
 private:
   /// --- Utility Methods --- ///
-  void initialize(const NonlocalGroupings& groupings, KinematicPolicy policy);
+  void initialize(const NonlocalGroupings& groupings);
 
   /// @brief Determines whether the caller has specified all required options.
   /// If a required option is missing, exits with an error message.
@@ -116,9 +108,6 @@ private:
 
   /// @brief Prior or predicted knowledge of the protein structure
   NonlocalGroupings groupings_;
-
-  /// @brief Specifies how to treat residues in the selected NLGrouping
-  KinematicPolicy kinematic_policy_;
 
   /// @brief Large fragment library
   core::fragment::FragSetOP fragments_lg_;
