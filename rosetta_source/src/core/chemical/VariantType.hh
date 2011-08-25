@@ -44,6 +44,7 @@ extern VariantType const CENTROID_HA;
 extern VariantType const PROTONATED;
 extern VariantType const DEPROTONATED;
 extern VariantType const SPECIAL_ROT;
+extern VariantType const VIRTUAL_PHOSPHATE;
 
 // The following are added by Andy M. Chen in July 2009 to be used for PTM patches/variants
 extern VariantType const PHOSPHORYLATION;

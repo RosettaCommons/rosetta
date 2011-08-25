@@ -128,8 +128,6 @@ private:
 
 };
 
-extern std::string const RNA;
-
 } // namespace core
 } // namespace chemical
 

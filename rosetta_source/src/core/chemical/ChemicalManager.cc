@@ -282,6 +282,8 @@ std::string const COARSE_TWO_BEAD( "coarse_two_bead" );
 std::string const HYBRID_FA_STANDARD_CENTROID( "hybrid_fa_standard_centroid" );
 /// @brief tag name for querying RNA chemical type set.
 std::string const RNA( "rna" );
+/// @brief tag name for querying COARSE_RNA chemical type set.
+std::string const COARSE_RNA( "coarse_rna" );
 
 } // namespace core
 } // namespace chemical

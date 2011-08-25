@@ -1285,6 +1285,14 @@ public:
 		return is_RNA_;
 	}
 
+
+	/// @brief is coarse?
+	bool
+	is_coarse() const
+	{
+		return is_coarse_;
+	}
+
 	/// @brief is Nucleic Acid?
 	bool
 	is_NA() const
@@ -2043,6 +2051,7 @@ private:
 	bool has_orbitals_;
 	bool has_sc_orbitals_;
 	bool is_aromatic_;
+	bool is_coarse_;
 	bool is_DNA_;
 	bool is_RNA_;
 	bool is_NA_;

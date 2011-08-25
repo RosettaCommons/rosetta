@@ -869,6 +869,8 @@ ResidueType::delete_property( std::string const & property )
 		is_charged_ = false;
 	} else if ( property == "AROMATIC" ) {
 		is_aromatic_ = false;
+	} else if ( property == "COARSE" ) {
+		is_coarse_ = false;
 	} else if ( property == "DNA" ) {
 		is_DNA_ = false;
 	} else if ( property == "RNA" ) {

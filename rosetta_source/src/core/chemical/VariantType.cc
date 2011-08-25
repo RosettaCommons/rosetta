@@ -75,6 +75,8 @@ VariantType const DEPROTONATED( "DEPROTONATED" );
 /// @brief Generic variant type that allows for differential scoring of a set of residues/rotamers
 VariantType const SPECIAL_ROT( "SPECIAL_ROT" );
 
+VariantType const VIRTUAL_PHOSPHATE( "VIRTUAL_PHOSPHATE" );
+
 // The following are added by Andy M. Chen in July 2009 to be used for PTM patches/variants
 VariantType const PHOSPHORYLATION( "PHOSPHORYLATION" );
 VariantType const ACETYLATION( "ACETYLATION" );
