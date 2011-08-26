@@ -36,11 +36,27 @@ class SampleSource:
             if err != '': print err
         except OSError, e:
             print >>sys.stderr, "Execution Failed:", e
-   
+
+        print "setup rosetta_inputs.db3..."
+        try:
+            print getcwd()
+            p = subprocess.Popen(["python", "setup_resfiles.py",
+                "--data_dir", "top8000_chains_eds_70",
+                "--rosetta_inputs_db", "rosetta_inputs.db3"],
+                cwd="input",
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
+            (out, err) = p.communicate()
+            print out
+            if err != '': print err
+        except OSError, e:
+            print >>sys.stderr, "Execution Failed:", e   
+
         print "generating all_pdbs.list..."
         try:
             f = open("input/all_pdbs.list", 'w')
-            p = subprocess.Popen(["find", getcwd() + "/input/top8000_chains_eds_70", "-name", "*pdb"],
+            p = subprocess.Popen(["find", "top8000_chains_eds_70", "-name", "*pdb"],
+                  cwd="input",
                   stdout=f, stderr=subprocess.PIPE)
             err = p.communicate()[1]
             if err != '': print err

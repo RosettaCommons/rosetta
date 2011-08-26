@@ -229,7 +229,7 @@ ResidueTypesFeatures::report_residue_type(
 
 	int lower_terminus(-1), upper_terminus(-1);
 	if(!res_type.is_lower_terminus()) lower_terminus = res_type.lower_connect_atom();
-	if(!res_type.is_lower_terminus()) lower_terminus = res_type.upper_connect_atom();
+	if(!res_type.is_upper_terminus()) upper_terminus = res_type.upper_connect_atom();
 
 	statement stmt = (*db_session)
 		<< "INSERT INTO residue_type VALUES (?,?,?,?,?,?,?,?,?,?);"
