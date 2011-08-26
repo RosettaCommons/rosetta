@@ -15,6 +15,7 @@
 #define INCLUDED_protocols_toolbox_task_operations_RestrictToInterface_hh
 
 #include <protocols/toolbox/task_operations/RestrictToInterface.fwd.hh>
+#include <protocols/toolbox/task_operations/InterfaceTaskOperation.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 
 // for parsing
@@ -101,12 +102,12 @@ private:
 
 };
 
-class RestrictToInterface : public core::pack::task::operation::TaskOperation
+class RestrictToInterface : public InterfaceTaskOperation
 {
 public:
 	typedef core::pack::task::operation::TaskOperation TaskOperation;
 	typedef core::pack::task::operation::TaskOperationOP TaskOperationOP;
-	typedef TaskOperation parent;
+	typedef InterfaceTaskOperation parent;
 public:
 	RestrictToInterface() : parent(), distance_( 8 ), loopy_interface_( false )
 	{
@@ -121,14 +122,14 @@ public:
 	///@brief Constructor with arguments for multiple jumps
 	RestrictToInterface( utility::vector1_int rb_jump_in, core::Real distance_in
 		= 8 ) : parent(), distance_ ( distance_in ), loopy_interface_( false ) {
-		rb_jump_ = rb_jump_in;
+		set_movable_jumps( rb_jump_in );
 	}
 
 	RestrictToInterface( utility::vector1_int rb_jump_in,
 		ObjexxFCL::FArray1D_bool loop_residues ) : parent(), distance_( 8 ),
 			loopy_interface_( true ) {
 		loop_residues_ = loop_residues;
-		rb_jump_ = rb_jump_in;
+		set_movable_jumps( rb_jump_in );
 	}
 
 	RestrictToInterface( ObjexxFCL::FArray1D_bool loop_residues ) :
@@ -142,12 +143,12 @@ public:
 	virtual ~RestrictToInterface();
 
 	void add_jump( int rb_jump_in ) {
-		rb_jump_.push_back( rb_jump_in );
+		add_movable_jump( rb_jump_in );
 	}
 
 	virtual TaskOperationOP clone() const;
 	void rb_jump( int jump_in );
-    void set_movable_jumps( utility::vector1_int const movable_jumps );
+    //void set_movable_jumps( utility::vector1_int const movable_jumps );
 	void distance( core::Real const distance_in );
 	void symmetric_task( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
 
@@ -155,7 +156,7 @@ public:
 	virtual void parse_tag( utility::tag::TagPtr tag );
 
 private:
-	utility::vector1_int rb_jump_;
+	//utility::vector1_int rb_jump_;
 	core::Real distance_;
 	bool loopy_interface_;
 	ObjexxFCL::FArray1D_bool loop_residues_;

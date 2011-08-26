@@ -18,6 +18,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/docking/DockTaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
+#include <protocols/toolbox/task_operations/InterfaceTaskOperation.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
 #include <core/conformation/Residue.hh> // for design() flag
@@ -136,7 +137,7 @@ DockTaskFactory::register_options()
 }
 
 
-void DockTaskFactory::set_interface_definition_task_operation(  protocols::toolbox::task_operations::RestrictToInterfaceOP interface_definition )
+void DockTaskFactory::set_interface_definition_task_operation(  protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition )
 {
     //restrict_to_interface_ = interface_definition;
     return;

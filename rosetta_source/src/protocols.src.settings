@@ -1227,6 +1227,7 @@ sources = {
 		"RestrictToInterface",
 		"SeqprofConsensusOperation",
 		"JointSequenceOperation",
+		"InterfaceTaskOperation",
 	],
 	"protocols/toolbox/rotamer_set_operations" : [
 		"RigidBodyMoveRotSetOps",

@@ -1503,7 +1503,7 @@
 		6FF8AF400446B07038212044 /* util.cc in Sources */ = {isa = PBXBuildFile; fileRef = F3FB096F06194B5CCD98A876 /* util.cc */; };
 		C9FFE2FFF30A5FC39AAEA2BE /* BoundaryFinder.cc in Sources */ = {isa = PBXBuildFile; fileRef = 1E97573ABC5D9AF2EA130352 /* BoundaryFinder.cc */; };
 		7C02BFD310E12E165722385C /* BrokenBase.cc in Sources */ = {isa = PBXBuildFile; fileRef = C1B80BF929FE5741CEEB4246 /* BrokenBase.cc */; };
-		27D60CC2EFA2AD6B48BAAA60 /* BrokenRefine.cc in Sources */ = {isa = PBXBuildFile; fileRef = 7B1724954899AB639B81DA06 /* BrokenRefine.cc */; };
+		D0462F91DBB91098D31A0865 /* BrokenFold.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9D273AE77AF3474667B0EB91 /* BrokenFold.cc */; };
 		732E8B4458D90FD64ADB337E /* Chunk.cc in Sources */ = {isa = PBXBuildFile; fileRef = F7E652A50A26D250D16FD8CD /* Chunk.cc */; };
 		D584D57DD9E0E2E2432E1455 /* CutFinder.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6782ADDEFE26090AC8EB4B06 /* CutFinder.cc */; };
 		A0F1722661FB89AFC8DAD65D /* ExtendedPoseMover.cc in Sources */ = {isa = PBXBuildFile; fileRef = 38978E89BA6E8AD903423667 /* ExtendedPoseMover.cc */; };
@@ -2512,6 +2512,7 @@
 		BA973BD9CFAF8F6FB8FA88EA /* run.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = run.OptionKeys.gen.hh; path = ../src/basic/options/keys/run.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
 		11B27B0A88DECFB17FFC5D9A /* score.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = score.OptionKeys.gen.hh; path = ../src/basic/options/keys/score.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
 		73E66A622A34CEE06C805B19 /* smhybrid.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = smhybrid.OptionKeys.gen.hh; path = ../src/basic/options/keys/smhybrid.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
+		28DD924B5392D9A6CB808044 /* swa.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = swa.OptionKeys.gen.hh; path = ../src/basic/options/keys/swa.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
 		E37F9741F766C57E53637A88 /* symmetry.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = symmetry.OptionKeys.gen.hh; path = ../src/basic/options/keys/symmetry.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
 		9BAE9DA64241224D2FEFFB8A /* templates.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = templates.OptionKeys.gen.hh; path = ../src/basic/options/keys/templates.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
 		01EE56FCC03E4E504D8711D9 /* threadsc.OptionKeys.gen.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = threadsc.OptionKeys.gen.hh; path = ../src/basic/options/keys/threadsc.OptionKeys.gen.hh; sourceTree = SOURCE_ROOT; };
@@ -3713,6 +3714,7 @@
 		A01BA2D1ABA52B68AD994928 /* SquareWellFunc.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SquareWellFunc.fwd.hh; path = ../src/core/scoring/constraints/SquareWellFunc.fwd.hh; sourceTree = SOURCE_ROOT; };
 		16DA49D6C1F67EDAEC06AB6F /* SquareWellFunc.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SquareWellFunc.hh; path = ../src/core/scoring/constraints/SquareWellFunc.hh; sourceTree = SOURCE_ROOT; };
 		E4E9917A09F26D9992596741 /* SumFunc.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SumFunc.cc; path = ../src/core/scoring/constraints/SumFunc.cc; sourceTree = SOURCE_ROOT; };
+		F959A76CE27202E399B26392 /* SumFunc.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SumFunc.fwd.hh; path = ../src/core/scoring/constraints/SumFunc.fwd.hh; sourceTree = SOURCE_ROOT; };
 		9E5F1F7A396532879190AB46 /* SumFunc.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SumFunc.hh; path = ../src/core/scoring/constraints/SumFunc.hh; sourceTree = SOURCE_ROOT; };
 		AB8B36F5869B4D9D3E36BE1F /* XYZ_Func.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = XYZ_Func.cc; path = ../src/core/scoring/constraints/XYZ_Func.cc; sourceTree = SOURCE_ROOT; };
 		31909077145A653F2B7663C6 /* XYZ_Func.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = XYZ_Func.fwd.hh; path = ../src/core/scoring/constraints/XYZ_Func.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -4371,6 +4373,7 @@
 		B7B5300D9E9EF866944023D3 /* RNA_FilteredBaseBaseInfo.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RNA_FilteredBaseBaseInfo.cc; path = ../src/core/scoring/rna/RNA_FilteredBaseBaseInfo.cc; sourceTree = SOURCE_ROOT; };
 		56733BCF8BBF1F4739F88820 /* RNA_FilteredBaseBaseInfo.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FilteredBaseBaseInfo.fwd.hh; path = ../src/core/scoring/rna/RNA_FilteredBaseBaseInfo.fwd.hh; sourceTree = SOURCE_ROOT; };
 		E2C1F1E2EABF9664D7E55621 /* RNA_FilteredBaseBaseInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FilteredBaseBaseInfo.hh; path = ../src/core/scoring/rna/RNA_FilteredBaseBaseInfo.hh; sourceTree = SOURCE_ROOT; };
+		F12C5E180D11D21CDED86833 /* RNA_FittedTorsionInfo.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FittedTorsionInfo.hh; path = ../src/core/scoring/rna/RNA_FittedTorsionInfo.hh; sourceTree = SOURCE_ROOT; };
 		AA2F019A903DE88ECA35C23A /* RNA_FullAtomStackingEnergy.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RNA_FullAtomStackingEnergy.cc; path = ../src/core/scoring/rna/RNA_FullAtomStackingEnergy.cc; sourceTree = SOURCE_ROOT; };
 		7745A598BAB511EC43374821 /* RNA_FullAtomStackingEnergy.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FullAtomStackingEnergy.fwd.hh; path = ../src/core/scoring/rna/RNA_FullAtomStackingEnergy.fwd.hh; sourceTree = SOURCE_ROOT; };
 		C99D4703455DE7F796925B9E /* RNA_FullAtomStackingEnergy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RNA_FullAtomStackingEnergy.hh; path = ../src/core/scoring/rna/RNA_FullAtomStackingEnergy.hh; sourceTree = SOURCE_ROOT; };
@@ -4818,7 +4821,6 @@
 		58B3F08E5B468EE5AF03C866 /* TaskFactory.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TaskFactory.cc; path = ../src/core/pack/task/TaskFactory.cc; sourceTree = SOURCE_ROOT; };
 		82D6F0EF10E19A2BF79C9B5D /* TaskFactory.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TaskFactory.fwd.hh; path = ../src/core/pack/task/TaskFactory.fwd.hh; sourceTree = SOURCE_ROOT; };
 		BBC9E93DEF678F1F705E5780 /* TaskFactory.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TaskFactory.hh; path = ../src/core/pack/task/TaskFactory.hh; sourceTree = SOURCE_ROOT; };
-		8CA004B14F2E6E7EB7604CBC /* ._RestrictToInterface.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._RestrictToInterface.hh; path = ../src/core/pack/task/operation/._RestrictToInterface.hh; sourceTree = SOURCE_ROOT; };
 		940C27C13D7F86589F9B7F89 /* NoRepackDisulfides.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NoRepackDisulfides.cc; path = ../src/core/pack/task/operation/NoRepackDisulfides.cc; sourceTree = SOURCE_ROOT; };
 		87A72156ABACB86EB6EB5820 /* NoRepackDisulfides.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = NoRepackDisulfides.fwd.hh; path = ../src/core/pack/task/operation/NoRepackDisulfides.fwd.hh; sourceTree = SOURCE_ROOT; };
 		CCE72DDA53471CD146126641 /* NoRepackDisulfides.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = NoRepackDisulfides.hh; path = ../src/core/pack/task/operation/NoRepackDisulfides.hh; sourceTree = SOURCE_ROOT; };
@@ -5402,10 +5404,6 @@
 		030F9898F6AD9F275456758D /* typedefs.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = typedefs.hh; path = ../src/protocols/dna/typedefs.hh; sourceTree = SOURCE_ROOT; };
 		246D19CCD77524643EDD29F0 /* util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = util.cc; path = ../src/protocols/dna/util.cc; sourceTree = SOURCE_ROOT; };
 		D38AF9D3FA205D568EBC7251 /* util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = util.hh; path = ../src/protocols/dna/util.hh; sourceTree = SOURCE_ROOT; };
-		6811B6D9D0B83EAD35C64B04 /* ._DockTaskFactory.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._DockTaskFactory.hh; path = ../src/protocols/docking/._DockTaskFactory.hh; sourceTree = SOURCE_ROOT; };
-		88486938B76653ED7599FB6F /* ._DockingHighRes.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._DockingHighRes.hh; path = ../src/protocols/docking/._DockingHighRes.hh; sourceTree = SOURCE_ROOT; };
-		862BB6B06B0F801E36DCA79D /* ._DockingHighResLegacy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._DockingHighResLegacy.hh; path = ../src/protocols/docking/._DockingHighResLegacy.hh; sourceTree = SOURCE_ROOT; };
-		19538A9D44D4CE7EA94F4052 /* ._DockingProtocol.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._DockingProtocol.hh; path = ../src/protocols/docking/._DockingProtocol.hh; sourceTree = SOURCE_ROOT; };
 		73FCE94210E4DE795798A525 /* DockFilters.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DockFilters.cc; path = ../src/protocols/docking/DockFilters.cc; sourceTree = SOURCE_ROOT; };
 		AFE38E171CE3F09217C44357 /* DockFilters.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DockFilters.fwd.hh; path = ../src/protocols/docking/DockFilters.fwd.hh; sourceTree = SOURCE_ROOT; };
 		4F7FC71F84346C6EA726FBEA /* DockFilters.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DockFilters.hh; path = ../src/protocols/docking/DockFilters.hh; sourceTree = SOURCE_ROOT; };
@@ -7243,9 +7241,9 @@
 		C1B80BF929FE5741CEEB4246 /* BrokenBase.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BrokenBase.cc; path = ../src/protocols/nonlocal/BrokenBase.cc; sourceTree = SOURCE_ROOT; };
 		AE0D1F5E93AE3B1900E7DFEA /* BrokenBase.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BrokenBase.fwd.hh; path = ../src/protocols/nonlocal/BrokenBase.fwd.hh; sourceTree = SOURCE_ROOT; };
 		C699383C95FEB4798A4A7D4B /* BrokenBase.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BrokenBase.hh; path = ../src/protocols/nonlocal/BrokenBase.hh; sourceTree = SOURCE_ROOT; };
-		7B1724954899AB639B81DA06 /* BrokenRefine.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BrokenRefine.cc; path = ../src/protocols/nonlocal/BrokenRefine.cc; sourceTree = SOURCE_ROOT; };
-		0B2449BC8F7BA93FA1578D3D /* BrokenRefine.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BrokenRefine.fwd.hh; path = ../src/protocols/nonlocal/BrokenRefine.fwd.hh; sourceTree = SOURCE_ROOT; };
-		019FB11F86263114844DB1D9 /* BrokenRefine.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BrokenRefine.hh; path = ../src/protocols/nonlocal/BrokenRefine.hh; sourceTree = SOURCE_ROOT; };
+		9D273AE77AF3474667B0EB91 /* BrokenFold.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = BrokenFold.cc; path = ../src/protocols/nonlocal/BrokenFold.cc; sourceTree = SOURCE_ROOT; };
+		EE7183B7AEC333CDB80E3552 /* BrokenFold.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BrokenFold.fwd.hh; path = ../src/protocols/nonlocal/BrokenFold.fwd.hh; sourceTree = SOURCE_ROOT; };
+		485EACAA6D72359B81E5C9A9 /* BrokenFold.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = BrokenFold.hh; path = ../src/protocols/nonlocal/BrokenFold.hh; sourceTree = SOURCE_ROOT; };
 		F7E652A50A26D250D16FD8CD /* Chunk.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Chunk.cc; path = ../src/protocols/nonlocal/Chunk.cc; sourceTree = SOURCE_ROOT; };
 		C96B90649E7B1F842D955ED2 /* Chunk.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Chunk.fwd.hh; path = ../src/protocols/nonlocal/Chunk.fwd.hh; sourceTree = SOURCE_ROOT; };
 		4C06988F2AE1689B647F36E6 /* Chunk.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = Chunk.hh; path = ../src/protocols/nonlocal/Chunk.hh; sourceTree = SOURCE_ROOT; };
@@ -8000,8 +7998,6 @@
 		FE2E1D7BC8B9135AB7A695A8 /* SpecialRotamerRotSetOps.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SpecialRotamerRotSetOps.cc; path = ../src/protocols/toolbox/rotamer_set_operations/SpecialRotamerRotSetOps.cc; sourceTree = SOURCE_ROOT; };
 		506E7F84E29FB96717C5CA54 /* SpecialRotamerRotSetOps.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SpecialRotamerRotSetOps.fwd.hh; path = ../src/protocols/toolbox/rotamer_set_operations/SpecialRotamerRotSetOps.fwd.hh; sourceTree = SOURCE_ROOT; };
 		549EAA0113A3D28EF481793F /* SpecialRotamerRotSetOps.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SpecialRotamerRotSetOps.hh; path = ../src/protocols/toolbox/rotamer_set_operations/SpecialRotamerRotSetOps.hh; sourceTree = SOURCE_ROOT; };
-		B4C50F342AE847479D3B4050 /* ._InterfaceTaskOperation.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._InterfaceTaskOperation.hh; path = ../src/protocols/toolbox/task_operations/._InterfaceTaskOperation.hh; sourceTree = SOURCE_ROOT; };
-		39DEC02CDA080755871630E8 /* ._RestrictToInterface.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._RestrictToInterface.hh; path = ../src/protocols/toolbox/task_operations/._RestrictToInterface.hh; sourceTree = SOURCE_ROOT; };
 		6B920EC6EE29617F50065BD2 /* DesignAroundOperation.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DesignAroundOperation.cc; path = ../src/protocols/toolbox/task_operations/DesignAroundOperation.cc; sourceTree = SOURCE_ROOT; };
 		90A682E32E25F33CBAC5B9F5 /* DesignAroundOperation.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DesignAroundOperation.fwd.hh; path = ../src/protocols/toolbox/task_operations/DesignAroundOperation.fwd.hh; sourceTree = SOURCE_ROOT; };
 		828CD9CA8C277B44D8FC1826 /* DesignAroundOperation.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DesignAroundOperation.hh; path = ../src/protocols/toolbox/task_operations/DesignAroundOperation.hh; sourceTree = SOURCE_ROOT; };
@@ -8608,6 +8604,7 @@
 				BA973BD9CFAF8F6FB8FA88EA /* run.OptionKeys.gen.hh */,
 				11B27B0A88DECFB17FFC5D9A /* score.OptionKeys.gen.hh */,
 				73E66A622A34CEE06C805B19 /* smhybrid.OptionKeys.gen.hh */,
+				28DD924B5392D9A6CB808044 /* swa.OptionKeys.gen.hh */,
 				E37F9741F766C57E53637A88 /* symmetry.OptionKeys.gen.hh */,
 				9BAE9DA64241224D2FEFFB8A /* templates.OptionKeys.gen.hh */,
 				01EE56FCC03E4E504D8711D9 /* threadsc.OptionKeys.gen.hh */,
@@ -10232,6 +10229,7 @@
 				A01BA2D1ABA52B68AD994928 /* SquareWellFunc.fwd.hh */,
 				16DA49D6C1F67EDAEC06AB6F /* SquareWellFunc.hh */,
 				E4E9917A09F26D9992596741 /* SumFunc.cc */,
+				F959A76CE27202E399B26392 /* SumFunc.fwd.hh */,
 				9E5F1F7A396532879190AB46 /* SumFunc.hh */,
 				AB8B36F5869B4D9D3E36BE1F /* XYZ_Func.cc */,
 				31909077145A653F2B7663C6 /* XYZ_Func.fwd.hh */,
@@ -11078,6 +11076,7 @@
 				B7B5300D9E9EF866944023D3 /* RNA_FilteredBaseBaseInfo.cc */,
 				56733BCF8BBF1F4739F88820 /* RNA_FilteredBaseBaseInfo.fwd.hh */,
 				E2C1F1E2EABF9664D7E55621 /* RNA_FilteredBaseBaseInfo.hh */,
+				F12C5E180D11D21CDED86833 /* RNA_FittedTorsionInfo.hh */,
 				AA2F019A903DE88ECA35C23A /* RNA_FullAtomStackingEnergy.cc */,
 				7745A598BAB511EC43374821 /* RNA_FullAtomStackingEnergy.fwd.hh */,
 				C99D4703455DE7F796925B9E /* RNA_FullAtomStackingEnergy.hh */,
@@ -11681,7 +11680,6 @@
 		F3E7261C1747F626EA87BF2C /* operation */ = {
 			isa = PBXGroup;
 			children = (
-				8CA004B14F2E6E7EB7604CBC /* ._RestrictToInterface.hh */,
 				940C27C13D7F86589F9B7F89 /* NoRepackDisulfides.cc */,
 				87A72156ABACB86EB6EB5820 /* NoRepackDisulfides.fwd.hh */,
 				CCE72DDA53471CD146126641 /* NoRepackDisulfides.hh */,
@@ -12701,10 +12699,6 @@
 			isa = PBXGroup;
 			children = (
 				3A7C29165CED7A203A41FEA2 /* stateless */,
-				6811B6D9D0B83EAD35C64B04 /* ._DockTaskFactory.hh */,
-				88486938B76653ED7599FB6F /* ._DockingHighRes.hh */,
-				862BB6B06B0F801E36DCA79D /* ._DockingHighResLegacy.hh */,
-				19538A9D44D4CE7EA94F4052 /* ._DockingProtocol.hh */,
 				73FCE94210E4DE795798A525 /* DockFilters.cc */,
 				AFE38E171CE3F09217C44357 /* DockFilters.fwd.hh */,
 				4F7FC71F84346C6EA726FBEA /* DockFilters.hh */,
@@ -15023,9 +15017,9 @@
 				C1B80BF929FE5741CEEB4246 /* BrokenBase.cc */,
 				AE0D1F5E93AE3B1900E7DFEA /* BrokenBase.fwd.hh */,
 				C699383C95FEB4798A4A7D4B /* BrokenBase.hh */,
-				7B1724954899AB639B81DA06 /* BrokenRefine.cc */,
-				0B2449BC8F7BA93FA1578D3D /* BrokenRefine.fwd.hh */,
-				019FB11F86263114844DB1D9 /* BrokenRefine.hh */,
+				9D273AE77AF3474667B0EB91 /* BrokenFold.cc */,
+				EE7183B7AEC333CDB80E3552 /* BrokenFold.fwd.hh */,
+				485EACAA6D72359B81E5C9A9 /* BrokenFold.hh */,
 				F7E652A50A26D250D16FD8CD /* Chunk.cc */,
 				C96B90649E7B1F842D955ED2 /* Chunk.fwd.hh */,
 				4C06988F2AE1689B647F36E6 /* Chunk.hh */,
@@ -16024,8 +16018,6 @@
 		F29383808EF7BB938F35DA17 /* task_operations */ = {
 			isa = PBXGroup;
 			children = (
-				B4C50F342AE847479D3B4050 /* ._InterfaceTaskOperation.hh */,
-				39DEC02CDA080755871630E8 /* ._RestrictToInterface.hh */,
 				6B920EC6EE29617F50065BD2 /* DesignAroundOperation.cc */,
 				90A682E32E25F33CBAC5B9F5 /* DesignAroundOperation.fwd.hh */,
 				828CD9CA8C277B44D8FC1826 /* DesignAroundOperation.hh */,
@@ -18257,7 +18249,7 @@
 				6FF8AF400446B07038212044 /* util.cc in Sources */,
 				C9FFE2FFF30A5FC39AAEA2BE /* BoundaryFinder.cc in Sources */,
 				7C02BFD310E12E165722385C /* BrokenBase.cc in Sources */,
-				27D60CC2EFA2AD6B48BAAA60 /* BrokenRefine.cc in Sources */,
+				D0462F91DBB91098D31A0865 /* BrokenFold.cc in Sources */,
 				732E8B4458D90FD64ADB337E /* Chunk.cc in Sources */,
 				D584D57DD9E0E2E2432E1455 /* CutFinder.cc in Sources */,
 				A0F1722661FB89AFC8DAD65D /* ExtendedPoseMover.cc in Sources */,

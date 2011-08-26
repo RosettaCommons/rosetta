@@ -49,7 +49,7 @@
 #include <core/pack/task/operation/ResFilters.hh> // ResidueLacksProperty
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+#include <protocols/toolbox/task_operations/InterfaceTaskOperation.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh> // PreventRepackingRLT
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 
@@ -726,7 +726,7 @@ void DockingProtocol::set_use_constraints( bool const use_csts )
 	}
 }
 
-void DockingProtocol::set_interface_definition_task_operation( protocols::toolbox::task_operations::RestrictToInterfaceOP interface_definition )
+void DockingProtocol::set_interface_definition_task_operation( protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition )
 {
     assert ( !low_res_protocol_only_ );
     if ( !docking_highres_mover_ ){

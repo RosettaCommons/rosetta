@@ -33,7 +33,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.fwd.hh>
+#include <protocols/toolbox/task_operations/InterfaceTaskOperation.fwd.hh>
 
 
 //Auto Headers
@@ -109,7 +109,7 @@ public:
 	void set_sc_min( bool sc_min ){ sc_min_ = sc_min; }
 	void set_rt_min( bool rt_min ){ rt_min_ = rt_min; }
 	void set_partners( std::string partners ) { partners_ = partners; }
-    void set_interface_definition_task_operation( protocols::toolbox::task_operations::RestrictToInterfaceOP interface_definition );
+    void set_interface_definition_task_operation( protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition );
     
 	bool sc_min() { return sc_min_; }
 	bool rt_min() { return rt_min_; }
