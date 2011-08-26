@@ -19,13 +19,16 @@
 // C/C++ headers
 #include <string>
 
+// Utility headers
+#include <utility/vector1.hh>
+
 // Project headers
 #include <core/types.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-
-// Package headers
-#include <protocols/nonlocal/BrokenBase.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <protocols/moves/Mover.hh>
 
 namespace protocols {
 namespace nonlocal {
@@ -33,17 +36,43 @@ namespace nonlocal {
 /// @class Broken-chain protocol for NonlocalAbinitio. Movers are
 /// enqueued in the constructor and executed in order in the base
 /// class. If specialization is required, simply override apply().
-class BrokenFold : public BrokenBase {
+class BrokenFold : public protocols::moves::Mover {
  public:
-  BrokenFold(core::fragment::FragSetOP fragments_small,
-						 core::kinematics::MoveMapOP movable);
+  BrokenFold(core::fragment::FragSetOP fragments_lg,
+             core::fragment::FragSetOP fragments_sm,
+             core::kinematics::MoveMapOP movable);
+
+  /// @brief Performs alternating rounds of jump minimization and
+  /// broken-chain folding
+  void apply(core::pose::Pose& pose);
 
   /// @brief Returns the name of this mover
   std::string get_name() const;
 
  private:
+  /// @brief Adds cutpoint variants to <pose>
+  void add_cutpoint_variants(core::pose::Pose* pose) const;
+
+  /// @brief Removes cutpoint variants from <pose>
+  void remove_cutpoint_variants(core::pose::Pose* pose) const;
+
   /// @brief Returns the number of cycles for stage i
-  core::Size num_cycles(int stage);
+  core::Size cycles(int stage);
+
+  /// @brief Configures the score function to be minimized for the ith stage
+  core::scoring::ScoreFunctionOP score_function(int stage, int num_residues) const;
+
+  /// @brief Configures a minimizer that attempts to optimize <score>
+  protocols::moves::MoverOP minimizer(core::scoring::ScoreFunctionOP score);
+
+  /// @brief Writes the stage header to <out>
+  void show_stage_header(core::Size stage_num, std::ostream& out) const;
+
+
+  // Members
+
+  /// @brief Collection of movers to be applied in order
+  utility::vector1<protocols::moves::MoverOP> movers_;
 };
 
 }  // namespace nonlocal
