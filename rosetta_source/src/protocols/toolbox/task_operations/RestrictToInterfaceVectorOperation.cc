@@ -17,7 +17,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-
+//#include <core/kinematics/FoldTree.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <protocols/toolbox/pose_metric_calculators/InterfaceVectorDefinitionCalculator.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
@@ -131,7 +131,9 @@ void RestrictToInterfaceVectorOperation::make_name() {
 ///@details apply function, uses inherited functionality
 void
 RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
-{
+{   
+    // When inheriting from InterfaceTaskOperation, this method will need to be called
+    //setup_interface_chains_from_jumps( pose );
 
 	//can do this here if we want setters
 	make_calculator(calculator_name_);
@@ -155,6 +157,19 @@ RestrictToInterfaceVectorOperation::lower_chain( core::Size lower_chain){
 	lower_chain_ = lower_chain;
 	make_name();
 }
+
+/*
+void
+RestrictToInterfaceVectorOperation::setup_interface_chains_from_jumps( core::pose::Pose const & pose ){
+    
+    // This class wouldn't know what to do with more than jump, so we'll assert that there's only one.
+    assert(movable_jumps().size() == 1);
+    lower_chain( pose.chain( pose.fold_tree().jump_edge( *it ).start() ) );
+    upper_chain( pose.chain( pose.fold_tree().jump_edge( *it ).stop() ) );
+}
+*/
+
+
 void
 RestrictToInterfaceVectorOperation::CB_dist_cutoff( core::Real CB_dist_cutoff){
 	CB_dist_cutoff_ = CB_dist_cutoff;

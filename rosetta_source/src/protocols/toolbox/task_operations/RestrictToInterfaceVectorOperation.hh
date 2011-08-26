@@ -72,6 +72,12 @@ public:
 	///@brief parse_tag function for rosetta scripts
 	void parse_tag( TagPtr tag );
 
+    /*
+    // Used to make the eventual inheritance from protocols::toolbox::task_operations::InterfaceTaskOperation easier.
+    void
+    setup_interface_chains_from_jumps( core::pose::Pose const & pose );
+    */
+    
 private:
 	///@brief constructor helper function - makes the PoseMetricCalculator
 	void make_calculator( const std::string & calculator_name ) const;
