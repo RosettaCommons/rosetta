@@ -43,7 +43,10 @@ namespace score { extern RealOptionKey const symE_bonus; }
 namespace score { extern RealOptionKey const NV_lbound; }
 namespace score { extern RealOptionKey const NV_ubound; }
 namespace score { extern StringOptionKey const NV_table; }
+namespace score { extern RealOptionKey const syn_chi_penalty; }
 namespace score { extern BooleanOptionKey const disable_orientation_dependent_rna_ch_o_bonds; }
+namespace score { extern StringOptionKey const rna_torsion_potential; }
+namespace score { extern BooleanOptionKey const include_neighbor_base_stacks; }
 namespace score { extern BooleanOptionKey const find_neighbors_3dgrid; }
 namespace score { extern StringOptionKey const seqdep_refene_fname; }
 namespace score { extern StringOptionKey const secondary_seqdep_refene_fname; }

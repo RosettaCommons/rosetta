@@ -1,9 +1,3 @@
-namespace abinitio { FileOptionKey const HD_EX_Info( "abinitio:HD_EX_Info" );  }
-namespace abinitio { RealOptionKey const HD_penalty( "abinitio:HD_penalty" );  }
-namespace abinitio { RealOptionKey const HD_fa_penalty( "abinitio:HD_fa_penalty" );  }
-namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_pred" );  }
-namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }
-namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
 namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
@@ -125,7 +119,10 @@ namespace score { RealOptionKey const symE_bonus( "score:symE_bonus" );  }
 namespace score { RealOptionKey const NV_lbound( "score:NV_lbound" );  }
 namespace score { RealOptionKey const NV_ubound( "score:NV_ubound" );  }
 namespace score { StringOptionKey const NV_table( "score:NV_table" );  }
+namespace score { RealOptionKey const syn_chi_penalty( "score:syn_chi_penalty" );  }
 namespace score { BooleanOptionKey const disable_orientation_dependent_rna_ch_o_bonds( "score:disable_orientation_dependent_rna_ch_o_bonds" );  }
+namespace score { StringOptionKey const rna_torsion_potential( "score:rna_torsion_potential" );  }
+namespace score { BooleanOptionKey const include_neighbor_base_stacks( "score:include_neighbor_base_stacks" );  }
 namespace score { BooleanOptionKey const find_neighbors_3dgrid( "score:find_neighbors_3dgrid" );  }
 namespace score { StringOptionKey const seqdep_refene_fname( "score:seqdep_refene_fname" );  }
 namespace score { StringOptionKey const secondary_seqdep_refene_fname( "score:secondary_seqdep_refene_fname" );  }
@@ -558,3 +555,12 @@ namespace phil { BooleanOptionKey const phil( "phil" );  }
 namespace phil { IntegerOptionKey const nloop( "phil:nloop" );  }
 namespace phil { StringOptionKey const vall_file( "phil:vall_file" );  }
 namespace phil { StringOptionKey const align_file( "phil:align_file" );  }
+namespace wum { BooleanOptionKey const wum( "wum" );  }
+namespace wum { IntegerOptionKey const n_slaves_per_master( "wum:n_slaves_per_master" );  }
+namespace wum { IntegerOptionKey const n_masters( "wum:n_masters" );  }
+namespace wum { IntegerOptionKey const memory_limit( "wum:memory_limit" );  }
+namespace wum { StringOptionKey const extra_scorefxn( "wum:extra_scorefxn" );  }
+namespace wum { FileOptionKey const extra_scorefxn_ref_structure( "wum:extra_scorefxn_ref_structure" );  }
+namespace wum { IntegerOptionKey const extra_scorefxn_relax( "wum:extra_scorefxn_relax" );  }
+namespace wum { RealOptionKey const trim_proportion( "wum:trim_proportion" );  }
+namespace lh { BooleanOptionKey const lh( "lh" );  }

@@ -1,14 +1,3 @@
-namespace AnchoredDesign { namespace akash { IntegerOptionKey const dyepos( "AnchoredDesign:akash:dyepos" );  } }
-namespace AnchoredDesign { namespace testing { BooleanOptionKey const testing( "AnchoredDesign:testing" );  } }
-namespace AnchoredDesign { namespace testing { RealOptionKey const VDW_weight( "AnchoredDesign:testing:VDW_weight" );  } }
-namespace AnchoredDesign { namespace testing { BooleanOptionKey const anchor_via_constraints( "AnchoredDesign:testing:anchor_via_constraints" );  } }
-namespace AnchoredDesign { namespace testing { BooleanOptionKey const delete_interface_native_sidechains( "AnchoredDesign:testing:delete_interface_native_sidechains" );  } }
-namespace AnchoredDesign { namespace testing { FileOptionKey const RMSD_only_this( "AnchoredDesign:testing:RMSD_only_this" );  } }
-namespace AnchoredDesign { namespace testing { BooleanOptionKey const anchor_noise_constraints_mode( "AnchoredDesign:testing:anchor_noise_constraints_mode" );  } }
-namespace DenovoProteinDesign { BooleanOptionKey const DenovoProteinDesign( "DenovoProteinDesign" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const redesign_core( "DenovoProteinDesign:redesign_core" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const redesign_loops( "DenovoProteinDesign:redesign_loops" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const redesign_surface( "DenovoProteinDesign:redesign_surface" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_complete( "DenovoProteinDesign:redesign_complete" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const disallow_native_aa( "DenovoProteinDesign:disallow_native_aa" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const optimize_loops( "DenovoProteinDesign:optimize_loops" );  }
@@ -430,6 +419,20 @@ namespace archive { IntegerOptionKey const completion_notify_frequency( "archive
 namespace optimization { BooleanOptionKey const optimization( "optimization" );  }
 namespace optimization { RealOptionKey const armijo_min_stepsize( "optimization:armijo_min_stepsize" );  }
 namespace optimization { IntegerOptionKey const lbfgs_M( "optimization:lbfgs_M" );  }
+namespace swa { BooleanOptionKey const swa( "swa" );  }
+namespace swa { StringVectorOptionKey const s1( "swa:s1" );  }
+namespace swa { StringVectorOptionKey const s2( "swa:s2" );  }
+namespace swa { StringVectorOptionKey const silent1( "swa:silent1" );  }
+namespace swa { StringVectorOptionKey const silent2( "swa:silent2" );  }
+namespace swa { StringVectorOptionKey const tags1( "swa:tags1" );  }
+namespace swa { StringVectorOptionKey const tags2( "swa:tags2" );  }
+namespace swa { IntegerVectorOptionKey const slice_res1( "swa:slice_res1" );  }
+namespace swa { IntegerVectorOptionKey const slice_res2( "swa:slice_res2" );  }
+namespace swa { IntegerVectorOptionKey const input_res1( "swa:input_res1" );  }
+namespace swa { IntegerVectorOptionKey const input_res2( "swa:input_res2" );  }
+namespace swa { IntegerVectorOptionKey const input_res( "swa:input_res" );  }
+namespace swa { BooleanOptionKey const backbone_only1( "swa:backbone_only1" );  }
+namespace swa { BooleanOptionKey const backbone_only2( "swa:backbone_only2" );  }
 namespace ufv { BooleanOptionKey const ufv( "ufv" );  }
 namespace ufv { IntegerOptionKey const left( "ufv:left" );  }
 namespace ufv { IntegerOptionKey const right( "ufv:right" );  }

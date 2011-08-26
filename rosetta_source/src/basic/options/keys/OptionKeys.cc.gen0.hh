@@ -558,3 +558,9 @@ namespace abinitio { BooleanOptionKey const include_stage5( "abinitio:include_st
 namespace abinitio { BooleanOptionKey const close_loops_by_idealizing( "abinitio:close_loops_by_idealizing" );  }
 namespace abinitio { BooleanOptionKey const optimize_cutpoints_using_kic( "abinitio:optimize_cutpoints_using_kic" );  }
 namespace abinitio { IntegerOptionKey const optimize_cutpoints_margin( "abinitio:optimize_cutpoints_margin" );  }
+namespace abinitio { FileOptionKey const HD_EX_Info( "abinitio:HD_EX_Info" );  }
+namespace abinitio { RealOptionKey const HD_penalty( "abinitio:HD_penalty" );  }
+namespace abinitio { RealOptionKey const HD_fa_penalty( "abinitio:HD_fa_penalty" );  }
+namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_pred" );  }
+namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }
+namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }

@@ -1661,7 +1661,10 @@ Options = Option_Group( '',
 		Option( 'NV_lbound', 'Real', desc="Lower Bound for neighbor Vector scoring" , default='3.3'),
 		Option( 'NV_ubound', 'Real', desc="Upper Bound for neighbor Vector scoring", default='11.1'),
 		Option( 'NV_table', 'String', desc="Location of path to potential lookup table", default='neighbor_vector_score.histogram'),
+		Option( 'syn_chi_penalty', 'Real', desc='penalty for syn/chi conformation', default='0.0'),
 		Option( 'disable_orientation_dependent_rna_ch_o_bonds',   'Boolean', desc="Do not use orientation-dependent potential for RNA carbon hydrogen bonds" , default="false"),
+		Option( 'rna_torsion_potential',   'String', desc="In RNA torsion calculation, directory containing 1D torsional potentials" , default="FINAL_Mar_24_2010_new_delta_zeta_chi"),
+		Option( 'include_neighbor_base_stacks',   'Boolean', desc="In RNA score calculation, include stacks between i,i+1" , default="false"),
 		Option( 'find_neighbors_3dgrid', 'Boolean', desc="Use a 3D lookup table for doing neighbor calculations.  For spherical, well-distributed conformations, O(N) neighbor detection instead of general O(NlgN)", default='false' ),
 		Option( 'seqdep_refene_fname', 'String', desc="Filename for table containing sequence-dependent reference energies" ),
 		Option( 'secondary_seqdep_refene_fname', 'String', desc="Additional filename for table containing sequence-dependent reference energies" ),
@@ -3357,6 +3360,22 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='enables sampling of non-pivot residue torsions when the kinematic loop closure segment length is > 3',
 			legal=['true','false'], default='true'
 		),
+		Option( 'fix_ca_bond_angles', 'Boolean',
+			desc='Freezes N-CA-C bond angles in KIC loop sampling',
+			legal=['true','false'], default='false'
+		),
+		Option( 'kic_use_linear_chainbreak', 'Boolean',
+			desc='Use linear_chainbreak instead of (harmonic) chainbreak in KIC loop sampling',
+			legal=['true','false'], default='false'
+		),
+		Option( 'allow_omega_move', 'Boolean',
+			desc='Allow loop omega to minimize during loop modeling',
+			legal=['true','false'], default='false'
+		),
+		Option( 'allow_takeoff_torsion_move', 'Boolean',
+			desc='Allow takeoff phi/psi to move during loop modeling',
+			legal=['true','false'], default='false'
+		),
     Option( 'extend_length', 'Integer',
       desc='Number of alanine residues to append after cutpoint in loopextend app',
       default = '0', lower = '0'
@@ -4288,6 +4307,24 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'armijo_min_stepsize','Real', desc='min stepsize in armijo minimizer', default='1e-8'),
 		#Option( 'lbfgs_max_cycles','Integer', desc='max cycles for l-BFGS', default='200'),
 		Option( 'lbfgs_M','Integer', desc='number of corrections to approximate the inverse hessian matrix.', default='64'),
+	),
+
+	################################
+	# step-wise assembly options
+	Option_Group( 'swa',
+		Option( 's1', 'StringVector',desc="input file(s)"),
+		Option( 's2', 'StringVector',desc="input file(s)"),
+		Option( 'silent1', 'StringVector',desc="input file"),
+		Option( 'silent2', 'StringVector',desc="input file"),
+		Option( 'tags1', 'StringVector',desc="input tag(s)"),
+		Option( 'tags2', 'StringVector',desc="input tag(s)"),
+		Option( 'slice_res1', 'IntegerVector',desc='Residues to slice out of starting file'),
+		Option( 'slice_res2', 'IntegerVector',desc='Residues to slice out of starting file'),
+		Option( 'input_res1', 'IntegerVector',desc='Residues already present in starting file'),
+		Option( 'input_res2', 'IntegerVector',desc='Residues already present in starting file2'),
+		Option( 'input_res' , 'IntegerVector',desc='Residues already present in starting file'),
+		Option( 'backbone_only1', 'Boolean', desc="just copy protein backbone DOFS, useful for homology modeling"),
+		Option( 'backbone_only2', 'Boolean', desc="just copy protein backbone DOFS, useful for homology modeling"),
 	),
 
 	###############################################################################
