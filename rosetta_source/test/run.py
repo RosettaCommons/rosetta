@@ -122,6 +122,8 @@ class Tester:
 
 
     def runOneLibUnitTests(self, platform, lib, yaml_file, log_file):
+        if Options.one  and  ( (lib, Options.one.split(':')[0]) not in self.all_tests_by_lib[lib] ): return
+
         #self.unitTestLog += self.log("-------- %s --------\n" % E)
         path = "cd build/test/" + platform + " && "
         mute, unmute  = ' ', ' '
@@ -131,8 +133,7 @@ class Tester:
         #if self.db_path: exe += " " + self.db_path
         print "Paths:", path, ' command line:', exe
 
-        if os.path.isfile(yaml_file):
-            os.remove(yaml_file)
+        if os.path.isfile(yaml_file): os.remove(yaml_file)
 
         output = "Running %s unit tests..." % lib
 
@@ -141,12 +142,18 @@ class Tester:
 
         command_line = path + ' ' + timelimit + exe + " 1>&2"
         #print 'Executing:', command_line
+
+
         f = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stderr
         for line in f:
             print line,
             output += line
             sys.stdout.flush()
         f.close()
+
+        #else:
+        #    print 'Test %s is not in %s, skipping...' % (Options.one, lib)
+        #    print 'tests:', self.all_tests_by_lib[lib]
 
         # saving log to a file...
         f = open(log_file, 'w');  f.write(output);  f.close()
@@ -199,15 +206,15 @@ class Tester:
         logs_yamls = {}
 
         # Getting list of test suite's
-        all_tests = []
-        all_tests_by_lib = {}
+        self.all_tests = []
+        self.all_tests_by_lib = {}
         for lib in UnitTestExecutable:
             tests = []
             for suite in commands.getoutput('build/test/'+ platform + '/' + lib + ' _ListAllTests_').split():
                 tests.append( (lib, suite) )
 
-            all_tests.extend( tests )
-            all_tests_by_lib[lib] = tests
+            self.all_tests.extend( tests )
+            self.all_tests_by_lib[lib] = tests
 
 
         if Options.one  or  Options.jobs < 5:
@@ -228,33 +235,35 @@ class Tester:
 
             for p in self.jobs: os.waitpid(p, 0)  # waiting for all child process to termintate...
 
-            # extracting and aggregation results
-            all_results_yaml_file = '.unit_test_results.yaml'
-            uf = file(all_results_yaml_file, 'w')
-            for lib in logs_yamls:
-                (log_file, yaml_file) = logs_yamls[lib]
-                info = self.extractInfo( file(log_file).read() )
-                info.name = lib
-                self.results[lib] = info
+            # extracting and aggregation results, but only if running all tests
+            if not Options.one:
+                all_results_yaml_file = '.unit_test_results.yaml'
+                uf = file(all_results_yaml_file, 'w')
+                for lib in logs_yamls:
+                    (log_file, yaml_file) = logs_yamls[lib]
+                    info = self.extractInfo( file(log_file).read() )
+                    info.name = lib
+                    self.results[lib] = info
 
-                if not os.path.isfile(yaml_file):
-                    print "Unable to read yaml file with test results %s - unit test run aborted!" % yaml_file
-                    uf.close()
-                    os.remove(all_results_yaml_file)
-                    sys.exit(1)
+                    if not os.path.isfile(yaml_file):
+                        print "Unable to read yaml file with test results %s - unit test run aborted!" % yaml_file
+                        uf.close()
+                        os.remove(all_results_yaml_file)
+                        sys.exit(1)
 
-                # generating summary yaml file for all tests
-                uf.write(lib + ':\n')
-                f = file(yaml_file)
-                for line in f: uf.write("    "+line)
-                f.close()
-                uf.write('\n')
+                    # generating summary yaml file for all tests
+                    uf.write(lib + ':\n')
+                    f = file(yaml_file)
+                    for line in f: uf.write("    "+line)
+                    f.close()
+                    uf.write('\n')
 
-            uf.close()
+                uf.close()
+
             #self.log( "Run unit tests... Done.\n")
 
         else: # running Unit test on multiple CPU's, new style, fully parallel
-            for lib, suite in all_tests:
+            for lib, suite in self.all_tests:
                 pid = self.mfork()
                 if not pid:  # we are child process
                     self.runOneSuite(platform, lib, suite)
@@ -273,7 +282,7 @@ class Tester:
                 log_file_h = file(log_file, 'w')
                 yaml_file_h = file(yaml_file, 'w')
                 yaml_data = {}
-                for l, suite in all_tests_by_lib[lib]:
+                for l, suite in self.all_tests_by_lib[lib]:
                     log_file_h.write( file('build/test/'+ platform + '/' + lib + '.' + suite + '.log').read() )
                     data = yaml.load( file('build/test/'+ platform + '/' + lib + '.'+ suite + '.yaml').read() )
                     for k in data:
@@ -360,7 +369,9 @@ def main(args):
 
     parser.add_option("-1", "--one",
       default='', action="store",
-      help="Run just one unit test or one test suite.",
+      help="Run just one unit test or one test suite. To run one unit test-suite just specify it name, ie: '--one PDB_IO'. \
+            To run one unit test specify name of test suit, colon, then name of the test it self, like this: '--one PDB_IO:test_pdb_io'.  \
+            It is HIGHLY RECOMMENDED to run one unit test suit instead of one unit test! (when running one test all suite have to be initialized, while when running one suit this is not the case).",
     )
 
     parser.add_option("-j", "--jobs",
@@ -399,6 +410,8 @@ def main(args):
             print "Can't find database at %s; please set $ROSETTA3_DB or use -d" % options.database
             return 1
 
+    else: options.database = path.abspath( options.database )
+
     global Options;  Options = options
 
 
@@ -408,7 +421,7 @@ def main(args):
 
     T = Tester()
     T.runUnitTests()
-    T.printSummary()
+    if not Options.one: T.printSummary()
 
     print "Done!"
 

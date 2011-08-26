@@ -68,6 +68,17 @@ namespace CxxTest
 					return; // suite name did not match - so we skipping this suite.
 				}
 			}
+			if( run_type == _OneTest_ )	{
+				bool found = false;
+
+				for(int i=0; i<sd.numTests(); ++i) {
+					TestDescription const & td( sd.testDescription(i) );
+					if( std::string(real_command_line_argv[1]) == std::string(td.suiteName()) + ":" + td.testName() ) {
+						found = true;
+					}
+				}
+			    if( !found ) return;
+			}
 
             tracker().enterSuite( sd );
             if ( sd.setUp() ) {
@@ -87,7 +98,8 @@ namespace CxxTest
 			/// Code to allow runing only one, specified test
 			if( run_type == _OneTest_ )	{
 				// compare first command line agrument to test name.
-				if( strcmp(real_command_line_argv[1], td.testName() ) ) {
+				//if( strcmp(real_command_line_argv[1], std::string(td.suiteName()) + ":" + td.testName() ) ) {
+				if( std::string(real_command_line_argv[1]) != std::string(td.suiteName()) + ":" + td.testName() ) {
 					return; // test name did not match td->td.testName() - so we skipping this test.
 				}
 			}

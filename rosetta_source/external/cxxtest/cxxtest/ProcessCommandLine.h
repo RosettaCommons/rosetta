@@ -82,7 +82,7 @@ namespace CxxTest
 						return;
 					}
 					for( TestDescription *td = sd->firstTest(); td; td = td->next() ) {
-						if( s == td->testName() ) {
+						if( s == std::string(sd->suiteName()) + ":" + td->testName() ) {
 							// Running one test
 							run_type = _OneTest_;
 							__remove_first_command_line_arg();
