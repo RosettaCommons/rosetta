@@ -18,11 +18,11 @@
 
 // Project headers
 #include <utility/file/file_sys_util.hh>
-
-
 namespace utility {
 namespace io {
 
+	// Initialize private static data
+	vector1< std::string > izstream::alternative_search_paths_;
 
 	/// @brief Open a file
 	void
@@ -44,31 +44,27 @@ namespace io {
 		 ( open_mode & ios_base::app ) ||
 		 ( ( open_mode & ios_base::in ) &&
 		 ( open_mode & ios_base::out ) ) ) { // Unsupported for gzip files: Use ifstream
-			trytry_ifstream_open( if_stream_, filename_a, open_mode );
+			open_ifstream(filename_a, open_mode);
 			compression_ = UNCOMPRESSED;
-			filename_ = filename_a;
 		} else if ( file_extension( filename_a ) == "gz" ) { // gzip file
-			trytry_ifstream_open( if_stream_, filename_a, ios_base::in|ios_base::binary );
-			if ( if_stream_ ) { // Open succeeded
+			open_ifstream(filename_a, ios_base::in|ios_base::binary );
+			if( if_stream_ ){ // Open succeeded
 				compression_ = GZIP;
 			} else { // Leave stream state so that failure can be detected
 				compression_ = NONE;
 			}
-			filename_ = filename_a;
 		} else { // Try with .gz extension added
-			trytry_ifstream_open( if_stream_, filename_a + ".gz", ios_base::in|ios_base::binary );
+			open_ifstream( filename_a + ".gz", ios_base::in|ios_base::binary );
 			if ( if_stream_ ) { // Found/opened with .gz added
 				compression_  = GZIP;
-				filename_ = filename_a + ".gz";
 			} else { // Try as an uncompressed file
 				if_stream_.clear();
-				trytry_ifstream_open( if_stream_, filename_a, open_mode );
+				open_ifstream( filename_a, open_mode );
 				if ( if_stream_ ) { // Open succeeded
 					compression_ = UNCOMPRESSED;
 				} else { // Leave stream state so that failure can be detected
 					compression_ = NONE;
 				}
-				filename_ = filename_a;
 			}
 		}
 
@@ -81,6 +77,32 @@ namespace io {
 				delete zip_stream_p_; zip_stream_p_ = 0;
 				if_stream_.close();
 				if_stream_.setstate( ios_base::failbit ); // set failbit so failure can be detected
+			}
+		}
+	}
+
+
+	void
+	izstream::open_ifstream(
+		std::string const & name,
+		std::ios_base::openmode open_mode
+	){
+		using std::ios_base;
+		using utility::file::trytry_ifstream_open;
+		trytry_ifstream_open( if_stream_, name, open_mode );
+		if ( if_stream_ ) { // Open succeeded
+			filename_ = name;
+		} else { // Try opening file in alternative search paths
+			vector1<std::string>::const_iterator i(alternative_search_paths_.begin());
+			vector1<std::string>::const_iterator const ie(alternative_search_paths_.end());
+			for( ; i!=ie; ++i ){
+				trytry_ifstream_open( if_stream_,
+					(*i + platform::file::PATH_SEPARATOR) + name,
+					ios_base::in|ios_base::binary );
+				if(if_stream_){
+					filename_ = (*i + platform::file::PATH_SEPARATOR) + name;
+					break;
+				}
 			}
 		}
 	}

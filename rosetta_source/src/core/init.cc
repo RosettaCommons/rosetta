@@ -27,6 +27,7 @@
 #include <core/types.hh>
 #include <basic/options/option.hh>
 #include <utility/basic_sys_util.hh>
+#include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
 // Classes in core that must register with factorys
@@ -486,6 +487,11 @@ void init(int argc, char * argv [])
 
 	if( basic::options::option[ run::version ]() ) {
 		TR << "Mini-Rosetta version " << core::minirosetta_svn_version() << " from " << core::minirosetta_svn_url() << std::endl;
+	}
+
+	if( basic::options::option[ in::path::path ].user() ){
+		utility::io::izstream::set_alternative_search_paths(
+			basic::options::option[ in::path::path ]());
 	}
 
 

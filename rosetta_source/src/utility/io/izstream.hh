@@ -26,6 +26,7 @@
 
 // Project headers
 #include <utility/file/gzip_util.hh>
+#include <utility/vector1.hh>
 
 // C++ headers
 #include <fstream>
@@ -609,6 +610,31 @@ private: // Properties: internal zip stream predicates
 		return ( zip_stream_p_ ? zip_stream_p_->get_out_size() : 0 );
 	}
 
+private:
+
+	/// @brief Helper function for opening files with alternative search paths
+	void
+	open_ifstream(
+		std::string const & name,
+		std::ios_base::openmode open_mode);
+
+public:
+
+	static
+	void
+	set_alternative_search_paths(
+		vector1< std::string > alternative_search_paths
+	){
+		alternative_search_paths_ = alternative_search_paths;
+	}
+
+
+	static
+	vector1< std::string >
+	get_alternative_search_paths() {
+		return alternative_search_paths_;
+	}
+
 
 private: // Fields
 
@@ -625,6 +651,12 @@ private: // Fields
 	/// @brief Zip file stream pointer (owning)
 	zlib_stream::zip_istream * zip_stream_p_;
 
+	/// @brief Alternative search paths
+	/// This initialized by the option system -in:path:path Notice that
+	/// izstream cannot access the option system (because the utility
+	/// library comes before the basic library), so setting the
+	/// alternate search paths is it the responsibility of core::init()
+	static vector1< std::string > alternative_search_paths_;
 
 }; // izstream
 

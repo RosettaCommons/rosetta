@@ -64,5 +64,27 @@ class IZStreamTests : public CxxTest::TestSuite {
 		TS_ASSERT( cnt_if == cnt_iz );
 	}
 
+
+	void test_alternate_paths() {
+		using namespace utility::io;
+
+		izstream cannot_find( "no_final_newline.txt" );
+		TS_ASSERT(!cannot_find);
+
+		utility::vector1< std::string > current_alternative_paths(
+			izstream::get_alternative_search_paths());
+
+		utility::vector1< std::string > alternative_paths;
+		alternative_paths.push_back("bla/bla/bla");
+		alternative_paths.push_back("utility/io");
+		alternative_paths.push_back("alb/alb/alb");
+
+		izstream::set_alternative_search_paths(alternative_paths);
+
+		izstream can_find( "no_final_newline.txt" );
+		TS_ASSERT(can_find);
+
+		izstream::set_alternative_search_paths(current_alternative_paths);
+	}
 };
 
