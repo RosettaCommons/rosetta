@@ -174,9 +174,9 @@ RestrictToInterface::apply(
 	using core::Size;
 	utility::vector1<bool> is_interface( pose.total_residue(), false );
 
-	core::Size num_jump_ = rb_jump_.size();
+	core::Size num_jump_ = movable_jumps().size();
 	for( Size jj=1; jj<=num_jump_; jj++ ) {
-		protocols::scoring::Interface interface( rb_jump_[jj] );
+		protocols::scoring::Interface interface( movable_jumps()[jj] );
 		interface.distance( distance_ );
 		interface.calculate( pose );
 
@@ -214,14 +214,6 @@ void RestrictToInterface::symmetric_task(
   }
 }
 
-void RestrictToInterface::rb_jump( int jump_in ) {
-
-	rb_jump_.push_back( jump_in );
-}
-
-void RestrictToInterface::set_movable_jumps( utility::vector1_size const movable_jumps ) {
-    rb_jump_ = movable_jumps;
-}
 void RestrictToInterface::distance( core::Real const distance_in ) {
 	distance_ = distance_in;
 }
@@ -229,7 +221,7 @@ void RestrictToInterface::distance( core::Real const distance_in ) {
 void
 RestrictToInterface::parse_tag( utility::tag::TagPtr tag )
 {
-  rb_jump_.push_back( ( tag->getOption< core::Size >( "jump", 1 ) ) );
+  add_movable_jumps( ( tag->getOption< core::Size >( "jump", 1 ) ) );
   distance_ = tag->getOption< core::Real >( "distance", 8 )  ;
 }
 

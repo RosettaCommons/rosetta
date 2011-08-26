@@ -1769,6 +1769,7 @@
 		BEDAA08F69587F6DD5FA0C07 /* RigidBodyMoveRotSetOps.cc in Sources */ = {isa = PBXBuildFile; fileRef = B5909A8FA9CECFAD2E1C617E /* RigidBodyMoveRotSetOps.cc */; };
 		1A9FE48B63665DBD3CC9D765 /* SpecialRotamerRotSetOps.cc in Sources */ = {isa = PBXBuildFile; fileRef = FE2E1D7BC8B9135AB7A695A8 /* SpecialRotamerRotSetOps.cc */; };
 		79BB1381C3DA5DCDD73987FF /* DesignAroundOperation.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6B920EC6EE29617F50065BD2 /* DesignAroundOperation.cc */; };
+		0586DD4C4A5A32E1B6579632 /* InterfaceTaskOperation.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4791699B58798568CDFE9B60 /* InterfaceTaskOperation.cc */; };
 		3AF579D04F448F1E5833940A /* JointSequenceOperation.cc in Sources */ = {isa = PBXBuildFile; fileRef = DB71BE44CA4454AEFFB5A64D /* JointSequenceOperation.cc */; };
 		ACE76D8D887DF844D0D1610E /* LayerDesignOperation.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4916E7D35613F5A0AB449D04 /* LayerDesignOperation.cc */; };
 		81C1CF8210058DED361FD750 /* LimitAromaChi2Operation.cc in Sources */ = {isa = PBXBuildFile; fileRef = 47BAB4936A875F074D2292BE /* LimitAromaChi2Operation.cc */; };
@@ -4817,6 +4818,7 @@
 		58B3F08E5B468EE5AF03C866 /* TaskFactory.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = TaskFactory.cc; path = ../src/core/pack/task/TaskFactory.cc; sourceTree = SOURCE_ROOT; };
 		82D6F0EF10E19A2BF79C9B5D /* TaskFactory.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TaskFactory.fwd.hh; path = ../src/core/pack/task/TaskFactory.fwd.hh; sourceTree = SOURCE_ROOT; };
 		BBC9E93DEF678F1F705E5780 /* TaskFactory.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = TaskFactory.hh; path = ../src/core/pack/task/TaskFactory.hh; sourceTree = SOURCE_ROOT; };
+		8CA004B14F2E6E7EB7604CBC /* ._RestrictToInterface.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._RestrictToInterface.hh; path = ../src/core/pack/task/operation/._RestrictToInterface.hh; sourceTree = SOURCE_ROOT; };
 		940C27C13D7F86589F9B7F89 /* NoRepackDisulfides.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = NoRepackDisulfides.cc; path = ../src/core/pack/task/operation/NoRepackDisulfides.cc; sourceTree = SOURCE_ROOT; };
 		87A72156ABACB86EB6EB5820 /* NoRepackDisulfides.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = NoRepackDisulfides.fwd.hh; path = ../src/core/pack/task/operation/NoRepackDisulfides.fwd.hh; sourceTree = SOURCE_ROOT; };
 		CCE72DDA53471CD146126641 /* NoRepackDisulfides.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = NoRepackDisulfides.hh; path = ../src/core/pack/task/operation/NoRepackDisulfides.hh; sourceTree = SOURCE_ROOT; };
@@ -5400,6 +5402,10 @@
 		030F9898F6AD9F275456758D /* typedefs.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = typedefs.hh; path = ../src/protocols/dna/typedefs.hh; sourceTree = SOURCE_ROOT; };
 		246D19CCD77524643EDD29F0 /* util.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = util.cc; path = ../src/protocols/dna/util.cc; sourceTree = SOURCE_ROOT; };
 		D38AF9D3FA205D568EBC7251 /* util.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = util.hh; path = ../src/protocols/dna/util.hh; sourceTree = SOURCE_ROOT; };
+		6811B6D9D0B83EAD35C64B04 /* ._DockTaskFactory.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._DockTaskFactory.hh; path = ../src/protocols/docking/._DockTaskFactory.hh; sourceTree = SOURCE_ROOT; };
+		88486938B76653ED7599FB6F /* ._DockingHighRes.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._DockingHighRes.hh; path = ../src/protocols/docking/._DockingHighRes.hh; sourceTree = SOURCE_ROOT; };
+		862BB6B06B0F801E36DCA79D /* ._DockingHighResLegacy.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._DockingHighResLegacy.hh; path = ../src/protocols/docking/._DockingHighResLegacy.hh; sourceTree = SOURCE_ROOT; };
+		19538A9D44D4CE7EA94F4052 /* ._DockingProtocol.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._DockingProtocol.hh; path = ../src/protocols/docking/._DockingProtocol.hh; sourceTree = SOURCE_ROOT; };
 		73FCE94210E4DE795798A525 /* DockFilters.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DockFilters.cc; path = ../src/protocols/docking/DockFilters.cc; sourceTree = SOURCE_ROOT; };
 		AFE38E171CE3F09217C44357 /* DockFilters.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DockFilters.fwd.hh; path = ../src/protocols/docking/DockFilters.fwd.hh; sourceTree = SOURCE_ROOT; };
 		4F7FC71F84346C6EA726FBEA /* DockFilters.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DockFilters.hh; path = ../src/protocols/docking/DockFilters.hh; sourceTree = SOURCE_ROOT; };
@@ -7994,10 +8000,15 @@
 		FE2E1D7BC8B9135AB7A695A8 /* SpecialRotamerRotSetOps.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SpecialRotamerRotSetOps.cc; path = ../src/protocols/toolbox/rotamer_set_operations/SpecialRotamerRotSetOps.cc; sourceTree = SOURCE_ROOT; };
 		506E7F84E29FB96717C5CA54 /* SpecialRotamerRotSetOps.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SpecialRotamerRotSetOps.fwd.hh; path = ../src/protocols/toolbox/rotamer_set_operations/SpecialRotamerRotSetOps.fwd.hh; sourceTree = SOURCE_ROOT; };
 		549EAA0113A3D28EF481793F /* SpecialRotamerRotSetOps.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SpecialRotamerRotSetOps.hh; path = ../src/protocols/toolbox/rotamer_set_operations/SpecialRotamerRotSetOps.hh; sourceTree = SOURCE_ROOT; };
+		B4C50F342AE847479D3B4050 /* ._InterfaceTaskOperation.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._InterfaceTaskOperation.hh; path = ../src/protocols/toolbox/task_operations/._InterfaceTaskOperation.hh; sourceTree = SOURCE_ROOT; };
+		39DEC02CDA080755871630E8 /* ._RestrictToInterface.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ._RestrictToInterface.hh; path = ../src/protocols/toolbox/task_operations/._RestrictToInterface.hh; sourceTree = SOURCE_ROOT; };
 		6B920EC6EE29617F50065BD2 /* DesignAroundOperation.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DesignAroundOperation.cc; path = ../src/protocols/toolbox/task_operations/DesignAroundOperation.cc; sourceTree = SOURCE_ROOT; };
 		90A682E32E25F33CBAC5B9F5 /* DesignAroundOperation.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DesignAroundOperation.fwd.hh; path = ../src/protocols/toolbox/task_operations/DesignAroundOperation.fwd.hh; sourceTree = SOURCE_ROOT; };
 		828CD9CA8C277B44D8FC1826 /* DesignAroundOperation.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DesignAroundOperation.hh; path = ../src/protocols/toolbox/task_operations/DesignAroundOperation.hh; sourceTree = SOURCE_ROOT; };
 		310A5A1C6176E0F499193CF8 /* DesignAroundOperationCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = DesignAroundOperationCreator.hh; path = ../src/protocols/toolbox/task_operations/DesignAroundOperationCreator.hh; sourceTree = SOURCE_ROOT; };
+		4791699B58798568CDFE9B60 /* InterfaceTaskOperation.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = InterfaceTaskOperation.cc; path = ../src/protocols/toolbox/task_operations/InterfaceTaskOperation.cc; sourceTree = SOURCE_ROOT; };
+		06DDCB6B5C58EDC712152222 /* InterfaceTaskOperation.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = InterfaceTaskOperation.fwd.hh; path = ../src/protocols/toolbox/task_operations/InterfaceTaskOperation.fwd.hh; sourceTree = SOURCE_ROOT; };
+		946DBBE036A0CB62A23B997F /* InterfaceTaskOperation.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = InterfaceTaskOperation.hh; path = ../src/protocols/toolbox/task_operations/InterfaceTaskOperation.hh; sourceTree = SOURCE_ROOT; };
 		DB71BE44CA4454AEFFB5A64D /* JointSequenceOperation.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = JointSequenceOperation.cc; path = ../src/protocols/toolbox/task_operations/JointSequenceOperation.cc; sourceTree = SOURCE_ROOT; };
 		A77C3616A01E99C68155D05A /* JointSequenceOperation.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = JointSequenceOperation.fwd.hh; path = ../src/protocols/toolbox/task_operations/JointSequenceOperation.fwd.hh; sourceTree = SOURCE_ROOT; };
 		043BCFC5B46C14A12964ACA1 /* JointSequenceOperation.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = JointSequenceOperation.hh; path = ../src/protocols/toolbox/task_operations/JointSequenceOperation.hh; sourceTree = SOURCE_ROOT; };
@@ -11670,6 +11681,7 @@
 		F3E7261C1747F626EA87BF2C /* operation */ = {
 			isa = PBXGroup;
 			children = (
+				8CA004B14F2E6E7EB7604CBC /* ._RestrictToInterface.hh */,
 				940C27C13D7F86589F9B7F89 /* NoRepackDisulfides.cc */,
 				87A72156ABACB86EB6EB5820 /* NoRepackDisulfides.fwd.hh */,
 				CCE72DDA53471CD146126641 /* NoRepackDisulfides.hh */,
@@ -12689,6 +12701,10 @@
 			isa = PBXGroup;
 			children = (
 				3A7C29165CED7A203A41FEA2 /* stateless */,
+				6811B6D9D0B83EAD35C64B04 /* ._DockTaskFactory.hh */,
+				88486938B76653ED7599FB6F /* ._DockingHighRes.hh */,
+				862BB6B06B0F801E36DCA79D /* ._DockingHighResLegacy.hh */,
+				19538A9D44D4CE7EA94F4052 /* ._DockingProtocol.hh */,
 				73FCE94210E4DE795798A525 /* DockFilters.cc */,
 				AFE38E171CE3F09217C44357 /* DockFilters.fwd.hh */,
 				4F7FC71F84346C6EA726FBEA /* DockFilters.hh */,
@@ -16008,10 +16024,15 @@
 		F29383808EF7BB938F35DA17 /* task_operations */ = {
 			isa = PBXGroup;
 			children = (
+				B4C50F342AE847479D3B4050 /* ._InterfaceTaskOperation.hh */,
+				39DEC02CDA080755871630E8 /* ._RestrictToInterface.hh */,
 				6B920EC6EE29617F50065BD2 /* DesignAroundOperation.cc */,
 				90A682E32E25F33CBAC5B9F5 /* DesignAroundOperation.fwd.hh */,
 				828CD9CA8C277B44D8FC1826 /* DesignAroundOperation.hh */,
 				310A5A1C6176E0F499193CF8 /* DesignAroundOperationCreator.hh */,
+				4791699B58798568CDFE9B60 /* InterfaceTaskOperation.cc */,
+				06DDCB6B5C58EDC712152222 /* InterfaceTaskOperation.fwd.hh */,
+				946DBBE036A0CB62A23B997F /* InterfaceTaskOperation.hh */,
 				DB71BE44CA4454AEFFB5A64D /* JointSequenceOperation.cc */,
 				A77C3616A01E99C68155D05A /* JointSequenceOperation.fwd.hh */,
 				043BCFC5B46C14A12964ACA1 /* JointSequenceOperation.hh */,
@@ -18502,6 +18523,7 @@
 				BEDAA08F69587F6DD5FA0C07 /* RigidBodyMoveRotSetOps.cc in Sources */,
 				1A9FE48B63665DBD3CC9D765 /* SpecialRotamerRotSetOps.cc in Sources */,
 				79BB1381C3DA5DCDD73987FF /* DesignAroundOperation.cc in Sources */,
+				0586DD4C4A5A32E1B6579632 /* InterfaceTaskOperation.cc in Sources */,
 				3AF579D04F448F1E5833940A /* JointSequenceOperation.cc in Sources */,
 				ACE76D8D887DF844D0D1610E /* LayerDesignOperation.cc in Sources */,
 				81C1CF8210058DED361FD750 /* LimitAromaChi2Operation.cc in Sources */,
