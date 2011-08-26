@@ -119,8 +119,9 @@ DockingHighRes::DockingHighRes( DockingHighRes const & old_instance ) :
 	scorefxn_pack_ = old_instance.scorefxn_pack_->clone();
 
 	movable_jumps_ = old_instance.movable_jumps_;
-
-	tf_ = new core::pack::task::TaskFactory( *old_instance.tf_ );
+	if( old_instance.tf_ ){
+		tf_ = new core::pack::task::TaskFactory( *old_instance.tf_ );
+	}
 	tf2_ = new DockTaskFactory( *old_instance.tf2_ );
 }
 
@@ -133,7 +134,7 @@ void DockingHighRes::init( DockJumps const movable_jumps )
 	ignore_default_task_ = false; //needs to be false by default
 
 	movable_jumps_ = movable_jumps;
-	//tf_=NULL; might need this
+	tf_ = NULL; //might need this
 	tf2_ = new DockTaskFactory();
 }
 

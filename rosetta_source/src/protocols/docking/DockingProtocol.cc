@@ -75,6 +75,7 @@
 #include <protocols/ScoreMap.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/protein_interface_design/dock_design_filters.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 // Utility Headers
 #include <utility/io/izstream.hh>
@@ -278,21 +279,23 @@ void DockingProtocol::sync_objects_with_flags()
 				if ( docking_highres_mover_->get_name() != "DockMinMover" ) docking_highres_mover_ = NULL;
 			}
 			if ( !docking_highres_mover_ ) docking_highres_mover_ = new DockMinMover( movable_jumps_, docking_scorefxn_high_ );
-		} else if ( use_legacy_protocol_ ) {
-            if ( docking_highres_mover_ ) {
+		}
+		else if ( use_legacy_protocol_ ) {
+			if ( docking_highres_mover_ ) {
 				if ( docking_highres_mover_->get_name() != "DockingHighResLegacy" ) docking_highres_mover_ = NULL;
 			}
 			if ( !docking_highres_mover_ ) {
 				docking_highres_mover_ = new DockingHighResLegacy( movable_jumps_, docking_scorefxn_high_, docking_scorefxn_pack_ );
 			}
-		} else {
-            if ( docking_highres_mover_ ) {
+		}
+		else {
+			if ( docking_highres_mover_ ) {
 				if ( docking_highres_mover_->get_name() != "DockMCMProtocol" ) docking_highres_mover_ = NULL;
 			}
 			if ( !docking_highres_mover_ ){
 				// uses docking_scorefxn_output because three scorefunction still exist
 				// After move to new protocol is complete, docking_scorefxn_output will be the same as docking_scorefxn_high
-                //				docking_highres_mover_ = new DockMCMProtocol( movable_jumps_, docking_scorefxn_output_, docking_scorefxn_pack_ ); //JQX commented this out, see the line below
+				// docking_highres_mover_ = new DockMCMProtocol( movable_jumps_, docking_scorefxn_output_, docking_scorefxn_pack_ ); //JQX commented this out, see the line below
 				docking_highres_mover_ = new DockMCMProtocol( movable_jumps_, docking_scorefxn_high_, docking_scorefxn_pack_ );  //JQX added this line to match the Legacy code
 				docking_highres_mover_->set_rt_min( rt_min_ );
 				docking_highres_mover_->set_sc_min( sc_min_ );
@@ -539,10 +542,80 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 //destructor
 DockingProtocol::~DockingProtocol() {}
 
-//clone
+///@brief clone operator, calls the copy constructor
 protocols::moves::MoverOP
 DockingProtocol::clone() const {
-	return( new DockingProtocol( movable_jumps_, low_res_protocol_only_, docking_local_refine_, autofoldtree_, docking_scorefxn_low_, docking_scorefxn_high_ ) );
+	//return( new DockingProtocol( movable_jumps_, low_res_protocol_only_, docking_local_refine_, autofoldtree_, docking_scorefxn_low_, docking_scorefxn_high_ ) ); This is bad do not clone this way.
+	return new DockingProtocol(*this);
+}
+///@brief copy ctor
+DockingProtocol::DockingProtocol( DockingProtocol const & rhs ) :
+	Mover(rhs)
+{
+	*this = rhs;
+}
+
+///@brief assignment operator
+DockingProtocol & DockingProtocol::operator=( DockingProtocol const & rhs ){
+	//abort self-assignment
+	if (this == &rhs) return *this;
+
+	//going through all of member data and assigning it
+	user_defined_ = rhs.user_defined_;
+	low_res_protocol_only_ = rhs.low_res_protocol_only_;
+	reporting_ = rhs.reporting_;
+	autofoldtree_ = rhs.autofoldtree_;
+	flags_and_objects_are_in_sync_ = rhs.flags_and_objects_are_in_sync_;
+	first_apply_with_current_setup_ = rhs.first_apply_with_current_setup_;
+	sc_min_ = rhs.sc_min_;
+	rt_min_ = rhs.rt_min_;
+	dock_min_ = rhs.dock_min_;
+	no_filters_ = rhs.no_filters_;
+	use_legacy_protocol_ =  rhs.use_legacy_protocol_;
+	docking_local_refine_ = rhs.docking_local_refine_;
+	use_csts_ = rhs.use_csts_;
+	cst_weight_ = rhs.cst_weight_;
+	score_cutoff_ = rhs.score_cutoff_;
+	fold_tree_ = rhs.fold_tree_;
+	partners_ = rhs.partners_;
+	previous_sequence_ = rhs.previous_sequence_;
+	lowres_inner_cycles_ = rhs.lowres_inner_cycles_;
+	lowres_outer_cycles_ = rhs.lowres_outer_cycles_;
+	movable_jumps_ = rhs.movable_jumps_;
+	docking_scorefxn_low_ = rhs.docking_scorefxn_low_->clone();
+	docking_scorefxn_high_ = rhs.docking_scorefxn_high_->clone();
+	docking_scorefxn_pack_ = rhs.docking_scorefxn_pack_->clone();
+	docking_scorefxn_output_ = rhs.docking_scorefxn_output_->clone();
+	if( rhs.mc_ ) //not used currently but might be needed later
+		mc_ = new moves::MonteCarlo( *(rhs.mc_) );
+	lowres_filter_ = static_cast< DockingLowResFilter * const > (rhs.lowres_filter_->clone()() );
+	highres_filter_ = static_cast< DockingHighResFilter * const > (rhs.highres_filter_->clone()() );
+	if(rhs.docking_lowres_mover_){
+		docking_lowres_mover_ = static_cast< DockingLowRes * >( rhs.docking_lowres_mover_->clone()() );
+	}
+	if(rhs.docking_highres_mover_){
+		docking_highres_mover_ = static_cast< DockingHighRes * >( rhs.docking_highres_mover_->clone()() );
+	}
+	to_centroid_ = static_cast< protocols::moves::SwitchResidueTypeSetMover * >( rhs.to_centroid_->clone()() );
+	to_all_atom_ = static_cast< protocols::moves::SwitchResidueTypeSetMover * >(rhs.to_all_atom_->clone()() );
+	if(rhs.ensemble1_ || ensemble2_){
+	ensemble1_ = new protocols::docking::DockingEnsemble( *(rhs.ensemble1_) );
+	ensemble1_filename_ = rhs.ensemble1_filename_ ;
+	}
+	if(rhs.ensemble2_){
+	ensemble2_ = new protocols::docking::DockingEnsemble( *(rhs.ensemble2_) );
+	ensemble2_filename_ = rhs.ensemble2_filename_;
+	}
+	if( rhs.docking_constraint_ )
+		docking_constraint_ = static_cast< protocols::moves::ConstraintSetMover * >( rhs.docking_constraint_->clone()() );
+	if( rhs.recover_sidechains_ )
+		recover_sidechains_ = static_cast< protocols::moves::ReturnSidechainMover * >( rhs.recover_sidechains_->clone()() );
+	if(	rhs.init_task_factory_ ){
+		init_task_factory_ = new 	core::pack::task::TaskFactory( *(rhs.init_task_factory_) );
+	}
+	design_ = rhs.design_;
+	ignore_default_docking_task_ = rhs.ignore_default_docking_task_;
+	return *this;
 }
 
 void DockingProtocol::set_lowres_scorefxn( core::scoring::ScoreFunctionOP docking_scorefxn_low )
@@ -918,11 +991,22 @@ DockingProtocol::parse_my_tag( TagPtr const tag, moves::DataMap & data, protocol
 		std::string const partners( tag->getOption<std::string>( "partners") );
 		set_partners(partners);
 	}
+	//initialize other flags to control behavior
+	//do high res step or not
+	set_low_res_protocol_only( tag->getOption<bool>( "low_res_protocol_only", 0 ) );
+	//skip the low res step if true
+	set_docking_local_refine( tag->getOption<bool>( "docking_local_refine", 0 ) );
+	//minimze final full atom structure?
+	set_dock_min( tag->getOption<bool>( "dock_min", 0 ) );
+	//ignore the default docking task and define your own
+	set_ignore_default_docking_task( tag->getOption<bool>( "ignore_default_docking_task", 0 ) );
+	if( tag->hasOption( "task_operations" ) ){
+		set_task_factory(protocols::rosetta_scripts::parse_task_operations( tag, data ) );
+	}
+
+}//end parse_my_tag
 
 
-}
-
-    
 std::string
 DockingProtocolCreator::keyname() const
 {

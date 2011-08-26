@@ -219,18 +219,18 @@ void DockMCMProtocol::apply( core::pose::Pose & pose )
 	if( !ignore_default_task() ){
 	 	TR << "Using the DockingTaskFactory." << std::endl;
 	 	tf2()->create_and_attach_task_factory( this, pose );
-	 }
+	}
 	else {
 	 	TR <<"The default DockingTaskFactory is being ignored." << std::endl;
-	 }
-	//Need a check to make sure there is a task HERE!!!
-	if( task_factory() )
-		dock_mcm_->set_task_factory( task_factory() );
-	if( ignore_default_task() && !task_factory() ){
-		TR<< "No TaskFactory given to docking, using default to design all residues." << std::endl;
 	}
-	//debugging
-	//std::cout << "DockMCMProtocol task set: \n" <<  *(task_factory()->create_task_and_apply_taskoperations(pose)) << std::endl;
+	//Need a check to make sure there is a task HERE!!!
+	if( task_factory() != 0 ){
+		dock_mcm_->set_task_factory( task_factory() );
+	}
+	//exit if you chose to ignore the default task but didn't provide one of your own.
+	if( ignore_default_task() && !task_factory() ){
+		utility_exit_with_message( "Exiting DockMCMProtocol you chose to ignore_default_task but no alternate task was given to docking, " );
+	}
 
 	//JQX: define the initial_pack, and this initial_pack was defined as a trial mover
 	moves::PackRotamersMoverOP initial_pack = new moves::PackRotamersMover();

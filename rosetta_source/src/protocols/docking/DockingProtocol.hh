@@ -97,6 +97,13 @@ public:
 
 	virtual protocols::moves::MoverOP clone() const;
 
+
+	///@brief copy ctor
+	DockingProtocol( DockingProtocol const & rhs );
+
+	///@brief assignment operator
+	DockingProtocol & operator=( DockingProtocol const & rhs );
+
 	/// @brief Associates relevant options with the DockingProtocol class
 	static void register_options();
 
@@ -206,7 +213,7 @@ private:
 	core::scoring::ScoreFunctionCOP docking_scorefxn_output_;
 
 	// success criteria enforcers
-	protocols::moves::MonteCarloOP mc_;
+	protocols::moves::MonteCarloOP mc_; //not used currently
 	protocols::docking::DockingLowResFilterOP lowres_filter_;
 	protocols::docking::DockingHighResFilterOP highres_filter_;
 
