@@ -27,6 +27,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
+#include <utility/tools/make_vector1.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 
@@ -109,12 +110,12 @@ public:
 public:
 	RestrictToInterface() : parent(), distance_( 8 ), loopy_interface_( false )
 	{
-		rb_jump_.push_back( 1 );
+        set_movable_jumps( utility::tools::make_vector1< int >( 1 ) );
 	}
 
 	RestrictToInterface( int rb_jump_in, core::Real distance_in = 8 ) :
 		parent(), distance_ ( distance_in ), loopy_interface_( false ) {
-		rb_jump_.push_back( rb_jump_in );
+		set_movable_jumps( utility::tools::make_vector1< int >( rb_jump_in ) );
 	}
 
 	///@brief Constructor with arguments for multiple jumps
@@ -146,7 +147,7 @@ public:
 
 	virtual TaskOperationOP clone() const;
 	void rb_jump( int jump_in );
-    void set_movable_jumps( utility::vector1_size const movable_jumps );
+    void set_movable_jumps( utility::vector1_int const movable_jumps );
 	void distance( core::Real const distance_in );
 	void symmetric_task( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const;
 
