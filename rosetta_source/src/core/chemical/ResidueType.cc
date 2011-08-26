@@ -2295,6 +2295,13 @@ ResidueType::set_ncaa_rotlib_n_bin_per_rot( utility::vector1<Size> n_bins_per_ro
 	}
 }
 
+/// @brief  Check if residue is 'VIRTUAL_RESIDUE'
+bool
+ResidueType::is_virtual_residue() const{
+	return ( has_variant_type( "VIRTUAL_RESIDUE" ) );
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////
 
 } // chemical

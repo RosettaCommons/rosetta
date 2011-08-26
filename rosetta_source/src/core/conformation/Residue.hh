@@ -181,6 +181,13 @@ public:
 	bool
 	is_virtual( Size const & atomno ) const;
 
+	/// @brief  Check atom is virtual based on number of atom type.
+	bool
+	is_virtual_residue() const
+	{
+		return rsd_type_.is_virtual_residue();
+	}
+
 	/// @brief Returns the index number of the  <atm>  in this residue
 	/// example: residue.atom_index("CA") returns 2 for a normal amino acid
 	///
