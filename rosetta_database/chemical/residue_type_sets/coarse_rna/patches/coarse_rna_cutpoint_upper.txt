@@ -1,0 +1,20 @@
+## patch for the residue on the upper side of a cutpoint, for loop modeling
+
+NAME coarse_rna_cutpoint_upper
+TYPES CUTPOINT_UPPER
+
+BEGIN_SELECTOR
+PROPERTY RNA COARSE
+NOT VARIANT_TYPE LOWER_TERMINUS
+END_SELECTOR
+
+BEGIN_CASE ################################# general
+
+ADD_ATOM OVU1 VIRT VIRT 0.0
+ADD_BOND P OVU1
+SET_BACKBONE_HEAVYATOM OVU1
+
+SET_ICOOR OVU1  60.729000   90.300000    3.832517   P     S     CEN
+
+END_CASE
+

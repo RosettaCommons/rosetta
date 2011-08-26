@@ -1,0 +1,9 @@
+## the atom_type_set and mm-atom_type_set to be used for the subsequent parameter files
+ATOM_TYPE_SET coarse_rna
+MM_ATOM_TYPE_SET fa_standard
+residue_types/RAD.params
+residue_types/RCY.params
+residue_types/RGU.params
+residue_types/URA.params
+residue_types/VRT.params
+

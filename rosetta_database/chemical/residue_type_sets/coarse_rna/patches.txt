@@ -1,0 +1,6 @@
+patches/LowerRNA.txt
+patches/UpperRNA.txt
+patches/coarse_rna_cutpoint_upper.txt
+patches/coarse_rna_cutpoint_lower.txt
+patches/Virtual_Phosphate.txt
+patches/Virtual_Base.txt

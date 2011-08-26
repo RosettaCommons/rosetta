@@ -1,0 +1,18 @@
+## this patch turns all protein residue backbone atoms (N,H,C,O, [1H, 2H, OXT]) into virtual atoms
+## can be useful if you want sidechain-only energy terms, while still allowing residue repacking
+NAME Virtual_Base
+TYPES  VIRTUAL_BASE
+
+BEGIN_SELECTOR
+PROPERTY RNA COARSE
+END_SELECTOR
+
+BEGIN_CASE ### general case ###
+SET_ATOM_TYPE CEN VIRT
+SET_ATOMIC_CHARGE CEN 0
+SET_ATOM_TYPE X VIRT
+SET_ATOMIC_CHARGE X 0
+SET_ATOM_TYPE Y VIRT
+SET_ATOMIC_CHARGE Y 0
+
+END_CASE
