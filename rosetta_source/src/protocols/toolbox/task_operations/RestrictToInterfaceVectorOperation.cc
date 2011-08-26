@@ -155,19 +155,6 @@ RestrictToInterfaceVectorOperation::lower_chain( core::Size lower_chain){
 	lower_chain_ = lower_chain;
 	make_name();
 }
-
-void
-RestrictToInterfaceVectorOperation::set_movable_jumps( utility::vector1_size const movable_jumps ){
-    for( utility::vector1_size::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
-		// detect chain number before and after the jump.
-        
-        
-        //TODO: implement this fully.
-        lower_chain( 1 );
-        upper_chain( 2 );
-	}
-}
-
 void
 RestrictToInterfaceVectorOperation::CB_dist_cutoff( core::Real CB_dist_cutoff){
 	CB_dist_cutoff_ = CB_dist_cutoff;

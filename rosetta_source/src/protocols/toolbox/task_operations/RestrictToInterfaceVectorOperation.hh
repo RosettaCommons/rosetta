@@ -71,8 +71,6 @@ public:
 	void vector_dist_cutoff(core::Real vector_dist_cutoff);
 	///@brief parse_tag function for rosetta scripts
 	void parse_tag( TagPtr tag );
-    
-    void set_movable_jumps( utility::vector1_size const movable_jumps );
 
 private:
 	///@brief constructor helper function - makes the PoseMetricCalculator

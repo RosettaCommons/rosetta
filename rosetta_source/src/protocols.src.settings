@@ -1216,7 +1216,6 @@ sources = {
 		"ReadResfileFromDB",
 		"RestrictByCalculatorsOperation",
 		"RestrictOperationsBase",
-		"InterfaceTaskOperation",
 		"RestrictToInterfaceOperation",
 		"RestrictToInterfaceVectorOperation",
 		"RestrictToNeighborhoodOperation",
