@@ -5,3 +5,7 @@ patches/rna_cutpoint_upper.txt
 patches/Virtual_Phosphate.txt
 patches/Virtual_O2star_hydrogen.txt
 patches/BulgeRNA.txt
+patches/Virtual_RNA_Residue.txt
+patches/VirtualBaseHeavyAtom.txt
+patches/Virtual_Backbone_Except_C1star.txt
+patches/Virtual_RNA_Residue_Upper.txt
