@@ -1,5 +1,4 @@
 # nonlocal
--nonlocal:min_chunk_size 9
 -nonlocal:max_chunk_size 21
 -abinitio:relax false
 
