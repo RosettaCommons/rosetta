@@ -6,5 +6,7 @@ patches/VirtualBB.txt
 patches/ShoveBB.txt
 patches/protein_centroid_with_HA.txt
 patches/VirtualNterm.txt
+patches/N_acetylated.txt
+patches/C_methylamidated.txt
 patches/RepulsiveOnly_centroid.txt
 #patches/ser_phosphorylated.txt
