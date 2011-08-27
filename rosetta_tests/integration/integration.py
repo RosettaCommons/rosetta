@@ -60,7 +60,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     # )
     parser.add_option("-d", "--database",
       default="", # processed below
-      help="Path to Rosetta database. (default: $ROSETTA_DB, ~/rosetta_database)",
+      help="Path to Rosetta database. (default: $ROSETTA_DB, ../..//rosetta_database)",
     )
 
     parser.add_option("-m", "--mini_home",
@@ -135,9 +135,12 @@ rm -r ref/; ./integration.py    # create reference results using only default se
         if os.environ.get('ROSETTA3_DB') is not None and \
                 path.isdir(os.environ.get('ROSETTA3_DB')):
             options.database = os.environ.get('ROSETTA3_DB')
-        elif path.isdir( path.join( path.expanduser("~"), "rosetta_database") ):
+        else:  options.database = path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'rosetta_database')
+
+        if not path.isdir( options.database ):
             options.database = path.join( path.expanduser("~"), "rosetta_database")
-        else:
+
+        if not path.isdir( options.database ):
             print "Can't find database at %s; please set $ROSETTA3_DB or use -d" % options.database
             return 1
     # Normalize path before we change directories!
