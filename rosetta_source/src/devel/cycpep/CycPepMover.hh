@@ -8,9 +8,10 @@
 #ifndef CYCPEPPROTOCOL_H_
 #define CYCPEPPROTOCOL_H_
 #include <numeric/constants.hh>
-
+#include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/evaluation/RmsdEvaluator.hh>
+#include <core/conformation/util.hh>
 
 #include <core/graph/Graph.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -27,7 +28,7 @@
 #include <protocols/moves/PackRotamersMover.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-//#include <core/optimization/MinimizerMap.hh>
+#include <core/optimization/MinimizerMap.hh>
 #include <core/scoring/Energies.fwd.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
@@ -46,7 +47,7 @@
 #include <protocols/loops/Loops.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <core/pose/disulfide_util.hh>
+#include <core/util/disulfide_util.hh>
 #include <protocols/loops/LoopRelaxMover.fwd.hh>
 #include <devel/init.hh>
 #include <core/scoring/rms_util.hh>
@@ -61,16 +62,16 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-
+#include <core/chemical/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/Edge.fwd.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/vector1.hh>
 #include <basic/basic.hh>
-#include <basic/Tracer.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/disulfides/FullatomDisulfidePotential.hh>
+#include <protocols/jobdist/standard_mains.hh>
 using namespace core;
 namespace protocols {
 namespace CycPepMover {
@@ -84,9 +85,14 @@ public:
 	void minimize(pose::Pose& workpose);
 	void packRotamers(pose::Pose& workpose);
 	void apply(pose::Pose& workpose);
+	virtual std::string get_name() const;
 private:
+	core::scoring::constraints::ConstraintSetOP prolineConstraint(pose::Pose& workpose);
+	core::scoring::constraints::ConstraintSetOP IleConstraint(pose::Pose& workpose);
+	void printEnergies(pose::Pose& workpose);
 	void rotateUntilCys(pose::Pose& workpose, Size untilCys);
 	void updateSSAtoms(pose::Pose& workpose, Size upNum, utility::vector1_int& vec, Size pepsize);
+	Real scoreNoConstraint(pose::Pose& workpose);
 	core::scoring::constraints::ConstraintSetOP createDihedralConstraint(pose::Pose& workpose);
 	void modelSSLoop(Size startCys, Size endCys, pose::Pose& workpose);
 	protocols::loops::LoopRelaxMover _loop_relax_mover;
@@ -96,6 +102,7 @@ private:
 	pack::task::operation::NoRepackDisulfides _noRepackDisulf;
 	//prevents the repacking of N-C terminal (repacking of these residues disconnects the structures)
 	pack::task::operation::PreventRepacking _preventer;
+	core::pack::task::TaskFactoryOP _packfactory;
 };
 }
 }
