@@ -25,11 +25,11 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.fwd.hh>
 #include <numeric/xyzVector.hh>
-#include <protocols/rna/AllowInsert.fwd.hh>
-#include <core/kinematics/tree/Atom.fwd.hh>
+#include <protocols/rna/AllowInsert.hh>
+//#include <protocols/rna/AllowInsert.fwd.hh>
+//#include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <utility/vector1.fwd.hh>
 #include <core/id/AtomID.hh>
 
 
@@ -39,7 +39,6 @@
 // C++ Headers
 #include <string>
 #include <map>
-// AUTO-REMOVED #include <vector>
 
 //Auto Headers
 #include <core/id/AtomID.fwd.hh>
