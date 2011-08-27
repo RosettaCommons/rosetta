@@ -310,6 +310,13 @@ public:
 		EnergyMap & emap
 	) const;
 
+	///
+	void
+	eval_intrares_energy(
+											 conformation::Residue const & rsd,
+											 EnergyMap & emap
+											 ) const;
+
 	/// Does *NOT* zero the emap values, just adds the additional contribution to the
 	/// existing emap energies (so can be called inside finalize_total_energies)
 	virtual void

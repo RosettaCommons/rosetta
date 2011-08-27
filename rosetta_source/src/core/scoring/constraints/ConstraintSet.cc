@@ -669,6 +669,19 @@ ConstraintSet::eval_intrares_energy(
 	}
 }
 
+///
+void
+ConstraintSet::eval_intrares_energy(
+	conformation::Residue const & rsd,
+	EnergyMap & emap
+) const
+{
+	ResidueConstraints::const_iterator it( intra_residue_constraints_.find( rsd.seqpos() ) );
+	if ( it != intra_residue_constraints_.end() ) {
+		it->second->intra_residue_energy( rsd, emap /*dummy -- not actually used in this function? */, emap );
+	}
+}
+
 
 
 /// Does *NOT* zero the emap values, just adds the additional contribution to the
