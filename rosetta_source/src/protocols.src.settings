@@ -1090,12 +1090,15 @@ sources = {
 	],
 
 	"protocols/rna" : [
+		"AllowInsert",
+		"FullAtomRNA_Fragments",
 		"RNA_BasePairClassifier",
 		"RNA_ChunkLibrary",
 		"RNA_DataReader",
 		"RNA_DeNovoProtocol",
 		"RNA_FragmentMover",
-		"RNA_FragmentsClasses",
+		"RNA_Fragments",
+		#"RNA_FragmentsClasses",
 		"RNA_HelixAssembler",
 		"RNA_JumpLibrary",
 		"RNA_LoopCloser",
@@ -1125,7 +1128,6 @@ sources = {
 		"StepWiseRNA_Clusterer",
 		"StepWiseRNA_JobParameters",
 		"StepWiseRNA_Minimizer",
-		"StepWiseRNA_PoseSetup",
 		"StepWiseRNA_ResidueInfo",
 		"StepWiseRNA_ResidueSampler",
 		"StepWiseRNA_RotamerGenerator",
@@ -1303,7 +1305,7 @@ sources = {
 		"ABEGO_SS_Pool",
 		"ABEGO_SS_Map",
 		"ABEGO_SS_Config",
-	], 
+	],
 	"protocols/frag_picker/scores" : [
 		"ABEGO_SS_Score",
 		"InterbondAngleScore",

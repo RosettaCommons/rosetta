@@ -208,7 +208,7 @@ rna_denovo_test()
 
 	rna_de_novo_protocol.ignore_secstruct( option[ ignore_secstruct ] );
 	rna_de_novo_protocol.jump_change_frequency( option[ jump_change_frequency ] );
-	rna_de_novo_protocol.close_loops( option[ close_loops] );
+	rna_de_novo_protocol.set_close_loops( option[ close_loops] );
 	rna_de_novo_protocol.output_lores_silent_file( option[ output_lores_silent_file ] );
 	rna_de_novo_protocol.set_dump_pdb( option[ dump ] ) ;
 	rna_de_novo_protocol.set_staged_constraints( option[ staged_constraints ] ) ;

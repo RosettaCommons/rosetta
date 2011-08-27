@@ -10,8 +10,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-#ifndef INCLUDED_protocols_rna_RNA_ChunkLibrary_hh
-#define INCLUDED_protocols_rna_RNA_ChunkLibrary_hh
+#ifndef INCLUDED_protocols_rna_RNA_ChunkLibrary_HH
+#define INCLUDED_protocols_rna_RNA_ChunkLibrary_HH
 
 #include <protocols/rna/RNA_ChunkLibrary.fwd.hh>
 
@@ -25,9 +25,11 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.fwd.hh>
 #include <numeric/xyzVector.hh>
+#include <protocols/rna/AllowInsert.fwd.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <utility/vector1.fwd.hh>
 #include <core/id/AtomID.hh>
 
 
@@ -80,15 +82,18 @@ namespace rna{
 		~ChunkSet();
 
 		void
-		insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index ) const;
+		insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index, protocols::rna::AllowInsertOP const & allow_insert ) const;
 
 		Size
 		num_chunks() const{ return mini_pose_list_.size(); };
 
 	private:
 
+		void filter_atom_id_map_with_mask( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ) const;
+
 		utility::vector1< core::pose::MiniPoseOP > mini_pose_list_;
 		core::pose::ResMap res_map_;
+		std::map< core::id::AtomID, bool > atom_id_mask_;
 
 	};
 
@@ -103,8 +108,14 @@ namespace rna{
 		// constructor -- needs a list of silent files. Each silent file
 		//  has solutions for a particular piece of the desired pose.
 		RNA_ChunkLibrary( utility::vector1 < std::string > const & silent_files,
-											std::string const & sequence_of_big_pose /* to figure out mapping to big pose */,
-											std::map< Size, Size > const & connections_in_big_pose /* to figure out mapping to big pose*/ );
+											core::pose::Pose const & pose,
+											std::map< Size, Size > const & connections_in_big_pose /* to figure out mapping to big pose*/
+											);
+
+		RNA_ChunkLibrary(
+								utility::vector1 < std::string > const & silent_files,
+								core::pose::Pose const & pose,
+								utility::vector1< core::Size > const & input_res );
 
 		//destructor -- necessary?
 		// ~RNA_ChunkLibrary();
@@ -127,9 +138,11 @@ namespace rna{
 		random_chunk_insertion( core::pose::Pose & pose ) const;
 
 		void
-		initialize_random_chunks( core::pose::Pose & pose ) const;
+		initialize_random_chunks( core::pose::Pose & pose, bool const dump_pdb = false ) const;
 
-		ObjexxFCL::FArray1D< bool > const & allow_insert() const{ return allow_insert_; };
+		AllowInsertOP allow_insert(){ return allow_insert_; };
+
+		void set_allow_insert( AllowInsertOP allow_insert );
 
 		core::Real const & chunk_coverage() const{ return chunk_coverage_; };
 
@@ -137,7 +150,9 @@ namespace rna{
 
 		void
 		zero_out_allow_insert( core::pose::ResMap const & res_map,
-													 std::map< Size, Size > const & connections_in_big_pose );
+													 core::pose::Pose const & pose,
+													 core::pose::Pose const & scratch_pose,
+													 Size const domain_num );
 
 
 		void
@@ -222,9 +237,10 @@ namespace rna{
 	private:
 
 		utility::vector1< ChunkSetOP > chunk_sets_;
-		ObjexxFCL::FArray1D <bool> allow_insert_;
+		AllowInsertOP allow_insert_;
 		ObjexxFCL::FArray1D <bool> covered_by_chunk_;
 		core::Real chunk_coverage_;
+		bool coarse_rna_;
 
 	};
 

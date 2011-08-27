@@ -17,10 +17,11 @@
 #include <protocols/rna/RNA_DeNovoProtocol.hh>
 
 // Package headers
+#include <protocols/rna/AllowInsert.hh>
 #include <protocols/rna/RNA_BasePairClassifier.hh>
 #include <protocols/rna/RNA_DataReader.hh>
 #include <protocols/rna/RNA_DataReader.fwd.hh>
-#include <protocols/rna/RNA_FragmentsClasses.hh>
+#include <protocols/rna/FullAtomRNA_Fragments.hh>
 #include <protocols/rna/RNA_LoopCloser.hh>
 #include <protocols/rna/RNA_LoopCloser.fwd.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
@@ -74,8 +75,8 @@
 #include <string>
 #include <sstream>
 #include <fstream>
-#if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
+#ifdef WIN32
+#include <ctime>
 #endif
 
 //Auto Headers
@@ -88,7 +89,6 @@ namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUT
 
 
 using namespace core;
-using basic::T;
 
 namespace protocols {
 namespace rna {
@@ -167,7 +167,6 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 	// Some useful movers...
 	////////////////////////////////////////
 	initialize_movers( pose );
-	rna_chunk_library_->initialize_random_chunks( pose );
 	if (dump_pdb_) pose.dump_pdb( "init.pdb" );
 
 	// RNA low resolution score function.
@@ -203,9 +202,6 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 			time_t pdb_start_time = time(NULL);
 
 			pose = start_pose;
-
-			// DONT CHECK IN!
-			//			rna_structure_parameters_->setup_jumps( pose, heat_structure_ /*initialize_jumps*/ );
 
 			if (dump_pdb_) dump_pdb( pose, "start.pdb" );
 
@@ -266,7 +262,8 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 		if (output_lores_silent_file_ ) output_to_silent_file( pose, lores_silent_file_, out_file_tag );
 
 		if (close_loops_) {
-			rna_loop_closer_->close_loops_carefully( pose, rna_structure_parameters_->connections() );
+			//rna_loop_closer_->close_loops_carefully( pose, rna_structure_parameters_->connections() );
+			rna_loop_closer_->apply( pose, rna_structure_parameters_->connections() );
 			denovo_scorefxn_->show( std::cout, pose );
 		}
 
@@ -289,6 +286,8 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 
 }
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 std::string
 RNA_DeNovoProtocol::get_name() const {
 	return "RNA_DeNovoProtocol";
@@ -314,20 +313,37 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 	// all jumping, secondary structure, base pair constraint, allow_insert information
 	// will be stored in a .prm file.
 	rna_structure_parameters_->initialize( pose, rna_params_file_, jump_library_file_, ignore_secstruct_ );
-	// May need to initialize jumps before starting...
-	rna_structure_parameters_->setup_jumps( pose, heat_structure_ /*initialize_jumps*/ );
-	// Setup constraints *after* defining jumps and chainbreak variants...
-	rna_structure_parameters_->setup_base_pair_constraints( pose );
 
 	// reads in any data on, e.g., exposure of different bases --> saves inside the pose's rna_data_info.
 	rna_data_reader_->initialize( pose, rna_data_file_ );
 
-	all_rna_fragments_ = RNA_FragmentsOP( new RNA_Fragments( all_rna_fragments_file_ ) );
+	all_rna_fragments_ = RNA_FragmentsOP( new FullAtomRNA_Fragments( all_rna_fragments_file_ ) );
 
-	rna_chunk_library_ = RNA_ChunkLibraryOP( new RNA_ChunkLibrary( chunk_silent_files_, pose.sequence(), rna_structure_parameters_->connections() ) );
-	rna_structure_parameters_->and_allow_insert( rna_chunk_library_->allow_insert() );
+	if ( chunk_res_.size() > 0 ){
+		rna_chunk_library_ = RNA_ChunkLibraryOP( new RNA_ChunkLibrary( chunk_silent_files_, pose, chunk_res_ ) );
+	} else {
+		rna_chunk_library_ = RNA_ChunkLibraryOP( new RNA_ChunkLibrary( chunk_silent_files_, pose, rna_structure_parameters_->connections() ) );
+	}
+
+
 	chunk_coverage_ = rna_chunk_library_->chunk_coverage();
 	TR << "CHUNK_COVERAGE: " << chunk_coverage_ << std::endl;
+	rna_structure_parameters_->allow_insert()->and_allow_insert( rna_chunk_library_->allow_insert() );
+
+	//	rna_structure_parameters_->allow_insert()->show();
+
+	// Setup constraints *after* defining jumps and chainbreak variants...
+	//rna_structure_parameters_->set_allow_insert( rna_chunk_library_->allow_insert() );
+	//rna_structure_parameters_->set_allow_insert( rna_structure_parameters_->allow_insert() );
+	rna_structure_parameters_->setup_fold_tree_and_jumps_and_variants( pose );
+
+	//	std::cout << "allow insert: after changes to fold tree and variants! " << std::endl;
+	//	rna_structure_parameters_->allow_insert()->show();
+
+	rna_structure_parameters_->setup_base_pair_constraints( pose );
+
+	rna_chunk_library_->set_allow_insert( rna_structure_parameters_->allow_insert() );
+	rna_chunk_library_->initialize_random_chunks( pose, dump_pdb_ );
 
 	rna_fragment_mover_ = RNA_FragmentMoverOP( new RNA_FragmentMover( all_rna_fragments_, rna_structure_parameters_->allow_insert() ) );
 
@@ -337,6 +353,7 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 
 	rna_relaxer_ = RNA_RelaxerOP( new RNA_Relaxer( rna_fragment_mover_, rna_minimizer_) );
 	rna_relaxer_->simple_rmsd_cutoff_relax( simple_rmsd_cutoff_relax_ );
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -441,10 +458,6 @@ RNA_DeNovoProtocol::output_to_silent_file( core::pose::Pose & pose, std::string 
 		RNA_SilentStruct s( pose, out_file_tag );
 		output_silent_struct( s, silent_file_data, silent_file, pose, out_file_tag, score_only );
 	}
-
-
-
-
 }
 
 

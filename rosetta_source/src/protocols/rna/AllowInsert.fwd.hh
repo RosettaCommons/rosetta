@@ -11,17 +11,17 @@
 /// @brief  Pose forward declarations header
 /// @author Rhiju Das
 
-#ifndef INCLUDED_protocols_rna_RNA_StructureParameters_FWD_HH
-#define INCLUDED_protocols_rna_RNA_StructureParameters_FWD_HH
+#ifndef INCLUDED_protocols_rna_AllowInsert_FWD_HH
+#define INCLUDED_protocols_rna_AllowInsert_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols{
 namespace rna{
 
-	class RNA_StructureParameters;
+	class AllowInsert;
 
-	typedef utility::pointer::owning_ptr< RNA_StructureParameters > RNA_StructureParametersOP;
+	typedef utility::pointer::owning_ptr< AllowInsert > AllowInsertOP;
 
 }
 }

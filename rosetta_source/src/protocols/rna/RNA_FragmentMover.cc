@@ -14,22 +14,12 @@
 
 
 #include <protocols/rna/RNA_FragmentMover.hh>
-#include <protocols/rna/RNA_FragmentsClasses.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_ProtocolUtil.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_SecStructInfo.hh>
+#include <protocols/rna/RNA_Fragments.hh>
+#include <protocols/rna/AllowInsert.hh>
+#include <protocols/rna/AllowInsert.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/rna/RNA_Util.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
-// AUTO-REMOVED #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <core/id/DOF_ID.hh>
-// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
 #include <core/pose/Pose.hh>
-
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
-
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -68,21 +58,52 @@ static basic::Tracer TR( "protocols.rna.rna_fragment_mover" ) ;
 namespace protocols {
 namespace rna {
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-RNA_FragmentMover::RNA_FragmentMover( RNA_FragmentsOP & all_rna_fragments, FArray1D_bool const & allow_insert ):
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	RNA_FragmentMover::RNA_FragmentMover(
+																		 RNA_FragmentsOP rna_fragments,
+																		 protocols::rna::AllowInsertOP allow_insert ):
   Mover(),
-	all_rna_fragments_( all_rna_fragments ),
+	rna_fragments_( rna_fragments ),
 	allow_insert_( allow_insert ),
-	num_insertable_residues_( 0 ),
-	insert_map_frag_size_( 0 ),
+	//	num_insertable_residues_( 0 ),
+	//	insert_map_frag_size_( 0 ),
 	frag_size_( 0 )
 {
 	Mover::type("RNA_FragmentMover");
 }
 
+	// This constructor is not actually used anymore -- better to use AllowInsert object above.
+	RNA_FragmentMover::RNA_FragmentMover( RNA_FragmentsOP all_rna_fragments,
+																				ObjexxFCL::FArray1D<bool> const & allow_insert_in,
+																				pose::Pose const & pose ):
+  Mover(),
+	rna_fragments_( all_rna_fragments ),
+	//allow_insert_( allow_insert ),
+	//	num_insertable_residues_( 0 ),
+	//	insert_map_frag_size_( 0 ),
+	frag_size_( 0 )
+{
+	Mover::type("RNA_FragmentMover");
+
+	allow_insert_ = new AllowInsert( pose );
+	allow_insert_->set( false );
+	for ( Size i = 1; i <= allow_insert_in.size(); i++ ){
+		if ( pose.residue_type( i ).is_RNA() && allow_insert_in[ i ] ) allow_insert_->set( i, true );
+	}
+
+}
+
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 RNA_FragmentMover::~RNA_FragmentMover()
 {
+}
+
+std::string
+RNA_FragmentMover::get_name() const {
+	return "RNA_FragmentMover";
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -95,112 +116,6 @@ RNA_FragmentMover::apply(
 	random_fragment_insertion( pose, frag_size_ );
 }
 
-std::string
-RNA_FragmentMover::get_name() const {
-	return "RNA_FragmentMover";
-}
-
-void
-RNA_FragmentMover::set_frag_size(
-	 Size const fragment_size
-)
-{
-	frag_size_ = fragment_size;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void
-RNA_FragmentMover::insert_fragment(
-	 core::pose::Pose & pose,
-	 Size const position,
-	 protocols::rna::TorsionSet const torsion_set
-){
-
-	using namespace protocols::rna;
-	using namespace scoring::rna;
-
-	Size const size = torsion_set.get_size();
-
-	for (Size offset = 0; offset < size; offset++){
-
-		Size const position_offset = position + offset;
-
-		pose.set_secstruct( position_offset, torsion_set.secstruct( offset ) );
-
-		for (Size j = 1; j <= NUM_RNA_TORSIONS; j++) {
-			id::TorsionID rna_torsion_id( position_offset, id::BB, j );
-			if ( j > NUM_RNA_MAINCHAIN_TORSIONS) rna_torsion_id = id::TorsionID( position_offset, id::CHI, j - NUM_RNA_MAINCHAIN_TORSIONS );
-			pose.set_torsion( rna_torsion_id,
-												torsion_set.torsions( j, offset ) );
-		}
-
-		//			pose.set_name( position_offset, torsion_set.torsion_source_name( offset ) );
-
-		//TR << std::endl;
-	}
-
-	//////////////////////////////////////////////////////////////
-	if ( torsion_set.non_main_chain_sugar_coords_defined ) {
-
-		initialize_non_main_chain_sugar_atoms();
-
-		//Force one refold.
-		pose.residue(1).xyz( 1 );
-		pose::Pose const & reference_pose( pose ); //This will avoid lots of refolds. I think.
-
-		for (Size offset = 0; offset < size; offset++){
-
-			Size const position_offset = position + offset;
-			utility::vector1< Vector > vecs;
-			for (Size n = 1; n <= non_main_chain_sugar_atoms.size(); n++  ) {
-				Vector v( torsion_set.non_main_chain_sugar_coords( offset, n, 1) ,
-									torsion_set.non_main_chain_sugar_coords( offset, n, 2) ,
-									torsion_set.non_main_chain_sugar_coords( offset, n, 3) ) ;
-				vecs.push_back( v );
-			}
-			apply_non_main_chain_sugar_coords( vecs, pose, reference_pose, position_offset );
-
-		}
-	}
-
-
-
-}
-
-// ///////////////////////////////////////////////////////////////////////////////
-// // non_main_chain_sugar_atoms should be C2*, C1*, O4* (check out RNA_FragmentsClasses.h)
-// void
-// RNA_FragmentMover::apply_non_main_chain_sugar_coords_fragment(
-//     FArray3D <Real > const & non_main_chain_sugar_coords,
-// 		pose::Pose & pose,
-// 		Size const position,
-// 		Size const frag_size)
-// {
-
-// 	using namespace core::scoring::rna;
-// 	using namespace core::id;
-// 	initialize_non_main_chain_sugar_atoms();
-
-// 	for (Size offset = 0; offset < frag_size; offset++){
-
-// 		utility::vector1< Vector > vecs;
-
-// 		for (Size n = 1; n <= non_main_chain_sugar_atoms.size(); n++  ) {
-// 			Vector v( non_main_chain_sugar_coords( offset, n, 1) ,
-// 								non_main_chain_sugar_coords( offset, n, 2) ,
-// 								non_main_chain_sugar_coords( offset, n, 3) ) ;
-// 			vecs.push_back( v );
-// 		}
-
-// 		Size const i = position+offset;
-
-// 		utility::vector1< Real > rna_torsions;
-
-// 		apply_non_main_chain_sugar_coords( vecs, pose, reference_pose, i );
-// 	}
-
-// }
-
 ///////////////////////////////////////////////////////////////////////////////
 void
 RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
@@ -209,62 +124,104 @@ RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 	if (frag_size_ == insert_map_frag_size_) return;
 
 	// OK we do.
-	//	TR << "Updating insert map for frag size " << frag_size_ << std::endl;
 	num_insertable_residues_ = 0;
 	insert_map_.clear();
 
-	for (Size i = 1; i <= allow_insert_.size() - frag_size_ + 1; i++ ) {
+	for (Size i = 1; i <= pose.total_residue() - frag_size_ + 1; i++ ) {
 
+		// Look to see if frame has *any* insertable residues.
+		// This is different from the past. Now we have a atom-resolution
+		// allow_insert map, so when we do the insertion, we can
+		// avoid changing atom positions that should be fixed.
 		bool frame_ok = true;
+
+		//		if ( !rna_fragments_->is_fullatom() ){
+		frame_ok = false;
 		for (Size offset = 1; offset <= frag_size_; offset++ ){
-			if ( !allow_insert_( i + offset - 1 ) ) { //sucka!
-				frame_ok = false; break;
-			}
-			if ( offset < frag_size_ && pose.fold_tree().is_cutpoint( i + offset - 1) ){
-				frame_ok = false; break;
+			if ( allow_insert_->get( i + offset - 1 ) ) { //sucka!
+				frame_ok = true;
+				break;
 			}
 		}
 
-		if (frame_ok) {
-			num_insertable_residues_++;
-			insert_map_[ num_insertable_residues_ ] = i;
-			//			TR << " INSERT_MAP: " << num_insertable_residues_ << " ==> " << i << std::endl;
-		}
+		//		} else {
+
+		//			frame_ok = true;
+		//			//Old school. Default for full-atom fragments.
+		//			for (Size offset = 1; offset <= frag_size_; offset++ ){
+		//				if ( !allow_insert_->get( i + offset - 1 ) ) { //sucka!
+		//					frame_ok = false;
+		//					break;
+		//				}
+		//			}
+		//		}
+
+		if ( !frame_ok ) continue;
+
+		// Check for cutpoints that interrupt frame. Wait. why?
+		//		for (Size offset = 1; offset <= frag_size_; offset++ ){
+		//			if ( offset < frag_size_ &&
+		//					 pose.fold_tree().is_cutpoint( i + offset - 1) &&
+		//					 !( pose.residue_type( i+offset-1).has_variant_type( chemical::CUTPOINT_LOWER ) &&
+		//							pose.residue_type( i+offset  ).has_variant_type( chemical::CUTPOINT_UPPER ) ) ) {
+		//				frame_ok = false; break;
+		//			}
+		//		}
+
+		if ( !frame_ok ) continue;
+
+		num_insertable_residues_++;
+		insert_map_[ num_insertable_residues_ ] = i;
 
 	}
+
+	// std::cout << "NUM_INSERTABEL_RESIDUES: " << num_insertable_residues_ << " for FRAG SIZE " << frag_size_ << std::endl;
+
+	// std::cout << "ALLOW INSERT! ALLOW INSERT! ALLOW INSERT!" << std::endl;
+	// for (Size i = 1; i <= pose.total_residue(); i++ ){
+	// 	std::cout << allow_insert_->get( i );
+	// }
+	// std::cout << std::endl;
+	// std::cout << "ALLOW INSERT! ALLOW INSERT! ALLOW INSERT!"<< std::endl;
+
+
 
 	insert_map_frag_size_ = frag_size_; //up to date!
 
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
-void
+////////////////////////////////////////////////////////////////////////////////////////
+Size
 RNA_FragmentMover::random_fragment_insertion(
 	 core::pose::Pose & pose,
 	 Size const & frag_size
 )
 {
-	using namespace protocols::rna;
-
 	frag_size_ = frag_size;
 
-	Size const type = MATCH_EXACT;
-	//Size const type = MATCH_YR;
-	TorsionSet torsion_set( frag_size_ );
-
-	// Generalize to move maps. (in fact, maybe use a move map???)
-	// Size position = static_cast <int> ( RG.uniform() * ( nres - frag_size + 1) ) + 1;
+	Size const type = protocols::rna::MATCH_YR;
 
 	// Make this insertion stuff a class before checking in?
 	update_insert_map( pose );
-	if ( num_insertable_residues_ == 0) return; // nothing to do
+	if ( num_insertable_residues_ == 0) return 0; // nothing to do
 	Size const position_index = static_cast <int> ( RG.uniform() * num_insertable_residues_ ) + 1;
 	Size const position = insert_map_[ position_index ];
-	all_rna_fragments_->pick_random_fragment( torsion_set, pose, position, frag_size_, type  );
-	insert_fragment( pose, position, torsion_set );
 
+	//	std::cout << " --- Trying fragment! at " << position << std::endl;
+
+	rna_fragments_->apply_random_fragment( pose, position, frag_size_, type, allow_insert_ );
+
+	return position;
 }
 
+
+void
+RNA_FragmentMover::set_frag_size(
+	 Size const fragment_size
+)
+{
+	frag_size_ = fragment_size;
+}
 
 } // namespace rna
 } // namespace protocols

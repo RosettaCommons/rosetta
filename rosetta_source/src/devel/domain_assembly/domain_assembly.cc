@@ -50,7 +50,7 @@
 #include <protocols/basic_moves/FragmentMover.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 // Headers for RNA
-#include <protocols/rna/RNA_FragmentsClasses.hh>
+#include <protocols/rna/FullAtomRNA_Fragments.hh>
 #include <basic/database/open.hh>
 #include <protocols/rna/RNA_FragmentMover.hh>
 #include <protocols/rna/RNA_FragmentMover.fwd.hh>
@@ -463,7 +463,7 @@ optimize_linkers_rna_fullatom_mode(
 	//Size outside_steps_stage2 ( 5 );
 
 	// Create a rna fragment mover, set its fragsize, and then do an initialization move
-	RNA_FragmentMoverOP rna_fragment_mover = RNA_FragmentMoverOP( new RNA_FragmentMover( all_rna_fragments, set_moveable_rna( full_pose, linker_rna) ) );
+	RNA_FragmentMoverOP rna_fragment_mover = RNA_FragmentMoverOP( new RNA_FragmentMover( all_rna_fragments, set_moveable_rna( full_pose, linker_rna), full_pose ) );
 	rna_fragment_mover -> set_frag_size( Size(1) );
 	for( Size i = 1; i <= rna_normalize_step; ++i){
 		rna_fragment_mover -> apply(full_pose);
@@ -625,7 +625,7 @@ assemble_domains_optimize()
 	std::string filename_linkers_rna = option[ OptionKeys::DomainAssembly::da_linker_file_rna]();
 	//If a rna linker file is passed, fill the fragment library and the rna linker ranges
 	if( filename_linkers_rna != "--" ) {
-		all_rna_fragments = RNA_FragmentsOP( new RNA_Fragments( basic::database::full_name("1jj2.torsions"  ) ) );
+		all_rna_fragments = RNA_FragmentsOP( new FullAtomRNA_Fragments( basic::database::full_name("1jj2.torsions"  ) ) );
 		read_linker_file( filename_linkers_rna, linker_ranges_rna);
 	}
 

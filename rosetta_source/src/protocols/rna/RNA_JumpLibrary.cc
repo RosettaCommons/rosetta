@@ -15,12 +15,6 @@
 
 // Rosetta Headers
 #include <protocols/rna/RNA_JumpLibrary.hh>
-// AUTO-REMOVED
-// AUTO-REMOVED #include <core/id/TorsionID.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
-
-// AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.hh>
-
 
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
@@ -29,8 +23,6 @@
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-
-// Auto-header: duplicate removed #include <basic/Tracer.hh>
 
 // C++ headers
 #include <fstream>

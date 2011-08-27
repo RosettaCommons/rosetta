@@ -14,7 +14,9 @@
 
 
 #include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/rna/RNA_SecStructInfo.hh>
 #include <protocols/idealize/IdealizeMover.hh>
+#include <protocols/forge/methods/fold_tree_functions.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/rna/RNA_Util.hh>
 #include <core/scoring/rna/RNA_ScoringInfo.hh>
@@ -22,19 +24,26 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/constraints/FadeFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
+#include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/tree/Atom.hh>
 
 
 #include <core/pose/Pose.hh>
+#include <core/pose/annotated_sequence.hh>
+#include <core/pose/util.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/id/AtomID.hh>
-// AUTO-REMOVED #include <core/id/DOF_ID.hh>
+#include <core/id/NamedAtomID.hh>
 #include <core/id/TorsionID.hh>
-
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/VariantType.hh>
+#include <core/chemical/util.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 
@@ -54,8 +63,8 @@
 // AUTO-REMOVED #include <ctime>
 
 //Auto Headers
-#include <core/pose/annotated_sequence.hh>
 #include <numeric/xyz.functions.hh>
+#include <numeric/conversions.hh>
 #include <ObjexxFCL/format.hh>
 
 
@@ -160,10 +169,14 @@ get_base_pairing_info( pose::Pose const & pose,
 					 && base_pair.orientation == 1 )  &&
 				 possibly_canonical( rsd_i.aa(), rsd_j.aa() ) ) {
 			std::string atom1, atom2;
-			get_watson_crick_base_pair_atoms( rsd_i.aa(), rsd_j.aa(), atom1, atom2 );
-			if ( ( rsd_i.xyz( atom1 ) - rsd_j.xyz( atom2 ) ).length() < 3.5 ) {
-				forms_canonical_base_pair = true;
+
+			if ( !rsd_i.is_coarse() ) { // doesn't work for coarse-grained RNA
+				get_watson_crick_base_pair_atoms( rsd_i.aa(), rsd_j.aa(), atom1, atom2 );
+				if ( ( rsd_i.xyz( atom1 ) - rsd_j.xyz( atom2 ) ).length() > 3.5 ) continue;
 			}
+
+			forms_canonical_base_pair = true;
+
 		}
 	}
 
@@ -175,6 +188,99 @@ get_base_pairing_info( pose::Pose const & pose,
 	}
 }
 
+
+
+///////////////////////////////////////////////////////////////////////////////
+void
+get_base_pairing_list( pose::Pose & pose,
+											 utility::vector1< std::pair<Size, Size> > & base_pairing_list ){
+
+	using namespace core::scoring;
+	using namespace core::chemical;
+	using namespace core::conformation;
+	using namespace core::scoring::rna;
+
+	// Need some stuff to figure out which residues are base paired. First score.
+	ScoreFunctionOP scorefxn( new ScoreFunction );
+	scorefxn->set_weight( rna_base_pair, 1.0 );
+	(*scorefxn)( pose );
+
+	RNA_ScoringInfo const & rna_scoring_info( rna_scoring_info_from_pose( pose ) );
+	RNA_FilteredBaseBaseInfo const & rna_filtered_base_base_info( rna_scoring_info.rna_filtered_base_base_info() );
+	Energy_base_pair_list const & scored_base_pair_list( rna_filtered_base_base_info.scored_base_pair_list() );
+
+	bool forms_canonical_base_pair( false ), forms_base_pair( false );
+
+	Size k( 0 ), m( 0 );
+
+	std::list < std::pair< Size,Size > > base_pair_list0;
+
+	for ( Energy_base_pair_list::const_iterator it = scored_base_pair_list.begin();
+				it != scored_base_pair_list.end(); ++it ){
+
+		Base_pair const base_pair = it->second;
+
+		Size const i = base_pair.res1;
+		Size const j = base_pair.res2;
+
+		if ( i > j ) continue;
+
+		k = base_pair.edge1;
+		m = base_pair.edge2;
+
+		Residue const & rsd_i( pose.residue( i ) );
+		Residue const & rsd_j( pose.residue( j ) );
+
+		if ( ( k == WATSON_CRICK && m == WATSON_CRICK
+					 && base_pair.orientation == 1 )  &&
+				 possibly_canonical( rsd_i.aa(), rsd_j.aa() ) ) {
+			std::string atom1, atom2;
+
+			if ( !rsd_i.is_coarse() ) { // doesn't work for coarse-grained RNA
+				get_watson_crick_base_pair_atoms( rsd_i.aa(), rsd_j.aa(), atom1, atom2 );
+				if ( ( rsd_i.xyz( atom1 ) - rsd_j.xyz( atom2 ) ).length() > 3.5 ) continue;
+			}
+
+			base_pair_list0.push_back( std::make_pair( i, j ) );
+
+		}
+	}
+
+
+	base_pair_list0.sort();
+	base_pairing_list.clear();
+	for ( std::list< std::pair<Size,Size > >::const_iterator it = base_pair_list0.begin();
+				it != base_pair_list0.end(); ++it ){
+		base_pairing_list.push_back( *it );
+	}
+
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+void
+figure_out_secstruct( pose::Pose & pose ){
+	using namespace core::scoring;
+	using namespace ObjexxFCL;
+
+	// Need some stuff to figure out which residues are base paired. First score.
+	ScoreFunctionOP scorefxn( new ScoreFunction );
+	scorefxn->set_weight( rna_base_pair, 1.0 );
+	(*scorefxn)( pose );
+
+	std::string secstruct = "";
+	FArray1D < bool > edge_is_base_pairing( 3, false );
+	char secstruct1( 'X' );
+	for (Size i=1; i <= pose.total_residue() ; ++i) {
+		get_base_pairing_info( pose, i, secstruct1, edge_is_base_pairing );
+		secstruct += secstruct1;
+	}
+
+	std::cout << "SECSTRUCT: " << secstruct << std::endl;
+
+	set_rna_secstruct( pose, secstruct );
+
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -319,7 +425,7 @@ ensure_phosphate_nomenclature_matches_mini( pose::Pose & pose )
 	Real sign1 = get_o1p_o2p_sign( pose );
 
 	pose::Pose mini_pose;
-	core::pose::make_pose_from_sequence( mini_pose, "aa", pose.residue(1).residue_type_set() );
+	make_pose_from_sequence( mini_pose, "aa", pose.residue(1).residue_type_set() );
 	Real sign2 = get_o1p_o2p_sign( mini_pose );
 
 	if ( sign1 * sign2 > 0 ) return;
@@ -367,14 +473,13 @@ assert_phosphate_nomenclature_matches_mini( pose::Pose const & pose){
 
 	runtime_assert( pose.total_residue() > 1 );
 
-
 	for(Size res_num=1; res_num<=pose.total_residue(); res_num++){
 
 
 		Real sign1 = get_o1p_o2p_sign_parin( pose,  res_num);
 
 		pose::Pose mini_pose;
-		core::pose::make_pose_from_sequence( mini_pose, "aa", pose.residue(res_num).residue_type_set() );
+		make_pose_from_sequence( mini_pose, "aa", pose.residue(res_num).residue_type_set() );
 		Real sign2 = get_o1p_o2p_sign( mini_pose);
 
 		if ( sign1 * sign2 < 0 ) {
@@ -400,28 +505,27 @@ ensure_phosphate_nomenclature_matches_mini_parin( pose::Pose & pose)
 
 	//std::cout << "Enter ensure_phosphate_nomenclature_matches_mini_parin function" << std::endl;
 
-	runtime_assert( pose.total_residue() > 1 );
+	//	runtime_assert( pose.total_residue() > 1 );
 
+	bool figure_out_reference_sign( false );
+	Real sign2( 0.0 );
 
 	for(Size res_num=1; res_num<=pose.total_residue(); res_num++){
 
+		if ( !pose.residue( res_num ).is_RNA() ) continue;
+
+		if ( !figure_out_reference_sign ) {
+			pose::Pose mini_pose;
+			make_pose_from_sequence( mini_pose, "aa", pose.residue( res_num ).residue_type_set() );
+			sign2 = get_o1p_o2p_sign( mini_pose);
+			figure_out_reference_sign = true;
+		}
 
 		Real sign1 = get_o1p_o2p_sign_parin( pose,  res_num);
 
-		pose::Pose mini_pose;
-		core::pose::make_pose_from_sequence( mini_pose, "aa", pose.residue(res_num).residue_type_set() );
-		Real sign2 = get_o1p_o2p_sign( mini_pose);
-
-
 		if ( sign1 * sign2 < 0 ) {
 
-			std::cout << "*************************************************************" << std::endl;
-			std::cout << " Warning ... flipping O1P <--> O2P to match mini convention  " << std::endl;
-			std::cout << "*************************************************************" << std::endl;
-			std::cout << "res_num " << res_num << std::endl;
-			std::cout << "sign1: " << sign1 << std::endl;
-			std::cout << "sign2: " << sign2 << std::endl;
-
+			std::cout << " Flipping O1P <--> O2P " << "res_num " << res_num << "sign1: " << sign1 << "sign2: " << sign2 << std::endl;
 
 			conformation::Residue const & rsd( pose.residue(res_num) );
 			if (!rsd.is_RNA() ) {
@@ -569,38 +673,476 @@ setup_base_pair_constraints(
 		Size const & i = pairings[n].first;
 		Size const & j = pairings[n].second;
 
-		Size const atom1 = pose.residue(i).type().atom_index( " C1*" ) ;
-		Size const atom2 = pose.residue(j).type().atom_index( " C1*" ) ;
-		pose.add_constraint( new AtomPairConstraint(
-																								id::AtomID(atom1,i),
-																								id::AtomID(atom2,j),
-																								C1star_distance_func ) );
 
-		utility::vector1< std::string > atom_ids1, atom_ids2;
-		get_watson_crick_base_pair_atoms( pose.residue(i).aa(), pose.residue(j).aa(), atom_ids1, atom_ids2 );
-
-		for (Size p = 1; p <= atom_ids1.size(); p++ ){
-
-			Size const atom1 = pose.residue(i).type().atom_index( atom_ids1[p] ) ;
-			Size const atom2 = pose.residue(j).type().atom_index( atom_ids2[p] ) ;
-
-			TR << "BASEPAIR: Adding rna_force_atom_pair constraint: " << pose.residue(i).name1() << I(3,i) << " <-->  " <<
-				pose.residue(j).name1() << I(3,j) << "   " <<
-				atom_ids1[p] << " <--> " <<
-				atom_ids2[p] << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
-
+		if ( !pose.residue(i).is_coarse() ) { //fullatom
+			Size const atom1 = pose.residue(i).type().atom_index( " C1*" ) ;
+			Size const atom2 = pose.residue(j).type().atom_index( " C1*" ) ;
 			pose.add_constraint( new AtomPairConstraint(
 																									id::AtomID(atom1,i),
 																									id::AtomID(atom2,j),
-																									distance_func ) );
+																									C1star_distance_func ) );
 
+			utility::vector1< std::string > atom_ids1, atom_ids2;
+			get_watson_crick_base_pair_atoms( pose.residue(i).aa(), pose.residue(j).aa(), atom_ids1, atom_ids2 );
+
+			for (Size p = 1; p <= atom_ids1.size(); p++ ){
+
+				Size const atom1 = pose.residue(i).type().atom_index( atom_ids1[p] ) ;
+				Size const atom2 = pose.residue(j).type().atom_index( atom_ids2[p] ) ;
+
+				TR << "BASEPAIR: Adding rna_force_atom_pair constraint: " << pose.residue(i).name1() << I(3,i) << " <-->  " <<
+					pose.residue(j).name1() << I(3,j) << "   " <<
+					atom_ids1[p] << " <--> " <<
+					atom_ids2[p] << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
+
+				pose.add_constraint( new AtomPairConstraint(
+																										id::AtomID(atom1,i),
+																										id::AtomID(atom2,j),
+																										distance_func ) );
+			}
+
+		} else { //coarse-grained RNA
+
+			static Real const coarse_WC_SUG_distance_min( 12.3 );
+			static Real const coarse_WC_SUG_distance_max( 14.3 );
+			static Real const coarse_WC_SUG_distance_stddev( 2.0 );
+			static Real const coarse_WC_SUG_bonus( -2.5 );
+			static FuncOP const coarse_SUG_distance_func( new FadeFunc( coarse_WC_SUG_distance_min - coarse_WC_SUG_distance_stddev,
+																																  coarse_WC_SUG_distance_max + coarse_WC_SUG_distance_stddev,
+																																	coarse_WC_SUG_distance_stddev,
+																																	coarse_WC_SUG_bonus ) );
+
+			if ( true ){
+				Size const & atom1 = pose.residue(i).atom_index( " S  " );
+				Size const & atom2 = pose.residue(j).atom_index( " S  " );
+				TR << "BASEPAIR: Adding rna_force_atom_pair constraint: " << pose.residue(i).name1() << I(3,i) << " <-->  " <<
+					pose.residue(j).name1() << I(3,j) << "   " <<
+					" S  " << " <--> " <<
+					" S  " << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
+				pose.add_constraint( new AtomPairConstraint(
+																										id::AtomID(atom1,i),
+																										id::AtomID(atom2,j),
+																										coarse_SUG_distance_func ) );
+			}
+
+			static Real const coarse_WC_CEN_distance( 5.5 );
+			static Real const coarse_WC_CEN_distance_stddev( 3.0 );
+			static Real const coarse_WC_CEN_bonus( -5.0 );
+			static FuncOP const coarse_CEN_distance_func( new FadeFunc( coarse_WC_CEN_distance - coarse_WC_CEN_distance_stddev,
+																																	coarse_WC_CEN_distance + coarse_WC_CEN_distance_stddev,
+																																	coarse_WC_CEN_distance_stddev,
+																																	coarse_WC_CEN_bonus ) );
+
+			if ( true ){
+				Size const & atom1 = pose.residue(i).atom_index( " CEN" );
+				Size const & atom2 = pose.residue(j).atom_index( " CEN" );
+				TR << "BASEPAIR: Adding rna_force_atom_pair constraint: " << pose.residue(i).name1() << I(3,i) << " <-->  " <<
+					pose.residue(j).name1() << I(3,j) << "   " <<
+					" CEN" << " <--> " <<
+					" CEN" << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
+				pose.add_constraint( new AtomPairConstraint(
+																										id::AtomID(atom1,i),
+																										id::AtomID(atom2,j),
+																										coarse_CEN_distance_func ) );
+			}
+
+			static Real const coarse_WC_X_distance( 3.5 );
+			static Real const coarse_WC_X_distance_stddev( 2.0 );
+			static Real const coarse_WC_X_bonus( -5.0 );
+			static FuncOP const coarse_X_distance_func( new FadeFunc( coarse_WC_X_distance - coarse_WC_X_distance_stddev,
+																																coarse_WC_X_distance + coarse_WC_X_distance_stddev,
+																																coarse_WC_X_distance_stddev, coarse_WC_X_bonus ) );
+
+			{
+				Size const & atom1 = pose.residue(i).atom_index( " X  " );
+				Size const & atom2 = pose.residue(j).atom_index( " X  " );
+				TR << "BASEPAIR: Adding rna_force_atom_pair constraint: " << pose.residue(i).name1() << I(3,i) << " <-->  " <<
+					pose.residue(j).name1() << I(3,j) << "   " <<
+					" X  " << " <--> " <<
+					" X  " << ".  [ " << atom1 << "-" << atom2 << "]" << std::endl;
+				pose.add_constraint( new AtomPairConstraint(
+																										id::AtomID(atom1,i),
+																										id::AtomID(atom2,j),
+																										coarse_X_distance_func ) );
+			}
 		}
 	}
+}
 
+
+/////////////////////////////////////////////////////////
+// Following only works for coarse-grained RNA poses --
+//  perhaps should set up something similar for regular RNA
+//  as an alternative to linear_chainbreak.
+void
+setup_coarse_chainbreak_constraints( pose::Pose & pose, Size const & n )
+{
+
+	using namespace core::scoring::constraints;
+	using namespace core::scoring::rna;
+
+	if ( !pose.residue_type( n ).has( " S  " ) ) return;
+	if ( !pose.residue_type( n ).is_RNA() ) return;
+
+	std::cout << "Adding CHAINBREAK constraints to " << n << " " << n+1 << std::endl;
+
+ 	static Real const S_P_distance_min( 3 );
+ 	static Real const S_P_distance_max( 4 );
+ 	static Real const S_P_distance_fade( 1.0 );
+ 	static Real const S_P_distance_bonus( -10.0 );
+	static FuncOP const S_P_distance_func( new FadeFunc( S_P_distance_min - S_P_distance_fade,
+																								S_P_distance_max + S_P_distance_fade,
+																								S_P_distance_fade,
+																								S_P_distance_bonus ) );
+
+	// loose long-range constraint too
+ 	static Real const S_P_distance( 4.0 );
+ 	static Real const S_P_distance_stdev( 10.0 );
+	static FuncOP const S_P_harmonic_func( new HarmonicFunc( S_P_distance,
+																													 S_P_distance_stdev ) );
+
+
+ 	static Real const S_S_distance_min( 4.5 );
+ 	static Real const S_S_distance_max( 7.5 );
+ 	static Real const S_S_distance_fade( 2.0 );
+ 	static Real const S_S_distance_bonus( -5.0 );
+	static FuncOP const S_S_distance_func( new FadeFunc( S_S_distance_min - S_S_distance_fade,
+																								S_S_distance_max + S_S_distance_fade,
+																								S_S_distance_fade,
+																								S_S_distance_bonus ) );
+
+ 	static Real const P_P_distance_min( 4.5 );
+ 	static Real const P_P_distance_max( 7.5 );
+ 	static Real const P_P_distance_fade( 2.0 );
+ 	static Real const P_P_distance_bonus( -5.0 );
+	static FuncOP const P_P_distance_func( new FadeFunc( P_P_distance_min - P_P_distance_fade,
+																								P_P_distance_max + P_P_distance_fade,
+																								P_P_distance_fade,
+																								P_P_distance_bonus ) );
+
+	Size const & atom_S1 = pose.residue( n ).atom_index( " S  " );
+	Size const & atom_P1 = pose.residue( n ).atom_index( " P  " );
+	Size const & atom_S2 = pose.residue( n+1 ).atom_index( " S  " );
+	Size const & atom_P2 = pose.residue( n+1 ).atom_index( " P  " );
+
+	pose.add_constraint( new AtomPairConstraint(
+																							id::AtomID(atom_S1, n),
+																							id::AtomID(atom_P2, n+1),
+																									S_P_distance_func ) );
+
+	pose.add_constraint( new AtomPairConstraint(
+																							id::AtomID(atom_S1, n),
+																							id::AtomID(atom_P2, n+1),
+																									S_P_harmonic_func ) );
+
+	pose.add_constraint( new AtomPairConstraint(
+																							id::AtomID(atom_P1, n),
+																							id::AtomID(atom_P2, n+1),
+																							P_P_distance_func ) );
+
+	pose.add_constraint( new AtomPairConstraint(
+																							id::AtomID(atom_S1, n),
+																							id::AtomID(atom_S2, n+1),
+																							S_S_distance_func ) );
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+std::string const
+convert_based_on_match_type( std::string const RNA_string, Size const type ){
+
+		std::string RNA_string_local = RNA_string;
+
+		Size const size = RNA_string.length();
+
+		//Obey orders to match exactly, match pyrimidine/purine, or match all.
+		if (type == MATCH_ALL){
+
+			for (Size i = 0; i < size; i++) 	RNA_string_local[ i ] = 'n';
+
+		} else if ( type == MATCH_YR ) {
+
+			for (Size i = 0; i < size; i++) {
+				if (RNA_string[ i ] == 'g' || RNA_string[ i ] == 'a' ){
+					RNA_string_local[ i ] = 'r';
+				} else {
+					runtime_assert( RNA_string[ i ] == 'u' || RNA_string[ i ] == 'c' );
+					RNA_string_local[ i ] = 'y';
+				}
+			}
+
+		}
+
+		return RNA_string_local;
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	compare_RNA_char( char const char1, char const char2 ) {
+		//Man this is silly, there must be a more elegant way to do this.
+		if (char1 == char2) return true;
+		if (char1 == 'n' || char2 == 'n') return true;
+		if (char1 == 'r' && (char2 == 'a' || char2 == 'g')) return true;
+		if (char1 == 'y' && (char2 == 'c' || char2 == 'u')) return true;
+		if (char2 == 'r' && (char1 == 'a' || char1 == 'g')) return true;
+		if (char2 == 'y' && (char1 == 'c' || char1 == 'u')) return true;
+		return false;
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	bool
+	compare_RNA_secstruct( char const char1, char const char2 ) {
+		if (char1 == char2) return true;
+		if (char1 == 'X' || char2 == 'X' ) return true;
+		if (char1 == 'L' && ( char2 == 'N' || char2 == 'P') ) return true;
+		if (char2 == 'L' && ( char1 == 'N' || char1 == 'P') ) return true;
+		return false;
+	}
+
+///////////////////////////////////////////////////////////////////////////
+Vector
+get_sugar_centroid( core::conformation::Residue const & rsd ){
+	Vector cen( 0.0 );
+	cen += rsd.xyz(  rsd.atom_index( " C1*" ) );
+	cen += rsd.xyz(  rsd.atom_index( " C2*" ) );
+	cen += rsd.xyz(  rsd.atom_index( " C3*" ) );
+	cen += rsd.xyz(  rsd.atom_index( " C4*" ) );
+	cen += rsd.xyz(  rsd.atom_index( " O4*" ) );
+	cen /= 5.0;
+	return cen;
+}
+
+/////////////////////////////////////////////////
+void
+make_extended_coarse_pose( pose::Pose & coarse_pose, std::string const & full_sequence ){
+
+ 	using namespace core::chemical;
+ 	using namespace core::id;
+
+	ResidueTypeSetCAP rsd_set_coarse = ChemicalManager::get_instance()->residue_type_set( COARSE_RNA );
+
+	make_pose_from_sequence( coarse_pose, full_sequence, *rsd_set_coarse );
+
+	for ( Size n = 1; n <= coarse_pose.total_residue(); n++ ) {
+		coarse_pose.set_torsion( TorsionID( n, BB, 1 ), -150.0 );
+		coarse_pose.set_torsion( TorsionID( n, BB, 2 ),  180.0 );
+	}
 
 }
 
 
+///////////////////////////////////////////////////////////////////////////
+void
+make_coarse_pose( pose::Pose const & pose, pose::Pose & coarse_pose ){
+
+ 	using namespace core::chemical;
+ 	using namespace core::id;
+ 	using namespace core::scoring::rna;
+
+	ResidueTypeSetCAP rsd_set, rsd_set_coarse;
+	RNA_CentroidInfo rna_centroid_info;
+
+	rsd_set_coarse = ChemicalManager::get_instance()->residue_type_set( COARSE_RNA );
+	make_extended_coarse_pose( coarse_pose, pose.sequence() );
+
+	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		coarse_pose.set_xyz(  NamedAtomID( " P  ", n ),  pose.xyz( NamedAtomID( " P  ", n )) );
+
+		//coarse_pose.set_xyz(  NamedAtomID( " S  ", n ),  pose.xyz( NamedAtomID( " C4*", n )) );
+		Vector sugar_centroid = get_sugar_centroid( pose.residue( n ) );
+		coarse_pose.set_xyz(  NamedAtomID( " S  ", n ),  sugar_centroid );
+
+		Vector base_centroid = rna_centroid_info.get_base_centroid( pose.residue( n ) );
+		kinematics::Stub stub = rna_centroid_info.get_base_coordinate_system( pose.residue( n ), base_centroid );
+
+		coarse_pose.set_xyz(  NamedAtomID( " CEN", n ),  base_centroid );
+		coarse_pose.set_xyz(  NamedAtomID( " X  ", n ),  base_centroid + stub.M.col_x() );
+		coarse_pose.set_xyz(  NamedAtomID( " Y  ", n ),  base_centroid + stub.M.col_y() );
+
+	}
+
+	core::kinematics::FoldTree f( pose.fold_tree() );
+	for ( Size n = 1; n <= pose.num_jump(); n++ ) {
+		f.set_jump_atoms( n, " Y  ", " Y  " );
+	}
+	coarse_pose.fold_tree( f );
+
+}
+
+////////////////////////////////////////////////////////
+void
+remove_cutpoint_closed( pose::Pose & pose, Size const i ){
+
+	using namespace core::chemical;
+	using namespace core::kinematics;
+
+	remove_variant_type_from_pose_residue( pose, CUTPOINT_LOWER, i );
+	remove_variant_type_from_pose_residue( pose, CUTPOINT_UPPER, i+1 );
+
+	//	using namespace protocols::forge::methods;
+	// 	FoldTree f( pose.fold_tree() );
+	// 	remove_cutpoint( i, f );
+	// 	pose.fold_tree( f );
+
+	utility::vector1< int > const & cutpoints = pose.fold_tree().cutpoints();
+
+	Size const num_jump = 	pose.fold_tree().num_jump();
+	utility::vector1< Size > upstream_pos, downstream_pos;
+	for ( Size n = 1; n <= num_jump; n++ ) {
+		upstream_pos.push_back( pose.fold_tree().upstream_jump_residue( n ) );
+		downstream_pos.push_back( pose.fold_tree().downstream_jump_residue( n ) );
+	}
+
+	ObjexxFCL::FArray1D<int> cuts( num_jump-1 );
+	Size count( 0 );
+	for ( Size n = 1; n <= num_jump; n++ ) {
+		if ( cutpoints[n] == static_cast<int>( i ) ) continue;
+		count++;
+		cuts( count ) = cutpoints[ n ];
+	}
+
+	Size const nres( pose.total_residue() );
+
+	// Just brute-force iterate through to find a jump we can remove.
+	Size jump_to_remove( 0 );
+	for ( Size k = 1; k <= num_jump; k++ ) {
+		FArray1D< bool > partition_definition( nres, false );
+		pose.fold_tree().partition_by_jump( k, partition_definition );
+		if ( partition_definition( i ) != partition_definition( i+1 ) ){
+			jump_to_remove = k; break;
+		}
+	}
+
+	bool success( false );
+
+	ObjexxFCL::FArray2D<int> jump_point( 2, num_jump-1 );
+
+	count = 0;
+	for ( Size n = 1; n <= num_jump; n++ ) {
+		if ( n == jump_to_remove ) continue;
+		count++;
+		if ( upstream_pos[ n ] < downstream_pos[ n ] ){
+			jump_point( 1, count ) = upstream_pos[ n ];
+			jump_point( 2, count ) = downstream_pos[ n ];
+		} else {
+			jump_point( 1, count ) = downstream_pos[ n ];
+			jump_point( 2, count ) = upstream_pos[ n ];
+		}
+	}
+
+	FoldTree f( nres );
+
+	success = f.tree_from_jumps_and_cuts( nres, num_jump-1, jump_point, cuts, 1, false /*verbose*/ );
+
+
+
+	if ( !success ) utility_exit_with_message( "FAIL to remove cutpoint "+string_of( i ) );
+
+	pose.fold_tree( f );
+
+}
+
+////////////////////////////////////////////////////////
+void
+remove_cutpoints_closed( pose::Pose & pose ){
+
+	// Make a list of each cutpoint_closed.
+	for ( Size i = 1; i < pose.total_residue(); i++ ) {
+
+		if ( pose.fold_tree().is_cutpoint( i ) &&
+				 pose.residue( i   ).has_variant_type( chemical::CUTPOINT_LOWER ) &&
+				 pose.residue( i+1 ).has_variant_type( chemical::CUTPOINT_UPPER ) ){
+			remove_cutpoint_closed( pose, i ); // this will cycle through to find a jump that is removable.
+		}
+	}
+
+}
+
+///////////////////////////////////////////////////////////////////////
+// One of these days I'll put in residue 1 as well.
+void
+print_internal_coords( core::pose::Pose const & pose ) {
+
+	using namespace core::id;
+	using numeric::conversions::degrees;
+
+	for (Size i = 2;  i <= pose.total_residue(); i++ ){
+
+		conformation::Residue const & rsd( pose.residue( i ) ) ;
+
+		std::cout << "----------------------------------------------------------------------" << std::endl;
+		std::cout << "RESIDUE: " << rsd.name3() << " " << rsd.seqpos() << std::endl;
+
+		for (Size j = 1; j <= rsd.natoms(); j++ ){
+			core::kinematics::tree::Atom const * current_atom ( & pose.atom_tree().atom( AtomID(j,i) ) );
+			core::kinematics::tree::Atom const * input_stub_atom1( current_atom->input_stub_atom1() );
+			core::kinematics::tree::Atom const * input_stub_atom2( current_atom->input_stub_atom2() );
+			core::kinematics::tree::Atom const * input_stub_atom3( current_atom->input_stub_atom3() );
+
+			if ( !(current_atom && input_stub_atom1 && input_stub_atom2 && input_stub_atom3) )  continue;
+
+			if ( current_atom->is_jump() ) {
+
+				core::kinematics::tree::Atom const * jump_stub_atom1( current_atom->stub_atom1() );
+				core::kinematics::tree::Atom const * jump_stub_atom2( current_atom->stub_atom2() );
+				core::kinematics::tree::Atom const * jump_stub_atom3( current_atom->stub_atom3() );
+
+				// Now try to reproduce this jump based on coordinates of atoms.
+				std::cout << 	 "JUMP! " <<
+					//					A( 5, rsd.atom_name( j )) << " " <<
+					"STUB ==> " <<
+					"FROM " << input_stub_atom1->id().rsd() << " " <<
+					pose.residue( (input_stub_atom1->id()).rsd() ).atom_name( (input_stub_atom1->id()).atomno() ) << "  " <<
+					pose.residue( (input_stub_atom2->id()).rsd() ).atom_name( (input_stub_atom2->id()).atomno() ) << "  " <<
+					pose.residue( (input_stub_atom3->id()).rsd() ).atom_name( (input_stub_atom3->id()).atomno() );
+				std::cout << "TO " << current_atom->id().rsd() << " " <<
+					pose.residue( (jump_stub_atom1->id()).rsd() ).atom_name( (jump_stub_atom1->id()).atomno() ) << "  " <<
+					pose.residue( (jump_stub_atom2->id()).rsd() ).atom_name( (jump_stub_atom2->id()).atomno() ) << "  " <<
+					pose.residue( (jump_stub_atom3->id()).rsd() ).atom_name( (jump_stub_atom3->id()).atomno() ) << std::endl;
+				std::cout << " MY JUMP: " << current_atom->jump() << std::endl;
+
+				kinematics::Stub const input_stub( input_stub_atom1->xyz(), input_stub_atom1->xyz(), input_stub_atom2->xyz(), input_stub_atom3->xyz());
+				kinematics::Stub const jump_stub ( jump_stub_atom1->xyz(), jump_stub_atom1->xyz(), jump_stub_atom2->xyz(), jump_stub_atom3->xyz());
+
+				std::cout << " MY JUMP: " << 	kinematics::Jump( input_stub, jump_stub ) << std::endl;
+
+
+			} else {
+				std::cout << "ICOOR_INTERNAL  " <<
+					A( 5, rsd.atom_name( j )) << " " <<
+					F(11,6, degrees(	pose.atom_tree().dof( DOF_ID( current_atom->id(), id::PHI ) ) ) )  << " " <<
+					F(11,6, degrees(  pose.atom_tree().dof( DOF_ID( current_atom->id(), id::THETA ) ) ) ) << " " <<
+					F(11,6, pose.atom_tree().dof( DOF_ID( current_atom->id(), id::D ) ) )    << "  " <<
+					pose.residue( (input_stub_atom1->id()).rsd() ).atom_name( (input_stub_atom1->id()).atomno() ) << "  " <<
+					pose.residue( (input_stub_atom2->id()).rsd() ).atom_name( (input_stub_atom2->id()).atomno() ) << "  " <<
+					pose.residue( (input_stub_atom3->id()).rsd() ).atom_name( (input_stub_atom3->id()).atomno() ) << "  " <<
+					" [" <<
+					" " << (input_stub_atom1->id()).rsd() <<
+					" " << (input_stub_atom2->id()).rsd() <<
+					" " << (input_stub_atom3->id()).rsd() <<
+					"]" <<
+					std::endl;
+			}
+
+		}
+
+// 		/////////////////////////////////
+// 		if ( option[ rsd_type_set]() == "rna" ){
+// 			std::cout << "Give me LOWER-P-O5* " << 180.0 - numeric::conversions::degrees( numeric::angle_radians( pose.residue(i-1).xyz( "O3*" ), rsd.xyz( "P" ), rsd.xyz( "O5*" ) ) ) << std::endl;
+// 			std::cout << "Give me O1P-P-O5* " << 180.0 - numeric::conversions::degrees( numeric::angle_radians( rsd.xyz( "O1P" ), rsd.xyz( "P" ), rsd.xyz( "O5*" ) ) ) << std::endl;
+// 			std::cout << "Give me O2P-P-O5* " << 180.0 - numeric::conversions::degrees( numeric::angle_radians( rsd.xyz( "O2P" ), rsd.xyz( "P" ), rsd.xyz( "O5*" ) ) ) << std::endl;
+
+// 			Real main_torsion = numeric::conversions::degrees(  numeric::dihedral_radians( pose.residue(i-1).xyz( "O3*" ), rsd.xyz( "P" ), rsd.xyz( "O5*" ), rsd.xyz( "C5*" ) ) );
+// 			Real main_torsion1 = numeric::conversions::degrees(  numeric::dihedral_radians( pose.residue(i).xyz( "O1P" ), rsd.xyz( "P" ), rsd.xyz( "O5*" ), rsd.xyz( "C5*" ) ) );
+// 			Real main_torsion2 = numeric::conversions::degrees(  numeric::dihedral_radians( pose.residue(i).xyz( "O2P" ), rsd.xyz( "P" ), rsd.xyz( "O5*" ), rsd.xyz( "C5*" ) ) );
+
+// 			std::cout << "OFFSETS: " << main_torsion1 - main_torsion << " " << main_torsion2 - main_torsion1 << std::endl;
+// 		}
+
+	}
+
+
+}
 
 } // namespace rna
 } // namespace protocols

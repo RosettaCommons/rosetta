@@ -15,8 +15,8 @@
 
 //Auto Headers
 
-#ifndef INCLUDED_protocols_rna_RNA_Minimizer_fwd_hh
-#define INCLUDED_protocols_rna_RNA_Minimizer_fwd_hh
+#ifndef INCLUDED_protocols_rna_RNA_Minimizer_FWD_HH
+#define INCLUDED_protocols_rna_RNA_Minimizer_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 

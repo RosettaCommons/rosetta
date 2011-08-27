@@ -10,8 +10,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-#ifndef INCLUDED_protocols_rna_RNA_JumpLibrary_hh
-#define INCLUDED_protocols_rna_RNA_JumpLibrary_hh
+#ifndef INCLUDED_protocols_rna_RNA_JumpLibrary_HH
+#define INCLUDED_protocols_rna_RNA_JumpLibrary_HH
 
 // AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/Jump.hh>

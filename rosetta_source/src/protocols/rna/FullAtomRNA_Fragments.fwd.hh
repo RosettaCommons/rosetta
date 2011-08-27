@@ -11,17 +11,21 @@
 /// @brief  Pose forward declarations header
 /// @author Rhiju Das
 
-#ifndef INCLUDED_protocols_rna_RNA_StructureParameters_FWD_HH
-#define INCLUDED_protocols_rna_RNA_StructureParameters_FWD_HH
-
+//Auto Headers
+#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
+
+
+#ifndef INCLUDED_protocols_rna_FullAtomRNA_Fragments_FWD_HH
+#define INCLUDED_protocols_rna_FullAtomRNA_Fragments_FWD_HH
 
 namespace protocols{
 namespace rna{
 
-	class RNA_StructureParameters;
+	class TorsionSet;
+	class FragmentLibrary;
 
-	typedef utility::pointer::owning_ptr< RNA_StructureParameters > RNA_StructureParametersOP;
+	typedef utility::pointer::owning_ptr< FragmentLibrary > FragmentLibraryOP;
 
 }
 }

@@ -14,14 +14,14 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_rna_RNA_DeNovoProtocol_hh
-#define INCLUDED_protocols_rna_RNA_DeNovoProtocol_hh
+#ifndef INCLUDED_protocols_rna_RNA_DeNovoProtocol_HH
+#define INCLUDED_protocols_rna_RNA_DeNovoProtocol_HH
 
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/rna/RNA_DataReader.fwd.hh>
-#include <protocols/rna/RNA_FragmentsClasses.hh>
+#include <protocols/rna/RNA_Fragments.fwd.hh>
 #include <protocols/rna/RNA_StructureParameters.fwd.hh>
 #include <protocols/rna/RNA_StructureParameters.hh>
 #include <protocols/rna/RNA_LoopCloser.fwd.hh>
@@ -55,20 +55,21 @@ public:
 	/// @brief Construct the protocol object given
 	/// the RNA fragment library to use.
 	RNA_DeNovoProtocol(
-		Size const nstruct,
-		Size const monte_carlo_cycles,
-		std::string const silent_file,
-		bool const heat_structure = true,
-		bool const minimize_structure = false,
-		bool const relax_structure = false );
+										 Size const nstruct,
+										 Size const monte_carlo_cycles,
+										 std::string const silent_file,
+										 bool const heat_structure = true,
+										 bool const minimize_structure = false,
+										 bool const relax_structure = false );
 
 	~RNA_DeNovoProtocol();
 
 	/// @brief Clone this object
 	virtual protocols::moves::MoverOP clone() const;
 
-	/// @brief Apply the loop-rebuild protocol to the input pose
+	/// @brief Apply the RNA denovo modeling protocol to the input pose
 	void apply( core::pose::Pose & pose );
+
 	virtual std::string get_name() const;
 
 	void
@@ -105,6 +106,11 @@ public:
 	}
 
 	void
+	set_chunk_res( utility::vector1< Size > const & chunk_res ) {
+		chunk_res_ = chunk_res;
+	}
+
+	void
 	ignore_secstruct( bool const setting ) { ignore_secstruct_ = setting; }
 
 	// No longer works -- need to specify allow_insert from a "params file"
@@ -112,19 +118,22 @@ public:
 	//	set_allow_insert( FArray1D <bool> const & allow_insert  ){ allow_insert_ = allow_insert; }
 
 	void
-	jump_change_frequency( core::Real const value ){ jump_change_frequency_ = value; }
+  jump_change_frequency( core::Real const value ){ jump_change_frequency_ = value; }
 
 	void
-	close_loops( bool const setting ){
+  set_close_loops( bool const setting ){
 		close_loops_ = setting;
 		if ( close_loops_ ) binary_rna_output_ = true;
 	}
 
 	void
-	simple_rmsd_cutoff_relax( bool const setting ){ simple_rmsd_cutoff_relax_ = setting; }
+  set_close_loops_after_each_move( bool const setting ){ close_loops_after_each_move_ = setting; }
 
 	void
-	output_lores_silent_file( bool const setting ){ output_lores_silent_file_ = setting; }
+  simple_rmsd_cutoff_relax( bool const setting ){ simple_rmsd_cutoff_relax_ = setting; }
+
+	void
+  output_lores_silent_file( bool const setting ){ output_lores_silent_file_ = setting; }
 
 	void
 	set_filter_lores_base_pairs( bool const setting ){ filter_lores_base_pairs_ = setting; }
@@ -163,14 +172,12 @@ private:
 
 
 	void
-	output_silent_struct(
-		core::io::silent::SilentStruct & s,
-		core::io::silent::SilentFileData & silent_file_data,
-		std::string const & silent_file,
-		core::pose::Pose & pose,
-		std::string const out_file_tag,
-		bool const score_only = false
-	) const;
+	output_silent_struct( core::io::silent::SilentStruct & s,
+												core::io::silent::SilentFileData & silent_file_data,
+												std::string const & silent_file,
+												core::pose::Pose & pose,
+												std::string const out_file_tag,
+												bool const score_only = false ) const;
 
 	void
 	do_random_fragment_insertions( core::pose::Pose & pose );
@@ -179,7 +186,7 @@ private:
 	update_denovo_scorefxn_weights( Size const & r, Size const & rounds );
 
 	Size
-	figure_out_constraint_separation_cutoff( Size const & r, Size const & rounds, Size const & max_dist );
+  figure_out_constraint_separation_cutoff( Size const & r, Size const & rounds, Size const & max_dist );
 
 	void
 	update_pose_constraints( Size const & r, Size const & rounds, core::pose::Pose & pose );
@@ -262,6 +269,7 @@ private:
 	core::scoring::rna::RNA_LowResolutionPotential local_rna_low_resolution_potential_;
 
 	utility::vector1< std::string > chunk_silent_files_;
+	utility::vector1< core::Size > chunk_res_;
 	core::Real chunk_coverage_;
 
 	bool staged_constraints_;

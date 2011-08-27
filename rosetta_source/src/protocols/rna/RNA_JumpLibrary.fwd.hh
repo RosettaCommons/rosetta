@@ -11,17 +11,16 @@
 /// @brief  Pose forward declarations header
 /// @author Rhiju Das
 
-#ifndef INCLUDED_protocols_rna_RNA_StructureParameters_FWD_HH
-#define INCLUDED_protocols_rna_RNA_StructureParameters_FWD_HH
-
 #include <utility/pointer/owning_ptr.hh>
+
+#ifndef INCLUDED_protocols_rna_RNA_JumpLibrary_FWD_HH
+#define INCLUDED_protocols_rna_RNA_JumpLibrary_FWD_HH
 
 namespace protocols{
 namespace rna{
 
-	class RNA_StructureParameters;
-
-	typedef utility::pointer::owning_ptr< RNA_StructureParameters > RNA_StructureParametersOP;
+	class RNA_JumpLibrary;
+	typedef utility::pointer::owning_ptr< RNA_JumpLibrary > RNA_JumpLibraryOP;
 
 }
 }

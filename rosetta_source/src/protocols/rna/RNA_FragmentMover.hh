@@ -11,86 +11,75 @@
 /// @brief
 /// @detailed
 ///
-/// @author James Thompson
-/// @author Srivatsan Raman
+/// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_rna_RNA_FragmentMover_hh
-#define INCLUDED_protocols_rna_RNA_FragmentMover_hh
+#ifndef INCLUDED_protocols_rna_RNA_FragmentMover_HH
+#define INCLUDED_protocols_rna_RNA_FragmentMover_HH
 
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
-#include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-#include <protocols/rna/RNA_FragmentsClasses.fwd.hh>
-#include <protocols/rna/RNA_FragmentsClasses.hh>
-
-//Oooh.
+#include <protocols/rna/RNA_Fragments.fwd.hh>
+#include <protocols/rna/AllowInsert.fwd.hh>
 #include <ObjexxFCL/FArray1D.hh>
+#include <core/pose/Pose.fwd.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
 #include <vector>
+#include <map>
 
 //Auto Headers
 #include <iostream>
-
 
 namespace protocols {
 namespace rna {
 
 /// @brief The RNA de novo structure modeling protocol
 class RNA_FragmentMover: public protocols::moves::Mover {
+
 public:
 	/// @brief Construct the protocol object given
 	/// the RNA fragment library to use.
-	RNA_FragmentMover( RNA_FragmentsOP & all_rna_fragments, FArray1D_bool const & allow_insert );
+	RNA_FragmentMover( RNA_FragmentsOP all_rna_fragments,
+										 protocols::rna::AllowInsertOP allow_insert );
+
+	// is this defunct now? I think so.
+	RNA_FragmentMover( RNA_FragmentsOP all_rna_fragments,
+										 ObjexxFCL::FArray1D<bool> const & allow_insert,
+										 core::pose::Pose const & pose );
+
 
 	~RNA_FragmentMover();
 
-	/// @brief Clone this object
-	virtual protocols::moves::MoverOP clone() const {
-		return new RNA_FragmentMover(*this);
-	}
-
 	/// @brief Apply the loop-rebuild protocol to the input pose
 	void apply( core::pose::Pose & pose );
+
 	virtual std::string get_name() const;
-	void set_frag_size( Size const fragment_size );
 
-	void
-	insert_fragment(
-		core::pose::Pose & pose,
-		Size const position,
-		rna::TorsionSet const torsion_set
-	);
-
-	//Hmmm, this probably reproduces code.
-	void
-	update_insert_map( core::pose::Pose const & pose );
-
-
-	void
+	core::Size
 	random_fragment_insertion( core::pose::Pose & pose, Size const & frag_size );
-	// undefined, commentin out to make PyRosetta compile
-	// void initialize_allow_insert( core::pose::Pose & pose );
+
+	// is this defunct now? I think so.
+	void
+	set_frag_size(
+	 Size const fragment_size
+	 );
 
 private:
 
-	RNA_FragmentsOP all_rna_fragments_;
+	void
+	update_insert_map( core::pose::Pose const & pose );
 
-	//Hmmm, this probably reproduces code.
-	// Move to some kind of RNA Fragment Mover class?
-	FArray1D <bool> const allow_insert_;
+	protocols::rna::RNA_FragmentsOP rna_fragments_;
+	protocols::rna::AllowInsertOP allow_insert_;
+
 	std::map < Size, Size > insert_map_;
 	Size num_insertable_residues_;
 	Size insert_map_frag_size_;
-
 	Size frag_size_;
 
 }; // class RNA_FragmentMover
-
 
 
 } //rna

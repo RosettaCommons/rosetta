@@ -13,6 +13,8 @@
 
 // Rosetta Headers
 #include <protocols/rna/RNA_ChunkLibrary.hh>
+#include <protocols/rna/RNA_ProtocolUtil.hh>
+#include <protocols/rna/AllowInsert.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
@@ -24,6 +26,7 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/VariantType.hh>
 #include <numeric/random/random.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Stub.hh>
@@ -63,8 +66,19 @@ namespace rna{
 	///////////////////////////////////////////////////////////////////////
 	ChunkSet::ChunkSet( utility::vector1< core::pose::MiniPoseOP > const & mini_pose_list,
 											ResMap const & res_map ) {
+
 		mini_pose_list_ = mini_pose_list;
+
 		res_map_ = res_map;
+
+		// not much information in mini_pose --> assume that all atoms are OK for copying.
+		core::pose::MiniPose const & mini_pose = *(mini_pose_list[ 1 ]);
+		for ( Size i = 1; i <= mini_pose.total_residue(); i++ ){
+			for ( Size j = 1; j <= mini_pose.coords()[i].size(); j++ ){
+				atom_id_mask_[ core::id::AtomID( j, i ) ] = true;
+			}
+		}
+
 	}
 
 	///////////////////////////////////////////////////////////////////////
@@ -73,7 +87,19 @@ namespace rna{
 		for ( Size n = 1; n <= pose_list.size(); n++ ) {
 			mini_pose_list_.push_back( core::pose::MiniPoseOP( new core::pose::MiniPose( *(pose_list[n]) ) ) );
 		}
+
+
 		res_map_ = res_map;
+
+		core::pose::Pose const & pose = *( pose_list[1] );
+		for ( Size i = 1; i <= pose.total_residue(); i++ ){
+			core::conformation::Residue rsd = pose.residue( i );
+			for ( Size j = 1; j <= rsd.natoms(); j++ ){
+				atom_id_mask_[ core::id::AtomID( j, i ) ] = !rsd.is_virtual( j );
+			}
+		}
+
+
 	}
 
 	///////////////////////////////////////////////////////////////////////
@@ -82,14 +108,47 @@ namespace rna{
 
 	///////////////////////////////////////////////////////////////////////
 	void
-	ChunkSet::insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index ) const{
+	ChunkSet::insert_chunk_into_pose( core::pose::Pose & pose, Size const & chunk_pose_index, AllowInsertOP const & allow_insert ) const{
 
 		using namespace core::pose;
+		using namespace core::id;
 
 		core::pose::MiniPose const & scratch_pose ( *(mini_pose_list_[ chunk_pose_index ]) );
 
 		//		TR << "SCRATCH_POSE " << scratch_pose.sequence() << ' ' << scratch_pose.fold_tree() << std::endl;
-		copy_dofs( pose, scratch_pose, res_map_ ); //, false  /*copy_dofs_for_junction_residues*/ );
+
+		std::map< AtomID, AtomID > atom_id_map;
+		allow_insert->calculate_atom_id_map( pose, res_map_, scratch_pose.fold_tree(), atom_id_map );
+
+		// This should prevent copying dofs for virtual phosphates, if they are tagged as such in the input silent files.
+		filter_atom_id_map_with_mask( atom_id_map );
+
+		copy_dofs( pose, scratch_pose, atom_id_map  );
+
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	void
+	ChunkSet::filter_atom_id_map_with_mask( std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ) const{
+
+		using namespace core::id;
+
+		std::map< AtomID, AtomID > atom_id_map_new;
+
+		for ( std::map< AtomID, AtomID >::const_iterator
+						it=atom_id_map.begin(), it_end = atom_id_map.end(); it != it_end; ++it ) {
+
+			AtomID const & insert_atom_id = it->first;
+			AtomID const & source_atom_id = it->second;
+
+			std::map< AtomID, bool >::const_iterator it_mask = atom_id_mask_.find( source_atom_id );
+			if ( it_mask == atom_id_mask_.end() ) utility_exit_with_message( "Some problem with atom_id_mask in defining atom_id_map " );
+			if ( !it_mask->second ) continue; // this source_atom_id is not allowed by mask, probably came from a virtual phosphate.
+
+			atom_id_map_new[ insert_atom_id ] = source_atom_id;
+		}
+
+		atom_id_map = atom_id_map_new;
 
 	}
 
@@ -106,23 +165,32 @@ namespace rna{
 	//  has solutions for a particular piece of the desired pose.
 	RNA_ChunkLibrary::RNA_ChunkLibrary(
 								utility::vector1 < std::string > const & silent_files,
-								std::string const & sequence_of_big_pose /* to figure out mapping to big pose */,
+								core::pose::Pose const & pose,
 								std::map< Size, Size > const & connections_in_big_pose /* to figure out mapping to big pose*/ )
 	{
 
+		std::string const & sequence_of_big_pose( pose.sequence() );
+		coarse_rna_ = pose.residue( 1 ).is_coarse();
+
 		// allow_insert keeps track of where chunks are placed -- only allow
 		// fragment insertions *outside* these regions.
-		allow_insert_.dimension( sequence_of_big_pose.size(), true );
+		allow_insert_ = new AllowInsert( pose );
 		covered_by_chunk_.dimension( sequence_of_big_pose.size(), false );
+
+		utility::vector1< Size > input_res;
+		Size chunk_res_count( 0 );
 
 		for ( Size n = 1; n <= silent_files.size(); n++ ) {
 
 			utility::vector1< pose::PoseOP > pose_list;
 			process_silent_file( silent_files[n], pose_list );
 
-			// There may be more than one part of the pose to which this sequence maps.
+			core::pose::Pose const & scratch_pose( *(pose_list[1]) );
+
 			utility::vector1< ResMap > res_maps;
-			figure_out_possible_res_maps( res_maps, *(pose_list[1]), sequence_of_big_pose, connections_in_big_pose );
+
+			// There may be more than one part of the pose to which this sequence maps.
+			figure_out_possible_res_maps( res_maps, scratch_pose, sequence_of_big_pose, connections_in_big_pose );
 
 			for (Size k = 1; k <= res_maps.size(); k++ )  {
 				check_res_map( res_maps[ k ], *(pose_list[1]), sequence_of_big_pose );
@@ -130,9 +198,71 @@ namespace rna{
 				ChunkSetOP chunk_set( new ChunkSet( pose_list, res_maps[ k ] ) );
 				chunk_sets_.push_back( chunk_set );
 
-				zero_out_allow_insert( res_maps[ k ], connections_in_big_pose );
+				zero_out_allow_insert( res_maps[ k ], pose, scratch_pose, n );
 			}
 
+			for ( ResMap::const_iterator
+							it=res_maps[1].begin(), it_end = res_maps[1].end(); it != it_end; ++it ) {
+				input_res.push_back( it->first );
+			}
+
+		}
+
+		figure_out_chunk_coverage();
+
+		std::cout << "INPUT_RES: ";
+		for ( Size n = 1; n <= input_res.size(); n++ ) std::cout << ' ' << input_res[ n ];
+		std::cout << std::endl;
+
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////////////////////////
+	// constructor -- needs a list of silent files. Each silent file
+	//  has solutions for a particular piece of the desired pose.
+	RNA_ChunkLibrary::RNA_ChunkLibrary(
+								utility::vector1 < std::string > const & silent_files,
+								core::pose::Pose const & pose,
+								utility::vector1< core::Size > const & input_res )
+	{
+
+		std::string const & sequence_of_big_pose( pose.sequence() );
+		coarse_rna_ = pose.residue( 1 ).is_coarse();
+
+		// allow_insert keeps track of where chunks are placed -- only allow
+		// fragment insertions *outside* these regions.
+		allow_insert_ = new AllowInsert( pose );
+		covered_by_chunk_.dimension( sequence_of_big_pose.size(), false );
+
+		Size count( 0 );
+		for ( Size n = 1; n <= silent_files.size(); n++ ) {
+
+			utility::vector1< pose::PoseOP > pose_list;
+			process_silent_file( silent_files[n], pose_list );
+
+			core::pose::Pose const & scratch_pose( *(pose_list[1]) );
+
+			// There may be more than one part of the pose to which this sequence maps.
+			ResMap res_map;
+
+			for ( Size i = 1; i <= scratch_pose.sequence().size(); i++ ) {
+				count++;
+				if ( sequence_of_big_pose[ input_res[ count ] -1 ] != scratch_pose.sequence()[ i - 1 ] ){
+					std::cout << "mismatch in sequence   in  big pose: " << sequence_of_big_pose[ input_res[ count ] -1 ] << input_res[count] <<
+						"  in input pose: " << scratch_pose.sequence()[ i - 1 ]  << i << std::endl;
+					//utility_exit_with_message( "mismatch in input_res sequence" );
+				}
+				res_map[ input_res[count ] ] = i;
+			}
+
+			ChunkSetOP chunk_set( new ChunkSet( pose_list, res_map ) );
+			chunk_sets_.push_back( chunk_set );
+
+			zero_out_allow_insert( res_map, pose, scratch_pose, n );
+
+		}
+		if ( count != input_res.size() ){
+			utility_exit_with_message( "Number of input res does not match total res in input silent files!" );
 		}
 
 		figure_out_chunk_coverage();
@@ -163,7 +293,7 @@ namespace rna{
 					 Size const & chunk_list_index,
 					 Size const & chunk_pose_index ) const
 	{
-		chunk_sets_[ chunk_list_index ]->insert_chunk_into_pose( pose, chunk_pose_index );
+		chunk_sets_[ chunk_list_index ]->insert_chunk_into_pose( pose, chunk_pose_index, allow_insert_ );
 	}
 
 
@@ -174,9 +304,12 @@ namespace rna{
 		Size const chunk_set_index = static_cast <int> ( RG.uniform() * num_chunk_sets() ) + 1;
 
 		ChunkSet const & chunk_set( *chunk_sets_[ chunk_set_index ] );
+
+		if ( chunk_set.num_chunks() < 2 )  return;
+
 		Size const chunk_index = static_cast <int> ( RG.uniform() * chunk_set.num_chunks() ) + 1;
 
-		chunk_set.insert_chunk_into_pose( pose, chunk_index );
+		chunk_set.insert_chunk_into_pose( pose, chunk_index, allow_insert_ );
 
 		//		TR << "INSERTED CHUNK " << chunk_index << " FROM SET " << chunk_set_index << std::endl;
 
@@ -185,29 +318,45 @@ namespace rna{
 	//////////////////////////////////////////////////////////////////////////////
 	void
 	RNA_ChunkLibrary::zero_out_allow_insert( ResMap const & res_map,
-																			 std::map< Size, Size > const & connections_in_big_pose )
+																					 core::pose::Pose const & pose,
+																					 core::pose::Pose const & scratch_pose,
+																					 core::Size const domain_num )
 	{
+		using namespace core::id;
+		using namespace core::conformation;
 
-		FArray1D< bool > connected( allow_insert_.size(), false );
-
-		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		// THIS MASKS OUT STEMS AS STILL OK FOR FRAGMENT INSERTIONS ...
-		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		for ( ResMap::const_iterator
-						it=connections_in_big_pose.begin(), it_end = connections_in_big_pose.end(); it != it_end; ++it ) {
-			Size const i = it->first; //Index in big pose.
-			connected( i ) = true;
-		}
+		// connected doesn't do anything anymore...
+		FArray1D< bool > connected( pose.total_residue(), false );
 
 		covered_by_chunk_ = false;
 
 		for ( ResMap::const_iterator
 						it=res_map.begin(), it_end = res_map.end(); it != it_end; ++it ) {
+
 			Size const i = it->first; //Index in big pose.
+			Size const i_scratch = it->second; //Index in big pose.
+
 			covered_by_chunk_( i ) = true;
-			if ( !connected( i ) ) {
-				allow_insert_( i ) = false;
+		// connected doesn't do anything anymore...
+			if ( connected( i ) ) continue;
+
+			Residue const & rsd_i = pose.residue(i);
+			for ( Size j = 1; j <= rsd_i.natoms(); j++ ){
+
+				std::string const & atomname = rsd_i.atom_name( j );
+				Residue const & scratch_rsd = scratch_pose.residue(i_scratch);
+
+				if ( scratch_rsd.has( atomname ) ) {
+					Size const & scratch_index = scratch_pose.residue( i_scratch ).atom_index( atomname );
+					if ( !scratch_rsd.is_virtual( scratch_index ) ) {
+						allow_insert_->set_domain( AtomID(j,i), domain_num);
+					}
+				}
 			}
+
+			//We don't trust phosphates at the beginning of chains!
+			//if ( i_scratch == 1 || scratch_pose.fold_tree().is_cutpoint( i_scratch - 1 ) ) allow_insert_->set_phosphate( i, pose, true );
+
 		}
 
 	}
@@ -217,7 +366,7 @@ namespace rna{
 	RNA_ChunkLibrary::figure_out_chunk_coverage()
 	{
 
-		Size const tot_res( allow_insert_.size() );
+		Size const tot_res( allow_insert_->nres() );
 		Size num_chunk_res( 0 );
 		Size num_other_res( 0 );
 
@@ -562,92 +711,6 @@ namespace rna{
 	}
 
 
-	///////////////
-	///////////////
-	///////////
-	// DELETE THIS AFTER SHIT IS WORKING.
-// 		// Go through each sequence and look for matches
-// 		utility::vector1< std::vector< Size > > matches_to_each_scratch_sequence;
-// 		Size tot_matches = 1;
-// 		for ( Size n = 1; n <= scratch_sequences.size(); n++ ) {
-// 			std::vector< Size > matches;
-// 			std::string const scratch_sequence( scratch_sequences[n] );
-// 			Size const scratch_sequence_length = scratch_sequence.size();
-// 			for ( Size i = 0; i <= sequence_of_big_pose.size() - scratch_sequence_length; i++ ) {
-// 				bool does_it_match( true );
-// 				for (Size offset = 0; offset < scratch_sequence_length; offset++ ) {
-// 					if ( sequence_of_big_pose[ i + offset ] != scratch_sequence[ offset ] ) {
-// 						does_it_match = false;
-// 						break;
-// 					}
-// 				}
-// 				if (does_it_match) {
-// 					matches.push_back( i );
-// 					TR << "Found match to scratch_sequence " << n << "   at position: " << i+1 << std::endl;
-// 				}
-// 			}
-
-// 			matches_to_each_scratch_sequence.push_back( matches );
-// 			num_sequence_match.push_back( matches.size() );
-
-// 			if ( matches.size() < 1 ) 	 utility_exit_with_message(  "Could not find match to sequence" );
-
-// 			tot_matches *= num_sequence_match[ n ];
-
-// 		}
-
-
-// 		// Test out every possible combination of sequence match -- make sure that
-// 		// jump-connected residues inside the mini "scratch pose" are connected in the
-// 		// big pose.
-// 		// Note that following is not optimal at all, but this code doesn't have to be --
-// 		// just runs once.
-// 		bool found_a_match( false );
-// 		TR << "TOT_MATCHES " << tot_matches << std::endl;
-// 		for ( Size k = 0; k < tot_matches; k++ ) {
-
-// 			Size count = k;
-
-// 			////////////////////////////////////////////////////////////////////////////////////////////
-// 			////////////////////////////////////////////////////////////////////////////////////////////
-// 			// This is a pretty ghetto decoding mechanism. The other option might be recursion.
-// 			utility::vector1< Size > which_match;
-// 			for ( Size n = 1; n <= scratch_sequences.size(); n++ ) {
-// 				which_match.push_back(  count % num_sequence_match[ n ] );
-// 				count = floor( count / num_sequence_match[ n ] );
-// 			}
-
-// 			// Fill out res_map
-// 			ResMap res_map;
-// 			 Size i( 0 );
-// 			for ( Size n = 1; n <= scratch_sequences.size(); n++ ) {
-// 				Size const match_pos = matches_to_each_scratch_sequence[ n ][ which_match[n] ];
-// 				Size const scratch_sequence_length = scratch_sequences[n].size();
-// 				for (Size offset = 0; offset < scratch_sequence_length; offset++ ) {
-// 					res_map[ match_pos + offset + 1 ] = i + 1; // Add back in 1 to match pose numbering.
-// 					i++;
-// 				}
-// 			}
-
-// 			if ( check_jump_match( scratch_pose, connections_in_big_pose, res_map, chain_id ) ) {
-// 				res_maps.push_back( res_map );
-// 				found_a_match = true;
-// 				for ( ResMap::const_iterator
-// 								it=res_map.begin(), it_end = res_map.end(); it != it_end; ++it ) {
-// 					TR << it->first << " mapped to " << it->second << std::endl;
-// 				}
-
-// 			}
-// 		}
-// 		if ( !found_a_match )  utility_exit_with_message(  "Could not match silent file with sequence "+scratch_pose.sequence() );
-
-// 	}
-
-
-	/////////////
-	///////////
-	/////////////
-
 
 	///////////////////////////////////////////////////////////////////////////
 	// Any jump inside the scratch pose (which came from a user-inputted silent file with its own fold tree)
@@ -765,6 +828,14 @@ namespace rna{
 			std::string const tag = iter->decoy_tag();
 			iter->fill_pose( *pose_op );
 
+			remove_cutpoints_closed( *pose_op );
+
+			if ( coarse_rna_ && !pose_op->residue(1).is_coarse() ){
+				pose::Pose coarse_pose;
+				make_coarse_pose( *pose_op, coarse_pose );
+				*pose_op = coarse_pose;
+			}
+
 			pose_list.push_back( pose_op );
 		}
 
@@ -776,17 +847,32 @@ namespace rna{
 
 	////////////////////////////////////////////////////////////////
 	void
-	RNA_ChunkLibrary::initialize_random_chunks( pose::Pose & pose ) const{
+	RNA_ChunkLibrary::initialize_random_chunks( pose::Pose & pose, bool const dump_pdb /* = false */) const{
 		for ( Size n = 1; n <= num_chunk_sets(); n++ ) {
 
 			ChunkSet const & chunk_set( *chunk_sets_[ n ] );
-			Size const chunk_index = static_cast <int> ( RG.uniform() * chunk_set.num_chunks() ) + 1;
-			//			TR << "NUM_CHUNKS " << chunk_index << " " << chunk_set.num_chunks() << std::endl;
-			chunk_set.insert_chunk_into_pose( pose, chunk_index );
 
-			//			pose.dump_pdb( "start_"+string_of(n)+".pdb" );
+			Size chunk_index = static_cast<int>( RG.uniform() * chunk_set.num_chunks() ) + 1;
+
+			// JUST FOR TESTING
+			if ( dump_pdb ) chunk_index = 1;
+
+			TR << "NUM_CHUNKS " << chunk_index << " " << chunk_set.num_chunks() << std::endl;
+			chunk_set.insert_chunk_into_pose( pose, chunk_index, allow_insert_ );
+
+			if ( dump_pdb ) pose.dump_pdb( "start_"+string_of(n)+".pdb" );
+
 		}
 
+		//exit( 0 );
+
+	}
+
+
+	////////////////////////////////////////////////////////////////
+	void
+	RNA_ChunkLibrary::set_allow_insert( AllowInsertOP allow_insert ){
+		allow_insert_ = allow_insert;
 	}
 
 }

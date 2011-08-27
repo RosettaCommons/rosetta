@@ -10,12 +10,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-#ifndef INCLUDED_protocols_rna_RNA_StructureParameters_hh
-#define INCLUDED_protocols_rna_RNA_StructureParameters_hh
+#ifndef INCLUDED_protocols_rna_RNA_StructureParameters_HH
+#define INCLUDED_protocols_rna_RNA_StructureParameters_HH
 
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/rna/RNA_JumpLibrary.hh>
-#include <core/scoring/rna/RNA_DataInfo.hh>
+#include <protocols/rna/RNA_JumpLibrary.fwd.hh>
+#include <protocols/rna/AllowInsert.fwd.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -27,7 +27,6 @@
 #include <map>
 #include <iostream>
 #include <list>
-
 
 
 namespace protocols {
@@ -57,29 +56,25 @@ public:
 		core::pose::Pose & pose,
 		std::string const rna_params_file,
 		std::string const jump_library_file,
-		bool const ignore_secstruct
-	);
+		bool const ignore_secstruct );
 
 	void
-	setup_jumps( core::pose::Pose & pose, bool const random_jumps = true );
+	setup_fold_tree_and_jumps_and_variants( core::pose::Pose & pose );
 
 	bool
 	random_jump_change( core::pose::Pose & pose ) const;
 
-	ObjexxFCL::FArray1D_bool
-	allow_insert() const{ return allow_insert_ ;}
+	AllowInsertOP
+	allow_insert();
 
 	void
-	set_allow_insert( ObjexxFCL::FArray1D <bool> const & allow_insert  ){ allow_insert_ = allow_insert; }
+	set_allow_insert( AllowInsertOP allow_insert );
 
 	bool
 	check_base_pairs( core::pose::Pose & pose ) const;
 
 	std::map< Size, Size >
 	connections() const;
-
-	void
-	and_allow_insert( ObjexxFCL::FArray1D< bool > const & allow_insert_in );
 
 	std::list< Size >
 	get_stem_residues(  core::pose::Pose const & pose ) const;
@@ -96,6 +91,9 @@ public:
 	override_secstruct( core::pose::Pose & pose );
 
 	void
+	append_virtual_anchor( core::pose::Pose & pose );
+
+	void
 	initialize_allow_insert( core::pose::Pose & pose  );
 
 	void
@@ -109,9 +107,18 @@ public:
 	void
 	read_parameters_from_file( std::string const & pairing_file );
 
+
 	void
-	set_jump_library( RNA_JumpLibraryOP rna_jump_library )
-	{ rna_jump_library_ = rna_jump_library; }
+	setup_jumps( core::pose::Pose & pose );
+
+	void
+	setup_chainbreak_variants( core::pose::Pose & pose );
+
+	void
+	setup_virtual_phosphate_variants( core::pose::Pose & pose );
+
+	void
+	set_jump_library( RNA_JumpLibraryOP rna_jump_library );
 
 	std::string const
 	read_secstruct_from_file( std::string const & rna_secstruct_file );
@@ -149,18 +156,20 @@ private:
 
 	utility::vector1 <core::Size > cutpoints_open_;
 	utility::vector1 <core::Size > cutpoints_closed_;
+	utility::vector1 <core::Size > virtual_anchor_attachment_points_;
 
 	bool secstruct_defined_;
 	std::string rna_secstruct_;
-
 	bool assume_non_stem_is_loop;
 
+	bool add_virtual_anchor_;
+
 	utility::vector1 < std::pair< core::Size, core::Size > > allow_insert_segments_;
-	ObjexxFCL::FArray1D_bool allow_insert_;
+	AllowInsertOP allow_insert_;
 
 };
 
-typedef utility::pointer::owning_ptr< RNA_StructureParameters > RNA_StructureParametersOP;
+	typedef utility::pointer::owning_ptr< RNA_StructureParameters > RNA_StructureParametersOP;
 
 } //rna
 } //protocols
