@@ -1,0 +1,10 @@
+COARSE_RNA
+atom_pair_constraint    1.0
+vdw                     1.0
+chainbreak              1.0
+rna_data_backbone       1.0
+rna_base_pair           1.0
+rna_base_axis           0.2
+rna_base_stagger        1.0
+rna_base_stack          1.0
+rna_base_stack_axis     0.2
