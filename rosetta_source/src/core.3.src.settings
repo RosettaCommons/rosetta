@@ -179,6 +179,7 @@ sources = {
 		"RNA_PairwiseLowResolutionEnergy",
 		"RNA_RawBaseBaseInfo",
 		"RNA_ScoringInfo",
+		"RNA_SugarCloseEnergy",
 		"RNA_TorsionEnergy",
 		"RNA_TorsionPotential",
 		"RNA_Util",

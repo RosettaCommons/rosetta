@@ -131,6 +131,7 @@
 #include <core/scoring/rna/RNA_FullAtomStackingEnergyCreator.hh>
 #include <core/scoring/rna/RNA_LJ_BaseEnergyCreator.hh>
 #include <core/scoring/rna/RNA_PairwiseLowResolutionEnergyCreator.hh>
+#include <core/scoring/rna/RNA_SugarCloseEnergyCreator.hh>
 #include <core/scoring/rna/RNA_TorsionEnergyCreator.hh>
 #include <core/scoring/rna/RNA_VDW_EnergyCreator.hh>
 #include <core/scoring/sym_e/symECreator.hh>
@@ -311,6 +312,7 @@ static EnergyMethodRegistrator< scoring::rna::RNA_DataBackboneEnergyCreator > RN
 static EnergyMethodRegistrator< scoring::rna::RNA_FullAtomStackingEnergyCreator > RNA_FullAtomStackingEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_LJ_BaseEnergyCreator > RNA_LJ_BaseEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_PairwiseLowResolutionEnergyCreator > RNA_PairwiseLowResolutionEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::rna::RNA_SugarCloseEnergyCreator > RNA_SugarCloseEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_TorsionEnergyCreator > RNA_TorsionEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::rna::RNA_VDW_EnergyCreator > RNA_VDW_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::sym_e::symECreator > symECreator_registrator;
