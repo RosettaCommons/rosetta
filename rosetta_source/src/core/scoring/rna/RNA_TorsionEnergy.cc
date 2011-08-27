@@ -62,7 +62,6 @@ ScoreTypes
 RNA_TorsionEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
 	sts.push_back( rna_torsion );
-	sts.push_back( rna_sugar_close );
 	return sts;
 }
 
