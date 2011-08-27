@@ -16,24 +16,26 @@
 #ifndef INCLUDED_protocols_loops_Loops_hh
 #define INCLUDED_protocols_loops_Loops_hh
 
-#include <protocols/loops/Loop.hh>
+// Unit header
 #include <protocols/loops/Loops.fwd.hh>
 
-#include <core/types.hh>
-// AUTO-REMOVED #include <basic/Tracer.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
-#include <core/id/types.hh>
-#include <core/pose/Pose.fwd.hh>
+// C/C++ headers
+#include <iostream>
+#include <string>
+
+// Utility headers
+#include <numeric/xyzVector.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/vector1.hh>
 
-// AUTO-REMOVED #include <string>
+// Project headers
+#include <core/types.hh>
+#include <core/id/types.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 
-// Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
-
-//Auto Headers
-#include <utility/vector1_bool.hh>
-
+// Package headers
+#include <protocols/loops/Loop.hh>
 
 namespace protocols {
 namespace loops {
@@ -91,7 +93,6 @@ public:
   	std::ostream& data,
 		std::string token
 	) const;
-
 
 	void
 	add_loop( Loop loop, core::Size minimal_gap = 0 );
@@ -185,7 +186,6 @@ public:
 
  	void make_sequence_shift( int shift );
 
-
 	/// @brief yield the Loop which contains the residue seqpos, returns false if seqpos is not in any residue.
 	bool loop_of_residue( core::Size const seqpos, Loop& loop ) const;
 
@@ -242,6 +242,12 @@ public:
 		core::Real mag_right
 	);
 
+  /// @brief Computes the center of mass of the Ca atoms specified by this
+  /// instance, writing the result to <center>. Assumes there is no missing
+  /// backbone density.
+  ///
+  /// Note: if this method is called on an instance without any Loop's, returns (0,0,0).
+  void center_of_mass(const core::pose::Pose& pose, numeric::xyzVector<core::Real>* center) const;
 
 	///@brief set each loop-residue in the vector to val.
 	/// input vector of nres length ( if shorter last residues of loop are ignored )

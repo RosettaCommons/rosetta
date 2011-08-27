@@ -13,29 +13,32 @@
 /// @author Mike Tyka
 /// @author James Thompson
 
-// Unit Headers
-#include <protocols/loops/Loop.hh>
+// Unit header
 #include <protocols/loops/Loops.hh>
 
-// Project Headers
-#include <core/kinematics/FoldTree.hh>
-#include <core/pose/Pose.hh>
-
 // C++ Headers
+#include <iostream>
 #include <string>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/exit.hh>
-#include <numeric/random/random.fwd.hh>
-#include <numeric/random/random.hh>
-// AUTO-REMOVED #include <numeric/random/random_permutation.hh>
 #include <basic/Tracer.hh>
-#include <utility/string_util.hh>
-
 #include <basic/options/option.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
+#include <numeric/xyzVector.hh>
+#include <numeric/random/random.fwd.hh>
+#include <numeric/random/random.hh>
+#include <utility/exit.hh>
+#include <utility/io/ozstream.hh>
+#include <utility/string_util.hh>
+
+// Project Headers
+#include <core/types.hh>
+#include <core/id/NamedAtomID.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/pose/Pose.hh>
+
+// Package headers
+#include <protocols/loops/Loop.hh>
 
 namespace protocols {
 namespace loops {
@@ -69,6 +72,26 @@ Loops get_loops_from_file() {
 	}
 
 	return Loops(); // return empty loop definition if neither option is defined.
+}
+
+void Loops::center_of_mass(const core::pose::Pose& pose,
+                           numeric::xyzVector<core::Real>* center) const {
+  using core::Real;
+  using core::Size;
+  using core::id::NamedAtomID;
+
+  assert(center);
+  center->zero();
+
+  Real count = 0;
+  for (const_iterator i = begin(); i != end(); ++i) {
+    for (Size j = i->start(); j <= i->stop(); ++j) {
+      (*center) += pose.xyz(NamedAtomID("CA", j));
+      ++count;
+    }
+  }
+
+  (*center) /= count;
 }
 
 /// @brief switch DOF_Type for residues in loop. id::CHI, id::BB --- don't use

@@ -10,6 +10,7 @@
 sources = {
         "loops" : [
           "Loop",
+          "Loops",
         ],
         "nonlocal" : [
           "BoundaryFinder",
