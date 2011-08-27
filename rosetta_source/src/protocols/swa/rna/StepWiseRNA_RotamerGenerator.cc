@@ -18,7 +18,7 @@
 
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/rna/RNA_TorsionPotential.hh>
+#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
 #include <basic/Tracer.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
@@ -150,7 +150,7 @@ namespace rna {
 
 		rotamer_centers_.clear();
 
-		core::scoring::rna::RNA_TorsionPotential rna_torsion_potential;
+		core::scoring::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
 
 		Real delta1( 0.0 ),	chi_1( 0.0 ),	nu2_1( 0.0 ),	nu1_1( 0.0 ),	epsilon1( 0.0 ),	zeta1( 0.0 ),	alpha2( 0.0 ),	beta2( 0.0 ),	gamma2( 0.0 ),	delta2( 0.0 ),	chi_2( 0.0 ),	nu2_2( 0.0 ),	nu1_2( 0.0 );
 
@@ -162,15 +162,15 @@ namespace rna {
 							 (c1 > 1) /*sample one dummy chi angle*/  ) )  continue;
 
 				if (d1 == 1) {
-					delta1 = rna_torsion_potential.gaussian_parameter_set_delta_north()[1].center;
-					chi_1 = rna_torsion_potential.gaussian_parameter_set_chi_north()[1].center + bin_size_*(c1-1) - 20;
-					nu2_1 = rna_torsion_potential.gaussian_parameter_set_nu2_north()[1].center;
-					nu1_1 = rna_torsion_potential.gaussian_parameter_set_nu1_north()[1].center;
+					delta1 = rna_fitted_torsion_info.gaussian_parameter_set_delta_north()[1].center;
+					chi_1 = rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[1].center + bin_size_*(c1-1) - 20;
+					nu2_1 = rna_fitted_torsion_info.gaussian_parameter_set_nu2_north()[1].center;
+					nu1_1 = rna_fitted_torsion_info.gaussian_parameter_set_nu1_north()[1].center;
 				}	else {
-					delta1 = rna_torsion_potential.gaussian_parameter_set_delta_south()[1].center;
-					chi_1 = rna_torsion_potential.gaussian_parameter_set_chi_south()[1].center + bin_size_*(c1-1) - 20;
-					nu2_1 = rna_torsion_potential.gaussian_parameter_set_nu2_south()[1].center;
-					nu1_1 = rna_torsion_potential.gaussian_parameter_set_nu1_south()[1].center;
+					delta1 = rna_fitted_torsion_info.gaussian_parameter_set_delta_south()[1].center;
+					chi_1 = rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[1].center + bin_size_*(c1-1) - 20;
+					nu2_1 = rna_fitted_torsion_info.gaussian_parameter_set_nu2_south()[1].center;
+					nu1_1 = rna_fitted_torsion_info.gaussian_parameter_set_nu1_south()[1].center;
 				}
 
 				for (int d2 = 1; d2 <= 2; d2++ ) {
@@ -186,15 +186,15 @@ namespace rna {
 									 (c2 > 1) /*sample one dummy chi angle*/ )   ) continue;
 
 						if (d2 == 1) {
-							delta2 = rna_torsion_potential.gaussian_parameter_set_delta_north()[1].center;
-							chi_2 = rna_torsion_potential.gaussian_parameter_set_chi_north()[1].center + bin_size_*(c2-1) - 20;
-							nu2_2 = rna_torsion_potential.gaussian_parameter_set_nu2_north()[1].center;
-							nu1_2 = rna_torsion_potential.gaussian_parameter_set_nu1_north()[1].center;
+							delta2 = rna_fitted_torsion_info.gaussian_parameter_set_delta_north()[1].center;
+							chi_2 = rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[1].center + bin_size_*(c2-1) - 20;
+							nu2_2 = rna_fitted_torsion_info.gaussian_parameter_set_nu2_north()[1].center;
+							nu1_2 = rna_fitted_torsion_info.gaussian_parameter_set_nu1_north()[1].center;
 						}	else {
-							delta2 = rna_torsion_potential.gaussian_parameter_set_delta_south()[1].center;
-							chi_2 = rna_torsion_potential.gaussian_parameter_set_chi_south()[1].center + bin_size_*(c2-1) - 20;
-							nu2_2 = rna_torsion_potential.gaussian_parameter_set_nu2_south()[1].center;
-							nu1_2 = rna_torsion_potential.gaussian_parameter_set_nu1_south()[1].center;
+							delta2 = rna_fitted_torsion_info.gaussian_parameter_set_delta_south()[1].center;
+							chi_2 = rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[1].center + bin_size_*(c2-1) - 20;
+							nu2_2 = rna_fitted_torsion_info.gaussian_parameter_set_nu2_south()[1].center;
+							nu1_2 = rna_fitted_torsion_info.gaussian_parameter_set_nu1_south()[1].center;
 						}
 
 						std::cout << " 	delta1= " <<  F(8, 3, delta1);
@@ -217,7 +217,7 @@ namespace rna {
 										for (int b2 = 1; b2 <= 1; b2++ ) {
 											for (int g2 = 1; g2 <= 3; g2++ ) {
 
-											// Why do these deviate from RNA_TorsionPotential?
+											// Why do these deviate from RNA_FittedTorsionInfo?
 											if (d1 == 1) epsilon1 = -150.17;
 											else         epsilon1 = -98.45;
 

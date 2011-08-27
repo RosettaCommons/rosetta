@@ -654,8 +654,8 @@ namespace rna {
 		using namespace core::scoring;
 		using namespace core::scoring::rna;
 
-		scoring::rna::RNA_TorsionPotential const rna_torsion_potential;
-		Real const DELTA_CUTOFF( rna_torsion_potential.delta_cutoff() );
+		scoring::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
+		Real const DELTA_CUTOFF( rna_fitted_torsion_info.delta_cutoff() );
 		std::cout << "  DELTA_CUTOFF angle=" << DELTA_CUTOFF;
 
 		conformation::Residue const & rsd(pose.residue(seq_num));

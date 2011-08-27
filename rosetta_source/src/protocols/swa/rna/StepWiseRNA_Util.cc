@@ -34,7 +34,7 @@
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/scoring/rna/RNA_TorsionPotential.hh>
+#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
@@ -288,7 +288,7 @@ namespace rna {
 	void
 	get_bulge_rotamers( utility::vector1< utility::vector1 <Real> >& rotamer_list, PuckerState const & pucker1, PuckerState const & pucker2 ) {
 
-		scoring::rna::RNA_TorsionPotential const rna_torsion_potential;
+		scoring::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 
 		Real bin_size=20;
 
@@ -315,16 +315,16 @@ namespace rna {
 		for (int d = 1; d <= 2; d++ ) {
 
 			if (d == 1) {
-				delta = rna_torsion_potential.gaussian_parameter_set_delta_north()[1].center;
-				chi = rna_torsion_potential.gaussian_parameter_set_chi_north()[1].center;
-				nu2 = rna_torsion_potential.gaussian_parameter_set_nu2_north()[1].center;
-				nu1 = rna_torsion_potential.gaussian_parameter_set_nu1_north()[1].center;
+				delta = rna_fitted_torsion_info.gaussian_parameter_set_delta_north()[1].center;
+				chi = rna_fitted_torsion_info.gaussian_parameter_set_chi_north()[1].center;
+				nu2 = rna_fitted_torsion_info.gaussian_parameter_set_nu2_north()[1].center;
+				nu1 = rna_fitted_torsion_info.gaussian_parameter_set_nu1_north()[1].center;
 
 			}	else {
-				delta = rna_torsion_potential.gaussian_parameter_set_delta_south()[1].center;
-				chi = rna_torsion_potential.gaussian_parameter_set_chi_south()[1].center;
-				nu2 = rna_torsion_potential.gaussian_parameter_set_nu2_south()[1].center;
-			nu1 = rna_torsion_potential.gaussian_parameter_set_nu1_south()[1].center;
+				delta = rna_fitted_torsion_info.gaussian_parameter_set_delta_south()[1].center;
+				chi = rna_fitted_torsion_info.gaussian_parameter_set_chi_south()[1].center;
+				nu2 = rna_fitted_torsion_info.gaussian_parameter_set_nu2_south()[1].center;
+			nu1 = rna_fitted_torsion_info.gaussian_parameter_set_nu1_south()[1].center;
 			}
 
 			if(pucker1==ALL){
@@ -362,19 +362,19 @@ namespace rna {
 
 
 				for ( Size a2_std = 1; a2_std <= torsion_samples.size(); a2_std++ ) {
-						alpha2 = rna_torsion_potential.gaussian_parameter_set_alpha()[a2].center + torsion_samples[a2_std]*bin_size;
+						alpha2 = rna_fitted_torsion_info.gaussian_parameter_set_alpha()[a2].center + torsion_samples[a2_std]*bin_size;
 
 						for ( Size z1_std = 1; z1_std <= torsion_samples.size(); z1_std++ ) {
-								if (a2 == 1)    zeta1 = rna_torsion_potential.gaussian_parameter_set_zeta_alpha_sc_minus()[z1].center + torsion_samples[z1_std]*bin_size;
-								else if (a2==2) zeta1 = rna_torsion_potential.gaussian_parameter_set_zeta_alpha_sc_plus()[z1].center + torsion_samples[z1_std]*bin_size;
-								else            zeta1 = rna_torsion_potential.gaussian_parameter_set_zeta_alpha_ap()[z1].center + torsion_samples[z1_std]*bin_size;
+								if (a2 == 1)    zeta1 = rna_fitted_torsion_info.gaussian_parameter_set_zeta_alpha_sc_minus()[z1].center + torsion_samples[z1_std]*bin_size;
+								else if (a2==2) zeta1 = rna_fitted_torsion_info.gaussian_parameter_set_zeta_alpha_sc_plus()[z1].center + torsion_samples[z1_std]*bin_size;
+								else            zeta1 = rna_fitted_torsion_info.gaussian_parameter_set_zeta_alpha_ap()[z1].center + torsion_samples[z1_std]*bin_size;
 
 								for ( Size b2_std = 1; b2_std <= torsion_samples.size(); b2_std++ ) {
 
-										beta2 = rna_torsion_potential.gaussian_parameter_set_beta()[b2].center + torsion_samples[b2_std]*bin_size;
+										beta2 = rna_fitted_torsion_info.gaussian_parameter_set_beta()[b2].center + torsion_samples[b2_std]*bin_size;
 
 										for ( Size g2_std = 1; g2_std <= torsion_samples.size(); g2_std++ ) {
-												gamma2 = rna_torsion_potential.gaussian_parameter_set_gamma()[g2].center + torsion_samples[g2_std]*bin_size;
+												gamma2 = rna_fitted_torsion_info.gaussian_parameter_set_gamma()[g2].center + torsion_samples[g2_std]*bin_size;
 
 													utility::vector1 < Real >  backbone_rotamer; //Would be better to make this a class, RNA_SuiteToSuiteRotamer
 
@@ -896,7 +896,7 @@ namespace rna {
 		}
 
 		current_pose.prepend_polymer_residue_before_seqpos( *new_rsd, three_prime_chainbreak, true);
-		scoring::rna::RNA_TorsionPotential const rna_torsion_potential;
+		scoring::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
 
 		if(verbose){
 			dump_pdb(current_pose, "Before_setting_torsion_to_A_form.pdb");
