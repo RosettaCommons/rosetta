@@ -345,6 +345,12 @@ settings = {
             "cxx"           : "g++-4.5",
         },
     },
+    "gcc, 4.6, linux" : {
+        "overrides" : {
+            "cc" : "gcc-4.6",
+            "cxx": "g++-4.6",
+        },
+    },
     "gcc, macos" : {
         "appends" : {
             "flags" : {
