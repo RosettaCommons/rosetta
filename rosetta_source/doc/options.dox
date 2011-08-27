@@ -2348,11 +2348,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 5</dd><br>
 </dl>
 <dl>
-<dt><b>-min_chunk_size</b> \<Integer\><dt>
-<dd>Minimum allowable chunk size for comparative modeling inputs. At the very minimum, should be set to the smallest fragments used during the simulation.</dd><br>
-<dd>Default: 3</dd><br>
-</dl>
-<dl>
 <dt><b>-max_chunk_size</b> \<Integer\><dt>
 <dd>Maximum allowable chunk size for comparative modeling inputs. If the chunk exceeds this threshold, it is recursively decomposed into smaller pieces.</dd><br>
 <dd>Default: 20</dd><br>
@@ -3306,8 +3301,23 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "neighbor_vector_score.histogram"</dd><br>
 </dl>
 <dl>
+<dt><b>-syn_chi_penalty</b> \<Real\><dt>
+<dd>penalty for syn/chi conformation</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
 <dt><b>-disable_orientation_dependent_rna_ch_o_bonds</b> \<Boolean\><dt>
 <dd>Do not use orientation-dependent potential for RNA carbon hydrogen bonds</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-rna_torsion_potential</b> \<String\><dt>
+<dd>In RNA torsion calculation, directory containing 1D torsional potentials</dd><br>
+<dd>Default: "FINAL_Mar_24_2010_new_delta_zeta_chi"</dd><br>
+</dl>
+<dl>
+<dt><b>-include_neighbor_base_stacks</b> \<Boolean\><dt>
+<dd>In RNA score calculation, include stacks between i,i+1</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
@@ -7576,6 +7586,26 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: true</dd><br>
 </dl>
 <dl>
+<dt><b>-fix_ca_bond_angles</b> \<Boolean\><dt>
+<dd>Freezes N-CA-C bond angles in KIC loop sampling</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-kic_use_linear_chainbreak</b> \<Boolean\><dt>
+<dd>Use linear_chainbreak instead of (harmonic) chainbreak in KIC loop sampling</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-allow_omega_move</b> \<Boolean\><dt>
+<dd>Allow loop omega to minimize during loop modeling</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-allow_takeoff_torsion_move</b> \<Boolean\><dt>
+<dd>Allow takeoff phi/psi to move during loop modeling</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-extend_length</b> \<Integer\><dt>
 <dd>Number of alanine residues to append after cutpoint in loopextend app</dd><br>
 <dd>Range: 0-</dd><br>
@@ -10269,6 +10299,64 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-lbfgs_M</b> \<Integer\><dt>
 <dd>number of corrections to approximate the inverse hessian matrix.</dd><br>
 <dd>Default: 64</dd><br>
+</dl>
+ </li>
+<li><h2>swa</h2>
+<dl>
+<dt><b>-swa</b> \<Boolean\><dt>
+<dd>swa option group</dd><br>
+</dl>
+<dl>
+<dt><b>-s1</b> \<StringVector\><dt>
+<dd>input file(s)</dd><br>
+</dl>
+<dl>
+<dt><b>-s2</b> \<StringVector\><dt>
+<dd>input file(s)</dd><br>
+</dl>
+<dl>
+<dt><b>-silent1</b> \<StringVector\><dt>
+<dd>input file</dd><br>
+</dl>
+<dl>
+<dt><b>-silent2</b> \<StringVector\><dt>
+<dd>input file</dd><br>
+</dl>
+<dl>
+<dt><b>-tags1</b> \<StringVector\><dt>
+<dd>input tag(s)</dd><br>
+</dl>
+<dl>
+<dt><b>-tags2</b> \<StringVector\><dt>
+<dd>input tag(s)</dd><br>
+</dl>
+<dl>
+<dt><b>-slice_res1</b> \<IntegerVector\><dt>
+<dd>Residues to slice out of starting file</dd><br>
+</dl>
+<dl>
+<dt><b>-slice_res2</b> \<IntegerVector\><dt>
+<dd>Residues to slice out of starting file</dd><br>
+</dl>
+<dl>
+<dt><b>-input_res1</b> \<IntegerVector\><dt>
+<dd>Residues already present in starting file</dd><br>
+</dl>
+<dl>
+<dt><b>-input_res2</b> \<IntegerVector\><dt>
+<dd>Residues already present in starting file2</dd><br>
+</dl>
+<dl>
+<dt><b>-input_res</b> \<IntegerVector\><dt>
+<dd>Residues already present in starting file</dd><br>
+</dl>
+<dl>
+<dt><b>-backbone_only1</b> \<Boolean\><dt>
+<dd>just copy protein backbone DOFS, useful for homology modeling</dd><br>
+</dl>
+<dl>
+<dt><b>-backbone_only2</b> \<Boolean\><dt>
+<dd>just copy protein backbone DOFS, useful for homology modeling</dd><br>
 </dl>
  </li>
 <li><h2>ufv</h2>

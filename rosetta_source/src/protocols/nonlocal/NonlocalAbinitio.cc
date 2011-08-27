@@ -77,18 +77,6 @@ typedef utility::vector1<NLGrouping> NonlocalGroupings;
 static basic::Tracer TR("protocols.nonlocal.NonlocalAbinitio");
 static numeric::random::RandomGenerator RG(764443637);
 
-void NonlocalAbinitio::check_required_options() const {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-
-  std::string prefix = "Failed to specify required option ";
-
-  if (!option[in::file::frag3].user())
-    utility_exit_with_message(prefix + "in:file:frag3");
-  if (!option[in::file::frag9].user())
-    utility_exit_with_message(prefix + "in:file:frag9");
-}
-
 NonlocalAbinitio::NonlocalAbinitio() {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
@@ -114,9 +102,6 @@ void NonlocalAbinitio::initialize(const NonlocalGroupings& groupings) {
   using core::fragment::SecondaryStructure;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
-
-  // Ensure that required options have been specified
-  check_required_options();
 
   // Load fragment libraries from file
   FragmentIO io;

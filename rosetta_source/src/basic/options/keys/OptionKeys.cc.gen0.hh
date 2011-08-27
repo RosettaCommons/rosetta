@@ -491,7 +491,6 @@ namespace nonlocal { FileOptionKey const moves( "nonlocal:moves" );  }
 namespace nonlocal { StringOptionKey const builder( "nonlocal:builder" );  }
 namespace nonlocal { BooleanOptionKey const randomize_missing( "nonlocal:randomize_missing" );  }
 namespace nonlocal { IntegerOptionKey const gap_sampling_extension( "nonlocal:gap_sampling_extension" );  }
-namespace nonlocal { IntegerOptionKey const min_chunk_size( "nonlocal:min_chunk_size" );  }
 namespace nonlocal { IntegerOptionKey const max_chunk_size( "nonlocal:max_chunk_size" );  }
 namespace nonlocal { RealOptionKey const rdc_weight( "nonlocal:rdc_weight" );  }
 namespace abinitio { RealOptionKey const prob_perturb_weights( "abinitio:prob_perturb_weights" );  }

@@ -1293,7 +1293,6 @@ Options = Option_Group( '',
     # Comparative modeling extensions
 		Option( 'randomize_missing', 'Boolean', desc = 'Randomize the coordinates of missing loops. This occurs often in broken-chain folding from a sequence alignment and template pdb. Default value is false to preserve existing behavior in ThreadingJobInputter', default = 'false'),
 		Option( 'gap_sampling_extension', 'Integer', desc="When constructing NLGrouping's from SequenceAlignments, extend gapped regions by at least 3 and at most N positions to enhance sampling", default = '5'),
-		Option( 'min_chunk_size', 'Integer', desc="Minimum allowable chunk size for comparative modeling inputs. At the very minimum, should be set to the smallest fragments used during the simulation.", default='3'),
 		Option( 'max_chunk_size', 'Integer', desc="Maximum allowable chunk size for comparative modeling inputs. If the chunk exceeds this threshold, it is recursively decomposed into smaller pieces.", default='20'),
 
     # Experimental data extensions

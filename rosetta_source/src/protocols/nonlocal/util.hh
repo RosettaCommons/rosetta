@@ -59,7 +59,9 @@ void read_from_template(const protocols::loops::Loops& regions,
 /// @brief Examines the contents of <regions>. If the length of any element
 /// exceeds -nonlocal:max_chunk_size, recursively decomposes that region into
 /// a series of pieces each less than the threshold.
-void limit_chunk_size(protocols::loops::Loops* regions);
+void limit_chunk_size(core::Size min_chunk_sz,
+                      core::Size max_chunk_sz,
+                      protocols::loops::Loops* regions);
 
 /// @brief Recursively decomposes <loop> into a series of <pieces>, each having
 /// length less than or equal to <max_length>.

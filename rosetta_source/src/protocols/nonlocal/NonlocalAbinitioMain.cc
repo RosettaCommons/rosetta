@@ -35,8 +35,28 @@ namespace protocols  {
 namespace nonlocal {
 
 static basic::Tracer TR("protocols.nonlocal.NonlocalAbinitioMain");
-
 using namespace std;
+
+void check_required_options() {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+	const string ERR_PREFIX = "Failed to specify required option ";
+
+  if (!option[cm::aln_format].user())
+    utility_exit_with_message(ERR_PREFIX + "-cm:aln_format");
+
+  if (!option[in::file::alignment].user())
+    utility_exit_with_message(ERR_PREFIX + "-in:file:alignment");
+
+  if (!option[in::file::template_pdb].user())
+    utility_exit_with_message(ERR_PREFIX + "-in:file:template_pdb");
+
+  if (!option[in::file::frag3].user())
+    utility_exit_with_message(ERR_PREFIX + "in:file:frag3");
+
+  if (!option[in::file::frag9].user())
+    utility_exit_with_message(ERR_PREFIX + "in:file:frag9");
+}
 
 void* NonlocalAbinitio_main(void*) {
   using namespace basic::options;
@@ -45,6 +65,9 @@ void* NonlocalAbinitio_main(void*) {
   using protocols::moves::MoverOP;
   using utility::vector1;
   using utility::excn::EXCN_Base;
+
+  // ensure that required options have been provided
+  check_required_options();
 
   MoverOP mover;
   if (option[in::file::alignment].user() &&

@@ -35,6 +35,8 @@
 // Project headers
 #include <core/types.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/fragment/FragmentIO.hh>
+#include <core/fragment/FragSet.hh>
 #include <core/fragment/SecondaryStructure.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/import_pose/import_pose.hh>
@@ -60,6 +62,8 @@ static numeric::random::RandomGenerator RG(156144120);
 void nonlocal_groupings_from_alignment(utility::vector1<NLGrouping>* groupings) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
+  using core::fragment::FragmentIO;
+  using core::fragment::FragSetOP;
   using core::id::SequenceMapping;
   using core::pose::PoseOP;
   using core::sequence::SequenceAlignment;
@@ -67,17 +71,6 @@ void nonlocal_groupings_from_alignment(utility::vector1<NLGrouping>* groupings) 
   using protocols::loops::Loops;
   using std::string;
   using utility::vector1;
-
-  // ensure that required options have been specified
-  const string prefix = "Failed to specify required option ";
-  if (!option[cm::aln_format].user())
-    utility_exit_with_message(prefix + "-cm:aln_format");
-
-  if (!option[in::file::alignment].user())
-    utility_exit_with_message(prefix + "-in:file:alignment");
-
-  if (!option[in::file::template_pdb].user())
-    utility_exit_with_message(prefix + "-in:file:template_pdb");
 
   // Assumes multiple alignments (if present) are contained in a single file
   string alignment_file = option[in::file::alignment]()[1];
@@ -88,11 +81,18 @@ void nonlocal_groupings_from_alignment(utility::vector1<NLGrouping>* groupings) 
   PoseOP template_pose = core::import_pose::pose_from_pdb(option[in::file::template_pdb]()[1]);
 
   // Identify stretches of aligned and unaligned residues in the alignment.
-  // Elements are stored in increasing order of (residue) position. Explicitly
-  // limit the length of the aligned regions to enhance conformational sampling.
+  // Elements are stored in increasing order of (residue) position.
   Loops aligned_regions, unaligned_regions;
   find_regions(*alignment, alignment->length(), &aligned_regions, &unaligned_regions);
-  limit_chunk_size(&aligned_regions);
+
+  // Limit the length of the aligned regions to enhance conformational sampling.
+  // Chunk size is bounded by fragment length on the low end.
+  FragmentIO io;
+  FragSetOP fragments = io.read_data(option[in::file::frag3]());
+  core::Size min_chunk_sz = fragments->max_frag_length();
+  core::Size max_chunk_sz = option[OptionKeys::nonlocal::max_chunk_size]();
+  limit_chunk_size(min_chunk_sz, max_chunk_sz, &aligned_regions);
+
   TR.Debug << "Aligned:" << std::endl << aligned_regions << std::endl;
   TR.Debug << "Unaligned:" << std::endl << unaligned_regions << std::endl;
 
@@ -112,35 +112,35 @@ void nonlocal_groupings_from_alignment(utility::vector1<NLGrouping>* groupings) 
 
 /// @brief Enforces restrictions on min/max chunk size in <regions> by applying
 /// recursive decomposition
-void limit_chunk_size(protocols::loops::Loops* regions) {
+void limit_chunk_size(core::Size min_chunk_sz,
+                      core::Size max_chunk_sz,
+                      protocols::loops::Loops* regions) {
   using core::Size;
   using protocols::loops::Loop;
   using protocols::loops::Loops;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   assert(regions);
+  assert(min_chunk_sz <= max_chunk_sz);
 
   Loops output;
-  const Size min_length = option[OptionKeys::nonlocal::min_chunk_size]();
-  const Size max_length = option[OptionKeys::nonlocal::max_chunk_size]();
-
   for (Size i = 1; i <= regions->num_loop(); ++i) {
     const Loop& loop = (*regions)[i];
 
     // Note: minimum length guaranteed because of gap extension code
-    if (loop.length() >= min_length &&
-        loop.length() <= max_length) {
+    if (loop.length() >= min_chunk_sz &&
+        loop.length() <= max_chunk_sz) {
       output.push_back(loop);
       continue;
     }
 
     // Recursively decompose <loop> until each piece has length <= max_length
     utility::vector1<Loop> pieces;
-    decompose(max_length, loop, &pieces);
+    decompose(max_chunk_sz, loop, &pieces);
 
     for (utility::vector1<Loop>::const_iterator j = pieces.begin(); j != pieces.end(); ++j) {
       const Loop& loop = *j;
-      if (loop.length() >= min_length)
+      if (loop.length() >= min_chunk_sz)
         output.push_back(loop);
     }
   }
