@@ -39,7 +39,6 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FragSet.hh>
-#include <core/fragment/SecondaryStructure.hh>
 #include <core/fragment/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -99,7 +98,6 @@ NonlocalAbinitio::NonlocalAbinitio(const NonlocalGroupings& groupings) {
 void NonlocalAbinitio::initialize(const NonlocalGroupings& groupings) {
   using core::fragment::FragmentIO;
   using core::fragment::FragSetOP;
-  using core::fragment::SecondaryStructure;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
 
@@ -107,9 +105,6 @@ void NonlocalAbinitio::initialize(const NonlocalGroupings& groupings) {
   FragmentIO io;
   fragments_lg_ = io.read_data(option[in::file::frag9]());
   fragments_sm_ = io.read_data(option[in::file::frag3]());
-
-  // Predict secondary structure from the fragment files
-  secondary_struct_ = new SecondaryStructure(*fragments_sm_);
 
   // Initialize members
   groupings_ = groupings;
@@ -188,7 +183,7 @@ TreeBuilderOP NonlocalAbinitio::make_fold_tree(const NLGrouping& grouping,
   using namespace basic::options::OptionKeys;
 
   TreeBuilderOP builder = TreeBuilderFactory::get_builder(option[OptionKeys::nonlocal::builder]());
-  builder->build(grouping, pose, secondary_struct_);
+  builder->set_up(grouping, pose);
 
   // Ensure that the FoldTree is left in a consistent state
   const core::kinematics::FoldTree& tree = pose->fold_tree();

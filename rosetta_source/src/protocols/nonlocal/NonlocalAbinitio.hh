@@ -25,7 +25,6 @@
 // Project headers
 #include <core/types.hh>
 #include <core/fragment/FragSet.hh>
-#include <core/fragment/SecondaryStructure.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -114,9 +113,6 @@ private:
 
   /// @brief Small fragment library
   core::fragment::FragSetOP fragments_sm_;
-
-  /// @brief Predicted secondary structure
-  core::fragment::SecondaryStructureOP secondary_struct_;
 };
 
 }  // namespace nonlocal

@@ -22,7 +22,6 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/fragment/SecondaryStructure.hh>
 #include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
@@ -33,9 +32,10 @@ class StarTreeBuilder : public TreeBuilder {
   /// @brief Assigns <virtual_res_> a value signifying that it is uninitialized
   StarTreeBuilder();
 
-  void build(const NLGrouping& grouping,
-             core::pose::Pose* pose,
-             core::fragment::SecondaryStructureOP secondary_struct = 0);
+	/// @brief Constructs a star fold tree by placing a virtual residue at
+	/// <grouping>'s center of mass and adding jumps to a stochastically
+	/// chosen residue in each chunk.
+  void set_up(const NLGrouping& grouping, core::pose::Pose* pose);
 
   /// @brief Removes the virtual residue added to <pose> in calls to build()
   void tear_down(core::pose::Pose* pose);

@@ -17,18 +17,14 @@
 #include <protocols/nonlocal/NLGrouping.hh>
 
 // Project headers
-#include <core/fragment/SecondaryStructure.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 
 namespace protocols {
 namespace nonlocal {
 
-void SimpleTreeBuilder::build(const NLGrouping& grouping,
-                              core::pose::Pose* pose,
-                              core::fragment::SecondaryStructureOP ss) {
-  using core::kinematics::FoldTree;
-  FoldTree simple_tree(pose->total_residue());
+void SimpleTreeBuilder::set_up(const NLGrouping& grouping, core::pose::Pose* pose) {
+  core::kinematics::FoldTree simple_tree(pose->total_residue());
   pose->fold_tree(simple_tree);
 }
 

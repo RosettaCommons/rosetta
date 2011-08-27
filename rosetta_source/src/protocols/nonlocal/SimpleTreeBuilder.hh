@@ -16,22 +16,19 @@
 // Unit headers
 #include <protocols/nonlocal/SimpleTreeBuilder.fwd.hh>
 
+// Project headers
+#include <core/pose/Pose.fwd.hh>
+
 // Package headers
 #include <protocols/nonlocal/NLGrouping.hh>
 #include <protocols/nonlocal/TreeBuilder.hh>
-
-// Project headers
-#include <core/fragment/SecondaryStructure.hh>
-#include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
 namespace nonlocal {
 
 class SimpleTreeBuilder : public TreeBuilder {
  public:
-  void build(const NLGrouping& groupings,
-             core::pose::Pose* pose,
-             core::fragment::SecondaryStructureOP secondary_struct = 0);
+  void set_up(const NLGrouping& groupings, core::pose::Pose* pose);
 };
 
 }  // namespace nonlocal

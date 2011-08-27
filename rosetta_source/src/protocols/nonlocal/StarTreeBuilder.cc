@@ -55,11 +55,11 @@ StarTreeBuilder::StarTreeBuilder() {
 // TODO(cmiles) Method getting a little long, consider refactoring
 //
 // Assumes <grouping> is sorted
-void StarTreeBuilder::build(const NLGrouping& grouping,
-                            core::pose::Pose* pose,
-                            core::fragment::SecondaryStructureOP ss) {
+void StarTreeBuilder::set_up(const NLGrouping& grouping, core::pose::Pose* pose) {
   using core::Size;
   using core::Real;
+  using core::fragment::SecondaryStructure;
+  using core::fragment::SecondaryStructureOP;
   using numeric::random::WeightedReservoirSampler;
   using utility::vector1;
   assert(pose->fold_tree().check_fold_tree());
@@ -104,6 +104,7 @@ void StarTreeBuilder::build(const NLGrouping& grouping,
   //
   // Create a cut between pairs of jumps. After the loop, add a cut between the
   // final jump and the end of the chain.
+  SecondaryStructureOP ss = new SecondaryStructure(*pose);
   utility::vector1<int> cuts;
   for (Size i = 2; i <= jumps.size(); ++i) {
     Size cutpoint = CutFinder::choose_cutpoint(jumps[i-1].second + 1, jumps[i].second - 1, ss);

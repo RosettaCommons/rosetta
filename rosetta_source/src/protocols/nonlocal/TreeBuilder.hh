@@ -16,30 +16,26 @@
 // Unit headers
 #include <protocols/nonlocal/TreeBuilder.fwd.hh>
 
-// Package headers
-#include <protocols/nonlocal/NLGrouping.hh>
+// Utility headers
+#include <utility/pointer/ReferenceCount.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/fragment/SecondaryStructure.hh>
 
-// Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+// Package headers
+#include <protocols/nonlocal/NLGrouping.hh>
 
 namespace protocols {
 namespace nonlocal {
 
 class TreeBuilder : public utility::pointer::ReferenceCount {
  public:
-  /// @brief Modifies <pose>'s FoldTree given non-local contact information.
-  /// Secondary structure, if provided, is used to improve cutpoint selection.
-  virtual void build(const NLGrouping& grouping,
-                     core::pose::Pose* pose,
-                     core::fragment::SecondaryStructureOP secondary_struct = NULL) = 0;
+  /// @brief Programmatically constructs a FoldTree, updating <pose>.
+  virtual void set_up(const NLGrouping& grouping, core::pose::Pose* pose) = 0;
 
-  /// @brief Reverts any modifications to <pose> that this builder may have
-  // introduced in previous calls to build(). Only subclasses that introduce
-  // modifications are responsible for overriding this method.
+  /// @brief Reverts any modifications to <pose> introduced in preceding calls
+  /// to set_up(). Only subclasses that introduce modifications are responsible
+  /// for overriding this method.
   virtual void tear_down(core::pose::Pose* pose) {}
 };
 
