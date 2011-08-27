@@ -48,21 +48,16 @@ namespace nonlocal {
 
 static basic::Tracer TR("protocols.nonlocal.StarTreeBuilder");
 
-StarTreeBuilder::StarTreeBuilder() {
-  virtual_residue(-1);
-}
+StarTreeBuilder::StarTreeBuilder() : virtual_res_(-1) {}
 
-// TODO(cmiles) Method getting a little long, consider refactoring
-//
 // Assumes <grouping> is sorted
 void StarTreeBuilder::set_up(const NLGrouping& grouping, core::pose::Pose* pose) {
   using core::Size;
   using core::Real;
   using core::fragment::SecondaryStructure;
   using core::fragment::SecondaryStructureOP;
-  using numeric::random::WeightedReservoirSampler;
   using utility::vector1;
-  assert(pose->fold_tree().check_fold_tree());
+  assert(pose);
 
   // Number of residues before addition of virtual residue
   Size num_residues = pose->total_residue();
@@ -78,14 +73,14 @@ void StarTreeBuilder::set_up(const NLGrouping& grouping, core::pose::Pose* pose)
   // Initialize member variable <virtual_res_> with the index of the newly added
   // virtual residue. Subsequently, <virtual_res_> can serve as a proxy for
   // <num_residues>
-  virtual_residue(pose->total_residue());
+  virtual_res_ = pose->total_residue();
   core::kinematics::FoldTree tree(pose->fold_tree());
   TR.Debug << "starting fold tree: " << tree << std::endl;
 
   bool has_conservation = pose->data().has(core::pose::datacache::CacheableDataType::STRUCTURAL_CONSERVATION);
   TR << "Structural conservation available: " << has_conservation << std::endl;
 
-  utility::vector1<std::pair<int, int> > jumps;
+  vector1<std::pair<int, int> > jumps;
   for (Size i = 1; i <= grouping.num_groups(); ++i) {
     const NLFragmentGroup& fragment = grouping.groups(i);
 
@@ -96,8 +91,8 @@ void StarTreeBuilder::set_up(const NLGrouping& grouping, core::pose::Pose* pose)
         (fragment.start() + fragment.stop()) / 2;
 
     // virtual residue => anchor position
-    jumps.push_back(std::make_pair(virtual_residue(), anchor_position));
-    TR << "Added jump: " << virtual_residue() << " => " << anchor_position << std::endl;
+    jumps.push_back(std::make_pair(virtual_res_, anchor_position));
+    TR << "Added jump: " << virtual_res_ << " => " << anchor_position << std::endl;
   }
 
   // TODO(cmiles) Improve inter-jump cutpoint selection
@@ -105,7 +100,7 @@ void StarTreeBuilder::set_up(const NLGrouping& grouping, core::pose::Pose* pose)
   // Create a cut between pairs of jumps. After the loop, add a cut between the
   // final jump and the end of the chain.
   SecondaryStructureOP ss = new SecondaryStructure(*pose);
-  utility::vector1<int> cuts;
+  vector1<int> cuts;
   for (Size i = 2; i <= jumps.size(); ++i) {
     Size cutpoint = CutFinder::choose_cutpoint(jumps[i-1].second + 1, jumps[i].second - 1, ss);
     cuts.push_back(cutpoint);
@@ -130,11 +125,11 @@ void StarTreeBuilder::set_up(const NLGrouping& grouping, core::pose::Pose* pose)
   }
 
   // Try to build the star fold tree from jumps and cuts
-  bool status = tree.tree_from_jumps_and_cuts(virtual_residue(),   // nres_in
+  bool status = tree.tree_from_jumps_and_cuts(virtual_res_,        // nres_in
                                               jumps.size(),        // num_jump_in
                                               ft_jumps,            // jump_point
                                               ft_cuts,             // cuts
-                                              virtual_residue());  // root
+                                              virtual_res_);       // root
   if (!status)
     utility_exit_with_message("StarTreeBuilder: failed to build fold tree from cuts and jumps");
 
@@ -162,24 +157,17 @@ core::Size StarTreeBuilder::choose_conserved_position(const NLFragmentGroup& fra
 }
 
 void StarTreeBuilder::tear_down(core::pose::Pose* pose) {
+  assert(pose);
+
   if (virtual_res_ == -1) {
     TR.Warning << "Attempt to tear_down() unitialized virtual residue" << std::endl;
     return;
   } else {
     pose->conformation().delete_residue_slow(virtual_res_);
     TR << "Removed virtual residue at position " << virtual_res_ << std::endl;
-    virtual_residue(-1);
+    virtual_res_ = -1;
   }
 }
-
-int StarTreeBuilder::virtual_residue() const {
-  return virtual_res_;
-}
-
-void StarTreeBuilder::virtual_residue(int virtual_res) {
-  virtual_res_ = virtual_res;
-}
-
 
 }  // namespace nonlocal
 }  // namespace protocols

@@ -46,13 +46,6 @@ class StarTreeBuilder : public TreeBuilder {
   core::Size choose_conserved_position(const NLFragmentGroup& fragment,
                                        const core::pose::Pose& pose);
 
-  /// @brief Returns the index of the virtual residue placed at the center of
-  /// mass in build(). If no such call has occurred, returns -1.
-  int virtual_residue() const;
-
-  /// @brief Sets the index of the virtual residue
-  void virtual_residue(int virtual_res);
-
   /// @brief Index of the virtual residue we added to the pose in build()
   int virtual_res_;
 };
