@@ -149,6 +149,7 @@ ResidueType::ResidueType(
 	is_upper_terminus_( false ),
 	is_actylated_nterminus_( false ),
 	is_methylated_cterminus_( false ),
+	is_coarse_( false ), //currently for coarse_RNA only
 	is_adduct_( false ),
 	aa_( aa_unk ),
 	//

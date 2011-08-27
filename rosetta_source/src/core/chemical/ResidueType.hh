@@ -2055,7 +2055,6 @@ private:
 	bool has_orbitals_;
 	bool has_sc_orbitals_;
 	bool is_aromatic_;
-	bool is_coarse_;
 	bool is_DNA_;
 	bool is_RNA_;
 	bool is_NA_;
@@ -2066,6 +2065,7 @@ private:
 	bool is_upper_terminus_; // last residue in a chain; set to TRUE during terminus patching
 	bool is_actylated_nterminus_;
 	bool is_methylated_cterminus_;
+	bool is_coarse_; //currently for coarse_RNA only
 	bool is_adduct_;
 	// etcetc
 
