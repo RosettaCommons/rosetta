@@ -13,8 +13,8 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 
-#ifndef INCLUDED_core_scoring_rna_RNA_TorsionEnergy_fwd_hh
-#define INCLUDED_core_scoring_rna_RNA_TorsionEnergy_fwd_hh
+#ifndef INCLUDED_core_scoring_rna_RNA_TorsionEnergy_FWD_HH
+#define INCLUDED_core_scoring_rna_RNA_TorsionEnergy_FWD_HH
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>

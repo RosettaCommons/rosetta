@@ -12,8 +12,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_core_scoring_rna_RNA_TorsionEnergy_hh
-#define INCLUDED_core_scoring_rna_RNA_TorsionEnergy_hh
+#ifndef INCLUDED_core_scoring_rna_RNA_TorsionEnergy_HH
+#define INCLUDED_core_scoring_rna_RNA_TorsionEnergy_HH
 
 // Unit Headers
 #include <core/scoring/rna/RNA_TorsionEnergy.fwd.hh>
@@ -54,27 +54,13 @@ public:
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
- 	virtual
- 	void
- 	setup_for_scoring( pose::Pose &pose, ScoreFunction const &scfxn ) const;
-
-	// call the cst setup_for_derivatives wrapper
- 	virtual
- 	void
- 	setup_for_derivatives( pose::Pose &pose, ScoreFunction const &scfxn ) const;
-
-	//
-	virtual
-	void
-	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & designing_residues ) const;
-
 	/// @brief Evaluate the intra-residue constraint energy for a given residue
 	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
+		ScoreFunction const &,
 		EnergyMap & emap
 	) const;
 
@@ -88,24 +74,6 @@ public:
 		ScoreFunction const &,
 		EnergyMap & emap
 	) const;
-
-	/// called at the end of energy evaluation
-	virtual
-	void
-	finalize_total_energy(
-		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
-	) const;
-
-	/// called at the end of energy evaluation
-	virtual
-	void
-	finalize_after_derivatives(
-		pose::Pose & pose,
-		ScoreFunction const &
-	) const;
-
 
 	/// called during gradient-based minimization inside dfunc
 	/**
@@ -123,18 +91,6 @@ public:
 		Vector & F1,
 		Vector & F2
 	) const;
-
-
-	/// uses the dof constraints
-	Real
-	eval_dof_derivative(
-		id::DOF_ID const & id,
-		id::TorsionID const & tor,
-		pose::Pose const & pose,
-		ScoreFunction const & scorefxn,
-		EnergyMap const & weights
-	) const;
-
 
 	bool
 	defines_intrares_energy( EnergyMap const & ) const { return true; }
@@ -155,16 +111,10 @@ public:
 
 private:
 
-	rna::RNA_TorsionPotential const & rna_torsion_potential_;
+	mutable RNA_TorsionPotential rna_torsion_potential_;
 
-	mutable constraints::ConstraintSetOP rna_torsion_constraints_;
-	mutable constraints::ConstraintSetOP rna_sugar_close_constraints_;
-	mutable RNA_SideChainTorsionTethers rna_side_chain_torsion_tethers_;
-
-	mutable bool constraints_ready_;
-	bool verbose_;
-virtual
-core::Size version() const;
+	virtual
+	core::Size version() const;
 
 };
 

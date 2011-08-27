@@ -779,15 +779,15 @@ build_rna_chi_rotamers(
 	//	}
 
 	//To define base, need a torsion that depends on sugar pucker...
-	static scoring::rna::RNA_TorsionPotential const rna_torsion_potential;
-	static Real const delta_cutoff = rna_torsion_potential.delta_cutoff();
+	static scoring::rna::RNA_FittedTorsionInfo const rna_fitted_torsion_info;
+	static Real const delta_cutoff = rna_fitted_torsion_info.delta_cutoff();
 
 	//Different chi angles depending on sugar pucker.
 	Real const delta( existing_residue.mainchain_torsion( scoring::rna::DELTA ) );
 	//	if ( delta <= delta_cutoff ) {
-	//		rot->set_chi( 3 /*nu1*/ , rna_torsion_potential.gaussian_parameter_set_nu1_north()[1].center );
+	//		rot->set_chi( 3 /*nu1*/ , rna_fitted_torsion_info.gaussian_parameter_set_nu1_north()[1].center );
 	//	} else { // South, or 2'-endo sugar pucker.
-	//		rot->set_chi( 3 /*nu1*/ , rna_torsion_potential.gaussian_parameter_set_nu1_south()[1].center );
+	//		rot->set_chi( 3 /*nu1*/ , rna_fitted_torsion_info.gaussian_parameter_set_nu1_south()[1].center );
 	//	}
 
 
@@ -802,9 +802,9 @@ build_rna_chi_rotamers(
 
 	//Different chi angles depending on sugar pucker.
 	if ( delta <= delta_cutoff ) {
-		add_rna_chi_rotamers( rot, rotamers, level, rna_torsion_potential.gaussian_parameter_set_chi_north() );
+		add_rna_chi_rotamers( rot, rotamers, level, rna_fitted_torsion_info.gaussian_parameter_set_chi_north() );
 	} else {
-		add_rna_chi_rotamers( rot, rotamers, level, rna_torsion_potential.gaussian_parameter_set_chi_south() );
+		add_rna_chi_rotamers( rot, rotamers, level, rna_fitted_torsion_info.gaussian_parameter_set_chi_south() );
 	}
 
 
