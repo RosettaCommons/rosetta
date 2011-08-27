@@ -110,27 +110,27 @@ new_sc(core::pose::Pose &pose, Real& int_area, Real& sc) {
 
 utility::vector1<Real>
 sidechain_sasa(Pose const & pose, Real probe_radius) {
-	using core::id::AtomID;
-	utility::vector1<Real> rsd_sasa(pose.n_residue(),0.0);
-	core::id::AtomID_Map<Real> atom_sasa;
-	core::id::AtomID_Map<bool> atom_mask;
-	core::pose::initialize_atomid_map(atom_sasa,pose,0.0);
-	core::pose::initialize_atomid_map(atom_mask,pose,false);
-	for(Size i = 1; i <= pose.n_residue(); i++) {
-		for(Size j = 1; j <= pose.residue(i).nheavyatoms(); j++) {
-			atom_mask[AtomID(j,i)] = true;
-		}	
-	}
-	core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false, atom_mask );
-	utility::vector1<Real> sc_sasa(pose.n_residue(),0.0);
-	for(Size i = 1; i <= pose.n_residue(); i++) {
-		// Use CA as the side chain for Glys
-		if(pose.residue(i).name3()=="GLY") sc_sasa[i] += atom_sasa[AtomID(2,i)];		
-		for(Size j = 5; j <= pose.residue(i).nheavyatoms(); j++) {
-			sc_sasa[i] += atom_sasa[AtomID(j,i)];
-		}
-	}
-	return sc_sasa;
+  using core::id::AtomID;
+  utility::vector1<Real> rsd_sasa(pose.n_residue(),0.0);
+  core::id::AtomID_Map<Real> atom_sasa;
+  core::id::AtomID_Map<bool> atom_mask;
+  core::pose::initialize_atomid_map(atom_sasa,pose,0.0);
+  core::pose::initialize_atomid_map(atom_mask,pose,false);
+  for(Size i = 1; i <= pose.n_residue(); i++) {
+    for(Size j = 1; j <= pose.residue(i).nheavyatoms(); j++) {
+      atom_mask[AtomID(j,i)] = true;
+    }
+  }
+  core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius, false, atom_mask );
+  utility::vector1<Real> sc_sasa(pose.n_residue(),0.0);
+  for(Size i = 1; i <= pose.n_residue(); i++) {
+    // Use CA as the side chain for Glys
+    if(pose.residue(i).name3()=="GLY") sc_sasa[i] += atom_sasa[AtomID(2,i)];
+    for(Size j = 5; j <= pose.residue(i).nheavyatoms(); j++) {
+      sc_sasa[i] += atom_sasa[AtomID(j,i)];
+    }
+  }
+  return sc_sasa;
 }
 
 
@@ -206,7 +206,7 @@ vector1<Size> get_des_pos(core::pose::Pose & pose_for_design) {
 }
 
 
-core::io::silent::SilentFileData sfd;	
+core::io::silent::SilentFileData sfd;
 
 void rescore(core::pose::Pose & pose, string tag) {
   using namespace basic::options;

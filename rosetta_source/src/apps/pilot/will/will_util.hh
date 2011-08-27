@@ -18,6 +18,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <numeric/constants.hh>
+#include "numeric/xyz.io.hh"
 
 using core::Real;
 using core::Size;
@@ -26,6 +27,7 @@ using core::id::AtomID;
 typedef numeric::xyzMatrix<Real> Mat;
 typedef numeric::xyzVector<Real> Vec;
 typedef utility::vector1<Vec>    Vecs;
+using numeric::conversions::radians;
 
 bool BB_UNS_INCLUDE_TERMINI = false;
 
@@ -94,6 +96,31 @@ void rot_pose( core::pose::Pose & pose, Vec const & axis, Real const & ang, Vec 
   rot_pose(pose,rotation_matrix_degrees(axis,ang),cen);
 }
 
+
+Vec com(core::pose::Pose & pose, Size str, Size end) {
+	Vec c(0,0,0);
+	for(Size i = str; i <= end; ++i) {
+		c += pose.xyz(AtomID(2,i));
+	}
+	c /= Real(end-str+1);
+	return c;
+}
+
+Vec symaxis(core::pose::Pose & pose, Size nsub, Size nsym, Size nblk) {
+	Size const st = nsub*nsym*nblk;
+	Vec c = com(pose,st+1,st+nsym*nsub);
+	Vec a(0,0,0);
+	for(Size i = 1; i <= nsub; ++i) {
+		Vec tmp = Vec(0,0,0);
+		for(Size j = 0; j < nsym; ++j) {
+			tmp += pose.xyz(AtomID(2,st+i+j*nsub));
+		}
+		tmp = tmp/(Real)nsym - c;
+		if( a.length() > 0.0001 && a.dot(tmp) < 0 ) tmp = -tmp;
+		a += tmp;
+	}
+	return a.normalized();
+}
 
 void alignaxis(core::pose::Pose & pose, Vec newaxis, Vec oldaxis, Vec cen = Vec(0,0,0) ) {
   newaxis.normalize();

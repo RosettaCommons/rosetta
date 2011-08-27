@@ -25,7 +25,6 @@ using ObjexxFCL::fmt::I;
 using ObjexxFCL::fmt::LJ;
 using ObjexxFCL::fmt::SS;
 using ObjexxFCL::string_of;
-using protocols::moves::MoverOP;
 using std::cerr;
 using std::cout;
 using std::string;

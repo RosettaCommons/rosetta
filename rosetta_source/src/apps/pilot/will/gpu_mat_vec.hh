@@ -194,6 +194,21 @@ inline struct VEC pproj(struct VEC const a, struct VEC const v) {
   r.z = v.z-d*a.z;
   return r;
 }
+inline void rotx(struct VEC *v, float const sin, float const cos) {
+  float const tmp = cos * v->y - sin * v->z;
+  ;          v->z = sin * v->y + cos * v->z;
+  v->y = tmp;
+}
+inline void roty(struct VEC *v, float const sin, float const cos) {
+  float const tmp = cos * v->z - sin * v->x;
+  ;          v->x = sin * v->z + cos * v->x;
+  v->z = tmp;
+}
+inline void rotz(struct VEC *v, float const sin, float const cos) {
+  float const tmp = cos * v->x - sin * v->y;
+  ;          v->y = sin * v->x + cos * v->y;
+  v->x = tmp;
+}
 inline struct MAT projectionMAT(struct VEC const a) {
   struct MAT P;
   float l2 = 1.0f/length2v(a);
@@ -266,6 +281,28 @@ vvcxform(struct VEC const _x1, struct VEC const _y1,
   x.R = multmm(Rto,Rfr);
   x.t = subvv(_c2,multmv(x.R,_c1));
   return x;
+}
+inline struct XFORM const
+stub(struct VEC const a, struct VEC const b, struct VEC const c)
+{
+  struct VEC const x = normalizedv(subvv(a,b));
+  struct VEC const y = normalizedv(pproj(x,subvv(c,b)));
+  struct VEC const z = crossvv(x,y);
+  struct XFORM s;
+  s.R = cols(x,y,z);
+  s.t = a;
+  return s;
+}
+inline struct XFORM const
+stubrev(struct VEC const a, struct VEC const b, struct VEC const c)
+{
+  struct VEC const x = normalizedv(subvv(a,b));
+  struct VEC const y = normalizedv(pproj(x,subvv(c,b)));
+  struct VEC const z = crossvv(x,y);
+  struct XFORM s;
+  s.R = rows(x,y,z);
+  s.t = multmv(s.R,vec(-a.x,-a.y,-a.z));
+  return s;
 }
 
 
