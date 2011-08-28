@@ -727,7 +727,7 @@ RNA_StructureParameters::setup_jumps( pose::Pose & pose )
 	std::vector< int > obligate_cut_points; //switch this to utility::vector1?
 	for (Size n = 1; n<= num_cuts_closed; n++ ) 	  obligate_cut_points.push_back( cutpoints_closed_[ n ] );
 	for (Size n = 1; n<= num_cuts_open  ; n++ ) 		obligate_cut_points.push_back( cutpoints_open_[n] );
-	for (Size n = 1; n <= num_cuts_total; n++ ) std::cout << "CUT " << obligate_cut_points[ n ]  << std::endl;
+	//	for (Size n = 1; n <= num_cuts_total; n++ ) std::cout << "CUT " << obligate_cut_points[ n-1 ]  << std::endl;
 
 
 	//////////////////////////////////////////////////////////////////////
