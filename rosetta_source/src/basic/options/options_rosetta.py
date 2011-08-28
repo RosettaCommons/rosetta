@@ -1081,6 +1081,7 @@ Options = Option_Group( '',
 			desc='format for sequence alignment between structures used in evaluation',
 			legal = ['grishin','general'], default='grishin'
 		),
+		Option( 'predicted_burial_fn', 'String', desc='file for burial predictions', default = '' ),
 		Option( 'pool', 'File', desc='find closest matching structure in this pool and report tag and rmsd' ),
 		Option( 'rmsd', 'FileVector', desc='[vector/pairs] tripletts: rmsd_target (or NATIVE / IRMS) col_name selection_file (or FULL)'),
 		Option( 'gdtmm', 'Boolean', desc='for each rmsd evaluator also a gdtmm evaluator is created', default='false'),
@@ -4302,9 +4303,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	################################
 	# optimization options
 	Option_Group( 'optimization',
-		#Option( 'dfpmin_max_cycles','Integer', desc='max cycles for dfpmin', default='200'),
+		Option( 'default_max_cycles','Integer', desc='max cycles for MinimizerOptions', default='2000'),
 		Option( 'armijo_min_stepsize','Real', desc='min stepsize in armijo minimizer', default='1e-8'),
-		#Option( 'lbfgs_max_cycles','Integer', desc='max cycles for l-BFGS', default='200'),
 		Option( 'lbfgs_M','Integer', desc='number of corrections to approximate the inverse hessian matrix.', default='64'),
 	),
 

@@ -278,6 +278,7 @@ enum ScoreType {
 	ss_pair,
 	rsigma,
 	sheet,
+	burial,
 
 	/// Whole structure energies, centroid score
 	// secondary structure scores

@@ -397,6 +397,7 @@ namespace evaluation { StringVectorOptionKey const jscore_evaluator( "evaluation
 namespace evaluation { StringVectorOptionKey const align_rmsd_column( "evaluation:align_rmsd_column" );  }
 namespace evaluation { FileVectorOptionKey const align_rmsd_fns( "evaluation:align_rmsd_fns" );  }
 namespace evaluation { StringOptionKey const align_rmsd_format( "evaluation:align_rmsd_format" );  }
+namespace evaluation { StringOptionKey const predicted_burial_fn( "evaluation:predicted_burial_fn" );  }
 namespace evaluation { FileOptionKey const pool( "evaluation:pool" );  }
 namespace evaluation { FileVectorOptionKey const rmsd( "evaluation:rmsd" );  }
 namespace evaluation { BooleanOptionKey const gdtmm( "evaluation:gdtmm" );  }

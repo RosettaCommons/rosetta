@@ -224,6 +224,7 @@ sources = {
 	],
 
 	"protocols/evaluation" : [
+		"PredictedBurialEvaluator",
 		"ContactMapEvaluator",
 		"JScoreEvaluator",
 		"StructuralSimilarityEvaluator",
@@ -1291,6 +1292,7 @@ sources = {
 		"PhiPsiTalosIO",
 		"PdbIdChunkFilter",
 		"TorsionBinIO",
+		"LAMBEGO_IO",
 		"CompositeFragmentSelector",
 		"CustomScoreSelector",
 		"DiversifyCrmsdSelector",
@@ -1339,6 +1341,7 @@ sources = {
 		"TalosSSSimilarity",
 		"PartialSecondarySimilarity",
 		"TorsionBinSimilarity",
+		"LAMBEGO_Similarity",
 		"SequenceIdentity",
 		"BFactor",
 		"DihedralConstraintsScore",

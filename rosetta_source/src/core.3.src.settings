@@ -316,6 +316,7 @@ sources = {
 		"ContextDependentLRTwoBodyEnergy",
 		"LongRangeTwoBodyEnergy",
 		"RG_Energy_Fast",
+		#"BurialEnergy",
 		"ContactOrderEnergy",
 		"RMS_Energy",
 		"SA_Energy",

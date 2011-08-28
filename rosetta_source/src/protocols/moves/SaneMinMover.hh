@@ -33,32 +33,24 @@ namespace moves {
 /// method for setting Minimization options is via the MinimizerOptions class.
 class SaneMinMover : public Mover {
 
-	typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;
-	typedef core::optimization::MinimizerOptionsOP MinimizerOptionsOP;
-	typedef core::Real Real;
-
 public:
 	SaneMinMover();
 	SaneMinMover(std::string const & name);
 	SaneMinMover(
 		core::kinematics::MoveMapOP movemap_in,
-		ScoreFunctionOP scorefxn_in,
-		MinimizerOptionsOP min_options_in,
+		core::scoring::ScoreFunctionOP scorefxn_in,
+		core::optimization::MinimizerOptionsOP min_options_in,
 		bool cartesian = false
 	);
 
 	virtual ~SaneMinMover();
 	virtual MoverOP clone() const;
 
+	// getters
 	bool cartesian() const;
-	void cartesian( bool setting );
-
-	MinimizerOptionsOP min_options();
-	void movemap( core::kinematics::MoveMapOP movemap_in );
-	core::kinematics::MoveMapOP movemap();
-
-	void score_function( core::scoring::ScoreFunctionOP scorefxn_in );
-	core::scoring::ScoreFunctionOP score_function();
+	core::kinematics::MoveMapOP move_map() const;
+	core::scoring::ScoreFunctionOP score_function() const;
+	core::optimization::MinimizerOptionsOP min_options() const;
 
 	/// @brief Minimizes the DOFs of pose specified in the MoveMap
 	virtual void apply( core::pose::Pose & pose );
@@ -71,8 +63,8 @@ private:
 
 	bool cartesian_;
 	core::kinematics::MoveMapOP movemap_;
-	ScoreFunctionOP scorefxn_;
-	MinimizerOptionsOP min_options_;
+	core::scoring::ScoreFunctionOP scorefxn_;
+	core::optimization::MinimizerOptionsOP min_options_;
 };
 
 } // moves

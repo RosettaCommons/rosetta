@@ -237,8 +237,8 @@ sources = {
  		#"filter_sequences",
  		#"min_cst",
  		#"dp_align",
- 		#"distances", # tex - don't commit!
- 		#"angles",
+ 		"distances",
+ 		"angles",
  		#"cst_quality",
  		#"constraints_matrix",
  		#"score_silent_cst",

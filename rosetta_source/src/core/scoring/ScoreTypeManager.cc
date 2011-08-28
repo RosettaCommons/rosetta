@@ -201,6 +201,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "special_rot"] = special_rot;
 
 	name2score_type_[ "env" ] = env;
+	name2score_type_[ "burial" ] = burial;
 	name2score_type_[ "pair" ] = pair;
 	name2score_type_[ "cbeta" ] = cbeta;
 

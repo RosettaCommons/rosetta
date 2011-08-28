@@ -22,6 +22,7 @@ namespace options {
 namespace OptionKeys {
 
 namespace optimization { extern BooleanOptionKey const optimization; }
+namespace optimization { extern IntegerOptionKey const default_max_cycles; }
 namespace optimization { extern RealOptionKey const armijo_min_stepsize; }
 namespace optimization { extern IntegerOptionKey const lbfgs_M; }
 

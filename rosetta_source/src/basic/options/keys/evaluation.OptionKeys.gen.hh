@@ -32,6 +32,7 @@ namespace evaluation { extern StringVectorOptionKey const jscore_evaluator; }
 namespace evaluation { extern StringVectorOptionKey const align_rmsd_column; }
 namespace evaluation { extern FileVectorOptionKey const align_rmsd_fns; }
 namespace evaluation { extern StringOptionKey const align_rmsd_format; }
+namespace evaluation { extern StringOptionKey const predicted_burial_fn; }
 namespace evaluation { extern FileOptionKey const pool; }
 namespace evaluation { extern FileVectorOptionKey const rmsd; }
 namespace evaluation { extern BooleanOptionKey const gdtmm; }

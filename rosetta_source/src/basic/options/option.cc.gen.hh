@@ -402,6 +402,7 @@ option.add( basic::options::OptionKeys::evaluation::jscore_evaluator, "Calculate
 option.add( basic::options::OptionKeys::evaluation::align_rmsd_column, "[vector] use xxx as column name for align_rmsd_target: rms_xxx" );
 option.add( basic::options::OptionKeys::evaluation::align_rmsd_fns, "[vector] of sequence alignments used for align_rmsd files" );
 option.add( basic::options::OptionKeys::evaluation::align_rmsd_format, "format for sequence alignment between structures used in evaluation" ).legal("grishin").legal("general").def("grishin");
+option.add( basic::options::OptionKeys::evaluation::predicted_burial_fn, "file for burial predictions" ).def("");
 option.add( basic::options::OptionKeys::evaluation::pool, "find closest matching structure in this pool and report tag and rmsd" );
 option.add( basic::options::OptionKeys::evaluation::rmsd, "[vector/pairs] tripletts: rmsd_target (or NATIVE / IRMS) col_name selection_file (or FULL)" );
 option.add( basic::options::OptionKeys::evaluation::gdtmm, "for each rmsd evaluator also a gdtmm evaluator is created" ).def(false);
@@ -1135,10 +1136,10 @@ option.add( basic::options::OptionKeys::wum::extra_scorefxn, "Extra score functi
 option.add( basic::options::OptionKeys::wum::extra_scorefxn_ref_structure, "Extra score function for post-batchrelax-rescoring reference structure for superimposition (for scorefunctions that depend on absolute coordinates such as electron denisty)" );
 option.add( basic::options::OptionKeys::wum::extra_scorefxn_relax, "After doing batch relax and adding any extra_scorefunction terms do another N fast relax rounds (defaut=0)" ).def(0);
 option.add( basic::options::OptionKeys::wum::trim_proportion, "No description" ).def(0.0);
+option.add( basic::options::OptionKeys::lh::lh, "lh option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::lh, "lh option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::lh::db_prefix, "stem for loop database" ).def("loopdb");
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::db_prefix, "stem for loop database" ).def("loopdb");
 option.add( basic::options::OptionKeys::lh::loopsizes, "Which loopsizes to use" ).def(10).def(15).def(20);
 option.add( basic::options::OptionKeys::lh::num_partitions, "Number of partitions to split the database into" ).def(1);
 option.add( basic::options::OptionKeys::lh::db_path, "Path to database" ).def("");
@@ -1702,11 +1703,11 @@ option.add( basic::options::OptionKeys::AnchoredDesign::testing::RMSD_only_this,
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_noise_constraints_mode, "Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor's placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer's commentary." ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::DenovoProteinDesign, "DenovoProteinDesign option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "redesign core of pdb" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_loops, "redesign loops of pdb" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "redesign surface of pdb" ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_loops, "redesign loops of pdb" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "redesign surface of pdb" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
@@ -2125,6 +2126,7 @@ option.add( basic::options::OptionKeys::archive::archive, "archive option group"
 option.add( basic::options::OptionKeys::archive::reread_all_structures, "ignore pool file... reread from batches" ).def(false);
 option.add( basic::options::OptionKeys::archive::completion_notify_frequency, "tell Archive every X completed decoys" ).def(100);
 option.add( basic::options::OptionKeys::optimization::optimization, "optimization option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::optimization::default_max_cycles, "max cycles for MinimizerOptions" ).def(2000);
 option.add( basic::options::OptionKeys::optimization::armijo_min_stepsize, "min stepsize in armijo minimizer" ).def(1e-8);
 option.add( basic::options::OptionKeys::optimization::lbfgs_M, "number of corrections to approximate the inverse hessian matrix." ).def(64);
 option.add( basic::options::OptionKeys::swa::swa, "swa option group" ).legal(true).def(true);

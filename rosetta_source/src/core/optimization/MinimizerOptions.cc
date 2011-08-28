@@ -22,15 +22,11 @@
 #include <string>
 
 // option key includes
-
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-
-
+#include <basic/options/keys/optimization.OptionKeys.gen.hh>
 
 namespace core {
 namespace optimization {
-
-
 
 MinimizerOptions::MinimizerOptions(
 	std::string const & min_type_in,
@@ -54,8 +50,12 @@ MinimizerOptions::MinimizerOptions(
 	brent_abs_tolerance_( 0.01 ),
 	ga_mutation_probability_( 0.5 )
 {
-	if ( basic::options::option[ basic::options::OptionKeys::run::nblist_autoupdate ].user() ) {
-		nblist_auto_update_ = true;
+	using namespace basic::options;
+	if ( option[ OptionKeys::run::nblist_autoupdate ].user() ) {
+		nblist_auto_update_ = option[ OptionKeys::run::nblist_autoupdate ]();
+	}
+	if ( option[ OptionKeys::optimization::default_max_cycles ].user() ) {
+		max_iter_ = option[ OptionKeys::optimization::default_max_cycles ]();
 	}
 }
 

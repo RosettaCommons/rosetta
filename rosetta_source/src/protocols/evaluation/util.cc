@@ -36,6 +36,7 @@
 #include <protocols/evaluation/RPF_ScoreEvaluator.hh>
 #include <protocols/evaluation/CamShiftEvaluator.hh>
 #include <protocols/evaluation/PalesEvaluator.hh>
+#include <protocols/evaluation/PredictedBurialEvaluator.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/scoring/constraints/util.hh>
 #include <protocols/moves/mc_convergence_checks/Pool_ConvergenceCheck.hh>
@@ -159,6 +160,11 @@ void read_common_evaluator_options( MetaPoseEvaluator& eval ) {
 			}
     }
   }
+
+	if ( option[ OptionKeys::evaluation::predicted_burial_fn ].user() ) {
+		std::string const fn( option[ OptionKeys::evaluation::predicted_burial_fn ]() );
+		eval.add_evaluation( new PredictedBurialEvaluator(fn) );
+	}
 
 	if ( option[ OptionKeys::evaluation::align_rmsd_target ].user() ) {
 		using std::string;

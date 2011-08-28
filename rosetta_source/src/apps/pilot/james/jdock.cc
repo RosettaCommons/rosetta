@@ -28,12 +28,14 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <protocols/jobdist/not_universal_main.hh>
+#include <core/optimization/MinimizerOptions.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MinMover.hh>
+#include <protocols/moves/SaneMinMover.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
+
+#include <core/scoring/rms_util.hh>
 
 #include <devel/init.hh>
 #include <iostream>
@@ -43,9 +45,13 @@
 #include <core/types.hh>
 #include <utility/vector1.hh>
 
+#include <ObjexxFCL/string.functions.hh>
+
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/james.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
 class SetupMover : public protocols::moves::Mover {
@@ -98,7 +104,6 @@ public:
 			ft_cuts,              // cuts
 			1                     // root
 		);
-		std::cout << "ft = " << ft << std::endl;
  		if (!status)
 			utility_exit_with_message("failed to build fold tree from cuts and jumps");
 		std::cout << "ft = " << ft << std::endl;
@@ -108,7 +113,7 @@ public:
 		const core::kinematics::FoldTree& tree(pose.fold_tree());
 		for ( Size ii = 1; ii <= pose.total_residue() - 1; ++ii ) {
 			using core::pose::add_variant_type_to_pose_residue;
-			std::cout << "considering " << ii << std::endl;
+			//std::cout << "considering " << ii << std::endl;
 			if ( tree.is_cutpoint(ii) ) {
 				add_variant_type_to_pose_residue(pose, core::chemical::CUTPOINT_LOWER, ii);
 				add_variant_type_to_pose_residue(pose, core::chemical::CUTPOINT_UPPER, ii+1);
@@ -117,6 +122,18 @@ public:
 		}
 	} // apply
 };
+
+void dump_pose(
+	std::string const & tag, core::pose::Pose & pose, core::pose::Pose const & orig_pose,
+	core::scoring::ScoreFunctionOP scorefxn
+) {
+	std::string const fn_out( tag + ".pdb" );
+	pose.dump_pdb(fn_out);
+	core::Real score = (*scorefxn)(pose);
+	core::Real rmsd = core::scoring::CA_rmsd( orig_pose, pose );
+	core::Real gdtmm = core::scoring::CA_gdtmm( orig_pose, pose );
+	std::cout << " " << score << " " << rmsd << " " << gdtmm << std::endl;
+}
 
 int
 main( int argc, char * argv [] ) {
@@ -127,19 +144,15 @@ main( int argc, char * argv [] ) {
 	using namespace core::scoring::constraints;
 	using namespace basic::options::OptionKeys;
 
+	using core::pose::Pose;
+	using core::Real;
+	using core::Size;
+
 	devel::init(argc, argv);
 
 	core::pose::Pose pose;
 	core::import_pose::pose_from_pdb(pose, option[ in::file::s ]()[1]);
-
-	//pose.constraint_set( new ConstraintSet );
-	//using core::Size;
-	// add CA-CA constraints from i => i+1
-	//for ( Size ii = 1; ii <= pose.total_residue() - 1; ++ii ) {
-	//	pose.constraint_set().add_constraint(
-	//		new AtomPairConstraint( AtomID(2,ii), AtomID(2,ii+1) ), HarmonicFunc( 3.8, 2 )
-	//	);
-	//}
+	core::pose::Pose const orig_pose(pose);
 
 	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
 	scorefxn->set_weight( core::scoring::chainbreak, 1.0 );
@@ -159,14 +172,34 @@ main( int argc, char * argv [] ) {
 	setup.apply(pose);
 	pose.dump_pdb("post_setup.pdb");
 	scorefxn->show(pose);
+	core::optimization::MinimizerOptionsOP min_options(
+		new core::optimization::MinimizerOptions( "dfpmin", 1e-2, true )
+	);
 
-	pose.dump_pdb("pre_min.pdb");
-	scorefxn->show(pose);
-	for ( core::Size ii = 1; ii <= 100; ++ii ) {
-		std::cout << "iteration " << ii << std::endl;
-		protocols::moves::MinMover min_mover( mm, scorefxn, "dfpmin", 1e-5, false );
+	//runtime_assert( option[ run::nblist_autoupdate ]() );
+
+	if ( !option[ james::debug ]() ) {
+		// case 1: 100 rounds of 20 iterations each.
+		min_options->max_iter(20);
+		for ( Size ii = 1; ii <= 100; ++ii ) {
+			protocols::moves::SaneMinMover min_mover( mm, scorefxn, min_options );
+			min_mover.apply(pose);
+
+			std::string tag( "case_1." + ObjexxFCL::string_of(ii) );
+			dump_pose(tag,pose,orig_pose,scorefxn);
+		}
+	} else {
+		// case 2: 1 round of 2000 iterations
+		min_options->max_iter(2000);
+		protocols::moves::SaneMinMover min_mover( mm, scorefxn, min_options );
+		std::string tag( "case_2.final" );
 		min_mover.apply(pose);
-		pose.dump_pdb("post_min.pdb");
-		scorefxn->show(pose);
+		dump_pose(tag,pose,orig_pose,scorefxn);
 	}
+	scorefxn->show(pose);
+
+	protocols::moves::SaneMinMover min_mover( mm, scorefxn, min_options );
+	min_mover.apply(pose);
+	std::string const fn_out( "post_min_final.pdb" );
+	pose.dump_pdb(fn_out);
 }

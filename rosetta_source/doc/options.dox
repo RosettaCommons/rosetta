@@ -1907,6 +1907,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "grishin"</dd><br>
 </dl>
 <dl>
+<dt><b>-predicted_burial_fn</b> \<String\><dt>
+<dd>file for burial predictions</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
 <dt><b>-pool</b> \<File\><dt>
 <dd>find closest matching structure in this pool and report tag and rmsd</dd><br>
 </dl>
@@ -10289,6 +10294,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-optimization</b> \<Boolean\><dt>
 <dd>optimization option group</dd><br>
+</dl>
+<dl>
+<dt><b>-default_max_cycles</b> \<Integer\><dt>
+<dd>max cycles for MinimizerOptions</dd><br>
+<dd>Default: 2000</dd><br>
 </dl>
 <dl>
 <dt><b>-armijo_min_stepsize</b> \<Real\><dt>

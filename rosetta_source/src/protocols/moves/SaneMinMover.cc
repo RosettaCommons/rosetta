@@ -72,36 +72,17 @@ SaneMinMover::SaneMinMover(
 bool SaneMinMover::cartesian() const {
 	return cartesian_;
 }
-void SaneMinMover::cartesian( bool setting ) {
-	cartesian_ = setting;
-}
 
-/// @brief allow non-const access to the internal minimizer options object
-core::optimization::MinimizerOptionsOP
-SaneMinMover::min_options() {
-	return min_options_;
-}
-
-void
-SaneMinMover::movemap( core::kinematics::MoveMapOP movemap_in ) {
-	runtime_assert( movemap_in );
-	movemap_ = new core::kinematics::MoveMap( *movemap_in );
-}
-
-core::kinematics::MoveMapOP
-SaneMinMover::movemap() {
+core::kinematics::MoveMapOP SaneMinMover::move_map() const {
 	return movemap_;
 }
 
-void
-SaneMinMover::score_function( core::scoring::ScoreFunctionOP scorefxn_in ) {
-	runtime_assert( scorefxn_in );
-	scorefxn_ = scorefxn_in;
+core::scoring::ScoreFunctionOP SaneMinMover::score_function() const {
+	return scorefxn_;
 }
 
-core::scoring::ScoreFunctionOP
-SaneMinMover::score_function() {
-	return scorefxn_;
+core::optimization::MinimizerOptionsOP SaneMinMover::min_options() const {
+	return min_options_;
 }
 
 void

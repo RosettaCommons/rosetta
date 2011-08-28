@@ -23,20 +23,16 @@
 
 
 // Utility headers
-// AUTO-REMOVED #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
 #include <map>
 #ifdef WIN32
 #include <string>
 #endif
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 
 namespace core {
 namespace scoring {
-
 
 //////////////////////////////////////////////////////////////////////////////
 /// @brief give a ScoreType string name and return its enum type
