@@ -204,9 +204,11 @@ int main(int argc, char *argv[]) {
       //   cout<<ct.x()<<" "<<ct.y()<<" "<<ct.z()<<"<- SHOULD BE -X, 0, 0!"<<std::endl;
       //   utility_exit_with_message("chi "+str(lcc)+" to "+str(lcc-1)+" trans  not -R,0,0!!!");
       // }
-      sout<<"#define "+seq.substr(0,1)+""+str(lcc)+""+str(lcc-1)+"_rot001_COS "<<F(12,9,cos(-cw))+"f"<<std::endl;
-      sout<<"#define "+seq.substr(0,1)+""+str(lcc)+""+str(lcc-1)+"_rot001_SIN "<<F(12,9,sin(-cw))+"f"<<std::endl;
-      sout<<"#define "+seq.substr(0,1)+""+str(lcc)+""+str(lcc-1)+"_mov        "<<" vec("<<F(11,8,ct.x())<<","<<F(11,8,ct.y())<<","<<F(11,8,ct.z())<<")"<<std::endl;
+      sout<<"#define "+seq.substr(0,1)+""+str(lcc)+""+str(lcc-1)+"_rot001_COS "<<F(12,9,cos(cw))+"f"<<std::endl;
+      sout<<"#define "+seq.substr(0,1)+""+str(lcc)+""+str(lcc-1)+"_rot001_SIN "<<F(12,9,sin(cw))+"f"<<std::endl;
+      if(fabs(ct.x())>0.0001) sout<<"#define "+seq.substr(0,1)+""+str(lcc)+""+str(lcc-1)+"_movx "<<F(11,8,-ct.x())<<std::endl;
+      if(fabs(ct.y())>0.0001) sout<<"#define "+seq.substr(0,1)+""+str(lcc)+""+str(lcc-1)+"_movy "<<F(11,8,-ct.y())<<std::endl;
+      if(fabs(ct.z())>0.0001) sout<<"#define "+seq.substr(0,1)+""+str(lcc)+""+str(lcc-1)+"_movz "<<F(11,8,-ct.z())<<std::endl;
       p1 = sa[1];  p2 = sa[2];  p3 = sa[3];
     }
     cout << sout.str();

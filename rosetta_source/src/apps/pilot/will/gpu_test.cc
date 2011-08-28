@@ -90,32 +90,36 @@ int main(int argc, char *argv[]) {
   // gpu_score_test(HVY);
   // utility_exit_with_message("RST");
 
-  Size ERRTH = 0.01;
+  Real ERRTH = 0.0001;
 
-  Pose his,glu,asp,cys,p;
+  Pose hmd,hme,dm1,dm2,em1,em2,cys,p;
   pose_from_pdb(p,option[OptionKeys::in::file::s]()[1]);
-  make_pose_from_sequence(cys,"C","fa_standard",false); remove_termini(cys); to_canonical_sc_frame(cys);
-  make_pose_from_sequence(asp,"D","fa_standard",false); remove_termini(asp); to_canonical_sc_frame(asp);
-  make_pose_from_sequence(glu,"E","fa_standard",false); remove_termini(glu); to_canonical_sc_frame(glu);
-  make_pose_from_sequence(his,"H[HIS_DE]","fa_standard",false); remove_termini(his); to_canonical_sc_frame(his);
-  his.set_dof(DOF_ID(AtomID(his.residue(1).atom_index("HD1"),1),core::id::D),2.1);
-  his.set_dof(DOF_ID(AtomID(his.residue(1).atom_index("HE2"),1),core::id::D),2.1);
-  his.set_dof(DOF_ID(AtomID(cys.residue(1).atom_index("HG"),1),core::id::D),2.1);
+  make_pose_from_sequence(cys,"C"        ,"fa_standard",false); remove_termini(cys); to_canonical_sc_frame(cys);
+  make_pose_from_sequence(dm1,"D[ASP_M1]","fa_standard",false); remove_termini(dm1); to_canonical_sc_frame(dm1);
+  make_pose_from_sequence(dm2,"D[ASP_M2]","fa_standard",false); remove_termini(dm2); to_canonical_sc_frame(dm2);
+  make_pose_from_sequence(em1,"E[GLU_M1]","fa_standard",false); remove_termini(em1); to_canonical_sc_frame(em1);
+  make_pose_from_sequence(em2,"E[GLU_M2]","fa_standard",false); remove_termini(em2); to_canonical_sc_frame(em2);
+  make_pose_from_sequence(hmd,"H[HIS_MD]","fa_standard",false); remove_termini(hmd); to_canonical_sc_frame(hmd);
+  make_pose_from_sequence(hme,"H[HIS_ME]","fa_standard",false); remove_termini(hme); to_canonical_sc_frame(hme);
 
   cout << std::setprecision(8) << std::fixed;
 
   float c11 = -69.9394;
   float c21 = 166.2;
   float c31 = uniform()*360.0;
-  float c12 = 0.0;//-70.0784;
-  float c22 = 0.0;//165.854;
-  float c32 = 0.0;//0.0f;//uniform()*360.0;
-  p.replace_residue(19,his.residue(1),true);
-  p.replace_residue(65,his.residue(1),true);
+  float c41 = uniform()*360.0;
+  float c12 = -70.0784;
+  float c22 = 165.854;
+  float c32 = uniform()*360.0;
+  float c42 = uniform()*360.0;
+  p.replace_residue(19,hmd.residue(1),true);
+  p.replace_residue(65,hme.residue(1),true);
   p.set_chi(1,19,c11);
   p.set_chi(2,19,c21);
+  p.set_chi(3,19,c31);
   p.set_chi(1,65,c12);
   p.set_chi(2,65,c22);
+  p.set_chi(3,65,c32);
 
   // repack(p);
   // TR << p.chi(1,19) << " " << p.chi(2,19) << std::endl;
@@ -130,38 +134,65 @@ int main(int argc, char *argv[]) {
   for(uint i = 1; i <= p.n_residue(); ++i) {
     toloc[i] = stubrev(VEC(p.xyz(AtomID(5,i))),VEC(p.xyz(AtomID(2,i))),VEC(p.xyz(AtomID(1,i))));
   }
-  xform_pose(p,toloc[19].stub());
-  //core::kinematics::Stub s(p.xyz(AtomID(5,19)),p.xyz(AtomID(2,19)),p.xyz(AtomID(1,19)));
-  //xform_pose_rev(p,s);
-  //  p.dump_pdb("p0.pdb");
+  Pose init = p;
+
+  {
+    p = init; xform_pose(p,toloc[19].stub());
+    XFORM x1 = hisd_bb2m(radians(p.chi(1,19)),radians(p.chi(2,19)),radians(p.chi(3,19)));
+    Vecf X = (p.residue(19).xyz("MD" )-p.residue(19).xyz("ND1")).normalized();
+    Vecf Y = (p.residue(19).xyz("MDY")-p.residue(19).xyz("MD" )).normalized();
+    Vecf M = p.residue(19).xyz("MD");
+    if( fabs(X.x()-x1.R.xx) > ERRTH || fabs(X.y()-x1.R.yx) > ERRTH || fabs(X.z()-x1.R.zx) > ERRTH || fabs(Y.x()-x1.R.xy) > ERRTH || fabs(Y.y()-x1.R.yy) > ERRTH || fabs(Y.z()-x1.R.zy) > ERRTH || fabs(M.x()-x1.t.x ) > ERRTH || fabs(M.y()-x1.t.y ) > ERRTH || fabs(M.z()-x1.t.z ) > ERRTH ){
+      TR << "xform from hisd_bb2m FAIL:!" << std::endl; cout << std::setprecision(8) << std::fixed;      cout << "MAIN: " << X << " " << x1.R.xx << " " << x1.R.yx << " " << x1.R.zx << std::endl;      cout << "MAIN: " << Y << " " << x1.R.xy << " " << x1.R.yy << " " << x1.R.zy << std::endl;     cout << "MAIN: " << M << " " << x1.t.x  << " " << x1.t.y  << " " << x1.t.z  << std::endl;
+    } else TR << "xform from hisd_bb2m seems correct!" << std::endl;
+  }
+  {
+    p = init; xform_pose(p,toloc[65].stub());
+    XFORM x1 = hise_bb2m(radians(p.chi(1,65)),radians(p.chi(2,65)),radians(p.chi(3,65)));
+    Vecf X = (p.residue(65).xyz("ME" )-p.residue(65).xyz("NE2")).normalized();
+    Vecf Y = (p.residue(65).xyz("MEY")-p.residue(65).xyz("ME" )).normalized();
+    Vecf M = p.residue(65).xyz("ME");
+    if( fabs(X.x()-x1.R.xx) > ERRTH || fabs(X.y()-x1.R.yx) > ERRTH || fabs(X.z()-x1.R.zx) > ERRTH || fabs(Y.x()-x1.R.xy) > ERRTH || fabs(Y.y()-x1.R.yy) > ERRTH || fabs(Y.z()-x1.R.zy) > ERRTH || fabs(M.x()-x1.t.x ) > ERRTH || fabs(M.y()-x1.t.y ) > ERRTH || fabs(M.z()-x1.t.z ) > ERRTH ){
+      TR << "xform from hise_bb2m FAIL:!" << std::endl; cout << std::setprecision(8) << std::fixed; cout << "MAIN: " << X << " " << x1.R.xx << " " << x1.R.yx << " " << x1.R.zx << std::endl; cout << "MAIN: " << Y << " " << x1.R.xy << " " << x1.R.yy << " " << x1.R.zy << std::endl; cout << "MAIN: " << M << " " << x1.t.x  << " " << x1.t.y  << " " << x1.t.z  << std::endl;
+    } else TR << "xform from hise_bb2m seems correct!" << std::endl;
+  }
+
+
+  core::kinematics::Stub s(p.residue(65).xyz("CB"),p.residue(65).xyz("CA"),p.residue(65).xyz("N"));
+  //core::kinematics::Stub s(p.residue(65).xyz("CG"),p.residue(65).xyz("CB"),p.residue(65).xyz("CA"));
+  //core::kinematics::Stub s(p.residue(65).xyz("MD"),p.residue(65).xyz("ND1"),p.residue(65).xyz("CG"));
+  xform_pose_rev(p,s);
+  std::cout << "MAIN MY: " << p.residue(65).xyz("MEY") << std::endl;
+  std::cout << "MAIN ML: " << p.residue(65).xyz("ME") << std::endl;
+  std::cout << "MAIN ND: " << p.residue(65).xyz("ND1") << std::endl;
+  std::cout << "MAIN NE: " << p.residue(65).xyz("NE2") << std::endl;
+  std::cout << "MAIN CE: " << p.residue(65).xyz("CE1") << std::endl;
+  std::cout << "MAIN CD: " << p.residue(65).xyz("CD2") << std::endl;
+  std::cout << "MAIN CG: " << p.residue(65).xyz("CG") << std::endl;
+
+  p.dump_pdb("p0.pdb");
+
+
+  // c11=0.0;
+  // c21=0.0;
+  // c31=0.0;
+  // c41=0.0;
+  // p.replace_residue(19,cys.residue(1),true);
+  // p.set_chi(1,19,c11);
+  // p.set_chi(2,19,c21);
+  // core::kinematics::Stub s(p.xyz(AtomID(5,19)),p.xyz(AtomID(2,19)),p.xyz(AtomID(1,19)));
+  // xform_pose_rev(p,s);
+  // p.dump_pdb("test.pdb");
   // {
-  //   XFORM x1 = hisd_bb2m(radians(p.chi(1,19)),radians(p.chi(2,19)),radians(c31));
-  //   Vecf X = (p.residue(19).xyz("HD1")-p.residue(19).xyz("ND1")).normalized();
-  //   Vecf Y = projperp(X, p.residue(19).xyz("ND1")-p.residue(19).xyz("CE1") ).normalized();
+  //   XFORM x1 = his_bb2m(radians(p.chi(1,19)),radians(p.chi(2,19)),radians(c31));
+  //   Vecf X = (p.residue(19).xyz("HG")-p.residue(19).xyz("SG")).normalized();
+  //   Vecf Y = projperp(X, p.residue(19).xyz("SG")-p.residue(19).xyz("CB") ).normalized();
   //   Y = (Matf)rotation_matrix_degrees((Vec)X,90.0+c31) * Y;
-  //   Vecf M = p.residue(19).xyz("HD1");
+  //   Vecf M = p.residue(19).xyz("HG");
   //   if( fabs(X.x()-x1.R.xx) > ERRTH || fabs(X.y()-x1.R.yx) > ERRTH || fabs(X.z()-x1.R.zx) > ERRTH ||
   //       fabs(Y.x()-x1.R.xy) > ERRTH || fabs(Y.y()-x1.R.yy) > ERRTH || fabs(Y.z()-x1.R.zy) > ERRTH ||
   //       fabs(M.x()-x1.t.x ) > ERRTH || fabs(M.y()-x1.t.y ) > ERRTH || fabs(M.z()-x1.t.z ) > ERRTH ) {
-  //     TR << "xform from hisd_bb2m FAIL:!" << std::endl;
-  //     cout << std::setprecision(8) << std::fixed;
-  //     cout << "MAIN: " << X << " " << x1.R.xx << " " << x1.R.yx << " " << x1.R.zx << std::endl;
-  //     cout << "MAIN: " << Y << " " << x1.R.xy << " " << x1.R.yy << " " << x1.R.zy << std::endl;
-  //     cout << "MAIN: " << M << " " << x1.t.x  << " " << x1.t.y  << " " << x1.t.z  << std::endl;
-  //   } else {
-  //     TR << "xform from hisd_bb2m seems correct!" << std::endl;
-  //   }
-  // }
-  // {
-  //   XFORM x1 = hise_bb2m(radians(p.chi(1,19)),radians(p.chi(2,19)),radians(c31));
-  //   Vecf X = (p.residue(19).xyz("HE2")-p.residue(19).xyz("NE2")).normalized();
-  //   Vecf Y = projperp(X, p.residue(19).xyz("NE2")-p.residue(19).xyz("CD2") ).normalized();
-  //   Y = (Matf)rotation_matrix_degrees((Vec)X,90.0+c31) * Y;
-  //   Vecf M = p.residue(19).xyz("HE2");
-  //   if( fabs(X.x()-x1.R.xx) > ERRTH || fabs(X.y()-x1.R.yx) > ERRTH || fabs(X.z()-x1.R.zx) > ERRTH ||
-  //       fabs(Y.x()-x1.R.xy) > ERRTH || fabs(Y.y()-x1.R.yy) > ERRTH || fabs(Y.z()-x1.R.zy) > ERRTH ||
-  //       fabs(M.x()-x1.t.x ) > ERRTH || fabs(M.y()-x1.t.y ) > ERRTH || fabs(M.z()-x1.t.z ) > ERRTH ) {
-  //     TR << "xform from hise_bb2m FAIL:!" << std::endl;
+  //     TR << "xform from cys_bb2m FAIL:!" << std::endl;
   //     cout << std::setprecision(8) << std::fixed;
   //     cout << "MAIN: " << X << " " << x1.R.xx << " " << x1.R.yx << " " << x1.R.zx << std::endl;
   //     cout << "MAIN: " << Y << " " << x1.R.xy << " " << x1.R.yy << " " << x1.R.zy << std::endl;
@@ -170,35 +201,6 @@ int main(int argc, char *argv[]) {
   //     TR << "xform from hise_bb2m seems correct!" << std::endl;
   //   }
   // }
-
-
-  c11=0.0;
-  c12=0.0;
-  c13=0.0;
-  p.replace_residue(19,cys.residue(1),true);
-  p.set_chi(1,19,c11);
-  p.set_chi(2,19,c12);
-  core::kinematics::Stub s(p.xyz(AtomID(5,19)),p.xyz(AtomID(2,19)),p.xyz(AtomID(1,19)));
-  xform_pose_rev(p,s);
-  p.dump_pdb("test.pdb");
-  {
-    XFORM x1 = cys_bb2m(radians(p.chi(1,19)),radians(p.chi(2,19)),radians(c13));
-    Vecf X = (p.residue(19).xyz("HG")-p.residue(19).xyz("SG")).normalized();
-    Vecf Y = projperp(X, p.residue(19).xyz("SG")-p.residue(19).xyz("CB") ).normalized();
-    Y = (Matf)rotation_matrix_degrees((Vec)X,90.0+c13) * Y;
-    Vecf M = p.residue(19).xyz("HG");
-    if( fabs(X.x()-x1.R.xx) > ERRTH || fabs(X.y()-x1.R.yx) > ERRTH || fabs(X.z()-x1.R.zx) > ERRTH ||
-        fabs(Y.x()-x1.R.xy) > ERRTH || fabs(Y.y()-x1.R.yy) > ERRTH || fabs(Y.z()-x1.R.zy) > ERRTH ||
-        fabs(M.x()-x1.t.x ) > ERRTH || fabs(M.y()-x1.t.y ) > ERRTH || fabs(M.z()-x1.t.z ) > ERRTH ) {
-      TR << "xform from cys_bb2m FAIL:!" << std::endl;
-      cout << std::setprecision(8) << std::fixed;
-      cout << "MAIN: " << X << " " << x1.R.xx << " " << x1.R.yx << " " << x1.R.zx << std::endl;
-      cout << "MAIN: " << Y << " " << x1.R.xy << " " << x1.R.yy << " " << x1.R.zy << std::endl;
-      cout << "MAIN: " << M << " " << x1.t.x  << " " << x1.t.y  << " " << x1.t.z  << std::endl;
-    } else {
-      TR << "xform from hise_bb2m seems correct!" << std::endl;
-    }
-  }
 
 
 }
