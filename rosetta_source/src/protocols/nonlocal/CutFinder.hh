@@ -14,7 +14,6 @@
 #define PROTOCOLS_NONLOCAL_CUTFINDER_HH_
 
 // Package headers
-#include <protocols/nonlocal/NLGrouping.hh>
 #include <protocols/nonlocal/Region.hh>
 
 // Project headers
