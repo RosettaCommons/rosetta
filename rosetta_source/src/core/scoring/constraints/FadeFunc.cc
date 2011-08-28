@@ -20,14 +20,21 @@
 
 #include <numeric/random.functions.hh>
 #include <ObjexxFCL/format.hh>
-#include <basic/Tracer.hh>
 
 // C++ Headers
-
+#include <iostream>
 
 namespace core {
 namespace scoring {
 namespace constraints {
+
+FuncOP
+FadeFunc::clone() const
+{
+	return new FadeFunc( cutoff_lower_, cutoff_upper_,
+											 fade_zone_, well_depth_,
+											 well_offset_ );
+}
 
 Real
 FadeFunc::func( Real const z ) const
@@ -53,7 +60,8 @@ FadeFunc::func( Real const z ) const
 		//		fade_deriv = (6 * b2 - 6 * b ) / fade_zone_;
 	}
 
-	return well_depth_ * fade_value;
+
+	return well_depth_ * fade_value + well_offset_;
 }
 
 Real
@@ -86,11 +94,20 @@ FadeFunc::dfunc( Real const z ) const
 void
 FadeFunc::read_data( std::istream& in ) {
 	in >> cutoff_lower_ >> cutoff_upper_ >> fade_zone_ >> well_depth_ ;
+
+	well_offset_ = 0.0;
+	if( in.good() )  in >> well_offset_;
+
 }
 
 void
 FadeFunc::show_definition( std::ostream &out ) const {
-	out << "FADE " << cutoff_lower_ << cutoff_upper_ << fade_zone_ << well_depth_ << std::endl;
+	out << "FADE " <<
+		' ' << cutoff_lower_ <<
+		' ' << cutoff_upper_ <<
+		' ' << fade_zone_ <<
+		' ' << well_depth_ <<
+		' ' << well_offset_ << std::endl;
 }
 
 Size

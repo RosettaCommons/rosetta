@@ -11,8 +11,8 @@
 /// @brief Definition for functions used in definition of constraints.
 /// @author Rhiju Das
 
-#ifndef INCLUDED_core_scoring_constraints_FadeFunc_hh
-#define INCLUDED_core_scoring_constraints_FadeFunc_hh
+#ifndef INCLUDED_core_scoring_constraints_FadeFunc_HH
+#define INCLUDED_core_scoring_constraints_FadeFunc_HH
 
 #include <core/scoring/constraints/FadeFunc.fwd.hh>
 
@@ -23,7 +23,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <ObjexxFCL/format.hh>
-#include <basic/Tracer.hh>
 
 // C++ Headers
 
@@ -33,22 +32,35 @@ namespace constraints {
 
 class FadeFunc : public Func {
 public:
+
+
+	FadeFunc( Real const cutoff_lower, Real const cutoff_upper,
+						Real const fade_zone, Real const well_depth,
+						Real const well_offset ):
+		cutoff_lower_( cutoff_lower ),
+		cutoff_upper_( cutoff_upper ),
+		fade_zone_( fade_zone ),
+		well_depth_( well_depth ),
+		well_offset_( well_offset ){}
+
 	FadeFunc( Real const cutoff_lower, Real const cutoff_upper,
 						Real const fade_zone, Real const well_depth ):
 		cutoff_lower_( cutoff_lower ),
 		cutoff_upper_( cutoff_upper ),
 		fade_zone_( fade_zone ),
-		well_depth_( well_depth ){}
+		well_depth_( well_depth ),
+		well_offset_( 0.0 ){}
 
 	FadeFunc( Real const cutoff_lower, Real const cutoff_upper,
 						Real const fade_zone ):
 		cutoff_lower_( cutoff_lower ),
 		cutoff_upper_( cutoff_upper ),
 		fade_zone_( fade_zone ),
-		well_depth_( 1.0 ){}
+		well_depth_( 1.0 ),
+		well_offset_( 0.0 ){}
 
 	FuncOP
-	clone() const { return new FadeFunc( *this ); }
+	clone() const;
 
 	Real func( Real const x ) const;
 	Real dfunc( Real const x ) const;
@@ -73,6 +85,8 @@ private:
 	Real cutoff_upper_;
 	Real fade_zone_;
 	Real well_depth_;
+	Real well_offset_;
+
 };
 
 
