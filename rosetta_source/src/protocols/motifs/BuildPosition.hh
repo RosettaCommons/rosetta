@@ -19,6 +19,7 @@
 
 // Package Headers
 #include <protocols/motifs/Motif.fwd.hh>
+#include <protocols/motifs/MotifHit.fwd.hh>
 
 // Project Headers
 #include <core/conformation/Residue.fwd.hh>
@@ -68,6 +69,11 @@ public:
 		Motif const & motif
 	);
 
+	// Save this motif hit
+	void keep_motifhit(
+		MotifHit const & motifhit
+	);
+
 	// Clears the best_motifs_ and best_rotamers_
 	void clear_data();
 
@@ -80,6 +86,7 @@ public:
 	std::set< std::string > const & allowed_types() const { return allowed_types_; }
 	core::pack::rotamer_set::Rotamers const & best_rotamers() const { return best_rotamers_; }
 	MotifCOPs const & best_motifs() const { return best_motifs_; }
+	MotifHitCOPs const & best_motifhits() const { return best_motifhits_; }
 
 private:
 
@@ -93,6 +100,7 @@ private:
 	core::pack::rotamer_set::Rotamers best_rotamers_;
 	// Motifs that pass cutoffs in the MotifSearch
 	MotifCOPs best_motifs_;
+	MotifHitCOPs best_motifhits_;
 
 };
 

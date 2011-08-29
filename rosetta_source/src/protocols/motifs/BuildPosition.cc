@@ -16,6 +16,7 @@
 
 // Package Headers
 #include <protocols/motifs/Motif.hh>
+#include <protocols/motifs/MotifHit.hh>
 
 // Project Headers
 #include <core/conformation/Residue.hh>
@@ -34,7 +35,8 @@ BuildPosition::BuildPosition(
 		target_positions_( target_positions ),
 		allowed_types_(),
 		best_rotamers_(0),
-		best_motifs_(0)
+		best_motifs_(0),
+		best_motifhits_(0)
 {}
 
 
@@ -46,7 +48,8 @@ BuildPosition::BuildPosition(
 		target_positions_( target_positions ),
 		allowed_types_( allowed_types ),
 		best_rotamers_(0),
-		best_motifs_(0)
+		best_motifs_(0),
+		best_motifhits_(0)
 {}
 
 BuildPosition::~BuildPosition()
@@ -58,7 +61,8 @@ BuildPosition::BuildPosition( BuildPosition const & src ) :
 	target_positions_( src.target_positions() ),
 	allowed_types_( src.allowed_types() ),
 	best_rotamers_( src.best_rotamers() ),
-	best_motifs_( src.best_motifs() )
+	best_motifs_( src.best_motifs() ),
+	best_motifhits_( src.best_motifhits() )
 {}
 
 BuildPositionOP
@@ -81,6 +85,14 @@ BuildPosition::keep_motif(
 )
 {
 	best_motifs_.push_back( motif.clone() );
+}
+
+void
+BuildPosition::keep_motifhit(
+	MotifHit const & motifhit
+)
+{
+	best_motifhits_.push_back( motifhit.clone() );
 }
 
 void

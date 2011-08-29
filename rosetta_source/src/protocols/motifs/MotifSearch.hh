@@ -21,6 +21,7 @@
 #include <protocols/dna/DnaDesignDef.fwd.hh>
 #include <protocols/motifs/BuildPosition.fwd.hh>
 #include <protocols/motifs/Motif.fwd.hh>
+#include <protocols/motifs/MotifHit.fwd.hh>
 #include <protocols/motifs/MotifLibrary.fwd.hh>
 
 // Project Headers
@@ -90,6 +91,12 @@ public:
 	bp_rotamers(
 		Size const seqpos
 	);
+
+	protocols::motifs::MotifHitCOPs
+	bp_motifhits(
+		Size const seqpos
+	);
+
 
 	bool
 	protein_dna_motif();
@@ -161,7 +168,8 @@ public:
 		Real const & r2,
 		Real const & z2,
 		Real const & d1,
-		Size const & rlevel
+		Size const & rlevel,
+		bool const bpdata
 	);
 
 	void
@@ -222,6 +230,7 @@ private:
 	bool clear_bprots_;
 	Size rots2add_;
 	bool restrict_to_wt_;
+	bool rerun_motifsearch_;
 
 };
 

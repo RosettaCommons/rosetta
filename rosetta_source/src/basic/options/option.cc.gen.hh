@@ -1347,6 +1347,7 @@ option.add( basic::options::OptionKeys::motifs::flex_sugar, "whether or not to a
 option.add( basic::options::OptionKeys::motifs::clear_bprots, "whether or not to clear the rotamers that were read in from a previous run and restart with only the motifs that were read in and the specified rotlevel" ).def(true);
 option.add( basic::options::OptionKeys::motifs::rots2add, "number of rotamers to add to design from the MotifSearch for each amino acid type" ).lower(1).def(100);
 option.add( basic::options::OptionKeys::motifs::restrict_to_wt, "restrict the motif search to finding motifs of the same amino acid as the starting pose, for homology modeling" ).def(true);
+option.add( basic::options::OptionKeys::motifs::rerun_motifsearch, "setting the MotifSearch to run again, using the rotamers in the build position, most likely to change stringency or amino acid type on a second run" ).def(true);
 option.add( basic::options::OptionKeys::motifs::ligand_motif_sphere, "option to specify radius of motif search around ligand" ).def(6.0);
 option.add( basic::options::OptionKeys::constraints::constraints, "constraints option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::constraints::CA_tether, "default CA tether for harmonic constraints" ).def(2.0);
@@ -1704,10 +1705,10 @@ option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_noise_co
 option.add( basic::options::OptionKeys::DenovoProteinDesign::DenovoProteinDesign, "DenovoProteinDesign option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "redesign core of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_loops, "redesign loops of pdb" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "redesign surface of pdb" ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "redesign surface of pdb" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );

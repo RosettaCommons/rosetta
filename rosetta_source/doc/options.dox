@@ -6514,6 +6514,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: true</dd><br>
 </dl>
 <dl>
+<dt><b>-rerun_motifsearch</b> \<Boolean\><dt>
+<dd>setting the MotifSearch to run again, using the rotamers in the build position, most likely to change stringency or amino acid type on a second run</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
 <dt><b>-ligand_motif_sphere</b> \<Real\><dt>
 <dd>option to specify radius of motif search around ligand</dd><br>
 <dd>Default: 6.0</dd><br>

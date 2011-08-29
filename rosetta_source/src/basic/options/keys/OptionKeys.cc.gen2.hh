@@ -206,6 +206,7 @@ namespace motifs { BooleanOptionKey const flex_sugar( "motifs:flex_sugar" );  }
 namespace motifs { BooleanOptionKey const clear_bprots( "motifs:clear_bprots" );  }
 namespace motifs { IntegerOptionKey const rots2add( "motifs:rots2add" );  }
 namespace motifs { BooleanOptionKey const restrict_to_wt( "motifs:restrict_to_wt" );  }
+namespace motifs { BooleanOptionKey const rerun_motifsearch( "motifs:rerun_motifsearch" );  }
 namespace motifs { RealOptionKey const ligand_motif_sphere( "motifs:ligand_motif_sphere" );  }
 namespace constraints { BooleanOptionKey const constraints( "constraints" );  }
 namespace constraints { RealOptionKey const CA_tether( "constraints:CA_tether" );  }
@@ -563,4 +564,3 @@ namespace AnchoredDesign { namespace testing { BooleanOptionKey const anchor_noi
 namespace DenovoProteinDesign { BooleanOptionKey const DenovoProteinDesign( "DenovoProteinDesign" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_core( "DenovoProteinDesign:redesign_core" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_loops( "DenovoProteinDesign:redesign_loops" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const redesign_surface( "DenovoProteinDesign:redesign_surface" );  }

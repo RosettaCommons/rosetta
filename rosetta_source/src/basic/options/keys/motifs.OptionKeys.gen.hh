@@ -64,6 +64,7 @@ namespace motifs { extern BooleanOptionKey const flex_sugar; }
 namespace motifs { extern BooleanOptionKey const clear_bprots; }
 namespace motifs { extern IntegerOptionKey const rots2add; }
 namespace motifs { extern BooleanOptionKey const restrict_to_wt; }
+namespace motifs { extern BooleanOptionKey const rerun_motifsearch; }
 namespace motifs { extern RealOptionKey const ligand_motif_sphere; }
 
 } // namespace OptionKeys

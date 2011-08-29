@@ -32,7 +32,6 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -126,6 +125,8 @@ MotifSearch::operator = ( MotifSearch const & src )
 		dump_motifs_ = src.dump_motifs_;
 		clear_bprots_ = src.clear_bprots_;
 		rots2add_ = src.rots2add_;
+		restrict_to_wt_ = src.restrict_to_wt_;
+		rerun_motifsearch_ = src.rerun_motifsearch_;
 	}
 	return *this;
 }
@@ -255,7 +256,7 @@ MotifSearch::incorporate_motifs(
 		std::map< std::string, std::map< Real, MotifHitOP > > best_mhits_all;
 
 		// If we have rotamers coming in from files and they weren't cleared in initialization, then the search won't happen on this BuildPosition
-		if ( ! ((*ir)->best_rotamers()).empty() ) continue;
+		if ( ( ! ((*ir)->best_rotamers()).empty() ) && ( ! rerun_motifsearch_ ) ) continue;
 		ms_tr << "WORKING ON PROTEIN POSITION " << (*ir)->seqpos() << std::endl;
 		MotifCOPs bp_best_motifs( (*ir)->best_motifs() );
 		core::pack::rotamer_set::Rotamers bp_best_rotamers( (*ir)->best_rotamers() );
@@ -517,6 +518,10 @@ MotifSearch::incorporate_motifs(
 						if( data_ ) {
 							data_output_file << "Passed! RMSD between DNA resi (rosetta #), no conformers " << bestpos << " and motif DNA = " << rmsdtest_ir2 << " and Z-test = " << ztest_ir2 << " and combined score = " << finaltest << " for residue type " << motifcop->restype_name1() << ", rotamer # " << ir2 << ", motif named " << motifcop->remark() << std::endl;
 						}
+						// Fix to make it so that rotamers with different hydrogen positions are added, even though they are not part of the motif and thus have the same finaltest value
+						if ( ( motifcop->restype_name1() == "SER" ) || ( motifcop->restype_name1() == "THR" ) || ( motifcop->restype_name1() == "TYR" ) || ( motifcop->restype_name1() == "ILE" ) || ( motifcop->restype_name1() == "CYS" ) ) {
+							finaltest = finaltest + ( 0.00001 * ir2 );
+						}
 						motifhit->final_test( finaltest );
 						motifhit->build_rotamer( *(rotset->nonconst_rotamer(ir2) ) );
 						motifhit->target_conformer( *posebase2 );
@@ -546,6 +551,10 @@ MotifSearch::incorporate_motifs(
 								ms_tr << "Passed! RMSD between DNA resi (rosetta #) " << bestpos << " and motif DNA = " << rmsdtest2 << " and Z-test = " << ztest2 << " and combined score = " << finaltest << " for residue type " << motifcop->restype_name1() << ", rotamer # " << ir2 << ", motif named " << motifcop->remark() << std::endl;
 								if( data_ ) {
 									data_output_file << "Passed! RMSD between DNA resi (rosetta #) " << bestpos << " and motif DNA = " << rmsdtest2 << " and Z-test = " << ztest2 << " and combined score = " << finaltest << " for residue type " << motifcop->restype_name1() << ", rotamer # " << ir2 << ", motif named " << motifcop->remark() << std::endl;
+								}
+								// Fix to make it so that rotamers with different hydrogen positions are added, even though they are not part of the motif and thus have the same finaltest value
+								if ( ( motifcop->restype_name1() == "SER" ) || ( motifcop->restype_name1() == "THR" ) || ( motifcop->restype_name1() == "TYR" ) || ( motifcop->restype_name1() == "ILE" ) || ( motifcop->restype_name1() == "CYS" ) ) {
+									finaltest = finaltest + ( 0.00001 * ir2 );
 								}
 								motifhit->final_test( finaltest );
 								motifhit->build_rotamer( *(rotset->nonconst_rotamer(ir2) ) );
@@ -587,6 +596,8 @@ MotifSearch::incorporate_motifs(
 					MotifHitOP motifhitop( bh2->second );
 					if( ! minimize_ ) {
 						(*ir)->keep_rotamer( *(motifhitop->build_rotamer()) );
+						(*ir)->keep_motif( *(motifhitop->motifcop()) );
+						(*ir)->keep_motifhit( *(motifhitop) );
 						++hits;
 						if( output_ ) {
 							motif_output_file << *(motifhitop->motifcop());
@@ -671,6 +682,8 @@ MotifSearch::incorporate_motifs(
 						}*/
 						if( sc_constraint_check < 10.0 ) {
 							(*ir)->keep_rotamer( (pose_dump.residue((*ir)->seqpos())) );
+							(*ir)->keep_motif( *(motifhitop->motifcop()) );
+							(*ir)->keep_motifhit( *(motifhitop) );
 							++hits;
 							if( output_ ) {
 								motif_output_file << *(motifhitop->motifcop());
@@ -679,6 +692,8 @@ MotifSearch::incorporate_motifs(
 						}
 						pose_dump.replace_residue( (*ir)->seqpos(), *(motifhitop->build_rotamer()), true );
 						(*ir)->keep_rotamer( (pose_dump.residue((*ir)->seqpos())) );
+						(*ir)->keep_motif( *(motifhitop->motifcop()) );
+						(*ir)->keep_motifhit( *(motifhitop) );
 						if( output_ ) {
 							motif_output_file << *(motifhitop->motifcop());
 							motif_output_file << "RESIDUE " << (pose_dump.residue((*ir)->seqpos()));
@@ -708,7 +723,7 @@ MotifSearch::bp_rotamers(
 	core::pack::rotamer_set::Rotamers best_rotamers;
 	for ( BuildPositionOPs::const_iterator ir( build_positionOPs_.begin() ), end_ir( build_positionOPs_.end() );
 			ir != end_ir; ++ir ) {
-			if( (*ir)->seqpos() != seqpos ) continue;
+		if( (*ir)->seqpos() != seqpos ) continue;
 			if ( ! ((*ir)->best_rotamers()).empty() ) {
 				std::set< std::string > allowedtypes( (*ir)->allowed_types() );
 				if( allowedtypes.empty() ) {
@@ -718,10 +733,7 @@ MotifSearch::bp_rotamers(
 				for ( Size r(1) ; r <= rs; ++r ) {
 					for( std::set< std::string >::const_iterator ir2(allowedtypes.begin() ), end_ir2( allowedtypes.end() );
 							ir2 != end_ir2; ++ir2 ) {
-						std::cout << "ABOUT ADDING ROT" << std::endl;
-						std::cout << (*ir2) << " " << ((*ir)->best_rotamers()[r])->name3() << std::endl;
 						if( (*ir2) == ((*ir)->best_rotamers()[r])->name3() ) {
-							std::cout << (*ir2) << " " << ((*ir)->best_rotamers()[r])->name3() << std::endl;
 							best_rotamers.push_back( (*ir)->best_rotamers()[r] );
 						}
 					}
@@ -732,6 +744,27 @@ MotifSearch::bp_rotamers(
 			}
 		}
 	return best_rotamers;
+}
+
+protocols::motifs::MotifHitCOPs
+MotifSearch::bp_motifhits(
+	Size const seqpos
+)
+{
+	protocols::motifs::MotifHitCOPs motifhitcops;
+	for ( BuildPositionOPs::const_iterator ir( build_positionOPs_.begin() ), end_ir( build_positionOPs_.end() );
+			ir != end_ir; ++ir ) {
+		if( (*ir)->seqpos() != seqpos ) continue;
+		if ( ! ((*ir)->best_motifhits()).empty() ) {
+			Size rs( ((*ir)->best_motifhits()).size() );
+			for ( Size r(1) ; r <= rs; ++r ) {
+				motifhitcops.push_back( (*ir)->best_motifhits()[r] );
+			}
+		} else {
+			ms_tr << "There were no motif hits for " << seqpos << ". Check to be sure that MotifSearch protocol actually ran. Use flag rerun_motifsearch to ensure that it runs even with input rotamers from BPData flag." << std::endl;
+		}
+	}
+	return motifhitcops;
 }
 
 // Maybe this belongs with Motif.cc or MotifLibrary.cc, or both, but not here
@@ -948,7 +981,8 @@ MotifSearch::override_option_input(
 	Real const & r2,
 	Real const & z2,
 	Real const & d1,
-	Size const & rlevel
+	Size const & rlevel,
+	bool const bpdata
 )
 {
 	ztest_cutoff_1_ = z1;
@@ -957,6 +991,7 @@ MotifSearch::override_option_input(
 	rmsd_cutoff_2_ = r2;
 	dtest_cutoff_ = d1;
 	rot_level_ = rlevel;
+	bpdata_ = bpdata;
 }
 
 void
@@ -1029,6 +1064,12 @@ MotifSearch::init_options()
 	} else {
 		restrict_to_wt_ = false;
 	}
+	if( (basic::options::option[ basic::options::OptionKeys::motifs::rerun_motifsearch ]).user() ) {
+		rerun_motifsearch_ = true;
+	} else {
+		rerun_motifsearch_ = false;
+	}
+
 }
 
 } // motifs

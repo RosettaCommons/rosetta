@@ -2906,6 +2906,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'clear_bprots', 'Boolean', default = 'true', desc = 'whether or not to clear the rotamers that were read in from a previous run and restart with only the motifs that were read in and the specified rotlevel'),
 		Option( 'rots2add', 'Integer', default = '100', lower = '1', desc = 'number of rotamers to add to design from the MotifSearch for each amino acid type'),
 		Option( 'restrict_to_wt', 'Boolean', default = 'true', desc = 'restrict the motif search to finding motifs of the same amino acid as the starting pose, for homology modeling'),
+		Option( 'rerun_motifsearch', 'Boolean', default = 'true', desc = 'setting the MotifSearch to run again, using the rotamers in the build position, most likely to change stringency or amino acid type on a second run'),
 		Option('ligand_motif_sphere','Real', default = '6.0',
 			desc="option to specify radius of motif search around ligand"),
 	), #motifs
