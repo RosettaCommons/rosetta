@@ -155,7 +155,8 @@ MotifDnaPacker::MotifDnaPacker()
 		minimize_dna_(false),
 		special_rotweight_(-40.0),
 		num_repacks_(5),
-		flex_dna_sugar_(false)
+		flex_dna_sugar_(false),
+		dna_design_(false)
 {
 	init_options();
 }
@@ -173,7 +174,8 @@ MotifDnaPacker::MotifDnaPacker(
 		minimize_dna_(false),
 		special_rotweight_(-40.0),
 		num_repacks_(5),
-		flex_dna_sugar_(false)
+		flex_dna_sugar_(false),
+		dna_design_(false)
 {
 	init_options();
 	filename_root_ = filename_root;
