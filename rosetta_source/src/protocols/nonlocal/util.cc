@@ -120,23 +120,26 @@ void limit_chunk_size(core::Size min_chunk_sz,
   using protocols::loops::Loops;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
+
   assert(regions);
+  assert(min_chunk_sz > 0);
+  assert(max_chunk_sz > 0);
   assert(min_chunk_sz <= max_chunk_sz);
 
   Loops output;
-  for (Size i = 1; i <= regions->num_loop(); ++i) {
-    const Loop& loop = (*regions)[i];
+  for (Loops::const_iterator i = regions->begin(); i != regions->end(); ++i) {
+    const Loop& loop = *i;
 
-    // Note: minimum length guaranteed because of gap extension code
-    if (loop.length() >= min_chunk_sz &&
-        loop.length() <= max_chunk_sz) {
+    // TODO(cmiles) trouble if we encounter aligned regions w/ length < min_chunk_sz.
+    // Gap sampling extension partially mitigates unaligned case.
+    if (loop.length() <= max_chunk_sz) {
       output.push_back(loop);
       continue;
     }
 
     // Recursively decompose <loop> until each piece has length <= max_length
     utility::vector1<Loop> pieces;
-    decompose(max_chunk_sz, loop, &pieces);
+    decompose(min_chunk_sz, max_chunk_sz, loop, &pieces);
 
     for (utility::vector1<Loop>::const_iterator j = pieces.begin(); j != pieces.end(); ++j) {
       const Loop& loop = *j;
@@ -147,46 +150,52 @@ void limit_chunk_size(core::Size min_chunk_sz,
   *regions = output;
 }
 
-void decompose(core::Size max_length,
+void decompose(core::Size min_chunk_sz,
+               core::Size max_chunk_sz,
                const protocols::loops::Loop& loop,
                utility::vector1<protocols::loops::Loop>* pieces) {
   using core::Size;
   using protocols::loops::Loop;
   using utility::vector1;
+
   assert(pieces);
 
-  // base case
-  if (loop.length() <= max_length) {
+  // Base case
+  if (loop.length() <= max_chunk_sz) {
     pieces->push_back(loop);
     return;
   }
 
-  // TODO(cmiles) improve pivot selection using secondary structure, structural
-  // conservation or some other reasonable metric
-  core::fragment::SecondaryStructureCOP ss;
-  Size pivot = CutFinder::choose_cutpoint(loop.start(), loop.stop(), ss);
+  // TODO(cmiles) check for off-by-1 errors
+  Size midpoint = loop.start() + loop.length() / 2;
+  Loop candidate_left(loop.start(), midpoint);
+  Loop candidate_right(midpoint, loop.stop());
 
-  // recursively decompose the left-hand side
-  Size left_start = loop.start();
-  Size left_stop = pivot;
-
-  if (left_start < left_stop) {
-    vector1<Loop> pieces_left;
-    Loop left(loop.start(), pivot);
-    decompose(max_length, left, &pieces_left);
-    std::copy(pieces_left.begin(), pieces_left.end(), std::back_inserter(*pieces));
+  // Impossible to satisfy min_chunk_sz requirement
+  if (candidate_left.length() < min_chunk_sz ||
+      candidate_right.length() < min_chunk_sz) {
+    pieces->push_back(loop);
+    return;
   }
 
-  // recursively decompose the right-hand side
-  Size right_start = pivot + 1;
-  Size right_stop = loop.stop();
+  // TODO(cmiles) consider including additional information (e.g. secondary
+  // structure, structural conservation) to inform pivot selection
+  Size pivot = numeric::random::random_range(
+      loop.start() + min_chunk_sz - 1,
+      loop.stop() - min_chunk_sz + 1);
 
-  if (right_start < right_stop) {
-      vector1<Loop> pieces_right;
-      Loop right(right_start, loop.stop());
-      decompose(max_length, right, &pieces_right);
-      std::copy(pieces_right.begin(), pieces_right.end(), std::back_inserter(*pieces));
-    }
+  // Recursively decompose the left- and right-hand sides of the pivot
+  Loop left(loop.start(), pivot);
+  vector1<Loop> pieces_left;
+  decompose(min_chunk_sz, max_chunk_sz, left, &pieces_left);
+
+  Loop right(pivot + 1, loop.stop());
+  vector1<Loop> pieces_right;
+  decompose(min_chunk_sz, max_chunk_sz, right, &pieces_right);
+
+  // Update the output parameter
+  std::copy(pieces_left.begin(), pieces_left.end(), std::back_inserter(*pieces));
+  std::copy(pieces_right.begin(), pieces_right.end(), std::back_inserter(*pieces));
 }
 
 void find_regions(const core::sequence::SequenceAlignment& alignment,

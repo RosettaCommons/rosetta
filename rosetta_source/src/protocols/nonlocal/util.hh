@@ -65,7 +65,8 @@ void limit_chunk_size(core::Size min_chunk_sz,
 
 /// @brief Recursively decomposes <loop> into a series of <pieces>, each having
 /// length less than or equal to <max_length>.
-void decompose(core::Size max_length,
+void decompose(core::Size min_chunk_sz,
+               core::Size max_chunk_sz,
                const protocols::loops::Loop& loop,
                utility::vector1<protocols::loops::Loop>* pieces);
 
