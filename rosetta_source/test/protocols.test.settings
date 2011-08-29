@@ -17,6 +17,7 @@ sources = {
           "Chunk",
           "NonlocalAbinitio",
           "NonlocalAbinitioReader",
+          "NonlocalUtil",
           "Region",
         ],
 	"abinitio" : [
@@ -249,6 +250,7 @@ testinputfiles = [
 	"moves/score12.pdb",
 	"moves/score12.u",
 	"nonlocal/2GB3.pdb",
+        "nonlocal/alignment.filt",
 	"nonlocal/mfr_aa2GB3_03_05.200_v1_3",
 	"nonlocal/mfr_aa2GB3_09_05.200_v1_3",
 	"nonlocal/test.pairings",
