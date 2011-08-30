@@ -417,7 +417,9 @@ fix_sugar_coords(
 
 		pose.set_dof( DOF_ID( AtomID( j, i), THETA), numeric::constants::d::pi - theta );
 
-		if ( input_stub_atom2->is_jump() ) continue;
+		// I commented out the following because otherwise, O4* at the 5' end of a pose did not get set properly. (RD, Nov. 2010)
+		//  but there may be fallout.
+		// if ( input_stub_atom2->is_jump() ) continue; //HEY NEED TO BE CAREFUL HERE.
 
 		core::kinematics::tree::Atom const * input_stub_atom3( current_atom->input_stub_atom3() );
 
