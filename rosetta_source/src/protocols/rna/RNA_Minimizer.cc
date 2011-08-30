@@ -223,7 +223,9 @@ void RNA_Minimizer::apply( core::pose::Pose & pose	)
 
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+	////////////////////////
 std::string
 RNA_Minimizer::get_name() const {
 	return "RNA_Minimizer";
@@ -307,7 +309,7 @@ RNA_Minimizer::setup_movemap( kinematics::MoveMap & mm, pose::Pose & pose ) {
 
 		Size const jump_pos2( pose.fold_tree().downstream_jump_residue( n ) );
 		std::string const jump_atom2( pose.fold_tree().downstream_atom( n ) );
-		AtomID const jump_atom_id2( named_atom_id_to_atom_id( NamedAtomID( jump_atom2, jump_pos2 ), pose ) );
+		AtomID const jump_atom_id2( named_atom_id_to_atom_id(NamedAtomID( jump_atom2, jump_pos2 ), pose ) );
 
 		// No -- should look at actual atoms that are connected by jump, not residues.
 		//if (allow_insert_->get( jump_pos1 ) || allow_insert_->get( jump_pos2 ) ) 	 mm.set_jump( n, true );

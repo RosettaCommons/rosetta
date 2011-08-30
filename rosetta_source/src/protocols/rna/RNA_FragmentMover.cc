@@ -199,7 +199,8 @@ RNA_FragmentMover::random_fragment_insertion(
 {
 	frag_size_ = frag_size;
 
-	Size const type = protocols::rna::MATCH_YR;
+	//Size const type = protocols::rna::MATCH_YR;
+	Size const type = protocols::rna::MATCH_EXACT;
 
 	// Make this insertion stuff a class before checking in?
 	update_insert_map( pose );

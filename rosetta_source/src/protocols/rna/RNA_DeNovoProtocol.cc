@@ -202,6 +202,8 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 			time_t pdb_start_time = time(NULL);
 
 			pose = start_pose;
+			rna_structure_parameters_->setup_fold_tree_and_jumps_and_variants( pose );
+			rna_chunk_library_->initialize_random_chunks( pose ); //actually not random if only one chunk in each region.
 
 			if (dump_pdb_) dump_pdb( pose, "start.pdb" );
 
@@ -212,8 +214,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 
 			TR << "Beginning main loop... " << std::endl;
 
-			//		Size const rounds = 3; //for now.
-			Size const rounds = 20; //for now.
+			Size const rounds = 10; //for now.
 			frag_size_ = 3;
 
 			for (Size r = 1; r <= rounds; r++ ) {
@@ -332,10 +333,9 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 
 	//	rna_structure_parameters_->allow_insert()->show();
 
-	// Setup constraints *after* defining jumps and chainbreak variants...
-	//rna_structure_parameters_->set_allow_insert( rna_chunk_library_->allow_insert() );
-	//rna_structure_parameters_->set_allow_insert( rna_structure_parameters_->allow_insert() );
-	rna_structure_parameters_->setup_fold_tree_and_jumps_and_variants( pose );
+
+	// Do this in the main loop to ensure diverse fold trees
+	//	rna_structure_parameters_->setup_fold_tree_and_jumps_and_variants( pose );
 
 	//	std::cout << "allow insert: after changes to fold tree and variants! " << std::endl;
 	//	rna_structure_parameters_->allow_insert()->show();
@@ -343,7 +343,9 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 	rna_structure_parameters_->setup_base_pair_constraints( pose );
 
 	rna_chunk_library_->set_allow_insert( rna_structure_parameters_->allow_insert() );
-	rna_chunk_library_->initialize_random_chunks( pose, dump_pdb_ );
+
+	// do this in main loop to ensure diversity
+	//	rna_chunk_library_->initialize_random_chunks( pose, dump_pdb_ );
 
 	rna_fragment_mover_ = RNA_FragmentMoverOP( new RNA_FragmentMover( all_rna_fragments_, rna_structure_parameters_->allow_insert() ) );
 
