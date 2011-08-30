@@ -25,7 +25,7 @@ namespace core {
 namespace scoring {
 namespace rna {
 
-enum{ WHATEVER, ALPHA, BETA, GAMMA, DELTA, EPSILON, ZETA, CHI, NU2, NU1, O2H};
+enum _RNA_FittedTorsionInfo_ { WHATEVER, ALPHA, BETA, GAMMA, DELTA, EPSILON, ZETA, CHI, NU2, NU1, O2H};
 
 class Gaussian_parameter {
 public:
