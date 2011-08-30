@@ -7,22 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/nonlocal/RationalMonteCarlo.fwd.hh
+/// @file protocols/moves/RationalMonteCarlo.fwd.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_RATIONAL_MONTE_CARLO_FWD_HH_
-#define PROTOCOLS_NONLOCAL_RATIONAL_MONTE_CARLO_FWD_HH_
+#ifndef PROTOCOLS_MOVES_RATIONAL_MONTE_CARLO_FWD_HH_
+#define PROTOCOLS_MOVES_RATIONAL_MONTE_CARLO_FWD_HH_
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace protocols {
-namespace nonlocal {
+namespace moves {
 
 class RationalMonteCarlo;
 typedef utility::pointer::owning_ptr<RationalMonteCarlo> RationalMonteCarloOP;
 typedef utility::pointer::owning_ptr<RationalMonteCarlo const> RationalMonteCarloCOP;
 
-}  // namespace nonlocal
+}  // namespace moves
 }  // namespace protocols
 
-#endif  // PROTOCOLS_NONLOCAL_RATIONAL_MONTE_CARLO_FWD_HH_
+#endif  // PROTOCOLS_MOVES_RATIONAL_MONTE_CARLO_FWD_HH_

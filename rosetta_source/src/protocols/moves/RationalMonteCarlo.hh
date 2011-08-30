@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/nonlocal/RationalMonteCarlo.hh
+/// @file protocols/moves/RationalMonteCarlo.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_RATIONAL_MONTE_CARLO_HH_
-#define PROTOCOLS_NONLOCAL_RATIONAL_MONTE_CARLO_HH_
+#ifndef PROTOCOLS_MOVES_RATIONAL_MONTE_CARLO_HH_
+#define PROTOCOLS_MOVES_RATIONAL_MONTE_CARLO_HH_
 
 // Unit header
-#include <protocols/nonlocal/RationalMonteCarlo.fwd.hh>
+#include <protocols/moves/RationalMonteCarlo.fwd.hh>
 
 // C/C++ headers
 #include <string>
@@ -23,21 +23,21 @@
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/moves/MonteCarlo.hh>
+
+// Package headers
+#include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 namespace protocols {
-namespace nonlocal {
+namespace moves {
 
-/// @class A rational implementation of trial-based monte carlo for performing
-/// straight minimization. More specialized tasks need not apply.
+/// @class Trial-based Monte Carlo minization primitive. Do not modify this
+/// class; almost anything you could possibly want to add is a bad idea.
 class RationalMonteCarlo : public protocols::moves::Mover {
   typedef core::Real Real;
   typedef core::Size Size;
   typedef core::pose::Pose Pose;
   typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;
-  typedef protocols::moves::MonteCarloOP MonteCarloOP;
-  typedef protocols::moves::MoverOP MoverOP;
 
  public:
   RationalMonteCarlo(MoverOP mover,
@@ -75,7 +75,7 @@ class RationalMonteCarlo : public protocols::moves::Mover {
   bool recover_low_;
 };
 
-}  // namespace nonlocal
+}  // namespace moves
 }  // namespace protocols
 
-#endif  // PROTOCOLS_NONLOCAL_RATIONAL_MONTE_CARLO_HH_
+#endif  // PROTOCOLS_MOVES_RATIONAL_MONTE_CARLO_HH_

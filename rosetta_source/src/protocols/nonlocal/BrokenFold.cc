@@ -50,12 +50,12 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <protocols/abinitio/MaxSeqSepConstraintSet.hh>
 #include <protocols/filters/Filter.hh>
+#include <protocols/moves/RationalMonteCarlo.hh>
 #include <protocols/moves/SaneMinMover.hh>
 
 // Package headers
 #include <protocols/nonlocal/Policy.hh>
 #include <protocols/nonlocal/PolicyFactory.hh>
-#include <protocols/nonlocal/RationalMonteCarlo.hh>
 #include <protocols/nonlocal/SingleFragmentMover.hh>
 #include <protocols/nonlocal/util.hh>
 
@@ -72,6 +72,7 @@ BrokenFold::BrokenFold(core::fragment::FragSetOP fragments_lg,
   using core::Real;
   using core::Size;
   using protocols::moves::MoverOP;
+  using protocols::moves::RationalMonteCarlo;
 
   // Consider only the top k best fragments in each library
   Size num_fragments = option[OptionKeys::abinitio::number_3mer_frags];

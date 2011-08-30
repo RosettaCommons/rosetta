@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/nonlocal/RationalMonteCarlo.cc
+/// @file protocols/moves/RationalMonteCarlo.cc
 /// @author Christopher Miles (cmiles@uw.edu)
 
 // Unit header
-#include <protocols/nonlocal/RationalMonteCarlo.hh>
+#include <protocols/moves/RationalMonteCarlo.hh>
 
 // C/C++ headers
 #include <string>
@@ -23,11 +23,13 @@
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
+
+// Package headers
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 
 namespace protocols {
-namespace nonlocal {
+namespace moves {
 
 using core::Real;
 using core::Size;
@@ -36,7 +38,7 @@ using protocols::moves::MoverOP;
 
 typedef protocols::moves::Mover Parent;
 
-static basic::Tracer TR("protocols.nonlocal.RationalMonteCarlo");
+static basic::Tracer TR("protocols.moves.RationalMonteCarlo");
 
 RationalMonteCarlo::RationalMonteCarlo(MoverOP mover, ScoreFunctionOP score, Size num_trials, Real temperature, bool recover_low)
     : Parent("RationalMonteCarlo"), mover_(mover), num_trials_(num_trials), recover_low_(recover_low) {
@@ -80,5 +82,5 @@ bool RationalMonteCarlo::recover_low() const {
   return recover_low_;
 }
 
-}  // namespace nonlocal
+}  // namespace moves
 }  // namespace protocols
