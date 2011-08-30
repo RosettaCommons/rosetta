@@ -28,7 +28,7 @@
 // AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-
+#include <core/pack/task/ResfileReader.hh>
 // AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 
 // AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
@@ -334,7 +334,9 @@ ddG_main()
   if(option[packing::resfile].user()){ //check is resfile is specified
     pack::task::PackerTaskOP storage_task(pack::task::TaskFactory::create_packer_task(pose));
 
-    storage_task->initialize_from_command_line().read_resfile().or_include_current(true);
+    storage_task->initialize_from_command_line();
+    pack::task::parse_resfile(pose, *storage_task);
+    storage_task->or_include_current(true);
 
     for(Size i =1;i<=pose.total_residue();i++){
       if(storage_task->design_residue(i)){

@@ -30,7 +30,6 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/AA.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/PDBPoseMap.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 
 // Utility Headers
@@ -299,14 +298,6 @@ public:
 
 	virtual
 	PackerTask &
-	read_resfile( std::string const & filename ) = 0;
-
-	virtual
-	PackerTask &
-	read_resfile() = 0;
-
-	virtual
-	PackerTask &
 	restrict_to_residues( utility::vector1< bool > const & residues_allowed_to_be_packed ) = 0;
 
 	virtual
@@ -340,10 +331,6 @@ public:
 	virtual
 	void
 	rotamer_couplings( RotamerCouplingsCOP setting ) = 0;
-
-	virtual
-	pose::PDBPoseMapCOP
-	pdb_pose_map() const = 0;
 
 	virtual
 	IGEdgeReweightContainerCOP

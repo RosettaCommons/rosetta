@@ -36,7 +36,12 @@ rotamer_trials.apply(pose)
 print pack
 
 task_design = TaskFactory.create_packer_task(pose)
-task_design.read_resfile("test/data/test_in.resfile") # TODO this hard-crashes if file is not a resfile
+
+# mjo -> in refactoring the resfile reader I modified this to use parse_resfile
+#task_design.read_resfile("test/data/test_in.resfile") 
+parse_resfile(pose, task_design, "test/data/test_in.resfile")# TODO this hard-crashes if file is not a resfile
+
+
 # BUG reported on jenkins machine: comments before 'start' line cause crash
 print task_design
 pack = PackRotamersMover( scorefxn, task_design )

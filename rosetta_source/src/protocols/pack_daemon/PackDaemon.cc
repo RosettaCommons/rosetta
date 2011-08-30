@@ -495,7 +495,7 @@ void DaemonSet::set_entity_resfile(
 	core::pose::make_pose_from_sequence( ala_pose, ala_seq, core::chemical::FA_STANDARD );
 	entity_task_ = TaskFactory::create_packer_task( ala_pose );
 
-	entity_resfile_ = new ResfileContents( *entity_task_, resfile );
+	entity_resfile_ = new ResfileContents( ala_pose, resfile );
 
 	/// apply the resfile operations to the entity_task_ for later error checking
 	for ( Size ii = 1; ii <= entity_task_->total_residue(); ++ii ) {
@@ -607,7 +607,7 @@ DaemonSet::add_pack_daemon(
 
 	/// Setup the task
 	PackerTaskOP task = task_factory_->create_task_and_apply_taskoperations( pose );
-	ResfileContents secondary_resfile_contents( *task, secondary_resfile );
+	ResfileContents secondary_resfile_contents( pose, secondary_resfile );
 
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 		Size ii_entity = ec->entity_for_residue( ii );

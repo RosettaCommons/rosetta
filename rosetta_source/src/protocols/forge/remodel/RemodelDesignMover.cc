@@ -576,7 +576,7 @@ void RemodelDesignMover::mode5_packertask(Pose & pose){ // manual with auto desi
 	working_model_.task->restrict_to_residues( additional_sites );
 
 	// process the information in blueprint and save the positions touched.
-  non_default_positions_ = protocols::forge::methods::parse_resfile_string_with_no_lockdown( *working_model_.task, remodel_data_.parsed_string_for_resfile );
+  non_default_positions_ = protocols::forge::methods::parse_resfile_string_with_no_lockdown(pose, *working_model_.task, remodel_data_.parsed_string_for_resfile );
 
 	TR << "number to be packed after adding sites: " << working_model_.task->num_to_be_packed() << std::endl;
 }

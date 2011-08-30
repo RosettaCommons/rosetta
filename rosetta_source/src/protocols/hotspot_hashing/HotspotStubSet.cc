@@ -31,6 +31,7 @@
 #include <core/chemical/AA.hh>
 
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -1269,7 +1270,7 @@ HotspotStubSet::add_hotspot_constraints_to_pose(
 			task->nonconst_residue_task(i).prevent_repacking();
 	}
 	if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ) {
-		task->read_resfile();
+		core::pack::task::parse_resfile(pose, *task);
 	}
 	core::pack::pack_rotamers( ala_pose, *full_scorefxn, task);
 	(*full_scorefxn)( ala_pose ); // to ensure that 10Aneighborgraph_state==GOOD
@@ -1466,7 +1467,7 @@ HotspotStubSet::prepare_hashing_packer_task_(
 
 	//in case there is a resfile, information in this resfile can set the packer task, but can be overridden below.
 	if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() )
-		hotspot_hash_packer_taskOP->read_resfile();
+		core::pack::task::parse_resfile(pose, *hotspot_hash_packer_taskOP);
 
 	// Setup the unbound pose, from which to compute residue sasa
 	// (move the chains apart first, in case we're starting from a good binding mode)

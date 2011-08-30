@@ -110,7 +110,7 @@ public:
 	repack_with_resfile( core::pose::Pose & pose, /*std::string const * name,*/ core::scoring::ScoreFunctionOP scorefxn ){
 		core::pack::task::PackerTaskOP task( core::pack::task::TaskFactory::create_packer_task( pose ));
 		task->restrict_to_repacking();
-		core::pack::task::parse_resfile_string( *task, "NATAA FIX_HIS_TAUTOMER \n start");
+		core::pack::task::parse_resfile_string( pose, *task, "NATAA FIX_HIS_TAUTOMER \n start");
 		//the "start" just dodges a resfile warning
 
 		core::pack::rotamer_trials( pose, *scorefxn, task );

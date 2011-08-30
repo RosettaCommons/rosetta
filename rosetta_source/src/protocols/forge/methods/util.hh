@@ -241,7 +241,7 @@ set_single_loop_fold_tree(
 );
 
 utility::vector1<bool>
-parse_resfile_string_with_no_lockdown( core::pack::task::PackerTask & the_task, std::string const & resfile_string
+parse_resfile_string_with_no_lockdown( core::pose::Pose const & pose, core::pack::task::PackerTask & the_task, std::string const & resfile_string
 );
 
 core::pack::task::TaskFactoryOP

@@ -43,7 +43,7 @@
 
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <core/pack/task/ResfileReader.hh>
+#include <core/pack/task/ResfileReader.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -340,7 +340,9 @@ main( int argc, char * argv [] )
 
 	pack::task::PackerTaskOP storage_task(pack::task::TaskFactory::create_packer_task(pose));
 
-	storage_task->initialize_from_command_line().read_resfile().or_include_current(true);
+	storage_task->initialize_from_command_line();
+	pack::task::parse_resfile(pose, *storage_task);
+	storage_task->or_include_current(true);
 
 	//write out information to repack_native logfile
 	//this eliminates unnecessary computations

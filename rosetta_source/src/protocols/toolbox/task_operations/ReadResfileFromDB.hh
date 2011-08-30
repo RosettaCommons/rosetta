@@ -50,7 +50,7 @@ public:
 
 	virtual
 	void
-	apply(core::pose::Pose const &, core::pack::task::PackerTask &) const;
+	apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const;
 
 	void database_filename(std::string const & database_filename);
 	std::string const & database_filename() const;

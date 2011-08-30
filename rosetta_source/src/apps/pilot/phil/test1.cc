@@ -84,6 +84,7 @@
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/ResfileReader.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/viewer/visualize.hh>
@@ -1888,7 +1889,9 @@ pack_rotamers_test()
 		core::import_pose::pose_from_pdb( pose, "input/test_in.pdb" );
 		Energy score_orig = scorefxn( pose );
 		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
-		task->initialize_from_command_line().read_resfile( "input/test_in.resfile" ).or_include_current( true );
+		task->initialize_from_command_line();
+		core::pack::task::parse_resfile(pose, *task, "input/test_in.resfile");
+		task->or_include_current( true );
 		task->set_bump_check( true );
 
 		clock_t starttime = clock();

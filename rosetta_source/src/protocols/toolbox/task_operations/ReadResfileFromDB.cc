@@ -92,7 +92,7 @@ TaskOperationOP ReadResfileFromDB::clone() const {
 }
 
 void
-ReadResfileFromDB::apply( Pose const &, PackerTask & task ) const {
+ReadResfileFromDB::apply( Pose const & pose, PackerTask & task ) const {
 
 	string tag(JobDistributor::get_instance()->current_job()->input_tag());
 
@@ -113,7 +113,7 @@ ReadResfileFromDB::apply( Pose const &, PackerTask & task ) const {
 	}
 	string resfile;
 	res >> resfile;
-	parse_resfile_string(task, resfile);
+	parse_resfile_string(pose, task, resfile);
 }
 
 void

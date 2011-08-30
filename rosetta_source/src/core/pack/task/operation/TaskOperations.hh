@@ -57,7 +57,7 @@ public:
 
 	virtual
 	void
-	apply( pose::Pose const &, PackerTask & ) const;
+	apply( pose::Pose const & pose, PackerTask & task ) const;
 
 	virtual void parse_tag( TagPtr );
 

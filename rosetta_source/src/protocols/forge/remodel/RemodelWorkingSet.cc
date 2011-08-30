@@ -429,7 +429,7 @@ protocols::forge::remodel::WorkingRemodelSet::manualPackerTaskGen(core::pose::Po
 
 	//core::pose::PDBPoseMap map(built_pose.pdb_info()->pdb2pose());
 	//TR << map.find(' ',1,' ') << "PDBPosemap" << std::endl;
-	core::pack::task::parse_resfile_string( *this->task, data.parsed_string_for_resfile );
+	core::pack::task::parse_resfile_string( built_pose, *this->task, data.parsed_string_for_resfile );
 }
 
 } //namespace remodel

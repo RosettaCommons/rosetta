@@ -31,6 +31,7 @@
 #include <core/fragment/FragmentIO.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/ResfileReader.hh>
 #include <utility/tag/Tag.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -190,7 +191,7 @@ DomainAssembly::apply( core::pose::Pose & pose )
 	}
 	//in case there is a resfile, information in this resfile overrides the computed task
 	if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() )
-		task->read_resfile();
+		core::pack::task::parse_resfile(pose, *task);
 
 	pack::pack_rotamers( pose, *scorefxn, task);
 	(*scorefxn)( pose );

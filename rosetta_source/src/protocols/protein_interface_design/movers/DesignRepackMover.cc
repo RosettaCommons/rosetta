@@ -22,6 +22,7 @@
 #include <core/conformation/symmetry/util.hh>
 
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/PackerTask.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -273,7 +274,8 @@ DesignRepackMover::setup_packer_and_movemap( core::pose::Pose const & in_pose )
 		task_->nonconst_residue_task( *res ).restrict_to_repacking();
 
 	if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() )
-		task_->read_resfile();
+		core::pack::task::parse_resfile(pose, *task_);
+
 	if ( symmetry_ ) {
 		core::pack::make_symmetric_PackerTask( in_pose, task_ );
 	}

@@ -32,6 +32,7 @@
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/ResfileReader.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 
@@ -153,7 +154,8 @@ public:
 		// --- PackerTask ---
 		// create a custom PackerTask, no extra chi, include current, using the surface score and setting the weight
 		designtask = task::TaskFactory::create_packer_task( pose );
-		designtask->read_resfile("core/pack/interaction_graph/resfile").or_include_current( true );
+		task::parse_resfile(pose, *designtask, "core/pack/interaction_graph/resfile");
+		designtask->or_include_current( true );
 
 		// --- ScoreFunction ---
 		// create a score function using the standard packer weights

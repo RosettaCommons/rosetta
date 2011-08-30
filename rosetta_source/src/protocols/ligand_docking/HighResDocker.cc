@@ -34,6 +34,7 @@
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 
@@ -304,7 +305,7 @@ HighResDocker::make_packer_task_from_vector(
 		bool const use_resfile= basic::options::option[ basic::options::OptionKeys::packing::resfile ].user() ;
 		if (use_resfile){
 			high_res_docker_tracer<< "using OPTIONS resfile"<< std::endl;
-			pack_task->read_resfile();
+			core::pack::task::parse_resfile(pose, *pack_task);
 		}
 		else{
 			high_res_docker_tracer<< "restricting to repack"<< std::endl;
@@ -318,7 +319,7 @@ HighResDocker::make_packer_task_from_vector(
 	}
 	else{
 		high_res_docker_tracer<< "using XML resfile"<< std::endl;
-		pack_task->read_resfile(resfile_);
+		core::pack::task::parse_resfile(pose, *pack_task);
 	}
 
 

@@ -33,6 +33,7 @@
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/ResfileReader.hh>
 #include <core/pack/pack_rotamers.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -1134,7 +1135,7 @@ PlaceStubMover::parse_my_tag( TagPtr const tag,
 			}
 		}
 		if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() )
-			task->read_resfile();
+			core::pack::task::parse_resfile(pose, *task);
 
 		core::scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
 		pack::pack_rotamers( *ala_pose, *scorefxn, task);

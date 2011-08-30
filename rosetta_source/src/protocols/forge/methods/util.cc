@@ -29,6 +29,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/ResfileReader.hh>
@@ -275,7 +276,7 @@ set_single_loop_fold_tree(
 	// all commands begin with something in the command map, if it's not a command treat it as a chain
 
 utility::vector1< bool >
-parse_resfile_string_with_no_lockdown( core::pack::task::PackerTask & the_task, std::string const & resfile_string )// throw(ResfileReaderException)
+parse_resfile_string_with_no_lockdown( core::pose::Pose const & pose, core::pack::task::PackerTask & the_task, std::string const & resfile_string )// throw(ResfileReaderException)
 {
 	using namespace std;
 	using namespace core::pack::task;
@@ -331,8 +332,14 @@ parse_resfile_string_with_no_lockdown( core::pack::task::PackerTask & the_task, 
 			if (chain == '_') chain = ' ';
 			++which_token;
 
-			Size resid;
-			resid = the_task.pdb_pose_map()->find( chain, PDBnum, icode );
+			Size resid(0);
+			if(pose.pdb_info()){
+				resid = pose.pdb_info()->pdb2pose().find( chain, PDBnum, icode );
+			} else {
+				if(1 <= PDBnum <= pose.total_residue()){
+					resid = PDBnum;
+				}
+			}
 			if (resid == 0){
 				std::stringstream err_msg;
 				err_msg  << "On line " << lineno << ", the pose does not have residue (" << chain << ", " << PDBnum << ").";

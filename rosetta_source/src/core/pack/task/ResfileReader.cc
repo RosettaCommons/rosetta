@@ -18,8 +18,8 @@
 // Package Headers
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-#include <core/pose/PDBPoseMap.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 
 // Project Headers
 #include <core/chemical/ResidueType.hh>
@@ -33,6 +33,7 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/util.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 using basic::T;
 using basic::Error;
@@ -60,15 +61,17 @@ namespace pack {
 namespace task {
 
 
-ResfileContents::ResfileContents( PackerTask const & the_task, std::istream & resfile ) :
-	commands_( the_task.total_residue() )
+ResfileContents::ResfileContents(
+	pose::Pose const & pose,
+	std::istream & resfile ) :
+	commands_( pose.total_residue() )
 {
 	using namespace std;
 
 	map< string, ResfileCommandOP > command_map = create_command_map();
 	bool have_read_start_token = false;
 
-	utility::vector1< bool > non_default_lines( the_task.total_residue(), false );
+	utility::vector1< bool > non_default_lines( pose.total_residue(), false );
 	utility::vector1< std::string > default_tokens;
 	utility::vector1< Size > origin_lines_of_default_tokens;
 
@@ -110,8 +113,14 @@ ResfileContents::ResfileContents( PackerTask const & the_task, std::istream & re
 			if (chain == '_') chain = ' ';
 			++which_token;
 
-			Size resid;
-			resid = the_task.pdb_pose_map()->find( chain, PDBnum, icode );
+			Size resid(0);
+			if(pose.pdb_info() == 0){
+				if(1 <= PDBnum <= pose.total_residue()){
+					resid = PDBnum;
+				}
+			} else {
+				resid = pose.pdb_info()->pdb2pose().find( chain, PDBnum, icode );
+			}
 			if (resid == 0){
 				std::stringstream err_msg;
 				err_msg  << "On line " << lineno << ", the pose does not have residue (" << chain << ", " << PDBnum << ").";
@@ -1077,7 +1086,19 @@ comment_begin( utility::vector1< std::string > const & tokens, Size which_token 
 ///specified have the default actions performed on them
 
 void
-parse_resfile( PackerTask & the_task, std::string filename)
+parse_resfile(
+	pose::Pose const & pose,
+	PackerTask & the_task)
+{
+	parse_resfile(pose, the_task, basic::options::option[basic::options::OptionKeys::packing::resfile].value().at(1));
+}
+
+
+void
+parse_resfile(
+	pose::Pose const & pose,
+	PackerTask & the_task,
+	std::string filename)
 {
 
 	std::string resfile;
@@ -1090,7 +1111,7 @@ parse_resfile( PackerTask & the_task, std::string filename)
 	}
 	utility::slurp( file, resfile );
 	try{
-		parse_resfile_string( the_task, resfile );
+		parse_resfile_string( pose, the_task, resfile );
 	} catch (ResfileReaderException) {
 		if (basic::options::option[ basic::options::OptionKeys::run::interactive ].user()){
 			throw;
@@ -1109,13 +1130,16 @@ parse_resfile( PackerTask & the_task, std::string filename)
 	// all commands begin with something in the command map, if it's not a command treat it as a chain
 
 void
-parse_resfile_string( PackerTask & the_task, std::string const & resfile_string ) throw(ResfileReaderException)
+parse_resfile_string(
+	pose::Pose const & pose,
+	PackerTask & the_task,
+	std::string const & resfile_string ) throw(ResfileReaderException)
 {
 	using namespace std;
 	istringstream resfile(resfile_string);
-	ResfileContents contents( the_task, resfile );
+	ResfileContents contents( pose, resfile );
 
-	for ( Size ii = 1; ii <= the_task.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 
 		std::list< ResfileCommandCOP > const & ii_command_list(
 			contents.specialized_commands_exist_for_residue( ii ) ?

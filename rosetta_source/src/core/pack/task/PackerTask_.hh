@@ -508,16 +508,6 @@ public:
 	virtual PackerTask &
 	initialize_extra_rotamer_flags_from_command_line();
 
-	///@brief read a given resfile to set the state of the PackerTask, NOT IN CONSTRUCTOR
-	virtual
-	PackerTask &
-	read_resfile( std::string const & filename );
-
-	///@brief read the resfile specified on the command line to set the state of the PackerTask, not in ctor
-	virtual
-	PackerTask &
-	read_resfile( );
-
 	///@brief turn off packing for residues passed false; can't turn on packing
 	virtual
 	PackerTask &
@@ -560,11 +550,6 @@ public:
 	virtual
 	void
 	rotamer_couplings( RotamerCouplingsCOP setting );
-
-	///@brief accessor for PDB data (for resfiles)
-	virtual
-	pose::PDBPoseMapCOP
-	pdb_pose_map() const;
 
 	///@brief accesor for residue residue weight map
 	virtual
@@ -662,10 +647,6 @@ private:
 	Real low_temp_;
 	Real high_temp_;
 	bool disallow_quench_;
-
-	///@details PackerTask needs the pose numbering vs PDB numbering data
-	///to pass to resfile reader
-	pose::PDBPoseMapCOP pdb_pose_map_;
 
 	///@details holds specific residue residue weights to be used in packing
 	IGEdgeReweightContainerOP IG_edge_reweights_;

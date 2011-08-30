@@ -21,6 +21,7 @@
 // Package Headers
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -67,7 +68,7 @@ class ResfileContents : public utility::pointer::ReferenceCount
 {
 public:
 
-	ResfileContents( PackerTask const &, std::istream & istream );
+	ResfileContents( pose::Pose const & pose, std::istream & istream );
 	virtual ~ResfileContents();
 
 	std::list< ResfileCommandCOP > const &
@@ -652,13 +653,25 @@ create_command_map();
 bool
 comment_begin( utility::vector1< std::string > const & tokens, Size which_token );
 
+///@brief changes the state of the given PackerTask according to the commands in the resfile at read in from the -pack:resfile option system.
+void
+parse_resfile(
+	pose::Pose const & pose,
+	PackerTask & the_task);
+
 ///@brief changes the state of the given PackerTask according to the commands in the resfile at filename
 void
-parse_resfile( PackerTask & the_task, std::string filename );
+parse_resfile(
+	pose::Pose const & pose,
+	PackerTask & the_task,
+	std::string filename );
 
 ///@brief changes the state of the given PackerTask according to the commands in the resfile.
 void
-parse_resfile_string( PackerTask & the_task, std::string const & resfile_string ) throw(ResfileReaderException);
+parse_resfile_string(
+	pose::Pose const & pose,
+	PackerTask & the_task,
+	std::string const & resfile_string ) throw(ResfileReaderException);
 
 void
 onError( std::string message );

@@ -436,14 +436,14 @@ TaskOperationOP ReadResfile::clone() const
 }
 
 void
-ReadResfile::apply( pose::Pose const &, PackerTask & task ) const
+ReadResfile::apply( pose::Pose const & pose, PackerTask & task ) const
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	if ( resfile_filename_.empty() ) {
-		task.read_resfile( option[ packing::resfile].value().at(1) );
+		parse_resfile(pose, task, option[ packing::resfile].value().at(1) );
 	} else {
-		task.read_resfile( resfile_filename_ );
+		parse_resfile(pose, task, resfile_filename_ );
 	}
 }
 
@@ -535,7 +535,7 @@ ReadResfileAndObeyLengthEvents::apply(
 	if (!file ) utility_exit_with_message( "Cannot open file " + this->filename() );
 	utility::slurp( file, resfile_string );
 	std::istringstream resfile(resfile_string);
-	ResfileContents contents( ptask, resfile );
+	ResfileContents contents( pose, resfile );
 
 
 	//3. apply the ResfileCommands to the remapped seqpos

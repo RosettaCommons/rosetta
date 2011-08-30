@@ -77,7 +77,8 @@ main(int argc, char* argv []){
 	  protocols::moves::SidechainMCMover scmc;
 	  pack::task::PackerTaskOP pt = core::pack::task::TaskFactory::create_packer_task( pose );
 	  pt->initialize_from_command_line();
-	  if ( option[ basic::options::OptionKeys::packing::resfile ].user() ) pt->read_resfile();
+	  if ( option[ basic::options::OptionKeys::packing::resfile ].user() )
+			parse_refile(pose, *pt);
 	  pt->restrict_to_repacking();
 	  scmc.set_task( pt );
 	  scmc.init_task( pose );
@@ -115,7 +116,8 @@ main(int argc, char* argv []){
 	  mc->reset( pose );
 	  core::pose::Pose last_accepted = pose;
 	  pt->initialize_from_command_line();
-	  if ( option[ basic::options::OptionKeys::packing::resfile ].user() ) pt->read_resfile();
+	  if ( option[ basic::options::OptionKeys::packing::resfile ].user() )
+			parse_resfile(pose, *pt);
 	  pt->restrict_to_repacking();
 	  sc.set_task( pt );
 	  sc.set_sampling_temperature( 1.0);

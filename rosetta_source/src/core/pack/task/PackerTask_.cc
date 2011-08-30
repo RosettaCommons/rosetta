@@ -34,7 +34,6 @@
 #include <core/chemical/VariantType.hh>
 #include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
-#include <core/pose/PDBPoseMap.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/id/SequenceMapping.hh>
 
@@ -1004,8 +1003,7 @@ PackerTask_::PackerTask_(
 	max_rotbump_energy_( 5.0 ),
 	low_temp_( -1.0 ), //default --> let annealer pick
 	high_temp_( -1.0 ), //default --> let annealer pick
-	disallow_quench_( false ),
-	pdb_pose_map_( NULL ) //set it null now for safe check in ctor
+	disallow_quench_( false )
 {
 	//create residue-level tasks
 	residue_tasks_.reserve( nres_ );
@@ -1013,17 +1011,6 @@ PackerTask_::PackerTask_(
 		residue_tasks_.push_back( ResidueLevelTask_( pose.residue(ii) ));
 	}
 
-	//look for pdb_pose_map
-	using core::pose::PDBInfo;
-	using core::pose::PDBPoseMap;
-	if( pose.pdb_info() ){ //if that's not a NULL pointer
-		pdb_pose_map_ = new PDBPoseMap( pose.pdb_info()->pdb2pose() );
-	} else {
-		//We need a PDBPoseMap to handle resid/chain lookups in resfiles; it has to be created NOW because we will not have pose access at resfile time.
-		//"PDB" info per se has no meaning for a silent-file derived pose, but the information in a PDBPoseMap object can be valid for a silent-file derived pose: the map will contain objects that index to themselves; resid 1->1, resid 2->2, etc.  This means that resfiles for silent-file derived poses will just use resid indexing (which makes sense).
-		PDBInfo info(pose);
-		pdb_pose_map_ = new PDBPoseMap( info ); //use PDBInfo ctor for PDBPoseMap
-	}
 	IG_edge_reweights_ = NULL; //default stays empty, no reweighting
 }
 
@@ -1342,21 +1329,6 @@ PackerTask_::initialize_from_command_line()
 	return *this;
 }
 
-PackerTask &
-PackerTask_::read_resfile( std::string const & filename )
-{
-	parse_resfile( *this, filename );
-	return *this;
-
-}
-
-PackerTask &
-PackerTask_::read_resfile( )
-{
-	//.value().at(1) means the first string in the vector of file options
-	return read_resfile(basic::options::option[basic::options::OptionKeys::packing::resfile].value().at(1));
-}
-
 ///@details vector boolean is based on residue position, disables packing at false positions
 ///does nothing to true positions.  Cannot turn on packing.
 PackerTask &
@@ -1487,8 +1459,6 @@ PackerTask_::update_n_to_be_packed() const
 	}
 	n_to_be_packed_up_to_date_ = true;
 }
-
-pose::PDBPoseMapCOP PackerTask_::pdb_pose_map() const { return pdb_pose_map_; }
 
 //some get-set functions for annealer options
 void

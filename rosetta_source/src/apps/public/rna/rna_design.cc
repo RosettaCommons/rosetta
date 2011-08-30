@@ -29,6 +29,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/ResfileReader.hh>
 #include <core/pack/pack_rotamers.hh>
 // AUTO-REMOVED #include <core/sequence/util.hh>
 // AUTO-REMOVED #include <core/io/silent/RNA_SilentStruct.hh>
@@ -201,7 +202,7 @@ rna_design_test()
 	task->initialize_from_command_line();
 
 	if( basic::options::option[basic::options::OptionKeys::packing::resfile].user() ){
-		task->read_resfile();
+		pack::task::parse_resfile(pose, *task);
 	} else {
 		for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
 			task->nonconst_residue_task( ii ).allow_aa( na_rad );

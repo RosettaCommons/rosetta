@@ -128,7 +128,7 @@ public:
 	//this test will test the "primary modes" ALLAAxc, NOTAA, etc
 	void test_resfile_primary_modes() {
 
-		the_task->read_resfile( "core/pack/task/resfile_test.resfile" );
+		parse_resfile(pose, *the_task, "core/pack/task/resfile_test.resfile" );
 
 		//check that some are being designed
 		TS_ASSERT( the_task->design_any());//, true);
@@ -205,7 +205,7 @@ public:
 
 		core::Size extrachi_cutoff_limit(core::pack::task::EXTRACHI_CUTOFF_LIMIT); //we want to cast the int to an unsigned
 
-		the_task->read_resfile( "core/pack/task/EX_test.resfile" );
+		parse_resfile(pose, *the_task, "core/pack/task/EX_test.resfile" );
 
 		//we need instances of an aromatic and nonaromatic residue
 		//fastest route is filching ResidueTypeSet reference out of pose

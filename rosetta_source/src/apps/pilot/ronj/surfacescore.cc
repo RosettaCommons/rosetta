@@ -492,7 +492,8 @@ main( int argc, char* argv[] ) {
 			// design positions, as specified by the resfile and command line
 			pack::task::PackerTaskOP designtask( pack::task::TaskFactory::create_packer_task( pose ));
 			designtask->set_bump_check( true );
-			designtask->initialize_from_command_line().read_resfile();
+			designtask->initialize_from_command_line();
+			parse_refile(pose, *designtask);
 
 			moves::PackRotamersMoverOP design_protocol( new moves::PackRotamersMover( scorefxn, designtask, (Size)basic::options::option[packing::ndruns].value() ) );
 			design_protocol->apply( pose );

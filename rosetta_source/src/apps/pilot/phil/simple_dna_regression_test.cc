@@ -3820,7 +3820,9 @@ not1_test()
 
 	{ // here's an example of packing with a resfile
 		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
-		task->initialize_from_command_line().read_resfile( option[ packing::resfile ]() ).or_include_current( true );
+		task->initialize_from_command_line();
+		parse_refile(pose, *task);
+		task->or_include_current( true );
 		task->set_bump_check( false );
 		pack::pack_rotamers( pose, (*scorefxn), task);
 		std::cout << "packed score: " << (*scorefxn)( pose ) << std::endl;
@@ -3830,7 +3832,9 @@ not1_test()
 
 	{ // here's an example of packing with a resfile
 		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
-		task->initialize_from_command_line().read_resfile( option[ packing::resfile ]() ).or_include_current( true );
+		task->initialize_from_command_line();
+		parse_refile(pose, *task);
+		task->or_include_current( true );
 		task->set_bump_check( false );
 		pack::rotamer_trials( pose, (*scorefxn), task);
 		std::cout << "packed_rottrialed score: " << (*scorefxn)( pose ) << std::endl;
@@ -3939,7 +3943,9 @@ design_test()
 
 	{ // here's an example of packing with a resfile
 		pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
-		task->initialize_from_command_line().read_resfile( option[ packing::resfile ]() ).or_include_current( true );
+		task->initialize_from_command_line();
+		parse_refile(pose, *task);
+		task->or_include_current( true );
 		task->set_bump_check( true );
 		pack::pack_rotamers( pose, (*scorefxn), task);
 
