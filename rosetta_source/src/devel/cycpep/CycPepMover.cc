@@ -32,15 +32,6 @@ CycPepMover::CycPepMover():Mover() {
 	_loop_relax_mover.relax("fullrelax");
 	_loop_relax_mover.copy_sidechains(true);
 
-	/*set defaults to task repacker: (commented out, moved to the packRotamers function since segfault is created if object not
-	created inside the function (probably due to reference counting issue...)
-*/
-
-//	core::pack::task::TaskFactoryOP _packfactory = new pack::task::TaskFactory;
-//	_packfactory->push_back( new pack::task::operation::InitializeFromCommandline ); // -ex1,ex2,use_input_sc,etc.
-//
-//	_packfactory->push_back( new pack::task::operation::IncludeCurrent ); // TODO: since our input is a prepacked structure, I always included its side-chains (these are NOT necessarily the native side-chains). But, maybe this should be left to the user (Barak)
-//	_packfactory->push_back( new pack::task::operation::RestrictToRepacking ); // prevents design
 }
 
 CycPepMover::~CycPepMover() {
@@ -49,8 +40,7 @@ CycPepMover::~CycPepMover() {
 
 void CycPepMover::minimize(core::pose::Pose& workpose){
 	core::kinematics::MoveMapOP moveMap = new core::kinematics::MoveMap();
-	moveMap->set_bb_true_range(1,workpose.n_residue());
-
+	moveMap->set_jump( 1, true );
 	protocols::moves::MinMover minimizer(moveMap, _scorefxn, "dfpmin_armijo_atol", 0.0001, true /*nb_list*/ );
 	minimizer.apply(workpose);
 }
@@ -58,7 +48,6 @@ void CycPepMover::minimize(core::pose::Pose& workpose){
 void CycPepMover::packRotamers(core::pose::Pose& workpose){
 	core::pack::task::TaskFactoryOP _packfactory = new pack::task::TaskFactory;
 	_packfactory->push_back( new pack::task::operation::InitializeFromCommandline ); // -ex1,ex2,use_input_sc,etc.
-
 	_packfactory->push_back( new pack::task::operation::IncludeCurrent ); // TODO: since our input is a prepacked structure, I always included its side-chains (these are NOT necessarily the native side-chains). But, maybe this should be left to the user (Barak)
 	_packfactory->push_back( new pack::task::operation::RestrictToRepacking ); // prevents design
 	_packTask = _packfactory->create_task_and_apply_taskoperations(workpose);
@@ -108,12 +97,22 @@ void CycPepMover::updateSSAtoms(pose::Pose& workpose, Size upNum, utility::vecto
 core::scoring::constraints::ConstraintSetOP CycPepMover::createDihedralConstraint(pose::Pose& workpose) {
 	core::scoring::constraints::ConstraintSetOP cst_set( new core::scoring::constraints::ConstraintSet() );
 	core::scoring::constraints::HarmonicFuncOP spring = new core::scoring::constraints::HarmonicFunc(180,3);
-	id::AtomID atom1(workpose.residue(workpose.n_residue()).atom_index("CA"),workpose.n_residue());
-	id::AtomID atom2(workpose.residue(workpose.n_residue()).atom_index("C"),workpose.n_residue());
-	id::AtomID atom3(workpose.residue(1).atom_index("N"),1);
-	id::AtomID atom4(workpose.residue(1).atom_index("CA"),1);
+    const core::pose::Pose::Residue & lastRes = workpose.residue(workpose.n_residue());
+    const core::pose::Pose::Residue & firstRes = workpose.residue(1);
+
+    id::AtomID atom1(lastRes.atom_index("CA"),workpose.n_residue());
+	id::AtomID atom2(lastRes.atom_index("C"),workpose.n_residue());
+    id::AtomID atom3(firstRes.atom_index("N"),1);
+	id::AtomID atom4(firstRes.atom_index("CA"),1);
+
+	//create atompair constraint:
+	Real distance = firstRes.xyz("N").distance(lastRes.xyz("C"));
+	TR<<"Sequence: " << workpose.sequence()<<std::endl;
+	TR<<"Distance is: " <<distance <<std::endl;
+	core::scoring::constraints::HarmonicFuncOP springAtomPair = new core::scoring::constraints::HarmonicFunc(distance,0.01);
 
 	cst_set->add_constraint(new core::scoring::constraints::DihedralConstraint(atom1,atom2,atom3,atom4,spring));
+//	cst_set->add_constraint(new core::scoring::constraints::AtomPairConstraint(atom3,atom2,springAtomPair));
 	return cst_set;
 }
 Real CycPepMover::scoreNoConstraint(pose::Pose& workpose){
@@ -142,51 +141,6 @@ void CycPepMover::printEnergies(pose::Pose& workpose) {
 	}
 }
 
-core::scoring::constraints::ConstraintSetOP CycPepMover::prolineConstraint(pose::Pose& workpose) {
-
-	core::scoring::constraints::ConstraintSetOP cst_set( new core::scoring::constraints::ConstraintSet() );
-	core::scoring::constraints::HarmonicFuncOP spring = new core::scoring::constraints::HarmonicFunc(-65.1,4);
-	id::AtomID atom1(workpose.residue(6).atom_index("C"),6);
-	id::AtomID atom2(workpose.residue(7).atom_index("N"),7);
-	id::AtomID atom3(workpose.residue(7).atom_index("CA"),7);
-	id::AtomID atom4(workpose.residue(7).atom_index("C"),7);
-
-	core::scoring::constraints::HarmonicFuncOP spring2 = new core::scoring::constraints::HarmonicFunc(160.0,4);
-	id::AtomID atom1a(workpose.residue(6).atom_index("N"),6);
-	id::AtomID atom2a(workpose.residue(6).atom_index("CA"),6);
-	id::AtomID atom3a(workpose.residue(6).atom_index("C"),6);
-	id::AtomID atom4a(workpose.residue(7).atom_index("N"),7);
-	core::scoring::constraints::HarmonicFuncOP spring3 = new core::scoring::constraints::HarmonicFunc(-81.8,4);
-	id::AtomID atom1b(workpose.residue(5).atom_index("C"),5);
-	id::AtomID atom2b(workpose.residue(6).atom_index("N"),6);
-	id::AtomID atom3b(workpose.residue(6).atom_index("CA"),6);
-	id::AtomID atom4b(workpose.residue(6).atom_index("C"),6);
-
-	core::scoring::constraints::HarmonicFuncOP spring4 = new core::scoring::constraints::HarmonicFunc(150.7,4);
-	id::AtomID atom1c(workpose.residue(7).atom_index("N"),7);
-	id::AtomID atom2c(workpose.residue(7).atom_index("CA"),7);
-	id::AtomID atom3c(workpose.residue(7).atom_index("C"),7);
-	id::AtomID atom4c(workpose.residue(8).atom_index("N"),8);
-
-	cst_set->add_constraint(new core::scoring::constraints::DihedralConstraint(atom1,atom2,atom3,atom4,spring));
-	cst_set->add_constraint(new core::scoring::constraints::DihedralConstraint(atom1a,atom2a,atom3a,atom4a,spring2));
-	cst_set->add_constraint(new core::scoring::constraints::DihedralConstraint(atom1b,atom2b,atom3b,atom4b,spring3));
-	cst_set->add_constraint(new core::scoring::constraints::DihedralConstraint(atom1c,atom2c,atom3c,atom4c,spring4));
-
-	return cst_set;
-}
-core::scoring::constraints::ConstraintSetOP CycPepMover::IleConstraint(pose::Pose& workpose) {
-
-	core::scoring::constraints::ConstraintSetOP cst_set( new core::scoring::constraints::ConstraintSet() );
-	core::scoring::constraints::HarmonicFuncOP spring = new core::scoring::constraints::HarmonicFunc(-8.95,0.001);
-	id::AtomID atom1(workpose.residue(6).atom_index("CA"),7);
-	id::AtomID atom2(workpose.residue(7).atom_index("C"),7);
-	id::AtomID atom3(workpose.residue(7).atom_index("N"),8);
-	id::AtomID atom4(workpose.residue(7).atom_index("CA"),8);
-
-	cst_set->add_constraint(new core::scoring::constraints::DihedralConstraint(atom1,atom2,atom3,atom4,spring));
-	return cst_set;
-}
 void CycPepMover::apply(pose::Pose& workpose) {
 	//remove terminal atoms
 	core::pose::remove_lower_terminus_type_from_pose_residue(workpose,1);
@@ -210,18 +164,18 @@ void CycPepMover::apply(pose::Pose& workpose) {
 		rotateUntilCys(workpose,ssAtoms[i]);
 		updateSSAtoms(workpose,ssAtoms[i],ssAtoms,workpose.n_residue());
 		core::scoring::constraints::ConstraintSetOP cst_set = createDihedralConstraint(workpose);
+		workpose.remove_constraints();
 		workpose.add_constraints(cst_set->get_all_constraints());
-//		core::scoring::constraints::ConstraintSetOP cst_set2;
-//		 if (i == 1 ){
-//			cst_set2 = IleConstraint(workpose);
-//			workpose.add_constraints(cst_set2->get_all_constraints());
-//		}
 		packRotamers(workpose);
-		//if ( i == 1 )
-		//	workpose.dump_pdb("after_repack.pdb");
+		std::stringstream ss;
+		ss << "after_repack" << i <<".pdb";
+		workpose.dump_pdb(ss.str());
+		Size numCst = workpose.constraint_set()->get_all_constraints().vector().size();
+		TR<<"Constraints: " << numCst<< std::endl;
 		minimize(workpose);
-		//if ( i == 1 )
-			//workpose.dump_pdb("after_minimization.pdb");
+		ss.str("");
+		ss<< "after_minimization" << i << ".pdb";
+		workpose.dump_pdb(ss.str());
 
 		Real sc = scoreNoConstraint(workpose);
 		TR<<"Score after minimization and repacking: "<<sc<<std::endl;
@@ -230,17 +184,17 @@ void CycPepMover::apply(pose::Pose& workpose) {
 		modelSSLoop(ssAtoms[1],ssAtoms[2],workpose);
 		if ( i == 1 )
 			workpose.dump_pdb("after_modeling1.pdb");
-		packRotamers(workpose);
-
-		minimize(workpose);
 
 		sc = scoreNoConstraint(workpose);
 		TR<<"Score after loopmodel + minimization + repacking: "<<sc<<std::endl;
 		workpose.remove_constraints(cst_set->get_all_constraints());
 	}
+		packRotamers(workpose);
+
+		minimize(workpose);
+	
 	_scorefxn->set_weight(core::scoring::dihedral_constraint,0);
 	TR<<"Finished with a score of " << _scorefxn->score(workpose)<<std::endl;
-	printEnergies(workpose);
 }
 
 }
