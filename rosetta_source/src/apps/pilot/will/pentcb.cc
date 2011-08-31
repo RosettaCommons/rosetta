@@ -80,13 +80,13 @@
 
 // #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
 #include "apps/pilot/will/will_util.hh"
-#include "mynamespaces.hh"
+#include "apps/pilot/will/mynamespaces.hh"
 
 #include <sys/stat.h>
 
 
 #define CONTACT_D2 20.25
-#define CONTACT_TH 12
+#define CONTACT_TH 10
 #define NSS 15872
 
 typedef numeric::xyzVector<Real> Vecf;
@@ -308,9 +308,9 @@ xmx = max(xmx,ib->x()); xmn = min(xmn,ib->x());
 // }
 
 struct Hit {
-  int iss,irt,cbc;
-	core::kinematics::Stub s1,s2;
-  Hit(int is, int ir, int cb) : iss(is),irt(ir),cbc(cb) {}
+  int iss,irt,cbc,sym;
+  core::kinematics::Stub s1,s2;
+  Hit(int is, int ir, int cb, int sm) : iss(is),irt(ir),cbc(cb),sym(sm) {}
 };
 bool cmp(Hit i,Hit j) { return i.cbc > j.cbc; }
 
@@ -337,10 +337,11 @@ void dock(Pose const init, std::string const & fn, vector1<xyzVector<double> > c
   // asamp.push_back(55.01348) ;asamp.push_back(52.81535) ;asamp.push_back(50.52882) ;asamp.push_back(48.14123) ;asamp.push_back(45.63666) ;asamp.push_back(42.99462 );
   // asamp.push_back(40.18793) ;asamp.push_back(37.17927) ;asamp.push_back(33.91485) ;asamp.push_back(30.31207) ;asamp.push_back(26.23179) ;asamp.push_back(21.40253 );
   // asamp.push_back(15.12286) ;asamp.push_back(0.00000 ) ;
-	for(Real i = 0; i < 180; ++i) asamp.push_back(i);
+  for(Real i = 0; i < 180; ++i) asamp.push_back(i);
 
   vector1<Vecf> bb0tmp,cb0tmp;
   for(int ir = 1; ir <= init.n_residue(); ++ir) {
+		if(!init.residue(ir).is_protein()) continue;
     for(int ia = 1; ia <= ((init.residue(ir).has("CB"))?5:4); ++ia) {
       bb0tmp.push_back(init.xyz(AtomID(ia,ir)));
     }
@@ -352,13 +353,14 @@ void dock(Pose const init, std::string const & fn, vector1<xyzVector<double> > c
   vector1<Vecf> const bb0(bb0tmp);
   vector1<Vecf> const cb0(cb0tmp);
 
-  Matf const R2 = rotation_matrix_degrees(Vec(1,0,0),180.0);
-  Matf const R3 = rotation_matrix_degrees(Vec(1,0,0),120.0);
-  Matf const R4 = rotation_matrix_degrees(Vec(1,0,0), 90.0);
-  Matf const R5 = rotation_matrix_degrees(Vec(1,0,0), 72.0);
-  Matf const R6 = rotation_matrix_degrees(Vec(1,0,0), 60.0);
+  vector1<Matf> Rsym(6);
+  Rsym[2] = rotation_matrix_degrees(Vec(1,0,0),180.0);
+  Rsym[3] = rotation_matrix_degrees(Vec(1,0,0),120.0);
+  Rsym[4] = rotation_matrix_degrees(Vec(1,0,0), 90.0);
+  Rsym[5] = rotation_matrix_degrees(Vec(1,0,0), 72.0);
+  Rsym[6] = rotation_matrix_degrees(Vec(1,0,0), 60.0);
 
-  vector1<Hit> hits;
+  vector1<vector1<Hit> > hits(6);
 
 #ifdef USE_OPENMP
 #pragma omp parallel for schedule(dynamic,1)
@@ -368,7 +370,7 @@ void dock(Pose const init, std::string const & fn, vector1<xyzVector<double> > c
     Vec axs = ssamp[iss];
     for(int irt = 1; irt <= asamp.size(); ++irt) {
       //if(axs.x() < 0.0) continue;
-	//Real const u = uniform();
+      //Real const u = uniform();
       Real const rot = asamp[irt];
       Matf const R = rotation_matrix_degrees(axs,rot);
 
@@ -376,37 +378,45 @@ void dock(Pose const init, std::string const & fn, vector1<xyzVector<double> > c
       vector1<Vecf> cb1 = cb0;
       for(vector1<Vecf>::iterator i = bb1.begin(); i != bb1.end(); ++i) *i = R*(*i);
       for(vector1<Vecf>::iterator i = cb1.begin(); i != cb1.end(); ++i) *i = R*(*i);
-      vector1<Vecf> bb2 = bb1;
-      vector1<Vecf> cb2 = cb1;
-      for(vector1<Vecf>::iterator i = bb2.begin(); i != bb2.end(); ++i) *i = R5*(*i);
-      for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = R5*(*i);
 
-      int cbc;
-      Real t = sicfast(bb1,bb2,cb1,cb2,cbc);
-      if(cbc >= CONTACT_TH) {
-				Hit h(iss,irt,cbc);
-				h.s1.from_four_points(bb1[1],bb1[1],bb1[2],bb1[3]);
-				h.s2.from_four_points(bb2[1],bb2[1],bb2[2],bb2[3]);
-				h.s1.v += t*Vec(0,0,1);
+      for(int ic = 2; ic < 7; ic++) {
+        vector1<Vecf> bb2 = bb1;
+        vector1<Vecf> cb2 = cb1;
+        for(vector1<Vecf>::iterator i = bb2.begin(); i != bb2.end(); ++i) *i = Rsym[ic]*(*i);
+        for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = Rsym[ic]*(*i);
+        int cbc;
+        Real t = sicfast(bb1,bb2,cb1,cb2,cbc);
+        if(cbc >= CONTACT_TH) {
+					Hit h(iss,irt,cbc,ic);
+          h.s1.from_four_points(bb1[1],bb1[1],bb1[2],bb1[3]);
+          h.s2.from_four_points(bb2[1],bb2[1],bb2[2],bb2[3]);
+          h.s1.v += t*Vec(0,0,1);
 #ifdef USE_OPENMP
 #pragma omp critical
 #endif
-        hits.push_back(h);
+          hits[ic].push_back(h);
+        }
       }
     }
     //break;
   }
 
-  std::sort(hits.begin(),hits.end(),cmp);
+	for(int ic = 2; ic < 7; ic++) {
+		std::sort(hits[ic].begin(),hits[ic].end(),cmp);
+		for(int i = 1; i <= min((Size)10,hits[ic].size()); ++i) {
+			Hit & h(hits[ic][i]);
+			cout << "RESULT " << fn << " " << h.sym << " " << h.iss << " " << NSS  << " " << h.irt << " " << h.cbc << endl;
+		}
+	}
 
-	if(hits.size()==0) return;
-  TR << hits[1].cbc << std::endl;
-  Pose p(init),q(init);
-	core::kinematics::Stub s(init.xyz(AtomID(1,1)),init.xyz(AtomID(2,1)),init.xyz(AtomID(3,1)));
-	xform_pose_rev(p,s); xform_pose(p,hits[1].s1);
-	xform_pose_rev(q,s); xform_pose(q,hits[1].s2);
-  p.dump_pdb(utility::file_basename(fn)+"_1_A.pdb");
-  q.dump_pdb(utility::file_basename(fn)+"_1_B.pdb");
+  // if(hits.size()==0) return;
+  // TR << hits[1].cbc << std::endl;
+  // Pose p(init),q(init);
+  // core::kinematics::Stub s(init.xyz(AtomID(1,1)),init.xyz(AtomID(2,1)),init.xyz(AtomID(3,1)));
+  // xform_pose_rev(p,s); xform_pose(p,hits[1].s1);
+  // xform_pose_rev(q,s); xform_pose(q,hits[1].s2);
+  // p.dump_pdb(utility::file_basename(fn)+"_1_A.pdb");
+  // q.dump_pdb(utility::file_basename(fn)+"_1_B.pdb");
 }
 
 
@@ -452,13 +462,13 @@ int main(int argc, char *argv[]) {
     //if( pnat.n_residue() > 150 ) continue;
     Size cyscnt=0, nhelix=0;
     for(Size ir = 2; ir <= pnat.n_residue()-1; ++ir) {
-			if(pnat.secstruct(ir) == 'H') nhelix++;
+      if(pnat.secstruct(ir) == 'H') nhelix++;
       //if(!pnat.residue(ir).is_protein()) goto cont1;
       if(pnat.residue(ir).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(pnat,ir);//goto cont1;
       if(pnat.residue(ir).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(pnat,ir);//goto cont1;
       if(pnat.residue(ir).name3()=="CYS") { if(++cyscnt > 3) goto cont1; }
     } goto done1; cont1: TR << "skipping " << fn << std::endl; continue; done1:
-		if( nhelix < 20 ) continue;
+    if( nhelix < 20 ) continue;
     Pose pala(pnat);
     dock(pala,fn,ssamp);
   }
