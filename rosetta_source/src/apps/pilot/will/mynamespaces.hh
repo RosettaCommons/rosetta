@@ -20,6 +20,8 @@ using numeric::xyzMatrix;
 using numeric::x_rotation_matrix_degrees;
 using numeric::y_rotation_matrix_degrees;
 using numeric::z_rotation_matrix_degrees;
+using numeric::conversions::radians;
+using numeric::conversions::degrees;
 using ObjexxFCL::fmt::F;
 using ObjexxFCL::fmt::I;
 using ObjexxFCL::fmt::LJ;

@@ -97,7 +97,7 @@ void rot_pose( core::pose::Pose & pose, Vec const & axis, Real const & ang, Vec 
 }
 
 
-Vec com(core::pose::Pose & pose, Size str, Size end) {
+Vec com(core::pose::Pose const & pose, Size str, Size end) {
 	Vec c(0,0,0);
 	for(Size i = str; i <= end; ++i) {
 		c += pose.xyz(AtomID(2,i));

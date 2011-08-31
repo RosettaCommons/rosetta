@@ -264,9 +264,12 @@ inline struct XFORM xrev(struct XFORM const x){
   r.t = multmv(r.R,multfv(-1.0f,x.t));
   return r;
 }
+inline struct VEC multxv(struct XFORM const x, struct VEC const v) {
+  return addvv(multmv(x.R,v),x.t);
+}
 inline struct XFORM const
-vvcxform(struct VEC const _x1, struct VEC const _y1,
-         struct VEC const _x2, struct VEC const _y2,
+vvcxform(struct VEC const _x1, struct VEC const _x2,
+         struct VEC const _y1, struct VEC const _y2,
          struct VEC const _c1, struct VEC const _c2)
 {
   struct VEC const x1 = normalizedv(_x1);
@@ -286,8 +289,8 @@ inline struct XFORM const
 stub(struct VEC const a, struct VEC const b, struct VEC const c)
 {
   struct VEC const x = normalizedv(subvv(a,b));
-  struct VEC const y = normalizedv(pproj(x,subvv(c,b)));
-  struct VEC const z = crossvv(x,y);
+  struct VEC const z = normalizedv(crossvv(x,subvv(c,b)));
+  struct VEC const y = crossvv(z,x);
   struct XFORM s;
   s.R = cols(x,y,z);
   s.t = a;
@@ -297,11 +300,33 @@ inline struct XFORM const
 stubrev(struct VEC const a, struct VEC const b, struct VEC const c)
 {
   struct VEC const x = normalizedv(subvv(a,b));
-  struct VEC const y = normalizedv(pproj(x,subvv(c,b)));
-  struct VEC const z = crossvv(x,y);
+  struct VEC const z = normalizedv(crossvv(x,subvv(c,b)));
+  struct VEC const y = crossvv(z,x);
   struct XFORM s;
   s.R = rows(x,y,z);
   s.t = multmv(s.R,vec(-a.x,-a.y,-a.z));
+  return s;
+}
+inline struct XFORM const
+stub(struct VEC const cen, struct VEC const a, struct VEC const b, struct VEC const c)
+{
+  struct VEC const x = normalizedv(subvv(a,b));
+  struct VEC const z = normalizedv(crossvv(x,subvv(c,b)));
+  struct VEC const y = crossvv(z,x);
+  struct XFORM s;
+  s.R = cols(x,y,z);
+  s.t = cen;
+  return s;
+}
+inline struct XFORM const
+stubrev(struct VEC const cen, struct VEC const a, struct VEC const b, struct VEC const c)
+{
+  struct VEC const x = normalizedv(subvv(a,b));
+  struct VEC const z = normalizedv(crossvv(x,subvv(c,b)));
+  struct VEC const y = crossvv(z,x);
+  struct XFORM s;
+  s.R = rows(x,y,z);
+  s.t = multmv(s.R,vec(-cen.x,-cen.y,-cen.z));
   return s;
 }
 
