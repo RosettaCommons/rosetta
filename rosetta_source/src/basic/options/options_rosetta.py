@@ -408,6 +408,7 @@ Options = Option_Group( '',
 		Option( 'pocket_surface_dist',	     'Real',default='2.5',desc='Distance to consider pocket surface'),
 		Option( 'pocket_buried_score',	     'Real',default='5.0',desc='Score given to deeply buried pocket points'),
 		Option( 'pocket_buried_dist',	     'Real',default='2.0',desc='Distance to consider pocket buried'),
+	 	Option( 'print_eggshell', 'Boolean', desc="print the eggshell points into a PDB file",default='false' ),
 	),
 
 	Option_Group('fingerprint',

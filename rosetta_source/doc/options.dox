@@ -1019,6 +1019,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Distance to consider pocket buried</dd><br>
 <dd>Default: 2.0</dd><br>
 </dl>
+<dl>
+<dt><b>-print_eggshell</b> \<Boolean\><dt>
+<dd>print the eggshell points into a PDB file</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>fingerprint</h2>
 <dl>

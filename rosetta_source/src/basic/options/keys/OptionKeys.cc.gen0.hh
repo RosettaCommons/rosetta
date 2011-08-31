@@ -214,6 +214,7 @@ namespace pocket_grid { RealOptionKey const pocket_surface_score( "pocket_grid:p
 namespace pocket_grid { RealOptionKey const pocket_surface_dist( "pocket_grid:pocket_surface_dist" );  }
 namespace pocket_grid { RealOptionKey const pocket_buried_score( "pocket_grid:pocket_buried_score" );  }
 namespace pocket_grid { RealOptionKey const pocket_buried_dist( "pocket_grid:pocket_buried_dist" );  }
+namespace pocket_grid { BooleanOptionKey const print_eggshell( "pocket_grid:print_eggshell" );  }
 namespace fingerprint { BooleanOptionKey const fingerprint( "fingerprint" );  }
 namespace fingerprint { RealOptionKey const atom_radius_scale( "fingerprint:atom_radius_scale" );  }
 namespace fingerprint { RealOptionKey const atom_radius_buffer( "fingerprint:atom_radius_buffer" );  }
@@ -563,4 +564,3 @@ namespace abinitio { RealOptionKey const HD_penalty( "abinitio:HD_penalty" );  }
 namespace abinitio { RealOptionKey const HD_fa_penalty( "abinitio:HD_fa_penalty" );  }
 namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_pred" );  }
 namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }
-namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
