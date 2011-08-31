@@ -1060,29 +1060,29 @@ def init(*args):
 
     #if not args: args = ["app"
     #                  ,"-database"
-    #                  ,os.path.join( os.path.expanduser("~"), "minirosetta_database")
+    #                  ,os.path.join( os.path.expanduser("~"), "rosetta_database")
     #                  ]
-    #if not args: args = ["app", "-database", "minirosetta_database", "-ex1", "-ex2aro"]
+    #if not args: args = ["app", "-database", "rosetta_database", "-ex1", "-ex2aro"]
 
     # Figure out database dir...
-    if os.path.isdir('minirosetta_database'):
-        database = os.path.abspath('minirosetta_database')
-        print 'Found minirosetta_database at %s, using it...' % database
+    if os.path.isdir('rosetta_database'):
+        database = os.path.abspath('rosetta_database')
+        print 'Found rosetta_database at %s, using it...' % database
 
     elif 'PYROSETTA_DATABASE' in os.environ:
         database = os.path.abspath( os.environ['PYROSETTA_DATABASE'] )
         print 'PYROSETTA_DATABASE environment variable was set to: %s... using it...' % database
 
-    elif os.path.isdir(os.environ['HOME'] + '/minirosetta_database'):
-        database = os.path.abspath(os.environ['HOME'] + '/minirosetta_database')
-        print 'Found minirosetta_database at home folder, ie: %s, using it...' % database
+    elif os.path.isdir(os.environ['HOME'] + '/rosetta_database'):
+        database = os.path.abspath(os.environ['HOME'] + '/rosetta_database')
+        print 'Found rosetta_database at home folder, ie: %s, using it...' % database
 
-    elif sys.platform == "cygwin" and os.path.isdir('/minirosetta_database'):
-        database = os.path.abspath('/minirosetta_database')
-        print 'Found minirosetta_database at root folder, ie: %s, using it...' % database
+    elif sys.platform == "cygwin" and os.path.isdir('/rosetta_database'):
+        database = os.path.abspath('/rosetta_database')
+        print 'Found rosetta_database at root folder, ie: %s, using it...' % database
 
     else:
-        print 'Could not find minirosetta_database! Check your paths or set PyRosetta environment vars. Exiting...'
+        print 'Could not find rosetta_database! Check your paths or set PyRosetta environment vars. Exiting...'
         sys.exit(1)
 
 
