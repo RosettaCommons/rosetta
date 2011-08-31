@@ -14,10 +14,8 @@
 #include <protocols/nonlocal/util.hh>
 
 // C/C++ headers
-#include <algorithm>
 #include <cmath>
 #include <iostream>
-#include <iterator>
 #include <string>
 
 // Utility headers
@@ -40,6 +38,7 @@
 #include <core/fragment/SecondaryStructure.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/sequence/Sequence.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
@@ -81,16 +80,14 @@ void nonlocal_groupings_from_alignment(utility::vector1<NLGrouping>* groupings) 
   PoseOP template_pose = core::import_pose::pose_from_pdb(option[in::file::template_pdb]()[1]);
 
   // Identify stretches of aligned and unaligned residues in the alignment.
-  // Elements are stored in increasing order of (residue) position.
-  Loops aligned_regions, unaligned_regions;
-  find_regions(*alignment, alignment->length(), &aligned_regions, &unaligned_regions);
-
   // Limit the length of the aligned regions to enhance conformational sampling.
-  // Chunk size is bounded by fragment length on the low end.
   FragmentIO io;
   FragSetOP fragments = io.read_data(option[in::file::frag3]());
   core::Size min_chunk_sz = fragments->max_frag_length();
   core::Size max_chunk_sz = option[OptionKeys::nonlocal::max_chunk_size]();
+
+  Loops aligned_regions, unaligned_regions;
+  find_regions(*alignment, min_chunk_sz, &aligned_regions, &unaligned_regions);
   limit_chunk_size(min_chunk_sz, max_chunk_sz, &aligned_regions);
 
   TR.Debug << "Aligned:" << std::endl << aligned_regions << std::endl;
@@ -199,7 +196,7 @@ void decompose(core::Size min_chunk_sz,
 }
 
 void find_regions(const core::sequence::SequenceAlignment& alignment,
-                  const core::Size num_residues,
+                  const core::Size unaligned_region_min_sz,
                   protocols::loops::Loops* aligned_regions,
                   protocols::loops::Loops* unaligned_regions) {
   using namespace basic::options;
@@ -208,60 +205,14 @@ void find_regions(const core::sequence::SequenceAlignment& alignment,
 
   assert(aligned_regions);
   assert(unaligned_regions);
-  TR.Debug << alignment << std::endl;
+  assert(unaligned_region_min_sz > 0);
 
-  // Due to the inherent ambiguity of sequence alignments, sample gapped regions
-  // stochastically. Set the minimum gap extension to 3 and the maximum to
-  // <extension_requested>
-  Size min_extension = 3;
-  Size extension_requested = option[OptionKeys::nonlocal::gap_sampling_extension]();
-  runtime_assert(extension_requested >= min_extension);
-  Size extension_actual = RG.random_range(min_extension, extension_requested);
-  TR.Debug << "Gap sampling extension: " << extension_actual << std::endl;
+  Size pose_space_num_residues = 0;
+  for (Size ii = 1; ii <= alignment.length(); ++ii)
+    pose_space_num_residues = std::max(pose_space_num_residues, alignment.sequence(1)->resnum(ii));
 
-  core::id::SequenceMapping map = alignment.sequence_mapping(1, 2);
-  map.show(TR.Debug);
-
-  // identify the unaligned regions, which will subsequently be inverted
-  utility::vector1<int> unaligned_residues;
-  for (Size i = 1; i <= num_residues; ++i) {
-    if (map[i] == 0) {
-      unaligned_residues.push_back(i);
-
-      // extend the gap to the left. don't forget that Size is an unsigned type.
-      // if we make <idx> a Size, we run the risk of getting back a very large
-      // (overflowed) positive number.
-      for (Size j = 1; j <= extension_actual; ++j) {
-        int idx = i - j;
-        if (idx > 0)
-          unaligned_residues.push_back(idx);
-      }
-
-      // extend the gap to the right
-      for (Size j = 1; j <= extension_actual; ++j) {
-        int idx = i + j;
-        int n = num_residues;
-        if (idx <= n)
-          unaligned_residues.push_back(idx);
-      }
-    }
-  }
-
-  // The algorithm for gap extension used above is very simple. If it encounters
-  // a gap in the alignment, it adds the position and its immediate predecessors
-  // and successors. This simplicity, comes at the cost of duplicates. Any
-  // contiguous sequence of gap characters with length > 1 contains duplicates.
-  // These are eliminated by the call to unique().
-  //
-  // Note: unique() assumes its input is sorted.
-  std::sort(unaligned_residues.begin(), unaligned_residues.end());
-  std::unique(unaligned_residues.begin(), unaligned_residues.end());
-
-  *unaligned_regions = protocols::comparative_modeling::pick_loops_unaligned(
-      num_residues, unaligned_residues, option[cm::min_loop_size]());
-
-  // find the aligned regions by inversion
-  *aligned_regions = unaligned_regions->invert(num_residues);
+  *unaligned_regions = protocols::comparative_modeling::loops_from_alignment( pose_space_num_residues, alignment, unaligned_region_min_sz);
+  *aligned_regions   = unaligned_regions->invert(pose_space_num_residues);
 }
 
 void generate_nonlocal_grouping(const protocols::loops::Loops& aligned_regions,

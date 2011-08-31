@@ -25,9 +25,6 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/nonlocal/util.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/nonlocal.OptionKeys.gen.hh>
 #include <utility/vector1.hh>
 
 namespace {
@@ -40,80 +37,65 @@ using utility::vector1;
 
 class NonlocalUtilTest : public CxxTest::TestSuite {
  public:
-  vector1<SequenceAlignment> alignments;
+  vector1<SequenceAlignment> alignments_;
   Loops regions;
 
   void setUp() {
-    using namespace basic::options;
-    using namespace basic::options::OptionKeys;
-
-    // Ensure consistent gap extension
     protocols_init();
-    option[OptionKeys::nonlocal::gap_sampling_extension](3);
 
     vector1<string> filenames;
     filenames.push_back("protocols/nonlocal/alignment.filt");
 
     core::sequence::read_all_alignments("grishin",
                                         filenames,
-                                        &alignments);
+                                        &alignments_);
   }
 
   void test_find_regions() {
-    const SequenceAlignment& alignment = alignments[1];
+    const SequenceAlignment& alignment = alignments_[1];
+    const Size unaligned_region_min_chunk_sz = 3;
 
     Loops aligned, unaligned;
     protocols::nonlocal::find_regions(alignment,
-                                      alignment.length(),
+                                      unaligned_region_min_chunk_sz,
                                       &aligned,
                                       &unaligned);
 
     // Verify aligned
-    TS_ASSERT_EQUALS(aligned.size(), 5);
-    TS_ASSERT(aligned[1] == Loop(8, 80));
-    TS_ASSERT(aligned[2] == Loop(88, 280));
-    TS_ASSERT(aligned[3] == Loop(288, 305));
-    TS_ASSERT(aligned[4] == Loop(315, 350));
-    TS_ASSERT(aligned[5] == Loop(359, 367));
+    TS_ASSERT_EQUALS(aligned.size(), 15);
+    TS_ASSERT(aligned[1] == Loop(6, 30));
+    TS_ASSERT(aligned[2] == Loop(34, 64));
+    TS_ASSERT(aligned[3] == Loop(68, 82));
+    TS_ASSERT(aligned[4] == Loop(86, 122));
+    TS_ASSERT(aligned[5] == Loop(126, 151));
+    TS_ASSERT(aligned[6] == Loop(155, 171));
+    TS_ASSERT(aligned[7] == Loop(175, 206));
+    TS_ASSERT(aligned[8] == Loop(210, 237));
+    TS_ASSERT(aligned[9] == Loop(241, 250));
+    TS_ASSERT(aligned[10] == Loop(254, 282));
+    TS_ASSERT(aligned[11] == Loop(286, 291));
+    TS_ASSERT(aligned[12] == Loop(295, 307));
+    TS_ASSERT(aligned[13] == Loop(313, 334));
+    TS_ASSERT(aligned[14] == Loop(338, 352));
+    TS_ASSERT(aligned[15] == Loop(356, 370));
 
     // Verify unaligned
-    TS_ASSERT_EQUALS(unaligned.size(), 6);
-    TS_ASSERT(unaligned[1] == Loop(1, 7));
-    TS_ASSERT(unaligned[2] == Loop(81, 87));
-    TS_ASSERT(unaligned[3] == Loop(281, 287));
-    TS_ASSERT(unaligned[4] == Loop(306, 314));
-    TS_ASSERT(unaligned[5] == Loop(351, 358));
-    TS_ASSERT(unaligned[6] == Loop(368, 390));
-  }
-
-  void test_limit_chunk_size() {
-    const SequenceAlignment& alignment = alignments[1];
-
-    Loops aligned, unaligned;
-    protocols::nonlocal::find_regions(alignment,
-                                      alignment.length(),
-                                      &aligned,
-                                      &unaligned);
-
-    Loops combined;
-    for (Loops::const_iterator i = aligned.begin(); i != aligned.end(); ++i)
-      combined.add_loop(*i);
-    for (Loops::const_iterator i = unaligned.begin(); i != unaligned.end(); ++i)
-      combined.add_loop(*i);
-    TS_ASSERT_EQUALS(combined.num_loop(), aligned.num_loop() + unaligned.num_loop());
-
-    Size min_chunk_sz = 7;
-    Size max_chunk_sz = 21;
-    protocols::nonlocal::limit_chunk_size(min_chunk_sz,
-                                          max_chunk_sz,
-                                          &combined);
-
-    TS_ASSERT(combined.num_loop() >= aligned.num_loop() + unaligned.num_loop());
-    for (Loops::const_iterator i = combined.begin(); i != combined.end(); ++i) {
-      const Loop& loop = *i;
-      TS_ASSERT(loop.length() >= min_chunk_sz);
-      TS_ASSERT(loop.length() <= max_chunk_sz);
-    }
+    TS_ASSERT_EQUALS(unaligned.size(), 15);
+    TS_ASSERT(unaligned[1] == Loop(1, 5));
+    TS_ASSERT(unaligned[2] == Loop(31, 33));
+    TS_ASSERT(unaligned[3] == Loop(65, 67));
+    TS_ASSERT(unaligned[4] == Loop(83, 85));
+    TS_ASSERT(unaligned[5] == Loop(123, 125));
+    TS_ASSERT(unaligned[6] == Loop(152, 154));
+    TS_ASSERT(unaligned[7] == Loop(172, 174));
+    TS_ASSERT(unaligned[8] == Loop(207, 209));
+    TS_ASSERT(unaligned[9] == Loop(238, 240));
+    TS_ASSERT(unaligned[10] == Loop(251, 253));
+    TS_ASSERT(unaligned[11] == Loop(283, 285));
+    TS_ASSERT(unaligned[12] == Loop(292, 294));
+    TS_ASSERT(unaligned[13] == Loop(308, 312));
+    TS_ASSERT(unaligned[14] == Loop(335, 337));
+    TS_ASSERT(unaligned[15] == Loop(353, 356));
   }
 };
 }  // anonymous namespace

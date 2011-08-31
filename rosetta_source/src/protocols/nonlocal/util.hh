@@ -41,7 +41,7 @@ void nonlocal_groupings_from_alignment(utility::vector1<NLGrouping>* groupings);
 
 // -- Utility methods -- not to be called directly
 void find_regions(const core::sequence::SequenceAlignment& alignment,
-                  const core::Size num_residues,
+                  const core::Size unaligned_region_min_sz,
                   protocols::loops::Loops* aligned_regions,
                   protocols::loops::Loops* unaligned_regions);
 
