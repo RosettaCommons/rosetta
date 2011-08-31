@@ -56,7 +56,7 @@ SigmoidFunc::read_data( std::istream& in ) {
 
 void
 SigmoidFunc::show_definition( std::ostream &out ) const {
-	out << "SIGMOID" << x0_ << " " << slope_ << std::endl;
+	out << "SIGMOID " << x0_ << " " << slope_ << std::endl;
 }
 
 Size
