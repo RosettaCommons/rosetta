@@ -243,7 +243,7 @@ P_AA::P_AA_pp_energy( conformation::Residue const & res ) const
 	AA const aa( res.aa()); //! Need to decide if/how/where to exclude NCAAs
 	if ( aa > chemical::num_canonical_aas ) return 0.0;
 
-	if ( ! res.is_terminus() ) //ToDo Also exclude chainbreaks
+	if ( ! res.is_terminus()  && ! res.is_virtual_residue()  )//ToDo Also exclude chainbreaks
 	{ // Probabilities for this amino acid are present in files and it is not a terminus
 		Angle const phi( res.mainchain_torsion( 1 ) );
 		Angle const psi( res.mainchain_torsion( 2 ) );
@@ -298,7 +298,7 @@ P_AA::get_Paa_pp_deriv(
 	Size const phi_id = 1;
 	Size const psi_id = 2;
 
-	if ( ! res.is_terminus() && ( tor_id.type() == id::BB && (tor_id.torsion() == phi_id || tor_id.torsion() == psi_id ))) {
+	if ( ! res.is_terminus() && ( tor_id.type() == id::BB && (tor_id.torsion() == phi_id || tor_id.torsion() == psi_id )) & ! res.is_virtual_residue() ) {
 		 //ToDo Also exclude chainbreaks
 		// Probabilities for this amino acid are present in files and it is not a terminus
 		Angle const phi( res.mainchain_torsion( phi_id ));

@@ -126,7 +126,7 @@ Ramachandran::eval_rama_score_all(
 
 	for ( int ii = 1; ii <= total_residue; ++ii )
 	{
-		if ( pose.residue(ii).is_protein()  && ! pose.residue(ii).is_terminus()  )
+		if ( pose.residue(ii).is_protein()  && ! pose.residue(ii).is_terminus() && ! pose.residue(ii).is_virtual_residue() )
 		{
 			Real rama_score,dphi,dpsi;
 			eval_rama_score_residue(pose.residue(ii),rama_score,dphi,dpsi);
@@ -305,7 +305,7 @@ Ramachandran::eval_rama_score_residue(
 	Real const psi
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2)));
 
-	if ( phi == 0.0 || psi == 0.0 || rsd.is_terminus() ) { // begin or end of chain
+	if ( phi == 0.0 || psi == 0.0 || rsd.is_terminus() || rsd.is_virtual_residue() ) { // begin or end of chain
 		rama = 0.0;
 		drama_dphi = 0.0;
 		drama_dpsi = 0.0;

@@ -94,6 +94,8 @@ DunbrackEnergy::residue_energy(
 	//++count_present;
 	//std::cout << "D" << count_present << std::flush;
 
+	if ( rsd.is_virtual_residue() ) return;
+
 	/* old		emap[ fa_dun ] = rot_lib_.rotamer_energy( rsd ); */
 	pack::dunbrack::SingleResidueRotamerLibraryCAP rotlib = RotamerLibrary::get_instance().get_rsd_library( rsd.type() ) ;
 	if ( rotlib ) {
@@ -170,6 +172,9 @@ DunbrackEnergy::eval_dof_derivative(
 		//		std::cerr << __FILE__<< ' ' << __LINE__ << ' ' << tor_id.rsd() << std::endl;
 		pack::dunbrack::SingleResidueRotamerLibraryCAP rotlib =
 			RotamerLibrary::get_instance().get_rsd_library( pose.residue( tor_id.rsd() ).type() );
+
+		if ( pose.residue( tor_id.rsd() ).is_virtual_residue() ) return 0.0;
+
 		if ( rotlib ) {
 			dunbrack::RotamerLibraryScratchSpace scratch;
 			rotlib->rotamer_energy_deriv

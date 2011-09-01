@@ -623,7 +623,7 @@ GeometricSolEnergy::get_atom_atom_geometric_solvation_for_acceptor(
 	// Virtual atom (e.g., Andrew Leaver-Fay's NV in proline) don't count.
 	// Maybe this should be a helper function inside residue.
 	chemical::AtomTypeSet const & atom_type_set( occ_rsd.atom_type_set() );
-	if (	atom_type_set[ occ_rsd.atom_type_index( occ_atm ) ].lj_radius()  < 0.001) return;
+	if (	occ_rsd.is_virtual( occ_atm ) ) return;
 
 	// the base atom isn't allowed to occlude solvent
 	// Note: In current implementation, intraresidue pairs aren't checked...

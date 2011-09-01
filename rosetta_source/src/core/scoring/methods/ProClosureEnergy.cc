@@ -123,6 +123,9 @@ ProClosureEnergy::residue_pair_energy(
 	using namespace conformation;
 	using namespace chemical;
 
+	if ( rsd1.is_virtual_residue() ) return;
+	if ( rsd2.is_virtual_residue() ) return;
+
 	if (( rsd2.aa() == aa_pro && rsd1.is_bonded( rsd2 ) &&
 			rsd1.seqpos() == rsd2.seqpos() - 1 ) ||
 			(rsd1.aa() == aa_pro && rsd1.is_bonded( rsd2 ) &&
@@ -285,6 +288,7 @@ ProClosureEnergy::eval_intrares_energy(
 {
 
 	if ( rsd.aa() == chemical::aa_pro ) {
+		if ( rsd.is_virtual_residue() )return;
 		Distance const dist2 = rsd.xyz( bbN_ ).distance_squared( rsd.xyz( scNV_ ) );
 		emap[ pro_close ] += dist2 / ( n_nv_dist_sd_ * n_nv_dist_sd_ );
 	}
@@ -315,6 +319,7 @@ ProClosureEnergy::eval_intrares_derivatives(
 
 	assert( rsd.has( scNV_ ) );
 	assert( rsd.has( bbN_ ) );
+	if ( rsd.is_virtual_residue() ) return;
 
 	Size NV_ind = rsd.atom_index( scNV_ );
 	Size N_ind = rsd.atom_index( bbN_ );

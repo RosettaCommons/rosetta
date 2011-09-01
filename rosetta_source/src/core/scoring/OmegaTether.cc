@@ -70,7 +70,7 @@ OmegaTether::eval_omega_score_all(
 
 	for ( int ii = 1; ii <= total_residue; ++ii )
 	{
-		if ( pose.residue(ii).is_protein()  && ! pose.residue(ii).is_terminus()  )
+		if ( pose.residue(ii).is_protein()  && ! pose.residue(ii).is_terminus() && ! pose.residue(ii).is_virtual_residue()  )
 		{
 			Real omega_score,dscore_domega;
 			eval_omega_score_residue(pose.residue(ii),omega_score,dscore_domega);
@@ -98,7 +98,7 @@ OmegaTether::eval_omega_score_residue(
 	Real const omega_angle
 		( nonnegative_principal_angle_degrees( rsd.mainchain_torsion(3)));
 
-	if ( rsd.is_upper_terminus() ) { // begin or end of chain
+	if ( rsd.is_upper_terminus() || rsd.is_virtual_residue() ) { // begin or end of chain
 		score = 0.0;
 		dscore_domega = 0.0;
 		return;

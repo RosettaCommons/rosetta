@@ -570,7 +570,7 @@ CarbonHBondEnergy::get_atom_atom_carbon_hbond_energy(
 */
 
 		//For some reason, the Virtual atom were screened and never reach this point.
-		if ( acc_rsd.atom_type(acc_atm).name() == virt_string_ ){
+	if ( acc_rsd.is_virtual( acc_atm ) ){
 			conformation::Residue const & residue_object=acc_rsd;
 			Size atomno=acc_atm;
 			tr << "ACCEPTOR    ";
@@ -580,7 +580,7 @@ CarbonHBondEnergy::get_atom_atom_carbon_hbond_energy(
 			return false;
 		}
 
-		if ( don_rsd.atom_type(don_atm).name() == virt_string_ ){
+	if ( don_rsd.is_virtual( don_atm ) ){
 			conformation::Residue const & residue_object=don_rsd;
 			Size atomno=don_atm;
 			tr << "DONOR_BASE  ";
@@ -590,7 +590,7 @@ CarbonHBondEnergy::get_atom_atom_carbon_hbond_energy(
 			return false;
 		}
 
-		if ( don_rsd.atom_type(don_h_atm).name() == virt_string_ ){
+	if ( don_rsd.is_virtual( don_h_atm) ){
 			conformation::Residue const & residue_object=don_rsd;
 			Size atomno=don_h_atm;
 			tr << "DONOR_HYDR  ";
