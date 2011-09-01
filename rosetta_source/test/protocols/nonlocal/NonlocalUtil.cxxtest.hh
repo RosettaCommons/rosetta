@@ -53,49 +53,51 @@ class NonlocalUtilTest : public CxxTest::TestSuite {
 
   void test_find_regions() {
     const SequenceAlignment& alignment = alignments_[1];
-    const Size unaligned_region_min_chunk_sz = 3;
+    const Size unaligned_region_min_chunk_sz = 7;
 
     Loops aligned, unaligned;
     protocols::nonlocal::find_regions(alignment,
                                       unaligned_region_min_chunk_sz,
                                       &aligned,
                                       &unaligned);
+    // Verify sizes
+    for (Loops::const_iterator i = aligned.begin(); i != aligned.end(); ++i)
+      TS_ASSERT(i->length() >= unaligned_region_min_chunk_sz);
+
+    for (Loops::const_iterator i = unaligned.begin(); i != unaligned.end(); ++i)
+      TS_ASSERT(i->length() >= unaligned_region_min_chunk_sz);
 
     // Verify aligned
-    TS_ASSERT_EQUALS(aligned.size(), 15);
-    TS_ASSERT(aligned[1] == Loop(6, 30));
-    TS_ASSERT(aligned[2] == Loop(34, 64));
-    TS_ASSERT(aligned[3] == Loop(68, 82));
-    TS_ASSERT(aligned[4] == Loop(86, 122));
-    TS_ASSERT(aligned[5] == Loop(126, 151));
-    TS_ASSERT(aligned[6] == Loop(155, 171));
-    TS_ASSERT(aligned[7] == Loop(175, 206));
-    TS_ASSERT(aligned[8] == Loop(210, 237));
-    TS_ASSERT(aligned[9] == Loop(241, 250));
-    TS_ASSERT(aligned[10] == Loop(254, 282));
-    TS_ASSERT(aligned[11] == Loop(286, 291));
-    TS_ASSERT(aligned[12] == Loop(295, 307));
-    TS_ASSERT(aligned[13] == Loop(313, 334));
-    TS_ASSERT(aligned[14] == Loop(338, 352));
-    TS_ASSERT(aligned[15] == Loop(356, 370));
+    TS_ASSERT_EQUALS(aligned.size(), 13);
+    TS_ASSERT(aligned[1] == Loop(8, 28));
+    TS_ASSERT(aligned[2] == Loop(36, 62));
+    TS_ASSERT(aligned[3] == Loop(70, 80));
+    TS_ASSERT(aligned[4] == Loop(88, 120));
+    TS_ASSERT(aligned[5] == Loop(128, 149));
+    TS_ASSERT(aligned[6] == Loop(157, 169));
+    TS_ASSERT(aligned[7] == Loop(177, 204));
+    TS_ASSERT(aligned[8] == Loop(212, 235));
+    TS_ASSERT(aligned[9] == Loop(256, 280));
+    TS_ASSERT(aligned[10] == Loop(297, 306));
+    TS_ASSERT(aligned[11] == Loop(314, 332));
+    TS_ASSERT(aligned[12] == Loop(340, 350));
+    TS_ASSERT(aligned[13] == Loop(358, 370));
 
     // Verify unaligned
-    TS_ASSERT_EQUALS(unaligned.size(), 15);
-    TS_ASSERT(unaligned[1] == Loop(1, 5));
-    TS_ASSERT(unaligned[2] == Loop(31, 33));
-    TS_ASSERT(unaligned[3] == Loop(65, 67));
-    TS_ASSERT(unaligned[4] == Loop(83, 85));
-    TS_ASSERT(unaligned[5] == Loop(123, 125));
-    TS_ASSERT(unaligned[6] == Loop(152, 154));
-    TS_ASSERT(unaligned[7] == Loop(172, 174));
-    TS_ASSERT(unaligned[8] == Loop(207, 209));
-    TS_ASSERT(unaligned[9] == Loop(238, 240));
-    TS_ASSERT(unaligned[10] == Loop(251, 253));
-    TS_ASSERT(unaligned[11] == Loop(283, 285));
-    TS_ASSERT(unaligned[12] == Loop(292, 294));
-    TS_ASSERT(unaligned[13] == Loop(308, 312));
-    TS_ASSERT(unaligned[14] == Loop(335, 337));
-    TS_ASSERT(unaligned[15] == Loop(353, 356));
+    TS_ASSERT_EQUALS(unaligned.size(), 13);
+    TS_ASSERT(unaligned[1] == Loop(1, 7));
+    TS_ASSERT(unaligned[2] == Loop(29, 35));
+    TS_ASSERT(unaligned[3] == Loop(63, 69));
+    TS_ASSERT(unaligned[4] == Loop(81, 87));
+    TS_ASSERT(unaligned[5] == Loop(121, 127));
+    TS_ASSERT(unaligned[6] == Loop(150, 156));
+    TS_ASSERT(unaligned[7] == Loop(170, 176));
+    TS_ASSERT(unaligned[8] == Loop(205, 211));
+    TS_ASSERT(unaligned[9] == Loop(236, 255));
+    TS_ASSERT(unaligned[10] == Loop(281, 296));
+    TS_ASSERT(unaligned[11] == Loop(307, 313));
+    TS_ASSERT(unaligned[12] == Loop(333, 339));
+    TS_ASSERT(unaligned[13] == Loop(351, 358));
   }
 };
 }  // anonymous namespace

@@ -211,7 +211,9 @@ void find_regions(const core::sequence::SequenceAlignment& alignment,
   for (Size ii = 1; ii <= alignment.length(); ++ii)
     pose_space_num_residues = std::max(pose_space_num_residues, alignment.sequence(1)->resnum(ii));
 
-  *unaligned_regions = protocols::comparative_modeling::loops_from_alignment( pose_space_num_residues, alignment, unaligned_region_min_sz);
+  protocols::comparative_modeling::bounded_loops_from_alignment(
+			pose_space_num_residues, unaligned_region_min_sz, alignment, unaligned_regions);
+
   *aligned_regions   = unaligned_regions->invert(pose_space_num_residues);
 }
 

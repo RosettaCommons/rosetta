@@ -69,9 +69,10 @@
 #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
-
 namespace protocols {
 namespace comparative_modeling {
+
+#define NO_LOOP_SIZE_CST 0
 
 using utility::vector1;
 using std::string;
@@ -101,6 +102,66 @@ core::sequence::SequenceAlignment alignment_from_cmd_line() {
 
 	runtime_assert( alns.size() > 0 );
 	return alns[1];
+}
+
+void bounded_loops_from_alignment(
+    const core::Size num_residues,
+    const core::Size min_size,
+    const core::sequence::SequenceAlignment& alignment,
+    protocols::loops::Loops* unaligned_regions) {
+
+  using core::Size;
+  using core::id::SequenceMapping;
+  using protocols::loops::Loop;
+  using protocols::loops::Loops;
+  assert(unaligned_regions);
+
+  const Size query_idx = 1;
+  const Size templ_idx = 2;
+  SequenceMapping mapping(alignment.sequence_mapping(query_idx, templ_idx));
+
+  vector1<Size> unaligned_residues;
+  for (Size resi = 1; resi <= num_residues; resi++) {
+    Size t_resi = mapping[resi];
+
+    bool const gap_exists(
+      t_resi == 0 || // query residue maps to a gap
+      (resi > 1 && mapping[ resi - 1 ] != t_resi - 1) ||            // last residue was gapped
+      (resi < num_residues && mapping[ resi + 1 ] != t_resi + 1));  // next residue is gapped
+
+    if (gap_exists) unaligned_residues.push_back( resi );
+  }
+
+  // Ensure the unaligned regions meet size constraints.
+  // Aligned regions are incorrect at this point.
+  Loops unaligned_ok = pick_loops_unaligned(num_residues, unaligned_residues, min_size);
+
+  // Ensure the aligned regions meet size constraints.
+  unaligned_residues.clear();
+  for (Loops::const_iterator i = unaligned_ok.begin(); i != unaligned_ok.end(); ++i) {
+    const Loop& loop = *i;
+    for (Size j = loop.start(); j <= loop.stop(); ++j) {
+      unaligned_residues.push_back(j);
+    }
+  }
+
+  vector1<Size> bounded_unaligned_residues(unaligned_residues);
+  for (Size i = 2; i <= unaligned_residues.size(); ++i) {
+    Size prev_residue = unaligned_residues[i - 1];
+    Size curr_residue = unaligned_residues[i];
+
+    // Length of the unaligned region is (curr - 1) - (prev + 1) + 1,
+    Size delta = curr_residue - prev_residue - 1;
+    if (delta == 0 || delta >= min_size)
+      continue;
+
+    for (Size j = (prev_residue + 1); j <= (curr_residue - 1); ++j)
+      bounded_unaligned_residues.push_back(j);
+  }
+  std::sort(bounded_unaligned_residues.begin(), bounded_unaligned_residues.end());
+
+  // Retrieve loops without affecting unaligned region length
+  *unaligned_regions = pick_loops_unaligned(num_residues, bounded_unaligned_residues, NO_LOOP_SIZE_CST);
 }
 
 protocols::loops::Loops loops_from_alignment(

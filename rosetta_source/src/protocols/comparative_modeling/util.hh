@@ -27,11 +27,7 @@
 #include <utility/vector1.fwd.hh>
 
 #include <map>
-
-#ifdef WIN32
 #include <string>
-#endif
-
 
 namespace protocols {
 namespace comparative_modeling {
@@ -41,6 +37,16 @@ protocols::loops::Loops loops_from_alignment(
 	core::sequence::SequenceAlignment const & aln,
 	core::Size const min_loop_size
 );
+
+/// @brief Identifies consecutive stretches of unaligned residues by scanning
+/// the alignment. Each unaligned region is guaranteed to have length at least
+/// <min_size>. Aligned regions share this property as well, and can be obtained
+/// by calling the invert() method on the output parameter <unaligned_regions>.
+void bounded_loops_from_alignment(
+    const core::Size num_residues,
+    const core::Size min_size,
+    const core::sequence::SequenceAlignment& alignment,
+    protocols::loops::Loops* unaligned_regions);
 
 protocols::loops::Loops loops_from_transitive_alignments(
 	core::Size nres1,
