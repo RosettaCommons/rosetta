@@ -20,6 +20,7 @@
 #include <protocols/frag_picker/scores/FragmentScoreManager.hh>
 
 #include <protocols/frag_picker/scores/SequenceIdentity.hh>
+#include <protocols/frag_picker/scores/ConstScore.hh>
 #include <protocols/frag_picker/scores/BFactor.hh>
 #include <protocols/frag_picker/scores/DisulfideIdentity.hh>
 #include <protocols/frag_picker/scores/DisulfideDistance.hh>
@@ -301,6 +302,7 @@ FragmentScoreManager::FragmentScoreManager() {
 	register_score_maker(new MakeGunnCostScore());
 	register_score_maker(new MakeABEGO_SS_Score());
 	register_score_maker(new MakeFragmentAllAtomCrmsd());
+	register_score_maker(new MakeConstScore());
 	zeros_score_later_ = true;
 }
 
