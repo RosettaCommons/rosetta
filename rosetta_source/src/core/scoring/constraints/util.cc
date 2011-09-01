@@ -255,7 +255,7 @@ add_coordinate_constraints( pose::Pose & pose ) {
 	using namespace core::conformation;
 	using namespace core::scoring::constraints;
 
-	Real const coord_sdev( 2.0 );
+	Real const coord_sdev( 10.0 );
 	Size const my_anchor( 1 ); //anchor atom on first residue?
 
 	ConstraintSetOP cst_set = pose.constraint_set()->clone();
