@@ -490,11 +490,16 @@ namespace chunk { FileOptionKey const pdb2( "chunk:pdb2" );  }
 namespace chunk { FileOptionKey const loop2( "chunk:loop2" );  }
 namespace nonlocal { BooleanOptionKey const nonlocal( "nonlocal" );  }
 namespace nonlocal { FileOptionKey const moves( "nonlocal:moves" );  }
+namespace nonlocal { StringOptionKey const mode( "nonlocal:mode" );  }
 namespace nonlocal { StringOptionKey const builder( "nonlocal:builder" );  }
+namespace nonlocal { StringOptionKey const search( "nonlocal:search" );  }
 namespace nonlocal { BooleanOptionKey const randomize_missing( "nonlocal:randomize_missing" );  }
 namespace nonlocal { IntegerOptionKey const gap_sampling_extension( "nonlocal:gap_sampling_extension" );  }
 namespace nonlocal { IntegerOptionKey const max_chunk_size( "nonlocal:max_chunk_size" );  }
 namespace nonlocal { RealOptionKey const rdc_weight( "nonlocal:rdc_weight" );  }
+namespace nonlocal { IntegerOptionKey const ramp_constraints_cycles( "nonlocal:ramp_constraints_cycles" );  }
+namespace nonlocal { BooleanOptionKey const ramp_chainbreaks( "nonlocal:ramp_chainbreaks" );  }
+namespace nonlocal { BooleanOptionKey const ramp_constraints( "nonlocal:ramp_constraints" );  }
 namespace abinitio { RealOptionKey const prob_perturb_weights( "abinitio:prob_perturb_weights" );  }
 namespace abinitio { BooleanOptionKey const abinitio( "abinitio" );  }
 namespace abinitio { BooleanOptionKey const membrane( "abinitio:membrane" );  }
@@ -558,9 +563,3 @@ namespace abinitio { BooleanOptionKey const close_chbrk( "abinitio:close_chbrk" 
 namespace abinitio { BooleanOptionKey const include_stage5( "abinitio:include_stage5" );  }
 namespace abinitio { BooleanOptionKey const close_loops_by_idealizing( "abinitio:close_loops_by_idealizing" );  }
 namespace abinitio { BooleanOptionKey const optimize_cutpoints_using_kic( "abinitio:optimize_cutpoints_using_kic" );  }
-namespace abinitio { IntegerOptionKey const optimize_cutpoints_margin( "abinitio:optimize_cutpoints_margin" );  }
-namespace abinitio { FileOptionKey const HD_EX_Info( "abinitio:HD_EX_Info" );  }
-namespace abinitio { RealOptionKey const HD_penalty( "abinitio:HD_penalty" );  }
-namespace abinitio { RealOptionKey const HD_fa_penalty( "abinitio:HD_fa_penalty" );  }
-namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_pred" );  }
-namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }

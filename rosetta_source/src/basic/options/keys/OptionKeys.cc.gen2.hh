@@ -1,3 +1,7 @@
+namespace wum { StringOptionKey const extra_scorefxn( "wum:extra_scorefxn" );  }
+namespace wum { FileOptionKey const extra_scorefxn_ref_structure( "wum:extra_scorefxn_ref_structure" );  }
+namespace wum { IntegerOptionKey const extra_scorefxn_relax( "wum:extra_scorefxn_relax" );  }
+namespace wum { RealOptionKey const trim_proportion( "wum:trim_proportion" );  }
 namespace lh { BooleanOptionKey const lh( "lh" );  }
 namespace lh { StringOptionKey const db_prefix( "lh:db_prefix" );  }
 namespace lh { IntegerVectorOptionKey const loopsizes( "lh:loopsizes" );  }
@@ -427,10 +431,6 @@ namespace loops { IntegerOptionKey const max_kic_build_attempts( "loops:max_kic_
 namespace loops { IntegerOptionKey const remodel_kic_attempts( "loops:remodel_kic_attempts" );  }
 namespace loops { IntegerOptionKey const max_kic_perturber_samples( "loops:max_kic_perturber_samples" );  }
 namespace loops { BooleanOptionKey const nonpivot_torsion_sampling( "loops:nonpivot_torsion_sampling" );  }
-namespace loops { BooleanOptionKey const fix_ca_bond_angles( "loops:fix_ca_bond_angles" );  }
-namespace loops { BooleanOptionKey const kic_use_linear_chainbreak( "loops:kic_use_linear_chainbreak" );  }
-namespace loops { BooleanOptionKey const allow_omega_move( "loops:allow_omega_move" );  }
-namespace loops { BooleanOptionKey const allow_takeoff_torsion_move( "loops:allow_takeoff_torsion_move" );  }
 namespace loops { IntegerOptionKey const extend_length( "loops:extend_length" );  }
 namespace loops { IntegerOptionKey const outer_cycles( "loops:outer_cycles" );  }
 namespace loops { IntegerOptionKey const max_inner_cycles( "loops:max_inner_cycles" );  }
@@ -563,4 +563,3 @@ namespace AnchoredDesign { namespace testing { BooleanOptionKey const delete_int
 namespace AnchoredDesign { namespace testing { FileOptionKey const RMSD_only_this( "AnchoredDesign:testing:RMSD_only_this" );  } }
 namespace AnchoredDesign { namespace testing { BooleanOptionKey const anchor_noise_constraints_mode( "AnchoredDesign:testing:anchor_noise_constraints_mode" );  } }
 namespace DenovoProteinDesign { BooleanOptionKey const DenovoProteinDesign( "DenovoProteinDesign" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const redesign_core( "DenovoProteinDesign:redesign_core" );  }

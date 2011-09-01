@@ -12,11 +12,12 @@
 /// @author Tim Jacobs
 
 //Unit headers
-#include <devel/init.hh>
-#include <apps/pilot/tjacobs/HelixAssemblyMover.hh>
+#include <devel/helixAssembly/HelixAssemblyMover.hh>
+
+//Package headers
+#include <devel/helixAssembly/HelixAssemblyJob.hh>
 
 //core library
-#include <core/init.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
@@ -28,14 +29,6 @@
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/EnergyMap.hh>
-
-// ObjexxFCL Headers
-#include <ObjexxFCL/FArray2D.fwd.hh>
-#include <ObjexxFCL/FArray2.hh>
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/ObserverMulti.hh>
-#include <ObjexxFCL/DynamicIndexRange.hh>
-#include <ObjexxFCL/FArrayInitializer.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -55,6 +48,14 @@
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/conformation/Residue.hh>
 
+// ObjexxFCL Headers
+#include <ObjexxFCL/FArray2D.fwd.hh>
+#include <ObjexxFCL/FArray2.hh>
+#include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/ObserverMulti.hh>
+#include <ObjexxFCL/DynamicIndexRange.hh>
+#include <ObjexxFCL/FArrayInitializer.hh>
+
 //utility & numeric
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
@@ -69,18 +70,14 @@
 //protocols
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/StructureRestrictor.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-
-//JD2
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
 
 // option key includes
 #include <basic/options/util.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/HelixAssembly.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-//#include <core/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Utility Headers
@@ -96,30 +93,13 @@
 #include <algorithm>
 #include <iterator>
 
-//static basic::Tracer TR( "HelixAssemblyMover" );
 using namespace std;
 using namespace core;
 using namespace core::pose;
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
 
 static basic::Tracer TR("HelixAssemblyMover");
-
-//application specific options
-namespace HelixAssembly{
-  basic::options::FileOptionKey const foobar( "foobar" ); //
-
-  basic::options::FileOptionKey const query_structure_path( "query_structure" ); //
-  basic::options::IntegerOptionKey const frag1_start( "frag1_start" ); //
-  basic::options::IntegerOptionKey const frag1_end( "frag1_end" ); //
-  basic::options::IntegerOptionKey const frag2_start( "frag2_start" ); //
-  basic::options::IntegerOptionKey const frag2_end( "frag2_end" ); //
-  basic::options::FileOptionKey const frag2_path( "frag2" ); //
-  basic::options::RealOptionKey const single_helix_rmsd_cutoff( "single_helix_rmsd_cutoff" );
-  basic::options::RealOptionKey const helix_pair_rmsd_cutoff( "helix_pair_rmsd_cutoff" );
-  basic::options::RealOptionKey const helix_cap_distance_cutoff( "helix_cap_distance_cutoff" );
-  basic::options::RealOptionKey const helix_contact_distance_cutoff( "helix_contact_distance_cutoff" );
-  basic::options::IntegerOptionKey const minimum_helix_contacts( "minimum_helix_contacts" );
-  basic::options::IntegerOptionKey const helices_to_add("helices_to_add");
-}
 
 ///@brief
 HelixAssemblyMover::HelixAssemblyMover() :
@@ -518,11 +498,11 @@ void HelixAssemblyMover::superimposeBundles(Pose & pose1, Pose const & pose2){
 }
 
 ///@details
-utility::vector1<std::string> HelixAssemblyMover::apply( Pose & pose ){
+utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob & job ){
 
-  cout << "In apply!" << endl;
+//  cout << "In apply!" << endl;
 
-  utility::vector1<std::string> returnPdbs;
+  utility::vector1<HelixAssemblyJob> new_jobs;
 ///DEBUG////
 //  stringstream foo;
 //  pose.dump_pdb(foo, "");
@@ -531,35 +511,38 @@ utility::vector1<std::string> HelixAssemblyMover::apply( Pose & pose ){
 //  return returnPdbs;
 ////END DEBUG////
 
-  utility::file::FileName filename (pose.pdb_info()->name());
-  TR << "working on file: " << filename << "\n";
-  std::string baseOutputName = filename.base() + "_hit_";
+//  utility::file::FileName filename (pose.pdb_info()->name());
+  cout << "working on file: " << job.get_job_name() << endl;
+//  std::string baseOutputName = filename.base() + "_hit_";
 
   Pose fullQueryStructure;
+  core::import_pose::pose_from_pdbstring(fullQueryStructure, job.get_query_structure());
+  cout << "Full Query Structure is " << fullQueryStructure.total_residue() << " residues" << endl;
 
-//  core::import_pose::pose_from_pdb(fullQueryStructure, get_query_structure_path(), false);
-//  core::import_pose::pose_from_pdb(helixFragment1, get_frag1_path(), false);
-//  core::import_pose::pose_from_pdb(helixFragment2, get_frag2_path(), false);
+  Pose search_structure;
+  core::import_pose::pose_from_pdbstring(search_structure, job.get_search_structure());
+  cout << "Search Structure is " << search_structure.total_residue() << " residues" << endl;
 
-//  if(get_query_structure_string() != "" ){
-      core::import_pose::pose_from_pdbstring(fullQueryStructure, get_query_structure_string());
-//  }
-//  else{
-//      core::import_pose::pose_from_pdb(fullQueryStructure, get_query_structure_path(), false);
-//  }
-  Pose helixFragment1(fullQueryStructure, get_frag1_start(), get_frag1_end());
-  Pose helixFragment2(fullQueryStructure, get_frag2_start(), get_frag2_end());
+  Pose helixFragment1(fullQueryStructure, job.get_frag1_start(), job.get_frag1_end());
+  Pose helixFragment2(fullQueryStructure, job.get_frag2_start(), job.get_frag2_end());
+  cout << "Fragment 1 is " << helixFragment1.total_residue() << " residues" << endl;
+  cout << "Fragment 2 is " << helixFragment2.total_residue() << " residues" << endl;
+
+  Pose combined_query_fragments = combinePoses(helixFragment1, helixFragment2);
 
   //set up dssp info - necessary in order to find helices based on secondary structure
-  core::scoring::dssp::Dssp dssp( pose );
-  dssp.insert_ss_into_pose( pose );
+  core::scoring::dssp::Dssp dssp( search_structure );
+  dssp.insert_ss_into_pose( search_structure );
 
   utility::vector1< std::pair< Size,Size > > helix_endpts;
-  helix_endpts = findHelices(pose);
+  helix_endpts = findHelices(search_structure);
+  cout << "Found " << helix_endpts.size() << " helices in search structure" << endl;
 
   //search helix poses for all close RMSD matches to each query fragment
-  utility::vector1<Size> fragment1Results = findFragments(pose, helixFragment1, helix_endpts);
-  utility::vector1<Size> fragment2Results = findFragments(pose, helixFragment2, helix_endpts);
+  utility::vector1<Size> fragment1Results = findFragments(search_structure, helixFragment1, helix_endpts);
+  utility::vector1<Size> fragment2Results = findFragments(search_structure, helixFragment2, helix_endpts);
+
+  cout << "Found " << fragment1Results.size() << " fragments for frag1 & " << fragment2Results.size() << " for frag2." << endl;
 
   //keep track of number of hits in structure, for output filename purposes
   Size resultsCounter;
@@ -570,114 +553,71 @@ utility::vector1<std::string> HelixAssemblyMover::apply( Pose & pose ){
 
   //loop through lists of fragments for each helix and check rmsd to the full query structure
   for(Size i=1; i<=fragment1Results.size(); i++){
-
       for(Size j=1; j<=fragment2Results.size(); j++){
-          Pose fragment1(pose, fragment1Results[i], fragment1Results[i]+helixFragment1.total_residue()-1);
-          Pose fragment2(pose, fragment2Results[j], fragment2Results[j]+helixFragment2.total_residue()-1);
-
-          //combine the poses in both possible ways to maximize RMSD
+          Pose fragment1(search_structure, fragment1Results[i], fragment1Results[i]+helixFragment1.total_residue()-1);
+          Pose fragment2(search_structure, fragment2Results[j], fragment2Results[j]+helixFragment2.total_residue()-1);
           Pose combinedResultFragments(combinePoses(fragment1, fragment2));
 
-          Real bbrmsd = core::scoring::bb_rmsd_including_O(fullQueryStructure, combinedResultFragments);
-
-          Real carmsd;
+          Real bbrmsd = core::scoring::bb_rmsd_including_O(combined_query_fragments, combinedResultFragments);
 
           if(bbrmsd <= helix_pair_rmsd_cutoff_){
 
               TR << "combined bb_atom RMSD(" << i << ", " << j << "): " << bbrmsd << endl;
 
-              utility::vector1< std::pair< Size,Size > > helix_partners = findPartnerHelices(pose, fragment1, fragment2,
+              utility::vector1< std::pair< Size,Size > > helix_partners = findPartnerHelices(search_structure, fragment1, fragment2,
                   fragment1Results[i], fragment2Results[j], helix_endpts);
 
               for(Size k=1; k<=helix_partners.size(); k++){
 
-                  Pose thirdHelix(pose, helix_partners[k].first, helix_partners[k].second);
+                  Pose thirdHelix(search_structure, helix_partners[k].first, helix_partners[k].second);
 
                   //superimpose the found query helix pair onto the found pair
                   superimposeBundles(fullQueryStructure, combinedResultFragments);
 
                   //combine query structure with third helix
-                  Pose threeHelixBundle = combinePoses(fullQueryStructure, thirdHelix);
+                  Size third_helix_start(fullQueryStructure.total_residue()+1);
+                  Pose new_bundle = combinePoses(fullQueryStructure, thirdHelix);
+                  Size third_helix_end(new_bundle.total_residue());
 
-                  //output
-//                  std::string threeHelixOutput = baseOutputName + utility::to_string(resultsCounter) +
-//                      "_threeHelix_" + utility::to_string(threeHelixCounter) +".pdb";
-//                  TR << "outputting file: " << threeHelixOutput << "\n";
+                  //need to check here for backbone clashes
+
                   stringstream tempStream;
-                  threeHelixBundle.dump_pdb(tempStream, "");
-                  std::string outputPdbString = tempStream.str();
-                  returnPdbs.push_back(outputPdbString);
-//                  threeHelixCounter++;
+                  new_bundle.dump_pdb(tempStream, "");
+                  std::string new_bundle_string = tempStream.str();
+
+                  HelixAssemblyJob new_job1;
+                  new_job1.set_query_structure(new_bundle_string);
+                  new_job1.set_round(job.get_round()+1);
+
+                  new_job1.set_frag1_start(third_helix_start);
+                  new_job1.set_frag1_end(third_helix_end);
+
+                  new_job1.set_frag2_start(job.get_frag1_start());
+                  new_job1.set_frag2_start(job.get_frag1_end());
+
+                  new_job1.set_job_name(job.get_job_name());
+
+                  new_jobs.push_back(new_job1);
+
+                  HelixAssemblyJob new_job2;
+                  new_job2.set_query_structure(new_bundle_string);
+                  new_job2.set_round(job.get_round()+1);
+
+                  new_job2.set_frag1_start(third_helix_start);
+                  new_job2.set_frag1_end(third_helix_end);
+
+                  new_job2.set_frag2_start(job.get_frag2_start());
+                  new_job2.set_frag2_start(job.get_frag2_end());
+
+                  new_job2.set_job_name(job.get_job_name());
+
+                  new_jobs.push_back(new_job2);
+
               }
 
               resultsCounter++;
           }
       }
   }
-  return returnPdbs;
+  return new_jobs;
 }//apply
-
-// run protocol
-//int
-//main( int argc, char * argv [] )
-//{
-//        using namespace basic::options;
-//        using namespace basic::options::OptionKeys;
-//        using namespace core;
-//        using namespace std;
-//
-//        option.add( HelixAssembly::query_structure_path, "" );
-//        option.add( HelixAssembly::frag1_start, "" );
-//        option.add( HelixAssembly::frag1_end, "" );
-//        option.add( HelixAssembly::frag2_start, "" );
-//        option.add( HelixAssembly::frag2_end, "" );
-//        option.add( HelixAssembly::single_helix_rmsd_cutoff, "");
-//        option.add( HelixAssembly::helix_pair_rmsd_cutoff, "");
-//        option.add( HelixAssembly::helix_cap_distance_cutoff, "");
-//        option.add( HelixAssembly::helix_contact_distance_cutoff, "");
-//        option.add( HelixAssembly::minimum_helix_contacts, "");
-//
-//        option.add( HelixAssembly::foobar, "");
-//
-//        // initialize core
-//        devel::init(argc, argv);
-//
-//        utility::vector1< std::string > inputFile( option[ HelixAssembly::foobar ].value() );
-//
-//        utility::vector1<std::string> pdbsToSearch;
-//
-//        for ( size_t i=1; i<= inputFile.size(); ++i ) {
-//            utility::io::izstream data( inputFile[i].c_str() );
-//            if ( !data.good() ) {
-//                utility_exit_with_message("unable to open input file file: "+inputFile[i]+"\n");
-//            }
-//            while ( data.good() ) {
-//                std::string name;
-//                data.getline(name);
-//                if ( data.good() ) pdbsToSearch.push_back( name );
-//            }
-//        }
-//
-//        TR << "TEST: " << pdbsToSearch[1];
-//
-//        Pose temp;
-//        core::import_pose::pose_from_pdb(temp, pdbsToSearch[1], false);
-//
-//        HelixAssemblyMover helixAssembler;
-//        utility::vector1<std::string> outputPdbs = helixAssembler.apply(temp);
-//
-//        std::TR << "number of pdbs to output: " << outputPdbs.size() << std::endl;
-//        for(core::Size i=1; i<=outputPdbs.size(); i++){
-//            utility::io::ozstream outputFile("horrayHelixes_" + utility::to_string(i) + ".pdb");
-//            outputFile << outputPdbs[i];
-//            outputFile.close();
-//        }
-//        std::TR << "Done! -------------------------------\n";
-////
-//        // initialize core
-//        devel::init(argc, argv);
-////
-////        protocols::jd2::JobDistributor::get_instance()->go( new HelixAssemblyMover() );
-////
-////        std::TR << "Done! -------------------------------\n";
-//}

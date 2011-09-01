@@ -17,6 +17,7 @@
 
 #include <core/pose/Pose.hh>
 #include <protocols/moves/Mover.hh>
+#include <devel/helixAssembly/HelixAssemblyJob.hh>
 
 //mover definition
 //class HelixAssemblyMover : public protocols::moves::Mover {
@@ -69,7 +70,7 @@ public:
 
         void superimposeBundles(core::pose::Pose & pose1, const core::pose::Pose & pose2);
 
-        utility::vector1<std::string> apply(core::pose::Pose & pose);
+        utility::vector1<HelixAssemblyJob> apply(HelixAssemblyJob & job);
 
 
 private:

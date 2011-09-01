@@ -495,11 +495,16 @@ option.add( basic::options::OptionKeys::chunk::pdb2, "file for chunk2" );
 option.add( basic::options::OptionKeys::chunk::loop2, "rigid region for chunk2" );
 option.add( basic::options::OptionKeys::nonlocal::nonlocal, "nonlocal option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::nonlocal::moves, "Enable non-local moves in the early stages of abinitio. File specifying groups of fragments to be applied simultaneously" );
-option.add( basic::options::OptionKeys::nonlocal::builder, "One of {simple, star}. Specifies how non-local abinitio should construct the fold tree" ).def("star");
+option.add( basic::options::OptionKeys::nonlocal::mode, "One of {rigid, semirigid}. Specifies how non-local abinitio should treat fragments" ).def("RIGID");
+option.add( basic::options::OptionKeys::nonlocal::builder, "One of {consecutive, simple, star}. Specifies how non-local abinitio should construct the fold tree" ).def("simple");
+option.add( basic::options::OptionKeys::nonlocal::search, "One of {refine, explore}. Specifies the search strategy to be applied. In refinement mode, conformational search does not wander too far from the starting structure. This is achieved by using small fragments and a low temperature. In exploration mode, search is allowed to traverse a much larger swath of conformational space." ).def("refine");
 option.add( basic::options::OptionKeys::nonlocal::randomize_missing, "Randomize the coordinates of missing loops. This occurs often in broken-chain folding from a sequence alignment and template pdb. Default value is false to preserve existing behavior in ThreadingJobInputter" ).def(false);
 option.add( basic::options::OptionKeys::nonlocal::gap_sampling_extension, "When constructing NLGrouping's from SequenceAlignments, extend gapped regions by at least 3 and at most N positions to enhance sampling" ).def(5);
 option.add( basic::options::OptionKeys::nonlocal::max_chunk_size, "Maximum allowable chunk size for comparative modeling inputs. If the chunk exceeds this threshold, it is recursively decomposed into smaller pieces." ).def(20);
 option.add( basic::options::OptionKeys::nonlocal::rdc_weight, "Weight for the rdc energy term in nonlocal abinitio protocol" ).def(5);
+option.add( basic::options::OptionKeys::nonlocal::ramp_constraints_cycles, "Ramp maximum sequence separation, linear chainbreak weight, and atom_pair_constraint weight every N cycles" ).def(100);
+option.add( basic::options::OptionKeys::nonlocal::ramp_chainbreaks, "Ramps the linear chainbreak term up within a stage of the simulation (intra) and up across stages of the simulation (inter)" ).def(true);
+option.add( basic::options::OptionKeys::nonlocal::ramp_constraints, "Ramps the atom pair constraint term up within a stage of the simulation (intra) and down across stages of the simulation (inter)" ).def(true);
 option.add( basic::options::OptionKeys::abinitio::prob_perturb_weights, "Probability of perturbing score function weights" ).lower(0).upper(1).def(0);
 option.add( basic::options::OptionKeys::abinitio::abinitio, "Ab initio mode" );
 option.add( basic::options::OptionKeys::abinitio::membrane, "will use the membrane abinitio protocol. sequential insertion of TMH" ).def(false);
@@ -563,15 +568,15 @@ option.add( basic::options::OptionKeys::abinitio::close_chbrk, "Chain break clos
 option.add( basic::options::OptionKeys::abinitio::include_stage5, "stage5 contains small moves only" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::close_loops_by_idealizing, "close loops by idealizing the structure after stage 4" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_using_kic, "optimize around cutpoints using kinematic relax" ).def(false);
-option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_margin, "" ).def(5);
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_margin, "" ).def(5);
 option.add( basic::options::OptionKeys::abinitio::HD_EX_Info, "input list of residues with low amide protection " );
 option.add( basic::options::OptionKeys::abinitio::HD_penalty, "penatlty for each inconsistent pairing with HD data " ).def(0.1);
 option.add( basic::options::OptionKeys::abinitio::HD_fa_penalty, "penalty for each Hbond donor inconsistent with HD donor" ).def(0.1);
 option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with interior/exterior predictions for strands" );
 option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
@@ -693,10 +698,7 @@ option.add( basic::options::OptionKeys::score::symE_bonus, "Energy bonus per mat
 option.add( basic::options::OptionKeys::score::NV_lbound, "Lower Bound for neighbor Vector scoring" ).def(3.3);
 option.add( basic::options::OptionKeys::score::NV_ubound, "Upper Bound for neighbor Vector scoring" ).def(11.1);
 option.add( basic::options::OptionKeys::score::NV_table, "Location of path to potential lookup table" ).def("neighbor_vector_score.histogram");
-option.add( basic::options::OptionKeys::score::syn_chi_penalty, "penalty for syn/chi conformation" ).def(0.0);
 option.add( basic::options::OptionKeys::score::disable_orientation_dependent_rna_ch_o_bonds, "Do not use orientation-dependent potential for RNA carbon hydrogen bonds" ).def(false);
-option.add( basic::options::OptionKeys::score::rna_torsion_potential, "In RNA torsion calculation, directory containing 1D torsional potentials" ).def("FINAL_Mar_24_2010_new_delta_zeta_chi");
-option.add( basic::options::OptionKeys::score::include_neighbor_base_stacks, "In RNA score calculation, include stacks between i,i+1" ).def(false);
 option.add( basic::options::OptionKeys::score::find_neighbors_3dgrid, "Use a 3D lookup table for doing neighbor calculations.  For spherical, well-distributed conformations, O(N) neighbor detection instead of general O(NlgN)" ).def(false);
 option.add( basic::options::OptionKeys::score::seqdep_refene_fname, "Filename for table containing sequence-dependent reference energies" );
 option.add( basic::options::OptionKeys::score::secondary_seqdep_refene_fname, "Additional filename for table containing sequence-dependent reference energies" );
@@ -1133,13 +1135,13 @@ option.add( basic::options::OptionKeys::wum::wum, "wum option group" ).legal(tru
 option.add( basic::options::OptionKeys::wum::n_slaves_per_master, "A value between 32 and 128 is usually recommended" ).def(64);
 option.add( basic::options::OptionKeys::wum::n_masters, "Manual override for -n_slaves_per_master. How many master nodes should be spawned ? 1 by default. generall 1 for eery 256-512 cores is recommended depending on master workload" ).def(1);
 option.add( basic::options::OptionKeys::wum::memory_limit, "Memory limit for queues (in kB) " ).def(0);
-option.add( basic::options::OptionKeys::wum::extra_scorefxn, "Extra score function for post-batchrelax-rescoring" );
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::wum::extra_scorefxn, "Extra score function for post-batchrelax-rescoring" );
 option.add( basic::options::OptionKeys::wum::extra_scorefxn_ref_structure, "Extra score function for post-batchrelax-rescoring reference structure for superimposition (for scorefunctions that depend on absolute coordinates such as electron denisty)" );
 option.add( basic::options::OptionKeys::wum::extra_scorefxn_relax, "After doing batch relax and adding any extra_scorefunction terms do another N fast relax rounds (defaut=0)" ).def(0);
 option.add( basic::options::OptionKeys::wum::trim_proportion, "No description" ).def(0.0);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::lh, "lh option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::lh::lh, "lh option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::lh::db_prefix, "stem for loop database" ).def("loopdb");
 option.add( basic::options::OptionKeys::lh::loopsizes, "Which loopsizes to use" ).def(10).def(15).def(20);
 option.add( basic::options::OptionKeys::lh::num_partitions, "Number of partitions to split the database into" ).def(1);
@@ -1568,10 +1570,6 @@ option.add( basic::options::OptionKeys::loops::max_kic_build_attempts, "Number o
 option.add( basic::options::OptionKeys::loops::remodel_kic_attempts, "Number of kic attempts per inner cycle during perturb_kic protocol" ).def(300);
 option.add( basic::options::OptionKeys::loops::max_kic_perturber_samples, "Maximum number of kinematic perturber samples" ).def(2000);
 option.add( basic::options::OptionKeys::loops::nonpivot_torsion_sampling, "enables sampling of non-pivot residue torsions when the kinematic loop closure segment length is > 3" ).legal(true).legal(false).def(true);
-option.add( basic::options::OptionKeys::loops::fix_ca_bond_angles, "Freezes N-CA-C bond angles in KIC loop sampling" ).legal(true).legal(false).def(false);
-option.add( basic::options::OptionKeys::loops::kic_use_linear_chainbreak, "Use linear_chainbreak instead of (harmonic) chainbreak in KIC loop sampling" ).legal(true).legal(false).def(false);
-option.add( basic::options::OptionKeys::loops::allow_omega_move, "Allow loop omega to minimize during loop modeling" ).legal(true).legal(false).def(false);
-option.add( basic::options::OptionKeys::loops::allow_takeoff_torsion_move, "Allow takeoff phi/psi to move during loop modeling" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::loops::extend_length, "Number of alanine residues to append after cutpoint in loopextend app" ).lower(0).def(0);
 option.add( basic::options::OptionKeys::loops::outer_cycles, "outer cycles in fullatom loop refinement" ).lower(1).def(3);
 option.add( basic::options::OptionKeys::loops::max_inner_cycles, "maxium number of inner cycles in fullatom loop refinement" ).lower(1).def(1);
@@ -1704,10 +1702,10 @@ option.add( basic::options::OptionKeys::AnchoredDesign::testing::delete_interfac
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::RMSD_only_this, "Perform only RMSD calculations without modifying input.  Only used for re-running metrics during benchmarking/debugging." );
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_noise_constraints_mode, "Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor's placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer's commentary." ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::DenovoProteinDesign, "DenovoProteinDesign option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "redesign core of pdb" ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_loops, "redesign loops of pdb" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "redesign core of pdb" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_loops, "redesign loops of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "redesign surface of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
@@ -2131,20 +2129,18 @@ option.add( basic::options::OptionKeys::optimization::optimization, "optimizatio
 option.add( basic::options::OptionKeys::optimization::default_max_cycles, "max cycles for MinimizerOptions" ).def(2000);
 option.add( basic::options::OptionKeys::optimization::armijo_min_stepsize, "min stepsize in armijo minimizer" ).def(1e-8);
 option.add( basic::options::OptionKeys::optimization::lbfgs_M, "number of corrections to approximate the inverse hessian matrix." ).def(64);
-option.add( basic::options::OptionKeys::swa::swa, "swa option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::swa::s1, "input file(s)" );
-option.add( basic::options::OptionKeys::swa::s2, "input file(s)" );
-option.add( basic::options::OptionKeys::swa::silent1, "input file" );
-option.add( basic::options::OptionKeys::swa::silent2, "input file" );
-option.add( basic::options::OptionKeys::swa::tags1, "input tag(s)" );
-option.add( basic::options::OptionKeys::swa::tags2, "input tag(s)" );
-option.add( basic::options::OptionKeys::swa::slice_res1, "Residues to slice out of starting file" );
-option.add( basic::options::OptionKeys::swa::slice_res2, "Residues to slice out of starting file" );
-option.add( basic::options::OptionKeys::swa::input_res1, "Residues already present in starting file" );
-option.add( basic::options::OptionKeys::swa::input_res2, "Residues already present in starting file2" );
-option.add( basic::options::OptionKeys::swa::input_res, "Residues already present in starting file" );
-option.add( basic::options::OptionKeys::swa::backbone_only1, "just copy protein backbone DOFS, useful for homology modeling" );
-option.add( basic::options::OptionKeys::swa::backbone_only2, "just copy protein backbone DOFS, useful for homology modeling" );
+option.add( basic::options::OptionKeys::HelixAssembly::HelixAssembly, "HelixAssembly option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::HelixAssembly::query_structure_path, "" );
+option.add( basic::options::OptionKeys::HelixAssembly::frag1_start, "" );
+option.add( basic::options::OptionKeys::HelixAssembly::frag1_end, "" );
+option.add( basic::options::OptionKeys::HelixAssembly::frag2_start, "" );
+option.add( basic::options::OptionKeys::HelixAssembly::frag2_end, "" );
+option.add( basic::options::OptionKeys::HelixAssembly::minimum_helix_contacts, "" );
+option.add( basic::options::OptionKeys::HelixAssembly::helices_to_add, "" );
+option.add( basic::options::OptionKeys::HelixAssembly::single_helix_rmsd_cutoff, "" );
+option.add( basic::options::OptionKeys::HelixAssembly::helix_pair_rmsd_cutoff, "" );
+option.add( basic::options::OptionKeys::HelixAssembly::helix_cap_distance_cutoff, "" );
+option.add( basic::options::OptionKeys::HelixAssembly::helix_contact_distance_cutoff, "" );
 option.add( basic::options::OptionKeys::ufv::ufv, "ufv option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::ufv::left, "left endpoint" );
 option.add( basic::options::OptionKeys::ufv::right, "right endpoint" );
