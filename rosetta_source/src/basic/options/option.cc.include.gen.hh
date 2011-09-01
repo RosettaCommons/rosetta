@@ -54,6 +54,7 @@
 #include <basic/options/keys/ufv.OptionKeys.gen.hh>
 #include <basic/options/keys/AnchoredDesign.OptionKeys.gen.hh>
 #include <basic/options/keys/MM.OptionKeys.gen.hh>
+#include <basic/options/keys/swa.OptionKeys.gen.hh>
 #include <basic/options/keys/rdc.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>

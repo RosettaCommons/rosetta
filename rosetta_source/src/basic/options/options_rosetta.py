@@ -1290,9 +1290,7 @@ Options = Option_Group( '',
   # Non-local information
   Option_Group('nonlocal',
 		Option( 'moves', 'File', desc="Enable non-local moves in the early stages of abinitio. File specifying groups of fragments to be applied simultaneously"),
-		Option( 'mode', 'String', desc="One of {rigid, semirigid}. Specifies how non-local abinitio should treat fragments", default="RIGID"),
-		Option( 'builder', 'String', desc="One of {consecutive, simple, star}. Specifies how non-local abinitio should construct the fold tree", default="simple"),
-		Option( 'search', 'String', desc="One of {refine, explore}. Specifies the search strategy to be applied. In refinement mode, conformational search does not wander too far from the starting structure. This is achieved by using small fragments and a low temperature. In exploration mode, search is allowed to traverse a much larger swath of conformational space.", default = 'refine'),
+		Option( 'builder', 'String', desc="One of {simple, star}. Specifies how non-local abinitio should construct the fold tree", default="star"),
 
     # Comparative modeling extensions
 		Option( 'randomize_missing', 'Boolean', desc = 'Randomize the coordinates of missing loops. This occurs often in broken-chain folding from a sequence alignment and template pdb. Default value is false to preserve existing behavior in ThreadingJobInputter', default = 'false'),
@@ -1301,11 +1299,6 @@ Options = Option_Group( '',
 
     # Experimental data extensions
 	  Option( 'rdc_weight', 'Real', desc = 'Weight for the rdc energy term in nonlocal abinitio protocol', default = '5'),
-
-    # Allows the user to specify whether and how various terms should be ramped during the simulation
-		Option( 'ramp_constraints_cycles', 'Integer', desc='Ramp maximum sequence separation, linear chainbreak weight, and atom_pair_constraint weight every N cycles', default='100'),
-    Option( 'ramp_chainbreaks', 'Boolean', desc='Ramps the linear chainbreak term up within a stage of the simulation (intra) and up across stages of the simulation (inter)', default='true'),
-    Option( 'ramp_constraints', 'Boolean', desc='Ramps the atom pair constraint term up within a stage of the simulation (intra) and down across stages of the simulation (inter)', default='true'),
   ),
 
 	# Ab initio mode -----------------------------------------------------------
@@ -1669,7 +1662,10 @@ Options = Option_Group( '',
 		Option( 'NV_lbound', 'Real', desc="Lower Bound for neighbor Vector scoring" , default='3.3'),
 		Option( 'NV_ubound', 'Real', desc="Upper Bound for neighbor Vector scoring", default='11.1'),
 		Option( 'NV_table', 'String', desc="Location of path to potential lookup table", default='neighbor_vector_score.histogram'),
+		Option( 'syn_chi_penalty', 'Real', desc='penalty for syn/chi conformation', default='0.0'),
 		Option( 'disable_orientation_dependent_rna_ch_o_bonds',   'Boolean', desc="Do not use orientation-dependent potential for RNA carbon hydrogen bonds" , default="false"),
+		Option( 'rna_torsion_potential',   'String', desc="In RNA torsion calculation, directory containing 1D torsional potentials" , default="FINAL_Mar_24_2010_new_delta_zeta_chi"),
+		Option( 'include_neighbor_base_stacks',   'Boolean', desc="In RNA score calculation, include stacks between i,i+1" , default="false"),
 		Option( 'find_neighbors_3dgrid', 'Boolean', desc="Use a 3D lookup table for doing neighbor calculations.  For spherical, well-distributed conformations, O(N) neighbor detection instead of general O(NlgN)", default='false' ),
 		Option( 'seqdep_refene_fname', 'String', desc="Filename for table containing sequence-dependent reference energies" ),
 		Option( 'secondary_seqdep_refene_fname', 'String', desc="Additional filename for table containing sequence-dependent reference energies" ),
@@ -3366,6 +3362,22 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='enables sampling of non-pivot residue torsions when the kinematic loop closure segment length is > 3',
 			legal=['true','false'], default='true'
 		),
+		Option( 'fix_ca_bond_angles', 'Boolean',
+			desc='Freezes N-CA-C bond angles in KIC loop sampling',
+			legal=['true','false'], default='false'
+		),
+		Option( 'kic_use_linear_chainbreak', 'Boolean',
+			desc='Use linear_chainbreak instead of (harmonic) chainbreak in KIC loop sampling',
+			legal=['true','false'], default='false'
+		),
+		Option( 'allow_omega_move', 'Boolean',
+			desc='Allow loop omega to minimize during loop modeling',
+			legal=['true','false'], default='false'
+		),
+		Option( 'allow_takeoff_torsion_move', 'Boolean',
+			desc='Allow takeoff phi/psi to move during loop modeling',
+			legal=['true','false'], default='false'
+		),
     Option( 'extend_length', 'Integer',
       desc='Number of alanine residues to append after cutpoint in loopextend app',
       default = '0', lower = '0'
@@ -4299,19 +4311,21 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	),
 
 	################################
-	## Tim's options
-	Option_Group( 'HelixAssembly',
-		Option('query_structure_path','File', desc=""),
-		Option('frag1_start','Integer', desc=""),
-		Option('frag1_end','Integer', desc=""),
-		Option('frag2_start','Integer', desc=""),
-		Option('frag2_end','Integer', desc=""),
-		Option('minimum_helix_contacts','Integer', desc=""),
-		Option('helices_to_add','Integer', desc=""),
-		Option('single_helix_rmsd_cutoff','Real', desc=""),
-		Option('helix_pair_rmsd_cutoff','Real', desc=""),
-		Option('helix_cap_distance_cutoff','Real', desc=""),
-		Option('helix_contact_distance_cutoff','Real', desc=""),
+	# step-wise assembly options
+	Option_Group( 'swa',
+		Option( 's1', 'StringVector',desc="input file(s)"),
+		Option( 's2', 'StringVector',desc="input file(s)"),
+		Option( 'silent1', 'StringVector',desc="input file"),
+		Option( 'silent2', 'StringVector',desc="input file"),
+		Option( 'tags1', 'StringVector',desc="input tag(s)"),
+		Option( 'tags2', 'StringVector',desc="input tag(s)"),
+		Option( 'slice_res1', 'IntegerVector',desc='Residues to slice out of starting file'),
+		Option( 'slice_res2', 'IntegerVector',desc='Residues to slice out of starting file'),
+		Option( 'input_res1', 'IntegerVector',desc='Residues already present in starting file'),
+		Option( 'input_res2', 'IntegerVector',desc='Residues already present in starting file2'),
+		Option( 'input_res' , 'IntegerVector',desc='Residues already present in starting file'),
+		Option( 'backbone_only1', 'Boolean', desc="just copy protein backbone DOFS, useful for homology modeling"),
+		Option( 'backbone_only2', 'Boolean', desc="just copy protein backbone DOFS, useful for homology modeling"),
 	),
 
 	###############################################################################
@@ -4364,6 +4378,22 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'rmsd_tol', 'Real', desc="rmsd filter for dump_pdb", default='1.0' ),
 		Option( 'dump_pdb', 'Boolean', desc="dump_pdb when pass thresh", default='false' ),
 		Option( 'nloop_scmove', 'Integer', desc="base of scmover loop (total=nloop^n_chi)", default='9' ),
+	),
+
+	################################
+	## Tim's options
+	Option_Group( 'HelixAssembly',
+		Option('query_structure_path','File', desc=""),
+		Option('frag1_start','Integer', desc=""),
+		Option('frag1_end','Integer', desc=""),
+		Option('frag2_start','Integer', desc=""),
+		Option('frag2_end','Integer', desc=""),
+		Option('minimum_helix_contacts','Integer', desc=""),
+		Option('helices_to_add','Integer', desc=""),
+		Option('single_helix_rmsd_cutoff','Real', desc=""),
+		Option('helix_pair_rmsd_cutoff','Real', desc=""),
+		Option('helix_cap_distance_cutoff','Real', desc=""),
+		Option('helix_contact_distance_cutoff','Real', desc=""),
 	),
 
 	###############################################################################

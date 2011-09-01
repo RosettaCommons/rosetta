@@ -2343,19 +2343,9 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Enable non-local moves in the early stages of abinitio. File specifying groups of fragments to be applied simultaneously</dd><br>
 </dl>
 <dl>
-<dt><b>-mode</b> \<String\><dt>
-<dd>One of {rigid, semirigid}. Specifies how non-local abinitio should treat fragments</dd><br>
-<dd>Default: "RIGID"</dd><br>
-</dl>
-<dl>
 <dt><b>-builder</b> \<String\><dt>
-<dd>One of {consecutive, simple, star}. Specifies how non-local abinitio should construct the fold tree</dd><br>
-<dd>Default: "simple"</dd><br>
-</dl>
-<dl>
-<dt><b>-search</b> \<String\><dt>
-<dd>One of {refine, explore}. Specifies the search strategy to be applied. In refinement mode, conformational search does not wander too far from the starting structure. This is achieved by using small fragments and a low temperature. In exploration mode, search is allowed to traverse a much larger swath of conformational space.</dd><br>
-<dd>Default: "refine"</dd><br>
+<dd>One of {simple, star}. Specifies how non-local abinitio should construct the fold tree</dd><br>
+<dd>Default: "star"</dd><br>
 </dl>
 <dl>
 <dt><b>-randomize_missing</b> \<Boolean\><dt>
@@ -2376,21 +2366,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-rdc_weight</b> \<Real\><dt>
 <dd>Weight for the rdc energy term in nonlocal abinitio protocol</dd><br>
 <dd>Default: 5</dd><br>
-</dl>
-<dl>
-<dt><b>-ramp_constraints_cycles</b> \<Integer\><dt>
-<dd>Ramp maximum sequence separation, linear chainbreak weight, and atom_pair_constraint weight every N cycles</dd><br>
-<dd>Default: 100</dd><br>
-</dl>
-<dl>
-<dt><b>-ramp_chainbreaks</b> \<Boolean\><dt>
-<dd>Ramps the linear chainbreak term up within a stage of the simulation (intra) and up across stages of the simulation (inter)</dd><br>
-<dd>Default: true</dd><br>
-</dl>
-<dl>
-<dt><b>-ramp_constraints</b> \<Boolean\><dt>
-<dd>Ramps the atom pair constraint term up within a stage of the simulation (intra) and down across stages of the simulation (inter)</dd><br>
-<dd>Default: true</dd><br>
 </dl>
  </li>
 <li><h2>abinitio</h2>
@@ -3336,8 +3311,23 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "neighbor_vector_score.histogram"</dd><br>
 </dl>
 <dl>
+<dt><b>-syn_chi_penalty</b> \<Real\><dt>
+<dd>penalty for syn/chi conformation</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
 <dt><b>-disable_orientation_dependent_rna_ch_o_bonds</b> \<Boolean\><dt>
 <dd>Do not use orientation-dependent potential for RNA carbon hydrogen bonds</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-rna_torsion_potential</b> \<String\><dt>
+<dd>In RNA torsion calculation, directory containing 1D torsional potentials</dd><br>
+<dd>Default: "FINAL_Mar_24_2010_new_delta_zeta_chi"</dd><br>
+</dl>
+<dl>
+<dt><b>-include_neighbor_base_stacks</b> \<Boolean\><dt>
+<dd>In RNA score calculation, include stacks between i,i+1</dd><br>
 <dd>Default: false</dd><br>
 </dl>
 <dl>
@@ -7611,6 +7601,26 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: true</dd><br>
 </dl>
 <dl>
+<dt><b>-fix_ca_bond_angles</b> \<Boolean\><dt>
+<dd>Freezes N-CA-C bond angles in KIC loop sampling</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-kic_use_linear_chainbreak</b> \<Boolean\><dt>
+<dd>Use linear_chainbreak instead of (harmonic) chainbreak in KIC loop sampling</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-allow_omega_move</b> \<Boolean\><dt>
+<dd>Allow loop omega to minimize during loop modeling</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-allow_takeoff_torsion_move</b> \<Boolean\><dt>
+<dd>Allow takeoff phi/psi to move during loop modeling</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-extend_length</b> \<Integer\><dt>
 <dd>Number of alanine residues to append after cutpoint in loopextend app</dd><br>
 <dd>Range: 0-</dd><br>
@@ -10311,54 +10321,62 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 64</dd><br>
 </dl>
  </li>
-<li><h2>HelixAssembly</h2>
+<li><h2>swa</h2>
 <dl>
-<dt><b>-HelixAssembly</b> \<Boolean\><dt>
-<dd>HelixAssembly option group</dd><br>
+<dt><b>-swa</b> \<Boolean\><dt>
+<dd>swa option group</dd><br>
 </dl>
 <dl>
-<dt><b>-query_structure_path</b> \<File\><dt>
-<dd></dd><br>
+<dt><b>-s1</b> \<StringVector\><dt>
+<dd>input file(s)</dd><br>
 </dl>
 <dl>
-<dt><b>-frag1_start</b> \<Integer\><dt>
-<dd></dd><br>
+<dt><b>-s2</b> \<StringVector\><dt>
+<dd>input file(s)</dd><br>
 </dl>
 <dl>
-<dt><b>-frag1_end</b> \<Integer\><dt>
-<dd></dd><br>
+<dt><b>-silent1</b> \<StringVector\><dt>
+<dd>input file</dd><br>
 </dl>
 <dl>
-<dt><b>-frag2_start</b> \<Integer\><dt>
-<dd></dd><br>
+<dt><b>-silent2</b> \<StringVector\><dt>
+<dd>input file</dd><br>
 </dl>
 <dl>
-<dt><b>-frag2_end</b> \<Integer\><dt>
-<dd></dd><br>
+<dt><b>-tags1</b> \<StringVector\><dt>
+<dd>input tag(s)</dd><br>
 </dl>
 <dl>
-<dt><b>-minimum_helix_contacts</b> \<Integer\><dt>
-<dd></dd><br>
+<dt><b>-tags2</b> \<StringVector\><dt>
+<dd>input tag(s)</dd><br>
 </dl>
 <dl>
-<dt><b>-helices_to_add</b> \<Integer\><dt>
-<dd></dd><br>
+<dt><b>-slice_res1</b> \<IntegerVector\><dt>
+<dd>Residues to slice out of starting file</dd><br>
 </dl>
 <dl>
-<dt><b>-single_helix_rmsd_cutoff</b> \<Real\><dt>
-<dd></dd><br>
+<dt><b>-slice_res2</b> \<IntegerVector\><dt>
+<dd>Residues to slice out of starting file</dd><br>
 </dl>
 <dl>
-<dt><b>-helix_pair_rmsd_cutoff</b> \<Real\><dt>
-<dd></dd><br>
+<dt><b>-input_res1</b> \<IntegerVector\><dt>
+<dd>Residues already present in starting file</dd><br>
 </dl>
 <dl>
-<dt><b>-helix_cap_distance_cutoff</b> \<Real\><dt>
-<dd></dd><br>
+<dt><b>-input_res2</b> \<IntegerVector\><dt>
+<dd>Residues already present in starting file2</dd><br>
 </dl>
 <dl>
-<dt><b>-helix_contact_distance_cutoff</b> \<Real\><dt>
-<dd></dd><br>
+<dt><b>-input_res</b> \<IntegerVector\><dt>
+<dd>Residues already present in starting file</dd><br>
+</dl>
+<dl>
+<dt><b>-backbone_only1</b> \<Boolean\><dt>
+<dd>just copy protein backbone DOFS, useful for homology modeling</dd><br>
+</dl>
+<dl>
+<dt><b>-backbone_only2</b> \<Boolean\><dt>
+<dd>just copy protein backbone DOFS, useful for homology modeling</dd><br>
 </dl>
  </li>
 <li><h2>ufv</h2>
@@ -10525,6 +10543,56 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-nloop_scmove</b> \<Integer\><dt>
 <dd>base of scmover loop (total=nloop^n_chi)</dd><br>
 <dd>Default: 9</dd><br>
+</dl>
+ </li>
+<li><h2>HelixAssembly</h2>
+<dl>
+<dt><b>-HelixAssembly</b> \<Boolean\><dt>
+<dd>HelixAssembly option group</dd><br>
+</dl>
+<dl>
+<dt><b>-query_structure_path</b> \<File\><dt>
+<dd></dd><br>
+</dl>
+<dl>
+<dt><b>-frag1_start</b> \<Integer\><dt>
+<dd></dd><br>
+</dl>
+<dl>
+<dt><b>-frag1_end</b> \<Integer\><dt>
+<dd></dd><br>
+</dl>
+<dl>
+<dt><b>-frag2_start</b> \<Integer\><dt>
+<dd></dd><br>
+</dl>
+<dl>
+<dt><b>-frag2_end</b> \<Integer\><dt>
+<dd></dd><br>
+</dl>
+<dl>
+<dt><b>-minimum_helix_contacts</b> \<Integer\><dt>
+<dd></dd><br>
+</dl>
+<dl>
+<dt><b>-helices_to_add</b> \<Integer\><dt>
+<dd></dd><br>
+</dl>
+<dl>
+<dt><b>-single_helix_rmsd_cutoff</b> \<Real\><dt>
+<dd></dd><br>
+</dl>
+<dl>
+<dt><b>-helix_pair_rmsd_cutoff</b> \<Real\><dt>
+<dd></dd><br>
+</dl>
+<dl>
+<dt><b>-helix_cap_distance_cutoff</b> \<Real\><dt>
+<dd></dd><br>
+</dl>
+<dl>
+<dt><b>-helix_contact_distance_cutoff</b> \<Real\><dt>
+<dd></dd><br>
 </dl>
  </li>
 <li><h2>pepspec</h2>
