@@ -1088,7 +1088,29 @@ rms_at_corresponding_atoms(
 )
 {
 
-	runtime_assert( mod_pose.total_residue() == ref_pose.total_residue() );
+	utility::vector1< Size > calc_rms_res;
+	for ( Size n = 1; n <= mod_pose.total_residue(); n++ ) calc_rms_res.push_back( n );
+
+	return rms_at_corresponding_atoms( mod_pose, ref_pose, atom_id_map, calc_rms_res );
+
+}
+
+
+/////////////////////////////////////////////////////////////
+/// @details Should be more robust to crazy variant type mismatches. Both poses must have the same length.
+Real
+rms_at_corresponding_atoms(
+	pose::Pose const & mod_pose,
+	pose::Pose const & ref_pose,
+	std::map< core::id::AtomID, core::id::AtomID > atom_id_map,
+	utility::vector1< Size > const & calc_rms_res
+)
+{
+
+	//	runtime_assert( mod_pose.total_residue() == ref_pose.total_residue() );
+
+	utility::vector1< bool > is_calc_rms( mod_pose.total_residue(), false );
+	for ( Size n = 1; n <= calc_rms_res.size(); n++ ) is_calc_rms[ calc_rms_res[ n ] ] = true;
 
 	utility::vector1< Vector > p1_coords, p2_coords;
 
@@ -1097,6 +1119,9 @@ rms_at_corresponding_atoms(
 
 		assert ( mod_pose.residue( (iter->first).rsd() ).atom_name(  (iter->first).atomno() ) ==
 						 ref_pose.residue( (iter->second).rsd() ).atom_name(  (iter->second).atomno() ) );
+
+		if ( !is_calc_rms[ (iter->first).rsd() ] ) continue;
+		if ( !is_calc_rms[ (iter->second).rsd() ] ) continue;
 
 		Vector const & p1(  mod_pose.xyz( iter->first ));
 		Vector const & p2(  ref_pose.xyz( iter->second ));
@@ -1108,6 +1133,61 @@ rms_at_corresponding_atoms(
 	//	std::cout << std::endl;
 
 	return numeric::model_quality::calc_rms( p1_coords, p2_coords );
+
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+Real
+rms_at_corresponding_atoms_no_super(
+	pose::Pose const & mod_pose,
+	pose::Pose const & ref_pose,
+	std::map< core::id::AtomID, core::id::AtomID > atom_id_map ){
+
+	utility::vector1< Size > calc_rms_res;
+	for ( Size n = 1; n <= mod_pose.total_residue(); n++ ) calc_rms_res.push_back( n );
+
+	return rms_at_corresponding_atoms_no_super( mod_pose, ref_pose, atom_id_map, calc_rms_res );
+
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+Real
+rms_at_corresponding_atoms_no_super(
+	pose::Pose const & mod_pose,
+	pose::Pose const & ref_pose,
+	std::map< core::id::AtomID, core::id::AtomID > atom_id_map,
+	utility::vector1< Size > const & calc_rms_res
+)
+{
+
+	//	runtime_assert( mod_pose.total_residue() == ref_pose.total_residue() );
+
+	utility::vector1< bool > is_calc_rms( mod_pose.total_residue(), false );
+	for ( Size n = 1; n <= calc_rms_res.size(); n++ ) is_calc_rms[ calc_rms_res[ n ] ] = true;
+
+	Size natoms( 0 );
+	Real sum( 0.0 );
+	for ( std::map< core::id::AtomID, core::id::AtomID >::const_iterator iter = atom_id_map.begin();
+				iter != atom_id_map.end(); iter++ ) {
+
+		assert ( mod_pose.residue( (iter->first).rsd() ).atom_name(  (iter->first).atomno() ) ==
+						 ref_pose.residue( (iter->second).rsd() ).atom_name(  (iter->second).atomno() ) );
+
+		if ( !is_calc_rms[ (iter->first).rsd() ] ) continue;
+		if ( !is_calc_rms[ (iter->second).rsd() ] ) continue;
+
+		Vector const & p1(  mod_pose.xyz( iter->first ));
+		Vector const & p2(  ref_pose.xyz( iter->second ));
+
+		sum += (p1 - p2).length_squared();
+		natoms++;
+	}
+
+	//	std::cout << "HEY! NATOMS: " << natoms << std::endl;
+
+	return std::sqrt( sum / natoms );
 
 }
 
@@ -1143,10 +1223,10 @@ setup_matching_heavy_atoms( core::pose::Pose const & pose1, core::pose::Pose con
 			std::string name( rsd1.atom_name( j )  );
 			if ( !rsd2.has( name ) ) continue;
 
-			if( rsd1.atom_type(j).name()=="VIRT") continue;
+			if( rsd1.is_virtual(j)) continue;
 
 			Size const j2( rsd2.atom_index( name ) );
-			if( rsd2.atom_type(j2).name()=="VIRT") continue;
+			if( rsd2.is_virtual(j2) ) continue;
 
 			atom_id_map[ AtomID( j, i ) ] = AtomID(  j2, i ) ;
 		}
@@ -1248,6 +1328,72 @@ residue_sc_rmsd_no_super( core::conformation::ResidueCOP res1, core::conformatio
 	}
 
 	return std::sqrt(sum2 / compare_atoms.size() );
+}
+
+//////////////////////////////////////////////////////////////////////////
+void
+setup_matching_CA_atoms( core::pose::Pose const & pose1, core::pose::Pose const & pose2, 	std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ){
+
+	utility::vector1< std::string > protein_backbone_heavy_atoms;
+	protein_backbone_heavy_atoms.push_back( " CA " );
+	setup_matching_atoms_with_given_names( pose1, pose2, protein_backbone_heavy_atoms, atom_id_map );
+
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+void
+setup_matching_protein_backbone_heavy_atoms( core::pose::Pose const & pose1, core::pose::Pose const & pose2,
+																						 std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ){
+
+	utility::vector1< std::string > protein_backbone_heavy_atoms;
+	protein_backbone_heavy_atoms.push_back( " N  ");
+	protein_backbone_heavy_atoms.push_back( " CA ");
+	protein_backbone_heavy_atoms.push_back( " C  ");
+	protein_backbone_heavy_atoms.push_back( " O  ");
+	setup_matching_atoms_with_given_names( pose1, pose2, protein_backbone_heavy_atoms, atom_id_map );
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+void
+setup_matching_atoms_with_given_names( core::pose::Pose const & pose1, core::pose::Pose const & pose2,
+																			 utility::vector1< std::string > const & atom_names_to_find,
+																			 std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ){
+
+	using namespace core::id;
+	using namespace core::conformation;
+	using namespace core::chemical;
+
+	atom_id_map.clear();
+	//	assert( pose1.sequence() == pose2.sequence() );
+
+	for (Size i = 1; i <= pose1.total_residue(); i++ ) {
+		Residue const & rsd1 = pose1.residue( i );
+		Residue const & rsd2 = pose2.residue( i );
+		ResidueType const & rsd_type1 = pose1.residue_type( i );
+		ResidueType const & rsd_type2 = pose2.residue_type( i );
+
+		for ( Size n = 1; n <= atom_names_to_find.size(); n++ ) {
+			std::string const & atom_name = atom_names_to_find[ n ];
+
+			if ( !rsd_type1.has_atom_name( atom_name )  ) continue;
+			if ( !rsd_type2.has_atom_name( atom_name )  ) continue;
+
+			Size const j1 = rsd1.atom_index( atom_name );
+			if( rsd1.is_virtual( j1 )) continue;
+
+			Size const j2 = rsd2.atom_index( atom_name );
+			if( rsd2.is_virtual( j2 )) continue;
+
+			atom_id_map[ AtomID( j1, i ) ] = AtomID(  j2, i ) ;
+
+		}
+
+	}
+
 }
 
 

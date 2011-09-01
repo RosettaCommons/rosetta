@@ -370,6 +370,29 @@ rms_at_corresponding_atoms(
 	std::map< core::id::AtomID, core::id::AtomID > atom_id_map
 													 );
 
+
+Real
+rms_at_corresponding_atoms(
+	pose::Pose const & mod_pose,
+	pose::Pose const & ref_pose,
+	std::map< core::id::AtomID, core::id::AtomID > atom_id_map,
+	utility::vector1< Size > const & calc_rms_res
+													 );
+
+Real
+rms_at_corresponding_atoms_no_super(
+	pose::Pose const & mod_pose,
+	pose::Pose const & ref_pose,
+	std::map< core::id::AtomID, core::id::AtomID > atom_id_map );
+
+Real
+rms_at_corresponding_atoms_no_super(
+	pose::Pose const & mod_pose,
+	pose::Pose const & ref_pose,
+	std::map< core::id::AtomID, core::id::AtomID > atom_id_map,
+	utility::vector1< Size > const & calc_rms_res
+																		);
+
 void
 setup_matching_heavy_atoms( core::pose::Pose const & pose1, core::pose::Pose const & pose2, 	std::map< core::id::AtomID, core::id::AtomID > & atom_id_map );
 
@@ -384,6 +407,18 @@ residue_sc_rmsd_no_super(
 	core::conformation::ResidueCOP res1,
 	core::conformation::ResidueCOP res2,
 	bool const fxnal_group_only=false );
+
+void
+setup_matching_CA_atoms( core::pose::Pose const & pose1, core::pose::Pose const & pose2, 	std::map< core::id::AtomID, core::id::AtomID > & atom_id_map );
+
+void
+setup_matching_protein_backbone_heavy_atoms( core::pose::Pose const & pose1, core::pose::Pose const & pose2,
+																						 std::map< core::id::AtomID, core::id::AtomID > & atom_id_map );
+
+void
+setup_matching_atoms_with_given_names( core::pose::Pose const & pose1, core::pose::Pose const & pose2,
+																			 utility::vector1< std::string > const & atom_names_to_find,
+																			 std::map< core::id::AtomID, core::id::AtomID > & atom_id_map );
 
 
 } // end namespace scoring

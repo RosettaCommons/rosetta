@@ -110,6 +110,12 @@ enum ScoreType {
 	rna_fa_rep_base,
 	rna_data_backbone, // Using chemical accessibility data for RNA.
 
+	//Carbon hydrogen bonds -- moved up here since they are currently context independent.
+	ch_bond,
+	ch_bond_bb_bb,
+	ch_bond_sc_sc,
+	ch_bond_bb_sc,
+
 	/// proline closure energy
 	pro_close,
 	rama2b,
@@ -118,6 +124,37 @@ enum ScoreType {
 	cenpack, // centroid
 
 	hybrid_vdw,     // hybrid centroid+fa
+
+	rna_vdw,          // low res clash check for RNA
+	rna_base_backbone,          // Bases to 2'-OH, phosphates, etc.
+	rna_backbone_backbone,      // 2'-OH to 2'-OH, phosphates, etc.
+	rna_repulsive,              // mainly phosphate-phosphate repulsion
+	rna_base_pair_pairwise,    // Base-base interactions (Watson-Crick and non-Watson-Crick)
+	rna_base_axis_pairwise,    // Force base normals to be parallel
+	rna_base_stagger_pairwise, // Force base pairs to be in same plane.
+	rna_base_stack_pairwise,   // Stacking interactions
+	rna_base_stack_axis_pairwise,   // Stacking interactions should involve parallel bases.
+	rna_data_base, // Using chemical accessibility data for RNA.
+
+	//RNA stuff
+	// This is a filtered version of the pairwise RNA low resolution terms above,
+	//  disallows a base edge to form  more than one base pair, and
+	//  disallows two bases to both stack and pair.
+	// THIS IS NOT REALLY PAIR-WISE, but is calculated in a finalize_energy
+	//  step at the end of a 2-body  score function (RNA_PairwiseLowResolutionEnergy.cc)
+	rna_base_pair,    // Base-base interactions (Watson-Crick and non-Watson-Crick)
+	rna_base_axis,    // Force base normals to be parallel
+	rna_base_stagger, // Force base pairs to be in same plane.
+	rna_base_stack,   // Stacking interactions
+	rna_base_stack_axis,   // Stacking interactions should involve parallel bases.
+
+
+	// High resolution
+	rna_torsion,       // RNA torsional potential.
+	rna_sugar_close,   // constraints to keep RNA sugar closed, and with reasonably ideal geometry
+	fa_stack,          // stacking interaction modeled as pairwise atom-atom interactions
+	//	fa_stack_purine,          // stacking interaction modeled as pairwise atom-atom interactions FOR PURINE
+	//	fa_stack_pyrimidine,          // stacking interaction modeled as pairwise atom-atom interactions FOR PYRIMIDINE
 
 	fa_cust_pair_dist,  // custom short range 2b
 	custom_atom_pair,
@@ -160,11 +197,6 @@ enum ScoreType {
 	// protein-protein interface scores
 	interface_dd_pair,
 
-	//Carbon hydrogen bonds?
-	ch_bond,
-	ch_bond_bb_bb,
-	ch_bond_sc_sc,
-	ch_bond_bb_sc,
 	// Geometric solvation
 	geom_sol,
 	occ_sol_fitted,
@@ -179,36 +211,6 @@ enum ScoreType {
 	//RNA stuff
 	//Low resolution
 	rna_rg,           // Radius of gyration for RNA
-	rna_vdw,          // low res clash check for RNA
-	rna_base_backbone,          // Bases to 2'-OH, phosphates, etc.
-	rna_backbone_backbone,      // 2'-OH to 2'-OH, phosphates, etc.
-	rna_repulsive,              // mainly phosphate-phosphate repulsion
-	rna_base_pair_pairwise,    // Base-base interactions (Watson-Crick and non-Watson-Crick)
-	rna_base_axis_pairwise,    // Force base normals to be parallel
-	rna_base_stagger_pairwise, // Force base pairs to be in same plane.
-	rna_base_stack_pairwise,   // Stacking interactions
-	rna_base_stack_axis_pairwise,   // Stacking interactions should involve parallel bases.
-	rna_data_base, // Using chemical accessibility data for RNA.
-
-	//RNA stuff
-	// This is a filtered version of the pairwise RNA low resolution terms above,
-	//  disallows a base edge to form  more than one base pair, and
-	//  disallows two bases to both stack and pair.
-	// THIS IS NOT REALLY PAIR-WISE, but is calculated in a finalize_energy
-	//  step at the end of a 2-body  score function (RNA_PairwiseLowResolutionEnergy.cc)
-	rna_base_pair,    // Base-base interactions (Watson-Crick and non-Watson-Crick)
-	rna_base_axis,    // Force base normals to be parallel
-	rna_base_stagger, // Force base pairs to be in same plane.
-	rna_base_stack,   // Stacking interactions
-	rna_base_stack_axis,   // Stacking interactions should involve parallel bases.
-
-
-	// High resolution
-	rna_torsion,       // RNA torsional potential.
-	rna_sugar_close,   // constraints to keep RNA sugar closed, and with reasonably ideal geometry
-	fa_stack,          // stacking interaction modeled as pairwise atom-atom interactions
-	//	fa_stack_purine,          // stacking interaction modeled as pairwise atom-atom interactions FOR PURINE
-	//	fa_stack_pyrimidine,          // stacking interaction modeled as pairwise atom-atom interactions FOR PYRIMIDINE
 
 	// centroid interchain 1b (docking) scores
 	interchain_pair,
