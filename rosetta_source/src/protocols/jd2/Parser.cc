@@ -29,6 +29,7 @@
 ///Utility headers
 
 ///C++ headers
+#include <sstream>
 
 namespace protocols {
 namespace jd2 {
@@ -41,7 +42,14 @@ protocols::jd2::Parser::generate_mover_from_job( JobOP job, protocols::moves::Mo
 
 	//unpackage job
 	core::pose::Pose pose( *(job->get_pose()) );
-	runtime_assert(pose.total_residue()); //if this is an empty pose we're in trouble
+	if (pose.total_residue() == 0){
+		std::stringstream err_msg;
+		err_msg
+			<< "Attempting to initiate job distribution for "
+			<< "input job '" << job->input_tag() << "', "
+			<< "but the generated pose has no residues.";
+		utility_exit_with_message(err_msg.str());
+	}
 
 	//returns true if there was a pose change (NOT if the mover changed)
 	if ( generate_mover_from_pose( job, pose, mover, new_input, ""/*xml_fname, this means go to options system*/ ) ){
