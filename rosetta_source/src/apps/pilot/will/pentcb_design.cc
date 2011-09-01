@@ -615,7 +615,7 @@ int main(int argc, char *argv[]) {
     TR <<" "<< fn <<" "<< iss <<" "<< ic <<" "<< nss <<" "<< irt <<" "<< cbc << endl;
     if(NSS != nss) utility_exit_with_message("wrong ssamp!!!");
     Pose pnat;
-    pose_from_pdb(pnat,"/data/pdb/mw20kr25/"+fn);
+    pose_from_pdb(pnat,"mw20kr25/"+fn);
     trans_pose(pnat,-com(pnat,1,pnat.n_residue()));
     core::scoring::dssp::Dssp dssp(pnat);
     dssp.insert_ss_into_pose(pnat);
