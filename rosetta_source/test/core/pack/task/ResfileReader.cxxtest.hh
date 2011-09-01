@@ -48,7 +48,8 @@
 #include <core/scoring/ScoreFunctionInfo.fwd.hh>
 #include <core/scoring/constraints/Constraints.fwd.hh>
 #include <utility/keys/Key2Tuple.hh>
-
+#include <basic/options/option.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 //I'm lazy using's
 using namespace core;
@@ -57,6 +58,7 @@ using namespace task;
 using namespace pose;
 using namespace chemical;
 using std::string;
+using std::stringstream;
 
 // --------------- Test Class --------------- //
 
@@ -66,6 +68,7 @@ public:
 
 	Pose pose;
 	PackerTaskOP the_task;
+	bool cache_option__interactive_;
 
 	// --------------- Fixtures --------------- //
 
@@ -74,11 +77,17 @@ public:
 		core::import_pose::pose_from_pdb( pose, "core/pack/task/resfile_test.pdb" );
 		the_task = TaskFactory::create_packer_task( pose );
 
+		cache_option__interactive_ = basic::options::option[ basic::options::OptionKeys::run::interactive ].value();
+		basic::options::option[ basic::options::OptionKeys::run::interactive ].value(true);
+
 	}
 
 	void tearDown() {
 		pose.clear(); //nuke that sucker in case it got altered
 		//nothing necessary for OP packer task - setUp's regeneration of a fresh copy will cause the old OP's data to delete itself
+
+		basic::options::option[ basic::options::OptionKeys::run::interactive ].value(cache_option__interactive_);
+
 	}
 
 	// ------------- Helper Functions ------------- //
@@ -340,4 +349,117 @@ public:
 //		}
 //	}
 //
+
+
+	void test_resid_parsing(){
+		{
+			PackerTaskOP ptask = TaskFactory::create_packer_task(pose);
+			stringstream resfile; resfile << "NATRO\nSTART\n1 - 3 _ ALLAA";
+			parse_resfile_string(pose, *ptask, resfile.str() );
+			TS_ASSERT(ptask->pack_residue(1));
+			TS_ASSERT(ptask->pack_residue(2));
+			TS_ASSERT(ptask->pack_residue(3));
+			TS_ASSERT(!ptask->pack_residue(4));
+			TS_ASSERT(!ptask->pack_residue(5));
+		}
+		{
+			PackerTaskOP ptask = TaskFactory::create_packer_task(pose);
+			stringstream resfile; resfile << "NATRO\nSTART\n2- 4  _ ALLAA";
+			try{
+				parse_resfile_string(pose, *ptask, resfile.str() );
+				TS_FAIL("Didn't catch malformed range resid.");
+			} catch(ResfileReaderException) {}
+		}
+		{
+			PackerTaskOP ptask = TaskFactory::create_packer_task(pose);
+			stringstream resfile; resfile << "NATRO\nSTART\n3 - 5 _ ALLAA";
+			parse_resfile_string(pose, *ptask, resfile.str() );
+			TS_ASSERT(!ptask->pack_residue(1));
+			TS_ASSERT(!ptask->pack_residue(2));
+			TS_ASSERT(ptask->pack_residue(3));
+			TS_ASSERT(ptask->pack_residue(4));
+			TS_ASSERT(ptask->pack_residue(5));
+		}
+		{
+			PackerTaskOP ptask = TaskFactory::create_packer_task(pose);
+			stringstream resfile; resfile << "NATRO\nSTART\n* _ ALLAA";
+			parse_resfile_string(pose, *ptask, resfile.str() );
+			for(Size i = 1; i <= pose.total_residue(); ++i){
+				TS_ASSERT(ptask->pack_residue(i));
+			}
+		}
+		{
+			PackerTaskOP ptask = TaskFactory::create_packer_task(pose);
+			stringstream resfile; resfile << "START\n* _ NATRO\n1 - 3 _ NATAA";
+			parse_resfile_string(pose, *ptask, resfile.str() );
+			TS_ASSERT(ptask->pack_residue(1));
+			TS_ASSERT(ptask->pack_residue(2));
+			TS_ASSERT(ptask->pack_residue(3));
+			for(Size i = 4; i <= pose.total_residue(); ++i){
+				TS_ASSERT(!ptask->pack_residue(i));
+			}
+		}
+		{
+			PackerTaskOP ptask = TaskFactory::create_packer_task(pose);
+			stringstream resfile; resfile << "START\n1 - 3 _ NATAA\n* _ NATRO";
+			parse_resfile_string(pose, *ptask, resfile.str() );
+			TS_ASSERT(ptask->pack_residue(1));
+			TS_ASSERT(ptask->pack_residue(2));
+			TS_ASSERT(ptask->pack_residue(3));
+			for(Size i = 4; i <= pose.total_residue(); ++i){
+				TS_ASSERT(!ptask->pack_residue(i));
+			}
+		}
+		{
+			stringstream resfile; resfile << "NATRO\nSTART\n * - 3 _ NATRO";
+			try{
+				ResfileContents(pose, resfile);
+				TS_FAIL("Didn't catch bad chain and range resid.");
+			} catch(ResfileReaderException){
+			}
+		}
+		{
+			stringstream resfile; resfile << "START\n2 _ ";
+			try{
+				ResfileContents(pose, resfile);
+				TS_FAIL("Didn't catch bad missing commands for single resid.");
+			} catch(ResfileReaderException){}
+		}
+		{
+			stringstream resfile; resfile << "START\n 3 - 4 _ ";
+			try{
+				ResfileContents(pose, resfile);
+				TS_FAIL("Didn't catch bad missing commands for range resid.");
+			} catch(ResfileReaderException){}
+		}
+		{
+			stringstream resfile; resfile << "START\n * _ ";
+			try{
+				ResfileContents(pose, resfile);
+				TS_FAIL("Didn't catch bad missing commands for chain resid.");
+			} catch(ResfileReaderException){}
+		}
+		{
+			stringstream resfile; resfile << "START\n3 - 2  _ NATAA";
+			try{
+				ResfileContents(pose, resfile);
+				TS_FAIL("Didn't catch that the start residue must come before the end residue in a range resid.");
+			} catch(ResfileReaderException){}
+		}
+		{
+			stringstream resfile; resfile << "START\n2 % NATAA";
+			try{
+				ResfileContents(pose, resfile);
+				TS_FAIL("Didn't catch that the chain identifier is not in [_A-Za-z].");
+			} catch(ResfileReaderException){}
+		}
+		{
+			stringstream resfile; resfile << "START\n2 __ NATAA";
+			try{
+				ResfileContents(pose, resfile);
+				TS_FAIL("Didn't catch that the chain must be just a single character.");
+			} catch(ResfileReaderException){}
+		}
+	}
+
 };//end class

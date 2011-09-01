@@ -256,9 +256,6 @@ namespace pose {
 
 static basic::Tracer TR("core.pose.PDBInfo");
 
-static std::string const chr_chains( " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz" );
-
-
 /// @brief default constructor, obsolete is *true*
 PDBInfo::PDBInfo() :
 	Super(),

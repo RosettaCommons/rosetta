@@ -28,8 +28,9 @@
 #include <core/chemical/AA.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
+#include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
+
 
 // STL Headers
 #include <iosfwd>
@@ -79,6 +80,63 @@ public:
 	std::list< ResfileCommandCOP > const &
 	commands_for_residue( Size resid ) const;
 
+private: // helper types and functions for parsing
+
+	enum residue_identifier_type{
+		SINGLE_RESID=1,
+		RANGE_RESID,
+		CHAIN_RESID
+	};
+
+	void
+	parse_header_line(
+		utility::vector1< std::string > const & tokens,
+		std::map< std::string, ResfileCommandOP > const & command_map,
+		Size const lineno,
+		bool & have_read_start_token);
+
+	void
+	parse_body_line(
+		pose::Pose const & pose,
+		utility::vector1< std::string > const & tokens,
+		std::map< std::string, ResfileCommandOP > const & command_map,
+		Size const lineno,
+		utility::vector1< std::list< ResfileCommandOP > > & residue_range_commands,
+		utility::vector1< std::list< ResfileCommandOP > > & residue_chain_commands);
+
+	void
+	parse_resid(
+		Size & which_token,
+		utility::vector1< std::string > const & tokens,
+		Size const lineno,
+		int & PDBnum,
+		int & PDBnum_end, // only defined for RANGE id_type
+		char & icode,
+		char & icode_end, // only defined for RANGE id_type
+		char & chain,
+		residue_identifier_type & id_type) const;
+
+	void
+	parse_PDBnum_icode(
+		std::string const & token,
+		Size const lineno,
+		int & PDBnum,
+		char & icode) const;
+
+	Size
+	locate_resid(
+		core::pose::Pose const & pose,
+		char const chain,
+		int const PDBnum,
+		char const icode,
+		Size const lineno) const;
+
+	ResfileCommandOP
+	locate_command(
+		Size const which_token,
+		utility::vector1< std::string > const & tokens,
+		std::map< std::string, ResfileCommandOP > const & command_map,
+		Size const lineno) const;
 
 private:
 	std::list< ResfileCommandCOP > default_commands_;
@@ -271,7 +329,7 @@ private:
 	utility::vector1< chemical::AA > keep_nas_;
 };
 
-///@brief PIKNA allows nucleic acid residues specifed in a following string
+///@brief PIKRNA allows nucleic acid residues specifed in a following string
 class PIKRNA : public ResfileCommand
 {
 public:
@@ -638,8 +696,11 @@ public:
 ///////////utility functions for resfile reader//////////
 
 ///@brief utility function to increment next token to be parsed
-	std::string
-get_token( const Size which_token, const utility::vector1<std::string> & tokens);
+std::string
+get_token(
+	const Size which_token,
+	const utility::vector1<std::string> & tokens,
+	const bool make_uper_case = true);
 
 ///@brief utility function for resfile reader
 utility::vector1< std::string >

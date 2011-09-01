@@ -52,6 +52,8 @@
 namespace core {
 namespace pose {
 
+static std::string const chr_chains( " ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz" );
+
 
 ///@brief info about an atom in a unrecognized res (not in pose, but we want to remember it)
 class UnrecognizedAtomRecord {

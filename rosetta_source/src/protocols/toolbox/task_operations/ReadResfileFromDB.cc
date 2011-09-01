@@ -39,6 +39,7 @@ namespace task_operations {
 using basic::database::get_db_session;
 using core::pose::Pose;
 using core::pack::task::parse_resfile_string;
+using core::pack::task::ResfileReaderException;
 using core::pack::task::PackerTask;
 using core::pack::task::operation::TaskOperationOP;
 using cppdb::result;
@@ -113,7 +114,16 @@ ReadResfileFromDB::apply( Pose const & pose, PackerTask & task ) const {
 	}
 	string resfile;
 	res >> resfile;
-	parse_resfile_string(pose, task, resfile);
+	try{
+		parse_resfile_string(pose, task, resfile);
+	} catch(ResfileReaderException e){
+		stringstream error_message;
+		error_message
+			<< "Failed to process resfile stored for input tag '" << tag << "'" << endl
+			<< "RESFILE:" << endl
+			<< resfile << endl;
+		utility_exit_with_message(error_message.str());
+	}
 }
 
 void
