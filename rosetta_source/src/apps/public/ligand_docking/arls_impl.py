@@ -6,10 +6,15 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 import sys, os, re
-from optparse import OptionParser
+from optparse import OptionParser, IndentedHelpFormatter
 
 try: set
 except: from sets import Set as set
+
+# Better handle multiple paragraph descriptions.
+class PreformattedDescFormatter (IndentedHelpFormatter):
+    def format_description(self, description):
+        return description.strip() + "\n" # Remove leading/trailing whitespace
 
 
 def chain_from_iterables(iterables):
@@ -239,7 +244,7 @@ def write_common_flags(outfile, options, docking_cases): #{{{
   #-database /scratch/ROSETTA/minirosetta_database
   ## "Fallback" database locations can also be specified,
   ## in case the primary database is missing on some nodes:
-  #-database /work/davis/minirosetta_database
+  #-database /work/davis/rosetta/rosetta_database
   ## Location provided by user:
   -database %(database)s
  -file
@@ -473,7 +478,8 @@ mkdir -p prepack/{input,all_traj}
 
 
 def write_tarball_pre_script(outfile, options, progs, docking_cases): #{{{
-    outfile.write('''#!/bin/bash
+    if not options.local :
+        outfile.write('''#!/bin/bash
 #set -v  # this messes up the nice echo output at the end
 shopt -s nullglob  # avoid error messages from tar about non-existant files
 
@@ -485,6 +491,13 @@ echo
 echo "  Now copy this file to the cluster where you'll do docking."
 echo
 echo "    rsync -avxP $(basename $(pwd)).tgz syd:runs/$(basename $(pwd))/"
+echo
+echo "  *** If necessary, adjust path to database in COMMON.flags"
+echo "  *** If necessary, adjust path to executable in 4_dock_condor.sh"
+echo
+''')
+    else: # options.local = True
+        outfile.write('''#!/bin/bash
 echo
 echo "  *** If necessary, adjust path to database in COMMON.flags"
 echo "  *** If necessary, adjust path to executable in 4_dock_condor.sh"
@@ -565,6 +578,63 @@ echo
 ''')
 #}}}
 
+def write_dock_bash_script(outfile, options, progs, docking_cases): #{{{
+    ligand_dock = progs['dock']
+    #target_dir = os.path.join(os.getcwd(), options.target_dir)
+    outfile.write('''#!/bin/bash
+
+Executable="%(ligand_dock)s"
+
+mkdir -p log
+
+# Create the header for the BASH files
+minnatfile="BASH.minnat.sh"
+dockfile="BASH.dock.sh"
+
+# Make sure that neither of them already exist.
+rm -f "$minnatfile"
+rm -f "$dockfile"
+
+# Function to set up each docking case
+# Takes protein_name ligand_name num_procs
+setup_docking_case()
+{
+    p="$1"
+    l="$2"
+    pl="${1}_${2}"
+    mkdir -p "work/minnat/$pl"
+    echo "${Executable} @COMMON.flags @MINNAT.flags -in:file:s native/$pl.pdb -in:file:native native/$pl.pdb -packing:unboundrot unbound/$p.pdb -out:path:pdb work/minnat/$pl > log/err.minnat.${pl}.log 2> log/out.minnat.${pl}.log &"  >> "$minnatfile"
+    echo >> "$minnatfile"
+    for((i=0;i<$3;i++)); do
+        mkdir -p "work/$pl/$i"
+        echo "${Executable} @COMMON.flags @DOCK.flags -in:file:s input/$pl.pdb -in:file:native native/$pl.pdb -packing:unboundrot unbound/$p.pdb -out:path:pdb work/$pl/$i -run:seed_offset $i -out:suffix _$i > log/out.${pl}.${i}.log 2> log/err.${pl}.${i}.log &" >> "$dockfile"
+    done
+    echo >> "$dockfile"
+}
+
+# List the individual docking cases
+''' % locals())
+    procs_per_case = get_procs_per_case(docking_cases, options)
+    outfile.write('procs_per_case=%i\n' % procs_per_case)
+    for d in docking_cases:
+        prot_lig = "%s_%s" % (d.protein.base, d.ligand.base)
+        outfile.write('setup_docking_case "%s" "%s" $procs_per_case\n' % (d.protein.base, d.ligand.base))
+    outfile.write('''
+
+# Make scripts executable
+chmod u+x $minnatfile $dockfile
+
+echo
+echo "  nohup nice $minnatfile    # if you want minimized natives"
+echo "  nohup nice $dockfile      # the actual docking calculations"
+echo
+echo " Or something like:"
+echo
+echo "  nohup nice parallel < $minnatfile  # if you want minimized natives"
+echo "  nohup nice parallel < $dockfile    # the actual docking calculations"
+''')
+#}}}
+
 
 def write_concat_script(outfile, options, progs, docking_cases): #{{{
     outfile.write('''#!/bin/bash
@@ -600,8 +670,9 @@ for f in out/*_silent.out; do
         echo "***ERROR*** $a $b"
     fi
 done
-
-tar cvzf $(basename $(pwd))_out.tgz out/
+''')
+    if not options.local:
+        outfile.write('''tar cvzf $(basename $(pwd))_out.tgz out/
 
 # Suggest copying
 echo
@@ -712,23 +783,33 @@ def main(argv):
     '''
     Automatic RosettaLigand Setup (ARLS)
 
-    Given a list of protein-ligand pairings, generates all the required input files for RosettaLigand docking, along with suggested flags and submit scripts.
+    Given a list of protein-ligand pairings, generates all the required input
+    files for RosettaLigand docking, along with suggested flags and submit scripts.
     The scripts are numbered 1 - N and should be run in order.
     See the Doxygen documentation for important information on using RosettaLigand.
 
     The script takes one argument, a list of protein-ligand pairs to dock.
-    Each line of the list should consist of the protein name, zero or more cofactor names, and the ligand name (whitespace separated).
-    In the current directory should be files with the same name and an appropriate extension:
-    .pdb for proteins, and one of (.mol, .sdf, .mol2) for ligands and cofactors.
-    For example, the line "1abc cofactor mylig" could use files named "1abc.pdb", "cofactor.mol", and "mylig.mol2".
-    No unnecessary work will be done even if a protein/cofactor/ligand appears in multiple lines.
+    Each line of the list should consist of the protein name, zero or more cofactor
+    names, and the ligand name (whitespace separated).
+    In the current directory should be files with the same name and an appropriate
+    extension: .pdb for proteins, and one of (.mol, .sdf, .mol2) for ligands and
+    cofactors. For example, the line "1abc cofactor mylig" could use files named
+    "1abc.pdb", "cofactor.mol", and "mylig.mol2". No unnecessary work will be done
+    even if a protein/cofactor/ligand appears in multiple lines.
 
     The protein file should only contain standard amino acid residues.
-    The cofactor and ligand files should contain a single conformation (unless --skip-omega) of a single compound.
-    The MiniRosetta database should be in ~/minirosetta_database;  otherwise use --database.
-    OpenEye's Omega should be in ~/openeye or on your PATH;  otherwise use --openeye or --skip-omega.
-    The OpenEye QUACPAC toolkit should be on your PYTHONPATH for charges to be assigned (else use --skip-charges).
-    '''
+    The cofactor and ligand files should contain a single conformation
+       (unless --skip-omega) of a single compound.
+    The MiniRosetta database should be in ~/minirosetta_database;
+        otherwise use --database.
+    OpenEye's Omega should be in ~/openeye or on your PATH;
+        otherwise use --openeye or --skip-omega.
+    The OpenEye QUACPAC toolkit should be on your PYTHONPATH
+        for charges to be assigned (else use --skip-charges).
+    You can specify which clustering software to use for the docking runs with
+        --cluster. Specifying BASH will result in a standard "nohup"-type submission.
+        for those without clustering software (It is recommended to also set --njobs.)
+    '''  # Preformatted
 
     def up_dir(path, num_steps=1):
         for i in xrange(num_steps):
@@ -736,7 +817,7 @@ def main(argv):
         return path
     MINI_HOME = up_dir(os.path.abspath(sys.path[0]), 4)
 
-    parser = OptionParser(usage="usage: %prog [<] LIST_OF_PAIRS.txt")
+    parser = OptionParser(usage="usage: %prog [<] LIST_OF_PAIRS.txt", formatter=PreformattedDescFormatter())
     parser.set_description(main.__doc__)
     # parser.add_option("-short", ["--long"],
     #   action="store|store_true|store_false",
@@ -753,17 +834,17 @@ def main(argv):
     )
     parser.add_option("-m", "--mini",
       default=MINI_HOME,
-      help="Directory where Mini is found (default: %s)" % MINI_HOME,
+      help="Directory where rosetta_source is found (default: %s)" % MINI_HOME,
     )
     parser.add_option("-d", "--database",
-      default=os.path.join( os.path.expanduser("~"), "minirosetta_database"),
-      help="Directory where Mini database is found (default: ~/minirosetta_database)",
+      default=os.path.join( os.path.expanduser("~"), "rosetta", "rosetta_database"),
+      help="Directory where the Rosetta database is found (default: ~/rosetta/rosetta_database)",
     )
     parser.add_option("--openeye",
       default=os.path.join( os.path.expanduser("~"), "openeye"),
       help="Directory where OpenEye tools are found (default: ~/openeye)",
     )
-    parser.add_option("--target-dir",
+    parser.add_option("-t", "--target-dir",
       help="Directory where output should be created (default: ./arls_work)",
       default="arls_work",
     )
@@ -785,6 +866,15 @@ def main(argv):
       action="store_true",
       default=False,
       help="Do not assign partial charges with OpenEye's AM1BCC.  Assumes small molecule file is in .mol2 format and already has charges, or that you want default Rosetta charges.",
+    )
+    parser.add_option("--local",
+      action="store_true",
+      default=False,
+      help="Run docking jobs locally (through current system), rather than on a remote cluster.",
+    )
+    parser.add_option("--cluster",
+      default="CONDOR",
+      help="Type of clustering software to use. Acceptable values: CONDOR, BASH",
     )
     parser.add_option("--njobs",
       default=250,
@@ -814,10 +904,13 @@ def main(argv):
         if len(set([(d.protein, d.ligand) for d in docking_cases])) < len(docking_cases):
             raise ValueError("Some protein-ligand pairs are duplicated!")
 
+        options.cluster = str(options.cluster).upper()
+        if options.cluster not in ["CONDOR","BASH"]:
+            raise ValueError('Invalid cluster type "%s"specified with --cluster'% options.cluster)
         if not os.path.isdir(options.mini):
             raise ValueError("Cannot find MiniRosetta source tree;  please specify with --mini")
         if not os.path.isdir(options.database):
-            raise ValueError("Cannot find MiniRosetta database;  please specify with --database")
+            raise ValueError("Cannot find Rosetta database;  please specify with --database")
         if not options.skip_omega and not os.path.isdir(options.openeye):
             raise ValueError("Cannot find OpenEye tools;  please specify with --openeye")
 
@@ -838,8 +931,16 @@ def main(argv):
             write_rpkmin_script, options, progs, docking_cases)
         write_if_not_exists("3_tarball_pre.sh", options,
             write_tarball_pre_script, options, progs, docking_cases)
-        write_if_not_exists("4_dock_condor.sh", options,
-            write_dock_condor_script, options, progs, docking_cases)
+        
+        if options.cluster == "CONDOR":
+            write_if_not_exists("4_dock_condor.sh", options,
+                write_dock_condor_script, options, progs, docking_cases)
+        elif options.cluster == "BASH":
+            write_if_not_exists("4_dock_bash.sh", options,
+                write_dock_bash_script, options, progs, docking_cases)
+        else:
+            raise ValueError("Shouldn't get here: invalid cluster type %s"%options.cluster)
+        
         write_if_not_exists("5_concat.sh", options,
             write_concat_script, options, progs, docking_cases)
         write_if_not_exists("6_analyze_results.sh", options,
