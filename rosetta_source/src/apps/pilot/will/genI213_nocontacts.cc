@@ -938,6 +938,7 @@ void repack_iface(Pose & p, ScoreFunctionOP sf, Size Ntri, vector1<bool> & iface
       task->nonconst_residue_task(i).restrict_to_repacking();
       task->nonconst_residue_task(i).or_include_current(true);
       task->nonconst_residue_task(i).initialize_extra_rotamer_flags_from_command_line();
+
       task->nonconst_residue_task(i).and_extrachi_cutoff(1);
     }
   }

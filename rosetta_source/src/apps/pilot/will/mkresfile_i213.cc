@@ -99,44 +99,44 @@ typedef vector1<Size> Sizes;
 
 
 vector1<Size> get_des_pos(core::pose::Pose & pose_for_design) {
-// Find out which positions are near the inter-subunit interfaces
-// These will be further screened below, then passed to design() and minimize()
-Real const contact_dist = 10.0;
-Real const contact_dist_sq = contact_dist * contact_dist;
+  // Find out which positions are near the inter-subunit interfaces
+  // These will be further screened below, then passed to design() and minimize()
+  Real const contact_dist = 10.0;
+  Real const contact_dist_sq = contact_dist * contact_dist;
 
-core::scoring::ScoreFunctionOP sf = core::scoring::getScoreFunction();
+  core::scoring::ScoreFunctionOP sf = core::scoring::getScoreFunction();
 
-////////////////////////////////////
-vector1<bool> indy_resis(pose_for_design.n_residue(),false);
-for(Size i = 1; i <= pose_for_design.n_residue()/2; ++i) indy_resis[i] = true;
-vector1<bool> subunit_index(pose_for_design.n_residue());
-for(Size i = 1; i <= pose_for_design.n_residue(); ++i) subunit_index[i] = (6*(i-1))/pose_for_design.n_residue();
-vector1<Size> intra_subs; intra_subs.push_back(1); intra_subs.push_back(2); intra_subs.push_back(3);
+  ////////////////////////////////////
+  vector1<bool> indy_resis(pose_for_design.n_residue(),false);
+  for(Size i = 1; i <= pose_for_design.n_residue()/2; ++i) indy_resis[i] = true;
+  vector1<bool> subunit_index(pose_for_design.n_residue());
+  for(Size i = 1; i <= pose_for_design.n_residue(); ++i) subunit_index[i] = (6*(i-1))/pose_for_design.n_residue();
+  vector1<Size> intra_subs; intra_subs.push_back(1); intra_subs.push_back(2); intra_subs.push_back(3);
 
 
-Sizes interface_pos;
-for (Size ir=1; ir<= pose_for_design.n_residue()/2; ir++) {
-std::string atom_i = "";
-if (pose_for_design.residue(ir).name3() == "GLY") {
-atom_i = "CA";
-} else {
-atom_i = "CB";
-}
-for (Size jr=1+pose_for_design.n_residue()/2; jr<= pose_for_design.n_residue(); jr++) {
-std::string atom_j = "";
-if (pose_for_design.residue(jr).name3() == "GLY") {
-atom_j = "CA";
- } else {
-  atom_j = "CB";
- }
- if (pose_for_design.residue(ir).xyz(atom_i).distance_squared(pose_for_design.residue(jr).xyz(atom_j)) <= contact_dist_sq) {
-   interface_pos.push_back(ir);
-   break;
- }
- }
- }
+  Sizes interface_pos;
+  for (Size ir=1; ir<= pose_for_design.n_residue()/2; ir++) {
+    std::string atom_i = "";
+    if (pose_for_design.residue(ir).name3() == "GLY") {
+      atom_i = "CA";
+    } else {
+      atom_i = "CB";
+    }
+    for (Size jr=1+pose_for_design.n_residue()/2; jr<= pose_for_design.n_residue(); jr++) {
+      std::string atom_j = "";
+      if (pose_for_design.residue(jr).name3() == "GLY") {
+        atom_j = "CA";
+      } else {
+        atom_j = "CB";
+      }
+      if (pose_for_design.residue(ir).xyz(atom_i).distance_squared(pose_for_design.residue(jr).xyz(atom_j)) <= contact_dist_sq) {
+        interface_pos.push_back(ir);
+        break;
+      }
+    }
+  }
 
- return interface_pos;
+  return interface_pos;
 
 }
 
@@ -256,9 +256,9 @@ main (int argc, char *argv[])
     sout << "anchor_residue 1" << endl;
     sout << "virtual_coordinates_start" << endl;
     sout << "xyz C00 " <<a0.x()<<","<<a0.y()<<","<<a0.z() << " "<<b00.x()<<","<<b00.y()<<","<<b00.z() << " "<<c0.x()<<","<<c0.y()<<","<<c0.z() << endl;
-		sout << "#" << endl;
+    sout << "#" << endl;
     sout << "xyz P00 " <<a0.x()<<","<<a0.y()<<","<<a0.z() << " "<<b00.x()<<","<<b00.y()<<","<<b00.z() << " "<<c0.x()<<","<<c0.y()<<","<<c0.z() << endl;
-		sout << "#" << endl;
+    sout << "#" << endl;
     sout << "xyz S00 " <<a0.x()<<","<<a0.y()<<","<<a0.z() << " "<<b00.x()<<","<<b00.y()<<","<<b00.z() << " "<<c0.x()<<","<<c0.y()<<","<<c0.z() << endl;
     sout << "xyz S01 " <<a0.x()<<","<<a0.y()<<","<<a0.z() << " "<<b01.x()<<","<<b01.y()<<","<<b01.z() << " "<<c0.x()<<","<<c0.y()<<","<<c0.z() << endl;
     sout << "xyz S02 " <<a0.x()<<","<<a0.y()<<","<<a0.z() << " "<<b02.x()<<","<<b02.y()<<","<<b02.z() << " "<<c0.x()<<","<<c0.y()<<","<<c0.z() << endl;
@@ -301,16 +301,16 @@ main (int argc, char *argv[])
     sout << "connect_virtual JS9  S30 SUBUNIT" << endl;
     sout << "connect_virtual JS10 S31 SUBUNIT" << endl;
     sout << "connect_virtual JS11 S32 SUBUNIT" << endl;
-		sout << "set_dof JP x angle_x" << endl;
+    sout << "set_dof JP x angle_x" << endl;
     sout << "set_jump_group JGS JS0 JS1 JS2 JS3 JS4 JS5 JS6 JS7 JS8 JS9 JS10 JS11" << endl;
     sout.close();
 
-		Pose tmp;
-		core::kinematics::FoldTree f(nsub);
-		vector1<Size> pos(nsub);
-		for(Size i = 1; i <= nsub; ++i) pos[i] = i;
-		core::pose::create_subpose(p,pos,f,tmp);
-		tmp.dump_pdb("mutalyze_"+fname+"_sub1.pdb");
+    Pose tmp;
+    core::kinematics::FoldTree f(nsub);
+    vector1<Size> pos(nsub);
+    for(Size i = 1; i <= nsub; ++i) pos[i] = i;
+    core::pose::create_subpose(p,pos,f,tmp);
+    tmp.dump_pdb("mutalyze_"+fname+"_sub1.pdb");
 
   }
 
