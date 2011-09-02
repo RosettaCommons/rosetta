@@ -90,7 +90,8 @@ sources = {
 		"rna_extract",
 		"rna_database",
 		"rna_design",
-                "rna_helix"
+                "rna_helix",
+                "rna_minimize"
 		],
 	"public/membrane_abinitio" : [
 		"membrane_abinitio2"
