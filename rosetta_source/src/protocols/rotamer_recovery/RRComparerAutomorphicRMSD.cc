@@ -66,7 +66,7 @@ RRComparerAutomorphicRMSD::RRComparerAutomorphicRMSD( RRComparerAutomorphicRMSD 
 
 RRComparerAutomorphicRMSD::~RRComparerAutomorphicRMSD() {}
 
-void
+bool
 RRComparerAutomorphicRMSD::measure_rotamer_recovery(
 	Pose const & pose1,
 	Pose const & pose2,
@@ -84,9 +84,10 @@ RRComparerAutomorphicRMSD::measure_rotamer_recovery(
 		utility_exit();
 	}
 
+	// TODO: Can this restriction be relaxed? What about using 'is_polymer()'?
 	if( res1.aa() > num_canonical_aas ){
 		TR << "WARNING: trying to compare rotamer bins for non-canonical amino acid '" << res1.name() << "'" << endl;
-		return;
+		return false;
 	}
 
 	if( get_include_backbone_atoms() ){
@@ -110,7 +111,7 @@ RRComparerAutomorphicRMSD::measure_rotamer_recovery(
 		score = automorphic_rmsd(*working_res1, *working_res2, false /*superimpose*/);
 		recovered = (score <= get_recovery_threshold() );
 	}
-
+	return true;
 }
 
 string

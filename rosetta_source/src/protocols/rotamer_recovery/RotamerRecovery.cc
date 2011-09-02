@@ -155,8 +155,11 @@ RotamerRecovery::measure_rotamer_recovery(
 
 	Real score;
 	bool recovered;
-	comparer_->measure_rotamer_recovery(pose1, pose2, res1, res2, score, recovered);
-	reporter_->report_rotamer_recovery(pose1, pose2, res1, res2, score, recovered );
+	if(comparer_->measure_rotamer_recovery(
+			pose1, pose2, res1, res2, score, recovered)){
+		reporter_->report_rotamer_recovery(
+			pose1, pose2, res1, res2, score, recovered );
+	}
 	return recovered;
 }
 

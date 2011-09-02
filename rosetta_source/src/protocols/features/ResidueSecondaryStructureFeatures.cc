@@ -102,6 +102,15 @@ ResidueSecondaryStructureFeatures::report_features(
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
 		if(!relevant_residues[resNum]) continue;
 
+
+		if(!pose.residue(resNum).is_protein()){
+			// Due to limitations with the current DSSP code,
+			// the indexing gets off after a non-protein residue
+			// and leads to a segmentation fault.
+			break;
+		}
+
+
 		// don't just push the char into the table.  It will end up an int!
 		stringstream dssp; dssp << all_dssp.get_dssp_secstruct(resNum);
 		statement stmt = (*db_session)

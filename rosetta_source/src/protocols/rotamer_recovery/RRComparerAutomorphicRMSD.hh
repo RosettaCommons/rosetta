@@ -53,7 +53,7 @@ public: // public interface
 	get_parameters() const;
 
 	virtual
-	void
+	bool
 	measure_rotamer_recovery(
 		core::pose::Pose const & pose1,
 		core::pose::Pose const & pose2,

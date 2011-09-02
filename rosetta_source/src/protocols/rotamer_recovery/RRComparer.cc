@@ -52,7 +52,9 @@ RRComparerRotBins::RRComparerRotBins( RRComparerRotBins const & ) :
 
 RRComparerRotBins::~RRComparerRotBins() {}
 
-void
+/// @details measure the rotamer recovery by comparing rotamer bins
+/// @return  true, if the measurement was successful, false otherwise
+bool
 RRComparerRotBins::measure_rotamer_recovery(
 	Pose const & /* pose1 */,
 	Pose const & /* pose2 */,
@@ -73,7 +75,7 @@ RRComparerRotBins::measure_rotamer_recovery(
 
 	if( res1.aa() > num_canonical_aas ){
 		TR << "WARNING: trying to compare rotamer bins for non-canonical amino acid '" << res1.name() << "'" << endl;
-		return;
+		return false;
 	}
 
 	RotVector res1_rotbins, res2_rotbins;
@@ -88,6 +90,7 @@ RRComparerRotBins::measure_rotamer_recovery(
 	}
 	score = res1_rotbins.size() - chi_match;
 	recovered = (score == 0);
+	return true;
 }
 
 string
