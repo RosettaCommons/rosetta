@@ -87,7 +87,7 @@ void nonlocal_groupings_from_alignment(utility::vector1<NLGrouping>* groupings) 
   core::Size max_chunk_sz = option[OptionKeys::nonlocal::max_chunk_size]();
 
   Loops aligned_regions, unaligned_regions;
-  find_regions(*alignment, min_chunk_sz, &aligned_regions, &unaligned_regions);
+  find_regions_with_minimum_size(*alignment, min_chunk_sz, &aligned_regions, &unaligned_regions);
   limit_chunk_size(min_chunk_sz, max_chunk_sz, &aligned_regions);
 
   TR.Debug << "Aligned:" << std::endl << aligned_regions << std::endl;
@@ -107,8 +107,6 @@ void nonlocal_groupings_from_alignment(utility::vector1<NLGrouping>* groupings) 
   TR << grouping.provenance() << std::endl;
 }
 
-/// @brief Enforces restrictions on min/max chunk size in <regions> by applying
-/// recursive decomposition
 void limit_chunk_size(core::Size min_chunk_sz,
                       core::Size max_chunk_sz,
                       protocols::loops::Loops* regions) {
@@ -119,30 +117,15 @@ void limit_chunk_size(core::Size min_chunk_sz,
   using namespace basic::options::OptionKeys;
 
   assert(regions);
-  assert(min_chunk_sz > 0);
-  assert(max_chunk_sz > 0);
   assert(min_chunk_sz <= max_chunk_sz);
 
   Loops output;
   for (Loops::const_iterator i = regions->begin(); i != regions->end(); ++i) {
-    const Loop& loop = *i;
-
-    // TODO(cmiles) trouble if we encounter aligned regions w/ length < min_chunk_sz.
-    // Gap sampling extension partially mitigates unaligned case.
-    if (loop.length() <= max_chunk_sz) {
-      output.push_back(loop);
-      continue;
-    }
-
-    // Recursively decompose <loop> until each piece has length <= max_length
     utility::vector1<Loop> pieces;
-    decompose(min_chunk_sz, max_chunk_sz, loop, &pieces);
+    decompose(min_chunk_sz, max_chunk_sz, *i, &pieces);
 
-    for (utility::vector1<Loop>::const_iterator j = pieces.begin(); j != pieces.end(); ++j) {
-      const Loop& loop = *j;
-      if (loop.length() >= min_chunk_sz)
-        output.push_back(loop);
-    }
+    for (utility::vector1<Loop>::const_iterator j = pieces.begin(); j != pieces.end(); ++j)
+      output.push_back(*j);
   }
   *regions = output;
 }
@@ -154,7 +137,6 @@ void decompose(core::Size min_chunk_sz,
   using core::Size;
   using protocols::loops::Loop;
   using utility::vector1;
-
   assert(pieces);
 
   // Base case
@@ -168,7 +150,7 @@ void decompose(core::Size min_chunk_sz,
   Loop candidate_left(loop.start(), midpoint);
   Loop candidate_right(midpoint, loop.stop());
 
-  // Impossible to satisfy min_chunk_sz requirement
+  // Impossible to partition <loop> and satisfy min_chunk_sz requirement
   if (candidate_left.length() < min_chunk_sz ||
       candidate_right.length() < min_chunk_sz) {
     pieces->push_back(loop);
@@ -195,24 +177,23 @@ void decompose(core::Size min_chunk_sz,
   std::copy(pieces_right.begin(), pieces_right.end(), std::back_inserter(*pieces));
 }
 
-void find_regions(const core::sequence::SequenceAlignment& alignment,
-                  const core::Size unaligned_region_min_sz,
-                  protocols::loops::Loops* aligned_regions,
-                  protocols::loops::Loops* unaligned_regions) {
+void find_regions_with_minimum_size(const core::sequence::SequenceAlignment& alignment,
+                                    const core::Size unaligned_region_min_sz,
+                                    protocols::loops::Loops* aligned_regions,
+                                    protocols::loops::Loops* unaligned_regions) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::Size;
 
   assert(aligned_regions);
   assert(unaligned_regions);
-  assert(unaligned_region_min_sz > 0);
 
   Size pose_space_num_residues = 0;
   for (Size ii = 1; ii <= alignment.length(); ++ii)
     pose_space_num_residues = std::max(pose_space_num_residues, alignment.sequence(1)->resnum(ii));
 
   protocols::comparative_modeling::bounded_loops_from_alignment(
-			pose_space_num_residues, unaligned_region_min_sz, alignment, unaligned_regions);
+      pose_space_num_residues, unaligned_region_min_sz, alignment, unaligned_regions);
 
   *aligned_regions   = unaligned_regions->invert(pose_space_num_residues);
 }

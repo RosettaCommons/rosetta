@@ -40,10 +40,10 @@ namespace nonlocal {
 void nonlocal_groupings_from_alignment(utility::vector1<NLGrouping>* groupings);
 
 // -- Utility methods -- not to be called directly
-void find_regions(const core::sequence::SequenceAlignment& alignment,
-                  const core::Size unaligned_region_min_sz,
-                  protocols::loops::Loops* aligned_regions,
-                  protocols::loops::Loops* unaligned_regions);
+void find_regions_with_minimum_size(const core::sequence::SequenceAlignment& alignment,
+                                    const core::Size unaligned_region_min_sz,
+                                    protocols::loops::Loops* aligned_regions,
+                                    protocols::loops::Loops* unaligned_regions);
 
 void generate_nonlocal_grouping(const protocols::loops::Loops& aligned_regions,
                                 const protocols::loops::Loops& unaligned_regions,
@@ -56,9 +56,8 @@ void read_from_template(const protocols::loops::Loops& regions,
                         const core::pose::Pose& template_pose,
                         NLGrouping* grouping);
 
-/// @brief Examines the contents of <regions>. If the length of any element
-/// exceeds -nonlocal:max_chunk_size, recursively decomposes that region into
-/// a series of pieces each less than the threshold.
+/// @brief Best-effort attempt to limit the length of a chunk by recursively
+/// decomposing <regions> such that min_chunk_sz <= |chunk| <= max_chunk_sz.
 void limit_chunk_size(core::Size min_chunk_sz,
                       core::Size max_chunk_sz,
                       protocols::loops::Loops* regions);

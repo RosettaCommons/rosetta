@@ -37,6 +37,8 @@ using utility::vector1;
 
 class NonlocalUtilTest : public CxxTest::TestSuite {
  public:
+  static const int MIN_CHUNK_SZ = 7;
+  static const int MAX_CHUNK_SZ = 28;
   vector1<SequenceAlignment> alignments_;
   Loops regions;
 
@@ -53,19 +55,17 @@ class NonlocalUtilTest : public CxxTest::TestSuite {
 
   void test_find_regions() {
     const SequenceAlignment& alignment = alignments_[1];
-    const Size unaligned_region_min_chunk_sz = 7;
 
     Loops aligned, unaligned;
-    protocols::nonlocal::find_regions(alignment,
-                                      unaligned_region_min_chunk_sz,
-                                      &aligned,
-                                      &unaligned);
+    protocols::nonlocal::find_regions_with_minimum_size
+        (alignment, MIN_CHUNK_SZ, &aligned, &unaligned);
+
     // Verify sizes
     for (Loops::const_iterator i = aligned.begin(); i != aligned.end(); ++i)
-      TS_ASSERT(i->length() >= unaligned_region_min_chunk_sz);
+      TS_ASSERT(i->length() >= MIN_CHUNK_SZ);
 
     for (Loops::const_iterator i = unaligned.begin(); i != unaligned.end(); ++i)
-      TS_ASSERT(i->length() >= unaligned_region_min_chunk_sz);
+      TS_ASSERT(i->length() >= MIN_CHUNK_SZ);
 
     // Verify aligned
     TS_ASSERT_EQUALS(aligned.size(), 13);
@@ -98,6 +98,27 @@ class NonlocalUtilTest : public CxxTest::TestSuite {
     TS_ASSERT(unaligned[11] == Loop(307, 313));
     TS_ASSERT(unaligned[12] == Loop(333, 339));
     TS_ASSERT(unaligned[13] == Loop(351, 358));
+  }
+
+  void test_limit_chunk_size() {
+    const SequenceAlignment& alignment = alignments_[1];
+
+    Loops aligned, unaligned;
+    protocols::nonlocal::find_regions_with_minimum_size
+        (alignment, MIN_CHUNK_SZ, &aligned, &unaligned);
+
+    protocols::nonlocal::limit_chunk_size(MIN_CHUNK_SZ, MAX_CHUNK_SZ, &aligned);
+    for (Loops::const_iterator i = aligned.begin(); i != aligned.end(); ++i) {
+      TS_ASSERT(i->length() >= MIN_CHUNK_SZ);
+      TS_ASSERT(i->length() <= MAX_CHUNK_SZ);
+    }
+
+    protocols::nonlocal::limit_chunk_size(MIN_CHUNK_SZ, MAX_CHUNK_SZ, &unaligned);
+    for (Loops::const_iterator i = unaligned.begin(); i != unaligned.end(); ++i) {
+      const Loop& loop = *i;
+      TS_ASSERT(i->length() >= MIN_CHUNK_SZ);
+      TS_ASSERT(i->length() <= MAX_CHUNK_SZ);
+    }
   }
 };
 }  // anonymous namespace
