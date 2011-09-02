@@ -31,6 +31,7 @@
 
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
+#include <utility/excn/Exceptions.hh>
 
 // C++ headers
 
@@ -38,7 +39,7 @@ void*
 my_main( void *)
 {
 	protocols::moves::MoverOP mover;//note that this is not instantiated and will crash if the job distributor actually tries to use it. That means that this can only be used with parser=true
-  protocols::jd2::JobDistributor::get_instance()->go(mover);
+	protocols::jd2::JobDistributor::get_instance()->go(mover);
 	return 0 ;
 }
 
@@ -49,34 +50,41 @@ my_main( void *)
 int
 main( int argc, char * argv [] )
 {
+	try{
+		protocols::abinitio::ClassicAbinitio::register_options();
+		// setup random numbers and options
+		devel::init(argc, argv);
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
 
-  protocols::abinitio::ClassicAbinitio::register_options();
-	// setup random numbers and options
-	devel::init(argc, argv);
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+		bool const view( option[ parser::view ] );
+		protocols::moves::MoverOP mover;//note that this is not instantiated and will crash if the job distributor actually tries to use it.
+																		//That means that this can only be used with parser=true
+		option[ jd2::dd_parser ].value( true ); // So here we fix that. jd2_parser app makes no sense without this option=true
+		if( !option[ jd2::ntrials ].user() )
+	// when using rosteta_scripts we want ntrials to be set to 1 if the user forgot to specify. o/w infinite loops might
+	// occur. We don't want ntrials to be set as default to 1, b/c other protocols might want it to behave differently
+			option[ jd2::ntrials ].value( 1 );
 
-	bool const view( option[ parser::view ] );
-	protocols::moves::MoverOP mover;//note that this is not instantiated and will crash if the job distributor actually tries to use it.
-																	//That means that this can only be used with parser=true
-	option[ jd2::dd_parser ].value( true ); // So here we fix that. jd2_parser app makes no sense without this option=true
-	if( !option[ jd2::ntrials ].user() )
-// when using rosteta_scripts we want ntrials to be set to 1 if the user forgot to specify. o/w infinite loops might
-// occur. We don't want ntrials to be set as default to 1, b/c other protocols might want it to behave differently
-		option[ jd2::ntrials ].value( 1 );
-
-	if( view )
-		protocols::viewer::viewer_main( my_main );
-	else{
+		if( view )
+			protocols::viewer::viewer_main( my_main );
+		else{
 #ifdef BOINC
-		protocols::jd2::BoincJobDistributor::get_instance()->go( mover );
+			protocols::jd2::BoincJobDistributor::get_instance()->go( mover );
 #else
 #ifdef USEMPI
-    protocols::jd2::MPIFileBufJobDistributor::get_instance()->go( mover );
+			protocols::jd2::MPIFileBufJobDistributor::get_instance()->go( mover );
 #else
-	  protocols::jd2::JobDistributor::get_instance()->go( mover );
+			protocols::jd2::JobDistributor::get_instance()->go( mover );
 #endif
 #endif
+		}
+	} catch( utility::excn::EXCN_Base& excn ) {
+		basic::Error()
+			<< "ERROR: Exception caught by rosetta_scripts application:"
+			<< excn << std::endl;
+		assert(false); // core dump in debug mode
+		std::exit( 1 );
 	}
 }
 
