@@ -59,6 +59,7 @@
 #include <core/scoring/methods/ReferenceEnergyCreator.hh>
 #include <core/scoring/methods/SecondaryStructureEnergyCreator.hh>
 #include <core/scoring/methods/VDW_EnergyCreator.hh>
+#include <core/scoring/methods/dfire/DFIRE_EnergyCreator.hh>
 
 #include <core/pack/dunbrack/DunbrackEnergyCreator.hh>
 
@@ -242,6 +243,7 @@ static EnergyMethodRegistrator< scoring::methods::RamachandranEnergyCreator > Ra
 static EnergyMethodRegistrator< scoring::methods::ReferenceEnergyCreator > ReferenceEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SecondaryStructureEnergyCreator > SecondaryStructureEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::VDW_EnergyCreator > VDW_EnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::dfire::DFIRE_EnergyCreator > DFIRE_EnergyCreator_registrator;
 
 static EnergyMethodRegistrator< pack::dunbrack::DunbrackEnergyCreator > DunbrackEnergyCreator_registrator;
 

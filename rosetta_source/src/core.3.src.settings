@@ -334,6 +334,11 @@ sources = {
 		"PoissonBoltzmannEnergy",
 	],
 
+	"core/scoring/methods/dfire" : [
+		"DFIRE_Energy",
+		"DFIRE_Potential",
+	],
+
 	"core/scoring/etable/etrie" : [
 		"CountPairData_1_1",
 		"CountPairData_1_2",

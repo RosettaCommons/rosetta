@@ -35,11 +35,11 @@ enum EnergyMethods
 
 
 // Eventually, gen born and classic coulombic energies will go here
-enum LongRangeEnergyType
-{
+enum LongRangeEnergyType {
 	constraints_lr = 1,
 	gen_born_lr,
 	PB_elec_lr,
+	DFIRE,
 	sym_bonus_lr,
 	elec_dens_energy,
 	elec_dens_fast_energy,

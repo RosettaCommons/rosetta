@@ -204,6 +204,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "burial" ] = burial;
 	name2score_type_[ "pair" ] = pair;
 	name2score_type_[ "cbeta" ] = cbeta;
+	name2score_type_[ "DFIRE" ] = DFIRE;
 
 	//bw membrane scoring terms
 	name2score_type_[ "Menv" ] = Menv;

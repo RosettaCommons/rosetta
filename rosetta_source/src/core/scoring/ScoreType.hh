@@ -268,6 +268,7 @@ enum ScoreType {
 	/// centroid whole structure energies
 	env,
 	cbeta,
+	DFIRE,
 	Menv,
 	Mcbeta,
 	Menv_non_helix,

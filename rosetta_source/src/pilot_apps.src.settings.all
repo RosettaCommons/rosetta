@@ -192,6 +192,7 @@ sources = {
 
 	"pilot/james" : [
 		"jdock",
+		#"make_artificial_centroids",
 		#"frag_hack",
 		#"zafer_frag_rmsd",
 		#"sparta_superdev",
