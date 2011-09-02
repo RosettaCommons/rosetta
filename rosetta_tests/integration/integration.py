@@ -60,7 +60,7 @@ rm -r ref/; ./integration.py    # create reference results using only default se
     # )
     parser.add_option("-d", "--database",
       default="", # processed below
-      help="Path to Rosetta database. (default: $ROSETTA_DB, ../..//rosetta_database)",
+      help="Path to Rosetta database. (default: $ROSETTA3_DB, ../..//rosetta_database)",
     )
 
     parser.add_option("-m", "--mini_home",

@@ -353,7 +353,7 @@ def main(args):
     parser.add_option("-d", '--database',
       default="", #processed below
       action="store",
-      help="Path to Rosetta database. (default: $ROSETTA_DB, ~/rosetta_database)",
+      help="Path to Rosetta database. (default: $ROSETTA3_DB, ../rosetta_database, ~/rosetta_database)",
     )
 
     parser.add_option("--extras",
@@ -404,6 +404,8 @@ def main(args):
         if os.environ.get('ROSETTA3_DB') is not None and \
                 path.isdir(os.environ.get('ROSETTA3_DB')):
             options.database = os.environ.get('ROSETTA3_DB')
+        elif path.isdir( path.join( "..", "rosetta_database") ):
+            options.database = path.abspath(path.join( "..", "rosetta_database"))
         elif path.isdir( path.join( path.expanduser("~"), "rosetta_database") ):
             options.database = path.join( path.expanduser("~"), "rosetta_database")
         else:
