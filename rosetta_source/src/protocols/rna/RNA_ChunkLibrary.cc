@@ -857,7 +857,7 @@ namespace rna{
 			// JUST FOR TESTING
 			if ( dump_pdb ) chunk_index = 1;
 
-			TR << "NUM_CHUNKS " << chunk_index << " " << chunk_set.num_chunks() << std::endl;
+			//TR << "NUM_CHUNKS " << chunk_index << " " << chunk_set.num_chunks() << std::endl;
 			chunk_set.insert_chunk_into_pose( pose, chunk_index, allow_insert_ );
 
 			if ( dump_pdb ) pose.dump_pdb( "start_"+string_of(n)+".pdb" );

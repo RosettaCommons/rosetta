@@ -408,7 +408,7 @@ void BinaryRNASilentStruct::fill_pose (
 ) const {
 	using namespace core::chemical;
 	ResidueTypeSetCAP residue_set;
-	std::cout << "RESIDUE TYPE SET RNA " << std::endl;
+	//std::cout << "RESIDUE TYPE SET RNA " << std::endl;
 	residue_set = ChemicalManager::get_instance()->residue_type_set( RNA );
 	fill_pose( pose, *residue_set );
 } // fill_pose
