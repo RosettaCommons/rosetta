@@ -104,6 +104,13 @@ core::sequence::SequenceAlignment alignment_from_cmd_line() {
 	return alns[1];
 }
 
+/// @detail The premise underlying this tortuous method is simple--
+/// identify aligned/unaligned regions in a sequence alignment with
+/// the constraint that each region has a certain minimum length.
+///
+/// The current implementation achieves this goal in a roundabout
+/// manner by making use of existing, less specialized utility
+/// functions.
 void bounded_loops_from_alignment(
     const core::Size num_residues,
     const core::Size min_size,

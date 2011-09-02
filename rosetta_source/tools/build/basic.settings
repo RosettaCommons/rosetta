@@ -153,7 +153,7 @@ settings = {
                 # be C99?  Are there portability issues?
                 "cc"        : [ "std=c99" ],
                 "cxx"       : [ "std=c++98" ],
-                "compile"   : [ "pipe", "ffor-scope" ],
+                "compile"   : [ "ffor-scope" ],
                 # By default, warn as much as possible.
                 "warn"      : [ "W", "Wall", "pedantic", "Wno-long-long" ],
             },
