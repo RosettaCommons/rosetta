@@ -500,7 +500,7 @@ void HelixAssemblyMover::superimposeBundles(Pose & pose1, Pose const & pose2){
 ///@details
 utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob & job ){
 
-//  cout << "In apply!" << endl;
+//  TR << "In apply!" << endl;
 
   utility::vector1<HelixAssemblyJob> new_jobs;
 ///DEBUG////
@@ -512,21 +512,21 @@ utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob &
 ////END DEBUG////
 
 //  utility::file::FileName filename (pose.pdb_info()->name());
-  cout << "working on file: " << job.get_job_name() << endl;
+  TR << "working on file: " << job.get_job_name() << endl;
 //  std::string baseOutputName = filename.base() + "_hit_";
 
   Pose fullQueryStructure;
   core::import_pose::pose_from_pdbstring(fullQueryStructure, job.get_query_structure());
-  cout << "Full Query Structure is " << fullQueryStructure.total_residue() << " residues" << endl;
+  TR << "Full Query Structure is " << fullQueryStructure.total_residue() << " residues" << endl;
 
   Pose search_structure;
   core::import_pose::pose_from_pdbstring(search_structure, job.get_search_structure());
-  cout << "Search Structure is " << search_structure.total_residue() << " residues" << endl;
+  TR << "Search Structure is " << search_structure.total_residue() << " residues" << endl;
 
   Pose helixFragment1(fullQueryStructure, job.get_frag1_start(), job.get_frag1_end());
   Pose helixFragment2(fullQueryStructure, job.get_frag2_start(), job.get_frag2_end());
-  cout << "Fragment 1 is " << helixFragment1.total_residue() << " residues" << endl;
-  cout << "Fragment 2 is " << helixFragment2.total_residue() << " residues" << endl;
+  TR << "Fragment 1 is " << helixFragment1.total_residue() << " residues" << endl;
+  TR << "Fragment 2 is " << helixFragment2.total_residue() << " residues" << endl;
 
   Pose combined_query_fragments = combinePoses(helixFragment1, helixFragment2);
 
@@ -536,13 +536,13 @@ utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob &
 
   utility::vector1< std::pair< Size,Size > > helix_endpts;
   helix_endpts = findHelices(search_structure);
-  cout << "Found " << helix_endpts.size() << " helices in search structure" << endl;
+  TR << "Found " << helix_endpts.size() << " helices in search structure" << endl;
 
   //search helix poses for all close RMSD matches to each query fragment
   utility::vector1<Size> fragment1Results = findFragments(search_structure, helixFragment1, helix_endpts);
   utility::vector1<Size> fragment2Results = findFragments(search_structure, helixFragment2, helix_endpts);
 
-  cout << "Found " << fragment1Results.size() << " fragments for frag1 & " << fragment2Results.size() << " for frag2." << endl;
+  TR << "Found " << fragment1Results.size() << " fragments for frag1 & " << fragment2Results.size() << " for frag2." << endl;
 
   //keep track of number of hits in structure, for output filename purposes
   Size resultsCounter;

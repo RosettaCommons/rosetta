@@ -108,7 +108,7 @@ main( int argc, char * argv [] )
           temp_job.set_round(1);
           job_queue.push_back(temp_job);
       }
-      cout << "Done populating the job queue with " << job_queue.size() << " jobs." << endl;
+      TR << "Done populating the job queue with " << job_queue.size() << " jobs." << endl;
 
       //distribute initial jobs to all processors
       for(Size i=1; i < world.size(); ++i){
@@ -120,7 +120,7 @@ main( int argc, char * argv [] )
               world.send(i, 0, true);
               world.send(i, 0, boost::mpi::skeleton(temp_job));
               world.send(i, 0, boost::mpi::get_content(temp_job));
-              cout << "Job sent to node: " << i << endl;
+              TR << "Job sent to node: " << i << endl;
           }
           //if we have more processors than we have jobs, keep track of which processors are free (for use by jobs created later)
           else{
@@ -134,11 +134,11 @@ main( int argc, char * argv [] )
           int completed_node;
           world.recv(boost::mpi::any_source,0,completed_node);
 
-          cout << "Node " << completed_node << " finished a job" << endl;
+          TR << "Node " << completed_node << " finished a job" << endl;
 
           int num_new_jobs;
           world.recv(completed_node,0,num_new_jobs);
-          cout << "Node " << completed_node << " wants to add " << num_new_jobs << " new job(s)" << endl;
+          TR << "Node " << completed_node << " wants to add " << num_new_jobs << " new job(s)" << endl;
           vector1<HelixAssemblyJob> new_jobs;
           //receive all new jobs from completed node
           for(Size i=1; i<=num_new_jobs; ++i){
@@ -148,7 +148,7 @@ main( int argc, char * argv [] )
               new_jobs.push_back(temp_job);
           }
 
-          cout << "Added all the new jobs" << endl;
+          TR << "Added all the new jobs" << endl;
 
           for(Size i=1; i <= new_jobs.size(); ++i){
               if(new_jobs[i].get_round() < option[HelixAssembly::helices_to_add]){
@@ -175,6 +175,8 @@ main( int argc, char * argv [] )
               }
           }
 
+          TR << "Jobs left: " << job_queue.size() << endl;
+
           //use newly free processor
           if(job_queue.size() > 0){
               //LOOP THROUGH FREE PROCESSORS HERE
@@ -185,6 +187,7 @@ main( int argc, char * argv [] )
               world.send(completed_node, 0, boost::mpi::skeleton(temp_job));
               world.send(completed_node, 0, boost::mpi::get_content(temp_job));
           }
+          //we're all done, tell all the other processors.
           else{
               //tell all processors that we don't have any more jobs
               for(Size i=1; i < world.size(); ++i){
@@ -198,28 +201,34 @@ main( int argc, char * argv [] )
 
       //while(receive_bool_from_node(0)){
       bool moreJobs;
-      world.recv(0, 0, moreJobs);
-      while(moreJobs){
-          HelixAssemblyJob received_job;
-          world.recv(0, 0, boost::mpi::skeleton(received_job));
-          world.recv(0, 0, boost::mpi::get_content(received_job));
-          cout << "Node " << world.rank() << " received a job" << endl;
+      while(true){
+          world.recv(0, 0, moreJobs);
+          if(moreJobs){
+              HelixAssemblyJob received_job;
+              world.recv(0, 0, boost::mpi::skeleton(received_job));
+              world.recv(0, 0, boost::mpi::get_content(received_job));
+              TR << "Node " << world.rank() << " received a job" << endl;
 
-          HelixAssemblyMover helixAssembler;
-          vector1<HelixAssemblyJob> returnedJobs = helixAssembler.apply(received_job);
-          cout << "Finished apply! returning " << returnedJobs.size() << " job(s)." << endl;
+              HelixAssemblyMover helixAssembler;
+              vector1<HelixAssemblyJob> returnedJobs = helixAssembler.apply(received_job);
+              TR << "Finished apply! returning " << returnedJobs.size() << " job(s)." << endl;
 
-          //tell head node which job finished
-          world.send(0,0,world.rank());
+              //tell head node which job finished
+              world.send(0,0,world.rank());
 
-          //send how many jobs to expect, then send each job
-          int num_jobs_to_send = returnedJobs.size();
-          world.send(0,0,num_jobs_to_send);
-          for(Size i=1; i<=returnedJobs.size(); ++i){
-              world.send(0,0,boost::mpi::skeleton(returnedJobs[i]));
-              world.send(0,0,boost::mpi::get_content(returnedJobs[i]));
+              //send how many jobs to expect, then send each job
+              int num_jobs_to_send = returnedJobs.size();
+              world.send(0,0,num_jobs_to_send);
+              for(Size i=1; i<=returnedJobs.size(); ++i){
+                  world.send(0,0,boost::mpi::skeleton(returnedJobs[i]));
+                  world.send(0,0,boost::mpi::get_content(returnedJobs[i]));
+              }
+          }
+          else{
+              break;
           }
       }
   }
   MPI_Finalize();
+  TR << "------------DONE!------------" << endl;
 }
