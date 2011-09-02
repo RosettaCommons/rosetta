@@ -11,10 +11,11 @@
 /// @brief  Program vector-valued option abstract base class
 /// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
 /// @author Modified by Sergey Lyskov (Sergey.Lyskov@jhu.edu)
+/// @author Modified by Rhiju Das (rhiju@stanford.edu)
 
 
-#ifndef INCLUDED_utility_options_VectorOption_T__hh
-#define INCLUDED_utility_options_VectorOption_T__hh
+#ifndef INCLUDED_utility_options_VectorOption_T__HH
+#define INCLUDED_utility_options_VectorOption_T__HH
 
 
 // Unit headers

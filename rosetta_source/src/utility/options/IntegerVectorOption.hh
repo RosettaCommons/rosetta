@@ -10,10 +10,11 @@
 /// @file   utility/options/IntegerVectorOption.hh
 /// @brief  Program integer vector option class
 /// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
+/// @author Modified by Rhiju Das (rhiju@stanford.edu)
 
 
-#ifndef INCLUDED_utility_options_IntegerVectorOption_hh
-#define INCLUDED_utility_options_IntegerVectorOption_hh
+#ifndef INCLUDED_utility_options_IntegerVectorOption_HH
+#define INCLUDED_utility_options_IntegerVectorOption_HH
 
 
 // Unit headers
