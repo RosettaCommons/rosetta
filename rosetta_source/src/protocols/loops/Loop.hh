@@ -132,11 +132,20 @@ inline std::ostream & operator<<( std::ostream & os, const Loop & loop ) {
 	return os;
 }
 
+/// @brief Orders loops by start position
+class RationalLoopComparator : public std::binary_function<double, double, bool> {
+ public:
+	bool operator()(Loop x, Loop y) {
+		return x.start() < y.start();
+	}
+};
+
+
 /// @brief used to sort Loops by start-res
 class Loop_lt : public std::binary_function<double, double, bool> {
 public:
 	bool operator()(Loop x, Loop y) {
-		return (x.start() < y.stop());
+		return (x.start() < y.stop());  // so wrong...
 	}
 };
 

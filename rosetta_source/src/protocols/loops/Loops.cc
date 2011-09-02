@@ -367,31 +367,8 @@ Loops::remove_terminal_loops( pose::Pose const & pose ){
 }
 
 /////////////////////////////////////////////////////////////////////////////
-void
-Loops::sequential_order()
-{
-	if ( num_loop() <= 1 ) return;
-
-	LoopList new_loops_;
-
-	iterator it_begin = loops_.begin();
-	new_loops_.push_back( *it_begin );
-
-	for ( const_iterator it = ++it_begin, it_end = loops_.end();
-				it != it_end; ++it ) {
-		bool inserted = false;
-		for( iterator it2 = new_loops_.begin(), it2_end = new_loops_.end();
-				 it2 != it2_end; ++it2 ) {
-			if ( it->start() < it2->start() ) {
-				new_loops_.insert( it2, *it );
-				inserted = true;
-				break;
-			}
-		}
-		if ( ! inserted ) new_loops_.push_back( *it );
-	}
-	runtime_assert( loops_.size() == new_loops_.size() );
-	loops_ = new_loops_;
+void Loops::sequential_order() {
+	std::sort(loops_.begin(), loops_.end(), RationalLoopComparator());
 }
 //////////////////////////////////////////////////////////////////////
 void
