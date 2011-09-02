@@ -265,6 +265,7 @@ option.add( basic::options::OptionKeys::docking::use_legacy_protocol, "Use the l
 option.add( basic::options::OptionKeys::docking::ligand::ligand, "docking:ligand option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::docking::ligand::protocol, "Which protocol to run?" ).def("abbreviated");
 option.add( basic::options::OptionKeys::docking::ligand::soft_rep, "Use soft repulsive potential?" ).def(false);
+option.add( basic::options::OptionKeys::docking::ligand::tweak_sxfn, "Apply default modifications to the score function?" ).def(true);
 option.add( basic::options::OptionKeys::docking::ligand::old_estat, "Emulate Rosetta++ electrostatics? (higher weight, ignore protein-protein)" ).def(false);
 option.add( basic::options::OptionKeys::docking::ligand::random_conformer, "Start from a random ligand rotamer chosen from the library" ).def(false);
 option.add( basic::options::OptionKeys::docking::ligand::improve_orientation, "Do N cycles of randomization to minimize clashes with backbone" );
@@ -279,11 +280,11 @@ option.add( basic::options::OptionKeys::docking::ligand::minimize_backbone, "All
 option.add( basic::options::OptionKeys::docking::ligand::harmonic_Calphas, "Minimize with harmonic restraints with specified stddev (in Angstroms)" ).def(0.2);
 option.add( basic::options::OptionKeys::docking::ligand::tether_ligand, "Restrain ligand to starting point with specified stddev (in Angstroms)" );
 option.add( basic::options::OptionKeys::docking::ligand::start_from, "One or more XYZ locations to choose for the ligand:  -start_from X1 Y1 Z1  -start_from X2 Y2 Z2  ..." );
+option.add( basic::options::OptionKeys::docking::ligand::option_file, "Name of Ligand Option File for use with multi_ligand_dock application" );
+option.add( basic::options::OptionKeys::docking::ligand::rescore, "No docking (debug/benchmark mode)" ).def(false);
 option.add( basic::options::OptionKeys::docking::ligand::grid::grid, "docking:ligand:grid option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::docking::ligand::grid::grid_kin, "Write kinemage version of generated grid to named file" );
 option.add( basic::options::OptionKeys::docking::ligand::grid::grid_map, "Write grid to named file as electron density in BRIX (aka `O'-map) format" );
-option.add( basic::options::OptionKeys::docking::ligand::option_file, "Name of Ligand Option File for use with multi_ligand_dock application" );
-option.add( basic::options::OptionKeys::docking::ligand::rescore, "No docking (debug/benchmark mode)" ).def(false);
 option.add( basic::options::OptionKeys::docking::symmetry::symmetry, "symmetry option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::docking::symmetry::minimize_backbone, "Allow protein backbone to minimize? " ).def(false);
 option.add( basic::options::OptionKeys::docking::symmetry::minimize_sidechains, "Allow protein sidechains to minimize? " ).def(false);
@@ -673,6 +674,7 @@ option.add( basic::options::OptionKeys::chemical::chemical, "chemical option gro
 option.add( basic::options::OptionKeys::chemical::exclude_patches, "Names of the residue-type-set patches which should not be applied; if you know which patches you do not need for a particular run, this flag can reduce your memory use" );
 option.add( basic::options::OptionKeys::score::score, "scorefunction option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::score::weights, "Name of weights file (without extension .wts)" ).def("standard");
+option.add( basic::options::OptionKeys::score::soft_wts, "Name of the 'soft' weights file, for protocols which use it." ).def("soft_rep");
 option.add( basic::options::OptionKeys::score::custom_atom_pair, "filename for custom atom pair constraints" ).def("empty");
 option.add( basic::options::OptionKeys::score::patch, "Name of patch file (without extension)" ).def("");
 option.add( basic::options::OptionKeys::score::empty, "Make an empty score - i.e. NO scoring" );
@@ -1714,10 +1716,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");

@@ -40,7 +40,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 //#include <core/scoring/constraints/Func.hh>
@@ -68,6 +68,7 @@
 
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <core/chemical/AtomType.hh>
@@ -105,8 +106,29 @@ LigandBaseProtocol::LigandBaseProtocol():
 	// Set up scoring function
 	// Meiler & Baker 06 uses the soft-repulsive weights, but David wants me to use the hard ones...
 	// TODO:  look into using standard weights (score12) as the base, with hack_elec added in and hbonds set to 1.3 (Lin's recommendation)
-	hard_scorefxn_ = make_tweaked_scorefxn("ligand", rosetta_electrostatics, rosetta_electrostatics, hbonds_downweight);
-	soft_scorefxn_ = make_tweaked_scorefxn("ligand_soft_rep", rosetta_electrostatics, rosetta_electrostatics, hbonds_downweight);
+
+	if ( option[ OptionKeys::docking::ligand::tweak_sxfn ] ) {
+		TR.Debug << "Using regular tweaked scorefunctions" << std::endl;
+		hard_scorefxn_ = make_tweaked_scorefxn("ligand", rosetta_electrostatics, rosetta_electrostatics, hbonds_downweight);
+		soft_scorefxn_ = make_tweaked_scorefxn("ligand_soft_rep", rosetta_electrostatics, rosetta_electrostatics, hbonds_downweight);
+	} else {
+		// Use plain scorefunctions - user specified ones if given, else the regular ones (but non-tweaked).
+		// Note that you should now be able to specify exclude_protein_protein_hack_elec in the weights files.
+		if ( option[ OptionKeys::score::weights ].user() || option[ OptionKeys::score::patch ].user() ) {
+			TR.Debug << "Using untweaked command-line specified (hard) scorefunction. " << std::endl;
+			hard_scorefxn_ = core::scoring::getScoreFunction();
+		} else {
+			TR.Debug << "Using untweaked ligand.wts hard scorefunction." << std::endl;
+			hard_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("ligand.wts");
+		}
+		if ( option[ OptionKeys::score::soft_wts ].user() ) {
+			TR.Debug << "Using untweaked -score:soft_wts specified soft scorefunction." << std::endl;
+			soft_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function( option[ OptionKeys::score::soft_wts ] );
+		} else {
+			TR.Debug << "Using untweaked ligand_soft_rep.wts soft scorefunction." << std::endl;
+			soft_scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("ligand_soft_rep.wts");
+		}
+	}
 
 	// "Default" score is always hard;  use soft-rep only inside of apply()
 	scorefxn_ = hard_scorefxn_; //( use_soft_rep_ ? soft_scorefxn_ : hard_scorefxn_ );

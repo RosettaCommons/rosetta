@@ -61,6 +61,7 @@ namespace docking { extern BooleanOptionKey const use_legacy_protocol; }
 namespace docking { namespace ligand { extern BooleanOptionKey const ligand; } }
 namespace docking { namespace ligand { extern StringOptionKey const protocol; } }
 namespace docking { namespace ligand { extern BooleanOptionKey const soft_rep; } }
+namespace docking { namespace ligand { extern BooleanOptionKey const tweak_sxfn; } }
 namespace docking { namespace ligand { extern BooleanOptionKey const old_estat; } }
 namespace docking { namespace ligand { extern BooleanOptionKey const random_conformer; } }
 namespace docking { namespace ligand { extern IntegerOptionKey const improve_orientation; } }
@@ -75,11 +76,11 @@ namespace docking { namespace ligand { extern BooleanOptionKey const minimize_ba
 namespace docking { namespace ligand { extern RealOptionKey const harmonic_Calphas; } }
 namespace docking { namespace ligand { extern RealOptionKey const tether_ligand; } }
 namespace docking { namespace ligand { extern RealVectorOptionKey const start_from; } }
+namespace docking { namespace ligand { extern StringOptionKey const option_file; } }
+namespace docking { namespace ligand { extern BooleanOptionKey const rescore; } }
 namespace docking { namespace ligand { namespace grid { extern BooleanOptionKey const grid; } } }
 namespace docking { namespace ligand { namespace grid { extern FileOptionKey const grid_kin; } } }
 namespace docking { namespace ligand { namespace grid { extern FileOptionKey const grid_map; } } }
-namespace docking { namespace ligand { extern StringOptionKey const option_file; } }
-namespace docking { namespace ligand { extern BooleanOptionKey const rescore; } }
 namespace docking { namespace symmetry { extern BooleanOptionKey const symmetry; } }
 namespace docking { namespace symmetry { extern BooleanOptionKey const minimize_backbone; } }
 namespace docking { namespace symmetry { extern BooleanOptionKey const minimize_sidechains; } }

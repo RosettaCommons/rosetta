@@ -260,6 +260,7 @@ namespace docking { BooleanOptionKey const use_legacy_protocol( "docking:use_leg
 namespace docking { namespace ligand { BooleanOptionKey const ligand( "docking:ligand" );  } }
 namespace docking { namespace ligand { StringOptionKey const protocol( "docking:ligand:protocol" );  } }
 namespace docking { namespace ligand { BooleanOptionKey const soft_rep( "docking:ligand:soft_rep" );  } }
+namespace docking { namespace ligand { BooleanOptionKey const tweak_sxfn( "docking:ligand:tweak_sxfn" );  } }
 namespace docking { namespace ligand { BooleanOptionKey const old_estat( "docking:ligand:old_estat" );  } }
 namespace docking { namespace ligand { BooleanOptionKey const random_conformer( "docking:ligand:random_conformer" );  } }
 namespace docking { namespace ligand { IntegerOptionKey const improve_orientation( "docking:ligand:improve_orientation" );  } }
@@ -274,11 +275,11 @@ namespace docking { namespace ligand { BooleanOptionKey const minimize_backbone(
 namespace docking { namespace ligand { RealOptionKey const harmonic_Calphas( "docking:ligand:harmonic_Calphas" );  } }
 namespace docking { namespace ligand { RealOptionKey const tether_ligand( "docking:ligand:tether_ligand" );  } }
 namespace docking { namespace ligand { RealVectorOptionKey const start_from( "docking:ligand:start_from" );  } }
+namespace docking { namespace ligand { StringOptionKey const option_file( "docking:ligand:option_file" );  } }
+namespace docking { namespace ligand { BooleanOptionKey const rescore( "docking:ligand:rescore" );  } }
 namespace docking { namespace ligand { namespace grid { BooleanOptionKey const grid( "docking:ligand:grid" );  } } }
 namespace docking { namespace ligand { namespace grid { FileOptionKey const grid_kin( "docking:ligand:grid:grid_kin" );  } } }
 namespace docking { namespace ligand { namespace grid { FileOptionKey const grid_map( "docking:ligand:grid:grid_map" );  } } }
-namespace docking { namespace ligand { StringOptionKey const option_file( "docking:ligand:option_file" );  } }
-namespace docking { namespace ligand { BooleanOptionKey const rescore( "docking:ligand:rescore" );  } }
 namespace docking { namespace symmetry { BooleanOptionKey const symmetry( "docking:symmetry" );  } }
 namespace docking { namespace symmetry { BooleanOptionKey const minimize_backbone( "docking:symmetry:minimize_backbone" );  } }
 namespace docking { namespace symmetry { BooleanOptionKey const minimize_sidechains( "docking:symmetry:minimize_sidechains" );  } }

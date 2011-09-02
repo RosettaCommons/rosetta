@@ -257,7 +257,7 @@ def write_common_flags(outfile, options, docking_cases): #{{{
 -out
  ## These channels generate a LOT of output,
  ## especially with -improve_orientation.
- -mute protocols.geometry.RB_geometry core.scoring.dunbrack.SingleLigandRotamerLibrary core.scoring.rms_util
+ -mute protocols.geometry.RB_geometry core.scoring.dunbrack.SingleLigandRotamerLibrary core.scoring.rms_util core.pack.dunbrack.SingleLigandRotamerLibrary
  -file
   ## I prefer output structures with Rosetta numbering, from 1 to N residues.
   ## To keep the original PDB numbering, omit this flag:
@@ -270,7 +270,7 @@ def write_common_flags(outfile, options, docking_cases): #{{{
  #-rng mt19937
  ## Rosetta's default behavior is to pretend that atoms with zero occupancy
  ## don't exist at all, which can lead to whole residues disappearing...
- -trust_missing_coords
+ -ignore_zero_occupancy false
 -packing
  ## Includes the input sidechain conformations as rotamers when repacking,
  ## but they can be "lost" if any other rotamer is chosen at that position.

@@ -1244,6 +1244,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-tweak_sxfn</b> \<Boolean\><dt>
+<dd>Apply default modifications to the score function?</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
 <dt><b>-old_estat</b> \<Boolean\><dt>
 <dd>Emulate Rosetta++ electrostatics? (higher weight, ignore protein-protein)</dd><br>
 <dd>Default: false</dd><br>
@@ -1310,6 +1315,15 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-start_from</b> \<RealVector\><dt>
 <dd>One or more XYZ locations to choose for the ligand:  -start_from X1 Y1 Z1  -start_from X2 Y2 Z2  ...</dd><br>
 </dl>
+<dl>
+<dt><b>-option_file</b> \<String\><dt>
+<dd>Name of Ligand Option File for use with multi_ligand_dock application</dd><br>
+</dl>
+<dl>
+<dt><b>-rescore</b> \<Boolean\><dt>
+<dd>No docking (debug/benchmark mode)</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>docking:ligand:grid</h2>
 <dl>
@@ -1323,17 +1337,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-grid_map</b> \<File\><dt>
 <dd>Write grid to named file as electron density in BRIX (aka `O'-map) format</dd><br>
-</dl>
- </li>
-<li><h2>docking:ligand</h2>
-<dl>
-<dt><b>-option_file</b> \<String\><dt>
-<dd>Name of Ligand Option File for use with multi_ligand_dock application</dd><br>
-</dl>
-<dl>
-<dt><b>-rescore</b> \<Boolean\><dt>
-<dd>No docking (debug/benchmark mode)</dd><br>
-<dd>Default: false</dd><br>
 </dl>
  </li>
 <li><h2>docking:symmetry</h2>
@@ -3218,6 +3221,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-weights</b> \<String\><dt>
 <dd>Name of weights file (without extension .wts)</dd><br>
 <dd>Default: "standard"</dd><br>
+</dl>
+<dl>
+<dt><b>-soft_wts</b> \<String\><dt>
+<dd>Name of the 'soft' weights file, for protocols which use it.</dd><br>
+<dd>Default: "soft_rep"</dd><br>
 </dl>
 <dl>
 <dt><b>-custom_atom_pair</b> \<String\><dt>

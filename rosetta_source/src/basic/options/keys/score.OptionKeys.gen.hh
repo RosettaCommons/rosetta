@@ -23,6 +23,7 @@ namespace OptionKeys {
 
 namespace score { extern BooleanOptionKey const score; }
 namespace score { extern StringOptionKey const weights; }
+namespace score { extern StringOptionKey const soft_wts; }
 namespace score { extern StringOptionKey const custom_atom_pair; }
 namespace score { extern StringOptionKey const patch; }
 namespace score { extern BooleanOptionKey const empty; }
