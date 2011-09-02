@@ -1253,6 +1253,7 @@ option.add( basic::options::OptionKeys::pose_metrics::min_sequence_separation, "
 option.add( basic::options::OptionKeys::pose_metrics::contact_cutoffE, " maximum interaction energy allowed between two residues to count as a contact in the NonlocalContactsCalculator" ).def(-1.0);
 option.add( basic::options::OptionKeys::pose_metrics::neighbor_by_distance_cutoff, "distance in angstroms (def. 10.0) for calculating neighbors of a residue via NeighborByDistanceCalculator" ).def(10.0);
 option.add( basic::options::OptionKeys::pose_metrics::inter_group_neighbors_cutoff, "distance in angstroms (def. 10.0) for calculating interfaces between domains with InterGroupNeighborsCalculator" ).def(10.0);
+option.add( basic::options::OptionKeys::pose_metrics::semiex_water_burial_cutoff, "water hbond states fraction cutiff for SemiExplicitWaterUnsatisfiedPolarsCalculator (0.0,1.0)" ).def(0.25);
 option.add( basic::options::OptionKeys::ddg::ddg, "ddg option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::ddg::avg_rot_cst_enrg, "No description" ).def(false);
 option.add( basic::options::OptionKeys::ddg::use_bound_cst, "No description" ).def(false);
@@ -1716,10 +1717,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
+option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");

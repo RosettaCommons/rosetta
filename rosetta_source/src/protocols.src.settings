@@ -1179,7 +1179,7 @@ sources = {
 	],
 
 	"protocols/toolbox/pose_metric_calculators" : [
-		#"ExplicitWaterUnsatisfiedPolarsCalculator",
+		"SemiExplicitWaterUnsatisfiedPolarsCalculator",
 		"BuriedUnsatisfiedPolarsCalculator",
 		"CatPiCalculator",
 		"ChargeCalculator",

@@ -2800,6 +2800,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'contact_cutoffE', 'Real', default='-1.0', desc=' maximum interaction energy allowed between two residues to count as a contact in the NonlocalContactsCalculator' ),
 		Option( 'neighbor_by_distance_cutoff', 'Real', default='10.0', desc='distance in angstroms (def. 10.0) for calculating neighbors of a residue via NeighborByDistanceCalculator'),
 		Option( 'inter_group_neighbors_cutoff', 'Real', default='10.0', desc='distance in angstroms (def. 10.0) for calculating interfaces between domains with InterGroupNeighborsCalculator'),
+		Option( 'semiex_water_burial_cutoff', 'Real', default='0.25', desc='water hbond states fraction cutiff for SemiExplicitWaterUnsatisfiedPolarsCalculator (0.0,1.0)' ),
 	 ),
 
 

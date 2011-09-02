@@ -29,6 +29,7 @@ namespace pose_metrics { extern IntegerOptionKey const min_sequence_separation; 
 namespace pose_metrics { extern RealOptionKey const contact_cutoffE; }
 namespace pose_metrics { extern RealOptionKey const neighbor_by_distance_cutoff; }
 namespace pose_metrics { extern RealOptionKey const inter_group_neighbors_cutoff; }
+namespace pose_metrics { extern RealOptionKey const semiex_water_burial_cutoff; }
 
 } // namespace OptionKeys
 } // namespace options

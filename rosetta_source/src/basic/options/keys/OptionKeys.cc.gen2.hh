@@ -104,6 +104,7 @@ namespace pose_metrics { IntegerOptionKey const min_sequence_separation( "pose_m
 namespace pose_metrics { RealOptionKey const contact_cutoffE( "pose_metrics:contact_cutoffE" );  }
 namespace pose_metrics { RealOptionKey const neighbor_by_distance_cutoff( "pose_metrics:neighbor_by_distance_cutoff" );  }
 namespace pose_metrics { RealOptionKey const inter_group_neighbors_cutoff( "pose_metrics:inter_group_neighbors_cutoff" );  }
+namespace pose_metrics { RealOptionKey const semiex_water_burial_cutoff( "pose_metrics:semiex_water_burial_cutoff" );  }
 namespace ddg { BooleanOptionKey const ddg( "ddg" );  }
 namespace ddg { BooleanOptionKey const avg_rot_cst_enrg( "ddg:avg_rot_cst_enrg" );  }
 namespace ddg { BooleanOptionKey const use_bound_cst( "ddg:use_bound_cst" );  }
@@ -567,4 +568,3 @@ namespace DenovoProteinDesign { FileOptionKey const secondary_structure_file( "D
 namespace DenovoProteinDesign { FileOptionKey const hydrophobic_polar_pattern( "DenovoProteinDesign:hydrophobic_polar_pattern" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const use_template_sequence( "DenovoProteinDesign:use_template_sequence" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "DenovoProteinDesign:use_template_topology" );  }
-namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "DenovoProteinDesign:create_from_template_pdb" );  }
