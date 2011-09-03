@@ -28,10 +28,10 @@
 /// write the following: pose.print_metric("unsat", "all_unsat_polars");
 ///
 /// @author
-/// Chris King, templated off of BuriedUnsatisfiedPolarsCalculator by Florian Richter
+/// Chris King
 /// Steven Combs - comments
 ///
-/// @last_modified November 19 2010
+/// @last_modified 9/2/2011
 /////////////////////////////////////////////////////////////////////////
 /// @file   core/pose/metrics/SemiExplicitWaterUnsatisfiedPolarsCalculator.cc
 /// @brief  number of hbonds calculator class

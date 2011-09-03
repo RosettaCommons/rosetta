@@ -6,7 +6,7 @@
 
 /// @file /src/protocols/toolbox/PoseMetricCalculators/SemiExplicitWaterUnsatisfiedPolarsCalculator.hh
 /// @brief
-/// @author Chris King, templated from SemiExplicitWaterUnsatisfiedPolarsCalulator by Florian RichterFlorian Richter
+/// @author Chris King, templated from BuriedUnsatisfiedPolarsCalulator by Florian Richter
 
 
 #ifndef INCLUDED_protocols_toolbox_pose_metric_calculators_SemiExplicitWaterUnsatisfiedPolarsCalculator_hh
@@ -18,8 +18,7 @@
 #include <basic/MetricValue.fwd.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/hbonds/HBondDatabase.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 
