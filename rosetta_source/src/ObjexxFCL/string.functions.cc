@@ -14,6 +14,9 @@
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
 
+// utility headers
+#include <utility/vector1.hh>
+
 // C++ Headers
 #include <algorithm>
 #include <cctype>
@@ -817,6 +820,50 @@ head( std::string const & s )
 		}
 	}
 }
+
+
+/// @brief  ints of a string (e.g., allowing "5-8" to represent "5 6 7 8").
+bool
+is_ints( std::string const & s ){
+  bool string_is_ok( false );
+  ints_of( s, string_is_ok );
+  return string_is_ok;
+}
+
+/// @brief  ints of a string (e.g., allowing "5-8" to represent "5 6 7 8").
+utility::vector1< int >
+ints_of( std::string const & s ){
+  bool string_is_ok( false );
+  return ints_of( s, string_is_ok );
+}
+
+/// @brief  ints of a string (e.g., allowing "5-8" to represent "5 6 7 8").
+utility::vector1< int >
+ints_of( std::string const & s, bool & string_is_ok ){
+
+  utility::vector1< int > vals;
+  string_is_ok = false;
+
+  size_t found_dash = s.find( "-" );
+  if ( found_dash == string::npos || found_dash == 0 ){
+
+    string_is_ok = is_int( s );
+    if ( string_is_ok ) vals.push_back( int_of( s ) );
+
+  } else {
+    std::string const start_val_string = s.substr(0,found_dash  );
+    std::string const  end_val_string  = s.substr(found_dash+1, s.size() );
+    string_is_ok = is_int( start_val_string ) && is_int( end_val_string); // currently cannot process
+    if ( string_is_ok ){
+      int start_val = int_of( start_val_string );
+      int end_val = int_of( end_val_string );
+      for ( int n = start_val; n <= end_val; n++ ) vals.push_back( n );
+    }
+  }
+
+  return vals;
+}
+
 
 
 } // namespace ObjexxFCL

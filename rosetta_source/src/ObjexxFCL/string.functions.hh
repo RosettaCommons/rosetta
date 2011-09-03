@@ -1,5 +1,5 @@
-#ifndef INCLUDED_ObjexxFCL_string_functions_hh
-#define INCLUDED_ObjexxFCL_string_functions_hh
+#ifndef INCLUDED_ObjexxFCL_string_functions_HH
+#define INCLUDED_ObjexxFCL_string_functions_HH
 
 
 // String Functions
@@ -17,6 +17,7 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/TypeTraits.hh>
+#include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <iomanip>
@@ -616,6 +617,9 @@ is_int( std::string const & s )
 	return is_type< int >( s );
 }
 
+/// @brief string is Readable as ints? [e.g., "5" or "5-8"]
+bool
+is_ints( std::string const & s );
 
 /// @brief string is Readable as a long int?
 inline
@@ -728,6 +732,15 @@ int_of( std::string const & s )
 {
 	return type_of< int >( s );
 }
+
+/// @brief ints of a string (e.g., allowing "5-8" to represent "5 6 7 8")
+utility::vector1< int >
+ints_of( std::string const & s );
+
+
+/// @brief ints of a string (e.g., allowing "5-8" to represent "5 6 7 8")
+utility::vector1< int >
+ints_of( std::string const & s, bool & string_is_ok );
 
 
 /// @brief long int of a string
