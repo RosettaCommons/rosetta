@@ -88,6 +88,7 @@ OPT_KEY( Boolean, minimize_rna )
 OPT_KEY( Boolean, relax_rna )
 OPT_KEY( Boolean, simple_relax )
 OPT_KEY( Boolean, close_loops )
+OPT_KEY( Boolean, close_loops_after_each_move )
 OPT_KEY( Boolean, output_lores_silent_file )
 OPT_KEY( Boolean, ignore_secstruct )
 OPT_KEY( Boolean, filter_lores_base_pairs )
@@ -104,6 +105,7 @@ OPT_KEY( String,  jump_library_file )
 OPT_KEY( String,  params_file )
 OPT_KEY( String,  data_file )
 OPT_KEY( String,  cst_file )
+OPT_KEY( IntegerVector,  chunk_res )
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -209,6 +211,7 @@ rna_denovo_test()
 	rna_de_novo_protocol.ignore_secstruct( option[ ignore_secstruct ] );
 	rna_de_novo_protocol.jump_change_frequency( option[ jump_change_frequency ] );
 	rna_de_novo_protocol.set_close_loops( option[ close_loops] );
+	rna_de_novo_protocol.set_close_loops_after_each_move( option[ close_loops_after_each_move ] );
 	rna_de_novo_protocol.output_lores_silent_file( option[ output_lores_silent_file ] );
 	rna_de_novo_protocol.set_dump_pdb( option[ dump ] ) ;
 	rna_de_novo_protocol.set_staged_constraints( option[ staged_constraints ] ) ;
@@ -221,6 +224,7 @@ rna_denovo_test()
 	if ( option[ in::file::silent ].user()	) {
 		rna_de_novo_protocol.set_chunk_silent_files( option[ in::file::silent ]() );
 	}
+	rna_de_novo_protocol.set_chunk_res( option[ chunk_res ]() ) ;
 
 		//Constraints?
 	if ( option[ cst_file ].user() ) {
@@ -250,6 +254,8 @@ main( int argc, char * argv [] )
 {
 	using namespace basic::options;
 
+	utility::vector1< Size > blank_size_vector;
+
 	//Uh, options? MOVE THESE TO OPTIONS NAMESPACE INSIDE CORE/OPTIONS.
 	NEW_OPT( minimize_rna, "Minimize RNA after fragment assembly",false );
 	NEW_OPT( relax_rna, "Relax RNA after fragment assembly",false );
@@ -263,6 +269,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( temperature, "temperature", 0.3 );
 	NEW_OPT( jump_change_frequency, "jump change frequency", 0.1 );
 	NEW_OPT( close_loops, "close loops during frag insertion and jump mover", false );
+	NEW_OPT( close_loops_after_each_move, "close loops during frag insertion and jump mover", false );
 	NEW_OPT( output_lores_silent_file, "output lores stuff", false );
 	NEW_OPT( heat, "Heat (random frag insertions)", false );
 	NEW_OPT( dump, "Dump pdb", false );
@@ -271,6 +278,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( params_file, "Input file for pairings", "default.prm" );
 	NEW_OPT( data_file, "Input file for RNA exposure data", "" );
 	NEW_OPT( cst_file, "Input file for constraints", "default.constraints" );
+	NEW_OPT( chunk_res, "Input residues for chunk libraries (specified by -in:file:silent)", blank_size_vector );
 
 
 	////////////////////////////////////////////////////////////////////////////
