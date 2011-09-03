@@ -17,7 +17,7 @@
 #include <core/types.hh>
 #include <basic/MetricValue.fwd.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
