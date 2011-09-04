@@ -406,13 +406,19 @@ public: // Methods
 		if ( ! stripped_value_str.empty() ) {
 			if ( state_ == DEFAULT ) value_.clear(); // Clear out the defaulted values
 			state_ = USER;
-			Value const v( value_of( stripped_value_str ) );
-			value_.push_back( v );
-			if ( ! legal_value( v ) ) {
-				std::cerr << "ERROR: Illegal value specified for option -" << id()
-				 << " : " << value_str << std::endl;
-				std::exit( EXIT_FAILURE );
+			Values const vs( values_of( stripped_value_str ) );
+
+			for ( Size i = 1; i <= vs.size(); i++ ){
+				Value v = vs[ i ];
+
+				value_.push_back( v );
+				if ( ! legal_value( v ) ) {
+					std::cerr << "ERROR: Illegal value specified for option -" << id()
+										<< " : " << value_str << std::endl;
+					std::exit( EXIT_FAILURE );
+				}
 			}
+
 		}
 		return *this;
 	}
@@ -1227,6 +1233,16 @@ protected: // Methods
 	virtual
 	Value
 	value_of( std::string const & value_str ) const = 0;
+
+	/// @brief Value of a string
+	virtual
+	Values
+	values_of( std::string const & value_str ) const
+	{
+		Values vs;
+		vs.push_back( value_of( value_str ) );
+		return vs;
+	}
 
 
 	/// @brief String representation of a given value
