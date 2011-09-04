@@ -66,8 +66,8 @@ namespace rna {
   Mover(),
 	rna_fragments_( rna_fragments ),
 	allow_insert_( allow_insert ),
-	//	num_insertable_residues_( 0 ),
-	//	insert_map_frag_size_( 0 ),
+	num_insertable_residues_( 0 ),
+	insert_map_frag_size_( 0 ),
 	frag_size_( 0 )
 {
 	Mover::type("RNA_FragmentMover");
@@ -79,9 +79,8 @@ namespace rna {
 																				pose::Pose const & pose ):
   Mover(),
 	rna_fragments_( all_rna_fragments ),
-	//allow_insert_( allow_insert ),
-	//	num_insertable_residues_( 0 ),
-	//	insert_map_frag_size_( 0 ),
+	num_insertable_residues_( 0 ),
+	insert_map_frag_size_( 0 ),
 	frag_size_( 0 )
 {
 	Mover::type("RNA_FragmentMover");
@@ -120,6 +119,7 @@ RNA_FragmentMover::apply(
 void
 RNA_FragmentMover::update_insert_map( pose::Pose const & pose )
 {
+
 	// Maybe we don't need to do any updating.
 	if (frag_size_ == insert_map_frag_size_) return;
 
