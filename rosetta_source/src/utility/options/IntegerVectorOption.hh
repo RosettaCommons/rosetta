@@ -129,6 +129,24 @@ protected: // Methods
 		return ObjexxFCL::int_of( value_str );
 	}
 
+	/// @brief Value of a string
+	inline
+	Values
+	values_of( std::string const & value_str ) const
+	{
+		if ( value_str.empty() || ( ! ObjexxFCL::is_ints( value_str ) ) ) {
+			std::cerr << "ERROR: Illegal value for integer option -" << id()
+								<< " specified: " << value_str << std::endl;
+			std::exit( EXIT_FAILURE );
+		}
+		std::vector< int > std_vector_ints =  ObjexxFCL::ints_of( value_str );
+
+		//convert to utility vector1. This is a workaround to prevent ObjexxFCL from knowing about vector1.
+		Values vector1_ints;
+		for ( Size n = 0; n < std_vector_ints.size(); n++ ) vector1_ints.push_back(  std_vector_ints[ n ] );
+		return vector1_ints;
+	}
+
 
 }; // IntegerVectorOption
 
