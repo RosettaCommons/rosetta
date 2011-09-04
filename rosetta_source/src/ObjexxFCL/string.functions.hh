@@ -17,12 +17,12 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/TypeTraits.hh>
-#include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <iomanip>
 #include <sstream>
 #include <string>
+#include <vector>
 
 
 namespace ObjexxFCL {
@@ -734,12 +734,12 @@ int_of( std::string const & s )
 }
 
 /// @brief ints of a string (e.g., allowing "5-8" to represent "5 6 7 8")
-utility::vector1< int >
+std::vector< int >
 ints_of( std::string const & s );
 
 
 /// @brief ints of a string (e.g., allowing "5-8" to represent "5 6 7 8")
-utility::vector1< int >
+std::vector< int >
 ints_of( std::string const & s, bool & string_is_ok );
 
 

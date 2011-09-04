@@ -14,9 +14,6 @@
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
 
-// utility headers
-#include <utility/vector1.hh>
-
 // C++ Headers
 #include <algorithm>
 #include <cctype>
@@ -831,17 +828,17 @@ is_ints( std::string const & s ){
 }
 
 /// @brief  ints of a string (e.g., allowing "5-8" to represent "5 6 7 8").
-utility::vector1< int >
+std::vector< int >
 ints_of( std::string const & s ){
   bool string_is_ok( false );
   return ints_of( s, string_is_ok );
 }
 
 /// @brief  ints of a string (e.g., allowing "5-8" to represent "5 6 7 8").
-utility::vector1< int >
+std::vector< int >
 ints_of( std::string const & s, bool & string_is_ok ){
 
-  utility::vector1< int > vals;
+  std::vector< int > vals;
   string_is_ok = false;
 
   size_t found_dash = s.find( "-" );
