@@ -16,9 +16,11 @@
 #include <test/protocols/init_util.hh>
 
 // C/C++ headers
+#include <iostream>
 #include <string>
 
 // Project headers
+#include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/sequence/util.hh>
@@ -29,11 +31,15 @@
 
 namespace {
 using core::Size;
+using core::id::SequenceMapping;
 using core::sequence::SequenceAlignment;
 using protocols::loops::Loop;
 using protocols::loops::Loops;
+using std::endl;
 using std::string;
 using utility::vector1;
+
+static basic::Tracer TR("protocols.nonlocal.NonlocalUtilTest");
 
 class NonlocalUtilTest : public CxxTest::TestSuite {
  public:
@@ -60,44 +66,20 @@ class NonlocalUtilTest : public CxxTest::TestSuite {
     protocols::nonlocal::find_regions_with_minimum_size
         (alignment, MIN_CHUNK_SZ, &aligned, &unaligned);
 
-    // Verify sizes
+    // Verify minimum lengths
     for (Loops::const_iterator i = aligned.begin(); i != aligned.end(); ++i)
       TS_ASSERT(i->length() >= MIN_CHUNK_SZ);
 
     for (Loops::const_iterator i = unaligned.begin(); i != unaligned.end(); ++i)
       TS_ASSERT(i->length() >= MIN_CHUNK_SZ);
 
-    // Verify aligned
-    TS_ASSERT_EQUALS(aligned.size(), 13);
-    TS_ASSERT(aligned[1] == Loop(8, 28));
-    TS_ASSERT(aligned[2] == Loop(36, 62));
-    TS_ASSERT(aligned[3] == Loop(70, 80));
-    TS_ASSERT(aligned[4] == Loop(88, 120));
-    TS_ASSERT(aligned[5] == Loop(128, 149));
-    TS_ASSERT(aligned[6] == Loop(157, 169));
-    TS_ASSERT(aligned[7] == Loop(177, 204));
-    TS_ASSERT(aligned[8] == Loop(212, 235));
-    TS_ASSERT(aligned[9] == Loop(256, 280));
-    TS_ASSERT(aligned[10] == Loop(297, 306));
-    TS_ASSERT(aligned[11] == Loop(314, 332));
-    TS_ASSERT(aligned[12] == Loop(340, 350));
-    TS_ASSERT(aligned[13] == Loop(358, 370));
+    // Verify contents
+    TS_ASSERT_EQUALS(aligned.size(), 1);
+    TS_ASSERT(aligned[1] == Loop(1, 53));
 
-    // Verify unaligned
-    TS_ASSERT_EQUALS(unaligned.size(), 13);
-    TS_ASSERT(unaligned[1] == Loop(1, 7));
-    TS_ASSERT(unaligned[2] == Loop(29, 35));
-    TS_ASSERT(unaligned[3] == Loop(63, 69));
-    TS_ASSERT(unaligned[4] == Loop(81, 87));
-    TS_ASSERT(unaligned[5] == Loop(121, 127));
-    TS_ASSERT(unaligned[6] == Loop(150, 156));
-    TS_ASSERT(unaligned[7] == Loop(170, 176));
-    TS_ASSERT(unaligned[8] == Loop(205, 211));
-    TS_ASSERT(unaligned[9] == Loop(236, 255));
-    TS_ASSERT(unaligned[10] == Loop(281, 296));
-    TS_ASSERT(unaligned[11] == Loop(307, 313));
-    TS_ASSERT(unaligned[12] == Loop(333, 339));
-    TS_ASSERT(unaligned[13] == Loop(351, 358));
+    TS_ASSERT_EQUALS(unaligned.size(), 1);
+    TS_ASSERT(unaligned[1] == Loop(54, 63));
+
   }
 
   void test_limit_chunk_size() {
@@ -108,14 +90,17 @@ class NonlocalUtilTest : public CxxTest::TestSuite {
         (alignment, MIN_CHUNK_SZ, &aligned, &unaligned);
 
     protocols::nonlocal::limit_chunk_size(MIN_CHUNK_SZ, MAX_CHUNK_SZ, &aligned);
+    protocols::nonlocal::limit_chunk_size(MIN_CHUNK_SZ, MAX_CHUNK_SZ, &unaligned);
+
+    TR << "Aligned: " << aligned << endl;
+    TR << "Unaligned: " << unaligned << endl;
+
     for (Loops::const_iterator i = aligned.begin(); i != aligned.end(); ++i) {
       TS_ASSERT(i->length() >= MIN_CHUNK_SZ);
       TS_ASSERT(i->length() <= MAX_CHUNK_SZ);
     }
 
-    protocols::nonlocal::limit_chunk_size(MIN_CHUNK_SZ, MAX_CHUNK_SZ, &unaligned);
     for (Loops::const_iterator i = unaligned.begin(); i != unaligned.end(); ++i) {
-      const Loop& loop = *i;
       TS_ASSERT(i->length() >= MIN_CHUNK_SZ);
       TS_ASSERT(i->length() <= MAX_CHUNK_SZ);
     }

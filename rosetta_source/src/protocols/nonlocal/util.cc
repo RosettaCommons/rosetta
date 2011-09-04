@@ -187,15 +187,12 @@ void find_regions_with_minimum_size(const core::sequence::SequenceAlignment& ali
 
   assert(aligned_regions);
   assert(unaligned_regions);
+  protocols::comparative_modeling::bounded_loops_from_alignment(alignment.length(),
+                                                                unaligned_region_min_sz,
+                                                                alignment,
+                                                                unaligned_regions);
 
-  Size pose_space_num_residues = 0;
-  for (Size ii = 1; ii <= alignment.length(); ++ii)
-    pose_space_num_residues = std::max(pose_space_num_residues, alignment.sequence(1)->resnum(ii));
-
-  protocols::comparative_modeling::bounded_loops_from_alignment(
-      pose_space_num_residues, unaligned_region_min_sz, alignment, unaligned_regions);
-
-  *aligned_regions   = unaligned_regions->invert(pose_space_num_residues);
+  *aligned_regions = unaligned_regions->invert(alignment.length());
 }
 
 void generate_nonlocal_grouping(const protocols::loops::Loops& aligned_regions,
