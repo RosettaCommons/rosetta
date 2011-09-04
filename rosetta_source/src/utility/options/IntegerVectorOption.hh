@@ -100,7 +100,7 @@ public: // Properties
 	bool
 	is_cl_value( std::string const & value_str ) const
 	{
-		return is_value( value_str );
+		return is_value( value_str ) || ObjexxFCL::is_ints( value_str );
 	}
 
 
