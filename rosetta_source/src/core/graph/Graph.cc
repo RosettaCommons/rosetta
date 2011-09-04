@@ -160,7 +160,7 @@ Node::~Node()
 /// Main constructor, no default constructor nor copy constructor
 Node::Node(Graph * owner, platform::Size node_id ) :
 	node_index_(node_id), num_incident_edges_(0),
-	num_neighbors_static_(0),
+	num_neighbors_counting_self_static_(1),
 	loop_incident_( false ),
 	num_edges_to_smaller_indexed_nodes_(0),
 	num_edges_to_larger_indexed_nodes_(0),
@@ -207,7 +207,7 @@ Node::add_edge( Edge* edge_ptr, EdgeListIter & eiter )
 			first_upper_edge_ = eiter;
 		}
 	}
-	num_neighbors_static_ = num_neighbors_counting_self();
+	num_neighbors_counting_self_static_ = num_neighbors_counting_self();
 }
 
 
@@ -244,7 +244,7 @@ void Node::drop_edge( EdgeListIter eiter )
 			--num_incident_edges_;
 		}
 	}
-	num_neighbors_static_ = num_neighbors_counting_self();
+	num_neighbors_counting_self_static_ = num_neighbors_counting_self();
 }
 
 
@@ -267,9 +267,9 @@ void Node::drop_all_edges()
 
 /// @details manually change the number of neighbors for a Node. Used
 /// for symmetry scoring
-void Node::set_neighbor_count_static( platform::Size neighbor )
+void Node::set_num_neighbors_counting_self_static( platform::Size neighbor )
 {
-  num_neighbors_static_ = neighbor;
+  num_neighbors_counting_self_static_ = neighbor;
 }
 
 /// @details Constant time if each vertex has a constant number of edges.  Edges are

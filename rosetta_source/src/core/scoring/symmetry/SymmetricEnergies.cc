@@ -198,7 +198,7 @@ SymmetricEnergies::update_neighbor_links(
 		if ( !SymmConf.Symmetry_Info()->fa_is_independent( res ) ) {
 			int symm_res ( SymmConf.Symmetry_Info()->bb_follows( res ) );
 			int neighbors_symm ( energy_graph_no_state_check().get_node( symm_res )->num_neighbors_counting_self() );
-			energy_graph_no_state_check().get_node( res )->set_neighbor_count_static( neighbors_symm );
+			energy_graph_no_state_check().get_node( res )->set_num_neighbors_counting_self_static( neighbors_symm );
 		}
 	}
 	/// Manually set the neighbour count for the energy_graph to be symmetrical
@@ -207,7 +207,7 @@ SymmetricEnergies::update_neighbor_links(
 			if ( !SymmConf.Symmetry_Info()->fa_is_independent( res ) ) {
 				int symm_res ( SymmConf.Symmetry_Info()->bb_follows( res ) );
 				int neighbors_symm ( context_graphs_present[ kk ]->get_node( symm_res )->num_neighbors_counting_self() );
-				context_graphs_present[ kk ]->get_node( res )->set_neighbor_count_static( neighbors_symm );
+				context_graphs_present[ kk ]->get_node( res )->set_num_neighbors_counting_self_static( neighbors_symm );
 			}
 		}
 	}
@@ -284,7 +284,7 @@ SymmetricEnergies::require_context_graph_( scoring::ContextGraphType type, bool 
 		if ( !SymmConf.Symmetry_Info()->fa_is_independent( res ) ) {
 			int symm_res ( SymmConf.Symmetry_Info()->bb_follows( res ) );
 			int neighbors_symm ( cgraphs[ type ]->get_node( symm_res )->num_neighbors_counting_self() );
-			cgraphs[ type ]->get_node( res )->set_neighbor_count_static( neighbors_symm );
+			cgraphs[ type ]->get_node( res )->set_num_neighbors_counting_self_static( neighbors_symm );
 		}
 	}
 

@@ -427,7 +427,7 @@ public:
 
 	/// @details manually change the number of neighbors for a Node. Used
 	/// for symmetry scoring
-	void set_neighbor_count_static( platform::Size neighbor );
+	void set_num_neighbors_counting_self_static( platform::Size neighbor );
 
 	/// @brief a "slow" (linear) search for an edge.
 	Edge const * find_edge(platform::Size other_node_index) const;
@@ -494,7 +494,7 @@ public:
   inline
   platform::Size num_neighbors_counting_self_static() const
   {
-    return num_neighbors_static_;
+    return num_neighbors_counting_self_static_;
   }
 
 	/// @brief the number of lower neighbors
@@ -532,7 +532,7 @@ private:
 
 	platform::Size node_index_;
 	platform::Size num_incident_edges_;
-	platform::Size num_neighbors_static_;
+	platform::Size num_neighbors_counting_self_static_;
 	bool loop_incident_; /// NOTE TO SELF: remove loop support
 	platform::Size num_edges_to_smaller_indexed_nodes_;
 	platform::Size num_edges_to_larger_indexed_nodes_;

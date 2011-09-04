@@ -232,6 +232,12 @@ class GraphTests : public CxxTest::TestSuite {
 	}
 
 
+	void test_num_neighbors_including_self() {
+
+		Graph g = Graph(1);
+		TS_ASSERT_EQUALS(g.get_node(1)->num_neighbors_counting_self(), 1);
+		TS_ASSERT_EQUALS(g.get_node(1)->num_neighbors_counting_self(), 1);
+	}
 };
 
 
