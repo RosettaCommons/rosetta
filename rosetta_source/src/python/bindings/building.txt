@@ -190,7 +190,7 @@ in file ~/y/include/boost-1_38/boost/python/detail/preprocessor.hpp line 29 chan
 # Check revsion number at line 0 of this file and update your src tree to this revesion
 svn up src -r<put revision numebr here>
 
-cd path_to_mini/src/python/bindings
+cd path_to_rosetta/rosetta_source/src/python/bindings
 
 # if you using using system installation of Python (for example for Mac OS build),
 # then add '-I/usr/include/python2.5' to command line below.

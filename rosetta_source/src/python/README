@@ -13,7 +13,7 @@ are on the PYTHONPATH, but if you get an error that says "ImportError: No
 module named ..." or you want to use these libs in your own scripts, add the
 following to your ~/.bash_profile:
 
-    export PYTHONPATH="$HOME/mini/src/python:$PYTHONPATH"
+    export PYTHONPATH="$HOME/rosetta/rosetta_source/src/python:$PYTHONPATH"
 
 Make the appropriate changes for where your copy of Rosetta actually lives.
 Syntax is similar but not identical if you use csh or tcsh instead of Bash.

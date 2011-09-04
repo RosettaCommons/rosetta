@@ -156,6 +156,7 @@ void NVscore::residue_energy(const conformation::Residue &rsd, const pose::Pose 
 		neighborVectSum += weightedVector;
 
 	}
+	if ( neighborCount == 0.0 ) return; // do not try to divide by zero
 
 	Vector avgSum = neighborVectSum/neighborCount;
 	//neighbor vector score is the norm of the average sum of all neighbor vectors

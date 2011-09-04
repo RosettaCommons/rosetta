@@ -65,7 +65,7 @@ main( int argc, char * argv [] ) {
 
 	pose::PoseOP pose = new pose::Pose();
 
-	core::import_pose::pose_from_pdb(*pose, "src/apps/pilot/weitzner/1bzq.pdb");// changing to relative path, so it could work from diff places... "/work/mini/src/apps/pilot/weitzner/1bzq.pdb");
+	core::import_pose::pose_from_pdb(*pose, "src/apps/pilot/weitzner/1bzq.pdb");// changing to relative path, so it could work from diff places... "/work/rosetta/rosetta_source/apps/pilot/weitzner/1bzq.pdb");
 
 	TR << "The pose's sequence is: " << pose->sequence() << std::endl;
 

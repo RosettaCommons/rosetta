@@ -23,11 +23,12 @@
 #include <core/types.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <basic/Tracer.hh>
 #include <protocols/optimize_weights/Arithmetic.hh>
 #include <protocols/multistate_design/MultiStatePacker.hh>
-#include <protocols/multistate_design/SingleState.hh>  // REQUIRED FOR WINDOWS
+#include <protocols/multistate_design/SingleState.hh>  // REQUIRED FOR WINDOWS (APL NOTE: why?)
 
 // Utility headers
 #include <utility/exit.hh>
@@ -563,6 +564,14 @@ DynamicAggregateFunction::set_num_entity_elements( Size setting ) {
 	num_entity_elements_ = setting;
 }
 
+/// @details Required for processing the POSE_ENERGY and POSE_ENERGY_VECTOR commands
+void
+DynamicAggregateFunction::set_score_function( core::scoring::ScoreFunction const & sfxn )
+{
+	sfxn_ = sfxn.clone();
+}
+
+
 core::Size
 DynamicAggregateFunction::num_states() const
 {
@@ -621,10 +630,11 @@ DynamicAggregateFunction::select_relevant_states(
 			iter = active_varnames.begin(), iter_end = active_varnames.end();
 			iter != iter_end; ++iter ) {
 		if ( state_variable_name_2_state_index_.find( *iter ) == state_variable_name_2_state_index_.end() ) {
+			/// Ignore active variables that are not in the state_varialbe_2_state_index_ map
+			/// These include POSE_ENERGY and POSE_ENERGY_VECTOR variables as well as
+			/// SCALAR_EXPRESSION variables that simply hold constants (e.g. "SCALAR_EXPRESSION five = 2 + 3" )
+			TR << "The variable named '" << *iter << "' contributes to the fitness but does not correspond to a state." << std::endl;
 			continue;
-			//utility_exit_with_message( "DAF bookkeeping error.  State variable named " +
-			//	utility::to_string( *iter ) + " is absent from the state_variable_name_2_state_index_ map."
-			//	"Cannot output all relevant states!" );
 		}
 		TR << "  fitness_exp_ identifies active variable: " << *iter << " " << state_variable_name_2_state_index_.find( *iter )->second << std::endl;
 		active_indices.push_back( state_variable_name_2_state_index_.find( *iter )->second );
@@ -872,6 +882,10 @@ void DynamicAggregateFunction::read_all_variables_from_input_file( std::istream 
 			process_STATE_line( line, count_line, input_line );
 		} else if ( command == "STATE_VECTOR" ) {
 			process_STATE_VECTOR_line( line, count_line, input_line, strucvec_filenames );
+		} else if ( command == "POSE_ENERGY" ) {
+			process_POSE_ENERGY_line( line, count_line, input_line );
+		} else if ( command == "POSE_ENERGY_VECTOR" ) {
+			process_POSE_ENERGY_VECTOR_line( line, count_line, input_line );
 		} else if ( command == "NPD_PROPERTY" ) {
 			process_NPD_PROPERTY_line( line, count_line, input_line );
 		} else if ( command == "VECTOR_VARIABLE" ) {
@@ -1084,6 +1098,164 @@ DynamicAggregateFunction::process_STATE_VECTOR_line(
 
 	strucvec_filenames.push_back( std::make_pair( state_vector_variable_name, state_vector_filename ) );
 }
+
+void
+DynamicAggregateFunction::process_POSE_ENERGY_line(
+	std::string const & line,
+	Size line_number,
+	std::istream & input_line
+)
+{
+	if ( ! input_line ) {
+		throw utility::excn::EXCN_Msg_Exception( "Expected to read variable name in the DynamicAggregateFunction"
+			" input file after reading POSE_ENERGY on line " + utility::to_string( line_number ) + "\n" + line );
+	}
+	// 1. read the new variable name that's being declared on this line
+	std::string varname;
+	input_line >> varname;
+	if ( varname.size() == 0 ) {
+		throw utility::excn::EXCN_Msg_Exception( "Expected to read variable name in the DynamicAggregateFunction"
+			" input file after reading POSE_ENERGY on line " + utility::to_string( line_number ) + "\n" + line );
+	}
+	if ( ! input_line ) {
+		throw utility::excn::EXCN_Msg_Exception( "Expected to read a PDB name in the DynamicAggregateFunction"
+			" input file after reading the variable name '" + varname + "' on line " + utility::to_string( line_number ) + "\n" + line );
+	}
+	verify_variable_name_or_throw( varname, "POSE_ENERGY", line, line_number );
+
+	std::string pdb_name;
+	input_line >> pdb_name;
+
+	TR << "  Importing pose from pdb file '" << pdb_name << "'" << std::endl;
+	//core::import_pose::pose_from_pdb( pose, pdb_name );
+	std::string pdb_string;
+	if ( file_contents_.find( pdb_name ) != file_contents_.end() ) {
+		pdb_string = file_contents_[ pdb_name ];
+	} else {
+		try {
+			pdb_string = utility::file_contents( pdb_name );
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+			throw utility::excn::EXCN_Msg_Exception( "Failed to open pdb file named '"
+			+ pdb_name + "' given in the POSE_ENERGY command on line " + utility::to_string( line_number)
+			+ "of the DynamicAggregateFunction fitness file" );
+		}
+	}
+
+	core::pose::Pose pose;
+	core::import_pose::pose_from_pdbstring( pose, pdb_string, pdb_name );
+	
+	if ( pose.total_residue() == 0 ) {
+		throw utility::excn::EXCN_Msg_Exception( "Input pose given in file '"
+			+ pdb_name + "' has zero residues.  Encountered while processing the '" + varname + "' variable in the DynamicAggregateFunction"
+			" input file on line " + utility::to_string( line_number ) + "\n" + line );
+	}
+
+	// ok -- go ahead and score the pose
+	TR << "  Scoring pose from pdb file '" << pdb_name << "'" << std::endl;
+	core::Real score = (*sfxn_)( pose );
+	scanner_->add_variable( varname );
+	scalar_expression_map_[ varname ] = new VariableExpression( varname, score );
+	TR << "Saving POSE_ENERGY of " << score << " in variable " << varname << std::endl;
+}
+
+void
+DynamicAggregateFunction::process_POSE_ENERGY_VECTOR_line(
+	std::string const & line,
+	Size line_number,
+	std::istream & input_line
+)
+{
+	if ( ! input_line ) {
+		throw utility::excn::EXCN_Msg_Exception( "Expected to read variable name in the DynamicAggregateFunction"
+			" input file after reading POSE_ENERGY_VECTOR on line " + utility::to_string( line_number ) + "\n" + line );
+	}
+	// 1. read the new variable name that's being declared on this line
+	std::string varname;
+	input_line >> varname;
+	if ( varname.size() == 0 ) {
+		throw utility::excn::EXCN_Msg_Exception( "Expected to read variable name in the DynamicAggregateFunction"
+			" input file after reading POSE_ENERGY_VECTOR on line " + utility::to_string( line_number ) + "\n" + line );
+	}
+	if ( ! input_line ) {
+		throw utility::excn::EXCN_Msg_Exception( "Expected to read the name of a list file in the DynamicAggregateFunction"
+			" input file after reading the variable name '" + varname + "' on line " + utility::to_string( line_number ) + "\n" + line );
+	}
+	verify_variable_name_or_throw( varname, "POSE_ENERGY_VECTOR", line, line_number );
+
+	std::string fname;
+	input_line >> fname;
+
+	std::istringstream pdbvec_file;
+	if ( file_contents_.find( fname ) != file_contents_.end() ) {
+		pdbvec_file.str( file_contents_[ fname ] );
+	} else {
+		try {
+			std::string fc = utility::file_contents( fname );
+			pdbvec_file.str( fc );
+		} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+			throw utility::excn::EXCN_Msg_Exception( "Failed to open pdb list file named '"
+			+ fname + "' given in the POSE_ENERGY_VECTOR command on line " + utility::to_string( line_number)
+			+ "of the DynamicAggregateFunction fitness file" );
+		}
+	}
+
+   std::list< std::string > pdb_names;
+	Size count_pdbs = 0;
+	Size pdbvec_linenum = 0;
+	while ( pdbvec_file ) {
+		++pdbvec_linenum;
+		std::string line;
+		std::getline( (std::istream &) (pdbvec_file), line );
+		if ( line.size() == 0 ) continue;
+
+		std::istringstream input_line( line );
+		if ( input_line.peek() == '#' ) continue; // allow lines beginning with # to be commented out
+		std::string pdbname;
+		input_line >> pdbname;
+		++count_pdbs;
+		pdb_names.push_back( pdbname );
+	}
+
+	utility::vector1< VariableExpressionOP > pose_energy_variables( count_pdbs );
+	count_pdbs = 0;
+	for ( std::list< std::string >::const_iterator iter = pdb_names.begin(), iter_end = pdb_names.end(); iter != iter_end; ++iter ) {
+		++count_pdbs;
+		assert( count_pdbs <= pose_energy_variables.size() );
+		TR << "  Importing pose from pdb file " << *iter << std::endl;
+   	//core::import_pose::pose_from_pdb( pose, pdb_name );
+		std::string pdb_string;
+		if ( file_contents_.find( *iter ) != file_contents_.end() ) {
+			pdb_string = file_contents_[ *iter ];
+		} else {
+			try {
+				pdb_string = utility::file_contents( *iter );
+			} catch ( utility::excn::EXCN_Msg_Exception & e ) {
+				throw utility::excn::EXCN_Msg_Exception( "Failed to open pdb file named '"
+				+ *iter + "' given in the POSE_ENERGY_VECTOR command on line " + utility::to_string( line_number)
+				+ "of the DynamicAggregateFunction fitness file" );
+			}
+		}
+		core::pose::Pose pose;
+   	core::import_pose::pose_from_pdbstring( pose, pdb_string, *iter );
+		
+		if ( pose.total_residue() == 0 ) {
+			throw utility::excn::EXCN_Msg_Exception( "Input pose given in file '"
+				+ *iter + "' has zero residues.  Encountered while processing the '" + varname + "' variable in the DynamicAggregateFunction"
+				" input file on line " + utility::to_string( line_number ) + "\n" + line );
+		}
+
+		TR << "  Scoring pose from pdb file '" << *iter << std::endl;
+		core::Real score = (*sfxn_)( pose );
+		std::string newvar = varname + "_" + *iter;
+		TR << "  Saving score of " << score << " in variable " << newvar << std::endl;
+		pose_energy_variables[ count_pdbs ] = new VariableExpression( newvar, score );;
+	}
+	scanner_->add_variable( varname );
+	vector_expression_map_[ varname ] = new VariableVectorExpression( varname, pose_energy_variables );
+
+
+}
+
 
 void
 DynamicAggregateFunction::process_NPD_PROPERTY_line(

@@ -128,7 +128,7 @@ public:
 		Pose pose;
 		core::import_pose::pose_from_pdb( pose, "core/pack/1l2y_renameH.pdb" );
 
-		//pose.dump_pdb("/Users/flo/rosetta/mini/test/1l2y_rename_H.pdb");
+		//pose.dump_pdb("/Users/flo/rosetta/rosetta_source/test/1l2y_rename_H.pdb");
 
 		//score the pose just for the heck of it
 		(*scorefxn)( pose );

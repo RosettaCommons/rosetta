@@ -25,6 +25,7 @@
 
 // Project headers
 #include <core/types.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/optimize_weights/Arithmetic.hh>
 
 // Utility headers
@@ -483,6 +484,7 @@ public:
 	virtual ~DynamicAggregateFunction();
 
 	void set_num_entity_elements( Size setting );
+	void set_score_function( core::scoring::ScoreFunction const & sfxn );
 
 	core::Size num_states() const;
 	core::Size num_npd_properties() const;
@@ -529,6 +531,21 @@ private:
 		std::istream & input_line,
 		utility::vector1< std::pair< std::string, std::string > > & strucvec_filenames
 	);
+
+   void
+	process_POSE_ENERGY_line(
+		std::string const & line,
+		Size line_number,
+		std::istream & input_line
+	);
+
+   void
+	process_POSE_ENERGY_VECTOR_line(
+		std::string const & line,
+		Size line_number,
+		std::istream & input_line
+	);
+
 
 	void
 	process_NPD_PROPERTY_line(
@@ -706,6 +723,7 @@ private:
 private:
 
 	Size num_entity_elements_;
+	core::scoring::ScoreFunctionOP sfxn_;
 
 	ExpressionCOP fitness_exp_;
 	utility::vector1< VariableExpressionOP > variable_expressions_for_states_;

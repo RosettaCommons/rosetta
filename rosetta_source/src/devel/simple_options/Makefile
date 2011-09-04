@@ -8,7 +8,7 @@ LD           = $(CC)
 all: read_options
 
 read_options: option.o any_module.o
-	$(LD) $(LDFLAGS) -o $@ $^ -lstdc++ -lutility -L/home/olange/rosetta_src/mini/build/src/debug/macos/10.4/32/x86/gcc/
+	$(LD) $(LDFLAGS) -o $@ $^ -lstdc++ -lutility -L/home/olange/rosetta/rosetta_source/build/src/debug/macos/10.4/32/x86/gcc/
 #rosetta_options.o readinp.o
 
 clean:

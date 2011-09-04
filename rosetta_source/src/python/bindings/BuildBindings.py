@@ -174,7 +174,7 @@ def main(args):
         print 'Option --update-IncludeDict could be used only with -j1... exiting...'
         return 1
 
-    # assuming that we in mini/src/python/bindings directory at that point
+    # assuming that we in rosetta/rosetta_source/src/python/bindings directory at that point
     mini_path = os.path.abspath('./../../../')
 
     bindings_path = os.path.abspath('./rosetta')

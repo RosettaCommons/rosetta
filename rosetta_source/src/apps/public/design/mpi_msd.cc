@@ -458,6 +458,7 @@ int main( int argc, char ** argv )
 		protocols::pack_daemon::MPIMultistateFitnessFunctionOP func = new protocols::pack_daemon::MPIMultistateFitnessFunction;
 		protocols::pack_daemon::DynamicAggregateFunctionOP daf = new DynamicAggregateFunction;
 		daf->set_num_entity_elements( ds->entity_task()->total_residue() );
+		daf->set_score_function( *sfxn ); // assume one score function for the entire 
 		utility::io::izstream daf_file( daf_filename );
 		try {
 			daf->initialize_from_input_file( ds, daf_file );
