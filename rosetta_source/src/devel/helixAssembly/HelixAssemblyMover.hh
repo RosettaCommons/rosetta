@@ -15,9 +15,15 @@
 #ifndef INCLUDED_apps_pilot_tjacobs_HelixAssemblyMover_hh
 #define INCLUDED_apps_pilot_tjacobs_HelixAssemblyMover_hh
 
-#include <core/pose/Pose.hh>
-#include <protocols/moves/Mover.hh>
+//Package
 #include <devel/helixAssembly/HelixAssemblyJob.hh>
+
+//Core
+#include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+
+//Protocols
+#include <protocols/moves/Mover.hh>
 
 //mover definition
 //class HelixAssemblyMover : public protocols::moves::Mover {
@@ -33,6 +39,7 @@ public:
           return "HelixAssemblyMover";
         }
 
+        core::scoring::ScoreFunctionOP get_scorefxn() const;
         core::Size get_frag1_start() const;
         core::Size get_frag1_end() const;
         core::Size get_frag2_start() const;
@@ -44,6 +51,7 @@ public:
         std::string get_query_structure_path() const;
         std::string get_query_structure_string() const;
         core::Real get_single_helix_rmsd_cutoff() const;
+        void set_scorefxn(core::scoring::ScoreFunctionOP scorefxn_);
         void set_frag1_start(core::Size frag1_start_);
         void set_frag2_start(core::Size frag2_start_);
         void set_frag1_end(core::Size frag1_end_);
@@ -70,11 +78,14 @@ public:
 
         void superimposeBundles(core::pose::Pose & pose1, const core::pose::Pose & pose2);
 
+        core::Real bb_score(core::pose::Pose & pose, core::Size unique_chain_num, core::scoring::ScoreFunctionOP & scorefxn);
+
         utility::vector1<HelixAssemblyJob> apply(HelixAssemblyJob & job);
 
 
 private:
 
+        core::scoring::ScoreFunctionOP scorefxn_;
         core::Size frag1_start_;
         core::Size frag1_end_;
         core::Size frag2_start_;

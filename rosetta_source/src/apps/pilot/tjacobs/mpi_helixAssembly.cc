@@ -151,7 +151,7 @@ main( int argc, char * argv [] )
           TR << "Added all the new jobs" << endl;
 
           for(Size i=1; i <= new_jobs.size(); ++i){
-              if(new_jobs[i].get_round() < option[HelixAssembly::helices_to_add]){
+              if(new_jobs[i].get_round() <= option[HelixAssembly::helices_to_add]){
                   for(Size j=1; j <= pdb_library.size(); ++j){
                       //copy incomplete job and add a pose to search, then add to the queue
                       HelixAssemblyJob temp_job(new_jobs[i]);
