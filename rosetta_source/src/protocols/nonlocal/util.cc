@@ -15,11 +15,9 @@
 
 // C/C++ headers
 #include <cmath>
-#include <iostream>
 #include <string>
 
 // Utility headers
-#include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
@@ -55,7 +53,6 @@
 namespace protocols {
 namespace nonlocal {
 
-static basic::Tracer TR("protocols.nonlocal.util");
 static numeric::random::RandomGenerator RG(156144120);
 
 void nonlocal_groupings_from_alignment(utility::vector1<NLGrouping>* groupings) {
@@ -90,9 +87,6 @@ void nonlocal_groupings_from_alignment(utility::vector1<NLGrouping>* groupings) 
   find_regions_with_minimum_size(*alignment, min_chunk_sz, &aligned_regions, &unaligned_regions);
   limit_chunk_size(min_chunk_sz, max_chunk_sz, &aligned_regions);
 
-  TR.Debug << "Aligned:" << std::endl << aligned_regions << std::endl;
-  TR.Debug << "Unaligned:" << std::endl << unaligned_regions << std::endl;
-
   // Generate non-local groupings by iterating over the regions identified
   // above. Backbone torsions and coordinates are taken from the template
   NLGrouping grouping;
@@ -104,7 +98,6 @@ void nonlocal_groupings_from_alignment(utility::vector1<NLGrouping>* groupings) 
 
   // update the output parameter
   groupings->push_back(grouping);
-  TR << grouping.provenance() << std::endl;
 }
 
 void limit_chunk_size(core::Size min_chunk_sz,
@@ -147,7 +140,7 @@ void decompose(core::Size min_chunk_sz,
 
   // TODO(cmiles) check for off-by-1 errors
   Size midpoint = loop.start() + loop.length() / 2;
-  Loop candidate_left(loop.start(), midpoint);
+  Loop candidate_left(loop.start(), midpoint - 1);
   Loop candidate_right(midpoint, loop.stop());
 
   // Impossible to partition <loop> and satisfy min_chunk_sz requirement
@@ -164,11 +157,11 @@ void decompose(core::Size min_chunk_sz,
       loop.stop() - min_chunk_sz + 1);
 
   // Recursively decompose the left- and right-hand sides of the pivot
-  Loop left(loop.start(), pivot);
+  Loop left(loop.start(), pivot - 1);
   vector1<Loop> pieces_left;
   decompose(min_chunk_sz, max_chunk_sz, left, &pieces_left);
 
-  Loop right(pivot + 1, loop.stop());
+  Loop right(pivot, loop.stop());
   vector1<Loop> pieces_right;
   decompose(min_chunk_sz, max_chunk_sz, right, &pieces_right);
 
@@ -187,12 +180,15 @@ void find_regions_with_minimum_size(const core::sequence::SequenceAlignment& ali
 
   assert(aligned_regions);
   assert(unaligned_regions);
-  protocols::comparative_modeling::bounded_loops_from_alignment(alignment.length(),
-                                                                unaligned_region_min_sz,
-                                                                alignment,
-                                                                unaligned_regions);
 
-  *aligned_regions = unaligned_regions->invert(alignment.length());
+  Size pose_space_num_residues = 0;
+  for (Size ii = 1; ii <= alignment.length(); ++ii)
+    pose_space_num_residues = std::max(pose_space_num_residues, alignment.sequence(1)->resnum(ii));
+
+  protocols::comparative_modeling::bounded_loops_from_alignment(
+      pose_space_num_residues, unaligned_region_min_sz, alignment, unaligned_regions);
+
+  *aligned_regions   = unaligned_regions->invert(pose_space_num_residues);
 }
 
 void generate_nonlocal_grouping(const protocols::loops::Loops& aligned_regions,
@@ -209,8 +205,6 @@ void generate_nonlocal_grouping(const protocols::loops::Loops& aligned_regions,
     unalignedBegin = unaligned_regions[1].start() < aligned_regions[1].start();
     unalignedEnd = unaligned_regions[unaligned_regions.size()].start() > aligned_regions[aligned_regions.size()].start();
   }
-  TR.Debug << "Unaligned begin: " << unalignedBegin << std::endl;
-  TR.Debug << "Unaligned end: " << unalignedEnd << std::endl;
 
   for (Size i = 1; i <= aligned_regions.num_loop(); ++i) {
     NLFragmentGroup group;
