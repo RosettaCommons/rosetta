@@ -479,7 +479,8 @@ map<string,SequenceAlignment> input_alignmentsMapped(bool mapToPdbid){
 			string mapToName;
 			if(mapToPdbid == true){
 				string aln_id = tmp_alns[jj].sequence(2)->id();
-				string pdbid = aln_id.substr(0,aln_id.length()-2);
+				string pdbid = aln_id.substr(0,5);
+				std::cout << "A:" << pdbid << "," << aln_id << std::endl;
 				mapToName = pdbid;
 			}
 			else{
