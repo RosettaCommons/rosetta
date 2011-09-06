@@ -1,5 +1,5 @@
 # nonlocal
--nonlocal:max_chunk_size 21
+-run:protocol nonlocal_abinitio
 -abinitio:relax false
 
 # target options
