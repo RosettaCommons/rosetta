@@ -34,37 +34,5 @@
 
 
 # prepare feature databases for caching into the testing server
-
-echo storing feature databased to the files folder
-
-sample_sources_fname="%(workdir)s/sample_sources/benchmark.list"
-while read sample_source; do
-	echo $sample_source | grep -q -e '^#' -e '^$' && continue
-
-	echo Begin processing sample source, $sample_source
-	for features_db_output in `find sample_sources/$sample_source/output/ -type d -name $sample_source*`; do
-		echo '	Begin processing features database' $features_db_output
-		sample_source_id="$(basename $features_db_output)"
-
-		echo '    Merge database parts together in case the features database was generated on a cluster'
-		features_db=$features_db_output/features_${sample_source_id}.db3
-		features_db_parts=$(ls ${features_db}_*)
-		python sample_sources/merge_databases.py $features_db $features_db_parts
-
-		echo '    Setup output paths'
-		target_dir=files/$sample_source_id
-		compressed_fname=$target_dir/$(basename $features_db).tar.gz
-		mkdir -p $target_dir
-
-		#find $features_db_output -name \*.log -exec cp {} /logs \;
-
-		echo '    Compressing features database -> ' $compressed_fname
-		tar -czf $compressed_fname $features_db
-
-		echo '    Splitting compressed features database -> ' ${compressed_fname}_???
-		rm -f ${compressed_fname}_*
-		split -a 3 -b 10m $compressed_fname ${compressed_fname}_
-		rm $compressed_fname
-	done
-	echo ""
-done < $sample_sources_fname
+cd sample_sources
+python analyze.py
