@@ -193,4 +193,4 @@ class BaseSampleSource:
         elif self.mvars["run_type"] == "condor": self.submit_condor_job()
         else:
             print "ERROR: Unrecognized run_type: '%s'." % self.mvars["run_type"]
-            print "ERROR: Recognized run_types for the submit action on the features scientific benchmark are ['local', 'lsf', 'dryrun', 'condor'].
+            print "ERROR: Recognized run_types for the submit action on the features scientific benchmark are ['local', 'lsf', 'dryrun', 'condor']."
