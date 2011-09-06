@@ -71,6 +71,10 @@ Please note that this script is for debuging/testing purposes only, it is not us
       help="Base directory of where to deposit data and results. [default %default]"
     )
 
+    parser.add_option("--run_type",
+      default="condor", action="store",
+      help="Indicate which type of the action should be run. Eg, 'lsf' means execute benchmark on a Load Sharing Facility cluster, while 'dryrun' means simulate the output of running the benchmark for debugging purposes. [default %default]" 
+    )
 
     (options, args) = parser.parse_args(args=argv)
 
@@ -91,10 +95,13 @@ Please note that this script is for debuging/testing purposes only, it is not us
         print 'You must supplies action and test name in command line! For example: "./cluster.py submit docking" or ""./cluster.py analyze docking""'
         return
 
+    valid_actions = ["submit", "analyze"]
+
     action, test = args
-    if action != 'submit' and action != 'submit_local' and action != 'submit_lsf' and action != 'analyze' :
-        print "Action must be eather 'submit', 'submit_local', 'submit_lsf', or 'analyze'..."
-        return
+    
+    if action not in valid_actions:
+        print "ERROR: Action must be one of ['%s']" % "', '".join(valid_actions)
+        return 1
 
     print 'Perform %s on test %s...' % (action, test)
 
@@ -118,6 +125,7 @@ Please note that this script is for debuging/testing purposes only, it is not us
     lsf_queue_name = options.lsf_queue_name
     num_cores = options.num_cores
     output_dir = options.output_dir
+    run_type = options.run_type
     # Read the command from the file "command"
 
     try:
@@ -138,7 +146,7 @@ Please note that this script is for debuging/testing purposes only, it is not us
 
     cmd = file(path.join(workdir, action)).read().strip()
     # cmd = cmd % vars() # variable substitution using Python printf style
-    mvars = dict(minidir=minidir, database=database, workdir=workdir, platform=platform, bin=bin, compiler=compiler, mode=mode, binext=binext, svn_url=svn_url, svn_revision=svn_revision, lsf_queue_name=lsf_queue_name, num_cores=num_cores, output_dir=output_dir)
+    mvars = dict(minidir=minidir, database=database, workdir=workdir, platform=platform, bin=bin, compiler=compiler, mode=mode, binext=binext, svn_url=svn_url, svn_revision=svn_revision, lsf_queue_name=lsf_queue_name, num_cores=num_cores, output_dir=output_dir, run_type=run_type)
     cmd = cmd % mvars
 
     # Writing result to .sh file for future reference.

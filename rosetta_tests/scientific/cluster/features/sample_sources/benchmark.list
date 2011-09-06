@@ -28,7 +28,7 @@ abrelax
 abrelax_correct
 
 # Rosetta Kinimatic Loop Closure structure predictions with the score12prime weight set
-#kic
+kic
 
 # Rosetta FlexPepDock structure predictions with score12prime weight set
 #flex_pep_dock

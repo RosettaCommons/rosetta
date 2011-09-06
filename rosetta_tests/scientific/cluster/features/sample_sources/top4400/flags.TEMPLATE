@@ -18,6 +18,12 @@
  -protocol %(output_dir)s/%(sample_source_id)s/features.xml
 #
 #
+#Deleting old poses subsantialy reduces the memory requirements for
+#for runs with a large number of structures
+-jd2
+ -delete_old_poses
+#
+#
 -chemical
  -exclude_patches \
 	LowerDNA \
