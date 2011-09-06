@@ -14,18 +14,13 @@
 #include <protocols/nonlocal/StarTreeBuilder.hh>
 
 // C/C++ headers
-#include <iostream>
 #include <utility>
-
-// External headers
-#include <boost/format.hpp>
 
 // Objexx headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-#include <basic/Tracer.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/WeightedReservoirSampler.hh>
 #include <utility/vector1.hh>
@@ -38,73 +33,73 @@
 #include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/datacache/StructuralConservationStore.hh>
+#include <protocols/loops/Loop.hh>
+#include <protocols/loops/Loops.hh>
 
 // Package headers
 #include <protocols/nonlocal/CutFinder.hh>
-#include <protocols/nonlocal/NLGrouping.hh>
 
 namespace protocols {
 namespace nonlocal {
 
-static basic::Tracer TR("protocols.nonlocal.StarTreeBuilder");
-
 StarTreeBuilder::StarTreeBuilder() : virtual_res_(-1) {}
 
-// Assumes <grouping> is sorted
-void StarTreeBuilder::set_up(const NLGrouping& grouping, core::pose::Pose* pose) {
+/// Note: assumes <chunks> are sorted in increasing order of start position
+void StarTreeBuilder::set_up(const protocols::loops::Loops& regions, core::pose::Pose* pose) {
   using core::Size;
   using core::Real;
   using core::fragment::SecondaryStructure;
   using core::fragment::SecondaryStructureOP;
+  using protocols::loops::Loop;
+  using protocols::loops::Loops;
   using utility::vector1;
+
   assert(pose);
+  assert(regions.num_loop());
+
+  // Sort chunks in increasing order of start residue
+  Loops chunks(regions);
+  chunks.sequential_order();
 
   // Number of residues before addition of virtual residue
   Size num_residues = pose->total_residue();
 
-  // Add a virtual residue at the center of mass, updating the FoldTree
+  // Add a virtual residue at the center of mass (updates the fold tree)
   numeric::xyzVector<Real> center;
-  grouping.center_of_mass(&center);
+  chunks.center_of_mass(*pose, &center);
   core::pose::addVirtualResAsRoot(center, *pose);
-  TR.Debug << "center of mass(aligned region): "
-           << boost::format("(%1%, %2%, %3%)") % center.x() % center.y() % center.z()
-           << std::endl;
 
   // Initialize member variable <virtual_res_> with the index of the newly added
   // virtual residue. Subsequently, <virtual_res_> can serve as a proxy for
   // <num_residues>
   virtual_res_ = pose->total_residue();
-  core::kinematics::FoldTree tree(pose->fold_tree());
-  TR.Debug << "starting fold tree: " << tree << std::endl;
-
   bool has_conservation = pose->data().has(core::pose::datacache::CacheableDataType::STRUCTURAL_CONSERVATION);
-  TR << "Structural conservation available: " << has_conservation << std::endl;
 
   vector1<std::pair<int, int> > jumps;
-  for (Size i = 1; i <= grouping.num_groups(); ++i) {
-    const NLFragmentGroup& fragment = grouping.groups(i);
+  for (Loops::const_iterator i = chunks.begin(); i != chunks.end(); ++i) {
+    const Loop& chunk = *i;
 
     // When available, use structural conservation to inform jump selection.
-    // Otherwise, choose the midpoint of the NLFragmentGroup.
+    // Otherwise, choose the midpoint of the region.
     Size anchor_position = has_conservation ?
-        choose_conserved_position(fragment, *pose) :
-        (fragment.start() + fragment.stop()) / 2;
+        choose_conserved_position(chunk, *pose) :
+        (chunk.start() + chunk.stop()) / 2;
 
     // virtual residue => anchor position
     jumps.push_back(std::make_pair(virtual_res_, anchor_position));
-    TR << "Added jump: " << virtual_res_ << " => " << anchor_position << std::endl;
   }
 
-  // TODO(cmiles) Improve inter-jump cutpoint selection
-  //
-  // Create a cut between pairs of jumps. After the loop, add a cut between the
-  // final jump and the end of the chain.
+  // TODO(cmiles)
+  //  - Calculate RMSD over jump residues (jump residue + 1 residue on each side)
+  //  - Comment in silent file
+  //  - Tracer output
+
+  // Insert cutpoints between adjacent jumps
   SecondaryStructureOP ss = new SecondaryStructure(*pose);
   vector1<int> cuts;
   for (Size i = 2; i <= jumps.size(); ++i) {
     Size cutpoint = CutFinder::choose_cutpoint(jumps[i-1].second + 1, jumps[i].second - 1, ss);
     cuts.push_back(cutpoint);
-    TR.Debug << "added cut at " << cutpoint << std::endl;
   }
 
   // Remember to include the original cutpoint at the end of the chain
@@ -125,11 +120,12 @@ void StarTreeBuilder::set_up(const NLGrouping& grouping, core::pose::Pose* pose)
   }
 
   // Try to build the star fold tree from jumps and cuts
-  bool status = tree.tree_from_jumps_and_cuts(virtual_res_,        // nres_in
-                                              jumps.size(),        // num_jump_in
-                                              ft_jumps,            // jump_point
-                                              ft_cuts,             // cuts
-                                              virtual_res_);       // root
+  core::kinematics::FoldTree tree(pose->fold_tree());
+  bool status = tree.tree_from_jumps_and_cuts(virtual_res_,   // nres_in
+                                              jumps.size(),   // num_jump_in
+                                              ft_jumps,       // jump_point
+                                              ft_cuts,        // cuts
+                                              virtual_res_);  // root
   if (!status)
     utility_exit_with_message("StarTreeBuilder: failed to build fold tree from cuts and jumps");
 
@@ -137,11 +133,11 @@ void StarTreeBuilder::set_up(const NLGrouping& grouping, core::pose::Pose* pose)
   pose->fold_tree(tree);
 }
 
-core::Size StarTreeBuilder::choose_conserved_position(const NLFragmentGroup& fragment,
-                                                      const core::pose::Pose& pose) {
+core::Size StarTreeBuilder::choose_conserved_position(const protocols::loops::Loop& chunk,
+                                                      const core::pose::Pose& pose) const {
   utility::vector1<core::Size> positions;
   utility::vector1<core::Real> weights;
-  for (core::Size j = fragment.start(); j <= fragment.stop(); ++j) {
+  for (core::Size j = chunk.start(); j <= chunk.stop(); ++j) {
     positions.push_back(j);
     weights.push_back(core::pose::structural_conservation(pose, j));
   }
@@ -158,13 +154,10 @@ core::Size StarTreeBuilder::choose_conserved_position(const NLFragmentGroup& fra
 
 void StarTreeBuilder::tear_down(core::pose::Pose* pose) {
   assert(pose);
-
   if (virtual_res_ == -1) {
-    TR.Warning << "Attempt to tear_down() unitialized virtual residue" << std::endl;
     return;
   } else {
     pose->conformation().delete_residue_slow(virtual_res_);
-    TR << "Removed virtual residue at position " << virtual_res_ << std::endl;
     virtual_res_ = -1;
   }
 }

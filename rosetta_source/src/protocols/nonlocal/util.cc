@@ -14,28 +14,18 @@
 #include <protocols/nonlocal/util.hh>
 
 // C/C++ headers
-#include <cmath>
 #include <string>
 
 // Utility headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
-#include <basic/options/keys/cm.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/nonlocal.OptionKeys.gen.hh>
 #include <numeric/random/random.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/fragment/FragmentIO.hh>
-#include <core/fragment/FragSet.hh>
-#include <core/fragment/SecondaryStructure.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -46,58 +36,26 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
-// Package headers
-#include <protocols/nonlocal/CutFinder.hh>
-#include <protocols/nonlocal/NLGrouping.hh>
-
 namespace protocols {
 namespace nonlocal {
 
 static numeric::random::RandomGenerator RG(156144120);
 
-void nonlocal_groupings_from_alignment(utility::vector1<NLGrouping>* groupings) {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using core::fragment::FragmentIO;
-  using core::fragment::FragSetOP;
-  using core::id::SequenceMapping;
-  using core::pose::PoseOP;
-  using core::sequence::SequenceAlignment;
-  using core::sequence::SequenceAlignmentOP;
+protocols::loops::Loops combine_and_trim(core::Size min_chunk_sz,
+                                         core::Size num_residues,
+                                         const protocols::loops::Loops& aligned_regions,
+                                         const protocols::loops::Loops& unaligned_regions) {
   using protocols::loops::Loops;
-  using std::string;
-  using utility::vector1;
 
-  // Assumes multiple alignments (if present) are contained in a single file
-  string alignment_file = option[in::file::alignment]()[1];
-  vector1<SequenceAlignment> alignments = core::sequence::read_aln(option[cm::aln_format](), alignment_file);
-  assert(alignments.size() > 0);
+  Loops combined;
+  for (Loops::const_iterator i = aligned_regions.begin(); i != aligned_regions.end(); ++i)
+    combined.push_back(*i);
+  for (Loops::const_iterator i = unaligned_regions.begin(); i != unaligned_regions.end(); ++i)
+    combined.push_back(*i);
 
-  SequenceAlignmentOP alignment = alignments[1].clone();
-  PoseOP template_pose = core::import_pose::pose_from_pdb(option[in::file::template_pdb]()[1]);
-
-  // Identify stretches of aligned and unaligned residues in the alignment.
-  // Limit the length of the aligned regions to enhance conformational sampling.
-  FragmentIO io;
-  FragSetOP fragments = io.read_data(option[in::file::frag3]());
-  core::Size min_chunk_sz = fragments->max_frag_length();
-  core::Size max_chunk_sz = option[OptionKeys::nonlocal::max_chunk_size]();
-
-  Loops aligned_regions, unaligned_regions;
-  find_regions_with_minimum_size(*alignment, min_chunk_sz, &aligned_regions, &unaligned_regions);
-  limit_chunk_size(min_chunk_sz, max_chunk_sz, &aligned_regions);
-
-  // Generate non-local groupings by iterating over the regions identified
-  // above. Backbone torsions and coordinates are taken from the template
-  NLGrouping grouping;
-  generate_nonlocal_grouping(aligned_regions,
-                             unaligned_regions,
-                             alignment->sequence_mapping(1, 2),
-                             *template_pose,
-                             &grouping);
-
-  // update the output parameter
-  groupings->push_back(grouping);
+  // trim back the final loop to nres() - min_chunk_sz
+  combined[combined.size()].set_stop(num_residues - min_chunk_sz + 1);
+  return combined;
 }
 
 void limit_chunk_size(core::Size min_chunk_sz,
@@ -188,53 +146,7 @@ void find_regions_with_minimum_size(const core::sequence::SequenceAlignment& ali
   protocols::comparative_modeling::bounded_loops_from_alignment(
       pose_space_num_residues, unaligned_region_min_sz, alignment, unaligned_regions);
 
-  *aligned_regions   = unaligned_regions->invert(pose_space_num_residues);
-}
-
-void generate_nonlocal_grouping(const protocols::loops::Loops& aligned_regions,
-                                const protocols::loops::Loops& unaligned_regions,
-                                const core::id::SequenceMapping& mapping,
-                                const core::pose::Pose& template_pose,
-                                NLGrouping* grouping) {
-  using core::Real;
-  using core::Size;
-  assert(grouping);
-
-  bool unalignedBegin = false, unalignedEnd = false;
-  if (unaligned_regions.size() > 0) {
-    unalignedBegin = unaligned_regions[1].start() < aligned_regions[1].start();
-    unalignedEnd = unaligned_regions[unaligned_regions.size()].start() > aligned_regions[aligned_regions.size()].start();
-  }
-
-  for (Size i = 1; i <= aligned_regions.num_loop(); ++i) {
-    NLFragmentGroup group;
-
-    const protocols::loops::Loop& region = aligned_regions[i];
-    for (Size j = region.start(); j <= region.stop(); ++j) {
-      Size mapped_index = mapping[j];
-
-      // torsions
-      Real phi = template_pose.phi(mapped_index);
-      Real psi = template_pose.psi(mapped_index);
-      Real omega = template_pose.omega(mapped_index);
-
-      // CA coordinates
-      const core::PointPosition& coords = template_pose.xyz(core::id::NamedAtomID("CA", mapped_index));
-      group.add_entry(NLFragment(j, phi, psi, omega, coords.x(), coords.y(), coords.z()));
-    }
-    grouping->add_group(group);
-  }
-  grouping->sort();
-}
-
-bool has_chainbreaks(core::pose::Pose& pose) {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-
-  protocols::loops::Loops loops =
-      protocols::comparative_modeling::pick_loops_chainbreak(pose, option[cm::min_loop_size]());
-  loops.verify_against(pose);
-  return loops.num_loop() > 0;
+  *aligned_regions = unaligned_regions->invert(pose_space_num_residues);
 }
 
 void emit_intermediate(const core::pose::Pose& pose,

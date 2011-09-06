@@ -100,7 +100,7 @@ SaneMinMover::apply( core::pose::Pose & pose ) {
 	}
 	PROF_STOP( basic::MINMOVER_APPLY );
 
-	scorefxn_->show(TR.Debug, pose);
+	scorefxn_->show(TR, pose);
 	TR.flush();
 }
 

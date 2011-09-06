@@ -89,7 +89,7 @@ BrokenFold::BrokenFold(core::fragment::FragSetOP fragments_lg,
 
   // Large fragments, uniformly chosen
   for (Size i = 1; i <= 3; ++i, ++stage) {
-    MoverOP minimize = minimizer(score_function(stage, nres));
+    //MoverOP minimize = minimizer(score_function(stage, nres));
     MoverOP fold = new RationalMonteCarlo(
         new SingleFragmentMover(fragments_lg, movable, uniform_lg),
         score_function(stage, nres),
@@ -97,13 +97,13 @@ BrokenFold::BrokenFold(core::fragment::FragSetOP fragments_lg,
         temperature,
         true);
 
-    movers_.push_back(minimize);
+    //movers_.push_back(minimize);
     movers_.push_back(fold);
   }
 
   // Small fragments, uniformly chosen
   for (Size i = 1; i <= 3; ++i, ++stage) {
-    MoverOP minimize = minimizer(score_function(stage, nres));
+    //MoverOP minimize = minimizer(score_function(stage, nres));
     MoverOP fold = new RationalMonteCarlo(
         new SingleFragmentMover(fragments_sm, movable, uniform_sm),
         score_function(stage, nres),
@@ -111,13 +111,13 @@ BrokenFold::BrokenFold(core::fragment::FragSetOP fragments_lg,
         temperature,
         true);
 
-    movers_.push_back(minimize);
+    //movers_.push_back(minimize);
     movers_.push_back(fold);
   }
 
   // Small fragments, smoothly chosen
   for (Size i = 1; i <= 3; ++i, ++stage) {
-    MoverOP minimize = minimizer(score_function(stage, nres));
+    //MoverOP minimize = minimizer(score_function(stage, nres));
     MoverOP fold = new RationalMonteCarlo(
         new SingleFragmentMover(fragments_sm, movable, smooth_sm),
         score_function(stage, nres),
@@ -125,7 +125,7 @@ BrokenFold::BrokenFold(core::fragment::FragSetOP fragments_lg,
         temperature,
         true);
 
-    movers_.push_back(minimize);
+    //movers_.push_back(minimize);
     movers_.push_back(fold);
   }
 }

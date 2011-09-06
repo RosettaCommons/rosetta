@@ -13,13 +13,14 @@
 #ifndef PROTOCOLS_NONLOCAL_NONLOCALABINITIOMAIN_HH_
 #define PROTOCOLS_NONLOCAL_NONLOCALABINITIOMAIN_HH_
 
-#include <protocols/nonlocal/NonlocalAbinitio.hh>
-
 namespace protocols {
 namespace nonlocal {
 
 /// @brief Primary entry point for NonlocalAbinitio protocol
 void* NonlocalAbinitio_main(void*);
+
+/// @brief Ensures that required program options have been specified
+void check_required();
 
 }  // namespace nonlocal
 }  // namespace protocols

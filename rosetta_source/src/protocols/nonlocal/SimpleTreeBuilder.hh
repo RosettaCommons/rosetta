@@ -18,9 +18,9 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
+#include <protocols/loops/Loops.fwd.hh>
 
 // Package headers
-#include <protocols/nonlocal/NLGrouping.hh>
 #include <protocols/nonlocal/TreeBuilder.hh>
 
 namespace protocols {
@@ -28,7 +28,7 @@ namespace nonlocal {
 
 class SimpleTreeBuilder : public TreeBuilder {
  public:
-  void set_up(const NLGrouping& groupings, core::pose::Pose* pose);
+  void set_up(const protocols::loops::Loops& chunks, core::pose::Pose* pose);
 };
 
 }  // namespace nonlocal

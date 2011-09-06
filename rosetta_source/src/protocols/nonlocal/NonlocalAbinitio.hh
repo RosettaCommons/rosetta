@@ -25,88 +25,52 @@
 // Project headers
 #include <core/types.hh>
 #include <core/fragment/FragSet.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/sequence/SequenceAlignment.hh>
+#include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Package headers
-#include <protocols/nonlocal/NLGrouping.hh>
-#include <protocols/nonlocal/TreeBuilder.hh>
+#include <protocols/nonlocal/TreeBuilder.fwd.hh>
 
 namespace protocols {
 namespace nonlocal {
 
 class NonlocalAbinitio : public protocols::moves::Mover {
-  typedef protocols::moves::Mover Parent;
-  typedef utility::vector1<NLGrouping> NonlocalGroupings;
-
-public:
-  /// @brief Constructs a new mover by reading non-local pairings from the
-  /// filename specified by -nonlocal:moves.
+ public:
   NonlocalAbinitio();
 
-  /// @brief Constructs a new mover with the specified non-local pairings.
-  explicit NonlocalAbinitio(const NonlocalGroupings& groupings);
-
-  /// @brief Chooses a non-local grouping at random as the starting point for
-  /// the simulation, then proceeds with kinematic ab initio.
+  /// @brief Performs broken-chain folding
   void apply(core::pose::Pose& pose);
 
   /// @brief Returns the name of this mover.
   std::string get_name() const;
 
-  /// @brief Creates a copy of this instance
+  /// @brief Create a new instance
   protocols::moves::MoverOP clone() const;
-
-  /// @brief Creates a new instance by calling the no-argument constructor
   protocols::moves::MoverOP fresh_instance() const;
 
-  // -- Accessors -- //
-
-  /// @brief Returns the set of non-local pairings
-  const NonlocalGroupings& groupings() const;
-
+private:
   /// @brief Returns a pointer to the large fragment library
   core::fragment::FragSetOP fragments_large() const;
 
   /// @brief Returns a pointer to the small fragment library
   core::fragment::FragSetOP fragments_small() const;
 
-private:
-  /// --- Utility Methods --- ///
-  void initialize(const NonlocalGroupings& groupings);
+  /// @brief Estimates missing backbone density
+  void estimate_missing_density(core::pose::Pose* pose) const;
 
-  /// @brief Determines whether the caller has specified all required options.
-  /// If a required option is missing, exits with an error message.
-  void check_required_options() const;
+  /// @brief Defines the kinematics of the system
+  TreeBuilderOP make_fold_tree(const protocols::loops::Loops& regions, core::pose::Pose* pose) const;
 
-  /// @brief Constructs the fold tree
-  TreeBuilderOP make_fold_tree(const NLGrouping& grouping, core::pose::Pose* pose) const;
+  /// @brief Defines restrictions on degree of freedom modifications
+  core::kinematics::MoveMapOP make_movemap(const core::kinematics::FoldTree& tree) const;
 
-  /// @brief Prepares a MoveMap to enforce restrictions on modifications to the
-  /// system's degrees of freedom. If member variable <mode_> is set to RIGID,
-  /// backbone torsions are prevented for each entry in <grouping>. In order to
-  /// protect the jumps, residues adjacent to cutpoints cannot be modified.
-  void prepare_movemap(const NLGrouping& grouping,
-                       const core::pose::Pose& pose,
-                       core::kinematics::MoveMapOP movable);
-
-  /// @brief Orients and places the rigid chunks in <grouping> into <pose>
-  void superimpose(const NLGrouping& grouping, core::pose::Pose* pose) const;
-
-  /// @brief Prepares <pose> for broken-chain folding by applying fragment moves
-  /// and loop closure
-  void initial_closure(core::pose::Pose* pose) const;
-
-  /// @brief Closes any chainbreaks that exist after broken chain folding
-  void final_closure(core::pose::Pose* pose) const;
-
-  /// @brief Relax into constraints
-  void relax(core::pose::Pose* pose) const;
+  /// @brief Full-atom refinement
+  void refine(core::pose::Pose* pose) const;
 
   /// --- Members --- ///
-
-  /// @brief Prior or predicted knowledge of the protein structure
-  NonlocalGroupings groupings_;
 
   /// @brief Large fragment library
   core::fragment::FragSetOP fragments_lg_;

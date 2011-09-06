@@ -16,26 +16,26 @@
 // Unit headers
 #include <protocols/nonlocal/StarTreeBuilder.fwd.hh>
 
-// Package headers
-#include <protocols/nonlocal/NLGrouping.hh>
-#include <protocols/nonlocal/TreeBuilder.hh>
-
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <protocols/loops/Loop.fwd.hh>
+#include <protocols/loops/Loops.fwd.hh>
+
+// Package headers
+#include <protocols/nonlocal/TreeBuilder.hh>
 
 namespace protocols {
 namespace nonlocal {
 
 class StarTreeBuilder : public TreeBuilder {
  public:
-  /// @brief Assigns <virtual_res_> a value signifying that it is uninitialized
   StarTreeBuilder();
 
-	/// @brief Constructs a star fold tree by placing a virtual residue at
-	/// <grouping>'s center of mass and adding jumps to a stochastically
-	/// chosen residue in each chunk.
-  void set_up(const NLGrouping& grouping, core::pose::Pose* pose);
+  /// @brief Constructs a star fold tree by placing a virtual residue at
+  /// <chunks> center of mass and adding jumps from it to a stochastically
+  /// chosen residue in each chunk.
+  void set_up(const protocols::loops::Loops& chunks, core::pose::Pose* pose);
 
   /// @brief Removes the virtual residue added to <pose> in calls to build()
   void tear_down(core::pose::Pose* pose);
@@ -43,8 +43,8 @@ class StarTreeBuilder : public TreeBuilder {
  private:
   /// @brief Stochastically selects an anchor position on [fragment.start(), fragment.stop()]
   /// according to per-residue structural conservation
-  core::Size choose_conserved_position(const NLFragmentGroup& fragment,
-                                       const core::pose::Pose& pose);
+  core::Size choose_conserved_position(const protocols::loops::Loop& chunk,
+                                       const core::pose::Pose& pose) const;
 
   /// @brief Index of the virtual residue we added to the pose in build()
   int virtual_res_;

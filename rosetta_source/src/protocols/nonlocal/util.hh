@@ -33,28 +33,17 @@
 namespace protocols {
 namespace nonlocal {
 
-/// @brief Creates a set of non-local groupings from a threading model.
-/// The sequence alignment and template pdb are read from the filenames
-/// specified in the options -in:file:alignment and -in:file:template_pdb,
-/// respectively.
-void nonlocal_groupings_from_alignment(utility::vector1<NLGrouping>* groupings);
+/// @brief Combine aligned and unaligned regions, limit size of final loop
+protocols::loops::Loops combine_and_trim(core::Size min_chunk_sz,
+                                         core::Size num_residues,
+                                         const protocols::loops::Loops& aligned_regions,
+                                         const protocols::loops::Loops& unaligned_regions);
 
 // -- Utility methods -- not to be called directly
 void find_regions_with_minimum_size(const core::sequence::SequenceAlignment& alignment,
                                     const core::Size unaligned_region_min_sz,
                                     protocols::loops::Loops* aligned_regions,
                                     protocols::loops::Loops* unaligned_regions);
-
-void generate_nonlocal_grouping(const protocols::loops::Loops& aligned_regions,
-                                const protocols::loops::Loops& unaligned_regions,
-                                const core::id::SequenceMapping& mapping,
-                                const core::pose::Pose& template_pose,
-                                NLGrouping* grouping);
-
-void read_from_template(const protocols::loops::Loops& regions,
-                        const core::id::SequenceMapping& mapping,
-                        const core::pose::Pose& template_pose,
-                        NLGrouping* grouping);
 
 /// @brief Best-effort attempt to limit the length of a chunk by recursively
 /// decomposing <regions> such that min_chunk_sz <= |chunk| <= max_chunk_sz.
@@ -68,11 +57,6 @@ void decompose(core::Size min_chunk_sz,
                core::Size max_chunk_sz,
                const protocols::loops::Loop& loop,
                utility::vector1<protocols::loops::Loop>* pieces);
-
-/// @brief Returns true if <pose> has chainbreaks, false otherwise.
-/// Non-const because protocols/comparative_modeling/util.cc's methods are
-/// unfortunately non-const.
-bool has_chainbreaks(core::pose::Pose& pose);
 
 /// @brief If -abinitio:debug is enabled, writes <pose> to <file>.
 void emit_intermediate(const core::pose::Pose& pose, const std::string& file);

@@ -13,17 +13,15 @@
 // Unit headers
 #include <protocols/nonlocal/SimpleTreeBuilder.hh>
 
-// Package headers
-#include <protocols/nonlocal/NLGrouping.hh>
-
 // Project headers
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
+#include <protocols/loops/Loops.hh>
 
 namespace protocols {
 namespace nonlocal {
 
-void SimpleTreeBuilder::set_up(const NLGrouping& grouping, core::pose::Pose* pose) {
+void SimpleTreeBuilder::set_up(const protocols::loops::Loops&, core::pose::Pose* pose) {
   assert(pose);
   core::kinematics::FoldTree simple_tree(pose->total_residue());
   pose->fold_tree(simple_tree);

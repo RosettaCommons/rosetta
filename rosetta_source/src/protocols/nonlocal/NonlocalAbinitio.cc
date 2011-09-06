@@ -14,8 +14,6 @@
 #include <protocols/nonlocal/NonlocalAbinitio.hh>
 
 // C/C++ headers
-#include <algorithm>
-#include <cmath>
 #include <iostream>
 #include <string>
 
@@ -24,14 +22,12 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/nonlocal.OptionKeys.gen.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
@@ -42,226 +38,142 @@
 #include <core/fragment/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/sequence/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/comparative_modeling/util.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/idealize/IdealizeMover.hh>
+#include <protocols/jd2/InnerJob.hh>
+#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/ThreadingJob.hh>
 #include <protocols/loops/LoopRelaxMover.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/relax/FastRelax.hh>
 
 // Package headers
-#include <protocols/nonlocal/BoundaryFinder.hh>
 #include <protocols/nonlocal/BrokenFold.hh>
-#include <protocols/nonlocal/NLFragment.hh>
-#include <protocols/nonlocal/NLFragmentGroup.hh>
-#include <protocols/nonlocal/NLGrouping.hh>
 #include <protocols/nonlocal/TreeBuilder.hh>
 #include <protocols/nonlocal/TreeBuilderFactory.hh>
-#include <protocols/nonlocal/NonlocalAbinitioReader.hh>
 #include <protocols/nonlocal/util.hh>
 
 namespace protocols {
 namespace nonlocal {
 
-// -- Convenience types -- //
-typedef utility::vector1<NLGrouping> NonlocalGroupings;
-
 static basic::Tracer TR("protocols.nonlocal.NonlocalAbinitio");
-static numeric::random::RandomGenerator RG(764443637);
 
 NonlocalAbinitio::NonlocalAbinitio() {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-
-  // Ensure that the required options have been specified
-  if (!option[OptionKeys::nonlocal::moves].user())
-    utility_exit_with_message("Failed to specify required option nonlocal:moves");
-
-  // Deserialize the pairings file
-  NonlocalGroupings groupings;
-  NonlocalAbinitioReader::read(option[OptionKeys::nonlocal::moves](), &groupings);
-
-  initialize(groupings);
-}
-
-NonlocalAbinitio::NonlocalAbinitio(const NonlocalGroupings& groupings) {
-  initialize(groupings);
-}
-
-void NonlocalAbinitio::initialize(const NonlocalGroupings& groupings) {
   using core::fragment::FragmentIO;
-  using core::fragment::FragSetOP;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
 
-  // Load fragment libraries from file
   FragmentIO io;
   fragments_lg_ = io.read_data(option[in::file::frag9]());
   fragments_sm_ = io.read_data(option[in::file::frag3]());
-
-  // Initialize members
-  groupings_ = groupings;
 }
 
 void NonlocalAbinitio::apply(core::pose::Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::Size;
-  using core::kinematics::MoveMap;
   using core::kinematics::MoveMapOP;
+  using core::pose::Pose;
+  using core::sequence::SequenceAlignment;
+  using protocols::jd2::InnerJobCOP;
+  using protocols::jd2::JobDistributor;
+  using protocols::jd2::ThreadingJob;
+  using protocols::loops::Loops;
   using protocols::moves::MoverOP;
 
-  // Always operate in centroid mode
-  core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
+  JobDistributor* jd2 = JobDistributor::get_instance();
+  InnerJobCOP inner = jd2->current_job()->inner_job();
+  ThreadingJob const * const job = (ThreadingJob const * const) inner();
+  TR << "Selected alignment: " << job->alignment_id() << std::endl;
 
-  // Are we processing a comparative modeling target?
-  bool comparative_modeling_input =
-      option[in::file::alignment].user() &&
-      option[in::file::template_pdb].user() &&
-      option[cm::aln_format].user();
+  // Estimate missing backbone density by performing fragment insertion and
+  // loop closure using a simple fold tree
+  estimate_missing_density(&pose);
 
-  // Randomly select one of the NLGrouping's as the basis for this trajectory
-  NLGrouping grouping = groupings_[RG.random_range(1, groupings_.size())];
+  // Identify consecutive stretches of aligned/unaligned residues, explicitly
+  // limiting their length to enhance conformational sampling.
+  const SequenceAlignment& alignment = job->alignment();
 
-  TreeBuilderOP builder;
-  if (comparative_modeling_input) {
-    initial_closure(&pose);
-    builder = make_fold_tree(grouping, &pose);
-  } else {
-    // Insert the torsions from the randomly selected NLGrouping
-    for (Size i = 1; i <= grouping.num_groups(); ++i) {
-      const NLFragmentGroup& group = grouping.groups(i);
+  Loops aligned_regions, unaligned_regions;
+  Size min_chunk_sz = fragments_lg_->max_frag_length();
+  Size max_chunk_sz = option[OptionKeys::nonlocal::max_chunk_size]();
+  find_regions_with_minimum_size(alignment, min_chunk_sz, &aligned_regions, &unaligned_regions);
+  limit_chunk_size(min_chunk_sz, max_chunk_sz, &aligned_regions);
+  limit_chunk_size(min_chunk_sz, max_chunk_sz, &unaligned_regions);
 
-      for (Size j = 1; j <= group.num_entries(); ++j) {
-        const NLFragment& entry = group.entries(j);
-        Size position = entry.position();
-        pose.set_phi(position, entry.phi());
-        pose.set_psi(position, entry.psi());
-        pose.set_omega(position, entry.omega());
-      }
-    }
+  // Define the kinematics of the system
+  Loops curated = combine_and_trim(min_chunk_sz, pose.total_residue(), aligned_regions, unaligned_regions);
+  TreeBuilderOP builder = make_fold_tree(curated, &pose);
+  MoveMapOP movable = make_movemap(pose.fold_tree());
 
-    // Construct the fold tree and orient the non-local fragments
-    builder = make_fold_tree(grouping, &pose);
-    superimpose(grouping, &pose);
-  }
-
-  // If we're operating in RIGID mode, enforce user-defined restrictions on
-  // backbone torsion modification
-  MoveMapOP movable = new MoveMap();
-  prepare_movemap(grouping, pose, movable);
-
-  // Perform fragment-based assembly
+  // Broken-chain folding
   emit_intermediate(pose, "nla_pre_abinitio.pdb");
   MoverOP mover = new BrokenFold(fragments_large(), fragments_small(), movable);
   mover->apply(pose);
   emit_intermediate(pose, "nla_post_abinitio.pdb");
 
-  // At the conclusion of folding, ask the TreeBuilder to revert any modifications
-  // to the pose that it introduced (e.g. virtual residues). Afterwards, proceed
-  // to close any remaining chainbreaks and (optionally) relax.
+  // Revert any modifications to the pose that TreeBuilder introduced, close
+	// remaining chainbreaks, and optionally relax
   builder->tear_down(&pose);
-  final_closure(&pose);
-  relax(&pose);
-
-  // Track the provenance of the non-local pairing by inserting an entry into
-  // the pose's DataCache. This allows us to determine which starting points
-  // (i.e. set of non-local contacts) contribute to low-scoring structures
-  core::pose::add_comment(pose, "Nonlocal Provenance", grouping.provenance());
+	estimate_missing_density(&pose);
+  refine(&pose);
 }
 
-TreeBuilderOP NonlocalAbinitio::make_fold_tree(const NLGrouping& grouping,
+TreeBuilderOP NonlocalAbinitio::make_fold_tree(const protocols::loops::Loops& regions,
                                                core::pose::Pose* pose) const {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
+  assert(pose);
+  TR << "Regions: " << regions << std::endl;
 
   TreeBuilderOP builder = TreeBuilderFactory::get_builder(option[OptionKeys::nonlocal::builder]());
-  builder->set_up(grouping, pose);
+  builder->set_up(regions, pose);
 
-  // Ensure that the FoldTree is left in a consistent state
-  const core::kinematics::FoldTree& tree = pose->fold_tree();
-  assert(tree.check_fold_tree());
-  TR << tree << std::endl;
-
+  TR << pose->fold_tree() << std::endl;
   return builder;
 }
 
-void NonlocalAbinitio::prepare_movemap(const NLGrouping& grouping,
-                                       const core::pose::Pose& pose,
-                                       core::kinematics::MoveMapOP movable) {
+core::kinematics::MoveMapOP NonlocalAbinitio::make_movemap(const core::kinematics::FoldTree& tree) const {
   using core::Size;
+  using core::kinematics::MoveMap;
+  using core::kinematics::MoveMapOP;
 
+  MoveMapOP movable = new MoveMap();
   movable->set_bb(true);
   movable->set_chi(true);
   movable->set_jump(true);
 
-  // Prevent modification to cutpoint residues and their neighbors
-  const core::kinematics::FoldTree& tree = pose.fold_tree();
-  for (Size i = 1; i <= pose.total_residue(); ++i) {
+  // Prevent modification to cutpoint residues and their immediate neighbors
+  for (Size i = 1; i <= tree.nres(); ++i) {
     if (tree.is_cutpoint(i)) {
       Size start = std::max(i-2, (Size) 1);
-      Size stop  = std::min(i+2, pose.total_residue());
+      Size stop  = std::min(i+2, tree.nres());
       for ( Size j = start; j <= stop; ++j ) {
         movable->set_bb(j, false);
       }
     }
   }
-
-  // Explicitly flush the tracer's buffer
-  movable->show(TR.Debug, pose.total_residue());
-  TR.Debug << std::endl;
+  return movable;
 }
 
-void NonlocalAbinitio::superimpose(const NLGrouping& grouping, core::pose::Pose* pose) const {
-  using core::Real;
-  using core::Size;
-  using numeric::xyzVector;
-
-  for (Size i = 1; i <= grouping.num_groups(); ++i) {
-    const NLFragmentGroup& group = grouping.groups(i);
-
-    // Construct stubs from the 3 central CA atoms
-    Size central_residue = static_cast<Size>(ceil(group.num_entries() / 2.0));
-
-    const NLFragment& f1 = group.entries(central_residue - 1);
-    const NLFragment& f2 = group.entries(central_residue);
-    const NLFragment& f3 = group.entries(central_residue + 1);
-    xyzVector<Real> fa1(f1.x(), f1.y(), f1.z());
-    xyzVector<Real> fa2(f2.x(), f2.y(), f2.z());
-    xyzVector<Real> fa3(f3.x(), f3.y(), f3.z());
-
-    Size midpoint_pose = f2.position();
-    xyzVector<Real> m1 = pose->residue(f1.position()).xyz("CA");
-    xyzVector<Real> m2 = pose->residue(f2.position()).xyz("CA");
-    xyzVector<Real> m3 = pose->residue(f3.position()).xyz("CA");
-
-    // Compute the transform
-    core::kinematics::Stub x = core::fragment::getxform(m1, m2, m3, fa1, fa2, fa3);
-
-    // Starting at the midpoint of the insertion point in the pose, propagate
-    // the change to the left and right until we reach either the end of the
-    // chain or a cutpoint
-    Size region_start, region_stop;
-    BoundaryFinder::boundaries(pose->fold_tree(), midpoint_pose, &region_start, &region_stop);
-    core::fragment::xform_pose(*pose, x, region_start, region_stop);
-  }
-  TR << "Pose reorientation complete!" << std::endl;
-}
-
-void NonlocalAbinitio::initial_closure(core::pose::Pose* pose) const {
+// TODO(cmiles) determine whether a less computationally demanding protocol is
+// capable of providing reasonable estimates for missing density
+void NonlocalAbinitio::estimate_missing_density(core::pose::Pose* pose) const {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::kinematics::FoldTree;
   using protocols::loops::LoopRelaxMover;
   using protocols::loops::Loops;
   assert(pose);
+
+  // Always operate in centroid mode
+  core::util::switch_to_residue_type_set(*pose, core::chemical::CENTROID);
 
   // An empty Loops selection notifies LoopRelaxMover that it is responsible
   // for choosing the breaks to close automatically.
@@ -281,61 +193,12 @@ void NonlocalAbinitio::initial_closure(core::pose::Pose* pose) const {
   // Use atom pair constraints when available
   closure.cmd_line_csts(option[constraints::cst_fa_file].user());
 
-  // LoopRelax constructs and manages its own FoldTree, which may be in
-  // conflict with the existing FoldTree. Set the Pose's FoldTree to the
-  // desired end state (a simple fold tree).
-  FoldTree orig_tree = pose->fold_tree();
-  pose->fold_tree(FoldTree(pose->total_residue()));
-
-  // Begin loop closure
+  FoldTree tree(pose->total_residue());
+  pose->fold_tree(tree);
   closure.apply(*pose);
-
-  // Restore <pose>'s original fold tree
-  pose->fold_tree(orig_tree);
 }
 
-void NonlocalAbinitio::final_closure(core::pose::Pose* pose) const {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using core::kinematics::FoldTree;
-  using protocols::loops::LoopRelaxMover;
-  using protocols::loops::Loops;
-
-  assert(pose);
-  pose->fold_tree(FoldTree(pose->total_residue()));
-
-  // Close any remaining chainbreaks
-  if (has_chainbreaks(*pose)) {
-    // An empty Loops selection notifies LoopRelaxMover that it is responsible
-    // for choosing the breaks to close automatically.
-    Loops empty;
-    LoopRelaxMover closure;
-    closure.remodel("quick_ccd");
-    closure.intermedrelax("no");
-    closure.refine("no");
-    closure.relax("no");
-    closure.loops(empty);
-
-    // 3-mers
-    utility::vector1<core::fragment::FragSetOP> fragments;
-    fragments.push_back(fragments_small());
-    closure.frag_libs(fragments);
-
-    // Use atom pair constraints when available
-    closure.cmd_line_csts(option[constraints::cst_fa_file].user());
-
-    // LoopRelax constructs and manages its own FoldTree, which may be in
-    // conflict with the existing FoldTree. Set the Pose's FoldTree to the
-    // desired end state (a simple fold tree).
-    pose->fold_tree(FoldTree(pose->total_residue()));
-
-    // Begin loop closure
-    closure.apply(*pose);
-    emit_intermediate(*pose, "nla_final_closure.pdb");
-  }
-}
-
-void NonlocalAbinitio::relax(core::pose::Pose* pose) const {
+void NonlocalAbinitio::refine(core::pose::Pose* pose) const {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::Real;
@@ -386,12 +249,6 @@ protocols::moves::MoverOP NonlocalAbinitio::clone() const {
 
 protocols::moves::MoverOP NonlocalAbinitio::fresh_instance() const {
   return new NonlocalAbinitio();
-}
-
-// -- Accessors -- //
-
-const NonlocalGroupings& NonlocalAbinitio::groupings() const {
-  return groupings_;
 }
 
 core::fragment::FragSetOP NonlocalAbinitio::fragments_large() const {
