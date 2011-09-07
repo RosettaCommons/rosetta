@@ -482,34 +482,61 @@ utility::vector1< std::pair< Size,Size > > HelixAssemblyMover::findPartnerHelice
   return partnerHelices;
 }
 
-void HelixAssemblyMover::superimposeBundles(Pose & pose1, Pose const & pose2){
+void HelixAssemblyMover::superimposeBundles(Pose & query_structure, Pose const & results_structure){
   id::AtomID_Map< core::id::AtomID > atom_map;
-  // maps every atomid to bogus atom
+  // maps every atomid to bogus atom. Atoms in the query_structure that are left mapped to the bogus atoms will not be used in the superimposition
   atom_map.clear();
-  core::pose::initialize_atomid_map( atom_map, pose1, id::BOGUS_ATOM_ID );
+  core::pose::initialize_atomid_map( atom_map, query_structure, id::BOGUS_ATOM_ID );
 
   //superimpose the found two-helix pose onto the query structure
-  for(Size j=1; j<=pose1.total_residue(); j++){
+  for(Size j=0; j<=get_frag1_end()-get_frag1_start(); j++){
       //Sloppy way of adding all bb atoms, must be a better way...
-      core::id::AtomID const id1( pose1.residue(j).atom_index("CA"), j);
-      core::id::AtomID const id2( pose2.residue(j).atom_index("CA"), j );
+
+      TR << "superimposing " << j+get_frag1_start() << " of query structure to " << j+1 << " of results structure" << endl;
+
+      core::id::AtomID const id1( query_structure.residue(j+get_frag1_start()).atom_index("CA"), j+get_frag1_start());
+      core::id::AtomID const id2( results_structure.residue(j+1).atom_index("CA"), j+1 );
       atom_map[ id1 ] = id2;
 
-      core::id::AtomID const id3( pose1.residue(j).atom_index("C"), j );
-      core::id::AtomID const id4( pose2.residue(j).atom_index("C"), j );
+      core::id::AtomID const id3( query_structure.residue(j+get_frag1_start()).atom_index("C"), j+get_frag1_start() );
+      core::id::AtomID const id4( results_structure.residue(j+1).atom_index("C"), j+1 );
       atom_map[ id3 ] = id4;
 
-      core::id::AtomID const id5( pose1.residue(j).atom_index("N"), j );
-      core::id::AtomID const id6( pose2.residue(j).atom_index("N"), j );
+      core::id::AtomID const id5( query_structure.residue(j+get_frag1_start()).atom_index("N"), j+get_frag1_start() );
+      core::id::AtomID const id6( results_structure.residue(j+1).atom_index("N"), j+1 );
       atom_map[ id5 ] = id6;
 
-      core::id::AtomID const id7( pose1.residue(j).atom_index("O"), j );
-      core::id::AtomID const id8( pose2.residue(j).atom_index("O"), j );
+      core::id::AtomID const id7( query_structure.residue(j+get_frag1_start()).atom_index("O"), j+get_frag1_start() );
+      core::id::AtomID const id8( results_structure.residue(j+1).atom_index("O"), j+1 );
       atom_map[ id7 ] = id8;
   }
 
+  for(Size j=0; j<=get_frag2_end()-get_frag2_start(); j++){
+      //Sloppy way of adding all bb atoms, must be a better way...
+
+      core::Size results_frag2_start = get_frag1_end()-get_frag1_start()+2;
+
+      TR << "superimposing " << j+get_frag2_start() << " of query structure to " << j+results_frag2_start << " of results structure" << endl;
+
+      core::id::AtomID const id1( query_structure.residue(j+get_frag2_start()).atom_index("CA"), j+get_frag2_start());
+      core::id::AtomID const id2( results_structure.residue(j+results_frag2_start).atom_index("CA"), j+1 );
+      atom_map[ id1 ] = id2;
+
+      core::id::AtomID const id3( query_structure.residue(j+get_frag2_start()).atom_index("C"), j+get_frag2_start() );
+      core::id::AtomID const id4( results_structure.residue(j+results_frag2_start).atom_index("C"), j+1 );
+      atom_map[ id3 ] = id4;
+
+      core::id::AtomID const id5( query_structure.residue(j+get_frag2_start()).atom_index("N"), j+get_frag2_start() );
+      core::id::AtomID const id6( results_structure.residue(j+results_frag2_start).atom_index("N"), j+1 );
+      atom_map[ id5 ] = id6;
+
+      core::id::AtomID const id7( query_structure.residue(j+get_frag2_start()).atom_index("O"), j+get_frag2_start() );
+      core::id::AtomID const id8( results_structure.residue(j+results_frag2_start).atom_index("O"), j+1 );
+      atom_map[ id7 ] = id8;
+    }
+
   //do superimpose
-  scoring::superimpose_pose(pose1, pose2, atom_map);
+  scoring::superimpose_pose(query_structure, results_structure, atom_map);
 }
 
 core::Real HelixAssemblyMover::bb_score(pose::Pose & pose, core::Size unique_chain_num, core::scoring::ScoreFunctionOP & scorefxn){
@@ -570,22 +597,45 @@ utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob &
 //  std::string bar = foo.str();
 //  returnPdbs.push_back(bar);
 //  return returnPdbs;
+
+//  HelixAssemblyJob new_job1;
+//  new_job1.set_query_structure("FOOBAR");
+//  new_job1.set_round(job.get_round()+1);
+//
+//  new_job1.set_frag1_start(1);
+//  new_job1.set_frag1_end(10);
+//
+//  new_job1.set_frag2_start(job.get_frag1_start());
+//  new_job1.set_frag2_start(job.get_frag1_end());
+//
+//  new_job1.set_job_name(job.get_job_name());
+//
+//  new_jobs.push_back(new_job1);
+//  return new_jobs;
+
 ////END DEBUG////
 
 //  utility::file::FileName filename (pose.pdb_info()->name());
   TR << "working on file: " << job.get_job_name() << endl;
 //  std::string baseOutputName = filename.base() + "_hit_";
 
-  Pose fullQueryStructure;
-  core::import_pose::pose_from_pdbstring(fullQueryStructure, job.get_query_structure());
-  TR << "Full Query Structure is " << fullQueryStructure.total_residue() << " residues" << endl;
+  Pose query_structure;
+  core::import_pose::pose_from_pdbstring(query_structure, job.get_query_structure());
+  TR << "Full Query Structure is " << query_structure.total_residue() << " residues" << endl;
 
   Pose search_structure;
   core::import_pose::pose_from_pdbstring(search_structure, job.get_search_structure());
   TR << "Search Structure is " << search_structure.total_residue() << " residues" << endl;
 
-  Pose helixFragment1(fullQueryStructure, job.get_frag1_start(), job.get_frag1_end());
-  Pose helixFragment2(fullQueryStructure, job.get_frag2_start(), job.get_frag2_end());
+  this->set_frag1_start(job.get_frag1_start());
+  this->set_frag1_end(job.get_frag1_end());
+  this->set_frag2_start(job.get_frag2_start());
+  this->set_frag2_end(job.get_frag2_end());
+
+  TR << "Frag1 (" << get_frag1_start() << ":" << get_frag1_end() << endl;
+  Pose helixFragment1(query_structure, get_frag1_start(), get_frag1_end());
+  TR << "Frag2 (" << get_frag2_start() << ":" << get_frag2_end() << endl;
+  Pose helixFragment2(query_structure, get_frag2_start(), get_frag2_end());
   TR << "Fragment 1 is " << helixFragment1.total_residue() << " residues" << endl;
   TR << "Fragment 2 is " << helixFragment2.total_residue() << " residues" << endl;
 
@@ -634,14 +684,20 @@ utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob &
 
                   Pose thirdHelix(search_structure, helix_partners[k].first, helix_partners[k].second);
 
+                  TR << "New helical pose created." << endl;
+
                   //superimpose the found query helix pair onto the found pair
-                  superimposeBundles(fullQueryStructure, combinedResultFragments);
+                  superimposeBundles(query_structure, combinedResultFragments);
+
+                  TR << "Poses have been superimposed for bundle creation" << endl;
 
                   //combine query structure with third helix
-                  Size third_helix_start(fullQueryStructure.total_residue()+1);
-                  Pose new_bundle = combinePoses(fullQueryStructure, thirdHelix);
+                  Size third_helix_start(query_structure.total_residue()+1);
+                  Pose new_bundle = combinePoses(query_structure, thirdHelix);
                   Size new_chain = new_bundle.chain(new_bundle.total_residue());
                   Size third_helix_end(new_bundle.total_residue());
+
+                  TR << "New bundle created" << endl;
 
                   //check for backbone clashes introduced by adding the new helix
                   Real clash_score = bb_score(new_bundle, new_chain, scorefxn_);
@@ -658,7 +714,7 @@ utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob &
                   new_job1.set_frag1_end(third_helix_end);
 
                   new_job1.set_frag2_start(job.get_frag1_start());
-                  new_job1.set_frag2_start(job.get_frag1_end());
+                  new_job1.set_frag2_end(job.get_frag1_end());
 
                   new_job1.set_job_name(job.get_job_name());
 
@@ -672,7 +728,7 @@ utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob &
                   new_job2.set_frag1_end(third_helix_end);
 
                   new_job2.set_frag2_start(job.get_frag2_start());
-                  new_job2.set_frag2_start(job.get_frag2_end());
+                  new_job2.set_frag2_end(job.get_frag2_end());
 
                   new_job2.set_job_name(job.get_job_name());
 

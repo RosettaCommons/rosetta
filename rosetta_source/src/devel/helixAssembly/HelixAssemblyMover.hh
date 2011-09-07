@@ -76,7 +76,7 @@ public:
 
         utility::vector1<std::pair<core::Size,core::Size> > findPartnerHelices(const core::pose::Pose & pose, const core::pose::Pose & fragment1, const core::pose::Pose & fragment2, core::Size frag1Start, core::Size frag2Start, utility::vector1<std::pair<core::Size,core::Size> > helix_endpts);
 
-        void superimposeBundles(core::pose::Pose & pose1, const core::pose::Pose & pose2);
+        void superimposeBundles(core::pose::Pose & query_structure, const core::pose::Pose & results_structure);
 
         core::Real bb_score(core::pose::Pose & pose, core::Size unique_chain_num, core::scoring::ScoreFunctionOP & scorefxn);
 

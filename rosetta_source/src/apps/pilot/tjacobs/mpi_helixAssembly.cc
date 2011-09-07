@@ -152,20 +152,24 @@ main( int argc, char * argv [] )
 
           for(Size i=1; i <= new_jobs.size(); ++i){
               if(new_jobs[i].get_round() <= option[HelixAssembly::helices_to_add]){
+                  TR << "job " << new_jobs[i].get_job_name() << " is on round " << new_jobs[i].get_round() <<
+                      " of " << option[HelixAssembly::helices_to_add] << endl;
                   for(Size j=1; j <= pdb_library.size(); ++j){
                       //copy incomplete job and add a pose to search, then add to the queue
                       HelixAssemblyJob temp_job(new_jobs[i]);
 
-                      utility::io::izstream data( pdb_library[i].name().c_str() );
+                      utility::io::izstream data( pdb_library[j].name().c_str() );
                       std::string pdbString;
                       utility::slurp(data, pdbString);
 
                       //only thing we should need to change about the job is the search structure, which only the head node knows
                       temp_job.set_search_structure(pdbString);
+                      temp_job.set_job_name(temp_job.get_job_name() + "_" + pdb_library[j].base());
                       job_queue.push_back(temp_job);
                   }
               }
               else{
+                  TR << "Outputting job " << new_jobs[i].get_job_name() << endl;
                   //done. output PDBs
                   utility::io::ozstream outputStream;
                   outputStream.open(new_jobs[i].get_job_name() + "_" + to_string(job_id_counter) + "_bundle.pdb");
@@ -183,6 +187,8 @@ main( int argc, char * argv [] )
 
               HelixAssemblyJob temp_job = job_queue[job_queue.size()];
               job_queue.pop_back();
+              TR << "Sending job " << temp_job.get_job_name() << " (" << temp_job.get_round() <<
+                                    ":" << option[HelixAssembly::helices_to_add] << endl;
               world.send(completed_node, 0, true);
               world.send(completed_node, 0, boost::mpi::skeleton(temp_job));
               world.send(completed_node, 0, boost::mpi::get_content(temp_job));
