@@ -74,7 +74,7 @@ UnfoldedStateEnergy::UnfoldedStateEnergy( std::string const & type ) :
 	unf_state_potential_( ScoringManager::get_instance()->get_UnfoldedStatePotential( type ) ),
 	score_type_weights_( unf_state_potential_.get_unfoled_potential_file_weights() )
 {
-	TR << "instantiating class with weights: " << score_type_weights_ << std::endl;
+	TR << "instantiating class with weights: " << score_type_weights_.show_nonzero() << std::endl;
 }
 
 UnfoldedStateEnergy::UnfoldedStateEnergy( std::string const & type, const EnergyMap & emap_in ):
@@ -83,7 +83,7 @@ UnfoldedStateEnergy::UnfoldedStateEnergy( std::string const & type, const Energy
 	unf_state_potential_( ScoringManager::get_instance()->get_UnfoldedStatePotential( type ) ),
 	score_type_weights_( emap_in )
 {
-	TR << "instantiating class with weights: " << score_type_weights_ << std::endl;
+	TR << "instantiating class with weights: " << score_type_weights_.show_nonzero()  << std::endl;
 }
 
 UnfoldedStateEnergy::~UnfoldedStateEnergy() {}
