@@ -16,7 +16,8 @@
 
 #include <protocols/moves/PyMolMover.hh>
 
-#include <numeric/random/mt19937.hh>
+//#include <numeric/random/mt19937.hh>
+#include <numeric/random/random.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -51,7 +52,8 @@ numeric::random::uniform_RG_OP getRG()
 	static numeric::random::uniform_RG_OP RG = 0;
 
 	if( RG == 0 ) {
-		RG = new numeric::random::mt19937_RG;
+		//RG = new numeric::random::mt19937_RG;
+		RG = new numeric::random::standard_RG;
 		RG->setSeed( time(NULL) );
 	}
 
