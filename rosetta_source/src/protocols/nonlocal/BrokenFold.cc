@@ -51,7 +51,6 @@
 #include <protocols/abinitio/MaxSeqSepConstraintSet.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/RationalMonteCarlo.hh>
-#include <protocols/moves/SaneMinMover.hh>
 
 // Package headers
 #include <protocols/nonlocal/Policy.hh>
@@ -89,7 +88,6 @@ BrokenFold::BrokenFold(core::fragment::FragSetOP fragments_lg,
 
   // Large fragments, uniformly chosen
   for (Size i = 1; i <= 3; ++i, ++stage) {
-    //MoverOP minimize = minimizer(score_function(stage, nres));
     MoverOP fold = new RationalMonteCarlo(
         new SingleFragmentMover(fragments_lg, movable, uniform_lg),
         score_function(stage, nres),
@@ -97,13 +95,11 @@ BrokenFold::BrokenFold(core::fragment::FragSetOP fragments_lg,
         temperature,
         true);
 
-    //movers_.push_back(minimize);
     movers_.push_back(fold);
   }
 
   // Small fragments, uniformly chosen
   for (Size i = 1; i <= 3; ++i, ++stage) {
-    //MoverOP minimize = minimizer(score_function(stage, nres));
     MoverOP fold = new RationalMonteCarlo(
         new SingleFragmentMover(fragments_sm, movable, uniform_sm),
         score_function(stage, nres),
@@ -111,13 +107,11 @@ BrokenFold::BrokenFold(core::fragment::FragSetOP fragments_lg,
         temperature,
         true);
 
-    //movers_.push_back(minimize);
     movers_.push_back(fold);
   }
 
   // Small fragments, smoothly chosen
   for (Size i = 1; i <= 3; ++i, ++stage) {
-    //MoverOP minimize = minimizer(score_function(stage, nres));
     MoverOP fold = new RationalMonteCarlo(
         new SingleFragmentMover(fragments_sm, movable, smooth_sm),
         score_function(stage, nres),
@@ -125,7 +119,6 @@ BrokenFold::BrokenFold(core::fragment::FragSetOP fragments_lg,
         temperature,
         true);
 
-    //movers_.push_back(minimize);
     movers_.push_back(fold);
   }
 }
@@ -226,33 +219,6 @@ void BrokenFold::apply(core::pose::Pose& pose) {
   // Remove cutpoint variants and restore the pose's original constraints
   remove_cutpoint_variants(&pose);
   pose.constraint_set(orig_constraints);
-}
-
-protocols::moves::MoverOP BrokenFold::minimizer(core::scoring::ScoreFunctionOP score) {
-  using core::kinematics::MoveMap;
-  using core::kinematics::MoveMapOP;
-  using core::optimization::MinimizerOptions;
-  using core::optimization::MinimizerOptionsOP;
-  using protocols::moves::SaneMinMover;
-  assert(score);
-
-  score->set_weight(core::scoring::chainbreak, 1);
-  score->set_weight(core::scoring::linear_chainbreak, 1);
-  score->set_weight(core::scoring::overlap_chainbreak, 1);
-  score->set_weight(core::scoring::distance_chainbreak, 1);
-
-  // define minimizable degrees of freedom
-  MoveMapOP movable = new MoveMap();
-  movable->set_bb(false);
-  movable->set_chi(false);
-  movable->set_jump(true);
-
-  // minimizer options
-  MinimizerOptionsOP options = new MinimizerOptions("dfpmin", 1e-10, true);
-  options->nblist_auto_update(true);
-  options->max_iter(10000);
-
-  return new SaneMinMover(movable, score, options);
 }
 
 core::Size BrokenFold::cycles(int stage) {

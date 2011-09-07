@@ -62,9 +62,6 @@ class BrokenFold : public protocols::moves::Mover {
   /// @brief Configures the score function to be minimized for the ith stage
   core::scoring::ScoreFunctionOP score_function(int stage, int num_residues) const;
 
-  /// @brief Configures a minimizer that attempts to optimize <score>
-  protocols::moves::MoverOP minimizer(core::scoring::ScoreFunctionOP score);
-
   /// @brief Writes the stage header to <out>
   void show_stage_header(core::Size stage_num, std::ostream& out) const;
 
