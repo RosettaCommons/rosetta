@@ -519,19 +519,19 @@ void HelixAssemblyMover::superimposeBundles(Pose & query_structure, Pose const &
       TR << "superimposing " << j+get_frag2_start() << " of query structure to " << j+results_frag2_start << " of results structure" << endl;
 
       core::id::AtomID const id1( query_structure.residue(j+get_frag2_start()).atom_index("CA"), j+get_frag2_start());
-      core::id::AtomID const id2( results_structure.residue(j+results_frag2_start).atom_index("CA"), j+1 );
+      core::id::AtomID const id2( results_structure.residue(j+results_frag2_start).atom_index("CA"),j+results_frag2_start );
       atom_map[ id1 ] = id2;
 
       core::id::AtomID const id3( query_structure.residue(j+get_frag2_start()).atom_index("C"), j+get_frag2_start() );
-      core::id::AtomID const id4( results_structure.residue(j+results_frag2_start).atom_index("C"), j+1 );
+      core::id::AtomID const id4( results_structure.residue(j+results_frag2_start).atom_index("C"), j+results_frag2_start );
       atom_map[ id3 ] = id4;
 
       core::id::AtomID const id5( query_structure.residue(j+get_frag2_start()).atom_index("N"), j+get_frag2_start() );
-      core::id::AtomID const id6( results_structure.residue(j+results_frag2_start).atom_index("N"), j+1 );
+      core::id::AtomID const id6( results_structure.residue(j+results_frag2_start).atom_index("N"), j+results_frag2_start );
       atom_map[ id5 ] = id6;
 
       core::id::AtomID const id7( query_structure.residue(j+get_frag2_start()).atom_index("O"), j+get_frag2_start() );
-      core::id::AtomID const id8( results_structure.residue(j+results_frag2_start).atom_index("O"), j+1 );
+      core::id::AtomID const id8( results_structure.residue(j+results_frag2_start).atom_index("O"), j+results_frag2_start );
       atom_map[ id7 ] = id8;
     }
 
@@ -588,36 +588,9 @@ core::Real HelixAssemblyMover::bb_score(pose::Pose & pose, core::Size unique_cha
 ///@details
 utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob & job ){
 
-//  TR << "In apply!" << endl;
-
   utility::vector1<HelixAssemblyJob> new_jobs;
-///DEBUG////
-//  stringstream foo;
-//  pose.dump_pdb(foo, "");
-//  std::string bar = foo.str();
-//  returnPdbs.push_back(bar);
-//  return returnPdbs;
 
-//  HelixAssemblyJob new_job1;
-//  new_job1.set_query_structure("FOOBAR");
-//  new_job1.set_round(job.get_round()+1);
-//
-//  new_job1.set_frag1_start(1);
-//  new_job1.set_frag1_end(10);
-//
-//  new_job1.set_frag2_start(job.get_frag1_start());
-//  new_job1.set_frag2_start(job.get_frag1_end());
-//
-//  new_job1.set_job_name(job.get_job_name());
-//
-//  new_jobs.push_back(new_job1);
-//  return new_jobs;
-
-////END DEBUG////
-
-//  utility::file::FileName filename (pose.pdb_info()->name());
   TR << "working on file: " << job.get_job_name() << endl;
-//  std::string baseOutputName = filename.base() + "_hit_";
 
   Pose query_structure;
   core::import_pose::pose_from_pdbstring(query_structure, job.get_query_structure());
@@ -626,6 +599,9 @@ utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob &
   Pose search_structure;
   core::import_pose::pose_from_pdbstring(search_structure, job.get_search_structure());
   TR << "Search Structure is " << search_structure.total_residue() << " residues" << endl;
+
+  //don't do anything with this round if the search structure is empty. Not testing for this causes all sorts of bad behavior
+  if(search_structure.total_residue() <= 0){return new_jobs;}
 
   this->set_frag1_start(job.get_frag1_start());
   this->set_frag1_end(job.get_frag1_end());
@@ -686,8 +662,15 @@ utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob &
 
                   TR << "New helical pose created." << endl;
 
+                  query_structure.dump_pdb("query_structure_before.pdb");
+                  combinedResultFragments.dump_pdb("combined_results_test.pdb");
+                  search_structure.dump_pdb("search_structure_test.pdb");
+
+
                   //superimpose the found query helix pair onto the found pair
                   superimposeBundles(query_structure, combinedResultFragments);
+                  query_structure.dump_pdb("query_structure_after.pdb");
+                  exit(1);
 
                   TR << "Poses have been superimposed for bundle creation" << endl;
 
