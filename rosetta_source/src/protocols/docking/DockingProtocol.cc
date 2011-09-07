@@ -652,20 +652,14 @@ void DockingProtocol::set_highres_scorefxn(
 
 void DockingProtocol::set_sc_min( bool sc_min )
 {
-	assert ( !low_res_protocol_only_ );
-	if ( !docking_highres_mover_ ){
-		sync_objects_with_flags();
-	}
+	check_high_res_protocol();
 	sc_min_ = sc_min;
 	docking_highres_mover_->set_sc_min( sc_min );
 }
 
 void DockingProtocol::set_rt_min( bool rt_min )
 {
-	assert ( !low_res_protocol_only_ );
-	if ( !docking_highres_mover_ ){
-		sync_objects_with_flags();
-	}
+	check_high_res_protocol();
 	rt_min_ = rt_min;
 	docking_highres_mover_->set_rt_min( rt_min );
 }
@@ -728,12 +722,37 @@ void DockingProtocol::set_use_constraints( bool const use_csts )
 
 void DockingProtocol::set_interface_definition_task_operation( protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition )
 {
+    check_high_res_protocol();
+    docking_highres_mover_->set_interface_definition_task_operation( interface_definition );
+}
+
+void DockingProtocol::set_additional_task_operarations( utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations )
+{
+    check_high_res_protocol();
+    docking_highres_mover_->set_additional_task_operarations( additional_task_operations );
+}
+
+void DockingProtocol::add_additional_task_operaration( core::pack::task::operation::TaskOperationOP task_operation )
+{
+    check_high_res_protocol();
+    docking_highres_mover_->add_additional_task_operaration( task_operation );
+}
+    
+utility::vector1< core::pack::task::operation::TaskOperationOP > DockingProtocol::get_additional_task_operarations()
+{
+    check_high_res_protocol();
+    docking_highres_mover_->get_additional_task_operarations();
+}
+
+
+void DockingProtocol::check_high_res_protocol()
+{
     assert ( !low_res_protocol_only_ );
     if ( !docking_highres_mover_ ){
         sync_objects_with_flags();
     }
-    docking_highres_mover_->set_interface_definition_task_operation( interface_definition );
 }
+
 /// @brief setup the constrainta for each application of the docking protocol
 void DockingProtocol::setup_constraints( pose::Pose & pose )
 {

@@ -177,6 +177,21 @@ void DockingHighRes::set_interface_definition_task_operation( protocols::toolbox
     tf2_->set_interface_definition_task_operation( interface_definition );
 }
 
+void DockingHighRes::set_additional_task_operarations( utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations )
+{
+    tf2_->set_additional_task_operarations( additional_task_operations );
+}
+
+void DockingHighRes::add_additional_task_operaration( core::pack::task::operation::TaskOperationOP task_operation )
+{
+    tf2_->add_additional_task_operaration( task_operation );
+}
+    
+utility::vector1< core::pack::task::operation::TaskOperationOP > DockingHighRes::get_additional_task_operarations()
+{
+    tf2_->get_additional_task_operarations();
+}
+
 core::scoring::ScoreFunctionCOP DockingHighRes::scorefxn()
 {
 	return scorefxn_;

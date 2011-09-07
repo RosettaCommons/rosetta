@@ -17,7 +17,7 @@
 #include <basic/options/option.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/docking/DockTaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pack/task/operation/TaskOperations.hh> // trans-clude <core/pack/task/operation/TaskOperation.hh>
 #include <protocols/toolbox/task_operations/InterfaceTaskOperation.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
@@ -89,6 +89,7 @@ DockTaskFactory::set_default()
 	resfile_ = false;
 	//design_chains_ = utility::tools::make_vector1( NULL );
 	design_chains_.clear();
+    additional_task_operations_.clear();
     
     restrict_to_interface_ = new toolbox::task_operations::RestrictToInterface();
     
@@ -135,7 +136,20 @@ DockTaskFactory::register_options()
 	option.add_relevant( OptionKeys::docking::norepack2 );
 	option.add_relevant( OptionKeys::packing::resfile );
 }
+void DockTaskFactory::set_additional_task_operarations( utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations )
+{
+    additional_task_operations_ = additional_task_operations;
+}
 
+void DockTaskFactory::add_additional_task_operaration( core::pack::task::operation::TaskOperationOP task_operation )
+{
+    additional_task_operations_.push_back( task_operation );
+}
+
+utility::vector1< core::pack::task::operation::TaskOperationOP > DockTaskFactory::get_additional_task_operarations()
+{
+    return additional_task_operations_;
+}
 
 void DockTaskFactory::set_interface_definition_task_operation(  protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition )
 {
@@ -197,6 +211,12 @@ DockTaskFactory::create_and_attach_task_factory(
         restrict_to_interface_->set_movable_jumps( docker->movable_jumps() );
         tf->push_back( restrict_to_interface_ );  //JQX: add restrict to interface, the Legacy code used this in the initial packing as well
 	}
+    
+    // Add user specified task operations
+    for( utility::vector1< core::pack::task::operation::TaskOperationOP>::const_iterator operation = additional_task_operations_.begin(); operation != additional_task_operations_.end(); ++operation ) {
+        tf->push_back( *operation );
+    }
+    
     docker->set_task_factory(tf);
 }
 

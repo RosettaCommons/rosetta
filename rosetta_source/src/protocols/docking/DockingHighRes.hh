@@ -33,6 +33,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <protocols/toolbox/task_operations/InterfaceTaskOperation.fwd.hh>
 
 
@@ -110,6 +111,10 @@ public:
 	void set_rt_min( bool rt_min ){ rt_min_ = rt_min; }
 	void set_partners( std::string partners ) { partners_ = partners; }
     void set_interface_definition_task_operation( protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition );
+    void set_additional_task_operarations( utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations );
+    void add_additional_task_operaration( core::pack::task::operation::TaskOperationOP task_operation );
+    utility::vector1< core::pack::task::operation::TaskOperationOP > get_additional_task_operarations();
+
     
 	bool sc_min() { return sc_min_; }
 	bool rt_min() { return rt_min_; }

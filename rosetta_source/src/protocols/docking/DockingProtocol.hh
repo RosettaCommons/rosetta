@@ -29,6 +29,7 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <protocols/toolbox/task_operations/InterfaceTaskOperation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>  // Needs to be the full header so the scorefxn can default to NULL
@@ -138,6 +139,12 @@ public:
 	void set_cst_weight( core::Real const cst_weight );
 	void set_use_constraints( bool const use_csts );
     void set_interface_definition_task_operation( protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition );
+   
+    void set_additional_task_operarations( utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations );
+    void add_additional_task_operaration( core::pack::task::operation::TaskOperationOP task_operation );
+    utility::vector1< core::pack::task::operation::TaskOperationOP > get_additional_task_operarations();
+    
+
 	virtual void apply( core::pose::Pose & pose );
 
 	// score_only is no longer implemented.  It remains here until a decision is made about what to do with it.
@@ -262,6 +269,7 @@ private:
 
     void setup_constraints( core::pose::Pose & pose );
 	void add_constraints_to_scorefunction();
+    void check_high_res_protocol();
 
 };
 } // docking
