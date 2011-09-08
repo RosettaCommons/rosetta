@@ -7,26 +7,31 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   demo/ian_test/ligand_dock.cc
+/// @file   app/public/ligand_docking/ligand_dock.cc
 ///
-/// @brief
-/// @author Ian Davis (ian.w.davis@gmail.com)
+/// @brief Ligand docking application
+/// @author Rocco Moretti (rmoretti@u.washington.edu) Ian Davis (ian.w.davis@gmail.com)
 
+// Unit Headers
 
 #include <devel/init.hh>
-// AUTO-REMOVED #include <basic/options/option_macros.hh>
+#include <protocols/ligand_docking/ligand_dock_impl.hh>
+
+// Utility Headers
+
+#include <basic/Tracer.hh>
+
+#include <basic/options/option.hh>
+
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/jd2.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
-#include <protocols/ligand_docking/ligand_dock_impl.hh>
 
-//Auto Headers
-#include <basic/options/option.hh>
+basic::Tracer TR("ligand_dock.main");
 
-
-/// This wrapper exists so David Kim's BOINC executable can call my real main() method.
 int
 main( int argc, char * argv [] )
 {
@@ -67,6 +72,31 @@ main( int argc, char * argv [] )
 	// Doesn't seem to hurt to do it again if already done once (?)
 	// Except in unit testing mode, where it wipes out e.g. -database
 	devel::init(argc, argv);
+
+	// Giving an AtomTreeDiff input file to ligand_dock is uncommon enough that it isn't worth special casing
+	if ( option[ in::file::silent ].active() ) {
+		TR.Warning << "WARNING: Current version of ligand_dock expects regular silent file with -in:file:silent" << std::endl;
+		TR.Warning << "         Use -in:file:atom_tree_diff for inputting Atom Tree Diff format files" << std::endl;
+	}
+
+	// Backward compatability default
+	// If we've haven set any other JD2 output options, use silent.out with Atom Tree Diff format
+	// (Options tested are a hacky repeat of cases in protocols::jd2::JobDistributorFactory::create_job_outputter() )
+	if ( ! option[ out::file::silent ].user() && ! option[ out::pdb ].user() && ! option[ out::file::score_only ].user() &&
+			! option[ jd2::no_output ].user() && ! option[ out::nooutput ].user() &&
+			! option[ jd2::enzdes_out ].user() && ! option[ out::use_database ].user() ) {
+		option[ out::file::atom_tree_diff ].value( "silent.out" );
+	}
+
+	// Backward compatibility options munging.
+	if ( option[ out::file::silent ].user() && ! option[ out::file::silent_struct_type ].user() ) {
+		TR.Warning << "WARNING: For backward compatibility, by default ligand_dock will output Atom Tree Diff format files to -out:file:silent" << std::endl;
+		TR.Warning << "         To output regular format silent file format, explicitly set -out:file:silent_struct_type" << std::endl;
+		option[ out::file::atom_tree_diff ].value( option[ out::file::silent ] );
+		option[ out::file::silent ].deactivate();
+	}
+
+	// Note: Another difference from the jd1 version of ligand_dock is that the job order for -s/-l isn't randomized
 
 	return ligand_dock_main();
 }

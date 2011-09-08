@@ -9,7 +9,7 @@
 
 /// @file   protocols/jd2/AtomTreeDiffJobInputter.hh
 /// @brief  header file for AtomTreeDiffJobInputter class
-/// @author James Thompson
+/// @author Gordon Lemmon (gordon.h.lemmon@vanderbilt.edu); Rocco Moretti (rmoretti@u.washington.edu)
 
 
 #ifndef INCLUDED_protocols_jd2_AtomTreeDiffJobInputter_hh

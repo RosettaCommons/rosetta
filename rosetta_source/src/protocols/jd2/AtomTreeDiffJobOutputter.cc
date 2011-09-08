@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/jd2/AtomTreeDiffJobOutputter.cc
-/// @brief  August 2008 job distributor as planned at RosettaCon08 - AtomTreeDiffJobOutputter
-/// @author Steven Lewis smlewi@gmail.com
+/// @brief  AtomTreeDiffJobOutputter
+/// @author Gordon Lemmon (gordon.h.lemmon@vanderbilt.edu); Rocco Moretti (rmoretti@u.washington.edu)
 
 ///Unit headers
 #include <protocols/jd2/AtomTreeDiffJobOutputter.hh>
@@ -45,7 +45,12 @@ namespace jd2 {
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
-AtomTreeDiffJobOutputter::AtomTreeDiffJobOutputter(){
+AtomTreeDiffJobOutputter::AtomTreeDiffJobOutputter():
+	bb_precision_(6),
+	sc_precision_(4),
+	bondlen_precision_(2),
+	use_input_(false)
+{
 
 	// Add directory path and prefix/suffix (if specified) to plain file name:
 	outfile_name_= basic::options::option[ OptionKeys::out::file::atom_tree_diff ]();
@@ -91,7 +96,7 @@ AtomTreeDiffJobOutputter::final_pose( JobCOP job, core::pose::Pose const & pose 
 
 	std::map< std::string, core::Real > scores(begin, end);
 	std::string output= output_name(job);
-	dump_pose( output, pose, scores);
+	dump_pose( output, pose, scores, job);
 
 }
 
@@ -100,7 +105,8 @@ void
 AtomTreeDiffJobOutputter::dump_pose(
 	std::string const & tag,
 	core::pose::Pose const & pose,
-	std::map< std::string, core::Real > scores
+	std::map< std::string, core::Real > scores,
+	JobCOP job
 ){
 
 	if( utility::file::file_exists(outfile_name_) ) {
@@ -116,21 +122,37 @@ AtomTreeDiffJobOutputter::dump_pose(
 		utility_exit_with_message( "Unable to open file: " + outfile_name_ + "\n" );
 	}
 
-	core::Size end= tag.find_last_of('_');
-	std::string const ref_tag= tag.substr(0, end);
-	TR<< "ref_tag: "<< ref_tag<< std::endl;
-	if( last_ref_tag_ != ref_tag ){
-		TR<< "writing reference pose"<< std::endl;
-		std::map< std::string, core::Real > temp_scores;
-		temp_scores["is_reference_pose"]= 1;
-		core::import_pose::atom_tree_diffs::dump_reference_pose(out_, "%REF%_"+tag, temp_scores, pose);
-		last_ref_tag_= ref_tag;// deep copy for reference pose
-		last_ref_pose_= pose;// deep copy for reference pose
+	if ( use_input_ && job ) {
+		// Use the input pose as the reference pose, matching the original ligand docking application.
+		std::string const ref_tag( job->input_tag() );
+		TR<< "ref_tag: "<< ref_tag<< std::endl;
+		if( last_ref_tag_ != ref_tag ){
+			TR<< "writing reference pose"<< std::endl;
+			std::map< std::string, core::Real > temp_scores;
+			temp_scores["is_reference_pose"]= 1;
+			job->get_pose(last_ref_pose_); // deep copy for reference pose
+			last_ref_tag_= ref_tag; // deep copy for reference pose
+			// Yes, we're outputting the input pose, but using the output tag -- we need the extra numbers on the end so we can slice them off when reading
+			core::import_pose::atom_tree_diffs::dump_reference_pose(out_, "%REF%_"+tag, temp_scores, last_ref_pose_);
+		}
+	} else {
+		// Use the current structure as the reference pose, if we don't already have an applicable one.
+		core::Size end= tag.find_last_of('_');
+		std::string const ref_tag= tag.substr(0, end);
+		TR<< "ref_tag: "<< ref_tag<< std::endl;
+		if( last_ref_tag_ != ref_tag ){
+			TR<< "writing reference pose"<< std::endl;
+			std::map< std::string, core::Real > temp_scores;
+			temp_scores["is_reference_pose"]= 1;
+			core::import_pose::atom_tree_diffs::dump_reference_pose(out_, "%REF%_"+tag, temp_scores, pose);
+			last_ref_tag_= ref_tag;// deep copy for reference pose
+			last_ref_pose_= pose;// deep copy for reference pose
+		}
 	}
 	if( used_tags_.find(tag) != used_tags_.end() ){
 		basic::Error() << "Tag " << tag << " already exists in silent file; writing structure anyway..." << std::endl;
 	}
-	core::import_pose::atom_tree_diffs::dump_atom_tree_diff(out_, tag, scores, last_ref_pose_, pose);
+	core::import_pose::atom_tree_diffs::dump_atom_tree_diff(out_, tag, scores, last_ref_pose_, pose, bb_precision_, sc_precision_, bondlen_precision_);
 	used_tags_.insert(tag);
 	// Can't flush compressed streams -- results in file truncation
 	if ( out_.uncompressed() ) out_.flush();
@@ -157,6 +179,21 @@ AtomTreeDiffJobOutputter::job_has_completed( JobCOP job ){
 std::string
 AtomTreeDiffJobOutputter::output_name( JobCOP job ){
 	return affixed_numbered_name( job );
+}
+
+void
+AtomTreeDiffJobOutputter::set_precision(int bb_precision, int sc_precision, int bondlen_precision ) {
+  bb_precision_ = bb_precision;
+  sc_precision_ = sc_precision;
+  bondlen_precision_ = bondlen_precision;
+}
+
+///@brief use input as reference pose?
+void
+AtomTreeDiffJobOutputter::use_input_for_ref(bool use_input) {
+	// Reset reference tag, in case we're changing course midstream
+	last_ref_tag_ = "";
+	use_input_ = use_input;
 }
 
 }//jd2

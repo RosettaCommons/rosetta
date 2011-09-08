@@ -15,7 +15,7 @@
 #ifndef INCLUDED_protocols_moves_NullMover_hh
 #define INCLUDED_protocols_moves_NullMover_hh
 
-
+#include <protocols/moves/NullMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Project Headers

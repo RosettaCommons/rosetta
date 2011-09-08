@@ -762,11 +762,11 @@ void print_buried_unsat_Hbonds(core::pose::Pose const & bound, core::pose::Pose 
 /// @brief Scores to be output that aren't normal scorefunction terms.
 void
 LigandDockProtocol::append_ligand_docking_scores(
-	core::pose::Pose & before,
-	core::pose::Pose & after,
+	core::pose::Pose const & before,
+	core::pose::Pose const & after,
 	core::scoring::ScoreFunctionCOP scorefxn,
 	std::map< std::string, core::Real > & scores, //< appended to for output
-	protocols::toolbox::match_enzdes_util::EnzConstraintIOOP constraint_io /*= NULL*/
+	protocols::toolbox::match_enzdes_util::EnzConstraintIOCOP constraint_io /*= NULL*/
 ) const
 {
 		using namespace core::scoring;

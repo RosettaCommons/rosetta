@@ -7,15 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/jd2/FileJobOutputter.hh
-/// @brief  header file for FileJobOutputter class, part of August 2008 job distributor as planned at RosettaCon08
-/// @author Steven Lewis smlewi@gmail.com
+/// @file   protocols/jd2/AtomTreeDiffJobOutputter.hh
+/// @brief  header file for AtomTreeDiffJobOutputter class
+/// @author Gordon Lemmon (gordon.h.lemmon@vanderbilt.edu); Rocco Moretti (rmoretti@u.washington.edu)
 
 
 #ifndef INCLUDED_protocols_jd2_AtomTreeDiffJobOutputter_hh
 #define INCLUDED_protocols_jd2_AtomTreeDiffJobOutputter_hh
 
 //unit headers
+#include <protocols/jd2/AtomTreeDiffJobOutputter.fwd.hh>
 #include <protocols/jd2/FileJobOutputter.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.fwd.hh>
@@ -60,6 +61,12 @@ public:
 	///@brief this is the master function for determining the unique output identifier for a job
 	std::string output_name( JobCOP job );
 
+	///@brief what precision should the atom_tree_diff be ouput at?
+	void set_precision(int bb_precision, int sc_precision, int bondlen_precision);
+
+	///@brief use input as reference pose?
+	void use_input_for_ref(bool use_input=true);
+
 private:
 
 	///@brief Appends pose to the silent file
@@ -67,7 +74,8 @@ private:
 	dump_pose(
 		std::string const & tag,
 		core::pose::Pose const & pose,
-		std::map< std::string, core::Real > scores
+		std::map< std::string, core::Real > scores,
+		JobCOP job
 	);
 
 	utility::io::ozstream out_;
@@ -76,6 +84,12 @@ private:
 	std::string last_ref_tag_;
 	core::pose::Pose last_ref_pose_;
 	core::import_pose::atom_tree_diffs::AtomTreeDiff atom_tree_diff_;
+
+	///@brief precision to output atom tree diff at.
+	int bb_precision_, sc_precision_, bondlen_precision_;
+
+	///@brief use input as reference pose? (default false)
+	bool use_input_;
 
 }; // AtomTreeDiffJobOutputter
 
