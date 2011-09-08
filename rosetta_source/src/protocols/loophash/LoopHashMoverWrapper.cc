@@ -16,7 +16,7 @@
 #include <protocols/loophash/LoopHashMoverWrapper.hh>
 #include <protocols/loophash/LoopHashMoverWrapperCreator.hh>
 
-// Project headers 
+// Project headers
 #include <core/pose/Pose.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
@@ -96,7 +96,10 @@ LoopHashMoverWrapper::LoopHashMoverWrapper() :
 	fastrelax_( NULL ),
 	prefilter_scorefxn_( NULL ),
 	nprefilter_( 0 ),
-	ideal_( false )
+	ideal_( false ),
+	cenfilter_( NULL ),
+	fafilter_( NULL ),
+	ranking_fafilter_( NULL )
 {
 	loop_sizes_.clear();
 }
@@ -219,10 +222,10 @@ LoopHashMoverWrapper::apply( Pose & pose )
 
 				// ... check against filter ...
 				bool passed_i = fafilter_->apply( rpose );
-	
+
 				// ... and insert
 				if (passed_i) {
-					core::Real score_i = fafilter_->report_sm( rpose );
+					core::Real score_i = ranking_fafilter_->report_sm( rpose );
 					core::io::silent::SilentStructOP new_struct =  ideal_?
 						core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out() :
 						core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary");
@@ -244,6 +247,11 @@ LoopHashMoverWrapper::apply( Pose & pose )
 		TR << "After fullatom filter: " << all_structs_.size() << " of " << cen_scored_structs.size() << " structures" << std::endl;
 	}
 
+	if( all_structs_.size() == 0 ){
+		TR<<"No structures survived fullatom filter. Consider relaxing filters"<<std::endl;
+		set_last_move_status( protocols::moves::FAIL_RETRY );
+		return;
+	}
 	// pop best
 	std::pair< Real, SilentStructOP > currbest = all_structs_.back();
 	all_structs_.pop_back();
@@ -327,7 +335,7 @@ LoopHashMoverWrapper::parse_my_tag( TagPtr const tag,
 	if( find_cenfilter == filters.end() )
 		utility_exit_with_message( "Filter " + centroid_filter_name + " not found in LoopHashMoverWrapper" );
 	cenfilter( find_cenfilter->second );
-	
+
 	// batch relax mover
 	if (tag->hasOption( "relax_mover" )) {
 		string const relax_mover_name( tag->getOption< string >( "relax_mover" ) );
@@ -354,6 +362,7 @@ LoopHashMoverWrapper::parse_my_tag( TagPtr const tag,
 		if( find_fafilter == filters.end() )
 			utility_exit_with_message( "Filter " + fullatom_filter_name + " not found in LoopHashMoverWrapper" );
 		fafilter( find_fafilter->second );
+		ranking_fafilter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string> ( "ranking_fafilter", fullatom_filter_name ), filters ) );
 	} else {
 		if (tag->hasOption(  "batch_size" ) ) TR << "Ignoring option batch_size" << std::endl;
 		if (tag->hasOption(  "nfullatom" ) ) TR << "Ignoring option nfullatom" << std::endl;
@@ -424,6 +433,11 @@ LoopHashMoverWrapper::cenfilter( protocols::filters::FilterOP cenfilter ) {
 void
 LoopHashMoverWrapper::fafilter( protocols::filters::FilterOP fafilter ) {
 	fafilter_ = fafilter;
+}
+
+void
+LoopHashMoverWrapper::ranking_fafilter( protocols::filters::FilterOP ranking_fafilter ) {
+	ranking_fafilter_ = ranking_fafilter;
 }
 
 utility::vector1< Size >

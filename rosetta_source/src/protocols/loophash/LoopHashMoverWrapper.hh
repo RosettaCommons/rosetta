@@ -69,6 +69,7 @@ public:
 
 	void cenfilter( protocols::filters::FilterOP cenfilter );
 	void fafilter( protocols::filters::FilterOP fafilter );
+	void ranking_fafilter( protocols::filters::FilterOP ranking_fafilter );
 	void relax_mover( protocols::relax::FastRelaxOP relax_mover );
 
 private:
@@ -83,7 +84,7 @@ private:
 	Size max_nstruct_;                                // maximum number of residues per position to generate
 	Size ncentroid_, nfullatom_;                      // number of structures to carry over to subsequent stages
 	Size batch_size_;                                 // batch relax batch size
-	protocols::filters::FilterOP cenfilter_, fafilter_;
+	protocols::filters::FilterOP cenfilter_, fafilter_, ranking_fafilter_; // cen/fafilter actually prune decoys based on the filter's apply function. ranking_fa_filter uses the filter's report_sm method to rank and report the best decoys
 
 	// prefiltering
 	core::Size nprefilter_;
