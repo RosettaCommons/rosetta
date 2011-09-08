@@ -47,6 +47,25 @@ namespace constraints {
 using core::pose::atom_id_to_named_atom_id;
 using core::pose::named_atom_id_to_atom_id;
 
+///
+void
+AtomPairConstraint::score( XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
+{
+	Real const score_val =  score( xyz( atom1_ ), xyz( atom2_ ) );
+	emap[ this->score_type() ] += score_val;
+}
+
+///
+Real
+AtomPairConstraint::score(
+													Vector const & xyz1,
+													Vector const & xyz2
+													) const
+{
+	//	std::cout << "score " <<  atom1_ << ' ' << atom2_ << ' ' << xyz1.distance( xyz2 ) << " --> " << func( xyz1.distance( xyz2 ) ) << std::endl;;
+	return func( xyz1.distance( xyz2 ) );
+}
+
 /// @brief Copies the data from this Constraint into a new object and returns an OP
 /// atoms are mapped to atoms with the same name in dest pose ( e.g. for switch from centroid to fullatom )
 /// if a sequence_mapping is present it is used to map residue numbers .. NULL = identity mapping
@@ -236,7 +255,7 @@ AtomPairConstraint::read_def(
 
 	tr.Debug << "read: " << name1 << " " << name2 << " " << res1 << " " << res2 << " func: " << func_type << std::endl;
 	if ( res1 > pose.total_residue() || res2 > pose.total_residue() ) {
-		tr.Warning 	<< "ignored constraint (requested residue numbers exceed numbers of residues in pose): " << "Total in Pose: " << pose.total_residue() << " " 
+		tr.Warning 	<< "ignored constraint (requested residue numbers exceed numbers of residues in pose): " << "Total in Pose: " << pose.total_residue() << " "
 			<< name1 << " " << name2 << " " << res1 << " " << res2 << std::endl;
 		data.setstate( std::ios_base::failbit );
 		return;

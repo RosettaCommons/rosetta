@@ -91,19 +91,13 @@ public:
 	///
 	Real
 	score(
-		Vector const & xyz1,
-		Vector const & xyz2
-	) const
-	{
-		return func( xyz1.distance( xyz2 ) );
-	}
+				Vector const & xyz1,
+				Vector const & xyz2
+				) const;
 
 	///
 	void
-	score( XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const
-	{
-		emap[ this->score_type() ] +=  score( xyz( atom1_ ), xyz( atom2_ ) );
-	}
+	score( XYZ_Func const & xyz, EnergyMap const &, EnergyMap & emap ) const;
 
 	// atom deriv
 	virtual
