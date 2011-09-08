@@ -203,6 +203,7 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose	) {
 
 			pose = start_pose;
 			rna_structure_parameters_->setup_fold_tree_and_jumps_and_variants( pose );
+			rna_structure_parameters_->setup_base_pair_constraints( pose ); // needs to happen after setting cutpoint variants, etc.
 			rna_chunk_library_->initialize_random_chunks( pose ); //actually not random if only one chunk in each region.
 
 			if (dump_pdb_) dump_pdb( pose, "start.pdb" );
@@ -339,8 +340,6 @@ RNA_DeNovoProtocol::initialize_movers( core::pose::Pose & pose ){
 
 	//	std::cout << "allow insert: after changes to fold tree and variants! " << std::endl;
 	//	rna_structure_parameters_->allow_insert()->show();
-
-	rna_structure_parameters_->setup_base_pair_constraints( pose );
 
 	rna_chunk_library_->set_allow_insert( rna_structure_parameters_->allow_insert() );
 
