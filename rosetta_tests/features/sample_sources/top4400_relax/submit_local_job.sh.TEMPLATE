@@ -1,0 +1,6 @@
+#!/bin/sh
+time \
+	%(bin)s/rosetta_scripts.%(binext)s \
+		-database %(database)s \
+		@%(output_dir)s/%(sample_source_id)s/flags \
+		&> %(output_dir)s/%(sample_source_id)s/features_local_%(sample_source_id)s.log
