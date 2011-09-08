@@ -65,7 +65,8 @@ void
 dump_pqr(
 		 core::pose::Pose const & pose,
 		 std::ostream & out,
-		 std::string const & tag
+		 std::string const & tag,
+		 std::string const & zero_charge_chains
 		 ) {
 	Size const nres( pose.total_residue() );
 	
@@ -86,15 +87,15 @@ dump_pqr(
 			++number;
 			runtime_assert( rsd.chain() < chains.size() ); // silly restriction
 			char const chain( chains[ rsd.chain() ] );
-			if (chain != 'B') {
-			using namespace ObjexxFCL::fmt;
-			out << "ATOM  " << I(5,number) << ' ' << rsd.atom_name(j) << ' ' <<
-			rsd.name3() << ' ' << chain << I(4,rsd.seqpos() ) << "    " <<
-			F(8,3,atom.xyz()(1)) <<
-			F(8,3,atom.xyz()(2)) <<
-			F(8,3,atom.xyz()(3)) <<
-			F(8,3,pose.residue_type(i).atomic_charge(j)) <<
-			F(8,3,rsd.atom_type(j).lj_radius()) << '\n';
+			if (zero_charge_chains.find(chain) == std::string::npos) {
+				using namespace ObjexxFCL::fmt;
+				out << "ATOM  " << I(5,number) << ' ' << rsd.atom_name(j) << ' ' <<
+				rsd.name3() << ' ' << chain << I(4,rsd.seqpos() ) << "    " <<
+				F(8,3,atom.xyz()(1)) <<
+				F(8,3,atom.xyz()(2)) <<
+				F(8,3,atom.xyz()(3)) <<
+				F(8,3,pose.residue_type(i).atomic_charge(j)) <<
+				F(8,3,rsd.atom_type(j).lj_radius()) << '\n';
 			}
 			else {
 				using namespace ObjexxFCL::fmt;

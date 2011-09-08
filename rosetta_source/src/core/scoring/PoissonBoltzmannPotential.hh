@@ -92,7 +92,7 @@ private:
 	bool potential_is_loaded_;
 };
 
-void dump_pqr(core::pose::Pose const & pose, std::ostream & out, std::string const & tag);		
+void dump_pqr(core::pose::Pose const & pose, std::ostream & out, std::string const & tag,  std::string const & zero_charge_chains);		
 PoissonBoltzmannPotential & get_PB_potential();
 
 }

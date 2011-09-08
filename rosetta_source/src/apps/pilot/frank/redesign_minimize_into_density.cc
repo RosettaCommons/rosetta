@@ -91,6 +91,21 @@ main( int argc, char * argv [] )
 
 	seq_mover->add_mover( pack_mover );
 
+	// add constraints to the starting structure
+	pose.remove_constraints();
+	Size nres = pose.total_residue();
+	Real const cst_width( option[ OptionKeys::relax::coord_cst_width ].user()? option[ OptionKeys::relax::coord_cst_width ]() : 0.5 );
+	Real const coord_sdev( option[ OptionKeys::relax::coord_cst_width ].user()? option[ OptionKeys::relax::coord_cst_stdev ]() : 0.5 );
+	for ( Size ires = 1; ires<= nres - 1; ++ires ) {
+		if (!pose.residue(ires).is_protein()) continue;
+		Residue const & nat_i_rsd( pose.residue(i) );
+		for ( Size iatom = 1; iatom<= nat_i_rsd.last_backbone_atom(); ++iatom ) {
+			pose.add_constraint( new CoordinateConstraint(
+							  AtomID(iatom,ires), AtomID(1,nres), nat_i_rsd.xyz( iatom ),
+							  new BoundFunc( 0, cst_width, coord_sdev, "xyz" )) );
+		}
+	}
+	
 	if ( !option[ symmetry::symmetry_definition ].user() )  {
 		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 		movemap->set_bb(true);

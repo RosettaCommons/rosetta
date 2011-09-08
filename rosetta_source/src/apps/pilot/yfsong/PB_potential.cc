@@ -50,6 +50,7 @@
 namespace PB_potential {
 	basic::options::FileOptionKey potential_file("PB_potential:potential_file");
 	basic::options::StringOptionKey apbs_exe("PB_potential:apbs_exe");
+	basic::options::StringOptionKey no_charge_on_chain("PB_potential:no_charge_on_chain");
 }
 
 static basic::Tracer TR("pilot.yfsong.PB_potential");
@@ -85,7 +86,7 @@ void write_APBS_config(core::pose::Pose & pose, std::ostream & config_file, std:
 	core::Real space(0.5);
 	numeric::xyzVector <core::Real> dimension_fine = length + numeric::xyzVector <core::Real> (fadd,fadd,fadd);
 	numeric::xyzVector <core::Real> dimension_coarse = length * cfac;
-	numeric::xyzVector <core::Size> n_grid = dimension_fine / space + numeric::xyzVector <core::Real> (1,1,1);
+	numeric::xyzVector <core::Size> n_grid = static_cast< numeric::xyzVector <core::Size> > (dimension_fine / space + numeric::xyzVector <core::Real> (1.,1.,1.));
 	
 	using namespace ObjexxFCL::fmt;
 	config_file << "#" << std::endl;
@@ -160,11 +161,16 @@ apply ( core::pose::Pose & pose )
 	std::string tag = protocols::jobdist::extract_tag_from_pose( pose );
 	std::string pqr_fn = tag + ".pqr";
 	std::ofstream out_pqr(pqr_fn.c_str());
-	core::scoring::dump_pqr(pose, out_pqr, tag);
+	std::string zero_charge_chains;
+	if (basic::options::option[PB_potential::no_charge_on_chain].user()) {
+		zero_charge_chains = basic::options::option[PB_potential::no_charge_on_chain]();
+	}
+	core::scoring::dump_pqr(pose, out_pqr, tag, zero_charge_chains);
 	
 	std::string config_fn = tag + ".in";
 	std::ofstream out_config(config_fn.c_str());
 	write_APBS_config(pose, out_config, pqr_fn);
+	out_config.close();
 	
 	if (!basic::options::option[PB_potential::apbs_exe].user()) {
 		std::cerr << "Need to know where the APBS executable is to proceed." << std::endl;
@@ -191,6 +197,7 @@ int
 main( int argc, char * argv [] )
 {
 	basic::options::option.add( PB_potential::apbs_exe, "APBS executable position" );
+	basic::options::option.add( PB_potential::no_charge_on_chain, "chain with zero charge" );
 	//basic::options::option.add( PB_potential::chain, "Only print given chains" );
 	//basic::options::option.add( PB_potential::chain, "Only print given chains" );
 	core::init( argc, argv );
