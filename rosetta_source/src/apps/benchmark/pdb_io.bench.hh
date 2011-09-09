@@ -45,7 +45,7 @@ public:
 
 	virtual void run(core::Real scaleFactor) {
 
-		for(int i=0; i<500*scaleFactor; i++) {
+		for(int i=0; i<100*scaleFactor; i++) {
 			core::import_pose::pose_from_pdbstring(pose, pdb_string_);
 		}
 	};

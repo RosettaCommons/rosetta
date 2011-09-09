@@ -69,7 +69,7 @@ DockingBenchmark_high DockingHigh("protocols.docking.DockingHighRes");
 //LigandDockScriptBenchmark ligand_dock_script("protocols.ligand_docking.LigandDockScript");
 
 #include <apps/benchmark/pdb_io.bench.hh>
-PDB_IOBenchmark PDB_IO_("core.pdb.import_pdb");
+PDB_IOBenchmark PDB_IO_("core_pdb_import_pdb");
 
 // option key includes
 
@@ -156,6 +156,11 @@ void Benchmark::executeOneBenchmark(
 		TR << std::endl << "Executing benchmark '" << name << "'... Done." << std::endl;
 	} else {
 		TR << std::endl << "Unable to locate benchmark '" << name << "'" << std::endl;
+		TR << "The available benchmarks are:" << std::endl;
+		for(Size i=0; i<all.size(); i++){
+			Benchmark * B = all[i];
+			TR << "    name: '" << B->name() << "'" << std::endl;
+		}
 	}
 }
 
