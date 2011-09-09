@@ -1,0 +1,13 @@
+#!/bin/sh
+
+bsub \
+    -q %(lsf_queue_name)s \
+    -n %(num_cores)s \
+    -J features_%(sample_source_id)s \
+    -o %(output_dir)s/%(sample_source_id)s/features_lsf_%(sample_source_id)s_%%J.log \
+    -e %(output_dir)s/%(sample_source_id)s/features_lsf_%(sample_source_id)s_%%J.err \
+    -a mvapich mpirun \
+    %(bin)s/rosetta_scripts.%(binext)s \
+    -database %(database)s \
+    -out:mpi_tracer_to_file %(output_dir)s/%(sample_source_id)s/features_lsf_%(sample_source_id)s.log \
+    @%(output_dir)s/%(sample_source_id)s/flags
