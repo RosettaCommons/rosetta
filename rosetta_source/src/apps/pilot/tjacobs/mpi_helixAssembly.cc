@@ -89,18 +89,16 @@ main( int argc, char * argv [] )
       vector1<int> freeProcessors;
       Size helices_to_add = option[ HelixAssembly::helices_to_add ];
 
+      TR << "library size: " << pdb_library.size() << endl;
+
       //Add all of the first-round jobs to the job queue
       for(Size i=1; i <= pdb_library.size(); ++i){
-          //read pdb into string
-          utility::io::izstream data( pdb_library[i].name().c_str() );
-          std::string pdbString;
-          utility::slurp(data, pdbString);
-
           //create a HelixAssemblyJob
           HelixAssemblyJob temp_job;
           temp_job.set_job_name(pdb_library[i].base());
           temp_job.set_query_structure(originalQueryPdbString);
-          temp_job.set_search_structure(pdbString);
+          //THIS is your problem.
+          temp_job.set_search_index(i);
           temp_job.set_frag1_start(option[ HelixAssembly::frag1_start]);
           temp_job.set_frag1_end(option[ HelixAssembly::frag1_end]);
           temp_job.set_frag2_start(option[ HelixAssembly::frag2_start]);
@@ -115,6 +113,12 @@ main( int argc, char * argv [] )
           if(job_queue.size() > 0){
               HelixAssemblyJob temp_job = job_queue[job_queue.size()];
               job_queue.pop_back();
+
+              //lazily load the search string
+              utility::io::izstream data( pdb_library[temp_job.get_search_index()].name().c_str() );
+              std::string pdbString;
+              utility::slurp(data, pdbString);
+              temp_job.set_search_structure(pdbString);
 
               //send the job to the node
               world.send(i, 0, true);
@@ -158,12 +162,9 @@ main( int argc, char * argv [] )
                       //copy incomplete job and add a pose to search, then add to the queue
                       HelixAssemblyJob temp_job(new_jobs[i]);
 
-                      utility::io::izstream data( pdb_library[j].name().c_str() );
-                      std::string pdbString;
-                      utility::slurp(data, pdbString);
-
                       //only thing we should need to change about the job is the search structure, which only the head node knows
-                      temp_job.set_search_structure(pdbString);
+                      //we use an index here so that we don't need to hang onto the string forever (just-in-time loading).
+                      temp_job.set_search_index(i);
                       temp_job.set_job_name(temp_job.get_job_name() + "_" + pdb_library[j].base());
                       job_queue.push_back(temp_job);
                   }
@@ -188,7 +189,14 @@ main( int argc, char * argv [] )
               HelixAssemblyJob temp_job = job_queue[job_queue.size()];
               job_queue.pop_back();
               TR << "Sending job " << temp_job.get_job_name() << " (" << temp_job.get_round() <<
-                                    ":" << option[HelixAssembly::helices_to_add] << endl;
+                                    ":" << option[HelixAssembly::helices_to_add] << ")" << endl;
+
+              //lazily load the search string
+              utility::io::izstream data( pdb_library[temp_job.get_search_index()].name().c_str() );
+              std::string pdbString;
+              utility::slurp(data, pdbString);
+              temp_job.set_search_structure(pdbString);
+
               world.send(completed_node, 0, true);
               world.send(completed_node, 0, boost::mpi::skeleton(temp_job));
               world.send(completed_node, 0, boost::mpi::get_content(temp_job));

@@ -590,7 +590,7 @@ utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob &
 
   utility::vector1<HelixAssemblyJob> new_jobs;
 
-  TR << "working on file: " << job.get_job_name() << endl;
+  cout << "working on file: " << job.get_job_name() << endl;
 
   Pose query_structure;
   core::import_pose::pose_from_pdbstring(query_structure, job.get_query_structure());
@@ -662,15 +662,8 @@ utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob &
 
                   TR << "New helical pose created." << endl;
 
-                  query_structure.dump_pdb("query_structure_before.pdb");
-                  combinedResultFragments.dump_pdb("combined_results_test.pdb");
-                  search_structure.dump_pdb("search_structure_test.pdb");
-
-
                   //superimpose the found query helix pair onto the found pair
                   superimposeBundles(query_structure, combinedResultFragments);
-                  query_structure.dump_pdb("query_structure_after.pdb");
-                  exit(1);
 
                   TR << "Poses have been superimposed for bundle creation" << endl;
 

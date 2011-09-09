@@ -30,11 +30,12 @@ HelixAssemblyJob::HelixAssemblyJob(HelixAssemblyJob const & old_job):
         frag1_start_(old_job.frag1_start_),
         frag1_end_(old_job.frag1_end_),
         frag2_start_(old_job.frag2_start_),
-        frag2_end_(old_job.frag2_end_)
+        frag2_end_(old_job.frag2_end_),
+        search_index_(old_job.search_index_)
 {}
 
 HelixAssemblyJob::HelixAssemblyJob(core::Size job_id, std::string job_name, core::Size round, std::string query_structure, std::string search_structure,
-    core::Size frag1_start, core::Size frag1_end, core::Size frag2_start, core::Size frag2_end):
+    core::Size frag1_start, core::Size frag1_end, core::Size frag2_start, core::Size frag2_end, core::Size search_index):
     job_id_(job_id),
     job_name_(job_name),
     round_(round),
@@ -43,7 +44,8 @@ HelixAssemblyJob::HelixAssemblyJob(core::Size job_id, std::string job_name, core
     frag1_start_(frag1_start),
     frag1_end_(frag1_end),
     frag2_start_(frag2_start),
-    frag2_end_(frag2_end)
+    frag2_end_(frag2_end),
+    search_index_(search_index)
 {}
 
 core::Size HelixAssemblyJob::get_job_id() const{
@@ -57,6 +59,11 @@ std::string HelixAssemblyJob::get_job_name() const{
 core::Size HelixAssemblyJob::get_round() const{
   return round_;
 }
+
+core::Size HelixAssemblyJob::get_search_index() const{
+  return search_index_;
+}
+
 
 core::Size HelixAssemblyJob::get_frag1_end() const{
   return frag1_end_;
@@ -116,4 +123,8 @@ void HelixAssemblyJob::set_query_structure(std::string query_structure){
 
 void HelixAssemblyJob::set_search_structure(std::string search_structure){
   this->search_structure_ = search_structure;
+}
+
+void HelixAssemblyJob::set_search_index(core::Size search_index){
+  this->search_index_ = search_index;
 }
