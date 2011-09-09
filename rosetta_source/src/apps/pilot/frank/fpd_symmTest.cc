@@ -26,6 +26,10 @@ public:
 		numeric::xyzVector< core::Real> X = core::pose::symmetry::get_symm_axis( pose );
 		std::cerr << "SYMM AXIS : " << X[0] << "," << X[1] << "," << X[2] << std::endl;
 	}
+
+	virtual std::string get_name() const {
+		return "CustomMover";
+	}
 };
 
 ///////////////////////////////////////////////////////////////////////////////

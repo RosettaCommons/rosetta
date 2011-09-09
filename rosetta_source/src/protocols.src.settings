@@ -220,6 +220,7 @@ sources = {
 
 	"protocols/electron_density" : [
 		"util",
+		"SetupForDensityScoringMover"
 	],
 
 	"protocols/evaluation" : [

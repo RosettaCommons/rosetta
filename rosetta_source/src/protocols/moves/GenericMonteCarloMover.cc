@@ -623,7 +623,8 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 	add_filter( find_filter->second->clone(), adaptive, temperature_, sample_type_ );
 	String const sfxn ( tag->getOption< String >( "scorefxn_name", "" ) );
 	if( sfxn != "" ){
-		scorefxn_ = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", sfxn ));
+		//scorefxn_ = new ScoreFunction( *data.get< ScoreFunction * >( "scorefxns", sfxn ));
+		scorefxn_ = data.get< ScoreFunction * >( "scorefxns", sfxn )->clone();   //fpd use clone
 		TR << "Score evaluation during MC is done by" << sfxn << ", ";
 		TR << filter_name << " is ignored." << std::endl;
 		filters_.clear();

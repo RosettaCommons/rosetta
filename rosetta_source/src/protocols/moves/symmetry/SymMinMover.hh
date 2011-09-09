@@ -18,6 +18,9 @@
 #include <protocols/moves/symmetry/SymMinMover.fwd.hh>
 #include <protocols/moves/MinMover.hh>
 
+#include <utility/tag/Tag.fwd.hh>
+#include <protocols/moves/DataMap.fwd.hh>
+
 // Package headers
 //#include <protocols/moves/Mover.hh>
 
@@ -59,8 +62,18 @@ public:
 		bool deriv_check_verbose_in = false
 	);
 
-	void apply( core::pose::Pose & pose_ );
+	virtual void apply( core::pose::Pose & pose_ );
 	virtual std::string get_name() const;
+
+	virtual MoverOP clone() const;
+	virtual MoverOP fresh_instance() const;
+
+	virtual void parse_my_tag( 
+			utility::tag::TagPtr const tag,
+			moves::DataMap &data,
+			filters::Filters_map const &filters,
+			moves::Movers_map const &movers,
+			core::pose::Pose const & pose );
 
 private:
 	core::kinematics::MoveMapOP symmetric_movemap_;

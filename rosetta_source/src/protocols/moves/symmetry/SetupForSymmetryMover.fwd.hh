@@ -28,6 +28,10 @@ class SetupForSymmetryMover;
 typedef utility::pointer::owning_ptr< SetupForSymmetryMover > SetupForSymmetryMoverOP;
 typedef utility::pointer::owning_ptr< SetupForSymmetryMover const > SetupForSymmetryMoverCOP;
 
+class ExtractAsymmetricUnitMover;
+typedef utility::pointer::owning_ptr< SetupForSymmetryMover > ExtractAsymmetricUnitMoverOP;
+typedef utility::pointer::owning_ptr< SetupForSymmetryMover const > ExtractAsymmetricUnitMoverCOP;
+
 } // symmetry
 } // moves
 } // rosetta

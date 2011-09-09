@@ -12,6 +12,7 @@
 
 // Unit headers
 #include <protocols/moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/moves/symmetry/SymPackRotamersMoverCreator.hh>
 
 // Project headers
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
@@ -30,7 +31,10 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
 
-// AUTO-REMOVED #include <core/util/prof.hh>
+#include <protocols/moves/DataMap.hh>
+#include <protocols/rosetta_scripts/util.hh>
+#include <utility/tag/Tag.hh>
+
 #include <basic/Tracer.hh>
 using basic::T;
 using basic::Error;
@@ -47,9 +51,28 @@ namespace moves {
 namespace symmetry {
 
 using namespace core;
-using namespace scoring;
-using namespace pack;
+	using namespace pack;
+		using namespace task;
+			using namespace operation;
+	using namespace scoring;
 
+// creator
+std::string
+SymPackRotamersMoverCreator::keyname() const {
+	return SymPackRotamersMoverCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+SymPackRotamersMoverCreator::create_mover() const {
+	return new SymPackRotamersMover;
+}
+
+std::string
+SymPackRotamersMoverCreator::mover_name() {
+	return "SymPackRotamersMover";
+}
+
+//////////////////////////
 /// PackRotamersMover
 
 SymPackRotamersMover::SymPackRotamersMover()
@@ -152,8 +175,23 @@ SymPackRotamersMover::make_symmetric_task(
 					allow_repacked.at(res) = true;
     }
     task->restrict_to_residues( allow_repacked );
-
 }
+
+MoverOP SymPackRotamersMover::clone() const { return new  SymPackRotamersMover( *this ); }
+MoverOP SymPackRotamersMover::fresh_instance() const { return new  SymPackRotamersMover; }
+
+///@brief parse XML (specifically in the context of the parser/scripting scheme)
+void
+SymPackRotamersMover::parse_my_tag(
+	TagPtr const tag,
+	DataMap & data,
+	Filters_map const &fm,
+	Movers_map const &mm,
+	Pose const &pose ) 
+{
+	PackRotamersMover::parse_my_tag( tag,data,fm,mm,pose );
+}
+
 
 }
 } // moves

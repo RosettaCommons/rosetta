@@ -21,6 +21,9 @@
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.fwd.hh>
 
+#include <utility/tag/Tag.fwd.hh>
+#include <protocols/moves/DataMap.fwd.hh>
+
 #include <utility/vector0.hh>
 
 namespace protocols {
@@ -54,6 +57,16 @@ public:
 	);
 	virtual std::string get_name() const;
 
+	virtual MoverOP clone() const;
+	virtual MoverOP fresh_instance() const;
+
+	virtual void parse_my_tag( 
+			utility::tag::TagPtr const tag,
+			moves::DataMap &data,
+			filters::Filters_map const &filters,
+			moves::Movers_map const &movers,
+			core::pose::Pose const & pose );
+
 private:
 
 	// to be used/redefined by derived classes
@@ -65,6 +78,7 @@ private:
 	) const;
 
 private:
+
 	// pointers to data that are passed in
 	core::pack::rotamer_set::symmetry::SymmetricRotamerSetsOP sym_rotamer_sets_;
 	core::pack::task::PackerTaskOP symmetric_task_;

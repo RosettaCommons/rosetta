@@ -13,6 +13,7 @@
 /// @author Frank DiMaio
 
 #include <protocols/electron_density/util.hh>
+#include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/jumping/Dssp.hh>
 
 #include <core/scoring/electron_density/util.hh>
@@ -64,40 +65,6 @@ static basic::Tracer TR("protocols.electron_density.util");
 
 using namespace protocols;
 using namespace core;
-
-
-void set_pose_and_scorefxn_for_edens_scoring( core::pose::Pose & pose, core::scoring::ScoreFunction &scorefxn ) {
-	core::pose::addVirtualResAsRoot( pose );
-	core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( scorefxn );
-}
-
-
-///////////////////////////////////////
-///////////////////////////////////////
-
-
-void SetupForDensityScoringMover::apply( core::pose::Pose & pose ) {
-	core::pose::addVirtualResAsRoot( pose );
-	core::scoring::electron_density::getDensityMap().maskResidues( mask_reses_ );
-	last_score = dockPoseIntoMap( pose );
-	core::scoring::electron_density::getDensityMap().clearMask(  );
-}
-
-std::string
-SetupForDensityScoringMover::get_name() const {
-	return "SetupForDensityScoringMover";
-}
-
-void SetupForDensityScoringMover::mask( protocols::loops::Loops const & loops ) {
-	mask_reses_.clear();
-	for( protocols::loops::Loops::LoopList::const_iterator it=loops.loops().begin(), it_end=loops.loops().end(); it != it_end; ++it )
-		for (core::Size i=it->start(), i_end=it->stop(); i<i_end; ++i )
-			mask_reses_.push_back(i);
-}
-
-
-///////////////////////////////////////
-///////////////////////////////////////
 
 // find stratch of residues worst agreeing with patterson map
 // for each possible segment, remove and rescore

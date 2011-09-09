@@ -21,6 +21,8 @@
 #include <protocols/jd2/BatchJobInputter.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <protocols/jd2/JobDistributorFactory.hh>
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/jd2/JobOutputter.hh>
@@ -416,7 +418,10 @@ JobDistributor::go_main( protocols::moves::MoverOP mover ) {
 		if ( status == protocols::moves::MS_SUCCESS ) {
 			if( using_parser ){
 				core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
-				(*scorefxn)(pose);
+				//fpd if the pose is symmetric use a symmetric scorefunction  
+				if (core::pose::symmetry::is_symmetric(pose))  
+					scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( scorefxn ) );
+ 				(*scorefxn)(pose);
 			}
 			job_succeeded( pose, jobtime );
 			//			tr.Info << job_outputter_->output_name( current_job_ ) << " reported success in " << jobtime << " seconds" << std::endl;

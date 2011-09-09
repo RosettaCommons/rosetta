@@ -21,6 +21,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/electron_density/SetupForDensityScoringMover.hh>
 
 //// C++ headers
 // AUTO-REMOVED #include <cstdlib>
@@ -49,27 +50,6 @@ protocols::loops::Loops findLoopFromPatterson( core::pose::Pose & pose, core::Si
 
 // find N residues with worst agreement to density
 protocols::loops::Loops findLoopFromDensity( core::pose::Pose & pose, core::Real frac, int max_helix, int max_strand );
-
-// compatibility layer
-// set up fold tree _and_ scoring function for density scoring
-void set_pose_and_scorefxn_for_edens_scoring( core::pose::Pose & pose, core::scoring::ScoreFunction &scorefxn );
-
-// dumb mover that sets a pose for density scoring
-// basically just wrapping 'addVirtualResAsRoot' + 'dockPoseIntoMap'
-class SetupForDensityScoringMover : public moves::Mover {
-public:
-	SetupForDensityScoringMover() : Mover(), last_score(0) {}
-	virtual void apply( core::pose::Pose & pose );
-	virtual std::string get_name() const;
-	virtual void mask( protocols::loops::Loops const & loops );
-	core::Real getScore() { return last_score; }
-
-private:
-	utility::vector1< core::Size > mask_reses_;
-	core::Real last_score;
-};
-
-typedef utility::pointer::owning_ptr< SetupForDensityScoringMover > SetupForDensityScoringMoverOP;
 
 }
 }

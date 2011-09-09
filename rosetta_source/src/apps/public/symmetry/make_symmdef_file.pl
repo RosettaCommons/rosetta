@@ -42,6 +42,7 @@ if ($#ARGV < 0) {
 	print STDERR "\n";
 	print STDERR "CRYST-specific options: \n";
 	print STDERR "    -c <real>x6 : override the unit cell parameters in the PDB with these values\n";
+	print STDERR "    -g <real>x3 : perturb the unit cell parameters (A,B,C only) in the PDB with these values\n";
 	print STDERR "    -s <string> : override the spacegroup in the PDB with these values\n";
 	print STDERR "    -k <real>   : (EXPERIMENTAL) Approximate the protein as a ball of this radius (only if no '-p'!)\n";
 	print STDERR "\n";
@@ -74,6 +75,7 @@ my $fndCompatible = 0;
 my $rbminAll = 0;
 my $sphere_size = -1;
 my @cell_new;
+my @cell_offset;
 my $spacegp_new;
 my $modestring = "NCS";
 my $nturns = 4;
@@ -116,6 +118,9 @@ for ( my $i=0; $i<=$#suboptions; $i++ ) {
 	}
 	elsif ($suboptions[$i] eq "-c " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
 		@cell_new = split /[, ]/,$suboptions[++$i];
+	}
+	elsif ($suboptions[$i] eq "-g " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
+		@cell_offset = split /[, ]/,$suboptions[++$i];
 	}
 	elsif ($suboptions[$i] eq "-s " && defined $suboptions[$i+1] && $suboptions[$i+1] !~ /^-[a-z|A-Z]/) {
 		$spacegp_new = $suboptions[++$i];
@@ -234,6 +239,11 @@ if ($cryst_mode == 1) {
 		if ($#cell_new >= 5) {
 			($A,$B,$C,$alpha,$beta,$gamma) = @cell_new;
 		}
+		if ($#cell_offset >= 2) {
+			$A += $cell_offset[0];
+			$B += $cell_offset[1];
+			$C += $cell_offset[2];
+		}
 		if (length($spacegp_new) > 0) {
 			$spacegp = $spacegp_new;
 		}
@@ -253,6 +263,11 @@ if ($cryst_mode == 1) {
 		# override crystal params from cmd line
 		if ($#cell_new >= 5) {
 			($A,$B,$C,$alpha,$beta,$gamma) = @cell_new;
+		}
+		if ($#cell_offset >= 2) {
+			$A += $cell_offset[0];
+			$B += $cell_offset[1];
+			$C += $cell_offset[2];
 		}
 		if (length($spacegp_new) > 0) {
 			$spacegp = $spacegp_new;

@@ -159,6 +159,11 @@
 #include <protocols/ligand_docking/HighResDockerCreator.hh>
 #include <protocols/ligand_docking/FinalMinimizerCreator.hh>
 #include <protocols/ligand_docking/InterfaceScoreCalculatorCreator.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMoverCreator.hh>
+#include <protocols/moves/symmetry/SymPackRotamersMoverCreator.hh>
+#include <protocols/moves/symmetry/SymRotamerTrialsMoverCreator.hh>
+#include <protocols/moves/symmetry/SymMinMoverCreator.hh>
+#include <protocols/electron_density/SetupForDensityScoringMoverCreator.hh>
 #include <protocols/loops/LoopMover_CCDCreator.hh>
 #include <protocols/rosetta_scripts/SavePoseMoverCreator.hh>
 #include <protocols/loophash/LoopHashMoverWrapperCreator.hh>
@@ -373,6 +378,12 @@ static MoverRegistrator< dna::DnaInterfacePackerCreator > reg_DnaInterfacePacker
 static MoverRegistrator< dna::DnaInterfaceMultiStateDesignCreator > reg_DnaInterfaceMultiStateDesignCreator;
 static MoverRegistrator< dna::DesignProteinBackboneAroundDNACreator > reg_DesignProteinBackboneAroundDNACreator;
 static MoverRegistrator< motifs::MotifDnaPackerCreator > reg_MotifDnaPackerCreator;
+static MoverRegistrator< electron_density::SetupForDensityScoringMoverCreator > reg_SetupForDensityScoringMoverCreator;
+static MoverRegistrator< moves::symmetry::SetupForSymmetryMoverCreator > reg_SetupForSymmetryMoverCreator;
+static MoverRegistrator< moves::symmetry::ExtractAsymmetricUnitMoverCreator > reg_ExtractAsymmetricUnitMoverCreator;
+static MoverRegistrator< moves::symmetry::SymPackRotamersMoverCreator > reg_SymPackRotamersMoverCreator;
+static MoverRegistrator< moves::symmetry::SymRotamerTrialsMoverCreator > reg_SymRotamerTrialsMoverCreator;
+static MoverRegistrator< moves::symmetry::SymMinMoverCreator > reg_SymMinMoverCreator;
 static MoverRegistrator< ligand_docking::LigandDesignCreator > reg_LigandDesignCreator;
 static MoverRegistrator< ligand_docking::GrowLigandCreator > reg_GrowLigandCreator;
 static MoverRegistrator< ligand_docking::AddHydrogensCreator > reg_AddHydrogensCreator;

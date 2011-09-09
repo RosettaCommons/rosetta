@@ -20,6 +20,9 @@
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
+#include <utility/tag/Tag.fwd.hh>
+#include <protocols/moves/DataMap.fwd.hh>
+
 namespace protocols {
 namespace moves {
 namespace symmetry {
@@ -60,6 +63,12 @@ public:
 		core::pack::task::PackerTaskOP task
 	);
 
+	virtual void parse_my_tag( 
+			utility::tag::TagPtr const tag,
+			moves::DataMap &data,
+			filters::Filters_map const &filters,
+			moves::Movers_map const &movers,
+			core::pose::Pose const & pose );
 };
 
 class SymEnergyCutRotamerTrialsMover : public SymRotamerTrialsMover {

@@ -11,6 +11,7 @@
 /// @author ashworth
 
 // Unit headers
+#include <protocols/moves/symmetry/SymMinMoverCreator.hh>
 #include <protocols/moves/symmetry/SymMinMover.hh>
 
 // Package headers
@@ -23,26 +24,50 @@
 #include <core/scoring/ScoreFunctionFactory.hh> // getScoreFunction
 #include <core/pose/Pose.fwd.hh>
 #include <basic/prof.hh>
-// Symmetry
+
+#include <utility/string_util.hh>
+
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
 
+#include <protocols/moves/DataMap.hh>
+#include <protocols/rosetta_scripts/util.hh>
+#include <utility/tag/Tag.hh>
 
-// ObjexxFCL Headers
+#include <basic/Tracer.hh>
+using basic::T;
+using basic::Error;
+using basic::Warning;
 
-// C++ Headers
+static basic::Tracer TR("protocols.moves.symmetry.SymMinMover");
 
-// Utility Headers
 
 namespace protocols {
 namespace moves {
 namespace symmetry {
 
-	using namespace core;
-  using namespace kinematics;
-  using namespace optimization;
-  using namespace scoring;
+using namespace core;
+using namespace kinematics;
+using namespace optimization;
+using namespace scoring;
 
+// creator
+std::string
+SymMinMoverCreator::keyname() const {
+	return SymMinMoverCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+SymMinMoverCreator::create_mover() const {
+	return new SymMinMover;
+}
+
+std::string
+SymMinMoverCreator::mover_name() {
+	return "SymMinMover";
+}
+
+//////////////////////////
 // default constructor
 // proper lightweight default constructor
 SymMinMover::SymMinMover()
@@ -73,8 +98,10 @@ SymMinMover::apply( pose::Pose & pose )
 {
 	// lazy default initialization
 	if ( ! movemap() ) symmetric_movemap_ =  new MoveMap;
-	else symmetric_movemap_ = (movemap())->clone();
-	core::pose::symmetry::make_symmetric_movemap( pose, *symmetric_movemap_ );
+	else symmetric_movemap_ = movemap()->clone();
+
+	core::pose::symmetry::make_symmetric_movemap( pose, *symmetric_movemap_ ); // we do this here since this is the first time we meet the symmetric pose
+
 	if ( ! score_function() ) score_function( getScoreFunction() ); // get a default (INITIALIZED!) ScoreFunction
 
 	PROF_START( basic::MINMOVER_APPLY );
@@ -92,8 +119,24 @@ SymMinMover::apply( pose::Pose & pose )
 
 std::string
 SymMinMover::get_name() const {
-	return "SymMinMover";
+	return SymMinMoverCreator::mover_name();
 }
+
+MoverOP SymMinMover::clone() const { return new  SymMinMover( *this ); }
+MoverOP SymMinMover::fresh_instance() const { return new  SymMinMover; }
+
+void SymMinMover::parse_my_tag(
+	TagPtr const tag,
+	DataMap & data,
+	Filters_map const & filters,
+	Movers_map const & movers,
+	Pose const & pose )
+{
+	MinMover::parse_my_tag( tag, data, filters, movers, pose );
+
+	// symm-specific options 
+}
+
 
 } // symmetry
 } // moves

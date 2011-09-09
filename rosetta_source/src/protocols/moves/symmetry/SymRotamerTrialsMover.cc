@@ -11,9 +11,11 @@
 /// @author  Ingemar Andre
 
 // Unit headers
+#include <protocols/moves/symmetry/SymRotamerTrialsMoverCreator.hh>
 #include <protocols/moves/symmetry/SymRotamerTrialsMover.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
 
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -24,19 +26,38 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-// Auto-header: duplicate removed #include <core/scoring/Energies.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
 
+#include <protocols/moves/DataMap.hh>
+#include <protocols/rosetta_scripts/util.hh>
+#include <utility/tag/Tag.hh>
 
 namespace protocols {
 namespace moves {
 namespace symmetry {
 
+// creator
+std::string
+SymRotamerTrialsMoverCreator::keyname() const {
+	return SymRotamerTrialsMoverCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+SymRotamerTrialsMoverCreator::create_mover() const {
+	return new SymRotamerTrialsMover;
+}
+
+std::string
+SymRotamerTrialsMoverCreator::mover_name() {
+	return "SymRotamerTrialsMover";
+}
+
+//////////////////////////
 // default constructor
 SymRotamerTrialsMover::SymRotamerTrialsMover() : RotamerTrialsMover()
 {
-	Mover::type( "RotamerTrials" );
+	Mover::type( "SymRotamerTrials" );
 }
 
 // constructor with arguments
@@ -45,7 +66,7 @@ SymRotamerTrialsMover::SymRotamerTrialsMover(
 	PackerTask & task_in
 ) : RotamerTrialsMover(scorefxn_in, task_in )
 {
-	Mover::type( "RotamerTrials" );
+	Mover::type( "SymRotamerTrials" );
 }
 
 // constructor with arguments
@@ -96,6 +117,19 @@ SymRotamerTrialsMover::make_symmetric_task(
     task->restrict_to_residues( allow_repacked );
 }
 
+/// @brief parse xml
+void
+SymRotamerTrialsMover::parse_my_tag(
+	TagPtr const tag,
+	DataMap & data,
+	Filters_map const &fm,
+	Movers_map const &mm,
+	Pose const &pose ) 
+{
+	RotamerTrialsMover::parse_my_tag( tag,data,fm,mm,pose );
+}
+
+/////////////////////////
 // default constructor
 SymEnergyCutRotamerTrialsMover::SymEnergyCutRotamerTrialsMover() :
   SymRotamerTrialsMover()

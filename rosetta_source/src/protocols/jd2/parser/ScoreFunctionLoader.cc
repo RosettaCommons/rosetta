@@ -18,6 +18,7 @@
 // Project Headers
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/symmetry/SymmetricScoreFunction.hh> 
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <basic/Tracer.hh>
@@ -50,6 +51,7 @@ void ScoreFunctionLoader::load_data(
 			++scorefxn_tag_it ) {//read user defined scorefxns
 		TagPtr const scorefxn_tag = *scorefxn_tag_it;
 		using namespace core::scoring;
+		using namespace core::scoring::symmetry;
 
 		ScoreFunctionOP in_scorefxn;
 		std::string const scorefxn_name( scorefxn_tag->getName() );
@@ -119,6 +121,13 @@ void ScoreFunctionLoader::load_data(
 			TR<<"setting "<<scorefxn_name<<" backbone_stub_constraint to "<<hs_hash<<'\n';
 			in_scorefxn->set_weight( backbone_stub_constraint, hs_hash );
 		}
+
+		//fpd should we symmetrize scorefunction?
+		bool const scorefxn_symm( scorefxn_tag->getOption<bool>( "symmetric", 0 ) ); 
+		if (scorefxn_symm) { 
+			in_scorefxn = ScoreFunctionOP( new SymmetricScoreFunction( in_scorefxn ) ); 
+			TR<<"symmetrizing "<<scorefxn_name<<'\n';
+		} 
 
 		data.add( "scorefxns" , scorefxn_name, in_scorefxn );
 	}//end user-defined scorefxns

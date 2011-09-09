@@ -25,7 +25,9 @@
 namespace protocols {
 namespace moves {
 namespace symmetry {
+
 ///////////////////////////////////////////////////////////////////////////////
+
 class SetupForSymmetryMover : public Mover
 {
 public:
@@ -33,11 +35,20 @@ public:
 	// default constructor
 	SetupForSymmetryMover();
 
-	//SetupForSymmetryMover( std::string const & );
+	SetupForSymmetryMover( std::string const & );
 
 	~SetupForSymmetryMover();
 
-	void apply( core::pose::Pose & pose );
+	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new SetupForSymmetryMover( *this ) ) ); }
+
+	virtual void apply( core::pose::Pose & pose );
+	virtual void parse_my_tag( 
+			utility::tag::TagPtr const tag,
+			moves::DataMap &data,
+			filters::Filters_map const &filters,
+			moves::Movers_map const &movers,
+			core::pose::Pose const & pose );
+
 	virtual std::string get_name() const;
 
 	// setter
@@ -45,6 +56,31 @@ public:
 
 private:
 	bool slide_;
+	std::string symmdef_file_;
+};
+
+///////////////
+
+class ExtractAsymmetricUnitMover : public Mover
+{
+public:
+
+	// default constructor
+	ExtractAsymmetricUnitMover();
+
+	~ExtractAsymmetricUnitMover();
+
+	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new ExtractAsymmetricUnitMover( *this ) ) ); }
+
+	virtual void apply( core::pose::Pose & pose );
+	virtual void parse_my_tag( 
+			utility::tag::TagPtr const tag,
+			moves::DataMap &data,
+			filters::Filters_map const &filters,
+			moves::Movers_map const &movers,
+			core::pose::Pose const & pose );
+
+	virtual std::string get_name() const;
 };
 
 } // symmetry
