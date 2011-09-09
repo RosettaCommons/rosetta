@@ -7,9 +7,8 @@
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 ## @file   features.py
-## @brief  A script to help debug/run cluster scientic tests
+## @brief  A script to help debug/run Features scientic tests
 ## @author Sergey Lyskov
-
 
 import sys, commands, subprocess, re
 
@@ -19,18 +18,8 @@ from optparse import OptionParser, IndentedHelpFormatter
 
 def main(argv):
     '''
-A script to help debug/run cluster scientic tests
-
-Each test has its own subdirectory in tests/, which serves as its name.
-Each test has a files named "submit" and "analyze", which should have the command to be executed.
-Variable substitution is possible using Python printf format; see examples.
-To create a new test, just make a new directory with a "command" file and other needed files.
-See tests/HOW_TO_MAKE_TESTS for more information.
-
-Intended usage is to run the tests once to submit jobs to cluster: './cluster submit docking'
-and when condor run is finished to run again to analyze results: './cluster analyze docking'
-
-Please note that this script is for debuging/testing purposes only, it is not used in ScientificCluster daemon.
+A script to help debug/run Features scientic tests
+Please note that this script is for debuging/testing purposes only, it is currently not used in ScientificProfile daemon.
     '''
     parser = OptionParser(usage="usage: %prog [OPTIONS] [TESTS]")
     parser.set_description(main.__doc__)
@@ -41,8 +30,9 @@ Please note that this script is for debuging/testing purposes only, it is not us
 
     parser.add_option("-m", "--mini_home",
       #default=path.join( path.expanduser("~"), "mini"),
-      default = path.dirname( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ) ) + "/rosetta_source",
-      help="Directory where Mini is found (default: ../../../rosetta_source)",
+      default= path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'rosetta_source'),
+      help="Directory where rosetta_source is found (default: ../../rosetta_source/)",
+
     )
 
     parser.add_option("--mode",
@@ -61,22 +51,22 @@ Please note that this script is for debuging/testing purposes only, it is not us
       help="in selecting binaries, which options were specified? (default: default)",
     )
 
-    parser.add_option("--lsf_queue_name",
+    parser.add_option("--lsf-queue_name",
       default="128cpu", action="store",
       help="The name of the queue when submitting jobs on the lsf cluster, to see available queues run 'bqueues' (use with 'submit_lsf' action). [default %default]"
     )
 
-    parser.add_option("--num_cores",
+    parser.add_option("--num-cores",
       default=128, action="store",
       help="How many cores to request when submitting jobs. [default %default]"
     )
 
-    parser.add_option("--output_dir",
+    parser.add_option("--output-dir",
       default="output", action="store",
       help="Base directory of where to deposit data and results. [default %default]"
     )
 
-    parser.add_option("--run_type",
+    parser.add_option("--run-type",
       default="condor", action="store",
       help="Indicate which type of the action should be run. Eg, 'lsf' means execute benchmark on a Load Sharing Facility cluster, while 'dryrun' means simulate the output of running the benchmark for debugging purposes. [default %default]"
     )
@@ -96,22 +86,21 @@ Please note that this script is for debuging/testing purposes only, it is not us
     options.database = path.abspath(options.database)
 
 
-    if len(args) != 2:
-        print 'You must supplies action and test name in command line! For example: "./cluster.py submit docking" or ""./cluster.py analyze docking""'
+    if len(args) != 1:
+        print 'You must supplies action and test name in command line! For example: "./feature.py submit " or ""./deature.py analyze ""'
         return
 
     valid_actions = ["submit", "analyze"]
 
-    action, test = args
+    action = args[0]
 
     if action not in valid_actions:
         print "ERROR: Action must be one of ['%s']" % "', '".join(valid_actions)
         return 1
 
-    print 'Perform %s on test %s...' % (action, test)
+    print 'Perform %s...' % action
 
-
-    workdir = path.abspath( test )
+    workdir = path.abspath( '.' )
     minidir = options.mini_home
 
     #print 'minidir:', minidir
@@ -141,11 +130,11 @@ Please note that this script is for debuging/testing purposes only, it is not us
         p.wait()
         svn_info = p.communicate()[0]'''
 
-        svn_info = commands.getoutput('svn info ../../../')
+        svn_info = commands.getoutput('svn info %s' % minidir)  # ../../../rosetta_source')
         svn_url = re.search("URL: (\S*)", svn_info).group(1)
         svn_revision = int(re.search("Revision: (\d*)", svn_info).group(1))
     except:
-        print "WARNING: Unable to get svn info"
+        print "WARNING: Unable to get svn info for path: %s" % minidir
         svn_url="UNKNOWN"
         svn_revision=0
 
@@ -161,7 +150,7 @@ Please note that this script is for debuging/testing purposes only, it is not us
     f = file(path.join(workdir, '_arguments.py'), 'w');  f.write( str(mvars) );  f.close()
 
     # Executing created bash script...
-    print commands.getoutput('cd %s && sh %s.sh' % (test, action) )
+    print commands.getoutput('sh %s.sh' % action )
 
 
 
