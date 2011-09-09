@@ -303,7 +303,6 @@ namespace run { BooleanOptionKey const clean( "run:clean" );  }
 namespace run { BooleanOptionKey const benchmark( "run:benchmark" );  }
 namespace run { BooleanOptionKey const test_cycles( "run:test_cycles" );  }
 namespace run { BooleanOptionKey const memory_test_cycles( "run:memory_test_cycles" );  }
-namespace run { IntegerOptionKey const benchmark_scale( "run:benchmark_scale" );  }
 namespace run { BooleanOptionKey const dry_run( "run:dry_run" );  }
 namespace run { BooleanOptionKey const debug( "run:debug" );  }
 namespace run { BooleanOptionKey const profile( "run:profile" );  }
@@ -568,3 +567,4 @@ namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score
 namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
 namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
+namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }

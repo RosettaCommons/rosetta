@@ -177,7 +177,7 @@ public:
 		shear_mover.apply(*pose);
 	};
 
-	virtual void run(int scaleFactor) {
+	virtual void run(core::Real scaleFactor) {
 		//protocols::moves::ShearMover shear_mover(movemap, 300., 100);
 		for(int i=0; i<2000*scaleFactor; i++) {
 			shear_mover.apply(*pose);

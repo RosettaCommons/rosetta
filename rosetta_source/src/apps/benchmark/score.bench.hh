@@ -236,7 +236,7 @@ public:
 		core::import_pose::pose_from_pdb(pose, "test_in.pdb");
 	}
 
-	virtual void run(int scaleFactor) {
+	virtual void run(core::Real scaleFactor) {
 		scoring::ScoreFunction scorefxn;
 		for(int i=0; i<45000*scaleFactor; i++) {
 			scorefxn(pose);

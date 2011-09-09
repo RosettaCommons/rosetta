@@ -77,7 +77,7 @@ public:
 		basic::options::option.load_options_from_file("ligand_dock/ligand_dock_script_flags.txt");
 	};
 
-	virtual void run(int scaleFactor) {
+	virtual void run(core::Real scaleFactor) {
 		protocols::moves::MoverOP mover;
 
 		for(int i=0; i<scaleFactor; i++) {

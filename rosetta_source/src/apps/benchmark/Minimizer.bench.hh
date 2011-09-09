@@ -220,7 +220,7 @@ public:
 		(*scorefxn)( *start_pose ); // to triger dunbrack loading/calcualtion
 	};
 
-	virtual void run(int scaleFactor) {
+	virtual void run(core::Real scaleFactor) {
 		for(int i=0; i<TScale*scaleFactor; i++) {
 			std::string stype = "unknow";
 			if( sft == SFT_dfpmin ) stype = "dfpmin";

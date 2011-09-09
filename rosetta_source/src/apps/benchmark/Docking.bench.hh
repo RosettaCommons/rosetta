@@ -278,7 +278,7 @@ public:
 	};
 
 
-	virtual void run(int scaleFactor) {
+	virtual void run(core::Real scaleFactor) {
 		//for(int i=0; i<10; i++) {
 		//	std::cout << "i="<< i << " R=" << numeric::random::uniform() << std::endl;
 		//}

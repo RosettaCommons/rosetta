@@ -1459,11 +1459,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
-<dt><b>-benchmark_scale</b> \<Integer\><dt>
-<dd>Run in benchmark mode</dd><br>
-<dd>Default: 1</dd><br>
-</dl>
-<dl>
 <dt><b>-dry_run</b> \<Boolean\><dt>
 <dd>Run through structures/tasks/etc skipping the actual calculation step for testing of I/O and/or setup</dd><br>
 <dd>Default: false</dd><br>
@@ -6057,6 +6052,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-inter_group_neighbors_cutoff</b> \<Real\><dt>
 <dd>distance in angstroms (def. 10.0) for calculating interfaces between domains with InterGroupNeighborsCalculator</dd><br>
 <dd>Default: 10.0</dd><br>
+</dl>
+<dl>
+<dt><b>-semiex_water_burial_cutoff</b> \<Real\><dt>
+<dd>water hbond states fraction cutiff for SemiExplicitWaterUnsatisfiedPolarsCalculator (0.0,1.0)</dd><br>
+<dd>Default: 0.25</dd><br>
 </dl>
  </li>
 <li><h2>ddg</h2>

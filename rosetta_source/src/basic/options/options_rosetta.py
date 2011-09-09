@@ -703,10 +703,6 @@ Options = Option_Group( '',
 			desc='use together with test_cycles to keep number of copies of anything as high as in production mode',
 			default='false'
     ),
-		Option( 'benchmark_scale', 'Integer',
-			desc='Run in benchmark mode',
-			default="1"
-			),
 		Option( 'dry_run', 'Boolean',
 			desc="Run through structures/tasks/etc skipping the actual calculation step for testing of I/O and/or setup",
 			default='false',

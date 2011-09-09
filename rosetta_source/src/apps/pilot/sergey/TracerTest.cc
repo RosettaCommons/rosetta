@@ -197,7 +197,6 @@ int main( int argc, char * argv [] )
 	using namespace core;
 	using namespace basic::options::OptionKeys;
 
-	basic::options::option.add_relevant(run::benchmark_scale);
 	basic::options::option.add_relevant(in::path::database);
 
 	devel::init(argc, argv);

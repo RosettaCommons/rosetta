@@ -16,6 +16,8 @@
 #ifndef INCLUDED_apps_benchmark_benchmark_hh
 #define INCLUDED_apps_benchmark_benchmark_hh
 
+#include <core/types.hh>
+
 #include <vector>
 #include <string>
 
@@ -31,17 +33,21 @@ public:
 	virtual ~Benchmark() {};
 
 	virtual void setUp() {};
-	virtual void run(int /*scaleFactor*/) {};
+	virtual void run(core::Real /*scaleFactor*/) {};
 	virtual void tearDown() {};
 
 	/// Execute benchmark cycle i.e.: setUp() - run() - tearDown()
 	/// return number of seconds that was used to performe 'run' step.
-	double execute(int scaleFactor);
+	double execute(core::Real scaleFactor);
 	std::string name() { return name_; };
 
 public:
-	static void executeAllBenchmarks(int scaleFactor=1);
+	static void executeOneBenchmark(
+		std::string const & name,
+		core::Real scaleFactor=1);
+	static void executeAllBenchmarks(core::Real scaleFactor=1);
 	static std::string getReport();
+	static std::string getOneReport(std::string const & name);
 
 private:
 	double result_;

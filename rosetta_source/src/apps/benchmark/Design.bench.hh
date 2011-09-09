@@ -208,7 +208,7 @@ public:
 		core::import_pose::pose_from_pdb(design_pose, "design_in.pdb");
 	};
 
-	virtual void run(int scaleFactor) {
+	virtual void run(core::Real scaleFactor) {
 		for(int i=0; i<scaleFactor; i++) {
 			pack_mover.apply(design_pose);
 		}

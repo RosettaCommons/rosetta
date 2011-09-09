@@ -302,7 +302,7 @@ public:
 		core::import_pose::pose_from_pdb(ligand_dock_pose, pdb_file_name);
 	};
 
-	virtual void run(int scaleFactor) {
+	virtual void run(core::Real scaleFactor) {
 		protocols::ligand_docking::LigandDockProtocol dock_protocol;
 		for(int i=0; i<scaleFactor; i++) {
 			dock_protocol.apply(ligand_dock_pose);

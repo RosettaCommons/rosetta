@@ -35,7 +35,6 @@ namespace run { extern BooleanOptionKey const clean; }
 namespace run { extern BooleanOptionKey const benchmark; }
 namespace run { extern BooleanOptionKey const test_cycles; }
 namespace run { extern BooleanOptionKey const memory_test_cycles; }
-namespace run { extern IntegerOptionKey const benchmark_scale; }
 namespace run { extern BooleanOptionKey const dry_run; }
 namespace run { extern BooleanOptionKey const debug; }
 namespace run { extern BooleanOptionKey const profile; }
