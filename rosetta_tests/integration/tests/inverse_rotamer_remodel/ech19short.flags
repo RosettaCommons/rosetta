@@ -1,0 +1,6 @@
+-parser:protocol inputs/invrot_rem_itest.xml
+-s inputs/remtest_in.pdb
+-enz_loops_file inputs/mock.loops
+-enzdes:cstfile inputs/invrot_test_mock.cst
+-match:geometric_constraint_file inputs/invrot_test_mock.cst
+

@@ -1,0 +1,12 @@
+LOOP_BEGIN
+
+start 232
+stop 234
+max_length  7
+min_length  4
+
+ss_blueprint H(4)
+
+LOOP_END
+
+

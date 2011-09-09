@@ -1,0 +1,25 @@
+-remodel_protocol
+-remodel_secmatch
+-extra_res_fa inputs/D2N_aX.params
+-extra_res_cen inputs/lig.cen.params
+-cut1 0.0
+-cut2 0.0
+-cut3 16.0
+-cut4 20.0
+-detect_design_interface
+-remodel_trials 20
+-single_loop_ensemble_size 2 #10 for production
+-loop_generator_trials 10 #100 for production
+-run:nblist_autoupdate true
+-correct
+-use_input_sc
+-output_matchres_only false
+-MM:ignore_missing_bondangle_params
+-mute protocols.BumpGrid protocols.forge.components.VarLengthBuild protocols.moves.MonteCarlo protocols.packstat.SimplePDB protocols.match.Matcher protocols.toolbox.RotamerSetOperations.RigidBodyMoveRotSetOps core.scoring.NeighborList core.pack.dunbrack.SingleLigandRotamerLibrary protocols.match.downstream.LigandConformerBuilder core.mm.MMBondAngleLibrary protocols.idealize core.fragment.picking_old
+-match:bump_tolerance 0.4
+-score:weights enzdes.wts
+-run:preserve_header
+-enzdes:parser_read_cloud_pdb
+-jd2:enzdes_out
+-dump_inverse_rotamers #comment this out for production runs
+-enzdes:no_packstat_calculation #comment this out for production runs
