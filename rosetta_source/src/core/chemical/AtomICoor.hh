@@ -140,6 +140,13 @@ public:
 	Vector // const &
 	xyz( ResidueType const & rsd_type ) const;
 
+	/// @brief WARNING: Slightly dangerous function intended for black magic use only.
+	///    Only to be used for situations where you *know* the ICoorAtomID can't be anything but
+	///    a real atom on the given residue, and where a conformation is absolutely not availible.
+	///    If you /can/ use ICoorAtomID::xyz( Residue const &, Conformation const &), you /should/.
+	Vector const &
+	xyz( conformation::Residue const & rsd ) const;
+
 	///
 	id::AtomID
 	atom_id( Size const seqpos, Conformation const & conformation ) const;
@@ -303,6 +310,13 @@ public:
 	build(
 		ResidueType const & rsd_type
 	) const;
+
+	/// @brief WARNING: Slightly dangerous function intended for black magic use only.
+	///    Only to be used for situations where you *know* the Atom /and all it's stub atoms/ can't be
+	///    anything but real atoms on the given residue, and where a conformation is absolutely not availible.
+	///    If you /can/ use AtomICoor::build( Residue const &, Conformation const &), you /should/.
+	Vector
+	build( conformation::Residue const & rsd ) const;
 
 private:
 	Real phi_;

@@ -159,6 +159,18 @@ ICoorAtomID::xyz(
 	return NullVector;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief WARNING: Slightly dangerous function intended for black magic use only.
+///    Only to be used for situations where you *know* the ICoorAtomID can't be anything but
+///    a real atom on the given residue, and where a conformation is absolutely not availible.
+///    If you /can/ use ICoorAtomID::xyz( Residue const &, Conformation const &), you /should/.
+Vector const &
+ICoorAtomID::xyz( conformation::Residue const & rsd ) const
+{
+	runtime_assert( type_ == INTERNAL ); // I warned you!
+	return rsd.atom( atomno_ ).xyz();
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 id::AtomID
@@ -210,6 +222,24 @@ AtomICoor::build(
 			stub_atom2_.xyz( rsd_type ),
 			stub_atom3_.xyz( rsd_type ) ).spherical( phi_, theta_, d_ );
 }
+
+
+/// @brief WARNING: Slightly dangerous function intended for black magic use only.
+///    Only to be used for situations where you *know* the AtomICoor /and all it's stub atoms/ can't be
+///    anything but real atoms on the given residue, and where a conformation is absolutely not availible.
+///    If you /can/ use AtomICoor::build( Residue const &, Conformation const &), you /should/.
+Vector
+AtomICoor::build( conformation::Residue const & rsd ) const
+{
+	assert( kinematics::Stub( stub_atom1_.xyz( rsd ),
+			stub_atom2_.xyz( rsd ),
+			stub_atom3_.xyz( rsd ) ).is_orthogonal( 0.001 ) );
+
+	return kinematics::Stub( stub_atom1_.xyz( rsd ),
+			stub_atom2_.xyz( rsd ),
+			stub_atom3_.xyz( rsd ) ).spherical( phi_, theta_, d_ );
+}
+
 
 } // chemical
 } // core

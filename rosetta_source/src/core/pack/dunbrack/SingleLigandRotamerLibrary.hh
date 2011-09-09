@@ -144,6 +144,13 @@ public:
 
 private:
 
+	/// @brief Fills in missing hydrogens/virtual atoms from library load
+	///
+	/// @details "missing" is the vector for atoms missing for the current "rsd"
+	//           "missed" is the vector annotating which atoms have already been filled (for diagnostic output tracking)
+	void
+	fill_missing_atoms( utility::vector1< bool > missing, conformation::ResidueOP rsd, utility::vector1< bool > & missed ) const;
+
 	// Breaking the ligand into rigid fragments that would supply (putative) pharamacophores
 	// to superimpose on was a nice idea, but it breaks the packer assumption that nbr_atom doesn't move.
 

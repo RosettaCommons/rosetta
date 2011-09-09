@@ -114,8 +114,10 @@ SingleLigandRotamerLibrary::init_from_file(
 	// This code is not currently as smart as the general-purpose PDB reader.
 	// Any atoms in the residue that don't have coordinate entries will be
 	// left with their default values, leading to really weird bugs.
-	// Thus, we count how many XYZs we assign, and throw an error if some are missing.
+	// We can do a limited building from ideal coordinates, for hydrogens and virtual atoms.
 	core::Size set_xyzs = 0;
+	utility::vector1< bool > missing(restype->natoms(),true);
+	utility::vector1< bool > missed(restype->natoms(),false); // Don't reset - only notify once, instead of for each library entry
 	while( std::getline( (std::istream&)data, line) ) {
 		if( utility::startswith(line, "ATOM  ") || utility::startswith(line, "HETATM") ) {
 			if( line.length() < 54 ) {
@@ -130,10 +132,12 @@ SingleLigandRotamerLibrary::init_from_file(
 			//std::cout << x << " " << y << " " << z << "\n";
 			if( rsd.get() == NULL ) {
 				rsd = conformation::ResidueFactory::create_residue( *restype );
+				missing.clear(); missing.resize( restype->natoms(), true );
 				set_xyzs = 0;
 			}
 			if( rsd->has( atom_name ) ) {
 				rsd->set_xyz( atom_name, core::Vector( x, y, z ) );
+				missing[ rsd->atom_index(atom_name) ] = false;
 				set_xyzs += 1;
 			} else if( skipped_atom_names.count(atom_name) == 0 ) {
 				TR.Warning << "Skipping unrecognized atom '" << atom_name << "' in library for " << restype->name() << std::endl;
@@ -148,7 +152,7 @@ SingleLigandRotamerLibrary::init_from_file(
 			TR << "Reference energy for " << restype->name() << " is " << ref_energy_ << std::endl;
 		} else { // e.g. TER lines
 			if( rsd.get() != NULL ) {
-				if( set_xyzs < rsd->natoms() ) utility_exit_with_message("Missing atom positions in rotamer library!");
+				if( set_xyzs < rsd->natoms() ) { fill_missing_atoms( missing, rsd, missed ); }
 				rotamers_.push_back( rsd );
 				rsd = NULL;
 				set_xyzs = 0;
@@ -156,7 +160,7 @@ SingleLigandRotamerLibrary::init_from_file(
 		}
 	}
 	if( rsd.get() != NULL ) {
-		if( set_xyzs < rsd->natoms() ) utility_exit_with_message("Missing atom positions in rotamer library!");
+		if( set_xyzs < rsd->natoms() ) { fill_missing_atoms( missing, rsd, missed ); }
 		rotamers_.push_back( rsd );
 	}
 
@@ -177,7 +181,6 @@ SingleLigandRotamerLibrary::init_from_file(
 	//list_automorphisms(restype);
 	//unique_auto_for_frags();
 }
-
 
 /// @details Not currently implemented -- returns 0.
 Real
@@ -405,6 +408,44 @@ SingleLigandRotamerLibrary::fill_rotamer_vector(
 
 	// Debugging:
 	//dump_library(concrete_residue->name()+".rotlib.pdb", rotamers);
+}
+
+/// @brief Fills in missing hydrogens/virtual atoms from library load
+void
+SingleLigandRotamerLibrary::fill_missing_atoms( utility::vector1< bool > missing, conformation::ResidueOP rsd, utility::vector1< bool > & missed ) const
+{
+	assert( rsd );
+	assert( missing.size() == rsd->natoms() );
+	//Unlike Residue::fill_missing_atoms(), only do a single pass -
+	// The residue should be constructed so that any atoms which would be typically missing
+	// (i.e. hydrogens and virtual atoms) are either built from present atoms, or can be built
+	// from "missing" atoms which are built earlier
+	for ( Size i=1; i<= rsd->natoms(); ++i ) {
+		if ( missing[i] ) {
+			if ( ! rsd->atom_is_hydrogen( i ) && ! rsd->is_virtual( i ) ) {
+				utility_exit_with_message("Non-virtual heavy atom "+rsd->atom_name(i)+" is missing in rotamer library for residue "+rsd->name()+"!");
+			}
+
+			chemical::AtomICoor const & ic( rsd->icoor(i) );
+			// check to see if any of our stub atoms are missing:
+			for ( Size j=1; j<= 3; ++j ) {
+				Size stubno( ic.stub_atom(j).atomno() );
+				if ( missing[ stubno ] ) {
+					TR.Error << "[ ERROR ] Missing atom " << stubno << " (" << rsd->atom_name(stubno) << ") when trying to place atom " <<
+						i << " (" << rsd->atom_name(i) << ") in " << rsd->name() << std::endl;
+					utility_exit_with_message("Cannot build missing atoms in ligand rotamer library");
+				}
+			}
+
+			// no stub atoms missing: build our ideal coordinates
+			missing[i] = false; // In case we're building later residues off of this one.
+			rsd->set_xyz( i, ic.build( *rsd ) ); // We just checked that all stub atoms exist in this residue, so we should be safe with the build call.
+			if( ! missed[ i ] ) {
+				missed[ i ] = true;
+				TR << "Atom " << rsd->atom_name(i) << " from residue " << rsd->name() << " not found in PDB_ROTAMERS library, creating based on idealized geometry." << std::endl;
+			}
+		}
+	}
 }
 
 //XRW_B_T1
