@@ -122,7 +122,7 @@ void RNA_LoopCloser::apply( core::pose::Pose & pose, std::map< Size, Size> const
 		//  or if the chainbreak is too big to close.
 		if ( fast_scan_ && !passes_fast_scan( pose, i ) )  continue;
 
-		TR << "Trying to close chain near cutpoint " << i << "-" << i+1 << std::endl;
+		//TR << "Trying to close chain near cutpoint " << i << "-" << i+1 << std::endl;
 
 		apply( pose, connections, i );
 

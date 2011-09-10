@@ -944,6 +944,11 @@ RNA_StructureParameters::setup_virtual_phosphate_variants( pose::Pose & pose )
 bool
 RNA_StructureParameters::random_jump_change( pose::Pose & pose ) const
 {
+
+	using namespace core::conformation;
+	using namespace core::scoring::rna;
+	using namespace core::id;
+
 	// Any jumps in here to tweak?
 	Size const num_jump = pose.num_jump();
 	if (num_jump == 0) return false;
@@ -961,7 +966,16 @@ RNA_StructureParameters::random_jump_change( pose::Pose & pose ) const
 		// should allow moves. (I guess the other one can stay fixed).
 		Size const jump_pos1( pose.fold_tree().upstream_jump_residue( which_jump ) );
 		Size const jump_pos2( pose.fold_tree().downstream_jump_residue( which_jump ) );
-		if (allow_insert_->get( jump_pos1 ) || allow_insert_->get( jump_pos2 ) ) break;
+
+		Residue const & rsd1 = pose.residue( jump_pos1 );
+		AtomID jump_atom_id1( rsd1.atom_index( default_jump_atom( rsd1 ) ), jump_pos1 );
+
+		Residue const & rsd2 = pose.residue( jump_pos2 );
+		AtomID jump_atom_id2( rsd2.atom_index( default_jump_atom( rsd2 ) ), jump_pos2 );
+
+		if ( allow_insert_->get( jump_atom_id1 ) ||
+				 allow_insert_->get( jump_atom_id1 ) ) break; // found an OK jump.
+
 	}
 	if (ntries >= MAX_TRIES ) return false;
 
