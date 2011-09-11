@@ -51,6 +51,10 @@ public:
 
 
 public:
+	bool empty() const {
+		return num_loop() == 0;
+	}
+
 	inline core::Size num_loop() const { return loops_.size(); }
 	inline const_iterator begin() const { return loops_.begin(); }
 	inline const_iterator end() const { return loops_.end(); }

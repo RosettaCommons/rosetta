@@ -7,34 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
-/// @detailed
-/// @author
-
-
 #ifndef INCLUDED_protocols_loops_util_hh
 #define INCLUDED_protocols_loops_util_hh
 
-// Project Headers
-#include <core/pose/Pose.fwd.hh>
-#include <protocols/loops/Loops.fwd.hh>
+// Project headers
 #include <core/types.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/SecondaryStructure.fwd.hh>
-
-//Auto Headers
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <iostream>
 
+// Package headers
+#include <protocols/loops/Loops.fwd.hh>
 
 namespace protocols {
 namespace loops {
 
 //@brief adds coord constraints for the atoms that are not in the loops structure
 void fix_with_coord_cst( loops::Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom, utility::vector1< core::Real >& );
-
-
 
 ///@brief get frags that are fully within the Loop --- shorten(=true/false) frags that are close to the end of loops.
 extern void select_loop_frags(
@@ -45,7 +35,11 @@ extern void select_loop_frags(
 );
 
 void set_extended_torsions_and_idealize_loops( core::pose::Pose& pose, loops::Loops loops );
-// add another version that uses loop object
+
+/// @brief Identical to set_extended_torsions_and_idealize_loops() without the irrational
+/// behavior surrounding empty loops.
+void safe_set_extended_torsions_and_idealize_loops(const protocols::loops::Loops& loops,
+																									 core::pose::Pose* pose);
 
 void addScoresForLoopParts(
 	core::pose::Pose& pose,

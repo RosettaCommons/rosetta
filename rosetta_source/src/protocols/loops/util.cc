@@ -7,13 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
-/// @detailed
 /// @author Oliver Lange
 /// @author Mike Tyka
-///
-
 
 // Unit Headers
 #include <protocols/loops/util.hh>
@@ -33,6 +28,7 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueType.hh>
@@ -54,7 +50,6 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
-// Auto-header: duplicate removed #include <protocols/loops/loops_main.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
@@ -66,29 +61,31 @@
 //numeric headers
 
 //// C++ headers
-// #include <string>
 #include <list>
 
 //Auto Headers
 #include <core/pose/util.hh>
 
-
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-
 
 static basic::Tracer TR("protocols.loops.util");
 
 namespace protocols {
 namespace loops {
+
+/// TODO(someone) so bad!
 using namespace core;
 using namespace pose;
 using namespace kinematics;
 
+// Numeric constants
+static const double EXT_PHI = -150;
+static const double EXT_PSI = +150;
+static const double EXT_OMG =  180;
 
 void
 fix_with_coord_cst( Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom, utility::vector1< core::Real > &weights ) {
-
 	bool const bReadWeights = ( weights.size() >= pose.total_residue() );
 	if ( !bReadWeights ) {
 		weights.resize( pose.total_residue() );
@@ -127,8 +124,6 @@ fix_with_coord_cst( Loops const& rigid, core::pose::Pose& pose, bool bCstAllAtom
     }
   }
 }
-
-
 
 ///@brief get frags that are fully within the Loop --- shorten(=true/false) frags that are close to the end of loops.
 void select_loop_frags(
@@ -176,36 +171,39 @@ void select_loop_frags(
 	}
 } //select_loop_frags
 
-void
-set_extended_torsions_and_idealize_loops( core::pose::Pose& pose, loops::Loops loops ) {
+void safe_set_extended_torsions_and_idealize_loops(const protocols::loops::Loops& loops,
+																										 core::pose::Pose* pose) {
+	if (loops.empty())
+		return;
+
+	set_extended_torsions_and_idealize_loops(*pose, loops);
+}
+
+void set_extended_torsions_and_idealize_loops(core::pose::Pose& pose, loops::Loops loops) {
+  using core::Size;
+  using core::conformation::Conformation;
+  using protocols::loops::Loop;
+  using protocols::loops::Loops;
 
 	// if no loops, we want to have extended structure everywhere.
 	// it is a by-value parameter -- as intenden the change is kept local
+	if (loops.empty())
+		loops.add_loop(1, pose.total_residue(), 0);
 
-	if ( loops.size() == 0 ) loops.add_loop( 1, pose.total_residue(), 0 );
 	TR.Debug << "extend structure for " << loops << std::endl;
-	for ( loops::Loops::const_iterator it = loops.begin(), eit = loops.end(); it != eit; ++it ) {
-		Size const end_extended ( std::min( (int) it->stop(), (int) pose.total_residue() ) );
-		for ( Size pos = std::max( 1, (int) it->start()); pos<=end_extended; pos++ ) {
-			core::conformation::idealize_position( pos, pose.conformation() );
-		}
- 		Real const init_phi  ( -150.0 );
-		Real const init_psi  (  150.0 );
-		Real const init_omega(  180.0 );
-		//special thing for residue 1 since idealize has a bug for residue 1
-	// 	if ( it->start() == 1 ) {
-// 			core::conformation::ResidueOP new_rsd( conformation::ResidueFactory::create_residue( pose.residue_type( 1 ) ) );
-// 			pose.replace_residue( 1, *new_rsd , false /*orient backbone*/ );
-// 		}
 
-		for ( Size pos = it->start(); pos <= end_extended; pos++ ) {
-			if( pos != it->start() )	pose.set_phi( pos,  init_phi );
-			if( pos != end_extended ) pose.set_psi( pos,  init_psi );
-			if( ( pos != it->start() ) && ( pos != end_extended ) ) pose.set_omega( pos,  init_omega );
-		}
-	}
+  Conformation& conf = pose.conformation();
+  for (Loops::const_iterator i = loops.begin(); i != loops.end(); ++i) {
+    const Loop& loop = *i;
+
+    for (Size j = loop.start(); j <= loop.stop(); ++j) {
+			core::conformation::idealize_position(j, conf);
+      pose.set_phi(j, EXT_PHI);
+      pose.set_psi(j, EXT_PSI);
+      pose.set_omega(j, EXT_OMG);
+    }
+  }
 }
-
 
 void addScoresForLoopParts(
 	core::pose::Pose & pose,
