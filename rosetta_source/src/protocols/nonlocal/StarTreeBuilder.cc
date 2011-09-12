@@ -45,7 +45,7 @@ namespace nonlocal {
 StarTreeBuilder::StarTreeBuilder() : virtual_res_(-1) {}
 
 /// Note: assumes <chunks> are sorted in increasing order of start position
-void StarTreeBuilder::set_up(const protocols::loops::Loops& regions, core::pose::Pose* pose) {
+void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::Pose* pose) {
   using core::Size;
   using core::Real;
   using core::fragment::SecondaryStructure;
@@ -55,11 +55,7 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& regions, core::pose:
   using utility::vector1;
 
   assert(pose);
-  assert(regions.num_loop());
-
-  // Sort chunks in increasing order of start residue
-  Loops chunks(regions);
-  chunks.sequential_order();
+  assert(chunks.num_loop());
 
   // Number of residues before addition of virtual residue
   Size num_residues = pose->total_residue();

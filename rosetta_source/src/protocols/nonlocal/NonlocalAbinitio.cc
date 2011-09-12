@@ -77,10 +77,7 @@ NonlocalAbinitio::NonlocalAbinitio() {
 void NonlocalAbinitio::apply(core::pose::Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
-  using core::Size;
-  using core::kinematics::MoveMapOP;
   using core::pose::Pose;
-  using core::sequence::SequenceAlignment;
   using protocols::jd2::ThreadingJob;
   using protocols::loops::Loops;
   using protocols::moves::MoverOP;
@@ -91,24 +88,13 @@ void NonlocalAbinitio::apply(core::pose::Pose& pose) {
   // loop closure using a simple fold tree
   estimate_missing_density(&pose);
 
-  // Identify consecutive stretches of aligned/unaligned residues, explicitly
-  // limiting their length to enhance conformational sampling.
-  const SequenceAlignment& alignment = job->alignment();
-  Loops aligned_regions, unaligned_regions;
-  Size min_chunk_sz = fragments_lg_->max_frag_length();
-  Size max_chunk_sz = option[OptionKeys::nonlocal::max_chunk_size]();
-  find_regions_with_minimum_size(alignment, min_chunk_sz, &aligned_regions, &unaligned_regions);
-  limit_chunk_size(min_chunk_sz, max_chunk_sz, &aligned_regions);
-  limit_chunk_size(min_chunk_sz, max_chunk_sz, &unaligned_regions);
+  Loops chunks;
+  identify_chunks(job->alignment(), pose.total_residue(), &chunks);
 
   // Define the kinematics of the system
-  Loops curated = combine_and_trim(min_chunk_sz, pose.total_residue(), aligned_regions, unaligned_regions);
-  TreeBuilderOP builder = make_fold_tree(curated, &pose);
-  MoveMapOP movable = make_movemap(pose.fold_tree());
-
-  // Broken-chain folding
   emit_intermediate(pose, "nla_pre_abinitio.pdb");
-  MoverOP mover = new BrokenFold(fragments_large(), fragments_small(), movable);
+  TreeBuilderOP builder = make_fold_tree(chunks, &pose);
+  MoverOP mover = new BrokenFold(fragments_large(), fragments_small(), make_movemap(pose.fold_tree()));
   mover->apply(pose);
   emit_intermediate(pose, "nla_post_abinitio.pdb");
 
@@ -156,8 +142,6 @@ core::kinematics::MoveMapOP NonlocalAbinitio::make_movemap(const core::kinematic
   return movable;
 }
 
-// TODO(cmiles) determine whether a less computationally demanding protocol is
-// capable of providing reasonable estimates for missing density
 void NonlocalAbinitio::estimate_missing_density(core::pose::Pose* pose) const {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
@@ -241,6 +225,27 @@ protocols::jd2::ThreadingJob const * const NonlocalAbinitio::current_job() const
   JobDistributor* jd2 = JobDistributor::get_instance();
   InnerJobCOP inner = jd2->current_job()->inner_job();
   return (ThreadingJob const * const) inner();
+}
+
+void NonlocalAbinitio::identify_chunks(const core::sequence::SequenceAlignment& alignment,
+                                       const core::Size num_residues,
+                                       protocols::loops::Loops* chunks) const {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  using core::Size;
+  using protocols::loops::Loops;
+
+  Size min_chunk_sz = fragments_lg_->max_frag_length();
+  Size max_chunk_sz = option[OptionKeys::nonlocal::max_chunk_size]();
+
+  Loops aligned, unaligned;
+  find_regions_with_minimum_size(alignment, min_chunk_sz, &aligned, &unaligned);
+  limit_chunk_size(min_chunk_sz, max_chunk_sz, &aligned);
+  limit_chunk_size(min_chunk_sz, max_chunk_sz, &unaligned);
+
+  /// TODO(cmiles) is there anything in alignment that is a proxy for num_residues?
+  *chunks = combine_and_trim(min_chunk_sz, num_residues, aligned, unaligned);
+  chunks->sequential_order();
 }
 
 std::string NonlocalAbinitio::get_name() const {

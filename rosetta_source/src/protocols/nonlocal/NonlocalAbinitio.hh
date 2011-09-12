@@ -61,6 +61,12 @@ private:
   /// @brief Retrieves the current job from the JobDistributor
   protocols::jd2::ThreadingJob const * const current_job() const;
 
+  /// @brief Identify aligned / unaligned regions by scanning the alignment.
+  /// Limit the lengths of these regions to enhance conformational sampling.
+  void identify_chunks(const core::sequence::SequenceAlignment& alignment,
+                       const core::Size num_residues,
+                       protocols::loops::Loops* chunks) const;
+
   /// @brief Estimates missing backbone density
   void estimate_missing_density(core::pose::Pose* pose) const;
 
