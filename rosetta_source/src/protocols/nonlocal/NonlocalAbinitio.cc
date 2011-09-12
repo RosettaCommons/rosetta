@@ -28,7 +28,6 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/nonlocal.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <utility/exit.hh>
 #include <utility/vector1.hh>
 
 // Project headers
@@ -77,7 +76,6 @@ NonlocalAbinitio::NonlocalAbinitio() {
 void NonlocalAbinitio::apply(core::pose::Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
-  using core::pose::Pose;
   using protocols::jd2::ThreadingJob;
   using protocols::loops::Loops;
   using protocols::moves::MoverOP;
@@ -98,9 +96,10 @@ void NonlocalAbinitio::apply(core::pose::Pose& pose) {
   mover->apply(pose);
   emit_intermediate(pose, "nla_post_abinitio.pdb");
 
-  // Revert any modifications to the pose that TreeBuilder introduced, close
-  // remaining chainbreaks, and optionally relax
+  // Revert any modifications to the pose that TreeBuilder introduced
   builder->tear_down(&pose);
+
+  // Close any remaining chainbreaks then perform full-atom refinement
   estimate_missing_density(&pose);
   refine(&pose);
 }
