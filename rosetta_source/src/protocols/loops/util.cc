@@ -172,11 +172,11 @@ void select_loop_frags(
 } //select_loop_frags
 
 void safe_set_extended_torsions_and_idealize_loops(const protocols::loops::Loops& loops,
-																										 core::pose::Pose* pose) {
-	if (loops.empty())
-		return;
+                                                   core::pose::Pose* pose) {
+  if (loops.empty())
+    return;
 
-	set_extended_torsions_and_idealize_loops(*pose, loops);
+  set_extended_torsions_and_idealize_loops(*pose, loops);
 }
 
 void set_extended_torsions_and_idealize_loops(core::pose::Pose& pose, loops::Loops loops) {

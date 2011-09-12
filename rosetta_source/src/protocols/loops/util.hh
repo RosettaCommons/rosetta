@@ -39,7 +39,7 @@ void set_extended_torsions_and_idealize_loops( core::pose::Pose& pose, loops::Lo
 /// @brief Identical to set_extended_torsions_and_idealize_loops() without the irrational
 /// behavior surrounding empty loops.
 void safe_set_extended_torsions_and_idealize_loops(const protocols::loops::Loops& loops,
-																									 core::pose::Pose* pose);
+                                                   core::pose::Pose* pose);
 
 void addScoresForLoopParts(
 	core::pose::Pose& pose,
