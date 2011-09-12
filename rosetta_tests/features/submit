@@ -34,6 +34,9 @@
 
 sample_sources_fname="%(workdir)s/sample_sources/benchmark.list"
 
+# cleaning our condor_job_id file
+echo '' > %(workdir)s/condor_job_ids
+
 while read sample_source; do
 	echo $sample_source | grep -q -e '^#' -e '^$' && continue
 
