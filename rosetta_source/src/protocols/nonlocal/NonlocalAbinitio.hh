@@ -28,6 +28,7 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/sequence/SequenceAlignment.hh>
+#include <protocols/jd2/ThreadingJob.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -41,13 +42,11 @@ class NonlocalAbinitio : public protocols::moves::Mover {
  public:
   NonlocalAbinitio();
 
-  /// @brief Performs broken-chain folding
+  // -- mover -- //
+  std::string get_name() const;
   void apply(core::pose::Pose& pose);
 
-  /// @brief Returns the name of this mover.
-  std::string get_name() const;
-
-  /// @brief Create a new instance
+  // -- jd2 -- //
   protocols::moves::MoverOP clone() const;
   protocols::moves::MoverOP fresh_instance() const;
 
@@ -57,6 +56,10 @@ private:
 
   /// @brief Returns a pointer to the small fragment library
   core::fragment::FragSetOP fragments_small() const;
+
+  // -- utility -- //
+  /// @brief Retrieves the current job from the JobDistributor
+  protocols::jd2::ThreadingJob const * const current_job() const;
 
   /// @brief Estimates missing backbone density
   void estimate_missing_density(core::pose::Pose* pose) const;
@@ -70,12 +73,8 @@ private:
   /// @brief Full-atom refinement
   void refine(core::pose::Pose* pose) const;
 
-  /// --- Members --- ///
-
-  /// @brief Large fragment library
+  // -- members -- //
   core::fragment::FragSetOP fragments_lg_;
-
-  /// @brief Small fragment library
   core::fragment::FragSetOP fragments_sm_;
 };
 

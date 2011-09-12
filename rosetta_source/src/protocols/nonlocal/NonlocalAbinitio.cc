@@ -81,16 +81,11 @@ void NonlocalAbinitio::apply(core::pose::Pose& pose) {
   using core::kinematics::MoveMapOP;
   using core::pose::Pose;
   using core::sequence::SequenceAlignment;
-  using protocols::jd2::InnerJobCOP;
-  using protocols::jd2::JobDistributor;
   using protocols::jd2::ThreadingJob;
   using protocols::loops::Loops;
   using protocols::moves::MoverOP;
 
-  JobDistributor* jd2 = JobDistributor::get_instance();
-  InnerJobCOP inner = jd2->current_job()->inner_job();
-  ThreadingJob const * const job = (ThreadingJob const * const) inner();
-  TR << "Selected alignment: " << job->alignment_id() << std::endl;
+  ThreadingJob const * const job = current_job();
 
   // Estimate missing backbone density by performing fragment insertion and
   // loop closure using a simple fold tree
@@ -99,7 +94,6 @@ void NonlocalAbinitio::apply(core::pose::Pose& pose) {
   // Identify consecutive stretches of aligned/unaligned residues, explicitly
   // limiting their length to enhance conformational sampling.
   const SequenceAlignment& alignment = job->alignment();
-
   Loops aligned_regions, unaligned_regions;
   Size min_chunk_sz = fragments_lg_->max_frag_length();
   Size max_chunk_sz = option[OptionKeys::nonlocal::max_chunk_size]();
@@ -119,9 +113,9 @@ void NonlocalAbinitio::apply(core::pose::Pose& pose) {
   emit_intermediate(pose, "nla_post_abinitio.pdb");
 
   // Revert any modifications to the pose that TreeBuilder introduced, close
-	// remaining chainbreaks, and optionally relax
+  // remaining chainbreaks, and optionally relax
   builder->tear_down(&pose);
-	estimate_missing_density(&pose);
+  estimate_missing_density(&pose);
   refine(&pose);
 }
 
@@ -237,6 +231,16 @@ void NonlocalAbinitio::refine(core::pose::Pose* pose) const {
     FastRelax relax(score);
     relax.apply(*pose);
   }
+}
+
+protocols::jd2::ThreadingJob const * const NonlocalAbinitio::current_job() const {
+  using protocols::jd2::InnerJobCOP;
+  using protocols::jd2::JobDistributor;
+  using protocols::jd2::ThreadingJob;
+
+  JobDistributor* jd2 = JobDistributor::get_instance();
+  InnerJobCOP inner = jd2->current_job()->inner_job();
+  return (ThreadingJob const * const) inner();
 }
 
 std::string NonlocalAbinitio::get_name() const {
