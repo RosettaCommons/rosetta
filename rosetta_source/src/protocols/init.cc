@@ -61,7 +61,7 @@
 #include <protocols/enzdes/EnzdesMoversCreator.hh>
 #include <protocols/moves/ParsedProtocolCreator.hh>
 #include <protocols/idealize/IdealizeMoverCreator.hh>
-#include <protocols/nonlocal/ExtendedPoseMoverCreator.hh>
+#include <protocols/moves/ExtendedPoseMoverCreator.hh>
 #include <protocols/nonlocal/SingleFragmentMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/PeptideStapleDesignMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/SetTemperatureFactorCreator.hh>
@@ -369,7 +369,7 @@ static MoverRegistrator< moves::RotamerTrialsMoverCreator > reg_RotamerTrialsMov
 static MoverRegistrator< moves::RotamerTrialsMinMoverCreator > reg_RotamerTrialsMinMoverCreator;
 static MoverRegistrator< moves::FavorSequenceProfileCreator > reg_FavorSequenceProfileCreator;
 static MoverRegistrator< flexpep_docking::FlexPepDockingProtocolCreator > reg_FlexPepDockingProtocolCreator;
-static MoverRegistrator< nonlocal::ExtendedPoseMoverCreator > reg_ExtendedPoseMoverCreator;
+static MoverRegistrator< moves::ExtendedPoseMoverCreator > reg_ExtendedPoseMoverCreator;
 static MoverRegistrator< nonlocal::SingleFragmentMoverCreator > reg_SingleFragmentMoverCreator;
 static MoverRegistrator< relax::FastRelaxCreator> reg_FastRelaxCreator;
 static MoverRegistrator< dna::SeparateDnaFromNonDnaCreator > reg_SeparateDnaFromNonDnaCreator;

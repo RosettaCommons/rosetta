@@ -7,25 +7,23 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/nonlocal/ExtendedPoseMoverCreator.cc
+/// @file protocols/moves/ExtendedPoseMoverCreator.cc
 /// @author Christopher Miles (cmiles@uw.edu)
 
 // Unit header
-#include <protocols/nonlocal/ExtendedPoseMoverCreator.hh>
+#include <protocols/moves/ExtendedPoseMoverCreator.hh>
 
 // C/C++ headers
 #include <string>
 
-// Project headers
+// Package headers
+#include <protocols/moves/ExtendedPoseMover.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
-// Package headers
-#include <protocols/nonlocal/ExtendedPoseMover.hh>
-
 namespace protocols {
-namespace nonlocal {
+namespace moves {
 
-protocols::moves::MoverOP ExtendedPoseMoverCreator::create_mover() const {
+MoverOP ExtendedPoseMoverCreator::create_mover() const {
   return new ExtendedPoseMover();
 }
 
@@ -37,5 +35,5 @@ std::string ExtendedPoseMoverCreator::mover_name() {
   return "ExtendedPoseMover";
 }
 
-}  // namespace nonlocal
+}  // namespace moves
 }  // namespace protocols

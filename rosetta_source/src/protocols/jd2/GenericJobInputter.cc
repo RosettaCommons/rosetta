@@ -20,7 +20,7 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 #include <core/sequence/util.hh>
-#include <protocols/nonlocal/ExtendedPoseMover.hh>
+#include <protocols/moves/ExtendedPoseMover.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -52,7 +52,7 @@ protocols::jd2::GenericJobInputter::GenericJobInputter() {
 /// that pose to the Job. If the pose pre-exists it just copies the COP's pose
 /// into it.
 void protocols::jd2::GenericJobInputter::pose_from_job( core::pose::Pose& pose, JobOP job) {
-  using protocols::nonlocal::ExtendedPoseMover;
+  using protocols::moves::ExtendedPoseMover;
   using std::string;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;

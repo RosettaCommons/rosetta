@@ -7,22 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/nonlocal/ExtendedPoseMover.fwd.hh
+/// @file protocols/moves/ExtendedPoseMover.fwd.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_EXTENDEDPOSEMOVER_FWD_HH_
-#define PROTOCOLS_NONLOCAL_EXTENDEDPOSEMOVER_FWD_HH_
+#ifndef PROTOCOLS_MOVES_EXTENDEDPOSEMOVER_FWD_HH_
+#define PROTOCOLS_MOVES_EXTENDEDPOSEMOVER_FWD_HH_
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace protocols {
-namespace nonlocal {
+namespace moves {
 
 class ExtendedPoseMover;
 typedef utility::pointer::owning_ptr<ExtendedPoseMover> ExtendedPoseMoverOP;
 typedef utility::pointer::owning_ptr<ExtendedPoseMover const> ExtendedPoseMoverCOP;
 
-}  // namespace nonlocal
+}  // namespace moves
 }  // namespace protocols
 
-#endif  // PROTOCOLS_NONLOCAL_EXTENDEDPOSEMOVER_FWD_HH_
+#endif  // PROTOCOLS_MOVES_EXTENDEDPOSEMOVER_FWD_HH_

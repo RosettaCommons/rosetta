@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/nonlocal/ExtendedPoseMover.cc
+/// @file protocols/moves/ExtendedPoseMover.cc
 /// @author Christopher Miles (cmiles@uw.edu)
 
 // Unit header
-#include <protocols/nonlocal/ExtendedPoseMover.hh>
+#include <protocols/moves/ExtendedPoseMover.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
@@ -22,15 +22,16 @@
 #include <core/pose/util.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>
+
+// Package headers
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 
 // C/C++ headers
-#include <cassert>
 #include <string>
 
 namespace protocols {
-namespace nonlocal {
+namespace moves {
 
 ExtendedPoseMover::ExtendedPoseMover(const std::string& sequence,
                                      const std::string& residue_type_set)
@@ -40,12 +41,9 @@ bool ExtendedPoseMover::valid() const {
   return sequence() != "";
 }
 
-// -- Mover -- //
 void ExtendedPoseMover::apply(core::pose::Pose& pose) {
   // Ensure that this instance is in a valid state
   assert(valid());
-
-  // Completely wipe out any existing contents in <pose>
   pose.clear();
 
   protocols::loops::Loops loops;
@@ -57,7 +55,6 @@ std::string ExtendedPoseMover::get_name() const {
   return "ExtendedPoseMover";
 }
 
-// -- Accessors -- //
 const std::string& ExtendedPoseMover::sequence() const {
   return sequence_;
 }
@@ -66,7 +63,6 @@ const std::string& ExtendedPoseMover::residue_type_set() const {
   return residue_type_set_;
 }
 
-// -- Mutators -- //
 void ExtendedPoseMover::sequence(const std::string& sequence) {
   sequence_ = sequence;
 }
@@ -75,20 +71,18 @@ void ExtendedPoseMover::residue_type_set(const std::string& residue_type_set) {
   residue_type_set_ = residue_type_set;
 }
 
-
-// -- RosettaScripts -- //
-protocols::moves::MoverOP ExtendedPoseMover::clone() const {
+MoverOP ExtendedPoseMover::clone() const {
   return new ExtendedPoseMover(*this);
 }
 
-protocols::moves::MoverOP ExtendedPoseMover::fresh_instance() const {
+MoverOP ExtendedPoseMover::fresh_instance() const {
   return new ExtendedPoseMover();
 }
 
 void ExtendedPoseMover::parse_my_tag(const utility::tag::TagPtr tag,
-                                     protocols::moves::DataMap&,
+                                     DataMap&,
                                      const protocols::filters::Filters_map&,
-                                     const protocols::moves::Movers_map&,
+                                     const Movers_map&,
                                      const core::pose::Pose&) {
   // required options
   if (!tag->hasOption("sequence"))
@@ -101,5 +95,5 @@ void ExtendedPoseMover::parse_my_tag(const utility::tag::TagPtr tag,
     residue_type_set(tag->getOption<string>("residue_type_set"));
 }
 
-}  // namespace nonlocal
+}  // namespace moves
 }  // namespace protocols

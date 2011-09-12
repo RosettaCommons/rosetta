@@ -7,27 +7,29 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/nonlocal/ExtendedPoseMover.hh
+/// @file protocols/moves/ExtendedPoseMover.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_NONLOCAL_EXTENDEDPOSEMOVER_HH_
-#define PROTOCOLS_NONLOCAL_EXTENDEDPOSEMOVER_HH_
+#ifndef PROTOCOLS_MOVES_EXTENDEDPOSEMOVER_HH_
+#define PROTOCOLS_MOVES_EXTENDEDPOSEMOVER_HH_
 
 // Unit header
-#include <protocols/nonlocal/ExtendedPoseMover.fwd.hh>
+#include <protocols/moves/ExtendedPoseMover.fwd.hh>
 
 // C/C++ headers
 #include <string>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
+
+// Package headers
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 namespace protocols {
-namespace nonlocal {
+namespace moves {
 
-class ExtendedPoseMover : public protocols::moves::Mover {
+class ExtendedPoseMover : public Mover {
   typedef std::string string;
 
  public:
@@ -62,14 +64,14 @@ class ExtendedPoseMover : public protocols::moves::Mover {
 
   // -- RosettaScripts -- //
   /// @brief Creates a replica of this Mover
-  protocols::moves::MoverOP clone() const;
+  MoverOP clone() const;
 
   /// @brief Creates a new instance by calling the no-argument constructor
-  protocols::moves::MoverOP fresh_instance() const;
+  MoverOP fresh_instance() const;
 
   /// @brief Mover-specific parsing required by RosettaScripts
   void parse_my_tag(const utility::tag::TagPtr tag,
-                    protocols::moves::DataMap& data,
+                    DataMap& data,
                     const protocols::filters::Filters_map& filters,
                     const protocols::moves::Movers_map& movers,
                     const core::pose::Pose& pose);
@@ -79,7 +81,7 @@ class ExtendedPoseMover : public protocols::moves::Mover {
   string residue_type_set_;
 };
 
-}  // namespace nonlocal
+}  // namespace moves
 }  // namespace protocols
 
-#endif  // PROTOCOLS_NONLOCAL_EXTENDEDPOSEMOVER_HH_
+#endif  // PROTOCOLS_MOVES_EXTENDEDPOSEMOVER_HH_
