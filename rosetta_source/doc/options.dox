@@ -2337,10 +2337,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>nonlocal option group</dd><br>
 </dl>
 <dl>
-<dt><b>-moves</b> \<File\><dt>
-<dd>Enable non-local moves in the early stages of abinitio. File specifying groups of fragments to be applied simultaneously</dd><br>
-</dl>
-<dl>
 <dt><b>-builder</b> \<String\><dt>
 <dd>One of {simple, star}. Specifies how non-local abinitio should construct the fold tree</dd><br>
 <dd>Default: "star"</dd><br>
@@ -2349,11 +2345,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-randomize_missing</b> \<Boolean\><dt>
 <dd>Randomize the coordinates of missing loops. This occurs often in broken-chain folding from a sequence alignment and template pdb. Default value is false to preserve existing behavior in ThreadingJobInputter</dd><br>
 <dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-gap_sampling_extension</b> \<Integer\><dt>
-<dd>When constructing NLGrouping's from SequenceAlignments, extend gapped regions by at least 3 and at most N positions to enhance sampling</dd><br>
-<dd>Default: 5</dd><br>
 </dl>
 <dl>
 <dt><b>-max_chunk_size</b> \<Integer\><dt>

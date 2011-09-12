@@ -1286,12 +1286,10 @@ Options = Option_Group( '',
 
   # Non-local information
   Option_Group('nonlocal',
-		Option( 'moves', 'File', desc="Enable non-local moves in the early stages of abinitio. File specifying groups of fragments to be applied simultaneously"),
 		Option( 'builder', 'String', desc="One of {simple, star}. Specifies how non-local abinitio should construct the fold tree", default="star"),
 
     # Comparative modeling extensions
 		Option( 'randomize_missing', 'Boolean', desc = 'Randomize the coordinates of missing loops. This occurs often in broken-chain folding from a sequence alignment and template pdb. Default value is false to preserve existing behavior in ThreadingJobInputter', default = 'false'),
-		Option( 'gap_sampling_extension', 'Integer', desc="When constructing NLGrouping's from SequenceAlignments, extend gapped regions by at least 3 and at most N positions to enhance sampling", default = '5'),
 		Option( 'max_chunk_size', 'Integer', desc="Maximum allowable chunk size for comparative modeling inputs. If the chunk exceeds this threshold, it is recursively decomposed into smaller pieces.", default='20'),
 
     # Experimental data extensions

@@ -489,10 +489,8 @@ namespace chunk { BooleanOptionKey const chunk( "chunk" );  }
 namespace chunk { FileOptionKey const pdb2( "chunk:pdb2" );  }
 namespace chunk { FileOptionKey const loop2( "chunk:loop2" );  }
 namespace nonlocal { BooleanOptionKey const nonlocal( "nonlocal" );  }
-namespace nonlocal { FileOptionKey const moves( "nonlocal:moves" );  }
 namespace nonlocal { StringOptionKey const builder( "nonlocal:builder" );  }
 namespace nonlocal { BooleanOptionKey const randomize_missing( "nonlocal:randomize_missing" );  }
-namespace nonlocal { IntegerOptionKey const gap_sampling_extension( "nonlocal:gap_sampling_extension" );  }
 namespace nonlocal { IntegerOptionKey const max_chunk_size( "nonlocal:max_chunk_size" );  }
 namespace nonlocal { RealOptionKey const rdc_weight( "nonlocal:rdc_weight" );  }
 namespace abinitio { RealOptionKey const prob_perturb_weights( "abinitio:prob_perturb_weights" );  }
@@ -568,3 +566,4 @@ namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
 namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
 namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
+namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }
