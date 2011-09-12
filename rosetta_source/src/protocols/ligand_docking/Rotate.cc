@@ -66,10 +66,10 @@ RotateCreator::mover_name()
 	return "Rotate";
 }
 
-Ligand_info::Ligand_info():atr(0), rep(0), jump(){}
+Ligand_info::Ligand_info():residues(), atr(0), rep(0), jump(){}
 
 Ligand_info::Ligand_info(core::conformation::ResidueCOPs const residues, int atr, int rep):
-		residues(residues), atr(atr), rep(rep){}
+		residues(residues), atr(atr), rep(rep), jump(){}
 
 Ligand_info::Ligand_info(core::conformation::ResidueCOPs const residues, std::pair<int,int> scores, core::kinematics::Jump jump):
 		residues(residues), atr(scores.first), rep(scores.second), jump(jump){}
@@ -87,10 +87,7 @@ const & Ligand_info::get_residues() const{
 }
 
 ///@brief
-Rotate::Rotate():
-		//utility::pointer::ReferenceCount(),
-		Mover("Rotate"),
-		grid_manager_(0)
+Rotate::Rotate(): Mover("Rotate")
 {}
 
 Rotate::Rotate(Rotate const & that):
@@ -131,11 +128,6 @@ Rotate::parse_my_tag(
 	if ( ! tag->hasOption("degrees") ) utility_exit_with_message("'Rotate' mover requires 'degrees' tag");
 	if ( ! tag->hasOption("cycles") ) utility_exit_with_message("'Rotate' mover requires 'cycles' tag");
 
-	if(data_map.has("scoringgrid","default"))
-	{
-		grid_manager_ = data_map.get<qsar::scoring_grid::GridManager *>("scoringgrid","default");
-	}
-
 	rotate_info_.chain = tag->getOption<std::string>("chain");
 	{
 		std::string distribution_str= tag->getOption<std::string>("distribution");
@@ -150,21 +142,23 @@ void Rotate::apply(core::pose::Pose & pose){
 	rotate_info_.jump_id= core::pose::get_jump_id_from_chain_id(rotate_info_.chain_id, pose);
 
 	core::Vector const center = protocols::geometry::downstream_centroid_by_jump(pose, rotate_info_.jump_id);
-	if(grid_manager_ == 0)
+
+	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
+	if(grid_manager->size() == 0)
 	{
-		utility::pointer::owning_ptr<core::grid::CartGrid<int> > const grid = make_atr_rep_grid(pose, center);
+		utility::pointer::owning_ptr<core::grid::CartGrid<int> > const grid = make_atr_rep_grid_without_ligand(pose, center,rotate_info_.chain_id);
 		rotate_ligand(grid, pose);// move ligand to a random point in binding pocket
 	}else
 	{
-		if(grid_manager_->is_qsar_map_attached())
+		if(grid_manager->is_qsar_map_attached())
 		{
 			//core::conformation::ResidueOP residue = new core::conformation::Residue(pose.residue(begin));
 			//qsar::qsarMapOP qsar_map(new qsar::qsarMap("default",residue));
 			//qsar_map->fill_with_value(1);
-			//grid_manager_->set_qsar_map(qsar_map);
+			//grid_manager->set_qsar_map(qsar_map);
 		}
-		//grid_manager_->initialize_all_grids(center);
-		//grid_manager_->update_grids(pose,center);
+		//grid_manager->initialize_all_grids(center);
+		//grid_manager->update_grids(pose,center);
 	}
 }
 
@@ -245,24 +239,6 @@ Rotate::create_random_rotations(
 	return ligands;
 }
 
-/*
-utility::vector1<Ligand_info> Rotate::create_random_rotations(
-		protocols::moves::RigidBodyMoverOP const,
-		core::Size const begin,
-		core::pose::Pose & pose) const
-{
-	core::Size const end = pose.conformation().chain_end(rotate_info_.chain_id);
-	//core::Size const heavy_atom_number= ligand_options::num_heavy_atoms(begin, end, pose);
-	core::pose::Pose local_pose= pose;
-	local_pose.remove_constraints();
-	core::Vector const center = protocols::geometry::downstream_centroid_by_jump(local_pose, rotate_info_.jump_id);
-	utility::vector1< Ligand_info> ligands;  ///TODO make this a set.  The set should check for another pose with a similar RMSD.
-	//core::Size max_diversity= 5*ligand_options::num_chi_angles(begin, end, local_pose)+1; // who knows why?  copied from Ian's code.
-
-
-}
-*/
-
 Ligand_info Rotate::create_random_rotation(
 		utility::pointer::owning_ptr<core::grid::CartGrid<int> > const & grid,
 		protocols::moves::RigidBodyMoverOP const mover,
@@ -278,18 +254,7 @@ Ligand_info Rotate::create_random_rotation(
 	core::conformation::ResidueCOPs const residues= core::pose::get_chain_residues(local_pose, rotate_info_.chain_id);
 	return Ligand_info(residues, scores, jump);
 }
-/*
-Ligand_info Rotate::create_random_rotation(
-		protocols::moves::RigidBodyMoverOP const mover,
-		core::Vector const center,
-		core::Size const begin,
-		core::Size const end,
-		core::pose::Pose & local_pose
-) const{
-	apply_rotate(mover,local_pose,center);
 
-}
-*/
 void add_ligand_conditionally(
 		Ligand_info const & ligand_info,
 		utility::vector1< Ligand_info> & ligands,
@@ -335,7 +300,7 @@ bool check_RMSD(
 	utility::vector1< Ligand_info >::const_iterator iter= ligands.begin();
 	utility::vector1< Ligand_info >::const_iterator const end= ligands.end();
 
-	for(; iter+1 != end; ++iter){
+	for(; iter != end; ++iter){ // if ligands is empty we still return true so no need to check for this condition.
 		core::conformation::ResidueCOPs const & these_residues= ligand.get_residues();
 		core::conformation::ResidueCOPs const & compare_residues= iter->get_residues();
 		runtime_assert(these_residues.size() == compare_residues.size());

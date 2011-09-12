@@ -14,6 +14,7 @@
 #include <protocols/qsar/scoring_grid/GridBase.hh>
 //#include <protocols/qsar/qsarTypeManager.hh>
 #include <utility/exit.hh>
+#include <utility/tag/Tag.hh>
 
 namespace protocols {
 namespace qsar {
@@ -64,25 +65,24 @@ GridFactory::factory_register(GridCreatorOP creator)
 	grid_creator_map_[grid_type]  = creator;
 }
 
-GridBaseOP GridFactory::new_grid(std::string const & grid_type) const
+GridBaseOP GridFactory::new_grid(utility::tag::TagPtr const tag) const
 {
+	//string const name = tag->getName();
+	std::string const type = tag->getOption<std::string>("grid_type");
 
-
-	//qsarType grid_enum = qsarTypeManager::qsar_type_from_name(grid_type);
-	GridMap::const_iterator iter(grid_creator_map_.find(grid_type));
+	GridMap::const_iterator iter(grid_creator_map_.find(type));
 	if( iter != grid_creator_map_.end())
 	{
 		if(!iter->second)
 		{
-			utility_exit_with_message("Error: GridCreatorOP prototype for "+grid_type+ " is NULL!");
+			utility_exit_with_message("Error: GridCreatorOP prototype for "+type+ " is NULL!");
 			return NULL;
 		}
-		GridMap::const_iterator it(grid_creator_map_.begin());
-		return iter->second->create_grid();
-	}else
+		return iter->second->create_grid(tag);
+	}
+	else
 	{
-		GridMap::const_iterator it(grid_creator_map_.begin());
-		utility_exit_with_message(grid_type + " is not known to the GridFactory.  Was it registered via a GridRegistrator in one of the init.cc files");
+		utility_exit_with_message(type + " is not known to the GridFactory.  Was it registered via a GridRegistrator in one of the init.cc files");
 		return NULL;
 	}
 

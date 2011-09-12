@@ -153,7 +153,8 @@ public:
 	{
 		if (zones_ != NULL)
 		{
-			delete zones_;
+			//delete zones_;
+			delete[] zones_;
 			zones_ = NULL;
 		}
 

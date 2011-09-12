@@ -20,7 +20,6 @@
 #include <core/pose/util.hh>
 
 //#include <protocols/jd2/PDBJobOutputter.hh>
-//#include <utility/exit.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/qsar.OptionKeys.gen.hh>
@@ -28,9 +27,12 @@
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 
+// Utility headers
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/exit.hh>
 
 #include <iostream>
 #include <fstream>
@@ -53,42 +55,22 @@ GridManager* GridManager::get_instance()
 	return instance_;
 }
 
-GridManager::GridManager() : last_tag_(""),width_(0), resolution_(0), qsar_map_(0),initialized_(false)
+GridManager::GridManager() : last_tag_(""),width_(40), resolution_(0.25), qsar_map_(0),initialized_(false)
 {
-	std::string base_name = basic::options::option[basic::options::OptionKeys::qsar::weights]();
-
-	utility::io::izstream infile;
-	bool file_status = basic::database::open(infile,"qsar/weights/"+base_name+".wts");
-	if(!file_status)
-	{
-		utility_exit_with_message("could not open "+ base_name+" weight file, check your paths");
-	}
-	std::string line;
-	do
-	{
-		getline(infile,line);
-		if(line.size()> 0 && line[0] != '#')
-		{
-			utility::vector1<std::string> split_line = static_cast<utility::vector1<std::string> >(utility::string_split(line,'\t'));
-			if(split_line.size() == 2)
-			{
-				//std::cout << line <<std::endl;
-				std::string qsar_name(split_line[1]);
-				//qsarType type(qsarTypeManager::qsar_type_from_name(qsar_name));
-				core::Real qsar_weight=utility::from_string(split_line[2],core::Real(0));
-				weight_map_.insert(std::pair<std::string,core::Real>(qsar_name,qsar_weight));
-			}
-		}
-	}while(!infile.eof());
-	infile.close();
+	grid_map_.clear();
+	score_map_.clear();
 }
 
-
-void GridManager::set_dimensions(core::Real width, core::Real resolution)
+void GridManager::set_width(core::Real width)
 {
 	width_ = width;
+}
+
+void GridManager::set_resolution(core::Real resolution)
+{
 	resolution_=resolution;
 }
+
 
 void GridManager::set_qsar_map(qsarMapOP qsar_map)
 {
@@ -106,24 +88,20 @@ bool GridManager::is_qsar_map_attached()
 	}
 }
 
-void GridManager::make_new_grid(std::string grid_name)
+void GridManager::make_new_grid(utility::tag::TagPtr const tag)
 {
-
-	//qsar::qsarType grid_type(qsar::qsarTypeManager::qsar_type_from_name(grid_name));
-	core::Real weight(weight_map_[grid_name]);
-	//GridBaseOP new_grid;
-	GridManagerTracer.Debug << grid_name <<std::endl;
-	//GridFactoryOP grid_factory(GridFactory::get_instance());
-	GridBaseOP new_grid(GridFactory::get_instance()->new_grid(grid_name));
-	new_grid->set_weight(weight);
-	insert_grid(new_grid);
+	std::string name= tag->getName();
+	GridManagerTracer.Debug << name <<std::endl;
+	GridBaseOP new_grid(GridFactory::get_instance()->new_grid(tag));
+	insert_grid(name, new_grid);
 }
 
-void GridManager::insert_grid(GridBaseOP grid)
+void GridManager::insert_grid(std::string const name, GridBaseOP const grid)
 {
-	std::string type(grid->get_type());
-	std::pair<std::string, GridBaseOP> new_grid(type,grid);
-	grid_map_.insert(new_grid);
+	if(grid_map_.find(name) != grid_map_.end()){
+		utility_exit_with_message("2 grids with the same name!");
+	}
+	grid_map_[name] = grid;
 }
 
 GridBaseOP GridManager::get_grid(std::string const & grid_type)
@@ -246,9 +224,10 @@ void GridManager::update_grids(core::pose::Pose const & pose, core::Vector const
 
 void GridManager::initialize_all_grids(core::Vector const & center)
 {
+	if(grid_map_.size() == 0)
+		utility_exit_with_message("hmm, no grids in the grid manager. Are they defined in the XML script?");
 	if(!initialized_)
 	{
-
 		std::map<std::string,GridBaseOP>::iterator map_iterator(grid_map_.begin());
 		for(;map_iterator != grid_map_.end();++map_iterator)
 		{

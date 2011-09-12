@@ -14,6 +14,7 @@
 #include <protocols/qsar/scoring_grid/polarizGridCreator.hh>
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
+#include <utility/tag/Tag.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
@@ -29,9 +30,15 @@ std::string polarizGridCreator::keyname() const
 	return polarizGridCreator::grid_name();
 }
 
-GridBaseOP polarizGridCreator::create_grid() const
+GridBaseOP polarizGridCreator::create_grid(utility::tag::TagPtr const tag) const
 {
-	return new polarizGrid;
+	if (tag->hasOption("weight")){
+		return new polarizGrid( tag->getOption<core::Real>("weight") );
+	}else{
+		return new polarizGrid();
+	}
+	// This is impossible
+	return NULL;
 }
 
 std::string polarizGridCreator::grid_name()

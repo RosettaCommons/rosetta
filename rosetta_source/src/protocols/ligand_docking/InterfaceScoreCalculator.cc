@@ -65,16 +65,15 @@ InterfaceScoreCalculator::InterfaceScoreCalculator():
 		Mover("InterfaceScoreCalculator"),
 		chains_(),
 		native_(NULL),
-		score_fxn_(NULL),
-		grid_manager_(NULL){}
+		score_fxn_(NULL)
+{}
 
 InterfaceScoreCalculator::InterfaceScoreCalculator(InterfaceScoreCalculator const & that):
 	    //utility::pointer::ReferenceCount(),
 		protocols::moves::Mover( that ),
 		chains_(that.chains_),
 		native_(that.native_),
-		score_fxn_(that.score_fxn_),
-		grid_manager_(that.grid_manager_)
+		score_fxn_(that.score_fxn_)
 {}
 
 InterfaceScoreCalculator::~InterfaceScoreCalculator() {}
@@ -127,10 +126,6 @@ InterfaceScoreCalculator::parse_my_tag(
 		std::string const & native_str= basic::options::option[ basic::options::OptionKeys::in::file::native ]().name();
 		native_ = new core::pose::Pose;
 		core::import_pose::pose_from_pdb(*native_, native_str);
-	}
-	if(datamap.has("scoringgrid","default"))
-	{
-		grid_manager_ = datamap.get<qsar::scoring_grid::GridManager *>("scoringgrid","default");
 	}
 }
 
@@ -197,10 +192,7 @@ InterfaceScoreCalculator::append_ligand_docking_scores(
 		append_ligand_travel(jump_id, job, *native_, after);
 		append_radius_of_gyration(jump_id, job, *native_);
 		append_ligand_RMSD(jump_id, job, *native_, after);
-		if(grid_manager_ != 0)
-		{
-			append_ligand_grid_scores(jump_id,job,after,grid_manager_);
-		}
+		append_ligand_grid_scores(jump_id,job,after);
 }
 
 

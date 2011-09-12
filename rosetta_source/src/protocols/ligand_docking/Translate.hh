@@ -80,7 +80,6 @@ private:
 	Translate_info translate_info_;
 	utility::pointer::owning_ptr<core::grid::CartGrid<int> > grid_;
 	utility::vector1<core::Size> chain_ids_to_exclude_; // these are invisible the translation grid, so ligand can land on top.
-	qsar::scoring_grid::GridManagerOP grid_manager_;
 
 	void translate_ligand(
 			utility::pointer::owning_ptr<core::grid::CartGrid<int> >  const & grid,

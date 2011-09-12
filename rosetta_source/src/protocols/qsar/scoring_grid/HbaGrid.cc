@@ -15,7 +15,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AtomType.hh>
-
+#include <utility/tag/Tag.hh>
 
 namespace protocols {
 namespace qsar {
@@ -27,9 +27,15 @@ std::string HbaGridCreator::keyname() const
 	return HbaGridCreator::grid_name();
 }
 
-GridBaseOP HbaGridCreator::create_grid() const
+GridBaseOP HbaGridCreator::create_grid(utility::tag::TagPtr const tag) const
 {
-	return new HbaGrid;
+	if (tag->hasOption("weight")){
+		return new HbaGrid( tag->getOption<core::Real>("weight") );
+	}else{
+		return new HbaGrid();
+	}
+	// This is impossible
+	return NULL;
 }
 
 std::string HbaGridCreator::grid_name()

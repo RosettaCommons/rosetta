@@ -15,6 +15,7 @@
 #include <protocols/qsar/qsarMap.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
 namespace protocols {
@@ -28,9 +29,15 @@ std::string RepGridCreator::keyname() const
 	return RepGridCreator::grid_name();
 }
 
-GridBaseOP RepGridCreator::create_grid() const
+GridBaseOP RepGridCreator::create_grid(utility::tag::TagPtr const tag) const
 {
-	return new RepGrid;
+	if (tag->hasOption("weight")){
+		return new RepGrid( tag->getOption<core::Real>("weight") );
+	}else{
+		return new RepGrid();
+	}
+	// This is impossible
+	return NULL;
 }
 
 std::string RepGridCreator::grid_name()

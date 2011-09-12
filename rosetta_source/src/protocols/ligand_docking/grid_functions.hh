@@ -121,14 +121,14 @@ utility::pointer::owning_ptr<core::grid::CartGrid<int> > make_atr_rep_grid(
 
 /// @brief Make a grid around the specified point with attractive (negative)
 /// and repulsive (positive) values for all heavy atoms not in ligand_chain_id_to_exclude
-/* utility::pointer::owning_ptr<core::grid::CartGrid<int> > make_atr_rep_grid_with_ligands(
+utility::pointer::owning_ptr<core::grid::CartGrid<int> > make_atr_rep_grid_without_ligand(
 	core::pose::Pose const & pose,
 	core::Vector const & center,
 	core::Size const & ligand_chain_id_to_exclude
-); */
+);
 
 /// @brief Make a grid around the specified point with attractive (negative)
-/// and repulsive (positive) values for all heavy atoms not in ligand_chain_id_to_exclude
+/// and repulsive (positive) values for all heavy atoms not in ligand_chain_ids_to_exclude
 utility::pointer::owning_ptr<core::grid::CartGrid<int> > make_atr_rep_grid_without_ligands(
 	core::pose::Pose const & pose,
 	core::Vector const & center,

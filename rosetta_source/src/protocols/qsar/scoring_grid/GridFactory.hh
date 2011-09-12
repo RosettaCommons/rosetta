@@ -57,10 +57,8 @@ public:
 
 	void factory_register(GridCreatorOP creator);
 
-	///@brief create Grid given identifying string
-	GridBaseOP new_grid(std::string const &) const;
-
-	//GridBaseOP newGrid(TagPtr const);
+	///@brief create Grid given grid tag
+	GridBaseOP new_grid(utility::tag::TagPtr const tag) const;
 
 private:
 	GridFactory();

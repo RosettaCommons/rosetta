@@ -20,6 +20,9 @@
 #include <protocols/moves/Mover.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <protocols/moves/DataMap.fwd.hh>
+#include <protocols/filters/Filter.fwd.hh>
 
 namespace protocols {
 namespace qsar {
@@ -27,26 +30,21 @@ namespace qsar {
 class qsarMover : public protocols::moves::Mover
 {
 public:
-	qsarMover(core::Real width, core::Real resolution);
-	void set_chain(std::string chain_id);
+	qsarMover();
 	//qsarMover(core::Real width, core::Real resolution);
-	void add_grid(std::string grid_name);
-	void write_all_grids(std::string prefix);
-	std::map<std::string,core::Real> get_cached_scores();
 	virtual void apply(core::pose::Pose & pose);
-//	virtual void parse_my_tag(utility::tag::TagPtr const tag,
-//			moves::DataMap & data,
-//			filters::Filters_map const& filters,
-//			Movers_map const & movers,
-//			core::pose::Pose const & pose)
+	virtual void parse_my_tag(utility::tag::TagPtr const tag,
+			moves::DataMap & data,
+			filters::Filters_map const& filters,
+			moves::Movers_map const & movers,
+			core::pose::Pose const & pose
+	);
 	virtual std::string get_name() const;
 
 private:
-	scoring_grid::GridManagerOP grid_manager_;
 	qsarMapOP qsar_map_;
-	//core::conformation::ResidueOP current_ligand_;
-	std::string chain_id_;
-	utility::vector1<std::string> grids_to_make_;
+	std::string chain_;
+	utility::vector1<std::string>  grids_to_use_;
 	bool initialize_;
 };
 

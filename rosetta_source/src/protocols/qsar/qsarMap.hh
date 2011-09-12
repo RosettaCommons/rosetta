@@ -94,7 +94,7 @@ private:
 	std::string map_name_;
 	std::map<std::string,qsarPointOP> qsar_map_;
 	std::multimap<std::string, qsarPointOP> type_map_;
-	std::multimap <core::Size,qsarPointOP> atom_map_;
+	std::multimap<core::Size,qsarPointOP> atom_map_;
 
 	core::conformation::ResidueOP residue_;
 

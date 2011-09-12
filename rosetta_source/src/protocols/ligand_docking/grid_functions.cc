@@ -340,49 +340,9 @@ utility::pointer::owning_ptr<core::grid::CartGrid<int> > make_atr_rep_grid_witho
 	core::Size const & ligand_chain_id_to_exclude
 )
 {
-	TR << "make_atr_rep_grid_with_ligands"<<std::endl;
-	using namespace core;
-	int const num_pts = 160;
-	Real const resol = 0.25;
-	Real const grid_halfwidth = (num_pts * resol) / 2.0;
-	Real const atr_rad = 4.75; // optimal contact distance <= 4A for most atom pairs (but we're ignoring H)
-	Real const rep_rad = 2.25; // don't want to exclude H-bonds (~2.8A heavy-heavy) or make clefts too narrow
-
-	// Designer of this class did not believe in RAII:
-	utility::pointer::owning_ptr<core::grid::CartGrid<int> > grid = new grid::CartGrid<int>();
-	grid->setBase(
-		center.x() - grid_halfwidth,
-		center.y() - grid_halfwidth,
-		center.z() - grid_halfwidth
-	);
-	grid->setDimensions(num_pts, num_pts, num_pts, resol, resol, resol);
-	grid->setupZones();
-	grid->zero();
-
-	// Set attractive zones around all heavy atoms -- assume most ligand atoms
-	// will be near *something*, and most sidechains will stay put.
-	for(Size r = 1, r_end = pose.total_residue(); r <= r_end; ++r) {
-		conformation::Residue const & rsd = pose.residue(r);
-		if( rsd.chain() == ligand_chain_id_to_exclude ) continue;
-		for(Size a = 1, a_end = rsd.nheavyatoms(); a <= a_end; ++a)
-		{
-			set_sphere(*grid, rsd.xyz(a), atr_rad, -1);
-		}
-	}
-
-	// Set neutral core around each sidechain heavy atom, as MOST of these stay put.
-	for(Size r = 1, r_end = pose.total_residue(); r <= r_end; ++r) {
-		conformation::Residue const & rsd = pose.residue(r);
-		if( !rsd.is_protein() ) continue;
-		for(Size a = rsd.first_sidechain_atom(), a_end = rsd.nheavyatoms(); a <= a_end; ++a)
-		{
-			set_sphere(*grid, rsd.xyz(a), rep_rad, 0);
-		}
-	}
-
-	set_repulsive_bb_cores(grid, pose, rep_rad);
-
-	return grid;
+	utility::vector1<core::Size> ligand_chain_ids_to_exclude;
+	ligand_chain_ids_to_exclude.push_back(ligand_chain_id_to_exclude);
+	return make_atr_rep_grid_without_ligands(pose, center, ligand_chain_ids_to_exclude);
 }
 
 /// @brief Make a grid around the specified point with attractive (negative)
@@ -419,7 +379,7 @@ utility::pointer::owning_ptr<core::grid::CartGrid<int> > make_atr_rep_grid_witho
 				ligand_chain_ids_to_exclude.begin(),
 				ligand_chain_ids_to_exclude.end(),
 				rsd.chain()
-			) ==  ligand_chain_ids_to_exclude.end()
+			) !=  ligand_chain_ids_to_exclude.end()
 		) {
 			continue;
 		}
@@ -432,11 +392,26 @@ utility::pointer::owning_ptr<core::grid::CartGrid<int> > make_atr_rep_grid_witho
 	// Set neutral core around each sidechain heavy atom, as MOST of these stay put.
 	for(Size r = 1, r_end = pose.total_residue(); r <= r_end; ++r) {
 		conformation::Residue const & rsd = pose.residue(r);
-		if( !rsd.is_protein() ) continue;
-		for(Size a = rsd.first_sidechain_atom(), a_end = rsd.nheavyatoms(); a <= a_end; ++a)
-		{
-			set_sphere(*grid, rsd.xyz(a), rep_rad, 0);
+		if( find(
+				ligand_chain_ids_to_exclude.begin(),
+				ligand_chain_ids_to_exclude.end(),
+				rsd.chain()
+			) !=  ligand_chain_ids_to_exclude.end()
+		) {
+			continue;
 		}
+		if( rsd.is_protein() ){
+			for(Size a = rsd.first_sidechain_atom(), a_end = rsd.nheavyatoms(); a <= a_end; ++a)
+			{
+				set_sphere(*grid, rsd.xyz(a), rep_rad, 0);//ligand can run into side-chains, they'll be repacked
+			}
+		}else{
+			for(Size a = 1, a_end = rsd.nheavyatoms(); a <= a_end; ++a)
+			{
+				set_sphere(*grid, rsd.xyz(a), rep_rad, 1); //ligand shouldn't run into other ligands
+			}
+		}
+		// else don't add this ligand to the grid
 	}
 
 	set_repulsive_bb_cores(grid, pose,rep_rad);

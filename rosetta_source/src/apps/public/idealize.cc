@@ -57,7 +57,6 @@ int
 main( int argc, char * argv [] )
 {
 	using namespace protocols;
-	using namespace protocols::jobdist;
 	using namespace protocols::moves;
 	using basic::options::option;
 	using namespace basic::options;
@@ -88,7 +87,7 @@ main( int argc, char * argv [] )
 		mover = seqmov;
 	}
 
-	main_plain_mover( *mover );
+	protocols::jobdist::main_plain_mover( *mover );
 
 	return 0;
 }

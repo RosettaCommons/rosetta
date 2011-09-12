@@ -54,7 +54,7 @@ std::string TransformCreator::mover_name()
 	return "Transform";
 }
 
-Transform::Transform(): Mover("Transform"), grid_manager_(0), transform_info_()
+Transform::Transform(): Mover("Transform"), transform_info_()
 {
 
 }
@@ -100,16 +100,6 @@ void Transform::parse_my_tag
 	if ( ! tag->hasOption("angle") ) utility_exit_with_message("'Transform' mover requires angle tag");
 	if ( ! tag->hasOption("cycles") ) utility_exit_with_message("'Transform' mover requires cycles tag");
 	if (!tag->hasOption("temperature")) utility_exit_with_message("'Transform' mover requires temperature tag");
-	if(data_map.has("scoringgrid","default"))
-	{
-		grid_manager_ = data_map.get<qsar::scoring_grid::GridManager *>("scoringgrid","default");
-	}
-	else
-	{
-		utility_exit_with_message("ERROR: you are using Transform without specifying a GridManger");
-
-		//grid_manager_ = new qsar::scoring_grid::GridManager(40.0, 0.25);
-	}
 
 	transform_info_.chain = tag->getOption<std::string>("chain");
 	//std::string distribution_str = tag->getOption<std::string>("distribution");
@@ -123,25 +113,27 @@ void Transform::parse_my_tag
 
 void Transform::apply(core::pose::Pose & pose)
 {
+	qsar::scoring_grid::GridManager* grid_manager(qsar::scoring_grid::GridManager::get_instance());
+
 	assert(transform_info_.chain.size() == 1);
 	transform_info_.chain_id = core::pose::get_chain_id_from_chain(transform_info_.chain, pose);
 	transform_info_.jump_id = core::pose::get_jump_id_from_chain_id(transform_info_.chain_id, pose);
 	core::Size const begin(pose.conformation().chain_begin(transform_info_.chain_id));
 	core::Vector const center(protocols::geometry::downstream_centroid_by_jump(pose, transform_info_.jump_id));
-	assert(grid_manager_ != 0); //something has gone hopelessly wrong if this triggers
+	assert(grid_manager != 0); //something has gone hopelessly wrong if this triggers
 
 
-	if(!grid_manager_->is_qsar_map_attached())
+	if(!grid_manager->is_qsar_map_attached())
 	{
 		core::conformation::ResidueOP residue = new core::conformation::Residue(pose.residue(begin));
 		qsar::qsarMapOP qsar_map(new qsar::qsarMap("default",residue));
 		if(!qsar_map->fill_from_mol_data(residue->type().get_mol_data()))
 		{
-			utility::vector1<std::string> grid_names( grid_manager_->get_grid_names() );
+			utility::vector1<std::string> grid_names( grid_manager->get_grid_names() );
 			qsar_map->fill_with_value(1,grid_names);
 		}
 		//		qsar_map->fill_with_value(1);
-		grid_manager_->set_qsar_map(qsar_map);
+		grid_manager->set_qsar_map(qsar_map);
 	}
 
 	core::conformation::Residue original_residue = pose.residue(begin);
@@ -149,11 +141,11 @@ void Transform::apply(core::pose::Pose & pose)
 	jd2::JobOP current_job = protocols::jd2::JobDistributor::get_instance()->current_job();
 	std::string tag = current_job->input_tag();
 
-	grid_manager_->initialize_all_grids(center);
-	grid_manager_->update_grids(pose,center,tag);
+	grid_manager->initialize_all_grids(center);
+	grid_manager->update_grids(pose,center,tag);
 
 	core::pose::Pose best_pose(pose);
-	core::Real best_score(grid_manager_->total_score(original_residue));
+	core::Real best_score(grid_manager->total_score(original_residue));
 	core::Real temperature = transform_info_.temperature;
 	core::Vector original_center(original_residue.xyz(original_residue.nbr_atom()));
 
@@ -167,7 +159,7 @@ void Transform::apply(core::pose::Pose & pose)
 		//delete residue;
 		core::conformation::Residue residue(pose.residue(begin));
 
-		core::Real current_score = grid_manager_->total_score(residue);
+		core::Real current_score = grid_manager->total_score(residue);
 		core::Real const boltz_factor((best_score-current_score)/temperature);
 		core::Real const probability = std::exp( boltz_factor ) ;
 		core::Vector new_center(residue.xyz(residue.nbr_atom()));

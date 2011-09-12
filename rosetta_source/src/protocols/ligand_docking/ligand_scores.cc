@@ -143,10 +143,16 @@ append_ligand_travel(
 void append_ligand_grid_scores(
 		core::Size jump_id,
 		protocols::jd2::JobOP job,
-		core::pose::Pose const & after,
-		qsar::scoring_grid::GridManagerOP grid_manager
+		core::pose::Pose const & after
 )
 {
+	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
+
+	if (grid_manager->size()==0){
+		ligand_scores_tracer << "skipping 'append ligand grid scores'. No grids used.";
+		return;
+	}
+
 	core::Size const chain_id = core::pose::get_chain_id_from_jump_id(jump_id,after);
 	core::Real total_score = grid_manager->total_score(after,chain_id);
 	std::map<std::string,core::Real> grid_scores(grid_manager->get_cached_scores());

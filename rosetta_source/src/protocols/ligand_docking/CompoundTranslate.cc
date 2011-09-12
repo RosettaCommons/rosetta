@@ -116,7 +116,7 @@ CompoundTranslate::parse_my_tag(
 		else utility_exit_with_message("'randomize_order' option takes arguments 'true' or 'false'");
 	}
 	{// parsing allow_overlap tag
-		std::string allow_overlap_string= tag->getOption<std::string>("randomize_order");
+		std::string allow_overlap_string= tag->getOption<std::string>("allow_overlap");
 		if(allow_overlap_string == "true" || allow_overlap_string == "True")
 			allow_overlap_= true;
 		else if(allow_overlap_string == "false" || allow_overlap_string == "False")

@@ -20,7 +20,7 @@
 #include <core/conformation/find_neighbors.hh>
 #include <basic/database/open.hh>
 #include <numeric/interpolation/util.hh>
-
+#include <utility/tag/Tag.hh>
 
 namespace protocols {
 namespace qsar {
@@ -31,9 +31,15 @@ std::string VdwGridCreator::keyname() const
 	return VdwGridCreator::grid_name();
 }
 
-GridBaseOP VdwGridCreator::create_grid() const
+GridBaseOP VdwGridCreator::create_grid(utility::tag::TagPtr const tag) const
 {
-	return new VdwGrid;
+	if (tag->hasOption("weight")){
+		return new VdwGrid( tag->getOption<core::Real>("weight") );
+	}else{
+		return new VdwGrid();
+	}
+	// This is impossible
+	return NULL;
 }
 
 std::string VdwGridCreator::grid_name()

@@ -10,6 +10,7 @@
 /// @file   /git/src/protocols/qsar/scoring_grid/AtrGrid.cc
 /// @author Sam DeLuca
 
+#include <utility/tag/Tag.hh>
 #include <protocols/qsar/scoring_grid/AtrGrid.hh>
 #include <protocols/qsar/scoring_grid/AtrGridCreator.hh>
 #include <core/conformation/Residue.hh>
@@ -23,9 +24,15 @@ std::string AtrGridCreator::keyname() const
 	return AtrGridCreator::grid_name();
 }
 
-GridBaseOP AtrGridCreator::create_grid() const
+GridBaseOP AtrGridCreator::create_grid(utility::tag::TagPtr const tag) const
 {
-	return new AtrGrid;
+	if (tag->hasOption("weight")){
+		return new AtrGrid( tag->getOption<core::Real>("weight") );
+	}else{
+		return new AtrGrid();
+	}
+	// This is impossible
+	return NULL;
 }
 
 std::string AtrGridCreator::grid_name()

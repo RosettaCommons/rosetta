@@ -120,7 +120,6 @@ private:
 			core::pose::Pose & local_pose) const;
 */
 	Rotate_info rotate_info_;
-	qsar::scoring_grid::GridManagerOP grid_manager_;
 }; // class Rotate
 
 /// Convenience Functions for use with Rotate

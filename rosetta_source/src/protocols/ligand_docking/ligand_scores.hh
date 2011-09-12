@@ -54,9 +54,7 @@ void
 append_ligand_grid_scores(
 		core::Size jump_id,
 		protocols::jd2::JobOP job,
-		core::pose::Pose const & after,
-		qsar::scoring_grid::GridManagerOP grid_manager
-
+		core::pose::Pose const & after
 );
 
 void

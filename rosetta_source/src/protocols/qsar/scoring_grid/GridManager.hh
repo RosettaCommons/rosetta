@@ -15,6 +15,7 @@
 
 #include <map>
 #include <utility/pointer/ReferenceCount.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <protocols/qsar/qsarMap.hh>
 #include <protocols/qsar/scoring_grid/GridBase.hh>
 #include <protocols/qsar/scoring_grid/GridManager.fwd.hh>
@@ -24,16 +25,18 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-class GridManager: public utility::pointer::ReferenceCount
+class GridManager
 {
 public:
 	static GridManager* get_instance();
-	///@brief set width and resolution (must be done before initialization
-	void set_dimensions(core::Real width, core::Real resolution);
-	///@brief make a new grid given the name of a grid type, and insert it into the grid manager
-	void make_new_grid(std::string grid_name);
+	///@brief set width (must be done before initialization)
+	void set_width(core::Real width);
+	///@brief set resolution (must be done before initialization)
+	void set_resolution(core::Real resolution);
+	///@brief make a new grid from grid tag, and insert it into the grid manager
+	void make_new_grid(utility::tag::TagPtr const tag);
 	///@brief insert a grid pointer into the grid manager
-	void insert_grid(GridBaseOP grid);
+	void insert_grid(std::string const name,GridBaseOP const grid);
 	///@brief set the qsar_map
 	void set_qsar_map(qsarMapOP qsar_map);
 	///@brief is a qsar map attached to the grid manager?
@@ -74,7 +77,6 @@ private:
 
 	std::map<std::string,GridBaseOP> grid_map_;
 	std::map<std::string,core::Real> score_map_;
-	std::map<std::string,core::Real> weight_map_;
 	std::string last_tag_;
 	core::Real width_;
 	core::Real resolution_;

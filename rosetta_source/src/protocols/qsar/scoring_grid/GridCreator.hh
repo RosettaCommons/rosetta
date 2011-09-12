@@ -14,9 +14,10 @@
 #ifndef INCLUDED_protocols_qsar_scoring_grid_GridCreator_HH_
 #define INCLUDED_protocols_qsar_scoring_grid_GridCreator_HH_
 
+#include <core/types.hh>
 #include <protocols/qsar/scoring_grid/GridBase.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
-
+#include <utility/tag/Tag.fwd.hh>
 #include <string>
 
 namespace protocols {
@@ -31,8 +32,10 @@ public:
 	GridCreator();
 	virtual ~GridCreator();
 
-	virtual GridBaseOP create_grid() const = 0;
+	virtual GridBaseOP create_grid(utility::tag::TagPtr const tag) const = 0;
 	virtual std::string keyname() const = 0;
+private:
+	core::Real weight_;
 };
 
 typedef utility::pointer::owning_ptr<GridCreator> GridCreatorOP;

@@ -67,7 +67,7 @@ public:
 	*/
 
 private:
-	qsar::scoring_grid::GridManagerOP grid_manager_;
+	//qsar::scoring_grid::GridManagerOP grid_manager_;
 	Transform_info transform_info_;
 
 private:

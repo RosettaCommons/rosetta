@@ -43,44 +43,31 @@ void ScoringGridLoader::load_data(
 	using namespace utility::tag;
 	typedef utility::vector0< TagPtr > TagPtrs;
 
-	TagPtrs const TO_tags( tag->getTags() );
+	/// Setup the scoring grid_manager
 
-	core::Real width = 40.0;
-	core::Real resolution = 0.25;
-	utility::vector1<std::string> grids_to_add;
+	//core::Real width = 40.0;
+	//core::Real resolution = 0.25;
 
-	for( TagPtrs::const_iterator tp( TO_tags.begin() ), tp_e( TO_tags.end() ); tp != tp_e; ++tp ) {
-		std::string const type( (*tp)->getName());
-		if(type == "dimensions") {
-			if((*tp)->hasOption("width") && (*tp)->hasOption("resolution")) {
-				width = (*tp)->getOption<core::Real>("width");
-				resolution = (*tp)->getOption<core::Real>("resolution");
-			} else {
-				utility_exit_with_message("you must specify both width and resolution");
-			}
-		} else if(type=="grid") {
-			if ( ! (*tp)->hasOption("grid_type") ) {
-				utility_exit_with_message("you need to specify a grid type");
-			}
-			std::string grid_name((*tp)->getOption<std::string>("grid_type"));
-			grids_to_add.push_back(grid_name);
-		}
+	qsar::scoring_grid::GridManager* grid_manager(qsar::scoring_grid::GridManager::get_instance());
+
+	if( tag->hasOption("width") ) {
+		grid_manager->set_width(tag->getOption<core::Real>("width"));
+	}
+	if( tag->hasOption("resolution") ){
+		grid_manager->set_resolution(tag->getOption<core::Real>("resolution"));
 	}
 
-	if(grids_to_add.size() == 0) {
+	/// Add grids to the scoring grid manager
+
+	TagPtrs const grid_tags( tag->getTags() );
+	if (grid_tags.size()==0){
 		TR <<"WARNING WARNING grid manager will be empty" <<std::endl;
 	}
 
-	qsar::scoring_grid::GridManagerOP grid_manager(qsar::scoring_grid::GridManager::get_instance());
-	grid_manager->set_dimensions(width, resolution);
-	//qsar::scoring_grid::GridManagerOP grid_manager(new qsar::scoring_grid::GridManager(width,resolution));
-	utility::vector1<std::string>::iterator current_grid;
-	for(current_grid = grids_to_add.begin();current_grid != grids_to_add.end(); ++current_grid) {
-		grid_manager->make_new_grid(*current_grid);
-		TR.Debug <<"adding grid: " <<*current_grid <<std::endl;
+	for( TagPtrs::const_iterator tp( grid_tags.begin() ), tp_e( grid_tags.end() ); tp != tp_e; ++tp ) {
+		grid_manager->make_new_grid(*tp);
 	}
 
-	data.add( "scoringgrid", "default", grid_manager );
 	TR.flush();
 }
 

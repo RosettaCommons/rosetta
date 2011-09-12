@@ -14,6 +14,7 @@
 #define INCLUDED_protocols_qsar_scoring_grid_AtrGridCreator_HH_
 
 #include <protocols/qsar/scoring_grid/GridCreator.hh>
+#include <utility/tag/Tag.fwd.hh>
 
 namespace protocols {
 namespace qsar {
@@ -22,7 +23,7 @@ namespace scoring_grid {
 class AtrGridCreator : public GridCreator
 {
 public:
-	virtual GridBaseOP create_grid() const;
+	virtual GridBaseOP create_grid(utility::tag::TagPtr const tag) const;
 	virtual std::string keyname() const;
 	static std::string grid_name();
 };

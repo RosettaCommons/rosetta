@@ -86,10 +86,7 @@ SlideTogether::parse_my_tag(
 	if ( tag->getName() != "SlideTogether" ) utility_exit_with_message("This should be impossible");
 	if ( ! tag->hasOption("chain") ) utility_exit_with_message("'SlideTogether' mover requires chain tag");
 
-	chain_= tag->getOption<std::string>("chain").c_str() ;
-
-	//parse_score_function( tag, datamap, filters, movers, pose );
-	//parse_task_operations( tag, datamap, filters, movers, pose );
+	chain_= tag->getOption<std::string>("chain");//.c_str() ;
 }
 
 void

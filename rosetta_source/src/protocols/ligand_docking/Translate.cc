@@ -68,8 +68,7 @@ Translate::Translate():
 		//utility::pointer::ReferenceCount(),
 		Mover("Translate"),
 		translate_info_(),
-		chain_ids_to_exclude_(),
-		grid_manager_(0)
+		chain_ids_to_exclude_()
 {}
 
 Translate::Translate(Translate const & that):
@@ -111,11 +110,6 @@ Translate::parse_my_tag(
 	if ( ! tag->hasOption("angstroms") ) utility_exit_with_message("'Translate' mover requires angstroms tag");
 	if ( ! tag->hasOption("cycles") ) utility_exit_with_message("'Translate' mover requires cycles tag");
 
-	if(data_map.has("scoringgrid","default"))
-	{
-		grid_manager_ = data_map.get<qsar::scoring_grid::GridManager *>("scoringgrid","default");
-	}
-
 	translate_info_.chain = tag->getOption<std::string>("chain");
 	{
 		std::string distribution_str= tag->getOption<std::string>("distribution");
@@ -139,22 +133,24 @@ void Translate::apply(core::pose::Pose & pose) {
 				chain_ids_to_exclude_.push_back(chain_id);
 	}
 	core::Vector const center = protocols::geometry::downstream_centroid_by_jump(pose, jump_id);
-	if(grid_manager_ == 0)
+
+	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
+	if(grid_manager->size() == 0)
 	{
 		utility::pointer::owning_ptr<core::grid::CartGrid<int> > const grid = make_atr_rep_grid_without_ligands(pose, center, chain_ids_to_exclude_);
 		translate_ligand(grid, jump_id, pose);// move ligand to a random point in binding pocket
 	}else
 	{
-		if(!grid_manager_->is_qsar_map_attached())
+		if(!grid_manager->is_qsar_map_attached())
 		{
-			utility::vector1<std::string> grid_names( grid_manager_->get_grid_names() );
+			utility::vector1<std::string> grid_names( grid_manager->get_grid_names() );
 			core::conformation::ResidueOP residue = new core::conformation::Residue(pose.residue(begin));
 			qsar::qsarMapOP qsar_map(new qsar::qsarMap("default",residue));
 			qsar_map->fill_with_value(1,grid_names);
-			grid_manager_->set_qsar_map(qsar_map);
+			grid_manager->set_qsar_map(qsar_map);
 		}
-		grid_manager_->initialize_all_grids(center);
-		grid_manager_->update_grids(pose,center);
+		grid_manager->initialize_all_grids(center);
+		grid_manager->update_grids(pose,center);
 		translate_ligand(jump_id,pose,begin);
 	}
 }
@@ -221,6 +217,8 @@ void Translate::translate_ligand(core::Size const jump_id,core::pose::Pose & pos
 	core::pose::Pose  orig_pose(pose);
 	translate_tracer.Debug << "time to cycle: " << translate_info_.cycles << std::endl;
 	core::Real best_score = 1000000;
+
+	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
 	for (Size cycle = 0; cycle < translate_info_.cycles; ++cycle) {
 		core::Real pick_move(numeric::random::gaussian());
 		if(pick_move >= 0.50)
@@ -233,7 +231,7 @@ void Translate::translate_ligand(core::Size const jump_id,core::pose::Pose & pos
 			translate_tracer.Trace <<"Doing a conformer selection move" <<std::endl;
 			conformer_mover->apply(pose);
 		}
-		core::Real score(grid_manager_->total_score(residue));
+		core::Real score(grid_manager->total_score(residue));
 		if(score <= best_score)
 		{
 			best_score = score;
