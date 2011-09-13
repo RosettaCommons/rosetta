@@ -170,6 +170,7 @@ class BaseSampleSource:
 
         # Submit condor job and add condor_job_id to the global list of jobs daemon should wait for
         o = commands.getoutput('condor_submit %s' % script_fname)
+	print 'Condor submit output:', o
         condor_job_id = int( o.split()[-1][:-1] )
         f = file('%(workdir)s/condor_job_ids' % self.mvars, 'a');  f.write(' %s ' % condor_job_id);  f.close()
 
