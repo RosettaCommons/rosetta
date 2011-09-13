@@ -23,7 +23,7 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/Tracer.hh>
 #include <basic/datacache/CacheableString.hh>
-#include <protocols/enzdes/EnzConstraintIO.hh> //function for reading cstfiles
+#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //function for reading cstfiles
 //#include <devel/enzdes/DesignSilentStruct.hh>
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/jobdist/JobDistributors.hh>
@@ -82,11 +82,6 @@ main( int argc, char * argv [])
 
 
 	protocols::enzdes::SecondaryMatchProtocolOP secmatch_protocol = new protocols::enzdes::SecondaryMatchProtocol();
-	//std::string scorefile_name("");
-
-	if( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ){
-		secmatch_protocol->cst_io()->read_enzyme_cstfile(basic::options::option[basic::options::OptionKeys::enzdes::cstfile]);
-	}
 
 	basic::options::option[basic::options::OptionKeys::run::preserve_header ].value(true);
 
