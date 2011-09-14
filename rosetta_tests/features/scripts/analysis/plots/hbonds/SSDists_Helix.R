@@ -9,7 +9,7 @@
 
 check_setup()
 
-plot_id <- "SSDists_Helix_seqsep_gte1"
+plot_id <- "SSDists_Helix_seqsep_gt1"
 
 # new idiom: union select
 sele <-"
@@ -30,7 +30,7 @@ WHERE
   dist.resNum2 = r2ss.resNum AND
   dist.resNum1 + 1 != dist.resNum2 AND
   r1ss.dssp = 'H' AND r2ss.dssp = 'H'
-LIMIT 1000000;
+LIMIT 500000;
 SELECT
   'N' as at1, 'N' as at2, N_N_dist as dist FROM ee_atpair_dists
 UNION
@@ -98,7 +98,7 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +
 	facet_grid(at1 ~ at2) +
-	opts(title = "Backbone atom atom distances involving helix residues\nnormalized for equal weight per unit distance") +
+	opts(title = "Backbone atom atom distances involving helix residues (seq. sep. > 1)\nnormalized for equal weight per unit distance") +
 	scale_y_log10("FeatureDensity", limits=c(1e-3,1e0)) +
 	scale_x_continuous(expression(paste('Atom Atom Distances (', ring(A), ')')), limits=c(1.5,7), breaks=2:7)
 

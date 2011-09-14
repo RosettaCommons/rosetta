@@ -9,7 +9,7 @@
 
 check_setup()
 
-plot_id <- "SSDists_Sheet_seqsep_gte1"
+plot_id <- "SSDists_Sheet_seqsep_gt1"
 
 # new idiom: union select
 sele <-"
@@ -29,7 +29,8 @@ WHERE
   dist.resNum1 = r1ss.resNum AND
   dist.resNum2 = r2ss.resNum AND
   dist.resNum1 + 1 != dist.resNum2 AND
-  r1ss.dssp = 'E' AND r2ss.dssp = 'E';
+  r1ss.dssp = 'E' AND r2ss.dssp = 'E'
+LIMIT 500000;
 SELECT
   'N' as at1, 'N' as at2, N_N_dist as dist FROM ee_atpair_dists
 UNION
@@ -95,7 +96,7 @@ p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +
 	facet_grid(at1 ~ at2) +
-	opts(title = "Backbone atom atom distances involving beta-sheet residues\nnormalized for equal weight per unit distance") +
+	opts(title = "Backbone atom atom distances involving beta-sheet residues (seq. sep. > 1)\nnormalized for equal weight per unit distance") +
 	scale_y_log10("FeatureDensity", limits=c(1e-3,1e0)) +
 	scale_x_continuous(expression(paste('Atom Atom Distances (', ring(A), ')')), limits=c(1.5,7), breaks=2:7)
 
@@ -104,43 +105,3 @@ if(nrow(sample_sources) <= 3){
 }
 
 save_plots(plot_id, sample_sources, output_dir, output_formats)
-
-
-#sele <-
-#SELECT
-#  r1conf.secstruct, r2conf.secstruct,
-#  dist.N_N_dist,   dist.N_Ca_dist,  dist.N_C_dist,   dist.N_O_dist,
-#  dist.Ca_N_dist,  dist.Ca_Ca_dist, dist.Ca_C_dist,  dist.Ca_O_dist,
-#  dist.C_N_dist,   dist.C_Ca_dist,  dist.C_C_dist,   dist.C_O_dist,
-#  dist.O_N_dist,   dist.O_Ca_dist,  dist.O_C_dist,   dist.O_O_dist
-#FROM
-#  hbond_sites as acc_site1,
-#  hbond_sites as don_site1,
-#  hbonds as hb1,
-#  hbond_sites as acc_site2,
-#  hbond_sites as don_site2,
-#  hbonds as hb2,
-#  protein_backbone_atom_atom_pairs as dist,
-#	protein_residue_conformation as r1conf,
-#	protein_residue_conformation as r2conf
-#WHERE
-#  acc_site1.struct_id = don_site1.struct_id AND
-#  hb1.struct_id = acc_site1.struct_id AND
-#  hb1.acc_id = acc_site1.site_id AND
-#  hb1.don_id = don_site1.site_id AND
-#  acc_site1.resNum = don_site1.resNum + 4 AND
-#
-#  acc_site2.struct_id = don_site2.struct_id AND
-#  hb2.struct_id = acc_site2.struct_id AND
-#  hb2.acc_id = acc_site2.site_id AND
-#  hb2.don_id = don_site2.site_id AND
-#  acc_site2.resNum = don_site2.resNum + 4 AND
-#
-#  don_site1.resNum = acc_site2.resnum AND
-#  hb1.struct_id = hb2.struct_id AND
-#
-#  dist.struct_id = hb1.struct_id AND
-#  ( dist.resNum1 = don_site1.resNum OR dist.resNum2 = don_site1.resNum )
-#
-#LIMIT 10000;
-

@@ -44,12 +44,12 @@ dens <- estimate_density_1d(
 
 plot_id <- "hbond_energy_chem_type"
 p <- ggplot(data=dens) + theme_bw() +
-	geom_line(aes(x=x, y=y, colour=sample_source)) +
+	geom_line(aes(x=x, y=log(y+1), colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +
 	facet_grid(don_chem_type ~ acc_chem_type) +
 	opts(title = "Hydrogen Bond Energy by Chemical Type") +
 	scale_x_continuous("Rosetta Energy Units (Unweighted)", limits=c(-1.5,0), breaks=c(-1.5, -1, -.5)) +
-	scale_y_continuous("Feature Density", breaks=c(0,1,2,3))
+	scale_y_continuous("log(Feature Density + 1)")
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }

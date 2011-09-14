@@ -145,4 +145,3 @@ save_plots(plot_id, sample_sources, output_dir, output_formats)
 #  ( dist.resNum1 = don_site1.resNum OR dist.resNum2 = don_site1.resNum )
 #
 #LIMIT 10000;
-

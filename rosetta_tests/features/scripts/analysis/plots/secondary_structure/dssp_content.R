@@ -21,6 +21,9 @@ GROUP BY
   ss.dssp;"
 
 f <- query_sample_sources(sample_sources, sele)
+
+# filter out(?) bad data
+f <- f[f$counts > 10,]
 f$fraction <- f$counts / f$num_res
 
 f$dssp_description <- NA
