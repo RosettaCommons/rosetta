@@ -59,6 +59,9 @@ public:
 		tags.push_back( "helix_hb_06_2009" );
 		tags.push_back( "newOH_params" );
 		tags.push_back( "His_Phil_fix" );
+		tags.push_back( "extended_BAH_params" );
+		tags.push_back( "newCHI_params" );
+		tags.push_back( "OLF_params" );
 		for( Size i = 1; i <= tags.size(); ++i ){
 			// Validate data integrity
 			HBondOptionsCOP hb_options(new HBondOptions( tags[i] ));

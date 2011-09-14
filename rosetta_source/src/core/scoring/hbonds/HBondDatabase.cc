@@ -75,7 +75,7 @@ namespace hbonds {
 
 HBondDatabase::HBondDatabase():
 	initialized_(false),
-	params_database_tag_(""), 
+	params_database_tag_(""),
 	HBFadeInterval_lookup_by_name_(),
 	HBFadeInterval_lookup_(),
 	AHdist_short_fade_lookup_(HB_EVAL_TYPE_COUNT, NULL),
@@ -212,14 +212,17 @@ HBondDatabase::initialize_HBFadeInterval()
 		utility_exit_with_message(message.str());
 	}
 
+	Size line_no(0);
 	string line;
 	vector1<string> tokens;
 	Size id;
 	string fade_interval_name;
+	bool smoothed;
 	Real min0, fmin, fmax, max0;
 	while ( getline( s, line ) ) {
+		++line_no;
 		tokens = string_split( line, ',');
-		Size ntokens = 7;
+		Size ntokens = 8;
 		if (tokens.size() != ntokens){
 			stringstream message;
 			message << "FadeInterval definition line does not have the expected number of fields " << endl;
@@ -231,13 +234,29 @@ HBondDatabase::initialize_HBFadeInterval()
 		Size i(1);
 		{ stringstream buf;buf.precision(16); buf << tokens[i]; i++; buf >> id; }
 		{ stringstream buf;buf.precision(16); buf << tokens[i]; i++; buf >> fade_interval_name; }
+		{
+			string junction_type;
+			stringstream buf; buf << tokens[i]; i++; buf >> junction_type;
+			if( junction_type == "smoothed" ){
+				smoothed = true;
+			} else if (junction_type == "piecewise_linear"){
+				smoothed = false;
+			} else {
+				stringstream message;
+				message
+					<< "On line " << HBFadeInterval_fname << ":" << line_no << ": '" << line << "'"
+					<< "the junction_type should be either 'smoothed' or 'piecewise_linear', "
+					<< "however it the unrecognized string '" << junction_type << "'." << endl;
+				utility_exit_with_message(message.str());
+			}
+		}
 		{ stringstream buf;buf.precision(16); buf << tokens[i]; i++; buf >> min0; }
 		{ stringstream buf;buf.precision(16); buf << tokens[i]; i++; buf >> fmin; }
 		{ stringstream buf;buf.precision(16); buf << tokens[i]; i++; buf >> fmax; }
 		{ stringstream buf;buf.precision(16); buf << tokens[i]; i++; buf >> max0; }
 
 		FadeIntervalOP fade_interval(
-			new FadeInterval(fade_interval_name, min0, fmin, fmax, max0));
+			new FadeInterval(fade_interval_name, min0, fmin, fmax, max0, smoothed));
 
 		if( HBFadeInterval_lookup_.size() + 1 != id ){
 			stringstream message;

@@ -40,21 +40,24 @@ FadeInterval::FadeInterval():
 	fmax_(0.0),
 	max0_(0.0),
 	dfade_min_(0.0),
-	dfade_max_(0.0)
+	dfade_max_(0.0),
+	smooth_(false)
 {}
 
 FadeInterval::FadeInterval(
 	Real const min0,
 	Real const fmin,
 	Real const fmax,
-	Real const max0) :
+	Real const max0,
+	bool const smooth) :
 	name_("UNKNOWN"),
 	min0_(min0),
 	fmin_(fmin),
 	fmax_(fmax),
 	max0_(max0),
 	dfade_min_(1.0/static_cast<double>(fmin-min0)),
-	dfade_max_(1.0/static_cast<double>(max0-fmax))
+	dfade_max_(1.0/static_cast<double>(max0-fmax)),
+	smooth_(smooth)
 {
 	assert(min0 <= fmin && fmin <= fmax && fmax <= max0);
 }
@@ -64,14 +67,16 @@ FadeInterval::FadeInterval(
 	Real const min0,
 	Real const fmin,
 	Real const fmax,
-	Real const max0) :
+	Real const max0,
+	bool const smooth) :
 	name_(name),
 	min0_(min0),
 	fmin_(fmin),
 	fmax_(fmax),
 	max0_(max0),
 	dfade_min_(1.0/static_cast<double>(fmin-min0)),
-	dfade_max_(1.0/static_cast<double>(max0-fmax))
+	dfade_max_(1.0/static_cast<double>(max0-fmax)),
+	smooth_(smooth)
 {
 	assert(min0 <= fmin && fmin <= fmax && fmax <= max0);
 }
@@ -86,10 +91,22 @@ FadeInterval::value_deriv(
 	if (x <= fmax_) {
 		if (x <= min0_) { val = deriv = 0.0; return; }       // in (-\infty, min0]
 		if (x >= fmin_) { val = 1.0; deriv = 0.0; return; }  // in [fmin, fmax]
-		deriv = dfade_min_; val = (x - min0_) * dfade_min_;  // in (min0,fmin)
+		if (smooth_){
+			double const z((x - min0_)* dfade_min_);
+			val = z*z*(3-2*z);
+			deriv = -6*z*(z-1)*dfade_min_;
+		} else {
+			deriv = dfade_min_; val = (x - min0_) * dfade_min_;  // in (min0,fmin)
+		}
 	} else {
 		if (x >= max0_) { val = deriv = 0.0; return; }       // in [max0, \infty)
-		deriv = -dfade_max_; val = (max0_ - x) * dfade_max_; // in (fmax,max0)
+		if (smooth_){
+			double const z((x - fmax_) * dfade_max_);
+			val = z*z*(2*z-3) + 1;
+			deriv = 6*z*(z-1)*dfade_max_;
+		} else {
+			deriv = -dfade_max_; val = (max0_ - x) * dfade_max_; // in (fmax,max0)
+		}
 	}
 }
 
@@ -101,10 +118,20 @@ FadeInterval::value(
 	if (x <= fmax_) {
 		if (x <= min0_) return 0.0;      // in (-\infty, min0]
 		if (x >= fmin_) return 1.0;      // in [fmin, fmax]
-		return (x - min0_) * dfade_min_; // in (min0,fmin)
+		if (smooth_){
+			double const z((x - min0_)* dfade_min_);
+			return z*z*(3.0-2.0*z);
+		} else {
+			return (x - min0_) * dfade_min_; // in (min0,fmin)
+		}
 	} else {
 		if (x >= max0_) return 0.0;      // in [max0, \infty)
-		return (max0_ - x) * dfade_max_; // in (fmax,max0)
+		if (smooth_){
+			double const z((x - fmax_) * dfade_max_);
+			return z*z*(2.0*z-3.0) + 1.0;
+		} else {
+			return (max0_ - x) * dfade_max_; // in (fmax,max0)
+		}
 	}
 }
 
@@ -139,6 +166,12 @@ FadeInterval::get_max0() const
 }
 
 bool
+FadeInterval::get_smooth() const
+{
+	return smooth_;
+}
+
+bool
 operator==(
 	FadeInterval const & a,
 	FadeInterval const & b)
@@ -147,7 +180,8 @@ operator==(
 		a.min0_ == b.min0_ &&
 		a.fmin_ == b.fmin_ &&
 		a.fmax_ == b.fmax_ &&
-		a.max0_ == b.max0_;
+		a.max0_ == b.max0_ &&
+		a.smooth_ == b.smooth_;
 }
 
 bool
@@ -171,7 +205,7 @@ void
 FadeInterval::show(
 	ostream & out ) const
 {
-	out << "(" << name_ << "; " << min0_ << ", " << fmin_ << ", " << fmax_ << ", " << max0_ << ")";
+	out << "(" << name_ << "; " << min0_ << ", " << fmin_ << ", " << fmax_ << ", " << max0_ << ")" << smooth_ ? " smoothed" : "";
 }
 
 } // hbonds

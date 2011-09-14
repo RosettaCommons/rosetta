@@ -32,7 +32,8 @@ namespace scoring {
 namespace hbonds {
 
 /////////////////////////////
-/// class FadeInterval
+/// Classic FadeInterval
+/////////////////////////////
 /// stores an "fading interval" [a b c d] with a <= b <= c <= d
 /// and computes the fraction of containment for x, which is defined to be
 /// 0 if x is outside of (a,d), 1 if x is inside of [b,c],
@@ -47,6 +48,46 @@ namespace hbonds {
 ///   if x == c == d and a < c then value = 1
 ///   if x == c == d and a == c then value = 0
 ///   In particular if a == b == c == d then for all x, value == deriv == 0
+///
+//////////////////////////////
+/// Smooth FadeInteval
+//////////////////////////////
+/// Rather than using a piecewise linear fading function,
+/// use a piecewise sigmoid function to have a continuous derivative.
+///
+/// Look for a canonical sigmoid function f(x) such that,
+///   f(0)  = 1    f(1)  = 0  // goes through the the knots
+///   f'(0) = 0    f'(1) = 0  // is horizontal at the knots
+///   a continuous differative
+///   f(x-.5)-.5 is odd       // symmetric
+///
+/// I claim, f(x) = 2x^3 - 3x^2 + 1, satisfies these constraints:
+///   f(0) = 2(0)^3 - 3(x)^2 + 1 = 1
+///   f(1) = 2(1)^3 - 3(1)^2 + 1 = 2 - 3 + 1 = 0
+///
+///   f'(x) = 6x^2 - 6x = 6x(x-1)
+///   f'(0) = 6(0)(0-1) = 0
+///   f'(1) = 6(1)(1-1) = 0
+///
+///   a function g(x) is odd if g(-x) = -g(x)
+///   f((-x)-.5)-.5 = 2(-x-.5)^3 - 3(-x-.5)^2 + 1 - .5
+///                 = -2x^3 - 6x^2 - 4.5x - .5
+///   -(f(x-.5)-.5) = -2(x-.5)^3 + 3(x-.5)^2 - 1 + .5
+///                 = -2x^3 - 6x^2 - 4.5x - .5
+///
+/// Given the knots --a-b---c-d-- transform f(x) to fill a-b and c-d
+/// to connect the linear regions.
+///
+///
+///   a-b region:
+///     let z(x) = (x-a)/(b-a) and z'(x) = 1/(b-a)
+///     use g(x) = 1-f(-z(x)) = -2z^3 + 3z^2
+///     and g'(x) = -6z(z-1)*z'(x)
+///   c-d region:
+///     let z(x) = (x-c)/(d-c) and z'(x) = 1/(d-c)
+///     use g(x) = f(z) = 2z^3 - 3z^2 + 1
+///     and g'(x) = 6z(z-1)*z'(x)
+///
 ////////////////////////////
 class FadeInterval : public utility::pointer::ReferenceCount {
 
@@ -59,14 +100,16 @@ public:
 		Real const min0,
 		Real const fmin,
 		Real const fmax,
-		Real const max0);
+		Real const max0,
+	  bool const smooth = false);
 
 	FadeInterval(
 		std::string const & name,
 		Real const min0,
 		Real const fmin,
 		Real const fmax,
-		Real const max0);
+		Real const max0,
+		bool const smooth = false);
 
 	void
 	value_deriv(
@@ -95,6 +138,8 @@ public:
 	Real
 	get_max0() const;
 
+	bool
+	get_smooth() const;
 
 	friend
 	bool
@@ -119,6 +164,7 @@ private:
 	Real const max0_;
 	double const dfade_min_;
 	double const dfade_max_;
+	bool const smooth_;
 
 };
 
