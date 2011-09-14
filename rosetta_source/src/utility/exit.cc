@@ -75,12 +75,13 @@ exit(
 	int const status
 )
 {
+  if ( ! message.empty() ) std::cerr << std::endl << "ERROR: " << message << std::endl;
+  std::cerr << "ERROR:: Exit from: " << file << " line: " << line << std::endl;
+  std::cerr.flush();
 #ifdef EXIT_THROWS_EXCEPTION
 	throw EXCN_utility_exit( message, file, line );
 #endif
-	if ( ! message.empty() ) std::cerr << std::endl << "ERROR: " << message << std::endl;
-	std::cerr << "ERROR:: Exit from: " << file << " line: " << line << std::endl;
-	std::cerr.flush();
+
 
 #ifdef USEMPI
 	MPI_Abort( MPI_COMM_WORLD, 911 );

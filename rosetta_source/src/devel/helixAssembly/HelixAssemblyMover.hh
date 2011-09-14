@@ -80,7 +80,7 @@ public:
 
         core::Real bb_score(core::pose::Pose & pose, core::Size unique_chain_num, core::scoring::ScoreFunctionOP & scorefxn);
 
-        utility::vector1<HelixAssemblyJob> apply(HelixAssemblyJob & job);
+        utility::vector1<HelixAssemblyJob> apply(HelixAssemblyJob & job, int rank);
 
 
 private:

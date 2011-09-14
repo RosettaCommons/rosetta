@@ -89,7 +89,7 @@ main( int argc, char * argv [] )
       vector1<int> freeProcessors;
       Size helices_to_add = option[ HelixAssembly::helices_to_add ];
 
-      TR << "library size: " << pdb_library.size() << endl;
+      cout << "library size: " << pdb_library.size() << endl;
 
       //Add all of the first-round jobs to the job queue
       for(Size i=1; i <= pdb_library.size(); ++i){
@@ -106,7 +106,7 @@ main( int argc, char * argv [] )
           temp_job.set_round(1);
           job_queue.push_back(temp_job);
       }
-      TR << "Done populating the job queue with " << job_queue.size() << " jobs." << endl;
+      cout << "Done populating the job queue with " << job_queue.size() << " jobs." << endl;
 
       //distribute initial jobs to all processors
       for(Size i=1; i < world.size(); ++i){
@@ -124,7 +124,7 @@ main( int argc, char * argv [] )
               world.send(i, 0, true);
               world.send(i, 0, boost::mpi::skeleton(temp_job));
               world.send(i, 0, boost::mpi::get_content(temp_job));
-              TR << "Job sent to node: " << i << endl;
+              cout << "Job sent to node: " << i << endl;
           }
           //if we have more processors than we have jobs, keep track of which processors are free (for use by jobs created later)
           else{
@@ -138,11 +138,11 @@ main( int argc, char * argv [] )
           int completed_node;
           world.recv(boost::mpi::any_source,0,completed_node);
 
-          TR << "Node " << completed_node << " finished a job" << endl;
+          cout << "Node " << completed_node << " finished a job" << endl;
 
           int num_new_jobs;
           world.recv(completed_node,0,num_new_jobs);
-          TR << "Node " << completed_node << " wants to add " << num_new_jobs << " new job(s)" << endl;
+          cout << "Node " << completed_node << " wants to add " << num_new_jobs << " new job(s)" << endl;
           vector1<HelixAssemblyJob> new_jobs;
           //receive all new jobs from completed node
           for(Size i=1; i<=num_new_jobs; ++i){
@@ -152,11 +152,11 @@ main( int argc, char * argv [] )
               new_jobs.push_back(temp_job);
           }
 
-          TR << "Added all the new jobs" << endl;
+          cout << "Added all the new jobs" << endl;
 
           for(Size i=1; i <= new_jobs.size(); ++i){
               if(new_jobs[i].get_round() <= option[HelixAssembly::helices_to_add]){
-                  TR << "job " << new_jobs[i].get_job_name() << " is on round " << new_jobs[i].get_round() <<
+                  cout << "job " << new_jobs[i].get_job_name() << " is on round " << new_jobs[i].get_round() <<
                       " of " << option[HelixAssembly::helices_to_add] << endl;
                   for(Size j=1; j <= pdb_library.size(); ++j){
                       //copy incomplete job and add a pose to search, then add to the queue
@@ -164,13 +164,20 @@ main( int argc, char * argv [] )
 
                       //only thing we should need to change about the job is the search structure, which only the head node knows
                       //we use an index here so that we don't need to hang onto the string forever (just-in-time loading).
-                      temp_job.set_search_index(i);
+                      temp_job.set_search_index(j);
                       temp_job.set_job_name(temp_job.get_job_name() + "_" + pdb_library[j].base());
                       job_queue.push_back(temp_job);
                   }
+                  //Incomplete job output for debugging purposes
+                  cout << "Outputting incomplete job " << new_jobs[i].get_job_name() << endl;
+                  utility::io::ozstream outputStream;
+                  outputStream.open(new_jobs[i].get_job_name() + "_" + to_string(job_id_counter) + "_bundle.pdb");
+                  ++job_id_counter;
+                  outputStream << new_jobs[i].get_query_structure();
+                  outputStream.close();
               }
               else{
-                  TR << "Outputting job " << new_jobs[i].get_job_name() << endl;
+                  cout << "Outputting job " << new_jobs[i].get_job_name() << endl;
                   //done. output PDBs
                   utility::io::ozstream outputStream;
                   outputStream.open(new_jobs[i].get_job_name() + "_" + to_string(job_id_counter) + "_bundle.pdb");
@@ -180,7 +187,7 @@ main( int argc, char * argv [] )
               }
           }
 
-          TR << "Jobs left: " << job_queue.size() << endl;
+          cout << "Jobs left: " << job_queue.size() << endl;
 
           //use newly free processor
           if(job_queue.size() > 0){
@@ -188,7 +195,7 @@ main( int argc, char * argv [] )
 
               HelixAssemblyJob temp_job = job_queue[job_queue.size()];
               job_queue.pop_back();
-              TR << "Sending job " << temp_job.get_job_name() << " (" << temp_job.get_round() <<
+              cout << "Sending job " << temp_job.get_job_name() << " (" << temp_job.get_round() <<
                                     ":" << option[HelixAssembly::helices_to_add] << ")" << endl;
 
               //lazily load the search string
@@ -221,11 +228,11 @@ main( int argc, char * argv [] )
               HelixAssemblyJob received_job;
               world.recv(0, 0, boost::mpi::skeleton(received_job));
               world.recv(0, 0, boost::mpi::get_content(received_job));
-              TR << "Node " << world.rank() << " received a job" << endl;
+              cout << "Node " << world.rank() << " received a job" << endl;
 
               HelixAssemblyMover helixAssembler;
               vector1<HelixAssemblyJob> returnedJobs = helixAssembler.apply(received_job);
-              TR << "Finished apply! returning " << returnedJobs.size() << " job(s)." << endl;
+              cout << "Finished apply! returning " << returnedJobs.size() << " job(s)." << endl;
 
               //tell head node which job finished
               world.send(0,0,world.rank());
@@ -244,5 +251,5 @@ main( int argc, char * argv [] )
       }
   }
   MPI_Finalize();
-  TR << "------------DONE!------------" << endl;
+  cout << "------------DONE!------------" << endl;
 }
