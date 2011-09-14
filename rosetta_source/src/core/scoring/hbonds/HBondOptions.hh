@@ -53,6 +53,17 @@ public:
 	HBondOptions const &
 	operator=( HBondOptions const & src );
 
+	/// @brief Double counted hbonds include:
+  /// @brief  - Hydrogen bonds to self
+	/// @brief  - Backbone - sidechain hydrogen bonds where the backbone partner is forming a backbone - backbone hydrogen bond.
+	/// @brief Turning off this exclusion rule is useful for collecting statistics on hydrogen bond site satisfaction
+	bool
+	exclude_self_hbonds() const;
+
+	///
+	void
+	exclude_self_hbonds( bool const setting );
+
 	///
 	bool
 	exclude_DNA_DNA() const;
@@ -145,6 +156,7 @@ public:
 private:
 
 	bool exclude_DNA_DNA_;
+	bool exclude_self_hbonds_;
 	bool use_hb_env_dep_;
 	bool use_hb_env_dep_DNA_;
 	bool smooth_hb_env_dep_;

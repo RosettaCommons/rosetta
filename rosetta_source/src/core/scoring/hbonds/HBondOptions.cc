@@ -42,6 +42,7 @@ namespace hbonds {
 
 HBondOptions::HBondOptions( std::string params_db_tag ):
 	exclude_DNA_DNA_( true ),
+	exclude_self_hbonds_( true ),
 	use_hb_env_dep_ ( true ),
 	use_hb_env_dep_DNA_( true ),
 	smooth_hb_env_dep_( true ),
@@ -64,6 +65,7 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 
 HBondOptions::HBondOptions():
 	exclude_DNA_DNA_( true ),
+	exclude_self_hbonds_( true ),
 	use_hb_env_dep_ ( true ),
 	use_hb_env_dep_DNA_( true ),
 	smooth_hb_env_dep_( true ),
@@ -100,6 +102,7 @@ HBondOptions const &
 HBondOptions::operator=( HBondOptions const & src )
 {
 	exclude_DNA_DNA_ = src.exclude_DNA_DNA_;
+	exclude_self_hbonds_ = src.exclude_self_hbonds_;
 	use_hb_env_dep_ = src.use_hb_env_dep_;
 	use_hb_env_dep_DNA_ = src.use_hb_env_dep_DNA_;
 	smooth_hb_env_dep_ = src.smooth_hb_env_dep_;
@@ -124,6 +127,24 @@ HBondOptions::exclude_DNA_DNA( bool const setting )
 {
 	exclude_DNA_DNA_ = setting;
 }
+
+
+///
+bool
+HBondOptions::exclude_self_hbonds() const
+{
+	return exclude_self_hbonds_;
+}
+
+///
+void
+HBondOptions::exclude_self_hbonds( bool const setting )
+{
+	exclude_self_hbonds_ = setting;
+}
+
+
+
 
 ///
 bool
@@ -238,6 +259,7 @@ bool
 operator==( HBondOptions const & a, HBondOptions const & b )
 {
 	return ( ( a.exclude_DNA_DNA_ == b.exclude_DNA_DNA_ ) &&
+		( a.exclude_self_hbonds_ == b.exclude_self_hbonds_ ) &&
 		( a.use_hb_env_dep_ == b.use_hb_env_dep_ ) &&
 		( a.use_hb_env_dep_DNA_ == b.use_hb_env_dep_DNA_ ) &&
 		( a.smooth_hb_env_dep_ == b.smooth_hb_env_dep_ ) &&
@@ -266,6 +288,8 @@ HBondOptions::show( std::ostream & out ) const
 {
 	out <<"HBondOptions::show: exclude_DNA_DNA: "
 		<<( exclude_DNA_DNA_ ? "true" : "false" ) << std::endl;
+	out <<"HBondOptions::show: exclude_self_hbonds: "
+		<<( exclude_self_hbonds_ ? "true" : "false" ) << std::endl;
 	out <<"HBondOptions::show: use_hb_env_dep: "
 		<<( use_hb_env_dep_ ? "true" : "false" ) << std::endl;
 	out <<"HBondOptions::show: use_hb_env_dep_DNA: "

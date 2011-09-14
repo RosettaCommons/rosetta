@@ -137,6 +137,20 @@ fill_hbond_set(
 
 			}
 		} // nbrs of res1
+		if(!hbond_set.hbond_options().exclude_self_hbonds() && hbond_set.hbond_options().exclude_DNA_DNA() && rsd1.is_DNA() ){
+			//pba membrane specific hbond
+			if ( hbond_set.hbond_options().Mbhbond() ) {
+				identify_hbonds_1way_membrane(
+					database,
+					rsd1, rsd1, nb1, nb1, calculate_derivative,
+					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set, pose);
+			} else {
+			   identify_hbonds_1way(
+					database,
+					rsd1, rsd1, nb1, nb1, calculate_derivative,
+					exclude_bb, exclude_bsc, exclude_scb, exclude_sc, hbond_set);
+			}
+		}
 	} // res1
 }
 
