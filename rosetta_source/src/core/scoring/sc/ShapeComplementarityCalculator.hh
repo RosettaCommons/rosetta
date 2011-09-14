@@ -196,7 +196,7 @@ public:
 		core::Size verbose;
 
 #ifdef USECUDA
-		core::Size gpu;
+		core::SSize gpu;
 		core::Size gpu_threads;
 		core::Size gpu_proc;
 #endif

@@ -209,7 +209,7 @@ main
 							pose.fold_tree(foldtree);
 						}
 						using core::id::AtomID;
-						if (protseq[0] != 'P' & revft) branchopt.optimize_angles(pose, pose.atom_tree().atom(AtomID(1, 1)).child(0)->id(), AtomID(1, 1), AtomID(2, 1));
+						if (protseq[0] != 'P' && revft) branchopt.optimize_angles(pose, pose.atom_tree().atom(AtomID(1, 1)).child(0)->id(), AtomID(1, 1), AtomID(2, 1));
 						branchopt.optimize_angles(pose, AtomID(1, 1), AtomID(2, 1), AtomID(3, 1));
 						branchopt.optimize_angles(pose, AtomID(2, 1), AtomID(3, 1), AtomID(1, 2));
 						if (protseq[1] != 'P') branchopt.optimize_angles(pose, AtomID(3, 1), AtomID(1, 2), AtomID(2, 2));
