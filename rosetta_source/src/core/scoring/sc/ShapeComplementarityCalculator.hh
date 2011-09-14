@@ -16,7 +16,7 @@
 
 // This code contains support for GPU acceleration using CUDA.
 // Basic steps to enable GPU acceleration support:
-//  1) define SC_CUDA_GPU (-DSC_CUDA_GPU)
+//  1) define USECUDA (-DUSECUDA)
 //  2) compile ShapeComplementarityCalculator_GPUKernels.cu with nvcc
 //  3) link libcore.3.so file against libcudart.so (-lcudart)
 // You will see a line like this when GPU is utilized:
@@ -29,7 +29,7 @@
 // precision floats by defining SC_PRECISION_REAL.
 
 // #define SC_PRECISION_REAL
-// #define SC_CUDA_GPU
+// #define USECUDA
 
 // Core Headers
 #include <core/types.hh>
@@ -43,7 +43,7 @@
 #include <map>
 #include <string>
 
-#ifdef SC_CUDA_GPU
+#ifdef USECUDA
 #include <time.h>
 #endif
 
@@ -195,7 +195,7 @@ public:
 
 		core::Size verbose;
 
-#ifdef SC_CUDA_GPU
+#ifdef USECUDA
 		core::Size gpu;
 		core::Size gpu_threads;
 		core::Size gpu_proc;
@@ -275,7 +275,7 @@ private:
   // Sort callback
 	static int _atom_distance_cb(void *a1, void *a2);
 
-#ifdef SC_CUDA_GPU
+#ifdef USECUDA
 public:
 	void GPUInit();
 

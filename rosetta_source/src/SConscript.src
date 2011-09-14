@@ -38,7 +38,13 @@ actual.subprojects = requested.subprojects
 # we will need to differentiate language types in the .src.settings files.
 for package, modules in requested.sources.items():
     for module in modules:
-        source = module + ".cc"
+        # CUDA files have extension '.cu'
+        if module.endswith(".cu"):
+            #print "build.options.extras", build.options.extras
+            if "cuda" not in build.options.extras : continue # skip .cu files if the "cuda" extra is not supplied
+            source = module
+        else:
+            source = module + ".cc"
         if package:
             actual.sources += [ "%s/%s" % (package, source) ]
         else:
@@ -97,6 +103,8 @@ env.Prepend(**actual.symbols())
 if "static" not in build.options.extras:
   env["RPATH"] = [
       build.toplevel + "/build/external/" + build.platform ]
+# direct SCons to the nvcc tool for CUDA source
+env.Tool('nvcc', toolpath = ['#tools/build/'])
 
 
 

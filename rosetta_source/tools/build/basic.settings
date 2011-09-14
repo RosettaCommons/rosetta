@@ -233,8 +233,18 @@ settings = {
             "defines"       : [ "NDEBUG" ],
         },
     },
-
-
+    "gcc, 4.4, release" : {
+        "removes" : {
+            "flags" : {
+                "compile"   : [ "finline-limit=20000" ],
+            },
+        },
+        "appends" : {
+            "flags" : {
+                "compile"   : [ "finline-limit=487" ], # Bug in gcc4.4 which has not yet been fixed requries that this inline limit is removed
+            },
+        },
+    },
 
     "gcc, pyrosetta" : {
         "appends" : {
@@ -610,6 +620,21 @@ settings = {
         },
     },
 
+    "gcc, cuda" : {
+        "appends" : {
+            "include_path"  : [ "/usr/local/cuda/include", ],
+            "libraries"     : [ "cudart" ],
+            "library_path"  : [ "/usr/local/cuda/lib64", "/usr/local/cuda/lib", ],
+            "defines"       : [ "USECUDA" ],
+        },
+    },
+
+    "gcc, macos, cuda" : {
+        "appends" : {
+                "include_path"  : [ "/Developer/CUDA/common/inc" ],
+                "library_path" : [ "/Developer/CUDA/lib" ],
+        }
+    },
 
     "gcc, omp" : {
         #"overrides" : {
@@ -1076,6 +1101,14 @@ settings = {
         "overrides" : {
             "cc"            : "mpicc",
             "cxx"           : "mpiCC",
+        },
+    },
+    "clang, cuda" : {
+        "appends" : {
+            "include_path"  : [ "/usr/local/cuda/include", ],
+            "libraries"     : [ "cudart" ],
+            "library_path"  : [ "/usr/local/cuda/lib64", "/usr/local/cuda/lib", ],
+            "defines"       : [ "USECUDA" ],
         },
     },
     "clang, linux" : {

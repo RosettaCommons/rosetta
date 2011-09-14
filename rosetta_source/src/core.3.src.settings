@@ -188,7 +188,7 @@ sources = {
 
         "core/scoring/sc" : [
                 "ShapeComplementarityCalculator",
-                #"ShapeComplementarityCalculator_GPUKernels",
+                "ShapeComplementarityCalculator_GPUKernels.cu"
         ],
 
 	"core/scoring/electron_density" : [

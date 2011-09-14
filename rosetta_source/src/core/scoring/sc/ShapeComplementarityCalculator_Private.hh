@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#ifdef SC_CUDA_GPU
+#ifdef USECUDA
 #include <time.h>
 #include <cuda_runtime_api.h>
 
@@ -27,7 +27,7 @@
 void _cuda_sccalc_TrimPeripheralBand(int x, int y, float3 *dAccDotCoords, uint nAcc, float3 *dBurDotCoords, char *dDotColl, float r2);
 void _cuda_sccalc_FindClosestNeighbor(int x, int y, float3 *dMyDots, float3 *dTheirDotCoords, uint nTheirDotCoords, uint *dNeighbors);
 
-#endif // SC_CUDA_GPU
+#endif // USECUDA
 
 namespace core {
 namespace scoring {

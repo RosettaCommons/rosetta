@@ -19,7 +19,7 @@
 ///
 /// This version contains support for GPU-acceleration by CUDA-capable devices,
 /// which provides a 10-25x speed up over the CPU-only code using a regular desktop
-/// video card with 4 processors (32 cores). Define SC_CUDA_GPU and compile with
+/// video card with 4 processors (32 cores). Define USECUDA and compile with
 /// NVIDIA's nvcc. Also see ShapeComplementarityCalculator.hh.
 
 #ifndef INCLUDED_core_scoring_sc_ShapeComplementarityCalculator_cc
@@ -51,6 +51,11 @@
 #include <map>
 #include <string>
 #include <math.h>
+
+// Cuda headers
+#ifdef USECUDA
+#include <cuda.h>
+#endif
 
 
 static basic::Tracer tr("core.scoring.sc.ShapeComplementarityCalculator");
@@ -85,7 +90,7 @@ ShapeComplementarityCalculator::ShapeComplementarityCalculator()
 	settings.binwidth_dist = 0.02;
 	settings.binwidth_norm = 0.02;
 
-#ifdef SC_CUDA_GPU
+#ifdef USECUDA
 	settings.gpu = -1;
 #endif
 }
@@ -205,7 +210,7 @@ int ShapeComplementarityCalculator::Calc(core::pose::Pose const & pose, core::Si
 
 int ShapeComplementarityCalculator::Calc()
 {
-#ifdef SC_CUDA_GPU
+#ifdef USECUDA
 	GPUInit();
 #endif
 
@@ -1315,7 +1320,7 @@ ShapeComplementarityCalculator::ScValue ShapeComplementarityCalculator::TrimPeri
 	if(sdots.empty())
 		return 0.0;
 
-#ifdef SC_CUDA_GPU
+#ifdef USECUDA
 	if(settings.gpu) {
 		area = CudaTrimPeripheralBand(sdots, trimmed_dots);
 	} else {
@@ -1333,7 +1338,7 @@ ShapeComplementarityCalculator::ScValue ShapeComplementarityCalculator::TrimPeri
 		}
 	}
 
-#ifdef SC_CUDA_GPU
+#ifdef USECUDA
 	}
 #endif
 
@@ -1389,7 +1394,7 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 		total += (*idot)->area;
 	}
 
-#ifdef SC_CUDA_GPU
+#ifdef USECUDA
 	std::vector<DOT const*> neighbors;
 	std::vector<DOT const*>::const_iterator iNeighbor;
 
@@ -1406,7 +1411,7 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 		ScValue distmin, r;
 		DOT const *neighbor = NULL;
 
-#ifdef SC_CUDA_GPU
+#ifdef USECUDA
 		if(settings.gpu)
 			neighbor = *iNeighbor++;
 		else
@@ -1537,7 +1542,7 @@ DOT const *ShapeComplementarityCalculator::CalcNeighborDistanceFindClosestNeighb
 	return neighbor;
 }
 
-#ifdef SC_CUDA_GPU
+#ifdef USECUDA
 
 #define cudaAssert(err) cudaThrowException(err, __FILE__, __LINE__)
 #define UPPER_MULTIPLE(n,d) (((n)%(d)) ? (((n)/(d)+1)*(d)) : (n))
