@@ -68,14 +68,15 @@ std::string connect_to("");
 
 SetAtomTree::SetAtomTree() :
 	protocols::moves::Mover( SetAtomTreeCreator::mover_name() ),
-	fold_tree_( NULL )
+	docking_ft_( false ),
+	jump_( 1 ),
+	resnum_( "" ),
+	connect_to_( "" ),
+	anchor_res_( "" ),
+	connect_from_( "" ),
+	host_chain_( 2 )
 {}
 
-SetAtomTree::SetAtomTree( core::kinematics::FoldTreeOP ft ) :
-	protocols::moves::Mover( SetAtomTreeCreator::mover_name() )
-{
-	fold_tree_ = ft;
-}
 SetAtomTree::~SetAtomTree() {}
 
 protocols::moves::MoverOP
@@ -83,74 +84,26 @@ SetAtomTree::clone() const {
 	return (protocols::moves::MoverOP( new SetAtomTree( *this ) ) );
 }
 
-
-void
-SetAtomTree::fold_tree( core::kinematics::FoldTreeOP ft ) { fold_tree_ = ft; }
-
-core::kinematics::FoldTreeOP
-SetAtomTree::fold_tree() const { return( fold_tree_ ); }
-
-
 void
 SetAtomTree::parse_my_tag( TagPtr const tag, DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
-	if( tag->getOption< bool >( "docking_ft", 0 ) ){//just generate a docking default foldtree
-		core::pose::Pose nonconst_pose( pose );
-		core::SSize const jump( tag->getOption< core::SSize >( "jump", 1 ));
-		utility::vector1< core::SSize > jumps;
-		jumps.clear();
-		jumps.push_back( jump );
-		std::string const partners( "_" );
-		protocols::docking::setup_foldtree( nonconst_pose, partners, jumps );
-		fold_tree_ = new core::kinematics::FoldTree( nonconst_pose.fold_tree() );
-		TR<<"Setting up docking foldtree over jump "<<jump<<'\n';
-		TR<<*fold_tree_;
-		return;
+	docking_ft_ = tag->getOption< bool >("docking_ft", 0 );
+	jump_ = tag->getOption< bool >( "jump", 1);
+	if( docking_ft_ ) return;
+	resnum_ = tag->getOption< std::string > ("resnum" );
+	if( tag->hasOption( "anchor_res" ) ){
+		anchor_res_ = tag->getOption< std::string > ( "anchor_res" );
+		if( tag->hasOption( "connect_from" ) )
+			connect_from_ = tag->getOption< std::string >( "connect_from" );
 	}
-	core::Size const resnum( protocols::rosetta_scripts::get_resnum( tag, pose ) );
-	core::conformation::Residue const res_central( pose.residue( resnum ) );;
-
-	if( tag->hasOption( "connect_to" ) ){
-		connect_to = tag->getOption<string>( "connect_to" );
-		TR<<"USER DEFINED connect to atom : "<<connect_to<<std::endl;
-	}
-	else {
-    connect_to = optimal_connection_point( res_central.name3() );
-    TR<<"connect_to not defined by user. Defaulting to "<<connect_to<<std::endl;
-	}
-
-	if ( tag->hasOption( "anchor_res" ) ) {
-			std::string anchor_string( tag->getOption<std::string>("anchor_res" ) );
-			core::pose::PDBPoseMap const pose_map( pose.pdb_info()->pdb2pose() );
-    	char const chain( anchor_string[ anchor_string.length() - 1 ] );
-			std::stringstream ss( anchor_string.substr( 0, anchor_string.length() - 1 ) );
-      core::Size number;
-      ss >> number;
-      anchor_num  = pose_map.find( chain, number );
-		  TR<<"anchor_num::: " << anchor_num << "and pdbnum:::" << resnum <<std::endl;
-			core::conformation::Residue const anchor_res( pose.residue( anchor_num ) );
-
-			if( tag->hasOption( "connect_from" ) ) {
-			 connect_from = tag->getOption<string>( "connect_from" );
-			 TR<<"USER-DEFINED connect from atom : "<<connect_from<<std::endl;
-			}
-			else {
-			 connect_from = optimal_connection_point( anchor_res.name3() );
-			 TR<<"DEFAULTING connection from : "<<connect_from<<std::endl;
-			}
-		}	//end anchor reside
-
-	core::Size const host_chain( tag->getOption<core::Size>( "host_chain", 2 ) );
-
-	create_atom_tree( pose, host_chain, resnum, anchor_num , connect_to, connect_from );
-	TR<<"AtomTree saving the following atom tree:\n"<<*fold_tree_<<std::endl;
-	TR<<"resnum: "<<resnum<<" anchor: "<< anchor_num<<std::endl;
+	host_chain_ = tag->getOption< core::Size >( "host_chain", 2);
+	TR<<"resnum: "<<resnum_<<" anchor: "<< anchor_res_<<std::endl;
 }//end parse my tag
 
 core::kinematics::FoldTreeOP
 SetAtomTree::create_atom_tree( core::pose::Pose const & pose, core::Size const host_chain, core::Size const resnum, core::Size const anchor_num_in, std::string connect_to_in/*=""*/, std::string connect_from_in/*=""*/ )
 {
-	fold_tree_ = new core::kinematics::FoldTree;
+	core::kinematics::FoldTreeOP fold_tree = new core::kinematics::FoldTree;
 
 	core::Size const begin( pose.conformation().chain_begin( host_chain == 1 ? 2 : 1 ) );
 	core::Size const end( pose.conformation().chain_end( host_chain == 1 ? 2 : 1 ) );
@@ -182,26 +135,62 @@ SetAtomTree::create_atom_tree( core::pose::Pose const & pose, core::Size const h
 	core::Size const rb_jump( 1 );
 	core::Size const jump_pos1( host_chain == 1 ? resnum : nearest_res );
 	core::Size const jump_pos2( host_chain == 1 ? nearest_res : resnum );
-	fold_tree_->clear();
-	fold_tree_->add_edge( jump_pos1, jump_pos2, rb_jump );
-	fold_tree_->add_edge( 1, jump_pos1, kinematics::Edge::PEPTIDE );
-	fold_tree_->add_edge( jump_pos1, pose.conformation().chain_end( 1 ), kinematics::Edge::PEPTIDE );
-	fold_tree_->add_edge( pose.conformation().chain_begin( 2 ), jump_pos2, kinematics::Edge::PEPTIDE );
-	fold_tree_->add_edge( jump_pos2, pose.total_residue(), kinematics::Edge::PEPTIDE );
+	fold_tree->clear();
+	fold_tree->add_edge( jump_pos1, jump_pos2, rb_jump );
+	fold_tree->add_edge( 1, jump_pos1, kinematics::Edge::PEPTIDE );
+	fold_tree->add_edge( jump_pos1, pose.conformation().chain_end( 1 ), kinematics::Edge::PEPTIDE );
+	fold_tree->add_edge( pose.conformation().chain_begin( 2 ), jump_pos2, kinematics::Edge::PEPTIDE );
+	fold_tree->add_edge( jump_pos2, pose.total_residue(), kinematics::Edge::PEPTIDE );
 	TR<<"CONNECT_FROM: "<<connect_from<<"and  CONNECT TO: " <<connect_to<<std::endl;
 
 	if ( connect_from == "" ) connect_from = optimal_connection_point( pose.residue( jump_pos1 ).name3() );
-  fold_tree_->set_jump_atoms( rb_jump, connect_from , connect_to );
-	fold_tree_->reorder( 1 );
-	return( fold_tree_ );
+  fold_tree->set_jump_atoms( rb_jump, connect_from , connect_to );
+	fold_tree->reorder( 1 );
+	return( fold_tree );
 }
 
 void
 SetAtomTree::apply( core::pose::Pose & pose )
 {
-	runtime_assert( fold_tree_ );
+	if( docking_ft_ ){
+		utility::vector1< core::SSize > jumps;
+		jumps.clear();
+		jumps.push_back( jump_ );
+		std::string const partners( "_" );
+		protocols::docking::setup_foldtree( pose, partners, jumps );
+		TR<<"Setting up docking foldtree over jump "<<jump_<<'\n';
+		TR<<"Docking foldtree: "<<pose.fold_tree();
+		return;
+	}
+
+	core::Size const resnum( protocols::rosetta_scripts::parse_resnum( resnum_, pose ) );
+	core::conformation::Residue const res_central( pose.residue( resnum ) );;
+
+  std::string connect_to( "" );
+	if( connect_to_ == "" ){
+    connect_to = optimal_connection_point( res_central.name3() );
+    TR<<"connect_to not defined by user. Defaulting to "<<connect_to<<std::endl;
+	}
+
+	core::Size anchor_num( 0 );
+	std::string connect_from("");
+	if ( anchor_res_ != "" ) {
+			core::pose::PDBPoseMap const pose_map( pose.pdb_info()->pdb2pose() );
+    	char const chain( anchor_res_[ anchor_res_.length() - 1 ] );
+			std::stringstream ss( anchor_res_.substr( 0, anchor_res_.length() - 1 ) );
+      core::Size number;
+      ss >> number;
+      anchor_num  = pose_map.find( chain, number );
+		  TR<<"anchor_num::: " << anchor_num << "and pdbnum:::" << resnum_ <<std::endl;
+
+			core::conformation::Residue const res_anchor( pose.residue( anchor_num ) );;
+			if( connect_from_ == "" )
+				connect_from = optimal_connection_point( res_anchor.name3() );
+		}	//end anchor reside
+
+
 	TR<<"Previous fold tree: "<<pose.fold_tree()<<'\n';
-	pose.fold_tree( *fold_tree_ );
+	pose.fold_tree( *create_atom_tree( pose, host_chain_, resnum, anchor_num , connect_to, connect_from ) );
 	TR<<"New fold tree: "<<pose.fold_tree()<<std::endl;
 }
 
