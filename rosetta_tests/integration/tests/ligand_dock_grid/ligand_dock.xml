@@ -17,10 +17,10 @@ It will also report the binding energy (ddg) and buried-surface area (sasa) in t
 		</hard_rep>
 	</SCOREFXNS>
 	<SCORINGGRIDS>
-		<grid grid_type="AtrGrid"/>
-		<grid grid_type="RepGrid"/>
-		<grid grid_type="HbaGrid"/>
-		<grid grid_type="HbdGrid"/>
+		<atr grid_type="AtrGrid"/>
+		<rep grid_type="RepGrid"/>
+		<hba grid_type="HbaGrid"/>
+		<hbd grid_type="HbdGrid"/>
 	</SCORINGGRIDS>
 	<LIGAND_AREAS>
 		<docking_sidechain chain=X cutoff=6.0 add_nbr_radius=true all_atom_mode=true minimize_ligand=10/>
