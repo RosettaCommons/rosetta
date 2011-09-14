@@ -11,6 +11,9 @@
 /// @brief
 /// @author Florian Richter, floric@u.washington.edu
 
+#ifndef INCLUDE_src_core_pack_task_IGEdgeReweightContainer_fwd_hh
+#define INCLUDE_src_core_pack_task_IGEdgeReweightContainer_fwd_hh
+
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
@@ -29,3 +32,5 @@ typedef utility::pointer::owning_ptr< IGEdgeReweightContainer const > IGEdgeRewe
 } //task
 } //pack
 } //core
+
+#endif

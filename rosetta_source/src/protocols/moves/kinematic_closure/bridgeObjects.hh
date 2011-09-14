@@ -12,6 +12,9 @@
 /// @author Evangelos A. Coutsias
 /// @author Daniel J. Mandell
 
+#ifndef INCLUDE_src_protocols_moves_kinematic_closure_bridgeObjects_hh
+#define INCLUDE_src_protocols_moves_kinematic_closure_bridgeObjects_hh
+
 // Rosetta Headers
 #include <core/types.hh>
 
@@ -53,3 +56,5 @@ core::Real bondangle(const utility::vector1<core::Real>& a, const utility::vecto
 } // end namespace kinematic_closure
 } // end namespace moves
 } // end namespace protocols
+
+#endif

@@ -12,6 +12,8 @@
 /// @brief
 /// @author Sinisa Bjelic
 
+#ifndef INCLUDE_src_protocols_enzdes_EnzdesTaskOperations_fwd_hh
+#define INCLUDE_src_protocols_enzdes_EnzdesTaskOperations_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
@@ -44,3 +46,5 @@ typedef utility::pointer::owning_ptr< AddLigandMotifRotamers const > AddLigandMo
 
 }  //namespace enzdes
 }  //namespace protocols
+
+#endif

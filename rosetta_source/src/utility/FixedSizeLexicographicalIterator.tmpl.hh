@@ -12,6 +12,9 @@
 /// @brief
 /// @author Andrew Leaver-Fay
 
+#ifndef INCLUDE_src_utility_FixedSizeLexicographicalIterator_tmpl_hh
+#define INCLUDE_src_utility_FixedSizeLexicographicalIterator_tmpl_hh
+
 // Unit headers
 #include <utility/FixedSizeLexicographicalIterator.hh>
 
@@ -158,3 +161,5 @@ FixedSizeLexicographicalIterator< S >::num_states_total() const {
 
 
 }
+
+#endif

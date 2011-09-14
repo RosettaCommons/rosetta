@@ -11,6 +11,9 @@
 /// @brief  Header file for kinematic_closure_helpers.cc
 /// @author Daniel J. Mandell
 
+#ifndef INCLUDE_src_protocols_moves_kinematic_closure_kinematic_closure_helpers_hh
+#define INCLUDE_src_protocols_moves_kinematic_closure_kinematic_closure_helpers_hh
+
 // Rosetta Headers
 #include <core/types.hh>
 
@@ -39,3 +42,5 @@ bool vectorsEqual(const utility::vector1<core::Real>& A, const utility::vector1<
 } // end namespace kinematic_closure
 } // end namespace moves
 } // end namespace protocols
+
+#endif

@@ -12,6 +12,8 @@
 /// @brief
 /// @author Sagar Khare (khares@uw.edu)
 
+#ifndef INCLUDE_src_protocols_enzdes_EnzRepackMinimize_fwd_hh
+#define INCLUDE_src_protocols_enzdes_EnzRepackMinimize_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -23,3 +25,5 @@ typedef utility::pointer::owning_ptr< EnzRepackMinimize > EnzRepackMinimizeOP;
 
 }  //namespace enzdes
 }  //namespace protocols
+
+#endif

@@ -13,6 +13,8 @@
 /// @brief and blueprint definition of positions and add them to the pose
 /// @author Possu Huang, possu@u.washington.edu, Jan 2010
 
+#ifndef INCLUDE_src_protocols_forge_remodel_RemodelEnzdesCstModule_fwd_hh
+#define INCLUDE_src_protocols_forge_remodel_RemodelEnzdesCstModule_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -27,4 +29,4 @@ typedef utility::pointer::owning_ptr< RemodelEnzdesCstModule > RemodelEnzdesCstM
 } // namespace forge
 } // namespace protocols
 
-
+#endif

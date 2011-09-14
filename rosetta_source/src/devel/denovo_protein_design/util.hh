@@ -13,6 +13,8 @@
 /// @author Grant Murphy
 ///
 
+#ifndef INCLUDE_src_devel_denovo_protein_design_util_hh
+#define INCLUDE_src_devel_denovo_protein_design_util_hh
 
 // Package Headers
 // AUTO-REMOVED #include <core/init.hh>
@@ -67,3 +69,5 @@ char random_helix_position();
 
 }
 }
+
+#endif

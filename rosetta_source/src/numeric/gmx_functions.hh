@@ -4,6 +4,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
+#ifndef INCLUDE_src_numeric_gmx_functions_hh
+#define INCLUDE_src_numeric_gmx_functions_hh
+
 namespace numeric {
 extern void jacobi(double a[6][6],double d[],double v[6][6],int *nrot);
 }
+
+#endif

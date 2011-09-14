@@ -12,6 +12,8 @@
 /// @brief
 /// @author Florian Richter
 
+#ifndef INCLUDE_src_protocols_enzdes_EnzdesBaseProtocol_fwd_hh
+#define INCLUDE_src_protocols_enzdes_EnzdesBaseProtocol_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
@@ -29,3 +31,5 @@ typedef utility::pointer::access_ptr< EnzdesBaseProtocol const > EnzdesBaseProto
 
 }  //namespace enzdes
 }  //namespace protocols
+
+#endif

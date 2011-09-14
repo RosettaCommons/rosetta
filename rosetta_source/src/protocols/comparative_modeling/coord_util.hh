@@ -10,6 +10,9 @@
 /// @file src/protocols/comparative_modeling/coord_util.hh
 /// @author James Thompson
 
+#ifndef INCLUDE_src_protocols_comparative_modeling_coord_util_hh
+#define INCLUDE_src_protocols_comparative_modeling_coord_util_hh
+
 #include <core/pose/Pose.fwd.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <ObjexxFCL/FArray2D.hh>
@@ -28,3 +31,5 @@ void gather_coords(
 
 } // comaprative_modeling
 } // protocols
+
+#endif

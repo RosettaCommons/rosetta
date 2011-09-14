@@ -12,6 +12,9 @@
 /// @author Evangelos A. Coutsias
 /// @author Daniel J. Mandell
 
+#ifndef INCLUDE_src_protocols_moves_kinematic_closure_dixon_hh
+#define INCLUDE_src_protocols_moves_kinematic_closure_dixon_hh
+
 // Rosetta Headers
 #include <core/types.hh>
 
@@ -37,3 +40,5 @@ void dixon(const utility::vector1<utility::vector1<core::Real> >& A,
 } // end namespace kinematic_closure
 } // end namespace moves
 } // end namespace protocols
+
+#endif

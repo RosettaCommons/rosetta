@@ -12,6 +12,8 @@
 /// @brief
 /// @author Sinisa Bjelic sinibjelic@gmail.com
 
+#ifndef INCLUDE_src_protocols_enzdes_EnzdesMovers_fwd_hh
+#define INCLUDE_src_protocols_enzdes_EnzdesMovers_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -23,3 +25,5 @@ typedef utility::pointer::owning_ptr< PredesignPerturbMover > PredesignPerturbMo
 
 }  //namespace enzdes
 }  //namespace protocols
+
+#endif
