@@ -207,7 +207,7 @@ class SurfaceNode : public FirstClassNode< V, E, G > {
 		static const int INTERACTION_RADIUS = 10;
 		static const int SURFACE_EXPOSED_CUTOFF = 20;
 		static const int BURIED_RESIDUE_NO_HSASA_CUTOFF = 24;
-		static const int MAX_PATCH_SURFACE_AREA = 1200;
+		static const int MAX_PATCH_SURFACE_AREA = 1100;
 
 		static int num_state_substitutions_considered_;
 		static int num_surface_comps_procrastinated_;
@@ -300,7 +300,7 @@ class SurfaceBackgroundNode : public BackgroundNode< V, E, G > {
 		static const int INTERACTION_RADIUS = 10;
 		static const int SURFACE_EXPOSED_CUTOFF = 20;
 		static const int BURIED_RESIDUE_NO_HSASA_CUTOFF = 24;
-		static const int MAX_PATCH_SURFACE_AREA = 1200;
+		static const int MAX_PATCH_SURFACE_AREA = 1100;
 
 		Real curr_state_total_hASA_;
 		Real alt_state_total_hASA_;
@@ -613,7 +613,7 @@ template < typename V, typename E, typename G >
 Real SurfaceNode< V, E, G >::surface_energy_weight_ = 1.0;
 
 template < typename V, typename E, typename G >
-const int SurfaceNode< V, E, G >::MAX_SURFACE_ENERGY = 50;
+const int SurfaceNode< V, E, G >::MAX_SURFACE_ENERGY = 100;
 
 template < typename V, typename E, typename G >
 int SurfaceNode< V, E, G >::num_state_substitutions_considered_( 0 );
@@ -2153,7 +2153,7 @@ template < typename V, typename E, typename G >
 Real SurfaceBackgroundNode< V, E, G >::surface_energy_weight_ = 1.0;
 
 template < typename V, typename E, typename G >
-const int SurfaceBackgroundNode< V, E, G >::MAX_SURFACE_ENERGY = 50;
+const int SurfaceBackgroundNode< V, E, G >::MAX_SURFACE_ENERGY = 100;
 
 
 ///

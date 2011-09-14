@@ -261,12 +261,12 @@ class SurfacePotentialTests : public CxxTest::TestSuite {
 		core::import_pose::pose_from_pdb( pose, "core/pack/1l2y_renameH.pdb" );
 
 		Real total_hpatch_score = 0.0;
-		std::map< Size, Real > patch_scores;
+		std::map< Size, std::pair< Real, Real > > patch_scores;
 		std::map< Size, utility::vector1< id::AtomID > > atoms_in_patches;
 		sp->compute_pose_hpatch_score( pose, total_hpatch_score, patch_scores, atoms_in_patches );
 
 		TS_ASSERT_DELTA( total_hpatch_score, 19.3600, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( patch_scores[ 16 ], 19.3600, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( patch_scores[ 16 ].first, 19.3600, TOLERATED_ERROR );
 
 		// test a more realistic pose than Trp-cage
 		pose = create_1ten_pdb_pose();
@@ -277,11 +277,11 @@ class SurfacePotentialTests : public CxxTest::TestSuite {
 		sp->compute_pose_hpatch_score( pose, total_hpatch_score, patch_scores, atoms_in_patches );
 
 		TS_ASSERT_DELTA( total_hpatch_score, 4.9600, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( patch_scores[ 170 ], 0.160, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( patch_scores[ 196 ], 0.6400, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( patch_scores[ 289 ], 4.0000, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( patch_scores[ 617 ], 0.1600, TOLERATED_ERROR );
-		TS_ASSERT_DELTA( patch_scores[ 680 ], 0.00, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( patch_scores[ 170 ].first, 0.160, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( patch_scores[ 196 ].first, 0.6400, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( patch_scores[ 289 ].first, 4.0000, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( patch_scores[ 617 ].first, 0.1600, TOLERATED_ERROR );
+		TS_ASSERT_DELTA( patch_scores[ 680 ].first, 0.00, TOLERATED_ERROR );
 
 	}
 
@@ -291,7 +291,7 @@ class SurfacePotentialTests : public CxxTest::TestSuite {
 		core::import_pose::pose_from_pdb( pose, "core/pack/2mcm_0001.pdb" );
 
 		Real total_hpatch_score = 0.0;
-		std::map< Size, Real > patch_scores;
+		std::map< Size, std::pair< Real, Real > > patch_scores;
 		std::map< Size, utility::vector1< id::AtomID > > atoms_in_patches;
 		sp->compute_pose_hpatch_score( pose, total_hpatch_score, patch_scores, atoms_in_patches );
 

@@ -271,12 +271,12 @@ public:
 
 		// P->P: commit state 382(ARG) on MR 5 (PDB: 8, LYS)
 		pdsig->consider_substitution( 5, 382, delta_energy, previous_energy_for_node );
-		TS_ASSERT_DELTA( delta_energy, -18.9475, 0.05 );
+		TS_ASSERT_DELTA( delta_energy, -101.1885, 0.05 );
 		pdsig->commit_considered_substitution();
 
 		// HP->P: commit state 186 (TYR) on MR 2 (GLN)
 		pdsig->consider_substitution( 2, 186, delta_energy, previous_energy_for_node );
-		TS_ASSERT_DELTA( delta_energy, 21.6926, 0.05 );
+		TS_ASSERT_DELTA( delta_energy, 103.9336, 0.05 );
 		pdsig->commit_considered_substitution();
 
 		int states_a[] = { 0, 186, 0, 0, 382, 0 };
@@ -305,7 +305,7 @@ public:
 
 		// HP->P: commit state 435 ARG on ILE-4 (MR: 1)
 		pdsig->consider_substitution( 1, 435, delta_energy, previous_energy_for_node );
-		TS_ASSERT_DELTA( delta_energy, -23.4626, 0.05 );
+		TS_ASSERT_DELTA( delta_energy, -105.0106, 0.05 );
 		currentenergy = pdsig->commit_considered_substitution();
 
 		// need to also test here that the nodes have updated their hASAs correctly!

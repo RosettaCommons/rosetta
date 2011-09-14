@@ -8,12 +8,12 @@
 /// @brief A protocol which takes a mutation and computes the ddG (stability) for the mutation
 /// @author Ron Jacak
 
-
 // Unit headers
 #include <devel/init.hh>
 
 // Project Headers
 #include <core/chemical/AA.hh>
+#include <core/conformation/Residue.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
@@ -33,15 +33,15 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/TenANeighborGraph.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/conformation/Residue.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/SetReturningPackRotamersMover.hh>
 #include <protocols/moves/TaskAwareMinMover.hh>
-#include <protocols/toolbox/pose_metric_calculators/SurfaceCalculator.hh>
+#include <protocols/toolbox/pose_metric_calculators/HPatchCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
-
 #include <basic/options/util.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -52,6 +52,7 @@
 #include <basic/MetricValue.hh>
 #include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
+#include <utility/vector1.functions.hh> // to get arg_max()
 
 // Numeric Headers
 
@@ -77,12 +78,8 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace ObjexxFCL::fmt;
 
-
 // application specific options
 namespace analyze_ddG_stability {
-	BooleanOptionKey const use_reweighted_score12_with_surfaceE_scorefunction( "analyze_ddG_stability::use_reweighted_score12_with_surfaceE_scorefunction" );
-	BooleanOptionKey const use_reweighted_score12_scorefunction( "analyze_ddG_stability::use_reweighted_score12_scorefunction" );
-	BooleanOptionKey const calculate_surface_energy( "analyze_ddG_stability::calculate_surface_energy" );
 	StringOptionKey const mutation( "analyze_ddG_stability::mutation" );
 }
 
@@ -105,12 +102,9 @@ void init_usage_prompt( std::string exe ) {
 			<< "\n\t-s pdb"
 			<< "\n\t-mutation ALA,16,TRP,A"
 
-			<< "\n\t[-use_reweighted_score12_with_surfaceE_scorefunction]"
-			<< "\n\t[-use_reweighted_score12_scorefunction]"
-			<< "\n\t[-calculate_surface_energy]"
-
 			<< "\n\t[-ex1 [-ex2]]"
 			<< "\n\t[-ndruns 5]"
+			<< "\n\t[-score:weights design_hpatch.wts]"
 
 			<< "\n\t[-ignore_unrecognized_res]"
 			<< "\n\t[-mute core.io core.conformation core.pack core.scoring]"
@@ -124,7 +118,7 @@ void init_usage_prompt( std::string exe ) {
 /// @begin print_energies
 ///
 /// @brief
-/// Helper method for the main function. Takes in a pose, the scorefunction, surface energies and weights and prints everything
+/// Helper method for the main function. Takes in a pose, the scorefunction, hpatch energies and weights and prints everything
 /// out in a pretty format.
 ///
 void print_energies( scoring::EnergyMap e, scoring::ScoreFunctionOP scorefxn ) {
@@ -148,8 +142,8 @@ void print_energies( scoring::EnergyMap e, scoring::ScoreFunctionOP scorefxn ) {
 		case scoring::fa_dun:
 		case scoring::p_aa_pp:
 		case scoring::ref:
-		case scoring::surface:
-			std::cout << scoring::ScoreType(jj) << ": " << ObjexxFCL::fmt::F(5,2, weight * e[ scoring::ScoreType(jj) ] ) << ", ";
+		case scoring::hpatch:
+			std::cout << scoring::ScoreType(jj) << ": " << ObjexxFCL::fmt::F(7,2, weight * e[ scoring::ScoreType(jj) ] ) << ", ";
 			break;
 		default:
 			break;
@@ -187,46 +181,31 @@ void tokenize_string( const std::string & str, std::vector< std::string > & toke
 ///
 int main( int argc, char* argv[] ) {
 
-	//
 	// add application specific options to options system
-	//
-	option.add( analyze_ddG_stability::use_reweighted_score12_with_surfaceE_scorefunction, "Use a score12 scorefunction that has the surface term and reference energies, with everything reweighted." );
-	option.add( analyze_ddG_stability::use_reweighted_score12_scorefunction, "Use a reweighted score12 scorefunction, without the surface energy." );
 	option.add( analyze_ddG_stability::mutation, "The mutation to make to the wild-type pose. Format to use is old-residue-type,PDB-res-num,new-residue-type." );
-	option.add( analyze_ddG_stability::calculate_surface_energy, "Calculate the surface energies of the wild-type and mutant poses." );
 
-
-	//
 	// options, random initialization
-	//
 	devel::init( argc, argv );
 
-	//
 	// Only use the -s flag. This protocol is not going to handle list input files for structures.  Also check to make sure the file exists.
-	//
 	using utility::file::file_exists;
 
 	utility::file::FileName pdb_file_name;
 	if ( option[ in::file::s ].active() ) {
-		//pdb_file_name = utility::file::FileName( option[ in::file::s ]()[0] );
 		pdb_file_name = utility::file::FileName( basic::options::start_file() );
-
 
 		// check to make sure the file exist; if not, move on to the next one
 		if ( !file_exists( pdb_file_name ) ) {
 			std::cerr << "Input pdb " << pdb_file_name.name() << " not found. Quitting protocol." << std::endl;
 			exit(1);
 		}
-
 	} else {
 		init_usage_prompt( argv[0] );
 		std::cout << usage_string;
 		utility_exit_with_message_status( "No files given: Use -file:s to designate a single pdb for making mutations.\n", 1 );
 	}
 
-	//
 	// Error out if the user didn't specify a mutation; then parse the mutation string
-	//
 	if ( ! option[ analyze_ddG_stability::mutation ].active() ) {
 		init_usage_prompt( argv[0] );
 		std::cout << usage_string;
@@ -258,114 +237,41 @@ int main( int argc, char* argv[] ) {
 	#endif
 
 
-	//
-	// create a custom score function as well as a score12 scorefunction
-	//
-	scoring::ScoreFunctionOP scorefxn;
-	if ( option[ analyze_ddG_stability::use_reweighted_score12_with_surfaceE_scorefunction ] ) {
-		TR << "Using reweighted score12 with surfaceE scorefunction." << std::endl;
-		scorefxn = scoring::ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH );
+	// create a score function; uses either score12 or command line specified score function
+	scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
+	scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn->energy_method_options() );
+	energymethodoptions.hbond_options()->decompose_bb_hb_into_pair_energies(true);
+	scorefxn->set_energy_method_options( energymethodoptions );
 
-		utility::vector1< Real > refEs_;
-		refEs_.resize( chemical::num_canonical_aas, 0.0 );
-		Real const rpp_refs[20] = { 1.01553, 2.33569, 0.918812, 1.1572, 1.92699, 1.02994, 1.72094, 0.824097, 1.07864, 0.569007,
-				1.19491, 0.602461, 0.883383, 0.919596, 0.878134, 0.776869, 0.596056, 0.517296, 3.53647, 1.30933 };
 
-		for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
-			refEs_[ii] = rpp_refs[ ii-1 ];
-		}
-		scorefxn->set_method_weights( core::scoring::ref, refEs_ );
-
-		scorefxn->set_weight( core::scoring::fa_atr, 0.6 );
-		scorefxn->set_weight( core::scoring::fa_rep, 0.807902 );
-		scorefxn->set_weight( core::scoring::fa_sol, 0.458364 );
-		scorefxn->set_weight( core::scoring::fa_intra_rep, 0.0588026 );
-		scorefxn->set_weight( core::scoring::pro_close, 0.0690371 );
-		scorefxn->set_weight( core::scoring::fa_pair, 0.127158 );
-		scorefxn->set_weight( core::scoring::hbond_sr_bb, 1.7428 );
-		scorefxn->set_weight( core::scoring::hbond_lr_bb, 1.76154 );
-		scorefxn->set_weight( core::scoring::hbond_bb_sc, 0.816982 );
-		scorefxn->set_weight( core::scoring::hbond_sc, 0.393182 );
-		scorefxn->set_weight( core::scoring::dslf_ss_dst, 1 );
-		scorefxn->set_weight( core::scoring::dslf_cs_ang, 1 );
-		scorefxn->set_weight( core::scoring::dslf_ss_dih, 1 );
-		scorefxn->set_weight( core::scoring::dslf_ca_dih, 1 );
-		scorefxn->set_weight( core::scoring::rama, 0.0134665 );
-		scorefxn->set_weight( core::scoring::omega, 0.5 );
-		scorefxn->set_weight( core::scoring::fa_dun, 0.0603081 );
-		scorefxn->set_weight( core::scoring::p_aa_pp, 0.351527 );
-		scorefxn->set_weight( core::scoring::ref, 1.0 );
-		scorefxn->set_weight( core::scoring::surface, 1.0 );
-
-	} else if ( option[ analyze_ddG_stability::use_reweighted_score12_scorefunction ] ) {
-
-		TR << "Using reweighted score12 scorefunction." << std::endl;
-		scorefxn = scoring::ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH );
-
-		utility::vector1< Real > refEs_;
-		refEs_.resize( chemical::num_canonical_aas, 0.0 );
-		Real const rpp_refs[20] = { 1.44647, 3.20455, 1.28033, 1.50335, 2.39638, 1.47398, 2.35098, 1.24274, 1.64901, 1.11337,
-				1.68414, 0.895638, 1.68502, 1.43777, 1.28772, 1.26944, 1.03373, 0.903269, 4.10334, 1.8192 };
-		for ( Size ii = 1; ii <= chemical::num_canonical_aas; ++ii ) {
-			refEs_[ii] = rpp_refs[ ii-1 ];
-		}
-		scorefxn->set_method_weights( core::scoring::ref, refEs_ );
-
-		scorefxn->set_weight( core::scoring::fa_atr, 0.6 );
-		scorefxn->set_weight( core::scoring::fa_rep, 0.676039 );
-		scorefxn->set_weight( core::scoring::fa_sol, 0.473486 );
-		scorefxn->set_weight( core::scoring::fa_intra_rep, 0.0669174 );
-		scorefxn->set_weight( core::scoring::pro_close, 0.0430282 );
-		scorefxn->set_weight( core::scoring::fa_pair, 0.155594 );
-		scorefxn->set_weight( core::scoring::hbond_sr_bb, 1.34807 );
-		scorefxn->set_weight( core::scoring::hbond_lr_bb, 1.79619 );
-		scorefxn->set_weight( core::scoring::hbond_bb_sc, 0.855615 );
-		scorefxn->set_weight( core::scoring::hbond_sc, 0.34485 );
-		scorefxn->set_weight( core::scoring::dslf_ss_dst, 1 );
-		scorefxn->set_weight( core::scoring::dslf_cs_ang, 1 );
-		scorefxn->set_weight( core::scoring::dslf_ss_dih, 1 );
-		scorefxn->set_weight( core::scoring::dslf_ca_dih, 1 );
-		scorefxn->set_weight( core::scoring::rama, 0.0407331 );
-		scorefxn->set_weight( core::scoring::omega, 0.5 );
-		scorefxn->set_weight( core::scoring::fa_dun, 0.0647276 );
-		scorefxn->set_weight( core::scoring::p_aa_pp, 0.319602 );
-		scorefxn->set_weight( core::scoring::ref, 1.0 );
-
-	} else {
-
-		TR << "Using standard score12 scorefunction." << std::endl;
-		scorefxn = scoring::ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH );
-
-	}
-
-	//EM options for bb-bb hbond scores
- 	scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn->energy_method_options() );
- 	energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies(true);
- 	scorefxn->set_energy_method_options( energymethodoptions );
-
-	//
 	// repack and score the wild type structure
 	// scoring isn't really necessary here, but scoring is fast and poses seem to be happier once they've been scored
-	//
 	pose::Pose pose;
 	core::import_pose::pose_from_pdb( pose, pdb_file_name.name() );
-
-	// score the wt pose
 	(*scorefxn)( pose );
 
-	//
-	// create a surface metric calculator, if using surface energy
-	//
-	pose::metrics::PoseMetricCalculatorOP surface_calculator;
+	pose::metrics::PoseMetricCalculatorOP hpatch_calculator;
 
-	basic::MetricValue< Real > wt_pose_surface_total;
-	basic::MetricValue< utility::vector1< core::Real > > wt_pose_residue_surface;
+	// create an hpatch metric calculator, if this term is being used
+	if ( scorefxn->get_weight( scoring::hpatch ) != 0.0 ) {
+		hpatch_calculator = new protocols::toolbox::pose_metric_calculators::HPatchCalculator;
+		pose::metrics::CalculatorFactory::Instance().register_calculator( "hpatch", hpatch_calculator );
 
-	if ( option[ analyze_ddG_stability::calculate_surface_energy ] ) {
-		surface_calculator = new protocols::toolbox::pose_metric_calculators::SurfaceCalculator;
-		pose::metrics::CalculatorFactory::Instance().register_calculator( "surface", surface_calculator );
+		utility::vector1< Real > patch_scores_vector;
+		basic::MetricValue< std::map< Size, Real > > individual_patch_scores;
+		pose.metric( "hpatch", "patch_scores", individual_patch_scores );
 
-		pose.metric( "surface", "residue_surface", wt_pose_residue_surface );
+		std::cout << A( "individual patch scores: " );
+		std::map< Size, Real > patch_scores = individual_patch_scores.value();
+		std::map< Size, Real >::iterator it;
+		for ( it = patch_scores.begin(); it != patch_scores.end(); it++ ) {
+			patch_scores_vector.push_back( (*it).second );
+			TR << (*it).second << ", ";
+		}
+		std::cout << std::endl;
+
+		Size const largest_size_index = utility::arg_max( patch_scores_vector ); // vector1.functions.hh
+		std::cout << A( "largest patch score: " ) << patch_scores_vector[ largest_size_index ] << std::endl;
 	}
 
 
@@ -565,7 +471,6 @@ int main( int argc, char* argv[] ) {
 	average_repacked_score_wt = sum_repacked_scores_wt / repacked_poses.size();
 
 
-
 	//
 	// Now print out all of the score/ddG information.
 	//
@@ -583,22 +488,13 @@ int main( int argc, char* argv[] ) {
 	std::cout << A( "ddG total:" ) << F( 12,3, ddG ) << std::endl;
 
 	std::cout << "ddG by energy term:" << std::endl;
-	std::cout << "wt:";
+	std::cout << A( 12, "wild type: " );
 	print_energies( pose.energies().total_energies(), scorefxn );
-	std::cout << "mut:";
+	std::cout << A( 12, "mutant: " );
 	print_energies( mutant_pose.energies().total_energies(), scorefxn );
 	scoring::EnergyMap ddG_energies = mutant_pose.energies().total_energies();
 	ddG_energies -= pose.energies().total_energies();
-	std::cout << "diff:";
+	std::cout << A( 12, "difference: " );
 	print_energies( ddG_energies, scorefxn );
-
-	if ( option[ analyze_ddG_stability::calculate_surface_energy ] ) {
-		Real mutant_pose_surface_energy = mutant_pose.energies().total_energies()[ scoring::surface ];
-		Real wt_pose_surface_energy = pose.energies().total_energies()[ scoring::surface ];
-		std::cout << A( "wt pose surface energy:  " ) << F( 9,3, wt_pose_surface_energy ) << std::endl;
-		std::cout << A( "mutant pose surface energy:  " ) << F( 9,3, mutant_pose_surface_energy ) << std::endl;
-		Real ddG_surface = mutant_pose_surface_energy - wt_pose_surface_energy;
-		std::cout << A( "ddG surface:  " ) << F( 9,3, ddG_surface ) << std::endl;
-	}
 
 }

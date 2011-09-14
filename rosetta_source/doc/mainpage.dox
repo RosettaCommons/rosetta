@@ -104,6 +104,7 @@ put links to commonly referred to documentation pages here.
 	- @ref UBQ_E2_thioester "Documentation for the UBQ_E2_thioester application"
 	- @ref pepspec "Documentation for the pepspec application"
 	- @ref comparative_modeling "Documentation for the comparative modeling application"
+	- @ref pmut_scan_parallel "Documentation for the point mutant scan application"
 
 @section mainpage_namespaces Important Namespaces
 

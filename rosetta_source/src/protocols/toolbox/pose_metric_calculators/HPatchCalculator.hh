@@ -46,7 +46,7 @@ protected:
 private:
 	core::Real total_hpatch_score_;
 	bool remove_nonprotein_res_;
-	std::map< Size, core::Real > patch_scores_;
+	std::map< Size, std::pair< core::Real, core::Real > > patch_scores_;
 	std::map< Size, utility::vector1< core::id::AtomID > > atoms_in_patches_;
 };
 

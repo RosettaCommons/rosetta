@@ -83,7 +83,7 @@ HPatchEnergy::finalize_total_energy( pose::Pose & pose, scoring::ScoreFunction c
 	// don't run if minimizing, non-differentiable
 	if ( ! pose.energies().use_nblist() ) {
 		core::Real hpatch_score = 0.0;
-		std::map< Size, Real > patch_scores;
+		std::map< Size, std::pair< Real, Real > > patch_scores;
 		std::map< Size, utility::vector1< id::AtomID > > atoms_in_patches;
 		SurfacePotential::get_instance()->compute_pose_hpatch_score( pose, hpatch_score, patch_scores, atoms_in_patches );
 		//TR << "hpatch score: " << hpatch_score << std::endl;

@@ -69,7 +69,7 @@ public:
 	void compute_pose_hpatch_score(
 		pose::Pose const & pose,
 		Real & total_hpatch_energy_,
-		std::map< core::Size, core::Real > & patch_scores_,
+		std::map< core::Size, std::pair< core::Real, core::Real > > & patch_scores_,
 		std::map< core::Size, utility::vector1< id::AtomID > > & atoms_in_patches_
 	);
 

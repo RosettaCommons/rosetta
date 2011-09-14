@@ -128,6 +128,9 @@ sources = {
 		"Arithmetic",
 		"DDGBindOptEData",
 	],
+	"pmut_scan" : [
+		"PointMutScanDriver",
+	],
 	"pack_daemon" : [
 		"DynamicAggregateFunction",
 		"EntityCorrespondence",
@@ -261,6 +264,9 @@ testinputfiles = [
 	"optimize_weights/1UAD.wt_unbounded.pdb",
 	"optimize_weights/1UAD.E38A.mut_complex.pdb",
 	"optimize_weights/1UAD.E38A.mut_unbounded.pdb",
+	"pmut_scan/mutants.txt",
+	"pmut_scan/shortloop.01.pdb.gz",
+	"pmut_scan/shortloop.02.pdb.gz",
 	"toolbox/task_operations/RestrictToInterfaceOperation.u",
 	"toolbox/task_operations/RestrictToInterfaceVectorOperation.u",
 	"toolbox/task_operations/RestrictToNeighborhoodOperation.u",

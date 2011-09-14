@@ -21,17 +21,21 @@
 #include <core/chemical/AA.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperation.hh>
+#include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/util.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
+#include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunctionInfo.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/TenANeighborGraph.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
 #include <basic/options/option.hh>
 
 #include <protocols/jobdist/standard_mains.hh>
@@ -52,6 +56,7 @@
 #include <numeric/random/random.hh>
 
 // ObjexxFCL Headers
+#include <ObjexxFCL/format.hh>
 
 
 // C++ headers
@@ -72,6 +77,7 @@ using namespace core;
 using namespace protocols;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
+using namespace ObjexxFCL::fmt;
 
 // application specific options
 namespace rss_energy_calculator {
@@ -137,7 +143,7 @@ create_and_score_fragments( std::string pdb_filename, scoring::ScoreFunctionOP s
 	// need to get a count of the number of residues in the protein since n_residue (or conformation.size()) includes metal atoms
 	// and other ligands as residues now. really, this should be a method in the Pose object.
 	int countProteinResidues = 0;
-	int chain = pose.residue(1).chain();
+	Size chain = pose.residue(1).chain();
 	for ( Size i=1; i < pose.n_residue(); ++i ) {
 		if ( pose.residue(i).type().is_protein() )
 			countProteinResidues++;
@@ -286,17 +292,6 @@ score_folded_residues( std::string pdb_filename, scoring::ScoreFunctionOP scoref
 		repack_pose( pose, scorefxn );
 	}
 
-	// need to get a count of the number of residues in the protein since n_residue (or conformation.size()) includes metal atoms
-	// and other ligands as residues now. really, this should be a method in the Pose object.
-	int countProteinResidues = 0;
-	int chain = pose.residue(1).chain();
-	for ( Size i=1; i < pose.n_residue(); ++i ) {
-		if ( pose.residue(i).type().is_protein() )
-			countProteinResidues++;
-		if ( chain != pose.residue(i).chain() )
-			break;
-	}
-
 	// score the entire pose
 	Energy score = ( *scorefxn )( pose );
 	if ( score > 1000 ) {
@@ -313,12 +308,11 @@ score_folded_residues( std::string pdb_filename, scoring::ScoreFunctionOP scoref
 		// utility_exit_with_message("Bad energy calculation.");
 	}
 
-	for ( int ii=1; ii <= countProteinResidues; ++ii ) {
-
-		// check to make sure every residue is of type protein.
+	for ( Size ii=1; ii <= pose.n_residue(); ++ii ) {
+		// check to make sure this residue is of type protein.
 		if ( !pose.residue(ii).type().is_protein() ) { continue; }
 
-		std::string residue_aa = pose.residue( ii ).name3();
+		std::string residue_aa = pose.residue(ii).name3();
 		std::string sequence = "PROTEIN";
 
 		// save the energies of the individual terms for this residue
@@ -388,14 +382,13 @@ main( int argc, char * argv [] ) {
 	// that term from the score function.
 	// Don't include the solubility term or the pAA term that we are considering using here.
 	TR << "Creating score function." << std::endl;
-	scoring::ScoreFunctionOP score12_scorefxn = scoring::ScoreFunctionFactory::create_score_function( scoring::STANDARD_WTS, scoring::SCORE12_PATCH );
+	scoring::ScoreFunctionOP score12_scorefxn = scoring::getScoreFunction();
 
 	scoring::methods::EnergyMethodOptions energymethodoptions( score12_scorefxn->energy_method_options() );
-	energymethodoptions.decompose_bb_hb_into_pair_energies( true );
+	energymethodoptions.hbond_options()->decompose_bb_hb_into_pair_energies( true );
 	score12_scorefxn->set_energy_method_options( energymethodoptions );
 
 	score12_scorefxn->set_weight( core::scoring::ref, 0.0 );
-	//score12_scorefxn->set_weight( core::scoring::pro_close, 0.0 );
 
 	score12_scorefxn->set_weight( core::scoring::dslf_ss_dst, 0.0 );
 	score12_scorefxn->set_weight( core::scoring::dslf_cs_ang, 0.0 );
@@ -412,7 +405,6 @@ main( int argc, char * argv [] ) {
 	// map_aa_to_vector_pair_sequence_energymap[ S ][ 0 ] = ( IYSAIDSGASFMV, energies )
 
 	std::map< std::string, std::vector< std::pair< std::string, scoring::EnergyMap > > > map_aa_to_vector_pair_sequence_energymap;
-
 
 	// iterate through all the structures - do something to them
 	for ( std::vector< utility::file::FileName >::iterator pdb = pdb_file_names.begin(), last_pdb = pdb_file_names.end(); pdb != last_pdb; ++pdb) {
@@ -479,7 +471,6 @@ main( int argc, char * argv [] ) {
 		case scoring::fa_dun:
 		case scoring::p_aa_pp:
 		case scoring::pro_close:
-		case scoring::total_score:
 			energiesOutFile << scoring::ScoreType(kk) << " ";
 			break;
 		default:
@@ -498,7 +489,6 @@ main( int argc, char * argv [] ) {
 
 			// now print out the energies, but only those we care about
 			for ( int kk = 1; kk <= scoring::n_score_types; ++kk ) {
-
 				switch( scoring::ScoreType(kk) ) {
 				case scoring::fa_atr:
 				case scoring::fa_rep:
@@ -514,7 +504,6 @@ main( int argc, char * argv [] ) {
 				case scoring::fa_dun:
 				case scoring::p_aa_pp:
 				case scoring::pro_close:
-				case scoring::total_score:
 					energiesOutFile << ObjexxFCL::fmt::F(7,5,mi->second[ jj ].second[ scoring::ScoreType(kk) ]) << " ";
 					break;
 				default:

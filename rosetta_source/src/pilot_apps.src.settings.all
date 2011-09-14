@@ -548,11 +548,13 @@ sources = {
                 #"surface_optE_parallel",
                 #"monomer_protocols",
                 #"analyze_ddG",
-                #"point_mut_scan_app",
+                #"analyze_interface",
+                "pmut_scan_parallel",
                 #"hydrophobic_patch_stats_calculator",
                 #"rss_energy_calculator",
                 #"report_hbonds_for_plugin",
-                #"patch_finder",
+                #"hydrophobic_patch_finder",
+                #"report_cavities_for_plugin",
          ],
          "pilot/thermo" : [
                  #"metropolis_hastings"

@@ -76,7 +76,7 @@ const core::Size SurfacePotential::SURFACE_SCORE_BIN_SIZE = 25;
 const core::Size SurfacePotential::BURIED_RESIDUE_NO_HSASA_CUTOFF = 24;
 
 const core::Size SurfacePotential::MAX_HPATCH_AREA = 1000;
-const core::Real SurfacePotential::MAX_HPATCH_SCORE = 25.0;
+const core::Real SurfacePotential::MAX_HPATCH_SCORE = 100.0;
 const core::Size SurfacePotential::HPATCH_SCORE_BIN_SIZE = 50;
 
 /// @brief set initial value as no instance
@@ -508,7 +508,7 @@ SurfacePotential::compute_pose_hpatch_score(
 )
 {
 	core::Real total_hpatch_score;
-	std::map< core::Size, core::Real > patch_scores;
+	std::map< core::Size, std::pair< core::Real, core::Real > > patch_scores;
 	std::map< Size,utility::vector1< id::AtomID > > atoms_in_patches;
 
 	compute_pose_hpatch_score( pose, total_hpatch_score, patch_scores, atoms_in_patches );
@@ -534,7 +534,7 @@ SurfacePotential::compute_pose_hpatch_score(
 void SurfacePotential::compute_pose_hpatch_score(
 	pose::Pose const & pose,
 	core::Real & total_hpatch_score_,
-	std::map< core::Size, core::Real > & patch_scores_,
+	std::map< core::Size, std::pair< core::Real, core::Real > > & patch_scores_,
 	std::map< Size,utility::vector1< id::AtomID > > & atoms_in_patches_
 )
 {
@@ -551,7 +551,7 @@ void SurfacePotential::compute_pose_hpatch_score(
 	utility::vector1< InvRotamerDotsOP > invdots( pose.total_residue() );
 
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		rdots[ii] = new RotamerDots( pose.residue(ii).clone(), true, true );
+		rdots[ii] = new RotamerDots( pose.residue(ii).clone(), true /* exclude H's */, true /* use expanded polar atom radii */);
 		invdots[ii] = new InvRotamerDots();
 	}
 
@@ -795,15 +795,15 @@ void SurfacePotential::compute_pose_hpatch_score(
 #endif
 		total_hpatch_score_ += score;
 
-		patch_scores_[ (*it).first ] = score;
+		patch_scores_[ (*it).first ] = std::make_pair( score, patch_area );
 	}
 
 //#ifdef FILE_DEBUG
 	// output all of the scores on a single line
 	TR << "calculated total hpatch score: " << total_hpatch_score_ << ", individual patch scores: [ ";
-	std::map< Size, Real >::iterator scores_iter;
+	std::map< Size, std::pair< Real, Real > >::iterator scores_iter;
 	for ( scores_iter = patch_scores_.begin(); scores_iter != patch_scores_.end(); scores_iter++ ) {
-		TR << (*scores_iter).second << ", ";
+		TR << (*scores_iter).second.first << ", ";
 	}
 	TR << "]" << std::endl;
 //#endif
@@ -813,9 +813,9 @@ void SurfacePotential::compute_pose_hpatch_score(
 	for ( it = sets.begin() ; it != sets.end(); it++ ) {
 		std::ostringstream strstream;
 		
-		std::map< core::Size, core::Real >::iterator ps_it = patch_scores_.find( (*it).first );
+		std::map< core::Size, std::pair< core::Real, core::Real > >::iterator ps_it = patch_scores_.find( (*it).first );
 		if ( ps_it == patch_scores_.end() ) { continue; } // this shouldn't happen though
-		Real score = (*ps_it).second;
+		Real score = (*ps_it).second.first;
 		if ( score < 4.00 ) { continue; }
 		
 		TR << "large patch, hpatch_score: " << score << ", PyMOL expression: select p" << (*it).first << ", ";

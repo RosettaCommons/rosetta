@@ -52,7 +52,7 @@ HPatchCalculator::lookup( std::string const & key, basic::MetricValueBase* valpt
 
 	} else if ( key == "patch_scores" ) {
 		basic::check_cast( valptr, &patch_scores_, "patch_scores expects to return a std::map< Size, Real >" );
-		(static_cast<basic::MetricValue<std::map< Size, Real > > *>(valptr) )->set( patch_scores_ );
+		(static_cast<basic::MetricValue<std::map< Size, std::pair< Real, Real > > > *>(valptr) )->set( patch_scores_ );
 
 	} else if ( key == "atoms_in_patches" ) {
 		basic::check_cast( valptr, &atoms_in_patches_, "atoms_in_patches expects to return a std::map< Size, utility::vector1< id::AtomID > >" );
@@ -94,7 +94,7 @@ HPatchCalculator::recompute( pose::Pose const & this_pose ) {
 		// iterate over all residues to see if this pose has any non-protein residues
 		bool has_nonprot_res(false);
 		for ( core::Size ii = 1; ii <= this_pose.total_residue(); ++ii ) {
-			if( ! this_pose.residue_type(ii).is_protein() ) {
+			if ( ! this_pose.residue_type(ii).is_protein() ) {
 				has_nonprot_res = true;
 				break;
 			}
@@ -104,7 +104,7 @@ HPatchCalculator::recompute( pose::Pose const & this_pose ) {
 			pose_manipulation::remove_non_protein_residues( *pureprotpose );
 			pack::interaction_graph::SurfacePotential::get_instance()->compute_pose_hpatch_score( *pureprotpose, total_hpatch_score_, patch_scores_, atoms_in_patches_ );
 
-		} else{
+		} else {
 			pack::interaction_graph::SurfacePotential::get_instance()->compute_pose_hpatch_score( this_pose, total_hpatch_score_, patch_scores_, atoms_in_patches_ );
 		}
 	}

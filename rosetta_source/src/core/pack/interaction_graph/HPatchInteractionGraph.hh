@@ -3937,7 +3937,7 @@ void HPatchInteractionGraph< V, E, G >::register_bg_node_affected_by_rotsub( int
 template < typename V, typename E, typename G >
 void HPatchInteractionGraph< V, E, G >::init_SASA_radii_from_database() {
 
-	core::chemical::AtomTypeSet const & atom_type_set = pose().residue(1).atom_type_set(); // horrible HACK TODO XXX
+	core::chemical::AtomTypeSet const & atom_type_set = pose().residue(1).atom_type_set();
 	radii_.resize( atom_type_set.n_atomtypes(), 0.0 );
 
 	core::Size SASA_RADIUS_INDEX = atom_type_set.extra_parameter_index( "NACCESS_SASA_RADIUS" );

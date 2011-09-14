@@ -981,6 +981,10 @@ sources = {
 		"PNatLigPoseOptEData",
 		"NestedEnergyTermOptEData",
 	],
+        "protocols/pmut_scan" : [
+                "PointMutScanDriver",
+                "Mutant",
+        ],
 	"protocols/protein_interface_design" : [
 		"DockDesignFilterFactory",
 		"design_utils",
