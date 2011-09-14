@@ -17,7 +17,7 @@ fid_yaml = open( '.results.yaml', 'w')
 fid_yaml.write('{ ')
 
 #score output as defined by the tags in the first line
-resultfile = './outputs/enz_score.out'
+resultfile = './output/enz_score.out'
 
 isTestPassed = True
 
