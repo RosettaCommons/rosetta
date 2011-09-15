@@ -139,6 +139,9 @@ sources = {
 		"OptCysHG",
 		"OptH",
 	],
+    "core/pack/task/operation/util":[
+        "interface_vector_calculate",
+        ],
         "core/util" : [
                 "ABEGOManager",
                 "disulfide_util",

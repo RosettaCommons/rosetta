@@ -29,7 +29,7 @@ InterfaceTaskOperation::InterfaceTaskOperation() : parent()
 InterfaceTaskOperation::InterfaceTaskOperation( InterfaceTaskOperation const & old_instance ) :
 	//utility::pointer::ReferenceCount(),
 	parent( old_instance )
-{	
+{
 	movable_jumps_ = old_instance.movable_jumps_;
 }
 
@@ -38,11 +38,12 @@ void InterfaceTaskOperation::add_movable_jump( int const additional_jump ) {
 	movable_jumps_.push_back( additional_jump );
 }
 
-void InterfaceTaskOperation::set_movable_jumps( utility::vector1_int const movable_jumps ) {
+void InterfaceTaskOperation::set_movable_jumps( utility::vector1_int const & movable_jumps ) {
     movable_jumps_ = movable_jumps;
 }
 
-utility::vector1_int InterfaceTaskOperation::movable_jumps() const{
+utility::vector1_int const &
+InterfaceTaskOperation::movable_jumps() const{
     return movable_jumps_;
 }
 

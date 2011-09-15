@@ -8,28 +8,32 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/toolbox/task_operations/RestrictToInterfaceVectorOperation.cc
-/// @brief  TaskOperation class that finds an interface based on InterfaceVectorDefinitionCalculator and leaves it mobile in the PackerTask
+/// @brief  TaskOperation class that finds an interface based on:
+/// core/pack/task/operation/util/interface_vector_calculate.hh
+/// and leaves it mobile in the PackerTask
 /// @author Ben Stranges (stranges@unc.edu)
 
 // Unit Headers
 #include <protocols/toolbox/task_operations/RestrictToInterfaceVectorOperation.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceVectorOperationCreator.hh>
-
+//#include <protocols/toolbox/task_operations/InterfaceTaskOperation.hh> //shouldn't need this
 // Project Headers
 #include <core/pose/Pose.hh>
+#include <core/pack/task/operation/util/interface_vector_calculate.hh>
 //#include <core/kinematics/FoldTree.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceVectorDefinitionCalculator.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
+//#include <protocols/toolbox/pose_metric_calculators/InterfaceVectorDefinitionCalculator.hh>
+//#include <core/pose/metrics/CalculatorFactory.hh>
 // AUTO-REMOVED #include <basic/MetricValue.hh>
 
 // Utility Headers
 #include <core/types.hh>
 #include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
+
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
-
 
 // C++ Headers
 #include <set>
@@ -44,22 +48,18 @@ namespace task_operations {
 
 ///@details, empty contructor for parser
 RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation() :
-	parent(),
-	lower_chain_(1),
-	upper_chain_(2),
+	parent(), //inits a jump number 1
+	jump_active_(true),
 	CB_dist_cutoff_( 11.0 ),
 	nearby_atom_cutoff_( 5.5 ),
 	vector_angle_cutoff_( 75.0 ),
 	vector_dist_cutoff_( 9.0 )
-	//char_constructor_(false);
-{ make_name();}
+{ }
 
-
-
-///@details this ctor assumes a pregenerated calculator - if you want a particular non-default cutoff distance
-RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation( std::string const & calculator )
-	: parent(), calculator_name_(calculator)
-{}
+// ///@details this ctor assumes a pregenerated calculator - if you want a particular non-default cutoff distance
+// RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation( std::string const & calculator )
+// 	: parent(), calculator_name_(calculator)
+// {}
 
 ///@brief this ctor will generate the calculator for you (may use defaults)
 ///if you want to use chain characters make the calculator that way and pass it to the constructor above
@@ -67,15 +67,16 @@ RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation( core::Si
 	parent(),
 	lower_chain_(lower_chain),
 	upper_chain_(upper_chain),
+	jump_active_(false),
 	CB_dist_cutoff_( 11.0 ),
 	nearby_atom_cutoff_( 5.5 ),
 	vector_angle_cutoff_( 75.0 ),
 	vector_dist_cutoff_( 9.0 )
-{ make_name(); }
+{ }
 
 //full constructor
 RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation( core::Size const lower_chain,
-																																				core::Size upper_chain,
+																																				core::Size const upper_chain,
 																																				core::Real CB_dist_cutoff,
 																																				core::Real nearby_atom_cutoff,
 																																				core::Real vector_angle_cutoff,
@@ -83,11 +84,39 @@ RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation( core::Si
 	parent(),
 	lower_chain_(lower_chain),
 	upper_chain_(upper_chain),
+	jump_active_(false),
 	CB_dist_cutoff_( CB_dist_cutoff ),
 	nearby_atom_cutoff_( nearby_atom_cutoff ),
 	vector_angle_cutoff_( vector_angle_cutoff ),
 	vector_dist_cutoff_( vector_dist_cutoff )
-{ make_name();}
+{ }
+
+///@brief this ctor will generate the calculator for you (may use defaults)
+///if you want to use chain characters make the calculator that way and pass it to the constructor above
+RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation( utility::vector1_int const movable_jumps ):
+	parent(),
+	jump_active_(true),
+	CB_dist_cutoff_( 11.0 ),
+	nearby_atom_cutoff_( 5.5 ),
+	vector_angle_cutoff_( 75.0 ),
+	vector_dist_cutoff_( 9.0 )
+{ set_movable_jumps( movable_jumps ); }
+
+//full constructor
+RestrictToInterfaceVectorOperation::RestrictToInterfaceVectorOperation( utility::vector1_int const movable_jumps ,
+																																				core::Real CB_dist_cutoff,
+																																				core::Real nearby_atom_cutoff,
+																																				core::Real vector_angle_cutoff,
+																																				core::Real vector_dist_cutoff):
+	parent(),
+	jump_active_(true),
+	CB_dist_cutoff_( CB_dist_cutoff ),
+	nearby_atom_cutoff_( nearby_atom_cutoff ),
+	vector_angle_cutoff_( vector_angle_cutoff ),
+	vector_dist_cutoff_( vector_dist_cutoff )
+{	set_movable_jumps( movable_jumps );}
+
+
 
 //class member functions
 RestrictToInterfaceVectorOperation::~RestrictToInterfaceVectorOperation() {}
@@ -104,64 +133,92 @@ core::pack::task::operation::TaskOperationOP RestrictToInterfaceVectorOperation:
 	return new RestrictToInterfaceVectorOperation( *this );
 }
 
-///@details private helper function to make calculator - runs in the ctor
-void RestrictToInterfaceVectorOperation::make_calculator( const std::string & calculator_name ) const {
-	using namespace core::pose::metrics;
-	using namespace protocols::toolbox::pose_metric_calculators;
 
-	if( CalculatorFactory::Instance().check_calculator_exists( calculator_name ) ){
-		Warning() << "In RestrictToInterfaceVectorOperation, calculator " << calculator_name
-							<< " already exists, this is hopefully correct for your purposes" << std::endl;
-	} else {
-		InterfaceVectorDefinitionCalculatorOP interface_calc = new InterfaceVectorDefinitionCalculator( lower_chain_, upper_chain_, CB_dist_cutoff_, nearby_atom_cutoff_, vector_angle_cutoff_, vector_dist_cutoff_ );
-
-		CalculatorFactory::Instance().register_calculator( calculator_name, interface_calc );
-	}
-}
-
-///@details private helper function to name calculator will be unique unless the setters are altered
-void RestrictToInterfaceVectorOperation::make_name() {
-	calculator_name_ = "RIVO_interface_calculator_" + utility::to_string( lower_chain_ )
-		+ '_' + utility::to_string( upper_chain_ ) +  '_' +
-		utility::to_string( CB_dist_cutoff_ ) + '_' +
-		utility::to_string( nearby_atom_cutoff_ ) + '_' +
-		utility::to_string( vector_angle_cutoff_ ) + '_' +
-		utility::to_string( vector_dist_cutoff_ );
-}
 ///@details apply function, uses inherited functionality
 void
 RestrictToInterfaceVectorOperation::apply( core::pose::Pose const & pose, core::pack::task::PackerTask & task ) const
-{   
-    // When inheriting from InterfaceTaskOperation, this method will need to be called
-    //setup_interface_chains_from_jumps( pose );
+{
+	//using namespace core::pack::task::operation::util;
 
-	//can do this here if we want setters
-	make_calculator(calculator_name_);
+	//if the jump constructor then itterate through jumps, make union
+	if(jump_active_){
+		utility::vector1_bool repack_full(pose.total_residue(), false);
+		for( utility::vector1_int::const_iterator jj = movable_jumps().begin() ; jj != movable_jumps().end() ; ++jj ){ //itterator fails here
+			//std::cout << "Calculating interface for jump: " <<*jj << std::endl;
+			//run detection based on jump
+			utility::vector1_bool repack =
+				core::pack::task::operation::util::calc_interface_vector( pose, *jj,
+																																	CB_dist_cutoff_,
+																																	nearby_atom_cutoff_,
+																																	vector_angle_cutoff_,
+																																	vector_dist_cutoff_ );
+			//add repack true setting to repack_full
+			for(core::Size ii = 1; ii <= repack.size(); ++ii){
+				if(repack[ii])
+					repack_full[ii] = true;
+			}//end add repack to full_repack
+		}//itterate over jumps
+		task.restrict_to_residues(repack_full);
+	}//end if jump active
 
- 	//vector for filling packertask
- 	utility::vector1_bool repack(pose.total_residue(), false);
-	run_calculator(pose, calculator_name_, "interface_residues", repack);
- 	task.restrict_to_residues(repack);
+ 	else{ // if using only the two chain case
+		//vector for filling packertask
+		utility::vector1_bool repack =
+			core::pack::task::operation::util::calc_interface_vector( pose,
+																																 lower_chain_, upper_chain_,
+																																 CB_dist_cutoff_,
+																																 nearby_atom_cutoff_,
+																																 vector_angle_cutoff_,
+																																 vector_dist_cutoff_ );
+		task.restrict_to_residues(repack);
+	}
+
 
 }
 
-///@details setters: only exist to pass info to the calculator
-/// calculator name must be remade when these are accessed
+///@details setters: only exist to pass info from the parser
 void
 RestrictToInterfaceVectorOperation::upper_chain( core::Size upper_chain){
 	upper_chain_ = upper_chain;
-	make_name();
+	jump_active_ = false;
+	//make_name();
 }
 void
 RestrictToInterfaceVectorOperation::lower_chain( core::Size lower_chain){
 	lower_chain_ = lower_chain;
-	make_name();
+	jump_active_ = false;
+	//make_name();
+}
+
+// void
+// RestrictToInterfaceVectorOperation::jump_num( int jump_num ){
+// 	add_movable_jump( jump_num );
+// 	jump_active_ = true;
+// }
+//if you want this function use parent class function:
+//add_movable_jump( int const additional_jump );
+
+void
+RestrictToInterfaceVectorOperation::CB_dist_cutoff( core::Real CB_dist_cutoff){
+	CB_dist_cutoff_ = CB_dist_cutoff;
+}
+void
+RestrictToInterfaceVectorOperation::nearby_atom_cutoff(core::Real nearby_atom_cutoff){
+	nearby_atom_cutoff_ = nearby_atom_cutoff;
+}
+void
+RestrictToInterfaceVectorOperation::vector_angle_cutoff(core::Real vector_angle_cutoff){
+	vector_angle_cutoff_ = vector_angle_cutoff;
+}
+void
+RestrictToInterfaceVectorOperation::vector_dist_cutoff(core::Real vector_dist_cutoff){
+	vector_dist_cutoff_ = vector_dist_cutoff;
 }
 
 /*
 void
 RestrictToInterfaceVectorOperation::setup_interface_chains_from_jumps( core::pose::Pose const & pose ){
-    
+
     // This class wouldn't know what to do with more than jump, so we'll assert that there's only one.
     assert(movable_jumps().size() == 1);
     lower_chain( pose.chain( pose.fold_tree().jump_edge( *it ).start() ) );
@@ -169,38 +226,46 @@ RestrictToInterfaceVectorOperation::setup_interface_chains_from_jumps( core::pos
 }
 */
 
-
-void
-RestrictToInterfaceVectorOperation::CB_dist_cutoff( core::Real CB_dist_cutoff){
-	CB_dist_cutoff_ = CB_dist_cutoff;
-	make_name();
-}
-void
-RestrictToInterfaceVectorOperation::nearby_atom_cutoff(core::Real nearby_atom_cutoff){
-	nearby_atom_cutoff_ = nearby_atom_cutoff;
-	make_name();
-}
-void
-RestrictToInterfaceVectorOperation::vector_angle_cutoff(core::Real vector_angle_cutoff){
-	vector_angle_cutoff_ = vector_angle_cutoff;
-	make_name();
-}
-void
-RestrictToInterfaceVectorOperation::vector_dist_cutoff(core::Real vector_dist_cutoff){
-	vector_dist_cutoff_ = vector_dist_cutoff;
-	make_name();
-}
-
 ///@details parse_tag function for the parser, sets reasonable values for all options
 void
 RestrictToInterfaceVectorOperation::parse_tag( TagPtr tag )
 {
-	lower_chain( tag->getOption< core::Size >( "chain1_num", 1) );
-	upper_chain( tag->getOption< core::Size >( "chain2_num", 2) );
+	if( ( tag->hasOption("chain1_num" ) || tag->hasOption("chain2_num" ) ) && tag->hasOption("jump" ) )
+		utility_exit_with_message( "You can't define chains and jumps" );
+	//use chain numbers if given, otherwise use jump
+	if( tag->hasOption("chain1_num" ) && tag->hasOption("chain2_num" ) ){
+		lower_chain( tag->getOption< core::Size >( "chain1_num") );
+		upper_chain( tag->getOption< core::Size >( "chain2_num") );
+		jump_active_ = false;
+	}
+	//go through the jumps, should probably be a utility function for this
+	else if( tag->hasOption("jump") )
+		{
+			//jump_num( tag->getOption< int >( "jump", 1) );
+			//get a string of comma separated jumps
+			utility::vector1_int jump_vector(0); //init to zero to cause insant problem if nothing passed
+			std::vector<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
+			for( std::vector<std::string>::const_iterator it = jumps.begin(); it != jumps.end(); ++it ) {
+				// convert to C string, then convert to integer then push back in vector
+				int this_jump(std::atoi( it->c_str() ) );
+				jump_vector.push_back( this_jump );
+				//add_movable_jump (this_jump ); //from parent class
+				TR << 	"Adding jump: " << this_jump << ", ";
+			}
+			TR << std::endl;
+			assert( jump_vector.size() > 0 );
+			//now set jumps for parent class and locally
+			set_movable_jumps( jump_vector );
+			jump_active_ = true;
+		}//end jumps
+	else
+		utility_exit_with_message( "Need to define either jump OR (chain1_num AND chain2_num)" );
+	//get other possible tags, set default values to something reasonable.
 	CB_dist_cutoff( tag->getOption< core::Real >( "CB_dist_cutoff", 10.0) );
 	nearby_atom_cutoff( tag->getOption< core::Real >( "nearby_atom_cutoff", 5.5) );
 	vector_angle_cutoff( tag->getOption< core::Real >( "vector_angle_cutoff", 75.0) );
 	vector_dist_cutoff( tag->getOption< core::Real >( "vector_dist_cutoff", 9.0 ) );
+
 }
 
 } //namespace protocols

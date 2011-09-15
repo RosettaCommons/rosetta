@@ -8,7 +8,9 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/toolbox/task_operations/RestrictToInterfaceVectorOperation.hh
-/// @brief  TaskOperation class that finds an interface based on InterfaceVectorDefinitionCalculator and leaves it mobile in the PackerTask.  Serves mostly to wrap InterfaceVectorDefinitionCalculator into a TaskOperation
+/// @brief  TaskOperation class that finds an interface based on InterfaceVectorDefinition
+/// and leaves it mobile in the PackerTask.  Serves mostly to wrap InterfaceVectorDefinition
+/// into a TaskOperation. see src/core/pack/task/operation/util/interface_vector_calculate.hh
 /// @author Ben Stranges (stranges@unc.edu)
 
 #ifndef INCLUDED_protocols_toolbox_task_operations_RestrictToInterfaceVectorOperation_hh
@@ -16,30 +18,30 @@
 
 // Unit Headers
 #include <protocols/toolbox/task_operations/RestrictToInterfaceVectorOperation.fwd.hh>
-#include <protocols/toolbox/task_operations/RestrictOperationsBase.hh>
+#include <protocols/toolbox/task_operations/InterfaceTaskOperation.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
+//#include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
 // Utility Headers
-#include <core/types.hh>
+//#include <core/types.hh>
 
 // C++ Headers
-#include <string>
+//#include <string>
 
 namespace protocols {
 namespace toolbox {
 namespace task_operations {
 
 ///@details this class is a TaskOperation to prevent repacking of residues not near an interface.
-class RestrictToInterfaceVectorOperation : public RestrictOperationsBase
+class RestrictToInterfaceVectorOperation : public InterfaceTaskOperation
 {
 public:
-	typedef RestrictOperationsBase parent;
+	typedef InterfaceTaskOperation parent;
 
-	//empty contstructor for parser
+	//empty contstructor for parser, uses jumps
 	RestrictToInterfaceVectorOperation();
 
 	RestrictToInterfaceVectorOperation( core::Size const lower_chain, core::Size const upper_chain );
@@ -51,8 +53,18 @@ public:
 																			core::Real vector_angle_cutoff,
 																			core::Real vector_dist_cutoff);
 
-	//if you want to use chain characters this is probably the best way, define the calculator separately
-	RestrictToInterfaceVectorOperation( std::string const & calculator );
+	//basic jump constructor
+	RestrictToInterfaceVectorOperation( utility::vector1_int const movable_jumps );
+
+	//full constructor for jumps
+	RestrictToInterfaceVectorOperation( utility::vector1_int const movable_jumps ,
+																			core::Real CB_dist_cutoff,
+																			core::Real nearby_atom_cutoff,
+																			core::Real vector_angle_cutoff,
+																			core::Real vector_dist_cutoff);
+
+	// //if you want to use chain characters this is probably the best way, define the calculator separately
+	// RestrictToInterfaceVectorOperation( std::string const & calculator );
 
 	virtual ~RestrictToInterfaceVectorOperation();
 
@@ -65,6 +77,7 @@ public:
 	//@brief, setters for the calculator.
 	void upper_chain( core::Size upper_chain);
 	void lower_chain( core::Size lower_chain);
+	void jump_num( int jump_num);
 	void CB_dist_cutoff( core::Real CB_dist_cutoff);
 	void nearby_atom_cutoff(core::Real nearby_atom_cutoff);
 	void vector_angle_cutoff(core::Real vector_angle_cutoff);
@@ -77,17 +90,10 @@ public:
     void
     setup_interface_chains_from_jumps( core::pose::Pose const & pose );
     */
-    
+
 private:
-	///@brief constructor helper function - makes the PoseMetricCalculator
-	void make_calculator( const std::string & calculator_name ) const;
-	//void make_calculator_char( char chain1_letter, char  chain2_letter );
 
-	///@brief constructor helper function - names the PoseMetricCalculator
-	void make_name();
-
-	///@brief private data used to pass to calculator
-	std::string calculator_name_;
+	///@brief private data used to pass to the definition function
 	//chain ids of the interface lower=chain1 upper=chain2 for most purposes.
 	core::Size lower_chain_;
 	core::Size upper_chain_;
@@ -97,7 +103,8 @@ private:
 	core::Real vector_angle_cutoff_; // used for cutoff for res1 CB to res2 CB angle cutoff
 	core::Real vector_dist_cutoff_; // used for distance between CBs for vector
 	//char upper_chain_char_, lower_chain_char;
-	//bool char_constructor_;
+	bool jump_active_; //is the jump deffinition being used
+	//int jump_vector_; //what jump is the interface across
 };
 
 } //namespace protocols

@@ -39,9 +39,9 @@ public:
 	
     virtual ~InterfaceTaskOperation();
 
-    void set_movable_jumps( utility::vector1_int const movable_jumps );
+    void set_movable_jumps( utility::vector1_int const & movable_jumps );
     void add_movable_jump( int const additional_jump );
-    utility::vector1_int movable_jumps() const;
+    utility::vector1_int const & movable_jumps() const;
 
 private:
 	utility::vector1_int movable_jumps_;

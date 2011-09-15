@@ -150,7 +150,18 @@ public:
 		//run
 		test::UTracer UT_RTIVO("protocols/toolbox/task_operations/RestrictToInterfaceVectorOperation.u");
 		//this call returns PackerTaskOP; we are dumping the ptask to utracer
+		//std::cout << *(RTIVO_factory.create_task_and_apply_taskoperations( pose )) << std::endl;
 		UT_RTIVO << *(RTIVO_factory.create_task_and_apply_taskoperations( pose )) << std::endl;
+
+		//now test again for jump deffinition
+		test::UTracer UT_RTIVO2("protocols/toolbox/task_operations/RestrictToInterfaceVectorOperation.u");
+		RTIVO_factory.clear();
+		utility::vector1< int > interface_jump;
+		interface_jump.push_back(1);
+		RTIVO_factory.push_back( new RestrictToInterfaceVectorOperation(interface_jump,10,5.5,75,9.0) );
+		//std::cout <<"Interface Jump RestrictToInterfaceVectorOperation \n "
+		//<< *(RTIVO_factory.create_task_and_apply_taskoperations( pose )) << std::endl;
+		UT_RTIVO2 << *(RTIVO_factory.create_task_and_apply_taskoperations( pose )) << std::endl;
 
 	}//end test_RestrictToInterfaceVectorOperation
 
