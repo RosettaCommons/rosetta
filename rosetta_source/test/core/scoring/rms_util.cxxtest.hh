@@ -36,11 +36,11 @@
 #include <utility/keys/Key2Tuple.hh>
 #include <numeric/model_quality/maxsub.hh>
 
+using core::Real;
+using core::pose::Pose;
 
 class RmsUtilTest : public CxxTest::TestSuite {
-
-public:
-
+ public:
 	void setUp() {
 		core_init_with_additional_options(
 			"-no_optH"// -extra_res_fa core/scoring/1pqc.params"
@@ -57,10 +57,7 @@ public:
 			ChemicalManager::get_instance()->element_set( FA_STANDARD ),
 			ChemicalManager::get_instance()->mm_atom_type_set( FA_STANDARD ),
 			ChemicalManager::get_instance()->orbital_type_set(FA_STANDARD));//,
-			//ChemicalManager::get_instance()->csd_atom_type_set( FA_STANDARD ));
 	}
-
-	void tearDown() {}
 
 	void test_ligand_rms() {
 		test::UTracer UT("core/scoring/rms_util.u");
@@ -77,5 +74,10 @@ public:
 		UT << "    no superposition, with automorphisms: " << automorphic_rmsd(pose1.residue(1), pose2.residue(1), false /*don't superimpose*/) << "\n";
 		UT << "  with superposition, with automorphisms: " << automorphic_rmsd(pose1.residue(1), pose2.residue(1), true /*superimpose*/) << "\n";
 	}
-};
 
+	void test_superimpose() {
+		Pose pose = *core::import_pose::pose_from_pdb("core/scoring/2GB3.pdb");
+		Real rmsd = core::scoring::CA_rmsd(pose, pose);
+		TS_ASSERT_DELTA(0, rmsd, 0.0001);
+	}
+};
