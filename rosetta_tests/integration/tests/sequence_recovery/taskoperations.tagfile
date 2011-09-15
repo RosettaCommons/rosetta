@@ -1,3 +1,0 @@
-<TASKOPERATIONS>
-  <RestrictNonSurfaceToRepacking name=rnstr surface_exposed_nb_count_cutoff=15 exclude_interfaces_from_restriction=false/>
-</TASKOPERATIONS>
