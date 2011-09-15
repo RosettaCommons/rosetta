@@ -41,6 +41,7 @@
 // C++ headers
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <set>
 
 // option key includes
@@ -371,7 +372,11 @@ ResidueTypeSet::add_residue_type_to_maps( ResidueType & rsd )
 
 	// name should be unique!
 	if ( name_map_.count( rsd.name() ) ) {
-		utility_exit_with_message("Residue names must be unique!");
+		std::stringstream err_msg;
+		err_msg << "Attempting to add a residue type with name '" + rsd.name() + "' ";
+		err_msg << "but this name is already taken." << std::endl;
+		err_msg << "Please check your residue parameter files." << std::endl;
+		utility_exit_with_message(err_msg.str());
 	}
 	name_map_[ rsd.name() ] = rsd_ptr;
 	nonconst_name_map_[ rsd.name() ] = &rsd;
