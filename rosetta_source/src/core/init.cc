@@ -443,6 +443,9 @@ void init(int argc, char * argv [])
 	if( basic::options::option[ out::level ].active() )  TO.level = basic::options::option[ out::level ]();
 	if( basic::options::option[ out::chname ].active() ) TO.print_channel_name = basic::options::option[ out::chname ]();
 
+	// Adding Tracer::flush_all_tracers to list of exit-callbacks so all tracer output got flush out when utility_exit is used.
+	utility::add_exit_callback(basic::Tracer::flush_all_tracers);
+
 	// set default corrections
 	if( basic::options::option[basic::options::OptionKeys::corrections::correct]) {
 		// Pair energy

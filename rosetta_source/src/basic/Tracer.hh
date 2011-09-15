@@ -170,6 +170,7 @@ public:
 	static bool super_mute() { return super_mute_; }
 	static void super_mute(bool f) { super_mute_ = f; }
 
+	static void flush_all_tracers();
 
 public: /// Inner Classes
 	 /// @brief Small inner class acting as a proxy to an object that hold it.
@@ -276,6 +277,8 @@ private: /// Data members
 	/// @which Mpi rank is this process
 	static int mpi_rank_;
 
+	/// @brief static collection of all Tracer objects
+	static std::vector< Tracer * > & all_tracers();
 
 	/// @brief T is special function for assign tracer property on the static object.
 	friend Tracer & T(std::string const &, TracerPriority);

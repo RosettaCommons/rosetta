@@ -34,7 +34,7 @@
 #include <fstream>
 
 
-basic::Tracer TM("TTest");
+basic::Tracer TM("TMemory");
 
 void TracerDiskSpaceTest(void)
 {
@@ -65,7 +65,8 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-basic::Tracer TR("TTest", basic::t_info, true);
+//basic::Tracer TR("TTest", basic::t_info, true);
+basic::Tracer TR("TTest");
 
 using namespace core;
 using namespace basic;
@@ -190,6 +191,8 @@ void test_Random(void)
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+// Utility headers
+#include <utility/exit.hh>
 
 
 int main( int argc, char * argv [] )
@@ -200,6 +203,15 @@ int main( int argc, char * argv [] )
 	basic::options::option.add_relevant(in::path::database);
 
 	devel::init(argc, argv);
+
+	TR << "Some unflushed output 1...\n";
+	TR << "Some unflushed output 2...\n";
+
+	//std::cout << "Calling basic::Tracer::flush_all_tracers manually..." << std::endl;
+	//basic::Tracer::flush_all_tracers();
+	//std::cout << "Calling basic::Tracer::flush_all_tracers manually... Done." << std::endl;
+	utility_exit_with_message("\nExiting without flushing the tracers...");
+
 
 	// Testing std::IO errors
 	std::cerr << "Point 1" << std::endl;

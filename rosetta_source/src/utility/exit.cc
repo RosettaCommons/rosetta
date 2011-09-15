@@ -30,15 +30,39 @@
 #include <string>
 #endif
 
+#include <vector>
 
 namespace utility {
 
 
-static void (*exit_callback)(void) = 0;
+/// Place holder for 'end-action' of utility::exit(…)
+static void (*main_exit_callback)(void) = 0;
 
-void set_exit_callback( void (*my_callback)(void) )
+void set_main_exit_callback( UtilityExitCallBack my_callback )
 {
-	exit_callback = my_callback;
+	main_exit_callback = my_callback;
+}
+
+/// Array to hold all additional exit-callbacks
+std::vector< UtilityExitCallBack > & get_all_exit_callbacks()
+{
+	static std::vector< UtilityExitCallBack > * all_CB = new std::vector< UtilityExitCallBack >;
+	return *all_CB;
+}
+
+void add_exit_callback( UtilityExitCallBack cb)
+{
+	get_all_exit_callbacks().push_back( cb );
+}
+
+void remove_exit_callback( UtilityExitCallBack cb )
+{
+	for(std::vector<UtilityExitCallBack>::iterator it=get_all_exit_callbacks().begin(); it < get_all_exit_callbacks().end(); ++it) {
+		if( (*it) == cb ) {
+			get_all_exit_callbacks().erase(it);
+			break;
+		}
+	}
 }
 
 
@@ -75,6 +99,11 @@ exit(
 	int const status
 )
 {
+	// Calling all preset exit-callback's
+	for(std::vector<UtilityExitCallBack>::iterator it=get_all_exit_callbacks().begin(); it < get_all_exit_callbacks().end(); ++it) {
+		(*it)();
+	}
+
   if ( ! message.empty() ) std::cerr << std::endl << "ERROR: " << message << std::endl;
   std::cerr << "ERROR:: Exit from: " << file << " line: " << line << std::endl;
   std::cerr.flush();
@@ -117,7 +146,7 @@ exit(
 	}
 
 #else // Not BOINC
-	if( exit_callback ) exit_callback();
+	if( main_exit_callback ) main_exit_callback();
 	else {
 		#ifndef _WIN32
 			assert( false ); // Force a core dump for post-mortem debugging

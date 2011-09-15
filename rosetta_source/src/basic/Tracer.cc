@@ -70,6 +70,21 @@ Tracer::TracerProxy::~TracerProxy()
 }
 
 
+/// @details static collection of all Tracer objects
+std::vector< Tracer * > & Tracer::all_tracers()
+{
+	static std::vector< Tracer * > * allTr = new std::vector< Tracer * >;
+	return *allTr;
+}
+
+void Tracer::flush_all_tracers()
+{
+	for(std::vector<Tracer *>::iterator it=all_tracers().begin(); it < all_tracers().end(); ++it) {
+		(*it)->flush_all_channels();
+	}
+}
+
+
 /// @details Constructor of Tracer object.
 /// Since most of the Tracer object will be created as static - they Constuctor will be called before
 /// Option system is initialized. So we can't really calculate any vizibility or priority here.
@@ -87,6 +102,8 @@ Tracer::Tracer(std::string const & channel, TracerPriority priority, bool muted_
 {
 	channel_ = channel;
 	priority_ = priority;
+
+	all_tracers().push_back(this);
 }
 
 Tracer::~Tracer()
@@ -106,6 +123,14 @@ Tracer::~Tracer()
 			(*v[i]) << "WARNING: Message(s) above was printed in the end instead of proper place because this Tracer object has some contents left in inner buffer when destructor was called. Explicit call Tracer::flush() or end your IO with std::endl to disable this warning.\n" << std::endl;
 		}
 	}
+
+	for(int i = all_tracers().size()-1; i >= 0; --i) {
+		if( this == all_tracers()[i] ) all_tracers().erase( all_tracers().begin()+i);
+	}
+
+	/* for(std::vector< Tracer * >::iterator it=all_tracers().begin(); it < all_tracers().end(); ++it) {
+		if( this == *it ) { all_tracers().erase( it ); break; }
+	} */
 }
 
 

@@ -216,7 +216,7 @@ void pyexit_callback(void)
 
 void set_pyexit_callback(void)
 {
-    set_exit_callback(pyexit_callback);
+    set_main_exit_callback(pyexit_callback);
 }
 
 
