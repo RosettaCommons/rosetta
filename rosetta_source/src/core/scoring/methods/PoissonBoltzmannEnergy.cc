@@ -25,13 +25,18 @@
 #include <core/scoring/methods/Methods.hh>
 
 // Project headers
-#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 
 // Utility headers
 #include <ObjexxFCL/format.hh>
 #include <numeric/conversions.hh>
 #include <basic/Tracer.hh>
+
+// option
+#include <basic/options/option.hh>
+#include <basic/options/util.hh>
+#include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 static basic::Tracer TR("core.scoring.methods.PoissonBoltzmannEnergy");
 
@@ -134,17 +139,17 @@ PoissonBoltzmannEnergy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 
 ///
-void
-PoissonBoltzmannEnergy::residue_energy(
-	conformation::Residue const & rsd,
-	pose::Pose const &,
-	EnergyMap & emap
-) const
-{
-	Real PB_score_residue, PB_score_backbone, PB_score_sidechain;
-	core::scoring::get_PB_potential().eval_PB_energy_residue( rsd, PB_score_residue, PB_score_backbone, PB_score_sidechain );
-	emap[ PB_elec ] += PB_score_sidechain;
-}
+/// void
+/// PoissonBoltzmannEnergy::residue_energy(
+/// 	conformation::Residue const & rsd,
+/// 	pose::Pose const &,
+/// 	EnergyMap & emap
+/// ) const
+/// {
+/// 	Real PB_score_residue, PB_score_backbone, PB_score_sidechain;
+/// 	core::scoring::get_PB_potential().eval_PB_energy_residue( rsd, PB_score_residue, PB_score_backbone, PB_score_sidechain );
+/// 	emap[ PB_elec ] += PB_score_sidechain;
+/// }
 
 bool PoissonBoltzmannEnergy::defines_residue_pair_energy(
 												 pose::Pose const & pose,
@@ -163,6 +168,52 @@ PoissonBoltzmannEnergy::eval_intrares_energy(
 									 ) const {
 	return;
 }
+
+bool
+PoissonBoltzmannEnergy::residue_in_chains(
+conformation::Residue const & rsd,
+utility::vector1 <Size> chains
+) const {
+	for (Size ichain=1; ichain<=chains.size(); ++ichain) {
+		if (rsd.chain() == chains[ichain]) return true;
+	}
+	return false;
+}
+
+
+Real
+PoissonBoltzmannEnergy::revamp_weight_by_burial(
+												conformation::Residue const & rsd,
+												pose::Pose const & pose
+) const {
+	utility::vector1 <Size> chains = basic::options::option[basic::options::OptionKeys::corrections::score::PB_revamp_near_chain]();
+	Real weight = 1.;
+	Real neighbor_count = 0.;
+	Real threshold = 4.;
+	for (Size j_res = 1; j_res <= pose.total_residue(); ++j_res) {
+		if ( pose.residue(j_res).is_virtual_residue() ) continue;
+		
+		if (residue_in_chains(pose.residue(j_res), chains) ) {
+			bool found_neighbor = false;
+			for (Size i_atom = rsd.last_backbone_atom() + 1; i_atom <= rsd.nheavyatoms(); ++i_atom) {
+				for (Size j_atom = 1; j_atom <= rsd.nheavyatoms(); ++j_atom) {
+					if ( pose.residue(j_res).is_virtual(j_atom) ) continue;
+					Real distance = rsd.xyz(i_atom).distance(pose.residue(j_res).xyz(j_atom));
+					if (distance < threshold) {
+						neighbor_count += 1.;
+						found_neighbor = true;
+						break;
+					}
+				}
+				if (found_neighbor) break;
+			}
+		}
+	}
+	if (neighbor_count > 0) weight = 1./neighbor_count;
+	//using namespace ObjexxFCL::fmt;
+	//TR << "PB_weight:" << I(4,rsd.seqpos()) << F(8, 3, weight) << std::endl;
+	return weight;
+}
 	
 void
 PoissonBoltzmannEnergy::residue_pair_energy(
@@ -176,8 +227,18 @@ PoissonBoltzmannEnergy::residue_pair_energy(
 	conformation::Residue const &rsd (rsd1.seqpos() == fixed_residue_? rsd2 : rsd1 );
 	
 	Real PB_score_residue, PB_score_backbone, PB_score_sidechain;
-	core::scoring::get_PB_potential().eval_PB_energy_residue( rsd, PB_score_residue, PB_score_backbone, PB_score_sidechain );
-	emap[ PB_elec ] += PB_score_sidechain;
+	Real PB_burial_weight(1.0);
+	if (basic::options::option[basic::options::OptionKeys::corrections::score::PB_revamp_near_chain].user()) {
+		PB_burial_weight = revamp_weight_by_burial(rsd, pose);
+	}
+	
+	core::scoring::get_PB_potential().eval_PB_energy_residue( rsd, PB_score_residue, PB_score_backbone, PB_score_sidechain, PB_burial_weight );
+	if (basic::options::option[basic::options::OptionKeys::corrections::score::PB_sidechain_only]()) {
+		emap[ PB_elec ] += PB_score_sidechain;
+	}
+	else {
+		emap[ PB_elec ] += PB_score_residue;
+	}
 }
 	
 /// @brief Energy is context independent and thus indicates that no context graphs need to

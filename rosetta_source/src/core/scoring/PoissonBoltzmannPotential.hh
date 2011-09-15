@@ -45,11 +45,12 @@ public:
 	core::Real get_potential(ObjexxFCL::FArray3D< core::Real > const & potential, numeric::xyzVector<core::Real> const & cartX) const;
 	void
 	eval_PB_energy_residue(
-							   core::conformation::Residue const & rsd,
-							   Real & PB_energy_residue,
-							   Real & PB_energy_backbone,
-							   Real & PB_energy_sidechain
-							   ) const;
+	   core::conformation::Residue const & rsd,
+	   Real & PB_energy_residue,
+	   Real & PB_energy_backbone,
+	   Real & PB_energy_sidechain,
+	   Real const & PB_burial_weight
+	   ) const;
 		
 	//////////////////////////////////
 	//////////////////////////////////

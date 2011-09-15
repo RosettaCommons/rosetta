@@ -202,7 +202,8 @@ PB::eval_PB_energy_residue(
 						   core::conformation::Residue const & rsd,
 						   Real & PB_energy_residue,
 						   Real & PB_energy_backbone,
-						   Real & PB_energy_sidechain
+						   Real & PB_energy_sidechain,
+						   Real const & PB_burial_weight
 						   ) const {
 	PB_energy_residue = 0.0;
 	PB_energy_backbone = 0.0;
@@ -216,7 +217,7 @@ PB::eval_PB_energy_residue(
 		if (rsd.atomic_charge(iatom) > -1e-6 && rsd.atomic_charge(iatom) < 1e-6) continue;
 		core::Real iatom_potential = get_potential(potential_, rsd.xyz(iatom));
 		
-		core::Real atom_energy = rsd.atomic_charge(iatom)*iatom_potential;
+		core::Real atom_energy = rsd.atomic_charge(iatom)*iatom_potential * PB_burial_weight;
 
 		if (rsd.atom_is_backbone(iatom)) {
 			PB_energy_backbone += atom_energy;

@@ -1,4 +1,3 @@
-namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }
 namespace fold_cst { BooleanOptionKey const force_minimize( "fold_cst:force_minimize" );  }
 namespace fold_cst { RealVectorOptionKey const seq_sep_stages( "fold_cst:seq_sep_stages" );  }
 namespace fold_cst { IntegerOptionKey const reramp_cst_cycles( "fold_cst:reramp_cst_cycles" );  }
@@ -176,7 +175,9 @@ namespace corrections { namespace score { StringOptionKey const ch_o_bond_potent
 namespace corrections { namespace score { BooleanOptionKey const hack_elec_co_only( "corrections:score:hack_elec_co_only" );  } }
 namespace corrections { namespace score { RealOptionKey const lj_hbond_hdis( "corrections:score:lj_hbond_hdis" );  } }
 namespace corrections { namespace score { FileOptionKey const PB_potential_file( "corrections:score:PB_potential_file" );  } }
+namespace corrections { namespace score { BooleanOptionKey const PB_sidechain_only( "corrections:score:PB_sidechain_only" );  } }
 namespace corrections { namespace score { IntegerVectorOptionKey const PB_score_residue_range( "corrections:score:PB_score_residue_range" );  } }
+namespace corrections { namespace score { IntegerVectorOptionKey const PB_revamp_near_chain( "corrections:score:PB_revamp_near_chain" );  } }
 namespace corrections { namespace score { RealOptionKey const PB_potential_cap( "corrections:score:PB_potential_cap" );  } }
 namespace corrections { namespace score { RealOptionKey const lj_hbond_OH_donor_dis( "corrections:score:lj_hbond_OH_donor_dis" );  } }
 namespace corrections { namespace score { BooleanOptionKey const score12prime( "corrections:score:score12prime" );  } }

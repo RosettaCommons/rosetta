@@ -3594,8 +3594,17 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Poisson Boltzmann potential file pre-calculated with APBS.</dd><br>
 </dl>
 <dl>
+<dt><b>-PB_sidechain_only</b> \<Boolean\><dt>
+<dd>Only calculate interactions to sidechain.</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
 <dt><b>-PB_score_residue_range</b> \<IntegerVector\><dt>
 <dd>start and end residue sequence numbers to be included in the PB calculation</dd><br>
+</dl>
+<dl>
+<dt><b>-PB_revamp_near_chain</b> \<IntegerVector\><dt>
+<dd>Scale down PB interactions if near the given chain. Use chain numbers as input.</dd><br>
 </dl>
 <dl>
 <dt><b>-PB_potential_cap</b> \<Real\><dt>

@@ -67,6 +67,16 @@ public:
 	
 	virtual void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
 
+	Real
+	revamp_weight_by_burial(
+						conformation::Residue const & rsd,
+						pose::Pose const & pose
+						) const ;
+	bool
+	residue_in_chains(
+	conformation::Residue const & rsd,
+	utility::vector1 <Size> chains
+	) const ;
 
 	virtual
 	void
@@ -86,13 +96,13 @@ public:
 									 EnergyMap & emap
 									 ) const;
 
-	virtual
-	void
-	residue_energy(
-		conformation::Residue const & rsd,
-		pose::Pose const & pose,
-		EnergyMap & emap
-	) const;
+	/// virtual
+	/// void
+	/// residue_energy(
+	/// 	conformation::Residue const & rsd,
+	/// 	pose::Pose const & pose,
+	/// 	EnergyMap & emap
+	/// ) const;
 
 
 	//virtual

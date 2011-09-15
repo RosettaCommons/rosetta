@@ -41,7 +41,9 @@ namespace corrections { namespace score { extern StringOptionKey const ch_o_bond
 namespace corrections { namespace score { extern BooleanOptionKey const hack_elec_co_only; } }
 namespace corrections { namespace score { extern RealOptionKey const lj_hbond_hdis; } }
 namespace corrections { namespace score { extern FileOptionKey const PB_potential_file; } }
+namespace corrections { namespace score { extern BooleanOptionKey const PB_sidechain_only; } }
 namespace corrections { namespace score { extern IntegerVectorOptionKey const PB_score_residue_range; } }
+namespace corrections { namespace score { extern IntegerVectorOptionKey const PB_revamp_near_chain; } }
 namespace corrections { namespace score { extern RealOptionKey const PB_potential_cap; } }
 namespace corrections { namespace score { extern RealOptionKey const lj_hbond_OH_donor_dis; } }
 namespace corrections { namespace score { extern BooleanOptionKey const score12prime; } }
