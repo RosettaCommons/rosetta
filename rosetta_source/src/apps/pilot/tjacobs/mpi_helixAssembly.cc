@@ -64,6 +64,7 @@ main( int argc, char * argv [] )
 
       int job_id_counter = 1;
       int num_completed_jobs = 0;
+      int currently_running_jobs = 0;
 
       vector1<file::FileName> input_lists( option[ in::file::l ]() );
       utility::vector1<file::FileName> pdb_library;
@@ -125,6 +126,7 @@ main( int argc, char * argv [] )
               world.send(i, 0, true);
               world.send(i, 0, boost::mpi::skeleton(temp_job));
               world.send(i, 0, boost::mpi::get_content(temp_job));
+              ++currently_running_jobs;
               TR << "Job sent to node: " << i << endl;
           }
           //if we have more processors than we have jobs, keep track of which processors are free (for use by jobs created later)
@@ -141,9 +143,11 @@ main( int argc, char * argv [] )
 
           TR << "Node " << completed_node << " finished a job" << endl;
           ++num_completed_jobs;
+          --currently_running_jobs;
 
           TR << "Number of completed jobs: " << num_completed_jobs << endl;
           cout << "Number of completed jobs: " << num_completed_jobs << endl;
+          cout << "Number of currently running jobs: " << num_completed_jobs << endl;
 
           int num_new_jobs;
           world.recv(completed_node,0,num_new_jobs);
@@ -213,9 +217,10 @@ main( int argc, char * argv [] )
               world.send(completed_node, 0, true);
               world.send(completed_node, 0, boost::mpi::skeleton(temp_job));
               world.send(completed_node, 0, boost::mpi::get_content(temp_job));
+              ++currently_running_jobs;
           }
-          //we're all done, tell all the other processors.
-          else{
+          //we're all done, wait for all the currently running jobs to finish then tell all the other processors we're done.
+          else if(currently_running_jobs == 0){
               //tell all processors that we don't have any more jobs
               for(Size i=1; i < world.size(); ++i){
                   world.send(i, 0, false);

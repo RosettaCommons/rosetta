@@ -395,7 +395,7 @@ utility::vector1< std::pair< Size,Size > > HelixAssemblyMover::findPartnerHelice
           Size minStartDistance=distCutoff*2;
           Size minEndDistance=distCutoff*2;
           //Search for helical fragments that have n-terms of query helix close to n-terms frag1 & c-terms of frag2.
-          for(Size helixOffset=0; helixOffset<=(helix_endpts[i].second-helix_endpts[i].first+1); helixOffset++){
+          for(Size helixOffset=0; helixOffset<(helix_endpts[i].second-helix_endpts[i].first+1); helixOffset++){
               core::DistanceSquared startDistance1 = fragment1.residue(1).atom("CA").xyz().distance_squared(
                   pose.residue(helix_endpts[i].first+helixOffset).atom("CA").xyz());
               TR << "residue " << helix_endpts[i].first+helixOffset << " start distance 1: " << startDistance1 << endl;
@@ -660,9 +660,6 @@ utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob &
 
     TR << closeHelixPairs.size() << " out of " << fragment1Results.size()*fragment2Results.size() <<
         " helix pairs were close enough for further investigation" << endl;
-
-    cout << closeHelixPairs.size() << " out of " << fragment1Results.size()*fragment2Results.size() <<
-            " helix pairs were close enough for further investigation" << endl;
 
     //keep track of number of hits in structure, for output filename purposes
     Size resultsCounter;
