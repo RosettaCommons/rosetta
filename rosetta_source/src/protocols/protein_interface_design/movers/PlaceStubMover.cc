@@ -946,8 +946,7 @@ PlaceStubMover::stub_based_atom_tree( core::pose::Pose & pose, core::conformatio
 /// Set atom tree according to the first placed stub.
 	protocols::protein_interface_design::movers::SetAtomTree sat;
 	core::Size const host_residue_num( placed_stubs_.begin()->first );
-	sat.create_atom_tree( pose, host_chain_, host_residue_num );
-	sat.apply( pose );
+	pose.fold_tree( *sat.create_atom_tree( pose, host_chain_, host_residue_num ) );
 	TR<<"Stub based atom tree: "<<pose.fold_tree()<<std::endl;
 }
 

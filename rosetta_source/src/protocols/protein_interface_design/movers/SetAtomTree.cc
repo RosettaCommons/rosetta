@@ -90,7 +90,11 @@ SetAtomTree::parse_my_tag( TagPtr const tag, DataMap &, protocols::filters::Filt
 	docking_ft_ = tag->getOption< bool >("docking_ft", 0 );
 	jump_ = tag->getOption< bool >( "jump", 1);
 	if( docking_ft_ ) return;
-	resnum_ = tag->getOption< std::string > ("resnum" );
+	/// resnum & pdb_num are now equivalent
+	if( tag->hasOption( "resnum" ) )
+		resnum_ = tag->getOption< std::string > ("resnum" );
+	else if( tag->hasOption( "pdb_num" ) )
+		resnum_ = tag->getOption< std::string > ("pdb_num" );
 	if( tag->hasOption( "anchor_res" ) ){
 		anchor_res_ = tag->getOption< std::string > ( "anchor_res" );
 		if( tag->hasOption( "connect_from" ) )
@@ -132,9 +136,11 @@ SetAtomTree::create_atom_tree( core::pose::Pose const & pose, core::Size const h
 	else
 		 nearest_res = anchor_num;
 
+
 	core::Size const rb_jump( 1 );
 	core::Size const jump_pos1( host_chain == 1 ? resnum : nearest_res );
 	core::Size const jump_pos2( host_chain == 1 ? nearest_res : resnum );
+	if ( connect_from == "" ) connect_from = optimal_connection_point( pose.residue( jump_pos1 ).name3() );
 	fold_tree->clear();
 	fold_tree->add_edge( jump_pos1, jump_pos2, rb_jump );
 	fold_tree->add_edge( 1, jump_pos1, kinematics::Edge::PEPTIDE );
@@ -143,7 +149,6 @@ SetAtomTree::create_atom_tree( core::pose::Pose const & pose, core::Size const h
 	fold_tree->add_edge( jump_pos2, pose.total_residue(), kinematics::Edge::PEPTIDE );
 	TR<<"CONNECT_FROM: "<<connect_from<<"and  CONNECT TO: " <<connect_to<<std::endl;
 
-	if ( connect_from == "" ) connect_from = optimal_connection_point( pose.residue( jump_pos1 ).name3() );
   fold_tree->set_jump_atoms( rb_jump, connect_from , connect_to );
 	fold_tree->reorder( 1 );
 	return( fold_tree );
