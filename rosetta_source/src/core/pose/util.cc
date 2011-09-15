@@ -68,6 +68,16 @@ namespace pose {
 
 static basic::Tracer TR("core.pose.util");
 
+void remove_virtual_residues(core::pose::Pose* pose) {
+  using core::Size;
+  assert(pose);
+
+  for (Size i = 1; i <= pose->total_residue(); ++i) {
+    if (pose->residue_type(i).name() == "VRT")
+      pose->conformation().delete_residue_slow(i);
+  }
+}
+
 void swap_transform(int jump_num, const kinematics::RT& xform, Pose* pose) {
   assert(pose);
   assert(jump_num > 0);

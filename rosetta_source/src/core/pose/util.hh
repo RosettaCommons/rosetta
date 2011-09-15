@@ -50,6 +50,9 @@
 namespace core {
 namespace pose {
 
+/// @brief Removes all virtual residues from <pose>
+void remove_virtual_residues(core::pose::Pose* pose);
+
 /// @brief Updates the rigid-body transform of the specified jump in <pose>
 void swap_transform(int jump_num, const kinematics::RT& xform, Pose* pose);
 
