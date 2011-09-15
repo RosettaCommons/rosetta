@@ -1,0 +1,6 @@
+# single mutants
+A N 1 G
+
+# double mutants
+A N 1 G A S 13 N
+
