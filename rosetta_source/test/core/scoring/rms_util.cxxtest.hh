@@ -75,9 +75,16 @@ class RmsUtilTest : public CxxTest::TestSuite {
 		UT << "  with superposition, with automorphisms: " << automorphic_rmsd(pose1.residue(1), pose2.residue(1), true /*superimpose*/) << "\n";
 	}
 
-	void test_superimpose() {
-		Pose pose = *core::import_pose::pose_from_pdb("core/scoring/2GB3.pdb");
-		Real rmsd = core::scoring::CA_rmsd(pose, pose);
-		TS_ASSERT_DELTA(0, rmsd, 0.0001);
-	}
+  void test_superimpose_self() {
+    Pose pose = *core::import_pose::pose_from_pdb("core/scoring/2GB3.pdb");
+    Real rmsd = core::scoring::CA_rmsd(pose, pose);
+    TS_ASSERT_DELTA(0, rmsd, 0.0001);
+  }
+
+  void test_superimpose_same() {
+    Pose pose1 = *core::import_pose::pose_from_pdb("core/scoring/2GB3.pdb");
+    Pose pose2 = *core::import_pose::pose_from_pdb("core/scoring/2GB3.pdb");
+    Real rmsd = core::scoring::CA_rmsd(pose1, pose2);
+    TS_ASSERT_DELTA(0, rmsd, 0.0001);
+  }
 };
