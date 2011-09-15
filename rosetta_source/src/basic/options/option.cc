@@ -239,6 +239,7 @@
 namespace basic {
 namespace options {
 
+basic::Tracer TR("basic.options");
 
 /// @details OptionCollection global
 utility::options::OptionCollection option;
@@ -294,32 +295,30 @@ process()
 {
 	using namespace utility::options;
 
-	basic::Tracer tr("basic.options");
-
 	{ // Stupid binary fullatom options that really suck.
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 		if ( option[ in::file::fullatom ].user() ) {
-			tr.Warning << "option[ in::file::fullatom ]() re-interpreted as setting "
+			TR.Warning << "option[ in::file::fullatom ]() re-interpreted as setting "
 				<< "option[ in::file::residue_type_set ]() to ";
 			std::string type_set_name("fa_standard");
 			if ( !option[ in::file::fullatom ]() ) {
 				type_set_name = "centroid";
 			}
 
-			tr.Warning << type_set_name << std::endl;
+			TR.Warning << type_set_name << std::endl;
 			option[ in::file::residue_type_set ].value( type_set_name );
 		}
 
 		if ( option[ out::file::fullatom ].user() ) {
-			tr.Warning << "option[ out::file::fullatom ]() re-interpreted as setting "
+			TR.Warning << "option[ out::file::fullatom ]() re-interpreted as setting "
 				<< "option[ out::file::residue_type_set ]() to ";
 			std::string type_set_name("fa_standard");
 			if ( !option[ out::file::fullatom ]() ) {
 				type_set_name = "centroid";
 			}
 
-			tr.Warning << type_set_name << std::endl;
+			TR.Warning << type_set_name << std::endl;
 			option[ out::file::residue_type_set ].value( type_set_name );
 		}
 	}
@@ -346,7 +345,7 @@ process()
 		if ( option[ solvate ] ) option[ explicit_h2o ].value( true ); // -solvate => -explicit_h2o
 	}
 
-	tr.flush();
+	TR.flush();
 	return option;
 }
 
