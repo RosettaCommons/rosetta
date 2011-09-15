@@ -12,26 +12,30 @@
 /// @brief  RMS stuff from rosetta++
 /// @author James Thompson
 /// @author Ian Davis
-/// @date   Wed Aug 22 12:10:37 2007
-///
+/// @author Christopher Miles (cmiles@uw.edu)
 
 #ifndef core_scoring_rms_util_HH
 #define core_scoring_rms_util_HH
 
-#include <core/id/AtomID.fwd.hh>
-
-#include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
-
+// C/C++ headers
+#include <iostream>
 #include <list>
 #include <map>
+#include <string>
 
-//Auto Headers
-#include <core/id/AtomID_Map.fwd.hh>
-#include <utility/vector1_bool.hh>
+// External headers
+#include <boost/unordered/unordered_map.hpp>
+
+// Utility headers
 #include <ObjexxFCL/FArray2D.fwd.hh>
-#include <iostream>
+#include <utility/vector1_bool.hh>
+
+// Project headers
+#include <core/types.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/id/AtomID.fwd.hh>
+#include <core/id/AtomID_Map.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 
 namespace core {
 namespace scoring {
@@ -49,8 +53,11 @@ extern core::Real native_CA_rmsd( const core::pose::Pose &native_pose ,  const c
 
 extern core::Real native_CA_gdtmm( const core::pose::Pose &native_pose ,  const core::pose::Pose &pose );
 
-
-
+/// @brief Computes the RMSD of the jump residues between <model> and <native>,
+/// storing the results in a map keyed by jump_id.
+void compute_jump_rmsd(const core::pose::Pose& reference,
+                       const core::pose::Pose& model,
+                       boost::unordered_map<core::Size, core::Real>* rmsds);
 
 /// @brief RMSD between residues, accounting for automorphisms
 /// (symmetries).  Does NOT include H atoms -- they add lots of extra

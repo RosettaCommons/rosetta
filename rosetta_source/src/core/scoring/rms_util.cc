@@ -14,49 +14,51 @@
 /// @date   Wed Aug 22 12:10:37 2007
 ///
 
+// Unit headers
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 
-// Rosetta Headers
+// C/C++ headers
+#include <string>
+#include <utility>
 
+// External headers
+#include <boost/unordered/unordered_map.hpp>
+
+// Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/id/types.hh>
 #include <core/chemical/automorphism.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/id/AtomID.hh>
+#include <core/id/AtomID_Map.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
 
-
+// Utility headers
+#include <basic/prof.hh>
+#include <basic/Tracer.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/model_quality/maxsub.hh>
 #include <numeric/model_quality/rms.hh>
-
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-
-#include <utility/exit.hh>
-#include <basic/prof.hh>
-
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <basic/Tracer.hh>
-
-//Auto Headers
-#include <core/chemical/AtomType.hh>
-
+#include <utility/exit.hh>
 
 using namespace ObjexxFCL;
 
 namespace core {
 namespace scoring {
 
-
 static basic::Tracer tr("core.scoring.rms_util");
-
 
 void invert_exclude_residues( Size nres, utility::vector1<int> const& exclude_list, ResidueSelection& residue_selection ) {
 	residue_selection.clear();
@@ -109,9 +111,6 @@ Real native_CA_gdtmm( const core::pose::Pose & native_pose, const core::pose::Po
 		return core::scoring::CA_gdtmm( native_pose, pose );
 	}
 } // native_CA_gdtmm
-
-
-
 
 /// @details Just iterates over all automorphisms for this residue type and chooses the minimum RMS.
 core::Real
@@ -225,7 +224,6 @@ is_protein_CA_or_CB(
 	return rsd.is_protein() && ( ( rsd.has("CA") && rsd.atom_index("CA") == atomno ) || ( rsd.has("CB") && rsd.atom_index("CB") == atomno ) );
 }
 
-
 bool
 is_protein_backbone(
 	core::pose::Pose const & pose1,
@@ -238,9 +236,7 @@ is_protein_backbone(
 	return  (rsd.is_protein() && ( rsd.has("CA") && rsd.atom_index("CA") == atomno )) ||
 		( rsd.has("N") && rsd.atom_index("N") == atomno ) ||
 		( rsd.has("C") && rsd.atom_index("C") == atomno );
-		//		( rsd.has("O") && rsd.atom_index("O") == atomno );
 }
-
 
 bool
 is_protein_backbone_including_O(
@@ -326,14 +322,11 @@ is_nbr_atom(
 	return rsd.nbr_atom() == atomno;
 }
 
-//////////////////////////////////////////////////////////////////////////////
-
 core::Real
 CA_rmsd(
 	const core::pose::Pose & pose1,
 	const core::pose::Pose & pose2
 ) {
-
 	using namespace core;
 	Size start ( 1 );
 	Size end ( std::min( pose1.total_residue(), pose2.total_residue() ) );
@@ -351,8 +344,8 @@ CA_rmsd(
 	using namespace core;
 	// copy coords into Real arrays
 	int natoms;
-	FArray2D< core::Real > p1a;//( 3, pose1.total_residue() );
-	FArray2D< core::Real > p2a;//( 3, pose2.total_residue() );
+	FArray2D< core::Real > p1a;
+	FArray2D< core::Real > p2a;
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, is_protein_CA );
 	if ( (int) end > natoms ) tr.Warning << "WARNING: CA_rmsd out of range... range" << start << " " << end << " requested "
 																 << "but only " << natoms << " CA atoms found in fill_rmsd_coordinates " << std::endl;
@@ -384,7 +377,6 @@ CA_rmsd(
 	PROF_STOP( basic::CA_RMSD_EVALUATION );
 	return rms;
 } // CA_rmsd
-
 
 core::Real
 CA_rmsd(
@@ -531,7 +523,6 @@ CA_rmsd(
 	return numeric::model_quality::rms_wrapper( final_atoms, r1a, r2a );
 } // CA_rmsd
 
-
 core::Real
 all_atom_rmsd(
 	const core::pose::Pose & pose1,
@@ -554,8 +545,6 @@ all_atom_rmsd(
 	Real rms = rmsd_with_super( pose1, pose2, residue_selection, is_heavyatom );
 	return rms;
 } // CA_rmsd
-
-
 
 core::Real
 nbr_atom_rmsd(
@@ -603,7 +592,6 @@ fill_rmsd_coordinates(
 // 		}
 // 	} // for ( int i = 1; i <= nres1; ++i )
 } // fill_rmsd_coordinates_CA
-
 
 int
 CA_maxsub(
@@ -788,7 +776,6 @@ CA_gdtmm(
 	return gdtmm;
 }
 
-
 core::Real
 xyz_gdtmm(
 	FArray2D< core::Real > p1a,
@@ -867,7 +854,6 @@ CA_gdtmm(
 	return CA_gdtmm( pose1, pose2, residue_selection, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4 );
 }
 
-
 /// @details  Superimpose mod_pose onto ref_pose using the AtomID mapping, which maps atoms in mod_pose onto
 /// atoms in ref_pose. Returns rmsd over alignment.
 ///
@@ -927,7 +913,6 @@ superimpose_pose(
 		runtime_assert( atomno == natoms );
 	}
 
-
 	// calculate starting center of mass (COM):
 	FArray1D_double COM(3);
 	COMAS(xx1,wt,natoms,COM(1),COM(2),COM(3));
@@ -944,7 +929,6 @@ superimpose_pose(
 		runtime_assert( std::abs(tmp1) + std::abs(tmp2) + std::abs(tmp3) < 1e-3 );
 	}
 
-
 	{ // translate xx2 by COM and fill in the new ref_pose coordinates
 		Size atomno(0);
 		Vector x2;
@@ -960,7 +944,6 @@ superimpose_pose(
 
 	return ( static_cast < Real > ( rms ) );
 }
-
 
 /// @details both poses must have the same length.
 Real
@@ -984,8 +967,6 @@ calpha_superimpose_pose(
 	}
 	return superimpose_pose( mod_pose, ref_pose, atom_map );
 }
-
-
 
 core::Real
 CA_rmsd_symmetric(
@@ -1026,7 +1007,6 @@ CA_rmsd_symmetric(
 	}
 
 	// Calc rms
-
 	std::vector< std::vector<int> > shuffle_map;
 	create_shuffle_map_recursive_rms(std::vector<int>(), N,shuffle_map);
 	for (int j=1; j < int (shuffle_map.size()); j++ ){
@@ -1043,15 +1023,13 @@ CA_rmsd_symmetric(
 		}
 	}
 
-if(rms < 0.00001) rms = 0.0;
+	if(rms < 0.00001) rms = 0.0;
   return rms;
-
 }
 
 // @details This is a recursive algorithm to generate all combinations of
 // n digits where a number can only occur once in the sequence.
 // The size scales as N! so don't use this for large values of N!!!
-
 void
 create_shuffle_map_recursive_rms(
 	std::vector<int> sequence,
@@ -1077,7 +1055,6 @@ create_shuffle_map_recursive_rms(
 	}
 }
 
-
 /////////////////////////////////////////////////////////////
 /// @details Should be more robust to crazy variant type mismatches. Both poses must have the same length.
 Real
@@ -1087,14 +1064,11 @@ rms_at_corresponding_atoms(
 	std::map< core::id::AtomID, core::id::AtomID > atom_id_map
 )
 {
-
 	utility::vector1< Size > calc_rms_res;
 	for ( Size n = 1; n <= mod_pose.total_residue(); n++ ) calc_rms_res.push_back( n );
 
 	return rms_at_corresponding_atoms( mod_pose, ref_pose, atom_id_map, calc_rms_res );
-
 }
-
 
 /////////////////////////////////////////////////////////////
 /// @details Should be more robust to crazy variant type mismatches. Both poses must have the same length.
@@ -1106,9 +1080,6 @@ rms_at_corresponding_atoms(
 	utility::vector1< Size > const & calc_rms_res
 )
 {
-
-	//	runtime_assert( mod_pose.total_residue() == ref_pose.total_residue() );
-
 	utility::vector1< bool > is_calc_rms( mod_pose.total_residue(), false );
 	for ( Size n = 1; n <= calc_rms_res.size(); n++ ) is_calc_rms[ calc_rms_res[ n ] ] = true;
 
@@ -1127,17 +1098,10 @@ rms_at_corresponding_atoms(
 		Vector const & p2(  ref_pose.xyz( iter->second ));
 		p1_coords.push_back(  p1 );
 		p2_coords.push_back(  p2 );
-
 	}
-
-	//	std::cout << std::endl;
-
 	return numeric::model_quality::calc_rms( p1_coords, p2_coords );
-
 }
 
-
-/////////////////////////////////////////////////////////////////////////////
 Real
 rms_at_corresponding_atoms_no_super(
 	pose::Pose const & mod_pose,
@@ -1148,11 +1112,8 @@ rms_at_corresponding_atoms_no_super(
 	for ( Size n = 1; n <= mod_pose.total_residue(); n++ ) calc_rms_res.push_back( n );
 
 	return rms_at_corresponding_atoms_no_super( mod_pose, ref_pose, atom_id_map, calc_rms_res );
-
 }
 
-
-/////////////////////////////////////////////////////////////////////////////
 Real
 rms_at_corresponding_atoms_no_super(
 	pose::Pose const & mod_pose,
@@ -1161,9 +1122,6 @@ rms_at_corresponding_atoms_no_super(
 	utility::vector1< Size > const & calc_rms_res
 )
 {
-
-	//	runtime_assert( mod_pose.total_residue() == ref_pose.total_residue() );
-
 	utility::vector1< bool > is_calc_rms( mod_pose.total_residue(), false );
 	for ( Size n = 1; n <= calc_rms_res.size(); n++ ) is_calc_rms[ calc_rms_res[ n ] ] = true;
 
@@ -1184,15 +1142,9 @@ rms_at_corresponding_atoms_no_super(
 		sum += (p1 - p2).length_squared();
 		natoms++;
 	}
-
-	//	std::cout << "HEY! NATOMS: " << natoms << std::endl;
-
 	return std::sqrt( sum / natoms );
-
 }
 
-
-// ///////////////////////////////////////////////////////////////////////////
 Real
 rms_at_corresponding_heavy_atoms(
 													 pose::Pose const & mod_pose,
@@ -1204,8 +1156,6 @@ rms_at_corresponding_heavy_atoms(
  	return rms_at_corresponding_atoms( mod_pose, ref_pose, atom_id_map );
 }
 
-
-//////////////////////////////////////////////////////////////////////////
 void
 setup_matching_heavy_atoms( core::pose::Pose const & pose1, core::pose::Pose const & pose2, 	std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ){
 
@@ -1231,7 +1181,6 @@ setup_matching_heavy_atoms( core::pose::Pose const & pose1, core::pose::Pose con
 			atom_id_map[ AtomID( j, i ) ] = AtomID(  j2, i ) ;
 		}
 	}
-
 }
 
 /// @details Iterates over all non-hydrogen sidechain atoms of two residues and returns their rmsd without superposition.
@@ -1340,8 +1289,6 @@ setup_matching_CA_atoms( core::pose::Pose const & pose1, core::pose::Pose const 
 
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////
 void
 setup_matching_protein_backbone_heavy_atoms( core::pose::Pose const & pose1, core::pose::Pose const & pose2,
@@ -1353,22 +1300,18 @@ setup_matching_protein_backbone_heavy_atoms( core::pose::Pose const & pose1, cor
 	protein_backbone_heavy_atoms.push_back( " C  ");
 	protein_backbone_heavy_atoms.push_back( " O  ");
 	setup_matching_atoms_with_given_names( pose1, pose2, protein_backbone_heavy_atoms, atom_id_map );
-
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void
 setup_matching_atoms_with_given_names( core::pose::Pose const & pose1, core::pose::Pose const & pose2,
 																			 utility::vector1< std::string > const & atom_names_to_find,
 																			 std::map< core::id::AtomID, core::id::AtomID > & atom_id_map ){
-
 	using namespace core::id;
 	using namespace core::conformation;
 	using namespace core::chemical;
 
 	atom_id_map.clear();
-	//	assert( pose1.sequence() == pose2.sequence() );
 
 	for (Size i = 1; i <= pose1.total_residue(); i++ ) {
 		Residue const & rsd1 = pose1.residue( i );
@@ -1389,13 +1332,37 @@ setup_matching_atoms_with_given_names( core::pose::Pose const & pose1, core::pos
 			if( rsd2.is_virtual( j2 )) continue;
 
 			atom_id_map[ AtomID( j1, i ) ] = AtomID(  j2, i ) ;
-
 		}
-
 	}
-
 }
 
+/// @detail Computes the RMSD of the jump residues (jump point +/- 1 residue) of
+/// <model> and <reference>. Jump residues are identified by scanning <reference>'s
+/// FoldTree. Results are stored in the output parameter <rmsds>, keyed by the index
+/// of the jump point. For example,
+///
+/// Jump 100 => 10
+/// rmsds[10] = rmsd(residues 9-11 in reference, residues 9-11 in model)
+void compute_jump_rmsd(const core::pose::Pose& reference,
+                       const core::pose::Pose& model,
+                       boost::unordered_map<core::Size, core::Real>* rmsds) {
+  using core::Size;
+  using core::kinematics::FoldTree;
+  assert(rmsds);
+
+  // Identify jump residues
+  const FoldTree& tree = model.fold_tree();
+  for (Size i = 1; i <= tree.nres(); ++i) {
+    if (!tree.is_jump_point(i))
+      continue;
+
+    // Edge cases at pose start/stop
+    if ((i - 1) < 1 || (i + 1) > model.total_residue())
+      continue;
+
+    (*rmsds)[i] = CA_rmsd(reference, model, i - 1, i + 1);
+  }
+}
 
 } // namespace core
 } // namespace scoring
