@@ -46,6 +46,10 @@ class StarTreeBuilder : public TreeBuilder {
   core::Size choose_conserved_position(const protocols::loops::Loop& chunk,
                                        const core::pose::Pose& pose) const;
 
+  /// @brief When native is available, computes rmsd of jump residues, storing
+  /// the results as comments in the silent file output.
+  void do_compute_jump_rmsd(core::pose::Pose* model) const;
+
   /// @brief Index of the virtual residue we added to the pose in build()
   int virtual_res_;
 };

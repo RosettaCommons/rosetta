@@ -16,11 +16,18 @@
 // C/C++ headers
 #include <utility>
 
+// External headers
+#include <boost/format.hpp>
+#include <boost/unordered/unordered_map.hpp>
+
 // Objexx headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/WeightedReservoirSampler.hh>
 #include <utility/vector1.hh>
@@ -28,11 +35,13 @@
 // Project headers
 #include <core/types.hh>
 #include <core/fragment/SecondaryStructure.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/datacache/StructuralConservationStore.hh>
+#include <core/scoring/rms_util.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
@@ -85,11 +94,6 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
     jumps.push_back(std::make_pair(virtual_res_, anchor_position));
   }
 
-  // TODO(cmiles)
-  //  - Calculate RMSD over jump residues (jump residue + 1 residue on each side)
-  //  - Comment in silent file
-  //  - Tracer output
-
   // Insert cutpoints between adjacent jumps
   SecondaryStructureOP ss = new SecondaryStructure(*pose);
   vector1<int> cuts;
@@ -127,6 +131,36 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
 
   // Update the pose's fold tree
   pose->fold_tree(tree);
+
+  // When native is available, compute RMSD over jump residues. Results stored
+  // as comments in the pose with format: rmsd_jump_residue_X rmsd
+  do_compute_jump_rmsd(pose);
+}
+
+void StarTreeBuilder::do_compute_jump_rmsd(core::pose::Pose* model) const {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  using core::Real;
+  using core::Size;
+  using core::pose::Pose;
+  assert(model);
+
+  if (!option[OptionKeys::in::file::native].user())
+    return;
+
+  // Compute RMSD of jump residues (jump point +/- 1 residue)
+  boost::unordered_map<Size, Real> rmsds;
+  Pose native = *core::import_pose::pose_from_pdb(option[OptionKeys::in::file::native]());
+  core::scoring::compute_jump_rmsd(native, *model, &rmsds);
+
+  // Write results to <model> as comments
+  for (boost::unordered_map<Size, Real>::const_iterator i = rmsds.begin(); i != rmsds.end(); ++i) {
+    const Size residue = i->first;
+    const Real rmsd = i->second;
+    core::pose::add_comment(*model,
+                            (boost::format("rmsd_jump_residue_%1%") % residue).str(),
+                            (boost::format("%1%") % rmsd).str());
+  }
 }
 
 core::Size StarTreeBuilder::choose_conserved_position(const protocols::loops::Loop& chunk,
