@@ -71,8 +71,8 @@ map<string,SequenceAlignment> input_alignmentsMapped(bool mapToPdbid){
   vector1< std::string > align_fns = option[ in::file::alignment ]();
   for ( Size ii = 1; ii <= align_fns.size(); ++ii ) {
     vector1< SequenceAlignment > tmp_alns = core::sequence::read_aln(
-				  option[ cm::aln_format ](), align_fns[ii]
-				  );
+			     option[ cm::aln_format ](), align_fns[ii]
+								     );
     for ( Size jj = 1; jj <= tmp_alns.size(); ++jj ) {
 			string mapToName;
 			if(mapToPdbid == true){
@@ -177,7 +177,7 @@ vector1<bool> calculate_surface_exposure(Pose pose){
   core::Real const probe_radius(1.4);
   //1.4 is the radius of water
   core::scoring::calc_per_atom_sasa( pose, atom_sasa, residue_sasa, probe_radius);
-  //some constants measured by Yifan. These account for the size difference of the amino acids.  This may be a problem with the partial thread. We'll see.
+  //some constants measured by Yifan. These account for the size difference of the amino acids.  If using a partial thread make sure side chains have been added
   utility::vector1< core::Real > exposed_rsd_sasa(20);
   exposed_rsd_sasa[  1]  = 170; // 1 A
   exposed_rsd_sasa[  2]  = 170; // 2 C
@@ -222,3 +222,13 @@ vector1<bool> calculate_surface_exposure(Pose pose){
   */
   return(surface_exposed);
 }
+
+
+/// @brief calculates burial 
+bool gap_res_re(Size gapStartRes, Size gapEndRes, Size resToStart, Size resToEnd, Size goalRes, Pose pose){
+  Size CA_CA_DIST = 3.16; //I measured several beta-sheets and found that the length between CA was exactly 3.16 in 2 cases.(Both cases 5 residues 15.8ang.  In loops the longest I got was 1.37 angstroms.
+  distStartToGoal =
+  distEndToGoal = 
+   
+  pose(position gap start) dist to end
+    pose(position gap end dist to end
