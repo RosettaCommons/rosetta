@@ -356,6 +356,7 @@ static SilentStructRegistrator< core::io::silent::BinaryRNASilentStructCreator >
 using namespace core::sequence;
 static SequenceRegistrator< core::sequence::SimpleSequenceCreator > SimpleSequenceCreator_registrator;
 static SequenceRegistrator< core::sequence::SequenceProfileCreator > SequenceProfileCreator_registrator;
+static SequenceRegistrator< core::sequence::SequenceCouplingCreator > SequenceCouplingCreator_registrator;
 static SequenceRegistrator< core::sequence::CompositeSequenceCreator > CompositeSequenceCreator_registrator;
 
 // perhaps these long registration lists live in their own separate file?

@@ -250,6 +250,8 @@ static core::scoring::methods::EnergyMethodRegistrator< protocols::fldsgn::poten
 
 /// Constraint Registrators
 static core::scoring::constraints::ConstraintRegistrator< protocols::constraints_additional::SequenceProfileConstraintCreator > SequenceProfileConstraintCreator_registrator;
+static core::scoring::constraints::ConstraintRegistrator< protocols::constraints_additional::SequenceCouplingConstraintCreator > SequenceCouplingConstraintCreator_registrator;
+static core::scoring::constraints::ConstraintRegistrator< protocols::constraints_additional::SequenceCoupling1BDConstraintCreator > SequenceCoupling1BDConstraintCreator_registrator;
 static core::scoring::constraints::ConstraintRegistrator< protocols::constraints_additional::BindingSiteConstraintCreator > BindingSiteConstraintCreator_registrator;
 static core::scoring::constraints::ConstraintRegistrator< protocols::constraints_additional::PocketConstraintCreator > PocketConstraintCreator_registrator;
 

@@ -32,6 +32,28 @@ public:
 	virtual std::string keyname() const;
 };
 
+/// @brief Mover creator for the SequenceCoupling1BDconstraint
+class SequenceCoupling1BDConstraintCreator : public core::scoring::constraints::ConstraintCreator
+{
+public:
+	SequenceCoupling1BDConstraintCreator();
+	virtual ~SequenceCoupling1BDConstraintCreator();
+
+	virtual core::scoring::constraints::ConstraintOP create_constraint() const;
+	virtual std::string keyname() const;
+};
+
+/// @brief Mover creator for the SequenceCouplingconstraint
+class SequenceCouplingConstraintCreator : public core::scoring::constraints::ConstraintCreator
+{
+public:
+	SequenceCouplingConstraintCreator();
+	virtual ~SequenceCouplingConstraintCreator();
+
+	virtual core::scoring::constraints::ConstraintOP create_constraint() const;
+	virtual std::string keyname() const;
+};
+
 /// @brief Mover creator for the SequenceProfileConstraint constraint
 class SequenceProfileConstraintCreator : public core::scoring::constraints::ConstraintCreator
 {

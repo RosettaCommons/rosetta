@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/constraints/SequenceProfileConstraint.cc
+/// @file   core/scoring/constraints/SequenceCoupling1BDConstraint.cc
 /// @brief  This is a constraint that refers to a core::sequence::SequenceProfile? in order to influence the scoring of amino acid types based on multiple sequence alignments (i.e. for biasing amino acid choices during design). A note about the SequenceProfile::read_from_checkpoint function that is used to read in scores for amino acid types: the first line of the file will be ignored.
 /// @author ashworth
 
-#include <protocols/constraints_additional/SequenceProfileConstraint.hh>
+#include <protocols/constraints_additional/SequenceCoupling1BDConstraint.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/sequence/SequenceProfile.hh>
@@ -49,53 +49,35 @@ using basic::t_warning;
 using basic::t_info;
 using basic::t_debug;
 using basic::t_trace;
-static basic::Tracer TR("protocols.constraints_additional.SequenceProfileConstraint");
+static basic::Tracer TR("protocols.constraints_additional.SequenceCoupling1BDConstraint");
 
-SequenceProfileConstraint::SequenceProfileConstraint()
-	: Constraint( res_type_constraint ),
-		seqpos_(0),
-		sequence_profile_(NULL)
+	SequenceCoupling1BDConstraint::SequenceCoupling1BDConstraint()
+	:SequenceProfileConstraint( )
 {}
 
-SequenceProfileConstraint::SequenceProfileConstraint(
-	Pose const & pose,
-	Size seqpos,
-	SequenceProfileOP profile /* = NULL */
-):
-	Constraint( res_type_constraint ),
-	seqpos_( seqpos ),
-	sequence_profile_( profile )
-{
-	Residue const & rsd( pose.residue(seqpos_) );
-	for( Size i(1), i_end( rsd.nheavyatoms() ); i <= i_end; ++i ) {
-		atom_ids_.push_back( AtomID( i, seqpos_ ) );
-	}
-}
+	SequenceCoupling1BDConstraint::SequenceCoupling1BDConstraint( 
+		Pose const & pose,
+		core::Size numpos,
+		SequenceProfileOP profile
+		):SequenceProfileConstraint(pose, numpos,profile)
+{}
 
-SequenceProfileConstraint::SequenceProfileConstraint(
-	Size seqpos,
-	utility::vector1< AtomID > const & atoms_in,
-	SequenceProfileOP sequence_profile /* = NULL */
-):
-	Constraint( res_type_constraint ),
-	seqpos_( seqpos ),
-	sequence_profile_( sequence_profile )
-{
-	for( utility::vector1< AtomID >::const_iterator at_it( atoms_in.begin() ), end( atoms_in.end() ); at_it != end; ++at_it ) {
-		atom_ids_.push_back( *at_it );
-	}
-}
-
-SequenceProfileConstraint::~SequenceProfileConstraint() {}
+	SequenceCoupling1BDConstraint::SequenceCoupling1BDConstraint( 
+		core::Size numpos,
+		utility::vector1< AtomID > const & atomids,
+		SequenceProfileOP profile
+		):SequenceProfileConstraint(numpos, atomids ,profile)
+{}
+SequenceCoupling1BDConstraint::~SequenceCoupling1BDConstraint() {}
 
 ConstraintOP
-SequenceProfileConstraint::clone() const {
-	return new SequenceProfileConstraint( *this );
+SequenceCoupling1BDConstraint::clone() const {
+	return new SequenceCoupling1BDConstraint( *this );
 }
 
 ///@details one line definition "SequenceProfile resindex profilefilename" (profilefilename can also be set to "none" in the constraints file, and specified by -in::file::pssm)
 void
-SequenceProfileConstraint::read_def(
+SequenceCoupling1BDConstraint::read_def(
 	std::istream & is,
 	Pose const & pose,
 	FuncFactory const &
@@ -113,12 +95,11 @@ SequenceProfileConstraint::read_def(
 		utility_exit();
 	}
 
-	seqpos_ = residue_index;
+	seqpos(residue_index);
 
-	Residue const & rsd( pose.residue(seqpos_) );
-	for( Size i(1), i_end( rsd.nheavyatoms() ); i <= i_end; ++i ) {
-		atom_ids_.push_back( AtomID( i, seqpos_ ) );
-	}
+	utility::vector1< AtomID > atomIds;
+	atomIds.push_back(AtomID(1,seqpos()));
+	atom_ids(atomIds);
 
 	// figure out sequence profile filename
 	using namespace utility::file;
@@ -128,18 +109,15 @@ SequenceProfileConstraint::read_def(
 			utility_exit_with_message( "no such file " + profile_filename );
 		}
 	// if filename not specified, load from commandline option -pssm only if sequence_profile_ is NULL
-	} else if ( !sequence_profile_ && option[ OptionKeys::in::file::pssm ].user() ) {
-	  profile_filename = option[ OptionKeys::in::file::pssm ]().front();
-		// ps. don't name your file "none"
-		if ( profile_filename == "none" ) {
+	} else {
 			utility_exit_with_message("\"none\" is not a valid value for -pssm in this context!");
-		}
 	}
 
 	// if filename is not "none" by this point, read it even if sequence_profile_ is not currently NULL
 	if ( profile_filename != "none" ) {
-		sequence_profile_ = new SequenceProfile;
-		sequence_profile_->read_from_checkpoint( FileName(profile_filename) );
+		SequenceCouplingOP c = new SequenceCoupling;
+		c->read_from_file( FileName(profile_filename) );
+		set_sequence_profile(c);
 	}
 
 	// if sequence_profile_ is still NULL by this point, it is assumed that the user intended so
@@ -147,61 +125,15 @@ SequenceProfileConstraint::read_def(
 } // read_def
 
 void
-SequenceProfileConstraint::show_def( std::ostream & os, Pose const & ) const
-{
-	show( os );
-}
-
-void
-SequenceProfileConstraint::show( std::ostream & os ) const {
-	os << "SequenceProfileConstraint at seqpos " << seqpos_ << ": ";
-	if ( ! sequence_profile_ ) os << "(uninitialized sequence profile)";
-//	else {
-//		typedef utility::vector1<Real> RealVec;
-//		RealVec const & aa_scores( sequence_profile_->prof_row( seqpos_ ) );
-//		runtime_assert( aa_scores.size() >= num_canonical_aas );
-//		for ( Size aa(1); aa <= num_canonical_aas; ++aa ) {
-//			os << aa_scores[aa] << " ";
-//		}
-//	}
+SequenceCoupling1BDConstraint::show( std::ostream & os ) const {
+	os << "SequenceCoupling1BD Constraint at seqpos " << seqpos() << ": ";
+	if ( ! sequence_profile() ) os << "(uninitialized sequence profile)";
 	os << '\n';
 }
 
-void
-SequenceProfileConstraint::set_sequence_profile( SequenceProfileOP profile )
-{
-	sequence_profile_ = profile;
-}
-
-SequenceProfileOP
-SequenceProfileConstraint::sequence_profile() { return sequence_profile_; }
-
-SequenceProfileCOP
-SequenceProfileConstraint::sequence_profile() const { return sequence_profile_; }
-
-Size
-SequenceProfileConstraint::natoms() const
-{
-	return atom_ids_.size();
-}
-
-id::AtomID const &
-SequenceProfileConstraint::atom( Size const index ) const
-{
-	return atom_ids_[index];
-}
-
-utility::vector1< id::AtomID > const &
-SequenceProfileConstraint::atom_ids() const { 
-	return atom_ids_; 
-}
-
-void SequenceProfileConstraint::atom_ids(utility::vector1< id::AtomID > & atomIds){
-	atom_ids_ = atomIds;
-}
-
+/*
 ConstraintOP
-SequenceProfileConstraint::remap_resid(
+SequenceCoupling1BDConstraint::remap_resid(
 	SequenceMapping const & seqmap
 ) const {
 	Size newseqpos( seqmap[ seqpos_ ] );
@@ -209,44 +141,43 @@ SequenceProfileConstraint::remap_resid(
 		TR(t_debug) << "Remapping resid " << seqpos_ << " to " << newseqpos << std::endl;
 
 		utility::vector1< AtomID > new_atomids;
-		for ( utility::vector1< AtomID >::const_iterator at_it( atom_ids_.begin() ), end( atom_ids_.end() ); at_it != end; ++at_it ) {
+		for ( utility::vector1< AtomID >::const_iterator at_it( atom_ids().begin() ), end( atom_ids().end() ); at_it != end; ++at_it ) {
 			if ( seqmap[ at_it->rsd() ] != 0 ) {
 				new_atomids.push_back( AtomID( at_it->atomno(), seqmap[ at_it->rsd() ] ) );
 			}
 		}
-		return new SequenceProfileConstraint(	newseqpos, new_atomids, sequence_profile_ );
+		return new SequenceCoupling1BDConstraint(	newseqpos, new_atomids, sequence_profile() );
 	}
 	else return NULL;
 }
+*/
 
 // Calculates a score for this constraint using XYZ_Func, and puts the UNWEIGHTED score into
 // emap. Although the current set of weights currently is provided, Constraint objects
 // should put unweighted scores into emap.
 void
-SequenceProfileConstraint::score(
+SequenceCoupling1BDConstraint::score(
 	XYZ_Func const & xyz_func,
 	EnergyMap const & weights,
 	EnergyMap & emap
 ) const
 {
 	if ( weights[ this->score_type() ] == 0 ) return; // what's the point?
-	runtime_assert( sequence_profile_ );
+	runtime_assert( sequence_profile() );
 
-	chemical::AA aa( xyz_func.residue( seqpos_ ).type().aa() );
-	utility::vector1< utility::vector1< Real > > const & profile( sequence_profile_->profile() );
-	if ( seqpos_ > profile.size() ) return; // safety/relevance check
-	utility::vector1< Real > const & position_profile( profile[ seqpos_ ] );
+	chemical::AA aa( xyz_func.residue( seqpos()).type().aa() );
+	utility::vector1< utility::vector1< Real > > const & profile( sequence_profile()->profile() );
+
+	if ( seqpos() > profile.size() ) return; // safety/relevance check
+	utility::vector1< Real > const & position_profile( profile[ seqpos() ] );
 	if ( size_t(aa) > position_profile.size() ) return; // safety/relevance check
-	// this assumes that the profile contains energies and not probabilities
-	Real const score( sequence_profile_->profile()[seqpos_][aa] );
-	TR(t_trace) << "seqpos " << seqpos_ << " aa " << aa << " " << score << std::endl;
-
-	if( sequence_profile_->profile_from_pssm_file() ) emap[ this->score_type() ] -= score;
-	else emap[ this->score_type() ] += score;
+	Real const score( profile[seqpos()][aa] );
+	TR(t_trace) << "seqpos " << seqpos() << " aa " << aa << " " << score << std::endl;
+	emap[ this->score_type() ] += score;
 }
 
 void
-SequenceProfileConstraint::fill_f1_f2(
+SequenceCoupling1BDConstraint::fill_f1_f2(
 	AtomID const & ,//atom,
 	XYZ_Func const & ,//conformation,
 	Vector & ,//f1,

@@ -7,18 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/constraints_additional/SequenceProfileConstraint.hh
-/// @brief  This is a constraint that refers to a core::sequence::SequenceProfile? in order to influence the scoring of amino acid types based on multiple sequence alignments (i.e. for biasing amino acid choices during design).
+/// @file   protocols/constraints_additional/SequenceCouplingConstraint.hh
+/// @brief  This is a constraint that refers to a core::sequence::SequenceCoupling? in order to influence the scoring of amino acid types based on multiple sequence alignments (i.e. for biasing amino acid choices during design).
 /// @author ashworth
 
-#ifndef INCLUDED_protocols_constraints_additional_SequenceProfileConstraint_hh
-#define INCLUDED_protocols_constraints_additional_SequenceProfileConstraint_hh
+#ifndef INCLUDED_protocols_constraints_additional_SequenceCouplingConstraint_hh
+#define INCLUDED_protocols_constraints_additional_SequenceCouplingConstraint_hh
 
-#include <protocols/constraints_additional/SequenceProfileConstraint.fwd.hh>
+#include <protocols/constraints_additional/SequenceCouplingConstraint.fwd.hh>
 #include <core/scoring/constraints/Constraint.hh>
 
 // AUTO-REMOVED #include <core/chemical/AA.hh>
-#include <core/sequence/SequenceProfile.hh>
+#include <core/sequence/SequenceCoupling.hh>
 
 // AUTO-REMOVED #include <utility/vector1.hh>
 
@@ -30,11 +30,11 @@ namespace protocols {
 namespace constraints_additional {
 
 ///@brief
-class SequenceProfileConstraint : public core::scoring::constraints::Constraint {
+class SequenceCouplingConstraint : public core::scoring::constraints::Constraint {
 public:
-	typedef core::sequence::SequenceProfile SequenceProfile;
-	typedef core::sequence::SequenceProfileOP SequenceProfileOP;
-	typedef core::sequence::SequenceProfileCOP SequenceProfileCOP;
+	typedef core::sequence::SequenceCoupling SequenceCoupling;
+	typedef core::sequence::SequenceCouplingOP SequenceCouplingOP;
+	typedef core::sequence::SequenceCouplingCOP SequenceCouplingCOP;
 	typedef core::id::SequenceMapping SequenceMapping;
 	typedef core::pose::Pose Pose;
 	typedef core::conformation::Conformation Conformation;
@@ -45,25 +45,27 @@ public:
 
 public:
 
-	SequenceProfileConstraint();
+	SequenceCouplingConstraint();
 
-	SequenceProfileConstraint(
+	SequenceCouplingConstraint(
 		Pose const &,
 		core::Size,
-		SequenceProfileOP profile = NULL
+		core::Size,
+		SequenceCouplingOP profile = NULL
 	);
 
-	SequenceProfileConstraint(
+	SequenceCouplingConstraint(
+		core::Size,
 		core::Size,
 		utility::vector1< AtomID > const &,
-		SequenceProfileOP profile = NULL
+		SequenceCouplingOP profile = NULL
 	);
 
-	virtual ~SequenceProfileConstraint();
+	virtual ~SequenceCouplingConstraint();
 
 	virtual ConstraintOP clone() const;
 
-	virtual std::string type() const { return "SequenceProfile"; }
+	virtual std::string type() const { return "SequenceCoupling"; }
 
 	///@brief used by ConstraintIO and ConstraintFactory to construct this constraint from a input file stream (constraint file)
 	virtual void
@@ -77,23 +79,17 @@ public:
 
 	virtual void show( std::ostream & out ) const;
 
-	core::Size seqpos() const { return seqpos_; }
+	core::Size seqpos1() const { return seqpos1_; }
+	core::Size seqpos2() const { return seqpos2_; }
 
-	//hk
-	void seqpos(core::Size seqpos) { 
-		seqpos_=seqpos; 
-	}
-	//hk end
-
-	void set_sequence_profile( SequenceProfileOP );
-	SequenceProfileOP sequence_profile();
-	SequenceProfileCOP sequence_profile() const;
+	void set_sequence_coupling( SequenceCouplingOP );
+	SequenceCouplingOP sequence_coupling();
+	SequenceCouplingCOP sequence_coupling() const;
 
 	virtual core::Size natoms() const;
-	virtual ConstraintOP remap_resid( SequenceMapping const & ) const;
+	//virtual ConstraintOP remap_resid( SequenceMapping const & ) const;
 	virtual AtomID const & atom( core::Size const ) const;
 	utility::vector1< AtomID > const & atom_ids() const;
-	void  atom_ids(utility::vector1< AtomID > & );
 
 	virtual void
 	score(
@@ -112,8 +108,9 @@ public:
 	) const;
 
 private:
-	core::Size seqpos_;
-	SequenceProfileOP sequence_profile_;
+	core::Size seqpos1_;
+	core::Size seqpos2_;
+	SequenceCouplingOP sequence_coupling_;
 	utility::vector1< AtomID > atom_ids_;
 };
 
@@ -121,4 +118,4 @@ private:
 } // namespace constraints_additional
 } // namespace protocols
 
-#endif // INCLUDED_protocols_constraints_additional_SequenceProfileConstraint_HH
+#endif // INCLUDED_protocols_constraints_additional_SequenceCouplingConstraint_HH

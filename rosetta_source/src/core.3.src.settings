@@ -481,6 +481,7 @@ sources = {
 		"SequenceAlignment",
 		"DerivedSequenceMapping",
 		"SequenceProfile",
+		"SequenceCoupling",
 		"CompositeSequence",
 		"ChemicalShiftSequence",
 		"SequenceFactory",

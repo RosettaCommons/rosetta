@@ -86,7 +86,7 @@ public:
 	}
 
 	/// @brief dtor
-	virtual ~SequenceProfile() {}
+	~SequenceProfile() {}
 
 	/// @brief Returns an owning pointer to a new SequenceProfile object,
 	/// with data that is a deep copy of the information in this object.

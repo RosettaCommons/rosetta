@@ -17,6 +17,8 @@
 
 /// Project Headers
 #include <protocols/constraints_additional/SequenceProfileConstraint.hh>
+#include <protocols/constraints_additional/SequenceCouplingConstraint.hh>
+#include <protocols/constraints_additional/SequenceCoupling1BDConstraint.hh>
 #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 #include <protocols/constraints_additional/BindingSiteConstraint.hh>
 #include <protocols/constraints_additional/PocketConstraint.hh>
@@ -36,6 +38,35 @@ BindingSiteConstraintCreator::create_constraint() const {
 std::string BindingSiteConstraintCreator::keyname() const
 {
 	return "BindingSite";
+}
+
+SequenceCoupling1BDConstraintCreator::SequenceCoupling1BDConstraintCreator() {}
+SequenceCoupling1BDConstraintCreator::~SequenceCoupling1BDConstraintCreator() {}
+
+core::scoring::constraints::ConstraintOP
+SequenceCoupling1BDConstraintCreator::create_constraint() const
+{
+	return new SequenceCoupling1BDConstraint;
+}
+
+std::string
+SequenceCoupling1BDConstraintCreator::keyname() const
+{
+	return "SequenceCoupling1BD";
+}
+SequenceCouplingConstraintCreator::SequenceCouplingConstraintCreator() {}
+SequenceCouplingConstraintCreator::~SequenceCouplingConstraintCreator() {}
+
+core::scoring::constraints::ConstraintOP
+SequenceCouplingConstraintCreator::create_constraint() const
+{
+	return new SequenceCouplingConstraint;
+}
+
+std::string
+SequenceCouplingConstraintCreator::keyname() const
+{
+	return "SequenceCoupling";
 }
 
 SequenceProfileConstraintCreator::SequenceProfileConstraintCreator() {}

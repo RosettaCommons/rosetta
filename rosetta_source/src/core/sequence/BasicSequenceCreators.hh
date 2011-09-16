@@ -40,6 +40,15 @@ public:
 	virtual std::string keyname() const;
 };
 
+class SequenceCouplingCreator : public SequenceCreator {
+public:
+	SequenceCouplingCreator();
+	virtual ~SequenceCouplingCreator();
+
+	virtual SequenceOP create_sequence() const;
+	virtual std::string keyname() const;
+};
+
 class CompositeSequenceCreator : public SequenceCreator {
 public:
 	CompositeSequenceCreator();

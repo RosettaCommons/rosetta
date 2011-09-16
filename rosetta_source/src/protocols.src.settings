@@ -136,6 +136,8 @@ sources = {
 		"AmbiguousMultiConstraint",
 		"AdditionalConstraintCreators",
 		"SequenceProfileConstraint",
+		"SequenceCouplingConstraint",
+		"SequenceCoupling1BDConstraint",
 		"BindingSiteConstraint",
 		"PocketConstraint",
 	],

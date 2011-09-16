@@ -18,6 +18,7 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/Sequence.fwd.hh>
 #include <core/sequence/SequenceProfile.hh>
+#include <core/sequence/SequenceCoupling.hh>
 #include <core/sequence/CompositeSequence.hh>
 #include <core/sequence/ChemicalShiftSequence.hh>
 
@@ -35,6 +36,15 @@ std::string SimpleSequenceCreator::keyname() const {
 	return "sequence";
 }
 
+SequenceCouplingCreator::SequenceCouplingCreator() {}
+SequenceCouplingCreator::~SequenceCouplingCreator() {}
+SequenceOP SequenceCouplingCreator::create_sequence() const {
+	return new SequenceCoupling;
+}
+
+std::string SequenceCouplingCreator::keyname() const {
+	return "sequence_coupling";
+}
 SequenceProfileCreator::SequenceProfileCreator() {}
 SequenceProfileCreator::~SequenceProfileCreator() {}
 SequenceOP SequenceProfileCreator::create_sequence() const {
