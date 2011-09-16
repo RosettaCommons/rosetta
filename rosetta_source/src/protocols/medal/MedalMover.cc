@@ -30,6 +30,7 @@
 #include <utility/vector1.hh>
 
 // Project headers
+#include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
@@ -42,6 +43,7 @@
 #include <protocols/jd2/InnerJob.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/ThreadingJob.hh>
+#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/moves/RationalMonteCarlo.hh>
@@ -59,10 +61,12 @@ static basic::Tracer TR("protocols.medal.MedalMover");
 void MedalMover::apply(core::pose::Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
+  using core::Size;
   using core::scoring::ScoreFunctionFactory;
   using core::scoring::ScoreFunctionOP;
   using core::sequence::SequenceAlignment;
   using protocols::jd2::ThreadingJob;
+  using protocols::loops::Loop;
   using protocols::loops::Loops;
   using protocols::moves::MoverOP;
   using protocols::moves::RationalMonteCarlo;
@@ -82,6 +86,14 @@ void MedalMover::apply(core::pose::Pose& pose) {
   Loops unaligned = protocols::comparative_modeling::loops_from_alignment(pose.total_residue(), alignment, 0);
   Loops aligned = unaligned.invert(pose.total_residue());
   TR << "Aligned regions: " << aligned;
+
+  // TODO(cmiles) Exclude unaligned residues from scoring
+  for (Loops::const_iterator i = unaligned.begin(); i != unaligned.end(); ++i) {
+    const Loop& region = *i;
+    for (Size j = region.start(); j <= region.stop(); ++j) {
+      // exclude residue j
+    }
+  }
 
   // Star fold tree construction
   StarTreeBuilder builder;
@@ -108,13 +120,13 @@ void MedalMover::apply(core::pose::Pose& pose) {
 }
 
 void MedalMover::jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) const {
-	using std::endl;
+  using std::endl;
 
   assert(jumps);
   for (core::Size i = 1; i <= pose.num_jump(); ++i) {
     (*jumps)[i] = pose.jump(i);
-		TR << "Added jump_num " << i << endl;
-	}
+    TR << "Added jump_num " << i << endl;
+  }
 }
 
 protocols::jd2::ThreadingJob const * const MedalMover::current_job() const {

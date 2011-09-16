@@ -55,14 +55,13 @@ void RigidBodyMotionMover::apply(core::pose::Pose& pose) {
 
   // randomly select a jump to manipulate
   Jumps::iterator i = jumps_.begin();
-  std::advance(i, numeric::random::random_range(0, jumps_.size()));
+  std::advance(i, numeric::random::random_range(0, jumps_.size() - 1));
   int jump_num = i->first;
   Jump jump = i->second;
 
   // perturb the rigid body transformation
-  TR.Debug << "Perturbing jump_num => " << jump_num << endl;
-  //jump.gaussian_move(1, option[OptionKeys::rigid::translation](), option[OptionKeys::rigid::rotation]());
-  //pose.set_jump(jump_num, jump);
+  jump.gaussian_move(1, option[OptionKeys::rigid::translation](), option[OptionKeys::rigid::rotation]());
+  pose.set_jump(jump_num, jump);
 }
 
 std::string RigidBodyMotionMover::get_name() const {
