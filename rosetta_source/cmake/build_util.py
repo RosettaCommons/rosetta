@@ -64,6 +64,8 @@ def list_project_files(path_to_mini, project_name):
 		old_srcfiles = srcfiles
 		srcfiles = []
 		for srcfile in old_srcfiles:
+			if len(srcfile) > 3 and srcfile[-3:] == ".cu" :
+				continue # APL NOTE: cannot currently compile cuda files with cmake
 			if os.path.exists(full_path + srcfile + '.cc'):
 				srcfiles.append(srcfile + '.cc')
 			elif os.path.exists(full_path + srcfile + '.c'):
