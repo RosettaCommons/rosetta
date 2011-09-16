@@ -102,6 +102,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
   // Score function
   ScoreFunctionOP score = ScoreFunctionFactory::create_score_function("score0");
   score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::constraints::cst_weight]());
+  score->show(TR, pose);
 
   Jumps jumps;
   jumps_from_pose(pose, &jumps);
