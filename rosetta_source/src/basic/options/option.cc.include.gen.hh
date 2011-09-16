@@ -73,6 +73,7 @@
 #include <basic/options/keys/RBSegmentRelax.OptionKeys.gen.hh>
 #include <basic/options/keys/krassk.OptionKeys.gen.hh>
 #include <basic/options/keys/threadsc.OptionKeys.gen.hh>
+#include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <basic/options/keys/blivens.OptionKeys.gen.hh>
 #include <basic/options/keys/fldsgn.OptionKeys.gen.hh>
 #include <basic/options/keys/matdes.OptionKeys.gen.hh>

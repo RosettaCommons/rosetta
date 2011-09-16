@@ -1,3 +1,6 @@
+namespace lh { PathOptionKey const db_path( "lh:db_path" );  }
+namespace lh { BooleanOptionKey const exclude_homo( "lh:exclude_homo" );  }
+namespace lh { StringOptionKey const refstruct( "lh:refstruct" );  }
 namespace lh { StringOptionKey const homo_file( "lh:homo_file" );  }
 namespace lh { RealVectorOptionKey const createdb_rms_cutoff( "lh:createdb_rms_cutoff" );  }
 namespace lh { RealOptionKey const min_bbrms( "lh:min_bbrms" );  }
@@ -566,5 +569,3 @@ namespace DenovoProteinDesign { BooleanOptionKey const optimize_loops( "DenovoPr
 namespace DenovoProteinDesign { FileOptionKey const secondary_structure_file( "DenovoProteinDesign:secondary_structure_file" );  }
 namespace DenovoProteinDesign { FileOptionKey const hydrophobic_polar_pattern( "DenovoProteinDesign:hydrophobic_polar_pattern" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const use_template_sequence( "DenovoProteinDesign:use_template_sequence" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "DenovoProteinDesign:use_template_topology" );  }
-namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "DenovoProteinDesign:create_from_template_pdb" );  }

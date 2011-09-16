@@ -83,6 +83,14 @@ if __name__ == "__main__": print "Don't run this one, run options.py instead!"
 # Data base of all rosetta options
 Options = Option_Group( '',
 
+  # Rigid body motion options
+  Option_Group( 'rigid',
+    Option('cycles', 'Integer', desc = 'Number of rigid body perturbation cycles', default = '1000'),
+		Option('temperature', 'Real', desc = 'Monte Carlo temperature', default = '2.0'),
+    Option('rotation', 'Real', desc = 'Rotation magnitude', default = '2.5'),
+		Option('translation', 'Real', desc = 'Translation magnitude', default = '0.5'),
+  ),
+
 	# Input options ---------------------------------------------------------
 	Option_Group( 'in',
 		Option( 'in', 'Boolean', desc="Input option group", legal='true', default='true' ),

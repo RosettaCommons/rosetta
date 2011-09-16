@@ -1,3 +1,7 @@
+namespace fold_cst { IntegerOptionKey const violation_skip_basis( "fold_cst:violation_skip_basis" );  }
+namespace fold_cst { IntegerOptionKey const violation_skip_ignore( "fold_cst:violation_skip_ignore" );  }
+namespace fold_cst { BooleanOptionKey const keep_skipped_csts( "fold_cst:keep_skipped_csts" );  }
+namespace fold_cst { BooleanOptionKey const no_minimize( "fold_cst:no_minimize" );  }
 namespace fold_cst { BooleanOptionKey const force_minimize( "fold_cst:force_minimize" );  }
 namespace fold_cst { RealVectorOptionKey const seq_sep_stages( "fold_cst:seq_sep_stages" );  }
 namespace fold_cst { IntegerOptionKey const reramp_cst_cycles( "fold_cst:reramp_cst_cycles" );  }
@@ -565,6 +569,3 @@ namespace lh { BooleanOptionKey const lh( "lh" );  }
 namespace lh { StringOptionKey const db_prefix( "lh:db_prefix" );  }
 namespace lh { IntegerVectorOptionKey const loopsizes( "lh:loopsizes" );  }
 namespace lh { IntegerOptionKey const num_partitions( "lh:num_partitions" );  }
-namespace lh { PathOptionKey const db_path( "lh:db_path" );  }
-namespace lh { BooleanOptionKey const exclude_homo( "lh:exclude_homo" );  }
-namespace lh { StringOptionKey const refstruct( "lh:refstruct" );  }

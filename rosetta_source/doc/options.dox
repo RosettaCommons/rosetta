@@ -2,6 +2,32 @@
 @page options
 Mini rosetta command line option descriptions. <i>(This is automatically generated file, do not edit!)</i>
 <ul>
+<li><h2>rigid</h2>
+<dl>
+<dt><b>-rigid</b> \<Boolean\><dt>
+<dd>rigid option group</dd><br>
+</dl>
+<dl>
+<dt><b>-cycles</b> \<Integer\><dt>
+<dd>Number of rigid body perturbation cycles</dd><br>
+<dd>Default: 1000</dd><br>
+</dl>
+<dl>
+<dt><b>-temperature</b> \<Real\><dt>
+<dd>Monte Carlo temperature</dd><br>
+<dd>Default: 2.0</dd><br>
+</dl>
+<dl>
+<dt><b>-rotation</b> \<Real\><dt>
+<dd>Rotation magnitude</dd><br>
+<dd>Default: 2.5</dd><br>
+</dl>
+<dl>
+<dt><b>-translation</b> \<Real\><dt>
+<dd>Translation magnitude</dd><br>
+<dd>Default: 0.5</dd><br>
+</dl>
+ </li>
 <li><h2>in</h2>
 <dl>
 <dt><b>-in</b> \<Boolean\><dt>

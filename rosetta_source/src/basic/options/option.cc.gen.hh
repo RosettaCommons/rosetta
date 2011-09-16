@@ -3,7 +3,12 @@
 #include <basic/options/option.hh>
 #include <basic/options/option.cc.include.gen.hh>
 #include <utility/options/OptionCollection.hh>
-inline void add_rosetta_options_0( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::in::in, "Input option group" ).legal(true).def(true);
+inline void add_rosetta_options_0( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rigid::rigid, "rigid option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::rigid::cycles, "Number of rigid body perturbation cycles" ).def(1000);
+option.add( basic::options::OptionKeys::rigid::temperature, "Monte Carlo temperature" ).def(2.0);
+option.add( basic::options::OptionKeys::rigid::rotation, "Rotation magnitude" ).def(2.5);
+option.add( basic::options::OptionKeys::rigid::translation, "Translation magnitude" ).def(0.5);
+option.add( basic::options::OptionKeys::in::in, "Input option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::in::termini, "Put full N and C termini on input structures" ).def(true);
 option.add( basic::options::OptionKeys::in::ignore_unrecognized_res, "Do not abort if unknown residues are found in PDB file;  instead, ignore them. Note this implies -in:ignore_waters" ).def(false);
 option.add( basic::options::OptionKeys::in::ignore_waters, "Do not abort if HOH water residues are found in PDB file;  instead, ignore them." ).def(false);
@@ -569,13 +574,13 @@ option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with in
 option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
 option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
-option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
+
+}
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
+option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::seq_sep_stages, "give vector with sequence_separation after stage1, stage3 and stage4" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::reramp_cst_cycles, "in stage2 do xxx cycles where atom_pair_constraint is ramped up" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::reramp_start_cstweight, "drop cst_weight to this value and ramp to 1.0 in stage2 -- needs reramp_cst_cycles > 0" ).def(0.01);
@@ -1142,12 +1147,12 @@ option.add( basic::options::OptionKeys::lh::lh, "lh option group" ).legal(true).
 option.add( basic::options::OptionKeys::lh::db_prefix, "stem for loop database" ).def("loopdb");
 option.add( basic::options::OptionKeys::lh::loopsizes, "Which loopsizes to use" ).def(10).def(15).def(20);
 option.add( basic::options::OptionKeys::lh::num_partitions, "Number of partitions to split the database into" ).def(1);
-option.add( basic::options::OptionKeys::lh::db_path, "Path to database" ).def("");
-option.add( basic::options::OptionKeys::lh::exclude_homo, "Use a homolog exclusion filter" ).def(false);
-option.add( basic::options::OptionKeys::lh::refstruct, "File with a target reference structure" ).def("");
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::homo_file, "File containing homologs to exclude" ).def("");
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::db_path, "Path to database" ).def("");
+option.add( basic::options::OptionKeys::lh::exclude_homo, "Use a homolog exclusion filter" ).def(false);
+option.add( basic::options::OptionKeys::lh::refstruct, "File with a target reference structure" ).def("");
+option.add( basic::options::OptionKeys::lh::homo_file, "File containing homologs to exclude" ).def("");
 option.add( basic::options::OptionKeys::lh::createdb_rms_cutoff, "RMS cutoff used for throwing out similar fragments." ).def(0).def(0).def(0);
 option.add( basic::options::OptionKeys::lh::min_bbrms, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::lh::max_bbrms, "No description" ).def(100000.0);
@@ -1715,11 +1720,11 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
+option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);
 option.add( basic::options::OptionKeys::RBSegmentRelax::RBSegmentRelax, "RBSegmentRelax option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::RBSegmentRelax::input_pdb, "input pdb file" ).def("--");
 option.add( basic::options::OptionKeys::RBSegmentRelax::rb_file, "input rb segment file" ).def("--");

@@ -13,7 +13,10 @@ sources = {
 		"Protocol",
 		"ScoreMap",
 	],
-
+        "protocols/medal" : [
+            "MedalMain",
+            "MedalMover",
+        ],
 	"protocols/nonlocal" : [
 		"BoundaryFinder",
 		"BrokenFold",
@@ -878,6 +881,7 @@ sources = {
 		"RepulsiveOnlyMover",
 		"rigid_body_moves",
 		"RigidBodyMover",
+                "RigidBodyMotionMover",
 		"RollMover",
 		"RotamerRecoveryMover",
 		"RotamerTrialsMover",
