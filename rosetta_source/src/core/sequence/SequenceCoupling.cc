@@ -160,7 +160,7 @@ void SequenceCoupling::read_from_file(
 	 	std::istringstream ls( line );
     core::Real aa_pot;
     core::Real min_pot = 1e9;
-    core::Size minPotAA=-1;
+    core::Size minPotAA=0;
     Size count=1;
     while(ls>>aa_pot){
       vertPot[order[count]]=aa_pot;
@@ -220,7 +220,7 @@ void SequenceCoupling::read_from_file(
 				return i;
 			}
 		}
-		return -1;
+		return 0;
 	}
 	utility::vector1< utility::vector1 < Real > > const & SequenceCoupling::edgePotBetween(Size vert1, Size vert2) const {//direction important. if (i,j) edge exists, will not return if (j,i) asked 
 		runtime_assert( vert1<= profile().size() && vert2 <= profile().size());
