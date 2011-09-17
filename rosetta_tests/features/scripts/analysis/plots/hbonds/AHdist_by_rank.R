@@ -41,12 +41,34 @@ f <- query_sample_sources(sample_sources, sele)
 f$accRank <- factor(f$accRank)
 f$donRank <- factor(f$donRank)
 
+# This is deprecated please use the hbond_chem_types table for the lables instead
+# Order the plots better and give more descriptive labels
+f$don_chem_type <- factor(f$don_chem_type,
+	levels = c("hbdon_IMD", "hbdon_IME", "hbdon_GDE", "hbdon_GDH",
+		"hbdon_AHX", "hbdon_HXL", "hbdon_IND", "hbdon_AMO", "hbdon_CXA", "hbdon_PBA"),
+	labels = c("dIMD: h", "dIME: h", "dGDE: r", "dGDH: r",
+		"dAHX: y", "dHXL: s,t", "dIND: w", "dAMO: k", "dCXA: n,q", "dPBA: bb"))
+
+# This is deprecated please use the hbond_chem_types table for the lables instead
+# Order the plots better and give more descriptive labels
+f$acc_chem_type <- factor(f$acc_chem_type,
+	levels = c("hbacc_IMD", "hbacc_IME", "hbacc_AHX", "hbacc_HXL",
+		"hbacc_CXA", "hbacc_CXL", "hbacc_PBA"),
+	labels = c("aIMD: h", "aIME: h", "aAHX: y", "aHXL: s,t",
+		"aCXA: n,q", "aCXL: d,e", "aPBA: bb"))
+
 plot_parts <- list(
-  geom_line(aes(x, y), size=1.3),
+  geom_line(aes(x, y)),
   geom_indicator(aes(indicator=counts)),
   labs(x=expression(paste('Acceptor -- Proton Distance (', ring(A), ')')),
        y="FeatureDensity"),
-  theme_bw())
+  theme_bw(),
+	opts(legend.position="bottom", legend.direction="horizontal"))
+
+if(nrow(sample_sources) <= 3){
+	plot_parts <- c(plot_parts,
+		list(opts(legend.position="bottom", legend.direction="horizontal")))
+}
 
 plot_id <- "AHdist_by_donRank"
 d <- estimate_density_1d(f, c("sample_source", "donRank"), "AHdist", radial_3d_normalization)

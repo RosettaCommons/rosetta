@@ -47,6 +47,9 @@ f$don_ss_name <- factor(f$don_ss,
 	labels = c('H: a-Helix', 'E: b-Sheet', 'T: HB Turn', 'G: 3/10 Helix',
 		'B: b-Bridge', 'S: Bend', 'I: pi-Helix','C: Irregular'))
 
+f <- f[!is.na(f$don_ss_name),]
+f <- f[!is.na(f$acc_ss_name),]
+
 #equal area projection
 f <- transform(f,
 	capx = 2*sin(acos(cosBAH)/2)*cos(chi),
@@ -57,8 +60,8 @@ capx_limits <- range(f$capx); capy_limits <- range(f$capy)
 f <- ddply(f, c("sample_source", "don_ss_name", "acc_ss_name"),
 	transform, counts = length(sample_source))
 
-plot_id = "hbond_sinBAH_eq_polar_density_bb_by_ss"
-d_ply(sample_sources, .("sample_sources"), function(sample_source){
+plot_id = "chi_sinBAH_eq_polar_density_bb_by_ss"
+d_ply(sample_sources, .(sample_source), function(sample_source){
 	ss_id <- sample_source$sample_source[1]
 	ggplot(data=subset(f, sample_source == ss_id)) + theme_bw() +
 		polar_equal_area_grids_bw +

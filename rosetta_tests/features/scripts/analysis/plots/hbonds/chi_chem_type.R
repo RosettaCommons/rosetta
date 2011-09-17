@@ -75,7 +75,7 @@ potential$y <- exp(-1*cos_potential(potential$x))/(12.5803 *180/pi)
 l_ply(levels(dens$hybrid), function(hybrid){
 	plot_id = paste("chi_", hybrid, sep="")
 	ggplot(data=dens[dens$hybrid==hybrid,]) + theme_bw() +
-		geom_line(data=potential, aes(x=x, y=y*1000), size=1.1, colour="darkgray") +
+		geom_line(data=potential, aes(x=x, y=y*1000), size=1, colour="lightgray") +
 		geom_line(aes(x=x, y=y*1000, colour=sample_source)) +
 		geom_indicator(aes(indicator=counts, colour=sample_source)) +
 		facet_wrap( ~ don_chem_type) +

@@ -18,7 +18,7 @@
 #
 
 
-output_web_raster <- list(
+output_web_raster <- data.frame(
   id="output_web_raster",
   extensions = ".png",
   height=8,
@@ -26,7 +26,7 @@ output_web_raster <- list(
   dpi=300,
   scale=1)
 
-output_web_vector <- list(
+output_web_vector <- data.frame(
   id="output_web_vector",
   extensions = ".svg",
   height=8,
@@ -34,7 +34,7 @@ output_web_vector <- list(
   dpi=300,
   scale=.1)
 
-output_slide_raster <- list(
+output_slide_raster <- data.frame(
   id="output_slide_raster",
   extension = ".png",
   height=6,
@@ -42,7 +42,7 @@ output_slide_raster <- list(
   dpi=300,
   scale=1)
 
-output_slide_vector <- list(
+output_slide_vector <- data.frame(
   id="output_slide_vector",
   extension = ".svg",
   height=6,
@@ -50,7 +50,7 @@ output_slide_vector <- list(
   dpi=300,
   scale=1)
 
-output_slide_pdf <- list(
+output_slide_pdf <- data.frame(
   id="output_slide_pdf",
   extension = ".pdf",
   height=6,
@@ -58,7 +58,7 @@ output_slide_pdf <- list(
   dpi=300,
   scale=1)
 
-output_print_raster <- list(
+output_print_raster <- data.frame(
   id="output_print_raster",
   extensions = ".png",
   height=8,
@@ -66,7 +66,7 @@ output_print_raster <- list(
   dpi=300,
   scale=1)
 
-output_print_vector <- list(
+output_print_vector <- data.frame(
   id="output_print_vector",
   extensions = ".svg",
   height=8,
@@ -75,7 +75,7 @@ output_print_vector <- list(
   scale=1)
 
 
-output_print_pdf <- list(
+output_print_pdf <- data.frame(
   id="output_print_pdf",
   extensions = ".pdf",
   height=15,
@@ -83,7 +83,7 @@ output_print_pdf <- list(
   dpi=300,
   scale=1)
 
-output_huge_raster <- list(
+output_huge_raster <- data.frame(
   id="output_huge_raster",
   extensions = ".png",
   height=15,
@@ -91,7 +91,7 @@ output_huge_raster <- list(
   dpi=300,
   scale=1)
 
-output_huge_vector <- list(
+output_huge_vector <- data.frame(
   id="output_huge_vector",
   extensions = ".svg",
   height=15,
@@ -100,7 +100,7 @@ output_huge_vector <- list(
   scale=1)
 
 
-output_huge_pdf <- list(
+output_huge_pdf <- data.frame(
   id="output_huge_pdf",
   extensions = ".pdf",
   height=8,
@@ -116,7 +116,7 @@ output_huge_pdf <- list(
 # $output_web_vector
 # [1] TRUE
 #OUTPUT:
-# matrix with output_formats suitable for passing to save_plots(...)
+# data.frame with output_formats suitable for passing to save_plots(...)
 get_output_formats <- function(opt){
   output_formats <- NULL
   if(opt$output_web_raster) output_formats <- rbind(output_formats, output_web_raster)

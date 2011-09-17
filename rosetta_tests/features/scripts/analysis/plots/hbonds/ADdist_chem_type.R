@@ -66,13 +66,14 @@ WHERE
   acc_atoms.struct_id = hb.struct_id AND acc_atoms.site_id = hb.acc_id;"
 
 # Execute the SQL query on each sample source.
-features <- query_sample_sources(sample_sources, sele)
+f <- query_sample_sources(sample_sources, sele)
 
 # A-D distance is not stored directly in the features database,
 # however it can be computed from the coordinates of the hydrogen
 # bonding atoms.
-features <- transform(features,
-	ADdist=sqrt((dx - dx)^2 + (dy - ay)^2 + (dz - az)^2))
+f <- transform(f,
+  ADdist = vector_distance(cbind(dx, dy, dz), cbind(ax, ay, az)))
+
 
 # This is deprecated please use the hbond_chem_types table for the lables instead
 # Order the plots better and give more descriptive labels
@@ -91,23 +92,24 @@ f$acc_chem_type <- factor(f$acc_chem_type,
 		"aCXA: n,q", "aCXL: d,e", "aPBA: bb"))
 
 # Filter to HBonds having A-D distance not greater than 3.5 Angstroms.
-features <- features[features$ADdist <= 3.5,]
+f <- f[f$ADdist <= 3.5,]
 
 # Compute density estimation for over the A-D distance grouping by the
 # donor type, acceptor type and sample source.  Apply the radial 3d
 # normalization. This corrects for the fact that there is more volume
 # in a spherical shell at a farther distance then a closer distance.
-dens <- estimate_density_1d(features,
+dens <- estimate_density_1d(f,
 	c("don_chem_type", "acc_chem_type", "sample_source"),
 	"ADdist", radial_3d_normalization)
 
 # Generate a lattice of density plots for each donor and acceptor type
+plot_id <- "ADdist_chem_type"
 p <- ggplot(dens) + theme_bw() +
   geom_line(aes(x, log(y+1), colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +
 	facet_grid(don_chem_type ~ acc_chem_type) +
   opts(title = "Hydrogen Bonds A-D Distance by Chemical Type\n(normalized for equal volume per unit distance)") +
-	scale_x_continuous("Acceptor -- Donor Distance (A)", breaks=c(2.3, 2.8, 3.3)) +
+	scale_x_continuous(expression(paste('Acceptor -- Donor Distance (', ring(A), ')')), breaks=c(2.3, 2.8, 3.3)) +
 	scale_y_continuous("log(FeatureDensity + 1)", breaks=c(0,1,2)) +
 	opts(strip.text.x=theme_text(size=7)) +
 	opts(strip.text.y=theme_text(size=7, angle=270))
@@ -115,4 +117,4 @@ if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
 }
 
-save_plots("ADdist_chem_type", sample_sources, output_dir, output_formats)
+save_plots(plot_id, sample_sources, output_dir, output_formats)
