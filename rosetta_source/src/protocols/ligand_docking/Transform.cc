@@ -123,6 +123,8 @@ void Transform::apply(core::pose::Pose & pose)
 	assert(grid_manager != 0); //something has gone hopelessly wrong if this triggers
 
 
+	//TODO qsar map needs to be refactored so it actually works right
+	/*
 	if(!grid_manager->is_qsar_map_attached())
 	{
 		core::conformation::ResidueOP residue = new core::conformation::Residue(pose.residue(begin));
@@ -135,7 +137,7 @@ void Transform::apply(core::pose::Pose & pose)
 		//		qsar_map->fill_with_value(1);
 		grid_manager->set_qsar_map(qsar_map);
 	}
-
+	*/
 	core::conformation::Residue original_residue = pose.residue(begin);
 
 	jd2::JobOP current_job = protocols::jd2::JobDistributor::get_instance()->current_job();

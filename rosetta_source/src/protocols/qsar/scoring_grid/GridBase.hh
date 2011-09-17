@@ -22,6 +22,7 @@
 #include <numeric/xyzVector.hh>
 #include <utility/io/ozstream.hh>
 #include <core/pose/Pose.hh>
+#include <list>
 
 namespace protocols {
 namespace qsar {
@@ -40,7 +41,7 @@ public:
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center,utility::vector1<core::Size> ligand_chain_ids_to_exclude)=0;
 	/// @brief populate the grid with values based on a passed pose
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center)=0;
-	/// @brief return a copy of the grid
+	/// @brief return a constant reference to the grid
 	core::grid::CartGrid<core::Real> const &  get_grid();
 	///@brief set the grid type
 	void set_type(std::string type);
@@ -54,13 +55,20 @@ public:
 	void set_center(core::Vector center);
 	/// @brief get the center of the grid
 	core::Vector get_center();
-	/// @brief get dimensions of the grid
+	/// @brief get the max score value in the grid
+	core::Real get_min_value() const;
+	/// @brief get the minimum score value in the grid
+	core::Real get_max_value() const;
+	/// @brief get the value of a single point in the grid
 	core::Real get_point(core::Real x, core::Real y, core::Real z);
+	/// @brief get dimensions of the grid
 	numeric::xyzVector<core::Size> get_dimensions();
 	/// @brief return the current score of a residue using the current grid
 	virtual core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map);
 	void grid_to_kin(utility::io::ozstream & out, core::Real min_val, core::Real max_val, core::Size stride);
 	//void grid_rotamer_trials(core::pose::Pose &  pose, core::Size residue_id, int const min_score);
+
+	std::list<std::pair<core::Vector, core::Real> > get_point_value_list_within_range(core::Real lower_bound, core::Real upper_bound,core::Size stride);
 
 	void dump_BRIX(std::string const & prefix);
 

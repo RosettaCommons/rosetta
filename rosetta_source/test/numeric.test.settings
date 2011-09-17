@@ -9,6 +9,7 @@
 
 sources = {
 	"" : [
+		"color_util",
 		"util",
 		"conversions",
 		"HomogeneousTransform",

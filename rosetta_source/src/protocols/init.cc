@@ -211,6 +211,7 @@
 #include <protocols/fldsgn/filters/ParallelBetaPairingPreferenceFilterCreator.hh>
 #include <protocols/fldsgn/filters/SecondaryStructureFilterCreator.hh>
 #include <protocols/fldsgn/filters/SheetTopologyFilterCreator.hh>
+#include <protocols/qsar/RenderGridsToKinemageCreator.hh>
 
 //Scoring Grid creators
 #include <protocols/qsar/scoring_grid/GridFactory.hh>
@@ -405,6 +406,7 @@ static MoverRegistrator< rosetta_scripts::SavePoseMoverCreator > SavePoseMoverCr
 static MoverRegistrator< loophash::LoopHashMoverWrapperCreator > reg_LoopHashMoverWrapperCreator;
 static MoverRegistrator< docking::DockingProtocolCreator > DockingProtocolCreator;
 static MoverRegistrator< moves::RollMoverCreator > reg_RollMoverCreator;
+static MoverRegistrator< qsar::RenderGridsToKinemageCreator> reg_RenderGridsToKinemageCreator;
 
 using namespace filters;
 

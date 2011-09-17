@@ -25,6 +25,9 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/sphericalVector.hh>
 
+//utility headers
+#include <utility/string_util.hh>
+
 // C++ headers
 #include <cmath>
 #include <cstdlib>
@@ -883,6 +886,24 @@ spherical_to_xyz(sphericalVector<T> const & spherical)
 	xyz.z(spherical.radius()*cos(spherical.theta()*numeric::constants::f::pi_over_180));
 	return xyz;
 }
+
+
+///@brief convert a string of comma separated values "0.2,0.4,0.3" to an xyzVector
+template<typename T>
+inline
+xyzVector<T>
+comma_seperated_string_to_xyz(std::string triplet)
+{
+	utility::vector1<std::string> split_string(utility::string_split(triplet, ','));
+	runtime_assert(split_string.size() == 3);
+	xyzVector<T> xyz;
+	xyz.x(utility::from_string(split_string[1],T(0.0)));
+	xyz.y(utility::from_string(split_string[2],T(0.0)));
+	xyz.z(utility::from_string(split_string[3],T(0.0)));
+	return xyz;
+
+}
+
 
 } // namespace numeric
 

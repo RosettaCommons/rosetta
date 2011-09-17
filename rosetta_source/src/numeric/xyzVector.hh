@@ -676,6 +676,22 @@ public: // Methods
 		return *this;
 	}
 
+	/// @brief get the lowest of the three values in the vector
+	inline
+	T
+	minimum_value() const
+	{
+		return std::min(std::min(x_,y_),std::min(y_,z_));
+	}
+
+	/// @brief get the highest of the three values in the vector
+	inline
+	T
+	maximum_value() const
+	{
+		return std::max(std::max(x_,y_),std::max(y_,z_));
+	}
+
 
 	/// @brief Normalized
 	inline

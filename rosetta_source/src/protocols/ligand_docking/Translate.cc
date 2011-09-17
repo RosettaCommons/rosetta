@@ -141,6 +141,8 @@ void Translate::apply(core::pose::Pose & pose) {
 		translate_ligand(grid, jump_id, pose);// move ligand to a random point in binding pocket
 	}else
 	{
+		//TODO refactor qsar map so it works properly
+		/*
 		if(!grid_manager->is_qsar_map_attached())
 		{
 			utility::vector1<std::string> grid_names( grid_manager->get_grid_names() );
@@ -149,6 +151,7 @@ void Translate::apply(core::pose::Pose & pose) {
 			qsar_map->fill_with_value(1,grid_names);
 			grid_manager->set_qsar_map(qsar_map);
 		}
+		*/
 		grid_manager->initialize_all_grids(center);
 		grid_manager->update_grids(pose,center);
 		translate_ligand(jump_id,pose,begin);

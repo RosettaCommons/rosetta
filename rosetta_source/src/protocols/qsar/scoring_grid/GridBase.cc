@@ -16,6 +16,7 @@
 #include <core/grid/CartGrid.hh>
 #include <protocols/ligand_docking/grid_functions.hh>
 #include <basic/Tracer.hh>
+#include <algorithm>
 //#include <protocols/qsar/qsarTypeManager.hh>
 
 namespace protocols {
@@ -83,6 +84,16 @@ core::Vector GridBase::get_center()
 	return center_;
 }
 
+core::Real GridBase::get_max_value() const
+{
+	return grid_.getMaxValue();
+}
+
+core::Real GridBase::get_min_value() const
+{
+	return grid_.getMinValue();
+}
+
 core::Real GridBase::get_point(core::Real x, core::Real y, core::Real z)
 {
 	 return grid_.getValue(x,y,z);
@@ -104,22 +115,55 @@ core::Real GridBase::score(core::conformation::Residue const & residue, core::Re
 	//GridBaseTracer << "map size is: " << qsar_map->size() <<std::endl;
 	for(core::Size atom_index = 1; atom_index <= residue.nheavyatoms() && score < max_score;++atom_index)
 	{
-		qsarPointOP qsar_info(qsar_map->get_point(atom_index,type_));
+		//TODO qsar map is broken, comment it out until it works right
+		//qsarPointOP qsar_info(qsar_map->get_point(atom_index,type_));
 
-		if(qsar_info != 0)
+		//if(qsar_info != 0)
+		//{
+		core::Vector const & atom = residue.xyz(atom_index);
+		if(grid_.is_in_grid(atom.x(),atom.y(), atom.z()))
 		{
-			core::Vector const & atom = residue.xyz(atom_index);
-			if(grid_.is_in_grid(atom.x(),atom.y(), atom.z()))
-			{
 
-				core::Real grid_score = grid_.getValue(atom.x(),atom.y(),atom.z());
+			core::Real grid_score = grid_.getValue(atom.x(),atom.y(),atom.z());
 
-				score = score+ grid_score*qsar_info->get_value();
-			}
+			score = score+ grid_score; //*qsar_info->get_value();
 		}
+		//}
 
 	}
 	return score*weight_;
+}
+
+std::list<std::pair<core::Vector, core::Real> >
+GridBase::get_point_value_list_within_range(
+		core::Real lower_bound,
+		core::Real upper_bound,
+		core::Size stride)
+{
+	std::list<std::pair<core::Vector, core::Real> > point_list;
+	int x_size(0);
+	int y_size(0);
+	int z_size(0);
+	grid_.getNumberOfPoints(x_size, y_size, z_size);
+	for(int x_index =0; x_index < x_size; x_index+= stride)
+	{
+		for(int y_index = 0; y_index < y_size; y_index += stride)
+		{
+			for(int z_index = 0; z_index < z_size; z_index+= stride)
+			{
+				core::grid::CartGrid<core::Real>::GridPt grid_point(x_index,y_index,z_index);
+				core::Vector pdb_coords(grid_.coords(grid_point));
+				core::Real value = grid_.getValue(grid_point);
+				//std::cout << value <<std::endl;
+				if(value >= lower_bound && value <= upper_bound)
+				{
+					std::pair<core::Vector,core::Real> data(pdb_coords,value);
+					point_list.push_back(data);
+				}
+			}
+		}
+	}
+	return point_list;
 }
 
 void GridBase::grid_to_kin(utility::io::ozstream & out, core::Real min_val, core::Real max_val, core::Size stride)
@@ -147,36 +191,6 @@ void GridBase::grid_to_kin(utility::io::ozstream & out, core::Real min_val, core
 	}
 }
 
-/*
-void GridBase::grid_rotamer_trials(core::pose::Pose &  pose, core::Size residue_id, int const min_score)
-{
-	utility::vector1<core::conformation::ResidueOP> conformers;
-	ligand_docking::rotamers_for_trials(pose,residue_id,conformers);
-	if(conformers.empty())
-		return;
-	int best_score = 9999;
-	int best_conformer = 0;
-	for(core::Size current_conformer = 1; current_conformer <= conformers.size(); ++current_conformer )
-	{
-		core::conformation::ResidueOP residue = conformers[current_conformer];
-		int const new_score = this->score(*residue,best_score,qsa);
-		if(new_score < best_score && new_score >= min_score)
-		{
-			best_score=new_score;
-			best_conformer = current_conformer;
-			if(best_score == min_score)
-				break;
-		}
-	}
-
-	if(best_conformer > 0)
-	{
-		TR << "best fit is conformer " << best_conformer << "with score" << best_score << std::endl;
-		pose.replace_residue(residue_id,*conformers[best_conformer],false);
-	}
-
-}
-*/
 
 void GridBase::set_sphere(core::Vector const & coords, core::Real radius, core::Real value)
 {

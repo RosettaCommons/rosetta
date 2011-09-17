@@ -1065,6 +1065,7 @@ sources = {
 	"protocols/qsar" : [
 		"qsarMap",
 		"qsarMover",
+		"RenderGridsToKinemage",
 	],
 
 	"protocols/qsar/scoring_grid" : [

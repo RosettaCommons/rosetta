@@ -150,6 +150,8 @@ void Rotate::apply(core::pose::Pose & pose){
 		rotate_ligand(grid, pose);// move ligand to a random point in binding pocket
 	}else
 	{
+		// TODO refactor qsar map so it works properly
+		/*
 		if(grid_manager->is_qsar_map_attached())
 		{
 			//core::conformation::ResidueOP residue = new core::conformation::Residue(pose.residue(begin));
@@ -157,6 +159,7 @@ void Rotate::apply(core::pose::Pose & pose){
 			//qsar_map->fill_with_value(1);
 			//grid_manager->set_qsar_map(qsar_map);
 		}
+		*/
 		//grid_manager->initialize_all_grids(center);
 		//grid_manager->update_grids(pose,center);
 	}

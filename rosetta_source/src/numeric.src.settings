@@ -9,6 +9,7 @@
 
 sources = {
 	"numeric" : [
+		"color_util",
 		"constants",
 		"random.functions",
 		"statistics.functions",

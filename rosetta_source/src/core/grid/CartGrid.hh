@@ -13,6 +13,8 @@
 #ifndef INCLUDED_core_grid_CartGrid_hh
 #define INCLUDED_core_grid_CartGrid_hh
 
+#include <algorithm>
+
 #include <core/grid/CartGrid.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
@@ -629,6 +631,16 @@ public:
 	T getValue(Vector const & coords) const
 	{
 		return getValue(coords.x(), coords.y(), coords.z());
+	}
+
+	T getMinValue() const
+	{
+		return *std::min_element(zones_,zones_+npoints_);
+	}
+
+	T getMaxValue() const
+	{
+		return *std::max_element(zones_,zones_+npoints_);
 	}
 
 	void setValue(GridPt const & gridpt, T value)
