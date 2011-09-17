@@ -39,7 +39,7 @@ Real
 SigmoidFunc::func( Real const x ) const
 {
 	Real const z = slope_*( x-x0_ );
-	return 1/(1+exp(-z));
+	return (1/(1+exp(-z)) - 0.5); // so at x0_, you get 0
 }
 
 Real
