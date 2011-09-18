@@ -18,7 +18,7 @@
 #include <protocols/moves/Mover.hh>
 #include <utility/io/ozstream.fwd.hh>
 #include <protocols/qsar/RenderGridsToKinemage.fwd.hh>
-
+#include <numeric/xyzVector.hh>
 namespace protocols {
 namespace qsar {
 
