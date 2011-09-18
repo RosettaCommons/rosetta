@@ -39,6 +39,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/constraints/util.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
@@ -103,7 +104,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
   builder.set_up(aligned, &pose);
 
   // Score function
-  ScoreFunctionOP score = score_function();
+  ScoreFunctionOP score = score_function(&pose);
   score->show(TR, pose);
 
   Jumps jumps;
@@ -128,16 +129,17 @@ void MedalMover::jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) con
   assert(jumps);
   for (core::Size i = 1; i <= pose.num_jump(); ++i) {
     (*jumps)[i] = pose.jump(i);
-    TR << "Added jump_num " << i << endl;
+    TR.Debug << "Added jump_num " << i << endl;
   }
 }
 
-core::scoring::ScoreFunctionOP MedalMover::score_function() const {
+core::scoring::ScoreFunctionOP MedalMover::score_function(core::pose::Pose* pose) const {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::scoring::ScoreFunctionFactory;
   using core::scoring::ScoreFunctionOP;
   using core::scoring::methods::EnergyMethodOptions;
+  assert(pose);
 
   ScoreFunctionOP score = ScoreFunctionFactory::create_score_function("score0");
 
@@ -153,6 +155,7 @@ core::scoring::ScoreFunctionOP MedalMover::score_function() const {
 
   /// ... more here
 
+  core::scoring::constraints::add_constraints_from_cmdline(*pose, *score);
   return score;
 }
 

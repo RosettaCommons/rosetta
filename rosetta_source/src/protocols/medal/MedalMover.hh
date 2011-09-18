@@ -51,7 +51,7 @@ private:
   void jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) const;
 
   /// @brief Configure the score function
-  core::scoring::ScoreFunctionOP score_function() const;
+  core::scoring::ScoreFunctionOP score_function(core::pose::Pose* pose) const;
 };
 
 }  // namespace medal
