@@ -34,9 +34,11 @@
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/util.hh>
@@ -109,6 +111,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
 
   Jumps jumps;
   jumps_from_pose(pose, &jumps);
+  add_cutpoint_variants(&pose);
 
   MoverOP mover = new RationalMonteCarlo(
         new RigidBodyMotionMover(aligned, jumps),
@@ -121,6 +124,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
 
   // Remove virtual residue placed during star fold tree construction
   builder.tear_down(&pose);
+  remove_cutpoint_variants(&pose);
 }
 
 void MedalMover::jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) const {
@@ -179,6 +183,30 @@ protocols::moves::MoverOP MedalMover::clone() const {
 
 protocols::moves::MoverOP MedalMover::fresh_instance() const {
   return new MedalMover();
+}
+
+// TODO(cmiles) deduplicate w/ protocols/nonlocal/BrokenFold
+void MedalMover::add_cutpoint_variants(core::pose::Pose* pose) const {
+  const core::kinematics::FoldTree& tree(pose->fold_tree());
+  for (core::Size i = 1; i <= pose->total_residue(); ++i) {
+    if (!tree.is_cutpoint(i) || i >= (pose->total_residue() - 1))
+      continue;
+
+    core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::CUTPOINT_LOWER, i);
+    core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::CUTPOINT_UPPER, i+1);
+  }
+}
+
+// TODO(cmiles) deduplicate w/ protocols/nonlocal/BrokenFold
+void MedalMover::remove_cutpoint_variants(core::pose::Pose* pose) const {
+  const core::kinematics::FoldTree& tree(pose->fold_tree());
+  for (core::Size i = 1; i <= pose->total_residue(); ++i) {
+    if (!tree.is_cutpoint(i) || i >= (pose->total_residue() - 1))
+      continue;
+
+    core::pose::remove_variant_type_from_pose_residue(*pose, core::chemical::CUTPOINT_LOWER, i);
+    core::pose::remove_variant_type_from_pose_residue(*pose, core::chemical::CUTPOINT_UPPER, i+1);
+  }
 }
 
 }  // namespace medal

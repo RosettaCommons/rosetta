@@ -52,6 +52,10 @@ private:
 
   /// @brief Configure the score function
   core::scoring::ScoreFunctionOP score_function(core::pose::Pose* pose) const;
+
+  /// Add cutpoint variants to the pose
+  void add_cutpoint_variants(core::pose::Pose* pose) const;
+  void remove_cutpoint_variants(core::pose::Pose* pose) const;
 };
 
 }  // namespace medal
