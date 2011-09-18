@@ -1,7 +1,8 @@
 namespace rigid { BooleanOptionKey const rigid( "rigid" );  }
 namespace rigid { IntegerOptionKey const cycles( "rigid:cycles" );  }
-namespace rigid { RealOptionKey const temperature( "rigid:temperature" );  }
 namespace rigid { RealOptionKey const rotation( "rigid:rotation" );  }
+namespace rigid { IntegerOptionKey const sequence_separation( "rigid:sequence_separation" );  }
+namespace rigid { RealOptionKey const temperature( "rigid:temperature" );  }
 namespace rigid { RealOptionKey const translation( "rigid:translation" );  }
 namespace in { BooleanOptionKey const in( "in" );  }
 namespace in { BooleanOptionKey const termini( "in:termini" );  }
@@ -568,4 +569,3 @@ namespace abinitio { RealOptionKey const HD_fa_penalty( "abinitio:HD_fa_penalty"
 namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_pred" );  }
 namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }
 namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
-namespace fold_cst { RealOptionKey const constraint_skip_rate( "fold_cst:constraint_skip_rate" );  }

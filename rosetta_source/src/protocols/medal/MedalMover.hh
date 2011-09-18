@@ -25,6 +25,7 @@
 // Project headers
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/jd2/ThreadingJob.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -48,6 +49,9 @@ private:
 
   /// @brief Retrieves jump information from <pose>, storing the result in <jumps>
   void jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) const;
+
+  /// @brief Configure the score function
+  core::scoring::ScoreFunctionOP score_function() const;
 };
 
 }  // namespace medal

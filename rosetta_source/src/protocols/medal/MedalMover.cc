@@ -24,7 +24,9 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#include <basic/options/keys/jumps.OptionKeys.gen.hh>
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <utility/vector1.hh>
@@ -37,8 +39,10 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <protocols/abinitio/MaxSeqSepConstraintSet.hh>
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/jd2/InnerJob.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -62,7 +66,6 @@ void MedalMover::apply(core::pose::Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::Size;
-  using core::scoring::ScoreFunctionFactory;
   using core::scoring::ScoreFunctionOP;
   using core::sequence::SequenceAlignment;
   using protocols::jd2::ThreadingJob;
@@ -100,8 +103,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
   builder.set_up(aligned, &pose);
 
   // Score function
-  ScoreFunctionOP score = ScoreFunctionFactory::create_score_function("score0");
-  score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::constraints::cst_weight]());
+  ScoreFunctionOP score = score_function();
   score->show(TR, pose);
 
   Jumps jumps;
@@ -128,6 +130,30 @@ void MedalMover::jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) con
     (*jumps)[i] = pose.jump(i);
     TR << "Added jump_num " << i << endl;
   }
+}
+
+core::scoring::ScoreFunctionOP MedalMover::score_function() const {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  using core::scoring::ScoreFunctionFactory;
+  using core::scoring::ScoreFunctionOP;
+  using core::scoring::methods::EnergyMethodOptions;
+
+  ScoreFunctionOP score = ScoreFunctionFactory::create_score_function("score0");
+
+  // Allowable sequence separation
+  EnergyMethodOptions options(score->energy_method_options());
+  options.cst_max_seq_sep(option[OptionKeys::rigid::sequence_separation]());
+  score->set_energy_method_options(options);
+
+  // Enable specific energy terms
+  score->set_weight(core::scoring::rg, 1 * option[OptionKeys::abinitio::rg_reweight]());
+  score->set_weight(core::scoring::linear_chainbreak, 1 * option[OptionKeys::jumps::increase_chainbreak]());
+  score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::constraints::cst_weight]());
+
+  /// ... more here
+
+  return score;
 }
 
 protocols::jd2::ThreadingJob const * const MedalMover::current_job() const {

@@ -86,8 +86,9 @@ Options = Option_Group( '',
   # Rigid body motion options
   Option_Group( 'rigid',
     Option('cycles', 'Integer', desc = 'Number of rigid body perturbation cycles', default = '1000'),
-		Option('temperature', 'Real', desc = 'Monte Carlo temperature', default = '2.0'),
     Option('rotation', 'Real', desc = 'Rotation magnitude', default = '2.5'),
+		Option('sequence_separation', 'Integer', desc = 'Maximum sequence separation for scoring chainbreaks', default = '20'),
+		Option('temperature', 'Real', desc = 'Monte Carlo temperature', default = '2.0'),
 		Option('translation', 'Real', desc = 'Translation magnitude', default = '0.5'),
   ),
 
