@@ -18,23 +18,22 @@
 #include <numeric/util.hh>
 #include <utility/vector1.hh>
 
-// --------------- Test Class --------------- //
-
 class NumericUtilTests : public CxxTest::TestSuite {
-
-	public:
-
+ public:
 	numeric::Real delta;
 
 	void setUp() {
 		delta = 0.0001;
 	}
 
-	// Shared finalization goes here.
-	void tearDown() {}
+	void test_clamp() {
+		TS_ASSERT_EQUALS(5, numeric::clamp<int>(10, 1, 5));  // clamp 10 to interval [1, 5]
+		TS_ASSERT_EQUALS(1, numeric::clamp<int>(-1, 1, 5));  // clamp -1 to interval [1, 5]
 
+    TS_ASSERT_EQUALS(5.0, numeric::clamp<double>(10.0, 1.0, 5.0));  // clamp 10.0 to interval [1.0, 5.0]
+		TS_ASSERT_EQUALS(1.0, numeric::clamp<double>(-1.0, 1.0, 5.0));  // clamp -1.0 to interval [1.0, 5.0]
+	}
 
-	/// @brief median test
 	void test_median() {
 		using utility::vector1;
 		using namespace numeric;

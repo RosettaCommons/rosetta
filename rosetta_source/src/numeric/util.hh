@@ -24,6 +24,19 @@
 
 namespace numeric {
 
+  /// @brief Clamps <value> to the closed interval [lower_bound, upper_bound].
+  /// Templated type must implement operator<.
+  template<typename Number>
+	Number clamp(Number value, Number lower_bound, Number upper_bound) {
+		if (value < lower_bound) {
+			return lower_bound;
+		} else if (upper_bound < value) {
+			return upper_bound;
+		} else {
+			return value;
+		}
+	}
+
   /// @brief Computes log(x) in the given base
   inline double log(double x, double base) {
 		return std::log10(x) / std::log10(base);
