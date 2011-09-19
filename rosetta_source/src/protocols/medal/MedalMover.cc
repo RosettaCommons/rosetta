@@ -34,11 +34,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
@@ -54,7 +50,6 @@
 #include <protocols/jd2/InnerJob.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/ThreadingJob.hh>
-#include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/moves/RationalMonteCarlo.hh>
@@ -64,7 +59,6 @@
 namespace protocols {
 namespace medal {
 
-typedef utility::vector1<protocols::loops::Loop> Regions;
 typedef boost::unordered_map<int, core::kinematics::Jump> Jumps;
 
 static basic::Tracer TR("protocols.medal.MedalMover");
@@ -72,15 +66,9 @@ static basic::Tracer TR("protocols.medal.MedalMover");
 void MedalMover::apply(core::pose::Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
-  using core::Size;
-  using core::chemical::ResidueType;
-  using core::chemical::ResidueTypeCAP;
-  using core::chemical::ResidueTypeSetCAP;
-  using core::conformation::Residue;
   using core::scoring::ScoreFunctionOP;
   using core::sequence::SequenceAlignment;
   using protocols::jd2::ThreadingJob;
-  using protocols::loops::Loop;
   using protocols::loops::Loops;
   using protocols::moves::MoverOP;
   using protocols::moves::RationalMonteCarlo;
@@ -91,32 +79,21 @@ void MedalMover::apply(core::pose::Pose& pose) {
   // Always operate in centroid mode
   core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
 
-  // Retrieve the current job from jd2
+  // Retrieve the current job from jd2, identify aligned regions
   ThreadingJob const * const job = current_job();
   const SequenceAlignment& alignment = job->alignment();
-  TR << "Alignment: " << alignment.alignment_id() << endl;
-
-  // Identify aligned regions
   Loops unaligned = protocols::comparative_modeling::loops_from_alignment(pose.total_residue(), alignment, 0);
   Loops aligned = unaligned.invert(pose.total_residue());
-  TR << "Aligned regions: " << aligned << endl;
 
-  // TODO(cmiles) Exclude unaligned residues from scoring
-  for (Loops::const_iterator i = unaligned.begin(); i != unaligned.end(); ++i) {
-    const Loop& region = *i;
-    for (Size j = region.start(); j <= region.stop(); ++j) {
-      //const Residue& residue = pose.residue(j);
-      //ResidueTypeCAP type_list = residue.residue_type_set().name3_map("VRT")[1];
-      //Residue replacement = *core::conformation::ResidueFactory::create_residue(*type_list);
-      //pose.replace_residue(j, replacement, false);
-    }
-  }
+  TR << "Alignment: " << alignment.alignment_id() << endl;
+  TR << "Aligned regions: " << aligned << endl;
+  TR << "Unaligned regions: " << unaligned << endl;
 
   // Star fold tree construction
   StarTreeBuilder builder;
   builder.set_up(aligned, &pose);
 
-  // Score function
+  // Score function setup
   ScoreFunctionOP score = score_function(&pose);
   score->show(TR, pose);
   TR.flush_all_channels();
@@ -135,17 +112,15 @@ void MedalMover::apply(core::pose::Pose& pose) {
   mover->apply(pose);
 
   // Remove virtual residue placed during star fold tree construction
-  builder.tear_down(&pose);
   remove_cutpoint_variants(&pose);
+  builder.tear_down(&pose);
 }
 
 void MedalMover::jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) const {
-  using std::endl;
-
   assert(jumps);
   for (core::Size i = 1; i <= pose.num_jump(); ++i) {
     (*jumps)[i] = pose.jump(i);
-    TR.Debug << "Added jump_num " << i << endl;
+    TR.Debug << "Added jump_num " << i << std::endl;
   }
 }
 
