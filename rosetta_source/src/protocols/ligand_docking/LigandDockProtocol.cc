@@ -527,9 +527,9 @@ LigandDockProtocol::optimize_orientation3(
 		of << "@kinemage\n";
 		of << "@group {grid}\n";
 		of << "@dotlist {atr} color= greentint\n";
-		grid_to_kin(of, *grid, -1, -1, 2);
+		grid_to_kin<int>(of, *grid, -1, -1, 2);
 		of << "@dotlist {rep} color= pinktint off\n";
-		grid_to_kin(of, *grid, 1, 1, 2);
+		grid_to_kin<int>(of, *grid, 1, 1, 2);
 		of.close();
 	}
 

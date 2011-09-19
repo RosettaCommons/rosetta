@@ -135,13 +135,35 @@ utility::pointer::owning_ptr<core::grid::CartGrid<int> > make_atr_rep_grid_witho
 	utility::vector1<core::Size> ligand_chain_ids_to_exclude
 );
 
+/// @details Just writes the points -- you have to write @ dotlist, etc.
+template<typename T>
 void grid_to_kin(
 	std::ostream & out,
-	core::grid::CartGrid<int> const & grid,
-	int min_val,
-	int max_val,
-	int stride = 1
-);
+	core::grid::CartGrid<T> const & grid,
+	T min_val,
+	T max_val,
+	int stride /*= 1*/
+)
+{
+	typedef core::grid::CartGrid<int>::GridPt GridPt;
+	using core::Vector;
+
+	int nx(0), ny(0), nz(0); // grid points in each dimension
+	grid.getNumberOfPoints(nx, ny, nz);
+	for(int i = 0, i_end = nx; i < i_end; i += stride) {
+		for(int j = 0, j_end = ny; j < j_end; j += stride) {
+			for(int k = 0, k_end = nz; k < k_end; k += stride) {
+				GridPt grid_pt(i, j, k);
+				Vector box_ctr = grid.coords( grid_pt );
+				T value = grid.getValue(grid_pt);
+				if( min_val <= value && value <= max_val ) {
+					out << '{' << i << ' ' << j << ' ' << k << "}U "
+						<< box_ctr.x() << ' ' << box_ctr.y() << ' ' << box_ctr.z() << '\n';
+				}
+			}
+		}
+	}
+}
 
 
 } // namespace ligand_docking

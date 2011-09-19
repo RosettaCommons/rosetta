@@ -192,6 +192,11 @@ void GridBase::grid_to_kin(utility::io::ozstream & out, core::Real min_val, core
 }
 
 
+void GridBase::fill_with_value(core::Real value)
+{
+	grid_.setFullOccupied(value);
+}
+
 void GridBase::set_sphere(core::Vector const & coords, core::Real radius, core::Real value)
 {
 	//TR <<"making sphere of radius " << radius << "and value " << value <<std::endl;
@@ -225,7 +230,39 @@ void GridBase::set_sphere(core::Vector const & coords, core::Real radius, core::
 	//TR << "done making sphere "<<std::endl;
 }
 
+void GridBase::set_distance_sphere_for_atom(core::Vector const & coords,core::Real cutoff)
+{
+	core::Real cutoff2 = cutoff*cutoff;
+	int x_count(0);
+	int y_count(0);
+	int z_count(0);
 
+	grid_.getNumberOfPoints(x_count,y_count,z_count);
+	core::Vector vector_radius (cutoff);
+	core::grid::CartGrid<core::Real>::GridPt grid_min = grid_.gridpt(coords - cutoff);
+	core::grid::CartGrid<core::Real>::GridPt grid_max = grid_.gridpt(coords + cutoff);
+	for(int x_index = std::max(0,grid_min.x()); x_index <= std::min(x_count-1,grid_max.x());++x_index)
+	{
+		for(int y_index = std::max(0,grid_min.y());y_index <= std::min(y_count-1,grid_max.y());++y_index)
+		{
+			for(int z_index = std::max(0,grid_min.z()); z_index <= std::min(z_count-1,grid_max.z());++z_index)
+			{
+				core::grid::CartGrid<core::Real>::GridPt point(x_index, y_index, z_index);
+				core::Vector box_center(grid_.coords(point));
+				core::Real distance2 = box_center.distance_squared(coords);
+				if(distance2 <= cutoff2)
+				{
+					core::Real distance = sqrt(distance2);
+					core::Real current_value = grid_.getValue(point);
+					if(distance <= current_value)
+					{
+						grid_.setValue(point,distance);
+					}
+				}
+			}
+		}
+	}
+}
 
 void GridBase::diffuse_ring(core::Vector const & coords, core::Real radius, core::Real width, core::Real magnitude)
 {

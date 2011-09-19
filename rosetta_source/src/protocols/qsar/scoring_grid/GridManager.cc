@@ -90,10 +90,12 @@ bool GridManager::is_qsar_map_attached()
 
 void GridManager::make_new_grid(utility::tag::TagPtr const tag)
 {
+
 	std::string name= tag->getName();
 	GridManagerTracer.Debug << name <<std::endl;
 	GridBaseOP new_grid(GridFactory::get_instance()->new_grid(tag));
 	insert_grid(name, new_grid);
+
 }
 
 void GridManager::insert_grid(std::string const name, GridBaseOP const grid)

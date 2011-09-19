@@ -63,6 +63,8 @@ int main(int argc, char*argv[])
 		  core::chemical::ChemicalManager::get_instance()->mm_atom_type_set("fa_standard");
   core::chemical::orbitals::OrbitalTypeSetCAP orbital_types =
 		  core::chemical::ChemicalManager::get_instance()->orbital_type_set("fa_standard");
+  core::chemical::ElementSetCAP element_set =
+		  core::chemical::ChemicalManager::get_instance()->element_set("fa_standard");
 
   std::list<std::string>::iterator file_list_it;
   for(file_list_it = file_list.begin(); file_list_it != file_list.end();++file_list_it)
@@ -73,7 +75,7 @@ int main(int argc, char*argv[])
 
 	  std::cout <<pathname <<std::endl;
 	  core::chemical::sdf::MolFileParser parser(pathname);
-	  parser.parse_mol_file(atom_types,mm_atom_types,orbital_types);
+	  parser.parse_mol_file(atom_types,element_set,mm_atom_types,orbital_types);
 	  core::chemical::ResidueTypeOP residue = parser.GetResidueTypeOP();
 	  std::cout <<"parsed molfile "<<std::endl;
 

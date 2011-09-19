@@ -52,6 +52,7 @@ void ScoringGridLoader::load_data(
 
 	if( tag->hasOption("width") ) {
 		grid_manager->set_width(tag->getOption<core::Real>("width"));
+
 	}
 	if( tag->hasOption("resolution") ){
 		grid_manager->set_resolution(tag->getOption<core::Real>("resolution"));

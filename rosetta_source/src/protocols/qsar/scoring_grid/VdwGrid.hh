@@ -33,7 +33,10 @@ public:
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> );
 	core::Real score(core::conformation::Residue const & residue, core::Real const max_score, qsarMapOP qsar_map);
 private:
+
+
 	numeric::interpolation::spline::SplineGenerator lj_spline_;
+	core::Size cutoff_;
 
 };
 
