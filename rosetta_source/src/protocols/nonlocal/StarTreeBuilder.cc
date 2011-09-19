@@ -18,18 +18,19 @@
 
 // External headers
 #include <boost/format.hpp>
+#include <boost/math/distributions/normal.hpp>
 #include <boost/unordered/unordered_map.hpp>
-
-// Objexx headers
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <numeric/util.hh>
 #include <numeric/xyzVector.hh>
+#include <numeric/random/DistributionSampler.hh>
 #include <numeric/random/WeightedReservoirSampler.hh>
+#include <ObjexxFCL/FArray1D.hh>
+#include <ObjexxFCL/FArray2D.hh>
 #include <utility/vector1.hh>
 
 // Project headers
@@ -88,7 +89,7 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
     // Otherwise, choose the midpoint of the region.
     Size anchor_position = has_conservation ?
         choose_conserved_position(chunk, *pose) :
-        (chunk.start() + chunk.stop()) / 2;
+        choose_unconserved_position(chunk.start(), chunk.stop());
 
     // virtual residue => anchor position
     jumps.push_back(std::make_pair(virtual_res_, anchor_position));
@@ -180,6 +181,22 @@ core::Size StarTreeBuilder::choose_conserved_position(const protocols::loops::Lo
   }
   sampler.samples(&samples);
   return samples[1];
+}
+
+/// @detail Fixed-variance selection, centered on the median
+core::Size StarTreeBuilder::choose_unconserved_position(core::Size start, core::Size stop) const {
+  using boost::math::normal;
+  using core::Size;
+	using numeric::random::DistributionSampler;
+
+  double mu = (stop - start + 1) / 2.0;
+  double sigma = (stop - mu) / 2.0;
+  normal distribution(mu, sigma);
+  DistributionSampler<normal> sampler(distribution);
+
+  // Clamp insertion position to closed interval [start, stop]
+  Size position = static_cast<Size>(sampler.sample());
+  return numeric::clamp<Size>(position, start, stop);
 }
 
 void StarTreeBuilder::tear_down(core::pose::Pose* pose) {

@@ -46,6 +46,9 @@ class StarTreeBuilder : public TreeBuilder {
   core::Size choose_conserved_position(const protocols::loops::Loop& chunk,
                                        const core::pose::Pose& pose) const;
 
+  /// @brief Stochastically selects an anchor position on [start, stop]
+  core::Size choose_unconserved_position(core::Size start, core::Size stop) const;
+
   /// @brief When native is available, computes rmsd of jump residues, storing
   /// the results as comments in the silent file output.
   void do_compute_jump_rmsd(core::pose::Pose* model) const;
