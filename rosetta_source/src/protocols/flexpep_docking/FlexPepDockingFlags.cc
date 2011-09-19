@@ -61,8 +61,6 @@ protocols::flexpep_docking::FlexPepDockingFlags::FlexPepDockingFlags
 			option[ OptionKeys::flexPepDocking::ref_startstruct]();
 		valid_ref_start_struct_ = true;
 	}
-	lowres_abinitio = option[ OptionKeys::flexPepDocking::lowres_abinitio ]();
-	lowres_preoptimize = option[ OptionKeys::flexPepDocking::lowres_preoptimize ]();
 	min_only = option[ OptionKeys::flexPepDocking::flexPepDockingMinimizeOnly ]();
 	random_phi_psi_pert = false;
 	if (option[ OptionKeys::flexPepDocking::random_phi_psi_preturbation ]())
@@ -74,15 +72,19 @@ protocols::flexpep_docking::FlexPepDockingFlags::FlexPepDockingFlags
 	if (option[ OptionKeys::flexPepDocking::random_trans_start ]() ||
 		option[ OptionKeys::flexPepDocking::random_rot_start ]())
 		randomRBstart = true;
+	lowres_abinitio = option[ OptionKeys::flexPepDocking::lowres_abinitio ]();
+	lowres_preoptimize = option[ OptionKeys::flexPepDocking::lowres_preoptimize ]();
+  pep_refine = option[ OptionKeys::flexPepDocking::pep_refine ]();
 	rbMCM = option[ OptionKeys::flexPepDocking::rbMCM ](); // obsolete
-	torsionsMCM = option[ OptionKeys::flexPepDocking::torsionsMCM ](); // obsolete
-  if( option[ OptionKeys::flexPepDocking::pep_refine ]() )
+	torsionsMCM = option[ OptionKeys::flexPepDocking::torsionsMCM ]();  // obsolete
+	// the next section should be removed after we get rid of obsolee rmMCM and torsionsMCM completely
+	if(pep_refine || lowres_preoptimize || lowres_abinitio)
 		{ // overrides old rbMCM and torsionsMCM
 			bool explicitFalseMCMs = 
 				( option[ OptionKeys::flexPepDocking::rbMCM ].user() && !rbMCM) ||
 				( option[ OptionKeys::flexPepDocking::torsionsMCM ].user() && !torsionsMCM);
 			runtime_assert_msg(!explicitFalseMCMs,
-												 "pep_refine is not compatible with explicitly setting -rbMCM or -torsionsMCM to false");
+												 "pep_refine / lowres_preoptimize / lowres_abinitio are not compatible with explicitly setting -rbMCM or -torsionsMCM to false");
 			rbMCM = true;
 			torsionsMCM = true;
 		}

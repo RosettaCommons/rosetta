@@ -1045,7 +1045,7 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 					prepack_only(pose, false/*ppk_receptor*/, true/*ppk_peptide*/);
 					pose_after_lowres = pose;
 				}
-				if(flags_.rbMCM || flags_.torsionsMCM
+				if( (flags_.pep_refine && (flags_.rbMCM || flags_.torsionsMCM))
 					 || flags_.design_peptide || flags_.peptide_loop_model){
 						//Insert cst from cmd-line - uses these flags to operate:
 						//option[ OptionKeys::constraints::cst_fa_file ].user()
@@ -1357,7 +1357,8 @@ void FlexPepDockingProtocol::parse_my_tag(
 		{
 			flags_.randomRBstart = true;
 		}
-  if( tag->getOption<bool>( "pep_refine", false)  )
+  flags_.pep_refine = tag->getOption<bool>( "pep_refine", flags_.pep_refine);
+	if(flags_.pep_refine || flags_.lowres_abinitio || flags_.lowres_preoptimize)
 		{ // overrides obsolete rbMCM and torsionsMCM
 			flags_.rbMCM = true;
 			flags_.torsionsMCM = true;

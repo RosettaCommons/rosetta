@@ -140,6 +140,7 @@ public:
 	bool lowres_abinitio;
 	bool lowres_preoptimize;
 	bool min_only;
+	bool pep_refine;
 	bool random_phi_psi_pert;
 	double random_phi_psi_pert_size;
   bool extend;
