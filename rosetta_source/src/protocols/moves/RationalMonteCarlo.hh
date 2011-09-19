@@ -25,7 +25,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Package headers
-#include <protocols/moves/MonteCarlo.fwd.hh>
+#include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 
 namespace protocols {
