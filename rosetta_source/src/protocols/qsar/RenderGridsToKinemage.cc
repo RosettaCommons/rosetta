@@ -60,7 +60,7 @@ RenderGridsToKinemage::RenderGridsToKinemage() :
 		protocols::moves::Mover("RenderGridsToKinemage"),
 		color_mode_(0.0),
 		gradient_bins_(10),
-		stride_(1.0)
+		stride_(1)
 		//low_cut_(0.0),
 		//high_cut_(0.0)
 {
