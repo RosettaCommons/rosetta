@@ -36,7 +36,7 @@ private:
 
 
 	numeric::interpolation::spline::SplineGenerator lj_spline_;
-	core::Size cutoff_;
+	core::Real cutoff_;
 
 };
 

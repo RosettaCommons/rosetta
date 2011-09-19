@@ -239,7 +239,7 @@ public:
 		}
 	}
 
-	void setFullOccupied(int value)
+	void setFullOccupied(T value)
 	{
 		for (int i=0; i < npoints_; i++)
 		{
