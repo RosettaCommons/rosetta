@@ -44,8 +44,6 @@
 #include <core/sequence/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/comparative_modeling/util.hh>
-#include <protocols/jd2/InnerJob.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/ThreadingJob.hh>
 #include <protocols/loops/LoopRelaxMover.hh>
 #include <protocols/loops/Loops.hh>
@@ -214,16 +212,6 @@ void NonlocalAbinitio::refine(core::pose::Pose* pose) const {
     FastRelax relax(score);
     relax.apply(*pose);
   }
-}
-
-protocols::jd2::ThreadingJob const * const NonlocalAbinitio::current_job() const {
-  using protocols::jd2::InnerJobCOP;
-  using protocols::jd2::JobDistributor;
-  using protocols::jd2::ThreadingJob;
-
-  JobDistributor* jd2 = JobDistributor::get_instance();
-  InnerJobCOP inner = jd2->current_job()->inner_job();
-  return (ThreadingJob const * const) inner();
 }
 
 void NonlocalAbinitio::identify_chunks(const core::sequence::SequenceAlignment& alignment,

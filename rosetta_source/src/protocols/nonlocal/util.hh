@@ -24,6 +24,7 @@
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
+#include <protocols/jd2/ThreadingJob.fwd.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
@@ -60,6 +61,15 @@ void decompose(core::Size min_chunk_sz,
 
 /// @brief If -abinitio:debug is enabled, writes <pose> to <file>.
 void emit_intermediate(const core::pose::Pose& pose, const std::string& file);
+
+/// @brief Retrieves the current job from the JobDistributor
+protocols::jd2::ThreadingJob const * const current_job();
+
+/// @brief Adds cutpoint variants to pose
+void add_cutpoint_variants(core::pose::Pose* pose);
+
+/// @brief Removes cutpoint variants from pose
+void remove_cutpoint_variants(core::pose::Pose* pose);
 
 }  // namespace nonlocal
 }  // namespace protocols

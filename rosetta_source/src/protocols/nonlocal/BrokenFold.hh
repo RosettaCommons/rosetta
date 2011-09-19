@@ -50,12 +50,6 @@ class BrokenFold : public protocols::moves::Mover {
   std::string get_name() const;
 
  private:
-  /// @brief Adds cutpoint variants to <pose>
-  void add_cutpoint_variants(core::pose::Pose* pose) const;
-
-  /// @brief Removes cutpoint variants from <pose>
-  void remove_cutpoint_variants(core::pose::Pose* pose) const;
-
   /// @brief Returns the number of cycles for stage i
   core::Size cycles(int stage);
 
@@ -64,9 +58,6 @@ class BrokenFold : public protocols::moves::Mover {
 
   /// @brief Writes the stage header to <out>
   void show_stage_header(core::Size stage_num, std::ostream& out) const;
-
-
-  // Members
 
   /// @brief Collection of movers to be applied in order
   utility::vector1<protocols::moves::MoverOP> movers_;

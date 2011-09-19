@@ -123,28 +123,6 @@ BrokenFold::BrokenFold(core::fragment::FragSetOP fragments_lg,
   }
 }
 
-void BrokenFold::add_cutpoint_variants(core::pose::Pose* pose) const {
-  const core::kinematics::FoldTree& tree(pose->fold_tree());
-  for (core::Size i = 1; i <= pose->total_residue(); ++i) {
-    if (!tree.is_cutpoint(i) || i >= (pose->total_residue() - 1))
-      continue;
-
-    core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::CUTPOINT_LOWER, i);
-    core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::CUTPOINT_UPPER, i+1);
-  }
-}
-
-void BrokenFold::remove_cutpoint_variants(core::pose::Pose* pose) const {
-  const core::kinematics::FoldTree& tree(pose->fold_tree());
-  for (core::Size i = 1; i <= pose->total_residue(); ++i) {
-    if (!tree.is_cutpoint(i) || i >= (pose->total_residue() - 1))
-      continue;
-
-    core::pose::remove_variant_type_from_pose_residue(*pose, core::chemical::CUTPOINT_LOWER, i);
-    core::pose::remove_variant_type_from_pose_residue(*pose, core::chemical::CUTPOINT_UPPER, i+1);
-  }
-}
-
 void BrokenFold::show_stage_header(core::Size stage_num, std::ostream& out) const {
   out << std::endl << "== Stage " << stage_num << " ==" << std::endl;
 }

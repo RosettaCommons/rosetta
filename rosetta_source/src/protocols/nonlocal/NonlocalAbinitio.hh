@@ -28,7 +28,6 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/sequence/SequenceAlignment.hh>
-#include <protocols/jd2/ThreadingJob.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -56,10 +55,6 @@ private:
 
   /// @brief Returns a pointer to the small fragment library
   core::fragment::FragSetOP fragments_small() const;
-
-  // -- utility -- //
-  /// @brief Retrieves the current job from the JobDistributor
-  protocols::jd2::ThreadingJob const * const current_job() const;
 
   /// @brief Identify aligned / unaligned regions by scanning the alignment.
   /// Limit the lengths of these regions to enhance conformational sampling.
