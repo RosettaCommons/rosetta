@@ -17,8 +17,15 @@
 
 #include <protocols/moves/Mover.hh>
 #include <utility/io/ozstream.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <protocols/moves/DataMap.fwd.hh>
+#include <protocols/filters/Filter.fwd.hh>
+#include <protocols/qsar/scoring_grid/GridBase.fwd.hh>
+
 #include <protocols/qsar/RenderGridsToKinemage.fwd.hh>
 #include <numeric/xyzVector.hh>
+
+
 namespace protocols {
 namespace qsar {
 
