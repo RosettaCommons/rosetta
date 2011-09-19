@@ -26,7 +26,6 @@
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/jd2/ThreadingJob.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 namespace protocols {
@@ -44,18 +43,11 @@ class MedalMover : public protocols::moves::Mover {
   protocols::moves::MoverOP fresh_instance() const;
 
 private:
-  /// @brief Retrieves the current job from the JobDistributor
-  protocols::jd2::ThreadingJob const * const current_job() const;
-
   /// @brief Retrieves jump information from <pose>, storing the result in <jumps>
   void jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) const;
 
   /// @brief Configure the score function
   core::scoring::ScoreFunctionOP score_function(core::pose::Pose* pose) const;
-
-  /// Add cutpoint variants to the pose
-  void add_cutpoint_variants(core::pose::Pose* pose) const;
-  void remove_cutpoint_variants(core::pose::Pose* pose) const;
 };
 
 }  // namespace medal

@@ -34,11 +34,8 @@
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/util.hh>
@@ -47,14 +44,14 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/abinitio/MaxSeqSepConstraintSet.hh>
 #include <protocols/comparative_modeling/util.hh>
-#include <protocols/jd2/InnerJob.hh>
-#include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/ThreadingJob.hh>
+#include <protocols/loops/LoopRelaxThreadingMover.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/moves/RationalMonteCarlo.hh>
 #include <protocols/moves/RigidBodyMotionMover.hh>
 #include <protocols/nonlocal/StarTreeBuilder.hh>
+#include <protocols/nonlocal/util.hh>
 
 namespace protocols {
 namespace medal {
@@ -69,6 +66,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
   using core::scoring::ScoreFunctionOP;
   using core::sequence::SequenceAlignment;
   using protocols::jd2::ThreadingJob;
+  using protocols::loops::LoopRelaxThreadingMover;
   using protocols::loops::Loops;
   using protocols::moves::MoverOP;
   using protocols::moves::RationalMonteCarlo;
@@ -80,7 +78,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
   core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
 
   // Retrieve the current job from jd2, identify aligned regions
-  ThreadingJob const * const job = current_job();
+  ThreadingJob const * const job = protocols::nonlocal::current_job();
   const SequenceAlignment& alignment = job->alignment();
   Loops unaligned = protocols::comparative_modeling::loops_from_alignment(pose.total_residue(), alignment, 0);
   Loops aligned = unaligned.invert(pose.total_residue());
@@ -89,19 +87,25 @@ void MedalMover::apply(core::pose::Pose& pose) {
   TR << "Aligned regions: " << aligned << endl;
   TR << "Unaligned regions: " << unaligned << endl;
 
-  // Star fold tree construction
-  StarTreeBuilder builder;
-  builder.set_up(aligned, &pose);
+  // Threading model
+  LoopRelaxThreadingMover closure;
+  closure.setup();
+  closure.apply(pose);
 
-  // Score function setup
+  // Setup the score function and score the initial model
   ScoreFunctionOP score = score_function(&pose);
   score->show(TR, pose);
   TR.flush_all_channels();
 
+  // Build the star fold tree, identify jumps
+  StarTreeBuilder builder;
+  builder.set_up(aligned, &pose);
+
   Jumps jumps;
   jumps_from_pose(pose, &jumps);
-  add_cutpoint_variants(&pose);
+	protocols::nonlocal::add_cutpoint_variants(&pose);
 
+  // Rigid body motion
   MoverOP mover = new RationalMonteCarlo(
         new RigidBodyMotionMover(aligned, jumps),
         score,
@@ -112,15 +116,18 @@ void MedalMover::apply(core::pose::Pose& pose) {
   mover->apply(pose);
 
   // Remove virtual residue placed during star fold tree construction
-  remove_cutpoint_variants(&pose);
+  protocols::nonlocal::remove_cutpoint_variants(&pose);
   builder.tear_down(&pose);
 }
 
 void MedalMover::jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) const {
+  using core::kinematics::Jump;
   assert(jumps);
+
   for (core::Size i = 1; i <= pose.num_jump(); ++i) {
-    (*jumps)[i] = pose.jump(i);
-    TR.Debug << "Added jump_num " << i << std::endl;
+    const Jump& jump = pose.jump(i);
+    (*jumps)[i] = jump;
+    TR.Debug << "Added jump_num " << i << ": " << jump << std::endl;
   }
 }
 
@@ -154,17 +161,6 @@ core::scoring::ScoreFunctionOP MedalMover::score_function(core::pose::Pose* pose
   return score;
 }
 
-// TODO(cmiles) deduplicate w/ protocols/nonlocal/NonlocalAbinitio
-protocols::jd2::ThreadingJob const * const MedalMover::current_job() const {
-  using protocols::jd2::InnerJobCOP;
-  using protocols::jd2::JobDistributor;
-  using protocols::jd2::ThreadingJob;
-
-  JobDistributor* jd2 = JobDistributor::get_instance();
-  InnerJobCOP inner = jd2->current_job()->inner_job();
-  return (ThreadingJob const * const) inner();
-}
-
 std::string MedalMover::get_name() const {
   return "MedalMover";
 }
@@ -175,30 +171,6 @@ protocols::moves::MoverOP MedalMover::clone() const {
 
 protocols::moves::MoverOP MedalMover::fresh_instance() const {
   return new MedalMover();
-}
-
-// TODO(cmiles) deduplicate w/ protocols/nonlocal/BrokenFold
-void MedalMover::add_cutpoint_variants(core::pose::Pose* pose) const {
-  const core::kinematics::FoldTree& tree(pose->fold_tree());
-  for (core::Size i = 1; i <= pose->total_residue(); ++i) {
-    if (!tree.is_cutpoint(i) || i >= (pose->total_residue() - 1))
-      continue;
-
-    core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::CUTPOINT_LOWER, i);
-    core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::CUTPOINT_UPPER, i+1);
-  }
-}
-
-// TODO(cmiles) deduplicate w/ protocols/nonlocal/BrokenFold
-void MedalMover::remove_cutpoint_variants(core::pose::Pose* pose) const {
-  const core::kinematics::FoldTree& tree(pose->fold_tree());
-  for (core::Size i = 1; i <= pose->total_residue(); ++i) {
-    if (!tree.is_cutpoint(i) || i >= (pose->total_residue() - 1))
-      continue;
-
-    core::pose::remove_variant_type_from_pose_residue(*pose, core::chemical::CUTPOINT_LOWER, i);
-    core::pose::remove_variant_type_from_pose_residue(*pose, core::chemical::CUTPOINT_UPPER, i+1);
-  }
 }
 
 }  // namespace medal
