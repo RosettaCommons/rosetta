@@ -34,7 +34,11 @@
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/ResidueFactory.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
@@ -69,6 +73,10 @@ void MedalMover::apply(core::pose::Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::Size;
+  using core::chemical::ResidueType;
+  using core::chemical::ResidueTypeCAP;
+  using core::chemical::ResidueTypeSetCAP;
+  using core::conformation::Residue;
   using core::scoring::ScoreFunctionOP;
   using core::sequence::SequenceAlignment;
   using protocols::jd2::ThreadingJob;
@@ -91,13 +99,16 @@ void MedalMover::apply(core::pose::Pose& pose) {
   // Identify aligned regions
   Loops unaligned = protocols::comparative_modeling::loops_from_alignment(pose.total_residue(), alignment, 0);
   Loops aligned = unaligned.invert(pose.total_residue());
-  TR << "Aligned regions: " << aligned;
+  TR << "Aligned regions: " << aligned << endl;
 
   // TODO(cmiles) Exclude unaligned residues from scoring
   for (Loops::const_iterator i = unaligned.begin(); i != unaligned.end(); ++i) {
     const Loop& region = *i;
     for (Size j = region.start(); j <= region.stop(); ++j) {
-      // exclude residue j
+      //const Residue& residue = pose.residue(j);
+      //ResidueTypeCAP type_list = residue.residue_type_set().name3_map("VRT")[1];
+      //Residue replacement = *core::conformation::ResidueFactory::create_residue(*type_list);
+      //pose.replace_residue(j, replacement, false);
     }
   }
 
@@ -108,6 +119,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
   // Score function
   ScoreFunctionOP score = score_function(&pose);
   score->show(TR, pose);
+  TR.flush_all_channels();
 
   Jumps jumps;
   jumps_from_pose(pose, &jumps);
@@ -153,9 +165,13 @@ core::scoring::ScoreFunctionOP MedalMover::score_function(core::pose::Pose* pose
   score->set_energy_method_options(options);
 
   // Enable specific energy terms
-  score->set_weight(core::scoring::rg, 1 * option[OptionKeys::abinitio::rg_reweight]());
-  score->set_weight(core::scoring::linear_chainbreak, 1 * option[OptionKeys::jumps::increase_chainbreak]());
   score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::constraints::cst_weight]());
+  score->set_weight(core::scoring::hbond_lr_bb, 1);
+  score->set_weight(core::scoring::hbond_sr_bb, 1);
+  score->set_weight(core::scoring::linear_chainbreak, option[OptionKeys::jumps::increase_chainbreak]());
+  score->set_weight(core::scoring::rama, 0.1);
+  score->set_weight(core::scoring::rg, 1.5 * option[OptionKeys::abinitio::rg_reweight]());
+  score->set_weight(core::scoring::sheet, 1);
 
   /// ... more here
 
@@ -163,6 +179,7 @@ core::scoring::ScoreFunctionOP MedalMover::score_function(core::pose::Pose* pose
   return score;
 }
 
+// TODO(cmiles) deduplicate w/ protocols/nonlocal/NonlocalAbinitio
 protocols::jd2::ThreadingJob const * const MedalMover::current_job() const {
   using protocols::jd2::InnerJobCOP;
   using protocols::jd2::JobDistributor;
