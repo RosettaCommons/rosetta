@@ -9,3 +9,4 @@
 -output_lores_silent_file
 -dump
 -mute core.io.database
+-vary_geometry
