@@ -83,13 +83,11 @@ void MedalMover::apply(core::pose::Pose& pose) {
   TR << "Alignment: " << alignment.alignment_id() << endl;
   TR << "Aligned regions: " << aligned << endl;
   TR << "Unaligned regions: " << unaligned << endl;
-  protocols::nonlocal::emit_intermediate(pose, "medal_initial.pdb");
 
   // Threading model
   LoopRelaxThreadingMover closure;
   closure.setup();
   closure.apply(pose);
-  protocols::nonlocal::emit_intermediate(pose, "medal_post_closure.pdb");
 
   // Setup the score function and score the initial model
   core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
@@ -118,7 +116,9 @@ void MedalMover::apply(core::pose::Pose& pose) {
   // Remove virtual residue placed during star fold tree construction
   protocols::nonlocal::remove_cutpoint_variants(&pose);
   builder.tear_down(&pose);
-  protocols::nonlocal::emit_intermediate(pose, "medal_final.pdb");
+
+  // Full-atom output
+  core::util::switch_to_residue_type_set(pose, core::chemical::FA_STANDARD);
 }
 
 void MedalMover::jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) const {
