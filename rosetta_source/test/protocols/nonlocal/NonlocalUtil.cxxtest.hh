@@ -185,7 +185,7 @@ class NonlocalUtilTest : public CxxTest::TestSuite {
     core::scoring::compute_jump_rmsd(native, model, &rmsds);
 
     for (unordered_map<Size, Real>::const_iterator i = rmsds.begin(); i != rmsds.end(); ++i)
-      TS_ASSERT_DELTA(0, i->second, 0.001);
+      TS_ASSERT_DELTA(0, i->second, 0.0025);
 
     builder.tear_down(&model);
   }
