@@ -70,20 +70,24 @@ public:
 
         utility::vector1<std::pair<core::Size,core::Size> > findHelices(const core::pose::Pose & pose);
 
-        utility::vector1<core::Size> findFragments(const core::pose::Pose & targetPose, const core::pose::Pose & queryFragment, utility::vector1<std::pair<core::Size,core::Size> > helix_endpts);
+        utility::vector1<core::Size> findFragments(const core::pose::Pose & targetPose,
+            const core::pose::Pose & queryFragment, utility::vector1<std::pair<core::Size,core::Size> > helix_endpts);
 
-        bool checkHelixContacts(const core::pose::Pose & pose, const core::pose::Pose & fragment1, const core::pose::Pose & fragment2, std::pair<core::Size,core::Size> helix_endpts);
+        bool checkHelixContacts(const core::pose::Pose & pose, const core::pose::Pose & fragment1,
+            const core::pose::Pose & fragment2, std::pair<core::Size,core::Size> helix_endpts);
 
         bool closenessCheck(const core::Distance maxRange, const core::Distance end1Dist, const core::Distance end2Dist,
             const core::pose::Pose & search_structure, core::Size frag1Start, core::Size frag2Start);
 
-        utility::vector1<std::pair<core::Size,core::Size> > findPartnerHelices(const core::pose::Pose & pose, const core::pose::Pose & fragment1, const core::pose::Pose & fragment2, core::Size frag1Start, core::Size frag2Start, utility::vector1<std::pair<core::Size,core::Size> > helix_endpts);
+        utility::vector1<std::pair<core::Size,core::Size> > findPartnerHelices(const core::pose::Pose & pose,
+            const core::pose::Pose & fragment1, const core::pose::Pose & fragment2, core::Size frag1Start,
+            core::Size frag2Start, utility::vector1<std::pair<core::Size,core::Size> > helix_endpts, bool direction);
 
         void superimposeBundles(core::pose::Pose & query_structure, const core::pose::Pose & results_structure);
 
         core::Real bb_score(core::pose::Pose & pose, core::Size unique_chain_num, core::scoring::ScoreFunctionOP & scorefxn);
 
-        utility::vector1<HelixAssemblyJob> apply(HelixAssemblyJob & job);
+        std::vector<HelixAssemblyJob> apply(HelixAssemblyJob & job);
 
 
 private:

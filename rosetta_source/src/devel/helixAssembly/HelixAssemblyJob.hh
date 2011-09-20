@@ -16,14 +16,14 @@
 #ifndef HELIXASSEMBLYJOB_HH_
 #define HELIXASSEMBLYJOB_HH_
 
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
-
 //Unit headers
-#include <devel/init.hh>
+#include <devel/helixAssembly/HelicalFragment.hh>
+
+//external library
+#include <boost/serialization/vector.hpp>
 
 //core library
-#include <core/init.hh>
+#include <core/types.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray2D.fwd.hh>
@@ -54,6 +54,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+
 // Utility Headers
 #include <basic/Tracer.hh>
 
@@ -72,61 +73,65 @@ public:
 
   HelixAssemblyJob();
   HelixAssemblyJob(HelixAssemblyJob const & old_job);
-  HelixAssemblyJob(core::Size job_id, std::string job_name, core::Size round, std::string query_structure, std::string search_structure,
-      core::Size frag1_start, core::Size frag1_end, core::Size frag2_start, core::Size frag2_end, core::Size search_index);
+  HelixAssemblyJob(core::Size job_id, std::string job_name, core::Size round, bool direction, std::string query_structure,
+      std::string search_structure, core::Size search_index, core::Size query_frag_1_index,
+      core::Size query_frag_2_index, std::vector<HelicalFragment> fragments);
 
   core::Size get_job_id() const;
   std::string get_job_name() const;
-  core::Size get_round() const;
-  core::Size get_frag1_end() const;
-  core::Size get_frag1_start() const;
-  core::Size get_frag2_end() const;
-  core::Size get_frag2_start() const;
+  core::Size get_remaining_rounds() const;
   core::Size get_search_index() const;
   std::string get_query_structure() const;
   std::string get_search_structure() const;
+  core::Size get_query_frag_1_index() const;
+  core::Size get_query_frag_2_index() const;
+  std::vector<HelicalFragment> get_fragments() const;
+  bool get_direction() const;
+  HelicalFragment get_query_frag_1() const;
+  HelicalFragment get_query_frag_2() const;
   void set_job_id(core::Size job_id);
   void set_job_name(std::string job_name);
-  void set_round(core::Size round);
+  void set_remaining_rounds(core::Size remaining_rounds);
   void set_search_index(core::Size search_index);
-  void set_frag1_end(core::Size frag1_end);
-  void set_frag1_start(core::Size frag1_start);
-  void set_frag2_end(core::Size frag2_end);
-  void set_frag2_start(core::Size frag2_start);
   void set_query_structure(std::string query_structure);
   void set_search_structure(std::string search_structure);
+  void set_query_frag_1_index(core::Size query_frag_1_index);
+  void set_query_frag_2_index(core::Size query_frag_2_index);
+  void set_fragments(std::vector<HelicalFragment> fragments);
+  void set_direction(bool direction);
+
 
 private:
-    friend class boost::serialization::access;
+  friend class boost::serialization::access;
 
-    // When the class Archive corresponds to an output archive, the
-    // & operator is defined similar to <<.  Likewise, when the class Archive
-    // is a type of input archive the & operator is defined similar to >>.
-    template<class Archive>
-    void serialize(Archive & ar, const unsigned int version)
-    {
-      ar & job_id_;
-      ar & job_name_;
-      ar & round_;
-      ar & query_structure_;
-      ar & search_structure_;
-      ar & frag1_start_;
-      ar & frag1_end_;
-      ar & frag2_start_;
-      ar & frag2_end_;
-      ar & search_index_;
-    }
+  // When the class Archive corresponds to an output archive, the
+  // & operator is defined similar to <<.  Likewise, when the class Archive
+  // is a type of input archive the & operator is defined similar to >>.
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    ar & job_id_;
+    ar & job_name_;
+    ar & remaining_rounds_;
+    ar & query_structure_;
+    ar & search_structure_;
+    ar & search_index_;
+    ar & query_frag_1_index_;
+    ar & query_frag_2_index_;
+    ar & fragments_;
+    ar & direction_;
+  }
 
   core::Size job_id_;
   std::string job_name_;
-  core::Size round_;
+  core::Size remaining_rounds_;
   std::string query_structure_;
   std::string search_structure_;
   core::Size search_index_;
-  core::Size frag1_start_;
-  core::Size frag1_end_;
-  core::Size frag2_start_;
-  core::Size frag2_end_;
+  core::Size query_frag_1_index_;
+  core::Size query_frag_2_index_;
+  std::vector<HelicalFragment> fragments_;
+  bool direction_; //toggles between true and false to tell HelixAssemblyMover which direction the helix should be built
 };
 
 #endif /* HELIXASSEMBLYJOB_HH_ */

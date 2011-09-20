@@ -16,6 +16,7 @@
 // Unit headers
 #include <devel/helixAssembly/HelixAssemblyMover.hh>
 #include <devel/helixAssembly/HelixAssemblyJob.hh>
+#include <devel/helixAssembly/HelicalFragment.hh>
 
 // Devel headers
 #include <devel/init.hh>
@@ -37,6 +38,7 @@
 //Boost MPI includes
 #include <boost/mpi.hpp>
 #include <boost/serialization/string.hpp>
+#include <boost/serialization/vector.hpp>
 
 // C++ headers
 #include <stdio.h>
@@ -91,7 +93,7 @@ main( int argc, char * argv [] )
       vector1<int> freeProcessors;
       Size helices_to_add = option[ HelixAssembly::helices_to_add ];
 
-      TR << "library size: " << pdb_library.size() << endl;
+      cout << "library size: " << pdb_library.size() << endl;
 
       //Add all of the first-round jobs to the job queue
       for(Size i=1; i <= pdb_library.size(); ++i){
@@ -99,16 +101,30 @@ main( int argc, char * argv [] )
           HelixAssemblyJob temp_job;
           temp_job.set_job_name(pdb_library[i].base());
           temp_job.set_query_structure(originalQueryPdbString);
-          //THIS is your problem.
           temp_job.set_search_index(i);
-          temp_job.set_frag1_start(option[ HelixAssembly::frag1_start]);
-          temp_job.set_frag1_end(option[ HelixAssembly::frag1_end]);
-          temp_job.set_frag2_start(option[ HelixAssembly::frag2_start]);
-          temp_job.set_frag2_end(option[ HelixAssembly::frag2_end]);
-          temp_job.set_round(1);
+          temp_job.set_remaining_rounds(option[HelixAssembly::helices_to_add]);
+          temp_job.set_direction(false); //true grows bundle off of the n-terminus, false grows off the c-terminus
+
+          HelicalFragment fragment1;
+          fragment1.set_start(option[ HelixAssembly::frag1_start]);
+          fragment1.set_end(option[ HelixAssembly::frag1_end]);
+          fragment1.set_pdb_source(pdb_library[i].name());
+
+          HelicalFragment fragment2;
+          fragment2.set_start(option[ HelixAssembly::frag2_start]);
+          fragment2.set_end(option[ HelixAssembly::frag2_end]);
+          fragment2.set_pdb_source(pdb_library[i].name());
+
+          vector<HelicalFragment> fragments;
+          fragments.push_back(fragment1);
+          temp_job.set_query_frag_1_index(0);
+          fragments.push_back(fragment2);
+          temp_job.set_query_frag_2_index(1);
+          temp_job.set_fragments(fragments);
+
           job_queue.push_back(temp_job);
       }
-      TR << "Done populating the job queue with " << job_queue.size() << " jobs." << endl;
+      cout << "Done populating the job queue with " << job_queue.size() << " jobs." << endl;
 
       //distribute initial jobs to all processors
       for(Size i=1; i < world.size(); ++i){
@@ -127,7 +143,7 @@ main( int argc, char * argv [] )
               world.send(i, 0, boost::mpi::skeleton(temp_job));
               world.send(i, 0, boost::mpi::get_content(temp_job));
               ++currently_running_jobs;
-              TR << "Job sent to node: " << i << endl;
+              cout << "Job sent to node: " << i << endl;
           }
           //if we have more processors than we have jobs, keep track of which processors are free (for use by jobs created later)
           else{
@@ -141,32 +157,36 @@ main( int argc, char * argv [] )
           int completed_node;
           world.recv(boost::mpi::any_source,0,completed_node);
 
-          TR << "Node " << completed_node << " finished a job" << endl;
+          cout << "Node " << completed_node << " finished a job" << endl;
           ++num_completed_jobs;
           --currently_running_jobs;
 
-          TR << "Number of completed jobs: " << num_completed_jobs << endl;
           cout << "Number of completed jobs: " << num_completed_jobs << endl;
-          cout << "Number of currently running jobs: " << num_completed_jobs << endl;
+          cout << "Number of currently running jobs: " << currently_running_jobs << endl;
 
-          int num_new_jobs;
+          //receive each new job individually from the completed node
+          std::vector<HelixAssemblyJob> new_jobs;
+
+          core::Size num_new_jobs;
           world.recv(completed_node,0,num_new_jobs);
-          TR << "Node " << completed_node << " wants to add " << num_new_jobs << " new job(s)" << endl;
-          vector1<HelixAssemblyJob> new_jobs;
-          //receive all new jobs from completed node
-          for(Size i=1; i<=num_new_jobs; ++i){
-              HelixAssemblyJob temp_job;
-              world.recv(completed_node,0,boost::mpi::skeleton(temp_job));
-              world.recv(completed_node,0,boost::mpi::get_content(temp_job));
-              new_jobs.push_back(temp_job);
+
+          for(Size i=0; i<num_new_jobs; i++){
+              HelixAssemblyJob new_job;
+              world.recv(completed_node,0,boost::mpi::skeleton(new_job));
+              world.recv(completed_node,0,boost::mpi::get_content(new_job));
+              new_jobs.push_back(new_job);
           }
 
-          TR << "Added all the new jobs" << endl;
+          //for some reason this causes a segfault
+//          world.recv(completed_node,0,boost::mpi::skeleton(new_jobs));
+//          world.recv(completed_node,0,boost::mpi::get_content(new_jobs));
 
-          for(Size i=1; i <= new_jobs.size(); ++i){
-              if(new_jobs[i].get_round() <= option[HelixAssembly::helices_to_add]){
-                  TR << "job " << new_jobs[i].get_job_name() << " is on round " << new_jobs[i].get_round() <<
-                      " of " << option[HelixAssembly::helices_to_add] << endl;
+          cout << "Node " << completed_node << " added " << new_jobs.size() << " new job(s)" << endl;
+
+          for(Size i=0; i < new_jobs.size(); ++i){
+              if(new_jobs[i].get_remaining_rounds() > 0){
+                  cout << "job " << new_jobs[i].get_job_name() << " has " << new_jobs[i].get_remaining_rounds() <<
+                      " remaining" << endl;
                   for(Size j=1; j <= pdb_library.size(); ++j){
                       //copy incomplete job and add a pose to search, then add to the queue
                       HelixAssemblyJob temp_job(new_jobs[i]);
@@ -175,10 +195,17 @@ main( int argc, char * argv [] )
                       //we use an index here so that we don't need to hang onto the string forever (just-in-time loading).
                       temp_job.set_search_index(j);
                       temp_job.set_job_name(temp_job.get_job_name() + "_" + pdb_library[j].base());
+
+                      //Add a partially incomplete Fragment Residue info to the end of the list of fragment residue infos. This
+                      //will be finished in the HelixAssemblyMover(which is when we know the resnums of the new fragmnet)
+//                      HelicalFragment newFragmentInfo;
+//                      newFragmentInfo.set_pdb_source_file(pdb_library[i].name());
+//                      temp_job.get_fragment_info().push_back(newFragmentInfo);
+
                       job_queue.push_back(temp_job);
                   }
                   //Incomplete job output for debugging purposes
-                  TR << "Outputting incomplete job " << new_jobs[i].get_job_name() << endl;
+                  cout << "Outputting incomplete job " << new_jobs[i].get_job_name() << endl;
                   utility::io::ozstream outputStream;
                   outputStream.open(new_jobs[i].get_job_name() + "_" + to_string(job_id_counter) + "_bundle.pdb");
                   ++job_id_counter;
@@ -186,7 +213,7 @@ main( int argc, char * argv [] )
                   outputStream.close();
               }
               else{
-                  TR << "Outputting job " << new_jobs[i].get_job_name() << endl;
+                  cout << "Outputting job " << new_jobs[i].get_job_name() << endl;
                   //done. output PDBs
                   utility::io::ozstream outputStream;
                   outputStream.open(new_jobs[i].get_job_name() + "_" + to_string(job_id_counter) + "_bundle.pdb");
@@ -196,7 +223,7 @@ main( int argc, char * argv [] )
               }
           }
 
-          TR << "Jobs left: " << job_queue.size() << endl;
+          cout << "Jobs left: " << job_queue.size() << endl;
           cout << "Jobs left: " << job_queue.size() << endl;
 
           //use newly free processor
@@ -205,8 +232,7 @@ main( int argc, char * argv [] )
 
               HelixAssemblyJob temp_job = job_queue[job_queue.size()];
               job_queue.pop_back();
-              TR << "Sending job " << temp_job.get_job_name() << " (" << temp_job.get_round() <<
-                                    ":" << option[HelixAssembly::helices_to_add] << ")" << endl;
+              cout << "Sending job " << temp_job.get_job_name() << endl;
 
               //lazily load the search string
               utility::io::izstream data( pdb_library[temp_job.get_search_index()].name().c_str() );
@@ -239,21 +265,24 @@ main( int argc, char * argv [] )
               HelixAssemblyJob received_job;
               world.recv(0, 0, boost::mpi::skeleton(received_job));
               world.recv(0, 0, boost::mpi::get_content(received_job));
-              TR << "Node " << world.rank() << " received a job" << endl;
+              cout << "Node " << world.rank() << " received a job" << endl;
 
               HelixAssemblyMover helixAssembler;
-              vector1<HelixAssemblyJob> returnedJobs = helixAssembler.apply(received_job);
-              TR << "Finished apply! returning " << returnedJobs.size() << " job(s)." << endl;
+              std::vector<HelixAssemblyJob> returned_jobs = helixAssembler.apply(received_job);
+              cout << "Finished apply! returning " << returned_jobs.size() << " job(s)." << endl;
 
               //tell head node which job finished
               world.send(0,0,world.rank());
 
-              //send how many jobs to expect, then send each job
-              int num_jobs_to_send = returnedJobs.size();
-              world.send(0,0,num_jobs_to_send);
-              for(Size i=1; i<=returnedJobs.size(); ++i){
-                  world.send(0,0,boost::mpi::skeleton(returnedJobs[i]));
-                  world.send(0,0,boost::mpi::get_content(returnedJobs[i]));
+              //For whatever reason this causes a segfault
+//              world.send(0,0,boost::mpi::skeleton(returned_jobs));
+//              world.send(0,0,boost::mpi::get_content(returned_jobs));
+
+              world.send(0,0,returned_jobs.size());
+
+              for(Size i=0; i < returned_jobs.size(); ++i){
+                  world.send(0,0,boost::mpi::skeleton(returned_jobs[i]));
+                  world.send(0,0,boost::mpi::get_content(returned_jobs[i]));
               }
           }
           else{
@@ -262,5 +291,5 @@ main( int argc, char * argv [] )
       }
   }
   MPI_Finalize();
-  TR << "------------DONE!------------" << endl;
+  cout << "------------DONE!------------" << endl;
 }

@@ -21,31 +21,33 @@ HelixAssemblyJob::HelixAssemblyJob(){};
 //    return new HelixAssemblyJob( *this );
 //  }
 
+//copy constructor
 HelixAssemblyJob::HelixAssemblyJob(HelixAssemblyJob const & old_job):
         job_id_(old_job.job_id_),
         job_name_(old_job.job_name_),
-        round_(old_job.round_),
+        remaining_rounds_(old_job.remaining_rounds_),
         query_structure_(old_job.query_structure_),
         search_structure_(old_job.search_structure_),
-        frag1_start_(old_job.frag1_start_),
-        frag1_end_(old_job.frag1_end_),
-        frag2_start_(old_job.frag2_start_),
-        frag2_end_(old_job.frag2_end_),
-        search_index_(old_job.search_index_)
+        search_index_(old_job.search_index_),
+        query_frag_1_index_(old_job.query_frag_1_index_),
+        query_frag_2_index_(old_job.query_frag_2_index_),
+        fragments_(old_job.fragments_),
+        direction_(old_job.direction_)
 {}
 
-HelixAssemblyJob::HelixAssemblyJob(core::Size job_id, std::string job_name, core::Size round, std::string query_structure, std::string search_structure,
-    core::Size frag1_start, core::Size frag1_end, core::Size frag2_start, core::Size frag2_end, core::Size search_index):
+HelixAssemblyJob::HelixAssemblyJob(core::Size job_id, std::string job_name, core::Size remaining_rounds, bool direction,
+    std::string query_structure, std::string search_structure, core::Size search_index, core::Size query_frag_1_index,
+    core::Size query_frag_2_index, std::vector<HelicalFragment> fragments):
     job_id_(job_id),
     job_name_(job_name),
-    round_(round),
+    remaining_rounds_(remaining_rounds),
+    direction_(direction),
     query_structure_(query_structure),
     search_structure_(search_structure),
-    frag1_start_(frag1_start),
-    frag1_end_(frag1_end),
-    frag2_start_(frag2_start),
-    frag2_end_(frag2_end),
-    search_index_(search_index)
+    search_index_(search_index),
+    query_frag_1_index_(query_frag_1_index),
+    query_frag_2_index_(query_frag_2_index),
+    fragments_(fragments)
 {}
 
 core::Size HelixAssemblyJob::get_job_id() const{
@@ -56,29 +58,12 @@ std::string HelixAssemblyJob::get_job_name() const{
   return job_name_;
 }
 
-core::Size HelixAssemblyJob::get_round() const{
-  return round_;
+core::Size HelixAssemblyJob::get_remaining_rounds() const{
+  return remaining_rounds_;
 }
 
 core::Size HelixAssemblyJob::get_search_index() const{
   return search_index_;
-}
-
-
-core::Size HelixAssemblyJob::get_frag1_end() const{
-  return frag1_end_;
-}
-
-core::Size HelixAssemblyJob::get_frag1_start() const{
-  return frag1_start_;
-}
-
-core::Size HelixAssemblyJob::get_frag2_end() const{
-  return frag2_end_;
-}
-
-core::Size HelixAssemblyJob::get_frag2_start() const{
-  return frag2_start_;
 }
 
 std::string HelixAssemblyJob::get_query_structure() const{
@@ -89,6 +74,30 @@ std::string HelixAssemblyJob::get_search_structure() const{
   return search_structure_;
 }
 
+core::Size HelixAssemblyJob::get_query_frag_1_index() const{
+  return query_frag_1_index_;
+}
+
+core::Size HelixAssemblyJob::get_query_frag_2_index() const{
+  return query_frag_2_index_;
+}
+
+bool HelixAssemblyJob::get_direction() const{
+  return direction_;
+}
+
+HelicalFragment HelixAssemblyJob::get_query_frag_1() const{
+  return fragments_[query_frag_1_index_];
+}
+
+HelicalFragment HelixAssemblyJob::get_query_frag_2() const{
+  return fragments_[query_frag_2_index_];
+}
+
+std::vector<HelicalFragment> HelixAssemblyJob::get_fragments() const{
+  return fragments_;
+}
+
 void HelixAssemblyJob::set_job_id(core::Size job_id){
   this->job_id_ = job_id;
 }
@@ -97,24 +106,8 @@ void HelixAssemblyJob::set_job_name(std::string job_name){
   this->job_name_ = job_name;
 }
 
-void HelixAssemblyJob::set_round(core::Size round){
-  this->round_ = round;
-}
-
-void HelixAssemblyJob::set_frag1_end(core::Size frag1_end){
-  this->frag1_end_ = frag1_end;
-}
-
-void HelixAssemblyJob::set_frag1_start(core::Size frag1_start){
-  this->frag1_start_ = frag1_start;
-}
-
-void HelixAssemblyJob::set_frag2_end(core::Size frag2_end){
-  this->frag2_end_ = frag2_end;
-}
-
-void HelixAssemblyJob::set_frag2_start(core::Size frag2_start){
-  this->frag2_start_ = frag2_start;
+void HelixAssemblyJob::set_remaining_rounds(core::Size remaining_rounds){
+  this->remaining_rounds_ = remaining_rounds;
 }
 
 void HelixAssemblyJob::set_query_structure(std::string query_structure){
@@ -127,4 +120,20 @@ void HelixAssemblyJob::set_search_structure(std::string search_structure){
 
 void HelixAssemblyJob::set_search_index(core::Size search_index){
   this->search_index_ = search_index;
+}
+
+void HelixAssemblyJob::set_query_frag_1_index(core::Size query_frag_1_index){
+  this->query_frag_1_index_ = query_frag_1_index;
+}
+
+void HelixAssemblyJob::set_query_frag_2_index(core::Size query_frag_2_index){
+  this->query_frag_2_index_ = query_frag_2_index;
+}
+
+void HelixAssemblyJob::set_fragments(std::vector<HelicalFragment> fragments){
+  this->fragments_ = fragments;
+}
+
+void HelixAssemblyJob::set_direction(bool direction){
+  this->direction_ = direction;
 }

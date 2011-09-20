@@ -305,8 +305,8 @@ utility::vector1<Size> HelixAssemblyMover::findFragments(Pose const & targetPose
   utility::vector1< std::pair< Size,Size > > helix_endpts){
 
   utility::vector1<Size> foundFragments;
-  TR << "target pose size: " << targetPose.total_residue() << endl;
-  TR << "query fragment size: " << queryFragment.total_residue() << endl;
+  cout << "target pose size: " << targetPose.total_residue() << endl;
+  cout << "query fragment size: " << queryFragment.total_residue() << endl;
 
   for(Size j=1; j<=helix_endpts.size(); j++){
       if(helix_endpts[j].first + queryFragment.total_residue() - 1 <= helix_endpts[j].second){
@@ -321,7 +321,7 @@ utility::vector1<Size> HelixAssemblyMover::findFragments(Pose const & targetPose
                   Real rmsd = core::scoring::bb_rmsd_including_O(queryFragment, testFragment);
 
                   if(rmsd <= single_helix_rmsd_cutoff_){
-                      //TR << "found matching fragment(" << i << "): " << rmsd << endl;
+                      //cout << "found matching fragment(" << i << "): " << rmsd << endl;
                       foundFragments.push_back(i);
                   }
               }
@@ -359,8 +359,8 @@ bool HelixAssemblyMover::checkHelixContacts(Pose const & pose, Pose const & frag
       }
   }
 
-  TR << "testHelix residues: " << testHelix.total_residue() << endl;
-  TR << "interactionCounter: " << interactionCounter << endl;
+  cout << "testHelix residues: " << testHelix.total_residue() << endl;
+  cout << "interactionCounter: " << interactionCounter << endl;
 
 
   if(interactionCounter >= minimum_helix_contacts_){
@@ -371,12 +371,12 @@ bool HelixAssemblyMover::checkHelixContacts(Pose const & pose, Pose const & frag
 
 ///@details search the pose for a helical segment that makes interactions with both of the pose fragments
 utility::vector1< std::pair< Size,Size > > HelixAssemblyMover::findPartnerHelices(Pose const & pose, Pose const & fragment1,
-    Pose const & fragment2, Size frag1Start, Size frag2Start, utility::vector1< std::pair< Size,Size > > helix_endpts){
+    Pose const & fragment2, Size frag1Start, Size frag2Start, utility::vector1< std::pair< Size,Size > > helix_endpts, bool direction){
 
   utility::vector1< std::pair< Size,Size > > partnerHelices;
 
-  TR << "frag1 start: " << frag1Start << endl;
-  TR << "frag2 start: " << frag2Start << endl;
+  cout << "frag1 start: " << frag1Start << endl;
+  cout << "frag2 start: " << frag2Start << endl;
 
   //look at each helix in the search structure as a potential helix to add
   for(Size i=1; i<=helix_endpts.size(); i++){
@@ -385,7 +385,7 @@ utility::vector1< std::pair< Size,Size > > HelixAssemblyMover::findPartnerHelice
       if(!((frag1Start >= helix_endpts[i].first && frag1Start <= helix_endpts[i].second) ||
           (frag2Start >= helix_endpts[i].first && frag2Start <= helix_endpts[i].second))){
 
-          TR << "Checking helix (" << helix_endpts[i].first << ":" << helix_endpts[i].second << ")" << endl;
+          cout << "Checking helix (" << helix_endpts[i].first << ":" << helix_endpts[i].second << ")" << endl;
 
           bool foundStart = false;
           bool foundEnd = false;
@@ -394,55 +394,61 @@ utility::vector1< std::pair< Size,Size > > HelixAssemblyMover::findPartnerHelice
           Size distCutoff = pow((double)helix_cap_distance_cutoff_,2);
           Size minStartDistance=distCutoff*2;
           Size minEndDistance=distCutoff*2;
-          //Search for helical fragments that have n-terms of query helix close to n-terms frag1 & c-terms of frag2.
+
+          //Depending on the direction in which this helix must go (in order to allow loop connection)
           for(Size helixOffset=0; helixOffset<(helix_endpts[i].second-helix_endpts[i].first+1); helixOffset++){
+
+              //Check distance between n-term of query fragment 1 and given residue of search fragment
               core::DistanceSquared startDistance1 = fragment1.residue(1).atom("CA").xyz().distance_squared(
                   pose.residue(helix_endpts[i].first+helixOffset).atom("CA").xyz());
-              TR << "residue " << helix_endpts[i].first+helixOffset << " start distance 1: " << startDistance1 << endl;
+              cout << "residue " << helix_endpts[i].first+helixOffset << " start distance 1: " << startDistance1 << endl;
 
+              //Check distance between c-term of query fragment 2 and given residue of search fragment
               core::DistanceSquared startDistance2 = fragment2.residue(fragment2.total_residue()).atom("CA").xyz().distance_squared(
                   pose.residue(helix_endpts[i].first+helixOffset).atom("CA").xyz());
-              TR << "residue " << helix_endpts[i].first+helixOffset << " start distance 2: " << startDistance2 << endl;
+              cout << "residue " << helix_endpts[i].first+helixOffset << " start distance 2: " << startDistance2 << endl;
 
-              //Check to make sure that this point in the potential 3rd helix is close to the "start" of both query helices
               if(startDistance1 < distCutoff && startDistance2 < distCutoff && (startDistance1 + startDistance2) < minStartDistance){
                   helixStart = helix_endpts[i].first+helixOffset;
                   minStartDistance = startDistance1 + startDistance2;
                   foundStart = true;
-                  TR << "Found third helix start at residue " << helixStart << " in helix (" << helix_endpts[i].first << ":" << helix_endpts[i].second << ")" << endl;
+                  cout << "Found third helix start at residue " << helixStart << " in helix (" << helix_endpts[i].first << ":" << helix_endpts[i].second << ")" << endl;
               }
 
               core::DistanceSquared endDistance1 = fragment1.residue(fragment1.total_residue()).atom("CA").xyz().distance_squared(
                   pose.residue(helix_endpts[i].second-helixOffset).atom("CA").xyz());
-              TR << "residue " << helix_endpts[i].second-helixOffset << " end distance 1: " << endDistance1 << endl;
+              cout << "residue " << helix_endpts[i].second-helixOffset << " end distance 1: " << endDistance1 << endl;
 
               core::DistanceSquared endDistance2 = fragment2.residue(1).atom("CA").xyz().distance_squared(
                   pose.residue(helix_endpts[i].second-helixOffset).atom("CA").xyz());
-              TR << "residue " << helix_endpts[i].second-helixOffset << " end distance 2: " << endDistance2 << endl;
+              cout << "residue " << helix_endpts[i].second-helixOffset << " end distance 2: " << endDistance2 << endl;
 
               //Check to make sure that this point in the potential 3rd helix is close to the "end" of both query helices
               if(endDistance1 < distCutoff && endDistance2 < distCutoff && (endDistance1 + endDistance2) < minEndDistance){
                   helixEnd = helix_endpts[i].second-helixOffset;
                   minEndDistance = endDistance1 + endDistance2;
                   foundEnd = true;
-                  TR << "Found third helix end at residue " << helixEnd << " in helix (" << helix_endpts[i].first << ":" << helix_endpts[i].second << ")" << endl;
+                  cout << "Found third helix end at residue " << helixEnd << " in helix (" << helix_endpts[i].first << ":" << helix_endpts[i].second << ")" << endl;
               }
           }
           if(foundStart && foundEnd){
               //by now we've found a helical fragment that has ends close to each of the fragments, now we want to
               //check for more extensive interactions with *both* of the fragments
-              std::pair<Size, Size> closeHelix;
-              if(helixStart < helixEnd){
+              if(helixStart < helixEnd && !direction){
+                  std::pair<Size, Size> closeHelix;
                   closeHelix.first=helixStart;
                   closeHelix.second=helixEnd;
+                  if(checkHelixContacts(pose, fragment1, fragment2, closeHelix)){
+                      partnerHelices.push_back(closeHelix);
+                  }
               }
-              else{
+              else if(helixEnd < helixStart && direction){
+                  std::pair<Size, Size> closeHelix;
                   closeHelix.first=helixEnd;
                   closeHelix.second=helixStart;
-              }
-
-              if(checkHelixContacts(pose, fragment1, fragment2, closeHelix)){
-                  partnerHelices.push_back(closeHelix);
+                  if(checkHelixContacts(pose, fragment1, fragment2, closeHelix)){
+                      partnerHelices.push_back(closeHelix);
+                  }
               }
           }
       }
@@ -460,7 +466,7 @@ void HelixAssemblyMover::superimposeBundles(Pose & query_structure, Pose const &
   for(Size j=0; j<=get_frag1_end()-get_frag1_start(); j++){
       //Sloppy way of adding all bb atoms, must be a better way...
 
-      TR << "superimposing " << j+get_frag1_start() << " of query structure to " << j+1 << " of results structure" << endl;
+      cout << "superimposing " << j+get_frag1_start() << " of query structure to " << j+1 << " of results structure" << endl;
 
 
       core::id::AtomID const id1( query_structure.residue(j+get_frag1_start()).atom_index("CA"), j+get_frag1_start());
@@ -485,7 +491,7 @@ void HelixAssemblyMover::superimposeBundles(Pose & query_structure, Pose const &
 
       core::Size results_frag2_start = get_frag1_end()-get_frag1_start()+2;
 
-      TR << "superimposing " << j+get_frag2_start() << " of query structure to " << j+results_frag2_start << " of results structure" << endl;
+      cout << "superimposing " << j+get_frag2_start() << " of query structure to " << j+results_frag2_start << " of results structure" << endl;
 
 
       core::id::AtomID const id1( query_structure.residue(j+get_frag2_start()).atom_index("CA"), j+get_frag2_start());
@@ -551,7 +557,7 @@ core::Real HelixAssemblyMover::bb_score(pose::Pose & pose, core::Size unique_cha
   }
   core::Real bb_energy (rep_wt * tbemv[core::scoring::fa_rep] + atr_wt * tbemv[core::scoring::fa_atr] );
 
-  TR<< "Backbone-backbone score: " << bb_energy << std::endl;
+  cout<< "Backbone-backbone score: " << bb_energy << std::endl;
 
   return bb_energy;
 }//end bb_score
@@ -592,35 +598,39 @@ bool HelixAssemblyMover::closenessCheck(const core::Distance maxRange, const cor
 }//end closenessCheck
 
 ///@details
-utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob & job){
+std::vector<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob & job){
 
   try{
-    utility::vector1<HelixAssemblyJob> new_jobs;
+    std::vector<HelixAssemblyJob> new_jobs;
 
-    TR << "working on file: " << job.get_job_name() << endl;
+    cout << "working on file: " << job.get_job_name() << endl;
 
     Pose query_structure;
     core::import_pose::pose_from_pdbstring(query_structure, job.get_query_structure());
-    TR << "Full Query Structure is " << query_structure.total_residue() << " residues" << endl;
+    cout << "Full Query Structure is " << query_structure.total_residue() << " residues" << endl;
 
     Pose search_structure;
     core::import_pose::pose_from_pdbstring(search_structure, job.get_search_structure());
-    TR << "Search Structure is " << search_structure.total_residue() << " residues" << endl;
+    cout << "Search Structure is " << search_structure.total_residue() << " residues" << endl;
 
     //don't do anything with this round if the search structure is empty. Not testing for this causes all sorts of bad behavior
     if(search_structure.total_residue() <= 0){return new_jobs;}
 
-    this->set_frag1_start(job.get_frag1_start());
-    this->set_frag1_end(job.get_frag1_end());
-    this->set_frag2_start(job.get_frag2_start());
-    this->set_frag2_end(job.get_frag2_end());
+    cout << "FRAG 1 INDEX: " << job.get_query_frag_1_index() << endl;
+    cout << "FRAG 2 INDEX: " << job.get_query_frag_2_index() << endl;
+    cout << "FRAGMENTS SIZE: " << job.get_fragments().size() << endl;
 
-    TR << "Frag1 (" << get_frag1_start() << ":" << get_frag1_end() << ")" << endl;
+    this->set_frag1_start(job.get_query_frag_1().get_start());
+    this->set_frag1_end(job.get_query_frag_1().get_end());
+    this->set_frag2_start(job.get_query_frag_2().get_start());
+    this->set_frag2_end(job.get_query_frag_2().get_end());
+
+    cout << "Frag1 (" << get_frag1_start() << ":" << get_frag1_end() << ")" << endl;
     Pose helixFragment1(query_structure, get_frag1_start(), get_frag1_end());
-    TR << "Frag2 (" << get_frag2_start() << ":" << get_frag2_end() << ")" << endl;
+    cout << "Frag2 (" << get_frag2_start() << ":" << get_frag2_end() << ")" << endl;
     Pose helixFragment2(query_structure, get_frag2_start(), get_frag2_end());
-    TR << "Fragment 1 is " << helixFragment1.total_residue() << " residues" << endl;
-    TR << "Fragment 2 is " << helixFragment2.total_residue() << " residues" << endl;
+    cout << "Fragment 1 is " << helixFragment1.total_residue() << " residues" << endl;
+    cout << "Fragment 2 is " << helixFragment2.total_residue() << " residues" << endl;
 
     Pose combined_query_fragments = combinePoses(helixFragment1, helixFragment2);
 
@@ -630,13 +640,13 @@ utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob &
 
     utility::vector1< std::pair< Size,Size > > helix_endpts;
     helix_endpts = findHelices(search_structure);
-    TR << "Found " << helix_endpts.size() << " helices in search structure" << endl;
+    cout << "Found " << helix_endpts.size() << " helices in search structure" << endl;
 
     //search helix poses for all close RMSD matches to each query fragment
     utility::vector1<Size> fragment1Results = findFragments(search_structure, helixFragment1, helix_endpts);
     utility::vector1<Size> fragment2Results = findFragments(search_structure, helixFragment2, helix_endpts);
 
-    TR << "Found " << fragment1Results.size() << " fragments for frag1 & " << fragment2Results.size() << " for frag2." << endl;
+    cout << "Found " << fragment1Results.size() << " fragments for frag1 & " << fragment2Results.size() << " for frag2." << endl;
 
     //Cut down on the number of pairs to check. This can be done in a number of ways...not sure which is the smartest
     utility::vector1< std::pair< Size,Size > > closeHelixPairs;
@@ -658,7 +668,7 @@ utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob &
         }
     }
 
-    TR << closeHelixPairs.size() << " out of " << fragment1Results.size()*fragment2Results.size() <<
+    cout << closeHelixPairs.size() << " out of " << fragment1Results.size()*fragment2Results.size() <<
         " helix pairs were close enough for further investigation" << endl;
 
     //keep track of number of hits in structure, for output filename purposes
@@ -669,35 +679,76 @@ utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob &
     threeHelixCounter = 1;
 
     //loop through lists of fragments for each helix and check rmsd to the full query structure
-    for(Size i=1; i<=closeHelixPairs.size(); i++){
-        Pose fragment1(search_structure, closeHelixPairs[i].first, closeHelixPairs[i].first+helixFragment1.total_residue()-1);
-        Pose fragment2(search_structure, closeHelixPairs[i].second, closeHelixPairs[i].second+helixFragment2.total_residue()-1);
-        Pose combinedResultFragments(combinePoses(fragment1, fragment2));
+    for(Size i=1; i<=closeHelixPairs.size(); ++i){
 
-        Real bbrmsd = core::scoring::bb_rmsd_including_O(combined_query_fragments, combinedResultFragments);
+        //We need to do the exact same mapping earlier but the superimpose method takes an AtomID_map and rmsd takes a map of AtomID to AtomID,
+        //therefore there's really no point in making this a generalized method.
+        std::map< core::id::AtomID, core::id::AtomID > atom_map;
+        atom_map.clear();
+        for(Size offset=0; offset<closeHelixPairs[i].first+helixFragment1.total_residue()-closeHelixPairs[i].first; ++offset){
+
+            core::id::AtomID const id1( search_structure.residue(closeHelixPairs[i].first+offset).atom_index("CA"), closeHelixPairs[i].first+offset);
+            core::id::AtomID const id2( query_structure.residue(get_frag1_start()+offset).atom_index("CA"), get_frag1_start()+offset);
+            atom_map.insert(std::pair<id::AtomID, id::AtomID>(id1, id2));
+
+            core::id::AtomID const id3( search_structure.residue(closeHelixPairs[i].first+offset).atom_index("C"), closeHelixPairs[i].first+offset);
+            core::id::AtomID const id4( query_structure.residue(get_frag1_start()+offset).atom_index("C"), get_frag1_start()+offset);
+            atom_map.insert(std::pair<id::AtomID, id::AtomID>(id3, id4));
+
+            core::id::AtomID const id5( search_structure.residue(closeHelixPairs[i].first+offset).atom_index("N"), closeHelixPairs[i].first+offset);
+            core::id::AtomID const id6( query_structure.residue(get_frag1_start()+offset).atom_index("N"), get_frag1_start()+offset);
+            atom_map.insert(std::pair<id::AtomID, id::AtomID>(id5, id6));
+
+            core::id::AtomID const id7( search_structure.residue(closeHelixPairs[i].first+offset).atom_index("O"), closeHelixPairs[i].first+offset);
+            core::id::AtomID const id8( query_structure.residue(get_frag1_start()+offset).atom_index("O"), get_frag1_start()+offset);
+            atom_map.insert(std::pair<id::AtomID, id::AtomID>(id7, id8));
+        }
+
+        for(Size offset=0; offset<closeHelixPairs[i].second+helixFragment2.total_residue()-closeHelixPairs[i].second; ++offset){
+
+            core::id::AtomID const id1( search_structure.residue(closeHelixPairs[i].second+offset).atom_index("CA"), closeHelixPairs[i].second+offset);
+            core::id::AtomID const id2( query_structure.residue(get_frag2_start()+offset).atom_index("CA"), get_frag2_start()+offset);
+            atom_map.insert(std::pair<id::AtomID, id::AtomID>(id1, id2));
+
+            core::id::AtomID const id3( search_structure.residue(closeHelixPairs[i].second+offset).atom_index("C"), closeHelixPairs[i].second+offset);
+            core::id::AtomID const id4( query_structure.residue(get_frag2_start()+offset).atom_index("C"), get_frag2_start()+offset);
+            atom_map.insert(std::pair<id::AtomID, id::AtomID>(id3, id4));
+
+            core::id::AtomID const id5( search_structure.residue(closeHelixPairs[i].second+offset).atom_index("N"), closeHelixPairs[i].second+offset);
+            core::id::AtomID const id6( query_structure.residue(get_frag2_start()+offset).atom_index("N"), get_frag2_start()+offset);
+            atom_map.insert(std::pair<id::AtomID, id::AtomID>(id5, id6));
+
+            core::id::AtomID const id7( search_structure.residue(closeHelixPairs[i].second+offset).atom_index("O"), closeHelixPairs[i].second+offset);
+            core::id::AtomID const id8( query_structure.residue(get_frag2_start()+offset).atom_index("O"), get_frag2_start()+offset);
+            atom_map.insert(std::pair<id::AtomID, id::AtomID>(id7, id8));
+        }
+
+        Real bbrmsd = core::scoring::rms_at_corresponding_atoms(search_structure, query_structure, atom_map);
 
         if(bbrmsd <= helix_pair_rmsd_cutoff_){
 
-            TR << "Found matching helical pair with helices starting at " << closeHelixPairs[i].first << " & "
+            Pose fragment1(search_structure, closeHelixPairs[i].first, closeHelixPairs[i].first+helixFragment1.total_residue()-1);
+            Pose fragment2(search_structure, closeHelixPairs[i].second, closeHelixPairs[i].second+helixFragment2.total_residue()-1);
+            Pose combinedResultFragments(combinePoses(fragment1, fragment2));
+
+            cout << "Found matching helical pair with helices starting at " << closeHelixPairs[i].first << " & "
                 << closeHelixPairs[i].second << " - " << bbrmsd << endl;
 
             utility::vector1< std::pair< Size,Size > > helix_partners = findPartnerHelices(search_structure, fragment1, fragment2,
-                closeHelixPairs[i].first, closeHelixPairs[i].second, helix_endpts);
+                closeHelixPairs[i].first, closeHelixPairs[i].second, helix_endpts, job.get_direction());
 
-            TR << "found " << helix_partners.size() << " suitable helix partners" << endl;
+            cout << "found " << helix_partners.size() << " suitable helix partners" << endl;
 
             for(Size k=1; k<=helix_partners.size(); k++){
 
                 Pose thirdHelix(search_structure, helix_partners[k].first, helix_partners[k].second);
 
-                TR << "New helical pose created." << endl;
-
+                cout << "New helical pose created." << endl;
 
                 //superimpose the found query helix pair onto the found pair
                 superimposeBundles(query_structure, combinedResultFragments);
 
-                TR << "Poses have been superimposed for bundle creation" << endl;
-
+                cout << "Poses have been superimposed for bundle creation" << endl;
 
                 //combine query structure with third helix
                 Size third_helix_start(query_structure.total_residue()+1);
@@ -705,7 +756,7 @@ utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob &
                 Size new_chain = new_bundle.chain(new_bundle.total_residue());
                 Size third_helix_end(new_bundle.total_residue());
 
-                TR << "New bundle created" << endl;
+                cout << "New bundle created" << endl;
 
 
                 //check for backbone clashes introduced by adding the new helix
@@ -713,37 +764,44 @@ utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob &
 
                 //TODO (tjacobs) Turn this into an option
                 if(clash_score <= 5){
+
+                    HelicalFragment newFragment;
+                    newFragment.set_start(third_helix_start);
+                    newFragment.set_end(third_helix_end);
+
+                    job.get_fragments().push_back(newFragment);
+
                     stringstream tempStream;
                     new_bundle.dump_pdb(tempStream, "");
                     std::string new_bundle_string = tempStream.str();
 
+                    //Create a new job with query fragments set to the new helix and query helix 1
                     HelixAssemblyJob new_job1;
                     new_job1.set_query_structure(new_bundle_string);
-                    new_job1.set_round(job.get_round()+1);
-
-                    new_job1.set_frag1_start(third_helix_start);
-                    new_job1.set_frag1_end(third_helix_end);
-
-                    new_job1.set_frag2_start(job.get_frag1_start());
-                    new_job1.set_frag2_end(job.get_frag1_end());
-
+                    new_job1.set_remaining_rounds(job.get_remaining_rounds()-1);
+                    new_job1.set_query_frag_1_index(job.get_fragments().size());
+                    new_job1.set_query_frag_2_index(job.get_query_frag_1_index());
                     new_job1.set_job_name(job.get_job_name());
+                    new_job1.set_fragments(job.get_fragments());
+                    new_job1.set_direction(!job.get_direction());//change direction for next helix
 
                     new_jobs.push_back(new_job1);
 
-                    HelixAssemblyJob new_job2;
-                    new_job2.set_query_structure(new_bundle_string);
-                    new_job2.set_round(job.get_round()+1);
+                    //If this was the last round, only return one new job (which is used only for output by the head node)
+                    if(new_job1.get_remaining_rounds() > 0){
 
-                    new_job2.set_frag1_start(third_helix_start);
-                    new_job2.set_frag1_end(third_helix_end);
+                        //Create a new job with query fragments set to the new helix and query helix 1
+                        HelixAssemblyJob new_job2;
+                        new_job2.set_query_structure(new_bundle_string);
+                        new_job2.set_remaining_rounds(job.get_remaining_rounds()-1);
+                        new_job2.set_query_frag_1_index(job.get_fragments().size());
+                        new_job2.set_query_frag_2_index(job.get_query_frag_2_index());
+                        new_job2.set_job_name(job.get_job_name());
+                        new_job2.set_fragments(job.get_fragments());
+                        new_job2.set_direction(!job.get_direction());//change direction for next helix
 
-                    new_job2.set_frag2_start(job.get_frag2_start());
-                    new_job2.set_frag2_end(job.get_frag2_end());
-
-                    new_job2.set_job_name(job.get_job_name());
-
-                    new_jobs.push_back(new_job2);
+                        new_jobs.push_back(new_job2);
+                    }
                 }
             }
             resultsCounter++;
@@ -752,8 +810,8 @@ utility::vector1<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob &
     return new_jobs;
   }
   catch(...){
-      TR << "ERROR: Exception thrown in HelixAssemblyMover" << endl;
-      utility::vector1<HelixAssemblyJob> blankJobs;
+      cout << "ERROR: Exception thrown in HelixAssemblyMover during job: " << job.get_job_name()  << endl;
+      std::vector<HelixAssemblyJob> blankJobs;
       return blankJobs;
   }
 }//apply
