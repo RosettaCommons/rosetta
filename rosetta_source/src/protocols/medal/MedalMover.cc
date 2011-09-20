@@ -74,9 +74,6 @@ void MedalMover::apply(core::pose::Pose& pose) {
   using protocols::nonlocal::StarTreeBuilder;
   using std::endl;
 
-  // Always operate in centroid mode
-  core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
-
   // Retrieve the current job from jd2, identify aligned regions
   ThreadingJob const * const job = protocols::nonlocal::current_job();
   const SequenceAlignment& alignment = job->alignment();
@@ -86,13 +83,16 @@ void MedalMover::apply(core::pose::Pose& pose) {
   TR << "Alignment: " << alignment.alignment_id() << endl;
   TR << "Aligned regions: " << aligned << endl;
   TR << "Unaligned regions: " << unaligned << endl;
+  protocols::nonlocal::emit_intermediate(pose, "medal_initial.pdb");
 
   // Threading model
   LoopRelaxThreadingMover closure;
   closure.setup();
   closure.apply(pose);
+  protocols::nonlocal::emit_intermediate(pose, "medal_post_closure.pdb");
 
   // Setup the score function and score the initial model
+  core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
   ScoreFunctionOP score = score_function(&pose);
   score->show(TR, pose);
   TR.flush_all_channels();
@@ -103,7 +103,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
 
   Jumps jumps;
   jumps_from_pose(pose, &jumps);
-	protocols::nonlocal::add_cutpoint_variants(&pose);
+  protocols::nonlocal::add_cutpoint_variants(&pose);
 
   // Rigid body motion
   MoverOP mover = new RationalMonteCarlo(
@@ -118,6 +118,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
   // Remove virtual residue placed during star fold tree construction
   protocols::nonlocal::remove_cutpoint_variants(&pose);
   builder.tear_down(&pose);
+  protocols::nonlocal::emit_intermediate(pose, "medal_final.pdb");
 }
 
 void MedalMover::jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) const {
