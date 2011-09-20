@@ -93,7 +93,7 @@ main( int argc, char * argv [] )
       vector1<int> freeProcessors;
       Size helices_to_add = option[ HelixAssembly::helices_to_add ];
 
-      cout << "library size: " << pdb_library.size() << endl;
+      TR << "library size: " << pdb_library.size() << endl;
 
       //Add all of the first-round jobs to the job queue
       for(Size i=1; i <= pdb_library.size(); ++i){
@@ -124,7 +124,7 @@ main( int argc, char * argv [] )
 
           job_queue.push_back(temp_job);
       }
-      cout << "Done populating the job queue with " << job_queue.size() << " jobs." << endl;
+      TR << "Done populating the job queue with " << job_queue.size() << " jobs." << endl;
 
       //distribute initial jobs to all processors
       for(Size i=1; i < world.size(); ++i){
@@ -143,7 +143,7 @@ main( int argc, char * argv [] )
               world.send(i, 0, boost::mpi::skeleton(temp_job));
               world.send(i, 0, boost::mpi::get_content(temp_job));
               ++currently_running_jobs;
-              cout << "Job sent to node: " << i << endl;
+              TR << "Job sent to node: " << i << endl;
           }
           //if we have more processors than we have jobs, keep track of which processors are free (for use by jobs created later)
           else{
@@ -157,11 +157,14 @@ main( int argc, char * argv [] )
           int completed_node;
           world.recv(boost::mpi::any_source,0,completed_node);
 
-          cout << "Node " << completed_node << " finished a job" << endl;
+          TR << "Node " << completed_node << " finished a job" << endl;
           ++num_completed_jobs;
           --currently_running_jobs;
 
-          cout << "Number of completed jobs: " << num_completed_jobs << endl;
+          TR << "Number of completed jobs: " << num_completed_jobs << endl;
+          cout << "Number of currently running jobs: " << currently_running_jobs << endl;
+
+          TR << "Number of currently running jobs: " << currently_running_jobs << endl;
           cout << "Number of currently running jobs: " << currently_running_jobs << endl;
 
           //receive each new job individually from the completed node
@@ -181,11 +184,11 @@ main( int argc, char * argv [] )
 //          world.recv(completed_node,0,boost::mpi::skeleton(new_jobs));
 //          world.recv(completed_node,0,boost::mpi::get_content(new_jobs));
 
-          cout << "Node " << completed_node << " added " << new_jobs.size() << " new job(s)" << endl;
+          TR << "Node " << completed_node << " added " << new_jobs.size() << " new job(s)" << endl;
 
           for(Size i=0; i < new_jobs.size(); ++i){
               if(new_jobs[i].get_remaining_rounds() > 0){
-                  cout << "job " << new_jobs[i].get_job_name() << " has " << new_jobs[i].get_remaining_rounds() <<
+                  TR << "job " << new_jobs[i].get_job_name() << " has " << new_jobs[i].get_remaining_rounds() <<
                       " remaining" << endl;
                   for(Size j=1; j <= pdb_library.size(); ++j){
                       //copy incomplete job and add a pose to search, then add to the queue
@@ -205,7 +208,7 @@ main( int argc, char * argv [] )
                       job_queue.push_back(temp_job);
                   }
                   //Incomplete job output for debugging purposes
-                  cout << "Outputting incomplete job " << new_jobs[i].get_job_name() << endl;
+                  TR << "Outputting incomplete job " << new_jobs[i].get_job_name() << endl;
                   utility::io::ozstream outputStream;
                   outputStream.open(new_jobs[i].get_job_name() + "_" + to_string(job_id_counter) + "_bundle.pdb");
                   ++job_id_counter;
@@ -213,7 +216,7 @@ main( int argc, char * argv [] )
                   outputStream.close();
               }
               else{
-                  cout << "Outputting job " << new_jobs[i].get_job_name() << endl;
+                  TR << "Outputting job " << new_jobs[i].get_job_name() << endl;
                   //done. output PDBs
                   utility::io::ozstream outputStream;
                   outputStream.open(new_jobs[i].get_job_name() + "_" + to_string(job_id_counter) + "_bundle.pdb");
@@ -223,7 +226,7 @@ main( int argc, char * argv [] )
               }
           }
 
-          cout << "Jobs left: " << job_queue.size() << endl;
+          TR << "Jobs left: " << job_queue.size() << endl;
           cout << "Jobs left: " << job_queue.size() << endl;
 
           //use newly free processor
@@ -232,7 +235,7 @@ main( int argc, char * argv [] )
 
               HelixAssemblyJob temp_job = job_queue[job_queue.size()];
               job_queue.pop_back();
-              cout << "Sending job " << temp_job.get_job_name() << endl;
+              TR << "Sending job " << temp_job.get_job_name() << endl;
 
               //lazily load the search string
               utility::io::izstream data( pdb_library[temp_job.get_search_index()].name().c_str() );
@@ -265,11 +268,11 @@ main( int argc, char * argv [] )
               HelixAssemblyJob received_job;
               world.recv(0, 0, boost::mpi::skeleton(received_job));
               world.recv(0, 0, boost::mpi::get_content(received_job));
-              cout << "Node " << world.rank() << " received a job" << endl;
+              TR << "Node " << world.rank() << " received a job" << endl;
 
               HelixAssemblyMover helixAssembler;
               std::vector<HelixAssemblyJob> returned_jobs = helixAssembler.apply(received_job);
-              cout << "Finished apply! returning " << returned_jobs.size() << " job(s)." << endl;
+              TR << "Finished apply! returning " << returned_jobs.size() << " job(s)." << endl;
 
               //tell head node which job finished
               world.send(0,0,world.rank());
@@ -291,5 +294,5 @@ main( int argc, char * argv [] )
       }
   }
   MPI_Finalize();
-  cout << "------------DONE!------------" << endl;
+  TR << "------------DONE!------------" << endl;
 }
