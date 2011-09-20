@@ -18,18 +18,5 @@
 -constraints:cst_fa_file 3ddlB_63.filt.fixed.dist_csts
 -constraints:cst_fa_weight 1.5
 
-# multiplicative factors
--jumps:increase_chainbreak 1.0
--constraints:increase_constraints 0.5
-
 # sampling
--abinitio:temperature 2.0
 -abinitio:increase_cycles 0.05
--abinitio:rg_reweight 0.25
-
-# evaluation
--bGDT
--evaluation:gdtmm
--evaluation:contact_map
--evaluation:jscore_evaluator score12_full fa_standard
--in:file:native native.pdb

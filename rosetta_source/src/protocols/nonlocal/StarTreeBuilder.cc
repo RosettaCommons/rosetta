@@ -28,6 +28,7 @@
 #include <numeric/util.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/DistributionSampler.hh>
+#include <numeric/random/random.hh>
 #include <numeric/random/WeightedReservoirSampler.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
@@ -183,20 +184,19 @@ core::Size StarTreeBuilder::choose_conserved_position(const protocols::loops::Lo
   return samples[1];
 }
 
-/// @detail Fixed-variance selection, centered on the median
 core::Size StarTreeBuilder::choose_unconserved_position(core::Size start, core::Size stop) const {
   using boost::math::normal;
   using core::Size;
-	using numeric::random::DistributionSampler;
+  using numeric::random::DistributionSampler;
 
   double mu = (stop - start + 1) / 2.0;
-  double sigma = (stop - mu) / 2.0;
+  double sigma = 1;
   normal distribution(mu, sigma);
   DistributionSampler<normal> sampler(distribution);
 
   // Clamp insertion position to closed interval [start, stop]
   Size position = static_cast<Size>(sampler.sample());
-  return numeric::clamp<Size>(position, start, stop);
+  return numeric::clamp<Size>(position, start, stop);;
 }
 
 void StarTreeBuilder::tear_down(core::pose::Pose* pose) {
