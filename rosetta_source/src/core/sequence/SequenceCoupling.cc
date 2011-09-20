@@ -49,7 +49,7 @@ utility::vector1< utility::vector1< Real > > const & SequenceCoupling::profile()
 void SequenceCoupling::delete_position( core::Size pos ){
 	using utility::vector1;
 	vector1< vector1< vector1< Real > > > newEdgePots;
-	for(core::Size i=1;i<edgeList_.size();i++){
+	for(core::Size i=1;i<=edgeList_.size();i++){
 		vector1 < Real > vertices = edgeList_[i];
 		if(!(vertices[1]==pos || vertices[2]==pos)){
 			newEdgePots.push_back(edgePots_[i]);
@@ -70,7 +70,7 @@ void SequenceCoupling::delete_position( core::Size pos ){
 void SequenceCoupling::insert_char(core:: Size pos, char new_char){
 	SequenceProfile::insert_char(pos,new_char);
 	numVerts_++;
-	for(core::Size i=1;i<edgeList_.size();i++){
+	for(core::Size i=1;i<=edgeList_.size();i++){
 			utility::vector1 < Real > vertices = edgeList_[i];
 			if(vertices[1]>=pos){
 				vertices[1]++;
@@ -214,7 +214,7 @@ void SequenceCoupling::read_from_file(
 }
 	core::Size SequenceCoupling::findEdgeId(Size vert1, Size vert2) const{
 		Size i=0;
-		for(i=1;i<edgeList_.size();i++){
+		for(i=1;i<=edgeList_.size();i++){
 			utility::vector1 < Real > vertices = edgeList_[i];
 			if(vertices[1]==vert1 && vertices[2] ==vert2){
 				return i;

@@ -246,7 +246,7 @@ SequenceCouplingConstraint::score(
 
 	Size edgeId = sequence_coupling_->findEdgeId(seqpos1_, seqpos2_);
 	Real score( 0);
-	if(edgeId<0){//direction important. if (i,j) edge exists, will not return if (j,i) asked 
+	if(edgeId<=0){//direction important. if (i,j) edge exists, will not return if (j,i) asked 
 		 edgeId = sequence_coupling_->findEdgeId(seqpos2_, seqpos1_);
 
 		 //epot = sequence_coupling_->edgePotBetween(edgeId); 
