@@ -226,8 +226,8 @@ main( int argc, char * argv [] )
               }
           }
 
-          TR << "Jobs left: " << job_queue.size() << endl;
-          cout << "Jobs left: " << job_queue.size() << endl;
+          TR << "Jobs left in queue: " << job_queue.size() << endl;
+          cout << "Jobs left in queue: " << job_queue.size() << endl;
 
           //use newly free processor
           if(job_queue.size() > 0){
@@ -235,7 +235,7 @@ main( int argc, char * argv [] )
 
               HelixAssemblyJob temp_job = job_queue[job_queue.size()];
               job_queue.pop_back();
-              TR << "Sending job " << temp_job.get_job_name() << endl;
+              TR << "Sending job " << temp_job.get_job_name() << " to node " << completed_node << endl;
 
               //lazily load the search string
               utility::io::izstream data( pdb_library[temp_job.get_search_index()].name().c_str() );
@@ -272,7 +272,7 @@ main( int argc, char * argv [] )
 
               HelixAssemblyMover helixAssembler;
               std::vector<HelixAssemblyJob> returned_jobs = helixAssembler.apply(received_job);
-              TR << "Finished apply! returning " << returned_jobs.size() << " job(s)." << endl;
+              TR << "Node " << world.rank() << "finished a job, returning " << returned_jobs.size() << "new job(s)." << endl;
 
               //tell head node which job finished
               world.send(0,0,world.rank());

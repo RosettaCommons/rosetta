@@ -779,7 +779,7 @@ std::vector<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob & job)
                     HelixAssemblyJob new_job1;
                     new_job1.set_query_structure(new_bundle_string);
                     new_job1.set_remaining_rounds(job.get_remaining_rounds()-1);
-                    new_job1.set_query_frag_1_index(job.get_fragments().size());
+                    new_job1.set_query_frag_1_index(job.get_fragments().size()-1);
                     new_job1.set_query_frag_2_index(job.get_query_frag_1_index());
                     new_job1.set_job_name(job.get_job_name());
                     new_job1.set_fragments(job.get_fragments());
@@ -794,7 +794,7 @@ std::vector<HelixAssemblyJob> HelixAssemblyMover::apply( HelixAssemblyJob & job)
                         HelixAssemblyJob new_job2;
                         new_job2.set_query_structure(new_bundle_string);
                         new_job2.set_remaining_rounds(job.get_remaining_rounds()-1);
-                        new_job2.set_query_frag_1_index(job.get_fragments().size());
+                        new_job2.set_query_frag_1_index(job.get_fragments().size()-1);
                         new_job2.set_query_frag_2_index(job.get_query_frag_2_index());
                         new_job2.set_job_name(job.get_job_name());
                         new_job2.set_fragments(job.get_fragments());
