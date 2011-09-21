@@ -77,7 +77,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
   // Retrieve the current job from jd2, identify aligned regions
   ThreadingJob const * const job = protocols::nonlocal::current_job();
   const SequenceAlignment& alignment = job->alignment();
-  Loops unaligned = protocols::comparative_modeling::loops_from_alignment(pose.total_residue(), alignment, 0);
+  Loops unaligned = protocols::comparative_modeling::loops_from_alignment(pose.total_residue(), alignment, 3);
   Loops aligned = unaligned.invert(pose.total_residue());
 
   TR << "Alignment: " << alignment.alignment_id() << endl;
@@ -105,7 +105,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
 
   // Rigid body motion
   MoverOP mover = new RationalMonteCarlo(
-        new RigidBodyMotionMover(aligned, jumps),
+        new RigidBodyMotionMover(jumps),
         score,
         option[OptionKeys::rigid::cycles](),
         option[OptionKeys::rigid::temperature](),

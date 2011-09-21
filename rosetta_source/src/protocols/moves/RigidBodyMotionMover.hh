@@ -25,7 +25,6 @@
 // Project headers
 #include <core/kinematics/Jump.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/loops/Loops.hh>
 
 // Package headers
 #include <protocols/moves/Mover.hh>
@@ -34,11 +33,10 @@ namespace protocols {
 namespace moves {
 
 class RigidBodyMotionMover : public Mover {
-  typedef protocols::loops::Loops Regions;
   typedef boost::unordered_map<int, core::kinematics::Jump> Jumps;
 
  public:
-  RigidBodyMotionMover(const Regions& regions, const Jumps& jumps);
+  explicit RigidBodyMotionMover(const Jumps& jumps);
 
   /// @brief Randomly selects a chunk and perturbs its rigid body transformation
   void apply(core::pose::Pose& pose);
@@ -48,7 +46,6 @@ class RigidBodyMotionMover : public Mover {
   MoverOP clone() const;
 
  private:
-  Regions regions_;
   Jumps jumps_;
 };
 

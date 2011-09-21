@@ -31,7 +31,6 @@
 // Project headers
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/loops/Loops.hh>
 
 // Package headers
 #include <protocols/moves/Mover.hh>
@@ -39,13 +38,11 @@
 namespace protocols {
 namespace moves {
 
-typedef protocols::loops::Loops Regions;
 typedef boost::unordered_map<int, core::kinematics::Jump> Jumps;
 
 static basic::Tracer TR("protocols.medal.RigidBodyMotionMover");
 
-RigidBodyMotionMover::RigidBodyMotionMover(const Regions& regions, const Jumps& jumps)
-    : regions_(regions), jumps_(jumps) {}
+RigidBodyMotionMover::RigidBodyMotionMover(const Jumps& jumps) : jumps_(jumps) {}
 
 void RigidBodyMotionMover::apply(core::pose::Pose& pose) {
   using namespace basic::options;
