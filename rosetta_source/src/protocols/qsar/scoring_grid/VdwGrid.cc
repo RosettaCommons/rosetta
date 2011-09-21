@@ -34,10 +34,10 @@ std::string VdwGridCreator::keyname() const
 
 GridBaseOP VdwGridCreator::create_grid(utility::tag::TagPtr const tag) const
 {
-	if (tag->hasOption("weight")){
-		return new VdwGrid( tag->getOption<core::Real>("weight") );
+	if (!tag->hasOption("weight")){
+		utility_exit_with_message("Could not make VdwGrid: you must specify a weight when making a new grid");
 	}else{
-		return new VdwGrid();
+		return new VdwGrid( tag->getOption<core::Real>("weight") );
 	}
 	// This is impossible
 	return NULL;
@@ -48,7 +48,7 @@ std::string VdwGridCreator::grid_name()
 	return "VdwGrid";
 }
 
-VdwGrid::VdwGrid() : GridBase("VdwGrid",0.0), cutoff_(10.0)
+VdwGrid::VdwGrid() : GridBase("VdwGrid",1.0), cutoff_(10.0)
 {
 	std::string lj_file(basic::database::full_name("qsar/lj_table.txt"));
 	lj_spline_ = numeric::interpolation::spline_from_file(lj_file,0.01);

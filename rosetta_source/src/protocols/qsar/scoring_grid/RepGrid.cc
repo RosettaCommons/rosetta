@@ -31,10 +31,10 @@ std::string RepGridCreator::keyname() const
 
 GridBaseOP RepGridCreator::create_grid(utility::tag::TagPtr const tag) const
 {
-	if (tag->hasOption("weight")){
-		return new RepGrid( tag->getOption<core::Real>("weight") );
+	if (!tag->hasOption("weight")){
+		utility_exit_with_message("Could not make RepGrid: you must specify a weight when making a new grid");
 	}else{
-		return new RepGrid();
+		return new RepGrid( tag->getOption<core::Real>("weight") );
 	}
 	// This is impossible
 	return NULL;
@@ -45,7 +45,7 @@ std::string RepGridCreator::grid_name()
 	return "RepGrid";
 }
 
-RepGrid::RepGrid() : GridBase("RepGrid",0.0), radius_(2.25)
+RepGrid::RepGrid() : GridBase("RepGrid",1.0), radius_(2.25)
 {
 
 }

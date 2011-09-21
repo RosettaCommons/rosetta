@@ -32,10 +32,10 @@ std::string polarizGridCreator::keyname() const
 
 GridBaseOP polarizGridCreator::create_grid(utility::tag::TagPtr const tag) const
 {
-	if (tag->hasOption("weight")){
-		return new polarizGrid( tag->getOption<core::Real>("weight") );
+	if (!tag->hasOption("weight")){
+		utility_exit_with_message("Could not make PolarizGrid: you must specify a weight when making a new grid");
 	}else{
-		return new polarizGrid();
+		return new polarizGrid( tag->getOption<core::Real>("weight") );
 	}
 	// This is impossible
 	return NULL;
@@ -46,7 +46,7 @@ std::string polarizGridCreator::grid_name()
 	return "polarizGrid";
 }
 
-polarizGrid::polarizGrid() : GridBase("polarizGrid",0.0), radius_(3.0)
+polarizGrid::polarizGrid() : GridBase("polarizGrid",1.0), radius_(3.0)
 {
 	//TODO: extract this to a method
 	utility::io::izstream infile;

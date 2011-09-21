@@ -29,10 +29,10 @@ std::string HbdGridCreator::keyname() const
 
 GridBaseOP HbdGridCreator::create_grid(utility::tag::TagPtr const tag) const
 {
-	if (tag->hasOption("weight")){
-		return new HbdGrid( tag->getOption<core::Real>("weight") );
+	if (!tag->hasOption("weight")){
+		utility_exit_with_message("Could not make HbdGrid: you must specify a weight when making a new grid");
 	}else{
-		return new HbdGrid();
+		return new HbdGrid( tag->getOption<core::Real>("weight") );
 	}
 	// This is impossible
 	return NULL;
@@ -43,12 +43,12 @@ std::string HbdGridCreator::grid_name()
 	return "HbdGrid";
 }
 
-HbdGrid::HbdGrid(): GridBase ("HbdGrid",0.0), radius_(2.4),width_(0.2), magnitude_(1.0)
+HbdGrid::HbdGrid(): GridBase ("HbdGrid",1.0), radius_(2.4),width_(1.0), magnitude_(-1.0)
 {
 
 }
 
-HbdGrid::HbdGrid(core::Real weight) : GridBase ("HbdGrid",weight), radius_(2.4),width_(0.2), magnitude_(1.0)
+HbdGrid::HbdGrid(core::Real weight) : GridBase ("HbdGrid",weight), radius_(2.4),width_(1.0), magnitude_(-1.0)
 {
 
 }

@@ -26,10 +26,11 @@ std::string AtrGridCreator::keyname() const
 
 GridBaseOP AtrGridCreator::create_grid(utility::tag::TagPtr const tag) const
 {
-	if (tag->hasOption("weight")){
-		return new AtrGrid( tag->getOption<core::Real>("weight") );
+	if (!tag->hasOption("weight")){
+		utility_exit_with_message("Could not make AtrGrid: you must specify a weight when making a new grid");
+
 	}else{
-		return new AtrGrid();
+		return new AtrGrid( tag->getOption<core::Real>("weight") );
 	}
 	// This is impossible
 	return NULL;
@@ -40,7 +41,7 @@ std::string AtrGridCreator::grid_name()
 	return "AtrGrid";
 }
 
-AtrGrid::AtrGrid() : GridBase("AtrGrid",0.0),radius_(4.75)
+AtrGrid::AtrGrid() : GridBase("AtrGrid",1.0),radius_(4.75)
 {
 	//
 }
