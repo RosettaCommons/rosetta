@@ -80,6 +80,7 @@ CREATE TABLE HBEval (
     don_chem_type TEXT,
     acc_chem_type TEXT,
     separation TEXT,
+
     AHdist_short_fade TEXT,
     AHdist_long_fade TEXT,
     cosBAH_fade TEXT,
@@ -98,6 +99,7 @@ DROP TABLE IF EXISTS HBFadeIntervals;
 CREATE TABLE HBFadeIntervals(
 		id INTEGER PRIMARY KEY,
     name TEXT,
+		junction_type TEXT,
 		min0 REAL,
 		fmin REAL,
 		fmax REAL,

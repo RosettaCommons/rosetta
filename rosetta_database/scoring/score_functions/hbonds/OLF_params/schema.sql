@@ -96,6 +96,7 @@ DROP TABLE IF EXISTS HBFadeIntervals;
 CREATE TABLE HBFadeIntervals(
 		id INTEGER PRIMARY KEY,
     name TEXT,
+		junction_type TEXT,
 		min0 REAL,
 		fmin REAL,
 		fmax REAL,
