@@ -18,7 +18,7 @@
 #include <protocols/viewer/viewers.hh>
 
 // Non-traditional main() function due to inclusion in BOINC.
-// See protocols/abinitio/NonlocalAbinitioMain.cc.
+// See protocols/nonlocal/NonlocalAbinitioMain.cc.
 int main(int argc, char* argv[]) {
   devel::init(argc, argv);
   protocols::viewer::viewer_main(
