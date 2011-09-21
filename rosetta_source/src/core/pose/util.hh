@@ -56,10 +56,6 @@ void remove_virtual_residues(core::pose::Pose* pose);
 /// @brief Updates the rigid-body transform of the specified jump in <pose>
 void swap_transform(int jump_num, const kinematics::RT& xform, Pose* pose);
 
-/// @brief Returns the structural conservation score associated with the given
-/// residue if available, -1 otherwise
-core::Real structural_conservation(const Pose& pose, core::Size residue);
-
 /// @brief Returns true if <residue> is positionally conserved, false otherwise
 bool is_position_conserved_residue(const Pose& pose, core::Size residue);
 

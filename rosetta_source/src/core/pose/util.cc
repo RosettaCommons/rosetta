@@ -56,7 +56,6 @@
 #include <core/pose/MiniPose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/datacache/PositionConservedResiduesStore.hh>
-#include <core/pose/datacache/StructuralConservationStore.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
@@ -114,25 +113,6 @@ void swap_transform(int jump_num, const kinematics::RT& xform, Pose* pose) {
       upstream_stub,
       downstream_stub,
       xform);
-}
-
-core::Real structural_conservation(const Pose& pose, core::Size residue) {
-  using basic::datacache::BasicDataCache;
-  using core::pose::datacache::StructuralConservationStore;
-  using core::pose::datacache::StructuralConservationStoreCOP;
-
-  assert(residue > 0);
-  assert(residue <= pose.total_residue());
-
-  const BasicDataCache& cache = pose.data();
-  if (!cache.has(core::pose::datacache::CacheableDataType::STRUCTURAL_CONSERVATION))
-    return -1;
-
-  StructuralConservationStoreCOP store =
-      static_cast<StructuralConservationStore const *>(
-          cache.get_const_ptr(core::pose::datacache::CacheableDataType::STRUCTURAL_CONSERVATION)());
-
-  return store->conservation_score(residue);
 }
 
 bool is_position_conserved_residue(const Pose& pose, core::Size residue) {

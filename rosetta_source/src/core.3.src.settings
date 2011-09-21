@@ -446,7 +446,6 @@ sources = {
 		"CacheableObserver",
 		"ObserverCache",
                 "PositionConservedResiduesStore",
-                "StructuralConservationStore",
 		"cacheable_observers",
 	],
 

@@ -19,9 +19,6 @@
 #include <protocols/jd2/ThreadingJobInputter.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
 
-// External headers
-#include <boost/unordered/unordered_map.hpp>
-
 //project headers
 #include <core/pose/Pose.fwd.hh>
 #ifdef WIN32
@@ -66,25 +63,6 @@ public:
 private:
 	/// @brief Returns the number of templates in <template_poses_>
 	size_t num_templates() const;
-
-  /// @brief Computes per-residue structural conservation if multiple alignments
-  /// were provided on the command line, storing the result as a CacheableDataType
-  /// in <pose>. Otherwise, takes no action. Returns true if conservation info was
-  /// successfully added to <pose>, false otherwise.
-  ///
-  /// *IMPORTANT* Assumes template PDB's have been superimposed
-  bool compute_structural_conservation(core::pose::Pose* pose);
-
-	/// @brief Computes per-residue structural conservation scores, which are on the
-	/// interval [0..+inf). Larger values correspond to higher degrees of conservation.
-	void root_mean_squared_fluctuation(const boost::unordered_map<core::Size, utility::vector1<core::PointPosition> >& coords,
-																		 boost::unordered_map<core::Size, core::PointPosition>& centers,
-																		 boost::unordered_map<core::Size, core::Real>* conservation_scores);
-
-	/// @brief Computes the center of mass for each aligned residue, storing the
-	/// result in <centers>
-	void aligned_centers_of_mass(const boost::unordered_map<core::Size, utility::vector1<core::PointPosition> >& coords,
-															 boost::unordered_map<core::Size, core::PointPosition>* centers);
 
 	Alignments alignments_;
 	PoseMap template_poses_;

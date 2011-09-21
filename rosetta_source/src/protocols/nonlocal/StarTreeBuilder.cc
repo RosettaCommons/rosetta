@@ -30,7 +30,6 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/random/DistributionSampler.hh>
 #include <numeric/random/random.hh>
-#include <numeric/random/WeightedReservoirSampler.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <utility/vector1.hh>
@@ -42,8 +41,6 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <core/pose/datacache/StructuralConservationStore.hh>
 #include <core/scoring/rms_util.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
@@ -100,17 +97,11 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
   // virtual residue. Subsequently, <virtual_res_> can serve as a proxy for
   // <num_residues>
   virtual_res_ = pose->total_residue();
-  bool has_conservation = pose->data().has(core::pose::datacache::CacheableDataType::STRUCTURAL_CONSERVATION);
 
   vector1<std::pair<int, int> > jumps;
   for (Loops::const_iterator i = chunks.begin(); i != chunks.end(); ++i) {
     const Loop& chunk = *i;
-
-    // When available, use structural conservation to inform jump selection.
-    // Otherwise, choose the midpoint of the region.
-    Size anchor_position = has_conservation ?
-        choose_conserved_position(chunk, *pose) :
-        choose_unconserved_position(chunk.start(), chunk.stop());
+    Size anchor_position = choose_anchor_position(chunk.start(), chunk.stop());
 
     // virtual residue => anchor position
     jumps.push_back(std::make_pair(virtual_res_, anchor_position));
@@ -128,8 +119,6 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
   // (before the virtual residue)
   cuts.push_back(num_residues);
 
-  // Construct the star fold tree from the set of jumps and cuts above.
-  // Reorder the resulting fold tree so that <virtual_res> is the root.
   ObjexxFCL::FArray2D_int ft_jumps(2, jumps.size());
   for (Size i = 1; i <= jumps.size(); ++i) {
     ft_jumps(1, i) = std::min(jumps[i].first, jumps[i].second);
@@ -141,7 +130,8 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
     ft_cuts(i) = cuts[i];
   }
 
-  // Try to build the star fold tree from jumps and cuts
+  // Construct the star fold tree from the set of jumps and cuts above.
+  // Reorder the resulting fold tree so that <virtual_res> is the root.
   core::kinematics::FoldTree tree(pose->fold_tree());
   bool status = tree.tree_from_jumps_and_cuts(virtual_res_,   // nres_in
                                               jumps.size(),   // num_jump_in
@@ -179,40 +169,15 @@ void StarTreeBuilder::do_compute_jump_rmsd(core::pose::Pose* model) const {
 
   // Write results to <model> as comments
   for (boost::unordered_map<Size, Real>::const_iterator i = rmsds.begin(); i != rmsds.end(); ++i) {
-    const Size residue = i->first;
-    const Real rmsd = i->second;
+    Size residue = i->first;
+    Real rmsd = i->second;
     core::pose::add_comment(*model,
                             (boost::format("rmsd_jump_residue_%1%") % residue).str(),
                             (boost::format("%1%") % rmsd).str());
   }
 }
 
-// TODO(cmiles) additional testing needed
-core::Size StarTreeBuilder::choose_conserved_position(const protocols::loops::Loop& chunk,
-                                                      const core::pose::Pose& pose) const {
-  using core::Size;
-  using utility::vector1;
-
-  vector1<Size> positions;
-  vector1<core::Real> weights;
-  for (Size j = chunk.start(); j <= chunk.stop(); ++j) {
-    positions.push_back(j);
-    weights.push_back(core::pose::structural_conservation(pose, j));
-  }
-
-  // Perform weighted selection to choose (a single) jump position
-  vector1<Size> samples;
-  numeric::random::WeightedReservoirSampler<Size> sampler(1);
-  for (Size j = 1; j <= positions.size(); ++j) {
-    sampler.consider_sample(positions[j], weights[j]);
-  }
-  sampler.samples(&samples);
-
-  Size position = samples[1];
-  return numeric::clamp<Size>(position, chunk.start(), chunk.stop());
-}
-
-core::Size StarTreeBuilder::choose_unconserved_position(core::Size start, core::Size stop) const {
+core::Size StarTreeBuilder::choose_anchor_position(core::Size start, core::Size stop) const {
   using boost::math::normal;
   using core::Size;
   using numeric::random::DistributionSampler;

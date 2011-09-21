@@ -18,13 +18,8 @@
 ///C++ headers
 #include <string>
 
-// External headers
-#include <boost/format.hpp>
-#include <boost/unordered/unordered_map.hpp>
-
 ///Utility headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/BasicDataCache.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -42,8 +37,6 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <core/pose/datacache/StructuralConservationStore.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 
@@ -232,9 +225,6 @@ void ThreadingJobInputter::pose_from_job(
 			tjob->alignment(), *tjob->get_pose(), extra_res);
 		thief.apply(pose);
 	}
-
-	// when multiple alignments exist, compute per-residue structural conservation
-	compute_structural_conservation(&pose);
 } // pose_from_job
 
 /// @details this function determines what jobs
@@ -335,135 +325,6 @@ size_t ThreadingJobInputter::num_templates() const {
       ++num_templates;
     }
     return num_templates;
-}
-
-bool ThreadingJobInputter::compute_structural_conservation(core::pose::Pose* pose) {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using core::PointPosition;
-  using core::Real;
-  using core::Size;
-  using core::pose::datacache::StructuralConservationStore;
-  using core::pose::datacache::StructuralConservationStoreOP;
-  using core::id::SequenceMapping;
-  using core::pose::PoseOP;
-  using core::sequence::SequenceAlignment;
-  using std::string;
-  using utility::vector1;
-
-  if (num_templates() < 2)
-    return false;
-
-  // Collect Cartesian coordinates for each aligned residue
-  boost::unordered_map<Size, vector1<core::PointPosition> > coords;
-
-  for (Alignments::const_iterator i = alignments_.begin();
-       i != alignments_.end(); ++i) {
-    const SequenceAlignment& alignment = *i;
-    const string& align_id = alignment.alignment_id();
-    const string& templ_id = align_id.substr(0, 5);
-
-    // filename => [template structures]
-    PoseMap::const_iterator it = template_poses_.find(templ_id);
-    if (it == template_poses_.end())
-      utility_exit_with_message(
-          str(boost::format("Unable to locate template with id = %1%") % templ_id));
-
-    // Iterate over the alignment, retaining the Cartesian coordinates of
-    // the aligned residues. Note: only considering the first template from
-    // the given filename (i.e. it->first)
-    PoseOP templ = (it->second)[1];
-    SequenceMapping mapping = alignment.sequence_mapping(1, 2);
-    for (Size j = 1; j <= alignment.length(); ++j) {
-      if (mapping[j] == 0)
-        continue;
-
-      // residue j is aligned in template i
-      coords[j].push_back(templ->xyz(core::id::NamedAtomID("CA", mapping[j])));
-    }
-  }
-
-  // Compute the center of mass for each collection of coordinates
-  boost::unordered_map<Size, PointPosition> centers;
-  aligned_centers_of_mass(coords, &centers);
-
-  // Compute structural conservation score as a function of root mean squared
-  // fluctuation from each aligned residue to its corresponding center of mass.
-  // Write the result to the StructuralConservationStore.
-  boost::unordered_map<Size, Real> conservation_scores;
-  root_mean_squared_fluctuation(coords, centers, &conservation_scores);
-
-  StructuralConservationStoreOP store = new StructuralConservationStore();
-  for (boost::unordered_map<Size, Real>::const_iterator i = conservation_scores.begin();
-       i != conservation_scores.end(); ++i) {
-    store->set_conservation_score(i->first, i->second);
-  }
-
-  // Update the pose
-  pose->data().set(core::pose::datacache::CacheableDataType::STRUCTURAL_CONSERVATION, store);
-  return true;
-}
-
-void ThreadingJobInputter::root_mean_squared_fluctuation(
-    const boost::unordered_map<core::Size, utility::vector1<core::PointPosition> >& coords,
-    boost::unordered_map<core::Size, core::PointPosition>& centers,
-    boost::unordered_map<core::Size, core::Real>* conservation_scores) {
-  using core::PointPosition;
-  using utility::vector1;
-
-  for (boost::unordered_map<core::Size, vector1<PointPosition> >::const_iterator i = coords.begin();
-       i != coords.end(); ++i) {
-    core::Size residue = i->first;
-
-    const vector1<PointPosition>& points = i->second;
-
-    // Compute Euclidean distance from each point to <center>
-    const PointPosition& center = centers[residue];
-
-    core::Real sum_distances = 0;
-    for (vector1<PointPosition>::const_iterator j = points.begin();
-         j != points.end(); ++j) {
-      const PointPosition& point = *j;
-      sum_distances += point.distance(center);
-    }
-
-    // Structural conservation scores are on the half-open interval [0..+inf).
-    // Larger values correspond to higher degrees of conservation.
-    core::Real rmsf = std::sqrt(sum_distances);
-    (*conservation_scores)[residue] = (points.size() - 1) / std::pow(M_E, rmsf) + 1e-20;
-    tr << "Structural conservation " << (*conservation_scores)[residue]
-       << " {res=" << residue << ",num_align=" << points.size() << ",rmsf=" << rmsf << "}"
-       << std::endl;
-  }
-}
-
-/// @detail Populates <centers> with the center of mass of each aligned residue
-void ThreadingJobInputter::aligned_centers_of_mass(
-    const boost::unordered_map<core::Size, utility::vector1<core::PointPosition> >& coords,
-    boost::unordered_map<core::Size, core::PointPosition>* centers) {
-  using core::PointPosition;
-  using core::Size;
-  using utility::vector1;
-
-  for (boost::unordered_map<Size, vector1<PointPosition> >::const_iterator i = coords.begin();
-       i != coords.end(); ++i) {
-    Size residue = i->first;
-    const vector1<PointPosition>& points = i->second;
-
-    core::Real sums[3] = {0, 0, 0};
-    for (vector1<PointPosition>::const_iterator j = points.begin();
-         j != points.end(); ++j) {
-      sums[0] += j->x();
-      sums[1] += j->y();
-      sums[2] += j->z();
-    }
-
-    PointPosition center(sums[0] / points.size(),
-                         sums[1] / points.size(),
-                         sums[2] / points.size());
-
-    (*centers)[residue] = center;
-  }
 }
 
 } // jd2
