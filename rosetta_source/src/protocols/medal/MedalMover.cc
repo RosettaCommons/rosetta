@@ -116,9 +116,6 @@ void MedalMover::apply(core::pose::Pose& pose) {
   // Remove virtual residue placed during star fold tree construction
   protocols::nonlocal::remove_cutpoint_variants(&pose);
   builder.tear_down(&pose);
-
-  // Full-atom output
-  core::util::switch_to_residue_type_set(pose, core::chemical::FA_STANDARD);
 }
 
 void MedalMover::jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) const {
