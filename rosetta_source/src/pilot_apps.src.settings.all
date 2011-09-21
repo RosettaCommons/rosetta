@@ -46,6 +46,7 @@ sources = {
                #"contact_map_from_homologs",
     ],
         "pilot/cmiles" : [
+            #"count_violations",
             "medal",
             "nonlocal_abinitio",
         ],
