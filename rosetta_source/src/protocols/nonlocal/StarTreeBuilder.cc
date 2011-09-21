@@ -14,6 +14,7 @@
 #include <protocols/nonlocal/StarTreeBuilder.hh>
 
 // C/C++ headers
+#include <iostream>
 #include <utility>
 
 // External headers
@@ -52,6 +53,25 @@
 
 namespace protocols {
 namespace nonlocal {
+
+/// @brief Simple utility method to aid debugging failed fold tree construction
+void show_cuts_and_jumps(const utility::vector1<int>& cuts,
+                         const utility::vector1<std::pair<int, int> >& jumps) {
+  using std::cerr;
+  using std::endl;
+  using std::pair;
+
+  cerr << "Cutpoints: " << endl;
+  for (utility::vector1<int>::const_iterator i = cuts.begin(); i != cuts.end(); ++i) {
+    cerr << "\t" << *i << endl;
+  }
+
+  cerr << "Jumps: " << endl;
+  for (utility::vector1<pair<int, int> >::const_iterator i = jumps.begin(); i != jumps.end(); ++i) {
+    const pair<int, int>& jump = *i;
+    cerr << "\t" << jump.first << " => " << jump.second << endl;
+  }
+}
 
 StarTreeBuilder::StarTreeBuilder() : virtual_res_(-1) {}
 
@@ -128,8 +148,10 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
                                               ft_jumps,       // jump_point
                                               ft_cuts,        // cuts
                                               virtual_res_);  // root
-  if (!status)
+  if (!status) {
+    show_cuts_and_jumps(cuts, jumps);
     utility_exit_with_message("StarTreeBuilder: failed to build fold tree from cuts and jumps");
+  }
 
   // Update the pose's fold tree
   pose->fold_tree(tree);
@@ -165,23 +187,29 @@ void StarTreeBuilder::do_compute_jump_rmsd(core::pose::Pose* model) const {
   }
 }
 
+// TODO(cmiles) additional testing needed
 core::Size StarTreeBuilder::choose_conserved_position(const protocols::loops::Loop& chunk,
                                                       const core::pose::Pose& pose) const {
-  utility::vector1<core::Size> positions;
-  utility::vector1<core::Real> weights;
-  for (core::Size j = chunk.start(); j <= chunk.stop(); ++j) {
+  using core::Size;
+  using utility::vector1;
+
+  vector1<Size> positions;
+  vector1<core::Real> weights;
+  for (Size j = chunk.start(); j <= chunk.stop(); ++j) {
     positions.push_back(j);
     weights.push_back(core::pose::structural_conservation(pose, j));
   }
 
   // Perform weighted selection to choose (a single) jump position
-  utility::vector1<core::Size> samples;
+  vector1<Size> samples;
   numeric::random::WeightedReservoirSampler<Size> sampler(1);
-  for (core::Size j = 1; j <= positions.size(); ++j) {
+  for (Size j = 1; j <= positions.size(); ++j) {
     sampler.consider_sample(positions[j], weights[j]);
   }
   sampler.samples(&samples);
-  return samples[1];
+
+  Size position = samples[1];
+  return numeric::clamp<Size>(position, chunk.start(), chunk.stop());
 }
 
 core::Size StarTreeBuilder::choose_unconserved_position(core::Size start, core::Size stop) const {
