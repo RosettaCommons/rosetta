@@ -58,7 +58,7 @@ ColorGradient::ColorGradient(numeric::xyzVector<core::Real> const & value,
 
 RenderGridsToKinemage::RenderGridsToKinemage() :
 		protocols::moves::Mover("RenderGridsToKinemage"),
-		color_mode_(0.0),
+		color_mode_(0),
 		gradient_bins_(10),
 		stride_(1)
 		//low_cut_(0.0),
