@@ -13,9 +13,10 @@
 
 #include <protocols/ligand_docking/TransformCreator.hh>
 #include <protocols/ligand_docking/Transform.hh>
-
+#include <protocols/ligand_docking/grid_functions.hh>
 
 #include <core/conformation/Conformation.hh>
+#include <core/chemical/ResidueType.hh>
 #include <basic/Tracer.hh>
 
 
@@ -92,9 +93,7 @@ void Transform::parse_my_tag
 	{
 		utility_exit_with_message("This should be impossible");
 	}
-	//tag->write(transform_tracer,1);
 	if ( ! tag->hasOption("chain") ) utility_exit_with_message("'Transform' mover requires chain tag");
-	//if ( ! tag->hasOption("distribution") ) utility_exit_with_message("'Translate' mover requires distribution tag");
 	if ( ! tag->hasOption("move_distance") ) utility_exit_with_message("'Transform' mover requires move_distance tag");
 	if (! tag->hasOption("box_size") ) utility_exit_with_message("'Transform' mover requires box_size tag");
 	if ( ! tag->hasOption("angle") ) utility_exit_with_message("'Transform' mover requires angle tag");
@@ -102,8 +101,6 @@ void Transform::parse_my_tag
 	if (!tag->hasOption("temperature")) utility_exit_with_message("'Transform' mover requires temperature tag");
 
 	transform_info_.chain = tag->getOption<std::string>("chain");
-	//std::string distribution_str = tag->getOption<std::string>("distribution");
-	//transform_info_.distribution = get_distribution(distribution_str);
 	transform_info_.move_distance = tag->getOption<core::Real>("move_distance");
 	transform_info_.box_size = tag->getOption<core::Real>("box_size");
 	transform_info_.angle = tag->getOption<core::Real>("angle");
@@ -139,7 +136,7 @@ void Transform::apply(core::pose::Pose & pose)
 	}
 	*/
 	core::conformation::Residue original_residue = pose.residue(begin);
-
+	core::chemical::ResidueType residue_type = pose.residue_type(begin);
 	jd2::JobOP current_job = protocols::jd2::JobDistributor::get_instance()->current_job();
 	std::string tag = current_job->input_tag();
 
@@ -151,13 +148,28 @@ void Transform::apply(core::pose::Pose & pose)
 	core::Real temperature = transform_info_.temperature;
 	core::Vector original_center(original_residue.xyz(original_residue.nbr_atom()));
 
+	rotamers_for_trials(pose,begin,ligand_conformers_);
+	transform_tracer << "Considering " << ligand_conformers_.size() << " conformers during sampling" << std::endl;
 	core::Size accepted_moves = 0;
 	core::Size rejected_moves = 0;
 
 	for(core::Size cycle = 1; cycle <= transform_info_.cycles; ++cycle)
 	{
-		transform_ligand(pose);
 
+		//during each move either move the ligand or try a new conformer (if there is more than one conformer)
+		if(ligand_conformers_.size() > 1)
+		{
+			if(RG.uniform() >= 0.5)
+			{
+				transform_ligand(pose);
+			}else
+			{
+				change_conformer(pose,begin);
+			}
+		}else
+		{
+			transform_ligand(pose);
+		}
 		//delete residue;
 		core::conformation::Residue residue(pose.residue(begin));
 
@@ -165,41 +177,30 @@ void Transform::apply(core::pose::Pose & pose)
 		core::Real const boltz_factor((best_score-current_score)/temperature);
 		core::Real const probability = std::exp( boltz_factor ) ;
 		core::Vector new_center(residue.xyz(residue.nbr_atom()));
-		//std::ostringstream oss;
 
-		//oss << std::setfill('0') << std::setw(4) << cycle;
-		//std::string cycle_string(oss.str());
 
-		//const std::string accept_path(tag+"_accept_"+cycle_string+".pdb");
-		//const std::string reject_path(tag+"_reject_"+cycle_string+".pdb");
 		if(new_center.distance(original_center) > transform_info_.box_size) //Reject the new pose
 		{
-			//pose.dump_pdb(reject_path);
 			pose = best_pose;
 			rejected_moves++;
 			transform_tracer << "probability: " << probability << " rejected (out of box)"<<std::endl;
 		}else if(probability < 1 && RG.uniform() >= probability)  //reject the new pose
 		{
-			//pose.dump_pdb(reject_path);
 			pose = best_pose;
 			rejected_moves++;
 			transform_tracer << "probability: " << probability << " rejected"<<std::endl;
 		}else if(probability < 1)  // Accept the new pose
 		{
-			//pose.dump_pdb(accept_path);
 			best_score = current_score;
 			best_pose = pose;
 			accepted_moves++;
 			transform_tracer << "probability: " << probability << " accepted"<<std::endl;
 		}else  //Accept the new pose
 		{
-			//pose.dump_pdb(accept_path);
 			best_score = current_score;
 			best_pose = pose;
 			accepted_moves++;
 			transform_tracer << "probability: " << probability << " accepted"<<std::endl;
-			//pose = best_pose;
-			//rejected_moves++;
 		}
 	}
 	pose=best_pose;
@@ -224,15 +225,15 @@ void Transform::transform_ligand(core::pose::Pose & pose)
 	pose.update_actcoords();
 }
 
-void Transform::change_conformer
-(
-	core::Size const ,
-	core::pose::Pose & ,
-	core::Size const &
-)
+void Transform::change_conformer(core::pose::Pose & pose, core::Size const & seqpos)
 {
-	//lets implement this later
+	assert(ligand_conformers_.size());
+	core::Size index_to_select = RG.random_range(1,ligand_conformers_.size());
+	core::conformation::ResidueOP new_residue = ligand_conformers_[index_to_select];
+	pose.conformation().replace_residue(seqpos,*new_residue,false );
+	pose.update_actcoords();
 }
+
 
 }
 }

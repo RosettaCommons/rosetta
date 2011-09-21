@@ -67,22 +67,17 @@ public:
 	*/
 
 private:
-	//qsar::scoring_grid::GridManagerOP grid_manager_;
-	Transform_info transform_info_;
+	void transform_ligand(core::pose::Pose & pose);
+
+
+	void change_conformer(core::pose::Pose & pose, core::Size const & seqpos);
 
 private:
-	void transform_ligand
-	(
-		core::pose::Pose & pose
-	);
+	//qsar::scoring_grid::GridManagerOP grid_manager_;
+	Transform_info transform_info_;
+	utility::vector1< core::conformation::ResidueOP >  ligand_conformers_;
 
 
-	void change_conformer
-	(
-		core::Size const jump_id,
-		core::pose::Pose & pose,
-		core::Size const & residue_id
-	);
 };
 
 }
