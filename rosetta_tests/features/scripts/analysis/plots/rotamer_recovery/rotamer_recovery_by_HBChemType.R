@@ -12,27 +12,40 @@ check_setup()
 sele <-"
 SELECT
   rr.divergence AS divergence,
-  hb_site.HBChemType AS hb_chem_type
+  hb_site_types.label AS hb_chem_type
 FROM
   rotamer_recovery AS rr,
-  hbond_sites AS hb_site
+  hbond_sites AS hb_site,
+  hbond_chem_types AS hb_site_types
 WHERE
   hb_site.resNum = rr.resNum AND
-  hb_site.struct_id = rr.struct_id;"
+  hb_site.struct_id = rr.struct_id AND
+  hb_site.HBChemType = hb_site_types.chem_type
+ORDER BY RANDOM()
+LIMIT 10000;"
 
-all_geom <- query_sample_sources(sample_sources, sele)
+f <- query_sample_sources(sample_sources, sele)
 
-dens <- estimate_density_1d(
-  data = all_geom,
+exp <- ddply(f, .(sample_source, hb_chem_type),
+	function(df) data.frame(mean=round(mean(df$divergence), 2)))
+
+
+dens <- estimate_density_1d_reflect_boundary(
+  data = f,
   ids = c("sample_source", "hb_chem_type"),
-  variable = "divergence")
+  variable = "divergence",
+	reflect_left=TRUE, left_boundary=0)
+
+dens <- merge(dens, exp)
 
 plot_id <- "rotamer_recovery_by_HBChemType"
-p <- ggplot(data=dens, aes(x=log(x+1), y=log(y+1), color=sample_source, indicator=counts))
-p <- p + geom_line() + geom_indicator()
-p <- p + facet_wrap( ~ hb_chem_type )
-p <- p + opts(title = "Rotamer Recovery by Hydrogen Bond Chemical Type")
-p <- p + labs(x="<- better      log(Automorphic RMSD + 1)      worse ->",
-              y="log(FeatureDensity + 1)")
-p <- p + theme_bw()
+ggplot(data=dens) + theme_bw() +
+  geom_line(aes(x=log(x+1), y=log(y+1), colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, color=sample_source)) +
+	geom_indicator(aes(indicator=mean, color=sample_source, xpos=.2)) +
+	facet_wrap( ~ hb_chem_type ) +
+	opts(title = "Rotamer Recovery by Hydrogen Bond Chemical Type") +
+	labs(x="<- better      log(Automorphic RMSD + 1)      worse ->",
+			 y="log(FeatureDensity + 1)")
 save_plots(plot_id, sample_sources, output_dir, output_formats)
+
