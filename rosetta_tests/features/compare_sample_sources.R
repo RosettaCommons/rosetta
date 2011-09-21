@@ -8,7 +8,7 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-# Get path to 'mini/test/scientific/cluster/features', where this script lives
+# Get path to 'rosetta_tests/features', where this script lives
 command_args <- commandArgs(trailingOnly = FALSE)
 base_dir <- dirname(substring(command_args[grep("--file=", command_args)], 8))
 source(paste(base_dir, "scripts/methods/generate_compare_sample_sources_iscript.R", sep="/"))

@@ -19,13 +19,13 @@ load_packages <- function(pkgs, verbose=FALSE){
 		}
 	}
 	if(length(failed_pkgs) > 0){
-		cat("Failed to load the following packages:\n")
+		cat("Failed to load some or all of the following packages:\n")
 		for(pkg in pkgs){
 			cat("    ", pkg, "\n")
 		}
 		valid_response = FALSE
 		while(!valid_response){
-			cat("Would you like to try to install them from CRAN? (y/n) \n")
+			cat("Would you like to try to install the missing ones them from CRAN? It will install them locally and unless you have a good reason not to, this is the easiest way. Please indicator your preference: (y/n) \n")
 			ans <- "n"
 			ans <- readChar(file("stdin"), nchars=1)
 			if(substr(ans, 1L, 1L) == "y"){
