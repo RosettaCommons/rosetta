@@ -14,6 +14,8 @@ SELECT
 	geom.AHdist,
 	geom.cosBAH,
 	geom.chi,
+  don_site.HBChemType as don_chem_type,
+  acc_site.HBChemType as acc_chem_type
 FROM
 	hbond_geom_coords AS geom,
 	hbonds AS hbond,
@@ -48,7 +50,7 @@ capy_limits <- capx_limits
 narrow_output_formats <- transform(output_formats, width=height)
 
 d_ply(f, .(sample_source), function(sub_f){
-	ss_id <- f$sample_source[1]
+	ss_id <- sub_f$sample_source[1]
 	plot_id = paste("chi_BAH_eq_polar_density_lr_bbbb", ss_id, sep="_")
 	ggplot(data=sub_f) + theme_bw() +
 		stat_density2d(aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE) +
