@@ -366,26 +366,26 @@ void run() {
 		 //for(Size i = 1; i <= natsasa.size(); ++i) std::cout << i << " " << natsasa[i] << std::endl;
 
 		vector1<Size> scanres;
-		scanres.push_back(4);
-		scanres.push_back(18);
-		scanres.push_back(21);
-		scanres.push_back(88);
+		// scanres.push_back(4);
+		// scanres.push_back(18);
+		// scanres.push_back(21);
+		// scanres.push_back(88);
 		//std::cerr << "aoirstenarsoit" << std::endl;
-		// if(option[willmatch::residues].user()) {
-		// 	TR << "input scanres!!!!!!" << std::endl;
-		// 	scanres = option[willmatch::residues]();
-		// } else {
-		// 	for(Size i = 1; i <= in_fa.n_residue(); ++i) {
-		// 		if(!in_fa.residue(i).has("N" )) { continue; }
-		// 		if(!in_fa.residue(i).has("CA")) { continue; }
-		// 		if(!in_fa.residue(i).has("C" )) { continue; }
-		// 		if(!in_fa.residue(i).has("O" )) { continue; }
-		// 		if(!in_fa.residue(i).has("CB")) { continue; }
-		// 		if(in_fa.residue(i).name3()=="PRO") { continue; }
-		// 		if(natsasa[i] > 0) continue;
-		// 		scanres.push_back(i);
-		// 	}
-		// }
+		if(option[willmatch::residues].user()) {
+			TR << "input scanres!!!!!!" << std::endl;
+			scanres = option[willmatch::residues]();
+		} else {
+			for(Size i = 1; i <= in_fa.n_residue(); ++i) {
+				if(!in_fa.residue(i).has("N" )) { continue; }
+				if(!in_fa.residue(i).has("CA")) { continue; }
+				if(!in_fa.residue(i).has("C" )) { continue; }
+				if(!in_fa.residue(i).has("O" )) { continue; }
+				if(!in_fa.residue(i).has("CB")) { continue; }
+				if(in_fa.residue(i).name3()=="PRO") { continue; }
+				if(natsasa[i] > 0) continue;
+				scanres.push_back(i);
+			}
+		}
 
 
 		// precompute acceptable chis
