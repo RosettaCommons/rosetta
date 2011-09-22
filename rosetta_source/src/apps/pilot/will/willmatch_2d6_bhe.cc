@@ -246,7 +246,7 @@ void run() {
 			pose3.append_residue_by_bond(pose.residue(3));
 			for(Sizes::const_iterator iri = scanres.begin(); iri != scanres.end(); ++iri) {
 			  Size const ir(*iri);
-			  if( natsasa[ir] < 1.0 ) { ballow2(ir) = 9e9; continue; }
+			  if( natsasa[ir] < 1.0 ) { ballow0(ir) = 9e9; continue; }
 				core::pose::replace_pose_residue_copying_existing_coordinates(pose,ir,rtphe); // clash w/BPY
 				pose3.replace_residue(1,pose.residue(((ir-1+pose.n_residue()-1)%(pose.n_residue()))+1),false);
 				pose3.replace_residue(2,pose.residue(((ir+0+pose.n_residue()-1)%(pose.n_residue()))+1),false);

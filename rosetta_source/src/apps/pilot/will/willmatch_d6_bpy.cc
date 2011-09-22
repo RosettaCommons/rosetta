@@ -20,10 +20,18 @@
 #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/AngleConstraint.hh>
+#include <core/scoring/constraints/DihedralConstraint.hh>
+#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/constraints/CircularHarmonicFunc.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/Stub.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
 #include <core/pack/optimizeH.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
@@ -46,6 +54,8 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
+#include <protocols/moves/PackRotamersMover.hh>
+#include <protocols/moves/MinMover.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
@@ -86,6 +96,113 @@ void myoptH(Pose & pose, ScoreFunctionOP sf) {
 	remove_upper_terminus_type_from_pose_residue(pose,pose.n_residue());
 }
 
+
+void refine(Pose & pose, ScoreFunctionOP sf, Size r1, Size r2, Size r3, Size r4 ) {
+  using namespace core::pack::task;
+  PackerTaskOP task = TaskFactory::create_packer_task(pose);
+	Size N = pose.n_residue();
+  vector1< bool > aac(20,false);
+  aac[core::chemical::aa_ala] = true;
+  //aac[core::chemical::aa_cys] = true;
+  //aac[core::chemical::aa_asp] = true;
+  //aac[core::chemical::aa_glu] = true;
+  aac[core::chemical::aa_phe] = true;
+  //aac[core::chemical::aa_gly] = true;
+  //aac[core::chemical::aa_his] = true;
+  aac[core::chemical::aa_ile] = true;
+  //aac[core::chemical::aa_lys] = true;
+  aac[core::chemical::aa_leu] = true;
+  aac[core::chemical::aa_met] = true;
+  //aac[core::chemical::aa_asn] = true;
+  //aac[core::chemical::aa_pro] = true;
+  //aac[core::chemical::aa_gln] = true;
+  //aac[core::chemical::aa_arg] = true;
+  aac[core::chemical::aa_ser] = true;
+  aac[core::chemical::aa_thr] = true;
+  aac[core::chemical::aa_val] = true;
+  aac[core::chemical::aa_trp] = true;
+  aac[core::chemical::aa_tyr] = true;
+
+  vector1<Size> iface(N,1);
+  for( Size ir = 1; ir <= N; ++ir) {
+		if( ir==r1 || ir==r2 || ir==r3 || ir==r4 ) iface[ir] = 0;
+    else if( pose.residue(ir).name3()=="CYS" || pose.residue(ir).name3()=="GLY" || pose.residue(ir).name3()=="PRO") iface[ir] = 0;
+		else {
+			Real closestatom=9e9,closestcb=9e9;
+			if( pose.residue(r1).xyz("NE1").distance_squared( pose.xyz(AtomID(2,ir)) ) > 225.0 ) continue;
+			//Real closestatom=9e9,closestcb=9e9;;
+			for(Size jri = 1; jri <= 4; jri++) {
+				Size jr = r1;	if(2==jri) jr = r2; else	if(3==jri) jr = r3; else	if(4==jri) jr = r4;
+				for(Size ja = 5; ja <= pose.residue(jr).nheavyatoms(); ++ja) {
+					Vec aj = pose.xyz(AtomID(ja,jr));
+					for(Size ia = 5; ia <= pose.residue(ir).nheavyatoms(); ++ia) {
+						Real d = aj.distance_squared( pose.xyz(AtomID(ia,ir)) );
+						closestatom = min(closestatom,d);
+						if(ia==5) closestcb = min(closestcb,d);
+					}
+				}
+			}
+			closestcb = sqrt(closestcb);
+			closestatom = sqrt(closestatom);
+			if(closestatom < 6.0) {
+				iface[ir] = 3;
+			}//  else if( closestatom < 8.0) {
+			// 	iface[ir] = 2;
+			// }
+		}
+  }
+
+  for(Size i = 1; i <= N; ++i) {
+		if(        iface[i] == 3 ) {
+      bool tmp = aac[pose.residue(i).aa()];
+      aac[pose.residue(i).aa()] = true;
+      task->nonconst_residue_task(i).restrict_absent_canonical_aas(aac);
+      task->nonconst_residue_task(i).or_include_current(true);
+      aac[pose.residue(i).aa()] = tmp;
+			task->nonconst_residue_task(i).initialize_extra_rotamer_flags_from_command_line();
+    } else if( iface[i] == 2 ) {
+      task->nonconst_residue_task(i).restrict_to_repacking();
+      task->nonconst_residue_task(i).or_include_current(true);
+      task->nonconst_residue_task(i).initialize_extra_rotamer_flags_from_command_line();
+    } else {
+      task->nonconst_residue_task(i).prevent_repacking();
+    }
+
+  }
+
+  Real worig = sf->get_weight(core::scoring::res_type_constraint);
+  if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,1.0);
+  utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
+	pose.add_constraints( res_cst );
+
+	protocols::moves::PackRotamersMover repack( sf, task );
+	repack.apply(pose);
+
+  // cleanup 2
+  pose.remove_constraints( res_cst );
+  sf->set_weight(core::scoring::res_type_constraint,worig);
+
+
+
+
+  core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+  movemap->set_jump(false);
+  movemap->set_bb(false);
+  movemap->set_chi(true);
+  protocols::moves::MinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+  // movemap->set_jump(false);
+  // movemap->set_bb(true);
+  // movemap->set_chi(true);
+  // protocols::moves::MinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+  movemap->set_jump(true);
+  movemap->set_bb(true);
+  movemap->set_chi(true);
+  protocols::moves::MinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+
+
+
+
+}
 
 
 // find 2 HIS that can chelate a tetrahedral metal
@@ -143,8 +260,23 @@ void run() {
 		Pose const fa_pose = in_fa;
 		ImplicitFastClashCheck clashcheck(fa_pose,basic::options::option[basic::options::OptionKeys::willmatch::clash_dis]());
 
-		ScoreFunctionOP sf = core::scoring::ScoreFunctionFactory::create_score_function("standard");
-		sf->set_weight(core::scoring::fa_dun,1.0);
+		ScoreFunctionOP sf     = core::scoring::getScoreFunction();
+		ScoreFunctionOP sfhard = core::scoring::ScoreFunctionFactory::create_score_function("standard");;
+		//sf->set_weight(core::scoring::fa_dun,1.0);
+		sf->set_weight(core::scoring::hbond_sr_bb,2.0);
+		sf->set_weight(core::scoring::hbond_lr_bb,2.0);
+		sf->set_weight(core::scoring::fa_intra_rep,0.4);
+		sf->set_weight(core::scoring::fa_dun,0.1);
+		sf->set_weight(core::scoring::atom_pair_constraint,1.0);
+		sf->set_weight(core::scoring::angle_constraint    ,1.0);
+		sf->set_weight(core::scoring::dihedral_constraint ,1.0);
+		sf->set_weight(core::scoring::hbond_sr_bb,3.0);
+		sf->set_weight(core::scoring::hbond_lr_bb,3.0);
+		sfhard->set_weight(core::scoring::fa_intra_rep,0.4);
+		sfhard->set_weight(core::scoring::fa_dun,0.1);
+		sfhard->set_weight(core::scoring::atom_pair_constraint,1.0);
+		sfhard->set_weight(core::scoring::angle_constraint    ,1.0);
+		sfhard->set_weight(core::scoring::dihedral_constraint ,1.0);
 
 		Real chi1incr = option[willmatch::chi1_increment]();
 		Real chi2incr = option[willmatch::chi2_increment]();
@@ -219,47 +351,56 @@ void run() {
 			}
 		}
 
-		vector1<Size> scanres;
-		if(option[willmatch::residues].user()) {
-			TR << "input scanres!!!!!!" << std::endl;
-			scanres = option[willmatch::residues]();
-		} else {
-			for(Size i = 1; i <= in_fa.n_residue(); ++i) {
-				if(!in_fa.residue(i).has("N" )) { continue; }
-				if(!in_fa.residue(i).has("CA")) { continue; }
-				if(!in_fa.residue(i).has("C" )) { continue; }
-				if(!in_fa.residue(i).has("O" )) { continue; }
-				if(!in_fa.residue(i).has("CB")) { continue; }
-				if(in_fa.residue(i).name3()=="PRO") { continue; }
-				scanres.push_back(i);
-			}
-		}
-
 		ObjexxFCL::FArray1D<Real> bsasa0(            in_fa.n_residue(),9e9);
 		ObjexxFCL::FArray2D<Real> bsasa1(CHI1.size(),in_fa.n_residue(),9e9);
 
 		 vector1<Real> natsasa; {
 			core::id::AtomID_Map<Real> atom_sasa;
 			core::scoring::calc_per_atom_sasa( native, atom_sasa, natsasa, 2.0, false );	 }
+		 //for(Size i = 1; i <= natsasa.size(); ++i) std::cout << i << " " << natsasa[i] << std::endl;
 
-		 for(Size i = 1; i <= natsasa.size(); ++i) TR << i << " " << natsasa[i] << std::endl;
+		vector1<Size> scanres;
+		scanres.push_back(4);
+		scanres.push_back(18);
+		scanres.push_back(21);
+		scanres.push_back(88);
+		//std::cerr << "aoirstenarsoit" << std::endl;
+		// if(option[willmatch::residues].user()) {
+		// 	TR << "input scanres!!!!!!" << std::endl;
+		// 	scanres = option[willmatch::residues]();
+		// } else {
+		// 	for(Size i = 1; i <= in_fa.n_residue(); ++i) {
+		// 		if(!in_fa.residue(i).has("N" )) { continue; }
+		// 		if(!in_fa.residue(i).has("CA")) { continue; }
+		// 		if(!in_fa.residue(i).has("C" )) { continue; }
+		// 		if(!in_fa.residue(i).has("O" )) { continue; }
+		// 		if(!in_fa.residue(i).has("CB")) { continue; }
+		// 		if(in_fa.residue(i).name3()=="PRO") { continue; }
+		// 		if(natsasa[i] > 0) continue;
+		// 		scanres.push_back(i);
+		// 	}
+		// }
+
 
 		// precompute acceptable chis
 		ObjexxFCL::FArray1D<Real> ballow0(                        in_fa.n_residue(),9e9),eallow0(                        in_fa.n_residue(),9e9),hallow0(                        in_fa.n_residue(),9e9);
 		ObjexxFCL::FArray2D<Real> ballow1(            CHI1.size(),in_fa.n_residue(),9e9),eallow1(            CHI1.size(),in_fa.n_residue(),9e9),hallow1(            CHI1.size(),in_fa.n_residue(),9e9);
 		ObjexxFCL::FArray3D<Real> ballow2(CHI2.size(),CHI1.size(),in_fa.n_residue(),9e9),eallow2(CHI2.size(),CHI1.size(),in_fa.n_residue(),9e9),hallow2(CHI2.size(),CHI1.size(),in_fa.n_residue(),9e9);
-		core::pack::dunbrack::SingleResidueRotamerLibraryCAP plib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( rtphe );
-		core::pack::dunbrack::SingleResidueRotamerLibraryCAP hlib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( hsd.residue(1).type() );
-		core::pack::dunbrack::SingleResidueRotamerLibraryCAP elib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( glu.residue(1).type() );
-		core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
+		//core::pack::dunbrack::SingleResidueRotamerLibraryCAP plib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( rtphe );
+		//core::pack::dunbrack::SingleResidueRotamerLibraryCAP hlib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( hsd.residue(1).type() );
+		//core::pack::dunbrack::SingleResidueRotamerLibraryCAP elib = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( glu.residue(1).type() );
+		//core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
 		{
-
-			 TR << "precomputing dun scores and clashes" << std::endl;
+			Real mbpyir = 9e9;
+			TR << "precomputing dun scores and clashes, size " << scanres.size() << std::endl;
 			// BPY
 			Pose pose = in_fa,pose3=bpy;
 			pose3.append_residue_by_bond(pose.residue(2));
 			pose3.append_residue_by_bond(pose.residue(3));
+			Size count = 0;
+			std::cerr << scanres.size() << " ";
 			for(Sizes::const_iterator iri = scanres.begin(); iri != scanres.end(); ++iri) {
+				std::cerr << ++count << " ";
 				Size const ir(*iri);
 				if( natsasa[ir] > 1.0 ) { ballow0(ir)=9e9; } else {
 					core::pose::replace_pose_residue_copying_existing_coordinates(pose,ir,rtphe); // clash w/BPY
@@ -270,7 +411,9 @@ void run() {
 						pose3.set_chi(1,2,CHI1[i1]);
 						for(Size i2 = 1; i2 <= CHI2.size(); ++i2) {
 							pose3.set_chi(2,2,CHI2[i2]);
-							ballow2(i2,i1,ir) = plib->rotamer_energy( pose3.residue(2), scratch );
+							sf->score(pose3);
+							ballow2(i2,i1,ir) = pose3.energies().residue_total_energies(2)[core::scoring::fa_intra_rep] - 7.0;
+							mbpyir = min(mbpyir,ballow2(i2,i1,ir));
 						}
 					}
 					pose.replace_residue(ir,bpy.residue(1),true);
@@ -302,10 +445,11 @@ void run() {
 				// 		Real dbmin = 9e9, argmn = 0.0;
 				// 		for(Real i3 = -177.5; i3 < 180.0; i3+=1) {
 				// 			pose3.set_chi(3,2,i3);
-				// 			Real tmp = elib->rotamer_energy( pose3.residue(2), scratch );
+				// 			sf->score(pose3);
+				// 			Real tmp = pose3.energies().residue_total_energies(2)[core::scoring::fa_intra_rep];// elib->rotamer_energy( pose3.residue(2), scratch );
 				// 			if( tmp < dbmin ) { dbmin = tmp; argmn = i3; }
 				// 		}
-				// 		std::cerr << "TEST " << dbmin << " " << ir << " " << i1 << " " << i2 << " " << argmn << std::endl;
+				// 		//std::cerr << "TEST " << dbmin << " " << ir << " " << i1 << " " << i2 << " " << argmn << std::endl;
 				// 		eallow2(i2,i1,ir) = dbmin;
 				// 		for(Size a = 6; a <= pose3.residue(2).nheavyatoms()-2; ++a) {
 				// 			if(!clashcheck.clash_check(pose3.residue(2).xyz(a),ir)) {
@@ -326,7 +470,8 @@ void run() {
 					pose3.set_chi(1,2,CHI1[i1]);
 					for(Size i2 = 1; i2 <= CHI2.size(); ++i2) {
 						pose3.set_chi(2,2,CHI2[i2]);
-						hallow2(i2,i1,ir) = hlib->rotamer_energy( pose3.residue(2), scratch );
+						sf->score(pose3);
+						hallow2(i2,i1,ir) = pose3.energies().residue_total_energies(2)[core::scoring::fa_intra_rep];//hlib->rotamer_energy( pose3.residue(2), scratch );
 						for(Size a = 6; a <= pose3.residue(2).nheavyatoms(); ++a) {
 							if(!clashcheck.clash_check(pose3.residue(2).xyz(a),ir)) {
 								hallow2(i2,i1,ir) += 9e9;
@@ -339,11 +484,10 @@ void run() {
 				}
 				core::pose::replace_pose_residue_copying_existing_coordinates(pose,ir,rtala);
 			}
-			TR << "DONE precomputing dun scores and clashes" << std::endl;
+			TR << "DONE precomputing dun scores and clashes " << mbpyir << std::endl;
 		}
 		Real const DUN_THRESH = option[willmatch::fa_dun_thresh]();
-
-
+		//utility_exit_with_message("aorsnt");
 		// string fname = utility::file_basename(infile)+"_d6_bpy_matches.pdb";
 		// utility::io::ozstream out(fname);
 		// out << "MODEL BASE"	<< endl;
@@ -391,8 +535,10 @@ void run() {
 		Pose pose = fa_pose;
 		//		Size lastb=0,lasti=0,lastj=0,laste=0;
 		//for(vector1<Size>::const_iterator biter = scanres.begin(); biter != scanres.end(); ++biter) {
-		#pragma omp parallel for
+		TR << "matching res, size " << scanres.size() << std::endl;
+		//#pragma omp parallel for
 		for ( Size ii = 1; ii <= scanres.size(); ++ii ) {
+			if(count%10==0) std::cerr << ObjexxFCL::fmt::I(4,ii) << "/" << scanres.size() << std::endl;
 			vector1<Vec> foundcenbg,foundori1bg,foundori2bg,foundori3bg,foundori4bg,foundori5bg,foundori6bg;
 			vector1<Vec> foundcensg,foundori1sg,foundori2sg,foundori3sg,foundori4sg,foundori5sg,foundori6sg;
 			//Size brsd = *biter;
@@ -401,7 +547,7 @@ void run() {
 			if( startbpy != 0 && startbpy != brsd ) continue;        // CHECKPOINT
 			if( startbpy == brsd ) { startfile = ""; startbpy = 0; } // CHECKPOINT
 			oprogress << infile << " " << brsd << std::endl;
-			TR << "scanning bpy rsd " << infile << " " << brsd << std::endl;
+			//TR << "scanning bpy rsd " << infile << " " << brsd << std::endl;
 			if( natsasa[brsd] > 0.1 ) continue;
 			Stub s3(CBs[brsd],CAs[brsd],CAs[brsd]+(Ns[brsd]-Cs[brsd]));
 			if(ballow0(brsd) > DUN_THRESH) continue; // if all chi1 / chi2 are clash or bad rot
@@ -681,6 +827,56 @@ void run() {
 																	opose.set_chi(2,ersd,CHI2[ech2]);
 																	opose.set_chi(3,ersd,pose.chi(3,ersd));
 
+																	AtomID bzn  = AtomID(opose.residue(brsd).atom_index("ZN" ),brsd);
+																	AtomID bne1 = AtomID(opose.residue(brsd).atom_index("NE1"),brsd);
+																	AtomID bnn1 = AtomID(opose.residue(brsd).atom_index("NN1"),brsd);
+																	AtomID inh  = AtomID(opose.residue(irsd).atom_index(ide?"HD1":"HE2"),irsd);
+																	AtomID ind1 = AtomID(opose.residue(irsd).atom_index("ND1"),irsd);
+																	AtomID ine2 = AtomID(opose.residue(irsd).atom_index("NE2"),irsd);
+																	AtomID ice1 = AtomID(opose.residue(irsd).atom_index("CE1"),irsd);
+																	AtomID icg  = AtomID(opose.residue(irsd).atom_index("CG" ),irsd);
+																	AtomID icd2 = AtomID(opose.residue(irsd).atom_index("CD2"),irsd);
+																	AtomID jnh  = AtomID(opose.residue(jrsd).atom_index(jde?"HD1":"HE2"),jrsd);
+																	AtomID jnd1 = AtomID(opose.residue(jrsd).atom_index("ND1"),jrsd);
+																	AtomID jne2 = AtomID(opose.residue(jrsd).atom_index("NE2"),jrsd);
+																	AtomID jce1 = AtomID(opose.residue(jrsd).atom_index("CE1"),jrsd);
+																	AtomID jcg  = AtomID(opose.residue(jrsd).atom_index("CG" ),jrsd);
+																	AtomID jcd2 = AtomID(opose.residue(jrsd).atom_index("CD2"),jrsd);
+																	AtomID ecd  = AtomID(opose.residue(ersd).atom_index("CD" ),ersd);
+																	AtomID eoe1 = AtomID(opose.residue(ersd).atom_index("OE1"),ersd);
+																	AtomID eoe2 = AtomID(opose.residue(ersd).atom_index("OE2"),ersd);
+																	Real d1 = pose.residue(brsd).xyz("ZN").distance(pose.residue(ersd).xyz("OE1"));
+																	Real d2 = pose.residue(brsd).xyz("ZN").distance(pose.residue(ersd).xyz("OE2"));
+																	core::scoring::constraints::FuncOP disfunc0 = new core::scoring::constraints::HarmonicFunc( 0.0, 0.2 );
+																	core::scoring::constraints::FuncOP disfunc  = new core::scoring::constraints::HarmonicFunc( 2.2, 0.2 );
+																	core::scoring::constraints::FuncOP angfunc  = new core::scoring::constraints::CircularHarmonicFunc( 1.5707, 0.2 );
+																	core::scoring::constraints::FuncOP angfunc2 = new core::scoring::constraints::CircularHarmonicFunc( 2.0943, 0.2 );
+
+																	opose.add_constraint(new core::scoring::constraints::AtomPairConstraint(bzn,inh,disfunc0));
+																	opose.add_constraint(new core::scoring::constraints::AtomPairConstraint(bzn,jnh,disfunc0));
+																	if( biglu || d1 < d2 ) opose.add_constraint(new core::scoring::constraints::AtomPairConstraint(bzn,eoe1,disfunc));
+																	if( biglu || d1 > d2 ) opose.add_constraint(new core::scoring::constraints::AtomPairConstraint(bzn,eoe2,disfunc));
+
+																	if(ide) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne1,bzn,ind1,angfunc));
+																	else    opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne1,bzn,ine2,angfunc));
+																	if(ide) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn1,bzn,ind1,angfunc));
+																	else    opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn1,bzn,ine2,angfunc));
+
+																	if(jde) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne1,bzn,jnd1,angfunc));
+																	else    opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne1,bzn,jne2,angfunc));
+																	if(jde) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn1,bzn,jnd1,angfunc));
+																	else    opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn1,bzn,jne2,angfunc));
+
+																	if( biglu || d1 < d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn1,bzn,eoe1,angfunc));
+																	if( biglu || d1 > d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn1,bzn,eoe2,angfunc));
+																	if( biglu || d1 < d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne1,bzn,eoe1,angfunc));
+																	if( biglu || d1 > d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne1,bzn,eoe2,angfunc));
+
+																	refine(opose,sf,brsd,irsd,jrsd,ersd);
+																	refine(opose,sfhard,brsd,irsd,jrsd,ersd);
+																	core::scoring::calpha_superimpose_pose(opose,native);
+																	Real rms = core::scoring::CA_rmsd(opose,native);
+
 																	string outfname = utility::file_basename(infile)+"_FULL_"+string_of(brsd)+"_"+string_of(irsd)+"_"+string_of(jrsd)+"_"+string_of(ersd);
 																	outfname += "_"+string_of(kch1)+"_"+string_of(kch2)+"_"+string_of(ich1)+"_"+string_of(ich2)+"_"+string_of(ide);
 																	outfname += "_"+string_of(jch1)+"_"+string_of(jch2)+"_"+string_of(jde)+"_"+string_of(ech1)+"_"+string_of(ech2);
@@ -688,22 +884,24 @@ void run() {
 																	outfname += ".pdb.gz";
 																	TR << "HIT! " << outfname << std::endl;
 
-																	//Real dbb = opose.energies().residue_total_energies(brsd)[core::scoring::fa_dun];
-																	Real dbi = hlib->rotamer_energy( opose.residue(irsd), scratch );
-																	Real dbj = hlib->rotamer_energy( opose.residue(jrsd), scratch );
-																	Real dbe = elib->rotamer_energy( opose.residue(ersd), scratch );
-																	if( dbe > DUN_THRESH ) continue;
+																	sf->score(opose);
+																	Real dbb = opose.energies().residue_total_energies(brsd)[core::scoring::fa_intra_rep];
+																	Real dbi = opose.energies().residue_total_energies(irsd)[core::scoring::fa_intra_rep];//hlib->rotamer_energy( opose.residue(irsd), scratch );
+																	Real dbj = opose.energies().residue_total_energies(jrsd)[core::scoring::fa_intra_rep];//hlib->rotamer_energy( opose.residue(jrsd), scratch );
+																	Real dbe = opose.energies().residue_total_energies(ersd)[core::scoring::fa_intra_rep];//elib->rotamer_energy( opose.residue(ersd), scratch );
+																	// if( dbe > DUN_THRESH ) continue;
 
 																	core::id::AtomID_Map<Real> atom_sasa;
 																	vector1<Real> rsd_sasa;
 																	core::scoring::calc_per_atom_sasa( opose, atom_sasa, rsd_sasa, 2.0, false );
-																	if( rsd_sasa[brsd] > 0.1 ) continue;
-
+																	// if( rsd_sasa[brsd] > 0.1 ) continue;
 
 																	core::io::silent::SilentStructOP ss_out_all( new core::io::silent::ScoreFileSilentStruct );
 																	ss_out_all->fill_struct(opose,outfname);
+																	ss_out_all->add_energy( "rms" , rms );
 																	ss_out_all->add_energy( "bpy_chi1" , CHI1[kch1] );
 																	ss_out_all->add_energy( "bpy_chi2" , CHI2[kch2] );
+																	ss_out_all->add_energy( "dun_bpy" , dbb );
 																	ss_out_all->add_energy( "dun_his1", dbi );
 																	ss_out_all->add_energy( "dun_his2", dbj );
 																	ss_out_all->add_energy( "dun_glu" , dbe );
