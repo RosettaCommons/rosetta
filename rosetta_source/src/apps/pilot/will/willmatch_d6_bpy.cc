@@ -823,7 +823,10 @@ void run() {
                                 foundori6.push_back(ori6);
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                                {
+																if( !( ide==1 && jde==1 && natsasa[irsd] < 0.001 && natsasa[jrsd] < 0.001 && natsasa[ersd] < 0.001 ) )
+																	{
+
+
                                   Pose opose = native;
                                   opose.replace_residue(brsd,bpy.residue(1),true);
                                   opose.set_chi(1,brsd,CHI1[kch1]);
