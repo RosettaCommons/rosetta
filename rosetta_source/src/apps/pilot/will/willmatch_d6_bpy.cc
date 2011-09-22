@@ -824,7 +824,12 @@ void run() {
                                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                                 {
-
+                                  string outfname = utility::file_basename(infile)+"_FULL_"+string_of(brsd)+"_"+string_of(irsd)+"_"+string_of(jrsd)+"_"+string_of(ersd);
+                                  outfname += "_"+string_of(kch1)+"_"+string_of(kch2)+"_"+string_of(ich1)+"_"+string_of(ich2)+"_"+string_of(ide);
+                                  outfname += "_"+string_of(jch1)+"_"+string_of(jch2)+"_"+string_of(jde)+"_"+string_of(ech1)+"_"+string_of(ech2);
+                                  if(biglu) outfname += "_BIGLU";
+                                  outfname += ".pdb.gz";
+                                  TR << "HIT! " << outfname << std::endl;
 
                                   Pose opose = native;
                                   opose.replace_residue(brsd,bpy.residue(1),true);
@@ -840,6 +845,8 @@ void run() {
                                   opose.set_chi(1,ersd,CHI1[ech1]);
                                   opose.set_chi(2,ersd,CHI2[ech2]);
                                   opose.set_chi(3,ersd,pose.chi(3,ersd));
+
+																	opose.dump_pdb( option[out::file::o]()+"/"+outfname+"_PRE.pdb");
 
                                   AtomID bzn = AtomID(opose.residue(brsd).atom_index("ZN" ),brsd);
                                   AtomID bne = AtomID(opose.residue(brsd).atom_index("NE1"),brsd);
@@ -891,13 +898,6 @@ void run() {
                                   refine(opose,sfhard,brsd,irsd,jrsd,ersd);
                                   core::scoring::calpha_superimpose_pose(opose,native);
                                   Real rms = core::scoring::CA_rmsd(opose,native);
-
-                                  string outfname = utility::file_basename(infile)+"_FULL_"+string_of(brsd)+"_"+string_of(irsd)+"_"+string_of(jrsd)+"_"+string_of(ersd);
-                                  outfname += "_"+string_of(kch1)+"_"+string_of(kch2)+"_"+string_of(ich1)+"_"+string_of(ich2)+"_"+string_of(ide);
-                                  outfname += "_"+string_of(jch1)+"_"+string_of(jch2)+"_"+string_of(jde)+"_"+string_of(ech1)+"_"+string_of(ech2);
-                                  if(biglu) outfname += "_BIGLU";
-                                  outfname += ".pdb.gz";
-                                  TR << "HIT! " << outfname << std::endl;
 
                                   sf->score(opose);
                                   Real dbb = opose.energies().residue_total_energies(brsd)[core::scoring::fa_intra_rep];
