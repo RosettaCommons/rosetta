@@ -15,6 +15,8 @@
 #include <core/scoring/methods/dfire/DFIRE_EnergyCreator.hh>
 
 // Package Headers
+#include <core/scoring/DenseEnergyContainer.hh>
+#include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/methods/dfire/DFIRE_Potential.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoringManager.hh>
@@ -71,10 +73,31 @@ DFIRE_Energy::setup_for_scoring(
 	pose::Pose & pose, ScoreFunction const &
 ) const {
 	using namespace core::scoring::methods;
-	std::cout << "called setup_for_scoring" << std::endl;
-	// Do we have a map?
+	//std::cout << "called setup_for_scoring" << std::endl;
+	// Do we have a potential yet?
 	if (!potential_is_loaded_) {
 		utility_exit_with_message("No potential loaded.");
+	}
+	
+	LongRangeEnergyType const & lr_type( long_range_type() );
+	// create a container
+	Energies & energies( pose.energies() );
+	bool create_new_lre_container( false );
+
+	if ( energies.long_range_container( lr_type ) == 0 ) {
+		create_new_lre_container = true;
+
+	} else {
+		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
+		DenseEnergyContainerOP dec( static_cast< DenseEnergyContainer * > ( lrc.get() ) );
+		if ( dec->size() != pose.total_residue() ) {
+			create_new_lre_container = true;
+		}
+	}
+
+	if ( create_new_lre_container ) {
+		LREnergyContainerOP new_dec = new DenseEnergyContainer( pose.total_residue(), gb_elec );
+		energies.set_long_range_container( lr_type, new_dec );
 	}
 }
 
@@ -97,7 +120,7 @@ DFIRE_Energy::residue_energy(
 	pose::Pose const &,
 	EnergyMap & emap
 ) const {
-	std::cout << "called residue_energy" << std::endl;
+	//std::cout << "called residue_energy" << std::endl;
 	return;
 }
 
@@ -106,12 +129,12 @@ bool DFIRE_Energy::defines_residue_pair_energy(
 	Size res1,
 	Size res2
 ) const {
-	std::cout << "testing " << res1 << "," << res2 << " ";
-	if (pose.residue_type(res1).is_protein() && pose.residue_type(res2).is_protein() ) {
-		std::cout << "true!" << std::endl;
-	} else {
-		std::cout << "false!" << std::endl;
-	}
+	//std::cout << "testing " << res1 << "," << res2 << " ";
+	//if (pose.residue_type(res1).is_protein() && pose.residue_type(res2).is_protein() ) {
+	//	std::cout << "true!" << std::endl;
+	//} else {
+	//	std::cout << "false!" << std::endl;
+	//}
 
 	return ( pose.residue_type(res1).is_protein() && pose.residue_type(res2).is_protein() );
 }
@@ -123,7 +146,7 @@ DFIRE_Energy::eval_intrares_energy(
 	ScoreFunction const &,
 	EnergyMap &
 ) const {
-	std::cout << "called eval_intrares_energy" << std::endl;
+	//std::cout << "called eval_intrares_energy" << std::endl;
 	return;
 }
 
@@ -135,7 +158,7 @@ DFIRE_Energy::residue_pair_energy(
 	ScoreFunction const &,
 	EnergyMap & emap
 ) const {
-	std::cout << "residue_pair_energy" << std::endl;
+	//std::cout << "residue_pair_energy" << std::endl;
 	emap[ core::scoring::DFIRE ] += core::scoring::methods::dfire::get_DFIRE_potential().eval_dfire_pair_energy( rsd1, rsd2 );
 }
 

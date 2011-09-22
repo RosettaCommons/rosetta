@@ -23,6 +23,7 @@
 
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.hh>
+#include <boost/algorithm/string/trim.hpp>
 
 namespace core {
 namespace scoring {
@@ -43,12 +44,16 @@ std::string const get_joint_id(
 	std::string const & res2,
 	std::string const & atom2
 ) {
+	std::string atom1_trimmed(atom1);
+	std::string atom2_trimmed(atom2);
+	boost::algorithm::trim(atom1_trimmed);
+	boost::algorithm::trim(atom2_trimmed);
 	using std::string;
 	if ( res1 < res2 ) {
-		string const joint_id1( res1 + " " + atom1 + " " + res2 + " " + atom2 );
+		string const joint_id1( res1 + " " + atom1_trimmed + " " + res2 + " " + atom2_trimmed);
 		return joint_id1;
 	}
-	string const joint_id2( res2 + " " + atom2 + " " + res1 + " " + atom1 );
+	string const joint_id2( res2 + " " + atom2_trimmed + " " + res1 + " " + atom1_trimmed );
 	return joint_id2;
 }
 
@@ -59,7 +64,7 @@ DFIRE_Potential::read_potential(std::string const & fn) {
 	using std::string;
 	using utility::vector1;
 
-	std::cout << "reading potential!" << std::endl;
+	//std::cout << "reading potential!" << std::endl;
 
 	utility::io::izstream input;
 	basic::database::open( input, fn );
@@ -77,20 +82,29 @@ DFIRE_Potential::read_potential(std::string const & fn) {
 			Size const res_idx1(res_index(res1)), res_idx2(res_index(res2)),
 				atom_idx1(atom_index(atom1)), atom_idx2(atom_index(atom2));
 
-			if ( res_idx1 != INVALID && res_idx2 != INVALID && atom_idx1 != INVALID && atom_idx2 != INVALID ) {
+			//std::cout << "line = " << line << std::endl;
+			//if ( res_idx1 != INVALID && res_idx2 != INVALID && atom_idx1 != INVALID && atom_idx2 != INVALID ) {
 				vector1< Real > pair_potential; // for (res1,atom1,res2,atom2)
 				Real value(-999);
 				ss >> value;
-				if ( !ss.fail() ) {
+				while ( !ss.fail() ) {
 					pair_potential.push_back(value);
 					ss >> value;
+					//std::cout << "value = " << value << std::endl;
 				}
 
 				potential_.push_back( pair_potential );
 				string const joint_id(get_joint_id(res1,atom1,res2,atom2));
 				atom_res_idx_[joint_id] = potential_.size();
-				std::cout << "potential size = " << potential_.size() << std::endl;
-			}
+				//std::cout << "joint_id = (" << joint_id << ")" << std::endl;
+				//std::cout << "potential size = " << potential_.size() << std::endl;
+				//std::cout << "pair_potential size = " << pair_potential.size() << std::endl;
+				//std::cout << joint_id;
+				//for ( Size ii = 1; ii <= pair_potential.size(); ++ii ) {
+				//	std::cout << " " << pair_potential[ii];
+				//}
+				//std::cout << std::endl;
+			//}
 		}
 	} // getline
 
@@ -99,8 +113,10 @@ DFIRE_Potential::read_potential(std::string const & fn) {
 
 
 core::Size DFIRE_Potential::res_index(
-	std::string const & res_name
+	std::string const & input
 ) const {
+	std::string res_name(input);
+	boost::algorithm::trim(res_name);
 	if      ( res_name == "ASP" ) return  1;
 	else if ( res_name == "PRO" ) return  2;
 	else if ( res_name == "LYS" ) return  3;
@@ -142,17 +158,21 @@ DFIRE_Potential::eval_dfire_pair_energy(
 	core::conformation::Residue const & rsd1,
 	core::conformation::Residue const & rsd2
 ) const {
+
+	if ( rsd1.seqpos() == rsd2.seqpos() ) return 0.0;
+
 	using core::Size;
 	using std::string;
 	Size const natoms1( rsd1.natoms() );
 	Size const natoms2( rsd2.natoms() );
 
 	Real score = 0;
-	std::cout << "calling score with " << natoms1 << "," << natoms2 << std::endl;
+	//std::cout << "calling score with " << natoms1 << "," << natoms2 << std::endl;
 	for ( Size ii = 1; ii <= natoms1; ++ii ) {
 	for ( Size jj = 1; jj <= natoms2; ++jj ) {
-		Real const dist_sq = rsd1.xyz(ii).distance_squared( rsd2.xyz(jj) );
-		Size const dist_bin_idx = (Size) (dist_sq + 0.5);
+		Real const dist = rsd1.xyz(ii).distance( rsd2.xyz(jj) );
+		Size const dist_bin_idx = (Size) (2*dist + 0.5);
+		//std::cout << "bin(" << dist << ") = " << dist_bin_idx << std::endl;
 		if ( dist_bin_idx < 30 ) {
 			string const atom_id1( rsd1.type().atom_name(ii) );
 			string const atom_id2( rsd2.type().atom_name(jj) );
@@ -160,14 +180,19 @@ DFIRE_Potential::eval_dfire_pair_energy(
 			string const res_id2 ( rsd2.type().name3() );
 			string const joint_bin_id( get_joint_id( res_id1, atom_id1, res_id2, atom_id2 ) );
 			boost::unordered_map< string, Size >::const_iterator it = atom_res_idx_.find(joint_bin_id);
-			if ( it != atom_res_idx_.end() ) {
-				score += potential_[it->second][dist_bin_idx];
+			utility::vector1< Real > const & scores( potential_[it->second] );;
+			if ( it != atom_res_idx_.end() && dist_bin_idx <= scores.size() ) {
+				score += scores[dist_bin_idx];
+				//for ( Size kk = 1; kk <= scores.size(); ++kk ) {
+				//	std::cout << " " << scores[kk];
+				//}
+				//std::cout << std::endl;
+				//std::cout << "score(" << joint_bin_id << "," << dist << "," << dist_bin_idx <<  ") = " << score << std::endl;
 			}
-			std::cout << "score = " << score << std::endl;
 		}
 	}
 	}
-	return score;
+	return score/100;
 }
 
 bool DFIRE_Potential::is_loaded() const {
