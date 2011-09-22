@@ -408,7 +408,7 @@ def prepareMiniLibs(mini_path, bindings_path):
         for k in sources:
             for f in sources[k]:
                 #all_sources.append( scons_file + '/' + k + '/' + f + obj_suffix)
-                all_sources.append( k + '/' + f + obj_suffix)
+                if not f.endswith('.cu'): all_sources.append( k + '/' + f + obj_suffix)
 
     #all_sources.remove('protocols/forge/remodel/RemodelDesignMover' + obj_suffix) # <-- I have no idea what gcc does not like this file...
 
