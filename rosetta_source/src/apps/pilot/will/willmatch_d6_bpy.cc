@@ -550,9 +550,9 @@ void run() {
       //Size brsd = *biter;
       Size brsd = scanres[ ii ];
       //      if(brsd != 110) continue;
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-			if( natsasa[brsd] > 0 ) continue;
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      if( natsasa[brsd] > 0 ) continue;
+      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       if( startbpy != 0 && startbpy != brsd ) continue;        // CHECKPOINT
       if( startbpy == brsd ) { startfile = ""; startbpy = 0; } // CHECKPOINT
       oprogress << infile << " " << brsd << std::endl;
@@ -592,9 +592,9 @@ void run() {
             Size irsd = *iiter;
             if(irsd==brsd) { continue; }
             Stub si(CBs[irsd],CAs[irsd],CAs[irsd]+(Ns[irsd]-Cs[irsd]));
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             for(Size ide = 1; ide <= 2; ide++) {
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+              /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
               if(hallow0(irsd) > DUN_THRESH) continue; // if all chi1 / chi2 are clash or bad rot
               if(CBs[irsd].distance_squared(cenb) > ((ide==1)?hddcbmx2:hedcbmx2) ) { continue; }              // if CB too far, skip
               for(Size ich1 = 1; ich1 <= CHI1.size(); ++ich1) {
@@ -637,9 +637,9 @@ void run() {
                     if(jrsd <= irsd) { continue; }
                     if(jrsd==brsd || jrsd==irsd) { continue; }
                     Stub sj(CBs[jrsd],CAs[jrsd],CAs[jrsd]+(Ns[jrsd]-Cs[jrsd]));
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     for(Size jde = 1; jde <= 2; jde++) {
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                       if(hallow0(jrsd) > DUN_THRESH) continue; // if all chi1 / chi2 are clash or bad rot
                       if(CBs[jrsd].distance_squared(cenb) > ((jde==1)?hddcbmx2:hedcbmx2) ) { continue; }  // if CB too far, skip
                       for(Size jch1 = 1; jch1 <= CHI1.size(); ++jch1) {
@@ -782,7 +782,7 @@ void run() {
                                 //  utility_exit_with_message("tesljtl;sfj");
                                 // }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                                 bool overlap = false;
                                 Vec cen = (2*cenb + ceni + cenj + cene)/5.0;
                                 Vec ori1 = orik1;
@@ -821,10 +821,9 @@ void run() {
                                 foundori4.push_back(ori4);
                                 foundori5.push_back(ori5);
                                 foundori6.push_back(ori6);
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-																if( !( ide==1 && jde==1 && natsasa[irsd] < 0.001 && natsasa[jrsd] < 0.001 && natsasa[ersd] < 0.001 ) )
-																	{
+                                {
 
 
                                   Pose opose = native;
@@ -842,50 +841,51 @@ void run() {
                                   opose.set_chi(2,ersd,CHI2[ech2]);
                                   opose.set_chi(3,ersd,pose.chi(3,ersd));
 
-                                  AtomID bzn  = AtomID(opose.residue(brsd).atom_index("ZN" ),brsd);
-                                  AtomID bne1 = AtomID(opose.residue(brsd).atom_index("NE1"),brsd);
-                                  AtomID bnn1 = AtomID(opose.residue(brsd).atom_index("NN1"),brsd);
-                                  AtomID inh  = AtomID(opose.residue(irsd).atom_index(ide==1?"HD1":"HE2"),irsd);
-                                  AtomID ind1 = AtomID(opose.residue(irsd).atom_index("ND1"),irsd);
-                                  AtomID ine2 = AtomID(opose.residue(irsd).atom_index("NE2"),irsd);
-                                  AtomID ice1 = AtomID(opose.residue(irsd).atom_index("CE1"),irsd);
-                                  AtomID icg  = AtomID(opose.residue(irsd).atom_index("CG" ),irsd);
-                                  AtomID icd2 = AtomID(opose.residue(irsd).atom_index("CD2"),irsd);
-                                  AtomID jnh  = AtomID(opose.residue(jrsd).atom_index(jde==1?"HD1":"HE2"),jrsd);
-                                  AtomID jnd1 = AtomID(opose.residue(jrsd).atom_index("ND1"),jrsd);
-                                  AtomID jne2 = AtomID(opose.residue(jrsd).atom_index("NE2"),jrsd);
-                                  AtomID jce1 = AtomID(opose.residue(jrsd).atom_index("CE1"),jrsd);
-                                  AtomID jcg  = AtomID(opose.residue(jrsd).atom_index("CG" ),jrsd);
-                                  AtomID jcd2 = AtomID(opose.residue(jrsd).atom_index("CD2"),jrsd);
-                                  AtomID ecd  = AtomID(opose.residue(ersd).atom_index("CD" ),ersd);
-                                  AtomID eoe1 = AtomID(opose.residue(ersd).atom_index("OE1"),ersd);
-                                  AtomID eoe2 = AtomID(opose.residue(ersd).atom_index("OE2"),ersd);
+                                  AtomID bzn = AtomID(opose.residue(brsd).atom_index("ZN" ),brsd);
+                                  AtomID bne = AtomID(opose.residue(brsd).atom_index("NE1"),brsd);
+                                  AtomID bnn = AtomID(opose.residue(brsd).atom_index("NN1"),brsd);
+                                  AtomID inh = AtomID(opose.residue(irsd).atom_index(ide==1?"HD1":"HE2"),irsd);
+                                  AtomID inn = AtomID(opose.residue(irsd).atom_index(ide==1?"ND1":"NE2"),irsd);
+                                  AtomID jnh = AtomID(opose.residue(jrsd).atom_index(jde==1?"HD1":"HE2"),jrsd);
+                                  AtomID jnn = AtomID(opose.residue(jrsd).atom_index(jde==1?"ND1":"NE2"),jrsd);
+                                  AtomID ecd = AtomID(opose.residue(ersd).atom_index("CD" ),ersd);
+                                  AtomID oe1 = AtomID(opose.residue(ersd).atom_index("OE1"),ersd);
+                                  AtomID oe2 = AtomID(opose.residue(ersd).atom_index("OE2"),ersd);
+
                                   Real d1 = pose.residue(brsd).xyz("ZN").distance(pose.residue(ersd).xyz("OE1"));
                                   Real d2 = pose.residue(brsd).xyz("ZN").distance(pose.residue(ersd).xyz("OE2"));
-                                  core::scoring::constraints::FuncOP disfunc0 = new core::scoring::constraints::HarmonicFunc( 0.0, 0.2 );
-                                  core::scoring::constraints::FuncOP disfunc  = new core::scoring::constraints::HarmonicFunc( 2.2, 0.2 );
-                                  core::scoring::constraints::FuncOP angfunc  = new core::scoring::constraints::CircularHarmonicFunc( 1.5707, 0.2 );
-                                  core::scoring::constraints::FuncOP angfunc2 = new core::scoring::constraints::CircularHarmonicFunc( 2.0943, 0.2 );
+                                  core::scoring::constraints::FuncOP disfunc0   = new core::scoring::constraints::HarmonicFunc( 0.0, 0.2 );
+                                  core::scoring::constraints::FuncOP disfunc    = new core::scoring::constraints::HarmonicFunc( 2.2, 0.2 );
+                                  core::scoring::constraints::FuncOP angfunc90  = new core::scoring::constraints::CircularHarmonicFunc(   1.5707, 0.2 );
+                                  core::scoring::constraints::FuncOP angfunc180 = new core::scoring::constraints::CircularHarmonicFunc( 2*1.5707, 0.2 );
+                                  core::scoring::constraints::FuncOP angfunc2   = new core::scoring::constraints::CircularHarmonicFunc( 2.0943, 0.2 );
+
+																	bool angbei = numeric::angle_degrees(opose.xyz(bne),opose.xyz(bzn),opose.xyz(inn)) < 135.0;
+																	bool angbni = numeric::angle_degrees(opose.xyz(bnn),opose.xyz(bzn),opose.xyz(inn)) < 135.0;
+																	bool angbej = numeric::angle_degrees(opose.xyz(bne),opose.xyz(bzn),opose.xyz(jnn)) < 135.0;
+																	bool angbnj = numeric::angle_degrees(opose.xyz(bnn),opose.xyz(bzn),opose.xyz(jnn)) < 135.0;
+																	bool anghij = numeric::angle_degrees(opose.xyz(inn),opose.xyz(bzn),opose.xyz(jnn)) < 135.0;
 
                                   opose.add_constraint(new core::scoring::constraints::AtomPairConstraint(bzn,inh,disfunc0));
                                   opose.add_constraint(new core::scoring::constraints::AtomPairConstraint(bzn,jnh,disfunc0));
-                                  if( biglu || d1 < d2 ) opose.add_constraint(new core::scoring::constraints::AtomPairConstraint(bzn,eoe1,disfunc));
-                                  if( biglu || d1 > d2 ) opose.add_constraint(new core::scoring::constraints::AtomPairConstraint(bzn,eoe2,disfunc));
+                                  opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne,bzn,inn,(angbei?angfunc90:angfunc180)));
+                                  opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn,bzn,inn,(angbni?angfunc90:angfunc180)));
+                                  opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne,bzn,jnn,(angbej?angfunc90:angfunc180)));
+                                  opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn,bzn,jnn,(angbnj?angfunc90:angfunc180)));
+                                  opose.add_constraint(new core::scoring::constraints::AngleConstraint(inn,bzn,jnn,(anghij?angfunc90:angfunc180)));
 
-                                  if(ide==1) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne1,bzn,ind1,angfunc));
-                                  else       opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne1,bzn,ine2,angfunc));
-                                  if(ide==1) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn1,bzn,ind1,angfunc));
-                                  else       opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn1,bzn,ine2,angfunc));
 
-                                  if(jde==1) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne1,bzn,jnd1,angfunc));
-                                  else       opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne1,bzn,jne2,angfunc));
-                                  if(jde==1) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn1,bzn,jnd1,angfunc));
-                                  else       opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn1,bzn,jne2,angfunc));
+																	bool angbe1 = numeric::angle_degrees(opose.xyz(bne),opose.xyz(bzn),opose.xyz(oe1)) < 135.0;
+																	bool angbn1 = numeric::angle_degrees(opose.xyz(bnn),opose.xyz(bzn),opose.xyz(oe1)) < 135.0;
+																	bool angbe2 = numeric::angle_degrees(opose.xyz(bne),opose.xyz(bzn),opose.xyz(oe2)) < 135.0;
+																	bool angbn2 = numeric::angle_degrees(opose.xyz(bnn),opose.xyz(bzn),opose.xyz(oe2)) < 135.0;
 
-                                  if( biglu || d1 < d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn1,bzn,eoe1,angfunc));
-                                  if( biglu || d1 > d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn1,bzn,eoe2,angfunc));
-                                  if( biglu || d1 < d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne1,bzn,eoe1,angfunc));
-                                  if( biglu || d1 > d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne1,bzn,eoe2,angfunc));
+                                  if( biglu || d1 < d2 ) opose.add_constraint(new core::scoring::constraints::AtomPairConstraint(bzn,oe1,disfunc));
+                                  if( biglu || d1 > d2 ) opose.add_constraint(new core::scoring::constraints::AtomPairConstraint(bzn,oe2,disfunc));
+																	if( biglu || d1 < d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne,bzn,oe1,(angbe1?angfunc90:angfunc180)));
+																	if( biglu || d1 < d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn,bzn,oe1,(angbn1?angfunc90:angfunc180)));
+                                  if( biglu || d1 > d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne,bzn,oe2,(angbe1?angfunc90:angfunc180)));
+                                  if( biglu || d1 > d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn,bzn,oe2,(angbn1?angfunc90:angfunc180)));
 
                                   refine(opose,sf,brsd,irsd,jrsd,ersd);
                                   refine(opose,sfhard,brsd,irsd,jrsd,ersd);
