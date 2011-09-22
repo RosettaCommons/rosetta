@@ -25,8 +25,10 @@
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/CircularHarmonicFunc.hh>
+#include <core/scoring/packing/compute_holes_score.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/init.hh>
+#include <basic/database/open.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -251,6 +253,10 @@ void run() {
 		}
 		Pose native = in_fa;
 		Size nres = in_fa.n_residue();
+		core::scoring::packing::HolesParams hp_dec15;
+		hp_dec15.read_data_file(basic::database::full_name("rosettaholes/decoy15.params"));
+		Real natrholes = core::scoring::packing::compute_dec15_score(native);
+
 		core::chemical::ResidueType const & rtala( in_fa.residue(1).residue_type_set().name_map("ALA") );
 		//core::chemical::ResidueType const & rthis( in_fa.residue(1).residue_type_set().name_map("HIS") );
 		//core::chemical::ResidueType const & rtglu( in_fa.residue(1).residue_type_set().name_map("GLU") );
@@ -897,8 +903,21 @@ void run() {
 																	// if( rsd_sasa[brsd] > 0.1 ) continue;
 
 																	core::io::silent::SilentStructOP ss_out_all( new core::io::silent::ScoreFileSilentStruct );
+
+																	Real decrholes = core::scoring::packing::compute_dec15_score(opose);
+																	core::scoring::packing::HolesResult hr = core::scoring::packing::compute_holes_score(opose,hp_dec15);
+																	Real locrholes = 0.0, count = 0.0;
+																	for(Size i = 1; i <= hr.atom_scores.n_atom(brsd); ++i) { count += 1; locrholes += hr.atom_scores[AtomID(i,brsd)]; }
+																	for(Size i = 1; i <= hr.atom_scores.n_atom(irsd); ++i) { count += 1; locrholes += hr.atom_scores[AtomID(i,irsd)]; }
+																	for(Size i = 1; i <= hr.atom_scores.n_atom(jrsd); ++i) { count += 1; locrholes += hr.atom_scores[AtomID(i,jrsd)]; }
+																	for(Size i = 1; i <= hr.atom_scores.n_atom(ersd); ++i) { count += 1; locrholes += hr.atom_scores[AtomID(i,ersd)]; }
+																	locrholes /= count;
+
 																	ss_out_all->fill_struct(opose,outfname);
 																	ss_out_all->add_energy( "rms" , rms );
+																	ss_out_all->add_energy( "rholes", decrholes );
+																	ss_out_all->add_energy( "drholes", decrholes - natrholes);
+																	ss_out_all->add_energy( "lrholes", locrholes );
 																	ss_out_all->add_energy( "bpy_chi1" , CHI1[kch1] );
 																	ss_out_all->add_energy( "bpy_chi2" , CHI2[kch2] );
 																	ss_out_all->add_energy( "dun_bpy" , dbb );
@@ -909,7 +928,7 @@ void run() {
 																	ss_out_all->add_energy( "sasa_his1", rsd_sasa[irsd] );
 																	ss_out_all->add_energy( "sasa_his2", rsd_sasa[jrsd] );
 																	ss_out_all->add_energy( "sasa_glu" , rsd_sasa[ersd] );
-																	sfd.write_silent_struct( *ss_out_all, option[ out::file::silent ]() );
+																	sfd.write_silent_struct( *ss_out_all, option[out::file::o]()+"/"+option[ out::file::silent ]() );
 
 																	utility::io::ozstream otmp(option[out::file::o]()+"/"+outfname);
 																	otmp << "REMARK 666 MATCH TEMPLATE A BPY "+ObjexxFCL::fmt::I(4,brsd)+" MATCH MOTIF A HIS "+ObjexxFCL::fmt::I(4,irsd)+"  1  1" << std::endl;
