@@ -288,6 +288,7 @@ sources = {
 		"GeometricSolvationFeatures",
 		"HBondFeatures",
 		"HBondParameterFeatures",
+		"JobDataFeatures",
 		"OrbitalsFeatures",
 		"PairFeatures",
 		"PoseCommentsFeatures",

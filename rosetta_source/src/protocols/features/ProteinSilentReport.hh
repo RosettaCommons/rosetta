@@ -26,6 +26,7 @@
 #include <protocols/features/PoseCommentsFeatures.hh>
 #include <protocols/features/ProteinResidueConformationFeatures.hh>
 #include <protocols/features/ResidueConformationFeatures.hh>
+#include <protocols/features/JobDataFeatures.hh>
 
 // Platform Headers
 #include <core/types.hh>
@@ -88,6 +89,7 @@ private:
 	protocols::features::PoseCommentsFeaturesOP pose_comments_features_;
 	protocols::features::ProteinResidueConformationFeaturesOP protein_residue_conformation_features_;
 	protocols::features::ResidueConformationFeaturesOP residue_conformation_features_;
+	protocols::features::JobDataFeaturesOP job_data_features_;
 
 };
 
