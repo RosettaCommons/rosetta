@@ -2712,6 +2712,13 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'tail_output_file_name', 'String', default='tail_output'),
 	),
 
+        Option_Group('rotamerdump',
+                Option('xyz','Boolean',default= 'false',desc="when using the RotamerDump application, output the xyz coords of every rotamer"),
+                Option('one_body','Boolean',default='false',desc="when using the RotamerDump application, output the one_body energies of every rotamer"),
+                Option('two_body','Boolean',default='false',desc="when using the RotamerDump application, output the two_body energies of every rotamer"),
+                Option('annealer','Boolean',default='false',desc="Run the annealer and output the rotamers it chose"),
+        ),
+
 	##options for Robert
 	#Option_Group('Robert',
 	#  Option( 'score', 'Boolean', default='true'),

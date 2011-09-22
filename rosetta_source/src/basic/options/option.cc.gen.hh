@@ -1196,6 +1196,11 @@ option.add( basic::options::OptionKeys::krassk::right_tail, "No description" ).d
 option.add( basic::options::OptionKeys::krassk::tail_mode, "No description" ).def(false);
 option.add( basic::options::OptionKeys::krassk::tail_mode_name, "No description" ).def(1);
 option.add( basic::options::OptionKeys::krassk::tail_output_file_name, "No description" ).def("tail_output");
+option.add( basic::options::OptionKeys::rotamerdump::rotamerdump, "rotamerdump option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::rotamerdump::xyz, "when using the RotamerDump application, output the xyz coords of every rotamer" ).def(false);
+option.add( basic::options::OptionKeys::rotamerdump::one_body, "when using the RotamerDump application, output the one_body energies of every rotamer" ).def(false);
+option.add( basic::options::OptionKeys::rotamerdump::two_body, "when using the RotamerDump application, output the two_body energies of every rotamer" ).def(false);
+option.add( basic::options::OptionKeys::rotamerdump::annealer, "Run the annealer and output the rotamers it chose" ).def(false);
 option.add( basic::options::OptionKeys::robert::robert, "robert option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::robert::pairdata_input_pdb_list, "Takes in a file containing a list of pdb locations paired with protocol specific data (eg: one disulfide pair)" ).def("");
 option.add( basic::options::OptionKeys::robert::pcs_maxsub_filter, "minimum normalized maxsub for PCS clustering protocol" ).def(0.9);

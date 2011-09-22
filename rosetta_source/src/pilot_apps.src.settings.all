@@ -51,6 +51,7 @@ sources = {
             "nonlocal_abinitio",
         ],
 	"pilot/delucasl" : [
+		"RotamerDump",
 		#"process_mdl"
 		#"map_testing"
 	],

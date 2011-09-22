@@ -35,6 +35,7 @@
 #include <basic/options/keys/assembly.OptionKeys.gen.hh>
 #include <basic/options/keys/abrelax.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/rotamerdump.OptionKeys.gen.hh>
 #include <basic/options/keys/robert.OptionKeys.gen.hh>
 #include <basic/options/keys/smhybrid.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>

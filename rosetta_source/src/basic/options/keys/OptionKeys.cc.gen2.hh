@@ -45,6 +45,11 @@ namespace krassk { IntegerOptionKey const right_tail( "krassk:right_tail" );  }
 namespace krassk { BooleanOptionKey const tail_mode( "krassk:tail_mode" );  }
 namespace krassk { IntegerOptionKey const tail_mode_name( "krassk:tail_mode_name" );  }
 namespace krassk { StringOptionKey const tail_output_file_name( "krassk:tail_output_file_name" );  }
+namespace rotamerdump { BooleanOptionKey const rotamerdump( "rotamerdump" );  }
+namespace rotamerdump { BooleanOptionKey const xyz( "rotamerdump:xyz" );  }
+namespace rotamerdump { BooleanOptionKey const one_body( "rotamerdump:one_body" );  }
+namespace rotamerdump { BooleanOptionKey const two_body( "rotamerdump:two_body" );  }
+namespace rotamerdump { BooleanOptionKey const annealer( "rotamerdump:annealer" );  }
 namespace robert { BooleanOptionKey const robert( "robert" );  }
 namespace robert { StringOptionKey const pairdata_input_pdb_list( "robert:pairdata_input_pdb_list" );  }
 namespace robert { RealOptionKey const pcs_maxsub_filter( "robert:pcs_maxsub_filter" );  }

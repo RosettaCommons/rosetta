@@ -1127,6 +1127,10 @@ sources = {
 		"util",
 	],
 
+        "protocols/RotamerDump" : [
+                "RotamerDumpMover",
+        ],
+
 	"protocols/rotamer_recovery" : [
 		"RotamerRecovery",
 		"RRComparer",
