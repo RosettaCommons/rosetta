@@ -551,6 +551,7 @@ hbond_compute_energy(
 				<< " xH = " << ObjexxFCL::fmt::SS( xH ) << " xD = " << ObjexxFCL::fmt::SS( xD ) << std::endl;
 		return;
 	}
+	//std::cout << " hb: " << AHdis << " " << xH << " " << xD << std::endl;
 	if ( AHdis > MAX_R || AHdis < MIN_R || xH < MIN_xH || xD < MIN_xD ||
 		xH > MAX_xH || xD > MAX_xD ) {
 		return;
@@ -563,13 +564,40 @@ hbond_compute_energy(
 	double const dxH = static_cast<double>(xH);
 	double  Pr(0.0),  PSxD(0.0),  PSxH(0.0),  PLxD(0.0),  PLxH(0.0); // values of polynomials
 	double dPr(0.0), dPSxD(0.0), dPSxH(0.0), dPLxD(0.0), dPLxH(0.0); // derivatives of polynomials
-	double  FSr,  FLr(0.0),  FxD,  FxH; // values of fading intervals
-	double dFSr, dFLr(0.0), dFxD, dFxH; // derivatives of fading intervals
+	double  FSr(0.0),  FLr(0.0),  FxD(0.0),  FxH(0.0); // values of fading intervals
+	double dFSr(0.0), dFLr(0.0), dFxD(0.0), dFxH(0.0); // derivatives of fading intervals
 
 	database.AHdist_short_fade_lookup( hbe )->value_deriv(AHdis, FSr, dFSr);
 	database.AHdist_long_fade_lookup( hbe )->value_deriv(AHdis, FLr, dFLr);
 	database.cosBAH_fade_lookup( hbe )->value_deriv(xH, FxH, dFxH);
 	database.cosAHD_fade_lookup( hbe )->value_deriv(xD, FxD, dFxD);
+
+	if ( FSr == Real(0.0) && FLr == Real(0.0) ) {
+		// is dAHdis out of range for both its fade function and its polynnomials?  Then set energy > MAX_HB_ENERGY.
+		if ( dAHdis < database.AHdist_poly_lookup( hbe )->xmin() ||
+			dAHdis < database.AHdist_poly_lookup( hbe )->xmax() ) {
+			energy = MAX_HB_ENERGY + Real(1.0);
+			return;
+		}
+	}
+
+	if ( FxH == Real(0.0) ) {
+		// is xH out of range for both its fade function and its polynnomials?  Then set energy > MAX_HB_ENERGY.
+		if ( ( dxH < database.cosBAH_short_poly_lookup( hbe )->xmin() && dxH < database.cosBAH_long_poly_lookup( hbe )->xmin() ) ||
+			( dxH > database.cosBAH_short_poly_lookup( hbe )->xmax() && dxH > database.cosBAH_long_poly_lookup( hbe )->xmax() ) ) {
+			energy = MAX_HB_ENERGY + Real(1.0);
+			return;
+		}
+	}
+
+	if ( FxD == Real(0.0) ) {
+		// is xD out of range for both its fade function and its polynnomials?  Then set energy > MAX_HB_ENERGY.
+		if ( ( dxD < database.cosAHD_short_poly_lookup( hbe )->xmin() && dxD < database.cosAHD_long_poly_lookup( hbe )->xmin() ) ||
+			( dxD > database.cosAHD_short_poly_lookup( hbe )->xmax() && dxD > database.cosAHD_long_poly_lookup( hbe )->xmax() ) ) {
+			energy = MAX_HB_ENERGY + Real(1.0);
+			return;
+		}
+	}
 
 	(*database.AHdist_poly_lookup( hbe ))(dAHdis, Pr, dPr);
 	(*database.cosBAH_short_poly_lookup( hbe ))(dxH, PSxH, dPSxH);
@@ -579,6 +607,14 @@ hbond_compute_energy(
 	//database.chi_poly_lookup( HBEvalType )(AHdis, Pr, dPr);
 
 	energy = Pr*FxD*FxH + FSr*(PSxD*FxH + FxD*PSxH) + FLr*(PLxD*FxH + FxD*PLxH);
+	//std::cout << " hb: " << AHdis << " " << xH << " " << xD << " energy: " << energy << std::endl;
+
+	//if ( dxH < 0 && energy < 0 ) {
+	//	std::cout << " hbond out of range with non-zero energy: energy= " << energy << " dAHdis= " << dAHdis << " dxD= " << dxD << " dxH= " << dxH << std::endl;
+	//	std::cout << " Fade function values: FSr= " << FSr << " FLr= " << FLr << " FxH= " << FxH << " FxD= " << FxD << std::endl;
+	//	std::cout << "Pr*FxD*FxH " << Pr*FxD*FxH << " FSr*(PSxD*FxH ) "<< FSr*PSxD*FxH << " FSr*FxD*PSxH " << FSr*FxD*PSxH << " FLr*PLxD*FxH " << FLr*PLxD*FxH << " FLr*FxD*PLxH " << FLr*FxD*PLxH << std::endl;
+	//	std::cout << "eval type: " << hbe << std::endl;
+	//}
 
 	Real const peak_height = basic::options::option[ basic::options::OptionKeys::corrections::score::hb_sp2_peak_heigh_above_trough ];
 	Real const chi_amp = basic::options::option[ basic::options::OptionKeys::corrections::score::hb_sp2_amp ];
@@ -588,7 +624,8 @@ hbond_compute_energy(
 	Real angleBAH(0.0);
 	Real half_cos_piminus3BAH_plus_1(1.0);
 	if ( hbondoptions.use_sp2_chi_penalty() &&
-			get_hbe_acc_hybrid( hbe ) == chemical::SP2_HYBRID ) {
+			get_hbe_acc_hybrid( hbe ) == chemical::SP2_HYBRID &&
+			hbe > hbe_dPBAaPBAsepP4helix ) {
 		apply_chi_torsion_penalty = true;
 
 		// NEW FORMULA #6:
@@ -602,6 +639,10 @@ hbond_compute_energy(
 		// (a/p)*( (p-1)(cos(2chi)+1)/2 + 1 ) * ( 1 - (cos(pi-3BAH)+1)/2 ) + a/p*(cos(pi-3BAH)+1)/2
 		// (a/p)*(( (p-1)(cos(2chi)+1)/2 + 1 ) * ( 1 - (cos(pi-3BAH)+1)/2) + (cos(pi-3BAH)+1)/2))
 		// (a/p)*(( (p-1)(cos(2chi)+1)/2 )( 1 - (cos3BAH+1)/2) + 1) -- may be easier to just add a and p back in.
+
+    /// Version #7: do not use the sp2 term for short-ranged backbone-backbone hydrogen bonds.
+    /// Added exclusion in the if-check above for hbe <= hbe_dPBAaPBAsepP4helix (which covers
+    /// all the short-ranged backbone-backbone hydrogen bonds)
 
 		chi_penalty = std::cos( 2 * chi ) + 1;
 		chi_penalty *= (peak_height - 1)/ 2;
@@ -883,7 +924,7 @@ hb_energy_deriv_u2(
 			deriv.abase_deriv.f1() += dchipen_dBAH * f1b;
 			deriv.abase_deriv.f2() += dchipen_dBAH * f2b;
 			deriv.h_deriv.f1()     += dchipen_dBAH * f1h;
-			deriv.h_deriv.f2()     += dchipen_dBAH * f2h;		
+			deriv.h_deriv.f2()     += dchipen_dBAH * f2h;
 		}
 		}
 
