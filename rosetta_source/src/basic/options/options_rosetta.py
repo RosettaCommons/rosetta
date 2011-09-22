@@ -4076,6 +4076,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	Option( 'dump_weight_trajectory','File', desc='if yes, write weights to file for each scoring event'),
 	Option( 'fix_normAzz', 'RealVector', desc='divide by this axial tensor component' ),
 	Option( 'select_residues_file', 'File', desc='loop/rigid-file with RIGID entries that define the set of residues active for RDC score' ),
+        Option( 'fit_method', 'String', legal = [ 'svd', 'nls'], default = 'svd', desc='different method used to fit RDC' ),
+        Option( 'fixDa', 'RealVector', desc='Da value for each experiment'),
+        Option( 'fixR', 'RealVector', desc='R value for each experiment'),
     ),
 
 	##############################################################################

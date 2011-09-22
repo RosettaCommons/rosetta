@@ -27,7 +27,6 @@
 //Auto Headers
 #include <utility/vector1_bool.hh>
 
-
 namespace core {
 namespace scoring {
 
@@ -95,6 +94,12 @@ public:
 	/// will set alignment tensor and force-fields in RDC
 	core::Real compute_dipscore(core::pose::Pose const& pose);
 
+	/// fit rdc using RDC data
+	core::Real compute_dipscore_nls(core::pose::Pose const& pose);
+	core::Real compute_dipscore_nlsDa(core::pose::Pose const& pose, utility::vector1<Real> const tensorDa);
+	core::Real compute_dipscore_nlsR(core::pose::Pose const& pose, utility::vector1<Real> const tensorR);
+	core::Real compute_dipscore_nlsDaR(core::pose::Pose const& pose, utility::vector1<Real> const tensorDa, utility::vector1<Real> const tensorR);
+
 	//wRDC (like wRMSD .. iter i + 1 tensor weights are ~exp(  - dev^2/sigma ))
 	Real iterate_tensor_weights(core::pose::Pose const& pose,
 			core::Real sigma2, core::Real tolerance, bool reset);
@@ -157,6 +162,11 @@ public:
 	void show_tensor_stats( std::ostream&, core::Size ex ) const;
 	void show_tensor_matrix( std::ostream&, core::Size ex ) const;
 	void show_rdc_values( std::ostream&, core::Size ex ) const;
+
+	void show_tensor_stats_nls( std::ostream&, core::Size ex, const double *par) const;
+	//void show_tensor_stats_nlsDa( std::ostream&, core::Size ex, const double tensorDa, const double *par) const;
+	//void show_tensor_stats_nlsR( std::ostream&, core::Size ex, const double tensorR, const double *par) const;
+	//void show_tensor_stats_nlsDaR( std::ostream&, core::Size ex, const double tensorDa, const double tensorR, const double *par) const;
 private:
 	///@brief read RDC data from file
 	void read_RDC_file( Size nex, std::string const& filename );
@@ -185,6 +195,14 @@ private:
 	core::Real* FA_;//Fractional Anisotropy of the diffusion tensor - NGS
 	core::Real* trace_;
 	core::Real* maxz_;
+
+  //stuff for nls
+	core::Real* r0_;
+	core::Real* r1_;
+	core::Real* r2_;
+	core::Real* exprdc_;
+	core::Real* rdcconst_;
+	core::Size* lenex_;
 };
 
 /////////////////////////////////////////////////
@@ -251,13 +269,13 @@ public:
 	inline Real fixed_dist() const {
 		runtime_assert( 0 ); ///don't use this
 		if (type() == RDC_TYPE_NH)
-			return 1.01;
+			return 1.02;
 		else if (type() == RDC_TYPE_NC)
-			return 1.08;
+			return 1.341;
 		else if (type() == RDC_TYPE_CH)
-			return 1.52325877;
+			return 1.08;
 		else if (type() == RDC_TYPE_CC)
-			return 1.2;
+			return 1.525;
 		//should never get here...
 		runtime_assert( 0 );
 		return 0;
@@ -280,13 +298,16 @@ public:
 	inline Real Dconst() const {
 		core::Real Dcnst(0.0);
 		if (type() == RDC_TYPE_NH)
-			Dcnst = 6.088;
+    //Concepts in Magnetic Resonance Part A, 21, 10-21
+			Dcnst = 36.5089;
 		if (type() == RDC_TYPE_NC)
-			Dcnst = 1.53124;
+			Dcnst = 9.179532;
 		if (type() == RDC_TYPE_CH)
-			Dcnst = 15.1046;
+			Dcnst = 90.55324;
+			//Dcnst = -90.55324;
 		if (type() == RDC_TYPE_CC)
-			Dcnst = 3.79873;
+			Dcnst = 22.76805;
+			//Dcnst = -22.76805;
 		//		std::cout << Dcnst <<std::endl;
 				runtime_assert( Dcnst != 0 ); // at this position the type() should already
 		return Dcnst;

@@ -1,6 +1,3 @@
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_sequence( "DenovoProteinDesign:use_template_sequence" );  }
-namespace DenovoProteinDesign { BooleanOptionKey const use_template_topology( "DenovoProteinDesign:use_template_topology" );  }
-namespace DenovoProteinDesign { FileOptionKey const create_from_template_pdb( "DenovoProteinDesign:create_from_template_pdb" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const create_from_secondary_structure( "DenovoProteinDesign:create_from_secondary_structure" );  }
 namespace RBSegmentRelax { BooleanOptionKey const RBSegmentRelax( "RBSegmentRelax" );  }
 namespace RBSegmentRelax { FileOptionKey const input_pdb( "RBSegmentRelax:input_pdb" );  }
@@ -341,6 +338,9 @@ namespace rdc { BooleanOptionKey const iterate_reset( "rdc:iterate_reset" );  }
 namespace rdc { FileOptionKey const dump_weight_trajectory( "rdc:dump_weight_trajectory" );  }
 namespace rdc { RealVectorOptionKey const fix_normAzz( "rdc:fix_normAzz" );  }
 namespace rdc { FileOptionKey const select_residues_file( "rdc:select_residues_file" );  }
+namespace rdc { StringOptionKey const fit_method( "rdc:fit_method" );  }
+namespace rdc { RealVectorOptionKey const fixDa( "rdc:fixDa" );  }
+namespace rdc { RealVectorOptionKey const fixR( "rdc:fixR" );  }
 namespace antibody { BooleanOptionKey const antibody( "antibody" );  }
 namespace antibody { BooleanOptionKey const graft_l1( "antibody:graft_l1" );  }
 namespace antibody { StringOptionKey const l1_template( "antibody:l1_template" );  }
