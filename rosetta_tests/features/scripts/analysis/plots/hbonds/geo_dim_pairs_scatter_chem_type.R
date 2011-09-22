@@ -12,20 +12,29 @@ check_setup()
 sele <-"
 SELECT
   geom.AHdist, geom.cosBAH, geom.cosAHD, geom.chi,
+  hblj.don_acc_atrE + hblj.don_acc_base_atrE +
+    h_acc_atrE + h_acc_base_atrE AS lj_atrE,
+  hblj.don_acc_repE + hblj.don_acc_base_repE +
+    h_acc_repE + h_acc_base_repE AS lj_repE,
+  hblj.don_acc_solv + hblj.don_acc_base_solv +
+    h_acc_solv + h_acc_base_solv AS lj_solv,
   acc_site.HBChemType AS acc_chem_type,
   don_site.HBChemType AS don_chem_type
 FROM
   hbond_geom_coords AS geom,
   hbonds AS hbond,
   hbond_sites AS don_site,
-  hbond_sites AS acc_site
+  hbond_sites AS acc_site,
+  hbond_lennard_jones AS hblj
 WHERE
   hbond.struct_id = geom.struct_id AND
   hbond.hbond_id =  geom.hbond_id AND
   hbond.struct_id = don_site.struct_id AND
   hbond.don_id = don_site.site_id AND
   hbond.struct_id = acc_site.struct_id AND
-  hbond.acc_id = acc_site.site_id;"
+  hbond.acc_id = acc_site.site_id AND
+  hbond.struct_id = hblj.struct_id AND
+  hbond.hbond_id = hblj.hbond_id;"
 f <- query_sample_sources(sample_sources, sele)
 
 # This is deprecated please use the hbond_chem_types table for the lables instead
@@ -58,11 +67,11 @@ scale_y_AHdist <- scale_y_continuous(
 
 scale_x_cosBAH <- scale_x_continuous(
 	"cos(Base -- Acceptor -- Hydrogen)",
-	limit=c(0,1), breaks=c(0, .2, .4, .6, .8, 1))
+	limit=c(-.4,1), breaks=c(-.4 -.2, 0, .2, .4, .6, .8, 1))
 
 scale_y_cosBAH <- scale_y_continuous(
 	"cos(Base -- Acceptor -- Hydrogen)",
-	limit=c(0,1), breaks=c(0, .2, .4, .6, .8, 1))
+	limit=c(-.4,1), breaks=c(-.4, -.2, 0, .2, .4, .6, .8, 1))
 
 scale_x_cosAHD <- scale_x_continuous(
 	"cos(Acceptor -- Hydrogen -- Donor)",
@@ -74,11 +83,11 @@ scale_y_cosAHD <- scale_y_continuous(
 
 scale_x_chi <- scale_x_continuous(
 	"Base -- Acceptor Torsion (Radians)",
-	limit=c(0,1), breaks=c(0, pi/3, pi*2/3, pi, pi*4/3, pi*5/3, 2*pi))
+	limit=c(0,2*pi), breaks=c(0, pi/3, pi*2/3, pi, pi*4/3, pi*5/3, 2*pi))
 
 scale_y_chi <- scale_y_continuous(
 	"Base -- Acceptor Torsion (Radians)",
-	limit=c(0,1), breaks=c(0, pi/3, pi*2/3, pi, pi*4/3, pi*5/3, 2*pi))
+	limit=c(0,2*pi), breaks=c(0, pi/3, pi*2/3, pi, pi*4/3, pi*5/3, 2*pi))
 
 plot_each_ss <- function(sub_f){
 	ss_id <- sub_f$sample_source[1]
@@ -86,37 +95,43 @@ plot_each_ss <- function(sub_f){
 
 	plot_id <- paste("geo_dim_pairs_scatter_cosBAH_AHdist_chem_type", ss_id, sep="_")
 	p <- ggplot(data=sub_f) + plot_parts +
-		geom_point(aes(x=cosBAH, y=AHdist), size=.4) + scale_x_cosBAH + scale_y_AHdist +
+		geom_point(aes(x=cosBAH, y=AHdist, colour=log(lj_repE+1)), size=.4) +
+		scale_x_cosBAH + scale_y_AHdist +
 		opts(title = paste("Hydrogen Bonds cosBAH vs AHdist  ss_id: ", ss_id, sep="_"))
 	save_plots(plot_id, ss, output_dir, output_formats)
 
 	plot_id <- paste("geo_dim_pairs_scatter_cosAHD_AHdist_chem_type", ss_id, sep="_")
 	p <- ggplot(data=sub_f) + plot_parts +
-		geom_point(aes(x=cosAHD, y=AHdist), size=.4) + scale_x_cosAHD + scale_y_AHdist +
+		geom_point(aes(x=cosAHD, y=AHdist, colour=log(lj_repE+1)), size=.4) +
+		scale_x_cosAHD + scale_y_AHdist +
 		opts(title = paste("Hydrogen Bonds cosAHD vs AHdist  ss_id: ", ss_id, sep="_"))
 	save_plots(plot_id, ss, output_dir, output_formats)
 
 	plot_id <- paste("geo_dim_pairs_scatter_chi_AHdist_chem_type", ss_id, sep="_")
 	p <- ggplot(data=sub_f) + plot_parts +
-		geom_point(aes(x=chi, y=AHdist), size=.4) + scale_x_chi + scale_y_AHdist +
+		geom_point(aes(x=chi, y=AHdist, colour=log(lj_repE+1)), size=.4) +
+		scale_x_chi + scale_y_AHdist +
 		opts(title = paste("Hydrogen Bonds CHI vs AHdist  ss_id: ", ss_id, sep="_"))
 	save_plots(plot_id, ss, output_dir, output_formats)
 
 	plot_id <- paste("geo_dim_pairs_scatter_cosAHD_cosBAH_chem_type", ss_id, sep="_")
 	p <- ggplot(data=sub_f) + plot_parts +
-		geom_point(aes(x=cosAHD, y=cosBAH), size=.4) + scale_x_cosAHD + scale_y_cosBAH +
+		geom_point(aes(x=cosAHD, y=cosBAH, colour=log(lj_repE+1)), size=.4) +
+		scale_x_cosAHD + scale_y_cosBAH +
 		opts(title = paste("Hydrogen Bonds cosAHD vs cosBAH  ss_id: ", ss_id, sep="_"))
 	save_plots(plot_id, ss, output_dir, output_formats)
 
 	plot_id <- paste("geo_dim_pairs_scatter_chi_cosBAH_chem_type", ss_id, sep="_")
 	p <- ggplot(data=sub_f) + plot_parts +
-		geom_point(aes(x=chi, y=cosBAH), size=.4) + scale_x_chi + scale_y_cosBAH +
+		geom_point(aes(x=chi, y=cosBAH, colour=log(lj_repE+1)), size=.4) +
+		scale_x_chi + scale_y_cosBAH +
 		opts(title = paste("Hydrogen Bonds CHI vs cosBAH  ss_id: ", ss_id, sep="_"))
 	save_plots(plot_id, ss, output_dir, output_formats)
 
 	plot_id <- paste("geo_dim_pairs_scatter_chi_cosAHD_chem_type", ss_id, sep="_")
 	p <- ggplot(data=sub_f) + plot_parts +
-		geom_point(aes(x=chi, y=cosAHD), size=.4) + scale_x_chi + scale_y_cosAHD +
+		geom_point(aes(x=chi, y=cosAHD, colour=log(lj_repE+1)), size=.4) +
+		scale_x_chi + scale_y_cosAHD +
 		opts(title = paste("Hydrogen Bonds CHI vs cosAHD  ss_id: ", ss_id, sep="_"))
 	save_plots(plot_id, ss, output_dir, output_formats)
 }
