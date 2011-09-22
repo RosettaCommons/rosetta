@@ -306,7 +306,7 @@ void GridBase::diffuse_ring(core::Vector const & coords, core::Real radius, core
 						distance_from_ring = distance_squared-(radius_squared+half_width_squared);
 					}
 
-					if(distance_from_ring <= abs(magnitude))
+					if(distance_from_ring <= std::abs(magnitude))
 					{
 						grid_.setValue(point,magnitude+distance_from_ring);
 					}
