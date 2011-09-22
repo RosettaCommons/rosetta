@@ -16,7 +16,7 @@ class BaseSampleSource:
 
     def __init__(self):
         # These defaults should be either overwritten in the derived
-        # class __init__ or set via the --sample_sour_id
+        # class __init__ or set via the --sample_source_id
         # and--sample_source_description command line options
 
         sample_source_tag = getcwd().split("/")[-1]
@@ -165,8 +165,22 @@ class BaseSampleSource:
         script_fname = "%(output_dir)s/%(sample_source_id)s/condor_submit_script" % self.mvars
         print "Submit condor job %s..." % script_fname
 
-        #p = subprocess.Popen(['condor_submit', script_fname])
-        #p.wait()
+        o = commands.getoutput("which condor_submit")
+        if o[:23] == 'which: no condor_submit':
+            print """
+ERROR: Attempting to submit job to condor cluster, but 'condor_submit' is not found.
+
+ * If you intended to run it on a different cluster platform, use the
+   --run-type flag. See:
+
+      wiki.rosettacommons.org/index.php/FeaturesTutorialRunSciBench
+
+   for available options.
+
+ * If you did intend to run this on a condor cluster. Please check
+   that the system configured approriately. 
+"""
+            return
 
         # Submit condor job and add condor_job_id to the global list of jobs daemon should wait for
         o = commands.getoutput('condor_submit %s' % script_fname)

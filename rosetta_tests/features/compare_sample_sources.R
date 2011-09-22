@@ -24,6 +24,7 @@ includes <- c(
 	"scripts/methods/sample_sources.R",
 	"scripts/methods/methods.R",
 	"scripts/methods/ggplot2_geom_indicator.R",
+	"scripts/methods/ggplot2_scales.R",
 	"scripts/methods/output_formats.R",
 	"scripts/methods/coordinate_normalizations.R",
 	"scripts/methods/vector_math.R",

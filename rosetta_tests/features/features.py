@@ -20,8 +20,11 @@ def main(argv):
     '''
 A script to help debug/run Features scientic tests
 Please note that this script is for debuging/testing purposes only, it is currently not used in ScientificProfile daemon.
+
+See https://wiki.rosettacommons.org/index.php?title=FeaturesTutorialRunSciBench
+for documentation.
     '''
-    parser = OptionParser(usage="usage: %prog [OPTIONS] [TESTS]")
+    parser = OptionParser(usage="usage: %prog [OPTIONS] [ACTION]")
     parser.set_description(main.__doc__)
     parser.add_option("-d", "--database",
       default="", # processed below
@@ -87,7 +90,7 @@ Please note that this script is for debuging/testing purposes only, it is curren
 
 
     if len(args) != 1:
-        print 'You must supplies action and test name in command line! For example: "./feature.py submit " or ""./deature.py analyze ""'
+        parser.print_help()
         return
 
     valid_actions = ["submit", "analyze"]
@@ -153,6 +156,37 @@ Please note that this script is for debuging/testing purposes only, it is curren
     print commands.getoutput('sh %s.sh' % action )
 
 
+# The features.py script is an outgrowth of the cluster.py script
+# after it got too complicated for the standard cluster scientific
+# benchmarks As a reminant of the old system, this python script calls
+# a bash script which calls another python script. To make things
+# cleaner and more straight forwared, this is the first steps of
+# refactoring it to just call the python code directly from here.
+def parse_benchmark_list(benchmark_list_fname):
+    
+    sample_sources = []
+    benchmark_list = open(benchmark_list_fname)
+    for line in benchmark_list:
+        if len(line) == 0: continue
+        if line[0] == '#': continue  
+
+        sample_sources.append(line)
+
+    benchmark_list.close()
+
+    return sample_sources
+        
+
+def submit_action(mvars):
+    open("%(workdir)s/condor_job_ids" % mvars, 'w').close()
+    
+    #TODO allow the benchmark.list path be passed in from the command line
+    sample_sources = parse_benchmark_list(
+        "%(workdir)s/sample_sources/benchmark.list" % mvars)
+
+    for sample_source in sample_sources:
+        z = __import__("sample_sources.%s.submit", fromlist=["SampleSources"])
+        z.Sample_source().submit()
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
