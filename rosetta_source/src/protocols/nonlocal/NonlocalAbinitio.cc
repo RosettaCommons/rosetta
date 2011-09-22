@@ -28,7 +28,6 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/nonlocal.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <utility/vector1.hh>
 
 // Project headers
 #include <core/chemical/ChemicalManager.hh>
@@ -45,7 +44,7 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/jd2/ThreadingJob.hh>
-#include <protocols/loops/LoopRelaxMover.hh>
+#include <protocols/loops/LoopRelaxThreadingMover.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/relax/FastRelax.hh>
@@ -86,19 +85,16 @@ void NonlocalAbinitio::apply(core::pose::Pose& pose) {
 
   Loops chunks;
   identify_chunks(job->alignment(), pose.total_residue(), &chunks);
+  TreeBuilderOP builder = make_fold_tree(chunks, &pose);
 
   // Define the kinematics of the system
   emit_intermediate(pose, "nla_pre_abinitio.pdb");
-  TreeBuilderOP builder = make_fold_tree(chunks, &pose);
   MoverOP mover = new BrokenFold(fragments_large(), fragments_small(), make_movemap(pose.fold_tree()));
   mover->apply(pose);
   emit_intermediate(pose, "nla_post_abinitio.pdb");
 
   // Revert any modifications to the pose that TreeBuilder introduced
   builder->tear_down(&pose);
-
-  // Close any remaining chainbreaks then perform full-atom refinement
-  estimate_missing_density(&pose);
   refine(&pose);
 }
 
@@ -140,37 +136,13 @@ core::kinematics::MoveMapOP NonlocalAbinitio::make_movemap(const core::kinematic
 }
 
 void NonlocalAbinitio::estimate_missing_density(core::pose::Pose* pose) const {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using core::kinematics::FoldTree;
-  using protocols::loops::LoopRelaxMover;
-  using protocols::loops::Loops;
   assert(pose);
 
-  // Always operate in centroid mode
-  core::util::switch_to_residue_type_set(*pose, core::chemical::CENTROID);
-
-  // An empty Loops selection notifies LoopRelaxMover that it is responsible
-  // for choosing the breaks to close automatically.
-  Loops empty;
-  LoopRelaxMover closure;
-  closure.remodel("quick_ccd");
-  closure.intermedrelax("no");
-  closure.refine("no");
-  closure.relax("no");
-  closure.loops(empty);
-
-  // 3-mers
-  utility::vector1<core::fragment::FragSetOP> fragments;
-  fragments.push_back(fragments_small());
-  closure.frag_libs(fragments);
-
-  // Use atom pair constraints when available
-  closure.cmd_line_csts(option[constraints::cst_fa_file].user());
-
-  FoldTree tree(pose->total_residue());
-  pose->fold_tree(tree);
+  protocols::loops::LoopRelaxThreadingMover closure;
+  closure.setup();
   closure.apply(*pose);
+
+  core::util::switch_to_residue_type_set(*pose, core::chemical::CENTROID);
 }
 
 void NonlocalAbinitio::refine(core::pose::Pose* pose) const {
