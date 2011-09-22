@@ -19,7 +19,7 @@ from optparse import OptionParser, IndentedHelpFormatter
 
 def main(argv):
     '''
-A simple system for running scientific tests on Mini.
+A simple system for running scientific tests on Rosetta.
 
 Each test has its own subdirectory in tests/, which serves as its name.
 Each test has a file named "command", which should have the command to be executed.
@@ -55,14 +55,14 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
     #   metavar="PLACE",
     # )
     parser.add_option("-d", "--database",
-      default=path.join( path.expanduser("~"), "minirosetta_database"),
-      help="Directory where Mini database is found (default: ~/minirosetta_database)",
+      default="", # processed below
+      help="Path to Rosetta database. (default: $ROSETTA3_DB, ../..//rosetta_database)",
     )
 
     parser.add_option("-m", "--mini_home",
       #default=path.join( path.expanduser("~"), "mini"),
-      default=path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ),
-      help="Directory where Mini is found (default: ../)",
+      default= path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'rosetta_source'),
+      help="Directory where Rosetta is found (default: ../../rosetta_source/)",
     )
     parser.add_option("-j", "--num_procs",
       default=1,
@@ -114,9 +114,18 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
         random.shuffle(digs)
         options.host.extend( digs[:options.digs] )
 
-    if not path.isdir(options.database):
-        print "Can't find database at %s; please use -d" % options.database
-        return 1
+    if options.database == parser.get_default_values().database:
+        if os.environ.get('ROSETTA3_DB') is not None and \
+                path.isdir(os.environ.get('ROSETTA3_DB')):
+            options.database = os.environ.get('ROSETTA3_DB')
+        else:  options.database = path.join( path.dirname( path.dirname( path.dirname(path.abspath(sys.argv[0])) ) ), 'rosetta_database')
+
+        if not path.isdir( options.database ):
+            options.database = path.join( path.expanduser("~"), "rosetta_database")
+
+        if not path.isdir( options.database ):
+            print "Can't find database at %s; please set $ROSETTA3_DB or use -d" % options.database
+            return 1
     # Normalize path before we change directories!
     options.database = path.abspath(options.database)
 
@@ -124,7 +133,7 @@ rm -rf statistics/; ./scientific.py    # create reference results using only def
     # Using argv[] here causes problems when people try to run the script as "python scientific.py ..."
     #os.chdir( path.dirname(sys.argv[0]) ) # argv[0] is the script name
     if not path.isdir("tests"):
-        print "You must run this script from mini/tests/scientific/"
+        print "You must run this script from rosetta_tests/scientific/"
         return 2
 
     #If the "statistics" directory doesn't exist, create one;
