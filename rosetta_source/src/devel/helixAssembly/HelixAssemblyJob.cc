@@ -23,8 +23,8 @@ HelixAssemblyJob::HelixAssemblyJob(){};
 
 //copy constructor
 HelixAssemblyJob::HelixAssemblyJob(HelixAssemblyJob const & old_job):
-        job_id_(old_job.job_id_),
-        job_name_(old_job.job_name_),
+        id_(old_job.id_),
+        name_(old_job.name_),
         remaining_rounds_(old_job.remaining_rounds_),
         query_structure_(old_job.query_structure_),
         search_structure_(old_job.search_structure_),
@@ -35,11 +35,11 @@ HelixAssemblyJob::HelixAssemblyJob(HelixAssemblyJob const & old_job):
         direction_(old_job.direction_)
 {}
 
-HelixAssemblyJob::HelixAssemblyJob(core::Size job_id, std::string job_name, core::Size remaining_rounds, bool direction,
+HelixAssemblyJob::HelixAssemblyJob(core::Size id, std::string name, core::Size remaining_rounds, bool direction,
     std::string query_structure, std::string search_structure, core::Size search_index, core::Size query_frag_1_index,
     core::Size query_frag_2_index, std::vector<HelicalFragment> fragments):
-    job_id_(job_id),
-    job_name_(job_name),
+    id_(id),
+    name_(name),
     remaining_rounds_(remaining_rounds),
     direction_(direction),
     query_structure_(query_structure),
@@ -50,12 +50,12 @@ HelixAssemblyJob::HelixAssemblyJob(core::Size job_id, std::string job_name, core
     fragments_(fragments)
 {}
 
-core::Size HelixAssemblyJob::get_job_id() const{
-  return job_id_;
+core::Size HelixAssemblyJob::get_id() const{
+  return id_;
 }
 
-std::string HelixAssemblyJob::get_job_name() const{
-  return job_name_;
+std::string HelixAssemblyJob::get_name() const{
+  return name_;
 }
 
 core::Size HelixAssemblyJob::get_remaining_rounds() const{
@@ -98,12 +98,12 @@ std::vector<HelicalFragment> HelixAssemblyJob::get_fragments() const{
   return fragments_;
 }
 
-void HelixAssemblyJob::set_job_id(core::Size job_id){
-  this->job_id_ = job_id;
+void HelixAssemblyJob::set_id(core::Size id){
+  this->id_ = id;
 }
 
-void HelixAssemblyJob::set_job_name(std::string job_name){
-  this->job_name_ = job_name;
+void HelixAssemblyJob::set_name(std::string name){
+  this->name_ = name;
 }
 
 void HelixAssemblyJob::set_remaining_rounds(core::Size remaining_rounds){

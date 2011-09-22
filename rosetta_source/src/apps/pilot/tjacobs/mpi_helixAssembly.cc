@@ -99,7 +99,7 @@ main( int argc, char * argv [] )
       for(Size i=1; i <= pdb_library.size(); ++i){
           //create a HelixAssemblyJob
           HelixAssemblyJob temp_job;
-          temp_job.set_job_name(pdb_library[i].base());
+          temp_job.set_name(pdb_library[i].base());
           temp_job.set_query_structure(originalQueryPdbString);
           temp_job.set_search_index(i);
           temp_job.set_remaining_rounds(option[HelixAssembly::helices_to_add]);
@@ -162,7 +162,7 @@ main( int argc, char * argv [] )
           --currently_running_jobs;
 
           TR << "Number of completed jobs: " << num_completed_jobs << endl;
-          cout << "Number of currently running jobs: " << currently_running_jobs << endl;
+          cout << "Number of completed jobs: " << num_completed_jobs << endl;
 
           TR << "Number of currently running jobs: " << currently_running_jobs << endl;
           cout << "Number of currently running jobs: " << currently_running_jobs << endl;
@@ -188,7 +188,7 @@ main( int argc, char * argv [] )
 
           for(Size i=0; i < new_jobs.size(); ++i){
               if(new_jobs[i].get_remaining_rounds() > 0){
-                  TR << "job " << new_jobs[i].get_job_name() << " has " << new_jobs[i].get_remaining_rounds() <<
+                  TR << "job " << new_jobs[i].get_name() << " has " << new_jobs[i].get_remaining_rounds() <<
                       " remaining" << endl;
                   for(Size j=1; j <= pdb_library.size(); ++j){
                       //copy incomplete job and add a pose to search, then add to the queue
@@ -197,7 +197,7 @@ main( int argc, char * argv [] )
                       //only thing we should need to change about the job is the search structure, which only the head node knows
                       //we use an index here so that we don't need to hang onto the string forever (just-in-time loading).
                       temp_job.set_search_index(j);
-                      temp_job.set_job_name(temp_job.get_job_name() + "_" + pdb_library[j].base());
+                      temp_job.set_name(temp_job.get_name() + "_" + pdb_library[j].base());
 
                       //Add a partially incomplete Fragment Residue info to the end of the list of fragment residue infos. This
                       //will be finished in the HelixAssemblyMover(which is when we know the resnums of the new fragmnet)
@@ -208,18 +208,18 @@ main( int argc, char * argv [] )
                       job_queue.push_back(temp_job);
                   }
                   //Incomplete job output for debugging purposes
-                  TR << "Outputting incomplete job " << new_jobs[i].get_job_name() << endl;
+                  TR << "Outputting incomplete job " << new_jobs[i].get_name() << endl;
                   utility::io::ozstream outputStream;
-                  outputStream.open(new_jobs[i].get_job_name() + "_" + to_string(job_id_counter) + "_bundle.pdb");
+                  outputStream.open(new_jobs[i].get_name() + "_" + to_string(job_id_counter) + "_bundle.pdb");
                   ++job_id_counter;
                   outputStream << new_jobs[i].get_query_structure();
                   outputStream.close();
               }
               else{
-                  TR << "Outputting job " << new_jobs[i].get_job_name() << endl;
+                  TR << "Outputting job " << new_jobs[i].get_name() << endl;
                   //done. output PDBs
                   utility::io::ozstream outputStream;
-                  outputStream.open(new_jobs[i].get_job_name() + "_" + to_string(job_id_counter) + "_bundle.pdb");
+                  outputStream.open(new_jobs[i].get_name() + "_" + to_string(job_id_counter) + "_bundle.pdb");
                   ++job_id_counter;
                   outputStream << new_jobs[i].get_query_structure();
                   outputStream.close();
@@ -235,7 +235,7 @@ main( int argc, char * argv [] )
 
               HelixAssemblyJob temp_job = job_queue[job_queue.size()];
               job_queue.pop_back();
-              TR << "Sending job " << temp_job.get_job_name() << " to node " << completed_node << endl;
+              TR << "Sending job " << temp_job.get_name() << " to node " << completed_node << endl;
 
               //lazily load the search string
               utility::io::izstream data( pdb_library[temp_job.get_search_index()].name().c_str() );
@@ -268,11 +268,11 @@ main( int argc, char * argv [] )
               HelixAssemblyJob received_job;
               world.recv(0, 0, boost::mpi::skeleton(received_job));
               world.recv(0, 0, boost::mpi::get_content(received_job));
-              TR << "Node " << world.rank() << " received a job" << endl;
+              TR << "Node " << world.rank() << " received job: " << received_job.get_name() << endl;
 
               HelixAssemblyMover helixAssembler;
               std::vector<HelixAssemblyJob> returned_jobs = helixAssembler.apply(received_job);
-              TR << "Node " << world.rank() << "finished a job, returning " << returned_jobs.size() << "new job(s)." << endl;
+              TR << "Node " << world.rank() << "finished " << received_job.get_name() << ", returning " << returned_jobs.size() << "new job(s)." << endl;
 
               //tell head node which job finished
               world.send(0,0,world.rank());

@@ -1102,6 +1102,30 @@ rms_at_corresponding_atoms(
 	return numeric::model_quality::calc_rms( p1_coords, p2_coords );
 }
 
+/// @details Calculates RMSD of all atoms in AtomID map, no need for the poses to be the same length.
+Real
+rms_at_all_corresponding_atoms(
+        pose::Pose const & mod_pose,
+        pose::Pose const & ref_pose,
+        std::map< core::id::AtomID, core::id::AtomID > atom_id_map
+)
+{
+        utility::vector1< Vector > p1_coords, p2_coords;
+
+        for ( std::map< core::id::AtomID, core::id::AtomID >::const_iterator iter = atom_id_map.begin();
+                                iter != atom_id_map.end(); iter++ ) {
+
+                assert ( mod_pose.residue( (iter->first).rsd() ).atom_name(  (iter->first).atomno() ) ==
+                                                 ref_pose.residue( (iter->second).rsd() ).atom_name(  (iter->second).atomno() ) );
+
+                Vector const & p1(  mod_pose.xyz( iter->first ));
+                Vector const & p2(  ref_pose.xyz( iter->second ));
+                p1_coords.push_back(  p1 );
+                p2_coords.push_back(  p2 );
+        }
+        return numeric::model_quality::calc_rms( p1_coords, p2_coords );
+}
+
 Real
 rms_at_corresponding_atoms_no_super(
 	pose::Pose const & mod_pose,

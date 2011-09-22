@@ -377,6 +377,12 @@ rms_at_corresponding_atoms(
 	std::map< core::id::AtomID, core::id::AtomID > atom_id_map
 													 );
 
+Real
+rms_at_all_corresponding_atoms(
+        pose::Pose const & mod_pose,
+        pose::Pose const & ref_pose,
+        std::map< core::id::AtomID, core::id::AtomID > atom_id_map
+);
 
 Real
 rms_at_corresponding_atoms(

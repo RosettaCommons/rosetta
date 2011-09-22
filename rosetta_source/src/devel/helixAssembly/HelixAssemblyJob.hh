@@ -73,12 +73,12 @@ public:
 
   HelixAssemblyJob();
   HelixAssemblyJob(HelixAssemblyJob const & old_job);
-  HelixAssemblyJob(core::Size job_id, std::string job_name, core::Size round, bool direction, std::string query_structure,
+  HelixAssemblyJob(core::Size id, std::string name, core::Size round, bool direction, std::string query_structure,
       std::string search_structure, core::Size search_index, core::Size query_frag_1_index,
       core::Size query_frag_2_index, std::vector<HelicalFragment> fragments);
 
-  core::Size get_job_id() const;
-  std::string get_job_name() const;
+  core::Size get_id() const;
+  std::string get_name() const;
   core::Size get_remaining_rounds() const;
   core::Size get_search_index() const;
   std::string get_query_structure() const;
@@ -89,8 +89,8 @@ public:
   bool get_direction() const;
   HelicalFragment get_query_frag_1() const;
   HelicalFragment get_query_frag_2() const;
-  void set_job_id(core::Size job_id);
-  void set_job_name(std::string job_name);
+  void set_id(core::Size job_id);
+  void set_name(std::string job_name);
   void set_remaining_rounds(core::Size remaining_rounds);
   void set_search_index(core::Size search_index);
   void set_query_structure(std::string query_structure);
@@ -110,8 +110,8 @@ private:
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version)
   {
-    ar & job_id_;
-    ar & job_name_;
+    ar & id_;
+    ar & name_;
     ar & remaining_rounds_;
     ar & query_structure_;
     ar & search_structure_;
@@ -122,8 +122,8 @@ private:
     ar & direction_;
   }
 
-  core::Size job_id_;
-  std::string job_name_;
+  core::Size id_;
+  std::string name_;
   core::Size remaining_rounds_;
   std::string query_structure_;
   std::string search_structure_;

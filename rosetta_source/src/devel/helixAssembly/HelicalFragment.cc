@@ -16,6 +16,15 @@
 //Unit Headers
 #include <devel/helixAssembly/HelicalFragment.hh>
 
+HelicalFragment::HelicalFragment(){}
+
+HelicalFragment::HelicalFragment(core::Size start, core::Size end):
+start_(start),
+end_(end)
+{}
+
+HelicalFragment::~HelicalFragment(){}
+
 core::Size HelicalFragment::get_start() const
 {
     return start_;

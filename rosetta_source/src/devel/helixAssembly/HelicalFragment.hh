@@ -29,6 +29,12 @@ class HelicalFragment{
 
 public:
 
+  HelicalFragment();
+
+  HelicalFragment(core::Size start, core::Size end);
+
+  virtual ~HelicalFragment();
+
   core::Size get_end() const;
   std::string get_pdb_source() const;
   core::Size get_start() const;

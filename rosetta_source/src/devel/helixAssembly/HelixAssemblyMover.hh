@@ -20,6 +20,7 @@
 
 //Core
 #include <core/pose/Pose.hh>
+#include <core/id/AtomID.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 //Protocols
@@ -40,10 +41,8 @@ public:
         }
 
         core::scoring::ScoreFunctionOP get_scorefxn() const;
-        core::Size get_frag1_start() const;
-        core::Size get_frag1_end() const;
-        core::Size get_frag2_start() const;
-        core::Size get_frag2_end() const;
+        HelicalFragment get_query_frag_1() const;
+        HelicalFragment get_query_frag_2() const;
         core::Real get_helix_cap_distance_cutoff() const;
         core::Real get_helix_contact_distance_cutoff() const;
         core::Real get_helix_pair_rmsd_cutoff() const;
@@ -52,10 +51,8 @@ public:
         std::string get_query_structure_string() const;
         core::Real get_single_helix_rmsd_cutoff() const;
         void set_scorefxn(core::scoring::ScoreFunctionOP scorefxn_);
-        void set_frag1_start(core::Size frag1_start_);
-        void set_frag2_start(core::Size frag2_start_);
-        void set_frag1_end(core::Size frag1_end_);
-        void set_frag2_end(core::Size frag2_end_);
+        void set_query_frag_1(HelicalFragment frag_1_);
+        void set_query_frag_2(HelicalFragment frag_2_);
         void set_helix_cap_distance_cutoff(core::Real helix_cap_distance_cutoff_);
         void set_helix_contact_distance_cutoff(core::Real helix_contact_distance_cutoff_);
         void set_helix_pair_rmsd_cutoff(core::Real helix_pair_rmsd_cutoff_);
@@ -70,18 +67,27 @@ public:
 
         utility::vector1<std::pair<core::Size,core::Size> > findHelices(const core::pose::Pose & pose);
 
-        utility::vector1<core::Size> findFragments(const core::pose::Pose & targetPose,
-            const core::pose::Pose & queryFragment, utility::vector1<std::pair<core::Size,core::Size> > helix_endpts);
+        utility::vector1<HelicalFragment> findFragmentMatches(core::pose::Pose const & search_structure,
+            core::pose::Pose const & query_structure, HelicalFragment query_fragment,
+            utility::vector1< std::pair< core::Size,core::Size > > helix_endpts);
 
-        bool checkHelixContacts(const core::pose::Pose & pose, const core::pose::Pose & fragment1,
-            const core::pose::Pose & fragment2, std::pair<core::Size,core::Size> helix_endpts);
+        bool checkHelixContacts(const core::pose::Pose & query_structure, const core::pose::Pose & fragment1,
+            const core::pose::Pose & fragment2, HelicalFragment helix_to_check);
 
         bool closenessCheck(const core::Distance maxRange, const core::Distance end1Dist, const core::Distance end2Dist,
-            const core::pose::Pose & search_structure, core::Size frag1Start, core::Size frag2Start);
+            const core::pose::Pose & search_structure, HelicalFragment search_frag_1, HelicalFragment search_frag_2);
 
-        utility::vector1<std::pair<core::Size,core::Size> > findPartnerHelices(const core::pose::Pose & pose,
-            const core::pose::Pose & fragment1, const core::pose::Pose & fragment2, core::Size frag1Start,
-            core::Size frag2Start, utility::vector1<std::pair<core::Size,core::Size> > helix_endpts, bool direction);
+        utility::vector1<HelicalFragment> findPartnerHelices(core::pose::Pose const & search_structure,
+            core::pose::Pose const & fragment1, core::pose::Pose const & fragment2,
+            std::pair<HelicalFragment, HelicalFragment> helix_pair, utility::vector1< std::pair< core::Size,core::Size > > helix_endpts,
+            bool direction);
+
+        std::map<core::id::AtomID, core::id::AtomID> getFragmentMap(const core::pose::Pose & pose_1,
+            const core::pose::Pose & pose_2, HelicalFragment pose_1_fragment, HelicalFragment pose_2_fragment);
+
+        std::map<core::id::AtomID, core::id::AtomID> getFragmentPairMap(const core::pose::Pose & pose_1,
+            const core::pose::Pose & pose_2, const std::pair<HelicalFragment, HelicalFragment> & pose_1_fragments,
+            const std::pair<HelicalFragment, HelicalFragment> & pose_2_fragments);
 
         void superimposeBundles(core::pose::Pose & query_structure, const core::pose::Pose & results_structure);
 
@@ -93,10 +99,8 @@ public:
 private:
 
         core::scoring::ScoreFunctionOP scorefxn_;
-        core::Size frag1_start_;
-        core::Size frag1_end_;
-        core::Size frag2_start_;
-        core::Size frag2_end_;
+        HelicalFragment query_frag_1_;
+        HelicalFragment query_frag_2_;
         std::string query_structure_path_;
         std::string query_structure_string_;
         core::Real single_helix_rmsd_cutoff_;
