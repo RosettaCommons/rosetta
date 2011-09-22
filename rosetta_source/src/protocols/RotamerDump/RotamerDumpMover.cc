@@ -26,7 +26,10 @@
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/graph/Graph.hh>
 #include <basic/Tracer.hh>
-#include <core/pack/packer_neighbors.cc>
+#include <core/pack/packer_neighbors.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/conformation/Residue.hh>
+
 #include <core/io/pdb/pose_io.hh>
 #include <ObjexxFCL/format.hh>
 
