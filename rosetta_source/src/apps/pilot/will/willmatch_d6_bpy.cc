@@ -398,9 +398,9 @@ void run() {
 			pose3.append_residue_by_bond(pose.residue(2));
 			pose3.append_residue_by_bond(pose.residue(3));
 			Size count = 0;
-			std::cerr << scanres.size() << " ";
+			TR << scanres.size() << " ";
 			for(Sizes::const_iterator iri = scanres.begin(); iri != scanres.end(); ++iri) {
-				std::cerr << ++count << " ";
+				TR << ++count << " ";
 				Size const ir(*iri);
 				if( natsasa[ir] > 1.0 ) { ballow0(ir)=9e9; } else {
 					core::pose::replace_pose_residue_copying_existing_coordinates(pose,ir,rtphe); // clash w/BPY
@@ -538,7 +538,7 @@ void run() {
 		TR << "matching res, size " << scanres.size() << std::endl;
 		//#pragma omp parallel for
 		for ( Size ii = 1; ii <= scanres.size(); ++ii ) {
-			if(count%10==0) std::cerr << ObjexxFCL::fmt::I(4,ii) << "/" << scanres.size() << std::endl;
+			if(count%10==0) TR << ObjexxFCL::fmt::I(4,ii) << "/" << scanres.size() << std::endl;
 			vector1<Vec> foundcenbg,foundori1bg,foundori2bg,foundori3bg,foundori4bg,foundori5bg,foundori6bg;
 			vector1<Vec> foundcensg,foundori1sg,foundori2sg,foundori3sg,foundori4sg,foundori5sg,foundori6sg;
 			//Size brsd = *biter;
