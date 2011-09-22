@@ -860,6 +860,7 @@ HBondDatabase::report_parameter_features_schema() const {
 		"CREATE TABLE IF NOT EXISTS hbond_fade_interval(\n"
 		"	database_tag TEXT,\n"
 		"	name TEXT,\n"
+		"	junction_Type TEXT,\n"
 		"	min0 REAL,\n"
 		"	fmin REAL,\n"
 		"	fmax REAL,\n"
@@ -949,9 +950,10 @@ HBondDatabase::report_parameter_features(
 	pair<string, FadeIntervalCOP> fade_name_interval;
 	foreach(fade_name_interval, HBFadeInterval_lookup_by_name_){
 		statement stmt = (*db_session)
-			<< "INSERT INTO hbond_fade_interval VALUES (?,?,?,?,?,?);"
+			<< "INSERT INTO hbond_fade_interval VALUES (?,?,?,?,?,?,?);"
 			<< database_tag
 			<< fade_name_interval.first
+			<< (fade_name_interval.second->get_smooth() ? "smooth" : "piecewise_linear")
 			<< fade_name_interval.second->get_min0()
 			<< fade_name_interval.second->get_fmin()
 			<< fade_name_interval.second->get_fmax()
