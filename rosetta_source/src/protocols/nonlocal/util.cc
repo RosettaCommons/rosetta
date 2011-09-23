@@ -14,9 +14,11 @@
 #include <protocols/nonlocal/util.hh>
 
 // C/C++ headers
+#include <iostream>
 #include <string>
 
 // Utility headers
+#include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
@@ -46,6 +48,7 @@ namespace protocols {
 namespace nonlocal {
 
 static numeric::random::RandomGenerator RG(156144120);
+static basic::Tracer TR("protocols.nonlocal.util");
 
 protocols::loops::Loops combine_and_trim(core::Size min_chunk_sz,
                                          core::Size num_residues,
@@ -181,6 +184,7 @@ void add_cutpoint_variants(core::pose::Pose* pose) {
 
     core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::CUTPOINT_LOWER, i);
     core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::CUTPOINT_UPPER, i+1);
+    TR.Debug << "Added cutpoint variants to residues " << i << ", " << i + 1 << std::endl;
   }
 }
 
@@ -192,6 +196,7 @@ void remove_cutpoint_variants(core::pose::Pose* pose) {
 
     core::pose::remove_variant_type_from_pose_residue(*pose, core::chemical::CUTPOINT_LOWER, i);
     core::pose::remove_variant_type_from_pose_residue(*pose, core::chemical::CUTPOINT_UPPER, i+1);
+    TR.Debug << "Removed cutpoint variants from residues " << i << ", " << i + 1 << std::endl;
   }
 }
 
