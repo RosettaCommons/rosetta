@@ -24,6 +24,8 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
+//XRW2 suggestion: refactor to protocols/toolbox
+
 // C++ Headers
 #include <map>
 

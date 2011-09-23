@@ -110,7 +110,7 @@ PackRotamersMover::PackRotamersMover(
 
 PackRotamersMover::~PackRotamersMover(){}
 
-PackRotamersMover::PackRotamersMover( PackRotamersMover const & other ) : 
+PackRotamersMover::PackRotamersMover( PackRotamersMover const & other ) :
 	//utility::pointer::ReferenceCount(),
 	Mover( other )
 {

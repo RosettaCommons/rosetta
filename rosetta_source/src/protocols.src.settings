@@ -845,6 +845,7 @@ sources = {
 		"IfMover",
 		"InterfaceAnalyzerMover",
 		"IteratedConvergenceMover",
+                "ConstrainToIdealMover",
 		"JumpOutMover",
 		"KinematicMover",
 		"LoopAnalyzerMover",

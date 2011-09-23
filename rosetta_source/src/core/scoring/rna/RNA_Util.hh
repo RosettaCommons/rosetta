@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/methods/RNA_Util.hh
-/// @brief  Statistically derived rotamer pair potential class implementation
+/// @file   core/scoring/rna/RNA_Util.hh
+/// @brief
 /// @author Rhiju
 
 #ifndef INCLUDED_core_scoring_rna_RNA_Util_hh

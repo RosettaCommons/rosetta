@@ -7,11 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file RNA de novo fragment assembly Structure Parameters
-/// @brief User input parameters for RNA structure inference
+/// @file protocols/rna/AllowInsert.cc
+/// @brief
 /// @detailed
 /// @author Rhiju Das
 
+//XRW2 suggestion: refactor to protocols/toolbox
 
 // Unit Headers
 #include <protocols/rna/AllowInsert.hh>

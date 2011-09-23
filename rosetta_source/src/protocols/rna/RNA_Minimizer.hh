@@ -29,11 +29,6 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <iostream>
 
-//Auto using namespaces
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-//Auto using namespaces end
-
-
 namespace protocols {
 namespace rna {
 
@@ -76,21 +71,22 @@ private:
 	// Make this a Mover?
 	void
 	o2star_trials( core::pose::Pose & pose, core::scoring::ScoreFunctionOP const & scorefxn,
-								 bool const do_pack_instead_of_rotamer_trials = false ) const;
+		bool const do_pack_instead_of_rotamer_trials = false ) const;
 
 	void
 	setup_movemap( core::kinematics::MoveMap & mm, core::pose::Pose & pose );
 
-	void
+	//refactored out to ConstrainToIdealMover
+	/*void
 	vary_bond_geometry(
-										 core::kinematics::MoveMap & mm,
-										 core::pose::Pose & pose,
-										 core::pose::Pose const & pose_reference );
+		core::kinematics::MoveMap & mm,
+		core::pose::Pose & pose,
+		core::pose::Pose const & pose_reference );
 
 	void
 	create_pose_reference(
-												core::pose::Pose const & pose,
-												core::pose::Pose & pose_reference );
+		core::pose::Pose const & pose,
+		core::pose::Pose & pose_reference );*/
 
 
 	bool deriv_check_;
@@ -103,8 +99,6 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 
 }; // class RNA_Minimizer
-
-
 
 } //rna
 } // protocols
