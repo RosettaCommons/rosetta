@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file SequenceCoupling.hh
-/// @brief class definition for a sequence coupling profile that 
-//   represents a  probability distribution over the entire protein. 
+/// @brief class definition for a sequence coupling profile that
+//   represents a  probability distribution over the entire protein.
 /// @author Hetu Kamisetty
 
 #ifndef INCLUDED_core_sequence_SequenceCoupling_hh
@@ -82,9 +82,7 @@ public:
 	}
 
 	/// @brief Print this SequenceCoupling object to the given std::ostream.
-	friend std::ostream & operator<<(
-		std::ostream & out, const SequenceCoupling & p
-	);
+	/// Commenting out to fix PyRosetta build  friend std::ostream & operator<<( std::ostream & out, const SequenceCoupling & p );
 
 	utility::vector1< utility::vector1< Size> > edgeList() const{
 		return edgeList_;
@@ -101,9 +99,9 @@ public:
 	}
 
 	Size findEdgeId(Size vert1, Size vert2) const;
-		
+
 	utility::vector1< utility::vector1 < Real > > const & edgePotBetween(Size vert1, Size vert2) const;
-	utility::vector1< utility::vector1 < Real > >  const & edgePotBetween(Size edgeId) const; 
+	utility::vector1< utility::vector1 < Real > >  const & edgePotBetween(Size edgeId) const;
 
 	void temp(core::Real const t){
 		temp_ = t;

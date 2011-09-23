@@ -77,7 +77,7 @@ public:
 	//@brief, setters for the calculator.
 	void upper_chain( core::Size upper_chain);
 	void lower_chain( core::Size lower_chain);
-	void jump_num( int jump_num);
+	/// Commenting out to fix PyRosetta build  void jump_num( int jump_num);
 	void CB_dist_cutoff( core::Real CB_dist_cutoff);
 	void nearby_atom_cutoff(core::Real nearby_atom_cutoff);
 	void vector_angle_cutoff(core::Real vector_angle_cutoff);

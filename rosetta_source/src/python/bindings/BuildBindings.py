@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# :noTabs=true: :collapseFolds=1:
+# :noTabs=true: :collapseFolds=10:
 
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.

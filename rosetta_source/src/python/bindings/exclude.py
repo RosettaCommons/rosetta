@@ -87,6 +87,8 @@ BannedFiles = ['utility/PyHelper.hh', 'utility/keys', 'utility/options', 'utilit
     'protocols/nonlocal/Chunk.hh', # Problem with GCCXML on GCC 4.0
     'protocols/nonlocal',
 
+    'protocols/medal/MedalMain.hh',  # void* (void*) declaration
+
     #'protocols/frag_picker', # whole dir not in scons (ie been moved now), temporary
 
 
