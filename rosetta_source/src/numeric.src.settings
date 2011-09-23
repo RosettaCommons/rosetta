@@ -54,9 +54,6 @@ sources = {
 		"kiss_fft",
 		"FFT",
 	],
-	"numeric/nls" : [
-		"lmmin",
-	],
 }
 include_path = []
 library_path = []

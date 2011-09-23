@@ -10014,19 +10014,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-select_residues_file</b> \<File\><dt>
 <dd>loop/rigid-file with RIGID entries that define the set of residues active for RDC score</dd><br>
 </dl>
-<dl>
-<dt><b>-fit_method</b> \<String\><dt>
-<dd>different method used to fit RDC</dd><br>
-<dd>Default: "svd"</dd><br>
-</dl>
-<dl>
-<dt><b>-fixDa</b> \<RealVector\><dt>
-<dd>Da value for each experiment</dd><br>
-</dl>
-<dl>
-<dt><b>-fixR</b> \<RealVector\><dt>
-<dd>R value for each experiment</dd><br>
-</dl>
  </li>
 <li><h2>antibody</h2>
 <dl>

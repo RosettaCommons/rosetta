@@ -116,7 +116,7 @@ private:
 
 //used by Energy Method during scoring... should this become part of ResidualDipolarCoupling and thus cached in the pose
 	mutable core::Real dip_score_; //computed in setup_for_scoring.. delivered in finalize
-	mutable id::AtomID_Map< utility::vector1<Size> > atom2rdc_map_;
+	mutable id::AtomID_Map< Size > atom2rdc_map_;
 virtual
 core::Size version() const;
 };
