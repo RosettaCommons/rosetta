@@ -352,7 +352,7 @@ bool HelixAssemblyMover::checkHelixContacts(Pose const & query_structure, Pose c
 ///@details search the pose for a helical segment that makes interactions with both of the pose fragments
 utility::vector1<HelicalFragment> HelixAssemblyMover::findPartnerHelices(Pose const & search_structure,
     Pose const & fragment1, Pose const & fragment2, std::pair<HelicalFragment, HelicalFragment> helix_pair,
-    utility::vector1< std::pair< Size,Size > > helix_endpts, bool direction){
+    utility::vector1< std::pair< Size,Size > > helix_endpts, bool first_round, bool direction_needed){
 
   utility::vector1<HelicalFragment> partner_helices;
 
@@ -375,7 +375,6 @@ utility::vector1<HelicalFragment> HelixAssemblyMover::findPartnerHelices(Pose co
           Real minStartDistance=distCutoff*2;
           Real minEndDistance=distCutoff*2;
 
-          //Depending on the direction in which this helix must go (in order to allow loop connection)
           for(Size helixOffset=0; helixOffset<(helix_endpts[i].second-helix_endpts[i].first+1); helixOffset++){
 
               //Check distance between n-term of query fragment 1 and given residue of search fragment
@@ -408,19 +407,22 @@ utility::vector1<HelicalFragment> HelixAssemblyMover::findPartnerHelices(Pose co
               }
           }
           if(foundStart && foundEnd){
-              //by now we've found a helical fragment that has ends close to each of the fragments, now we want to
-              //check for more extensive interactions with *both* of the fragments
-              if(helixStart < helixEnd && !direction){
-                  HelicalFragment closeHelix(helixStart, helixEnd);
-                  if(checkHelixContacts(search_structure, fragment1, fragment2, closeHelix)){
-                      partner_helices.push_back(closeHelix);
-                  }
+              //if the round is 1 we can have a helix in either direction (ie, we can build off either the n or c-terminus).
+              //if the round is not 1 then we must alternate directions
+              HelicalFragment closeHelix;
+              if(helixStart < helixEnd){
+                  closeHelix.set_start(helixStart);
+                  closeHelix.set_end(helixEnd);
+                  closeHelix.set_direction(get_query_frag_1().get_direction());
               }
-              else if(helixEnd < helixStart && direction){
-                  HelicalFragment closeHelix(helixEnd, helixStart);
-                  if(checkHelixContacts(search_structure, fragment1, fragment2, closeHelix)){
-                      partner_helices.push_back(closeHelix);
-                  }
+              else if(helixEnd < helixStart){
+                  closeHelix.set_start(helixEnd);
+                  closeHelix.set_end(helixStart);
+                  closeHelix.set_direction(get_query_frag_2().get_direction());
+              }
+              if((first_round || closeHelix.get_direction() == direction_needed) &&
+                  checkHelixContacts(search_structure, fragment1, fragment2, closeHelix)){
+                  partner_helices.push_back(closeHelix);
               }
           }
       }
@@ -554,15 +556,31 @@ bool HelixAssemblyMover::closenessCheck(const core::Distance maxRange, const cor
 //      }
 //  }
 
-  core::Distance newEnd1Dist = search_structure.residue(search_frag_1.get_start()).atom("CA").xyz().distance(
-      search_structure.residue(search_frag_2.get_end()).atom("CA").xyz());
+  //if the query fragments are parallel treat the search fragments the same way & vice-versa
+  bool parallel = get_query_frag_1().get_direction()==get_query_frag_2().get_direction();
+  if(parallel){ //parallel
+      core::Distance newEnd1Dist = search_structure.residue(search_frag_1.get_start()).atom("CA").xyz().distance(
+            search_structure.residue(search_frag_2.get_start()).atom("CA").xyz());
 
-  if(abs(newEnd1Dist - end1Dist) > maxRange){return false;}
+        if(abs(newEnd1Dist - end1Dist) > maxRange){return false;}
 
-  core::Distance newEnd2Dist = search_structure.residue(search_frag_1.get_end()).atom("CA").xyz().distance(
-      search_structure.residue(search_frag_2.get_start()).atom("CA").xyz());
+        core::Distance newEnd2Dist = search_structure.residue(search_frag_1.get_end()).atom("CA").xyz().distance(
+            search_structure.residue(search_frag_2.get_end()).atom("CA").xyz());
 
-  if(abs(newEnd2Dist - end2Dist)+abs(newEnd1Dist - end1Dist) > maxRange){return false;}
+        if(abs(newEnd2Dist - end2Dist)+abs(newEnd1Dist - end1Dist) > maxRange){return false;}
+  }
+  else{//anti-parallel
+      core::Distance newEnd1Dist = search_structure.residue(search_frag_1.get_start()).atom("CA").xyz().distance(
+          search_structure.residue(search_frag_2.get_end()).atom("CA").xyz());
+
+      if(abs(newEnd1Dist - end1Dist) > maxRange){return false;}
+
+      core::Distance newEnd2Dist = search_structure.residue(search_frag_1.get_end()).atom("CA").xyz().distance(
+          search_structure.residue(search_frag_2.get_start()).atom("CA").xyz());
+
+      if(abs(newEnd2Dist - end2Dist)+abs(newEnd1Dist - end1Dist) > maxRange){return false;}
+  }
+
 
   return true;
 }//end closenessCheck
@@ -638,9 +656,6 @@ std::vector<HelixAssemblyJob> HelixAssemblyMover::apply(HelixAssemblyJob & job){
     this->set_query_frag_1(job.get_query_frag_1());
     this->set_query_frag_2(job.get_query_frag_2());
 
-    Pose query_fragment_1(query_structure, get_query_frag_1().get_start(), get_query_frag_1().get_end());
-    Pose query_fragment_2(query_structure, get_query_frag_2().get_start(), get_query_frag_2().get_end());
-
     std::pair<HelicalFragment, HelicalFragment> query_fragments(get_query_frag_1(), get_query_frag_2());
 
     TR << "Fragment 1 is " << get_query_frag_1().get_size() << " residues" << endl;
@@ -665,11 +680,24 @@ std::vector<HelixAssemblyJob> HelixAssemblyMover::apply(HelixAssemblyJob & job){
     //The max distance-squared a single point can be off an still meet the allowable RMSD requirements
     core::Distance max_point_distance = sqrt(get_helix_pair_rmsd_cutoff() * get_helix_pair_rmsd_cutoff() * query_structure.total_residue());
 
-    core::Distance end_1_dist = query_structure.residue(get_query_frag_1().get_start()).atom("CA").xyz().distance(
-          query_structure.residue(get_query_frag_2().get_end()).atom("CA").xyz());
 
-    core::Distance end_2_dist = query_structure.residue(get_query_frag_1().get_end()).atom("CA").xyz().distance(
-         query_structure.residue(get_query_frag_2().get_start()).atom("CA").xyz());
+    bool parallel = get_query_frag_1().get_direction() == get_query_frag_2().get_direction();
+    core::Distance end_1_dist;
+    core::Distance end_2_dist;
+    if(parallel){
+        end_1_dist = query_structure.residue(get_query_frag_1().get_start()).atom("CA").xyz().distance(
+            query_structure.residue(get_query_frag_2().get_start()).atom("CA").xyz());
+
+        end_2_dist = query_structure.residue(get_query_frag_1().get_end()).atom("CA").xyz().distance(
+            query_structure.residue(get_query_frag_2().get_end()).atom("CA").xyz());
+    }
+    else{
+        end_1_dist = query_structure.residue(get_query_frag_1().get_start()).atom("CA").xyz().distance(
+            query_structure.residue(get_query_frag_2().get_end()).atom("CA").xyz());
+
+        end_2_dist = query_structure.residue(get_query_frag_1().get_end()).atom("CA").xyz().distance(
+            query_structure.residue(get_query_frag_2().get_start()).atom("CA").xyz());
+    }
 
     //Create a vector of only helical pairs that could possibly have an RMSD to the query structure within the allowable range
     utility::vector1< std::pair< HelicalFragment,HelicalFragment > > close_helix_pairs;
@@ -706,7 +734,7 @@ std::vector<HelixAssemblyJob> HelixAssemblyMover::apply(HelixAssemblyJob & job){
             Pose combinedResultFragments(combinePoses(fragment1, fragment2));
 
             utility::vector1<HelicalFragment> helix_partners = findPartnerHelices(search_structure, fragment1, fragment2,
-                close_helix_pairs[i], helix_endpts, job.get_direction());
+                close_helix_pairs[i], helix_endpts, job.get_first_round(), job.get_direction_needed());
 
             TR << "found " << helix_partners.size() << " suitable helix partners" << endl;
 
@@ -739,6 +767,15 @@ std::vector<HelixAssemblyJob> HelixAssemblyMover::apply(HelixAssemblyJob & job){
                     newFragment.set_start(third_helix_start);
                     newFragment.set_end(third_helix_end);
 
+                    //capture native residue info from the matching query_fragment and the newly added helix
+//                    for(Size m=close_helix_pairs[i].first.get_start(); m<=close_helix_pairs[i].first.get_end(); ++m){
+//
+//                    }
+//
+//                    for(Size m=close_helix_pairs[i].first.get_start(); m<=close_helix_pairs[i].first.get_end(); ++m){
+//
+//                    }
+
                     job.get_fragments().push_back(newFragment);
 
                     stringstream tempStream;
@@ -753,7 +790,7 @@ std::vector<HelixAssemblyJob> HelixAssemblyMover::apply(HelixAssemblyJob & job){
                     new_job1.set_query_frag_2_index(job.get_query_frag_1_index());
                     new_job1.set_name(job.get_name());
                     new_job1.set_fragments(job.get_fragments());
-                    new_job1.set_direction(!job.get_direction());//change direction for next helix
+                    new_job1.set_direction_needed(!helix_partners[k].get_direction());//change direction for next helix
 
                     new_jobs.push_back(new_job1);
 
@@ -768,7 +805,7 @@ std::vector<HelixAssemblyJob> HelixAssemblyMover::apply(HelixAssemblyJob & job){
                         new_job2.set_query_frag_2_index(job.get_query_frag_2_index());
                         new_job2.set_name(job.get_name());
                         new_job2.set_fragments(job.get_fragments());
-                        new_job2.set_direction(!job.get_direction());//change direction for next helix
+                        new_job2.set_direction_needed(!helix_partners[k].get_direction());//change direction for next helix
 
                         new_jobs.push_back(new_job2);
                     }

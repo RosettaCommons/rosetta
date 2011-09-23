@@ -80,7 +80,7 @@ public:
         utility::vector1<HelicalFragment> findPartnerHelices(core::pose::Pose const & search_structure,
             core::pose::Pose const & fragment1, core::pose::Pose const & fragment2,
             std::pair<HelicalFragment, HelicalFragment> helix_pair, utility::vector1< std::pair< core::Size,core::Size > > helix_endpts,
-            bool direction);
+            bool first_round, bool direction_needed);
 
         std::map<core::id::AtomID, core::id::AtomID> getFragmentMap(const core::pose::Pose & pose_1,
             const core::pose::Pose & pose_2, HelicalFragment pose_1_fragment, HelicalFragment pose_2_fragment);

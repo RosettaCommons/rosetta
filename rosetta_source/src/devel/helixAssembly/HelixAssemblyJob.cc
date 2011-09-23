@@ -32,22 +32,24 @@ HelixAssemblyJob::HelixAssemblyJob(HelixAssemblyJob const & old_job):
         query_frag_1_index_(old_job.query_frag_1_index_),
         query_frag_2_index_(old_job.query_frag_2_index_),
         fragments_(old_job.fragments_),
-        direction_(old_job.direction_)
+        direction_needed_(old_job.direction_needed_),
+        first_round_(old_job.first_round_)
 {}
 
-HelixAssemblyJob::HelixAssemblyJob(core::Size id, std::string name, core::Size remaining_rounds, bool direction,
+HelixAssemblyJob::HelixAssemblyJob(core::Size id, std::string name, core::Size remaining_rounds, bool direction_needed,
     std::string query_structure, std::string search_structure, core::Size search_index, core::Size query_frag_1_index,
-    core::Size query_frag_2_index, std::vector<HelicalFragment> fragments):
+    core::Size query_frag_2_index, std::vector<HelicalFragment> fragments, bool first_round):
     id_(id),
     name_(name),
     remaining_rounds_(remaining_rounds),
-    direction_(direction),
+    direction_needed_(direction_needed),
     query_structure_(query_structure),
     search_structure_(search_structure),
     search_index_(search_index),
     query_frag_1_index_(query_frag_1_index),
     query_frag_2_index_(query_frag_2_index),
-    fragments_(fragments)
+    fragments_(fragments),
+    first_round_(first_round)
 {}
 
 core::Size HelixAssemblyJob::get_id() const{
@@ -82,8 +84,12 @@ core::Size HelixAssemblyJob::get_query_frag_2_index() const{
   return query_frag_2_index_;
 }
 
-bool HelixAssemblyJob::get_direction() const{
-  return direction_;
+bool HelixAssemblyJob::get_direction_needed() const{
+  return direction_needed_;
+}
+
+bool HelixAssemblyJob::get_first_round() const{
+  return first_round_;
 }
 
 HelicalFragment HelixAssemblyJob::get_query_frag_1() const{
@@ -134,6 +140,10 @@ void HelixAssemblyJob::set_fragments(std::vector<HelicalFragment> fragments){
   this->fragments_ = fragments;
 }
 
-void HelixAssemblyJob::set_direction(bool direction){
-  this->direction_ = direction;
+void HelixAssemblyJob::set_direction_needed(bool direction_needed){
+  this->direction_needed_ = direction_needed;
+}
+
+void HelixAssemblyJob::set_first_round(bool first_round){
+  this->first_round_=first_round;
 }

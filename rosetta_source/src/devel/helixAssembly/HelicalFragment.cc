@@ -45,6 +45,11 @@ std::string HelicalFragment::get_pdb_source() const
     return pdb_source_;
 }
 
+bool HelicalFragment::get_direction() const
+{
+    return direction_;
+}
+
 void HelicalFragment::set_start(core::Size start_)
 {
     this->start_ = start_;
@@ -58,4 +63,9 @@ void HelicalFragment::set_end(core::Size end_)
 void HelicalFragment::set_pdb_source(std::string pdb_source_)
 {
     this->pdb_source_ = pdb_source_;
+}
+
+void HelicalFragment::set_direction(bool direction_)
+{
+    this->direction_ = direction_;
 }

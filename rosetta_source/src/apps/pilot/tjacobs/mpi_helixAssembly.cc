@@ -103,17 +103,20 @@ main( int argc, char * argv [] )
           temp_job.set_query_structure(originalQueryPdbString);
           temp_job.set_search_index(i);
           temp_job.set_remaining_rounds(option[HelixAssembly::helices_to_add]);
-          temp_job.set_direction(false); //true grows bundle off of the n-terminus, false grows off the c-terminus
+          temp_job.set_direction_needed(true); //doesn't matter for first round
+          temp_job.set_first_round(true);
 
           HelicalFragment fragment1;
           fragment1.set_start(option[ HelixAssembly::frag1_start]);
           fragment1.set_end(option[ HelixAssembly::frag1_end]);
           fragment1.set_pdb_source(pdb_library[i].name());
+          fragment1.set_direction(true); //first fragment of original query is always true (all other fragments are relative to this)
 
           HelicalFragment fragment2;
           fragment2.set_start(option[ HelixAssembly::frag2_start]);
           fragment2.set_end(option[ HelixAssembly::frag2_end]);
           fragment2.set_pdb_source(pdb_library[i].name());
+          fragment2.set_direction(false); //second fragment of original query is always false (all other fragments are relative to this)
 
           vector<HelicalFragment> fragments;
           fragments.push_back(fragment1);

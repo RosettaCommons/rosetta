@@ -19,11 +19,16 @@
 //Core
 #include <core/types.hh>
 
+//Devel
+#include <devel/helixAssembly/NativeResidue.hh>
+
 //External
 #include <boost/serialization/access.hpp>
 
 //C++ Headers
 #include <string>
+#include <vector>
+#include <map>
 
 class HelicalFragment{
 
@@ -39,9 +44,11 @@ public:
   std::string get_pdb_source() const;
   core::Size get_start() const;
   core::Size get_size() const;
+  bool get_direction() const;
   void set_end(core::Size end_);
   void set_pdb_source(std::string pdb_source_);
   void set_start(core::Size start_);
+  void set_direction(bool direction);
 
 private:
   friend class boost::serialization::access;
@@ -60,6 +67,8 @@ private:
   core::Size start_;
   core::Size end_;
   std::string pdb_source_;
+  bool direction_;
+  std::map<core::Size, std::vector<NativeResidue> > residue_map;
 
 };
 

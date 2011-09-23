@@ -73,9 +73,9 @@ public:
 
   HelixAssemblyJob();
   HelixAssemblyJob(HelixAssemblyJob const & old_job);
-  HelixAssemblyJob(core::Size id, std::string name, core::Size round, bool direction, std::string query_structure,
+  HelixAssemblyJob(core::Size id, std::string name, core::Size round, bool direction_needed, std::string query_structure,
       std::string search_structure, core::Size search_index, core::Size query_frag_1_index,
-      core::Size query_frag_2_index, std::vector<HelicalFragment> fragments);
+      core::Size query_frag_2_index, std::vector<HelicalFragment> fragments, bool first_round);
 
   core::Size get_id() const;
   std::string get_name() const;
@@ -86,7 +86,8 @@ public:
   core::Size get_query_frag_1_index() const;
   core::Size get_query_frag_2_index() const;
   std::vector<HelicalFragment> get_fragments() const;
-  bool get_direction() const;
+  bool get_direction_needed() const;
+  bool get_first_round() const;
   HelicalFragment get_query_frag_1() const;
   HelicalFragment get_query_frag_2() const;
   void set_id(core::Size job_id);
@@ -98,7 +99,8 @@ public:
   void set_query_frag_1_index(core::Size query_frag_1_index);
   void set_query_frag_2_index(core::Size query_frag_2_index);
   void set_fragments(std::vector<HelicalFragment> fragments);
-  void set_direction(bool direction);
+  void set_direction_needed(bool direction);
+  void set_first_round(bool first_round);
 
 
 private:
@@ -119,7 +121,8 @@ private:
     ar & query_frag_1_index_;
     ar & query_frag_2_index_;
     ar & fragments_;
-    ar & direction_;
+    ar & direction_needed_;
+    ar & first_round_;
   }
 
   core::Size id_;
@@ -131,7 +134,8 @@ private:
   core::Size query_frag_1_index_;
   core::Size query_frag_2_index_;
   std::vector<HelicalFragment> fragments_;
-  bool direction_; //toggles between true and false to tell HelixAssemblyMover which direction the helix should be built
+  bool direction_needed_; //toggles between true and false to tell HelixAssemblyMover which direction the helix should be built
+  bool first_round_;
 };
 
 #endif /* HELIXASSEMBLYJOB_HH_ */
