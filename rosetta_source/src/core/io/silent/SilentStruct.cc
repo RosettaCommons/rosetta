@@ -472,8 +472,13 @@ std::string SilentStruct::get_comment( std::string const & name ) const {
 }
 
 void SilentStruct::erase_comment( std::string const & name ) {
-		silent_comments_.erase( name );
+	silent_comments_.erase( name );
 }
+
+void SilentStruct::clear_comments() {
+	silent_comments_.clear();
+}
+
 
 void SilentStruct::parse_energies(
 	std::istream & input,

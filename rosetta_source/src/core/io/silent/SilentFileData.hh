@@ -18,7 +18,6 @@
 
 // mini headers
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
 
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/silent.fwd.hh>

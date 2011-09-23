@@ -222,6 +222,7 @@ namespace silent {
 		std::string get_comment( std::string const & name ) const;
 		void comment_from_line( std::string const & line );
 		void erase_comment( std::string const & name );
+		void clear_comments();
 
 		std::map< std::string, std::string > get_all_comments() const;
 		//void set_all_comments( std::map< std::string, std::string > );
