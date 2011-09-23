@@ -6,8 +6,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/options/keys/rotamerdump.OptionKeys.gen.hh
-/// @brief  core::options::OptionKeys collection
+/// @file   basic/options/keys/rotamerdump.OptionKeys.gen.hh
+/// @brief  basic::options::OptionKeys collection
 /// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
 /// @author James M. Thompson (tex@u.washington.edu)
 

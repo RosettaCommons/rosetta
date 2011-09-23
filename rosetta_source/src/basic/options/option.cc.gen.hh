@@ -4,7 +4,8 @@
 #include <basic/options/option.cc.include.gen.hh>
 #include <utility/options/OptionCollection.hh>
 inline void add_rosetta_options_0( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rigid::rigid, "rigid option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::rigid::cycles, "Number of rigid body perturbation cycles" ).def(1000);
+option.add( basic::options::OptionKeys::rigid::rigid_body_cycles, "Number of rigid body perturbation cycles" ).def(1000);
+option.add( basic::options::OptionKeys::rigid::fragment_cycles, "Number of fragment insertion cycles" ).def(1000);
 option.add( basic::options::OptionKeys::rigid::rotation, "Rotation magnitude" ).def(2.5);
 option.add( basic::options::OptionKeys::rigid::sequence_separation, "Maximum sequence separation for scoring chainbreaks" ).def(20);
 option.add( basic::options::OptionKeys::rigid::temperature, "Monte Carlo temperature" ).def(2.0);
@@ -575,10 +576,10 @@ option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with in
 option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
 option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
+option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
-option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::force_minimize, "Minimization moves in fold_constraints protocol also if no constraints present" ).def(false);
@@ -765,8 +766,8 @@ option.add( basic::options::OptionKeys::corrections::score::PB_potential_cap, "C
 option.add( basic::options::OptionKeys::corrections::score::lj_hbond_OH_donor_dis, "Lennard Jones sigma value for O in OH donor groups.  Classically it has been 3.0 but the average distances from crystal structurs is 2.6 (momeara)" ).def(3.0);
 option.add( basic::options::OptionKeys::corrections::score::score12prime, "Whenever getScoreFunction() would have returned the ScoreFunction from standard.wts + score12.wts_patch, instead return a revised score12 (score12prime) with reference energies optimized with optE for sequence profile recovery" ).def(false);
 option.add( basic::options::OptionKeys::corrections::score::hb_sp2_chipen, "Experimental term for hydrogen bonds to sp2 acceptors: penalizes out-of-plane geometry by 67%" ).def(false);
-option.add( basic::options::OptionKeys::corrections::score::hb_sp2_amp, "Experimental term for hydrogen bonds to sp2 acceptors: sets the amplitude of the sp2 hydrogen bond (greater than 1 upweights sp2 hydrogen bonds)" ).def(1.25);
-option.add( basic::options::OptionKeys::corrections::score::hb_sp2_peak_heigh_above_trough, "Experimental term for hydrogen bonds to sp2 acceptors: sets the dynamic range between the most potent sp2 hydrogen bonds and the least potent" ).def(2.0);
+option.add( basic::options::OptionKeys::corrections::score::hb_sp2_amp, "Experimental term for hydrogen bonds to sp2 acceptors: sets the amplitude of the sp2 hydrogen bond (greater than 1 upweights sp2 hydrogen bonds)" ).def(2.0);
+option.add( basic::options::OptionKeys::corrections::score::hb_sp2_peak_heigh_above_trough, "Experimental term for hydrogen bonds to sp2 acceptors: sets the dynamic range between the most potent sp2 hydrogen bonds and the least potent" ).def(3.0);
 option.add( basic::options::OptionKeys::corrections::chemical::chemical, "chemical option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::corrections::chemical::icoor_05_2009, "New set of idealized coordinates for full atom, 05-2009" );
 option.add( basic::options::OptionKeys::corrections::chemical::parse_charge, "Use PARSE charge set." );
@@ -1149,12 +1150,12 @@ option.add( basic::options::OptionKeys::lh::db_prefix, "stem for loop database" 
 option.add( basic::options::OptionKeys::lh::loopsizes, "Which loopsizes to use" ).def(10).def(15).def(20);
 option.add( basic::options::OptionKeys::lh::num_partitions, "Number of partitions to split the database into" ).def(1);
 option.add( basic::options::OptionKeys::lh::db_path, "Path to database" ).def("");
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::exclude_homo, "Use a homolog exclusion filter" ).def(false);
+option.add( basic::options::OptionKeys::lh::exclude_homo, "Use a homolog exclusion filter" ).def(false);
 option.add( basic::options::OptionKeys::lh::refstruct, "File with a target reference structure" ).def("");
 option.add( basic::options::OptionKeys::lh::homo_file, "File containing homologs to exclude" ).def("");
-option.add( basic::options::OptionKeys::lh::createdb_rms_cutoff, "RMS cutoff used for throwing out similar fragments." ).def(0).def(0).def(0);
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::createdb_rms_cutoff, "RMS cutoff used for throwing out similar fragments." ).def(0).def(0).def(0);
 option.add( basic::options::OptionKeys::lh::min_bbrms, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::lh::max_bbrms, "No description" ).def(100000.0);
 option.add( basic::options::OptionKeys::lh::min_rms, "No description" ).def(0.0);

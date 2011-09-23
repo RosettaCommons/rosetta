@@ -22,7 +22,8 @@ namespace options {
 namespace OptionKeys {
 
 namespace rigid { extern BooleanOptionKey const rigid; }
-namespace rigid { extern IntegerOptionKey const cycles; }
+namespace rigid { extern IntegerOptionKey const rigid_body_cycles; }
+namespace rigid { extern IntegerOptionKey const fragment_cycles; }
 namespace rigid { extern RealOptionKey const rotation; }
 namespace rigid { extern IntegerOptionKey const sequence_separation; }
 namespace rigid { extern RealOptionKey const temperature; }

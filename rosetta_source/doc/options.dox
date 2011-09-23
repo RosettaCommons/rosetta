@@ -8,8 +8,13 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>rigid option group</dd><br>
 </dl>
 <dl>
-<dt><b>-cycles</b> \<Integer\><dt>
+<dt><b>-rigid_body_cycles</b> \<Integer\><dt>
 <dd>Number of rigid body perturbation cycles</dd><br>
+<dd>Default: 1000</dd><br>
+</dl>
+<dl>
+<dt><b>-fragment_cycles</b> \<Integer\><dt>
+<dd>Number of fragment insertion cycles</dd><br>
 <dd>Default: 1000</dd><br>
 </dl>
 <dl>
@@ -3660,12 +3665,12 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-hb_sp2_amp</b> \<Real\><dt>
 <dd>Experimental term for hydrogen bonds to sp2 acceptors: sets the amplitude of the sp2 hydrogen bond (greater than 1 upweights sp2 hydrogen bonds)</dd><br>
-<dd>Default: 1.25</dd><br>
+<dd>Default: 2.0</dd><br>
 </dl>
 <dl>
 <dt><b>-hb_sp2_peak_heigh_above_trough</b> \<Real\><dt>
 <dd>Experimental term for hydrogen bonds to sp2 acceptors: sets the dynamic range between the most potent sp2 hydrogen bonds and the least potent</dd><br>
-<dd>Default: 2.0</dd><br>
+<dd>Default: 3.0</dd><br>
 </dl>
  </li>
 <li><h2>corrections:chemical</h2>
@@ -5780,6 +5785,32 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-tail_output_file_name</b> \<String\><dt>
 <dd>No description</dd><br>
 <dd>Default: "tail_output"</dd><br>
+</dl>
+ </li>
+<li><h2>rotamerdump</h2>
+<dl>
+<dt><b>-rotamerdump</b> \<Boolean\><dt>
+<dd>rotamerdump option group</dd><br>
+</dl>
+<dl>
+<dt><b>-xyz</b> \<Boolean\><dt>
+<dd>when using the RotamerDump application, output the xyz coords of every rotamer</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-one_body</b> \<Boolean\><dt>
+<dd>when using the RotamerDump application, output the one_body energies of every rotamer</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-two_body</b> \<Boolean\><dt>
+<dd>when using the RotamerDump application, output the two_body energies of every rotamer</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-annealer</b> \<Boolean\><dt>
+<dd>Run the annealer and output the rotamers it chose</dd><br>
+<dd>Default: false</dd><br>
 </dl>
  </li>
 <li><h2>robert</h2>

@@ -29,11 +29,13 @@
 #include <basic/options/keys/jumps.OptionKeys.gen.hh>
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/id/NamedAtomID.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -60,6 +62,30 @@ typedef boost::unordered_map<int, core::kinematics::Jump> Jumps;
 
 static basic::Tracer TR("protocols.medal.MedalMover");
 
+void validate_chunks(const core::pose::Pose& pose, protocols::loops::Loops* chunks) {
+  using core::Real;
+  using core::Size;
+  using core::id::NamedAtomID;
+  using numeric::xyzVector;
+  using protocols::loops::Loop;
+  using protocols::loops::Loops;
+  assert(chunks);
+
+  Loops modified;
+
+  for (Loops::const_iterator i = chunks->begin(); i != chunks->end(); ++i) {
+    const Loop& loop = *i;
+
+    for (Size j = loop.start() + 1; j <= loop.stop(); ++j) {
+      const xyzVector<Real>& prev_xyz = pose.xyz(NamedAtomID("CA", j - 1));
+      const xyzVector<Real>& curr_xyz = pose.xyz(NamedAtomID("CA", j));
+
+      double distance = prev_xyz.distance(curr_xyz);
+      TR << "CA distance between residues " << j - 1 << " and " << j << " = " << distance << std::endl;
+    }
+  }
+}
+
 void MedalMover::apply(core::pose::Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
@@ -79,6 +105,11 @@ void MedalMover::apply(core::pose::Pose& pose) {
   const SequenceAlignment& alignment = job->alignment();
   Loops unaligned = protocols::comparative_modeling::loops_from_alignment(pose.total_residue(), alignment, 3);
   Loops aligned = unaligned.invert(pose.total_residue());
+
+  // Examine the plausibility of the chunks. If consecutive CA-CA distance exceeds some
+  // threshold, partition the chunk into separately moving pieces.
+  //validate_chunks(pose, &aligned);
+  //validate_chunks(pose, &unaligned);
 
   TR << "Alignment: " << alignment.alignment_id() << endl;
   TR << "Aligned regions: " << aligned << endl;
@@ -111,7 +142,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
   MoverOP mover = new RationalMonteCarlo(
         new RigidBodyMotionMover(jumps),
         score,
-        option[OptionKeys::rigid::cycles](),
+        option[OptionKeys::rigid::rigid_body_cycles](),
         option[OptionKeys::rigid::temperature](),
         true);
 
