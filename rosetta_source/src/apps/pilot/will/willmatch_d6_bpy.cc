@@ -188,10 +188,10 @@ void refine(Pose & pose, ScoreFunctionOP sf, Size r1, Size r2, Size r3, Size r4 
 
 
   core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-  movemap->set_jump(false);
-  movemap->set_bb(false);
-  movemap->set_chi(true);
-  protocols::moves::MinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+  // movemap->set_jump(false);
+  // movemap->set_bb(false);
+  // movemap->set_chi(true);
+  // protocols::moves::MinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
   // movemap->set_jump(false);
   // movemap->set_bb(true);
   // movemap->set_chi(true);
@@ -906,6 +906,10 @@ void run() {
                                   Real dbe = opose.energies().residue_total_energies(ersd)[core::scoring::fa_intra_rep];//elib->rotamer_energy( opose.residue(ersd), scratch );
                                   // if( dbe > DUN_THRESH ) continue;
 
+                                  Real hbi = opose.energies().residue_total_energies(irsd)[core::scoring::hbond_sc_sc]+opose.energies().residue_total_energies(irsd)[core::scoring::hbond_bb_sc];
+                                  Real hbj = opose.energies().residue_total_energies(jrsd)[core::scoring::hbond_sc_sc]+opose.energies().residue_total_energies(jrsd)[core::scoring::hbond_bb_sc];
+                                  Real hbe = opose.energies().residue_total_energies(ersd)[core::scoring::hbond_sc_sc]+opose.energies().residue_total_energies(ersd)[core::scoring::hbond_bb_sc];
+
                                   core::id::AtomID_Map<Real> atom_sasa;
                                   vector1<Real> rsd_sasa;
                                   core::scoring::calc_per_atom_sasa( opose, atom_sasa, rsd_sasa, 2.0, false );
@@ -927,6 +931,9 @@ void run() {
                                   ss_out_all->add_energy( "rholes", decrholes );
                                   ss_out_all->add_energy( "drholes", decrholes - natrholes);
                                   ss_out_all->add_energy( "lrholes", locrholes );
+                                  ss_out_all->add_energy( "hb_bpy" , hbb );
+                                  ss_out_all->add_energy( "hb_his1", hbi );
+                                  ss_out_all->add_energy( "hb_his2", hbj );
                                   ss_out_all->add_energy( "bpy_chi1" , CHI1[kch1] );
                                   ss_out_all->add_energy( "bpy_chi2" , CHI2[kch2] );
                                   ss_out_all->add_energy( "dun_bpy" , dbb );
