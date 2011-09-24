@@ -294,21 +294,23 @@ utility::vector1<HelicalFragment> HelixAssemblyMover::findFragmentMatches(Pose c
 
   for(Size j=1; j<=helix_endpts.size(); j++){
 
-      for(Size i=helix_endpts[j].first; i<=helix_endpts[j].second-query_fragment.get_size()+1; i++){
+      if(helix_endpts[j].second > query_fragment.get_size()+1){ //I hate unsigned ints
+          for(Size i=helix_endpts[j].first; i<=helix_endpts[j].second-query_fragment.get_size()+1; i++){
 
-          //make sure we don't make a test fragment out of two separate chains
-          if(search_structure.total_residue() > i+query_fragment.get_size() &&
-              search_structure.residue(i).chain() == search_structure.residue(i+query_fragment.get_size()-1).chain()){
+              //make sure we don't make a test fragment out of two separate chains
+              if(search_structure.total_residue() > i+query_fragment.get_size() &&
+                  search_structure.residue(i).chain() == search_structure.residue(i+query_fragment.get_size()-1).chain()){
 
-              HelicalFragment test_fragment(i, i+query_fragment.get_size()-1);
+                  HelicalFragment test_fragment(i, i+query_fragment.get_size()-1);
 
-              std::map<core::id::AtomID, core::id::AtomID> frag_map = getFragmentMap(search_structure,
-                  query_structure, test_fragment, query_fragment);
+                  std::map<core::id::AtomID, core::id::AtomID> frag_map = getFragmentMap(search_structure,
+                      query_structure, test_fragment, query_fragment);
 
-              Real rmsd = core::scoring::rms_at_all_corresponding_atoms(search_structure, query_structure, frag_map);
+                  Real rmsd = core::scoring::rms_at_all_corresponding_atoms(search_structure, query_structure, frag_map);
 
-              if(rmsd <= single_helix_rmsd_cutoff_){
-                  frag_matches.push_back(test_fragment);
+                  if(rmsd <= single_helix_rmsd_cutoff_){
+                      frag_matches.push_back(test_fragment);
+                  }
               }
           }
       }
@@ -375,35 +377,37 @@ utility::vector1<HelicalFragment> HelixAssemblyMover::findPartnerHelices(Pose co
           Real minStartDistance=distCutoff*2;
           Real minEndDistance=distCutoff*2;
 
-          for(Size helixOffset=0; helixOffset<(helix_endpts[i].second-helix_endpts[i].first+1); helixOffset++){
+          if(helix_endpts[i].second > helix_endpts[i].first+1){//I hate unsigned ints
+              for(Size helixOffset=0; helixOffset<(helix_endpts[i].second-helix_endpts[i].first+1); helixOffset++){
 
-              //Check distance between n-term of query fragment 1 and given residue of search fragment
-              core::DistanceSquared startDistance1 = fragment1.residue(1).atom("CA").xyz().distance_squared(
-                  search_structure.residue(helix_endpts[i].first+helixOffset).atom("CA").xyz());
+                  //Check distance between n-term of query fragment 1 and given residue of search fragment
+                  core::DistanceSquared startDistance1 = fragment1.residue(1).atom("CA").xyz().distance_squared(
+                      search_structure.residue(helix_endpts[i].first+helixOffset).atom("CA").xyz());
 
-              //Check distance between c-term of query fragment 2 and given residue of search fragment
-              core::DistanceSquared startDistance2 = fragment2.residue(fragment2.total_residue()).atom("CA").xyz().distance_squared(
-                  search_structure.residue(helix_endpts[i].first+helixOffset).atom("CA").xyz());
+                  //Check distance between c-term of query fragment 2 and given residue of search fragment
+                  core::DistanceSquared startDistance2 = fragment2.residue(fragment2.total_residue()).atom("CA").xyz().distance_squared(
+                      search_structure.residue(helix_endpts[i].first+helixOffset).atom("CA").xyz());
 
-              if(startDistance1 < distCutoff && startDistance2 < distCutoff && (startDistance1 + startDistance2) < minStartDistance){
-                  helixStart = helix_endpts[i].first+helixOffset;
-                  minStartDistance = startDistance1 + startDistance2;
-                  foundStart = true;
-                  TR << "Found third helix start at residue " << helixStart << " in helix (" << helix_endpts[i].first << ":" << helix_endpts[i].second << ")" << endl;
-              }
+                  if(startDistance1 < distCutoff && startDistance2 < distCutoff && (startDistance1 + startDistance2) < minStartDistance){
+                      helixStart = helix_endpts[i].first+helixOffset;
+                      minStartDistance = startDistance1 + startDistance2;
+                      foundStart = true;
+                      TR << "Found third helix start at residue " << helixStart << " in helix (" << helix_endpts[i].first << ":" << helix_endpts[i].second << ")" << endl;
+                  }
 
-              core::DistanceSquared endDistance1 = fragment1.residue(fragment1.total_residue()).atom("CA").xyz().distance_squared(
-                  search_structure.residue(helix_endpts[i].second-helixOffset).atom("CA").xyz());
+                  core::DistanceSquared endDistance1 = fragment1.residue(fragment1.total_residue()).atom("CA").xyz().distance_squared(
+                      search_structure.residue(helix_endpts[i].second-helixOffset).atom("CA").xyz());
 
-              core::DistanceSquared endDistance2 = fragment2.residue(1).atom("CA").xyz().distance_squared(
-                  search_structure.residue(helix_endpts[i].second-helixOffset).atom("CA").xyz());
+                  core::DistanceSquared endDistance2 = fragment2.residue(1).atom("CA").xyz().distance_squared(
+                      search_structure.residue(helix_endpts[i].second-helixOffset).atom("CA").xyz());
 
-              //Check to make sure that this point in the potential 3rd helix is close to the "end" of both query helices
-              if(endDistance1 < distCutoff && endDistance2 < distCutoff && (endDistance1 + endDistance2) < minEndDistance){
-                  helixEnd = helix_endpts[i].second-helixOffset;
-                  minEndDistance = endDistance1 + endDistance2;
-                  foundEnd = true;
-                  TR << "Found third helix end at residue " << helixEnd << " in helix (" << helix_endpts[i].first << ":" << helix_endpts[i].second << ")" << endl;
+                  //Check to make sure that this point in the potential 3rd helix is close to the "end" of both query helices
+                  if(endDistance1 < distCutoff && endDistance2 < distCutoff && (endDistance1 + endDistance2) < minEndDistance){
+                      helixEnd = helix_endpts[i].second-helixOffset;
+                      minEndDistance = endDistance1 + endDistance2;
+                      foundEnd = true;
+                      TR << "Found third helix end at residue " << helixEnd << " in helix (" << helix_endpts[i].first << ":" << helix_endpts[i].second << ")" << endl;
+                  }
               }
           }
           if(foundStart && foundEnd){
@@ -642,24 +646,12 @@ std::vector<HelixAssemblyJob> HelixAssemblyMover::apply(HelixAssemblyJob & job){
 
     TR << "working on file: " << job.get_name() << endl;
 
-    Pose query_structure;
-    core::import_pose::pose_from_pdbstring(query_structure, job.get_query_structure());
-    TR << "Full Query Structure is " << query_structure.total_residue() << " residues" << endl;
-
     Pose search_structure;
     core::import_pose::pose_from_pdbstring(search_structure, job.get_search_structure());
     TR << "Search Structure is " << search_structure.total_residue() << " residues" << endl;
 
     //don't do anything with this round if the search structure is empty. Not testing for this causes all sorts of bad behavior
     if(search_structure.total_residue() <= 0){return new_jobs;}
-
-    this->set_query_frag_1(job.get_query_frag_1());
-    this->set_query_frag_2(job.get_query_frag_2());
-
-    std::pair<HelicalFragment, HelicalFragment> query_fragments(get_query_frag_1(), get_query_frag_2());
-
-    TR << "Fragment 1 is " << get_query_frag_1().get_size() << " residues" << endl;
-    TR << "Fragment 2 is " << get_query_frag_2().get_size() << " residues" << endl;
 
     //set up dssp info - necessary in order to find helices based on secondary structure
     core::scoring::dssp::Dssp dssp( search_structure );
@@ -669,9 +661,25 @@ std::vector<HelixAssemblyJob> HelixAssemblyMover::apply(HelixAssemblyJob & job){
     helix_endpts = findHelices(search_structure);
     TR << "Found " << helix_endpts.size() << " helices in search structure" << endl;
 
+    //If there aren't 3 separate helices in the structure then there's not enough information to use
+    if(helix_endpts.size() <= 2){return new_jobs;}
+
+    Pose query_structure;
+    core::import_pose::pose_from_pdbstring(query_structure, job.get_query_structure());
+    TR << "Full Query Structure is " << query_structure.total_residue() << " residues" << endl;
+
+    this->set_query_frag_1(job.get_query_frag_1());
+    this->set_query_frag_2(job.get_query_frag_2());
+
+    std::pair<HelicalFragment, HelicalFragment> query_fragments(get_query_frag_1(), get_query_frag_2());
+
+    TR << "Fragment 1 is " << get_query_frag_1().get_size() << " residues" << endl;
+    TR << "Fragment 2 is " << get_query_frag_2().get_size() << " residues" << endl;
+
     //search helix poses for all close RMSD matches to each query fragment
     utility::vector1<HelicalFragment> frag1_matches = findFragmentMatches(search_structure, query_structure,
         get_query_frag_1(), helix_endpts);
+
     utility::vector1<HelicalFragment> frag2_matches = findFragmentMatches(search_structure, query_structure,
         get_query_frag_2(), helix_endpts);
 
@@ -679,7 +687,6 @@ std::vector<HelixAssemblyJob> HelixAssemblyMover::apply(HelixAssemblyJob & job){
 
     //The max distance-squared a single point can be off an still meet the allowable RMSD requirements
     core::Distance max_point_distance = sqrt(get_helix_pair_rmsd_cutoff() * get_helix_pair_rmsd_cutoff() * query_structure.total_residue());
-
 
     bool parallel = get_query_frag_1().get_direction() == get_query_frag_2().get_direction();
     core::Distance end_1_dist;
