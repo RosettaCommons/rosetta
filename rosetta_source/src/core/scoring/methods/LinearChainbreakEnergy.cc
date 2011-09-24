@@ -18,7 +18,9 @@
 #include <core/scoring/methods/LinearChainbreakEnergyCreator.hh>
 
 // Project headers
+#include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/conformation/Conformation.hh>
@@ -87,40 +89,86 @@ namespace methods {
     shortest_paths_.reset();
   }
 
+core::Real LinearChainbreakEnergy::do_score_dev(const core::conformation::Residue& lower_rsd,
+                                                const core::conformation::Residue& upper_rsd,
+                                                const core::Size nbb) const {
+  // virtual N and CA on lower_rsd (OVL1 and OVL2) and a virtual C on upper_rsd "OVU1"
+  return (upper_rsd.atom(upper_rsd.mainchain_atoms()[1]).xyz().distance(lower_rsd.atom("OVL1").xyz()) +
+          upper_rsd.atom(upper_rsd.mainchain_atoms()[2]).xyz().distance(lower_rsd.atom("OVL2").xyz()) +
+          lower_rsd.atom(lower_rsd.mainchain_atoms()[nbb]).xyz().distance(upper_rsd.atom("OVU1").xyz()));
+}
+
+core::Real LinearChainbreakEnergy::do_score_ovp(const core::conformation::Residue& lower_rsd,
+                                                const core::conformation::Residue& upper_rsd,
+                                                const core::Size nbb,
+                                                const core::Size cutpoint,
+                                                const core::pose::Pose& pose) const {
+  using core::id::AtomID;
+  using core::kinematics::Stub;
+
+  // now compute the overlap score: this is done by comparing the stub   (lower side )  C, | N, CA (upper side)
+  // the stub for the lower_rsd is already in the atom-tree at atom "OVL2 == CA*"
+  Stub lower_stub(pose.conformation().atom_tree().atom(AtomID(pose.residue(cutpoint).atom_index("OVL2"), cutpoint)).get_stub());
+
+  // the upper stub... let's just compute it for now...
+  // could be gained from AtomID( NamedAtomID( "OVU1", cutpoint+1 ).get_stub()
+  // and then the correct reversal...
+  Stub upper_stub(upper_rsd.atom(upper_rsd.mainchain_atoms()[2]).xyz(),  // CA
+                  upper_rsd.atom(upper_rsd.mainchain_atoms()[1]).xyz(),  // N
+                  upper_rsd.atom("OVU1" ).xyz());                        // virtual C
+
+  //for double-checking... ( debug )
+  Stub manual_lower_stub(lower_rsd.atom("OVL2").xyz(),                                         // virtual CA
+                                     lower_rsd.atom("OVL1").xyz(),                             // virtual N
+                                     lower_rsd.atom(lower_rsd.mainchain_atoms()[nbb]).xyz());  // C
+
+  if (distance(lower_stub, manual_lower_stub) > 0.01)
+    tr.Warning << "WARNING: mismatch between manual computed and atom-tree stub: "
+               << lower_stub << " " << manual_lower_stub << std::endl;
+
+  return
+      manual_lower_stub.M.col_x().distance(upper_stub.M.col_x()) +
+      manual_lower_stub.M.col_y().distance(upper_stub.M.col_y()) +
+      manual_lower_stub.M.col_z().distance(upper_stub.M.col_z());
+}
+
   /// called at the end of energy evaluation
   /// In this case (LinearChainbreakEnergy), all the calculation is done here
   void LinearChainbreakEnergy::finalize_total_energy(pose::Pose& pose,
                                                      ScoreFunction const &,
                                                      EnergyMap& totals) const {
+    using core::Size;
     using conformation::Residue;
+    using core::kinematics::FoldTree;
     using core::kinematics::ShortestPathInFoldTree;
 
-    Real total_dev(0.0);
-    Real total_ovp(0.0);
+    Real total_dev = 0.0;
+    Real total_ovp = 0.0;
 
-    // The cached ShortestPathInFoldTree instance is invalid and must be recomputed
-    size_t hash_value = pose.fold_tree().hash_value();
+    // Cached ShortestPathInFoldTree instance is invalid and must be recomputed
+    const FoldTree& tree = pose.fold_tree();
+    size_t hash_value = tree.hash_value();
     if (!shortest_paths_.get() || previous_hash_value_ != hash_value) {
-      shortest_paths_.reset(new ShortestPathInFoldTree(pose.fold_tree()));
+      shortest_paths_.reset(new ShortestPathInFoldTree(tree));
       previous_hash_value_ = hash_value;
     }
 
-    for ( int n=1; n<= pose.fold_tree().num_cutpoint(); ++n ) {
-      int const cutpoint( pose.fold_tree().cutpoint( n ) );
-      Residue const & lower_rsd( pose.residue( cutpoint ) );
-      if ( !lower_rsd.has_variant_type( chemical::CUTPOINT_LOWER ) ) continue;
+    // Search the FoldTree for cutpoint variants to score
+    for (Size i = 1; i <= tree.num_cutpoint(); ++i) {
+      const int cutpoint = tree.cutpoint(i);
+      const Residue& lower_rsd = pose.residue(cutpoint);
+      const Residue& upper_rsd = pose.residue(cutpoint + 1);
+      const Size nbb = lower_rsd.mainchain_atoms().size();
 
-      Residue const & upper_rsd( pose.residue( cutpoint+1 ) );
-      // Don't stop the calculation by assert, because there is a case that
-      // chain needs to be circularized. Nobu
-      // assert( upper_rsd.has_variant_type( chemical::CUTPOINT_UPPER ) );
-      if( !upper_rsd.has_variant_type( chemical::CUTPOINT_UPPER ) ) continue;
-      Size const nbb( lower_rsd.mainchain_atoms().size() );
+      if (!lower_rsd.has_variant_type(core::chemical::CUTPOINT_LOWER) ||
+          !upper_rsd.has_variant_type(core::chemical::CUTPOINT_UPPER)) {
+        continue;
+      }
 
       // Determine whether the separation between <lowed_rsd> and <upper_rsd>,
       // as computed by ShortestPathInFoldTree, exceeds the current allowable
       // sequence separation
-      Size separation = shortest_paths_->dist(cutpoint, cutpoint + 1);
+      const Size separation = shortest_paths_->dist(cutpoint, cutpoint + 1);
       if (separation > allowable_sequence_sep_) {
         tr.Debug << "Chainbreak skipped-- "
                  << separation << " > " << allowable_sequence_sep_
@@ -128,45 +176,14 @@ namespace methods {
         continue;
       }
 
-      // virtual N and CA on lower_rsd (OVL1 and OVL2) and a virtual C on upper_rsd "OVU1"
-      total_dev += (upper_rsd.atom( upper_rsd.mainchain_atoms()[  1] ).xyz().distance( lower_rsd.atom( "OVL1"
- ).xyz() ) +
-                    upper_rsd.atom( upper_rsd.mainchain_atoms()[  2] ).xyz().distance( lower_rsd.atom( "OVL2"
- ).xyz() ) +
-                    lower_rsd.atom( lower_rsd.mainchain_atoms()[nbb] ).xyz().distance( upper_rsd.atom( "OVU1"
- ).xyz() ) );
-
-      // now compute the overlap score: this is done by comparing the stub   (lower side )  C, | N, CA (upper side)
-      // the stub for the lower_rsd is already in the atom-tree at atom "OVL2 == CA*"
-      kinematics::Stub lower_stub(pose.conformation().atom_tree().atom(id::AtomID( pose.residue(cutpoint).atom_index("OVL2"), cutpoint) ).get_stub() );
-
-      // the upper stub... let's just compute it for now...
-      // could be gained from AtomID( NamedAtomID( "OVU1", cutpoint+1 ).get_stub()
-      // and then the correct reversal...
-      kinematics::Stub upper_stub(upper_rsd.atom( upper_rsd.mainchain_atoms()[  2]).xyz(), //CA
-                                  upper_rsd.atom( upper_rsd.mainchain_atoms()[  1]).xyz(),  //N
-                                  upper_rsd.atom( "OVU1" ).xyz()); //virtual C
-
-      //for double-checking... ( debug )
-      kinematics::Stub manual_lower_stub(lower_rsd.atom( "OVL2" ).xyz(),  //virtual CA
-                                         lower_rsd.atom( "OVL1" ).xyz(),  //virtual N
-                                         lower_rsd.atom( lower_rsd.mainchain_atoms()[ nbb] ).xyz()); // C
-
-      total_ovp +=
-        manual_lower_stub.M.col_x().distance( upper_stub.M.col_x() ) +
-        manual_lower_stub.M.col_y().distance( upper_stub.M.col_y() ) +
-        manual_lower_stub.M.col_z().distance( upper_stub.M.col_z() );
-
-      if ( distance( lower_stub, manual_lower_stub ) > 0.01 ) {
-        tr.Warning << "WARNING: mismatch between manual computed and atom-tree stub: "
-                   << lower_stub << " " << manual_lower_stub << std::endl;
-      }
+      // Scoring
+      total_dev += do_score_dev(lower_rsd, upper_rsd, nbb);
+      total_ovp += do_score_ovp(lower_rsd, upper_rsd, nbb, cutpoint, pose);
     }
-    assert( std::abs( totals[ linear_chainbreak ] ) < 1e-3 );
 
-    totals[ linear_chainbreak ] = total_dev/3.0;
-    //division by 3 because we have 3 distances. Fix your weights to perfection.
-    totals[ overlap_chainbreak ] = total_ovp;
+    assert(std::abs(totals[linear_chainbreak]) < 1e-3 );
+    totals[linear_chainbreak] = total_dev / 3.0;  // 3 distances
+    totals[overlap_chainbreak] = total_ovp;
   }
 
   /// called during gradient-based minimization inside dfunc

@@ -21,7 +21,9 @@
 
 // Package headers
 #include <core/types.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
@@ -95,6 +97,16 @@ public:
 	virtual void indicate_required_context_graphs( utility::vector1< bool > & ) const;
 
 private:
+	core::Real do_score_dev(const core::conformation::Residue& lower_rsd,
+													const core::conformation::Residue& upper_rsd,
+													const core::Size nbb) const;
+
+	core::Real do_score_ovp(const core::conformation::Residue& lower_rsd,
+													const core::conformation::Residue& upper_rsd,
+													const core::Size nbb,
+													const core::Size cutpoint,
+													const core::pose::Pose& pose) const;
+
 	// Initialization routine common to both constructor
 	void initialize(Size allowable_sequence_sep);
 
