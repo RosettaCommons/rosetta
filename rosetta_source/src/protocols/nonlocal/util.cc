@@ -33,11 +33,12 @@
 #include <core/id/SequenceMapping.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
+#include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/sequence/util.hh>
-
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/jd2/InnerJob.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -165,6 +166,40 @@ void emit_intermediate(const core::pose::Pose& pose,
   using namespace basic::options::OptionKeys;
   if (option[OptionKeys::abinitio::debug]())
     core::io::pdb::dump_pdb(pose, filename);
+}
+
+protocols::jd2::ThreadingJob const * const current_job() {
+  using protocols::jd2::InnerJobCOP;
+  using protocols::jd2::JobDistributor;
+  using protocols::jd2::ThreadingJob;
+
+  JobDistributor* jd2 = JobDistributor::get_instance();
+  InnerJobCOP inner = jd2->current_job()->inner_job();
+  return (ThreadingJob const * const) inner();
+}
+
+void add_cutpoint_variants(core::pose::Pose* pose) {
+  const core::kinematics::FoldTree& tree(pose->fold_tree());
+  for (core::Size i = 1; i <= pose->total_residue(); ++i) {
+    if (!tree.is_cutpoint(i) || i >= (pose->total_residue() - 1))
+      continue;
+
+    core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::CUTPOINT_LOWER, i);
+    core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::CUTPOINT_UPPER, i+1);
+    TR.Debug << "Added cutpoint variants to residues " << i << ", " << i + 1 << std::endl;
+  }
+}
+
+void remove_cutpoint_variants(core::pose::Pose* pose) {
+  const core::kinematics::FoldTree& tree(pose->fold_tree());
+  for (core::Size i = 1; i <= pose->total_residue(); ++i) {
+    if (!tree.is_cutpoint(i) || i >= (pose->total_residue() - 1))
+      continue;
+
+    core::pose::remove_variant_type_from_pose_residue(*pose, core::chemical::CUTPOINT_LOWER, i);
+    core::pose::remove_variant_type_from_pose_residue(*pose, core::chemical::CUTPOINT_UPPER, i+1);
+    TR.Debug << "Removed cutpoint variants from residues " << i << ", " << i + 1 << std::endl;
+  }
 }
 
 
@@ -308,6 +343,5 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 	return secondary_structure_chunks;
 }
 
-	
 }  // namespace nonlocal
 }  // namespace protocols
