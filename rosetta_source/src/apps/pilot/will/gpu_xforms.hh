@@ -152,7 +152,7 @@ his_bb2m(float const chi1, float const chi2, float const chi3, bool DorE){
                      VEC(hmd.residue(1).xyz("NE2")-hmd.residue(1).xyz("ND1")),subvv(NE,ND) ,
                      VEC(hmd.residue(1).xyz("CG")                           ),     CG      );
   xform_pose(hmd,x.stub());
-  hmd.dump_pdb("test.pdb");
+  //  hmd.dump_pdb("test.pdb");
 
 
 

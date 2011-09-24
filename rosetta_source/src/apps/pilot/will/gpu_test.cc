@@ -319,4 +319,51 @@ int main(int argc, char *argv[]) {
 
   }
 
+
+
+  float c11 = uniform()*360.0; float c21 = uniform()*360.0; float c31 = uniform()*360.0; float c41 = uniform()*360.0;
+  float c12 = uniform()*360.0; float c22 = uniform()*360.0; float c32 = uniform()*360.0; float c42 = uniform()*360.0;
+  p.replace_residue(19,hmd.residue(1),true);
+  p.replace_residue(65,hme.residue(1),true);
+  p.set_chi(1,19,c11);
+  p.set_chi(2,19,c21);
+  p.set_chi(3,19,c31);
+  p.set_chi(1,65,c12);
+  p.set_chi(2,65,c22);
+  p.set_chi(3,65,c32);
+  Pose q(p);
+
+  struct XFORM tol19 = stubrev(p,19);
+  struct XFORM tog19 = stub   (p,19);
+  struct XFORM tol65 = stubrev(p,65);
+  struct XFORM tog65 = stub   (p,65);  
+  struct XFORM b2m19 = hisd_bb2m(c11,c21,c31);
+  struct XFORM m2b19 = hisd_m2bb(c11,c21,c31);
+  struct XFORM b2m65 = hise_bb2m(c12,c22,c32);
+  struct XFORM m2b65 = hise_m2bb(c12,c22,c32);
+
+  tol19.apply(p);
+  tol65.apply(q);
+
+  TR << b2m19.t << endl;
+  TR << m2b19.t << endl;
+  TR << p.residue(19).xyz("MD") << endl;
+
+  //  m2b19.apply(p);
+  //  m2b65.apply(q);
+
+
+  p.dump_pdb("testp.pdb");
+  q.dump_pdb("testq.pdb");
+
+
+
+
+
+
+
+
+
+
+
 }

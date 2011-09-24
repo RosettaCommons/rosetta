@@ -2,26 +2,26 @@
 #include <apps/pilot/will/gpu_bit_utils.hh>
 
 template<typename T, typename M>
-class OcTree {
+class xyzHash {
 public:
-  typedef struct { T x,y,z,w; } float4;
-  typedef struct { ushort x,y; } ushort2;
+  //typedef struct { T x,y,z,w; } float4;
+  //typedef struct { ushort x,y; } ushort2;
 private:
   T const grid_size_;
   uint natom_;
   float4  const * grid_atoms_;
   ushort2 const * grid_stripe_;
   uint xdim_,ydim_,zdim_;
-  numeric::xyzMatrix<Real> rotation_;
-  numeric::xyzVector<Real> translation_;
+  //numeric::xyzMatrix<Real> rotation_;
+  //numeric::xyzVector<Real> translation_;
 public:
-  OcTree( T grid_size ) : grid_size_(grid_size), grid_atoms_(NULL), grid_stripe_(NULL),
-                          rotation_(numeric::xyzMatrix<Real>::identity()), translation_(T(0),T(0),T(0)) {}
-  OcTree( T grid_size,
-          vector1<numeric::xyzVector<T> > const & atoms,
-          vector1<M> const & meta
-          ) : grid_size_(grid_size), grid_atoms_(NULL), grid_stripe_(NULL),
-              rotation_(numeric::xyzMatrix<Real>::identity()), translation_(T(0),T(0),T(0))
+  xyzHash( T grid_size ) : grid_size_(grid_size), grid_atoms_(NULL), grid_stripe_(NULL)//,
+                           /*rotation_(numeric::xyzMatrix<Real>::identity()), translation_(T(0),T(0),T(0))*/ {}
+  xyzHash( T grid_size,
+           vector1<numeric::xyzVector<T> > const & atoms,
+           vector1<M> const & meta
+           ) : grid_size_(grid_size), grid_atoms_(NULL), grid_stripe_(NULL)//,
+               /*rotation_(numeric::xyzMatrix<Real>::identity()), translation_(T(0),T(0),T(0))*/
   {
     init(atoms,meta);
   }
@@ -33,7 +33,9 @@ public:
   {
     if( sizeof(T) < sizeof(M) ) utility_exit_with_message("octree metadata must fit in sizeof(T)!");
     if( atoms.size() != meta.size() ) utility_exit_with_message("must be metadata for each point!");
-    if( atoms.size() > 65535 ) utility_exit_with_message("OcTree con only handle < 65535 atoms!");
+    if( atoms.size() > 65535 ) utility_exit_with_message("xyzHash con only handle < 65535 atoms!");
+
+#define FUDGE 0.0f
 
     natom_ = atoms.size();
 
@@ -49,25 +51,25 @@ public:
     }
     //TR<<xmx-xmn<<" "<<ymx-ymn<<" "<<zmx-zmn<<std::endl;
     // for(uint i = 0; i < natom_; ++i) {
-    //   atoms[i].x -= xmn-0.01;
-    //   atoms[i].y -= ymn-0.01;
-    //   atoms[i].z -= zmn-0.01;
+    //   atoms[i].x -= xmn-FUDGE;
+    //   atoms[i].y -= ymn-FUDGE;
+    //   atoms[i].z -= zmn-FUDGE;
     // }
-    xdim_ = ceil((xmx-xmn+0.02)/grid_size_);
-    ydim_ = ceil((ymx-ymn+0.02)/grid_size_);
-    zdim_ = ceil((zmx-zmn+0.02)/grid_size_);
+    xdim_ = ceil((xmx-xmn+0.0001)/grid_size_);
+    ydim_ = ceil((ymx-ymn+0.0001)/grid_size_);
+    zdim_ = ceil((zmx-zmn+0.0001)/grid_size_);
     assert(xdim_ < 9999); assert(ydim_ < 9999); assert(zdim_ < 9999);
     uint const gsize = xdim_*ydim_*zdim_;
-    ushort2 *gindex = new ushort2[gsize];
+    ushort2 *gindex  = new ushort2[gsize];
     ushort2 *gstripe = new ushort2[gsize];
     for(Size i = 0; i < gsize; ++i) { gindex[i].y = 0; gindex[i].x = 0; }
     //TR<<"atom "<<natom_<<" grid1 "<<xdim_*ydim_*zdim_<<" "<<xdim_<<" "<<ydim_<<" "<<zdim_<<std::endl;
 
     for(Size i = 1; i <= natom_; ++i) {
-      int ix = (atoms[i].x()-xmn+0.01)/grid_size_;
-      int iy = (atoms[i].y()-ymn+0.01)/grid_size_;
-      int iz = (atoms[i].z()-zmn+0.01)/grid_size_;
-      assert(ix >= 0); assert(iy >= 0); assert(iz >= 0); assert(ix < xdim_); assert(iy < ydim_); assert(iz < zdim_);
+      int ix = (atoms[i].x()-xmn+FUDGE)/grid_size_;
+      int iy = (atoms[i].y()-ymn+FUDGE)/grid_size_;
+      int iz = (atoms[i].z()-zmn+FUDGE)/grid_size_;
+      assert(ix >= 0)1; assert(iy >= 0); assert(iz >= 0); assert(ix < xdim_); assert(iy < ydim_); assert(iz < zdim_);
       int ig = ix+xdim_*iy+xdim_*ydim_*iz;
       assert(ig>=0);assert(ig<9999999);
       ++(gindex[ig].y);
@@ -86,26 +88,26 @@ public:
     //       uint i = ix+xdim_*iy+xdim_*ydim_*iz;
     //       TR<<ix<<" "<<iy<<" "<<iz<<" "<<I(3,gindex[i].x)<<" "<<I(3,gindex[i].y) <<" "<<I(3,grid_stripe_[i].x)<<" "<<I(3,grid_stripe_[i].y)<<std::endl;
     //     }
-    float4 *gatom = new float4[natom_+4];
+    float4 *gatom = new float4[natom_+4]; // space for 4 overflow atoms
     for(uint i=0;i<4;++i) {gatom[natom_+i].x=9e9;gatom[natom_+i].y=9e9;gatom[natom_+i].z=9e9;gatom[natom_+i].w=9e9;}
     ushort *gridc = new ushort[gsize];
     for(Size i = 0; i < gsize; ++i) gridc[i] = 0;
     for(Size i = 1; i <= natom_; ++i) {
-      uint const ix = (atoms[i].x()-xmn+0.01)/grid_size_;
-      uint const iy = (atoms[i].y()-ymn+0.01)/grid_size_;
-      uint const iz = (atoms[i].z()-zmn+0.01)/grid_size_;
+      uint const ix = (atoms[i].x()-xmn+FUDGE)/grid_size_;
+      uint const iy = (atoms[i].y()-ymn+FUDGE)/grid_size_;
+      uint const iz = (atoms[i].z()-zmn+FUDGE)/grid_size_;
       uint const ig = ix+xdim_*iy+xdim_*ydim_*iz;
       uint const idx = gindex[ig].x + gridc[ig];
-      gatom[ idx ].x = atoms[i].x()-xmn+0.01;
-      gatom[ idx ].y = atoms[i].y()-ymn+0.01;
-      gatom[ idx ].z = atoms[i].z()-zmn+0.01;
+      gatom[ idx ].x = atoms[i].x()-xmn+FUDGE;
+      gatom[ idx ].y = atoms[i].y()-ymn+FUDGE;
+      gatom[ idx ].z = atoms[i].z()-zmn+FUDGE;
       gatom[ idx ].w = *((float*)(&meta[i]));
       ++(gridc[ig]);
     }
     grid_atoms_ = gatom;
-    translation_.x() = 0.01 - xmn;
-    translation_.y() = 0.01 - ymn;
-    translation_.z() = 0.01 - zmn;
+    // translation_.x() = FUDGE - xmn;
+    // translation_.y() = FUDGE - ymn;
+    // translation_.z() = FUDGE - zmn;
     // for(uint iz = 0; iz < zdim(); ++iz) for(uint iy = 0; iy < ydim(); ++iy) for(uint ix = 0; ix < xdim(); ++ix) {
     //       uint i = ix+xdim_*iy+xdim_*ydim_*iz;
     //       TR<<"GRID CELL "<<ix<<" "<<iy<<" "<<iz<<std::endl;
@@ -115,9 +117,35 @@ public:
     //   }
     delete gridc,gindex;
   }
-  virtual ~OcTree() {
+  virtual ~xyzHash() {
     if(grid_atoms_)  delete grid_atoms_;
     if(grid_stripe_) delete grid_stripe_;
+  }
+
+  bool sanity_check() {
+    for(int ix = 0; ix < xdim_; ++ix) {
+      for(int iy = 0; iy < ydim_; ++iy) {
+        for(int iz = 0; iz < zdim_; ++iz) {
+          //cout << ix << " " << iy << " " << iz << endl;
+          ushort const ig  = ix+xdim_*iy+ydim_*xdim_*iz;
+          ushort const igl = grid_stripe_[ig].x;
+          ushort const igu = grid_stripe_[ig].y;
+          for(int i = igl; i < igu; ++i) {
+            float const & x(grid_atoms_[i].x);
+            float const & y(grid_atoms_[i].y);
+            float const & z(grid_atoms_[i].z);
+            if(i==igl) cout << endl;
+            bool xc = grid_size_*(float)ix <= x && x <= grid_size_*(float)(ix+1);
+            bool yc = grid_size_*(float)iy <= y && y <= grid_size_*(float)(iy+1);
+            bool zc = grid_size_*(float)iz <= z && z <= grid_size_*(float)(iz+1);
+            if(/*!xc||*/!yc||!zc) utility_exit_with_message("INSANE!");
+            cout<<I(2,ix)<<" "<<I(2,iy)<<" "<<I(2,iz)<<" "<<F(8,3,x)<<" "<<F(8,3,y)<<" "<<F(8,3,z)<<" "<<xc<<" "<<yc<<" "<<zc<<std::endl;
+          }
+        }
+        return true;
+      }
+    }
+    return true;
   }
 
   inline Size const nbcount( float x, float y, float z ) {
@@ -187,16 +215,17 @@ public:
 };
 
 
-enum PoseOcTreeMode {
+enum PoseHashMode {
   NBR,
   BB,
+  BNP,
   HVY,
   ALL
 };
 
-class PoseOcTree : public OcTree<float,float> {
+class PoseHash : public xyzHash<float,float> {
 public:
-  PoseOcTree(float radius, core::pose::Pose p, PoseOcTreeMode m = BB ) : OcTree<float,float>(radius) { // makes copy
+  PoseHash(float radius, core::pose::Pose p, PoseHashMode m = BB ) : xyzHash<float,float>(radius) { // makes copy
     Size natom = 0;
     for(int ir = 1; ir <= p.n_residue(); ++ir) {
       core::conformation::Residue const & r(p.residue(ir));
@@ -214,12 +243,16 @@ public:
         Size ia = r.nbr_atom();
         core::id::AtomID const aid(ia,ir);;
         atoms[++count] = p.xyz(aid);
-        meta [  count] = aidr_as_float(aid,r.atom_type(ia).lj_radius() );        
+        meta [  count] = aidr_as_float(aid,r.atom_type(ia).lj_radius() );
       } else if(BB==m) {
         if(r.has( "N")){ atoms[++count]=r.xyz( "N"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index( "N"),ir),r.atom_type(r.atom_index( "N")).lj_radius()); }
         if(r.has("CA")){ atoms[++count]=r.xyz("CA"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index("CA"),ir),r.atom_type(r.atom_index("CA")).lj_radius()); }
         if(r.has( "C")){ atoms[++count]=r.xyz( "C"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index( "C"),ir),r.atom_type(r.atom_index( "C")).lj_radius()); }
         if(r.has( "O")){ atoms[++count]=r.xyz( "O"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index( "O"),ir),r.atom_type(r.atom_index( "O")).lj_radius()); }
+        if(r.has("CB")){ atoms[++count]=r.xyz("CB"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index("CB"),ir),r.atom_type(r.atom_index("CB")).lj_radius()); }
+      } else if(BB==m) {
+        if(r.has("CA")){ atoms[++count]=r.xyz("CA"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index("CA"),ir),r.atom_type(r.atom_index("CA")).lj_radius()); }
+        if(r.has( "C")){ atoms[++count]=r.xyz( "C"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index( "C"),ir),r.atom_type(r.atom_index( "C")).lj_radius()); }
         if(r.has("CB")){ atoms[++count]=r.xyz("CB"); meta[count]=aidr_as_float(core::id::AtomID(r.atom_index("CB"),ir),r.atom_type(r.atom_index("CB")).lj_radius()); }
       } else {
         Size natom = (ALL==m) ? r.natoms() : r.nheavyatoms();;
@@ -245,9 +278,9 @@ octree_test( float4  const * gatom,
              ushort2 const * gstripe,
              float   const * gsize_in,
              uint8   const * gdim,
-  uint tmp
-             //        float         * output 
-){
+             uint tmp
+             //        float         * output
+             ){
   float e = 0.0f;
   ushort const xdim = gdim[0].x;
   ushort const ydim = gdim[0].y;

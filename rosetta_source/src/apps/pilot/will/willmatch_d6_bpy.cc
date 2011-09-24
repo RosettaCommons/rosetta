@@ -846,7 +846,7 @@ void run() {
                                   opose.set_chi(2,ersd,CHI2[ech2]);
                                   opose.set_chi(3,ersd,pose.chi(3,ersd));
 
-																	opose.dump_pdb( option[out::file::o]()+"/"+outfname+"_PRE.pdb");
+																	//opose.dump_pdb( option[out::file::o]()+"/"+outfname+"_PRE.pdb.gz");
 
                                   AtomID bzn = AtomID(opose.residue(brsd).atom_index("ZN" ),brsd);
                                   AtomID bne = AtomID(opose.residue(brsd).atom_index("NE1"),brsd);

@@ -2,6 +2,13 @@
 #include <iostream>
 #include <iomanip>
 
+typedef cl_float16 float16;
+typedef cl_float8  float8;
+typedef cl_float4  float4;
+typedef cl_float3  float3;
+typedef cl_float2  float2;
+typedef cl_ushort2 ushort2;
+typedef cl_uint8   uint8;
 
 inline float native_sin(float x) { return std::sin(x); }
 inline float native_cos(float x) { return std::cos(x); }
@@ -88,7 +95,11 @@ struct XFORM {
   struct MAT R;
   struct VEC t;
 #ifdef __cplusplus
+  // XFORM(core::pose::Pose const & p, Size rsd) {    
+  // }
   core::kinematics::Stub stub() const { return core::kinematics::Stub(R.xyzMatrix(),t.xyzVector()); }
+  void apply(core::pose::Pose & p) { xform_pose(p,stub());  }
+  void aprev(core::pose::Pose & p) { xform_pose_rev(p,stub());  }
 #endif
 };
 inline struct XFORM xform(struct MAT const R, struct VEC const t) { struct XFORM x; x.R = R;  x.t = t;  return x; }
@@ -308,7 +319,7 @@ stubrev(struct VEC const a, struct VEC const b, struct VEC const c)
   return s;
 }
 inline struct XFORM const
-stub(struct VEC const cen, struct VEC const a, struct VEC const b, struct VEC const c)
+stubc(struct VEC const cen, struct VEC const a, struct VEC const b, struct VEC const c)
 {
   struct VEC const x = normalizedv(subvv(a,b));
   struct VEC const z = normalizedv(crossvv(x,subvv(c,b)));
@@ -319,7 +330,7 @@ stub(struct VEC const cen, struct VEC const a, struct VEC const b, struct VEC co
   return s;
 }
 inline struct XFORM const
-stubrev(struct VEC const cen, struct VEC const a, struct VEC const b, struct VEC const c)
+stubcrev(struct VEC const cen, struct VEC const a, struct VEC const b, struct VEC const c)
 {
   struct VEC const x = normalizedv(subvv(a,b));
   struct VEC const z = normalizedv(crossvv(x,subvv(c,b)));
@@ -329,6 +340,14 @@ stubrev(struct VEC const cen, struct VEC const a, struct VEC const b, struct VEC
   s.t = multmv(s.R,vec(-cen.x,-cen.y,-cen.z));
   return s;
 }
+#ifdef __cplusplus
+XFORM const stub(core::pose::Pose const & p, Size const rsd) {
+  return stub   (p.residue(rsd).xyz("CA"),p.residue(rsd).xyz("N"),p.residue(rsd).xyz("C"));
+}
+XFORM const stubrev(core::pose::Pose const & p, Size const rsd) {
+  return stubrev(p.residue(rsd).xyz("CA"),p.residue(rsd).xyz("N"),p.residue(rsd).xyz("C"));
+}
+#endif
 
 
 ///////////////////////////////////
@@ -367,8 +386,8 @@ std::ostream & operator<<(std::ostream & out, struct VEC v) {
 }
 void myasserteq(float u, float v, string s) {
   if( !eq(u,v) ) {
-    TR << u << std::endl;
-    TR << v << std::endl;
+    cout << u << std::endl;
+    cout << v << std::endl;
     utility_exit_with_message(s);
   }
 }
@@ -419,7 +438,7 @@ void test_MAT_VEC() {
   myasserteq(  rotationMAT(U,123.0),   rotation_matrix(Vec(u),123.0)     , "rotation" );
   myasserteq(  projectionMAT(U),   projection_matrix(Vec(u))     , "projection" );
 
-  //  TR << "PASS!" << std::endl;
+  //  cout << "PASS!" << std::endl;
 }
 
 

@@ -2,24 +2,24 @@ template<typename T>
 void printbits32(T const & x) {
   if( sizeof(T) != 4 ) utility_exit_with_message("must be 32 bits!");
   uint i = *((uint*)( &x ));
-  TR<<" 30 27 24 21 18 15 12 9876543210"<<" as uint: "<<i<<std::endl;
-  TR<<" |  |  |  |  |  |  |  ||||||||||"<<" as uint: "<<i<<std::endl;
+  std::cout<<" 30 27 24 21 18 15 12 9876543210"<<" as uint: "<<i<<std::endl;
+  std::cout<<" |  |  |  |  |  |  |  ||||||||||"<<" as uint: "<<i<<std::endl;
   for( int ib = 31; ib >= 0; --ib) {
-    TR<<(i>>ib)%(2u);
+    std::cout<<(i>>ib)%(2u);
   }
-  TR<<" as uint: "<<i<<std::endl;
+  std::cout<<" as uint: "<<i<<std::endl;
 }
 
 template<typename T>
 void printbits16(T const & x) {
   if( sizeof(T) != 2 ) utility_exit_with_message("must be 32 bits!");
   ushort i = *((uint*)( &x ));
-  TR<<"15 12 9876543210"<<" as ushort: "<<i<<std::endl;
-  TR<<"|  |  ||||||||||"<<" as ushort: "<<i<<std::endl;
+  std::cout<<"15 12 9876543210"<<" as ushort: "<<i<<std::endl;
+  std::cout<<"|  |  ||||||||||"<<" as ushort: "<<i<<std::endl;
   for( int ib = 15; ib >= 0; --ib) {
-    TR<<(i>>ib)%(2u);
+    std::cout<<(i>>ib)%(2u);
   }
-  TR<<" as ushort: "<<i<<std::endl;
+  std::cout<<" as ushort: "<<i<<std::endl;
 }
 
 inline float bitsasfloat(uint const & i) {
