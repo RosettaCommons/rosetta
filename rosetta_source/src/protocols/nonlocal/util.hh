@@ -62,15 +62,32 @@ void decompose(core::Size min_chunk_sz,
 /// @brief If -abinitio:debug is enabled, writes <pose> to <file>.
 void emit_intermediate(const core::pose::Pose& pose, const std::string& file);
 
-/// @brief Retrieves the current job from the JobDistributor
-protocols::jd2::ThreadingJob const * const current_job();
-
-/// @brief Adds cutpoint variants to pose
-void add_cutpoint_variants(core::pose::Pose* pose);
-
-/// @brief Removes cutpoint variants from pose
-void remove_cutpoint_variants(core::pose::Pose* pose);
-
+/// @brief Extract secondary structure chunks from the pose, using multiple secondary structure types
+/// this function also uses DSSP to calculate the secondary structure types first
+protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose const & pose,
+														   std::string extracted_ss_types,
+														   core::Size gap_size, // if two chunks are seperated by a gap of this size (or less), consider them one big chunk
+														   core::Size minimum_length_of_chunk,
+														   core::Real CA_CA_distance_cutoff);
+	
+/// @brief Extract secondary structure chunks from the pose, using a given secondary structure type
+protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose const & pose,
+														   char const extracted_ss_type);
+	
+/// @brief Split into separate chunks if CA-CA distance is over the cutoff
+protocols::loops::Loops split_by_ca_ca_dist(core::pose::Pose const & pose,
+											protocols::loops::Loops const & input_chunks,
+											core::Real const CA_CA_distance_cutoff);
+	
+/// @brief If two chunks are separated by a small gap, group the two chunks into one
+protocols::loops::Loops remove_small_gaps(protocols::loops::Loops const & input_chunks,
+										  core::Size gap_size // if two chunks are seperated by a gap of this size (or less), consider them one big chunk
+										  );
+	
+/// @brief Remove small chunks
+protocols::loops::Loops remove_short_chunks(protocols::loops::Loops const & input_chunks,
+											core::Size minimum_length_of_chunk);
+		
 }  // namespace nonlocal
 }  // namespace protocols
 
