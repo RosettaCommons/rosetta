@@ -51,13 +51,15 @@ Polynomial_1d::Polynomial_1d(
 	HBGeoDimType const geometric_dimension,
 	Real const xmin,
 	Real const xmax,
+	Real const min_val,
+	Real const max_val,
 	Real const root1,
 	Real const root2,
 	Size degree,
 	vector1< Real > const & coefficients):
 	polynomial_name_(polynomial_name),
 	geometric_dimension_(geometric_dimension),
-	xmin_(xmin), xmax_(xmax), root1_(root1), root2_(root2),
+	xmin_(xmin), xmax_(xmax), min_val_(min_val), max_val_(max_val), root1_(root1), root2_(root2),
 	degree_(degree),
 	coefficients_(coefficients)
 {}
@@ -95,6 +97,18 @@ Real
 Polynomial_1d::xmax() const
 {
 	return xmax_;
+}
+
+Real
+Polynomial_1d::min_val() const
+{
+	return min_val_;
+}
+
+Real
+Polynomial_1d::max_val() const
+{
+	return max_val_;
 }
 
 Real
@@ -161,11 +175,17 @@ Polynomial_1d::operator()(
 	double & value,
 	double & deriv) const
 {
-	if((variable <= xmin_) || (variable >= xmax_)){
-		value = 0.0;
+	if(variable <= xmin_){
+		value = min_val_;
 		deriv = 0.0;
 		return;
 	}
+	if(variable >= xmax_){
+		value = max_val_;
+		deriv = 0.0;
+		return;
+	}
+
 	value = coefficients_[1];
 	deriv = 0.0;
 	for(Size i=2; i <= degree_; i++){
@@ -185,6 +205,7 @@ Polynomial_1d::show( ostream & out ) const{
 	out << polynomial_name_ << " "
 			<< "geometric dimension:" <<HBondTypeManager::name_from_geo_dim_type(geometric_dimension_) << " "
 			<< "domain:(" << xmin_ << "," << xmax_ << ") "
+			<< "out_of_range_vals:(" << min_val_ << "," << max_val_ << ") "
 			<< "roots:[" << root1_ << "," << root2_ << "] "
 			<< "degree:" << degree_ << " "
 			<< "y=";

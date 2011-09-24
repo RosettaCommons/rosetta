@@ -43,6 +43,8 @@ public:
 		HBGeoDimType const geometric_dimension,
 		Real const xmin,
 		Real const xmax,
+		Real const min_val,
+		Real const max_val,
 		Real const root1,
 		Real const root2,
 		Size degree,
@@ -63,6 +65,12 @@ public:
 
 	Real
 	xmax() const;
+
+	Real
+	min_val() const;
+
+	Real
+	max_val() const;
 
 	Real
 	root1() const;
@@ -94,6 +102,8 @@ private:
 	HBGeoDimType geometric_dimension_;
 	Real xmin_;
 	Real xmax_;
+	Real min_val_;
+	Real max_val_;
 	Real root1_;
 	Real root2_;
 	Size degree_;

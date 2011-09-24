@@ -58,6 +58,8 @@ CREATE TABLE HBPoly1D (
     dimension TEXT,
     xmin REAL,
     xmax REAL,
+    min_val REAL,
+    max_val REAL,
     root1 REAL,
     root2 REAL,
     degree INTEGER,

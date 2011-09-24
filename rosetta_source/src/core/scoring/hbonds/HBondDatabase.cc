@@ -294,12 +294,12 @@ HBondDatabase::initialize_HBPoly1D()
 	string polynomial_name;
 	string geo_dim_name;
 	HBGeoDimType geometric_dimension;
-	Real xmin, xmax, root1, root2;
+	Real xmin, xmax, min_val, max_val, root1, root2;
 	Size degree;
 	vector1< Real > coefficients_;
 	while ( getline( s, line ) ) {
 		tokens = string_split( line, ',');
-		Size ntokens = 20;
+		Size ntokens = 22;
 		if (tokens.size() != ntokens){
 			stringstream message;
 			message << "Polynomial definition line does not have enough fields" << endl;
@@ -316,6 +316,8 @@ HBondDatabase::initialize_HBPoly1D()
 			geometric_dimension = HBondTypeManager::geo_dim_type_from_name( geo_dim_name ); }
 		{ stringstream buf; buf << tokens[i]; i++; buf >> xmin;}
 		{ stringstream buf; buf << tokens[i]; i++; buf >> xmax;}
+		{ stringstream buf; buf << tokens[i]; i++; buf >> min_val;}
+		{ stringstream buf; buf << tokens[i]; i++; buf >> max_val;}
 		{ stringstream buf; buf << tokens[i]; i++; buf >> root1;}
 		{ stringstream buf; buf << tokens[i]; i++; buf >> root2;}
 		{ stringstream buf; buf << tokens[i]; i++; buf >> degree;}
@@ -330,7 +332,7 @@ HBondDatabase::initialize_HBPoly1D()
 		Polynomial_1dOP p(new Polynomial_1d(
 			polynomial_name,
 			geometric_dimension,
-			xmin, xmax, root1, root2,
+			xmin, xmax, min_val, max_val, root1, root2,
 			degree,
 			coefficients_));
 
@@ -873,6 +875,8 @@ HBondDatabase::report_parameter_features_schema() const {
 		"	dimension TEXT,\n"
 		"	xmin REAL,\n"
 		"	xmax REAL,\n"
+		"	min_val REAL,\n"
+		"	max_val REAL,\n"
 		"	root1 REAL,\n"
 		"	root2 REAL,\n"
 		"	degree INTEGER,\n"
@@ -964,12 +968,14 @@ HBondDatabase::report_parameter_features(
 	pair<string, Polynomial_1dCOP> poly_name_fn;
 	foreach(poly_name_fn, HBPoly1D_lookup_by_name_){
 		statement stmt = (*db_session)
-			<< "INSERT INTO hbond_polynomial_1d VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
+			<< "INSERT INTO hbond_polynomial_1d VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
 			<< database_tag
 			<< poly_name_fn.first
 			<< HBondTypeManager::name_from_geo_dim_type(poly_name_fn.second->geometric_dimension())
 			<< poly_name_fn.second->xmin()
 			<< poly_name_fn.second->xmax()
+			<< poly_name_fn.second->min_val()
+			<< poly_name_fn.second->max_val()
 			<< poly_name_fn.second->root1()
 			<< poly_name_fn.second->root2()
 			<< poly_name_fn.second->degree();

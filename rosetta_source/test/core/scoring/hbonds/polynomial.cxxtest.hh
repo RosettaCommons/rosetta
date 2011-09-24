@@ -56,6 +56,8 @@ public:
       core::scoring::hbonds::hbgd_AHdist,
       -3 /*xmin*/,
       3 /*xmax*/,
+      10.0 /*min_val*/,
+      10.0 /*max_val*/,
       -.2 /*root1*/,
       .2 /*root2*/,
       3 /*degree*/,

@@ -1,4 +1,4 @@
 let p(x) = 5x^2 - 1
 p(0) = -1, p'(0) = 0
 p(2) = 19, p'(2) = 20
-test_polynomial geometric dimension:hbgd_AHdist domain:(-3,3) roots:[-0.2,0.2] degree:3 y=5x^2-1
+test_polynomial geometric dimension:hbgd_AHdist domain:(-3,3) out_of_range_vals:(10,10) roots:[-0.2,0.2] degree:3 y=5x^2-1
