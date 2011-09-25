@@ -3236,6 +3236,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
  </li>
 <li><h2>score</h2>
 <dl>
+<dt><b>-score_pose_cutpoint_variants</b> \<Boolean\><dt>
+<dd>Include cutpoint variants in the pose during linear chainbreak</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-score</b> \<Boolean\><dt>
 <dd>scorefunction option group</dd><br>
 </dl>

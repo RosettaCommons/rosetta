@@ -96,6 +96,7 @@ namespace abrelax { BooleanOptionKey const filters( "abrelax:filters" );  }
 namespace abrelax { BooleanOptionKey const fail_unclosed( "abrelax:fail_unclosed" );  }
 namespace chemical { BooleanOptionKey const chemical( "chemical" );  }
 namespace chemical { StringVectorOptionKey const exclude_patches( "chemical:exclude_patches" );  }
+namespace score { BooleanOptionKey const score_pose_cutpoint_variants( "score:score_pose_cutpoint_variants" );  }
 namespace score { BooleanOptionKey const score( "score" );  }
 namespace score { StringOptionKey const weights( "score:weights" );  }
 namespace score { StringOptionKey const soft_wts( "score:soft_wts" );  }
@@ -570,4 +571,3 @@ namespace lh { StringOptionKey const db_prefix( "lh:db_prefix" );  }
 namespace lh { IntegerVectorOptionKey const loopsizes( "lh:loopsizes" );  }
 namespace lh { IntegerOptionKey const num_partitions( "lh:num_partitions" );  }
 namespace lh { PathOptionKey const db_path( "lh:db_path" );  }
-namespace lh { BooleanOptionKey const exclude_homo( "lh:exclude_homo" );  }

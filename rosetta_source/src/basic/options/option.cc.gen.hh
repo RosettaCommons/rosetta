@@ -676,6 +676,7 @@ option.add( basic::options::OptionKeys::abrelax::filters, "" );
 option.add( basic::options::OptionKeys::abrelax::fail_unclosed, "structures which don't close loops are reported as FAIL_DO_NOT_RETRY" ).def(false);
 option.add( basic::options::OptionKeys::chemical::chemical, "chemical option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::chemical::exclude_patches, "Names of the residue-type-set patches which should not be applied; if you know which patches you do not need for a particular run, this flag can reduce your memory use" );
+option.add( basic::options::OptionKeys::score::score_pose_cutpoint_variants, "Include cutpoint variants in the pose during linear chainbreak" ).def(false);
 option.add( basic::options::OptionKeys::score::score, "scorefunction option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::score::weights, "Name of weights file (without extension .wts)" ).def("standard");
 option.add( basic::options::OptionKeys::score::soft_wts, "Name of the 'soft' weights file, for protocols which use it." ).def("soft_rep");
@@ -1150,10 +1151,10 @@ option.add( basic::options::OptionKeys::lh::db_prefix, "stem for loop database" 
 option.add( basic::options::OptionKeys::lh::loopsizes, "Which loopsizes to use" ).def(10).def(15).def(20);
 option.add( basic::options::OptionKeys::lh::num_partitions, "Number of partitions to split the database into" ).def(1);
 option.add( basic::options::OptionKeys::lh::db_path, "Path to database" ).def("");
-option.add( basic::options::OptionKeys::lh::exclude_homo, "Use a homolog exclusion filter" ).def(false);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::refstruct, "File with a target reference structure" ).def("");
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::exclude_homo, "Use a homolog exclusion filter" ).def(false);
+option.add( basic::options::OptionKeys::lh::refstruct, "File with a target reference structure" ).def("");
 option.add( basic::options::OptionKeys::lh::homo_file, "File containing homologs to exclude" ).def("");
 option.add( basic::options::OptionKeys::lh::createdb_rms_cutoff, "RMS cutoff used for throwing out similar fragments." ).def(0).def(0).def(0);
 option.add( basic::options::OptionKeys::lh::min_bbrms, "No description" ).def(0.0);
@@ -1725,10 +1726,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, 
 option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
+option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);

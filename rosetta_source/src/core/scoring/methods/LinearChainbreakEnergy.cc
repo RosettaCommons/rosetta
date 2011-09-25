@@ -17,6 +17,14 @@
 #include <core/scoring/methods/LinearChainbreakEnergy.hh>
 #include <core/scoring/methods/LinearChainbreakEnergyCreator.hh>
 
+// External headers
+#include <boost/unordered/unordered_set.hpp>
+
+// Utility headers
+#include <basic/options/option.hh>
+#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
@@ -32,7 +40,9 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
+#include <algorithm>
 #include <iostream>
+#include <iterator>
 
 using core::Size;
 
@@ -41,6 +51,41 @@ static basic::Tracer tr("core.scoring.LinearChainbreak",basic::t_info);
 namespace core {
 namespace scoring {
 namespace methods {
+
+void find_cutpoint_variants(const core::pose::Pose& pose,
+                            const core::kinematics::FoldTree& tree,
+                            utility::vector1<int>* cutpoints) {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  using boost::unordered_set;
+  using core::Size;
+  using core::conformation::Residue;
+
+  assert(cutpoints);
+  unordered_set<int> unique_cutpoints;
+
+  // Search the FoldTree for cutpoint variants
+  for (Size i = 1; i <= tree.num_cutpoint(); ++i) {
+    unique_cutpoints.insert(tree.cutpoint(i));
+  }
+
+  // Search the Pose for cutpoint variants
+  if (option[OptionKeys::score::score_pose_cutpoint_variants]()) {
+    for (Size i = 1; i <= pose.total_residue(); ++i) {
+      const Residue& residue = pose.residue(i);
+      if (residue.has_variant_type(core::chemical::CUTPOINT_LOWER)) {
+        unique_cutpoints.insert(i);
+      }
+    }
+  }
+
+  // Update output parameter
+  std::copy(unique_cutpoints.begin(),
+            unique_cutpoints.end(),
+            std::back_inserter(*cutpoints));
+
+  std::sort(cutpoints->begin(), cutpoints->end());
+}
 
   LinearChainbreakEnergy::LinearChainbreakEnergy()
     : parent(new LinearChainbreakEnergyCreator) {
@@ -141,6 +186,7 @@ core::Real LinearChainbreakEnergy::do_score_ovp(const core::conformation::Residu
     using conformation::Residue;
     using core::kinematics::FoldTree;
     using core::kinematics::ShortestPathInFoldTree;
+    using utility::vector1;
 
     Real total_dev = 0.0;
     Real total_ovp = 0.0;
@@ -153,9 +199,12 @@ core::Real LinearChainbreakEnergy::do_score_ovp(const core::conformation::Residu
       previous_hash_value_ = hash_value;
     }
 
-    // Search the FoldTree for cutpoint variants to score
-    for (Size i = 1; i <= tree.num_cutpoint(); ++i) {
-      const int cutpoint = tree.cutpoint(i);
+    // Identify all cutpoint variants defined by the caller
+    vector1<int> cutpoints;
+    find_cutpoint_variants(pose, tree, &cutpoints);
+
+    for (Size i = 1; i <= cutpoints.size(); ++i) {
+      const int cutpoint = cutpoints[i];
       const Residue& lower_rsd = pose.residue(cutpoint);
       const Residue& upper_rsd = pose.residue(cutpoint + 1);
       const Size nbb = lower_rsd.mainchain_atoms().size();

@@ -21,6 +21,7 @@ namespace basic {
 namespace options {
 namespace OptionKeys {
 
+namespace score { extern BooleanOptionKey const score_pose_cutpoint_variants; }
 namespace score { extern BooleanOptionKey const score; }
 namespace score { extern StringOptionKey const weights; }
 namespace score { extern StringOptionKey const soft_wts; }

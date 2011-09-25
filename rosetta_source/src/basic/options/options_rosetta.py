@@ -1645,6 +1645,7 @@ Options = Option_Group( '',
 	),
 	# score function settings  -----------------------------------------------------------
 	Option_Group( 'score',
+    Option( 'score_pose_cutpoint_variants', 'Boolean', desc='Include cutpoint variants in the pose during linear chainbreak', default='false'),
 		Option( 'score', 'Boolean', desc="scorefunction option group", legal='true', default='true' ),
 		Option( 'weights', 'String', desc="Name of weights file (without extension .wts)" , default="standard" ),
 		Option( 'soft_wts', 'String', desc="Name of the 'soft' weights file, for protocols which use it." , default="soft_rep" ),
