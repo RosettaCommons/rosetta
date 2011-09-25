@@ -592,8 +592,12 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
             try:
                 if fl == headers[0]:  # for first header we additionaly check if 'by_hand' code is up to date
                     #print '__checking for:', by_hand_code
-                    if os.path.isfile(by_hand_code) and os.path.getmtime(by_hand_code) > os.path.getmtime(all_at_once_lib):
-                        raise os.error
+                    if Options.one_lib_file:
+                        if os.path.isfile(by_hand_code) and os.path.getmtime(by_hand_code) > os.path.getmtime(all_at_once_lib):
+                            raise os.error
+                    else:
+                        if os.path.isfile(by_hand_code) and os.path.getmtime(by_hand_code) > os.path.getmtime(dst_name):
+                            raise os.error
 
                 if Options.one_lib_file:
                     if os.path.getmtime(fl) > os.path.getmtime(all_at_once_lib):

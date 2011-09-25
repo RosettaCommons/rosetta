@@ -37,7 +37,7 @@ def isFileInScons(fname):
 
 
 BannedFiles = ['utility/PyHelper.hh', 'utility/keys', 'utility/options', 'utility/options/keys', 'utility/pointer', 'utility/sql_database/sqlite3_interface.hh',
-    'basic/options/keys',
+    'basic/options/keys', 'utility/exit.hh',
     #'basic/Tracer.hh',
     'core/scoring/etable/BaseMembEtableEnergy.hh',  # abandoned?
     'core/scoring/etable/CoarseEtableEnergyCreator.hh',  # not in scons (.hh only)
