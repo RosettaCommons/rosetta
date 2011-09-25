@@ -8,13 +8,18 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>rigid option group</dd><br>
 </dl>
 <dl>
-<dt><b>-rigid_body_cycles</b> \<Integer\><dt>
-<dd>Number of rigid body perturbation cycles</dd><br>
+<dt><b>-fragment_cycles</b> \<Integer\><dt>
+<dd>Number of fragment insertion cycles</dd><br>
 <dd>Default: 1000</dd><br>
 </dl>
 <dl>
-<dt><b>-fragment_cycles</b> \<Integer\><dt>
-<dd>Number of fragment insertion cycles</dd><br>
+<dt><b>-max_ca_ca_dist</b> \<Real\><dt>
+<dd>Maximum distance between consecutive CA atoms before chunk partitioning occurs</dd><br>
+<dd>Default: 5.0</dd><br>
+</dl>
+<dl>
+<dt><b>-rigid_body_cycles</b> \<Integer\><dt>
+<dd>Number of rigid body perturbation cycles</dd><br>
 <dd>Default: 1000</dd><br>
 </dl>
 <dl>

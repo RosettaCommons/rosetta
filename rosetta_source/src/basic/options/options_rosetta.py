@@ -85,8 +85,9 @@ Options = Option_Group( '',
 
   # Rigid body motion options
   Option_Group( 'rigid',
-    Option('rigid_body_cycles', 'Integer', desc = 'Number of rigid body perturbation cycles', default = '1000'),
 		Option('fragment_cycles', 'Integer', desc = 'Number of fragment insertion cycles', default = '1000'),
+		Option('max_ca_ca_dist', 'Real', desc = 'Maximum distance between consecutive CA atoms before chunk partitioning occurs', default = '5.0'),
+		Option('rigid_body_cycles', 'Integer', desc = 'Number of rigid body perturbation cycles', default = '1000'),
     Option('rotation', 'Real', desc = 'Rotation magnitude', default = '2.5'),
 		Option('sequence_separation', 'Integer', desc = 'Maximum sequence separation for scoring chainbreaks', default = '20'),
 		Option('temperature', 'Real', desc = 'Monte Carlo temperature', default = '2.0'),

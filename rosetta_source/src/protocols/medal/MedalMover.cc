@@ -35,9 +35,12 @@
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/VariantType.hh>
 #include <core/id/NamedAtomID.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/util.hh>
@@ -62,26 +65,48 @@ typedef boost::unordered_map<int, core::kinematics::Jump> Jumps;
 
 static basic::Tracer TR("protocols.medal.MedalMover");
 
-void validate_chunks(const core::pose::Pose& pose, protocols::loops::Loops* chunks) {
+void chunkify(core::pose::Pose* pose, protocols::loops::Loops* chunks) {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
   using core::Real;
   using core::Size;
   using core::id::NamedAtomID;
   using numeric::xyzVector;
   using protocols::loops::Loop;
   using protocols::loops::Loops;
+  using utility::vector1;
   assert(chunks);
 
-  Loops modified;
+  vector1<Size> violated_residues;
+  violated_residues.push_back(1);
+  for (Size i = 2; i <= pose->total_residue(); ++i) {
+    const xyzVector<Real>& prev_xyz = pose->xyz(NamedAtomID("CA", i - 1));
+    const xyzVector<Real>& curr_xyz = pose->xyz(NamedAtomID("CA", i));
 
-  for (Loops::const_iterator i = chunks->begin(); i != chunks->end(); ++i) {
-    const Loop& loop = *i;
+    double distance = prev_xyz.distance(curr_xyz);
+    if (distance > option[OptionKeys::rigid::max_ca_ca_dist]()) {
+      // Residues j and j - 1 are separated by more than max_ca_ca_dist Angstroms
+      violated_residues.push_back(i);
+    }
+  }
+  violated_residues.push_back(pose->total_residue() + 1);
 
-    for (Size j = loop.start() + 1; j <= loop.stop(); ++j) {
-      const xyzVector<Real>& prev_xyz = pose.xyz(NamedAtomID("CA", j - 1));
-      const xyzVector<Real>& curr_xyz = pose.xyz(NamedAtomID("CA", j));
+  // violated_residues = [ 1, ..., n ]
+  for (Size i = 2; i <= violated_residues.size(); ++i) {
+    const Size prev_start = violated_residues[i - 1];
+    const Size curr_start = violated_residues[i];
+    const Size prev_stop  = curr_start - 1;
 
-      double distance = prev_xyz.distance(curr_xyz);
-      TR << "CA distance between residues " << j - 1 << " and " << j << " = " << distance << std::endl;
+    // Add the chunk
+    Loop chunk(prev_start, prev_stop);
+    chunks->add_loop(chunk);
+    TR.Debug << "Added chunk " << chunk.start() << " " << chunk.stop() << std::endl;
+
+    // Enable chainbreak term between adjacent chunks
+    if (curr_start < pose->total_residue()) {
+      core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::CUTPOINT_LOWER, prev_stop);
+      core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::CUTPOINT_UPPER, curr_start);
+      TR.Debug << "Added cutpoint variants to residues " << prev_stop << " and " << curr_start << std::endl;
     }
   }
 }
@@ -100,21 +125,8 @@ void MedalMover::apply(core::pose::Pose& pose) {
   using protocols::nonlocal::StarTreeBuilder;
   using std::endl;
 
-  // Retrieve the current job from jd2, identify aligned regions
+  // Retrieve the current job from jd2
   ThreadingJob const * const job = protocols::nonlocal::current_job();
-  const SequenceAlignment& alignment = job->alignment();
-  Loops unaligned = protocols::comparative_modeling::loops_from_alignment(pose.total_residue(), alignment, 3);
-  Loops aligned = unaligned.invert(pose.total_residue());
-
-  // Examine the plausibility of the chunks. If consecutive CA-CA distance exceeds some
-  // threshold, partition the chunk into separately moving pieces.
-  //validate_chunks(pose, &aligned);
-  //validate_chunks(pose, &unaligned);
-
-  TR << "Alignment: " << alignment.alignment_id() << endl;
-  TR << "Aligned regions: " << aligned << endl;
-  TR << "Unaligned regions: " << unaligned << endl;
-
   protocols::nonlocal::emit_intermediate(pose, "medal_initial_model.pdb");
 
   // Threading model
@@ -124,15 +136,22 @@ void MedalMover::apply(core::pose::Pose& pose) {
 
   protocols::nonlocal::emit_intermediate(pose, "medal_post_closure.pdb");
 
+  // Decompose the structure into chunks based on consecutive CA-CA distance.
+  // Add cutpoint variants between adjacent chunks.
+  Loops chunks;
+  chunkify(&pose, &chunks);
+  TR << "Chunks: " << chunks << endl;
+
   // Setup the score function and score the initial model
-  core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
+  //core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
   ScoreFunctionOP score = score_function(&pose);
   score->show(TR, pose);
   TR.flush_all_channels();
 
   // Build the star fold tree, identify jumps
   StarTreeBuilder builder;
-  builder.set_up(aligned, &pose);
+  builder.set_up(chunks, &pose);
+  TR << pose.fold_tree() << endl;
 
   Jumps jumps;
   jumps_from_pose(pose, &jumps);
@@ -181,13 +200,18 @@ core::scoring::ScoreFunctionOP MedalMover::score_function(core::pose::Pose* pose
   score->set_energy_method_options(options);
 
   // Enable specific energy terms
-  score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::constraints::cst_weight]());
-  score->set_weight(core::scoring::hbond_lr_bb, 1);
-  score->set_weight(core::scoring::hbond_sr_bb, 1);
+  //score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::constraints::cst_weight]());
+  //score->set_weight(core::scoring::hbond_lr_bb, 1);
+  //score->set_weight(core::scoring::hbond_sr_bb, 1);
+  score->set_weight(core::scoring::chainbreak, option[OptionKeys::jumps::increase_chainbreak]());
+  score->set_weight(core::scoring::distance_chainbreak, option[OptionKeys::jumps::increase_chainbreak]());
   score->set_weight(core::scoring::linear_chainbreak, option[OptionKeys::jumps::increase_chainbreak]());
-  score->set_weight(core::scoring::rama, 0.1);
-  score->set_weight(core::scoring::rg, 1.5 * option[OptionKeys::abinitio::rg_reweight]());
-  score->set_weight(core::scoring::sheet, 1);
+  //score->set_weight(core::scoring::rama, 0.1);
+  //score->set_weight(core::scoring::rg, 1.5 * option[OptionKeys::abinitio::rg_reweight]());
+  //score->set_weight(core::scoring::sheet, 1);
+
+  // Disable specific energy terms
+  //score->set_weight(core::scoring::rama, 0);
 
   /// ... more here
 

@@ -4,8 +4,9 @@
 #include <basic/options/option.cc.include.gen.hh>
 #include <utility/options/OptionCollection.hh>
 inline void add_rosetta_options_0( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rigid::rigid, "rigid option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::rigid::rigid_body_cycles, "Number of rigid body perturbation cycles" ).def(1000);
 option.add( basic::options::OptionKeys::rigid::fragment_cycles, "Number of fragment insertion cycles" ).def(1000);
+option.add( basic::options::OptionKeys::rigid::max_ca_ca_dist, "Maximum distance between consecutive CA atoms before chunk partitioning occurs" ).def(5.0);
+option.add( basic::options::OptionKeys::rigid::rigid_body_cycles, "Number of rigid body perturbation cycles" ).def(1000);
 option.add( basic::options::OptionKeys::rigid::rotation, "Rotation magnitude" ).def(2.5);
 option.add( basic::options::OptionKeys::rigid::sequence_separation, "Maximum sequence separation for scoring chainbreaks" ).def(20);
 option.add( basic::options::OptionKeys::rigid::temperature, "Monte Carlo temperature" ).def(2.0);
@@ -575,10 +576,10 @@ option.add( basic::options::OptionKeys::abinitio::HD_fa_penalty, "penalty for ea
 option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with interior/exterior predictions for strands" );
 option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
 option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
+option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
 option.add( basic::options::OptionKeys::fold_cst::no_minimize, "No minimization moves in fold_constraints protocol. Useful for testing wheather fragment moves alone can recapitulate a given structure." ).def(false);
