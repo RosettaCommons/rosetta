@@ -45,7 +45,6 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/sequence/SequenceAlignment.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/abinitio/MaxSeqSepConstraintSet.hh>
 #include <protocols/comparative_modeling/util.hh>
@@ -68,20 +67,18 @@ static basic::Tracer TR("protocols.medal.MedalMover");
 void chunkify(core::pose::Pose* pose, protocols::loops::Loops* chunks) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
-  using core::Real;
   using core::Size;
   using core::id::NamedAtomID;
   using numeric::xyzVector;
   using protocols::loops::Loop;
-  using protocols::loops::Loops;
   using utility::vector1;
   assert(chunks);
 
   vector1<Size> violated_residues;
   violated_residues.push_back(1);
   for (Size i = 2; i <= pose->total_residue(); ++i) {
-    const xyzVector<Real>& prev_xyz = pose->xyz(NamedAtomID("CA", i - 1));
-    const xyzVector<Real>& curr_xyz = pose->xyz(NamedAtomID("CA", i));
+    const xyzVector<double>& prev_xyz = pose->xyz(NamedAtomID("CA", i - 1));
+    const xyzVector<double>& curr_xyz = pose->xyz(NamedAtomID("CA", i));
 
     double distance = prev_xyz.distance(curr_xyz);
     if (distance > option[OptionKeys::rigid::max_ca_ca_dist]()) {
@@ -115,7 +112,6 @@ void MedalMover::apply(core::pose::Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::scoring::ScoreFunctionOP;
-  using core::sequence::SequenceAlignment;
   using protocols::jd2::ThreadingJob;
   using protocols::loops::LoopRelaxThreadingMover;
   using protocols::loops::Loops;
@@ -143,7 +139,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
   TR << "Chunks: " << chunks << endl;
 
   // Setup the score function and score the initial model
-  //core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
+  core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
   ScoreFunctionOP score = score_function(&pose);
   score->show(TR, pose);
   TR.flush_all_channels();
@@ -166,6 +162,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
         true);
 
   mover->apply(pose);
+  protocols::nonlocal::emit_intermediate(pose, "medal_post_rigid_body.pdb");
 
   // Remove virtual residue placed during star fold tree construction
   protocols::nonlocal::remove_cutpoint_variants(&pose);
@@ -200,20 +197,15 @@ core::scoring::ScoreFunctionOP MedalMover::score_function(core::pose::Pose* pose
   score->set_energy_method_options(options);
 
   // Enable specific energy terms
-  //score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::constraints::cst_weight]());
-  //score->set_weight(core::scoring::hbond_lr_bb, 1);
-  //score->set_weight(core::scoring::hbond_sr_bb, 1);
-  score->set_weight(core::scoring::chainbreak, option[OptionKeys::jumps::increase_chainbreak]());
-  score->set_weight(core::scoring::distance_chainbreak, option[OptionKeys::jumps::increase_chainbreak]());
+  score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::constraints::cst_weight]());
+  score->set_weight(core::scoring::hbond_lr_bb, 1);
+  score->set_weight(core::scoring::hbond_sr_bb, 1);
   score->set_weight(core::scoring::linear_chainbreak, option[OptionKeys::jumps::increase_chainbreak]());
-  //score->set_weight(core::scoring::rama, 0.1);
-  //score->set_weight(core::scoring::rg, 1.5 * option[OptionKeys::abinitio::rg_reweight]());
-  //score->set_weight(core::scoring::sheet, 1);
+  score->set_weight(core::scoring::rg, option[OptionKeys::abinitio::rg_reweight]());
+  score->set_weight(core::scoring::sheet, 1);
 
   // Disable specific energy terms
-  //score->set_weight(core::scoring::rama, 0);
-
-  /// ... more here
+  score->set_weight(core::scoring::rama, 0);
 
   core::scoring::constraints::add_constraints_from_cmdline(*pose, *score);
   return score;
