@@ -881,6 +881,7 @@ VarSolDRotamerDots::overlap_atoms(
 			}
 		}
 	}
+	return true;
 }
 
 
