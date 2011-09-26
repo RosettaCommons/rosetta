@@ -150,7 +150,6 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "orbitals_hpol" ] = orbitals_hpol;
 	name2score_type_[ "orbitals_haro" ] = orbitals_haro;
 	name2score_type_["orbitals_hpol_bb"] = orbitals_hpol_bb;
-	name2score_type_["orbitals_orbitals"] = orbitals_orbitals;
 
 
 

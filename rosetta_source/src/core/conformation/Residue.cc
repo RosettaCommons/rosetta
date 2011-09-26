@@ -59,11 +59,6 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 	nonstandard_polymer_( false ),
 	connect_map_( rsd_type_in.n_residue_connections() )
 {
-/*	Vector dummy_xyz(0,0,0);//use to place in the orbitals_xyz
-	orbital_xyz_.resize(rsd_type_.n_orbitals()); //create space for orbital xyz. needed because we never update the orbital xyz unless needed
-	for(Size i=1; i <= rsd_type_.n_orbitals(); ++i){
-		orbital_xyz_[i] = dummy_xyz;
-	}*/
 
 
 
@@ -71,17 +66,25 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 		atoms_.push_back( Atom( rsd_type_.xyz(i), rsd_type_.atom_type_index(i),  rsd_type_.mm_atom_type_index(i) ) );
 		//std::cout << this->atom_name(i) << std::endl;
 	}
-/*	if(basic::options::option[basic::options::OptionKeys::orbitals::orbitals]){
-		for(Size orbital_index=1; orbital_index <= rsd_type_.n_orbitals(); ++orbital_index){
-			core::chemical::orbitals::ICoorOrbitalData orb_icoor(rsd_type_.orbital_icoor_data(orbital_index));
-			Vector stub1_xyz(this->atom(orb_icoor.stub1()).xyz());
-			Vector stub2_xyz(this->atom(orb_icoor.stub2()).xyz());
-			Vector stub3_xyz(this->atom(orb_icoor.stub3()).xyz());
-			Vector orbital_vector(orb_icoor.build(stub1_xyz, stub2_xyz, stub3_xyz));
-			//orbitals_.push_back(Orbital(orbital_vector));
-			orbitals_.push_back(orbital_vector);
+
+	for(
+		utility::vector1<core::Size>::const_iterator
+		atoms_with_orb_index = rsd_type_.atoms_with_orb_index().begin(),
+		atoms_with_orb_index_end = rsd_type_.atoms_with_orb_index().end();
+		atoms_with_orb_index != atoms_with_orb_index_end; ++atoms_with_orb_index
+	){
+		utility::vector1<core::Size> orbital_indices(rsd_type_.bonded_orbitals(*atoms_with_orb_index));
+		for(
+				utility::vector1< core::Size >::const_iterator
+				orbital_index = orbital_indices.begin(),
+				orbital_index_end = orbital_indices.end();
+				orbital_index != orbital_index_end; ++orbital_index
+		){
+			Vector orb_xyz(this->build_orbital_xyz(*orbital_index));
+			orbitals_.push_back(orbitals::OrbitalXYZCoords(orb_xyz));
 		}
-	}*/
+	}
+
 }
 
 /// @details Create a residue/rotamer of type rsd_type_in placed at the position occupied by current_rsd
@@ -108,29 +111,14 @@ Residue::Residue(
 	connections_to_residues_( current_rsd.connections_to_residues_ ),
 	pseudobonds_( current_rsd.pseudobonds_ )
 {
-/*
-	Vector dummy_xyz(0,0,0);//use to place in the orbitals_xyz
-	orbital_xyz_.resize(rsd_type_.n_orbitals()); //create space for orbital xyz. needed because we never update the orbital xyz unless needed
-	for(Size i=1; i <= rsd_type_.n_orbitals(); ++i){
-		orbital_xyz_[i] = dummy_xyz;
-	}
-*/
+
 
 
 	for ( Size i=1; i<= rsd_type_.natoms(); ++i ) {
 		atoms_.push_back( Atom( rsd_type_.xyz(i), rsd_type_.atom_type_index(i), rsd_type_.mm_atom_type_index(i) ) );
 	}
-/*	if(basic::options::option[basic::options::OptionKeys::orbitals::orbitals]){
-		for(Size orbital_index=1; orbital_index <= rsd_type_.n_orbitals(); ++orbital_index){
-			core::chemical::orbitals::ICoorOrbitalData orb_icoor(rsd_type_.orbital_icoor_data(orbital_index));
-			Vector stub1_xyz(this->atom(orb_icoor.stub1()).xyz());
-			Vector stub2_xyz(this->atom(orb_icoor.stub2()).xyz());
-			Vector stub3_xyz(this->atom(orb_icoor.stub3()).xyz());
-			Vector orbital_vector(orb_icoor.build(stub1_xyz, stub2_xyz, stub3_xyz));
-			//orbitals_.push_back(Orbital(orbital_vector));
-			orbitals_.push_back(orbital_vector);
-		}
-	}*/
+
+
 
 	assert( current_rsd.mainchain_torsions().size() == rsd_type_.mainchain_atoms().size() );
 
@@ -172,6 +160,23 @@ Residue::Residue(
 		);
 		chi_[ chino ] = current_chi;
 	}
+	for(
+		utility::vector1<core::Size>::const_iterator
+		atoms_with_orb_index = rsd_type_.atoms_with_orb_index().begin(),
+		atoms_with_orb_index_end = rsd_type_.atoms_with_orb_index().end();
+		atoms_with_orb_index != atoms_with_orb_index_end; ++atoms_with_orb_index
+	){
+		utility::vector1<core::Size> orbital_indices(rsd_type_.bonded_orbitals(*atoms_with_orb_index));
+		for(
+				utility::vector1< core::Size >::const_iterator
+				orbital_index = orbital_indices.begin(),
+				orbital_index_end = orbital_indices.end();
+				orbital_index != orbital_index_end; ++orbital_index
+		){
+			Vector orb_xyz(this->build_orbital_xyz(*orbital_index));
+			orbitals_.push_back(orbitals::OrbitalXYZCoords(orb_xyz));
+		}
+	}
 
 }
 
@@ -182,7 +187,6 @@ Residue::Residue( Residue const & src )
 	utility::pointer::ReferenceCount(),
 	rsd_type_(src.rsd_type_),
 	atoms_(src.atoms_),
-//	orbitals_(src.orbitals_),
 	seqpos_(src.seqpos_),
 	chain_(src.chain_),
 	chi_(src.chi_),
@@ -655,22 +659,7 @@ Residue::fill_missing_atoms(
 	}
 }
 
-/*
-///@brief This will return the xyz coordinates for an orbital based upon the index of that orbital. Currently does not cache the orbital xyz
-Vector const
-Residue::orbital_xyz(Size const orbital_index) const{
-		core::chemical::orbitals::ICoorOrbitalData orb_icoor(rsd_type_.orbital_icoor_data(orbital_index));
-		Vector stub1_xyz(this->atom(orb_icoor.stub1()).xyz());
-		Vector stub2_xyz(this->atom(orb_icoor.stub2()).xyz());
-		Vector stub3_xyz(this->atom(orb_icoor.stub3()).xyz());
-		//std::cout << "stub1: "<< this->atom_name(orb_icoor.stub1()) << " stub2: " << this->atom_name(orb_icoor.stub2()) << " stub3: " << this->atom_name(orb_icoor.stub3()) << std::endl;
-		Vector orbital_vector(orb_icoor.build(stub1_xyz, stub2_xyz, stub3_xyz));
-		//std::cout << "stub1 " << stub1_xyz.x() << " " << stub1_xyz.y() << " " << stub1_xyz.z() << std::endl;
-		//std::cout << "stub2 " << stub2_xyz.x() << " " << stub2_xyz.y() << " " << stub2_xyz.z() << std::endl;
-		//std::cout << "stub3 " << stub3_xyz.x() << " "<< stub3_xyz.y() << " " << stub3_xyz.z() << std::endl;
-		return orbital_vector;
-}
-*/
+
 
 void
 Residue::clear_residue_connections()

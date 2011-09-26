@@ -74,6 +74,18 @@ public:
 			std::string stub3
 	);
 
+	ICoorOrbitalData(
+		Real phi,
+		Real theata,
+		Real distance,
+		Size stub1,
+		Size stub2,
+		Size stub3
+	);
+
+
+
+
 	Real phi() const;
 	Real theta() const;
 	Real distance() const;
@@ -89,6 +101,33 @@ public:
 	) const;
 
 
+	void replace_stub1(const core::Size atom1 )
+	{
+		s_stub1_=atom1;
+	}
+
+	void replace_stub2(const core::Size atom2)
+	{
+		s_stub2_=atom2;
+	}
+	void replace_stub3(const core::Size atom3)
+	{
+		s_stub3_=atom3;
+	}
+
+	core::Size get_stub1()
+	{
+		return s_stub1_;
+	}
+	core::Size get_stub2()
+	{
+		return s_stub2_;
+	}
+	core::Size get_stub3()
+	{
+		return s_stub3_;
+	}
+
 
 private:
 	Real phi_;
@@ -97,6 +136,12 @@ private:
 	std::string stub1_;
 	std::string stub2_;
 	std::string stub3_;
+
+	Size s_stub1_;
+	Size s_stub2_;
+	Size s_stub3_;
+
+
 
 };
 

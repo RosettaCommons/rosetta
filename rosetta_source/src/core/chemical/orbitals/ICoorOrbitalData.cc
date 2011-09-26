@@ -58,12 +58,12 @@ namespace orbitals{
 
 /// @brief construct ICoorOrbitalData.
 ICoorOrbitalData::ICoorOrbitalData():
-	phi_(0.0),
-	theta_(0.0),
-	distance_(0.0),
-	stub1_(""),
-	stub2_(""),
-	stub3_("")
+			phi_(0.0),
+			theta_(0.0),
+			distance_(0.0),
+			stub1_(""),
+			stub2_(""),
+			stub3_("")
 
 {}
 
@@ -77,13 +77,35 @@ ICoorOrbitalData::ICoorOrbitalData(
 		std::string stub3
 
 ):
-	phi_(phi),
-	theta_(theta),
-	distance_(distance),
-	stub1_(stub1),
-	stub2_(stub2),
-	stub3_(stub3)
+phi_(phi),
+theta_(theta),
+distance_(distance),
+stub1_(stub1),
+stub2_(stub2),
+stub3_(stub3)
 {}
+
+
+//Testing size orbitals
+ICoorOrbitalData::ICoorOrbitalData(
+		Real phi,
+		Real theta,
+		Real distance,
+		Size stub1,
+		Size stub2,
+		Size stub3
+):
+phi_(phi),
+theta_(theta),
+distance_(distance),
+s_stub1_(stub1),
+s_stub2_(stub2),
+s_stub3_(stub3)
+{
+
+}
+
+
 
 ///@brief return the phi for a given orbital
 Real ICoorOrbitalData::phi() const
@@ -120,6 +142,9 @@ std::string ICoorOrbitalData::stub3() const
 {
 	return stub3_;
 }
+
+
+
 
 
 ///@brief build the xyz coordinates for an orbital based upon the stub1, stub2, stub3 xyz coordinates.
