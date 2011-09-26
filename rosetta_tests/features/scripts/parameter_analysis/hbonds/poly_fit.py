@@ -49,13 +49,49 @@ class PolyFit:
 
         self.polynomial_colors = {2:"#D53E4F", 3:"#FC8D59", 4:"#FEE08B", 5:"#FFFFBF", 6:"#E6F598", 7:"#99D594", 8:"#3288BD"}
 
-        self.poly_text_frame = Tkinter.Frame(self.main)
-        self.poly_label = Tkinter.Label(self.poly_text_frame, text="Polynomial Coefficients: smallest coefficient first")
+        #BEGIN PANEL FRAME
+        self.panel_frame = Tkinter.Frame(self.main)
+
+        #BEGIN POLY FRAME
+        self.poly_text_frame = Tkinter.Frame(self.panel_frame)
+        self.poly_label = Tkinter.Label(self.poly_text_frame, text="Polynomial Coefficients: largest coefficient first")
         self.poly_label.pack(side="top")
         self.poly_text = Tkinter.Text(\
             self.poly_text_frame, width = 50, background="lightgray")
         self.poly_text.pack(side="bottom")
-        self.poly_text_frame.pack(side="right")
+        self.poly_text_frame.pack(side="top")
+        #END POLY_TEXT
+
+        #BEGIN REFLECT FRAME
+        self.reflect_frame = Tkinter.Frame(self.panel_frame)
+        self.reflect_check_label= Tkinter.Label(self.reflect_frame, text="reflect y-axis:")
+        self.reflect_check_label.pack(side="left")
+        self.reflect_check_var = Tkinter.IntVar()
+        self.reflect_check = Tkinter.Checkbutton(self.reflect_frame, variable=self.reflect_check_var, command=self.redraw_everything)
+        self.reflect_check.pack(side="left")
+        self.reflect_var = Tkinter.StringVar()
+        self.reflect_var.trace("w", self.reflect_var_callback)
+        self.reflect_value_label = Tkinter.Label(self.reflect_frame, text="y=")
+        self.reflect_value_label.pack(side="left")
+        self.reflect_value = Tkinter.Entry(self.reflect_frame, textvariable=self.reflect_var)
+        self.reflect_value.pack(side="right", expand=1, fill=Tkinter.X)
+        self.reflect_frame.pack(side="bottom", expand=1, fill=Tkinter.X)
+        #END REFLECT FRAME
+
+        #BEGIN REFERENCE POLYS FRAME
+        self.reference_polys_frame = Tkinter.Frame(self.panel_frame)
+        self.reference_polys_label = Tkinter.Label(self.reference_polys_frame, text="Add reference polynomials here:")
+        self.reference_polys_label.pack(side="top")
+        self.reference_polys_text = Tkinter.Text(
+            self.reference_polys_frame, width=50, background="lightgray")
+#        self.reference_polys_text.tag_add("update", 1.0, Tkinter.END)
+        self.reference_polys_text.bind("<Key>", self.reference_polys_text_callback)
+        self.reference_polys_text.pack(side="bottom")
+        self.reference_polys_frame.pack(side="bottom")
+        #END REFERENCE POLYS FRAME
+
+        self.panel_frame.pack(side="right")
+        #END PANEL FRAME
 
         self.canvas = Tkinter.Canvas( self.main,height=self.canvas_height, width=self.canvas_width  )
         self.canvas.pack(side="top")
@@ -68,10 +104,14 @@ class PolyFit:
 
 
         self.control_points = initial_control_points
-
         self.control_point_widgets = []
-        self.polynomial_points = {}
+
         self.polynomial_coefficients = {}
+        self.polynomial_points = {}
+
+        self.ref_polynomial_coefficients= []
+        self.ref_polynomial_points = {}
+
         self.redraw_everything()
     
 
@@ -79,6 +119,14 @@ class PolyFit:
 
  
         self.main.mainloop()
+
+
+    def reference_polys_text_callback(self, event):
+        self.redraw_everything()
+
+    def reflect_var_callback(self, name, index, mode):
+        print lineno(), "setting reflection to y=%s" % self.reflect_var.get()
+        self.redraw_everything()
 
 
     def test_diagnostics(self):
@@ -141,13 +189,42 @@ class PolyFit:
     def redraw_everything( self ):
 
         self.clear()
+        self.parse_reference_polynomials()
         self.compute_polynomial_fits()
+        self.compute_reference_polynomial_points()
         self.draw_demo()
         self.print_coefficients()
         print "Control point coordinates:"
         print self.control_points
         print ""
         
+    def parse_reference_polynomials(self):
+        contents = self.reference_polys_text.get(1.0, Tkinter.END)
+        self.ref_polynomial_coefficients = []
+        linenum = 1
+        for line in contents.split("\n"):
+            if line == "" or line[0] == "#": continue
+            coefs = line.split(",")
+            if len(coefs) > 9:
+                print "Reference polynomial has to many coefficients on line", linenum
+                print "line:'%s'" % line
+                continue
+            if len(coefs) < 3:
+                print "Reference polynomial does not have ateast 3 coefficients, use ',' to separate the coefficients on line", linenum
+                print "line:'%s'" % line
+                continue
+            try:
+                coefs = map(float, coefs)
+            except:
+                print "Reference polynomial has non-numeric coefficients, on line", linenum
+                print "line:'%s'" % line
+                continue
+
+            self.ref_polynomial_coefficients.append(coefs)
+
+        
+
+
     def print_coefficients(self):
         self.poly_text.delete(1.0, Tkinter.END)
         for d, coefs in self.polynomial_coefficients.iteritems():
@@ -161,7 +238,6 @@ class PolyFit:
             s = []
             for v in coefs:
                 s.append("%.4f" %v)
-            s.reverse() # to get coefficients from low to high
             lines.append(",".join(s))
             lines.append("")
         self.poly_text.insert(Tkinter.END, "\n".join(lines))
@@ -173,12 +249,13 @@ class PolyFit:
             self.poly_text.tag_add(str(d), tag_begin, tag_end)
             self.poly_text.tag_config(str(d), foreground=self.polynomial_colors[d])
 
+    def polynomial_x_points(self):
+        x_points = [float(x)*(self.xmax - self.xmin)/self.nbins + self.xmin for x in range(self.nbins)]
+        return x_points
 
     def compute_polynomial_fits(self):
-
-        x_points = [float(x)*(self.xmax - self.xmin)/self.nbins + self.xmin for x in range(self.nbins)]
+        x_points = self.polynomial_x_points()
         
-
         self.polynomial_points = {}
 
         if len(self.control_points) == 0: return
@@ -186,6 +263,15 @@ class PolyFit:
             if len(self.control_points) < d: break
             xs = [p[0] for p in self.control_points]
             ys = [p[1] for p in self.control_points]
+
+
+            try:
+                ry = float(self.reflect_var.get()) 
+            except:
+                ry = None
+            if self.reflect_check_var.get() and ry is not None:
+                xs.extend([2*ry - p[0] for p in self.control_points])
+                ys.extend(ys)
 
             # silence RankWarning
             with warnings.catch_warnings():
@@ -197,22 +283,36 @@ class PolyFit:
             self.polynomial_points[d] = \
                 (x_points, numpy.polyval(numpy.poly1d(coefs), x_points))
 
+    def compute_reference_polynomial_points(self):
+        self.ref_polynomial_points = {}
+
+        x_points = self.polynomial_x_points()
+        for i in range(len(self.ref_polynomial_coefficients)):
+            ref_poly_coefs = self.ref_polynomial_coefficients[i]
+
+            self.ref_polynomial_points[i] = \
+                (x_points, numpy.polyval(numpy.poly1d(ref_poly_coefs), x_points))
+
     def draw_demo(self):
+        self.draw_polynomial_fits(self.ref_polynomial_points, fixed_color="darkgray")
+        self.draw_polynomial_fits(self.polynomial_points)
+        self.draw_control_points()
+
+    def draw_polynomial_fits(self, poly_points, fixed_color=None):
         canv_points = []
-        for d, (xs, ys) in self.polynomial_points.iteritems():
+        for d, (xs, ys) in poly_points.iteritems():
             for i in range(len(xs)):
                 px, py = self.p2canv(xs[i], ys[i])
                 canv_points.append((d,px,py))
         
-        for i in range(len(canv_points)):
-            d,px,py = canv_points[i]
-            dot_color = self.polynomial_colors[d]
-            px0,px1 = px - self.dot_width / 2, px + self.dot_width / 2
-            py0,py1 = py - self.dot_width / 2, py + self.dot_width / 2
-            
-#            self.canvas.create_oval( px0, py0, px1, py1, fill=dot_color )
-            if i == len(canv_points):
-                self.canvas.create_text( px+10, py+10, text="dim=%s" %d)
+#        for i in range(len(canv_points)):
+#            d,px,py = canv_points[i]
+##            line_color = self.polynomial_colors[d]
+#            px0,px1 = px - self.dot_width / 2, px + self.dot_width / 2
+#            py0,py1 = py - self.dot_width / 2, py + self.dot_width / 2
+#            
+#            if i == len(canv_points)-1:
+#                self.canvas.create_text( px+10, py+10, text="dim=%s" %d)
             
 
         for i in range(1,len(canv_points)):
@@ -222,11 +322,15 @@ class PolyFit:
             d, px,py = canv_points[i]
             if ad != d: continue
 
-            dot_color = self.polynomial_colors[d]
+            if fixed_color is None:
+                line_color = self.polynomial_colors[d]
+            else:
+                line_color = fixed_color
+
+            self.canvas.create_line( ax, ay, px, py, fill=line_color)
 
 
-            self.canvas.create_line( ax, ay, px, py, fill=dot_color)
-
+    def draw_control_points(self):
 
         self.control_point_widgets = []
         for x, y in self.control_points:
@@ -235,7 +339,7 @@ class PolyFit:
             py0,py1 = py - self.dot_width / 2, py + self.dot_width / 2
             t = self.canvas.create_oval( px0, py0, px1, py1, fill=self.dot_color )
             self.control_point_widgets.append(t)
-
+        
             
 
     def event_lclick(self, event):
@@ -276,7 +380,7 @@ class PolyFit:
         self.redraw_everything()
 
 
-initial_control_points = [(0.17941176470588235, 0.21764705882352942), (-0.29999999999999999, 0.34705882352941175), (-0.49411764705882355, -0.055882352941176473), (-0.53823529411764703, -0.28235294117647058), (-0.30588235294117649, -0.35588235294117648)]
+initial_control_points = []
 
 
 d = PolyFit(initial_control_points)
