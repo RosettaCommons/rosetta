@@ -34,21 +34,25 @@ class StarTreeBuilder : public TreeBuilder {
 
   /// @brief Constructs a star fold tree by placing a virtual residue at
   /// <chunks> center of mass and adding jumps from it to a stochastically
-  /// chosen residue in each chunk.
+  /// chosen anchor residue in each chunk. Cutpoints are added on chunk
+  /// boundaries.
+  ///
+  /// Important: chunks must be sorted in increasing order of start position.
+  /// The simplest way to achieve this is a call to Loops::sequential_order().
   void set_up(const protocols::loops::Loops& chunks, core::pose::Pose* pose);
 
-  /// @brief Removes the virtual residue added to <pose> in calls to build()
+  /// @brief Removes the virtual residue added to <pose> in calls to set_up()
   void tear_down(core::pose::Pose* pose);
 
  private:
   /// @brief Stochastically selects an anchor position
-  core::Size choose_anchor_position(Size start, Size stop) const;
+  core::Size choose_anchor_position(const protocols::loops::Loop& chunk) const;
 
   /// @brief When native is available, computes rmsd of jump residues, storing
-  /// the results as comments in the silent file output.
+  /// the results as comments in silent file output
   void do_compute_jump_rmsd(core::pose::Pose* model) const;
 
-  /// @brief Index of the virtual residue we added to the pose in build()
+  /// @brief Index of the virtual residue we added to the pose in set_up()
   int virtual_res_;
 };
 

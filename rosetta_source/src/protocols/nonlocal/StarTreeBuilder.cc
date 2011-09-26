@@ -14,7 +14,6 @@
 #include <protocols/nonlocal/StarTreeBuilder.hh>
 
 // C/C++ headers
-#include <iostream>
 #include <utility>
 
 // External headers
@@ -29,14 +28,12 @@
 #include <numeric/util.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/random/DistributionSampler.hh>
-#include <numeric/random/random.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <utility/vector1.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/fragment/SecondaryStructure.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
@@ -51,33 +48,12 @@
 namespace protocols {
 namespace nonlocal {
 
-/// @brief Simple utility method to aid debugging failed fold tree construction
-void show_cuts_and_jumps(const utility::vector1<int>& cuts,
-                         const utility::vector1<std::pair<int, int> >& jumps) {
-  using std::cerr;
-  using std::endl;
-  using std::pair;
-
-  cerr << "Cutpoints: " << endl;
-  for (utility::vector1<int>::const_iterator i = cuts.begin(); i != cuts.end(); ++i) {
-    cerr << "\t" << *i << endl;
-  }
-
-  cerr << "Jumps: " << endl;
-  for (utility::vector1<pair<int, int> >::const_iterator i = jumps.begin(); i != jumps.end(); ++i) {
-    const pair<int, int>& jump = *i;
-    cerr << "\t" << jump.first << " => " << jump.second << endl;
-  }
-}
-
 StarTreeBuilder::StarTreeBuilder() : virtual_res_(-1) {}
 
 /// Note: assumes <chunks> are sorted in increasing order of start position
 void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::Pose* pose) {
   using core::Size;
   using core::Real;
-  using core::fragment::SecondaryStructure;
-  using core::fragment::SecondaryStructureOP;
   using protocols::loops::Loop;
   using protocols::loops::Loops;
   using utility::vector1;
@@ -98,21 +74,16 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
   // <num_residues>
   virtual_res_ = pose->total_residue();
 
+  // Define jumps, cuts
+  vector1<int> cuts;
   vector1<std::pair<int, int> > jumps;
   for (Loops::const_iterator i = chunks.begin(); i != chunks.end(); ++i) {
     const Loop& chunk = *i;
-    Size anchor_position = choose_anchor_position(chunk.start(), chunk.stop());
+    const Size cut_point  = chunk.stop();
+    const Size jump_point = choose_anchor_position(chunk);
 
-    // virtual residue => anchor position
-    jumps.push_back(std::make_pair(virtual_res_, anchor_position));
-  }
-
-  // Insert cutpoints between adjacent jumps
-  SecondaryStructureOP ss = new SecondaryStructure(*pose);
-  vector1<int> cuts;
-  for (Size i = 2; i <= jumps.size(); ++i) {
-    Size cutpoint = CutFinder::choose_cutpoint(jumps[i-1].second + 1, jumps[i].second - 1, ss);
-    cuts.push_back(cutpoint);
+    cuts.push_back(cut_point);
+    jumps.push_back(std::make_pair(virtual_res_, jump_point));
   }
 
   // Remember to include the original cutpoint at the end of the chain
@@ -138,10 +109,8 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
                                               ft_jumps,       // jump_point
                                               ft_cuts,        // cuts
                                               virtual_res_);  // root
-  if (!status) {
-    show_cuts_and_jumps(cuts, jumps);
+  if (!status)
     utility_exit_with_message("StarTreeBuilder: failed to build fold tree from cuts and jumps");
-  }
 
   // Update the pose's fold tree
   pose->fold_tree(tree);
@@ -154,6 +123,7 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
 void StarTreeBuilder::do_compute_jump_rmsd(core::pose::Pose* model) const {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
+  using boost::unordered_map;
   using core::Real;
   using core::Size;
   using core::pose::Pose;
@@ -163,33 +133,18 @@ void StarTreeBuilder::do_compute_jump_rmsd(core::pose::Pose* model) const {
     return;
 
   // Compute RMSD of jump residues (jump point +/- 1 residue)
-  boost::unordered_map<Size, Real> rmsds;
+  unordered_map<Size, Real> rmsds;
   Pose native = *core::import_pose::pose_from_pdb(option[OptionKeys::in::file::native]());
   core::scoring::compute_jump_rmsd(native, *model, &rmsds);
 
   // Write results to <model> as comments
-  for (boost::unordered_map<Size, Real>::const_iterator i = rmsds.begin(); i != rmsds.end(); ++i) {
+  for (unordered_map<Size, Real>::const_iterator i = rmsds.begin(); i != rmsds.end(); ++i) {
     Size residue = i->first;
     Real rmsd = i->second;
     core::pose::add_comment(*model,
                             (boost::format("rmsd_jump_residue_%1%") % residue).str(),
                             (boost::format("%1%") % rmsd).str());
   }
-}
-
-core::Size StarTreeBuilder::choose_anchor_position(core::Size start, core::Size stop) const {
-  using boost::math::normal;
-  using core::Size;
-  using numeric::random::DistributionSampler;
-
-  double mu = (stop - start + 1) / 2.0;
-  double sigma = 1;
-  normal distribution(mu, sigma);
-  DistributionSampler<normal> sampler(distribution);
-
-  // Clamp insertion position to closed interval [start, stop]
-  Size position = static_cast<Size>(sampler.sample());
-  return numeric::clamp<Size>(position, start, stop);;
 }
 
 void StarTreeBuilder::tear_down(core::pose::Pose* pose) {
@@ -200,6 +155,23 @@ void StarTreeBuilder::tear_down(core::pose::Pose* pose) {
     pose->conformation().delete_residue_slow(virtual_res_);
     virtual_res_ = -1;
   }
+}
+
+/// mu- midpoint of the chunk
+/// sigma- linear function of chunk length
+core::Size StarTreeBuilder::choose_anchor_position(const protocols::loops::Loop& chunk) const {
+  using boost::math::normal;
+  using core::Size;
+  using numeric::random::DistributionSampler;
+
+  double mu = chunk.start() + chunk.length() / 2.0;
+  double sigma = chunk.length() / 5.0;
+  normal distribution(mu, sigma);
+  DistributionSampler<normal> sampler(distribution);
+
+  // Clamp insertion position to closed interval [start, stop]
+  Size position = static_cast<Size>(sampler.sample());
+  return numeric::clamp<Size>(position, chunk.start(), chunk.stop());;
 }
 
 }  // namespace nonlocal
