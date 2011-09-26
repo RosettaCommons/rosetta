@@ -2382,7 +2382,8 @@ Conformation::update_residue_torsions( Size const seqpos, bool const fire_signal
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-Conformation::update_orbital_coords( Residue & rsd) const{
+Conformation::update_orbital_coords( Residue & rsd) const {
+	/*
 	for(
 		utility::vector1<core::Size>::const_iterator
 		atoms_with_orb_index = rsd.atoms_with_orb_index().begin(),
@@ -2400,6 +2401,7 @@ Conformation::update_orbital_coords( Residue & rsd) const{
 			rsd.set_orbital_xyz(*orbital_index, orb_xyz );
 		}
 	}
+	*/
 }
 
 
@@ -2525,7 +2527,9 @@ Conformation::update_actcoord( Size resid )
 void
 Conformation::update_orbital_coords( Size resid )
 {
+	/*
 		residues_[ resid ]->update_orbital_coords();
+	*/
 }
 
 
