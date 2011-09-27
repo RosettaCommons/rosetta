@@ -47,6 +47,7 @@ void gather_coords(
 
 	natoms = 0;
 	for ( Size ii = 1; ii <= model.total_residue(); ++ii ) {
+		if (!model.residue(ii).is_protein()) continue;
 		Size const native_ii( mapping[ii] );
 		bool skip(
 			native_ii == 0 ||
@@ -59,6 +60,7 @@ void gather_coords(
 
 	Size n_gap(0);
 	for ( Size ii = 1; ii <= model.total_residue(); ++ii ) {
+		if (!model.residue(ii).is_protein()) continue;
 		Size const native_ii( mapping[ii] );
 		bool skip(
 			native_ii == 0 ||

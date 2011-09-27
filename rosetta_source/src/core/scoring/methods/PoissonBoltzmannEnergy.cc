@@ -180,7 +180,6 @@ utility::vector1 <Size> chains
 	return false;
 }
 
-
 Real
 PoissonBoltzmannEnergy::revamp_weight_by_burial(
 												conformation::Residue const & rsd,

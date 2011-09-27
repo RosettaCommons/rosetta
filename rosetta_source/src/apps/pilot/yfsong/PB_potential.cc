@@ -47,10 +47,13 @@
 #include <utility/io/izstream.hh>
 #include <ostream>
 
+//Option( 'PB_charged_chains', 'String', desc="Poisson Boltzmann potential is generated with the charges of given chains" , default="A"),
+//Option( 'PB_boundary_chains', 'String', desc="Poisson Boltzmann potential is generated with the boundary of given chains" , default="AB"),
+
 namespace PB_potential {
 	basic::options::FileOptionKey potential_file("PB_potential:potential_file");
 	basic::options::StringOptionKey apbs_exe("PB_potential:apbs_exe");
-	basic::options::StringOptionKey no_charge_on_chain("PB_potential:no_charge_on_chain");
+	basic::options::IntegerVectorOptionKey no_charge_on_chain("PB_potential:no_charge_on_chain");
 }
 
 static basic::Tracer TR("pilot.yfsong.PB_potential");
@@ -154,14 +157,15 @@ void write_APBS_config(core::pose::Pose & pose, std::ostream & config_file, std:
 	config_file << "end" << std::endl;
 	config_file << "quit" << std::endl;
 }
-	
+
+
 void
 apply ( core::pose::Pose & pose )
 {
 	std::string tag = protocols::jobdist::extract_tag_from_pose( pose );
 	std::string pqr_fn = tag + ".pqr";
 	std::ofstream out_pqr(pqr_fn.c_str());
-	std::string zero_charge_chains;
+	utility::vector1<Size> zero_charge_chains;
 	if (basic::options::option[PB_potential::no_charge_on_chain].user()) {
 		zero_charge_chains = basic::options::option[PB_potential::no_charge_on_chain]();
 	}

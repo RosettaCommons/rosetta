@@ -46,7 +46,7 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/io/izstream.hh>
-
+#include <algorithm>
 // option key includes
 
 static basic::Tracer TR("core.scoring.PoissonBoltzmannPotential");
@@ -66,7 +66,7 @@ dump_pqr(
 		 core::pose::Pose const & pose,
 		 std::ostream & out,
 		 std::string const & tag,
-		 std::string const & zero_charge_chains
+		 utility::vector1 <Size> const & zero_charge_chains
 		 ) {
 	Size const nres( pose.total_residue() );
 	
@@ -87,7 +87,7 @@ dump_pqr(
 			++number;
 			runtime_assert( rsd.chain() < chains.size() ); // silly restriction
 			char const chain( chains[ rsd.chain() ] );
-			if (zero_charge_chains.find(chain) == std::string::npos) {
+			if (find(zero_charge_chains.begin(), zero_charge_chains.end(), rsd.chain()) == zero_charge_chains.end()) {
 				using namespace ObjexxFCL::fmt;
 				out << "ATOM  " << I(5,number) << ' ' << rsd.atom_name(j) << ' ' <<
 				rsd.name3() << ' ' << chain << I(4,rsd.seqpos() ) << "    " <<
