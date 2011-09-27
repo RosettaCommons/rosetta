@@ -23,6 +23,7 @@
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
+#include <protocols/viewer/viewers.hh>
 
 // Package headers
 #include <protocols/moves/MonteCarlo.hh>
@@ -43,6 +44,7 @@ static basic::Tracer TR("protocols.moves.RationalMonteCarlo");
 RationalMonteCarlo::RationalMonteCarlo(MoverOP mover, ScoreFunctionOP score, Size num_trials, Real temperature, bool recover_low)
     : Parent("RationalMonteCarlo"), mover_(mover), num_trials_(num_trials), recover_low_(recover_low) {
   mc_ = new protocols::moves::MonteCarlo(*score, temperature);
+  protocols::viewer::add_monte_carlo_viewer(*mc_, "RationalMonteCarlo");
 }
 
 Size RationalMonteCarlo::num_trials() const {
