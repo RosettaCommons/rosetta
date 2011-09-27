@@ -72,7 +72,11 @@ void add_cutpoint_variants(core::pose::Pose* pose);
 void remove_cutpoint_variants(core::pose::Pose* pose);
 
 /// @brief Extract secondary structure chunks from the pose, using multiple secondary structure types
-/// this function also uses DSSP to calculate the secondary structure types first
+/// this function requires that the pose object already have secstruct information
+/// to get this information from structure (DSSP), call
+/// protocols::jumping::Dssp dssp_obj( *pose );	dssp_obj.insert_ss_into_pose( *pose );
+/// or from secondary structure prediction (psipred_ss2 file), call
+///	core::pose::read_psipred_ss2_file(pose);
 protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose const & pose,
                                std::string extracted_ss_types = "HE",
                                core::Size gap_size = 1,
