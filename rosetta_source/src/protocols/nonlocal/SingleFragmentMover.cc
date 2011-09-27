@@ -216,7 +216,7 @@ void SingleFragmentMover::initialize_chunks(const core::kinematics::FoldTree& tr
   // Normalize probabilities
   for (Size i = 1; i <= probs_.size(); ++i) {
     probs_[i] /= sum;
-    TR.Debug << "P(c_" << i << ")=" << probs_[i] << std::endl;
+    TR << "P(c_" << i << ")=" << probs_[i] << std::endl;
   }
 }
 
