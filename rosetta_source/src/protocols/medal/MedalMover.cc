@@ -26,6 +26,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/jumps.OptionKeys.gen.hh>
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
@@ -36,6 +37,8 @@
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/fragment/FragmentIO.hh>
+#include <core/fragment/FragSet.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
@@ -54,6 +57,7 @@
 #include <protocols/loops/util.hh>
 #include <protocols/moves/RationalMonteCarlo.hh>
 #include <protocols/moves/RigidBodyMotionMover.hh>
+#include <protocols/nonlocal/SingleFragmentMover.hh>
 #include <protocols/nonlocal/StarTreeBuilder.hh>
 #include <protocols/nonlocal/util.hh>
 
@@ -106,20 +110,15 @@ void chunkify(core::pose::Pose* pose, protocols::loops::Loops* chunks) {
       TR.Debug << "Added cutpoint variants to residues " << prev_stop << " and " << curr_start << std::endl;
     }
   }
+  TR << "Chunks: " << *chunks << std::endl;
 }
 
 void MedalMover::apply(core::pose::Pose& pose) {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
   using core::scoring::ScoreFunctionOP;
   using protocols::jd2::ThreadingJob;
   using protocols::loops::LoopRelaxThreadingMover;
   using protocols::loops::Loops;
-  using protocols::moves::MoverOP;
-  using protocols::moves::RationalMonteCarlo;
-  using protocols::moves::RigidBodyMotionMover;
   using protocols::nonlocal::StarTreeBuilder;
-  using std::endl;
 
   // Retrieve the current job from jd2
   ThreadingJob const * const job = protocols::nonlocal::current_job();
@@ -129,14 +128,12 @@ void MedalMover::apply(core::pose::Pose& pose) {
   LoopRelaxThreadingMover closure;
   closure.setup();
   closure.apply(pose);
-
   protocols::nonlocal::emit_intermediate(pose, "medal_post_closure.pdb");
 
   // Decompose the structure into chunks based on consecutive CA-CA distance.
   // Add cutpoint variants between adjacent chunks.
   Loops chunks;
   chunkify(&pose, &chunks);
-  TR << "Chunks: " << chunks << endl;
 
   // Setup the score function and score the initial model
   core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
@@ -144,30 +141,75 @@ void MedalMover::apply(core::pose::Pose& pose) {
   score->show(TR, pose);
   TR.flush_all_channels();
 
-  // Build the star fold tree, identify jumps
+  // Define the kinematics
   StarTreeBuilder builder;
   builder.set_up(chunks, &pose);
-  TR << pose.fold_tree() << endl;
+  TR << pose.fold_tree() << std::endl;
+
+  protocols::nonlocal::add_cutpoint_variants(&pose);
+  do_rigid_body_moves(score, &pose);
+  do_fragment_insertion(score, &pose);
+  protocols::nonlocal::remove_cutpoint_variants(&pose);
+
+  // Cleanup kinematics
+  builder.tear_down(&pose);
+}
+
+void MedalMover::do_rigid_body_moves(const core::scoring::ScoreFunctionOP& score,
+                                     core::pose::Pose* pose) const {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  using protocols::moves::MoverOP;
+  using protocols::moves::RationalMonteCarlo;
+  using protocols::moves::RigidBodyMotionMover;
+  assert(pose);
 
   Jumps jumps;
-  jumps_from_pose(pose, &jumps);
-  protocols::nonlocal::add_cutpoint_variants(&pose);
+  jumps_from_pose(*pose, &jumps);
 
   // Rigid body motion
+  MoverOP rigid_mover = new RationalMonteCarlo(
+      new RigidBodyMotionMover(jumps),
+      score,
+      option[OptionKeys::rigid::rigid_body_cycles](),
+      option[OptionKeys::rigid::temperature](),
+      true);
+
+  TR <<"Beginning rigid body perturbation phase..." << std::endl;
+  rigid_mover->apply(*pose);
+  protocols::nonlocal::emit_intermediate(*pose, "medal_post_rigid_body.pdb");
+}
+
+void MedalMover::do_fragment_insertion(const core::scoring::ScoreFunctionOP& score,
+                                       core::pose::Pose* pose) const {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  using core::fragment::FragmentIO;
+  using core::fragment::FragSetOP;
+  using core::kinematics::MoveMap;
+  using core::kinematics::MoveMapOP;
+  using protocols::moves::MoverOP;
+  using protocols::moves::RationalMonteCarlo;
+  using protocols::nonlocal::SingleFragmentMover;
+  assert(pose);
+
+  FragmentIO io;
+  FragSetOP fragments = io.read_data(option[in::file::frag3]());
+
+  MoveMapOP movable = new MoveMap();
+  movable->set_bb(true);
+  movable->set_jump(true);
+
   MoverOP mover = new RationalMonteCarlo(
-        new RigidBodyMotionMover(jumps),
-        score,
-        option[OptionKeys::rigid::rigid_body_cycles](),
-        option[OptionKeys::rigid::temperature](),
-        true);
+      new SingleFragmentMover(fragments, movable),
+      score,
+      option[OptionKeys::rigid::fragment_cycles](),
+      option[OptionKeys::rigid::temperature](),
+      true);
 
-  mover->apply(pose);
-  protocols::nonlocal::emit_intermediate(pose, "medal_post_rigid_body.pdb");
-
-  // Remove virtual residue placed during star fold tree construction
-  protocols::nonlocal::remove_cutpoint_variants(&pose);
-  builder.tear_down(&pose);
-  protocols::nonlocal::emit_intermediate(pose, "medal_final_model.pdb");
+  TR << "Beginning fragment insertion phase..." << std::endl;
+  mover->apply(*pose);
+  protocols::nonlocal::emit_intermediate(*pose, "medal_post_fragment_insertion.pdb");
 }
 
 void MedalMover::jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) const {
