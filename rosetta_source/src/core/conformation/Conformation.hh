@@ -711,11 +711,6 @@ public:
 	void
 	update_actcoord( Size resid );
 
-	void update_orbital_coords( Residue & rsd) const;
-
-	void
-	update_orbital_coords( Size resid );
-
 	/////////////////////////////////////////////////////////////////////////////
 	// ID access and conversions
 

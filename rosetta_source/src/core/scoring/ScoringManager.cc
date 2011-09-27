@@ -565,20 +565,11 @@ ScoringManager::get_NVLookupTable() const
 			using namespace basic::options;
 			using namespace basic::options::OptionKeys;
 			utility::vector1<std::string> filenames;
-			utility::vector1< std::string > cubic_files;
-
-			filenames.push_back(basic::database::full_name( "scoring/score_functions/orbitals/HPOL_sc_H_sc_orb.txt"));//filenames[1]
-			filenames.push_back(basic::database::full_name("scoring/score_functions/orbitals/HARO_sc_H_sc_orb.txt"));//filenames[2]
-			filenames.push_back(basic::database::full_name("scoring/score_functions/orbitals/HPOL_sc_H_bb_orb.txt"));//filenames[3]
-			filenames.push_back(basic::database::full_name("scoring/score_functions/orbitals/HPOL_bb_H_sc_orb.txt"));  //filenames[4]
-
-			cubic_files.push_back(basic::database::full_name("scoring/score_functions/orbitals/cubic_HPOL_sc_H_sc_orb.txt"));
-			cubic_files.push_back(basic::database::full_name("scoring/score_functions/orbitals/cubic_HPOL_sc_H_bb_orb.txt"));
-			cubic_files.push_back(basic::database::full_name("scoring/score_functions/orbitals/cubic_HPOL_bb_H_sc_orb.txt"));
-			cubic_files.push_back(basic::database::full_name("scoring/score_functions/orbitals/cubic_HARO_sc_H_sc_orb.txt"));
-
-
-			orbitals_lookup_table_ = new orbitals::OrbitalsLookup(filenames, cubic_files);
+			filenames.push_back("5A_orbitals_hpol.txt");//filenames[1]
+			filenames.push_back("5A_orbitals_haro.txt");//filenames[2]
+			filenames.push_back("5A_orbitals_bb_sc.txt");//filenames[3]
+			filenames.push_back("5A_sc_orb_bb_H.txt");  //filenames[4]
+			orbitals_lookup_table_ = new orbitals::OrbitalsLookup(filenames);
 
 		}
 		return *orbitals_lookup_table_;

@@ -143,36 +143,7 @@ FileData::append_residue(
 		ai.z = atom.xyz()(3);
 		ai.occupancy = 1.0; // dummy occupancy, can be overridden by PDBInfo
 
-		//add orbitals if requested
-/*		if(basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals] &&
-				rsd.atom_type(j).atom_has_orbital()){
-			for(
-					chemical::AtomIndices::const_iterator
-					orbital_index = rsd.bonded_orbitals(j).begin(),
-					orbital_index_end = rsd.bonded_orbitals(j).end();
-					orbital_index != orbital_index_end; ++orbital_index
-			){
-				std::cout << rsd.seqpos() << rsd.name3() << " "<< rsd.atom_name(j) << " "<< rsd.orbital_name(*orbital_index) << std::endl;
 
-
-				Vector orbital_xyz(rsd.orbital_xyz(*orbital_index));
-				orb.isHet = (!rsd.is_polymer() || rsd.is_ligand());
-				orb.serial = atom_index;
-				orb.name = rsd.orbital_name(*orbital_index);
-				orb.resName = rsd.name3();
-				orb.x = orbital_xyz.x();
-				orb.y = orbital_xyz.y();
-				orb.z = orbital_xyz.z();
-				orb.occupancy = 1.0; // dummy occupancy, can be overridden by PDBInfo
-				orb.chainID = pdb_info->chain( rsd.seqpos() );
-				orb.resSeq = pdb_info->number( rsd.seqpos() );
-				orb.iCode = pdb_info->icode( rsd.seqpos() );
-				orb.altLoc = pdb_info->alt_loc( rsd.seqpos(), j );
-				orb.temperature = pdb_info->temperature( rsd.seqpos(), j );
-			}
-
-
-		}*/
 
 
 		// output with pdb specific info if possible
@@ -217,10 +188,7 @@ FileData::append_residue(
 		if ( chains.size() < Size(rsd.chain() + 1) ) chains.resize( rsd.chain() + 1 );
 		AtomChain & AC(chains[rsd.chain()]);
 		AC.push_back(ai);
-/*		if(basic::options::option[ basic::options::OptionKeys::out::file::output_orbitals] &&
-				rsd.atom_type(j).atom_has_orbital()){
-				AC.push_back(orb);
-		}*/
+
 	}
 }
 

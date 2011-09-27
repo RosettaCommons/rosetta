@@ -83,6 +83,10 @@ sources = {
 		"util",
 	],
 	
+#    "core/conformation/orbitals" :[
+#        "OrbitalXYZCoords",
+#    ],
+
 
 	"core/conformation/symmetry" : [
 		"SymmetricConformation",

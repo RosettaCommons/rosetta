@@ -2322,8 +2322,6 @@ Conformation::update_residue_coordinates( Size const seqpos, bool const fire_sig
 	}
 	rsd.update_actcoord();
 
-	this->update_orbital_coords(rsd);
-
 	if ( fire_signal ) {
 		notify_xyz_obs( XYZEvent( this ) );
 	}
@@ -2371,39 +2369,11 @@ Conformation::update_residue_torsions( Size const seqpos, bool const fire_signal
 	for ( Size j=1, j_end = rsd.nchi(); j<= j_end; ++j ) {
 		rsd.chi()[ j ] = atom_tree_torsion( TorsionID( seqpos, CHI, j ) );
 	}
-	//update orbital coords!
-	this->update_orbital_coords(rsd);
-
 
 	if ( fire_signal ) {
 		notify_xyz_obs( XYZEvent( this ) );
 	}
 }
-
-///////////////////////////////////////////////////////////////////////////////
-void
-Conformation::update_orbital_coords( Residue & rsd) const {
-	/*
-	for(
-		utility::vector1<core::Size>::const_iterator
-		atoms_with_orb_index = rsd.atoms_with_orb_index().begin(),
-		atoms_with_orb_index_end = rsd.atoms_with_orb_index().end();
-		atoms_with_orb_index != atoms_with_orb_index_end; ++atoms_with_orb_index
-	){
-		utility::vector1<core::Size> orbital_indices(rsd.bonded_orbitals(*atoms_with_orb_index));
-		for(
-				utility::vector1< core::Size >::const_iterator
-				orbital_index = orbital_indices.begin(),
-				orbital_index_end = orbital_indices.end();
-				orbital_index != orbital_index_end; ++orbital_index
-		){
-			Vector orb_xyz(rsd.build_orbital_xyz(*orbital_index));
-			rsd.set_orbital_xyz(*orbital_index, orb_xyz );
-		}
-	}
-	*/
-}
-
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @details check that the residue torsions are in sync with the residue coords and
@@ -2524,14 +2494,6 @@ Conformation::update_actcoord( Size resid )
 		residues_[ resid ]->update_actcoord();
 	}
 }
-void
-Conformation::update_orbital_coords( Size resid )
-{
-	/*
-		residues_[ resid ]->update_orbital_coords();
-	*/
-}
-
 
 /////////////////////////////////////////////////////////////////////////////
 /// @brief clear data

@@ -628,11 +628,7 @@ public:
 
 	/// @brief indices of the orbitals bonded to an atom
 	utility::vector1<core::Size> const
-	bonded_orbitals(Size const atomno)const
-	{
-		return orbital_bonded_neighbor_[atomno];
-	}
-
+	bonded_orbitals(Size const atomno)const;
 
 	/// @brief is this orbital present in this residue?
 	bool
@@ -660,6 +656,28 @@ public:
 	/// @brief get orbital index by name
 	core::Size
 	orbital_index( std::string const & name ) const;
+
+	/*	void print_bonded_orbitals() {
+			for(std::map< std::string, OrbitalIndices >::iterator it=orbital_bonded_neighbor_.begin(); it != orbital_bonded_neighbor_.end(); ++it ){
+				for(core::Size i= 1; i <= it->second.size(); ++i){
+					std::cout << this->name3() << " " << (*it).first << " " << (*it).second[i] << std::endl;
+				}
+			}
+		}
+
+		void print_bonded_orbitals(std::string name) const{
+				for(core::Size i=1; i <= orbital_bonded_neighbor_.find(name)->second.size(); ++i){
+					std::cout << this->name3() << " " << orbital_bonded_neighbor_.find(name)->first << " " << orbital_bonded_neighbor_.find(name)->second[i] << std::endl;
+				}
+
+		}
+
+		void print_bonded_orbitals(std::string name){
+				for(core::Size i=1; i <= orbital_bonded_neighbor_.find(name)->second.size(); ++i){
+					std::cout << this->name3() << " " << orbital_bonded_neighbor_.find(name)->first << " " << orbital_bonded_neighbor_.find(name)->second[i] << std::endl;
+				}
+
+		}*/
 
 
 	//////////////////////////////////////////////////////////////////////
@@ -1117,15 +1135,6 @@ public:
 		return orbital_icoor_id_[orbital_index];
 	}
 
-
-	orbitals::ICoorOrbitalData const &
-	new_orbital_icoor_data(Size const orbital_index) const{
-		return new_orbital_icoor_id_[orbital_index];
-	}
-
-
-
-
 	///@brief set OrbitalICoor for an orbital
 	void
 	set_orbital_icoor_id(
@@ -1533,11 +1542,39 @@ public:
 //		return csd_atom_name_[ index ];
 //	}
 
+	///@brief return the xyz vector of an orbital. Currently, this is not cached
+/*	Vector const &
+	orbital_xyz(Size const orbital_index) const
+	{
+		Vector stub1_xyz(this->xyz(orbital_icoor_id_[orbital_index].stub1()));
+		std::cout << " orbital_type name " << this->orbital_name(orbital_index) << " "
+				<< stub1_xyz.x() << " " << stub1_xyz.y() << " " << stub1_xyz.z() << std::endl;
+		Vector stub2_xyz(this->xyz(orbital_icoor_id_[orbital_index].stub2()));
+		Vector stub3_xyz(this->xyz(orbital_icoor_id_[orbital_index].stub3()));
+		return orbital_icoor_id_[orbital_index].build(stub1_xyz, stub2_xyz, stub3_xyz);
+	}*/
+
+/*	void
+	set_orbital_xyz(
+		std::string const & atm,
+		Vector const & xyz_in
+	)
+	{
+		Size const index( orbital_index(atm) );
+		set_orbital_xyz(index,xyz_in);
+	}*/
 
 
 
-
-
+/*	void
+	set_orbital_xyz(
+			Size index,
+			Vector const & xyz_in
+	)
+	{
+		if ( index > orbital_xyz_.size() ) orbital_xyz_.resize(index);
+		orbital_xyz_[ index ] = xyz_in;
+	}*/
 
 	void set_RotamerLibraryName( std::string const & filename );
 
@@ -1873,7 +1910,7 @@ private:
 	/// charge
 	utility::vector1< Real        > atomic_charge_;
 	/// indices of the atoms psuedo bonded atoms. Used in orbital code
-	utility::vector1< utility::vector1<core::Size > > orbital_bonded_neighbor_;
+	std::map<std::string, OrbitalIndices> orbital_bonded_neighbor_;
 	/// indices of each atom's bonded neighbors
 	utility::vector1< AtomIndices > bonded_neighbor_;
 	/// indices of each atom's bonded neighbor type (uses the same indexing scheme and order as bonded_neighbor_
@@ -1892,7 +1929,6 @@ private:
 	utility::vector1< AtomICoor   > icoor_;
 	/// OrbitalICoor, ideal internal coordinates
 	utility::vector1< orbitals::ICoorOrbitalData> orbital_icoor_id_;
-	utility::vector1< orbitals::ICoorOrbitalData> new_orbital_icoor_id_;
 	/// ideal xyz coordinates
 	utility::vector1< Vector > xyz_;
 	/// ideal orbital xyz coordinates
@@ -2016,6 +2052,7 @@ private:
 	bool is_protein_;
 	bool is_charged_;
 	bool is_polar_;
+	bool has_orbitals_;
 	bool has_sc_orbitals_;
 	bool is_aromatic_;
 	bool is_DNA_;

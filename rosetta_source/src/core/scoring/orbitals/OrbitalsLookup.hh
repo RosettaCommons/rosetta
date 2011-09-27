@@ -18,13 +18,12 @@
 #include <core/chemical/orbitals/OrbitalTypeMapper.fwd.hh>
 
 #include <numeric/interpolation/spline/Bicubic_spline.hh>
-#include <numeric/interpolation/spline/Cubic_spline.hh>
 #include <numeric/interpolation/spline/Interpolator.hh>
-//#include <map>
+#include <map>
 
 //STL header
 
-//#include <map>
+#include <map>
 #include <vector>
 
 //Auto Headers
@@ -40,42 +39,19 @@ public:
 	enum h_type { hpol, sc_orb_bb_H, haro, bb };
 
 
-	OrbitalsLookup( utility::vector1< std::string > const & filename, utility::vector1< std::string > const & cubic_files );
+	OrbitalsLookup( utility::vector1< std::string > const & filename );
 
-	void get_dist_AOH_angle_energy (
+	void get_energy (
 		const h_type h_enum,
 		const core::chemical::orbitals::orbital_type_enum orb_type_name,
 		const core::Real distance,
-		const core::Real AOH_angle,
+		const core::Real angle,
 		core::Real & energy,
 		core::Real & distance_derivative,
 		core::Real & angle_derivative,
 		bool check_derivative
 	) const;
 
-
-	bool check_distance(
-		const core::Real distance,
-		const h_type h_enum,
-		const core::chemical::orbitals::orbital_type_enum orb_type_name
-	) const;
-
-
-	bool check_AOH_angle(
-		const core::Real AOH_angle,
-		const h_type h_enum,
-		const core::chemical::orbitals::orbital_type_enum orb_type_name
-	) const;
-
-
-	void get_DHO_angle_energy(
-			const h_type h_enum,
-			const core::chemical::orbitals::orbital_type_enum orb_type_name,
-			const core::Real DHO_angle,
-			core::Real & energy,
-			core::Real & angle_derivative,
-			bool check_derivative
-	) const;
 
 
 
@@ -85,38 +61,16 @@ private:
 	///@brief number of elements in the KBP
 	core::Size number_elements_;
 
-	utility::vector1< numeric::interpolation::spline::BicubicSpline  > HPOL_sc_H_sc_orb_splines_;
-	utility::vector1< numeric::interpolation::spline::BicubicSpline  > HPOL_bb_H_sc_orb_splines_;
-	utility::vector1< numeric::interpolation::spline::BicubicSpline  > HPOL_sc_H_bb_orb_splines_;
-	utility::vector1< numeric::interpolation::spline::BicubicSpline  > HARO_sc_H_sc_orb_splines_;
+	utility::vector1< numeric::interpolation::spline::BicubicSpline  > hpol_interpolation_splines_;
+	utility::vector1< numeric::interpolation::spline::BicubicSpline  > hpol_sc_orb_bb_Hinterpolation_splines_;
+	utility::vector1< numeric::interpolation::spline::BicubicSpline  > haro_interpolation_splines_;
+	utility::vector1< numeric::interpolation::spline::BicubicSpline  > orb_bb_interpolation_splines_;
 
-
-	utility::vector1<numeric::interpolation::spline::CubicSpline> cubic_HPOL_sc_H_sc_orb_splines_;
-	utility::vector1<numeric::interpolation::spline::CubicSpline> cubic_HPOL_sc_H_bb_orb_splines_;
-	utility::vector1<numeric::interpolation::spline::CubicSpline> cubic_HPOL_bb_H_sc_orb_splines_;
-	utility::vector1<numeric::interpolation::spline::CubicSpline> cubic_HARO_sc_H_sc_orb_splines_;
-
-
-
-/*	std::map< core::Size, numeric::interpolation::spline::BicubicSpline > hpol_splines_; //a map that contains all
+	std::map< core::Size, numeric::interpolation::spline::BicubicSpline > hpol_splines_; //a map that contains all
 	std::map< core::Size, numeric::interpolation::spline::BicubicSpline > haro_splines_; //a map that contains all
 	std::map< core::Size, numeric::interpolation::spline::BicubicSpline > hpol_sc_orb_bb_splines_; //a map that contains all
 
 	std::map< core::Size, numeric::interpolation::spline::BicubicSpline > orb_bb_splines_; //a map that contains all
-
-
-	utility::vector1<numeric::interpolation::spline::BicubicSpline> HPOL_sc_H_sc_orb_splines_;
-	utility::vector1<numeric::interpolation::spline::BicubicSpline> haro_spline_vector_;*/
-
-
-	core::Real Cpisp2_min2_;
-	core::Real Npisp2_min2_;
-	core::Real Npsp2_min2_;
-	core::Real Opisp2_min2_;
-	core::Real Opsp2_min2_;
-	core::Real Opsp3_min2_;
-	core::Real Spsp3_min2_;
-
 
 };
 

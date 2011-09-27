@@ -308,6 +308,23 @@ ResidueType::mm_atom_type_index( Size const atomno ) const
 	return mm_atom_type_index_[ atomno ];
 }
 
+///@brief returns a vector1 of orbital indices that are bonded to a specific atom. Currently,
+/// the indices are obtained by passing the atom index, which is then converted to a name, which is used
+/// to find the orbital indices bonded to that atom index. This is done this way because orbital indices
+/// are kept seperate from atom indices and when the atom indices are updated, the orbital indices remain
+/// constant. Therefore, in order to keep everything consistent with the reordering, atoms with bonded orbitals
+/// are looked up by atom name (which is updated when the index is changed).
+utility::vector1<core::Size> const
+ResidueType::bonded_orbitals(Size const atomno)const
+{
+	std::string atom_name(strip_whitespace(atom_name_[atomno]));
+	if(orbital_bonded_neighbor_.find(atom_name) == orbital_bonded_neighbor_.end()){
+		utility::vector1<core::Size> empty_vector;
+		return empty_vector;
+	}
+	//print_bonded_orbitals(atom_name);
+	return orbital_bonded_neighbor_.find(atom_name)->second;
+}
 
 
 /// @note this does not set xyz coordiates for the added atom
@@ -395,8 +412,6 @@ ResidueType::add_atom(
 	cut_bond_neighbor_.resize( natoms_ ); // added here to handle residues w/ no bonds
 	atom_base_.push_back( natoms_ ); // default value, should generally be changed
 	icoor_.push_back( AtomICoor( 0.0, 0.0, 0.0, atom_name, atom_name, atom_name, *this ) );
-	orbital_bonded_neighbor_.resize(natoms_);
-
 }
 
 
@@ -452,7 +467,6 @@ ResidueType::add_orbital(
 
 
 	orbital_icoor_id_.resize(n_orbitals_);
-	new_orbital_icoor_id_.resize(n_orbitals_);
 	//orbital_icoor_.push_back( orbitals::OrbitalICoor( 0.0, 0.0, 0.0, orbital_name, orbital_name, orbital_name, *this ) );
 }
 
@@ -568,24 +582,44 @@ ResidueType::add_orbital_bond(
 )
 {
 	// signal that we need to update the derived data
-		finalized_ = false;
+	finalized_ = false;
 
-		if ( !has( atom_name1 ) || !has_orbital( orbital_name ) ) {
-		   std::string message = "add_bond: atoms " + atom_name1 + " and " + orbital_name + " dont exist!";
-			utility_exit_with_message( message  );
-		}
+	if ( !has( atom_name1 ) || !has_orbital( orbital_name ) ) {
+	   std::string message = "add_bond: atoms " + atom_name1 + " and " + orbital_name + " dont exist!";
+		utility_exit_with_message( message  );
+	}
 
-		//Size const i1( atom_index_[ atom_name1 ] );
-		Size const i2( orbitals_index_[ orbital_name ] );
+	//Size const i1( atom_index_[ atom_name1 ] );
+	Size const i2( orbitals_index_[ orbital_name ] );
 
-		if(atom_index_.find(atom_name1) == atom_index_.end()){
-			utility_exit_with_message("atom_name: " + atom_name1 +" not found. Improper params file!");
+	if(atom_index_.find(atom_name1) == atom_index_.end()){
+		utility_exit_with_message("atom_name: " + atom_name1 +" not found. Improper params file!");
 
-		}
+	}
 
-		Size const i1( atom_index_[ atom_name1 ] );
+/*	if ( psuedo_bonded_neighbor_.size() < Size( std::max( i1, i2) ) ) {
+		// ensure enough space for nbrs
+		utility_exit_with_message("ResidueType:: shouldnt get here -- resizing in add_atom");
+		//bonded_neighbor_.resize( std::max( i1,i2 ) );
+	}*/ //else{
+		// check if bond already exists
+		//AtomIndices const & i1_nbrs( psuedo_bonded_neighbor_[i1] );
+	//	if ( std::find( i1_nbrs.begin(), i1_nbrs.end(), i2 ) != i1_nbrs.end() ) {
+		//	utility_exit_with_message( "dont add residue bonds more than once!" );
+		//}
+	//}
 
-		orbital_bonded_neighbor_[i1].push_back(i2);
+	if(orbital_bonded_neighbor_.find(atom_name1) != orbital_bonded_neighbor_.end()){
+		orbital_bonded_neighbor_.find(atom_name1)->second.push_back(i2);
+	}else{
+		OrbitalIndices new_index;
+		new_index.push_back(i2);
+		//std::cout << "adding new index for orbitals. new_index[1]="<< new_index[1] << std::endl;
+		orbital_bonded_neighbor_.insert(std::pair<std::string, OrbitalIndices >(atom_name1, new_index) );
+	}
+	//orbital_bonded_neighbor_[ i1 ].push_back( i2 );
+	//psuedo_bonded_neighbor_[ i2 ].push_back( i1 );
+	//bondType_vector_[i1].push_back(BondType(i1,i2,SingleBond));
 
 }
 
@@ -1057,13 +1091,11 @@ ResidueType::reorder_primary_data(
 	utility::vector1< int > old_mm_atom_type_index( mm_atom_type_index_ );
 //	utility::vector1< int > old_csd_atom_type_index( csd_atom_type_index_ );
 	utility::vector1< Real > old_atomic_charge( atomic_charge_ );
-	utility::vector1< utility::vector1 <core::Size> > old_orbital_bonded_neighbor(orbital_bonded_neighbor_);
 	utility::vector1< AtomIndices > old_bonded_neighbor( bonded_neighbor_ );
 	utility::vector1<utility::vector1<BondName> > old_bonded_neighbor_type(bonded_neighbor_type_);
 	utility::vector1< AtomIndices > old_cut_bond_neighbor( cut_bond_neighbor_ );
 	AtomIndices old_atom_base( atom_base_ );
 	utility::vector1< AtomICoor > old_icoor( icoor_ );
-	utility::vector1<orbitals::ICoorOrbitalData > old_orbital_icoor(new_orbital_icoor_id_);
 	utility::vector1< Vector > old_xyz( xyz_ );
 	utility::vector1<Size> old_parents(parents_);
 
@@ -1075,7 +1107,6 @@ ResidueType::reorder_primary_data(
 		mm_atom_type_index_.resize( natoms_ );
 //		csd_atom_type_index_.resize( natoms_ );
 		atomic_charge_.resize( natoms_ );
-		orbital_bonded_neighbor_.resize( natoms_ );
 		bonded_neighbor_.resize( natoms_ );
 		bonded_neighbor_type_.resize (natoms_);
 		cut_bond_neighbor_.resize( natoms_ );
@@ -1100,8 +1131,6 @@ ResidueType::reorder_primary_data(
 
 		atom_base_[ new_index ] = old2new[ old_atom_base[ old_index ] ];
 		assert( atom_base_[ new_index ] ); // this will fail if we deleted an atom which was the atom_base for another atom
-		orbital_bonded_neighbor_[new_index] = old_orbital_bonded_neighbor[old_index];
-
 		bonded_neighbor_[ new_index ].clear();
 		for ( Size j=1, j_end = old_bonded_neighbor[ old_index ].size(); j<= j_end; ++j )
 		{
@@ -1133,32 +1162,6 @@ ResidueType::reorder_primary_data(
 				stub_atom.atomno( old2new[ stub_atom.atomno() ] );
 				assert( stub_atom.atomno() ); // this will fail if we deleted a stub atom for some other atom
 			}
-		}
-		if(new_orbital_icoor_id_.size() != 0){
-				utility::vector1< core::Size > const orbital_indices(orbital_bonded_neighbor_[new_index]);
-				for (
-						utility::vector1< core::Size >::const_iterator
-						orbital_index = orbital_indices.begin(),
-						orbital_index_end = orbital_indices.end();
-						orbital_index != orbital_index_end; ++orbital_index
-				)
-				{
-
-					core::Size stub1( new_orbital_icoor_id_[*orbital_index].get_stub1());
-					core::Size stub2( new_orbital_icoor_id_[*orbital_index].get_stub2());
-					core::Size stub3( new_orbital_icoor_id_[*orbital_index].get_stub3() );
-
-					if ( stub1 == 0 || stub2 == 0 || stub3 == 0) {
-						continue;
-					}else{
-						new_orbital_icoor_id_[*orbital_index].replace_stub1( old2new[stub1]);
-						new_orbital_icoor_id_[*orbital_index].replace_stub2( old2new[stub2]);
-						new_orbital_icoor_id_[*orbital_index].replace_stub3( old2new[stub3]);
-					}
-
-
-				}
-
 		}
 	}
 
@@ -1812,14 +1815,6 @@ ResidueType::set_orbital_icoor_id(
 	std::string stub3(stub_atom3);
 	orbitals::ICoorOrbitalData id(phi, theta, d, stub1, stub2, stub3);
 	orbital_icoor_id_[ orb_indx ] =id;
-
-
-	core::Size s1(atom_index_[ stub_atom1 ]);
-	core::Size s2(atom_index_[ stub_atom2 ]);
-	core::Size s3(atom_index_[ stub_atom3 ]);
-	orbitals::ICoorOrbitalData new_icoor(phi, theta, d, s1, s2, s3);
-
-	new_orbital_icoor_id_[ orb_indx ]=new_icoor;
 }
 
 

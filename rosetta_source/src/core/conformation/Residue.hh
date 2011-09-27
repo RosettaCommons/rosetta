@@ -21,7 +21,7 @@
 // Package headers
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Atom.hh>
-#include <core/conformation/orbitals/OrbitalXYZCoords.hh>
+//#include <core/conformation/Orbital.hh>
 
 #include <core/conformation/PseudoBond.fwd.hh>
 #include <core/chemical/AtomType.fwd.hh>
@@ -48,6 +48,7 @@
 #include <iosfwd>
 #include <limits>
 
+//#include <basic/options/keys/orbitals.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/chemical/AtomType.hh>
 
@@ -552,6 +553,38 @@ public:
 	set_xyz( core::Size const atm_index, Vector const & xyz_in )
 	{
 		atoms_[ atm_index ].xyz( xyz_in );
+
+		/*if(basic::options::option[basic::options::OptionKeys::orbitals::orbitals]){
+
+			if(this->atom_type(atm_index).atom_has_orbital()){
+				utility::vector1<core::Size> const & orbital_indices(this->bonded_orbitals(atm_index));
+
+				for(
+						utility::vector1<core::Size>::const_iterator
+						orbital_index = orbital_indices.begin(),
+						orbital_index_end = orbital_indices.end();
+						orbital_index != orbital_index_end; ++orbital_index
+				){
+					core::chemical::orbitals::ICoorOrbitalData orb_icoor(rsd_type_.orbital_icoor_data(*orbital_index));
+					Vector stub1_xyz(this->atom(orb_icoor.stub1()).xyz());
+					Vector stub2_xyz(this->atom(orb_icoor.stub2()).xyz());
+					Vector stub3_xyz(this->atom(orb_icoor.stub3()).xyz());
+
+
+					Vector orbital_vector(orb_icoor.build(stub1_xyz, stub2_xyz, stub3_xyz));
+					std::cout << "setting orbital xyz coords (index) atm name: " << this->atom_name(atm_index)  << " : "<< *orbital_index << std::endl;
+					//orbitals_[*orbital_index].xyz(orbital_vector);
+					orbitals_[*orbital_index] = orbital_vector;
+				}
+			}
+
+
+
+		}*/
+
+
+
+
 	}
 
 	/// @brief Sets the position of this residue's atom with name  <atm_name>
@@ -568,6 +601,33 @@ public:
 	set_xyz( std::string const & atm_name, Vector const & xyz_in )
 	{
 		atom( atm_name ).xyz( xyz_in );
+
+/*		if(basic::options::option[basic::options::OptionKeys::orbitals::orbitals]){
+			Size atm_index = this->atom_index(atm_name);
+			if(this->atom_type(atm_index).atom_has_orbital()){
+				utility::vector1<core::Size> const & orbital_indices(this->bonded_orbitals(atm_index));
+
+				for(
+						utility::vector1<core::Size>::const_iterator
+						orbital_index = orbital_indices.begin(),
+						orbital_index_end = orbital_indices.end();
+						orbital_index != orbital_index_end; ++orbital_index
+				){
+				core::chemical::orbitals::ICoorOrbitalData orb_icoor(rsd_type_.orbital_icoor_data(*orbital_index));
+				Vector stub1_xyz(this->atom(orb_icoor.stub1()).xyz());
+				Vector stub2_xyz(this->atom(orb_icoor.stub2()).xyz());
+				Vector stub3_xyz(this->atom(orb_icoor.stub3()).xyz());
+
+
+				Vector orbital_vector(orb_icoor.build(stub1_xyz, stub2_xyz, stub3_xyz));
+				std::cout << "setting orbital xyz coords (name) #: " <<  *orbital_index << std::endl;
+
+				//orbitals_[*orbital_index].xyz(orbital_vector);
+				orbitals_[*orbital_index] = orbital_vector;
+				}
+			}
+		}*/
+
 	}
 
 
@@ -936,88 +996,54 @@ public:
 	//////////////////////////////////////////////////////////////////////
 
 	/// @brief
-		AtomIndices const &
-		atoms_with_orb_index() const
-		{
-			return rsd_type_.atoms_with_orb_index();
-		}
+	AtomIndices const &
+	atoms_with_orb_index() const
+	{
+		return rsd_type_.atoms_with_orb_index();
+	}
 
-		//Vector const
-		//orbital_xyz(Size const orbital_index) const;
-
-
-		Vector const
-		build_orbital_xyz( Size const orbital_index ) const
-		{
-
-			core::chemical::orbitals::ICoorOrbitalData orb_icoor(rsd_type_.new_orbital_icoor_data(orbital_index));
-			Vector stub1_xyz(this->atom(orb_icoor.get_stub1()).xyz());
-			Vector stub2_xyz(this->atom(orb_icoor.get_stub2()).xyz());
-			Vector stub3_xyz(this->atom(orb_icoor.get_stub3()).xyz());
-
-			Vector orbital_vector(orb_icoor.build(stub1_xyz, stub2_xyz, stub3_xyz));
-			return orbital_vector;
-		}
+	//Vector const
+	//orbital_xyz(Size const orbital_index) const;
 
 
-		Vector const &
-		orbital_xyz( Size const orbital_index ) const
-		{
-			return orbitals_[orbital_index].xyz();
-		}
-
-		void
-		set_orbital_xyz( core::Size const orbital_index, Vector const & xyz_in )
-		{
-			orbitals_[ orbital_index ].xyz( xyz_in );
-		}
+	Vector const
+	orbital_xyz( Size const orbital_index ) const
+	{
+		core::chemical::orbitals::ICoorOrbitalData orb_icoor(rsd_type_.orbital_icoor_data(orbital_index));
+		Vector stub1_xyz(this->atom(orb_icoor.stub1()).xyz());
+		Vector stub2_xyz(this->atom(orb_icoor.stub2()).xyz());
+		Vector stub3_xyz(this->atom(orb_icoor.stub3()).xyz());
 
 
-		/// @brief Returns the number of orbitals in this residue
-		Size
-		n_orbitals() const
-		{
-			return rsd_type_.n_orbitals();
-		}
+		Vector orbital_vector(orb_icoor.build(stub1_xyz, stub2_xyz, stub3_xyz));
+
+		//return orbitals_[ orbital_index ].xyz();
+		return orbital_vector;
+	}
 
 
-		utility::vector1<core::Size> const
-		bonded_orbitals(int const atm) const{
-			return rsd_type_.bonded_orbitals(atm);
-		}
+	/// @brief Returns the number of orbitals in this residue
+	Size
+	n_orbitals() const
+	{
+		return rsd_type_.n_orbitals();
+	}
 
+	utility::vector1<core::Size> const
+	bonded_orbitals(int const atm) const{
+		return rsd_type_.bonded_orbitals(atm);
+	}
 
-		std::string const &
-		orbital_name(int const orbital_index) const{
-			return rsd_type_.orbital_name(orbital_index);
-		}
+	std::string const &
+	orbital_name(int const orbital_index) const{
+		return rsd_type_.orbital_name(orbital_index);
+	}
 
-		chemical::orbitals::OrbitalType const &
-		orbital_type(int const orbital_index) const{
-			return rsd_type_.orbital_type(orbital_index);
-		}
+	chemical::orbitals::OrbitalType const &
+	orbital_type(int const orbital_index) const{
+		return rsd_type_.orbital_type(orbital_index);
+	}
 
-
-		void
-		update_orbital_coords() {
-			for(
-				utility::vector1<core::Size>::const_iterator
-				atoms_with_orb_index = rsd_type_.atoms_with_orb_index().begin(),
-				atoms_with_orb_index_end = rsd_type_.atoms_with_orb_index().end();
-				atoms_with_orb_index != atoms_with_orb_index_end; ++atoms_with_orb_index
-			){
-				utility::vector1<core::Size> orbital_indices(rsd_type_.bonded_orbitals(*atoms_with_orb_index));
-				for(
-						utility::vector1< core::Size >::const_iterator
-						orbital_index = orbital_indices.begin(),
-						orbital_index_end = orbital_indices.end();
-						orbital_index != orbital_index_end; ++orbital_index
-				){
-					Vector orb_xyz(this->build_orbital_xyz(*orbital_index));
-					this->set_orbital_xyz(*orbital_index, orb_xyz );
-				}
-			}
-		}
 
 	//////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
@@ -1809,8 +1835,9 @@ private:
 	/// @brief our conformation atoms (not kinematic atom pointers) with xyz positiona and atom type
 	Atoms atoms_;
 
-	utility::vector1<orbitals::OrbitalXYZCoords> orbitals_;
-
+	/// @brief conformation of orbitals with orbital type information
+	//utility::vector1<Orbital > orbitals_;
+	//utility::vector1<Vector > orbitals_;
 	/// @brief the sequence position
 	Size seqpos_;
 

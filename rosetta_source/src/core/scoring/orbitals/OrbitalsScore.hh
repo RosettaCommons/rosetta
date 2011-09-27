@@ -28,6 +28,19 @@ namespace core{
 namespace scoring{
 namespace orbitals{
 
+struct orbital_info_for_score{ // including default values
+	OrbitalsLookup::h_type htype;
+	core::chemical::orbitals::orbital_type_enum orbital_type;
+	core::Real distance;
+	core::Real tau;
+	core::Size atom_index;
+	core::Size h_index;
+	core::Size orbital_index;
+	bool lookup_backbone_energy;
+	core::Real energy;
+	core::Real distance_derivative;
+	core::Real angle_derivative;
+};
 
 class OrbitalsScore : public methods::ContextDependentTwoBodyEnergy {
 public:
@@ -93,82 +106,100 @@ public:
 		return false;
 	}
 
-	virtual
-	void
-	prepare_rotamers_for_packing(
-		pose::Pose const & pose,
-		conformation::RotamerSetBase & set
-	) const;
-
-	virtual
-	void
-	update_residue_for_packing(
-		pose::Pose &,
-		Size resid
-	) const;
-
 public:
-
-	void get_E_haro_one_way(
-			core::conformation::Residue const & res1,
-			core::conformation::Residue const & res2,
-			core::Real & HARO_sc_H_sc_orb_E,
-			core::Real & HARO_DHO_angle_E
+	std::list< orbital_info_for_score >
+	get_E_haro_one_way(
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		core::Real & haro_E,
+		bool check_derivative,
+		bool & was_scored
 	) const;
 
-	void get_E_hpol_one_way(
-			core::conformation::Residue const & res1,
-			core::conformation::Residue const & res2,
-			core::Real & HPOL_sc_H_sc_orb_E,
-			core::Real & HPOL_bb_H_sc_orb_energy,
-			core::Real & HPOL_sc_H_bb_orb_energy,
-			core::Real & HPOL_DHO_angle_E
+	std::list< orbital_info_for_score >
+	get_E_hpol_one_way(
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		core::Real & hpol_E,
+		core::Real & sc_bb_E,
+		bool check_derivative,
+		bool & was_scored
 	) const;
 
-	void get_orb_H_distance_and_energy(
-			core::conformation::Residue const & res1,
-			core::Size const & atom_index,
-			numeric::xyzVector<core::Real> const & atom_xyz,
-			numeric::xyzVector<core::Real> const & H_xyz,
-			numeric::xyzVector<core::Real> const & donor_xyz,
-			core::Real & sc_energy,
-			core::Real & bb_h_energy,
-			core::Real & bb_orb_energy,
-			core::Real & DHO_angle_E,
-			OrbitalsLookup::h_type htype,
-			bool bb_h_flag,
-			bool bb_orb_flag
+
+	std::list< orbital_info_for_score >
+	get_sc_bb_E_one_way(
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		core::Real & sc_bb_E,
+		bool check_derivative,
+		bool & was_scored
 	) const;
 
-	void assign_haro_derivs_one_way(
-			core::conformation::Residue const & res1,
-			core::conformation::Residue const & res2,
-			EnergyMap const & weights,
-			utility::vector1< DerivVectorPair > & r1_atom_derivs,
-			utility::vector1< DerivVectorPair > & r2_atom_derivs
+
+	void add_energies_to_emap(EnergyMap & emap, std::list< orbital_info_for_score > & orbital_hydrogen_energies) const;
+
+	///@brief places index of an atom with orbital into variable:  atom_index_w_orbital. Places index of Hpol atom into: H_atom_index.
+	/// Based on shortest distance between atom and hydrogen
+	/// will also trigger check orbital distance if distance between atom and H are within max_dist_squared_
+	void get_bonded_orb_atom_and_Hpol_atom(
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		std::list<std::pair<core::Size, utility::vector1<core::Size > >  > & atoms_with_orbs_and_hydrogen_pairs,
+		bool & check_orbital_distance
 	) const;
 
-	void assign_hpol_derivs_one_way(
-			core::conformation::Residue const & res1,
-			core::conformation::Residue const & res2,
-			EnergyMap const & weights,
-			utility::vector1< DerivVectorPair > & r1_atom_derivs,
-			utility::vector1< DerivVectorPair > & r2_atom_derivs
-
+	void get_bonded_orb_atom_and_Haro_atom(
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		std::list< std::pair< core::Size, utility::vector1< core::Size > > > & atoms_with_orbs_and_hydrogen_pairs,
+		bool & check_orbital_distance
 	) const;
 
-	void assign_orb_H_derivs(
-			core::conformation::Residue const & res1,
-			core::conformation::Residue const & res2,
-			core::Size const & atom_index,
-			numeric::xyzVector<core::Real> const & atom_xyz,
-			core::Size const & H_index,
-			numeric::xyzVector<core::Real> const & H_xyz,
-			OrbitalsLookup::h_type htype,
-			EnergyMap const & weights,
-			utility::vector1< DerivVectorPair > & r1_atom_derivs,
-			utility::vector1< DerivVectorPair > & r2_atom_derivs
-	)const;
+	void get_bonded_bb_orb_atom_and_Hpol_atom(
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		std::list< std::pair< core::Size, utility::vector1< core::Size > > > & atoms_with_orbs_and_hydrogen_pairs,
+		bool & check_orbital_distance
+	) const;
+
+
+	///@brief given an atom with an orbital and a hydrogen, get the shortest distance between the orbitals on the atom and the hydrogen. Basically,
+	/// iterate through all orbitals on a given atom with a H on other residue. Hydrogen and atom index determined from previous functions.
+	std::list< orbital_info_for_score >
+	get_orb_H_distance_and_angle(
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		const std::list<std::pair<core::Size, utility::vector1<core::Size > >  > & atoms_with_orbs_and_hydrogen_pairs,
+		core::Real & min_dist_squared,
+		core::chemical::orbitals::orbital_type_enum & orbital_type,
+		bool & get_score
+	) const;
+
+
+	///@brief the htype and orbital_type are dertimened by whether we are looking for hpol or haro atoms
+	/// to a given orbital_type. orbital_type is currently limited to 7 different types and in this context is an enum
+	/// min_dist_squared are determined from get_orb_H_distance_and_angle() function.
+	void get_orbital_H_score(
+		OrbitalsLookup::h_type htype,
+		core::chemical::orbitals::orbital_type_enum orbital_type,
+		core::Real const & min_dist_squared,
+		core::Real const & tau,
+		core::Real & energy,
+		core::Real & distance_derivative,
+		core::Real & angle_derivative,
+		bool check_derivative
+	) const;
+
+
+	void assign_atom_derivatves(
+		core::conformation::Residue const & res1,
+		core::conformation::Residue const & res2,
+		EnergyMap const & weights,
+		std::list< orbital_info_for_score > min_orbital_dist_tau,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs
+	) const;
 
 //virtual private functions
 private:
@@ -176,24 +207,19 @@ private:
 
 private:
 	OrbitalsLookup const & lookup_table_;
-	core::Real const max_orbital_dist_squared_;//defaault 4A or 16A squared. based on statistics
+	//core::scoring::etable::EtableEnergy lookup_Etable_;
+	core::Real max_dist_squared_; //the maximum distance squared which orbitals are scored
+	//core::scoring::etable::EtableCAP etable_;
+	core::Real max_orbital_dist_squared_;//defaault 4A or 16A squared. based on statistics
 	core::Real nbr_distance_squared_;//default 10A or 100A squared
 	std::map<core::chemical::orbitals::orbital_type_enum, core::Real> min_orb_dist_enum_map_;
-	core::Real max_dist_squared_; //the maximum distance squared which orbitals are scored. based on atom distance
-
-
-
-	//core::scoring::etable::EtableEnergy lookup_Etable_;
-	//core::scoring::etable::EtableCAP etable_;
-	//mutable utility::vector1< utility::vector1< Vector> > orbital_coords_;
-
-
-
-
-
-
-	//
-
+	core::Real Cpisp2_min2_;
+	core::Real Npisp2_min2_;
+	core::Real Npsp2_min2_;
+	core::Real Opisp2_min2_;
+	core::Real Opsp2_min2_;
+	core::Real Opsp3_min2_;
+	core::Real Spsp3_min2_;
 
 };
 

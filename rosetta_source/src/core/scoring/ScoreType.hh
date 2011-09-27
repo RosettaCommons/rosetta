@@ -163,6 +163,7 @@ enum ScoreType {
 	// All the orbitals scoretypes
 	orbitals_hpol,
 	orbitals_haro,
+	orbitals_orbitals,
 	orbitals_hpol_bb,
 
 	PyRosettaTwoBodyContextIndepenedentEnergy_first,
