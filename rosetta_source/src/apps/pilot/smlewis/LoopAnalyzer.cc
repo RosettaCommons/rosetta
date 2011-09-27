@@ -12,7 +12,7 @@
 /// @author Steven Lewis
 
 // Unit Headers
-#include <devel/anchored_design/LoopAnalyzerMover.hh>
+#include <protocols/moves/LoopAnalyzerMover.hh>
 
 // Project Headers
 #include <protocols/loops/Loops.hh>
@@ -33,7 +33,7 @@ static basic::Tracer TR("apps.pilot.smlewis.LoopAnalyzerMover");
 
 class hackLAMMover : public protocols::moves::Mover {
 public:
-	hackLAMMover(protocols::loops::Loops const & loops) : LAM(new devel::anchored_design::LoopAnalyzerMover(loops, true)){}
+	hackLAMMover(protocols::loops::Loops const & loops) : LAM(new protocols::moves::LoopAnalyzerMover(loops, true)){}
 
 	virtual
 	void
@@ -47,7 +47,7 @@ public:
 	std::string
 	get_name() const { return "hackLAMMover"; }
 
-	devel::anchored_design::LoopAnalyzerMoverOP LAM;
+	protocols::moves::LoopAnalyzerMoverOP LAM;
 };
 
 int
