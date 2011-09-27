@@ -62,6 +62,7 @@ private:
     ar & start_;
     ar & end_;
     ar & pdb_source_;
+    ar & direction_;
   }
 
   core::Size start_;

@@ -104,6 +104,10 @@ std::vector<HelicalFragment> HelixAssemblyJob::get_fragments() const{
   return fragments_;
 }
 
+void HelixAssemblyJob::add_fragment(HelicalFragment new_fragment){
+  fragments_.push_back(new_fragment);
+}
+
 void HelixAssemblyJob::set_id(core::Size id){
   this->id_ = id;
 }

@@ -211,18 +211,18 @@ main( int argc, char * argv [] )
                       job_queue.push_back(temp_job);
                   }
                   //Incomplete job output for debugging purposes
-                  TR << "Outputting incomplete job " << new_jobs[i].get_name() << endl;
-                  utility::io::ozstream outputStream;
-                  outputStream.open(new_jobs[i].get_name() + "_" + to_string(job_id_counter) + "_bundle.pdb");
-                  ++job_id_counter;
-                  outputStream << new_jobs[i].get_query_structure();
-                  outputStream.close();
+//                  TR << "Outputting incomplete job " << new_jobs[i].get_name() << endl;
+//                  utility::io::ozstream outputStream;
+//                  outputStream.open(new_jobs[i].get_name() + "_" + to_string(job_id_counter) + "_bundle.pdb");
+//                  ++job_id_counter;
+//                  outputStream << new_jobs[i].get_query_structure();
+//                  outputStream.close();
               }
               else{
                   TR << "Outputting job " << new_jobs[i].get_name() << endl;
                   //done. output PDBs
                   utility::io::ozstream outputStream;
-                  outputStream.open(new_jobs[i].get_name() + "_" + to_string(job_id_counter) + "_bundle.pdb");
+                  outputStream.open(new_jobs[i].get_name()+ "_bundle.pdb");
                   ++job_id_counter;
                   outputStream << new_jobs[i].get_query_structure();
                   outputStream.close();
@@ -275,7 +275,8 @@ main( int argc, char * argv [] )
 
               HelixAssemblyMover helixAssembler;
               std::vector<HelixAssemblyJob> returned_jobs = helixAssembler.apply(received_job);
-              TR << "Node " << world.rank() << "finished " << received_job.get_name() << ", returning " << returned_jobs.size() << "new job(s)." << endl;
+              cout << "Node " << world.rank() << " finished " << received_job.get_name() << ", returning " <<
+                  returned_jobs.size() << " new job(s)." << endl;
 
               //tell head node which job finished
               world.send(0,0,world.rank());

@@ -101,6 +101,7 @@ public:
   void set_fragments(std::vector<HelicalFragment> fragments);
   void set_direction_needed(bool direction);
   void set_first_round(bool first_round);
+  void add_fragment(HelicalFragment new_fragment);
 
 
 private:

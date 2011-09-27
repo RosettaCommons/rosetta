@@ -65,21 +65,20 @@ public:
 
         core::pose::Pose combinePoses(const core::pose::Pose & pose1, const core::pose::Pose & pose2);
 
-        utility::vector1<std::pair<core::Size,core::Size> > findHelices(const core::pose::Pose & pose);
+        utility::vector1<HelicalFragment> findHelices(const core::pose::Pose & pose);
 
         utility::vector1<HelicalFragment> findFragmentMatches(core::pose::Pose const & search_structure,
             core::pose::Pose const & query_structure, HelicalFragment query_fragment,
-            utility::vector1< std::pair< core::Size,core::Size > > helix_endpts);
+            utility::vector1<HelicalFragment> all_helices);
 
-        bool checkHelixContacts(const core::pose::Pose & query_structure, const core::pose::Pose & fragment1,
-            const core::pose::Pose & fragment2, HelicalFragment helix_to_check);
+        bool checkHelixContacts(const core::pose::Pose & query_structure, std::pair<HelicalFragment, HelicalFragment> helix_pair,
+            HelicalFragment helix_to_check);
 
         bool closenessCheck(const core::Distance maxRange, const core::Distance end1Dist, const core::Distance end2Dist,
             const core::pose::Pose & search_structure, HelicalFragment search_frag_1, HelicalFragment search_frag_2);
 
         utility::vector1<HelicalFragment> findPartnerHelices(core::pose::Pose const & search_structure,
-            core::pose::Pose const & fragment1, core::pose::Pose const & fragment2,
-            std::pair<HelicalFragment, HelicalFragment> helix_pair, utility::vector1< std::pair< core::Size,core::Size > > helix_endpts,
+            std::pair<HelicalFragment, HelicalFragment> query_match, utility::vector1<HelicalFragment> all_helices,
             bool first_round, bool direction_needed);
 
         std::map<core::id::AtomID, core::id::AtomID> getFragmentMap(const core::pose::Pose & pose_1,
