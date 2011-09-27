@@ -27,7 +27,6 @@ sources = {
 		"NLGrouping",
 		"NonlocalAbinitio",
 		"NonlocalAbinitioMain",
-		"NonlocalAbinitioReader",
 		"PolicyFactory",
 		"Region",
 		"SimpleTreeBuilder",
