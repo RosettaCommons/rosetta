@@ -22,7 +22,9 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
+#include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <numeric/random/random.hh>
+#include <numeric/xyzVector.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
@@ -34,6 +36,7 @@
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
+#include <core/id/NamedAtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/sequence/Sequence.hh>
@@ -49,8 +52,57 @@
 namespace protocols {
 namespace nonlocal {
 
-static numeric::random::RandomGenerator RG(156144120);
 static basic::Tracer TR("protocols.nonlocal.util");
+
+void chunks_by_CA_CA_distance(core::pose::Pose* pose, protocols::loops::Loops* chunks) {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  chunks_by_CA_CA_distance(pose, chunks, option[OptionKeys::rigid::max_ca_ca_dist]());
+}
+
+void chunks_by_CA_CA_distance(core::pose::Pose* pose, protocols::loops::Loops* chunks, double threshold) {
+  using core::Size;
+  using core::id::NamedAtomID;
+  using numeric::xyzVector;
+  using protocols::loops::Loop;
+  using utility::vector1;
+	assert(pose);
+  assert(chunks);
+
+  vector1<Size> violated_residues;
+  violated_residues.push_back(1);
+  for (Size i = 2; i <= pose->total_residue(); ++i) {
+    const xyzVector<double>& prev_xyz = pose->xyz(NamedAtomID("CA", i - 1));
+    const xyzVector<double>& curr_xyz = pose->xyz(NamedAtomID("CA", i));
+
+    double distance = prev_xyz.distance(curr_xyz);
+    if (distance > threshold) {
+      // Residues j and j - 1 are separated by more than max_ca_ca_dist Angstroms
+      violated_residues.push_back(i);
+    }
+  }
+  violated_residues.push_back(pose->total_residue() + 1);
+
+  // violated_residues = [ 1, ..., n ]
+  for (Size i = 2; i <= violated_residues.size(); ++i) {
+    const Size prev_start = violated_residues[i - 1];
+    const Size curr_start = violated_residues[i];
+    const Size prev_stop  = curr_start - 1;
+
+    // Add the chunk
+    Loop chunk(prev_start, prev_stop);
+    chunks->add_loop(chunk);
+    TR.Debug << "Added chunk " << chunk.start() << " " << chunk.stop() << std::endl;
+
+    // Enable chainbreak term between adjacent chunks
+    if (curr_start < pose->total_residue()) {
+      core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::CUTPOINT_LOWER, prev_stop);
+      core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::CUTPOINT_UPPER, curr_start);
+      TR.Debug << "Added cutpoint variants to residues " << prev_stop << " and " << curr_start << std::endl;
+    }
+  }
+  TR.Debug << "Chunks: " << *chunks << std::endl;
+}
 
 protocols::loops::Loops combine_and_trim(core::Size min_chunk_sz,
                                          core::Size num_residues,
@@ -107,7 +159,6 @@ void decompose(core::Size min_chunk_sz,
     return;
   }
 
-  // TODO(cmiles) check for off-by-1 errors
   Size midpoint = loop.start() + loop.length() / 2;
   Loop candidate_left(loop.start(), midpoint - 1);
   Loop candidate_right(midpoint, loop.stop());
@@ -202,145 +253,139 @@ void remove_cutpoint_variants(core::pose::Pose* pose) {
   }
 }
 
-
 /// @brief Extract secondary structure chunks from the secondary structure
 protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose const & pose,
-										 char const extracted_ss_type)
-{
-	using namespace core;
-	using protocols::loops::Loops;
-	Loops secondary_structure_chunks;
-	
-	bool ss_chunk_started = false;
-	Size chunk_start_seqpos(0);
-	Size chunk_end_seqpos(0);
-	
-	for (core::Size ires = 1; ires <= pose.total_residue(); ++ires) {
-		if (!ss_chunk_started) {
-			if (pose.secstruct(ires) == extracted_ss_type) {
-				ss_chunk_started = true;
-				chunk_start_seqpos = ires;
-			}
-		}
-		else {
-			if (pose.secstruct(ires) != extracted_ss_type) {
-				ss_chunk_started = false;
-				chunk_end_seqpos = ires - 1;
-				secondary_structure_chunks.add_loop( chunk_start_seqpos, chunk_end_seqpos);
-			}
-			else if ( ! pose.residue_type(ires).is_protein() ) {
-				ss_chunk_started = false;
-				chunk_end_seqpos = ires - 1;
-				secondary_structure_chunks.add_loop( chunk_start_seqpos, chunk_end_seqpos);
-			}
-		}
-	}
-	
-	// if the input sequence ends with the last ss chunk
-	if (ss_chunk_started) {
-		chunk_end_seqpos = pose.total_residue();
-		secondary_structure_chunks.add_loop( chunk_start_seqpos, chunk_end_seqpos);
-	}
-	
-	return secondary_structure_chunks;
+                     char const extracted_ss_type) {
+  using namespace core;
+  using protocols::loops::Loops;
+  Loops secondary_structure_chunks;
+
+  bool ss_chunk_started = false;
+  Size chunk_start_seqpos(0);
+  Size chunk_end_seqpos(0);
+
+  for (core::Size ires = 1; ires <= pose.total_residue(); ++ires) {
+    if (!ss_chunk_started) {
+      if (pose.secstruct(ires) == extracted_ss_type) {
+        ss_chunk_started = true;
+        chunk_start_seqpos = ires;
+      }
+    }
+    else {
+      if (pose.secstruct(ires) != extracted_ss_type) {
+        ss_chunk_started = false;
+        chunk_end_seqpos = ires - 1;
+        secondary_structure_chunks.add_loop( chunk_start_seqpos, chunk_end_seqpos);
+      }
+      else if ( ! pose.residue_type(ires).is_protein() ) {
+        ss_chunk_started = false;
+        chunk_end_seqpos = ires - 1;
+        secondary_structure_chunks.add_loop( chunk_start_seqpos, chunk_end_seqpos);
+      }
+    }
+  }
+
+  // if the input sequence ends with the last ss chunk
+  if (ss_chunk_started) {
+    chunk_end_seqpos = pose.total_residue();
+    secondary_structure_chunks.add_loop( chunk_start_seqpos, chunk_end_seqpos);
+  }
+  return secondary_structure_chunks;
 }
 
 protocols::loops::Loops split_by_ca_ca_dist(core::pose::Pose const & pose,
-						  protocols::loops::Loops const & input_chunks,
-						  core::Real const CA_CA_distance_cutoff = 4.0)
-{
-	using protocols::loops::Loop;
-	using protocols::loops::Loops;
-	Loops secondary_structure_chunks;
-	
-	Loops::LoopList::const_iterator eit, it;
-	for (  it = input_chunks.begin(), eit = input_chunks.end();
-		 it != eit; ++it ) {
-		
-		Loop new_loop(*it);
-		
-		for (core::Size ires = it->start(); ires < it->stop(); ++ires) {
-			if ( pose.residue(ires).xyz("CA").distance(pose.residue(ires+1).xyz("CA")) > CA_CA_distance_cutoff ) {
-				new_loop.set_stop(ires);
-				secondary_structure_chunks.add_loop(new_loop);
-				
-				new_loop.set_start(ires+1);
-				new_loop.set_stop(it->stop());
-			}
-		}
-		secondary_structure_chunks.add_loop( new_loop );
-	}
-	return secondary_structure_chunks;
+              protocols::loops::Loops const & input_chunks,
+              core::Real const CA_CA_distance_cutoff) {
+  using protocols::loops::Loop;
+  using protocols::loops::Loops;
+  Loops secondary_structure_chunks;
+
+  Loops::LoopList::const_iterator eit, it;
+  for (  it = input_chunks.begin(), eit = input_chunks.end();
+     it != eit; ++it ) {
+
+    Loop new_loop(*it);
+
+    for (core::Size ires = it->start(); ires < it->stop(); ++ires) {
+      if ( pose.residue(ires).xyz("CA").distance(pose.residue(ires+1).xyz("CA")) > CA_CA_distance_cutoff ) {
+        new_loop.set_stop(ires);
+        secondary_structure_chunks.add_loop(new_loop);
+
+        new_loop.set_start(ires+1);
+        new_loop.set_stop(it->stop());
+      }
+    }
+    secondary_structure_chunks.add_loop( new_loop );
+  }
+  return secondary_structure_chunks;
 }
 
-protocols::loops::Loops remove_small_gaps(protocols::loops::Loops const & input_chunks,
-						core::Size gap_size = 1 // if two chunks are seperated by a gap of this size (or less), consider them one big chunk
-						) {
-	using protocols::loops::Loops;
-	using protocols::loops::Loop;
-	Loops secondary_structure_chunks;
-	
-	// join ss_chunks seperated by a small gap
-	core::Size i_chunk = 1;
-	while (i_chunk <= input_chunks.num_loop()) {
-		Loop new_loop(input_chunks[i_chunk]);
-		while(i_chunk < input_chunks.num_loop()) {
-			if (input_chunks[i_chunk+1].start() - input_chunks[i_chunk].stop() <= gap_size+1) {
-				new_loop.set_stop(input_chunks[i_chunk+1].stop());
-				++i_chunk;
-			}
-			else {
-				break;
-			}
-		}
-		secondary_structure_chunks.add_loop(new_loop);
-		++i_chunk;
-	}
-	return secondary_structure_chunks;
+// gap_size- if two chunks are seperated by a gap of this size (or less), consider them one big chunk
+protocols::loops::Loops remove_small_gaps(protocols::loops::Loops const & input_chunks, core::Size gap_size) {
+  using protocols::loops::Loops;
+  using protocols::loops::Loop;
+  Loops secondary_structure_chunks;
+
+  // join ss_chunks seperated by a small gap
+  core::Size i_chunk = 1;
+  while (i_chunk <= input_chunks.num_loop()) {
+    Loop new_loop(input_chunks[i_chunk]);
+    while(i_chunk < input_chunks.num_loop()) {
+      if (input_chunks[i_chunk+1].start() - input_chunks[i_chunk].stop() <= gap_size+1) {
+        new_loop.set_stop(input_chunks[i_chunk+1].stop());
+        ++i_chunk;
+      }
+      else {
+        break;
+      }
+    }
+    secondary_structure_chunks.add_loop(new_loop);
+    ++i_chunk;
+  }
+  return secondary_structure_chunks;
 }
 
-protocols::loops::Loops remove_short_chunks(protocols::loops::Loops const & input_chunks,
-						  core::Size minimum_length_of_chunk = 3
-						  ) {
-	using protocols::loops::Loops;
-	Loops secondary_structure_chunks;
-	//remove short ss_chunks
-	Loops::LoopList::const_iterator eit, it;
-	for (  it = input_chunks.begin(), eit = input_chunks.end();
-		 it != eit; ++it ) {
-		if (it->size() >= minimum_length_of_chunk) {
-			secondary_structure_chunks.add_loop(*it);
-		}
-	}
-	
-	return secondary_structure_chunks;
+protocols::loops::Loops remove_short_chunks(protocols::loops::Loops const & input_chunks, core::Size minimum_length_of_chunk) {
+  using protocols::loops::Loops;
+  Loops secondary_structure_chunks;
+
+  //remove short ss_chunks
+  Loops::LoopList::const_iterator eit, it;
+  for (  it = input_chunks.begin(), eit = input_chunks.end();
+     it != eit; ++it ) {
+    if (it->size() >= minimum_length_of_chunk) {
+      secondary_structure_chunks.add_loop(*it);
+    }
+  }
+  return secondary_structure_chunks;
 }
 
+// gap_size- if two chunks are seperated by a gap of this size (or less), consider them one big chunk
 protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose const & pose,
-										 std::string extracted_ss_types = "HE",
-										 core::Size gap_size = 1, // if two chunks are seperated by a gap of this size (or less), consider them one big chunk
-										 core::Size minimum_length_of_chunk = 3,
-										 core::Real CA_CA_distance_cutoff = 4.0)
-{
-	using protocols::loops::Loops;
-	Loops secondary_structure_chunks;
-	
-	for (core::Size i_ss = 0; i_ss < extracted_ss_types.size(); ++i_ss) {
-		char ss = extracted_ss_types[i_ss];
-		Loops secondary_structure_chunks_this_ss;
-		// this order might be the best to deal with chain breaks in the middle of secondary structure chunk
-		secondary_structure_chunks_this_ss = extract_secondary_structure_chunks(pose, ss);
-		secondary_structure_chunks_this_ss = remove_small_gaps(secondary_structure_chunks_this_ss, gap_size);
-		secondary_structure_chunks_this_ss = split_by_ca_ca_dist(pose, secondary_structure_chunks_this_ss, CA_CA_distance_cutoff);
-		secondary_structure_chunks_this_ss = remove_short_chunks(secondary_structure_chunks_this_ss, minimum_length_of_chunk);
-		
-		Loops::LoopList::const_iterator eit, it;
-		for (  it = secondary_structure_chunks_this_ss.begin(), eit = secondary_structure_chunks_this_ss.end();
-			 it != eit; ++it ) {
-			secondary_structure_chunks.add_loop(*it);
-		}
-	}
-	return secondary_structure_chunks;
+                     std::string extracted_ss_types,
+                     core::Size gap_size,
+                     core::Size minimum_length_of_chunk,
+                     core::Real CA_CA_distance_cutoff) {
+  using protocols::loops::Loops;
+  Loops secondary_structure_chunks;
+
+  for (core::Size i_ss = 0; i_ss < extracted_ss_types.size(); ++i_ss) {
+    char ss = extracted_ss_types[i_ss];
+    Loops secondary_structure_chunks_this_ss;
+
+    // this order might be the best to deal with chain breaks in the middle of secondary structure chunk
+    secondary_structure_chunks_this_ss = extract_secondary_structure_chunks(pose, ss);
+    secondary_structure_chunks_this_ss = remove_small_gaps(secondary_structure_chunks_this_ss, gap_size);
+    secondary_structure_chunks_this_ss = split_by_ca_ca_dist(pose, secondary_structure_chunks_this_ss, CA_CA_distance_cutoff);
+    secondary_structure_chunks_this_ss = remove_short_chunks(secondary_structure_chunks_this_ss, minimum_length_of_chunk);
+
+    Loops::LoopList::const_iterator eit, it;
+    for (  it = secondary_structure_chunks_this_ss.begin(), eit = secondary_structure_chunks_this_ss.end();
+       it != eit; ++it ) {
+      secondary_structure_chunks.add_loop(*it);
+    }
+  }
+  return secondary_structure_chunks;
 }
 
 }  // namespace nonlocal

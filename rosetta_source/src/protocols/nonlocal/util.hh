@@ -74,28 +74,38 @@ void remove_cutpoint_variants(core::pose::Pose* pose);
 /// @brief Extract secondary structure chunks from the pose, using multiple secondary structure types
 /// this function also uses DSSP to calculate the secondary structure types first
 protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose const & pose,
-														   std::string extracted_ss_types,
-														   core::Size gap_size, // if two chunks are seperated by a gap of this size (or less), consider them one big chunk
-														   core::Size minimum_length_of_chunk,
-														   core::Real CA_CA_distance_cutoff);
-	
+                               std::string extracted_ss_types = "HE",
+                               core::Size gap_size = 1,
+                               core::Size minimum_length_of_chunk = 3,
+                               core::Real CA_CA_distance_cutoff = 4);
+
 /// @brief Extract secondary structure chunks from the pose, using a given secondary structure type
 protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose const & pose,
-														   char const extracted_ss_type);
-	
+                               char const extracted_ss_type);
+
+/// @brief Computes the distance between consecutive CA atoms. If the distance exceeds
+/// a user-specified threshold, creates a new chunk and adds it to <chunks>. CA-CA
+/// distance threshold is retrieved from the option system (rigid::max_ca_ca_dist).
+/// Adds cutpoint variants to <pose> between adjacent chunks.
+void chunks_by_CA_CA_distance(core::pose::Pose* pose, protocols::loops::Loops* chunks);
+
+/// @brief Computes the distance between consecutive CA atoms. If the distance exceeds
+/// <threshold>, creates a new chunk and adds it to <chunks>. Adds cutpoint variants
+/// to <pose> between adjacent chunks.
+void chunks_by_CA_CA_distance(core::pose::Pose* pose, protocols::loops::Loops* chunks, double threshold);
+
+// TODO(cmiles) deduplicate
 /// @brief Split into separate chunks if CA-CA distance is over the cutoff
 protocols::loops::Loops split_by_ca_ca_dist(core::pose::Pose const & pose,
-											protocols::loops::Loops const & input_chunks,
-											core::Real const CA_CA_distance_cutoff);
-	
-/// @brief If two chunks are separated by a small gap, group the two chunks into one
-protocols::loops::Loops remove_small_gaps(protocols::loops::Loops const & input_chunks,
-										  core::Size gap_size // if two chunks are seperated by a gap of this size (or less), consider them one big chunk
-										  );
-	
+                      protocols::loops::Loops const & input_chunks,
+                      core::Real const CA_CA_distance_cutoff = 4);
+
+/// @brief If two chunks are separated by a small gap of size <= <gap_size>, combine them
+protocols::loops::Loops remove_small_gaps(protocols::loops::Loops const & input_chunks, core::Size gap_size = 1);
+
 /// @brief Remove small chunks
-protocols::loops::Loops remove_short_chunks(protocols::loops::Loops const & input_chunks,
-											core::Size minimum_length_of_chunk);
+protocols::loops::Loops remove_short_chunks(protocols::loops::Loops const & input_chunks, core::Size min_length = 3);
+
 }  // namespace nonlocal
 }  // namespace protocols
 

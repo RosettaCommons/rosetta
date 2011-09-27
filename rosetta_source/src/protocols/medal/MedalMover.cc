@@ -68,51 +68,6 @@ typedef boost::unordered_map<int, core::kinematics::Jump> Jumps;
 
 static basic::Tracer TR("protocols.medal.MedalMover");
 
-void chunkify(core::pose::Pose* pose, protocols::loops::Loops* chunks) {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using core::Size;
-  using core::id::NamedAtomID;
-  using numeric::xyzVector;
-  using protocols::loops::Loop;
-  using utility::vector1;
-  assert(chunks);
-
-  vector1<Size> violated_residues;
-  violated_residues.push_back(1);
-  for (Size i = 2; i <= pose->total_residue(); ++i) {
-    const xyzVector<double>& prev_xyz = pose->xyz(NamedAtomID("CA", i - 1));
-    const xyzVector<double>& curr_xyz = pose->xyz(NamedAtomID("CA", i));
-
-    double distance = prev_xyz.distance(curr_xyz);
-    if (distance > option[OptionKeys::rigid::max_ca_ca_dist]()) {
-      // Residues j and j - 1 are separated by more than max_ca_ca_dist Angstroms
-      violated_residues.push_back(i);
-    }
-  }
-  violated_residues.push_back(pose->total_residue() + 1);
-
-  // violated_residues = [ 1, ..., n ]
-  for (Size i = 2; i <= violated_residues.size(); ++i) {
-    const Size prev_start = violated_residues[i - 1];
-    const Size curr_start = violated_residues[i];
-    const Size prev_stop  = curr_start - 1;
-
-    // Add the chunk
-    Loop chunk(prev_start, prev_stop);
-    chunks->add_loop(chunk);
-    TR.Debug << "Added chunk " << chunk.start() << " " << chunk.stop() << std::endl;
-
-    // Enable chainbreak term between adjacent chunks
-    if (curr_start < pose->total_residue()) {
-      core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::CUTPOINT_LOWER, prev_stop);
-      core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::CUTPOINT_UPPER, curr_start);
-      TR.Debug << "Added cutpoint variants to residues " << prev_stop << " and " << curr_start << std::endl;
-    }
-  }
-  TR << "Chunks: " << *chunks << std::endl;
-}
-
 void MedalMover::apply(core::pose::Pose& pose) {
   using core::scoring::ScoreFunctionOP;
   using protocols::jd2::ThreadingJob;
@@ -122,18 +77,16 @@ void MedalMover::apply(core::pose::Pose& pose) {
 
   // Retrieve the current job from jd2
   ThreadingJob const * const job = protocols::nonlocal::current_job();
-  protocols::nonlocal::emit_intermediate(pose, "medal_initial_model.pdb");
 
   // Threading model
   LoopRelaxThreadingMover closure;
   closure.setup();
   closure.apply(pose);
-  protocols::nonlocal::emit_intermediate(pose, "medal_post_closure.pdb");
 
   // Decompose the structure into chunks based on consecutive CA-CA distance.
   // Add cutpoint variants between adjacent chunks.
   Loops chunks;
-  chunkify(&pose, &chunks);
+  protocols::nonlocal::chunks_by_CA_CA_distance(&pose, &chunks);
 
   // Setup the score function and score the initial model
   core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
