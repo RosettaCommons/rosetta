@@ -46,7 +46,7 @@
 
 using core::Size;
 
-static basic::Tracer tr("core.scoring.LinearChainbreak",basic::t_info);
+static basic::Tracer tr("core.scoring.LinearChainbreak", basic::t_info);
 
 namespace core {
 namespace scoring {
@@ -247,14 +247,33 @@ core::Real LinearChainbreakEnergy::do_score_ovp(const core::conformation::Residu
                                                     EnergyMap const & weights,
                                                     Vector & F1,
                                                     Vector & F2) const {
-    using conformation::Residue;
-    using chemical::CUTPOINT_LOWER;
-    using chemical::CUTPOINT_UPPER;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		using core::Size;
+		using conformation::Residue;
 
-    if ( pose.fold_tree().is_cutpoint( id.rsd() ) && pose.residue(id.rsd() ).has_variant_type( CUTPOINT_LOWER ) ) {
-      Residue const & lower_rsd( pose.residue( id.rsd()     ) );
-      Residue const & upper_rsd( pose.residue( id.rsd() + 1 ) );
+		const Size residue = id.rsd();
+
+		// For historical reasons, this method is called on a per-residue basis, which means that
+		// we could be looking at a residue with no cutpoint variants, a lower cutpoint variant,
+		// or an upper cutpoint variant. The structure of this method is intended to reflect these
+		// possibilities.
+		const bool has_lower_variant_type = pose.residue(residue).has_variant_type(chemical::CUTPOINT_LOWER);
+		const bool has_upper_variant_type = pose.residue(residue).has_variant_type(chemical::CUTPOINT_UPPER);
+
+		// CASE 1: no cutpoint variants
+		if (!has_lower_variant_type && !has_upper_variant_type) return;
+
+		// CASE 2: left-hand side of chainbreak (CUTPOINT_LOWER)
+		const bool is_cutpoint_in_tree_lower = pose.fold_tree().is_cutpoint(residue);
+		const bool is_cutpoint_in_tree_upper = pose.fold_tree().is_cutpoint(residue - 1);
+		const bool use_pose_cutpoint_variants = option[OptionKeys::score::score_pose_cutpoint_variants]();
+
+		if (has_lower_variant_type && (is_cutpoint_in_tree_lower || use_pose_cutpoint_variants)) {
+      Residue const & lower_rsd( pose.residue(residue));
+      Residue const & upper_rsd( pose.residue(residue + 1));
       Vector const & xyz_moving( pose.xyz( id ) );
+
       bool match( true );
       Vector xyz_fixed;
       Size const nbb( lower_rsd.mainchain_atoms().size() );
@@ -269,11 +288,9 @@ core::Real LinearChainbreakEnergy::do_score_ovp(const core::conformation::Residu
       }
 
       if ( match ) {
-        // deriv = 1
-        // factor = deriv / r = 1/r //sounds ugly!
         Vector const f2 ( xyz_moving - xyz_fixed );
         Real const dist ( f2.length() );
-        if ( dist >= 0.01 ) { //avoid getting too close to singularity...
+        if ( dist >= 0.01 ) {  // avoid getting too close to singularity...
           Real const invdist( 1.0 / dist );
           F1 += weights[ linear_chainbreak ] * invdist * cross( xyz_moving, xyz_fixed ) / 3;
           F2 += weights[ linear_chainbreak ] * invdist * ( xyz_moving - xyz_fixed ) / 3;
@@ -281,11 +298,13 @@ core::Real LinearChainbreakEnergy::do_score_ovp(const core::conformation::Residu
       }
     }
 
-    if ( id.rsd() > 1 && pose.fold_tree().is_cutpoint( id.rsd()-1 ) &&
-         pose.residue(id.rsd() ).has_variant_type( CUTPOINT_UPPER )  ) {
-      Residue const & lower_rsd( pose.residue( id.rsd() - 1 ) );
-      Residue const & upper_rsd( pose.residue( id.rsd()     ) );
+		// CASE 3: right-hand side of chainbreak (CUTPOINT_UPPER)
+		if (residue <= 1) return;
+		if (has_upper_variant_type && (is_cutpoint_in_tree_upper || use_pose_cutpoint_variants)) {
+      Residue const & lower_rsd( pose.residue(residue - 1));
+      Residue const & upper_rsd( pose.residue(residue));
       Vector const & xyz_moving( pose.xyz( id ) );
+
       bool match( true );
       Vector xyz_fixed;
       Size const nbb( lower_rsd.mainchain_atoms().size() );
@@ -300,10 +319,9 @@ core::Real LinearChainbreakEnergy::do_score_ovp(const core::conformation::Residu
       }
 
       if ( match ) {
-        // factor = deriv / r = 1/r //sounds ugly!
         Vector const f2 ( xyz_moving - xyz_fixed );
         Real const dist ( f2.length() );
-        if ( dist >= 0.01 ) { //avoid getting too close to singularity...
+        if ( dist >= 0.01 ) {  // avoid getting too close to singularity...
           Real const invdist( 1.0 / dist );
           F1 += weights[ linear_chainbreak ] * invdist * cross( xyz_moving, xyz_fixed ) / 3;
           F2 += weights[ linear_chainbreak ] * invdist * ( xyz_moving - xyz_fixed ) / 3;
@@ -316,9 +334,8 @@ core::Real LinearChainbreakEnergy::do_score_ovp(const core::conformation::Residu
   /// be maintained by class Energies
   void
   LinearChainbreakEnergy::indicate_required_context_graphs(utility::vector1<bool>&) const {} /*context_graphs_required*/
-core::Size
-LinearChainbreakEnergy::version() const
-{
+
+core::Size LinearChainbreakEnergy::version() const {
   return 1; // Initial versioning
 }
 
