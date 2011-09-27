@@ -371,11 +371,30 @@ new_sc(Pose &pose, utility::vector1<Size> intra_subs, Real& int_area, Real& sc) 
   }
 }
 
-
-Real packing_score(Pose const & psym) {
-	
+Size num_trimer_contacts(Pose const & psym, Size nres) {
+	Size count = 0;
+	for(Size ir = 1; ir <= nres; ++ir) {
+		for(Size jr = nres+1; jr <= 3*nres; ++jr) {
+			if( psym.residue(ir).nbr_atom_xyz().distance_squared( psym.residue(jr).nbr_atom_xyz() ) < 100 ) count++;
+		}
+		for(Size jr = 4*nres+1; jr <= 12*nres; ++jr) {
+			if( psym.residue(ir).nbr_atom_xyz().distance_squared( psym.residue(jr).nbr_atom_xyz() ) < 100 ) count++;
+		}
+	}
+	return count;
 }
 
+Real packing_score(Pose const & psym) {
+	;
+}
+
+
+Real get_bare_rep(Pose tmp, ScoreFunctionOP sfrepsym) {
+	option[basic::options::OptionKeys::symmetry::symmetry_definition]("input/sym/C2.sym");
+	core::pose::symmetry::make_symmetric_pose(tmp);
+	sfrepsym->score(tmp);
+	return tmp.energies().total_energies()[core::scoring::fa_rep];
+}
 
 #define ATET 54.735610317245360079 // asin(sr2/sr3)
 #define AOCT 35.264389682754668343 // asin(sr1/sr3)
@@ -390,6 +409,7 @@ void run() {
   ScoreFunctionOP sf = core::scoring::getScoreFunction();
   ScoreFunctionOP sfrep = new core::scoring::ScoreFunction;
   sfrep->set_weight(core::scoring::fa_rep,1.0);
+	ScoreFunctionOP sfrepsym = new core::scoring::symmetry::SymmetricScoreFunction(sfrep);
 
   core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
   Pose bpy,ala;
@@ -487,10 +507,15 @@ void run() {
           }
           goto noclash4;  clash4: continue; noclash4:
 
-          Real const baserep = sfrep->score(base);
+
           Pose psym = base;
           trans_pose(psym,-isct);
           Pose psym_bare = psym;
+					for(Size ir = 1; ir <= psym_bare.n_residue(); ++ir) {
+						if( psym_bare.residue(ir).name3()=="GLY" || psym_bare.residue(ir).name3()=="PRO" ) continue;
+						psym_bare.replace_residue(ir,ala.residue(1),true);
+					}
+					Real barerep = get_bare_rep(psym_bare,sfrepsym);
           Mat Rsymm;
           string symtag;
           Vec f1=(c3f1-isct).normalized(),f2=(c2f1-isct).normalized(),t1=Vec(0,0,1);
@@ -501,11 +526,13 @@ void run() {
             Rsymm = alignVectorSets(f1,f2,t1, (orig_ang<90.0?1.0:-1.0)*Vec(0.8164965743782284,0.0,0.5773502784520137) );
             dimersub =  4;
           } else if( fabs(ang-AOCT) <= ANGTH ) {
+						continue;
             symtag = "OCT";
             option[OptionKeys::symmetry::symmetry_definition]("input/sym/octa.sym");
             Rsymm = alignVectorSets(f1,f2,t1, (orig_ang<90.0?1.0:-1.0)*Vec(0.4082482904638630,0.4082482904638626,0.8164965809277260));
             dimersub =  4;
           } else if( fabs(ang-AICS) <= ANGTH ) {
+						continue;
             symtag = "ICS";
             option[OptionKeys::symmetry::symmetry_definition]("input/sym/icosa.sym");
             Rsymm = alignVectorSets(f1,f2,t1, (orig_ang<90.0?1.0:-1.0)*rotation_matrix_degrees(Vec(0,0,1),120.0)*Vec(0.35670090519235864157,0.0,0.93421863834701557305));
@@ -517,24 +544,30 @@ void run() {
 
           rot_pose(psym     ,Rsymm); core::pose::symmetry::make_symmetric_pose(psym     );
           rot_pose(psym_bare,Rsymm); core::pose::symmetry::make_symmetric_pose(psym_bare);
+					//psym_bare.dump_pdb("bare.pdb");
 
           string fname = symtag+"_"+infile+"_B"+lead_zero_string_of(ibpy,3)+"-"+lead_zero_string_of((Size)(bch1),3)+"_"+lead_zero_string_of(jaxs,1)+".pdb";
 
-          sf->score(psym_bare);
-          // TR << "REP " << 2*baserep << " " << psym_bare.energies().total_energies()[core::scoring::fa_rep] << std::endl;
-          if(! psym_bare.energies().total_energies()[core::scoring::fa_rep] - 2*baserep > 1000.0) continue;
+          sfrepsym->score(psym_bare);
+          //TR << "REP " << psym_bare.energies().total_energies()[core::scoring::fa_rep] - barerep << std::endl;
+          //if(psym_bare.energies().total_energies()[core::scoring::fa_rep] - barerep <   10.0) continue;
+          if(psym_bare.energies().total_energies()[core::scoring::fa_rep] - barerep > 1000.0) continue;
 
-          //refine(psym,ibpy,dimersub);
+					//utility_exit_with_message("arostn");
+
+					Size ncontact = num_trimer_contacts(psym,base.n_residue());
+					if( ncontact < 100 ) continue;
+
+          refine(psym,ibpy,dimersub);
           psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+fname);
 
 					Real rms = core::scoring::CA_rmsd(psym,psym_bare);
 					Real sc,int_area;
 					vector1<Size> intra_subs(1,4);
 					sf->score(psym);
-					//new_sc(psym,intra_subs,int_area,sc);
+					new_sc(psym,intra_subs,int_area,sc);
 
-
-					//repack(psym,ibpy,dimersub);
+					repack(psym,ibpy,dimersub);
 					Real s0 = sf->score(psym);
 					for(Size ir = 1; ir <= base.n_residue(); ++ir) {
 						for(Size ia = 1; ia <= psym.residue_type(ir).natoms(); ++ia) {
@@ -544,9 +577,8 @@ void run() {
 							if("TET"==symtag)	psym.set_xyz( aid, psym.xyz(aid) + 20*Vec( 0.816497, 0.000000, 0.577350 ) );
 						}
 					}
-					//repack(psym,ibpy,dimersub);
+					repack(psym,ibpy,dimersub);
 					Real s1 = sf->score(psym);
-          psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+fname+"_DIMER.pdb");
 
           TR << "HIT " << fname << " " <<  ang << " " << ibpy << " " << bch1 << " " << jaxs << " ddG: " << s0-s1 << " sc: " << sc << " " << int_area <<std::endl;
 
