@@ -21,6 +21,8 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/chemical/VariantType.hh>
 
 // STL Headers
@@ -364,7 +366,8 @@ ResidueNeighborConstIteratorOP
 FullatomDisulfideEnergyContainer::const_upper_neighbor_iterator_begin( int resid ) const
 {
 	assert( !empty() );
-	if ( resid_2_disulfide_index_[ resid ] != NO_DISULFIDE &&
+	if ( resid <= resid_2_disulfide_index_.size() &&
+			 resid_2_disulfide_index_[ resid ] != NO_DISULFIDE &&
 			(Size) resid < other_neighbor_id( resid_2_disulfide_index_[ resid ], resid ) ) {
 		return new DisulfResNeighbConstIterator( this, resid, resid_2_disulfide_index_[ resid ]  );
 	}
@@ -402,7 +405,8 @@ FullatomDisulfideEnergyContainer::neighbor_iterator_end( int )
 	ResidueNeighborIteratorOP
 FullatomDisulfideEnergyContainer::upper_neighbor_iterator_begin( int resid )
 {
-	if ( resid_2_disulfide_index_[ resid ] != NO_DISULFIDE &&
+	if ( resid <= resid_2_disulfide_index_.size() &&
+			 resid_2_disulfide_index_[ resid ] != NO_DISULFIDE &&
 			(Size) resid < other_neighbor_id( resid_2_disulfide_index_[ resid ], resid ) ) {
 		return new DisulfResNeighbIterator( this, resid, resid_2_disulfide_index_[ resid ]  );
 	}
@@ -537,16 +541,22 @@ bool FullatomDisulfideEnergyContainer::energy_computed( Size disulfide_index ) c
 void
 FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 {
+	Size nres = pose.total_residue();
+	if( core::pose::symmetry::is_symmetric(pose) ) {
+		nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
+	}
+
 	disulfide_partners_.clear();
 	disulfide_atom_indices_.clear();
 	disulfide_info_.clear();
-	resid_2_disulfide_index_.resize( pose.total_residue() );
-	disulfide_residue_types_.resize( pose.total_residue() );
+	resid_2_disulfide_index_.resize( nres );
+	disulfide_residue_types_.resize( nres );
 	std::fill( resid_2_disulfide_index_.begin(), resid_2_disulfide_index_.end(), NO_DISULFIDE );
 	std::fill( disulfide_residue_types_.begin(), disulfide_residue_types_.end(), chemical::ResidueTypeCAP(0) );
 
+
 	Size count_disulfides( 0 );
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( Size ii = 1; ii <= nres; ++ii ) {
 		if ( pose.residue( ii ).aa() == chemical::aa_cys &&
 				pose.residue( ii ).has_variant_type( chemical::DISULFIDE ) &&
 				resid_2_disulfide_index_[ ii ] == NO_DISULFIDE &&
@@ -586,7 +596,11 @@ FullatomDisulfideEnergyContainer::find_disulfides( pose::Pose const & pose )
 	bool
 FullatomDisulfideEnergyContainer::disulfides_changed( pose::Pose const & pose )
 {
-	Size const total_residue( pose.total_residue() );
+	Size nres = pose.total_residue();
+	if( core::pose::symmetry::is_symmetric(pose) ) {
+		nres = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
+	}
+	Size const total_residue( nres );
 	if ( resid_2_disulfide_index_.size() != total_residue ) return true;
 
 	for ( Size ii = 1; ii <= total_residue; ++ii ) {
