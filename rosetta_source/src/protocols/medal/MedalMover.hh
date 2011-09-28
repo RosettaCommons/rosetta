@@ -23,6 +23,7 @@
 #include <boost/unordered/unordered_map.hpp>
 
 // Project headers
+#include <core/fragment/FragSet.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -35,6 +36,7 @@ class MedalMover : public protocols::moves::Mover {
   typedef boost::unordered_map<int, core::kinematics::Jump> Jumps;
 
  public:
+  MedalMover();
   void apply(core::pose::Pose& pose);
 
   // -- jd2 -- //
@@ -46,25 +48,14 @@ private:
   /// @brief Closes chainbreaks in <pose>
   void do_loop_closure(core::pose::Pose* pose) const;
 
-  /// @brief Performs kinematically-aware, scored fragment insertion
-  void do_fragment_insertion(const core::scoring::ScoreFunctionOP& score,
-                             core::pose::Pose* pose) const;
-
-  /// @brief Performs rigid body moves
-  void do_rigid_body_moves(const core::scoring::ScoreFunctionOP& score,
-                           core::pose::Pose* pose) const;
-
   /// @brief Retrieves jump information from <pose>, storing the result in <jumps>
   void jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) const;
 
   /// @brief Configures a basic score functions which callers can then specialize
-  core::scoring::ScoreFunctionOP base_score_function() const;
+  core::scoring::ScoreFunctionOP score_function() const;
 
-  /// @brief Configures the score function used for rigid body perturbation
-  core::scoring::ScoreFunctionOP perturb_score_function() const;
-
-  /// @brief Configures the score function used for fragment insertion
-  core::scoring::ScoreFunctionOP insert_score_function() const;
+  core::fragment::FragSetOP fragments_sm_;
+  core::fragment::FragSetOP fragments_lg_;
 };
 
 }  // namespace medal

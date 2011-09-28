@@ -14,6 +14,7 @@
 #include <protocols/medal/MedalMover.hh>
 
 // C/C++ headers
+#include <algorithm>
 #include <iostream>
 #include <string>
 
@@ -55,6 +56,7 @@
 #include <protocols/loops/LoopRelaxThreadingMover.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>
+#include <protocols/moves/CyclicMover.hh>
 #include <protocols/moves/RationalMonteCarlo.hh>
 #include <protocols/moves/RigidBodyMotionMover.hh>
 #include <protocols/nonlocal/Policy.hh>
@@ -70,11 +72,32 @@ typedef boost::unordered_map<int, core::kinematics::Jump> Jumps;
 
 static basic::Tracer TR("protocols.medal.MedalMover");
 
+MedalMover::MedalMover() {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  using core::fragment::FragmentIO;
+  using core::fragment::FragSetOP;
+
+  FragmentIO io;
+  fragments_lg_ = io.read_data(option[in::file::frag9]());
+  fragments_sm_ = io.read_data(option[in::file::frag3]());
+}
+
 void MedalMover::apply(core::pose::Pose& pose) {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  using core::kinematics::MoveMap;
+  using core::kinematics::MoveMapOP;
   using core::scoring::ScoreFunctionOP;
   using protocols::jd2::ThreadingJob;
   using protocols::loops::LoopRelaxThreadingMover;
   using protocols::loops::Loops;
+  using protocols::moves::CyclicMover;
+  using protocols::moves::CyclicMoverOP;
+  using protocols::moves::MoverOP;
+  using protocols::moves::RationalMonteCarlo;
+  using protocols::moves::RigidBodyMotionMover;
+  using protocols::nonlocal::SingleFragmentMover;
   using protocols::nonlocal::StarTreeBuilder;
 
   ThreadingJob const * const job = protocols::nonlocal::current_job();
@@ -90,31 +113,39 @@ void MedalMover::apply(core::pose::Pose& pose) {
 
   // Configure the score functions used in the simulation
   core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
-  ScoreFunctionOP perturb_score = perturb_score_function();
-  ScoreFunctionOP insertion_score = insert_score_function();
+  ScoreFunctionOP score = score_function();
 
   // Add constraints to the pose, score the initial model
   core::scoring::constraints::add_constraints_from_cmdline_to_pose(pose);
-  perturb_score->show(TR, pose);
+  score->show(TR, pose);
 
   // Define the kinematics
   StarTreeBuilder builder;
   builder.set_up(chunks, &pose);
   TR << pose.fold_tree() << std::endl;
 
-  // Action:
-  //  1. Rigid body perturbation
-  //  2. Fragment insertion (uniform policy)
-  //  3. CCD closure
-  protocols::nonlocal::add_cutpoint_variants(&pose);
-  do_rigid_body_moves(perturb_score, &pose);
-  do_fragment_insertion(insertion_score, &pose);
+  // Define the base movers
+  Jumps jumps;
+  jumps_from_pose(pose, &jumps);
+  MoverOP rigid_body_mover = new RigidBodyMotionMover(jumps);
 
-  // Housekeeping
-  builder.tear_down(&pose);
+  MoveMapOP movable = new MoveMap();
+  movable->set_bb(true);
+  MoverOP fragment_mover = new SingleFragmentMover(fragments_sm_, movable);
+
+  // Alternating rigid body and fragment insertion moves
+  CyclicMoverOP meta = new CyclicMover();
+  meta->enqueue(rigid_body_mover);
+  meta->enqueue(fragment_mover);
+
+  protocols::nonlocal::add_cutpoint_variants(&pose);
+  const Size cycles = std::max(option[OptionKeys::rigid::rigid_body_cycles](), option[OptionKeys::rigid::fragment_cycles]());
+  RationalMonteCarlo mover(meta, score, cycles, option[OptionKeys::rigid::temperature](), true);
+  mover.apply(pose);
   protocols::nonlocal::remove_cutpoint_variants(&pose);
 
-  // Close remaining chainbreaks
+  // Loop closure
+  builder.tear_down(&pose);
   do_loop_closure(&pose);
 }
 
@@ -155,77 +186,6 @@ void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
   core::util::switch_to_residue_type_set(*pose, core::chemical::CENTROID);
 }
 
-void MedalMover::do_rigid_body_moves(const core::scoring::ScoreFunctionOP& score,
-                                     core::pose::Pose* pose) const {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using protocols::moves::MoverOP;
-  using protocols::moves::RationalMonteCarlo;
-  using protocols::moves::RigidBodyMotionMover;
-  assert(pose);
-
-  Jumps jumps;
-  jumps_from_pose(*pose, &jumps);
-
-  MoverOP rigid_mover = new RationalMonteCarlo(
-      new RigidBodyMotionMover(jumps),
-      score,
-      option[OptionKeys::rigid::rigid_body_cycles](),
-      option[OptionKeys::rigid::temperature](),
-      true);
-
-  rigid_mover->apply(*pose);
-}
-
-void MedalMover::do_fragment_insertion(const core::scoring::ScoreFunctionOP& score,
-                                       core::pose::Pose* pose) const {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using core::Size;
-  using core::fragment::FragmentIO;
-  using core::fragment::FragSetOP;
-  using core::kinematics::MoveMap;
-  using core::kinematics::MoveMapOP;
-  using protocols::moves::MoverOP;
-  using protocols::moves::RationalMonteCarlo;
-  using protocols::nonlocal::PolicyOP;
-  using protocols::nonlocal::PolicyFactory;
-  using protocols::nonlocal::SingleFragmentMover;
-  assert(pose);
-
-  FragmentIO io;
-  FragSetOP fragments = io.read_data(option[in::file::frag3]());
-
-  // Fragment selection policies
-  const Size num_fragments = option[OptionKeys::abinitio::number_3mer_frags]();
-  PolicyOP uniform = PolicyFactory::get_policy("uniform", fragments, num_fragments);
-  PolicyOP smooth  = PolicyFactory::get_policy("smooth", fragments, num_fragments);
-
-  // Define degrees of freedom
-  MoveMapOP movable = new MoveMap();
-  movable->set_bb(true);
-
-  // Small fragments, uniform selection
-  MoverOP uniform_mover = new RationalMonteCarlo(
-      new SingleFragmentMover(fragments, movable, uniform),
-      score,
-      option[OptionKeys::rigid::fragment_cycles](),
-      option[OptionKeys::rigid::temperature](),
-      true);
-
-  uniform_mover->apply(*pose);
-
-  // Small fragments, smooth selection
-  MoverOP smooth_mover = new RationalMonteCarlo(
-      new SingleFragmentMover(fragments, movable, smooth),
-      score,
-      option[OptionKeys::rigid::fragment_cycles](),
-      option[OptionKeys::rigid::temperature](),
-      true);
-
-  smooth_mover->apply(*pose);
-}
-
 void MedalMover::jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) const {
   using core::kinematics::Jump;
   assert(jumps);
@@ -237,7 +197,7 @@ void MedalMover::jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) con
   }
 }
 
-core::scoring::ScoreFunctionOP MedalMover::base_score_function() const {
+core::scoring::ScoreFunctionOP MedalMover::score_function() const {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::scoring::ScoreFunctionFactory;
@@ -258,23 +218,13 @@ core::scoring::ScoreFunctionOP MedalMover::base_score_function() const {
   score->set_weight(core::scoring::linear_chainbreak, option[OptionKeys::jumps::increase_chainbreak]());
   score->set_weight(core::scoring::rg, option[OptionKeys::abinitio::rg_reweight]());
   score->set_weight(core::scoring::sheet, 1);
-  score->set_weight(core::scoring::vdw, 0.25);
+  score->set_weight(core::scoring::vdw, 1);
 
   // Disable specific energy terms
   score->set_weight(core::scoring::rama, 0);
 
   core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn(*score);
   return score;
-}
-
-// TODO(cmiles) specialize
-core::scoring::ScoreFunctionOP MedalMover::perturb_score_function() const {
-  return base_score_function();
-}
-
-// TODO(cmiles) specialize
-core::scoring::ScoreFunctionOP MedalMover::insert_score_function() const {
-  return base_score_function();
 }
 
 std::string MedalMover::get_name() const {
