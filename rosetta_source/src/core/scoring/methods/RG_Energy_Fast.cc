@@ -99,6 +99,7 @@ RG_Energy_Fast::calculate_rg_score( core::pose::Pose const & pose ) const
 {
 
 	Size const nres( pose.total_residue() );
+	Size nres_counted=0;
 
 	///////////////////////////////////////
 	//
@@ -108,21 +109,22 @@ RG_Energy_Fast::calculate_rg_score( core::pose::Pose const & pose ) const
 	Vector center_of_mass( 0, 0, 0 );
 	for ( Size i = 1; i <= nres; ++i ) {
 		// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-		if ( pose.residue(i).has_variant_type( "REPLONLY" ) ){
-				continue;
-		}
+		if ( pose.residue(i).has_variant_type( "REPLONLY" ) ) continue;
+		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
+
 		Vector const v( pose.residue(i).nbr_atom_xyz() );
 		center_of_mass += v;
+		nres_counted++;
 	}
-	center_of_mass /= nres;
+	center_of_mass /= nres_counted;
 
 	// calculate RG based on distance from center of mass
 	Real rg_score = 0;
 	for ( Size i = 1; i <= nres; ++i ) {
 		// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-		if ( pose.residue(i).has_variant_type( "REPLONLY" ) ){
-				continue;
-		}
+		if ( pose.residue(i).has_variant_type( "REPLONLY" ) ) continue;
+		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
+
 		Vector const v( pose.residue(i).nbr_atom_xyz() );
 		rg_score += v.distance_squared( center_of_mass );
 	}
@@ -131,7 +133,7 @@ RG_Energy_Fast::calculate_rg_score( core::pose::Pose const & pose ) const
 	// divides by nres and not by nres-1.  For the sake of matching r++, it's
 	// being left at nres-1 for now, but is a candidate for change in the near
 	// future.
-	rg_score /= (nres - 1);
+	rg_score /= (nres_counted - 1);
 
 	return sqrt( rg_score );
 
@@ -144,6 +146,7 @@ RG_Energy_Fast::calculate_rg_score(
 {
 
 	Size const nres( pose.total_residue() );
+	Size nres_counted=0;
 
 	///////////////////////////////////////
 	//
@@ -155,21 +158,24 @@ RG_Energy_Fast::calculate_rg_score(
 		if (!relevant_residues[i]) continue;
 
 		// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-		if ( pose.residue(i).has_variant_type( "REPLONLY" ) ){
-				continue;
-		}
+		if ( pose.residue(i).has_variant_type( "REPLONLY" ) ) continue;
+		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
+
 		Vector const v( pose.residue(i).nbr_atom_xyz() );
 		center_of_mass += v;
+		nres_counted++;
 	}
-	center_of_mass /= nres;
+	center_of_mass /= nres_counted;
 
 	// calculate RG based on distance from center of mass
 	Real rg_score = 0;
 	for ( Size i = 1; i <= nres; ++i ) {
+		if (!relevant_residues[i]) continue;
+
 		// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-		if ( pose.residue(i).has_variant_type( "REPLONLY" ) ){
-				continue;
-		}
+		if ( pose.residue(i).has_variant_type( "REPLONLY" ) ) continue;
+		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
+
 		Vector const v( pose.residue(i).nbr_atom_xyz() );
 		rg_score += v.distance_squared( center_of_mass );
 	}
@@ -178,7 +184,7 @@ RG_Energy_Fast::calculate_rg_score(
 	// divides by nres and not by nres-1.  For the sake of matching r++, it's
 	// being left at nres-1 for now, but is a candidate for change in the near
 	// future.
-	rg_score /= (nres - 1);
+	rg_score /= (nres_counted - 1);
 
 	return sqrt( rg_score );
 
