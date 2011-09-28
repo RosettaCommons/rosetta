@@ -84,10 +84,9 @@ void MedalMover::apply(core::pose::Pose& pose) {
   closure.setup();
   closure.apply(pose);
 
-  // Decompose the structure into chunks based on consecutive CA-CA distances.
-  // Add cutpoint variants between adjacent chunks.
+  // Decompose the structure into chunks based on consecutive CA-CA distances
   Loops chunks;
-  protocols::nonlocal::chunks_by_CA_CA_distance(&pose, &chunks);
+  protocols::nonlocal::chunks_by_CA_CA_distance(pose, &chunks);
 
   // Configure the score functions used in the simulation
   core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);

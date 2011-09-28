@@ -90,13 +90,11 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 /// @brief Computes the distance between consecutive CA atoms. If the distance exceeds
 /// a user-specified threshold, creates a new chunk and adds it to <chunks>. CA-CA
 /// distance threshold is retrieved from the option system (rigid::max_ca_ca_dist).
-/// Adds cutpoint variants to <pose> between adjacent chunks.
-void chunks_by_CA_CA_distance(core::pose::Pose* pose, protocols::loops::Loops* chunks);
+void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::Loops* chunks);
 
 /// @brief Computes the distance between consecutive CA atoms. If the distance exceeds
-/// <threshold>, creates a new chunk and adds it to <chunks>. Adds cutpoint variants
-/// to <pose> between adjacent chunks.
-void chunks_by_CA_CA_distance(core::pose::Pose* pose, protocols::loops::Loops* chunks, double threshold);
+/// <threshold>, creates a new chunk and adds it to <chunks>.
+void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::Loops* chunks, double threshold);
 
 // TODO(cmiles) deduplicate
 /// @brief Split into separate chunks if CA-CA distance is over the cutoff

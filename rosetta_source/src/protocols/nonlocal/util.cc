@@ -54,26 +54,27 @@ namespace nonlocal {
 
 static basic::Tracer TR("protocols.nonlocal.util");
 
-void chunks_by_CA_CA_distance(core::pose::Pose* pose, protocols::loops::Loops* chunks) {
+void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::Loops* chunks) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   chunks_by_CA_CA_distance(pose, chunks, option[OptionKeys::rigid::max_ca_ca_dist]());
 }
 
-void chunks_by_CA_CA_distance(core::pose::Pose* pose, protocols::loops::Loops* chunks, double threshold) {
+void chunks_by_CA_CA_distance(const core::pose::Pose& pose, protocols::loops::Loops* chunks, double threshold) {
   using core::Size;
   using core::id::NamedAtomID;
   using numeric::xyzVector;
   using protocols::loops::Loop;
   using utility::vector1;
-	assert(pose);
+
   assert(chunks);
+  assert(threshold > 0);
 
   vector1<Size> violated_residues;
   violated_residues.push_back(1);
-  for (Size i = 2; i <= pose->total_residue(); ++i) {
-    const xyzVector<double>& prev_xyz = pose->xyz(NamedAtomID("CA", i - 1));
-    const xyzVector<double>& curr_xyz = pose->xyz(NamedAtomID("CA", i));
+  for (Size i = 2; i <= pose.total_residue(); ++i) {
+    const xyzVector<double>& prev_xyz = pose.xyz(NamedAtomID("CA", i - 1));
+    const xyzVector<double>& curr_xyz = pose.xyz(NamedAtomID("CA", i));
 
     double distance = prev_xyz.distance(curr_xyz);
     if (distance > threshold) {
@@ -81,7 +82,7 @@ void chunks_by_CA_CA_distance(core::pose::Pose* pose, protocols::loops::Loops* c
       violated_residues.push_back(i);
     }
   }
-  violated_residues.push_back(pose->total_residue() + 1);
+  violated_residues.push_back(pose.total_residue() + 1);
 
   // violated_residues = [ 1, ..., n ]
   for (Size i = 2; i <= violated_residues.size(); ++i) {
@@ -93,15 +94,7 @@ void chunks_by_CA_CA_distance(core::pose::Pose* pose, protocols::loops::Loops* c
     Loop chunk(prev_start, prev_stop);
     chunks->add_loop(chunk);
     TR.Debug << "Added chunk " << chunk.start() << " " << chunk.stop() << std::endl;
-
-    // Enable chainbreak term between adjacent chunks
-    if (curr_start < pose->total_residue()) {
-      core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::CUTPOINT_LOWER, prev_stop);
-      core::pose::add_variant_type_to_pose_residue(*pose, core::chemical::CUTPOINT_UPPER, curr_start);
-      TR.Debug << "Added cutpoint variants to residues " << prev_stop << " and " << curr_start << std::endl;
-    }
   }
-  TR.Debug << "Chunks: " << *chunks << std::endl;
 }
 
 protocols::loops::Loops combine_and_trim(core::Size min_chunk_sz,
