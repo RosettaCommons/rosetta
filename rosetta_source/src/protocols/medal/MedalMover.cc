@@ -146,6 +146,10 @@ void MedalMover::apply(core::pose::Pose& pose) {
   // Loop closure
   builder.tear_down(&pose);
   do_loop_closure(&pose);
+
+  // Return to centroid representation and rescore
+  core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
+  score->show(TR, pose);
 }
 
 void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
@@ -176,8 +180,6 @@ void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
   FoldTree tree(pose->total_residue());
   pose->fold_tree(tree);
   closure.apply(*pose);
-
-  core::util::switch_to_residue_type_set(*pose, core::chemical::CENTROID);
 }
 
 void MedalMover::jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) const {
