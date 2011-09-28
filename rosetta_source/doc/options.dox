@@ -10,7 +10,17 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-fragment_cycles</b> \<Integer\><dt>
 <dd>Number of fragment insertion cycles</dd><br>
-<dd>Default: 1000</dd><br>
+<dd>Default: 10000</dd><br>
+</dl>
+<dl>
+<dt><b>-jump_attempts</b> \<Integer\><dt>
+<dd>Number of jump minimization attempts</dd><br>
+<dd>Default: 10</dd><br>
+</dl>
+<dl>
+<dt><b>-jump_cycles</b> \<Integer\><dt>
+<dd>Number of jump minimization cycles</dd><br>
+<dd>Default: 500</dd><br>
 </dl>
 <dl>
 <dt><b>-max_ca_ca_dist</b> \<Real\><dt>
@@ -20,7 +30,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-rigid_body_cycles</b> \<Integer\><dt>
 <dd>Number of rigid body perturbation cycles</dd><br>
-<dd>Default: 1000</dd><br>
+<dd>Default: 20000</dd><br>
 </dl>
 <dl>
 <dt><b>-rotation</b> \<Real\><dt>

@@ -219,7 +219,7 @@ core::Real LinearChainbreakEnergy::do_score_ovp(const core::conformation::Residu
       // sequence separation
       const Size separation = shortest_paths_->dist(cutpoint, cutpoint + 1);
       if (separation > allowable_sequence_sep_) {
-        tr.Debug << "Chainbreak skipped-- "
+        tr.Trace << "Chainbreak skipped-- "
                  << separation << " > " << allowable_sequence_sep_
                  << std::endl;
         continue;

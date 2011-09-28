@@ -43,19 +43,28 @@ class MedalMover : public protocols::moves::Mover {
   protocols::moves::MoverOP fresh_instance() const;
 
 private:
+  /// @brief Closes chainbreaks in <pose>
+  void do_loop_closure(core::pose::Pose* pose) const;
+
   /// @brief Performs kinematically-aware, scored fragment insertion
   void do_fragment_insertion(const core::scoring::ScoreFunctionOP& score,
                              core::pose::Pose* pose) const;
 
-  /// @brief Perturbs jumps using rigid body perturbation
+  /// @brief Performs rigid body moves
   void do_rigid_body_moves(const core::scoring::ScoreFunctionOP& score,
                            core::pose::Pose* pose) const;
 
   /// @brief Retrieves jump information from <pose>, storing the result in <jumps>
   void jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) const;
 
-  /// @brief Configure the score function
-  core::scoring::ScoreFunctionOP score_function(core::pose::Pose* pose) const;
+  /// @brief Configures a basic score functions which callers can then specialize
+  core::scoring::ScoreFunctionOP base_score_function() const;
+
+  /// @brief Configures the score function used for rigid body perturbation
+  core::scoring::ScoreFunctionOP perturb_score_function() const;
+
+  /// @brief Configures the score function used for fragment insertion
+  core::scoring::ScoreFunctionOP insert_score_function() const;
 };
 
 }  // namespace medal

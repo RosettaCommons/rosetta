@@ -1,3 +1,4 @@
+namespace lh { PathOptionKey const db_path( "lh:db_path" );  }
 namespace lh { BooleanOptionKey const exclude_homo( "lh:exclude_homo" );  }
 namespace lh { StringOptionKey const refstruct( "lh:refstruct" );  }
 namespace lh { StringOptionKey const homo_file( "lh:homo_file" );  }

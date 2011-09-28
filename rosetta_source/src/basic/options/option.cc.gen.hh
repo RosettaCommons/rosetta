@@ -4,9 +4,11 @@
 #include <basic/options/option.cc.include.gen.hh>
 #include <utility/options/OptionCollection.hh>
 inline void add_rosetta_options_0( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rigid::rigid, "rigid option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::rigid::fragment_cycles, "Number of fragment insertion cycles" ).def(1000);
+option.add( basic::options::OptionKeys::rigid::fragment_cycles, "Number of fragment insertion cycles" ).def(10000);
+option.add( basic::options::OptionKeys::rigid::jump_attempts, "Number of jump minimization attempts" ).def(10);
+option.add( basic::options::OptionKeys::rigid::jump_cycles, "Number of jump minimization cycles" ).def(500);
 option.add( basic::options::OptionKeys::rigid::max_ca_ca_dist, "Maximum distance between consecutive CA atoms before chunk partitioning occurs" ).def(5.0);
-option.add( basic::options::OptionKeys::rigid::rigid_body_cycles, "Number of rigid body perturbation cycles" ).def(1000);
+option.add( basic::options::OptionKeys::rigid::rigid_body_cycles, "Number of rigid body perturbation cycles" ).def(20000);
 option.add( basic::options::OptionKeys::rigid::rotation, "Rotation magnitude" ).def(2.5);
 option.add( basic::options::OptionKeys::rigid::sequence_separation, "Maximum sequence separation for scoring chainbreaks" ).def(20);
 option.add( basic::options::OptionKeys::rigid::temperature, "Monte Carlo temperature" ).def(2.0);
@@ -575,10 +577,10 @@ option.add( basic::options::OptionKeys::abinitio::HD_penalty, "penatlty for each
 option.add( basic::options::OptionKeys::abinitio::HD_fa_penalty, "penalty for each Hbond donor inconsistent with HD donor" ).def(0.1);
 option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with interior/exterior predictions for strands" );
 option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
-option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
 option.add( basic::options::OptionKeys::fold_cst::keep_skipped_csts, "final score only with active constraints" ).def(false);
@@ -1151,10 +1153,10 @@ option.add( basic::options::OptionKeys::lh::lh, "lh option group" ).legal(true).
 option.add( basic::options::OptionKeys::lh::db_prefix, "stem for loop database" ).def("loopdb");
 option.add( basic::options::OptionKeys::lh::loopsizes, "Which loopsizes to use" ).def(10).def(15).def(20);
 option.add( basic::options::OptionKeys::lh::num_partitions, "Number of partitions to split the database into" ).def(1);
-option.add( basic::options::OptionKeys::lh::db_path, "Path to database" ).def("");
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::exclude_homo, "Use a homolog exclusion filter" ).def(false);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::db_path, "Path to database" ).def("");
+option.add( basic::options::OptionKeys::lh::exclude_homo, "Use a homolog exclusion filter" ).def(false);
 option.add( basic::options::OptionKeys::lh::refstruct, "File with a target reference structure" ).def("");
 option.add( basic::options::OptionKeys::lh::homo_file, "File containing homologs to exclude" ).def("");
 option.add( basic::options::OptionKeys::lh::createdb_rms_cutoff, "RMS cutoff used for throwing out similar fragments." ).def(0).def(0).def(0);

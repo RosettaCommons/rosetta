@@ -23,6 +23,8 @@ namespace OptionKeys {
 
 namespace rigid { extern BooleanOptionKey const rigid; }
 namespace rigid { extern IntegerOptionKey const fragment_cycles; }
+namespace rigid { extern IntegerOptionKey const jump_attempts; }
+namespace rigid { extern IntegerOptionKey const jump_cycles; }
 namespace rigid { extern RealOptionKey const max_ca_ca_dist; }
 namespace rigid { extern IntegerOptionKey const rigid_body_cycles; }
 namespace rigid { extern RealOptionKey const rotation; }

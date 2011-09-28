@@ -1,5 +1,7 @@
 namespace rigid { BooleanOptionKey const rigid( "rigid" );  }
 namespace rigid { IntegerOptionKey const fragment_cycles( "rigid:fragment_cycles" );  }
+namespace rigid { IntegerOptionKey const jump_attempts( "rigid:jump_attempts" );  }
+namespace rigid { IntegerOptionKey const jump_cycles( "rigid:jump_cycles" );  }
 namespace rigid { RealOptionKey const max_ca_ca_dist( "rigid:max_ca_ca_dist" );  }
 namespace rigid { IntegerOptionKey const rigid_body_cycles( "rigid:rigid_body_cycles" );  }
 namespace rigid { RealOptionKey const rotation( "rigid:rotation" );  }
@@ -570,4 +572,3 @@ namespace abinitio { RealOptionKey const HD_penalty( "abinitio:HD_penalty" );  }
 namespace abinitio { RealOptionKey const HD_fa_penalty( "abinitio:HD_fa_penalty" );  }
 namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_pred" );  }
 namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }
-namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
