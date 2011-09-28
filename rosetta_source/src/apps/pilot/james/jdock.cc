@@ -155,10 +155,10 @@ main( int argc, char * argv [] ) {
 	core::pose::Pose const orig_pose(pose);
 
 	core::scoring::ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
-	scorefxn->set_weight( core::scoring::chainbreak, 1.0 );
+	//scorefxn->set_weight( core::scoring::chainbreak, 1.0 );
 	scorefxn->set_weight( core::scoring::linear_chainbreak, 1.0 );
-	scorefxn->set_weight( core::scoring::overlap_chainbreak, 1.0 );
-	scorefxn->set_weight( core::scoring::distance_chainbreak, 1.0 );
+	//scorefxn->set_weight( core::scoring::overlap_chainbreak, 1.0 );
+	//scorefxn->set_weight( core::scoring::distance_chainbreak, 1.0 );
 
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 	mm->set_bb (false);
