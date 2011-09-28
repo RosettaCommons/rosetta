@@ -42,6 +42,8 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/sequence/util.hh>
+#include <core/scoring/EnergyMap.hh>
+#include <core/scoring/Energies.hh>
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/jd2/InnerJob.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -379,6 +381,18 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
     }
   }
   return secondary_structure_chunks;
+}
+
+core::Real get_per_residue_score(
+	core::Size rsd_idx,
+	core::scoring::ScoreType scoretype,
+	core::pose::Pose const & pose
+) {
+	using namespace core::scoring;
+	//EnergyMap weights( current_pose.energies().weights() );
+	assert( rsd_idx <= pose.total_residue() );
+	EnergyMap rsd_energies(pose.energies().residue_total_energies(rsd_idx)); // unweighted scores
+	return rsd_energies[ scoretype ];
 }
 
 }  // namespace nonlocal

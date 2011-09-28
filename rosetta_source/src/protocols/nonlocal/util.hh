@@ -30,6 +30,7 @@
 
 // Package headers
 #include <protocols/nonlocal/NLGrouping.hh>
+#include <core/scoring/ScoreType.hh>
 
 namespace protocols {
 namespace nonlocal {
@@ -107,6 +108,13 @@ protocols::loops::Loops remove_small_gaps(protocols::loops::Loops const & input_
 
 /// @brief Remove small chunks
 protocols::loops::Loops remove_short_chunks(protocols::loops::Loops const & input_chunks, core::Size min_length = 3);
+
+/// @brief Returns the unweighted score of the ScoreType for the given residue. Assumes that the Pose has recently been scored by ScoreFunction with non-zero weight for the ScoreType.
+core::Real get_per_residue_score(
+	core::Size rsd_idx,
+	core::scoring::ScoreType scoretype,
+	core::pose::Pose const & pose
+);
 
 }  // namespace nonlocal
 }  // namespace protocols
