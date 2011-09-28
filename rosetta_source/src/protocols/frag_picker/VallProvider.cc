@@ -184,42 +184,41 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 	VallChunkOP current_section = new VallChunk(this);
 	std::string line;
 	getline(stream, line);
-	while(line[0] == '#') {
-		getline(stream, line);
-	}
+	while(line[0] == '#') getline(stream, line);
 
 	VallResidueOP firstRes = new VallResidue();
 	firstRes->key(1);
 
 	//Decides if vall is in the old nnmake format
 	//if not it tries to use the nnmake + chemical shift's format
-	if ( line.length() < 250 ) {
+	if (line.length() < 240)
 		firstRes->fill_from_string(line);
-	} else {
+	else if (line.length() < 280)
+		firstRes->fill_from_string_version1(line);
+	else
 		firstRes->fill_from_string_cs(line);
-	}
 
 	current_section->push_back(firstRes);
 	prior_id = firstRes->id();
 	prior_resi = firstRes->resi();
 	// parse Vall from file
 	n_lines = 1;
+
 	while (getline(stream, line)) {
 		++n_lines;
 		if( n_lines < startline ) continue;
 
 		// If endline is 0, just read to the end of the file
-		if( endline != 0 ){
-			if( n_lines > endline ) break;
-		}
+		if( endline != 0 && n_lines > endline ) break;
 
-		VallResidueOP current_residue = new VallResidue();//line);
+		VallResidueOP current_residue = new VallResidue();
 
-		if ( line.length() < 250 ) {
+		if (line.length() < 240)
 			current_residue->fill_from_string(line);
-		} else {
+		else if (line.length() < 280)
+			current_residue->fill_from_string_version1(line);
+		else
 			current_residue->fill_from_string_cs(line);
-		}
 
 		current_residue->key( n_lines + last_key );
 		// check for start of new continuous stretch
@@ -238,34 +237,34 @@ Size VallProvider::vallChunksFromLibrary(std::string const & filename, core::Siz
 		}
 		prior_resi = current_residue->resi();
 		current_section->push_back(current_residue);
-		if (n_lines % 100000 == 0) {
-			TR.Info << "   " << n_lines << std::endl;
-			TR.flush();
-		}
-	}
+//		if (n_lines % 100000 == 0) {
+//			TR.Info << "   " << n_lines << std::endl;
+//			TR.flush();
+//		}
+
+	} // line loop
+
 	push_back(current_section);
 	TR.Debug << "Created a new chunk for : " << current_section->get_pdb_id()
 			<< " having " << current_section->size() << " residues "
 			<< " at index " << size() << std::endl;
 	Size t = current_section->size();
-	if (t > largest_chunk_size_)
-		largest_chunk_size_ = t;
+	if (t > largest_chunk_size_) largest_chunk_size_ = t;
 
 	time_t time_end = time(NULL);
 
 	TR.Info << "... done.  Read " << n_lines << " lines.  Time elapsed: "
 			<< (time_end - time_start) << " seconds." << std::endl;
 
+	TR.Info << "Total chunks: " << size() << std::endl;
 	TR.Info << "Largest chunk: " << largest_chunk_size_ << " aa" << std::endl;
-	TR.flush();
 
-	for (Size i = 1; i <= largest_chunk_size_; i++)
-		poly_A_seq_ += "A";
-
+	// create cached pose
+	for (Size i = 1; i <= largest_chunk_size_; i++) poly_A_seq_ += "A";
 	cached_pose_ = new core::pose::Pose();
 	core::pose::make_pose_from_sequence(*cached_pose_, poly_A_seq_,
-			*(chemical::ChemicalManager::get_instance()->residue_type_set(
-    					"fa_standard")));
+			*(chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard")));
+	TR.flush();
 	return n_lines;
 }
 

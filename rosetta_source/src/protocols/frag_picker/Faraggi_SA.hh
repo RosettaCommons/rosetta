@@ -1,0 +1,37 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file   protocols/frag_picker/Faraggi_SA.hh
+/// @brief  Faraggi maximum SA values from Faraggi et al. Proteins 2008
+/// @author David E Kim
+
+#ifndef INCLUDED_protocols_frag_picker_Faraggi_SA_hh
+#define INCLUDED_protocols_frag_picker_Faraggi_SA_hh
+
+// type headers
+#include <core/types.hh>
+
+// utility headers
+
+// project headers
+
+// C++ headers
+#include <map>
+
+namespace protocols {
+namespace frag_picker {
+
+core::Real sa_faraggi_max( char aa );
+
+} // frag_picker
+} // protocols
+
+
+#endif /* INCLUDED_protocols_frag_picker_Faraggi_SA_HH */
+

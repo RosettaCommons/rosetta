@@ -1315,6 +1315,8 @@ sources = {
 		"DiversifyCrmsdSelector",
 		"DiversifyDihedralsSelector",
 		"DiversifyCrmsdByClustering",
+		"Faraggi_SA",
+		"ContactTypes",
 	],
 	"protocols/frag_picker/quota" : [
 		"SecondaryStructurePool",
@@ -1367,6 +1369,11 @@ sources = {
 		"PValuedFragmentScoreManager",
 		"fragment_scoring_utilities",
 		"FragmentAllAtomCrmsd",
+		"FragmentDME",
+		"HydrophobicitySimilarity",
+		"SolventAccessibility",
+		"Phi",
+		"Psi",
 	],
 
 	"protocols/frag_picker/nonlocal" : [

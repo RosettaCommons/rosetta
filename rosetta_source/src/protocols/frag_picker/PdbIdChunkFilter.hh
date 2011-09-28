@@ -38,11 +38,11 @@ public:
 	void add_pdb_id(std::string pdb_ids) {
 
 		pdb_hash_[pdb_ids] = true;
-		if(pdb_ids.size() == 5) {
-		    if((pdb_ids[4]=='A') || (pdb_ids[4]=='a'))
-			pdb_hash_[ pdb_ids.replace(4,1,1,'_') ] = true;
-		    if(pdb_ids[4]=='_')
-			pdb_hash_[ pdb_ids.replace(4,1,1,'A') ] = true;
+		if(pdb_ids.size() > 4) {
+			if((pdb_ids[4]=='A') || (pdb_ids[4]=='a'))
+				pdb_hash_[ pdb_ids.replace(4,1,1,'_') ] = true;
+			if(pdb_ids[4]=='_')
+				pdb_hash_[ pdb_ids.replace(4,1,1,'A') ] = true;
 		}
 	}
 
@@ -52,10 +52,12 @@ public:
 		for (Size i = 1; i <= list_of_pdb_ids.size(); i++) {
 			pdb_hash_[list_of_pdb_ids[i]] = true;
 			std::string & pdb_ids = list_of_pdb_ids[i];
-			if((pdb_ids[4]=='A') || (pdb_ids[4]=='a'))
-			    pdb_hash_[ pdb_ids.replace(4,1,1,'_') ] = true;
-			if(pdb_ids[4]=='_')
-			    pdb_hash_[ pdb_ids.replace(4,1,1,'A') ] = true;
+			if(pdb_ids.size() > 4) {
+				if((pdb_ids[4]=='A') || (pdb_ids[4]=='a'))
+					pdb_hash_[ pdb_ids.replace(4,1,1,'_') ] = true;
+				if(pdb_ids[4]=='_')
+					pdb_hash_[ pdb_ids.replace(4,1,1,'A') ] = true;
+			}
 		}
 	}
 

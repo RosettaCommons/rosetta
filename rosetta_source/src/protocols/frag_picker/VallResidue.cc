@@ -16,12 +16,14 @@
 // project headers
 #include <core/chemical/AA.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
+#include <protocols/frag_picker/Faraggi_SA.hh>
 
 // boost headers
 #include <boost/type_traits.hpp>
 
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/exit.hh>
 
 // C++ headers
 #include <cstdio>
@@ -38,7 +40,6 @@ static basic::Tracer TR("protocols.frag_picker.VallResidue");
 
 // static initialization
 utility::vector1<core::chemical::AA> VallResidue::order_ = order_vector();
-VallResidue::String VallResidue::format_ = format_string_cs();
 
 /// @brief default constructor
 VallResidue::VallResidue() :
@@ -50,16 +51,20 @@ VallResidue::VallResidue() :
 VallResidue::VallResidue(String const & line) {
 	if (line.length() < 240)
 		fill_from_string(line);
+	else if (line.length() < 280)
+		fill_from_string_version1(line);
 	else
 		fill_from_string_cs(line);
-
 }
 
 /// @brief copy constructor
 VallResidue::VallResidue(VallResidue const & rval) :
 	utility::pointer::ReferenceCount(), key_(rval.key_),id_(rval.id_), aa_(rval.aa_), ss_(
 			rval.ss_), resi_(rval.resi_), bF_(rval.bF_), x_(rval.x_), y_(rval.y_),
-			z_(rval.z_), phi_(rval.phi_), psi_(rval.psi_), omega_(rval.omega_),
+			z_(rval.z_), cbx_(rval.cbx_), cby_(rval.cby_),
+			cbz_(rval.cbz_), cenx_(rval.cenx_), ceny_(rval.ceny_),
+			cenz_(rval.cenz_), dssp_phi_(rval.dssp_phi_), dssp_psi_(rval.dssp_psi_), sa_(rval.sa_), sa_norm_(rval.sa_norm_), nali_(rval.nali_),
+			phi_(rval.phi_), psi_(rval.psi_), omega_(rval.omega_),
 			profile_(rval.profile_), sec_shift_data_(rval.sec_shift_data_),
 	position_index_(rval.position_index_), section_index_(rval.section_index_) {
 }
@@ -79,6 +84,17 @@ VallResidue & VallResidue::operator =(VallResidue const & rval) {
 		x_ = rval.x_;
 		y_ = rval.y_;
 		z_ = rval.z_;
+		cbx_ = rval.cbx_;
+		cby_ = rval.cby_;
+		cbz_ = rval.cbz_;
+		cenx_ = rval.cenx_;
+		ceny_ = rval.ceny_;
+		cenz_ = rval.cenz_;
+		dssp_phi_ = rval.dssp_phi_;
+		dssp_psi_ = rval.dssp_psi_;
+		sa_ = rval.sa_;
+		sa_norm_ = rval.sa_norm_;
+		nali_ = rval.nali_;
 		phi_ = rval.phi_;
 		psi_ = rval.psi_;
 		omega_ = rval.omega_;
@@ -141,8 +157,6 @@ void VallResidue::fill_from_string_cs(String const & line) {
 	//std::cerr<<line<<std::endl;
 	sec_shift_data_.resize(12);
 
-	//format_ = format_string_cs();
-
 	// Use sscanf here; Vall is huge and istringstream is way too slow.
 	// *One* sscanf call per line, multiple calls decreases performance!
 
@@ -165,6 +179,34 @@ void VallResidue::fill_from_string_cs(String const & line) {
 
 	id_ = id;
 }
+
+/// @brief fill internal data from string
+/// @details Values are delimited by whitespace.  Ordering is:
+///  <tt> id  aa  ss  resi  dummy  dummy  x  y  z cbz cby cbz cenx ceny cenz phi  psi  omega dssp_phi dssp_psi sa nali  (aa profile_info, 20 columns) BFactor </tt>
+void VallResidue::fill_from_string_version1(String const & line) {
+
+	char id[] = { '\0', '\0', '\0', '\0', '\0', '\0' }; // 5 char + 1 null termination
+
+	static String format_here = format_string_version1();
+
+	// Use sscanf here; Vall is huge and istringstream is way too slow.
+	// *One* sscanf call per line, multiple calls decreases performance!
+	std::sscanf(line.c_str(), format_here.c_str(), &id, &aa_, &ss_, &resi_, &x_,
+	    &y_, &z_, &cbx_, &cby_, &cbz_, &cenx_, &ceny_, &cenz_, &phi_, &psi_, &omega_, &dssp_phi_, &dssp_psi_, &sa_, &nali_, &profile_[order_[1]],
+	    &profile_[order_[2]], &profile_[order_[3]], &profile_[order_[4]],
+	    &profile_[order_[5]], &profile_[order_[6]], &profile_[order_[7]],
+	    &profile_[order_[8]], &profile_[order_[9]], &profile_[order_[10]],
+	    &profile_[order_[11]], &profile_[order_[12]],
+	    &profile_[order_[13]], &profile_[order_[14]],
+	    &profile_[order_[15]], &profile_[order_[16]],
+	    &profile_[order_[17]], &profile_[order_[18]],
+	    &profile_[order_[19]], &profile_[order_[20]]);
+
+	sa_norm_ = sa_/protocols::frag_picker::sa_faraggi_max(aa_);
+
+	id_ = id;
+}
+
 
 /// @brief return a vector specifying the order of profile data in Vall
 utility::vector1<core::chemical::AA> VallResidue::order_vector() {
@@ -229,7 +271,7 @@ VallResidue::String VallResidue::format_string() {
 		s << " " << (is_double ? "%lf" : "%f");
 	}
 
-        TR.Debug << "vall line format (no CS) is:\n"<<s.str()<<std::endl;
+	TR.Debug << "vall line format (no CS) is:\n"<<s.str()<<std::endl;
 
 	return s.str();
 }
@@ -268,7 +310,53 @@ VallResidue::String VallResidue::format_string_cs() {
 	}
 
 
-        TR.Debug << "vall line format (WITH CS) is:\n"<<s.str()<<std::endl;
+	TR.Debug << "vall line format (WITH CS) is:\n"<<s.str()<<std::endl;
+	return s.str();
+}
+
+/// @brief return a formatting string for fill_from_string_version1() dependent
+///  upon actual type of core::Real and core::Size
+/// @remarks This is necessary for sscanf; wrong type can give wrong
+///  input.
+VallResidue::String VallResidue::format_string_version1() {
+	using boost::is_same;
+
+	// resolve types
+	bool const is_ulong = is_same<Size, unsigned long>::value;
+	bool const is_double = is_same<Real, double>::value;
+
+	// format w/ the following order:
+	std::ostringstream s;
+	s << "%s" << " "; // (string) id
+	s << "%c" << " "; // (char)   aa
+	s << "%c" << " "; // (char)   ss
+	s << (is_ulong ? "%lu" : "%u") << " "; // (int)    resi
+	s << "%*s" << " "; // (string) dummy
+	s << "%*s" << " ";// (string) dummy
+	s << (is_double ? "%lf" : "%f") << " "; // (real)   x
+	s << (is_double ? "%lf" : "%f") << " "; // (real)   y
+	s << (is_double ? "%lf" : "%f") << " "; // (real)   z
+	s << (is_double ? "%lf" : "%f") << " "; // (real)   cbx
+	s << (is_double ? "%lf" : "%f") << " "; // (real)   cby
+	s << (is_double ? "%lf" : "%f") << " "; // (real)   cbz
+	s << (is_double ? "%lf" : "%f") << " "; // (real)   cenx
+	s << (is_double ? "%lf" : "%f") << " "; // (real)   ceny
+	s << (is_double ? "%lf" : "%f") << " "; // (real)   cenz
+	s << (is_double ? "%lf" : "%f") << " "; // (real)   phi
+	s << (is_double ? "%lf" : "%f") << " "; // (real)   psi
+	s << (is_double ? "%lf" : "%f") << " "; // (real)   omega
+	s << (is_double ? "%lf" : "%f") << " "; // (real)   dssp_phi
+	s << (is_double ? "%lf" : "%f") << " "; // (real)   dssp_psi
+	s << (is_double ? "%lf" : "%f") << " "; // (real) sa
+	s << (is_ulong ? "%ld" : "%d") << " "; // (size) nali
+
+	// (real)   (aa profile_info, 20 columns)
+	for (Size i = 0; i < 20; ++i) {
+		s << " " << (is_double ? "%lf" : "%f");
+	}
+
+	TR.Debug << "vall line format version1 is:\n"<<s.str()<<std::endl;
+
 	return s.str();
 }
 
@@ -277,6 +365,33 @@ core::Real VallResidue::distance_squared( VallResidueCOP r ) {
 	core::Real y = y_-r->y();
 	core::Real z = z_-r->z();
 	return x*x+y*y+z*z;
+}
+
+core::Real VallResidue::distance_squared_cb( VallResidueCOP r ) {
+	core::Real x = cbx_-r->cbx();
+	core::Real y = cby_-r->cby();
+	core::Real z = cbz_-r->cbz();
+	return x*x+y*y+z*z;
+}
+
+core::Real VallResidue::distance_squared_cen( VallResidueCOP r ) {
+	core::Real x = cenx_-r->cenx();
+	core::Real y = ceny_-r->ceny();
+	core::Real z = cenz_-r->cenz();
+	return x*x+y*y+z*z;
+}
+
+core::Real VallResidue::distance_squared( VallResidueCOP r, ContactType const & type ) {
+	switch (type) {
+		case CA:
+			return distance_squared(r);
+		case CB:
+			return distance_squared_cb(r);
+		case CEN:
+			return distance_squared_cen(r);
+		default:
+			utility_exit_with_message("unkown contacts type for distance");
+	}
 }
 
 } // frag_picker

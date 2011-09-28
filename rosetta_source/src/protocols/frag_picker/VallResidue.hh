@@ -17,6 +17,9 @@
 // unit headers
 #include <protocols/frag_picker/VallResidue.fwd.hh>
 
+// project headers
+#include <protocols/frag_picker/ContactTypes.hh>
+
 // type headers
 #include <core/types.hh>
 
@@ -31,7 +34,7 @@
 
 // C++ headers
 #include <iostream>
-// AUTO-REMOVED #include <string>
+#include <map>
 
 //Auto Headers
 #include <core/fragment/BBTorsionSRFD.fwd.hh>
@@ -120,6 +123,61 @@ public:
 	inline Real z() const {
 		return z_;
 	}
+
+  /// @brief x-coordinate of C-beta
+  inline Real cbx() const {
+    return cbx_;
+  }
+
+  /// @brief y-coordinate of C-beta
+  inline Real cby() const {
+    return cby_;
+  }
+
+  /// @brief z-coordinate of C-beta
+  inline Real cbz() const {
+    return cbz_;
+  }
+
+  /// @brief x-coordinate of centroid
+  inline Real cenx() const {
+    return cenx_;
+  }
+
+  /// @brief y-coordinate of centroid
+  inline Real ceny() const {
+    return ceny_;
+  }
+
+  /// @brief z-coordinate of centroid
+  inline Real cenz() const {
+    return cenz_;
+  }
+
+  /// @brief solvent accessible area
+  inline Real sa() const {
+    return sa_;
+  }
+
+	/// @brief solvent accessible area normalized
+	inline Real sa_norm() const {
+		return sa_norm_;
+	}
+
+  /// @brief phi backbone torsion in degrees from DSSP
+  inline Real dssp_phi() const {
+    return dssp_phi_;
+  }
+
+  /// @brief psi backbone torsion in degrees from DSSP
+  inline Real dssp_psi() const {
+    return dssp_psi_;
+  }
+
+  /// @brief number of alignments
+  inline Size nali() const {
+    return nali_;
+  }
 
 	/// @brief phi backbone torsion in degrees
 	inline Real phi() const {
@@ -213,6 +271,56 @@ public:
 		z_ = val;
 	}
 
+
+  /// @brief x-coordinate of C-beta
+  inline
+  void cbx(Real const val) {
+    cbx_ = val;
+  }
+
+  /// @brief y-coordinate of C-beta
+  inline
+  void cby(Real const val) {
+    cby_ = val;
+  }
+
+  /// @brief z-coordinate of C-beta
+  inline
+  void cbz(Real const val) {
+    cbz_ = val;
+  }
+
+  /// @brief x-coordinate of centroid
+  inline
+  void cenx(Real const val) {
+    cenx_ = val;
+  }
+
+  /// @brief y-coordinate of centroid
+  inline
+  void ceny(Real const val) {
+    ceny_ = val;
+  }
+
+  /// @brief z-coordinate of centroid
+  inline
+  void cenz(Real const val) {
+    cenz_ = val;
+  }
+
+
+  /// @brief solvent accessible area
+  inline
+  void sa(Real const val) {
+    sa_ = val;
+  }
+
+  /// @brief number of alignments
+  inline
+  void nali(Size const val) {
+    nali_ = val;
+  }
+
 	/// @brief phi backbone torsion in degrees
 	inline
 	void phi(Real const val) {
@@ -274,7 +382,16 @@ public:
 	/// @brief fill internal data from string
 	void fill_from_string_cs(String const & line);
 
+	/// @brief fill internal data from string
+	void fill_from_string_version1(String const & line);
+
 	Real distance_squared( VallResidueCOP r );
+
+	Real distance_squared_cb( VallResidueCOP r );
+
+	Real distance_squared_cen( VallResidueCOP r );
+
+	Real distance_squared( VallResidueCOP r, ContactType const & type );
 
 private:
 	// static methods
@@ -292,6 +409,13 @@ private:
 	/// @remarks This is necessary for sscanf; wrong type can give wrong
 	///  input.
 	static String format_string_cs();
+
+	/// @brief return a formatting string for fill_from_string() dependent
+	///  upon actual type of core::Real and core::Size
+	/// @remarks This is necessary for sscanf; wrong type can give wrong
+	///  input.
+	static String format_string_version1();
+
 private:
 	// data
 
@@ -322,6 +446,24 @@ private:
 	/// @brief z-coordinate of C-alpha
 	Real z_;
 
+	/// @brief x-coordinate of C-beta
+	Real cbx_;
+
+	/// @brief y-coordinate of C-beta
+	Real cby_;
+
+	/// @brief z-coordinate of C-beta
+	Real cbz_;
+
+	/// @brief x-coordinate of centroid
+	Real cenx_;
+
+	/// @brief y-coordinate of centroid
+	Real ceny_;
+
+	/// @brief z-coordinate of centroid
+	Real cenz_;
+
 	/// @brief phi backbone torsion in degrees
 	Real phi_;
 
@@ -330,6 +472,21 @@ private:
 
 	/// @brief omega backbone torsion in degrees
 	Real omega_;
+
+	/// @brief solvent accessible area
+	Real sa_;
+
+	/// @brief normalized solvent accessible area
+	Real sa_norm_;
+
+	/// @brief phi backbone torsion in degrees from DSSP program
+	Real dssp_phi_;
+
+	/// @brief psi backbone torsion in degrees from DSSP program
+	Real dssp_psi_;
+
+	/// @brief number of alignments used for profile
+	Size nali_;
 
 	/// @brief per amino acid profile data
 	utility::vector1<Real> profile_;
@@ -350,8 +507,6 @@ private:
 	/// @brief order of amino acid profile data in Vall
 	static utility::vector1<core::chemical::AA> order_;
 
-	/// @brief formatting string for fill_from_string()
-	static String format_;
 };
 
 } // frag_picker

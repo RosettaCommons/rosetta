@@ -40,12 +40,14 @@ void PdbIdChunkFilter::load_pdb_id_from_file(std::string file_name) {
 	if (!data)
 		utility_exit_with_message("[ERROR] Unable to open a file fith allowed PDB ids: "
 				+ file_name);
-	std::string pdb_id;
-	while (data) {
-		data >> pdb_id;
+	std::string line, pdb_id;
+	while (getline(data, line)) {
+		if (line.size() && line[0] == '#') continue;
+		std::istringstream line_stream( line );
+		line_stream >> pdb_id;
 		add_pdb_id(pdb_id);
 
-		if (pdb_id[4] == '_') {
+		if (pdb_id.size() > 4 && pdb_id[4] == '_') {
 			pdb_id[4] = 'A';
 			add_pdb_id(pdb_id);
 		}
@@ -61,7 +63,7 @@ void PdbIdChunkFilter::show_pdb_ids(std::ostream& out) {
 	for (iter = pdb_hash_.begin(); iter != pdb_hash_.end(); ++iter) {
 		out << iter->first << " ";
 		cnt++;
-		if (cnt % 12)
+		if (cnt % 12 == 0)
 			out << '\n';
 	}
 	out << std::endl;
@@ -75,6 +77,10 @@ bool DenyPdbIdFilter::test_chunk(VallChunkOP a_chunk) {
 		trPdbFilter.Debug << "FAILED" << std::endl;
 		return false;
 	}
+	if (pdb_hash_.find(a_chunk->get_pdb_id()) != pdb_hash_.end()) {
+		trPdbFilter.Debug << "FAILED" << std::endl;
+		return false;
+	}
 	trPdbFilter.Debug << "OK" << std::endl;
 	return true;
 }
@@ -84,6 +90,10 @@ bool AllowPdbIdFilter::test_chunk(VallChunkOP a_chunk) {
 	std::string id = a_chunk->get_pdb_id() + a_chunk->get_chain_id();
 	trPdbFilter.Debug << "Testing " << id << " ... ";
 	if (pdb_hash_.find(id) != pdb_hash_.end()) {
+		trPdbFilter.Debug << "OK" << std::endl;
+		return true;
+	}
+	if (pdb_hash_.find(a_chunk->get_pdb_id()) != pdb_hash_.end()) {
 		trPdbFilter.Debug << "OK" << std::endl;
 		return true;
 	}

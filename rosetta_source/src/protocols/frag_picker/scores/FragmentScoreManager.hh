@@ -39,8 +39,8 @@ namespace scores {
 class FragmentScoreManager: public utility::pointer::ReferenceCount {
 public:
 
-        /// @brief precision used to display the total score for each fragment
-        static const Size TOTAL_PRECISION = 3;
+	/// @brief precision used to display the total score for each fragment
+	static const Size TOTAL_PRECISION = 3;
 	/// @brief default width used to print a score value, equal to 6
 	Size default_width_;
 	/// @brief default precision used to print a score value, equal to 1

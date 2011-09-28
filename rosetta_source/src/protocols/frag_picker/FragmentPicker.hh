@@ -197,6 +197,31 @@ public:
 		return query_ss_as_string_.find(prediction_name)->second;
 	}
 
+	/// Returns the solvent accessibility prediction
+	utility::vector1<Real> & get_query_sa_prediction() {
+		return query_sa_prediction_;
+	}
+
+	/// Returns the phi prediction
+	utility::vector1<Real> & get_query_phi_prediction() {
+		return query_phi_prediction_;
+	}
+
+	/// Returns the psi prediction
+	utility::vector1<Real> & get_query_psi_prediction() {
+		return query_psi_prediction_;
+	}
+
+	/// Returns the phi prediction confidence
+	utility::vector1<Real> & get_query_phi_prediction_conf() {
+		return query_phi_prediction_conf_;
+	}
+
+	/// Returns the psi prediction confidence
+	utility::vector1<Real> & get_query_psi_prediction_conf() {
+		return query_psi_prediction_conf_;
+	}
+
 	/// @brief Sets the query secondary structure
 	void add_query_ss(std::string, std::string);
 
@@ -276,7 +301,7 @@ public:
 	static QuotaDebug log_200_;
 private:
 
-        void setup_summary(quota::QuotaCollector* collector_);
+	void setup_summary(quota::QuotaCollector* collector_);
 	void write_summary();
 
 	core::sequence::SequenceProfileOP query_profile_;
@@ -290,6 +315,13 @@ private:
 	Size max_frag_size_;
 
 	utility::vector1<Size> query_positions_;
+
+	// phi,psi,sa predictions
+	utility::vector1<Real> query_sa_prediction_;
+	utility::vector1<Real> query_phi_prediction_;
+	utility::vector1<Real> query_psi_prediction_;
+	utility::vector1<Real> query_phi_prediction_conf_;
+	utility::vector1<Real> query_psi_prediction_conf_;
 
 	/// @brief Reads query secondary structure prediction from a PsiPred file
 	void read_psipred_ss2(std::string const &, std::string);

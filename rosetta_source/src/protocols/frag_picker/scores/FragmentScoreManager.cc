@@ -53,7 +53,11 @@
 #include <protocols/frag_picker/scores/GunnCostScore.hh>
 #include <protocols/frag_picker/scores/ABEGO_SS_Score.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
-
+#include <protocols/frag_picker/scores/FragmentDME.hh>
+#include <protocols/frag_picker/scores/HydrophobicitySimilarity.hh>
+#include <protocols/frag_picker/scores/SolventAccessibility.hh>
+#include <protocols/frag_picker/scores/Phi.hh>
+#include <protocols/frag_picker/scores/Psi.hh>
 
 #include <utility/io/izstream.hh>
 
@@ -303,6 +307,11 @@ FragmentScoreManager::FragmentScoreManager() {
 	register_score_maker(new MakeABEGO_SS_Score());
 	register_score_maker(new MakeFragmentAllAtomCrmsd());
 	register_score_maker(new MakeConstScore());
+	register_score_maker(new MakeFragmentDME());
+	register_score_maker(new MakeHydrophobicitySimilarity());
+	register_score_maker(new MakeSolventAccessibility());
+	register_score_maker(new MakePhi());
+	register_score_maker(new MakePsi());
 	zeros_score_later_ = true;
 }
 
