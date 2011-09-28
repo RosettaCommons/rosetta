@@ -387,22 +387,22 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::semiexpl_water_hbgeom_score(
 						Real water_ang( 0.0 );
 						//store water internal bond angle
 						//WARNING: hard-coded for TP3 water (H1-O-H2)
-            if( wat_is_acc ){
-							water_ang = pose.conformation().bond_angle( AtomID( 2, acc_pos ),
-									AtomID( 1, acc_pos  ),
-									AtomID( 3, don_pos  ) );
-						}
+//            if( wat_is_acc ){
+//							water_ang = pose.conformation().bond_angle( AtomID( 2, acc_pos ),
+//									AtomID( 1, acc_pos  ),
+//									AtomID( 3, acc_pos  ) );
+//						}
             pose.conformation().set_bond_angle( AtomID( batm, acc_pos ),
                 AtomID( aatm, acc_pos  ),
                 AtomID( hatm, don_pos  ),
                 BAHang );
-            if( wat_is_acc ){
-							//need to fix water internal bond angle
-							pose.conformation().set_bond_angle( AtomID( 2, acc_pos ),
-									AtomID( 1, acc_pos  ),
-									AtomID( 3, don_pos  ),
-									water_ang );
-						}
+//            if( wat_is_acc ){
+//							//need to fix water internal bond angle
+//							pose.conformation().set_bond_angle( AtomID( 2, acc_pos ),
+//									AtomID( 1, acc_pos  ),
+//									AtomID( 3, don_pos  ),
+//									water_ang );
+//						}
 
             pose.conformation().set_bond_angle( AtomID( aatm, acc_pos ),
                 AtomID( hatm, don_pos  ),
@@ -447,13 +447,13 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::semiexpl_water_hbgeom_score(
 
 						if( wat_score <= 0.0 ){
 							++water_hb_states_good;
-							// TR_unsat << "AHdist: " << AHdist << " ";
-							// TR_unsat << "\tBAHang: " << BAHang << " ";
-							// TR_unsat << "\tAHDang: " << AHDang << " ";
-							// TR_unsat << "\tB2BAHchi: " << B2BAHchi << " ";
-							// TR_unsat << "\tBAHDchi: " << BAHDchi << " ";
-							// TR_unsat << "\twat_score: " << wat_score << std::endl;
-//							pose.dump_pdb( "watest." + to_string( seqpos ) + "." + to_string( atomno ) + "." + to_string( Size( numeric::conversions::degrees( AHDang ) ) ) + "." + to_string( Size( numeric::conversions::degrees( BAHang ) ) ) + "." + to_string( Size( numeric::conversions::degrees( BAHDchi ) ) ) + "." + to_string( Size( numeric::conversions::degrees( B2BAHchi ) ) ) + ".pdb" );
+							//TR_unsat << "AHdist: " << AHdist << " ";
+							//TR_unsat << "\tBAHang: " << BAHang << " ";
+							//TR_unsat << "\tBAHDchi: " << BAHDchi << " ";
+							//TR_unsat << "\twat_score: " << wat_score << std::endl;
+							//TR_unsat << pose.energies().total_energies().weighted_to_string( scorefxn->weights() )
+							//	+ " total_score: " + to_string( pose.energies().total_energies()[ total_score ] );
+							//pose.dump_pdb( "watest." + to_string( seqpos ) + "." + to_string( atomno ) + "." + to_string( Size( numeric::conversions::degrees( AHDang ) ) ) + "." + to_string( Size( numeric::conversions::degrees( BAHang ) ) ) + "." + to_string( Size( numeric::conversions::degrees( BAHDchi ) ) ) + "." + to_string( Size( numeric::conversions::degrees( B2BAHchi ) ) ) + ".pdb" );
 						}
           }
         }
