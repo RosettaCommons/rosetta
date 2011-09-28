@@ -391,7 +391,7 @@ core::Real get_per_residue_score(
 	using namespace core::scoring;
 	//EnergyMap weights( current_pose.energies().weights() );
 	assert( rsd_idx <= pose.total_residue() );
-	EnergyMap rsd_energies(pose.energies().residue_total_energies(rsd_idx)); // unweighted scores
+	EnergyMap const & rsd_energies(pose.energies().residue_total_energies(rsd_idx)); // unweighted scores
 	return rsd_energies[ scoretype ];
 }
 
