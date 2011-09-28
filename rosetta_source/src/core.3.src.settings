@@ -264,6 +264,7 @@ sources = {
 
 	"core/scoring/methods" : [
 		"util",
+		"chainbreak_util",
 		"CustomAtomPairEnergy",
 		"ChainbreakEnergy",
 		"LinearChainbreakEnergy",
