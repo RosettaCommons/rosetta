@@ -644,6 +644,9 @@ main( int argc, char* argv[] ) {
 		 << wt_split_filename <<": " <<(*scorefxn)( sep_wt_pose ) <<  "\n"
 		 << mut_complex_filename  <<": " <<(*scorefxn)( mut_pose ) <<  "  rms: "<< mut_rms<<"\n"
 		 << mut_split_filename << ": " <<(*scorefxn)( sep_mut_pose ) << std::endl;
+	//calc ddG mutant - wt
+	TR << "DDGbind " <<pdb_file_name.base()<<" "<< mut_string_output << " = "
+		 << ( (*scorefxn)( mut_pose ) - (*scorefxn)( sep_mut_pose ) ) - ((*scorefxn)( wt_pose ) -(*scorefxn)( sep_wt_pose ) ) << std::endl;
 
 	//output pdbs!
 	wt_pose.dump_scored_pdb( wt_complex_filename, *(scorefxn()) );

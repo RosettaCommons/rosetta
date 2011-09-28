@@ -191,6 +191,7 @@ sources = {
 	],
 	"pilot/stranges" : [
 		#"buried_polar_finder",
+                "min_pack_min",
 	],
 
 	"pilot/james" : [

@@ -8,7 +8,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file apps/pilot/stranges/InterfaceStructMaker.cc
+/// @file apps/pilot/stranges/min_pack_min.cc
 /// @brief does cycles of Minimiziation, Repacking, Minimization for interface analysis later
 /// no design by default
 /// @author Ben Stranges
@@ -31,14 +31,15 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-
 #include <core/scoring/hbonds/HBondOptions.hh>
+
+// #ifndef NDEBUG
+//   #include <core/kinematics/FoldTree.hh>
+// #endif
 
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/Mover.hh>
-//#include <protocols/moves/PyMolMover.hh>
-
 
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
@@ -66,7 +67,7 @@
 #include <core/import_pose/import_pose.hh>
 
 
-static basic::Tracer TR("InterfaceStructMaker");
+static basic::Tracer TR("apps.pilot.stranges.min_pack_min");
 
 using namespace core;
 using namespace utility;
@@ -79,7 +80,7 @@ using namespace basic::options::OptionKeys;
 using namespace protocols::jd2;
 
 // application specific options
-namespace InterfaceStructMaker {
+namespace MinPackMin {
 	IntegerVectorOptionKey const rbjump( "rbjump" ); //What jumps to minimize
 	BooleanOptionKey const pack_first( "pack_first" ); //pack before min, good if big clashes!
 	BooleanOptionKey const no_rbmin( "no_rbmin" ); //do now allow RB min at all
@@ -89,25 +90,25 @@ namespace InterfaceStructMaker {
 }
 
 // mover deffinition
-class InterfaceStructMakerMover : public Mover {
+class MinPackMinMover : public Mover {
 public:
 
-	InterfaceStructMakerMover();
+	MinPackMinMover();
 
 	virtual void apply( core::pose::Pose& pose );
 
 	virtual MoverOP clone() const {
-		return new InterfaceStructMakerMover( *this );
+		return new MinPackMinMover( *this );
 	}
 
 	virtual
 	std::string
 	get_name() const {
-		return "InterfaceStructMakerMover";
+		return "MinPackMinMover";
 	}
 
 	virtual	MoverOP	fresh_instance() const {
-		return new InterfaceStructMakerMover;
+		return new MinPackMinMover;
 	}
 
 private:
@@ -119,20 +120,19 @@ private:
 };
 
 //constructor
-InterfaceStructMakerMover::InterfaceStructMakerMover(){
+MinPackMinMover::MinPackMinMover(){
 	vector1<Size> default_jump;
 	default_jump.push_back(1);
-	jump_num_ = option[ InterfaceStructMaker::rbjump ].def(default_jump);
-	min_all_ = option[ InterfaceStructMaker::min_all_jumps ].def(true);
-	no_rbmin_ = option[ InterfaceStructMaker::no_rbmin].def(false);
-	pack_first_ = option[ InterfaceStructMaker::pack_first].def(false);
-
-	//pymolreport_ = option[ InterfaceStructMaker::pymolreport ];
+	jump_num_ = option[ MinPackMin::rbjump ].def(default_jump);
+	min_all_ = option[ MinPackMin::min_all_jumps ].def(true);
+	no_rbmin_ = option[ MinPackMin::no_rbmin].def(false);
+	pack_first_ = option[ MinPackMin::pack_first].def(false);
+	//pymolreport_ = option[ MinPackMin::pymolreport ];
 	scorefxn_ = scoring::getScoreFunction();
 }
 
 //begin mover apply
-void InterfaceStructMakerMover::apply (pose::Pose& pose ) {
+void MinPackMinMover::apply (pose::Pose& pose ) {
 
 // 	//for pymol viewing
 // 	if( pymolreport_ ){
@@ -176,6 +176,11 @@ void InterfaceStructMakerMover::apply (pose::Pose& pose ) {
 
   // score the input pose for kicks and giggles
   (*scorefxn_)( pose );
+
+
+// #ifndef NDEBUG
+//   TR<< "FoldTree: \n" << pose.fold_tree() << std::endl;
+// #endif
 
 
   //////////////////////////////////////////////////////
@@ -255,11 +260,11 @@ void InterfaceStructMakerMover::apply (pose::Pose& pose ) {
   TR << "Initial scores for input: " << job_name  <<": "<< (*scorefxn_)(pose) << std::endl;
 
 	if(pack_first_){
-  //Step 2 packing incase minimization not enough in some cases (big clashes)
-  TR << "Packing first for: "<< job_name << std::endl;
-  repacker->apply(pose);
-	//Print out scores after packing
-  TR << "Score after first packing Packing " << job_name << ": " <<(*scorefxn_)(pose)  << std::endl;
+		//Step 2 packing incase minimization not enough in some cases (big clashes)
+		TR << "Packing first for: "<< job_name << std::endl;
+		repacker->apply(pose);
+		//Print out scores after packing
+		TR << "Score after first packing " << job_name << ": " <<(*scorefxn_)(pose)  << std::endl;
 
 	}
 
@@ -283,7 +288,7 @@ void InterfaceStructMakerMover::apply (pose::Pose& pose ) {
 	min_mover->apply( pose );
 
 	//figure out an rmsd if the native structure is given
-	core::Real  rms (0.0);
+	core::Real rms (0.0);
 	if (basic::options::option[ in::file::native ].user()){
 		// allow superposition because RB min is allowed
 		rms = scoring::rmsd_with_super( native_pose, pose , scoring::is_protein_CA ) ;
@@ -311,16 +316,16 @@ main( int argc, char * argv [] )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-  option.add( InterfaceStructMaker::rbjump, "Defines the rigid body jump to split the interface apart by.");
-  option.add( InterfaceStructMaker::pack_first, "Add packing before initial minimization.");
-  option.add( InterfaceStructMaker::no_rbmin, "Do not allow rigid body minimization." );
-	option.add( InterfaceStructMaker::min_all_jumps, "Rigid body minimizationon ALL jumps." );
-	//option.add( InterfaceStructMaker::pymolreport, "Report to pymol observer").def(false);
+  option.add( MinPackMin::rbjump, "Defines the rigid body jump to split the interface apart by.");
+  option.add( MinPackMin::pack_first, "Add packing before initial minimization.");
+  option.add( MinPackMin::no_rbmin, "Do not allow rigid body minimization." );
+	option.add( MinPackMin::min_all_jumps, "Rigid body minimizationon ALL jumps." );
+	//option.add( MinPackMin::pymolreport, "Report to pymol observer").def(false);
 
 	// initialize core
 	devel::init(argc, argv);
 
-	protocols::jd2::JobDistributor::get_instance()->go( new InterfaceStructMakerMover );
+	protocols::jd2::JobDistributor::get_instance()->go( new MinPackMinMover );
 
 	std::cout << "Done! -------------------------------\n";
 }

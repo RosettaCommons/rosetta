@@ -1,0 +1,14 @@
+-s 1brs.pdb
+-run:min_type dfpmin_armijo_nonmonotone
+-nstruct 1
+#app specific options
+#-rbjump 1 2  #what jumps to minimize 
+-pack_first false # if you want to pack before the first minimization step
+-no_rbmin false # if true do not do any rb jump minimization
+-min_all_jumps true #defaults to true, minimize all jumps
+#other fun
+-chemical:exclude_patches LowerDNA  UpperDNA Cterm_amidation SpecialRotamer protein_cutpoint_upper protein_cutpoint_lower VirtualBB ShoveBB VirtualDNAPhosphate VirtualNTerm CTermConnect sc_orbitals pro_hydroxylated_case1 pro_hydroxylated_case2 ser_phosphorylated thr_phosphorylated  tyr_phosphorylated tyr_sulfated lys_dimethylated lys_monomethylated  lys_trimethylated lys_acetylated glu_carboxylated cys_acetylated tyr_diiodinated N_acetylated C_methylamidated MethylatedProteinCterm
+#tracer stuff
+-mute core.util.prof ## dont show timing info
+-unmute
+
