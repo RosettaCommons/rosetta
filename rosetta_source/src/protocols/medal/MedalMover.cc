@@ -14,7 +14,6 @@
 #include <protocols/medal/MedalMover.hh>
 
 // C/C++ headers
-#include <algorithm>
 #include <iostream>
 #include <string>
 
@@ -139,7 +138,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
   meta->enqueue(fragment_mover);
 
   protocols::nonlocal::add_cutpoint_variants(&pose);
-  const Size cycles = std::max(option[OptionKeys::rigid::rigid_body_cycles](), option[OptionKeys::rigid::fragment_cycles]());
+  const Size cycles = option[OptionKeys::rigid::rigid_body_cycles]() + option[OptionKeys::rigid::fragment_cycles]();
   RationalMonteCarlo mover(meta, score, cycles, option[OptionKeys::rigid::temperature](), true);
   mover.apply(pose);
   protocols::nonlocal::remove_cutpoint_variants(&pose);
@@ -152,8 +151,6 @@ void MedalMover::apply(core::pose::Pose& pose) {
 void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
-  using core::fragment::FragmentIO;
-  using core::fragment::FragSetOP;
   using core::kinematics::FoldTree;
   using protocols::loops::LoopRelaxMover;
   using protocols::loops::Loops;
@@ -168,11 +165,8 @@ void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
   closure.relax("no");
   closure.loops(empty);
 
-  // Small fragments
-  FragmentIO io;
-  FragSetOP fragments_sm = io.read_data(option[in::file::frag3]());
   utility::vector1<core::fragment::FragSetOP> fragments;
-  fragments.push_back(fragments_sm);
+  fragments.push_back(fragments_sm_);
   closure.frag_libs(fragments);
 
   // Use atom pair constraints when available
@@ -187,11 +181,9 @@ void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
 }
 
 void MedalMover::jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) const {
-  using core::kinematics::Jump;
   assert(jumps);
-
   for (core::Size i = 1; i <= pose.num_jump(); ++i) {
-    const Jump& jump = pose.jump(i);
+    const core::kinematics::Jump& jump = pose.jump(i);
     (*jumps)[i] = jump;
     TR.Debug << "Added jump_num " << i << ": " << jump << std::endl;
   }
