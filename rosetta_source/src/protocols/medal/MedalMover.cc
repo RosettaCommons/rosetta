@@ -148,8 +148,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
 
   // Add constraints to the pose, score the initial model
   core::scoring::constraints::add_constraints_from_cmdline_to_pose(pose);
-  score->show(TR, pose);
-  TR.flush_all_channels();
+  score_pose(*score, &pose);
 
   // Define the kinematics
   StarTreeBuilder builder;
@@ -187,7 +186,13 @@ void MedalMover::apply(core::pose::Pose& pose) {
 
   // Return to centroid representation and rescore
   core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
-  score->show(TR, pose);
+  score_pose(*score, &pose);
+}
+
+void MedalMover::score_pose(const core::scoring::ScoreFunction& score,
+                            core::pose::Pose* pose) const {
+  assert(pose);
+  score.show(TR, *pose);
   TR.flush_all_channels();
 }
 
