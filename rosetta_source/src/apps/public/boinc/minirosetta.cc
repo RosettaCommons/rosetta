@@ -24,6 +24,7 @@
 #include <protocols/jd2/archive/ArchiveManager.hh>
 #include <protocols/abinitio/BrokerMain.hh>
 #include <protocols/comparative_modeling/cm_main.hh>
+#include <protocols/medal/MedalMain.hh>
 #include <protocols/nonlocal/NonlocalAbinitioMain.hh>
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
 #include <protocols/rbsegment_moves/RBSegmentRelax_main.hh>
@@ -217,7 +218,9 @@ main( int argc, char * argv [] )
 		} else if ( option[ run::protocol ]() == "threading" ) {
 			protocols::comparative_modeling::cm_main();
 		} else if ( option[ run::protocol ]() == "nonlocal_abinitio" ) {
-			protocols::nonlocal::NonlocalAbinitio_main(NULL);  // for viewer
+			protocols::nonlocal::NonlocalAbinitio_main(NULL);
+		} else if ( option[ run::protocol ]() == "medal" ) {
+			protocols::medal::Medal_main(NULL);
 		} else if ( option[ run::protocol ]() == "rbsegmentrelax" ) {
 			protocols::RBSegmentRelax_main( true );
 		} else if ( option[ run::protocol ]() == "boinc_debug" ) {
