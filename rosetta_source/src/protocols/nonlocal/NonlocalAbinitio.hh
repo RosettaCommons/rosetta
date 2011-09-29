@@ -59,11 +59,13 @@ private:
   /// @brief Identify aligned / unaligned regions by scanning the alignment.
   /// Limit the lengths of these regions to enhance conformational sampling.
   void identify_chunks(const core::sequence::SequenceAlignment& alignment,
-                       const core::Size num_residues,
                        protocols::loops::Loops* chunks) const;
 
   /// @brief Estimates missing backbone density
-  void estimate_missing_density(core::pose::Pose* pose) const;
+  void build_partial_model(core::pose::Pose* pose) const;
+
+  /// @brief Closes any remaining loops
+  void loop_closure(core::pose::Pose* pose) const;
 
   /// @brief Defines the kinematics of the system
   TreeBuilderOP make_fold_tree(const protocols::loops::Loops& regions, core::pose::Pose* pose) const;

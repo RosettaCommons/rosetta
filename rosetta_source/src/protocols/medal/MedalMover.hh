@@ -19,12 +19,8 @@
 // C/C++ headers
 #include <string>
 
-// External headers
-#include <boost/unordered/unordered_map.hpp>
-
 // Project headers
 #include <core/fragment/FragSet.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -33,8 +29,6 @@ namespace protocols {
 namespace medal {
 
 class MedalMover : public protocols::moves::Mover {
-  typedef boost::unordered_map<int, core::kinematics::Jump> Jumps;
-
  public:
   MedalMover();
   void apply(core::pose::Pose& pose);
@@ -50,9 +44,6 @@ private:
 
   /// @brief Closes chainbreaks in <pose>
   void do_loop_closure(core::pose::Pose* pose) const;
-
-  /// @brief Retrieves jump information from <pose>, storing the result in <jumps>
-  void jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) const;
 
   /// @brief Configures a basic score functions which callers can then specialize
   core::scoring::ScoreFunctionOP score_function() const;

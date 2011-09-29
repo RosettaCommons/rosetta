@@ -19,6 +19,9 @@
 #include <map>
 #include <set>
 
+// External headers
+#include <boost/unordered/unordered_map.hpp>
+
 // Utility headers
 #include <basic/datacache/BasicDataCache.hh>
 #include <numeric/xyzVector.hh>
@@ -38,6 +41,7 @@
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
+#include <core/kinematics/Jump.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/RT.fwd.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
@@ -49,6 +53,12 @@
 
 namespace core {
 namespace pose {
+
+typedef boost::unordered_map<int, core::kinematics::Jump> Jumps;
+
+/// @brief Retrieves jump information from <pose>, storing the result in <jumps>.
+/// Jumps are keyed by their jump id.
+void jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps);
 
 /// @brief Removes all virtual residues from <pose>
 void remove_virtual_residues(core::pose::Pose* pose);

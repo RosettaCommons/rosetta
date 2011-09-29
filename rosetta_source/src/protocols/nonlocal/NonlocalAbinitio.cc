@@ -44,6 +44,7 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/jd2/ThreadingJob.hh>
+#include <protocols/loops/LoopRelaxMover.hh>
 #include <protocols/loops/LoopRelaxThreadingMover.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>
@@ -71,30 +72,33 @@ NonlocalAbinitio::NonlocalAbinitio() {
 }
 
 void NonlocalAbinitio::apply(core::pose::Pose& pose) {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
   using protocols::jd2::ThreadingJob;
   using protocols::loops::Loops;
-  using protocols::moves::MoverOP;
 
   ThreadingJob const * const job = current_job();
 
-  // Estimate missing backbone density by performing fragment insertion and
-  // loop closure using a simple fold tree
-  estimate_missing_density(&pose);
+  // Estimate missing backbone density
+  build_partial_model(&pose);
 
+  // Decompose the structure into chunks by scanning the alignment.
+  // Explicitly limit chunk length to enhance conformational sampling.
   Loops chunks;
-  identify_chunks(job->alignment(), pose.total_residue(), &chunks);
+  identify_chunks(job->alignment(), &chunks);
+
+  // Define the kinematics
   TreeBuilderOP builder = make_fold_tree(chunks, &pose);
 
-  // Define the kinematics of the system
-  emit_intermediate(pose, "nla_pre_abinitio.pdb");
-  MoverOP mover = new BrokenFold(fragments_large(), fragments_small(), make_movemap(pose.fold_tree()));
-  mover->apply(pose);
-  emit_intermediate(pose, "nla_post_abinitio.pdb");
+  BrokenFold mover(fragments_large(),
+                   fragments_small(),
+                   make_movemap(pose.fold_tree()));
+
+  mover.apply(pose);
 
   // Revert any modifications to the pose that TreeBuilder introduced
   builder->tear_down(&pose);
+
+  // Full-atom refinement
+  loop_closure(&pose);
   refine(&pose);
 }
 
@@ -103,7 +107,6 @@ TreeBuilderOP NonlocalAbinitio::make_fold_tree(const protocols::loops::Loops& re
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   assert(pose);
-  TR << "Regions: " << regions << std::endl;
 
   TreeBuilderOP builder = TreeBuilderFactory::get_builder(option[OptionKeys::nonlocal::builder]());
   builder->set_up(regions, pose);
@@ -113,29 +116,13 @@ TreeBuilderOP NonlocalAbinitio::make_fold_tree(const protocols::loops::Loops& re
 }
 
 core::kinematics::MoveMapOP NonlocalAbinitio::make_movemap(const core::kinematics::FoldTree& tree) const {
-  using core::Size;
-  using core::kinematics::MoveMap;
-  using core::kinematics::MoveMapOP;
-
-  MoveMapOP movable = new MoveMap();
+	core::kinematics::MoveMapOP movable = new core::kinematics::MoveMap();
   movable->set_bb(true);
-  movable->set_chi(true);
   movable->set_jump(true);
-
-  // Prevent modification to cutpoint residues and their immediate neighbors
-  for (Size i = 1; i <= tree.nres(); ++i) {
-    if (tree.is_cutpoint(i)) {
-      Size start = std::max(i-2, (Size) 1);
-      Size stop  = std::min(i+2, tree.nres());
-      for ( Size j = start; j <= stop; ++j ) {
-        movable->set_bb(j, false);
-      }
-    }
-  }
   return movable;
 }
 
-void NonlocalAbinitio::estimate_missing_density(core::pose::Pose* pose) const {
+void NonlocalAbinitio::build_partial_model(core::pose::Pose* pose) const {
   assert(pose);
 
   protocols::loops::LoopRelaxThreadingMover closure;
@@ -143,6 +130,37 @@ void NonlocalAbinitio::estimate_missing_density(core::pose::Pose* pose) const {
   closure.apply(*pose);
 
   core::util::switch_to_residue_type_set(*pose, core::chemical::CENTROID);
+}
+
+void NonlocalAbinitio::loop_closure(core::pose::Pose* pose) const {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  using core::kinematics::FoldTree;
+  using protocols::loops::LoopRelaxMover;
+  using protocols::loops::Loops;
+  assert(pose);
+
+  // An empty Loops selection notifies LoopRelaxMover that it is responsible
+  // for choosing the breaks to close automatically.
+  Loops empty;
+  LoopRelaxMover closure;
+  closure.remodel("quick_ccd");
+  closure.intermedrelax("no");
+  closure.refine("no");
+  closure.relax("no");
+  closure.loops(empty);
+
+  // 3-mers
+  utility::vector1<core::fragment::FragSetOP> fragments;
+  fragments.push_back(fragments_small());
+  closure.frag_libs(fragments);
+
+  // Use atom pair constraints when available
+  closure.cmd_line_csts(option[constraints::cst_fa_file].user());
+
+  FoldTree tree(pose->total_residue());
+  pose->fold_tree(tree);
+  closure.apply(*pose);
 }
 
 void NonlocalAbinitio::refine(core::pose::Pose* pose) const {
@@ -156,8 +174,8 @@ void NonlocalAbinitio::refine(core::pose::Pose* pose) const {
   assert(pose);
 
   // Relax into constraints according to the search strategy in use
-  Real base_wt = option[OptionKeys::constraints::cst_fa_weight]();
-  Real constraint_wt = base_wt / 2;
+  const Real base_wt = option[OptionKeys::constraints::cst_fa_weight]();
+  const Real constraint_wt = base_wt / 2;
 
   // Optionally relax
   if (option[OptionKeys::abinitio::relax]()) {
@@ -187,23 +205,21 @@ void NonlocalAbinitio::refine(core::pose::Pose* pose) const {
 }
 
 void NonlocalAbinitio::identify_chunks(const core::sequence::SequenceAlignment& alignment,
-                                       const core::Size num_residues,
                                        protocols::loops::Loops* chunks) const {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::Size;
   using protocols::loops::Loops;
 
-  Size min_chunk_sz = fragments_lg_->max_frag_length();
-  Size max_chunk_sz = option[OptionKeys::nonlocal::max_chunk_size]();
+  const Size min_chunk_sz = fragments_lg_->max_frag_length();
+  const Size max_chunk_sz = option[OptionKeys::nonlocal::max_chunk_size]();
 
   Loops aligned, unaligned;
   find_regions_with_minimum_size(alignment, min_chunk_sz, &aligned, &unaligned);
   limit_chunk_size(min_chunk_sz, max_chunk_sz, &aligned);
   limit_chunk_size(min_chunk_sz, max_chunk_sz, &unaligned);
 
-  /// TODO(cmiles) is there anything in alignment that is a proxy for num_residues?
-  *chunks = combine_and_trim(min_chunk_sz, num_residues, aligned, unaligned);
+  *chunks = combine_and_trim(min_chunk_sz, alignment.length(), aligned, unaligned);
   chunks->sequential_order();
 }
 

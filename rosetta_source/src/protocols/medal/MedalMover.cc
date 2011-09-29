@@ -157,7 +157,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
 
   // Define the base movers
   Jumps jumps;
-  jumps_from_pose(pose, &jumps);
+  core::pose::jumps_from_pose(pose, &jumps);
   MoverOP rigid_body_mover = new RigidBodyMotionMover(jumps);
 
   MoveMapOP movable = new MoveMap();
@@ -224,15 +224,6 @@ void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
   FoldTree tree(pose->total_residue());
   pose->fold_tree(tree);
   closure.apply(*pose);
-}
-
-void MedalMover::jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) const {
-  assert(jumps);
-  for (core::Size i = 1; i <= pose.num_jump(); ++i) {
-    const core::kinematics::Jump& jump = pose.jump(i);
-    (*jumps)[i] = jump;
-    TR.Debug << "Added jump_num " << i << ": " << jump << std::endl;
-  }
 }
 
 core::scoring::ScoreFunctionOP MedalMover::score_function() const {
