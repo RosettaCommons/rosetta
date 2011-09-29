@@ -115,7 +115,7 @@ private:
 	//vector1<Size> default_jump_;
 	vector1<int> jump_num_ ;
 	bool no_rbmin_, pack_first_;
-	bool min_all_, /*pymolreport_*/;
+	bool min_all_;
 	scoring::ScoreFunctionOP scorefxn_;
 };
 
