@@ -149,6 +149,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
   // Add constraints to the pose, score the initial model
   core::scoring::constraints::add_constraints_from_cmdline_to_pose(pose);
   score->show(TR, pose);
+  TR.flush_all_channels();
 
   // Define the kinematics
   StarTreeBuilder builder;
@@ -173,8 +174,8 @@ void MedalMover::apply(core::pose::Pose& pose) {
   RationalMonteCarlo mover(meta, score, cycles, option[OptionKeys::rigid::temperature](), true);
 
   // Partial function application and callback registration
-  Trigger callback = boost::bind(&on_pose_accept, chunks, jumps, _1, rigid_body_mover, fragment_mover);
-  mover.add_trigger(callback);
+  //Trigger callback = boost::bind(&on_pose_accept, chunks, jumps, _1, rigid_body_mover, fragment_mover);
+  //mover.add_trigger(callback);
 
   protocols::nonlocal::add_cutpoint_variants(&pose);
   mover.apply(pose);
@@ -187,6 +188,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
   // Return to centroid representation and rescore
   core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
   score->show(TR, pose);
+  TR.flush_all_channels();
 }
 
 void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
