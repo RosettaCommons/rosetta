@@ -18,6 +18,9 @@
 #include <string>
 
 // External headers
+#include <boost/bind.hpp>
+#include <boost/format.hpp>
+#include <boost/function.hpp>
 #include <boost/unordered/unordered_map.hpp>
 
 // Utility headers
@@ -38,6 +41,9 @@
 #include <core/chemical/VariantType.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FragSet.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/SilentStructFactory.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -67,9 +73,35 @@
 namespace protocols {
 namespace medal {
 
+typedef boost::function<void(const core::pose::Pose&)> Trigger;
 typedef boost::unordered_map<int, core::kinematics::Jump> Jumps;
 
 static basic::Tracer TR("protocols.medal.MedalMover");
+
+// Assumptions:
+//   - There is a 1-to-1 mapping between chunks and jumps
+//   - The ordering of chunks is identical locally and in <fragment_mover>
+//   - The ordering of jumps is identical locally and in <rigid_body_mover>
+void on_pose_accept(const protocols::loops::Loops& chunks,
+                    const Jumps& jumps,
+                    const core::pose::Pose& pose,
+                    protocols::moves::MoverOP rigid_body_mover,
+                    protocols::moves::MoverOP fragment_mover) {
+
+  using core::io::silent::SilentFileData;
+  using core::io::silent::SilentStructFactory;
+  using core::io::silent::SilentStructOP;
+
+  assert(jumps.size() == chunks.size());
+
+  static int num_accepted = 0;
+
+  SilentStructOP silent = SilentStructFactory::get_instance()->get_silent_struct_out();
+  silent->fill_struct(pose, str(boost::format("accepted_pose_%d") % num_accepted++));
+
+  SilentFileData sfd;
+  sfd.write_silent_struct(*silent, "medal.accepted.out");
+}
 
 MedalMover::MedalMover() {
   using namespace basic::options;
@@ -137,9 +169,14 @@ void MedalMover::apply(core::pose::Pose& pose) {
   meta->enqueue(rigid_body_mover);
   meta->enqueue(fragment_mover);
 
-  protocols::nonlocal::add_cutpoint_variants(&pose);
   const Size cycles = option[OptionKeys::rigid::rigid_body_cycles]() + option[OptionKeys::rigid::fragment_cycles]();
   RationalMonteCarlo mover(meta, score, cycles, option[OptionKeys::rigid::temperature](), true);
+
+  // Partial function application and callback registration
+  Trigger callback = boost::bind(&on_pose_accept, chunks, jumps, _1, rigid_body_mover, fragment_mover);
+  mover.add_trigger(callback);
+
+  protocols::nonlocal::add_cutpoint_variants(&pose);
   mover.apply(pose);
   protocols::nonlocal::remove_cutpoint_variants(&pose);
 

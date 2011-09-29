@@ -19,6 +19,10 @@
 // C/C++ headers
 #include <string>
 
+// External headers
+#include <boost/function.hpp>
+#include <boost/unordered/unordered_map.hpp>
+
 // Project headers
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -30,6 +34,10 @@
 
 namespace protocols {
 namespace moves {
+
+/// @brief Trigger API definition
+typedef boost::function<void(const core::pose::Pose&)> Trigger;
+typedef boost::unordered_map<int, Trigger> Triggers;
 
 /// @class Trial-based Monte Carlo minization primitive. Do not modify this
 /// class; almost anything you could possibly want to add is a bad idea.
@@ -59,6 +67,19 @@ class RationalMonteCarlo : public protocols::moves::Mover {
   /// @brief Returns this mover's name
   std::string get_name() const;
 
+  /// @brief Registers the specified trigger with this instance. Returns a unique
+  /// identifier for referring to this trigger for subsequent operations (e.g. remove).
+  int add_trigger(const Trigger& trigger);
+
+  /// @brief Unregisters the specified trigger.
+  void remove_trigger(int trigger_id);
+
+ protected:
+  /// @brief Executes all triggers attached to this instance. The order of trigger
+  /// execution is undefined. Do not assume, depend, or in any way rely upon a
+  /// partiular ordering.
+  void fire_all_triggers(const Pose& pose);
+
  private:
   /// @brief Underlying mover
   MoverOP mover_;
@@ -73,6 +94,12 @@ class RationalMonteCarlo : public protocols::moves::Mover {
   /// @brief Determines whether the low scoring pose should be recovered at the
   /// conclusion of the apply() method
   bool recover_low_;
+
+  /// @brief Collection of function callbacks
+  Triggers triggers_;
+
+  /// @brief Next trigger id to be assigned
+  Size next_trigger_id_;
 };
 
 }  // namespace moves

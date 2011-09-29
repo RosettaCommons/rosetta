@@ -14,7 +14,12 @@
 #include <protocols/moves/RationalMonteCarlo.hh>
 
 // C/C++ headers
+#include <iostream>
 #include <string>
+
+// External headers
+#include <boost/function.hpp>
+#include <boost/unordered/unordered_map.hpp>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -42,7 +47,7 @@ typedef protocols::moves::Mover Parent;
 static basic::Tracer TR("protocols.moves.RationalMonteCarlo");
 
 RationalMonteCarlo::RationalMonteCarlo(MoverOP mover, ScoreFunctionOP score, Size num_trials, Real temperature, bool recover_low)
-    : Parent("RationalMonteCarlo"), mover_(mover), num_trials_(num_trials), recover_low_(recover_low) {
+    : Parent("RationalMonteCarlo"), mover_(mover), num_trials_(num_trials), recover_low_(recover_low), next_trigger_id_(0) {
   mc_ = new protocols::moves::MonteCarlo(*score, temperature);
   protocols::viewer::add_monte_carlo_viewer(*mc_, "RationalMonteCarlo");
 }
@@ -54,7 +59,7 @@ Size RationalMonteCarlo::num_trials() const {
 void RationalMonteCarlo::apply(core::pose::Pose& pose) {
   using core::pose::Pose;
 
-  // mandatory initialization of the MonteCarlo object
+  // Initialize the MonteCarlo object
   mc_->reset(pose);
   mc_->reset_counters();
 
@@ -62,8 +67,12 @@ void RationalMonteCarlo::apply(core::pose::Pose& pose) {
     // retain a copy of the pose in the event that the move is rejected
     Pose copy(pose);
     mover_->apply(pose);
-    if (!mc_->boltzmann(pose))
+
+    if (mc_->boltzmann(pose)) {  // accept
+      fire_all_triggers(pose);
+    } else {                     // reject
       pose = copy;
+    }
   }
 
   // optionally recover the low-scoring pose
@@ -82,6 +91,32 @@ std::string RationalMonteCarlo::get_name() const {
 
 bool RationalMonteCarlo::recover_low() const {
   return recover_low_;
+}
+
+/// @detail Adds the specified trigger, returning a unique trigger id
+int RationalMonteCarlo::add_trigger(const Trigger& trigger) {
+  const int tid = ++next_trigger_id_;
+  triggers_[tid] = trigger;
+  return tid;
+}
+
+/// @detail Attempts to remove the trigger with the given id. Issues a
+/// warning if one is not found.
+void RationalMonteCarlo::remove_trigger(int trigger_id) {
+  Triggers::iterator i = triggers_.find(trigger_id);
+  if (i == triggers_.end()) {
+    TR.Warning << "Attempt to remove invalid trigger_id => " << trigger_id << std::endl;
+    return;
+  }
+  triggers_.erase(i);
+}
+
+/// @detail Invokes all triggers registered with the pose
+void RationalMonteCarlo::fire_all_triggers(const Pose& pose) {
+  for (Triggers::iterator i = triggers_.begin(); i != triggers_.end(); ++i) {
+    Trigger& t = i->second;
+    t(pose);
+  }
 }
 
 }  // namespace moves
