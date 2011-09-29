@@ -33,7 +33,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
-//// C++ headers
+// C++ headers
 
 namespace protocols {
 namespace filters {
@@ -56,13 +56,13 @@ public:
 public:// constructor/destructor
 
 
-	// @brief default constructor
+	/// @brief default constructor
 	PackStatFilter();
 
-	// @brief constructor with arguments
+	/// @brief constructor with arguments
 	PackStatFilter( Real const & ss );
 
-	// @brief copy constructor
+	/// @brief copy constructor
 	PackStatFilter( PackStatFilter const & rval );
 
 	virtual ~PackStatFilter(){}
@@ -71,24 +71,24 @@ public:// constructor/destructor
 public:// virtual constructor
 
 
-	// @brief make clone
+	/// @brief make clone
 	virtual FilterOP clone() const { return new PackStatFilter( *this ); }
 
-	// @brief make fresh instance
+	/// @brief make fresh instance
 	virtual FilterOP fresh_instance() const {	return new PackStatFilter(); }
 
 
 public:// mutator
 
 
-	// @brief set filtered secondary structure
+	/// @brief set filtered secondary structure
 	void filtered_score( Real const & ss );
 
 
 public:// accessor
 
 
-	// @brief get name of this filter
+	/// @brief get name of this filter
 	virtual std::string name() const { return "PackStatFilter"; }
 
 
@@ -105,8 +105,8 @@ public:// parser
 public:// virtual main operation
 
 
-	// @brief returns true if the given pose passes the filter, false otherwise.
-	// In this case, the test is whether the give pose is the topology we want.
+	/// @brief returns true if the given pose passes the filter, false otherwise.
+	/// In this case, the test is whether the give pose is the topology we want.
 	virtual bool apply( Pose const & pose ) const;
 
 	/// @brief

@@ -293,6 +293,7 @@ sources = {
 		"PoseCommentsFeatures",
 		"PoseConformationFeatures",
 		"ProteinSilentReport",
+		"ProteinSilentReport_util",
 		"ProteinBackboneTorsionAngleFeatures",
 		"ProteinBackboneAtomAtomPairFeatures",
 		"ProteinResidueConformationFeatures",

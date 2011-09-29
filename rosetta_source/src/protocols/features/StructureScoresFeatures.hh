@@ -58,6 +58,11 @@ public:
 		utility::sql_database::sessionOP db_session
 	);
 
+	void delete_record(
+		Size struct_id,
+		utility::sql_database::sessionOP db_session
+	);
+
 	void
 	insert_score_type_rows(
 		core::Size struct_id,

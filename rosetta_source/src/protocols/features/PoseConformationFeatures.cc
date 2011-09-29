@@ -258,6 +258,20 @@ PoseConformationFeatures::report_features(
 	return 0;
 }
 
+void PoseConformationFeatures::delete_record(
+	Size struct_id,
+	sessionOP db_session
+){
+	statement stmt = (*db_session) << "DELETE FROM pose_conformations WHERE struct_id == ?;\n" << struct_id;
+	stmt.exec();
+	stmt = (*db_session) << "DELETE FROM fold_trees WHERE struct_id == ?;\n"  << struct_id;
+	stmt.exec();
+	stmt = (*db_session) << "DELETE FROM jumps WHERE struct_id == ?;\n" <<struct_id;
+	stmt.exec();
+	stmt = (*db_session) << "DELETE FROM chain_endings WHERE struct_id == ?;" << struct_id;
+	stmt.exec();
+}
+
 void
 PoseConformationFeatures::load_into_pose(
 	sessionOP db_session,

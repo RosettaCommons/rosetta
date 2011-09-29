@@ -55,7 +55,7 @@ std::string JobDataFeatures::schema() const
 	if(db_mode == "sqlite3")
 	{
 		return
-			"CREATE TABLE IF NOT EXISTS string_data (\n"
+			"CREATE TABLE IF NOT EXISTS job_string_data (\n"
 			"	struct_id INTEGER,\n"
 			"	data_key TEXT,\n"
 			"	FOREIGN KEY (struct_id)\n"
@@ -63,7 +63,7 @@ std::string JobDataFeatures::schema() const
 			"	DEFERRABLE INITIALLY DEFERRED,\n"
 			"	PRIMARY KEY (struct_id,data_key));\n"
 			"\n"
-			"CREATE TABLE IF NOT EXISTS string_string_data (\n"
+			"CREATE TABLE IF NOT EXISTS job_string_string_data (\n"
 			"	struct_id INTEGER,\n"
 			"	data_key TEXT,\n"
 			"	data_value TEXT,\n"
@@ -72,7 +72,7 @@ std::string JobDataFeatures::schema() const
 			"	DEFERRABLE INITIALLY DEFERRED,\n"
 			"	PRIMARY KEY (struct_id,data_key));\n"
 			"\n"
-			"CREATE TABLE IF NOT EXISTS string_real_data (\n"
+			"CREATE TABLE IF NOT EXISTS job_string_real_data (\n"
 			"	struct_id INTEGER,\n"
 			"	data_key TEXT,\n"
 			"	data_value REAL,\n"
@@ -83,20 +83,20 @@ std::string JobDataFeatures::schema() const
 	}else if(db_mode == "mysql")
 	{
 		return
-			"CREATE TABLE IF NOT EXISTS string_data (\n"
+			"CREATE TABLE IF NOT EXISTS job_string_data (\n"
 			"	struct_id INTEGER,\n"
 			"	data_key TEXT,\n"
 			"	FOREIGN KEY (struct_id)	REFERENCES structures(struct_id)\n"
 			"	PRIMARY KEY (struct_id,data_key));\n"
 			"\n"
-			"CREATE TABLE IF NOT EXISTS string_string_data (\n"
+			"CREATE TABLE IF NOT EXISTS job_string_string_data (\n"
 			"	struct_id INTEGER,\n"
 			"	data_key TEXT,\n"
 			"	data_value TEXT,\n"
 			"	FOREIGN KEY (struct_id)	REFERENCES structures(struct_id)\n"
 			"	PRIMARY KEY (struct_id,data_key));\n"
 			"\n"
-			"CREATE TABLE IF NOT EXISTS string_real_data (\n"
+			"CREATE TABLE IF NOT EXISTS job_string_real_data (\n"
 			"	struct_id INTEGER,\n"
 			"	data_key TEXT,\n"
 			"	data_value REAL,\n"
@@ -124,13 +124,27 @@ JobDataFeatures::report_features(
 	return 0;
 }
 
+void JobDataFeatures::delete_record(
+	core::Size struct_id,
+	utility::sql_database::sessionOP db_session
+	)
+{
+	cppdb::statement stmt = (*db_session) << "DELETE FROM job_string_data WHERE struct_id == ?;\n" <<struct_id;
+	stmt.exec();
+	stmt = (*db_session) << "DELETE FROM job_string_string_data WHERE struct_id == ?;\n" <<struct_id;
+	stmt.exec();
+	stmt = (*db_session) << "DELETE FROM job_string_real_data WHERE struct_id == ?;" << struct_id ;
+	stmt.exec();
+}
+
+
 void JobDataFeatures::insert_string_rows(core::Size struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
 {
 	protocols::jd2::Job::Strings::const_iterator it(job->output_strings_begin());
 	for(; it != job->output_strings_end(); ++it)
 	{
 		cppdb::statement stmt = (*db_session)
-			<< "INSERT INTO string_data VALUES (?,?);"
+			<< "INSERT INTO job_string_data VALUES (?,?);"
 			<< struct_id
 			<< *it;
 		stmt.exec();
@@ -143,7 +157,7 @@ void JobDataFeatures::insert_string_string_rows(core::Size struct_id, utility::s
 	for(; it != job->output_string_string_pairs_end();++it)
 	{
 		cppdb::statement stmt = (*db_session)
-			<< "INSERT INTO string_string_data VALUES (?,?,?);"
+			<< "INSERT INTO job_string_string_data VALUES (?,?,?);"
 			<< struct_id
 			<< it->first
 			<< it->second;
@@ -157,7 +171,7 @@ void JobDataFeatures::insert_string_real_rows(core::Size struct_id, utility::sql
 	for(; it != job->output_string_real_pairs_end();++it)
 	{
 		cppdb::statement stmt = (*db_session)
-			<< "INSERT INTO string_real_data VALUES (?,?,?);"
+			<< "INSERT INTO job_string_real_data VALUES (?,?,?);"
 			<< struct_id
 			<< it->first
 			<< it->second;

@@ -60,6 +60,10 @@ public:
 		core::Size struct_id,
 		utility::sql_database::sessionOP db_session);
 
+	void
+	delete_record(
+		core::Size sturct_id,
+		utility::sql_database::sessionOP);
 
 	void
 	load_into_pose(

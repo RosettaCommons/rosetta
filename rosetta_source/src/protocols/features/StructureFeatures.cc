@@ -22,6 +22,7 @@
 #include <utility/vector1.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <protocols/jd2/JobDistributor.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -66,6 +67,7 @@ StructureFeatures::schema() const {
 			"	struct_id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
 			"	protocol_id INTEGER,\n"
 			"	tag TEXT UNIQUE,\n"
+			"	input_tag TEXT,\n"
 			"	FOREIGN KEY (protocol_id)\n"
 			"		REFERENCES protocols (protocol_id)\n"
 			"		DEFERRABLE INITIALLY DEFERRED);";
@@ -76,6 +78,7 @@ StructureFeatures::schema() const {
 			"	struct_id INTEGER PRIMARY KEY AUTO_INCREMENT,\n"
 			"	protocol_id INTEGER REFERENCES protocols(protocol_id),\n"
 			"	tag VARCHAR(255) UNIQUE,\n"
+			"	input_tag VARCHAR(255),\n"
 			"	FOREIGN KEY (protocol_id) REFERENCES protocols (protocol_id));";
 	}else
 	{
@@ -90,8 +93,9 @@ StructureFeatures::report_features(
 	Size protocol_id,
 	sessionOP db_session
 ){
+	std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
 	return report_features(
-		pose, relevant_residues, protocol_id, db_session, find_tag(pose));
+		pose, relevant_residues, protocol_id, db_session, find_tag(pose),input_tag);
 }
 
 Size
@@ -102,8 +106,9 @@ StructureFeatures::report_features(
 	Size protocol_id,
 	sessionOP db_session
 ){
+	std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
 	return report_features(
-		pose, relevant_residues, struct_id, protocol_id, db_session, find_tag(pose));
+		pose, relevant_residues, struct_id, protocol_id, db_session, find_tag(pose),input_tag);
 }
 
 
@@ -113,12 +118,14 @@ StructureFeatures::report_features(
 	vector1< bool > const &,
 	Size protocol_id,
 	sessionOP db_session,
-	string const & tag
+	string const & tag,
+	string const & input_tag
 ){
 	statement stmt = (*db_session)
-		<< "INSERT INTO structures VALUES (NULL,?,?);"
+		<< "INSERT INTO structures VALUES (NULL,?,?,?);"
 		<< protocol_id
-		<< tag;
+		<< tag
+		<< input_tag;
 	stmt.exec();
 	return stmt.last_insert_id();
 }
@@ -130,17 +137,26 @@ StructureFeatures::report_features(
 	Size struct_id,
 	Size protocol_id,
 	sessionOP db_session,
-	string const & tag
+	string const & tag,
+	string const & input_tag
 ){
 	statement stmt = (*db_session)
-		<< "INSERT INTO structures VALUES (?,?,?);"
+		<< "INSERT INTO structures VALUES (?,?,?,?);"
 		<< struct_id
 		<< protocol_id
-		<< tag;
+		<< tag
+		<< input_tag;
 	stmt.exec();
 	return stmt.last_insert_id();
 }
-
+void StructureFeatures::delete_record(
+	core::Size struct_id,
+	utility::sql_database::sessionOP db_session
+){
+	statement stmt = (*db_session)
+		<< "DELETE FROM structures WHERE struct_id == ?;" << struct_id;
+	stmt.exec();
+}
 
 void
 StructureFeatures::load_into_pose(

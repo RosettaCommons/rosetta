@@ -701,6 +701,15 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Write out structures to database.  Specify database via -inout:database_filename and wanted structures with -in:file:tags</dd><br>
 </dl>
 <dl>
+<dt><b>-output_top_n_percent</b> \<Real\><dt>
+<dd>Write out only the top n percent of structures by score.  This option is only relevent if -out:use_database is specified</dd><br>
+</dl>
+<dl>
+<dt><b>-top_n_percent_score_term</b> \<String\><dt>
+<dd>Specify the score to use with the -out:top_n_percent</dd><br>
+<dd>Default: "total_score"</dd><br>
+</dl>
+<dl>
 <dt><b>-nooutput</b> \<Boolean\><dt>
 <dd>Surpress outputfiles</dd><br>
 <dd>Default: false</dd><br>

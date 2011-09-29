@@ -197,6 +197,17 @@ ProteinResidueConformationFeatures::report_features(
 	return 0;
 }
 
+void
+ProteinResidueConformationFeatures::delete_record(
+	core::Size struct_id,
+	utility::sql_database::sessionOP db_session
+){
+	statement stmt = (*db_session) << "DELETE FROM protein_residue_conformation WHERE struct_id == ?;\n" << struct_id;
+	stmt.exec();
+	stmt = (*db_session) << "DELETE FROM residue_atom_coords WHERE struct_id == ?;\n" << struct_id;
+	stmt.exec();
+}
+
 
 void
 ProteinResidueConformationFeatures::load_into_pose(

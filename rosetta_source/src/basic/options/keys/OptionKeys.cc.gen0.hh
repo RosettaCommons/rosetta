@@ -148,6 +148,8 @@ namespace out { BooleanOptionKey const pdb_gz( "out:pdb_gz" );  }
 namespace out { BooleanOptionKey const pdb( "out:pdb" );  }
 namespace out { BooleanOptionKey const silent_gz( "out:silent_gz" );  }
 namespace out { BooleanOptionKey const use_database( "out:use_database" );  }
+namespace out { RealOptionKey const output_top_n_percent( "out:output_top_n_percent" );  }
+namespace out { StringOptionKey const top_n_percent_score_term( "out:top_n_percent_score_term" );  }
 namespace out { BooleanOptionKey const nooutput( "out:nooutput" );  }
 namespace out { BooleanOptionKey const output( "out:output" );  }
 namespace out { RealOptionKey const scorecut( "out:scorecut" );  }

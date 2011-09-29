@@ -157,6 +157,15 @@ StructureScoresFeatures::report_features(
 	return 0;
 }
 
+void StructureScoresFeatures::delete_record(
+	Size struct_id,
+	utility::sql_database::sessionOP db_session
+){
+	statement stmt = (*db_session) <<
+		"DELETE FROM structure_scores WHERE struct_id == ?;\n" << struct_id;
+	stmt.exec();
+}
+
 void
 StructureScoresFeatures::insert_score_type_rows(
 	Size struct_id,

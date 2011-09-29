@@ -153,6 +153,8 @@ option.add( basic::options::OptionKeys::out::pdb_gz, "Compress (gzip) output pdb
 option.add( basic::options::OptionKeys::out::pdb, "Output PDBs" ).def(false);
 option.add( basic::options::OptionKeys::out::silent_gz, "Use gzipped compressed output (silent run level)" ).def(false);
 option.add( basic::options::OptionKeys::out::use_database, "Write out structures to database.  Specify database via -inout:database_filename and wanted structures with -in:file:tags" );
+option.add( basic::options::OptionKeys::out::output_top_n_percent, "Write out only the top n percent of structures by score.  This option is only relevent if -out:use_database is specified" );
+option.add( basic::options::OptionKeys::out::top_n_percent_score_term, "Specify the score to use with the -out:top_n_percent" ).def("total_score");
 option.add( basic::options::OptionKeys::out::nooutput, "Surpress outputfiles" ).def(false);
 option.add( basic::options::OptionKeys::out::output, "Force outputfiles" ).def(false);
 option.add( basic::options::OptionKeys::out::scorecut, "Only output lowest energy fraction of structures - default 1.0, i.e. output all " ).def(1.0);

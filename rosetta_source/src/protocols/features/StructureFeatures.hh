@@ -72,7 +72,8 @@ public:
 		utility::vector1< bool > const & relevant_residues,
 		core::Size protocol_id,
 		utility::sql_database::sessionOP db_session,
-		std::string const & tag
+		std::string const & tag,
+		std::string const & input_tag
 	);
 
 	///@brief collect all the feature data for the pose
@@ -84,7 +85,13 @@ public:
 		core::Size struct_id,
 		core::Size protocol_id,
 		utility::sql_database::sessionOP db_session,
-		std::string const & tag
+		std::string const & tag,
+		std::string const & input_tag
+	);
+
+	void delete_record(
+		core::Size struct_id,
+		utility::sql_database::sessionOP db_session
 	);
 
 	void

@@ -115,6 +115,15 @@ PoseCommentsFeatures::report_features(
 	return 0;
 }
 
+void PoseCommentsFeatures::delete_record(
+	core::Size struct_id,
+	utility::sql_database::sessionOP db_session
+) {
+	statement stmt = (*db_session) <<
+		"DELETE FROM pose_comments where struct_id == ?;" <<struct_id;
+	stmt.exec();
+}
+
 void
 PoseCommentsFeatures::load_into_pose(
 	sessionOP db_session,

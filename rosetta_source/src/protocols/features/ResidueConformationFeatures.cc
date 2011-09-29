@@ -190,6 +190,18 @@ ResidueConformationFeatures::report_features(
 	return 0;
 }
 
+void
+ResidueConformationFeatures::delete_record(
+	Size struct_id,
+	sessionOP db_session
+){
+	statement stmt = (*db_session) << "DELETE FROM nonprotein_residue_conformation WHERE struct_id == ?;\n"<<struct_id;
+	stmt.exec();
+	stmt = (*db_session) << "DELETE FROM nonprotein_residue_angles WHERE struct_id == ?;\n" << struct_id;
+	stmt.exec();
+	stmt = (*db_session) << "DELETE FROM residue_atom_coords WHERE struct_id == ?;" << struct_id;
+	stmt.exec();
+}
 
 void
 ResidueConformationFeatures::load_into_pose(

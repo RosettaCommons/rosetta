@@ -76,6 +76,20 @@ public:
 		utility::sql_database::sessionOP db_session ) const;
 
 private:
+	void write_full_report(
+		core::pose::Pose const & pose,
+		utility::sql_database::sessionOP db_session,
+		std::string const & tag);
+
+	void delete_pose(
+		utility::sql_database::sessionOP db_session,
+		std::string const & tag);
+
+	void delete_pose(
+		utility::sql_database::sessionOP db_session,
+		core::Size const & struct_id);
+
+private:
 
 	bool initialized_;
 
