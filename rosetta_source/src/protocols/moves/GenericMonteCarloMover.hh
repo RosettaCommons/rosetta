@@ -50,7 +50,7 @@ namespace moves {
 typedef boost::function<bool(core::Size,
                              core::Size,
                              const core::pose::Pose&,
-                             core::scoring::ScoreFunctionOP)> Trigger;
+                             core::scoring::ScoreFunctionOP)> GenericMonteCarloMoverTrigger;
 
 
 class GenericMonteCarloMover : public protocols::moves::Mover {
@@ -165,7 +165,7 @@ public:
 	/// progress of the simulation as a whole.
 	///
 	/// If the trigger returns true, rescoring occurs.
-	Size add_trigger(const Trigger& trigger);
+	Size add_trigger(const GenericMonteCarloMoverTrigger& trigger);
 
 	/// @brief Returns the number of triggers
 	Size num_triggers() const;
@@ -320,7 +320,7 @@ private:
 	Size next_trigger_id_;
 
 	/// @brief Collection of function callbacks
-	boost::unordered_map<Size, Trigger> triggers_;
+	boost::unordered_map<Size, GenericMonteCarloMoverTrigger> triggers_;
 	protocols::filters::FilterOP stopping_condition_; //dflt false_filter; use this to stop an MC trajectory before maxtrials_ (if filter evaluates to true)
 };
 

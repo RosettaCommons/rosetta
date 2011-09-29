@@ -604,7 +604,7 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 {
 	maxtrials_ = tag->getOption< core::Size >( "trials", 10 );
 	temperature_ = tag->getOption< Real >( "temperature", 0.0 );
-	
+
 	String const  mover_name( tag->getOption< String >( "mover_name" ,""));
 	String const filter_name( tag->getOption< String >( "filter_name", "true_filter" ) );
 	Movers_map::const_iterator  find_mover ( movers.find( mover_name ));
@@ -631,17 +631,17 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 	}else{
 		scorefxn_ = NULL;
 	}
-	
+
 	if( filter_name == "true_filter" && !scorefxn_ ){
 		TR.Error << "You need to set filter_name or scorefxn_name for MC criteria." << std::endl;
 		runtime_assert( false );
 	}
-	
+
 	if( filters_.size() == 0 ){
 		TR << "Apply mover of " << mover_name << ", and evaluate score by " << sfxn
 		<< " at Temperature=" << temperature_ << ", ntrails= " << maxtrials_ << std::endl;
 	}
-	
+
 	stopping_condition( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "stopping_condition", "false_filter" ), filters ) );
 	TR<<"Generic MC using stopping condition "<< stopping_condition()->get_user_defined_name()<<std::endl;
 	drift_ = tag->getOption< bool >( "drift", 1 );
@@ -679,7 +679,7 @@ GenericMonteCarloMover::parse_my_tag( TagPtr const tag, DataMap & data, Filters_
 		else
 			utility_exit_with_message( "tag name " + btag->getName() + " unrecognized." );
 	}//foreach btag
-	
+
   if( !drift_ ){
     TR << "Pose is set back to initial pose every after applying mover and score evaluation." << std::endl;
   }
@@ -697,26 +697,26 @@ void GenericMonteCarloMover::fire_all_triggers(
 	const Pose& pose,
 	ScoreFunctionOP scoring)
 {
-	boost::unordered_map<Size, Trigger>::iterator i;
+	boost::unordered_map<Size, GenericMonteCarloMoverTrigger>::iterator i;
 	for (i = triggers_.begin(); i != triggers_.end(); ++i) {
-		Trigger& t = i->second;
+		GenericMonteCarloMoverTrigger& t = i->second;
 		bool rescore = t(cycle, num_cycles, pose, scoring);
-		
+
 		if (rescore) {
 			last_accepted_score_ = scoring->score(*last_accepted_pose_);
 			lowest_score_ = scoring->score(*lowest_score_pose_);
 		}
 	}
 }
-	
-Size GenericMonteCarloMover::add_trigger(const Trigger& trigger) {
+
+Size GenericMonteCarloMover::add_trigger(const GenericMonteCarloMoverTrigger& trigger) {
   Size tid = next_trigger_id_++;
   triggers_[tid] = trigger;
   return tid;
 }
 
 void GenericMonteCarloMover::remove_trigger(Size trigger_id) {
-  boost::unordered_map<Size, Trigger>::iterator i = triggers_.find(trigger_id);
+  boost::unordered_map<Size, GenericMonteCarloMoverTrigger>::iterator i = triggers_.find(trigger_id);
   if (i == triggers_.end()) {
     TR.Warning << "Attempt to remove invalid trigger_id => " << trigger_id << std::endl;
     return;

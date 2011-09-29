@@ -36,8 +36,8 @@ namespace protocols {
 namespace moves {
 
 /// @brief Trigger API definition
-typedef boost::function<void(const core::pose::Pose&)> Trigger;
-typedef boost::unordered_map<int, Trigger> Triggers;
+typedef boost::function<void(const core::pose::Pose&)> RationalMonteCarloTrigger;
+typedef boost::unordered_map<int, RationalMonteCarloTrigger> Triggers;
 
 /// @class Trial-based Monte Carlo minization primitive. Do not modify this
 /// class; almost anything you could possibly want to add is a bad idea.
@@ -69,7 +69,7 @@ class RationalMonteCarlo : public protocols::moves::Mover {
 
   /// @brief Registers the specified trigger with this instance. Returns a unique
   /// identifier for referring to this trigger for subsequent operations (e.g. remove).
-  int add_trigger(const Trigger& trigger);
+  int add_trigger(const RationalMonteCarloTrigger& trigger);
 
   /// @brief Unregisters the specified trigger.
   void remove_trigger(int trigger_id);

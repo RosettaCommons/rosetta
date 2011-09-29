@@ -94,7 +94,7 @@ bool RationalMonteCarlo::recover_low() const {
 }
 
 /// @detail Adds the specified trigger, returning a unique trigger id
-int RationalMonteCarlo::add_trigger(const Trigger& trigger) {
+int RationalMonteCarlo::add_trigger(const RationalMonteCarloTrigger& trigger) {
   const int tid = ++next_trigger_id_;
   triggers_[tid] = trigger;
   return tid;
@@ -114,7 +114,7 @@ void RationalMonteCarlo::remove_trigger(int trigger_id) {
 /// @detail Invokes all triggers registered with the pose
 void RationalMonteCarlo::fire_all_triggers(const Pose& pose) {
   for (Triggers::iterator i = triggers_.begin(); i != triggers_.end(); ++i) {
-    Trigger& t = i->second;
+    RationalMonteCarloTrigger& t = i->second;
     t(pose);
   }
 }
