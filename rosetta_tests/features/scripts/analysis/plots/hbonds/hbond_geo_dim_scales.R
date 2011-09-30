@@ -1,6 +1,6 @@
 
 
-scale_x_AHdist <- scale_y_continuous(
+scale_x_AHdist <- scale_x_continuous(
 	expression(paste('Acceptor -- Hydrogen Distance (', ring(A), ')')),
 	limits=c(1.4, 3), breaks=c(1.4, 1.8, 2.2, 2.6, 3))
 

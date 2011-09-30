@@ -51,19 +51,19 @@ sele <- "
 SELECT
 	don_atoms.base_x AS dx, don_atoms.base_y AS dy, don_atoms.base_z AS dz,
 	acc_atoms.atm_x  AS ax, acc_atoms.atm_y  AS ay, acc_atoms.atm_z  AS az,
-  don.HBChemType AS don_chem_type,
-  acc.HBChemType AS acc_chem_type
+	don.HBChemType AS don_chem_type,
+	acc.HBChemType AS acc_chem_type
 FROM
 	hbonds AS hb,
-  hbond_sites as don,
-  hbond_sites as acc,
+	hbond_sites AS don,
+	hbond_sites AS acc,
 	hbond_site_atoms AS don_atoms,
 	hbond_site_atoms AS acc_atoms
 WHERE
-  don.struct_id = hb.struct_id AND don.site_id =hb.don_id AND
-  acc.struct_id = hb.struct_id AND acc.site_id =hb.acc_id AND
-  don_atoms.struct_id = hb.struct_id AND don_atoms.site_id = hb.don_id AND
-  acc_atoms.struct_id = hb.struct_id AND acc_atoms.site_id = hb.acc_id;"
+	don.struct_id = hb.struct_id AND don.site_id =hb.don_id AND
+	acc.struct_id = hb.struct_id AND acc.site_id =hb.acc_id AND
+	don_atoms.struct_id = hb.struct_id AND don_atoms.site_id = hb.don_id AND
+	acc_atoms.struct_id = hb.struct_id AND acc_atoms.site_id = hb.acc_id;"
 
 # Execute the SQL query on each sample source.
 f <- query_sample_sources(sample_sources, sele)
@@ -72,7 +72,7 @@ f <- query_sample_sources(sample_sources, sele)
 # however it can be computed from the coordinates of the hydrogen
 # bonding atoms.
 f <- transform(f,
-  ADdist = vector_distance(cbind(dx, dy, dz), cbind(ax, ay, az)))
+	ADdist = vector_distance(cbind(dx, dy, dz), cbind(ax, ay, az)))
 
 
 # This is deprecated please use the hbond_chem_types table for the lables instead
@@ -105,10 +105,10 @@ dens <- estimate_density_1d(f,
 # Generate a lattice of density plots for each donor and acceptor type
 plot_id <- "ADdist_chem_type"
 p <- ggplot(dens) + theme_bw() +
-  geom_line(aes(x, log(y+1), colour=sample_source)) +
+	geom_line(aes(x, log(y+1), colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +
 	facet_grid(don_chem_type ~ acc_chem_type) +
-  opts(title = "Hydrogen Bonds A-D Distance by Chemical Type\n(normalized for equal volume per unit distance)") +
+	opts(title = "Hydrogen Bonds A-D Distance by Chemical Type\n(normalized for equal volume per unit distance)") +
 	scale_x_continuous(expression(paste('Acceptor -- Donor Distance (', ring(A), ')')), breaks=c(2.3, 2.8, 3.3)) +
 	scale_y_continuous("log(FeatureDensity + 1)", breaks=c(0,1,2)) +
 	opts(strip.text.x=theme_text(size=7)) +

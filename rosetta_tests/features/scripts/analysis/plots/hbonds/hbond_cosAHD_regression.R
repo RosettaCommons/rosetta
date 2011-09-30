@@ -41,10 +41,27 @@ WHERE
   hbond.don_id = don_site.site_id AND
   hbond.struct_id = acc_site.struct_id AND
   hbond.acc_id = acc_site.site_id;"
-all_geom <- query_sample_sources(sample_sources, sele)
+f <- query_sample_sources(sample_sources, sele)
+
+# This is deprecated please use the hbond_chem_types table for the lables instead
+# Order the plots better and give more descriptive labels
+f$don_chem_type <- factor(f$don_chem_type,
+	levels = c("hbdon_IMD", "hbdon_IME", "hbdon_GDE", "hbdon_GDH",
+		"hbdon_AHX", "hbdon_HXL", "hbdon_IND", "hbdon_AMO", "hbdon_CXA", "hbdon_PBA"),
+	labels = c("dIMD: h", "dIME: h", "dGDE: r", "dGDH: r",
+		"dAHX: y", "dHXL: s,t", "dIND: w", "dAMO: k", "dCXA: n,q", "dPBA: bb"))
+
+# This is deprecated please use the hbond_chem_types table for the lables instead
+# Order the plots better and give more descriptive labels
+f$acc_chem_type <- factor(f$acc_chem_type,
+	levels = c("hbacc_IMD", "hbacc_IME", "hbacc_AHX", "hbacc_HXL",
+		"hbacc_CXA", "hbacc_CXL", "hbacc_PBA"),
+	labels = c("aIMD: h", "aIME: h", "aAHX: y", "aHXL: s,t",
+		"aCXA: n,q", "aCXL: d,e", "aPBA: bb"))
+
 
 all_dens <- estimate_density_1d(
-  all_geom, c("sample_source"), "cosAHD", histogram=TRUE)
+  f, c("sample_source"), "cosAHD", histogram=TRUE)
 
 all_m <- nls(y ~ c*dbeta(x, a, b), all_dens, start=list(a=11, b=1.2, c=.04), algorithm="port", trace=TRUE, weight=y)
 all_dens$fitted <- predict(all_m)
@@ -58,12 +75,12 @@ ggplot(data=all_dens, aes(x=x)) + theme_bw() +
   opts(title = "Hydrogen Bonds AHD Angle Fit with Beta Function\n(normalized for equal volume per unit distance)") +
   labs(x=expression(paste('Acceptor -- Hydrogen -- Donor (degrees)')),
        y="FeatureDensity")
-save_plots(plot_id, sample_sources[sample_sources$sample_source=all_geom$sample_sour, output_dir, output_formats)
+save_plots(plot_id, sample_sources, output_dir, output_formats)
 
 
 
 don_dens <- estimate_density_1d(
-  all_geom, c("sample_source", "don_chem_type"), "cosAHD", histogram=TRUE)
+  f, c("sample_source", "don_chem_type"), "cosAHD", histogram=TRUE)
 
 don_dens <- ddply(don_dens, .variables=c("sample_source", "don_chem_type"), function(df){
   cat("sample_source:", df$sample_source[1], "don_chem_type:", as.character(df$don_chem_type[1]), "\n")
@@ -96,7 +113,7 @@ save_plots(plot_id, sample_sources, output_dir, output_formats)
 
 
 acc_dens <- estimate_density_1d(
-  all_geom, c("sample_source", "acc_chem_type"), "cosAHD", histogram=TRUE)
+  f, c("sample_source", "acc_chem_type"), "cosAHD", histogram=TRUE)
 
 acc_dens <- ddply(acc_dens, .variables=c("sample_source", "acc_chem_type"), function(df){
   cat("sample_source:", df$sample_source[1], "acc_chem_type:", as.character(df$acc_chem_type[1]), "\n")
@@ -127,19 +144,22 @@ save_plots(plot_id, sample_sources, output_dir, output_formats)
 
 
 each_dens <- estimate_density_1d(
-  all_geom, c("sample_source", "don_chem_type", "acc_chem_type"), "cosAHD", histogram=TRUE)
+  f, c("sample_source", "don_chem_type", "acc_chem_type"), "cosAHD", histogram=TRUE)
 
 each_dens <- ddply(each_dens, .variables=c("sample_source", "don_chem_type", "acc_chem_type"), function(df){
   cat("sample_source:", df$sample_source[1], "acc_chem_type:", as.character(df$acc_chem_type[1]), "\n")
   cat("sample_source:", df$sample_source[1], "don_chem_type:", as.character(df$don_chem_type[1]), "\n")
   success <- try({
-    params.grid <- expand.grid(a=c(2), b=c(.7), c=c(.5))
-    m <- nls(y ~ c*dbeta(x, a, b), df, start=params.grid, algorithm="port", trace=TRUE, control=nls.control(maxiter=100), weight=sqrt(y))})
+    params.grid <- expand.grid(
+			a=seq(.01, 10, length.out=20),
+			b=seq(.01, 2, length.out=20),
+		  c=seq(.01,.5, length.out=20))
+    m <- nls(y ~ c*dbeta(x, a, b), df, start=params.grid, algorithm="port", trace=TRUE, control=nls.control(maxiter=300), weight=sqrt(y))})
   if(class(success)=="try-error"){
     df$fitted <- NA
   } else {
     df$fitted <- predict(m)
-    df$param_string <- paste(c("a:", "b:", "c:"), round(m$m$getPars(),3), collapse=", ")
+    df$param_string <- paste(c("a:", "b:", "c:"), round(m$m$getPars(),2), collapse=", ")
   }
   df
 })
