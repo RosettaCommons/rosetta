@@ -46,10 +46,13 @@ bool HydrophobicitySimilarity::score(FragmentCandidateOP f,
 		VallResidueOP r = f->get_residue(i);
 		// scoring based on SEGMER hydrophobicity energy term
 		if (is_hydrophobic_[r->aa()] && is_hydrophobic_[query_[i + f->get_first_index_in_query() - 2]])
-			totalScore += 0; // no penalty if both query and vall residue are hydrophobic
-		else if (r->aa() == query_[i + f->get_first_index_in_query() - 2])
-			totalScore += 0.3; // small penalty if residues are equal
-		else
+			continue; // no penalty if both query and vall residue are hydrophobic
+		else if (r->aa() == query_[i + f->get_first_index_in_query() - 2]) {
+			if (r->aa() == 'G' || r->aa() == 'g' || r->aa() == 'P' || r->aa() == 'p')
+				continue; // no penalty for identical G or P
+			else
+				totalScore += 0.3; // small penalty if residues are equal
+		} else
 			totalScore += 1.0; // penalty if different and not hydrophobic
 	}
 	totalScore /= (Real) f->get_length();
