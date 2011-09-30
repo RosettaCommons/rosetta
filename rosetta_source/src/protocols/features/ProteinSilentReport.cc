@@ -141,7 +141,7 @@ ProteinSilentReport::apply(
 		core::Size n_structs = basic::options::option[basic::options::OptionKeys::out::nstruct];
 		core::Size n_models = get_current_structure_count_by_input_tag(db_session,current_input);
 
-		core::Size percentile_count = percentile*n_structs;
+		core::Size percentile_count = static_cast<core::Size>(floor(percentile*n_structs));
 		//store all the structures until you have at least percentile_count worth of models
 		if(n_models < percentile_count)
 		{
