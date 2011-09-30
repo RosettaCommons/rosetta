@@ -129,6 +129,15 @@ ProteinSilentReport::apply(
 	sessionOP db_session,
 	string const & tag) {
 
+	vector1< bool > relevant_residues(pose.total_residue(), true);
+
+	if (!initialized_){
+		write_schema_to_db(db_session);
+		protocol_id_ = protocol_features_->report_features(
+		  pose, relevant_residues, 0, db_session);
+		initialized_ = true;
+	}
+
 	if(!basic::options::option[basic::options::OptionKeys::out::output_top_n_percent].user())
 	{
 		write_full_report(pose,db_session,tag);
@@ -246,6 +255,11 @@ ProteinSilentReport::load_pose(
 
 }
 
+bool ProteinSilentReport::is_initialized() const
+{
+	return initialized_;
+}
+
 void
 ProteinSilentReport::write_full_report(
 	core::pose::Pose const & pose,
@@ -255,13 +269,6 @@ ProteinSilentReport::write_full_report(
 	vector1< bool > relevant_residues(pose.total_residue(), true);
 
 	cppdb::transaction transact_guard(*db_session);
-	if (!initialized_){
-		write_schema_to_db(db_session);
-		protocol_id_ = protocol_features_->report_features(
-		  pose, relevant_residues, 0, db_session);
-		initialized_ = true;
-	}
-
 	std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
 	Size struct_id = structure_features_->report_features(
 		pose, relevant_residues, protocol_id_, db_session, tag,input_tag);

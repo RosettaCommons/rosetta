@@ -62,13 +62,13 @@ DatabaseJobOutputter::DatabaseJobOutputter() :
 {
 	load_options_from_option_system();
 
-	sessionOP db_session(basic::database::get_db_session(database_fname_));
+	//sessionOP db_session(basic::database::get_db_session(database_fname_));
 
-	protein_silent_report_->write_schema_to_db(db_session);
+	//protein_silent_report_->write_schema_to_db(db_session);
 }
 
 DatabaseJobOutputter::~DatabaseJobOutputter() {
-	//DO NOT PUT THINGS HERE - it is not guarunteed to get called - use flush below instead.
+	//DO NOT PUT THINGS HERE - it is not guaranteed to get called - use flush below instead.
 }
 
 void
@@ -102,7 +102,7 @@ DatabaseJobOutputter::get_database_fname() const {
 	if(database_fname_ == ""){
 		utility_exit_with_message(
 			"To use the DatabaseJobInputter, please specify the database "
-			"where thinput is data is stored, eg. via the -inout:database_filename "
+			"where the input is data is stored, eg. via the -inout:database_filename "
 			"<database_fname> option system flag.");
 	}
 	return database_fname_;
@@ -115,7 +115,6 @@ void DatabaseJobOutputter::final_pose(
 	JobCOP job, core::pose::Pose const & pose
 ) {
 	sessionOP db_session(basic::database::get_db_session(database_fname_));
-
 	protein_silent_report_->apply(pose, db_session, output_name(job));
 }
 
@@ -143,8 +142,17 @@ bool DatabaseJobOutputter::job_has_completed( JobCOP job ) {
 	}
 	sessionOP db_session(basic::database::get_db_session(database_fname_));
 
+	//It is possible for the mpi distributor to call this function
+	//before the database has even been initialized
+	//if this is the case, return false
+	if(!protein_silent_report_->is_initialized())
+	{
+		return false;
+	}
+
 	result res = (*db_session) <<
 		"SELECT count(*) FROM structures WHERE tag=?;" << output_name(job);
+
 	res.next();
 	Size already_written;
 	res >> already_written;

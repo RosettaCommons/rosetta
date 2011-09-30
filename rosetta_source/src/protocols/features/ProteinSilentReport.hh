@@ -54,6 +54,8 @@ public:
 	core::Size
 	version();
 
+	bool is_initialized() const;
+
 	void
 	apply(
 		core::pose::Pose const & pose,
@@ -74,6 +76,8 @@ public:
 	void
 	write_schema_to_db(
 		utility::sql_database::sessionOP db_session ) const;
+
+
 
 private:
 	void write_full_report(
