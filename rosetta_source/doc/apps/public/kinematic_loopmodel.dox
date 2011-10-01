@@ -7,16 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@author Daniel J. Mandell
+///@author Daniel J. Mandell, Roland A. Pache
 /*!
 
 @page kinematic_loopmodel Documentation for kinematic loop modeling
 
 @section metadata Metadata
-This document was last updated September 27, 2010 by Daniel J. Mandell. The corresponding PIs for this application are Tanja Kortemme <kortemme@cgl.ucsf.edu> and Evangelos A. Coutsias <coutsias@unm.edu>.
+This document was last updated October 30, 2011 by Roland A. Pache. The corresponding PIs for this application are Tanja Kortemme <kortemme@cgl.ucsf.edu> and Evangelos A. Coutsias <coutsias@unm.edu>.
 
 @section kic_code_demos Code and Demo
-The application for this method is <code>bin/loopmodel.<my_os>gccrelease</code>. The major protocol movers are <code>src/protocols/moves/KinematicMover</code>, which performs a localized kinematic perturbation to a peptide chain, <code>src/protocols/loops/LoopMover_KIC</code>, which wraps the KinematicMover into a Monte Carlo protocol for loop modeling, and <code>src/protocols/loops/LoopRelaxMover</code>, which allows the protocols in LoopMover_KIC to be combined with other loop modeling protocols. A basic usage example that briefly remodels an 8-residue loop is the <code>kinematic_looprelax</code> integration test, which resides at <code>test/integration/tests/kinematic_looprelax</code>.
+The current application for this method (in Rosetta 3.3) is <code>bin/loopmodel.<my_os>gccrelease</code>. The major protocol movers are <code>src/protocols/moves/KinematicMover</code>, which performs a localized kinematic perturbation to a peptide chain, <code>src/protocols/loops/LoopMover_KIC</code>, which wraps the KinematicMover into a Monte Carlo protocol for loop modeling, and <code>src/protocols/loops/LoopRelaxMover</code>, which allows the protocols in LoopMover_KIC to be combined with other loop modeling protocols. A basic usage example that briefly remodels an 8-residue loop is the <code>kinematic_looprelax</code> integration test, which resides at <code>test/integration/tests/kinematic_looprelax</code>.
+
+For reproducing the benchmark results for dataset 1 and 2 of the Mandell <em>et al.</em> (2009) paper (see reference below), please checkout Rosetta revision 24219 from the subversion system. 
+In this older version of Rosetta, the kinematic loop modeling application is <code>bin/loop_test.<my_os>gccrelease</code>. Being a pilot app, for proper compilation, please ensure that in the file <code>src/pilot_apps.src.settings.all</code> the application <code>loop_test</code> is not commented out and then compile Rosetta, using the <code>scons.py</code> script from the current Rosetta distribution (Rosetta 3.3) with the command line
+@verbatim
+scons.py bin mode=release pilot_apps_all
+@endverbatim
+This version of the kinematic loop modeling application also uses different flags than the current version implemented in Rosetta 3.3 (see below for details). 
+
 
 @section kic_refs References
 A description of the kinematic loop modeling protocol, the geometric steps taken by the protocol, and results showing 0.9 Å median accuracy in <em>de novo</em> reconstruction of 45 12-residue loops in protein monomers, and similar accuracy in modeling conformational changes of protein interface loops can be found here:
@@ -48,11 +56,19 @@ It is also possible to use the KIC protocols for a number of new applications (s
 Although this documentation refers to modeling loop regions, in practice KIC protocols can be applied to any protein segments at least 3 residues in length.
 
 @section kic_quick_start Quick Start Example
-The following command line will perform a <em>de novo</em> reconstruction of a protein loop (the starting coordinates will be discarded and the loop will be modeled from scratch), followed by all-atom refinement with extra rotamers.
-@verbatim
-rosetta/rosetta_source/bin/loopmodel.<my_os>gccrelease -database <rosetta_database_path> -loops:remodel perturb_kic -loops:refine refine_kic -loops:input_pdb <my_starting_structure>.pdb -loops:loop_file <my_loopfile>.loop -nstruct <num_desired_models> -ex1 -ex2 -extrachi_cutoff 0 -overwrite
-@endverbatim
+The following command lines will perform a <em>de novo</em> reconstruction of a protein loop (the starting coordinates will be discarded and the loop will be modeled from scratch), followed by all-atom refinement with extra rotamers.
 In order to discard the starting coordinates of the loop, be sure the 'Extend loop' field in the loop definition file is set to '1' (see @ref kic_inputs).
+
+Using the current version of Rosetta (Rosetta 3.3):
+@verbatim
+rosetta/rosetta_source/bin/loopmodel.<my_os>gccrelease -database <rosetta_database_path> -loops:remodel perturb_kic -loops:refine refine_kic -loops:input_pdb <my_starting_structure>.pdb -in:file:fullatom -loops:loop_file <my_loopfile>.loop -nstruct <num_desired_models> -ex1 -ex2 -overwrite
+@endverbatim
+
+Using the old version of Rosetta (Rosetta revision 24219) from the original publication by Mandell <em>et al.</em> (2009, see @ref kic_refs):
+@verbatim
+rosetta/mini/bin/loop_test.<my_os>gccrelease -database <rosetta_database_path> -loops:kinematic -loops:nonpivot_torsion_sampling -loops:template_pdb <my_starting_structure>.pdb -in:file:fullatom -loops:loop_file <my_loopfile>.loop -nstruct <num_desired_models> -ex1 -ex2 -out:file:fullatom -overwrite
+@endverbatim
+
 
 @section kic_protocol Protocol
 There are two stages to the KIC loop modeling protocol: <strong>remodel</strong>, activated by <code>-loops:remodel perturb_kic</code> and <strong>refine</strong>, activated by <code>-loops:refine refine_kic</code>, which may be invoked seperately or sequentially by command line flags.
@@ -77,21 +93,23 @@ For <strong>loop refinement</strong>, just use <code>-loops:refine refine_kic</c
 
 For details on the geometric steps taken by the underlying kinematic solver, please see the supplementary material of Mandell <em>et al.</em> referenced above.
 
+In Rosetta revision 24219 used in the original publication by Mandell <em>et al.</em> (2009, see @ref kic_refs), these flags did not exist yet. Instead, in that Rosetta version there is a flag <code>-loops:kinematic</code>, which activates the KIC method in both the remodel and refine stages. 
+
 @section kic_limitations Limitations
 By definition, KIC moves are local perturbations, so the C-alpha atoms of start and end residues in loop definitions stay fixed. Loop definitions may include the N- and/or C-termini of monomeric proteins, and the C-alpha atoms of the termini will remain fixed (i.e., KIC loop modeling cannot be used to sample conformations of terminal residues themselves without adding 'virtual' residues to the termini). For terminal definitions in protein complexes, please see the note in <em>Whole protein ensemble generation</em> under @ref kic_new_stuff.
 
 @section kic_inputs Input Files
 The following files are required for kinematic loop modeling:
-@li Starting PDB file, specified by <code>-loops:input_pdb</code>.  The starting structure must have real coordinates for all residues outside the loop definition, plus the first and last residue of each loop region.
+@li Starting PDB file, specified by <code>-loops:input_pdb</code>.  The starting structure must have real coordinates for all residues outside the loop definition, plus the first and last residue of each loop region. In Rosetta revision 24219 used in the original publication by Mandell <em>et al.</em> (2009, see @ref kic_refs), this flag is called <code>-loops:template_pdb</code> instead. 
 
 @li Loop definition file, specificied by <code>loops:loop_file</code> and shared across all loop modeling protocols. For each loop to be modeled, include the following on one line:
 @verbatim
 column1  "LOOP":     The loop file identify tag
 column2  "integer":  Loop start residue number
 column3  "integer":  Loop end residue number
-column4  "integer":  Cut point residue number, >=startRes, <=endRes. default - let the loop modeling code choose cutpoint
+column4  "integer":  Cut point residue number, >=startRes, <=endRes. default - let the loop modeling code choose cutpoint. Note: Setting the cut point outside the loop can lead to a segmentation fault. 
 column5  "float":    Skip rate. default - never skip
-column6  "boolean":  Extend loop. Default false
+column6  "boolean":  Extend loop. Default false. Setting this flag to 1 leads to randomization of the loop conformation before KIC sampling, using idealized bond lengths and angles. This is important for loop reconstruction benchmarks to ensure a starting loop conformation that is different from the original one, as well as for <em>de novo</em> loop construction/insertion based on unconnected loop residues. 
 @endverbatim
 An example loop definition file can be found at <code>test/integration/tests/kinematic_looprelax/input/4fxn.loop</code>, which looks like this:
 @verbatim
@@ -115,16 +133,18 @@ LOOP 88 95 92 0 1
 @li The following general Rosetta options are commonly used with KIC:
 @verbatim
 -in:file:native                 Path/name of native pdb file. Backbone rmsd to this structure will be reported in each output decoy.
-                                If no native structure is provided, backbone rmsd to the starting structure is reported. [File]
--in:file:fullatom               Read the input structure in full-atom mode. Set this flag to avoid repacking the input structure
-                                before modeling in non-KIC protocols (KIC refine alway begins by repacking the loop side-chains,
+                                If no native structure is provided, the protocol will return an rmsd of 0. [File]
+-in:file:fullatom               Read the input structure in full-atom mode. Set this flag to avoid discarding the native side chains and repacking the input structure
+                                before modeling (KIC refine alway begins by repacking the loop side-chains,
                                 including the neighboring side-chains if -loops:fix_natsc is 'false'). default = 'false'. [Boolean]
 -loops:fix_natsc                Don't repack, rotamer trial, or minimize loop residue neighbors. default = 'false'. [Bolean]
--ex1 (-ex2, -ex3, -ex4)         Include extra chi1 rotamers (or also chi2, chi3, chi4)
+-ex1 (-ex2, -ex3, -ex4)         Include extra chi1 rotamers (or also chi2, chi3, chi4). Using -ex1 -ex2 improves benchmark performance.  
 -extrachi_cutoff 0              Set to 0 to include extra rotamers regardless of number of neighbors
 -extra_res_cen                  Path to centroid parameters file for non-protein atoms or ligands
 -extra_res_fa                   Path to all-atom parameters file for non-protein atoms or ligands
 -overwrite                      Overwrite existing models (Rosetta will not output without this flag if same-named model exists)
+-out:pdb_gz                     Create compressed output PDB files (using gzip), which saves a lot of space. These files can still be 
+                                visualized normally with software such as Pymol. 
 
 @endverbatim
 @li The following 'expert' options may be used to customize the behavior of KIC:
@@ -156,6 +176,14 @@ region_sidechains_after_move    Should rotamer trials and minimization be perfor
 -run:test_cycles                Sets the number of outer cycles and inner cycles to 3. For extremely quick testing and
                                 sanity checks, not for production runs. default = 'false'. [Boolean]
 @endverbatim
+@li Flags specific to Rosetta revision 24219 used in the original publication by Mandell <em>et al.</em> (2009, see @ref kic_refs):
+@verbatim
+-loops:template_pdb                Path/name of input pdb file.  [File]
+-loops:kinematic                   Activates the KIC method for both remodel and refine stages. 
+-loops:output_pdb                  Definition of the output path and PDB prefix. Note: In this old version of Rosetta, the 
+                                   -out:pdb_gz and -out:path flags don't work. 
+@endverbatim
+<strong>NOTE:</strong> In this old version of the KIC protocol, an unlimited number of loop build attempts are performed. 
 
 @section kic_tips Tips
 For production runs, it is recommended to include <code>-ex1</code> and <code>-ex2</code>. To consistently reconstruct long loops (e.g., 12-residues or longer) to high accuracy, it is recommended to generate 1000 models by using <code>-nstruct 1000</code> (or by running several smaller jobs over multiple processor cores). The KIC protocol was optimized for <em>de novo</em> reconstruction of 12-residue protein loops in different environments with different end-to-end distances. Shorter loops or largely buried peptide segments <em>may</em> require substantially fewer models. The KIC method was also shown to reconstruct 9 different 18-residue loops from SH3 domains to sub-angstrom accuracy, for which 5000 models were generated per case. On average, each model generated by the combined remodel and refine protocol shown in the @ref kic_quick_start section takes 15-20 minutes for a 12-residue loop on a single CPU-core, although the time required can vary depending on loop burial and amino acid composition.
