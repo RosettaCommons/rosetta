@@ -34,6 +34,7 @@ namespace in { extern IntegerVectorOptionKey const target_residues; }
 namespace in { extern IntegerVectorOptionKey const replonly_residues; }
 namespace in { extern BooleanOptionKey const replonly_loops; }
 namespace in { extern BooleanOptionKey const use_database; }
+namespace in { extern StringVectorOptionKey const select_structures_from_database; }
 namespace in { namespace path { extern PathVectorOptionKey const path; } }
 namespace in { namespace path { extern PathVectorOptionKey const fragments; } }
 namespace in { namespace path { extern PathVectorOptionKey const pdb; } }

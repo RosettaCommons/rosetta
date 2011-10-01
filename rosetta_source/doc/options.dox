@@ -111,7 +111,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-use_database</b> \<Boolean\><dt>
-<dd>Read in structures from database.  Specify database via -inout:database_filename and wanted structures with -in:file:tags</dd><br>
+<dd>Read in structures from database.  Specify database via -inout:database_filename and wanted structures with -in:file:tags or select_structures_from_database</dd><br>
+</dl>
+<dl>
+<dt><b>-select_structures_from_database</b> \<StringVector\><dt>
+<dd>specify an SQL query to determine which structures get read in from a database specified with -inout:database_filename.  SELECT query must return structures.tag</dd><br>
 </dl>
  </li>
 <li><h2>in:path</h2>

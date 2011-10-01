@@ -25,7 +25,8 @@ option.add( basic::options::OptionKeys::in::use_stupid_foldtree_format, "use the
 option.add( basic::options::OptionKeys::in::target_residues, "which residue numbers to pass for getDistConstraints" );
 option.add( basic::options::OptionKeys::in::replonly_residues, "residue numbers regarded as repulsive-only residues" );
 option.add( basic::options::OptionKeys::in::replonly_loops, "all loops will be regarded as repulsive-only" ).def(false);
-option.add( basic::options::OptionKeys::in::use_database, "Read in structures from database.  Specify database via -inout:database_filename and wanted structures with -in:file:tags" );
+option.add( basic::options::OptionKeys::in::use_database, "Read in structures from database.  Specify database via -inout:database_filename and wanted structures with -in:file:tags or select_structures_from_database" );
+option.add( basic::options::OptionKeys::in::select_structures_from_database, "specify an SQL query to determine which structures get read in from a database specified with -inout:database_filename.  SELECT query must return structures.tag" );
 option.add( basic::options::OptionKeys::in::path::path, "Paths to search for input files (checked after type-specific paths)" ).def(".");
 option.add( basic::options::OptionKeys::in::path::fragments, "Fragment file input search paths" );
 option.add( basic::options::OptionKeys::in::path::pdb, "PDB file input search paths" );
@@ -577,11 +578,11 @@ option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_margin, "" 
 option.add( basic::options::OptionKeys::abinitio::HD_EX_Info, "input list of residues with low amide protection " );
 option.add( basic::options::OptionKeys::abinitio::HD_penalty, "penatlty for each inconsistent pairing with HD data " ).def(0.1);
 option.add( basic::options::OptionKeys::abinitio::HD_fa_penalty, "penalty for each Hbond donor inconsistent with HD donor" ).def(0.1);
-option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with interior/exterior predictions for strands" );
-option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with interior/exterior predictions for strands" );
+option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
+option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::fold_cst::constraint_skip_rate, "if e.g., 0.95 it will randomly select 5% if the constraints each round -- full-cst score in  extra column" ).def(0);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_basis, "local skip_rate is viol/base" ).def(100);
 option.add( basic::options::OptionKeys::fold_cst::violation_skip_ignore, "no skip for numbers below this level" ).def(10);
@@ -1154,10 +1155,10 @@ option.add( basic::options::OptionKeys::wum::trim_proportion, "No description" )
 option.add( basic::options::OptionKeys::lh::lh, "lh option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::lh::db_prefix, "stem for loop database" ).def("loopdb");
 option.add( basic::options::OptionKeys::lh::loopsizes, "Which loopsizes to use" ).def(10).def(15).def(20);
-option.add( basic::options::OptionKeys::lh::num_partitions, "Number of partitions to split the database into" ).def(1);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::db_path, "Path to database" ).def("");
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::num_partitions, "Number of partitions to split the database into" ).def(1);
+option.add( basic::options::OptionKeys::lh::db_path, "Path to database" ).def("");
 option.add( basic::options::OptionKeys::lh::exclude_homo, "Use a homolog exclusion filter" ).def(false);
 option.add( basic::options::OptionKeys::lh::refstruct, "File with a target reference structure" ).def("");
 option.add( basic::options::OptionKeys::lh::homo_file, "File containing homologs to exclude" ).def("");

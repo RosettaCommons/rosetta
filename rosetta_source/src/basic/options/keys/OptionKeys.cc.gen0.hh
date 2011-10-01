@@ -21,6 +21,7 @@ namespace in { IntegerVectorOptionKey const target_residues( "in:target_residues
 namespace in { IntegerVectorOptionKey const replonly_residues( "in:replonly_residues" );  }
 namespace in { BooleanOptionKey const replonly_loops( "in:replonly_loops" );  }
 namespace in { BooleanOptionKey const use_database( "in:use_database" );  }
+namespace in { StringVectorOptionKey const select_structures_from_database( "in:select_structures_from_database" );  }
 namespace in { namespace path { PathVectorOptionKey const path( "in:path" );  } }
 namespace in { namespace path { PathVectorOptionKey const fragments( "in:path:fragments" );  } }
 namespace in { namespace path { PathVectorOptionKey const pdb( "in:path:pdb" );  } }
@@ -572,5 +573,3 @@ namespace abinitio { IntegerOptionKey const optimize_cutpoints_margin( "abinitio
 namespace abinitio { FileOptionKey const HD_EX_Info( "abinitio:HD_EX_Info" );  }
 namespace abinitio { RealOptionKey const HD_penalty( "abinitio:HD_penalty" );  }
 namespace abinitio { RealOptionKey const HD_fa_penalty( "abinitio:HD_fa_penalty" );  }
-namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_pred" );  }
-namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }

@@ -31,6 +31,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
+#include <utility/string_util.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Boost Headers
@@ -94,6 +95,13 @@ DatabaseJobInputter::load_options_from_option_system(){
 	if (option.has(in::file::tags) && option[in::file::tags].user()){
 		set_tags(option[in::file::tags]);
 	}
+	if(option[in::file::tags].user() && option[in::select_structures_from_database].user()) {
+		utility_exit_with_message("you cannot use -in:file:tags and -in:select_structures_from_database simultaniously");
+	}
+
+	if (option[in::select_structures_from_database].user()) {
+		set_tags_from_sql(option[in::select_structures_from_database]);
+	}
 }
 
 void
@@ -152,6 +160,26 @@ DatabaseJobInputter::set_tags(
 	vector1< string > const & tags
 ) {
 	tags_ = tags;
+}
+
+void DatabaseJobInputter::set_tags_from_sql(utility::vector1<std::string> const & sql)
+{
+	//first do some basic validation, make sure this is a SELECT command that is selecting the tag or structures.tag
+	if(sql[1] != "SELECT" && !(sql[2] == "tag" || sql[2] == "structures.tag"))
+	{
+		utility_exit_with_message("you must provide an SQL SELECT command that selects the tag or structures.tag column");
+	}
+
+	std::string sql_command(utility::join(sql, " "));
+
+	sessionOP db_session(basic::database::get_db_session(database_fname_));
+	result res = (*db_session) << sql_command;
+	while(res.next()){
+		string tag;
+		res >> tag;
+		tags_.push_back(tag);
+	}
+
 }
 
 void

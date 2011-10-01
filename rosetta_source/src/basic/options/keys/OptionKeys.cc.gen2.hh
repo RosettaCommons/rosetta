@@ -1,3 +1,4 @@
+namespace lh { IntegerOptionKey const num_partitions( "lh:num_partitions" );  }
 namespace lh { PathOptionKey const db_path( "lh:db_path" );  }
 namespace lh { BooleanOptionKey const exclude_homo( "lh:exclude_homo" );  }
 namespace lh { StringOptionKey const refstruct( "lh:refstruct" );  }

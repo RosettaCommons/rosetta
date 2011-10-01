@@ -70,6 +70,10 @@ public:
 	void
 	set_tags(utility::vector1< std::string > const & tags);
 
+	/// @brief set input tags using a database SELECT command
+	void
+	set_tags_from_sql(utility::vector1<std::string> const & sql);
+
 	/// @brief Get input tags
 	void
 	get_tags(utility::vector1< std::string > & tags);
