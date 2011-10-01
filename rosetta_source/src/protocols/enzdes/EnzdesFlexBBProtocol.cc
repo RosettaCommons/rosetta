@@ -1958,27 +1958,85 @@ EnzdesFlexibleRegion::minimize_region(
 	core::Size old_njump = old_fold_tree.num_jump();
 	core::kinematics::FoldTree temp_fold_tree;
 	core::kinematics::FoldTree const & f_const = old_fold_tree;
-
+	//tr << "regmindebug start foldtree " << old_fold_tree << std::endl;
 	core::scoring::ScoreFunctionOP min_scorefxn = scorefxn->clone();
 	min_scorefxn->set_weight( core::scoring::chainbreak, 100.0 );
 
+	//fold tree approach
+	//the segment will be covered by an edge from start -1 to end
+	//non-jump edges spanning the segment will be replaced by two edges
+	//jump edges spanning the segment will be left untouched
+	//non-jump edges going into the segment will go either until start or end
+	//jump ed
+	bool backward_into_seg(false), backward_outof_seg(false);
+	utility::vector1< std::pair<core::Size,int> > jump_origins, jump_destinations;
 
 	//find the edge that spans the end of this segment
+	//tr << "regmindebug setting foldtree for region from " << this->start() << " to " << this->end() << std::endl;
 	for( core::kinematics::FoldTree::const_iterator e = f_const.begin(); e != f_const.end(); ++e ){
+		bool is_jump( e->is_jump() ), backward( e->start() > e->stop() ), start_in_seg( e->start() >= this->start() && e->start() <= this->end() ), stop_in_seg( e->stop() >= this->start() && e->stop() <= this->end() );
+		bool span( backward ? ( (e->start() > this->end()) && (e->stop() < this->start()) ) : ( (e->start() < this->start()) && (e->stop() > this->end()) ) );
+		//tr << "regmindebug dealing with edge from " << e->start() << " to " << e->stop() << " with label " << e->label() << " backward is " << backward << ", span is " << span << ", start_in_seg is " << start_in_seg << ", stop in seg is " << stop_in_seg << ", is_jump is " << is_jump << std::endl;
 
-		if( (e->start() <= (int) this->end() ) && ( e->stop() >= (int) this->end() + 1 ) && !e->is_jump() ){
-
-			temp_fold_tree.add_edge( e->start(), this->start() - 1, e->label() );
-			temp_fold_tree.add_edge( this->start() - 1, this->end(), e->label() );
-			temp_fold_tree.add_edge( core::kinematics::Edge(this->start() - 1, this->end() + 1, old_njump + 1, "CA", "CA", false) );
-			temp_fold_tree.add_edge( this->end() + 1, e->stop(), e->label() );
-
+		//edges only in the segment will be discarded
+		if( start_in_seg && stop_in_seg ){
+			if( is_jump ) old_njump--;
+			continue;
 		}
+
+		if( is_jump && start_in_seg ) jump_destinations.push_back( std::pair<core::Size, int>(e->stop(), e->label()) );
+		else if( is_jump && stop_in_seg ) jump_origins.push_back( std::pair< core::Size, int>(e->start(), e->label() ) );
+		else if( !is_jump && start_in_seg ){
+			if( backward ){
+				temp_fold_tree.add_edge( this->start(), e->stop(), e->label() );
+				backward_outof_seg = true;
+			}
+			else temp_fold_tree.add_edge( this->end() + 1, e->stop(), e->label() );
+		}
+		else if( !is_jump && stop_in_seg ){
+			if( backward ){
+				temp_fold_tree.add_edge( e->start(), this->end() + 1, e->label() );
+				backward_into_seg = true;
+			}
+			else temp_fold_tree.add_edge( e->start(), this->start(), e->label() );
+		}
+		else if (!is_jump && span ){
+			if(backward ){
+				//tr << "regmindebug dealing with backward span " << std::endl;
+				temp_fold_tree.add_edge( e->start(), this->end() + 1, e->label() );
+				temp_fold_tree.add_edge( this->start(), e->stop(), e->label() );
+				backward_outof_seg = true;
+				backward_into_seg = true;
+			}
+			else{
+				//tr << "regmindebug dealing with forward span " << std::endl;
+				temp_fold_tree.add_edge( e->start(), this->start(), e->label() );
+				temp_fold_tree.add_edge( this->end() + 1, e->stop(), e->label() );
+			}
+		}
+
 		else{
 			temp_fold_tree.add_edge( *e );
 		}
+	} // loop over edges
+	temp_fold_tree.add_edge( this->start(), this->end(), -1);  // add edge for segment
+	core::Size jump_focus( this->start() );
+	if( backward_into_seg && backward_outof_seg ){
+		jump_focus = this->end() + 1;
+		temp_fold_tree.add_edge(  core::kinematics::Edge(this->end() +1, this->start(), old_njump + 1 ,"CA", "CA", false ) );
 	}
+	else{
+		//tr << "regmindebug adding jump across segment " << std::endl;
+		temp_fold_tree.add_edge(  core::kinematics::Edge(this->start(), this->end() +1, old_njump + 1 ,"CA", "CA", false ) );
+	}
+
+	for( utility::vector1< std::pair<core::Size, int> >::const_iterator jump_o_it = jump_origins.begin(); jump_o_it != jump_origins.end(); ++jump_o_it )  temp_fold_tree.add_edge(  core::kinematics::Edge(jump_o_it->first, jump_focus, jump_o_it->second ,"CA", "CA", false ) );
+
+	for( utility::vector1< std::pair< core::Size,int> >::const_iterator jump_d_it = jump_destinations.begin(); jump_d_it != jump_destinations.end(); ++jump_d_it )  temp_fold_tree.add_edge(  core::kinematics::Edge( jump_focus, jump_d_it->first, jump_d_it->second ,"CA", "CA", false ) );
+
+
 	temp_fold_tree.delete_extra_vertices();
+	//tr << "regmindebug new foldtree " << temp_fold_tree << std::endl;
 
 	if( !temp_fold_tree.check_fold_tree() ) {
 		utility_exit_with_message("Invalid fold tree after trying to set up for flexbb ca angle min");
