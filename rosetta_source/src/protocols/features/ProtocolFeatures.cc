@@ -19,6 +19,9 @@
 #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <core/svn_version.hh>
@@ -66,26 +69,57 @@ ProtocolFeatures::type_name() const { return "ProtocolFeatures"; }
 string
 ProtocolFeatures::schema() const {
 	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
+	bool protocol_id_mode = basic::options::option[basic::options::OptionKeys::out::database_protocol_id].user();
 	if(db_mode == "sqlite3")
 	{
-		return
-			"CREATE TABLE IF NOT EXISTS protocols (\n"
-			"	protocol_id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-			"	command_line TEXT,\n"
-			"	specified_options TEXT,\n"
-			"	svn_url TEXT,\n"
-			"	svn_version TEXT,\n"
-			"	script TEXT);";
+		if(protocol_id_mode)
+		{
+			return
+				"CREATE TABLE IF NOT EXISTS protocols (\n"
+				"	protocol_id INTEGER PRIMARY KEY UNIQUE,\n"
+				"	command_line TEXT,\n"
+				"	specified_options TEXT,\n"
+				"	svn_url TEXT,\n"
+				"	svn_version TEXT,\n"
+				"	script TEXT);";
+		}else
+		{
+			//default behavior
+			return
+				"CREATE TABLE IF NOT EXISTS protocols (\n"
+				"	protocol_id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
+				"	command_line TEXT,\n"
+				"	specified_options TEXT,\n"
+				"	svn_url TEXT,\n"
+				"	svn_version TEXT,\n"
+				"	script TEXT);";
+		}
+
 	}else if(db_mode == "mysql")
 	{
-		return
-			"CREATE TABLE IF NOT EXISTS protocols (\n"
-			"	protocol_id INTEGER PRIMARY KEY AUTO_INCREMENT,\n"
-			"	command_line TEXT,\n"
-			"	specified_options TEXT,\n"
-			"	svn_url TEXT,\n"
-			"	svn_version TEXT,\n"
-			"	script TEXT);";
+		if(protocol_id_mode)
+		{
+			return
+				"CREATE TABLE IF NOT EXISTS protocols (\n"
+				"	protocol_id INTEGER PRIMARY KEY UNIQUE,\n"
+				"	command_line TEXT,\n"
+				"	specified_options TEXT,\n"
+				"	svn_url TEXT,\n"
+				"	svn_version TEXT,\n"
+				"	script TEXT);";
+		}else
+		{
+			//default behavior
+			return
+				"CREATE TABLE IF NOT EXISTS protocols (\n"
+				"	protocol_id INTEGER PRIMARY KEY AUTO_INCREMENT,\n"
+				"	command_line TEXT,\n"
+				"	specified_options TEXT,\n"
+				"	svn_url TEXT,\n"
+				"	svn_version TEXT,\n"
+				"	script TEXT);";
+		}
+
 	}else
 	{
 		return "";

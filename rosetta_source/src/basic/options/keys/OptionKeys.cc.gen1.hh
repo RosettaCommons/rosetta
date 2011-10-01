@@ -1,3 +1,4 @@
+namespace abinitio { RealOptionKey const HD_fa_penalty( "abinitio:HD_fa_penalty" );  }
 namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_pred" );  }
 namespace abinitio { RealOptionKey const SEP_score_scalling( "abinitio:SEP_score_scalling" );  }
 namespace fold_cst { BooleanOptionKey const fold_cst( "fold_cst" );  }
@@ -572,4 +573,3 @@ namespace wum { IntegerOptionKey const extra_scorefxn_relax( "wum:extra_scorefxn
 namespace wum { RealOptionKey const trim_proportion( "wum:trim_proportion" );  }
 namespace lh { BooleanOptionKey const lh( "lh" );  }
 namespace lh { StringOptionKey const db_prefix( "lh:db_prefix" );  }
-namespace lh { IntegerVectorOptionKey const loopsizes( "lh:loopsizes" );  }

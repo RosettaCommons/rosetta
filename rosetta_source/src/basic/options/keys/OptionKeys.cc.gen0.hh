@@ -149,6 +149,7 @@ namespace out { BooleanOptionKey const pdb_gz( "out:pdb_gz" );  }
 namespace out { BooleanOptionKey const pdb( "out:pdb" );  }
 namespace out { BooleanOptionKey const silent_gz( "out:silent_gz" );  }
 namespace out { BooleanOptionKey const use_database( "out:use_database" );  }
+namespace out { IntegerOptionKey const database_protocol_id( "out:database_protocol_id" );  }
 namespace out { RealOptionKey const output_top_n_percent( "out:output_top_n_percent" );  }
 namespace out { StringOptionKey const top_n_percent_score_term( "out:top_n_percent_score_term" );  }
 namespace out { BooleanOptionKey const nooutput( "out:nooutput" );  }
@@ -572,4 +573,3 @@ namespace abinitio { BooleanOptionKey const optimize_cutpoints_using_kic( "abini
 namespace abinitio { IntegerOptionKey const optimize_cutpoints_margin( "abinitio:optimize_cutpoints_margin" );  }
 namespace abinitio { FileOptionKey const HD_EX_Info( "abinitio:HD_EX_Info" );  }
 namespace abinitio { RealOptionKey const HD_penalty( "abinitio:HD_penalty" );  }
-namespace abinitio { RealOptionKey const HD_fa_penalty( "abinitio:HD_fa_penalty" );  }

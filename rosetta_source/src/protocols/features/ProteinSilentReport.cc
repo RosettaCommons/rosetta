@@ -133,9 +133,18 @@ ProteinSilentReport::apply(
 
 	if (!initialized_){
 		write_schema_to_db(db_session);
-		protocol_id_ = protocol_features_->report_features(
-		  pose, relevant_residues, 0, db_session);
+		if(basic::options::option[basic::options::OptionKeys::out::database_protocol_id].user())
+		{
+			core::Size protocol_id = basic::options::option[basic::options::OptionKeys::out::database_protocol_id];
+			protocol_id_ = protocol_features_->report_features(
+				pose, relevant_residues, protocol_id, db_session);
+		}else
+		{
+			protocol_id_ = protocol_features_->report_features(
+				pose, relevant_residues, 0, db_session);
+		}
 		initialized_ = true;
+
 	}
 
 	if(!basic::options::option[basic::options::OptionKeys::out::output_top_n_percent].user())

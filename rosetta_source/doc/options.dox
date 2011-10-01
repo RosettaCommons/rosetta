@@ -705,6 +705,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Write out structures to database.  Specify database via -inout:database_filename and wanted structures with -in:file:tags</dd><br>
 </dl>
 <dl>
+<dt><b>-database_protocol_id</b> \<Integer\><dt>
+<dd>Manually specify a protocol ID for database output. MPI distributed jobs are the only time when you will want to use this. It is a temporary workaround to a limitation of the MPI distributor</dd><br>
+</dl>
+<dl>
 <dt><b>-output_top_n_percent</b> \<Real\><dt>
 <dd>Write out only the top n percent of structures by score.  This option is only relevent if -out:use_database is specified</dd><br>
 </dl>
