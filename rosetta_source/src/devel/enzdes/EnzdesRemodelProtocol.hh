@@ -226,9 +226,15 @@ private:
 	//how many times to remodel this loop
 	core::Size remodel_trials_;
 
+	//are we trying to introduce new specific interactions?
+	bool remodel_secmatch_;
+
 	//try to make the foldtree at the end of apply
 	//look like the input foldtree
 	bool reinstate_initial_foldtree_;
+
+	//which of the regions marked as flexible to remodel
+	core::Size region_to_remodel_;
 
 	//filters to be applied after loop closure but before design, to determine whether
 	//a newly generated loop is worth designing

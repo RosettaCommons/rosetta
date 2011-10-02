@@ -232,7 +232,9 @@ EnzdesRemodelMover::EnzdesRemodelMover()
 	enz_prot_(NULL),
 	flex_region_( NULL ),
 	remodel_trials_( basic::options::option[basic::options::OptionKeys::enzdes::remodel_trials] ),
+	remodel_secmatch_(basic::options::option[basic::options::OptionKeys::enzdes::remodel_secmatch] ),
 	reinstate_initial_foldtree_(false),
+	region_to_remodel_(1),
 	start_to_current_smap_(NULL),
 	ss_similarity_probability_( 1.0 - basic::options::option[basic::options::OptionKeys::enzdes::remodel_aggressiveness] )
 {
@@ -259,7 +261,9 @@ EnzdesRemodelMover::EnzdesRemodelMover( EnzdesRemodelMover const & other )
 	other_design_positions_(other.other_design_positions_),
 	other_repack_positions_(other.other_repack_positions_),
 	remodel_trials_( other.remodel_trials_ ),
+	remodel_secmatch_( other.remodel_secmatch_ ),
 	reinstate_initial_foldtree_(other.reinstate_initial_foldtree_),
+	region_to_remodel_(other.region_to_remodel_),
 	predesign_filters_(other.predesign_filters_),
 	postdesign_filters_(other.postdesign_filters_),
 	start_to_current_smap_(other.start_to_current_smap_),
@@ -277,7 +281,9 @@ EnzdesRemodelMover::EnzdesRemodelMover(
 	enz_prot_( enz_prot ),
 	flex_region_( flex_region ),
 	remodel_trials_( basic::options::option[basic::options::OptionKeys::enzdes::remodel_trials] ),
+	remodel_secmatch_( basic::options::option[basic::options::OptionKeys::enzdes::remodel_secmatch] ),
 	reinstate_initial_foldtree_(false),
+	region_to_remodel_(1),
 	start_to_current_smap_(NULL),
 	ss_similarity_probability_( 1.0 - basic::options::option[basic::options::OptionKeys::enzdes::remodel_aggressiveness] )
 {
@@ -445,8 +451,14 @@ EnzdesRemodelMover::parse_my_tag(
 		return;
 	}
 
+	if( tag->hasOption("remodel_secmatch") ){
+		remodel_secmatch_ = tag->getOption<bool>( "remodel_secmatch", 1 );
+	}
 	if( tag->hasOption("reinstate_foldtree") ){
 		reinstate_initial_foldtree_ = tag->getOption<bool>( "reinstate_foldtree", 1 );
+	}
+	if( tag->hasOption("remodel_region") ){
+		region_to_remodel_ = tag->getOption<core::Size>( "remodel_region", 1 );
 	}
 }
 
@@ -465,7 +477,7 @@ EnzdesRemodelMover::initialize(
 
 	enz_prot_->determine_flexible_regions( pose, orig_task_ );
 	//temporary hardcoded: only one region to be remodeled
-	flex_region_ = enz_prot_->enz_flexible_region(1);
+	flex_region_ = enz_prot_->enz_flexible_region( region_to_remodel_ );
 
 	this->set_task( enz_prot_->modified_task( pose, *orig_task_ ) );
 }
@@ -594,7 +606,7 @@ EnzdesRemodelMover::examine_initial_conformation(
 	protocols::filters::FilterCOP png_filter = setup_packer_neighbor_graph_filter( pose );
 
 	//create inverse rotamers if necessary
-	if( basic::options::option[basic::options::OptionKeys::enzdes::remodel_secmatch] ){
+	if( remodel_secmatch_ ){
 		create_target_inverse_rotamers( pose );
 	}
 
@@ -1005,7 +1017,7 @@ EnzdesRemodelMover::secmatch_after_remodel(
 {
 
 	//if this option is off, return right away
-	if( ! basic::options::option[basic::options::OptionKeys::enzdes::remodel_secmatch] ) return true;
+	if( ! remodel_secmatch_ ) return true;
 
 	//if no parameters are missing, return right away
 	protocols::toolbox::match_enzdes_util::EnzConstraintIOCOP cstio( protocols::enzdes::enzutil::get_enzcst_io( pose ) );
@@ -1065,7 +1077,7 @@ EnzdesRemodelMover::setup_rcgs(
 	rcgs_.clear();
 
 	//rcgs from inverse rotamers
-	if( basic::options::option[basic::options::OptionKeys::enzdes::remodel_secmatch] ){
+	if( remodel_secmatch_ ){
 		setup_rcgs_from_inverse_rotamers( vlb );
 	}
 
