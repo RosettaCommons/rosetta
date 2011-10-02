@@ -232,6 +232,7 @@ EnzdesRemodelMover::EnzdesRemodelMover()
 	enz_prot_(NULL),
 	flex_region_( NULL ),
 	remodel_trials_( basic::options::option[basic::options::OptionKeys::enzdes::remodel_trials] ),
+	reinstate_initial_foldtree_(false),
 	start_to_current_smap_(NULL),
 	ss_similarity_probability_( 1.0 - basic::options::option[basic::options::OptionKeys::enzdes::remodel_aggressiveness] )
 {
@@ -258,6 +259,7 @@ EnzdesRemodelMover::EnzdesRemodelMover( EnzdesRemodelMover const & other )
 	other_design_positions_(other.other_design_positions_),
 	other_repack_positions_(other.other_repack_positions_),
 	remodel_trials_( other.remodel_trials_ ),
+	reinstate_initial_foldtree_(other.reinstate_initial_foldtree_),
 	predesign_filters_(other.predesign_filters_),
 	postdesign_filters_(other.postdesign_filters_),
 	start_to_current_smap_(other.start_to_current_smap_),
@@ -275,6 +277,7 @@ EnzdesRemodelMover::EnzdesRemodelMover(
 	enz_prot_( enz_prot ),
 	flex_region_( flex_region ),
 	remodel_trials_( basic::options::option[basic::options::OptionKeys::enzdes::remodel_trials] ),
+	reinstate_initial_foldtree_(false),
 	start_to_current_smap_(NULL),
 	ss_similarity_probability_( 1.0 - basic::options::option[basic::options::OptionKeys::enzdes::remodel_aggressiveness] )
 {
@@ -441,7 +444,10 @@ EnzdesRemodelMover::parse_my_tag(
 		runtime_assert(false);
 		return;
 	}
-	//nothing yet
+
+	if( tag->hasOption("reinstate_foldtree") ){
+		reinstate_initial_foldtree_ = tag->getOption<bool>( "reinstate_foldtree", 1 );
+	}
 }
 
 void
@@ -944,11 +950,22 @@ EnzdesRemodelMover::setup_cached_observers(
 
 void
 EnzdesRemodelMover::remove_cached_observers(
-	core::pose::Pose & //pose
+	core::pose::Pose & pose
 ){
 
 	//nothing yet, the length event collector needs to stay because
 	//stuff downstream needs it
+
+	//fixing foldtree that somehow gets fucked up
+	//by vlb stuff if we have several chains
+	core::kinematics::FoldTree const & old_fold_tree( this->get_native_pose()->fold_tree() );
+	core::kinematics::FoldTree new_fold_tree;
+	for( core::kinematics::FoldTree::const_iterator e = old_fold_tree.begin(); e != old_fold_tree.end(); ++e ){
+		core::Size estart = (*start_to_current_smap_)[e->start() ];
+		core::Size estop = (*start_to_current_smap_)[e->stop() ];
+		new_fold_tree.add_edge( estart, estop, e->label() );
+	}
+	pose.fold_tree( new_fold_tree );
 }
 
 void

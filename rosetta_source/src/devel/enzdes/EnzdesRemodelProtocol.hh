@@ -226,6 +226,10 @@ private:
 	//how many times to remodel this loop
 	core::Size remodel_trials_;
 
+	//try to make the foldtree at the end of apply
+	//look like the input foldtree
+	bool reinstate_initial_foldtree_;
+
 	//filters to be applied after loop closure but before design, to determine whether
 	//a newly generated loop is worth designing
 	protocols::filters::FilterCollectionOP predesign_filters_;
