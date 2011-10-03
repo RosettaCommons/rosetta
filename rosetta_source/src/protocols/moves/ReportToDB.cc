@@ -171,6 +171,7 @@ using protocols::rosetta_scripts::saved_reference_pose;
 using std::string;
 using std::endl;
 using std::accumulate;
+using std::stringstream;
 using utility::file::FileName;
 using utility::vector0;
 using utility::vector1;
@@ -193,6 +194,7 @@ ReportToDB::ReportToDB():
 	sample_source_("Rosetta: Unknown Protocol"),
 	scfxn_(getScoreFunction()),
 	use_transactions_(true),
+	cache_size_(2000),
 	task_factory_(new TaskFactory()),
 	features_reporters_(),
 	initialized( false )
@@ -206,6 +208,7 @@ ReportToDB::ReportToDB(string const & name):
 	database_mode_("sqlite3"),
 	sample_source_("Rosetta: Unknown Protocol"),
 	scfxn_( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) ),
+	cache_size_(2000),
 	use_transactions_(true),
 	task_factory_(new TaskFactory()),
 	features_reporters_(),
@@ -219,13 +222,15 @@ ReportToDB::ReportToDB(
 	string const & database_fname,
 	string const & sample_source,
 	ScoreFunctionOP scfxn,
-	bool use_transactions) :
+	bool use_transactions,
+	Size cache_size) :
 	Mover(name),
 	database_fname_(database_fname),
 	database_mode_("sqlite3"),
 	sample_source_(sample_source),
 	scfxn_(scfxn),
 	use_transactions_(use_transactions),
+	cache_size_(cache_size),
 	task_factory_(new TaskFactory()),
 	features_reporters_(),
 	initialized( false )
@@ -240,6 +245,7 @@ ReportToDB::ReportToDB( ReportToDB const & src):
 	sample_source_(src.sample_source_),
 	scfxn_(new ScoreFunction(* src.scfxn_)),
 	use_transactions_(src.use_transactions_),
+	cache_size_(src.cache_size_),
 	task_factory_(src.task_factory_),
 	protocol_features_(src.protocol_features_),
 	structure_features_(src.structure_features_),
@@ -363,6 +369,15 @@ ReportToDB::parse_use_transactions_tag_item(
 }
 
 void
+ReportToDB::parse_cache_size_tag_item(
+	TagPtr const tag) {
+	if(tag->hasOption("cache_size")){
+		cache_size_ = tag->getOption<bool>("cache_size");
+	}
+}
+
+
+void
 ReportToDB::parse_feature_tag(
 	TagPtr const feature_tag,
 	DataMap & data,
@@ -455,9 +470,14 @@ ReportToDB::parse_my_tag(
 	parse_db_mode_tag_item(tag);
 
 	// Use transactions to group database i/o to be more efficient. Turning them off OBcan help debugging.
-	// use_transactions=true
-	// DEFAULTS TRUE
+	// EXAMPLE: use_transactions=true
+	// DEFAULT: TRUE
 	parse_use_transactions_tag_item(tag);
+
+	// Specify the maximum number 1k pages to keep in memory before writing to disk
+	// EXAMPLE: cache_size=1000000  // this uses ~ 1GB of memory
+	// DEFAULT: 2000
+	parse_cache_size_tag_item(tag);
 
 	task_factory_ = parse_task_operations(tag, data);
 
@@ -523,6 +543,9 @@ ReportToDB::apply( Pose& pose ){
 	if(use_transactions_) db_session->commit();
 
 	if(use_transactions_) db_session->begin();
+
+	stringstream stmt_ss; stmt_ss << "PRAGMA cache_size = " << cache_size_ << ";";
+	statement stmt = (*db_session) << stmt_ss.str(); stmt.exec();
 
 	if(!protocol_table_initialized_){
 		protocol_id_ = protocol_features_->report_features(

@@ -6,7 +6,10 @@
 -ignore_unrecognized_res
 #
 #
--l input/all_pdbs.list
+-in
+ -path %(sample_source_path)s/input/top4400pdbs
+ -file
+  -l %(sample_source_path)s/input/all_pdbs.list
 #
 # Since the important output is the feature database,
 # ignore the job distributor output.

@@ -77,6 +77,7 @@ public:
 		core::pose::Pose const & pose,
 		core::Size resNum,
 		core::Size atmNum,
+		core::Size heavy_atmNum,
 		core::Size struct_id,
 		core::Size site_id,
 		utility::sql_database::sessionOP db_session);

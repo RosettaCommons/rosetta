@@ -12,7 +12,7 @@
 
 import sys, commands, subprocess, re
 
-from os import path, environ
+from os import path, environ, getcwd()
 from optparse import OptionParser, IndentedHelpFormatter
 
 
@@ -65,7 +65,7 @@ for documentation.
     )
 
     parser.add_option("--output-dir",
-      default="output", action="store",
+      default= getcwd() + "/output", action="store",
       help="Base directory of where to deposit data and results. [default %default]"
     )
 

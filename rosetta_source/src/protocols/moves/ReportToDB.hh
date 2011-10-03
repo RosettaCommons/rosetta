@@ -53,7 +53,8 @@ public:
 		std::string const & database_fname,
 		std::string const & sample_source,
 		core::scoring::ScoreFunctionOP scfxn,
-		bool use_transactions=true);
+		bool use_transactions=true,
+		core::Size cache_size=2000);
 
 	ReportToDB(ReportToDB const & src);
 
@@ -96,6 +97,10 @@ public:
 		utility::tag::TagPtr const tag);
 
 	void
+	parse_cache_size_tag_item(
+		utility::tag::TagPtr const tag);
+
+	void
 	parse_feature_tag(
 		utility::tag::TagPtr const tag,
 		protocols::moves::DataMap & data,
@@ -129,6 +134,8 @@ private:
 
 	core::scoring::ScoreFunctionOP scfxn_;
 	bool use_transactions_;
+
+	core::Size cache_size_;
 
 	// For parallel jobs, where databases are written for each node,
 	// maintaining mergability requires managing the struct_id values to

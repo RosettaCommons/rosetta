@@ -191,7 +191,8 @@ HBondFeatures::schema() const {
 		"	chain TEXT,\n"
 		"	resNum INTEGER,\n"
 		"	iCode TEXT,\n"
-		"	bFact REAL,\n"
+		"	heavy_atom_temperature REAL,\n"
+		"	heavy_atom_occupancy REAL,\n"
 		"	FOREIGN KEY(struct_id, site_id)\n"
 		"		REFERENCES hbond_sites(struct_id, site_id)\n"
 		"		DEFERRABLE INITIALLY DEFERRED,\n"
@@ -350,7 +351,7 @@ HBondFeatures::report_features(
 	for( Size resNum =1; resNum <= pose.n_residue(); ++resNum ){
 		if(!relevant_residues[resNum]) continue;
 
-		Residue const res(pose.residue(resNum));
+		Residue const & res(pose.residue(resNum));
 		// donor sites
 		for ( AtomIndices::const_iterator
 			atmNum  = res.Hpos_polar().begin(),
@@ -359,7 +360,7 @@ HBondFeatures::report_features(
 			site_id++;
 			insert_site_row(pose, struct_id, site_id, resNum, *atmNum, true /*is donor*/, db_session);
 			site_ids(resNum,*atmNum) = site_id;
-			insert_site_pdb_row(pose, resNum, *atmNum, struct_id, site_id, db_session);
+			insert_site_pdb_row(pose, resNum, *atmNum, res.atom_base(*atmNum), struct_id, site_id, db_session);
 			insert_site_environment_row(pose, resNum, *atmNum, struct_id, site_id, atom_sasa_s, atom_sasa_m, atom_sasa_l, site_partners, site_hbond_energies, db_session);
 			insert_site_atoms_row(pose, resNum, *atmNum, struct_id, site_id, db_session);
 
@@ -376,7 +377,7 @@ HBondFeatures::report_features(
 			site_id++;
 			insert_site_row(pose, struct_id, site_id, resNum, *atmNum, false /*is not donor*/, db_session);
 			site_ids(resNum,*atmNum) = site_id;
-			insert_site_pdb_row(pose, resNum, *atmNum, struct_id, site_id, db_session);
+			insert_site_pdb_row(pose, resNum, *atmNum, *atmNum, struct_id, site_id, db_session);
 			insert_site_environment_row(pose, resNum, *atmNum, struct_id, site_id, atom_sasa_s, atom_sasa_m, atom_sasa_l, site_partners, site_hbond_energies, db_session);
 			insert_site_atoms_row(pose, resNum, *atmNum, struct_id, site_id, db_session);
 
@@ -387,7 +388,7 @@ HBondFeatures::report_features(
 	}
 
 	for (Size hbond_id = 1; hbond_id <= hbond_set.nhbonds(); hbond_id++) {
-		HBond hbond = hbond_set.hbond( hbond_id );
+		HBond const & hbond = hbond_set.hbond( hbond_id );
 		if(!relevant_residues[hbond.don_res()] ||
 		  !relevant_residues[hbond.acc_res()]) continue;
 
@@ -412,7 +413,7 @@ HBondFeatures::insert_site_row(
 
 
 	Size chain( pose.chain(resNum) );
-	string const resType( pose.residue_type(resNum).name() );
+	string const & resType( pose.residue_type(resNum).name() );
 	string atmType;
 
 
@@ -449,6 +450,7 @@ HBondFeatures::insert_site_pdb_row(
 	Pose const & pose,
 	Size resNum,
 	Size atmNum,
+  Size heavy_atmNum,
 	Size struct_id,
 	Size site_id,
 	sessionOP db_session
@@ -458,17 +460,21 @@ HBondFeatures::insert_site_pdb_row(
 	Size const pdb_chain( pose.pdb_info()->chain(resNum) );
 	Size const pdb_resNum( pose.pdb_info()->number(resNum) );
 	char const pdb_iCode( pose.pdb_info()->icode(resNum) );
-	Real const pdb_bFact( pose.pdb_info()->temperature(resNum,atmNum) );
+	Real const pdb_heavy_atom_temperature(
+		pose.pdb_info()->temperature(resNum,heavy_atmNum) );
+	Real const pdb_heavy_atom_occupancy(
+		pose.pdb_info()->occupancy(resNum, heavy_atmNum) );
+
 
 	statement stmt = (*db_session)
-		<< "INSERT INTO hbond_sites_pdb VALUES (?,?,?,?,?,?);"
+		<< "INSERT INTO hbond_sites_pdb VALUES (?,?,?,?,?,?,?);"
 		<< struct_id
 		<< site_id
 		<< pdb_chain
 		<< pdb_resNum
 		<< pdb_iCode
-		<< pdb_bFact;
-		// should the occupancy be here as well?
+		<< pdb_heavy_atom_temperature
+		<< pdb_heavy_atom_occupancy;
 	stmt.exec();
 }
 
@@ -512,7 +518,7 @@ HBondFeatures::insert_site_atoms_row(
 	Size site_id,
 	sessionOP db_session
 ){
-	Residue rsd( pose.residue(resNum) );
+	Residue const & rsd( pose.residue(resNum) );
 
 
 	Real const atm_x( rsd.atom(atmNum).xyz().x() );

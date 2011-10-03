@@ -63,8 +63,9 @@ class SampleSource(BaseSampleSource):
         print "generating all_pdbs.list..."
         try:
             f = open("input/all_pdbs.list", 'w')
-            p = subprocess.Popen(["find", os.getcwd() + "/input/top4400pdbs", "-name", "*pdb"],
-                  stdout=f, stderr=subprocess.PIPE)
+            p = subprocess.Popen(["find", ".", "-name", "*pdb"],
+                  stdout=f, stderr=subprocess.PIPE, cwd=os.getcwd() + "/input/top4400pdbs")
+                 stdout=f, stderr=subprocess.PIPE)
             err = p.communicate()[1]
             if err != '': print err
             f.close()
