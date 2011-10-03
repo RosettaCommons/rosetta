@@ -36,6 +36,9 @@ namespace rdc { extern BooleanOptionKey const iterate_reset; }
 namespace rdc { extern FileOptionKey const dump_weight_trajectory; }
 namespace rdc { extern RealVectorOptionKey const fix_normAzz; }
 namespace rdc { extern FileOptionKey const select_residues_file; }
+namespace rdc { extern StringOptionKey const fit_method; }
+namespace rdc { extern RealVectorOptionKey const fixDa; }
+namespace rdc { extern RealVectorOptionKey const fixR; }
 
 } // namespace OptionKeys
 } // namespace options

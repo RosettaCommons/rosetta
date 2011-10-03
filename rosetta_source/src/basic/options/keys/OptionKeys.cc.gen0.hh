@@ -573,3 +573,4 @@ namespace abinitio { BooleanOptionKey const optimize_cutpoints_using_kic( "abini
 namespace abinitio { IntegerOptionKey const optimize_cutpoints_margin( "abinitio:optimize_cutpoints_margin" );  }
 namespace abinitio { FileOptionKey const HD_EX_Info( "abinitio:HD_EX_Info" );  }
 namespace abinitio { RealOptionKey const HD_penalty( "abinitio:HD_penalty" );  }
+namespace abinitio { RealOptionKey const HD_fa_penalty( "abinitio:HD_fa_penalty" );  }
