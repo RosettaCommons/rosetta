@@ -168,7 +168,7 @@ int not_universal_main(
 			// output
 			if ( !option[ out::nooutput ]() ) {
 				core::io::silent::SilentStructOP ss
-					= SilentStructFactory::get_instance()->get_instance()->get_silent_struct_out();
+					= SilentStructFactory::get_instance()->get_silent_struct_out();
 				ss->fill_struct( current_pose );
 
 				// add model quality information if a native was given.
