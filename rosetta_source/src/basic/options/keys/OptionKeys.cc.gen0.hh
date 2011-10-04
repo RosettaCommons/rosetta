@@ -89,6 +89,7 @@ namespace in { namespace file { IntegerOptionKey const extended_pose( "in:file:e
 namespace in { namespace file { FileVectorOptionKey const template_pdb( "in:file:template_pdb" );  } }
 namespace in { namespace file { FileOptionKey const template_silent( "in:file:template_silent" );  } }
 namespace in { namespace file { FileVectorOptionKey const rdc( "in:file:rdc" );  } }
+namespace in { namespace file { FileVectorOptionKey const burial( "in:file:burial" );  } }
 namespace in { namespace file { FileVectorOptionKey const vall( "in:file:vall" );  } }
 namespace in { namespace file { BooleanOptionKey const rescore( "in:file:rescore" );  } }
 namespace in { namespace file { StringOptionKey const spanfile( "in:file:spanfile" );  } }
@@ -573,4 +574,3 @@ namespace abinitio { BooleanOptionKey const optimize_cutpoints_using_kic( "abini
 namespace abinitio { IntegerOptionKey const optimize_cutpoints_margin( "abinitio:optimize_cutpoints_margin" );  }
 namespace abinitio { FileOptionKey const HD_EX_Info( "abinitio:HD_EX_Info" );  }
 namespace abinitio { RealOptionKey const HD_penalty( "abinitio:HD_penalty" );  }
-namespace abinitio { RealOptionKey const HD_fa_penalty( "abinitio:HD_fa_penalty" );  }

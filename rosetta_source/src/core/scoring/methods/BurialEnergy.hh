@@ -17,6 +17,7 @@
 
 
 // Package headers
+#include <core/scoring/methods/BurialEnergyCreator.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -36,7 +37,7 @@ namespace methods {
 class BurialEnergy : public WholeStructureEnergy {
 public:
 
-	BurialEnergy() {
+	BurialEnergy() : WholeStructureEnergy( new BurialEnergyCreator ) {
 		init_from_file();
 	}
 
@@ -63,13 +64,12 @@ public:
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
-	) const {}
+	) const;
 
 private:
 	void init_from_file();
 	utility::vector1< core::Real > pred_burial_;
 };
-
 
 }
 }

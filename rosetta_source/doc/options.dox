@@ -413,6 +413,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Experimental NMR Residual Dipolar Coupling File --- one file per alignment medium</dd><br>
 </dl>
 <dl>
+<dt><b>-burial</b> \<FileVector\><dt>
+<dd>WESA-formatted burial prediction</dd><br>
+</dl>
+<dl>
 <dt><b>-vall</b> \<FileVector\><dt>
 <dd>Fragment database file, e.g vall.dat.2006-05-05</dd><br>
 <dd>Default: "filtered.vall.dat.2006-05-05"</dd><br>

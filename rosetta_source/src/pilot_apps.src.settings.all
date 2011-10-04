@@ -195,6 +195,7 @@ sources = {
 	],
 
 	"pilot/james" : [
+		"per_residue_features",
 		"jdock",
 		#"make_artificial_centroids",
 		#"frag_hack",

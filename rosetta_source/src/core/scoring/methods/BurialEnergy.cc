@@ -8,27 +8,29 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/methods/BurialEnergy.cc
-/// @brief  Radius of gyration energy function definition.
 /// @author James Thompson
 
-// Unit headers
 #include <core/scoring/methods/BurialEnergy.hh>
 #include <core/scoring/methods/BurialEnergyCreator.hh>
 
-// Package headers
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
 
-// Project headers
 #include <core/pose/Pose.hh>
 
-// Utility headers
 #include <basic/prof.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/TwelveANeighborGraph.hh>
 #include <core/scoring/ContextGraphTypes.hh>
+
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+
+#include <utility/io/izstream.hh>
+#include <utility/file/FileName.hh>
+#include <ObjexxFCL/string.functions.hh>
 
 namespace core {
 namespace scoring {
@@ -46,16 +48,9 @@ BurialEnergyCreator::create_energy_method(
 ScoreTypes
 BurialEnergyCreator::score_types_for_method() const {
 	ScoreTypes sts;
-	sts.push_back( rg );
+	sts.push_back(burial);
 	return sts;
 }
-
-
-/// c-tor
-BurialEnergy::BurialEnergy() :
-	parent( new BurialEnergyCreator )
-{}
-
 
 /// clone
 EnergyMethodOP
@@ -72,18 +67,17 @@ void
 BurialEnergy::finalize_total_energy(
 	core::pose::Pose & pose,
 	ScoreFunction const &,
-	EnergyMap & totals
+	EnergyMap & emap
 ) const {
+	pose.update_residue_neighbors();
 	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+		core::conformation::Residue const & rsd( pose.residue(ii) );
 		if ( rsd.has_variant_type( "REPLONLY" ) ) continue;
 		if ( ! rsd.is_protein() ) continue;
 
-		core::conformation::Residue const & rsd;
-
 		TwelveANeighborGraph const & graph ( pose.energies().twelveA_neighbor_graph() );
-		Size const atomindex_i = rsd.atom_index( representative_atom_name( rsd.aa() ));
 
-		core::conformation::Atom const & atom_i = rsd.atom(atomindex_i);
+		core::conformation::Atom const & atom_i = rsd.atom(rsd.nbr_atom());
 
 		// iterate across neighbors within 12 angstroms, count number <10A
 		Size countN(0);
@@ -94,19 +88,24 @@ BurialEnergy::finalize_total_energy(
 			Size const j( (*ir)->get_other_ind( rsd.seqpos() ) );
 			core::conformation::Residue const & rsd_j( pose.residue(j) );
 
-			Size atomindex_j( rsd_j.nbr_atom() );
-			core::conformation::Atom const & atom_j = rsd_j.atom(atomindex_j);
+			core::conformation::Atom const & atom_j = rsd_j.atom(rsd_j.nbr_atom());
 			Real sqdist = atom_i.xyz().distance_squared( atom_j.xyz() );
-			if ( sqdist < 10 ) {
+			if ( sqdist < 100 ) {
 				countN++;
 			}
 		}
+		//std::cout << "countN(" << ii << ") = " << countN << std::endl;
 
-		// burial_prediction is negative for exposed predictions and positive for buried
-		// magnitude of burial_prediction is related to prediction confidence
 		Real const & burial_prediction( pred_burial_[ii] );
-		Real const score( -1 * burial_prediction * countN );
-		emap[ burial ] += score;
+		Real score = burial_prediction;
+		if ( countN < 16 ) {
+			emap[ burial ] += -1 * score;
+		} else {
+			emap[ burial ] += score;
+		}
+		//Real const score( -1 * burial_prediction * countN );
+		//std::cout << "score(" << ii << ") = " << score << std::endl;
+		//emap[ burial ] += score;
 	}
 }
 
@@ -122,16 +121,45 @@ BurialEnergy::indicate_required_context_graphs( utility::vector1< bool > & conte
 	context_graphs_required[ twelve_A_neighbor_graph ] = true;
 }
 
-void
-BurialEnergy::setup_for_scoring(
-	pose::Pose & pose,
-	ScoreFunction const &
-) const {
-	pose.update_residue_neighbors();
-}
+//void
+//BurialEnergy::setup_for_scoring(
+//	pose::Pose & pose,
+//	ScoreFunction const &
+//) const {
+//	pose.update_residue_neighbors();
+//}
+
 
 void BurialEnergy::init_from_file() {
-	utility::io::izstream input;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	std::string const & burial_fn( option[ in::file::burial ]()[1] );
+	//utility::vector1< core::Real > pred_burial_;
+	utility::io::izstream input(burial_fn);
+	if ( !input.good() ) {
+		std::string const msg( "Error opening file: " + burial_fn );
+		utility_exit_with_message( msg );
+	}
+
+	using std::string;
+	string line;
+	getline(input,line); // header
+	while (getline(input,line) ) {
+			std::istringstream ss(line);
+			core::Size resi;
+			char aa;
+			ss >> resi >> aa;
+			string last_token;
+			while ( ss.good() ) ss >> last_token;
+			std::istringstream dbl_reader( last_token.substr(2,4) );
+			Real burial(0);
+			dbl_reader >> burial;
+			if ( last_token.substr(0,1) == "0" ) burial *= -1;
+			pred_burial_.push_back( burial );
+			//std::cout << "line = " << line << std::endl;
+			//std::cout << "burial = " << burial << std::endl;
+	}
 }
 
 } // methods

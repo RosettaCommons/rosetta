@@ -51,6 +51,7 @@
 #include <core/scoring/methods/PairEnergyCreator.hh>
 #include <core/scoring/methods/PeptideBondEnergyCreator.hh>
 #include <core/scoring/methods/ProClosureEnergyCreator.hh>
+#include <core/scoring/methods/BurialEnergyCreator.hh>
 #include <core/scoring/methods/RG_Energy_FastCreator.hh>
 #include <core/scoring/methods/SA_EnergyCreator.hh>
 #include <core/scoring/methods/RMS_EnergyCreator.hh>
@@ -235,6 +236,7 @@ static EnergyMethodRegistrator< scoring::methods::PackStatEnergyCreator > PackSt
 static EnergyMethodRegistrator< scoring::methods::PairEnergyCreator > PairEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::PeptideBondEnergyCreator > PeptideBondEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ProClosureEnergyCreator > ProClosureEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::BurialEnergyCreator > BurialCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RG_Energy_FastCreator > RG_Energy_FastCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SA_EnergyCreator > SA_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RMS_EnergyCreator > RMS_EnergyCreator_registrator;
