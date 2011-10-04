@@ -107,9 +107,13 @@ The following files are required for kinematic loop modeling:
 column1  "LOOP":     The loop file identify tag
 column2  "integer":  Loop start residue number
 column3  "integer":  Loop end residue number
-column4  "integer":  Cut point residue number, >=startRes, <=endRes. default - let the loop modeling code choose cutpoint. Note: Setting the cut point outside the loop can lead to a segmentation fault. 
+column4  "integer":  Cut point residue number, >=startRes, <=endRes. default - let the loop modeling code choose cutpoint. 
+                     Note: Setting the cut point outside the loop can lead to a segmentation fault. 
 column5  "float":    Skip rate. default - never skip
-column6  "boolean":  Extend loop. Default false. Setting this flag to 1 leads to randomization of the loop conformation before KIC sampling, using idealized bond lengths and angles. This is important for loop reconstruction benchmarks to ensure a starting loop conformation that is different from the original one, as well as for <em>de novo</em> loop construction/insertion based on unconnected loop residues. 
+column6  "boolean":  Extend loop. Default false. Setting this flag to 1 leads to randomization of the loop conformation before KIC sampling, 
+                     using idealized bond lengths and angles. This is important for loop reconstruction benchmarks to ensure a starting loop 
+                     conformation that is different from the original one, as well as for <em>de novo</em> loop construction/insertion with KIC, 
+                     based on unconnected loop residues (see tutorial at https://svn.rosettacommons.org/source/trunk/RosettaCon2011/demos/model_missing_loop/). 
 @endverbatim
 An example loop definition file can be found at <code>test/integration/tests/kinematic_looprelax/input/4fxn.loop</code>, which looks like this:
 @verbatim
@@ -178,10 +182,10 @@ region_sidechains_after_move    Should rotamer trials and minimization be perfor
 @endverbatim
 @li Flags specific to Rosetta revision 24219 used in the original publication by Mandell <em>et al.</em> (2009, see @ref kic_refs):
 @verbatim
--loops:template_pdb                Path/name of input pdb file.  [File]
--loops:kinematic                   Activates the KIC method for both remodel and refine stages. 
--loops:output_pdb                  Definition of the output path and PDB prefix. Note: In this old version of Rosetta, the 
-                                   -out:pdb_gz and -out:path flags don't work. 
+-loops:template_pdb             Path/name of input pdb file.  [File]
+-loops:kinematic                Activates the KIC method for both remodel and refine stages. 
+-loops:output_pdb               Definition of the output path and PDB prefix. Note: In this old version of Rosetta, the 
+                                -out:pdb_gz and -out:path flags don't work. 
 @endverbatim
 <strong>NOTE:</strong> In this old version of the KIC protocol, an unlimited number of loop build attempts are performed. 
 
