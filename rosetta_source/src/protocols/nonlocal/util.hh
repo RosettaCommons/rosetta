@@ -29,7 +29,6 @@
 #include <protocols/loops/Loops.hh>
 
 // Package headers
-#include <protocols/nonlocal/NLGrouping.hh>
 #include <core/scoring/ScoreType.hh>
 
 namespace protocols {
