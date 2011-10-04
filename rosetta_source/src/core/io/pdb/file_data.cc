@@ -62,7 +62,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-
+#include <basic/options/keys/pH.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <core/chemical/AtomTypeSet.hh>
@@ -668,7 +668,8 @@ build_pose_as_is1(
 			if ( rsd_type.aa() == aa_cys && rsd_type.has_variant_type( DISULFIDE ) && pdb_name != "CYD" ) {
 				continue;
 			}
-			if ( rsd_type.has_variant_type( PROTONATED ) || rsd_type.has_variant_type( DEPROTONATED ) ){
+			if ( !basic::options::option[ basic::options::OptionKeys::pH::pH_mode ]() &&
+				( rsd_type.has_variant_type( PROTONATED ) || rsd_type.has_variant_type( DEPROTONATED ) )){
 				continue;
 			}
 			Size rsd_missing(0), xyz_missing(0);
