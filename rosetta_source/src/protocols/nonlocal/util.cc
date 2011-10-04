@@ -326,7 +326,8 @@ protocols::loops::Loops remove_small_gaps(protocols::loops::Loops const & input_
   while (i_chunk <= input_chunks.num_loop()) {
     Loop new_loop(input_chunks[i_chunk]);
     while(i_chunk < input_chunks.num_loop()) {
-      if (input_chunks[i_chunk+1].start() - input_chunks[i_chunk].stop() <= gap_size+1) {
+      const core::Size gap_length = input_chunks[i_chunk+1].start() - input_chunks[i_chunk].stop();
+      if (gap_length <= gap_size) {
         new_loop.set_stop(input_chunks[i_chunk+1].stop());
         ++i_chunk;
       }
@@ -384,15 +385,14 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
 }
 
 core::Real get_per_residue_score(
-	core::Size rsd_idx,
-	core::scoring::ScoreType scoretype,
-	core::pose::Pose const & pose
+  core::Size rsd_idx,
+  core::scoring::ScoreType scoretype,
+  core::pose::Pose const & pose
 ) {
-	using namespace core::scoring;
-	//EnergyMap weights( current_pose.energies().weights() );
-	assert( rsd_idx <= pose.total_residue() );
-	EnergyMap const & rsd_energies(pose.energies().residue_total_energies(rsd_idx)); // unweighted scores
-	return rsd_energies[ scoretype ];
+  using namespace core::scoring;
+  assert( rsd_idx <= pose.total_residue() );
+  EnergyMap const & rsd_energies(pose.energies().residue_total_energies(rsd_idx)); // unweighted scores
+  return rsd_energies[ scoretype ];
 }
 
 }  // namespace nonlocal
