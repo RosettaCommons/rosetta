@@ -16,6 +16,7 @@
 #include <test/protocols/init_util.hh>
 
 // C/C++ headers
+#include <algorithm>
 #include <string>
 
 // External headers
@@ -178,7 +179,7 @@ class NonlocalUtilTest : public CxxTest::TestSuite {
     chunks.push_back(1, 20);
     chunks.push_back(21, model.total_residue());
 
-		StarTreeBuilder builder;
+    StarTreeBuilder builder;
     builder.set_up(chunks, &model);
 
     unordered_map<Size, Real> rmsds;
@@ -188,6 +189,22 @@ class NonlocalUtilTest : public CxxTest::TestSuite {
       TS_ASSERT_DELTA(0, i->second, 0.0025);
 
     builder.tear_down(&model);
+  }
+
+  /// @brief Unit test for choosing insertion positions using binary search
+  void test_random_position() {
+    int x[] = {10, 20, 30, 30, 20, 10, 10, 20};
+    vector1<int> data(x, x + 8);
+
+    // data  10 10 10 20 20 20 30 30
+    //                ^        ^
+    // index 1  2  3  4  5  6  7  8
+    std::sort(data.begin(), data.end());
+    vector1<int>::const_iterator lower = std::lower_bound(data.begin(), data.end(), 20);
+    vector1<int>::const_iterator upper = std::upper_bound(data.begin(), data.end(), 20);
+
+    TS_ASSERT_EQUALS(4, lower - data.begin() + 1);
+    TS_ASSERT_EQUALS(7, upper - data.begin() + 1);
   }
 };
 }  // anonymous namespace

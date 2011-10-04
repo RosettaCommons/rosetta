@@ -18,8 +18,7 @@ sources = {
             "MedalMover",
         ],
 	"protocols/nonlocal" : [
-                #"BiasedFragmentMover",
-                #"BiasedFragmentMoverCreator",
+                "BiasedFragmentMover",
 		"BoundaryFinder",
 		"BrokenFold",
 		"Chunk",
