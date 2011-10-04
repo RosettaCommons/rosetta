@@ -50,6 +50,9 @@ f$don_dssp <- factor(f$don_dssp,
 		'G: 3/10 Helix', 'B: b-Bridge', 'S: Bend',
 		'I: pi-Helix',   'Irregular'))
 
+# remove non-canonical amino acids
+f <- na.omit(f, method="r")
+
 f <- transform(f,
   AHchi = vector_dihedral(
     cbind(abx, aby, abz), cbind(ax, ay, az),

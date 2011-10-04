@@ -1,3 +1,21 @@
+
+########################
+How to get this sample_source setup:
+
+1) put directory of pdbs into the input/ directory, e.g. 'top8000_chains_eds_70/'
+
+2) run setup_resfiles.py 'python setup_resfiles.py --data_dir top8000_chains_eds_70' to generate generated rosetta_inputs.db3
+
+3) setup the list of structures to use: eg 'ls top8000_chains_eds/ > all_pdbs.list' 
+
+4) if you didn't use top8000_chains_eds_70, edit the '-in:path option in' in flags.TEMPLATE 
+
+5) add this sample_source to features/sample_source/benchmark.list
+
+##########################
+
+
+
 The Top8000: An Origin Story
 
 Daniel A. Keedy, W. Bryan Arendall, Lindsay N. Deis, Jane S. Richardson

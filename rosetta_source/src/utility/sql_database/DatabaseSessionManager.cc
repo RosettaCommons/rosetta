@@ -39,6 +39,7 @@ namespace sql_database {
 
 using utility::file::FileName;
 using std::stringstream;
+using cppdb::cppdb_error;
 
 #ifdef MULTITHREADED
 	boost::thread_specific_pointer< DatabaseSessionManager > DatabaseSessionManager::instance_;
@@ -69,11 +70,19 @@ using std::stringstream;
 	  bool const readonly
 	){
 		sessionOP s(new session());
-		if(readonly){
-			s->open("sqlite3:mode=readonly;db="+FileName(db_fname).name());
-		} else {
-			s->open("sqlite3:db="+FileName(db_fname).name());
-
+		try {
+			if(readonly){
+				s->open("sqlite3:mode=readonly;db="+FileName(db_fname).name());
+			} else {
+				s->open("sqlite3:db="+FileName(db_fname).name());
+			}
+		} catch (cppdb_error & e){
+			std::stringstream error_msg;
+			error_msg
+				<< "Failed to open database file '" << db_fname << "'"
+				<< (readonly ? " in readonly mode:" : ":") << std::endl
+				<< "\t" << e.what();
+			utility_exit_with_message(error_msg.str());
 		}
 		return s;
   }

@@ -29,14 +29,10 @@
 // External Headers
 #include <cppdb/frontend.h>
 
-// C++ Headers
-#include <sstream>
-
 namespace protocols{
 namespace features{
 
 using std::string;
-using std::stringstream;
 using protocols::jumping::Dssp;
 using core::Size;
 using core::conformation::Residue;
@@ -110,14 +106,11 @@ ResidueSecondaryStructureFeatures::report_features(
 			break;
 		}
 
-
-		// don't just push the char into the table.  It will end up an int!
-		stringstream dssp; dssp << all_dssp.get_dssp_secstruct(resNum);
 		statement stmt = (*db_session)
 			<< "INSERT INTO residue_secondary_structure VALUES (?,?,?);"
 			<< struct_id
 			<< resNum
-			<< dssp.str();
+			<< string(1, all_dssp.get_dssp_secstruct(resNum));
 		stmt.exec();
 	}
 	return 0;

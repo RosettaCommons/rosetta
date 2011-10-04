@@ -12,7 +12,7 @@
 
 import sys, commands, subprocess, re
 
-from os import path, environ, getcwd()
+from os import path, environ, getcwd
 from optparse import OptionParser, IndentedHelpFormatter
 
 

@@ -7,7 +7,7 @@
 #
 # Run this script
 #
-#    python setup_resfiles.py --data_dir <path_to_pdb_files> --rosetta_inputs_db <rosetta_inputs.db3>
+#    python setup_resfiles.py --data_dir <path_to_pdb_files>
 #
 #    In the data directory should be pdb files named like ????FH_?.pdb
 #    where the last "?" indicates which chain should be used.
@@ -68,6 +68,7 @@ def main(argv):
       help="A directory containing pdb files of the form ???FH_?.pdb where the final ? indicates the chain letter of the chain that should be used.")
 
     parser.add_option("--rosetta_inputs_db",
+      default="rosetta_inputs.db3",
       help="The path to a sqlite3 database where the resfiles should be stored.")
 
     (options, args) = parser.parse_args(args=argv)
