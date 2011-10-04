@@ -13,7 +13,7 @@
 @page kinematic_loopmodel Documentation for kinematic loop modeling
 
 @section metadata Metadata
-This document was last updated October 30, 2011 by Roland A. Pache. The corresponding PIs for this application are Tanja Kortemme <kortemme@cgl.ucsf.edu> and Evangelos A. Coutsias <coutsias@unm.edu>.
+This document was last updated October 4, 2011 by Roland A. Pache. The corresponding PIs for this application are Tanja Kortemme <kortemme@cgl.ucsf.edu> and Evangelos A. Coutsias <coutsias@unm.edu>.
 
 @section kic_code_demos Code and Demo
 The current application for this method (in Rosetta 3.3) is <code>bin/loopmodel.<my_os>gccrelease</code>. The major protocol movers are <code>src/protocols/moves/KinematicMover</code>, which performs a localized kinematic perturbation to a peptide chain, <code>src/protocols/loops/LoopMover_KIC</code>, which wraps the KinematicMover into a Monte Carlo protocol for loop modeling, and <code>src/protocols/loops/LoopRelaxMover</code>, which allows the protocols in LoopMover_KIC to be combined with other loop modeling protocols. A basic usage example that briefly remodels an 8-residue loop is the <code>kinematic_looprelax</code> integration test, which resides at <code>test/integration/tests/kinematic_looprelax</code>.
@@ -113,7 +113,8 @@ column5  "float":    Skip rate. default - never skip
 column6  "boolean":  Extend loop. Default false. Setting this flag to 1 leads to randomization of the loop conformation before KIC sampling, 
                      using idealized bond lengths and angles. This is important for loop reconstruction benchmarks to ensure a starting loop 
                      conformation that is different from the original one, as well as for <em>de novo</em> loop construction/insertion with KIC, 
-                     based on unconnected loop residues (see tutorial at https://svn.rosettacommons.org/source/trunk/RosettaCon2011/demos/model_missing_loop/). 
+                     to create a connected starting loop conformation from single unconnected loop residues 
+                     (see tutorial at https://svn.rosettacommons.org/source/trunk/RosettaCon2011/demos/model_missing_loop/). 
 @endverbatim
 An example loop definition file can be found at <code>test/integration/tests/kinematic_looprelax/input/4fxn.loop</code>, which looks like this:
 @verbatim
