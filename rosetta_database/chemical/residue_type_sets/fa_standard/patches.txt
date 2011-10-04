@@ -17,7 +17,7 @@ patches/VirtualProteinResidue.txt
 patches/CtermConnect.txt
 
 ##added by steven combs November 11 2010
-patches/sc_orbitals.txt
+#patches/sc_orbitals.txt
 
 
 ## The following were added by Andy M. Chen in June 2009
