@@ -17,25 +17,29 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 using std::string;
+using utility::sql_database::sessionOP;
+using utility::sql_database::DatabaseSessionManager;
 
 namespace basic {
 namespace database {
 
 utility::sql_database::sessionOP get_db_session(
 	string const & db_name,
-	bool const readonly
+	bool const readonly /* = false */,
+  bool const separate_db_per_mpi_process /* = false */
 ){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
 	string db_mode(option[inout::database_mode]);
-	return get_db_session(db_name, db_mode, readonly);
+	return get_db_session(db_name, db_mode, readonly, separate_db_per_mpi_process);
 }
 
-utility::sql_database::sessionOP get_db_session(
+sessionOP get_db_session(
 	string const & db_name,
 	string const & db_mode,
-	bool const readonly
+	bool const readonly /* = false */,
+	bool const separate_db_per_mpi_process /* = false */
 ){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -44,18 +48,19 @@ utility::sql_database::sessionOP get_db_session(
 
 		if(option[mysql::host].user() || option[mysql::user].user() || option[mysql::password].user() || option[mysql::port].user())
 		{
-			utility_exit_with_message("you have specified mysql server options, but are running in sqlite3 mode, spefcify -inout:database_mode mysql to rectify this.");
+			utility_exit_with_message("you have specified mysql server options, but are running in sqlite3 mode, specify -inout:database_mode mysql to rectify this.");
 		}
-		utility::sql_database::sessionOP db_session(utility::sql_database::DatabaseSessionManager::get_instance()->get_session(db_name, readonly));
+		sessionOP db_session(DatabaseSessionManager::get_instance()->get_session(db_name, readonly, separate_db_per_mpi_process));
 		return db_session;
 	}else if(db_mode == "mysql")
 	{
 #ifndef USEMYSQL
-		utility_exit_with_message("if you want to use a mysql database, build with extras=mysql");
+		utility_exit_with_message("If you want to use a mysql database, build with extras=mysql");
 #endif
 		if(readonly){
 			utility_exit_with_message("Restricting access to a mysql database is done at the user level rather that the connection level. So requesting a readonly connection cannot fullfilled.");
 		}
+
 		if(option[mysql::host].user() && option[mysql::user].user() && option[mysql::password].user() && option[mysql::port].user())
 		{
 			string host(option[mysql::host]);
@@ -64,16 +69,16 @@ utility::sql_database::sessionOP get_db_session(
 			platform::Size port(option[mysql::port]);
 
 
-			utility::sql_database::sessionOP db_session(
-				utility::sql_database::DatabaseSessionManager::get_instance()->get_session(host,user,password,db_name,port));
+			sessionOP db_session(
+				DatabaseSessionManager::get_instance()->get_session(host,user,password,db_name,port));
 			return db_session;
 		}else
 		{
-			utility_exit_with_message("yiou must specify the following options to use a mysql database: -mysql:host -mysql:user -mysql:password -mysql:port");
+			utility_exit_with_message("You must specify the following options to use a mysql database: -mysql:host -mysql:user -mysql:password -mysql:port");
 		}
 	}else
 	{
-		utility_exit_with_message("you need to specify either 'mysql' or 'sqlite3' as a mode with -inout:database_mode.  You specified: "+db_mode);
+		utility_exit_with_message("You need to specify either 'mysql' or 'sqlite3' as a mode with -inout:database_mode.  You specified: "+db_mode);
 	}
 }
 

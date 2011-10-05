@@ -58,7 +58,8 @@ public:
 	sessionOP
 	get_session(
 		std::string const & db_fname,
-		bool const readonly=false);
+		bool const readonly=false,
+		bool const separate_db_per_mpi_process=false);
 
 	// overloaded get_session function for mysql
 	sessionOP

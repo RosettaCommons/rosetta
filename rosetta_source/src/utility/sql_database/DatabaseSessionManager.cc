@@ -38,6 +38,7 @@ namespace utility {
 namespace sql_database {
 
 using utility::file::FileName;
+using std::string;
 using std::stringstream;
 using cppdb::cppdb_error;
 
@@ -63,18 +64,38 @@ using cppdb::cppdb_error;
 
   DatabaseSessionManager::~DatabaseSessionManager() {}
 
-  // Currently only supports SQLite3 and mysqldatabase databases
+  ///details@ Currently only supports SQLite3 and mysqldatabase databases
+	/// if the separate_db_per_mpi_process appends "_<mpi_rank>" to the end of the database filename
+  /// This is useful when writing to an sqlite database not through the job distributor where locking causes problems
   sessionOP
   DatabaseSessionManager::get_session(
 	  std::string const & db_fname,
-	  bool const readonly
+	  bool const readonly /* = false */,
+		bool const separate_db_per_mpi_process /* = false */
 	){
 		sessionOP s(new session());
+
 		try {
-			if(readonly){
-				s->open("sqlite3:mode=readonly;db="+FileName(db_fname).name());
+			string use_db_fname;
+
+#ifdef USEMPI
+			if(separate_db_per_mpi_process){
+				int mpi_rank(0);
+				MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+				stringstream buf; buf << FileName(db_fname).name() << "_" << mpi_rank;
+				use_db_fname = buf.str();
 			} else {
-				s->open("sqlite3:db="+FileName(db_fname).name());
+				use_db_fname = FileName(db_fname).name();
+			}
+#else
+			use_db_fname = FileName(db_fname).name();
+#endif
+
+
+			if(readonly){
+				s->open("sqlite3:mode=readonly;db="+use_db_fname);
+			} else {
+				s->open("sqlite3:db="+use_db_fname);
 			}
 		} catch (cppdb_error & e){
 			std::stringstream error_msg;

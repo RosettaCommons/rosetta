@@ -46,14 +46,14 @@ sele <-"
 CREATE TEMPORARY TABLE ee_bb_bb_hbonds AS
 SELECT
   hb.struct_id,
-  acc_site.resNum as acc_resNum,
-  don_site.resNum as don_resNum
+  acc_site.resNum AS acc_resNum,
+  don_site.resNum AS don_resNum
 FROM
-  hbonds as hb,
-  hbond_sites as acc_site,
-  hbond_sites as don_site,
-  residue_secondary_structure as r1ss,
-  residue_secondary_structure as r2ss
+  hbonds AS hb,
+  hbond_sites AS acc_site,
+  hbond_sites AS don_site,
+  residue_secondary_structure AS r1ss,
+  residue_secondary_structure AS r2ss
 WHERE
   acc_site.HBChemType = 'hbacc_PBA' AND
   acc_site.struct_id = hb.struct_id AND
@@ -71,11 +71,11 @@ WHERE
 CREATE TEMPORARY TABLE antiparallel_close_contact_residue_pairs AS
 SELECT
   hb1.struct_id,
-  hb1.acc_resNum as resNum_i,
-  hb1.don_resNum as resNum_j
+  hb1.acc_resNum AS resNum_i,
+  hb1.don_resNum AS resNum_j
 FROM
-  ee_bb_bb_hbonds as hb1,
-  ee_bb_bb_hbonds as hb2
+  ee_bb_bb_hbonds AS hb1,
+  ee_bb_bb_hbonds AS hb2
 WHERE
   hb1.struct_id  = hb2.struct_id AND
   hb1.acc_resNum = hb2.don_resNum AND
@@ -84,19 +84,19 @@ WHERE
 
 CREATE TEMPORARY TABLE antiparallel_O_O AS
 SELECT dist.O_O_dist AS dist, 'antiparallel' AS strand_orientation
-FROM   protein_backbone_atom_atom_pairs as dist,
-       antiparallel_close_contact_residue_pairs as atpairs
+FROM   protein_backbone_atom_atom_pairs AS dist,
+       antiparallel_close_contact_residue_pairs AS atpairs
 WHERE  dist.struct_id =  atpairs.struct_id AND
        dist.resNum1 = atpairs.resNum_i AND dist.resNum2 = atpairs.resNum_j;
 
 CREATE TEMPORARY TABLE parallel_close_contact_residue_pairs AS
 SELECT
   hb1.struct_id,
-  hb1.acc_resNum as resNum_i,
-  hb1.don_resNum as resNum_j
+  hb1.acc_resNum AS resNum_i,
+  hb1.don_resNum AS resNum_j
 FROM
-  ee_bb_bb_hbonds as hb1,
-  ee_bb_bb_hbonds as hb2
+  ee_bb_bb_hbonds AS hb1,
+  ee_bb_bb_hbonds AS hb2
 WHERE
   hb1.struct_id   = hb2.struct_id AND
   hb1.don_resNum  = hb2.acc_resNum AND
@@ -104,16 +104,16 @@ WHERE
 
 CREATE TEMPORARY TABLE parallel_O_O_minus AS
 SELECT dist.O_O_dist AS dist, 'parallel_minus' AS strand_orientation
-FROM   protein_backbone_atom_atom_pairs as dist,
-       parallel_close_contact_residue_pairs as apairs
+FROM   protein_backbone_atom_atom_pairs AS dist,
+       parallel_close_contact_residue_pairs AS apairs
 WHERE  dist.struct_id =  apairs.struct_id AND
        apairs.resNum_i < apairs.resNum_j AND
        dist.resNum1 = apairs.resNum_i AND dist.resNum2 = apairs.resNum_j - 1;
 
 CREATE TEMPORARY TABLE parallel_O_O_plus AS
 SELECT dist.O_O_dist AS dist, 'parallel_plus' AS strand_orientation
-FROM   protein_backbone_atom_atom_pairs as dist,
-       parallel_close_contact_residue_pairs as apairs
+FROM   protein_backbone_atom_atom_pairs AS dist,
+       parallel_close_contact_residue_pairs AS apairs
 WHERE  dist.struct_id =  apairs.struct_id AND
        apairs.resNum_i < apairs.resNum_j AND
        dist.resNum1 = apairs.resNum_i AND dist.resNum2 = apairs.resNum_j + 1;

@@ -14,8 +14,8 @@ SELECT
 	geom.AHdist,
 	geom.cosBAH,
 	geom.chi,
-  don_site.HBChemType as don_chem_type,
-  acc_site.HBChemType as acc_chem_type
+  don_site.HBChemType AS don_chem_type,
+  acc_site.HBChemType AS acc_chem_type
 FROM
 	hbond_geom_coords AS geom,
 	hbonds AS hbond,

@@ -11,7 +11,7 @@ check_setup()
 
 sele <-"
 SELECT
-  acc_site.HBChemType as acc_chem_type,
+  acc_site.HBChemType AS acc_chem_type,
   count(acc_site.HBChemType) AS acc_chem_type_count
 FROM
   hbonds AS hbond,
@@ -43,7 +43,7 @@ save_plots(plot_id, sample_sources, output_dir, output_formats)
 
 sele <-"
 SELECT
-  don_site.HBChemType as don_chem_type,
+  don_site.HBChemType AS don_chem_type,
   count(don_site.HBChemType) AS don_chem_type_count
 FROM
   hbonds AS hbond,

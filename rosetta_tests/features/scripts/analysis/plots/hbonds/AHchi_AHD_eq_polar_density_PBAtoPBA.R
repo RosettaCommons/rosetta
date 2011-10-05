@@ -12,7 +12,7 @@ check_setup()
 sele <-"
 SELECT
 	geom.cosAHD,
-	don_site.HBChemType as don_chem_type,
+	don_site.HBChemType AS don_chem_type,
 	acc_site.HBChemType  acc_chem_type,
   don_ss.dssp AS don_dssp,
  	acc_atoms.base_x AS abx, acc_atoms.base_y AS aby, acc_atoms.base_z AS abz, -- acceptor base atom
@@ -24,7 +24,7 @@ FROM
 	hbonds AS hbond,
 	hbond_sites AS don_site,
 	hbond_sites AS acc_site,
-	residue_secondary_structure as don_ss,
+	residue_secondary_structure AS don_ss,
 	hbond_site_atoms AS don_atoms, hbond_site_atoms AS acc_atoms
 WHERE
 	don_site.HBChemType == 'hbdon_PBA' AND acc_site.HBChemType == 'hbacc_PBA' AND

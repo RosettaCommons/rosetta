@@ -20,9 +20,9 @@ SELECT
   dist.C_N_dist,   dist.C_Ca_dist,  dist.C_C_dist,   dist.C_O_dist,
   dist.O_N_dist,   dist.O_Ca_dist,  dist.O_C_dist,   dist.O_O_dist
 FROM
-  protein_backbone_atom_atom_pairs as dist,
-	residue_secondary_structure as r1ss,
-	residue_secondary_structure as r2ss
+  protein_backbone_atom_atom_pairs AS dist,
+	residue_secondary_structure AS r1ss,
+	residue_secondary_structure AS r2ss
 WHERE
   dist.struct_id = r1ss.struct_id AND
   dist.struct_id = r2ss.struct_id AND
@@ -32,52 +32,52 @@ WHERE
   r1ss.dssp = 'H' AND r2ss.dssp = 'H'
 LIMIT 500000;
 SELECT
-  'N' as at1, 'N' as at2, N_N_dist as dist FROM ee_atpair_dists
+  'N' AS at1, 'N' AS at2, N_N_dist AS dist FROM ee_atpair_dists
 UNION
 SELECT
-  'N' as at1, 'CA' as at2, N_Ca_dist as dist FROM ee_atpair_dists
+  'N' AS at1, 'CA' AS at2, N_Ca_dist AS dist FROM ee_atpair_dists
 UNION
 SELECT
-  'N' as at1, 'CA' as at2, Ca_N_dist as dist FROM ee_atpair_dists
+  'N' AS at1, 'CA' AS at2, Ca_N_dist AS dist FROM ee_atpair_dists
 UNION
 SELECT
-  'N' as at1, 'C' as at2, N_C_dist as dist FROM ee_atpair_dists
+  'N' AS at1, 'C' AS at2, N_C_dist AS dist FROM ee_atpair_dists
 UNION
 SELECT
-  'N' as at1, 'C' as at2, C_N_dist as dist FROM ee_atpair_dists
+  'N' AS at1, 'C' AS at2, C_N_dist AS dist FROM ee_atpair_dists
 UNION
 SELECT
-  'N' as at1, 'O' as at2, N_O_dist as dist FROM ee_atpair_dists
+  'N' AS at1, 'O' AS at2, N_O_dist AS dist FROM ee_atpair_dists
 UNION
 SELECT
-  'N' as at1, 'O' as at2, O_N_dist as dist FROM ee_atpair_dists
+  'N' AS at1, 'O' AS at2, O_N_dist AS dist FROM ee_atpair_dists
 UNION
 SELECT
-  'CA' as at1, 'CA' as at2, Ca_Ca_dist as dist FROM ee_atpair_dists
+  'CA' AS at1, 'CA' AS at2, Ca_Ca_dist AS dist FROM ee_atpair_dists
 UNION
 SELECT
-  'CA' as at1, 'C' as at2, Ca_C_dist as dist FROM ee_atpair_dists
+  'CA' AS at1, 'C' AS at2, Ca_C_dist AS dist FROM ee_atpair_dists
 UNION
 SELECT
-  'CA' as at1, 'C' as at2, C_Ca_dist as dist FROM ee_atpair_dists
+  'CA' AS at1, 'C' AS at2, C_Ca_dist AS dist FROM ee_atpair_dists
 UNION
 SELECT
-  'CA' as at1, 'O' as at2, Ca_O_dist as dist FROM ee_atpair_dists
+  'CA' AS at1, 'O' AS at2, Ca_O_dist AS dist FROM ee_atpair_dists
 UNION
 SELECT
-  'CA' as at1, 'O' as at2, O_Ca_dist as dist FROM ee_atpair_dists
+  'CA' AS at1, 'O' AS at2, O_Ca_dist AS dist FROM ee_atpair_dists
 UNION
 SELECT
-  'C' as at1, 'C' as at2, C_C_dist as dist FROM ee_atpair_dists
+  'C' AS at1, 'C' AS at2, C_C_dist AS dist FROM ee_atpair_dists
 UNION
 SELECT
-  'C' as at1, 'O' as at2, C_O_dist as dist FROM ee_atpair_dists
+  'C' AS at1, 'O' AS at2, C_O_dist AS dist FROM ee_atpair_dists
 UNION
 SELECT
-  'C' as at1, 'O' as at2, O_C_dist as dist FROM ee_atpair_dists
+  'C' AS at1, 'O' AS at2, O_C_dist AS dist FROM ee_atpair_dists
 UNION
 SELECT
-  'O' as at1, 'O' as at2, O_O_dist as dist FROM ee_atpair_dists;"
+  'O' AS at1, 'O' AS at2, O_O_dist AS dist FROM ee_atpair_dists;"
 
 f <- query_sample_sources(sample_sources, sele)
 
@@ -117,15 +117,15 @@ save_plots(plot_id, sample_sources, output_dir, output_formats)
 #  dist.C_N_dist,   dist.C_Ca_dist,  dist.C_C_dist,   dist.C_O_dist,
 #  dist.O_N_dist,   dist.O_Ca_dist,  dist.O_C_dist,   dist.O_O_dist
 #FROM
-#  hbond_sites as acc_site1,
-#  hbond_sites as don_site1,
-#  hbonds as hb1,
-#  hbond_sites as acc_site2,
-#  hbond_sites as don_site2,
-#  hbonds as hb2,
-#  protein_backbone_atom_atom_pairs as dist,
-#	protein_residue_conformation as r1conf,
-#	protein_residue_conformation as r2conf
+#  hbond_sites AS acc_site1,
+#  hbond_sites AS don_site1,
+#  hbonds AS hb1,
+#  hbond_sites AS acc_site2,
+#  hbond_sites AS don_site2,
+#  hbonds AS hb2,
+#  protein_backbone_atom_atom_pairs AS dist,
+#	protein_residue_conformation AS r1conf,
+#	protein_residue_conformation AS r2conf
 #WHERE
 #  acc_site1.struct_id = don_site1.struct_id AND
 #  hb1.struct_id = acc_site1.struct_id AND

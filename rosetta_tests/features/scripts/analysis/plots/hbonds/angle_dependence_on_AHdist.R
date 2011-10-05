@@ -12,7 +12,7 @@ check_setup()
 sele <-"
 SELECT
 	geom.AHdist, geom.cosBAH, geom.cosAHD, geom.chi,
-	don.HBChemType AS don_chem_type, acc.HBChemType as acc_chem_type
+	don.HBChemType AS don_chem_type, acc.HBChemType AS acc_chem_type
 FROM
 	hbond_geom_coords AS geom,
 	hbonds AS hbond,

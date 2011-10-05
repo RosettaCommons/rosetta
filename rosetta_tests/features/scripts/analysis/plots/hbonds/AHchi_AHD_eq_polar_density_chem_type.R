@@ -12,12 +12,13 @@ check_setup()
 sele <-"
 SELECT
 	geom.cosAHD,
-	don_site.HBChemType as don_chem_type,
-	acc_site.HBChemType as acc_chem_type,
+	don_site.HBChemType AS don_chem_type,
+	acc_site.HBChemType AS acc_chem_type,
  	acc_atoms.base_x AS abx, acc_atoms.base_y AS aby, acc_atoms.base_z AS abz, -- acceptor base atom
 	acc_atoms.atm_x  AS ax,  acc_atoms.atm_y  AS ay,  acc_atoms.atm_z  AS az,  -- acceptor atom
 	don_atoms.atm_x  AS hx,  don_atoms.atm_y  AS hy,  don_atoms.atm_z  AS hz,  -- hydrogen atom
-	don_atoms.base_x AS dx,  don_atoms.base_y AS dy,  don_atoms.base_z AS dz   -- donor atom
+	don_atoms.base_x AS dx,  don_atoms.base_y AS dy,  don_atoms.base_z AS dz,  -- donor atom
+	hbond.accRank AS acc_rank
 FROM
 	hbond_geom_coords AS geom,
 	hbonds AS hbond,
@@ -30,24 +31,26 @@ WHERE
 	hbond.struct_id = don_site.struct_id AND hbond.don_id = don_site.site_id AND
 	hbond.struct_id = acc_site.struct_id AND hbond.acc_id = acc_site.site_id AND
 	don_atoms.struct_id = hbond.struct_id AND don_atoms.site_id = hbond.don_id AND
-	acc_atoms.struct_id = hbond.struct_id AND acc_atoms.site_id = hbond.acc_id;";
+	acc_atoms.struct_id = hbond.struct_id AND acc_atoms.site_id = hbond.acc_id;"
 f <- query_sample_sources(sample_sources, sele)
 
 f$don_chem_type <- factor(f$don_chem_type,
 	levels = c("hbdon_HXL", "hbdon_IMD", "hbdon_GDE", "hbdon_AHX",
 		"hbdon_IME", "hbdon_GDH", "hbdon_CXA", "hbdon_AMO", "hbdon_IND", "hbdon_PBA"),
 	labels = c("dHXL: s,t", "dIMD: h", "dGDE: r", "dAHX: y", "dIME: h", "dGDH: r",
-		  "dCXA: n,q", "dAMO: k", "dIND: w", "dPBA: bb"))
+		"dCXA: n,q", "dAMO: k", "dIND: w", "dPBA: bb"))
 
 f$acc_chem_type <- factor(f$acc_chem_type,
 	levels = c("hbacc_HXL", "hbacc_CXL", "hbacc_IMD", "hbacc_AHX", "hbacc_CXA", "hbacc_IME",  "hbacc_PBA"),
 	labels = c("aHXL: s,t", "aCXL: d,e", "aIMD: h",   "aAHX: y",   "aCXA: n,q", "aIME: h",    "aPBA: bb"))
 
+f$acc_rank <- factor(f$acc_rank)
+
 f <- transform(f,
-  AHchi = vector_dihedral(
-    cbind(abx, aby, abz), cbind(ax, ay, az),
-    cbind(hx, hy, hz), cbind(dx, dy, dz)))
-               
+	AHchi = vector_dihedral(
+		cbind(abx, aby, abz), cbind(ax, ay, az),
+		cbind(hx, hy, hz), cbind(dx, dy, dz)))
+
 #equal area projection
 f <- transform(f,
 	capx = 2*sin(acos(cosAHD)/2)*cos(AHchi),
@@ -70,47 +73,62 @@ narrow_output_formats <- transform(output_formats, width=height)
 
 d_ply(f, .(sample_source), function(sub_f){
 	ss_id <- sub_f$sample_source[1]
-        
+
 	plot_id = paste("AHchi_AHD_eq_polar_density_by_don", ss_id, sep="_")
-        sub_f <- ddply(sub_f, .(don_chem_type), transform, counts = length(sample_source))
+		sub_f <- ddply(sub_f, .(don_chem_type), transform, counts = length(sample_source))
 	ggplot(data=sub_f) + plot_parts +
 		opts(title = paste("Hydrogen Bonds AHchi vs AHD Angles Sidechain-Sidechain\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
-                facet_wrap( ~ don_chem_type)
+		facet_wrap( ~ don_chem_type)
 	save_plots(plot_id, sample_sources[sample_sources$sample_source == ss_id,],
 		output_dir, narrow_output_formats)
 
-        plot_id = paste("AHchi_AHD_eq_polar_density_by_acc", ss_id, sep="_")
-        sub_f <- ddply(sub_f, .(acc_chem_type), transform, counts = length(sample_source))
-        ggplot(data=sub_f) + plot_parts +
+	plot_id = paste("AHchi_AHD_eq_polar_density_by_acc", ss_id, sep="_")
+	sub_f <- ddply(sub_f, .(acc_chem_type), transform, counts = length(sample_source))
+	ggplot(data=sub_f) + plot_parts +
 		opts(title = paste("Hydrogen Bonds AHchi vs AHD Angles Sidechain-Sidechain\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
-                facet_wrap( ~ acc_chem_type)
+		facet_wrap( ~ acc_chem_type)
 	save_plots(plot_id, sample_sources[sample_sources$sample_source == ss_id,],
 		output_dir, output_formats)
 
-        plot_id = paste("AHchi_AHD_eq_polar_density", ss_id, sep="_")
-        sub_f$counts <- nrow(sub_f)
+	plot_id = paste("AHchi_AHD_eq_polar_density", ss_id, sep="_")
+	sub_f$counts <- nrow(sub_f)
 	ggplot(data=sub_f) + plot_parts +
 		opts(title = paste("Hydrogen Bonds AHchi vs AHD Angles Sidechain-Sidechain\nEqual Coordinate Projection   Sample Source: ", ss_id, sep=""))
 	save_plots(plot_id, sample_sources[sample_sources$sample_source == ss_id,],
 		output_dir, output_formats)
 
-        sub_f <- ddply(sub_f, .(don_chem_type, acc_chem_type), transform, counts = length(sample_source))
+	sub_f <- ddply(sub_f, .(don_chem_type, acc_chem_type),
+		transform, counts = length(sample_source))
 
-        plot_id = paste("AHchi_AHD_eq_polar_density_dGDE", ss_id, sep="_")
+	plot_id = paste("AHchi_AHD_eq_polar_density_dGDE", ss_id, sep="_")
 	ggplot(data=subset(sub_f, don_chem_type == "dGDE: r")) + plot_parts +
-		opts(title = paste("Hydrogen Bonds AHchi vs AHD Angles GDE Donor\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
-               	facet_wrap(~acc_chem_type)
+		opts(title = paste("Hydrogen Bonds AHchi vs AHD Angles GDE Donor\nEqual Coordinate Projection   Sample Source: ", ss_id, sep=""))
+		facet_wrap( ~ acc_chem_type)
 	save_plots(plot_id, sample_sources[sample_sources$sample_source == ss_id,],
 		output_dir, output_formats)
 
-        plot_id = paste("AHchi_AHD_eq_polar_density_dGDH", ss_id, sep="_")
+	plot_id = paste("AHchi_AHD_eq_polar_density_dGDH", ss_id, sep="_")
 	ggplot(data=subset(sub_f, don_chem_type == "dGDH: r")) + plot_parts +
 		opts(title = paste("Hydrogen Bonds AHchi vs AHD Angles GDH Donor\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
-               	facet_wrap(~acc_chem_type)
+		facet_wrap( ~ acc_chem_type)
 	save_plots(plot_id, sample_sources[sample_sources$sample_source == ss_id,],
 		output_dir, output_formats)
 
+	sub_f <- ddply(sub_f, .(don_chem_type, acc_chem_type, acc_rank),
+		transform, counts = length(sample_source))
 
+	plot_id = paste("AHchi_AHD_eq_polar_density_dGDE_aCXL_by_acc_rank", ss_id, sep="_")
+	ggplot(data=subset(sub_f, don_chem_type == "dGDE: r" & acc_chem_type == "aCXL: d,e")) + plot_parts +
+		opts(title = paste("Hydrogen Bonds AHchi vs AHD Angles aCXL-dGDE by Acc Rank\nEqual Coordinate Projection   Sample Source: ", ss_id, sep=""))
+		facet_wrap( ~ acc_rank)
+	save_plots(plot_id, sample_sources[sample_sources$sample_source == ss_id,],
+		output_dir, output_formats)
 
-        
+	plot_id = paste("AHchi_AHD_eq_polar_density_dGDH_aCXL_by_acc_rank", ss_id, sep="_")
+	ggplot(data=subset(sub_f, don_chem_type == "dGDH: r" & acc_chem_type == "aCXL: d,e")) + plot_parts +
+		opts(title = paste("Hydrogen Bonds AHchi vs AHD Angles aCXL-dGDH by Acc Rank\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
+		facet_wrap( ~ acc_rank)
+	save_plots(plot_id, sample_sources[sample_sources$sample_source == ss_id,],
+		output_dir, output_formats)
+
 })

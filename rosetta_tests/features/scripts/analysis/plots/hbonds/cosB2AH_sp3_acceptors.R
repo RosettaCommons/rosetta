@@ -28,18 +28,18 @@ WHERE
 f <- query_sample_sources(sample_sources, sele)
 
 f <- transform(f,
-  cosB2AH = vector_dotprod(
-    cbind(ax-b2x, ay-b2y, az-b2z), cbind(hx-ax, hy-ay, hz-az)))
+  B2AH_proj = vector_dotprod(
+    vector_normalize(cbind(ax-b2x, ay-b2y, az-b2z)), cbind(hx-ax, hy-ay, hz-az)))
 
 dens <- estimate_density_1d(
-  data = f, ids = c("sample_source"), variable = "cosB2AH")
+  data = f, ids = c("sample_source"), variable = "B2AH_proj")
 
 plot_id = "cosB2AH_sp3_acceptors"
 p <- ggplot(data=dens) + theme_bw() +
-	geom_line(aes(x=acos(x)*180/pi, y=y, colour=sample_source)) +
+	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	geom_indicator(aes(colour=sample_source, indicator=counts)) +
-	opts(title = "Hydrogen Bonds B2AH Angle for sp3 Acceptors") +
-	scale_x_continuous(paste('Base Carbon -- Acceptor -- Donated Hydrogen Angle (degrees)')) +
+	opts(title = "Hydrogen Bonds B2AH Projection for sp3 Acceptors") +
+	scale_x_continuous(expression(paste('Hydrogen Projection on Base Carbon--Acceptor Vector (', ring(A), ')'))) +
 	scale_y_continuous("FeatureDensity")
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")

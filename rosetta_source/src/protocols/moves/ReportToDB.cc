@@ -525,7 +525,7 @@ ReportToDB::initialize_database(
 void
 ReportToDB::apply( Pose& pose ){
 
-	utility::sql_database::sessionOP db_session(basic::database::get_db_session(database_fname_, database_mode_));
+	utility::sql_database::sessionOP db_session(basic::database::get_db_session(database_fname_, database_mode_, false, true));
 
 	// Make sure energy objects are initialized
 	(*scfxn_)(pose);

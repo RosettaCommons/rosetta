@@ -20,12 +20,15 @@ namespace database {
 
 utility::sql_database::sessionOP get_db_session(
 	std::string const & db_name,
-	bool const readonly = false);
+	bool const readonly = false,
+	bool const separate_db_per_mpi_process = false);
 
 utility::sql_database::sessionOP get_db_session(
 	std::string const & db_name,
 	std::string const & db_mode,
-	bool const readonly = false);
+	bool const readonly = false,
+	bool const separate_db_per_mpi_process = false);
+
 }
 }
 
