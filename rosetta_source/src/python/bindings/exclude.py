@@ -11,10 +11,12 @@
 ## @brief  functions to exclude varios elements from Python buidings
 ## @author Sergey Lyskov and William Sheffler
 
-import os, os.path, re, time, commands
+import os, os.path, re, time, commands, sys
 
-import pyplusplus, pygccxml
-from pyplusplus.module_builder import call_policies
+
+if sys.platform != 'win32':
+    import pyplusplus, pygccxml
+    from pyplusplus.module_builder import call_policies
 
 
 MAKE_SURE_IS_COPYABLE = [

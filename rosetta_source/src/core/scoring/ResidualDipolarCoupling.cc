@@ -533,7 +533,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 		S_[ex][2][0] = S_[ex][0][2];
 		S_[ex][2][1] = S_[ex][1][2];
 		S_[ex][2][2] = -S_[ex][0][0] - S_[ex][1][1];
-	  
+
 	  //Always use one, otherwise it is overwritten.
 		Smax[ex] = 1;
 
@@ -598,7 +598,7 @@ Real ResidualDipolarCoupling::compute_dipscore(core::pose::Pose const& pose) {
 
 		ex = it->expid();
 
-		Real computed_coupling = it->Jdipolar_computed_ =  
+		Real computed_coupling = it->Jdipolar_computed_ =
 				 S_[ex][0][0] * D_[d][0] + S_[ex][0][1] * D_[d][1]
 						+ S_[ex][0][2] * D_[d][2] + S_[ex][1][1] * D_[d][3]
 						+ S_[ex][1][2] * D_[d][4];
@@ -923,8 +923,13 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
   //parameters
 	int n_par = 5; // number of parameters in model function frdc
 	int nrepeat = 5; // number of repeat lmfit
-	double parbest[n_par*nex_];
-	double par[n_par*nex_];
+
+	//double parbest[n_par*nex_];
+	std::vector<double> parbest(n_par*nex_);
+
+	//double par[n_par*nex_];
+	std::vector<double> par(n_par*nex_);
+
 	int i,j;
 	double bestnorm;
 	Size prelen=0;
@@ -957,7 +962,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
         Smax[ ex ] = option[ OptionKeys::rdc::fix_normAzz ]()[ ex+1 ];
        	}
        }
-    
+
 			bestnorm=1e12;
 
 	    for (j = 0; j < nrepeat; j++) {
@@ -968,7 +973,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 	 	 	 	 	  par[ex*n_par+3]=2.0*3.1415*numeric::random::uniform();//beta
 	 	 	 	 	  par[ex*n_par+4]=2.0*3.1415*numeric::random::uniform();//gamma
 	 	 	 	 	  //call lmmin
-	 	 	 	 	  numeric::nls::lmmin( n_par, par+ex*n_par, lenex_[ex+1], (const void*) &data, evaluaterdc, &status,numeric::nls::lm_printout_std);
+	 	 	 	 	  numeric::nls::lmmin( n_par, &par[ex*n_par], lenex_[ex+1], (const void*) &data, evaluaterdc, &status,numeric::nls::lm_printout_std);
    	 				if ( tr.Trace.visible() ) {
            		tr.Trace << std::endl;
 	 	 						tr.Trace << "Iteration: " << j << "status.fnorm:" << status.fnorm << "bestnorm: "<< bestnorm << std::endl;
@@ -1032,7 +1037,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
      //store in the temporarily in parbest
 			parbest[ex*n_par+0]=1.0/2.0*(-Ax-Ay);
 			parbest[ex*n_par+1]=2.0/3.0*(Ay-Ax)/(Ax+Ay);
-	 
+
 	   if ( tr.Trace.visible() ) {
 	    //debug
 	      tr.Trace << std::endl;
@@ -1063,14 +1068,14 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 		Size ex = it->expid();
 		Real obs = it->Jdipolar();
 	 	//tr.Trace << "ex: " << ex << " lenex_[ex]: " << lenex_[ex] <<std::endl;
-		
+
 		//compute the length of previous exps
 		prelen=0;
 		for (Size cnt=0; cnt<=ex; cnt++) {
 				prelen+=lenex_[cnt];
 		}
 
-		Real computed_coupling = it->Jdipolar_computed_ = frdc(r0_[prelen+irow], r1_[prelen+irow], r2_[prelen+irow], rdcconst_[prelen+irow], par+ex*n_par);
+		Real computed_coupling = it->Jdipolar_computed_ = frdc(r0_[prelen+irow], r1_[prelen+irow], r2_[prelen+irow], rdcconst_[prelen+irow], &par[ex*n_par]);
 		Real dev = computed_coupling - obs;
 		Real weight = it->weight()*Smax[ex]; //force constant
 
@@ -1086,7 +1091,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
     core::Real pfac = rdc.Dconst() * invr2 * invr2 * invr * weight;
     core::Real const pfac_NH = weight * 36.5089/1.04/1.04/1.04/1.04/1.04;
 		if (bReduced) {
-			if ( tr.Trace.visible() ) 
+			if ( tr.Trace.visible() )
 					tr.Trace << "reducing coupling for " << rdc << " dev: " << dev << " pfac: " << pfac << " pfac_NH " << pfac_NH;
 			pfac = pfac_NH;
 			dev *= pfac_NH / pfac;
@@ -1119,11 +1124,11 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
     rdc.fij_[1] = - dev * pfac * 2 * (Axx*rx*r01+Ayy*ry*r11+Azz*rz*r21);
     rdc.fij_[2] = - dev * pfac * 2 * (Axx*rx*r02+Ayy*ry*r12+Azz*rz*r22) ;
 
-    //rdc.fij_[0] = - dev * (rdc.Dconst() * (2*Axx*rx*r00+2*Ayy*ry*r10+2*Azz*rz*r20) * r2 * r2 * r 
+    //rdc.fij_[0] = - dev * (rdc.Dconst() * (2*Axx*rx*r00+2*Ayy*ry*r10+2*Azz*rz*r20) * r2 * r2 * r
 		//										 - rdc.Dconst() * (Axx*rx*rx+Ayy*ry*ry+Azz*rz*rz) * 5 * r2 *r2  )/ (r2*r2*r2*r2*r2) ;
-    //rdc.fij_[1] = - dev * (rdc.Dconst() * (2*Axx*rx*r01+2*Ayy*ry*r11+2*Azz*rz*r21) * r2 * r2 * r 
+    //rdc.fij_[1] = - dev * (rdc.Dconst() * (2*Axx*rx*r01+2*Ayy*ry*r11+2*Azz*rz*r21) * r2 * r2 * r
 		//										 - rdc.Dconst() * (Axx*rx*rx+Ayy*ry*ry+Azz*rz*rz) * 5 * r2 *r2  )/ (r2*r2*r2*r2*r2) ;
-    //rdc.fij_[2] = - dev * (rdc.Dconst() * (2*Axx*rx*r02+2*Ayy*ry*r12+2*Azz*rz*r22) * r2 * r2 * r 
+    //rdc.fij_[2] = - dev * (rdc.Dconst() * (2*Axx*rx*r02+2*Ayy*ry*r12+2*Azz*rz*r22) * r2 * r2 * r
 		//										 - rdc.Dconst() * (Axx*rx*rx+Ayy*ry*ry+Azz*rz*rz) * 5 * r2 *r2  )/ (r2*r2*r2*r2*r2) ;
 
 
@@ -1159,7 +1164,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 		Q += sqr( dev );
 		Qnorm += sqr( obs );
 
-    
+
 
 		//increament the array
 		if (irow<lenex_[ex+1]-1) {
@@ -1175,7 +1180,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nls(core::pose::Pose const& pose)
 
 	if ( tr.Trace.visible() ) {
 			tr.Trace << "R_: " << R_ << std::endl;
-			tr.Trace << "Q_: " << sqrt(2)*R_ << std::endl;
+			tr.Trace << "Q_: " << sqrt(2.)*R_ << std::endl;
 			tr.Trace << "rmsd_: " << rmsd_ << std::endl;
 			tr.Trace << "All_RDC_lines_.size(): " << All_RDC_lines_.size() << std::endl;
 	}
@@ -1253,7 +1258,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
 			pfac *= invr * invr * invr;
 		}
 
-		//put all normalize vector to a array 
+		//put all normalize vector to a array
 	  r.normalized();
 
 		//check the -1 if it is correct
@@ -1272,8 +1277,14 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
   //parameters
 	int n_par = 4; // number of parameters in model function frdcDa
 	int nrepeat = 5; // number of repeat lmfit
-	double parbest[n_par*nex_];
-	double par[n_par*nex_];
+
+	//double parbest[n_par*nex_];
+	std::vector<double> parbest(n_par*nex_);
+
+	//double par[n_par*nex_];
+	std::vector<double> par(n_par*nex_);
+
+
 	int i,j;
 	double bestnorm;
   Size prelen=0;
@@ -1305,7 +1316,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
         Smax[ ex ] = option[ OptionKeys::rdc::fix_normAzz ]()[ ex+1 ];
        	}
        }
-    
+
 			bestnorm=1e12;
 
 	    for (j = 0; j < nrepeat; j++) {
@@ -1315,7 +1326,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
 	 	 	 	 	  par[ex*n_par+2]=2.0*3.1415*numeric::random::uniform();//beta
 	 	 	 	 	  par[ex*n_par+3]=2.0*3.1415*numeric::random::uniform();//gamma
 	 	 	 	 	  //call lmmin
-	 	 	 	 	  numeric::nls::lmmin( n_par, par+ex*n_par, lenex_[ex+1], (const void*) &data, evaluaterdcDa, &status,numeric::nls::lm_printout_std);
+	 	 	 	 	  numeric::nls::lmmin( n_par, &par[ex*n_par], lenex_[ex+1], (const void*) &data, evaluaterdcDa, &status,numeric::nls::lm_printout_std);
    	 				if ( tr.Trace.visible() ) {
            		tr.Trace << std::endl;
 	 	 						tr.Trace << "Iteration: " << j << "status.fnorm:" << status.fnorm << "bestnorm: "<< bestnorm << std::endl;
@@ -1330,7 +1341,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
 	    //copy back to par
 	 	 for (i=0; i<n_par ; i++)
 	 	 		par[ex*n_par+i]=parbest[ex*n_par+i];
-	 
+
 	    //debug
 	   if ( tr.Trace.visible() ) {
 	      tr.Trace << std::endl;
@@ -1363,7 +1374,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
 			prelen+=lenex_[cnt];
 		}
 
-		Real computed_coupling = it->Jdipolar_computed_ = frdcDa(r0_[prelen+irow], r1_[prelen+irow], r2_[prelen+irow], rdcconst_[prelen+irow], tensorDa[ex+1], par+ex*n_par);
+		Real computed_coupling = it->Jdipolar_computed_ = frdcDa(r0_[prelen+irow], r1_[prelen+irow], r2_[prelen+irow], rdcconst_[prelen+irow], tensorDa[ex+1], &par[ex*n_par]);
 
 		Real dev = computed_coupling - obs;
 
@@ -1381,7 +1392,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDa(core::pose::Pose const& pos
     core::Real pfac = rdc.Dconst() * invr2 * invr2 * invr * weight;
     core::Real const pfac_NH = weight * 36.5089/1.04/1.04/1.04/1.04/1.04;
 		if (bReduced) {
-			if ( tr.Trace.visible() ) 
+			if ( tr.Trace.visible() )
 					tr.Trace << "reducing coupling for " << rdc << " dev: " << dev << " pfac: " << pfac << " pfac_NH " << pfac_NH;
 			pfac = pfac_NH;
 			dev *= pfac_NH / pfac;
@@ -1515,7 +1526,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
 			pfac *= invr * invr * invr;
 		}
 
-		//put all normalize vector to a array 
+		//put all normalize vector to a array
 	  r.normalized();
 
 		//check the -1 if it is correct
@@ -1534,8 +1545,11 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
   //parameters
 	int n_par = 4; // number of parameters in model function frdcR
 	int nrepeat = 5; // number of repeat lmfit
-	double parbest[n_par*nex_];
-	double par[n_par*nex_];
+	//double parbest[n_par*nex_];
+	//double par[n_par*nex_];
+	std::vector<double> parbest(n_par*nex_);
+	std::vector<double> par(n_par*nex_);
+
 	int i,j;
 	double bestnorm;
   Size prelen=0;
@@ -1567,7 +1581,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
         Smax[ ex ] = option[ OptionKeys::rdc::fix_normAzz ]()[ ex+1 ];
        	}
        }
-    
+
 			bestnorm=1e12;
 
 	    for (j = 0; j < nrepeat; j++) {
@@ -1577,7 +1591,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
 	 	 	 	 	  par[ex*n_par+2]=2.0*3.1415*numeric::random::uniform();//beta
 	 	 	 	 	  par[ex*n_par+3]=2.0*3.1415*numeric::random::uniform();//gamma
 	 	 	 	 	  //call lmmin
-	 	 	 	 	  numeric::nls::lmmin( n_par, par+ex*n_par, lenex_[ex+1], (const void*) &data, evaluaterdcR, &status,numeric::nls::lm_printout_std);
+	 	 	 	 	  numeric::nls::lmmin( n_par, &par[ex*n_par], lenex_[ex+1], (const void*) &data, evaluaterdcR, &status,numeric::nls::lm_printout_std);
    	 				if ( tr.Trace.visible() ) {
            		tr.Trace << std::endl;
 	 	 						tr.Trace << "Iteration: " << j << "status.fnorm:" << status.fnorm << "bestnorm: "<< bestnorm << std::endl;
@@ -1592,7 +1606,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
 	    //copy back to par
 	 	 for (i=0; i<n_par ; i++)
 	 	 		par[ex*n_par+i]=parbest[ex*n_par+i];
-	 
+
 	    //debug
 	   if ( tr.Trace.visible() ) {
 	      tr.Trace << std::endl;
@@ -1626,7 +1640,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
 			prelen+=lenex_[cnt];
 		}
 
-		Real computed_coupling = it->Jdipolar_computed_ = frdcR(r0_[prelen+irow], r1_[prelen+irow], r2_[prelen+irow], rdcconst_[prelen+irow], tensorR[ex+1], par+ex*n_par);
+		Real computed_coupling = it->Jdipolar_computed_ = frdcR(r0_[prelen+irow], r1_[prelen+irow], r2_[prelen+irow], rdcconst_[prelen+irow], tensorR[ex+1], &par[ex*n_par]);
 
 		Real dev = computed_coupling - obs;
 		Real weight = it->weight()*Smax[ex]; //force constant
@@ -1643,7 +1657,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsR(core::pose::Pose const& pose
     core::Real pfac = rdc.Dconst() * invr2 * invr2 * invr * weight;
     core::Real const pfac_NH = weight * 36.5089/1.04/1.04/1.04/1.04/1.04;
 		if (bReduced) {
-			if ( tr.Trace.visible() ) 
+			if ( tr.Trace.visible() )
 					tr.Trace << "reducing coupling for " << rdc << " dev: " << dev << " pfac: " << pfac << " pfac_NH " << pfac_NH;
 			pfac = pfac_NH;
 			dev *= pfac_NH / pfac;
@@ -1780,7 +1794,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
 			pfac *= invr * invr * invr;
 		}
 
-		//put all normalize vector to a array 
+		//put all normalize vector to a array
 	  r.normalized();
 
 		//check the -1 if it is correct
@@ -1799,8 +1813,11 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
   //parameters
 	int n_par = 3; // number of parameters in model function frdcR
 	int nrepeat = 5; // number of repeat lmfit
-	double parbest[n_par*nex_];
-	double par[n_par*nex_];
+	//double parbest[n_par*nex_];
+	//double par[n_par*nex_];
+	std::vector<double> parbest(n_par*nex_);
+	std::vector<double> par(n_par*nex_);
+
 	int i,j;
 	double bestnorm;
   Size prelen=0;
@@ -1832,7 +1849,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
         Smax[ ex ] = option[ OptionKeys::rdc::fix_normAzz ]()[ ex+1 ];
        	}
        }
-    
+
 			bestnorm=1e12;
 
 	    for (j = 0; j < nrepeat; j++) {
@@ -1841,7 +1858,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
 	 	 	 	 	  par[ex*n_par+1]=2.0*3.1415*numeric::random::uniform();//beta
 	 	 	 	 	  par[ex*n_par+2]=2.0*3.1415*numeric::random::uniform();//gamma
 	 	 	 	 	  //call lmmin
-	 	 	 	 	  numeric::nls::lmmin( n_par, par+ex*n_par, lenex_[ex+1], (const void*) &data, evaluaterdcDaR, &status,numeric::nls::lm_printout_std);
+	 	 	 	 	  numeric::nls::lmmin( n_par, &par[ex*n_par], lenex_[ex+1], (const void*) &data, evaluaterdcDaR, &status,numeric::nls::lm_printout_std);
    	 				if ( tr.Trace.visible() ) {
            		tr.Trace << std::endl;
 	 	 						tr.Trace << "Iteration: " << j << " status.fnorm: " << status.fnorm << " bestnorm: "<< bestnorm << std::endl;
@@ -1858,7 +1875,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
 	    //copy back to par
 	 	 for (i=0; i<n_par ; i++)
 	 	 		par[ex*n_par+i]=parbest[ex*n_par+i];
-	 
+
 	    //debug
 	   if ( tr.Trace.visible() ) {
 	      tr.Trace << std::endl;
@@ -1893,7 +1910,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
 			prelen+=lenex_[cnt];
 		}
 
-		Real computed_coupling = it->Jdipolar_computed_ = frdcDaR(r0_[prelen+irow], r1_[prelen+irow], r2_[prelen+irow], rdcconst_[prelen+irow], tensorDa[ex+1], tensorR[ex+1], par+ex*n_par);
+		Real computed_coupling = it->Jdipolar_computed_ = frdcDaR(r0_[prelen+irow], r1_[prelen+irow], r2_[prelen+irow], rdcconst_[prelen+irow], tensorDa[ex+1], tensorR[ex+1], &par[ex*n_par]);
 
 		Real dev = computed_coupling - obs;
 
@@ -1913,7 +1930,7 @@ Real ResidualDipolarCoupling::compute_dipscore_nlsDaR(core::pose::Pose const& po
     core::Real pfac = rdc.Dconst() * invr2 * invr2 * invr * weight;
     core::Real const pfac_NH = weight * 36.5089/1.04/1.04/1.04/1.04/1.04;
 		if (bReduced) {
-			if ( tr.Trace.visible() ) 
+			if ( tr.Trace.visible() )
 					tr.Trace << "reducing coupling for " << rdc << " dev: " << dev << " pfac: " << pfac << " pfac_NH " << pfac_NH;
 			pfac = pfac_NH;
 			dev *= pfac_NH / pfac;

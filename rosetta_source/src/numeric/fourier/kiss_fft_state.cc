@@ -14,7 +14,7 @@
 
 //  implementation loosely based on Kiss-FFT's fast fourier transform
 //     for licensing info see external/kiss_fft_v1_2_8/COPYING
-#ifdef WIN32
+#if (defined WIN32) || (defined PYROSETTA)
 	#define _USE_MATH_DEFINES
 	#include <math.h>
 #endif

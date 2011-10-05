@@ -12,26 +12,32 @@
 ## @author Sergey Lyskov
 
 import os, re, sys, time, commands, shutil, platform, os.path, itertools, gc
-
-#from BuildModule import buildModule
-
-from pyplusplus import module_builder
-import pyplusplus, tools.DoxygenExtractorPyPP
-
-import exclude
-
-import tools.CppParser
-
-
-
-from optparse import OptionParser, IndentedHelpFormatter
+import subprocess
 
 # Create global 'Platform' that will hold info of current system
 if sys.platform.startswith("linux"): Platform = "linux" # can be linux1, linux2, etc
 elif sys.platform == "darwin" : Platform = "macos"
 elif sys.platform == "cygwin" : Platform = "cygwin"
+elif sys.platform == "win32" : Platform = "windows"
 else: Platform = "_unknown_"
 PlatformBits = platform.architecture()[0][:2]
+
+
+if Platform != "windows":
+    from pyplusplus import module_builder
+    import pyplusplus
+
+import exclude
+
+import tools.DoxygenExtractorPyPP
+import tools.CppParser
+
+
+
+
+
+from optparse import OptionParser, IndentedHelpFormatter
+
 
 
 # global include dict 'file' --> bool;  True mean include file, False - exclude
@@ -181,6 +187,11 @@ def main(args):
     if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
     shutil.copyfile('src/__init__.py', 'rosetta/__init__.py')
 
+    if Platform == "windows":  # we dealing with windows native build
+        build_path = os.path.join(mini_path, 'build\windows')
+        BuildRosettaOnWindows(build_path)
+        sys.exit(0)
+
     if options.BuildMiniLibs:
         prepareMiniLibs(mini_path, bindings_path)
 
@@ -192,7 +203,6 @@ def main(args):
     IncludeDict = eval( file('python/bindings/IncludeDict').read() )
     if type( IncludeDict['core'] ) == str:
         for k in IncludeDict: IncludeDict[k] = ({'+':True, '-':False}[IncludeDict[k]], 999, [])
-
 
     if options.one:
         print 'Building just following namespaces:', options.one
@@ -264,8 +274,52 @@ def main(args):
     print "Done!"
 
 
+def execute(message, command_line, return_=False, untilSuccesses=False):
+    print message
+    print command_line
+    while True:
+        #(res, output) = commands.getstatusoutput(commandline)
 
-def execute(message, commandline, return_=False):
+        po = subprocess.Popen(command_line+ ' 1>&2', bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        #po = subprocess.Popen(command_line+ ' 1>&2', bufsize=0, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        f = po.stderr
+        output = ''
+        for line in f:
+            #po.poll()
+            print line,
+            output += line
+            sys.stdout.flush()
+        f.close()
+        while po.returncode is None: po.wait()
+        res = po.returncode
+        #print '_____________________', res
+
+
+        '''
+        po = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderror = po.communicate()
+        output = stdout + stderror
+        res = po.returncode
+        '''
+        print output
+
+        if res and untilSuccesses: pass  # Thats right - redability COUNT!
+        else: break
+
+        print "Error while executing %s: %s\n" % (message, output)
+        print "Sleeping 60s... then I will retry..."
+        time.sleep(60)
+
+    if res:
+        print "\nEncounter error while executing: " + command_line
+        if return_==True: return True
+        else: sys.exit(1)
+
+    if return_ == 'output': return output
+    else: return False
+
+
+def _execute(message, commandline, return_=False):
     print message
     print commandline
     (res, output) = commands.getstatusoutput(commandline)
@@ -448,6 +502,56 @@ def prepareMiniLibs(mini_path, bindings_path):
                 execute('Adjustin lib path in %s' % l, 'install_name_tool -change %s rosetta/%s %s' % (os.path.abspath(mini_path+'/'+lib_path+k), k, bindings_path+'/'+l) )
 
     shutil.copyfile(bindings_path+'/../src/__init__.py' , bindings_path+'/__init__.py')
+
+
+def getAllRosettaSourceFiles():
+    obj_suffix = ''
+
+    all_sources = []
+    for scons_file in ['ObjexxFCL', 'utility', 'numeric', 'basic', 'core.1', 'core.2', 'core.3', 'core.4', 'core.5', 'protocols']:
+    #for scons_file in ['utility']:
+    #for scons_file in ['ObjexxFCL', 'numeric', 'utility',]:
+        f = file('./../../%s.src.settings' % scons_file).read();  exec(f)
+        for k in sources:
+            for f in sources[k]:
+                #all_sources.append( scons_file + '/' + k + '/' + f + obj_suffix)
+                if not f.endswith('.cu'): all_sources.append( k + '/' + f + obj_suffix)
+
+    extra_objs = [  # additioanal source for external libs
+        'dbio/cppdb/atomic_counter', "dbio/cppdb/conn_manager", "dbio/cppdb/driver_manager", "dbio/cppdb/frontend",
+        "dbio/cppdb/backend", "dbio/cppdb/mutex", "dbio/cppdb/pool", "dbio/cppdb/shared_object", "dbio/cppdb/sqlite3_backend",
+        "dbio/cppdb/utils", 'dbio/sqlite3/sqlite3', ]
+
+    extra_objs = []
+
+    all_sources += [ mini_path + '/' + lib_path.replace('/src/', '/external/') + x + obj_suffix for x in extra_objs ]
+
+    return all_sources
+
+
+def BuildRosettaOnWindows(build_dir):
+    ''' bypassing scones and build rosetta on windows native
+    '''
+    sources = getAllRosettaSourceFiles()
+
+
+
+    os.chdir( './../../' )
+
+
+    for s in sources:
+        #s = s.replace('/', '\\')
+
+        try: os.makedirs( os.path.join( build_dir, os.path.split(s)[0]) )
+        except OSError: pass
+
+        obj = os.path.join(build_dir,s) + '.obj'
+
+        if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s+'.cc'):
+            execute('Compiling %s' % s, 'cl /DWIN32 /DBOOST_NO_MT /DPYROSETTA /c %s.cc /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/64/msvc /Fo%s /EHsc' % (s, obj))
+
+
+
 
 
 _TestInludes_ = ''

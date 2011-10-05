@@ -36,12 +36,17 @@
 #define INCLUDED_utility_io_zipstream_HPP
 
 #ifdef _WIN32
-#define ZLIB_WINAPI  // REQUIRED FOR WINDOWS
+	#ifndef PYROSETTA
+		#define ZLIB_WINAPI  // REQUIRED FOR WINDOWS
+	#endif
 #endif
+
 
 // Zlib headers
 #include <zlib/zlib.h>
 #include <zlib/zutil.h>
+
+
 
 // C++ headers
 #include <algorithm>
@@ -54,6 +59,7 @@ namespace zlib_stream {
 
 /// @brief Default gzip buffer size, change this to suite your needs
 const size_t default_buffer_size = 921600; // Was 102400; Was 4096;
+
 
 
 /// Compression strategy, see zlib doc.

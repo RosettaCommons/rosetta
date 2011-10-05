@@ -122,7 +122,7 @@ FoldTree::delete_self_edges()
 void
 FoldTree::delete_seqpos( int const seqpos )
 {
-	PyAssert( (seqpos>0) && (seqpos<=nres()), 'FoldTree::delete_seqpos( int const seqpos ): input variable seqpos has a meaningless value');
+	PyAssert( (seqpos>0) && (seqpos<=nres()), "FoldTree::delete_seqpos( int const seqpos ): input variable seqpos has a meaningless value");
 	if ( is_jump_point( seqpos ) || is_root( seqpos ) ) {
 		delete_jump_seqpos( seqpos );
 	} else {
@@ -143,8 +143,8 @@ FoldTree::delete_jump_and_intervening_cutpoint( int const jump_number )
 void
 FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin, int jump_end )
 {
-	PyAssert( (jump_begin>0) && (jump_begin<=num_jump()), 'FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin , int jump_end ): input variable jump_begin has a meaningless value');
-	PyAssert( (jump_end>0) && (jump_end<=num_jump()), 'FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin , int jump_end ): input variable jump_end has a meaningless value');
+	PyAssert( (jump_begin>0) && (jump_begin<=num_jump()), "FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin , int jump_end ): input variable jump_begin has a meaningless value");
+	PyAssert( (jump_end>0) && (jump_end<=num_jump()), "FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin , int jump_end ): input variable jump_end has a meaningless value");
 //	PyAssert( is_jump_point( jump_begin ) && is_jump_point( jump_end ), 'FoldTree::delete_jump_and_intervening_cutpoint( int jump_begin , int jump_end ): input variables are not jump points');
 	assert( is_jump_point( jump_begin ) && is_jump_point( jump_end ) );
 
@@ -195,7 +195,7 @@ void
 FoldTree::slide_cutpoint( Size const current_cut, Size const target_cut )
 {
 	assert( is_cutpoint( current_cut ) && !is_cutpoint( target_cut ) );
-	PyAssert( (is_cutpoint( current_cut )) && (!is_cutpoint( target_cut )), 'FoldTree::slide_cutpoint( Size const current_cut , Size const target_cut ): input variable current_cut or target_cut has a meaningless value');
+	PyAssert( (is_cutpoint( current_cut )) && (!is_cutpoint( target_cut )), "FoldTree::slide_cutpoint( Size const current_cut , Size const target_cut ): input variable current_cut or target_cut has a meaningless value");
 	Size const current_root( root() );
 
 	TR.Trace << "slide_cutpoint: current= "<< current_cut << " target= " << target_cut << ' ' << *this;
@@ -271,7 +271,7 @@ FoldTree::delete_jump_seqpos( int const seqpos )
 
 	Size const old_nres( nres() );
 	assert( is_jump_point( seqpos ) || is_root( seqpos ) );
-	PyAssert( ( is_jump_point( seqpos )) || ( is_root( seqpos ) ), 'FoldTree::delete_jump_seqpos( int const seqpos): input variable seqpos has a meaningless value');
+	PyAssert( ( is_jump_point( seqpos )) || ( is_root( seqpos ) ), "FoldTree::delete_jump_seqpos( int const seqpos): input variable seqpos has a meaningless value");
 
 	/// this could confuse us
 	delete_self_edges();
@@ -1092,7 +1092,7 @@ FoldTree::reorder( int const start_residue )
 void
 FoldTree::simple_tree( int const nres_in )
 {
-	PyAssert( (nres_in>0), 'FoldTree::simple_tree( int const nres_in ): input variable nres_in has a meaningless value');
+	PyAssert( (nres_in>0), "FoldTree::simple_tree( int const nres_in ): input variable nres_in has a meaningless value");
 	new_topology = true; // ensure that derived data are re-calculated
 	edge_list_.clear();
 	add_edge(1, nres_in, Edge::PEPTIDE); // from 1->total_residue

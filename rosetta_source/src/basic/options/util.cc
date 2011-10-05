@@ -11,8 +11,8 @@
 /// @brief
 /// @author
 
-#ifdef _WIN32
-#define ZLIB_WINAPI  // REQUIRED FOR WINDOWS
+#if (defined _WIN32) && (!defined PYROSETTA)
+	#define ZLIB_WINAPI  // REQUIRED FOR WINDOWS
 #endif
 
 // Unit headers

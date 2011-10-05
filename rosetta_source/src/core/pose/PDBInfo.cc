@@ -929,7 +929,7 @@ std::ostream & operator << (std::ostream & os, PDBInfo const & info)
 	info.show(os);
 	//os << "Number of Residues: " << info.nres() << std::endl;
 	// perhaps add per residue information: pose_num, pdb_num, chain, icode, occupancy, temperature, etc.
-    //return os;
+    return os;
 }
 
 } // pose

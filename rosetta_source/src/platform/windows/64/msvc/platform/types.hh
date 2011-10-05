@@ -35,6 +35,16 @@ typedef  long long int  ssize_t; // Signed size
 
 namespace platform {
 
+typedef size_t       Size;
+typedef ssize_t      SSize;
+typedef size_t       uint;
+
+// Floating point precision control scalar
+#ifdef ROSETTA_FLOAT // Real == float
+typedef  float  Real;
+#else // Real == double
+typedef  double  Real;
+#endif
 
 namespace file {
 

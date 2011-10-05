@@ -503,7 +503,7 @@ MoveMap::init_from_file( std::string const & filename ) {
 void
 MoveMap::show( std::ostream & out, Size total_residue) const
 {
-	PyAssert( (total_residue>0), 'MoveMap::show( std::ostream & out , Size total_residue ): input variable total_residue has a meaningless value');
+	PyAssert( (total_residue>0), "MoveMap::show( std::ostream & out , Size total_residue ): input variable total_residue has a meaningless value");
 	out <<A(8,"resnum")<<' '<<A(8,"BB") <<' '<<A(8,"CHI")<<std::endl;
 	for (Size i = 1; i <= total_residue; i++){
 		std::string bb = "FALSE";
