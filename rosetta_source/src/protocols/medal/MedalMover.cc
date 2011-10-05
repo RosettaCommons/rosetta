@@ -46,13 +46,13 @@
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/sequence/SequenceAlignment.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/abinitio/MaxSeqSepConstraintSet.hh>
 #include <protocols/comparative_modeling/util.hh>
@@ -64,9 +64,9 @@
 #include <protocols/moves/CyclicMover.hh>
 #include <protocols/moves/RationalMonteCarlo.hh>
 #include <protocols/moves/RigidBodyMotionMover.hh>
+#include <protocols/nonlocal/BiasedFragmentMover.hh>
 #include <protocols/nonlocal/Policy.hh>
 #include <protocols/nonlocal/PolicyFactory.hh>
-#include <protocols/nonlocal/SingleFragmentMover.hh>
 #include <protocols/nonlocal/StarTreeBuilder.hh>
 #include <protocols/nonlocal/util.hh>
 
@@ -75,6 +75,7 @@ namespace medal {
 
 typedef boost::function<void(const core::pose::Pose&)> Trigger;
 typedef boost::unordered_map<int, core::kinematics::Jump> Jumps;
+typedef utility::vector1<double> Probabilities;
 
 static basic::Tracer TR("protocols.medal.MedalMover");
 
@@ -87,7 +88,6 @@ void on_pose_accept(const protocols::loops::Loops& chunks,
                     const core::pose::Pose& pose,
                     protocols::moves::MoverOP rigid_body_mover,
                     protocols::moves::MoverOP fragment_mover) {
-
   using core::io::silent::SilentFileData;
   using core::io::silent::SilentStructFactory;
   using core::io::silent::SilentStructOP;
@@ -101,6 +101,28 @@ void on_pose_accept(const protocols::loops::Loops& chunks,
 
   SilentFileData sfd;
   sfd.write_silent_struct(*silent, "medal.accepted.out");
+}
+
+void compute_per_residue_probabilities(const core::sequence::SequenceAlignment& alignment,
+                                       const protocols::loops::Loops& chunks,
+                                       const core::kinematics::FoldTree& tree,
+                                       const core::fragment::FragSet& fragments,
+                                       Probabilities* probs) {
+  // TODO(cmiles)
+  const double nres = tree.nres();
+  for (unsigned i = 1; i <= nres; ++i) {
+    probs->push_back(1 / nres);
+  }
+
+  // Zero-out probabilities of residues that would allow folding across the cut
+  const unsigned fragment_len = fragments.max_frag_length();
+
+  for (unsigned i = 1; i <= tree.num_cutpoint(); ++i) {
+    const unsigned cutpoint = tree.cutpoint(i);
+    for (unsigned j = (cutpoint - fragment_len + 2); j <= cutpoint; ++j) {
+      (*probs)[j] = 0;
+    }
+  }
 }
 
 MedalMover::MedalMover() {
@@ -117,21 +139,16 @@ MedalMover::MedalMover() {
 void MedalMover::apply(core::pose::Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
-  using core::kinematics::MoveMap;
-  using core::kinematics::MoveMapOP;
   using core::scoring::ScoreFunctionOP;
+  using core::sequence::SequenceAlignment;
   using protocols::jd2::ThreadingJob;
   using protocols::loops::LoopRelaxThreadingMover;
   using protocols::loops::Loops;
-  using protocols::moves::CyclicMover;
-  using protocols::moves::CyclicMoverOP;
-  using protocols::moves::MoverOP;
-  using protocols::moves::RationalMonteCarlo;
-  using protocols::moves::RigidBodyMotionMover;
-  using protocols::nonlocal::SingleFragmentMover;
-  using protocols::nonlocal::StarTreeBuilder;
+  using namespace protocols::moves;
+  using namespace protocols::nonlocal;
 
   ThreadingJob const * const job = protocols::nonlocal::current_job();
+  const SequenceAlignment& alignment = job->alignment();
 
   // Build up a threading model
   LoopRelaxThreadingMover closure;
@@ -155,14 +172,18 @@ void MedalMover::apply(core::pose::Pose& pose) {
   builder.set_up(chunks, &pose);
   TR << pose.fold_tree() << std::endl;
 
-  // Define the base movers
+  // Rigid body moves
   Jumps jumps;
   core::pose::jumps_from_pose(pose, &jumps);
   MoverOP rigid_body_mover = new RigidBodyMotionMover(jumps);
 
-  MoveMapOP movable = new MoveMap();
-  movable->set_bb(true);
-  MoverOP fragment_mover = new SingleFragmentMover(fragments_sm_, movable);
+  // Fragment insertion moves
+  Probabilities probs;
+  compute_per_residue_probabilities(alignment, chunks, pose.fold_tree(), *fragments_sm_, &probs);
+  MoverOP fragment_mover =
+      new BiasedFragmentMover(fragments_sm_,
+                              PolicyFactory::get_policy("uniform", fragments_sm_, 25),
+                              probs);
 
   // Alternating rigid body and fragment insertion moves
   CyclicMoverOP meta = new CyclicMover();
@@ -173,8 +194,8 @@ void MedalMover::apply(core::pose::Pose& pose) {
   RationalMonteCarlo mover(meta, score, cycles, option[OptionKeys::rigid::temperature](), true);
 
   // Partial function application and callback registration
-  //Trigger callback = boost::bind(&on_pose_accept, chunks, jumps, _1, rigid_body_mover, fragment_mover);
-  //mover.add_trigger(callback);
+  Trigger callback = boost::bind(&on_pose_accept, chunks, jumps, _1, rigid_body_mover, fragment_mover);
+  mover.add_trigger(callback);
 
   protocols::nonlocal::add_cutpoint_variants(&pose);
   mover.apply(pose);
@@ -244,7 +265,10 @@ core::scoring::ScoreFunctionOP MedalMover::score_function() const {
   score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::constraints::cst_weight]());
   score->set_weight(core::scoring::hbond_lr_bb, 1);
   score->set_weight(core::scoring::hbond_sr_bb, 1);
+  score->set_weight(core::scoring::chainbreak, option[OptionKeys::jumps::increase_chainbreak]());
+  score->set_weight(core::scoring::distance_chainbreak, option[OptionKeys::jumps::increase_chainbreak]());
   score->set_weight(core::scoring::linear_chainbreak, option[OptionKeys::jumps::increase_chainbreak]());
+  score->set_weight(core::scoring::overlap_chainbreak, option[OptionKeys::jumps::increase_chainbreak]());
   score->set_weight(core::scoring::rg, option[OptionKeys::abinitio::rg_reweight]());
   score->set_weight(core::scoring::sheet, 1);
   score->set_weight(core::scoring::vdw, 1);

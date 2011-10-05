@@ -46,7 +46,7 @@ class ProbUtil : public CxxTest::TestSuite {
   }
 
   void test_prenormalized_input() {
-		vector<double> tmp(probs.begin(), probs.end());
+    vector<double> tmp(probs.begin(), probs.end());
     numeric::normalize(tmp.begin(), tmp.end());
 
     // input was already normalized, no change expected
@@ -67,5 +67,31 @@ class ProbUtil : public CxxTest::TestSuite {
     TS_ASSERT_DELTA(0.2, x[1], MARGIN);
     TS_ASSERT_DELTA(0.3, x[2], MARGIN);
     TS_ASSERT_DELTA(0.4, x[3], MARGIN);
+  }
+
+  void test_cumulative() {
+    numeric::cumulative(probs.begin(), probs.end());
+
+    TS_ASSERT_DELTA(0.05, probs[0], MARGIN);
+    TS_ASSERT_DELTA(0.20, probs[1], MARGIN);
+    TS_ASSERT_DELTA(0.55, probs[2], MARGIN);
+    TS_ASSERT_DELTA(1.00, probs[3], MARGIN);
+  }
+
+  void test_product() {
+    vector<double> p1;
+    p1.push_back(0.5);
+    p1.push_back(0.25);
+    p1.push_back(0.25);
+
+    vector<double> p2;
+    p2.push_back(0.75);
+    p2.push_back(0.05);
+    p2.push_back(0.20);
+
+    numeric::product(p1.begin(), p1.end(), p2.begin(), p2.end());
+    TS_ASSERT_DELTA(0.85714, p1[0], MARGIN);
+    TS_ASSERT_DELTA(0.02857, p1[1], MARGIN);
+    TS_ASSERT_DELTA(0.11428, p1[2], MARGIN);
   }
 };

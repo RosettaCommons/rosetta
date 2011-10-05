@@ -22,6 +22,7 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
+#include <numeric/prob_util.hh>
 #include <numeric/random/random.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
@@ -46,23 +47,6 @@ typedef utility::vector1<double> Probabilities;
 
 static basic::Tracer TR("protocols.nonlocal.BiasedFragmentMover");
 
-double sum(const Probabilities& probs) {
-  double sum = 0;
-  for (Probabilities::const_iterator i = probs.begin(); i != probs.end(); ++i) {
-    sum += *i;
-  }
-  return sum;
-}
-
-void normalize(Probabilities& probs) {
-  const double div = sum(probs);
-  assert(div > 0);
-
-  for (unsigned i = 1; i <= probs.size(); ++i) {
-    probs[i] /= div;
-  }
-}
-
 BiasedFragmentMover::BiasedFragmentMover(const FragSetOP& fragments, const PolicyOP& policy, const Probabilities& pdf)
     : fragments_(fragments), policy_(policy), pdf_(pdf) {
   assert(fragments);
@@ -82,11 +66,9 @@ void BiasedFragmentMover::initialize_library() {
 
 /// @detail Normalizes the pdf, then computes the cdf
 void BiasedFragmentMover::initialize_probabilities() {
-  normalize(pdf_);
+  numeric::normalize(pdf_.begin(), pdf_.end());
   std::copy(pdf_.begin(), pdf_.end(), cdf_.begin());
-  for (unsigned i = 2; i <= cdf_.size(); ++i) {
-    cdf_[i] += cdf_[i - 1];
-  }
+  numeric::cumulative(cdf_.begin(), cdf_.end());
 }
 
 /// @detail Verifies that the probability of selecting invalid positions is 0
