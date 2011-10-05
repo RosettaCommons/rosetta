@@ -279,6 +279,7 @@ ProteinSilentReport::write_full_report(
 
 	cppdb::transaction transact_guard(*db_session);
 	std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
+
 	Size struct_id = structure_features_->report_features(
 		pose, relevant_residues, protocol_id_, db_session, tag,input_tag);
 

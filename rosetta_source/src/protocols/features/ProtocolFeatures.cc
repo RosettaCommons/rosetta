@@ -53,7 +53,7 @@ using utility::io::izstream;
 using utility::vector1;
 using utility::sql_database::sessionOP;
 using cppdb::statement;
-
+using cppdb::result;
 
 ProtocolFeatures::ProtocolFeatures(){}
 
@@ -156,6 +156,25 @@ ProtocolFeatures::report_features(
 		script_buf << utility::io::izstream( script_fname.c_str() ).rdbuf();
 		script = script_buf.str();
 	}
+
+	//if -out:database_protocol_id is specified we need to make sure the protocol hasn't already been specified
+	result res = (*db_session) <<
+		"SELECT\n"
+		"	count(*)\n"
+		"FROM\n"
+		"	protocols\n"
+		"WHERE\n"
+		"	protocols.protocol_id == ?;" << protocol_id;
+	if(res.next())
+	{
+		core::Size selected = 0;
+		res >> selected;
+		if(selected != 0)
+		{
+			return protocol_id;
+		}
+	}
+
 	statement stmt;
 	if(protocol_id){
 		stmt = (*db_session)
