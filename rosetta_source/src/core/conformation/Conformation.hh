@@ -189,7 +189,6 @@ public:
 	set_secstruct( Size const seqpos, char const setting )
 	{
 		if ( secstruct_.size() < Size(seqpos) ) secstruct_.resize( seqpos, 'L' );
-		//		assert( setting == 'H' || setting == 'E' || setting == 'L' );
 		secstruct_[seqpos] = setting;
 	}
 
@@ -246,14 +245,13 @@ public:
 	void
 	chains_from_termini();
 
-
 	/////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Returns the AA enum for position  <seqpos>
 	chemical::AA const &
-	aa( Size const seqpos ) const
-	{
-		assert( seqpos >=1 && seqpos <= size() );
+	aa( Size const seqpos ) const {
+		assert( seqpos >= 1 );
+		assert( seqpos <= size() );
 		return residues_[seqpos]->aa();
 	}
 
@@ -265,7 +263,8 @@ public:
 	inline
 	Residue const &
 	residue( Size const seqpos ) const {
-		runtime_assert( seqpos >=1 && seqpos <= size() );
+		runtime_assert( seqpos >= 1 );
+		runtime_assert( seqpos <= size() );
 		if ( residue_coordinates_need_updating_ ) update_residue_coordinates();
 		if ( residue_torsions_need_updating_ )    update_residue_torsions();
 		return *( residues_[ seqpos ] );
@@ -275,7 +274,8 @@ public:
 	chemical::ResidueType const &
 	residue_type( Size const seqpos ) const
 	{
-		assert( seqpos >=1 && seqpos <= size() );
+		assert( seqpos >=1 );
+		assert( seqpos <= size() );
 		return residues_[seqpos]->type();
 	}
 
@@ -455,24 +455,6 @@ public:
 	/// @brief  Inefficient -- constructs copy of residues_
 	ResidueCAPs
 	const_residues() const;
-
-	/**
-	void
-	setup_backrub_segment(
-		utility::vector1< AtomID > const & mainchain,
-		AtomID const & downstream_id, // mainchain child of last atom in mainchain vector
-		utility::vector1< std::pair< Size, Size > > const & edges,
-		Size const first_new_pseudo_residue
-	)
-	{
-		atom_tree_.setup_backrub_segment( mainchain, downstream_id, edges, first_new_pseudo_residue );
-		for ( Size i=first_new_pseudo_residue; i< first_new_pseudo_residue+edges.size(); ++i ) {
-			assert( residues_[i]->name() == "VRT1" ); // 1-atom virtual residue
-			// update coords of pseudo atoms, as they may have moved. Everything else should have stayed the same
-			residues_[ i ]->set_xyz( 1, atom_tree_.xyz( AtomID(1,i) ) );
-		}
-	}
-	**/
 
 	/////////////////////////////////////////////////////////////////////////////
 	// access/modify dofs/xyz's
@@ -1046,7 +1028,8 @@ private:
 	Residue const &
 	residue_( Size const seqpos ) const
 	{
-		assert( seqpos >=1 && seqpos <= size() );
+		assert( seqpos >=1 );
+		assert( seqpos <= size() );
 		return *residues_[ seqpos ];
 	}
 
