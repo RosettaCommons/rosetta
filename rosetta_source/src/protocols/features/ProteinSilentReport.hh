@@ -20,6 +20,7 @@
 
 // Project Headers
 #include <protocols/features/ProtocolFeatures.hh>
+#include <protocols/features/PdbDataFeatures.hh>
 #include <protocols/features/StructureFeatures.hh>
 #include <protocols/features/StructureScoresFeatures.hh>
 #include <protocols/features/PoseConformationFeatures.hh>
@@ -101,6 +102,7 @@ private:
 	StructureMap structure_map_;
 
 	protocols::features::ProtocolFeaturesOP protocol_features_;
+	protocols::features::PdbDataFeaturesOP pdb_data_features_;
 	protocols::features::StructureFeaturesOP structure_features_;
 	protocols::features::StructureScoresFeaturesOP structure_scores_features_;
 	protocols::features::PoseConformationFeaturesOP pose_conformation_features_;

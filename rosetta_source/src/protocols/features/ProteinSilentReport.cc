@@ -21,6 +21,7 @@
 #include <protocols/features/ProtocolFeatures.hh>
 #include <protocols/features/StructureFeatures.hh>
 #include <protocols/features/StructureScoresFeatures.hh>
+#include <protocols/features/PdbDataFeatures.hh>
 #include <protocols/features/PoseCommentsFeatures.hh>
 #include <protocols/features/PoseConformationFeatures.hh>
 #include <protocols/features/ProteinResidueConformationFeatures.hh>
@@ -71,6 +72,7 @@ ProteinSilentReport::ProteinSilentReport() :
 	protocol_id_(0),
 	structure_map_(),
 	protocol_features_( new ProtocolFeatures() ),
+	pdb_data_features_( new PdbDataFeatures()),
 	structure_features_( new StructureFeatures() ),
 	structure_scores_features_( new StructureScoresFeatures() ),
 	pose_conformation_features_( new PoseConformationFeatures() ),
@@ -86,6 +88,7 @@ ProteinSilentReport::ProteinSilentReport(ProteinSilentReport const & src) :
 	protocol_id_(src.protocol_id_),
 	structure_map_(src.structure_map_),
 	protocol_features_(src.protocol_features_),
+	pdb_data_features_(src.pdb_data_features_),
 	structure_features_(src.structure_features_),
 	structure_scores_features_(src.structure_scores_features_),
 	pose_conformation_features_(src.pose_conformation_features_),
@@ -105,6 +108,7 @@ ProteinSilentReport::write_schema_to_db(
 	sessionOP db_session
 ) const {
 	protocol_features_->write_schema_to_db(db_session);
+	pdb_data_features_->write_schema_to_db(db_session);
 	structure_features_->write_schema_to_db(db_session);
 	structure_scores_features_->write_schema_to_db(db_session);
 	pose_conformation_features_->write_schema_to_db(db_session);
@@ -258,6 +262,7 @@ ProteinSilentReport::load_pose(
 	Size struct_id = structure_features_->get_struct_id(db_session, tag);
 
 	pose_conformation_features_->load_into_pose(db_session, struct_id, pose);
+	pdb_data_features_->load_into_pose(db_session,struct_id,pose);
 	pose_comments_features_->load_into_pose(db_session, struct_id, pose);
 	protein_residue_conformation_features_->load_into_pose(db_session, struct_id, pose);
 	residue_conformation_features_->load_into_pose(db_session,struct_id,pose);
@@ -285,6 +290,8 @@ ProteinSilentReport::write_full_report(
 
 	pose_conformation_features_->report_features(
 		pose, relevant_residues, struct_id, db_session);
+	pdb_data_features_->report_features(
+		pose,relevant_residues,struct_id,db_session);
 	structure_scores_features_->report_features(
 		pose, relevant_residues, struct_id, db_session);
 	pose_comments_features_->report_features(
@@ -302,19 +309,14 @@ ProteinSilentReport::write_full_report(
 void ProteinSilentReport::delete_pose(utility::sql_database::sessionOP db_session, std::string const & tag)
 {
 	core::Size struct_id = structure_features_->get_struct_id(db_session,tag);
-	structure_features_->delete_record(struct_id,db_session);
-	pose_conformation_features_->delete_record(struct_id,db_session);
-	structure_scores_features_->delete_record(struct_id,db_session);
-	pose_comments_features_->delete_record(struct_id,db_session);
-	protein_residue_conformation_features_->delete_record(struct_id,db_session);
-	residue_conformation_features_->delete_record(struct_id,db_session);
-	job_data_features_->delete_record(struct_id,db_session);
+	delete_pose(db_session,struct_id);
 }
 
 void ProteinSilentReport::delete_pose(utility::sql_database::sessionOP db_session, core::Size const & struct_id)
 {
 	structure_features_->delete_record(struct_id,db_session);
 	pose_conformation_features_->delete_record(struct_id,db_session);
+	pdb_data_features_->delete_record(struct_id,db_session);
 	structure_scores_features_->delete_record(struct_id,db_session);
 	pose_comments_features_->delete_record(struct_id,db_session);
 	protein_residue_conformation_features_->delete_record(struct_id,db_session);

@@ -288,6 +288,7 @@ sources = {
 		"JobDataFeatures",
 		"OrbitalsFeatures",
 		"PairFeatures",
+		"PdbDataFeatures",
 		"PoseCommentsFeatures",
 		"PoseConformationFeatures",
 		"ProteinSilentReport",

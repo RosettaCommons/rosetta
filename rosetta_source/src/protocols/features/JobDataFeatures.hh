@@ -49,7 +49,7 @@ public:
 		core::Size struct_id,
 		utility::sql_database::sessionOP db_session
 	);
-
+private:
 	void insert_string_rows(core::Size struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const;
 
 	void insert_string_string_rows(core::Size struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const;
