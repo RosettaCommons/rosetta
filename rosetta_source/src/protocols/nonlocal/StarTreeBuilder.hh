@@ -39,6 +39,8 @@ class StarTreeBuilder : public TreeBuilder {
   ///
   /// Important: chunks must be sorted in increasing order of start position.
   /// The simplest way to achieve this is a call to Loops::sequential_order().
+  ///
+  /// Additionally, every residue in pose must belong to one and only one chunk.
   void set_up(const protocols::loops::Loops& chunks, core::pose::Pose* pose);
 
   /// @brief Removes the virtual residue added to <pose> in calls to set_up()
