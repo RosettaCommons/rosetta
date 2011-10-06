@@ -50,6 +50,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
@@ -193,39 +194,129 @@ bool iface_check_C2Z(Pose const & p, Size rsd) {
 
 
 void refine(Pose & pose, Size ibpy, Size dsub) {
-	using namespace core::chemical;
-	using namespace core::conformation::symmetry;
-	using namespace core::pack::task;
-	using namespace core::scoring::constraints;
-	ScoreFunctionOP sf = core::scoring::getScoreFunction();
-	sf->set_weight(core::scoring::atom_pair_constraint,1.0);
-	sf->set_weight(core::scoring::coordinate_constraint,1.0);
-
+  using namespace core::chemical;
+  using namespace core::conformation::symmetry;
+  using namespace core::pack::task;
+  using namespace core::scoring::constraints;
+  ScoreFunctionOP sf = core::scoring::getScoreFunction();
+  sf->set_weight(core::scoring::atom_pair_constraint ,10.0);
+  sf->set_weight(core::scoring::angle_constraint     ,10.0);
+  sf->set_weight(core::scoring::coordinate_constraint,10.0);
   // Get the symmetry info and make the packer task
   SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 
-	pose.add_constraint( new AtomPairConstraint( AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy),
-																							 AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy+1*sym_info->num_independent_residues()),
-																							 new HarmonicFunc(0,0.02) ) );
-	pose.add_constraint( new AtomPairConstraint( AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy),
-																							 AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy+2*sym_info->num_independent_residues()),
-																							 new HarmonicFunc(0,0.02) ) );
+  {
+    // Set allowed AAs.
+    vector1<bool> allowed_aas(20,false);
+    allowed_aas[aa_ala] = true;
 
-	AtomID REF(1,sym_info->num_total_residues_without_pseudo()+1);
-	for(Size ir = 1; ir <= sym_info->num_independent_residues(); ++ir) {
-		if(ir==ibpy) continue;
-		for(Size ia = 1; ia <= pose.residue(ir).nheavyatoms(); ++ia) {
-			pose.add_constraint(new CoordinateConstraint( AtomID(ia,ir), REF, pose.xyz(AtomID(ia,ir)), new HarmonicFunc(0.0,1.0) ) );
-		}
-	}
+    PackerTaskOP task( TaskFactory::create_packer_task( pose ));
+
+    vector1<Size> design_pos;
+    for( Size i=1; i<=pose.n_residue(); i++) {
+      if(i==ibpy) continue;
+      if(!sym_info->bb_is_independent(i)) continue;
+      for( Size j=1; j<=pose.n_residue(); j++) {
+        if(sym_info->bb_is_independent(j)) continue;
+        if(sym_info->subunit_index(j) == dsub ) continue;
+        if( pose.residue(i).nbr_atom_xyz().distance_squared( pose.residue(j).nbr_atom_xyz() ) < 100.0 ) {
+          //TR << "design_pos " << i << " " << j << std::endl;
+          if( find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) design_pos.push_back(i);
+        }
+      }
+    }
+
+    // Set which residues can be designed
+    for( Size i=1; i<=pose.n_residue(); i++) {
+      if (!sym_info->bb_is_independent(i)) {
+        task->nonconst_residue_task(i).prevent_repacking();
+      } else if( pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY") {
+        // Don't mess with Pros or Glys at the interfaces
+        task->nonconst_residue_task(i).prevent_repacking();
+      } else if (find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) {
+        task->nonconst_residue_task(i).prevent_repacking();
+      } else {
+        bool temp = allowed_aas[pose.residue(i).aa()];
+        allowed_aas[pose.residue(i).aa()] = true;
+        task->nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aas);
+        task->nonconst_residue_task(i).or_include_current(true);
+        task->nonconst_residue_task(i).initialize_from_command_line();
+        allowed_aas[pose.residue(i).aa()] = temp;
+      }
+    }
+
+		Real worig = sf->get_weight(core::scoring::res_type_constraint);
+		if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,10.0);
+		utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
+		pose.add_constraints( res_cst );
+
+    // Actually perform design.
+    core::pack::make_symmetric_PackerTask(pose, task);
+    protocols::moves::MoverOP packer = new protocols::moves::symmetry::SymPackRotamersMover(sf, task);
+    packer->apply(pose);
+
+		pose.remove_constraints( res_cst );
+		sf->set_weight(core::scoring::res_type_constraint,worig);
+
+  }
+
+  pose.add_constraint( new AtomPairConstraint( AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy),
+                                               AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy+1*sym_info->num_independent_residues()),
+                                               new HarmonicFunc(0,0.02) ) );
+  pose.add_constraint( new AtomPairConstraint( AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy),
+                                               AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy+2*sym_info->num_independent_residues()),
+                                               new HarmonicFunc(0,0.02) ) );
+
+  pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy),
+                                            AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy),
+                                            AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+1*sym_info->num_independent_residues()),
+                                            new HarmonicFunc(1.570796,0.1) ) );
+  pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy),
+                                            AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy),
+                                            AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+1*sym_info->num_independent_residues()),
+                                            new HarmonicFunc(3.141593,0.1) ) );
+  pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy),
+                                            AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy),
+                                            AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+1*sym_info->num_independent_residues()),
+                                            new HarmonicFunc(3.141593,0.1) ) );
+  pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy),
+                                            AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy),
+                                            AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+1*sym_info->num_independent_residues()),
+                                            new HarmonicFunc(1.570796,0.1) ) );
+
+  pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy),
+                                            AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy),
+                                            AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+2*sym_info->num_independent_residues()),
+                                            new HarmonicFunc(1.570796,0.1) ) );
+  pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy),
+                                            AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy),
+                                            AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+2*sym_info->num_independent_residues()),
+                                            new HarmonicFunc(3.141593,0.1) ) );
+  pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy),
+                                            AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy),
+                                            AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+2*sym_info->num_independent_residues()),
+                                            new HarmonicFunc(3.141593,0.1) ) );
+  pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy),
+                                            AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy),
+                                            AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+2*sym_info->num_independent_residues()),
+                                            new HarmonicFunc(1.570796,0.1) ) );
+
+  AtomID REF(1,sym_info->num_total_residues_without_pseudo()+1);
+  for(Size ir = 1; ir <= sym_info->num_independent_residues(); ++ir) {
+    if(ir==ibpy) continue;
+    for(Size ia = 1; ia <= pose.residue(ir).nheavyatoms(); ++ia) {
+      pose.add_constraint(new CoordinateConstraint( AtomID(ia,ir), REF, pose.xyz(AtomID(ia,ir)), new HarmonicFunc(0.0,1.0) ) );
+    }
+  }
   core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-	movemap->set_jump(true);
+  movemap->set_jump(true);
   movemap->set_bb(true);
   movemap->set_chi(true);
-	core::pose::symmetry::make_symmetric_movemap(pose,*movemap);
+  core::pose::symmetry::make_symmetric_movemap(pose,*movemap);
   protocols::moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+  return;
 
-	pose.remove_constraints();
+  pose.remove_constraints();
 
   // Set allowed AAs.
   vector1<bool> allowed_aas(20,false);
@@ -245,19 +336,19 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
   PackerTaskOP task( TaskFactory::create_packer_task( pose ));
 
 
-	vector1<Size> design_pos;
+  vector1<Size> design_pos;
   for( Size i=1; i<=pose.n_residue(); i++) {
-		if(i==ibpy) continue;
-		if(!sym_info->bb_is_independent(i)) continue;
-		for( Size j=1; j<=pose.n_residue(); j++) {
-			if(sym_info->bb_is_independent(j)) continue;
-			if(sym_info->subunit_index(j) == dsub ) continue;
-			if( pose.residue(i).nbr_atom_xyz().distance_squared( pose.residue(j).nbr_atom_xyz() ) < 100.0 ) {
-				//TR << "design_pos " << i << " " << j << std::endl;
-				if( find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) design_pos.push_back(i);
-			}
-		}
-	}
+    if(i==ibpy) continue;
+    if(!sym_info->bb_is_independent(i)) continue;
+    for( Size j=1; j<=pose.n_residue(); j++) {
+      if(sym_info->bb_is_independent(j)) continue;
+      if(sym_info->subunit_index(j) == dsub ) continue;
+      if( pose.residue(i).nbr_atom_xyz().distance_squared( pose.residue(j).nbr_atom_xyz() ) < 100.0 ) {
+        //TR << "design_pos " << i << " " << j << std::endl;
+        if( find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) design_pos.push_back(i);
+      }
+    }
+  }
 
   // Set which residues can be designed
   for( Size i=1; i<=pose.n_residue(); i++) {
@@ -278,39 +369,47 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
     }
   }
 
+  Real worig = sf->get_weight(core::scoring::res_type_constraint);
+  if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,1.0);
+  utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
+  pose.add_constraints( res_cst );
+
   // Actually perform design.
-	core::pack::make_symmetric_PackerTask(pose, task);
+  core::pack::make_symmetric_PackerTask(pose, task);
   protocols::moves::MoverOP packer = new protocols::moves::symmetry::SymPackRotamersMover(sf, task);
   packer->apply(pose);
+
+  pose.remove_constraints( res_cst );
+  sf->set_weight(core::scoring::res_type_constraint,worig);
 
 }
 
 
 void repack(Pose & pose, Size ibpy, Size dsub) {
-	using namespace core::chemical;
-	using namespace core::conformation::symmetry;
-	using namespace core::pack::task;
-	using namespace core::scoring::constraints;
-	ScoreFunctionOP sf = core::scoring::getScoreFunction();
+  using namespace core::chemical;
+  using namespace core::conformation::symmetry;
+  using namespace core::pack::task;
+  using namespace core::scoring::constraints;
+  ScoreFunctionOP sf = core::scoring::getScoreFunction();
 
   // Get the symmetry info and make the packer task
   SymmetryInfoCOP sym_info = core::pose::symmetry::symmetry_info(pose);
 
   PackerTaskOP task( TaskFactory::create_packer_task( pose ));
 
-	vector1<Size> design_pos;
+  vector1<Size> design_pos;
   for( Size i=1; i<=pose.n_residue(); i++) {
-		if(i==ibpy) continue;
-		if(!sym_info->bb_is_independent(i)) continue;
-		for( Size j=1; j<=pose.n_residue(); j++) {
-			if(sym_info->bb_is_independent(j)) continue;
-			if(sym_info->subunit_index(j) == dsub ) continue;
-			if( pose.residue(i).nbr_atom_xyz().distance_squared( pose.residue(j).nbr_atom_xyz() ) < 100.0 ) {
-				//TR << "design_pos " << i << " " << j << std::endl;
-				if( find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) design_pos.push_back(i);
-			}
-		}
-	}
+    if(i==ibpy) continue;
+    if(!sym_info->bb_is_independent(i)) continue;
+    for( Size j=1; j<=pose.n_residue(); j++) {
+      if(sym_info->bb_is_independent(j)) continue;
+      if(sym_info->subunit_index(j) == dsub ) continue;
+      if( pose.residue(i).nbr_atom_xyz().distance_squared( pose.residue(j).nbr_atom_xyz() ) < 100.0 ) {
+        //TR << "design_pos " << i << " " << j << std::endl;
+        if( find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) design_pos.push_back(i);
+      }
+    }
+  }
 
   // Set which residues can be designed
   for( Size i=1; i<=pose.n_residue(); i++) {
@@ -327,7 +426,7 @@ void repack(Pose & pose, Size ibpy, Size dsub) {
   }
 
   // Actually perform design.
-	core::pack::make_symmetric_PackerTask(pose, task);
+  core::pack::make_symmetric_PackerTask(pose, task);
   protocols::moves::MoverOP packer = new protocols::moves::symmetry::SymPackRotamersMover(sf, task);
   packer->apply(pose);
 
@@ -372,28 +471,28 @@ new_sc(Pose &pose, utility::vector1<Size> intra_subs, Real& int_area, Real& sc) 
 }
 
 Size num_trimer_contacts(Pose const & psym, Size nres) {
-	Size count = 0;
-	for(Size ir = 1; ir <= nres; ++ir) {
-		for(Size jr = nres+1; jr <= 3*nres; ++jr) {
-			if( psym.residue(ir).nbr_atom_xyz().distance_squared( psym.residue(jr).nbr_atom_xyz() ) < 100 ) count++;
-		}
-		for(Size jr = 4*nres+1; jr <= 12*nres; ++jr) {
-			if( psym.residue(ir).nbr_atom_xyz().distance_squared( psym.residue(jr).nbr_atom_xyz() ) < 100 ) count++;
-		}
-	}
-	return count;
+  Size count = 0;
+  for(Size ir = 1; ir <= nres; ++ir) {
+    for(Size jr = nres+1; jr <= 3*nres; ++jr) {
+      if( psym.residue(ir).nbr_atom_xyz().distance_squared( psym.residue(jr).nbr_atom_xyz() ) < 100 ) count++;
+    }
+    for(Size jr = 4*nres+1; jr <= 12*nres; ++jr) {
+      if( psym.residue(ir).nbr_atom_xyz().distance_squared( psym.residue(jr).nbr_atom_xyz() ) < 100 ) count++;
+    }
+  }
+  return count;
 }
 
 Real packing_score(Pose const & psym) {
-	;
+  ;
 }
 
 
 Real get_bare_rep(Pose tmp, ScoreFunctionOP sfrepsym) {
-	option[basic::options::OptionKeys::symmetry::symmetry_definition]("input/sym/C2.sym");
-	core::pose::symmetry::make_symmetric_pose(tmp);
-	sfrepsym->score(tmp);
-	return tmp.energies().total_energies()[core::scoring::fa_rep];
+  option[basic::options::OptionKeys::symmetry::symmetry_definition]("input/sym/C2.sym");
+  core::pose::symmetry::make_symmetric_pose(tmp);
+  sfrepsym->score(tmp);
+  return tmp.energies().total_energies()[core::scoring::fa_rep];
 }
 
 #define ATET 54.735610317245360079 // asin(sr2/sr3)
@@ -409,7 +508,7 @@ void run() {
   ScoreFunctionOP sf = core::scoring::getScoreFunction();
   ScoreFunctionOP sfrep = new core::scoring::ScoreFunction;
   sfrep->set_weight(core::scoring::fa_rep,1.0);
-	ScoreFunctionOP sfrepsym = new core::scoring::symmetry::SymmetricScoreFunction(sfrep);
+  ScoreFunctionOP sfrepsym = new core::scoring::symmetry::SymmetricScoreFunction(sfrep);
 
   core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
   Pose bpy,ala;
@@ -433,12 +532,12 @@ void run() {
     core::import_pose::pose_from_pdb(nat,*rs,fname);
     Pose base(nat);
 
-		Size cyscnt = 0;
-		for(Size ir = 1; ir <= base.n_residue(); ++ir) {
-			if(base.residue(ir).name3()=="CYS") cyscnt++;
-		}
+    Size cyscnt = 0;
+    for(Size ir = 1; ir <= base.n_residue(); ++ir) {
+      if(base.residue(ir).name3()=="CYS") cyscnt++;
+    }
 
-		if(cyscnt > 3) continue;
+    if(cyscnt > 3) continue;
     //TR << "gensym_3bpy_from_dimer " << ifile << " " << fnames[ifile] << " " << base.n_residue() << " residues" << " " << cyscnt << std::endl;
     for(Size ibpy = 1; ibpy <= base.n_residue(); ++ibpy) {
       if(!base.residue(ibpy).is_protein()) continue;
@@ -511,11 +610,13 @@ void run() {
           Pose psym = base;
           trans_pose(psym,-isct);
           Pose psym_bare = psym;
-					for(Size ir = 1; ir <= psym_bare.n_residue(); ++ir) {
-						if( psym_bare.residue(ir).name3()=="GLY" || psym_bare.residue(ir).name3()=="PRO" ) continue;
-						psym_bare.replace_residue(ir,ala.residue(1),true);
-					}
-					Real barerep = get_bare_rep(psym_bare,sfrepsym);
+          for(Size ir = 1; ir <= psym_bare.n_residue(); ++ir) {
+            if( psym_bare.residue(ir).name3()=="GLY" || psym_bare.residue(ir).name3()=="PRO" ) continue;
+            if( psym_bare.residue(ir).is_lower_terminus() ) continue;
+            if( psym_bare.residue(ir).is_upper_terminus() ) continue;
+            psym_bare.replace_residue(ir,ala.residue(1),true);
+          }
+          Real barerep = get_bare_rep(psym_bare,sfrepsym);
           Mat Rsymm;
           string symtag;
           Vec f1=(c3f1-isct).normalized(),f2=(c2f1-isct).normalized(),t1=Vec(0,0,1);
@@ -526,25 +627,25 @@ void run() {
             Rsymm = alignVectorSets(f1,f2,t1, (orig_ang<90.0?1.0:-1.0)*Vec(0.8164965743782284,0.0,0.5773502784520137) );
             dimersub =  4;
           } else if( fabs(ang-AOCT) <= ANGTH ) {
-						continue;
+            //continue;
             symtag = "OCT";
             option[OptionKeys::symmetry::symmetry_definition]("input/sym/octa.sym");
             Rsymm = alignVectorSets(f1,f2,t1, (orig_ang<90.0?1.0:-1.0)*Vec(0.4082482904638630,0.4082482904638626,0.8164965809277260));
             dimersub =  4;
           } else if( fabs(ang-AICS) <= ANGTH ) {
-						continue;
+            //continue;
             symtag = "ICS";
             option[OptionKeys::symmetry::symmetry_definition]("input/sym/icosa.sym");
             Rsymm = alignVectorSets(f1,f2,t1, (orig_ang<90.0?1.0:-1.0)*rotation_matrix_degrees(Vec(0,0,1),120.0)*Vec(0.35670090519235864157,0.0,0.93421863834701557305));
-            dimersub =  11;
+            dimersub =  4;
           } else {
-						continue;
+            continue;
             TR << "closed symm from ang " << ang << " not yet supported" << std::endl;
           }
 
           rot_pose(psym     ,Rsymm); core::pose::symmetry::make_symmetric_pose(psym     );
           rot_pose(psym_bare,Rsymm); core::pose::symmetry::make_symmetric_pose(psym_bare);
-					//psym_bare.dump_pdb("bare.pdb");
+          //psym_bare.dump_pdb("bare.pdb");
 
           string fname = symtag+"_"+infile+"_B"+lead_zero_string_of(ibpy,3)+"-"+lead_zero_string_of((Size)(bch1),3)+"_"+lead_zero_string_of(jaxs,1)+".pdb";
 
@@ -553,41 +654,42 @@ void run() {
           //if(psym_bare.energies().total_energies()[core::scoring::fa_rep] - barerep <   10.0) continue;
           if(psym_bare.energies().total_energies()[core::scoring::fa_rep] - barerep > 1000.0) continue;
 
-					//utility_exit_with_message("arostn");
+          //utility_exit_with_message("arostn");
 
-					Size ncontact = num_trimer_contacts(psym,base.n_residue());
-					if( ncontact < 100 ) continue;
+          Size ncontact = num_trimer_contacts(psym,base.n_residue());
+          if( ncontact < 100 ) continue;
 
           refine(psym,ibpy,dimersub);
           psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+fname);
+          continue;
 
-					Real rms = core::scoring::CA_rmsd(psym,psym_bare);
-					Real sc,int_area;
-					vector1<Size> intra_subs(1,4);
-					sf->score(psym);
-					new_sc(psym,intra_subs,int_area,sc);
+          Real rms = core::scoring::CA_rmsd(psym,psym_bare);
+          Real sc,int_area;
+          vector1<Size> intra_subs(1,4);
+          sf->score(psym);
+          new_sc(psym,intra_subs,int_area,sc);
 
-					repack(psym,ibpy,dimersub);
-					Real s0 = sf->score(psym);
-					for(Size ir = 1; ir <= base.n_residue(); ++ir) {
-						for(Size ia = 1; ia <= psym.residue_type(ir).natoms(); ++ia) {
-							core::id::AtomID const aid(core::id::AtomID(ia,ir));
-							if("ICS"==symtag) psym.set_xyz( aid, psym.xyz(aid) + 20*Vec(-0.178411, 0.309017, 0.934172 ) );
-							if("OCT"==symtag)	psym.set_xyz( aid, psym.xyz(aid) + 20*Vec( 0.408248, 0.408248, 0.816497 ) );
-							if("TET"==symtag)	psym.set_xyz( aid, psym.xyz(aid) + 20*Vec( 0.816497, 0.000000, 0.577350 ) );
-						}
-					}
-					repack(psym,ibpy,dimersub);
-					Real s1 = sf->score(psym);
+          repack(psym,ibpy,dimersub);
+          Real s0 = sf->score(psym);
+          for(Size ir = 1; ir <= base.n_residue(); ++ir) {
+            for(Size ia = 1; ia <= psym.residue_type(ir).natoms(); ++ia) {
+              core::id::AtomID const aid(core::id::AtomID(ia,ir));
+              if("ICS"==symtag) psym.set_xyz( aid, psym.xyz(aid) + 20*Vec(-0.178411, 0.309017, 0.934172 ) );
+              if("OCT"==symtag) psym.set_xyz( aid, psym.xyz(aid) + 20*Vec( 0.408248, 0.408248, 0.816497 ) );
+              if("TET"==symtag) psym.set_xyz( aid, psym.xyz(aid) + 20*Vec( 0.816497, 0.000000, 0.577350 ) );
+            }
+          }
+          repack(psym,ibpy,dimersub);
+          Real s1 = sf->score(psym);
 
           TR << "HIT " << fname << " " <<  ang << " " << ibpy << " " << bch1 << " " << jaxs << " ddG: " << s0-s1 << " sc: " << sc << " " << int_area <<std::endl;
 
           core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
           ss_out->fill_struct(psym_bare,fname);
-					ss_out->add_energy("rms",rms);
-					ss_out->add_energy("ddg",s0-s1);
-					ss_out->add_energy("sc",sc);
-					ss_out->add_energy("int_area",int_area);
+          ss_out->add_energy("rms",rms);
+          ss_out->add_energy("ddg",s0-s1);
+          ss_out->add_energy("sc",sc);
+          ss_out->add_energy("int_area",int_area);
           sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]()+"/"+option[basic::options::OptionKeys::out::file::silent ]() );
 
         }

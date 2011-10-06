@@ -97,7 +97,8 @@ void rot_pose( core::pose::Pose & pose, Vec const & axis, Real const & ang, Vec 
 }
 
 
-Vec com(core::pose::Pose const & pose, Size str, Size end) {
+Vec center_of_geom(core::pose::Pose const & pose, Size str=1, Size end=0) {
+	if(!end) end = pose.n_residue();
 	Vec c(0,0,0);
 	for(Size i = str; i <= end; ++i) {
 		c += pose.xyz(AtomID(2,i));
@@ -108,7 +109,7 @@ Vec com(core::pose::Pose const & pose, Size str, Size end) {
 
 Vec symaxis(core::pose::Pose & pose, Size nsub, Size nsym, Size nblk) {
 	Size const st = nsub*nsym*nblk;
-	Vec c = com(pose,st+1,st+nsym*nsub);
+	Vec c = center_of_geom(pose,st+1,st+nsym*nsub);
 	Vec a(0,0,0);
 	for(Size i = 1; i <= nsub; ++i) {
 		Vec tmp = Vec(0,0,0);

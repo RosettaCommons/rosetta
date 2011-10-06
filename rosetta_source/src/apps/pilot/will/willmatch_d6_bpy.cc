@@ -115,9 +115,9 @@ void refine(Pose & pose, ScoreFunctionOP sf, Size r1, Size r2, Size r3, Size r4 
   //aac[core::chemical::aa_lys] = true;
   aac[core::chemical::aa_leu] = true;
   aac[core::chemical::aa_met] = true;
-  //aac[core::chemical::aa_asn] = true;
+  aac[core::chemical::aa_asn] = true;
   //aac[core::chemical::aa_pro] = true;
-  //aac[core::chemical::aa_gln] = true;
+  aac[core::chemical::aa_gln] = true;
   //aac[core::chemical::aa_arg] = true;
   aac[core::chemical::aa_ser] = true;
   aac[core::chemical::aa_thr] = true;
@@ -269,15 +269,23 @@ void run() {
     ScoreFunctionOP sf     = core::scoring::getScoreFunction();
     ScoreFunctionOP sfhard = core::scoring::ScoreFunctionFactory::create_score_function("standard");;
     //sf->set_weight(core::scoring::fa_dun,1.0);
+    sf->set_weight(core::scoring::fa_sol,0.0);
     sf->set_weight(core::scoring::hbond_sr_bb,2.0);
     sf->set_weight(core::scoring::hbond_lr_bb,2.0);
+    sf->set_weight(core::scoring::hbond_sc,3.0);
+    sf->set_weight(core::scoring::hbond_bb_sc,3.0);
     sf->set_weight(core::scoring::fa_intra_rep,0.4);
     sf->set_weight(core::scoring::fa_dun,0.1);
     sf->set_weight(core::scoring::atom_pair_constraint,1.0);
     sf->set_weight(core::scoring::angle_constraint    ,1.0);
     sf->set_weight(core::scoring::dihedral_constraint ,1.0);
-    sf->set_weight(core::scoring::hbond_sr_bb,3.0);
-    sf->set_weight(core::scoring::hbond_lr_bb,3.0);
+    //sfhard->set_weight(core::scoring::fa_atr,1.2);
+    //sfhard->set_weight(core::scoring::fa_rep,0.2);
+    //sfhard->set_weight(core::scoring::fa_sol,0.0);
+    sfhard->set_weight(core::scoring::hbond_sr_bb,3.0);
+    sfhard->set_weight(core::scoring::hbond_lr_bb,3.0);
+    //sfhard->set_weight(core::scoring::hbond_sc   ,3.0);
+    //sfhard->set_weight(core::scoring::hbond_bb_sc,3.0);
     sfhard->set_weight(core::scoring::fa_intra_rep,0.4);
     sfhard->set_weight(core::scoring::fa_dun,0.1);
     sfhard->set_weight(core::scoring::atom_pair_constraint,1.0);
@@ -894,7 +902,13 @@ void run() {
                                   if( biglu || d1 > d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne,bzn,oe2,(angbe1?angfunc90:angfunc180)));
                                   if( biglu || d1 > d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn,bzn,oe2,(angbn1?angfunc90:angfunc180)));
 
-                                  refine(opose,sf,brsd,irsd,jrsd,ersd);
+																	replace_pose_residue_copying_existing_coordinates(opose, irsd, opose.residue(1).residue_type_set().name_map(ide==1?"HIS_EEE":"HIS_DDD") );
+																	replace_pose_residue_copying_existing_coordinates(opose, jrsd, opose.residue(1).residue_type_set().name_map(jde==1?"HIS_EEE":"HIS_DDD") );
+
+																	//opose.dump_pdb("test.pdb");
+																	//utility_exit_with_message("oarsetno");
+
+                                  //refine(opose,sf    ,brsd,irsd,jrsd,ersd);
                                   refine(opose,sfhard,brsd,irsd,jrsd,ersd);
                                   core::scoring::calpha_superimpose_pose(opose,native);
                                   Real rms = core::scoring::CA_rmsd(opose,native);
