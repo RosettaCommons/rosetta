@@ -866,6 +866,7 @@ void run() {
                                   AtomID inn = AtomID(opose.residue(irsd).atom_index(ide==1?"ND1":"NE2"),irsd);
                                   AtomID jnh = AtomID(opose.residue(jrsd).atom_index(jde==1?"HD1":"HE2"),jrsd);
                                   AtomID jnn = AtomID(opose.residue(jrsd).atom_index(jde==1?"ND1":"NE2"),jrsd);
+                                  AtomID ecg = AtomID(opose.residue(ersd).atom_index("CG" ),ersd);
                                   AtomID ecd = AtomID(opose.residue(ersd).atom_index("CD" ),ersd);
                                   AtomID oe1 = AtomID(opose.residue(ersd).atom_index("OE1"),ersd);
                                   AtomID oe2 = AtomID(opose.residue(ersd).atom_index("OE2"),ersd);
@@ -874,9 +875,10 @@ void run() {
                                   Real d2 = pose.residue(brsd).xyz("ZN").distance(pose.residue(ersd).xyz("OE2"));
                                   core::scoring::constraints::FuncOP disfunc0   = new core::scoring::constraints::HarmonicFunc( 0.0, 0.2 );
                                   core::scoring::constraints::FuncOP disfunc    = new core::scoring::constraints::HarmonicFunc( 2.2, 0.2 );
+                                  core::scoring::constraints::FuncOP angfunc0   = new core::scoring::constraints::CircularHarmonicFunc(   0.0   , 0.2 );
                                   core::scoring::constraints::FuncOP angfunc90  = new core::scoring::constraints::CircularHarmonicFunc(   1.5707, 0.2 );
                                   core::scoring::constraints::FuncOP angfunc180 = new core::scoring::constraints::CircularHarmonicFunc( 2*1.5707, 0.2 );
-                                  core::scoring::constraints::FuncOP angfunc2   = new core::scoring::constraints::CircularHarmonicFunc( 2.0943, 0.2 );
+                                  core::scoring::constraints::FuncOP angfunc2   = new core::scoring::constraints::CircularHarmonicFunc(   2.0943, 0.2 );
 
 																	bool angbei = numeric::angle_degrees(opose.xyz(bne),opose.xyz(bzn),opose.xyz(inn)) < 135.0;
 																	bool angbni = numeric::angle_degrees(opose.xyz(bnn),opose.xyz(bzn),opose.xyz(inn)) < 135.0;
@@ -893,23 +895,57 @@ void run() {
                                   opose.add_constraint(new core::scoring::constraints::AngleConstraint(inn,bzn,jnn,(anghij?angfunc90:angfunc180)));
 
 
-																	bool angbe1 = numeric::angle_degrees(opose.xyz(bne),opose.xyz(bzn),opose.xyz(oe1)) < 135.0;
-																	bool angbn1 = numeric::angle_degrees(opose.xyz(bnn),opose.xyz(bzn),opose.xyz(oe1)) < 135.0;
-																	bool angbe2 = numeric::angle_degrees(opose.xyz(bne),opose.xyz(bzn),opose.xyz(oe2)) < 135.0;
-																	bool angbn2 = numeric::angle_degrees(opose.xyz(bnn),opose.xyz(bzn),opose.xyz(oe2)) < 135.0;
+																	Real omx1 = max( max( max( numeric::angle_degrees(opose.xyz(bne),opose.xyz(bzn),opose.xyz(oe1)),
+																														 numeric::angle_degrees(opose.xyz(bnn),opose.xyz(bzn),opose.xyz(oe1))),
+																												     numeric::angle_degrees(opose.xyz(inn),opose.xyz(bzn),opose.xyz(oe1))),
+																									           numeric::angle_degrees(opose.xyz(jnn),opose.xyz(bzn),opose.xyz(oe1)));
+																	Real omx2 = max( max( max( numeric::angle_degrees(opose.xyz(bne),opose.xyz(bzn),opose.xyz(oe2)),
+																														 numeric::angle_degrees(opose.xyz(bnn),opose.xyz(bzn),opose.xyz(oe2))),
+																												     numeric::angle_degrees(opose.xyz(inn),opose.xyz(bzn),opose.xyz(oe2))),
+																									           numeric::angle_degrees(opose.xyz(jnn),opose.xyz(bzn),opose.xyz(oe2)));
 
-                                  if( biglu || d1 < d2 ) opose.add_constraint(new core::scoring::constraints::AtomPairConstraint(bzn,oe1,disfunc));
-                                  if( biglu || d1 > d2 ) opose.add_constraint(new core::scoring::constraints::AtomPairConstraint(bzn,oe2,disfunc));
-																	if( biglu || d1 < d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne,bzn,oe1,(angbe1?angfunc90:angfunc180)));
-																	if( biglu || d1 < d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn,bzn,oe1,(angbn1?angfunc90:angfunc180)));
-                                  if( biglu || d1 > d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne,bzn,oe2,(angbe1?angfunc90:angfunc180)));
-                                  if( biglu || d1 > d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn,bzn,oe2,(angbn1?angfunc90:angfunc180)));
+
+																	bool angbe1 = numeric::angle_degrees(opose.xyz(bne),opose.xyz(bzn),opose.xyz(oe1)) != omx1;
+																	bool angbn1 = numeric::angle_degrees(opose.xyz(bnn),opose.xyz(bzn),opose.xyz(oe1)) != omx1;
+																	bool anghi1 = numeric::angle_degrees(opose.xyz(inn),opose.xyz(bzn),opose.xyz(oe1)) != omx1;
+																	bool anghj1 = numeric::angle_degrees(opose.xyz(jnn),opose.xyz(bzn),opose.xyz(oe1)) != omx1;
+
+																	bool angbe2 = numeric::angle_degrees(opose.xyz(bne),opose.xyz(bzn),opose.xyz(oe2)) != omx2;
+																	bool angbn2 = numeric::angle_degrees(opose.xyz(bnn),opose.xyz(bzn),opose.xyz(oe2)) != omx2;
+																	bool anghi2 = numeric::angle_degrees(opose.xyz(inn),opose.xyz(bzn),opose.xyz(oe2)) != omx2;
+																	bool anghj2 = numeric::angle_degrees(opose.xyz(jnn),opose.xyz(bzn),opose.xyz(oe2)) != omx2;
+
+																	if( ((int)angbe1 + (int)angbn1 + (int)anghi1 + (int)anghj1) != 3 ) utility_exit_with_message("GLU1 ANG WRONG!!!!!!");
+																	if( ((int)angbe2 + (int)angbn2 + (int)anghi2 + (int)anghj2) != 3 ) utility_exit_with_message("GLU2 ANG WRONG!!!!!!");
+
+                                  if( biglu || d1 < d2 ) {
+																		opose.add_constraint(new core::scoring::constraints::AtomPairConstraint(bzn,oe1,disfunc));
+																		opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne,bzn,oe1,(angbe1?angfunc90:angfunc180)));
+																		opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn,bzn,oe1,(angbn1?angfunc90:angfunc180)));
+																		opose.add_constraint(new core::scoring::constraints::AngleConstraint(inn,bzn,oe1,(anghi1?angfunc90:angfunc180)));
+																		opose.add_constraint(new core::scoring::constraints::AngleConstraint(jnn,bzn,oe1,(anghj1?angfunc90:angfunc180)));
+																		opose.add_constraint(new core::scoring::constraints::AngleConstraint(    bzn,oe1,ecd,angfunc2));
+																		if( fabs(numeric::dihedral_degrees(opose.xyz(bzn),opose.xyz(oe1),opose.xyz(ecd),opose.xyz(ecg))) > 90.0 )
+																			   opose.add_constraint(new core::scoring::constraints::DihedralConstraint(bzn,oe1,ecd,ecg,angfunc180));
+																		else opose.add_constraint(new core::scoring::constraints::DihedralConstraint(bzn,oe1,ecd,ecg,angfunc0  ));
+																	}
+																	if( biglu || d1 > d2 ) {
+																		opose.add_constraint(new core::scoring::constraints::AtomPairConstraint(bzn,oe2,disfunc));
+																		opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne,bzn,oe2,(angbe2?angfunc90:angfunc180)));
+																		opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn,bzn,oe2,(angbn2?angfunc90:angfunc180)));
+																		opose.add_constraint(new core::scoring::constraints::AngleConstraint(inn,bzn,oe2,(anghi2?angfunc90:angfunc180)));
+																		opose.add_constraint(new core::scoring::constraints::AngleConstraint(jnn,bzn,oe2,(anghj2?angfunc90:angfunc180)));
+																		opose.add_constraint(new core::scoring::constraints::AngleConstraint(    bzn,oe2,ecd,angfunc2));
+																		if( fabs(numeric::dihedral_degrees(opose.xyz(bzn),opose.xyz(oe2),opose.xyz(ecd),opose.xyz(ecg))) > 90.0 )
+																			   opose.add_constraint(new core::scoring::constraints::DihedralConstraint(bzn,oe2,ecd,ecg,angfunc180));
+																		else opose.add_constraint(new core::scoring::constraints::DihedralConstraint(bzn,oe2,ecd,ecg,angfunc0  ));
+																	}
 
 																	//opose.dump_pdb("test.pdb");
 																	//utility_exit_with_message("oarsetno");
 
                                   //refine(opose,sf    ,brsd,irsd,jrsd,ersd);
-                                  refine(opose,sfhard,brsd,irsd,jrsd,ersd);
+                                  //refine(opose,sfhard,brsd,irsd,jrsd,ersd);
                                   core::scoring::calpha_superimpose_pose(opose,native);
                                   Real rms = core::scoring::CA_rmsd(opose,native);
 
