@@ -15,6 +15,7 @@
 
 // C/C++ headers
 #include <algorithm>
+#include <iterator>
 #include <string>
 
 // External headers
@@ -42,12 +43,11 @@
 namespace protocols {
 namespace nonlocal {
 
-typedef core::fragment::FragSetOP FragSetOP;
 typedef utility::vector1<double> Probabilities;
 
 static basic::Tracer TR("protocols.nonlocal.BiasedFragmentMover");
 
-BiasedFragmentMover::BiasedFragmentMover(const FragSetOP& fragments, const PolicyOP& policy, const Probabilities& pdf)
+BiasedFragmentMover::BiasedFragmentMover(const core::fragment::FragSetOP& fragments, const PolicyOP& policy, const Probabilities& pdf)
     : fragments_(fragments), policy_(policy), pdf_(pdf) {
   assert(fragments);
   assert(policy);
@@ -64,10 +64,9 @@ void BiasedFragmentMover::initialize_library() {
   }
 }
 
-/// @detail Normalizes the pdf, then computes the cdf
+/// @detail Computes cdf from pdf. cumulative() takes care of normalization.
 void BiasedFragmentMover::initialize_probabilities() {
-  numeric::normalize(pdf_.begin(), pdf_.end());
-  std::copy(pdf_.begin(), pdf_.end(), cdf_.begin());
+  std::copy(pdf_.begin(), pdf_.end(), std::back_inserter(cdf_));
   numeric::cumulative(cdf_.begin(), cdf_.end());
 }
 

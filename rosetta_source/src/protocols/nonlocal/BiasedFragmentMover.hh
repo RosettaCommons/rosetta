@@ -89,10 +89,10 @@ class BiasedFragmentMover : public protocols::moves::Mover {
   /// @brief Guidance for selecting the fragment to be inserted at a given position
   PolicyOP policy_;
 
-  /// @brief PDF of residue sampling probabilities
+  /// @brief PDF of residue sampling probabilities. Must remain in sync with cdf_.
   Probabilities pdf_;
 
-  /// @brief CDF of residue sampling probabilities
+  /// @brief CDF of residue sampling probabilities. Must remain in sync with pdf_.
   Probabilities cdf_;
 };
 

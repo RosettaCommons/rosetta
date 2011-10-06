@@ -14,6 +14,7 @@
 #include <protocols/medal/MedalMover.hh>
 
 // C/C++ headers
+#include <iomanip>
 #include <iostream>
 #include <string>
 
@@ -33,6 +34,7 @@
 #include <basic/options/keys/jumps.OptionKeys.gen.hh>
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <numeric/prob_util.hh>
 #include <utility/vector1.hh>
 
 // Project headers
@@ -70,6 +72,9 @@
 #include <protocols/nonlocal/StarTreeBuilder.hh>
 #include <protocols/nonlocal/util.hh>
 
+// Package headers
+#include <protocols/medal/util.hh>
+
 namespace protocols {
 namespace medal {
 
@@ -91,7 +96,6 @@ void on_pose_accept(const protocols::loops::Loops& chunks,
   using core::io::silent::SilentFileData;
   using core::io::silent::SilentStructFactory;
   using core::io::silent::SilentStructOP;
-
   assert(jumps.size() == chunks.size());
 
   static int num_accepted = 0;
@@ -103,26 +107,44 @@ void on_pose_accept(const protocols::loops::Loops& chunks,
   sfd.write_silent_struct(*silent, "medal.accepted.out");
 }
 
-void compute_per_residue_probabilities(const core::sequence::SequenceAlignment& alignment,
+void compute_per_residue_probabilities(const unsigned num_residues,
+                                       const core::sequence::SequenceAlignment& alignment,
                                        const protocols::loops::Loops& chunks,
                                        const core::kinematics::FoldTree& tree,
                                        const core::fragment::FragSet& fragments,
                                        Probabilities* probs) {
-  // TODO(cmiles)
-  const double nres = tree.nres();
-  for (unsigned i = 1; i <= nres; ++i) {
-    probs->push_back(1 / nres);
-  }
+  using namespace std;
+
+  Probabilities p_alignment, p_chunk, p_cut;
+  alignment_probabilities(num_residues, alignment, &p_alignment);
+  chunk_probabilities(chunks, &p_chunk);
+  cutpoint_probabilities(num_residues, tree, &p_cut);
+
+  // Product of probabilities
+  probs->insert(probs->begin(), p_alignment.begin(), p_alignment.end());
+  numeric::product(probs->begin(), probs->end(), p_chunk.begin(), p_chunk.end());
+  numeric::product(probs->begin(), probs->end(), p_cut.begin(), p_cut.end());
 
   // Zero-out probabilities of residues that would allow folding across the cut
-  const unsigned fragment_len = fragments.max_frag_length();
+  invalidate_residues_spanning_cuts(tree, fragments.max_frag_length(), probs);
+  numeric::normalize(probs->begin(), probs->end());
 
-  for (unsigned i = 1; i <= tree.num_cutpoint(); ++i) {
-    const unsigned cutpoint = tree.cutpoint(i);
-    for (unsigned j = (cutpoint - fragment_len + 2); j <= cutpoint; ++j) {
-      (*probs)[j] = 0;
-    }
+  // Display individual and combined probabilities
+  TR << setw(10) << "Residue"
+     << setw(15) << "P(align)"
+     << setw(15) << "P(chunk)"
+     << setw(15) << "P(cut)"
+     << setw(15) << "P(combined)"
+     << endl;
+
+  for (unsigned i = 1; i <= probs->size(); ++i) {
+    TR << setw(10) << i;
+    TR << fixed << setw(15) << setprecision(5) << p_alignment[i];
+    TR << fixed << setw(15) << setprecision(5) << p_chunk[i];
+    TR << fixed << setw(15) << setprecision(5) << p_cut[i];
+    TR << fixed << setw(15) << setprecision(5) << (*probs)[i] << endl;
   }
+  TR.flush_all_channels();
 }
 
 MedalMover::MedalMover() {
@@ -149,6 +171,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
 
   ThreadingJob const * const job = protocols::nonlocal::current_job();
   const SequenceAlignment& alignment = job->alignment();
+  const unsigned num_residues = pose.total_residue();
 
   // Build up a threading model
   LoopRelaxThreadingMover closure;
@@ -179,7 +202,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
 
   // Fragment insertion moves
   Probabilities probs;
-  compute_per_residue_probabilities(alignment, chunks, pose.fold_tree(), *fragments_sm_, &probs);
+  compute_per_residue_probabilities(num_residues, alignment, chunks, pose.fold_tree(), *fragments_sm_, &probs);
   MoverOP fragment_mover =
       new BiasedFragmentMover(fragments_sm_,
                               PolicyFactory::get_policy("uniform", fragments_sm_, 25),
