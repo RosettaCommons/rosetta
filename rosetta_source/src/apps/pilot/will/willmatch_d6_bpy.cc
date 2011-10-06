@@ -945,7 +945,7 @@ void run() {
 																	//utility_exit_with_message("oarsetno");
 
                                   //refine(opose,sf    ,brsd,irsd,jrsd,ersd);
-                                  //refine(opose,sfhard,brsd,irsd,jrsd,ersd);
+                                  refine(opose,sfhard,brsd,irsd,jrsd,ersd);
                                   core::scoring::calpha_superimpose_pose(opose,native);
                                   Real rms = core::scoring::CA_rmsd(opose,native);
 
