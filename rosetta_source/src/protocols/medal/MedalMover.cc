@@ -115,15 +115,17 @@ void compute_per_residue_probabilities(const unsigned num_residues,
                                        Probabilities* probs) {
   using namespace std;
 
-  Probabilities p_alignment, p_chunk, p_cut;
+  Probabilities p_alignment, p_chunk, p_cut, p_end;
   alignment_probabilities(num_residues, alignment, &p_alignment);
   chunk_probabilities(chunks, &p_chunk);
   cutpoint_probabilities(num_residues, tree, &p_cut);
+  end_bias_probabilities(num_residues, &p_end);
 
   // Product of probabilities
   probs->insert(probs->begin(), p_alignment.begin(), p_alignment.end());
   numeric::product(probs->begin(), probs->end(), p_chunk.begin(), p_chunk.end());
   numeric::product(probs->begin(), probs->end(), p_cut.begin(), p_cut.end());
+  numeric::product(probs->begin(), probs->end(), p_end.begin(), p_end.end());
 
   // Zero-out probabilities of residues that would allow folding across the cut
   invalidate_residues_spanning_cuts(tree, fragments.max_frag_length(), probs);
@@ -134,6 +136,7 @@ void compute_per_residue_probabilities(const unsigned num_residues,
      << setw(15) << "P(align)"
      << setw(15) << "P(chunk)"
      << setw(15) << "P(cut)"
+     << setw(15) << "P(end)"
      << setw(15) << "P(combined)"
      << endl;
 
@@ -142,6 +145,7 @@ void compute_per_residue_probabilities(const unsigned num_residues,
     TR << fixed << setw(15) << setprecision(5) << p_alignment[i];
     TR << fixed << setw(15) << setprecision(5) << p_chunk[i];
     TR << fixed << setw(15) << setprecision(5) << p_cut[i];
+    TR << fixed << setw(15) << setprecision(5) << p_end[i];
     TR << fixed << setw(15) << setprecision(5) << (*probs)[i] << endl;
   }
   TR.flush_all_channels();
@@ -178,22 +182,23 @@ void MedalMover::apply(core::pose::Pose& pose) {
   closure.setup();
   closure.apply(pose);
 
+  // Configure the score functions used in the simulation
+  core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
+  core::scoring::constraints::add_constraints_from_cmdline_to_pose(pose);
+  ScoreFunctionOP score = score_function();
+  score_pose(*score, &pose);
+
   // Decompose the structure into chunks based on consecutive CA-CA distances
   Loops chunks;
   protocols::nonlocal::chunks_by_CA_CA_distance(pose, &chunks);
 
-  // Configure the score functions used in the simulation
-  core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
-  ScoreFunctionOP score = score_function();
-
-  // Add constraints to the pose, score the initial model
-  core::scoring::constraints::add_constraints_from_cmdline_to_pose(pose);
-  score_pose(*score, &pose);
-
-  // Define the kinematics
   StarTreeBuilder builder;
   builder.set_up(chunks, &pose);
   TR << pose.fold_tree() << std::endl;
+
+  // Compute per-residue sampling probabilities
+  Probabilities probs;
+  compute_per_residue_probabilities(num_residues, alignment, chunks, pose.fold_tree(), *fragments_sm_, &probs);
 
   // Rigid body moves
   Jumps jumps;
@@ -201,8 +206,6 @@ void MedalMover::apply(core::pose::Pose& pose) {
   MoverOP rigid_body_mover = new RigidBodyMotionMover(jumps);
 
   // Fragment insertion moves
-  Probabilities probs;
-  compute_per_residue_probabilities(num_residues, alignment, chunks, pose.fold_tree(), *fragments_sm_, &probs);
   MoverOP fragment_mover =
       new BiasedFragmentMover(fragments_sm_,
                               PolicyFactory::get_policy("uniform", fragments_sm_, 25),
@@ -288,10 +291,7 @@ core::scoring::ScoreFunctionOP MedalMover::score_function() const {
   score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::constraints::cst_weight]());
   score->set_weight(core::scoring::hbond_lr_bb, 1);
   score->set_weight(core::scoring::hbond_sr_bb, 1);
-  score->set_weight(core::scoring::chainbreak, option[OptionKeys::jumps::increase_chainbreak]());
-  score->set_weight(core::scoring::distance_chainbreak, option[OptionKeys::jumps::increase_chainbreak]());
   score->set_weight(core::scoring::linear_chainbreak, option[OptionKeys::jumps::increase_chainbreak]());
-  score->set_weight(core::scoring::overlap_chainbreak, option[OptionKeys::jumps::increase_chainbreak]());
   score->set_weight(core::scoring::rg, option[OptionKeys::abinitio::rg_reweight]());
   score->set_weight(core::scoring::sheet, 1);
   score->set_weight(core::scoring::vdw, 1);

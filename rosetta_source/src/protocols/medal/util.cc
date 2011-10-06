@@ -35,9 +35,25 @@ namespace medal {
 
 typedef utility::vector1<double> Probabilities;
 
+/// @brief Lower sampling probability near termini
+void end_bias_probabilities(const unsigned num_residues, Probabilities* p) {
+  assert(p);
+
+  // Penalize 10% lowest, highest residues
+  const unsigned offset_left = static_cast<unsigned>(std::ceil(0.1 * num_residues));
+  const unsigned offset_right = num_residues - offset_left + 1;
+
+  p->clear();
+  for (unsigned i = 1; i <= num_residues; ++i) {
+    bool near_terminus = i <= offset_left || i >= offset_right;
+    p->push_back(near_terminus ? 0.1 : 0.9);
+  }
+  numeric::normalize(p->begin(), p->end());
+}
+
 void alignment_probabilities(const unsigned num_residues,
-														 const core::sequence::SequenceAlignment& alignment,
-														 Probabilities* p) {
+                             const core::sequence::SequenceAlignment& alignment,
+                             Probabilities* p) {
   assert(p);
 
   p->clear();
@@ -69,7 +85,7 @@ void cutpoint_probabilities(const unsigned num_residues, const core::kinematics:
   assert(p);
 
   // List of cutpoints sorted by position
-	std::set<unsigned> cutpoints;
+  std::set<unsigned> cutpoints;
   for (unsigned i = 1; i <= tree.num_cutpoint(); ++i) {
     unsigned cutpoint = tree.cutpoint(i);
     if (cutpoint == num_residues)  // cutpoint at end of chain

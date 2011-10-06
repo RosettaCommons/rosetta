@@ -44,6 +44,9 @@ void cutpoint_probabilities(const unsigned num_residues,
                             const core::kinematics::FoldTree& tree,
                             Probabilities* p);
 
+/// @brief Biases sampling away from termini
+void end_bias_probabilities(const unsigned num_residues, Probabilities* p);
+
 /// @brief Zeroes out the probability of residues for which fragment insertion
 /// would cross cutpoint boundaries.
 void invalidate_residues_spanning_cuts(const core::kinematics::FoldTree& tree,
