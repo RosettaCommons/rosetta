@@ -1,12 +1,13 @@
 <ROSETTASCRIPTS>
 	<SCOREFXNS>
 		<s weights=score12prime/>
-	</SCOREFXNS>
+	</SCOREFXNS>		
 	<TASKOPERATIONS>
 		<ReadResfileFromDB name=relevant_chain db="%(sample_source_path)s/input/rosetta_inputs.db3" table="resfiles"/>
-	</TASKOPERATIONS>		
-	<MOVERS>
+	</TASKOPERATIONS>
+        <MOVERS>
 		<SavePoseMover name=init_struct reference_name=init_struct/>
+		<FastRelax name=fast_relax scorefxn=s/>
 		<ReportToDB name=features_reporter db="%(output_dir)s/%(sample_source_id)s/features_%(sample_source_id)s.db3" sample_source="%(sample_source_description)s" task_operations=relevant_chain>
 			<feature name=HBondFeatures scorefxn=s/>
 			<feature name=HBondParameterFeatures scorefxn=s/>
@@ -15,7 +16,6 @@
 			<feature name=PoseConformationFeatures/>
 			<feature name=ProteinBackboneAtomAtomPairFeatures/>
 			<feature name=ProteinResidueConformationFeatures/>
-			<feature name=ProteinRMSDFeatures reference_name=init_struct/>
 			<feature name=RadiusOfGyrationFeatures/>
 			<feature name=ResidueBurialFeatures/>
 			<feature name=ResidueFeatures/>
@@ -23,10 +23,11 @@
 			<feature name=ResidueTypesFeatures/>
 			<feature name=RotamerRecoveryFeatures scorefxn=s/>
 			<feature name=StructureScoresFeatures scorefxn=s/>
-		</ReportToDB>
-	</MOVERS>
-	<PROTOCOLS>
+                </ReportToDB>
+        </MOVERS>
+        <PROTOCOLS>
 		<Add mover_name=init_struct/>
+		<Add mover_name=fast_relax/>
 		<Add mover_name=features_reporter/>
-	</PROTOCOLS>
+        </PROTOCOLS>
 </ROSETTASCRIPTS>

@@ -20,7 +20,7 @@ class SampleSource(BaseSampleSource):
         BaseSampleSource.__init__(self)
 
         self.sample_source_description_default_value = \
-            "Top 8000 chains in PDB from the Richardson Lab"
+            "Top 8000 chains in PDB from the Richardson Lab with Reduce placed Hydrogens"
 
         self.initialize_options_parser()
         self.parse_options(argv)

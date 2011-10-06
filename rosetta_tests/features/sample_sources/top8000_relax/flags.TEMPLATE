@@ -7,8 +7,7 @@
 #
 #
 -in
- -path
-  -path %(sample_source_path)s/input/top8000_chains_eds_70_rosetta_named_hydrogens
+ -path %(sample_source_path)s/input/top8000_chains_eds_70_rosetta_named_hydrogens
  -file
   -l %(sample_source_path)s/input/all_pdbs.list
 #

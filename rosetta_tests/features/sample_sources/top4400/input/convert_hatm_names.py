@@ -139,7 +139,6 @@ def run(data_dir, output_dir):
         print "Creating output directory '%s'." % output_dir
         os.makedirs(output_dir)
 
-
     n_pdbs = 0
     for fname in glob.glob(data_dir+"/*.pdb"):
         n_pdbs += 1

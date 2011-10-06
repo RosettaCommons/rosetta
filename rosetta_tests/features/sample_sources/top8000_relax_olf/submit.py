@@ -20,7 +20,7 @@ class SampleSource(BaseSampleSource):
         BaseSampleSource.__init__(self)
 
         self.sample_source_description_default_value = \
-            "Top 8000 chains in PDB from the Richardson Lab with Reduce placed Hydrogens, relaxed with fast relax"
+            "Top 8000 chains in PDB from the Richardson Lab, relaxed with fast relax with the O'Meara Leaver-Fay score function corrections"
 
         self.initialize_options_parser()
         self.parse_options(argv)

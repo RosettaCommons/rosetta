@@ -20,7 +20,7 @@ class SampleSource(BaseSampleSource):
         BaseSampleSource.__init__(self)
 
         self.sample_source_description_default_value = \
-            "Top 4400 chains in PDB from the Richardson Lab with Reduce placed hydrogens, relaxed with fast relax"
+            "Top 4400 chains in PDB from the Richardson Lab with Reduce placed hydrogens, relaxed with fast relax and the O'Meara Leaver-Fay corrections."
 
         self.initialize_options_parser()
         self.parse_options(argv)
@@ -62,8 +62,7 @@ class SampleSource(BaseSampleSource):
 #        print "generating all_pdbs.list..."
 #        try:
 #            f = open("input/all_pdbs.list", 'w')
-#            p = subprocess.Popen(["find", ".", "-name", "*pdb"],
-#                  stdout=f, stderr=subprocess.PIPE, cwd=os.getcwd() + "/input/top4400pdbs")
+#            p = subprocess.Popen(["find", os.getcwd() + "/input/top4400pdbs", "-name", "*pdb"],
 #                  stdout=f, stderr=subprocess.PIPE)
 #            err = p.communicate()[1]
 #            if err != '': print err

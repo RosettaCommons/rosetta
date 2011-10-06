@@ -5,9 +5,6 @@
 #
 # The chi term correction
 -score::hb_sp2_chipen
--score::hb_sp2_amp 2.0
--score:hb_sp2_peak_heigh_above_trough 3.0
-#
 #
 #
 # HBond OH donor correction
@@ -27,7 +24,7 @@
 #
 #
 -in
- -path %(sample_source_path)s/input/top4400pdbs
+ -path %(sample_source_path)s/input/top4400pdbs_rosetta_named_hydrogens
  -file
   -l %(sample_source_path)s/input/all_pdbs.list
 #
@@ -36,7 +33,11 @@
 -out
  -nooutput
 #
-#
+#Read in pronation states from input data (use with
+#caution for runs that do more than extract features)
+-pH
+ -pH_mode
+
 -parser
  -protocol %(output_dir)s/%(sample_source_id)s/features.xml
 #
@@ -47,39 +48,8 @@
  -delete_old_poses
 #
 #
--chemical
- -exclude_patches \
-	LowerDNA \
-	UpperDNA \
-	Cterm_amidation \
-	SpecialRotamer \
-	protein_cutpoint_upper \
-	protein_cutpoint_lower \
-	ShoveBB \
-	VirtualDNAPhosphate \
-	CTermConnect \
-	pro_hydroxylated_case1 \
-	pro_hydroxylated_case2 \
-	ser_phosphorylated \
-	thr_phosphorylated \
-	tyr_phosphorylated \
-	tyr_sulfated \
-	lys_dimethylated \
-	lys_monomethylated \
-	lys_trimethylated \
-	lys_acetylated \
-	glu_carboxylated \
-	cys_acetylated \
-	tyr_diiodinated \
-	N_acetylated \
-	C_methylamidated \
-	MethylatedProteinCterm
 #
-#
--mute protocols.jd2
--mute core.io.pdb.file_data
 -mute core.scoring.etable
 -mute core.io.database
--mute core.scoring.ScoreFunctionFactory
 -mute core.pack.task
 -mute protocols.ProteinInterfaceDesign.DockDesign

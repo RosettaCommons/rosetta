@@ -15,14 +15,26 @@ top4400
 # The top4400 chains dataset where each structure is FastRelaxed
 #top4400_relax
 
+# The top4400 chains dataset with the O'Meara Leaver-Fay score function corrections
+top4400_olf
+
+# The top4400 chains dataset where each structure is FastRelaxed with the O'Meara Leaver-Fay score function corrections
+#top4400_relax_olf
+
 # The top8000 chains dataset
 #top8000
 
 # The top8000 chains dataset where each structure is FastRelaxed
 #top8000_relax
 
+# The top8000 chains dataset with the O'Meara Leaver-Fay score function corrections
+#top8000_olf
+
+# The top8000 chains dataset where each structure is FastRelaxed with the O'Meara Leaver-Fay score function corrections
+#top8000_relax_olf
+
 # Rosetta ab initio structure predictions with lr5 rmsd to native normalizationn with score12prime weight set
-abrelax
+#abrelax
 
 # Rosetta ab init structure predictions with lr5 rmsd to native normalization with -correct flag
 #abrelax_correct

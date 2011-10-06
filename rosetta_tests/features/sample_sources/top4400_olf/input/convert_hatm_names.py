@@ -135,9 +135,9 @@ def run(data_dir, output_dir):
         print "ERROR: The supplied data directory '%s' does not exist." % data_dir
         exit(1)
 
-    if not os.path.exists(output_dir): 
-        print "Creating output directory '%s'." % output_dir
-        os.makedirs(output_dir)
+     if not os.path.exists(output_dir): 
+         print "Creating output directory '%s'." % output_dir
+         os.makedirs(output_dir)
 
 
     n_pdbs = 0
