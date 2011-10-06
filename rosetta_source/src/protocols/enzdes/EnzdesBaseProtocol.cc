@@ -316,13 +316,13 @@ EnzdesBaseProtocol::create_enzdes_pack_task(
 	if( get_enzdes_observer( pose ) ){
 		taskfactory.push_back( new AddRigidBodyLigandConfs() );
 	}
-	if( basic::options::option[basic::options::OptionKeys::enzdes::run_ligand_motifs].user() ){
-		taskfactory.push_back( new AddLigandMotifRotamers() );
-	}
 	if( basic::options::option[basic::options::OptionKeys::enzdes::detect_design_interface].user() ){
 		SetCatalyticResPackBehaviorOP catpack = new SetCatalyticResPackBehavior();
 		catpack->set_fix_catalytic_aa( this->fix_catalytic_aa_ );
 		taskfactory.push_back( catpack );
+	}
+	if( basic::options::option[basic::options::OptionKeys::enzdes::run_ligand_motifs].user() ){
+		taskfactory.push_back( new AddLigandMotifRotamers() );
 	}
 
 	PackerTaskOP task = taskfactory.create_task_and_apply_taskoperations( pose );
