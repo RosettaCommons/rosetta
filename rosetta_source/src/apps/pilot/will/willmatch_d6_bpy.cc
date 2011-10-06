@@ -247,6 +247,7 @@ void run() {
     if( startfile != "" && startfile != infile ) continue; // CHECKPOINT
     Pose in_fa;
     pose_from_pdb(in_fa, *fa_residue_set,infile);
+		if( in_fa.n_residue() > 300 ) continue;
     for(Size ir = 1; ir <= in_fa.n_residue(); ++ir) {
       if(in_fa.residue(ir).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(in_fa,ir);
       if(in_fa.residue(ir).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(in_fa,ir);
@@ -855,6 +856,8 @@ void run() {
                                   opose.set_chi(3,ersd,pose.chi(3,ersd));
 
 																	//opose.dump_pdb( option[out::file::o]()+"/"+outfname+"_PRE.pdb.gz");
+																	replace_pose_residue_copying_existing_coordinates(opose, irsd, opose.residue(1).residue_type_set().name_map(ide==1?"HIS_EEE":"HIS_DDD") );
+																	replace_pose_residue_copying_existing_coordinates(opose, jrsd, opose.residue(1).residue_type_set().name_map(jde==1?"HIS_EEE":"HIS_DDD") );
 
                                   AtomID bzn = AtomID(opose.residue(brsd).atom_index("ZN" ),brsd);
                                   AtomID bne = AtomID(opose.residue(brsd).atom_index("NE1"),brsd);
@@ -901,9 +904,6 @@ void run() {
 																	if( biglu || d1 < d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn,bzn,oe1,(angbn1?angfunc90:angfunc180)));
                                   if( biglu || d1 > d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bne,bzn,oe2,(angbe1?angfunc90:angfunc180)));
                                   if( biglu || d1 > d2 ) opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn,bzn,oe2,(angbn1?angfunc90:angfunc180)));
-
-																	replace_pose_residue_copying_existing_coordinates(opose, irsd, opose.residue(1).residue_type_set().name_map(ide==1?"HIS_EEE":"HIS_DDD") );
-																	replace_pose_residue_copying_existing_coordinates(opose, jrsd, opose.residue(1).residue_type_set().name_map(jde==1?"HIS_EEE":"HIS_DDD") );
 
 																	//opose.dump_pdb("test.pdb");
 																	//utility_exit_with_message("oarsetno");
