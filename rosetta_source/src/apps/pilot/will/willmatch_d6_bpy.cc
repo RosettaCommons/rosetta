@@ -894,6 +894,8 @@ void run() {
                                   opose.add_constraint(new core::scoring::constraints::AngleConstraint(bnn,bzn,jnn,(angbnj?angfunc90:angfunc180)));
                                   opose.add_constraint(new core::scoring::constraints::AngleConstraint(inn,bzn,jnn,(anghij?angfunc90:angfunc180)));
 
+																	// TR << "!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n" << std::endl;
+																	// if(!biglu) continue;
 
 																	Real omx1 = max( max( max( numeric::angle_degrees(opose.xyz(bne),opose.xyz(bzn),opose.xyz(oe1)),
 																														 numeric::angle_degrees(opose.xyz(bnn),opose.xyz(bzn),opose.xyz(oe1))),
