@@ -82,7 +82,7 @@ void test_save_and_restore()
 		= core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 
 	core::io::silent::SilentFileData sfd;
-	std::string silent_outfile = "test.silent.out";
+	std::string silent_outfile = "test_save_and_restore.test.silent.out";
 	utility::file::file_delete( silent_outfile );
 	core::import_pose::PDBSilentStruct pss( start_pose, "tag" );
 	sfd.write_silent_struct( pss, silent_outfile );
