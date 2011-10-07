@@ -162,7 +162,7 @@ public:
 		runtime_assert(GTPase.conformation().num_chains() == 1);
 		char const GTPasechain(GTPase.pdb_info()->chain(1));
 		core::Size const GTPase_cys(GTPase.pdb_info()->pdb2pose(GTPasechain, basic::options::option[GTPase_residue].value()));
-		runtime_assert(GTPase.residue_type(GTPase_cys).aa() == core::chemical::aa_cys);
+		//runtime_assert(GTPase.residue_type(GTPase_cys).aa() == core::chemical::aa_cys);
 
 		//determine c_term target on UBQ
 		core::Size const UBQ_term = UBQlength;
@@ -177,7 +177,7 @@ public:
 		//replace cysteine
 		core::chemical::ResidueType const & cyx_rsd_type( fa_standard->name_map("CYX") );
 		//GTPase.dump_pdb("prereplace_GTPase.pdb");
-		core::pose::replace_pose_residue_copying_existing_coordinates( GTPase, GTPase_cys, cyx_rsd_type );
+		GTPase.replace_residue( GTPase_cys, core::conformation::Residue(cyx_rsd_type, true), true);
 		//GTPase.dump_pdb("postreplace_GTPase.pdb");
 
 		// check safety of connections (from phil)
