@@ -29,6 +29,7 @@
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -79,6 +80,11 @@ class BiasedFragmentMover : public protocols::moves::Mover {
   /// @brief Returns a randomly chosen position according to the input probabilities
   unsigned random_position() const;
 
+
+  // -- Members --
+
+  /// @brief Avoid creating a useless MoveMap for each call to Frame::apply().
+  core::kinematics::MoveMap movable_;
 
   /// @brief Fragment library
   FragSetOP fragments_;

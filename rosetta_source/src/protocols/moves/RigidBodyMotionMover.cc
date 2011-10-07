@@ -14,7 +14,6 @@
 #include <protocols/moves/RigidBodyMotionMover.hh>
 
 // C/C++ headers
-#include <iostream>
 #include <iterator>
 #include <string>
 
@@ -22,7 +21,6 @@
 #include <boost/unordered/unordered_map.hpp>
 
 // Utility headers
-#include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
@@ -40,15 +38,12 @@ namespace moves {
 
 typedef boost::unordered_map<int, core::kinematics::Jump> Jumps;
 
-static basic::Tracer TR("protocols.medal.RigidBodyMotionMover");
-
 RigidBodyMotionMover::RigidBodyMotionMover(const Jumps& jumps) : jumps_(jumps) {}
 
 void RigidBodyMotionMover::apply(core::pose::Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::kinematics::Jump;
-  using std::endl;
 
   // randomly select a jump to manipulate
   Jumps::iterator i = jumps_.begin();

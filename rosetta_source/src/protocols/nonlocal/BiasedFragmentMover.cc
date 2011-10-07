@@ -22,7 +22,6 @@
 #include <boost/format.hpp>
 
 // Utility headers
-#include <basic/Tracer.hh>
 #include <numeric/prob_util.hh>
 #include <numeric/random/random.hh>
 #include <utility/exit.hh>
@@ -45,14 +44,15 @@ namespace nonlocal {
 
 typedef utility::vector1<double> Probabilities;
 
-static basic::Tracer TR("protocols.nonlocal.BiasedFragmentMover");
-
 BiasedFragmentMover::BiasedFragmentMover(const core::fragment::FragSetOP& fragments, const PolicyOP& policy, const Probabilities& pdf)
     : fragments_(fragments), policy_(policy), pdf_(pdf) {
   assert(fragments);
   assert(policy);
   initialize_library();
   initialize_probabilities();
+
+  // Avoid repeated MoveMap construction in apply()
+  movable_.set_bb(true);
 }
 
 /// @detail Creates a position-indexable Frame lookup
@@ -88,20 +88,15 @@ void BiasedFragmentMover::verify_probabilities_or_die(const core::kinematics::Fo
 }
 
 void BiasedFragmentMover::apply(core::pose::Pose& pose) {
-  using core::fragment::Frame;
-  using core::kinematics::MoveMap;
-
   // Verify user-specified sampling probabilities
   verify_probabilities_or_die(pose.fold_tree());
 
+  // Select insertion position and fragment
   const unsigned insertion_pos = random_position();
-  const Frame& frame = frames_[insertion_pos];
+  const core::fragment::Frame& frame = frames_[insertion_pos];
   const unsigned fragment_num = policy_->choose(frame, pose);
 
-  MoveMap movable;
-  movable.set_bb(true);
-  frame.apply(movable, fragment_num, pose);
-  TR.Debug << "Inserted fragment at position " << insertion_pos << std::endl;
+  frame.apply(movable_, fragment_num, pose);
 }
 
 /// @detail Selects the insertion position in a weighted random fashion using binary search on the cdf
