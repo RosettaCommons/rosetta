@@ -391,7 +391,7 @@ SS_Killhairpins_Info::setup_killhairpins()
 			if ( keyword == "KILL" ) {
 				setup_from_kill_hairpins_file(input_file);
 			} else {
-				utility_exit_with_message("[ERROR] Unknown file type for kill_hairpins file (need psipred_ss2 or kill)");
+				utility_exit_with_message("[ERROR] Unknown file type for kill_hairpins file (need psipred_ss2 or kill).  File type is autodetected by file header; check your header.");
 			}
 		}
 	}
