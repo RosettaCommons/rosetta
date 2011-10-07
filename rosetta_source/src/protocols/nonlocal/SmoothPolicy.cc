@@ -54,7 +54,7 @@ core::Size SmoothPolicy::choose(const core::fragment::Frame& frame,
   if (candidates.size() == 0) {
     return utility::argmin(scores);
   } else {
-    return RG.random_range(1, candidates.size());
+    return numeric::random::random_range(1, candidates.size());
   }
 }
 
