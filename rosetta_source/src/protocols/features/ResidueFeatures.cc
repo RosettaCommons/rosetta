@@ -126,18 +126,7 @@ ResidueFeatures::schema() const {
 		"	FOREIGN KEY (struct_id, resNum2)\n"
 		"		REFERENCES residues (struct_id, resNum)\n"
 		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY(struct_id, resNum1, resNum2, score_type));\n"
-		"\n"
-		"CREATE TABLE IF NOT EXISTS residues_pdb (\n"
-		"	struct_id INTEGER,\n"
-		"	resNum INTEGER,\n"
-		"	pdb_chain TEXT,\n"
-		"	pdb_resNum INTEGER,\n"
-		"	pdb_ICode TEXT,\n"
-		"	FOREIGN KEY (struct_id, resNum)\n"
-		"		REFERENCES residues (struct_id, resNum)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY(struct_id, resNum));\n";
+		"	PRIMARY KEY(struct_id, resNum1, resNum2, score_type));\n";
 }
 
 Size
@@ -149,7 +138,6 @@ ResidueFeatures::report_features(
 ){
 	insert_residue_rows(pose, relevant_residues, struct_id, db_session);
 	insert_residue_scores_rows(pose, relevant_residues, struct_id, db_session );
-	insert_residues_pdb_rows(pose, relevant_residues, struct_id, db_session );
 
 	return 0;
 }
@@ -315,43 +303,6 @@ ResidueFeatures::insert_residue_scores_rows(
 	} // End res1 for loop
 } // End function body
 
-void
-ResidueFeatures::insert_residues_pdb_rows (
-	Pose const & pose,
-	vector1< bool > const & relevant_residues,
-	Size struct_id,
-	sessionOP db_session
-){
-
-	// this can be false, for example, if the structure came from a silent file
-	bool from_pdb( pose.pdb_info() );
-
-	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
-		if(!relevant_residues[resNum]) continue;
-
-		char pdb_chain;
-		if( from_pdb ){
-			pdb_chain = pose.pdb_info()->chain(resNum);
-		} else {
-			stringstream pdb_chain_buffer;
-			pdb_chain_buffer << pose.chain( resNum );
-			pdb_chain = pdb_chain_buffer.str().c_str()[0];
-		}
-		Size const pdb_resNum(
-			from_pdb ? pose.pdb_info()->number(resNum) : resNum );
-		char const pdb_iCode(
-			from_pdb ? pose.pdb_info()->icode(resNum) : ' ' );
-
-		statement stmt = (*db_session)
-			<< "INSERT INTO residues_pdb VALUES (?,?,?,?,?);"
-			<< struct_id
-			<< resNum
-			<< pdb_chain
-			<< pdb_resNum
-			<< pdb_iCode;
-		stmt.exec();
-	}
-}
 
 } // namesapce
 } // namespace

@@ -57,7 +57,7 @@ std::string PdbDataFeatures::schema() const
 	if(db_mode == "sqlite3")
 	{
 		return
-			"CREATE TABLE IF NOT EXISTS pdb_data (\n"
+			"CREATE TABLE IF NOT EXISTS residue_pdb_identification (\n"
 			"	struct_id INTEGER,\n"
 			"	residue_number INTEGER,\n"
 			"	chain_id TEXT,\n"
@@ -69,7 +69,7 @@ std::string PdbDataFeatures::schema() const
 	}else if(db_mode=="mysql")
 	{
 		return
-			"CREATE TABLE IF NOT EXISTS pdb_data (\n"
+			"CREATE TABLE IF NOT EXISTS residue_pdb_identification (\n"
 			"	struct_id INTEGER,\n"
 			"	residue_number INTEGER,\n"
 			"	chain_id TEXT,\n"
@@ -97,7 +97,7 @@ void PdbDataFeatures::delete_record(
 	core::Size struct_id,
 	utility::sql_database::sessionOP db_session)
 {
-	cppdb::statement stmt = (*db_session) << "DELETE FROM pdb_data WHERE struct_id == ?;\n" <<struct_id;
+	cppdb::statement stmt = (*db_session) << "DELETE FROM residue_pdb_identification WHERE struct_id == ?;\n" <<struct_id;
 	stmt.exec();
 }
 
@@ -126,9 +126,9 @@ void PdbDataFeatures::load_pdb_info(
 		"	insertion_code,\n"
 		"	pdb_residue_number\n"
 		"FROM\n"
-		"	pdb_data\n"
+		"	residue_pdb_identification\n"
 		"WHERE\n"
-		"	pdb_data.struct_id=?;" <<struct_id;
+		"	residue_pdb_identification.struct_id=?;" <<struct_id;
 
 	while(res.next()) {
 		core::Size residue_number;
@@ -166,7 +166,7 @@ void PdbDataFeatures::insert_pdb_info_rows(core::Size struct_id,
 		core::Size pdb_residue_number = pose.pdb_info()->number(index);
 
 		cppdb::statement stmt = (*db_session)
-			<< "INSERT INTO pdb_data VALUES (?,?,?,?,?);"
+			<< "INSERT INTO residue_pdb_identification VALUES (?,?,?,?,?);"
 			<< struct_id
 			<< index
 			<< chain_id

@@ -76,12 +76,6 @@ public:
 		core::Size const struct_id,
 		utility::sql_database::sessionOP db_session);
 
-	void
-	insert_residues_pdb_rows(
-		core::pose::Pose const & pose,
-		utility::vector1< bool > const & relevant_residues,
-		core::Size const struct_id,
-		utility::sql_database::sessionOP db_session);
 
 private:
 

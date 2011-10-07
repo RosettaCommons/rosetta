@@ -31,6 +31,7 @@
 #include <protocols/features/ProteinBackboneAtomAtomPairFeatures.hh>
 #include <protocols/features/ProteinResidueConformationFeatures.hh>
 #include <protocols/features/ProtocolFeatures.hh>
+#include <protocols/features/PdbDataFeatures.hh>
 #include <protocols/features/RadiusOfGyrationFeatures.hh>
 #include <protocols/features/ResidueFeatures.hh>
 #include <protocols/features/ResidueTypesFeatures.hh>
@@ -84,6 +85,8 @@ FeaturesReporterFactory::create_features_reporter(
 		return new OrbitalsFeatures;
 	} else if (name == "PairFeatures") {
 		return new PairFeatures;
+	} else if (name == "PdbDataFeatures") {
+		return new PdbDataFeatures;
 	} else if (name == "PoseCommentsFeatures") {
 		return new PoseCommentsFeatures;
 	} else if (name == "PoseConformationFeatures") {
