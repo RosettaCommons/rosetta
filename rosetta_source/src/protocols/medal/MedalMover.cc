@@ -280,7 +280,7 @@ core::scoring::ScoreFunctionOP MedalMover::score_function() const {
   using core::scoring::ScoreFunctionOP;
   using core::scoring::methods::EnergyMethodOptions;
 
-  ScoreFunctionOP score = ScoreFunctionFactory::create_score_function("score0");
+  ScoreFunctionOP score = ScoreFunctionFactory::create_score_function("score3");
 
   // Maximum sequence separation
   EnergyMethodOptions options(score->energy_method_options());
@@ -289,15 +289,9 @@ core::scoring::ScoreFunctionOP MedalMover::score_function() const {
 
   // Enable specific energy terms
   score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::constraints::cst_weight]());
-  score->set_weight(core::scoring::hbond_lr_bb, 1);
-  score->set_weight(core::scoring::hbond_sr_bb, 1);
+  score->set_weight(core::scoring::hbond_lr_bb, 0.3);
+  score->set_weight(core::scoring::hbond_sr_bb, 0.3);
   score->set_weight(core::scoring::linear_chainbreak, option[OptionKeys::jumps::increase_chainbreak]());
-  score->set_weight(core::scoring::rg, option[OptionKeys::abinitio::rg_reweight]());
-  score->set_weight(core::scoring::sheet, 1);
-  score->set_weight(core::scoring::vdw, 1);
-
-  // Disable specific energy terms
-  score->set_weight(core::scoring::rama, 0);
 
   core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn(*score);
   return score;
