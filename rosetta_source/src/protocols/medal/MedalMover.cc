@@ -32,6 +32,7 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/jumps.OptionKeys.gen.hh>
+#include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <numeric/prob_util.hh>
@@ -151,6 +152,20 @@ void compute_per_residue_probabilities(const unsigned num_residues,
   TR.flush_all_channels();
 }
 
+void decompose_structure(const core::pose::Pose& pose, protocols::loops::Loops* chunks) {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+
+  bool loops_file_specified = option[OptionKeys::loops::extended_loop_file].user();
+  if (!loops_file_specified) {
+    protocols::nonlocal::chunks_by_CA_CA_distance(pose, chunks);
+    return;
+  }
+
+  // Override automatic chunk selection
+  chunks->read_loop_file(option[OptionKeys::loops::extended_loop_file]());
+}
+
 MedalMover::MedalMover() {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
@@ -190,7 +205,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
 
   // Decompose the structure into chunks based on consecutive CA-CA distances
   Loops chunks;
-  protocols::nonlocal::chunks_by_CA_CA_distance(pose, &chunks);
+  decompose_structure(pose, &chunks);
 
   StarTreeBuilder builder;
   builder.set_up(chunks, &pose);
