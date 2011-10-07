@@ -326,7 +326,7 @@ protocols::loops::Loops remove_small_gaps(protocols::loops::Loops const & input_
   while (i_chunk <= input_chunks.num_loop()) {
     Loop new_loop(input_chunks[i_chunk]);
     while(i_chunk < input_chunks.num_loop()) {
-      const core::Size gap_length = input_chunks[i_chunk+1].start() - input_chunks[i_chunk].stop();
+      const core::Size gap_length = input_chunks[i_chunk+1].start() - input_chunks[i_chunk].stop() - 1;
       if (gap_length <= gap_size) {
         new_loop.set_stop(input_chunks[i_chunk+1].stop());
         ++i_chunk;
@@ -360,7 +360,8 @@ protocols::loops::Loops remove_short_chunks(protocols::loops::Loops const & inpu
 protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose const & pose,
                      std::string extracted_ss_types,
                      core::Size gap_size,
-                     core::Size minimum_length_of_chunk,
+                     core::Size minimum_length_of_chunk_helix,
+                     core::Size minimum_length_of_chunk_strand,
                      core::Real CA_CA_distance_cutoff) {
   using protocols::loops::Loops;
   Loops secondary_structure_chunks;
@@ -373,7 +374,12 @@ protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose cons
     secondary_structure_chunks_this_ss = extract_secondary_structure_chunks(pose, ss);
     secondary_structure_chunks_this_ss = remove_small_gaps(secondary_structure_chunks_this_ss, gap_size);
     secondary_structure_chunks_this_ss = split_by_ca_ca_dist(pose, secondary_structure_chunks_this_ss, CA_CA_distance_cutoff);
-    secondary_structure_chunks_this_ss = remove_short_chunks(secondary_structure_chunks_this_ss, minimum_length_of_chunk);
+    if (ss == 'H') {
+      secondary_structure_chunks_this_ss = remove_short_chunks(secondary_structure_chunks_this_ss, minimum_length_of_chunk_helix);
+    }
+    if (ss == 'E') {
+      secondary_structure_chunks_this_ss = remove_short_chunks(secondary_structure_chunks_this_ss, minimum_length_of_chunk_strand);
+    }
 
     Loops::LoopList::const_iterator eit, it;
     for (  it = secondary_structure_chunks_this_ss.begin(), eit = secondary_structure_chunks_this_ss.end();

@@ -80,7 +80,8 @@ void remove_cutpoint_variants(core::pose::Pose* pose);
 protocols::loops::Loops extract_secondary_structure_chunks(core::pose::Pose const & pose,
                                std::string extracted_ss_types = "HE",
                                core::Size gap_size = 1,
-                               core::Size minimum_length_of_chunk = 3,
+                               core::Size minimum_length_of_chunk_helix = 5,
+                               core::Size minimum_length_of_chunk_strand = 3,
                                core::Real CA_CA_distance_cutoff = 4);
 
 /// @brief Extract secondary structure chunks from the pose, using a given secondary structure type
