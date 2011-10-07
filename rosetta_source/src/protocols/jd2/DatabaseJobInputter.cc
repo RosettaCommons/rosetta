@@ -40,6 +40,8 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+#include <cppdb/errors.h>
+
 
 // C++ headers
 #include <string>
@@ -173,13 +175,25 @@ void DatabaseJobInputter::set_tags_from_sql(utility::vector1<std::string> const 
 	std::string sql_command(utility::join(sql, " "));
 
 	sessionOP db_session(basic::database::get_db_session(database_fname_));
-	result res = (*db_session) << sql_command;
-	while(res.next()){
-		string tag;
-		res >> tag;
-		tags_.push_back(tag);
-	}
 
+	while(true)
+	{
+		try
+		{
+			result res = (*db_session) << sql_command;
+			while(res.next()){
+				string tag;
+				res >> tag;
+				tags_.push_back(tag);
+			break;
+			}
+
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 }
 
 void
@@ -209,7 +223,18 @@ DatabaseJobInputter::pose_from_job(
 	if ( !job->inner_job()->get_pose() ) {
 		tr.Debug << "filling pose from Database (tag = " << tag	<< ")" << endl;
 		sessionOP db_session(basic::database::get_db_session(database_fname_));
-		protein_silent_report_->load_pose(db_session, tag, pose);
+		while(true)
+		{
+			try
+			{
+				protein_silent_report_->load_pose(db_session, tag, pose);
+				break;
+			}catch(cppdb::cppdb_error & )
+			{
+				usleep(10);
+				continue;
+			}
+		}
 
 	} else {
 		tr.Debug << "filling pose from saved copy (tag = " << tag << ")" << endl;
@@ -230,12 +255,24 @@ void protocols::jd2::DatabaseJobInputter::fill_jobs( Jobs & jobs ){
 	if(!tags_.size()){
 		sessionOP db_session(basic::database::get_db_session(database_fname_));
 
-		result res = (*db_session) << "SELECT tag FROM structures;";
-		while(res.next()){
-			string tag;
-			res >> tag;
-			tags_.push_back(tag);
+		while(true)
+		{
+			try
+			{
+				result res = (*db_session) << "SELECT tag FROM structures;";
+				while(res.next()){
+					string tag;
+					res >> tag;
+					tags_.push_back(tag);
+				}
+				break;
+			}catch(cppdb::cppdb_error &)
+			{
+				usleep(10);
+				continue;
+			}
 		}
+
 	}
 
 	vector1< InnerJobOP > inner_jobs;

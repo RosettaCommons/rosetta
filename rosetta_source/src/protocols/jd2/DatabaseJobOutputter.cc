@@ -36,6 +36,7 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+#include <cppdb/errors.h>
 
 // C++ Headers
 #include <string>
@@ -115,7 +116,18 @@ void DatabaseJobOutputter::final_pose(
 	JobCOP job, core::pose::Pose const & pose
 ) {
 	sessionOP db_session(basic::database::get_db_session(database_fname_));
-	protein_silent_report_->apply(pose, db_session, output_name(job));
+	while(true)
+	{
+		try
+		{
+			protein_silent_report_->apply(pose, db_session, output_name(job));
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 }
 
 /// @brief this function is intended for saving mid-protocol poses; for example
@@ -127,8 +139,18 @@ void DatabaseJobOutputter::other_pose(
 ) {
 
 	sessionOP db_session(basic::database::get_db_session(database_fname_));
-	protein_silent_report_->apply(pose, db_session, tag);
-
+	while(true)
+	{
+		try
+		{
+			protein_silent_report_->apply(pose, db_session, tag);
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 }
 
 /////////////////////////////////state of output functions/////////////////////////////////
@@ -150,14 +172,28 @@ bool DatabaseJobOutputter::job_has_completed( JobCOP job ) {
 		return false;
 	}
 
-	result res = (*db_session) <<
-		"SELECT count(*) FROM structures WHERE tag=?;" << output_name(job);
+	while(true)
+	{
+		try
+		{
+			result res = (*db_session) <<
+				"SELECT count(*) FROM structures WHERE tag=?;" << output_name(job);
 
-	res.next();
-	Size already_written;
-	res >> already_written;
+			res.next();
+			Size already_written;
+			res >> already_written;
 
-	return already_written;
+			return already_written;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+
+	}
+
+	return false; // we shouldn't get here
+
 }
 
 /// @details

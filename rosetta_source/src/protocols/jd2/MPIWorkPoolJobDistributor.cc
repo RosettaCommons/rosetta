@@ -96,10 +96,10 @@ MPIWorkPoolJobDistributor::go( protocols::moves::MoverOP mover )
 }
 
 
-///@details This is the heart of the MPIWorkPoolJobDistributor. It consistits of two while loops: the job
-///distribution loop (JDL) and the node spin down loop (NSDL). The JDL has three functions. The first is to recieve and
-///process messages from the slave nodes requesting new job ids. The second is to recieve and process messages from the
-///slave nodes indicating a bad input. The third is to recive and process job_success messages from the slave nodes and
+///@details This is the heart of the MPIWorkPoolJobDistributor. It consists of two while loops: the job
+///distribution loop (JDL) and the node spin down loop (NSDL). The JDL has three functions. The first is to receive and
+///process messages from the slave nodes requesting new job ids. The second is to receive and process messages from the
+///slave nodes indicating a bad input. The third is to receive and process job_success messages from the slave nodes and
 ///block while the slave node is writing its output. This is prevent interleaving of output in score files and silent
 ///files. The function of the NSDL is to keep the head node alive while there are still slave nodes processing. Without
 ///the NSDL if a slave node finished its allocated job after the head node had finished handing out all of the jobs and
@@ -121,7 +121,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 	while ( next_job_to_assign_ != 0 ) {
 		TR << "Master Node: Waiting for job requests..." << std::endl;
 		//MPI::COMM_WORLD.Recv( &slave_data, 1, MPI::INT, MPI::ANY_SOURCE, MPI::ANY_TAG, status );
-		//TR << "Master Node: Recieved message from  " << status.MPI::Status::Get_source() << " with tag " << status.MPI::Status::Get_tag() << std::endl;
+		//TR << "Master Node: Received message from  " << status.MPI::Status::Get_source() << " with tag " << status.MPI::Status::Get_tag() << std::endl;
 		MPI_Recv( &slave_data, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
 		TR << "Master Node: Received message from " << status.MPI_SOURCE << " with tag " << status.MPI_TAG << std::endl;
 
@@ -145,7 +145,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 			TR << "Master Node: Received job success message for job id " << slave_data << " from node " << status.MPI_SOURCE << " blocking till output is done " << std::endl;
 			MPI_Send( &next_job_to_assign_, 1, MPI_INT, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
 			MPI_Recv( &slave_data, 1, MPI_INT, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status);
-			TR << "Master Node: Received job output finish messege for job id " << slave_data << " from node " << status.MPI_SOURCE << std::endl;
+			TR << "Master Node: Received job output finish message for job id " << slave_data << " from node " << status.MPI_SOURCE << std::endl;
 			break;
 		}
 	}
@@ -157,9 +157,9 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 	while ( n_nodes_left_to_spin_down > 0 ) {
 		TR << "Master Node: Waiting for " << n_nodes_left_to_spin_down << " slaves to finish jobs" << std::endl;
 		//MPI::COMM_WORLD.Recv( &slave_data, 1, MPI::INT, MPI::ANY_SOURCE, MPI::ANY_TAG, status );
-		//TR << "Master Node: Recieved message from  " << status.MPI::Status::Get_source() << " with tag " << status.MPI::Status::Get_tag() << std::endl;
+		//TR << "Master Node: Received message from  " << status.MPI::Status::Get_source() << " with tag " << status.MPI::Status::Get_tag() << std::endl;
 		MPI_Recv( &slave_data, 1, MPI_INT, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-		TR << "Master Node: Recieved message from  " << status.MPI_SOURCE << " with tag " << status.MPI_TAG << std::endl;
+		TR << "Master Node: Received message from  " << status.MPI_SOURCE << " with tag " << status.MPI_TAG << std::endl;
 
 		// decide what to do based on message tag
 		//switch ( status.MPI::Status::Get_tag() ) {
@@ -177,7 +177,7 @@ MPIWorkPoolJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 			TR << "Master Node: Received job success message for job id " << slave_data << " from node " << status.MPI_SOURCE << " blocking till output is done " << std::endl;
 			MPI_Send( &next_job_to_assign_, 1, MPI_INT, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD );
 			MPI_Recv( &slave_data, 1, MPI_INT, status.MPI_SOURCE, JOB_SUCCESS_TAG, MPI_COMM_WORLD, &status);
-			TR << "Master Node: Received job output finish messege for job id " << slave_data << " from node " << status.MPI_SOURCE << std::endl;
+			TR << "Master Node: Received job output finish message for job id " << slave_data << " from node " << status.MPI_SOURCE << std::endl;
 			break;
 		}
 	}
