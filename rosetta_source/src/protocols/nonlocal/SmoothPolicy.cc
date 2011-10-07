@@ -13,9 +13,6 @@
 // Unit header
 #include <protocols/nonlocal/SmoothPolicy.hh>
 
-// C/C++ headers
-#include <algorithm>
-
 // Utility headers
 #include <numeric/random/random.hh>
 #include <utility/minmax.hh>
@@ -33,9 +30,6 @@ namespace nonlocal {
 typedef SmoothPolicy::Candidate Candidate;
 typedef utility::vector1<core::Real> ScoreList;
 typedef utility::vector1<Candidate> CandidateList;
-
-static numeric::random::RandomGenerator RG(1102);
-
 
 SmoothPolicy::SmoothPolicy(core::fragment::FragSetCOP fragments)
     : Policy(fragments) {}

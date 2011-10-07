@@ -28,8 +28,6 @@ namespace nonlocal {
 
 /// @class Implements the Policy interface. Given a Frame, chooses the fragment
 /// that, when applied to the pose, minimizes total distortion ("smooth move").
-/// Precomputes fragment endpoint positions in the constructor to improve
-/// performance.
 class SmoothPolicy : public Policy {
   typedef core::fragment::FragSetCOP FragSetCOP;
   typedef protocols::basic_moves::GunnCost GunnCost;
@@ -38,38 +36,31 @@ class SmoothPolicy : public Policy {
 
   /// @class Simple container that associates fragment indices with Gunn scores
   class Candidate {
-    typedef core::Real Real;
-    typedef core::Size Size;
-
    public:
-    Candidate(Real score, Size fragment_num)
+    Candidate(core::Real score, core::Size fragment_num)
         : score_(score), fragment_num_(fragment_num) {}
 
     /// @brief Returns the candidate's score
-    Real score() const {
+    core::Real score() const {
       return score_;
     }
 
     /// @brief Returns the candidate's position within the Frame
-    Size fragment_num() const {
+    core::Size fragment_num() const {
       return fragment_num_;
     }
 
    private:
-    Real score_;
-    Size fragment_num_;
+    core::Real score_;
+    core::Size fragment_num_;
   };
 
-
-  /// @brief Precomputes the endpoints of each fragment, storing the result in a
-  /// two-level map indexed by frame- and fragment-number, respectively.
   explicit SmoothPolicy(FragSetCOP fragments);
 
   /// @brief Given the current state of <pose>, selects the fragment in <frame>
   /// that minimizes overall distortion
   virtual core::Size choose(const core::fragment::Frame& frame,
                             const core::pose::Pose&);
-
 
  private:
   GunnCost scorer_;
