@@ -105,8 +105,6 @@ public:
 	///@brief assignment operator
 	DockingProtocol & operator=( DockingProtocol const & rhs );
 
-
-
 	/// @brief Associates relevant options with the DockingProtocol class
 	static void register_options();
 
@@ -266,8 +264,6 @@ private:
 		core::scoring::ScoreFunctionCOP docking_score_low,
 		core::scoring::ScoreFunctionCOP docking_score_high
 	);
-
-  	void initForEqualOperatorAndCopyConstructor(DockingProtocol & lhs, DockingProtocol const & rhs);
 
 	void setup_objects();
 
