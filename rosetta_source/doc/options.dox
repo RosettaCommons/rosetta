@@ -5147,6 +5147,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-arg_sweep_cutoff</b> \<Real\><dt>
+<dd>Interaction cutoff distance from arginine to ligand when performing arginine sweep interface detection.</dd><br>
+<dd>Default: 3.7</dd><br>
+</dl>
+<dl>
 <dt><b>-cut1</b> \<Real\><dt>
 <dd>option to specify redesign cutoff 1 in enzdes calculation</dd><br>
 <dd>Default: 0.0</dd><br>

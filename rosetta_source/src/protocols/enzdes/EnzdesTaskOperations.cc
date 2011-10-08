@@ -26,6 +26,8 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 
+#include <protocols/dna/util.hh> // Needed for arginine sweep interface detection
+
 #include <protocols/motifs/LigandMotifSearch.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
@@ -218,6 +220,7 @@ DetectProteinLigandInterface::init_from_options()
 {
 	detect_design_interface_ = basic::options::option[basic::options::OptionKeys::enzdes::detect_design_interface];
 	arg_sweep_interface_ = basic::options::option[basic::options::OptionKeys::enzdes::arg_sweep_interface];
+	arg_sweep_cutoff_ = basic::options::option[basic::options::OptionKeys::enzdes::arg_sweep_cutoff];
 	score_only_ = basic::options::option[basic::options::OptionKeys::enzdes::enz_score];
 	repack_only_ = basic::options::option[basic::options::OptionKeys::enzdes::enz_repack];
 	cut1_ = basic::options::option[basic::options::OptionKeys::enzdes::cut1];
@@ -239,6 +242,7 @@ DetectProteinLigandInterface::parse_tag( TagPtr tag )
 	cut2_ = tag->getOption< core::Real >( "cut2", 8.0 );
 	cut3_ = tag->getOption< core::Real >( "cut3", 10.0 );
 	cut4_ = tag->getOption< core::Real >( "cut4", 12.0 );
+	arg_sweep_cutoff_ = tag->getOption< core::Real >( "arg_sweep_cutoff", 3.7 );
 	design_ = tag->getOption< bool >( "design", 1 );
 	resfilename_ =  tag->getOption< std::string >( "resfile", "");
 	if( tag->hasOption("segment_interface") ) add_observer_cache_segs_to_interface_ = tag->getOption< bool >( "segment_interface", true );
@@ -505,46 +509,6 @@ DetectProteinLigandInterface::find_design_interface_arg_sweep(
 	utility::vector1< bool > & design_res
 ) const
 {
-	//Just have dummy code in here for now, have to swap in arg sweep code
-	/*
-//Here is Justin's code
-void
-DnaInterfaceFinder::determine_protein_interface(
-	pose::Pose const & pose,
-	vector1< Size > const & protein_positions,
-	vector1< Size > const & dna_positions
-)
-{
-	for ( vector1< Size >::const_iterator p_index( protein_positions.begin() ),
-	      end( protein_positions.end() ); p_index != end; ++p_index ) {
-		runtime_assert( pose.residue_type( *p_index ).is_protein() );
-
-		Residue const & pres( pose.residue( *p_index ) );
-		protein_neighbors_[ *p_index ] = DnaNeighbor();
-		DnaNeighbor & neighbor( protein_neighbors_[ *p_index ] );
-
-		Real shortest_arg_dis2(10000);
-		for ( vector1< Size >::const_iterator dna_index( dna_positions.begin() ),
-		      end( dna_positions.end() ); dna_index != end && !neighbor.contact(); ++dna_index ) {
-			runtime_assert( pose.residue_type( *dna_index ).is_DNA() );
-
-			Residue const & dres( pose.residue( *dna_index ) );
-			neighbor.close( close_to_dna( pres, dres, close_threshold_, base_only_ ) );
-			if ( neighbor.close() ) {
-				if ( z_axis_dist( pres, dres ) < z_cutoff_ ) {
-					Real dis2(
-						argrot_dna_dis2( pose, *p_index, pres, dres, contact_threshold_, base_only_ )
-					);
-					if ( dis2 < shortest_arg_dis2 ) shortest_arg_dis2 = dis2;
-					if ( shortest_arg_dis2 < contact_threshold_ ) neighbor.contact(true);
-				}
-			}
-		}
-	}
-	initialized_ = true;
-}
-
-	*/
 	core::Real cut1_sq = cut1 * cut1;
 	core::Real cut2_sq = cut2 * cut2;
 	core::Real cut3_sq = cut3 * cut3;
@@ -563,11 +527,29 @@ DnaInterfaceFinder::determine_protein_interface(
 			targ_res_atom_start = targ_rsd.first_sidechain_atom();
 		}
 
+			//		tr.Info << "Design residues by arg_sweep are: ";
 	  for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i) {
-			if( design_res[i] ) continue; //in case this is already set to design, we don't have to loop over it again
+			if( design_res[i] ) continue; 	//in case this is already set to design, we don't have to loop over it again
 			if( interface_target_res.find( i ) != interface_target_res.end() ) continue;
 	    core::conformation::Residue const & prot_rsd = pose.residue(i);
-	    for(core::Size k = targ_res_atom_start, k_end = targ_rsd.nheavyatoms(); k <= k_end; ++k) {
+			// Defining private members as magic numbers, shouldn't do this...
+			core::Real contact_threshold_ = 3.3 * 3.3 ; // Originally 3.7*3.7 (13.7)
+			core::Real close_threshold_ =  10. * 10. ;
+			bool base_only_ = false; //Doesn't matter here, chooses between all atoms in residue and sidechain atoms for iterator
+
+			//Super simple arg sweep interface detection routinue
+			bool close_to_lig(  protocols::dna::close_to_dna( prot_rsd, targ_rsd, close_threshold_, base_only_ ) );
+			if( close_to_lig ) {
+				core::Real dis2 =  protocols::dna::argrot_dna_dis2( pose, i, prot_rsd, targ_rsd, contact_threshold_, base_only_ ); // i is protein residue id
+				if( dis2 <= contact_threshold_ ) {
+					design_res[i] = true;
+					repack_res[i] = false;
+				//	tr.Info << i << ", ";
+					continue; //If arg_sweep finds design_res, go onto next resi
+					}
+				}
+//	tr.Info << "on protein resi number " << i << " , close_to_lig is " << close_to_lig << " and dis2 from arginine rotamer sweep is " << dis2 << std::endl ;
+	    for(core::Size k = targ_res_atom_start, k_end = targ_rsd.nheavyatoms(); k <= k_end; ++k) { //Now looping over atoms in ligand, I don't need to do that
 	     core::Vector prot_cb, prot_ca;
 	      if( prot_rsd.has("CB") ) prot_cb = prot_rsd.xyz("CB");
 	      if( prot_rsd.has("CA") ) prot_ca = prot_rsd.xyz("CA"); // GLY
@@ -576,16 +558,16 @@ DnaInterfaceFinder::determine_protein_interface(
 	        if( ca_dist2 <= cut3_sq ) {
 	          if( ca_dist2 <= cut2_sq ) {
 	            if( ca_dist2 <= cut1_sq) {
-	              design_res[i] = true;
-	              repack_res[i] = false;
+	              design_res[i] = false;
+	              repack_res[i] = true;
 								break;
 	            } // cut1
 	            else if( prot_rsd.has("CB") ) {
 	              core::Real cb_dist2 = targ_rsd.xyz(k).distance_squared( prot_cb );
 	              //                tr.Info << "cb_dist2 is " << cb_dist2 << "; ";
 	              if( cb_dist2 < ca_dist2 ) {
-	                design_res[i] = true;
-	                repack_res[i] = false;
+	                design_res[i] = false;
+	                repack_res[i] = true;
 									break;
 	              }
 	              else {
@@ -597,8 +579,8 @@ DnaInterfaceFinder::determine_protein_interface(
 								prot_cb = prot_rsd.xyz("2HA");
 								core::Real cb_dist2 = targ_rsd.xyz(k).distance_squared( prot_cb );
 								if( cb_dist2 < ca_dist2 ) {   // 2HA is closer than CA
-									design_res[i] = true;
-									repack_res[i] = false;
+									design_res[i] = false;
+									repack_res[i] = true;
 									break;
 								}
 								else {   // 2HA is further than CA

@@ -70,6 +70,7 @@ namespace enzdes { extern RealOptionKey const favor_native_res; }
 namespace enzdes { extern BooleanOptionKey const detect_design_interface; }
 namespace enzdes { extern BooleanOptionKey const include_catres_in_interface_detection; }
 namespace enzdes { extern BooleanOptionKey const arg_sweep_interface; }
+namespace enzdes { extern RealOptionKey const arg_sweep_cutoff; }
 namespace enzdes { extern RealOptionKey const cut1; }
 namespace enzdes { extern RealOptionKey const cut2; }
 namespace enzdes { extern RealOptionKey const cut3; }

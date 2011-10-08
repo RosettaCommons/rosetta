@@ -1068,6 +1068,7 @@ option.add( basic::options::OptionKeys::enzdes::favor_native_res, "a bonus energ
 option.add( basic::options::OptionKeys::enzdes::detect_design_interface, "automatically detect design/repack region around ligand(s)" ).def(false);
 option.add( basic::options::OptionKeys::enzdes::include_catres_in_interface_detection, "if option -detect_design_interface is active, invoking this option causes all residues that are within the specified cuts of any catalytic residue are also set to designing/repacking" ).def(false);
 option.add( basic::options::OptionKeys::enzdes::arg_sweep_interface, "Use protein-DNA design-like interface detection, involving generation of arginine rotamers at each position, checking to see if argininte can make interaction with ligand." ).def(false);
+option.add( basic::options::OptionKeys::enzdes::arg_sweep_cutoff, "Interaction cutoff distance from arginine to ligand when performing arginine sweep interface detection." ).def(3.7);
 option.add( basic::options::OptionKeys::enzdes::cut1, "option to specify redesign cutoff 1 in enzdes calculation" ).def(0.0);
 option.add( basic::options::OptionKeys::enzdes::cut2, "option to specify redesign cutoff 2 in enzdes calculation" ).def(0.0);
 option.add( basic::options::OptionKeys::enzdes::cut3, "option to specify repack cutoff 1 in enzdes calculation" ).def(10.0);
@@ -1156,10 +1157,10 @@ option.add( basic::options::OptionKeys::wum::extra_scorefxn_relax, "After doing 
 option.add( basic::options::OptionKeys::wum::trim_proportion, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::lh::lh, "lh option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::lh::db_prefix, "stem for loop database" ).def("loopdb");
-option.add( basic::options::OptionKeys::lh::loopsizes, "Which loopsizes to use" ).def(10).def(15).def(20);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::num_partitions, "Number of partitions to split the database into" ).def(1);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::loopsizes, "Which loopsizes to use" ).def(10).def(15).def(20);
+option.add( basic::options::OptionKeys::lh::num_partitions, "Number of partitions to split the database into" ).def(1);
 option.add( basic::options::OptionKeys::lh::db_path, "Path to database" ).def("");
 option.add( basic::options::OptionKeys::lh::exclude_homo, "Use a homolog exclusion filter" ).def(false);
 option.add( basic::options::OptionKeys::lh::refstruct, "File with a target reference structure" ).def("");
@@ -1734,10 +1735,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, 
 option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
+option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_secondary_structure, "create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format" ).def(false);

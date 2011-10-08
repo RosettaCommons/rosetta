@@ -1,3 +1,4 @@
+namespace lh { IntegerVectorOptionKey const loopsizes( "lh:loopsizes" );  }
 namespace lh { IntegerOptionKey const num_partitions( "lh:num_partitions" );  }
 namespace lh { PathOptionKey const db_path( "lh:db_path" );  }
 namespace lh { BooleanOptionKey const exclude_homo( "lh:exclude_homo" );  }
@@ -573,4 +574,3 @@ namespace DenovoProteinDesign { BooleanOptionKey const redesign_complete( "Denov
 namespace DenovoProteinDesign { BooleanOptionKey const disallow_native_aa( "DenovoProteinDesign:disallow_native_aa" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const optimize_loops( "DenovoProteinDesign:optimize_loops" );  }
 namespace DenovoProteinDesign { FileOptionKey const secondary_structure_file( "DenovoProteinDesign:secondary_structure_file" );  }
-namespace DenovoProteinDesign { FileOptionKey const hydrophobic_polar_pattern( "DenovoProteinDesign:hydrophobic_polar_pattern" );  }

@@ -485,6 +485,7 @@ namespace enzdes { RealOptionKey const favor_native_res( "enzdes:favor_native_re
 namespace enzdes { BooleanOptionKey const detect_design_interface( "enzdes:detect_design_interface" );  }
 namespace enzdes { BooleanOptionKey const include_catres_in_interface_detection( "enzdes:include_catres_in_interface_detection" );  }
 namespace enzdes { BooleanOptionKey const arg_sweep_interface( "enzdes:arg_sweep_interface" );  }
+namespace enzdes { RealOptionKey const arg_sweep_cutoff( "enzdes:arg_sweep_cutoff" );  }
 namespace enzdes { RealOptionKey const cut1( "enzdes:cut1" );  }
 namespace enzdes { RealOptionKey const cut2( "enzdes:cut2" );  }
 namespace enzdes { RealOptionKey const cut3( "enzdes:cut3" );  }
@@ -573,4 +574,3 @@ namespace wum { IntegerOptionKey const extra_scorefxn_relax( "wum:extra_scorefxn
 namespace wum { RealOptionKey const trim_proportion( "wum:trim_proportion" );  }
 namespace lh { BooleanOptionKey const lh( "lh" );  }
 namespace lh { StringOptionKey const db_prefix( "lh:db_prefix" );  }
-namespace lh { IntegerVectorOptionKey const loopsizes( "lh:loopsizes" );  }

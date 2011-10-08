@@ -143,6 +143,8 @@ private:
 
 	/// Use protein-DNA interface like arginine rotamer sweep to identify designable positions
 	bool arg_sweep_interface_;
+	/// Dicitate the max distance from arginine to ligand for position to be counted as designable
+	core::Real arg_sweep_cutoff_;
 
 	/// interface can be declared as all catalytic res
 	bool catalytic_res_part_of_interface_;
