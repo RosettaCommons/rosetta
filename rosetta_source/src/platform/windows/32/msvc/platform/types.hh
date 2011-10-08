@@ -16,8 +16,9 @@
 #define INCLUDED_platform_windows_32_msvc_platform_types_hh
 
 
-// Windows SDK headers
-#include <basetsd.h>
+#ifndef WIN_PYROSETTA
+	// Windows SDK headers
+	#include <basetsd.h>
 
 
 /// @brief Fixed size types
@@ -25,6 +26,18 @@ typedef  INT32  int32_t; // 32-bit unsigned integer
 typedef  UINT32 uint32_t; // 32-bit unsigned integer
 typedef  INT64  int64_t; // 64-bit signed integer
 typedef  UINT64  uint64_t; // 64-bit unsigned integer
+
+#else
+typedef  signed int int32_t; // 32-bit signed integer
+typedef  unsigned int uint32_t; // 32-bit unsigned integer
+typedef  long long int  int64_t; // 64-bit signed integer
+typedef  unsigned long long int  uint64_t; // 64-bit unsigned integer
+
+
+/// @brief Scalable size types
+typedef  long int  ssize_t; // Signed size
+
+#endif
 
 
 /// @brief Scalable size types

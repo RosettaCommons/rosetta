@@ -51,7 +51,8 @@
 #include <stdio.h>
 #include <core/io/pdb/file_data.hh>
 #include <basic/Tracer.hh>
-#ifdef _WIN32
+
+#if (defined _WIN32) && (!defined WIN_PYROSETTA)
 #include <windows.h>
 #endif
 
@@ -305,7 +306,9 @@ ScoringSecMatchRPE::evaluate_residues(
 		out << rand();
 		randNum = out.str();
 #ifdef _WIN32
-		Sleep( 10000 );
+		#ifndef WIN_PYROSETTA
+			Sleep( 10000 );
+		#endif
 #else
 		sleep (10);
 #endif

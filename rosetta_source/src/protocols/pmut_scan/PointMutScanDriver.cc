@@ -143,14 +143,14 @@ PointMutScanDriver::~PointMutScanDriver() {}
 void PointMutScanDriver::go() {
 
 	clock_t entire_starttime;
-	if ( MPI_rank_ == 0 ) { 
+	if ( MPI_rank_ == 0 ) {
 		// time the protocol, doesn't include the time spent reading in input structures.
 		entire_starttime = clock();
 	}
 
 	TR << "go(): " << node_name( MPI_rank_ ) << std::endl;
 
-	if ( MPI_rank_ == 0 ) { 
+	if ( MPI_rank_ == 0 ) {
 		// set up the list of mutations that will be tried.
 		// if the user specified a list, then do just those. if not, try all possible combinations of mutants.
 		fill_mutations_list();
@@ -204,7 +204,7 @@ void PointMutScanDriver::barrier() {
 /// @begin PointMutScanDriver::read_in_structures()
 ///
 /// @brief
-/// Reads in the structure (or list of structures) specified on the command line to a class member variable. Create 
+/// Reads in the structure (or list of structures) specified on the command line to a class member variable. Create
 /// Pose objects for all of the structures because we'll pass these out to the slave nodes later.
 ///
 /// NOTE: This protocol assumes that if you pass multiple structures, they are all variants of the same structure and you
@@ -234,43 +234,43 @@ void PointMutScanDriver::read_in_structures() {
 ///
 /// If we're doing a scan over all possible mutations:
 ///
-/// If we have a two residue protein, 1 and 2, there are 19 possible aa's we can mutate each residue to. Since 1 and 2 
+/// If we have a two residue protein, 1 and 2, there are 19 possible aa's we can mutate each residue to. Since 1 and 2
 /// are independent, the number of possible double mutants is 19*19 = 361. It's easy to enumerate all of the possible
-/// double mutants, but we want to come up with an efficient way of making those mutants and calculating the ddGs. The 
+/// double mutants, but we want to come up with an efficient way of making those mutants and calculating the ddGs. The
 /// easiest solution is to enumerate all of the possible double mutants, make that a work unit, and then distribute all
 /// of the work units out to a large cluster. The downside to this approach is that several processors will end up making
 /// the same mutation, at least in part. For example, the double mutant A1C A2C is similar to the mutant A1C A2D. In fact,
 /// A1C will have to be paired not only with A2C and A2D, but also A2E, A2F and so on. It would be more efficient to make
-/// a pose for A1C, and then go into a second for loop that tries A2C-A2W on that already mutated pose.	
+/// a pose for A1C, and then go into a second for loop that tries A2C-A2W on that already mutated pose.
 ///
-/// What's the outermost thing this protocol has to do.  For the single mutant scan, you have to try all 19 non-wt aas at 
+/// What's the outermost thing this protocol has to do.  For the single mutant scan, you have to try all 19 non-wt aas at
 /// every position.  That lends itself to parallelization rather easily.  Each protein position is independent of the others
 /// so you can have nres processes each testing the mutations at that position.  At most, each processor will test 19 mutations.
 /// With double_mutants, you have to fix one mutation (eg. A1C) and then try all possible other mutations at all other
 /// positions.  So, if you have nres processors, each processor will fix some position to 1 of 19 aas and then scan through
 /// a mutant at all other positions. Let's assume we have a 10 residue protein.  Position 1 will mutate to 1 of 19 aas.
-/// For each of 1 of those 19, we have to test 19 * 9 = 171 other mutations (at the other positions). That results in a 
+/// For each of 1 of those 19, we have to test 19 * 9 = 171 other mutations (at the other positions). That results in a
 /// grand total of 3249 possibilites.  And that's only residue 1's mutants!  We also have to try to fix the 19 non-wt aas
-/// for position 2 and try 19 * 8 = 152 mutations at the other locations for a total of 2888 mutations for just position 
-/// 2. 3: 19 * 19 * 7 = 2527. 4: 19 * 19 * 6 = 2166.  5: 19 * 19 * 5 = 1805. Continuing on in this fashion leads to a 
-/// grand grand total of 16245 possible double mutants in a 10 residue protein. Doing the same kind of protocol for a 
+/// for position 2 and try 19 * 8 = 152 mutations at the other locations for a total of 2888 mutations for just position
+/// 2. 3: 19 * 19 * 7 = 2527. 4: 19 * 19 * 6 = 2166.  5: 19 * 19 * 5 = 1805. Continuing on in this fashion leads to a
+/// grand grand total of 16245 possible double mutants in a 10 residue protein. Doing the same kind of protocol for a
 /// 233 residue protein results in 9,841,221 possible double mutants!
 ///
 /// Testing ~10 million mutants even on 512 cpus could take quite a bit of time. We really need to find a way to prune
-/// down the number of possible mutants to just the ones that will be most interesting. I definitely could change it so 
-/// that if the two mutations are more than some number of Angstroms apart, then don't bother making that mutant and 
+/// down the number of possible mutants to just the ones that will be most interesting. I definitely could change it so
+/// that if the two mutations are more than some number of Angstroms apart, then don't bother making that mutant and
 /// scoring. The question then becomes how often you have a stabilizing first mutant, and then find a stabilizing (better
 /// than -0.1) second mutant on the first structure that is more than xAng away. Probably happens often.
 ///
 /// Another problem is that the parallelization is not balanced. Because we have directionality in the approach for
-/// testing double mutants - for example, if we've already done 1AC 2AC we don't have to do 2AC 1AC - processor 1 which 
-/// handles all of the possible mutants at 1 and every other residue has to do way way less 
+/// testing double mutants - for example, if we've already done 1AC 2AC we don't have to do 2AC 1AC - processor 1 which
+/// handles all of the possible mutants at 1 and every other residue has to do way way less
 ///
 ///
 /// For triple mutants, assuming a 10 residue protein there would be 19 * 19 * 19 * nres(nres+1)/2, or ~377,000, possible
 /// mutants. The 233 residue antibody: 186,983,199 possible combinations.
 ///
-/// 
+///
 ///
 void PointMutScanDriver::fill_mutations_list() {
 
@@ -305,8 +305,8 @@ void PointMutScanDriver::fill_mutations_list() {
 
 			if ( pose.residue( resid1 ).aa() == chemical::AA( aa_enum_index_a ) ) { continue; }
 			if ( !pose.residue_type( resid1 ).is_protein() ) { continue; }
-			
-			MutationData md1( 
+
+			MutationData md1(
 				pose.residue( resid1 ).name1(),
 				oneletter_code_from_aa( chemical::AA( aa_enum_index_a ) ),
 				resid1,
@@ -328,17 +328,17 @@ void PointMutScanDriver::fill_mutations_list() {
 						no_double_mutants_excluded_for_distance += 19;
 						continue;
 					}
-					
+
 					// try every type at each position (well, except the native type at this position!)
 					for ( Size aa_enum_index_b = 1; aa_enum_index_b <= chemical::num_canonical_aas; ++aa_enum_index_b ) {
 
 						if ( pose.residue( resid2 ).aa() == chemical::AA( aa_enum_index_b ) ) { continue; }
 						if ( !pose.residue_type( resid2 ).is_protein() ) { continue; }
-						
+
 						no_double_mutants_possible++;
 
 						MutationData md2(
-							pose.residue( resid2 ).name1(), 
+							pose.residue( resid2 ).name1(),
 							oneletter_code_from_aa( chemical::AA( aa_enum_index_b ) ),
 							resid2,
 							pose.pdb_info()->number( resid2 ),
@@ -349,7 +349,7 @@ void PointMutScanDriver::fill_mutations_list() {
 						Mutant m;
 						m.add_mutation( md1 ); // the variable mutations is a vector of vectors!
 						m.add_mutation( md2 ); // the variable mutations is a vector of vectors!
-						
+
 						all_mutants_.push_back( m );
 						//TR << "fill_mutations_list(): adding mutation: " << m << std::endl;
 					}
@@ -382,7 +382,7 @@ void PointMutScanDriver::fill_mutations_list() {
 ///
 /// @brief
 /// If the user specified mutants, it reads the lines in the mutant list file and parses those lines to get mutation
-/// data and then saves them all to the class member variable. 
+/// data and then saves them all to the class member variable.
 /// Needs access to a pose to translate the lines in the mutations_list file to pose numbering
 ///
 void PointMutScanDriver::read_mutants_list_file( std::string & list_file ) {
@@ -406,7 +406,7 @@ void PointMutScanDriver::read_mutants_list_file( std::string & list_file ) {
 	for ( Size ii=1; ii <= mutant_file_lines.size(); ++ii ) {
 		std::string const & line( mutant_file_lines[ ii ] );
 		std::istringstream iss( line );
-		
+
 		char wt_residue, mut_residue, chain;
 		std::string position_code;
 
@@ -414,14 +414,14 @@ void PointMutScanDriver::read_mutants_list_file( std::string & list_file ) {
 
 		// there might be more than one mutation per line!
 		while ( iss.peek() && !iss.eof() ) {
-		
+
 			iss >> chain >> wt_residue >> position_code >> mut_residue;
 
 			// check to see if an insertion code is present in the position_code string
 			// if the string is made of all digits, no icode is present
 			Size pdb_resnum; char icode = ' ';
 			std::stringstream ss;
-			
+
 			if ( position_code.find_first_not_of("0123456789") == std::string::npos ) {
 				icode = ' ';
 				ss << position_code;
@@ -437,7 +437,7 @@ void PointMutScanDriver::read_mutants_list_file( std::string & list_file ) {
 				}
 				ss >> pdb_resnum; // converts the ss buffer contents to a Size type
 			}
-				
+
 			// figure out what the pose residue number for this residue is
 			pose::Pose & pose = input_poses_[ 1 ];
 			Size pose_resnum = (pose.pdb_info())->pdb2pose( chain, pdb_resnum, icode );
@@ -449,7 +449,7 @@ void PointMutScanDriver::read_mutants_list_file( std::string & list_file ) {
 			}
 
 			//TR << "Found mutation of " << wt_residue << " to " << mut_residue  << " at position " << pose_resnum << " (pdb chain: '" << chain << "', resnum: '" << pdb_resnum << "', icode: '" << icode << "')" << std::endl;
-				
+
 			MutationData md( wt_residue, mut_residue, pose_resnum, pdb_resnum, icode, chain );
 			m.add_mutation( md ); // the variable mutations is a vector of vectors!
 
@@ -490,14 +490,14 @@ void PointMutScanDriver::calculate_neighbor_table( pose::Pose & pose, utility::v
 	}
 
 	for ( Size ii=1; ii <= pose.n_residue(); ++ii ) {
-	
+
 		conformation::Residue const & ii_rsd( pose.residue( ii ) );
 		for ( core::graph::EdgeListConstIterator eli = neighbor_graph.get_node( ii )->const_edge_list_begin(),
 			eli_end = neighbor_graph.get_node( ii )->const_edge_list_end(); eli != eli_end; ++eli ) {
 
 			Size nb_resnum = (*eli)->get_other_ind( ii );
 			if ( nb_resnum < ii ) { continue; } // only want higher indexed residues
-			
+
 			// check to see if any of the atoms on this neighboring residue "interact" with any atoms on the ii residue.
 			// our definition of interact: one sc-sc atom pair within 4.5A (BK's suggestion)
 			conformation::Residue const & jj_rsd( pose.residue( nb_resnum ) );
@@ -516,7 +516,7 @@ void PointMutScanDriver::calculate_neighbor_table( pose::Pose & pose, utility::v
 					}
 
 				} // ii rsd atoms
-				
+
 				if ( neighbors[ ii ][ nb_resnum ] ) {
 					// already found an atom pair within 4.5A; no point in going through all the rest of jj rsd's atoms!
 					break;
@@ -533,7 +533,7 @@ void PointMutScanDriver::calculate_neighbor_table( pose::Pose & pose, utility::v
 /// @begin PointMutScanDriver::divide_up_mutations
 ///
 /// @brief
-/// This function takes the vector of all possible mutants and splits them up as evenly as possible among all the CPUs. 
+/// This function takes the vector of all possible mutants and splits them up as evenly as possible among all the CPUs.
 ///
 void PointMutScanDriver::divide_up_mutations() {
 
@@ -587,7 +587,7 @@ void PointMutScanDriver::divide_up_mutations() {
 	}
 #endif
 
-}	
+}
 
 
 #ifdef USEMPI
@@ -647,12 +647,12 @@ Mutant PointMutScanDriver::receive_mutant_data_from_node( int source ) {
 
 	Mutant m;
 	for ( Size ii = 1; ii <= num_mutations; ++ii ) {
-		
+
 		char wt_residue, mut_residue;
 		MPI_Recv( & wt_residue, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, & stat );
 		MPI_Recv( & mut_residue, 1, MPI_CHAR, source, tag, MPI_COMM_WORLD, & stat );
 		//TR << "received wt_residue: " << wt_residue << " and mut_residue: " << mut_residue << " from node " << source << "." << std::endl;
-		
+
 		Size pose_resnum = 1, pdb_resnum = 1;
 		MPI_Recv( & pose_resnum, 1, MPI_UNSIGNED_LONG, source, tag, MPI_COMM_WORLD, & stat );
 		MPI_Recv( & pdb_resnum, 1, MPI_UNSIGNED_LONG, source, tag, MPI_COMM_WORLD, & stat );
@@ -685,7 +685,7 @@ void PointMutScanDriver::make_mutants() {
 
 	utility::vector1< pose::Pose > mutant_poses( input_poses_.size() ); // this will get set in the function below
 	utility::vector1< pose::Pose > native_poses( input_poses_.size() );
-	
+
 	// create a scorefxn that will be used for all the mutants
 	// (to enable hpatch scoring, the command line weights file flag will have to be used)
 	// decompose bb hbond energies into pair energies
@@ -695,7 +695,7 @@ void PointMutScanDriver::make_mutants() {
 	scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn->energy_method_options() );
 	energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies( true );
 	scorefxn->set_energy_method_options( energymethodoptions );
-	
+
 	// print out a header to the terminal
 	if ( MPI_rank_ == 0 ) {
 		TR << A( "mutation" ) << X(3) << A( "average ddG" ) << X(3) << A( "average total energy" ) << std::endl;
@@ -738,7 +738,7 @@ void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & 
 
 	// if the mutants vector has more than element, we have to take out the first element of the vector
 	if ( m.n_mutations() > 1 ) {
-		
+
 		// need to make the first mutation and call this function recursively
 		MutationData md = m.pop_mutation();
 
@@ -778,7 +778,7 @@ void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & 
 			// send in the input_pose for the mutant. that way the mutant poses will be "returned" because mutant_poses
 			// is actually a reference!
 			make_mutant_structure( mutant_poses[ii], native_poses[ii], md, scorefxn );
-		
+
 			// score the created mutant structure
 			pose::Pose & mutant_pose = mutant_poses[ ii ];
 			Energy mutant_score = (*scorefxn)( mutant_pose );
@@ -808,7 +808,7 @@ void PointMutScanDriver::make_specific_mutant( utility::vector1< pose::Pose > & 
 		average_native_score = sum_native_scores / native_poses.size();
 
 		Real ddG_mutation = average_mutant_score - average_native_score;
-		if ( ddG_mutation > DDG_CUTOFF_ ) { 
+		if ( ddG_mutation > DDG_CUTOFF_ ) {
 			return;
 		}
 
@@ -850,7 +850,7 @@ void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::
 
 	Size resid = md.pose_resnum();
 	chemical::AA mut_aa = chemical::aa_from_oneletter_code( md.mut_residue() );
-	
+
 	// need to create a neighborhood by distance calculator so we can identify neighbors of the mutated residue
 	std::stringstream out;
 	out << md.mutation_string() << "_mutant_nb_calculator";
@@ -910,20 +910,20 @@ void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::
 	//TR << "Finished creating all TaskOperation's and TaskFactory's. Creating MoveMap." << std::endl;
 
 	kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
-	std::set< core::Size >::iterator iter;
+	std::set< core::Size >::const_iterator iter;
 	for ( iter = neighbor_set.begin(); iter != neighbor_set.end(); iter++ ) {
 		//movemap_->set_bb(i, true); // don't do any backbone minimization
 		movemap->set_chi( *iter, true ); // but do minimize the side chains
 	}
 	//movemap->show( std::cout, mutant_pose.n_residue() );
-	
+
 	//TR << "Movemap created... Beginning repacking/minimization of mutant pose." << std::endl;
 
 	// create an actual PackerTask from the TaskFactory
 	pack::task::PackerTaskOP scan_task = mutant_tf->create_task_and_apply_taskoperations( mutant_pose );
 	scan_task->num_to_be_packed();
 	//TR << "mutant packer task: " << *scan_task << std::endl;  // generates a TON of output
-	
+
 	// now create the movers that will do the repacking and minimization
 	moves::PackRotamersMoverOP mutant_repacker_mover = new moves::PackRotamersMover( scorefxn, scan_task, 2 ); // ndruns: 2
 	moves::MinMoverOP min_mover = new moves::MinMover( movemap, scorefxn, option[ OptionKeys::run::min_type ].value(), 0.01, true ); // use nb_list: true
@@ -933,7 +933,7 @@ void PointMutScanDriver::make_mutant_structure( pose::Pose & mutant_pose, pose::
 	seq_mover->add_mover( task_aware_min_mover );
 
 	seq_mover->apply( mutant_pose );
-				
+
 	//TR << "Beginning repacking/minimization of wt pose." << std::endl;
 
 	// create an actual PackerTask from the TaskFactory

@@ -186,10 +186,10 @@ void DockingHighRes::add_additional_task_operaration( core::pack::task::operatio
 {
     tf2_->add_additional_task_operaration( task_operation );
 }
-    
+
 utility::vector1< core::pack::task::operation::TaskOperationOP > DockingHighRes::get_additional_task_operarations()
 {
-    tf2_->get_additional_task_operarations();
+    return tf2_->get_additional_task_operarations();
 }
 
 core::scoring::ScoreFunctionCOP DockingHighRes::scorefxn()

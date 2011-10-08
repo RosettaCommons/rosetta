@@ -266,7 +266,8 @@ void FragmentPicker::nonlocal_pairs_protocol() {
 		core::io::silent::SilentFileData sfd;
 
 		utility::io::ozstream output(out_file_name);
-		output << "# min_seq_sep: " << min_seq_sep << " ca_dist: " << sqrt(ca_dist_squared) << " min_contacts: " << min_contacts << std::endl << std::endl;
+		// double(...) is added for MSVC compatability
+		output << "# min_seq_sep: " << min_seq_sep << " ca_dist: " << sqrt( double(ca_dist_squared) ) << " min_contacts: " << min_contacts << std::endl << std::endl;
 		log_25_.setup_summary(c);
 		log_200_.setup_summary(c);
 
@@ -350,7 +351,8 @@ void FragmentPicker::nonlocal_pairs_protocol() {
 
 		// save pair contact counts
 		utility::io::ozstream contacts_output(contacts_out_file_name);
-		contacts_output << "# min_seq_sep: " << min_seq_sep << " ca_dist: " << sqrt(ca_dist_squared) << " min_contacts: " << min_contacts << std::endl << std::endl;
+		// double(...) is added for MSVC compatability
+		contacts_output << "# min_seq_sep: " << min_seq_sep << " ca_dist: " << sqrt( double(ca_dist_squared) ) << " min_contacts: " << min_contacts << std::endl << std::endl;
 		for ( contacts_map_it=contacts_map.begin() ; contacts_map_it != contacts_map.end(); contacts_map_it++ ) {
 			pos_pair p = (*contacts_map_it).first;
 			contacts_output << p.first << " " << p.second << " " << (*contacts_map_it).second << std::endl;

@@ -25,6 +25,10 @@
 // Project headers
 #include <basic/Tracer.hh>
 
+#if (defined WIN32) && (defined WIN_PYROSETTA)
+	#include <protocols/fldsgn/topology/HSSTriplet.hh>
+#endif
+
 static basic::Tracer TR( "protocols.forge.constraints.SheetConstraintsRCG" );
 
 namespace protocols{

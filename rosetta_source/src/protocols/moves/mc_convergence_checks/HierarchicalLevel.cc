@@ -652,7 +652,7 @@ namespace mc_convergence_checks {
     }
     return next_index;
   }
-  **/ 
+  **/
 
   void
   HierarchicalLevel::reset( Address & addr,
@@ -750,7 +750,7 @@ namespace mc_convergence_checks {
     //tolerance = 0.05;
     if( has_next_level() ) {
       if( TR.visible() ) TR.Debug << "going down to next level" << std::endl;
-      if( best_level_rmsd > radius_  ) { 
+      if( best_level_rmsd > radius_  ) {
       // if( best_level_rmsd > radius_ + tolerance ) { // 10/12/10 ek added in tolerance for very close cases
       // if( best_level_rmsd > radius_ + tolerance ) { // 10/12/10 ek added in tolerance for very close cases
 	if( TR.visible() ) { TR.Debug << "best level rmsd: " << best_level_rmsd << " greater than radius: " << radius_ << std::endl; }
@@ -1056,7 +1056,9 @@ namespace mc_convergence_checks {
     core::Size ntries = 5;
     while( pool_ptr->size() == 0 && ntries > 0 ) { //we never try to open empty files
 #ifdef _WIN32
+	#ifndef WIN_PYROSETTA
 		Sleep(5000);  // REQUIRED FOR WINDOWS
+		#endif
 #else
 		sleep(5);
 #endif

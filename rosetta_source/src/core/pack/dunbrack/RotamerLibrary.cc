@@ -1343,7 +1343,7 @@ RotamerLibrary::create_fa_dunbrack_libraries_10_from_ASCII()
 	std::string const bbdep_contmin = ".bbdep.densities.lib";
 	std::string const bbind_midfix  = ".bbind.chi";
 	std::string const bbind_defs    = ".Definitions.lib";
-	// Note: No Backbone-Independent NRCHI representation in '10 library 
+	// Note: No Backbone-Independent NRCHI representation in '10 library
 	// std::string const bbind_probs   = ".Probabilities.lib";
 
 	////////////////////////////////////////////
@@ -1716,7 +1716,7 @@ RotamerLibrary::write_binary_fa_dunbrack_libraries_10() const
 
 		initialize_dun08_aa_parameters(
 			rotameric_amino_acids, rotameric_n_chi,
-			sraa, srnchi, scind, sampind, sym, astr ); 
+			sraa, srnchi, scind, sampind, sym, astr );
 
 		boost::int32_t nrotameric( static_cast< boost::int32_t > (rotameric_amino_acids.size() ));
 		boost::int32_t nsemirotameric( static_cast< boost::int32_t > (sraa.size()) );

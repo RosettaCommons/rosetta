@@ -24,6 +24,8 @@
 #include <utility/io/ozstream.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <platform/types.hh>
+
 namespace protocols {
 namespace scoring {
 
@@ -60,7 +62,7 @@ public:
 		numeric::xyzVector<core::Real> const & pp
 	) const;
 
-	uint
+	platform::uint
 	clash_count(
 		numeric::xyzVector<core::Real> const & pp
 	) const;
@@ -70,20 +72,20 @@ public:
 		numeric::xyzVector<core::Real> const & pp,
 		core::Size resno
 	) const;
-	
+
 	// bool
 	// clash_check(
 	// 	core::pose::Pose const & pose,
 	// 	core::Size refrsd
 	// ) const;
-	// 
+	//
 	// bool
 	// clash_check(
 	// 	core::kinematics::Stub const & stub,
 	// 	numeric::xyzVector<core::Real> pos
 	// ) const;
-	// 
-	bool 
+	//
+	bool
 	clash_check_trimer(
 		core::pose::Pose const & pose,
 		Size refrsd
@@ -95,7 +97,7 @@ public:
 		core::kinematics::Stub const & stub,
 		char chain = 'Z'
 	) const;
-	
+
 	void
 	dump_debug_pdb(
 		std::string const & fname,
@@ -127,8 +129,8 @@ private:
 	numeric::xyzTriple< core::Size > cube_dim_;
 
 	core::Real side_inv_, neighbor_cutoff_, neighbor_cutoff_sq_;
-	
-	ObjexxFCL::FArray3D< utility::vector1<numeric::xyzVector<core::Real> > > cubes_ca_;	
+
+	ObjexxFCL::FArray3D< utility::vector1<numeric::xyzVector<core::Real> > > cubes_ca_;
 	numeric::xyzVector<core::Real> bbl_ca_;
 	numeric::xyzTriple< core::Size > cube_dim_ca_;
 	core::Real side_inv_ca_, neighbor_cutoff_ca_, neighbor_cutoff_sq_ca_;

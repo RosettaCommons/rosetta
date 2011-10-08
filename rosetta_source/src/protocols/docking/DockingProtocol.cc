@@ -737,11 +737,11 @@ void DockingProtocol::add_additional_task_operaration( core::pack::task::operati
     check_high_res_protocol();
     docking_highres_mover_->add_additional_task_operaration( task_operation );
 }
-    
+
 utility::vector1< core::pack::task::operation::TaskOperationOP > DockingProtocol::get_additional_task_operarations()
 {
     check_high_res_protocol();
-    docking_highres_mover_->get_additional_task_operarations();
+    return docking_highres_mover_->get_additional_task_operarations();
 }
 
 

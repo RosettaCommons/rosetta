@@ -10,7 +10,8 @@
 /// @brief class to compute projection of a protein structure to principal component (PCA) eigenvectors ( as defined in file )
 /// @author Oliver Lange
 
-#ifdef _WIN32
+
+#if (defined _WIN32) && (!defined WIN_PYROSETTA)
 #define ZLIB_WINAPI  // REQUIRED FOR WINDOWS
 #endif
 

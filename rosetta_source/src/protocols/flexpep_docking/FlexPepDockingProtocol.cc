@@ -90,6 +90,7 @@
 #include <set>
 #include <sstream>
 #include <cstdio>
+#include <algorithm>
 
 using basic::T;
 using basic::Error;
@@ -259,7 +260,13 @@ FlexPepDockingProtocol::setup_foldtree( pose::Pose & pose )
 				num_jumps++;
 			}
 			jumps(JUMP_FROM, cur_jump + 1) = residue; // this anchor is src of jump to next anchor
-			max_jump = std::max( max_jump, cur_jump );
+
+
+			#if (defined WIN32) && (defined WIN_PYROSETTA)
+				max_jump = max( max_jump, cur_jump );
+			#else
+				max_jump = std::max( max_jump, cur_jump );
+			#endif
 		}
 		runtime_assert_msg(max_jump == num_jumps,
 			"invalid anchor indexing in FlexPepDock parameter file (or in default FlexPepDock parameters)");
@@ -1045,7 +1052,7 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 					prepack_only(pose, false/*ppk_receptor*/, true/*ppk_peptide*/);
 					pose_after_lowres = pose;
 				}
-				if( (flags_.pep_refine || flags_.rbMCM || flags_.torsionsMCM) 
+				if( (flags_.pep_refine || flags_.rbMCM || flags_.torsionsMCM)
 					 || flags_.design_peptide || flags_.peptide_loop_model){
 						//Insert cst from cmd-line - uses these flags to operate:
 						//option[ OptionKeys::constraints::cst_fa_file ].user()

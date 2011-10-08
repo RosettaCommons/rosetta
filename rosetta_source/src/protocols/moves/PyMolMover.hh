@@ -28,8 +28,10 @@
 
 // REQUIRED FOR WINDOWS
 #ifndef NATCL
-	#ifdef _WIN32
-		#include <winsock2.h>
+	#ifdef WIN32
+		#ifndef WIN_PYROSETTA
+			#include <winsock2.h>
+		#endif
 	#else
 		#include <sys/socket.h>
 		#include <netinet/in.h>
@@ -38,7 +40,11 @@
 #endif
 
 #ifdef NATCL
-  typedef int sockaddr_in; 
+  typedef int sockaddr_in;
+#endif
+
+#ifdef WIN_PYROSETTA
+  typedef int sockaddr_in;
 #endif
 
 

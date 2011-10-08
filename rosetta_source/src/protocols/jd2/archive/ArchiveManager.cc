@@ -60,10 +60,6 @@
 #include <sstream>
 #include <iterator>
 
-#ifdef WIN32
-#include <windows.h>
-#endif
-
 //Debug headers
 #include <protocols/abinitio/AbrelaxMover.hh>
 #include <fstream> //testing
@@ -71,6 +67,10 @@
 
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
+
+#if (defined WIN32) //&& (!defined WIN_PYROSETTA)
+#include <windows.h>
+#endif
 
 static basic::Tracer tr("protocols.jd2.Archive");
 using basic::mem_tr;
@@ -97,7 +97,9 @@ namespace archive {
 
 #ifdef WIN32
 	void sleep(int seconds){
-		Sleep( seconds * 1000 );
+		//#if (defined WIN32) && (!defined WIN_PYROSETTA)
+			Sleep( seconds * 1000 );
+		//#endif
 	}
 #endif
 

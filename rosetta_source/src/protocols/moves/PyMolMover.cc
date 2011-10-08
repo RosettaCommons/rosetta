@@ -70,26 +70,30 @@ UDPSocketClient::UDPSocketClient() : sentCount_(0)
 		max_packet_size_ = 64512; /* 1024*63*/
 	#endif
 
-	// generating random uuid by hands
+	#ifndef WIN_PYROSETTA
+		// generating random uuid by hands
 		for(unsigned int i=0; i<sizeof(uuid_.shorts_)/sizeof(uuid_.shorts_[0]); i++) uuid_.shorts_[i] = (ushort)getRG()->getRandom()*65536;  //RG.random_range(0, 65536);
 
-	memset(&socket_addr_, '\0', sizeof(sockaddr_in));
+		memset(&socket_addr_, '\0', sizeof(sockaddr_in));
 
-	socket_addr_.sin_family = AF_INET;     // host byte order
-	socket_addr_.sin_port = htons(65000);  // short, network byte order
-	socket_addr_.sin_addr.s_addr = inet_addr("127.0.0.1");
+		socket_addr_.sin_family = AF_INET;     // host byte order
+		socket_addr_.sin_port = htons(65000);  // short, network byte order
+		socket_addr_.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-	socket_h_ = socket(AF_INET, SOCK_DGRAM, 0);
+		socket_h_ = socket(AF_INET, SOCK_DGRAM, 0);
+	#endif
 #endif
 }
 
 UDPSocketClient::~UDPSocketClient()
 {
-#ifdef _WIN32
-	closesocket(socket_h_);
-#else
-	close(socket_h_);
-#endif
+	#ifndef WIN_PYROSETTA
+		#ifdef WIN32
+			closesocket(socket_h_);
+		#else
+			close(socket_h_);
+		#endif
+	#endif
 }
 
 void UDPSocketClient::sendMessage(std::string msg)
@@ -108,17 +112,19 @@ void UDPSocketClient::sendMessage(std::string msg)
 
 void UDPSocketClient::sendRAWMessage(int globalPacketID, int packetI, int packetCount, char * msg_begin, char *msg_end)
 {
-#ifndef NATCL
-	std::string buf(msg_end - msg_begin + sizeof(uuid_.bytes_) + sizeof(short)*3, 0);
-	int i = 0;
+	#ifndef NATCL
+		std::string buf(msg_end - msg_begin + sizeof(uuid_.bytes_) + sizeof(short)*3, 0);
+		int i = 0;
 
-	memcpy(&buf[i], uuid_.bytes_, sizeof(uuid_.bytes_));  i+= sizeof(uuid_.bytes_);
-	memcpy(&buf[i], &globalPacketID, 2);  i+=2;
-	memcpy(&buf[i], &packetI, 2);  i+=2;
-	memcpy(&buf[i], &packetCount, 2);  i+=2;
-	memcpy(&buf[i], msg_begin, msg_end-msg_begin);  i+=msg_end-msg_begin;
-	sendto(socket_h_, &buf[0], buf.size(), 0 , (struct sockaddr *)&socket_addr_, sizeof(struct sockaddr_in));
-#endif
+		memcpy(&buf[i], uuid_.bytes_, sizeof(uuid_.bytes_));  i+= sizeof(uuid_.bytes_);
+		memcpy(&buf[i], &globalPacketID, 2);  i+=2;
+		memcpy(&buf[i], &packetI, 2);  i+=2;
+		memcpy(&buf[i], &packetCount, 2);  i+=2;
+		memcpy(&buf[i], msg_begin, msg_end-msg_begin);  i+=msg_end-msg_begin;
+		#ifndef WIN_PYROSETTA
+			sendto(socket_h_, &buf[0], buf.size(), 0 , (struct sockaddr *)&socket_addr_, sizeof(struct sockaddr_in));
+		#endif
+	#endif
 }
 
 
@@ -301,7 +307,7 @@ void PyMolMover::send_colors(Pose const &pose, std::map<int, int> colors, X11Col
 
 PyMolObserverOP AddPyMolObserver(core::pose::Pose &p, bool keep_history, core::Real update_interval)
 {
-	//Add options 
+	//Add options
     PyMolObserverOP o = new PyMolObserver;
 	o->pymol().keep_history(keep_history);
 	o->pymol().update_interval(update_interval);

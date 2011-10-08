@@ -137,8 +137,8 @@ bool ImplicitFastClashCheck::clash_check(Vec const & pp ) const {
 	return true;
 }
 
-uint ImplicitFastClashCheck::clash_count(Vec const & pp ) const {
-	uint count = 0;
+platform::uint ImplicitFastClashCheck::clash_count(Vec const & pp ) const {
+	platform::uint count = 0;
 	Size const icx( Size( ( pp.x() - bbl_.x() ) * side_inv_ ) + 1 );
 	Size const icy( Size( ( pp.y() - bbl_.y() ) * side_inv_ ) + 1 );
 	Size const icz( Size( ( pp.z() - bbl_.z() ) * side_inv_ ) + 1 );
@@ -239,10 +239,10 @@ void ImplicitFastClashCheck::dump_debug_pdb( utility::io::ozstream & out, core::
 		std::string aname = pose_->residue(resno_[i]).atom_name(atomno_[i]);
 		out << "HETATM" + I( 5, i ) + " "+aname+" "+rname+" "+chain
 			+ I( 4, resno_[i] ) + "    "
-			+ F( 8, 3, p.x() ) 
-			+ F( 8, 3, p.y() ) 
+			+ F( 8, 3, p.x() )
+			+ F( 8, 3, p.y() )
 			+ F( 8, 3, p.z() )
-			+ F( 6, 2, 0.0 ) + ' ' 
+			+ F( 6, 2, 0.0 ) + ' '
 			+ F( 5, 2, 0.0);
 		out << "" << std::endl;
 	}
@@ -265,14 +265,14 @@ bool ImplicitFastClashCheck::clash_check_test( numeric::xyzVector<core::Real> co
 		}
 	}
 	return false;
-	
+
 	bool clash = clash_check(pp);
-	
+
 	if(clash != bclash) utility_exit_with_message("clash check test fails!!!");
-	
+
 	return clash;
 }
 
 
 } // namespace scoring {
-} // namespace 
+} // namespace

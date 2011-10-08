@@ -45,6 +45,9 @@
 #include <protocols/moves/TrialMover.fwd.hh>  //JQX: add this
 #include <protocols/moves/TrialMover.hh>
 
+#ifdef WIN_PYROSETTA
+	#include <core/pack/task/operation/TaskOperation.hh>
+#endif
 
 using basic::T;
 using basic::Error;
@@ -124,20 +127,20 @@ DockMCMProtocol::init()
 	filter_ = new DockingHighResFilter();
 }
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-/*  JQX: rewrite this apply function, try to use all the really OO concept, especial to make sure that the same mc_ object is always being used	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
+/*  JQX: rewrite this apply function, try to use all the really OO concept, especial to make sure that the same mc_ object is always being used
+
+
 ////////////////////////////////////////////////////////////////////////////////
 /// @begin docking high resolution apply function
 /// @brief
@@ -168,40 +171,40 @@ void DockMCMProtocol::apply( core::pose::Pose & pose )
 //	dock_mcm_->apply( pose );            //JQX comment this out, it seems not necessary compared to the Legacy
 //	dock_mcm_->get_mc()->show_scores();  //JQX comment this out, it seems not necessary compared to the Legacy
 
-	filter_->set_score_margin( 10.0 ); 
-	if ( filter_->apply( pose ) )       
-	{									
+	filter_->set_score_margin( 10.0 );
+	if ( filter_->apply( pose ) )
+	{
 		for ( Size i=1; i<=4; ++i ) { dock_mcm_->apply( pose );
 		dock_mcm_->get_mc()->show_scores();}
 
 		pose.dump_pdb("after_4_cycles.pdb");   //JQX:  want to check the pose after 4 cycles
 		exit(-1) ;  //JQX: for testing
 
-		filter_->set_score_margin( 5.0 );  
-		if ( filter_->apply( pose ) )     
+		filter_->set_score_margin( 5.0 );
+		if ( filter_->apply( pose ) )
 		{
 			for ( Size i=1; i<=45; ++i ) { dock_mcm_->apply( pose );
 			dock_mcm_->get_mc()->show_scores();}
-		}    
-	}    
-	filter_->set_score_margin( 0.0 );  
-	
+		}
+	}
+	filter_->set_score_margin( 0.0 );
+
 	// add minimize to strict tolerance 0.02
-	minimize_trial->set_min_tolerance( 0.02 ); 
+	minimize_trial->set_min_tolerance( 0.02 );
 	minimize_trial->apply( pose );
 }
-	
-	
+
+
 */
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 // JQX: rewrite the apply function
-	
+
 ////////////////////////////////////////////////////////////////////////////////
 /// @begin docking high resolution apply function
 /// @brief
@@ -270,32 +273,32 @@ void DockMCMProtocol::apply( core::pose::Pose & pose )
 //		}
 //	}
 
-//	filter_->set_score_margin( 0.0 );  
-	
+//	filter_->set_score_margin( 0.0 );
 
-	minimize_trial->set_min_tolerance( 0.01 ); 
+
+	minimize_trial->set_min_tolerance( 0.01 );
 	minimize_trial->apply( pose );
-	
-	
-	
-	
+
+
+
+
 //JQX:	get the smallest energy pose memorized in the "mc_" object
 	dock_mcm_-> get_mc()->recover_low( pose );
-	
+
 }
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 std::string
 DockMCMProtocol::get_name() const {

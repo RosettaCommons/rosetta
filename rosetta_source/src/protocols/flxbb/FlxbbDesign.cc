@@ -59,6 +59,10 @@
 #include <protocols/moves/MakePolyXMover.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
 
+#if (defined WIN32) && (defined WIN_PYROSETTA)
+	#include <protocols/fldsgn/topology/HSSTriplet.hh>
+#endif
+
 
 static basic::Tracer TR("protocols.flxbb.FlxbbDesign");
 

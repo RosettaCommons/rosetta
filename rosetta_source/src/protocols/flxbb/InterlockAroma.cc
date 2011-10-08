@@ -41,6 +41,11 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>
 
+#if (defined WIN32) && (defined WIN_PYROSETTA)
+	#include <protocols/fldsgn/topology/HSSTriplet.hh>
+#endif
+
+
 static basic::Tracer TR("protocols.flxbb.InterlockAroma");
 
 

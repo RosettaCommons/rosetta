@@ -33,6 +33,10 @@
 // Parser headers
 #include <utility/tag/Tag.hh>
 
+#if (defined WIN32) && (defined WIN_PYROSETTA)
+	#include <protocols/fldsgn/topology/HSSTriplet.hh>
+#endif
+
 //Auto Headers
 
 //// C++ headers
@@ -69,7 +73,7 @@ HelixKinkFilter::apply( Pose const & pose ) const
 	using protocols::fldsgn::topology::Helices;
 	using protocols::fldsgn::topology::check_kink_helix;
 	using core::scoring::EnergiesCacheableDataType::HBOND_SET;
-	
+
 	// set SS_Info
 	String secstruct( pose.secstruct() );
 	if( secstruct_ != "" ) {
@@ -82,31 +86,31 @@ HelixKinkFilter::apply( Pose const & pose ) const
 		TR << "There is no helix definition in pose. " << std::endl;
 		return true;
 	}
-	
+
 	if ( ! pose.energies().data().has( HBOND_SET ) ) {
 		TR << " Pose does not have HBOND_SET. Checking hbonds will be skipped. " << std::endl;
 	}
-	
+
 	// check kink
 	for( Size ii=1; ii<=helices.size(); ++ii ) {
-		
+
 		TR << "Helix " << ii << ", res " << helices[ ii ]->begin() << "-" << helices[ ii ]->end() << ", ";
 		// check helix bend
 		if ( helices[ ii ]->bend() > bend_angle_ ) {
 			TR << "is bended angle=" << helices[ ii ]->bend() << std::endl;
 			return false;
 		}
-		
+
 		// check broken hydrogen within helix
 		/// @brief check kink of helix, return number of loosen hydrogen
-		if ( pose.energies().data().has( HBOND_SET ) ) {		
+		if ( pose.energies().data().has( HBOND_SET ) ) {
 			Size broken_hbonds( check_kink_helix( pose, helices[ ii ]->begin()-1, helices[ ii ]->end()-5 ) );
 			if( broken_hbonds > 0 ) {
-				TR << "is kinked, hbonds are broken. " << std::endl;			
+				TR << "is kinked, hbonds are broken. " << std::endl;
 				return false;
 			}
 		}
-	
+
 		TR << "is OK." << std::endl;
 	}
 

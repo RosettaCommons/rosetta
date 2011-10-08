@@ -276,7 +276,7 @@ NcontactsCalculator::recompute( Pose const & pose )
 		for ( Size j=1 ;j<=max_ssele; ++j ) {
 			if ( calc_sselements[ i ][ j ] ) {
 				Real prob = Real(ncon_sselements[i][j])/Real(tot);
-				ss_entrpy_ += -prob*( std::log( prob )/std::log( 2 ) );
+				ss_entrpy_ += -prob*( std::log( prob )/std::log( 2.0 ) );
 			}
 		}
 	}

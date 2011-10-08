@@ -15,8 +15,8 @@
 #ifndef INCLUDED_core_pack_dunbrack_RotamericSingleResidueDunbrackLibrary_tmpl_hh
 #define INCLUDED_core_pack_dunbrack_RotamericSingleResidueDunbrackLibrary_tmpl_hh
 
-#ifdef _WIN32
-#define ZLIB_WINAPI  // REQUIRED FOR WINDOWS
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
+	#define ZLIB_WINAPI  // REQUIRED FOR WINDOWS
 #endif
 
 // Unit Headers

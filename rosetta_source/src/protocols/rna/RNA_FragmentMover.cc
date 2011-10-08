@@ -48,6 +48,10 @@
 #include <utility/options/keys/BooleanOptionKey.hh>
 
 
+#if (defined WIN32) && (defined WIN_PYROSETTA)
+	#include <core/id/AtomID.hh>
+#endif
+
 using namespace core;
 using basic::T;
 

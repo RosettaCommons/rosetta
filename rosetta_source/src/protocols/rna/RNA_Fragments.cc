@@ -14,6 +14,12 @@
 // Rosetta Headers
 #include <protocols/rna/RNA_Fragments.hh>
 #include <protocols/rna/AllowInsert.fwd.hh>
+
+#if (defined WIN32) && (defined WIN_PYROSETTA)
+	#include <protocols/rna/AllowInsert.hh>
+	#include <core/id/AtomID.hh>
+#endif
+
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 

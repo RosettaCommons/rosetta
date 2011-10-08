@@ -13,6 +13,7 @@
 
 #include <protocols/motifs/BuildPosition.hh>  // REQUIRED FOR WINDOWS
 #include <protocols/motifs/Motif.hh>  // REQUIRED FOR WINDOWS
+#include <protocols/motifs/MotifHit.hh>  // REQUIRED FOR WINDOWS
 
 #include <protocols/enzdes/EnzdesTaskOperations.hh>
 #include <protocols/enzdes/DetectProteinLigandInterfaceOperationCreator.hh>

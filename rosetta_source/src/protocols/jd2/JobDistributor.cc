@@ -418,8 +418,8 @@ JobDistributor::go_main( protocols::moves::MoverOP mover ) {
 		if ( status == protocols::moves::MS_SUCCESS ) {
 			if( using_parser ){
 				core::scoring::ScoreFunctionOP scorefxn = core::scoring::getScoreFunction();
-				//fpd if the pose is symmetric use a symmetric scorefunction  
-				if (core::pose::symmetry::is_symmetric(pose))  
+				//fpd if the pose is symmetric use a symmetric scorefunction
+				if (core::pose::symmetry::is_symmetric(pose))
 					scorefxn = core::scoring::ScoreFunctionOP( new core::scoring::symmetry::SymmetricScoreFunction( scorefxn ) );
  				(*scorefxn)(pose);
 			}
@@ -671,9 +671,12 @@ void JobDistributor::jd2_signal_handler(int signal_)
 	if( signal_ == SIGINT ) std::cout << "Ctrl-c was pressed!" << std::endl;
 	if( signal_ == SIGABRT ) std::cout << "Process was aborted!" << std::endl;
 	if( signal_ == SIGTERM ) std::cout << "Process was terminated!" << std::endl;
-	if( signal_ == SIGTSTP ) std::cout << "Process was SIGTSTP!" << std::endl;
-	if( signal_ == SIGKILL ) std::cout << "Process was SIGKILL!" << std::endl;
-	if( signal_ == SIGQUIT ) std::cout << "Process was SIGQUIT!" << std::endl;
+
+	#ifndef WIN32
+		if( signal_ == SIGTSTP ) std::cout << "Process was SIGTSTP!" << std::endl;
+		if( signal_ == SIGKILL ) std::cout << "Process was SIGKILL!" << std::endl;
+		if( signal_ == SIGQUIT ) std::cout << "Process was SIGQUIT!" << std::endl;
+	#endif
 
 	jd2::JobDistributor::get_instance()->handle_interrupt();
 
@@ -690,9 +693,12 @@ void JobDistributor::setup_system_signal_handler( void (*signal_fn)(int) )
 	signal(SIGINT,  signal_fn);
 	signal(SIGABRT, signal_fn);
 	signal(SIGTERM, signal_fn);
-	signal(SIGTSTP, signal_fn);
-	signal(SIGKILL, signal_fn);
-	signal(SIGQUIT, signal_fn);
+
+	#ifndef WIN32
+		signal(SIGTSTP, signal_fn);
+		signal(SIGKILL, signal_fn);
+		signal(SIGQUIT, signal_fn);
+	#endif
 }
 
 /// @details Set signal handler back to default state.
@@ -701,9 +707,11 @@ void JobDistributor::remove_system_signal_handler()
 	signal(SIGINT,  SIG_DFL);
 	signal(SIGABRT, SIG_DFL);
 	signal(SIGTERM, SIG_DFL);
-	signal(SIGTSTP, SIG_DFL);
-	signal(SIGKILL, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
+	#ifndef WIN32
+		signal(SIGTSTP, SIG_DFL);
+		signal(SIGKILL, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
+	#endif
 }
 
 

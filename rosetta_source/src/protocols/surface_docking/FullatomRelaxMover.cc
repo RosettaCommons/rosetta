@@ -58,6 +58,11 @@
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
+#ifdef WIN_PYROSETTA
+	#include <core/pack/task/operation/TaskOperation.hh>
+#endif
+
+
 using basic::T;
 using basic::Error;
 using basic::Warning;

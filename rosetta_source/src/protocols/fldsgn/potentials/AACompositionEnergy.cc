@@ -126,8 +126,13 @@ AACompositionEnergy::residue_energy(
 	while( itr != comp_constraint_aas_.end() ) {
 
 		std::pair< Real, Real > thresholds( itr->second );
-		Size const lower = (Size)round( thresholds.first * pose.total_residue() );
-		Size const upper = (Size)round( thresholds.second * pose.total_residue() );
+		#ifndef WIN_PYROSETTA
+			Size const lower = (Size)round( thresholds.first * pose.total_residue() );
+			Size const upper = (Size)round( thresholds.second * pose.total_residue() );
+		#else
+			Size const lower = (Size)double( thresholds.first * pose.total_residue() + 0.5 );
+			Size const upper = (Size)double( thresholds.second * pose.total_residue() + 0.5 );
+		#endif
 
 		if( hist[ itr->first ] < lower ) {
 			e += numeric::square( hist[ itr->first ] - lower );
@@ -135,16 +140,16 @@ AACompositionEnergy::residue_energy(
 			e += numeric::square( hist[ itr->first ] - upper );
 		}
 
-		//std::cout << core::chemical::name_from_aa( itr->first ) << " " << hist[ itr->first ] << 
-		//  " " << thresholds.first << " " << thresholds.second << " " << lower << " " << upper << std::endl; 
+		//std::cout << core::chemical::name_from_aa( itr->first ) << " " << hist[ itr->first ] <<
+		//  " " << thresholds.first << " " << thresholds.second << " " << lower << " " << upper << std::endl;
 		++itr;
-		
+
 	}
 	emap[ core::scoring::aa_cmp ] = e;
 
-	//std::cout << rsd.seqpos() << " " << core::chemical::name_from_aa( pose.aa( rsd.seqpos() ) ) << " "  
+	//std::cout << rsd.seqpos() << " " << core::chemical::name_from_aa( pose.aa( rsd.seqpos() ) ) << " "
 			//<< core::chemical::name_from_aa( rsd.aa() ) << " " << hist[ rsd.aa() ] << " " << e << std::endl;
-			  
+
 }
 
 

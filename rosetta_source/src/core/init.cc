@@ -183,7 +183,7 @@ using basic::Error;
 using basic::Warning;
 
 // Windows headers
-#ifdef WIN32
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
 #include <windows.h>
 #include <wincrypt.h>
 #endif
@@ -553,7 +553,7 @@ void init(int argc, char * argv [])
 			<< " real_seed=" << real_seed << std::endl;
 	}
 	else {
-#ifdef WIN32
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
 		bool const on_windows_platform = true;
 #else
 		bool const on_windows_platform = false;
@@ -596,7 +596,8 @@ void init(int argc, char * argv [])
 		} else {
 			// grab seeds from device
 			uint32_t unsigned_32bit_seed;
-#ifdef WIN32
+
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
 			// windows random device name
 			random_device_name = "CryptGenRandom";
 

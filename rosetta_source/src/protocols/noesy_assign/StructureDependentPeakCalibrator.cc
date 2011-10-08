@@ -16,10 +16,10 @@
 /// @author Oliver Lange
 
 // Define a suitable replacement for lrint() on Windows
-#ifdef _WIN32
-#include <boost/math/special_functions/round.hpp>
-int lrint(double x) {
-  return boost::math::iround(x);
+#if (defined WIN32)
+	#include <boost/math/special_functions/round.hpp>
+	int lrint(double x) {
+	return boost::math::iround(x); }
 #endif
 
 // Unit Headers

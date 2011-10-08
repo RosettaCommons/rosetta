@@ -69,6 +69,10 @@
 //Auto Headers
 
 
+#if (defined WIN32) && (defined WIN_PYROSETTA)
+	#include <core/fragment/FragSet.hh>
+#endif
+
 namespace protocols {
 namespace fldsgn {
 
@@ -388,7 +392,7 @@ BluePrintBDR::set_instruction_blueprint( Pose const & pose )
 		TR << "There is no instruction in blueprint. " << std::endl;
 		return false;
 	}
-	
+
 	return true;
 } // set_build_instruction
 

@@ -26,7 +26,9 @@
 
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>
-	#include <windows.h>
+	#ifndef WIN_PYROSETTA
+	    #include <windows.h>
+	#endif
 #endif
 
 namespace protocols {
@@ -56,7 +58,7 @@ WorkUnitBase::WorkUnitBase ( )
 void WorkUnitBase::add_blacklist( int mpi_rank ) {
 		blacklist_.push_back( mpi_rank );
 }
-		
+
 void WorkUnitBase::clear_blacklist() {
 		blacklist_.clear();
 }
@@ -116,7 +118,7 @@ WorkUnitBase::print( std::ostream & out, bool verbose ) const {
 			<< " stop: "  << std::max( -1, (int)header.unixtime_stop_ -  (int)header.unixtime_stop_ )
 		#else
 			<< " start: " << max( -1, (int)header.unixtime_start_ - (int)header.unixtime_creation_ )
-			<< " stop: "  << max( -1, (int)header.unixtime_stop_ -  (int)header.unixtime_stop_ )		
+			<< " stop: "  << max( -1, (int)header.unixtime_stop_ -  (int)header.unixtime_stop_ )
 		#endif
 		<< " dat: "
 		 << header.extra_data_1_<<" "
@@ -168,7 +170,7 @@ WorkUnitBase::set_wu_type( const std::string &text ){
 		unsigned int length = std::min( (int)text.length(), int(128) );
 	#else
 		unsigned int length = min( (int)text.length(), int(128) );
-	#endif	
+	#endif
 	if( length == 0 ) return;
 	strcpy( &header.wu_type_[0], text.c_str() );
 }
@@ -184,7 +186,7 @@ WorkUnitBase::set_options( const std::string &text ){
 		unsigned int length = std::min( (int)text.length(), (int)128 );
 	#else
 		unsigned int length = min( (int)text.length(), (int)128 );
-	#endif	
+	#endif
 	if( length == 0 ) return;
 	strcpy( &header.options_[0], text.c_str() );
 }
@@ -213,7 +215,9 @@ core::Size WorkUnitBase::get_run_time(){
 void WorkUnit_Wait::run(){
 	//TR << "Waiting for " << header.extra_data_1_ << std::endl;
 #ifdef _WIN32
-	Sleep( header.extra_data_1_ * 1000 );
+	#ifndef WIN_PYROSETTA
+		Sleep( header.extra_data_1_ * 1000 );
+	#endif
 #else
 	sleep( header.extra_data_1_ );
 #endif

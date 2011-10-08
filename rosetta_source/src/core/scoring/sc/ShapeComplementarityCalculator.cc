@@ -1470,16 +1470,18 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 		}
 		cumperc = c;
 
-		if(settings.verbose) {
-			char buf[128];
-			snprintf(buf, sizeof(buf),
-				"%.2f - %.2f\t%.1f\t%.1f\t%.1f\t%.1f",
-				(ScValue)it->first * settings.binwidth_dist,
-				(ScValue)it->first * settings.binwidth_dist + settings.binwidth_dist,
-				abin, cumarea,
-				perc, cumperc);
-			tr << buf << std::endl;
-		}
+		#ifndef WIN_PYROSETTA
+			if(settings.verbose) {
+				char buf[128];
+				snprintf(buf, sizeof(buf),
+					"%.2f - %.2f\t%.1f\t%.1f\t%.1f\t%.1f",
+					(ScValue)it->first * settings.binwidth_dist,
+					(ScValue)it->first * settings.binwidth_dist + settings.binwidth_dist,
+					abin, cumarea,
+					perc, cumperc);
+				tr << buf << std::endl;
+			}
+		#endif
 	}
 
 	run_.results.surface[molecule].d_mean = distmin_sum / my_dots.size();
@@ -1499,15 +1501,17 @@ int ShapeComplementarityCalculator::CalcNeighborDistance(
 		}
 		cumperc = c;
 
-		if(settings.verbose) {
-			char buf[128];
-			snprintf(buf, sizeof(buf),
-				"%.2f - %.2f\t%d\t%.1f\t%.1f",
-				(ScValue)-it->first * settings.binwidth_norm - settings.binwidth_norm,
-				(ScValue)-it->first * settings.binwidth_norm,
-				it->second, perc, cumperc);
-			tr << buf << std::endl;
-		}
+		#ifndef WIN_PYROSETTA
+			if(settings.verbose) {
+				char buf[128];
+				snprintf(buf, sizeof(buf),
+					"%.2f - %.2f\t%d\t%.1f\t%.1f",
+					(ScValue)-it->first * settings.binwidth_norm - settings.binwidth_norm,
+					(ScValue)-it->first * settings.binwidth_norm,
+					it->second, perc, cumperc);
+				tr << buf << std::endl;
+			}
+		#endif
 	}
 
 	run_.results.surface[molecule].s_mean= -norm_sum / my_dots.size();

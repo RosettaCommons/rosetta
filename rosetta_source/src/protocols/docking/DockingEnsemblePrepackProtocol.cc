@@ -50,6 +50,11 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 
+#ifdef WIN_PYROSETTA
+	#include <core/pack/task/operation/TaskOperation.hh>
+#endif
+
+
 using basic::T;
 using namespace protocols::moves;
 using namespace core;
@@ -120,7 +125,7 @@ void DockingEnsemblePrepackProtocol::setup_pack_operation_movers()
 	prepack_full_repack_->score_function( scorefxn_pack() );
 	prepack_full_repack_->task_factory( task_factory() );
 	pack_operations_->add_mover(prepack_full_repack_);
-	
+
 	if ( rt_min() ){
 		rtmin_mover_ = new RotamerTrialsMinMover( );
 		rtmin_mover_->score_function( scorefxn_pack() );

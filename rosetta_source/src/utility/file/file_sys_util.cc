@@ -57,9 +57,14 @@
 #endif // _WIN32
 
 // C POSIX library header for directory manipulation
-#ifdef _WIN32
+#if (defined WIN32) //&& (!defined WIN_PYROSETTA)
 #include <windows.h>
 #include <direct.h>
+#endif
+
+#ifdef WIN_PYROSETTA
+	#include <direct.h>
+	#define mkdir _mkdir
 #endif
 
 
@@ -200,7 +205,7 @@ create_directory(
 	std::string const & dir_path
 )
 {
-#ifdef _WIN32
+#if (defined WIN32)
 	// Windows code
 	return !mkdir(dir_path.c_str());
 #else
@@ -360,34 +365,36 @@ trytry_ofstream_open(
 
 int list_dir (std::string dir, utility::vector1<std::string> & files)
 {
-#ifdef _WIN32
-	std::string file_name = dir + "\\*";
+	//#ifndef WIN_PYROSETTA
+		#if (defined WIN32) //&& (!defined PYROSETTA)
+			std::string file_name = dir + "\\*";
 
-	WIN32_FIND_DATA find_file_data;
-	HANDLE h_find;
+			WIN32_FIND_DATA find_file_data;
+			HANDLE h_find;
 
-	h_find = FindFirstFile(file_name.c_str(), &find_file_data);
-	if (h_find == INVALID_HANDLE_VALUE) {
-		return -1;
-	}
+			h_find = FindFirstFile(file_name.c_str(), &find_file_data);
+			if (h_find == INVALID_HANDLE_VALUE) {
+				return -1;
+			}
 
-	do {
-		files.push_back(find_file_data.cFileName);
-	} while(FindNextFile(h_find, &find_file_data) != 0);
-	FindClose(h_find);
-#else
-    DIR *dp;
-    struct dirent *dirp;
-    if((dp  = opendir(dir.c_str())) == NULL) {
-     //  cout << "Error(" << errno << ") opening " << dir << endl;
-        return errno;
-    }
+			do {
+				files.push_back(find_file_data.cFileName);
+			} while(FindNextFile(h_find, &find_file_data) != 0);
+			FindClose(h_find);
+		#else
+			DIR *dp;
+			struct dirent *dirp;
+			if((dp  = opendir(dir.c_str())) == NULL) {
+			 //  cout << "Error(" << errno << ") opening " << dir << endl;
+				return errno;
+			}
 
-    while ((dirp = readdir(dp)) != NULL) {
-        files.push_back(std::string(dirp->d_name));
-    }
-    closedir(dp);
-#endif
+			while ((dirp = readdir(dp)) != NULL) {
+				files.push_back(std::string(dirp->d_name));
+			}
+			closedir(dp);
+		#endif
+	//#endif
     return 0;
 }
 

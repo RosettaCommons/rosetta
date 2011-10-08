@@ -56,6 +56,12 @@
 #include <sstream>
 #include <fstream>
 #include <utility/fixedsizearray1.hh>
+
+#ifdef WIN_PYROSETTA
+	#include <protocols/moves/ThermodynamicObserver.hh>
+#endif
+
+
 using namespace core;
 using namespace core::pose;
 using namespace basic;
@@ -295,13 +301,13 @@ SidechainMCMover::apply(
 		//}
 		pose.replace_residue( res_i, (*current_[ res_i ]), true );
 	}
-	
+
 	score_post_apply_ = current_energy;
 	if (metropolis_hastings_mover_) {
 		score_post_apply_ = sfxn_(pose);
 		//TR << "Score Actual: " << score_post_apply_ << " Accumulated: " << current_energy << " Delta: " << current_energy - score_post_apply_ << std::endl;
 	}
-	
+
 	type("sc_mc");
 }
 
@@ -352,7 +358,7 @@ SidechainMCMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves
 				utility_exit_with_message("TaskOperation " + *t_o_key + " not found in DataMap.");
 			}
 		}
-		
+
 		set_task_factory(new_task_factory);
 
 	} else {
@@ -388,7 +394,7 @@ SidechainMCMover::initialize_simulation(
 )
 {
 	SidechainMover::initialize_simulation(pose, metropolis_hastings_mover);
-	
+
 	if (inherit_scorefxn_temperature_) {
 		runtime_assert(metropolis_hastings_mover_);
 		set_scorefunction(metropolis_hastings_mover_->monte_carlo()->score_function());

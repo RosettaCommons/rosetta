@@ -90,6 +90,9 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 
+#if (defined WIN32) && (defined WIN_PYROSETTA)
+	#include <protocols/motifs/MotifHit.hh>
+#endif
 
 namespace protocols {
 namespace motifs {

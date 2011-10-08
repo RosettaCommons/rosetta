@@ -11,7 +11,7 @@
 /// @brief  header file for ThreadingJob classes, part of August 2008 job distributor as planned at RosettaCon08.  This file is responsible for three ideas: "inner" jobs, "outer" jobs (with which the job distributor works) and job container (currently just typdefed in the .fwd.hh)
 /// @author Steven Lewis smlewi@gmail.com
 
-#ifdef _WIN32
+#if (defined _WIN32) && (!defined WIN_PYROSETTA)
 #define ZLIB_WINAPI  // REQUIRED FOR WINDOWS
 #endif
 

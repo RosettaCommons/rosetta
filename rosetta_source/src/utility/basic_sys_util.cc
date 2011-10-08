@@ -25,11 +25,15 @@
 #include <sstream>
 
 // Platform headers
-#ifdef _WIN32
-#include <windows.h>
-#include <float.h>
-#else // Not _WIN32
-#include <unistd.h>
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
+	#include <windows.h>
+	#include <float.h>
+	#else // Not _WIN32
+
+	#ifndef WIN_PYROSETTA
+		#include <unistd.h>
+	#endif
+
 #endif // _WIN32
 
 // Boinc headers
@@ -52,7 +56,10 @@ sys_sleep( double const seconds )
 	//cout << "sleep" << endl;
 
 #ifdef _WIN32
-	::Sleep( (int) (1000 * seconds) );
+	#ifndef WIN_PYROSETTA
+		::Sleep( (int) (1000 * seconds) );
+    #endif
+
 #else // Not _WIN32
 	unsigned int remaining_time = (int) seconds;
 	while ( true ) {

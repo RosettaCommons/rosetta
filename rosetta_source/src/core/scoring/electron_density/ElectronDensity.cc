@@ -18,7 +18,9 @@
 #ifdef WIN32
 	#define _USE_MATH_DEFINES
 	#include <math.h>
-	#include <windows.h>
+	#ifndef WIN_PYROSETTA
+		#include <windows.h>
+	#endif
 #endif
 
 // Project headers
@@ -1040,14 +1042,14 @@ numeric::xyzVector<core::Real> ElectronDensity::get_nearest_UC(
 															   numeric::xyzVector<core::Real> const & cartX_in,
 															   numeric::xyzVector<core::Real> const & cartX_ref) {
 	// find a copy of cartX_in in any unit cell that is closest to cartX_ref
-	core::Real distance_squared = cartX_in.distance_squared(cartX_ref);	
+	core::Real distance_squared = cartX_in.distance_squared(cartX_ref);
 	numeric::xyzVector<core::Real> cartX_out(cartX_in);
-	
+
 	bool searching(true);
 	while (searching) {
 		searching = false;
 		numeric::xyzVector<core::Real> fracX(c2f*cartX_out);
-		
+
 		numeric::xyzVector<core::Real> shift(-1,-1,-1);
 		for (shift[0] = -1; shift[0] < 1.1; shift[0] += 1) {
 			for (shift[1] = -1; shift[1] < 1.1; shift[1] += 1) {
@@ -1069,7 +1071,7 @@ numeric::xyzVector<core::Real> ElectronDensity::get_nearest_UC(
 	return cartX_out;
 }
 
-	
+
 numeric::xyzVector<core::Real> ElectronDensity::get_cart_unitCell(
 														  numeric::xyzVector<core::Real> const & cartX) {
 	numeric::xyzVector<core::Real> fracX(c2f*cartX);
@@ -1269,7 +1271,7 @@ void ElectronDensity::setup_fastscoring_first_time(core::pose::Pose const &pose)
 	spline_coeffs( fastdens_score, temp_coeffs); fastdens_score = temp_coeffs;
 	spline_coeffs( fastdens_dscoredx, temp_coeffs); fastdens_dscoredx = temp_coeffs;
 	spline_coeffs( fastdens_dscoredy, temp_coeffs); fastdens_dscoredy = temp_coeffs;
-	spline_coeffs( fastdens_dscoredz, temp_coeffs); fastdens_dscoredz = temp_coeffs;	
+	spline_coeffs( fastdens_dscoredz, temp_coeffs); fastdens_dscoredz = temp_coeffs;
 }
 
 
@@ -2732,7 +2734,7 @@ core::Real ElectronDensity::matchRes(
 			core::Real f = ( sumCO_i - sumC_i*sumO_i / vol_i );
 			core::Real g = sqrt ( varO_i * varC_i );
 
-			numeric::xyzVector<core::Real> fprime = dCOdx_ij - 1/(vol_i*vol_i) * ( 
+			numeric::xyzVector<core::Real> fprime = dCOdx_ij - 1/(vol_i*vol_i) * (
 			    (dOdx_ij*sumC_i + dCdx_ij*sumO_i)*vol_i - sumO_i*sumC_i*dVdx_ij);
 			numeric::xyzVector<core::Real> gprime = 0.5 * (
 					sqrt(varO_i)/sqrt(varC_i) * ( dC2dx_ij - ( 1/(vol_i*vol_i) * ( 2*vol_i*sumC_i*dCdx_ij - sumC_i*sumC_i*dVdx_ij ) ) ) +
@@ -2809,7 +2811,7 @@ void ElectronDensity::dCCdx_fastRes(
 	if ( pose.residue(resid).aa() == core::chemical::aa_vrt ) return;
 
 	numeric::xyzVector<core::Real> fracX = c2f*X;
-	numeric::xyzVector<core::Real> idxX = numeric::xyzVector<core::Real>( 
+	numeric::xyzVector<core::Real> idxX = numeric::xyzVector<core::Real>(
 	                                          fracX[0]*fastgrid[0] - fastorigin[0] + 1,
 	                                          fracX[1]*fastgrid[1] - fastorigin[1] + 1,
 	                                          fracX[2]*fastgrid[2] - fastorigin[2] + 1);
