@@ -46,7 +46,9 @@ RelativePoseFilter::RelativePoseFilter() :
 	pose_( NULL ),
 	scorefxn_( NULL ),
 	packing_shell_( 8.0 ),
-	thread_( true )
+	thread_( true ),
+	baseline_( true ),
+	baseline_val_( -9999 )
 {
 	alignment_.clear();
 }
@@ -163,7 +165,10 @@ RelativePoseFilter::compute( core::pose::Pose const & p ) const{
 		dump.set_scorefxn( scorefxn() );
 		dump.apply( *threaded_pose );
 	}
-	return( filter_val );
+	if( baseline() )
+		return( filter_val - baseline_val() );
+	else
+		return( filter_val );
 }
 
 core::Real
@@ -192,6 +197,13 @@ RelativePoseFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	std::string const pose_fname( tag->getOption< std::string >( "pdb_name" ) );
 	pose( core::import_pose::pose_from_pdb( pose_fname, false /*read foldtree*/ ) );
 	filter( parse_filter( tag->getOption< std::string >( "filter" ), filters ) );
+	baseline( tag->getOption< bool >( "baseline", 1 ));
+	if( baseline() ){
+		baseline_val( filter()->report_sm( *pose() ) );
+		TR<<"The baseline value for the pose read from disk is: "<<baseline_val()<<std::endl;
+	}
+	else
+		TR<<"Baseline turned off. Is that intended?"<<std::endl;
 	relax_mover( parse_mover( tag->getOption< std::string >( "relax_mover", "null" ), movers ) );
 	dump_pose_fname( tag->getOption< std::string >( "dump_pose", "" ) );
 	if( tag->hasOption( "alignment" ) ){
@@ -250,6 +262,28 @@ RelativePoseFilter::scorefxn( core::scoring::ScoreFunctionOP const scorefxn ){
 core::scoring::ScoreFunctionOP
 RelativePoseFilter::scorefxn() const{
 	return( scorefxn_ );
+}
+
+bool
+RelativePoseFilter::baseline() const{
+	return baseline_;
+}
+
+void
+RelativePoseFilter::baseline( bool const b ){
+	baseline_ = b;
+}
+
+core::Real
+RelativePoseFilter::baseline_val() const{
+	runtime_assert( baseline() );
+	return baseline_val_;
+}
+
+void
+RelativePoseFilter::baseline_val( core::Real const b ){
+	runtime_assert( baseline() );
+	baseline_val_ = b;
 }
 
 } // filters

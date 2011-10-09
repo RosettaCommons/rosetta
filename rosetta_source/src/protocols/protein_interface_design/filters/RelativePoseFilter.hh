@@ -67,6 +67,10 @@ public:
 	core::pose::PoseOP thread_seq( core::pose::Pose const & p) const; //key functionality of this filter: thread relevant sections, repack and relax
 	bool thread() const;
 	void thread( bool const t );
+	bool baseline() const;
+	void baseline( bool const b );
+	core::Real baseline_val() const;
+	void baseline_val( core::Real const );
 private:
 	protocols::filters::FilterOP filter_; //which filter to use
 	protocols::moves::MoverOP relax_mover_; // a mover to be called before evaluating the filter's value.
@@ -76,6 +80,8 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::Real packing_shell_; //dflt 8; after threading, what shell to repack around residue
 	bool thread_;// dflt true; should we thread or only repack? Only repack is useful for computing baseline filter values at the start of the run, vs. the values for the actual mutated sequences later
+	bool baseline_; // dflt true; should we use an internal baseline? (see wiki for details)
+	core::Real baseline_val_;
 };
 
 } // filters
