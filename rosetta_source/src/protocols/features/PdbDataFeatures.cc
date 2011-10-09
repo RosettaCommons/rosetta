@@ -91,6 +91,7 @@ core::Size PdbDataFeatures::report_features(
 	utility::sql_database::sessionOP db_session )
 {
 	insert_pdb_info_rows(struct_id,db_session,pose);
+	return 0;
 }
 
 void PdbDataFeatures::delete_record(
