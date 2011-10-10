@@ -464,12 +464,6 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		set_input_pose( input_pose );
 	}
 
-	if ( !get_native_pose() ) {
-		TR << "Danger Will Robinson! Native is an impostor!" << std::endl;
-		core::pose::PoseOP native_pose = new core::pose::Pose(pose);
-		set_native_pose( native_pose );
-	}
-
 	// if an ensemble file is defined for either partner, both partners must be defined
 	if ( ensemble1_filename_ != "" || ensemble2_filename_ != "" ) {
 		if ( ensemble1_filename_ == "" || ensemble2_filename_ == "" ) utility_exit_with_message( "Must define ensemble file for both partners");
@@ -552,70 +546,74 @@ DockingProtocol::clone() const {
 DockingProtocol::DockingProtocol( DockingProtocol const & rhs ) :
 	Mover(rhs)
 {
-	*this = rhs;
+	initForEqualOperatorAndCopyConstructor(*this, rhs);
 }
 
 ///@brief assignment operator
 DockingProtocol & DockingProtocol::operator=( DockingProtocol const & rhs ){
 	//abort self-assignment
 	if (this == &rhs) return *this;
+	Mover::operator=(rhs);
+	initForEqualOperatorAndCopyConstructor(*this, rhs);
+	return *this;
+}
 
+void DockingProtocol::initForEqualOperatorAndCopyConstructor(DockingProtocol & lhs, DockingProtocol const & rhs){
 	//going through all of member data and assigning it
-	user_defined_ = rhs.user_defined_;
-	low_res_protocol_only_ = rhs.low_res_protocol_only_;
-	reporting_ = rhs.reporting_;
-	autofoldtree_ = rhs.autofoldtree_;
-	flags_and_objects_are_in_sync_ = rhs.flags_and_objects_are_in_sync_;
-	first_apply_with_current_setup_ = rhs.first_apply_with_current_setup_;
-	sc_min_ = rhs.sc_min_;
-	rt_min_ = rhs.rt_min_;
-	dock_min_ = rhs.dock_min_;
-	no_filters_ = rhs.no_filters_;
-	use_legacy_protocol_ =  rhs.use_legacy_protocol_;
-	docking_local_refine_ = rhs.docking_local_refine_;
-	use_csts_ = rhs.use_csts_;
-	cst_weight_ = rhs.cst_weight_;
-	score_cutoff_ = rhs.score_cutoff_;
-	fold_tree_ = rhs.fold_tree_;
-	partners_ = rhs.partners_;
-	previous_sequence_ = rhs.previous_sequence_;
-	lowres_inner_cycles_ = rhs.lowres_inner_cycles_;
-	lowres_outer_cycles_ = rhs.lowres_outer_cycles_;
-	movable_jumps_ = rhs.movable_jumps_;
-	docking_scorefxn_low_ = rhs.docking_scorefxn_low_->clone();
-	docking_scorefxn_high_ = rhs.docking_scorefxn_high_->clone();
-	docking_scorefxn_pack_ = rhs.docking_scorefxn_pack_->clone();
-	docking_scorefxn_output_ = rhs.docking_scorefxn_output_->clone();
+	lhs.user_defined_ = rhs.user_defined_;
+	lhs.low_res_protocol_only_ = rhs.low_res_protocol_only_;
+	lhs.reporting_ = rhs.reporting_;
+	lhs.autofoldtree_ = rhs.autofoldtree_;
+	lhs.flags_and_objects_are_in_sync_ = rhs.flags_and_objects_are_in_sync_;
+	lhs.first_apply_with_current_setup_ = rhs.first_apply_with_current_setup_;
+	lhs.sc_min_ = rhs.sc_min_;
+	lhs.rt_min_ = rhs.rt_min_;
+	lhs.dock_min_ = rhs.dock_min_;
+	lhs.no_filters_ = rhs.no_filters_;
+	lhs.use_legacy_protocol_ =  rhs.use_legacy_protocol_;
+	lhs.docking_local_refine_ = rhs.docking_local_refine_;
+	lhs.use_csts_ = rhs.use_csts_;
+	lhs.cst_weight_ = rhs.cst_weight_;
+	lhs.score_cutoff_ = rhs.score_cutoff_;
+	lhs.fold_tree_ = rhs.fold_tree_;
+	lhs.partners_ = rhs.partners_;
+	lhs.previous_sequence_ = rhs.previous_sequence_;
+	lhs.lowres_inner_cycles_ = rhs.lowres_inner_cycles_;
+	lhs.lowres_outer_cycles_ = rhs.lowres_outer_cycles_;
+	lhs.movable_jumps_ = rhs.movable_jumps_;
+	lhs.docking_scorefxn_low_ = rhs.docking_scorefxn_low_->clone();
+	lhs.docking_scorefxn_high_ = rhs.docking_scorefxn_high_->clone();
+	lhs.docking_scorefxn_pack_ = rhs.docking_scorefxn_pack_->clone();
+	lhs.docking_scorefxn_output_ = rhs.docking_scorefxn_output_->clone();
 	if( rhs.mc_ ) //not used currently but might be needed later
-		mc_ = new moves::MonteCarlo( *(rhs.mc_) );
-	lowres_filter_ = static_cast< DockingLowResFilter * const > (rhs.lowres_filter_->clone()() );
-	highres_filter_ = static_cast< DockingHighResFilter * const > (rhs.highres_filter_->clone()() );
+		lhs.mc_ = new moves::MonteCarlo( *(rhs.mc_) );
+	lhs.lowres_filter_ = static_cast< DockingLowResFilter * const > (rhs.lowres_filter_->clone()() );
+	lhs.highres_filter_ = static_cast< DockingHighResFilter * const > (rhs.highres_filter_->clone()() );
 	if(rhs.docking_lowres_mover_){
-		docking_lowres_mover_ = static_cast< DockingLowRes * >( rhs.docking_lowres_mover_->clone()() );
+		lhs.docking_lowres_mover_ = static_cast< DockingLowRes * >( rhs.docking_lowres_mover_->clone()() );
 	}
 	if(rhs.docking_highres_mover_){
-		docking_highres_mover_ = static_cast< DockingHighRes * >( rhs.docking_highres_mover_->clone()() );
+		lhs.docking_highres_mover_ = static_cast< DockingHighRes * >( rhs.docking_highres_mover_->clone()() );
 	}
-	to_centroid_ = static_cast< protocols::moves::SwitchResidueTypeSetMover * >( rhs.to_centroid_->clone()() );
-	to_all_atom_ = static_cast< protocols::moves::SwitchResidueTypeSetMover * >(rhs.to_all_atom_->clone()() );
-	if(rhs.ensemble1_ || ensemble2_){
-	ensemble1_ = new protocols::docking::DockingEnsemble( *(rhs.ensemble1_) );
-	ensemble1_filename_ = rhs.ensemble1_filename_ ;
+	lhs.to_centroid_ = static_cast< protocols::moves::SwitchResidueTypeSetMover * >( rhs.to_centroid_->clone()() );
+	lhs.to_all_atom_ = static_cast< protocols::moves::SwitchResidueTypeSetMover * >(rhs.to_all_atom_->clone()() );
+	if(rhs.ensemble1_){
+		lhs.ensemble1_ = new protocols::docking::DockingEnsemble( *(rhs.ensemble1_) );
+		lhs.ensemble1_filename_ = rhs.ensemble1_filename_ ;
 	}
 	if(rhs.ensemble2_){
-	ensemble2_ = new protocols::docking::DockingEnsemble( *(rhs.ensemble2_) );
-	ensemble2_filename_ = rhs.ensemble2_filename_;
+		lhs.ensemble2_ = new protocols::docking::DockingEnsemble( *(rhs.ensemble2_) );
+		lhs.ensemble2_filename_ = rhs.ensemble2_filename_;
 	}
 	if( rhs.docking_constraint_ )
-		docking_constraint_ = static_cast< protocols::moves::ConstraintSetMover * >( rhs.docking_constraint_->clone()() );
+		lhs.docking_constraint_ = static_cast< protocols::moves::ConstraintSetMover * >( rhs.docking_constraint_->clone()() );
 	if( rhs.recover_sidechains_ )
-		recover_sidechains_ = static_cast< protocols::moves::ReturnSidechainMover * >( rhs.recover_sidechains_->clone()() );
+		lhs.recover_sidechains_ = static_cast< protocols::moves::ReturnSidechainMover * >( rhs.recover_sidechains_->clone()() );
 	if(	rhs.init_task_factory_ ){
-		init_task_factory_ = new 	core::pack::task::TaskFactory( *(rhs.init_task_factory_) );
+		lhs.init_task_factory_ = new 	core::pack::task::TaskFactory( *(rhs.init_task_factory_) );
 	}
-	design_ = rhs.design_;
-	ignore_default_docking_task_ = rhs.ignore_default_docking_task_;
-	return *this;
+	lhs.design_ = rhs.design_;
+	lhs.ignore_default_docking_task_ = rhs.ignore_default_docking_task_;
 }
 
 void DockingProtocol::set_lowres_scorefxn( core::scoring::ScoreFunctionOP docking_scorefxn_low )
@@ -813,6 +811,12 @@ DockingProtocol::apply( pose::Pose & pose )
 	bool passed_lowres_filter = true;
 	bool passed_highres_filter = true;
 	std::map < std::string, core::Real > lowres_scores;
+
+	if ( !get_native_pose() ) {
+		TR << "Danger Will Robinson! Native is an impostor!" << std::endl;
+		core::pose::PoseOP native_pose = new core::pose::Pose(pose);
+		set_native_pose( native_pose );
+	}
 
 	if ( !flags_and_objects_are_in_sync_ ){
 		sync_objects_with_flags();
