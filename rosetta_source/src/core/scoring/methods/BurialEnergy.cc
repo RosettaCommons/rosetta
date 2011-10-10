@@ -52,10 +52,16 @@ BurialEnergyCreator::score_types_for_method() const {
 	return sts;
 }
 
+void
+BurialEnergy::setup_for_scoring(
+	 pose::Pose & pose, ScoreFunction const &
+) const {
+	pose.update_residue_neighbors();
+}
+
 /// clone
 EnergyMethodOP
-BurialEnergy::clone() const
-{
+BurialEnergy::clone() const {
 	return new BurialEnergy;
 }
 
@@ -64,48 +70,41 @@ BurialEnergy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 
 void
-BurialEnergy::finalize_total_energy(
-	core::pose::Pose & pose,
-	ScoreFunction const &,
+BurialEnergy::residue_energy(
+	core::conformation::Residue const & rsd,
+	core::pose::Pose const & pose,
 	EnergyMap & emap
 ) const {
-	pose.update_residue_neighbors();
-	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
-		core::conformation::Residue const & rsd( pose.residue(ii) );
-		if ( rsd.has_variant_type( "REPLONLY" ) ) continue;
-		if ( ! rsd.is_protein() ) continue;
+	static const core::Real dist_sq_cutoff(100);
+	static const core::Size NN_cutoff(16);
 
-		TwelveANeighborGraph const & graph ( pose.energies().twelveA_neighbor_graph() );
+	TwelveANeighborGraph const & graph ( pose.energies().twelveA_neighbor_graph() );
 
-		core::conformation::Atom const & atom_i = rsd.atom(rsd.nbr_atom());
+	core::conformation::Atom const & atom_i = rsd.atom(rsd.nbr_atom());
 
-		// iterate across neighbors within 12 angstroms, count number <10A
-		Size countN(0);
-		for ( graph::Graph::EdgeListConstIter
-				ir  = graph.get_node( rsd.seqpos() )->const_edge_list_begin(),
-				ire = graph.get_node( rsd.seqpos() )->const_edge_list_end();
-				ir != ire; ++ir ) {
-			Size const j( (*ir)->get_other_ind( rsd.seqpos() ) );
-			core::conformation::Residue const & rsd_j( pose.residue(j) );
+	// iterate across neighbors within 12 angstroms, count number <10A
+	Size countN(0);
+	for ( graph::Graph::EdgeListConstIter
+			ir  = graph.get_node( rsd.seqpos() )->const_edge_list_begin(),
+			ire = graph.get_node( rsd.seqpos() )->const_edge_list_end();
+			ir != ire; ++ir ) {
+		Size const j( (*ir)->get_other_ind( rsd.seqpos() ) );
+		core::conformation::Residue const & rsd_j( pose.residue(j) );
 
-			core::conformation::Atom const & atom_j = rsd_j.atom(rsd_j.nbr_atom());
-			Real sqdist = atom_i.xyz().distance_squared( atom_j.xyz() );
-			if ( sqdist < 100 ) {
-				countN++;
-			}
+		core::conformation::Atom const & atom_j = rsd_j.atom(rsd_j.nbr_atom());
+		Real sqdist = atom_i.xyz().distance_squared( atom_j.xyz() );
+		if ( sqdist < dist_sq_cutoff ) {
+			countN++;
 		}
-		//std::cout << "countN(" << ii << ") = " << countN << std::endl;
+	}
+	//std::cout << "countN(" << ii << ") = " << countN << std::endl;
 
-		Real const & burial_prediction( pred_burial_[ii] );
-		Real score = burial_prediction;
-		if ( countN < 16 ) {
-			emap[ burial ] += -1 * score;
-		} else {
-			emap[ burial ] += score;
-		}
-		//Real const score( -1 * burial_prediction * countN );
-		//std::cout << "score(" << ii << ") = " << score << std::endl;
-		//emap[ burial ] += score;
+	Real const & burial_prediction( pred_burial_[rsd.seqpos()] );
+	Real score = burial_prediction;
+	if ( countN < NN_cutoff ) {
+		emap[ burial ] += -1 * score;
+	} else {
+		emap[ burial ] += score;
 	}
 }
 
@@ -120,15 +119,6 @@ BurialEnergy::indicate_required_context_graphs( utility::vector1< bool > & conte
 {
 	context_graphs_required[ twelve_A_neighbor_graph ] = true;
 }
-
-//void
-//BurialEnergy::setup_for_scoring(
-//	pose::Pose & pose,
-//	ScoreFunction const &
-//) const {
-//	pose.update_residue_neighbors();
-//}
-
 
 void BurialEnergy::init_from_file() {
 	using namespace basic::options;
