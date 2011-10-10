@@ -144,6 +144,7 @@ namespace score { BooleanOptionKey const output_residue_energies( "score:output_
 namespace score { StringOptionKey const fa_custom_pair_distance_file( "score:fa_custom_pair_distance_file" );  }
 namespace score { RealOptionKey const disulf_matching_probe( "score:disulf_matching_probe" );  }
 namespace score { RealVectorOptionKey const bonded_params( "score:bonded_params" );  }
+namespace score { BooleanOptionKey const linear_bonded_potential( "score:linear_bonded_potential" );  }
 namespace score { namespace saxs { BooleanOptionKey const saxs( "score:saxs" );  } }
 namespace score { namespace saxs { RealOptionKey const min_score( "score:saxs:min_score" );  } }
 namespace score { namespace saxs { StringOptionKey const custom_ff( "score:saxs:custom_ff" );  } }
@@ -573,4 +574,3 @@ namespace wum { FileOptionKey const extra_scorefxn_ref_structure( "wum:extra_sco
 namespace wum { IntegerOptionKey const extra_scorefxn_relax( "wum:extra_scorefxn_relax" );  }
 namespace wum { RealOptionKey const trim_proportion( "wum:trim_proportion" );  }
 namespace lh { BooleanOptionKey const lh( "lh" );  }
-namespace lh { StringOptionKey const db_prefix( "lh:db_prefix" );  }

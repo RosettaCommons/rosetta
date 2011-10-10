@@ -727,6 +727,7 @@ option.add( basic::options::OptionKeys::score::output_residue_energies, "Output 
 option.add( basic::options::OptionKeys::score::fa_custom_pair_distance_file, "Name of custom pair distance energy file" ).def("");
 option.add( basic::options::OptionKeys::score::disulf_matching_probe, "Size of probe to use in disulfide matching score" ).def(2.5);
 option.add( basic::options::OptionKeys::score::bonded_params, "Spring constants for bonded parameters [length,angle,torsion,proton-torsion] (default 600,300,300,60)" );
+option.add( basic::options::OptionKeys::score::linear_bonded_potential, "use linear (instead of quadratic) bonded potential" ).def(false);
 option.add( basic::options::OptionKeys::score::saxs::saxs, "saxs option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::score::saxs::min_score, "minimum value of saxs score; the parameter is used to flatten the energy funnel around its minimum" ).def(-5);
 option.add( basic::options::OptionKeys::score::saxs::custom_ff, "Name of config file providing extra from factors" ).def("");
@@ -1156,10 +1157,10 @@ option.add( basic::options::OptionKeys::wum::extra_scorefxn_ref_structure, "Extr
 option.add( basic::options::OptionKeys::wum::extra_scorefxn_relax, "After doing batch relax and adding any extra_scorefunction terms do another N fast relax rounds (defaut=0)" ).def(0);
 option.add( basic::options::OptionKeys::wum::trim_proportion, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::lh::lh, "lh option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::lh::db_prefix, "stem for loop database" ).def("loopdb");
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::loopsizes, "Which loopsizes to use" ).def(10).def(15).def(20);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::db_prefix, "stem for loop database" ).def("loopdb");
+option.add( basic::options::OptionKeys::lh::loopsizes, "Which loopsizes to use" ).def(10).def(15).def(20);
 option.add( basic::options::OptionKeys::lh::num_partitions, "Number of partitions to split the database into" ).def(1);
 option.add( basic::options::OptionKeys::lh::db_path, "Path to database" ).def("");
 option.add( basic::options::OptionKeys::lh::exclude_homo, "Use a homolog exclusion filter" ).def(false);
@@ -1734,10 +1735,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
+option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );

@@ -3472,6 +3472,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-bonded_params</b> \<RealVector\><dt>
 <dd>Spring constants for bonded parameters [length,angle,torsion,proton-torsion] (default 600,300,300,60)</dd><br>
 </dl>
+<dl>
+<dt><b>-linear_bonded_potential</b> \<Boolean\><dt>
+<dd>use linear (instead of quadratic) bonded potential</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>score:saxs</h2>
 <dl>
