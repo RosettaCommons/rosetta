@@ -223,17 +223,17 @@ void Translate::translate_ligand(core::Size const jump_id,core::pose::Pose & pos
 
 	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
 	for (Size cycle = 0; cycle < translate_info_.cycles; ++cycle) {
-		core::Real pick_move(numeric::random::gaussian());
-		if(pick_move >= 0.50)
-		{
+	//	core::Real pick_move(numeric::random::gaussian());
+	//	if(pick_move >= 0.50)
+	//	{
 			translate_tracer.Trace <<"Doing a translate move" <<std::endl;
 			translate_mover->apply(pose);
-		}else
-		{
-
-			translate_tracer.Trace <<"Doing a conformer selection move" <<std::endl;
-			conformer_mover->apply(pose);
-		}
+	//	}else
+	//	{
+	//
+	//		translate_tracer.Trace <<"Doing a conformer selection move" <<std::endl;
+	//		conformer_mover->apply(pose);
+	//	}
 		core::Real score(grid_manager->total_score(residue));
 		if(score <= best_score)
 		{

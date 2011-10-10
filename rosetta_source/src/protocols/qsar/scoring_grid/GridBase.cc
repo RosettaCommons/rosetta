@@ -197,17 +197,30 @@ void GridBase::fill_with_value(core::Real value)
 	grid_.setFullOccupied(value);
 }
 
-void GridBase::set_sphere(core::Vector const & coords, core::Real radius, core::Real value)
-{
+void GridBase::set_sphere(
+		core::Vector const & coords,
+		core::Real radius,
+		core::Real value
+){
+	set_ring(coords, 0, radius, value);
+}
+
+void GridBase::set_ring(
+		core::Vector const & coords,
+		core::Real inner_radius,
+		core::Real outer_radius,
+		core::Real value
+){
 	//TR <<"making sphere of radius " << radius << "and value " << value <<std::endl;
-	core::Real radius2 = radius*radius;
+	core::Real inner_radius2 = inner_radius*inner_radius;
+	core::Real outer_radius2 = outer_radius*outer_radius;
 	int x_count(0);
 	int y_count(0);
 	int z_count(0);
 	grid_.getNumberOfPoints(x_count,y_count,z_count);
-	core::Vector vector_radius (radius);
-	core::grid::CartGrid<core::Real>::GridPt grid_min = grid_.gridpt(coords - radius);
-	core::grid::CartGrid<core::Real>::GridPt grid_max = grid_.gridpt(coords + radius);
+	core::Vector vector_radius (outer_radius);
+	core::grid::CartGrid<core::Real>::GridPt grid_min = grid_.gridpt(coords - outer_radius);
+	core::grid::CartGrid<core::Real>::GridPt grid_max = grid_.gridpt(coords + outer_radius);
 	//TR <<"min: " <<grid_min.x() << " "<<grid_min.y() << " " <<grid_min.z() <<std::endl;
 	//TR <<"max: "<<grid_max.x() << " "<<grid_max.y() << " " <<grid_max.z() <<std::endl;
 	//TR <<"counts: " << x_count <<" "<< y_count << " " << z_count <<std::endl;
@@ -220,8 +233,10 @@ void GridBase::set_sphere(core::Vector const & coords, core::Real radius, core::
 				core::grid::CartGrid<core::Real>::GridPt point(x_index, y_index, z_index);
 				core::Vector box_center = grid_.coords(point);
 				//TR <<x_index << " "<<y_index << " " <<z_index <<std::endl;
-				if(box_center.distance_squared(coords) <= radius2)
-				{
+				if(
+						box_center.distance_squared(coords) >= inner_radius2
+						&& box_center.distance_squared(coords) <= outer_radius2
+				){
 					grid_.setValue(point, value);
 				}
 			}

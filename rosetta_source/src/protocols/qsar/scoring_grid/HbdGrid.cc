@@ -29,13 +29,11 @@ std::string HbdGridCreator::keyname() const
 
 GridBaseOP HbdGridCreator::create_grid(utility::tag::TagPtr const tag) const
 {
-	if (!tag->hasOption("weight")){
-		utility_exit_with_message("Could not make HbdGrid: you must specify a weight when making a new grid");
-	}else{
-		return new HbdGrid( tag->getOption<core::Real>("weight") );
-	}
-	// This is impossible
-	return NULL;
+	GridBaseOP hbd_grid= new HbdGrid();
+
+	hbd_grid->parse_my_tag(tag);
+
+	return hbd_grid;
 }
 
 std::string HbdGridCreator::grid_name()
@@ -51,6 +49,14 @@ HbdGrid::HbdGrid(): GridBase ("HbdGrid",1.0), radius_(2.4),width_(1.0), magnitud
 HbdGrid::HbdGrid(core::Real weight) : GridBase ("HbdGrid",weight), radius_(2.4),width_(1.0), magnitude_(-1.0)
 {
 
+}
+
+void
+HbdGrid::parse_my_tag(utility::tag::TagPtr const tag){
+	if (!tag->hasOption("weight")){
+		utility_exit_with_message("Could not make HbdGrid: you must specify a weight when making a new grid");
+	}
+	set_weight( tag->getOption<core::Real>("weight") );
 }
 
 void HbdGrid::refresh(core::pose::Pose const & pose, core::Vector const & )

@@ -30,6 +30,8 @@ public:
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center);
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> ligand_chain_ids_to_exclude);
 
+	void parse_my_tag(utility::tag::TagPtr const tag);
+
 private:
 
 	core::Real radius_;

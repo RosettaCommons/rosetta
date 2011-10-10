@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   /git/src/protocols/qsar/scoring_grid/AtrRepGrid.cc
+/// @file   /git/src/protocols/qsar/scoring_grid/RepGrid.cc
 /// @author Sam DeLuca
 
 #include <protocols/qsar/scoring_grid/RepGrid.hh>
@@ -31,13 +31,11 @@ std::string RepGridCreator::keyname() const
 
 GridBaseOP RepGridCreator::create_grid(utility::tag::TagPtr const tag) const
 {
-	if (!tag->hasOption("weight")){
-		utility_exit_with_message("Could not make RepGrid: you must specify a weight when making a new grid");
-	}else{
-		return new RepGrid( tag->getOption<core::Real>("weight") );
-	}
-	// This is impossible
-	return NULL;
+	GridBaseOP rep_grid= new RepGrid();
+
+	rep_grid->parse_my_tag(tag);
+
+	return rep_grid;
 }
 
 std::string RepGridCreator::grid_name()
@@ -45,13 +43,33 @@ std::string RepGridCreator::grid_name()
 	return "RepGrid";
 }
 
-RepGrid::RepGrid() : GridBase("RepGrid",1.0), radius_(2.25)
+RepGrid::RepGrid() : GridBase("RepGrid",0.0), radius_(2.25), bb_(1), sc_(0), ligand_(1)
 {
 
 }
 
 RepGrid::RepGrid(core::Real weight) : GridBase("RepGrid",weight), radius_(2.25)
 {
+}
+
+void
+RepGrid::parse_my_tag(utility::tag::TagPtr const tag){
+
+	if (tag->hasOption("bb") || tag->hasOption("sc") || tag->hasOption("ligand") ){
+		// the user MUST provide all 3 if he/she is providing any of these 3 options
+		if (!(tag->hasOption("bb") && tag->hasOption("sc") && tag->hasOption("ligand") ) ){
+			utility_exit_with_message("'RepGrid' requires bb, sc, and ligand if any one of these are used");
+		}else{
+			bb_= tag->getOption<core::Real>("bb");
+			sc_= tag->getOption<core::Real>("sc");
+			ligand_= tag->getOption<core::Real>("ligand");
+		}
+	}
+
+	if (!tag->hasOption("weight")){
+		utility_exit_with_message("Could not make RepGrid: you must specify a weight when making a new grid");
+	}
+	set_weight( tag->getOption<core::Real>("weight") );
 }
 
 void RepGrid::refresh( core::pose::Pose const & pose,  core::Vector const & )

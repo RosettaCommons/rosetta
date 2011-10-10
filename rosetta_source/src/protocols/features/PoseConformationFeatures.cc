@@ -64,6 +64,8 @@ using core::Vector;
 using core::kinematics::FoldTree;
 using core::kinematics::Jump;
 using core::pose::Pose;
+using core::pose::PoseOP;
+using core::pose::PoseCOP;
 using core::pose::make_pose_from_sequence;
 using core::chemical::ResidueTypeSetCAP;
 using core::chemical::ChemicalManager;
@@ -194,14 +196,19 @@ PoseConformationFeatures::report_features(
 	Size struct_id,
 	sessionOP db_session
 ){
-	Pose pose;
 	vector1< Size > residue_indices;
 	for(Size i = 1; i <= relevant_residues.size(); ++i){
 		if(relevant_residues[i]) residue_indices.push_back(i);
 	}
-	pose_from_pose(pose, pose_orig, residue_indices);
+	Pose* pose;
+	if (residue_indices.size() == pose_orig.n_residue()){
+		pose = const_cast<Pose * >(&pose_orig);
+	}
+	else{
+		pose_from_pose( *pose, pose_orig, residue_indices);
+	}
 
-	FoldTree const & fold_tree(pose.conformation().fold_tree());
+	FoldTree const & fold_tree(pose->conformation().fold_tree());
 	//assume non-trivial fold_tree only if more than one edge, i.e., EDGE 1 <nres> -1
 	//cppdb::transaction transact_guard(*db_session);
 	for (FoldTree::const_iterator
@@ -217,7 +224,7 @@ PoseConformationFeatures::report_features(
 		stmt.exec();
 	}
  	for (Size nr = 1; nr <= fold_tree.num_jump(); nr++)  {
-		Jump const & jump(pose.jump(nr));
+		Jump const & jump(pose->jump(nr));
 		xyzMatrix< Real > const & r(jump.get_rotation());
 		Real xx(r.xx()), xy(r.xy()), xz(r.xz());
 		Real yx(r.yx()), yy(r.yy()), yz(r.yz());
@@ -229,15 +236,15 @@ PoseConformationFeatures::report_features(
 			xx << xy << xz << yx << yy << yz << zx << zy << zz << x << y << z;
 		stmt.exec();
 	}
-	foreach(Size end_pos, pose.conformation().chain_endings()){
+	foreach(Size end_pos, pose->conformation().chain_endings()){
 		statement stmt = (*db_session) <<
 			"INSERT INTO chain_endings VALUES (?,?);" << struct_id << end_pos;
 		stmt.exec();
 	}
 
 	bool ideal = true;
-	core::conformation::Conformation const & conformation(pose.conformation());
-	for(core::Size resn = 1; resn <= pose.n_residue();++resn)
+	core::conformation::Conformation const & conformation(pose->conformation());
+	for(core::Size resn = 1; resn <= pose->n_residue();++resn)
 	{
 		bool residue_status(core::conformation::is_ideal_position(resn,conformation));
 		if(!residue_status)
@@ -247,12 +254,12 @@ PoseConformationFeatures::report_features(
 		}
 	}
 
-	string annotated_sequence(pose.annotated_sequence());
+	string annotated_sequence(pose->annotated_sequence(true));
 	statement stmt = (*db_session)
 		<< "INSERT INTO pose_conformations VALUES (?,?,?,?);" << struct_id
 		<< annotated_sequence
-		<< pose.total_residue()
-		<< pose.is_fullatom();
+		<< pose->total_residue()
+		<< pose->is_fullatom();
 	stmt.exec();
 	//transact_guard.commit();
 	return 0;

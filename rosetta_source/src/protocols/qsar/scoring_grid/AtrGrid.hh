@@ -30,8 +30,20 @@ public:
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center);
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, utility::vector1<core::Size> ligand_chain_ids_to_exclude);
 
+	void parse_my_tag(utility::tag::TagPtr const tag);
+
 private:
-	core::Real radius_;
+	void set_protein_rings( core::conformation::Residue const & rsd);
+	void set_ligand_rings(
+			core::conformation::Residue const & rsd,
+			utility::vector1<core::Size> ligand_chain_ids_to_exclude
+	);
+
+	core::Real inner_radius_;
+	core::Real outer_radius_;
+	core::Real bb_; // score for clashes with a backbone atom
+	core::Real sc_; // score for clashes with a side-chain atom
+	core::Real ligand_; // score for clashes with a non-protein atom
 };
 
 }

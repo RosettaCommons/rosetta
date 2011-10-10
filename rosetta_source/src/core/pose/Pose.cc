@@ -846,7 +846,10 @@ Pose::annotated_sequence( bool show_all_variants ) const
 	for ( Size i=1; i<= conformation_->size(); ++i ) {
 		char c = residue(i).name1();
 		seq += c;
-		if ( ( !oneletter_code_specifies_aa(c) || name_from_aa( aa_from_oneletter_code(c) ) != residue(i).name() ) && ( show_all_variants || residue(i).name().substr(0,3) != "CYD") ) {
+		if (
+				( !oneletter_code_specifies_aa(c) || name_from_aa( aa_from_oneletter_code(c) ) != residue(i).name() )
+				&& ( show_all_variants || residue(i).name().substr(0,3) != "CYD")
+		) {
 			seq = seq + '[' + residue(i).name() + ']';
 		}
 	}

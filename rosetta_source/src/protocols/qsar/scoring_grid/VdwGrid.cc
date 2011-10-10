@@ -34,13 +34,11 @@ std::string VdwGridCreator::keyname() const
 
 GridBaseOP VdwGridCreator::create_grid(utility::tag::TagPtr const tag) const
 {
-	if (!tag->hasOption("weight")){
-		utility_exit_with_message("Could not make VdwGrid: you must specify a weight when making a new grid");
-	}else{
-		return new VdwGrid( tag->getOption<core::Real>("weight") );
-	}
-	// This is impossible
-	return NULL;
+	GridBaseOP vdw_grid= new VdwGrid();
+
+	vdw_grid->parse_my_tag(tag);
+
+	return vdw_grid;
 }
 
 std::string VdwGridCreator::grid_name()
@@ -59,6 +57,15 @@ VdwGrid::VdwGrid(core::Real weight) : GridBase ("VdwGrid",weight), cutoff_(10.0)
 	std::string lj_file(basic::database::full_name("qsar/lj_table.txt"));
 	lj_spline_ = numeric::interpolation::spline_from_file(lj_file,0.01);
 }
+
+void
+VdwGrid::parse_my_tag(utility::tag::TagPtr const tag){
+	if (!tag->hasOption("weight")){
+		utility_exit_with_message("Could not make VdwGrid: you must specify a weight when making a new grid");
+	}
+	set_weight( tag->getOption<core::Real>("weight") );
+}
+
 
 void VdwGrid::refresh(core::pose::Pose const & pose, core::Vector const &  )
 {

@@ -22,6 +22,7 @@
 #include <numeric/xyzVector.hh>
 #include <utility/io/ozstream.hh>
 #include <core/pose/Pose.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <list>
 
 namespace protocols {
@@ -41,6 +42,8 @@ public:
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center,utility::vector1<core::Size> ligand_chain_ids_to_exclude)=0;
 	/// @brief populate the grid with values based on a passed pose
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center)=0;
+	/// @setup a grid based on RosettaScripts input
+	virtual void parse_my_tag(utility::tag::TagPtr const tag)=0;
 	/// @brief return a constant reference to the grid
 	core::grid::CartGrid<core::Real> const &  get_grid();
 	///@brief set the grid type
@@ -74,6 +77,12 @@ public:
 
 	//Various mathematical functions for assigning values to the grid go here
 	void set_sphere(core::Vector const & coords, core::Real radius, core::Real value);
+	void set_ring(
+			core::Vector const & coords,
+			core::Real inner_radius,
+			core::Real outer_radius,
+			core::Real value
+	);
 	void diffuse_ring(core::Vector const & coords, core::Real radius, core::Real width, core::Real magnitude);
 	void set_distance_sphere(core::Vector const & coords,core::Real cutoff);
 	void set_point(core::Vector const & coords, core::Real value);

@@ -30,8 +30,14 @@ public:
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & ligand_chain_id_to_exclude);
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center);
 	virtual void refresh(core::pose::Pose const & pose, core::Vector const & center,utility::vector1<core::Size> ligand_chain_ids_to_exclude);
+
+	void parse_my_tag(utility::tag::TagPtr const tag);
+
 private:
 	core::Real radius_;
+	core::Real bb_; // score for a clash with a backbone atom
+	core::Real sc_; // score for a clash with a side-chain atom
+	core::Real ligand_; // score for a clash with a non-protein atom
 };
 
 

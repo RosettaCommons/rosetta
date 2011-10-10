@@ -19,21 +19,18 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
-std::string AtrGridCreator::keyname() const
+std::string AtrGridCreator::keyname()const
 {
 	return AtrGridCreator::grid_name();
 }
 
 GridBaseOP AtrGridCreator::create_grid(utility::tag::TagPtr const tag) const
 {
-	if (!tag->hasOption("weight")){
-		utility_exit_with_message("Could not make AtrGrid: you must specify a weight when making a new grid");
+	GridBaseOP atr_grid= new AtrGrid();
 
-	}else{
-		return new AtrGrid( tag->getOption<core::Real>("weight") );
-	}
-	// This is impossible
-	return NULL;
+	atr_grid->parse_my_tag(tag);
+
+	return atr_grid;
 }
 
 std::string AtrGridCreator::grid_name()
@@ -41,100 +38,116 @@ std::string AtrGridCreator::grid_name()
 	return "AtrGrid";
 }
 
-AtrGrid::AtrGrid() : GridBase("AtrGrid",1.0),radius_(4.75)
+
+AtrGrid::AtrGrid() :
+		GridBase("AtrGrid",0.0),
+		inner_radius_(2.25),
+		outer_radius_(4.75),
+		bb_(-1),
+		sc_(-1),
+		ligand_(-1)
 {
 	//
 }
 
-AtrGrid::AtrGrid(core::Real weight) : GridBase ("AtrGrid",weight), radius_(4.75)
+AtrGrid::AtrGrid(core::Real weight) :
+		GridBase("AtrGrid",weight),
+		inner_radius_(2.25),
+		outer_radius_(4.75),
+		bb_(-1),
+		sc_(-1),
+		ligand_(-1)
 {
  //
 }
 
-void AtrGrid::refresh(core::pose::Pose const & pose, core::Vector const & )
-{
+void
+AtrGrid::parse_my_tag(utility::tag::TagPtr const tag){
 
-	for(core::Size residue_id=1 ; residue_id <= pose.total_residue(); ++residue_id)
-	{
-		core::conformation::Residue const & residue = pose.residue(residue_id);
-		if(!residue.is_protein())
-			continue;
-		for(core::Size atom_index = 1; atom_index <= residue.nheavyatoms();++atom_index)
-		{
-			this->set_sphere(residue.xyz(atom_index),radius_, -1.0);
+	if (tag->hasOption("bb") || tag->hasOption("sc") || tag->hasOption("ligand") ){
+		// the user MUST provide all 3 if he/she is providing any of these 3 options
+		if (!(tag->hasOption("bb") && tag->hasOption("sc") && tag->hasOption("ligand") ) ){
+			utility_exit_with_message("'AtrGrid' requires bb, sc, and ligand if any one of these are used");
 		}
+		bb_= tag->getOption<core::Real>("bb");
+		sc_= tag->getOption<core::Real>("sc");
+		ligand_= tag->getOption<core::Real>("ligand");
 	}
 
-	for(core::Size residue_id=1; residue_id <= pose.total_residue(); ++residue_id)
-	{
-		core::conformation::Residue const & residue = pose.residue(residue_id);
-		if(!residue.is_protein())
-			continue;
-		for(core::Size atom_index = 1; atom_index <= residue.nheavyatoms();++atom_index)
-		{
-			this->set_sphere(residue.xyz(atom_index),2.25, -1.0);
+	if(tag->hasOption("inner_radius") || tag->hasOption("outer_radius")){
+		// the user MUST provide both if he/she is providing either of these options
+		if(!(tag->hasOption("inner_radius") && tag->hasOption("outer_radius"))){
+			utility_exit_with_message("'AtrGrid' requires outer_radius and inner_radius if either of these options are used");
 		}
+		inner_radius_= tag->getOption<core::Real>("inner_radius");
+		outer_radius_= tag->getOption<core::Real>("outer_radius");
+	}
+
+	if (!tag->hasOption("weight")){
+		utility_exit_with_message("Could not make AtrGrid: you must specify a weight when making a new grid");
+	}
+	set_weight( tag->getOption<core::Real>("weight") );
+}
+
+void AtrGrid::refresh(core::pose::Pose const & pose, core::Vector const & center)
+{
+	utility::vector1<core::Size> ligand_chain_ids_to_exclude;
+	this->refresh(pose, center, ligand_chain_ids_to_exclude);
+}
+
+void AtrGrid::refresh(core::pose::Pose const & pose, core::Vector const & center, core::Size const & ligand_chain_id_to_exclude)
+{
+	utility::vector1<core::Size> ligand_chain_ids_to_exclude;
+	ligand_chain_ids_to_exclude.push_back(ligand_chain_id_to_exclude);
+	this->refresh(pose, center, ligand_chain_ids_to_exclude);
+}
+
+void AtrGrid::set_protein_rings( core::conformation::Residue const & rsd)
+{
+	for(core::Size a=1, a_end = rsd.last_backbone_atom(); a <= a_end; ++a)
+	{
+		set_ring(rsd.xyz(a), inner_radius_, outer_radius_, bb_);
+	}
+	for(core::Size a = rsd.first_sidechain_atom(), a_end = rsd.nheavyatoms(); a <= a_end; ++a)
+	{
+		set_ring(rsd.xyz(a), inner_radius_, outer_radius_, sc_);
+	}
+
+}
+
+void AtrGrid::set_ligand_rings(
+		core::conformation::Residue const & rsd,
+		utility::vector1<core::Size> ligand_chain_ids_to_exclude
+
+){
+	if( find(
+			ligand_chain_ids_to_exclude.begin(),
+			ligand_chain_ids_to_exclude.end(),
+			rsd.chain()
+		) ==  ligand_chain_ids_to_exclude.end()
+	) {
+		return;
+	}
+	for(core::Size a = 1, a_end = rsd.nheavyatoms(); a <= a_end; ++a)
+	{
+		set_ring(rsd.xyz(a), inner_radius_, outer_radius_, ligand_);
 	}
 }
 
-void AtrGrid::refresh(core::pose::Pose const & pose, core::Vector const & , core::Size const & ligand_chain_id_to_exclude)
-{
-	for(core::Size residue_id=1; residue_id <= pose.total_residue(); ++residue_id)
-	{
-		core::conformation::Residue const & residue = pose.residue(residue_id);
-		if(residue.chain() == ligand_chain_id_to_exclude)
-			continue;
-		for(core::Size atom_index = 1; atom_index <= residue.nheavyatoms();++atom_index)
-		{
-			this->set_sphere(residue.xyz(atom_index),radius_, -1.0);
-		}
-	}
+void AtrGrid::refresh(
+		core::pose::Pose const & pose,
+		core::Vector const & center,
+		utility::vector1<core::Size> ligand_chain_ids_to_exclude
+){
+	// Set neutral core around each sidechain heavy atom, as MOST of these stay put.
+	for(Size r = 1, r_end = pose.total_residue(); r <= r_end; ++r) {
+		core::conformation::Residue const & rsd = pose.residue(r);
+		if( rsd.is_protein() ) set_protein_rings(rsd);
+		else{
+			set_ligand_rings(rsd, ligand_chain_ids_to_exclude);
 
-	for(core::Size residue_id=1; residue_id <= pose.total_residue(); ++residue_id)
-	{
-		core::conformation::Residue const & residue = pose.residue(residue_id);
-		if(residue.chain() == ligand_chain_id_to_exclude)
-			continue;
-		for(core::Size atom_index = 1; atom_index <= residue.nheavyatoms();++atom_index)
-		{
-			this->set_sphere(residue.xyz(atom_index),2.25, -1.0);
 		}
-	}
-}
-
-void AtrGrid::refresh(core::pose::Pose const & pose, core::Vector const & , utility::vector1<core::Size> ligand_chain_ids_to_exclude)
-{
-	for(core::Size residue_id=1; residue_id <= pose.total_residue(); ++residue_id)
-	{
-		core::conformation::Residue const & residue = pose.residue(residue_id);
-		if(find(
-				ligand_chain_ids_to_exclude.begin(),
-				ligand_chain_ids_to_exclude.end(),
-				residue.chain()) == ligand_chain_ids_to_exclude.end())
-		{
-			continue;
-		}
-
-		for(core::Size atom_index = 1; atom_index <= residue.nheavyatoms();++atom_index)
-		{
-			this->set_sphere(residue.xyz(atom_index),radius_, -1.0);
-		}
-	}
-
-	for(core::Size residue_id=1; residue_id <= pose.total_residue(); ++residue_id)
-	{
-		core::conformation::Residue const & residue = pose.residue(residue_id);
-		if(find(
-				ligand_chain_ids_to_exclude.begin(),
-				ligand_chain_ids_to_exclude.end(),
-				residue.chain()) == ligand_chain_ids_to_exclude.end())
-		{
-			continue;
-		}
-		for(core::Size atom_index = 1; atom_index <= residue.nheavyatoms();++atom_index)
-		{
-			this->set_sphere(residue.xyz(atom_index),2.25, -1.0);
-		}
+		// else don't add this ligand to the grid
 	}
 
 }
