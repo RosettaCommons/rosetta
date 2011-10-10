@@ -60,7 +60,7 @@ public:
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const;
+	) const {}
 
 	virtual
 	core::Size version() const;
