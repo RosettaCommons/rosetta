@@ -88,13 +88,15 @@ void
 SetAtomTree::parse_my_tag( TagPtr const tag, DataMap &, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
 {
 	docking_ft_ = tag->getOption< bool >("docking_ft", 0 );
-	jump_ = tag->getOption< bool >( "jump", 1);
+	jump_ = tag->getOption< core::Size >( "jump", 1);
 	if( docking_ft_ ) return;
 	/// resnum & pdb_num are now equivalent
 	if( tag->hasOption( "resnum" ) )
 		resnum_ = tag->getOption< std::string > ("resnum" );
-	else if( tag->hasOption( "pdb_num" ) )
+	else if( tag->hasOption( "pdb_num" ) ){
 		resnum_ = tag->getOption< std::string > ("pdb_num" );
+		connect_to_ = tag->getOption< std::string >( "connect_to","" );
+	}
 	if( tag->hasOption( "anchor_res" ) ){
 		anchor_res_ = tag->getOption< std::string > ( "anchor_res" );
 		if( tag->hasOption( "connect_from" ) )
