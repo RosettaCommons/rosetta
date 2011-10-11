@@ -53,7 +53,7 @@ jet.colors <-
 plot_id = "chi_BAH_eq_polar_density_bb_to_bb"
 l_ply(levels(f$sample_source), function(ss){
 	ggplot(data=f) + theme_bw() +
-		polar_equal_area_grids_bw +
+		polar_equal_area_grids_bw() +
 		geom_bin2d(aes(x=capx, y=capy, fill=log(..count..), weight=weight), binwidth=c(.06, .06)) +
 		facet_grid(acc_chem_type ~ don_chem_type) +
 		opts(title = paste("Hydrogen Bonds chi vs BAH Angles with Sequence Separation > 5\nBackbone/Backbone Hydrogen Bonds\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +

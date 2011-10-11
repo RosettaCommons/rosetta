@@ -13,7 +13,7 @@ GeomIndicator <- proto(Geom, {
       } else if( is.numeric(data$xpos[1]) &&  0 <= data$xpos[1] && data$xpos[1] <= 100){
         xpos <- data$xpos[1]
       } else {
-        stop(paste("In geom_indicator(), unrecognized value xpos=\"", data$xpos[1],"\".  Please use 'left', 'right' or 'center', or a value from 0 to 100.", sep=""))
+        stop(paste("In geom_indicator(), unrecognized value xpos=\"", data$xpos[1],"\".  Please use 'left', 'right' or 'center', or a value from 0 to 1.", sep=""))
       }
     } else {
       xpos <- .97
@@ -29,7 +29,7 @@ GeomIndicator <- proto(Geom, {
       } else if( is.numeric(data$ypos[1]) &&  0 <= data$ypos[1] && data$ypos[1] <= 100){
         ypos <- data$ypos[1]
       } else {
-        stop(paste("In geom_indicator(), unrecognized value ypos=\"", data$ypos[1],"\".  Please use 'top', 'bottom' or 'center', or a value from 0 to 100.", sep=""))
+        stop(paste("In geom_indicator(), unrecognized value ypos=\"", data$ypos[1],"\".  Please use 'top', 'bottom' or 'center', or a value from 0 to 1.", sep=""))
       }
     } else {
       ypos <- .97

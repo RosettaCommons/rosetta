@@ -14,9 +14,7 @@ d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
 
   sele <-"
   SELECT
-    geom.AHdist,
-    geom.cosBAH,
-    geom.chi,
+    geom.AHdist, geom.cosBAH, geom.chi,
     acc_site.HBChemType AS acc_chem_type,
     don_site.HBChemType AS don_chem_type
   FROM
@@ -35,15 +33,13 @@ d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
     capx = 2*sin(acos(cosBAH)/2)*cos(chi),
     capy = 2*sin(acos(cosBAH)/2)*sin(chi))
 
-  sub_f <- ddply(f, .variables=c("don_chem_type", "acc_chem_type"),
-    function(df){sample_rows(df, 5000)})
-
   plot_id = "hbond_sinBAH_eq_polar_scatter_by_chem_type"
-  ggplot(data=sub_f) + theme_bw() +
-		polar_equal_area_grids_bw +
+  ggplot(data=f) + theme_bw() +
+		polar_equal_area_grids_bw() +
 		opts(panel.grid.major =theme_blank(), panel.grid.minor=theme_blank()) +
     geom_point(aes(x=capx, y=capy), size=.5) +
-    facet_grid(acc_chem_type ~ don_chem_type) +
+		stat_density2d(aes(x=capx, y=capy), size=.2) +
+		facet_grid(acc_chem_type ~ don_chem_type) +
     opts(title = paste("Hydrogen Bonds chi vs sinBAH Angles by Chemical Type\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +
     scale_x_continuous('2*sin(BAH/2) * cos(CHI)', breaks=c(-1, 0, 1)) +
     scale_y_continuous('2*sin(BAH/2) * sin(CHI)', breaks=c(-1, 0, 1))
@@ -56,13 +52,11 @@ d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
     capy = sin(acos(cosBAH))*sin(chi))
 
 
-  sub_f <- ddply(f, .variables=c("don_chem_type", "acc_chem_type"),
-    function(df){sample_rows(df, 5000)})
-
   plot_id = "hbond_sinBAH_ortho_polar_scatter_by_chem_type"
-  ggplot(data=sub_f) + theme_bw() +
+  ggplot(data=f) + theme_bw() +
     geom_point(aes(x=capx, y=capy), size=.5) +
-    facet_grid(acc_chem_type ~ don_chem_type) +
+		stat_density2d(aes(x=capx, y=capy), size=.2) +
+		facet_grid(acc_chem_type ~ don_chem_type) +
     opts(title = paste("Hydrogen Bonds chi vs sinBAH Angles by Chemical Type\nOrthographic Projection   Sample Source: ", ss, sep="")) +
     scale_x_continuous('sin(BAH) * cos(CHI)', breaks=c(-1, 0, 1)) +
     scale_y_continuous('sin(BAH) * sin(CHI)', breaks=c(-1, 0, 1))

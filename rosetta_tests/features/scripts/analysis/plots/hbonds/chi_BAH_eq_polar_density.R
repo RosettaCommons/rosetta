@@ -57,7 +57,7 @@ d_ply(f, .(sample_source, hybrid), function(sub_f){
 	hybrid <- sub_f$hybrid[1]
 	sub_plot_id <- paste(plot_id, hybrid, ss_id, sep="_")
 	ggplot(data=sub_f) + theme_bw() +
-		polar_equal_area_grids_bw +
+		polar_equal_area_grids_bw() +
 		geom_indicator(aes(indicator=counts)) +
 		stat_bin2d(aes(x=capx, y=capy, fill=log(..density..)), binwidth=c(.01, .01)) +
 		opts(title = paste(hybrid, " Acceptor Hydrogen Bonds seq_sep > 5: chi vs BAH\nEqual Coordinate Projection  ss_id: ", ss_id, sep="")) +
@@ -76,7 +76,7 @@ f <- ddply(f, c("sample_source", "acc_chem_type", "don_chem_type"),
 plot_id = "chi_BAH_eq_polar_density_by_chem_type"
 l_ply(levels(f$sample_source), function(ss){
 	ggplot(data=f[f$sample_source == ss,]) + theme_bw() +
-		polar_equal_area_grids_bw +
+		polar_equal_area_grids_bw() +
 		geom_indicator(aes(indicator=counts)) +
 		geom_bin2d(aes(x=capx, y=capy, fill=log(..density..)), binwidth=c(.06, .06)) +
 		facet_grid(acc_chem_type ~ don_chem_type) +

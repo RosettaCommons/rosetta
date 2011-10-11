@@ -59,7 +59,7 @@ d_ply(f, .(sample_source), function(sub_f){
 		opts(title = paste("Hydrogen Bonds chi vs BAH Angles with Sequence Separation > 5\nBackbone/Backbone Hydrogen Bonds\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
 		scale_x_continuous('2*sin(BAH/2) * cos(CHI)', limits=capx_limits, breaks=c(-1, 0, 1)) +
 		scale_y_continuous('2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
-		polar_equal_area_grids_bw +
+		polar_equal_area_grids_bw() +
 		coord_fixed(ratio = 1) +
 		scale_fill_gradientn('Density', colour=jet.colors(10)) +
 #        	opts(legend.position="bottom", legend.direction="horizontal")

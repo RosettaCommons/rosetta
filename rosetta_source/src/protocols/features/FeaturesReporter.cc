@@ -72,12 +72,13 @@ FeaturesReporter::write_schema_to_db(
 	foreach( string const & stmt_str, tokens){
 		string trimmed_stmt_str(trim(stmt_str, " \n\t"));
 		if(trimmed_stmt_str.size()){
-			statement stmt = (*db_session) << trimmed_stmt_str + ";";
 			try{
+				statement stmt = (*db_session) << trimmed_stmt_str + ";";
 				stmt.exec();
 			} catch (cppdb_error e) {
-				TR.Error << "ERROR read schema:" << endl;
-				TR.Error << trimmed_stmt_str << endl;
+				TR.Error
+					<< "ERROR reading schema for FeatureReporter: " << type_name() << "\n"
+					<< trimmed_stmt_str << endl;
 				TR.Error << e.what() << endl;
 			}
 		}

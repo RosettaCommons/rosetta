@@ -9,48 +9,38 @@
 
 check_setup()
 
+# example of how to condition down to specific types of interactions.
+# In this case, hydrogen bonds that are forming beta sheet mediated
+# protein-protein interfaces.
+
 sele <-"
 SELECT
-  structure.tag,
-  don_site.chain,
-  don_site.resNum,
-  don_site.atmNum,
-  acc_site.chain,
-  acc_site.resNum,
-  acc_site.atmNum,
+  s.tag,
+  don_pdb.chain, don_pdb.resNum, don_pdb.iCode, don.atmNum,
+  acc_pdb.chain, acc_pdb.resNum, acc_pdb.iCode, don.atmNum,
   hbond.energy,
-  hbond.HBEvalType,
-  geom.AHdist,
-  geom.cosBAH,
-  geom.cosAHD,
-  geom.chi,
-  don_env.dssp AS don_dssp,
-  acc_env.dssp AS acc_dssp
+	don.HBChemType, acc.HBChemType,
+  geom.AHdist, geom.cosBAH, geom.cosAHD, geom.chi,
+  don_ss.dssp AS don_dssp, acc_ss.dssp AS acc_dssp
 FROM
-  hbond_geom_coords AS geom,
+  structures AS s,
   hbonds AS hbond,
-  structures AS structure,
-  hbond_sites AS don_site,
-  hbond_sites AS acc_site,
-  hbond_site_environment AS don_env,
-  hbond_site_environment AS acc_env
+  hbond_geom_coords AS geom,
+  hbond_sites AS don, hbond_sites AS acc,
+	hbond_site_pdb AS don_pdb, hbond_site_pdb AS acc_pdb,
+  residue_secondary_structure AS don_ss, residue_secondary_structure AS acc_ss
 WHERE
-  hbond.struct_id  = structure.struct_id AND
-  hbond.struct_id  = geom.struct_id AND
-  hbond.hbond_id   = geom.hbond_id AND
-  hbond.struct_id  = don_site.struct_id AND
-  hbond.don_id     = don_site.site_id AND
-  hbond.struct_id  = acc_site.struct_id AND
-  hbond.acc_id     = acc_site.site_id AND
-  hbond.struct_id  = don_env.struct_id AND
-  hbond.don_id     = don_env.site_id AND
-  hbond.struct_id  = acc_env.struct_id AND
-  hbond.acc_id     = acc_env.site_id;"
-#--  don_env.dssp     = 'E' AND -- beta sheet
-#--  acc_env.dssp     = 'E' AND -- beta sheet
-#--  don_site.chain  != acc_site.chain AND -- to make the hbonds be across an interface
-#--  don_site.HBChemType = 'hbdon_PBA' AND -- protein backbone amide
-#--  acc_site.HBChemType = 'hbacc_PBA';"
+  hbond.struct_id = s.struct_id AND
+	geom.struct_id = s.struct_id AND hbond.hbond_id = geom.hbond_id AND
+  don.struct_id = s.struct_id AND don.site_id = hbond.don_id AND
+	acc.struct_id = s.struct_id AND acc.site_id = hbond.acc_id AND
+	don_pdb.site_id = don.site_id AND
+  acc_pdb.site_id = acc.site_id AND
+	don_ss.struct_id = s.struct_id AND don_ss.resNum = don.resNum AND
+	acc_ss.struct_id = s.struct_id AND acc_ss.resNum = acc.resNum AND
+	don_ss.dssp = 'E' AND acc_ss.dssp = 'E' AND
+	don.HBChemType = 'hbdon_PBA' AND acc.HBChemType = 'hbacc_PBA' AND
+	don_pdb.chain != acc_pdb.chain';"
 
 f <- query_sample_sources(sample_sources, sele)
 

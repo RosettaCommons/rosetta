@@ -107,7 +107,7 @@ d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
 
   plot_id = "hbond_sinBAH_eq_polar_scatter_by_chem_type_long_range"
   ggplot(data=sub_f) + theme_bw() +
-		polar_equal_area_grids_bw +
+		polar_equal_area_grids_bw() +
     geom_point(aes(x=capx, y=capy), size=.4, alpha=.5) +
     facet_grid(acc_chem_type ~ don_chem_type) +
     opts(title = paste("Hydrogen Bonds chi vs sinBAH Angles by Chemical Type with Sequence Separation > 5\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +

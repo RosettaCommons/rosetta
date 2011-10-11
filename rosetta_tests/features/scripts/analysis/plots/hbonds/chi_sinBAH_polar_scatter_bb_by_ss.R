@@ -105,7 +105,7 @@ d_ply(sample_sources, .variables=("sample_source"), function(sample_source){
 
 	plot_id = "hbond_sinBAH_eq_polar_scatter_bb_by_ss"
 	ggplot(data=sub_f) + theme_bw() +
-		polar_equal_area_grids_bw +
+		polar_equal_area_grids_bw() +
 		geom_point(aes(x=capx, y=capy), size=.4, alpha=.5) +
 		facet_grid(don_ss ~ acc_ss) +
 		opts(title = paste("Backbone-Backbone Hydrogen Bonds chi vs sinBAH Angles by Secondary Structure\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +

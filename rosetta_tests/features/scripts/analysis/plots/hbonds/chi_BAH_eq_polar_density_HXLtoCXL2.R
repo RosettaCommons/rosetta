@@ -53,7 +53,7 @@ jet.colors <-
 plot_id = "chi_BAH_eq_polar_density_scOHdon_to_scOOCacc2"
 l_ply(levels(f$sample_source), function(ss){
 	ggplot(data=f) + theme_bw() +
-		polar_equal_area_grids_bw +
+		polar_equal_area_grids_bw() +
 		#geom_bin2d(aes(x=capx, y=capy, fill=log(..count..), weight=weight), binwidth=c(.06, .06)) +
     stat_density2d(aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE ) +
 		facet_grid(acc_chem_type ~ don_chem_type) +

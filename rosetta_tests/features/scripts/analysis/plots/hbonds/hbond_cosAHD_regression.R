@@ -150,11 +150,11 @@ each_dens <- ddply(each_dens, .variables=c("sample_source", "don_chem_type", "ac
   cat("sample_source:", df$sample_source[1], "acc_chem_type:", as.character(df$acc_chem_type[1]), "\n")
   cat("sample_source:", df$sample_source[1], "don_chem_type:", as.character(df$don_chem_type[1]), "\n")
   success <- try({
-    params.grid <- expand.grid(
-			a=seq(.01, 10, length.out=20),
-			b=seq(.01, 2, length.out=20),
-		  c=seq(.01,.5, length.out=20))
-    m <- nls(y ~ c*dbeta(x, a, b), df, start=params.grid, algorithm="port", trace=TRUE, control=nls.control(maxiter=300), weight=sqrt(y))})
+    params.grid <- expand.grid(a=c(2), b=c(.7), c=c(.5))
+#			a=seq(2, 10, length.out=3),
+#			b=seq(.01, 2, length.out=3),
+#		  c=seq(.01,.5, length.out=3))
+    m <- nls(y ~ c*dbeta(x, a, b), df, start=params.grid, algorithm="port", trace=TRUE, control=nls.control(maxiter=100), weight=sqrt(y))})
   if(class(success)=="try-error"){
     df$fitted <- NA
   } else {

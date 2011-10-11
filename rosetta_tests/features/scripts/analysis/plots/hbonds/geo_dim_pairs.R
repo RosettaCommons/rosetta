@@ -21,7 +21,7 @@ do_query <- function(dOH_clause, sample_source){
   WHERE  geo.struct_id = hb.struct_id AND geo.hbond_id = hb.hbond_id AND
          don.struct_id = hb.struct_id AND don.site_id  = hb.don_id AND
          acc.struct_id = hb.struct_id AND acc.site_id  = hb.acc_id AND
-         ", dOH_clause, ");", sep="")
+         (", dOH_clause, ");", sep="")
 
 	f <- query_sample_sources(sample_source, sele)
 	# This is deprecated please use the hbond_chem_types table for the
@@ -50,6 +50,7 @@ plot_parts_scatter <- list(
   theme_bw(),
   aes(y=AHdist^2),
 	geom_point(size=.7),
+	stat_density2d(size=.2),
 	facet_wrap( ~ acc_chem_type, ncol=1),
 	labs(y=expression(paste('(Acceptor -- Proton Distance)^2 (', ring(A), ')'))),
 	scale_x_continuous(limits=c(0,1)),

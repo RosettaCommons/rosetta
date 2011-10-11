@@ -20,40 +20,68 @@ check_setup()
 #			don_geom
 #		don_env
 sele <- "
-SELECT
-	acc_geom.AHdist AS acc_AHdist,
-	don_geom.AHdist AS don_AHdist,
-	acc_hb.energy AS acc_energy,
-	don_hb.energy AS don_energy,
-	acc_env.dssp AS dssp,
+CREATE INDEX IF NOT EXISTS hbond_sites_struct_id_resNum ON
+	hbond_sites(struct_id, resNum);
+CREATE INDEX IF NOT EXISTS hbonds_struct_id_acc_id ON
+	hbonds(struct_id, acc_id);
+CREATE INDEX IF NOT EXISTS hbonds_struct_id_don_id ON
+	hbonds(struct_id, don_id);
+
+CREATE TEMPORARY TABLE bb_hbs AS SELECT
+	don.struct_id, don.resNum,
+	acc.site_id AS acc_id, don.site_id AS don_id
 FROM
-	residues AS rsd,
-	hbond_sites AS acc_site,
-	hbond_sites AS don_site,
-	hbonds AS acc_hb,
-	hbonds AS don_hb,
-	hbond_geom_coords AS acc_geom,
-	hbond_geom_coords AS don_geom,
-	hbond_site_environment AS acc_env
+	hbond_sites AS acc, hbond_sites AS don
 WHERE
-	acc_site.struct_id  = rsd.struct_id      AND acc_site.resNum   = rsd.resNum       AND
-	acc_site.HBChemType = 'hbacc_PBA' AND
-	acc_hb.struct_id    = acc_site.struct_id AND acc_hb.acc_id     = acc_site.site_id AND
-	acc_geom.struct_id  = acc_hb.struct_id   AND acc_geom.hbond_id = acc_hb.hbond_id  AND
-	acc_env.struct_id   = acc_site.struct_id AND acc_env.site_id   = acc_site.site_id AND
-	don_site.struct_id  = rsd.struct_id      AND don_site.resNum   = rsd.resNum       AND
-	don_site.HBChemType = 'hbdon_PBA' AND
-	don_hb.struct_id    = don_site.struct_id AND don_hb.don_id     = don_site.site_id AND
-	don_geom.struct_id  = don_hb.struct_id   AND don_geom.hbond_id = don_hb.hbond_id;"
+	acc.struct_id = don.struct_id AND acc.resNum = don.resNum AND
+	acc.HBChemType = 'hbacc_PBA' AND don.HBChemType = 'hbdon_PBA';
 
-all_geom <- query_sample_sources(sample_sources, sele)
+SELECT
+	acc_geo.AHdist AS acc_AHdist, don_geo.AHdist AS don_AHdist,
+	acc_hb.energy AS acc_energy, don_hb.energy AS don_energy,
+	res_ss.dssp AS dssp
+FROM
+	bb_hbs AS t,
+	hbonds AS acc_hb, hbonds AS don_hb,
+	hbond_geom_coords AS acc_geo, hbond_geom_coords AS don_geo,
+	residue_secondary_structure AS res_ss
+WHERE
+	acc_hb.struct_id  = t.struct_id AND acc_hb.acc_id = t.acc_id AND
+	don_hb.struct_id  = t.struct_id AND don_hb.don_id = t.don_id AND
+	acc_geo.struct_id = t.struct_id AND acc_geo.hbond_id = acc_hb.hbond_id AND
+	don_geo.struct_id = t.struct_id AND don_geo.hbond_id = don_hb.hbond_id AND
+	res_ss.struct_id  = t.struct_id AND res_ss.resNum = t.resNum;"
 
-plot_id <- "hbond_backbone_correlation"
-p <- ggplot(data=all_geom) + theme_bw() +
-	geom_point(aes(acc_AHdist, don_AHdist), size=.3) +
-	facet_wrap(don_dssp) +
-	opts(title = "HBond Backbone Amide Correlation by DSSP of residue") +
-	labs(x=expression(paste('Backbone is Acceptor: Acceptor -- Proton Distance (', ring(A), ')')),
-		y=expression(paste('Backbone is Donor: Acceptor -- Proton Distance (', ring(A), ')')))
+f <- query_sample_sources(sample_sources, sele)
 
-save_plots(plot_id, sample_sources, output_dir, output_formats)
+f <- ddply(f, c("sample_source", "dssp"), transform,
+					 counts = length(sample_source),
+					 correlation = cor(acc_AHdist, don_AHdist))
+
+
+
+f$dssp <- factor(f$dssp,
+	levels = c("H", "E", "T", "G", "B", "S", "I", " "),
+	labels = c('H: a-Helix', 'E: b-Sheet', 'T: HB Turn', 'G: 3/10 Helix',
+		'B: b-Bridge', 'S: Bend', 'I: pi-Helix','C: Irregular'))
+
+f <- na.omit(f, method="r")
+
+d_ply(f, .(sample_source), function(sub_f){
+	ss_id = sub_f[1,"sample_source"]
+	plot_id <- "hbond_backbone_correlation"
+	ggplot(data=sub_f) + theme_bw() +
+		geom_point(aes(acc_AHdist, don_AHdist), size=.3) +
+		stat_density2d(aes(x=acc_AHdist, y=don_AHdist), size=.2) +
+		geom_indicator(aes(indicator=counts)) +
+		geom_indicator(aes(indicator=paste("cor:",round(correlation, 3)), xpos=.3)) +
+		facet_wrap(~dssp) +
+		coord_equal(ratio=1) +
+		opts(title = paste("HBond Backbone Amide Correlation by DSSP of Residue\nSample Source:", ss_id)) +
+		labs(x=expression(paste('Backbone is Acceptor: Acceptor -- Proton Distance (', ring(A), ')')),
+			y=expression(paste('Backbone is Donor: Acceptor -- Proton Distance (', ring(A), ')')))
+
+	save_plots(
+		plot_id, sample_sources[sample_sources$sample_source == ss_id,],
+		output_dir, output_formats)
+})

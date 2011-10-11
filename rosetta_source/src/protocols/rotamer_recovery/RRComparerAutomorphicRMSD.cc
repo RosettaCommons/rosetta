@@ -76,18 +76,18 @@ RRComparerAutomorphicRMSD::measure_rotamer_recovery(
 	bool & recovered
 ) {
 
-	if( res1.aa() != res2.aa() ) {
-		TR << "Cannot measure rotamer recovery because" << endl;
-		TR << "residue 1 has type '" << res1.type().name() << "'" << endl;
-		TR << "residue 2 has type '" << res2.type().name() << "'" << endl;
-		TR << "Make sure the protocol to generate the conformations did not 'design' the sequence identity too." << endl;
-		utility_exit();
+	if( res1.aa() != res2.aa()  || res1.nheavyatoms() != res2.nheavyatoms()) {
+		TR << "Cannot measure rotamer recovery of residue " << res1.seqpos() << " because" << endl;
+		TR << "\nresidue 1 has type '" << res1.type().name() << "'" << endl;
+		TR << "\nresidue 2 has type '" << res2.type().name() << "'" << endl;
+		TR << "\nMake sure the protocol to generate the conformations did not 'design' the sequence identity too." << endl;
+		score = -1; recovered = false; return false;
 	}
 
 	// TODO: Can this restriction be relaxed? What about using 'is_polymer()'?
 	if( res1.aa() > num_canonical_aas ){
 		TR << "WARNING: trying to compare rotamer bins for non-canonical amino acid '" << res1.name() << "'" << endl;
-		return false;
+		score = -1; recovered = false; return false;
 	}
 
 	if( get_include_backbone_atoms() ){

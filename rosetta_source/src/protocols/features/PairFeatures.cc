@@ -78,7 +78,8 @@ PairFeatures::schema() const {
 		"		DEFERRABLE INITIALLY DEFERRED,\n"
 		"	CONSTRAINT res1_10A_neighbors_is_positive CHECK (res1_10A_neighbors >= 1),\n"
 		"	CONSTRAINT res2_10A_neighbors_is_positive CHECK (res2_10A_neighbors >= 1),\n"
-		"	CONSTRAINT actcoord_dist_is_nonnegative CHECK (actcoord_dist >= 0));";
+		"	CONSTRAINT actcoord_dist_is_nonnegative CHECK (actcoord_dist >= 0),\n"
+		"	PRIMARY KEY(struct_id, resNum1, resNum2));";
 }
 
 Size

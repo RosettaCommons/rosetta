@@ -16,6 +16,7 @@
 # ignore the job distributor output.
 -out
  -nooutput
+-overwrite
 #
 # Select the features to be output to the features database using
 # the parser.  See for details

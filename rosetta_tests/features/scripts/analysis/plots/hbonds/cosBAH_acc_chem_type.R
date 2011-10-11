@@ -27,15 +27,18 @@ WHERE
   hbond.struct_id = acc_site.struct_id AND
   hbond.acc_id = acc_site.site_id;"
 
-all_geom <- query_sample_sources(sample_sources, sele)
+f <- query_sample_sources(sample_sources, sele)
+
+f$acc_chem_type <- factor(f$acc_chem_type,
+	levels =
+		c("hbacc_HXL", "hbacc_CXL", "hbacc_IMD", "hbacc_PBA",
+			"hbacc_AHX", "hbacc_CXA", "hbacc_IME"),
+	labels =
+		c("aHXL: s,t", "aCXL: d,e", "aIMD: h", "aPBA: bb",
+			"aAHX: y",   "aCXA: n,q", "aIME: h"))
 
 dens <- estimate_density_1d(
-  data = all_geom,
-  ids = c("sample_source", "acc_chem_type" ),
-  variable = "cosBAH")
-
-# The 'hbdon_' part of the donor labels doesn't fit so strip them out
-dens$don_chem_type <- sub("^hbdon_", '', dens$don_chem_type)
+  f, c("sample_source", "acc_chem_type" ), "cosBAH")
 
 plot_id = "cosBAH_acc_chem_type"
 ggplot(data=dens) +
@@ -44,5 +47,7 @@ ggplot(data=dens) +
 	facet_grid( ~ acc_chem_type) +
 	opts(title = "Hydrogen Bonds BAH Angle by Chemical Type\n(normalized for equal volume per unit distance)") +
 	scale_x_continuous(paste('Base -- Acceptor -- Hydrogen (degrees)')) +
-	scale_y_continuous("-log(FeatureDensity)", limits=c(-2.3,6))
+	scale_y_continuous("-log(FeatureDensity)", limits=c(-2.3,6)) +
+	opts(legend.position=c(.58,.35)) +
+	opts(legend.justification=c("left", "top"))
 save_plots(plot_id, sample_sources, output_dir, output_formats)

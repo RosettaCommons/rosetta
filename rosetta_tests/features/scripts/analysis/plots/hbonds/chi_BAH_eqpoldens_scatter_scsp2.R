@@ -54,7 +54,7 @@ jet.colors <-
 plot_id = "chi_BAH_eqpoldens_and_scatter_scsc_to_sp2"
 #l_ply(levels(f$sample_source), function(ss){
 #	ggplot(data=f) + theme_bw() +
-#		polar_equal_area_grids_bw +
+#		polar_equal_area_grids_bw() +
 #		#geom_bin2d(aes(x=capx, y=capy, fill=log(..count..), weight=weight), binwidth=c(.06, .06)) +
 #    stat_density2d(aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE ) +
 #		#facet_grid(acc_chem_type ~ don_chem_type) +
@@ -71,7 +71,7 @@ f_first <- f[ f$sample_source == levels(sample_sources$sample_source)[1], ]
 f_second <- f[ f$sample_source == levels(sample_sources$sample_source)[2], ]
 
 ggplot(data=f_first) + theme_bw() +
-		polar_equal_area_grids_bw +
+		polar_equal_area_grids_bw() +
 		#geom_bin2d(aes(x=capx, y=capy, fill=log(..count..), weight=weight), binwidth=c(.06, .06)) +
     stat_density2d(aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE ) +
 		#facet_grid(acc_chem_type ~ don_chem_type) +

@@ -53,7 +53,7 @@ jet.colors <-
 plot_id = "chi_BAH_eq_polar_density_scOHdon_to_scOOCacc"
 l_ply(levels(f$sample_source), function(ss){
 	ggplot(data=f) + theme_bw() +
-		polar_equal_area_grids_bw +
+		polar_equal_area_grids_bw() +
 		geom_bin2d(aes(x=capx, y=capy, fill=log(..count..), weight=weight), binwidth=c(.06, .06)) +
 		facet_grid(acc_chem_type ~ don_chem_type) +
 		opts(title = paste("Hydrogen Bonds chi vs BAH Angles with Sequence Separation > 5\nSidechain Hydroxyl Donors to Sidechain Carboxyl Acceptors\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +

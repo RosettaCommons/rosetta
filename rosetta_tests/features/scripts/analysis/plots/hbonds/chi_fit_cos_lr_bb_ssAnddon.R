@@ -54,9 +54,8 @@ f$acc_ss <- factor(f$acc_ss,
 
 plot_id = "chi_long_range_bbloopacc_by_dontype"
 
-loop_f <- f[f$acc_ss == ' ',]
 dens <- estimate_density_1d_wrap(
-	loop_f, c("sample_source", "acc_ss", "don_chem_type"), "chi")
+	f, c("sample_source", "acc_ss", "don_chem_type"), "chi")
 ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +

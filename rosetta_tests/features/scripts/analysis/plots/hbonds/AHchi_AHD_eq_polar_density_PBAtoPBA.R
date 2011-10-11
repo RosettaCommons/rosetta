@@ -74,7 +74,7 @@ d_ply(f, .(sample_source), function(sub_f){
 	ggplot(data=sub_f) + theme_bw() +
 		geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
 		stat_density2d(aes(x=capx,y=capy, fill=log(..density..+1)), geom="tile", contour=FALSE) +
-		polar_equal_area_grids_bw +
+		polar_equal_area_grids_bw() +
 		geom_indicator(aes(indicator=counts)) +
 		facet_wrap(~don_dssp) +
 		opts(title = paste("Backbone Backbone Hydrogen Bonds AHchi vs AHD Angles\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +

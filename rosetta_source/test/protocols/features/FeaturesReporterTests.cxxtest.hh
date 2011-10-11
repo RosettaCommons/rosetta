@@ -37,6 +37,7 @@
 #include <protocols/features/ResidueSecondaryStructureFeatures.hh>
 #include <protocols/features/RotamerBoltzmannWeightFeatures.hh>
 #include <protocols/features/RotamerRecoveryFeatures.hh>
+#include <protocols/features/SaltBridgeFeatures.hh>
 #include <protocols/features/StructureFeatures.hh>
 #include <protocols/features/StructureScoresFeatures.hh>
 

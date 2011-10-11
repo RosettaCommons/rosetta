@@ -29,19 +29,19 @@ WHERE
 	ABS(don_site.resNum - acc_site.resNum) > 5;";
 f <- query_sample_sources(sample_sources, sele)
 
-f$sample_source <- factor(f$sample_source,
-   levels=c(
-     "t4400_sc12_reference",
-     "lr5_sc12_reference",
-     "t4400_sp2v7_x2_p2t3_srfull_apltest4c",
-     "lr5_sp2v7_x2_p2t3_srfull_apltest4c",
-     "top4400_apltest4c"),
-   labels=c(
-     "top4400    standard",
-     "ab-relax   standard",
-     "top4400   corrected",
-     "ab-relax  corrected",
-     "top4400       native"))
+#f$sample_source <- factor(f$sample_source,
+#   levels=c(
+#     "t4400_sc12_reference",
+#     "lr5_sc12_reference",
+#     "t4400_sp2v7_x2_p2t3_srfull_apltest4c",
+#     "lr5_sp2v7_x2_p2t3_srfull_apltest4c",
+#     "top4400_apltest4c"),
+#   labels=c(
+#     "top4400    standard",
+#     "ab-relax   standard",
+#     "top4400   corrected",
+#     "ab-relax  corrected",
+#     "top4400       native"))
 
 
 
@@ -63,7 +63,7 @@ jet.colors <-
 #l_ply(levels(f$sample_source), function(ss){
 #	ggplot(data=f) + theme_bw() +
 #		stat_density2d(aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE) +
-#		polar_equal_area_grids_bw +
+#		polar_equal_area_grids_bw() +
 #                opts(title = paste("Hydrogen Bonds chi vs BAH Angles with Sequence Separation > 5\nBackbone/Backbone Hydrogen Bonds\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +
 #		scale_x_continuous('2*sin(BAH/2) * cos(CHI)', limits=capx_limits, breaks=c(-1, 0, 1)) +
 #		scale_y_continuous('2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +

@@ -66,7 +66,7 @@ d_ply(sample_sources, .(sample_source), function(sample_source){
 	print(paste("plotting for sample source ->", ss_id))
 	ggplot(data=subset(f, sample_source == ss_id)) + theme_bw() +
 		stat_bin2d(aes(x=capx, y=capy, fill=log(..density..)), binwidth=c(.06,.06)) +
-		polar_equal_area_grids_bw +
+		polar_equal_area_grids_bw() +
 
 		geom_indicator(aes(indicator=counts)) +
 		facet_grid(don_ss_name ~ acc_ss_name) +

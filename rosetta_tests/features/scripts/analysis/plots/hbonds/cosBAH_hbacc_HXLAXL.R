@@ -31,24 +31,16 @@ WHERE
   hbond.acc_id = acc_site.site_id AND
   ABS(don_site.resNum - acc_site.resNum) > 5;"
 
-all_geom <- query_sample_sources(sample_sources, sele)
-
-print(summary(all_geom))
-stop("STOPPING")
+f <- query_sample_sources(sample_sources, sele)
+print(summary(f))
 
 dens <- estimate_density_1d(
-  data = all_geom,
-  ids = c("sample_source" ),
-  variable = "cosBAH")
-
-# The 'hbdon_' part of the donor labels doesn't fit so strip them out
-# dens$don_chem_type <- sub("^hbdon_", '', dens$don_chem_type)
+  data = f, ids = c("sample_source" ), variable = "cosBAH")
 
 plot_id = "cosBAH_scsc_sp3acc"
 ggplot(data=dens) +
 	geom_line(aes(x=(pi-acos(x))*180/pi, y=y, colour=sample_source),size=3) +
-	#geom_indicator(aes(colour=sample_source, indicator=counts)) +
-	#facet_grid( ~ ) +
+	geom_indicator(aes(colour=sample_source, indicator=counts)) +
 	opts(title = "Sidechain/Sidechain Hydrogen Bonds to SP3 Acceptors. BAH Angle by Chemical Type\n(normalized for equal volume per unit distance)") +
 	scale_x_continuous(paste('Base -- Acceptor -- Hydrogen (degrees)')) +
 	scale_y_continuous("FeatureDensity")

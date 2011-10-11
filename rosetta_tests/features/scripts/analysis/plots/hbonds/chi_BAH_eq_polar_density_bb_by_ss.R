@@ -64,7 +64,7 @@ plot_id = "chi_sinBAH_eq_polar_density_bb_by_ss"
 d_ply(sample_sources, .(sample_source), function(sample_source){
 	ss_id <- sample_source$sample_source[1]
 	ggplot(data=subset(f, sample_source == ss_id)) + theme_bw() +
-		polar_equal_area_grids_bw +
+		polar_equal_area_grids_bw() +
 		stat_bin2d(aes(x=capx, y=capy, fill=log(..density..)), binwidth=c(.06,.06)) +
 		geom_indicator(aes(indicator=counts)) +
 		facet_grid(don_ss_name ~ acc_ss_name) +

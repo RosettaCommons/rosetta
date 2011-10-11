@@ -39,6 +39,7 @@
 #include <protocols/features/RotamerBoltzmannWeightFeatures.hh>
 #include <protocols/features/ResidueBurialFeatures.hh>
 #include <protocols/features/ResidueSecondaryStructureFeatures.hh>
+#include <protocols/features/SaltBridgeFeatures.hh>
 #include <protocols/features/StructureFeatures.hh>
 #include <protocols/features/StructureScoresFeatures.hh>
 
@@ -125,6 +126,8 @@ FeaturesReporterFactory::create_features_reporter(
 		return new ResidueBurialFeatures;
 	} else if (name == "ResidueSecondaryStructureFeatures") {
 		return new ResidueSecondaryStructureFeatures;
+	} else if (name == "SaltBridgeFeatures") {
+		return new SaltBridgeFeatures;
 	} else if (name == "StructureFeatures") {
 		return new StructureFeatures;
 	} else if (name == "StructureScoresFeatures") {

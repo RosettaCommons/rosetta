@@ -459,7 +459,7 @@ HBondFeatures::insert_site_pdb_row(
 
 	string const pdb_chain(1,pose.pdb_info()->chain(resNum));
 	Size const pdb_resNum( pose.pdb_info()->number(resNum) );
-	char const pdb_iCode( pose.pdb_info()->icode(resNum) );
+	string const pdb_iCode(1,pose.pdb_info()->icode(resNum));
 	Real const pdb_heavy_atom_temperature(
 		pose.pdb_info()->temperature(resNum,heavy_atmNum) );
 	Real const pdb_heavy_atom_occupancy(

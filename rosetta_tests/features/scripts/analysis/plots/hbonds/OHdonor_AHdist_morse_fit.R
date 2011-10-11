@@ -16,7 +16,7 @@ morse_fn <- function(x, D_a, a, r_0, min_e){
 
 estimate_densities <- function(dOH_clause){
 	sele <- paste("
-	SELECT geo.AHdist,
+	SELECT geo.AHdist
   FROM   hbonds AS hb,
          hbond_sites AS don, hbond_sites AS acc,
          hbond_geom_coords AS geo

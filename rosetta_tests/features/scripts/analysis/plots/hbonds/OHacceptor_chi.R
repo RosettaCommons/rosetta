@@ -65,11 +65,11 @@ f <- transform(f,
 capx_limits <- range(f$capx); capy_limits <- range(f$capy)
 
 l_ply(levels(f$hybrid), function(hybrid){
-	plot_id = paste("hbond_chi_BAH_polar_density_", hybrid, "_by_don_chem_type" sep="")
+	plot_id = paste("hbond_chi_BAH_polar_density_", hybrid, "_by_don_chem_type", sep="")
 	d_ply(sample_sources, .("sample_sources"), function(sample_source){
 		ss_id <- sample_source$sample_source[1]
 		ggplot(data=subset(f, sample_source == ss_id & hybrid==hybrid)) + theme_bw() +
-			polar_equal_area_grids_bw +
+			polar_equal_area_grids_bw() +
 			stat_bin2d(aes(x=capx, y=capy, fill=log(..density..)), binwidth=c(.06,.06)) +
 			facet_grid(don_ss ~ acc_ss) +
 			opts(title = paste("Backbone-Backbone Hydrogen Bonds chi vs sinBAH Angles by Secondary Structure\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
