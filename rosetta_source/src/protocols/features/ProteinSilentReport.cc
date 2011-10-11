@@ -263,6 +263,7 @@ ProteinSilentReport::load_pose(
 
 	pose_conformation_features_->load_into_pose(db_session, struct_id, pose);
 	pdb_data_features_->load_into_pose(db_session,struct_id,pose);
+	job_data_features_->load_into_pose(db_session, struct_id, pose);
 	pose_comments_features_->load_into_pose(db_session, struct_id, pose);
 	protein_residue_conformation_features_->load_into_pose(db_session, struct_id, pose);
 	residue_conformation_features_->load_into_pose(db_session,struct_id,pose);

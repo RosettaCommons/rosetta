@@ -200,7 +200,7 @@ PoseConformationFeatures::report_features(
 	for(Size i = 1; i <= relevant_residues.size(); ++i){
 		if(relevant_residues[i]) residue_indices.push_back(i);
 	}
-	Pose* pose;
+	Pose* pose; // I had serious memory corruption when I tried to make this an owning pointer
 	if (residue_indices.size() == pose_orig.n_residue()){
 		pose = const_cast<Pose * >(&pose_orig);
 	}

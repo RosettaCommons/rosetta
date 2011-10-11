@@ -55,53 +55,53 @@ std::string JobDataFeatures::schema() const
 	if(db_mode == "sqlite3")
 	{
 		return
-			"CREATE TABLE IF NOT EXISTS job_string_data (\n"
-			"	struct_id INTEGER,\n"
-			"	data_key TEXT,\n"
-			"	FOREIGN KEY (struct_id)\n"
-			"	REFERENCES structures(struct_id)\n"
-			"	DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY (struct_id,data_key));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS job_string_string_data (\n"
-			"	struct_id INTEGER,\n"
-			"	data_key TEXT,\n"
-			"	data_value TEXT,\n"
-			"	FOREIGN KEY (struct_id)\n"
-			"	REFERENCES structures(struct_id)\n"
-			"	DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY (struct_id,data_key));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS job_string_real_data (\n"
-			"	struct_id INTEGER,\n"
-			"	data_key TEXT,\n"
-			"	data_value REAL,\n"
-			"	FOREIGN KEY (struct_id)\n"
-			"	REFERENCES structures(struct_id)\n"
-			"	DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY (struct_id, data_key));";
+				"CREATE TABLE IF NOT EXISTS job_string_data (\n"
+				"	struct_id INTEGER,\n"
+				"	data_key TEXT,\n"
+				"	FOREIGN KEY (struct_id)\n"
+				"	REFERENCES structures(struct_id)\n"
+				"	DEFERRABLE INITIALLY DEFERRED,\n"
+				"	PRIMARY KEY (struct_id,data_key));\n"
+				"\n"
+				"CREATE TABLE IF NOT EXISTS job_string_string_data (\n"
+				"	struct_id INTEGER,\n"
+				"	data_key TEXT,\n"
+				"	data_value TEXT,\n"
+				"	FOREIGN KEY (struct_id)\n"
+				"	REFERENCES structures(struct_id)\n"
+				"	DEFERRABLE INITIALLY DEFERRED,\n"
+				"	PRIMARY KEY (struct_id,data_key));\n"
+				"\n"
+				"CREATE TABLE IF NOT EXISTS job_string_real_data (\n"
+				"	struct_id INTEGER,\n"
+				"	data_key TEXT,\n"
+				"	data_value REAL,\n"
+				"	FOREIGN KEY (struct_id)\n"
+				"	REFERENCES structures(struct_id)\n"
+				"	DEFERRABLE INITIALLY DEFERRED,\n"
+				"	PRIMARY KEY (struct_id, data_key));";
 	}else if(db_mode == "mysql")
 	{
 		return
-			"CREATE TABLE IF NOT EXISTS job_string_data (\n"
-			"	struct_id INTEGER,\n"
-			"	data_key TEXT,\n"
-			"	FOREIGN KEY (struct_id)	REFERENCES structures(struct_id)\n"
-			"	PRIMARY KEY (struct_id,data_key));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS job_string_string_data (\n"
-			"	struct_id INTEGER,\n"
-			"	data_key TEXT,\n"
-			"	data_value TEXT,\n"
-			"	FOREIGN KEY (struct_id)	REFERENCES structures(struct_id)\n"
-			"	PRIMARY KEY (struct_id,data_key));\n"
-			"\n"
-			"CREATE TABLE IF NOT EXISTS job_string_real_data (\n"
-			"	struct_id INTEGER,\n"
-			"	data_key TEXT,\n"
-			"	data_value REAL,\n"
-			"	FOREIGN KEY (struct_id)	REFERENCES structures(struct_id)\n"
-			"	PRIMARY KEY (struct_id, data_key));";
+				"CREATE TABLE IF NOT EXISTS job_string_data (\n"
+				"	struct_id INTEGER,\n"
+				"	data_key TEXT,\n"
+				"	FOREIGN KEY (struct_id)	REFERENCES structures(struct_id)\n"
+				"	PRIMARY KEY (struct_id,data_key));\n"
+				"\n"
+				"CREATE TABLE IF NOT EXISTS job_string_string_data (\n"
+				"	struct_id INTEGER,\n"
+				"	data_key TEXT,\n"
+				"	data_value TEXT,\n"
+				"	FOREIGN KEY (struct_id)	REFERENCES structures(struct_id)\n"
+				"	PRIMARY KEY (struct_id,data_key));\n"
+				"\n"
+				"CREATE TABLE IF NOT EXISTS job_string_real_data (\n"
+				"	struct_id INTEGER,\n"
+				"	data_key TEXT,\n"
+				"	data_value REAL,\n"
+				"	FOREIGN KEY (struct_id)	REFERENCES structures(struct_id)\n"
+				"	PRIMARY KEY (struct_id, data_key));";
 	}else
 	{
 		return "";
@@ -115,7 +115,7 @@ JobDataFeatures::report_features(
 		utility::vector1<bool> const & /*relevant_residues*/,
 		core::Size struct_id,
 		utility::sql_database::sessionOP db_session
-	)
+)
 {
 	protocols::jd2::JobCOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
 	insert_string_rows(struct_id,db_session,job);
@@ -124,11 +124,21 @@ JobDataFeatures::report_features(
 	return 0;
 }
 
+void
+JobDataFeatures::load_into_pose(
+		utility::sql_database::sessionOP db_session,
+		Size struct_id,
+		core::pose::Pose & pose
+){
+	load_string_data(db_session, struct_id, pose);
+	load_string_string_data(db_session, struct_id, pose);
+	load_string_real_data(db_session, struct_id, pose);
+}
+
 void JobDataFeatures::delete_record(
-	core::Size struct_id,
-	utility::sql_database::sessionOP db_session
-	)
-{
+		core::Size struct_id,
+		utility::sql_database::sessionOP db_session
+){
 	while(true)
 	{
 		try
@@ -147,7 +157,6 @@ void JobDataFeatures::delete_record(
 		}
 	}
 }
-
 
 void JobDataFeatures::insert_string_rows(core::Size struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
 {
@@ -173,11 +182,34 @@ void JobDataFeatures::insert_string_rows(core::Size struct_id, utility::sql_data
 	}
 }
 
+void
+JobDataFeatures::load_string_data(
+		utility::sql_database::sessionOP db_session,
+		Size struct_id,
+		core::pose::Pose & pose
+){
+	cppdb::result res = (*db_session) <<
+			"SELECT\n"
+			"	data_key\n"
+			"FROM\n"
+			"	job_string_data\n"
+			"WHERE\n"
+			"	job_string_data.struct_id = ?;" << struct_id;
+
+	while(res.next()){
+		std::string data_key;
+		res >> data_key;
+		protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+		job->add_string(data_key);
+	}
+}
+
 void JobDataFeatures::insert_string_string_rows(core::Size struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
 {
 	protocols::jd2::Job::StringStringPairs::const_iterator it(job->output_string_string_pairs_begin());
 	for(; it != job->output_string_string_pairs_end();++it)
 	{
+
 		while(true)
 		{
 			try
@@ -195,6 +227,29 @@ void JobDataFeatures::insert_string_string_rows(core::Size struct_id, utility::s
 				continue;
 			}
 		}
+	}
+}
+
+void
+JobDataFeatures::load_string_string_data(
+		utility::sql_database::sessionOP db_session,
+		Size struct_id,
+		core::pose::Pose & pose
+){
+	cppdb::result res = (*db_session) <<
+			"SELECT\n"
+			"	data_key,\n"
+			"	data_value\n"
+			"FROM\n"
+			"	job_string_string_data\n"
+			"WHERE\n"
+			"	job_string_string_data.struct_id = ?;" << struct_id;
+
+	while(res.next()){
+		std::string data_key, data_value;
+		res >> data_key >> data_value;
+		protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+		job->add_string_string_pair(data_key, data_value);
 	}
 }
 
@@ -220,6 +275,30 @@ void JobDataFeatures::insert_string_real_rows(core::Size struct_id, utility::sql
 				continue;
 			}
 		}
+	}
+}
+
+void
+JobDataFeatures::load_string_real_data(
+		utility::sql_database::sessionOP db_session,
+		Size struct_id,
+		core::pose::Pose & pose
+){
+	cppdb::result res = (*db_session) <<
+			"SELECT\n"
+			"	data_key,\n"
+			"	data_value\n"
+			"FROM\n"
+			"	job_string_real_data\n"
+			"WHERE\n"
+			"	job_string_real_data.struct_id = ?;" << struct_id;
+
+	while(res.next()){
+		std::string data_key;
+		core::Real data_value;
+		res >> data_key >> data_value;
+		protocols::jd2::JobOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
+		job->add_string_real_pair(data_key, data_value);
 	}
 }
 

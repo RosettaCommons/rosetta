@@ -45,6 +45,13 @@ public:
 		utility::sql_database::sessionOP db_session
 	);
 
+	void
+	load_into_pose(
+		utility::sql_database::sessionOP db_session,
+		Size struct_id,
+		core::pose::Pose & pose
+	);
+
 	void delete_record(
 		core::Size struct_id,
 		utility::sql_database::sessionOP db_session
@@ -55,6 +62,12 @@ private:
 	void insert_string_string_rows(core::Size struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const;
 
 	void insert_string_real_rows(core::Size struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const;
+
+	void load_string_data(utility::sql_database::sessionOP  db_session, Size struct_id, core::pose::Pose & pose);
+
+	void load_string_string_data(utility::sql_database::sessionOP  db_session, Size struct_id, core::pose::Pose & pose);
+
+	void load_string_real_data(utility::sql_database::sessionOP  db_session, Size struct_id, core::pose::Pose & pose);
 };
 
 }
