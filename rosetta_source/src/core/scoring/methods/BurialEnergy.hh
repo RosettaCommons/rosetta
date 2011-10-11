@@ -11,26 +11,33 @@
 /// @brief  energy term use for scoring predicted burial
 /// @author James Thompson
 
+
 #ifndef INCLUDED_core_scoring_methods_BurialEnergy_hh
 #define INCLUDED_core_scoring_methods_BurialEnergy_hh
 
+
+// Package headers
 #include <core/scoring/methods/BurialEnergyCreator.hh>
-#include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
+#include <core/scoring/methods/WholeStructureEnergy.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
+// Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.fwd.hh>
+
+// Utility headers
+
 
 namespace core {
 namespace scoring {
 namespace methods {
 
 
-class BurialEnergy : public ContextDependentOneBodyEnergy {
+class BurialEnergy : public WholeStructureEnergy {
 public:
 
-	BurialEnergy() : ContextDependentOneBodyEnergy( new BurialEnergyCreator ) {
+	BurialEnergy() : WholeStructureEnergy( new BurialEnergyCreator ) {
 		init_from_file();
 	}
 
@@ -43,24 +50,13 @@ public:
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	virtual void
-	residue_energy(
-		conformation::Residue const & rsd,
-		pose::Pose const & pose,
-		EnergyMap & emap
-	) const;
-
-	void
-	setup_for_scoring(
-		 pose::Pose & pose, ScoreFunction const &
-	) const;
-
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
 		ScoreFunction const &,
 		EnergyMap & totals
-	) const {}
+	) const;
+
 
 	virtual
 	core::Size version() const;
