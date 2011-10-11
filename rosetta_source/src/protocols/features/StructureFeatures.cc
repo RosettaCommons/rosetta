@@ -23,6 +23,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <protocols/jd2/JobDistributor.hh>
+#include <basic/database/sql_utils.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -122,23 +123,13 @@ StructureFeatures::report_features(
 	string const & input_tag
 ){
 	statement stmt;
-	while(true)
-	{
-		try
-		{
-			stmt = (*db_session)
-				<< "INSERT INTO structures VALUES (NULL,?,?,?);"
-				<< protocol_id
-				<< tag
-				<< input_tag;
-			stmt.exec();
-			break;
-		}catch(cppdb::cppdb_error &)
-		{
-			usleep(10);
-			continue;
-		}
-	}
+	stmt = (*db_session)
+		<< "INSERT INTO structures VALUES (NULL,?,?,?);"
+		<< protocol_id
+		<< tag
+		<< input_tag;
+	basic::database::safely_write_to_database(stmt);
+
 	return stmt.last_insert_id();
 }
 
@@ -153,44 +144,25 @@ StructureFeatures::report_features(
 	string const & input_tag
 ){
 	statement stmt;
-	while(true)
-	{
-		try
-		{
-			stmt = (*db_session)
-				<< "INSERT INTO structures VALUES (?,?,?,?);"
-				<< struct_id
-				<< protocol_id
-				<< tag
-				<< input_tag;
-			stmt.exec();
-			break;
-		}catch(cppdb::cppdb_error &)
-		{
-			usleep(10);
-			continue;
-		}
-	}
+	stmt = (*db_session)
+		<< "INSERT INTO structures VALUES (?,?,?,?);"
+		<< struct_id
+		<< protocol_id
+		<< tag
+		<< input_tag;
+	basic::database::safely_write_to_database(stmt);
+
 	return stmt.last_insert_id();
 }
 void StructureFeatures::delete_record(
 	core::Size struct_id,
 	utility::sql_database::sessionOP db_session
 ){
-	while(true)
-	{
-		try
-		{
-			statement stmt = (*db_session)
-				<< "DELETE FROM structures WHERE struct_id == ?;" << struct_id;
-			stmt.exec();
-			break;
-		}catch(cppdb::cppdb_error &)
-		{
-			usleep(10);
-			continue;
-		}
-	}
+
+	statement stmt = (*db_session)
+		<< "DELETE FROM structures WHERE struct_id == ?;" << struct_id;
+	basic::database::safely_write_to_database(stmt);
+
 }
 
 void
@@ -208,25 +180,15 @@ StructureFeatures::load_tag(
 	Size struct_id,
 	Pose & pose) {
 
-	result res;
-	while(true)
-	{
-		try
-		{
-			res = (*db_session) <<
-				"SELECT\n"
-				"	tag\n"
-				"FROM\n"
-				"	structures\n"
-				"WHERE\n"
-				"	structures.struct_id=?" << struct_id;
-			break;
-		}catch(cppdb::cppdb_error &)
-		{
-			usleep(10);
-			continue;
-		}
-	}
+	statement stmt = (*db_session) <<
+		"SELECT\n"
+		"	tag\n"
+		"FROM\n"
+		"	structures\n"
+		"WHERE\n"
+		"	structures.struct_id=?" << struct_id;
+
+	result res(basic::database::safely_read_from_database(stmt));
 	if(!res.next()){
 		stringstream error_message;
 		error_message << "Unable to locate structure with struct_id '"
@@ -243,25 +205,15 @@ StructureFeatures::get_struct_id(
 	sessionOP db_session,
 	string const & tag
 ){
-	result res;
-	while(true)
-	{
-		try
-		{
-			res = (*db_session) <<
-				"SELECT\n"
-				"	struct_id\n"
-				"FROM\n"
-				"	structures\n"
-				"WHERE\n"
-				"	structures.tag=?;" << tag;
-			break;
-		}catch(cppdb::cppdb_error &)
-		{
-			usleep(10);
-			continue;
-		}
-	}
+	statement stmt = (*db_session) <<
+		"SELECT\n"
+		"	struct_id\n"
+		"FROM\n"
+		"	structures\n"
+		"WHERE\n"
+		"	structures.tag=?;" << tag;
+
+	result res(basic::database::safely_read_from_database(stmt));
 	if(!res.next()){
 		stringstream error_message;
 		error_message << "Unable to locate structure with tag '"<<tag<<"'."<<endl;

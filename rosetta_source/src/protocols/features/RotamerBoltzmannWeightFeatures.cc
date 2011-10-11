@@ -21,6 +21,7 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <protocols/protein_interface_design/filters/RotamerBoltzmannWeight.hh>
+#include <basic/database/sql_utils.hh>
 
 // Numeric Headers
 #include <numeric/xyzVector.hh>
@@ -89,23 +90,14 @@ RotamerBoltzmannWeightFeatures::report_features(
 		Real const boltzmann_weight(
 			rotamer_boltzmann_weight_->compute_Boltzmann_weight(pose, resNum));
 
-		while(true)
-		{
-			try
-			{
-				statement stmt = (*db_session)
-					<< "INSERT INTO rotamer_boltzmann_weight VALUES (?,?,?);"
-					<< struct_id
-					<< resNum
-					<< boltzmann_weight;
-				stmt.exec();
-				break;
-			}catch(cppdb::cppdb_error &)
-			{
-				usleep(10);
-				continue;
-			}
-		}
+
+		statement stmt = (*db_session)
+			<< "INSERT INTO rotamer_boltzmann_weight VALUES (?,?,?);"
+			<< struct_id
+			<< resNum
+			<< boltzmann_weight;
+		basic::database::safely_write_to_database(stmt);
+
 	}
 	return 0;
 }
