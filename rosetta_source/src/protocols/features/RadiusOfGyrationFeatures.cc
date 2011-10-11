@@ -67,11 +67,22 @@ RadiusOfGyrationFeatures::report_features(
 	sessionOP db_session
 ){
 	RG_Energy_Fast rg;
-	statement stmt = (*db_session)
-		<< "INSERT INTO radius_of_gyration VALUES (?,?);"
-		<< struct_id
-		<< rg.calculate_rg_score(pose, relevant_residues);
-	stmt.exec();
+	while(true)
+	{
+		try
+		{
+			statement stmt = (*db_session)
+				<< "INSERT INTO radius_of_gyration VALUES (?,?);"
+				<< struct_id
+				<< rg.calculate_rg_score(pose, relevant_residues);
+			stmt.exec();
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 	return 0;
 }
 

@@ -174,21 +174,43 @@ ProteinResidueConformationFeatures::report_features(
 		Real chi3 = fullatom && resi.nchi() >= 3 ? resi.chi(3) : 0.0;
 		Real chi4 = fullatom && resi.nchi() >= 4 ? resi.chi(4) : 0.0;
 
-		statement stmt = (*db_session) <<
-			"INSERT INTO protein_residue_conformation VALUES (?,?,?,?,?,?,?,?,?,?)" <<
-			struct_id << i << secstruct << phi << psi << omega << chi1 << chi2 << chi3 << chi4 ;
-		stmt.exec();
+		while(true)
+		{
+			try
+			{
+				statement stmt = (*db_session) <<
+					"INSERT INTO protein_residue_conformation VALUES (?,?,?,?,?,?,?,?,?,?)" <<
+					struct_id << i << secstruct << phi << psi << omega << chi1 << chi2 << chi3 << chi4 ;
+				stmt.exec();
+				break;
+			}catch(cppdb::cppdb_error &)
+			{
+				usleep(10);
+				continue;
+			}
+		}
 
 		if(!ideal)
 		{
 			for(Size atom = 1; atom <= resi.natoms(); ++atom)
 			{
 				core::Vector coords = resi.xyz(atom);
-				statement stmt = (*db_session) <<
-					"INSERT INTO residue_atom_coords VALUES(?,?,?,?,?,?)" <<
-					struct_id << i << atom << coords.x() << coords.y() <<coords.z();
-					//std::cout <<"*" << i << " " << resi.atom_name(atom) << " " << coords.x() << " " << coords.y() << " "<< coords.z() <<std::endl;
-				stmt.exec();
+				while(true)
+				{
+					try
+					{
+						statement stmt = (*db_session) <<
+							"INSERT INTO residue_atom_coords VALUES(?,?,?,?,?,?)" <<
+							struct_id << i << atom << coords.x() << coords.y() <<coords.z();
+							//std::cout <<"*" << i << " " << resi.atom_name(atom) << " " << coords.x() << " " << coords.y() << " "<< coords.z() <<std::endl;
+						stmt.exec();
+						break;
+					}catch(cppdb::cppdb_error &)
+					{
+						usleep(10);
+						continue;
+					}
+				}
 			}
 		}
 	}
@@ -202,10 +224,21 @@ ProteinResidueConformationFeatures::delete_record(
 	core::Size struct_id,
 	utility::sql_database::sessionOP db_session
 ){
-	statement stmt = (*db_session) << "DELETE FROM protein_residue_conformation WHERE struct_id == ?;\n" << struct_id;
-	stmt.exec();
-	stmt = (*db_session) << "DELETE FROM residue_atom_coords WHERE struct_id == ?;\n" << struct_id;
-	stmt.exec();
+	while(true)
+	{
+		try
+		{
+			statement stmt = (*db_session) << "DELETE FROM protein_residue_conformation WHERE struct_id == ?;\n" << struct_id;
+			stmt.exec();
+			stmt = (*db_session) << "DELETE FROM residue_atom_coords WHERE struct_id == ?;\n" << struct_id;
+			stmt.exec();
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 }
 
 
@@ -224,22 +257,35 @@ ProteinResidueConformationFeatures::load_conformation(
 	Size struct_id,
 	Pose & pose
 ){
+
 	if(pose.is_fullatom()){
-		result res = (*db_session) <<
-			"SELECT\n"
-			"	seqpos,\n"
-			"	secstruct,\n"
-			"	phi,\n"
-			"	psi,\n"
-			"	omega,\n"
-			"	chi1,\n"
-			"	chi2,\n"
-			"	chi3,\n"
-			"	chi4\n"
-			"FROM\n"
-			"	protein_residue_conformation\n"
-			"WHERE\n"
-			"	protein_residue_conformation.struct_id=?;" << struct_id;
+		result res;
+		while(true)
+		{
+			try
+			{
+				res = (*db_session) <<
+					"SELECT\n"
+					"	seqpos,\n"
+					"	secstruct,\n"
+					"	phi,\n"
+					"	psi,\n"
+					"	omega,\n"
+					"	chi1,\n"
+					"	chi2,\n"
+					"	chi3,\n"
+					"	chi4\n"
+					"FROM\n"
+					"	protein_residue_conformation\n"
+					"WHERE\n"
+					"	protein_residue_conformation.struct_id=?;" << struct_id;
+				break;
+			}catch(cppdb::cppdb_error &)
+			{
+				usleep(10);
+				continue;
+			}
+		}
 		while(res.next()){
 			Size seqpos;
 			Real phi,psi,omega,chi1,chi2,chi3,chi4;
@@ -265,16 +311,28 @@ ProteinResidueConformationFeatures::load_conformation(
 		}
 
 	}else{
-		result res = (*db_session) <<
-			"SELECT\n"
-			"	seqpos,\n"
-			"	phi,\n"
-			"	psi,\n"
-			"	omega\n"
-			"FROM\n"
-			"	protein_residue_conformation\n"
-			"WHERE\n"
-			"	protein_residue_conformation.struct_id=?;" << struct_id;
+		result res;
+		while(true)
+		{
+			try
+			{
+				res = (*db_session) <<
+					"SELECT\n"
+					"	seqpos,\n"
+					"	phi,\n"
+					"	psi,\n"
+					"	omega\n"
+					"FROM\n"
+					"	protein_residue_conformation\n"
+					"WHERE\n"
+					"	protein_residue_conformation.struct_id=?;" << struct_id;
+				break;
+			}catch(cppdb::cppdb_error &)
+			{
+				usleep(10);
+				continue;
+			}
+		}
 		while(res.next()){
 			Size seqpos;
 			Real phi,psi,omega;
@@ -301,16 +359,28 @@ void ProteinResidueConformationFeatures::set_coords_for_residue(
 		Pose & pose
 ){
 
-	result res = (*db_session) <<
-			"SELECT\n"
-			"	atomno,\n"
-			"	x,\n"
-			"	y,\n"
-			"	z\n"
-			"FROM\n"
-			"	residue_atom_coords\n"
-			"WHERE\n"
-			"residue_atom_coords.struct_id=? AND residue_atom_coords.seqpos=?;" << struct_id <<	seqpos;
+	result res;
+	while(true)
+	{
+		try
+		{
+			res = (*db_session) <<
+					"SELECT\n"
+					"	atomno,\n"
+					"	x,\n"
+					"	y,\n"
+					"	z\n"
+					"FROM\n"
+					"	residue_atom_coords\n"
+					"WHERE\n"
+					"residue_atom_coords.struct_id=? AND residue_atom_coords.seqpos=?;" << struct_id <<	seqpos;
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 	while(res.next())
 	{
 		Size atomno;
@@ -322,6 +392,7 @@ void ProteinResidueConformationFeatures::set_coords_for_residue(
 		pose.set_xyz(atom_id,coords);
 		//std::cout <<seqpos << " " << pose.residue(seqpos).atom_name(atomno)<< " " << x << " "<<y << " "<<z <<std::endl;
 	}
+
 
 }
 

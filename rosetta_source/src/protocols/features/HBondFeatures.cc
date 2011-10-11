@@ -51,6 +51,7 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+#include <cppdb/errors.h>
 
 // C++ Headers
 #include <cmath>
@@ -431,18 +432,29 @@ HBondFeatures::insert_site_row(
 		atmType = pose.residue(resNum).atom_type(atmNum).name();
 	}
 
-	statement stmt = (*db_session)
-		<< "INSERT INTO hbond_sites VALUES (?,?,?,?,?,?,?,?,?);"
-		<< struct_id
-		<< site_id
-		<< resNum
-		<< atmNum
-		<< is_donor
-		<< chain
-		<< resType
-		<< atmType
-		<< HBChemType;
-	stmt.exec();
+	while(true)
+	{
+		try
+		{
+			statement stmt = (*db_session)
+				<< "INSERT INTO hbond_sites VALUES (?,?,?,?,?,?,?,?,?);"
+				<< struct_id
+				<< site_id
+				<< resNum
+				<< atmNum
+				<< is_donor
+				<< chain
+				<< resType
+				<< atmType
+				<< HBChemType;
+			stmt.exec();
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 }
 
 void
@@ -465,17 +477,27 @@ HBondFeatures::insert_site_pdb_row(
 	Real const pdb_heavy_atom_occupancy(
 		pose.pdb_info()->occupancy(resNum, heavy_atmNum) );
 
-
-	statement stmt = (*db_session)
-		<< "INSERT INTO hbond_sites_pdb VALUES (?,?,?,?,?,?,?);"
-		<< struct_id
-		<< site_id
-		<< pdb_chain
-		<< pdb_resNum
-		<< pdb_iCode
-		<< pdb_heavy_atom_temperature
-		<< pdb_heavy_atom_occupancy;
-	stmt.exec();
+	while(true)
+	{
+		try
+		{
+			statement stmt = (*db_session)
+				<< "INSERT INTO hbond_sites_pdb VALUES (?,?,?,?,?,?,?);"
+				<< struct_id
+				<< site_id
+				<< pdb_chain
+				<< pdb_resNum
+				<< pdb_iCode
+				<< pdb_heavy_atom_temperature
+				<< pdb_heavy_atom_occupancy;
+			stmt.exec();
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 }
 
 
@@ -497,16 +519,27 @@ HBondFeatures::insert_site_environment_row(
 	Real const hbond_energy (site_hbond_energies(resNum, atmNum) );
 	Size const num_hbonds(site_partners(resNum,atmNum).size() );
 
-	statement stmt = (*db_session)
-		<< "INSERT INTO hbond_site_environment VALUES (?,?,?,?,?,?,?);"
-		<< struct_id
-		<< site_id
-		<< atom_sasa_s[AtomID(atmNum, resNum)]
-		<< atom_sasa_m[AtomID(atmNum, resNum)]
-		<< atom_sasa_l[AtomID(atmNum, resNum)]
-		<< hbond_energy
-		<< num_hbonds;
-	stmt.exec();
+	while(true)
+	{
+		try
+		{
+			statement stmt = (*db_session)
+				<< "INSERT INTO hbond_site_environment VALUES (?,?,?,?,?,?,?);"
+				<< struct_id
+				<< site_id
+				<< atom_sasa_s[AtomID(atmNum, resNum)]
+				<< atom_sasa_m[AtomID(atmNum, resNum)]
+				<< atom_sasa_l[AtomID(atmNum, resNum)]
+				<< hbond_energy
+				<< num_hbonds;
+			stmt.exec();
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 }
 
 void
@@ -538,21 +571,33 @@ HBondFeatures::insert_site_atoms_row(
 		base2_y = rsd.atom(rsd.abase2(atmNum)).xyz().y();
 		base2_z = rsd.atom(rsd.abase2(atmNum)).xyz().z();
 	}
-	statement stmt = (*db_session)
-		<< "INSERT INTO hbond_site_atoms VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
-		<< struct_id
-		<< site_id
-		<< atm_x << atm_y << atm_z
-		<< base_x << base_y << base_z
-		<< bbase_x << bbase_y << bbase_z;
-	if( has_base2 ){
-		stmt << base2_x << base2_y << base2_z;
-	} else {
-		stmt.bind_null();
-		stmt.bind_null();
-		stmt.bind_null();
+
+	while(true)
+	{
+		try
+		{
+			statement stmt = (*db_session)
+				<< "INSERT INTO hbond_site_atoms VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
+				<< struct_id
+				<< site_id
+				<< atm_x << atm_y << atm_z
+				<< base_x << base_y << base_z
+				<< bbase_x << bbase_y << bbase_z;
+			if( has_base2 ){
+				stmt << base2_x << base2_y << base2_z;
+			} else {
+				stmt.bind_null();
+				stmt.bind_null();
+				stmt.bind_null();
+			}
+			stmt.exec();
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
 	}
-	stmt.exec();
 }
 
 Size
@@ -614,19 +659,29 @@ HBondFeatures::insert_hbond_row(
 	Real const energy( hbond.energy() );
 	Real const envWeight( hbond.weight() );
 
-	statement stmt = (*db_session)
-		<< "INSERT INTO hbonds VALUES (?,?,?,?,?,?,?,?,?);"
-		<< struct_id
-		<< hbond_id
-		<< don_id
-		<< acc_id
-		<< HBEvalType
-		<< energy
-		<< envWeight
-		<< donRank
-		<< accRank;
-	stmt.exec();
-	return stmt.last_insert_id();
+	while(true)
+	{
+		try
+		{
+			statement stmt = (*db_session)
+				<< "INSERT INTO hbonds VALUES (?,?,?,?,?,?,?,?,?);"
+				<< struct_id
+				<< hbond_id
+				<< don_id
+				<< acc_id
+				<< HBEvalType
+				<< energy
+				<< envWeight
+				<< donRank
+				<< accRank;
+			stmt.exec();
+			return stmt.last_insert_id();
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 }
 
 void
@@ -668,15 +723,26 @@ HBondFeatures::insert_hbond_geom_coords(
 
 	float const chi(dihedral_radians(B2xyz, Bxyz, Axyz, Hxyz));
 
-	statement stmt = (*db_session)
-		<< "INSERT INTO hbond_geom_coords VALUES (?,?,?,?,?,?);"
-		<< struct_id
-		<< hbond_id
-		<< AHdist
-		<< cosBAH
-		<< cosAHD
-		<< chi;
-	stmt.exec();
+	while(true)
+	{
+		try
+		{
+			statement stmt = (*db_session)
+				<< "INSERT INTO hbond_geom_coords VALUES (?,?,?,?,?,?);"
+				<< struct_id
+				<< hbond_id
+				<< AHdist
+				<< cosBAH
+				<< cosAHD
+				<< chi;
+			stmt.exec();
+			break;
+		}catch(cppdb::cppdb_error & )
+		{
+			usleep(10);
+			continue;
+		}
+	}
 }
 
 // right now this just reports the lennard jones values for hbond atoms
@@ -743,23 +809,34 @@ HBondFeatures::insert_hbond_lennard_jones_row(
 	h_acc_base_repE *= (*scfxn_)[ fa_rep ];
 	h_acc_base_solv *= (*scfxn_)[ fa_sol ];
 
-	statement stmt = (*db_session)
-		<< "INSERT INTO hbond_lennard_jones VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
-		<< struct_id
-		<< hbond_id
-		<< don_acc_atrE
-		<< don_acc_repE
-		<< don_acc_solv
-		<< don_acc_base_atrE
-		<< don_acc_base_repE
-		<< don_acc_base_solv
-		<< h_acc_atrE
-		<< h_acc_repE
-		<< h_acc_solv
-		<< h_acc_base_atrE
-		<< h_acc_base_repE
-		<< h_acc_base_solv;
-	stmt.exec();
+	while(true)
+	{
+		try
+		{
+			statement stmt = (*db_session)
+				<< "INSERT INTO hbond_lennard_jones VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
+				<< struct_id
+				<< hbond_id
+				<< don_acc_atrE
+				<< don_acc_repE
+				<< don_acc_solv
+				<< don_acc_base_atrE
+				<< don_acc_base_repE
+				<< don_acc_base_solv
+				<< h_acc_atrE
+				<< h_acc_repE
+				<< h_acc_solv
+				<< h_acc_base_atrE
+				<< h_acc_base_repE
+				<< h_acc_base_solv;
+			stmt.exec();
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 }
 
 // This follows the definition of the dehydron described in:
@@ -829,12 +906,23 @@ HBondFeatures::insert_hbond_dehydron_row(
 		}
 	}
 
-	statement stmt = (*db_session)
-		<< "INSERT INTO hbond_dehydrons VALUES (?,?,?);"
-		<< struct_id
-		<< hbond_id
-		<< wrapping_count;
-	stmt.exec();
+	while(true)
+	{
+		try
+		{
+			statement stmt = (*db_session)
+				<< "INSERT INTO hbond_dehydrons VALUES (?,?,?);"
+				<< struct_id
+				<< hbond_id
+				<< wrapping_count;
+			stmt.exec();
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 }
 
 

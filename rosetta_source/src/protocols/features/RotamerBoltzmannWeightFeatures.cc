@@ -89,12 +89,23 @@ RotamerBoltzmannWeightFeatures::report_features(
 		Real const boltzmann_weight(
 			rotamer_boltzmann_weight_->compute_Boltzmann_weight(pose, resNum));
 
-		statement stmt = (*db_session)
-			<< "INSERT INTO rotamer_boltzmann_weight VALUES (?,?,?);"
-			<< struct_id
-			<< resNum
-			<< boltzmann_weight;
-		stmt.exec();
+		while(true)
+		{
+			try
+			{
+				statement stmt = (*db_session)
+					<< "INSERT INTO rotamer_boltzmann_weight VALUES (?,?,?);"
+					<< struct_id
+					<< resNum
+					<< boltzmann_weight;
+				stmt.exec();
+				break;
+			}catch(cppdb::cppdb_error &)
+			{
+				usleep(10);
+				continue;
+			}
+		}
 	}
 	return 0;
 }

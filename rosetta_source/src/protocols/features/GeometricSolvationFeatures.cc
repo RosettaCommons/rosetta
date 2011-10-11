@@ -29,6 +29,7 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+#include <cppdb/errors.h>
 
 // C++ Headers
 #include <string>
@@ -106,16 +107,27 @@ GeometricSolvationFeatures::report_features(
 	sessionOP db_session
 ){
 
-	// locate the polar sites from the hbond_sites table
-	result res = (*db_session) <<
-		"SELECT\n"
-		"	site.site_id,\n"
-		"	site.resNum,\n"
-		"	site.atmNum\n"
-		"FROM\n"
-		"	hbond_sites as site\n"
-		"WHERE\n"
-		"	site.struct_id = ?;" << struct_id;
+	result res;
+	while(true)
+	{
+		try
+		{
+			res = (*db_session) <<
+				"SELECT\n"
+				"	site.site_id,\n"
+				"	site.resNum,\n"
+				"	site.atmNum\n"
+				"FROM\n"
+				"	hbond_sites as site\n"
+				"WHERE\n"
+				"	site.struct_id = ?;" << struct_id;
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 
 	while(res.next()){
 		Size site_id, resNum, atmNum;
@@ -127,13 +139,27 @@ GeometricSolvationFeatures::report_features(
 			pose.residue(resNum),
 			atmNum));
 
-		statement stmt = (*db_session)
-			<< "INSERT INTO geometric_solvation VALUES (?,?,?)"
-			<< struct_id
-			<< site_id
-			<< geometric_solvation_exact;
-		stmt.exec();
+		while(true)
+		{
+			try
+			{
+				statement stmt = (*db_session)
+					<< "INSERT INTO geometric_solvation VALUES (?,?,?)"
+					<< struct_id
+					<< site_id
+					<< geometric_solvation_exact;
+				stmt.exec();
+				break;
+			}catch(cppdb::cppdb_error &)
+			{
+				usleep(10);
+				continue;
+			}
+		}
 	}
+
+	// locate the polar sites from the hbond_sites table
+
 	return 0;
 }
 

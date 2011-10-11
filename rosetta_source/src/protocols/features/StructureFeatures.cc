@@ -121,12 +121,24 @@ StructureFeatures::report_features(
 	string const & tag,
 	string const & input_tag
 ){
-	statement stmt = (*db_session)
-		<< "INSERT INTO structures VALUES (NULL,?,?,?);"
-		<< protocol_id
-		<< tag
-		<< input_tag;
-	stmt.exec();
+	statement stmt;
+	while(true)
+	{
+		try
+		{
+			stmt = (*db_session)
+				<< "INSERT INTO structures VALUES (NULL,?,?,?);"
+				<< protocol_id
+				<< tag
+				<< input_tag;
+			stmt.exec();
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 	return stmt.last_insert_id();
 }
 
@@ -140,22 +152,45 @@ StructureFeatures::report_features(
 	string const & tag,
 	string const & input_tag
 ){
-	statement stmt = (*db_session)
-		<< "INSERT INTO structures VALUES (?,?,?,?);"
-		<< struct_id
-		<< protocol_id
-		<< tag
-		<< input_tag;
-	stmt.exec();
+	statement stmt;
+	while(true)
+	{
+		try
+		{
+			stmt = (*db_session)
+				<< "INSERT INTO structures VALUES (?,?,?,?);"
+				<< struct_id
+				<< protocol_id
+				<< tag
+				<< input_tag;
+			stmt.exec();
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 	return stmt.last_insert_id();
 }
 void StructureFeatures::delete_record(
 	core::Size struct_id,
 	utility::sql_database::sessionOP db_session
 ){
-	statement stmt = (*db_session)
-		<< "DELETE FROM structures WHERE struct_id == ?;" << struct_id;
-	stmt.exec();
+	while(true)
+	{
+		try
+		{
+			statement stmt = (*db_session)
+				<< "DELETE FROM structures WHERE struct_id == ?;" << struct_id;
+			stmt.exec();
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 }
 
 void
@@ -173,13 +208,25 @@ StructureFeatures::load_tag(
 	Size struct_id,
 	Pose & pose) {
 
-	result res = (*db_session) <<
-		"SELECT\n"
-		"	tag\n"
-		"FROM\n"
-		"	structures\n"
-		"WHERE\n"
-		"	structures.struct_id=?" << struct_id;
+	result res;
+	while(true)
+	{
+		try
+		{
+			res = (*db_session) <<
+				"SELECT\n"
+				"	tag\n"
+				"FROM\n"
+				"	structures\n"
+				"WHERE\n"
+				"	structures.struct_id=?" << struct_id;
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 	if(!res.next()){
 		stringstream error_message;
 		error_message << "Unable to locate structure with struct_id '"
@@ -196,13 +243,25 @@ StructureFeatures::get_struct_id(
 	sessionOP db_session,
 	string const & tag
 ){
-	result res = (*db_session) <<
-		"SELECT\n"
-		"	struct_id\n"
-		"FROM\n"
-		"	structures\n"
-		"WHERE\n"
-		"	structures.tag=?;" << tag;
+	result res;
+	while(true)
+	{
+		try
+		{
+			res = (*db_session) <<
+				"SELECT\n"
+				"	struct_id\n"
+				"FROM\n"
+				"	structures\n"
+				"WHERE\n"
+				"	structures.tag=?;" << tag;
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 	if(!res.next()){
 		stringstream error_message;
 		error_message << "Unable to locate structure with tag '"<<tag<<"'."<<endl;

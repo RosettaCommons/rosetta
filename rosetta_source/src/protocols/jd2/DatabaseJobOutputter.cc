@@ -139,18 +139,8 @@ void DatabaseJobOutputter::other_pose(
 ) {
 
 	sessionOP db_session(basic::database::get_db_session(database_fname_));
-	while(true)
-	{
-		try
-		{
-			protein_silent_report_->apply(pose, db_session, tag);
-			break;
-		}catch(cppdb::cppdb_error &)
-		{
-			usleep(10);
-			continue;
-		}
-	}
+	protein_silent_report_->apply(pose, db_session, tag);
+
 }
 
 /////////////////////////////////state of output functions/////////////////////////////////
@@ -172,27 +162,28 @@ bool DatabaseJobOutputter::job_has_completed( JobCOP job ) {
 		return false;
 	}
 
+
+	result res;
 	while(true)
 	{
 		try
 		{
-			result res = (*db_session) <<
+			res = (*db_session) <<
 				"SELECT count(*) FROM structures WHERE tag=?;" << output_name(job);
-
-			res.next();
-			Size already_written;
-			res >> already_written;
-
-			return already_written;
+			break;
 		}catch(cppdb::cppdb_error &)
 		{
 			usleep(10);
 			continue;
 		}
-
 	}
 
-	return false; // we shouldn't get here
+	res.next();
+	Size already_written;
+	res >> already_written;
+
+	return already_written;
+
 
 }
 

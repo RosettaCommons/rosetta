@@ -953,39 +953,61 @@ HBondDatabase::report_parameter_features(
 
 	pair<string, FadeIntervalCOP> fade_name_interval;
 	foreach(fade_name_interval, HBFadeInterval_lookup_by_name_){
-		statement stmt = (*db_session)
-			<< "INSERT INTO hbond_fade_interval VALUES (?,?,?,?,?,?,?);"
-			<< database_tag
-			<< fade_name_interval.first
-			<< (fade_name_interval.second->get_smooth() ? "smooth" : "piecewise_linear")
-			<< fade_name_interval.second->get_min0()
-			<< fade_name_interval.second->get_fmin()
-			<< fade_name_interval.second->get_fmax()
-			<< fade_name_interval.second->get_max0();
-		stmt.exec();
+		while(true)
+		{
+			try
+			{
+				statement stmt = (*db_session)
+					<< "INSERT INTO hbond_fade_interval VALUES (?,?,?,?,?,?,?);"
+					<< database_tag
+					<< fade_name_interval.first
+					<< (fade_name_interval.second->get_smooth() ? "smooth" : "piecewise_linear")
+					<< fade_name_interval.second->get_min0()
+					<< fade_name_interval.second->get_fmin()
+					<< fade_name_interval.second->get_fmax()
+					<< fade_name_interval.second->get_max0();
+				stmt.exec();
+				break;
+			}catch(cppdb::cppdb_error &)
+			{
+				usleep(10);
+				continue;
+			}
+		}
 	}
 
 	pair<string, Polynomial_1dCOP> poly_name_fn;
 	foreach(poly_name_fn, HBPoly1D_lookup_by_name_){
-		statement stmt = (*db_session)
-			<< "INSERT INTO hbond_polynomial_1d VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
-			<< database_tag
-			<< poly_name_fn.first
-			<< HBondTypeManager::name_from_geo_dim_type(poly_name_fn.second->geometric_dimension())
-			<< poly_name_fn.second->xmin()
-			<< poly_name_fn.second->xmax()
-			<< poly_name_fn.second->min_val()
-			<< poly_name_fn.second->max_val()
-			<< poly_name_fn.second->root1()
-			<< poly_name_fn.second->root2()
-			<< poly_name_fn.second->degree();
-		for(Size i = 1; i <= poly_name_fn.second->degree(); ++i){
-			stmt << poly_name_fn.second->coefficients()[i];
+		while(true)
+		{
+			try
+			{
+				statement stmt = (*db_session)
+					<< "INSERT INTO hbond_polynomial_1d VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
+					<< database_tag
+					<< poly_name_fn.first
+					<< HBondTypeManager::name_from_geo_dim_type(poly_name_fn.second->geometric_dimension())
+					<< poly_name_fn.second->xmin()
+					<< poly_name_fn.second->xmax()
+					<< poly_name_fn.second->min_val()
+					<< poly_name_fn.second->max_val()
+					<< poly_name_fn.second->root1()
+					<< poly_name_fn.second->root2()
+					<< poly_name_fn.second->degree();
+				for(Size i = 1; i <= poly_name_fn.second->degree(); ++i){
+					stmt << poly_name_fn.second->coefficients()[i];
+				}
+				for(Size i = 1; i <= 11-poly_name_fn.second->degree(); ++i){
+					stmt << cppdb::null;
+				}
+				stmt.exec();
+				break;
+			}catch(cppdb::cppdb_error &)
+			{
+				usleep(10);
+				continue;
+			}
 		}
-		for(Size i = 1; i <= 11-poly_name_fn.second->degree(); ++i){
-			stmt << cppdb::null;
-		}
-		stmt.exec();
 	}
 
 	for (Size hbdon=1; hbdon <= hbdon_MAX; ++hbdon){
@@ -998,23 +1020,34 @@ HBondDatabase::report_parameter_features(
 				HBEvalType const hbe(HBEval_lookup(hbdon, hbacc, hbseq_sep));
 				if(!hbe) continue;
 
-				statement stmt = (*db_session)
-					<< "INSERT INTO hbond_evaluation_types VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
-					<< database_tag
-					<< don_chem_type
-					<< acc_chem_type
-					<< separation
-					<< AHdist_short_fade_lookup(hbe)->get_name()
-					<< AHdist_long_fade_lookup(hbe)->get_name()
-					<< cosBAH_fade_lookup(hbe)->get_name()
-					<< cosAHD_fade_lookup(hbe)->get_name()
-					<< AHdist_poly_lookup(hbe)->name()
-					<< cosBAH_short_poly_lookup(hbe)->name()
-					<< cosBAH_long_poly_lookup(hbe)->name()
-					<< cosAHD_short_poly_lookup(hbe)->name()
-					<< cosAHD_long_poly_lookup(hbe)->name()
-					<< HBondTypeManager::name_from_weight_type(weight_type_lookup(hbe));
-				stmt.exec();
+				while(true)
+				{
+					try
+					{
+						statement stmt = (*db_session)
+							<< "INSERT INTO hbond_evaluation_types VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
+							<< database_tag
+							<< don_chem_type
+							<< acc_chem_type
+							<< separation
+							<< AHdist_short_fade_lookup(hbe)->get_name()
+							<< AHdist_long_fade_lookup(hbe)->get_name()
+							<< cosBAH_fade_lookup(hbe)->get_name()
+							<< cosAHD_fade_lookup(hbe)->get_name()
+							<< AHdist_poly_lookup(hbe)->name()
+							<< cosBAH_short_poly_lookup(hbe)->name()
+							<< cosBAH_long_poly_lookup(hbe)->name()
+							<< cosAHD_short_poly_lookup(hbe)->name()
+							<< cosAHD_long_poly_lookup(hbe)->name()
+							<< HBondTypeManager::name_from_weight_type(weight_type_lookup(hbe));
+						stmt.exec();
+						break;
+					}catch(cppdb::cppdb_error &)
+					{
+						usleep(10);
+						continue;
+					}
+				}
 			}
 		}
 	}

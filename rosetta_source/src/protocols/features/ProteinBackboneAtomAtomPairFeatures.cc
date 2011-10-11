@@ -132,26 +132,37 @@ ProteinBackboneAtomAtomPairFeatures::report_features(
 			Vector const & C2(res2.xyz("C"));
 			Vector const & O2(res2.xyz("O"));
 
-			statement stmt = (*db_session)
-				<< "INSERT INTO protein_backbone_atom_atom_pairs VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
-				<< struct_id << resNum1 << resNum2
-				<< N1.distance(N2)
-				<< N1.distance(Ca2)
-				<< N1.distance(C2)
-				<< N1.distance(O2)
-				<< Ca1.distance(N2)
-				<< Ca1.distance(Ca2)
-				<< Ca1.distance(C2)
-				<< Ca1.distance(O2)
-				<< C1.distance(N2)
-				<< C1.distance(Ca2)
-				<< C1.distance(C2)
-				<< C1.distance(O2)
-				<< O1.distance(N2)
-				<< O1.distance(Ca2)
-				<< O1.distance(C2)
-				<< O1.distance(O2);
-			stmt.exec();
+			while(true)
+			{
+				try
+				{
+					statement stmt = (*db_session)
+						<< "INSERT INTO protein_backbone_atom_atom_pairs VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
+						<< struct_id << resNum1 << resNum2
+						<< N1.distance(N2)
+						<< N1.distance(Ca2)
+						<< N1.distance(C2)
+						<< N1.distance(O2)
+						<< Ca1.distance(N2)
+						<< Ca1.distance(Ca2)
+						<< Ca1.distance(C2)
+						<< Ca1.distance(O2)
+						<< C1.distance(N2)
+						<< C1.distance(Ca2)
+						<< C1.distance(C2)
+						<< C1.distance(O2)
+						<< O1.distance(N2)
+						<< O1.distance(Ca2)
+						<< O1.distance(C2)
+						<< O1.distance(O2);
+					stmt.exec();
+					break;
+				}catch(cppdb::cppdb_error &)
+				{
+					usleep(10);
+					continue;
+				}
+			}
 		} //res2
 	} //res1
 	return 0;

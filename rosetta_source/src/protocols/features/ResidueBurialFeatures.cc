@@ -125,17 +125,28 @@ ResidueBurialFeatures::report_features(
 		EnergyMap nv_emap;
 		nv_score_->residue_energy(res, pose, nv_emap);
 
-		statement stmt = (*db_session)
-			<< "INSERT INTO residue_burial VALUES (?,?,?,?,?,?,?,?);"
-			<< struct_id
-			<< resNum
-			<< ten_a_neighbors
-			<< twelve_a_neighbors
-			<< nv_emap[neigh_vect_raw]
-			<< residue_sasa_s[resNum]
-			<< residue_sasa_m[resNum]
-			<< residue_sasa_l[resNum];
-		stmt.exec();
+		while(true)
+		{
+			try
+			{
+				statement stmt = (*db_session)
+					<< "INSERT INTO residue_burial VALUES (?,?,?,?,?,?,?,?);"
+					<< struct_id
+					<< resNum
+					<< ten_a_neighbors
+					<< twelve_a_neighbors
+					<< nv_emap[neigh_vect_raw]
+					<< residue_sasa_s[resNum]
+					<< residue_sasa_m[resNum]
+					<< residue_sasa_l[resNum];
+				stmt.exec();
+				break;
+			}catch(cppdb::cppdb_error &)
+			{
+				usleep(10);
+				continue;
+			}
+		}
 	}
 	return 0;
 }

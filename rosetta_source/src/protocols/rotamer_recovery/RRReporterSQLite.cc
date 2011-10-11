@@ -275,21 +275,32 @@ RRReporterSQLite::report_rotamer_recovery_full(
 		struct2_name = JobDistributor::get_instance()->current_job()->input_tag();
 	}
 
-	statement stmt = (*db_session_)
-		<< "INSERT INTO rotamer_recovery VALUES (?,?,?,?,?,?,?,?,?,?,?,?);"
-		<< struct1_name
-		<< res1.name1()
-		<< res1.type().name()
-		<< res1.chain()
-		<< res1.seqpos()
-		<< struct2_name
-		<< res2.chain()
-		<< res2.seqpos()
-		<< comparer_name_
-		<< comparer_params_
-		<< score
-		<< recovered;
-	stmt.exec();
+	while(true)
+	{
+		try
+		{
+			statement stmt = (*db_session_)
+				<< "INSERT INTO rotamer_recovery VALUES (?,?,?,?,?,?,?,?,?,?,?,?);"
+				<< struct1_name
+				<< res1.name1()
+				<< res1.type().name()
+				<< res1.chain()
+				<< res1.seqpos()
+				<< struct2_name
+				<< res2.chain()
+				<< res2.seqpos()
+				<< comparer_name_
+				<< comparer_params_
+				<< score
+				<< recovered;
+			stmt.exec();
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 }
 
 void
@@ -300,12 +311,23 @@ RRReporterSQLite::report_rotamer_recovery_features(
 ){
 
 
-	statement stmt = (*db_session_)
-		<< "INSERT INTO rotamer_recovery VALUES (?,?,?);"
-		<< struct_id1
-		<< res1.seqpos()
-		<< score;
-	stmt.exec();
+	while(true)
+	{
+		try
+		{
+			statement stmt = (*db_session_)
+				<< "INSERT INTO rotamer_recovery VALUES (?,?,?);"
+				<< struct_id1
+				<< res1.seqpos()
+				<< score;
+			stmt.exec();
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 }
 
 void

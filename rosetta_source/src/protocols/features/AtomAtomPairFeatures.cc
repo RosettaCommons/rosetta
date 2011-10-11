@@ -35,6 +35,7 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+#include <cppdb/errors.h>
 
 namespace protocols{
 namespace features{
@@ -165,16 +166,28 @@ AtomAtomPairFeatures::report_atom_pairs(
 				for(Size atmNum2=1; atmNum2 <= max_atm; ++atmNum2){
 					for(Size dist_bin=1; dist_bin <= 15; ++dist_bin){
 						Size const count(counts(aa1, atmNum1, aa2, atmNum2, dist_bin));
-						statement stmt = (*db_session)
-							<< "INSERT INTO atom_pairs VALUES (?,?,?,?,?,?,?);"
-							<< struct_id
-							<< aa1
-							<< atmNum1
-							<< aa2
-							<< atmNum2
-							<< dist_bin
-							<< count;
-						stmt.exec();
+						while(true)
+						{
+							try
+							{
+								statement stmt = (*db_session)
+									<< "INSERT INTO atom_pairs VALUES (?,?,?,?,?,?,?);"
+									<< struct_id
+									<< aa1
+									<< atmNum1
+									<< aa2
+									<< atmNum2
+									<< dist_bin
+									<< count;
+								stmt.exec();
+								break;
+							}catch(cppdb::cppdb_error &)
+							{
+								usleep(10);
+								continue;
+							}
+						}
+
 					}
 				}
 			}

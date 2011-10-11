@@ -171,18 +171,40 @@ ResidueConformationFeatures::report_features(
 	
 		for(core::Size chi_num = 1; chi_num <= resi.nchi();++chi_num){
 			core::Real chi_angle = resi.chi(chi_num);
-			statement stmt = (*db_session) <<
-					"INSERT INTO nonprotein_residue_angles VALUES (?,?,?,?)" <<
-					struct_id << i << chi_num << chi_angle;
-			stmt.exec();
+			while(true)
+			{
+				try
+				{
+					statement stmt = (*db_session) <<
+							"INSERT INTO nonprotein_residue_angles VALUES (?,?,?,?)" <<
+							struct_id << i << chi_num << chi_angle;
+					stmt.exec();
+					break;
+				}catch(cppdb::cppdb_error &)
+				{
+					usleep(10);
+					continue;
+				}
+			}
 		}
 		if(!ideal || resi.is_ligand()){ // always store coords for a ligand
 			for(Size atom = 1; atom <= resi.natoms(); ++atom){
 				core::Vector coords = resi.xyz(atom);
-				statement stmt = (*db_session) <<
-					"INSERT INTO residue_atom_coords VALUES(?,?,?,?,?,?)" <<
-					struct_id << i << atom << coords.x() << coords.y() <<coords.z();
-				stmt.exec();
+				while(true)
+				{
+					try
+					{
+						statement stmt = (*db_session) <<
+							"INSERT INTO residue_atom_coords VALUES(?,?,?,?,?,?)" <<
+							struct_id << i << atom << coords.x() << coords.y() <<coords.z();
+						stmt.exec();
+						break;
+					}catch(cppdb::cppdb_error &)
+					{
+						usleep(10);
+						continue;
+					}
+				}
 			}
 		}
 	}
@@ -195,12 +217,23 @@ ResidueConformationFeatures::delete_record(
 	Size struct_id,
 	sessionOP db_session
 ){
-	statement stmt = (*db_session) << "DELETE FROM nonprotein_residue_conformation WHERE struct_id == ?;\n"<<struct_id;
-	stmt.exec();
-	stmt = (*db_session) << "DELETE FROM nonprotein_residue_angles WHERE struct_id == ?;\n" << struct_id;
-	stmt.exec();
-	stmt = (*db_session) << "DELETE FROM residue_atom_coords WHERE struct_id == ?;" << struct_id;
-	stmt.exec();
+	while(true)
+	{
+		try
+		{
+			statement stmt = (*db_session) << "DELETE FROM nonprotein_residue_conformation WHERE struct_id == ?;\n"<<struct_id;
+			stmt.exec();
+			stmt = (*db_session) << "DELETE FROM nonprotein_residue_angles WHERE struct_id == ?;\n" << struct_id;
+			stmt.exec();
+			stmt = (*db_session) << "DELETE FROM residue_atom_coords WHERE struct_id == ?;" << struct_id;
+			stmt.exec();
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 }
 
 void
@@ -219,69 +252,91 @@ ResidueConformationFeatures::load_conformation(
 	Pose & pose
 ){
 	if(pose.is_fullatom()){
-		result protein_res = (*db_session) <<
-			"SELECT\n"
-			"	seqpos,\n"
-			"	phi,\n"
-			"	psi,\n"
-			"	omega\n"
-			"FROM\n"
-			"	nonprotein_residue_conformation\n"
-			"WHERE\n"
-			"	nonprotein_residue_conformation.struct_id=?;" << struct_id;
-		result res_conformation = (*db_session) <<
-			"SELECT\n"
-			"	seqpos,\n"
-			"	chinum,\n"
-			"	chiangle\n"
-			"FROM\n"
-			"	nonprotein_residue_angles\n"
-			"WHERE\n"
-			"	nonprotein_residue_angles.struct_id=?;" << struct_id;
+		while(true)
+		{
+			try
+			{
+				result protein_res = (*db_session) <<
+					"SELECT\n"
+					"	seqpos,\n"
+					"	phi,\n"
+					"	psi,\n"
+					"	omega\n"
+					"FROM\n"
+					"	nonprotein_residue_conformation\n"
+					"WHERE\n"
+					"	nonprotein_residue_conformation.struct_id=?;" << struct_id;
+				result res_conformation = (*db_session) <<
+					"SELECT\n"
+					"	seqpos,\n"
+					"	chinum,\n"
+					"	chiangle\n"
+					"FROM\n"
+					"	nonprotein_residue_angles\n"
+					"WHERE\n"
+					"	nonprotein_residue_angles.struct_id=?;" << struct_id;
 
-		while(protein_res.next()){
-			Size seqpos;
-			Real phi,psi,omega;
-			protein_res >> seqpos >> phi >> psi >> omega;
-			if (pose.residue_type(seqpos).is_protein()){
-				pose.set_phi(seqpos,phi);
-				pose.set_psi(seqpos,psi);
-				pose.set_omega(seqpos,omega);
+				while(protein_res.next()){
+					Size seqpos;
+					Real phi,psi,omega;
+					protein_res >> seqpos >> phi >> psi >> omega;
+					if (pose.residue_type(seqpos).is_protein()){
+						pose.set_phi(seqpos,phi);
+						pose.set_psi(seqpos,psi);
+						pose.set_omega(seqpos,omega);
+					}
+				}
+				while(res_conformation.next()){
+					//Size nchi(pose.residue_type(seqpos).nchi());
+					Size seqpos;
+					Size chinum;
+					Real chiangle;
+					set_coords_for_residue(db_session,struct_id,seqpos,pose);
+					res_conformation >> seqpos >> chinum >> chiangle;
+					pose.set_chi(chinum,seqpos,chiangle);
+				}
+				break;
+			}catch(cppdb::cppdb_error &)
+			{
+				usleep(10);
+				continue;
 			}
-		}
-		while(res_conformation.next()){
-			//Size nchi(pose.residue_type(seqpos).nchi());
-			Size seqpos;
-			Size chinum;
-			Real chiangle;
-			set_coords_for_residue(db_session,struct_id,seqpos,pose);
-			res_conformation >> seqpos >> chinum >> chiangle;
-			pose.set_chi(chinum,seqpos,chiangle);
 		}
 
 	}else{
-		result protein_res = (*db_session) <<
-			"SELECT\n"
-			"	seqpos,\n"
-			"	phi,\n"
-			"	psi,\n"
-			"	omega\n"
-			"FROM\n"
-			"	nonprotein_residue_conformation\n"
-			"WHERE\n"
-			"	nonprotein_residue_conformation.struct_id=?;" << struct_id;
-		while(protein_res.next()){
-			Size seqpos;
-			Real phi,psi,omega;
-			protein_res >> seqpos >> phi >> psi >> omega;
-			if (!pose.residue_type(seqpos).is_protein()){
-				// WARNING why are you storing non-protein in the ProteinSilentReport?
+		while(true)
+		{
+			try
+			{
+				result protein_res = (*db_session) <<
+					"SELECT\n"
+					"	seqpos,\n"
+					"	phi,\n"
+					"	psi,\n"
+					"	omega\n"
+					"FROM\n"
+					"	nonprotein_residue_conformation\n"
+					"WHERE\n"
+					"	nonprotein_residue_conformation.struct_id=?;" << struct_id;
+				while(protein_res.next()){
+					Size seqpos;
+					Real phi,psi,omega;
+					protein_res >> seqpos >> phi >> psi >> omega;
+					if (!pose.residue_type(seqpos).is_protein()){
+						// WARNING why are you storing non-protein in the ProteinSilentReport?
+						continue;
+					}
+					set_coords_for_residue(db_session,struct_id,seqpos,pose);
+					pose.set_phi(seqpos,phi);
+					pose.set_psi(seqpos,psi);
+					pose.set_omega(seqpos,omega);
+				}
+				break;
+			}catch(cppdb::cppdb_error &)
+			{
+				usleep(10);
 				continue;
 			}
-			set_coords_for_residue(db_session,struct_id,seqpos,pose);
-			pose.set_phi(seqpos,phi);
-			pose.set_psi(seqpos,psi);
-			pose.set_omega(seqpos,omega);
 		}
 	}
 }
@@ -294,24 +349,35 @@ void ResidueConformationFeatures::set_coords_for_residue(
 		Pose & pose
 ){
 
-	result res = (*db_session) <<
-			"SELECT\n"
-			"	atomno,\n"
-			"	x,\n"
-			"	y,\n"
-			"	z\n"
-			"FROM\n"
-			"	residue_atom_coords\n"
-			"WHERE\n"
-			"residue_atom_coords.struct_id=? AND residue_atom_coords.seqpos=?;" << struct_id <<	seqpos;
-	while(res.next()){
-		Size atomno;
-		Real x,y,z;
-		res >> atomno >> x >> y >> z;
+	while(true)
+	{
+		try
+		{
+			result res = (*db_session) <<
+					"SELECT\n"
+					"	atomno,\n"
+					"	x,\n"
+					"	y,\n"
+					"	z\n"
+					"FROM\n"
+					"	residue_atom_coords\n"
+					"WHERE\n"
+					"residue_atom_coords.struct_id=? AND residue_atom_coords.seqpos=?;" << struct_id <<	seqpos;
+			while(res.next()){
+				Size atomno;
+				Real x,y,z;
+				res >> atomno >> x >> y >> z;
 
-		core::id::AtomID atom_id(atomno,seqpos);
-		core::Vector coords(x,y,z);
-		pose.set_xyz(atom_id,coords);
+				core::id::AtomID atom_id(atomno,seqpos);
+				core::Vector coords(x,y,z);
+				pose.set_xyz(atom_id,coords);
+			}
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
 	}
 
 }

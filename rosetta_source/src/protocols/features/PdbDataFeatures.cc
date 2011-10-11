@@ -119,17 +119,28 @@ void PdbDataFeatures::load_pdb_info(
 	utility::vector1<core::Size> pdb_numbers;
 	utility::vector1<char> pdb_chains;
 	utility::vector1<char> insertion_codes;
-
-	cppdb::result res = (*db_session) <<
-		"SELECT\n"
-		"	residue_number,\n"
-		"	chain_id,\n"
-		"	insertion_code,\n"
-		"	pdb_residue_number\n"
-		"FROM\n"
-		"	residue_pdb_identification\n"
-		"WHERE\n"
-		"	residue_pdb_identification.struct_id=?;" <<struct_id;
+	cppdb::result res;
+	while(true)
+	{
+		try
+		{
+			res = (*db_session) <<
+				"SELECT\n"
+				"	residue_number,\n"
+				"	chain_id,\n"
+				"	insertion_code,\n"
+				"	pdb_residue_number\n"
+				"FROM\n"
+				"	residue_pdb_identification\n"
+				"WHERE\n"
+				"	residue_pdb_identification.struct_id=?;" <<struct_id;
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 
 	while(res.next()) {
 		core::Size residue_number;
@@ -166,14 +177,25 @@ void PdbDataFeatures::insert_pdb_info_rows(core::Size struct_id,
 		std::string insertion_code(&pose.pdb_info()->icode(index),1);
 		core::Size pdb_residue_number = pose.pdb_info()->number(index);
 
-		cppdb::statement stmt = (*db_session)
-			<< "INSERT INTO residue_pdb_identification VALUES (?,?,?,?,?);"
-			<< struct_id
-			<< index
-			<< chain_id
-			<< insertion_code
-			<< pdb_residue_number;
-		stmt.exec();
+		while(true)
+		{
+			try
+			{
+				cppdb::statement stmt = (*db_session)
+					<< "INSERT INTO residue_pdb_identification VALUES (?,?,?,?,?);"
+					<< struct_id
+					<< index
+					<< chain_id
+					<< insertion_code
+					<< pdb_residue_number;
+				stmt.exec();
+				break;
+			}catch(cppdb::cppdb_error &)
+			{
+				usleep(10);
+				continue;
+			}
+		}
 	}
 }
 
