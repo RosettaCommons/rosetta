@@ -115,6 +115,7 @@ void compute_per_residue_probabilities(const unsigned num_residues,
                                        const core::fragment::FragSet& fragments,
                                        Probabilities* probs) {
   using namespace std;
+  assert(probs);
 
   Probabilities p_alignment, p_chunk, p_cut, p_end;
   alignment_probabilities(num_residues, alignment, &p_alignment);
