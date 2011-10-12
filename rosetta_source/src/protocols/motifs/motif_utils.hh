@@ -226,6 +226,13 @@ atom_specific_rms(
 	utility::vector1< std::string > const & atoms
 );
 
+core::Real
+atom_specific_rms(
+	core::conformation::Residue const & rsd1,
+	core::conformation::Residue const & rsd2,
+	utility::vector1< core::Size > const & atoms
+);
+
 core::pack::rotamer_set::RotamerSetOP
 build_rotamers_lite(
 	core::pose::Pose & pose,

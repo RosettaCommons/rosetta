@@ -319,7 +319,8 @@ PackerTask & task) const
 		}
 		//Now we have two ways to find interface: typical sphere method, and new arg sweep method (if arginine rotamers can interact with ligand, position is designable)
 		if ( arg_sweep_interface_ == true ) {
-			find_design_interface_arg_sweep( pose, interface_target_res, cut1, cut2, cut3, cut4, repack_res, design_res );
+			core::Real arg_sweep_cutoff(arg_sweep_cutoff_);
+			find_design_interface_arg_sweep( pose, interface_target_res, cut1, cut2, cut3, cut4, arg_sweep_cutoff, repack_res, design_res );
 		} else {
 			find_design_interface( pose, interface_target_res, cut1, cut2, cut3, cut4, repack_res, design_res );
 		}
@@ -506,6 +507,7 @@ DetectProteinLigandInterface::find_design_interface_arg_sweep(
 	core::Real cut2,
 	core::Real cut3,
 	core::Real cut4,
+	core::Real arg_sweep_cutoff,
 	utility::vector1< bool > & repack_res,
 	utility::vector1< bool > & design_res
 ) const
@@ -534,7 +536,7 @@ DetectProteinLigandInterface::find_design_interface_arg_sweep(
 			if( interface_target_res.find( i ) != interface_target_res.end() ) continue;
 	    core::conformation::Residue const & prot_rsd = pose.residue(i);
 			// Defining private members as magic numbers, shouldn't do this...
-			core::Real contact_threshold_ = 3.3 * 3.3 ; // Originally 3.7*3.7 (13.7)
+			core::Real contact_threshold_ = arg_sweep_cutoff * arg_sweep_cutoff ; // Originally 3.7*3.7 (13.7)
 			core::Real close_threshold_ =  10. * 10. ;
 			bool base_only_ = false; //Doesn't matter here, chooses between all atoms in residue and sidechain atoms for iterator
 

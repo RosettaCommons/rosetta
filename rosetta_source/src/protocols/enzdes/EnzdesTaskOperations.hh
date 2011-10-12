@@ -117,6 +117,7 @@ public:
 		core::Real cut2,
 		core::Real cut3,
 		core::Real cut4,
+		core::Real arg_sweep_cutoff,
 	 	utility::vector1< bool > & repack_res,
 		utility::vector1< bool > & design_res
 		) const;

@@ -250,6 +250,15 @@ Motif::Motif(
   res1_atom1_index_ = rsd_type1.atom_index( res1_atom1_name_ );
 	res1_atom2_index_ = rsd_type1.atom_index( res1_atom2_name_ );
 	res1_atom3_index_ = rsd_type1.atom_index( res1_atom3_name_ );
+// mt << "Res1: " <<  res1_atom1_name_ << res1_atom2_name_ << res1_atom3_name_ << " res2: " << res2_atom1_name_ << res2_atom2_name_ << res2_atom3_name_ << std::endl;
+	//int res1_atom1_int_ = rsd_type.atom_type_index( res1_atom1_index_);
+	//int res1_atom2_int_ = rsd_type.atom_type_index( res1_atom2_index_ );
+	//int res1_atom3_int_ = rsd_type.atom_type_index( res1_atom3_index_ );
+  core::chemical::AtomTypeSetCAP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( core::chemical::FA_STANDARD );
+	res2_atom1_int_ = atset->atom_type_index(res2_atom1_name_);
+	res2_atom2_int_ = atset->atom_type_index(res2_atom2_name_);
+	res2_atom3_int_ = atset->atom_type_index(res2_atom3_name_);
+ // mt << " res2: " << res2_atom1_int_ << ", " << res2_atom2_int_ << ", " << res2_atom3_int_ << std::endl;
 }
 
 Motif::Motif(
@@ -319,6 +328,9 @@ Motif::Motif(
 	res1_atom1_index_( src.res1_atom1_index_ ),
 	res1_atom2_index_( src.res1_atom2_index_ ),
 	res1_atom3_index_( src.res1_atom3_index_ ),
+	res1_atom1_int_( src.res1_atom1_int_ ),
+	res1_atom2_int_( src.res1_atom2_int_ ),
+	res1_atom3_int_( src.res1_atom3_int_ ),
 	restype_name2_( src.restype_name2_ ),
 	res2_atom1_name_( src.res2_atom1_name_ ),
 	res2_atom2_name_( src.res2_atom2_name_ ),
@@ -326,6 +338,9 @@ Motif::Motif(
 	res2_atom1_index_( src.res2_atom1_index_ ),
 	res2_atom2_index_( src.res2_atom2_index_ ),
 	res2_atom3_index_( src.res2_atom3_index_ ),
+	res2_atom1_int_( src.res2_atom1_int_ ),
+	res2_atom2_int_( src.res2_atom2_int_ ),
+	res2_atom3_int_( src.res2_atom3_int_ ),
 	forward_jump_( src.forward_jump_ ),
 	backward_jump_( src.backward_jump_ ),
 	remark_( src.remark_ ),
@@ -367,6 +382,50 @@ Motif::apply_check(
 {
 	return( utility::trimmed_compare( pose.residue( pos ).name3(), restype_name1_ ) ||
 					utility::trimmed_compare( pose.residue( pos ).name3(), restype_name2_ ) );
+}
+/*
+// Search constructor for reading out the motifs from the motif file for ligands
+Motif::Motif(
+ std::string const resname1,
+ std::string const res1_atom1,
+ std::string const res1_atom2,
+ std::string const res1_atom3,
+ std::string const res2_atom1,
+ std::string const res2_atom2,
+ std::string const res2_atom3,
+ core::kinematics::Jump const & orientation
+)
+{
+		restype_name1_ = resname1;
+		res1_atom1_name_ = res1_atom1;
+		res1_atom2_name_ = res1_atom2;
+		res1_atom3_name_ = res1_atom3;
+		restype_name2_ = "LG1"; //We need to give the second residue (ligand residue) some random name
+		res2_atom1_name_ = res2_atom1;
+		res2_atom2_name_ = res2_atom2;
+		res2_atom3_name_ = res2_atom3;
+*/
+void
+Motif::generate_atom_ints(
+)
+{
+  core::chemical::AtomTypeSetCAP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( core::chemical::FA_STANDARD );
+ mt << "Res1: " <<  res1_atom1_name_ << res1_atom2_name_ << res1_atom3_name_ << " res2: " << res2_atom1_name_ << res2_atom2_name_ << res2_atom3_name_ << std::endl;
+
+	core::chemical::ResidueTypeSet & rsd_set( core::chemical::ChemicalManager::get_instance()->nonconst_residue_type_set( core::chemical::FA_STANDARD ) );
+	core::chemical::ResidueType const & rsd_type( rsd_set.name_map( restype_name1_ ) );
+	Size res1_atom1_index = rsd_type.atom_index( res1_atom1_name_ );
+	Size res1_atom2_index = rsd_type.atom_index( res1_atom2_name_ );
+	Size res1_atom3_index = rsd_type.atom_index( res1_atom3_name_ );
+
+	int res1_atom1_int_ = rsd_type.atom_type_index( res1_atom1_index);
+	int res1_atom2_int_ = rsd_type.atom_type_index( res1_atom2_index );
+	int res1_atom3_int_ = rsd_type.atom_type_index( res1_atom3_index );
+	int res2_atom1_int_ = atset->atom_type_index(res2_atom1_name_);
+	int res2_atom2_int_ = atset->atom_type_index(res2_atom2_name_);
+	int res2_atom3_int_ = atset->atom_type_index(res2_atom3_name_);
+ mt << " res2: " << res2_atom1_int_ << ", " << res2_atom2_int_ << ", " << res2_atom3_int_ << std::endl;
+	return;
 }
 
 void
@@ -500,7 +559,7 @@ void
 Motif::place_atoms(
 	core::conformation::Residue const & fixed,
 	core::conformation::Residue & mobile,
-	utility::vector1< std::string > const & atoms,
+	utility::vector1< Size > const & atoms,
 	  Size const & res2_atom1_index_in,
 	  Size const & res2_atom2_index_in,
     Size const & res2_atom3_index_in,
@@ -508,7 +567,7 @@ Motif::place_atoms(
 ) const
 {
 std::string ligand_name( "LG1" );
-	if( utility::trimmed_compare( protocols::dna::dna_full_name3( fixed.name3() ), restype_name1_ ) &&
+/*	if( utility::trimmed_compare( protocols::dna::dna_full_name3( fixed.name3() ), restype_name1_ ) &&
 			utility::trimmed_compare( protocols::dna::dna_full_name3( mobile.name3() ), restype_name2_ ) ) {
 			return place_atoms_( fixed, mobile, true, atoms, one_three );
 
@@ -516,7 +575,7 @@ std::string ligand_name( "LG1" );
 			utility::trimmed_compare( protocols::dna::dna_full_name3( mobile.name3() ), restype_name1_ ) ) {
 			return place_atoms_( fixed, mobile, false, atoms, one_three );
 
-	} else if ( utility::trimmed_compare( protocols::dna::dna_full_name3( fixed.name3() ), restype_name1_ ) &&
+	} else*/ if ( utility::trimmed_compare( protocols::dna::dna_full_name3( fixed.name3() ), restype_name1_ ) &&
 			utility::trimmed_compare( ligand_name , restype_name2_ ) ) {
 			return place_atoms_( fixed, mobile, true, atoms, res2_atom1_index_in, res2_atom2_index_in, res2_atom3_index_in, one_three ); //This is Matt's new test for ligands
 	} else {
@@ -538,7 +597,8 @@ Motif::place_atom(
 	Size const & res2_atom1_index_in,
 	Size const & res2_atom2_index_in,
 	Size const & res2_atom3_index_in,
-	std::string const & atomtype,
+	//std::string const & atomtype,
+	Size const & atomtype,
 	bool one_three
 ) const
 {
@@ -586,7 +646,8 @@ Motif::place_atom_(
 	Size const & res2_atom1_index_in,
 	Size const & res2_atom2_index_in,
 	Size const & res2_atom3_index_in,
-	std::string const & atomtype,
+	//std::string const & atomtype,
+	Size const & atomtype,
 	bool one_three
 ) const
 {
@@ -1064,7 +1125,7 @@ Motif::place_atoms_(
 	core::conformation::Residue const & fixed,
 	core::conformation::Residue & mobile,
 	bool forward,
-	utility::vector1< std::string > const & atoms,
+	utility::vector1< Size > const & atoms,
 	  Size const & res2_atom1_index_in,
 	  Size const & res2_atom2_index_in,
     Size const & res2_atom3_index_in,

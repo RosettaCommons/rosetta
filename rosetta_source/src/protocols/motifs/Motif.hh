@@ -143,6 +143,10 @@ public:
 		Size const pos
 	) const;
 
+	// Make atom integers for this motif
+	virtual void
+	generate_atom_ints();
+
 	virtual core::pack::rotamer_set::RotamerSetOP
 	build_rotamers(
 		core::pose::Pose & pose,
@@ -231,7 +235,7 @@ public:
 	place_atoms(
 		core::conformation::Residue const & fixed,
 		core::conformation::Residue & mobile,
-		utility::vector1< std::string > const & atoms,
+		utility::vector1< Size > const & atoms,
 		Size const & res2_atom1_index_in,
 		Size const & res2_atom2_index_in,
 		Size const & res2_atom3_index_in,
@@ -247,7 +251,7 @@ public:
 		Size const & res2_atom1_index_in,
 		Size const & res2_atom2_index_in,
 		Size const & res2_atom3_index_in,
-		std::string const & atomtype,
+		Size const & atomtype,
 		bool one_three = true
 	) const;
 
@@ -273,7 +277,7 @@ public:
 	  Size const & res2_atom1_index_in,
 	  Size const & res2_atom2_index_in,
     Size const & res2_atom3_index_in,
-		std::string const & atomtype,
+		Size const & atomtype,
 		bool one_three = true
 	) const;
 
@@ -283,7 +287,7 @@ public:
 		core::conformation::Residue const & fixed,
 		core::conformation::Residue & mobile,
 		bool forward,
-		utility::vector1< std::string > const & atoms,
+		utility::vector1< Size > const & atoms,
 	  Size const & res2_atom1_index_in,
 	  Size const & res2_atom2_index_in,
     Size const & res2_atom3_index_in,
@@ -323,6 +327,9 @@ public:
 	std::string const & res1_atom1_name() const { return res1_atom1_name_; }
 	std::string const & res1_atom2_name() const { return res1_atom2_name_; }
 	std::string const & res1_atom3_name() const { return res1_atom3_name_; }
+	int const & res1_atom1_int() const { return res1_atom1_int_; }
+	int const & res1_atom2_int() const { return res1_atom2_int_; }
+	int const & res1_atom3_int() const { return res1_atom3_int_; }
 	Size const & res1_atom1_index() const { return res1_atom1_index_; }
 	Size const & res1_atom2_index() const { return res1_atom2_index_; }
 	Size const & res1_atom3_index() const { return res1_atom3_index_; }
@@ -330,6 +337,9 @@ public:
 	std::string const & res2_atom1_name() const { return res2_atom1_name_; }
 	std::string const & res2_atom2_name() const { return res2_atom2_name_; }
 	std::string const & res2_atom3_name() const { return res2_atom3_name_; }
+	int const & res2_atom1_int() const { return res2_atom1_int_; }
+	int const & res2_atom2_int() const { return res2_atom2_int_; }
+	int const & res2_atom3_int() const { return res2_atom3_int_; }
 	Size const & res2_atom1_index() const { return res2_atom1_index_; }
 	Size const & res2_atom2_index() const { return res2_atom2_index_; }
 	Size const & res2_atom3_index() const { return res2_atom3_index_; }
@@ -346,6 +356,9 @@ private:
 	std::string res1_atom1_name_;
 	std::string res1_atom2_name_;
 	std::string res1_atom3_name_;
+	int res1_atom1_int_;
+	int res1_atom2_int_;
+	int res1_atom3_int_;
 	Size res1_atom1_index_;
 	Size res1_atom2_index_;
 	Size res1_atom3_index_;
@@ -353,6 +366,9 @@ private:
 	std::string res2_atom1_name_;
 	std::string res2_atom2_name_;
 	std::string res2_atom3_name_;
+	int res2_atom1_int_;
+	int res2_atom2_int_;
+	int res2_atom3_int_;
 	Size res2_atom1_index_;
 	Size res2_atom2_index_;
 	Size res2_atom3_index_;

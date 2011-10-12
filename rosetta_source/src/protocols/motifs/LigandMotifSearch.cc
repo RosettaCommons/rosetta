@@ -32,6 +32,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh> //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType
+#include <core/chemical/AtomTypeSet.hh> //Need this to get AtomType integers
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
@@ -253,7 +254,6 @@ LigandMotifSearch::run(
 			incorporate_motifs( pose );
 		}
 		//OK, we have either loaded motifs from file or we have found them.  Now we will add rotamers to task.
-///////////////////////////////// FROM ENZDES TASK OPERATION ///////////////////////////////////////////////
 
 
 		std::set< core::Size > src_pos;
@@ -380,9 +380,11 @@ LigandMotifSearch::incorporate_motifs(
 
 	using utility::vector1;
 	int ligand_resi_number = 0;
-	utility::vector1< utility::vector1< std::string  > > search_lig_triplets;
-	utility::vector1< utility::vector1< Size > > motif_indices_list;
-	utility::vector1< utility::vector1< Size > > all_motif_indices;
+	utility::vector1< utility::vector1< Size  > > search_lig_triplets;
+//	utility::vector1< utility::vector1< Size > > motif_indices_list;
+	utility::vector1< utility::vector1< utility::vector1< Size > > > motif_indices_list; //Now, instead of having a vector of triplet vectors containing a size for the atom number, change size to vector of size to contain atom number and atomtype size
+	//motif_indices_list[all triplets][atom i/j/k][1 is atom number, 2 is AtomType integer]
+	utility::vector1< utility::vector1< utility::vector1< Size > > > all_motif_indices;
 
 	int nres( pose.total_residue() );
 	for( int lig_pos = 1 ; lig_pos <= nres ; ++lig_pos ) {
@@ -394,26 +396,33 @@ LigandMotifSearch::incorporate_motifs(
 // This is to make a ligres object once we find our ligand
 		core::conformation::ResidueOP ligres = new core::conformation::Residue (pose.residue( lig_pos ) );
 
-
+// This is to make an atomtypeset to get atomtype integers
+					core::chemical::AtomTypeSetCAP atset = core::chemical::ChemicalManager::get_instance()->atom_type_set( FA_STANDARD );
 
 		for(core::Size atom_i = 1; atom_i <= ligres->natoms(); ++atom_i) {
 
 			//std::cout << "in atom iterate block, atom num is" << atom_i <<   std::endl;
 			std::string const atom_name = ligres->atom_name(atom_i);
+			if( ligres->atom_is_hydrogen(atom_i) ) { continue; }
 			//std::cout << "atom name is " << atom_name <<  std::endl;
 
 			// This is a for loop to iterate over each atom's connected atoms:
 			core::conformation::Residue::AtomIndices atom_i_connects(  ligres->bonded_neighbor( atom_i ) );
 			for(core::Size atom_j = 1; atom_j <= atom_i_connects.size(); ++ atom_j ) {
+				if( ligres->atom_is_hydrogen(atom_i_connects[atom_j]) ) { continue; }
 				// std::cout << "ATOM j: " << atom_i_connects[atom_j] << " Name: " << ligres.atom_name(atom_i_connects[atom_j]) << std::endl;
 
 				// This is the next for loop to find connects for the second atom, giving us the final atom number (atom k)
 				core::conformation::Residue::AtomIndices atom_j_connects(  ligres->bonded_neighbor( atom_i_connects[atom_j] ) );
 				for(core::Size atom_k = 1; atom_k <= atom_j_connects.size(); ++ atom_k ) {
+					if( ligres->atom_is_hydrogen(atom_j_connects[atom_k]) ) { continue; }
 					//std::cout << "ATOM k: " << atom_j_connects[atom_k] << " Name: " << ligres.atom_name(atom_j_connects[atom_k]) << std::endl;
 
 					chemical::AtomType atom_i_type(ligres->atom_type(atom_i));
 					std::string atom_i_name = atom_i_type.atom_type_name();
+					Size atom_i_int = atset->atom_type_index(atom_i_name);
+				// std::cout << "ATOM j: " << atom_i << " Name: " << atom_i_name << " Int: " << atom_i_int << std::endl;
+					//
 
 					//std::cout << "Connected triplet is: " << atom_i << ", type is " << atom_i_name  << ", ";
 					//std::cout << atom_i_connects[atom_j] << ", type is " << ligres.atom_type(atom_i_connects[atom_j]).atom_type_name() << ", " ;
@@ -421,15 +430,23 @@ LigandMotifSearch::incorporate_motifs(
 					if ( atom_i != atom_j_connects[atom_k] ) {
 
 						//make the 3 atom vector
-						utility::vector1< Size > cur_motif_indices;
-						utility::vector1< std::string > cur_motif_names;
-						cur_motif_indices.push_back( atom_i );
-						cur_motif_indices.push_back( atom_i_connects[atom_j] );
-						cur_motif_indices.push_back( atom_j_connects[atom_k] );
-						cur_motif_names.push_back(ligres->atom_type(atom_i).atom_type_name());
-						cur_motif_names.push_back(ligres->atom_type(atom_i_connects[atom_j]).atom_type_name() );
-						cur_motif_names.push_back(ligres->atom_type(atom_j_connects[atom_k]).atom_type_name() );
-						search_lig_triplets.push_back(cur_motif_names);
+						utility::vector1< utility::vector1< Size > > cur_motif_indices;
+
+						utility::vector1< Size > atom_i_vector;
+						atom_i_vector.push_back( atom_i );
+						atom_i_vector.push_back( atset->atom_type_index( ligres->atom_type(atom_i).atom_type_name() ) );
+
+						utility::vector1< Size > atom_j_vector;
+						atom_j_vector.push_back( atom_i_connects[atom_j] );
+						atom_j_vector.push_back( atset->atom_type_index( ligres->atom_type(atom_i_connects[atom_j]).atom_type_name() ) );
+
+						utility::vector1< Size > atom_k_vector;
+						atom_k_vector.push_back( atom_j_connects[atom_k] );
+						atom_k_vector.push_back( atset->atom_type_index( ligres->atom_type(atom_j_connects[atom_k]).atom_type_name() ) );
+
+						cur_motif_indices.push_back( atom_i_vector);
+						cur_motif_indices.push_back( atom_j_vector);
+						cur_motif_indices.push_back( atom_k_vector);
 
 						//check if current index is a duplicate
 						//don't need to do that here, but I forget what code I can delete.  I'm just going to change bool assignment.
@@ -438,10 +455,16 @@ LigandMotifSearch::incorporate_motifs(
 						if ( !motif_indices_list.empty() ) {
 							for(core::Size cur_motif_check = 1; cur_motif_check <= motif_indices_list.size(); ++ cur_motif_check) {
 								// run a test to see if vectors are identical
-								utility::vector1< Size > cur_mainlist ( motif_indices_list[cur_motif_check] );
+								utility::vector1< utility::vector1< Size > > cur_mainlist_parent ( motif_indices_list[cur_motif_check] );
+								utility::vector1< Size > cur_mainlist;
+								utility::vector1< Size > cur_index;
+								for(core::Size slice_parent = 1; slice_parent <= 3; ++ slice_parent) {
+								cur_mainlist.push_back( cur_mainlist_parent[slice_parent][1] ); }
+								for(core::Size slice_cur = 1; slice_cur <= 3; ++ slice_cur) {
+								cur_index.push_back( cur_motif_indices[slice_cur][1] ); }
+								utility::vector1< Size > sort_from_curindex (cur_index) ;
 								utility::vector1< Size > sort_from_mainlist (cur_mainlist) ;
 								std::sort(  sort_from_mainlist.begin(),  sort_from_mainlist.end() );
-								utility::vector1< Size > sort_from_curindex (cur_motif_indices) ;
 								std::sort( sort_from_curindex.begin(), sort_from_curindex.end() );
 								if ( sort_from_mainlist[1] == sort_from_curindex[1] && sort_from_mainlist[2] == sort_from_curindex[2] && sort_from_mainlist[3] == sort_from_curindex[3] ) {
 									current_is_duplicate = false;
@@ -498,25 +521,27 @@ LigandMotifSearch::incorporate_motifs(
 
 //For each motif in library
 
-	for( protocols::motifs::MotifCOPs::const_iterator motifcop_itr = motif_library.begin(), end_itr = motif_library.end();
+	for( protocols::motifs::MotifCOPs::iterator motifcop_itr = motif_library.begin(), end_itr = motif_library.end();
 			 motifcop_itr != end_itr; ++motifcop_itr ) {
 
 		protocols::motifs::MotifCOP motifcop( *motifcop_itr );
-		std::string motif_atom1_name(motifcop->res2_atom1_name());
-		std::string motif_atom2_name(motifcop->res2_atom2_name());
-		std::string motif_atom3_name(motifcop->res2_atom3_name());
+		//motifcop.generate_atom_ints();
+		int motif_atom1_int(motifcop->res2_atom1_int());
+		int motif_atom2_int(motifcop->res2_atom2_int());
+		int motif_atom3_int(motifcop->res2_atom3_int());
 // ms_tr << "Motif atom 1 type: " << motif_atom1_name << ";  Motif atom 2 type: " << motif_atom2_name <<  ";  Motif atom 3 type: " << motif_atom3_name <<  std::endl;
 		//For each triplet in ligand
-		for(core::Size cur_lig_trip = 1; cur_lig_trip <= search_lig_triplets.size(); ++ cur_lig_trip) {
-			std::string ligand_atom1_name(search_lig_triplets[cur_lig_trip][1]);
-			std::string ligand_atom2_name(search_lig_triplets[cur_lig_trip][2]);
-			std::string ligand_atom3_name(search_lig_triplets[cur_lig_trip][3]);
+		for(core::Size cur_lig_trip = 1; cur_lig_trip <= motif_indices_list.size(); ++ cur_lig_trip) {
+			int ligand_atom1_int(motif_indices_list[cur_lig_trip][1][2]);
+			int ligand_atom2_int(motif_indices_list[cur_lig_trip][2][2]);
+			int ligand_atom3_int(motif_indices_list[cur_lig_trip][3][2]);
+		//	 ms_tr << "Motif types: " <<  motif_atom1_int << " " <<  motif_atom2_int << " " <<  motif_atom3_int << ", Ligand types: " << ligand_atom1_int << " " << ligand_atom2_int << " " << ligand_atom3_int << " " << std::endl;
 			//Check to see if match
 //	 ms_tr << "Checking if match..."  <<  std::endl;
 			if (
-				motif_atom1_name	== ligand_atom1_name && motif_atom2_name == ligand_atom2_name  && motif_atom3_name == ligand_atom3_name ) {
+				motif_atom1_int	== ligand_atom1_int && motif_atom2_int == ligand_atom2_int  && motif_atom3_int == ligand_atom3_int ) {
 //also OK if it's reversed
-// ms_tr << "It's a match!"  <<  std::endl;
+ // ms_tr << "It's a match!"  <<  std::endl;
 				//also add motif to new motif library
 				pruned_motif_library.push_back(motifcop);
 				break;
@@ -533,7 +558,6 @@ LigandMotifSearch::incorporate_motifs(
 	Size next_motif_percent = motif_percent_chunk;
 	ms_tr << "Pruned motifs: "  << motif_library_size << std::endl;
 
-	motif_library = pruned_motif_library; //For convenience, we're going to overwrite the motif library with the new, pruned motif library
 ///////////////////////////////////////////////////////////////////////////
 /////////////////// done with pruning, ready to search! ///////////////////
 ///////////////////////////////////////////////////////////////////////////
@@ -602,7 +626,7 @@ LigandMotifSearch::incorporate_motifs(
 		}
 
 		// For every motif in the motif_library_
-		for( protocols::motifs::MotifCOPs::const_iterator motifcop_itr = motif_library.begin(), end_itr = motif_library.end();
+		for( protocols::motifs::MotifCOPs::const_iterator motifcop_itr = pruned_motif_library.begin(), end_itr = pruned_motif_library.end();
 				 motifcop_itr != end_itr; ++motifcop_itr ) {
 			++motif_counter;
 			if ( motif_counter == next_motif_percent ) {
@@ -638,7 +662,7 @@ LigandMotifSearch::incorporate_motifs(
 				rmsd_cutoff_2 = (rmsd_cutoff_2 / 1.33 );
 				dtest_cutoff = (dtest_cutoff / 1.33 );
 			}
-			utility::vector1< std::string > atoms;
+			//utility::vector1< std::string > atoms;
 			/*
 						// Atoms required for the parallel base test
 						// maybe these vectors should be stored as a part of this class?
@@ -719,13 +743,15 @@ LigandMotifSearch::incorporate_motifs(
 			// Important in case of the very strange situation where more than one
 			// target_position is close enough to pass the tests
 			bool tftest(false);
-			utility::vector1< Size > bestpos;
+			utility::vector1< utility::vector1< Size > > bestpos;
 			Real test(1000);
 // Used to iterate over target_positions, now we will iterate over triplets in current ligand
 			Sizes target_positions( (*ir)->target_positions() );
 
 
-			for( utility::vector1< utility::vector1< Size > >::const_iterator curtrip( motif_indices_list.begin() ), end( motif_indices_list.end() ); //prof II
+	//utility::vector1< utility::vector1< utility::vector1< Size > > > motif_indices_list; //Now, instead of having a vector of triplet vectors containing a size for the atom number, change size to vector of size to contain atom number and atomtype size
+	//motif_indices_list[all triplets][atom i/j/k][1 is atom number, 2 is AtomType integer]
+			for( utility::vector1< utility::vector1< utility::vector1< Size > > >::const_iterator curtrip( motif_indices_list.begin() ), end( motif_indices_list.end() ); //prof II
 					 curtrip != end; ++curtrip ) {
 
 				//before: bpos now: curtrip
@@ -733,18 +759,18 @@ LigandMotifSearch::incorporate_motifs(
 				//		std::set< std::string > allowed_types( target_positions_[*bpos] ); nonsensical now
 				// Should have a test to ensure that it has the atom types I'll be using?
 				// At this point, I know what my triplet is, and I know what my motif is--let's se if they match.  Otherwise, we'll continue to the next triplet.
-				utility::vector1< Size > deref_trip( *curtrip );
+				utility::vector1<  utility::vector1< Size > > deref_trip( *curtrip );
 				core::conformation::ResidueOP check_ligand = ligres;
-				std::string motif_atom1_name(motifcop->res2_atom1_name());
-				std::string motif_atom2_name(motifcop->res2_atom2_name());
-				std::string motif_atom3_name(motifcop->res2_atom3_name());
+				int motif_atom1_int(motifcop->res2_atom1_int());
+				int motif_atom2_int(motifcop->res2_atom2_int());
+				int motif_atom3_int(motifcop->res2_atom3_int());
 				//For each triplet in ligand
-				std::string ligand_atom1_name( check_ligand->atom_type(deref_trip[1]).atom_type_name());
-				std::string ligand_atom2_name( check_ligand->atom_type(deref_trip[2]).atom_type_name());
-				std::string ligand_atom3_name( check_ligand->atom_type(deref_trip[3]).atom_type_name());
+				int ligand_atom1_int( deref_trip[1][2]);
+				int ligand_atom2_int( deref_trip[2][2]);
+				int ligand_atom3_int( deref_trip[3][2]);
 				//Check to see if match
 				if (
-					motif_atom1_name  == ligand_atom1_name && motif_atom2_name == ligand_atom2_name  && motif_atom3_name == ligand_atom3_name )
+					motif_atom1_int  == ligand_atom1_int && motif_atom2_int == ligand_atom2_int  && motif_atom3_int == ligand_atom3_int )
 					//not OK if it's reversed--we'll find it because we don't prune ligand triplets
 				{
 					//std::cout << "Motif atom 1 type: " << motif_atom1_name << ";  Motif atom 2 type: " << motif_atom2_name <<  ";  Motif atom 3 type: " << motif_atom3_name <<  std::endl;
@@ -784,33 +810,31 @@ LigandMotifSearch::incorporate_motifs(
 				for( Size ir2(1); ir2 <= rs1; ++ir2 ) { //rotamer loop
 
 					//Used to be before this loop, now put it here because we didn't know which atom to place yet
-					core::conformation::Atom atm( check_ligand->atom( deref_trip[2] ) );
-					core::conformation::Atom auto_atm( check_ligand->atom( deref_trip[2] ) );
+					core::conformation::Atom atm( check_ligand->atom( deref_trip[2][1] ) );
+					core::conformation::Atom auto_atm( check_ligand->atom( deref_trip[2][1] ) );
 
-					Size  trip_atom_1(deref_trip[1]);
-					Size  trip_atom_2(deref_trip[2]);
-					Size  trip_atom_3(deref_trip[3]);
-					utility::vector1< std::string > atoms;
+					Size  trip_atom_1(deref_trip[1][1]);
+					Size  trip_atom_2(deref_trip[2][1]);
+					Size  trip_atom_3(deref_trip[3][1]);
+					//utility::vector1< Size > atoms = new utility::vector1< Size >( {trip_atom_1, trip_atom_2, trip_atom_3} );
+					//Size myatoms[] = {trip_atom_1, trip_atom_2, trip_atom_3};
+					utility::vector1< Size > atoms;
+					atoms.push_back(trip_atom_1);
+					atoms.push_back(trip_atom_2);
+					atoms.push_back(trip_atom_3);
 
-					std::string  atm_str(check_ligand->atom_name( deref_trip[2] ) );
-					std::string  atm_str1(check_ligand->atom_name( deref_trip[1] ) );
-					std::string  atm_str3(check_ligand->atom_name( deref_trip[3] ) );
-
-					atoms.push_back(atm_str1);
-					atoms.push_back(atm_str);
-					atoms.push_back(atm_str3);
-
-					motifcop->place_atom( *(rotset->nonconst_rotamer(ir2)), *check_ligand, atm, trip_atom_1, trip_atom_2, trip_atom_3, atm_str ); //prof II
+//					motifcop->place_atom( *(rotset->nonconst_rotamer(ir2)), *check_ligand, atm, trip_atom_1, trip_atom_2, trip_atom_3, atm_str ); //prof II
+					motifcop->place_atom( *(rotset->nonconst_rotamer(ir2)), *check_ligand, atm, trip_atom_1, trip_atom_2, trip_atom_3, trip_atom_2 );
 					if( automorphism ) {
-						motifcop->place_atom( *(rotset->nonconst_rotamer(ir2)), *check_ligand, auto_atm, trip_atom_1, trip_atom_2, trip_atom_3, atm_str, false ); //the false just flips the placement
+						motifcop->place_atom( *(rotset->nonconst_rotamer(ir2)), *check_ligand, auto_atm, trip_atom_1, trip_atom_2, trip_atom_3, trip_atom_2, false ); //the false just flips the placement
 					}
 
 
-					Real dtest1( atm.xyz().distance( posecopy.residue( ligand_resi_number  ).xyz( deref_trip[2] ) ) );
+					Real dtest1( atm.xyz().distance( posecopy.residue( ligand_resi_number  ).xyz( deref_trip[2][1] ) ) );
 // For dtest1, we are getting the distance from the motif base which has already been placed to the DNA base in the build.  This is very similar to what we're going
 					Real dtest1_auto(100);
 					if( automorphism ) {
-						dtest1_auto = ( auto_atm.xyz().distance( posecopy.residue( ligand_resi_number ).xyz( deref_trip[2] ) ) );
+						dtest1_auto = ( auto_atm.xyz().distance( posecopy.residue( ligand_resi_number ).xyz( deref_trip[2][1] ) ) );
 
 
 						//ms_tr << "RMSD between ligand resi (rosetta #) " <<  ligand_resi_number << " and motif ligand = " << dtest1 << " dtestauto is " << dtest1_auto << " for residue type " << motifcop->restype_name1() << ", rotamer # " << ir2 << ", motif named " << motifcop->remark() << std::endl;

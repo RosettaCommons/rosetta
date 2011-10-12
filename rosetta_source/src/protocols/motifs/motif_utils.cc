@@ -1124,7 +1124,7 @@ core::Real
 atom_specific_rms(
 	core::conformation::Residue const & rsd1,
 	core::conformation::Residue const & rsd2,
-	utility::vector1< std::string > const & atoms
+	utility::vector1< core::Size > const & atoms
 )
 {
 	using namespace core;
@@ -1151,6 +1151,36 @@ atom_specific_rms(
 	return best_rms;
 }
 
+core::Real
+atom_specific_rms(
+	core::conformation::Residue const & rsd1,
+	core::conformation::Residue const & rsd2,
+	utility::vector1< std::string > const & atoms
+)
+{
+	using namespace core;
+	using namespace core::chemical;
+	using namespace core::conformation;
+	// Doesn't do automorphisms like original core/scoring/rms_util.cc functions!!
+	//if( rsd1.type().name3() != rsd2.type().name3() ) utility_exit_with_message("Residue type name3 mismatch");
+	//if( rsd1.nheavyatoms()  != rsd2.nheavyatoms()  ) utility_exit_with_message("Residue number-of-heavy-atoms mismatch");
+	core::Real best_rms = 1e99;
+	// Make atom-number translation table
+	core::Real sum2( 0.0 );
+	core::Size natoms( 0 );
+	for( core::Size j = 1; j <= atoms.size(); ++j ) {
+		core::Vector diff = rsd1.xyz( atoms[j] ) - rsd2.xyz( atoms[j] );
+		sum2 += diff.length_squared();
+		natoms +=1;
+	}
+	core::Real const curr_rms = std::sqrt(sum2 / natoms);
+
+	// Check vs. minimum rmsd
+	if( curr_rms < best_rms ) {
+		best_rms = curr_rms;
+	}
+	return best_rms;
+}
 core::pack::rotamer_set::RotamerSetOP
 build_rotamers_lite(
 	core::pose::Pose & pose,
