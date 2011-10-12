@@ -573,7 +573,6 @@
 		106A40E0C69C2B776F47DCE9 /* SAXSEnergyCreatorFA.cc in Sources */ = {isa = PBXBuildFile; fileRef = 8AED854CFC3F5C90E1DB8054 /* SAXSEnergyCreatorFA.cc */; };
 		C90A49240F1F2C66D6A043DA /* SinXOverX.cc in Sources */ = {isa = PBXBuildFile; fileRef = 61501D67530B6B51D0739890 /* SinXOverX.cc */; };
 		3D130DCD8839C82C6254F852 /* ShapeComplementarityCalculator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3543C247C8776BB17F8520C6 /* ShapeComplementarityCalculator.cc */; };
-		0D33CAC2B3F33D96AC830D2B /* ShapeComplementarityCalculator_GPUKernels.cu in Sources */ = {isa = PBXBuildFile; fileRef = FC2052B4024F1DE523A22BE6 /* ShapeComplementarityCalculator_GPUKernels.cu */; };
 		2E1F7A1455CAB188623CCA81 /* symE.cc in Sources */ = {isa = PBXBuildFile; fileRef = 27CD6067498488E1DD76AB5A /* symE.cc */; };
 		3DCA316FADEC8A31EC817102 /* SymmetricEnergies.cc in Sources */ = {isa = PBXBuildFile; fileRef = A1272CFE4339214F76BBBBA7 /* SymmetricEnergies.cc */; };
 		1DFDCA90A4915FD0DF7B0455 /* SymmetricScoreFunction.cc in Sources */ = {isa = PBXBuildFile; fileRef = CF4773CBAC275E56D3FC76F7 /* SymmetricScoreFunction.cc */; };
@@ -987,6 +986,7 @@
 		05F830D91647AA41B9A73FAB /* ResidueTypesFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = D8B9EEC7DEDFD3EC2076E498 /* ResidueTypesFeatures.cc */; };
 		49D6D536D9174BB455D4FE5E /* RotamerBoltzmannWeightFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = E0276DD51B4CCF1AA9C3D72C /* RotamerBoltzmannWeightFeatures.cc */; };
 		2B9323B696E7CF45D943306A /* RotamerRecoveryFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9686B6F515936A7BF46FD5BF /* RotamerRecoveryFeatures.cc */; };
+		BF641DE72D43A8EB366B0003 /* SaltBridgeFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = D53376895DEF9EB505EA7268 /* SaltBridgeFeatures.cc */; };
 		61EE3237B0606F7403A0FD05 /* StructureFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9BAE136D9BEEEB0D8B4BC686 /* StructureFeatures.cc */; };
 		0636F66977D22A2C289714EB /* StructureScoresFeatures.cc in Sources */ = {isa = PBXBuildFile; fileRef = E16021EB451BD7EFD30A43D3 /* StructureScoresFeatures.cc */; };
 		DD0E0935896EC25408129EC9 /* AbinitioBaseFilter.cc in Sources */ = {isa = PBXBuildFile; fileRef = A4C75801B12D2E988979AB35 /* AbinitioBaseFilter.cc */; };
@@ -3520,6 +3520,8 @@
 		C6CDE2ED46651E2501843EB4 /* PairEPotential.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PairEPotential.cc; path = ../src/core/scoring/PairEPotential.cc; sourceTree = SOURCE_ROOT; };
 		013AC469AC320056ED558FE5 /* PairEPotential.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PairEPotential.fwd.hh; path = ../src/core/scoring/PairEPotential.fwd.hh; sourceTree = SOURCE_ROOT; };
 		A988947A9D00D0D4B321B337 /* PairEPotential.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PairEPotential.hh; path = ../src/core/scoring/PairEPotential.hh; sourceTree = SOURCE_ROOT; };
+		F5C9E9D8D8949C35A12E5DC8 /* PeptideBondedEnergyContainer.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PeptideBondedEnergyContainer.fwd.hh; path = ../src/core/scoring/PeptideBondedEnergyContainer.fwd.hh; sourceTree = SOURCE_ROOT; };
+		8134E9EDD03BC149B4557481 /* PeptideBondedEnergyContainer.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PeptideBondedEnergyContainer.hh; path = ../src/core/scoring/PeptideBondedEnergyContainer.hh; sourceTree = SOURCE_ROOT; };
 		ADF79394E929049123BB782B /* PoissonBoltzmannPotential.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PoissonBoltzmannPotential.cc; path = ../src/core/scoring/PoissonBoltzmannPotential.cc; sourceTree = SOURCE_ROOT; };
 		EEBECA2F4988DC282703DE32 /* PoissonBoltzmannPotential.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PoissonBoltzmannPotential.fwd.hh; path = ../src/core/scoring/PoissonBoltzmannPotential.fwd.hh; sourceTree = SOURCE_ROOT; };
 		68849DF31B3B75A7E48E0FD6 /* PoissonBoltzmannPotential.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = PoissonBoltzmannPotential.hh; path = ../src/core/scoring/PoissonBoltzmannPotential.hh; sourceTree = SOURCE_ROOT; };
@@ -4493,7 +4495,6 @@
 		3543C247C8776BB17F8520C6 /* ShapeComplementarityCalculator.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ShapeComplementarityCalculator.cc; path = ../src/core/scoring/sc/ShapeComplementarityCalculator.cc; sourceTree = SOURCE_ROOT; };
 		C0587944E949489F734C9DEE /* ShapeComplementarityCalculator.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ShapeComplementarityCalculator.fwd.hh; path = ../src/core/scoring/sc/ShapeComplementarityCalculator.fwd.hh; sourceTree = SOURCE_ROOT; };
 		3F63CBDF62D7133E665FDF5F /* ShapeComplementarityCalculator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ShapeComplementarityCalculator.hh; path = ../src/core/scoring/sc/ShapeComplementarityCalculator.hh; sourceTree = SOURCE_ROOT; };
-		FC2052B4024F1DE523A22BE6 /* ShapeComplementarityCalculator_GPUKernels.cu */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ShapeComplementarityCalculator_GPUKernels.cu; path = ../src/core/scoring/sc/ShapeComplementarityCalculator_GPUKernels.cu; sourceTree = SOURCE_ROOT; };
 		82C2BA7F2B13CF7A631115F6 /* ShapeComplementarityCalculator_Private.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ShapeComplementarityCalculator_Private.hh; path = ../src/core/scoring/sc/ShapeComplementarityCalculator_Private.hh; sourceTree = SOURCE_ROOT; };
 		27CD6067498488E1DD76AB5A /* symE.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = symE.cc; path = ../src/core/scoring/sym_e/symE.cc; sourceTree = SOURCE_ROOT; };
 		76FB33ADF5A5B495F4FD37F7 /* symE.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = symE.fwd.hh; path = ../src/core/scoring/sym_e/symE.fwd.hh; sourceTree = SOURCE_ROOT; };
@@ -5739,6 +5740,9 @@
 		9686B6F515936A7BF46FD5BF /* RotamerRecoveryFeatures.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RotamerRecoveryFeatures.cc; path = ../src/protocols/features/RotamerRecoveryFeatures.cc; sourceTree = SOURCE_ROOT; };
 		51621AE3FF6DF8F733D769DA /* RotamerRecoveryFeatures.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RotamerRecoveryFeatures.fwd.hh; path = ../src/protocols/features/RotamerRecoveryFeatures.fwd.hh; sourceTree = SOURCE_ROOT; };
 		C35CF6AF23403E4CCF79CCE4 /* RotamerRecoveryFeatures.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = RotamerRecoveryFeatures.hh; path = ../src/protocols/features/RotamerRecoveryFeatures.hh; sourceTree = SOURCE_ROOT; };
+		D53376895DEF9EB505EA7268 /* SaltBridgeFeatures.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SaltBridgeFeatures.cc; path = ../src/protocols/features/SaltBridgeFeatures.cc; sourceTree = SOURCE_ROOT; };
+		909DBA95CCD449A8A0CBC97C /* SaltBridgeFeatures.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SaltBridgeFeatures.fwd.hh; path = ../src/protocols/features/SaltBridgeFeatures.fwd.hh; sourceTree = SOURCE_ROOT; };
+		BE4E69BE16A9FE5776732B3B /* SaltBridgeFeatures.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SaltBridgeFeatures.hh; path = ../src/protocols/features/SaltBridgeFeatures.hh; sourceTree = SOURCE_ROOT; };
 		9BAE136D9BEEEB0D8B4BC686 /* StructureFeatures.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = StructureFeatures.cc; path = ../src/protocols/features/StructureFeatures.cc; sourceTree = SOURCE_ROOT; };
 		640878D111945936A94B7918 /* StructureFeatures.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StructureFeatures.fwd.hh; path = ../src/protocols/features/StructureFeatures.fwd.hh; sourceTree = SOURCE_ROOT; };
 		AF9D604632397FC82B8B58F5 /* StructureFeatures.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = StructureFeatures.hh; path = ../src/protocols/features/StructureFeatures.hh; sourceTree = SOURCE_ROOT; };
@@ -10126,6 +10130,8 @@
 				C6CDE2ED46651E2501843EB4 /* PairEPotential.cc */,
 				013AC469AC320056ED558FE5 /* PairEPotential.fwd.hh */,
 				A988947A9D00D0D4B321B337 /* PairEPotential.hh */,
+				F5C9E9D8D8949C35A12E5DC8 /* PeptideBondedEnergyContainer.fwd.hh */,
+				8134E9EDD03BC149B4557481 /* PeptideBondedEnergyContainer.hh */,
 				ADF79394E929049123BB782B /* PoissonBoltzmannPotential.cc */,
 				EEBECA2F4988DC282703DE32 /* PoissonBoltzmannPotential.fwd.hh */,
 				68849DF31B3B75A7E48E0FD6 /* PoissonBoltzmannPotential.hh */,
@@ -11328,7 +11334,6 @@
 				3543C247C8776BB17F8520C6 /* ShapeComplementarityCalculator.cc */,
 				C0587944E949489F734C9DEE /* ShapeComplementarityCalculator.fwd.hh */,
 				3F63CBDF62D7133E665FDF5F /* ShapeComplementarityCalculator.hh */,
-				FC2052B4024F1DE523A22BE6 /* ShapeComplementarityCalculator_GPUKernels.cu */,
 				82C2BA7F2B13CF7A631115F6 /* ShapeComplementarityCalculator_Private.hh */,
 			);
 			name = sc;
@@ -13218,6 +13223,9 @@
 				9686B6F515936A7BF46FD5BF /* RotamerRecoveryFeatures.cc */,
 				51621AE3FF6DF8F733D769DA /* RotamerRecoveryFeatures.fwd.hh */,
 				C35CF6AF23403E4CCF79CCE4 /* RotamerRecoveryFeatures.hh */,
+				D53376895DEF9EB505EA7268 /* SaltBridgeFeatures.cc */,
+				909DBA95CCD449A8A0CBC97C /* SaltBridgeFeatures.fwd.hh */,
+				BE4E69BE16A9FE5776732B3B /* SaltBridgeFeatures.hh */,
 				9BAE136D9BEEEB0D8B4BC686 /* StructureFeatures.cc */,
 				640878D111945936A94B7918 /* StructureFeatures.fwd.hh */,
 				AF9D604632397FC82B8B58F5 /* StructureFeatures.hh */,
@@ -17603,7 +17611,6 @@
 				106A40E0C69C2B776F47DCE9 /* SAXSEnergyCreatorFA.cc in Sources */,
 				C90A49240F1F2C66D6A043DA /* SinXOverX.cc in Sources */,
 				3D130DCD8839C82C6254F852 /* ShapeComplementarityCalculator.cc in Sources */,
-				0D33CAC2B3F33D96AC830D2B /* ShapeComplementarityCalculator_GPUKernels.cu in Sources */,
 				2E1F7A1455CAB188623CCA81 /* symE.cc in Sources */,
 				3DCA316FADEC8A31EC817102 /* SymmetricEnergies.cc in Sources */,
 				1DFDCA90A4915FD0DF7B0455 /* SymmetricScoreFunction.cc in Sources */,
@@ -18017,6 +18024,7 @@
 				05F830D91647AA41B9A73FAB /* ResidueTypesFeatures.cc in Sources */,
 				49D6D536D9174BB455D4FE5E /* RotamerBoltzmannWeightFeatures.cc in Sources */,
 				2B9323B696E7CF45D943306A /* RotamerRecoveryFeatures.cc in Sources */,
+				BF641DE72D43A8EB366B0003 /* SaltBridgeFeatures.cc in Sources */,
 				61EE3237B0606F7403A0FD05 /* StructureFeatures.cc in Sources */,
 				0636F66977D22A2C289714EB /* StructureScoresFeatures.cc in Sources */,
 				DD0E0935896EC25408129EC9 /* AbinitioBaseFilter.cc in Sources */,

@@ -57,7 +57,7 @@ def list_project_files(path_to_mini, project_name):
 			elif os.path.exists(full_path + srcfile + '.c'):
 				srcfiles.append(srcfile + '.c')
 			elif os.path.exists(full_path + srcfile ) and srcfile[-3:] == '.cu':
-				srcfiles.append(srcfile)
+				continue
 			else:
 				raise RuntimeError('Nonexistant source file: ' + full_path + srcfile)
 
