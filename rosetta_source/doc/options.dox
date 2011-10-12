@@ -43,6 +43,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 20</dd><br>
 </dl>
 <dl>
+<dt><b>-small_cycles</b> \<Integer\><dt>
+<dd>Number of small, random torsion perturbation cycles</dd><br>
+<dd>Default: 10000</dd><br>
+</dl>
+<dl>
 <dt><b>-temperature</b> \<Real\><dt>
 <dd>Monte Carlo temperature</dd><br>
 <dd>Default: 2.0</dd><br>
@@ -2414,14 +2419,18 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "star"</dd><br>
 </dl>
 <dl>
-<dt><b>-randomize_missing</b> \<Boolean\><dt>
-<dd>Randomize the coordinates of missing loops. This occurs often in broken-chain folding from a sequence alignment and template pdb. Default value is false to preserve existing behavior in ThreadingJobInputter</dd><br>
-<dd>Default: false</dd><br>
+<dt><b>-chunks</b> \<File\><dt>
+<dd>Decsribes how the structure is partitioned into chunks. Each residue must be present in 1 and only 1 chunk. Loop file format.</dd><br>
 </dl>
 <dl>
 <dt><b>-max_chunk_size</b> \<Integer\><dt>
 <dd>Maximum allowable chunk size for comparative modeling inputs. If the chunk exceeds this threshold, it is recursively decomposed into smaller pieces.</dd><br>
 <dd>Default: 20</dd><br>
+</dl>
+<dl>
+<dt><b>-randomize_missing</b> \<Boolean\><dt>
+<dd>Randomize the coordinates of missing loops. This occurs often in broken-chain folding from a sequence alignment and template pdb. Default value is false to preserve existing behavior in ThreadingJobInputter</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-rdc_weight</b> \<Real\><dt>

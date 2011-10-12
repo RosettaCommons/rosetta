@@ -40,7 +40,9 @@ class MedalMover : public protocols::moves::Mover {
 
 private:
   /// @brief Scores the pose, writing the result to tracer
-  void score_pose(const core::scoring::ScoreFunction& score, core::pose::Pose* pose) const;
+  void score_pose(const core::scoring::ScoreFunction& score,
+                  const std::string& message,
+                  core::pose::Pose* pose) const;
 
   /// @brief Closes chainbreaks in <pose>
   void do_loop_closure(core::pose::Pose* pose) const;

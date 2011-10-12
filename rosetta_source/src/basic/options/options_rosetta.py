@@ -92,6 +92,7 @@ Options = Option_Group( '',
 		Option('rigid_body_cycles', 'Integer', desc = 'Number of rigid body perturbation cycles', default = '20000'),
     Option('rotation', 'Real', desc = 'Rotation magnitude', default = '2.5'),
 		Option('sequence_separation', 'Integer', desc = 'Maximum sequence separation for scoring chainbreaks', default = '20'),
+		Option('small_cycles', 'Integer', desc = 'Number of small, random torsion perturbation cycles', default = '10000'),
 		Option('temperature', 'Real', desc = 'Monte Carlo temperature', default = '2.0'),
 		Option('translation', 'Real', desc = 'Translation magnitude', default = '0.5'),
   ),
@@ -1302,16 +1303,13 @@ Options = Option_Group( '',
 		Option( 'loop2', 'File', desc="rigid region for chunk2" ),
 	),
 
-  # Non-local information
+  # NonlocalAbinitio
   Option_Group('nonlocal',
-		Option( 'builder', 'String', desc="One of {simple, star}. Specifies how non-local abinitio should construct the fold tree", default="star"),
-
-    # Comparative modeling extensions
-		Option( 'randomize_missing', 'Boolean', desc = 'Randomize the coordinates of missing loops. This occurs often in broken-chain folding from a sequence alignment and template pdb. Default value is false to preserve existing behavior in ThreadingJobInputter', default = 'false'),
-		Option( 'max_chunk_size', 'Integer', desc="Maximum allowable chunk size for comparative modeling inputs. If the chunk exceeds this threshold, it is recursively decomposed into smaller pieces.", default='20'),
-
-    # Experimental data extensions
-	  Option( 'rdc_weight', 'Real', desc = 'Weight for the rdc energy term in nonlocal abinitio protocol', default = '5'),
+		Option('builder', 'String', desc = 'One of {simple, star}. Specifies how non-local abinitio should construct the fold tree', default = 'star'),
+		Option('chunks', 'File', desc = 'Decsribes how the structure is partitioned into chunks. Each residue must be present in 1 and only 1 chunk. Loop file format.'),
+		Option('max_chunk_size', 'Integer', desc = 'Maximum allowable chunk size for comparative modeling inputs. If the chunk exceeds this threshold, it is recursively decomposed into smaller pieces.', default = '20'),
+		Option('randomize_missing', 'Boolean', desc = 'Randomize the coordinates of missing loops. This occurs often in broken-chain folding from a sequence alignment and template pdb. Default value is false to preserve existing behavior in ThreadingJobInputter', default = 'false'),
+	  Option('rdc_weight', 'Real', desc = 'Weight for the rdc energy term in nonlocal abinitio protocol', default = '5'),
   ),
 
 	# Ab initio mode -----------------------------------------------------------

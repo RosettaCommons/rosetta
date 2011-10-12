@@ -11,6 +11,7 @@ option.add( basic::options::OptionKeys::rigid::max_ca_ca_dist, "Maximum distance
 option.add( basic::options::OptionKeys::rigid::rigid_body_cycles, "Number of rigid body perturbation cycles" ).def(20000);
 option.add( basic::options::OptionKeys::rigid::rotation, "Rotation magnitude" ).def(2.5);
 option.add( basic::options::OptionKeys::rigid::sequence_separation, "Maximum sequence separation for scoring chainbreaks" ).def(20);
+option.add( basic::options::OptionKeys::rigid::small_cycles, "Number of small, random torsion perturbation cycles" ).def(10000);
 option.add( basic::options::OptionKeys::rigid::temperature, "Monte Carlo temperature" ).def(2.0);
 option.add( basic::options::OptionKeys::rigid::translation, "Translation magnitude" ).def(0.5);
 option.add( basic::options::OptionKeys::in::in, "Input option group" ).legal(true).def(true);
@@ -510,8 +511,9 @@ option.add( basic::options::OptionKeys::chunk::pdb2, "file for chunk2" );
 option.add( basic::options::OptionKeys::chunk::loop2, "rigid region for chunk2" );
 option.add( basic::options::OptionKeys::nonlocal::nonlocal, "nonlocal option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::nonlocal::builder, "One of {simple, star}. Specifies how non-local abinitio should construct the fold tree" ).def("star");
-option.add( basic::options::OptionKeys::nonlocal::randomize_missing, "Randomize the coordinates of missing loops. This occurs often in broken-chain folding from a sequence alignment and template pdb. Default value is false to preserve existing behavior in ThreadingJobInputter" ).def(false);
+option.add( basic::options::OptionKeys::nonlocal::chunks, "Decsribes how the structure is partitioned into chunks. Each residue must be present in 1 and only 1 chunk. Loop file format." );
 option.add( basic::options::OptionKeys::nonlocal::max_chunk_size, "Maximum allowable chunk size for comparative modeling inputs. If the chunk exceeds this threshold, it is recursively decomposed into smaller pieces." ).def(20);
+option.add( basic::options::OptionKeys::nonlocal::randomize_missing, "Randomize the coordinates of missing loops. This occurs often in broken-chain folding from a sequence alignment and template pdb. Default value is false to preserve existing behavior in ThreadingJobInputter" ).def(false);
 option.add( basic::options::OptionKeys::nonlocal::rdc_weight, "Weight for the rdc energy term in nonlocal abinitio protocol" ).def(5);
 option.add( basic::options::OptionKeys::abinitio::prob_perturb_weights, "Probability of perturbing score function weights" ).lower(0).upper(1).def(0);
 option.add( basic::options::OptionKeys::abinitio::abinitio, "Ab initio mode" );
@@ -578,10 +580,10 @@ option.add( basic::options::OptionKeys::abinitio::close_loops_by_idealizing, "cl
 option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_using_kic, "optimize around cutpoints using kinematic relax" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_margin, "" ).def(5);
 option.add( basic::options::OptionKeys::abinitio::HD_EX_Info, "input list of residues with low amide protection " );
-option.add( basic::options::OptionKeys::abinitio::HD_penalty, "penatlty for each inconsistent pairing with HD data " ).def(0.1);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::HD_fa_penalty, "penalty for each Hbond donor inconsistent with HD donor" ).def(0.1);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::HD_penalty, "penatlty for each inconsistent pairing with HD data " ).def(0.1);
+option.add( basic::options::OptionKeys::abinitio::HD_fa_penalty, "penalty for each Hbond donor inconsistent with HD donor" ).def(0.1);
 option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with interior/exterior predictions for strands" );
 option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
 option.add( basic::options::OptionKeys::fold_cst::fold_cst, "fold_cst option group" ).legal(true).def(true);
@@ -1735,10 +1737,10 @@ option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
+option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
-option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );

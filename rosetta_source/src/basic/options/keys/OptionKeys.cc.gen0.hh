@@ -6,6 +6,7 @@ namespace rigid { RealOptionKey const max_ca_ca_dist( "rigid:max_ca_ca_dist" ); 
 namespace rigid { IntegerOptionKey const rigid_body_cycles( "rigid:rigid_body_cycles" );  }
 namespace rigid { RealOptionKey const rotation( "rigid:rotation" );  }
 namespace rigid { IntegerOptionKey const sequence_separation( "rigid:sequence_separation" );  }
+namespace rigid { IntegerOptionKey const small_cycles( "rigid:small_cycles" );  }
 namespace rigid { RealOptionKey const temperature( "rigid:temperature" );  }
 namespace rigid { RealOptionKey const translation( "rigid:translation" );  }
 namespace in { BooleanOptionKey const in( "in" );  }
@@ -505,8 +506,9 @@ namespace chunk { FileOptionKey const pdb2( "chunk:pdb2" );  }
 namespace chunk { FileOptionKey const loop2( "chunk:loop2" );  }
 namespace nonlocal { BooleanOptionKey const nonlocal( "nonlocal" );  }
 namespace nonlocal { StringOptionKey const builder( "nonlocal:builder" );  }
-namespace nonlocal { BooleanOptionKey const randomize_missing( "nonlocal:randomize_missing" );  }
+namespace nonlocal { FileOptionKey const chunks( "nonlocal:chunks" );  }
 namespace nonlocal { IntegerOptionKey const max_chunk_size( "nonlocal:max_chunk_size" );  }
+namespace nonlocal { BooleanOptionKey const randomize_missing( "nonlocal:randomize_missing" );  }
 namespace nonlocal { RealOptionKey const rdc_weight( "nonlocal:rdc_weight" );  }
 namespace abinitio { RealOptionKey const prob_perturb_weights( "abinitio:prob_perturb_weights" );  }
 namespace abinitio { BooleanOptionKey const abinitio( "abinitio" );  }
@@ -573,4 +575,3 @@ namespace abinitio { BooleanOptionKey const close_loops_by_idealizing( "abinitio
 namespace abinitio { BooleanOptionKey const optimize_cutpoints_using_kic( "abinitio:optimize_cutpoints_using_kic" );  }
 namespace abinitio { IntegerOptionKey const optimize_cutpoints_margin( "abinitio:optimize_cutpoints_margin" );  }
 namespace abinitio { FileOptionKey const HD_EX_Info( "abinitio:HD_EX_Info" );  }
-namespace abinitio { RealOptionKey const HD_penalty( "abinitio:HD_penalty" );  }

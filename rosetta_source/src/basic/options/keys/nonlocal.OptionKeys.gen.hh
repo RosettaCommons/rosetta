@@ -23,8 +23,9 @@ namespace OptionKeys {
 
 namespace nonlocal { extern BooleanOptionKey const nonlocal; }
 namespace nonlocal { extern StringOptionKey const builder; }
-namespace nonlocal { extern BooleanOptionKey const randomize_missing; }
+namespace nonlocal { extern FileOptionKey const chunks; }
 namespace nonlocal { extern IntegerOptionKey const max_chunk_size; }
+namespace nonlocal { extern BooleanOptionKey const randomize_missing; }
 namespace nonlocal { extern RealOptionKey const rdc_weight; }
 
 } // namespace OptionKeys

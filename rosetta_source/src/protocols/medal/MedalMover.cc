@@ -33,6 +33,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/jumps.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
+#include <basic/options/keys/nonlocal.OptionKeys.gen.hh>
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <numeric/prob_util.hh>
@@ -85,20 +86,10 @@ typedef utility::vector1<double> Probabilities;
 
 static basic::Tracer TR("protocols.medal.MedalMover");
 
-// Assumptions:
-//   - There is a 1-to-1 mapping between chunks and jumps
-//   - The ordering of chunks is identical locally and in <fragment_mover>
-//   - The ordering of jumps is identical locally and in <rigid_body_mover>
-void on_pose_accept(const protocols::loops::Loops& chunks,
-                    const Jumps& jumps,
-                    const core::pose::Pose& pose,
-                    protocols::moves::MoverOP rigid_body_mover,
-                    protocols::moves::MoverOP fragment_mover) {
+void on_pose_accept(const core::pose::Pose& pose) {
   using core::io::silent::SilentFileData;
   using core::io::silent::SilentStructFactory;
   using core::io::silent::SilentStructOP;
-  assert(jumps.size() == chunks.size());
-
   static int num_accepted = 0;
 
   SilentStructOP silent = SilentStructFactory::get_instance()->get_silent_struct_out();
@@ -156,15 +147,47 @@ void compute_per_residue_probabilities(const unsigned num_residues,
 void decompose_structure(const core::pose::Pose& pose, protocols::loops::Loops* chunks) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
+  assert(chunks);
 
-  bool loops_file_specified = option[OptionKeys::loops::extended_loop_file].user();
+  bool loops_file_specified = option[OptionKeys::nonlocal::chunks].user();
   if (!loops_file_specified) {
     protocols::nonlocal::chunks_by_CA_CA_distance(pose, chunks);
     return;
   }
 
   // Override automatic chunk selection
-  chunks->read_loop_file(option[OptionKeys::loops::extended_loop_file]());
+  chunks->read_loop_file(option[OptionKeys::nonlocal::chunks]());
+}
+
+/// @detail Alternating rigid body and fragment insertion moves
+protocols::moves::RationalMonteCarloOP create_stage1_mover(const core::pose::Pose& pose,
+                                                           core::scoring::ScoreFunctionOP score,
+                                                           core::fragment::FragSetOP fragments,
+                                                           const Probabilities& probs) {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  using namespace protocols::moves;
+  using protocols::nonlocal::BiasedFragmentMover;
+  using protocols::nonlocal::PolicyFactory;
+
+  Jumps jumps;
+  core::pose::jumps_from_pose(pose, &jumps);
+  MoverOP rigid_body_mover = new RigidBodyMotionMover(jumps);
+
+  MoverOP fragment_mover =
+      new BiasedFragmentMover(fragments,
+                              PolicyFactory::get_policy("uniform", fragments, 25),
+                              probs);
+
+  CyclicMoverOP meta = new CyclicMover();
+  meta->enqueue(rigid_body_mover);
+  meta->enqueue(fragment_mover);
+
+  unsigned cycles = option[OptionKeys::rigid::rigid_body_cycles]() + option[OptionKeys::rigid::fragment_cycles]();
+
+  RationalMonteCarloOP mover = new RationalMonteCarlo(meta, score, cycles, option[OptionKeys::rigid::temperature](), true);
+  mover->add_trigger(boost::bind(&on_pose_accept, _1));
+  return mover;
 }
 
 MedalMover::MedalMover() {
@@ -179,8 +202,6 @@ MedalMover::MedalMover() {
 }
 
 void MedalMover::apply(core::pose::Pose& pose) {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
   using core::scoring::ScoreFunctionOP;
   using core::sequence::SequenceAlignment;
   using protocols::jd2::ThreadingJob;
@@ -202,9 +223,9 @@ void MedalMover::apply(core::pose::Pose& pose) {
   core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
   core::scoring::constraints::add_constraints_from_cmdline_to_pose(pose);
   ScoreFunctionOP score = score_function();
-  score_pose(*score, &pose);
+  score_pose(*score, "Initial model", &pose);
 
-  // Decompose the structure into chunks based on consecutive CA-CA distances
+  // Decompose the structure into chunks
   Loops chunks;
   decompose_structure(pose, &chunks);
 
@@ -216,31 +237,11 @@ void MedalMover::apply(core::pose::Pose& pose) {
   Probabilities probs;
   compute_per_residue_probabilities(num_residues, alignment, chunks, pose.fold_tree(), *fragments_sm_, &probs);
 
-  // Rigid body moves
-  Jumps jumps;
-  core::pose::jumps_from_pose(pose, &jumps);
-  MoverOP rigid_body_mover = new RigidBodyMotionMover(jumps);
-
-  // Fragment insertion moves
-  MoverOP fragment_mover =
-      new BiasedFragmentMover(fragments_sm_,
-                              PolicyFactory::get_policy("uniform", fragments_sm_, 25),
-                              probs);
-
   // Alternating rigid body and fragment insertion moves
-  CyclicMoverOP meta = new CyclicMover();
-  meta->enqueue(rigid_body_mover);
-  meta->enqueue(fragment_mover);
-
-  const Size cycles = option[OptionKeys::rigid::rigid_body_cycles]() + option[OptionKeys::rigid::fragment_cycles]();
-  RationalMonteCarlo mover(meta, score, cycles, option[OptionKeys::rigid::temperature](), true);
-
-  // Partial function application and callback registration
-  Trigger callback = boost::bind(&on_pose_accept, chunks, jumps, _1, rigid_body_mover, fragment_mover);
-  mover.add_trigger(callback);
+  RationalMonteCarloOP stage1 = create_stage1_mover(pose, score, fragments_sm_, probs);
 
   protocols::nonlocal::add_cutpoint_variants(&pose);
-  mover.apply(pose);
+  stage1->apply(pose);
   protocols::nonlocal::remove_cutpoint_variants(&pose);
 
   // Loop closure
@@ -249,12 +250,14 @@ void MedalMover::apply(core::pose::Pose& pose) {
 
   // Return to centroid representation and rescore
   core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
-  score_pose(*score, &pose);
+  score_pose(*score, "Final model", &pose);
 }
 
 void MedalMover::score_pose(const core::scoring::ScoreFunction& score,
+														const std::string& message,
                             core::pose::Pose* pose) const {
   assert(pose);
+	TR << message << std::endl;
   score.show(TR, *pose);
   TR.flush_all_channels();
 }
