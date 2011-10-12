@@ -100,9 +100,9 @@ void GridManager::make_new_grid(utility::tag::TagPtr const tag)
 
 void GridManager::insert_grid(std::string const name, GridBaseOP const grid)
 {
-	if(grid_map_.find(name) != grid_map_.end()){
-		utility_exit_with_message("2 grids with the same name!");
-	}
+	//if(grid_map_.find(name) != grid_map_.end()){
+	//	utility_exit_with_message("2 grids with the same name!");
+	//}
 	grid_map_[name] = grid;
 }
 
