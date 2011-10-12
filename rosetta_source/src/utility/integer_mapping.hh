@@ -33,7 +33,7 @@ namespace utility {
 class subset_mapping : public utility::pointer::ReferenceCount {
 public:
 	typedef utility::pointer::ReferenceCount parent;
-	static platform::Size const UNMAPPED = 0;
+	static platform::Size const UNMAPPED;
 
 public:
 	subset_mapping();

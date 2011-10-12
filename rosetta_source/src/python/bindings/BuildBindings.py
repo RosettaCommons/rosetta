@@ -527,7 +527,7 @@ def getAllRosettaSourceFiles():
 
     #all_sources += [ '../external/' + x for x in extra_objs ]
 
-    all_sources.sort()
+    #all_sources.sort()
     #for i in all_sources: print i
     return extra_objs, all_sources
 
@@ -548,7 +548,7 @@ def BuildRosettaOnWindows(build_dir):
         s = '../external/' + s
 
         if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
-            execute('Compiling %s' % s, 'cl /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /MD /DSQLITE_DISABLE_LFS /DSQLITE_OMIT_LOAD_EXTENSION /DSQLITE_THREADSAFE=0 /DCPPDB_EXPORTS /DCPPDB_LIBRARY_SUFFIX=\\".dylib\\" /DCPPDB_LIBRARY_PREFIX=\\"lib\\" /DCPPDB_DISABLE_SHARED_OBJECT_LOADING /DCPPDB_DISABLE_THREAD_SAFETY /DCPPDB_SOVERSION=\\"0\\" /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/32/msvc /Fo%s /EHsc' % (s, obj),)
+            execute('Compiling %s' % s, 'cl /MD /GR /Gy /D "WIN32" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /DSQLITE_DISABLE_LFS /DSQLITE_OMIT_LOAD_EXTENSION /DSQLITE_THREADSAFE=0 /DCPPDB_EXPORTS /DCPPDB_LIBRARY_SUFFIX=\\".dylib\\" /DCPPDB_LIBRARY_PREFIX=\\"lib\\" /DCPPDB_DISABLE_SHARED_OBJECT_LOADING /DCPPDB_DISABLE_THREAD_SAFETY /DCPPDB_SOVERSION=\\"0\\" /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/32/msvc /Fo%s /EHsc' % (s, obj),)
 
     for s in sources:
         #s = s.replace('/', '\\')
@@ -559,7 +559,7 @@ def BuildRosettaOnWindows(build_dir):
         obj = os.path.join(build_dir,s) + '.obj'
 
         if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
-            execute('Compiling %s' % s, 'cl /MD  /DWIN32 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/32/msvc /Fo%s /EHsc' % (s, obj),
+            execute('Compiling %s' % s, 'cl /MD /GR /Gy /DWIN32 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/32/msvc /Fo%s /EHsc' % (s, obj),
                     )  # return_=True)
 
     # Now creating DLL
@@ -567,6 +567,8 @@ def BuildRosettaOnWindows(build_dir):
     objs = ' '.join( [ f + '.obj' for f in external] ) + ' ' + ' '.join( [f + '.obj' for f in sources] )
     file(os.path.join(build_dir,'objs') , 'w').write( objs )
     execute('Creating DLL %s...' % dll, 'cd ..\\build\\windows && link /dll @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib /out:%s' % dll )
+    execute('Creating lib %s...' % dll, 'cd ..\\build\\windows && lib @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib /out:lr.lib')
+    # libcmt.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
     #execute('Creating DLL %s...' % s, 'cd ..\\build\\windows && cl /link /DLL @objs /OUT:%s' % dll )
 
     #"c:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\bin\vcvars32.bat"

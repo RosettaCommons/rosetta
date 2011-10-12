@@ -23,7 +23,7 @@
 
 namespace utility {
 
-platform::Size const subset_mapping::UNMAPPED;
+platform::Size const subset_mapping::UNMAPPED = 0;
 
 subset_mapping::subset_mapping() {}
 subset_mapping::subset_mapping( platform::Size source_enumeration_size ) : src_2_dst_( source_enumeration_size, UNMAPPED ) {}
