@@ -8,19 +8,19 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>rigid option group</dd><br>
 </dl>
 <dl>
+<dt><b>-close_loops</b> \<Boolean\><dt>
+<dd>Perform loop closure at the end of medal</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
 <dt><b>-fragment_cycles</b> \<Integer\><dt>
 <dd>Number of fragment insertion cycles</dd><br>
 <dd>Default: 10000</dd><br>
 </dl>
 <dl>
-<dt><b>-jump_attempts</b> \<Integer\><dt>
-<dd>Number of jump minimization attempts</dd><br>
-<dd>Default: 10</dd><br>
-</dl>
-<dl>
-<dt><b>-jump_cycles</b> \<Integer\><dt>
-<dd>Number of jump minimization cycles</dd><br>
-<dd>Default: 500</dd><br>
+<dt><b>-log_accepted_moves</b> \<Boolean\><dt>
+<dd>Write accepted moves to silent file output</dd><br>
+<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-max_ca_ca_dist</b> \<Real\><dt>
@@ -43,9 +43,9 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 20</dd><br>
 </dl>
 <dl>
-<dt><b>-small_cycles</b> \<Integer\><dt>
-<dd>Number of small, random torsion perturbation cycles</dd><br>
-<dd>Default: 10000</dd><br>
+<dt><b>-stages</b> \<Integer\><dt>
+<dd>Number of stages over which to interpolate ramped values</dd><br>
+<dd>Default: 4</dd><br>
 </dl>
 <dl>
 <dt><b>-temperature</b> \<Real\><dt>

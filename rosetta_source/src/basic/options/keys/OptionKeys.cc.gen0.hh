@@ -1,12 +1,12 @@
 namespace rigid { BooleanOptionKey const rigid( "rigid" );  }
+namespace rigid { BooleanOptionKey const close_loops( "rigid:close_loops" );  }
 namespace rigid { IntegerOptionKey const fragment_cycles( "rigid:fragment_cycles" );  }
-namespace rigid { IntegerOptionKey const jump_attempts( "rigid:jump_attempts" );  }
-namespace rigid { IntegerOptionKey const jump_cycles( "rigid:jump_cycles" );  }
+namespace rigid { BooleanOptionKey const log_accepted_moves( "rigid:log_accepted_moves" );  }
 namespace rigid { RealOptionKey const max_ca_ca_dist( "rigid:max_ca_ca_dist" );  }
 namespace rigid { IntegerOptionKey const rigid_body_cycles( "rigid:rigid_body_cycles" );  }
 namespace rigid { RealOptionKey const rotation( "rigid:rotation" );  }
 namespace rigid { IntegerOptionKey const sequence_separation( "rigid:sequence_separation" );  }
-namespace rigid { IntegerOptionKey const small_cycles( "rigid:small_cycles" );  }
+namespace rigid { IntegerOptionKey const stages( "rigid:stages" );  }
 namespace rigid { RealOptionKey const temperature( "rigid:temperature" );  }
 namespace rigid { RealOptionKey const translation( "rigid:translation" );  }
 namespace in { BooleanOptionKey const in( "in" );  }

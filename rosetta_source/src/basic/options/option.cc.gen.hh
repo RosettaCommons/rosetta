@@ -4,14 +4,14 @@
 #include <basic/options/option.cc.include.gen.hh>
 #include <utility/options/OptionCollection.hh>
 inline void add_rosetta_options_0( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rigid::rigid, "rigid option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::rigid::close_loops, "Perform loop closure at the end of medal" ).def(true);
 option.add( basic::options::OptionKeys::rigid::fragment_cycles, "Number of fragment insertion cycles" ).def(10000);
-option.add( basic::options::OptionKeys::rigid::jump_attempts, "Number of jump minimization attempts" ).def(10);
-option.add( basic::options::OptionKeys::rigid::jump_cycles, "Number of jump minimization cycles" ).def(500);
+option.add( basic::options::OptionKeys::rigid::log_accepted_moves, "Write accepted moves to silent file output" ).def(false);
 option.add( basic::options::OptionKeys::rigid::max_ca_ca_dist, "Maximum distance between consecutive CA atoms before chunk partitioning occurs" ).def(5.0);
 option.add( basic::options::OptionKeys::rigid::rigid_body_cycles, "Number of rigid body perturbation cycles" ).def(20000);
 option.add( basic::options::OptionKeys::rigid::rotation, "Rotation magnitude" ).def(2.5);
 option.add( basic::options::OptionKeys::rigid::sequence_separation, "Maximum sequence separation for scoring chainbreaks" ).def(20);
-option.add( basic::options::OptionKeys::rigid::small_cycles, "Number of small, random torsion perturbation cycles" ).def(10000);
+option.add( basic::options::OptionKeys::rigid::stages, "Number of stages over which to interpolate ramped values" ).def(4);
 option.add( basic::options::OptionKeys::rigid::temperature, "Monte Carlo temperature" ).def(2.0);
 option.add( basic::options::OptionKeys::rigid::translation, "Translation magnitude" ).def(0.5);
 option.add( basic::options::OptionKeys::in::in, "Input option group" ).legal(true).def(true);

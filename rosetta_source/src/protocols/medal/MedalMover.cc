@@ -160,10 +160,10 @@ void decompose_structure(const core::pose::Pose& pose, protocols::loops::Loops* 
 }
 
 /// @detail Alternating rigid body and fragment insertion moves
-protocols::moves::RationalMonteCarloOP create_stage1_mover(const core::pose::Pose& pose,
-                                                           core::scoring::ScoreFunctionOP score,
-                                                           core::fragment::FragSetOP fragments,
-                                                           const Probabilities& probs) {
+protocols::moves::RationalMonteCarloOP create_fragment_mover(const core::pose::Pose& pose,
+                                                             core::scoring::ScoreFunctionOP score,
+                                                             core::fragment::FragSetOP fragments,
+                                                             const Probabilities& probs) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using namespace protocols::moves;
@@ -190,6 +190,12 @@ protocols::moves::RationalMonteCarloOP create_stage1_mover(const core::pose::Pos
   return mover;
 }
 
+/// @brief Linearly interpolates chainbreak weight from cb_start to cb_stop over num_stages
+double chainbreak_weight(double cb_start, double cb_stop, unsigned stage, unsigned num_stages) {
+  assert(stage >= 0);
+  return cb_start + stage * (cb_stop - cb_start) / num_stages;
+}
+
 MedalMover::MedalMover() {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
@@ -202,6 +208,8 @@ MedalMover::MedalMover() {
 }
 
 void MedalMover::apply(core::pose::Pose& pose) {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
   using core::scoring::ScoreFunctionOP;
   using core::sequence::SequenceAlignment;
   using protocols::jd2::ThreadingJob;
@@ -222,8 +230,6 @@ void MedalMover::apply(core::pose::Pose& pose) {
   // Configure the score functions used in the simulation
   core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
   core::scoring::constraints::add_constraints_from_cmdline_to_pose(pose);
-  ScoreFunctionOP score = score_function();
-  score_pose(*score, "Initial model", &pose);
 
   // Decompose the structure into chunks
   Loops chunks;
@@ -237,11 +243,20 @@ void MedalMover::apply(core::pose::Pose& pose) {
   Probabilities probs;
   compute_per_residue_probabilities(num_residues, alignment, chunks, pose.fold_tree(), *fragments_sm_, &probs);
 
-  // Alternating rigid body and fragment insertion moves
-  RationalMonteCarloOP stage1 = create_stage1_mover(pose, score, fragments_sm_, probs);
+  // Alternating rigid body and fragment insertion moves with increasing linear_chainbreak weight
+  ScoreFunctionOP score = score_function();
+  const double cb_start = score->get_weight(core::scoring::linear_chainbreak);
+  const double cb_stop = cb_start * 2;
+  const unsigned num_stages = option[OptionKeys::rigid::stages]();
 
   protocols::nonlocal::add_cutpoint_variants(&pose);
-  stage1->apply(pose);
+  for (unsigned stage = 0; stage <= num_stages; ++stage) {
+    score->set_weight(core::scoring::linear_chainbreak,
+                      chainbreak_weight(cb_start, cb_stop, stage, num_stages));
+
+    RationalMonteCarloOP fragment_mover = create_fragment_mover(pose, score, fragments_sm_, probs);
+    fragment_mover->apply(pose);
+  }
   protocols::nonlocal::remove_cutpoint_variants(&pose);
 
   // Loop closure
@@ -250,14 +265,13 @@ void MedalMover::apply(core::pose::Pose& pose) {
 
   // Return to centroid representation and rescore
   core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
-  score_pose(*score, "Final model", &pose);
 }
 
 void MedalMover::score_pose(const core::scoring::ScoreFunction& score,
-														const std::string& message,
+                            const std::string& message,
                             core::pose::Pose* pose) const {
   assert(pose);
-	TR << message << std::endl;
+  TR << message << std::endl;
   score.show(TR, *pose);
   TR.flush_all_channels();
 }
@@ -269,6 +283,9 @@ void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
   using protocols::loops::LoopRelaxMover;
   using protocols::loops::Loops;
   assert(pose);
+
+  if (!option[OptionKeys::rigid::close_loops]())
+    return;
 
   // Choose chainbreaks automatically
   Loops empty;
@@ -308,8 +325,8 @@ core::scoring::ScoreFunctionOP MedalMover::score_function() const {
 
   // Enable specific energy terms
   score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::constraints::cst_weight]());
-  score->set_weight(core::scoring::hbond_lr_bb, 0.3);
-  score->set_weight(core::scoring::hbond_sr_bb, 0.3);
+  score->set_weight(core::scoring::hbond_lr_bb, 0.5);
+  score->set_weight(core::scoring::hbond_sr_bb, 0.5);
   score->set_weight(core::scoring::linear_chainbreak, option[OptionKeys::jumps::increase_chainbreak]());
 
   core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn(*score);
