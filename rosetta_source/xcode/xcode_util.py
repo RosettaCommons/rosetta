@@ -123,6 +123,9 @@ def make_groups_and_file_refs(root_group_key, project, project_path, project_fil
             if f.endswith('.cc'):
                 new_file_ref['sourcetype'] = 'sourcecode.cpp.cpp'
                 new_file_ref['is_source'] = True
+            elif f.endswith('.cu'):
+                new_file_ref['sourcetype'] = 'sourcecode.cpp.cpp'
+                new_file_ref['is_source'] = True
             elif f.endswith('.hh'):
                 new_file_ref['sourcetype'] = 'sourcecode.cpp.h'
                 new_file_ref['is_source'] = False
