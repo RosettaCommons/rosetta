@@ -252,6 +252,10 @@ private:
 	//target backbones for remodel secondary matching
 	utility::vector1< std::list< core::conformation::ResidueCOP > > target_inverse_rotamers_;
 
+	//should the existing conformation of an inverse rotamer residue be
+	//included in the inverse rotamers for that residue?
+	bool include_existing_conf_as_invrot_target_;
+
 	utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP > rcgs_;
 
 	core::Real ss_similarity_probability_;

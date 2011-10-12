@@ -18,7 +18,7 @@
 
 #include <protocols/enzdes/AddorRemoveCsts.hh>
 #include <protocols/enzdes/enzdes_util.hh>
-#include <protocols/enzdes/SecondaryMatchProtocol.hh> //for secmatch
+//#include <protocols/enzdes/SecondaryMatchProtocol.hh> //for secmatch
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh> //for secmatch
 #include <protocols/enzdes/EnzdesLoopsFile.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzCstTemplateRes.hh>
@@ -236,6 +236,7 @@ EnzdesRemodelMover::EnzdesRemodelMover()
 	reinstate_initial_foldtree_(false),
 	region_to_remodel_(1),
 	start_to_current_smap_(NULL),
+	include_existing_conf_as_invrot_target_(false),
 	ss_similarity_probability_( 1.0 - basic::options::option[basic::options::OptionKeys::enzdes::remodel_aggressiveness] )
 {
 	predesign_filters_ = new protocols::filters::FilterCollection();
@@ -269,6 +270,7 @@ EnzdesRemodelMover::EnzdesRemodelMover( EnzdesRemodelMover const & other )
 	start_to_current_smap_(other.start_to_current_smap_),
 	target_inverse_rotamers_(other.target_inverse_rotamers_),
 	rcgs_(other.rcgs_),
+	include_existing_conf_as_invrot_target_(other.include_existing_conf_as_invrot_target_),
 	ss_similarity_probability_(other.ss_similarity_probability_ )
 {}
 
@@ -285,6 +287,7 @@ EnzdesRemodelMover::EnzdesRemodelMover(
 	reinstate_initial_foldtree_(false),
 	region_to_remodel_(1),
 	start_to_current_smap_(NULL),
+	include_existing_conf_as_invrot_target_(false),
 	ss_similarity_probability_( 1.0 - basic::options::option[basic::options::OptionKeys::enzdes::remodel_aggressiveness] )
 {
 
@@ -459,6 +462,9 @@ EnzdesRemodelMover::parse_my_tag(
 	}
 	if( tag->hasOption("remodel_region") ){
 		region_to_remodel_ = tag->getOption<core::Size>( "remodel_region", 1 );
+	}
+	if( tag->hasOption("include_existing_conf_as_invrot_target") ){
+		include_existing_conf_as_invrot_target_ = tag->getOption<bool>("include_existing_conf_as_invrot_target",1);
 	}
 }
 
@@ -1208,15 +1214,25 @@ EnzdesRemodelMover::create_target_inverse_rotamers(
 
 					if( flex_region_->contains_seqpos( seqpos_it->first ) ){
 						core::Size seqpos( seqpos_it->first );
-						tr << "Catalytic residue for MatchConstraint " << i << " at position " << seqpos << " is in remodeled region, building inverse rotamers... " << std::endl;
-						target_inverse_rotamers_.push_back( std::list<core::conformation::ResidueCOP> () );
-						target_inverse_rotamers_[ target_inverse_rotamers_.size() ].push_back( new core::conformation::Residue( pose.residue( seqpos ) ) );
-						invrots_build = true;
-						core::Size other_res( template_res == 1 ? 2 : 1 );
-						runtime_assert( param_cache->template_res_cache( other_res )->seqpos_map_size() == 1 );
-						core::Size other_seqpos( param_cache->template_res_cache( other_res )->seqpos_map_begin()->first );
-						std::list< core::conformation::ResidueCOP > cur_inv_rots( enzcst_io->mcfi_list( i )->inverse_rotamers_against_residue( other_res, &(pose.residue( other_seqpos ) ) ) );
-						if( cur_inv_rots.size() != 0 ) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].splice( target_inverse_rotamers_[ target_inverse_rotamers_.size() ].end(), cur_inv_rots );
+
+						//complication: if this is a residue that plays a role in several cst blocks,
+						//we only build inverse rotamers according to the geometry specified in the
+						//earliest cst block that this residue appears in
+						core::Size corresponding_res_block( template_res == 1 ? cst_params->resA()->corresponding_res_block() : cst_params->resB()->corresponding_res_block() );
+						if( (corresponding_res_block == 0 ) || ( corresponding_res_block > i ) ){
+							tr << "Catalytic residue for MatchConstraint " << i << " at position " << seqpos << " is in remodeled region, building inverse rotamers... " << std::endl;
+							target_inverse_rotamers_.push_back( std::list<core::conformation::ResidueCOP> () );
+							if( include_existing_conf_as_invrot_target_) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].push_back( new core::conformation::Residue( pose.residue( seqpos ) ) );
+							invrots_build = true;
+							core::Size other_res( template_res == 1 ? 2 : 1 );
+							runtime_assert( param_cache->template_res_cache( other_res )->seqpos_map_size() == 1 );
+							core::Size other_seqpos( param_cache->template_res_cache( other_res )->seqpos_map_begin()->first );
+							std::list< core::conformation::ResidueCOP > cur_inv_rots( enzcst_io->mcfi_list( i )->inverse_rotamers_against_residue( other_res, &(pose.residue( other_seqpos ) ) ) );
+							if( cur_inv_rots.size() != 0 ) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].splice( target_inverse_rotamers_[ target_inverse_rotamers_.size() ].end(), cur_inv_rots );
+						}
+						else{
+							tr << "Catalytic residue for MatchConstraint " << i << " at position " << seqpos << " is in remodeled region, but we're not building inverse rotamers because the same residue is also specified in block " << corresponding_res_block << " of the cstfile. Inverse rotamers will be built according to the geometry specified in that block." << std::endl;
+						}
 						//need to remove the position from the constraints,
 						++seqpos_it; //crucial to avoid iterator becoming invalidated
 						enzcst_io->remove_constraints_from_pose_for_block( pose, i, false );

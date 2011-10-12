@@ -135,6 +135,10 @@ public:
 	is_backbone() const {
 		return is_backbone_; }
 
+	core::Size
+	corresponding_res_block() const {
+		return corresponding_res_block_; }
+
 	bool
 	find_in_pose_if_missing_from_header( core::pose::Pose & pose);
 
