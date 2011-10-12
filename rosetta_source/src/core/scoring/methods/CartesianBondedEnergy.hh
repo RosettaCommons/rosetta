@@ -19,7 +19,7 @@
 
 // Package headers
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
+#include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -94,7 +94,6 @@ private:
 	//fpd involves a string comparison (restype) .. could be faster
 	//std::map< residx_atm_triple, core::Real > bondangles_;
 	boost::unordered_map< residx_atm_triple, core::Real > bondangles_;
-	boost::unordered_map< residx_atm_triple, core::Real > Kangles_;
 
 	Real k_angle;  // defaults
 };
@@ -114,16 +113,15 @@ private:
 	//fpd involves a string comparison (restype) .. could be faster
 	//std::map< residx_atm_pair, core::Real > bondlengths_;
 	boost::unordered_map< residx_atm_pair, core::Real > bondlengths_;
-	boost::unordered_map< residx_atm_pair, core::Real > Kbonds_;
 
 	Real k_bond;  // defaults
 };
 
 
 ///////////////////
-class CartesianBondedEnergy : public ContextIndependentLRTwoBodyEnergy {
+class CartesianBondedEnergy : public ContextIndependentTwoBodyEnergy  {
 public:
-	typedef ContextIndependentLRTwoBodyEnergy  parent;
+	typedef ContextIndependentTwoBodyEnergy  parent;
 
 public:
 	CartesianBondedEnergy( methods::EnergyMethodOptions const & options );
@@ -137,19 +135,9 @@ public:
 	EnergyMethodOP
 	clone() const;
 
-	virtual	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
-
-	virtual
-	bool
-	defines_residue_pair_energy(
-		pose::Pose const & pose,
-		Size res1,
-		Size res2
-	) const;
-
 	///
-	virtual	void
+	virtual
+	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
@@ -158,10 +146,12 @@ public:
 		EnergyMap & emap
 	) const;
 
-	virtual	bool
+	virtual
+	bool
 	defines_intrares_energy( EnergyMap const & /*weights*/ ) const ;
 
-	virtual	void
+	virtual
+	void
 	eval_intrares_energy(
 	  conformation::Residue const & rsd,
 		pose::Pose const & pose,
@@ -169,7 +159,8 @@ public:
 		EnergyMap & emap
 	) const;
 
-	virtual	void
+	virtual
+	void
 	eval_atom_derivative(
 		id::AtomID const & id,
 		pose::Pose const & pose,
@@ -188,16 +179,11 @@ public:
 	virtual
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const;
 
-	methods::LongRangeEnergyType
-	long_range_type() const;
-
 private:
 
 	mutable BondAngleDatabase db_angle_;
 	mutable BondLengthDatabase db_length_;
 	mutable TorsionDatabase db_torsion_;
-
-	bool linear_bonded_potential_;
 
 private:
 

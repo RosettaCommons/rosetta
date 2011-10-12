@@ -222,15 +222,16 @@ design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool 
 	allowed_aas[aa_cys] = false;
 	allowed_aas[aa_gly] = false;
 	allowed_aas[aa_pro] = false;
-	allowed_aas[aa_met] = false; //fpd -- only let met mutate to met
-
 	if(hphobic_only == true) {
 		allowed_aas[aa_ala] = true;
+		//allowed_aas[aa_asp] = true;
 		allowed_aas[aa_asp] = false;
+		//allowed_aas[aa_glu] = true;
 		allowed_aas[aa_glu] = false;
 		allowed_aas[aa_phe] = true;
 		allowed_aas[aa_his] = false;
 		allowed_aas[aa_ile] = true;
+		//allowed_aas[aa_lys] = true;
 		allowed_aas[aa_lys] = false;
 		allowed_aas[aa_leu] = true;
 		allowed_aas[aa_met] = true;

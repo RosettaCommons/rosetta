@@ -572,4 +572,3 @@ namespace abinitio { IntegerVectorOptionKey const recover_low_in_stages( "abinit
 namespace abinitio { IntegerVectorOptionKey const skip_stages( "abinitio:skip_stages" );  }
 namespace abinitio { BooleanOptionKey const close_chbrk( "abinitio:close_chbrk" );  }
 namespace abinitio { BooleanOptionKey const include_stage5( "abinitio:include_stage5" );  }
-namespace abinitio { BooleanOptionKey const close_loops_by_idealizing( "abinitio:close_loops_by_idealizing" );  }
