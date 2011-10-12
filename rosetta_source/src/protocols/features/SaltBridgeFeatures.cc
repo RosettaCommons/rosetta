@@ -24,6 +24,7 @@
 // Basic Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/database/sql_utils.hh>
 
 // Numeric Headers
 #include <numeric/xyzVector.hh>
@@ -144,7 +145,7 @@ SaltBridgeFeatures::report_features(
 
 	// Note: these are all pairs of potential salt bridge sites, not
 	// just the ones involved in hydrogen bonds
-	result res = (*db_session) <<
+	statement stmt = (*db_session) <<
 		"SELECT\n"
 		"	acc.site_id, acc.resNum, acc.atmNum,\n"
 		"	don.site_id, don.resNum, don.atmNum\n"
@@ -157,6 +158,8 @@ SaltBridgeFeatures::report_features(
 		"  don.HBChemType = 'hbdon_IME') AND\n"
 		"	(acc.HBChemType = 'hbacc_CXA' OR acc.HBChemType = 'hbacc_CXL');\n"
 		<< struct_id << struct_id;
+
+	result res(basic::database::safely_read_from_database(stmt));
 
 	Size acc_site_id, acc_resNum, acc_atmNum;
 	Size don_site_id, don_resNum, don_atmNum;
@@ -231,7 +234,7 @@ SaltBridgeFeatures::report_features(
 			<< theta
 			<< rho
 			<< orbital;
-		stmt.exec();
+		basic::database::safely_write_to_database(stmt);
 	}
 
 	return 0;

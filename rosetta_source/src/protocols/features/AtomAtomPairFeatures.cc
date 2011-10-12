@@ -26,6 +26,7 @@
 #include <core/types.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
+#include <basic/database/sql_utils.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray5D.hh>
@@ -166,28 +167,16 @@ AtomAtomPairFeatures::report_atom_pairs(
 				for(Size atmNum2=1; atmNum2 <= max_atm; ++atmNum2){
 					for(Size dist_bin=1; dist_bin <= 15; ++dist_bin){
 						Size const count(counts(aa1, atmNum1, aa2, atmNum2, dist_bin));
-						while(true)
-						{
-							try
-							{
-								statement stmt = (*db_session)
-									<< "INSERT INTO atom_pairs VALUES (?,?,?,?,?,?,?);"
-									<< struct_id
-									<< aa1
-									<< atmNum1
-									<< aa2
-									<< atmNum2
-									<< dist_bin
-									<< count;
-								stmt.exec();
-								break;
-							}catch(cppdb::cppdb_error &)
-							{
-								usleep(10);
-								continue;
-							}
-						}
-
+						statement stmt = (*db_session)
+							<< "INSERT INTO atom_pairs VALUES (?,?,?,?,?,?,?);"
+							<< struct_id
+							<< aa1
+							<< atmNum1
+							<< aa2
+							<< atmNum2
+							<< dist_bin
+							<< count;
+						basic::database::safely_write_to_database(stmt);
 					}
 				}
 			}

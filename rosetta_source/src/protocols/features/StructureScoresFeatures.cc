@@ -30,7 +30,7 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
-
+#include <basic/database/sql_utils.hh>
 // External Headers
 #include <cppdb/frontend.h>
 
@@ -161,20 +161,11 @@ void StructureScoresFeatures::delete_record(
 	Size struct_id,
 	utility::sql_database::sessionOP db_session
 ){
-	while(true)
-	{
-		try
-		{
-			statement stmt = (*db_session) <<
-				"DELETE FROM structure_scores WHERE struct_id == ?;\n" << struct_id;
-			stmt.exec();
-			break;
-		}catch(cppdb::cppdb_error &)
-		{
-			usleep(10);
-			continue;
-		}
-	}
+
+	statement stmt = (*db_session) <<
+		"DELETE FROM structure_scores WHERE struct_id == ?;\n" << struct_id;
+	basic::database::safely_write_to_database(stmt);
+
 }
 
 void
@@ -184,20 +175,10 @@ StructureScoresFeatures::insert_score_type_rows(
 ) {
 	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
 	Size protocol_id;
-	result res;
-	while(true)
-	{
-		try
-		{
-			res = (*db_session) <<
-				"SELECT protocol_id FROM structures WHERE struct_id=?" << struct_id;
-			break;
-		}catch(cppdb::cppdb_error &)
-		{
-			usleep(10);
-			continue;
-		}
-	}
+	statement stmt = (*db_session) <<
+		"SELECT protocol_id FROM structures WHERE struct_id=?" << struct_id;
+
+	result res(basic::database::safely_read_from_database(stmt));
 	if(res.next()){
 		res >> protocol_id;
 	} else {
@@ -216,42 +197,24 @@ StructureScoresFeatures::insert_score_type_rows(
 		//it makes the code so much more vibrant and diverse
 		if(db_mode == "sqlite3")
 		{
-			while(true)
-			{
-				try
-				{
-					statement stmt = (*db_session)
-						<< "INSERT OR IGNORE INTO score_types VALUES (?,?,?);"
-						<< protocol_id
-						<< score_type_id
-						<< score_type;
-					stmt.exec();
-					break;
-				}catch(cppdb::cppdb_error &)
-				{
-					usleep(10);
-					continue;
-				}
-			}
+
+			statement stmt = (*db_session)
+				<< "INSERT OR IGNORE INTO score_types VALUES (?,?,?);"
+				<< protocol_id
+				<< score_type_id
+				<< score_type;
+			basic::database::safely_write_to_database(stmt);
+
 		}else if(db_mode == "mysql")
 		{
-			while(true)
-			{
-				try
-				{
-					statement stmt = (*db_session)
-						<< "INSERT IGNORE INTO score_types VALUES (?,?,?);"
-						<< protocol_id
-						<< score_type_id
-						<< score_type;
-					stmt.exec();
-					break;
-				}catch(cppdb::cppdb_error &)
-				{
-					usleep(10);
-					continue;
-				}
-			}
+
+			statement stmt = (*db_session)
+				<< "INSERT IGNORE INTO score_types VALUES (?,?,?);"
+				<< protocol_id
+				<< score_type_id
+				<< score_type;
+			basic::database::safely_write_to_database(stmt);
+
 		}else
 		{
 			utility_exit_with_message("the database mode needs to be 'mysql' or 'sqlite3'");
@@ -279,23 +242,13 @@ StructureScoresFeatures::insert_structure_score_rows(
 		ScoreType type(static_cast<ScoreType>(score_type_id));
 		Real const score_value( energies.weights()[type] * emap[type] );
 		if(!score_value) continue;
-		while(true)
-		{
-			try
-			{
-				statement stmt = (*db_session)
-					<< "INSERT INTO structure_scores VALUES (?,?,?);"
-					<< struct_id
-					<< score_type_id
-					<< score_value;
-				stmt.exec();
-				break;
-			}catch(cppdb::cppdb_error &)
-			{
-				usleep(10);
-				continue;
-			}
-		}
+
+		statement stmt = (*db_session)
+			<< "INSERT INTO structure_scores VALUES (?,?,?);"
+			<< struct_id
+			<< score_type_id
+			<< score_value;
+		basic::database::safely_write_to_database(stmt);
 	}
 }
 

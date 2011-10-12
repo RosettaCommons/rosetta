@@ -18,6 +18,7 @@
 #include <core/conformation/Residue.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
+#include <basic/database/sql_utils.hh>
 
 // Platform Headers
 #include <core/pose/Pose.hh>
@@ -78,21 +79,12 @@ ProteinBackboneTorsionAngleFeatures::report_features(
 		Real phi  (resi.mainchain_torsion(1));
 		Real psi  (resi.mainchain_torsion(2));
 		Real omega(resi.mainchain_torsion(3));
-		while(true)
-		{
-			try
-			{
-				statement stmt = (*db_session) <<
-					"INSERT INTO protein_backbone_torsion_angles VALUES (?,?,?,?,?)" <<
-					struct_id << i << phi << psi << omega;
-				stmt.exec();
-				break;
-			}catch(cppdb::cppdb_error &)
-			{
-				usleep(10);
-				continue;
-			}
-		}
+
+		statement stmt = (*db_session) <<
+			"INSERT INTO protein_backbone_torsion_angles VALUES (?,?,?,?,?)" <<
+			struct_id << i << phi << psi << omega;
+		basic::database::safely_write_to_database(stmt);
+
 	}
 	return 0;
 }

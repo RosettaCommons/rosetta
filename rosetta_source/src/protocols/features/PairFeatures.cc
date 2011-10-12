@@ -25,6 +25,7 @@
 #include <core/types.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
+#include <basic/database/sql_utils.hh>
 
 // Numeric Headers
 #include <numeric/xyzVector.hh>
@@ -133,27 +134,16 @@ PairFeatures::report_residue_pairs(
 
 			int polymeric_sequence_dist(res1.polymeric_sequence_distance(res2));
 
-			while(true)
-			{
-				try
-				{
-					statement stmt = (*db_session)
-						<< "INSERT INTO residue_pairs VALUES (?,?,?,?,?,?,?);"
-						<< struct_id
-						<< resNum1
-						<< resNum2
-						<< res1_10A_neighbors
-						<< res2_10A_neighbors
-						<< actcoord_dist
-						<< polymeric_sequence_dist;
-					stmt.exec();
-					break;
-				}catch(cppdb::cppdb_error &)
-				{
-					usleep(10);
-					continue;
-				}
-			}
+			statement stmt = (*db_session)
+				<< "INSERT INTO residue_pairs VALUES (?,?,?,?,?,?,?);"
+				<< struct_id
+				<< resNum1
+				<< resNum2
+				<< res1_10A_neighbors
+				<< res2_10A_neighbors
+				<< actcoord_dist
+				<< polymeric_sequence_dist;
+			basic::database::safely_write_to_database(stmt);
 		}
 	}
 }

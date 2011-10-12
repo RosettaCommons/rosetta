@@ -15,6 +15,7 @@
 #include <basic/options/keys/mysql.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <basic/Tracer.hh>
 
 using std::string;
 using utility::sql_database::sessionOP;
@@ -22,6 +23,8 @@ using utility::sql_database::DatabaseSessionManager;
 
 namespace basic {
 namespace database {
+
+static basic::Tracer TR( "basic.database.sql_utils" );
 
 utility::sql_database::sessionOP get_db_session(
 	string const & db_name,
@@ -81,6 +84,85 @@ sessionOP get_db_session(
 		utility_exit_with_message("You need to specify either 'mysql' or 'sqlite3' as a mode with -inout:database_mode.  You specified: "+db_mode);
 	}
 }
+
+
+void safely_write_to_database(cppdb::statement & statement)
+{
+	while(true)
+	{
+		try
+		{
+			statement.exec();
+			return;
+		}catch(cppdb::bad_value_cast & except)
+		{
+
+			utility_exit_with_message(except.what());
+		}catch(cppdb::empty_row_access & except)
+		{
+			utility_exit_with_message(except.what());
+		}catch(cppdb::invalid_column & except)
+		{
+			utility_exit_with_message(except.what());
+		}catch(cppdb::invalid_placeholder & except)
+		{
+			utility_exit_with_message(except.what());
+		}catch(cppdb::multiple_rows_query & except)
+		{
+			utility_exit_with_message(except.what());
+		}catch(cppdb::not_supported_by_backend & except)
+		{
+			utility_exit_with_message(except.what());
+		}catch(cppdb::null_value_fetch & except)
+		{
+			utility_exit_with_message(except.what());
+		}catch(cppdb::cppdb_error & except)
+		{
+			TR <<except.what() <<std::endl;
+			usleep(10);
+			continue;
+		}
+	}
+}
+
+cppdb::result safely_read_from_database(cppdb::statement & statement)
+{
+	while(true)
+	{
+		try
+		{
+			return statement.query();
+		}catch(cppdb::bad_value_cast & except)
+		{
+
+			utility_exit_with_message(except.what());
+		}catch(cppdb::empty_row_access & except)
+		{
+			utility_exit_with_message(except.what());
+		}catch(cppdb::invalid_column & except)
+		{
+			utility_exit_with_message(except.what());
+		}catch(cppdb::invalid_placeholder & except)
+		{
+			utility_exit_with_message(except.what());
+		}catch(cppdb::multiple_rows_query & except)
+		{
+			utility_exit_with_message(except.what());
+		}catch(cppdb::not_supported_by_backend & except)
+		{
+			utility_exit_with_message(except.what());
+		}catch(cppdb::null_value_fetch & except)
+		{
+			utility_exit_with_message(except.what());
+		}catch(cppdb::cppdb_error & except)
+		{
+			TR <<except.what() <<std::endl;
+			usleep(10);
+			continue;
+		}
+	}
+}
+
 
 }
 }

@@ -34,6 +34,7 @@
 // Basic Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/database/sql_utils.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -127,34 +128,24 @@ ProteinRMSDFeatures::report_features(
 	}
 
 
-	while(true)
-	{
-		try
-		{
-			statement stmt = (*db_session)
-				<< "INSERT INTO protein_rmsd VALUES (?,?,?,?,?,?,?,?,?,?);"
-				<< struct_id
-				<< find_tag(*reference_pose_)
-				<< rmsd_with_super(*reference_pose_, pose, subset_residues, is_protein_CA)
-				<< rmsd_with_super(
-					*reference_pose_, pose, subset_residues, is_protein_CA_or_CB)
-				<< rmsd_with_super(
-					*reference_pose_, pose, subset_residues, is_protein_backbone)
-				<< rmsd_with_super(
-					*reference_pose_, pose, subset_residues, is_protein_backbone_including_O)
-				<< rmsd_with_super(
-					*reference_pose_, pose, subset_residues, is_protein_sidechain_heavyatom)
-				<< rmsd_with_super(*reference_pose_, pose, subset_residues, is_heavyatom)
-				<< rmsd_with_super(*reference_pose_, pose, subset_residues, is_nbr_atom)
-				<< all_atom_rmsd(*reference_pose_, pose, subset_residues);
-			stmt.exec();
-			break;
-		}catch(cppdb::cppdb_error &)
-		{
-			usleep(10);
-			continue;
-		}
-	}
+	statement stmt = (*db_session)
+		<< "INSERT INTO protein_rmsd VALUES (?,?,?,?,?,?,?,?,?,?);"
+		<< struct_id
+		<< find_tag(*reference_pose_)
+		<< rmsd_with_super(*reference_pose_, pose, subset_residues, is_protein_CA)
+		<< rmsd_with_super(
+			*reference_pose_, pose, subset_residues, is_protein_CA_or_CB)
+		<< rmsd_with_super(
+			*reference_pose_, pose, subset_residues, is_protein_backbone)
+		<< rmsd_with_super(
+			*reference_pose_, pose, subset_residues, is_protein_backbone_including_O)
+		<< rmsd_with_super(
+			*reference_pose_, pose, subset_residues, is_protein_sidechain_heavyatom)
+		<< rmsd_with_super(*reference_pose_, pose, subset_residues, is_heavyatom)
+		<< rmsd_with_super(*reference_pose_, pose, subset_residues, is_nbr_atom)
+		<< all_atom_rmsd(*reference_pose_, pose, subset_residues);
+	basic::database::safely_write_to_database(stmt);
+
 
 
 	return 0;
