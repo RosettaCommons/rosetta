@@ -21,7 +21,6 @@
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/database/sql_utils.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
@@ -160,15 +159,25 @@ ProtocolFeatures::report_features(
 
 	//if -out:database_protocol_id is specified we need to make sure the protocol hasn't already been specified
 
-	cppdb::statement stmt = (*db_session) <<
-		"SELECT\n"
-		"	count(*)\n"
-		"FROM\n"
-		"	protocols\n"
-		"WHERE\n"
-		"	protocols.protocol_id == ?;" << protocol_id;
-
-	cppdb::result res(basic::database::safely_read_from_database(stmt));
+	result res;
+	while(true)
+	{
+		try
+		{
+			res = (*db_session) <<
+				"SELECT\n"
+				"	count(*)\n"
+				"FROM\n"
+				"	protocols\n"
+				"WHERE\n"
+				"	protocols.protocol_id == ?;" << protocol_id;
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 	if(res.next())
 	{
 		core::Size selected = 0;
@@ -179,23 +188,34 @@ ProtocolFeatures::report_features(
 		}
 	}
 
-
-	if(protocol_id){
-		stmt = (*db_session)
-			<< "INSERT INTO protocols VALUES (?,?,?,?,?,?);"
-			<< protocol_id;
-	} else {
-		stmt = (*db_session)
-			<< "INSERT INTO protocols VALUES (NULL,?,?,?,?,?);";
+	while(true)
+	{
+		try
+		{
+			statement stmt;
+			if(protocol_id){
+				stmt = (*db_session)
+					<< "INSERT INTO protocols VALUES (?,?,?,?,?,?);"
+					<< protocol_id;
+			} else {
+				stmt = (*db_session)
+					<< "INSERT INTO protocols VALUES (NULL,?,?,?,?,?);";
+			}
+			stmt
+				<< command_line
+				<< specified_options
+				<< svn_url
+				<< svn_version
+				<< script;
+			stmt.exec();
+			return stmt.sequence_last("");
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
 	}
-	stmt
-		<< command_line
-		<< specified_options
-		<< svn_url
-		<< svn_version
-		<< script;
-	basic::database::safely_write_to_database(stmt);
-	return stmt.sequence_last("");
+
 
 }
 

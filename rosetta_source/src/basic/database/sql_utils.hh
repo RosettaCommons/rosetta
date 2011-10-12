@@ -29,10 +29,6 @@ utility::sql_database::sessionOP get_db_session(
 	bool const readonly = false,
 	bool const separate_db_per_mpi_process = false);
 
-void safely_write_to_database(cppdb::statement & statement);
-
-cppdb::result safely_read_from_database(cppdb::statement & statement);
-
 }
 }
 

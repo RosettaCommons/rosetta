@@ -20,7 +20,6 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/orbitals/OrbitalsLookup.hh>
 #include <core/types.hh>
-#include <basic/database/sql_utils.hh>
 
 //Numeric Headers
 #include <numeric/xyzVector.hh>
@@ -160,13 +159,24 @@ OrbitalsFeatures::report_orbital_interactions(
 							Real const dist(res1_orb_xyz.distance(res2_H_xyz));
 							if(dist <= atomic_interaction_cutoff){
 								Real angle = cos_of(bonded_atom_xyz, res1_orb_xyz, res2_H_xyz );
-								statement stmt = (*db_session)
-									<< "INSERT INTO orbital_polar_hydrogen_interactions VALUES (?,?,?,?,?,?,?,?);"
-									<< struct_id
-									<< resNum1 << orbNum1 << orbName1
-									<< resNum2 << hpolNum2
-									<< dist << angle;
-								basic::database::safely_write_to_database(stmt);
+								while(true)
+								{
+									try
+									{
+										statement stmt = (*db_session)
+											<< "INSERT INTO orbital_polar_hydrogen_interactions VALUES (?,?,?,?,?,?,?,?);"
+											<< struct_id
+											<< resNum1 << orbNum1 << orbName1
+											<< resNum2 << hpolNum2
+											<< dist << angle;
+										stmt.exec();
+										break;
+									}catch(cppdb::cppdb_error &)
+									{
+										usleep(10);
+										continue;
+									}
+								}
 							}
 						}
 						foreach(Size const haroNum2, res2.Haro_index()){
@@ -174,13 +184,24 @@ OrbitalsFeatures::report_orbital_interactions(
 							Real const dist(res1_orb_xyz.distance(res2_H_xyz));
 							if(dist <= atomic_interaction_cutoff){
 								Real angle = cos_of(bonded_atom_xyz, res1_orb_xyz, res2_H_xyz );
-								statement stmt = (*db_session)
-									<< "INSERT INTO orbital_aromatic_hydrogen_interactions VALUES (?,?,?,?,?,?,?,?);"
-									<< struct_id
-									<< resNum1 << orbNum1 << orbName1
-									<< resNum2 << haroNum2
-									<< dist << angle;
-								basic::database::safely_write_to_database(stmt);
+								while(true)
+								{
+									try
+									{
+										statement stmt = (*db_session)
+											<< "INSERT INTO orbital_aromatic_hydrogen_interactions VALUES (?,?,?,?,?,?,?,?);"
+											<< struct_id
+											<< resNum1 << orbNum1 << orbName1
+											<< resNum2 << haroNum2
+											<< dist << angle;
+										stmt.exec();
+										break;
+									}catch(cppdb::cppdb_error &)
+									{
+										usleep(10);
+										continue;
+									}
+								}
 							}
 						}
 						if(resNum1 < resNum2){
@@ -189,14 +210,24 @@ OrbitalsFeatures::report_orbital_interactions(
 								Real const dist(res1_orb_xyz.distance(res2_orb_xyz));
 								if(dist <= atomic_interaction_cutoff){
 									Real angle = cos_of(bonded_atom_xyz, res1_orb_xyz, res2_orb_xyz );
-									statement stmt = (*db_session)
-										<< "INSERT INTO orbital_orbital_interactions VALUES (?,?,?,?,?,?,?,?);"
-										<< struct_id
-										<< resNum1 << orbNum1 << orbName1
-										<< resNum2 << orbNum2
-										<< dist << angle;
-									basic::database::safely_write_to_database(stmt);
-
+									while(true)
+									{
+										try
+										{
+											statement stmt = (*db_session)
+												<< "INSERT INTO orbital_orbital_interactions VALUES (?,?,?,?,?,?,?,?);"
+												<< struct_id
+												<< resNum1 << orbNum1 << orbName1
+												<< resNum2 << orbNum2
+												<< dist << angle;
+											stmt.exec();
+											break;
+										}catch(cppdb::cppdb_error &)
+										{
+											usleep(10);
+											continue;
+										}
+									}
 								}
 							}
 						}

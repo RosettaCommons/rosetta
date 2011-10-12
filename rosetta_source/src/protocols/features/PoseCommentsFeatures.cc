@@ -31,8 +31,6 @@
 // Basic Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <basic/database/sql_utils.hh>
-
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -108,11 +106,21 @@ PoseCommentsFeatures::report_features(
 	typedef map< string, string >::value_type kv_pair;
 	//cppdb::transaction transact_guard(*db_session);
 	foreach(kv_pair const & kv, get_all_comments(pose)){
-
-		statement stmt = (*db_session) <<
-			"INSERT INTO pose_comments VALUES (?,?,?);" <<
-			struct_id << kv.first << kv.second;
-		basic::database::safely_write_to_database(stmt);
+		while(true)
+		{
+			try
+			{
+				statement stmt = (*db_session) <<
+					"INSERT INTO pose_comments VALUES (?,?,?);" <<
+					struct_id << kv.first << kv.second;
+				stmt.exec();
+				break;
+			}catch(cppdb::cppdb_error &)
+			{
+				usleep(10);
+				continue;
+			}
+		}
 	}
 	//transact_guard.commit();
 	return 0;
@@ -122,11 +130,20 @@ void PoseCommentsFeatures::delete_record(
 	core::Size struct_id,
 	utility::sql_database::sessionOP db_session
 ) {
-
-	statement stmt = (*db_session) <<
-		"DELETE FROM pose_comments where struct_id == ?;" <<struct_id;
-	basic::database::safely_write_to_database(stmt);
-
+	while(true)
+	{
+		try
+		{
+			statement stmt = (*db_session) <<
+				"DELETE FROM pose_comments where struct_id == ?;" <<struct_id;
+			stmt.exec();
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 }
 
 void
@@ -135,21 +152,30 @@ PoseCommentsFeatures::load_into_pose(
 	Size struct_id,
 	Pose & pose){
 
-	statement stmt = (*db_session) <<
-		"SELECT\n"
-		"	comment_key,\n"
-		"	value\n"
-		"FROM\n"
-		"	pose_comments\n"
-		"WHERE\n"
-		"	pose_comments.struct_id = ?;" << struct_id;
+	while(true)
+	{
+		try
+		{
+			result res = (*db_session) <<
+				"SELECT\n"
+				"	comment_key,\n"
+				"	value\n"
+				"FROM\n"
+				"	pose_comments\n"
+				"WHERE\n"
+				"	pose_comments.struct_id = ?;" << struct_id;
 
-	result res(basic::database::safely_read_from_database(stmt));
-
-	while(res.next()){
-		string key, value;
-		res >> key >> value;
-		add_comment(pose, key, value);
+			while(res.next()){
+				string key, value;
+				res >> key >> value;
+				add_comment(pose, key, value);
+			}
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
 	}
 }
 

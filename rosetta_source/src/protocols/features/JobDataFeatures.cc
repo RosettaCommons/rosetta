@@ -18,7 +18,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <basic/database/sql_utils.hh>
 
 //external headers
 #include <cppdb/frontend.h>
@@ -137,18 +136,26 @@ JobDataFeatures::load_into_pose(
 }
 
 void JobDataFeatures::delete_record(
-	core::Size struct_id,
-	utility::sql_database::sessionOP db_session
-	)
-{
-
-	cppdb::statement stmt = (*db_session) << "DELETE FROM job_string_data WHERE struct_id == ?;\n" <<struct_id;
-	basic::database::safely_write_to_database(stmt);
-	stmt = (*db_session) << "DELETE FROM job_string_string_data WHERE struct_id == ?;\n" <<struct_id;
-	basic::database::safely_write_to_database(stmt);
-	stmt = (*db_session) << "DELETE FROM job_string_real_data WHERE struct_id == ?;" << struct_id ;
-	basic::database::safely_write_to_database(stmt);
-
+		core::Size struct_id,
+		utility::sql_database::sessionOP db_session
+){
+	while(true)
+	{
+		try
+		{
+			cppdb::statement stmt = (*db_session) << "DELETE FROM job_string_data WHERE struct_id == ?;\n" <<struct_id;
+			stmt.exec();
+			stmt = (*db_session) << "DELETE FROM job_string_string_data WHERE struct_id == ?;\n" <<struct_id;
+			stmt.exec();
+			stmt = (*db_session) << "DELETE FROM job_string_real_data WHERE struct_id == ?;" << struct_id ;
+			stmt.exec();
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 }
 
 void JobDataFeatures::insert_string_rows(core::Size struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
@@ -156,11 +163,22 @@ void JobDataFeatures::insert_string_rows(core::Size struct_id, utility::sql_data
 	protocols::jd2::Job::Strings::const_iterator it(job->output_strings_begin());
 	for(; it != job->output_strings_end(); ++it)
 	{
-		cppdb::statement stmt = (*db_session)
-			<< "INSERT INTO job_string_data VALUES (?,?);"
-			<< struct_id
-			<< *it;
-		basic::database::safely_write_to_database(stmt);
+		while(true)
+		{
+			try
+			{
+				cppdb::statement stmt = (*db_session)
+					<< "INSERT INTO job_string_data VALUES (?,?);"
+					<< struct_id
+					<< *it;
+				stmt.exec();
+				break;
+			}catch(cppdb::cppdb_error &)
+			{
+				usleep(10);
+				continue;
+			}
+		}
 	}
 }
 
@@ -192,12 +210,23 @@ void JobDataFeatures::insert_string_string_rows(core::Size struct_id, utility::s
 	for(; it != job->output_string_string_pairs_end();++it)
 	{
 
-		cppdb::statement stmt = (*db_session)
-			<< "INSERT INTO job_string_string_data VALUES (?,?,?);"
-			<< struct_id
-			<< it->first
-			<< it->second;
-		basic::database::safely_write_to_database(stmt);
+		while(true)
+		{
+			try
+			{
+				cppdb::statement stmt = (*db_session)
+					<< "INSERT INTO job_string_string_data VALUES (?,?,?);"
+					<< struct_id
+					<< it->first
+					<< it->second;
+				stmt.exec();
+				break;
+			}catch(cppdb::cppdb_error &)
+			{
+				usleep(10);
+				continue;
+			}
+		}
 	}
 }
 
@@ -229,14 +258,23 @@ void JobDataFeatures::insert_string_real_rows(core::Size struct_id, utility::sql
 	protocols::jd2::Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin());
 	for(; it != job->output_string_real_pairs_end();++it)
 	{
-
-		cppdb::statement stmt = (*db_session)
-			<< "INSERT INTO job_string_real_data VALUES (?,?,?);"
-			<< struct_id
-			<< it->first
-			<< it->second;
-		basic::database::safely_write_to_database(stmt);
-
+		while(true)
+		{
+			try
+			{
+				cppdb::statement stmt = (*db_session)
+					<< "INSERT INTO job_string_real_data VALUES (?,?,?);"
+					<< struct_id
+					<< it->first
+					<< it->second;
+				stmt.exec();
+				break;
+			}catch(cppdb::cppdb_error &)
+			{
+				usleep(10);
+				continue;
+			}
+		}
 	}
 }
 

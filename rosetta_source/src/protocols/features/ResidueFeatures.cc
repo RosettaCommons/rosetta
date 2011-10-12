@@ -34,7 +34,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/types.hh>
 #include <protocols/jumping/Dssp.hh>
-#include <basic/database/sql_utils.hh>
+
 // Utility Headers
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
@@ -158,14 +158,24 @@ ResidueFeatures::insert_residue_rows(
 		string const name3( res.name3() );
 		string const res_type( res.name() );
 
-		statement stmt = (*db_session)
-			<< "INSERT INTO residues VALUES (?,?,?,?);"
-			<< struct_id
-			<< resNum
-			<< name3
-			<< res_type;
-		basic::database::safely_write_to_database(stmt);
-
+		while(true)
+		{
+			try
+			{
+				statement stmt = (*db_session)
+					<< "INSERT INTO residues VALUES (?,?,?,?);"
+					<< struct_id
+					<< resNum
+					<< name3
+					<< res_type;
+				stmt.exec();
+				break;
+			}catch(cppdb::cppdb_error &)
+			{
+				usleep(10);
+				continue;
+			}
+		}
 	}
 }
 
@@ -225,15 +235,25 @@ ResidueFeatures::insert_residue_scores_rows(
 				string const score_type( ScoreTypeManager::name_from_score_type(*st) );
 				Real const score_value( emap[*st] );
 
-
-				statement stmt = (*db_session)
-					<< "INSERT INTO residue_scores_1b VALUES (?,?,?,?,?);"
-					<< struct_id
-					<< resNum
-					<< score_type
-					<< score_value
-					<< false;
-				basic::database::safely_write_to_database(stmt);
+				while(true)
+				{
+					try
+					{
+						statement stmt = (*db_session)
+							<< "INSERT INTO residue_scores_1b VALUES (?,?,?,?,?);"
+							<< struct_id
+							<< resNum
+							<< score_type
+							<< score_value
+							<< false;
+						stmt.exec();
+						break;
+					}catch(cppdb::cppdb_error &)
+					{
+						usleep(10);
+						continue;
+					}
+				}
 			}
 		}
 		{ // Context Dependent One Body Energies
@@ -247,16 +267,25 @@ ResidueFeatures::insert_residue_scores_rows(
 
 				string const score_type( ScoreTypeManager::name_from_score_type(*st) );
 				Real const score_value( emap[*st] );
-
-				statement stmt = (*db_session)
-					<< "INSERT INTO residue_scores_1b VALUES (?,?,?,?,?);"
-					<< struct_id
-					<< resNum
-					<< score_type
-					<< score_value
-					<< true;
-				basic::database::safely_write_to_database(stmt);
-
+				while(true)
+				{
+					try
+					{
+						statement stmt = (*db_session)
+							<< "INSERT INTO residue_scores_1b VALUES (?,?,?,?,?);"
+							<< struct_id
+							<< resNum
+							<< score_type
+							<< score_value
+							<< true;
+						stmt.exec();
+						break;
+					}catch(cppdb::cppdb_error &)
+					{
+						usleep(10);
+						continue;
+					}
+				}
 			}
 		}
 
@@ -274,16 +303,26 @@ ResidueFeatures::insert_residue_scores_rows(
 					string const score_type(ScoreTypeManager::name_from_score_type(*st));
 					Real const score_value( emap[*st] );
 
-					statement stmt = (*db_session)
-						<< "INSERT INTO residue_scores_2b VALUES (?,?,?,?,?,?);"
-						<< struct_id
-						<< resNum
-						<< otherResNum
-						<< score_type
-						<< score_value
-						<< false;
-					basic::database::safely_write_to_database(stmt);
-
+					while(true)
+					{
+						try
+						{
+							statement stmt = (*db_session)
+								<< "INSERT INTO residue_scores_2b VALUES (?,?,?,?,?,?);"
+								<< struct_id
+								<< resNum
+								<< otherResNum
+								<< score_type
+								<< score_value
+								<< false;
+							stmt.exec();
+							break;
+						}catch(cppdb::cppdb_error &)
+						{
+							usleep(10);
+							continue;
+						}
+					}
 				}
 			}
 			{ // Context Dependent Two Body Energies
@@ -293,17 +332,26 @@ ResidueFeatures::insert_residue_scores_rows(
 					if(!emap[*st]) continue;
 					string const score_type(ScoreTypeManager::name_from_score_type(*st));
 					Real const score_value( emap[*st] );
-
-					statement stmt = (*db_session)
-						<< "INSERT INTO residue_scores_2b VALUES (?,?,?,?,?,?);"
-						<< struct_id
-						<< resNum
-						<< otherResNum
-						<< score_type
-						<< score_value
-						<< true;
-					basic::database::safely_write_to_database(stmt);
-
+					while(true)
+					{
+						try
+						{
+							statement stmt = (*db_session)
+								<< "INSERT INTO residue_scores_2b VALUES (?,?,?,?,?,?);"
+								<< struct_id
+								<< resNum
+								<< otherResNum
+								<< score_type
+								<< score_value
+								<< true;
+							stmt.exec();
+							break;
+						}catch(cppdb::cppdb_error &)
+						{
+							usleep(10);
+							continue;
+						}
+					}
 				}
 			}
 		} // End Two Body Energies

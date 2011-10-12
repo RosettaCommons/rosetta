@@ -21,7 +21,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
 #include <protocols/jumping/Dssp.hh>
-#include <basic/database/sql_utils.hh>
+
 // Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
@@ -106,13 +106,23 @@ ResidueSecondaryStructureFeatures::report_features(
 			break;
 		}
 
-		statement stmt = (*db_session)
-			<< "INSERT INTO residue_secondary_structure VALUES (?,?,?);"
-			<< struct_id
-			<< resNum
-			<< string(1, all_dssp.get_dssp_secstruct(resNum));
-		basic::database::safely_write_to_database(stmt);
-
+		while(true)
+		{
+			try
+			{
+				statement stmt = (*db_session)
+					<< "INSERT INTO residue_secondary_structure VALUES (?,?,?);"
+					<< struct_id
+					<< resNum
+					<< string(1, all_dssp.get_dssp_secstruct(resNum));
+				stmt.exec();
+				break;
+			}catch(cppdb::cppdb_error &)
+			{
+				usleep(10);
+				continue;
+			}
+		}
 	}
 	return 0;
 }

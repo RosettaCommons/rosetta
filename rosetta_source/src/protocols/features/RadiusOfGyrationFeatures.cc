@@ -19,7 +19,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-#include <basic/database/sql_utils.hh>
 
 // Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
@@ -68,12 +67,22 @@ RadiusOfGyrationFeatures::report_features(
 	sessionOP db_session
 ){
 	RG_Energy_Fast rg;
-
-	statement stmt = (*db_session)
-		<< "INSERT INTO radius_of_gyration VALUES (?,?);"
-		<< struct_id
-		<< rg.calculate_rg_score(pose, relevant_residues);
-	basic::database::safely_write_to_database(stmt);
+	while(true)
+	{
+		try
+		{
+			statement stmt = (*db_session)
+				<< "INSERT INTO radius_of_gyration VALUES (?,?);"
+				<< struct_id
+				<< rg.calculate_rg_score(pose, relevant_residues);
+			stmt.exec();
+			break;
+		}catch(cppdb::cppdb_error &)
+		{
+			usleep(10);
+			continue;
+		}
+	}
 	return 0;
 }
 
