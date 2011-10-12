@@ -29,3 +29,4 @@
 -mute core.io
 -mute core.conformation
 -mute core.pack
+-add_orbitals
