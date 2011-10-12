@@ -238,8 +238,6 @@ sub jacobi3 {
 # ($eigen_vec, $eigenval) = diagonalize_symmetric( $matrix )
 sub diagonalize_symmetric {
 	my $matrix = shift;
-	my $n_rot = 0;
-
 	my ($eigenval,$vec,$n_rot) = jacobi3($matrix);
 
 	# sort solutions by eigenval

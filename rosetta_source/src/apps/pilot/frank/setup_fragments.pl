@@ -10,6 +10,7 @@ require "kabsch.pm";
 require "matrix.pm";
 
 my $dssp                 = "/work/dimaio/bin/dssp";
+my $RMS_ALIGN = 2.5;
 
 ###############################
 ###############################
@@ -204,12 +205,13 @@ foreach my $pdb (@ARGV) {
 # align all->all
 my $npdbs = @ARGV;
 my $rmsds = [];
+my $nalignlen = [];
 my $Rs = [];
 my $comis = [];
 my $comjs = [];
 
 foreach my $i (0..$#ARGV) {
-foreach my $j (0..$#ARGV) { # lazy
+foreach my $j ($i..$#ARGV) {
 	# intersection of $bbatoms{i} and {j}
 	my @common_atoms = ();
 	foreach ( keys %{ $bbatoms{$ARGV[$i]} } ) {
@@ -223,57 +225,145 @@ foreach my $j (0..$#ARGV) { # lazy
 		push @{ $atoms_i }, deep_copy( $bbatoms{$ARGV[$i]}->{$_} );
 		push @{ $atoms_j }, deep_copy( $bbatoms{$ARGV[$j]}->{$_} );
 	}
-	($Rs->[$i][$j], $rmsds->[$i][$j], $comis->[$i][$j], $comjs->[$i][$j]) = rms_align( $atoms_i , $atoms_j );
 
-	if ($i<$j) {print STDERR "RMS(".$ARGV[$i].",".$ARGV[$j].") over ".@common_atoms." atoms is ".$rmsds->[$i][$j]."\n";}
+	# realign
+	my $done = 0;
+	while ($done == 0 && scalar(@common_atoms) > 4) {
+		($Rs->[$i][$j], $rmsds->[$i][$j], $comis->[$i][$j], $comjs->[$i][$j]) = rms_align( $atoms_i , $atoms_j );
+		$nalignlen->[$i][$j] = scalar(@common_atoms);
+
+		$done = 1;
+		my @new_common_atoms = ();
+		$atoms_i = [];
+		$atoms_j = [];
+		foreach ( @common_atoms ) {
+			my $x = $bbatoms{$ARGV[$i]}->{$_};
+			my $y = vadd( mapply( $Rs->[$i][$j] , vsub( $bbatoms{$ARGV[$j]}->{$_} , $comis->[$i][$j] ) ), 
+			              vadd($comis->[$i][$j] , $comjs->[$i][$j]) );
+			my $dist = dist( $x,$y );
+			if ($dist > $RMS_ALIGN) {
+				$done = 0;
+			} else {
+				push @new_common_atoms, $_;
+				push @{ $atoms_i }, deep_copy( $bbatoms{$ARGV[$i]}->{$_} );
+				push @{ $atoms_j }, deep_copy( $bbatoms{$ARGV[$j]}->{$_} );
+			}
+		}
+		@common_atoms = @new_common_atoms;
+		if ($done == 1) {print STDERR "RMS(".$ARGV[$i].",".$ARGV[$j].") over ".@common_atoms." atoms is ".$rmsds->[$i][$j]."\n";}
+	}
 }
 }
 
-# align all to the centermost
-my $minrmsd = 9999;
-my $center_model = -1;
+
 foreach my $i (0..$#ARGV) {
-	my $avgrmsd = 0;
+foreach my $j (0..$i-1) {
+	 $Rs->[$i][$j] =  minv( $Rs->[$j][$i] );
+	 $rmsds->[$i][$j] =  deep_copy( $rmsds->[$j][$i] );
+	 $comis->[$i][$j] =  vadd( $comis->[$j][$i], $comjs->[$j][$i] );
+	 $comjs->[$i][$j] =  vscale( -1 , $comjs->[$j][$i] );
+	 $nalignlen->[$i][$j] = $nalignlen->[$j][$i];
+}
+}
+
+# greedy align
+
+# find min RMS in table
+my $maxlen = -999;
+my $minI = -1;
+my $minJ = -1;
+foreach my $i (0..$#ARGV) {
+foreach my $j ($i+1..$#ARGV) {
+	if ( $nalignlen->[$i][$j] > $maxlen ) {
+		$maxlen = $nalignlen->[$i][$j];
+		$minI = $i; $minJ = $j;
+	}
+}
+}
+
+# use i's coordinate frame
+# seed j
+my $globalRs = [];
+$globalRs->[$minI] = [[1,0,0],[0,1,0],[0,0,1]];
+$globalRs->[$minJ] = deep_copy( $Rs->[$minI][$minJ] );
+my $preTs = [];
+$preTs->[$minI] = deep_copy( $comis->[$minJ][$minI] );
+$preTs->[$minJ] = deep_copy( $comis->[$minI][$minJ] );
+my $postTs = [];
+$postTs->[$minI] = $preTs->[$minI];
+$postTs->[$minJ] = vadd(  $comjs->[$minI][$minJ], $preTs->[$minJ] );
+
+# for i = 2 to $#ARGV find best alignment to already-aligned model
+my @aligned = (0) x scalar(@ARGV);
+$aligned[$minI] = 1; $aligned[$minJ] = 1;
+
+print STDERR "align ".$ARGV[$minI].",".$ARGV[$minJ]."\n";
+
+foreach my $cycle (2..$#ARGV) {
+	$maxlen = -999; $minI = -1; $minJ = -1;
+	foreach my $i (0..$#ARGV) {
 	foreach my $j (0..$#ARGV) {
-		if ($i != $j) {
-			$avgrmsd += $rmsds->[$i][$j];
+		next if ($i==$j);
+		next if ($aligned[$i] == 0 || $aligned[$j] == 1);
+		# i is aligned, j is not
+		if ( $nalignlen->[$i][$j] > $maxlen ) {
+			$maxlen = $nalignlen->[$i][$j];
+			$minI = $i; $minJ = $j;
 		}
 	}
-	if ($avgrmsd<$minrmsd) {
-		$minrmsd = $avgrmsd;
-		$center_model = $i;
 	}
+
+	# add j to alignment
+	print STDERR "align ".$ARGV[$minJ]." (from".$ARGV[$minI].")\n";
+	$globalRs->[$minJ] = mmult( $globalRs->[$minI], $Rs->[$minI][$minJ]  );
+	$preTs->[$minJ] = deep_copy( $comis->[$minI][$minJ] );
+
+	# post-rotation translation is a bit tricky
+	# we need to transform to j's coordinate frame, 
+	#   then apply j's transformation to this result
+	my $post_to_j = vadd( $comjs->[$minI][$minJ], $preTs->[$minJ] );
+	my $post_j_to_global = vadd( mapply( $globalRs->[$minI] , vsub( $post_to_j , $preTs->[$minI]) ) , 
+	                             $postTs->[$minI] );
+	$postTs->[$minJ] = $post_j_to_global;
+
+	$aligned[$minJ] = 1;
 }
 
+
 # apply rotation; dump primary fragments to DB
-print STDERR "Aligning all models to ".$ARGV[$center_model]."\n";
 mkdir "fragments";
+mkdir "aligned_templates";
 foreach my $i (0..$#ARGV) {
 	my $pdb = $ARGV[$i];
 	my $nfrags = scalar( @{ $allfrags{$pdb} } );
+
+	my $outpdb = $pdb;
+	$outpdb =~ s/.*\///;
+	$outpdb =~ s/\.pdb$/_aln.$i.pdb/;
+	print STDERR "writing aligned_templates/$outpdb\n";
+	open (PDBF, ">aligned_templates/$outpdb") || print STDERR "Cannot open $_";
 
 	foreach my $frag (0..$nfrags-1) {
 		my $outfile = $pdb;
 		$outfile =~ s/.*\///;
 		$outfile =~ s/\.pdb$/_$frag.$i.pdb/;
-		print STDERR "writing fragments/$outfile\n";
 		open (PDB, ">fragments/$outfile") || print STDERR "Cannot open $_";
 		foreach my $line (@{ $allfrags{$pdb}->[$frag] }) {
 			my $newX = [ substr ($line, 30, 8), substr ($line, 38, 8), substr ($line, 46, 8) ];
-			$newX = vsub( $newX, $comis->[$center_model][$i]);
-			$newX = mapply( $Rs->[$center_model][$i], $newX );
-			$newX = vadd( $newX, $comis->[$center_model][$i]);
-			$newX = vadd( $newX, $comjs->[$center_model][$i]);
+			$newX = vsub( $newX, $preTs->[$i]);
+			$newX = mapply( $globalRs->[$i], $newX );
+			$newX = vadd( $newX, $postTs->[$i]);
 
 			substr ($line, 30, 8) = sprintf ("%8.3f", $newX->[0]);
 			substr ($line, 38, 8) = sprintf ("%8.3f", $newX->[1]);
 			substr ($line, 46, 8) = sprintf ("%8.3f", $newX->[2]);
 			print PDB $line;
+			print PDBF $line;
 		}
 		close PDB;
 	}
+	close PDBF;
 }
-
 
 
 # prepare pseudo-backbone trace
@@ -302,7 +392,11 @@ foreach my $i (1..$nres) {
  		my $pdb = $ARGV[$j];
  		if (defined $bbatoms{$pdb}->{$id} ) {
  			push @ids_i, $j;
- 			push @cas_i, $bbatoms{$pdb}->{$id};
+			my $newX = deep_copy($bbatoms{$pdb}->{$id});
+			$newX = vsub( $newX, $preTs->[$j]);
+			$newX = mapply( $globalRs->[$j], $newX );
+			$newX = vadd( $newX, $postTs->[$j]);
+ 			push @cas_i, $newX;
  		}
  	}
 	my $com = [0,0,0];
@@ -326,10 +420,10 @@ foreach my $i (1..$nres) {
 		$last_ungapped = $i;
 		foreach my $atm (" N  ", " CA ", " C  ", " O  ") {
 			my $x = $bbatoms{ $ARGV[$maxid] }->{$atm."A".$i};
-			$x = vsub( $x, $comis->[$center_model][$maxid]);
-			$x = mapply( $Rs->[$center_model][$maxid], $x );
-			$x = vadd( $x, $comis->[$center_model][$maxid]);
-			$x = vadd( $x, $comjs->[$center_model][$maxid]);
+			$x = vsub( $x, $preTs->[$maxid]);
+			$x = mapply( $globalRs->[$maxid], $x );
+			$x = vadd( $x, $postTs->[$maxid]);
+
 			$pseudotrace[$i]->{$atm} = $x;
 		}
 	} else {
@@ -341,7 +435,7 @@ foreach my $i (1..$nres) {
 }
 
 # fill in gaps
-my $maxgap = 0;
+my $maxgap = $gaps[$nres];
 for (my $i=$last_ungapped-1; $i >= 1; $i--) {
 	$gaps[$i] = min( $gaps[$i+1]+1, $gaps[$i] );
 	$maxgap = max($maxgap, $gaps[$i]);

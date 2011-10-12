@@ -1,5 +1,6 @@
 
 use strict;
+use constant PI    => 4 * atan2(1, 1);
 
 return 1;
 
@@ -280,8 +281,8 @@ sub is_equivalent {
 # f2c/c2f #
 ###########
 
-sub d2r { return (@_[0]*PI/180); }
-sub square { return @_[0]*@_[0]; }
+sub d2r { return ($_[0]*PI/180); }
+sub square { return $_[0]*$_[0]; }
 
 # my ($f2c,$c2f) = crystparams($a,$b,$c,$alpha,$beta,$gamma)
 sub crystparams {
