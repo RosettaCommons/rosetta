@@ -1257,6 +1257,9 @@ public:
 	void
 	update_actcoord( Size resid );
 
+	void
+	update_orbital_coords(Size resid);
+
 	/// @brief Apply a transform of the Rx + v form, where R is a
 	/// rotation matrix and v is a translation vector.
 	void

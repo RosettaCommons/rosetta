@@ -56,6 +56,10 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <utility/io/izstream.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+
+
 //option
 #include <basic/options/option.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
@@ -407,27 +411,31 @@ read_topology_file(
 			}
 			rsd->set_ncaa_rotlib_n_bin_per_rot( n_bins_per_rot );
 		} else if( tag== "ORBITALS" ){ //begin parsing orbital information
-			l >> orbitals_tag; //looking at the second set of text of the params file
-			if(orbitals_tag == "BOND"){ //add pseudo bonds that will be used for iccor
-				l >> atom1 >> orbital;
-				rsd->add_orbital_bond( atom1, orbital );
-			} else if( orbitals_tag == "ICOOR_INTERNAL"){
-				Real phi, theta, d;
-				std::string child_atom(""),  parent_atom(""), angle_atom(""), torsion_atom("");
-				l >> child_atom >> phi >> theta >> d >> parent_atom >> angle_atom >> torsion_atom;
+			if(basic::options::option[ basic::options::OptionKeys::in::add_orbitals]){
 
-				phi = radians(phi); theta = radians(theta);
-				rsd->set_orbital_icoor_id(child_atom, phi, theta, d, parent_atom, angle_atom, torsion_atom);
-			}
-			else { //assign the name of the orbital and the orbital type. This actually happens first
-				std::string orbital_type_name("");
-				//std::string orbital_name(l);
-				//
 
-				l >> orbital_type_name; //the orbital type, which is defined in OrbitalType.hh
+				l >> orbitals_tag; //looking at the second set of text of the params file
+				if(orbitals_tag == "BOND"){ //add pseudo bonds that will be used for iccor
+					l >> atom1 >> orbital;
+					rsd->add_orbital_bond( atom1, orbital );
+				} else if( orbitals_tag == "ICOOR_INTERNAL"){
+					Real phi, theta, d;
+					std::string child_atom(""),  parent_atom(""), angle_atom(""), torsion_atom("");
+					l >> child_atom >> phi >> theta >> d >> parent_atom >> angle_atom >> torsion_atom;
 
-				rsd->add_orbital( orbitals_tag, orbital_type_name); //orbitals tag is the name of the orbital
-				++norbitals;
+					phi = radians(phi); theta = radians(theta);
+					rsd->set_orbital_icoor_id(child_atom, phi, theta, d, parent_atom, angle_atom, torsion_atom);
+				}
+				else { //assign the name of the orbital and the orbital type. This actually happens first
+					std::string orbital_type_name("");
+					//std::string orbital_name(l);
+					//
+
+					l >> orbital_type_name; //the orbital type, which is defined in OrbitalType.hh
+
+					rsd->add_orbital( orbitals_tag, orbital_type_name); //orbitals tag is the name of the orbital
+					++norbitals;
+				}
 			}
 
 		}

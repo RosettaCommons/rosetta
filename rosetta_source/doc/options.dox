@@ -79,6 +79,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-add_orbitals</b> \<Boolean\><dt>
+<dd>Will add orbitals to residues only. Does not include orbitals to ligands. Done through params file reading.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-remember_unrecognized_res</b> \<Boolean\><dt>
 <dd>Ignore unrecognized residues, but remember them in PDBInfo.</dd><br>
 <dd>Default: false</dd><br>
@@ -10998,21 +11003,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
-<dt><b>-orbital</b> \<Boolean\><dt>
-<dd>look at only orbital-orbital interactions</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-atomic_cutoff</b> \<Real\><dt>
-<dd>the atomic interaction cutoff for orb score</dd><br>
-<dd>Default: 15.0</dd><br>
-</dl>
-<dl>
-<dt><b>-verbose</b> \<Boolean\><dt>
-<dd>No description</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
 <dt><b>-bb_stats</b> \<Boolean\><dt>
 <dd>look at orbital backbone stats</dd><br>
 <dd>Default: false</dd><br>
@@ -11028,42 +11018,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
-<dt><b>-threeA</b> \<Boolean\><dt>
-<dd>cutoff used for statistics</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-fiveA</b> \<Boolean\><dt>
-<dd>cutoff used for statistics</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-no_pos_bonus</b> \<Boolean\><dt>
-<dd>no arg arg lys lys bonus</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
 <dt><b>-sc_bb</b> \<Boolean\><dt>
-<dd>score the backbone</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-ten</b> \<Boolean\><dt>
-<dd>score the backbone</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-dist</b> \<Boolean\><dt>
-<dd>score the backbone</dd><br>
-<dd>Default: false</dd><br>
-</dl>
-<dl>
-<dt><b>-nbr_distance_squared</b> \<Real\><dt>
-<dd>the atomic interaction cutoff for orb score</dd><br>
-<dd>Default: 100.0</dd><br>
-</dl>
-<dl>
-<dt><b>-bb_smooth</b> \<Boolean\><dt>
 <dd>score the backbone</dd><br>
 <dd>Default: false</dd><br>
 </dl>

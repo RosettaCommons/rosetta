@@ -24,20 +24,10 @@ namespace OptionKeys {
 namespace orbitals { extern BooleanOptionKey const orbitals; }
 namespace orbitals { extern BooleanOptionKey const Hpol; }
 namespace orbitals { extern BooleanOptionKey const Haro; }
-namespace orbitals { extern BooleanOptionKey const orbital; }
-namespace orbitals { extern RealOptionKey const atomic_cutoff; }
-namespace orbitals { extern BooleanOptionKey const verbose; }
 namespace orbitals { extern BooleanOptionKey const bb_stats; }
 namespace orbitals { extern BooleanOptionKey const sc_stats; }
 namespace orbitals { extern BooleanOptionKey const orb_orb_stats; }
-namespace orbitals { extern BooleanOptionKey const threeA; }
-namespace orbitals { extern BooleanOptionKey const fiveA; }
-namespace orbitals { extern BooleanOptionKey const no_pos_bonus; }
 namespace orbitals { extern BooleanOptionKey const sc_bb; }
-namespace orbitals { extern BooleanOptionKey const ten; }
-namespace orbitals { extern BooleanOptionKey const dist; }
-namespace orbitals { extern RealOptionKey const nbr_distance_squared; }
-namespace orbitals { extern BooleanOptionKey const bb_smooth; }
 
 } // namespace OptionKeys
 } // namespace options

@@ -18,6 +18,7 @@ option.add( basic::options::OptionKeys::in::in, "Input option group" ).legal(tru
 option.add( basic::options::OptionKeys::in::termini, "Put full N and C termini on input structures" ).def(true);
 option.add( basic::options::OptionKeys::in::ignore_unrecognized_res, "Do not abort if unknown residues are found in PDB file;  instead, ignore them. Note this implies -in:ignore_waters" ).def(false);
 option.add( basic::options::OptionKeys::in::ignore_waters, "Do not abort if HOH water residues are found in PDB file;  instead, ignore them." ).def(false);
+option.add( basic::options::OptionKeys::in::add_orbitals, "Will add orbitals to residues only. Does not include orbitals to ligands. Done through params file reading." ).def(false);
 option.add( basic::options::OptionKeys::in::remember_unrecognized_res, "Ignore unrecognized residues, but remember them in PDBInfo." ).def(false);
 option.add( basic::options::OptionKeys::in::remember_unrecognized_water, "Remember waters along with other unrecognized residues." ).def(false);
 option.add( basic::options::OptionKeys::in::detect_disulf, "Forcably enable or disable disulfide detection. When unspecified, rosetta conservatively detects disulfides in full atom input based on SG distance, but will not form centroid disulfides. Setting `-detect_disulf true` will force  aggressive disulfide detection in centroid poses based on CB distance. Setting `-detect_disulf false` disables all detection, even in full atom poses. Note that disabling disulfides causes severe clashes for native disulfides." ).legal(true).legal(false);
@@ -577,12 +578,12 @@ option.add( basic::options::OptionKeys::abinitio::skip_stages, "say: 2 3 4, and 
 option.add( basic::options::OptionKeys::abinitio::close_chbrk, "Chain break closure during classic abinito " ).def(false);
 option.add( basic::options::OptionKeys::abinitio::include_stage5, "stage5 contains small moves only" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::close_loops_by_idealizing, "close loops by idealizing the structure after stage 4" ).def(false);
-option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_using_kic, "optimize around cutpoints using kinematic relax" ).def(false);
-option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_margin, "" ).def(5);
-option.add( basic::options::OptionKeys::abinitio::HD_EX_Info, "input list of residues with low amide protection " );
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::HD_penalty, "penatlty for each inconsistent pairing with HD data " ).def(0.1);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_using_kic, "optimize around cutpoints using kinematic relax" ).def(false);
+option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_margin, "" ).def(5);
+option.add( basic::options::OptionKeys::abinitio::HD_EX_Info, "input list of residues with low amide protection " );
+option.add( basic::options::OptionKeys::abinitio::HD_penalty, "penatlty for each inconsistent pairing with HD data " ).def(0.1);
 option.add( basic::options::OptionKeys::abinitio::HD_fa_penalty, "penalty for each Hbond donor inconsistent with HD donor" ).def(0.1);
 option.add( basic::options::OptionKeys::abinitio::sheet_edge_pred, "file with interior/exterior predictions for strands" );
 option.add( basic::options::OptionKeys::abinitio::SEP_score_scalling, "scalling factor" ).def(1.0);
@@ -1154,14 +1155,14 @@ option.add( basic::options::OptionKeys::wum::wum, "wum option group" ).legal(tru
 option.add( basic::options::OptionKeys::wum::n_slaves_per_master, "A value between 32 and 128 is usually recommended" ).def(64);
 option.add( basic::options::OptionKeys::wum::n_masters, "Manual override for -n_slaves_per_master. How many master nodes should be spawned ? 1 by default. generall 1 for eery 256-512 cores is recommended depending on master workload" ).def(1);
 option.add( basic::options::OptionKeys::wum::memory_limit, "Memory limit for queues (in kB) " ).def(0);
-option.add( basic::options::OptionKeys::wum::extra_scorefxn, "Extra score function for post-batchrelax-rescoring" );
+
+}
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::wum::extra_scorefxn, "Extra score function for post-batchrelax-rescoring" );
 option.add( basic::options::OptionKeys::wum::extra_scorefxn_ref_structure, "Extra score function for post-batchrelax-rescoring reference structure for superimposition (for scorefunctions that depend on absolute coordinates such as electron denisty)" );
 option.add( basic::options::OptionKeys::wum::extra_scorefxn_relax, "After doing batch relax and adding any extra_scorefunction terms do another N fast relax rounds (defaut=0)" ).def(0);
 option.add( basic::options::OptionKeys::wum::trim_proportion, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::lh::lh, "lh option group" ).legal(true).def(true);
-
-}
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::lh::db_prefix, "stem for loop database" ).def("loopdb");
+option.add( basic::options::OptionKeys::lh::db_prefix, "stem for loop database" ).def("loopdb");
 option.add( basic::options::OptionKeys::lh::loopsizes, "Which loopsizes to use" ).def(10).def(15).def(20);
 option.add( basic::options::OptionKeys::lh::num_partitions, "Number of partitions to split the database into" ).def(1);
 option.add( basic::options::OptionKeys::lh::db_path, "Path to database" ).def("");
@@ -1731,16 +1732,16 @@ option.add( basic::options::OptionKeys::AnchoredDesign::testing::delete_interfac
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::RMSD_only_this, "Perform only RMSD calculations without modifying input.  Only used for re-running metrics during benchmarking/debugging." );
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_noise_constraints_mode, "Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor's placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer's commentary." ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::DenovoProteinDesign, "DenovoProteinDesign option group" ).legal(true).def(true);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "redesign core of pdb" ).def(false);
+
+}
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "redesign core of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_loops, "redesign loops of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "redesign surface of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::optimize_loops, "do serious loop modeling at the end of designrelax mover" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::secondary_structure_file, "has fasta file format - describes secondary structure of desired target with H/C/E" );
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
+option.add( basic::options::OptionKeys::DenovoProteinDesign::hydrophobic_polar_pattern, "has fasta file format - describes hydrophobic(B) polar(P) pattern" );
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_sequence, "use the template pdbs sequence when creating starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::use_template_topology, "use templates phi/psi in loops and begin/end helix/sheet generate only template like starting structures" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb, "create starting structure from a template pdb, follow with pdb name" );
@@ -2275,20 +2276,10 @@ option.add( basic::options::OptionKeys::pepspec::prep_align_prot_to, "No descrip
 option.add( basic::options::OptionKeys::orbitals::orbitals, "orbitals option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::orbitals::Hpol, "look at only polar hydrogen interactions" ).def(false);
 option.add( basic::options::OptionKeys::orbitals::Haro, "look at only aromatic hydrogen interactions" ).def(false);
-option.add( basic::options::OptionKeys::orbitals::orbital, "look at only orbital-orbital interactions" ).def(false);
-option.add( basic::options::OptionKeys::orbitals::atomic_cutoff, "the atomic interaction cutoff for orb score" ).def(15.0);
-option.add( basic::options::OptionKeys::orbitals::verbose, "No description" ).def(false);
 option.add( basic::options::OptionKeys::orbitals::bb_stats, "look at orbital backbone stats" ).def(false);
 option.add( basic::options::OptionKeys::orbitals::sc_stats, "look at orbital sc stats" ).def(false);
 option.add( basic::options::OptionKeys::orbitals::orb_orb_stats, "look at orbital orbital stats" ).def(false);
-option.add( basic::options::OptionKeys::orbitals::threeA, "cutoff used for statistics" ).def(false);
-option.add( basic::options::OptionKeys::orbitals::fiveA, "cutoff used for statistics" ).def(false);
-option.add( basic::options::OptionKeys::orbitals::no_pos_bonus, "no arg arg lys lys bonus" ).def(false);
 option.add( basic::options::OptionKeys::orbitals::sc_bb, "score the backbone" ).def(false);
-option.add( basic::options::OptionKeys::orbitals::ten, "score the backbone" ).def(false);
-option.add( basic::options::OptionKeys::orbitals::dist, "score the backbone" ).def(false);
-option.add( basic::options::OptionKeys::orbitals::nbr_distance_squared, "the atomic interaction cutoff for orb score" ).def(100.0);
-option.add( basic::options::OptionKeys::orbitals::bb_smooth, "score the backbone" ).def(false);
 option.add( basic::options::OptionKeys::dwkulp::dwkulp, "dwkulp option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::dwkulp::forcePolyAAfragments, "a single amino acid that will be used for fragment picking,default is blank which means taking actual sequence from pose" ).def("");
 option.add( basic::options::OptionKeys::matdes::matdes, "matdes option group" ).legal(true).def(true);

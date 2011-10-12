@@ -88,6 +88,10 @@ public:
 			numeric::histograms::TwoDHistogram<core::Size, core::SSize> & histogram
 	);
 
+	void bb_stats(
+			core::pose::Pose & pdb
+	);
+
 	numeric::histograms::TwoDHistogram<core::Size, core::SSize> get_2D_histogram();
 	utility::vector1< numeric::histograms::TwoDHistogram<core::Size, core::SSize> >  get_histogram_vector();
 	core::Size get_number_of_histograms();

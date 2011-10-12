@@ -1351,6 +1351,13 @@ Pose::update_actcoord( Size resid )
 	conformation_->update_actcoord( resid );
 }
 
+void
+Pose::update_orbital_coords( Size resid )
+{
+	conformation_->update_orbital_coords( resid );
+}
+
+
 /// @brief Applies a transform of the form Rx + v, where R is a rotation
 /// matrix, V is a vector, and x is the original position in xyz space.
 void

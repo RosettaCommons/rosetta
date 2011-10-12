@@ -131,6 +131,10 @@ int main( int argc, char * argv [] )
 			orbital_stats.sc_H_orbital(pose); //where the magic happens
 
 		}
+		if(basic::options::option[basic::options::OptionKeys::orbitals::bb_stats]){
+			orbital_stats.bb_stats(pose); //where the magic happens
+
+		}
 
 
 		if(i+1 != i_end){

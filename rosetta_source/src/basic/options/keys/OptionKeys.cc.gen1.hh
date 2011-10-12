@@ -1,3 +1,6 @@
+namespace abinitio { BooleanOptionKey const optimize_cutpoints_using_kic( "abinitio:optimize_cutpoints_using_kic" );  }
+namespace abinitio { IntegerOptionKey const optimize_cutpoints_margin( "abinitio:optimize_cutpoints_margin" );  }
+namespace abinitio { FileOptionKey const HD_EX_Info( "abinitio:HD_EX_Info" );  }
 namespace abinitio { RealOptionKey const HD_penalty( "abinitio:HD_penalty" );  }
 namespace abinitio { RealOptionKey const HD_fa_penalty( "abinitio:HD_fa_penalty" );  }
 namespace abinitio { FileOptionKey const sheet_edge_pred( "abinitio:sheet_edge_pred" );  }
@@ -570,8 +573,3 @@ namespace wum { BooleanOptionKey const wum( "wum" );  }
 namespace wum { IntegerOptionKey const n_slaves_per_master( "wum:n_slaves_per_master" );  }
 namespace wum { IntegerOptionKey const n_masters( "wum:n_masters" );  }
 namespace wum { IntegerOptionKey const memory_limit( "wum:memory_limit" );  }
-namespace wum { StringOptionKey const extra_scorefxn( "wum:extra_scorefxn" );  }
-namespace wum { FileOptionKey const extra_scorefxn_ref_structure( "wum:extra_scorefxn_ref_structure" );  }
-namespace wum { IntegerOptionKey const extra_scorefxn_relax( "wum:extra_scorefxn_relax" );  }
-namespace wum { RealOptionKey const trim_proportion( "wum:trim_proportion" );  }
-namespace lh { BooleanOptionKey const lh( "lh" );  }

@@ -173,6 +173,9 @@ sources = {
 		"RG_Energy",
 		"UnfoldedStateEnergy",
 	],
+	"scoring/orbitals" : [
+		"OrbitalsScore"
+	],
 	"sequence" : [
 		"ScoringSchemes",
 		"SequenceMapping",

@@ -131,7 +131,7 @@ public:
         const bool LINCONT[2], const std::pair< core::Real, core::Real> FIRSTBE[2]
       );
 
-      inline  core::Real sqr ( const core::Real x ) const{
+      inline  core::Real sqr ( const core::Real & x ) const{
       	return x*x;
       }
 
