@@ -92,6 +92,7 @@ void on_pose_accept(const core::pose::Pose& pose) {
   using core::io::silent::SilentFileData;
   using core::io::silent::SilentStructFactory;
   using core::io::silent::SilentStructOP;
+
   static int num_accepted = 0;
 
   SilentStructOP silent = SilentStructFactory::get_instance()->get_silent_struct_out();
@@ -165,7 +166,9 @@ void decompose_structure(const core::pose::Pose& pose, protocols::loops::Loops* 
 protocols::moves::RationalMonteCarloOP create_fragment_mover(const core::pose::Pose& pose,
                                                              core::scoring::ScoreFunctionOP score,
                                                              core::fragment::FragSetOP fragments,
-                                                             const Probabilities& probs) {
+                                                             const Probabilities& probs,
+                                                             const std::string& policy,
+                                                             unsigned library_size) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using namespace protocols::moves;
@@ -178,17 +181,23 @@ protocols::moves::RationalMonteCarloOP create_fragment_mover(const core::pose::P
 
   MoverOP fragment_mover =
       new BiasedFragmentMover(fragments,
-                              PolicyFactory::get_policy("uniform", fragments, 25),
+                              PolicyFactory::get_policy(policy, fragments, library_size),
                               probs);
 
   CyclicMoverOP meta = new CyclicMover();
   meta->enqueue(rigid_body_mover);
   meta->enqueue(fragment_mover);
 
-  unsigned cycles = option[OptionKeys::rigid::rigid_body_cycles]() + option[OptionKeys::rigid::fragment_cycles]();
+  RationalMonteCarloOP mover = new RationalMonteCarlo(meta,
+                                                      score,
+                                                      option[OptionKeys::rigid::fragment_cycles](),
+                                                      option[OptionKeys::rigid::temperature](),
+                                                      true);
 
-  RationalMonteCarloOP mover = new RationalMonteCarlo(meta, score, cycles, option[OptionKeys::rigid::temperature](), true);
-  mover->add_trigger(boost::bind(&on_pose_accept, _1));
+  // Optionally record accepted moves
+  if (option[OptionKeys::rigid::log_accepted_moves]())
+    mover->add_trigger(boost::bind(&on_pose_accept, _1));
+
   return mover;
 }
 
@@ -203,17 +212,28 @@ protocols::moves::RationalMonteCarloOP create_small_mover(core::scoring::ScoreFu
   MoveMapOP movable = new MoveMap();
   movable->set_bb(true);
 
-  MoverOP small_mover = new SmallMover(movable, option[OptionKeys::rigid::temperature](), 1);
-  MoverOP shear_mover = new ShearMover(movable, option[OptionKeys::rigid::temperature](), 1);
+  SmallMoverOP small_mover = new SmallMover(movable,
+                                            option[OptionKeys::rigid::temperature](),
+                                            option[OptionKeys::rigid::residues_backbone_move]());
+
+  ShearMoverOP shear_mover = new ShearMover(movable,
+                                            option[OptionKeys::rigid::temperature](),
+                                            option[OptionKeys::rigid::residues_backbone_move]());
 
   CyclicMoverOP meta = new CyclicMover();
   meta->enqueue(small_mover);
   meta->enqueue(shear_mover);
 
-  unsigned cycles = option[OptionKeys::rigid::shear_cycles]() + option[OptionKeys::rigid::small_cycles]();
+  RationalMonteCarloOP mover = new RationalMonteCarlo(meta,
+                                                      score,
+                                                      option[OptionKeys::rigid::small_cycles](),
+                                                      option[OptionKeys::rigid::temperature](),
+                                                      true);
 
-  RationalMonteCarloOP mover = new RationalMonteCarlo(meta, score, cycles, option[OptionKeys::rigid::temperature](), true);
-  mover->add_trigger(boost::bind(&on_pose_accept, _1));
+  // Optionally record accepted moves
+  if (option[OptionKeys::rigid::log_accepted_moves]())
+    mover->add_trigger(boost::bind(&on_pose_accept, _1));
+
   return mover;
 }
 
@@ -264,7 +284,9 @@ void MedalMover::apply(core::pose::Pose& pose) {
   Probabilities probs;
   compute_per_residue_probabilities(num_residues, alignment, chunks, pose.fold_tree(), *fragments_sm_, &probs);
 
-  // Alternating rigid body and fragment insertion moves with increasing linear_chainbreak weight
+  // Alternating rigid body and fragment insertion moves with increasing linear_chainbreak weight.
+  // Early stages select fragments uniformly from the top 25, later stages select fragments according
+  // to Gunn cost using the entire fragment library.
   protocols::nonlocal::add_cutpoint_variants(&pose);
   ScoreFunctionOP score = score_function();
 
@@ -276,7 +298,11 @@ void MedalMover::apply(core::pose::Pose& pose) {
     score->set_weight(core::scoring::linear_chainbreak,
                       numeric::linear_interpolate(cb_start, cb_stop, stage, num_stages));
 
-    RationalMonteCarloOP mover = create_fragment_mover(pose, score, fragments_sm_, probs);
+    RationalMonteCarloOP mover =
+        create_fragment_mover(pose, score, fragments_sm_, probs,
+                              (stage < (num_stages / 2)) ? "uniform" : "smooth",
+                              (stage < (num_stages / 2)) ? 25 : 200);
+
     mover->apply(pose);
   }
 

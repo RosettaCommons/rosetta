@@ -14,7 +14,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 </dl>
 <dl>
 <dt><b>-fragment_cycles</b> \<Integer\><dt>
-<dd>Number of fragment insertion cycles</dd><br>
+<dd>Number of fragment insertion/rigid body cycles</dd><br>
 <dd>Default: 10000</dd><br>
 </dl>
 <dl>
@@ -28,9 +28,9 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 5.0</dd><br>
 </dl>
 <dl>
-<dt><b>-rigid_body_cycles</b> \<Integer\><dt>
-<dd>Number of rigid body perturbation cycles</dd><br>
-<dd>Default: 20000</dd><br>
+<dt><b>-residues_backbone_move</b> \<Integer\><dt>
+<dd>Number of residues perturbed by a backbone move</dd><br>
+<dd>Default: 5</dd><br>
 </dl>
 <dl>
 <dt><b>-rotation</b> \<Real\><dt>
@@ -43,14 +43,9 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 20</dd><br>
 </dl>
 <dl>
-<dt><b>-shear_cycles</b> \<Integer\><dt>
-<dd>Number of shear cycles</dd><br>
-<dd>Default: 10000</dd><br>
-</dl>
-<dl>
 <dt><b>-small_cycles</b> \<Integer\><dt>
-<dd>Number of small cycles</dd><br>
-<dd>Default: 10000</dd><br>
+<dd>Number of small/shear cycles</dd><br>
+<dd>Default: 8000</dd><br>
 </dl>
 <dl>
 <dt><b>-stages</b> \<Integer\><dt>

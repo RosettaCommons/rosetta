@@ -13,8 +13,11 @@
 // Unit header
 #include <protocols/nonlocal/SmoothPolicy.hh>
 
+// C/C++ headers
+#include <cmath>
+
 // Utility headers
-#include <numeric/random/random.hh>
+#include <numeric/random/WeightedReservoirSampler.hh>
 #include <utility/minmax.hh>
 #include <utility/vector1.hh>
 
@@ -27,34 +30,44 @@
 namespace protocols {
 namespace nonlocal {
 
-typedef SmoothPolicy::Candidate Candidate;
 typedef utility::vector1<core::Real> ScoreList;
-typedef utility::vector1<Candidate> CandidateList;
+
+/// @brief Convenience method for retrieving the single highest-weighted sample
+core::Size make_selection(numeric::random::WeightedReservoirSampler<core::Size>* sampler) {
+  assert(sampler);
+  utility::vector1<core::Size> results;
+  sampler->samples(&results);
+  return results[1];
+}
 
 SmoothPolicy::SmoothPolicy(core::fragment::FragSetCOP fragments)
     : Policy(fragments) {}
 
 core::Size SmoothPolicy::choose(const core::fragment::Frame& frame,
                                 const core::pose::Pose& pose) {
+  using core::Size;
+  using numeric::random::WeightedReservoirSampler;
   assert(frame.nr_frags() > 0);
 
   ScoreList scores;
   scorer_.score(frame, pose, scores);
 
-  CandidateList candidates;
-  for (core::Size i = 1; i <= scores.size(); ++i) {
-    core::Real score = scores[i];
+  WeightedReservoirSampler<Size> sampler(1);
+  for (Size i = 1; i <= scores.size(); ++i) {
+    double score = scores[i];
+    double fitness = std::sqrt(scorer_.cutoff() - score);
+
     if (score < scorer_.cutoff()) {
-      candidates.push_back(Candidate(score, i));
+      sampler.consider_sample(i, fitness);
     }
   }
 
   // If no candidates met the score threshold, return the best scoring fragment.
-  // Otherwise, uniformly choose among the candidates.
-  if (candidates.size() == 0) {
+  // Otherwise, randomly choose among the candidates by score.
+  if (sampler.num_considered() == 0) {
     return utility::argmin(scores);
   } else {
-    return numeric::random::random_range(1, candidates.size());
+    return make_selection(&sampler);
   }
 }
 
