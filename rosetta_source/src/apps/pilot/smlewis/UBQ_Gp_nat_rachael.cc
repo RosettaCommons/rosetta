@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/apps/pilot/smlewis/UBQ_Gp_rachael.cc
-/// @brief  this application is a one-shot for modeling a ubiquitinated G-protein
+/// @file   src/apps/pilot/smlewis/UBQ_Gp_nat_rachael.cc
+/// @brief  this application is a one-shot for modeling a ubiquitinated G-protein; this version uses a native lysine to ubiquitin linkage via LYX
 /// @author Steven Lewis
 
 // Unit Headers
@@ -104,7 +104,7 @@ basic::options::RealOptionKey const scorefilter("scorefilter");
 //tracers
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("apps.pilot.smlewis.UBQ_Gp_rachael");
+static basic::Tracer TR("apps.pilot.smlewis.UBQ_Gp_nat_rachael");
 
 class UBQ_GTPaseMover : public protocols::moves::Mover {
 public:
@@ -223,16 +223,13 @@ public:
 		core::id::AtomID const atom5( ubq_rsd_type.atom_index( "CA" ), ubq_pos );
 		core::id::AtomID const atom6( ubq_rsd_type.atom_index( "N"  ), ubq_pos );
 
-		//starting values derived from 1FXT.pdb
-
-		//CHANGE TO STRAIGHT OUT
-		for( core::Size chi(1); chi<=4; ++chi)
-			complex.set_chi(chi, GTPase_lys_, 180);
+		//starting values derived from the peptide bond and a straight-out lysine
+		for( core::Size chi(1); chi<=4; ++chi) complex.set_chi(chi, GTPase_lys_, 180);
 		//complex.conformation().set_torsion_angle( atom0, atom1, atom2, atom3, numeric::conversions::radians(106.5) );
 		//complex.conformation().set_torsion_angle( atom1, atom2, atom3, atom4, numeric::conversions::radians(-60.0) );
 		complex.conformation().set_torsion_angle( atom2, atom3, atom4, atom5, numeric::conversions::radians(180.0) );
 		complex.conformation().set_torsion_angle( atom3, atom4, atom5, atom6, numeric::conversions::radians(135.0) );
-		complex.dump_pdb("just1_complex2.pdb");
+		//complex.dump_pdb("just1_complex2.pdb");
 
 		//now add the rest of ubiquitin
 		for( core::Size i=UBQ_term-1; i>= 1; --i ) {

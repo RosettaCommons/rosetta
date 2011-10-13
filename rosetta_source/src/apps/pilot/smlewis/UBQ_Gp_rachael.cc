@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   src/apps/pilot/smlewis/UBQ_Gp_rachael.cc
-/// @brief  this application is a one-shot for modeling a ubiquitinated G-protein
+/// @brief  this application is a one-shot for modeling a ubiquitinated G-protein; this version uses a nonnatural cysteine to ubiquitin linkage (derived from the parent UBQ_E2 protocol)
 /// @author Steven Lewis
 
 // Unit Headers
