@@ -35,15 +35,28 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
+#include <core/graph/Graph.hh>
+#include <core/pack/packer_neighbors.hh>
+#include <core/pack/rotamer_set/RotamerSetFactory.hh>
+#include <core/pack/rotamer_set/RotamerSet.hh>
+#include <core/pack/optimizeH.hh>
+#include <core/pack/dunbrack/RotamerLibrary.hh>
+#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
+#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
+#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/TaskFactory.hh>
 #include <core/pack/optimizeH.hh>
 #include <core/pack/make_symmetric_task.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pose/annotated_sequence.hh>
+#include <core/pose/annotated_sequence.hh>b
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
+#include <core/pack/dunbrack/RotamerLibrary.hh>
+#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
+#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -184,7 +197,7 @@ void fixH(core::pose::Pose & pose) {
 bool iface_check_C2Z(Pose const & p, Size rsd) {
   Mat Rc2 = rotation_matrix_degrees(Vec(0,0,1),180.0);
   Vec CA = p.xyz(AtomID(2,rsd));
-  for (Size ir; ir < p.n_residue(); ++ir) {
+  for (Size ir=1; ir < p.n_residue(); ++ir) {
     if(p.residue(ir).is_protein())
       if( CA.distance_squared( Rc2*p.xyz(AtomID(2,ir))) < 100.0 )
         return true;
@@ -245,61 +258,63 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
       }
     }
 
-		Real worig = sf->get_weight(core::scoring::res_type_constraint);
-		if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,10.0);
-		utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
-		pose.add_constraints( res_cst );
+    Real worig = sf->get_weight(core::scoring::res_type_constraint);
+    if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,10.0);
+    utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
+    pose.add_constraints( res_cst );
 
     // Actually perform design.
     core::pack::make_symmetric_PackerTask(pose, task);
     protocols::moves::MoverOP packer = new protocols::moves::symmetry::SymPackRotamersMover(sf, task);
     packer->apply(pose);
 
-		pose.remove_constraints( res_cst );
-		sf->set_weight(core::scoring::res_type_constraint,worig);
+    pose.remove_constraints( res_cst );
+    sf->set_weight(core::scoring::res_type_constraint,worig);
 
   }
+  {
+    pose.add_constraint( new AtomPairConstraint( AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy+0*sym_info->num_independent_residues()),
+                                                 AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy+1*sym_info->num_independent_residues()),
+                                                 new HarmonicFunc(0,0.02) ) );
+    pose.add_constraint( new AtomPairConstraint( AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy+0*sym_info->num_independent_residues()),
+                                                 AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy+2*sym_info->num_independent_residues()),
+                                                 new HarmonicFunc(0,0.02) ) );
 
-  pose.add_constraint( new AtomPairConstraint( AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy),
-                                               AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy+1*sym_info->num_independent_residues()),
-                                               new HarmonicFunc(0,0.02) ) );
-  pose.add_constraint( new AtomPairConstraint( AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy),
-                                               AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy+2*sym_info->num_independent_residues()),
-                                               new HarmonicFunc(0,0.02) ) );
+    pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+1*sym_info->num_independent_residues()),
+                                              new HarmonicFunc(1.570796,0.1) ) );
+    pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+1*sym_info->num_independent_residues()),
+                                              new HarmonicFunc(3.14159,0.1) ) );
+    pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+2*sym_info->num_independent_residues()),
+                                              new HarmonicFunc(1.570796,0.1) ) );
+    pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+2*sym_info->num_independent_residues()),
+                                              new HarmonicFunc(1.570796,0.1) ) );
 
-  pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy),
-                                            AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy),
-                                            AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+1*sym_info->num_independent_residues()),
-                                            new HarmonicFunc(1.570796,0.1) ) );
-  pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy),
-                                            AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy),
-                                            AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+1*sym_info->num_independent_residues()),
-                                            new HarmonicFunc(3.141593,0.1) ) );
-  pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy),
-                                            AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy),
-                                            AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+1*sym_info->num_independent_residues()),
-                                            new HarmonicFunc(3.141593,0.1) ) );
-  pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy),
-                                            AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy),
-                                            AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+1*sym_info->num_independent_residues()),
-                                            new HarmonicFunc(1.570796,0.1) ) );
+    pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+1*sym_info->num_independent_residues()),
+                                              new HarmonicFunc(1.570796,0.1) ) );
+    pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+1*sym_info->num_independent_residues()),
+                                              new HarmonicFunc(1.570796,0.1) ) );
+    pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+2*sym_info->num_independent_residues()),
+                                              new HarmonicFunc(3.14159,0.1) ) );
+    pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+2*sym_info->num_independent_residues()),
+                                              new HarmonicFunc(1.570796,0.1) ) );
+  }
 
-  pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy),
-                                            AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy),
-                                            AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+2*sym_info->num_independent_residues()),
-                                            new HarmonicFunc(1.570796,0.1) ) );
-  pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy),
-                                            AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy),
-                                            AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+2*sym_info->num_independent_residues()),
-                                            new HarmonicFunc(3.141593,0.1) ) );
-  pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy),
-                                            AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy),
-                                            AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+2*sym_info->num_independent_residues()),
-                                            new HarmonicFunc(3.141593,0.1) ) );
-  pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy),
-                                            AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy),
-                                            AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+2*sym_info->num_independent_residues()),
-                                            new HarmonicFunc(1.570796,0.1) ) );
 
   AtomID REF(1,sym_info->num_total_residues_without_pseudo()+1);
   for(Size ir = 1; ir <= sym_info->num_independent_residues(); ++ir) {
@@ -314,9 +329,10 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
   movemap->set_chi(true);
   core::pose::symmetry::make_symmetric_movemap(pose,*movemap);
   protocols::moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
-  return;
-
   pose.remove_constraints();
+  //sf->show(pose);
+  //pose.dump_pdb("test.pdb");
+  //utility_exit_with_message("aroitsn");
 
   // Set allowed AAs.
   vector1<bool> allowed_aas(20,false);
@@ -355,11 +371,14 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
     if (!sym_info->bb_is_independent(i)) {
       task->nonconst_residue_task(i).prevent_repacking();
     } else if( pose.residue(i).name3() == "PRO" || pose.residue(i).name3() == "GLY") {
+      //TR << "res " << i << " fix" << std::endl;
       // Don't mess with Pros or Glys at the interfaces
       task->nonconst_residue_task(i).prevent_repacking();
     } else if (find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) {
+      //TR << "res " << i << " fix" << std::endl;
       task->nonconst_residue_task(i).prevent_repacking();
     } else {
+      //TR << "res " << i << " des" << std::endl;
       bool temp = allowed_aas[pose.residue(i).aa()];
       allowed_aas[pose.residue(i).aa()] = true;
       task->nonconst_residue_task(i).restrict_absent_canonical_aas(allowed_aas);
@@ -381,6 +400,50 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
 
   pose.remove_constraints( res_cst );
   sf->set_weight(core::scoring::res_type_constraint,worig);
+  {
+    pose.add_constraint( new AtomPairConstraint( AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy+0*sym_info->num_independent_residues()),
+                                                 AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy+1*sym_info->num_independent_residues()),
+                                                 new HarmonicFunc(0,0.02) ) );
+    pose.add_constraint( new AtomPairConstraint( AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy+0*sym_info->num_independent_residues()),
+                                                 AtomID(pose.residue(ibpy).atom_index("ZN"),ibpy+2*sym_info->num_independent_residues()),
+                                                 new HarmonicFunc(0,0.02) ) );
+
+    pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+1*sym_info->num_independent_residues()),
+                                              new HarmonicFunc(1.570796,0.1) ) );
+    pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+1*sym_info->num_independent_residues()),
+                                              new HarmonicFunc(3.14159,0.1) ) );
+    pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+2*sym_info->num_independent_residues()),
+                                              new HarmonicFunc(1.570796,0.1) ) );
+    pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+2*sym_info->num_independent_residues()),
+                                              new HarmonicFunc(1.570796,0.1) ) );
+
+    pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+1*sym_info->num_independent_residues()),
+                                              new HarmonicFunc(1.570796,0.1) ) );
+    pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+1*sym_info->num_independent_residues()),
+                                              new HarmonicFunc(1.570796,0.1) ) );
+    pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("NE1"),ibpy+2*sym_info->num_independent_residues()),
+                                              new HarmonicFunc(3.14159,0.1) ) );
+    pose.add_constraint( new AngleConstraint( AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("ZN" ),ibpy+0*sym_info->num_independent_residues()),
+                                              AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+2*sym_info->num_independent_residues()),
+                                              new HarmonicFunc(1.570796,0.1) ) );
+  }
+  protocols::moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+  pose.remove_constraints();
 
 }
 
@@ -511,11 +574,12 @@ void run() {
   ScoreFunctionOP sfrepsym = new core::scoring::symmetry::SymmetricScoreFunction(sfrep);
 
   core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
-  Pose bpy,ala;
+  Pose bpy,ala,tyr;
   core::import_pose::pose_from_pdb(bpy ,*rs,"input/bpy_ideal.pdb");
   core::pose::remove_lower_terminus_type_from_pose_residue(bpy,1);
   core::pose::remove_upper_terminus_type_from_pose_residue(bpy,1);
   make_pose_from_sequence(ala,"A","fa_standard",false);
+  make_pose_from_sequence(tyr,"Y","fa_standard",false);
   remove_lower_terminus_type_from_pose_residue(ala,1);
   remove_upper_terminus_type_from_pose_residue(ala,1);
 
@@ -530,15 +594,15 @@ void run() {
     string infile = utility::file_basename(fnames[ifile]);
     Pose nat;
     core::import_pose::pose_from_pdb(nat,*rs,fname);
+    if( nat.n_residue() > 200 ) continue;
     Pose base(nat);
-
     Size cyscnt = 0;
     for(Size ir = 1; ir <= base.n_residue(); ++ir) {
       if(base.residue(ir).name3()=="CYS") cyscnt++;
     }
 
     if(cyscnt > 3) continue;
-    //TR << "gensym_3bpy_from_dimer " << ifile << " " << fnames[ifile] << " " << base.n_residue() << " residues" << " " << cyscnt << std::endl;
+    TR << "gensym_3bpy_from_dimer " << ifile << " " << fnames[ifile] << " " << base.n_residue() << " residues" << " " << cyscnt << std::endl;
     for(Size ibpy = 1; ibpy <= base.n_residue(); ++ibpy) {
       if(!base.residue(ibpy).is_protein()) continue;
       if(iface_check_C2Z(base,ibpy)) continue;
@@ -547,7 +611,7 @@ void run() {
       base = nat;
       base.replace_residue(ibpy,bpy.residue(1),true);
       Real chi1_incr = option[willmatch::chi1_increment]();
-      for(Real bch1 = 0.0; bch1 <= 360; bch1 += chi1_incr) {
+      for(Real bch1 = 0.0; bch1 < 360; bch1 += chi1_incr) {
         base.set_chi(1,ibpy,bch1);
         for(Size ir = 1; ir <= base.n_residue(); ++ir) {
           Size natom = (ir==ibpy) ? 5 : base.residue(ir).nheavyatoms();
@@ -579,11 +643,14 @@ void run() {
             if(ir==ibpy) continue;
             for(Size ia = 1; ia <= base.residue(ir).nheavyatoms(); ia++) {
               for(Size ja = 7; ja <= base.residue(ibpy).nheavyatoms(); ja++) {
-                if( base.xyz(AtomID(ia,ir)).distance_squared(base.xyz(AtomID(ja,ibpy))) < 9.0 ) goto clash3;
+                if( base.xyz(AtomID(ia,ir)).distance_squared(base.xyz(AtomID(ja,ibpy))) < 2.8*2.8 ) goto clash3;
               }
             }
           }
           goto noclash3;  clash3: continue; noclash3:
+          sf->score(base);
+          //TR << "IREP "<< base.energies().residue_total_energies(ibpy)[core::scoring::fa_intra_rep] << std::endl;
+          if( base.energies().residue_total_energies(ibpy)[core::scoring::fa_intra_rep] > 15.0 ) continue;
 
           Mat const R1 = rotation_matrix_degrees(a3f1,120.0);
           Mat const R2 = rotation_matrix_degrees(a3f1,240.0);
@@ -610,13 +677,13 @@ void run() {
           Pose psym = base;
           trans_pose(psym,-isct);
           Pose psym_bare = psym;
-          for(Size ir = 1; ir <= psym_bare.n_residue(); ++ir) {
-            if( psym_bare.residue(ir).name3()=="GLY" || psym_bare.residue(ir).name3()=="PRO" ) continue;
-            if( psym_bare.residue(ir).is_lower_terminus() ) continue;
-            if( psym_bare.residue(ir).is_upper_terminus() ) continue;
-            psym_bare.replace_residue(ir,ala.residue(1),true);
-          }
-          Real barerep = get_bare_rep(psym_bare,sfrepsym);
+          // for(Size ir = 1; ir <= psym_bare.n_residue(); ++ir) {
+          //   if( psym_bare.residue(ir).name3()=="GLY" || psym_bare.residue(ir).name3()=="PRO" || psym_bare.residue(ir).name3()=="BPY" ) continue;
+          //   if( psym_bare.residue(ir).is_lower_terminus() ) continue;
+          //   if( psym_bare.residue(ir).is_upper_terminus() ) continue;
+          //  replace_pose_residue_copying_existing_coordinates(psym_bare,ir,psym_bare.residue(1).residue_type_set().name_map("GLY"));
+          // }
+          // Real barerep = get_bare_rep(psym_bare,sfrepsym);
           Mat Rsymm;
           string symtag;
           Vec f1=(c3f1-isct).normalized(),f2=(c2f1-isct).normalized(),t1=Vec(0,0,1);
@@ -644,32 +711,152 @@ void run() {
           }
 
           rot_pose(psym     ,Rsymm); core::pose::symmetry::make_symmetric_pose(psym     );
-          rot_pose(psym_bare,Rsymm); core::pose::symmetry::make_symmetric_pose(psym_bare);
+          //rot_pose(psym_bare,Rsymm); core::pose::symmetry::make_symmetric_pose(psym_bare);
           //psym_bare.dump_pdb("bare.pdb");
 
           string fname = symtag+"_"+infile+"_B"+lead_zero_string_of(ibpy,3)+"-"+lead_zero_string_of((Size)(bch1),3)+"_"+lead_zero_string_of(jaxs,1)+".pdb";
 
-          sfrepsym->score(psym_bare);
+          //sfrepsym->score(psym_bare);
           //TR << "REP " << psym_bare.energies().total_energies()[core::scoring::fa_rep] - barerep << std::endl;
           //if(psym_bare.energies().total_energies()[core::scoring::fa_rep] - barerep <   10.0) continue;
-          if(psym_bare.energies().total_energies()[core::scoring::fa_rep] - barerep > 1000.0) continue;
-
+          //if(psym_bare.energies().total_energies()[core::scoring::fa_rep] - barerep < 100.0) continue;
           //utility_exit_with_message("arostn");
+          bool clash = false;
+          for(Size ir = 4; ir <= base.n_residue()-3; ++ir) {
+            Size natom =  (psym.residue(ir).name3()=="BPY") ? 17 : 5;
+            if( psym.residue(ir).name3()=="GLY" ) natom = 4;
+            for(Size ia = 1; ia <= natom; ++ia) {
+              Vec ip = psym.xyz(AtomID(ia,ir));
+              for(Size is = 2; is <= 12; ++is) {
+                if(is==4) continue;
+                for(Size jr = 4 + (is-1)*base.n_residue(); jr <= is*base.n_residue()-3; ++jr) {
+                  for(Size ja = 1; ja <= 4; ja++) {
+                    if( ip.distance_squared( psym.xyz(AtomID(ja,jr)) ) < 2.8*2.8 ) clash = true;
+                  }
+                }
+              }
+            }
+          }
+          for(Size ir = 3*base.n_residue()+4; ir <= 4*base.n_residue()-3; ++ir) {
+            Size natom =  (psym.residue(ir).name3()=="BPY") ? 17 : 5;
+            if( psym.residue(ir).name3()=="GLY" ) natom = 4;
+            for(Size ia = 1; ia <= natom; ++ia) {
+              Vec ip = psym.xyz(AtomID(ia,ir));
+              for(Size is = 2; is <= 12; ++is) {
+                if(is==4) continue;
+                for(Size jr = 4 + (is-1)*base.n_residue(); jr <= is*base.n_residue()-3; ++jr) {
+                  for(Size ja = 1; ja <= 4; ja++) {
+                    if( ip.distance_squared( psym.xyz(AtomID(ja,jr)) ) < 2.8*2.8 ) clash = true;
+                  }
+                }
+              }
+            }
+          }
+          //TR << "!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n" << std::endl;
+          if(clash) continue;
 
           Size ncontact = num_trimer_contacts(psym,base.n_residue());
-          if( ncontact < 100 ) continue;
+          if( ncontact < 50 ) continue;
 
+          // {
+          //   bool noclash = true;
+          //   Pose tmp(base);
+          //   tmp.append_residue_by_jump(*core::conformation::ResidueFactory::create_residue(tmp.residue(1).residue_type_set().name_map("VRT")),ibpy,"ZN","ORIG");
+          //   core::kinematics::FoldTree f = tmp.fold_tree();
+          //   f.reorder(tmp.n_residue());
+          //   tmp.fold_tree(f);
+
+          //   // get rotamers
+          //   core::pack::rotamer_set::RotamerSetOP rotset;
+          //   {
+          //     Pose pose(base);
+          //     pose.replace_residue(ibpy,tyr.residue(1),true);
+          //     core::scoring::ScoreFunction dummy_sfxn;
+					// 		//dummy_sfxn.set_weight(core::scoring::fa_rep,0.44);
+          //     dummy_sfxn( pose );
+          //     core::pack::task::PackerTaskOP dummy_task = core::pack::task::TaskFactory::create_packer_task( pose );
+					// 		//for(Size i = 1; i <= pose.n_residue(); ++i) if(i!=ibpy) dummy_task->nonconst_residue_task(ibpy).prevent_repacking();
+          //     dummy_task->nonconst_residue_task(ibpy).restrict_to_repacking();
+					// 		dummy_task->nonconst_residue_task(ibpy).and_extrachi_cutoff(1);
+          //     // dummy_task->nonconst_residue_task(ibpy).or_include_current( false ); //need to do this because the residue was built from internal coords and is probably crumpled up
+          //     // dummy_task->nonconst_residue_task(ibpy).or_fix_his_tautomer( true ); //since we only want rotamers for the specified restype
+          //     dummy_task->nonconst_residue_task(ibpy).or_ex1(true);
+          //     dummy_task->nonconst_residue_task(ibpy).or_ex2(true);
+          //     // NO_EXTRA_CHI_SAMPLES = 0,      //0
+          //     // EX_ONE_STDDEV,                 //1
+          //     // EX_ONE_HALF_STEP_STDDEV,       //2
+          //     // EX_TWO_FULL_STEP_STDDEVS,      //3
+          //     // EX_TWO_HALF_STEP_STDDEVS,      //4
+          //     // EX_FOUR_HALF_STEP_STDDEVS,     //5
+          //     // EX_THREE_THIRD_STEP_STDDEVS,   //6
+          //     // EX_SIX_QUARTER_STEP_STDDEVS,   //7
+          //     dummy_task->nonconst_residue_task(ibpy).or_ex1_sample_level(core::pack::task::EX_TWO_FULL_STEP_STDDEVS);
+          //     dummy_task->nonconst_residue_task(ibpy).or_ex2_sample_level(core::pack::task::EX_TWO_FULL_STEP_STDDEVS);
+          //     core::graph::GraphOP dummy_png = core::pack::create_packer_graph( pose, dummy_sfxn, dummy_task );
+          //     core::pack::rotamer_set::RotamerSetFactory rsf;
+          //     rotset = rsf.create_rotamer_set( pose.residue(ibpy) );
+          //     rotset->set_resid(ibpy);
+          //     rotset->build_rotamers( pose, dummy_sfxn, *dummy_task, dummy_png );
+          //     for(Size krot = 1; krot <= rotset->num_rotamers(); ++krot) {
+          //       TR << "ROT " << krot << " " << rotset->rotamer(krot)->chi(1) << " " << rotset->rotamer(krot)->chi(2) << std::endl;
+          //     }
+          //   }
+          //   for(Size krot = 1; krot <= rotset->num_rotamers(); ++krot) {
+          //     tmp.set_chi(1,ibpy,rotset->rotamer(krot)->chi(1));
+          //     tmp.set_chi(2,ibpy,rotset->rotamer(krot)->chi(2));
+          //     //tmp.dump_pdb("test"+str(krot)+".pdb");
+          //     Vec cm = psym.residue(ibpy).xyz("CM");
+          //     Vec cz = psym.residue(ibpy).xyz("CZ");
+          //     Vec ne = psym.residue(ibpy).xyz("NE1");
+          //     Vec cen = (cm+cz)/2.0;
+          //     Vec axs = (cz-cm).cross(ne-cz);
+          //     Mat rot = rotation_matrix_degrees(axs,180.0);
+          //     bool clash = false;
+          //     for(Size ir = 4; ir <= base.n_residue()-3; ++ir) {
+          //       Size natom =  (psym.residue(ir).name3()=="BPY") ? 17 : 5;
+          //       if( psym.residue(ir).name3()=="GLY" ) natom = 4;
+          //       for(Size ia = 1; ia <= natom; ++ia) {
+          //         Vec ip = rot*(psym.xyz(AtomID(ia,ir))-cen)+cen;
+          //         for(Size is = 2; is <= 12; ++is) {
+          //           if(is==4) continue;
+          //           for(Size jr = 4 + (is-1)*base.n_residue(); jr <= is*base.n_residue()-3; ++jr) {
+          //             for(Size ja = 1; ja <= 4; ja++) {
+          //               if( ip.distance_squared( psym.xyz(AtomID(ja,jr)) ) < 2.8*2.8 ) noclash = false;
+          //             }
+          //           }
+          //         }
+          //       }
+          //     }
+          //   }
+          //   //TR << "!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n!\n" << std::endl;
+          //   //utility_exit_with_message("arst");
+          //   if(noclash) {
+          //     psym.dump_pdb("test.pdb");
+          //     utility_exit_with_message("ariesotn");
+          //     continue;
+          //   }
+          // }
+
+
+          Real batr = psym.energies().residue_total_energies(ibpy)[core::scoring::fa_atr];
+          //psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+fname+"0.pdb");
+          //continue;
           refine(psym,ibpy,dimersub);
-          psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+fname);
-          continue;
+
+          //continue;
 
           Real rms = core::scoring::CA_rmsd(psym,psym_bare);
           Real sc,int_area;
-          vector1<Size> intra_subs(1,4);
+          vector1<Size> intra_subs; intra_subs.push_back(1); intra_subs.push_back(4);
           sf->score(psym);
           new_sc(psym,intra_subs,int_area,sc);
 
+					if( int_area < 300 || sc < 0.6 ) continue;
+
+          psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+fname+"_des.pdb");
+
           repack(psym,ibpy,dimersub);
+          //psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+fname+"_RPK.pdb");
           Real s0 = sf->score(psym);
           for(Size ir = 1; ir <= base.n_residue(); ++ir) {
             for(Size ia = 1; ia <= psym.residue_type(ir).natoms(); ++ia) {
@@ -680,6 +867,7 @@ void run() {
             }
           }
           repack(psym,ibpy,dimersub);
+          //psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+fname+"_DDG_RPK.pdb");
           Real s1 = sf->score(psym);
 
           TR << "HIT " << fname << " " <<  ang << " " << ibpy << " " << bch1 << " " << jaxs << " ddG: " << s0-s1 << " sc: " << sc << " " << int_area <<std::endl;
@@ -687,6 +875,8 @@ void run() {
           core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
           ss_out->fill_struct(psym_bare,fname);
           ss_out->add_energy("rms",rms);
+          ss_out->add_energy("nres",base.n_residue());
+          ss_out->add_energy("batr",batr);
           ss_out->add_energy("ddg",s0-s1);
           ss_out->add_energy("sc",sc);
           ss_out->add_energy("int_area",int_area);
