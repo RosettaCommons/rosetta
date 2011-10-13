@@ -23,10 +23,8 @@
 #include <protocols/moves/ThermodynamicMover.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
-
-
 // Core Headers
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -43,14 +41,8 @@
 // Utility headers
 #include <utility/vector1.hh>
 
-//Auto Headers
-#include <core/pack/task/TaskFactory.fwd.hh>
-
-
 namespace protocols {
 namespace moves {
-
-
 
 /// @brief class for non-discrete side chain sampling using Dunbrack rotamer probabilities/distributions
 class SidechainMover : public ThermodynamicMover {
@@ -172,6 +164,16 @@ public:
 	void
 	set_preserve_detailed_balance(
 		bool preserve_detailed_balance
+	);
+
+	///@brief perform direct chi manipulations rather than using replace_residue to effect rotamer changes; useful if things are kinematically dependent on a sidechain.
+	bool
+	change_chi_without_replacing_residue() const;
+
+	///@brief perform direct chi manipulations rather than using replace_residue to effect rotamer changes; useful if things are kinematically dependent on a sidechain.
+	void
+	set_change_chi_without_replacing_residue(
+		bool const change_chi_without_replacing_residue
 	);
 
 	/// @brief get the TorsionIDs perturbed by the mover during moves, along with their ranges
@@ -309,6 +311,7 @@ private:
 	bool preserve_detailed_balance_;
 	bool accept_according_to_dunbrack_;
 	bool sample_rotwells_unif_;
+	bool change_chi_without_replacing_residue_;
 	core::Size next_resnum_;
 	utility::vector1<core::Real> last_chi_angles_;
 	core::Size last_nchi_;

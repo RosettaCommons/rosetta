@@ -85,6 +85,7 @@ SidechainMover::SidechainMover():
 	prob_random_pert_to_current_(0.0),
 	accept_according_to_dunbrack_(true),
 	sample_rotwells_unif_(false),
+	change_chi_without_replacing_residue_(false),
 	next_resnum_(0),
 	last_proposal_density_ratio_(1),
 	task_initialized_(false),
@@ -103,6 +104,7 @@ SidechainMover::SidechainMover(
 	prob_random_pert_to_current_(0.0),
 	accept_according_to_dunbrack_(true),
 	sample_rotwells_unif_(false),
+	change_chi_without_replacing_residue_(false),
 	next_resnum_(0),
 	last_proposal_density_ratio_(1),
 	task_initialized_(false),
@@ -125,6 +127,7 @@ SidechainMover::SidechainMover(
 	preserve_detailed_balance_(mover.preserve_detailed_balance_),
 	accept_according_to_dunbrack_(mover.accept_according_to_dunbrack_),
 	sample_rotwells_unif_(mover.sample_rotwells_unif_),
+	change_chi_without_replacing_residue_(mover.change_chi_without_replacing_residue_),
 	next_resnum_(mover.next_resnum_),
 	last_chi_angles_(mover.last_chi_angles_),
 	last_nchi_(mover.last_nchi_),
@@ -187,6 +190,7 @@ SidechainMover::parse_my_tag(
 	set_prob_uniform( tag->getOption<core::Real>( "prob_uniform", prob_uniform() ) );
 	set_prob_withinrot( tag->getOption<core::Real>( "prob_withinrot", prob_withinrot() ) );
 	set_prob_random_pert_current( tag->getOption<core::Real>( "prob_random_pert_current", prob_random_pert_current() ) );
+	set_change_chi_without_replacing_residue( tag->getOption<core::Real>( "change_chi_without_replacing_residue", change_chi_without_replacing_residue() ) );
 }
 
 /// @detailed
@@ -619,7 +623,15 @@ SidechainMover::apply(
 		TR.Debug << std::endl;
 	}
 
-	pose.replace_residue(resnum, *final, true);
+	//perform replace_residue by default, or if there was a mutation
+	if(!change_chi_without_replacing_residue() || last_mutation_){
+		pose.replace_residue(resnum, *final, true);
+	} else { //optionally, perform in-place chi rotations instead of a residue replace.  This causes proper kinematic dependency if the atomtree has atoms that are children of the moving residue.
+		core::Size const nchi(final->nchi());
+		for( core::Size i(1); i<=nchi; ++i ){
+			pose.set_chi(i, resnum, final->chi(i));
+		}
+	}
 
 	if ( TR.visible( basic::t_debug )) {
 		TR.Debug << "pose replaced " << resnum << " " << pose.residue(resnum).type().name() << " has phi-psi " << pose.phi(resnum) << " " << pose.psi(resnum) << " and chi: ";
@@ -899,6 +911,20 @@ SidechainMover::set_preserve_detailed_balance(
 )
 {
 	preserve_detailed_balance_ = preserve_detailed_balance;
+}
+
+bool
+SidechainMover::change_chi_without_replacing_residue() const
+{
+	return change_chi_without_replacing_residue_;
+}
+
+void
+SidechainMover::set_change_chi_without_replacing_residue(
+	bool const change_chi_without_replacing_residue
+)
+{
+	change_chi_without_replacing_residue_ = change_chi_without_replacing_residue;
 }
 
 utility::vector1<core::id::TorsionID_Range>
