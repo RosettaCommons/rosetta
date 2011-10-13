@@ -36,6 +36,7 @@
 #include <basic/options/keys/nonlocal.OptionKeys.gen.hh>
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <numeric/interpolate.hh>
 #include <numeric/prob_util.hh>
 #include <utility/vector1.hh>
 
@@ -65,6 +66,7 @@
 #include <protocols/loops/LoopRelaxThreadingMover.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>
+#include <protocols/moves/BackboneMover.hh>
 #include <protocols/moves/CyclicMover.hh>
 #include <protocols/moves/RationalMonteCarlo.hh>
 #include <protocols/moves/RigidBodyMotionMover.hh>
@@ -190,10 +192,29 @@ protocols::moves::RationalMonteCarloOP create_fragment_mover(const core::pose::P
   return mover;
 }
 
-/// @brief Linearly interpolates chainbreak weight from cb_start to cb_stop over num_stages
-double chainbreak_weight(double cb_start, double cb_stop, unsigned stage, unsigned num_stages) {
-  assert(stage >= 0);
-  return cb_start + stage * (cb_stop - cb_start) / num_stages;
+/// @detail Alternating small and shear moves
+protocols::moves::RationalMonteCarloOP create_small_mover(core::scoring::ScoreFunctionOP score) {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  using namespace protocols::moves;
+  using core::kinematics::MoveMap;
+  using core::kinematics::MoveMapOP;
+
+  MoveMapOP movable = new MoveMap();
+  movable->set_bb(true);
+
+  MoverOP small_mover = new SmallMover(movable, option[OptionKeys::rigid::temperature](), 1);
+  MoverOP shear_mover = new ShearMover(movable, option[OptionKeys::rigid::temperature](), 1);
+
+  CyclicMoverOP meta = new CyclicMover();
+  meta->enqueue(small_mover);
+  meta->enqueue(shear_mover);
+
+  unsigned cycles = option[OptionKeys::rigid::shear_cycles]() + option[OptionKeys::rigid::small_cycles]();
+
+  RationalMonteCarloOP mover = new RationalMonteCarlo(meta, score, cycles, option[OptionKeys::rigid::temperature](), true);
+  mover->add_trigger(boost::bind(&on_pose_accept, _1));
+  return mover;
 }
 
 MedalMover::MedalMover() {
@@ -244,19 +265,24 @@ void MedalMover::apply(core::pose::Pose& pose) {
   compute_per_residue_probabilities(num_residues, alignment, chunks, pose.fold_tree(), *fragments_sm_, &probs);
 
   // Alternating rigid body and fragment insertion moves with increasing linear_chainbreak weight
+  protocols::nonlocal::add_cutpoint_variants(&pose);
   ScoreFunctionOP score = score_function();
+
   const double cb_start = score->get_weight(core::scoring::linear_chainbreak);
   const double cb_stop = cb_start * 2;
   const unsigned num_stages = option[OptionKeys::rigid::stages]();
 
-  protocols::nonlocal::add_cutpoint_variants(&pose);
   for (unsigned stage = 0; stage <= num_stages; ++stage) {
     score->set_weight(core::scoring::linear_chainbreak,
-                      chainbreak_weight(cb_start, cb_stop, stage, num_stages));
+                      numeric::linear_interpolate(cb_start, cb_stop, stage, num_stages));
 
-    RationalMonteCarloOP fragment_mover = create_fragment_mover(pose, score, fragments_sm_, probs);
-    fragment_mover->apply(pose);
+    RationalMonteCarloOP mover = create_fragment_mover(pose, score, fragments_sm_, probs);
+    mover->apply(pose);
   }
+
+  // Alternating small and shear moves
+  RationalMonteCarloOP mover = create_small_mover(score);
+  mover->apply(pose);
   protocols::nonlocal::remove_cutpoint_variants(&pose);
 
   // Loop closure
@@ -265,6 +291,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
 
   // Return to centroid representation and rescore
   core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
+  score_pose(*score, "Final model", &pose);
 }
 
 void MedalMover::score_pose(const core::scoring::ScoreFunction& score,

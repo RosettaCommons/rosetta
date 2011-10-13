@@ -6,6 +6,8 @@ namespace rigid { RealOptionKey const max_ca_ca_dist( "rigid:max_ca_ca_dist" ); 
 namespace rigid { IntegerOptionKey const rigid_body_cycles( "rigid:rigid_body_cycles" );  }
 namespace rigid { RealOptionKey const rotation( "rigid:rotation" );  }
 namespace rigid { IntegerOptionKey const sequence_separation( "rigid:sequence_separation" );  }
+namespace rigid { IntegerOptionKey const shear_cycles( "rigid:shear_cycles" );  }
+namespace rigid { IntegerOptionKey const small_cycles( "rigid:small_cycles" );  }
 namespace rigid { IntegerOptionKey const stages( "rigid:stages" );  }
 namespace rigid { RealOptionKey const temperature( "rigid:temperature" );  }
 namespace rigid { RealOptionKey const translation( "rigid:translation" );  }
@@ -571,4 +573,3 @@ namespace abinitio { BooleanOptionKey const override_vdw_all_stages( "abinitio:o
 namespace abinitio { IntegerVectorOptionKey const recover_low_in_stages( "abinitio:recover_low_in_stages" );  }
 namespace abinitio { IntegerVectorOptionKey const skip_stages( "abinitio:skip_stages" );  }
 namespace abinitio { BooleanOptionKey const close_chbrk( "abinitio:close_chbrk" );  }
-namespace abinitio { BooleanOptionKey const include_stage5( "abinitio:include_stage5" );  }

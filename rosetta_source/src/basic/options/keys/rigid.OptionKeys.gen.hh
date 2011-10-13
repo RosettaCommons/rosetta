@@ -29,6 +29,8 @@ namespace rigid { extern RealOptionKey const max_ca_ca_dist; }
 namespace rigid { extern IntegerOptionKey const rigid_body_cycles; }
 namespace rigid { extern RealOptionKey const rotation; }
 namespace rigid { extern IntegerOptionKey const sequence_separation; }
+namespace rigid { extern IntegerOptionKey const shear_cycles; }
+namespace rigid { extern IntegerOptionKey const small_cycles; }
 namespace rigid { extern IntegerOptionKey const stages; }
 namespace rigid { extern RealOptionKey const temperature; }
 namespace rigid { extern RealOptionKey const translation; }

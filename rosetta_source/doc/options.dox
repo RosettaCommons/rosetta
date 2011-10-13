@@ -43,6 +43,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 20</dd><br>
 </dl>
 <dl>
+<dt><b>-shear_cycles</b> \<Integer\><dt>
+<dd>Number of shear cycles</dd><br>
+<dd>Default: 10000</dd><br>
+</dl>
+<dl>
+<dt><b>-small_cycles</b> \<Integer\><dt>
+<dd>Number of small cycles</dd><br>
+<dd>Default: 10000</dd><br>
+</dl>
+<dl>
 <dt><b>-stages</b> \<Integer\><dt>
 <dd>Number of stages over which to interpolate ramped values</dd><br>
 <dd>Default: 4</dd><br>
