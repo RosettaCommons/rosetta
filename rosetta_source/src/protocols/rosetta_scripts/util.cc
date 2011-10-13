@@ -172,7 +172,9 @@ get_resnum_list( std::string const str, core::pose::Pose const & pose )
 			if ( str_limits.size() == 2) {
 				core::Size const start ( parse_resnum( str_limits[1], pose ) );
 				core::Size const end ( parse_resnum( str_limits[2], pose ) );
-				runtime_assert( start && end && start <= end );
+				if ( start && end && start > end ) {
+					utility_exit_with_message("Invalid residue range: " + res);
+				}
 				for(core::Size i = start; i <= end; ++i )
 					resid.insert( i );
 				continue;

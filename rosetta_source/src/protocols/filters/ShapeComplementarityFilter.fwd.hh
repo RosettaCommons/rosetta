@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/protocols/filters/ScFilter.fwd.hh
+/// @file   src/protocols/filters/ShapeComplementarityFilter.fwd.hh
 /// @brief
 /// @author Luki Goldschmidt (luki@mbi.ucla.edu)
 
 
-#ifndef INCLUDED_protocols_filters_ScFilter_fwd_hh
-#define INCLUDED_protocols_filters_ScFilter_fwd_hh
+#ifndef INCLUDED_protocols_filters_ShapeComplementarityFilter_fwd_hh
+#define INCLUDED_protocols_filters_ShapeComplementarityFilter_fwd_hh
 
 
 // Utility headers
@@ -23,11 +23,11 @@ namespace protocols {
 namespace filters {
 
 // Forward
-class ScFilter;
+class ShapeComplementarityFilter;
 
 // Types
-typedef utility::pointer::owning_ptr< ScFilter >  ScFilterOP;
-typedef utility::pointer::owning_ptr< ScFilter const >  ScFilterCOP;
+typedef utility::pointer::owning_ptr< ShapeComplementarityFilter >  ShapeComplementarityFilterOP;
+typedef utility::pointer::owning_ptr< ShapeComplementarityFilter const >  ShapeComplementarityFilterCOP;
 
 } // namespace protocols
 } // namespace filters

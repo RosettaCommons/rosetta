@@ -582,7 +582,7 @@ sources = {
                 "ligand_dock_jd1", # /* Old, jd1 version of ligand_dock, in case someone really needs it. */
 	],
         "pilot/luki" : [
-                #"sc",
+                "sc",
         ],
 }
 

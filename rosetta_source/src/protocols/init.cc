@@ -200,7 +200,7 @@
 #include <protocols/filters/AtomicContactFilterCreator.hh>
 #include <protocols/filters/TimeFilterCreator.hh>
 #include <protocols/filters/AtomicDistanceFilterCreator.hh>
-#include <protocols/filters/ScFilterCreator.hh>
+#include <protocols/filters/ShapeComplementarityFilterCreator.hh>
 #include <protocols/fldsgn/filters/CoreDunbrackFilterCreator.hh>
 #include <protocols/fldsgn/filters/FragQualFilterCreator.hh>
 #include <protocols/fldsgn/filters/HelixKinkFilterCreator.hh>
@@ -432,7 +432,7 @@ static FilterRegistrator< protocols::filters::MoveBeforeFilterCreator > reg_Move
 static FilterRegistrator< protocols::filters::PackStatFilterCreator > reg_PackStatFilterCreator;
 static FilterRegistrator< protocols::filters::StochasticFilterCreator > reg_StochasticFilterCreator;
 static FilterRegistrator< protocols::filters::ScoreCutoffFilterCreator > reg_ScoreCutoffFilterCreator;
-static FilterRegistrator< protocols::filters::ScFilterCreator > reg_ScFilterCreator;
+static FilterRegistrator< protocols::filters::ShapeComplementarityFilterCreator > reg_ScFilterCreator;
 static FilterRegistrator< protocols::fldsgn::filters::CoreDunbrackFilterCreator > reg_CoreDunbrackFilterCreator;
 static FilterRegistrator< protocols::fldsgn::filters::FragQualFilterCreator > reg_FragQualFilterCreator;
 static FilterRegistrator< protocols::fldsgn::filters::HelixPairingFilterCreator > reg_HelixPairingFilterCreator;

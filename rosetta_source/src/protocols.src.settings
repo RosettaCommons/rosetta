@@ -275,7 +275,7 @@ sources = {
 		"ContingentFilter",
 		"HolesFilter",
 		"TimeFilter",
-		"ScFilter",
+		"ShapeComplementarityFilter",
 	],
 
 	"protocols/features" : [

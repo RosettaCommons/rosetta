@@ -41,7 +41,7 @@ basic::options::RealOptionKey const rp("sc:rp");
 basic::options::RealOptionKey const sep("sc:sec");
 basic::options::RealOptionKey const trim("sc:trim");
 basic::options::RealOptionKey const weight("sc:weight");
-#ifdef SC_CUDA_GPU
+#ifdef USECUDA
 basic::options::RealOptionKey const gpu("sc:gpu");
 #endif
 }}}}//basic::options::OptionKeys::sc
@@ -70,7 +70,7 @@ main( int argc, char * argv [] )
 	option.add(basic::options::OptionKeys::sc::verbose, "Show verbose output").def(false);
 	option.add(basic::options::OptionKeys::sc::weight, "Weight factor using in sc calculation").def(0.5);
 
-#ifdef SC_CUDA_GPU
+#ifdef USECUDA
 	option.add(basic::options::OptionKeys::sc::gpu, "Define GPU to use (0 to disable)").def(-1);
 #endif
 	// initialize core
@@ -95,7 +95,7 @@ main( int argc, char * argv [] )
 	std::cout << "                  -sc:rp <float>                        Probe radius (A)" << std::endl;
 	std::cout << "                  -sc:sep <float>                       Interface separation threshold (A)" << std::endl;
 	std::cout << "                  -sc:weight <float>                    Distance weighting factor" << std::endl;
-#ifdef SC_CUDA_GPU
+#ifdef USECUDA
         std::cout << "                  -sc:gpu <n>                           Use GPU #n" << std::endl;
 #endif
 	std::cout << " Example: " << std::endl;
@@ -123,7 +123,7 @@ main( int argc, char * argv [] )
 	sc.settings.verbose = option[ basic::options::OptionKeys::sc::verbose ];
 	sc.settings.weight = option[ basic::options::OptionKeys::sc::weight ];
 
-#ifdef SC_CUDA_GPU
+#ifdef USECUDA
 	sc.settings.gpu = option[ basic::options::OptionKeys::sc::gpu ];
 #endif
 

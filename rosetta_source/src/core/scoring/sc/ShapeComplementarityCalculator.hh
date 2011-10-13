@@ -77,11 +77,12 @@ typedef struct _RESULTS {
 		core::Size nAccessibleDots;  // Number of accessible dots (on surface)
 		core::Real trimmedArea;      // Trimmed area in Angstrom^2
 	} surface[3];
-	struct {                       // Surface dot counts by type (from Connolly algorithm)
+	struct {			// Surface dot counts by type (from Connolly algorithm)
 		core::Size convex;           // Number of convex surface dots
 		core::Size concave;          // Number of concace surface dots
 		core::Size toroidal;         // NUmber of toroidal surfac dots
-	} dots;
+	} dots;				// True if computed results are valid
+	int valid;			
 } RESULTS;
 
 // Atom radius definition

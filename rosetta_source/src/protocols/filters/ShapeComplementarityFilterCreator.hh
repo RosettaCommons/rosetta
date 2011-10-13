@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/filters/ScFilterCreator.hh
-/// @brief  FilterCreator for the ScFilter
+/// @file   protocols/filters/ShapeComplementarityFilterCreator.hh
+/// @brief  FilterCreator for the ShapeComplementarityFilter
 /// @author Luki Goldschmidt (luki@mbi.ucla.edu)
 
-#ifndef INCLUDED_protocols_filters_ScFilterCreator_hh
-#define INCLUDED_protocols_filters_ScFilterCreator_hh
+#ifndef INCLUDED_protocols_filters_ShapeComplementarityFilterCreator_hh
+#define INCLUDED_protocols_filters_ShapeComplementarityFilterCreator_hh
 
 
 // Package Headers
@@ -27,7 +27,7 @@
 namespace protocols {
 namespace filters {
 
-class ScFilterCreator : public FilterCreator
+class ShapeComplementarityFilterCreator : public FilterCreator
 {
 public:
 	virtual FilterOP create_filter() const;

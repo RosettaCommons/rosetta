@@ -216,6 +216,8 @@ int ShapeComplementarityCalculator::Calc()
 
 	try {
 
+	run_.results.valid = 0;
+
 	if(run_.atoms.empty())
 		throw ShapeComplementarityCalculatorException("No atoms defined");
 	if(!run_.results.surface[0].nAtoms)
@@ -270,10 +272,11 @@ int ShapeComplementarityCalculator::Calc()
 	run_.results.surface[2].nTrimmedDots = (run_.results.surface[0].nTrimmedDots + run_.results.surface[1].nTrimmedDots);
 	//run_.results.surface[2].nBuriedDots = (run_.results.surface[0].nBuriedDots + run_.results.surface[1].nBuriedDots);
 	//run_.results.surface[2].nAccessibleDots = (run_.results.surface[0].nAccessibleDots + run_.results.surface[1].nAccessibleDots);
-	run_.results.surface[2].trimmedArea = (run_.results.surface[0].trimmedArea + run_.results.surface[1].trimmedArea)/2;
+	run_.results.surface[2].trimmedArea = (run_.results.surface[0].trimmedArea + run_.results.surface[1].trimmedArea);
 
 	run_.results.sc = run_.results.surface[2].s_median;
 	run_.results.area = run_.results.surface[2].trimmedArea;
+	run_.results.valid = 1;
 
 	return 1;
 
@@ -357,6 +360,7 @@ core::Size ShapeComplementarityCalculator::AddResidue(
 		if(AddAtom(molecule, scatom))
 			++n;
 	}
+
 	return n;
 }
 

@@ -7,24 +7,26 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/filters/ScFilter.hh
-/// @brief  header file for ScFilter class
+/// @file   protocols/filters/ShapeComplementarityFilter.hh
+/// @brief  header file for ShapeComplementarityFilter class
 /// @author Luki Goldschmidt (luki@mbi.ucla.edu)
 
 
-#ifndef INCLUDED_protocols_filters_ScFilter_hh
-#define INCLUDED_protocols_filters_ScFilter_hh
+#ifndef INCLUDED_protocols_filters_ShapeComplementarityFilter_hh
+#define INCLUDED_protocols_filters_ShapeComplementarityFilter_hh
 
 // Unit Headers
-#include <protocols/filters/ScFilter.fwd.hh>
+#include <protocols/filters/ShapeComplementarityFilter.fwd.hh>
 
 // Package Headers
 #include <protocols/filters/Filter.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
+#include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 
 // Utility headers
+#include <utility/vector1.fwd.hh>
 
 // Parser headers
 #include <protocols/moves/DataMap.fwd.hh>
@@ -37,7 +39,7 @@
 namespace protocols {
 namespace filters {
 
-class ScFilter : public protocols::filters::Filter {
+class ShapeComplementarityFilter : public protocols::filters::Filter {
 public:
 
 	typedef protocols::filters::Filter Super;
@@ -56,40 +58,44 @@ public:// constructor/destructor
 
 
 	// @brief default constructor
-	ScFilter();
+	ShapeComplementarityFilter();
 
 	// @brief constructor with arguments
-	ScFilter( Real const & filtered_sc, Size const & jump_id, Size const & quick, Size const & verbose );
+	ShapeComplementarityFilter( Real const & filtered_sc, Real const & filtered_area,
+		Size const & jump_id, Size const & quick, Size const & verbose);
 
 	// @brief copy constructor
-	ScFilter( ScFilter const & rval );
+	ShapeComplementarityFilter( ShapeComplementarityFilter const & rval );
 
-	virtual ~ScFilter(){}
+	virtual ~ShapeComplementarityFilter(){}
 
 
 public:// virtual constructor
 
 
 	// @brief make clone
-	virtual FilterOP clone() const { return new ScFilter( *this ); }
+	virtual FilterOP clone() const { return new ShapeComplementarityFilter( *this ); }
 
 	// @brief make fresh instance
-	virtual FilterOP fresh_instance() const {	return new ScFilter(); }
+	virtual FilterOP fresh_instance() const { return new ShapeComplementarityFilter(); }
 
 
 public:// accessor
 
 
 	// @brief get name of this filter
-	virtual std::string name() const { return "ScFilter"; }
+	virtual std::string name() const { return "ShapeComplementarity"; }
 
 
 public:// mutator
 
 	void filtered_sc( Real const & filtered_sc );
+	void filtered_area( Real const & filtered_area );
 	void jump_id( Size const & jump_id );
 	void quick( Size const & quick );
 	void verbose( Size const & verbose );
+	void residues1( std::string const & str );
+	void residues2( std::string const & str );
 
 public:// parser
 
@@ -110,16 +116,21 @@ public:// virtual main operation
 	/// @brief
 	virtual Real report_sm( Pose const & pose ) const;
 
-	/// @brief calc packstat score
-	Real compute( Pose const & pose ) const;
+	/// @brief calc shape complementarity
+	virtual Size compute( Pose const & pose ) const;
 
 
 private:
 
+	core::scoring::sc::ShapeComplementarityCalculator mutable scc_;
+
 	Real filtered_sc_;
+	Real filtered_area_;
 	Size verbose_;
 	Size quick_;
 	Size jump_id_;
+	utility::vector1<core::Size> residues1_;
+	utility::vector1<core::Size> residues2_;
 
 };
 
