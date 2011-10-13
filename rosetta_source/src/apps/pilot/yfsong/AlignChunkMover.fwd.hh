@@ -22,6 +22,10 @@ class MultiTemplateAlignChunkMover;
 typedef utility::pointer::owning_ptr<MultiTemplateAlignChunkMover>       MultiTemplateAlignChunkMoverOP;
 typedef utility::pointer::owning_ptr<MultiTemplateAlignChunkMover const> MultiTemplateAlignChunkMoverCOP;
 
+class CustomFragmentMover;
+typedef utility::pointer::owning_ptr<CustomFragmentMover>       CustomFragmentMoverOP;
+typedef utility::pointer::owning_ptr<CustomFragmentMover const> CustomFragmentMoverCOP;
+		
 	} // pilot
 } // apps
 

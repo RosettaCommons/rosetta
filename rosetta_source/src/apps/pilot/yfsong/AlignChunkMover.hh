@@ -440,7 +440,8 @@ void
 get_alignment_from_chunk_mapping(std::map <core::Size, core::Size> const & chunk_mapping,
 								 Loops const template_ss_chunks,
 								 Loops const target_ss_chunks,
-								 std::map <core::Size, core::Size> & sequence_alignment) {
+								 std::map <core::Size, core::Size> & sequence_alignment)
+{
 	max_registry_shift_.resize(target_ss_chunks.size());
 	for (Size i_chunk_pose = 1; i_chunk_pose <= target_ss_chunks.size(); ++i_chunk_pose) {
 		if (chunk_mapping.find(i_chunk_pose) == chunk_mapping.end()) continue;
@@ -612,6 +613,7 @@ private:
 
 }; // class CustomStarTreeMover
 	
+	/// @brief A Mover that insert fragments to the loop region
 class CustomFragmentMover: public protocols::moves::Mover
 {
 public:
