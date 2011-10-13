@@ -18,8 +18,6 @@ namespace numeric {
 /// @brief Linearly interpolates a quantity from start to stop over (num_stages + 1) stages
 template <class Value>
 double linear_interpolate(Value start, Value stop, unsigned curr_stage, unsigned num_stages) {
-  assert(curr_stage >= 0);
-  assert(curr_stage <= num_stages);
   return start + curr_stage * (stop - start) / num_stages;
 }
 
