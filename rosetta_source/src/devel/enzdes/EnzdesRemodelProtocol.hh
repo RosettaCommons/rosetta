@@ -256,6 +256,11 @@ private:
 	//included in the inverse rotamers for that residue?
 	bool include_existing_conf_as_invrot_target_;
 
+	//positions of catalytic res that are not being remodeled
+	//but are part of an interaction where the other residue
+	//is being remodeled
+	utility::vector1< core::Size > non_remodel_match_pos_;
+
 	utility::vector1< protocols::forge::remodel::RemodelConstraintGeneratorOP > rcgs_;
 
 	core::Real ss_similarity_probability_;

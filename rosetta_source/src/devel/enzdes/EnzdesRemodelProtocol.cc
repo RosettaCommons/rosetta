@@ -249,6 +249,7 @@ EnzdesRemodelMover::EnzdesRemodelMover()
 	vlb_sfxn_->set_weight(core::scoring::angle_constraint, 1.0 );
 	vlb_sfxn_->set_weight(core::scoring::dihedral_constraint, 1.0 );
 	vlb_sfxn_->set_weight(core::scoring::backbone_stub_constraint, 1.0 );
+	non_remodel_match_pos_.clear();
 }
 
 EnzdesRemodelMover::EnzdesRemodelMover( EnzdesRemodelMover const & other )
@@ -271,6 +272,7 @@ EnzdesRemodelMover::EnzdesRemodelMover( EnzdesRemodelMover const & other )
 	target_inverse_rotamers_(other.target_inverse_rotamers_),
 	rcgs_(other.rcgs_),
 	include_existing_conf_as_invrot_target_(other.include_existing_conf_as_invrot_target_),
+	non_remodel_match_pos_(other.non_remodel_match_pos_),
 	ss_similarity_probability_(other.ss_similarity_probability_ )
 {}
 
@@ -316,6 +318,8 @@ EnzdesRemodelMover::EnzdesRemodelMover(
 	vlb_sfxn_->set_weight(core::scoring::angle_constraint, 1.0 );
 	vlb_sfxn_->set_weight(core::scoring::dihedral_constraint, 1.0 );
 	vlb_sfxn_->set_weight(core::scoring::backbone_stub_constraint, 1.0 );
+
+	non_remodel_match_pos_.clear();
 
 } //enzdes remodel mover constructor
 
@@ -999,6 +1003,10 @@ EnzdesRemodelMover::process_length_change(
 			 rcg_it != rcgs_.end(); ++rcg_it ){
 		(*rcg_it)->set_seqmap( smap );
 	}
+
+	for( utility::vector1< core::Size >::iterator other_match_pos_it = non_remodel_match_pos_.begin(); other_match_pos_it != non_remodel_match_pos_.end(); ++other_match_pos_it ){
+		(*other_match_pos_it) = (*smap)[*other_match_pos_it];
+	}
 }
 
 
@@ -1053,6 +1061,7 @@ EnzdesRemodelMover::secmatch_after_remodel(
 	//generate the positions
 	utility::vector1< core::Size > match_positions;
 	for( core::Size i = flex_region_->start(); i <= flex_region_->stop(); ++i ) match_positions.push_back( i );
+	for( utility::vector1< core::Size >::const_iterator other_match_pos_it = non_remodel_match_pos_.begin(); other_match_pos_it != non_remodel_match_pos_.end(); ++other_match_pos_it ) match_positions.push_back( *other_match_pos_it );
 	matcher_mover->set_match_positions( match_positions );
 	matcher_mover->set_ligres( ligres );
 	matcher_mover->apply( pose );
@@ -1173,6 +1182,7 @@ EnzdesRemodelMover::create_target_inverse_rotamers(
 {
 
 	target_inverse_rotamers_.clear();
+	non_remodel_match_pos_.clear();
 	tr << "Beginning to build inverse rotamers...    " << std::endl;
 	//protocols::toolbox::match_enzdes_util::EnzConstraintIOCOP enzcst_io (enz_prot_->cst_io() );
 	protocols::toolbox::match_enzdes_util::EnzConstraintIOCOP enzcst_io( protocols::enzdes::enzutil::get_enzcst_io( pose ) );
@@ -1215,6 +1225,11 @@ EnzdesRemodelMover::create_target_inverse_rotamers(
 					if( flex_region_->contains_seqpos( seqpos_it->first ) ){
 						core::Size seqpos( seqpos_it->first );
 
+						core::Size other_res( template_res == 1 ? 2 : 1 );
+						runtime_assert( param_cache->template_res_cache( other_res )->seqpos_map_size() == 1 );
+						core::Size other_seqpos( param_cache->template_res_cache( other_res )->seqpos_map_begin()->first );
+
+						if( pose.residue_type( other_seqpos ).is_protein() ) non_remodel_match_pos_.push_back( other_seqpos );
 						//complication: if this is a residue that plays a role in several cst blocks,
 						//we only build inverse rotamers according to the geometry specified in the
 						//earliest cst block that this residue appears in
@@ -1224,9 +1239,6 @@ EnzdesRemodelMover::create_target_inverse_rotamers(
 							target_inverse_rotamers_.push_back( std::list<core::conformation::ResidueCOP> () );
 							if( include_existing_conf_as_invrot_target_) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].push_back( new core::conformation::Residue( pose.residue( seqpos ) ) );
 							invrots_build = true;
-							core::Size other_res( template_res == 1 ? 2 : 1 );
-							runtime_assert( param_cache->template_res_cache( other_res )->seqpos_map_size() == 1 );
-							core::Size other_seqpos( param_cache->template_res_cache( other_res )->seqpos_map_begin()->first );
 							std::list< core::conformation::ResidueCOP > cur_inv_rots( enzcst_io->mcfi_list( i )->inverse_rotamers_against_residue( other_res, &(pose.residue( other_seqpos ) ) ) );
 							if( cur_inv_rots.size() != 0 ) target_inverse_rotamers_[ target_inverse_rotamers_.size() ].splice( target_inverse_rotamers_[ target_inverse_rotamers_.size() ].end(), cur_inv_rots );
 						}

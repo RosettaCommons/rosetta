@@ -489,6 +489,13 @@ MatchConstraintFileInfo::inverse_rotamers_against_residue(
 
 	//1. loop over all allowed restypes of the inverse template
 	utility::vector1< core::chemical::ResidueTypeCAP > invrot_restypes(this->allowed_restypes( invrot_template ));
+
+	//if we're dealing with backbone interaction, only build glycine rotamers
+	if( this->is_backbone( invrot_template ) ){
+		invrot_restypes.clear();
+		invrot_restypes.push_back( &(restype_set_->name_map("ALA")) );
+		tr << "Only Ala inverse rotamers will be built because it is a backbone interaction." << std::endl;
+	}
 	for( core::Size ii =1; ii <= invrot_restypes.size(); ++ii ){
 
 		//2 get the relevant atoms through wich the orientation of the two residues
@@ -754,10 +761,6 @@ MatchConstraintFileInfoList::inverse_rotamers_against_residue(
 			continue;
 		}
 		core::Size const invrot_template( target_template == 1 ? 2 : 1 );
-		if( mcfis_[i]->is_backbone( invrot_template ) ){
-			tr << "Skipping building of inverse rotamers for mcfi " << i << " because it is a backbone interaction." << std::endl;
-			continue;
-		}
 		if( std::find( mcfis_[i]->allowed_res_name3s( target_template ).begin(), mcfis_[i]->allowed_res_name3s( target_template ).end(), target_conf->name3() ) == mcfis_[i]->allowed_res_name3s( target_template ).end() ){
 			tr << "Can't create inverse rotamers for mcfi " << i << " because it doesn't contain target template for residue " << target_conf->name3() << "." << std::endl;
 			continue;
