@@ -21,14 +21,19 @@
 
 // Project headers
 #include <core/fragment/FragSet.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/sequence/SequenceAlignment.fwd.hh>
+#include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 namespace protocols {
 namespace medal {
 
 class MedalMover : public protocols::moves::Mover {
+  typedef utility::vector1<double> Probabilities;
+
  public:
   MedalMover();
   void apply(core::pose::Pose& pose);
@@ -38,7 +43,7 @@ class MedalMover : public protocols::moves::Mover {
   protocols::moves::MoverOP clone() const;
   protocols::moves::MoverOP fresh_instance() const;
 
-private:
+ protected:
   /// @brief Scores the pose, writing the result to tracer
   void score_pose(const core::scoring::ScoreFunction& score,
                   const std::string& message,
@@ -47,9 +52,36 @@ private:
   /// @brief Closes chainbreaks in <pose>
   void do_loop_closure(core::pose::Pose* pose) const;
 
+  /// @brief Computes per-residue sampling probabilities
+  void compute_per_residue_probabilities(
+      const unsigned num_residues,
+      const core::sequence::SequenceAlignment& alignment,
+      const protocols::loops::Loops& chunks,
+      const core::kinematics::FoldTree& tree,
+      const core::fragment::FragSet& fragments,
+      Probabilities* probs) const;
+
+  /// @brief Partitions the structure into non-overlapping chunks
+  void decompose_structure(const core::pose::Pose& pose,
+                           protocols::loops::Loops* chunks) const;
+
+  /// @brief Configures a mover for performing alternating fragment insertion and
+  /// rigid body moves
+  protocols::moves::MoverOP create_fragment_mover(
+      const core::pose::Pose& pose,
+      core::scoring::ScoreFunctionOP score,
+      core::fragment::FragSetOP fragments,
+      const Probabilities& probs,
+      const std::string& policy,
+      unsigned library_size) const;
+
+  /// @brief Configures a mover for performing alternating small and shear moves
+  protocols::moves::MoverOP create_small_mover(core::scoring::ScoreFunctionOP score) const;
+
   /// @brief Configures a basic score functions which callers can then specialize
   core::scoring::ScoreFunctionOP score_function() const;
 
+ private:
   core::fragment::FragSetOP fragments_sm_;
   core::fragment::FragSetOP fragments_lg_;
 };

@@ -84,7 +84,6 @@ namespace medal {
 
 typedef boost::function<void(const core::pose::Pose&)> Trigger;
 typedef boost::unordered_map<int, core::kinematics::Jump> Jumps;
-typedef utility::vector1<double> Probabilities;
 
 static basic::Tracer TR("protocols.medal.MedalMover");
 
@@ -102,12 +101,14 @@ void on_pose_accept(const core::pose::Pose& pose) {
   sfd.write_silent_struct(*silent, "medal.accepted.out");
 }
 
-void compute_per_residue_probabilities(const unsigned num_residues,
-                                       const core::sequence::SequenceAlignment& alignment,
-                                       const protocols::loops::Loops& chunks,
-                                       const core::kinematics::FoldTree& tree,
-                                       const core::fragment::FragSet& fragments,
-                                       Probabilities* probs) {
+void MedalMover::compute_per_residue_probabilities(
+    const unsigned num_residues,
+    const core::sequence::SequenceAlignment& alignment,
+    const protocols::loops::Loops& chunks,
+    const core::kinematics::FoldTree& tree,
+    const core::fragment::FragSet& fragments,
+    Probabilities* probs) const {
+
   using namespace std;
   assert(probs);
 
@@ -147,7 +148,8 @@ void compute_per_residue_probabilities(const unsigned num_residues,
   TR.flush_all_channels();
 }
 
-void decompose_structure(const core::pose::Pose& pose, protocols::loops::Loops* chunks) {
+void MedalMover::decompose_structure(const core::pose::Pose& pose,
+                                     protocols::loops::Loops* chunks) const {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   assert(chunks);
@@ -160,81 +162,6 @@ void decompose_structure(const core::pose::Pose& pose, protocols::loops::Loops* 
 
   // Override automatic chunk selection
   chunks->read_loop_file(option[OptionKeys::nonlocal::chunks]());
-}
-
-/// @detail Alternating rigid body and fragment insertion moves
-protocols::moves::RationalMonteCarloOP create_fragment_mover(const core::pose::Pose& pose,
-                                                             core::scoring::ScoreFunctionOP score,
-                                                             core::fragment::FragSetOP fragments,
-                                                             const Probabilities& probs,
-                                                             const std::string& policy,
-                                                             unsigned library_size) {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using namespace protocols::moves;
-  using protocols::nonlocal::BiasedFragmentMover;
-  using protocols::nonlocal::PolicyFactory;
-
-  Jumps jumps;
-  core::pose::jumps_from_pose(pose, &jumps);
-  MoverOP rigid_body_mover = new RigidBodyMotionMover(jumps);
-
-  MoverOP fragment_mover =
-      new BiasedFragmentMover(fragments,
-                              PolicyFactory::get_policy(policy, fragments, library_size),
-                              probs);
-
-  CyclicMoverOP meta = new CyclicMover();
-  meta->enqueue(rigid_body_mover);
-  meta->enqueue(fragment_mover);
-
-  RationalMonteCarloOP mover = new RationalMonteCarlo(meta,
-                                                      score,
-                                                      option[OptionKeys::rigid::fragment_cycles](),
-                                                      option[OptionKeys::rigid::temperature](),
-                                                      true);
-
-  // Optionally record accepted moves
-  if (option[OptionKeys::rigid::log_accepted_moves]())
-    mover->add_trigger(boost::bind(&on_pose_accept, _1));
-
-  return mover;
-}
-
-/// @detail Alternating small and shear moves
-protocols::moves::RationalMonteCarloOP create_small_mover(core::scoring::ScoreFunctionOP score) {
-  using namespace basic::options;
-  using namespace basic::options::OptionKeys;
-  using namespace protocols::moves;
-  using core::kinematics::MoveMap;
-  using core::kinematics::MoveMapOP;
-
-  MoveMapOP movable = new MoveMap();
-  movable->set_bb(true);
-
-  SmallMoverOP small_mover = new SmallMover(movable,
-                                            option[OptionKeys::rigid::temperature](),
-                                            option[OptionKeys::rigid::residues_backbone_move]());
-
-  ShearMoverOP shear_mover = new ShearMover(movable,
-                                            option[OptionKeys::rigid::temperature](),
-                                            option[OptionKeys::rigid::residues_backbone_move]());
-
-  CyclicMoverOP meta = new CyclicMover();
-  meta->enqueue(small_mover);
-  meta->enqueue(shear_mover);
-
-  RationalMonteCarloOP mover = new RationalMonteCarlo(meta,
-                                                      score,
-                                                      option[OptionKeys::rigid::small_cycles](),
-                                                      option[OptionKeys::rigid::temperature](),
-                                                      true);
-
-  // Optionally record accepted moves
-  if (option[OptionKeys::rigid::log_accepted_moves]())
-    mover->add_trigger(boost::bind(&on_pose_accept, _1));
-
-  return mover;
 }
 
 MedalMover::MedalMover() {
@@ -260,7 +187,6 @@ void MedalMover::apply(core::pose::Pose& pose) {
   using namespace protocols::nonlocal;
 
   ThreadingJob const * const job = protocols::nonlocal::current_job();
-  const SequenceAlignment& alignment = job->alignment();
   const unsigned num_residues = pose.total_residue();
 
   // Build up a threading model
@@ -282,7 +208,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
 
   // Compute per-residue sampling probabilities
   Probabilities probs;
-  compute_per_residue_probabilities(num_residues, alignment, chunks, pose.fold_tree(), *fragments_sm_, &probs);
+  compute_per_residue_probabilities(num_residues, job->alignment(), chunks, pose.fold_tree(), *fragments_sm_, &probs);
 
   // Alternating rigid body and fragment insertion moves with increasing linear_chainbreak weight.
   // Early stages select fragments uniformly from the top 25, later stages select fragments according
@@ -298,7 +224,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
     score->set_weight(core::scoring::linear_chainbreak,
                       numeric::linear_interpolate(cb_start, cb_stop, stage, num_stages));
 
-    RationalMonteCarloOP mover =
+    MoverOP mover =
         create_fragment_mover(pose, score, fragments_sm_, probs,
                               (stage < (num_stages / 2)) ? "uniform" : "smooth",
                               (stage < (num_stages / 2)) ? 25 : 200);
@@ -307,7 +233,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
   }
 
   // Alternating small and shear moves
-  RationalMonteCarloOP mover = create_small_mover(score);
+  MoverOP mover = create_small_mover(score);
   mover->apply(pose);
   protocols::nonlocal::remove_cutpoint_variants(&pose);
 
@@ -396,6 +322,78 @@ protocols::moves::MoverOP MedalMover::clone() const {
 
 protocols::moves::MoverOP MedalMover::fresh_instance() const {
   return new MedalMover();
+}
+
+/// @detail Alternating rigid body and fragment insertion moves
+protocols::moves::MoverOP MedalMover::create_fragment_mover(
+    const core::pose::Pose& pose,
+    core::scoring::ScoreFunctionOP score,
+    core::fragment::FragSetOP fragments,
+    const Probabilities& probs,
+    const std::string& policy,
+    unsigned library_size) const {
+
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  using namespace protocols::moves;
+  using protocols::nonlocal::BiasedFragmentMover;
+  using protocols::nonlocal::PolicyFactory;
+
+  Jumps jumps;
+  core::pose::jumps_from_pose(pose, &jumps);
+
+  CyclicMoverOP meta = new CyclicMover();
+  meta->enqueue(new RigidBodyMotionMover(jumps));
+  meta->enqueue(new BiasedFragmentMover(fragments,
+                                        PolicyFactory::get_policy(policy, fragments, library_size),
+                                        probs));
+
+  RationalMonteCarloOP mover =
+      new RationalMonteCarlo(meta,
+                             score,
+                             option[OptionKeys::rigid::fragment_cycles](),
+                             option[OptionKeys::rigid::temperature](),
+                             true);
+
+  // Optionally record accepted moves
+  if (option[OptionKeys::rigid::log_accepted_moves]())
+    mover->add_trigger(boost::bind(&on_pose_accept, _1));
+
+  return mover;
+}
+
+/// @detail Alternating small and shear moves
+protocols::moves::MoverOP MedalMover::create_small_mover(core::scoring::ScoreFunctionOP score) const {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+  using namespace protocols::moves;
+  using core::kinematics::MoveMap;
+  using core::kinematics::MoveMapOP;
+
+  MoveMapOP movable = new MoveMap();
+  movable->set_bb(true);
+
+  CyclicMoverOP meta = new CyclicMover();
+  meta->enqueue(new SmallMover(movable,
+                               option[OptionKeys::rigid::temperature](),
+                               option[OptionKeys::rigid::residues_backbone_move]()));
+
+  meta->enqueue(new ShearMover(movable,
+                               option[OptionKeys::rigid::temperature](),
+                               option[OptionKeys::rigid::residues_backbone_move]()));
+
+  RationalMonteCarloOP mover =
+      new RationalMonteCarlo(meta,
+                             score,
+                             option[OptionKeys::rigid::small_cycles](),
+                             option[OptionKeys::rigid::temperature](),
+                             true);
+
+  // Optionally record accepted moves
+  if (option[OptionKeys::rigid::log_accepted_moves]())
+    mover->add_trigger(boost::bind(&on_pose_accept, _1));
+
+  return mover;
 }
 
 }  // namespace medal
