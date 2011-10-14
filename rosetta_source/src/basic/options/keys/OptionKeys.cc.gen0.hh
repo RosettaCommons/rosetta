@@ -573,3 +573,4 @@ namespace abinitio { RealOptionKey const vdw_weight_stage1( "abinitio:vdw_weight
 namespace abinitio { BooleanOptionKey const override_vdw_all_stages( "abinitio:override_vdw_all_stages" );  }
 namespace abinitio { IntegerVectorOptionKey const recover_low_in_stages( "abinitio:recover_low_in_stages" );  }
 namespace abinitio { IntegerVectorOptionKey const skip_stages( "abinitio:skip_stages" );  }
+namespace abinitio { BooleanOptionKey const close_chbrk( "abinitio:close_chbrk" );  }

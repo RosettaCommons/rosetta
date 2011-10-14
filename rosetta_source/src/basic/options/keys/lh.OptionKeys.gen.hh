@@ -60,6 +60,10 @@ namespace lh { extern BooleanOptionKey const centroid_only; }
 namespace lh { extern BooleanOptionKey const write_centroid_structs; }
 namespace lh { extern BooleanOptionKey const sandbox; }
 namespace lh { extern BooleanOptionKey const create_db; }
+namespace lh { namespace fragpdb { extern BooleanOptionKey const fragpdb; } }
+namespace lh { namespace fragpdb { extern StringOptionKey const out_path; } }
+namespace lh { namespace fragpdb { extern IntegerVectorOptionKey const indexoffset; } }
+namespace lh { namespace fragpdb { extern StringVectorOptionKey const bin; } }
 
 } // namespace OptionKeys
 } // namespace options

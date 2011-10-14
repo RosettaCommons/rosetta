@@ -2675,7 +2675,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'exclude_homo', 'Boolean', default = 'false', desc = 'Use a homolog exclusion filter' ),
 		Option( 'refstruct', 'String', default = '', desc = 'File with a target reference structure' ),
 		Option( 'homo_file', 'String', default = '', desc = 'File containing homologs to exclude' ),
-        Option( 'createdb_rms_cutoff', 'RealVector', default = ['0','0','0'], desc = 'RMS cutoff used for throwing out similar fragments.' ),
+		Option( 'createdb_rms_cutoff', 'RealVector', default = ['0','0','0'], desc = 'RMS cutoff used for throwing out similar fragments.' ),
 		Option( 'min_bbrms', 'Real', default='0.0' ),
 		Option( 'max_bbrms', 'Real', default='100000.0' ),
 		Option( 'min_rms'  , 'Real', default='0.0' ),
@@ -2707,6 +2707,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'write_centroid_structs',   'Boolean', default = 'false', desc = 'Output raw loophashed decoys as well as relaxed ones' ),
 		Option( 'sandbox',   'Boolean', default = 'false', desc = 'Sand box mode' ),
 		Option( 'create_db', 'Boolean', default = 'false', desc = 'Make database with this loopsize' ),
+		Option_Group( 'fragpdb',
+			Option( 'out_path', 'String', default = '', desc='Path where pdbs are saved' ),
+			Option( 'indexoffset', 'IntegerVector', desc='list of index offset pairs' , default = ['-1']),
+            Option( 'bin', 'StringVector', desc='list of bin keys', default = 'utility::vector1<std::string>()' ),
+		),
 	),
 
 

@@ -5807,6 +5807,27 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
  </li>
+<li><h2>lh:fragpdb</h2>
+<dl>
+<dt><b>-fragpdb</b> \<Boolean\><dt>
+<dd>fragpdb option group</dd><br>
+</dl>
+<dl>
+<dt><b>-out_path</b> \<String\><dt>
+<dd>Path where pdbs are saved</dd><br>
+<dd>Default: ""</dd><br>
+</dl>
+<dl>
+<dt><b>-indexoffset</b> \<IntegerVector\><dt>
+<dd>list of index offset pairs</dd><br>
+<dd>Default: ['-1']</dd><br>
+</dl>
+<dl>
+<dt><b>-bin</b> \<StringVector\><dt>
+<dd>list of bin keys</dd><br>
+<dd>Default: utility::vector1<std::string>()</dd><br>
+</dl>
+ </li>
 <li><h2>blivens</h2>
 <dl>
 <dt><b>-blivens</b> \<Boolean\><dt>
