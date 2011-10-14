@@ -64,6 +64,7 @@ namespace score { extern BooleanOptionKey const output_residue_energies; }
 namespace score { extern StringOptionKey const fa_custom_pair_distance_file; }
 namespace score { extern RealOptionKey const disulf_matching_probe; }
 namespace score { extern RealVectorOptionKey const bonded_params; }
+namespace score { extern BooleanOptionKey const linear_bonded_potential; }
 namespace score { namespace saxs { extern BooleanOptionKey const saxs; } }
 namespace score { namespace saxs { extern RealOptionKey const min_score; } }
 namespace score { namespace saxs { extern StringOptionKey const custom_ff; } }
