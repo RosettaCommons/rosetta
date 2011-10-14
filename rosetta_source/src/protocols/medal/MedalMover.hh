@@ -65,9 +65,17 @@ class MedalMover : public protocols::moves::Mover {
   void decompose_structure(const core::pose::Pose& pose,
                            protocols::loops::Loops* chunks) const;
 
-  /// @brief Configures a mover for performing alternating fragment insertion and
-  /// rigid body moves
+  /// @brief Configures a mover for biased fragment insertion
   protocols::moves::MoverOP create_fragment_mover(
+      core::scoring::ScoreFunctionOP score,
+      core::fragment::FragSetOP fragments,
+      const Probabilities& probs,
+      const std::string& policy,
+      unsigned library_size) const;
+
+  /// @brief Configures a mover for alternating biased fragment insertion
+  /// and rigid body moves
+  protocols::moves::MoverOP create_fragment_and_rigid_mover(
       const core::pose::Pose& pose,
       core::scoring::ScoreFunctionOP score,
       core::fragment::FragSetOP fragments,

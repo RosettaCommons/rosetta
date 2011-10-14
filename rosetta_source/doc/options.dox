@@ -28,6 +28,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 5.0</dd><br>
 </dl>
 <dl>
+<dt><b>-medium_range_seqsep</b> \<Integer\><dt>
+<dd>Constraints with sequence separation less than x are scored</dd><br>
+<dd>Default: 30</dd><br>
+</dl>
+<dl>
 <dt><b>-residues_backbone_move</b> \<Integer\><dt>
 <dd>Number of residues perturbed by a backbone move</dd><br>
 <dd>Default: 5</dd><br>
@@ -41,6 +46,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-sequence_separation</b> \<Integer\><dt>
 <dd>Maximum sequence separation for scoring chainbreaks</dd><br>
 <dd>Default: 20</dd><br>
+</dl>
+<dl>
+<dt><b>-short_range_seqsep</b> \<Integer\><dt>
+<dd>Constraints with sequence separation less than x are scored</dd><br>
+<dd>Default: 15</dd><br>
 </dl>
 <dl>
 <dt><b>-small_cycles</b> \<Integer\><dt>

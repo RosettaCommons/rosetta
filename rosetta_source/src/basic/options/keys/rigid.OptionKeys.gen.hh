@@ -26,9 +26,11 @@ namespace rigid { extern BooleanOptionKey const close_loops; }
 namespace rigid { extern IntegerOptionKey const fragment_cycles; }
 namespace rigid { extern BooleanOptionKey const log_accepted_moves; }
 namespace rigid { extern RealOptionKey const max_ca_ca_dist; }
+namespace rigid { extern IntegerOptionKey const medium_range_seqsep; }
 namespace rigid { extern IntegerOptionKey const residues_backbone_move; }
 namespace rigid { extern RealOptionKey const rotation; }
 namespace rigid { extern IntegerOptionKey const sequence_separation; }
+namespace rigid { extern IntegerOptionKey const short_range_seqsep; }
 namespace rigid { extern IntegerOptionKey const small_cycles; }
 namespace rigid { extern IntegerOptionKey const stages; }
 namespace rigid { extern RealOptionKey const temperature; }

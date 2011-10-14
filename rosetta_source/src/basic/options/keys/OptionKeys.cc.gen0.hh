@@ -3,9 +3,11 @@ namespace rigid { BooleanOptionKey const close_loops( "rigid:close_loops" );  }
 namespace rigid { IntegerOptionKey const fragment_cycles( "rigid:fragment_cycles" );  }
 namespace rigid { BooleanOptionKey const log_accepted_moves( "rigid:log_accepted_moves" );  }
 namespace rigid { RealOptionKey const max_ca_ca_dist( "rigid:max_ca_ca_dist" );  }
+namespace rigid { IntegerOptionKey const medium_range_seqsep( "rigid:medium_range_seqsep" );  }
 namespace rigid { IntegerOptionKey const residues_backbone_move( "rigid:residues_backbone_move" );  }
 namespace rigid { RealOptionKey const rotation( "rigid:rotation" );  }
 namespace rigid { IntegerOptionKey const sequence_separation( "rigid:sequence_separation" );  }
+namespace rigid { IntegerOptionKey const short_range_seqsep( "rigid:short_range_seqsep" );  }
 namespace rigid { IntegerOptionKey const small_cycles( "rigid:small_cycles" );  }
 namespace rigid { IntegerOptionKey const stages( "rigid:stages" );  }
 namespace rigid { RealOptionKey const temperature( "rigid:temperature" );  }
@@ -571,5 +573,3 @@ namespace abinitio { RealOptionKey const vdw_weight_stage1( "abinitio:vdw_weight
 namespace abinitio { BooleanOptionKey const override_vdw_all_stages( "abinitio:override_vdw_all_stages" );  }
 namespace abinitio { IntegerVectorOptionKey const recover_low_in_stages( "abinitio:recover_low_in_stages" );  }
 namespace abinitio { IntegerVectorOptionKey const skip_stages( "abinitio:skip_stages" );  }
-namespace abinitio { BooleanOptionKey const close_chbrk( "abinitio:close_chbrk" );  }
-namespace abinitio { BooleanOptionKey const include_stage5( "abinitio:include_stage5" );  }
