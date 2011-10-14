@@ -173,7 +173,7 @@ public:
 	// @brief compute the list of bin indices of a hypershell
 	// Bounding box overflow pruned here
 	std::vector < boost::uint64_t >
-	radial_bin_index( core::Size inner_shell, core::Size outer_shell, Real6 const & center );
+	radial_bin_index( core::Size radius, Real6 const & center );
 
 	Bin6D
 	bin_from_index( boost::uint64_t index ) const {

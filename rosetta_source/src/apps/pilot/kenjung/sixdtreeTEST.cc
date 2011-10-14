@@ -62,10 +62,11 @@ main( int argc, char * argv [] )
 	center[4]=60;
 	center[5]=60;
 	center[6]=60;
-	std::vector < boost::uint64_t > offset_list = hash_->radial_bin_index(0,2,center);
+/*std::vector < boost::uint64_t > offset_list = hash_->radial_bin_index(0,2,center);
 	for( std::vector< boost::uint64_t >::iterator itr = offset_list.begin(); itr != offset_list.end(); itr++ ) {
 		TR << *itr << std::endl;
 	}
+	*/
 
 }
 

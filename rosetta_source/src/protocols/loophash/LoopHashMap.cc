@@ -384,6 +384,8 @@ LoopHashMap::setup( core::Size loop_size)
 	bin_widths[6] = angle_multiplier*loop_size;
 
 	hash_ = new protocols::match::SixDCoordinateBinner( bounding_box, euler_offsets, bin_widths );
+	// initialize the radial tree
+	hash_->tree_init(15);
 }
 
 void
@@ -479,12 +481,12 @@ LoopHashMap::lookup(  protocols::match::Real6 transform, std::vector < core::Siz
 	}
 }
 
-void LoopHashMap::radial_lookup( core::Size inner_shell, core::Size outer_shell,  protocols::match::Real6 center, std::vector < core::Size > &result )
+void LoopHashMap::radial_lookup( core::Size radius,  protocols::match::Real6 center, std::vector < core::Size > &result )
 {
 
 	center[4] = numeric::nonnegative_principal_angle_degrees(center[4] );
 	center[5] = numeric::nonnegative_principal_angle_degrees(center[5] );
-	std::vector< boost::uint64_t > bin_index_vec = hash_->radial_bin_index( inner_shell, outer_shell, center );
+	std::vector< boost::uint64_t > bin_index_vec = hash_->radial_bin_index( radius, center );
 
 	for( core::Size i = 0; i < bin_index_vec.size(); ++i ) {
 		// now get an iterator over that map entry

@@ -54,7 +54,7 @@ LoopHashSampler::LoopHashSampler(
 	max_bbrms_ ( 100000.0 ),
 	min_rms_   ( 0.0 ),
 	max_rms_   ( 100.0 ),
-	nprefilter_ ( 0 ),
+	nprefilter_ ( 0 ), // OBSOLETE?
 	nonideal_ ( false )
 {
 	set_defaults();
@@ -67,11 +67,11 @@ LoopHashSampler::set_defaults(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	set_min_bbrms(  option[ lh::min_bbrms ]() ); 
-	set_max_bbrms(  option[ lh::max_bbrms ] ()  );
-	set_min_rms(    option[ lh::min_rms ]() );
-	set_max_rms(    option[ lh::max_rms ]() );
-	set_max_nstruct( 10000000 );
+	set_min_bbrms(  option[ lh::min_bbrms ]() );  // OBSOLETE?
+	set_max_bbrms(  option[ lh::max_bbrms ] ()  ); //OBSOLETE?
+	set_min_rms(    option[ lh::min_rms ]() ); //OBSOLETE?
+	set_max_rms(    option[ lh::max_rms ]() ); //OBSOLETE?
+	set_max_nstruct( 10000000 ); // OBSOLETE?
 }
 
   // @brief create a set of structures for a the given range of residues and other parameters
@@ -171,193 +171,141 @@ LoopHashSampler::set_defaults(){
 				// make up some function that uses sample weight to generate model number cutoffs
 				// and one that gives a max_bbrms and min_bbrms
 				// These are just placeholders
-				core::Size sw_nmodels = int(avg_sw/2);
-				core::Size sw_nfrags = int(avg_sw*10);
-				core::Size sw_max_bbrms = int(avg_sw*10);
-				core::Size sw_min_bbrms = int(avg_sw/2);
+				core::Size sw_nmodels = 5;
+				core::Size sw_nfrags = 500;
+				//super lax for now
+				core::Real sw_max_bbrms = 1000;
+				core::Real sw_min_bbrms = 0;
+				core::Real sw_max_rms = 100;
+				core::Real sw_min_rms = 0;
+
+				const core::Size MAX_RADIUS = 2;
 
 
 
-				// we want x models no matter what
+				// we want sw_nmodels models no matter what
 				// but if there is a brrms constraint, we might never reach x models
 				// some breakpoint, like x bins checked or x frags checked
 				// or radius check
-				core::Size radius = 0;
-				core::Size explore_count = 0;
-				std::vector < core::Size > filter_leap_index_bucket;
-				while ( filter_leap_index_bucket.size() < sw_nmodels ) {
+				core::Size fragments_seen = 0;
+				core::Size models_seen = 0;
 
-						// Needs to be optimized
-						if( explore_count > sw_nfrags ) break;
+				for( Size radius = 0; radius <= MAX_RADIUS; radius++ ) {
+					std::vector < core::Size > leap_index_bucket;
+					std::vector < core::Size > filter_leap_index_bucket;
+					hashmap.radial_lookup( radius, loop_transform, leap_index_bucket );
+					TR << "radius, lookup_size = " << radius << ", " << leap_index_bucket.size() << std::endl;
 
-						// looks up a hypershell in bin space and returns all frags
-						std::vector < core::Size > leap_index_bucket;
-						hashmap.radial_lookup( radius, radius+1, loop_transform, leap_index_bucket );
-
-						//TR.Info << "G: " << runcount << " " << ir << "  " << jr << " " << leap_index_bucket.size() << "  " << loop_transform[1] << "  " << loop_transform[2] << "  " << loop_transform[3] << "  " << loop_transform[4] << "  " << loop_transform[5] << "  " << loop_transform[6] << std::endl;
-
-
-						// Now for every hit, get the internal coordinates and make a short list of replacement loops
-						// according to the RMS criteria
-
-						if( leap_index_bucket.size() == 0) {
-								radius++;
-								continue;
-						}
-
-						explore_count += leap_index_bucket.size();
-
-						for(  std::vector < core::Size >::const_iterator it = leap_index_bucket.begin();
-								it != leap_index_bucket.end();
-								++it ){
-
-							// Get the actual strucure index (not just the bin index)
-							core::Size retrieve_index = (core::Size) (*it);
-							LeapIndex cp = hashmap.get_peptide( retrieve_index );
-
-							// Retrieve the actual backbone structure
-							BackboneSegment new_bs;
-							library_->backbone_database().get_backbone_segment( cp.index, cp.offset, hashmap.get_loop_size() , new_bs );
-
-							// Check the values against against any RMS limitations
-							core::Real BBrms = get_rmsd( pose_bs, new_bs );
-							if( ( BBrms > sw_min_bbrms) && ( BBrms < sw_max_bbrms ) ){
-								filter_leap_index_bucket.push_back( *it );
-							}
-						}
-
-						// If no loops pass the previous filter - enlarge shell
-						if( filter_leap_index_bucket.size() == 0) {
-								// this is just in case decide to put in fpd again
-								radius++;
-								continue;
-						}
-
-						/* Commenting this out for now, since it isn't used 
-						// Now go through the chosen loops in random order
-						core::Size explore_count = 0;
-						std::random_shuffle( filter_leap_index_bucket.begin(), filter_leap_index_bucket.end());
-						
-						//fpd--------------------------------------------------------------------------------------
-						//fpd prefiltering step!  Insert loops with chainbreak present and very quickly score them
-						if (nprefilter_ > 0 && nprefilter_ < filter_leap_index_bucket.size() ) {
-							assert( score_filt_ );
-
-							std::vector < std::pair< core::Real, core::Size> > scored_bucketlist;
-
-							for(  std::vector < core::Size >::const_iterator it = filter_leap_index_bucket.begin();
-									it != filter_leap_index_bucket.end(); ++it ){
-								if( explore_count ++ >= 2*max_nstruct_ ) break;
-									// oversample a bit (2*max_nstruct_) since some will fail RMSd check later
-
-								core::Size retrieve_index = *it;
-								LeapIndex cp = hashmap.get_peptide( retrieve_index );
-			
-								BackboneSegment new_bs;
-								library_->backbone_database().get_backbone_segment( cp.index, cp.offset, hashmap.get_loop_size() , new_bs );
-			
-								core::pose::Pose newpose( start_pose );
-								core::Real final_rms = inserter_->make_local_bb_change_include_cut( newpose, original_pose, new_bs, ir );
-								core::Real filtered_score = (*score_filt_)(newpose);
-								scored_bucketlist.push_back( std::pair<core::Real, core::Size>(filtered_score,retrieve_index) );
-							}
-
-							// now apply the filter, updating 'filter_leap_index_bucket'
-							filter_leap_index_bucket.clear();
-							std::sort( scored_bucketlist.begin(), scored_bucketlist.end(), utility::SortFirst<Real, Size>() );
-							for (core::Size ii=1; ii<=std::min( nprefilter_, scored_bucketlist.size() ); ++ii) {
-								TR << "Adding score = " << scored_bucketlist[ii].first << std::endl;
-								filter_leap_index_bucket.push_back( scored_bucketlist[ii].second );
-							}
-						}
-						//fpd end prefilter
-						//fpd---------------
-						*/
-
-						radius++;
-				}
-
-				std::random_shuffle( filter_leap_index_bucket.begin(), filter_leap_index_bucket.end());
-
-				explore_count = 0;
-
-				for(  std::vector < core::Size >::const_iterator it = filter_leap_index_bucket.begin();
-						it != filter_leap_index_bucket.end();
-						++it ){
-
-					if( explore_count++ > sw_nmodels ) break;
-
-
-					clock_t starttime = clock();
-
-					core::Size retrieve_index = *it;
-					LeapIndex cp = hashmap.get_peptide( retrieve_index );
-
-					BackboneSegment new_bs;
-					library_->backbone_database().get_backbone_segment( cp.index, cp.offset, hashmap.get_loop_size() , new_bs );
-
-					core::pose::Pose newpose( start_pose );
-					//transfer_phi_psi( start_pose, newpose );			//fpd necessary??
-
-					core::Real final_rms = inserter_->make_local_bb_change( newpose, original_pose, new_bs, ir );
-
-					bool isok = false;
-					if ( ( final_rms < max_rms_ ) && ( final_rms > min_rms_ ) ){
-
-						core::pose::Pose mynewpose( start_pose );
-
-						transfer_phi_psi( newpose, mynewpose );
-						transfer_jumps( newpose, mynewpose );
-
-						core::io::silent::SilentStructOP new_struct = nonideal_ ?
-							core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") :
-							core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
-						new_struct->fill_struct( mynewpose );    // make the silent struct from the copy pose
-						new_struct->energies_from_pose( newpose ); // take energies from the modified pose, not the copy pose
-						//TR << "SAMPLER: " << new_struct->get_energy("censcore") << std::endl;
-						// Add donor history for this round of loophash only
-
-						// Assume extra data is loade, because we need it!
-						BBData bb;
-						BBExtraData bbextra;
-						library_->backbone_database().get_protein( cp.index, bb );
-						
-						std::string donorhistory = new_struct->get_comment("donorhistory");
-						if( library_->backbone_database().extra_size() <= bb.extra_key ){ 
-							std::cerr << "ERROR: No extra data ?: " << library_->backbone_database().extra_size() << " < " << bb.extra_key << std::endl;
-							
-							donorhistory = donorhistory
-											+       utility::to_string( loop_size )
-											+ "/" + utility::to_string( library_->loopdb_range().first + cp.index )
-											+ "/" + utility::to_string( cp.offset/3 )
-											+ "/" + utility::to_string( ir-1 ) + ";";
-						}else{
-
-							library_->backbone_database().get_extra_data( bb.extra_key, bbextra );
-							
-							donorhistory = donorhistory
-											+       utility::to_string( loop_size )
-											+ "/" + utility::to_string( bbextra.pdb_id)
-											//+ "/" + utility::to_string( bbextra.sequence.substr(cp.offset/3, 5) )
-											+ "/" + utility::to_string( library_->loopdb_range().first + cp.index )
-											+ "/" + utility::to_string( cp.offset/3 )
-											+ "/" + utility::to_string( ir-1 ) + ";";
-						}
-						new_struct->erase_comment( "donorhistory" );
-						new_struct->add_comment( "donorhistory", donorhistory );
-						lib_structs.push_back( new_struct );
-						isok = true;
+					if( leap_index_bucket.size() == 0) {
+						continue;
 					}
 
-					//if ( lib_structs.size() > 2  ) return;
+					// Now for every hit, get the internal coordinates and make a short list of replacement loops
+					// according to the RMS criteria
+					for(  std::vector < core::Size >::const_iterator it = leap_index_bucket.begin();
+							it != leap_index_bucket.end();
+							++it ){
 
-					clock_t endtime = clock();
+						// Get the actual strucure index (not just the bin index)
+						core::Size retrieve_index = (core::Size) (*it);
+						LeapIndex cp = hashmap.get_peptide( retrieve_index );
 
-					TR.Debug << "Clocks: " << endtime - starttime << "  " << final_rms << (isok ? " OK" : " Reject") << std::endl;
+						// Retrieve the actual backbone structure
+						BackboneSegment new_bs;
+						library_->backbone_database().get_backbone_segment( cp.index, cp.offset, hashmap.get_loop_size() , new_bs );
+
+						// Check the values against against any RMS limitations
+						core::Real BBrms = get_rmsd( pose_bs, new_bs );
+						if( ( BBrms > sw_min_bbrms) && ( BBrms < sw_max_bbrms ) ){
+							filter_leap_index_bucket.push_back( *it );
+							fragments_seen++;
+							if( fragments_seen > sw_nfrags ) break; // continue with however many are in the bucket now, and break at end
+						}
+					}
+
+					std::random_shuffle( filter_leap_index_bucket.begin(), filter_leap_index_bucket.end());
+
+					// Now create models and check rms after insertion
+					for(  std::vector < core::Size >::const_iterator it = filter_leap_index_bucket.begin();
+							it != filter_leap_index_bucket.end();
+							++it ){
+
+						clock_t starttime = clock();
+
+						core::Size retrieve_index = *it;
+						LeapIndex cp = hashmap.get_peptide( retrieve_index );
+
+						BackboneSegment new_bs;
+						library_->backbone_database().get_backbone_segment( cp.index, cp.offset, hashmap.get_loop_size() , new_bs );
+
+						core::pose::Pose newpose( start_pose );
+						//transfer_phi_psi( start_pose, newpose );			//fpd necessary??
+
+						core::Real final_rms = inserter_->make_local_bb_change( newpose, original_pose, new_bs, ir );
+
+						bool isok = false;
+						if ( ( final_rms < sw_max_rms ) && ( final_rms > sw_min_rms ) ){
+
+							core::pose::Pose mynewpose( start_pose );
+
+							transfer_phi_psi( newpose, mynewpose );
+							transfer_jumps( newpose, mynewpose );
+
+							core::io::silent::SilentStructOP new_struct = nonideal_ ?
+								core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary") :
+								core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out();
+							new_struct->fill_struct( mynewpose );    // make the silent struct from the copy pose
+							new_struct->energies_from_pose( newpose ); // take energies from the modified pose, not the copy pose
+							//TR << "SAMPLER: " << new_struct->get_energy("censcore") << std::endl;
+							// Add donor history for this round of loophash only
+
+							// Assume extra data is loade, because we need it!
+							BBData bb;
+							BBExtraData bbextra;
+							library_->backbone_database().get_protein( cp.index, bb );
+							
+							std::string donorhistory = new_struct->get_comment("donorhistory");
+							if( library_->backbone_database().extra_size() <= bb.extra_key ){ 
+								std::cerr << "ERROR: No extra data ?: " << library_->backbone_database().extra_size() << " < " << bb.extra_key << std::endl;
+								
+								donorhistory = donorhistory
+												+       utility::to_string( loop_size )
+												+ "/" + utility::to_string( library_->loopdb_range().first + cp.index )
+												+ "/" + utility::to_string( cp.offset/3 )
+												+ "/" + utility::to_string( ir-1 ) + ";";
+							}else{
+
+								library_->backbone_database().get_extra_data( bb.extra_key, bbextra );
+								
+								donorhistory = donorhistory
+												+       utility::to_string( loop_size )
+												+ "/" + utility::to_string( bbextra.pdb_id)
+												//+ "/" + utility::to_string( bbextra.sequence.substr(cp.offset/3, 5) )
+												+ "/" + utility::to_string( library_->loopdb_range().first + cp.index )
+												+ "/" + utility::to_string( cp.offset/3 )
+												+ "/" + utility::to_string( ir-1 ) + ";";
+							}
+							new_struct->erase_comment( "donorhistory" );
+							new_struct->add_comment( "donorhistory", donorhistory );
+							lib_structs.push_back( new_struct );
+							models_seen++;
+							if( models_seen > sw_nmodels ) break;
+							isok = true;
+						}
+
+						//if ( lib_structs.size() > 2  ) return;
+
+						clock_t endtime = clock();
+
+						TR.Debug << "Clocks: " << endtime - starttime << "  " << final_rms << (isok ? " OK" : " Reject") << std::endl;
 
 				}
+				// To break out of the outer for loop when these conditions are met
+				if( models_seen > sw_nmodels ) break;
+				if( fragments_seen > sw_nfrags) break;
       }
     }
+	}
 
 
 		long endtime = time(NULL);

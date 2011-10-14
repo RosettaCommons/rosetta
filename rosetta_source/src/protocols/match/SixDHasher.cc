@@ -110,23 +110,21 @@ SixDCoordinateBinner::bin6( Real6 const & values ) const {
 }
 
 std::vector < boost::uint64_t >
-SixDCoordinateBinner::radial_bin_index( Size inner_shell, Size outer_shell, Real6 const & center ) {
+SixDCoordinateBinner::radial_bin_index( Size radius, Real6 const & center ) {
 		std::vector < boost::uint64_t > bin_indices;
     Bin6D center_bin = bin6( center );
-		for( Size i = inner_shell; i <= outer_shell; ++i ) {
-			std::vector < SBin6D > offsets = offset_tree_.lookup(i, center_bin, dimsizes_);
-			for( Size j = 0; j < offsets.size(); ++j ) {
-				Bin6D candidate;
-				// apparently fixedarray1 (bin6d) has no + operator to another fixedarray1
-				for( Size k = 1; k <= 6; ++k ) {
-					//go through and add
-					candidate[k] = center_bin[k] + offsets[j][k];
-					//TR<< candidate[k] << "\t" << center_bin[k] << "\t" << offsets[j][k] << std::endl;
-				}
-			//	TR << std::endl;
-				bin_indices.push_back( bin_index( candidate) );
+		std::vector < SBin6D > offsets = offset_tree_.lookup(radius, center_bin, dimsizes_);
+		for( Size j = 0; j < offsets.size(); ++j ) {
+			Bin6D candidate;
+			// apparently fixedarray1 (bin6d) has no + operator to another fixedarray1
+			for( Size k = 1; k <= 6; ++k ) {
+			//go through and add
+				candidate[k] = center_bin[k] + offsets[j][k];
+				//TR<< candidate[k] << "\t" << center_bin[k] << "\t" << offsets[j][k] << std::endl;
 			}
-	}
+		//	TR << std::endl;
+			bin_indices.push_back( bin_index( candidate) );
+		}
 	return bin_indices;
 }
 
