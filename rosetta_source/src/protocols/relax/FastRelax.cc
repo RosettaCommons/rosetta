@@ -170,6 +170,12 @@ endrepeat
 
 #include <numeric/random/random.fwd.hh>
 
+// REMOVE THESE WHEN SILENTSTRUCT DATA OBJECTS ARE FIXED
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
+#include <core/scoring/constraints/util.hh>
+// end stupid headers
+
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
 
@@ -938,6 +944,18 @@ void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
 
 	// 432/436mb
 
+	
+	// when silentstruct has support for datacache, use that to copy data from the pose
+	// delete me later?
+	
+	input_structs[0]->fill_pose( pose );
+	core::scoring::constraints::ConstraintSetOP cstset; 
+	if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
+		cstset = core::scoring::constraints::ConstraintIO::get_instance()->read_constraints(
+			core::scoring::constraints::get_cst_fa_file_option(), new core::scoring::constraints::ConstraintSet, pose  );
+		TR << "Read constraints for batchrelax: " << ( cstset->has_constraints() ? "YES" : "NONE" ) << std::endl;
+	}
+
 
 	// create a local array of relax_decoys
 	std::vector < SRelaxPose > relax_decoys;
@@ -955,6 +973,7 @@ void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
 			//core::Real afterscore = (*local_scorefxn)(pose);
 		}
 		// 453mb
+
 
 		//pose.dump_pdb("test_" + string_of( i ) + ".pdb" );
 		new_relax_decoy.active = true;
@@ -1022,6 +1041,10 @@ void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
 			if ( TR.Debug.visible() ){
 				kinematics::simple_visualize_fold_tree_and_movemap_bb_chi( pose.fold_tree(),  *local_movemap, TR );
 			}
+
+
+
+
 		}
 		// 453 mb
 	}
@@ -1119,6 +1142,8 @@ void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
 				clock_t starttime = clock();
 				if ( !relax_decoys[index].active ) continue;
 				relax_decoys[index].current_struct->fill_pose( pose );
+				//delete me later?
+				pose.constraint_set( cstset );
 				if( total_repeat_count > 1 && repeat_count > 2 ){
 					if( cmd.param1 < 0.2 ){
 						if( do_rama_repair ){
@@ -1178,14 +1203,19 @@ void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
 			for( core::Size index=0; index < relax_decoys.size(); ++ index ){
 				if ( !relax_decoys[index].active ) continue;
 				relax_decoys[index].current_struct->fill_pose( pose );
+				//delete me later?
+				pose.constraint_set( cstset );
 				core::Real score = (*local_scorefxn)( pose );
 				TR.Debug << "Comparison: " << score << " " << relax_decoys[index].best_score << std::endl;
 
 				if( ( score < relax_decoys[index].best_score) || (relax_decoys[index].accept_count == 0) ){
 					relax_decoys[index].best_score = score;
 					relax_decoys[index].best_struct->fill_struct( pose );
+					pose.constraint_set( cstset );
 
 					core::pose::Pose pose_check;
+					//delete me later?
+					pose_check.constraint_set(cstset);
 					relax_decoys[index].best_struct->fill_pose( pose_check );
 					core::Real score_check = (*local_scorefxn)( pose_check );
 					TR.Debug << "Sanity: "<< score << " ==  " << score_check << std::endl;
@@ -1248,6 +1278,8 @@ void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
 	// Finally return all the scores;
 	for( core::Size index=0; index < relax_decoys.size(); ++ index ){
 		relax_decoys[index].best_struct->fill_pose( pose );
+		//delete me later?
+		pose.constraint_set(cstset);
 		setPoseExtraScores( pose, "giveup", relax_decoys[index].accept_count  );
 		core::Real rms = 0;
 		core::Real gdtmm = 0;

@@ -28,6 +28,7 @@
 #include <basic/options/keys/wum.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
+#include <core/scoring/constraints/util.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -74,7 +75,10 @@ WorkUnit_BatchRelax::run(){
 	// scorefxn and sequence file are controllable from commandline - unfortunately that means
   // there can only be one setting. The batch solution handles this better but is also much more
   // restricted in a way.
-	if( !scorefxn_ ) scorefxn_ = core::scoring::getScoreFunction();
+	if( !scorefxn_ ) {
+		scorefxn_ = core::scoring::getScoreFunction();
+		core::scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn( *scorefxn_ );  
+	}
   protocols::relax::FastRelax relax( scorefxn_,  option[ OptionKeys::relax::sequence_file ]() );
 	if( native_pose_ ){
 		relax.set_native_pose( native_pose_ );
