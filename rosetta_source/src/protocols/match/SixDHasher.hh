@@ -12,6 +12,7 @@
 /// @brief  Declaration for classes in 6D hasher
 /// @author Alex Zanghellini (zanghell@u.washington.edu)
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com), porting to mini
+/// @author Ken Jung (kenjung@uw.edu), adding radial lookup
 
 
 #ifndef INCLUDED_protocols_match_SixDHasher_hh
@@ -30,9 +31,12 @@
 
 /// Boost headers
 #include <boost/cstdint.hpp>
+#include <boost/foreach.hpp>
+#include <boost/unordered_map.hpp>
 
 /// C++ headers
 #include <cmath>
+#include <vector>
 
 //Auto Headers
 #include <protocols/match/Hit.fwd.hh>
@@ -53,6 +57,34 @@ struct bin_index_hasher
 		return  bin_index % P;
 	}
 
+};
+
+/// @brief Returns a list of offsets corresponding to the bins in a hypershell with radius x
+/// Uses raw pointers!!!
+class SixDOffsetTree {
+	public:
+		typedef core::Real                               Real;
+		typedef core::Size                               Size;
+		typedef core::SSize                              SSize;
+
+		SixDOffsetTree();
+
+		// returns only offsets within bounds
+		std::vector< SBin6D > lookup( Size radius, const Bin6D & center, const Bin6D & bounds );
+
+		//don't put this in the constructor because it will add overhead to anyone using the 6dhasher without the radial tree
+		void init( Size max_radius );
+		Size sum_radius( SBin6D & input, Size range = 6);
+		
+
+	private:
+		bool insert( SBin6D & input, Size depth = 1, Size caller = 0);
+		
+		// Holds the offsets
+		// instead of pointers we use integer offsets
+		// format: data_[radius][random idx][depth]
+		// either points to the next depth or 0/1 if depth=6
+		std::vector < std:: vector < boost::unordered_map < SSize, Size > > > data_;
 };
 
 
@@ -85,6 +117,11 @@ public:
 	contains( Real6 const & point ) {
 		return bounding_box_.contains( Vector( point[1], point[2], point[3] ));
 	}
+
+	void tree_init( Size max_radius ) {
+		offset_tree_.init( max_radius );
+	}
+
 
 	/// @brief Construct the discrete representation of a six-dimensional vector
 	/// of reals representing an xyz coordinate in its first three dimensions and
@@ -132,6 +169,11 @@ public:
 		Bin6D bin = bin6( values );
 		return bin_index( bin );
 	}
+
+	// @brief compute the list of bin indices of a hypershell
+	// Bounding box overflow pruned here
+	std::vector < boost::uint64_t >
+	radial_bin_index( core::Size inner_shell, core::Size outer_shell, Real6 const & center );
 
 	Bin6D
 	bin_from_index( boost::uint64_t index ) const {
@@ -182,6 +224,7 @@ private:
 	Real6 bin_widths_;
 	Real6 halfbin_widths_;
 	Real3 euler_offsets_;
+	SixDOffsetTree offset_tree_;
 };
 
 

@@ -112,6 +112,9 @@ public:
 		/// @brief Append to a bucket of vectors in the appropriate bin, lookup by transform
 		void lookup(  protocols::match::Real6 transform, std::vector < core::Size > &result );
 
+		/// @brief Append to a bucket of vectors in the appropriate bin, radial lookup by transform
+		void radial_lookup( core::Size inner_shell, core::Size outer_shell,  protocols::match::Real6 transform, std::vector < core::Size > &result );
+		
 		/// @brief Append to a bucket of vectors in the appropriate bin, lookup by bin index
         /// Using core::Size instead of boost::uinst64_t
 		void lookup( core::Size index, std::vector < core::Size > &result );

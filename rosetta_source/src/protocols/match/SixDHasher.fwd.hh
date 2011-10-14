@@ -45,6 +45,7 @@ typedef utility::fixedsizearray1< core::Size, 6 > Size6;
 typedef utility::fixedsizearray1< core::Size, 3 > Bin3D;
 typedef utility::fixedsizearray1< core::Real, 3 > Real3;
 typedef utility::fixedsizearray1< core::Size, 6 > Bin6D;
+typedef utility::fixedsizearray1< core::SSize, 6 > SBin6D;
 
 typedef Bin3D xyzbin;
 typedef Bin3D eulerbin;

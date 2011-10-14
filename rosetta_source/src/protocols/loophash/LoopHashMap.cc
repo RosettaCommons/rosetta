@@ -479,6 +479,26 @@ LoopHashMap::lookup(  protocols::match::Real6 transform, std::vector < core::Siz
 	}
 }
 
+void LoopHashMap::radial_lookup( core::Size inner_shell, core::Size outer_shell,  protocols::match::Real6 center, std::vector < core::Size > &result )
+{
+
+	center[4] = numeric::nonnegative_principal_angle_degrees(center[4] );
+	center[5] = numeric::nonnegative_principal_angle_degrees(center[5] );
+	std::vector< boost::uint64_t > bin_index_vec = hash_->radial_bin_index( inner_shell, outer_shell, center );
+
+	for( core::Size i = 0; i < bin_index_vec.size(); ++i ) {
+		// now get an iterator over that map entry
+		std::pair<  BackboneIndexMap::iterator,
+			BackboneIndexMap::iterator> range = backbone_index_map_.equal_range( bin_index_vec[i] );
+		for( BackboneIndexMap::iterator it = range.first;
+				it != range.second;
+				++it)
+		{
+			result.push_back( it->second );
+		}
+	}
+}
+
 void
 LoopHashMap::lookup(
 	core::Size index,
