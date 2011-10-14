@@ -65,7 +65,7 @@ OrbitalsFeatures::type_name() const { return "OrbitalsFeatures"; }
 string
 OrbitalsFeatures::schema() const {
 	return
-		"CREATE TABLE IF NOT EXISTS orbital_polar_hydrogen_interactions (\n"
+		"CREATE TABLE IF NOT EXISTS HPOL_sc_H_sc_orb (\n"
 		"	struct_id TEXT,\n"
 		"	resNum1 INTEGER,\n"
 		"	orbNum1 INTEGER,\n"
@@ -73,16 +73,53 @@ OrbitalsFeatures::schema() const {
 		"	resNum2 INTEGER,\n"
 		"	hpolNum2 INTEGER,\n"
 		"	dist REAL,\n"
-		"	angle REAL,\n"
+		"	AOH_angle REAL,\n"
+		"   DHO_angle REAL, \n"
 		"	FOREIGN KEY (struct_id, resNum1)\n"
 		"		REFERENCES residues (struct_id, resNum)\n"
 		"		DEFERRABLE INITIALLY DEFERRED,\n"
 		"	FOREIGN KEY (struct_id, resNum2)\n"
 		"		REFERENCES residues (struct_id, resNum)\n"
 		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY(struct_id, resNum1, orbNum1, resNum2, hpolNum2));\n"
+		"	PRIMARY KEY(struct_id, resNum1, orbName1, resNum2, hpolNum2));\n"
 		"\n"
-		"CREATE TABLE IF NOT EXISTS orbital_aromatic_hydrogen_interactions (\n"
+		"CREATE TABLE IF NOT EXISTS HPOL_bb_H_sc_orb (\n"
+		"	struct_id TEXT,\n"
+		"	resNum1 INTEGER,\n"
+		"	orbNum1 INTEGER,\n"
+		"	orbName1 TEXT,\n"
+		"	resNum2 INTEGER,\n"
+		"	hpolNum2 INTEGER,\n"
+		"	dist REAL,\n"
+		"	AOH_angle REAL,\n"
+		"   DHO_angle REAL, \n"
+		"	FOREIGN KEY (struct_id, resNum1)\n"
+		"		REFERENCES residues (struct_id, resNum)\n"
+		"		DEFERRABLE INITIALLY DEFERRED,\n"
+		"	FOREIGN KEY (struct_id, resNum2)\n"
+		"		REFERENCES residues (struct_id, resNum)\n"
+		"		DEFERRABLE INITIALLY DEFERRED,\n"
+		"	PRIMARY KEY(struct_id, resNum1, orbName1, resNum2, hpolNum2));\n"
+		"\n"
+		"CREATE TABLE IF NOT EXISTS HPOL_sc_H_bb_orb (\n"
+		"	struct_id TEXT,\n"
+		"	resNum1 INTEGER,\n"
+		"	orbNum1 INTEGER,\n"
+		"	orbName1 TEXT,\n"
+		"	resNum2 INTEGER,\n"
+		"	hpolNum2 INTEGER,\n"
+		"	dist REAL,\n"
+		"	AOH_angle REAL,\n"
+		"   DHO_angle REAL, \n"
+		"	FOREIGN KEY (struct_id, resNum1)\n"
+		"		REFERENCES residues (struct_id, resNum)\n"
+		"		DEFERRABLE INITIALLY DEFERRED,\n"
+		"	FOREIGN KEY (struct_id, resNum2)\n"
+		"		REFERENCES residues (struct_id, resNum)\n"
+		"		DEFERRABLE INITIALLY DEFERRED,\n"
+		"	PRIMARY KEY(struct_id, resNum1, orbName1, resNum2, hpolNum2));\n"
+		"\n"
+		"CREATE TABLE IF NOT EXISTS HARO_sc_H_sc_orb (\n"
 		"	struct_id TEXT,\n"
 		"	resNum1 INTEGER,\n"
 		"	orbNum1 INTEGER,\n"
@@ -90,31 +127,16 @@ OrbitalsFeatures::schema() const {
 		"	resNum2 INTEGER,\n"
 		"	haroNum2 INTEGER,\n"
 		"	dist REAL,\n"
-		"	angle REAL,\n"
+		"	AOH_angle REAL,\n"
+		"   DHO_angle REAL, \n"
 		"	FOREIGN KEY (struct_id, resNum1)\n"
 		"		REFERENCES residues (struct_id, resNum)\n"
 		"		DEFERRABLE INITIALLY DEFERRED,\n"
 		"	FOREIGN KEY (struct_id, resNum2)\n"
 		"		REFERENCES residues (struct_id, resNum)\n"
 		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY(struct_id, resNum1, orbNum1, resNum2, haroNum2));\n"
-		"\n"
-		"CREATE TABLE IF NOT EXISTS orbital_orbital_interactions (\n"
-		"	struct_id TEXT,\n"
-		"	resNum1 INTEGER,\n"
-		"	orbNum1 INTEGER,\n"
-		"	orbName1 TEXT,\n"
-		"	resNum2 INTEGER,\n"
-		"	orbNum2 INTEGER,\n"
-		"	dist REAL,\n"
-		"	angle REAL,\n"
-		"	FOREIGN KEY (struct_id, resNum1)\n"
-		"		REFERENCES residues (struct_id, resNum)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	FOREIGN KEY (struct_id, resNum2)\n"
-		"		REFERENCES residues (struct_id, resNum)\n"
-		"		DEFERRABLE INITIALLY DEFERRED,\n"
-		"	PRIMARY KEY(struct_id, resNum1, orbNum1, resNum2, orbNum2));\n";
+		"	PRIMARY KEY(struct_id, resNum1, orbName1, resNum2, haroNum2));\n"
+		"\n";
 
 
 }
@@ -126,86 +148,160 @@ OrbitalsFeatures::report_features(
 	Size const struct_id,
 	sessionOP db_session
 ){
-	report_orbital_interactions( pose, relevant_residues, struct_id, db_session );
+	report_hpol_orbital_interactions( pose, relevant_residues, struct_id, db_session );
+	report_haro_orbital_interactions( pose, relevant_residues, struct_id, db_session );
 	return 0;
 }
 
 
-///@brief get statistics based upon hydrogen to orbital distance/angle
+///@brief get statistics based upon polar hydrogen to orbital distance/angle
 void
-OrbitalsFeatures::report_orbital_interactions(
+OrbitalsFeatures::report_hpol_orbital_interactions(
 	Pose const & pose,
 	vector1< bool > const & relevant_residues,
 	Size const struct_id,
 	sessionOP db_session
 ){
-	// This should match OrbitalsScore::atomic_interaction_cutoff()
-	Real atomic_interaction_cutoff = 4.5; // min distance
+	//should match max_dist_squared_^1/2
 
 	for(Size resNum1 = 1; resNum1 <= pose.n_residue(); ++resNum1){
-		if(!relevant_residues[resNum1]) continue;
 		Residue const res1 = pose.residue(resNum1);
 		foreach(Size const atm1, res1.atoms_with_orb_index()){
-			xyzVector<Real> const bonded_atom_xyz(res1.atom(atm1).xyz());
-			foreach(Size const orbNum1, res1.bonded_orbitals(atm1)){
-				string const orbName1(res1.mm_atom_name(orbNum1));
-				xyzVector<Real> const res1_orb_xyz(res1.orbital_xyz(orbNum1));
-
-				for(Size resNum2 = 1; resNum2 <= pose.n_residue(); ++resNum2){
-					if(!relevant_residues[resNum2]) continue;
-					Residue const res2 = pose.residue(resNum2);
-					if(resNum1 != resNum2){
-						foreach(Size const hpolNum2, res2.Hpos_polar_sc()){
-							xyzVector<Real> res2_H_xyz(res2.atom(hpolNum2).xyz());
-							Real const dist(res1_orb_xyz.distance(res2_H_xyz));
-							if(dist <= atomic_interaction_cutoff){
-								Real angle = cos_of(bonded_atom_xyz, res1_orb_xyz, res2_H_xyz );
-								statement stmt = (*db_session)
-									<< "INSERT INTO orbital_polar_hydrogen_interactions VALUES (?,?,?,?,?,?,?,?);"
-									<< struct_id
-									<< resNum1 << orbNum1 << orbName1
-									<< resNum2 << hpolNum2
-									<< dist << angle;
-								basic::database::safely_write_to_database(stmt);
-							}
-						}
-						foreach(Size const haroNum2, res2.Haro_index()){
-							xyzVector<Real> res2_H_xyz(res2.atom(haroNum2).xyz());
-							Real const dist(res1_orb_xyz.distance(res2_H_xyz));
-							if(dist <= atomic_interaction_cutoff){
-								Real angle = cos_of(bonded_atom_xyz, res1_orb_xyz, res2_H_xyz );
-								statement stmt = (*db_session)
-									<< "INSERT INTO orbital_aromatic_hydrogen_interactions VALUES (?,?,?,?,?,?,?,?);"
-									<< struct_id
-									<< resNum1 << orbNum1 << orbName1
-									<< resNum2 << haroNum2
-									<< dist << angle;
-								basic::database::safely_write_to_database(stmt);
-							}
-						}
-						if(resNum1 < resNum2){
-							for(Size orbNum2=1; orbNum2 <= res2.n_orbitals(); ++orbNum2){
-								xyzVector<Real> res2_orb_xyz(res2.orbital_xyz(orbNum2));
-								Real const dist(res1_orb_xyz.distance(res2_orb_xyz));
-								if(dist <= atomic_interaction_cutoff){
-									Real angle = cos_of(bonded_atom_xyz, res1_orb_xyz, res2_orb_xyz );
-									statement stmt = (*db_session)
-										<< "INSERT INTO orbital_orbital_interactions VALUES (?,?,?,?,?,?,?,?);"
-										<< struct_id
-										<< resNum1 << orbNum1 << orbName1
-										<< resNum2 << orbNum2
-										<< dist << angle;
-									basic::database::safely_write_to_database(stmt);
-
+			Size resNum2(0);
+			string orbName1;
+			Size orbNum1(0);
+			Size hpolNum2(0);
+			Size haroNum2(0);
+			Size atm(0);
+			Real AOH_angle(0);
+			Real DHO_angle(0);
+			Real dist(10.1); // min distance used to derive statistics. Should be the shortest distance between an orbital and hydrogen
+			xyzVector<Real> const bonded_atom_to_orbital_xyz(res1.atom(atm1).xyz());
+			foreach(Size const temp_orbNum1, res1.bonded_orbitals(atm1)){
+				xyzVector<Real> const res1_orb_xyz(res1.orbital_xyz(temp_orbNum1));
+				for(Size res_num2 = 1; res_num2 <= pose.n_residue(); ++res_num2){
+					Residue const res2 = pose.residue(res_num2);
+					if(resNum1 != res_num2){
+						foreach(Size const temp_hpolNum2, res2.Hpol_index()){
+							if(res1.atom_is_backbone(atm1) && res2.atom_is_backbone(temp_hpolNum2)){
+								continue;//do nothing. Dont really want to calculate bb-bb interactions
+							}else{
+								xyzVector<Real> res2_H_xyz(res2.atom(temp_hpolNum2).xyz());
+								Real const container(res1_orb_xyz.distance(res2_H_xyz));
+								if(container <= dist){
+									Size donor_atom(res2.bonded_neighbor(temp_hpolNum2)[1]);
+									xyzVector<Real> donor(res2.xyz(donor_atom));
+									AOH_angle = cos_of(bonded_atom_to_orbital_xyz, res1_orb_xyz, res2_H_xyz );
+									DHO_angle = cos_of(donor, res2_H_xyz, res1_orb_xyz);
+									dist=container;
+									resNum2=res_num2;
+									hpolNum2=temp_hpolNum2;
+									orbNum1=temp_orbNum1;
+									orbName1=res1.orbital_name(temp_orbNum1);
+									atm=atm1;
 								}
 							}
 						}
 					}
 				}
+				}
+			if(dist <=10.0){
+								Residue const res2 = pose.residue(resNum2);
+									if(res1.atom_is_backbone(atm) && !res2.atom_is_backbone(hpolNum2)){//HPOL_sc_H_bb_orb
+										statement stmt = (*db_session)
+															<< "INSERT INTO HPOL_sc_H_bb_orb VALUES (?,?,?,?,?,?,?,?,?);"
+															<< struct_id
+															<< resNum1 << orbNum1 << orbName1
+															<< resNum2 << hpolNum2
+															<< dist << AOH_angle << DHO_angle;
+										basic::database::safely_write_to_database(stmt);
+									}
+									else if(!res1.atom_is_backbone(atm) && res2.atom_is_backbone(hpolNum2)){//HPOL_bb_H_sc_orb
+										statement stmt = (*db_session)
+															<< "INSERT INTO HPOL_bb_H_sc_orb VALUES (?,?,?,?,?,?,?,?,?);"
+															<< struct_id
+															<< resNum1 << orbNum1 << orbName1
+															<< resNum2 << hpolNum2
+															<< dist << AOH_angle << DHO_angle;
+										basic::database::safely_write_to_database(stmt);
+									}
+									else if(!res1.atom_is_backbone(atm) && !res2.atom_is_backbone(hpolNum2)){//HPOL_sc_H_sc_orb
+										statement stmt = (*db_session)
+															<< "INSERT INTO HPOL_sc_H_sc_orb VALUES (?,?,?,?,?,?,?,?,?);"
+															<< struct_id
+															<< resNum1 << orbNum1 << orbName1
+															<< resNum2 << hpolNum2
+															<< dist << AOH_angle << DHO_angle;
+										basic::database::safely_write_to_database(stmt);
+									}
+
 			}
 		}
 	}
 }
+
+
+	///@brief get statistics based upon aromatic hydrogen to orbital distance/angle
+void
+OrbitalsFeatures::report_haro_orbital_interactions(
+	Pose const & pose,
+	vector1< bool > const & relevant_residues,
+	Size const struct_id,
+	sessionOP db_session
+){
+	for(Size resNum1 = 1; resNum1 <= pose.n_residue(); ++resNum1){
+		Residue const res1 = pose.residue(resNum1);
+		foreach(Size const atm1, res1.atoms_with_orb_index()){
+			Size resNum2(0);
+			string orbName1;
+			Size orbNum1(0);
+			Size haroNum2(0);
+			Size atm(0);
+			Real AOH_angle(0);
+			Real DHO_angle(0);
+			Real dist(10.1); // min distance used to derive statistics. Should be the shortest distance between an orbital and hydrogen
+			xyzVector<Real> const bonded_atom_to_orbital_xyz(res1.atom(atm1).xyz());
+			foreach(Size const temp_orbNum1, res1.bonded_orbitals(atm1)){
+				xyzVector<Real> const res1_orb_xyz(res1.orbital_xyz(temp_orbNum1));
+				for(Size res_num2 = 1; res_num2 <= pose.n_residue(); ++res_num2){
+					Residue const res2 = pose.residue(res_num2);
+					if(resNum1 != res_num2){
+						foreach(Size const temp_haroNum2, res2.Haro_index()){
+							xyzVector<Real> res2_H_xyz(res2.atom(temp_haroNum2).xyz());
+							Real const container(res1_orb_xyz.distance(res2_H_xyz));
+							if(container <= dist){
+								Size donor_atom(res2.bonded_neighbor(temp_haroNum2)[1]);
+								xyzVector<Real> donor(res2.xyz(donor_atom));
+								AOH_angle = cos_of(bonded_atom_to_orbital_xyz, res1_orb_xyz, res2_H_xyz );
+								DHO_angle = cos_of(donor, res2_H_xyz, res1_orb_xyz);
+								dist=container;
+								resNum2=res_num2;
+								haroNum2=temp_haroNum2;
+								orbNum1=temp_orbNum1;
+								orbName1=res1.orbital_name(temp_orbNum1);
+								atm=atm1;
+							}
+						}
+					}
+				}
+
+			}
+			if(dist <=10.0){
+				Residue const res2 = pose.residue(resNum2);
+				statement stmt = (*db_session)
+													<< "INSERT INTO HARO_sc_H_sc_orb VALUES (?,?,?,?,?,?,?,?,?);"
+													<< struct_id
+													<< resNum1 << orbNum1 << orbName1
+													<< resNum2 << haroNum2
+													<< dist << AOH_angle << DHO_angle;
+				basic::database::safely_write_to_database(stmt);
+			}
+		}
+	}
+}
+
+
+
 
 
 
