@@ -174,12 +174,12 @@ LoopHashSampler::set_defaults(){
 				// make up some function that uses sample weight to generate model number cutoffs
 				// and one that gives a max_bbrms and min_bbrms
 				// Make it slightly dependent on round
-				core::Size sw_nmodels = (int)avg_sw/5+(int)round/6;
+				core::Size sw_nmodels = (int)(avg_sw/5*(1.0+(round-1)/60));
 				core::Size sw_nfrags = (int)avg_sw*10;
 				
 				// Limit how many structures chosen from a given radius
 				// Make it dependent on round, less for higher rounds
-				core::Size sw_nmodels_per_rad = (int)avg_sw/5-(int)round/10;
+				core::Size sw_nmodels_per_rad = (int)(avg_sw/5*(1.0-(round-1)/45));
 
 				//super lax for now
 				core::Real sw_max_bbrms = 1000;
