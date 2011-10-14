@@ -47,7 +47,8 @@ class LoopHashSampler {
   /// @brief create a set of structures for a the given range of residues and other parameters stored int his class.
   void build_structures(
 		const core::pose::Pose& start_pose,
-    std::vector< core::io::silent::SilentStructOP > &lib_structs
+    std::vector< core::io::silent::SilentStructOP > &lib_structs,
+		core::Size round = 1
 	);
 
 
@@ -57,6 +58,7 @@ class LoopHashSampler {
   void set_max_bbrms( core::Real  value ) {  max_bbrms_  = value; }
   void set_min_rms  ( core::Real  value ) {  min_rms_    = value; }
   void set_max_rms  ( core::Real  value ) {  max_rms_    = value; }
+  void set_max_radius  ( core::Size value ) {  max_radius_    = value; }
   void set_max_nstruct  ( core::Size  value ) {  max_nstruct_    = value; }
   void set_nonideal  ( bool value ) {  nonideal_  = value; }
 
@@ -90,6 +92,7 @@ class LoopHashSampler {
 		core::Real max_bbrms_;
 		core::Real min_rms_  ;
 		core::Real max_rms_  ;
+		core::Size max_radius_;
 		core::Size max_nstruct_;
 		bool nonideal_;
 

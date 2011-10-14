@@ -34,6 +34,7 @@ namespace lh { extern RealOptionKey const min_bbrms; }
 namespace lh { extern RealOptionKey const max_bbrms; }
 namespace lh { extern RealOptionKey const min_rms; }
 namespace lh { extern RealOptionKey const max_rms; }
+namespace lh { extern IntegerOptionKey const max_radius; }
 namespace lh { extern RealOptionKey const grid_space_multiplier; }
 namespace lh { extern RealOptionKey const grid_angle_multiplier; }
 namespace lh { extern IntegerOptionKey const skim_size; }

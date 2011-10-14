@@ -14,6 +14,7 @@ namespace lh { RealOptionKey const min_bbrms( "lh:min_bbrms" );  }
 namespace lh { RealOptionKey const max_bbrms( "lh:max_bbrms" );  }
 namespace lh { RealOptionKey const min_rms( "lh:min_rms" );  }
 namespace lh { RealOptionKey const max_rms( "lh:max_rms" );  }
+namespace lh { IntegerOptionKey const max_radius( "lh:max_radius" );  }
 namespace lh { RealOptionKey const grid_space_multiplier( "lh:grid_space_multiplier" );  }
 namespace lh { RealOptionKey const grid_angle_multiplier( "lh:grid_angle_multiplier" );  }
 namespace lh { IntegerOptionKey const skim_size( "lh:skim_size" );  }
@@ -574,4 +575,3 @@ namespace AnchoredDesign { namespace akash { BooleanOptionKey const akash( "Anch
 namespace AnchoredDesign { namespace akash { IntegerOptionKey const dyepos( "AnchoredDesign:akash:dyepos" );  } }
 namespace AnchoredDesign { namespace testing { BooleanOptionKey const testing( "AnchoredDesign:testing" );  } }
 namespace AnchoredDesign { namespace testing { RealOptionKey const VDW_weight( "AnchoredDesign:testing:VDW_weight" );  } }
-namespace AnchoredDesign { namespace testing { BooleanOptionKey const anchor_via_constraints( "AnchoredDesign:testing:anchor_via_constraints" );  } }

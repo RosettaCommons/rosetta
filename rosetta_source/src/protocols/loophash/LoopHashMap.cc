@@ -389,7 +389,7 @@ LoopHashMap::setup( core::Size loop_size)
 
 	hash_ = new protocols::match::SixDCoordinateBinner( bounding_box, euler_offsets, bin_widths );
 	// initialize the radial tree
-	hash_->tree_init(6);
+	hash_->tree_init(option[lh::max_radius]());
 }
 
 void

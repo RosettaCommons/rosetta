@@ -67,6 +67,8 @@ LoopHashSampler::set_defaults(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
+	set_max_radius(  option[ lh::max_radius ]() );  
+
 	set_min_bbrms(  option[ lh::min_bbrms ]() );  // OBSOLETE?
 	set_max_bbrms(  option[ lh::max_bbrms ] ()  ); //OBSOLETE?
 	set_min_rms(    option[ lh::min_rms ]() ); //OBSOLETE?
@@ -78,7 +80,8 @@ LoopHashSampler::set_defaults(){
  void
  LoopHashSampler::build_structures(
 		const core::pose::Pose& start_pose,
-    std::vector< core::io::silent::SilentStructOP > &lib_structs
+    std::vector< core::io::silent::SilentStructOP > &lib_structs,
+		core::Size round
 	)
   {
     using namespace core;
@@ -170,17 +173,19 @@ LoopHashSampler::set_defaults(){
 
 				// make up some function that uses sample weight to generate model number cutoffs
 				// and one that gives a max_bbrms and min_bbrms
-				// These are just placeholders
-				core::Size sw_nmodels = 5;
-				core::Size sw_nfrags = 500;
+				// Make it slightly dependent on round
+				core::Size sw_nmodels = (int)avg_sw/5+(int)round/6;
+				core::Size sw_nfrags = (int)avg_sw*10;
+				
+				// Limit how many structures chosen from a given radius
+				// Make it dependent on round, less for higher rounds
+				core::Size sw_nmodels_per_rad = (int)avg_sw/5-(int)round/10;
+
 				//super lax for now
 				core::Real sw_max_bbrms = 1000;
 				core::Real sw_min_bbrms = 0;
 				core::Real sw_max_rms = 100;
 				core::Real sw_min_rms = 0;
-
-				const core::Size MAX_RADIUS = 2;
-
 
 
 				// we want sw_nmodels models no matter what
@@ -190,7 +195,8 @@ LoopHashSampler::set_defaults(){
 				core::Size fragments_seen = 0;
 				core::Size models_seen = 0;
 
-				for( Size radius = 0; radius <= MAX_RADIUS; radius++ ) {
+				for( Size radius = 0; radius <= max_radius_; radius++ ) {
+					core::Size models_seen_this_rad = 0;
 					std::vector < core::Size > leap_index_bucket;
 					std::vector < core::Size > filter_leap_index_bucket;
 					hashmap.radial_lookup( radius, loop_transform, leap_index_bucket );
@@ -289,7 +295,9 @@ LoopHashSampler::set_defaults(){
 							new_struct->add_comment( "donorhistory", donorhistory );
 							lib_structs.push_back( new_struct );
 							models_seen++;
+							models_seen_this_rad++;
 							if( models_seen > sw_nmodels ) break;
+							if( models_seen_this_rad > sw_nmodels_per_rad ) break;
 							isok = true;
 						}
 

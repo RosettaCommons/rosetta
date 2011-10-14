@@ -5678,6 +5678,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 100.0</dd><br>
 </dl>
 <dl>
+<dt><b>-max_radius</b> \<Integer\><dt>
+<dd>No description</dd><br>
+<dd>Default: 4.0</dd><br>
+</dl>
+<dl>
 <dt><b>-grid_space_multiplier</b> \<Real\><dt>
 <dd>No description</dd><br>
 <dd>Default: 1</dd><br>
