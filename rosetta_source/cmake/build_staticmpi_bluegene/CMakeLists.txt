@@ -3,7 +3,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 INCLUDE(../build/build.pre.cmake)
 INCLUDE(../build/external.static.cmake)
 
-LINK_DIRECTORIES(/bgsys/drivers/ppcfloor/arch/include)
+LINK_DIRECTORIES(/bgsys/drivers/ppcfloor/arch/include /soft/apps/zlib-1.2.3/lib)
 
 ADD_DEFINITIONS(-DNDEBUG)
 ADD_DEFINITIONS(-DUSEMPI)
