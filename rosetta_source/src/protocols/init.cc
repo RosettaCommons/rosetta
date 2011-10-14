@@ -28,10 +28,12 @@
 #include <protocols/toolbox/task_operations/LimitAromaChi2OperationCreator.hh>
 #include <protocols/toolbox/task_operations/LayerDesignOperationCreator.hh>
 #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperationCreator.hh>
+#include <protocols/toolbox/task_operations/PreventResiduesFromRepackingOperationCreator.hh>
 #include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperationCreator.hh>
 #include <protocols/toolbox/task_operations/ReadResfileFromDBCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictByCalculatorsOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperationCreator.hh>
+#include <protocols/toolbox/task_operations/RestrictResiduesToRepackingOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceOperationCreator.hh>
 #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperationCreator.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperationCreator.hh>
@@ -267,10 +269,12 @@ static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictCo
 static TaskOperationRegistrator< protocols::toolbox::task_operations::LimitAromaChi2OperationCreator > LimitAromaChi2OperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::LayerDesignOperationCreator > LayerDesignOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::PreventChainFromRepackingOperationCreator > PreventChainFromRepackingOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::PreventResiduesFromRepackingOperationCreator > PreventResiduesFromRepackingOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::ProteinInterfaceDesignOperationCreator > ProteinInterfaceDesignOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::ReadResfileFromDBCreator > ReadResfileFromDBCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictByCalculatorsOperationCreator > RestrictByCalculatorsOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictChainToRepackingOperationCreator > RestrictChainToRepackingOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictResiduesToRepackingOperationCreator > RestrictResiduesToRepackingOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToInterfaceOperationCreator > RestrictToInterfaceOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToInterfaceVectorOperationCreator > RestrictToInterfaceVectorOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictToNeighborhoodOperationCreator > RestrictToNeighborhoodOperationCreator_registrator;
