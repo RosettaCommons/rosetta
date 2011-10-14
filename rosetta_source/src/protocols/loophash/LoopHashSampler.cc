@@ -69,10 +69,10 @@ LoopHashSampler::set_defaults(){
 
 	set_max_radius(  option[ lh::max_radius ]() );  
 
-	set_min_bbrms(  option[ lh::min_bbrms ]() );  // OBSOLETE?
-	set_max_bbrms(  option[ lh::max_bbrms ] ()  ); //OBSOLETE?
-	set_min_rms(    option[ lh::min_rms ]() ); //OBSOLETE?
-	set_max_rms(    option[ lh::max_rms ]() ); //OBSOLETE?
+	set_min_bbrms(  option[ lh::min_bbrms ]() );  
+	set_max_bbrms(  option[ lh::max_bbrms ] ()  );
+	set_min_rms(    option[ lh::min_rms ]() );
+	set_max_rms(    option[ lh::max_rms ]() );
 	set_max_nstruct( 10000000 ); // OBSOLETE?
 }
 
@@ -179,13 +179,14 @@ LoopHashSampler::set_defaults(){
 				
 				// Limit how many structures chosen from a given radius
 				// Make it dependent on round, less for higher rounds
-				core::Size sw_nmodels_per_rad = (int)(avg_sw/5*(1.0-(round-1)/45));
+				core::Size sw_nmodels_per_rad = (int)(avg_sw/50*3);
 
-				//super lax for now
-				core::Real sw_max_bbrms = 1000;
-				core::Real sw_min_bbrms = 0;
-				core::Real sw_max_rms = 100;
-				core::Real sw_min_rms = 0;
+				/* dont change these based on avg_sw for now
+				set_min_rms(  avg_sw/10   );
+				set_max_rms(  avg_sw/8  );
+				set_min_bbrms( avg_sw/20  );  
+				set_max_bbrms(  avg_sw/12  );
+				*/
 
 
 				// we want sw_nmodels models no matter what
@@ -200,7 +201,7 @@ LoopHashSampler::set_defaults(){
 					std::vector < core::Size > leap_index_bucket;
 					std::vector < core::Size > filter_leap_index_bucket;
 					hashmap.radial_lookup( radius, loop_transform, leap_index_bucket );
-					TR << "radius, lookup_size = " << radius << ", " << leap_index_bucket.size() << std::endl;
+					//TR << "radius, lookup_size = " << radius << ", " << leap_index_bucket.size() << std::endl;
 
 					if( leap_index_bucket.size() == 0) {
 						continue;
@@ -222,7 +223,7 @@ LoopHashSampler::set_defaults(){
 
 						// Check the values against against any RMS limitations
 						core::Real BBrms = get_rmsd( pose_bs, new_bs );
-						if( ( BBrms > sw_min_bbrms) && ( BBrms < sw_max_bbrms ) ){
+						if( ( BBrms > min_bbrms_) && ( BBrms < max_bbrms_ ) ){
 							filter_leap_index_bucket.push_back( *it );
 							fragments_seen++;
 							if( fragments_seen > sw_nfrags ) break; // continue with however many are in the bucket now, and break at end
@@ -250,7 +251,7 @@ LoopHashSampler::set_defaults(){
 						core::Real final_rms = inserter_->make_local_bb_change( newpose, original_pose, new_bs, ir );
 
 						bool isok = false;
-						if ( ( final_rms < sw_max_rms ) && ( final_rms > sw_min_rms ) ){
+						if ( ( final_rms < max_rms_ ) && ( final_rms > min_rms_) ){
 
 							core::pose::Pose mynewpose( start_pose );
 
