@@ -98,6 +98,8 @@ LoopHashSampler::set_defaults(){
 
 		long starttime = time(NULL);
 
+		Size impossible_torsion_rejects = 0;
+    std::string sequence = start_pose.sequence();
 
     core::pose::Pose original_pose = start_pose;
     core::pose::Pose edit_pose = start_pose;
@@ -224,7 +226,44 @@ LoopHashSampler::set_defaults(){
 						// Check the values against against any RMS limitations
 						core::Real BBrms = get_rmsd( pose_bs, new_bs );
 						if( ( BBrms > min_bbrms_) && ( BBrms < max_bbrms_ ) ){
-							filter_leap_index_bucket.push_back( *it );
+							// Next part is ported from score_fragment.f so these are magical cutoffs
+							const std::vector< core::Real > phi = new_bs.phi();
+							const std::vector< core::Real > psi = new_bs.psi();
+							bool offlimits;
+							// Check phi/psi angles against the sequence
+							// Pose counts residues starting from one, so offset that
+							for( core::Size m = ir - 1; m < jr - 1; m++ ) {
+									offlimits = true;
+									// Proline
+									if( sequence[m] == 'P' ) {
+										 if( phi[m] < -103 || phi[m] > -33 ) break;
+									}
+									// Beta branched residues
+									if( sequence[m] == 'I' || sequence[m] == 'V' || sequence[m] == 'T' ) {
+											if( phi[m] > -40 ) break; 
+									}
+									// Non glycine residues are confined to only part of the positive phi region
+									// populated by glycine residues
+									if( sequence[m] != 'I' || sequence[m] != 'V' || sequence[m] != 'T' || 
+											sequence[m] != 'P'||  sequence[m] != 'G' ) {
+											if( phi[m] > 70 ) break; 
+									}
+									if( sequence[m] != 'G' ) {
+										 if( psi[m] < -75 && psi[m] > -170 ) break;
+									}
+									// Residues other than glycine preceding prolines are quite restricted
+									if( sequence[m] == 'P' ) {
+										 if( phi[m] < 40 && sequence[m] != 'G' ) {
+													if( psi[m] > -25 || phi[m] < -90 ) break;
+										 }
+									}
+									offlimits = false;
+							}
+							if( offlimits ) {
+									impossible_torsion_rejects++;
+							} else {
+									filter_leap_index_bucket.push_back( *it );
+							}
 							fragments_seen++;
 							if( fragments_seen > sw_nfrags ) break; // continue with however many are in the bucket now, and break at end
 						}
@@ -320,7 +359,7 @@ LoopHashSampler::set_defaults(){
 		long endtime = time(NULL);
 
 
-		TR.Info << "LHS: " << start_res << "-" << stop_res << ":  " <<lib_structs.size() << "structures " << endtime - starttime << " seconds" << std::endl;
+		TR.Info << "LHS: " << start_res << "-" << stop_res << ":  " <<lib_structs.size() << "structures " << endtime - starttime << " seconds, ia rejected " << impossible_torsion_rejects << std::endl;
 
 		for( std::vector< core::io::silent::SilentStructOP >::iterator it=lib_structs.begin();
 				it != lib_structs.end(); ++it ){
