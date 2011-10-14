@@ -79,6 +79,7 @@ using io::pdb::dump_pdb;
 
 OPT_1GRP_KEY(Boolean, min, debug)
 OPT_1GRP_KEY(Boolean, min, debug_verbose)
+OPT_1GRP_KEY(Boolean, min, cartesian)
 OPT_1GRP_KEY(String, min, minimizer)
 
 
@@ -90,6 +91,7 @@ main( int argc, char * argv [] )
 {
 	NEW_OPT(min::debug, "debug derivs?", false);
 	NEW_OPT(min::debug_verbose, "debug derivs verbose?", false);
+	NEW_OPT(min::cartesian, "cartesian minimization?", false);
 	NEW_OPT(min::minimizer, "minimizer?", "lbfgs_armijo");
 
 	core::init(argc, argv);
@@ -155,34 +157,34 @@ main( int argc, char * argv [] )
 	std::string minimizer_name = option[ OptionKeys::min::minimizer ]();
 
 	// setup the options
- 	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
- 		core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_derivs );
- 		core::optimization::symmetry::SymAtomTreeMinimizer minimizer;
- 		std::cout << "SYMTORSION MINTEST: " << "\n";
- 		std::cout << "start score: " << (*scorefxn)(*pose) << "\n";
- 		long t1=clock();
- 		minimizer.run( *pose, mm, *scorefxn, options );
- 		long t2=clock();
- 		double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
- 		std::cout << "end score: " << (*scorefxn)(*pose) << "\n";
- 		std::cout << "MIN TIME: " << time << " sec \n";
- 	} else {
-		core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_verbose );
-		core::optimization::AtomTreeMinimizer minimizer;
-		std::cout << "TORSION MINTEST: " << "\n";
-		std::cout << "start score: " << (*scorefxn)(*pose) << "\n";
-		long t1=clock();
-		minimizer.run( *pose, mm, *scorefxn, options );
-		long t2=clock();
-		double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
- 		std::cout << "end score: " << (*scorefxn)(*pose) << "\n";
- 		std::cout << "MIN TIME: " << time << " sec \n";
- 		pose->dump_pdb( "torsion_min.pdb" );
-		(*scorefxn)(*pose);
-		scorefxn->show(std::cout, *pose);
- 	}
- 	pose = start_pose;
-	{
+	if ( !option[ OptionKeys::min::cartesian ]() )  {
+		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
+			core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_derivs );
+			core::optimization::symmetry::SymAtomTreeMinimizer minimizer;
+			std::cout << "SYMTORSION MINTEST: " << "\n";
+			std::cout << "start score: " << (*scorefxn)(*pose) << "\n";
+			long t1=clock();
+			minimizer.run( *pose, mm, *scorefxn, options );
+			long t2=clock();
+			double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
+			std::cout << "end score: " << (*scorefxn)(*pose) << "\n";
+			std::cout << "MIN TIME: " << time << " sec \n";
+		} else {
+			core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_verbose );
+			core::optimization::AtomTreeMinimizer minimizer;
+			std::cout << "TORSION MINTEST: " << "\n";
+			std::cout << "start score: " << (*scorefxn)(*pose) << "\n";
+			long t1=clock();
+			minimizer.run( *pose, mm, *scorefxn, options );
+			long t2=clock();
+			double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
+			std::cout << "end score: " << (*scorefxn)(*pose) << "\n";
+			std::cout << "MIN TIME: " << time << " sec \n";
+			pose->dump_pdb( "torsion_min.pdb" );
+			(*scorefxn)(*pose);
+			scorefxn->show(std::cout, *pose);
+		}
+	} else {
 		core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_verbose );
 		core::optimization::CartesianMinimizer minimizer;
 		std::cout << "CART MINTEST: " << "\n";
