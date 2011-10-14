@@ -5828,6 +5828,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: utility::vector1<std::string>()</dd><br>
 </dl>
  </li>
+<li><h2>lh:symfragrm</h2>
+<dl>
+<dt><b>-symfragrm</b> \<Boolean\><dt>
+<dd>symfragrm option group</dd><br>
+</dl>
+<dl>
+<dt><b>-pdblist</b> \<FileVector\><dt>
+<dd>list of pdbs to be processed</dd><br>
+</dl>
+ </li>
 <li><h2>blivens</h2>
 <dl>
 <dt><b>-blivens</b> \<Boolean\><dt>

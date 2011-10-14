@@ -1,5 +1,3 @@
-namespace wum { IntegerOptionKey const memory_limit( "wum:memory_limit" );  }
-namespace wum { StringOptionKey const extra_scorefxn( "wum:extra_scorefxn" );  }
 namespace wum { FileOptionKey const extra_scorefxn_ref_structure( "wum:extra_scorefxn_ref_structure" );  }
 namespace wum { IntegerOptionKey const extra_scorefxn_relax( "wum:extra_scorefxn_relax" );  }
 namespace wum { RealOptionKey const trim_proportion( "wum:trim_proportion" );  }
@@ -46,6 +44,8 @@ namespace lh { namespace fragpdb { BooleanOptionKey const fragpdb( "lh:fragpdb" 
 namespace lh { namespace fragpdb { StringOptionKey const out_path( "lh:fragpdb:out_path" );  } }
 namespace lh { namespace fragpdb { IntegerVectorOptionKey const indexoffset( "lh:fragpdb:indexoffset" );  } }
 namespace lh { namespace fragpdb { StringVectorOptionKey const bin( "lh:fragpdb:bin" );  } }
+namespace lh { namespace symfragrm { BooleanOptionKey const symfragrm( "lh:symfragrm" );  } }
+namespace lh { namespace symfragrm { FileVectorOptionKey const pdblist( "lh:symfragrm:pdblist" );  } }
 namespace blivens { BooleanOptionKey const blivens( "blivens" );  }
 namespace blivens { namespace disulfide_scorer { BooleanOptionKey const disulfide_scorer( "blivens:disulfide_scorer" );  } }
 namespace blivens { namespace disulfide_scorer { RealOptionKey const nds_prob( "blivens:disulfide_scorer:nds_prob" );  } }
@@ -574,3 +574,4 @@ namespace AnchoredDesign { namespace akash { IntegerOptionKey const dyepos( "Anc
 namespace AnchoredDesign { namespace testing { BooleanOptionKey const testing( "AnchoredDesign:testing" );  } }
 namespace AnchoredDesign { namespace testing { RealOptionKey const VDW_weight( "AnchoredDesign:testing:VDW_weight" );  } }
 namespace AnchoredDesign { namespace testing { BooleanOptionKey const anchor_via_constraints( "AnchoredDesign:testing:anchor_via_constraints" );  } }
+namespace AnchoredDesign { namespace testing { BooleanOptionKey const delete_interface_native_sidechains( "AnchoredDesign:testing:delete_interface_native_sidechains" );  } }

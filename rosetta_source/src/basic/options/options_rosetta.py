@@ -2712,6 +2712,9 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			Option( 'indexoffset', 'IntegerVector', desc='list of index offset pairs' , default = ['-1']),
             Option( 'bin', 'StringVector', desc='list of bin keys', default = 'utility::vector1<std::string>()' ),
 		),
+		Option_Group( 'symfragrm',
+			Option( 'pdblist', 'FileVector', desc='list of pdbs to be processed' ),
+		),
 	),
 
 

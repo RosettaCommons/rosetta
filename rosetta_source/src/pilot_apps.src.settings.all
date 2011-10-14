@@ -260,7 +260,9 @@ sources = {
 #		"use_asn_motifs",
  	],
  	"pilot/kenjung" : [
-                #"loophash_createfiltereddb",
+	  "loophash_createfiltereddb",
+	  "fragpdb",
+	  "symfragrm",
  	],
  	"pilot/mike" : [
 		"crossaln",

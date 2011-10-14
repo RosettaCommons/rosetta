@@ -64,6 +64,8 @@ namespace lh { namespace fragpdb { extern BooleanOptionKey const fragpdb; } }
 namespace lh { namespace fragpdb { extern StringOptionKey const out_path; } }
 namespace lh { namespace fragpdb { extern IntegerVectorOptionKey const indexoffset; } }
 namespace lh { namespace fragpdb { extern StringVectorOptionKey const bin; } }
+namespace lh { namespace symfragrm { extern BooleanOptionKey const symfragrm; } }
+namespace lh { namespace symfragrm { extern FileVectorOptionKey const pdblist; } }
 
 } // namespace OptionKeys
 } // namespace options
