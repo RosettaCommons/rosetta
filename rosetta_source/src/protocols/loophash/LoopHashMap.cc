@@ -351,19 +351,23 @@ LoopHashMap::setup( core::Size loop_size)
 
 	TR.Info << "Setting up hash_: Size:  " << loop_size << std::endl;
 
-	BoundingBox bounding_box( core::Vector( -HASH_POSITION_GRID_SIZE,
-				-HASH_POSITION_GRID_SIZE,
-				-HASH_POSITION_GRID_SIZE),
-			core::Vector( HASH_POSITION_GRID_SIZE,
-				HASH_POSITION_GRID_SIZE,
-				HASH_POSITION_GRID_SIZE ) );
+	BoundingBox bounding_box( core::Vector( 
+				-HASH_POSITION_GRID_BASE*(int)loop_size,
+				-HASH_POSITION_GRID_BASE*(int)loop_size,
+				-HASH_POSITION_GRID_BASE*(int)loop_size
+				),
+			core::Vector( 
+				HASH_POSITION_GRID_BASE*(int)loop_size,
+				HASH_POSITION_GRID_BASE*(int)loop_size,
+				HASH_POSITION_GRID_BASE*(int)loop_size
+				) );
 	protocols::match::Size3 euler_offsets;
 	euler_offsets[1] = 0;
 	euler_offsets[2] = 0;
 	euler_offsets[3] = 0;
 	protocols::match::Real6 bin_widths;
 
-	core::Real space_multiplier = 1.0;
+	core::Real space_multiplier = 0.2;
   core::Real angle_multiplier =  15.0/6.0;
 
 	using namespace basic::options;
@@ -385,7 +389,7 @@ LoopHashMap::setup( core::Size loop_size)
 
 	hash_ = new protocols::match::SixDCoordinateBinner( bounding_box, euler_offsets, bin_widths );
 	// initialize the radial tree
-	hash_->tree_init(15);
+	hash_->tree_init(6);
 }
 
 void
@@ -525,6 +529,14 @@ LoopHashMap::return_key( core::Size bb_index )
 {
 	LeapIndex leap_index = get_peptide( bb_index );
 	return leap_index.key;
+}
+
+void
+LoopHashMap::radial_lookup_withkey( boost::uint64_t key, core::Size radius, std::vector < core::Size > &result )
+{
+	// get center of bin from key
+	protocols::match::Real6 center = hash_->bin_center_point( hash_->bin_from_index( key ) );
+	radial_lookup( radius, center, result );
 }
 
 void

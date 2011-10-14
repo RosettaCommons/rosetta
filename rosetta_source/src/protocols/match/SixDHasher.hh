@@ -60,7 +60,6 @@ struct bin_index_hasher
 };
 
 /// @brief Returns a list of offsets corresponding to the bins in a hypershell with radius x
-/// Uses raw pointers!!!
 class SixDOffsetTree {
 	public:
 		typedef core::Real                               Real;

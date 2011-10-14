@@ -223,6 +223,18 @@ namespace loophash {
 		long starttime = time(NULL);
 
 		// Might want to split this function into subroutines, its kinda big
+
+		// Concat the entire second_bbdb to the master one
+		// Can later add a removal step, where proteins who aren't referenced can be removed
+		core::Size index_offset;
+		if( extra_ != second_lib->get_extra() ) {
+			throw EXCN_bbdb_Merge_Failed( extra_, second_lib->get_extra() );
+		}
+		if ( ! merge_bbdb( second_lib->backbone_database(), index_offset ) ) {
+			throw EXCN_bbdb_Merge_Failed( "bbdb merge failed for unknown reasons" );
+		}
+
+		TR.Debug << "BBDB concated" << std::endl;
 		core::Size rms_cutoff_counter = 1;  // Because hash_sizes is using an iterator instead of an index
 		for( std::vector< core::Size >::const_iterator jt = hash_sizes_.begin(); jt != hash_sizes_.end(); ++jt ){
 
@@ -232,16 +244,6 @@ namespace loophash {
 			LoopHashMap &hashmap = gethash( loop_size );
 			LoopHashMap &second_hashmap = second_lib->gethash( loop_size );
 			TR.Debug << "Hashmaps loaded for frag size " << loop_size <<std::endl;
-			// Concat the entire second_bbdb to the master one
-			// Can later add a removal step, where proteins who aren't referenced can be removed
-			core::Size index_offset;
-			if( extra_ != second_lib->get_extra() ) {
-				throw EXCN_bbdb_Merge_Failed( extra_, second_lib->get_extra() );
-			}
-			if ( ! merge_bbdb( second_lib->backbone_database(), index_offset ) ) {
-				throw EXCN_bbdb_Merge_Failed( "bbdb merge failed for unknown reasons" );
-			}
-			TR.Debug << "BBDB concated for frag size " << loop_size << std::endl;
 
 			// do NOT use bucket interface, boost can't guarantee 1 bucket = 1 key even with rehash
 			//iterate through all the members of second_loopdb
@@ -266,11 +268,13 @@ namespace loophash {
 				BackboneSegment bs_;
 				second_lib->backbone_database().get_backbone_segment( cp.index, cp.offset, loop_size , bs_ );
 
-				//Grab loops from the main loopdb that correspond to that key
-				std::vector < core::Size > leap_index_equals;
-				hashmap.lookup_withkey( key, leap_index_equals );
 				if( rms_cutoff != 0 ) {
 					if( !same_as_last ) {
+						//Grab loops from the main loopdb that correspond to that key
+						std::vector < core::Size > leap_index_equals;
+						//hashmap.lookup_withkey( key, leap_index_equals );
+						hashmap.radial_lookup_withkey( key, 3, leap_index_equals );
+
 						bs_vec_.clear();
 						leap_vec_.clear();
 						//Need to generate vector of equal backbone segments of the master lib for the RMS check
@@ -283,7 +287,7 @@ namespace loophash {
 							bbdb_.get_backbone_segment( cp_equals.index, cp_equals.offset , loop_size , bs_equals );
 							bs_vec_.push_back( bs_equals );
 							leap_vec_.push_back( cp_equals );
-							if( cp_equals.key != key ) TR.Info<< "These keys don't match: " << cp_equals.key << " " << key << std::endl;
+							//if( cp_equals.key != key ) TR.Info<< "These keys don't match: " << cp_equals.key << " " << key << std::endl;
 						}
 					}
 					// Now do an RMS check against every bs in the master lib bucket
@@ -294,7 +298,7 @@ namespace loophash {
 							// and also don't check any others
 							add_this_ = false;
 							TR.Debug << "RMS too close, skipping this frag" << std::endl;
-							if(cp.key != leap_vec_[j].key )TR.Info << "keys " << cp.key << " " <<leap_vec_[j].key << std::endl;
+							//if(cp.key != leap_vec_[j].key )TR.Info << "keys " << cp.key << " " <<leap_vec_[j].key << std::endl;
 							continue;
 						}
 					}
@@ -905,7 +909,7 @@ namespace loophash {
 				leap_index.offset = (ir-1)*3;
 
 
-				TR.Info << "ADD: "
+				TR.Debug << "ADD: "
 					<< runcount  << " "
 					<< ir  << " "
 					<< jr  << " "
@@ -917,7 +921,7 @@ namespace loophash {
 					<< t[6] << " "
 					<< leap_index.index << " "
 					<< leap_index.offset;
-				TR.Info << std::endl;
+				TR.Debug << std::endl;
 				hashmap.add_leap( leap_index, t );
 
 				BackboneSegment pose_bs;

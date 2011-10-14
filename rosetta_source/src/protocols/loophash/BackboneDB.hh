@@ -40,7 +40,7 @@ const core::Real MAXIMAL_FLOAT = 100000000.0;
 
 typedef boost::unordered_multimap< boost::uint64_t, core::Size , protocols::match::bin_index_hasher >   BackboneIndexMap;
 typedef numeric::geometry::BoundingBox< core::Vector > BoundingBox;
-const int HASH_POSITION_GRID_SIZE= 75;
+const int HASH_POSITION_GRID_BASE= 5;
 
 short RealAngleToShort( core::Real angle );
 

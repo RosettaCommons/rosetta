@@ -107,6 +107,11 @@ public:
 		}
 
     /// @brief Return a vector of loops with equal keys  given a key
+		//  And any keys within a radius around the original key
+        void radial_lookup_withkey( boost::uint64_t key, core::Size radius, std::vector < core::Size > &result );
+
+    /// @brief Return a vector of loops with equal keys  given a key
+		//  Identical to radial_lookup_withkey(radius=0), but faster
         void lookup_withkey( boost::uint64_t key, std::vector < core::Size > &result );
 
 		/// @brief Append to a bucket of vectors in the appropriate bin, lookup by transform
