@@ -50,6 +50,18 @@ public:
     core::Size res_pos
   ) = 0;
 
+	// closes gaps between ir and jr
+  virtual
+  core::Real
+  make_local_bb_change_close_gaps(
+    core::pose::Pose &start_pose,
+    const core::pose::Pose &original_pose,
+    const protocols::loophash::BackboneSegment &new_bs,
+    core::Size res_pos
+  ) = 0;
+	
+	// closes many gaps outside of ir and jr
+	// will die if gap exists between ir and jr
   virtual
   core::Real
   make_local_bb_change_include_cut(
@@ -78,6 +90,15 @@ public:
   virtual
   core::Real
   make_local_bb_change(
+    core::pose::Pose &start_pose,
+    const core::pose::Pose &original_pose,
+    const protocols::loophash::BackboneSegment &new_bs,
+    core::Size res_pos
+  );
+
+  virtual
+  core::Real
+  make_local_bb_change_close_gaps(
     core::pose::Pose &start_pose,
     const core::pose::Pose &original_pose,
     const protocols::loophash::BackboneSegment &new_bs,

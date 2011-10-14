@@ -261,6 +261,7 @@ sources = {
  	],
  	"pilot/kenjung" : [
 	  "loophash_createfiltereddb",
+    "FastGap",
 	  #"fragpdb",
 	  #"symfragrm",
     #"sixdtreeTEST",

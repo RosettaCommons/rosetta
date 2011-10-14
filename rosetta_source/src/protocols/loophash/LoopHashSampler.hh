@@ -24,15 +24,17 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
 #include <string>
 #include <vector>
+
 
 namespace protocols {
 namespace loophash {
 
 
 
-class LoopHashSampler {
+class LoopHashSampler : public utility::pointer::ReferenceCount  {
   public:
 
   LoopHashSampler(
@@ -51,6 +53,13 @@ class LoopHashSampler {
 		core::Size round = 1
 	);
 
+  /// @brief create a set of structures with closed gaps
+  void close_gaps(
+		const core::pose::Pose& start_pose,
+    std::vector< core::pose::Pose > &lib_structs,
+		core::Size loop_size,
+		core::Size round = 1
+	);
 
   void set_start_res( core::Size  value ) {  start_res_  = value; }
   void set_stop_res ( core::Size  value ) {  stop_res_   = value; }
@@ -61,6 +70,7 @@ class LoopHashSampler {
   void set_max_radius  ( core::Size value ) {  max_radius_    = value; }
   void set_max_nstruct  ( core::Size  value ) {  max_nstruct_    = value; }
   void set_nonideal  ( bool value ) {  nonideal_  = value; }
+	// This is meant for model creation, not mpi refinement!
 
   core::Size get_start_res() { return  start_res_ ; }
   core::Size get_stop_res () { return  stop_res_  ; }
@@ -79,6 +89,7 @@ class LoopHashSampler {
 	}
 
   private:
+		
     /// @brief pointer to the library used for insertion
     LoopHashLibraryOP library_;
 
