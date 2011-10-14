@@ -120,6 +120,18 @@ LoopHashSampler::set_defaults(){
     //core::Size backbone_offset;
     //bbdb_.add_pose( pose, backbone_offset );
 
+		// Get the sample weight array, split it and cast it as int
+		// rosetta string functions suck
+		std::string sample_weight_str;
+		core::pose::get_comment(start_pose, "sample_weight", sample_weight_str);
+		std::list < std::string > t;
+		t = utility::split_to_list(sample_weight_str);
+		utility::vector1 < core::Size > sample_weight;
+		for (std::list<std::string>::const_iterator iterator = t.begin(), end = t.end(); iterator != end; ++iterator) {
+				    sample_weight.push_back( utility::string2int( *iterator ) );
+		}
+
+
     int runcount=0;
     runcount++;
 
@@ -153,6 +165,12 @@ LoopHashSampler::set_defaults(){
 
         //TR.Info << "G: " << runcount << " " << ir << "  " << jr << " " << leap_index_bucket.size() << "  " << loop_transform[1] << "  " << loop_transform[2] << "  " << loop_transform[3] << "  " << loop_transform[4] << "  " << loop_transform[5] << "  " << loop_transform[6] << std::endl;
 
+				// Now we compute the per residue sample weight averaged over the segment
+				core::Real avg_sw = 0;
+				for( core::Size m = ir; m <= jr; m++ ) {
+						avg_sw += sample_weight[m];
+				}
+				avg_sw = avg_sw/loop_size;
 
 
         // Now for every hit, get the internal coordinates and make a short list of replacement loops

@@ -5806,6 +5806,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Make database with this loopsize</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-sample_weight_file</b> \<File\><dt>
+<dd>Holds the initial per residue sample weights</dd><br>
+</dl>
  </li>
 <li><h2>lh:fragpdb</h2>
 <dl>

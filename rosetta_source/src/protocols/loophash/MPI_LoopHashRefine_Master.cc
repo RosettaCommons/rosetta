@@ -55,6 +55,10 @@
 #include <unistd.h>
 #endif
 
+#include <fstream>
+#include <utility/string_util.hh>
+#include <boost/algorithm/string.hpp>
+
 //Auto Headers
 #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
@@ -95,6 +99,9 @@ MPI_LoopHashRefine_Master::init(){
 	} else {
 		load_structures_from_cmdline_into_library( max_lib_size() * master_rank() );
 	}
+	
+	// sample_weight cannot be initialized until after structures are imported, so we can check size
+		load_sample_weight();
 	TR << "STARTLIB: " << std::endl;
 	print_library();
 }
@@ -260,6 +267,11 @@ MPI_LoopHashRefine_Master::create_loophash_WUs( const core::io::silent::SilentSt
 		start_struct->fill_pose( start_pose );
   	core::util::switch_to_residue_type_set( start_pose, core::chemical::CENTROID);
 		core::pose::set_ss_from_phipsi( start_pose );
+
+		//refresh the sampling weight comment, as it may have changed
+		// easier to do it here, copy_scores copies comments as well
+		core::pose::delete_comment(start_pose,"sample_weight");
+		core::pose::add_comment(start_pose,"sample_weight", sample_weight_str_);
 
 		core::io::silent::ProteinSilentStruct pss;
 		pss.fill_struct( start_pose );
@@ -457,8 +469,43 @@ MPI_LoopHashRefine_Master::report_structure_to_emperor(  core::io::silent::Prote
 }
 
 
+void
+MPI_LoopHashRefine_Master::load_sample_weight() {
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+		// This just loads sample weights from a file
+		// I assume that the optionkeys sanitizes input
+		
+		// using ifstream instead of utility::io::izstream because izstream doesn't return success bool 
+		if( option[ OptionKeys::lh::sample_weight_file ].active() ) {
+				std::string pathtofile = option[ OptionKeys::lh::sample_weight_file ]();
+				std::ifstream file( pathtofile.c_str() ); 
+				if (!file) utility_exit_with_message( "Failed to open sample_weight file.  Check path." );
+				std::string line;
+				getline( file, line );
 
+				boost::trim(line);
+				
+				// Check for correct format
+				for( int i = 0; i < line.length(); i++ ) {
+						if( !std::isdigit(line[i]) && line[i] != ' ')
+								utility_exit_with_message( "Sample weight file has characters other than digits and spaces. Please reformat." );
+				}
 
+				// check for correct length
+				std::list < std::string > t;
+				t = utility::split_to_list(line);
+				if( t.size() != (*(library_central().begin()))->nres() )
+				utility_exit_with_message( "Sample weight file either improperly formatted or does not have same number of residues as structure." );
+				sample_weight_str_ = line;
+		} else {
+				std::string t = "50";
+				for( int i = 0; i < (*(library_central().begin()))->nres() - 1; i++ ) {
+						t += " 50";
+				}
+				sample_weight_str_ = t;
+		}
+}
 
 
 

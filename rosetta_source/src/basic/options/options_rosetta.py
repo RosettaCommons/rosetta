@@ -2707,6 +2707,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'write_centroid_structs',   'Boolean', default = 'false', desc = 'Output raw loophashed decoys as well as relaxed ones' ),
 		Option( 'sandbox',   'Boolean', default = 'false', desc = 'Sand box mode' ),
 		Option( 'create_db', 'Boolean', default = 'false', desc = 'Make database with this loopsize' ),
+		Option( 'sample_weight_file', 'File', desc = 'Holds the initial per residue sample weights' ),
 		Option_Group( 'fragpdb',
 			Option( 'out_path', 'String', default = '', desc='Path where pdbs are saved' ),
 			Option( 'indexoffset', 'IntegerVector', desc='list of index offset pairs' , default = ['-1']),

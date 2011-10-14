@@ -40,6 +40,7 @@ namespace lh { BooleanOptionKey const centroid_only( "lh:centroid_only" );  }
 namespace lh { BooleanOptionKey const write_centroid_structs( "lh:write_centroid_structs" );  }
 namespace lh { BooleanOptionKey const sandbox( "lh:sandbox" );  }
 namespace lh { BooleanOptionKey const create_db( "lh:create_db" );  }
+namespace lh { FileOptionKey const sample_weight_file( "lh:sample_weight_file" );  }
 namespace lh { namespace fragpdb { BooleanOptionKey const fragpdb( "lh:fragpdb" );  } }
 namespace lh { namespace fragpdb { StringOptionKey const out_path( "lh:fragpdb:out_path" );  } }
 namespace lh { namespace fragpdb { IntegerVectorOptionKey const indexoffset( "lh:fragpdb:indexoffset" );  } }
@@ -574,4 +575,3 @@ namespace AnchoredDesign { namespace akash { IntegerOptionKey const dyepos( "Anc
 namespace AnchoredDesign { namespace testing { BooleanOptionKey const testing( "AnchoredDesign:testing" );  } }
 namespace AnchoredDesign { namespace testing { RealOptionKey const VDW_weight( "AnchoredDesign:testing:VDW_weight" );  } }
 namespace AnchoredDesign { namespace testing { BooleanOptionKey const anchor_via_constraints( "AnchoredDesign:testing:anchor_via_constraints" );  } }
-namespace AnchoredDesign { namespace testing { BooleanOptionKey const delete_interface_native_sidechains( "AnchoredDesign:testing:delete_interface_native_sidechains" );  } }

@@ -66,6 +66,8 @@ protected: // Added functions
 
 	void check_library_expiry_dates();
 
+	void load_sample_weight();
+
 	virtual bool add_structure_to_library( core::io::silent::ProteinSilentStruct &pss, std::string add_algorithm = "" );
 
 	void report_structure_to_emperor(  core::io::silent::SilentStructOP &ss ) ;
@@ -92,6 +94,9 @@ private:
 	bool       mpi_master_save_score_only_;
 	// local store
 	protocols::wum::SilentStructStore  to_be_relaxed_;
+
+	// sampling weight (is not constant!)
+	std::string sample_weight_str_;
 
 	// static settings
 	const core::Size my_emperor_;
