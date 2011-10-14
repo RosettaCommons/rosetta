@@ -1,0 +1,133 @@
+#!/usr/bin/python
+
+
+import sys
+import os
+import string
+import re
+import gzip
+import bz2
+
+
+cutoff = 1.0 #CUTOFF GDTMM
+numpaths = 20 #how many paths we follow
+
+files = []
+gdtlist = []
+
+
+nomorefiles = False
+for arg in sys.argv[1:]:
+    if arg == "--":
+        nomorefiles = True
+    if not nomorefiles:
+        files.append(arg)
+    else:
+        if arg[0:3] == "-c=":
+            cutoff = float(arg[3:])
+        if arg[0:3] == "-n=":
+            numpaths = int(arg[3:])
+for filename in files:
+    lines = []
+    if( filename[-3:] == ".gz" ):
+		file = gzip.open(filename,"r")
+		lines = string.split(file.read(),"\n")
+    elif( filename[-4:] == ".bz2" ):
+		lines = bz2.BZ2File( filename,"r").readlines()
+    else:
+		file = open(filename,"r")
+		lines = string.split(file.read(),"\n")
+
+
+    checkedcols = False
+    gdtcol = 0
+    husidcol = 0
+
+    for num,line in enumerate(lines):
+        token = line.split()
+        if len(token) <= 0: continue
+        if not checkedcols:
+            if (token[0] == "SCORE ") or (token[0] == "SCORE:") :
+                for colnum,scorename in enumerate(token):
+                    if scorename == "gdtmm": gdtcol = colnum
+                    if scorename == "husid": husidcol = colnum
+                checkedcols = True
+        if token[0] == "SCORE:" and token[1] != "score":
+            gdtlist.append( (token[gdtcol], token[husidcol] ) )
+
+
+gdtlist.sort()
+gdtlist.reverse()
+cutidx = 0
+for i,pair in enumerate(gdtlist):
+    if float(pair[0]) < cutoff:
+        cutidx = i
+        break
+gdtlist = gdtlist[cutidx:cutidx+numpaths]
+
+# here we have a dict(key=husid) of lists of tuples(order, husid)
+# where order is the order of history
+scorelines = dict( (husid,[]) for ( gdt,husid ) in gdtlist )
+
+# run back through EVERYTHING to grab score lines of relevant decoys
+# insanely inefficient because it checks every husid against 20 possible?
+
+headerline = ""
+for filename in files:
+    lines = []
+    if( filename[-3:] == ".gz" ):
+		file = gzip.open(filename,"r")
+		lines = string.split(file.read(),"\n")
+    elif( filename[-4:] == ".bz2" ):
+		lines = bz2.BZ2File( filename,"r").readlines()
+    else:
+		file = open(filename,"r")
+		lines = string.split(file.read(),"\n")
+
+    checkedcols = False
+    husidcol = 0
+    order = 0
+
+    getnextremark = False
+    currenthusid = []
+
+    for num,line in enumerate(lines):
+        token = line.split()
+        if len(token) <= 0: continue
+        if not checkedcols:
+            if (token[0] == "SCORE ") or (token[0] == "SCORE:") :
+                headerline = line
+                for colnum,scorename in enumerate(token):
+                    if scorename == "husid": husidcol = colnum
+                checkedcols = True
+
+        # assuming all scorelines are lined up correctly
+        # pretty big assumption
+
+        if token[0] == "SCORE:":
+            for husid in scorelines:
+                if husid.find(token[husidcol]) != -1 :
+                    order = len(token[husidcol].split("."))
+                    if order not in [b for b,c,d in scorelines[husid]]:
+                        scorelines[husid].append( [order, line, ""] )
+                        #could sort later, but now is ok too
+                        getnextremark = True
+                        currenthusid.append(husid)
+
+        # Horrible hack because donorhistory isn't a score... stupid of me to implement like that
+        if token[0] == "REMARK" and getnextremark:
+            for husid in currenthusid:
+                scorelines[husid][-1][2] = line
+                getnextremark = False
+            currenthusid = []
+
+
+# sort and output
+print headerline
+for path in scorelines:
+    print "\n\n################"+path+"####################\n\n"
+    scorelines[path].sort()
+    for order,score,dh in scorelines[path]:
+        print score
+        print dh
+

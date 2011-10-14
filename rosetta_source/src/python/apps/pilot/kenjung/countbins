@@ -1,0 +1,23 @@
+#!/usr/bin/python
+import sys
+db = open(sys.argv[1], "r")
+
+count = {}
+for line in db:
+	bin = line.rstrip().split(" ")[2]
+	if bin not in count:
+		count[bin] = 1
+	else:
+		count[bin] += 1
+	
+total = 0.0
+biggest = 0.0
+biggestkey = ""
+for key in sorted(count.iterkeys()):
+    if (count[key] > biggest):
+            biggest = count[key]
+            biggestkey = key
+    total += count[key]
+    print "%s: %s" % (key, count[key])
+print "#average: %s" % (total/len(count))
+print "#biggest: %s %s" % (biggestkey, biggest)
