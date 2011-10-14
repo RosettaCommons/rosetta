@@ -112,7 +112,7 @@ public:
 	: init_for_input_yet_(false),
 		fullatom_scorefunction_(NULL),
 		task_factory_(NULL),
-		thioester_mm_(NULL),
+		amide_mm_(NULL),
 		loop_(), //we want default ctor
 		atomIDs(8, core::id::BOGUS_ATOM_ID ),
 		InterfaceSasaDefinition_("InterfaceSasaDefinition_" + 1),
@@ -262,13 +262,13 @@ public:
 
 		//setup MoveMaps
 		//small/shear behave improperly @ the last residue - psi is considered nonexistent and the wrong phis apply.
-		thioester_mm_ = new core::kinematics::MoveMap;
-		//thioester_mm_->set_bb(complexlength, true);
-		//thioester_mm_->set(core::id::TorsionID(complexlength, core::id::BB, core::id::phi_torsion), true);
-		//thioester_mm_->set(core::id::TorsionID(complexlength, core::id::BB, core::id::psi_torsion), true);
-		thioester_mm_->set_bb(complexlength-1, true);
-		thioester_mm_->set_bb(complexlength-2, true);
-		//thioester_mm_->set(complex.atom_tree().torsion_angle_dof_id(atomIDs[2], atomIDs[3], atomIDs[4], atomIDs[5]), false);
+		amide_mm_ = new core::kinematics::MoveMap;
+		//amide_mm_->set_bb(complexlength, true);
+		//amide_mm_->set(core::id::TorsionID(complexlength, core::id::BB, core::id::phi_torsion), true);
+		//amide_mm_->set(core::id::TorsionID(complexlength, core::id::BB, core::id::psi_torsion), true);
+		amide_mm_->set_bb(complexlength-1, true);
+		amide_mm_->set_bb(complexlength-2, true);
+		//amide_mm_->set(complex.atom_tree().torsion_angle_dof_id(atomIDs[2], atomIDs[3], atomIDs[4], atomIDs[5]), false);
 
 		//setup loop
 		std::set< core::Size > loop_posns;
@@ -334,29 +334,29 @@ public:
 		MonteCarloOP mc( new MonteCarlo( pose, *fullatom_scorefunction_, option[ refine_temp ].value() ) );
 
 		//////////////////////////Small/ShearMovers////////////////////////////////////////////////////////
-		protocols::moves::BackboneMoverOP small_mover = new protocols::moves::SmallMover(thioester_mm_, 0.8, 1);
+		protocols::moves::BackboneMoverOP small_mover = new protocols::moves::SmallMover(amide_mm_, 0.8, 1);
 		small_mover->angle_max( 'H', 4.0 );
 		small_mover->angle_max( 'E', 4.0 );
 		small_mover->angle_max( 'L', 4.0 );
 
-		protocols::moves::BackboneMoverOP shear_mover = new protocols::moves::ShearMover(thioester_mm_, 0.8, 1);
+		protocols::moves::BackboneMoverOP shear_mover = new protocols::moves::ShearMover(amide_mm_, 0.8, 1);
 		shear_mover->angle_max( 'H', 4.0 );
 		shear_mover->angle_max( 'E', 4.0 );
 		shear_mover->angle_max( 'L', 4.0 );
 
-		protocols::moves::TorsionDOFMoverOP DOF_mover_chi1(new protocols::moves::TorsionDOFMover);
-		DOF_mover_chi1->set_DOF(atomIDs[1], atomIDs[2], atomIDs[3], atomIDs[4]);
-		DOF_mover_chi1->check_mmt(true);
-		DOF_mover_chi1->temp(0.4);
-		DOF_mover_chi1->set_angle_range(-180, 180);
-		DOF_mover_chi1->tries(1000);
+		// protocols::moves::TorsionDOFMoverOP DOF_mover_chi1(new protocols::moves::TorsionDOFMover);
+		// DOF_mover_chi1->set_DOF(atomIDs[1], atomIDs[2], atomIDs[3], atomIDs[4]);
+		// DOF_mover_chi1->check_mmt(true);
+		// DOF_mover_chi1->temp(0.4);
+		// DOF_mover_chi1->set_angle_range(-180, 180);
+		// DOF_mover_chi1->tries(1000);
 
-		protocols::moves::TorsionDOFMoverOP DOF_mover_chi2(new protocols::moves::TorsionDOFMover);
-		DOF_mover_chi2->set_DOF(atomIDs[2], atomIDs[3], atomIDs[4], atomIDs[5]);
-		DOF_mover_chi2->check_mmt(true);
-		DOF_mover_chi2->temp(0.4);
-		DOF_mover_chi2->set_angle_range(-180, 180);
-		DOF_mover_chi2->tries(1000);
+		// protocols::moves::TorsionDOFMoverOP DOF_mover_chi2(new protocols::moves::TorsionDOFMover);
+		// DOF_mover_chi2->set_DOF(atomIDs[2], atomIDs[3], atomIDs[4], atomIDs[5]);
+		// DOF_mover_chi2->check_mmt(true);
+		// DOF_mover_chi2->temp(0.4);
+		// DOF_mover_chi2->set_angle_range(-180, 180);
+		// DOF_mover_chi2->tries(1000);
 
 		protocols::moves::TorsionDOFMoverOP DOF_mover_thioester(new protocols::moves::TorsionDOFMover);
 		DOF_mover_thioester->set_DOF(atomIDs[3], atomIDs[4], atomIDs[5], atomIDs[6]);
@@ -392,13 +392,13 @@ public:
 		SC_mover->set_task(SC_task);
 
 		protocols::moves::RandomMoverOP backbone_mover( new protocols::moves::RandomMover() );
-		// backbone_mover->add_mover(small_mover, 2.0);
-// 		backbone_mover->add_mover(shear_mover, 1.0);
-// 		backbone_mover->add_mover(DOF_mover_chi1, 0.75);
-// 		backbone_mover->add_mover(DOF_mover_chi2, 0.75);
-// 		backbone_mover->add_mover(DOF_mover_thioester, 0.75);
-// 		backbone_mover->add_mover(DOF_mover_psi, 0.75);
-		//backbone_mover->add_mover(DOF_mover_phi, 0.75);
+		backbone_mover->add_mover(small_mover, 2.0);
+		backbone_mover->add_mover(shear_mover, 1.0);
+		// 		backbone_mover->add_mover(DOF_mover_chi1, 0.75); //SC mover will handle this DOF
+		// 		backbone_mover->add_mover(DOF_mover_chi2, 0.75); //SC mover will handle this DOF
+ 		backbone_mover->add_mover(DOF_mover_thioester, 0.75);
+ 		backbone_mover->add_mover(DOF_mover_psi, 0.75);
+		backbone_mover->add_mover(DOF_mover_phi, 0.75);
 		backbone_mover->add_mover(SC_mover, 1.0);
 
 		///////////////////////////loop movement/////////////////////////////////////////////////////
@@ -424,7 +424,7 @@ public:
 		using protocols::moves::MinMoverOP;
 		using protocols::moves::MinMover;
 		MinMoverOP min_mover = new MinMover(
-																				thioester_mm_,
+																				amide_mm_,
 																				fullatom_scorefunction_,
 																				basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
 																				0.01,
@@ -456,7 +456,7 @@ public:
 		pack_mover->score_function( fullatom_scorefunction_ );
 
 		MinMoverOP min_mover_pack = new MinMover(
-																						 thioester_mm_,
+																						 amide_mm_,
 																						 fullatom_scorefunction_,
 																						 basic::options::option[ basic::options::OptionKeys::run::min_type ].value(),
 																						 0.01,
@@ -567,7 +567,7 @@ private:
 
 	core::scoring::ScoreFunctionOP fullatom_scorefunction_;
 	core::pack::task::TaskFactoryOP task_factory_;
-	core::kinematics::MoveMapOP thioester_mm_;
+	core::kinematics::MoveMapOP amide_mm_;
 // 	core::kinematics::MoveMapOP loop_mm_;
 // 	core::kinematics::MoveMapOP all_mm_;
 
