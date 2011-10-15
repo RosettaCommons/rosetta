@@ -337,14 +337,14 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
   // Set allowed AAs.
   vector1<bool> allowed_aas(20,false);
   allowed_aas[aa_ala] = true;
-  allowed_aas[aa_asp] = true;
+  //allowed_aas[aa_asp] = true;
   allowed_aas[aa_phe] = true;
   allowed_aas[aa_ile] = true;
   allowed_aas[aa_leu] = true;
   allowed_aas[aa_met] = true;
-  allowed_aas[aa_asn] = true;
-  allowed_aas[aa_ser] = true;
-  allowed_aas[aa_thr] = true;
+  //allowed_aas[aa_asn] = true;
+  //allowed_aas[aa_ser] = true;
+  //allowed_aas[aa_thr] = true;
   allowed_aas[aa_val] = true;
   allowed_aas[aa_trp] = true;
   allowed_aas[aa_tyr] = true;
@@ -356,10 +356,12 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
   for( Size i=1; i<=pose.n_residue(); i++) {
     if(i==ibpy) continue;
     if(!sym_info->bb_is_independent(i)) continue;
+		if(pose.residue(i).name3()=="GLY"||pose.residue(i).name3()=="PRO") continue;
     for( Size j=1; j<=pose.n_residue(); j++) {
       if(sym_info->bb_is_independent(j)) continue;
       if(sym_info->subunit_index(j) == dsub ) continue;
-      if( pose.residue(i).nbr_atom_xyz().distance_squared( pose.residue(j).nbr_atom_xyz() ) < 100.0 ) {
+			if(pose.residue(j).name3()=="GLY"||pose.residue(j).name3()=="PRO") continue;
+      if( pose.residue(i).xyz("CB").distance_squared( pose.residue(j).xyz("CB") ) < 100.0 ) {
         //TR << "design_pos " << i << " " << j << std::endl;
         if( find(design_pos.begin(), design_pos.end(), i) == design_pos.end()) design_pos.push_back(i);
       }
@@ -546,9 +548,9 @@ Size num_trimer_contacts(Pose const & psym, Size nres) {
   return count;
 }
 
-Real packing_score(Pose const & psym) {
-  ;
-}
+//Real packing_score(Pose const & psym) {
+//  ;
+//}
 
 
 Real get_bare_rep(Pose tmp, ScoreFunctionOP sfrepsym) {
@@ -851,7 +853,7 @@ void run() {
           sf->score(psym);
           new_sc(psym,intra_subs,int_area,sc);
 
-					if( int_area < 300 || sc < 0.6 ) continue;
+					if( int_area < 200 || sc < 0.6 ) continue;
 
           psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+fname+"_des.pdb");
 
