@@ -103,7 +103,6 @@ public:
 			core::pose::PoseOP pose_i = new core::pose::Pose();
 			core::import_pose::pose_from_pdb( *pose_i, *residue_set, files[i].name() );
 			pose1s_.push_back( pose_i );
-			//pose1_insert_points_.push_back( pose_i->pdb_info()->number(1) );
 		}
 
 		// load all the fragments for insertion
@@ -114,28 +113,27 @@ public:
 			core::import_pose::pose_from_pdb( *pose_i, *residue_set, files[i].name() );
 			if (pose_i->total_residue() >= MINFRAGLEN) {
 				pose2s_.push_back( pose_i );
-				//pose2_insert_points_.push_back( pose_i->pdb_info()->number(1) );
 				std::cout << "PDB " << files[i].name() << " insert point " << pose_i->pdb_info()->number(1) << std::endl;
 			}
 		}
 
 		// default chunking on remaining long fragments
-// 		int FRAGLEN = option[ fpd::subfraglen ]();
-// 		core::Size nfrags = pose1s_.size();
-// 		for (int i=1; i<=nfrags; ++i) {
-// 		 	core::pose::PoseOP pose_i = pose1s_[i];
-// 		 	if (pose_i->total_residue() > FRAGLEN+4) {
-// 		 		int nres=pose_i->total_residue();
-// 		 		for (int j=1; j<=pose_i->total_residue()-FRAGLEN; j+=1) {
-// 		 			core::pose::PoseOP pose_j = new core::pose::Pose( *pose_i, j, j+FRAGLEN );
-// 		 			pose2s_.push_back( pose_j );
-// 		 			pose2_insert_points_.push_back( pose1_insert_points_[i]+j-1 );
-// 		 			std::cout << "Created " << pose_j->total_residue() << "-residue subfragment"
-// 		 					  << " from PDB " << files[i].name() 
-// 		 					  << " insert point " << pose_i->pdb_info()->number(j) << std::endl;
-// 		 		}
-// 		 	}
-// 		}
+		// int FRAGLEN = option[ fpd::subfraglen ]();
+		// core::Size nfrags = pose1s_.size();
+		// for (int i=1; i<=nfrags; ++i) {
+		// 	core::pose::PoseOP pose_i = pose1s_[i];
+		// 	if (pose_i->total_residue() > FRAGLEN+4) {
+		// 		int nres=pose_i->total_residue();
+		// 		for (int j=1; j<=pose_i->total_residue()-FRAGLEN; j+=1) {
+		// 			core::pose::PoseOP pose_j = new core::pose::Pose( *pose_i, j, j+FRAGLEN );
+		// 			pose2s_.push_back( pose_j );
+		// 			pose2_insert_points_.push_back( pose1_insert_points_[i]+j-1 );
+		// 			std::cout << "Created " << pose_j->total_residue() << "-residue subfragment"
+		// 					  << " from PDB " << files[i].name() 
+		// 					  << " insert point " << pose_i->pdb_info()->number(j) << std::endl;
+		// 		}
+		// 	}
+		// }
 
 		// screfunction init
 		lowres_scorefxn_ = core::scoring::getScoreFunction();
@@ -149,7 +147,6 @@ public:
 		min2_scorefxn_->set_weight( core::scoring::hbond_lr_bb, lowres_scorefxn_->get_weight( core::scoring::hbond_lr_bb ) );
 		min2_scorefxn_->set_weight( core::scoring::hbond_sr_bb, lowres_scorefxn_->get_weight( core::scoring::hbond_sr_bb ) );
 		min2_scorefxn_->set_weight( core::scoring::cart_bonded, lowres_scorefxn_->get_weight( core::scoring::cart_bonded ) );
-		min2_scorefxn_->set_weight( core::scoring::envsmooth, lowres_scorefxn_->get_weight( core::scoring::envsmooth ) );
 		min2_scorefxn_->set_weight( core::scoring::rama, lowres_scorefxn_->get_weight( core::scoring::rama ) );
 		min2_scorefxn_->set_weight( core::scoring::omega, lowres_scorefxn_->get_weight( core::scoring::omega ) );
 
@@ -158,15 +155,13 @@ public:
 		min3_scorefxn_->set_weight( core::scoring::hbond_lr_bb, lowres_scorefxn_->get_weight( core::scoring::hbond_lr_bb ) );
 		min3_scorefxn_->set_weight( core::scoring::hbond_sr_bb, lowres_scorefxn_->get_weight( core::scoring::hbond_sr_bb ) );
 		min3_scorefxn_->set_weight( core::scoring::cart_bonded, lowres_scorefxn_->get_weight( core::scoring::cart_bonded ) );
-		min2_scorefxn_->set_weight( core::scoring::envsmooth, lowres_scorefxn_->get_weight( core::scoring::envsmooth ) );
 		min3_scorefxn_->set_weight( core::scoring::rama, lowres_scorefxn_->get_weight( core::scoring::rama ) );
 		min3_scorefxn_->set_weight( core::scoring::omega, lowres_scorefxn_->get_weight( core::scoring::omega ) );
-		min3_scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.1*lowres_scorefxn_->get_weight( core::scoring::atom_pair_constraint ) );
+		min3_scorefxn_->set_weight( core::scoring::atom_pair_constraint, lowres_scorefxn_->get_weight( core::scoring::atom_pair_constraint ) );
 
 		// change VDW set
 		core::scoring::methods::EnergyMethodOptions lowres_options(lowres_scorefxn_->energy_method_options());
 		lowres_options.atom_vdw_atom_type_set_name("centroid_min");
-		//lowres_scorefxn_->set_energy_method_options(lowres_options);
 		min1_scorefxn_->set_energy_method_options(lowres_options);
 		min2_scorefxn_->set_energy_method_options(lowres_options);
 		min3_scorefxn_->set_energy_method_options(lowres_options);
@@ -192,7 +187,6 @@ public:
 
 	void superpose( core::pose::Pose &frag, core::pose::Pose &pose, 
 	                numeric::xyzMatrix< core::Real > &R, numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT) {
-
 		// com of both
 		core::Size len = frag.total_residue();
 		core::Size aln_len = std::min( (core::Size)9, len );
@@ -379,9 +373,10 @@ public:
 		// for i = 1 to n cycles
 		core::Size ncycles = option[ fpd::ncycles ]();
 		core::Size nmacrocycles = option[ fpd::nmacrocycles ]();
-
+		std::cout << "RUNNING FOR " << nmacrocycles << " MACROCYCLES" << std::endl;
+		
 		if (nmacrocycles > 0) {
-			for (int m=1; m<=5; m+=1) {
+			for (int m=1; m<=std::min((int)nmacrocycles,5); m+=1) {
 				core::Real bonded_weight = 0;
 				if (m==1) bonded_weight = 0;
 				if (m==2) bonded_weight = 0;
@@ -392,10 +387,10 @@ public:
 				core::Real cst_weight = max_cst;
 				if (m<5)  cst_weight = 2*max_cst;
 
-				core::Real vdw_weight =0;
-				if (m==1)  vdw_weight = 0;
-				if (m==2)  vdw_weight = 0;
-				if (m==3)  vdw_weight = 0.01*max_vdw;
+				core::Real vdw_weight = max_vdw;
+				if (m==1)  vdw_weight = max_vdw;
+				if (m==2)  vdw_weight = 0.1*max_vdw;
+				if (m==3)  vdw_weight = 0.1*max_vdw;
 				if (m==4)  vdw_weight = 0.1*max_vdw;
 	
 				std::cout << "CYCLE " << m << std::endl;
@@ -408,8 +403,14 @@ public:
 	
 				(*lowres_scorefxn_)(pose);
 				protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_, 2.0 );
+				protocols::moves::MonteCarloOP mc_inner
+					= new protocols::moves::MonteCarlo( pose, *lowres_scorefxn_, 0.0 );
 	
-				for (int n=1; n<=ncycles; ++n) {
+				core::Size neffcycles = option[ fpd::ncycles ]();
+
+				if (m==1) neffcycles = 5;
+
+				for (int n=1; n<=neffcycles; ++n) {
 					// superimpose frag
 					numeric::xyzMatrix< core::Real > R;
 					numeric::xyzVector< core::Real > preT(0,0,0), postT(0,0,0);
@@ -425,18 +426,20 @@ public:
 					core::Size action = 0;
 	
 					if (m==1) {
-						action = 1;
-						if (action_picker < 0.3333) action = 3;
-						if (action_picker > 0.6666) action = 4;
-					} else if (m==2) {
-						action = 4;
-						if (action_picker < 0.2) action = 5;
+						//if (n%STAGE1STEP == 1)
+							action = 1;
+						//else
+						//	if (action_picker < 0.5) action = 2;
+						//	else action = 4;
 					} else if (m==2) {
 						action = 4;
 						if (action_picker < 0.2) action = 5;
 					} else if (m==3) {
 						action = 4;
-						if (action_picker < 0.4) action = 5;
+						if (action_picker < 0.2) action = 5;
+					} else if (m==4) {
+						action = 4;
+						if (action_picker < 0.2) action = 5;
 					} else if (m==5) {
 						action = 5;
 					}
@@ -514,15 +517,29 @@ public:
 							pose.set_xyz( tgt, postT + (R*(frag->xyz( src )-preT)) );
 						}
 					}
-	
-					(*min3_scorefxn_)(pose);
-					if (m>1) minimizer.run( pose, mm, *min3_scorefxn_, options );
-					mc->boltzmann( pose , action_string );
 
+
+					// //////   //
+					// MC stuff //
+					// //////   //
+					try {
+						(*min3_scorefxn_)(pose);
+						minimizer.run( pose, mm, *min3_scorefxn_, options );
+	
+						if (m>1)
+							mc->boltzmann( pose , action_string );
+						else { // m==1
+							minimizer.run( pose, mm, *min3_scorefxn_, options_minilbfgs );
+							mc->boltzmann( pose , action_string );
+						}
+					} catch( utility::excn::EXCN_Base& excn ) {  // bad hbond shit
+						mc->recover_low(pose);
+					}
 					if (n%100 == 0) {
 						mc->show_scores();
 						mc->show_counters();
 					}
+
 				}
 				mc->recover_low(pose);
 	
@@ -547,14 +564,12 @@ public:
 							  << " (" << m_1_1 << "," << m_2_2 << "," << m_3_3 << "," << m_4_3 << "," << m_7_4 << ")" << std::endl;
 				}
 	
-				if (m>=4) {
+				if (m==5) {
 					(*min3_scorefxn_)(pose); minimizer.run( pose, mm, *min3_scorefxn_, options_lbfgs );
 					(*min2_scorefxn_)(pose); minimizer.run( pose, mm, *min2_scorefxn_, options_lbfgs );
-					if (m==4) {
-						(*min1_scorefxn_)(pose); minimizer.run( pose, mm, *min1_scorefxn_, options_lbfgs );
-						(*min2_scorefxn_)(pose); minimizer.run( pose, mm, *min2_scorefxn_, options_lbfgs );
-						(*min3_scorefxn_)(pose); minimizer.run( pose, mm, *min3_scorefxn_, options_lbfgs );
-					}
+					(*min1_scorefxn_)(pose); minimizer.run( pose, mm, *min1_scorefxn_, options_lbfgs );
+					(*min2_scorefxn_)(pose); minimizer.run( pose, mm, *min2_scorefxn_, options_lbfgs );
+					(*min3_scorefxn_)(pose); minimizer.run( pose, mm, *min3_scorefxn_, options_lbfgs );
 	
 					// evaluator
 					if ( option[ in::file::native ].user() && native_) {
@@ -666,7 +681,7 @@ main( int argc, char * argv [] ) {
 	NEW_OPT(fpd::fragments, "fragments", utility::vector1<utility::file::FileName >(0));
 	NEW_OPT(fpd::frag9, "frag9", "");
 	NEW_OPT(fpd::ncycles, "ncycles", 500);
-	NEW_OPT(fpd::nmacrocycles, "nmacrocycles", 6);
+	NEW_OPT(fpd::nmacrocycles, "nmacrocycles", 5);
 	NEW_OPT(fpd::subfraglen, "subfraglen", 9);
 	NEW_OPT(fpd::minfraglen, "minfraglen", 4);
 	NEW_OPT(fpd::movie, "movie", false);

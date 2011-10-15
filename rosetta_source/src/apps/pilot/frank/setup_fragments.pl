@@ -389,134 +389,105 @@ foreach my $i (0..$#ARGV) {
 }
 
 
-# prepare pseudo-backbone trace
-my @pseudotrace;
-my @gaps;
-my $last_ungapped = 0;
-foreach my $i (1..$nres) {
-	my $id = " CA "."A".$i;
-
-	# (opt 1) find longest fragment at each position
-#	my $maxfraglen = 0;
-#	my $maxid = -1;
-#	foreach my $j (0..$#ARGV) {
-#		my $pdb = $ARGV[$j];
-#		if ( defined $fraglens{$pdb}->{$id} && $fraglens{$pdb}->{$id} > $maxfraglen) {
-#			$maxfraglen = $fraglens{$pdb}->{$id};
-#			$maxid = $j;
-#		}
-#	}
-
-	# (opt 2) find residue closest to mean
- 	my @cas_i = ();
- 	my @ids_i = ();
-	my $maxid = -1;
-	foreach my $j (0..$#ARGV) {
-		next if ($aligned[$j] == 0);
- 		my $pdb = $ARGV[$j];
- 		if (defined $bbatoms{$pdb}->{$id} ) {
- 			push @ids_i, $j;
-			my $newX = deep_copy($bbatoms{$pdb}->{$id});
-			$newX = vsub( $newX, $preTs->[$j]);
-			$newX = mapply( $globalRs->[$j], $newX );
-			$newX = vadd( $newX, $postTs->[$j]);
- 			push @cas_i, $newX;
- 		}
- 	}
-	my $com = [0,0,0];
-	if (scalar(@cas_i) > 0) {
-		foreach (@cas_i) { $com = vadd( $com, $_ ); }
-		$com = vscale( 1/scalar(@cas_i), $com);
-		my $mindist = 999;
-		my $minId;
-		foreach my $j (0..$#cas_i) {
-			my $thisdist = vdist( $cas_i[$j], $com );
-			if ($mindist > $thisdist) {
-				$mindist = $thisdist;
-				$maxid = $ids_i[$j];
-			}
-		}
-	}
- 
-	# add it to pseudotrace
-	if ($maxid >= 0) {
-		$gaps[$i] = 0;
-		$last_ungapped = $i;
-		foreach my $atm (" N  ", " CA ", " C  ", " O  ") {
-			my $x;
-	 		if (defined $bbatoms{$ARGV[$seedPDB]}->{$atm."A".$i} ) {
-				$x = $bbatoms{ $ARGV[$seedPDB] }->{$atm."A".$i};
-				$x = vsub( $x, $preTs->[$seedPDB]);
-				$x = mapply( $globalRs->[$seedPDB], $x );
-				$x = vadd( $x, $postTs->[$seedPDB]);
-			} else {
-				$x = $bbatoms{ $ARGV[$maxid] }->{$atm."A".$i};
-				$x = vsub( $x, $preTs->[$maxid]);
-				$x = mapply( $globalRs->[$maxid], $x );
-				$x = vadd( $x, $postTs->[$maxid]);
-			}
-
-			$pseudotrace[$i]->{$atm} = $x;
-		}
-	} else {
-		$gaps[$i] = 999;
-		if ($i>1) {
-			$gaps[$i] = $gaps[$i-1]+1; # right extension distance
-		}
-	}
-}
-
-# fill in gaps
-my $maxgap = $gaps[$nres];
-for (my $i=$last_ungapped-1; $i >= 1; $i--) {
-	$gaps[$i] = min( $gaps[$i+1]+1, $gaps[$i] );
-	$maxgap = max($maxgap, $gaps[$i]);
-}
-foreach my $i (1..$nres) { print STDERR $gaps[$i]; } print STDERR "\n";
-for my $cycle (1..$maxgap) {
-	# extend
+# fill gaps
+mkdir "rebuilt_templates";
+foreach my $mdl (0..$#ARGV) {
+	my $pdb = $ARGV[$mdl];
+	my @pseudotrace;
+	my @gaps;
+	my $last_ungapped = 0;
 	foreach my $i (1..$nres) {
-		if ($gaps[$i] == $cycle) {
-			my $dir=-1; # extend backwards
-			if ( ($i != $nres && $gaps[$i+1] < $cycle)) {
-				$dir=1; #extend forwards
-			}
-			print STDERR "Rebuild $i ($dir)...\n";
-
-			my $Xp1=[];
-			my $Xp2=[];
+		my $id = " CA "."A".$i;
+	
+		# add it to pseudotrace
+		if (defined $bbatoms{$pdb}->{$id}) {
+			$gaps[$i] = 0;
+			$last_ungapped = $i;
 			foreach my $atm (" N  ", " CA ", " C  ", " O  ") {
-				push @{$Xp1}, deep_copy($pseudotrace[$i+1*$dir]->{$atm});
-				push @{$Xp2}, deep_copy($pseudotrace[$i+2*$dir]->{$atm});
+				my $x;
+				$x = $bbatoms{$pdb}->{$atm."A".$i};
+				$x = vsub( $x, $preTs->[$mdl]);
+				$x = mapply( $globalRs->[$mdl], $x );
+				$x = vadd( $x, $postTs->[$mdl]);
+				$pseudotrace[$i]->{$atm} = $x;
 			}
+		} else {
+			$gaps[$i] = 999;
+			if ($i>1) {
+				$gaps[$i] = $gaps[$i-1]+1; # right extension distance
+			}
+		}
+	}
 
-			# align xp2->xp1
-			my ($R21, $rmsd21, $com2, $com1) = rms_align( $Xp1 , $Xp2 );
+	# fill in gaps
+	my $maxgap = $gaps[$nres];
+	for (my $i=$last_ungapped-1; $i >= 1; $i--) {
+		$gaps[$i] = min( $gaps[$i+1]+1, $gaps[$i] );
+		$maxgap = max($maxgap, $gaps[$i]);
+	}
+	foreach my $i (1..$nres) { print STDERR $gaps[$i]; } print STDERR "\n";
+	for my $cycle (1..$maxgap) {
+		# extend
+		foreach my $i (1..$nres) {
+			if ($gaps[$i] == $cycle) {
+				my $dir=-1; # extend backwards
+				if ( ($i != $nres && $gaps[$i+1] < $cycle)) {
+					$dir=1; #extend forwards
+				}
+				print STDERR "Rebuild $i ($dir)...\n";
+	
+				my $Xp1=[];
+				my $Xp2=[];
+				foreach my $atm (" N  ", " CA ", " C  ", " O  ") {
+					push @{$Xp1}, deep_copy($pseudotrace[$i+1*$dir]->{$atm});
+					push @{$Xp2}, deep_copy($pseudotrace[$i+2*$dir]->{$atm});
+				}
+	
+				# align xp2->xp1
+				my ($R21, $rmsd21, $com2, $com1) = rms_align( $Xp1 , $Xp2 );
+	
+				# apply to xp1
+				foreach my $atm (" N  ", " CA ", " C  ", " O  ") {
+					my $newX = vsub( $pseudotrace[$i+1*$dir]->{$atm}, $com2);
+					$newX = mapply( $R21, $newX );
+					$newX = vadd( $newX, $com2);
+					$newX = vadd( $newX, $com1);
+					$pseudotrace[$i]->{$atm} = $newX;
+				}
+			}
+		}
+	}
+		
+	
+	# write model
+	my $outpdb = $pdb;
+	$outpdb =~ s/.*\///;
+	$outpdb =~ s/\.pdb$/_rebuild.$mdl.pdb/;
+	print STDERR "writing rebuilt_templates/$outpdb\n";
+	open (PDB, ">rebuilt_templates/$outpdb") || print STDERR "Cannot open $_";
+	my $atmidx = 1;
+	foreach my $i (1..$nres) {
+		my $restype = $one_to_three{ substr($seq, $i-1, 1) };
+		foreach my $atm (" N  ", " CA ", " C  ", " O  ") {
+			my $x = $pseudotrace[$i]->{$atm};
+			printf PDB "ATOM   %4d %s %s %s %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 
+				   $atmidx++, $atm, $restype, 'A', $i, $x->[0], $x->[1], $x->[2];
+		}
+	}
+	close(PDB);
 
-			# apply to xp1
+	if ($mdl==$seedPDB) {
+		$atmidx = 1;
+		foreach my $i (1..$nres) {
+			my $restype = $one_to_three{ substr($seq, $i-1, 1) };
 			foreach my $atm (" N  ", " CA ", " C  ", " O  ") {
-				my $newX = vsub( $pseudotrace[$i+1*$dir]->{$atm}, $com2);
-				$newX = mapply( $R21, $newX );
-				$newX = vadd( $newX, $com2);
-				$newX = vadd( $newX, $com1);
-				$pseudotrace[$i]->{$atm} = $newX;
+				my $x = $pseudotrace[$i]->{$atm};
+				printf "ATOM   %4d %s %s %s %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 
+					   $atmidx++, $atm, $restype, 'A', $i, $x->[0], $x->[1], $x->[2];
 			}
 		}
 	}
 }
-	
-
-# write starting model
-my $atmidx = 1;
-foreach my $i (1..$nres) {
-	my $restype = $one_to_three{ substr($seq, $i-1, 1) };
-	foreach my $atm (" N  ", " CA ", " C  ", " O  ") {
-		my $x = $pseudotrace[$i]->{$atm};
-		printf "ATOM   %4d %s %s %s %3d     %7.3f %7.3f %7.3f  1.00  0.00\n", 
-		       $atmidx++, $atm, $restype, 'A', $i, $x->[0], $x->[1], $x->[2];
-	}
-}
-
 
 
 
