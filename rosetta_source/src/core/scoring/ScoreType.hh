@@ -67,7 +67,6 @@ enum ScoreType {
 	mm_twist,      // could be lr 2benergy and not in energy graph
 	mm_bend,       // could be lr 2benergy and not in energy graph
 	mm_stretch,    // could be lr 2benergy and not in energy graph
-	cart_bonded,  // cartesian bonded potential
 	lk_costheta,
 	lk_polar,
 	lk_nonpolar,
@@ -319,6 +318,7 @@ enum ScoreType {
 	overlap_chainbreak,
 	distance_chainbreak,
 	dof_constraint,
+	cart_bonded,  // cartesian bonded potential
 
 
 	//Neighbor Vector solvation approximation
