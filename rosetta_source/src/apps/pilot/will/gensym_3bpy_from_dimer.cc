@@ -353,12 +353,11 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
 
 
   vector1<Size> design_pos;
-  for( Size i=1; i<=pose.n_residue(); i++) {
+  for( Size i=1; i <= sym_info->num_independent_residues() ; i++) {
     if(i==ibpy) continue;
     if(!sym_info->bb_is_independent(i)) continue;
 		if(pose.residue(i).name3()=="GLY"||pose.residue(i).name3()=="PRO") continue;
-    for( Size j=1; j<=pose.n_residue(); j++) {
-      if(sym_info->bb_is_independent(j)) continue;
+    for( Size j=sym_info->num_independent_residues()+1; j <= sym_info->num_total_residues_without_pseudo(); j++) {
       if(sym_info->subunit_index(j) == dsub ) continue;
 			if(pose.residue(j).name3()=="GLY"||pose.residue(j).name3()=="PRO") continue;
       if( pose.residue(i).xyz("CB").distance_squared( pose.residue(j).xyz("CB") ) < 100.0 ) {
@@ -573,6 +572,7 @@ void run() {
   ScoreFunctionOP sf = core::scoring::getScoreFunction();
   ScoreFunctionOP sfrep = new core::scoring::ScoreFunction;
   sfrep->set_weight(core::scoring::fa_rep,1.0);
+  ScoreFunctionOP sfsym = new core::scoring::symmetry::SymmetricScoreFunction(sf);
   ScoreFunctionOP sfrepsym = new core::scoring::symmetry::SymmetricScoreFunction(sfrep);
 
   core::chemical::ResidueTypeSetCAP rs = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
@@ -850,7 +850,7 @@ void run() {
           Real rms = core::scoring::CA_rmsd(psym,psym_bare);
           Real sc,int_area;
           vector1<Size> intra_subs; intra_subs.push_back(1); intra_subs.push_back(4);
-          sf->score(psym);
+          sfsym->score(psym);
           new_sc(psym,intra_subs,int_area,sc);
 
 					if( int_area < 200 || sc < 0.6 ) continue;
@@ -859,7 +859,7 @@ void run() {
 
           repack(psym,ibpy,dimersub);
           //psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+fname+"_RPK.pdb");
-          Real s0 = sf->score(psym);
+          Real s0 = sfsym->score(psym);
           for(Size ir = 1; ir <= base.n_residue(); ++ir) {
             for(Size ia = 1; ia <= psym.residue_type(ir).natoms(); ++ia) {
               core::id::AtomID const aid(core::id::AtomID(ia,ir));
@@ -870,7 +870,7 @@ void run() {
           }
           repack(psym,ibpy,dimersub);
           //psym.dump_pdb(option[OptionKeys::out::file::o]()+"/"+fname+"_DDG_RPK.pdb");
-          Real s1 = sf->score(psym);
+          Real s1 = sfsym->score(psym);
 
           TR << "HIT " << fname << " " <<  ang << " " << ibpy << " " << bch1 << " " << jaxs << " ddG: " << s0-s1 << " sc: " << sc << " " << int_area <<std::endl;
 
