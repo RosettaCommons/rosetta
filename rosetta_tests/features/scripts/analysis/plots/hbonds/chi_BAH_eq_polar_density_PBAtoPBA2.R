@@ -37,13 +37,6 @@ f <- transform(f,
 	capx = 2*sin(acos(cosBAH)/2)*cos(chi),
 	capy = 2*sin(acos(cosBAH)/2)*sin(chi))
 
-##orthographic projection
-#f <- transform(f,
-#	capx = sin(acos(cosBAH))*cos(chi),
-#	capy = sin(acos(cosBAH))*sin(chi))
-
-#capx_limits <- range(f$capx);
-#capy_limits <- range(f$capy)
 capx_limits <- c(-1.5,1.5)
 capy_limits <- capx_limits
 
@@ -51,18 +44,23 @@ narrow_output_formats <- transform(output_formats, width=height)
 
 d_ply(f, .(sample_source), function(sub_f){
 	ss_id <- sub_f$sample_source[1]
+	ss = sample_sources[sample_sources$sample_source == ss_id,]
+
 	plot_id = paste("chi_BAH_eq_polar_density_lr_bbbb", ss_id, sep="_")
 	ggplot(data=sub_f) + theme_bw() +
-		stat_density2d(aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE) +
-		geom_indicator(aes(indicator=counts)) +
+		geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+		stat_density2d(
+			aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE) +
+		polar_equal_area_grids_bw() +
+		geom_indicator(aes(indicator=counts), color="white") +
 		facet_grid(acc_chem_type ~ don_chem_type) +
 		opts(title = paste("Hydrogen Bonds chi vs BAH Angles with Sequence Separation > 5\nBackbone/Backbone Hydrogen Bonds\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
-		scale_x_continuous('2*sin(BAH/2) * cos(CHI)', limits=capx_limits, breaks=c(-1, 0, 1)) +
-		scale_y_continuous('2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
+		scale_x_continuous(
+			'2*sin(BAH/2) * cos(CHI)', limits=capx_limits, breaks=c(-1, 0, 1)) +
+		scale_y_continuous(
+			'2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
 		polar_equal_area_grids_bw() +
 		coord_fixed(ratio = 1) +
-		scale_fill_gradientn('Density', colour=jet.colors(10)) +
-#        	opts(legend.position="bottom", legend.direction="horizontal")
-	save_plots(plot_id, sample_sources[sample_sources$sample_source == ss_id,],
-		output_dir, narrow_output_formats)
+		scale_fill_gradientn('Density', colour=jet.colors(10))
+	save_plots(plot_id, ss, output_dir, narrow_output_formats)
 })

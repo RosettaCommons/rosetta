@@ -44,99 +44,55 @@ f$acc_chem_type <- factor(f$acc_chem_type,
 	labels = c("aIMD: h", "aIME: h", "aAHX: y", "aHXL: s,t",
 		"aCXA: n,q", "aCXL: d,e", "aPBA: bb"))
 
+f <- ddply(f, .(sample_source, acc_chem_type, don_chem_type),
+	transform, counts = length(sample_source))
+
 plot_parts <- list(
 	theme_bw(),
-	facet_grid(don_chem_type ~ acc_chem_type))
+	facet_grid(don_chem_type ~ acc_chem_type),
+	geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F"),
+	stat_density2d(aes(fill=log(..density..+100)), geom="tile", contour=FALSE),
+	polar_equal_area_grids_bw(),
+	geom_indicator(aes(indicator=counts), color="white"),
+	scale_fill_gradientn('Density', colour=jet.colors(10)))
 
-scale_x_AHdist <- scale_y_continuous(
-	expression(paste('Acceptor -- Hydrogen Distance (', ring(A), ')')),
-	limits=c(1.4, 3), breaks=c(1.4, 1.8, 2.2, 2.6, 3))
+set_plot_title <- function(xdim, ydim, ss_id) {
+	opts(title =
+			 paste("Hydrogen Bonds ", xdim, " vs ", ydim, "  ss_id: ", ss_id, sep=""))
+}
 
-scale_y_AHdist <- scale_y_continuous(
-	expression(paste('Acceptor -- Hydrogen Distance (', ring(A), ')')),
-	limits=c(1.4, 3), breaks=c(1.4, 1.8, 2.2, 2.6, 3))
-
-scale_x_cosBAH <- scale_x_continuous(
-	"cos(Base -- Acceptor -- Hydrogen)",
-	limit=c(-.4,1), breaks=c(-.4 -.2, 0, .2, .4, .6, .8, 1))
-
-scale_y_cosBAH <- scale_y_continuous(
-	"cos(Base -- Acceptor -- Hydrogen)",
-	limit=c(-.4,1), breaks=c(-.4, -.2, 0, .2, .4, .6, .8, 1))
-
-scale_x_cosAHD <- scale_x_continuous(
-	"cos(Acceptor -- Hydrogen -- Donor)",
-	limit=c(0,1), breaks=c(0, .2, .4, .6, .8, 1))
-
-scale_y_cosAHD <- scale_y_continuous(
-	"cos(Acceptor -- Hydrogen -- Donor)",
-	limit=c(0,1), breaks=c(0, .2, .4, .6, .8, 1))
-
-scale_x_chi <- scale_x_continuous(
-	"Base -- Acceptor Torsion (Radians)",
-	limit=c(0,2*pi), breaks=c(0, pi/3, pi*2/3, pi, pi*4/3, pi*5/3, 2*pi))
-
-scale_y_chi <- scale_y_continuous(
-	"Base -- Acceptor Torsion (Radians)",
-	limit=c(0,2*pi), breaks=c(0, pi/3, pi*2/3, pi, pi*4/3, pi*5/3, 2*pi))
-
-fill_scale_compression <- 100
 plot_each_ss <- function(sub_f){
 	ss_id <- sub_f$sample_source[1]
 	ss <- sample_sources[sample_sources$sample_source == ss_id,]
 
 	plot_id <- "geo_dim_pairs_density_cosBAH_AHdist_chem_type"
-	p <- ggplot(data=sub_f) + plot_parts +
-		stat_density2d(aes(x=cosBAH, y=AHdist, fill=log(..density..+100)), geom="tile", contour=FALSE) +
-			scale_x_cosBAH + scale_y_AHdist +
-			scale_fill_gradientn('Density', colour=jet.colors(10)) +
-			opts(plot.background = theme_rect(colour = "#00007F")) +
-		opts(title = paste("Hydrogen Bonds cosBAH vs AHdist  ss_id: ", ss_id, sep="_"))
+	p <- ggplot(data=sub_f, aes(x=cosBAH, y=AHdist)) + plot_parts +
+		scale_x_cosBAH + scale_y_AHdist + set_plot_title("cosBAH", "AHdist", ss_id)
 	save_plots(plot_id, ss, output_dir, output_formats)
 
 	plot_id <- "geo_dim_pairs_density_cosAHD_AHdist_chem_type"
-	p <- ggplot(data=sub_f) + plot_parts +
-		stat_density2d(aes(x=cosAHD, y=AHdist, fill=log(..density..+100)), geom="tile", contour=FALSE) +
-			scale_x_cosAHD + scale_y_AHdist +
-			scale_fill_gradientn('Density', colour=jet.colors(10)) +
-			opts(plot.background = theme_rect(colour = "#00007F")) +
-		opts(title = paste("Hydrogen Bonds cosAHD vs AHdist  ss_id: ", ss_id, sep="_"))
+	p <- ggplot(data=sub_f, aes(x=cosAHD, y=AHdist)) + plot_parts +
+		scale_x_cosAHD + scale_y_AHdist + set_plot_title("cosAHD", "AHdist", ss_id)
 	save_plots(plot_id, ss, output_dir, output_formats)
 
 	plot_id <- "geo_dim_pairs_density_chi_AHdist_chem_type"
-	p <- ggplot(data=sub_f) + plot_parts +
-		stat_density2d(aes(x=chi, y=AHdist, fill=log(..density..+100)), geom="tile", contour=FALSE) +
-			scale_x_chi + scale_y_AHdist +
-			scale_fill_gradientn('Density', colour=jet.colors(10)) +
-			opts(plot.background = theme_rect(colour = "#00007F")) +
-			opts(title = paste("Hydrogen Bonds CHI vs AHdist  ss_id: ", ss_id, sep="_"))
+	p <- ggplot(data=sub_f, aes(x=chi, y=AHdist)) + plot_parts +
+		scale_x_chi + scale_y_AHdist + set_plot_title("CHI", "AHdist", ss_id)
 	save_plots(plot_id, ss, output_dir, output_formats)
 
 	plot_id <- "geo_dim_pairs_density_cosAHD_cosBAH_chem_type"
-	p <- ggplot(data=sub_f) + plot_parts +
-		stat_density2d(aes(x=cosAHD, y=cosBAH, fill=log(..density..+100)), geom="tile", contour=FALSE) +
-			scale_x_cosAHD + scale_y_cosBAH +
-			scale_fill_gradientn('Density', colour=jet.colors(10)) +
-			opts(plot.background = theme_rect(colour = "#00007F")) +
-			opts(title = paste("Hydrogen Bonds cosAHD vs cosBAH  ss_id: ", ss_id, sep="_"))
+	p <- ggplot(data=sub_f, aes(x=cosAHD, y=cosBAH)) + plot_parts +
+		scale_x_cosAHD + scale_y_cosBAH + set_plot_title("cosAHD", "cosBAH", ss_id)
 	save_plots(plot_id, ss, output_dir, output_formats)
 
 	plot_id <- "geo_dim_pairs_density_chi_cosBAH_chem_type"
-	p <- ggplot(data=sub_f) + plot_parts +
-		stat_density2d(aes(x=chi, y=cosBAH, fill=log(..density..+100)), geom="tile", contour=FALSE) +
-			scale_x_chi + scale_y_cosBAH +
-			scale_fill_gradientn('Density', colour=jet.colors(10)) +
-			opts(plot.background = theme_rect(colour = "#00007F")) +
-		opts(title = paste("Hydrogen Bonds CHI vs cosBAH  ss_id: ", ss_id, sep="_"))
+	p <- ggplot(data=sub_f, aes(x=chi, y=cosBAH)) + plot_parts +
+		scale_x_chi + scale_y_cosBAH + set_plot_title("CHI", "cosBAH", ss_id)
 	save_plots(plot_id, ss, output_dir, output_formats)
 
 	plot_id <- "geo_dim_pairs_density_chi_cosAHD_chem_type"
-	p <- ggplot(data=sub_f) + plot_parts +
-		stat_density2d(aes(x=chi, y=cosAHD, fill=log(..density..+100)), geom="tile", contour=FALSE) +
-			scale_x_chi + scale_y_cosAHD +
-			scale_fill_gradientn('Density', colour=jet.colors(10)) +
-			opts(plot.background = theme_rect(colour = "#00007F")) +
-		opts(title = paste("Hydrogen Bonds CHI vs cosAHD  ss_id: ", ss_id, sep="_"))
+	p <- ggplot(data=sub_f, aes(x=chi, y=cosAHD)) + plot_parts +
+		scale_x_chi + scale_y_cosAHD + set_plot_title("CHI", "cosAHD", ss_id)
 	save_plots(plot_id, ss, output_dir, output_formats)
 }
 

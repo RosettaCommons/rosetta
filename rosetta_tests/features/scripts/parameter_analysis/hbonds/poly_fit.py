@@ -22,18 +22,8 @@ class PolyFit:
         self.left_gutter = 10
         self.top_gutter = 10
 
-        self.xmin = -1
-        self.xmax = 1
 
-        self.ymin = -1
-        self.ymax = 1
-
-        self.xaxis = 0
-        self.yaxis = 0
-
-        self.xaxis_ticks = [-1, -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1]
         self.xaxis_tick_height = 5
-        self.yaxis_ticks = [-1, -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1]
         self.yaxis_tick_width = 5
 
         self.axis_color = "white"
@@ -49,54 +39,23 @@ class PolyFit:
 
         self.polynomial_colors = {2:"#D53E4F", 3:"#FC8D59", 4:"#FEE08B", 5:"#FFFFBF", 6:"#E6F598", 7:"#99D594", 8:"#3288BD"}
 
-        #BEGIN PANEL FRAME
         self.panel_frame = Tkinter.Frame(self.main)
 
-        #BEGIN POLY FRAME
-        self.poly_text_frame = Tkinter.Frame(self.panel_frame)
-        self.poly_label = Tkinter.Label(self.poly_text_frame, text="Polynomial Coefficients: largest coefficient first")
-        self.poly_label.pack(side="top")
-        self.poly_text = Tkinter.Text(\
-            self.poly_text_frame, width = 50, background="lightgray")
-        self.poly_text.pack(side="bottom")
-        self.poly_text_frame.pack(side="top")
-        #END POLY_TEXT
+        self.build_poly_frame(self.panel_frame)
+        # inserting them in reverse order because it works...
+        self.build_zoom_frame(self.panel_frame)
+        self.build_reflect_frame(self.panel_frame)
+        self.build_reference_polys_frame(self.panel_frame)
 
-        #BEGIN REFLECT FRAME
-        self.reflect_frame = Tkinter.Frame(self.panel_frame)
-        self.reflect_check_label= Tkinter.Label(self.reflect_frame, text="reflect y-axis:")
-        self.reflect_check_label.pack(side="left")
-        self.reflect_check_var = Tkinter.IntVar()
-        self.reflect_check = Tkinter.Checkbutton(self.reflect_frame, variable=self.reflect_check_var, command=self.redraw_everything)
-        self.reflect_check.pack(side="left")
-        self.reflect_var = Tkinter.StringVar()
-        self.reflect_var.trace("w", self.reflect_var_callback)
-        self.reflect_value_label = Tkinter.Label(self.reflect_frame, text="y=")
-        self.reflect_value_label.pack(side="left")
-        self.reflect_value = Tkinter.Entry(self.reflect_frame, textvariable=self.reflect_var)
-        self.reflect_value.pack(side="right", expand=1, fill=Tkinter.X)
-        self.reflect_frame.pack(side="bottom", expand=1, fill=Tkinter.X)
-        #END REFLECT FRAME
-
-        #BEGIN REFERENCE POLYS FRAME
-        self.reference_polys_frame = Tkinter.Frame(self.panel_frame)
-        self.reference_polys_label = Tkinter.Label(self.reference_polys_frame, text="Add reference polynomials here:")
-        self.reference_polys_label.pack(side="top")
-        self.reference_polys_text = Tkinter.Text(
-            self.reference_polys_frame, width=50, background="lightgray")
-#        self.reference_polys_text.tag_add("update", 1.0, Tkinter.END)
-        self.reference_polys_text.bind("<Key>", self.reference_polys_text_callback)
-        self.reference_polys_text.pack(side="bottom")
-        self.reference_polys_frame.pack(side="bottom")
-        #END REFERENCE POLYS FRAME
 
         self.panel_frame.pack(side="right")
-        #END PANEL FRAME
-
-        self.canvas = Tkinter.Canvas( self.main,height=self.canvas_height, width=self.canvas_width  )
+        
+        self.canvas = Tkinter.Canvas(\
+            self.main,height=self.canvas_height, width=self.canvas_width)
         self.canvas.pack(side="top")
         
-        self.btn_makeart = Tkinter.Button( self.main, text="clear", command=self.clear )
+        self.btn_makeart = Tkinter.Button(\
+            self.main, text="clear", command=self.clear )
         self.btn_makeart.pack(side="top")
 
         self.main.bind("<Button-1>", self.event_lclick )
@@ -112,6 +71,12 @@ class PolyFit:
         self.ref_polynomial_coefficients= []
         self.ref_polynomial_points = {}
 
+        self.xmin, self.xmax, self.ymin, self.ymax = -1, 1, -1, 1
+        self.zoom_xmin_var.set(-1)
+        self.zoom_xmax_var.set(1)
+        self.zoom_ymin_var.set(-1)
+        self.zoom_ymax_var.set(1)
+
         self.redraw_everything()
     
 
@@ -121,12 +86,132 @@ class PolyFit:
         self.main.mainloop()
 
 
+    def build_poly_frame(self, parent):
+        self.poly_text_frame = Tkinter.Frame(parent)
+        self.poly_label = Tkinter.Label(\
+            self.poly_text_frame, text="Polynomial Coefficients: largest coefficient first")
+        self.poly_label.pack(side="top")
+        self.poly_text = Tkinter.Text(\
+            self.poly_text_frame, width = 50, background="lightgray")
+        self.poly_text.pack(side="bottom")
+        self.poly_text_frame.pack(side="top")
+
+    def build_reflect_frame(self, parent):
+        self.reflect_frame = Tkinter.Frame(parent)
+        self.reflect_check_label= Tkinter.Label(self.reflect_frame, text="reflect y-axis:")
+        self.reflect_check_label.pack(side="left")
+        self.reflect_check_var = Tkinter.IntVar()
+        self.reflect_check = Tkinter.Checkbutton(self.reflect_frame, variable=self.reflect_check_var, command=self.redraw_everything)
+        self.reflect_check.pack(side="left")
+        self.reflect_var = Tkinter.StringVar()
+        self.reflect_var.trace("w", self.reflect_var_callback)
+        self.reflect_value_label = Tkinter.Label(self.reflect_frame, text="y=")
+        self.reflect_value_label.pack(side="left")
+        self.reflect_value = Tkinter.Entry(self.reflect_frame, textvariable=self.reflect_var)
+        self.reflect_value.pack(side="right", expand=1, fill=Tkinter.X)
+        self.reflect_frame.pack(side="bottom", expand=1, fill=Tkinter.X)
+
+    def build_reference_polys_frame(self, parent):
+        self.reference_polys_frame = Tkinter.Frame(parent)
+        self.reference_polys_label = Tkinter.Label(self.reference_polys_frame, text="Add reference polynomials here:")
+        self.reference_polys_label.pack(side="top")
+        self.reference_polys_text = Tkinter.Text(
+            self.reference_polys_frame, width=50, background="lightgray")
+#        self.reference_polys_text.tag_add("update", 1.0, Tkinter.END)
+        self.reference_polys_text.bind("<Key>", self.reference_polys_text_callback)
+        self.reference_polys_text.pack(side="bottom")
+        self.reference_polys_frame.pack(side="bottom")
+
+    def build_zoom_frame(self, parent, width=6):
+        
+        self.zoom_frame = Tkinter.Frame(parent)
+        self.zoom_xmin_label = Tkinter.Label(self.zoom_frame, text="xmin:")
+        self.zoom_xmin_label.pack(side="left")
+        self.zoom_xmin_var = Tkinter.StringVar()
+        self.zoom_xmin_var.trace("w", self.zoom_xmin_var_callback)
+        self.zoom_xmin_value = Tkinter.Entry(self.zoom_frame, width=width, textvariable=self.zoom_xmin_var)
+        self.zoom_xmin_value.pack(side="left", expand=1, fill=Tkinter.X)
+
+        self.zoom_xmax_label = Tkinter.Label(self.zoom_frame, text="xmax:")
+        self.zoom_xmax_label.pack(side="left")
+        self.zoom_xmax_var = Tkinter.StringVar()
+        self.zoom_xmax_var.trace("w", self.zoom_xmax_var_callback)
+        self.zoom_xmax_value = Tkinter.Entry(self.zoom_frame, width=width, textvariable=self.zoom_xmax_var)
+        self.zoom_xmax_value.pack(side="left", expand=1, fill=Tkinter.X)
+
+        self.zoom_ymin_label = Tkinter.Label(self.zoom_frame, text="ymin:")
+        self.zoom_ymin_label.pack(side="left")
+        self.zoom_ymin_var = Tkinter.StringVar()
+        self.zoom_ymin_var.trace("w", self.zoom_ymin_var_callback)
+        self.zoom_ymin_value = Tkinter.Entry(self.zoom_frame, width=width, textvariable=self.zoom_ymin_var)
+        self.zoom_ymin_value.pack(side="left", expand=1, fill=Tkinter.X)
+
+        self.zoom_ymax_label = Tkinter.Label(self.zoom_frame, text="ymax:")
+        self.zoom_ymax_label.pack(side="left")
+        self.zoom_ymax_var = Tkinter.StringVar()
+        self.zoom_ymax_var.trace("w", self.zoom_ymax_var_callback)
+        self.zoom_ymax_value = Tkinter.Entry(self.zoom_frame, width=width, textvariable=self.zoom_ymax_var)
+        self.zoom_ymax_value.pack(side="left", expand=1, fill=Tkinter.X)
+        self.zoom_frame.pack(side="bottom", expand=1, fill=Tkinter.X)
+
+
+
     def reference_polys_text_callback(self, event):
         self.redraw_everything()
 
     def reflect_var_callback(self, name, index, mode):
         print lineno(), "setting reflection to y=%s" % self.reflect_var.get()
         self.redraw_everything()
+
+
+    def zoom_xmin_var_callback(self, name, index, mode):
+        try:
+            new_xmin = float(self.zoom_xmin_var.get())
+        except:
+            return
+
+        if new_xmin > self.xmax:
+            print lineno(), "Attempting to set xmin=%s to a value greater than xmax=%s." % (new_xmin, self.xmax)
+        else:
+            self.xmin = new_xmin
+            self.redraw_everything()
+
+    def zoom_xmax_var_callback(self, name, index, mode):
+        try:
+            new_xmax = float(self.zoom_xmax_var.get())
+        except:
+            return
+
+        if self.xmin > new_xmax:
+            print lineno(), "Attempting to set xmax=%s to a value less than xmin=%s." % (new_xmax, self.xmin)
+        else:
+            self.xmax = new_xmax
+            self.redraw_everything()
+
+    def zoom_ymin_var_callback(self, name, index, mode):
+        try:
+            new_ymin = float(self.zoom_ymin_var.get())
+        except:
+            return
+
+        if new_ymin > self.ymax:
+            print lineno(), "Attempting to set ymin=%s to a value greater than ymax=%s." % (new_ymin, self.ymax)
+        else:
+            self.ymin = new_ymin
+            self.redraw_everything()
+
+    def zoom_ymax_var_callback(self, name, index, mode):
+        try:
+            new_ymax = float(self.zoom_ymax_var.get())
+        except:
+            return 
+
+        if self.ymin > new_ymax:
+            print lineno(), "Attempting to set ymax=%s to a value less than ymin=%s." % (new_ymax, self.ymin) 
+        else:
+            self.ymax = new_ymax
+            self.redraw_everything()
+
 
 
     def test_diagnostics(self):
@@ -139,27 +224,31 @@ class PolyFit:
 
 
     def p2canv( self, x, y):
-
-        px = float(x)*self.plot_width/(self.xmax-self.xmin) + \
-            self.left_gutter + self.plot_width/2
-        py = -1*float(y)*self.plot_height/(self.ymax-self.ymin) + \
-            self.top_gutter + self.plot_width/2
+        px = (float(x)-self.xmin)*self.plot_width/(self.xmax-self.xmin) + \
+            self.left_gutter
+        py = -1*(float(y)-self.ymin)*self.plot_height/(self.ymax-self.ymin) + \
+            self.top_gutter + self.plot_width
 
         return (px, py)
 
     def canv2p(self, px, py):
-        x = float(px - self.plot_width/2 - self.left_gutter)
-        x = x*(self.xmax-self.xmin)/self.plot_width
-        y = float(py - self.plot_height/2 - self.top_gutter)
-        y = -y*(self.ymax-self.ymin)/self.plot_height
+        x = (float(px) - self.left_gutter) * \
+            (self.xmax - self.xmin)/self.plot_width + self.xmin
+        y = -1*(float(py) - self.top_gutter - self.plot_width) * \
+            (self.ymax - self.ymin)/self.plot_height + self.ymin
 
         return (x, y)
-    
+
+    def compute_zoom_and_axes(self):
+        self.xaxis_ticks = [i * (self.xmax - self.xmin)/10 + self.xmin for i in range(11)]
+        self.yaxis_ticks = [i * (self.ymax - self.ymin)/10 + self.ymin for i in range(11)]
+        self.xaxis = (self.ymax-self.ymin)/2 + self.ymin
+        self.yaxis = (self.xmax-self.xmin)/2 + self.xmin
+        
     def clear( self ):
         for t in self.canvas.find_all():
             self.canvas.delete(t)
 
-        #primal axes
         #xaxis
         px0, py0 = self.p2canv(self.xmin, self.xaxis)
         px1, py1 = self.p2canv(self.xmax, self.xaxis)
@@ -170,16 +259,15 @@ class PolyFit:
         px1, py1 = self.p2canv(self.yaxis, self.ymax)
         self.canvas.create_line( px0, py0, px1, py1, fill=self.axis_color)
 
-
         for x in self.xaxis_ticks:
-            px, py = self.p2canv(x,0)
+            px, py = self.p2canv(x,(self.ymax+self.ymin)/2)
             px0,px1 = px, px 
             py0,py1 = py, py + self.xaxis_tick_height
             self.canvas.create_line( px0, py0, px1, py1, fill=self.axis_color)
             self.canvas.create_text( px1, py1+5, text=str(x), font=("helvetica", 7)) 
             
         for y in self.yaxis_ticks:
-            px, py = self.p2canv(0,y)
+            px, py = self.p2canv((self.xmax+self.xmin)/2,y)
             px0,px1 = px, px + self.yaxis_tick_width
             py0,py1 = py, py
             self.canvas.create_line( px0, py0, px1, py1, fill=self.axis_color)
@@ -188,6 +276,7 @@ class PolyFit:
 
     def redraw_everything( self ):
 
+        self.compute_zoom_and_axes()
         self.clear()
         self.parse_reference_polynomials()
         self.compute_polynomial_fits()
@@ -292,7 +381,7 @@ class PolyFit:
 
             self.ref_polynomial_points[i] = \
                 (x_points, numpy.polyval(numpy.poly1d(ref_poly_coefs), x_points))
-
+        
     def draw_demo(self):
         self.draw_polynomial_fits(self.ref_polynomial_points, fixed_color="darkgray")
         self.draw_polynomial_fits(self.polynomial_points)

@@ -9,25 +9,28 @@
 
 check_setup()
 
+description <-
+	"The plot is of hydrogen bonds with sidechain donor groups and Sp2 sidechain acceptors (eg. in proteins, Asp, Glu, Asn or Gln), filtered for so the sequence separation between the residues of the donor and acceptor groups is greater than 5.
+
+Dimensions of the plot is the direction of the Hydrogen atom from the Acceptor atom. This direction is projected via the Lambert Azmuthal projection with the center point where the Acceptor Base, the Acceptor and the Hydrogen are colinear, the positive X axis is the Anti orbital and the negative X axis is the Syn orbital.T he Syn orbital is in the Acceptor Sp2 plane the Acceptor Base 2, Acceptor Base, Acceptor, and Orbital positions form a trans dihedral angle.
+
+The plot organization is a smooth 2D density for the first sample source and then put points on to it from the second sample source. This is useful, for example, when one wants to determine the likelihood that a few samples (the first sample source) came from the a larger sample source (the second sample source)."
+
 sele <-"
 SELECT
-	geom.AHdist,
-	geom.cosBAH,
-	geom.chi,
-	acc_site.HBChemType AS acc_chem_type,
-	don_site.HBChemType AS don_chem_type
+	geom.cosBAH, geom.chi,
+	acc.HBChemType AS acc_chem_type, don.HBChemType AS don_chem_type
 FROM
 	hbond_geom_coords AS geom,
 	hbonds AS hbond,
-	hbond_sites AS don_site,
-	hbond_sites AS acc_site
+	hbond_sites AS don, hbond_sites AS acc
 WHERE
-  don_site.HBChemType != 'hbdon_PBA' AND
-	( acc_site.HBChemType == 'hbacc_CXL' OR acc_site.HBChemType == 'hbacc_CXA' ) AND
+  don.HBChemType != 'hbdon_PBA' AND
+	(acc.HBChemType == 'hbacc_CXL' OR acc.HBChemType == 'hbacc_CXA') AND
 	hbond.struct_id = geom.struct_id AND hbond.hbond_id = geom.hbond_id AND
-	hbond.struct_id = don_site.struct_id AND hbond.don_id = don_site.site_id AND
-	hbond.struct_id = acc_site.struct_id AND hbond.acc_id = acc_site.site_id AND
-	ABS(don_site.resNum - acc_site.resNum) > 5;";
+	hbond.struct_id = don.struct_id AND hbond.don_id = don.site_id AND
+	hbond.struct_id = acc.struct_id AND hbond.acc_id = acc.site_id AND
+	ABS(don.resNum - acc.resNum) > 5;";
 f <- query_sample_sources(sample_sources, sele)
 
 #equal area projection
@@ -35,52 +38,28 @@ f <- transform(f,
 	capx = 2*sin(acos(cosBAH)/2)*cos(chi),
 	capy = 2*sin(acos(cosBAH)/2)*sin(chi))
 
-##orthographic projection
-#f <- transform(f,
-#	capx = sin(acos(cosBAH))*cos(chi),
-#	capy = sin(acos(cosBAH))*sin(chi))
-
-#capx_limits <- range(f$capx);
-#capy_limits <- range(f$capy)
 capx_limits <- c(-1.5,1.5)
 capy_limits <- capx_limits
 
-f$weight <- radial_3d_normalization(f$AHdist)
-
-jet.colors <-
-  colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
-                     "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
-
 plot_id = "chi_BAH_eqpoldens_and_scatter_scsc_to_sp2"
-#l_ply(levels(f$sample_source), function(ss){
-#	ggplot(data=f) + theme_bw() +
-#		polar_equal_area_grids_bw() +
-#		#geom_bin2d(aes(x=capx, y=capy, fill=log(..count..), weight=weight), binwidth=c(.06, .06)) +
-#    stat_density2d(aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE ) +
-#		#facet_grid(acc_chem_type ~ don_chem_type) +
-#		opts(title = paste("Hydrogen Bonds chi vs BAH Angles with Sequence Separation > 5\nSidechain Hydroxyl Donors to Sidechain Carboxyl Acceptors\nEqual Coordinate Projection   Sample Source: ", ss, sep="")) +
-#		scale_x_continuous('2*sin(BAH/2) * cos(CHI)', limits=capx_limits, breaks=c(-1, 0, 1)) +
-#		scale_y_continuous('2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
-#		coord_fixed(ratio = 1) +
-#		scale_fill_gradientn('Density', colour=jet.colors(10)) +
-##        	opts(legend.position="bottom", legend.direction="horizontal")
-#	save_plots(plot_id, sample_sources[sample_sources$sample_source == ss,], output_dir, output_formats)
-#})
 
 f_first <- f[ f$sample_source == levels(sample_sources$sample_source)[1], ]
 f_second <- f[ f$sample_source == levels(sample_sources$sample_source)[2], ]
 
 ggplot(data=f_first) + theme_bw() +
-		polar_equal_area_grids_bw() +
-		#geom_bin2d(aes(x=capx, y=capy, fill=log(..count..), weight=weight), binwidth=c(.06, .06)) +
-    stat_density2d(aes(x=capx,y=capy, fill=..density..), geom="tile", contour=FALSE ) +
-		#facet_grid(acc_chem_type ~ don_chem_type) +
-		opts(title = paste("Hydrogen Bonds chi vs BAH Angles with Sequence Separation > 5\nSidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\nNatives (density) vs Interface Designs (white circles)")) +
-		scale_x_continuous('2*sin(BAH/2) * cos(CHI)', limits=capx_limits, breaks=c(-1, 0, 1)) +
-		scale_y_continuous('2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
-		coord_fixed(ratio = 1) +
-		scale_fill_gradientn('Density', colour=jet.colors(10)) +
-		geom_point( data=f_second,aes(x=capx,y=capy),colour="white",size=2)
-#        	opts(legend.position="bottom", legend.direction="horizontal")
+	geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
+  stat_density2d(
+		aes(x=capx, y=capy, fill=..density..), geom="tile", contour=FALSE ) +
+	polar_equal_area_grids_bw() +
+	geom_point(data=f_second,aes(x=capx,y=capy),colour="white",size=2) +
+	opts(title =
+		paste("Hydrogen Bonds chi vs BAH Angles with Sequence Separation > 5\n",
+		"Sidechain Donors to Sidechain sp2 Acceptors, Equal Coordinate Projection\n",
+		"Reference (density) vs Test (white circles)", sep="")) +
+	scale_x_continuous(
+		'2*sin(BAH/2) * cos(CHI)', limits=capx_limits, breaks=c(-1, 0, 1)) +
+	scale_y_continuous(
+		'2*sin(BAH/2) * sin(CHI)', limits=capy_limits, breaks=c(-1, 0, 1)) +
+	coord_fixed(ratio = 1) +
+	scale_fill_gradientn('Density', colour=jet.colors(10))
 save_plots(plot_id, sample_sources, output_dir, output_formats)
-

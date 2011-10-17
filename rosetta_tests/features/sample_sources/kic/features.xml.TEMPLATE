@@ -21,6 +21,7 @@
 			<feature name=ResidueSecondaryStructureFeatures/>
 			<feature name=ResidueTypesFeatures/>
 			<feature name=RotamerRecoveryFeatures scorefxn=s/>
+			<feature name=SaltBridgeFeatures/>
 			<feature name=StructureScoresFeatures scorefxn=s/>
                 </ReportToDB>
         </MOVERS>

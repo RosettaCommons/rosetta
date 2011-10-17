@@ -86,6 +86,8 @@ GeomIndicator <- proto(Geom, {
   default_stat <- function(.) StatIdentity
   icon <- function(.) textGrob("text", gp=gpar(cex=1.2))
   desc <- "Count Instances"
+  required_aes <- c("indicator")
+  default_aes <- function(.) aes(colour="black", xpos="right", ypos="top", xjust="right", yjust="top", size=5)
   guide_geom <- function(x) "text"
   example <- function(.){
     data <- rbind(

@@ -13,6 +13,7 @@
 			<feature name=HBondParameterFeatures scorefxn=s/>
 			<feature name=OrbitalsFeatures/>
 			<feature name=PairFeatures/>
+			<feature name=PdbDataFeatures/>
 			<feature name=PoseCommentsFeatures/>
 			<feature name=PoseConformationFeatures/>
 			<feature name=ProteinBackboneTorsionAngleFeatures/>

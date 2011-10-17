@@ -73,17 +73,21 @@ d_ply(f, .(sample_source), function(sub_f){
 	plot_id = paste("AHchi_AHD_eq_polar_density_bbbb_by_sec_struct", ss_id, sep="_")
 	ggplot(data=sub_f) + theme_bw() +
 		geom_rect(aes(xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf), fill="#00007F") +
-		stat_density2d(aes(x=capx,y=capy, fill=log(..density..+1)), geom="tile", contour=FALSE) +
+		stat_density2d(
+			aes(x=capx,y=capy, fill=log(..density..+1)), geom="tile", contour=FALSE) +
 		polar_equal_area_grids_bw() +
 		geom_indicator(aes(indicator=counts)) +
 		facet_wrap(~don_dssp) +
-		opts(title = paste("Backbone Backbone Hydrogen Bonds AHchi vs AHD Angles\nEqual Coordinate Projection   Sample Source: ", ss_id, sep="")) +
-		scale_x_continuous('2*sin(AHD/2) * cos(AHchi)', limits=capx_limits, breaks=c(-1, 0, 1)) +
-		scale_y_continuous('2*sin(AHD/2) * sin(AHchi)', limits=capy_limits, breaks=c(-1, 0, 1)) +
+		opts(title =
+			paste("Backbone Backbone Hydrogen Bonds AHchi vs AHD Angles\n",
+			"Equal Coordinate Projection   Sample Source: ", ss_id, sep="")) +
+		scale_x_continuous(
+			'2*sin(AHD/2) * cos(AHchi)', limits=capx_limits, breaks=c(-1, 0, 1)) +
+		scale_y_continuous(
+			'2*sin(AHD/2) * sin(AHchi)', limits=capy_limits, breaks=c(-1, 0, 1)) +
 		coord_fixed(ratio = 1) +
 		scale_fill_gradientn('log(Density+1)', colour=jet.colors(10)) +
 		opts(legend.position=c(.78,.23))
 	save_plots(plot_id, sample_sources[sample_sources$sample_source == ss_id,],
 		output_dir, narrow_output_formats)
-
 })
