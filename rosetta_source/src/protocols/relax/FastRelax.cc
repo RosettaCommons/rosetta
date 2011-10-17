@@ -329,17 +329,18 @@ core::pose::Pose const & pose
 	std::string const scorefxn( tag->getOption<std::string>( "scorefxn", "score12" ));
 	//set_scorefxn( new core::scoring::ScoreFunction( *data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn) ) );
 	//fpd ^^^ please use clone()
-	set_scorefxn( data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn)->clone() );
-	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
-	mm->set_chi( true );
-	mm->set_bb( true );
-	mm->set_jump( true );
-	set_movemap(mm);
+  set_scorefxn( data.get< core::scoring::ScoreFunction * >( "scorefxns", scorefxn)->clone() );
 
- 	movemap_tag_ = new utility::tag::Tag( *tag ); // this will be parsed at apply time
+  core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
+  mm->set_chi( true );
+  mm->set_bb( true );
+  mm->set_jump( true );
 
-	set_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
- 	protocols::rosetta_scripts::parse_movemap( movemap_tag_, pose, get_movemap() );
+  set_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
+
+  // initially, all backbone torsions are movable
+  protocols::rosetta_scripts::parse_movemap( tag, pose, mm, data, false);
+  set_movemap(mm);
 
 	default_repeats_ = tag->getOption< int >( "repeats", 8 );
 	std::string script_file = tag->getOption< std::string >("relaxscript", "" );
