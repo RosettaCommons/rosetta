@@ -31,6 +31,8 @@
 namespace protocols {
 namespace medal {
 
+/// @class Alternating rigid body and fragment insertion moves with
+/// a linearly increasing chainbreak
 class MedalMover : public protocols::moves::Mover {
   typedef utility::vector1<double> Probabilities;
 
@@ -89,7 +91,6 @@ class MedalMover : public protocols::moves::Mover {
   /// @brief Configures a basic score functions which callers can then specialize
   core::scoring::ScoreFunctionOP score_function() const;
 
- private:
   core::fragment::FragSetOP fragments_sm_;
   core::fragment::FragSetOP fragments_lg_;
 };

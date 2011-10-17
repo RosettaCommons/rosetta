@@ -46,8 +46,8 @@ sources = {
                #"contact_map_from_homologs",
     ],
         "pilot/cmiles" : [
-            #"count_violations",
             "medal",
+            "medal_free",
             "nonlocal_abinitio",
         ],
 	"pilot/delucasl" : [

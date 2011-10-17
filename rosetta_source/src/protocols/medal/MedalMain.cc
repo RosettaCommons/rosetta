@@ -31,6 +31,7 @@
 
 // Package headers
 #include <protocols/medal/MedalMover.hh>
+#include <protocols/medal/MedalFreeMover.hh>
 
 namespace protocols {
 namespace medal {
@@ -62,6 +63,23 @@ void* Medal_main(void*) {
   check_required();
 
   MoverOP mover = new MedalMover();
+  try {
+    JobDistributor::get_instance()->go(mover);
+  } catch (utility::excn::EXCN_Base& e) {
+    std::cerr << "Exception: " << std::endl;
+    e.show(std::cerr);
+  }
+  return 0;
+}
+
+void* MedalFree_main(void*) {
+  using protocols::jd2::JobDistributor;
+  using protocols::moves::MoverOP;
+
+  // Ensure that required arguments have been specified
+  check_required();
+
+  MoverOP mover = new MedalFreeMover();
   try {
     JobDistributor::get_instance()->go(mover);
   } catch (utility::excn::EXCN_Base& e) {

@@ -324,11 +324,13 @@ protocols::moves::MoverOP MedalMover::fresh_instance() const {
   return new MedalMover();
 }
 
-protocols::moves::MoverOP create_fragment_mover(core::scoring::ScoreFunctionOP score,
-                                                core::fragment::FragSetOP fragments,
-                                                const Probabilities& probs,
-                                                const std::string& policy,
-                                                unsigned library_size) {
+protocols::moves::MoverOP MedalMover::create_fragment_mover(
+    core::scoring::ScoreFunctionOP score,
+    core::fragment::FragSetOP fragments,
+    const Probabilities& probs,
+    const std::string& policy,
+    unsigned library_size) const {
+
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using namespace protocols::moves;
@@ -349,12 +351,14 @@ protocols::moves::MoverOP create_fragment_mover(core::scoring::ScoreFunctionOP s
     return mover;
 }
 
-protocols::moves::MoverOP MedalMover::create_fragment_and_rigid_mover(const core::pose::Pose& pose,
-                                                                      core::scoring::ScoreFunctionOP score,
-                                                                      core::fragment::FragSetOP fragments,
-                                                                      const Probabilities& probs,
-                                                                      const std::string& policy,
-                                                                      unsigned library_size) const {
+protocols::moves::MoverOP MedalMover::create_fragment_and_rigid_mover(
+    const core::pose::Pose& pose,
+    core::scoring::ScoreFunctionOP score,
+    core::fragment::FragSetOP fragments,
+    const Probabilities& probs,
+    const std::string& policy,
+    unsigned library_size) const {
+
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using namespace protocols::moves;

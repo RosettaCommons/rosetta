@@ -7,25 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/medal/MedalMain.hh
+/// @file protocols/medal/MedalFreeMover.fwd.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_MEDAL_MEDAL_MAIN_HH_
-#define PROTOCOLS_MEDAL_MEDAL_MAIN_HH_
+#ifndef PROTOCOLS_MEDAL_MEDAL_FREE_MOVER_FWD_HH_
+#define PROTOCOLS_MEDAL_MEDAL_FREE_MOVER_FWD_HH_
+
+#include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace protocols {
 namespace medal {
 
-/// @brief Primary entry point for Medal protocol
-void* Medal_main(void*);
-
-/// @brief Primary entry point for Medal protocol
-void* MedalFree_main(void*);
-
-/// @brief Ensures that required program options have been specified
-void check_required();
+class MedalFreeMover;
+typedef utility::pointer::owning_ptr<MedalFreeMover> MedalFreeMoverOP;
+typedef utility::pointer::owning_ptr<MedalFreeMover const> MedalFreeMoverCOP;
 
 }  // namespace medal
 }  // namespace protocols
 
-#endif  // PROTOCOLS_MEDAL_MEDAL_MAIN_HH_
+#endif  // PROTOCOLS_MEDAL_MEDAL_FREE_MOVER_FWD_HH_

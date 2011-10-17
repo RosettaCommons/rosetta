@@ -221,6 +221,8 @@ main( int argc, char * argv [] )
 			protocols::nonlocal::NonlocalAbinitio_main(NULL);
 		} else if ( option[ run::protocol ]() == "medal" ) {
 			protocols::medal::Medal_main(NULL);
+		} else if ( option[ run::protocol ]() == "medal_free" ) {
+			protocols::medal::MedalFree_main(NULL);
 		} else if ( option[ run::protocol ]() == "rbsegmentrelax" ) {
 			protocols::RBSegmentRelax_main( true );
 		} else if ( option[ run::protocol ]() == "boinc_debug" ) {

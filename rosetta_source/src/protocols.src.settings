@@ -15,6 +15,7 @@ sources = {
 	],
         "protocols/medal" : [
             "MedalMain",
+            "MedalFreeMover",
             "MedalMover",
             "util",
         ],
