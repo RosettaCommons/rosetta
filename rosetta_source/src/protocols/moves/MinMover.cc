@@ -183,7 +183,7 @@ MinMover::apply( pose::Pose & pose_ )
 
   // emit statistics
   scorefxn_->show(TR.Debug, pose_);
-  TR.flush();
+  TR.Debug << std::endl;
 }
 
 std::string
