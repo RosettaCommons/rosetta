@@ -12,8 +12,8 @@
 /// @detailed
 ///
 ///
-/// @author Oliver Lange
-
+/// @author Nikolas Sgourakis ?
+///
 
 
 // Unit Headers
@@ -49,7 +49,7 @@ namespace evaluation {
 
 using namespace core;
 
-#ifdef NATCL 
+#ifdef NATCL
 #define system(a) 1
 #endif
 
