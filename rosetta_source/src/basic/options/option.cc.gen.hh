@@ -1177,7 +1177,7 @@ option.add( basic::options::OptionKeys::lh::min_bbrms, "No description" ).def(0.
 option.add( basic::options::OptionKeys::lh::max_bbrms, "No description" ).def(100000.0);
 option.add( basic::options::OptionKeys::lh::min_rms, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::lh::max_rms, "No description" ).def(100.0);
-option.add( basic::options::OptionKeys::lh::max_radius, "No description" ).def(4.0);
+option.add( basic::options::OptionKeys::lh::max_radius, "No description" ).def(4);
 option.add( basic::options::OptionKeys::lh::grid_space_multiplier, "No description" ).def(1);
 option.add( basic::options::OptionKeys::lh::grid_angle_multiplier, "No description" ).def(2.5);
 option.add( basic::options::OptionKeys::lh::skim_size, "No description" ).def(100);
