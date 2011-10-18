@@ -305,6 +305,7 @@ namespace docking { namespace symmetry { BooleanOptionKey const minimize_backbon
 namespace docking { namespace symmetry { BooleanOptionKey const minimize_sidechains( "docking:symmetry:minimize_sidechains" );  } }
 namespace pH { BooleanOptionKey const pH( "pH" );  }
 namespace pH { BooleanOptionKey const pH_mode( "pH:pH_mode" );  }
+namespace pH { BooleanOptionKey const keep_input_protonation_state( "pH:keep_input_protonation_state" );  }
 namespace pH { RealOptionKey const value_pH( "pH:value_pH" );  }
 namespace pH { namespace calc_pka { BooleanOptionKey const calc_pka( "pH:calc_pka" );  } }
 namespace pH { namespace calc_pka { IntegerOptionKey const pka_for_resno( "pH:calc_pka:pka_for_resno" );  } }

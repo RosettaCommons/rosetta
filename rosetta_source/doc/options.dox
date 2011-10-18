@@ -1463,6 +1463,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-keep_input_protonation_state</b> \<Boolean\><dt>
+<dd>Read in residue protonation states from input pdb?</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-value_pH</b> \<Real\><dt>
 <dd>pH value input for the pHEnergy score</dd><br>
 <dd>Default: 7.0</dd><br>

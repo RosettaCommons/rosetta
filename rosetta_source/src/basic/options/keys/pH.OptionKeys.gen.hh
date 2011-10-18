@@ -23,6 +23,7 @@ namespace OptionKeys {
 
 namespace pH { extern BooleanOptionKey const pH; }
 namespace pH { extern BooleanOptionKey const pH_mode; }
+namespace pH { extern BooleanOptionKey const keep_input_protonation_state; }
 namespace pH { extern RealOptionKey const value_pH; }
 namespace pH { namespace calc_pka { extern BooleanOptionKey const calc_pka; } }
 namespace pH { namespace calc_pka { extern IntegerOptionKey const pka_for_resno; } }

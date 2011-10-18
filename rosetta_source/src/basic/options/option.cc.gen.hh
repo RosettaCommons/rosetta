@@ -310,6 +310,7 @@ option.add( basic::options::OptionKeys::docking::symmetry::minimize_backbone, "A
 option.add( basic::options::OptionKeys::docking::symmetry::minimize_sidechains, "Allow protein sidechains to minimize? " ).def(false);
 option.add( basic::options::OptionKeys::pH::pH, "pH option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::pH::pH_mode, "Allow protonated/deprotonated versions of the residues based on pH" ).def(false);
+option.add( basic::options::OptionKeys::pH::keep_input_protonation_state, "Read in residue protonation states from input pdb?" ).def(false);
 option.add( basic::options::OptionKeys::pH::value_pH, "pH value input for the pHEnergy score" ).def(7.0);
 option.add( basic::options::OptionKeys::pH::calc_pka::calc_pka, "calc_pka option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::pH::calc_pka::pka_for_resno, "Residue no whose pKa value is to be determined" ).def(-1);
@@ -1159,10 +1160,10 @@ option.add( basic::options::OptionKeys::wum::n_slaves_per_master, "A value betwe
 option.add( basic::options::OptionKeys::wum::n_masters, "Manual override for -n_slaves_per_master. How many master nodes should be spawned ? 1 by default. generall 1 for eery 256-512 cores is recommended depending on master workload" ).def(1);
 option.add( basic::options::OptionKeys::wum::memory_limit, "Memory limit for queues (in kB) " ).def(0);
 option.add( basic::options::OptionKeys::wum::extra_scorefxn, "Extra score function for post-batchrelax-rescoring" );
+option.add( basic::options::OptionKeys::wum::extra_scorefxn_ref_structure, "Extra score function for post-batchrelax-rescoring reference structure for superimposition (for scorefunctions that depend on absolute coordinates such as electron denisty)" );
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::wum::extra_scorefxn_ref_structure, "Extra score function for post-batchrelax-rescoring reference structure for superimposition (for scorefunctions that depend on absolute coordinates such as electron denisty)" );
-option.add( basic::options::OptionKeys::wum::extra_scorefxn_relax, "After doing batch relax and adding any extra_scorefunction terms do another N fast relax rounds (defaut=0)" ).def(0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::wum::extra_scorefxn_relax, "After doing batch relax and adding any extra_scorefunction terms do another N fast relax rounds (defaut=0)" ).def(0);
 option.add( basic::options::OptionKeys::wum::trim_proportion, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::lh::lh, "lh option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::lh::db_prefix, "stem for loop database" ).def("loopdb");
@@ -1738,11 +1739,11 @@ option.add( basic::options::OptionKeys::AnchoredDesign::akash::akash, "akash opt
 option.add( basic::options::OptionKeys::AnchoredDesign::akash::dyepos, "dye position" ).def(0);
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::testing, "testing option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::VDW_weight, "centroid VDW weight; testing if 2 better than 1" ).lower(0).def(1.0);
+option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_via_constraints, "allow anchor&jump to move; anchor held in place via constraints - you must specify constraints!" ).def(false);
+option.add( basic::options::OptionKeys::AnchoredDesign::testing::delete_interface_native_sidechains, "benchmarking option.  delete input sidechains as prepacking step before running centroid or fullatom phases.  use if also using use_input_sc and doing benchmarking.  use_input_sc is used because of sidechain minimization, not to maintain input sidechains." );
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_via_constraints, "allow anchor&jump to move; anchor held in place via constraints - you must specify constraints!" ).def(false);
-option.add( basic::options::OptionKeys::AnchoredDesign::testing::delete_interface_native_sidechains, "benchmarking option.  delete input sidechains as prepacking step before running centroid or fullatom phases.  use if also using use_input_sc and doing benchmarking.  use_input_sc is used because of sidechain minimization, not to maintain input sidechains." );
-option.add( basic::options::OptionKeys::AnchoredDesign::testing::RMSD_only_this, "Perform only RMSD calculations without modifying input.  Only used for re-running metrics during benchmarking/debugging." );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::AnchoredDesign::testing::RMSD_only_this, "Perform only RMSD calculations without modifying input.  Only used for re-running metrics during benchmarking/debugging." );
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_noise_constraints_mode, "Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor's placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer's commentary." ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::DenovoProteinDesign, "DenovoProteinDesign option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "redesign core of pdb" ).def(false);
