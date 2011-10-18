@@ -157,7 +157,8 @@ public:
 		min3_scorefxn_->set_weight( core::scoring::cart_bonded, lowres_scorefxn_->get_weight( core::scoring::cart_bonded ) );
 		min3_scorefxn_->set_weight( core::scoring::rama, lowres_scorefxn_->get_weight( core::scoring::rama ) );
 		min3_scorefxn_->set_weight( core::scoring::omega, lowres_scorefxn_->get_weight( core::scoring::omega ) );
-		min3_scorefxn_->set_weight( core::scoring::atom_pair_constraint, lowres_scorefxn_->get_weight( core::scoring::atom_pair_constraint ) );
+		min3_scorefxn_->set_weight( core::scoring::atom_pair_constraint,
+			0.1*lowres_scorefxn_->get_weight( core::scoring::atom_pair_constraint ) );
 
 		// change VDW set
 		core::scoring::methods::EnergyMethodOptions lowres_options(lowres_scorefxn_->energy_method_options());
@@ -408,7 +409,7 @@ public:
 	
 				core::Size neffcycles = option[ fpd::ncycles ]();
 
-				if (m==1) neffcycles = 5;
+				if (m==1) neffcycles = 1;
 
 				for (int n=1; n<=neffcycles; ++n) {
 					// superimpose frag
@@ -426,13 +427,9 @@ public:
 					core::Size action = 0;
 	
 					if (m==1) {
-						//if (n%STAGE1STEP == 1)
-							action = 1;
-						//else
-						//	if (action_picker < 0.5) action = 2;
-						//	else action = 4;
+						action = 1;
 					} else if (m==2) {
-						action = 4;
+						action = 2;
 						if (action_picker < 0.2) action = 5;
 					} else if (m==3) {
 						action = 4;
@@ -526,13 +523,8 @@ public:
 						(*min3_scorefxn_)(pose);
 						minimizer.run( pose, mm, *min3_scorefxn_, options );
 	
-						if (m>1)
-							mc->boltzmann( pose , action_string );
-						else { // m==1
-							minimizer.run( pose, mm, *min3_scorefxn_, options_minilbfgs );
-							mc->boltzmann( pose , action_string );
-						}
-					} catch( utility::excn::EXCN_Base& excn ) {  // bad hbond shit
+						mc->boltzmann( pose , action_string );
+					} catch( utility::excn::EXCN_Base& excn ) {
 						mc->recover_low(pose);
 					}
 					if (n%100 == 0) {

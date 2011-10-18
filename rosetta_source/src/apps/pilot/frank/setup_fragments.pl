@@ -368,9 +368,13 @@ foreach my $i (0..$#ARGV) {
 
 	foreach my $frag (0..$nfrags-1) {
 		my $outfile = $pdb;
+
+		next if scalar( @{ $allfrags{$pdb}->[$frag] } <=5 );
+
 		$outfile =~ s/.*\///;
 		$outfile =~ s/\.pdb$/_$frag.$i.pdb/;
 		open (PDB, ">fragments/$outfile") || print STDERR "Cannot open $_";
+
 		foreach my $line (@{ $allfrags{$pdb}->[$frag] }) {
 			my $newX = [ substr ($line, 30, 8), substr ($line, 38, 8), substr ($line, 46, 8) ];
 			$newX = vsub( $newX, $preTs->[$i]);
@@ -400,7 +404,7 @@ foreach my $mdl (0..$#ARGV) {
 		my $id = " CA "."A".$i;
 	
 		# add it to pseudotrace
-		if (defined $bbatoms{$pdb}->{$id}) {
+		if (defined $bbatoms{$pdb}->{$id} && $fraglens{$pdb}->{ $id } > 5 ) {
 			$gaps[$i] = 0;
 			$last_ungapped = $i;
 			foreach my $atm (" N  ", " CA ", " C  ", " O  ") {
