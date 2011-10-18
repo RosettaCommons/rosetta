@@ -7,25 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file src/protocols/idealize/IdealizeMover.fwd.hh
-/// @brief protocols for idealizing a Pose
+/// @file src/protocols/loophash/FastGapMover.fwd.hh
+/// @brief Closes gaps
 /// @author
 
 
-#ifndef INCLUDED_protocols_idealize_IdealizeMover_fwd_hh
-#define INCLUDED_protocols_idealize_IdealizeMover_fwd_hh
+#ifndef INCLUDED_protocols_loophash_FastGapMover_fwd_hh
+#define INCLUDED_protocols_loophash_FastGapMover_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
-namespace idealize {
+namespace loophash {
 
 // Forward
-class IdealizeMover;
+class FastGapMover;
 
 // Types
-typedef utility::pointer::owning_ptr< IdealizeMover > IdealizeMoverOP;
-typedef utility::pointer::owning_ptr< IdealizeMover const > IdealizeMoverCOP;
+typedef utility::pointer::owning_ptr< FastGapMover > FastGapMoverOP;
+typedef utility::pointer::owning_ptr< FastGapMover const > FastGapMoverCOP;
 
 }
 }

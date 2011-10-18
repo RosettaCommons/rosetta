@@ -695,6 +695,7 @@ sources = {
 		"MPI_LoopHashRefine_Master",
 		"Mover_LoopHashRefine",
 		"LoopHashMoverWrapper",
+    "FastGapMover",
 	],
 
 	"protocols/loops" : [
