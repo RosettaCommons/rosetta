@@ -4,6 +4,55 @@ import Tkinter, tkFileDialog, tkSimpleDialog
 import numpy
 import inspect, warnings
 
+from cvxopt import lapack, matrix
+
+def fit_polynomial(X, Y, d):
+    m = len(X)
+    assert(len(Y) == m)
+
+    A = matrix( [[X**k] for k in xrange(d)])
+
+   # make a deep copy of Y
+    xls = +Y
+    
+    # general least-squares: minimize ||A*x - y||_2
+    lapack.gels(+A,xls)
+    xls = xls[:d]
+
+    return xls
+
+def fit_polynomial_constrained(X, Y, d, x0, y0):
+    m = len(X)
+    assert(len(Y) == m)
+
+    A = matrix( [[X**k] for k in xrange(d)])
+
+    G = matrix(0.0, (2,d))
+    G[0, range(d)] = matrix([[x0**k] for k in xrange(d)])
+    G[1, range(1,d)] = matrix([[k*x0**(k-1)] for k in xrange(1,d)])
+    
+    # LS fit
+    #
+    #     minimize    (1/2) * || A*x - Y ||_2^2
+    #     subject to  G*x = h
+    #
+    # Solve as a linear equation
+    #
+    #     [ A'*A  G' ] [ x ]   [ A'*Y ]
+    #     [ G     0  ] [ Y ] = [ 0    ].
+    
+    K = matrix(0.0, (d+2,d+2))
+    K[:d,:d] = A.T * A
+    K[d:,:d] = G
+    xls = matrix(0.0, (d+2,1))
+    xls[:d] = A.T * Y
+    xls[d] = y0
+    lapack.sysv(K, xls)
+    xls = xls[:d]
+    return xls
+
+
+
 def lineno():
     """Returns the current line number in our program."""
     return inspect.currentframe().f_back.f_lineno
@@ -29,7 +78,7 @@ class PolyFit:
         self.axis_color = "white"
 
 
-        self.polynomial_dimensions = [2,3,4,5,6,7,8]
+        self.polynomial_dimensions = [3,4,5,6,7,8]
         self.nbins = 200
 
         self.coefficient_precision = 3
@@ -44,7 +93,8 @@ class PolyFit:
         self.build_poly_frame(self.panel_frame)
         # inserting them in reverse order because it works...
         self.build_zoom_frame(self.panel_frame)
-        self.build_reflect_frame(self.panel_frame)
+        self.build_minima_frame(self.panel_frame)
+#        self.build_reflect_frame(self.panel_frame)
         self.build_reference_polys_frame(self.panel_frame)
 
 
@@ -55,12 +105,14 @@ class PolyFit:
         self.canvas.pack(side="top")
         
         self.btn_makeart = Tkinter.Button(\
-            self.main, text="clear", command=self.clear )
+            self.main, text="clear", command=self.clear_callback )
         self.btn_makeart.pack(side="top")
 
         self.main.bind("<Button-1>", self.event_lclick )
         self.main.bind("<Button-3>", self.event_rclick )
 
+
+        self.minima = [None, None]
 
         self.control_points = initial_control_points
         self.control_point_widgets = []
@@ -110,6 +162,24 @@ class PolyFit:
         self.reflect_value = Tkinter.Entry(self.reflect_frame, textvariable=self.reflect_var)
         self.reflect_value.pack(side="right", expand=1, fill=Tkinter.X)
         self.reflect_frame.pack(side="bottom", expand=1, fill=Tkinter.X)
+
+    def build_minima_frame(self, parent):
+        self.minima_frame = Tkinter.Frame(parent)
+        self.minima_x_label= Tkinter.Label(self.minima_frame, text="Minima x:")
+        self.minima_x_label.pack(side="left")
+        self.minima_x_var = Tkinter.StringVar()
+        self.minima_x_var.trace("w", self.minima_x_var_callback)
+        self.minima_x_value = Tkinter.Entry(self.minima_frame, textvariable=self.minima_x_var)
+        self.minima_x_value.pack(side="left", expand=1, fill=Tkinter.X)
+
+        self.minima_y_label = Tkinter.Label(self.minima_frame, text="y:")
+        self.minima_y_label.pack(side="left")
+        self.minima_y_var = Tkinter.StringVar()
+        self.minima_y_var.trace("w", self.minima_y_var_callback)
+        self.minima_y_value = Tkinter.Entry(self.minima_frame, textvariable=self.minima_y_var)
+        self.minima_y_value.pack(side="left", expand=1, fill=Tkinter.X)
+
+        self.minima_frame.pack(side="bottom", expand=1, fill=Tkinter.X)
 
     def build_reference_polys_frame(self, parent):
         self.reference_polys_frame = Tkinter.Frame(parent)
@@ -163,6 +233,23 @@ class PolyFit:
         print lineno(), "setting reflection to y=%s" % self.reflect_var.get()
         self.redraw_everything()
 
+    def minima_x_var_callback(self, name, index, mode):
+        try:
+            self.minima[0] = float(self.minima_x_var.get())
+            print lineno(), "setting minima x value to x=%s" % self.minima_x_var.get()
+        except:
+            self.minima[0] = None
+
+        self.redraw_everything()
+
+    def minima_y_var_callback(self, name, index, mode):
+        try:
+            self.minima[1] = float(self.minima_y_var.get())
+            print lineno(), "setting minima y value to y=%s" % self.minima_y_var.get()
+        except:
+            self.minima[1] = None
+
+        self.redraw_everything()
 
     def zoom_xmin_var_callback(self, name, index, mode):
         try:
@@ -212,15 +299,15 @@ class PolyFit:
             self.ymax = new_ymax
             self.redraw_everything()
 
+    def clear_callback(self):
+        self.control_points = []
+        self.redraw_everything()
 
 
     def test_diagnostics(self):
-
         self.control_points = [(0,0), (1,1), (2,0)]
         self.compute_polynomial_fits()
-
         self.redraw_everything()
-
 
 
     def p2canv( self, x, y):
@@ -342,6 +429,28 @@ class PolyFit:
         x_points = [float(x)*(self.xmax - self.xmin)/self.nbins + self.xmin for x in range(self.nbins)]
         return x_points
 
+
+    def fit_polynomials_using_polyfit(self, xs, ys, d):
+        # silence RankWarning
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            coefs = numpy.polyfit(xs, ys, deg=d-1)
+        return coefs
+
+
+    def fit_polynomials_using_cvxopt(self, xs, ys, d):
+        coefs = fit_polynomial(matrix(xs), matrix(ys), d)
+        coefs = numpy.array(coefs.T)[0]
+        coefs = coefs[::-1]
+        return coefs
+
+    def fit_polynomials_constrained_using_cvxopt(self, xs, ys, d, minima):
+        coefs = fit_polynomial_constrained(matrix(xs), matrix(ys), d, minima[0], minima[1])
+        coefs = numpy.array(coefs.T)[0]
+        coefs = coefs[::-1]
+        return coefs
+
+
     def compute_polynomial_fits(self):
         x_points = self.polynomial_x_points()
         
@@ -354,18 +463,23 @@ class PolyFit:
             ys = [p[1] for p in self.control_points]
 
 
-            try:
-                ry = float(self.reflect_var.get()) 
-            except:
-                ry = None
-            if self.reflect_check_var.get() and ry is not None:
-                xs.extend([2*ry - p[0] for p in self.control_points])
-                ys.extend(ys)
+# This is used to reflect the points across a line. The point of this
+# was to control the derivative at a point Now just set the point of
+# the minima.
+#            try:
+#                ry = float(self.reflect_var.get()) 
+#            except:
+#                ry = None
+#            if self.reflect_check_var.get() and ry is not None:
+#                xs.extend([2*ry - p[0] for p in self.control_points])
+#                ys.extend(ys)
 
-            # silence RankWarning
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
-                coefs = numpy.polyfit(xs,ys,deg=d)
+            
+            #coefs = self.fit_polynomials_using_polyfit(xs, ys, d)
+            if self.minima[0] is None or self.minima[1] is None:
+                coefs = self.fit_polynomials_using_cvxopt(xs, ys, d)
+            else:
+                coefs = self.fit_polynomials_constrained_using_cvxopt(xs, ys, d, self.minima)
 
             self.polynomial_coefficients[d] = coefs
 
