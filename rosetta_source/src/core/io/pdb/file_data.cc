@@ -668,7 +668,7 @@ build_pose_as_is1(
 			if ( rsd_type.aa() == aa_cys && rsd_type.has_variant_type( DISULFIDE ) && pdb_name != "CYD" ) {
 				continue;
 			}
-			if ( !basic::options::option[ basic::options::OptionKeys::pH::pH_mode ]() &&
+			if ( !basic::options::option[ basic::options::OptionKeys::pH::keep_input_protonation_state ]() &&
 				( rsd_type.has_variant_type( PROTONATED ) || rsd_type.has_variant_type( DEPROTONATED ) )){
 				continue;
 			}
