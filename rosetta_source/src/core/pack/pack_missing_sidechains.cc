@@ -55,34 +55,10 @@ pack_missing_sidechains(
 	core::pack::task::PackerTaskOP task = core::pack::task::TaskFactory::create_packer_task( pose );
 	task->initialize_from_command_line();
 	task->restrict_to_repacking();
-	utility::vector1_bool repackable( pose.total_residue() );
-	bool any_missing(false);
 
-	//set up the PackerTask
-	//iterate over all sidechain atoms, and compare to the state of the input missing map.
-	for( core::Size resid(1); resid <= pose.total_residue(); ++resid ){
-
-		//iterate over all heavy sidechain atoms
-		core::chemical::ResidueType const & restype(pose.residue_type(resid));
-		for( core::Size atomno(restype.first_sidechain_atom()), end(restype.nheavyatoms()); atomno <= end; ++atomno){
-			core::id::AtomID atomid(atomno, resid);
-			//if the atom is missing and not a virtual atom...
-			if( 	missing.get(atomid) &&
-					restype.atom_type(atomno).name() != "VIRT"  &&
-					restype.atom_type(atomno).name() != "ORBS"  &&
-					restype.atom_type(atomno).name() != "LPbb"
-
-			) {
-				TR << "packing residue number " << resid << " because of missing atom number " << atomno << " atom name "
-						<< restype.atom_name(atomno) << std::endl;
-				repackable[resid] = true;
-				any_missing = true;
-				break; //we can stop now
-			}
-		}//for all sidechain heavyatoms
-	}//all residues
-
-	if(!any_missing) return; //return early - prevents weird "0 residues at 0 positions" packer calls
+	utility::vector1_bool repackable;
+	bool something_to_pack = figure_out_repackable_residues( pose, missing, repackable );
+	if (!something_to_pack) return;
 
 	//task is set up
 	task->restrict_to_residues(repackable);
@@ -93,6 +69,39 @@ pack_missing_sidechains(
 	core::pack::pack_rotamers( pose, *sfxn, task );
 }//pack_missing_sidechains
 
+
+bool figure_out_repackable_residues( core::pose::Pose & pose,
+	core::id::AtomID_Mask const & to_repack,
+	utility::vector1_bool& repackable
+) {
+	repackable.resize( pose.total_residue() );
+	bool any_to_repack(false);
+
+	//set up the PackerTask
+	//iterate over all sidechain atoms, and compare to the state of the input missing map.
+	for ( core::Size resid(1); resid <= pose.total_residue(); ++resid ) {
+
+		//iterate over all heavy sidechain atoms
+		core::chemical::ResidueType const & restype(pose.residue_type(resid));
+
+		for( core::Size atomno=restype.first_sidechain_atom(); atomno <= restype.nheavyatoms(); ++atomno) {
+			core::id::AtomID atomid(atomno, resid);
+			//if the atom is to_repack and not a virtual atom...
+			if ( to_repack.get(atomid) &&
+				restype.atom_type(atomno).name() != "VIRT"  &&
+				restype.atom_type(atomno).name() != "ORBS"  &&
+				restype.atom_type(atomno).name() != "LPbb"
+			) {
+				TR << "packing residue number " << resid << " because of missing atom number " << atomno << " atom name "
+					 << restype.atom_name(atomno) << std::endl;
+				repackable[resid] = true;
+				any_to_repack = true;
+				break; //we can stop now
+			}
+		}//for all sidechain heavyatoms
+	}//all residues
+	return any_to_repack; //return early - prevents weird "0 residues at 0 positions" packer calls
+}
 
 } //namespace pack
 } //namespace core

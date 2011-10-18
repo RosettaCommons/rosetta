@@ -885,6 +885,7 @@ sources = {
 		"RepeatMover",
 		"ResId",
 		"ReturnSidechainMover",
+                "RepackSidechainsMover",
 		"ReportToDB",
 		"RepulsiveOnlyMover",
 		"rigid_body_moves",

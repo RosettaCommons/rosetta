@@ -17,6 +17,7 @@
 // Project headers
 #include <core/id/AtomID_Mask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace core {
 namespace pack {
@@ -25,7 +26,14 @@ namespace pack {
 void
 pack_missing_sidechains(
 	pose::Pose & pose,
-	id::AtomID_Mask const & missing
+	id::AtomID_Mask const& missing
+);
+
+///@brief return vector of bools with true for each residue that has >=1 atom in to_repack that is not VIRT, ORBS or LPbb
+bool figure_out_repackable_residues(
+  core::pose::Pose & pose,
+	core::id::AtomID_Mask const& to_repack,
+	utility::vector1_bool& repackable
 );
 
 

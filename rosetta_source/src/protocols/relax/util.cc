@@ -124,10 +124,6 @@ void setup_membrane_topology( pose::Pose & pose, std::string spanfile ) {
   topology.initialize(spanfile);
 }
 
-
-
-
-
 void relax_pose( pose::Pose& pose, core::scoring::ScoreFunctionOP scorefxn, std::string const& tag ) {
 	using namespace basic::options;
 	RelaxProtocolBaseOP protocol( generate_relax_from_cmd() );

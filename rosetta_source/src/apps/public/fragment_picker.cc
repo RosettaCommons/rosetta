@@ -1,8 +1,11 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
 // (c) Copyright Rosetta Commons Member Institutions.
 // (c) This file is part of the Rosetta software suite and is made available under license.
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
-// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+// (c) addresse
 #include <devel/init.hh>
 
 // utility headers
@@ -47,94 +50,94 @@ using namespace basic::options::OptionKeys;
 
 void register_options() {
 
-	OPT(in::file::native);
-	OPT(in::file::s);
-	OPT(in::file::xyz);
-	OPT(in::file::fasta);
-	OPT(in::file::pssm);
-	OPT(in::file::checkpoint);
-	OPT(in::file::talos_phi_psi);
-	OPT(in::file::torsion_bin_probs);
-	OPT(in::path::database);
+  OPT(in::file::native);
+  OPT(in::file::s);
+  OPT(in::file::xyz);
+  OPT(in::file::fasta);
+  OPT(in::file::pssm);
+  OPT(in::file::checkpoint);
+  OPT(in::file::talos_phi_psi);
+  OPT(in::file::torsion_bin_probs);
+  OPT(in::path::database);
 
-	OPT(frags::scoring::config);
-	OPT(frags::scoring::profile_score);
-	OPT(frags::ss_pred);
-	OPT(frags::n_frags);
-	OPT(frags::n_candidates);
-	OPT(frags::frag_sizes);
-	OPT(frags::write_ca_coordinates);
-	OPT(frags::allowed_pdb);
-	OPT(frags::denied_pdb);
-	OPT(frags::describe_fragments);
-	OPT(frags::keep_all_protocol);
-	OPT(frags::bounded_protocol);
-	OPT(frags::quota_protocol);
-	OPT(frags::nonlocal_pairs_protocol);
-	OPT(frags::picking::selecting_rule);
-	OPT(frags::picking::selecting_scorefxn);
-	OPT(frags::picking::quota_config_file);
-	OPT(frags::picking::query_pos);
-//	OPT(frags::p_value_selection);
+  OPT(frags::scoring::config);
+  OPT(frags::scoring::profile_score);
+  OPT(frags::ss_pred);
+  OPT(frags::n_frags);
+  OPT(frags::n_candidates);
+  OPT(frags::frag_sizes);
+  OPT(frags::write_ca_coordinates);
+  OPT(frags::allowed_pdb);
+  OPT(frags::denied_pdb);
+  OPT(frags::describe_fragments);
+  OPT(frags::keep_all_protocol);
+  OPT(frags::bounded_protocol);
+  OPT(frags::quota_protocol);
+  OPT(frags::nonlocal_pairs_protocol);
+  OPT(frags::picking::selecting_rule);
+  OPT(frags::picking::selecting_scorefxn);
+  OPT(frags::picking::quota_config_file);
+  OPT(frags::picking::query_pos);
+  //	OPT(frags::p_value_selection);
 
-	OPT(constraints::cst_file);
+  OPT(constraints::cst_file);
 
-	OPT(out::file::frag_prefix);
+  OPT(out::file::frag_prefix);
 
-//	OPT(rdc::correct_NH_length);
-//	OPT(rdc::reduced_couplings);
+  //	OPT(rdc::correct_NH_length);
+  //	OPT(rdc::reduced_couplings);
 
-	OPT(frags::nonlocal::min_seq_sep);
-	OPT(frags::nonlocal::ca_dist);
-	OPT(frags::nonlocal::min_contacts_per_res);
-//	OPT(frags::nonlocal::max_ddg_score);
-//	OPT(frags::nonlocal::max_rmsd_after_relax);
+  OPT(frags::nonlocal::min_seq_sep);
+  OPT(frags::nonlocal::ca_dist);
+  OPT(frags::nonlocal::min_contacts_per_res);
+  //	OPT(frags::nonlocal::max_ddg_score);
+  //	OPT(frags::nonlocal::max_rmsd_after_relax);
 
 }
 
 int main(int argc, char * argv[]) {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
 
-	register_options();
-	devel::init(argc, argv);
+  register_options();
+  devel::init(argc, argv);
 
-	if (option[in::file::native].user()) {
-		trace.Debug << option[in::file::native]() << std::endl;
-	}
+  if (option[in::file::native].user()) {
+    trace.Debug << option[in::file::native]() << std::endl;
+  }
 
-	//---------- Set up a picker.
-	FragmentPickerOP pickIt;
-	if(option[frags::p_value_selection]() == true)
-	    pickIt = new FragmentPicker("PValuedFragmentScoreManager");
-	else
-	    pickIt = new FragmentPicker();
-	pickIt->parse_command_line();
-	trace << "After setup; size of a query is: " << pickIt->size_of_query()
-			<< std::endl;
+  //---------- Set up a picker.
+  FragmentPickerOP pickIt;
+  if(option[frags::p_value_selection]() == true)
+    pickIt = new FragmentPicker("PValuedFragmentScoreManager");
+  else
+    pickIt = new FragmentPicker();
+  pickIt->parse_command_line();
+  trace << "After setup; size of a query is: " << pickIt->size_of_query()
+	<< std::endl;
 
-	//-------- Trata ta ta, tra ta... (picking fragment candidates)
-	trace << "Picking candidates" << std::endl;
+  //-------- Trata ta ta, tra ta... (picking fragment candidates)
+  trace << "Picking candidates" << std::endl;
 
-	if (option[frags::picking::quota_config_file].user() || option[frags::quota_protocol].user() ) {
-			if (option[frags::nonlocal_pairs_protocol].user()) {
-				trace << "Running nonlocal pairs quota protocol" << std::endl;
-				pickIt->nonlocal_pairs_protocol();
-			} else {
-				trace << "Running quota protocol" << std::endl;
-				pickIt->quota_protocol();
-			}
-	} else {
-	    if (option[frags::keep_all_protocol].user()) {
-		trace << "Running keep-all protocol" << std::endl;
-		pickIt->keep_all_protocol();
-	    } else {
-		trace << "Running bounded protocol" << std::endl;
-		pickIt->bounded_protocol();
-	    }
-	}
+  if (option[frags::picking::quota_config_file].user() || option[frags::quota_protocol].user() ) {
+    if (option[frags::nonlocal_pairs_protocol].user()) {
+      trace << "Running nonlocal pairs quota protocol" << std::endl;
+      pickIt->nonlocal_pairs_protocol();
+    } else {
+      trace << "Running quota protocol" << std::endl;
+      pickIt->quota_protocol();
+    }
+  } else {
+    if (option[frags::keep_all_protocol].user()) {
+      trace << "Running keep-all protocol" << std::endl;
+      pickIt->keep_all_protocol();
+    } else {
+      trace << "Running bounded protocol" << std::endl;
+      pickIt->bounded_protocol();
+    }
+  }
 
-	basic::prof_show();
+  basic::prof_show();
 }
 

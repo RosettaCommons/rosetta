@@ -84,19 +84,19 @@ FrameList pick_fragments(
 	using core::fragment::Frame;
 	using core::fragment::FrameOP;
 	using core::fragment::IndependentBBTorsionSRFD;
-	
+
 	using core::fragment::picking_old::vall::pick_fragments;
 
 	FrameList frames;
-	
+
 	for ( Size j = 0, je = interval.length(); j < je; ++j ) {
 		TR << "picking " << n_frags << " " << frag_length << "-mers for position " << ( interval.left + j ) << std::endl;
-		
+
 		String ss_sub = complete_ss.substr( interval.left + j - 1, frag_length );
 		if ( ss_sub.length() < frag_length ) {
 			ss_sub.append( frag_length - ss_sub.length(), 'D' );
 		}
-		
+
 		String aa_sub;
 		if ( !complete_aa.empty() ) {
 			aa_sub = complete_aa.substr( interval.left + j - 1, frag_length );
@@ -106,7 +106,7 @@ FrameList pick_fragments(
 		} else {
 			aa_sub = "";
 		}
-		
+
 		utility::vector1< String > abego_sub;
 		if ( complete_abego.size() > 0 ) {
 			runtime_assert( complete_ss.length() == complete_abego.size() );
@@ -122,14 +122,14 @@ FrameList pick_fragments(
 		} else {
 			abego_sub.clear(); // make sure it is empty
 		}
-		
+
 		FrameOP frame = new Frame( interval.left + j, frag_length );
-		
+
 		frame->add_fragment( pick_fragments( ss_sub, aa_sub, abego_sub, n_frags, true, IndependentBBTorsionSRFD() ) );
 
 		frames.push_back( frame );
 	}
-	
+
 	return frames;
 }
 
@@ -157,14 +157,14 @@ main( int argc, char * argv [] )
 	Size naa( 0 );
 	String ss( "" );
     utility::vector1< String >abego;
-	
+
 	if( option[ blueprint ].user() ){
 		// read secondary structure from blueprint
 		protocols::fldsgn::BluePrintOP blue = new protocols::fldsgn::BluePrint( option[ blueprint ] );
 		naa = blue->total_residue();
 		ss = blue->secstruct();
 		if( option[ use_abego ].user() ) {
-			abego = blue->abego();			
+			abego = blue->abego();
 		}
 	}else if( option[ in::file::s ].user() ){
 		core::pose::Pose pose;

@@ -14,6 +14,8 @@
 // Rosetta headers
 #include <protocols/docking/DockingProtocol.hh>
 #include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
+
 #include <devel/init.hh>
 #include <core/types.hh>
 
@@ -30,9 +32,9 @@
 
 // JQX added below two lines for forcing the code
 // to use the constant seed in production mode
-// Sergey believes that in production run, 
+// Sergey believes that in production run,
 // the -constant_seed is not working properly in Jump.cc file
-// Please see the details in the Jump.cc file 
+// Please see the details in the Jump.cc file
 //#include <core/init.hh>     //JQX
 //#include <numeric/random/random.hh> //JQX
 
@@ -49,6 +51,7 @@ main( int argc, char * argv [] )
 	using namespace protocols::jd2;
 
 	DockingProtocol::register_options();
+	protocols::jd2::register_options();
 	// initialize core
 	devel::init(argc, argv);
 //	core::init_random_generators(3,numeric::random::_RND_TestRun_, "mt19937"); //JQX from Sergery

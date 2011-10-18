@@ -64,6 +64,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/ScoreMover.hh>
 #include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/moves/RepackSidechainsMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
 #include <protocols/moves/ReturnSidechainMover.hh>
@@ -74,6 +75,7 @@
 
 #include <protocols/ScoreMap.hh>
 #include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 #include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
@@ -92,6 +94,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
@@ -179,7 +182,11 @@ void DockingProtocol::init(
 
 	// correctly set up the score functions from either passed in values or defaults
 	if ( docking_score_low() == NULL ) {
-		docking_scorefxn_low_ = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen" );
+		//docking_scorefxn_low_ = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen" );
+		docking_scorefxn_low_ = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen",
+			basic::options::option[ basic::options::OptionKeys::score::patch ]()
+		);
+
 	} else {
 		docking_scorefxn_low_ = docking_score_low;
 	}
@@ -252,7 +259,13 @@ void DockingProtocol::setup_objects()
 
 	// Residue movers
 	to_centroid_ = new protocols::moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
-	to_all_atom_ = new protocols::moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD );
+
+	//generate to_all_atom mover: 	to_all_atom_ =
+	protocols::moves::SequenceMoverOP to_all_atom_and_repack = new protocols::moves::SequenceMover;
+	to_all_atom_and_repack->add_mover( new protocols::moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) );
+	//	to_all_atom_and_repack->add_mover( new protocols::moves::RepackSidechainsMover( docking_scorefxn_pack_ ) );
+	to_all_atom_=to_all_atom_and_repack;
+
 	sync_objects_with_flags();
 }
 
@@ -460,7 +473,7 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 	// check for native and input pose
 	// input pose is used further down for the recover sidehchains mover
 	if ( !get_input_pose() ) {
-		core::pose::PoseOP input_pose = new core::pose::Pose(pose);
+		core::pose::PoseOP input_pose = new core::pose::Pose( pose );
 		set_input_pose( input_pose );
 	}
 
@@ -502,7 +515,12 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 //		// pass the score function to the high res mover
 //		docking_highres_mover_->set_scorefxn( docking_scorefxn_high_ );
 	} else {
-		recover_sidechains_ = new protocols::moves::ReturnSidechainMover( *get_input_pose() );
+		if ( get_input_pose() && get_input_pose()->is_fullatom() ) {
+			recover_sidechains_ = new protocols::moves::ReturnSidechainMover( *get_input_pose() );
+		} else {
+			// recover sidechains mover is not needed with ensemble docking since the sidechains are recovered from the partners in the ensemble file
+			recover_sidechains_ = NULL;
+		}
 	}
 
 	// pass the ensemble movers to the lowres protocol
@@ -596,7 +614,7 @@ void DockingProtocol::initForEqualOperatorAndCopyConstructor(DockingProtocol & l
 		lhs.docking_highres_mover_ = static_cast< DockingHighRes * >( rhs.docking_highres_mover_->clone()() );
 	}
 	lhs.to_centroid_ = static_cast< protocols::moves::SwitchResidueTypeSetMover * >( rhs.to_centroid_->clone()() );
-	lhs.to_all_atom_ = static_cast< protocols::moves::SwitchResidueTypeSetMover * >(rhs.to_all_atom_->clone()() );
+	lhs.to_all_atom_ = rhs.to_all_atom_->clone();
 	if(rhs.ensemble1_){
 		lhs.ensemble1_ = new protocols::docking::DockingEnsemble( *(rhs.ensemble1_) );
 		lhs.ensemble1_filename_ = rhs.ensemble1_filename_ ;
@@ -882,8 +900,12 @@ DockingProtocol::apply( pose::Pose & pose )
 		if ( !pose.is_fullatom() ) {
 			// Convert pose to high resolution and recover sidechains
 			to_all_atom_->apply( pose );
-			if ( recover_sidechains_ && get_input_pose() ) {
+			(*docking_highres_mover_->scorefxn())( pose );
+			jd2::write_score_tracer( pose, "Docking_to_all_atom" );
+			if ( recover_sidechains_ ) {
 				recover_sidechains_->apply( pose );
+				(*docking_highres_mover_->scorefxn())( pose );
+				jd2::write_score_tracer( pose, "Docking_recovered_sidechains" );
 			} else {
 				if ( ensemble1_ ) {
 					ensemble1_->recover_conformer_sidechains( pose );

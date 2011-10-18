@@ -107,12 +107,12 @@ public:
 	void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, const DockMCMCycle & dp );
 
-	
+
 	//JQX: allow the DockMCMProtocol.cc file to change the index of the CycleMover
-	void reset_cycle_index(); 
+	void reset_cycle_index();
 	void init_mc(core::pose::Pose & pose);
-	
-	
+
+
 private:
 	core::scoring::ScoreFunctionCOP scorefxn_;
 	core::scoring::ScoreFunctionCOP scorefxn_pack_;
@@ -122,7 +122,7 @@ private:
 	moves::MonteCarloOP mc_;
 
 
-	
+
 	// docking
 	DockJumps movable_jumps_;
 	core::Real trans_magnitude_, rot_magnitude_;

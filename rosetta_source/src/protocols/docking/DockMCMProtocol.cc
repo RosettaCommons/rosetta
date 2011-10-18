@@ -33,17 +33,19 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/PackRotamersMover.hh>
 
-
+#include <core/kinematics/FoldTree.hh>
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
 
-
+#include <protocols/jd2/util.hh>
 
 #include <core/pose/Pose.hh>    //JQX: dumping out pdb for testing
 
 #include <protocols/moves/TrialMover.fwd.hh>  //JQX: add this
 #include <protocols/moves/TrialMover.hh>
+
+#include <ObjexxFCL/format.hh>
 
 #ifdef WIN_PYROSETTA
 	#include <core/pack/task/operation/TaskOperation.hh>
@@ -53,7 +55,7 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
-static basic::Tracer TR("protocols.docking.DockMCMProtocol");
+static basic::Tracer TR("protocols.docking.DockMCMProtocol",basic::t_info);
 
 //     originally from dock_structure.cc Jeff Gray April 2001
 
@@ -210,12 +212,15 @@ void DockMCMProtocol::apply( core::pose::Pose & pose )
 /// @brief
 /// @detailed
 ///		decides what to call according to options
-void DockMCMProtocol::apply( core::pose::Pose & pose )
+void DockMCMProtocol::apply( core::pose::Pose& pose )
 {
 
 	using namespace scoring;
 
-	TR << "in DockMCMProtocol.apply" << std::endl;
+	TR.Info << "in DockMCMProtocol.apply" << std::endl;
+	TR.Debug << "fold-tree in DockMCM: " << pose.fold_tree() << std::endl;
+	(*scorefxn())( pose );
+	jd2::write_score_tracer( pose, "DockMCM_start" );
 
 	dock_mcm_ = new DockMCMCycle( movable_jumps(), scorefxn(), scorefxn_pack() );
 	//check if we are ignoring the default docking task
@@ -243,10 +248,12 @@ void DockMCMProtocol::apply( core::pose::Pose & pose )
 	moves::TrialMoverOP initial_pack_trial = new moves::TrialMover(initial_pack, dock_mcm_->get_mc() );
 	initial_pack_trial->apply( pose );
 
+	jd2::write_score_tracer( pose, "DockMCM_pack_trialed" );
+
 	/// minimize_trial defaults to a min_tolerance of 0.01 in DockMinMover
 	DockMinMoverOP minimize_trial = new DockMinMover( movable_jumps(), scorefxn(), dock_mcm_->get_mc() );
 	minimize_trial->apply( pose );
-
+	jd2::write_score_tracer( pose, "DockMCM_minimized" );
 
 //	filter_->set_score_margin( 10.0 );
 //	if ( filter_->apply( pose ) )
@@ -254,6 +261,7 @@ void DockMCMProtocol::apply( core::pose::Pose & pose )
 		for ( Size i=1; i<=4; ++i ) {
 			dock_mcm_->apply( pose );
 //			dock_mcm_->get_mc()->show_scores();
+			jd2::write_score_tracer( pose, "DockMCM_cycle_"+ObjexxFCL::fmt::I(1, i ) );
 		}
 
 //		pose.dump_pdb("after_4_cycles.pdb");
@@ -269,6 +277,8 @@ void DockMCMProtocol::apply( core::pose::Pose & pose )
 			for ( Size i=1; i<=45; ++i ) {
 				dock_mcm_->apply( pose );
 //				dock_mcm_->get_mc()->show_scores();
+			jd2::write_score_tracer( pose, "DockMCM_cycle_"+ObjexxFCL::fmt::I(1, i+4 ) );
+
 			}
 //		}
 //	}
@@ -279,11 +289,10 @@ void DockMCMProtocol::apply( core::pose::Pose & pose )
 	minimize_trial->set_min_tolerance( 0.01 );
 	minimize_trial->apply( pose );
 
-
-
-
 //JQX:	get the smallest energy pose memorized in the "mc_" object
 	dock_mcm_-> get_mc()->recover_low( pose );
+
+	jd2::write_score_tracer( pose, "DockMCM_final" );
 
 }
 

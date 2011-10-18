@@ -141,11 +141,11 @@ public:
 	void set_cst_weight( core::Real const cst_weight );
 	void set_use_constraints( bool const use_csts );
     void set_interface_definition_task_operation( protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition );
-   
+
     void set_additional_task_operarations( utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations );
     void add_additional_task_operaration( core::pack::task::operation::TaskOperationOP task_operation );
     utility::vector1< core::pack::task::operation::TaskOperationOP > get_additional_task_operarations();
-    
+
 
 	virtual void apply( core::pose::Pose & pose );
 
@@ -234,7 +234,7 @@ private:
 
 	// atom set switch movers
 	protocols::moves::SwitchResidueTypeSetMoverOP to_centroid_;
-	protocols::moves::SwitchResidueTypeSetMoverOP to_all_atom_;
+	protocols::moves::MoverOP to_all_atom_;
 
 	// ensemble objects
 	protocols::docking::DockingEnsembleOP ensemble1_;

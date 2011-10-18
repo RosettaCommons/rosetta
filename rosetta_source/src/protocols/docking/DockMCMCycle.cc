@@ -190,7 +190,7 @@ void DockMCMCycle::set_move_map( core::kinematics::MoveMapOP movemap ) { movemap
 ///		decides what to call according to options
 void DockMCMCycle::apply( core::pose::Pose & pose )
 {
-	TR << "in DockMCMCycle.apply" << std::endl;
+	TR.Debug << "in DockMCMCycle.apply" << std::endl;
 //	protocols::moves::PyMolMover pymol;   //JQX: comment out, pymolmover will use the random number, not good for debug
 
 	// only set up on first call to the mover
@@ -208,15 +208,15 @@ DockMCMCycle::get_name() const {
 	return "DockMCMCycle";
 }
 
-	
-	
-	
+
+
+
 //JQX: reset the pack_cycle_ index
-void DockMCMCycle::reset_cycle_index()   
+void DockMCMCycle::reset_cycle_index()
 {
 	dock_mcm_cycle_->reset_cycle_index();
 }
-	
+
 void DockMCMCycle::init_mc(core::pose::Pose & pose)
 {
 	(*scorefxn_)(pose);
@@ -225,13 +225,13 @@ void DockMCMCycle::init_mc(core::pose::Pose & pose)
 	TR << "Setting up defaults for DockMCMCycle: " << std::endl;
 	show(TR);
 }
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 ///////////////////////////////////////////////////////////////////////////////////
 /// @begin dock_mcm_protocol
 ///
@@ -299,9 +299,9 @@ void DockMCMCycle::init_mc(core::pose::Pose & pose)
 
 
 
-	
-	
-	
+
+
+
 
 /*    JQX:     completely comment this out and rewrite it !!!!!
 
@@ -356,60 +356,60 @@ void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 
 
 
-	
-	
-	
-	
-	
-	
-// JQX rewrote the setup_protocol below	
-	
+
+
+
+
+
+
+// JQX rewrote the setup_protocol below
+
 void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 	using namespace moves;
 	using namespace basic::options;
 	using namespace core::pack::task;
 	using namespace core::pack::task::operation;
 	using namespace protocols::toolbox::task_operations;
-		
-	
-	
+
+
+
 	// @TODO these are not being used at all, need to be incorporated into the sequence
 	//	RotamerTrialsMinMoverOP rtmin = new RotamerTrialsMinMover( scorefxn_pack_, tf_ );
 	//	TrialMoverOP rtmin_trial = new TrialMover( rtmin, mc_ );
 	//
 	//	SidechainMinMoverOP scmin_mover = new SidechainMinMover(scorefxn_pack_, tf_ );
 	//	TrialMoverOP scmin_trial = new TrialMover( scmin_mover, mc_ );
-	
-	
-	
-		
+
+
+
+
 	//JQX: set up rigid body movers
 	RigidBodyPerturbMoverOP rb_mover = new RigidBodyPerturbMover( pose, *movemap_, rot_magnitude_, trans_magnitude_ , partner_downstream, true );
 
-	
+
 	//set up sidechain movers for each movable jump
-	//	tf_->push_back( new RestrictToInterface( movable_jumps_ ) );   
+	//	tf_->push_back( new RestrictToInterface( movable_jumps_ ) );
 			// JQX commented this out, there is one more RestrictToInterface function in the DockTaskFactory.cc file
-	
-	
+
+
 	RotamerTrialsMoverOP rottrial = new RotamerTrialsMover( scorefxn_pack_, tf_ );
 	SequenceMoverOP rb_pack_min = new SequenceMover;
-	
+
 	rb_pack_min->add_mover( rb_mover );
 	rb_pack_min->add_mover( rottrial );
-	
-	
+
+
 	//JQX: use   (SequenceMover) rb_pack_min   and   (MinMover) min_mover
 	//JQX: to define the JumpOutMover
 	core::Real minimization_threshold = 15.0;
 	moves::MinMoverOP min_mover = new moves::MinMover( movemap_, scorefxn_, min_type_, min_tolerance_, nb_list_ );
 	JumpOutMoverOP rb_mover_min = new JumpOutMover( rb_pack_min, min_mover, scorefxn_, minimization_threshold );
-	
-	
+
+
 	//JQX: (JumpOutMover) rb_mover_min    should be a TrialMover
 	TrialMoverOP rb_mover_min_trail = new TrialMover( rb_mover_min, mc_);
-	
-	
+
+
 	//JQX: define the SequenceMover repack_step
 	//JQX: repack_step is almost the same as rb_mover_min_trail
 	//JQX: the only difference is you have one more step: (TrialMover) the pack_interface_and_loops_trial
@@ -419,27 +419,27 @@ void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 	PackRotamersMoverOP pack_rotamers = new PackRotamersMover( scorefxn_pack_ ); pack_rotamers->task_factory(tf_);
 	TrialMoverOP pack_interface_and_move_loops_trial = new TrialMover( pack_rotamers, mc_);
 	repack_step->add_mover(pack_interface_and_move_loops_trial);
-	
-	
+
+
 	//JQX: define the cycle mover
 	//JQX: 1. rb_mover_min_trail (7 times)
 	//JQX: 2. repack_tep (1 time)
 	dock_mcm_cycle_ = new CycleMover;
 	for (Size i=1; i<repack_period_; ++i) dock_mcm_cycle_->add_mover( rb_mover_min_trail );
 	dock_mcm_cycle_->add_mover( repack_step );
-	
-	
+
+
 }
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
 
 
 

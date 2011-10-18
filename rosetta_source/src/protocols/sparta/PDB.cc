@@ -75,8 +75,8 @@ void PDB::loadPDB_Entry(const string &str, PDB_Entry &entry)
 
   string atomName = simplifyWhiteSpace( getField(str,3).c_str() );
   entry.atomName = atomName;
-  if( atomName == "H" ) entry.atomName="HN";
-  if( atomName[0] >= '1' && atomName[0] <= '3' ) entry.atomName = atomName.substr(1,4) + atomName[0];
+  if ( atomName == "H" ) entry.atomName="HN";
+  if ( atomName[0] >= '1' && atomName[0] <= '3' ) entry.atomName = atomName.substr(1,4) + atomName[0];
 
   // remove the charge character '+'
   entry.resName =  simplifyWhiteSpace( getField(str,4).substr(0,3).c_str() );
@@ -97,7 +97,7 @@ void PDB::loadPDB(const string &fileName)
   PDBfileName = fileName;
 
   ifstream file(fileName.c_str());
-  if(! file.is_open() ) {
+  if (! file.is_open() ) {
 		tr.Error << "\tCan't open file " << fileName << " for reading" << endl;
 		exit(0);
 	}
@@ -123,32 +123,39 @@ void PDB::loadPDB(istream &file) {
   donorList.clear();
   HBDistList.clear();
 
-
+	int residue_offset = 0;
   Mol conformer;
   int conformer_count=1;
+	int lastline_index = 0;
 
   while (!file.eof() ) {
 		char buf[1000];
 		file.getline(buf, 1000);
 		string str(buf);
-		if(str.empty() || str.size() == 0) continue;
-
-		int pos = str.find("ATOM"); //starting of one molecule
+		if ( str.empty() || str.size() == 0 ) continue;
+			int pos = str.find("ATOM"); //starting of one molecule
 		int pos2 = str.find("TER"), pos3 = str.find("END"); //ending of one molecule
-		if(pos != 0 && pos2 != 0 && pos3 != 0) continue;
+		if ( pos != 0 && pos2 != 0 && pos3 != 0 ) continue;
 
-		if( pos2 == 0 || pos3 == 0)	{
+		if ( pos2 == 0 || pos3 == 0)	{     // this part has never been executed
 			Conformers[conformer_count] = conformer;
 			conformer_count++;
 			conformer.clear();
-			break; // ******* only read one confomer/chain
-			//continue;
+			break;
+			//			continue;
 		}
 
-		PDB_Entry temp;
+ 		PDB_Entry temp;
 		loadPDB_Entry(str, temp);
 
+ 		if ( lastline_index>1 && temp.chainName != conformer[lastline_index].chainName ) residue_offset = conformer[lastline_index].resNum-temp.resNum+1;
+		//to modify the resNum if  more than one chain
+		temp.resNum = temp.resNum + residue_offset;
+
 		conformer[temp.atomNum] = temp; // table indexed by the atom number
+		lastline_index = temp.atomNum;
+		//		tr.Trace << "resNum : "<< temp.resNum << std::endl;
+		//		std::cout << "resNum: " << conformer[lastline_index].resNum<<std::endl;
 		ATOMS[conformer_count][temp.resNum][temp.atomName] = temp;
 		// table indexed by the residue number and atom name
 		// fast for obtaining a specific atom with given residue number and atom name
@@ -156,17 +163,18 @@ void PDB::loadPDB(istream &file) {
 		residList[temp.resNum] = temp.resName; //resdiue list with three-letter-aa name
 		residListOne[temp.resNum] = getOneAAName(temp.resName); //resdiue list with one-letter-aa name
 
-		if( temp.resNum < r1 ) r1 = temp.resNum;
-		if( temp.resNum > rN ) rN = temp.resNum;
+		// 		std::cout << "resNum: to check r1 rN: " << temp.resNum << " r1: " << r1 << " rN: " << rN << std::endl;
+		if ( temp.resNum < r1 ) r1 = temp.resNum;
+		if ( temp.resNum > rN ) rN = temp.resNum;
 	}
 
 	if(conformer.size() != 0) Conformers[conformer_count] = conformer;
 
   //correction of the name cys/CYS accoding to the status of the disulfide bond
   std::map<int, string> ::iterator it;
-  for(it=residListOne.begin(); it!=residListOne.end(); it++) {
-    if( it->second == "C" ) {
-      if( isSSBonded(1, it->first) ) {
+  for ( it=residListOne.begin(); it!=residListOne.end(); it++ ) {
+    if ( it->second == "C" ) {
+      if ( isSSBonded(1, it->first) ) {
 				residListOne[it->first] = "c";
 				residList[it->first] = "cys";
       }
