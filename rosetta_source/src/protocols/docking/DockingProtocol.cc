@@ -263,7 +263,7 @@ void DockingProtocol::setup_objects()
 	//generate to_all_atom mover: 	to_all_atom_ =
 	protocols::moves::SequenceMoverOP to_all_atom_and_repack = new protocols::moves::SequenceMover;
 	to_all_atom_and_repack->add_mover( new protocols::moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) );
-	//	to_all_atom_and_repack->add_mover( new protocols::moves::RepackSidechainsMover( docking_scorefxn_pack_ ) );
+	to_all_atom_and_repack->add_mover( new protocols::moves::RepackSidechainsMover( docking_scorefxn_pack_ ) );
 	to_all_atom_=to_all_atom_and_repack;
 
 	sync_objects_with_flags();
