@@ -146,6 +146,8 @@ centroids_by_jump_int(
 )
 {
 	FArray1D_bool is_upstream ( pose.total_residue(), false );
+	TR.Debug << "fold-tree: " << pose.fold_tree() << std::endl;
+	TR.Debug << "partition by jump " << jump_id << std::endl;
 	pose.fold_tree().partition_by_jump( jump_id, is_upstream );
 
 	upstream_ctrd = 0;
@@ -187,8 +189,8 @@ centroids_by_jump_int(
 	}
 
 	if ( upstream_atoms == 0 || downstream_atoms == 0 ){
-		TR << "centroids_by_jump_int called but no interface detected!!" << std::endl;
-		TR << "calling centroids_by_jump..." << std::endl;
+		TR.Warning << "centroids_by_jump_int called but no interface detected!!" << std::endl;
+		TR.Warning << "calling centroids_by_jump..." << std::endl;
 		centroids_by_jump( pose, jump_id, upstream_ctrd, downstream_ctrd);
 	} else {
 		upstream_ctrd /= upstream_atoms;
