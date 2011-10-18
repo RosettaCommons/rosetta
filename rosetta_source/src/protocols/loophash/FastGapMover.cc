@@ -110,14 +110,15 @@ FastGapMover::apply( pose::Pose & pose ) {
 		Real gap_dist;
 		find_next_gap( *working_pose, next_gap, gap_dist );
 		while( next_gap != 0 ) {
-			TR.Info << "Attempting to fix gap following residue " << next_gap << std::endl;
+			TR << "Attempting to fix gap following residue " << next_gap << std::endl;
 			std::vector< Pose > lib_structs;
 			
 			// gogo loophash
 			// increase loophash size until we get anything returned
-			Size loop_size = std::max((Size)(gap_dist/3.5), min_loop_size_); // no point in trying anything that cant reach across the gap
+			//Size loop_size = std::max((Size)(gap_dist/3.5), min_loop_size_); // no point in trying anything that cant reach across the gap
+			Size loop_size = min_loop_size_; // no point in trying anything that cant reach across the gap
 			while( lib_structs.size() == 0 && loop_size < max_loop_size_ ) {
-				TR.Info << "Trying loopsize " << ++loop_size << std::endl;
+				TR << "Trying loopsize " << ++loop_size << std::endl;
 				lhsampler_->set_start_res( next_gap + 3 < loop_size ? 0 : next_gap + 3 - loop_size );
 				lhsampler_->set_stop_res ( next_gap );
 				lhsampler_->close_gaps( *working_pose, lib_structs, loop_size );
@@ -135,41 +136,28 @@ FastGapMover::apply( pose::Pose & pose ) {
 // lifted straight from protocols/idealize/idealize.cc
 void
 FastGapMover::find_next_gap( Pose & pose, Size & idx, Real & gap_distance ) {
-        // squared distance at which bond is considered discontinuous
-        Real const chain_break_cutoff = { 4.0 };
-        Size const nres ( pose.total_residue() );
+	// squared distance at which bond is considered discontinuous
+	Real const chain_break_cutoff = { 4.0 };
+	Size const nres ( pose.total_residue() );
 
-        // find chain breaks to add to gaplist
-        pose::PDBInfoCOP pdbinfo = pose.pdb_info();
-        kinematics::FoldTree f( pose.fold_tree() );
-        for ( Size i = idx + 1; i < nres; ++i ) {
-                if ( f.is_cutpoint(i) ) continue;
-                bool chain_break = false;
-                Size j = i+1;
-                if ( pdbinfo->number(i)+1 != pdbinfo->number(j) ) {
-                        TR.Info << "non-sequential at res nums " << i << '-' << j << std::endl;
-                        TR.Info << "non-sequential pdb res nums " << pdbinfo->number(i) << pdbinfo->chain(i) <<
-                                        '-' << pdbinfo->number(j) << pdbinfo->chain(j) << std::endl;
-                        chain_break = true;
-                } else {
-                        conformation::Residue const & rsd = pose.residue(i);
-                        conformation::Residue const & next_rsd = pose.residue(j);
-                        if (rsd.is_polymer() && next_rsd.is_polymer()) {
-                                Real dist_squared = rsd.atom( rsd.upper_connect_atom() ).xyz().distance_squared(next_rsd.atom( next_rsd.lower_connect_atom() ).xyz());
-                                gap_distance = std::sqrt(dist_squared);
-                                if (dist_squared > chain_break_cutoff) {
-                                                chain_break = true;
-                                } else if ( dist_squared < 0.1 ) {
-                                                chain_break = true;
-                                }
-                        }
-                }
-                if ( chain_break ) {
-                        idx = i;
-                        return;
-                }
-        }
-        idx = 0;
+	// find chain breaks to add to gaplist
+	kinematics::FoldTree f( pose.fold_tree() );
+	for ( Size i = idx + 1; i < nres; ++i ) {
+			bool chain_break = false;
+			Size j = i+1;
+			conformation::Residue const & rsd = pose.residue(i);
+			conformation::Residue const & next_rsd = pose.residue(j);
+			if (rsd.is_polymer() && next_rsd.is_polymer()) {
+					Real dist_squared = rsd.atom( rsd.upper_connect_atom() ).xyz().distance_squared(next_rsd.atom( next_rsd.lower_connect_atom() ).xyz());
+					gap_distance = std::sqrt(dist_squared);
+					if (dist_squared > chain_break_cutoff || dist_squared < 0.1) {
+							chain_break = true;
+							idx = i;
+							return;
+					}
+			}
+	}
+	idx = 0;
 }
 string
 FastGapMover::get_name() const {
