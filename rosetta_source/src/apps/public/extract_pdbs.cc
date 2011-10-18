@@ -61,7 +61,7 @@ main( int argc, char* argv [] ) {
 	OPT(in::file::tags);
 	OPT(in::file::silent_struct_type);
 	OPT(in::file::silent_renumber);
-	OPT(in::file::residue_type_set);
+	OPT(out::file::residue_type_set);
 	OPT(out::prefix);
 	OPT(in::path::database);
 	OPT(in::file::rescore);
@@ -154,7 +154,7 @@ main( int argc, char* argv [] ) {
 			pose.dump_pdb( fn );
 		}
 
-		//fpd 
+		//fpd
 
 		tr.flush();
 	}
