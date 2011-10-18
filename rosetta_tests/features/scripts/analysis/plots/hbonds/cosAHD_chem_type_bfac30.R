@@ -18,7 +18,9 @@ FROM
   hbond_geom_coords AS geom,
   hbonds AS hbond,
   hbond_sites AS don_site,
-  hbond_sites AS acc_site
+  hbond_sites AS acc_site,
+	hbond_sites_pdb AS don_site_pdb,
+  hbond_sites_pdb AS acc_site_pdb
 WHERE
   hbond.struct_id = geom.struct_id AND
   hbond.hbond_id =  geom.hbond_id AND
@@ -26,6 +28,12 @@ WHERE
   hbond.don_id = don_site.site_id AND
   hbond.struct_id = acc_site.struct_id AND
   hbond.acc_id = acc_site.site_id AND
+  don_site_pdb.struct_id = hbond.struct_id AND
+	don_site_pdb.site_id   = don_site.site_id AND
+	acc_site_pdb.struct_id = hbond.struct_id AND
+	acc_site_pdb.site_id   = acc_site.site_id AND
+	don_site_pdb.heavy_atom_temperature < 30 AND
+	acc_site_pdb.heavy_atom_temperature < 30 AND
   abs( don_site.resNum - acc_site.resNum ) > 5;"
 
 f <- query_sample_sources(sample_sources, sele)
@@ -57,12 +65,12 @@ dens <- estimate_density_1d_reflect_boundary(
  reflect_right=TRUE,
  right_boundary=1)
 
-plot_id = "cosAHD_chem_type"
+plot_id = "cosAHD_chem_type_bfac30"
 p <- ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=180-acos(x)*180/pi, y=y, colour=sample_source)) +
 	geom_indicator(aes(colour=sample_source, indicator=counts)) +
 	facet_grid(don_chem_type ~ acc_chem_type) +
-	opts(title = "Hydrogen Bonds AHD Angle by Chemical Type; SeqSep > 5\n(normalized for equal volume per unit distance)") +
+	opts(title = "Hydrogen Bonds AHD Angle by Chemical Type; SeqSep > 5; BFactors < 30\n(normalized for equal volume per unit distance)") +
 	scale_y_continuous("FeatureDensity", limits=c(0,20), breaks=c(0,5,10,15)) +
 	scale_x_continuous("Acceptor -- Hydrogen -- Donor (degrees)", trans="reverse")
 

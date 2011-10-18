@@ -51,11 +51,11 @@ dens <- estimate_density_1d(
   "AHdist", weight_fun = radial_3d_normalization)
 
 p <- ggplot(data=dens) + theme_bw() +
-	geom_line(aes(x=x, y=log(y+1), colour=sample_source)) +
+	geom_line(aes(x=x, y=y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +
 	facet_grid(don_chem_type ~ acc_chem_type) +
 	opts(title = "Hydrogen Bonds A-H Distance by Chemical Type\nnormalized for equal weight per unit distance") +
-	scale_y_continuous("log(FeatureDensity + 1)", limits=c(0,2.9), breaks=0:2) +
+	scale_y_continuous("FeatureDensity)", limits=c(0,6), breaks=c(1,3,5)) +
 	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
 
 if(nrow(sample_sources) <= 3){

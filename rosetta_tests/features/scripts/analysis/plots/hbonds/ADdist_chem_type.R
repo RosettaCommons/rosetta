@@ -105,12 +105,12 @@ dens <- estimate_density_1d(f,
 # Generate a lattice of density plots for each donor and acceptor type
 plot_id <- "ADdist_chem_type"
 p <- ggplot(dens) + theme_bw() +
-	geom_line(aes(x, log(y+1), colour=sample_source)) +
+	geom_line(aes(x, y, colour=sample_source)) +
 	geom_indicator(aes(indicator=counts, colour=sample_source)) +
 	facet_grid(don_chem_type ~ acc_chem_type) +
 	opts(title = "Hydrogen Bonds A-D Distance by Chemical Type\n(normalized for equal volume per unit distance)") +
 	scale_x_continuous(expression(paste('Acceptor -- Donor Distance (', ring(A), ')')), breaks=c(2.3, 2.8, 3.3)) +
-	scale_y_continuous("log(FeatureDensity + 1)", breaks=c(0,1,2)) +
+	scale_y_continuous("FeatureDensity", limits=c(0,6), breaks=c(1,3,5)) +
 	opts(strip.text.x=theme_text(size=7)) +
 	opts(strip.text.y=theme_text(size=7, angle=270))
 if(nrow(sample_sources) <= 3){

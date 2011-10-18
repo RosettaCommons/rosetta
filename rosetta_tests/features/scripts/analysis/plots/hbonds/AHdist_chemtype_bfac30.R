@@ -9,24 +9,31 @@
 
 check_setup()
 
+plot_id <- "AHdist_chem_type_bcut30"
+
 sele <-"
 SELECT
-  geom.cosAHD,
+  geom.AHdist,
   acc_site.HBChemType AS acc_chem_type,
   don_site.HBChemType AS don_chem_type
 FROM
   hbond_geom_coords AS geom,
   hbonds AS hbond,
   hbond_sites AS don_site,
-  hbond_sites AS acc_site
+  hbond_sites AS acc_site,
+  hbond_sites_pdb AS don_site_pdb,
+  hbond_sites_pdb AS acc_site_pdb
 WHERE
   hbond.struct_id = geom.struct_id AND
   hbond.hbond_id =  geom.hbond_id AND
   hbond.struct_id = don_site.struct_id AND
   hbond.don_id = don_site.site_id AND
   hbond.struct_id = acc_site.struct_id AND
-  hbond.acc_id = acc_site.site_id AND
-  abs( don_site.resNum - acc_site.resNum ) > 5;"
+  don_site_pdb.struct_id = hbond.struct_id AND don_site_pdb.site_id = hbond.don_id AND
+  acc_site_pdb.struct_id = hbond.struct_id AND acc_site_pdb.site_id = hbond.acc_id AND
+  don_site_pdb.heavy_atom_temperature < 30 AND
+  acc_site_pdb.heavy_atom_temperature < 30 AND
+  hbond.acc_id = acc_site.site_id;"
 
 f <- query_sample_sources(sample_sources, sele)
 
@@ -46,25 +53,17 @@ f$acc_chem_type <- factor(f$acc_chem_type,
 	labels = c("aIMD: h", "aIME: h", "aAHX: y", "aHXL: s,t",
 		"aCXA: n,q", "aCXL: d,e", "aPBA: bb"))
 
-#coAHD goes from 0 to 1, where 1 is linear
-#since there is significant density at 1,
-#to accurately model a discontinuity, reflect
-#the data across the right boundary, in computing the density esitmation
-dens <- estimate_density_1d_reflect_boundary(
- data=f,
- ids = c("sample_source", "acc_chem_type", "don_chem_type"),
- variable = "cosAHD",
- reflect_right=TRUE,
- right_boundary=1)
+dens <- estimate_density_1d(
+  f, c("sample_source", "acc_chem_type", "don_chem_type"),
+  "AHdist", weight_fun = radial_3d_normalization)
 
-plot_id = "cosAHD_chem_type"
 p <- ggplot(data=dens) + theme_bw() +
-	geom_line(aes(x=180-acos(x)*180/pi, y=y, colour=sample_source)) +
-	geom_indicator(aes(colour=sample_source, indicator=counts)) +
+	geom_line(aes(x=x, y=y, colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source)) +
 	facet_grid(don_chem_type ~ acc_chem_type) +
-	opts(title = "Hydrogen Bonds AHD Angle by Chemical Type; SeqSep > 5\n(normalized for equal volume per unit distance)") +
-	scale_y_continuous("FeatureDensity", limits=c(0,20), breaks=c(0,5,10,15)) +
-	scale_x_continuous("Acceptor -- Hydrogen -- Donor (degrees)", trans="reverse")
+	opts(title = "Hydrogen Bonds A-H Distance with Bfactors < 30\nnormalized for equal weight per unit distance") +
+	scale_y_continuous("FeatureDensity)", limits=c(0,6), breaks=c(1,3,5)) +
+	scale_x_continuous(expression(paste('Acceptor -- Proton Distance (', ring(A), ')')), limits=c(1.4,2.7), breaks=c(1.6, 1.9, 2.2, 2.6))
 
 if(nrow(sample_sources) <= 3){
 	p <- p + opts(legend.position="bottom", legend.direction="horizontal")
