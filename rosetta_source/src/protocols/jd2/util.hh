@@ -48,6 +48,9 @@ JobOP get_current_job();
 
 void set_native_in_mover( protocols::moves::Mover &mover );
 
+void
+write_score_tracer( core::pose::Pose const& pose_in, std::string tag );
+
 }
 }
 

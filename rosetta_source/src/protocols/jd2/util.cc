@@ -22,7 +22,11 @@
 #include <protocols/evaluation/util.hh>
 
 #include <core/pose/Pose.hh>
+
 #include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentStructFactory.hh>
+
 
 #include <basic/Tracer.hh>
 
@@ -93,6 +97,39 @@ bool jd2_used() {
 	return ( jd && jd->job_outputter() && jd->current_job() != JD2_BOGUS_JOB );
 }
 
+void
+write_score_tracer( core::pose::Pose const& pose_in, std::string tracer_point ) {
+	static basic::Tracer tr_score("protocols.jd2.score");
+	if ( !tr_score.visible() ) return;
+
+	protocols::jd2::JobDistributor* jd
+	 = protocols::jd2::JobDistributor::get_instance();
+
+  if ( !jd || !jd->job_outputter()) {
+    tr_score.Warning << "can't output intermediate pose if not running with  jobdistributor ( jd2 / 2008 )" << std::endl;
+		return;
+  }
+
+	using core::io::silent::SilentStructFactory;
+	core::io::silent::SilentStructOP ss;
+	ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("score");
+	JobCOP job( get_current_job() );
+	std::string tag( jd->job_outputter()->output_name( job ) );
+	ss->fill_struct( pose_in, tag );
+	add_job_data_to_ss( ss, job );
+
+	core::pose::Pose pose( pose_in );
+	jd->job_outputter()->evaluate( pose, tag, *ss );
+
+	ss->add_string_value("tracer_point", tracer_point );
+
+	core::io::silent::SilentFileData sfd;
+	if ( !basic::options::option[ basic::options::OptionKeys::out::file::silent_print_all_score_headers ]() ) {
+		ss->print_header( tr_score );
+	}
+	sfd.write_silent_struct( *ss, tr_score, true /*write scores only*/ );
+	tr_score.flush();
+}
 
 JobOP get_current_job() {
 	protocols::jd2::JobDistributor* jd

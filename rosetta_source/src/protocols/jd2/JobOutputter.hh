@@ -101,8 +101,6 @@ public:
 
   evaluation::PoseEvaluatorsCOP evaluators() const;
 
-
-protected:
   void evaluate( core::pose::Pose &pose, std::string tag, core::io::silent::SilentStruct &pss) const;
 
 private:
