@@ -99,7 +99,8 @@ bool jd2_used() {
 
 void
 write_score_tracer( core::pose::Pose const& pose_in, std::string tracer_point ) {
-	static basic::Tracer tr_score("protocols.jd2.score");
+	static basic::Tracer tr_score("protocols.jd2.score", basic::t_info, true /*muted by default*/ );
+
 	if ( !tr_score.visible() ) return;
 
 	protocols::jd2::JobDistributor* jd
