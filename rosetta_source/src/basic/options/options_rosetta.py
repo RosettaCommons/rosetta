@@ -662,6 +662,7 @@ Options = Option_Group( '',
   	# Residue protonation state options #krishna
 	Option_Group( 'pH' ,
     	  Option( 'pH_mode', 'Boolean', desc="Allow protonated/deprotonated versions of the residues based on pH", default='false' ),
+    	  Option( 'keep_input_protonation_state', 'Boolean', desc="Read in residue protonation states from input pdb?", default='false' ),
           Option( 'value_pH', 'Real', desc="pH value input for the pHEnergy score", default = '7.0' ),
 
   	  Option_Group( 'calc_pka',
