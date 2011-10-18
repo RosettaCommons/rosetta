@@ -333,6 +333,7 @@ sources = {
  	"pilot/smlewis" : [
                 "UBQ_Gp_rachael",
                 "UBQ_Gp_nat_rachael",
+                "UBQ_Gp_disulfide",
         ],
  	"pilot/sthyme" : [
 		"dna_motifs_collector",
