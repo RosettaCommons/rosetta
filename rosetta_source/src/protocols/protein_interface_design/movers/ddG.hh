@@ -37,10 +37,12 @@ public:
 	typedef core::scoring::ScoreType ScoreType;
 	typedef core::pose::Pose Pose;
 public :
-	ddG() : DesignRepackMover() {}
+	ddG();
 	ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump=1, bool const symmetry=false );
+	virtual void apply (Pose & pose);
 	void calculate( Pose const & pose );
 	void symm_ddG( core::pose::Pose const & pose_in );
+	void no_repack_ddG(core::pose::Pose const & pose_in);
 	void report_ddG( std::ostream & out ) const;
 	Real sum_ddG() const;
 	core::Size rb_jump() const { return rb_jump_; }
@@ -48,19 +50,26 @@ public :
 	virtual ~ddG();
 	protocols::moves::MoverOP fresh_instance() const { return (protocols::moves::MoverOP) new ddG; }
 	protocols::moves::MoverOP clone() const;
-	void parse_my_tag(  utility::tag::TagPtr const, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const& ) {}
+	void parse_my_tag(  utility::tag::TagPtr const, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const& );
 
 	virtual std::string get_name() const;
 
 private :
 	std::map< ScoreType, Real > bound_energies_;
 	std::map< ScoreType, Real > unbound_energies_;
+	
+	std::map< Size, Real > bound_per_residue_energies_;
+	std::map< Size, Real > unbound_per_residue_energies_;
+	
 	Real bound_total_energy_;
 	Real unbound_total_energy_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	void fill_energy_vector( Pose const & pose, std::map<ScoreType, Real > & energy_map );
+	void fill_per_residue_energy_vector(Pose const & pose, std::map<Size,Real> & energy_map);
 	core::Size rb_jump_;
 	bool symmetry_;
+	bool per_residue_ddg_;
+	bool repack_;
 };
 
 } // movers

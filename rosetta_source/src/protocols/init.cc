@@ -97,6 +97,7 @@
 #include <protocols/protein_interface_design/movers/PlacementAuctionMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/PlacementMinimizationMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/VLBCreator.hh>
+#include <protocols/protein_interface_design/movers/ddGCreator.hh>
 #include <protocols/protein_interface_design/movers/BackrubDDMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/PrepackMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/SpinMoverCreator.hh>
@@ -334,6 +335,7 @@ static MoverRegistrator< protein_interface_design::movers::BackrubDDMoverCreator
 static MoverRegistrator< protein_interface_design::movers::PrepackMoverCreator > reg_PrepackMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::SpinMoverCreator > reg_SpinMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::HotspotDisjointedFoldTreeMoverCreator > reg_HotsotDisjointedFoldTreeMoverCreator;
+static MoverRegistrator< protein_interface_design::movers::ddGCreator> reg_ddGCreator;
 static MoverRegistrator< protein_interface_design::movers::LoopMoverFromCommandLineCreator > reg_LoopMoverFromCommandLine;
 static MoverRegistrator< flxbb::FlxbbDesignCreator > reg_FlxbbDesignCreator;
 static MoverRegistrator< flxbb::InterlockAromaCreator > reg_InterlockAromaCreator;
