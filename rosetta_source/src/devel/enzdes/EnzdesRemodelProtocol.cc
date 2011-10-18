@@ -389,14 +389,14 @@ EnzdesRemodelMover::apply(
 		//apply_random_lowE_ligconf( pose );
 		//get new loop
 		if( !remodel_pose( pose, secstruct ) ){
-			tr << "Remodel trial " << i << ": fail remodel." << std::endl;
+			tr << "Region " << region_to_remodel_ << " remodel trial " << i << ": fail remodel." << std::endl;
 			continue;
 		}
 		//pose.dump_pdb("remdebug_aftremodel_"+utility::to_string( num_nstruct )+".pdb" );
 		tr << "Score after remodel and before refine is " << (*(enz_prot_->reduced_scorefxn()))(pose) << std::endl;
 		//some of the loops have nasty  clashes, so let's do some fa refinement
 		if( !refine_pose( pose ) ){
-			tr << "Remodel trial " << i << ": fail remodel." << std::endl;
+			tr << "Region " << region_to_remodel_ << " remodel trial " << i << ": fail remodel." << std::endl;
 			continue;
 		}
 		//pose.dump_pdb("remdebug_aftrefine_"+utility::to_string( num_nstruct )+".pdb" );
@@ -404,17 +404,17 @@ EnzdesRemodelMover::apply(
 
 		//apply predesign filters
 		if( !predesign_filters_->apply( pose ) ){
-			tr << "Remodel trial " << i << ": fail predesign filters." << std::endl;
+			tr << "Region " << region_to_remodel_ << " remodel trial " << i << ": fail predesign filters." << std::endl;
 			continue;
 		}
 		//if there are missing constraints in the pose, let's start the secondary matcher
 		if( !secmatch_after_remodel( pose ) ){
-			tr << "Remodel trial " << i << ": fail secmatch." << std::endl;
+			tr << "Region " << region_to_remodel_ << " remodel trial " << i << ": fail secmatch." << std::endl;
 			continue;
 		}
 		//for now we will break as soon as we have the first new loop
 		this->set_last_move_status( protocols::moves::MS_SUCCESS );
-		tr << "Remodel mover success with secstruct string " << secstruct << " in trial " << i <<"." << std::endl;
+		tr << "Remodel mover for region " << region_to_remodel_ << " success with secstruct string " << secstruct << " in trial " << i <<"." << std::endl;
 		break;
 
 		//do design+min + unconstrained repack
@@ -723,7 +723,7 @@ EnzdesRemodelMover::generate_secstruct_string( core::pose::Pose & pose ) const {
 
 		utility::vector1< std::string > const & possible_ss( flex_region_->enz_loop_info()->ss_strings() );
 		std::string new_ss( possible_ss[ RG.random_range(1, possible_ss.size() ) ] );
-		tr << "New secstruct (length " << new_ss.size() << ") is " << new_ss << std::endl;
+		tr << "New secstruct (length " << new_ss.size() << ") for region " << region_to_remodel_ << " is " << new_ss << std::endl;
 		return new_ss;
 	}
 
@@ -959,15 +959,17 @@ EnzdesRemodelMover::translate_res_interactions_to_rvinfos(
 	return to_return;
 }
 
-/// @details putting a LengthEventCollector into the pose
+/// @details putting a LengthEventCollector into the pose if not yet present
 void
 EnzdesRemodelMover::setup_cached_observers(
 	core::pose::Pose & pose
 ){
-	core::pose::datacache::LengthEventCollectorOP lencollect = new core::pose::datacache::LengthEventCollector();
 
-	pose.observer_cache().set( core::pose::datacache::CacheableObserverType::LENGTH_EVENT_COLLECTOR, lencollect );
+	if( !pose.observer_cache().has( core::pose::datacache::CacheableObserverType::LENGTH_EVENT_COLLECTOR ) ){
+		core::pose::datacache::LengthEventCollectorOP lencollect = new core::pose::datacache::LengthEventCollector();
 
+		pose.observer_cache().set( core::pose::datacache::CacheableObserverType::LENGTH_EVENT_COLLECTOR, lencollect );
+	}
 }
 
 void

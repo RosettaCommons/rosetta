@@ -40,6 +40,9 @@
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pose/PDBInfo.hh> //for getting pdb name
 #include <core/pose/Pose.hh>
+#include <core/pose/datacache/CacheableObserverType.hh>
+#include <core/pose/datacache/ObserverCache.hh>
+#include <core/pose/datacache/cacheable_observers.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/id/SequenceMapping.hh>
 //#include <core/scoring/constraints/CoordinateConstraint.hh>
@@ -528,11 +531,25 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 
 	if( enz_loops_file_ ){
 
+		//if the SpecialSegmentsObserver in the pose cache has been set,
+		//loop start and end will be taken from it, in case another
+		//loop has been previously remodeled with indels
+		core::pose::datacache::SpecialSegmentsObserverCOP segob(NULL);
+		if( pose.observer_cache().has( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER )){
+			core::pose::datacache::CacheableObserverCOP cache_ob = pose.observer_cache().get_const_ptr( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER);
+			segob = utility::pointer::static_pointer_cast< core::pose::datacache::SpecialSegmentsObserver const >( cache_ob );
+			runtime_assert( segob->segments().size() == enz_loops_file_->num_loops() );
+		}
+
 		for( core::Size i(1); i <= enz_loops_file_->num_loops(); ++i){
 
 			core::Size lstart(0), lstop(0);
 
-			if ( enz_loops_file_->loop_info( i )->pose_numb() ) {
+			if( segob ){
+				lstart = segob->segments()[i].first;
+				lstop = segob->segments()[i].second - 1; //segment convention
+			}
+			else if ( enz_loops_file_->loop_info( i )->pose_numb() ) {
 
 				lstart = enz_loops_file_->loop_info( i )->start();
 

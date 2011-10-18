@@ -262,7 +262,7 @@ SpecialSegmentsObserver::on_length_change( conformation::signals::LengthEvent co
 				if( int( event.position - event.length_change ) > int(segments_[i].second) ){ //complete segment deleted?
 					deleted_segments.insert(i);
 				}
-				else if(  int( event.position - segments_[i].first ) < event.length_change ){ //partial segment deleted?
+				else if(  int( event.position - event.length_change ) > int(segments_[i].first) ){ //partial segment deleted?
 					segments_[i].first = event.position - event.length_change;
 					segments_[i].second += event.length_change;
 				}

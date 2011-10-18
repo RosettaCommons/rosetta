@@ -572,7 +572,8 @@ EnzdesLoopInfo::generate_ss_strings_from_blueprint(
 	core::Size too_long_strings(0), too_short_strings(0);
 
 	utility::LexicographicalIterator lex( blueprint_element_num_lengths );
-
+	std::set< std::string > observed_ss_strings; //safeguard to prevent the same string appearing more than once
+	core::Size redundant_strings(0);
 	while( !lex.at_end() ){
 
 		core::Size length_this_string(0);
@@ -601,7 +602,11 @@ EnzdesLoopInfo::generate_ss_strings_from_blueprint(
 			}
 		}
 		//runtime_assert( ss_string.size() == length_this_string );
-		ss_strings_.push_back( ss_string );
+		if( observed_ss_strings.find( ss_string ) == observed_ss_strings.end() ){
+			ss_strings_.push_back( ss_string );
+			observed_ss_strings.insert( ss_string );
+		}
+		else redundant_strings++;
 
 		++lex;
 	}
@@ -610,7 +615,7 @@ EnzdesLoopInfo::generate_ss_strings_from_blueprint(
 
 	for( core::Size i = num_previous_ss_strings + 1; i <= ss_strings_.size(); ++i ) tr << ss_strings_[i] << ", ";
 
-	tr << std::endl << "A total of " << too_long_strings << " ss_strings were ignored because they were too long, and a total of " << too_short_strings << " ss_strings were ignored because they were too short." << std::endl;
+	tr << std::endl << "A total of " << too_long_strings << " ss_strings were ignored because they were too long, a total of " << too_short_strings << " ss_strings were ignored because they were too short, and a total of " << redundant_strings << " ss_strings were ignored because they were redundant." << std::endl;
 
 }
 
