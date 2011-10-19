@@ -19,7 +19,7 @@ SELECT
   geom1.AHdist, geom1.cosBAH, geom1.cosAHD, geom1.chi,
   aST1.HBChemType AS hb1_acc_chem_type
 FROM
-  hbonds AS aST1_dBB1, 
+  hbonds AS aST1_dBB1,
   hbonds AS aBB2_dBB2,
   hbond_sites AS aST1, hbond_sites AS dBB1,
   hbond_sites AS aBB2, hbond_sites AS dBB2,

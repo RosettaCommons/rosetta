@@ -66,7 +66,9 @@ WHERE
   r1ss.dssp          = 'E' AND
   r2ss.struct_id     = don_site.struct_id AND
   r2ss.resNum        = don_site.resNum AND
-  r2ss.dssp          = 'E';
+  r2ss.dssp          = 'E'
+ORDER BY RANDOM()
+LIMIT 100000;
 
 CREATE TEMPORARY TABLE antiparallel_close_contact_residue_pairs AS
 SELECT
