@@ -23,6 +23,7 @@
 #include <protocols/features/HBondParameterFeatures.hh>
 #include <protocols/features/OrbitalsFeatures.hh>
 #include <protocols/features/PairFeatures.hh>
+#include <protocols/features/PdbDataFeatures.hh>
 #include <protocols/features/PoseCommentsFeatures.hh>
 #include <protocols/features/PoseConformationFeatures.hh>
 #include <protocols/features/ProteinBackboneTorsionAngleFeatures.hh>
@@ -86,6 +87,7 @@ public:
 		features_reporters_.push_back(new HBondParameterFeatures(score_function_));
 		features_reporters_.push_back(new OrbitalsFeatures());
 		features_reporters_.push_back(new PairFeatures());
+		features_reporters_.push_back(new PdbDataFeatures());
 		features_reporters_.push_back(new PoseCommentsFeatures());
 		features_reporters_.push_back(new PoseConformationFeatures());
 		features_reporters_.push_back(new ProtocolFeatures());

@@ -28,21 +28,13 @@
 namespace protocols {
 namespace features {
 
-JobDataFeatures::JobDataFeatures()
-{
+using basic::database::table_exists;
 
-}
+JobDataFeatures::JobDataFeatures() {}
 
+JobDataFeatures::JobDataFeatures(JobDataFeatures const & src) {}
 
-JobDataFeatures::JobDataFeatures(JobDataFeatures const & src)
-{
-
-}
-
-JobDataFeatures::~JobDataFeatures()
-{
-
-}
+JobDataFeatures::~JobDataFeatures() {}
 
 std::string JobDataFeatures::type_name() const
 {
@@ -170,6 +162,8 @@ JobDataFeatures::load_string_data(
 		Size struct_id,
 		core::pose::Pose & pose
 ){
+	if(!table_exists(db_session, "job_string_data")) return;
+
 	cppdb::result res = (*db_session) <<
 			"SELECT\n"
 			"	data_key\n"
@@ -207,6 +201,8 @@ JobDataFeatures::load_string_string_data(
 		Size struct_id,
 		core::pose::Pose & pose
 ){
+	if(!table_exists(db_session, "job_string_string_data")) return;
+
 	cppdb::result res = (*db_session) <<
 			"SELECT\n"
 			"	data_key,\n"
@@ -246,6 +242,8 @@ JobDataFeatures::load_string_real_data(
 		Size struct_id,
 		core::pose::Pose & pose
 ){
+	if(!table_exists(db_session, "job_string_real_data")) return;
+
 	cppdb::result res = (*db_session) <<
 			"SELECT\n"
 			"	data_key,\n"

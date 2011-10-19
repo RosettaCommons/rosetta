@@ -66,15 +66,23 @@ public:
 
 private:
 
-	void insert_pdb_info_rows(
+	void insert_residue_pdb_identification_rows(
 		core::Size struct_id,
 		utility::sql_database::sessionOP db_session,
 		core::pose::Pose const & pose);
 
-	void load_pdb_info(
+	void load_residue_pdb_identification(
 		utility::sql_database::sessionOP db_session,
 		core::Size struct_id,
 		core::pose::Pose & pose);
+
+	void insert_residue_pdb_confidence_rows(
+		core::Size struct_id,
+		utility::sql_database::sessionOP db_session,
+		core::pose::Pose const & pose);
+
+	// don't load residue_pdb_confidence because we're not extracting it
+	// at the atomic level
 
 };
 

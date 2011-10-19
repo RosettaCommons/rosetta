@@ -49,6 +49,7 @@ using core::Real;
 using core::pose::Pose;
 using core::conformation::Residue;
 using core::chemical::num_canonical_aas;
+using basic::database::table_exists;
 using utility::vector1;
 using utility::sql_database::sessionOP;
 using cppdb::statement;
@@ -225,6 +226,9 @@ ResidueConformationFeatures::load_conformation(
 	Size struct_id,
 	Pose & pose
 ){
+	if(!table_exists(db_session, "nonprotein_residue_conformation")) return;
+	if(!table_exists(db_session, "nonprotein_residue_angles")) return;
+
 	if(pose.is_fullatom()){
 
 		statement protein_stmt = (*db_session) <<

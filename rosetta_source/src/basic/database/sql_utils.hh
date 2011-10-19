@@ -33,6 +33,12 @@ void safely_write_to_database(cppdb::statement & statement);
 
 cppdb::result safely_read_from_database(cppdb::statement & statement);
 
+
+bool
+table_exists(
+	utility::sql_database::sessionOP db_session,
+	std::string const & table_name);
+
 }
 }
 

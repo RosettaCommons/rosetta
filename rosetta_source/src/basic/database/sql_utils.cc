@@ -164,5 +164,22 @@ cppdb::result safely_read_from_database(cppdb::statement & statement)
 }
 
 
+
+
+bool
+table_exists(
+	sessionOP db_session,
+	string const & table_name
+) {
+	cppdb::result res = (*db_session)
+		<< "SELECT name FROM sqlite_master WHERE name=?;" << table_name;
+
+	if(res.next()){
+		return true;
+	} else {
+		return false;
+	}
+}
+
 }
 }
