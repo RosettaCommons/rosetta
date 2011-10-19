@@ -57,6 +57,7 @@
 
 /// Mover creators
 #include <protocols/moves/InterfaceAnalyzerMoverCreator.hh>
+#include <protocols/contact_map/ContactMapCreator.hh>
 #include <protocols/enzdes/AddOrRemoveMatchCstsCreator.hh>
 #include <protocols/enzdes/BackboneSamplerCreator.hh>
 #include <protocols/enzdes/EnzRepackMinimizeCreator.hh>
@@ -293,6 +294,7 @@ static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictTo
 using namespace moves;
 
 static MoverRegistrator< protocols::moves::InterfaceAnalyzerMoverCreator > reg_InterfaceAnalyzerMoverCreator;
+static MoverRegistrator< protocols::contact_map::ContactMapCreator> reg_ContactMapCreator;
 static MoverRegistrator< enzdes::AddOrRemoveMatchCstsCreator > reg_AddOrRemoveMatchCstsCreator;
 static MoverRegistrator< enzdes::BackboneSamplerCreator > reg_BackboneSamplerCreator;
 static MoverRegistrator< enzdes::EnzRepackMinimizeCreator > reg_EnzRepackMinimizeCreator;

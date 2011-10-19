@@ -882,6 +882,7 @@
 		6CA75648FF260A8177695406 /* SequenceCoupling1BDConstraint.cc in Sources */ = {isa = PBXBuildFile; fileRef = 548632A5888CE51EDAA19176 /* SequenceCoupling1BDConstraint.cc */; };
 		EE359ED74B5D7F7ACB0A3018 /* SequenceCouplingConstraint.cc in Sources */ = {isa = PBXBuildFile; fileRef = 43EACB32F04EF63089FA365E /* SequenceCouplingConstraint.cc */; };
 		C1EFC5F9BB45ADDA1B34A7F3 /* SequenceProfileConstraint.cc in Sources */ = {isa = PBXBuildFile; fileRef = 6E0EE1D34350DBA4BAF3B88E /* SequenceProfileConstraint.cc */; };
+		96C91CEE26F6969CA49DB5EC /* ContactMap.cc in Sources */ = {isa = PBXBuildFile; fileRef = DD97E2ADEE41D80E5056CCA8 /* ContactMap.cc */; };
 		F2240222D6F95D4A458B4768 /* ddGData.cc in Sources */ = {isa = PBXBuildFile; fileRef = 104197F67510AD471A3B5761 /* ddGData.cc */; };
 		D230D7F1940756A5CD7AECCE /* ddG_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = DAD6CD25038C9303C42A8603 /* ddG_main.cc */; };
 		3D274175B3132C3DFD8B15A6 /* DesignProteinBackboneAroundDNA.cc in Sources */ = {isa = PBXBuildFile; fileRef = B4A2A37794D736CDBFCA5768 /* DesignProteinBackboneAroundDNA.cc */; };
@@ -5430,6 +5431,10 @@
 		6E0EE1D34350DBA4BAF3B88E /* SequenceProfileConstraint.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = SequenceProfileConstraint.cc; path = ../src/protocols/constraints_additional/SequenceProfileConstraint.cc; sourceTree = SOURCE_ROOT; };
 		C9C8460AB815D3F70D2334A4 /* SequenceProfileConstraint.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SequenceProfileConstraint.fwd.hh; path = ../src/protocols/constraints_additional/SequenceProfileConstraint.fwd.hh; sourceTree = SOURCE_ROOT; };
 		32C76EC0E9741977D2471E89 /* SequenceProfileConstraint.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = SequenceProfileConstraint.hh; path = ../src/protocols/constraints_additional/SequenceProfileConstraint.hh; sourceTree = SOURCE_ROOT; };
+		DD97E2ADEE41D80E5056CCA8 /* ContactMap.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ContactMap.cc; path = ../src/protocols/contact_map/ContactMap.cc; sourceTree = SOURCE_ROOT; };
+		4744CF7E27CC9F252FC6E6FD /* ContactMap.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ContactMap.fwd.hh; path = ../src/protocols/contact_map/ContactMap.fwd.hh; sourceTree = SOURCE_ROOT; };
+		9074B414C378B16320472592 /* ContactMap.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ContactMap.hh; path = ../src/protocols/contact_map/ContactMap.hh; sourceTree = SOURCE_ROOT; };
+		5EDF4537A44F3A87940A013B /* ContactMapCreator.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ContactMapCreator.hh; path = ../src/protocols/contact_map/ContactMapCreator.hh; sourceTree = SOURCE_ROOT; };
 		104197F67510AD471A3B5761 /* ddGData.cc */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ddGData.cc; path = ../src/protocols/ddg/ddGData.cc; sourceTree = SOURCE_ROOT; };
 		9726C7B878054A953A83980F /* ddGData.fwd.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ddGData.fwd.hh; path = ../src/protocols/ddg/ddGData.fwd.hh; sourceTree = SOURCE_ROOT; };
 		5FB101138F76D7538E6A1418 /* ddGData.hh */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.h; name = ddGData.hh; path = ../src/protocols/ddg/ddGData.hh; sourceTree = SOURCE_ROOT; };
@@ -12467,6 +12472,7 @@
 				6CB660A2DCB18BBF02D468EB /* cluster */,
 				64A0BE9C92B75F522202C41A /* comparative_modeling */,
 				BAA60F1CD796DD2A27D37271 /* constraints_additional */,
+				95FE959F16E3AB78E2E153D9 /* contact_map */,
 				7B8C4994AC3A0E64B680BD72 /* ddg */,
 				AFE5155FE1751B4800A6DB93 /* dna */,
 				98B4DCA5E600A3DF84B0681B /* docking */,
@@ -12854,6 +12860,18 @@
 			);
 			name = constraints_additional;
 			path = ../src/protocols/constraints_additional/;
+			sourceTree = SOURCE_ROOT;
+		};
+		95FE959F16E3AB78E2E153D9 /* contact_map */ = {
+			isa = PBXGroup;
+			children = (
+				DD97E2ADEE41D80E5056CCA8 /* ContactMap.cc */,
+				4744CF7E27CC9F252FC6E6FD /* ContactMap.fwd.hh */,
+				9074B414C378B16320472592 /* ContactMap.hh */,
+				5EDF4537A44F3A87940A013B /* ContactMapCreator.hh */,
+			);
+			name = contact_map;
+			path = ../src/protocols/contact_map/;
 			sourceTree = SOURCE_ROOT;
 		};
 		7B8C4994AC3A0E64B680BD72 /* ddg */ = {
@@ -17934,6 +17952,7 @@
 				6CA75648FF260A8177695406 /* SequenceCoupling1BDConstraint.cc in Sources */,
 				EE359ED74B5D7F7ACB0A3018 /* SequenceCouplingConstraint.cc in Sources */,
 				C1EFC5F9BB45ADDA1B34A7F3 /* SequenceProfileConstraint.cc in Sources */,
+				96C91CEE26F6969CA49DB5EC /* ContactMap.cc in Sources */,
 				F2240222D6F95D4A458B4768 /* ddGData.cc in Sources */,
 				D230D7F1940756A5CD7AECCE /* ddG_main.cc in Sources */,
 				3D274175B3132C3DFD8B15A6 /* DesignProteinBackboneAroundDNA.cc in Sources */,
