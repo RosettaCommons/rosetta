@@ -33,6 +33,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 30</dd><br>
 </dl>
 <dl>
+<dt><b>-patch</b> \<File\><dt>
+<dd>Patch file containing energy terms and their respective weights</dd><br>
+</dl>
+<dl>
 <dt><b>-residues_backbone_move</b> \<Integer\><dt>
 <dd>Number of residues perturbed by a backbone move</dd><br>
 <dd>Default: 5</dd><br>
@@ -41,6 +45,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-rotation</b> \<Real\><dt>
 <dd>Rotation magnitude</dd><br>
 <dd>Default: 2.5</dd><br>
+</dl>
+<dl>
+<dt><b>-score</b> \<String\><dt>
+<dd>Centroid-level score function</dd><br>
+<dd>Default: "score3"</dd><br>
 </dl>
 <dl>
 <dt><b>-sequence_separation</b> \<Integer\><dt>

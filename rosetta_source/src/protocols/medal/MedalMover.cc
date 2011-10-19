@@ -288,6 +288,11 @@ void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
   closure.apply(*pose);
 }
 
+/// @detail Configures the score function used during the simulation.
+/// Precedence:
+///   1. User-specified patch file (i.e. -rigid:patch)
+///   2. User-specified options (e.g. -jumps:increase_chainbreak)
+///   3. Default values
 core::scoring::ScoreFunctionOP MedalMover::score_function() const {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
@@ -295,20 +300,26 @@ core::scoring::ScoreFunctionOP MedalMover::score_function() const {
   using core::scoring::ScoreFunctionOP;
   using core::scoring::methods::EnergyMethodOptions;
 
-  ScoreFunctionOP score = ScoreFunctionFactory::create_score_function("score3");
+  ScoreFunctionOP score = ScoreFunctionFactory::create_score_function(
+      option[OptionKeys::rigid::score]());
 
-  // Maximum sequence separation
+  // Configure constraints
+  core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn(*score);
+
   EnergyMethodOptions options(score->energy_method_options());
   options.cst_max_seq_sep(option[OptionKeys::rigid::sequence_separation]());
   score->set_energy_method_options(options);
 
-  // Enable specific energy terms
-  score->set_weight(core::scoring::atom_pair_constraint, option[OptionKeys::constraints::cst_weight]());
+  // Override default energy terms, weights
+  if (option[OptionKeys::rigid::patch].user()) {
+    score->apply_patch_from_file(option[OptionKeys::rigid::patch]());
+    return score;
+  }
+
+  // Default energy terms, weights
   score->set_weight(core::scoring::hbond_lr_bb, 0.5);
   score->set_weight(core::scoring::hbond_sr_bb, 0.5);
   score->set_weight(core::scoring::linear_chainbreak, option[OptionKeys::jumps::increase_chainbreak]());
-
-  core::scoring::constraints::add_constraints_from_cmdline_to_scorefxn(*score);
   return score;
 }
 
