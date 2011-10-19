@@ -337,6 +337,7 @@ static ConstraintRegistrator< core::scoring::constraints::AtomPairConstraintCrea
 static ConstraintRegistrator< core::scoring::constraints::BigBinConstraintCreator > BigBinConstraintCreator_registrator;
 static ConstraintRegistrator< core::scoring::constraints::CoordinateConstraintCreator > CoordinateConstraintCreator_registrator;
 static ConstraintRegistrator< core::scoring::constraints::DihedralConstraintCreator > DihedralConstraintCreator_registrator;
+static ConstraintRegistrator< core::scoring::constraints::DihedralPairConstraintCreator > DihedralPairConstraintCreator_registrator;
 static ConstraintRegistrator< core::scoring::constraints::KofNConstraintCreator > KofNConstraintCreator_registrator;
 static ConstraintRegistrator< core::scoring::constraints::LocalCoordinateConstraintCreator > LocalCoordinateConstraintCreator_registrator;
 static ConstraintRegistrator< core::scoring::constraints::MultiConstraintCreator > MultiConstraintCreator_registrator;

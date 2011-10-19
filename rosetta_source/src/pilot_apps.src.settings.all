@@ -88,6 +88,8 @@ sources = {
 		#"perturb_bbg", # /* Frank Dimaio,Documentation Location,Demo Location */
 		#"redesign_minimize_into_density", # /* Frank Dimaio,Documentation Location,Demo Location */
 		#"min_test", # /* Frank Dimaio,Documentation Location,Demo Location */
+		#"cryst_design", # /* Frank Dimaio,Documentation Location,Demo Location */
+		#"cen_hybridize", # /* Frank Dimaio,Documentation Location,Demo Location */
  	],
          "pilot/grant" : [
              #"RedesignXtal_Test", # /* Grant,Documentation Location,Demo Location */

@@ -60,6 +60,10 @@ get_resnum_list(utility::tag::TagPtr const tag_ptr, std::string const& tag, core
 std::set< core::Size >
 get_resnum_list( std::string const str, core::pose::Pose const & pose );
 
+/// @brief returns a resnum list directly from a string, preserving order
+utility::vector1<core::Size>
+get_resnum_list_ordered( std::string const str, core::pose::Pose const & pose );
+
 utility::vector1< core::pack::task::operation::TaskOperationOP >
 get_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data );
 

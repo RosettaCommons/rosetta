@@ -940,6 +940,7 @@ sources = {
 
 	"protocols/moves/symmetry" : [
 		"fibril_util",
+		"SetupNCSMover",
 		"SetupForFibrilMover",
 		"SetupForSymmetryMover",
 		"SymFoldandDockRbTrialMover",

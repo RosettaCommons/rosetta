@@ -57,6 +57,17 @@ public:
 	virtual std::string keyname() const;
 };
 
+/// @brief Constraint creator for DihedralPairConstraint
+class DihedralPairConstraintCreator : public ConstraintCreator
+{
+public:
+	DihedralPairConstraintCreator();
+	virtual ~DihedralPairConstraintCreator();
+
+	virtual ConstraintOP create_constraint() const;
+	virtual std::string keyname() const;
+};
+
 /// @brief Mover creator for the BigBinConstraint constraint
 class BigBinConstraintCreator : public ConstraintCreator
 {

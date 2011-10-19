@@ -162,6 +162,7 @@
 #include <protocols/ligand_docking/HighResDockerCreator.hh>
 #include <protocols/ligand_docking/FinalMinimizerCreator.hh>
 #include <protocols/ligand_docking/InterfaceScoreCalculatorCreator.hh>
+#include <protocols/moves/symmetry/SetupNCSMoverCreator.hh>
 #include <protocols/moves/symmetry/SetupForSymmetryMoverCreator.hh>
 #include <protocols/moves/symmetry/SymPackRotamersMoverCreator.hh>
 #include <protocols/moves/symmetry/SymRotamerTrialsMoverCreator.hh>
@@ -388,6 +389,7 @@ static MoverRegistrator< dna::DnaInterfaceMultiStateDesignCreator > reg_DnaInter
 static MoverRegistrator< dna::DesignProteinBackboneAroundDNACreator > reg_DesignProteinBackboneAroundDNACreator;
 static MoverRegistrator< motifs::MotifDnaPackerCreator > reg_MotifDnaPackerCreator;
 static MoverRegistrator< electron_density::SetupForDensityScoringMoverCreator > reg_SetupForDensityScoringMoverCreator;
+static MoverRegistrator< moves::symmetry::SetupNCSMoverCreator > reg_SetupNCSMoverCreator;
 static MoverRegistrator< moves::symmetry::SetupForSymmetryMoverCreator > reg_SetupForSymmetryMoverCreator;
 static MoverRegistrator< moves::symmetry::ExtractAsymmetricUnitMoverCreator > reg_ExtractAsymmetricUnitMoverCreator;
 static MoverRegistrator< moves::symmetry::SymPackRotamersMoverCreator > reg_SymPackRotamersMoverCreator;

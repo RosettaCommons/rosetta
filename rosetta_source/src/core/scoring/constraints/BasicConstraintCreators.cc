@@ -23,6 +23,7 @@
 #include <core/scoring/constraints/BigBinConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
+#include <core/scoring/constraints/DihedralPairConstraint.hh>
 //#include <core/scoring/constraints/DunbrackConstraint.hh>
 #include <core/scoring/constraints/KofNConstraint.hh>
 #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
@@ -127,6 +128,20 @@ ConstraintOP DihedralConstraintCreator::create_constraint() const {
 std::string DihedralConstraintCreator::keyname() const
 {
 	return "Dihedral";
+}
+
+DihedralPairConstraintCreator::DihedralPairConstraintCreator() {}
+DihedralPairConstraintCreator::~DihedralPairConstraintCreator() {}
+
+ConstraintOP DihedralPairConstraintCreator::create_constraint() const {
+	return new DihedralPairConstraint( 
+		id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), 
+		id::AtomID(), id::AtomID(), id::AtomID(), id::AtomID(), NULL );
+}
+
+std::string DihedralPairConstraintCreator::keyname() const
+{
+	return "DihedralPair";
 }
 
 KofNConstraintCreator::KofNConstraintCreator() {}

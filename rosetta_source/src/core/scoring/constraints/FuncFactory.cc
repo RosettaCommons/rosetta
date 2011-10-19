@@ -36,6 +36,7 @@
 #include <core/scoring/constraints/KarplusFunc.hh>
 #include <core/scoring/constraints/IdentityFunc.hh>
 #include <core/scoring/constraints/FlatHarmonicFunc.hh>
+#include <core/scoring/constraints/TopOutFunc.hh>
 
 #include <utility/exit.hh>
 //#include <basic/Tracer.hh>
@@ -93,5 +94,6 @@ FuncFactory::FuncFactory(void) {
   FuncFactory::add_type( "KARPLUS", new KarplusFunc(6.98,-1.38,1.72,-1.05,0,0,0));
 	FuncFactory::add_type( "IDENTITY", new IdentityFunc() );
   FuncFactory::add_type( "FLAT_HARMONIC", new FlatHarmonicFunc( 0, 0, 0 ) );
+  FuncFactory::add_type( "TOPOUT", new TopOutFunc( 0, 0, 0 ) );
 }
 

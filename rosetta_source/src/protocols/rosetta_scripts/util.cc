@@ -188,6 +188,39 @@ get_resnum_list( std::string const str, core::pose::Pose const & pose )
 }
 
 
+// fpd same as 'get_resnum_list', but preserve ordering from input list
+utility::vector1<Size>
+get_resnum_list_ordered( std::string const str, core::pose::Pose const & pose ) {
+	using namespace std;
+	using namespace utility;
+	utility::vector1<Size> resid;
+
+	resid.clear();
+	vector1< string> const str_residues( utility::string_split( str , ',' ) );
+	foreach( string const res, str_residues ){
+		if( res == "" ) continue;
+		if( res.find('-') != string::npos) {
+			// Handle residue range
+			vector1< string> const str_limits( utility::string_split( res , '-' ) );
+			if ( str_limits.size() == 2) {
+				core::Size const start ( parse_resnum( str_limits[1], pose ) );
+				core::Size const end ( parse_resnum( str_limits[2], pose ) );
+				if ( start && end && start > end ) {
+					utility_exit_with_message("Invalid residue range: " + res);
+				}
+				for(core::Size i = start; i <= end; ++i )
+					resid.push_back( i );
+				continue;
+			}
+		}
+		core::Size const num( parse_resnum( res, pose ) );
+		runtime_assert( num );
+		resid.push_back( num );
+	}//foreach
+	return resid;
+}
+
+
 /// @details This is essentially a shameless copy of Justin's PackRotamersMover::parse_task_operations. In truth
 /// DesignRepackMover should disappear into Justin's better organized class, but this will wait... (SJF)
 core::pack::task::TaskFactoryOP
