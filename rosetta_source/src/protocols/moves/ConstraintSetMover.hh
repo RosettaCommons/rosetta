@@ -54,8 +54,10 @@ public:
 	parse_my_tag( TagPtr const, DataMap &, Filters_map const &, Movers_map const &, Pose const & );
 
 private:
-	ConstraintSetOP constraint_set_;
+	ConstraintSetOP constraint_set_low_res_;
+	ConstraintSetOP constraint_set_high_res_;
 	std::string cst_file_;
+	std::string cst_fa_file_;
 
 };
 

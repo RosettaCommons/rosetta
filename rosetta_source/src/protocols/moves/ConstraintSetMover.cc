@@ -72,38 +72,59 @@ ConstraintSetMover::read_options()
 {
 	if ( option[ OptionKeys::constraints::cst_file ].user() )
 		cst_file_ = option[ OptionKeys::constraints::cst_file ]().front();
+	if ( option[ OptionKeys::constraints::cst_fa_file ].user() )
+		cst_fa_file_ = option[ OptionKeys::constraints::cst_fa_file ]().front();
+	else cst_fa_file_=cst_file_;
 }
 
 void
 ConstraintSetMover::constraint_set( ConstraintSetCOP cst_set )
 {
-	constraint_set_ = new ConstraintSet( *cst_set );
+	constraint_set_low_res_ = new ConstraintSet( *cst_set );
+	constraint_set_high_res_ = new ConstraintSet( *cst_set );
 }
 
 void
 ConstraintSetMover::constraint_file( std::string const & cst_file )
 {
 	cst_file_ = cst_file;
+	cst_fa_file_ = cst_file;
 }
 
 
-ConstraintSetOP ConstraintSetMover::constraint_set() { return constraint_set_; }
-ConstraintSetCOP ConstraintSetMover::constraint_set() const { return constraint_set_; }
+ConstraintSetOP ConstraintSetMover::constraint_set() { return constraint_set_low_res_; }
+ConstraintSetCOP ConstraintSetMover::constraint_set() const { return constraint_set_low_res_; }
 
 void
 ConstraintSetMover::apply( Pose & pose )
 {
-	if ( ! constraint_set_ ) {
+	if ( !constraint_set_low_res_ && !pose.is_fullatom() ) {
 		// uninitialized filename not tolerated, in order to avoid potential confusion
 		if ( cst_file_.empty() ) utility_exit_with_message("Can\'t read constraints from empty file!");
 		// special case: set cst_file_ to "none" to effectively remove constraints from Pose
-		else if ( cst_file_ == "none" ) constraint_set_ = new ConstraintSet;
+		else if ( cst_file_ == "none" ) constraint_set_low_res_ = new ConstraintSet;
 		else {
-			constraint_set_ =
+			constraint_set_low_res_ =
 				ConstraintIO::get_instance()->read_constraints_new( cst_file_, new ConstraintSet, pose );
 		}
 	}
-	pose.constraint_set( constraint_set_ );
+
+	if ( !constraint_set_high_res_ && pose.is_fullatom() ) {
+		// uninitialized filename not tolerated, in order to avoid potential confusion
+		if ( cst_fa_file_.empty() ) utility_exit_with_message("Can\'t read constraints from empty file!");
+		// special case: set cst_file_ to "none" to effectively remove constraints from Pose
+		else if ( cst_fa_file_ == "none" ) constraint_set_high_res_ = new ConstraintSet;
+		else {
+			constraint_set_high_res_ =
+				ConstraintIO::get_instance()->read_constraints_new( cst_fa_file_, new ConstraintSet, pose );
+		}
+	}
+
+	if ( pose.is_fullatom() ) {
+		pose.constraint_set( constraint_set_high_res_ );
+	} else {
+		pose.constraint_set( constraint_set_low_res_ );
+	}
 }
 
 std::string
@@ -124,8 +145,12 @@ ConstraintSetMover::parse_my_tag(
 )
 {
 	if ( tag->hasOption("cst_file") ) cst_file_ = tag->getOption<std::string>("cst_file");
-
-	TR<<"of type ConstraintSetMover with constraint file: "<<cst_file_<<std::endl;
+	if ( tag->hasOption("cst_fa_file") ) cst_fa_file_ = tag->getOption<std::string>("cst_fa_file");
+	else cst_fa_file_=cst_file_;
+	TR << "of type ConstraintSetMover with constraint file: "<< cst_file_ <<std::endl;
+	if ( cst_fa_file_ != cst_file_ ) {
+		TR << "of type ConstraintSetMover with fullatom constraint file: "<< cst_fa_file_ <<std::endl;
+	}
 }
 
 } // moves
