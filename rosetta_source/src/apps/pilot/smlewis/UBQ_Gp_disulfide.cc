@@ -170,22 +170,25 @@ public:
 
 		//replace cysteine
 		core::chemical::ResidueTypeSetCAP fa_standard(core::chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD));
-		core::chemical::ResidueType const & cyx_rsd_type( fa_standard->name_map("CYD") );
+		core::chemical::ResidueType const & cyd_rsd_type( fa_standard->name_map("CYD") );
 		//GTPase.dump_pdb("prereplace_GTPase.pdb");
-		GTPase.replace_residue( GTPase_cyd_, core::conformation::Residue(cyx_rsd_type, true), true);
+		GTPase.replace_residue( GTPase_cyd_, core::conformation::Residue(cyd_rsd_type, true), true);
 		//GTPase.dump_pdb("postreplace_GTPase.pdb");
 
-		//strip C-term from UBQ - best to do this with a full replace to re-draw the carboxyl oxygen
-		UBQ.replace_residue( UBQ_term, core::conformation::Residue(cyx_rsd_type, true), true);
+		//replace with CYD on ubiquitin too
+		//TR << UBQ.residue_type(UBQ_term).name() << std::endl;
+		core::chemical::ResidueType const & cyd_rsd_term_type(fa_standard->name_map("CYD_p:CtermProteinFull"));
+		UBQ.replace_residue( UBQ_term, core::conformation::Residue(cyd_rsd_term_type, true), true);
 
 		// check safety of connections (from phil)
 		core::chemical::ResidueType const & ubq_rsd_type( UBQ.residue_type( UBQ_term ) );
-		core::Size const cyx_connid( 3 );
-		core::Size const ubq_connid( 3 );
+		runtime_assert(ubq_rsd_type.name() == cyd_rsd_term_type.name());
+		core::Size const cyd_connid( 3 );
+		core::Size const ubq_connid( 2 );
 
-		runtime_assert( cyx_rsd_type.n_residue_connections() == cyx_connid &&
-			cyx_rsd_type.lower_connect_id() != cyx_connid &&
-			cyx_rsd_type.upper_connect_id() != cyx_connid );
+		runtime_assert( cyd_rsd_type.n_residue_connections() == cyd_connid &&
+			cyd_rsd_type.lower_connect_id() != cyd_connid &&
+			cyd_rsd_type.upper_connect_id() != cyd_connid );
 
 		runtime_assert( ubq_rsd_type.n_residue_connections() == ubq_connid &&
 			ubq_rsd_type.lower_connect_id() != ubq_connid);
@@ -204,17 +207,17 @@ public:
 			bool const start_new_chain = false
 			)*/
 		core::pose::Pose complex(GTPase);
-		complex.append_residue_by_bond( UBQ.residue( UBQ_term ), true, ubq_connid, GTPase_cyd_, cyx_connid );
+		complex.append_residue_by_bond( UBQ.residue( UBQ_term ), true, ubq_connid, GTPase_cyd_, cyd_connid );
 		//complex.dump_pdb("just1_complex.pdb");
 
 		//not that this does anything
-		complex.conformation().insert_ideal_geometry_at_residue_connection( GTPase_cyd_, cyx_connid );
+		complex.conformation().insert_ideal_geometry_at_residue_connection( GTPase_cyd_, cyd_connid );
 
 		core::Size const ubq_pos( complex.total_residue() );
-		core::id::AtomID const atom0( cyx_rsd_type.atom_index( "C" ), GTPase_cyd_ );
-		core::id::AtomID const atom1( cyx_rsd_type.atom_index( "CA" ), GTPase_cyd_ );
-		core::id::AtomID const atom2( cyx_rsd_type.atom_index( "CB" ), GTPase_cyd_ );
-		core::id::AtomID const atom3( cyx_rsd_type.atom_index( "SG" ), GTPase_cyd_ );
+		core::id::AtomID const atom0( cyd_rsd_type.atom_index( "C" ), GTPase_cyd_ );
+		core::id::AtomID const atom1( cyd_rsd_type.atom_index( "CA" ), GTPase_cyd_ );
+		core::id::AtomID const atom2( cyd_rsd_type.atom_index( "CB" ), GTPase_cyd_ );
+		core::id::AtomID const atom3( cyd_rsd_type.atom_index( "SG" ), GTPase_cyd_ );
 		core::id::AtomID const atom4( ubq_rsd_type.atom_index( "SG"  ), ubq_pos );
 		core::id::AtomID const atom5( ubq_rsd_type.atom_index( "CB" ), ubq_pos );
 		core::id::AtomID const atom6( ubq_rsd_type.atom_index( "CA"  ), ubq_pos );
@@ -244,7 +247,7 @@ public:
 		atomIDs[5] = core::id::AtomID( ubq_rsd_type.atom_index("SG" ), complexlength );
 		atomIDs[6] = core::id::AtomID( ubq_rsd_type.atom_index("CB" ), complexlength );
 		atomIDs[7] = core::id::AtomID( ubq_rsd_type.atom_index("CA" ), complexlength );
-		atomIDs[8] = core::id::AtomID( ubq_rsd_type.atom_index("C" ), complexlength-1 );
+		atomIDs[8] = core::id::AtomID( ubq_rsd_type.atom_index("C" ), complexlength );
 
 		starting_pose_ = complex;
 		starting_pose_.dump_pdb("starting_complex.pdb");
