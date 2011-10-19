@@ -98,6 +98,7 @@ main( int argc, char* argv [] ) {
 	// options, random initialization
 	core::init( argc, argv );
 
+	protocols::loophash::FastGapMover fast_gap;
 	ResidueTypeSetCAP rsd_set = rsd_set_from_cmd_line();
 	MetaPoseInputStream input = streams_from_cmd_line();
 	std::string sequence = core::sequence::read_fasta_file(
@@ -131,7 +132,6 @@ main( int argc, char* argv [] ) {
 
 		full_length_pose.dump_pdb("here.pdb");
 
-		protocols::loophash::FastGapMover fast_gap;
 		fast_gap.apply(full_length_pose);
 
 		std::string output_prefix( core::pose::tag_from_pose(start_pose) );
