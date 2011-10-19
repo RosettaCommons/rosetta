@@ -239,7 +239,7 @@ utility::vector1< protocols::loops::Loop> MinimizeBackbone::add_cut_points(
 	core::Size start= interface.find_first_interface_residue(edge.start(), edge.stop());
 	core::Size stop= 0;
 
-	while(start ){
+	while(start){
 		stop= interface.find_stop_of_this_interface_region(start, edge.stop());
 
 		minimize_backbone_tracer.Debug << "start,stop:"<< start << ','<< stop << std::endl;
@@ -267,6 +267,7 @@ utility::vector1< protocols::loops::Loop> MinimizeBackbone::add_cut_points(
 		core::pose::add_variant_type_to_pose_residue(pose, core::chemical::CUTPOINT_LOWER, cutpt);
 		core::pose::add_variant_type_to_pose_residue(pose, core::chemical::CUTPOINT_UPPER, cutpt + 1);
 
+		if(stop == edge.stop()) break;
 		start= interface.find_start_of_next_interface_region(stop+1,  edge.stop());
 	}
 	return loops;

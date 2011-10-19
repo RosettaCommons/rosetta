@@ -28,6 +28,7 @@
 #include <protocols/features/ProteinResidueConformationFeatures.hh>
 #include <protocols/features/ResidueConformationFeatures.hh>
 #include <protocols/features/JobDataFeatures.hh>
+#include <protocols/features/DatabaseFilters.fwd.hh>
 
 // Platform Headers
 #include <core/types.hh>
@@ -95,8 +96,10 @@ private:
 		core::Size const & struct_id);
 
 private:
+	void choose_database_filter();
 
 	bool initialized_;
+	DatabaseFilterOP database_filter_;
 
 	core::Size protocol_id_;
 	StructureMap structure_map_;

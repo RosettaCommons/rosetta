@@ -21,47 +21,49 @@
 namespace protocols {
 namespace features {
 
-core::Size get_current_structure_count_by_input_tag(
-	utility::sql_database::sessionOP db_session,
-	std::string const & input_tag);
+// a class
 
+core::Size get_current_structure_count(
+	utility::sql_database::sessionOP db_session,
+	std::string const & input_tag=""
+);
 core::Size get_score_type_id_from_score_term(
 	utility::sql_database::sessionOP db_session,
 	core::Size const & protocol_id,
 	std::string const & score_term
 );
-
 core::Size get_struct_id_with_lowest_score_from_job_data(
 	utility::sql_database::sessionOP db_session,
 	std::string const & score_term,
-	std::string const & input_tag );
+	std::string const & input_tag="" );
 
 core::Size get_struct_id_with_lowest_score_from_score_data(
 	utility::sql_database::sessionOP db_session,
 	core::Size const & score_type_id,
-	std::string const & input_tag );
+	std::string const & input_tag="" );
+
 
 core::Size get_struct_id_with_highest_score_from_job_data(
 	utility::sql_database::sessionOP db_session,
 	std::string const & score_term,
-	std::string const & input_tag );
+	std::string const & input_tag="" );
 
 core::Size get_struct_id_with_highest_score_from_score_data(
 	utility::sql_database::sessionOP db_session,
 	core::Size const & score_type_id,
-	std::string const & input_tag );
+	std::string const & input_tag="");
 
 core::Size get_struct_id_with_nth_lowest_score_from_job_data(
 	utility::sql_database::sessionOP db_session,
 	std::string const & score_term,
-	std::string const & input_tag,
-	core::Size const & cutoff_index);
+	core::Size const & cutoff_index,
+	std::string const & input_tag);
 
 core::Size get_struct_id_with_nth_lowest_score_from_score_data(
 	utility::sql_database::sessionOP db_session,
 	core::Size const & score_type_id,
-	std::string const & input_tag,
-	core::Size const & cutoff_index);
+	core::Size const & cutoff_index,
+	std::string const & input_tag);
 
 core::Real get_score_for_struct_id_and_score_term_from_job_data(
 	utility::sql_database::sessionOP db_session,
@@ -72,6 +74,15 @@ core::Real get_score_for_struct_id_and_score_term_from_score_data(
 	utility::sql_database::sessionOP db_session,
 	core::Size const & struct_id,
 	core::Size const & score_type_id);
+
+
+
+
+
+
+
+
+
 
 }
 }

@@ -163,8 +163,7 @@ option.add( basic::options::OptionKeys::out::pdb, "Output PDBs" ).def(false);
 option.add( basic::options::OptionKeys::out::silent_gz, "Use gzipped compressed output (silent run level)" ).def(false);
 option.add( basic::options::OptionKeys::out::use_database, "Write out structures to database.  Specify database via -inout:database_filename and wanted structures with -in:file:tags" );
 option.add( basic::options::OptionKeys::out::database_protocol_id, "Manually specify a protocol ID for database output. MPI distributed jobs are the only time when you will want to use this. It is a temporary workaround to a limitation of the MPI distributor" );
-option.add( basic::options::OptionKeys::out::output_top_n_percent, "Write out only the top n percent of structures by score.  This option is only relevent if -out:use_database is specified" );
-option.add( basic::options::OptionKeys::out::top_n_percent_score_term, "Specify the score to use with the -out:top_n_percent" ).def("total_score");
+option.add( basic::options::OptionKeys::out::database_filter, "filter to use with database output. arguments for filter follow filter name" );
 option.add( basic::options::OptionKeys::out::nooutput, "Surpress outputfiles" ).def(false);
 option.add( basic::options::OptionKeys::out::output, "Force outputfiles" ).def(false);
 option.add( basic::options::OptionKeys::out::scorecut, "Only output lowest energy fraction of structures - default 1.0, i.e. output all " ).def(1.0);
@@ -581,10 +580,10 @@ option.add( basic::options::OptionKeys::abinitio::vdw_weight_stage1, "vdw weight
 option.add( basic::options::OptionKeys::abinitio::override_vdw_all_stages, "apply vdw_weight_stage1 for all stages" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::recover_low_in_stages, "say default: 2 3 4 recover_low happens in stages 2 3 4" ).def(0);
 option.add( basic::options::OptionKeys::abinitio::skip_stages, "say: 2 3 4, and it will skip stages 2 3 4" ).def(0);
+option.add( basic::options::OptionKeys::abinitio::close_chbrk, "Chain break closure during classic abinito " ).def(false);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::close_chbrk, "Chain break closure during classic abinito " ).def(false);
-option.add( basic::options::OptionKeys::abinitio::include_stage5, "stage5 contains small moves only" ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::include_stage5, "stage5 contains small moves only" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::close_loops_by_idealizing, "close loops by idealizing the structure after stage 4" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_using_kic, "optimize around cutpoints using kinematic relax" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_margin, "" ).def(5);
@@ -1161,10 +1160,10 @@ option.add( basic::options::OptionKeys::wum::wum, "wum option group" ).legal(tru
 option.add( basic::options::OptionKeys::wum::n_slaves_per_master, "A value between 32 and 128 is usually recommended" ).def(64);
 option.add( basic::options::OptionKeys::wum::n_masters, "Manual override for -n_slaves_per_master. How many master nodes should be spawned ? 1 by default. generall 1 for eery 256-512 cores is recommended depending on master workload" ).def(1);
 option.add( basic::options::OptionKeys::wum::memory_limit, "Memory limit for queues (in kB) " ).def(0);
+option.add( basic::options::OptionKeys::wum::extra_scorefxn, "Extra score function for post-batchrelax-rescoring" );
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::wum::extra_scorefxn, "Extra score function for post-batchrelax-rescoring" );
-option.add( basic::options::OptionKeys::wum::extra_scorefxn_ref_structure, "Extra score function for post-batchrelax-rescoring reference structure for superimposition (for scorefunctions that depend on absolute coordinates such as electron denisty)" );
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::wum::extra_scorefxn_ref_structure, "Extra score function for post-batchrelax-rescoring reference structure for superimposition (for scorefunctions that depend on absolute coordinates such as electron denisty)" );
 option.add( basic::options::OptionKeys::wum::extra_scorefxn_relax, "After doing batch relax and adding any extra_scorefunction terms do another N fast relax rounds (defaut=0)" ).def(0);
 option.add( basic::options::OptionKeys::wum::trim_proportion, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::lh::lh, "lh option group" ).legal(true).def(true);
@@ -1741,10 +1740,10 @@ option.add( basic::options::OptionKeys::AnchoredDesign::akash::akash, "akash opt
 option.add( basic::options::OptionKeys::AnchoredDesign::akash::dyepos, "dye position" ).def(0);
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::testing, "testing option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::VDW_weight, "centroid VDW weight; testing if 2 better than 1" ).lower(0).def(1.0);
+option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_via_constraints, "allow anchor&jump to move; anchor held in place via constraints - you must specify constraints!" ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_via_constraints, "allow anchor&jump to move; anchor held in place via constraints - you must specify constraints!" ).def(false);
-option.add( basic::options::OptionKeys::AnchoredDesign::testing::delete_interface_native_sidechains, "benchmarking option.  delete input sidechains as prepacking step before running centroid or fullatom phases.  use if also using use_input_sc and doing benchmarking.  use_input_sc is used because of sidechain minimization, not to maintain input sidechains." );
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::AnchoredDesign::testing::delete_interface_native_sidechains, "benchmarking option.  delete input sidechains as prepacking step before running centroid or fullatom phases.  use if also using use_input_sc and doing benchmarking.  use_input_sc is used because of sidechain minimization, not to maintain input sidechains." );
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::RMSD_only_this, "Perform only RMSD calculations without modifying input.  Only used for re-running metrics during benchmarking/debugging." );
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_noise_constraints_mode, "Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor's placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer's commentary." ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::DenovoProteinDesign, "DenovoProteinDesign option group" ).legal(true).def(true);

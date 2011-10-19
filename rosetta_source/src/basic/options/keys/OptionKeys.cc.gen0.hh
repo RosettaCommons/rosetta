@@ -158,8 +158,7 @@ namespace out { BooleanOptionKey const pdb( "out:pdb" );  }
 namespace out { BooleanOptionKey const silent_gz( "out:silent_gz" );  }
 namespace out { BooleanOptionKey const use_database( "out:use_database" );  }
 namespace out { IntegerOptionKey const database_protocol_id( "out:database_protocol_id" );  }
-namespace out { RealOptionKey const output_top_n_percent( "out:output_top_n_percent" );  }
-namespace out { StringOptionKey const top_n_percent_score_term( "out:top_n_percent_score_term" );  }
+namespace out { StringVectorOptionKey const database_filter( "out:database_filter" );  }
 namespace out { BooleanOptionKey const nooutput( "out:nooutput" );  }
 namespace out { BooleanOptionKey const output( "out:output" );  }
 namespace out { RealOptionKey const scorecut( "out:scorecut" );  }
@@ -576,3 +575,4 @@ namespace abinitio { RealOptionKey const vdw_weight_stage1( "abinitio:vdw_weight
 namespace abinitio { BooleanOptionKey const override_vdw_all_stages( "abinitio:override_vdw_all_stages" );  }
 namespace abinitio { IntegerVectorOptionKey const recover_low_in_stages( "abinitio:recover_low_in_stages" );  }
 namespace abinitio { IntegerVectorOptionKey const skip_stages( "abinitio:skip_stages" );  }
+namespace abinitio { BooleanOptionKey const close_chbrk( "abinitio:close_chbrk" );  }

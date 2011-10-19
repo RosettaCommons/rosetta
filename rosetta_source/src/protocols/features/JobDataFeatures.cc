@@ -164,13 +164,14 @@ JobDataFeatures::load_string_data(
 ){
 	if(!table_exists(db_session, "job_string_data")) return;
 
-	cppdb::result res = (*db_session) <<
+	cppdb::statement stmt = (*db_session) <<
 			"SELECT\n"
 			"	data_key\n"
 			"FROM\n"
 			"	job_string_data\n"
 			"WHERE\n"
 			"	job_string_data.struct_id = ?;" << struct_id;
+	cppdb::result res(basic::database::safely_read_from_database(stmt));
 
 	while(res.next()){
 		std::string data_key;
@@ -202,8 +203,7 @@ JobDataFeatures::load_string_string_data(
 		core::pose::Pose & pose
 ){
 	if(!table_exists(db_session, "job_string_string_data")) return;
-
-	cppdb::result res = (*db_session) <<
+	cppdb::statement stmt = (*db_session) <<
 			"SELECT\n"
 			"	data_key,\n"
 			"	data_value\n"
@@ -211,6 +211,7 @@ JobDataFeatures::load_string_string_data(
 			"	job_string_string_data\n"
 			"WHERE\n"
 			"	job_string_string_data.struct_id = ?;" << struct_id;
+	cppdb::result res(basic::database::safely_read_from_database(stmt));
 
 	while(res.next()){
 		std::string data_key, data_value;
@@ -243,8 +244,7 @@ JobDataFeatures::load_string_real_data(
 		core::pose::Pose & pose
 ){
 	if(!table_exists(db_session, "job_string_real_data")) return;
-
-	cppdb::result res = (*db_session) <<
+	cppdb::statement stmt = (*db_session) <<
 			"SELECT\n"
 			"	data_key,\n"
 			"	data_value\n"
@@ -252,6 +252,7 @@ JobDataFeatures::load_string_real_data(
 			"	job_string_real_data\n"
 			"WHERE\n"
 			"	job_string_real_data.struct_id = ?;" << struct_id;
+	cppdb::result res(basic::database::safely_read_from_database(stmt));
 
 	while(res.next()){
 		std::string data_key;

@@ -18,6 +18,7 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/stream_util.hh>
+#include <utility/exit.hh>
 
 // Boost headers
 #include <boost/algorithm/string/erase.hpp>
@@ -27,6 +28,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <typeinfo>
 
 namespace utility {
 
@@ -145,6 +147,11 @@ inline T const from_string (std::string const & s, T )
 	T t;
 	std::istringstream ss(s);
 	ss >> t;
+	if ( ss.fail() ) {
+			const char* type = typeid(T).name();
+			utility_exit_with_message("cannot convert string "+s+"to type "+type);
+		}
+
 	return t;
 }
 

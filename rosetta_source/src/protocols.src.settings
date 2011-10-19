@@ -285,6 +285,8 @@ sources = {
 
 	"protocols/features" : [
 		"AtomAtomPairFeatures",
+		"DatabaseFilters",
+		"DatabaseStatements",
 		"Report",
 		"FeaturesReporter",
 		"FeaturesReporterFactory",
@@ -298,7 +300,6 @@ sources = {
 		"PoseCommentsFeatures",
 		"PoseConformationFeatures",
 		"ProteinSilentReport",
-		"ProteinSilentReport_util",
 		"ProteinBackboneTorsionAngleFeatures",
 		"ProteinBackboneAtomAtomPairFeatures",
 		"ProteinResidueConformationFeatures",

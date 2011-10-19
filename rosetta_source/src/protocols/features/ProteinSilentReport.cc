@@ -27,7 +27,7 @@
 #include <protocols/features/ProteinResidueConformationFeatures.hh>
 #include <protocols/features/ResidueConformationFeatures.hh>
 #include <protocols/features/JobDataFeatures.hh>
-#include <protocols/features/ProteinSilentReport_util.hh>
+#include <protocols/features/DatabaseFilters.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -35,9 +35,8 @@
 // Platform Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/Energies.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
@@ -57,8 +56,6 @@ static basic::Tracer ProteinSilentReportTracer("protocols.features.ProteinSilent
 namespace protocols{
 namespace features{
 
-
-using std::string;
 using utility::sql_database::sessionOP;
 using utility::vector1;
 using cppdb::statement;
@@ -69,6 +66,7 @@ using core::pose::tag_from_pose;
 
 ProteinSilentReport::ProteinSilentReport() :
 	initialized_(false),
+	database_filter_(NULL),
 	protocol_id_(0),
 	structure_map_(),
 	protocol_features_( new ProtocolFeatures() ),
@@ -80,11 +78,14 @@ ProteinSilentReport::ProteinSilentReport() :
 	protein_residue_conformation_features_( new ProteinResidueConformationFeatures() ),
 	residue_conformation_features_ (new ResidueConformationFeatures() ),
 	job_data_features_ (new JobDataFeatures() )
-{}
+{
+	database_filter_=get_DB_filter_ptr();
+}
 
 ProteinSilentReport::ProteinSilentReport(ProteinSilentReport const & src) :
 	Report(),
 	initialized_(src.initialized_),
+	database_filter_(src.database_filter_),
 	protocol_id_(src.protocol_id_),
 	structure_map_(src.structure_map_),
 	protocol_features_(src.protocol_features_),
@@ -131,7 +132,8 @@ void
 ProteinSilentReport::apply(
 	Pose const & pose,
 	sessionOP db_session,
-	string const & tag) {
+	std::string const & tag
+) {
 
 	vector1< bool > relevant_residues(pose.total_residue(), true);
 
@@ -151,110 +153,26 @@ ProteinSilentReport::apply(
 
 	}
 
-	if(!basic::options::option[basic::options::OptionKeys::out::output_top_n_percent].user())
-	{
+	if(!database_filter_){
 		write_full_report(pose,db_session,tag);
 		return;
-	}else
-	{
-		core::Real percentile = basic::options::option[basic::options::OptionKeys::out::output_top_n_percent];
-		std::string score_term(basic::options::option[basic::options::OptionKeys::out::top_n_percent_score_term]);
-		std::string current_input(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
-		core::Size n_structs = basic::options::option[basic::options::OptionKeys::out::nstruct];
-		core::Size n_models = get_current_structure_count_by_input_tag(db_session,current_input);
+	}
 
-		core::Size percentile_count = static_cast<core::Size>(floor(percentile*n_structs));
-		//store all the structures until you have at least percentile_count worth of models
-		if(n_models < percentile_count)
-		{
-			write_full_report(pose,db_session,tag);
-			return;
-		}else
-		{
-			core::Size struct_id = 0;
-			core::Real cutoff_score = 0.0;
-			core::Real current_model_score = 0.0;
-			core::Size score_type_id = get_score_type_id_from_score_term(db_session,protocol_id_,score_term);
-			//Some applications (most ligand docking) store score terms in the job data.
-			//If this is the case score_type_id will return 0
-			//otherwise, we know that the score term in question is a normal scoring function term
-			if(score_type_id != 0)
-			{
-				//Set up to pull scores out of the energy map
-				core::scoring::Energies const & energies(pose.energies());
-				core::scoring::EnergyMap emap;
-				core::scoring::ScoreFunctionOP score_function(core::scoring::getScoreFunction());
-				core::scoring::ScoreType score_type = static_cast<core::scoring::ScoreType>(score_type_id);
-				vector1< bool > relevant_residues(pose.total_residue(), true);
-				score_function->get_sub_score(pose,relevant_residues,emap);
-
-				//Get the structure ID and associated score from the database
-				struct_id = get_struct_id_with_nth_lowest_score_from_score_data(db_session,score_type_id,current_input,percentile_count);
-				cutoff_score = get_score_for_struct_id_and_score_term_from_score_data(db_session, struct_id,score_type_id);
-
-				current_model_score = energies.weights()[score_type] * emap[score_type];
-
-				//See if our current model is better
-
-				if(current_model_score < cutoff_score )
-				{
-					write_full_report(pose,db_session,tag);
-					core::Size struct_id_to_remove = get_struct_id_with_highest_score_from_score_data(db_session,score_type_id,current_input);
-					delete_pose(db_session,struct_id_to_remove);
-					return;
-					//The current model is above the cutoff, insert and delete the structure that was at the cutoff
-				}else
-				{
-					ProteinSilentReportTracer << "Current pose score is " << current_model_score <<
-						" and cutoff score is " << cutoff_score << " Discarding pose" <<std::endl;
-					//the current model is below the cutoff, throw the structure out
-					return;
-				}
-
-			}else
-			{
-				//get the current score out of the job data map
-				protocols::jd2::JobCOP job(protocols::jd2::JobDistributor::get_instance()->current_job());
-				//The job data is stored as a list instead of a map so we have to actually iterate over the whole thing
-				//In order to pull out one particular item
-				protocols::jd2::Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin());
-				for(;it != job->output_string_real_pairs_end();++it)
-				{
-					if(it->first == score_term)
-					{
-						current_model_score = it->second;
-						break;
-					}
-				}
-
-				struct_id = get_struct_id_with_nth_lowest_score_from_job_data(db_session,score_term,current_input,percentile_count);
-				cutoff_score = get_score_for_struct_id_and_score_term_from_job_data(db_session,struct_id,score_term);
-
-				//See if our current model is better
-
-				if(current_model_score < cutoff_score )
-				{
-					write_full_report(pose,db_session,tag);
-					core::Size struct_id_to_remove = get_struct_id_with_highest_score_from_job_data(db_session,score_term,current_input);
-					delete_pose(db_session,struct_id_to_remove);
-					return;
-					//The current model is above the cutoff, insert and delete the structure that was at the cutoff
-				}else
-				{
-					ProteinSilentReportTracer << "Current pose score is " << current_model_score <<
-						" and cutoff score is " << cutoff_score << " Discarding pose" <<std::endl;
-					//the current model is below the cutoff, throw the structure out
-					return;
-				}
-			}
-		}
+	std::pair<bool, utility::vector1<core::Size> > temp= (*database_filter_)(pose, db_session, protocol_id_);
+	bool write_this_pose = temp.first;
+	utility::vector1<core::Size> struct_ids_to_delete = temp.second;
+	foreach(core::Size struct_id, struct_ids_to_delete){
+		delete_pose(db_session,struct_id);
+	}
+	if(write_this_pose){
+		write_full_report(pose,db_session,tag);
 	}
 }
 
 void
 ProteinSilentReport::load_pose(
 	sessionOP db_session,
-	string tag,
+	std::string tag,
 	Pose & pose){
 
 	tag_into_pose(pose,tag);
