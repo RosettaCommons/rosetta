@@ -275,6 +275,7 @@ int ShapeComplementarityCalculator::Calc()
 	run_.results.surface[2].trimmedArea = (run_.results.surface[0].trimmedArea + run_.results.surface[1].trimmedArea);
 
 	run_.results.sc = run_.results.surface[2].s_median;
+	run_.results.distance = run_.results.surface[2].d_median;
 	run_.results.area = run_.results.surface[2].trimmedArea;
 	run_.results.valid = 1;
 
@@ -385,6 +386,9 @@ int ShapeComplementarityCalculator::AddAtom(
 		atom.access = 0;
 		run_.atoms.push_back(atom);
 		++run_.results.surface[molecule].nAtoms;
+		/*
+		printf("AddAtom[%d] %d: %s:%s (%10.4f, %10.4f, %10.4f) = %.4f\n", molecule, run_.results.surface[molecule].nAtoms, atom.residue, atom.atom, atom.x(), atom.y(), atom.z(), atom.radius);
+		*/
 		return 1;
 
 	} else {
@@ -406,8 +410,8 @@ int ShapeComplementarityCalculator::AssignAtomRadius(Atom &atom)
 
 	// Assign radius with wildcard matching
 	for(radius = radii_.begin(); radius != radii_.end(); ++radius) {
-		if(WildcardMatch(atom.residue, radius->residue, sizeof(atom.residue)-1) &&
-			WildcardMatch(atom.atom, radius->atom, sizeof(atom.atom)-1)) {
+		if(WildcardMatch(atom.residue, radius->residue, sizeof(atom.residue)) &&
+			WildcardMatch(atom.atom, radius->atom, sizeof(atom.atom))) {
 				atom.radius = radius->radius;
 				return 1;
 		}

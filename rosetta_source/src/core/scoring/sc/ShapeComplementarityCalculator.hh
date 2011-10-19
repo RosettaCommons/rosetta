@@ -62,6 +62,7 @@ namespace sc {
 typedef struct _RESULTS {
 	core::Real sc;                 // Interface shape complementarity statistic
 	core::Real area;               // Area of interface (A^2)
+	core::Real distance;           // Interface separation (A)
 	core::Size nAtoms;             // Number of Atoms used in calculation
 	struct {                       // These detailed counts are for for both molecules (0, 1) and sum/average for both (2)
 		core::Real d_mean;           // Mean seperation of molecules
