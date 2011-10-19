@@ -1,5 +1,0 @@
--in:file:fasta input/t288_.fasta
--in:file:s input/t288.pdb
--loops:frag_files input/boinc_aat288_03_05.200_v1_3.gz none
--loops:frag_sizes 3 1
--cm:min_loop_size 3
