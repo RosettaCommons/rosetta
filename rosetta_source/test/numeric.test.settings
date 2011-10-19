@@ -59,4 +59,7 @@ include_path = [ "#external/cxxtest", "#" ]
 library_path = []
 libraries    = [ "sqlite3", "cppdb", "numeric", "utility", "ObjexxFCL", "z",]
 subprojects  = []
-testinputfiles = [ "mt19937.u", "interpolation/Histogram_sample.hist", ]
+testinputfiles = [ "mt19937.u",
+                   "sampling.prob",
+                   "interpolation/Histogram_sample.hist",
+                 ]

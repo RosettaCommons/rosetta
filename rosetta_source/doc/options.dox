@@ -47,6 +47,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 2.5</dd><br>
 </dl>
 <dl>
+<dt><b>-sampling_prob</b> \<File\><dt>
+<dd>Normalized, per-residue sampling probabilities</dd><br>
+</dl>
+<dl>
 <dt><b>-score</b> \<String\><dt>
 <dd>Centroid-level score function</dd><br>
 <dd>Default: "score3"</dd><br>

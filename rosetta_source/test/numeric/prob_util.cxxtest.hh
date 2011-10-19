@@ -17,6 +17,9 @@
 #include <iterator>
 #include <vector>
 
+// Utility headers
+#include <utility/vector1.hh>
+
 // Project headers
 #include <numeric/prob_util.hh>
 
@@ -93,5 +96,16 @@ class ProbUtil : public CxxTest::TestSuite {
     TS_ASSERT_DELTA(0.85714, p1[0], MARGIN);
     TS_ASSERT_DELTA(0.02857, p1[1], MARGIN);
     TS_ASSERT_DELTA(0.11428, p1[2], MARGIN);
+  }
+
+  void test_read_probabilities() {
+    double data[] = { 0.2, 0.1, 0.4, 0.25, 0.05 };
+    utility::vector1<double> expected(data, data + 5);
+
+    utility::vector1<double> observed;
+    numeric::read_probabilities_or_die("numeric/sampling.prob", &observed);
+
+    for (unsigned i = 1; i <= observed.size(); ++i)
+      TS_ASSERT_DELTA(expected[i], observed[i], MARGIN);
   }
 };

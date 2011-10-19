@@ -108,41 +108,36 @@ void MedalMover::compute_per_residue_probabilities(
     const core::kinematics::FoldTree& tree,
     const core::fragment::FragSet& fragments,
     Probabilities* probs) const {
-
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
   using namespace std;
   assert(probs);
 
-  Probabilities p_alignment, p_chunk, p_cut, p_end;
-  alignment_probabilities(num_residues, alignment, &p_alignment);
-  chunk_probabilities(chunks, &p_chunk);
-  cutpoint_probabilities(num_residues, tree, &p_cut);
-  end_bias_probabilities(num_residues, &p_end);
+  // Override automatic sampling probability computation
+  if (option[OptionKeys::rigid::sampling_prob].user()) {
+    numeric::read_probabilities_or_die(option[OptionKeys::rigid::sampling_prob](), probs);
+  } else {
+    Probabilities p_alignment, p_chunk, p_cut, p_end;
+    alignment_probabilities(num_residues, alignment, &p_alignment);
+    chunk_probabilities(chunks, &p_chunk);
+    cutpoint_probabilities(num_residues, tree, &p_cut);
+    end_bias_probabilities(num_residues, &p_end);
 
-  // Product of probabilities
-  probs->insert(probs->begin(), p_alignment.begin(), p_alignment.end());
-  numeric::product(probs->begin(), probs->end(), p_chunk.begin(), p_chunk.end());
-  numeric::product(probs->begin(), probs->end(), p_cut.begin(), p_cut.end());
-  numeric::product(probs->begin(), probs->end(), p_end.begin(), p_end.end());
+    // Product of probabilities
+    probs->insert(probs->begin(), p_alignment.begin(), p_alignment.end());
+    numeric::product(probs->begin(), probs->end(), p_chunk.begin(), p_chunk.end());
+    numeric::product(probs->begin(), probs->end(), p_cut.begin(), p_cut.end());
+    numeric::product(probs->begin(), probs->end(), p_end.begin(), p_end.end());
 
-  // Zero-out probabilities of residues that would allow folding across the cut
-  invalidate_residues_spanning_cuts(tree, fragments.max_frag_length(), probs);
-  numeric::normalize(probs->begin(), probs->end());
+    // Zero-out probabilities of residues that would allow folding across the cut
+    invalidate_residues_spanning_cuts(tree, fragments.max_frag_length(), probs);
+    numeric::normalize(probs->begin(), probs->end());
+  }
 
-  // Display individual and combined probabilities
-  TR << setw(10) << "Residue"
-     << setw(15) << "P(align)"
-     << setw(15) << "P(chunk)"
-     << setw(15) << "P(cut)"
-     << setw(15) << "P(end)"
-     << setw(15) << "P(combined)"
-     << endl;
-
+  // Emit sampling probabilities
+  TR << "Residue" << setw(15) << "Probability" << endl;
   for (unsigned i = 1; i <= probs->size(); ++i) {
-    TR << setw(10) << i;
-    TR << fixed << setw(15) << setprecision(5) << p_alignment[i];
-    TR << fixed << setw(15) << setprecision(5) << p_chunk[i];
-    TR << fixed << setw(15) << setprecision(5) << p_cut[i];
-    TR << fixed << setw(15) << setprecision(5) << p_end[i];
+    TR << i;
     TR << fixed << setw(15) << setprecision(5) << (*probs)[i] << endl;
   }
   TR.flush_all_channels();

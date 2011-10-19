@@ -30,6 +30,7 @@ namespace rigid { extern IntegerOptionKey const medium_range_seqsep; }
 namespace rigid { extern FileOptionKey const patch; }
 namespace rigid { extern IntegerOptionKey const residues_backbone_move; }
 namespace rigid { extern RealOptionKey const rotation; }
+namespace rigid { extern FileOptionKey const sampling_prob; }
 namespace rigid { extern StringOptionKey const score; }
 namespace rigid { extern IntegerOptionKey const sequence_separation; }
 namespace rigid { extern IntegerOptionKey const short_range_seqsep; }

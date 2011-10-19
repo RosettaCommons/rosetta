@@ -16,6 +16,10 @@
 // C/C++ headers
 #include <algorithm>
 #include <iterator>
+#include <string>
+
+// Utility headers
+#include <utility/vector1.hh>
 
 /// A collection of functions for working with probabilities
 namespace numeric {
@@ -62,6 +66,12 @@ void product(ForwardIterator probs1_first, ForwardIterator probs1_last,
   }
   normalize(probs1_first, probs1_last);
 }
+
+/// @brief Loads normalized, per-residue probabilities from filename,
+/// storing the result in probs. Assumes line i holds the probability
+/// of sampling residue i. There must be 1 line for each residue in the
+/// pose on which this data will be used.
+void read_probabilities_or_die(const std::string& filename, utility::vector1<double>* probs);
 
 }  // namespace numeric
 
