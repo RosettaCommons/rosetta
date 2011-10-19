@@ -16,6 +16,9 @@
 // Unit headers
 #include <protocols/nonlocal/StarTreeBuilder.fwd.hh>
 
+// C/C++ headers
+#include <string>
+
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -29,6 +32,10 @@ namespace protocols {
 namespace nonlocal {
 
 class StarTreeBuilder : public TreeBuilder {
+ protected:
+  static const std::string PREFIX_INITIAL;
+  static const std::string PREFIX_FINAL;
+
  public:
   StarTreeBuilder();
 
@@ -46,14 +53,16 @@ class StarTreeBuilder : public TreeBuilder {
   /// @brief Removes the virtual residue added to <pose> in calls to set_up()
   void tear_down(core::pose::Pose* pose);
 
- private:
+ protected:
   /// @brief Stochastically selects an anchor position
   core::Size choose_anchor_position(const protocols::loops::Loop& chunk) const;
 
   /// @brief When native is available, computes rmsd of jump residues, storing
-  /// the results as comments in silent file output
-  void do_compute_jump_rmsd(core::pose::Pose* model) const;
+  /// the results as comments in silent file output. If specified, prefix string
+  /// will precede the result in the silent file output.
+  void do_compute_jump_rmsd(core::pose::Pose* model, const std::string& prefix = "") const;
 
+ private:
   /// @brief Index of the virtual residue we added to the pose in set_up()
   int virtual_res_;
 };

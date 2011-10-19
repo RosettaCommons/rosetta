@@ -14,6 +14,7 @@
 #include <protocols/nonlocal/StarTreeBuilder.hh>
 
 // C/C++ headers
+#include <string>
 #include <utility>
 
 // External headers
@@ -47,6 +48,10 @@
 
 namespace protocols {
 namespace nonlocal {
+
+// Static member initialization
+const std::string StarTreeBuilder::PREFIX_INITIAL = "initial";
+const std::string StarTreeBuilder::PREFIX_FINAL = "final";
 
 StarTreeBuilder::StarTreeBuilder() : virtual_res_(-1) {}
 
@@ -117,10 +122,10 @@ void StarTreeBuilder::set_up(const protocols::loops::Loops& chunks, core::pose::
 
   // When native is available, compute RMSD over jump residues. Results stored
   // as comments in the pose with format: rmsd_jump_residue_X rmsd
-  do_compute_jump_rmsd(pose);
+  do_compute_jump_rmsd(pose, PREFIX_INITIAL);
 }
 
-void StarTreeBuilder::do_compute_jump_rmsd(core::pose::Pose* model) const {
+void StarTreeBuilder::do_compute_jump_rmsd(core::pose::Pose* model, const std::string& prefix) const {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using boost::unordered_map;
@@ -142,7 +147,7 @@ void StarTreeBuilder::do_compute_jump_rmsd(core::pose::Pose* model) const {
     Size residue = i->first;
     Real rmsd = i->second;
     core::pose::add_comment(*model,
-                            (boost::format("rmsd_jump_residue_%1%") % residue).str(),
+                            (boost::format("%1% rmsd_jump_residue_%2%") % prefix % residue).str(),
                             (boost::format("%1%") % rmsd).str());
   }
 }
@@ -152,6 +157,7 @@ void StarTreeBuilder::tear_down(core::pose::Pose* pose) {
   if (virtual_res_ == -1) {
     return;
   } else {
+    do_compute_jump_rmsd(pose, PREFIX_FINAL);
     pose->conformation().delete_residue_slow(virtual_res_);
     virtual_res_ = -1;
   }
