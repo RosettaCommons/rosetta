@@ -149,6 +149,7 @@ core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
 
 	tr << "Shape complementarity: " << r.sc << std::endl;
 	tr << "Interface area: " << r.area << std::endl;
+	tr << "Interface seperation: " << r.distance << std::endl;
 
 	return 1;
 }

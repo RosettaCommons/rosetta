@@ -201,7 +201,7 @@ int process_pose(
 //		      std::cout << "	  Buried Dots: " << r.surface[i].nBuriedDots << endl;
 //		      std::cout << "      Accessible Dots: " << r.surface[i].nAccessibleDots << endl;
 			std::cout << " Trimmed Surface Dots: " << r.surface[i].nTrimmedDots << endl;
-			std::cout << "	 Trimmed Area: " << r.surface[i].trimmedArea << " (avg) " << endl;
+			std::cout << "	 Trimmed Area: " << r.surface[i].trimmedArea << endl;
 			std::cout << endl;
 	       }
 		std::cout << endl;
@@ -220,7 +220,9 @@ int process_pose(
 	}
 
 	std::cout << "==================================================" << endl;
-	std::cout << "Shape Complementarity: " << r.sc << endl;
+	std::cout << "Shape Complementarity:          " << r.sc << endl;
+	std::cout << "Interface separation (A):       " << r.distance << endl;
+	std::cout << "Area buried in interface (A^2): " << r.area << endl;
 	std::cout << "==================================================" << endl;
 
 	return 1;
