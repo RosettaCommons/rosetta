@@ -539,6 +539,9 @@ def BuildRosettaOnWindows(build_dir):
     #if 'protocols/moves/PyMolMover.cc' in sources: sources.remove('protocols/moves/PyMolMover.cc')
 
     os.chdir( './../../' )
+    
+    # Generate svn_version
+    execute('Generate svn_version.cc...', 'cd .. && python svn_version.py')
 
     for s in external:
         try: os.makedirs( os.path.join( build_dir, os.path.split(s)[0]) )

@@ -28,18 +28,20 @@ typedef  INT64  int64_t; // 64-bit signed integer
 typedef  UINT64  uint64_t; // 64-bit unsigned integer
 
 
-typedef  signed int int32_t; // 32-bit signed integer
-typedef  unsigned int uint32_t; // 32-bit unsigned integer
-typedef  long long int  int64_t; // 64-bit signed integer
-typedef  unsigned long long int  uint64_t; // 64-bit unsigned integer
 
-
-/// @brief Scalable size types
-typedef  long int  ssize_t; // Signed size
 
 #else
 
 #endif
+
+
+typedef  signed int int32_t; // 32-bit signed integer
+typedef  unsigned int uint32_t; // 32-bit unsigned integer
+typedef  long long int int64_t; // 64-bit signed integer
+typedef  unsigned long long int  uint64_t; // 64-bit unsigned integer
+
+/// @brief Scalable size types
+typedef  long int  ssize_t; // Signed size
 
 
 /// @brief Scalable size types

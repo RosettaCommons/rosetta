@@ -174,6 +174,10 @@
 
 #endif
 
+#ifndef WIN_PYROSETTA
+	#include <platform/types.hh>
+#endif
+
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <cstring>
 

@@ -53,6 +53,7 @@
 
 #ifndef _WIN32 // REQUIRED FOR WINDOWS
 #include <unistd.h>
+#include <cctype>
 #endif
 
 #include <fstream>
@@ -488,8 +489,11 @@ MPI_LoopHashRefine_Master::load_sample_weight() {
 				
 				// Check for correct format
 				for( int i = 0; i < line.length(); i++ ) {
-						if( !std::isdigit(line[i]) && line[i] != ' ')
-								utility_exit_with_message( "Sample weight file has characters other than digits and spaces. Please reformat." );
+					#ifdef WIN_PYROSETTA
+						if( !std::isdigit(line[i], std::locale::classic()) && line[i] != ' ') utility_exit_with_message( "Sample weight file has characters other than digits and spaces. Please reformat." );
+					#else
+						if( !std::isdigit(line[i]) && line[i] != ' ') utility_exit_with_message( "Sample weight file has characters other than digits and spaces. Please reformat." );
+					#endif		
 				}
 
 				// check for correct length
