@@ -12,3 +12,40 @@
 /// @brief
 
 /// @author Tim jacobs
+
+//Core
+#include <core/types.hh>
+
+//Unit Headers
+#include <devel/helixAssembly/NativeResidue.hh>
+
+//Utility
+#include <utility/string_util.hh>
+
+//Devel
+#include <devel/helixAssembly/NativeAtom.hh>
+
+NativeResidue::NativeResidue():
+res_type_(),
+atoms_()
+{}
+
+NativeResidue::NativeResidue(const std::string & res_type, const std::vector<NativeAtom> & atoms):
+res_type_(res_type),
+atoms_(atoms)
+{}
+
+NativeResidue::~NativeResidue(){}
+
+std::string NativeResidue::res_type(){
+  return res_type_;
+}
+
+std::string NativeResidue::print() const{
+  std::string output = "RESIDUE " + res_type_ + "\n";
+
+  for(core::Size i=0; i<atoms_.size(); ++i){
+      output += atoms_[i].print();
+  }
+  return output;
+}

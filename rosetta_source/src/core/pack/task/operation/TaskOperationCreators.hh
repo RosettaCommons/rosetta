@@ -48,6 +48,12 @@ public:
 	virtual std::string keyname() const { return "AppendRotamerSet"; }
 };
 
+class AppendResidueRotamerSetCreator : public TaskOperationCreator {
+public:
+	virtual TaskOperationOP create_task_operation() const;
+	virtual std::string keyname() const { return "AppendResidueRotamerSet"; }
+};
+
 class AppendRotamerCreator : public TaskOperationCreator {
 public:
 	virtual TaskOperationOP create_task_operation() const;

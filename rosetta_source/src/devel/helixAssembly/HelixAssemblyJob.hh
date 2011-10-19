@@ -72,10 +72,7 @@ class HelixAssemblyJob {
 public:
 
   HelixAssemblyJob();
-  HelixAssemblyJob(HelixAssemblyJob const & old_job);
-  HelixAssemblyJob(core::Size id, std::string name, core::Size round, bool direction_needed, std::string query_structure,
-      std::string search_structure, core::Size search_index, core::Size query_frag_1_index,
-      core::Size query_frag_2_index, std::vector<HelicalFragment> fragments, bool first_round);
+  ~HelixAssemblyJob();
 
   core::Size get_id() const;
   std::string get_name() const;
@@ -103,6 +100,7 @@ public:
   void set_first_round(bool first_round);
   void add_fragment(HelicalFragment new_fragment);
 
+  std::string printBundleResidues() const;
 
 private:
   friend class boost::serialization::access;

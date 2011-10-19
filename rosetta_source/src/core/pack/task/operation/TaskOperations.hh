@@ -351,6 +351,26 @@ private:
 	rotamer_set::RotamerSetOperationOP rotamer_set_operation_;
 };
 
+///@brief Apply rotamerSetOperation to only the rotamerSet for the given residue
+///@author Tim Jacobs (2011)
+class AppendResidueRotamerSet : public TaskOperation
+{
+public:
+	typedef TaskOperation parent;
+public:
+	AppendResidueRotamerSet();
+	virtual ~AppendResidueRotamerSet();
+	AppendResidueRotamerSet( core::Size resnum, rotamer_set::RotamerSetOperationOP rotamer_set_operation );
+	AppendResidueRotamerSet( AppendResidueRotamerSet const & );
+	virtual TaskOperationOP clone() const;
+	virtual void apply( pose::Pose const &, PackerTask & ) const;
+	void set_resnum( core::Size resnum );
+	void set_rotamer_set_operation( rotamer_set::RotamerSetOperationOP rotamer_operation );
+
+private:
+	core::Size resnum_;
+	rotamer_set::RotamerSetOperationOP rotamer_set_operation_;
+};
 
 class PreserveCBeta : public TaskOperation
 {

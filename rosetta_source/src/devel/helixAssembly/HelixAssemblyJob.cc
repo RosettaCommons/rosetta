@@ -13,44 +13,23 @@
 
 /// @author Tim jacobs
 
+//Unit
 #include <devel/helixAssembly/HelixAssemblyJob.hh>
 
-HelixAssemblyJob::HelixAssemblyJob(){};
-
-//  HelixAssemblyJob clone() const {
-//    return new HelixAssemblyJob( *this );
-//  }
-
-//copy constructor
-HelixAssemblyJob::HelixAssemblyJob(HelixAssemblyJob const & old_job):
-        id_(old_job.id_),
-        name_(old_job.name_),
-        remaining_rounds_(old_job.remaining_rounds_),
-        query_structure_(old_job.query_structure_),
-        search_structure_(old_job.search_structure_),
-        search_index_(old_job.search_index_),
-        query_frag_1_index_(old_job.query_frag_1_index_),
-        query_frag_2_index_(old_job.query_frag_2_index_),
-        fragments_(old_job.fragments_),
-        direction_needed_(old_job.direction_needed_),
-        first_round_(old_job.first_round_)
-{}
-
-HelixAssemblyJob::HelixAssemblyJob(core::Size id, std::string name, core::Size remaining_rounds, bool direction_needed,
-    std::string query_structure, std::string search_structure, core::Size search_index, core::Size query_frag_1_index,
-    core::Size query_frag_2_index, std::vector<HelicalFragment> fragments, bool first_round):
-    id_(id),
-    name_(name),
-    remaining_rounds_(remaining_rounds),
-    direction_needed_(direction_needed),
-    query_structure_(query_structure),
-    search_structure_(search_structure),
-    search_index_(search_index),
-    query_frag_1_index_(query_frag_1_index),
-    query_frag_2_index_(query_frag_2_index),
-    fragments_(fragments),
-    first_round_(first_round)
-{}
+HelixAssemblyJob::HelixAssemblyJob():
+id_(0),
+name_(""),
+remaining_rounds_(0),
+query_structure_(""),
+search_structure_(""),
+search_index_(0),
+query_frag_1_index_(0),
+query_frag_2_index_(0),
+fragments_(),
+direction_needed_(true),
+first_round_(false)
+{};
+HelixAssemblyJob::~HelixAssemblyJob(){};
 
 core::Size HelixAssemblyJob::get_id() const{
   return id_;
@@ -150,4 +129,14 @@ void HelixAssemblyJob::set_direction_needed(bool direction_needed){
 
 void HelixAssemblyJob::set_first_round(bool first_round){
   this->first_round_=first_round;
+}
+
+std::string HelixAssemblyJob::printBundleResidues() const{
+
+  std::string output = "BUNDLE: " + name_ + "\n";
+
+  for(core::Size i=0; i<fragments_.size(); ++i){
+      output+=fragments_[i].print() + "\n";
+  }
+  return output;
 }

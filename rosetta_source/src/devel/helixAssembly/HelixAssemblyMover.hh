@@ -32,9 +32,8 @@ class HelixAssemblyMover {
 public:
 
         ///@brief
-        HelixAssemblyMover();
-
-        virtual ~HelixAssemblyMover();
+        HelixAssemblyMover(HelicalFragment query_frag_1, HelicalFragment query_frag_2);
+        ~HelixAssemblyMover();
 
         virtual std::string get_name() const {
           return "HelixAssemblyMover";
@@ -50,9 +49,9 @@ public:
         std::string get_query_structure_path() const;
         std::string get_query_structure_string() const;
         core::Real get_single_helix_rmsd_cutoff() const;
-        void set_scorefxn(core::scoring::ScoreFunctionOP scorefxn_);
-        void set_query_frag_1(HelicalFragment frag_1_);
-        void set_query_frag_2(HelicalFragment frag_2_);
+        void set_scorefxn(const core::scoring::ScoreFunctionOP & scorefxn_);
+        void set_query_frag_1(const HelicalFragment & frag_1_);
+        void set_query_frag_2(const HelicalFragment & frag_2_);
         void set_helix_cap_distance_cutoff(core::Real helix_cap_distance_cutoff_);
         void set_helix_contact_distance_cutoff(core::Real helix_contact_distance_cutoff_);
         void set_helix_pair_rmsd_cutoff(core::Real helix_pair_rmsd_cutoff_);
@@ -88,7 +87,7 @@ public:
             const core::pose::Pose & pose_2, const std::pair<HelicalFragment, HelicalFragment> & pose_1_fragments,
             const std::pair<HelicalFragment, HelicalFragment> & pose_2_fragments);
 
-        void superimposeBundles(core::pose::Pose & query_structure, const core::pose::Pose & results_structure);
+        void superimposeBundles(const core::pose::Pose & query_structure, core::pose::Pose & results_structure, std::pair< HelicalFragment, HelicalFragment> matching_pair);
 
         core::Real bb_score(core::pose::Pose & pose, core::Size unique_chain_num, core::scoring::ScoreFunctionOP & scorefxn);
 

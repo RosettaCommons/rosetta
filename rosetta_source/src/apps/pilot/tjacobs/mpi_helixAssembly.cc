@@ -17,6 +17,8 @@
 #include <devel/helixAssembly/HelixAssemblyMover.hh>
 #include <devel/helixAssembly/HelixAssemblyJob.hh>
 #include <devel/helixAssembly/HelicalFragment.hh>
+#include <devel/helixAssembly/NativeAtom.hh>
+#include <devel/helixAssembly/NativeResidue.hh>
 
 // Devel headers
 #include <devel/init.hh>
@@ -39,6 +41,7 @@
 #include <boost/mpi.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/vector.hpp>
+#include <boost/serialization/map.hpp>
 
 // C++ headers
 #include <stdio.h>
@@ -60,6 +63,27 @@ main( int argc, char * argv [] )
   devel::init(argc, argv);
 
   boost::mpi::communicator world;
+
+  ///*****DEBUG*****/////
+
+//  if(world.rank()==0){
+//      std::map<int, std::vector<std::string> > test;
+//      test[1].push_back("FOO");
+//      test[50].push_back("BAR");
+//      world.send(1, 1, boost::mpi::skeleton(test));
+//      world.send(1, 1, boost::mpi::get_content(test));
+//      cout << "sent" << endl;
+//  }
+//  else{
+//      std::map<int, std::vector<std::string> > test;
+//      world.recv(0,1,boost::mpi::skeleton(test));
+//      world.recv(0,1,boost::mpi::get_content(test));
+//      cout << test[1][0] << endl;
+//      cout << test[50][0] << endl;
+//      exit(1);
+//  }
+
+  ////***END DEBUG***////
 
   //Should I check to make sure MPI is initialized?
   if(world.rank()==0){
@@ -106,19 +130,18 @@ main( int argc, char * argv [] )
           temp_job.set_direction_needed(true); //doesn't matter for first round
           temp_job.set_first_round(true);
 
-          HelicalFragment fragment1;
-          fragment1.set_start(option[ HelixAssembly::frag1_start]);
-          fragment1.set_end(option[ HelixAssembly::frag1_end]);
+          core::Size frag1_start = option[ HelixAssembly::frag1_start];
+          core::Size frag1_end = option[ HelixAssembly::frag1_end];
+          core::Size frag2_start = option[ HelixAssembly::frag2_start];
+          core::Size frag2_end = option[ HelixAssembly::frag2_end];
+
+          HelicalFragment fragment1(frag1_start, frag1_end, true);
           fragment1.set_pdb_source(pdb_library[i].name());
-          fragment1.set_direction(true); //first fragment of original query is always true (all other fragments are relative to this)
 
-          HelicalFragment fragment2;
-          fragment2.set_start(option[ HelixAssembly::frag2_start]);
-          fragment2.set_end(option[ HelixAssembly::frag2_end]);
+          HelicalFragment fragment2(frag2_start, frag2_end, false);
           fragment2.set_pdb_source(pdb_library[i].name());
-          fragment2.set_direction(false); //second fragment of original query is always false (all other fragments are relative to this)
 
-          vector<HelicalFragment> fragments;
+          std::vector<HelicalFragment> fragments;
           fragments.push_back(fragment1);
           temp_job.set_query_frag_1_index(0);
           fragments.push_back(fragment2);
@@ -176,10 +199,13 @@ main( int argc, char * argv [] )
           core::Size num_new_jobs;
           world.recv(completed_node,0,num_new_jobs);
 
+          cout << "Number of jobs to receive " << num_new_jobs << endl;
+
           for(Size i=0; i<num_new_jobs; i++){
               HelixAssemblyJob new_job;
               world.recv(completed_node,0,boost::mpi::skeleton(new_job));
               world.recv(completed_node,0,boost::mpi::get_content(new_job));
+
               new_jobs.push_back(new_job);
           }
 
@@ -221,11 +247,16 @@ main( int argc, char * argv [] )
               else{
                   TR << "Outputting job " << new_jobs[i].get_name() << endl;
                   //done. output PDBs
-                  utility::io::ozstream outputStream;
-                  outputStream.open(new_jobs[i].get_name()+ "_bundle.pdb");
+                  utility::io::ozstream pdb_output_stream;
+                  pdb_output_stream.open(new_jobs[i].get_name()+ "_bundle.pdb");
                   ++job_id_counter;
-                  outputStream << new_jobs[i].get_query_structure();
-                  outputStream.close();
+                  pdb_output_stream << new_jobs[i].get_query_structure();
+                  pdb_output_stream.close();
+
+                  utility::io::ozstream residue_output_stream;
+                  residue_output_stream.open(new_jobs[i].get_name()+ "_residues.txt");
+                  residue_output_stream << new_jobs[i].printBundleResidues();
+                  residue_output_stream.close();
               }
           }
 
@@ -273,7 +304,7 @@ main( int argc, char * argv [] )
               world.recv(0, 0, boost::mpi::get_content(received_job));
               TR << "Node " << world.rank() << " received job: " << received_job.get_name() << endl;
 
-              HelixAssemblyMover helixAssembler;
+              HelixAssemblyMover helixAssembler(received_job.get_query_frag_1(), received_job.get_query_frag_2());
               std::vector<HelixAssemblyJob> returned_jobs = helixAssembler.apply(received_job);
               cout << "Node " << world.rank() << " finished " << received_job.get_name() << ", returning " <<
                   returned_jobs.size() << " new job(s)." << endl;

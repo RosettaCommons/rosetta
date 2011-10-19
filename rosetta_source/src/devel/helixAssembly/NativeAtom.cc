@@ -13,3 +13,41 @@
 
 /// @author Tim Jacobs
 
+//Unit headers
+#include <devel/helixAssembly/NativeAtom.hh>
+
+//Utility
+#include <utility/string_util.hh>
+
+NativeAtom::NativeAtom():
+type_(0),
+x_(0),
+y_(0),
+z_(0)
+{}
+
+NativeAtom::NativeAtom(const unsigned short type, const float x, const float y, const float z):
+type_(type),
+x_(x),
+y_(y),
+z_(z)
+{}
+
+NativeAtom::~NativeAtom(){}
+
+float NativeAtom::x(){
+  return x_;
+}
+
+float NativeAtom::y(){
+  return y_;
+}
+
+float NativeAtom::z(){
+  return z_;
+}
+
+std::string NativeAtom::print() const{
+  return "ATOM " + utility::to_string(type_) + " " + utility::to_string(x_) + " " + utility::to_string(y_) + " " +
+      utility::to_string(z_) + "\n";
+}

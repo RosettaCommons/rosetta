@@ -706,6 +706,57 @@ AppendRotamerSet::set_rotamer_set_operation(
 }
 
 
+/// BEGIN AppendResidueRotamerSet
+
+AppendResidueRotamerSet::AppendResidueRotamerSet()
+	: parent(),
+	  resnum_(0),
+	  rotamer_set_operation_(0)
+{}
+
+AppendResidueRotamerSet::~AppendResidueRotamerSet()
+{}
+
+AppendResidueRotamerSet::AppendResidueRotamerSet( core::Size resnum,
+		rotamer_set::RotamerSetOperationOP rotamer_set_operation )
+ : resnum_(resnum),
+   rotamer_set_operation_( rotamer_set_operation )
+{}
+
+AppendResidueRotamerSet::AppendResidueRotamerSet( AppendResidueRotamerSet const & src )
+	: parent(src),
+	  rotamer_set_operation_( src.rotamer_set_operation_ ),
+	  resnum_( src.resnum_ )
+{}
+
+TaskOperationOP AppendResidueRotamerSetCreator::create_task_operation() const
+{
+	return new AppendResidueRotamerSet;
+}
+
+TaskOperationOP AppendResidueRotamerSet::clone() const
+{
+	return new AppendResidueRotamerSet( *this );
+}
+
+void
+AppendResidueRotamerSet::apply( pose::Pose const &, PackerTask & task ) const
+{
+	task.nonconst_residue_task(resnum_).append_rotamerset_operation(rotamer_set_operation_);
+}
+
+void
+AppendResidueRotamerSet::set_resnum( core::Size resnum )
+{
+	resnum_ = resnum;
+}
+
+void
+AppendResidueRotamerSet::set_rotamer_set_operation( rotamer_set::RotamerSetOperationOP rotamer_set_operation )
+{
+	rotamer_set_operation_ = rotamer_set_operation;
+}
+
 
 /// BEGIN PreserveCBeta
 
