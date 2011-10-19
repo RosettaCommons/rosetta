@@ -15,10 +15,8 @@
 
 // C/C++ headers
 #include <iterator>
+#include <set>
 #include <string>
-
-// External headers
-#include <boost/unordered/unordered_map.hpp>
 
 // Utility headers
 #include <basic/options/option.hh>
@@ -36,24 +34,26 @@
 namespace protocols {
 namespace moves {
 
-typedef boost::unordered_map<int, core::kinematics::Jump> Jumps;
+typedef std::set<int> Jumps;
 
 RigidBodyMotionMover::RigidBodyMotionMover(const Jumps& jumps) : jumps_(jumps) {}
 
 void RigidBodyMotionMover::apply(core::pose::Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
-  using core::kinematics::Jump;
+	using core::kinematics::Jump;
 
-  // randomly select a jump to manipulate
-  Jumps::iterator i = jumps_.begin();
-  std::advance(i, numeric::random::random_range(0, jumps_.size() - 1));
-  int jump_num = i->first;
-  Jump jump = i->second;
-
-  // perturb the rigid body transformation
+	int jump_num = random_jump();
+	Jump jump = pose.jump(jump_num);  // intentional copy
   jump.gaussian_move(1, option[OptionKeys::rigid::translation](), option[OptionKeys::rigid::rotation]());
   pose.set_jump(jump_num, jump);
+}
+
+/// @detail Equiprobable selection
+int RigidBodyMotionMover::random_jump() const {
+	Jumps::iterator i = jumps_.begin();
+	std::advance(i, numeric::random::random_range(0, jumps_.size() - 1));
+	return *i;
 }
 
 std::string RigidBodyMotionMover::get_name() const {

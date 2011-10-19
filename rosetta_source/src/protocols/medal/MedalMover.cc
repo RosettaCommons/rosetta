@@ -16,13 +16,13 @@
 // C/C++ headers
 #include <iomanip>
 #include <iostream>
+#include <map>
 #include <string>
 
 // External headers
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
 #include <boost/function.hpp>
-#include <boost/unordered/unordered_map.hpp>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -83,7 +83,7 @@ namespace protocols {
 namespace medal {
 
 typedef boost::function<void(const core::pose::Pose&)> Trigger;
-typedef boost::unordered_map<int, core::kinematics::Jump> Jumps;
+typedef std::set<int> Jumps;
 
 static basic::Tracer TR("protocols.medal.MedalMover");
 

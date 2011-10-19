@@ -19,9 +19,6 @@
 #include <map>
 #include <set>
 
-// External headers
-#include <boost/unordered/unordered_map.hpp>
-
 // Utility headers
 #include <basic/datacache/BasicDataCache.hh>
 #include <numeric/xyzVector.hh>
@@ -54,7 +51,7 @@
 namespace core {
 namespace pose {
 
-typedef boost::unordered_map<int, core::kinematics::Jump> Jumps;
+typedef std::set<int> Jumps;
 
 /// @brief Retrieves jump information from <pose>, storing the result in <jumps>.
 /// Jumps are keyed by their jump id.

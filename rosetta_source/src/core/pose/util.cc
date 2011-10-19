@@ -19,9 +19,6 @@
 #include <cmath>
 #include <iostream>
 
-// External headers
-#include <boost/unordered/unordered_map.hpp>
-
 // Utility headers
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -72,15 +69,14 @@ static basic::Tracer TR("core.pose.util");
 
 void jumps_from_pose(const core::pose::Pose& pose, Jumps* jumps) {
 	assert(jumps);
-	for (int i = 1; i <= pose.num_jump(); ++i)
-		(*jumps)[i] = pose.jump(i);
+	for (int i = 1; i <= pose.num_jump(); ++i) {
+		jumps->insert(i);
+	}
 }
 
 void remove_virtual_residues(core::pose::Pose* pose) {
-  using core::Size;
   assert(pose);
-
-  for (Size i = 1; i <= pose->total_residue(); ++i) {
+  for (core::Size i = 1; i <= pose->total_residue(); ++i) {
     if (pose->residue_type(i).name() == "VRT")
       pose->conformation().delete_residue_slow(i);
   }

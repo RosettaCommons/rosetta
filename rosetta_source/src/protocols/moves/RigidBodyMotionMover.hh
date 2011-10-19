@@ -17,10 +17,8 @@
 #include <protocols/moves/RigidBodyMotionMover.fwd.hh>
 
 // C/C++ headers
+#include <set>
 #include <string>
-
-// External headers
-#include <boost/unordered/unordered_map.hpp>
 
 // Project headers
 #include <core/kinematics/Jump.fwd.hh>
@@ -33,7 +31,7 @@ namespace protocols {
 namespace moves {
 
 class RigidBodyMotionMover : public Mover {
-  typedef boost::unordered_map<int, core::kinematics::Jump> Jumps;
+  typedef std::set<int> Jumps;
 
  public:
   explicit RigidBodyMotionMover(const Jumps& jumps);
@@ -46,6 +44,9 @@ class RigidBodyMotionMover : public Mover {
   MoverOP clone() const;
 
  private:
+	/// @brief Returns a randomly selected jump
+	int random_jump() const;
+
   Jumps jumps_;
 };
 
