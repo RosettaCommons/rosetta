@@ -88,14 +88,13 @@ FastGapMover::FastGapMover() :
 	lhlibrary_->load_mergeddb();
 
 	lhsampler_ = new LoopHashSampler( lhlibrary_, simple_inserter_ );
-
-	lhsampler_->set_max_rms( max_rms_ );
-	lhsampler_->set_nonideal( non_ideal_ );
-	lhsampler_->set_min_rms( min_rms_ );
 } 
 
 void
 FastGapMover::apply( pose::Pose & pose ) {
+		lhsampler_->set_max_rms( max_rms_ );
+		lhsampler_->set_nonideal( non_ideal_ );
+		lhsampler_->set_min_rms( min_rms_ );
 
 		// copy pose
 		PoseOP working_pose = new Pose(pose);

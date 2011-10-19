@@ -56,20 +56,6 @@ public:
 	virtual std::string get_name() const;
 
 	FastGapMover &
-	min_loop_size( core::Size const setting )
-	{
-		min_loop_size_ = setting;
-		return *this;
-	}
-
-	FastGapMover &
-	max_loop_size( core::Size const setting )
-	{
-		max_loop_size_ = setting;
-		return *this;
-	}
-
-	FastGapMover &
 	min_rms( core::Real const setting )
 	{
 		min_rms_ = setting;
