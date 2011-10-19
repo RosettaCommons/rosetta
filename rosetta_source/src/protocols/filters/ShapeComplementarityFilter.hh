@@ -94,8 +94,8 @@ public:// mutator
 	void jump_id( Size const & jump_id );
 	void quick( Size const & quick );
 	void verbose( Size const & verbose );
-	void residues1( std::string const & str );
-	void residues2( std::string const & str );
+	//Undefinded, commenting out to fix PyRosetta build void residues1( std::string const & str );
+	//Undefinded, commenting out to fix PyRosetta build void residues2( std::string const & str );
 
 public:// parser
 
