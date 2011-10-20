@@ -51,7 +51,7 @@ void RigidBodyMotionMover::apply(core::pose::Pose& pose) {
 
 /// @detail Equiprobable selection
 int RigidBodyMotionMover::random_jump() const {
-	Jumps::iterator i = jumps_.begin();
+	Jumps::const_iterator i(jumps_.begin());
 	std::advance(i, numeric::random::random_range(0, jumps_.size() - 1));
 	return *i;
 }
