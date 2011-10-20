@@ -553,9 +553,12 @@ settings = {
     "gcc, linux, boinc" : {
         "appends" : {
             "include_path"  : [ "#external", "#external/dbio", "/usr/include/GL" ],
-            "libraries"     : [ "pthread", "GL", "GLU", "X11", "Xext","Xxf86vm", "dl"],
+            "libraries"     : [ "GL", "GLU", "X11", "Xext","Xxf86vm", "dl"],
             "library_path"  : [ "#external/boinc/api", "#external/boinc/lib", "#external/boinc/zip", "/usr/X11R6/lib" ],
             "defines"       : [ "BOINC_GRAPHICS" ],
+            "flags" : {
+              "link" : [ "Wl,--whole-archive -lpthread -Wl,--no-whole-archive" ],
+            },
         },
     },
 
