@@ -211,7 +211,7 @@ ResidueTypesFeatures::report_features(
 				break;
 			}catch(cppdb::cppdb_error &)
 			{
-				#ifndef WIN_PYROSETTA
+				#ifndef WIN32
 					usleep(10);
 				#endif
 				continue;
