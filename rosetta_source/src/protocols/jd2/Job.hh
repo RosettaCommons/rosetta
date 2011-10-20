@@ -87,6 +87,8 @@ public:
 	///@brief
 	core::Size nstruct_max() const;
 
+	///////////////////////////THIS SECTION OF FUNCTIONS IS MEANT TO BE USED BY MOVERS/////////////////////////////
+	//It is safe to call these functions even in the absence of a job distributor - it will store the data in a dummy object.  You are not making your protocol dependent on JD2 by using these functions (although this extra output might get "lost" if you do not emit it by another method like the Tracers.) -- SML 10/20/11
 	//functions for loading output info into the job
 	///@brief add an output string
 	void add_string( std::string const & string_in );
@@ -100,6 +102,10 @@ public:
 	///@brief add a string/real pair
 	void add_string_real_pair( std::string const & string_in, core::Real const real_in );
 
+
+	////////////////////THIS SECTION OF FUNCTIONS IS FORBIDDEN FOR USE BY MOVERS//////////////////////////////////
+	//If Movers try to use these functions, those Movers become tied to JD2 and may fail if JD2 is not present (because there will be no data in these strings).  To prevent this, DO NOT CALL these functions from within Movers. SML 10/20/11
+
 	//functions for returning output info from the job.  You get iterators so that this interface can stay constant as the underlying implementation changes
 	Strings::const_iterator output_strings_begin() const;
 	Strings::const_iterator output_strings_end() const;
@@ -109,6 +115,8 @@ public:
 
 	StringRealPairs::const_iterator output_string_real_pairs_begin() const;
 	StringRealPairs::const_iterator output_string_real_pairs_end() const;
+
+	////////////////////////END SECTION//////////////////////////////////////////////////////////////////
 
 	//there are no functions for deleting output info.  This is on purpose - use copy_without_output instead
 
