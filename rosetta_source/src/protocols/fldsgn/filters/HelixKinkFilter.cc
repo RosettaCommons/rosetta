@@ -33,11 +33,7 @@
 // Parser headers
 #include <utility/tag/Tag.hh>
 
-#if (defined WIN32) && (defined WIN_PYROSETTA)
-	#include <protocols/fldsgn/topology/HSSTriplet.hh>
-#endif
-
-//Auto Headers
+#include <protocols/fldsgn/topology/HSSTriplet.hh>
 
 //// C++ headers
 static basic::Tracer TR("protocols.fldsgn.filters.HelixKinkFilter");
