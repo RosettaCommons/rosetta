@@ -13,7 +13,6 @@
 
 // Unit headers
 #include <protocols/docking/SidechainMinMover.hh>
-//#include <protocols/docking/DockTaskFactory.hh>
 
 // Package Headers
 #include <protocols/docking/DockTaskFactory.hh>
@@ -34,13 +33,9 @@
 #include <protocols/moves/MinMover.hh>
 
 // Utility Headers
-//#include <utility/tools/make_vector1.hh>
 #include <basic/Tracer.hh>
 
-#ifdef WIN_PYROSETTA
-	#include <core/pack/task/operation/TaskOperation.hh>
-#endif
-
+#include <core/pack/task/operation/TaskOperation.hh>
 
 using basic::T;
 using basic::Error;
