@@ -90,10 +90,7 @@
 #include <iostream>
 #include <sstream>
 
-#if (defined WIN32) && (defined WIN_PYROSETTA)
-	#include <protocols/motifs/MotifHit.hh>
-#endif
-
+#include <protocols/motifs/MotifHit.hh>
 
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS

@@ -47,10 +47,7 @@
 #include <core/kinematics/Jump.hh>
 #include <utility/options/keys/BooleanOptionKey.hh>
 
-
-#if (defined WIN32) && (defined WIN_PYROSETTA)
-	#include <core/id/AtomID.hh>
-#endif
+#include <core/id/AtomID.hh>
 
 using namespace core;
 using basic::T;

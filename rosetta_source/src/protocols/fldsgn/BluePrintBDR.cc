@@ -67,11 +67,7 @@
 #include <boost/lexical_cast.hpp>
 
 //Auto Headers
-
-
-#if (defined WIN32) && (defined WIN_PYROSETTA)
-	#include <core/fragment/FragSet.hh>
-#endif
+#include <core/fragment/FragSet.hh>
 
 namespace protocols {
 namespace fldsgn {
