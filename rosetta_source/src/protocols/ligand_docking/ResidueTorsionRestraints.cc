@@ -29,6 +29,9 @@
 //Auto Headers
 #include <core/chemical/AtomType.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace ligand_docking {
@@ -150,8 +153,8 @@ void ResidueTorsionRestraints::enable( core::pose::Pose & pose )
 	if( !resid_has_changed ) {
 		// No:  restore constraints exactly as they were
 		ConstraintSetOP new_constraints = pose.constraint_set()->clone(); // deep copy, constraints and their funcs are cloned too
-		for( std::set< core::scoring::constraints::ConstraintCOP >::iterator i = old_constraints_.begin(), i_end = old_constraints_.end(); i != i_end; ++i ) {
-			new_constraints->add_constraint( *i );
+		foreach(core::scoring::constraints::ConstraintCOP constraint, old_constraints_){
+			new_constraints->add_constraint( constraint );
 		}
 		pose.constraint_set( new_constraints );
 	} else {

@@ -40,6 +40,10 @@
 //Auto Headers
 #include <core/grid/CartGrid.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -187,10 +191,9 @@ void Rotate::rotate_ligand(
 	{
 		pose.set_jump(rotate_info_.jump_id, ligands[jump_choice].jump);
 
-		core::conformation::ResidueCOPs::iterator begin= ligands[jump_choice].residues.begin();
-		core::conformation::ResidueCOPs::iterator const end= ligands[jump_choice].residues.begin();
-		for(; begin != end; ++begin, ++chain_begin){
-			pose.replace_residue(chain_begin, **begin, false /*orient backbone*/);// assume rotamers are oriented?
+		foreach(core::conformation::ResidueCOP residue, ligands[jump_choice].residues){
+			pose.replace_residue(chain_begin, *residue, false /*orient backbone*/);// assume rotamers are oriented?
+			++chain_begin;
 		}
 
 	}
@@ -300,12 +303,10 @@ bool check_RMSD(
 	// This next parameter is a wild heuristic guesses that seem OK for the Meiler x-dock set.
 	core::Real const diverse_rms = 0.65 * std::sqrt((double) heavy_atom_number);
 
-	utility::vector1< Ligand_info >::const_iterator iter= ligands.begin();
-	utility::vector1< Ligand_info >::const_iterator const end= ligands.end();
+	core::conformation::ResidueCOPs const & these_residues= ligand.get_residues();
 
-	for(; iter != end; ++iter){ // if ligands is empty we still return true so no need to check for this condition.
-		core::conformation::ResidueCOPs const & these_residues= ligand.get_residues();
-		core::conformation::ResidueCOPs const & compare_residues= iter->get_residues();
+	foreach(Ligand_info ligand_info, ligands){ // if ligands is empty we still return true so no need to check for this condition.
+		core::conformation::ResidueCOPs const & compare_residues= ligand_info.get_residues();
 		runtime_assert(these_residues.size() == compare_residues.size());
 
 		core::Real const rms = (compare_residues.size() == 1) ///TODO write multi_residue automorphic fxn.

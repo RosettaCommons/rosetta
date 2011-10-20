@@ -27,6 +27,9 @@
 // Utility headers
 #include <utility/tag/Tag.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace ligand_docking {
@@ -45,12 +48,7 @@ void InterfaceBuilderLoader::load_data(
 	using namespace utility::tag;
 	typedef utility::vector0< TagPtr > TagPtrs;
 
-	TagPtrs const interface_builders_tags( tag->getTags() );
-
-	for( TagPtrs::const_iterator
-			tp( interface_builders_tags.begin() ), tp_e( interface_builders_tags.end() );
-			tp != tp_e; ++tp ) {
-		TagPtr const interface_builder_tag = *tp;
+	foreach(TagPtr interface_builder_tag, tag->getTags()){
 		std::string const name( interface_builder_tag->getName() );
 
 		if ( data.has("interface_builders", name)) {
@@ -84,11 +82,7 @@ void MoveMapBuilderLoader::load_data(
 	using namespace utility::tag;
 	typedef utility::vector0< TagPtr > TagPtrs;
 
-	TagPtrs const movemap_builders_tags( tag->getTags() );
-	for( TagPtrs::const_iterator
-			tp( movemap_builders_tags.begin() ), tp_e( movemap_builders_tags.end() );
-			tp != tp_e; ++tp ) {
-		TagPtr const movemap_builder_tag = *tp;
+	foreach(TagPtr movemap_builder_tag, tag->getTags()){
 		std::string const name( movemap_builder_tag->getName() );
 
 		if ( data.has("movemap_builders", name)) {
@@ -122,11 +116,7 @@ void LigandAreaLoader::load_data(
 	using namespace utility::tag;
 	typedef utility::vector0< TagPtr > TagPtrs;
 
-	TagPtrs const ligand_areas_tags( tag->getTags() );
-	for( TagPtrs::const_iterator
-			tp( ligand_areas_tags.begin() ), tp_e( ligand_areas_tags.end() );
-			tp != tp_e; ++tp ) {
-		TagPtr const ligand_area_tag = *tp;
+	foreach(TagPtr ligand_area_tag, tag->getTags()){
 		std::string const name( ligand_area_tag->getName() );
 
 		if ( data.has("ligand_areas", name)) {

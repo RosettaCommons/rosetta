@@ -59,10 +59,10 @@ public:
 
 	ligand_options::Interface build(core::pose::Pose const & pose) const;
 
-	std::map<char, LigandAreaOP> get_ligand_areas() const;
+	LigandAreas get_ligand_areas() const;
 
 private:
-	std::map<char, LigandAreaOP> ligand_areas_;
+	LigandAreas ligand_areas_;
 	core::Size extension_window_;
 
 	void enforce_minimum_length(

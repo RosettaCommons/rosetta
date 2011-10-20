@@ -31,6 +31,10 @@
 //Auto Headers
 #include <core/pose/util.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -102,11 +106,7 @@ StartFrom::parse_my_tag(
 
 	chain_ = tag->getOption<std::string>("chain");
 
-	utility::vector0< utility::tag::TagPtr >::const_iterator begin=tag->getTags().begin();
-	utility::vector0< utility::tag::TagPtr >::const_iterator end=tag->getTags().end();
-
-	for(; begin != end; ++begin){
-		utility::tag::TagPtr child_tag= *begin;
+	foreach(utility::tag::TagPtr child_tag, tag->getTags()){
 		std::string name= child_tag->getName();
 		if( name == "features"){
 			std::cout << "found features tag with type '" << child_tag->getOption<std::string>("type") << "'" << std::endl;

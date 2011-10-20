@@ -47,6 +47,10 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <numeric/random/random.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 namespace protocols {
 namespace ligand_docking {
 
@@ -91,9 +95,9 @@ LigandDesign::set_fragments(){
 	core::chemical::ResidueTypeSetCAP rsd_set= cm->residue_type_set( core::chemical::FA_STANDARD );
 	core::chemical::ResidueTypeCAPs fragment_types= rs.select( *rsd_set );
 	ligand_design_tracer<< fragment_types.size()<< " fragment_types"<< std::endl;
-	core::chemical::ResidueTypeCAPs::const_iterator begin= fragment_types.begin();
-	for(; begin!= fragment_types.end(); ++begin){
-		core::conformation::Residue* temp= new core::conformation::Residue(**begin, true);
+
+	foreach(core::chemical::ResidueTypeCAP fragment_type, fragment_types){
+		core::conformation::Residue* temp= new core::conformation::Residue(*fragment_type, true);
 		fragments_.push_back(temp);
 		ligand_design_tracer<< "frag_name: "<< temp->name()<< std::endl;
 	}
@@ -226,9 +230,8 @@ LigandDesign::apply( core::pose::Pose & pose )
 }
 
 void LigandDesign::fragments_to_string() const{
-	core::conformation::ResidueCOPs::const_iterator begin= fragments_.begin();
-	for(; begin != fragments_.end(); ++begin){
-		core::conformation::Residue const & res= **begin;
+	foreach(core::conformation::ResidueCOP fragment, fragments_){
+		core::conformation::Residue const & res= *fragment;
 		std::string name= res.name();
 		core::Size total= res.n_residue_connections();
 		core::Size incomplete= get_incomplete_connections(&res).size();

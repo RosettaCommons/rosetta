@@ -31,6 +31,10 @@
 #include <numeric/xyzVector.io.hh>
 #include <utility/tag/Tag.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -57,8 +61,6 @@ CompoundTranslateCreator::mover_name()
 {
 	return "CompoundTranslate";
 }
-
-
 
 ///@brief
 CompoundTranslate::CompoundTranslate():
@@ -124,10 +126,7 @@ CompoundTranslate::parse_my_tag(
 		else utility_exit_with_message("'allow_overlap' option takes arguments 'true' or 'false'");
 	}
 
-	utility::vector0< utility::tag::TagPtr >::const_iterator begin=tag->getTags().begin();
-	utility::vector0< utility::tag::TagPtr >::const_iterator end=tag->getTags().end();
-	for(; begin != end; ++begin){
-		utility::tag::TagPtr tag= *begin;
+	foreach(utility::tag::TagPtr tag, tag->getTags()){
 		std::string name= tag->getName();
 		if( name != "Translate")
 			utility_exit_with_message("CompoundTranslate only takes Translate movers");
@@ -146,23 +145,19 @@ void CompoundTranslate::apply(core::pose::Pose & pose) {
 	TranslateOPs::iterator begin= translates_.begin();
 	TranslateOPs::iterator const end= translates_.end();
 
-	for(; begin != end; ++begin){
-		TranslateOP translate= *begin;
+	foreach(TranslateOP translate, translates_){
 		core::Size chain_id= translate->get_chain_id(pose);
 		chains_to_translate.insert(chain_id);
 	}
 
-
 	if(allow_overlap_){
-		for(begin= translates_.begin(); begin != end; ++ begin){
-			TranslateOP translate= *begin;
+		foreach(TranslateOP translate, translates_){
 			translate->add_excluded_chains(chains_to_translate.begin(), chains_to_translate.end());
 			translate->apply(pose);
 		}
 	}
 	else{ // remove each chain from the exclusion list so that placed chains are in the grid
-		for(begin= translates_.begin(); begin != end; ++ begin){
-			TranslateOP translate= *begin;
+		foreach(TranslateOP translate, translates_){
 			translate->add_excluded_chains(chains_to_translate.begin(), chains_to_translate.end());
 			translate->apply(pose);
 			core::Size chain_id= translate->get_chain_id(pose);

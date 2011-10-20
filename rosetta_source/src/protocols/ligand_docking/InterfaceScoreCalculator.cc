@@ -34,6 +34,10 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -153,9 +157,10 @@ void InterfaceScoreCalculator::add_scores_to_job(
 		if ( score_fxn_->has_nonzero_weight(ii) ) score_types.push_back(ii);
 	}
 
-
-	for(ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii) {
-		job->add_string_real_pair(name_from_score_type(*ii), score_fxn_->get_weight(*ii) * pose.energies().total_energies()[ *ii ]);
+	foreach(ScoreType score_type, score_types){
+		std::string const score_term = name_from_score_type(score_type);
+		core::Real const weight = score_fxn_->get_weight(score_type);
+		job->add_string_real_pair(score_term,  weight * pose.energies().total_energies()[ score_type ]);
 	}
 	job->add_string_real_pair(name_from_score_type(core::scoring::total_score), tot_score);
 }
@@ -170,13 +175,13 @@ InterfaceScoreCalculator::append_ligand_docking_scores(
 {
 	std::vector<std::string>::const_iterator begin = chains_.begin();
 	std::vector<std::string>::const_iterator end = chains_.end();
-	for( ; begin != end ; ++begin){
-		InterfaceScoreCalculator_tracer.Debug << "appending ligand: "<< *begin << std::endl;
-		assert( core::pose::has_chain(*begin, after));
-		core::Size jump_id = core::pose::get_jump_id_from_chain(*begin, after);
+	foreach(std::string chain, chains_){
+		InterfaceScoreCalculator_tracer.Debug << "appending ligand: "<< chain << std::endl;
+		assert( core::pose::has_chain(chain, after));
+		core::Size jump_id = core::pose::get_jump_id_from_chain(chain, after);
 		append_interface_deltas(jump_id, job, after, score_fxn_);
 		if(native_){
-			assert( core::pose::has_chain(*begin, *native_));
+			assert( core::pose::has_chain(chain, *native_));
 			append_ligand_docking_scores(jump_id, after, job);
 		}
 	}

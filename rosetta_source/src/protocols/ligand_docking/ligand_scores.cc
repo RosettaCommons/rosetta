@@ -53,6 +53,9 @@
 //Auto Headers
 #include <core/scoring/constraints/Constraint.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace ligand_docking {
@@ -155,14 +158,13 @@ void append_ligand_grid_scores(
 
 	core::Size const chain_id = core::pose::get_chain_id_from_jump_id(jump_id,after);
 	core::Real total_score = grid_manager->total_score(after,chain_id);
-	std::map<std::string,core::Real> grid_scores(grid_manager->get_cached_scores());
-	std::map<std::string,core::Real>::const_iterator it = grid_scores.begin();
 	char const ligand_chain=core::pose::get_chain_from_jump_id(jump_id,after);
-	for(; it != grid_scores.end();++it)
-	{
+
+	qsar::scoring_grid::ScoreMap grid_scores(grid_manager->get_cached_scores());
+	foreach(qsar::scoring_grid::ScoreMap::value_type grid_score, grid_scores){
 		std::ostringstream score_label;
-		score_label << it->first << "_grid_" <<ligand_chain;
-		job->add_string_real_pair(score_label.str(),it->second);
+		score_label << grid_score.first << "_grid_" <<ligand_chain;
+		job->add_string_real_pair(score_label.str(),grid_score.second);
 	}
 
 	std::ostringstream score_label;

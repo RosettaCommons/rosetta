@@ -28,6 +28,10 @@
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 namespace protocols {
 namespace ligand_docking {
 
@@ -61,11 +65,8 @@ InterfaceBuilder::parse_my_tag(
 	std::string ligand_areas_string= tag->getOption<std::string>("ligand_areas");
 	std::vector<std::string> ligand_area_strings= utility::string_split(ligand_areas_string, ',');
 
-	std::vector<std::string>::const_iterator begin= ligand_area_strings.begin();
-	std::vector<std::string>::const_iterator const end= ligand_area_strings.end();
-
-	for(; begin != end; ++begin){
-		LigandAreaOP ligand_area = datamap.get< protocols::ligand_docking::LigandArea * >( "ligand_areas", *begin);
+	foreach(std::string ligand_area_string, ligand_area_strings){
+		LigandAreaOP ligand_area = datamap.get< protocols::ligand_docking::LigandArea * >( "ligand_areas", ligand_area_string);
 		ligand_areas_[ ligand_area->chain_ ] = ligand_area;
 	}
 }
@@ -82,7 +83,7 @@ void InterfaceBuilder::find_interface_residues(
 		ligand_options::Interface & interface,
 		core::pose::Pose const & pose
 )const{
-	std::map<char, LigandAreaOP>::const_iterator ligand_area= ligand_areas_.begin();
+	LigandAreas::const_iterator ligand_area= ligand_areas_.begin();
 	for(; ligand_area != ligand_areas_.end(); ++ligand_area){
 		char const & chain= ligand_area->first;
 		core::Size const & chain_id= core::pose::get_chain_id_from_chain(chain, pose);
@@ -139,7 +140,7 @@ bool InterfaceBuilder::is_interface_residue(
 	core::Size const potential_interface_neighbor_atom_id= potential_interface_residue.nbr_atom();
 	core::Vector const potential_interface_vector= potential_interface_residue.xyz(potential_interface_neighbor_atom_id);
 
-	std::map<char, LigandAreaOP>::const_iterator found= ligand_areas_.find(chain);
+	LigandAreas::const_iterator found= ligand_areas_.find(chain);
 	assert(found != ligand_areas_.end());
 	LigandAreaOP const ligand_area = found->second;
 
@@ -168,7 +169,7 @@ void InterfaceBuilder::enforce_minimum_length(
 	}
 }
 
-std::map<char, LigandAreaOP>
+LigandAreas
 InterfaceBuilder::get_ligand_areas() const{
 	return ligand_areas_;
 }

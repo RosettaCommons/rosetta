@@ -39,12 +39,13 @@
 //Auto Headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
-//#include <core/pose/util.hh>
 
-//#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <numeric/random/random_permutation.hh>
 #include <utility/exit.hh>
-//#include <core/pose/PDBInfo.hh>
+
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace ligand_docking {
@@ -102,9 +103,9 @@ GrowLigand::set_fragments(){
 	fragments_.assign(atom_set_size, utility::vector1< std::pair<core::conformation::ResidueCOP, core::Size> >() );
 	core::chemical::ResidueTypeCAPs fragment_types= rs.select( *rsd_set );
 	grow_ligand_tracer<< fragment_types.size()<< " fragment_types"<< std::endl;
-	core::chemical::ResidueTypeCAPs::const_iterator begin= fragment_types.begin();
-	for(; begin!= fragment_types.end(); ++begin){
-		core::conformation::Residue* temp= new core::conformation::Residue(**begin, true);
+
+	foreach(core::chemical::ResidueTypeCAP fragment_type, fragment_types){
+		core::conformation::Residue* temp= new core::conformation::Residue(*fragment_type, true);
 		for(core::Size i=1; i<= temp->n_residue_connections(); ++i){
 			core::chemical::ResidueConnection const & res_conn= temp->residue_connection(i);
 			int atom_index_number= res_conn.atomno();
@@ -167,11 +168,7 @@ GrowLigand::apply( core::pose::Pose & pose )
 
 	numeric::random::random_permutation(unconnected_residues, numeric::random::RG);// shuffle vector
 
-	utility::vector1<core::Size>::const_iterator start= unconnected_residues.begin();
-	utility::vector1<core::Size>::const_iterator const end= unconnected_residues.end();
-
-	for(; start != end; ++start){
-		core::Size const & grow_from= *start;
+	foreach(core::Size grow_from, unconnected_residues){
 		core::Size grow_from_connection= random_connection(&pose.residue(grow_from));
 		core::Size atom_type_index= pose.residue(grow_from).residue_connection(grow_from_connection).atom_type_index();
 		utility::vector1< std::pair<core::conformation::ResidueCOP, core::Size > >

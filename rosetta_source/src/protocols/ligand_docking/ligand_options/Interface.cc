@@ -15,6 +15,10 @@
 #include <protocols/ligand_docking/ligand_options/Interface.hh>
 #include <core/types.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 // AUTO-REMOVED #include <utility/assert.hh>
 
 namespace protocols {
@@ -118,10 +122,8 @@ std::string Interface::get_python_string() const{
 	std::stringstream python_stream;
 
 	python_stream<<"interface residues: ";
-	utility::vector1<core::Size> interface_residues= get_interface_residues();
-	utility::vector1<core::Size>::const_iterator i= interface_residues.begin();
-	for(; i != interface_residues.end(); ++i){
-		python_stream<< *i << '+';
+	foreach(core::Size res_id, get_interface_residues()){
+		python_stream<< res_id << '+';
 	}
 	python_stream<< std::endl;
 	python_stream<<"near interface residues: ";

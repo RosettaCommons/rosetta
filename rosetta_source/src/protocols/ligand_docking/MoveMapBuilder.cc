@@ -34,6 +34,10 @@
 // Scripter Headers
 #include <utility/tag/Tag.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -48,13 +52,10 @@ static basic::Tracer MoveMapBuilder_tracer("protocols.ligand_docking.ligand_opti
 void
 set_jumps(
 		core::pose::Pose const & pose, core::kinematics::MoveMapOP movemap,
-		std::map<char,LigandAreaOP> ligand_areas
+		LigandAreas ligand_areas
 ){
-	std::map<char, LigandAreaOP>::const_iterator ligand_area = ligand_areas.begin();
-	std::map<char, LigandAreaOP>::const_iterator ligand_area_end = ligand_areas.end();
-
-	for(; ligand_area!= ligand_area_end; ++ligand_area){
-		char const & chain= ligand_area->first;
+	foreach(LigandAreas::value_type ligand_area_pair, ligand_areas){
+		char const & chain= ligand_area_pair.first;
 		core::Size jump_id= core::pose::get_jump_id_from_chain(chain, pose);
 		movemap->set_jump(jump_id, true);
 	}
@@ -103,8 +104,8 @@ core::kinematics::MoveMapOP
 MoveMapBuilder::build(core::pose::Pose const & pose) const{
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
 
-	std::map<char, LigandAreaOP> const & ligand_areas1 = sc_interface_builder_->get_ligand_areas();
-	std::map<char, LigandAreaOP> const & ligand_areas2 = sc_interface_builder_->get_ligand_areas();
+	LigandAreas const & ligand_areas1 = sc_interface_builder_->get_ligand_areas();
+	LigandAreas const & ligand_areas2 = sc_interface_builder_->get_ligand_areas();
 
 	set_jumps(pose, movemap, ligand_areas1);
 	set_jumps(pose, movemap, ligand_areas2);
@@ -151,8 +152,8 @@ MoveMapBuilder::set_all_chi(
 	// remove ligands with a minimize_ligand value of zero
 	for ( core::Size chain_id = 1; chain_id <= pose.conformation().num_chains(); ++chain_id){
 		char const chain= core::pose::get_chain_from_chain_id(chain_id, pose);
-		std::map<char, LigandAreaOP> const & ligand_areas= sc_interface_builder_->get_ligand_areas();
-		std::map<char, LigandAreaOP>::const_iterator ligand_area= ligand_areas.find(chain);
+		LigandAreas const & ligand_areas= sc_interface_builder_->get_ligand_areas();
+		LigandAreas::const_iterator ligand_area= ligand_areas.find(chain);
 		if(ligand_area == ligand_areas.end()) continue;
 		if(ligand_area->second->minimize_ligand_ > 0) continue;
 		// else if we aren't minimizing the ligand set_chi for this ligand to false

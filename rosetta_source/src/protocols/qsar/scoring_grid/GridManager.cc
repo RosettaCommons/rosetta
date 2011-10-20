@@ -246,7 +246,7 @@ core::Size GridManager::size()
 	return grid_map_.size();
 }
 
-std::map<std::string, core::Real> GridManager::get_cached_scores()
+ScoreMap GridManager::get_cached_scores()
 {
 	return score_map_;
 }

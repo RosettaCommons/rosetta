@@ -61,13 +61,16 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 //STL headers
 #include <string>
 
 #include <set>
 
 //Auto Headers
-//#include <core/pose/util.hh>
 #include <numeric/conversions.hh>
 
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
@@ -174,11 +177,11 @@ MinimizeLigandOPs
 HighResDocker::setup_ligands_to_minimize(core::pose::Pose pose){
 	MinimizeLigandOPs minimize_ligands;
 
-	std::map<char, LigandAreaOP> const ligand_areas =
+	LigandAreas const ligand_areas =
 			movemap_builder_->get_sc_interface_builder()->get_ligand_areas();
-	std::map<char, LigandAreaOP>::const_iterator ligand_area_itr= ligand_areas.begin();
-	std::map<char, LigandAreaOP>::const_iterator const ligand_area_end= ligand_areas.end();
-
+	LigandAreas::const_iterator ligand_area_itr= ligand_areas.begin();
+	LigandAreas::const_iterator const ligand_area_end= ligand_areas.end();
+	//TODO Use BOOST_FOREACH
 	for(; ligand_area_itr != ligand_area_end; ++ligand_area_itr){
 		char const & chain= ligand_area_itr->first;
 		LigandAreaOP const ligand_area = ligand_area_itr->second;
@@ -196,10 +199,10 @@ TetherLigandOPs
 HighResDocker::tether_ligands(core::pose::Pose & pose){
 	TetherLigandOPs ligand_tethers;
 
-	std::map<char, LigandAreaOP> const ligand_areas =
+	LigandAreas const ligand_areas =
 			movemap_builder_->get_sc_interface_builder()->get_ligand_areas();
-	std::map<char, LigandAreaOP>::const_iterator ligand_area_itr= ligand_areas.begin();
-	std::map<char, LigandAreaOP>::const_iterator const ligand_area_end= ligand_areas.end();
+	LigandAreas::const_iterator ligand_area_itr= ligand_areas.begin();
+	LigandAreas::const_iterator const ligand_area_end= ligand_areas.end();
 
 	for(; ligand_area_itr != ligand_area_end; ++ligand_area_itr){
 		char const & chain= ligand_area_itr->first;
@@ -219,8 +222,8 @@ HighResDocker::remove_ligand_tethers(core::pose::Pose pose, TetherLigandOPs liga
 	TetherLigandOPs::const_iterator begin= ligand_tethers.begin();
 	TetherLigandOPs::const_iterator const end= ligand_tethers.end();
 
-	for(; begin != end; ++begin){
-		(*begin)->release(pose);
+	foreach(TetherLigandOP ligand_tether, ligand_tethers){
+		ligand_tether->release(pose);
 	}
 }
 
@@ -383,16 +386,14 @@ utility::vector1<protocols::moves::MoverOP>
 HighResDocker::create_rigid_body_movers(core::pose::Pose const & pose) const{
 	utility::vector1<protocols::moves::MoverOP> rigid_body_movers;
 
-	std::map<char, LigandAreaOP> const ligand_areas =
+	LigandAreas const ligand_areas =
 			movemap_builder_->get_sc_interface_builder()->get_ligand_areas();
-	std::map<char, LigandAreaOP>::const_iterator ligand_area_itr= ligand_areas.begin();
-	std::map<char, LigandAreaOP>::const_iterator const ligand_area_end= ligand_areas.end();
 
-	for(; ligand_area_itr != ligand_area_end; ++ligand_area_itr){
-		char const & chain= ligand_area_itr->first;
+	foreach(LigandAreas::value_type ligand_area_pair, ligand_areas){
+		char const & chain= ligand_area_pair.first;
 		core::Size jump_id= core::pose::get_jump_id_from_chain(chain, pose);
 
-		LigandAreaOP const ligand_area = ligand_area_itr->second;
+		LigandAreaOP const ligand_area = ligand_area_pair.second;
 		core::Real const & angstroms= ligand_area->high_res_angstroms_;
 		core::Real const & degrees= ligand_area->high_res_degrees_;
 		protocols::moves::MoverOP rigid_body_mover= new protocols::moves::RigidBodyPerturbMover( jump_id, degrees, angstroms);
@@ -406,8 +407,8 @@ void HighResDocker::apply_rigid_body_moves(
 		utility::vector1<protocols::moves::MoverOP> & rigid_body_movers
 ){
 	utility::vector1<protocols::moves::MoverOP>::iterator rigid_body_mover= rigid_body_movers.begin();
-	for(; rigid_body_mover != rigid_body_movers.end(); ++rigid_body_mover){
-		(*rigid_body_mover)->apply(pose);
+	foreach(protocols::moves::MoverOP rigid_body_mover, rigid_body_movers){
+		rigid_body_mover->apply(pose);
 	}
 }
 

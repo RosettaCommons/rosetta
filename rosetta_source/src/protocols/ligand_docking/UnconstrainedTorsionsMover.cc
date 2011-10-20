@@ -19,6 +19,9 @@
 
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace ligand_docking {
@@ -41,9 +44,8 @@ UnconstrainedTorsionsMover::UnconstrainedTorsionsMover(
 	Mover(),
 	child_mover_(child_mover)
 {
-	std::set<ResidueTorsionRestraintsOP>::iterator i= restraints.begin();
-	for(; i != restraints.end(); ++i){
-		restraints_.push_back(*i);
+	foreach(ResidueTorsionRestraintsOP restraint, restraints){
+		restraints_.push_back(restraint);
 	}
 }
 
@@ -54,21 +56,20 @@ UnconstrainedTorsionsMover::UnconstrainedTorsionsMover(
 	Mover(),
 	child_mover_(child_mover)
 {
-	MinimizeLigandOPs::iterator iter= minimize_ligands.begin();
-	for(; iter != minimize_ligands.end(); ++iter){
-		MinimizeLigandOP minimize_ligand= *iter;
+	foreach(MinimizeLigandOP minimize_ligand, minimize_ligands){
 		restraints_.insert( restraints_.end(), minimize_ligand->begin(), minimize_ligand->end() );
 	}
 }
 
 void UnconstrainedTorsionsMover::apply( core::pose::Pose & pose )
 {
-	for( Restraints::iterator i = restraints_.begin(), i_end = restraints_.end(); i != i_end; ++i ) {
-		(*i)->disable( pose );
+	foreach(ResidueTorsionRestraintsOP restraint, restraints_){
+		restraint->disable( pose );
 	}
 	child_mover_->apply(pose);
-	for( Restraints::iterator i = restraints_.begin(), i_end = restraints_.end(); i != i_end; ++i ) {
-		(*i)->enable( pose );
+
+	foreach(ResidueTorsionRestraintsOP restraint, restraints_){
+		restraint->enable( pose );
 	}
 }
 

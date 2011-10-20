@@ -31,6 +31,10 @@
 #include <core/conformation/Conformation.hh>
 //#include <numeric/random/random.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 namespace protocols {
 namespace ligand_docking {
 
@@ -102,21 +106,14 @@ AddHydrogens::apply( core::pose::Pose & pose )
 	core::Size const chain_id= core::pose::get_chain_id_from_chain(chain_, pose);
 	core::Size const chain_begin= pose.conformation().chain_begin(chain_id);
 	core::Size const chain_end= pose.conformation().chain_end(chain_id);
-	utility::vector1<core::Size> unconnected= find_unconnected_residues(pose, chain_begin, chain_end);
+	utility::vector1<core::Size> unconnected_ids= find_unconnected_residues(pose, chain_begin, chain_end);
 
-	utility::vector1<core::Size>::iterator unconnected_begin= unconnected.begin();
-	utility::vector1<core::Size>::iterator const unconnected_end= unconnected.end();
-	for(; unconnected_begin != unconnected_end ; ++unconnected_begin){
-		core::conformation::Residue const & res_to_fix= pose.residue(*unconnected_begin);
-
+	foreach(core::Size unconnected_id, unconnected_ids){
+		core::conformation::Residue const & res_to_fix= pose.residue(unconnected_id);
 		utility::vector1<core::Size> connect_ids= get_incomplete_connections(&res_to_fix);
 
-		utility::vector1<core::Size>::iterator connect_ids_begin= connect_ids.begin();
-		utility::vector1<core::Size>::iterator const connect_ids_end= connect_ids.end();
-		for(; connect_ids_begin != connect_ids_end; ++connect_ids_begin){
-			core::Size connect_id= *connect_ids_begin;
-
-			AddHydrogen AH(*unconnected_begin, connect_id);
+		foreach(core::Size connect_id, connect_ids){
+			AddHydrogen AH(unconnected_id, connect_id);
 			AH.apply(pose);
 		}
 	}

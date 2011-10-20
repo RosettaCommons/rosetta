@@ -25,6 +25,9 @@ namespace protocols {
 namespace qsar {
 namespace scoring_grid {
 
+typedef std::map<std::string,GridBaseOP> GridMap;
+typedef std::map<std::string,core::Real> ScoreMap;
+
 class GridManager
 {
 public:
@@ -62,7 +65,7 @@ public:
 	///@brief return the number of grids in the manager
 	core::Size size();
 	///@brief get a map of cached scores
-	std::map<std::string, core::Real> get_cached_scores();
+	ScoreMap get_cached_scores();
 	///@brief append all cached scores to a current job
 	void append_cached_scores(jd2::JobOP job);
 	///@brief write all grids out using the BRIX format
@@ -75,8 +78,8 @@ private:
 	//GridManager(core::Real width,core::Real resolution);
 	static GridManager * instance_;
 
-	std::map<std::string,GridBaseOP> grid_map_;
-	std::map<std::string,core::Real> score_map_;
+	GridMap grid_map_;
+	ScoreMap score_map_;
 	std::string last_tag_;
 	core::Real width_;
 	core::Real resolution_;
