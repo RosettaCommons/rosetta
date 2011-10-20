@@ -92,11 +92,7 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-
-
-#if (defined WIN32) && (defined WIN_PYROSETTA)
-	#include <utility/tag/Tag.hh>
-#endif
+#include <utility/tag/Tag.hh>
 
 namespace protocols {
 namespace forge {
