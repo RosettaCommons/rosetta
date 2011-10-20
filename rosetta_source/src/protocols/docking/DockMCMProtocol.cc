@@ -47,9 +47,7 @@
 
 #include <ObjexxFCL/format.hh>
 
-#ifdef WIN_PYROSETTA
-	#include <core/pack/task/operation/TaskOperation.hh>
-#endif
+#include <core/pack/task/operation/TaskOperation.hh>
 
 using basic::T;
 using basic::Error;
