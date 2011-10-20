@@ -126,7 +126,7 @@ AACompositionEnergy::residue_energy(
 	while( itr != comp_constraint_aas_.end() ) {
 
 		std::pair< Real, Real > thresholds( itr->second );
-		#ifndef WIN_PYROSETTA
+		#ifndef WIN32
 			Size const lower = (Size)round( thresholds.first * pose.total_residue() );
 			Size const upper = (Size)round( thresholds.second * pose.total_residue() );
 		#else
