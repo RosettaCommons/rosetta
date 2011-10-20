@@ -20,8 +20,8 @@
 
 // Project Headers
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/moves/ThermodynamicMover.fwd.hh>
-#include <protocols/moves/ThermodynamicObserver.fwd.hh>
+#include <protocols/moves/ThermodynamicMover.hh>
+#include <protocols/moves/ThermodynamicObserver.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/random/WeightedSampler.hh>
 
@@ -33,7 +33,7 @@ namespace protocols {
 namespace moves {
 
 ///@details
-class MetropolisHastingsMover : public protocols::moves::Mover {
+class MetropolisHastingsMover : public Mover {
 
 public:
 
@@ -54,11 +54,11 @@ public:
 	std::string
 	get_name() const;
 
-	protocols::moves::MoverOP
+	MoverOP
 	clone() const;
 
 	virtual
-	protocols::moves::MoverOP
+	MoverOP
 	fresh_instance() const;
 
 	virtual
@@ -73,18 +73,18 @@ public:
 	void
 	parse_my_tag(
 		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data,
+		DataMap & data,
 		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
+		Movers_map const & movers,
 		core::pose::Pose const & pose
 	);
 
-	protocols::moves::MonteCarloCOP
+	MonteCarloCOP
 	monte_carlo() const;
 
 	void
 	set_monte_carlo(
-		protocols::moves::MonteCarloOP monte_carlo
+		MonteCarloOP monte_carlo
 	);
 
 	core::Size
@@ -106,12 +106,12 @@ public:
 	bool
 	finished() const;
 
-	protocols::moves::ThermodynamicMoverOP
+	ThermodynamicMoverOP
 	random_mover();
 
 	void
 	add_mover(
-		protocols::moves::ThermodynamicMoverOP mover,
+		ThermodynamicMoverOP mover,
 		core::Real weight
 	);
 
@@ -149,17 +149,17 @@ public:
 
 	void
 	add_observer(
-		protocols::moves::ThermodynamicObserverOP observer
+		ThermodynamicObserverOP observer
 	);
 
 private:
 
-	protocols::moves::MonteCarloOP monte_carlo_;
+	MonteCarloOP monte_carlo_;
 	core::Size ntrials_;
 	core::Size trial_;
-	utility::vector1< protocols::moves::ThermodynamicMoverOP > movers_;
+	utility::vector1< ThermodynamicMoverOP > movers_;
 	numeric::random::WeightedSampler weighted_sampler_;
-	utility::vector1< protocols::moves::ThermodynamicObserverOP > observers_;
+	utility::vector1< ThermodynamicObserverOP > observers_;
 	std::string output_name_;
 
 }; //end MetropolisHastingsMover
