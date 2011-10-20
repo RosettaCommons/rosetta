@@ -124,7 +124,7 @@ void DatabaseJobOutputter::final_pose(
 			break;
 		}catch(cppdb::cppdb_error &)
 		{
-			#ifndef WIN_PYROSETTA
+			#ifndef WIN32
 				usleep(10);
 			#endif
 			continue;
@@ -175,7 +175,7 @@ bool DatabaseJobOutputter::job_has_completed( JobCOP job ) {
 			break;
 		}catch(cppdb::cppdb_error &)
 		{
-			#ifndef WIN_PYROSETTA
+			#ifndef WIN32
 				usleep(10);
 			#endif
 			continue;
