@@ -78,7 +78,7 @@ class PolyFit:
         self.axis_color = "white"
 
 
-        self.polynomial_dimensions = [3,4,5,6,7,8]
+        self.polynomial_dimensions = [2,3,4,5,6,7,8,9,10]
         self.nbins = 200
 
         self.coefficient_precision = 3
@@ -86,7 +86,7 @@ class PolyFit:
         self.dot_color = 'blue'
         self.dot_width = 6
 
-        self.polynomial_colors = {2:"#D53E4F", 3:"#FC8D59", 4:"#FEE08B", 5:"#FFFFBF", 6:"#E6F598", 7:"#99D594", 8:"#3288BD"}
+        self.polynomial_colors = {2:"#D53E4F", 3:"#FC8D59", 4:"#FEE08B", 5:"#FFFFBF", 6:"#E6F598", 7:"#99D594", 8:"#3288BD", 9:"#FFFFFF", 10:"#000000"}
 
         self.panel_frame = Tkinter.Frame(self.main)
 
