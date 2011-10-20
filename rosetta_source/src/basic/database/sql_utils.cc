@@ -119,7 +119,7 @@ void safely_write_to_database(cppdb::statement & statement)
 		}catch(cppdb::cppdb_error & except)
 		{
 			TR <<except.what() <<std::endl;
-			#ifndef WIN_PYROSETTA
+			#ifndef WIN32
 				usleep(10);
 			#endif
 			continue;
@@ -159,7 +159,7 @@ cppdb::result safely_read_from_database(cppdb::statement & statement)
 		}catch(cppdb::cppdb_error & except)
 		{
 			TR <<except.what() <<std::endl;
-			#ifndef WIN_PYROSETTA
+			#ifndef WIN32
 				usleep(10);
 			#endif
 			continue;
