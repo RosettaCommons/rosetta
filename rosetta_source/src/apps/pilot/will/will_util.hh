@@ -31,13 +31,6 @@ using numeric::conversions::radians;
 
 bool BB_UNS_INCLUDE_TERMINI = false;
 
-inline core::Real const sqr(core::Real const r) { return r*r; }
-inline core::Real sigmoid2( core::Real const & sqdist ) {
-  Real ub = CONTACT_D2+5.0; core::Real lb = CONTACT_D2-5.0;
-  if     ( sqdist > ub ) return 0.0;
-  else if( sqdist < lb ) return 1.0;
-  else return sqr(1.0  - sqr( (sqrt(sqdist) - lb) / (ub - lb) ) );
-}
 
 inline Vec projperp(Vec const & u, Vec const & v) {
   return v - projection_matrix(u)*v;
