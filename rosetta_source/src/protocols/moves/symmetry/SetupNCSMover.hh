@@ -47,13 +47,13 @@ public:
 	void set_defaults();
 
 	// clear all groups
-	void clear();
+	// Undefined, commenting out to fix PyRosetta build   void clear();
 
 	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new SetupNCSMover( *this ) ) ); }
 
 	virtual void apply( core::pose::Pose & pose );
 
-	virtual void parse_my_tag( 
+	virtual void parse_my_tag(
 			utility::tag::TagPtr const tag,
 			moves::DataMap &data,
 			filters::Filters_map const &filters,
