@@ -76,43 +76,42 @@ Size QuotaCollector::count_candidates(Size pos) {
 }
 
 Size QuotaCollector::count_candidates() {
-
-    Size cnt = 0;
-    for(Size i=1;i<=storage_.size();++i)
-	for(Size j=1;j<storage_[i].size();++j)
+	Size cnt = 0;
+	for(Size i=1;i<=storage_.size();++i)
+		for(Size j=1;j<storage_[i].size();++j)
 	    cnt += storage_[i][j]->count_candidates();
 
-    return cnt;
+	return cnt;
 }
 
 	/// @brief Describes what has been collected
 void QuotaCollector::print_report(std::ostream & output,
-			scores::FragmentScoreManagerOP //scoring
-			) {
+	scores::FragmentScoreManagerOP //scoring
+) {
 
-    using namespace ObjexxFCL::fmt;
+	using namespace ObjexxFCL::fmt;
 
-    output<<"QuotaCollector contains the following number of fragments at each position:\n";
-    for(Size i=1;i<=storage_.size();++i) {
-	output<< I(4, i);
-	for(Size j=1;j<=storage_[i].size();++j) {
+	output<<"QuotaCollector contains the following number of fragments at each position:\n";
+	for(Size i=1;i<=storage_.size();++i) {
+		output<< I(4, i);
+		for(Size j=1;j<=storage_[i].size();++j) {
 	    output<<" "<<RJ(10,storage_[i][j]->get_pool_name())
-			<<" "<<I(3,storage_[i][j]->current_size());
+						<<" "<<I(3,storage_[i][j]->current_size());
+		}
+		output<<"\n";
 	}
-	output<<"\n";
-    }
-    output<<std::endl;
+	output<<std::endl;
 }
 
 utility::vector1<std::pair<FragmentCandidateOP,
-			scores::FragmentScoreMapOP> > & QuotaCollector::get_candidates(
+			scores::FragmentScoreMapOP> > const& QuotaCollector::get_candidates(
 			Size position_in_query) {
 
 		frags_for_pos_.clear();
 		for(Size j=1;j<=storage_[position_in_query].size();++j) {
 		    for(Size k=1;k<=storage_[position_in_query][j]->count_candidates();k++) {
 			utility::vector1<std::pair<FragmentCandidateOP,
-			                        scores::FragmentScoreMapOP> > & content = storage_[position_in_query][j]->get_candidates(0);
+			                        scores::FragmentScoreMapOP> > const& content = storage_[position_in_query][j]->get_candidates(0);
 			for(Size l=1;l<=content.size();l++)
 			    frags_for_pos_.push_back( content[l] );
 		    }

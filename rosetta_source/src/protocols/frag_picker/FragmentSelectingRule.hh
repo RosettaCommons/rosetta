@@ -18,7 +18,7 @@
 
 // package headers
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
-#include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
+
 
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -42,10 +42,7 @@ public:
 	}
 
 	/// @brief  Selects desired number of fragments from a given candidates
-	virtual void select_fragments(utility::vector1<std::pair<
-			FragmentCandidateOP, scores::FragmentScoreMapOP> >&,
-			utility::vector1<std::pair<FragmentCandidateOP,
-					scores::FragmentScoreMapOP> >&)=0;
+	virtual void select_fragments( ScoredCandidatesVector1 const&, ScoredCandidatesVector1& ) = 0;
 
 	/// @brief Says how many fragments will be selected for each position in a query sequence
 	inline Size frags_per_pos() {

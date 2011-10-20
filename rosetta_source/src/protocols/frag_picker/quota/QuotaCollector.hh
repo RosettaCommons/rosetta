@@ -64,9 +64,7 @@ public:
 	/// fragment picking machinery.
 	Size query_length() { return storage_.size(); }
 
-	utility::vector1<std::pair<FragmentCandidateOP,
-			scores::FragmentScoreMapOP> > & get_candidates(
-			Size position_in_query);
+	ScoredCandidatesVector1 const& get_candidates(Size position_in_query);
 
 	/// @brief Describes what has been collected
 	void print_report(std::ostream & output,
@@ -96,7 +94,7 @@ public:
     		std::string, Size, utility::vector1<Size>,utility::vector1<Real>,Size);
 private:
 	Size frag_size_;
-	utility::vector1<std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> > frags_for_pos_;
+	ScoredCandidatesVector1 frags_for_pos_;
 	utility::vector1< utility::vector1<QuotaPoolOP> > storage_;
 };
 

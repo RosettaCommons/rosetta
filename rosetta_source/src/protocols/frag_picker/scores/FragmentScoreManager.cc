@@ -129,8 +129,7 @@ Real FragmentScoreManager::total_score(FragmentScoreMapOP f) {
 void FragmentScoreManager::do_caching(VallChunkOP chunk) {
 
 	for (Size iScore = 1; iScore <= scores_.size(); ++iScore) {
-            if(( zeros_score_later_ ) && ( fabs(score_weights_[iScore]) < 0.000001 ))
-              continue;
+		if (( zeros_score_later_ ) && ( fabs(score_weights_[iScore]) < 0.000001 ))	continue;
 		CachingScoringMethod* score =
 				dynamic_cast<CachingScoringMethod*> (scores_[iScore].get());
 		if (score != 0)
@@ -223,40 +222,40 @@ bool FragmentScoreManager::score_fragment(FragmentCandidateOP candidate,
 		FragmentScoreMapOP empty_map) {
 
 	for (Size iScore = 1; iScore <= scores_.size(); iScore++) {
-	    if(( zeros_score_later_ ) && ( fabs(score_weights_[iScore]) < 0.000001 ))
+	    if (( zeros_score_later_ ) && ( fabs(score_weights_[iScore]) < 0.000001 ))
     		continue;
 	    if (!scores_[iScore]->score(candidate, empty_map))
-		return false;
+				return false;
 	}
-
 	return true;
 }
 
-bool FragmentScoreManager::score_zero_scores(FragmentCandidateOP candidate,
-                FragmentScoreMapOP empty_map) {
-
-        for (Size iScore = 1; iScore <= scores_.size(); iScore++) {
-                if( fabs(score_weights_[iScore]) < 0.000001 )
-                	scores_[iScore]->score(candidate, empty_map);
+bool FragmentScoreManager::score_zero_scores(
+					 FragmentCandidateOP candidate,
+					 FragmentScoreMapOP empty_map)
+{
+	for ( Size iScore = 1; iScore <= scores_.size(); iScore++ ) {
+		if ( fabs(score_weights_[iScore]) < 0.000001 )
+			scores_[iScore]->score(candidate, empty_map);
 	}
-
 	return true;
 }
 
 
-bool FragmentScoreManager::score_fragment_from_cache(FragmentCandidateOP candidate,
-		FragmentScoreMapOP empty_map) {
-
-	for (Size iScore = 1; iScore <= scores_.size(); iScore++) {
-		if(( zeros_score_later_ ) && ( fabs(score_weights_[iScore]) < 0.000001 ))
+bool FragmentScoreManager::score_fragment_from_cache(
+    FragmentCandidateOP candidate,
+		FragmentScoreMapOP empty_map)
+{
+	for ( Size iScore = 1; iScore <= scores_.size(); iScore++ ) {
+		if (( zeros_score_later_ ) && ( fabs(score_weights_[iScore]) < 0.000001 ))
 		    continue;
 		CachingScoringMethod *s =
 			dynamic_cast<CachingScoringMethod*> (scores_[iScore].get());
-		if (s != 0) {
-			if (!s->cached_score(candidate, empty_map))
+		if ( s != 0 ) {
+			if ( !s->cached_score(candidate, empty_map) )
 				return false;
 		} else {
-			if (!scores_[iScore]->score(candidate, empty_map))
+			if ( !scores_[iScore]->score(candidate, empty_map) )
 				return false;
 		}
 	}
@@ -273,6 +272,8 @@ FragmentScoreManager::FragmentScoreManager() {
 
 	default_precision_ = 2;
 	default_width_ = 6;
+	zeros_score_later_ = true;
+
 	register_score_maker(new MakeSecondaryIdentity());
 	register_score_maker(new MakeSequenceIdentity());
 	register_score_maker(new MakeBFactor());
@@ -312,7 +313,6 @@ FragmentScoreManager::FragmentScoreManager() {
 	register_score_maker(new MakeSolventAccessibility());
 	register_score_maker(new MakePhi());
 	register_score_maker(new MakePsi());
-	zeros_score_later_ = true;
 }
 
 void FragmentScoreManager::create_scoring_method(

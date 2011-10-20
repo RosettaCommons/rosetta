@@ -84,7 +84,7 @@ bool SecondaryStructurePool::could_be_accepted(std::pair<FragmentCandidateOP, sc
 bool SecondaryStructurePool::add(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> candidate) {
 
 	if( candidate.first->get_middle_ss() == ss_type_ ) {
-	    return  storage_->push( candidate );
+	    return  storage_->push_back( candidate );
 	}
 
 	return false;

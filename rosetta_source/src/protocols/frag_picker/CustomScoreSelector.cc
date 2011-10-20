@@ -19,7 +19,7 @@
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 #include <protocols/frag_picker/scores/FragmentScoreManager.hh>
-
+#include <utility/vector1.hh>
 // utility headers
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -27,40 +27,37 @@
 namespace protocols {
 namespace frag_picker {
 
-static basic::Tracer trCustomScoreSelector(
-		"protocols.frag_picker.CustomScoreSelector");
+static basic::Tracer trCustomScoreSelector("protocols.frag_picker.CustomScoreSelector");
 
-bool sort_function (std::pair< std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP>, core::Real > p1,
-		    std::pair< std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP>, core::Real > p2) { 
-	return ( p1.second < p2.second ); 
+typedef utility::vector1<std::pair< ScoredCandidate, core::Real> > ExtraScoreVector;
+
+bool sort_function( ExtraScoreVector::value_type p1, ExtraScoreVector::value_type p2 ) {
+	return ( p1.second < p2.second );
 }
 
-void CustomScoreSelector::select_fragments(utility::vector1<std::pair<
-		FragmentCandidateOP, scores::FragmentScoreMapOP> >& input_canditates,
-		utility::vector1<std::pair<FragmentCandidateOP,
-				scores::FragmentScoreMapOP> >& output_selection) {
-
+void CustomScoreSelector::select_fragments(
+   ScoredCandidatesVector1 const& input_canditates,
+	 ScoredCandidatesVector1& output_selection )
+{
 	Size n = frags_per_pos();
 	if (n > input_canditates.size())
 		n = input_canditates.size();
 	trCustomScoreSelector.Debug << "Selecting " << n << "fragments from "
 			<< input_canditates.size() << " candidates" << std::endl;
-
-	utility::vector1< std::pair< std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP>, core::Real> > tmp;
-        scores::FragmentScoreMapOP map = scoring_scheme_->create_empty_map();
+	ExtraScoreVector tmp;
+	scores::FragmentScoreMapOP map = scoring_scheme_->create_empty_map();
 	for (Size i=1; i<=input_canditates.size(); i++) {
-
-	    scoring_scheme_->do_caching(input_canditates[i].first->get_chunk());
-	    scoring_scheme_->score_fragment( input_canditates[i].first, map );
-	    core::Real v = scoring_scheme_->total_score( map );
-	    scoring_scheme_->clean_up();
-	    std::pair< std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP>, core::Real > p(input_canditates[i], v);
-	    tmp.push_back( p );
+		scoring_scheme_->do_caching(input_canditates[i].first->get_chunk());
+		scoring_scheme_->score_fragment( input_canditates[i].first, map );
+		core::Real v = scoring_scheme_->total_score( map );
+		scoring_scheme_->clean_up();
+		ExtraScoreVector::value_type p(input_canditates[i], v);
+		tmp.push_back( p );
 	}
 
 	std::sort(tmp.begin(), tmp.end(), sort_function);
 	for (Size i = 1; i <= n; i++) {
-		output_selection.push_back(tmp[i].first);
+		output_selection.push_back( tmp[i].first );
 	}
 }
 

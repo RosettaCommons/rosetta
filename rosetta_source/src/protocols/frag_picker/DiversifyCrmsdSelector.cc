@@ -50,10 +50,10 @@ void DiversifyCrmsdSelector::copy_coordinates(FragmentCandidateOP src,FArray2D_d
 
 
 /// @brief  Selects desired number of fragments from a given set of candidates
-void DiversifyCrmsdSelector::select_fragments(utility::vector1<std::pair<
-			FragmentCandidateOP, scores::FragmentScoreMapOP> >& in,
-			utility::vector1<std::pair<FragmentCandidateOP,
-					scores::FragmentScoreMapOP> >& out) {
+void DiversifyCrmsdSelector::select_fragments(
+   ScoredCandidatesVector1 const& in,
+	 ScoredCandidatesVector1& out )
+{
 
 	if(in.size()==0) return;
 

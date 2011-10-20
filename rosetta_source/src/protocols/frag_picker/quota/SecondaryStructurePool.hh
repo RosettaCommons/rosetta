@@ -94,7 +94,7 @@ public:
 
 	/// @brief  Returns all the candidate in this pool
 	utility::vector1<std::pair<FragmentCandidateOP,
-			scores::FragmentScoreMapOP> > & get_candidates( Size //position_in_query
+			scores::FragmentScoreMapOP> > const& get_candidates( Size //position_in_query
 			) {
 	    return storage_->expose_data();
 	}
@@ -107,26 +107,24 @@ public:
 	void print_report(std::ostream &, scores::FragmentScoreManagerOP);
 
 	virtual void set_fraction(Real new_fraction) {
-	    QuotaPool::set_fraction(new_fraction);
-	    this_size_ = (Size)(total_size_*new_fraction);
-	    if(this_size_<20)
-		this_size_ = 20;
-	    storage_->resize(this_size_,this_size_*buffer_factor_);
+		QuotaPool::set_fraction(new_fraction);
+		this_size_ = (Size)(total_size_*new_fraction);
+		if ( this_size_ < 20 )
+			this_size_ = 20;
+		storage_->resize( this_size_,this_size_*buffer_factor_ );
 	}
 
 	virtual Real quota_score(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> candidate) const {
-
-	    Real t2(0);
-	    for(Size i=1;i<=components_.size();i++)
+		Real t2(0);
+		for(Size i=1;i<=components_.size();i++)
 		t2 += candidate.second->at( components_[i] ) * weights_[i];
-
-	    return t2;
+		return t2;
 	}
 
 private:
 	Size total_size_;
 	Size this_size_;
-        char ss_type_;
+	char ss_type_;
 	utility::vector1<Size> components_;
 	utility::vector1<Real> weights_;
 	BoundedQuotaContainerOP storage_;

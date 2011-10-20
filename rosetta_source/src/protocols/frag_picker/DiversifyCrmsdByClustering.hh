@@ -43,10 +43,7 @@ public:
 	DiversifyCrmsdByClustering(Size frags_per_pos) : FragmentSelectingRule(frags_per_pos) {}
 
 	/// @brief  Selects desired number of fragments from a given set of candidates
-	virtual void select_fragments(utility::vector1<std::pair<
-			FragmentCandidateOP, scores::FragmentScoreMapOP> >&,
-			utility::vector1<std::pair<FragmentCandidateOP,
-					scores::FragmentScoreMapOP> >&);
+	virtual void select_fragments( ScoredCandidatesVector1 const&, ScoredCandidatesVector1& );
 
 	virtual ~DiversifyCrmsdByClustering() {
 	}

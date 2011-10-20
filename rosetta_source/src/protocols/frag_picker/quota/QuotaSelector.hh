@@ -46,33 +46,37 @@ public:
 	}
 
 	/// @brief  Selects desired number of fragments from a given candidates
-	virtual void select_fragments(utility::vector1<std::pair<
-			FragmentCandidateOP, scores::FragmentScoreMapOP> >& in,
-			utility::vector1<std::pair<FragmentCandidateOP,
-					scores::FragmentScoreMapOP> >& out)  {
+	virtual void select_fragments(
+				ScoredCandidatesVector1 const& in,
+				ScoredCandidatesVector1 & out)
+	{
 		select_fragments_25_200(in,out);
 	}
+
 protected:
 	QuotaCollectorOP collector_;
 	Size q_pos_;
 	inline Size round(Real x) { return Size(x > 0.0 ? x + 0.5 : x - 0.5); }
 
-	Size next_from_pool(utility::vector1<std::pair<FragmentCandidateOP,
-                scores::FragmentScoreMapOP> > &,Size ,std::set<Size> &);
+	Size next_from_pool(
+		 ScoredCandidatesVector1 const&,
+		 Size recently_taken,
+		 std::set<Size> & in_use
+	);
+
 	void push_the_limits(utility::vector1<Size> & q_limits,Size target_total);
 
 	void push_the_limits_to_the_winner(utility::vector1<Size> & q_limits,Size target_total);
 
 	void push_the_limits(utility::vector1<Size> &,Size,utility::vector1<Real> &);
 
-	virtual void select_fragments_200(utility::vector1<std::pair<
-			FragmentCandidateOP, scores::FragmentScoreMapOP> >&,
-			utility::vector1<std::pair<FragmentCandidateOP,
-					scores::FragmentScoreMapOP> >&) ;
-	virtual void select_fragments_25_200(utility::vector1<std::pair<
-			FragmentCandidateOP, scores::FragmentScoreMapOP> >&,
-			utility::vector1<std::pair<FragmentCandidateOP,
-					scores::FragmentScoreMapOP> >&) ;
+	virtual void select_fragments_200(
+				ScoredCandidatesVector1 const& in,
+				ScoredCandidatesVector1 & out);
+
+	virtual void select_fragments_25_200(
+				ScoredCandidatesVector1 const& in,
+				ScoredCandidatesVector1 & out);
 private:
     utility::vector1<std::string> tags_;
     std::map<std::string,Size> tag_map_;

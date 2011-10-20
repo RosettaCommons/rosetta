@@ -91,7 +91,7 @@ bool ABEGO_SS_Pool::could_be_accepted(std::pair<FragmentCandidateOP, scores::Fra
 bool ABEGO_SS_Pool::add(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> candidate) {
 
 	if( could_be_accepted(candidate) ) {
-	    return storage_->push( candidate );
+	    return storage_->push_back( candidate );
 	}
 	return false;
 }

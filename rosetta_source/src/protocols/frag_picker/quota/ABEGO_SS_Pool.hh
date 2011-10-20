@@ -107,10 +107,8 @@ public:
 	Size query_length()  { return 0; }
 
 	/// @brief  Returns all the candidate in this pool
-	utility::vector1<std::pair<FragmentCandidateOP,
-			scores::FragmentScoreMapOP> > & get_candidates( Size //position_in_query
-			) {
-	    return storage_->expose_data();
+	ScoredCandidatesVector1 const& get_candidates( Size /*position_in_query*/ ) {
+		return storage_->expose_data();
 	}
 
 	/// @brief Describes what has been collected

@@ -17,6 +17,10 @@
 // utility headers
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
+#include <utility/vector1.fwd.hh>
+#include <map>
+//Auto Headers
 
 namespace protocols {
 namespace frag_picker {
@@ -25,8 +29,9 @@ namespace frag_picker {
 class FragmentCandidate;
 
 typedef utility::pointer::owning_ptr<FragmentCandidate> FragmentCandidateOP;
-typedef utility::pointer::owning_ptr<FragmentCandidate const>
-		FragmentCandidateCOP;
+typedef utility::pointer::owning_ptr<FragmentCandidate const>	FragmentCandidateCOP;
+typedef std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> ScoredCandidate;
+typedef utility::vector1<ScoredCandidate> ScoredCandidatesVector1;
 
 } // frag_picker
 } // protocols

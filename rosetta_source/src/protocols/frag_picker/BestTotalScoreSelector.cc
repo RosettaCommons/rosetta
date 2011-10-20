@@ -33,21 +33,21 @@ namespace frag_picker {
 static basic::Tracer trBestTotalScoreSelector(
 		"protocols.frag_picker.BestTotalScoreSelector");
 
-void BestTotalScoreSelector::select_fragments(utility::vector1<std::pair<
-		FragmentCandidateOP, scores::FragmentScoreMapOP> >& input_canditates,
-		utility::vector1<std::pair<FragmentCandidateOP,
-				scores::FragmentScoreMapOP> >& output_selection) {
+void BestTotalScoreSelector::select_fragments(
+   ScoredCandidatesVector1 const& input_candidates,
+	 ScoredCandidatesVector1& output_selection )
+{
 
 	Size n = frags_per_pos();
-	if (n > input_canditates.size())
-		n = input_canditates.size();
 	trBestTotalScoreSelector.Debug << "Selecting " << n << "fragments from "
-			<< input_canditates.size() << " candidates" << std::endl;
+			<< input_candidates.size() << " candidates" << std::endl;
 
-	std::sort(input_canditates.begin(), input_canditates.end(), comparator_);
-	for (Size i = 1; i <= n; i++) {
-		output_selection.push_back(input_canditates[i]);
+	output_selection = input_candidates;
+	if ( n > input_candidates.size() ) {
+		return;
 	}
+	std::sort( output_selection.begin(), output_selection.end(), comparator_ );
+	output_selection.erase( output_selection.begin()+n,output_selection.end() );
 }
 
 } // frag_picker

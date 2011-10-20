@@ -68,10 +68,9 @@ public:
 	}
 
 	/// @brief  Insert a fragment candidate to the container
-	inline bool add(
-			std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> new_canditate) {
+	inline bool add( ScoredCandidate new_canditate) {
 
-		return storage_[new_canditate.first->get_first_index_in_query()].push(
+		return storage_[new_canditate.first->get_first_index_in_query()].push_back(
 				new_canditate);
 	}
 
@@ -97,9 +96,7 @@ public:
 	}
 
 	/// @brief returns all stored fragment candidates that begins at a given position in a query
-	inline utility::vector1<std::pair<FragmentCandidateOP,
-			scores::FragmentScoreMapOP> >& get_candidates(
-			Size position_in_query) {
+	inline 	ScoredCandidatesVector1 const& get_candidates( Size position_in_query ) {
 		return storage_.at(position_in_query).expose_data();
 	}
 

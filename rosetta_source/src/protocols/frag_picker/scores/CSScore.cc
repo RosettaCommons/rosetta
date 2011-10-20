@@ -73,10 +73,10 @@ CSScore::CSScore(Size priority, Real lowest_acceptable_value, bool use_lowest,
 //This is where the CSScore equation lives
 void CSScore::do_caching(VallChunkOP current_chunk) {
 
-	////ONLY USED IN THE OLD MFR VERSION OF THE SCORE
 	////clip_factor is used to define the maximum shift difference
 	////larger differences are adjusted down to clip_factor*v_shift
 	////(the new score is sigmoidal, so clip factors are not required)
+	////ONLY USED IN THE OLD MFR VERSION OF THE SCORE
 	//Real const clip_factor(3.0);
 
 	bool vall_data(false);

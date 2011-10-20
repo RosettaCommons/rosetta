@@ -49,8 +49,7 @@ public:
 	}
 
 	/// @brief  Insert a fragment candidate to the container
-	inline bool add(
-			std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP> new_canditate) {
+	inline bool add( ScoredCandidate new_canditate ) {
 		storage_[new_canditate.first->get_first_index_in_query()].push_back(
 				new_canditate);
 		return true;

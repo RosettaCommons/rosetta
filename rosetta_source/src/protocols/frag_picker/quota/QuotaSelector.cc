@@ -44,27 +44,25 @@ QuotaSelector::QuotaSelector(Size frags_per_pos,Size pos_in_query,QuotaCollector
 }
 
 
-Size QuotaSelector::next_from_pool(utility::vector1<std::pair<FragmentCandidateOP,
-                scores::FragmentScoreMapOP> > & pool,Size recently_taken,std::set<Size> & in_use) {
+Size QuotaSelector::next_from_pool( ScoredCandidatesVector1 const& pool,Size recently_taken,std::set<Size> & in_use) {
+	if( recently_taken >= pool.size() )
+		return 0;
+	recently_taken++;
 
-    if(recently_taken >= pool.size())
-	return 0;
-    recently_taken++;
-
-    for(Size i=recently_taken;i<=pool.size();i++) {
-	if ( pool[i].first == 0 ) {
+	for(Size i=recently_taken;i<=pool.size();i++) {
+		if ( pool[i].first == 0 ) {
 	    trQuotaSelector.Warning << "Fragment candidate at pos. " << i
-		<< " from a pool is null - nothing to select\n"
-		<< " maybe your vall database is to small?" << std::endl;
+															<< " from a pool is null - nothing to select\n"
+															<< " maybe your vall database is to small?" << std::endl;
 	    return 0;
-	}
-	if( in_use.find( pool[i].first->key() ) == in_use.end() ) {
+		}
+		if( in_use.find( pool[i].first->key() ) == in_use.end() ) {
 	    in_use.insert( pool[i].first->key() );
 	    return i;
+		}
 	}
-    }
 
-    return 0;
+	return 0;
 }
 
 
@@ -149,10 +147,10 @@ void QuotaSelector::push_the_limits(utility::vector1<Size> & q_limits,Size targe
 }
 
 
-void QuotaSelector::select_fragments_200(utility::vector1<std::pair<
-		FragmentCandidateOP, scores::FragmentScoreMapOP> >& //input_candidates
-		, utility::vector1<std::pair<FragmentCandidateOP,
-				scores::FragmentScoreMapOP> >& output_selection) {
+void QuotaSelector::select_fragments_200(
+				ScoredCandidatesVector1 const&,
+				ScoredCandidatesVector1& output_selection
+) {
 
 	utility::vector1<Size> last_selected(collector_->count_pools(q_pos_),0);
 	Size n = 0;
@@ -175,32 +173,30 @@ void QuotaSelector::select_fragments_200(utility::vector1<std::pair<
 
 	push_the_limits( q_limits, frags_per_pos() );
 	do {
-    	    something_taken = false;
-	    for(Size i=1;i<=collector_->count_pools(q_pos_);++i) {
-		utility::vector1<std::pair<FragmentCandidateOP,
-	                            scores::FragmentScoreMapOP> > & fs = collector_->get_pool(q_pos_,i)->get_candidates(0);
-		if( q_cnt[i] == q_limits[i] )
+		something_taken = false;
+		for ( Size i=1;i<=collector_->count_pools(q_pos_);++i ) {
+			ScoredCandidatesVector1 const& fs = collector_->get_pool(q_pos_,i)->get_candidates(0);
+			if ( q_cnt[i] == q_limits[i] )
 		    continue;
-		Size ifrag = next_from_pool( fs, last_selected[i], nice_collection );
-		if( ifrag > 0 ) {
+			Size ifrag = next_from_pool( fs, last_selected[i], nice_collection );
+			if ( ifrag > 0 ) {
 		    output_selection.push_back( fs[ifrag] );
 		    n++;
 		    something_taken = true;
 		    q_cnt[i]++;
+			}
 		}
-	    }
 	} while((n < frags_per_pos()) && (something_taken==true));
 	trQuotaSelector.Trace<<"Position "<<q_pos_<<" done, "<< output_selection.size()<<" fragments selected."<<std::endl;
 }
 
 
-void QuotaSelector::select_fragments_25_200(utility::vector1<std::pair<
-		FragmentCandidateOP, scores::FragmentScoreMapOP> >& //input_candidates
-		, utility::vector1<std::pair<FragmentCandidateOP,
-				scores::FragmentScoreMapOP> >& output_selection) {
-
+void QuotaSelector::select_fragments_25_200(
+				ScoredCandidatesVector1 const&,
+				ScoredCandidatesVector1& output_selection
+) {
 	if( collector_->count_candidates() == 0 )
-	    return;
+		return;
 	utility::vector1<Size> last_selected(collector_->count_pools(q_pos_),0);
 	Size frag_size = collector_->get_pool(q_pos_,1)->get_candidates(0)[1].first->get_length();
 	Size n = 0;
@@ -228,15 +224,14 @@ void QuotaSelector::select_fragments_25_200(utility::vector1<std::pair<
 	    trQuotaSelector.Trace<<std::endl;
 	}
 	do {
-    	    something_taken = false;
-	    for(Size i=1;i<=collector_->count_pools(q_pos_);++i) {
-		if( q_cnt[i] == q_limits[i] )
+		something_taken = false;
+		for(Size i=1;i<=collector_->count_pools(q_pos_);++i) {
+			if( q_cnt[i] == q_limits[i] )
 		    continue;
-		QuotaPoolOP the_pool = collector_->get_pool(q_pos_,i);
-		utility::vector1<std::pair<FragmentCandidateOP,
-	                            scores::FragmentScoreMapOP> > & fs = the_pool->get_candidates(0);
-		Size ifrag = next_from_pool( fs, last_selected[i], nice_collection );
-		if( ifrag > 0 ) {
+			QuotaPoolOP the_pool = collector_->get_pool(q_pos_,i);
+			ScoredCandidatesVector1 const& fs = the_pool->get_candidates(0);
+			Size ifrag = next_from_pool( fs, last_selected[i], nice_collection );
+			if( ifrag > 0 ) {
 		    fs[ifrag].second->set_quota_score( the_pool->quota_score( fs[ifrag] ) );
 		    fs[ifrag].first->set_pool_name( the_pool->get_pool_name() );
 
@@ -277,8 +272,7 @@ void QuotaSelector::select_fragments_25_200(utility::vector1<std::pair<
 		if( q_cnt[i] == q_limits[i] )
 		    continue;
 		QuotaPoolOP the_pool = collector_->get_pool(q_pos_,i);
-		utility::vector1<std::pair<FragmentCandidateOP,
-	                            scores::FragmentScoreMapOP> > & fs = the_pool->get_candidates(0);
+		ScoredCandidatesVector1 const& fs = the_pool->get_candidates(0);
 		Size ifrag = next_from_pool( fs, last_selected[i], nice_collection );
 		last_selected[i] = ifrag;
 		if( ifrag > 0 ) {

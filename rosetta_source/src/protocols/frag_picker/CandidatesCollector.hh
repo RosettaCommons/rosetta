@@ -40,8 +40,7 @@ namespace frag_picker {
 class CandidatesCollector: public utility::pointer::ReferenceCount {
 public:
 	/// @brief  Insert a fragment candidate to the container
-	virtual bool
-			add(std::pair<FragmentCandidateOP, scores::FragmentScoreMapOP>) = 0;
+	virtual bool add( ScoredCandidate ) = 0;
 
 	/// @brief removes all candidates from the container
 	virtual void clear() = 0;
@@ -57,13 +56,11 @@ public:
 	/// fragment picking machinery.
 	virtual Size query_length()=0;
 
-	virtual utility::vector1<std::pair<FragmentCandidateOP,
-			scores::FragmentScoreMapOP> > & get_candidates(
-			Size position_in_query) =0;
+	virtual ScoredCandidatesVector1 const& get_candidates( Size position_in_query) = 0;
 
 	/// @brief Describes what has been collected
-	virtual void print_report(std::ostream & output,
-			scores::FragmentScoreManagerOP scoring) = 0;
+	virtual void print_report( std::ostream & output,
+			scores::FragmentScoreManagerOP scoring ) = 0;
 };
 
 } // frag_picker

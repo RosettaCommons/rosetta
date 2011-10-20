@@ -58,7 +58,7 @@ public:
 		return data_[1];
 	}
 
-	inline bool push(const T& x) {
+	inline bool push_back(const T& x) {
 
 		if(comp(worst_,x)) {
 		    n_denied_++;
