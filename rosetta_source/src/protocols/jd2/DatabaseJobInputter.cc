@@ -185,7 +185,7 @@ void DatabaseJobInputter::set_tags_from_sql(utility::vector1<std::string> const 
 			break;
 		}catch(cppdb::cppdb_error &)
 		{
-			#ifndef WIN_PYROSETTA
+			#ifndef WIN32
 				usleep(10);
 			#endif
 			continue;
@@ -256,7 +256,7 @@ void protocols::jd2::DatabaseJobInputter::fill_jobs( Jobs & jobs ){
 				break;
 			}catch(cppdb::cppdb_error &)
 			{
-				#ifndef WIN_PYROSETTA
+				#ifndef WIN32
 					usleep(10);
 				#endif
 				continue;
