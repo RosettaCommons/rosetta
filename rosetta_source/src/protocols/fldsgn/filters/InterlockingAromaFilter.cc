@@ -38,10 +38,7 @@
 #include <core/pose/util.hh>
 #include <protocols/moves/DataMap.hh>
 
-#ifdef WIN_PYROSETTA
-	#include <protocols/fldsgn/topology/HSSTriplet.hh>
-#endif
-
+#include <protocols/fldsgn/topology/HSSTriplet.hh>
 
 //// C++ headers
 static basic::Tracer tr("protocols.fldsgn.filters.InterlockingAromaFilter");
