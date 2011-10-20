@@ -205,7 +205,7 @@ Real ik_arg_glu_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
   if( pose.residue(rsd1).xyz("CB").distance_squared(pose.residue(rsd2).xyz("CB")) > 144.0 ) return 0;
   Real mxcb = 0.0;
   //Real arg_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::arg_dun_th]();
-	//  Real coo_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::glu_dun_th]();
+  //  Real coo_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::glu_dun_th]();
 
   Size iO2=ctp.residue(1).atom_index("O2"), iO5=ctp.residue(1).atom_index("O5"), iC5=ctp.residue(1).atom_index("C5");
   Size iO1=ctp.residue(1).atom_index("O1"), iC2=ctp.residue(1).atom_index("C2"), iC7=ctp.residue(1).atom_index("C7");
@@ -678,7 +678,7 @@ Real ik_arg_asp_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
   if( pose.residue(rsd1).xyz("CB").distance_squared(pose.residue(rsd2).xyz("CB")) > 100.0 ) return 0;
   Real mxcb = 0.0;
   //Real arg_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::arg_dun_th]();
-	//  Real coo_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::glu_dun_th]();
+  //  Real coo_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::glu_dun_th]();
 
   Size iO2=ctp.residue(1).atom_index("O2"), iO5=ctp.residue(1).atom_index("O5"), iC5=ctp.residue(1).atom_index("C5");
   Size iO1=ctp.residue(1).atom_index("O1"), iC2=ctp.residue(1).atom_index("C2"), iC7=ctp.residue(1).atom_index("C7");
@@ -822,7 +822,7 @@ void ik_lys_ctp_asp(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & 
   if( pose.residue(rsd1).xyz("CB").distance_squared(pose.residue(rsd2).xyz("CB")) > 225.0 ) return;
 
   //Real arg_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::arg_dun_th]();
-	//  Real coo_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::glu_dun_th]();
+  //  Real coo_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::glu_dun_th]();
 
   core::kinematics::Stub cstub(ctp.residue(1).xyz("C5"),ctp.residue(1).xyz("O1"),ctp.residue(1).xyz("O2"));
   for(Size i = 1; i <= ctp.residue(1).natoms(); ++i) ctp.set_xyz(AtomID(i,1), cstub.global2local(ctp.xyz(AtomID(i,1))));
@@ -1014,7 +1014,7 @@ void ik_lys_ctp_glu(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & 
   if( pose.residue(rsd1).xyz("CB").distance_squared(pose.residue(rsd2).xyz("CB")) > 300.0 ) return;
 
   //Real arg_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::arg_dun_th]();
-	//  Real coo_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::glu_dun_th]();
+  //  Real coo_dun_th = basic::options::option[basic::options::OptionKeys::willmatch::glu_dun_th]();
 
   core::kinematics::Stub cstub(ctp.residue(1).xyz("C5"),ctp.residue(1).xyz("O1"),ctp.residue(1).xyz("O2"));
   for(Size i = 1; i <= ctp.residue(1).natoms(); ++i) ctp.set_xyz(AtomID(i,1), cstub.global2local(ctp.xyz(AtomID(i,1))));
@@ -1032,7 +1032,7 @@ void ik_lys_ctp_glu(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck & 
   order [1]=1; order [2]= 2; order [3]= 3;
   pivots[1]=8, pivots[2]=11, pivots[3]=14;
 
-	//  core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib2 = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue(rsd2).type() );
+  //  core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib2 = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue(rsd2).type() );
   ///core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
 
   // get rotamers
@@ -1239,26 +1239,26 @@ int main (int argc, char *argv[]) {
     if(pose.residue(i).is_lower_terminus()) core::pose::remove_lower_terminus_type_from_pose_residue(pose,i);
     if(pose.residue(i).is_upper_terminus()) core::pose::remove_upper_terminus_type_from_pose_residue(pose,i);
   }
-	Pose pala(pose);
-	for(Size ir = 1; ir <= pala.n_residue(); ++ir) {
-		if(pala.residue(ir).name3()!="GLY")	pala.replace_residue(ir,ala.residue(1),true);
-	}
+  Pose pala(pose);
+  for(Size ir = 1; ir <= pala.n_residue(); ++ir) {
+    if(pala.residue(ir).name3()!="GLY") pala.replace_residue(ir,ala.residue(1),true);
+  }
 
   ImplicitFastClashCheck ifc (pose,2.0);
   ImplicitFastClashCheck ifc3(pose,2.6);
   vector1<Real> sasa; { core::id::AtomID_Map<Real> atom_sasa; core::scoring::calc_per_atom_sasa( pose, atom_sasa, sasa, 5.0, false ); }
-	if( basic::options::option[basic::options::OptionKeys::match::scaffold_active_site_residues].user() ) {
-		string posfile = basic::options::option[basic::options::OptionKeys::match::scaffold_active_site_residues]();
-		TR << "reading pos file " << posfile << std::endl;
-		utility::io::izstream in(posfile);
-		vector1<Size> pos;
-		Size tmp; while(in >> tmp) pos.push_back(tmp);
-		in.close();
-		for(Size i = 1; i <= sasa.size(); ++i) {
-			if( std::find(pos.begin(),pos.end(),i) == pos.end() ) sasa[i] = 9e9;
-			else sasa[i] = 0.0;
-		}
-	}
+  if( basic::options::option[basic::options::OptionKeys::match::scaffold_active_site_residues].user() ) {
+    string posfile = basic::options::option[basic::options::OptionKeys::match::scaffold_active_site_residues]();
+    TR << "reading pos file " << posfile << std::endl;
+    utility::io::izstream in(posfile);
+    vector1<Size> pos;
+    Size tmp; while(in >> tmp) pos.push_back(tmp);
+    in.close();
+    for(Size i = 1; i <= sasa.size(); ++i) {
+      if( std::find(pos.begin(),pos.end(),i) == pos.end() ) sasa[i] = 9e9;
+      else sasa[i] = 0.0;
+    }
+  }
 
   TR << "scanning LYS-LG-OOC" << std::endl;
   vector1<HitOP> khits; {
@@ -1269,13 +1269,13 @@ int main (int argc, char *argv[]) {
 #endif
     for(int ir = 3; ir <= (int)pose.n_residue()-2; ++ir) {
       if(sasa[ir] > 0.1) continue;
-				Pose wp,lg;
+      Pose wp,lg;
 #ifdef USE_OPENMP
 #pragma omp critical
 #endif
       { wp=pose; lg=ctp; }
       wp.replace_residue(ir,lys.residue(1),true);
-			for(Size jr = 3; jr <= pose.n_residue()-2; ++jr) {
+      for(Size jr = 3; jr <= pose.n_residue()-2; ++jr) {
         if(ir==jr) continue;
         if(sasa[jr] > 0.1) continue;
         //if( (ir*jr+jr+3*ir+999999999)%10!=0 ) continue;
@@ -1301,7 +1301,7 @@ int main (int argc, char *argv[]) {
     for(int ir = 3; ir <= (int)pose.n_residue()-2; ++ir) {
       if(sasa[ir] > 0.1) continue;
       //TR << ir << std::endl;
-			Pose wp,lg;
+      Pose wp,lg;
 #ifdef USE_OPENMP
 #pragma omp critical
 #endif
@@ -1327,7 +1327,7 @@ int main (int argc, char *argv[]) {
   TR << "LYS/OOC HITS: " << khits.size() << std::endl;
   TR << "ARG bkp HITS: " << rhits.size() << std::endl;
 
-	// set up lig position
+  // set up lig position
   core::kinematics::Stub const lgstub(ctp.residue(1).xyz("C5"),ctp.residue(1).xyz("O1"),ctp.residue(1).xyz("O2"));
   for(Size i = 1; i <= ctp.residue(1).natoms(); ++i) ctp.set_xyz(AtomID(i,1), lgstub.global2local(ctp.xyz(AtomID(i,1))));
   Vec ccom(0,0,0); for(Size i = 1; i <= ctp.residue(1).nheavyatoms(); ++i) ccom += ctp.residue(1).xyz(i); ccom /= ctp.residue(1).nheavyatoms();
@@ -1338,7 +1338,7 @@ int main (int argc, char *argv[]) {
   trans_pose(lgB,ctp.residue(1).xyz("C7")-lgB.residue(1).xyz("C9"));
   Vec ccomB(0,0,0); for(Size i = 1; i <= lgB.residue(1).nheavyatoms(); ++i) ccomB += lgB.residue(1).xyz(i); ccomB /= lgB.residue(1).nheavyatoms();
 
-	// set up lys grid
+  // set up lys grid
   Vec lb(9e9,9e9,9e9),ub(-9e9,-9e9,-9e9);
   for(Size i = 1; i <= khits.size(); ++i) {
     Vec com  = khits[i]->stub.local2global(ccom );  lb.min( com -3.0 ); ub.max( com +3.0 );
@@ -1363,34 +1363,34 @@ int main (int argc, char *argv[]) {
 #ifdef USE_OPENMP
 #pragma omp parallel for schedule(dynamic,1)
 #endif
-for(int ir = 1; ir <= (int)rhits.size(); ++ir) {
+  for(int ir = 1; ir <= (int)rhits.size(); ++ir) {
     if(ir%1000==0) TR << Real(ir)/Real(rhits.size()) * 100.0 << " percent done combine " << nhit << " hits" << std::endl;
     Hit const rhit(*rhits[ir]);
     Vec rcom = rhit.stub.local2global(ccom);
-		Pose wp,lg;
-		ScoreFunctionOP sf,sf2;
-		core::kinematics::MoveMapOP movemap;
+    Pose wp,lg;
+    ScoreFunctionOP sf,sf2;
+    core::kinematics::MoveMapOP movemap;
 #ifdef USE_OPENMP
 #pragma omp critical
 #endif
-		{
-			sf = new core::scoring::ScoreFunction();
-			sf2 = new core::scoring::ScoreFunction();
-			movemap = new core::kinematics::MoveMap;
-			wp=pala; lg=ctp;
-			rhit.apply(wp);
-		}
-		sf->set_weight(core::scoring::fa_atr,1.0);
-		sf->set_weight(core::scoring::fa_rep,1.0);
-		sf->set_weight(core::scoring::fa_intra_rep,1.0);
-		sf->set_weight(core::scoring::hbond_sc,5.0);
-		sf->set_weight(core::scoring::atom_pair_constraint,1.1);
-		sf->set_weight(core::scoring::    angle_constraint,1.1);
-		movemap->set_bb(false);
-		movemap->set_chi(true);
-		movemap->set_jump(false);
-		movemap->set_jump(4,true);
-		protocols::moves::MinMover minm( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+    {
+      sf = new core::scoring::ScoreFunction();
+      sf2 = new core::scoring::ScoreFunction();
+      movemap = new core::kinematics::MoveMap;
+      wp=pala; lg=ctp;
+      rhit.apply(wp);
+    }
+    sf->set_weight(core::scoring::fa_atr,1.0);
+    sf->set_weight(core::scoring::fa_rep,1.0);
+    sf->set_weight(core::scoring::fa_intra_rep,1.0);
+    sf->set_weight(core::scoring::hbond_sc,5.0);
+    sf->set_weight(core::scoring::atom_pair_constraint,1.1);
+    sf->set_weight(core::scoring::    angle_constraint,1.1);
+    movemap->set_bb(false);
+    movemap->set_chi(true);
+    movemap->set_jump(false);
+    movemap->set_jump(4,true);
+    protocols::moves::MinMover minm( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
     for(Size is = 1; is <= rhits.size(); ++is) {
       Hit const shit(*rhits[is]);
       if(rhit.rsd1==shit.rsd1||rhit.rsd1==shit.rsd2||rhit.rsd2==shit.rsd1||rhit.rsd2==shit.rsd2) continue;
@@ -1441,9 +1441,9 @@ for(int ir = 1; ir <= (int)rhits.size(); ++ir) {
       tmp.add_constraint( new AngleConstraint( AtomID(bk21,4),AtomID(bk22,4),AtomID(bk23,3),                new HarmonicFunc(3.14159,0.3)) );
       tmp.add_constraint( new AngleConstraint(                AtomID(bk22,4),AtomID(bk23,3),AtomID(bk24,3), new HarmonicFunc(3.14159,0.3)) );
 
-// #ifdef USE_OPENMP
-// #pragma omp critical
-// #endif
+      // #ifdef USE_OPENMP
+      // #pragma omp critical
+      // #endif
       minm.apply(tmp);
 
       {
@@ -1503,9 +1503,9 @@ for(int ir = 1; ir <= (int)rhits.size(); ++ir) {
               //tmp2.append_residue_by_jump(lgK.residue(1),1);
               Pose prev(tmp2);
 
-// #ifdef USE_OPENMP
-// #pragma omp critical
-// #endif
+              // #ifdef USE_OPENMP
+              // #pragma omp critical
+              // #endif
               minm.apply(tmp2);
               {
                 bool clash = false;
@@ -1524,74 +1524,74 @@ for(int ir = 1; ir <= (int)rhits.size(); ++ir) {
 #endif
               nhit++;
 
-							Pose tmp3;;
+              Pose tmp3;;
 #ifdef USE_OPENMP
 #pragma omp critical
 #endif
-							{
-								tmp3 = pala;
-								rhit.apply(tmp3);
-								shit.apply(tmp3);
-								khit.apply(tmp3);
-							}
+              {
+                tmp3 = pala;
+                rhit.apply(tmp3);
+                shit.apply(tmp3);
+                khit.apply(tmp3);
+              }
 
-							tmp3.append_residue_by_jump(lg1.residue(1),1);
-							Size r1 = rhit.rsd1;
-							Size r2 = rhit.rsd2;
-							Size r3 = shit.rsd1;
-							Size r4 = shit.rsd2;
-							Size r5 = tmp3.n_residue();
-							Size r6 = khit.rsd1;
-							Size r7 = khit.rsd2;
+              tmp3.append_residue_by_jump(lg1.residue(1),1);
+              Size r1 = rhit.rsd1;
+              Size r2 = rhit.rsd2;
+              Size r3 = shit.rsd1;
+              Size r4 = shit.rsd2;
+              Size r5 = tmp3.n_residue();
+              Size r6 = khit.rsd1;
+              Size r7 = khit.rsd2;
 
-							tmp3.add_constraint( new AtomPairConstraint( AtomID(n11,r1), AtomID(c11,r5), new HarmonicFunc(2.8,0.2)) );
-							tmp3.add_constraint( new AtomPairConstraint( AtomID(n12,r1), AtomID(c12,r5), new HarmonicFunc(2.8,0.2)) );
-							tmp3.add_constraint( new AtomPairConstraint( AtomID(n21,r3), AtomID(c21,r5), new HarmonicFunc(2.8,0.2)) );
-							tmp3.add_constraint( new AtomPairConstraint( AtomID(n22,r3), AtomID(c22,r5), new HarmonicFunc(2.8,0.2)) );
-							tmp3.add_constraint( new AngleConstraint( AtomID(tmp.residue(5).atom_index("C2"),r5),AtomID(tmp.residue(5).atom_index("C7"),r5),AtomID(9,r1),                new HarmonicFunc(3.14159,0.3)) );
-							tmp3.add_constraint( new AngleConstraint(                                            AtomID(tmp.residue(5).atom_index("C7"),r5),AtomID(9,r1),AtomID(n1a,r1), new HarmonicFunc(3.14159,0.3)) );
-							tmp3.add_constraint( new AngleConstraint( AtomID(tmp.residue(5).atom_index("C8"),r5),AtomID(tmp.residue(5).atom_index("C9"),r5),AtomID(9,r3),                new HarmonicFunc(3.14159,0.3)) );
-							tmp3.add_constraint( new AngleConstraint(                                            AtomID(tmp.residue(5).atom_index("C9"),r5),AtomID(9,r3),AtomID(n2a,r3), new HarmonicFunc(3.14159,0.3)) );
-							tmp3.add_constraint( new AngleConstraint( AtomID(bk11,r2),AtomID(bk12,r2),AtomID(bk13,r1),                 new HarmonicFunc(3.14159,0.3)) );
-							tmp3.add_constraint( new AngleConstraint(                 AtomID(bk12,r2),AtomID(bk13,r1),AtomID(bk14,r1), new HarmonicFunc(3.14159,0.3)) );
-							tmp3.add_constraint( new AngleConstraint( AtomID(bk21,r4),AtomID(bk22,r4),AtomID(bk23,r3),                 new HarmonicFunc(3.14159,0.3)) );
-							tmp3.add_constraint( new AngleConstraint(                 AtomID(bk22,r4),AtomID(bk23,r3),AtomID(bk24,r3), new HarmonicFunc(3.14159,0.3)) );
-							tmp3.add_constraint( new AtomPairConstraint( AtomID(9                               ,r6), AtomID(iO2, r5), new HarmonicFunc(3.0,0.2)) );
-							tmp3.add_constraint( new AtomPairConstraint( AtomID(tmp2.residue(7).nheavyatoms()-1 ,r7), AtomID(iO1, r5), new HarmonicFunc(3.0,0.2)) );
-							tmp3.add_constraint( new AngleConstraint(    AtomID(tmp2.residue(7).nheavyatoms()-2 ,r7), AtomID(tmp2.residue(7).nheavyatoms()-1,r7), AtomID(iO1,r5), new HarmonicFunc(3.14159*2.0/3.0,0.05)) );
-							tmp3.add_constraint( new AngleConstraint(    AtomID(tmp2.residue(7).nheavyatoms()-1 ,r7), AtomID(iO1, r5), AtomID(iC5,r5), new HarmonicFunc(1.838,0.05) ) );
+              tmp3.add_constraint( new AtomPairConstraint( AtomID(n11,r1), AtomID(c11,r5), new HarmonicFunc(2.8,0.2)) );
+              tmp3.add_constraint( new AtomPairConstraint( AtomID(n12,r1), AtomID(c12,r5), new HarmonicFunc(2.8,0.2)) );
+              tmp3.add_constraint( new AtomPairConstraint( AtomID(n21,r3), AtomID(c21,r5), new HarmonicFunc(2.8,0.2)) );
+              tmp3.add_constraint( new AtomPairConstraint( AtomID(n22,r3), AtomID(c22,r5), new HarmonicFunc(2.8,0.2)) );
+              tmp3.add_constraint( new AngleConstraint( AtomID(tmp.residue(5).atom_index("C2"),r5),AtomID(tmp.residue(5).atom_index("C7"),r5),AtomID(9,r1),                new HarmonicFunc(3.14159,0.3)) );
+              tmp3.add_constraint( new AngleConstraint(                                            AtomID(tmp.residue(5).atom_index("C7"),r5),AtomID(9,r1),AtomID(n1a,r1), new HarmonicFunc(3.14159,0.3)) );
+              tmp3.add_constraint( new AngleConstraint( AtomID(tmp.residue(5).atom_index("C8"),r5),AtomID(tmp.residue(5).atom_index("C9"),r5),AtomID(9,r3),                new HarmonicFunc(3.14159,0.3)) );
+              tmp3.add_constraint( new AngleConstraint(                                            AtomID(tmp.residue(5).atom_index("C9"),r5),AtomID(9,r3),AtomID(n2a,r3), new HarmonicFunc(3.14159,0.3)) );
+              tmp3.add_constraint( new AngleConstraint( AtomID(bk11,r2),AtomID(bk12,r2),AtomID(bk13,r1),                 new HarmonicFunc(3.14159,0.3)) );
+              tmp3.add_constraint( new AngleConstraint(                 AtomID(bk12,r2),AtomID(bk13,r1),AtomID(bk14,r1), new HarmonicFunc(3.14159,0.3)) );
+              tmp3.add_constraint( new AngleConstraint( AtomID(bk21,r4),AtomID(bk22,r4),AtomID(bk23,r3),                 new HarmonicFunc(3.14159,0.3)) );
+              tmp3.add_constraint( new AngleConstraint(                 AtomID(bk22,r4),AtomID(bk23,r3),AtomID(bk24,r3), new HarmonicFunc(3.14159,0.3)) );
+              tmp3.add_constraint( new AtomPairConstraint( AtomID(9                               ,r6), AtomID(iO2, r5), new HarmonicFunc(3.0,0.2)) );
+              tmp3.add_constraint( new AtomPairConstraint( AtomID(tmp2.residue(7).nheavyatoms()-1 ,r7), AtomID(iO1, r5), new HarmonicFunc(3.0,0.2)) );
+              tmp3.add_constraint( new AngleConstraint(    AtomID(tmp2.residue(7).nheavyatoms()-2 ,r7), AtomID(tmp2.residue(7).nheavyatoms()-1,r7), AtomID(iO1,r5), new HarmonicFunc(3.14159*2.0/3.0,0.05)) );
+              tmp3.add_constraint( new AngleConstraint(    AtomID(tmp2.residue(7).nheavyatoms()-1 ,r7), AtomID(iO1, r5), AtomID(iC5,r5), new HarmonicFunc(1.838,0.05) ) );
 
-							for(Size ir = 1; ir < tmp3.n_residue(); ++ir) {
-								tmp3.add_constraint( new CoordinateConstraint( AtomID(2,ir), AtomID(2,100), tmp3.xyz(AtomID(2,ir)) , new HarmonicFunc(0,1.0) ) );
-							}
+              for(Size ir = 1; ir < tmp3.n_residue(); ++ir) {
+                tmp3.add_constraint( new CoordinateConstraint( AtomID(2,ir), AtomID(2,100), tmp3.xyz(AtomID(2,ir)) , new HarmonicFunc(0,1.0) ) );
+              }
 
-							//sf2->set_weight(core::scoring::fa_atr,0.2);
-							sf2->set_weight(core::scoring::fa_rep,0.2);
-							//sf2->set_weight(core::scoring::fa_intra_rep,1.0);
-							//sf2->set_weight(core::scoring::fa_dun,1.0);
-							sf2->set_weight(core::scoring::hbond_sc,10.0);
-							sf2->set_weight(core::scoring:: atom_pair_constraint,2.0);
-							sf2->set_weight(core::scoring::     angle_constraint,2.0);
-							sf2->set_weight(core::scoring::coordinate_constraint,0.01);
-							core::kinematics::MoveMapOP movemap2 = new core::kinematics::MoveMap;
-							movemap2->set_bb(true);
-							movemap2->set_chi(true);
-							movemap2->set_jump(true);
-							protocols::moves::MinMover minm2( movemap2, sf2, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+              //sf2->set_weight(core::scoring::fa_atr,0.2);
+              sf2->set_weight(core::scoring::fa_rep,0.2);
+              //sf2->set_weight(core::scoring::fa_intra_rep,1.0);
+              //sf2->set_weight(core::scoring::fa_dun,1.0);
+              sf2->set_weight(core::scoring::hbond_sc,10.0);
+              sf2->set_weight(core::scoring:: atom_pair_constraint,2.0);
+              sf2->set_weight(core::scoring::     angle_constraint,2.0);
+              sf2->set_weight(core::scoring::coordinate_constraint,0.01);
+              core::kinematics::MoveMapOP movemap2 = new core::kinematics::MoveMap;
+              movemap2->set_bb(true);
+              movemap2->set_chi(true);
+              movemap2->set_jump(true);
+              protocols::moves::MinMover minm2( movemap2, sf2, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 
-							//tmp3.dump_pdb("pre.pdb");
-							minm2.apply(tmp3);
-							//tmp3.dump_pdb("min.pdb");
+              //tmp3.dump_pdb("pre.pdb");
+              minm2.apply(tmp3);
+              //tmp3.dump_pdb("min.pdb");
               tmp3.dump_pdb(utility::file_basename(infile)+"_"+fn+"_min.pdb");
 
-							Pose tmp4(tmp2);
-							tmp4.replace_residue(1,tmp3.residue(r1),false);
-							tmp4.replace_residue(2,tmp3.residue(r2),false);
-							tmp4.replace_residue(3,tmp3.residue(r3),false);
-							tmp4.replace_residue(4,tmp3.residue(r4),false);
-							tmp4.replace_residue(5,tmp3.residue(r5),false);
-							tmp4.replace_residue(6,tmp3.residue(r6),false);
-							tmp4.replace_residue(7,tmp3.residue(r7),false);
+              Pose tmp4(tmp2);
+              tmp4.replace_residue(1,tmp3.residue(r1),false);
+              tmp4.replace_residue(2,tmp3.residue(r2),false);
+              tmp4.replace_residue(3,tmp3.residue(r3),false);
+              tmp4.replace_residue(4,tmp3.residue(r4),false);
+              tmp4.replace_residue(5,tmp3.residue(r5),false);
+              tmp4.replace_residue(6,tmp3.residue(r6),false);
+              tmp4.replace_residue(7,tmp3.residue(r7),false);
 
               Real rd1 = tmp4.xyz(AtomID(n11,1)).distance(tmp4.xyz(AtomID(c11,5)));
               Real rd2 = tmp4.xyz(AtomID(n12,1)).distance(tmp4.xyz(AtomID(c12,5)));
@@ -1600,7 +1600,7 @@ for(int ir = 1; ir <= (int)rhits.size(); ++ir) {
               Real ra1 = numeric::angle_degrees(tmp4.xyz(AtomID(tmp.residue(5).atom_index("C2"),5)),tmp4.xyz(AtomID(tmp.residue(5).atom_index("C7"),5)),tmp4.xyz(AtomID(9,1)));
               Real ra2 = numeric::angle_degrees(tmp4.xyz(AtomID(tmp.residue(5).atom_index("C7"),5)),tmp4.xyz(AtomID(9,1)),tmp4.xyz(AtomID(n1a,1)));
               Real ra3 = numeric::angle_degrees(tmp4.xyz(AtomID(tmp.residue(5).atom_index("C8"),5)),tmp4.xyz(AtomID(tmp.residue(5).atom_index("C9"),5)),tmp4.xyz(AtomID(9,3)));
-							Real ra4 = numeric::angle_degrees(tmp4.xyz(AtomID(tmp.residue(5).atom_index("C9"),5)),tmp4.xyz(AtomID(9,3)),tmp4.xyz(AtomID(n2a,3)));
+              Real ra4 = numeric::angle_degrees(tmp4.xyz(AtomID(tmp.residue(5).atom_index("C9"),5)),tmp4.xyz(AtomID(9,3)),tmp4.xyz(AtomID(n2a,3)));
               Real ra5 = numeric::angle_degrees(tmp4.xyz(AtomID(bk11,2)),tmp4.xyz(AtomID(bk12,2)),tmp4.xyz(AtomID(bk13,1)));
               Real ra6 = numeric::angle_degrees(tmp4.xyz(AtomID(bk12,2)),tmp4.xyz(AtomID(bk13,1)),tmp4.xyz(AtomID(bk14,1)));
               Real ra7 = numeric::angle_degrees(tmp4.xyz(AtomID(bk21,4)),tmp4.xyz(AtomID(bk22,4)),tmp4.xyz(AtomID(bk23,3)));
@@ -1608,33 +1608,33 @@ for(int ir = 1; ir <= (int)rhits.size(); ++ir) {
               Real kd1 = tmp4.xyz(AtomID(9                              ,6)).distance(tmp4.xyz(AtomID(iO2,5)));
               Real kd2 = tmp4.xyz(AtomID(tmp4.residue(7).nheavyatoms()-1,7)).distance(tmp4.xyz(AtomID(iO1,5)));
               Real ka1 = numeric::angle_degrees(tmp4.xyz(AtomID(tmp4.residue(7).nheavyatoms()-2,7)),tmp4.xyz(AtomID(tmp4.residue(7).nheavyatoms()-1,7)), tmp4.xyz(AtomID(iO1,5)));
-							Real ka2 = numeric::angle_degrees(tmp4.xyz(AtomID(tmp4.residue(7).nheavyatoms()-1,7)),tmp4.xyz(AtomID(iO1,5)), tmp4.xyz(AtomID(iC5,5)));
+              Real ka2 = numeric::angle_degrees(tmp4.xyz(AtomID(tmp4.residue(7).nheavyatoms()-1,7)),tmp4.xyz(AtomID(iO1,5)), tmp4.xyz(AtomID(iC5,5)));
               sf2->score(tmp3);
               core::io::silent::SilentStructOP ss_out_all( new core::io::silent::ScoreFileSilentStruct );
               ss_out_all->fill_struct(tmp4,fn);
-							ss_out_all->add_energy( "rd1", rd1 );
-							ss_out_all->add_energy( "rd2", rd2 );
-							ss_out_all->add_energy( "rd3", rd3 );
-							ss_out_all->add_energy( "rd4", rd4 );
-							ss_out_all->add_energy( "ra1", ra1 );
-							ss_out_all->add_energy( "ra2", ra2 );
-							ss_out_all->add_energy( "ra3", ra3 );
-							ss_out_all->add_energy( "ra4", ra4 );
-							ss_out_all->add_energy( "ra5", ra5 );
-							ss_out_all->add_energy( "ra6", ra6 );
-							ss_out_all->add_energy( "ra7", ra7 );
-							ss_out_all->add_energy( "ra8", ra8 );
-							ss_out_all->add_energy( "kd1", kd1 );
-							ss_out_all->add_energy( "kd2", kd2 );
-							ss_out_all->add_energy( "ka1", ka1 );
-							ss_out_all->add_energy( "ka2", ka2 );
+              ss_out_all->add_energy( "rd1", rd1 );
+              ss_out_all->add_energy( "rd2", rd2 );
+              ss_out_all->add_energy( "rd3", rd3 );
+              ss_out_all->add_energy( "rd4", rd4 );
+              ss_out_all->add_energy( "ra1", ra1 );
+              ss_out_all->add_energy( "ra2", ra2 );
+              ss_out_all->add_energy( "ra3", ra3 );
+              ss_out_all->add_energy( "ra4", ra4 );
+              ss_out_all->add_energy( "ra5", ra5 );
+              ss_out_all->add_energy( "ra6", ra6 );
+              ss_out_all->add_energy( "ra7", ra7 );
+              ss_out_all->add_energy( "ra8", ra8 );
+              ss_out_all->add_energy( "kd1", kd1 );
+              ss_out_all->add_energy( "kd2", kd2 );
+              ss_out_all->add_energy( "ka1", ka1 );
+              ss_out_all->add_energy( "ka2", ka2 );
               ss_out_all->add_energy( "irep" ,
-																			tmp4.energies().residue_total_energies(1)[core::scoring::fa_intra_rep]+
-																			tmp4.energies().residue_total_energies(2)[core::scoring::fa_intra_rep]+
-																			tmp4.energies().residue_total_energies(3)[core::scoring::fa_intra_rep]+
-																			tmp4.energies().residue_total_energies(4)[core::scoring::fa_intra_rep]+
-																			tmp4.energies().residue_total_energies(6)[core::scoring::fa_intra_rep]+
-																			tmp4.energies().residue_total_energies(7)[core::scoring::fa_intra_rep] );
+                                      tmp4.energies().residue_total_energies(1)[core::scoring::fa_intra_rep]+
+                                      tmp4.energies().residue_total_energies(2)[core::scoring::fa_intra_rep]+
+                                      tmp4.energies().residue_total_energies(3)[core::scoring::fa_intra_rep]+
+                                      tmp4.energies().residue_total_energies(4)[core::scoring::fa_intra_rep]+
+                                      tmp4.energies().residue_total_energies(6)[core::scoring::fa_intra_rep]+
+                                      tmp4.energies().residue_total_energies(7)[core::scoring::fa_intra_rep] );
 
               ss_out_all->add_energy( "irep1" , tmp4.energies().residue_total_energies(1)[core::scoring::fa_intra_rep] );
               ss_out_all->add_energy( "irep2" , tmp4.energies().residue_total_energies(2)[core::scoring::fa_intra_rep] );
@@ -1651,7 +1651,7 @@ for(int ir = 1; ir <= (int)rhits.size(); ++ir) {
               sfd.write_silent_struct( *ss_out_all, utility::file_basename(infile)+".sc" );
               //tmp4.dump_pdb(utility::file_basename(infile)+"_"+fn+".pdb");
 
-							//utility_exit_with_message("arst");
+              //utility_exit_with_message("arst");
             }
           }
         }
