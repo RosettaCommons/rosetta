@@ -38,7 +38,6 @@
 #include <protocols/moves/MinMover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
 
-
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -52,16 +51,12 @@
 #include <basic/Tracer.hh>
 #include <core/kinematics/FoldTree.hh>
 
-
 // C++ Headers
 #include <utility/exit.hh>
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
-#ifdef WIN_PYROSETTA
-	#include <core/pack/task/operation/TaskOperation.hh>
-#endif
-
+#include <core/pack/task/operation/TaskOperation.hh>
 
 using basic::T;
 using basic::Error;
