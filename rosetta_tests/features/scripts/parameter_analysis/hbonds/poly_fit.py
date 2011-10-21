@@ -14,14 +14,14 @@ def fit_polynomial(X, Y, d):
 
    # make a deep copy of Y
     xls = +Y
-    
+
     # general least-squares: minimize ||A*x - y||_2
     lapack.gels(+A,xls)
     xls = xls[:d]
 
     return xls
 
-def fit_polynomial_constrained(X, Y, d, x0, y0):
+def fit_polynomial_one_constraint(X, Y, d, x0, y0):
     m = len(X)
     assert(len(Y) == m)
 
@@ -30,7 +30,7 @@ def fit_polynomial_constrained(X, Y, d, x0, y0):
     G = matrix(0.0, (2,d))
     G[0, range(d)] = matrix([[x0**k] for k in xrange(d)])
     G[1, range(1,d)] = matrix([[k*x0**(k-1)] for k in xrange(1,d)])
-    
+
     # LS fit
     #
     #     minimize    (1/2) * || A*x - Y ||_2^2
@@ -40,7 +40,7 @@ def fit_polynomial_constrained(X, Y, d, x0, y0):
     #
     #     [ A'*A  G' ] [ x ]   [ A'*Y ]
     #     [ G     0  ] [ Y ] = [ 0    ].
-    
+
     K = matrix(0.0, (d+2,d+2))
     K[:d,:d] = A.T * A
     K[d:,:d] = G
@@ -52,6 +52,40 @@ def fit_polynomial_constrained(X, Y, d, x0, y0):
     return xls
 
 
+def fit_polynomial_multiple_constraints(X, Y, d, x0, y0):
+    m = len(X)
+    assert(len(Y) == m)
+
+    A = matrix( [[X**k] for k in xrange(d)])
+
+    ncst = len(x0)
+    assert( ncst == len(y0))
+
+    G = matrix(0.0, (2*ncst,d))
+    for ii in xrange(ncst) :
+        G[2*ii+0, range(d)]   = matrix([[x0[ii]**k] for k in xrange(d)])
+        G[2*ii+1, range(1,d)] = matrix([[k*x0[ii]**(k-1)] for k in xrange(1,d)])
+
+    # LS fit
+    #
+    #     minimize    (1/2) * || A*x - Y ||_2^2
+    #     subject to  G*x = h
+    #
+    # Solve as a linear equation
+    #
+    #     [ A'*A  G' ] [ x ]   [ A'*Y ]
+    #     [ G     0  ] [ Y ] = [ 0    ].
+
+    K = matrix(0.0, (d+2*ncst,d+2*ncst))
+    K[:d,:d] = A.T * A
+    K[d:,:d] = G
+    xls = matrix(0.0, (d+2*ncst,1))
+    xls[:d] = A.T * Y
+    for ii in xrange( ncst ) :
+        xls[d+ii*2] = y0[ii]
+    lapack.sysv(K, xls)
+    xls = xls[:d]
+    return xls
 
 def lineno():
     """Returns the current line number in our program."""
@@ -63,7 +97,7 @@ class PolyFit:
 
         self.main = Tkinter.Tk()
         self.main.title("Polynomial Fitting")
-        
+
         self.canvas_width =  750
         self.canvas_height = 750
         self.plot_width = 680
@@ -81,7 +115,7 @@ class PolyFit:
         self.polynomial_dimensions = [2,3,4,5,6,7,8,9,10]
         self.nbins = 200
 
-        self.coefficient_precision = 3
+        self.coefficient_precision = 8
 
         self.dot_color = 'blue'
         self.dot_width = 6
@@ -99,11 +133,11 @@ class PolyFit:
 
 
         self.panel_frame.pack(side="right")
-        
+
         self.canvas = Tkinter.Canvas(\
             self.main,height=self.canvas_height, width=self.canvas_width)
         self.canvas.pack(side="top")
-        
+
         self.btn_makeart = Tkinter.Button(\
             self.main, text="clear", command=self.clear_callback )
         self.btn_makeart.pack(side="top")
@@ -112,7 +146,7 @@ class PolyFit:
         self.main.bind("<Button-3>", self.event_rclick )
 
 
-        self.minima = [None, None]
+        self.minima = [None, None] # a list of length two of x and y minima
 
         self.control_points = initial_control_points
         self.control_point_widgets = []
@@ -130,11 +164,11 @@ class PolyFit:
         self.zoom_ymax_var.set(1)
 
         self.redraw_everything()
-    
+
 
 #        self.test_diagnostics()
 
- 
+
         self.main.mainloop()
 
 
@@ -193,7 +227,7 @@ class PolyFit:
         self.reference_polys_frame.pack(side="bottom")
 
     def build_zoom_frame(self, parent, width=6):
-        
+
         self.zoom_frame = Tkinter.Frame(parent)
         self.zoom_xmin_label = Tkinter.Label(self.zoom_frame, text="xmin:")
         self.zoom_xmin_label.pack(side="left")
@@ -234,20 +268,41 @@ class PolyFit:
         self.redraw_everything()
 
     def minima_x_var_callback(self, name, index, mode):
-        try:
-            self.minima[0] = float(self.minima_x_var.get())
-            print lineno(), "setting minima x value to x=%s" % self.minima_x_var.get()
-        except:
-            self.minima[0] = None
+        minima_string = self.minima_x_var.get();
+        print "minima_x_var_callback",minima_string
+        minima_strings = minima_string.split(",")
+        print minima_strings
+        if len(minima_strings) == 0 :
+            self.minima[ 0 ] = None
+        else :
+            try:
+                print "trying to read minima x values"
+                self.minima[0] = []
+                for ii in xrange( len( minima_strings ) ) :
+                    print "trying to extract minima", ii, minima_strings[ ii ]
+                    iival = float( minima_strings[ ii ] )
+                    print iival
+                    self.minima[0].append( iival )
+                    print lineno(), "setting minima x value #%d to x=%f" % (ii+1, self.minima[0][ii])
+            except:
+                self.minima[0] = None
 
         self.redraw_everything()
 
     def minima_y_var_callback(self, name, index, mode):
-        try:
-            self.minima[1] = float(self.minima_y_var.get())
-            print lineno(), "setting minima y value to y=%s" % self.minima_y_var.get()
-        except:
-            self.minima[1] = None
+        minima_string = self.minima_y_var.get();
+        print "minima_y_var_callback",minima_string
+        minima_strings = minima_string.split(",")
+        if len(minima_strings) == 0 :
+            self.minima[ 1 ] = None
+        else :
+            try:
+                self.minima[1] = []
+                for ii in xrange( len( minima_strings ) ) :
+                    self.minima[1].append( float( minima_strings[ ii ] ))
+                    print lineno(), "setting minima y value #%d to x=%f" % (ii+1, self.minima[1][ii])
+            except:
+                self.minima[1] = None
 
         self.redraw_everything()
 
@@ -291,10 +346,10 @@ class PolyFit:
         try:
             new_ymax = float(self.zoom_ymax_var.get())
         except:
-            return 
+            return
 
         if self.ymin > new_ymax:
-            print lineno(), "Attempting to set ymax=%s to a value less than ymin=%s." % (new_ymax, self.ymin) 
+            print lineno(), "Attempting to set ymax=%s to a value less than ymin=%s." % (new_ymax, self.ymin)
         else:
             self.ymax = new_ymax
             self.redraw_everything()
@@ -331,7 +386,7 @@ class PolyFit:
         self.yaxis_ticks = [i * (self.ymax - self.ymin)/10 + self.ymin for i in range(11)]
         self.xaxis = (self.ymax-self.ymin)/2 + self.ymin
         self.yaxis = (self.xmax-self.xmin)/2 + self.xmin
-        
+
     def clear( self ):
         for t in self.canvas.find_all():
             self.canvas.delete(t)
@@ -348,17 +403,17 @@ class PolyFit:
 
         for x in self.xaxis_ticks:
             px, py = self.p2canv(x,(self.ymax+self.ymin)/2)
-            px0,px1 = px, px 
+            px0,px1 = px, px
             py0,py1 = py, py + self.xaxis_tick_height
             self.canvas.create_line( px0, py0, px1, py1, fill=self.axis_color)
-            self.canvas.create_text( px1, py1+5, text=str(x), font=("helvetica", 7)) 
-            
+            self.canvas.create_text( px1, py1+5, text=str(x), font=("helvetica", 7))
+
         for y in self.yaxis_ticks:
             px, py = self.p2canv((self.xmax+self.xmin)/2,y)
             px0,px1 = px, px + self.yaxis_tick_width
             py0,py1 = py, py
             self.canvas.create_line( px0, py0, px1, py1, fill=self.axis_color)
-            self.canvas.create_text( px1+5, py1, text=str(y), font=("helvetica", 7)) 
+            self.canvas.create_text( px1+5, py1, text=str(y), font=("helvetica", 7))
 
 
     def redraw_everything( self ):
@@ -373,7 +428,7 @@ class PolyFit:
         print "Control point coordinates:"
         print self.control_points
         print ""
-        
+
     def parse_reference_polynomials(self):
         contents = self.reference_polys_text.get(1.0, Tkinter.END)
         self.ref_polynomial_coefficients = []
@@ -381,7 +436,7 @@ class PolyFit:
         for line in contents.split("\n"):
             if line == "" or line[0] == "#": continue
             coefs = line.split(",")
-            if len(coefs) > 9:
+            if len(coefs) > 11:
                 print "Reference polynomial has to many coefficients on line", linenum
                 print "line:'%s'" % line
                 continue
@@ -398,7 +453,7 @@ class PolyFit:
 
             self.ref_polynomial_coefficients.append(coefs)
 
-        
+
 
 
     def print_coefficients(self):
@@ -413,7 +468,7 @@ class PolyFit:
             lines.append("#Dim=%s"%d)
             s = []
             for v in coefs:
-                s.append("%.4f" %v)
+                s.append( ("%." + str(self.coefficient_precision) + "f") %v)
             lines.append(",".join(s))
             lines.append("")
         self.poly_text.insert(Tkinter.END, "\n".join(lines))
@@ -445,7 +500,19 @@ class PolyFit:
         return coefs
 
     def fit_polynomials_constrained_using_cvxopt(self, xs, ys, d, minima):
-        coefs = fit_polynomial_constrained(matrix(xs), matrix(ys), d, minima[0], minima[1])
+        if len( minima[0] ) != len( minima[1] ) :
+            print "Minima lists are not of the same length"
+            coefs = fit_polynomial( matrix(xs), matrix(ys), d )
+        elif len( minima[0] ) == 1 :
+            print "Fitting with a single constraint"
+            coefs = fit_polynomial_one_constraint(matrix(xs), matrix(ys), d, minima[0][0], minima[1][0])
+        else :
+            try :
+                coefs = fit_polynomial_multiple_constraints(matrix(xs), matrix(ys), d, minima[0], minima[1])
+                print "successfully fit multiply constrained polynomial of degree", d
+            except :
+                print "Could not satisfy constraints"
+                coefs = fit_polynomial(  matrix(xs), matrix(ys), d )
         coefs = numpy.array(coefs.T)[0]
         coefs = coefs[::-1]
         return coefs
@@ -453,7 +520,7 @@ class PolyFit:
 
     def compute_polynomial_fits(self):
         x_points = self.polynomial_x_points()
-        
+
         self.polynomial_points = {}
 
         if len(self.control_points) == 0: return
@@ -467,16 +534,17 @@ class PolyFit:
 # was to control the derivative at a point Now just set the point of
 # the minima.
 #            try:
-#                ry = float(self.reflect_var.get()) 
+#                ry = float(self.reflect_var.get())
 #            except:
 #                ry = None
 #            if self.reflect_check_var.get() and ry is not None:
 #                xs.extend([2*ry - p[0] for p in self.control_points])
 #                ys.extend(ys)
 
-            
+
             #coefs = self.fit_polynomials_using_polyfit(xs, ys, d)
             if self.minima[0] is None or self.minima[1] is None:
+                print "Fitting without constraints"
                 coefs = self.fit_polynomials_using_cvxopt(xs, ys, d)
             else:
                 coefs = self.fit_polynomials_constrained_using_cvxopt(xs, ys, d, self.minima)
@@ -495,7 +563,7 @@ class PolyFit:
 
             self.ref_polynomial_points[i] = \
                 (x_points, numpy.polyval(numpy.poly1d(ref_poly_coefs), x_points))
-        
+
     def draw_demo(self):
         self.draw_polynomial_fits(self.ref_polynomial_points, fixed_color="darkgray")
         self.draw_polynomial_fits(self.polynomial_points)
@@ -507,21 +575,21 @@ class PolyFit:
             for i in range(len(xs)):
                 px, py = self.p2canv(xs[i], ys[i])
                 canv_points.append((d,px,py))
-        
+
 #        for i in range(len(canv_points)):
 #            d,px,py = canv_points[i]
 ##            line_color = self.polynomial_colors[d]
 #            px0,px1 = px - self.dot_width / 2, px + self.dot_width / 2
 #            py0,py1 = py - self.dot_width / 2, py + self.dot_width / 2
-#            
+#
 #            if i == len(canv_points)-1:
 #                self.canvas.create_text( px+10, py+10, text="dim=%s" %d)
-            
+
 
         for i in range(1,len(canv_points)):
             last_i =  i-1
-            
-            ad, ax, ay = canv_points[last_i]            
+
+            ad, ax, ay = canv_points[last_i]
             d, px,py = canv_points[i]
             if ad != d: continue
 
@@ -542,8 +610,8 @@ class PolyFit:
             py0,py1 = py - self.dot_width / 2, py + self.dot_width / 2
             t = self.canvas.create_oval( px0, py0, px1, py1, fill=self.dot_color )
             self.control_point_widgets.append(t)
-        
-            
+
+
 
     def event_lclick(self, event):
         if event.widget == self.canvas:
@@ -553,12 +621,12 @@ class PolyFit:
             self.control_points.append(self.canv2p(px,py))
 
             self.redraw_everything()
-  
+
     def event_rclick(self, event):
         if event.widget != self.canvas:
             print "not canvas event"
             return
-        
+
 
         if len(self.control_points) == 0:
             print "no points to delete"
@@ -589,4 +657,4 @@ initial_control_points = []
 d = PolyFit(initial_control_points)
 
 
-        
+
