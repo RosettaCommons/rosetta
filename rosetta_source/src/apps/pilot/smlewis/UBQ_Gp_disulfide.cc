@@ -177,6 +177,7 @@ public:
 
 		//replace with CYD on ubiquitin too
 		//TR << UBQ.residue_type(UBQ_term).name() << std::endl;
+		//core::chemical::ResidueType const & cyd_rsd_term_type(fa_standard->name_map("CYD"));
 		core::chemical::ResidueType const & cyd_rsd_term_type(fa_standard->name_map("CYD_p:CtermProteinFull"));
 		UBQ.replace_residue( UBQ_term, core::conformation::Residue(cyd_rsd_term_type, true), true);
 
@@ -212,6 +213,7 @@ public:
 
 		//not that this does anything
 		complex.conformation().insert_ideal_geometry_at_residue_connection( GTPase_cyd_, cyd_connid );
+		complex.conformation().insert_ideal_geometry_at_residue_connection( complex.total_residue(), ubq_connid );
 
 		core::Size const ubq_pos( complex.total_residue() );
 		core::id::AtomID const atom0( cyd_rsd_type.atom_index( "C" ), GTPase_cyd_ );
@@ -222,12 +224,21 @@ public:
 		core::id::AtomID const atom5( ubq_rsd_type.atom_index( "CB" ), ubq_pos );
 		core::id::AtomID const atom6( ubq_rsd_type.atom_index( "CA"  ), ubq_pos );
 
-		//starting values derived from a random disulfide in 3BPS
-		complex.conformation().set_torsion_angle( atom0, atom1, atom2, atom3, numeric::conversions::radians(52.0) );
-		complex.conformation().set_torsion_angle( atom1, atom2, atom3, atom4, numeric::conversions::radians(65.0) );
-		complex.conformation().set_torsion_angle( atom2, atom3, atom4, atom5, numeric::conversions::radians(65.0) );
-		complex.conformation().set_torsion_angle( atom3, atom4, atom5, atom6, numeric::conversions::radians(65.0) );
-		//complex.dump_pdb("just1_complex2.pdb");
+		//starting values derived from disulfide code (FullatomDisulfidePotential.cc and also $database/scoring/score_functions/disulfides/fa_SS_distance_score
+		complex.conformation().set_torsion_angle( atom0, atom1, atom2, atom3, numeric::conversions::radians(52.0) ); //chi1
+		complex.conformation().set_torsion_angle( atom1, atom2, atom3, atom4, 1.709486 ); //chi2
+		complex.conformation().set_torsion_angle( atom2, atom3, atom4, atom5, 1.641427 ); //S-S bond
+		complex.conformation().set_torsion_angle( atom3, atom4, atom5, atom6, 1.709486 ); //chi2
+		complex.conformation().set_bond_length( atom3, atom4, 2.020); //S-S bond
+		complex.conformation().set_bond_angle( atom2, atom3, atom4, 1.819120); //CB-SG-SG
+		complex.conformation().set_bond_angle( atom3, atom4, atom5, 1.819120); //SG-SG-CB
+
+// 		TR << "real disulf dist" << complex.xyz(atom3).distance(complex.xyz(atom4)) << std::endl;
+// 		TR << GTPase_cyd_ << complex.xyz(atom3) << std::endl;
+// 		TR << ubq_pos << complex.xyz(atom4) << std::endl;
+// 		TR << GTPase_cyd_ << " " << ubq_pos << std::endl;
+// 		complex.dump_scored_pdb("just1_complex2.pdb", *fullatom_scorefunction_);
+// 		TR << "real disulf dist" << complex.xyz(atom3).distance(complex.xyz(atom4)) << std::endl;
 
 		//now add the rest of ubiquitin
 		for( core::Size i=UBQ_term-1; i>= 1; --i ) {
@@ -292,7 +303,7 @@ public:
 		//prevent repacking at linkage cysteine!
 		PreventRepackingOP prevent(new PreventRepacking);
 		prevent->include_residue(GTPase_cyd_);
-		prevent->include_residue(UBQ_term);
+		prevent->include_residue(complexlength);
 		task_factory_->push_back(prevent);
 
 		std::string const interface_calc("UBQGTPase_InterfaceNeighborDefinitionCalculator");
@@ -395,9 +406,9 @@ public:
 		backbone_mover->add_mover(small_mover, 2.0);
 		backbone_mover->add_mover(shear_mover, 1.0);
 // 		backbone_mover->add_mover(DOF_mover_chi1, 0.75);
-// 		backbone_mover->add_mover(DOF_mover_chi2, 0.75);
-// 		backbone_mover->add_mover(DOF_mover_disulfide, 0.75);
-// 		backbone_mover->add_mover(DOF_mover_psi, 0.75);
+ 		backbone_mover->add_mover(DOF_mover_chi2, 0.75);
+ 		backbone_mover->add_mover(DOF_mover_disulfide, 0.75);
+ 		backbone_mover->add_mover(DOF_mover_psi, 0.75);
 // 		backbone_mover->add_mover(DOF_mover_phi, 0.75);
 		backbone_mover->add_mover(SC_mover, 3.0);
 
@@ -534,11 +545,12 @@ public:
 		//print mobile region fine-grained data
 		protocols::jd2::JobOP job_me(protocols::jd2::JobDistributor::get_instance()->current_job());
 		using numeric::conversions::degrees;
-		job_me->add_string_real_pair("cysteine_chi1_C-CA-CB-SG", degrees(pose.atom_tree().torsion_angle(atomIDs[1], atomIDs[2], atomIDs[3], atomIDs[4])));
-		job_me->add_string_real_pair("cysteine_chi2_CA-CB-SG-SG", degrees(pose.atom_tree().torsion_angle(atomIDs[2], atomIDs[3], atomIDs[4], atomIDs[5])));
+		job_me->add_string_real_pair("Ncysteine_chi1_C-CA-CB-SG", degrees(pose.atom_tree().torsion_angle(atomIDs[1], atomIDs[2], atomIDs[3], atomIDs[4])));
+		job_me->add_string_real_pair("Ncysteine_chi2_CA-CB-SG-SG", degrees(pose.atom_tree().torsion_angle(atomIDs[2], atomIDs[3], atomIDs[4], atomIDs[5])));
 		job_me->add_string_real_pair("disulfide_CB-SG-SG-CB", degrees(pose.atom_tree().torsion_angle(atomIDs[3], atomIDs[4], atomIDs[5], atomIDs[6])));
-		job_me->add_string_real_pair("glycine_psi_SG-SG-CB-CA", degrees(pose.atom_tree().torsion_angle(atomIDs[4], atomIDs[5], atomIDs[6], atomIDs[7])));
-		job_me->add_string_real_pair("glycine_phi_SG-CB-CA-C", degrees(pose.atom_tree().torsion_angle(atomIDs[5], atomIDs[6], atomIDs[7], atomIDs[8])));
+		job_me->add_string_real_pair("Ccysteine_psi_SG-SG-CB-CA", degrees(pose.atom_tree().torsion_angle(atomIDs[4], atomIDs[5], atomIDs[6], atomIDs[7])));
+		job_me->add_string_real_pair("Ccysteine_phi_SG-CB-CA-C", degrees(pose.atom_tree().torsion_angle(atomIDs[5], atomIDs[6], atomIDs[7], atomIDs[8])));
+		//job_me->add_string_real_pair("disulf_dist", pose.xyz(atomIDs[4]).distance(pose.xyz(atomIDs[5])));
 
 		set_last_move_status(protocols::moves::MS_SUCCESS);
 		return;
@@ -611,6 +623,7 @@ int main( int argc, char* argv[] )
 	protocols::jd2::JobDistributor::get_instance()->go(new UBQ_GTPase_disulfide_Mover);
 
 	basic::prof_show();
+	TR << "NOTE on interpreting results: the interface energies are somewhat broken due to there being a disulfide across the interface; the bond is still scored in the separated state, which leads to enormously bad bond-length energies.  This biases by abou 6000 energy units.  Relative ranking (which is all you should do anyway) is still correct." << std::endl;
 	TR << "************************d**o**n**e**************************************" << std::endl;
 
 	return 0;
