@@ -1,0 +1,21 @@
+# OptE 132. Minpack.  JSR54 training set. fa_max_dis 6.0. no_his_his_pairE.
+METHOD_WEIGHTS ref 0.0253873 -0.186751 -0.558846 -0.635085 1.29399 -0.310862 0.945186 0.299715 -0.51296 0.113227 -0.224806 -0.847722 -0.161175 -0.852766 -0.658121 -0.409136 -0.350849 0.214721 1.73229 1.08457 
+fa_atr 0.8
+fa_rep 0.44
+fa_sol 0.65
+fa_intra_rep 0.004
+pro_close 1
+fa_pair 0.49
+hbond_sr_bb 0.585
+hbond_lr_bb 1.17
+hbond_bb_sc 1.17
+hbond_sc 1.1
+dslf_ss_dst 1
+dslf_cs_ang 1
+dslf_ss_dih 1
+dslf_ca_dih 1
+rama 0.2
+omega 0.5
+fa_dun 0.56
+p_aa_pp 0.32
+ref 1
