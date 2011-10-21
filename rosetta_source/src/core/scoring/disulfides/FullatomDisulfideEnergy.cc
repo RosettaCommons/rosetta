@@ -442,7 +442,7 @@ FullatomDisulfideEnergy::residue_pair_energy(
 	potential_.score_this_disulfide(
 		rsd1, rsd2,
 		dec->disulfide_atom_indices( rsd1.seqpos() ),
-		dec->other_neighbor_atom_indices( rsd2.seqpos() ),
+		dec->other_neighbor_atom_indices( rsd1.seqpos() ), //The function change from the above line changes which index we get; if we also change which rsd we use then it turns everything upside down twice and the disulfide_atom_indices inappropriately match
 		distance_score_this_disulfide,
 		csangles_score_this_disulfide,
 		dihedral_score_this_disulfide,

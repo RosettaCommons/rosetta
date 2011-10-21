@@ -21,13 +21,13 @@ Testing docking high-res scoring function...
  hbond_lr_bb                  0.245     -68.252     -16.722
  hbond_bb_sc                  0.245     -19.044      -4.666
  hbond_sc                     0.245      -5.364      -1.314
- dslf_ss_dst                  0.500       8.405       4.202
- dslf_cs_ang                  2.000      10.116      20.233
- dslf_ss_dih                  5.000       5.678      28.391
- dslf_ca_dih                  5.000       0.449       2.243
+ dslf_ss_dst                  0.500      -0.412      -0.206
+ dslf_cs_ang                  2.000       9.959      19.918
+ dslf_ss_dih                  5.000       5.528      27.640
+ dslf_ca_dih                  5.000       0.458       2.292
  fa_dun                       0.036    1432.978      51.587
 ---------------------------------------------------
- Total weighted score:                     -123.147
+ Total weighted score:                     -128.572
 Testing DockingProtocol.setup_foldtree()...
 FOLD_TREE  EDGE 1 197 -1  EDGE 197 245 -1  EDGE 197 282 1  EDGE 282 301 -1  EDGE 282 246 -1 
 
