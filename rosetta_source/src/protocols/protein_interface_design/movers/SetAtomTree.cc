@@ -173,14 +173,14 @@ SetAtomTree::apply( core::pose::Pose & pose )
 	core::Size const resnum( protocols::rosetta_scripts::parse_resnum( resnum_, pose ) );
 	core::conformation::Residue const res_central( pose.residue( resnum ) );;
 
-  std::string connect_to( "" );
+  std::string connect_to( connect_to_ );
 	if( connect_to_ == "" ){
     connect_to = optimal_connection_point( res_central.name3() );
     TR<<"connect_to not defined by user. Defaulting to "<<connect_to<<std::endl;
 	}
 
 	core::Size anchor_num( 0 );
-	std::string connect_from("");
+	std::string connect_from( connect_from_ );
 	if ( anchor_res_ != "" ) {
 			core::pose::PDBPoseMap const pose_map( pose.pdb_info()->pdb2pose() );
     	char const chain( anchor_res_[ anchor_res_.length() - 1 ] );
