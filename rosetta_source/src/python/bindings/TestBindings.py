@@ -46,7 +46,7 @@ def main(args):
         #execute('Executing %s...' % t, 'export PYTHONPATH=`pwd`:$PYTHONPATH && python %s' % t)
         #execute('Executing %s...' % t, 'source SetPyRosettaEnvironment.sh && python %s' % t)
 
-
+    print '\nAll PyRosetta Tests passed!\n'
 
 
 
