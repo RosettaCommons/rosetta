@@ -94,15 +94,12 @@ public:
 	}
 
 	/// @brief returns all stored fragment candidates that begins at a given position in a query
-	inline utility::vector1<std::pair<FragmentCandidateOP,
-			scores::FragmentScoreMapOP> >& get_candidates(
-			Size position_in_query) {
+	inline virtual ScoredCandidatesVector1 const& get_candidates(Size position_in_query) {
 		return storage_.at(position_in_query);
 	}
 
 private:
-	utility::vector1<utility::vector1<std::pair<FragmentCandidateOP,
-			scores::FragmentScoreMapOP> > > storage_;
+	utility::vector1< ScoredCandidatesVector1 > storage_;
 };
 
 } // frag_picker
