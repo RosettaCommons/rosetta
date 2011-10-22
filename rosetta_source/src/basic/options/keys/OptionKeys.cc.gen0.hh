@@ -186,6 +186,9 @@ namespace out { namespace file { StringOptionKey const o( "out:file:o" );  } }
 namespace out { namespace file { StringOptionKey const silent( "out:file:silent" );  } }
 namespace out { namespace file { StringOptionKey const score_only( "out:file:score_only" );  } }
 namespace out { namespace file { StringOptionKey const atom_tree_diff( "out:file:atom_tree_diff" );  } }
+namespace out { namespace file { IntegerOptionKey const atom_tree_diff_bb( "out:file:atom_tree_diff_bb" );  } }
+namespace out { namespace file { IntegerOptionKey const atom_tree_diff_sc( "out:file:atom_tree_diff_sc" );  } }
+namespace out { namespace file { IntegerOptionKey const atom_tree_diff_bl( "out:file:atom_tree_diff_bl" );  } }
 namespace out { namespace file { StringOptionKey const alignment( "out:file:alignment" );  } }
 namespace out { namespace file { StringOptionKey const scorefile( "out:file:scorefile" );  } }
 namespace out { namespace file { StringOptionKey const silent_struct_type( "out:file:silent_struct_type" );  } }
@@ -574,5 +577,3 @@ namespace abinitio { RealOptionKey const end_bias( "abinitio:end_bias" );  }
 namespace abinitio { IntegerOptionKey const symmetry_residue( "abinitio:symmetry_residue" );  }
 namespace abinitio { RealOptionKey const vdw_weight_stage1( "abinitio:vdw_weight_stage1" );  }
 namespace abinitio { BooleanOptionKey const override_vdw_all_stages( "abinitio:override_vdw_all_stages" );  }
-namespace abinitio { IntegerVectorOptionKey const recover_low_in_stages( "abinitio:recover_low_in_stages" );  }
-namespace abinitio { IntegerVectorOptionKey const skip_stages( "abinitio:skip_stages" );  }

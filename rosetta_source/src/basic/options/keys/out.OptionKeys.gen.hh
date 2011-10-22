@@ -60,6 +60,9 @@ namespace out { namespace file { extern StringOptionKey const o; } }
 namespace out { namespace file { extern StringOptionKey const silent; } }
 namespace out { namespace file { extern StringOptionKey const score_only; } }
 namespace out { namespace file { extern StringOptionKey const atom_tree_diff; } }
+namespace out { namespace file { extern IntegerOptionKey const atom_tree_diff_bb; } }
+namespace out { namespace file { extern IntegerOptionKey const atom_tree_diff_sc; } }
+namespace out { namespace file { extern IntegerOptionKey const atom_tree_diff_bl; } }
 namespace out { namespace file { extern StringOptionKey const alignment; } }
 namespace out { namespace file { extern StringOptionKey const scorefile; } }
 namespace out { namespace file { extern StringOptionKey const silent_struct_type; } }

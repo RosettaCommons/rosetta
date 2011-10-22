@@ -876,6 +876,21 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: "default.out"</dd><br>
 </dl>
 <dl>
+<dt><b>-atom_tree_diff_bb</b> \<Integer\><dt>
+<dd>For atom_tree_diff output, how many digits of precision to use for backbone dihedrals</dd><br>
+<dd>Default: 6</dd><br>
+</dl>
+<dl>
+<dt><b>-atom_tree_diff_sc</b> \<Integer\><dt>
+<dd>For atom_tree_diff output, how many digits of precision to use for sidechain dihedrals</dd><br>
+<dd>Default: 4</dd><br>
+</dl>
+<dl>
+<dt><b>-atom_tree_diff_bl</b> \<Integer\><dt>
+<dd>For atom_tree_diff output, how many digits of precision to use for bond lengths</dd><br>
+<dd>Default: 2</dd><br>
+</dl>
+<dl>
 <dt><b>-alignment</b> \<String\><dt>
 <dd>Output file for sequence alignment</dd><br>
 <dd>Default: "out.align"</dd><br>

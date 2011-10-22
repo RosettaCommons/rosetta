@@ -191,6 +191,9 @@ option.add( basic::options::OptionKeys::out::file::o, "Name of output file" );
 option.add( basic::options::OptionKeys::out::file::silent, "Use silent file output, use filename after this flag" ).def("default.out");
 option.add( basic::options::OptionKeys::out::file::score_only, "Only output scores, no silent files or pdb files" ).def("default.sc");
 option.add( basic::options::OptionKeys::out::file::atom_tree_diff, "Use atom_tree_diff file output, use filename after this flag" ).def("default.out");
+option.add( basic::options::OptionKeys::out::file::atom_tree_diff_bb, "For atom_tree_diff output, how many digits of precision to use for backbone dihedrals" ).def(6);
+option.add( basic::options::OptionKeys::out::file::atom_tree_diff_sc, "For atom_tree_diff output, how many digits of precision to use for sidechain dihedrals" ).def(4);
+option.add( basic::options::OptionKeys::out::file::atom_tree_diff_bl, "For atom_tree_diff output, how many digits of precision to use for bond lengths" ).def(2);
 option.add( basic::options::OptionKeys::out::file::alignment, "Output file for sequence alignment" ).def("out.align");
 option.add( basic::options::OptionKeys::out::file::scorefile, "Write a scorefile to the provided filename" ).def("default.sc");
 option.add( basic::options::OptionKeys::out::file::silent_struct_type, "Type of SilentStruct object to use in silent-file output" ).def("protein");
@@ -579,11 +582,11 @@ option.add( basic::options::OptionKeys::abinitio::end_bias, "set the endbias for
 option.add( basic::options::OptionKeys::abinitio::symmetry_residue, "hacky symmetry mode for dimers, fragments are inserted at i and i + SR - 1" ).def(-1);
 option.add( basic::options::OptionKeys::abinitio::vdw_weight_stage1, "vdw weight in stage1" ).def(1.0);
 option.add( basic::options::OptionKeys::abinitio::override_vdw_all_stages, "apply vdw_weight_stage1 for all stages" ).def(false);
-option.add( basic::options::OptionKeys::abinitio::recover_low_in_stages, "say default: 2 3 4 recover_low happens in stages 2 3 4" ).def(0);
-option.add( basic::options::OptionKeys::abinitio::skip_stages, "say: 2 3 4, and it will skip stages 2 3 4" ).def(0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::close_chbrk, "Chain break closure during classic abinito " ).def(false);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::recover_low_in_stages, "say default: 2 3 4 recover_low happens in stages 2 3 4" ).def(0);
+option.add( basic::options::OptionKeys::abinitio::skip_stages, "say: 2 3 4, and it will skip stages 2 3 4" ).def(0);
+option.add( basic::options::OptionKeys::abinitio::close_chbrk, "Chain break closure during classic abinito " ).def(false);
 option.add( basic::options::OptionKeys::abinitio::include_stage5, "stage5 contains small moves only" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::close_loops_by_idealizing, "close loops by idealizing the structure after stage 4" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_using_kic, "optimize around cutpoints using kinematic relax" ).def(false);
@@ -1160,10 +1163,10 @@ option.add( basic::options::OptionKeys::phil::align_file, "No description" );
 option.add( basic::options::OptionKeys::wum::wum, "wum option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::wum::n_slaves_per_master, "A value between 32 and 128 is usually recommended" ).def(64);
 option.add( basic::options::OptionKeys::wum::n_masters, "Manual override for -n_slaves_per_master. How many master nodes should be spawned ? 1 by default. generall 1 for eery 256-512 cores is recommended depending on master workload" ).def(1);
-option.add( basic::options::OptionKeys::wum::memory_limit, "Memory limit for queues (in kB) " ).def(0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::wum::extra_scorefxn, "Extra score function for post-batchrelax-rescoring" );
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::wum::memory_limit, "Memory limit for queues (in kB) " ).def(0);
+option.add( basic::options::OptionKeys::wum::extra_scorefxn, "Extra score function for post-batchrelax-rescoring" );
 option.add( basic::options::OptionKeys::wum::extra_scorefxn_ref_structure, "Extra score function for post-batchrelax-rescoring reference structure for superimposition (for scorefunctions that depend on absolute coordinates such as electron denisty)" );
 option.add( basic::options::OptionKeys::wum::extra_scorefxn_relax, "After doing batch relax and adding any extra_scorefunction terms do another N fast relax rounds (defaut=0)" ).def(0);
 option.add( basic::options::OptionKeys::wum::trim_proportion, "No description" ).def(0.0);

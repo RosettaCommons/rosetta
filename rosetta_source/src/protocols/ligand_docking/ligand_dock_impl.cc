@@ -47,6 +47,7 @@
 
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
 namespace protocols {
@@ -163,11 +164,21 @@ ligand_dock_main()
 {
 	protocols::ligand_docking::LigandDockMainOP ligand_dock( new protocols::ligand_docking::LigandDockMain );
 
-	/// Change precision of AtomTreeDiffJobOutputter, for backward compatability reasons
+	// Change precision of AtomTreeDiffJobOutputter, for backward compatability reasons
+	// makes silent file much smaller, ~3x vs. default 6,4,2
+	// but has too much atom positioning error (~0.1 Ang) to be reliable for rescoring
+	if ( ! basic::options::option[ basic::options::OptionKeys::out::file::atom_tree_diff_bb].user() &&
+			! basic::options::option[ basic::options::OptionKeys::out::file::atom_tree_diff_sc].user() &&
+			! basic::options::option[ basic::options::OptionKeys::out::file::atom_tree_diff_bl].user()) {
+		protocols::ligand_docking::TR << "Changing atom_tree_diff output precision to 6,3,1." << std::endl;
+		basic::options::option[ basic::options::OptionKeys::out::file::atom_tree_diff_bb].value(6);
+		basic::options::option[ basic::options::OptionKeys::out::file::atom_tree_diff_sc].value(3);
+		basic::options::option[ basic::options::OptionKeys::out::file::atom_tree_diff_bl].value(1);
+	}
+
  	protocols::jd2::JobOutputterOP 	job_outputter(protocols::jd2::JobDistributor::get_instance()->job_outputter());
 	protocols::jd2::AtomTreeDiffJobOutputterOP atd_outputter( dynamic_cast< protocols::jd2::AtomTreeDiffJobOutputter * >( job_outputter() ) );
 	if ( atd_outputter ) {
-		atd_outputter->set_precision(6,3,1); // makes silent file much smaller, ~3x vs. default 6,4,2
 		atd_outputter->use_input_for_ref(true); // match original ligand_dock application
 	}
 

@@ -52,6 +52,8 @@ AtomTreeDiffJobOutputter::AtomTreeDiffJobOutputter():
 	use_input_(false)
 {
 
+	set_precision( option[ out::file::atom_tree_diff_bb ], option[ out::file::atom_tree_diff_sc ], option[ out::file::atom_tree_diff_bl ] );
+
 	// Add directory path and prefix/suffix (if specified) to plain file name:
 	outfile_name_= basic::options::option[ OptionKeys::out::file::atom_tree_diff ]();
 	{
