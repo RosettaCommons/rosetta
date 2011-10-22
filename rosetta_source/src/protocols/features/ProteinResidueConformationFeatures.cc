@@ -46,9 +46,11 @@ namespace features{
 using std::string;
 using core::Size;
 using core::Real;
-using core::pose::Pose;
-using core::conformation::Residue;
+using core::Vector;
 using core::chemical::num_canonical_aas;
+using core::conformation::Residue;
+using core::pose::Pose;
+using core::id::AtomID;
 using utility::sql_database::sessionOP;
 using utility::vector1;
 using cppdb::statement;
@@ -231,6 +233,9 @@ ProteinResidueConformationFeatures::load_conformation(
 	Pose & pose
 ){
 
+	set_coords_for_residues(db_session,struct_id,pose);
+
+
 	if(pose.is_fullatom()){
 		statement stmt = (*db_session) <<
 			"SELECT\n"
@@ -259,7 +264,6 @@ ProteinResidueConformationFeatures::load_conformation(
 				// WARNING why are you storing non-protein in the ProteinSilentReport?
 				continue;
 			}
-			set_coords_for_residue(db_session,struct_id,seqpos,pose);
 			if(!(phi < 0.00001 && psi < 0.00001 && omega < 0.00001) )
 			{
 				pose.set_phi(seqpos,phi);
@@ -275,68 +279,72 @@ ProteinResidueConformationFeatures::load_conformation(
 		}
 
 	}else{
-		statement stmt = (*db_session) <<
-			"SELECT\n"
-			"	seqpos,\n"
-			"	phi,\n"
-			"	psi,\n"
-			"	omega\n"
-			"FROM\n"
-			"	protein_residue_conformation\n"
-			"WHERE\n"
-			"	protein_residue_conformation.struct_id=?;" << struct_id;
-
-		result res(basic::database::safely_read_from_database(stmt));
-		while(res.next()){
-			Size seqpos;
-			Real phi,psi,omega;
-			res >> seqpos >> phi >> psi >> omega;
-			if (!pose.residue_type(seqpos).is_protein()){
-				// WARNING why are you storing non-protein in the ProteinSilentReport?
-				continue;
-			}
-
-			//pose.set_phi(seqpos,phi);
-			//pose.set_psi(seqpos,psi);
-			//pose.set_omega(seqpos,omega);
-			set_coords_for_residue(db_session,struct_id,seqpos,pose);
-		}
+	//	statement stmt = (*db_session) <<
+	//		"SELECT\n"
+	//		"	seqpos,\n"
+	//		"	phi,\n"
+	//		"	psi,\n"
+	//		"	omega\n"
+	//		"FROM\n"
+	//		"	protein_residue_conformation\n"
+	//		"WHERE\n"
+	//		"	protein_residue_conformation.struct_id=?;" << struct_id;
+	//
+	//	result res(basic::database::safely_read_from_database(stmt));
+	//	while(res.next()){
+	//		Size seqpos;
+	//		Real phi,psi,omega;
+	//		res >> seqpos >> phi >> psi >> omega;
+	//		if (!pose.residue_type(seqpos).is_protein()){
+	//			// WARNING why are you storing non-protein in the ProteinSilentReport?
+	//			continue;
+	//		}
+	//
+	//		//pose.set_phi(seqpos,phi);
+	//		//pose.set_psi(seqpos,psi);
+	//		//pose.set_omega(seqpos,omega);
+	//	}
 	}
 }
 
 
 //This should be factored out into a non-member function.
-void ProteinResidueConformationFeatures::set_coords_for_residue(
+void ProteinResidueConformationFeatures::set_coords_for_residues(
 		sessionOP db_session,
 		Size struct_id,
-		Size seqpos,
 		Pose & pose
 ){
-
+	// lookup and set all the atoms at once because each query is
+	// roughly O(n*log(n) + k) where n is the size of the tables and k
+	// is the number of rows returned. Doing it all at once means you
+	// only have to pay the n*log(n) cost once.
 	statement stmt = (*db_session) <<
-			"SELECT\n"
-			"	atomno,\n"
-			"	x,\n"
-			"	y,\n"
-			"	z\n"
-			"FROM\n"
-			"	residue_atom_coords\n"
-			"WHERE\n"
-			"residue_atom_coords.struct_id=? AND residue_atom_coords.seqpos=?;" << struct_id <<	seqpos;
+		"SELECT\n"
+		"	seqpos,\n"
+		"	atomno,\n"
+		"	x,\n"
+		"	y,\n"
+		"	z\n"
+		"FROM\n"
+		"	residue_atom_coords\n"
+		"WHERE\n"
+		"	residue_atom_coords.struct_id=?;" << struct_id;
 	result res(basic::database::safely_read_from_database(stmt));
 
+	vector1< AtomID > atom_ids;
+	vector1< Vector > coords;
 	while(res.next())
 	{
-		Size atomno;
+		Size seqpos, atomno;
 		Real x,y,z;
-		res >> atomno >> x >> y >> z;
+		res >> seqpos >> atomno >> x >> y >> z;
 
-		core::id::AtomID atom_id(atomno,seqpos);
-		core::Vector coords(x,y,z);
-		pose.set_xyz(atom_id,coords);
-		//std::cout <<seqpos << " " << pose.residue(seqpos).atom_name(atomno)<< " " << x << " "<<y << " "<<z <<std::endl;
+		atom_ids.push_back(AtomID(atomno, seqpos));
+		coords.push_back(Vector(x,y,z));
 	}
-
+	// use the batch_set_xyz because it doesn't trigger a coordinate
+	// update after setting each atom.
+	pose.batch_set_xyz(atom_ids,coords);
 
 }
 

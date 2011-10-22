@@ -35,9 +35,6 @@ class ResidueSecondaryStructureFeatures : public protocols::features::FeaturesRe
 public:
 	ResidueSecondaryStructureFeatures();
 
-	// Undefined, commenting out to fix PyRosetta build
-	//ResidueSecondaryStructureFeatures(core::scoring::ScoreFunctionOP scfxn);
-
 	ResidueSecondaryStructureFeatures( ResidueSecondaryStructureFeatures const & src );
 
 	virtual ~ResidueSecondaryStructureFeatures();

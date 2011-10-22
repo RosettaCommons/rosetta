@@ -46,6 +46,7 @@ using utility::sql_database::sessionOP;
 using utility::vector1;
 using basic::database::safely_read_from_database;
 using basic::database::safely_write_to_database;
+using basic::database::table_exists;
 using cppdb::result;
 using cppdb::statement;
 using core::pose::PDBInfo;
@@ -85,7 +86,7 @@ string PdbDataFeatures::schema() const
 			"	insertion_code TEXT,\n"
 			"	pdb_residue_number INTEGER,\n"
 			"	FOREIGN KEY (struct_id, residue_number)\n"
-			"		REFERENCES residue (struct_id, residue_number)\n"
+			"		REFERENCES residue (struct_id, resNum)\n"
 			"		DEFERRABLE INITIALLY DEFERRED,\n"
 			"	PRIMARY KEY(struct_id, residue_number));\n"
 			"\n"
@@ -111,9 +112,22 @@ string PdbDataFeatures::schema() const
 			"	chain_id TEXT,\n"
 			"	insertion_code TEXT,\n"
 			"	pdb_residue_number INTEGER,\n"
-			"	FOREIGN KEY (struct_id)\n"
-			"	REFERENCES structures(struct_id)"
-			"	DEFERRABLE INITIALLY DEFERRED);";
+			"	FOREIGN KEY (struct_id, residue_number)\n"
+			"		REFERENCES residue (struct_id, resNum),\n"
+			"	PRIMARY KEY(struct_id, residue_number);\n"
+			"\n"
+			"CREATE TABLE IF NOT EXISTS residue_pdb_confidence (\n"
+			"	struct_id INTEGER,\n"
+			"	residue_number INTEGER,\n"
+			"	max_temperature REAL,\n"
+			"	max_bb_temperature REAL,\n"
+			"	max_sc_temperature REAL,\n"
+			"	min_occupancy REAL,\n"
+			"	min_bb_occupancy REAL,\n"
+			"	min_sc_occupancy REAL,\n"
+			"	FOREIGN KEY (struct_id, residue_number)\n"
+			"		REFERENCES residue (struct_id, resNum),\n"
+			"	PRIMARY KEY(struct_id, residue_number));";
 	}else
 	{
 		return "";
@@ -151,6 +165,7 @@ void PdbDataFeatures::load_residue_pdb_identification(
 	Size struct_id,
 	Pose & pose)
 {
+	if(!table_exists(db_session, "residue_pdb_identification")) return;
 
 	vector1<Size> pdb_numbers;
 	vector1<char> pdb_chains;

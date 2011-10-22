@@ -177,8 +177,6 @@ main( int argc, char* argv [] ) {
 	cout << "   Database Output:" << endl;
 	cout << "      -out:use_database                           Output structures to database (see General Database Options)" << endl;
 
-	option[ out::show_accessed_options ].value(true);
-
 	try {
 		// options, random initialization
 		devel::init( argc, argv );

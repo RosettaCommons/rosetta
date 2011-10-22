@@ -78,10 +78,9 @@ public:
 
 private:
 	void
-	set_coords_for_residue(
+	set_coords_for_residues(
 		utility::sql_database::sessionOP db_session,
 		core::Size struct_id,
-		core::Size seqpos,
 		core::pose::Pose & pose);
 
 };
