@@ -157,11 +157,17 @@ def main(args):
       help="Maximum number of files that goes in to one lib file. Default is unlimeted [0]."
     )
 
+    parser.add_option("--max-function-size", default=1024*128, type='int',
+      help="Maximum size of function in binding files in bytes."
+    )
+
     parser.add_option("-j", "--jobs",
       default=1,
       type="int",
       help="Number of processors to use on when building(default: 1)",
     )
+
+
 
     (options, args) = parser.parse_args(args=args[1:])
     global Options;  Options = options
@@ -539,7 +545,7 @@ def BuildRosettaOnWindows(build_dir):
     #if 'protocols/moves/PyMolMover.cc' in sources: sources.remove('protocols/moves/PyMolMover.cc')
 
     os.chdir( './../../' )
-    
+
     # Generate svn_version
     execute('Generate svn_version.cc...', 'cd .. && python svn_version.py')
 
@@ -846,7 +852,7 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
             # Temporary injecting Mover in to protocols level
             #if path == 'protocols': namespaces_to_wrap.append('::protocols::moves::')
 
-            code = tools.CppParser.parseAndWrapModule(all_at_once_base, namespaces_to_wrap,  all_at_once_xml, all_at_once_relative_files, max_funcion_size=1024*128)
+            code = tools.CppParser.parseAndWrapModule(all_at_once_base, namespaces_to_wrap,  all_at_once_xml, all_at_once_relative_files, max_funcion_size=Options.max_function_size)
 
             objs_list = []
             for i in range( len(code) ):

@@ -17,6 +17,7 @@ sources = {
         "mpi_util",
 		"exit",
 		"LexicographicalIterator",
+		'static_database',
 	],
 	"utility/boinc" : [
 		"boinc_util"
