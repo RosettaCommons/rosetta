@@ -39,6 +39,7 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 #include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/jd2/JobDistributor.hh>
 
 namespace protocols {
 namespace protein_interface_design{
@@ -59,7 +60,8 @@ FilterScanFilter::FilterScanFilter() :
 	delta_( false ),
 	unbound_( false ),
 	report_all_( false ),
-	jump_( 0 )
+	jump_( 0 ),
+	dump_pdb_( false )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -258,6 +260,14 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 			 TR<<"Triage filter succeeds"<<std::endl;
 			 residue_id_val_map[ std::pair< core::Size, AA >( resi, target_aa ) ] = std::pair< core::Real, bool >(filter()->report_sm( pose ), true);
     	 residue_id_map[ resi ].push_back( target_aa );
+			 if( dump_pdb() ){
+			 	using namespace protocols::jd2;
+			 	JobOP job( JobDistributor::get_instance()->current_job() );
+			 	std::stringstream fname;
+				fname << job->input_tag() << pose_orig.residue( resi ).name3() << resi << pose.residue( resi ).name3();
+			 	TR<<"Saving pose "<<fname.str();
+				pose.dump_scored_pdb( fname.str(), *scorefxn() );
+			 }
 			 TR.flush();
 		}//foreach target_aa
 	}//foreach resi
@@ -342,7 +352,8 @@ FilterScanFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	resfile_name( tag->getOption< std::string >( "resfile_name",resfile_name() ) );
 	resfile_general_property( tag->getOption< std::string >( "resfile_general_property", "nataa" ) );
-	TR<<"with options resfile_name: "<<resfile_name()<<" resfile_general_property "<<resfile_general_property()<<" unbound "<<unbound()<<" jump "<<jump()<<" delta "<<delta()<<" and filter "<<filter_name<<std::endl;
+	dump_pdb( tag->getOption< bool >( "dump_pdb", false ) );
+	TR<<"with options resfile_name: "<<resfile_name()<<" resfile_general_property "<<resfile_general_property()<<" unbound "<<unbound()<<" jump "<<jump()<<" delta "<<delta()<<" filter "<<filter_name<<" dump_pdb "<<dump_pdb()<<std::endl;
 }
 
 core::scoring::ScoreFunctionOP
@@ -372,6 +383,16 @@ FilterScanFilterCreator::create_filter() const { return new FilterScanFilter; }
 
 std::string
 FilterScanFilterCreator::keyname() const { return "FilterScan"; }
+
+void
+FilterScanFilter::dump_pdb( bool const d ){
+	dump_pdb_ = d;
+}
+
+bool
+FilterScanFilter::dump_pdb() const{
+	return dump_pdb_;
+}
 
 } // filters
 } // protein_interface_design

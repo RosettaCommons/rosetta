@@ -77,6 +77,8 @@ public:
 	void delta( bool const d );
 	bool report_all() const;
 	void report_all( bool const ra );
+	void dump_pdb( bool const d );
+	bool dump_pdb() const;
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	protocols::filters::FilterOP triage_filter_;//dflt null; mutations that are categorically rejected, no matter what
@@ -90,6 +92,7 @@ private:
 	bool report_all_;
 	core::Size jump_;
 	void unbind( core::pose::Pose & ) const; //utility function for unbinding the pose
+	bool dump_pdb_; // dflt false; dump a pdb for each substitution (with extensions signifying the substitution).
 };
 
 } // filters
