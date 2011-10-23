@@ -23,6 +23,9 @@
 #
 -ignore_unrecognized_res
 #
+# Use Reduce placed hydrogen atoms
+-no_optH
+#
 #
 -in
  -path %(sample_source_path)s/input/top8000_chains_eds_70_rosetta_named_hydrogens

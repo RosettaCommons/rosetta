@@ -46,6 +46,10 @@ iscript_libraries <- function(libraries){
   cat("\n", file=iscript_fname, append=TRUE)
 }
 
+iscript_base_dir <- function(base_dir){
+	cat("base_dir <- \"", base_dir , "\"\n", file=iscript_fname, sep="", append=T)
+}
+
 iscript_includes <- function(includes){
   for( inc in includes){
     cat("source(\"", inc, "\")\n", file=iscript_fname, sep="", append=TRUE)

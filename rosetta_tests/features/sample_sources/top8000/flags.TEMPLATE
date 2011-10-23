@@ -5,6 +5,9 @@
 #
 -ignore_unrecognized_res
 #
+# Use Reduce placed hydrogen atoms
+-no_optH
+#
 #
 -in
  -path %(sample_source_path)s/input/top8000_chains_eds_70_rosetta_named_hydrogens
@@ -24,8 +27,8 @@
 #
 #Read in pronation states from input data (use with
 #caution for runs that do more than extract features)
--pH
- -pH_mode
+#-pH
+# -pH_mode
 #
 -parser
  -protocol %(output_dir)s/%(sample_source_id)s/features.xml

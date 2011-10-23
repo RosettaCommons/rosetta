@@ -11,20 +11,27 @@
 # Get path to 'rosetta_tests/features', where this script lives
 command_args <- commandArgs(trailingOnly = FALSE)
 base_dir <- dirname(substring(command_args[grep("--file=", command_args)], 8))
+if(length(base_dir) == 0){
+	base_dir = getwd()
+}
 source(paste(base_dir, "scripts/methods/generate_compare_sample_sources_iscript.R", sep="/"))
 iscript_header()
 
-# load_packages() will kindly ask to install the packages if they are missing
+# load_packages() will help the user to install the packages if they are missing
 source(paste(base_dir, "scripts/methods/load_packages.R", sep="/"))
 libraries <- c("optparse", "ggplot2", "RSQLite", "logspline", "plotrix", "plyr", "polynom")
 load_packages(libraries)
 iscript_libraries(libraries)
 
+iscript_base_dir(base_dir)
+
 includes <- c(
 	"scripts/methods/sample_sources.R",
 	"scripts/methods/methods.R",
+	"scripts/methods/density_estimation.R",
 	"scripts/methods/ggplot2_geom_indicator.R",
 	"scripts/methods/ggplot2_scales.R",
+	"scripts/methods/instancer.R",
 	"scripts/methods/output_formats.R",
 	"scripts/methods/coordinate_normalizations.R",
 	"scripts/methods/vector_math.R",
@@ -77,9 +84,38 @@ if(length(opt$args) > 0){
 	cat("Using supplied feature databases", opt$args, "\n")
 	data_sources <- opt$args
 } else {
-  #use all sample sources in sample_source_dir
-  cat("Looking up feature databases in", opt$options$sample_source_dir, "\n")
-  data_sources <- get_data_sources(opt$options$sample_source_dir)
+	cat(
+		"ERROR: No sample_source databases were supplied",
+		"",
+		"##################################################",
+		"NAME",
+		"    compare_sample_source.R",
+		"",
+		"SYNOPSIS",
+		"    ./compare_sample_sources.R [OPTIONS] --script <analysis_script> features_<ss_id1>.db3 [features_<ss_id2>.db3 ...]",
+		"    ./compare_sample_sources.R [OPTIONS] --analysis_dir <analysis_dir> features_<ss_id1>.db3 [features_<ss_id2>.db3 ...]",
+		"",
+		"    From within an R session:",
+		"       source(\"compare_sample_sources_iscript.R\", # This will re-run the last './compare_sample_sources.R' interactively",
+		"",
+		"DESCRIPTION",
+		"    Compare structural features coming from different sample sources.",
+		"",
+		"    See ./compare_sample_sources.R --help for available options.",
+		"    See https://wiki.rosettacommons.org/index.php/FeaturesScientificBenchmark for application documentation.",
+		"    To cite: contact mattjomeara@gmail.com as the work is in progress.",
+		"",
+		"EXAMPLE",
+		"    To compare how Rosetta distorts native structures, extract feature databases for a set of structures from the pdb",
+		"    and the same set of structures optimized with your favorite prediction protocol. Assume the resulting feature databases",
+		"    are stored in 'features_natives.db3' and 'features_rosetta.db3'. To compare the length of hydrogen bonds",
+		"    conditional on the donor and acceptor chemical types between the two sample sources, run:",
+		"",
+		"    ./compare_sample_sources.R --script scripts/analysis/plots/hbonds/AHdist_chem_type.R features_rosetta.db3 features_rosetta.db3",
+		"",
+		"AUTHOR",
+		"    Matthew O'Meara (mattjomeara@gmail.com)\n", sep="\n")
+  quit()
 }
 sample_sources <- get_sample_sources(data_sources)
 iscript_sample_sources(sample_sources)

@@ -11,41 +11,76 @@ check_setup()
 
 sele <-"
 SELECT
-  geom.cosBAH,
-  acc_site.HBChemType AS acc_chem_type,
-  don_site.HBChemType AS don_chem_type
+	acc_atoms.base_x AS bx, acc_atoms.base_y AS by, acc_atoms.base_z AS bz,
+	acc_atoms.atm_x  AS ax, acc_atoms.atm_y  AS ay, acc_atoms.atm_z  AS az,
+	don_atoms.atm_x  AS hx, don_atoms.atm_y  AS hy, don_atoms.atm_z  AS hz,
+	acc.HBChemType AS acc_chem_type,
+	don.HBChemType AS don_chem_type,
+	abs(don.resNum - acc.resNum) AS seq_sep,
+	don_pdb.heavy_atom_temperature AS don_temp,
+	acc_pdb.heavy_atom_temperature AS acc_temp
 FROM
-  hbond_geom_coords AS geom,
-  hbonds AS hbond,
-  hbond_sites AS don_site,
-  hbond_sites AS acc_site
+	hbonds AS hb,
+	hbond_geom_coords AS geom,
+	hbond_sites AS don, hbond_sites AS acc,
+	hbond_site_atoms AS don_atoms, hbond_site_atoms AS acc_atoms,
+	hbond_sites_pdb AS don_pdb, hbond_sites_pdb AS acc_pdb
 WHERE
-  hbond.struct_id = geom.struct_id AND
-  hbond.hbond_id =  geom.hbond_id AND
-  hbond.struct_id = don_site.struct_id AND
-  hbond.don_id = don_site.site_id AND
-  hbond.struct_id = acc_site.struct_id AND
-  hbond.acc_id = acc_site.site_id;"
+	geom.struct_id = hb.struct_id AND geom.hbond_id = hb.hbond_id AND
+	don.struct_id = hb.struct_id AND don.site_id = hb.don_id AND
+	acc.struct_id = hb.struct_id AND acc.site_id = hb.acc_id AND
+	don_atoms.struct_id = hb.struct_id AND don_atoms.site_id = hb.don_id AND
+	acc_atoms.struct_id = hb.struct_id AND acc_atoms.site_id = hb.acc_id AND
+	don_pdb.struct_id = hb.struct_id AND don_pdb.site_id = hb.don_id AND
+	acc_pdb.struct_id = hb.struct_id AND acc_pdb.site_id = hb.acc_id;"
 
 f <- query_sample_sources(sample_sources, sele)
 
-f$acc_chem_type <- factor(f$acc_chem_type,
+f$acc_chem_type_label <- factor(f$acc_chem_type,
 	levels =
-		c("hbacc_HXL", "hbacc_CXL", "hbacc_IMD", "hbacc_PBA",
-			"hbacc_AHX", "hbacc_CXA", "hbacc_IME"),
+		c("hbacc_CXA", "hbacc_AHX", "hbacc_IMD",
+			"hbacc_CXL", "hbacc_HXL", "hbacc_IME",
+			"hbacc_PBA"),
 	labels =
-		c("aHXL: s,t", "aCXL: d,e", "aIMD: h", "aPBA: bb",
-			"aAHX: y",   "aCXA: n,q", "aIME: h"))
+		c("aCXA: n,q", "aAHX: y",   "aIMD: h",
+			"aCXL: d,e", "aHXL: s,t", "aIME: h",
+			"aPBA: bb"))
+
+f <- transform(f,
+	cosBAH = vector_dotprod(
+		vector_normalize(cbind(ax-bx, ay-by, az-bz)),
+		vector_normalize(cbind(hx-ax, hy-ay, hz-az))))
 
 dens <- estimate_density_1d(
-  f, c("sample_source", "acc_chem_type" ), "cosBAH")
+	f, c("sample_source", "acc_chem_type_label" ), "cosBAH")
 
 plot_id = "cosBAH_acc_chem_type"
-ggplot(data=dens) +
+ggplot(data=dens) + theme_bw() +
 	geom_line(aes(x=acos(x)*180/pi, y=-log(y), colour=sample_source)) +
 	geom_indicator(aes(colour=sample_source, indicator=counts)) +
-	facet_grid( ~ acc_chem_type) +
-	opts(title = "Hydrogen Bonds BAH Angle by Chemical Type\n(normalized for equal volume per unit distance)") +
+	facet_wrap( ~ acc_chem_type_label) +
+	opts(title = "Hydrogen Bonds BAH Angle by Acceptor Chemical Type\n(normalized for equal volume per unit distance)") +
+	scale_x_continuous(paste('Base -- Acceptor -- Hydrogen (degrees)')) +
+	scale_y_continuous("-log(FeatureDensity)", limits=c(-2.3,6)) +
+	opts(legend.position=c(.58,.35)) +
+	opts(legend.justification=c("left", "top"))
+save_plots(plot_id, sample_sources, output_dir, output_formats)
+
+filt_f <- f[
+	f$don_temp < 30 &
+	f$acc_temp < 30 &
+	f$don_chem_type != "hbdon_PBA" &
+	f$seq_sep > 5, ]
+
+dens <- estimate_density_1d(
+	filt_f, c("sample_source", "acc_chem_type_label" ), "cosBAH")
+
+plot_id = "cosBAH_acc_chem_type_filtered"
+ggplot(data=dens) + theme_bw() +
+	geom_line(aes(x=acos(x)*180/pi, y=-log(y), colour=sample_source)) +
+	geom_indicator(aes(colour=sample_source, indicator=counts)) +
+	facet_wrap( ~ acc_chem_type_label) +
+	opts(title = "HBonds: Sidechain Donor, BFact < 30, SeqSep > 5   BAH Angle by Acceptor Chemical Type\n(normalized for equal volume per unit distance)") +
 	scale_x_continuous(paste('Base -- Acceptor -- Hydrogen (degrees)')) +
 	scale_y_continuous("-log(FeatureDensity)", limits=c(-2.3,6)) +
 	opts(legend.position=c(.58,.35)) +

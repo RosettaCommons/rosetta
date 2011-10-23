@@ -71,6 +71,13 @@ save_plots <- function(
   })
 }
 
+set_db_cache_size <- function(con, cache_size){
+  res <- dbSendQuery(con,
+    paste("PRAGMA cache_size=",as.integer(cache_size),";",sep=""))
+  dbClearResult(res)
+}
+
+
 query_sample_sources <- function(
   sample_sources,
   sele,
@@ -114,268 +121,36 @@ query_sample_sources <- function(
 	features
 }
 
-set_db_cache_size <- function(con, cache_size){
-  res <- dbSendQuery(con,
-    paste("PRAGMA cache_size=",as.integer(cache_size),";",sep=""))
-  dbClearResult(res)
-}
+locate_rosetta_application <- function(
+	app_name,
+	rosetta_base_path = NULL,
+	platform=NULL,
+	extras="default",
+	compiler="gcc",
+	mode="release") {
 
-n_pts <- 200
-compute_density <- function(pts, wts){
-  density(x=pts, from=xlim[1], to=xlim[2], n=n_pts, weights=wts)
-}
+	# find application is located at
+	# ${rosetta_base_dir}/rosetta_source/bin/${app_name}.${extras}.${platform}${compiler}${mode}
+	# detect what is not specified
 
-estimate_density_1d <-function(
-  data,
-  ids,
-  variable,
-  weight_fun=uniform_normalization,
-  min_count=20,
-  n_pts=200,
-  histogram=FALSE,
-  ...){
-	if(!(class(data) == "data.frame")){
-		stop(paste("The data argument must be a data.frame, instead it is of class '", class(data), "'"))
+	if(is.null(rosetta_base_path)){
+		rosetta_base_path <- file.path(base_dir, "..", "..")
 	}
-	for(id in ids){
-		if(!(id %in% names(data))){
-			stop(paste("The id variable '", id, "' is not a column name of the data. The ids are used to group the data instances for computing the density estimation.", sep=""))
+
+	if(is.null(platform)){
+		sysname <- Sys.info()[1]
+		if (sysname == "Linux") {
+			platform = "linux"
+		} else if (sysname == "Darwin") {
+			platform = "mac"
+		} else {
+			stop(paste("Unable to determine platform in trying to locate the application '", app_name, ". Try specifying the platform explicitly. (e.g. platform='linux' or platform='mac')", sep=""))
 		}
 	}
-	if(!(variable %in% names(data))){
-		stop(paste("The value variable '", variable, "' is not a column name of the data. The value variable is used to compute the density estimation.", sep=""))
+
+	full_app_path = file.path(rosetta_base_path, "rosetta_source", "bin", paste(app_name, ".", extras, ".", platform, compiler, mode, sep=""))
+	if(!file.exists(full_app_path)){
+		stop(paste("Looking for application '", app_name, "' at the path '", full_app_path, "', but it does not exist.", sep=""))
 	}
-
-  xlim <- range(data[,variable])
-  compute_density <- function(factor_df){
-    if (nrow(factor_df) < min_count){
-      return( data.frame(x=seq(xlim[1], xlim[2], n_pts), y=0))
-    } else {
-      weights <- weight_fun(factor_df[,variable])
-      if(histogram){
-        breaks = seq(from=xlim[1], to=xlim[2], length=n_pts)
-        d <- weighted.hist(x=factor_df[,variable], w=weights, plot=FALSE)
-        return(data.frame(x=d$mids, y=d$density, counts=nrow(factor_df)))
-      } else {
-        d <- density(x=factor_df[,variable], from=xlim[1], to=xlim[2], n=n_pts,
-          weights=weights,
-          ...)
-          return(data.frame(x=d$x, y=d$y, counts=nrow(factor_df)))
-      }
-
-    }
-  }
-  ddply(data, ids, compute_density)
-}
-
-estimate_density_1d_wrap <-function(
-  data,
-  ids,
-  variable,
-  weight_fun=uniform_normalization,
-  min_count=20,
-  n_pts=200,
-	xlim=c(0,360),
-  ...){
-	if(!(class(data) == "data.frame")){
-		stop(paste("The data argument must be a data.frame, instead it is of class '", class(data), "'"))
-	}
-	for(id in ids){
-		if(!(id %in% names(data))){
-			stop(paste("The id variable '", id, "' is not a column name of the data. The ids are used to group the data instances for computing the density estimation.", sep=""))
-		}
-	}
-	if(!(variable %in% names(data))){
-		stop(paste("The value variable '", variable, "' is not a column name of the data. The value variable is used to compute the density estimation.", sep=""))
-	}
-
-	extended_data <- mdply(
-		c(xlim[1]-xlim[2], 0, xlim[2]-xlim[1]),function(s){
-		y <- data;
-		y[,variable] <- y[,variable] + s;
-		y
-	})
-	extended_n_pts=n_pts*3
-	extended_min_count=min_count*3
-  compute_density <- function(factor_df){
-    if (nrow(factor_df) < extended_min_count){
-      return( data.frame(x=seq(xlim[1], xlim[2], length.out=n_pts), y=0))
-    } else {
-      weights <- weight_fun(factor_df[,variable])
-			d <- density(x=factor_df[,variable], from=xlim[1], to=xlim[2], n=extended_n_pts,
-				weights=weights,
-        ...)
-      return(data.frame(
-				x=d$x[xlim[1] <= d$x & d$x <= xlim[2]],
-				y=d$y[xlim[1] <= d$x & d$x <= xlim[2]]*3,
-				counts=nrow(factor_df)/3))
-    }
-  }
-  ddply(extended_data, ids, compute_density)
-}
-
-
-estimate_density_1d_reflect_boundary <-function(
-  data,
-  ids,
-  variable,
-  weight_fun=uniform_normalization,
-  min_count=20,
-  n_pts=200,
-	reflect_left=FALSE,
-	reflect_right=FALSE,
-  left_boundary=NULL,
-	right_boundary=NULL,
-  ...){
-	if(!(class(data) == "data.frame")){
-		stop(paste("The data argument must be a data.frame, instead it is of class '", class(data), "'"))
-	}
-	for(id in ids){
-		if(!(id %in% names(data))){
-			stop(paste("The id variable '", id, "' is not a column name of the data. The ids are used to group the data instances for computing the density estimation.", sep=""))
-		}
-	}
-	if(!(variable %in% names(data))){
-		stop(paste("The value variable '", variable, "' is not a column name of the data. The value variable is used to compute the density estimation.", sep=""))
-	}
-
-	if(is.null(left_boundary)){
-		left_boundary=min(data[,variable])
-	}
-	if(is.null(right_boundary)){
-		right_boundary=max(data[,variable])
-	}
-
-	extended_factor = 1
-
-	if(reflect_left==TRUE){
-		data_lower <- data
-		data_lower[,variable] <- 2*left_boundary - data[,variable]
-		data <- rbind(data, data_lower)
-		extended_factor = extended_factor + 1
-	}
-
-	if(reflect_right==TRUE){
-		data_upper <- data
-		data_upper[,variable] <- 2*right_boundary - data[,variable]
-		data <- rbind(data, data_upper)
-		extended_factor = extended_factor + 1
-	}
-  compute_density <- function(factor_df){
-			if (nrow(factor_df) < min_count*extended_factor){
-				return(data.frame(x=seq(left_boundary, right_boundary, length.out=n_pts), y=0, counts=nrow(factor_df)))
-    } else {
-      weights <- weight_fun(factor_df[,variable])
-			d <- density(x=factor_df[,variable], from=left_boundary, to=right_boundary, n=n_pts*extended_factor,
-				weights=weights,
-        ...)
-
-			return(data.frame(
-				x=d$x[left_boundary <= d$x & d$x <= right_boundary],
-				y=d$y[left_boundary <= d$x & d$x <= right_boundary]*extended_factor,
-				counts=nrow(factor_df)/extended_factor))
-    }
-  }
-	ddply(data, ids, compute_density)
-}
-
-
-estimate_density_1d_logspline <-function(
-  data,
-  ids,
-  variable,
-  min_count=20,
-  n_pts=200,
-  weight_fun=NULL,
-  ...){
-
-	if(!(class(data) == "data.frame")){
-		stop(paste("The data argument must be a data.frame, instead it is of class '", class(data), "'", sep=""))
-	}
-	for(id in ids){
-		if(!(id %in% names(data))){
-			stop(paste("The id variable '", id, "' is not a column name of the data. The ids are used to group the data instances for computing the density estimation.", sep=""))
-		}
-	}
-	if(!(variable %in% names(data))){
-		stop(paste("The value variable '", variable, "' is not a column name of the data. The value variable is used to compute the density estimation.", sep=""))
-	}
-
-  xlim <- range(data[,variable])
-  if(!is.null(weight_fun)){
-    xlim_transformed <- weight_fun(xlim)
-  }
-
-  compute_density <- function(factor_df){
-    if (nrow(factor_df) < min_count){
-      return( data.frame(x=seq(xlim[1], xlim[2], n_pts), y=0))
-    } else {
-      if(!is.null(weight_fun)){
-        values_transformed <- weight_fun(factor_df[,variable])
-        lgs <- logspline(
-          values_transformed,
-          lbound=xlim_transformed[1],
-          ubound=xlim_transformed[2])
-        x_transformed <- seq(
-          from=xlim_transformed[1],
-          to=xlim_transformed[2],
-          length.out=n_pts)
-        y <- dlogspline(x_transformed, lgs)
-        x <- seq(from=xlim[1], to=xlim[2], length.out=n_pts)
-
-      } else {
-        lgs <- logspline(factor_df[,variable], lbound=xlim[1], ubound=xlim[2])
-        x <- seq(from=xlim[1], to=xlim[2], length.out=n_pts)
-        y <- dlogspline(x, lgs)
-      }
-      return(data.frame(x=x, y=y, counts=nrow(factor_df)))
-    }
-  }
-  ddply(data, ids, compute_density)
-}
-
-
-estimate_density_2d <-function(
-  data,
-  ids,
-  xvariable,
-	yvariable,
-  min_count=20,
-  n_pts=200,
-  histogram=FALSE,
-  ...){
-	if(!(class(data) == "data.frame")){
-		stop(paste("The data argument must be a data.frame, instead it is of class '", class(data), "'", sep=""))
-	}
-	for(id in ids){
-		if(!(id %in% names(data))){
-			stop(paste("The id variable '", id, "' is not a column name of the data. The ids are used to group the data instances for computing the density estimation.", sep=""))
-		}
-	}
-	if(!(xvariable %in% names(data))){
-		stop(paste("The value variable '", xvariable, "' is not a column name of the data. The xvariable and yvariable are used to compute the density estimation.", sep=""))
-	}
-	if(!(yvariable %in% names(data))){
-		stop(paste("The value variable '", yvariable, "' is not a column name of the data. The xvariable and yvariable are used to compute the density estimation.", sep=""))
-	}
-
-	xlim <- range(data[,xvariable])
-  xlim <- range(data[,yvariable])
-	ddply(data, ids, function(df){
-	  if (nrow(df) < min_count){
-      d <- data.frame(x=NULL, y=NULL, z=NULL)
-    } else {
-			if(histogram){
-			  h <- gplots::hist2d(
-          x=as.matrix(df[,c(xvariable, yvariable)]), nbins=n_pts, show=FALSE)
-        d <- with(h, data.frame(expand.grid(x=x, y=y), z=as.vector(counts), density=as.vector(counts)/nrow(df)))
-        d$z <- melt(h$counts)$value
-			} else {
-				dm <- MASS::kde2d(
-				  x=df[,xvariable], y=df[,yvariable], n_pts)
-				d <- with(dm, data.frame(expand.grid(x=x, y=y), z=as.vector(z)))
-      }
-    }
-    d
-  })
+	full_app_path
 }

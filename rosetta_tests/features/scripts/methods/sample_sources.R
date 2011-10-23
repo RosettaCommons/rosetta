@@ -47,7 +47,7 @@ get_sample_sources <- function(data_sources){
 		sample_source <- factor( strsplit(
 						strsplit( basename(fname), "^features_")[[1]][2],".db3$")[[1]])
 		if(is.na(sample_source) || is.null(sample_source) || sample_source==""){
-			stop(paste("Unable to get 'sample_source_id' from sample source database file name",fname,", verify that it is of the form 'features_<sample_source_id>.db3'"))
+			stop(paste("Unable to get 'sample_source_id' from sample source database file name '",fname,"', verify that it is of the form 'features_<sample_source_id>.db3'"))
 		}
 		data.frame(fname, sample_source, get_sample_source_meta_data(fname))
 	})
