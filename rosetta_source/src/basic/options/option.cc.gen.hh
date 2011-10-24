@@ -589,9 +589,7 @@ option.add( basic::options::OptionKeys::abinitio::skip_stages, "say: 2 3 4, and 
 option.add( basic::options::OptionKeys::abinitio::close_chbrk, "Chain break closure during classic abinito " ).def(false);
 option.add( basic::options::OptionKeys::abinitio::include_stage5, "stage5 contains small moves only" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::close_loops_by_idealizing, "close loops by idealizing the structure after stage 4" ).def(false);
-
-}
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_using_kic, "optimize around cutpoints using kinematic relax" ).def(false);
+option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_using_kic, "optimize around cutpoints using kinematic relax" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::optimize_cutpoints_margin, "" ).def(5);
 option.add( basic::options::OptionKeys::abinitio::HD_EX_Info, "input list of residues with low amide protection " );
 option.add( basic::options::OptionKeys::abinitio::HD_penalty, "penatlty for each inconsistent pairing with HD data " ).def(0.1);
@@ -1165,11 +1163,11 @@ option.add( basic::options::OptionKeys::phil::align_file, "No description" );
 option.add( basic::options::OptionKeys::wum::wum, "wum option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::wum::n_slaves_per_master, "A value between 32 and 128 is usually recommended" ).def(64);
 option.add( basic::options::OptionKeys::wum::n_masters, "Manual override for -n_slaves_per_master. How many master nodes should be spawned ? 1 by default. generall 1 for eery 256-512 cores is recommended depending on master workload" ).def(1);
-option.add( basic::options::OptionKeys::wum::memory_limit, "Memory limit for queues (in kB) " ).def(0);
-option.add( basic::options::OptionKeys::wum::extra_scorefxn, "Extra score function for post-batchrelax-rescoring" );
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::wum::extra_scorefxn_ref_structure, "Extra score function for post-batchrelax-rescoring reference structure for superimposition (for scorefunctions that depend on absolute coordinates such as electron denisty)" );
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::wum::memory_limit, "Memory limit for queues (in kB) " ).def(0);
+option.add( basic::options::OptionKeys::wum::extra_scorefxn, "Extra score function for post-batchrelax-rescoring" );
+option.add( basic::options::OptionKeys::wum::extra_scorefxn_ref_structure, "Extra score function for post-batchrelax-rescoring reference structure for superimposition (for scorefunctions that depend on absolute coordinates such as electron denisty)" );
 option.add( basic::options::OptionKeys::wum::extra_scorefxn_relax, "After doing batch relax and adding any extra_scorefunction terms do another N fast relax rounds (defaut=0)" ).def(0);
 option.add( basic::options::OptionKeys::wum::trim_proportion, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::lh::lh, "lh option group" ).legal(true).def(true);
@@ -1754,9 +1752,7 @@ option.add( basic::options::OptionKeys::AnchoredDesign::testing::RMSD_only_this,
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_noise_constraints_mode, "Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor's placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer's commentary." ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::DenovoProteinDesign, "DenovoProteinDesign option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "redesign core of pdb" ).def(false);
-
-}
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_loops, "redesign loops of pdb" ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_loops, "redesign loops of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "redesign surface of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::disallow_native_aa, "do not allow native aa in design" ).def(false);
