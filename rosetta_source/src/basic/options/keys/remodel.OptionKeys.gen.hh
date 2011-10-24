@@ -53,6 +53,7 @@ namespace remodel { extern BooleanOptionKey const cluster_on_entire_pose; }
 namespace remodel { extern IntegerOptionKey const collect_clustered_top; }
 namespace remodel { extern IntegerOptionKey const dr_cycles; }
 namespace remodel { extern IntegerOptionKey const two_chain_tree; }
+namespace remodel { extern IntegerOptionKey const repeat_structuer; }
 namespace remodel { namespace domainFusion { extern BooleanOptionKey const domainFusion; } }
 namespace remodel { namespace domainFusion { extern FileOptionKey const insert_segment_from_pdb; } }
 namespace remodel { extern RealOptionKey const hb_lrbb; }
