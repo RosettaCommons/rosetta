@@ -17,21 +17,14 @@
 
 // Utility headers
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
-
-
 
 // C++ headers
 #include <map>
 #include <string>
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 
 #include <sstream>
-
-//Auto Headers
 #include <utility/vector1_bool.hh>
-
 
 namespace core {
 namespace scoring {
@@ -152,8 +145,6 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_["orbitals_hpol_bb"] = orbitals_hpol_bb;
 	name2score_type_["orbitals_orbitals"] = orbitals_orbitals;
 
-
-
 	name2score_type_[ "geom_sol"    ] = geom_sol;
 	name2score_type_[ "occ_sol_fitted"    ] = occ_sol_fitted;
 	name2score_type_[ "occ_sol_fitted_onebody"    ] = occ_sol_fitted_onebody;
@@ -200,11 +191,12 @@ ScoreTypeManager::setup_score_type_names()
 	// Variant type to flag rotamers for alternative scoring with varying weight
 	name2score_type_[ "special_rot"] = special_rot;
 
-	name2score_type_[ "env" ] = env;
+	name2score_type_[ "env" ]    = env;
 	name2score_type_[ "burial" ] = burial;
-	name2score_type_[ "pair" ] = pair;
-	name2score_type_[ "cbeta" ] = cbeta;
-	name2score_type_[ "DFIRE" ] = DFIRE;
+	name2score_type_[ "abego" ]  = abego;
+	name2score_type_[ "pair" ]   = pair;
+	name2score_type_[ "cbeta" ]  = cbeta;
+	name2score_type_[ "DFIRE" ]  = DFIRE;
 
 	//bw membrane scoring terms
 	name2score_type_[ "Menv" ] = Menv;

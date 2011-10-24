@@ -15,20 +15,8 @@
 #ifndef INCLUDED_core_scoring_ScoreType_hh
 #define INCLUDED_core_scoring_ScoreType_hh
 
-// Project Headers
-// AUTO-REMOVED #include <core/types.hh>
-
-// Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
-
-// STL Headers
-// AUTO-REMOVED #include <cassert>
 #include <iostream>
-
-//Auto Headers
 #include <utility/vector1.hh>
-
-
 
 namespace core {
 namespace scoring {
@@ -280,7 +268,8 @@ enum ScoreType {
 	ss_pair,
 	rsigma,
 	sheet,
-	burial,
+	burial, // informatic burial prediction
+	abego,  // informatic torsion-bin prediction
 
 	/// Whole structure energies, centroid score
 	// secondary structure scores
