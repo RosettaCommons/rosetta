@@ -6,17 +6,15 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-
-
+///
 /// @file protocols/seeded_abinitio/SwapSegment.hh
-/// @brief 
 /// @author Eva-Maria Strauch (evas01@u.washington.edu)
 
 #ifndef INCLUDED_protocols_seeded_abinitio_SwapSegment_hh
 #define INCLUDED_protocols_seeded_abinitio_SwapSegment_hh
 
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
@@ -24,77 +22,77 @@
 #include <utility/string_util.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/Loops.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <utility/vector1.hh>
-
 
 namespace protocols {
 namespace seeded_abinitio {
 
-class SwapSegment : public protocols::moves::Mover
-{
-public:
-        typedef core::pose::Pose Pose;
+class SwapSegment : public protocols::moves::Mover {
+ public:
+  typedef core::pose::Pose Pose;
 
-        public:
-                                SwapSegment();
+  SwapSegment();
 
-                                void apply( core::pose::Pose & pose );
+  void apply( core::pose::Pose & pose );
 
-                                virtual std::string get_name() const;
+  virtual std::string get_name() const;
 
-                                void parse_my_tag( utility::tag::TagPtr const tag,
-                                                                  protocols::moves::DataMap &,
-                                                                  protocols::filters::Filters_map const &,
-                                                                  protocols::moves::Movers_map const &,
-                                                                  core::pose::Pose const & );
+  void parse_my_tag( utility::tag::TagPtr const tag,
+                     protocols::moves::DataMap &,
+                     protocols::filters::Filters_map const &,
+                     protocols::moves::Movers_map const &,
+                     core::pose::Pose const & );
 
-                                protocols::moves::MoverOP clone() const { return( protocols::moves::MoverOP( new SwapSegment( *this ) ) ); }
-                                protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new SwapSegment ); }
+  protocols::moves::MoverOP clone() const { return( protocols::moves::MoverOP( new SwapSegment( *this ) ) ); }
+  protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new SwapSegment ); }
 
-                                virtual ~SwapSegment();
+  virtual ~SwapSegment();
 
-                        private:
-							void copying_side_chains(
-									 core::pose::Pose & pose,
-									 core::pose::PoseOP & swap_segment,
-									 protocols::loops::Loops & seeds
-												);
-							void swap_segment(
-									 core::pose::Pose & pose,
-					  				 core::pose::PoseOP & swap_segment,
-					  				 protocols::loops::Loops & seeds
-												 );
-							void swap_chain(
-								core::pose::Pose & pose,
-								core::pose::PoseOP & target_chain,
-								core::Size chain_to_swap
-												 );
-	
-                        private:
-							
-							bool copy_sidechains_;
-							bool swap_segment_;
-							core::Size swap_chain_;
-							///input pdb that contains the segments that should be swapped
-							core::pose::PoseOP seeds_pdb_;
-							///check for the segments
-							bool seeds_presence_;
-							protocols::loops::Loops all_seeds_;
-							///chain that contains the seed in the seed_pdb
-							core::Size from_chain_;
-							///chain in which the segments should be swapped/side chain replaced
-							core::Size to_chain_;
-							core::scoring::ScoreFunctionOP scorefxn_;
-							///switch to determine what numbering needs to be used since 
-							///parse time is different from computing time and if the pose has changed, numbering will be off
-							bool previously_grown_;
+ private:
+  void copying_side_chains(
+      core::pose::Pose & pose,
+      core::pose::PoseOP & swap_segment,
+      protocols::loops::Loops & seeds);
 
-                        };
+  void swap_segment(
+      core::pose::Pose & pose,
+      core::pose::PoseOP & swap_segment,
+      protocols::loops::Loops & seeds);
 
+  void swap_chain(
+                core::pose::Pose & pose,
+                core::pose::PoseOP & target_chain,
+                core::Size chain_to_swap);
 
-                } //
-} // protocols
+  bool copy_sidechains_;
 
+  bool swap_segment_;
 
-#endif 
+  core::Size swap_chain_;
+
+  ///input pdb that contains the segments that should be swapped
+  core::pose::PoseOP seeds_pdb_;
+
+  ///check for the segments
+  bool seeds_presence_;
+
+  protocols::loops::Loops all_seeds_;
+
+  ///chain that contains the seed in the seed_pdb
+  core::Size from_chain_;
+
+  ///chain in which the segments should be swapped/side chain replaced
+  core::Size to_chain_;
+
+  core::scoring::ScoreFunctionOP scorefxn_;
+
+  ///switch to determine what numbering needs to be used since
+  ///parse time is different from computing time and if the pose has changed, numbering will be off
+  bool previously_grown_;
+};
+
+}
+}
+
+#endif
