@@ -780,7 +780,13 @@ void RemodelLoopMover::simultaneous_stage(
 	// report status
 	mc.score_function().show_line_headers( TR );
 	TR << std::endl;
-	mc.score_function().show_line( TR, pose );
+
+  if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+		mc.score_function().show_line( TR, repeat_pose_ );
+	}	else {
+		mc.score_function().show_line( TR, pose );
+	}
+
 	TR << std::endl;
 	mc.show_state();
 
@@ -955,7 +961,13 @@ void RemodelLoopMover::independent_stage(
 		// report status
 		mc.score_function().show_line_headers( TR );
 		TR << std::endl;
-		mc.score_function().show_line( TR, pose );
+
+		if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+			mc.score_function().show_line( TR, repeat_pose_ );
+		}	else {
+			mc.score_function().show_line( TR, pose );
+		}
+
 		TR << std::endl;
 		mc.show_state();
 
@@ -1150,7 +1162,13 @@ void RemodelLoopMover::boost_closure_stage(
 		// report status
 		mc.score_function().show_line_headers( TR );
 		TR << std::endl;
-		mc.score_function().show_line( TR, pose );
+
+		if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+			mc.score_function().show_line( TR, repeat_pose_ );
+		}	else {
+			mc.score_function().show_line( TR, pose );
+		}
+
 		TR << std::endl;
 		mc.show_state();
 
