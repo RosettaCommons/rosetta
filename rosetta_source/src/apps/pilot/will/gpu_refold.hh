@@ -163,9 +163,7 @@ void gpu_refold_test(uint const NITER) {
   for(Size i=1;i<=N;++i){cpu_crd[3*i-2]=tmp.xyz(AtomID(1,i));cpu_crd[3*i-1]=tmp.xyz(AtomID(2,i));cpu_crd[3*i-0]=tmp.xyz(AtomID(3,i));}
   core::scoring::calpha_superimpose_pose(tmp,nat);
   tmp.dump_pdb("refold_cpu.pdb");
-  
-  utility_exit_with_message("airst");
-  
+    
   vector1<xyzVector<Real> > ros_crd(3*N), idl_crd(3*N);
   double tros = 0.0;
   {
@@ -208,17 +206,31 @@ void gpu_refold_test(uint const NITER) {
   string Kname = "abinitio";
   cl.make_kernel(Kname);
   vector1<cl_mem> outs;
-  cl_mem clmtor = cl.makeROmem(sizeof(cl_float)*3u*N);
-  cl_mem clmN   = cl.makeROmem(sizeof(cl_uint)      );
-  cl.cpu2gpu( &N , clmN      , sizeof(cl_float)     );
+  cl_mem clmtor = cl.makeROmem(sizeof(cl_float)*3u*N      );
+  cl_mem clmN   = cl.makeROmem(sizeof(cl_uint)            );
   cl_mem clmout = cl.makeWOmem(sizeof(cl_float)*100u*21u*N);
-  cl.setargs(Kname,clmtor,clmN,clmout);
+  cl_mem clmaas = cl.makeROmem(sizeof(cl_uint)*N          );
+  cl_mem clmCB  = cl.makeROmem(sizeof(struct VEC)*20u     );
+  cl_mem clmCEN = cl.makeROmem(sizeof(struct VEC)*20u     );
+  cl.cpu2gpu( tor     , clmtor, sizeof(cl_float)*3u*N      );
+  cl.cpu2gpu( &N      , clmN  , sizeof(cl_float)           );
+  //          out               sizeof(cl_float)*100u*21u*N);  
+  cl.cpu2gpu( aas     , clmaas, sizeof(cl_uint)*N          );
+  cl.cpu2gpu(  CB_LCOR, clmCB , sizeof(struct VEC)*20u     );  
+  cl.cpu2gpu( CEN_LCOR, clmCEN, sizeof(struct VEC)*20u     );    
+
+  err = clSetKernelArg(cl.kernels_[Kname],0,sizeof(cl_mem), &clmtor ); if(err!=CL_SUCCESS) cout << "ERR " << 0 << " " << cl.errstr(err) << endl;
+  err = clSetKernelArg(cl.kernels_[Kname],1,sizeof(cl_mem), &clmN   ); if(err!=CL_SUCCESS) cout << "ERR " << 1 << " " << cl.errstr(err) << endl;
+  err = clSetKernelArg(cl.kernels_[Kname],2,sizeof(cl_mem), &clmout ); if(err!=CL_SUCCESS) cout << "ERR " << 2 << " " << cl.errstr(err) << endl;
+  err = clSetKernelArg(cl.kernels_[Kname],3,sizeof(cl_mem), &clmaas ); if(err!=CL_SUCCESS) cout << "ERR " << 3 << " " << cl.errstr(err) << endl;
+  err = clSetKernelArg(cl.kernels_[Kname],4,sizeof(cl_mem), &clmCB  ); if(err!=CL_SUCCESS) cout << "ERR " << 4 << " " << cl.errstr(err) << endl;
+  err = clSetKernelArg(cl.kernels_[Kname],5,sizeof(cl_mem), &clmCEN ); if(err!=CL_SUCCESS) cout << "ERR " << 5 << " " << cl.errstr(err) << endl;
+
   float *out = new float[21u*N*100u];
 
   double tcl = time_highres();
-  cl.cpu2gpu( tor , clmtor   , sizeof(cl_float)*3u*N);
   for(Size iter = 0; iter < NITER; ++iter){
-    cl.q2d(Kname,256u,100u,256u,1u);
+    cl.q2d(Kname,128u,100u,128u,1u);
   }
   cl.finish();
   tcl = time_highres() - tcl;
@@ -227,21 +239,19 @@ void gpu_refold_test(uint const NITER) {
 
   vector1<xyzVector<Real> > gpu_crd(3*N); {
     Pose tmp;
-    string seq = "";
-    for(int i = 0; i < N; ++i) seq += "A";
-    core::pose::make_pose_from_sequence(tmp,seq,*crs,false);
+    core::pose::make_pose_from_sequence(tmp,nat.sequence(),*crs,false);
     for(Size i = 1; i <= tmp.n_residue(); ++i) {
       if(tmp.residue(i).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(tmp,i);
       if(tmp.residue(i).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(tmp,i);
     }
     for(int i = 0; i < N; ++i) {
-      tmp.set_xyz(AtomID(1,i+1),Vec(out[21*i+ 0],out[21*i+ 1],out[21*i+ 2]));
-      tmp.set_xyz(AtomID(2,i+1),Vec(out[21*i+ 3],out[21*i+ 4],out[21*i+ 5]));
-      tmp.set_xyz(AtomID(3,i+1),Vec(out[21*i+ 6],out[21*i+ 7],out[21*i+ 8]));
-      tmp.set_xyz(AtomID(4,i+1),Vec(out[21*i+ 9],out[21*i+10],out[21*i+11]));
-      tmp.set_xyz(AtomID(5,i+1),Vec(out[21*i+12],out[21*i+13],out[21*i+14]));
-      tmp.set_xyz(AtomID(6,i+1),Vec(out[21*i+15],out[21*i+16],out[21*i+17]));
-      tmp.set_xyz(AtomID(7,i+1),Vec(out[21*i+18],out[21*i+19],out[21*i+20]));
+      if(tmp.residue(i+1u).has( "N" )) tmp.set_xyz(AtomID(tmp.residue(i+1u).atom_index( "N" ),i+1u),Vec(out[21*i+ 0],out[21*i+ 1],out[21*i+ 2]));
+      if(tmp.residue(i+1u).has( "CA")) tmp.set_xyz(AtomID(tmp.residue(i+1u).atom_index( "CA"),i+1u),Vec(out[21*i+ 3],out[21*i+ 4],out[21*i+ 5]));
+      if(tmp.residue(i+1u).has( "C" )) tmp.set_xyz(AtomID(tmp.residue(i+1u).atom_index( "C" ),i+1u),Vec(out[21*i+ 6],out[21*i+ 7],out[21*i+ 8]));
+      if(tmp.residue(i+1u).has( "O" )) tmp.set_xyz(AtomID(tmp.residue(i+1u).atom_index( "O" ),i+1u),Vec(out[21*i+ 9],out[21*i+10],out[21*i+11]));
+      if(tmp.residue(i+1u).has( "CB")) tmp.set_xyz(AtomID(tmp.residue(i+1u).atom_index( "CB"),i+1u),Vec(out[21*i+12],out[21*i+13],out[21*i+14]));
+      if(tmp.residue(i+1u).has("CEN")) tmp.set_xyz(AtomID(tmp.residue(i+1u).atom_index("CEN"),i+1u),Vec(out[21*i+15],out[21*i+16],out[21*i+17]));
+      if(tmp.residue(i+1u).has( "H" )) tmp.set_xyz(AtomID(tmp.residue(i+1u).atom_index( "H" ),i+1u),Vec(out[21*i+18],out[21*i+19],out[21*i+20]));
     }
     core::scoring::calpha_superimpose_pose(tmp,nat);
     tmp.dump_pdb("refold_gpu.pdb");
@@ -254,7 +264,7 @@ void gpu_refold_test(uint const NITER) {
   TR << "CA RMSD: ros/gpu " << F(11,6,numeric::model_quality::calc_rms(ros_crd,gpu_crd)) 
      <<       "   cpu/gpu " << F(11,6,numeric::model_quality::calc_rms(cpu_crd,gpu_crd)) 
      <<       "   nat/gpu " << F(11,6,numeric::model_quality::calc_rms(nat_crd,gpu_crd)) << endl;
-  TR << "RUNTIME: ros/gpu " << F(10,5,100.0*tros/tcl) << "x   cpu/gpu " << F(10,5,100.0*tpar/tcl) << "x" << endl;
+  TR << "RUNTIME: ros/gpu " << F(10,5,100.0*tros/tcl) << "x   gpu/cpu " << F(10,5,100.0*tpar/tcl) << "x" << endl;
   TR << endl;
   //TR << "tros: " << tros << "                " << t3.x() << t4.x() << std::endl;
   TR << "IDL/CPU RMS: " << numeric::model_quality::calc_rms(idl_crd,cpu_crd) << endl;

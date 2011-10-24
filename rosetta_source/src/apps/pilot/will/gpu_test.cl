@@ -208,7 +208,10 @@ void refold(
   __local float *O__xyz,
   __local float *CB_xyz,
   __local float *H__xyz,
-  __local float *CENxyz
+  __local float *CENxyz,
+  __constant uint *aas,
+  __constant struct VEC * CB_LCOR,  
+  __constant struct VEC *CEN_LCOR
 ){
   // first phase uses O,CB,H as temp storage
   // could be done more efficiently
@@ -382,6 +385,30 @@ void refold(
     }
   }
   barrier(CLK_LOCAL_MEM_FENCE);
+
+  for(uint ichunk = 0; ichunk < N; ichunk+=get_global_size(0)) {
+    uint const i = get_global_id(0u) + ichunk;
+    uint const  i3 = 3u*(i                                            );
+    uint const ip3 = 3u*(i==0 ? 0 : get_global_id(0u)-1u);
+    uint const in3 = 3u*(i==N ? N : get_global_id(0u)+1u);
+    O__xyz[i3+0u] = C__xyz[i3+0u] + 1.6410f*(C__xyz[i3+0u]-(CA_xyz[i3+0u]+1.147f*N__xyz[in3+0u])/2.147f);
+    O__xyz[i3+1u] = C__xyz[i3+1u] + 1.6410f*(C__xyz[i3+1u]-(CA_xyz[i3+1u]+1.147f*N__xyz[in3+1u])/2.147f);
+    O__xyz[i3+2u] = C__xyz[i3+2u] + 1.6410f*(C__xyz[i3+2u]-(CA_xyz[i3+2u]+1.147f*N__xyz[in3+2u])/2.147f);
+    H__xyz[i3+0u] = N__xyz[i3+0u] + 1.4915f*(N__xyz[i3+0u]-(CA_xyz[i3+0u]+1.100f*C__xyz[ip3+0u])/2.100f);
+    H__xyz[i3+1u] = N__xyz[i3+1u] + 1.4915f*(N__xyz[i3+1u]-(CA_xyz[i3+1u]+1.100f*C__xyz[ip3+1u])/2.100f);
+    H__xyz[i3+2u] = N__xyz[i3+2u] + 1.4915f*(N__xyz[i3+2u]-(CA_xyz[i3+2u]+1.100f*C__xyz[ip3+2u])/2.100f);
+    struct XFORM bbstub = stub(vec(CA_xyz[i3+0u],CA_xyz[i3+1u],CA_xyz[i3+2u]),
+                               vec(N__xyz[i3+0u],N__xyz[i3+1u],N__xyz[i3+2u]),
+                               vec(C__xyz[i3+0u],C__xyz[i3+1u],C__xyz[i3+2u]));
+    const struct VEC cb = multxv(bbstub, CB_LCOR[aas[get_global_id(0)]]);
+    const struct VEC cn = multxv(bbstub,CEN_LCOR[aas[get_global_id(0)]]);
+    CB_xyz[i3+0u] = cb.x;
+    CB_xyz[i3+1u] = cb.y;
+    CB_xyz[i3+2u] = cb.z;
+    CENxyz[i3+0u] = cn.x;
+    CENxyz[i3+1u] = cn.y;
+    CENxyz[i3+2u] = cn.z;
+  }
 }
 
 void set_dependent_atoms(
@@ -400,7 +427,10 @@ void set_dependent_atoms(
 __kernel void abinitio(
                      __global const float *tor_in,
                      __global const uint  *nres,
-                     __global       float *out
+                     __global       float *out,
+                     __constant uint *aas,
+                     __constant struct VEC * CB_LCOR,
+                     __constant struct VEC *CEN_LCOR                     
                      ){
   uint N = nres[0];
   __local float torsions[128*3];
@@ -423,7 +453,7 @@ __kernel void abinitio(
   }
   barrier(CLK_LOCAL_MEM_FENCE);
 
-  refold(torsions,N,N__xyz,CA_xyz,C__xyz,O__xyz,CB_xyz,H__xyz,CENxyz);
+  refold(torsions,N,N__xyz,CA_xyz,C__xyz,O__xyz,CB_xyz,H__xyz,CENxyz,aas,CB_LCOR,CEN_LCOR);
 //  refold(torsions,N,bb,b2);
 
   for(uint ichunk = 0; ichunk < N; ichunk+=get_global_size(0)) {
