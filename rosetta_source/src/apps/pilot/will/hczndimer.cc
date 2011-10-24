@@ -148,148 +148,180 @@ bool clashcheckhalf(Pose const & p, Vec v) {
   return true;
 }
 
-struct Hit {
-  Vec cen,axs,ori;
-  Size ir,jr,irot,jrot;
-  Hit(Vec c, Vec a, Vec o, Size irs, Size jrs, Size irt, Size jrt) : cen(c),axs(a.normalized()),ori(o.normalized()),ir(irs),jr(jrs),irot(irt),jrot(jrt) {}
+enum RTYPE {
+  CYS = 1,
+  HIS1,
+  HIS2,  
+  ASP1,
+  ASP2,
+  ASP3,    
+  NRTYPES = ASP3
 };
 
+struct Hit {
+  Vec cen,axs,ori;
+  Size ir,jr,irot,jrot,itype,jtype,itgt,jtgt;
+  Hit(Vec c, Vec a, Vec o, Size irs, Size jrs, Size irt, Size jrt, Size _itype, Size _jtype, Size _itgt, Size _jtgt) 
+  : cen(c),axs(a.normalized()),ori(o.normalized()),ir(irs),jr(jrs),irot(irt),jrot(jrt),itype(_itype),jtype(_jtype),itgt(_itgt),jtgt(_jtgt) {}
+};
+
+Pose make_single_res_pose(string rt) {
+  Pose tmp;
+  make_pose_from_sequence(tmp,rt,"fa_standard",false);
+  remove_lower_terminus_type_from_pose_residue(tmp,1);
+  remove_upper_terminus_type_from_pose_residue(tmp,1);  
+  return tmp;
+}
+
 void dock(Pose const init, std::string const & fn) {
-  Pose his,cys,ala;
-  make_pose_from_sequence(ala,"A","fa_standard",false);
-  remove_lower_terminus_type_from_pose_residue(ala,1);
-  remove_upper_terminus_type_from_pose_residue(ala,1);
-  make_pose_from_sequence(cys,"C[CYS_M]","fa_standard",false);
-  remove_lower_terminus_type_from_pose_residue(cys,1);
-  remove_upper_terminus_type_from_pose_residue(cys,1);
-  make_pose_from_sequence(his,"H[HIS_DE]","fa_standard",false);
-  remove_lower_terminus_type_from_pose_residue(his,1);
-  remove_upper_terminus_type_from_pose_residue(his,1);
-  Pose tmp(ala);
-
-  tr << "get rotamers" << endl;
-  vector1<vector1<pair<Real,Real> > > hrots(init.n_residue()),crots(init.n_residue());
-  for(Size ir = 1; ir <= init.n_residue(); ++ir){
-    hrots[ir] = makerots(init,ir,his);
-    crots[ir] = makerots(init,ir,cys);
-    //tr << ir << " " << crots[ir].size() << " " << hrots[ir].size() << endl;    
+  /*///////////////////////////////////////////////////////////////////////////////////*/ tr << "make mbcount" << endl; /*//////////////////////*/
+  vector1<Size> nbcount(init.n_residue(),0);
+  for(Size ir = 1; ir <= init.n_residue(); ++ir)
+    for(Size jr = 1; jr <= init.n_residue(); ++jr)
+      if(init.xyz(AtomID(2,ir)).distance_squared(init.xyz(AtomID(2,jr))) < 100.0) nbcount[ir]++;
+  /*////////////////////////////////////////////////////////////////////////////////////*/ tr << "make poses" << endl; /*//////////////////////*/
+  Pose ala = make_single_res_pose("A");
+  vector1<Pose> res(NRTYPES);
+  res[CYS ] = make_single_res_pose("C[CYS_M]" );
+  res[HIS1] = make_single_res_pose("H[HIS_M1]");
+  res[HIS2] = make_single_res_pose("H[HIS_M2]");  
+  res[ASP1] = make_single_res_pose("D[ASP_M1]");
+  res[ASP2] = make_single_res_pose("D[ASP_M2]");
+  res[ASP3] = make_single_res_pose("D[ASP_M3]");   
+  vector1<Size> matom(NRTYPES),batom(NRTYPES);
+  matom[CYS ] = res[CYS ].residue(1).atom_index("ZN"); batom[CYS ] = res[CYS ].residue(1).atom_index("SG" );
+  matom[HIS1] = res[HIS1].residue(1).atom_index("ZN"); batom[HIS1] = res[HIS1].residue(1).atom_index("ND1");
+  matom[HIS2] = res[HIS2].residue(1).atom_index("ZN"); batom[HIS2] = res[HIS2].residue(1).atom_index("NE2");  
+  matom[ASP1] = res[ASP1].residue(1).atom_index("ZN"); batom[ASP1] = res[ASP1].residue(1).atom_index("OD1");
+  matom[ASP2] = res[ASP2].residue(1).atom_index("ZN"); batom[ASP2] = res[ASP2].residue(1).atom_index("OD1");  
+  matom[ASP3] = res[ASP3].residue(1).atom_index("ZN"); batom[ASP3] = res[ASP3].residue(1).atom_index("CG");  
+  /*////////////////////////////////////////////////////////////////////////////////*/ tr << "make rotamers" << endl; /*//////////////////////*/
+  vector1<vector1<vector1<pair<Real,Real> > > > allrots(NRTYPES);
+  for(Size ir = 1; ir <= init.n_residue(); ++ir) {
+    allrots[CYS ].push_back(makerots(init,ir,res[CYS ]));
+    allrots[HIS1].push_back(makerots(init,ir,res[HIS1]));
+    allrots[HIS2] = allrots[HIS1];
+    allrots[ASP1].push_back(makerots(init,ir,res[ASP1]));
+    allrots[ASP2] = allrots[ASP1];
+    allrots[ASP3] = allrots[ASP1];    
   }
-  Size ihg = cys.residue(1).atom_index("ZN");
-  Size ihd = his.residue(1).atom_index("ZN1");
-  Size ihe = his.residue(1).atom_index("ZN2");
-  Pose p(init);
-  vector1<Size> nbcount(p.n_residue(),0);
-  for(Size ir = 1; ir <= p.n_residue(); ++ir)
-    for(Size jr = 1; jr <= p.n_residue(); ++jr)
-      if(p.xyz(AtomID(2,ir)).distance_squared(p.xyz(AtomID(2,jr))) < 100.0) nbcount[ir]++;
-  for(Size ir = 1; ir <= p.n_residue(); ++ir) p.replace_residue(ir,ala.residue(1),true);
+  /*////////////////////////////////////////////////////////////////////////////////*/ tr << "find pairs" << endl; /*//////////////////////*/
 
-  vector1<Hit> hits;
-  for(Size ir = 1; ir <= p.n_residue(); ++ir) {
-    if(p.residue(ir).name3()=="GLY"||p.residue(ir).name3()=="PRO") continue;
-    if(nbcount[ir] < 10) continue;
-    core::conformation::Residue itmp(p.residue(ir));
-    p.replace_residue(ir,his.residue(1),true);
-    for(Size irot = 1; irot <= hrots[ir].size(); ++irot) {
-      p.set_chi(1,ir,hrots[ir][irot].first);
-      p.set_chi(2,ir,hrots[ir][irot].second);
-      Vec const xd = p.xyz(AtomID(ihd,ir));
-      Vec const xe = p.xyz(AtomID(ihe,ir));      
-      for(Size jr = 1; jr <= p.n_residue(); ++jr) {
-        if(ir==jr) continue;
-        if(nbcount[jr] < 10) continue;
-        if(p.residue(jr).name3()=="GLY"||p.residue(jr).name3()=="PRO") continue;
-        if(p.xyz(AtomID(2,jr)).distance_squared(xd) > 25.0) continue;
-        core::conformation::Residue jtmp(p.residue(jr));
-        p.replace_residue(jr,cys.residue(1),true);
-        for(Size jrot = 1; jrot <= crots[jr].size(); ++jrot) {
-          p.set_chi(1,jr,crots[jr][jrot].first);
-          p.set_chi(2,jr,crots[jr][jrot].second);
-          Vec const xc = p.xyz(AtomID(ihg,jr));
-          bool clash = false;
-          if( xc.distance_squared(xd) < 0.25 || xc.distance_squared(xe) < 0.25) {
-            for(Size ia = 5; ia <= p.residue(ir).nheavyatoms(); ++ia) {
-              if(ia==ihd||ia==ihe) continue;
-              for(Size ja = 5; ja <= p.residue(jr).nheavyatoms(); ++ja) {
-                if(ja==ihg) continue;
-                if( p.xyz(AtomID(ia,ir)).distance_squared(p.xyz(AtomID(ja,jr))) < 9.0 ) clash=true;
-              }
-            }
-            if(clash) continue;
-            bool dhit = p.xyz(AtomID(ihg,jr)).distance_squared(xd) < 0.25;
-            Vec xh = dhit ? xd : xe;
-            Vec m = (xc+xh)/2.0;
-            Vec nh = p.residue(ir).xyz(dhit?"ND1":"NE2");
-            Vec sg = p.residue(jr).xyz("SG");
-            if( fabs(109-angle_degrees(nh,m,sg)) > 10.0 ) continue;
-            Vec a = (((m-nh).normalized()+(m-sg).normalized())/2.0).normalized();
-            Vec L3 = rotation_matrix_degrees(a,90.0)*((2*m-sg)-m)+m;
-            Vec L4 = rotation_matrix_degrees(a,90.0)*((2*m-nh)-m)+m;
-            if(!clashcheck(p,L3)) continue;
-            if(!clashcheck(p,L4)) continue;            
-            tmp.replace_residue(1,p.residue(ir),false);
-            tmp.set_xyz(AtomID(1,1),L3);
-            tmp.dump_pdb("HIT_"+lzs(ir,3)+"_"+lzs(jr,3)+"_"+lzs(irot,3)+"_"+lzs(jrot,3)+"_H.pdb");
-            tmp.replace_residue(1,p.residue(jr),false);
-            tmp.set_xyz(AtomID(1,1),L4);
-            tmp.dump_pdb("HIT_"+lzs(ir,3)+"_"+lzs(jr,3)+"_"+lzs(irot,3)+"_"+lzs(jrot,3)+"_C.pdb");
-            tr << "HALFHIT "+lzs(ir,3)+"_"+lzs(jr,3)+"_"+lzs(irot,3)+"_"+lzs(jrot,3) << endl;
-            hits.push_back(Hit(m,a,a.cross(L3-m),ir,jr,irot,jrot));
-          }
-        }
-        p.replace_residue(jr,jtmp,false);
-      }
-    }
-    p.replace_residue(ir,itmp,false);
-  }
+  // Pose p(init);
+  // for(Size ir = 1; ir <= p.n_residue(); ++ir) p.replace_residue(ir,ala.residue(1),true);
+  // // search pairs
+  // vector1<Hit> hits;
+  // for(Size ir = 1; ir <= p.n_residue(); ++ir) {
+  //   if(p.residue(ir).name3()=="GLY"||p.residue(ir).name3()=="PRO") continue;
+  //   if(nbcount[ir] < 7) continue;
+  //   core::conformation::Residue itmp(p.residue(ir)); // remember replaced res
+  //   for(Size itype = 1; itype <= NRTYPES; ++itype) {
+  //     p.replace_residue(ir,res[itype].residue(1),true);
+  //     vector1<pair<Real,Real> > const & irots( allrots[itype][ir] );
+  //     for(Size irot = 1; irot <= irots.size(); ++irot) {
+  //       p.set_chi(1,ir,irots[irot].first);
+  //       p.set_chi(2,ir,irots[irot].second);
+  //       for(Size itgt = 1; itgt <= matom[itype].size(); ++itgt) {
+  //         Vec const ix = p.xyz(AtomID(matom[itype][itgt],ir));
+  //         // tgt 2
+  //         for(Size jr = 1; jr <= p.n_residue(); ++jr) {
+  //           if(p.residue(jr).name3()=="GLY"||p.residue(jr).name3()=="PRO") continue;
+  //           if(nbcount[jr] < 7) continue;
+  //           core::conformation::Residue jtmp(p.residue(jr)); // remember replaced res
+  //           for(Size jtype = 1; jtype <= NRTYPES; ++jtype) {
+  //             p.replace_residue(jr,res[jtype].residue(1),true);
+  //             vector1<pair<Real,Real> > const & jrots( allrots[jtype][jr] );
+  //             for(Size jrot = 1; jrot <= jrots.size(); ++jrot) {
+  //               p.set_chi(1,jr,jrots[jrot].first);
+  //               p.set_chi(2,jr,jrots[jrot].second);
+  //               for(Size jtgt = 1; jtgt <= matom[jtype].size(); ++jtgt) {
+  //                 Vec const jx = p.xyz(AtomID(matom[jtype][itgt],jr));
+  //                 if( ix.distance_squared(jx) > 0.5*0.5 ) continue; // dist check
+  //                 Vec const m = (ix+jx)/2.0;
+  //                 Vec const ib = p.xyz(AtomID(batom[itype][itgt],ir));
+  //                 Vec const jb = p.xyz(AtomID(batom[jtype][itgt],jr));
+  //                 if( fabs(109.0-angle_degrees(ib,m,jb)) > 20.0 ) continue; // ang check
+  //                 // bool clash = false;
+  //                 // for(Size ia = 5; ia <= p.residue(ir).nheavyatoms(); ++ia) {
+  //                 //   if(p.residue(ir).is_virtual(ia)) continue;
+  //                 //   for(Size ja = 5; ja <= p.residue(jr).nheavyatoms(); ++ja) {
+  //                 //     if(p.residue(jr).is_virtual(ja)) continue;      
+  //                 //     if( p.xyz(AtomID(ia,ir)).distance_squared(p.xyz(AtomID(ja,jr))) < 9.0 ) clash=true;
+  //                 //   }
+  //                 // }
+  //                 // if(clash) continue; // clash check
+  //                 Vec a = (((m-ib).normalized()+(m-jb).normalized())/2.0).normalized();
+  //                 Vec L3 = rotation_matrix_degrees(a,90.0)*((2*m-ib)-m)+m;
+  //                 Vec L4 = rotation_matrix_degrees(a,90.0)*((2*m-jb)-m)+m;
+  //                 if(!clashcheck(p,L3)) continue;
+  //                 if(!clashcheck(p,L4)) continue;
+  //                 Pose tmp(ala);
+  //                 tmp.replace_residue(1,p.residue(ir),false);
+  //                 tmp.set_xyz(AtomID(1,1),L3);
+  //                 tmp.dump_pdb("HIT_"+lzs(ir,3)+"_"+lzs(jr,3)+"_"+lzs(irot,3)+"_"+lzs(jrot,3)+"_H.pdb");
+  //                 tmp.replace_residue(1,p.residue(jr),false);
+  //                 tmp.set_xyz(AtomID(1,1),L4);
+  //                 tmp.dump_pdb("HIT_"+lzs(ir,3)+"_"+lzs(jr,3)+"_"+lzs(irot,3)+"_"+lzs(jrot,3)+"_C.pdb");
+  //                 tr << "HALFHIT "+lzs(ir,3)+"_"+lzs(jr,3)+"_"+lzs(irot,3)+"_"+lzs(jrot,3) << endl;
+  //                 hits.push_back(Hit(m,a,a.cross(L3-m),ir,jr,irot,jrot,itype,jtype,itgt,jtgt));
+  //               } // jtgt
+  //             } // jrot
+  //           } // jtype
+  //           p.replace_residue(jr,jtmp,false);
+  //         } // jr
+  //       } // itgt
+  //     } // irot
+  //   } // itype
+  //   p.replace_residue(ir,itmp,false);
+  // } // ir
 
-  Pose & pala(p);
-  for(Size ih = 1; ih <= hits.size(); ++ih) {
-    Hit & hi(hits[ih]);
-    for(Size jh = ih+1; jh <= hits.size(); ++jh) {
-      Hit & hj(hits[jh]);
-      if(hi.ir==hj.ir||hi.jr==hj.ir||hi.ir==hj.jr||hi.jr==hj.jr) continue;
-      if(hi.cen.distance_squared(hj.cen) < 64.0) continue;
-      Vec c2cen = (hi.cen+hj.cen) / 2.0;
-      if(!clashcheckhalf(pala,c2cen)) continue;
-      Vec c2ori = (hi.cen-hj.cen).normalized();
-      for(Size iaxs = 0; iaxs < 360; iaxs++) {
-        Vec c2axs = rotation_matrix_degrees(c2ori,(Real)iaxs)*c2ori.cross(Vec(1,0,0));
-        Mat c2rot = rotation_matrix_degrees(c2axs,180.0);
-        // axes must be opposite ~180° 
-        if(hi.axs.dot(c2rot*hj.axs) > -0.99384807753012208) continue;// cos(10°)
-        // oris must be 90° rotated
-        if(fabs(hi.ori.dot(c2rot*hj.ori)) > 0.17364817766693041) continue; //cos(80°)
-        bool clash = false;
-        // for(Size ir = 1; ir <= p.n_residue();++ir) {
-        //   for(Size ia = 2; ia <= 2; ++ia) {
-        //     if(!clashcheckhalf(pala,c2rot*(pala.xyz(AtomID(ia,ir))-c2cen)+c2cen)) clash=true;
-        //   } if(clash) break;
-        // }
-        // if(clash) continue;
-        tr << "FULLHIT!!!!!!" << endl;
-        Pose p(pala);
-        p.replace_residue(hi.ir,his.residue(1),true);
-        p.replace_residue(hi.jr,cys.residue(1),true);
-        p.replace_residue(hj.ir,his.residue(1),true);
-        p.replace_residue(hj.jr,cys.residue(1),true);
-        p.set_chi(1,hi.ir,hrots[hi.ir][hi.irot].first );
-        p.set_chi(2,hi.ir,hrots[hi.ir][hi.irot].second);
-        p.set_chi(1,hi.jr,crots[hi.jr][hi.jrot].first );
-        p.set_chi(2,hi.jr,crots[hi.jr][hi.jrot].second);      
-        p.set_chi(1,hj.ir,hrots[hj.ir][hj.irot].first );
-        p.set_chi(2,hj.ir,hrots[hj.ir][hj.irot].second);      
-        p.set_chi(1,hj.jr,crots[hj.jr][hj.jrot].first );
-        p.set_chi(2,hj.jr,crots[hj.jr][hj.jrot].second);
-        p.set_xyz(AtomID(ihg,hi.jr),hi.cen);
-        p.set_xyz(AtomID(ihg,hj.jr),hj.cen);
-        p.dump_pdb(utility::file_basename(fn)+"_"+lzs(ih,3)+lzs(jh,3)+lzs(iaxs,3)+"A.pdb");
-        rot_pose(p,c2rot,c2cen);
-        p.dump_pdb(utility::file_basename(fn)+"_"+lzs(ih,3)+lzs(jh,3)+lzs(iaxs,3)+"B.pdb");    
-        //utility_exit_with_message("aosnrt");  
-      }
-    }
-  }
+  // Pose & pala(p);
+  // for(Size ih = 1; ih <= hits.size(); ++ih) {
+  //   Hit & hi(hits[ih]);
+  //   for(Size jh = ih+1; jh <= hits.size(); ++jh) {
+  //     Hit & hj(hits[jh]);
+  //     if(hi.ir==hj.ir||hi.jr==hj.ir||hi.ir==hj.jr||hi.jr==hj.jr) continue;
+  //     if(hi.cen.distance_squared(hj.cen) < 100.0) continue;
+  //     Vec c2cen = (hi.cen+hj.cen) / 2.0;
+  //     if(!clashcheckhalf(pala,c2cen)) continue;
+  //     Vec c2ori = (hi.cen-hj.cen).normalized();
+  //     for(Size iaxs = 0; iaxs < 360; iaxs++) {
+  //       Vec c2axs = rotation_matrix_degrees(c2ori,(Real)iaxs)*c2ori.cross(Vec(1,0,0));
+  //       Mat c2rot = rotation_matrix_degrees(c2axs,180.0);
+  //       // axes must be opposite ~180° 
+  //       if(hi.axs.dot(c2rot*hj.axs) > -0.984807753012208) continue;// cos(10°)
+  //       // oris must be 90° rotated
+  //       if(fabs(hi.ori.dot(c2rot*hj.ori)) > 0.17364817766693041) continue; //cos(80°)
+  //       bool clash = false;
+  //       for(Size ir = 1; ir <= p.n_residue();++ir) {
+  //         for(Size ia = 2; ia <= 2; ++ia) {
+  //           if(!clashcheck(pala,c2rot*(pala.xyz(AtomID(ia,ir))-c2cen)+c2cen)) clash=true;
+  //         } if(clash) break;
+  //       }
+  //       if(clash) continue;
+  //       tr << "FULLHIT!!!!!!" << endl;
+  //       Pose p(pala);
+  //       p.replace_residue(hi.ir,his.residue(1),true);
+  //       p.replace_residue(hi.jr,cys.residue(1),true);
+  //       p.replace_residue(hj.ir,his.residue(1),true);
+  //       p.replace_residue(hj.jr,cys.residue(1),true);
+  //       p.set_chi(1,hi.ir,hrots[hi.ir][hi.irot].first );
+  //       p.set_chi(2,hi.ir,hrots[hi.ir][hi.irot].second);
+  //       p.set_chi(1,hi.jr,crots[hi.jr][hi.jrot].first );
+  //       p.set_chi(2,hi.jr,crots[hi.jr][hi.jrot].second);      
+  //       p.set_chi(1,hj.ir,hrots[hj.ir][hj.irot].first );
+  //       p.set_chi(2,hj.ir,hrots[hj.ir][hj.irot].second);      
+  //       p.set_chi(1,hj.jr,crots[hj.jr][hj.jrot].first );
+  //       p.set_chi(2,hj.jr,crots[hj.jr][hj.jrot].second);
+  //       p.set_xyz(AtomID(ihg,hi.jr),hi.cen);
+  //       p.set_xyz(AtomID(ihg,hj.jr),hj.cen);
+  //       p.dump_pdb(utility::file_basename(fn)+"_"+lzs(ih,3)+lzs(jh,3)+lzs(iaxs,3)+"A.pdb");
+  //       rot_pose(p,c2rot,c2cen);
+  //       p.dump_pdb(utility::file_basename(fn)+"_"+lzs(ih,3)+lzs(jh,3)+lzs(iaxs,3)+"B.pdb");    
+  //       //utility_exit_with_message("aosnrt");  
+  //     }
+  //   }
+  // }
 
 }
 
@@ -303,6 +335,8 @@ int main(int argc, char *argv[]) {
     Pose pnat;
     tr << "checking " << fn << std::endl;
     core::import_pose::pose_from_pdb(pnat,fn);
+    if(pnat.n_residue() < 20) continue;
+    if(pnat.n_residue() > 250) continue;    
     core::scoring::dssp::Dssp dssp(pnat);
     dssp.insert_ss_into_pose(pnat);
     Size cyscnt=0, nhelix=0;

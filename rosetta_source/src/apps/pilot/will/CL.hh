@@ -77,8 +77,8 @@ struct CL {
     //out_ << kernelsource << std::endl;
     program_ = clCreateProgramWithSource(context_, 1, (const char **) &kernelsource, NULL, &err_);
     if(!program_) handle_error("Error: Failed to create compute program!");
-    //err_ = clBuildProgram(program_, 0, NULL, "-Isrc/apps/pilot/will -cl-single-precision-constant -cl-mad-enable -cl-no-signed-zeros -cl-fast-relaxed-math -w", NULL, NULL);
-    err_ = clBuildProgram(program_, 0, NULL, "-Isrc/apps/pilot/will -cl-single-precision-constant -w", NULL, NULL);
+    err_ = clBuildProgram(program_, 0, NULL, "-I src/apps/pilot/will -cl-single-precision-constant -cl-mad-enable -cl-no-signed-zeros -cl-fast-relaxed-math -w", NULL, NULL);
+    //err_ = clBuildProgram(program_, 0, NULL, "-Isrc/apps/pilot/will -cl-single-precision-constant -w", NULL, NULL);
     if(err_ != CL_SUCCESS) {
       size_t len_status, len_options, len_log;
       char buffer_options[81920];
