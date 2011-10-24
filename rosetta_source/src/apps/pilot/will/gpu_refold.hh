@@ -35,60 +35,60 @@ void gpu_refold_test(uint const NITER) {
 
   int err;
   struct VEC *CB_LCOR = new VEC[20];
-  CB_LCOR[ 0u] = vec(0.5333336334f,-0.7751260775f,1.195999688f); // A
-  CB_LCOR[ 1u] = vec(0.5385020267f,-0.571040073f,1.312000289f); // C
-  CB_LCOR[ 2u] = vec(0.5256167631f,-0.7793338556f,1.207998884f); // D
-  CB_LCOR[ 3u] = vec(0.525755529f,-0.7785836494f,1.208000359f); // E
-  CB_LCOR[ 4u] = vec(0.5262055372f,-0.7772538616f,1.207999598f); // F
+  CB_LCOR[ 0u] = vec(0.5298019858f,-0.7775442472f,-1.195999688f); // A
+  CB_LCOR[ 1u] = vec(0.3376587247f,-0.7085603598f,-1.312000289f); // C
+  CB_LCOR[ 2u] = vec(0.5365158091f,-0.7718711205f,-1.207998884f); // D
+  CB_LCOR[ 3u] = vec(0.5357659908f,-0.7717293427f,-1.208000359f); // E
+  CB_LCOR[ 4u] = vec(0.5343635718f,-0.7716679376f,-1.207999598f); // F
   CB_LCOR[ 5u] = vec(0.0f,0.0f,0.0f); // G
-  CB_LCOR[ 6u] = vec(0.5234921973f,-0.7836302636f,1.207997917f); // H
-  CB_LCOR[ 7u] = vec(0.5041208954f,-0.8015844639f,1.213999277f); // I
-  CB_LCOR[ 8u] = vec(0.5258157482f,-0.7785053493f,1.206997076f); // K
-  CB_LCOR[ 9u] = vec(0.5336851968f,-0.7754772515f,1.210999657f); // L
-  CB_LCOR[10u] = vec(0.5284624554f,-0.7709555162f,1.208000858f); // M
-  CB_LCOR[11u] = vec(0.5246473761f,-0.7987818032f,1.178999268f); // N
-  CB_LCOR[12u] = vec(0.5787360676f,-0.6275511491f,1.279085868f); // P
-  CB_LCOR[13u] = vec(0.5166017522f,-0.7752828156f,1.214998881f); // Q
-  CB_LCOR[14u] = vec(0.5569299709f,-0.8316861918f,1.145999356f); // R
-  CB_LCOR[15u] = vec(0.5281901647f,-0.7647611169f,1.198002116f); // S
-  CB_LCOR[16u] = vec(0.5029925471f,-0.801331108f,1.215000707f); // T
-  CB_LCOR[17u] = vec(0.5035780983f,-0.801583241f,1.2150076f); // V
-  CB_LCOR[18u] = vec(0.5244585036f,-0.7753769855f,1.209996785f); // W
-  CB_LCOR[19u] = vec(0.5248130885f,-0.7777290247f,1.209000815f); // Y
+  CB_LCOR[ 6u] = vec(0.5412897477f,-0.7714440224f,-1.207997917f); // H
+  CB_LCOR[ 7u] = vec(0.565034011f,-0.7598763691f,-1.213999277f); // I
+  CB_LCOR[ 8u] = vec(0.5356713209f,-0.7717570965f,-1.206997076f); // K
+  CB_LCOR[ 9u] = vec(0.5300015401f,-0.7779995015f,-1.210999657f); // L
+  CB_LCOR[10u] = vec(0.5276755193f,-0.7714943428f,-1.208000858f); // M
+  CB_LCOR[11u] = vec(0.5549986657f,-0.7779998198f,-1.178999268f); // N
+  CB_LCOR[12u] = vec(0.3757952229f,-0.7665075545f,-1.279085868f); // P
+  CB_LCOR[13u] = vec(0.5359990809f,-0.762001181f,-1.214998881f); // Q
+  CB_LCOR[14u] = vec(0.5740011989f,-0.8199972791f,-1.145999356f); // R
+  CB_LCOR[15u] = vec(0.5219984905f,-0.7690006449f,-1.198002116f); // S
+  CB_LCOR[16u] = vec(0.5652062499f,-0.7587324576f,-1.215000707f); // T
+  CB_LCOR[17u] = vec(0.5652287619f,-0.7593701601f,-1.2150076f); // V
+  CB_LCOR[18u] = vec(0.5332451765f,-0.7693606264f,-1.209996785f); // W
+  CB_LCOR[19u] = vec(0.5353099059f,-0.7705417045f,-1.209000815f); // Y
   struct VEC *CEN_LCOR = new VEC[20];
-  CEN_LCOR[ 0u] = vec(0.5324949443f,-0.7748415953f,1.195342832f); // A
-  CEN_LCOR[ 1u] = vec(1.265400934f,-1.276711201f,1.47384148f); // C
-  CEN_LCOR[ 2u] = vec(1.256405064f,-1.444627167f,1.454677027f); // D
-  CEN_LCOR[ 3u] = vec(1.624075779f,-1.893351417f,1.882064572f); // E
-  CEN_LCOR[ 4u] = vec(1.675429398f,-1.824215788f,1.539187475f); // F
-  CEN_LCOR[ 5u] = vec(-0.000378412968f,-0.0001466455924f,-0.0003408792981f); // G
-  CEN_LCOR[ 6u] = vec(1.581532088f,-1.68863299f,1.511134449f); // H
-  CEN_LCOR[ 7u] = vec(1.314107304f,-1.420581615f,1.600644937f); // I
-  CEN_LCOR[ 8u] = vec(1.847861549f,-2.235910231f,1.984348918f); // K
-  CEN_LCOR[ 9u] = vec(1.616501126f,-1.860619718f,1.363157218f); // L
-  CEN_LCOR[10u] = vec(1.618967482f,-2.066666501f,1.666680953f); // M
-  CEN_LCOR[11u] = vec(1.322834211f,-1.446019727f,1.391972756f); // N
-  CEN_LCOR[12u] = vec(1.280126925f,0.9946088254f,1.528740065f); // P
-  CEN_LCOR[13u] = vec(1.690375247f,-1.948444963f,1.756352754f); // Q
-  CEN_LCOR[14u] = vec(1.986485326f,-2.417875528f,2.408043756f); // R
-  CEN_LCOR[15u] = vec(0.6995892515f,-0.8583423264f,1.705672815f); // S
-  CEN_LCOR[16u] = vec(0.9334680122f,-1.029926495f,1.537327961f); // T
-  CEN_LCOR[17u] = vec(0.9210670044f,-1.31522194f,1.406024671f); // V
-  CEN_LCOR[18u] = vec(1.497323704f,-2.166713044f,1.648385057f); // W
-  CEN_LCOR[19u] = vec(1.752540328f,-1.956289875f,1.624625239f); // Y
+  CEN_LCOR[ 0u] = vec(0.5298400468f,-0.7766594416f,-1.195342832f); // A
+  CEN_LCOR[ 1u] = vec(0.7327082569f,-1.641453509f,-1.47384148f); // C
+  CEN_LCOR[ 2u] = vec(0.8925138823f,-1.693788743f,-1.454677027f); // D
+  CEN_LCOR[ 3u] = vec(1.177911f,-2.198846835f,-1.882064572f); // E
+  CEN_LCOR[ 4u] = vec(1.094883789f,-2.221723745f,-1.539187475f); // F
+  CEN_LCOR[ 5u] = vec(0.0002735646292f,0.0002997727436f,0.0003408792981f); // G
+  CEN_LCOR[ 6u] = vec(1.002432522f,-2.085150872f,-1.511134449f); // H
+  CEN_LCOR[ 7u] = vec(0.8492291086f,-1.738890466f,-1.600644937f); // I
+  CEN_LCOR[ 8u] = vec(1.416360674f,-2.531365108f,-1.984348918f); // K
+  CEN_LCOR[ 9u] = vec(1.150131621f,-2.179949284f,-1.363157218f); // L
+  CEN_LCOR[10u] = vec(1.341344973f,-2.256758693f,-1.666680953f); // M
+  CEN_LCOR[11u] = vec(0.8697909727f,-1.756225232f,-1.391972756f); // N
+  CEN_LCOR[12u] = vec(-1.390223339f,-0.8338169625f,-1.528740065f); // P
+  CEN_LCOR[13u] = vec(1.205301427f,-2.280582101f,-1.756352754f); // Q
+  CEN_LCOR[14u] = vec(1.535880763f,-2.726410883f,-2.408043756f); // R
+  CEN_LCOR[15u] = vec(0.5472643686f,-0.9626413564f,-1.705672815f); // S
+  CEN_LCOR[16u] = vec(0.6226610786f,-1.242740639f,-1.537327961f); // T
+  CEN_LCOR[17u] = vec(0.8931319791f,-1.334349446f,-1.406024671f); // V
+  CEN_LCOR[18u] = vec(1.478608645f,-2.17952751f,-1.648385057f); // W
+  CEN_LCOR[19u] = vec(1.190133765f,-2.341377649f,-1.624625239f); // Y
   // {
   //   Vec dummy(0,0,0);
   //   Pose tmp;
   //   cout << std::setprecision(10);
   //   for(Size i = 1; i <= 20; ++i) {
   //     make_pose_from_sequence(tmp,"A"+str(core::chemical::oneletter_code_from_aa((core::chemical::AA)i))+"A",*crs,false);
-  //     core::kinematics::Stub s(tmp.xyz(AtomID(2,2)),tmp.xyz(AtomID(3,2)),tmp.xyz(AtomID(1,2)));
+  //     core::kinematics::Stub s(tmp.xyz(AtomID(2,2)),tmp.xyz(AtomID(1,2)),tmp.xyz(AtomID(3,2)));
   //     Vec v = tmp.residue(2).has("CB") ? s.global2local(tmp.residue(2).xyz("CB")) : dummy;
   //     cout << " CB_LCOR["<<lzs(i-1,2)<<"u] = vec(" << v.x() << "f," << v.y() << "f," << v.z() << "f); // " << core::chemical::oneletter_code_from_aa((core::chemical::AA)i) << endl;
   //   }
   //   for(Size i = 1; i <= 20; ++i) {
   //     make_pose_from_sequence(tmp,"A"+str(core::chemical::oneletter_code_from_aa((core::chemical::AA)i))+"A",*crs,false);
-  //     core::kinematics::Stub s(tmp.xyz(AtomID(2,2)),tmp.xyz(AtomID(3,2)),tmp.xyz(AtomID(1,2)));
+  //     core::kinematics::Stub s(tmp.xyz(AtomID(2,2)),tmp.xyz(AtomID(1,2)),tmp.xyz(AtomID(3,2)));
   //     Vec v = tmp.residue(2).has("CEN") ? s.global2local(tmp.residue(2).xyz("CEN")) : dummy;
   //     cout << " CEN_LCOR["<<lzs(i-1,2)<<"u] = vec(" << v.x() << "f," << v.y() << "f," << v.z() << "f); // " << core::chemical::oneletter_code_from_aa((core::chemical::AA)i) << endl;
   //   }
@@ -108,7 +108,7 @@ void gpu_refold_test(uint const NITER) {
   p.dump_pdb("refold_natv.pdb");
   Pose nat(p);
   uint * aas = new uint[N];
-  for(Size i = 1; i <= N; ++i) aas[i-1u] = nat.residue(i).aa();
+  for(Size i = 1; i <= N; ++i) aas[i-1u] = (uint)nat.residue(i).aa()-1;
 
   float *tor = new float[3*N];
   float *degrees_tor = new float[3*N];
@@ -139,21 +139,19 @@ void gpu_refold_test(uint const NITER) {
   }
 
   Pose tmp;
-  string seq = "";
-  for(int i = 0; i < N; ++i) seq += "A";
-  core::pose::make_pose_from_sequence(tmp,seq,*crs,false);
+  core::pose::make_pose_from_sequence(tmp,nat.sequence(),*crs,false);
   for(Size i = 1; i <= tmp.n_residue(); ++i) {
     if(tmp.residue(i).is_lower_terminus()) remove_lower_terminus_type_from_pose_residue(tmp,i);
     if(tmp.residue(i).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(tmp,i);
   }
   for(uint i = 0u; i < N; ++i) {
-    tmp.set_xyz(AtomID(1u,i+1u),Vec(N__xyz[3u*i+0u],N__xyz[3u*i+1u],N__xyz[3u*i+2u]));
-    tmp.set_xyz(AtomID(2u,i+1u),Vec(CA_xyz[3u*i+0u],CA_xyz[3u*i+1u],CA_xyz[3u*i+2u]));
-    tmp.set_xyz(AtomID(3u,i+1u),Vec(C__xyz[3u*i+0u],C__xyz[3u*i+1u],C__xyz[3u*i+2u]));
-    tmp.set_xyz(AtomID(4u,i+1u),Vec(O__xyz[3u*i+0u],O__xyz[3u*i+1u],O__xyz[3u*i+2u]));
-    tmp.set_xyz(AtomID(5u,i+1u),Vec(CB_xyz[3u*i+0u],CB_xyz[3u*i+1u],CB_xyz[3u*i+2u]));
-    tmp.set_xyz(AtomID(6u,i+1u),Vec(CENxyz[3u*i+0u],CENxyz[3u*i+1u],CENxyz[3u*i+2u]));
-    tmp.set_xyz(AtomID(7u,i+1u),Vec(H__xyz[3u*i+0u],H__xyz[3u*i+1u],H__xyz[3u*i+2u]));
+    if(tmp.residue(i+1u).has( "N" )) tmp.set_xyz(AtomID(tmp.residue(i+1u).atom_index( "N" ),i+1u),Vec(N__xyz[3u*i+0u],N__xyz[3u*i+1u],N__xyz[3u*i+2u]));
+    if(tmp.residue(i+1u).has( "CA")) tmp.set_xyz(AtomID(tmp.residue(i+1u).atom_index( "CA"),i+1u),Vec(CA_xyz[3u*i+0u],CA_xyz[3u*i+1u],CA_xyz[3u*i+2u]));
+    if(tmp.residue(i+1u).has( "C" )) tmp.set_xyz(AtomID(tmp.residue(i+1u).atom_index( "C" ),i+1u),Vec(C__xyz[3u*i+0u],C__xyz[3u*i+1u],C__xyz[3u*i+2u]));
+    if(tmp.residue(i+1u).has( "O" )) tmp.set_xyz(AtomID(tmp.residue(i+1u).atom_index( "O" ),i+1u),Vec(O__xyz[3u*i+0u],O__xyz[3u*i+1u],O__xyz[3u*i+2u]));
+    if(tmp.residue(i+1u).has( "CB")) tmp.set_xyz(AtomID(tmp.residue(i+1u).atom_index( "CB"),i+1u),Vec(CB_xyz[3u*i+0u],CB_xyz[3u*i+1u],CB_xyz[3u*i+2u]));
+    if(tmp.residue(i+1u).has("CEN")) tmp.set_xyz(AtomID(tmp.residue(i+1u).atom_index("CEN"),i+1u),Vec(CENxyz[3u*i+0u],CENxyz[3u*i+1u],CENxyz[3u*i+2u]));
+    if(tmp.residue(i+1u).has( "H" )) tmp.set_xyz(AtomID(tmp.residue(i+1u).atom_index( "H" ),i+1u),Vec(H__xyz[3u*i+0u],H__xyz[3u*i+1u],H__xyz[3u*i+2u]));
   }
   cout << "GEOM H " << tmp.xyz(AtomID(1,2)).distance(tmp.xyz(AtomID(7,2))) << " " 
        << angle_degrees(tmp.xyz(AtomID(3,1)),tmp.xyz(AtomID(1,2)),tmp.xyz(AtomID(7,2))) << " "
