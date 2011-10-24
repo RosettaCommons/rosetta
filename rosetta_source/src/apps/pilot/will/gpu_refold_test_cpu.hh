@@ -400,7 +400,9 @@ void refold_second(
 void refold_third(
                   /*__global*/ const float *tor,
                   /*__global*/ const uint  *nres,
-                  float *N__xyz, float *CA_xyz, float *C__xyz, float *O__xyz, float *CB_xyz, float *H__xyz, float *CENxyz
+                  float *N__xyz, float *CA_xyz, float *C__xyz, float *O__xyz, float *CB_xyz, float *H__xyz, float *CENxyz,
+                  const struct VEC *CB_LCOR, const struct VEC *CEN_LCOR,
+                  const uint * aas
 ){
   uint const  i3 = 3u*(get_global_id(0u)                                              );
   uint const ip3 = 3u*(get_global_id(0u) ==      0u  ?      0u  : get_global_id(0u)-1u);
@@ -408,15 +410,20 @@ void refold_third(
   O__xyz[i3+0u] = C__xyz[i3+0u] + 1.641f*(C__xyz[i3+0u]-(CA_xyz[i3+0u]+1.147f*N__xyz[in3+0u])/2.147f);
   O__xyz[i3+1u] = C__xyz[i3+1u] + 1.641f*(C__xyz[i3+1u]-(CA_xyz[i3+1u]+1.147f*N__xyz[in3+1u])/2.147f);
   O__xyz[i3+2u] = C__xyz[i3+2u] + 1.641f*(C__xyz[i3+2u]-(CA_xyz[i3+2u]+1.147f*N__xyz[in3+2u])/2.147f);
-  CB_xyz[i3+0u] = CA_xyz[i3+0u] + 1.387f*(CA_xyz[i3+0u]-(C__xyz[i3+0u]+N__xyz[ i3+0u])/2.0f);
-  CB_xyz[i3+1u] = CA_xyz[i3+1u] + 1.387f*(CA_xyz[i3+1u]-(C__xyz[i3+1u]+N__xyz[ i3+1u])/2.0f);
-  CB_xyz[i3+2u] = CA_xyz[i3+2u] + 1.387f*(CA_xyz[i3+2u]-(C__xyz[i3+2u]+N__xyz[ i3+2u])/2.0f);
-  CENxyz[i3+0u] = CB_xyz[i3+0u] + 1.345f*(CB_xyz[i3+0u]-CA_xyz[i3+0u]);
-  CENxyz[i3+1u] = CB_xyz[i3+1u] + 1.345f*(CB_xyz[i3+1u]-CA_xyz[i3+1u]);
-  CENxyz[i3+2u] = CB_xyz[i3+2u] + 1.345f*(CB_xyz[i3+2u]-CA_xyz[i3+2u]);
   H__xyz[i3+0u] = N__xyz[i3+0u] + 1.4915f*(N__xyz[i3+0u]-(CA_xyz[i3+0u]+1.1f*C__xyz[ip3+0u])/2.1f);
   H__xyz[i3+1u] = N__xyz[i3+1u] + 1.4915f*(N__xyz[i3+1u]-(CA_xyz[i3+1u]+1.1f*C__xyz[ip3+1u])/2.1f);
   H__xyz[i3+2u] = N__xyz[i3+2u] + 1.4915f*(N__xyz[i3+2u]-(CA_xyz[i3+2u]+1.1f*C__xyz[ip3+2u])/2.1f);
+  struct XFORM bbstub = stub(vec(CA_xyz[i3+0u],CA_xyz[i3+1u],CA_xyz[i3+2u]),
+                             vec(N__xyz[i3+0u],N__xyz[i3+1u],N__xyz[i3+2u]),
+                             vec(C__xyz[i3+0u],C__xyz[i3+1u],C__xyz[i3+2u]));
+  const struct VEC cb = multxv(bbstub,CB_LCOR [aas[get_global_id(0)]]);
+  const struct VEC cn = multxv(bbstub,CEN_LCOR[aas[get_global_id(0)]]);
+  CB_xyz[i3+0u] = cb.x;
+  CB_xyz[i3+1u] = cb.y;
+  CB_xyz[i3+2u] = cb.z;
+  CENxyz[i3+0u] = cn.x;
+  CENxyz[i3+1u] = cn.y;
+  CENxyz[i3+2u] = cn.z;
 }
 
 
