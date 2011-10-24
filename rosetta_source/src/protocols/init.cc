@@ -174,7 +174,10 @@
 #include <protocols/loophash/LoopHashMoverWrapperCreator.hh>
 #include <protocols/docking/DockingProtocolCreator.hh>
 #include <protocols/moves/RollMoverCreator.hh>
-
+#include <protocols/seeded_abinitio/CAcstGeneratorCreator.hh>
+#include <protocols/seeded_abinitio/SeedSetupMoverCreator.hh>
+#include <protocols/seeded_abinitio/SwapSegmentCreator.hh>
+#include <protocols/seeded_abinitio/CoordinateCstCreator.hh>
 // Filter creators
 #include <protocols/filters/FilterFactory.hh>
 
@@ -417,6 +420,10 @@ static MoverRegistrator< loophash::LoopHashMoverWrapperCreator > reg_LoopHashMov
 static MoverRegistrator< docking::DockingProtocolCreator > DockingProtocolCreator;
 static MoverRegistrator< moves::RollMoverCreator > reg_RollMoverCreator;
 static MoverRegistrator< qsar::RenderGridsToKinemageCreator> reg_RenderGridsToKinemageCreator;
+static MoverRegistrator< seeded_abinitio::CAcstGeneratorCreator > CAcstGeneratorCreator;
+static MoverRegistrator< seeded_abinitio::SeedSetupMoverCreator > SeedSetupMoverCreator;
+static MoverRegistrator< seeded_abinitio::SwapSegmentCreator > SwapSegmentCreator;
+static MoverRegistrator< seeded_abinitio::CoordinateCstCreator > CoordinateCstCreator;
 
 using namespace filters;
 
