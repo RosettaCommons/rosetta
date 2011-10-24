@@ -35,20 +35,20 @@ namespace remodel{
           bool hasInsertion;
 
 					protocols::forge::build::BuildManager manager;
-				core::pack::task::PackerTaskOP task;
+					core::pack::task::PackerTaskOP task;
 
           // disulfide building
           core::pose::Pose rvjump_pose;
           bool buildDisulfide;
-			ObjexxFCL::FArray2D_int disulfide_jump_points;
+					ObjexxFCL::FArray2D_int disulfide_jump_points;
           int disulfide_cutpoint;
           std::string disulfide_ss;
 
           int insertionStartIndex;
           int insertionEndIndex;
-			ObjexxFCL::FArray2D_bool design_matrix;
+					ObjexxFCL::FArray2D_bool design_matrix;
           void workingSetGen( core::pose::Pose const & input_pose, protocols::forge::remodel::RemodelData const & data);
-		  void manualPackerTaskGen(core::pose::Pose const & built_pose, protocols::forge::remodel::RemodelData const & data);
+					void manualPackerTaskGen(core::pose::Pose const & built_pose, protocols::forge::remodel::RemodelData const & data);
           //void design_matrix_from_blueprint( std::vector<protocols::forge::remodel::LineObject>  blueprint); //manual
           //void setup_auto_design_matrix(core::pose::Pose const & model_pose, std::vector<protocols::forge::remodel::LineObject> const & blueprint, bool const core, bool const boundary, bool surface);
 
@@ -71,9 +71,15 @@ namespace remodel{
             hasInsertion = false;
             buildDisulfide = false;
           };
-          ~WorkingRemodelSet(){
-          };
-      };
+
+					// copy constrctor
+					WorkingRemodelSet( WorkingRemodelSet const & rval);
+
+					// copy assignment
+					WorkingRemodelSet & operator = ( WorkingRemodelSet const & rval);
+
+          ~WorkingRemodelSet(){};
+        };
 
         class Segment
         {

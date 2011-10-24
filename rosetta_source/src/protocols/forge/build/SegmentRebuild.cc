@@ -36,6 +36,8 @@
 #include <core/pose/Pose.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
+#include <core/pose/PDBInfo.hh>
+
 
 // numeric headers
 #include <numeric/random/random.hh>
@@ -892,6 +894,14 @@ pose.dump_pdb("test_idl.pdb");
 	for ( Size r = interval_.left, i = 0; r <= interval_.right; ++r, ++i ) {
 		pose.set_secstruct( r, ss_.at( i ) );
 	}
+
+// safety, make sure PDBInfo leaves obsolete
+  if ( pose.pdb_info().get() ) {
+	    pose.pdb_info()->obsolete( true );
+			  }
+
+
+
 }
 
 

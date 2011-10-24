@@ -23,6 +23,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/basic_moves/FragmentMover.fwd.hh>
 #include <protocols/loops/Loops.hh>
@@ -210,6 +211,15 @@ public: // accessors
 
 
 public: // mutators
+
+	// @brief for building repeat structures stored in private variable
+	void repeat_generation_with_additional_residue(Pose & pose, Pose &repeat_pose);
+
+	void repeat_generation(Pose & pose, Pose &repeat_pose);
+
+	// @brief for updating repeat angles from a monomeric copy
+	void repeat_propagation( Pose & pose, Pose & repeat_pose, Size repeat_number);
+
 
 
 	/// @brief the ScoreFunction to use during modeling
@@ -523,6 +533,9 @@ private: // data
 
 	/// @brief fragment sets to use
 	FragSetOPs fragsets_;
+
+  /// @brief local copy of repeat pose
+	Pose repeat_pose_;
 
 
 };

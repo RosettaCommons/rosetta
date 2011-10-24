@@ -54,7 +54,7 @@ public: //constructor/destructor
 
 	RemodelDesignMover();
 
-	RemodelDesignMover(RemodelData remodel_data, RemodelWorkingSet working_model, ScoreFunctionOP sfxn);
+	RemodelDesignMover(RemodelData remodel_data, RemodelWorkingSet const & working_model, ScoreFunctionOP sfxn);
 
 	virtual
 	~RemodelDesignMover();

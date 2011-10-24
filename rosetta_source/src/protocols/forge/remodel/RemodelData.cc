@@ -106,6 +106,7 @@ protocols::forge::remodel::RemodelData::RemodelData(){
 	has_design_info_ = false;
 	design_neighbor = false;
 	auto_design = false;
+	natro_movemap_.set_chi(true);
 }
 
 void
@@ -192,7 +193,15 @@ protocols::forge::remodel::RemodelData::getLoopsToBuildFromFile()
 					line.has_constraints=true;
 					line.constraint_definition.push_back(*it);
 				}
-				if ((*it).substr(0,6) == "DISULF"){
+				if ((*it).substr(0,3) == "DM_"){
+					disulfMobileRange.push_back(line.index);
+					if (disulfMobileRange.size() > 2){
+						std::ostringstream err_message;
+						err_message << "ERROR: Disulfide mobile range assigment contains " <<  disulfMobileRange.size() << " elements." << std::endl;
+					  utility::exit(__FILE__, __LINE__, err_message.str());
+					}
+				}
+				if ((*it).substr(0,3) == "DS_"){
 					disulfLandingRange.push_back(line.index);
 					if (disulfLandingRange.size() > 2){
 						std::ostringstream err_message;
@@ -230,7 +239,7 @@ protocols::forge::remodel::RemodelData::getLoopsToBuildFromFile()
 				}
 
 				if ( split_info[i] == "NATRO"){
-					TR_REMODEL << "NATRO movemap setup: turning off chi move for refinement stage" << std::endl;
+					TR_REMODEL << "NATRO movemap setup: turning off chi move for refinement stage: " << line.index << std::endl;
 					natro_movemap_.set_chi(line.index, false);
 				}
 			}
@@ -245,6 +254,11 @@ protocols::forge::remodel::RemodelData::getLoopsToBuildFromFile()
 
 			std::cout << "DEBUG parsed STRING " << oss.str() << std::endl;
 			this->parsed_string_for_resfile = oss.str();
+			if (option[ OptionKeys::remodel::repeat_structuer].user()){
+				for (int i = 1; i<= option[ OptionKeys::remodel::repeat_structuer ]; i++){
+					this->parsed_string_for_resfile.append(this->parsed_string_for_resfile);
+				}
+			}
 
 			//TR_REMODEL << "manual design overwrite position: " << line.index << std::endl;
 			//this->design_mode = 3; //default manual mode

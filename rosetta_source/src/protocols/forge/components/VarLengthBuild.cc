@@ -262,6 +262,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 	String bi_rts_name = ( **manager_.begin() ).residue_type_set().name();
 
 	// make backup copy for e.g. side-chain transferal later
+	// REPEAT: also used for monomeric repeat
 	Pose archive_pose = pose;
 
 	// alter pose
@@ -291,6 +292,14 @@ void VarLengthBuild::apply( Pose & pose ) {
 			original2modified = manager_.modify( pose );
 		}
 	}
+	// REPEAT: used for fragment picking and others
+  if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structuer].user()) {
+		core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
+		core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
+		pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
+		pose.conformation().insert_ideal_geometry_at_polymer_bond(pose.total_residue()-1);
+		pose.set_omega(pose.total_residue()-1,180);
+	}
 
 	// centroid level protocol
 	if ( get_last_move_status() == MS_SUCCESS ) {
@@ -303,6 +312,15 @@ void VarLengthBuild::apply( Pose & pose ) {
 		} else {
 			set_last_move_status( FAIL_DO_NOT_RETRY );
 		}
+	}
+
+  if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structuer].user()) {
+	  if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structuer] == 1){
+		  // do nothing
+	  } else {
+		//remove the added residue
+		//pose.conformation().delete_residue_slow(pose.total_residue());
+	  }
 	}
 
 	// flip back to prior residue type set if necessary
@@ -358,7 +376,7 @@ bool VarLengthBuild::centroid_build(
 	// grab new secondary structure
 	String ss;
 	if ( !new_secondary_structure_override_.empty() ) { // user has overridden the string auto-setup
-
+/*
 		// first check to make sure length of the override string corresponds
 		// to the working pose
 		if ( new_secondary_structure_override_.length() != pose.n_residue() ) {
@@ -368,7 +386,7 @@ bool VarLengthBuild::centroid_build(
 				<< ".  Programmer mistake!" << std::endl;
 			runtime_assert( false );
 		}
-
+*/
 		ss = new_secondary_structure_override_;
 
 	} else { // auto-setup, take directly from the pose
@@ -417,9 +435,13 @@ bool VarLengthBuild::centroid_build(
 	// identify regions to rebuild and pick fragments
 	std::set< Interval > loop_intervals = manager_.intervals_containing_undefined_positions();
 	for ( std::set< Interval >::const_iterator i = loop_intervals.begin(), ie = loop_intervals.end(); i != ie; ++i ) {
-		Interval const & interval = *i;
+		Interval interval = *i;
 
 		Size n_cuts = count_cutpoints( pose, interval.left, interval.right );
+
+		if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structuer].user()) {
+			interval.right = interval.right+1; // pad interval to include the extra shadow residue in pose
+			}
 		TR << "VLB count_cutpoints " << n_cuts << " interval.left " << interval.left << " interval.right " << interval.right << std::endl;
 
 		// multi-cutpoint region handling not implemented yet
@@ -428,8 +450,14 @@ bool VarLengthBuild::centroid_build(
 		// setup regions
 		//if ( n_cuts > 0 ) { // loop model region
 		if (interval.left != 1 && interval.right != pose.n_residue()){ //internal loop
+			Size cutpoint = 0;
+			//if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structuer].user()) {
+			//	cutpoint = find_cutpoint( pose, interval.left, interval.right-1 );
+//}
+			//else {
+				cutpoint = find_cutpoint( pose, interval.left, interval.right );
+			//}
 
-			Size cutpoint = find_cutpoint( pose, interval.left, interval.right );
 		//	if (basic::options::option[basic::options::OptionKeys::remodel::RemodelLoopMover::force_cutting_N].user()){
 		//		cutpoint = interval.left+1;
 		//	}
@@ -440,8 +468,11 @@ bool VarLengthBuild::centroid_build(
 			}
 		} else if ( n_cuts == 0 ) { // fragment only region
 
+			if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structuer].user())	{
+				loops.add_loop( Loop( interval.left, interval.right, 0, 0.0, true ) );//pick additional frame for connection to repeats
+			}else{
 			loops.add_loop( Loop( interval.left, interval.right, 0, 0.0, true ) );
-
+			}
 		}
 
 		// Pick fragments.  Choose num_fragpick_ ( default 200 ) per position per size.

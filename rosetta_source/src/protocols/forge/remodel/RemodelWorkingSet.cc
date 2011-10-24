@@ -105,12 +105,55 @@ namespace remodel{
 
 static basic::Tracer TR("REMODELw");
 
+/// @brief copy constructor
+WorkingRemodelSet::WorkingRemodelSet(WorkingRemodelSet const & rval):
+	loops( rval.loops ),
+	translate_index( rval.translate_index ),
+	begin( rval.begin ),
+	end (rval.end ),
+	copy_begin( rval.copy_begin ),
+	copy_end (rval.copy_end ),
+	src_begin (rval.src_begin),
+	src_end (rval.src_end),
+	manager( rval.manager ),
+	task( rval.task ),
+	rvjump_pose( rval.rvjump_pose)
+{
+	sequence = rval.sequence;
+	ss = rval.ss;
+	hasInsertion= hasInsertion;
+}
+
+WorkingRemodelSet & WorkingRemodelSet::operator = ( WorkingRemodelSet const & rval ){
+	if (this != & rval) {
+		loops =  rval.loops ;
+		sequence = rval.sequence;
+		ss = rval.ss;
+		translate_index = rval.translate_index;
+		begin = rval.begin ;
+		end =rval.end;
+		copy_begin= rval.copy_begin ;
+		copy_end =rval.copy_end ;
+		src_begin =rval.src_begin;
+		src_end =rval.src_end;
+		hasInsertion= hasInsertion;
+		manager = rval.manager;
+		task =  rval.task ;
+		rvjump_pose =  rval.rvjump_pose;
+	}
+	return *this;
+}
+
+
+
+
+
 void
 protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 	core::pose::Pose const & input_pose,
 	protocols::forge::remodel::RemodelData const & data
 )      {
-
+	using namespace basic::options;
 	//core::util::switch_to_residue_type_set( input_pose, core::chemical::CENTROID );
 
 	//find rebuilding segments
@@ -123,7 +166,12 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 	this->ss = data.dssp_updated_ss;
 
 	//this is purely experimental for matching fragment set
-	this->ss.append("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
+	if (option[ OptionKeys::remodel::repeat_structuer].user()){
+		this->ss.append(this->ss);
+	} else {
+		this->ss.append("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
+	}
+
 	this->sequence = data.sequence;
 
 	//find N term extension, if any

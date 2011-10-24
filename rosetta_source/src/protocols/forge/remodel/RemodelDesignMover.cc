@@ -69,9 +69,9 @@ RemodelDesignMover::RemodelDesignMover(){
 }
 
 /// @brief value constructor
-RemodelDesignMover::RemodelDesignMover(RemodelData remodel_data, RemodelWorkingSet working_model, ScoreFunctionOP sfxn)
+RemodelDesignMover::RemodelDesignMover(RemodelData remodel_data, RemodelWorkingSet const & working_model, ScoreFunctionOP sfxn)
 {
-
+	using namespace basic::options;
 	using core::pose::metrics::CalculatorFactory;
 	using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
 
@@ -82,9 +82,34 @@ RemodelDesignMover::RemodelDesignMover(RemodelData remodel_data, RemodelWorkingS
 
   // setup calculators
   CalculatorFactory::Instance().remove_calculator( "neighborhood_calc" );
+
+	std::set< core:: Size > und_pos;
+
+  std::set< core::Size > uup = working_model.manager.union_of_intervals_containing_undefined_positions();
+  for ( std::set<core::Size>::iterator i = uup.begin(); i!=uup.end(); i++){
+	    TR << *i <<  " UUP in DesignMover" <<  std::endl;
+  }
+
+	if (option[ OptionKeys::remodel::repeat_structuer].user()){
+		Size repeatCount = option[ OptionKeys::remodel::repeat_structuer];
+		for (int rep = 0; rep < repeatCount ; rep++){
+			for (std::set< core::Size >::iterator it = uup.begin(); it != uup.end(); ++it){
+			//DEBUG
+				//std::cout << *it + remodel_data.blueprint.size()*rep << std::endl;
+				std::cout << "manger size"  << working_model.manager.union_of_intervals_containing_undefined_positions().size() <<  std::endl;
+				std::cout << *it  << std::endl;
+				und_pos.insert(*it + remodel_data.blueprint.size()*rep);
+			}
+		}
+	}
+	else {
+		und_pos = working_model.manager.union_of_intervals_containing_undefined_positions();
+	}
+
+
   CalculatorFactory::Instance().register_calculator(
     "neighborhood_calc",
-    new NeighborhoodByDistanceCalculator( working_model.manager.union_of_intervals_containing_undefined_positions())
+    new NeighborhoodByDistanceCalculator( und_pos )
   );
 
 }
@@ -405,6 +430,24 @@ bool RemodelDesignMover::find_disulfides_in_the_neighborhood(Pose & pose, utilit
 	utility::vector1<Size> nbr_res;
 	run_calculator(pose, "neighborhood_calc", "neighbors", residue_clusters);
 	run_calculator(pose, "neighborhood_calc", "central_residues", modeled_clusters);
+
+//manual overwrite of the disulfide mobile range
+	if (remodel_data_.disulfMobileRange.size() != 0){
+		int i = 1;
+		for (utility::vector1_bool::iterator itr=modeled_clusters.begin(), end=modeled_clusters.end();  itr !=end; itr++){
+			*itr = false;
+			if ( i == remodel_data_.disulfMobileRange[0]){
+				*itr=true;
+				TR << "Use disulf mobile range start: " << i << std::endl;
+			}
+			if ( i == remodel_data_.disulfMobileRange[1]){
+				*itr=true;
+				TR << "Use disulf mobile range stop: " << i << std::endl;
+			}
+			i++;
+		}
+	}
+
 //debug
 	Size i=1;
 	for (utility::vector1_bool::iterator itr=modeled_clusters.begin(), end=modeled_clusters.end();  itr !=end; itr++){

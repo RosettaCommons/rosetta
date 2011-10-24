@@ -62,6 +62,7 @@ namespace remodel{
 
             std::vector<protocols::forge::remodel::LineObject> blueprint;
 
+            std::vector<core::Size> disulfMobileRange;
             std::vector<core::Size> disulfLandingRange;
 
 						std::string parsed_string_for_resfile;

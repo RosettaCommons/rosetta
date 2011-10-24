@@ -32,6 +32,7 @@
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
@@ -79,6 +80,8 @@
 #include <protocols/forge/remodel/RemodelAccumulator.hh>
 #include <protocols/forge/remodel/RemodelEnzdesCstModule.hh>
 #include <protocols/viewer/viewers.hh>
+#include <protocols/moves/PyMolMover.hh>
+
 
 //test
 #include <protocols/protein_interface_design/movers/DockAndRetrieveSidechains.hh>
@@ -314,7 +317,17 @@ void RemodelMover::apply( Pose & pose ) {
 	remodel_data_ = remodel_data; // will use the movemap for natro definition later
 	working_model_=working_model;
 
-/*  DEBUG
+
+/* test PyMol viewer */
+	if ( option[ OptionKeys::run::show_simulation_in_pymol ].user() &&
+			option[ OptionKeys::run::show_simulation_in_pymol ]() == true ){
+ //               moves::AddPyMolObserver( pose, false, core::Real( 0.50 ) );
+  }
+
+
+
+
+//  DEBUG
 	std::set<core::Size> up = working_model.manager.undefined_positions();
   for ( std::set<core::Size>::iterator i = up.begin(); i!=up.end(); i++){
 	  TR << *i << std::endl;
@@ -323,7 +336,7 @@ void RemodelMover::apply( Pose & pose ) {
 	for ( std::set<core::Size>::iterator i = uup.begin(); i!=uup.end(); i++){
 		TR << *i <<  " UUP" <<  std::endl;
 	}
-*/
+//
 //	Pose testArc;
 //	testArc = pose;
 if (working_model.manager.size()!= 0){
@@ -345,6 +358,16 @@ if (working_model.manager.size()!= 0){
 	);
 
 }
+
+	up = working_model.manager.undefined_positions();
+  for ( std::set<core::Size>::iterator i = up.begin(); i!=up.end(); i++){
+	  TR << *i << std::endl;
+		}
+     uup = working_model.manager.union_of_intervals_containing_undefined_positions();
+	for ( std::set<core::Size>::iterator i = uup.begin(); i!=uup.end(); i++){
+		TR << *i <<  " UUP2" <<  std::endl;
+	}
+
 //	manager_.dummy_modify(testArc.n_residue());
 //	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, true);
 //	core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD, true);
@@ -372,17 +395,6 @@ if (working_model.manager.size()!= 0){
 			pose.pdb_info( pdb_info );
   }
 
-/* moved to VLB
-	if ( basic::options::option[basic::options::OptionKeys::enzdes::cstfile].user() ){
-
-		RemodelEnzdesCstModuleOP cstOP = new RemodelEnzdesCstModule(remodel_data);
-
-		//RemodelEnzdesCstModule cst(remodel_data);
-		cstOP->use_backbone_only_blocks();
-		cstOP->apply(pose);
-		cstOP->enable_constraint_scoreterms(centroid_sfx_);
-	}
-*/
   Size i = basic::options::option[basic::options::OptionKeys::remodel::num_trajectory];
 	Size num_traj = i; //need this for checkpointing math
 	Size prev_checkpoint = 0;
@@ -406,9 +418,27 @@ if (working_model.manager.size()!= 0){
     );
 }
 
+   up = working_model.manager.undefined_positions();
+  for ( std::set<core::Size>::iterator i = up.begin(); i!=up.end(); i++){
+    TR << *i << std::endl;
+    }
+   uup = working_model.manager.union_of_intervals_containing_undefined_positions();
+  for ( std::set<core::Size>::iterator i = uup.begin(); i!=uup.end(); i++){
+    TR << *i <<  " UUP2" <<  std::endl;
+  }
+
+
 	RemodelDesignMover designMover(remodel_data, working_model, fullatom_sfx_);
 
 	while ( i > 0){
+
+		//cache the modified pose first for REPEAT
+		Pose cached_modified_pose;
+
+		if (option[ OptionKeys::remodel::repeat_structuer].user()) {
+			cached_modified_pose = pose;
+		}
+
 		// do centroid build
 		TR << "BUILD CYCLE REMAINING " << i << std::endl;
 		core::kinematics::FoldTree originalTree = pose.fold_tree();
@@ -419,6 +449,9 @@ if (working_model.manager.size()!= 0){
 			//	return;
 			}
 		}
+
+		//test
+		pose.dump_pdb("check.pdb");
 
 		designMover.set_state("stage");
 
@@ -498,7 +531,13 @@ if (working_model.manager.size()!= 0){
 			accumulator.write_checkpoint(num_traj-i-prev_checkpoint);
 		}
 		//restore foldtree
-		pose.fold_tree(originalTree);
+		if (option[ OptionKeys::remodel::repeat_structuer].user()) {
+		//reset the pose to monomer
+			pose = cached_modified_pose;
+
+		} else {
+			pose.fold_tree(originalTree);
+		}
 		i--;
 	}
 
@@ -697,7 +736,7 @@ bool RemodelMover::centroid_build(
 //	vlb_->max_linear_chainbreak( max_linear_chainbreak_ );
 	vlb_->loop_mover_str( centroid_loop_mover_str_ );
 	vlb_->restart_mode(true);
-
+  vlb_->new_secondary_structure_override(working_model_.ss);
 	if ( option[OptionKeys::remodel::use_blueprint_sequence] ) {
 		vlb_->new_sequence_override( remodel_data_.sequence );
 	}
@@ -714,10 +753,19 @@ bool RemodelMover::centroid_build(
 		// scoring
 		pose.energies().clear();
 
+		if (option[ OptionKeys::remodel::repeat_structuer].user()) {
+			RemodelLoopMover RLM;
+			Pose bufferPose(modified_archive_pose);
+			RLM.repeat_generation( bufferPose, modified_archive_pose );
+		}
+
+
+
 		// Swap back original sidechains.  At the moment this is a two step process
 		// in case any sidechains from SegmentInsert and the like that aren't in the
 		// original archive pose need to be transferred.
 		restore_residues( modified_archive_pose, pose );
+
 		// since pose is setup modified in RemodelMover, only one step will do
 		//restore_residues( manager_.original2modified(), archive_pose, pose );
 		// go ahead and score w/ full-atom here; we do this in case there are no
@@ -882,11 +930,9 @@ bool RemodelMover::design_refine(
 			combined_mm.import( manager_.movemap() );
 
 			//modify task to accept NATRO definition
-
 			utility::vector1<core::Size> natroPositions;
 			for (int i = 1; i<= pose.total_residue(); i++){
-				if (remodel_data_.natro_movemap_.get_chi(i) == false){
-					std::cout << "NATRO for position: " << i << std::endl;
+				if (remodel_data_.natro_movemap_.get_chi(i) == 0){
 					natroPositions.push_back(i);
 				}
 			}
