@@ -139,6 +139,7 @@ endrepeat
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/util.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
@@ -516,7 +517,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 	/// prints something like this ***1***C***1*********2***C********3****C****2********3*****
 	///                            **********xxxxxxxxxxxxx************************************
-	if( TR.Debug.visible() ){
+	if ( basic::options::option[ basic::options::OptionKeys::run::debug ]() ) {
 		kinematics::simple_visualize_fold_tree_and_movemap_bb_chi( pose.fold_tree(),  *local_movemap, TR );
 	}
 
@@ -552,8 +553,8 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	int total_count=0;
 	for ( core::Size ncmd = 0; ncmd < script_.size(); ncmd ++ ){
 		total_count++;
-		if ( TR.Debug.visible() ) local_scorefxn->show( TR, pose );
-		if ( TR.Debug.visible() ) pose.constraint_set()->show_numbers( TR.Debug );
+		if ( basic::options::option[ basic::options::OptionKeys::run::debug ]() ) local_scorefxn->show( TR, pose );
+		if ( basic::options::option[ basic::options::OptionKeys::run::debug ]() ) pose.constraint_set()->show_numbers( TR.Debug );
 
 		// No MC is used, so update graphics manually
 		#ifdef BOINC_GRAPHICS
@@ -653,7 +654,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 
 			// print some debug info
-			if(	TR.Debug.visible() ){
+			if ( basic::options::option[ basic::options::OptionKeys::run::debug ]() ) {
 				core::Real imedscore = (*local_scorefxn)( pose );
 				core::pose::setPoseExtraScores( pose, "R" + right_string_of( total_count ,5,'0'), imedscore );
 			}
@@ -730,7 +731,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	pose = best_pose;
 	(*local_scorefxn)( pose );
 
-	if( TR.Debug.visible() ){
+	if ( basic::options::option[ basic::options::OptionKeys::run::debug ]() ) {
 		for( Size j = 0; j < best_score_log.size(); j++ )
 			core::pose::setPoseExtraScores( pose, "B" + right_string_of(j,3,'0'), best_score_log[j]);
 
@@ -1019,14 +1020,10 @@ void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
 			if ( core::pose::symmetry::is_symmetric( pose )  )  {
 				core::pose::symmetry::make_symmetric_movemap( pose, *local_movemap );
 			}
-
-			if ( TR.Debug.visible() ){
+		 
+			if ( basic::options::option[ basic::options::OptionKeys::run::debug ]() ) {
 				kinematics::simple_visualize_fold_tree_and_movemap_bb_chi( pose.fold_tree(),  *local_movemap, TR );
 			}
-
-
-
-
 		}
 		// 453 mb
 	}
