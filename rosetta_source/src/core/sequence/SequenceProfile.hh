@@ -38,7 +38,11 @@ class SequenceProfile : public Sequence {
 public:
 
 	/// @brief ctors
-	SequenceProfile() : temp_( 1.0 ) {}
+	SequenceProfile() :
+		temp_( 1.0 ),
+		profile_from_pssm_file_(false)
+	{}
+
 	SequenceProfile(
 		FileName const & fn,
 		core::Real temp = 1.0
@@ -81,6 +85,7 @@ public:
 		profile ( rhs.profile() );
 		alphabet( rhs.alphabet() );
 		temp    ( rhs.temp() );
+		profile_from_pssm_file_ = rhs.profile_from_pssm_file_;
 
 		return *this;
 	}
