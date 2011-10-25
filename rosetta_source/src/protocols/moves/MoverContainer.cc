@@ -44,6 +44,18 @@ using basic::T;
 using basic::Error;
 using basic::Warning;
 
+/// @details Invoke clone() on each of the movers that are contained by this MoverContainer
+/// to create deep copies.
+MoverContainer::MoverContainer( MoverContainer const & source )
+{
+	//remember that movers_ is a vector0
+	movers_.resize( source.movers_.size() );
+	for ( Size ii = 0; ii < source.movers_.size(); ++ii ) {
+		movers_[ ii ] = source.movers_[ ii ]->clone();
+	}
+	weight_ = source.weight_;
+}
+
 void MoverContainer::add_mover( MoverOP mover_in , Real weight_in ) // do we need weights?
 {
 	movers_.push_back(mover_in);
@@ -68,6 +80,16 @@ void MoverContainer::set_native_pose( PoseCOP pose ){
 	for ( Size i=0; i<movers_.size(); ++i ) {
 		movers_[i]->set_native_pose( pose );
 	}
+}
+
+SequenceMover::SequenceMover( SequenceMover const & source ) :
+	MoverContainer( source ),
+	use_mover_status_( source.use_mover_status_ )
+{}
+
+MoverOP
+SequenceMover::clone() const {
+	return new SequenceMover( *this );
 }
 
 void SequenceMover::apply( core::pose::Pose & pose )
@@ -143,6 +165,17 @@ void RandomMover::apply( core::pose::Pose & pose )
 
 }
 
+RandomMover::RandomMover( RandomMover const & source ) :
+	MoverContainer( source ),
+	nmoves_( source.nmoves_ ),
+	last_proposal_density_ratio_( source.last_proposal_density_ratio_ )
+{}
+
+MoverOP
+RandomMover::clone() const {
+	return new RandomMover( *this );
+}
+
 std::string
 RandomMover::get_name() const {
 	return "RandomMover";
@@ -151,6 +184,16 @@ RandomMover::get_name() const {
 //ek added this function must be called AFTER apply
 core::Real RandomMover::last_proposal_density_ratio(){
 		return last_proposal_density_ratio_;
+}
+
+CycleMover::CycleMover( CycleMover const & source ) :
+	MoverContainer( source ),
+	next_move_( source.next_move_ )
+{}
+
+MoverOP
+CycleMover::clone() const {
+	return new CycleMover( *this );
 }
 
 void CycleMover::apply( core::pose::Pose& pose )

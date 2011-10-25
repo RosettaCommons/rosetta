@@ -40,6 +40,7 @@
 #include <protocols/moves/ConstraintSetMover.fwd.hh>
 #include <protocols/moves/ReturnSidechainMover.fwd.hh>
 #include <protocols/moves/SwitchResidueTypeSetMover.fwd.hh>
+//#include <protocols/moves/MoverContainer.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
 
@@ -140,11 +141,11 @@ public:
 	void set_use_legacy_protocol( bool const use_legacy_protocol );
 	void set_cst_weight( core::Real const cst_weight );
 	void set_use_constraints( bool const use_csts );
-    void set_interface_definition_task_operation( protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition );
+	void set_interface_definition_task_operation( protocols::toolbox::task_operations::InterfaceTaskOperationOP interface_definition );
 
-    void set_additional_task_operarations( utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations );
-    void add_additional_task_operaration( core::pack::task::operation::TaskOperationOP task_operation );
-    utility::vector1< core::pack::task::operation::TaskOperationOP > get_additional_task_operarations();
+	void set_additional_task_operarations( utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations );
+	void add_additional_task_operaration( core::pack::task::operation::TaskOperationOP task_operation );
+	utility::vector1< core::pack::task::operation::TaskOperationOP > get_additional_task_operarations();
 
 
 	virtual void apply( core::pose::Pose & pose );
@@ -153,11 +154,19 @@ public:
 	// void score_only( core::pose::Pose & pose );
 
 	// inline getters
-	std::string partners(){ return partners_;} /// @brief returns the docking partners chain identifiers
+	std::string partners() const { return partners_;} /// @brief returns the docking partners chain identifiers
 	virtual std::string get_name() const { return "DockingProtocol"; }
 	DockJumps & movable_jumps(){ return movable_jumps_;} ///@brief returns ref to the jumps vector for docking
 	DockJumps const & movable_jumps() const { return movable_jumps_; } ///@ return const ref to the jumps vector for docking
-	core::pack::task::TaskFactory task_factory() { return *init_task_factory_; }
+	core::pack::task::TaskFactory const & task_factory() { return *init_task_factory_; }
+
+	//getters for const access to movers and data of docking protocol
+	protocols::moves::SwitchResidueTypeSetMoverCOP to_centroid() const;
+	protocols::moves::MoverCOP to_all_atom() const;
+	protocols::docking::DockingLowResCOP docking_lowres_mover() const;
+	protocols::docking::DockingHighResCOP docking_highres_mover() const;
+	protocols::docking::DockingInitialPerturbationCOP perturber() const;
+
 
 	// inline setters
 	void set_autofoldtree( bool const autofoldtree ){ autofoldtree_ = autofoldtree; }

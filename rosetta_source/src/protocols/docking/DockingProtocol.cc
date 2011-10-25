@@ -70,6 +70,7 @@
 #include <protocols/moves/ReturnSidechainMover.hh>
 #include <protocols/moves/RotamerTrialsMinMover.hh>
 #include <protocols/moves/SwitchResidueTypeSetMover.hh>
+//#include <protocols/moves/MoverContainer.hh>
 
 #include <protocols/moves/DataMap.hh>
 
@@ -959,6 +960,25 @@ DockingProtocol::apply( pose::Pose & pose )
 
 	basic::prof_show();
 }
+
+
+//getters for const access to movers and data of docking protocol
+protocols::moves::SwitchResidueTypeSetMoverCOP DockingProtocol::to_centroid() const {
+	return to_centroid_;
+}
+protocols::moves::MoverCOP DockingProtocol::to_all_atom() const{
+	return to_all_atom_ ;
+}
+protocols::docking::DockingLowResCOP DockingProtocol::docking_lowres_mover() const{
+	return docking_lowres_mover_;
+}
+protocols::docking::DockingHighResCOP DockingProtocol::docking_highres_mover() const{
+	return docking_highres_mover_;
+}
+protocols::docking::DockingInitialPerturbationCOP DockingProtocol::perturber() const{
+	return perturber_;
+}
+
 
 /// @details  Show the complete setup of the docking protocol
 void

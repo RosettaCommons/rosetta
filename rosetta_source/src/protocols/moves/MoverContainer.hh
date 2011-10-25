@@ -17,33 +17,26 @@
 
 // Unit headers
 #include <protocols/moves/MoverContainer.fwd.hh>
-
 #include <protocols/moves/Mover.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/moves/MoverStatistics.hh>
-
 #include <core/types.hh>
-
 #include <core/pose/Pose.fwd.hh>
 
-// ObjexxFCL Headers
 
 // C++ Headers
 #include <map>
 #include <string>
 
 // Utility Headers
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
-
-//Auto Headers
-#include <utility/vector1_bool.hh>
-
 
 namespace protocols {
 namespace moves {
 
-// A MoverContainer is an array of movers
+// A MoverContainer is an array of movers.  Movers placed inside MoverContainers must be cloneable.
 // you can either apply them randomly using a RandomOneMover
 // or sequentially using a SequenceMover (see .cc for implementation)
 // @todo relative weighting of the moves should be handled by this class
@@ -51,8 +44,10 @@ class MoverContainer : public Mover {
 public:
 
 	// constructor with arguments
-	MoverContainer() : Mover()
-	{}
+	MoverContainer() : Mover() {}
+
+	/// @brief to be called by derived-class clone() methods; copy all data from the source MoverContainer
+	MoverContainer( MoverContainer const & source );
 
 	/// @brief Adds a mover to the end of this container
 	void add_mover( MoverOP mover_in, core::Real weight_in = 1.0 );
@@ -73,20 +68,20 @@ public:
 
 	MoverOP front() { return movers_.front(); };
 
-	std::vector < core::Real > const& weights() {
+	utility::vector0< core::Real > const & weights() const {
 		return weight_;
 	}
 
-	std::vector < MoverOP > const& movers() {
+	utility::vector0< MoverOP > const & movers() const {
 		return movers_;
 	}
 
 
 protected:
 	// the weight is only used for RandomMover to pick which one is used, can this be changed?
-	std::vector < core::Real > weight_;           ///< relative weight when part of MoverContainer.
-	std::vector < MoverOP > movers_;
-	core::Real last_proposal_density_ratio_; //added ek 2/25/10
+	utility::vector0< core::Real > weight_;           ///< relative weight when part of MoverContainer.
+	utility::vector0< MoverOP > movers_;
+
 }; // MoverContainer class
 
 /// @brief A Mover that iterates through a vector of Movers,
@@ -101,14 +96,23 @@ public:
 	// constructor
 	/// @brief Constructs a SequenceMover
 	/// seqmover = SequenceMover()
-	SequenceMover( bool ms=false ) :  MoverContainer(), use_mover_status_( ms ) {}
+	SequenceMover( bool ms=false ) :
+		MoverContainer(),
+		use_mover_status_( ms )
+	{}
+
+	/// @brief Copy constructor -- performs a deep copy of all contained movers.  Invoked by clone()
+	SequenceMover( SequenceMover const & );
 
 	/// @brief Convenience constructor: initial sequence of 2 movers
 	/// seqmover = SequenceMover( mover1 , mover2 )
 	///
 	/// Mover    mover1   /first mover to apply with SequenceMover.apply
 	/// Mover    mover2   /second mover to apply with SequenceMover.apply
-	SequenceMover(MoverOP mover1, MoverOP mover2) : MoverContainer() {
+	SequenceMover(MoverOP mover1, MoverOP mover2) :
+		MoverContainer(),
+		use_mover_status_( false )
+	{
 		add_mover(mover1);
 		add_mover(mover2);
 	}
@@ -119,11 +123,17 @@ public:
 	/// Mover    mover1   /first mover to apply with SequenceMover.apply
 	/// Mover    mover2   /second mover to apply with SequenceMover.apply
 	/// Mover    mover3   /third mover to apply with SequenceMover.apply
-	SequenceMover(MoverOP mover1, MoverOP mover2, MoverOP mover3) : MoverContainer() {
+	SequenceMover(MoverOP mover1, MoverOP mover2, MoverOP mover3) :
+		MoverContainer(),
+		use_mover_status_( false )
+	{
 		add_mover(mover1);
 		add_mover(mover2);
 		add_mover(mover3);
 	}
+
+	/// @brief deep copy of all contained movers.
+	virtual MoverOP clone() const;
 
 	/// @brief MoverStatus of the mover will be evaluated after each mover
 	void use_mover_status( bool const flag ){
@@ -141,7 +151,7 @@ public:
 	///     MinMover
 	///     RepeatMover
 	///     SequenceMover
-	///     TrialMover 
+	///     TrialMover
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
@@ -162,7 +172,13 @@ class RandomMover : public MoverContainer {
 public:
 
 	// constructor
-	RandomMover() : MoverContainer(), nmoves_(1) {}
+	/// APL NOTE: Liz, I'm making up a value of "1.0" here, because you haven't set this value.  Is this a reasonable initial value?
+	RandomMover() : MoverContainer(), nmoves_(1), last_proposal_density_ratio_(1.0) {}
+
+	/// @brief Copy constructor.  Performs a deep copy of all contained movers.
+	RandomMover( RandomMover const & );
+
+	virtual MoverOP clone() const;
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
@@ -200,6 +216,12 @@ public:
 
 	// constructor
 	CycleMover() : MoverContainer(), next_move_(0) {}
+
+	// @brief Copy constructor.  Performs a deep copy of all contained movers.
+	CycleMover( CycleMover const & source );
+
+	// @breif Clone returns a new instance of CycleMover representing a deep copy of this mover.
+	virtual MoverOP clone() const;
 
 	virtual void apply( core::pose::Pose& pose );
 	void reset_cycle_index(); //JQX: add reset the cycle mover index next_move_
