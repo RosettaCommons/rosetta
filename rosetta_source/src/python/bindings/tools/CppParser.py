@@ -134,7 +134,7 @@ class CppType_Complex(CppType):  # 'Class', 'Struct', 'Union', 'Typedef', 'Enume
 
         if r.startswith('::std::_Rb_tree_const_iterator<std::pair<const '): r = '::std::map< ' + r.partition('<const ')[2][:-1] + '::const_iterator'
 
-        if r.startswith('::__gnu_cxx::__normal_iterator<const '): r = r.partition(',')[2][:-1] + ':: const_iterator'
+        if r.startswith('::__gnu_cxx::__normal_iterator<const '): r = r.partition('*,')[2][:-1] + ':: const_iterator'
 
         if r.startswith('::__gnu_cxx::__normal_iterator<'):
             #print '_____________________', r
