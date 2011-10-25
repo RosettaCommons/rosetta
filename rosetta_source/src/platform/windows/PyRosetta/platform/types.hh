@@ -7,43 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   platform/windows/32/msvc/platform/types.hh
-/// @brief  Platform-specific types for 32-bit Windows with MS VC++
-/// @author Stuart G. Mentzer (Stuart_Mentzer@objexx.com)
+/// @file   platform/windows/32/gcc/platform/types.hh
+/// @brief  Platform-specific types for 32-bit Windows with GCC compiling PyRosetta source generated on 64-bit Linux
+/// @author Sergey Lyskov
 
 
-#ifndef INCLUDED_platform_windows_32_msvc_platform_types_hh
-#define INCLUDED_platform_windows_32_msvc_platform_types_hh
+#ifndef INCLUDED_platform_pyrosetta_windows_32_gcc_platform_types_hh
+#define INCLUDED_platform_pyrosetta_windows_32_gcc_platform_types_hh
 
 
-#ifndef WIN_PYROSETTA
-	// Windows SDK headers
-	#include <basetsd.h>
+// C++ headers
+//#include <stdint.h> // int64_t, uint64_t, intptr_t, uintptr_t
 
 
-/// @brief Fixed size types
-typedef  INT32  int32_t; // 32-bit unsigned integer
-typedef  UINT32 uint32_t; // 32-bit unsigned integer
-typedef  INT64  int64_t; // 64-bit signed integer
-typedef  UINT64  uint64_t; // 64-bit unsigned integer
-
-
-
-
-#else
-
-#endif
-
-
-typedef  signed int int32_t; // 32-bit signed integer
-typedef  unsigned int uint32_t; // 32-bit unsigned integer
-typedef  long long int int64_t; // 64-bit signed integer
-typedef  unsigned long long int  uint64_t; // 64-bit unsigned integer
-
-#ifndef WIN_PYROSETTA_PASS_2
-	/// @brief Scalable size types
-	typedef  long int  ssize_t; // Signed size
-#endif
+/// @brief Fixed size types:
+// int64_t  64-bit signed integer
+// uint64_t  64-bit unsigned integer
 
 
 /// @brief Scalable size types
@@ -52,18 +31,21 @@ typedef  unsigned long long int  uint64_t; // 64-bit unsigned integer
 //typedef  long int  ssize_t; // Signed size
 
 
+
 namespace platform {
 
-typedef size_t       Size;
-typedef ssize_t      SSize;
-typedef size_t       uint;
+typedef long unsigned int Size;
+typedef long          int SSize;
+typedef std::size_t  uint;
 
-// Floating point precision control scalar
+
+	// Floating point precision control scalar
 #ifdef ROSETTA_FLOAT // Real == float
 typedef  float  Real;
 #else // Real == double
 typedef  double  Real;
 #endif
+
 namespace file {
 
 

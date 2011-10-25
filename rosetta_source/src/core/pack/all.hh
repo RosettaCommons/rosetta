@@ -15,6 +15,13 @@
 #ifndef INCLUDED_core_pack_all_hh
 #define INCLUDED_core_pack_all_hh
 
+#ifdef PYROSETTA
+	// REQUIRED FOR WINDOWS
+	#include <core/optimization/DOF_Node.hh> 
+	#include <core/pack/scmin//AtomTreeCollection.hh>
+#endif	
+
+
 namespace core {
 namespace pack {
 

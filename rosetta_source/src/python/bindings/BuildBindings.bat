@@ -8,6 +8,8 @@ rem cd "c:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\bin"
 rem call vcvars32.bat
 
 rem p:
-c:\Python27\python.exe BuildBindings.py
 
+rem c:\Python27\python.exe BuildBindings.py --use-pre-generated-sources C:\WPyRosetta\LinuxPyRosetta\rosetta.16384 %*
 
+c:\Python27\python.exe BuildBindings.py --use-pre-generated-sources P:\WinPyRosetta\rosetta %*
+rem c:\Python27\python.exe BuildBindings.py --use-pre-generated-sources P:\WinPyRosetta\rosetta.all %*
