@@ -43,9 +43,6 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
-// Package headers
-#include <protocols/nonlocal/CutFinder.hh>
-
 namespace protocols {
 namespace nonlocal {
 

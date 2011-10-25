@@ -14,7 +14,6 @@ sources = {
           "LoopsUtil",
         ],
         "nonlocal" : [
-          "BoundaryFinder",
           "Chunk",
           "NonlocalUtil",
           "Region",

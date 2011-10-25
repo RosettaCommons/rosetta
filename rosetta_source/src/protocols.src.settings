@@ -21,10 +21,8 @@ sources = {
         ],
 	"protocols/nonlocal" : [
                 "BiasedFragmentMover",
-		"BoundaryFinder",
 		"BrokenFold",
 		"Chunk",
-		"CutFinder",
 		"NonlocalAbinitio",
 		"NonlocalAbinitioMain",
 		"PolicyFactory",
