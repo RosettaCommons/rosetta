@@ -100,6 +100,7 @@ basic::options::FileOptionKey const GTPasepdb("GTPasepdb");
 basic::options::IntegerOptionKey const GTPase_residue("GTPase_residue");
 basic::options::RealOptionKey const SASAfilter("SASAfilter");
 basic::options::RealOptionKey const scorefilter("scorefilter");
+basic::options::IntegerOptionKey const n_tail_res("n_tail_res");
 
 //tracers
 using basic::Error;
@@ -272,11 +273,13 @@ public:
 		//setup MoveMaps
 		//small/shear behave fine @ the last residue
 		disulfide_mm_ = new core::kinematics::MoveMap;
-		disulfide_mm_->set_bb(complexlength, true);
+		for( core::Size i(0), ntailres(basic::options::option[n_tail_res]); i<ntailres; ++i){ //slightly irregular < comparison because C-terminus is functionally zero-indexed
+			disulfide_mm_->set_bb((complexlength-i), true);
+		}
 		//disulfide_mm_->set(core::id::TorsionID(complexlength, core::id::BB, core::id::phi_torsion), true);
 		//disulfide_mm_->set(core::id::TorsionID(complexlength, core::id::BB, core::id::psi_torsion), true);
-		disulfide_mm_->set_bb(complexlength-1, true);
-		disulfide_mm_->set_bb(complexlength-2, true);
+		//disulfide_mm_->set_bb(complexlength-1, true);
+		//disulfide_mm_->set_bb(complexlength-2, true);
 		//disulfide_mm_->set(complex.atom_tree().torsion_angle_dof_id(atomIDs[2], atomIDs[3], atomIDs[4], atomIDs[5]), false);
 
 		//setup loop
@@ -610,6 +613,7 @@ int main( int argc, char* argv[] )
  	option.add( GTPase_residue, "GTPase cysteine (PDB numbering)").def(85);
 	option.add( SASAfilter, "filter out interface dSASA less than this").def(10);
 	option.add( scorefilter, "filter out total score greater than this").def(1000);
+	option.add( n_tail_res, "Number of c-terminal \"tail\" residues to make flexible (terminus inclusive)").def(3);
 
 	//initialize options
 	devel::init(argc, argv);
