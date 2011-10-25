@@ -158,7 +158,7 @@ OrbitalsFeatures::report_features(
 void
 OrbitalsFeatures::report_hpol_orbital_interactions(
 	Pose const & pose,
-	vector1< bool > const & relevant_residues,
+	vector1< bool > const & /*relevant_residues*/,
 	Size const struct_id,
 	sessionOP db_session
 ){
@@ -245,7 +245,7 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 void
 OrbitalsFeatures::report_haro_orbital_interactions(
 	Pose const & pose,
-	vector1< bool > const & relevant_residues,
+	vector1< bool > const & /*relevant_residues*/,
 	Size const struct_id,
 	sessionOP db_session
 ){

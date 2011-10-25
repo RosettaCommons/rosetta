@@ -312,6 +312,7 @@ sources = {
 		"RotamerBoltzmannWeightFeatures",
 		"RotamerRecoveryFeatures",
 		"SaltBridgeFeatures",
+		"ScoreTypeFeatures",
 		"StructureFeatures",
 		"StructureScoresFeatures",
 	],

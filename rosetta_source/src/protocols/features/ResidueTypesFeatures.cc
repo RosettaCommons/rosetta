@@ -54,8 +54,6 @@ using core::chemical::AtomIndices;
 using core::chemical::ResidueType;
 using utility::sql_database::sessionOP;
 using utility::vector1;
-using cppdb::statement;
-using cppdb::result;
 using basic::Tracer;
 
 static Tracer TR("protocols.features.ResidueTypesFeatures");
@@ -199,26 +197,15 @@ ResidueTypesFeatures::report_features(
 		string const & residue_type_set_name(res_type->residue_type_set().name());
 
 		// Is this residue type already in the database?
-		result res;
-		while(true)
-		{
-			try
-			{
-				res = (*db_session)
-					<< "SELECT * FROM residue_type\n"
-					"WHERE residue_type_set_name = ? AND name = ?;"
-					<< residue_type_set_name << res_type->name();
-				break;
-			}catch(cppdb::cppdb_error &)
-			{
-				#ifndef WIN32
-					usleep(10);
-				#endif
-				continue;
-			}
-		}
-		if(res.next()) continue;
+		cppdb::statement statement = (*db_session)
+				<< "SELECT * FROM residue_type\n"
+				"WHERE residue_type_set_name = ? AND name = ?;"
+				<< residue_type_set_name << res_type->name();
 
+		cppdb::result res(basic::database::safely_read_from_database(statement));
+
+
+		if(res.next()) continue;
 
 		report_residue_type(residue_type_set_name, *res_type, db_session);
 		report_residue_type_atom(residue_type_set_name, *res_type, db_session);
@@ -249,7 +236,7 @@ ResidueTypesFeatures::report_residue_type(
 	}
 
 
-	statement stmt = (*db_session)
+	cppdb::statement stmt = (*db_session)
 		<< "INSERT INTO residue_type VALUES (?,?,?,?,?,?,?,?,?,?);"
 		<< residue_type_set_name
 		<< version_
@@ -275,7 +262,7 @@ ResidueTypesFeatures::report_residue_type_atom(
 	// AtomTypeSet?
 	for(Size i=1; i <= res_type.natoms(); ++i){
 
-		statement stmt = (*db_session)
+		cppdb::statement stmt = (*db_session)
 			<< "INSERT INTO residue_type_atom VALUES (?,?,?,?,?,?,?,?);"
 			<< residue_type_set_name
 			<< res_type.name()
@@ -303,7 +290,7 @@ ResidueTypesFeatures::report_residue_type_bond(
 		for(Size nbr=1; nbr <= neighbors.size(); ++nbr){
 			if(atm >= neighbors[nbr]) continue;
 
-			statement stmt = (*db_session)
+			cppdb::statement stmt = (*db_session)
 				<< "INSERT INTO residue_type_bond VALUES (?,?,?,?,?);"
 				<< residue_type_set_name
 				<< res_type.name()
@@ -325,7 +312,7 @@ ResidueTypesFeatures::report_residue_type_cut_bond(
 	for(Size i=1; i <= res_type.natoms(); ++i){
 		foreach(Size const j, res_type.cut_bond_neighbor(i)){
 			if(i>=j) continue;
-			statement stmt = (*db_session)
+			cppdb::statement stmt = (*db_session)
 				<< "INSERT INTO residue_type_cut_bond VALUES (?,?,?,?);"
 				<< residue_type_set_name
 				<< res_type.name()
@@ -346,7 +333,7 @@ ResidueTypesFeatures::report_residue_type_chi(
 	for(Size i=1; i <= res_type.nchi(); ++i){
 		AtomIndices const & chi_atoms(res_type.chi_atoms(i));
 
-		statement stmt = (*db_session)
+		cppdb::statement stmt = (*db_session)
 			<< "INSERT INTO residue_type_chi VALUES (?,?,?,?,?,?,?);"
 			<< residue_type_set_name
 			<< res_type.name()
@@ -370,7 +357,7 @@ ResidueTypesFeatures::report_residue_type_chi_rotamer(
 		pair<Real, Real> mean_sdev;
 		foreach(mean_sdev, res_type.chi_rotamers(chi)){
 
-			statement stmt = (*db_session)
+			cppdb::statement stmt = (*db_session)
 				<< "INSERT INTO residue_type_chi_rotamer VALUES (?,?,?,?,?);"
 				<< residue_type_set_name
 				<< res_type.name()
@@ -392,7 +379,7 @@ ResidueTypesFeatures::report_residue_type_proton_chi(
 		Size const chi(res_type.proton_chi_2_chi(proton_chi));
 		foreach(Real const sample, res_type.proton_chi_samples(proton_chi)){
 
-			statement stmt_sample = (*db_session)
+			cppdb::statement stmt_sample = (*db_session)
 				<< "INSERT INTO residue_type_proton_chi VALUES (?,?,?,?,?);"
 				<< residue_type_set_name
 				<< res_type.name()
@@ -404,7 +391,7 @@ ResidueTypesFeatures::report_residue_type_proton_chi(
 
 			foreach(Real const extra_sample, res_type.proton_chi_extra_samples(proton_chi)){
 
-				statement stmt_neg_extra = (*db_session)
+				cppdb::statement stmt_neg_extra = (*db_session)
 					<< "INSERT INTO residue_type_proton_chi VALUES (?,?,?,?,?);"
 					<< residue_type_set_name
 					<< res_type.name()
@@ -413,7 +400,7 @@ ResidueTypesFeatures::report_residue_type_proton_chi(
 					<< true;
 				basic::database::safely_write_to_database(stmt_neg_extra);
 
-				statement stmt_pos_extra = (*db_session)
+				cppdb::statement stmt_pos_extra = (*db_session)
 					<< "INSERT INTO residue_type_proton_chi VALUES (?,?,?,?,?);"
 					<< residue_type_set_name
 					<< res_type.name()
@@ -435,12 +422,12 @@ ResidueTypesFeatures::report_residue_type_properties(
 ) const {
 	foreach(string const & property, res_type.properties()){
 
-				statement stmt = (*db_session)
+		cppdb::statement stmt = (*db_session)
 					<< "INSERT INTO residue_type_property VALUES (?,?,?);"
 					<< residue_type_set_name
 					<< res_type.name()
 					<< property;
-				basic::database::safely_write_to_database(stmt);
+		basic::database::safely_write_to_database(stmt);
 
 	}
 }
@@ -453,7 +440,7 @@ ResidueTypesFeatures::report_residue_type_variant(
 ) const {
 	foreach(string const & variant_type, res_type.variant_types()){
 
-		statement stmt = (*db_session)
+		cppdb::statement stmt = (*db_session)
 			<< "INSERT INTO residue_type_variant_type VALUES (?,?,?);"
 			<< residue_type_set_name
 			<< res_type.name()

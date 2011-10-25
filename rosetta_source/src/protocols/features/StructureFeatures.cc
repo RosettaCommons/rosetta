@@ -67,8 +67,9 @@ StructureFeatures::schema() const {
 			"CREATE TABLE IF NOT EXISTS structures (\n"
 			"	struct_id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
 			"	protocol_id INTEGER,\n"
-			"	tag TEXT UNIQUE,\n"
+			"	tag TEXT,\n"
 			"	input_tag TEXT,\n"
+			"	UNIQUE (protocol_id, tag)"
 			"	FOREIGN KEY (protocol_id)\n"
 			"		REFERENCES protocols (protocol_id)\n"
 			"		DEFERRABLE INITIALLY DEFERRED);";
@@ -78,8 +79,9 @@ StructureFeatures::schema() const {
 			"CREATE TABLE IF NOT EXISTS structures (\n"
 			"	struct_id INTEGER PRIMARY KEY AUTO_INCREMENT,\n"
 			"	protocol_id INTEGER REFERENCES protocols(protocol_id),\n"
-			"	tag VARCHAR(255) UNIQUE,\n"
+			"	tag VARCHAR(255),\n"
 			"	input_tag VARCHAR(255),\n"
+			"	UNIQUE (protocol_id, tag)\n"
 			"	FOREIGN KEY (protocol_id) REFERENCES protocols (protocol_id));";
 	}else
 	{

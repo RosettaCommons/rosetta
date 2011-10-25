@@ -549,7 +549,7 @@ ReportToDB::apply( Pose& pose ){
 
 	if(!protocol_table_initialized_){
 		protocol_id_ = protocol_features_->report_features(
-			pose, relevant_residues, protocol_id_, db_session);
+			protocol_id_, db_session);
 		protocol_table_initialized_ = true;
 
 		statement stmt = (*db_session) <<

@@ -49,7 +49,9 @@
 #include <basic/options/keys/pH.OptionKeys.gen.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
 
-
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace core {
 namespace chemical {
@@ -128,8 +130,7 @@ ResidueTypeSet::ResidueTypeSet(
 			}
 		}
 
-		for(std::vector< std::string >::const_iterator i = extra_res_param_files.begin(), e = extra_res_param_files.end(); i != e; ++i) {
-			std::string filename (*i);
+		foreach(std::string filename, extra_res_param_files){
 			ResidueTypeOP rsd_type( read_topology_file( filename, atom_types, elements, mm_atom_types, orbital_types, this ) ); //, csd_atom_types ) );
 			// kwk commenting out csd atom types until they have been fully implemented
 			residue_types_.push_back( rsd_type );
@@ -529,7 +530,7 @@ ResidueTypeSet::place_adducts()
 	// 5 entries in the rsd param file will create all combinations with up to
 	// 2 total adducts.
 
-	std::map< std::string, int > add_map = parse_adduct_string( add_set );
+	AdductMap add_map = parse_adduct_string( add_set );
 
 	// Error check each requested adduct from the command line, and
 	// complain if there are no examples in any residues.  This function
@@ -538,8 +539,8 @@ ResidueTypeSet::place_adducts()
 
 	// Set up a starting point map where the int value is the number
 	// of adducts of a given type placed
-		std::map< std::string, int > blank_map( add_map );
-		for( std::map< std::string, int >::iterator add_iter = blank_map.begin(),
+		AdductMap blank_map( add_map );
+		for( AdductMap::iterator add_iter = blank_map.begin(),
 						end_iter = blank_map.end() ;
 					add_iter != end_iter ; ++add_iter ) {
 			add_iter->second = 0;
@@ -549,7 +550,7 @@ ResidueTypeSet::place_adducts()
 	for ( ResidueTypeOPs::const_iterator iter= residue_types_.begin(), iter_end = residue_types_.end();
 				iter != iter_end; ++iter ) {
 		ResidueType const & rsd( **iter );
-		std::map< std::string, int > count_map( blank_map );
+		AdductMap count_map( blank_map );
 		utility::vector1< bool > add_mask( rsd.defined_adducts().size(), false  );
 		create_adduct_combinations( rsd, add_map, count_map, add_mask, rsd.defined_adducts().begin() );
 	}
@@ -572,8 +573,8 @@ ResidueTypeSet::add_residue_type( ResidueTypeOP new_type )
 /// @brief Create correct combinations of adducts for a residue type
 void ResidueTypeSet:: create_adduct_combinations(
 	ResidueType const & rsd,
-	std::map< std::string, int > ref_map,
-	std::map< std::string, int > count_map,
+	AdductMap ref_map,
+	AdductMap count_map,
 	utility::vector1< bool > add_mask,
 	utility::vector1< Adduct >::const_iterator work_iter
 )
@@ -587,12 +588,13 @@ void ResidueTypeSet:: create_adduct_combinations(
 		}
 		// Make this combo and return;
 //		std::cout << "Making an adduct" << std::endl;
-		utility::vector1< Adduct >::const_iterator add_iter = rsd.defined_adducts().begin() ;
-		for( utility::vector1< bool >::iterator make_iter = add_mask.begin(),
-				end_iter = add_mask.end();
-				make_iter != end_iter ; ++make_iter, ++add_iter ) {
+
+//		utility::vector1< Adduct >::const_iterator add_iter = rsd.defined_adducts().begin() ;
+//		for( utility::vector1< bool >::iterator make_iter = add_mask.begin(),
+//				end_iter = add_mask.end();
+//				make_iter != end_iter ; ++make_iter, ++add_iter ) {
 //			std::cout << "Adduct " << add_iter->adduct_name() << " make is " << (*make_iter) << std::endl;
-		}
+//		}
 
 		// Farm this out to a helper function
 		residue_types_.push_back( apply_adducts_to_residue( rsd, add_mask ) );
@@ -603,12 +605,12 @@ void ResidueTypeSet:: create_adduct_combinations(
 	// Traverse the 'make' branch for this adduct if:
 	// 1. The adduct is in the map of requested adducts
 	// 2. we haven't exceeded the count limit for this adduct
-	std::map< std::string, int >::iterator test_iter =
+	AdductMap::iterator test_iter =
 			ref_map.find( work_iter->adduct_name() );
 
 	if ( test_iter != ref_map.end() &&
 				count_map[ test_iter->first ] < ref_map[ test_iter->first ]   ) {
-		std::map< std::string, int > new_count_map( count_map );
+		AdductMap new_count_map( count_map );
 		new_count_map[ work_iter->adduct_name() ]++;
 		utility::vector1< bool > new_add_mask( add_mask );
 		// This following line may not work if the Adducts are no longer
@@ -619,7 +621,7 @@ void ResidueTypeSet:: create_adduct_combinations(
 
 	// Always traverse the 'do not make' for this adduct
 	// The count is not incremented, and the mask is left at the default (false)
-	std::map< std::string, int > new_count_map( count_map );
+	AdductMap new_count_map( count_map );
 	utility::vector1< bool > new_add_mask( add_mask );
 	create_adduct_combinations( rsd, ref_map, new_count_map, new_add_mask, work_iter+1 );
 

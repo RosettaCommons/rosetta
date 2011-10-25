@@ -11,7 +11,6 @@
 /// @brief
 /// @author Phil Bradley
 
-
 // Unit header
 #include <core/chemical/residue_io.hh>
 
@@ -63,6 +62,10 @@
 //option
 #include <basic/options/option.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
+
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
@@ -778,11 +781,9 @@ write_topology_file(
 
 	//then all the bonds
 	for(Size i=1; i <= rsd.natoms(); i++){
-
-		AtomIndices bonds_this_atom = rsd.nbrs( i );
-		for(AtomIndices::iterator at_it = bonds_this_atom.begin(); at_it != bonds_this_atom.end(); at_it++ ){
-			if( *at_it > i ) {  //don't write out bonds more than once
-				out << "BOND  " << rsd.atom_name( i ) << "    " << rsd.atom_name( *at_it ) << " \n";
+		foreach(Size atom_index, rsd.nbrs(i)){// bond_this_atom
+			if( atom_index > i ) {  //don't write out bonds more than once
+				out << "BOND  " << rsd.atom_name( i ) << "    " << rsd.atom_name( atom_index ) << " \n";
 			}
 		}
 	} // bond write out

@@ -40,6 +40,9 @@
 //Auto Headers
 #include <core/chemical/AtomTypeSet.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace core {
 namespace conformation {
@@ -67,21 +70,10 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 	}
 
 
-
-	for(
-		utility::vector1<core::Size>::const_iterator
-		atoms_with_orb_index = rsd_type_.atoms_with_orb_index().begin(),
-		atoms_with_orb_index_end = rsd_type_.atoms_with_orb_index().end();
-		atoms_with_orb_index != atoms_with_orb_index_end; ++atoms_with_orb_index
-	){
-		utility::vector1<core::Size> orbital_indices(rsd_type_.bonded_orbitals(*atoms_with_orb_index));
-		for(
-				utility::vector1< core::Size >::const_iterator
-				orbital_index = orbital_indices.begin(),
-				orbital_index_end = orbital_indices.end();
-				orbital_index != orbital_index_end; ++orbital_index
-		){
-			Vector orb_xyz(this->build_orbital_xyz(*orbital_index));
+	foreach(core::Size atom_with_orbitals, rsd_type_.atoms_with_orb_index()){
+		utility::vector1<core::Size> orbital_indices(rsd_type_.bonded_orbitals(atom_with_orbitals));
+		foreach(core::Size orbital_index, orbital_indices){
+			Vector orb_xyz(this->build_orbital_xyz(orbital_index));
 			orbitals_.push_back(orbitals::OrbitalXYZCoords(orb_xyz));
 		}
 	}
@@ -162,20 +154,10 @@ Residue::Residue(
 		chi_[ chino ] = current_chi;
 	}
 
-	for(
-		utility::vector1<core::Size>::const_iterator
-		atoms_with_orb_index = rsd_type_.atoms_with_orb_index().begin(),
-		atoms_with_orb_index_end = rsd_type_.atoms_with_orb_index().end();
-		atoms_with_orb_index != atoms_with_orb_index_end; ++atoms_with_orb_index
-	){
-		utility::vector1<core::Size> orbital_indices(rsd_type_.bonded_orbitals(*atoms_with_orb_index));
-		for(
-				utility::vector1< core::Size >::const_iterator
-				orbital_index = orbital_indices.begin(),
-				orbital_index_end = orbital_indices.end();
-				orbital_index != orbital_index_end; ++orbital_index
-		){
-			Vector orb_xyz(this->build_orbital_xyz(*orbital_index));
+	foreach(core::Size atom_with_orbitals, rsd_type_.atoms_with_orb_index()){
+		utility::vector1<core::Size> orbital_indices(rsd_type_.bonded_orbitals(atom_with_orbitals));
+		foreach(core::Size orbital_index, orbital_indices){
+			Vector orb_xyz(this->build_orbital_xyz(orbital_index));
 			orbitals_.push_back(orbitals::OrbitalXYZCoords(orb_xyz));
 		}
 	}

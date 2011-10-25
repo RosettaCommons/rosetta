@@ -57,8 +57,6 @@ public:
 	///if protocol_id is 0 autoincrement the protocol_id
 	core::Size
 	report_features(
-		core::pose::Pose const & /*pose*/,
-		utility::vector1< bool > const & /*relevant_residues*/,
 		core::Size protocol_id,
 		utility::sql_database::sessionOP db_session
 	);

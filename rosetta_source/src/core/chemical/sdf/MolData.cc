@@ -16,6 +16,10 @@
 #include <map>
 #include <string>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 namespace core {
 namespace chemical {
 namespace sdf {
@@ -43,14 +47,12 @@ void MolData::clear()
 
 void MolData::parse_mol_data(utility::vector1<std::string> const & file_lines)
 {
-	utility::vector1<std::string>::const_iterator line_it;
 	bool inside_block = false;
 
 	std::string data_name = "";
 	std::string data = "";
-	for(line_it = file_lines.begin(); line_it != file_lines.end(); ++line_it)
-	{
-		std::string line = *line_it;
+
+	foreach(std::string line, file_lines){
 		if(line[0] == '>') //we've found a data header
 		{
 			data_name = line.substr(3,line.size());

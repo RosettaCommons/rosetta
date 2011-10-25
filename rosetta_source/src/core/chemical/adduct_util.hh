@@ -36,15 +36,17 @@
 namespace core {
 namespace chemical {
 
+	typedef std::map< std::string, int > AdductMap;
+
 	/// @brief Convert input string to map of adducts->max usage
-	std::map< std::string, int >
+	AdductMap
 	parse_adduct_string(
 		utility::options::StringVectorOption & add_vec
 	);
 
 	/// @brief Make sure requested adducts exist in some residue
 	void
-	error_check_requested_adducts( std::map< std::string, int > const & add_map,
+	error_check_requested_adducts( AdductMap const & add_map,
 		ResidueTypeCAPs const & rsd_types );
 
 	/// @brief Apply adducts to residue using a boolean mask

@@ -29,6 +29,10 @@
 #include <string>
 #include <stdlib.h>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 namespace core {
 namespace chemical {
 namespace sdf {
@@ -111,10 +115,11 @@ void ctabV2000Parser::ParseTable()
 		core::Size atomno = molecule_container_->atom_index(atomname);
 		set_atom_type(atomno, atomname);
 	}
-	utility::vector1<addedH>::iterator H_iterator;
-	for(H_iterator = added_H_.begin(); H_iterator!=added_H_.begin(); ++H_iterator){
-		index_to_names_map_.insert(std::pair<core::Size,std::string>(
-				H_iterator->atom_number,"H"+H_iterator->atom_number));
+
+	foreach(addedH added, added_H_){
+		index_to_names_map_.insert(
+				std::pair<core::Size,std::string>(added.atom_number,"H"+added.atom_number)
+		);
 	}
 
 
@@ -303,20 +308,17 @@ void ctabV3000Parser::set_atom_type(core::Size atomno, std::string atomname)
 
 core::Real ctabV3000Parser::FindExtraParameter(std::vector<std::string> extra_parameters,const std::string query )
 {
-	std::vector<std::string>::iterator extra_parameters_iterator;
-	for(extra_parameters_iterator = extra_parameters.begin(); extra_parameters_iterator != extra_parameters.end(); ++extra_parameters_iterator)
-	{
-		std::string current_parameter(*extra_parameters_iterator);
-		if(current_parameter.find(query) == std::string::npos)
+	foreach(std::string extra_parameter, extra_parameters){
+		if(extra_parameter.find(query) == std::string::npos)
 		{
 			continue;
 		}
 		else
 		{
-			core::Size value_length = current_parameter.size() - (query.size()+1);
+			core::Size value_length = extra_parameter.size() - (query.size()+1);
 			core::Size value_start = query.size()+1;
 
-			std::string value_string = current_parameter.substr(value_start,value_length);
+			std::string value_string = extra_parameter.substr(value_start,value_length);
 			core::Real value = atof(value_string.c_str());
 			return value;
 		}
@@ -325,15 +327,14 @@ core::Real ctabV3000Parser::FindExtraParameter(std::vector<std::string> extra_pa
 }
 void ctabV3000Parser::ParseTable()
 {
-	utility::vector1<std::string>::iterator connection_table_iterator;
+
 	bool atom_block(false);
 	bool bond_block(false);
 
 	std::map<core::Size,std::string> atom_type_data = this->ParseAtomTypeData();
 
-	for(connection_table_iterator = connection_table_lines_.begin(); connection_table_iterator != connection_table_lines_.end(); ++connection_table_iterator)
-	{
-		std::string current_line(*connection_table_iterator);
+	foreach(std::string current_line, connector_table_lines_){
+
 		std::vector<std::string> line_vector(utility::split(current_line));
 		//if(line_vector[0] != "M" || line_vector[1] != "V30")
 		//{
@@ -392,11 +393,10 @@ void ctabV3000Parser::ParseTable()
 			set_atom_type(atomno,atomname);
 		}
 	}
-	utility::vector1<addedH>::iterator H_iterator;
-	for(H_iterator = added_H_.begin();H_iterator != added_H_.begin();++H_iterator)
-	{
+
+	foreach(addedH added, added_H_){
 		index_to_names_map_.insert(std::pair<core::Size,std::string>(
-				H_iterator->atom_number,"H"+H_iterator->atom_number));
+				added.atom_number,"H"+added.atom_number));
 	}
 
 }

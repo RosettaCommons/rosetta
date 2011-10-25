@@ -75,6 +75,10 @@
 #include <core/graph/UpperEdgeGraph.hh>
 #include <numeric/random/random.fwd.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -1673,15 +1677,12 @@ Conformation::detect_pseudobonds()
  */
 void
 Conformation::fix_disulfides(utility::vector1< std::pair<Size, Size> > disulf_bonds) {
-
-	//For each disulfide bond
-	for(utility::vector1< std::pair<Size, Size> >::ConstIterator disulf_iter = disulf_bonds.begin();
-			disulf_iter != disulf_bonds.end(); ++disulf_iter) {
-
+	typedef std::pair<Size,Size> SizePair;
+	foreach(SizePair disulfide_bond, disulf_bonds){
 		using utility::vector1;
 
-		Size l_index = (*disulf_iter).first; //Lower residue
-		Size u_index = (*disulf_iter).second; //Upper residue, usually l<u
+		Size l_index = (disulfide_bond).first; //Lower residue
+		Size u_index = (disulfide_bond).second; //Upper residue, usually l<u
 
 		// Check that the residues exist
 		if(l_index > size() ) {
@@ -2388,21 +2389,11 @@ Conformation::update_residue_torsions( Size const seqpos, bool const fire_signal
 ///////////////////////////////////////////////////////////////////////////////
 void
 Conformation::update_orbital_coords( Residue & rsd) const{
-	for(
-		utility::vector1<core::Size>::const_iterator
-		atoms_with_orb_index = rsd.atoms_with_orb_index().begin(),
-		atoms_with_orb_index_end = rsd.atoms_with_orb_index().end();
-		atoms_with_orb_index != atoms_with_orb_index_end; ++atoms_with_orb_index
-	){
-		utility::vector1<core::Size> orbital_indices(rsd.bonded_orbitals(*atoms_with_orb_index));
-		for(
-				utility::vector1< core::Size >::const_iterator
-				orbital_index = orbital_indices.begin(),
-				orbital_index_end = orbital_indices.end();
-				orbital_index != orbital_index_end; ++orbital_index
-		){
-			Vector orb_xyz(rsd.build_orbital_xyz(*orbital_index));
-			rsd.set_orbital_xyz(*orbital_index, orb_xyz );
+	foreach(core::Size atom_with_orbitals, rsd.atoms_with_orb_index()){
+		utility::vector1<core::Size> orbital_indices(rsd.bonded_orbitals(atom_with_orbitals));
+		foreach(core::Size orbital_index, orbital_indices){
+			Vector orb_xyz(rsd.build_orbital_xyz(orbital_index));
+			rsd.set_orbital_xyz(orbital_index, orb_xyz );
 		}
 	}
 }

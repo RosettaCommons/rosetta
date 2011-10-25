@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/features/StructureScoresFeatures.cc
+/// @file   protocols/features/ScoreTypeFeatures.cc
 /// @brief  report protocol level features to features statistics scientific benchmark
 /// @author Matthew O'Meara
 
 // Unit Headers
-#include <protocols/features/StructureScoresFeatures.hh>
+#include <protocols/features/ScoreTypeFeatures.hh>
 
 // Platform Headers
 #include <basic/options/option.hh>
@@ -67,60 +67,58 @@ using utility::sql_database::sessionOP;
 using cppdb::statement;
 using cppdb::result;
 
-StructureScoresFeatures::StructureScoresFeatures() :
+ScoreTypeFeatures::ScoreTypeFeatures() :
 	scfxn_(getScoreFunction())
 {}
 
-StructureScoresFeatures::StructureScoresFeatures(
+ScoreTypeFeatures::ScoreTypeFeatures(
 	ScoreFunctionOP scfxn
 ) :
 	scfxn_(scfxn)
 {
 	if ( scfxn_ == 0 ) {
-		utility_exit_with_message( "StructureScoresFeatures may not be constructed with a null-pointer ScoreFunctionOP" );
+		utility_exit_with_message( "ScoreTypeFeatures may not be constructed with a null-pointer ScoreFunctionOP" );
 	}
 }
 
-StructureScoresFeatures::StructureScoresFeatures(
-	StructureScoresFeatures const & src
+ScoreTypeFeatures::ScoreTypeFeatures(
+	ScoreTypeFeatures const & src
 ) :
 	FeaturesReporter(),
 	scfxn_(src.scfxn_)
 {}
 
-StructureScoresFeatures::~StructureScoresFeatures() {}
+ScoreTypeFeatures::~ScoreTypeFeatures() {}
 
 string
-StructureScoresFeatures::type_name() const { return "StructureScoresFeatures"; }
+ScoreTypeFeatures::type_name() const { return "ScoreTypeFeatures"; }
 
 string
-StructureScoresFeatures::schema() const {
+ScoreTypeFeatures::schema() const {
 	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
 
 	if(db_mode == "sqlite3")
 	{
 		return
-			"CREATE TABLE IF NOT EXISTS structure_scores (\n"
-			"	struct_id INTEGER,\n"
+			"CREATE TABLE IF NOT EXISTS score_types (\n"
+			"	protocol_id INTEGER,\n"
 			"	score_type_id INTEGER,\n"
-			"	score_value INTEGER,\n"
-			"	FOREIGN KEY (struct_id)\n"
-			"		REFERENCES structures (struct_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	FOREIGN KEY (score_type_id)\n"
-			"		REFERENCES score_types (score_type_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED,\n"
-			"	PRIMARY KEY (struct_id, score_type_id));";
+			"	score_type_name TEXT,\n"
+			"	PRIMARY KEY (protocol_id, score_type_id)\n"
+			"	FOREIGN KEY (protocol_id)\n"
+			"		REFERENCES protocols (protocol_id)\n"
+			"		DEFERRABLE INITIALLY DEFERRED);\n"
+			"\n";
 	}else if(db_mode == "mysql")
 	{
 		return
-			"CREATE TABLE IF NOT EXISTS structure_scores (\n"
-			"	struct_id INTEGER,\n"
+			"CREATE TABLE IF NOT EXISTS score_types (\n"
+			"	protocol_id INTEGER,\n"
 			"	score_type_id INTEGER,\n"
-			"	score_value INTEGER,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
-			"	FOREIGN KEY (score_type_id) REFERENCES score_types (score_type_id),\n"
-			"	PRIMARY KEY (struct_id, score_type_id));";
+			"	score_type_name TEXT,\n"
+			"   PRIMARY KEY (protocol_id, score_type_id)\n"
+			"	FOREIGN KEY (protocol_id) REFERENCES protocols (protocol_id));\n"
+			"\n";
 	}else
 	{
 		return "";
@@ -129,17 +127,15 @@ StructureScoresFeatures::schema() const {
 }
 
 Size
-StructureScoresFeatures::report_features(
-	Pose const & pose,
-	vector1< bool > const & relevant_residues,
-	Size struct_id,
+ScoreTypeFeatures::report_features(
+	Size protocol_id,
 	sessionOP db_session
 ){
-	insert_structure_score_rows(pose, relevant_residues, struct_id, db_session);
+	insert_score_type_rows(protocol_id, db_session);
 	return 0;
 }
 
-void StructureScoresFeatures::delete_record(
+void ScoreTypeFeatures::delete_record(
 	Size struct_id,
 	utility::sql_database::sessionOP db_session
 ){
@@ -151,39 +147,49 @@ void StructureScoresFeatures::delete_record(
 }
 
 void
-StructureScoresFeatures::insert_structure_score_rows(
-	Pose const & pose,
-	vector1< bool > const & relevant_residues,
-	Size struct_id,
+ScoreTypeFeatures::insert_score_type_rows(
+	Size protocol_id,
 	sessionOP db_session
-) const {
+) {
+	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
 
-	Energies const & energies(pose.energies());
-	EnergyMap emap;
-	scfxn_->get_sub_score(pose, relevant_residues, emap);
-
-	core::Real total_score= 0.0;
-
+	//cppdb::transaction transact_guard(*db_session);
 	for(Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id){
 		ScoreType type(static_cast<ScoreType>(score_type_id));
-		Real const score_value( energies.weights()[type] * emap[type] );
-		if(!score_value) continue;
-		total_score += score_value;
-		statement stmt = (*db_session)
-			<< "INSERT INTO structure_scores VALUES (?,?,?);"
-			<< struct_id
-			<< score_type_id
-			<< score_value;
-		basic::database::safely_write_to_database(stmt);
+
+		string const score_type( ScoreTypeManager::name_from_score_type(type) );
+
+		// I <3 all the tiny differences between SQL dialects,
+		//it makes the code so much more vibrant and diverse
+		if(db_mode == "sqlite3")
+		{
+
+			statement stmt = (*db_session)
+				<< "INSERT OR IGNORE INTO score_types VALUES (?,?,?);"
+				<< protocol_id
+				<< score_type_id
+				<< score_type;
+			basic::database::safely_write_to_database(stmt);
+
+		}else if(db_mode == "mysql")
+		{
+
+			statement stmt = (*db_session)
+				<< "INSERT IGNORE INTO score_types VALUES (?,?,?);"
+				<< protocol_id
+				<< score_type_id
+				<< score_type;
+			basic::database::safely_write_to_database(stmt);
+
+		}else
+		{
+			utility_exit_with_message("the database mode needs to be 'mysql' or 'sqlite3'");
+		}
+
 	}
-	// add the total_score type
-	statement stmt = (*db_session)
-		<< "INSERT INTO structure_scores VALUES (?,?,?);"
-		<< struct_id
-		<< n_score_types
-		<< total_score;
-	basic::database::safely_write_to_database(stmt);
+	//transact_guard.commit();
 }
+
 
 } // namesapce
 } // namespace

@@ -116,20 +116,7 @@ void DatabaseJobOutputter::final_pose(
 	JobCOP job, core::pose::Pose const & pose
 ) {
 	sessionOP db_session(basic::database::get_db_session(database_fname_));
-	while(true)
-	{
-		try
-		{
-			protein_silent_report_->apply(pose, db_session, output_name(job));
-			break;
-		}catch(cppdb::cppdb_error &)
-		{
-			#ifndef WIN32
-				usleep(10);
-			#endif
-			continue;
-		}
-	}
+	protein_silent_report_->apply(pose, db_session, output_name(job));
 }
 
 /// @brief this function is intended for saving mid-protocol poses; for example

@@ -17,6 +17,10 @@
 
 #include <utility/string_util.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 namespace core {
 namespace chemical {
 namespace sdf {
@@ -138,10 +142,7 @@ void V3Parser::ParseBond(std::string const bond_line)
 
 core::Real V3Parser::FindExtraParameter(std::vector<std::string> const extra_parameters, std::string const query )
 {
-	std::vector<std::string>::const_iterator extra_parameters_iterator;
-	for(extra_parameters_iterator = extra_parameters.begin(); extra_parameters_iterator != extra_parameters.end(); ++extra_parameters_iterator)
-	{
-		std::string current_parameter(*extra_parameters_iterator);
+	foreach(std::string current_parameter, extra_parameters){
 		if(current_parameter.find(query) == std::string::npos)
 		{
 			continue;

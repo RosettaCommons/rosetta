@@ -7,16 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/features/StructureScoresFeatures.hh
+/// @file   protocols/features/ScoreTypeFeatures.hh
 /// @brief  Structure scores to features Statistics Scientific Benchmark
 /// @author Matthew O'Meara
 
-#ifndef INCLUDED_protocols_features_StructureScoresFeatures_hh
-#define INCLUDED_protocols_features_StructureScoresFeatures_hh
+#ifndef INCLUDED_protocols_features_ScoreTypeFeatures_hh
+#define INCLUDED_protocols_features_ScoreTypeFeatures_hh
 
 // Unit Headers
 #include <protocols/features/FeaturesReporter.hh>
-#include <protocols/features/StructureScoresFeatures.fwd.hh>
+#include <protocols/features/ScoreTypeFeatures.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -30,16 +30,16 @@
 namespace protocols{
 namespace features{
 
-class StructureScoresFeatures : public protocols::features::FeaturesReporter {
+class ScoreTypeFeatures : public protocols::features::FeaturesReporter {
 public:
-	StructureScoresFeatures();
+	ScoreTypeFeatures();
 
-	StructureScoresFeatures(
+	ScoreTypeFeatures(
 		core::scoring::ScoreFunctionOP scfxn);
 
-	StructureScoresFeatures( StructureScoresFeatures const & src );
+	ScoreTypeFeatures( ScoreTypeFeatures const & src );
 
-	virtual ~StructureScoresFeatures();
+	virtual ~ScoreTypeFeatures();
 
 	///@brief return string with class name
 	std::string
@@ -52,9 +52,7 @@ public:
 	///@brief collect all the feature data for the pose
 	core::Size
 	report_features(
-		core::pose::Pose const & pose,
-		utility::vector1< bool > const & relevant_residues,
-		core::Size struct_id,
+		core::Size protocol_id,
 		utility::sql_database::sessionOP db_session
 	);
 
@@ -64,12 +62,10 @@ public:
 	);
 
 	void
-	insert_structure_score_rows(
-		core::pose::Pose const & pose,
-		utility::vector1< bool > const & relevant_residues,
-		core::Size struct_id,
+	insert_score_type_rows(
+		core::Size protocol_id,
 		utility::sql_database::sessionOP db_session
-	) const;
+	);
 
 private:
 	core::scoring::ScoreFunctionOP scfxn_;

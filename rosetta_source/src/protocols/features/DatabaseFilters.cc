@@ -145,8 +145,9 @@ TopPercentOfEachInput::TopPercentOfEachInput(
 		DatabaseFilter(),
 		top_count_of_each_input_()
 {
-	if(arguments.size() != 2)
+	if(arguments.size() != 2){
 		utility_exit_with_message("TopPercentOfEachInput option takes 2 arguments");
+	}
 	top_count_of_each_input_.score_term_ = arguments[1];
 
 	core::Real percent = utility::from_string(arguments[2], core::Real());
@@ -167,8 +168,9 @@ TopPercentOfEachInput::operator()(
 TopPercentOfAllInputs::TopPercentOfAllInputs(utility::vector1<std::string> arguments):
 			DatabaseFilter()
 {
-	if(arguments.size() != 2)
+	if(arguments.size() != 2){
 		utility_exit_with_message("TopPercentOfAllInputs option takes 2 arguments");
+	}
 	top_count_of_all_inputs_.score_term_ = arguments[1];
 
 	core::Real percent = utility::from_string(arguments[2], core::Real());
@@ -194,8 +196,9 @@ TopCountOfEachInput::TopCountOfEachInput(utility::vector1<std::string> arguments
 				DatabaseFilter(),
 				count_(0)
 {
-	if(arguments.size() != 2)
+	if(arguments.size() != 2){
 		utility_exit_with_message("TopCountOfEachInput option takes 2 arguments");
+	}
 	score_term_ = arguments[1];
 	count_ = utility::from_string(arguments[2], core::Size());
 };
@@ -218,8 +221,9 @@ TopCountOfAllInputs::TopCountOfAllInputs(utility::vector1<std::string> arguments
 				DatabaseFilter(),
 				count_(0)
 {
-	if(arguments.size() != 2)
+	if(arguments.size() != 2){
 		utility_exit_with_message("TopCountOfAllInputs option takes 2 arguments");
+	}
 	score_term_ = arguments[1];
 	count_ = utility::from_string(arguments[2], core::Size());
 };

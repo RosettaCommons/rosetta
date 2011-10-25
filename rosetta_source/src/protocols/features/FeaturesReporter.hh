@@ -61,7 +61,6 @@ public:
 		utility::sql_database::sessionOP /*db_session*/
 	);
 
-
 	///@brief collect all the feature data for the pose.
 	virtual
 	core::Size

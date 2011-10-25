@@ -378,6 +378,9 @@
 #include <boost/pool/detail/mutex.hpp>
 #include <boost/pool/poolfwd.hpp>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace core {
 namespace pose {
@@ -1472,8 +1475,9 @@ Pose::add_constraints( scoring::constraints::ConstraintCOPs csts )
 	}
 	using namespace scoring::constraints;
 	ConstraintCOPs new_csts;
-	for( ConstraintCOPs::const_iterator cst_it = csts.begin(); cst_it != csts.end(); ++cst_it )
-		new_csts.push_back( (*cst_it)->clone() );
+	foreach(ConstraintCOP constraint, csts){
+		new_csts.push_back( constraint->clone() );
+	}
 	constraint_set_->add_constraints( new_csts );
 	return( new_csts );
 }

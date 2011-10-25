@@ -19,15 +19,16 @@
 #include <protocols/features/ProteinSilentReport.fwd.hh>
 
 // Project Headers
-#include <protocols/features/ProtocolFeatures.hh>
-#include <protocols/features/PdbDataFeatures.hh>
-#include <protocols/features/StructureFeatures.hh>
-#include <protocols/features/StructureScoresFeatures.hh>
-#include <protocols/features/PoseConformationFeatures.hh>
-#include <protocols/features/PoseCommentsFeatures.hh>
-#include <protocols/features/ProteinResidueConformationFeatures.hh>
-#include <protocols/features/ResidueConformationFeatures.hh>
-#include <protocols/features/JobDataFeatures.hh>
+#include <protocols/features/ProtocolFeatures.fwd.hh>
+#include <protocols/features/PdbDataFeatures.fwd.hh>
+#include <protocols/features/StructureFeatures.fwd.hh>
+#include <protocols/features/StructureScoresFeatures.fwd.hh>
+#include <protocols/features/ScoreTypeFeatures.fwd.hh>
+#include <protocols/features/PoseConformationFeatures.fwd.hh>
+#include <protocols/features/PoseCommentsFeatures.fwd.hh>
+#include <protocols/features/ProteinResidueConformationFeatures.fwd.hh>
+#include <protocols/features/ResidueConformationFeatures.fwd.hh>
+#include <protocols/features/JobDataFeatures.fwd.hh>
 #include <protocols/features/DatabaseFilters.fwd.hh>
 
 // Platform Headers
@@ -82,10 +83,16 @@ public:
 
 
 private:
+	void
+	write_protocol_report(
+			utility::sql_database::sessionOP db_session
+	);
+
 	void write_full_report(
 		core::pose::Pose const & pose,
 		utility::sql_database::sessionOP db_session,
-		std::string const & tag);
+		std::string const & tag
+	);
 
 	void delete_pose(
 		utility::sql_database::sessionOP db_session,
@@ -108,6 +115,7 @@ private:
 	protocols::features::PdbDataFeaturesOP pdb_data_features_;
 	protocols::features::StructureFeaturesOP structure_features_;
 	protocols::features::StructureScoresFeaturesOP structure_scores_features_;
+	protocols::features::ScoreTypeFeaturesOP score_type_features_;
 	protocols::features::PoseConformationFeaturesOP pose_conformation_features_;
 	protocols::features::PoseCommentsFeaturesOP pose_comments_features_;
 	protocols::features::ProteinResidueConformationFeaturesOP protein_residue_conformation_features_;

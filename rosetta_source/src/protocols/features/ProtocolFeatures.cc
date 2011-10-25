@@ -134,8 +134,6 @@ ProtocolFeatures::indices() const {
 
 Size
 ProtocolFeatures::report_features(
-	Pose const & /*pose*/,
-	vector1< bool > const & /*relevant_residues*/,
 	Size protocol_id,
 	sessionOP db_session
 ){

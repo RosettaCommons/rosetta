@@ -20,9 +20,12 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <basic/Tracer.hh>
 
-
 #include <string>
 #include <map>
+
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace core {
 namespace chemical {
@@ -70,14 +73,10 @@ void SDFParser::SplitSDF()
 	std::string current_name;
 	utility::vector1<std::string> current_mol_block;
 	utility::vector1<std::string> current_data_block;
-	utility::vector1<std::string>::iterator file_vector_iterator;
 	core::Size line_counter = 1;
 	bool data_block = false;
 
-	for(file_vector_iterator = file_vector_.begin(); file_vector_iterator != file_vector_.end(); ++file_vector_iterator)
-	{
-		std::string current_line(*file_vector_iterator);
-
+	foreach(std::string current_line, file_vector_){
 
 		if(line_counter == 1)
 		{

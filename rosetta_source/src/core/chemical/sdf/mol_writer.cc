@@ -17,9 +17,11 @@
 #include <core/chemical/ResidueType.hh>
 #include <utility/string_util.hh>
 #include <core/chemical/ChemicalManager.hh>
-
-
 #include <set>
+
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace core {
 namespace chemical {
@@ -44,11 +46,8 @@ void MolWriter::output_residue(utility::io::ozstream & output_stream, core::conf
 	prepared_lines.insert(prepared_lines.end(),typeinfo.begin(),typeinfo.end());
 	prepared_lines.insert(prepared_lines.end(),nbr_atom.begin(),nbr_atom.end());
 
-	std::list<std::string>::iterator line_it;
-
-	for(line_it = prepared_lines.begin();line_it != prepared_lines.end(); ++line_it)
-	{
-		output_stream << *line_it;
+	foreach(std::string line, prepared_lines){
+		output_stream << line;
 	}
 
 }
@@ -205,10 +204,7 @@ std::list<std::string> MolWriter::compose_bonds(core::conformation::ResidueCOP r
 	}
 
 	core::Size bond_index = 1;
-	std::set<BondData>::iterator bond_iterator;
-	for(bond_iterator = bond_data_set.begin(); bond_iterator !=bond_data_set.end();++bond_iterator)
-	{
-		BondData current_bond = *bond_iterator;
+	foreach(BondData current_bond, bond_data_set){
 		std::string bond_line = line_header_ + utility::to_string<core::Size>(bond_index) + " " +
 								utility::to_string<core::Size>(current_bond.bondType) + " " +
 								utility::to_string<core::Size>(current_bond.lower) + " " +

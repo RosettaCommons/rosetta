@@ -20,6 +20,7 @@
 
 #include <protocols/features/ProtocolFeatures.hh>
 #include <protocols/features/StructureFeatures.hh>
+#include <protocols/features/ScoreTypeFeatures.hh>
 #include <protocols/features/StructureScoresFeatures.hh>
 #include <protocols/features/PdbDataFeatures.hh>
 #include <protocols/features/PoseCommentsFeatures.hh>
@@ -73,6 +74,7 @@ ProteinSilentReport::ProteinSilentReport() :
 	pdb_data_features_( new PdbDataFeatures()),
 	structure_features_( new StructureFeatures() ),
 	structure_scores_features_( new StructureScoresFeatures() ),
+	score_type_features_(new ScoreTypeFeatures()),
 	pose_conformation_features_( new PoseConformationFeatures() ),
 	pose_comments_features_( new PoseCommentsFeatures() ),
 	protein_residue_conformation_features_( new ProteinResidueConformationFeatures() ),
@@ -80,6 +82,10 @@ ProteinSilentReport::ProteinSilentReport() :
 	job_data_features_ (new JobDataFeatures() )
 {
 	database_filter_=get_DB_filter_ptr();
+
+	if( basic::options::option[basic::options::OptionKeys::out::database_protocol_id].user() ){
+		protocol_id_ = basic::options::option[basic::options::OptionKeys::out::database_protocol_id];
+	}
 }
 
 ProteinSilentReport::ProteinSilentReport(ProteinSilentReport const & src) :
@@ -92,6 +98,7 @@ ProteinSilentReport::ProteinSilentReport(ProteinSilentReport const & src) :
 	pdb_data_features_(src.pdb_data_features_),
 	structure_features_(src.structure_features_),
 	structure_scores_features_(src.structure_scores_features_),
+	score_type_features_(src.score_type_features_),
 	pose_conformation_features_(src.pose_conformation_features_),
 	pose_comments_features_(src.pose_comments_features_),
 	protein_residue_conformation_features_(src.protein_residue_conformation_features_),
@@ -112,6 +119,7 @@ ProteinSilentReport::write_schema_to_db(
 	pdb_data_features_->write_schema_to_db(db_session);
 	structure_features_->write_schema_to_db(db_session);
 	structure_scores_features_->write_schema_to_db(db_session);
+	score_type_features_->write_schema_to_db(db_session);
 	pose_conformation_features_->write_schema_to_db(db_session);
 	pose_comments_features_->write_schema_to_db(db_session);
 	protein_residue_conformation_features_->write_schema_to_db(db_session);
@@ -139,18 +147,8 @@ ProteinSilentReport::apply(
 
 	if (!initialized_){
 		write_schema_to_db(db_session);
-		if(basic::options::option[basic::options::OptionKeys::out::database_protocol_id].user())
-		{
-			core::Size protocol_id = basic::options::option[basic::options::OptionKeys::out::database_protocol_id];
-			protocol_id_ = protocol_features_->report_features(
-				pose, relevant_residues, protocol_id, db_session);
-		}else
-		{
-			protocol_id_ = protocol_features_->report_features(
-				pose, relevant_residues, 0, db_session);
-		}
+		write_protocol_report(db_session);
 		initialized_ = true;
-
 	}
 
 	if(!database_filter_){
@@ -185,7 +183,6 @@ ProteinSilentReport::load_pose(
 	pose_comments_features_->load_into_pose(db_session, struct_id, pose);
 	protein_residue_conformation_features_->load_into_pose(db_session, struct_id, pose);
 	residue_conformation_features_->load_into_pose(db_session,struct_id,pose);
-
 }
 
 bool ProteinSilentReport::is_initialized() const
@@ -194,10 +191,18 @@ bool ProteinSilentReport::is_initialized() const
 }
 
 void
+ProteinSilentReport::write_protocol_report(
+		utility::sql_database::sessionOP db_session
+){
+	protocol_features_->report_features(protocol_id_, db_session);
+	score_type_features_->report_features(protocol_id_, db_session);
+}
+void
 ProteinSilentReport::write_full_report(
 	core::pose::Pose const & pose,
 	utility::sql_database::sessionOP db_session,
-	std::string const & tag) {
+	std::string const & tag
+) {
 
 	vector1< bool > relevant_residues(pose.total_residue(), true);
 
@@ -205,7 +210,7 @@ ProteinSilentReport::write_full_report(
 	std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
 
 	Size struct_id = structure_features_->report_features(
-		pose, relevant_residues, protocol_id_, db_session, tag,input_tag);
+		pose, relevant_residues, protocol_id_, db_session, tag, input_tag);
 
 	pose_conformation_features_->report_features(
 		pose, relevant_residues, struct_id, db_session);

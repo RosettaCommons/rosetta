@@ -104,7 +104,7 @@ std::string JobDataFeatures::schema() const
 
 core::Size
 JobDataFeatures::report_features(
-		core::pose::Pose const & pose,
+		core::pose::Pose const & /*pose */,
 		utility::vector1<bool> const & /*relevant_residues*/,
 		core::Size struct_id,
 		utility::sql_database::sessionOP db_session

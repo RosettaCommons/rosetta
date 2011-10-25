@@ -17,6 +17,9 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+#include <utility/exit.hh>
+#include <utility/excn/Exceptions.hh>
+#include <utility/string_util.hh>
 
 
 namespace protocols {
@@ -34,8 +37,10 @@ T get_something_from_database(
 	if(result.next())
 	{
 		result >> value;
+		return value;
+	}else{
+		throw utility::excn::EXCN_Msg_Exception("No result found");
 	}
-	return value;
 }
 
 cppdb::statement get_structure_count_statement(
@@ -47,9 +52,10 @@ cppdb::statement get_structure_count_statement(
 				"SELECT\n"
 				"	count(*)\n"
 				"FROM\n"
-				"	structures;";
+				"	structures;\n";
 	}else{
-		return 	(*db_session) << "SELECT\n"
+		return 	(*db_session) <<
+				"SELECT\n"
 				"	count(*)\n"
 				"FROM\n"
 				"	structures\n"
@@ -64,7 +70,6 @@ core::Size get_score_type_id_from_score_term(
 	std::string const & score_term
 )
 {
-
 	cppdb::statement statement = (*db_session) <<
 		"SELECT\n"
 		"	score_type_id\n"
@@ -75,7 +80,11 @@ core::Size get_score_type_id_from_score_term(
 		"AND\n"
 		"	score_type_name=?;" << protocol_id << score_term;
 
-	return get_something_from_database(statement, core::Size());
+	try{
+		return get_something_from_database(statement, core::Size());
+	}catch(utility::excn::EXCN_Msg_Exception){
+		utility_exit_with_message("No score_term "+score_term+" with protocol_id "+utility::to_string(protocol_id));
+	}
 }
 
 cppdb::statement get_nth_lowest_score_from_job_data_statement(
@@ -202,6 +211,8 @@ cppdb::statement get_highest_score_from_score_data_statement(
 				"	structure_scores.struct_id\n"
 				"FROM\n"
 				"	structure_scores\n"
+				"WHERE\n"
+				"	structure_scores.score_type_id == ?\n"
 				"ORDER BY\n"
 				"	structure_scores.score_value DESC\n"
 				"LIMIT 1;" << score_type_id;
@@ -243,7 +254,12 @@ core::Size get_struct_id_with_nth_lowest_score_from_job_data(
 	std::string const & input_tag
 ){
 	cppdb::statement statement = get_nth_lowest_score_from_job_data_statement(db_session, score_term, cutoff_index, input_tag);
-	return get_something_from_database(statement, core::Size());
+
+	try{
+		return get_something_from_database(statement, core::Size());
+	}catch(utility::excn::EXCN_Msg_Exception){
+		utility_exit_with_message("No nth lowest "+score_term+" with input_tag "+input_tag+ ", where n="+utility::to_string(cutoff_index));
+	}
 }
 
 core::Size get_struct_id_with_nth_lowest_score_from_score_data(
@@ -253,7 +269,12 @@ core::Size get_struct_id_with_nth_lowest_score_from_score_data(
 	std::string const & input_tag
 ){
 	cppdb::statement statement = get_nth_lowest_score_from_score_data_statement(db_session, score_type_id, cutoff_index, input_tag);
-	return get_something_from_database(statement, core::Size());
+
+	try{
+		return get_something_from_database(statement, core::Size());
+	}catch(utility::excn::EXCN_Msg_Exception){
+		utility_exit_with_message("No nth lowest score_type_id: "+utility::to_string(score_type_id)+", with input_tag "+input_tag+ ", where n="+utility::to_string(cutoff_index));
+	}
 }
 
 core::Size get_struct_id_with_lowest_score_from_job_data(
@@ -278,7 +299,12 @@ core::Size get_struct_id_with_highest_score_from_job_data(
 	std::string const & input_tag )
 {
 	cppdb::statement statement = get_highest_score_from_job_data_statement(db_session, score_term, input_tag);
-	return get_something_from_database(statement, core::Size());
+
+	try{
+		return get_something_from_database(statement, core::Size());
+	}catch(utility::excn::EXCN_Msg_Exception){
+		utility_exit_with_message("No "+score_term+" with input_tag "+input_tag);
+	}
 }
 
 core::Size get_struct_id_with_highest_score_from_score_data(
@@ -287,7 +313,12 @@ core::Size get_struct_id_with_highest_score_from_score_data(
 	std::string const & input_tag
 ){
 	cppdb::statement statement = get_highest_score_from_score_data_statement(db_session, score_type_id, input_tag);
-	return get_something_from_database(statement, core::Size());
+
+	try{
+		return get_something_from_database(statement, core::Size());
+	}catch(utility::excn::EXCN_Msg_Exception){
+		utility_exit_with_message("No score_type_id: "+utility::to_string(score_type_id)+", with input_tag "+input_tag);
+	}
 }
 
 core::Real get_score_for_struct_id_and_score_term_from_job_data(
@@ -306,7 +337,11 @@ core::Real get_score_for_struct_id_and_score_term_from_job_data(
 		"AND\n"
 		"	job_string_real_data.struct_id == ?\n;" << score_term <<struct_id;
 
-	return get_something_from_database(statement, core::Real());
+	try{
+		return get_something_from_database(statement, core::Real());
+	}catch(utility::excn::EXCN_Msg_Exception){
+		utility_exit_with_message("No "+score_term+" with struct_id "+utility::to_string(struct_id));
+	}
 }
 
 core::Real get_score_for_struct_id_and_score_term_from_score_data(
@@ -325,7 +360,11 @@ core::Real get_score_for_struct_id_and_score_term_from_score_data(
 		"AND\n"
 		"	structure_scores.score_type_id == ?;" << struct_id << score_type_id;
 
-	return get_something_from_database(statement, core::Real());
+	try{
+		return get_something_from_database(statement, core::Real());
+	}catch(utility::excn::EXCN_Msg_Exception){
+		utility_exit_with_message("No score_type_id:"+utility::to_string(score_type_id)+", with struct_id "+utility::to_string(struct_id));
+	}
 }
 
 }
