@@ -80,7 +80,7 @@ private:
 /// should be accepted using the reservoir sampling criterion.
 /// @detailed If we've seen N values and we want to keep K of them,
 /// the probability of the Nth value being accepted is min(K/N,1.0).
-numeric::Real
+inline numeric::Real
 reservoir_sample_accept_prob(
 	numeric::Size n_wanted,
 	numeric::Size const n_seen
