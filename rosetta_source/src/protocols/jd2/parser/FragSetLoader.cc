@@ -59,7 +59,6 @@ void FragSetLoader::load_data(
 	FragmentReaderMap frag_readers_map;
 	if ( tag->hasTag( "FRAGMENTS" ) ) {
 		foreach(TagPtr tag, tag->getTag( "FRAGMENTS" )->getTags()){
-			TagPtr tag( tag );
 			std::string const name ( tag->getName() ); // this name is used when fragsets are defined later.
 			runtime_assert( !name.empty() );
 			FragmentReaderOP frop = new FragmentReader( tag );
