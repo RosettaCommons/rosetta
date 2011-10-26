@@ -1,4 +1,3 @@
-namespace abinitio { BooleanOptionKey const override_vdw_all_stages( "abinitio:override_vdw_all_stages" );  }
 namespace abinitio { IntegerVectorOptionKey const recover_low_in_stages( "abinitio:recover_low_in_stages" );  }
 namespace abinitio { IntegerVectorOptionKey const skip_stages( "abinitio:skip_stages" );  }
 namespace abinitio { BooleanOptionKey const close_chbrk( "abinitio:close_chbrk" );  }
@@ -577,3 +576,5 @@ namespace phil { StringOptionKey const vall_file( "phil:vall_file" );  }
 namespace phil { StringOptionKey const align_file( "phil:align_file" );  }
 namespace wum { BooleanOptionKey const wum( "wum" );  }
 namespace wum { IntegerOptionKey const n_slaves_per_master( "wum:n_slaves_per_master" );  }
+namespace wum { IntegerOptionKey const n_masters( "wum:n_masters" );  }
+namespace wum { IntegerOptionKey const memory_limit( "wum:memory_limit" );  }
