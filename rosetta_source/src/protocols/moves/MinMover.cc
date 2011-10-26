@@ -33,6 +33,10 @@
 #include <iostream>
 #include <protocols/rosetta_scripts/util.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 namespace protocols {
 namespace moves {
 
@@ -226,8 +230,8 @@ void MinMover::parse_opts(
 			movemap_->set_jump( false );
 		else{
 			std::vector<std::string> jumps = utility::string_split( tag->getOption<std::string>( "jump" ), ',' );
-			for( std::vector<std::string>::const_iterator it = jumps.begin(); it != jumps.end(); ++it ) {
-				Size const value = std::atoi( it->c_str() ); // convert to C string, then convert to integer, then set a Size (phew!)
+			foreach(std::string jump, jumps){
+				Size const value = std::atoi( jump.c_str() ); // convert to C string, then convert to integer, then set a Size (phew!)
 				TR << "Setting min on jump " << value << std::endl;
 				movemap_->set_jump( value, true );
 			}

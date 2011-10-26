@@ -36,6 +36,10 @@
 #include <sstream>
 #include <string>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;
 
@@ -237,12 +241,12 @@ FoldTree::slide_jump( Size const jump_number, Size const new_res1, Size const ne
 			remove_edges.push_back( *it );
 		}
 	}
-	for( utility::vector1< Edge >::iterator it=remove_edges.begin(); it!=remove_edges.end(); ++it ) {
-		delete_edge( *it );
+	foreach(Edge edge, remove_edges){
+		delete_edge( edge );
 	}
-  for( utility::vector1< Edge >::iterator it=new_edges.begin(); it!=new_edges.end(); ++it ) {
-    add_edge( *it );
-  }
+	foreach(Edge edge, new_edges){
+		add_edge( edge );
+	}
 
 	Edge const new_jump_edge( pos1, pos2, jump_number );
 	delete_edge( old_jump_edge );

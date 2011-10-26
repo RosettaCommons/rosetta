@@ -174,8 +174,12 @@
 #include <ostream>
 #include <string>
 #include <vector>
+
+// Boost Headers
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 
 namespace core {
@@ -197,10 +201,7 @@ rmsd_with_super(
 	std::vector< core::Vector > p1_coords;
 	std::vector< core::Vector > p2_coords;
 
-	for(std::list<Size>::const_iterator list_iter = subset_residues.begin();
-	    list_iter != subset_residues.end(); list_iter++)
-	  {
-	    Size const i( *list_iter );
+	foreach(Size i, subset_residues){
 	    Size num_atoms ( pose1.residue(i).natoms() );
 	    if ( predicate == is_ligand_heavyatom ||
 		 predicate == is_polymer_heavyatom ||

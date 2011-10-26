@@ -37,8 +37,9 @@
 // Auto-header: duplicate removed #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
 
-//Auto Headers
-
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 //// C++ headers
 static basic::Tracer TR("protocols.filters.Filter");
@@ -234,9 +235,8 @@ CompoundFilter::parse_my_tag(
 	Pose const & )
 {
 	TR<<"CompoundStatement"<<std::endl;
-	utility::vector0< TagPtr > const compound_tags( tag->getTags() );
-	for( utility::vector0< TagPtr >::const_iterator cmp_it=compound_tags.begin(); cmp_it!=compound_tags.end(); ++cmp_it ) {
-		TagPtr const cmp_tag_ptr = *cmp_it;
+
+	foreach(TagPtr cmp_tag_ptr, tag->getTags() ){
 		std::string const operation( cmp_tag_ptr->getName() );
 		std::pair< FilterOP, boolean_operations > filter_pair;
 		if( operation == "AND" ) filter_pair.second = AND;
@@ -307,8 +307,8 @@ CombinedFilter::compute( core::pose::Pose const & pose ) const
 {
 	core::Real value( 0.0 );
 
-	for( FilterList::const_iterator it=filterlist_.begin(); it!=filterlist_.end(); ++it ) {
-		value += it->second * it->first->report_sm( pose );
+	foreach(FilterWeightPair fw_pair, filterlist_){
+		value += fw_pair.second * fw_pair.first->report_sm( pose );
 	}
 	return( value );
 }
@@ -323,8 +323,7 @@ CombinedFilter::parse_my_tag(
 {
 	threshold_ = tag->getOption<core::Real>( "threshold", 0.0 );
 	utility::vector1< TagPtr > const sub_tags( tag->getTags() );
-	for( utility::vector1< TagPtr >::const_iterator it=sub_tags.begin(); it!=sub_tags.end(); ++it ) {
-		TagPtr const tag_ptr = *it;
+	foreach(TagPtr tag_ptr, sub_tags){
 		core::Real weight(1.0);
 		if (tag_ptr->hasOption("factor") ) {
 			weight = tag_ptr->getOption<core::Real>( "factor" );

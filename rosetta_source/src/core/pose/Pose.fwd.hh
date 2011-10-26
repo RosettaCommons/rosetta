@@ -16,6 +16,7 @@
 
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/vector1.hh>
 
 namespace core {
 namespace pose {
@@ -28,6 +29,8 @@ typedef utility::pointer::owning_ptr< Pose const > PoseCOP;
 
 typedef utility::pointer::access_ptr< Pose > PoseAP;
 typedef utility::pointer::access_ptr< Pose const > PoseCAP;
+
+typedef utility::vector1< PoseOP > PoseOPs;
 
 } // namespace pose
 } // namespace core

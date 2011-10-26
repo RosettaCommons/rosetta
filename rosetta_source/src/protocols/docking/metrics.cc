@@ -39,6 +39,10 @@
 
 #include <protocols/docking/metrics.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 static basic::Tracer TR("protocols.docking.DockingProtocol.metrics");
 
 using namespace core;
@@ -71,8 +75,8 @@ calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::Sco
 	// calculate energy of separated pose over each movable jump
 	// ddG is the "right" way to do this, to properly penalize strained rotamers
 	// but aroop reports that I_sc yields better results for antibodies
-	for( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
-		Size const rb_jump = *it;
+	foreach(int jump, movable_jumps){
+		Size const rb_jump = jump;
 		/*
 		 Real const threshold = 100000; // dummy threshold
 		 Size const repeats = 3;
@@ -98,8 +102,8 @@ calc_Lrmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose,
 	using namespace scoring;
 	Real Lrmsd(0);
 
-	for( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
-		Size const rb_jump = *it;
+	foreach(int jump, movable_jumps){
+		Size const rb_jump = jump;
 		ObjexxFCL::FArray1D_bool temp_part ( pose.total_residue(), false );
 		ObjexxFCL::FArray1D_bool superpos_partner ( pose.total_residue(), false );
 		/// this gets the wrong partner, therefore it is stored in a temporary
@@ -124,8 +128,8 @@ calc_Irmsd( const core::pose::Pose & pose, const core::pose::Pose & native_pose,
 	using namespace scoring;
 	Real Irmsd(0);
 
-	for( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
-		core::Size const rb_jump = *it;
+	foreach(int jump, movable_jumps){
+		core::Size const rb_jump = jump;
 		if (!pose.is_fullatom() || !native_pose.is_fullatom()){
 			TR << "Irmsd calc called with non-fullatom pose!!!"<<std::endl;
 			return 0.0;
@@ -162,8 +166,8 @@ calc_Fnat( const core::pose::Pose & pose, const core::pose::Pose & native_pose, 
 	using namespace conformation;
 	Real Fnat(0);
 
-	for( DockJumps::const_iterator it = movable_jumps.begin(); it != movable_jumps.end(); ++it ) {
-		core::Size const rb_jump = *it;
+	foreach(int jump, movable_jumps){
+		core::Size const rb_jump = jump;
 
 		if (!pose.is_fullatom() || !native_pose.is_fullatom()){
 			TR << "Fnat calc called with non-fullatom pose!!!"<<std::endl;

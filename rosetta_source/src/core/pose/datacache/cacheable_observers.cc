@@ -73,7 +73,9 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace core {
 namespace pose {
@@ -139,10 +141,8 @@ LengthEventCollector::copy_length_events(
 	using namespace core::conformation::signals;
 	length_events_.clear();
 
-	for( utility::vector1< LengthEvent >::const_iterator len_it = events.begin();
-			 len_it != events.end(); ++len_it ){
-
-		length_events_.push_back( LengthEvent( *len_it ) );
+	foreach(LengthEvent event, events){
+		length_events_.push_back( LengthEvent( event ) );
 	}
 
 }
@@ -229,6 +229,7 @@ SpecialSegmentsObserver::set_farray_from_sso(
 
 	if( pose.observer_cache().has( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER) ){
 		utility::vector1< std::pair< core::Size, core::Size > > const & segments = utility::pointer::static_pointer_cast< core::pose::datacache::SpecialSegmentsObserver const >(pose.observer_cache().get_const_ptr( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER ) )->segments();
+
 
 		for( core::Size i = 1; i <= segments.size(); ++i ){
 			for( core::Size j = segments[i].first; j < segments[i].second; ++j ) array[ j - 1 ] = value;

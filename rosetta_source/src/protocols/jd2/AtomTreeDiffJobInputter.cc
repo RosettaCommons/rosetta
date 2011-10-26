@@ -27,6 +27,10 @@
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 ///C++ headers
 #include <string>
 
@@ -117,41 +121,32 @@ void protocols::jd2::AtomTreeDiffJobInputter::fill_jobs( Jobs & jobs ){
 
 
 	if ( option[ in::file::tags ].user() ) {
-		utility::vector1< string > const tags=  option[ in::file::tags ]();
-		utility::vector1< string >::const_iterator tag= tags.begin();
-		utility::vector1< string >::const_iterator end= tags.end();
-		for(; tag != end; ++tag){
-			assert(atom_tree_diff_.has_tag(*tag));
-			InnerJobOP ijob( new InnerJob( *tag, nstruct ) );
+		foreach(string tag, option[ in::file::tags ]()){
+			assert(atom_tree_diff_.has_tag(tag));
+			InnerJobOP ijob( new InnerJob( tag, nstruct ) );
 			for(core::Size i=1; i<=nstruct; ++i){
 				jobs.push_back( JobOP( new Job( ijob, i) ) );
 			}
 		}
 	}
 	else{
-		std::map< std::string, core::Size > const & tags= atom_tree_diff_.get_tag_score_map();
-		std::map< std::string, core::Size > ::const_iterator tag= tags.begin();
-		std::map< std::string, core::Size > ::const_iterator const end= tags.end();
+		core::import_pose::atom_tree_diffs::TagScoreMap const & tags= atom_tree_diff_.get_tag_score_map();
 
-		for(; tag != end; ++tag){
-			InnerJobOP ijob( new InnerJob( tag->first, nstruct ) );
+		foreach(core::import_pose::atom_tree_diffs::TagScorePair tag, tags){
+			InnerJobOP ijob( new InnerJob( tag.first, nstruct ) );
 			core::import_pose::atom_tree_diffs::ScoresPairList::const_iterator pairs= atom_tree_diff_.scores().begin();
 			core::import_pose::atom_tree_diffs::ScoresPairList::const_iterator const end= atom_tree_diff_.scores().end();
 			for(; pairs != end; ++pairs){
-				if(pairs->first == tag->first)
-					break;
+				if(pairs->first == tag.first) break;
 			}
 			assert(pairs != end);
 
 			core::import_pose::atom_tree_diffs::Scores scores= pairs->second;
-			core::import_pose::atom_tree_diffs::Scores::const_iterator const & scores_begin= scores.begin();
-			core::import_pose::atom_tree_diffs::Scores::const_iterator const & scores_end= scores.end();
 
 			for(core::Size j=1; j<=nstruct; ++j){
 				JobOP job = new Job( ijob, j);
-				core::import_pose::atom_tree_diffs::Scores::const_iterator scores_itr= scores_begin;
-				for(; scores_itr != scores_end; ++scores_itr){
-					job->add_string_real_pair(scores_itr->first, scores_itr->second);
+				foreach(core::import_pose::atom_tree_diffs::ScorePair score, scores){
+					job->add_string_real_pair(score.first, score.second);
 				}
 				jobs.push_back( job );
 			}

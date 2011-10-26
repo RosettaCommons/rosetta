@@ -46,7 +46,9 @@
 #include <core/chemical/AtomType.hh>
 #include <core/kinematics/tree/Atom.hh>
 
-
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace core {
 namespace import_pose {
@@ -192,7 +194,7 @@ void AtomTreeDiff::read_pose(std::string const & tag, core::pose::Pose & pose_ou
 	}
 
 	std::string tag_reread;
-	std::map< std::string, core::Real > scores_reread;
+	Scores scores_reread;
 	if( !core::import_pose::atom_tree_diffs::header_from_atom_tree_diff(in_, tag_reread, scores_reread) || tag != tag_reread ) {
 		utility_exit_with_message("Seek took us to the wrong entry!");
 	}
@@ -219,14 +221,14 @@ void dump_score_line(
 	// Repeating the pose tag in the score line is a great convenience
 	// for grepping out score data and later correlating it with a model.
 	out << "SCORES " << pose_tag;
-	for( std::map< std::string, core::Real >::const_iterator pair = scores.begin(), pair_end = scores.end(); pair != pair_end; ++pair ) {
+	foreach(ScorePair pair, scores){
 		// Scores that are very near zero have artificially high precision
 		// when rendered in scientific notation, leading to numerical instability in benchmarks.
 		// Stupid C++ doesn't seem to have a fixed-point output mode
 		// that doesn't also append extra (unneeded) zeros to the end of every float.
-		core::Real val = pair->second;
+		core::Real val = pair.second;
 		if( std::abs(val) < 1e-8 ) val = 0.0;
-		out << ' ' << pair->first << ' ' << val;
+		out << ' ' << pair.first << ' ' << val;
 	}
 	out << '\n';
 }
@@ -239,13 +241,13 @@ void dump_score_line(
 void dump_reference_pose(
 	std::ostream & out,
 	std::string const & pose_tag,
-	std::map< std::string, core::Real > const & scores,
+	Scores const & scores,
 	core::pose::Pose const & pose
 )
 {
 	out << "POSE_TAG " << pose_tag << '\n';
 
-	std::map< std::string, core::Real > mod_scores = scores; // a mutable copy
+	Scores mod_scores = scores; // a mutable copy
 	mod_scores["is_reference_pose"] = 1;
 	dump_score_line(out, pose_tag, mod_scores);
 
@@ -407,7 +409,7 @@ void dump_atom_tree_diff(
 bool header_from_atom_tree_diff(
 	std::istream & in,
 	std::string & pose_tag_out,
-	std::map< std::string, core::Real > & scores_out
+	Scores & scores_out
 )
 {
 	scores_out.clear();
@@ -599,7 +601,7 @@ bool pose_from_atom_tree_diff(
 void map_of_weighted_scores(
 	core::pose::Pose & pose,
 	core::scoring::ScoreFunction const & sfxn,
-	std::map< std::string, core::Real > & scores_out
+	Scores & scores_out
 )
 {
 	using namespace core::scoring;
@@ -616,8 +618,8 @@ void map_of_weighted_scores(
 	}
 
 	scores_out.clear();
-	for(ScoreTypeVec::iterator ii = score_types.begin(), end_ii = score_types.end(); ii != end_ii; ++ii) {
-		scores_out[ name_from_score_type(*ii) ] = ( sfxn.get_weight(*ii) * pose.energies().total_energies()[ *ii ] );
+	foreach(ScoreType score_type, score_types){
+		scores_out[ name_from_score_type(score_type) ] = ( sfxn.get_weight(score_type) * pose.energies().total_energies()[ score_type ] );
 	}
 	scores_out[ name_from_score_type(core::scoring::total_score) ] = tot_score;
 }

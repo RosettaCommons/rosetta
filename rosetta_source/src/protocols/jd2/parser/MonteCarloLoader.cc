@@ -23,6 +23,9 @@
 // Utility headers
 #include <utility/tag/Tag.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace jd2 {
@@ -44,10 +47,7 @@ void MonteCarloLoader::load_data(
 
 	TagPtrs const montecarlo_tags( tag->getTags() );
 
-	for( TagPtrs::const_iterator montecarlo_tag_it=montecarlo_tags.begin(); montecarlo_tag_it!=montecarlo_tags.end();
-			++montecarlo_tag_it ) {
-		TagPtr const montecarlo_tag = *montecarlo_tag_it;
-
+	foreach(TagPtr montecarlo_tag, montecarlo_tags){
 		std::string const mc_name( montecarlo_tag->getName() );
 		core::Real const mctemp( montecarlo_tag->getOption< core::Real >( "temperature", 2.0 ));
 		std::string const sfxn_name( montecarlo_tag->getOption< std::string > ( "scorefunction", "score12" ));

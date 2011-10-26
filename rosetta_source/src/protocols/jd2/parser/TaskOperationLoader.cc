@@ -23,6 +23,10 @@
 // Utility headers
 #include <utility/tag/Tag.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 namespace protocols {
 namespace jd2 {
 namespace parser {
@@ -41,20 +45,18 @@ void TaskOperationLoader::load_data(
 	using namespace core::pack::task::operation;
 	typedef utility::vector0< utility::tag::TagPtr > TagPtrs;
 
-	TagPtrs const TO_tags( tag->getTags() );
-
-	for( TagPtrs::const_iterator tp( TO_tags.begin() ), tp_e( TO_tags.end() ); tp != tp_e; ++tp ) {
-		std::string const type( (*tp)->getName() );
-		if ( ! (*tp)->hasOption("name") ) {
+	foreach(utility::tag::TagPtr tag, tag->getTags()){
+		std::string const type( tag->getName() );
+		if ( ! tag->hasOption("name") ) {
 			utility_exit_with_message( "Can't create unnamed TaskOperation (type: " + type + ")" );
 		}
-		std::string const name( (*tp)->getOption<std::string>("name") );
+		std::string const name( tag->getOption<std::string>("name") );
 		if ( data.has( "task_operations", name ) ) {
 			TR.Error << "Error TaskOperation of name \"" << name
 				<< "\" (with type " << type << ") already exists. \n" << tag << std::endl;
 			utility_exit_with_message("Duplicate definition of TaskOperation with name " + name);
 		}
-		TaskOperationOP new_t_o( TaskOperationFactory::get_instance()->newTaskOperation( type, *tp ) );
+		TaskOperationOP new_t_o( TaskOperationFactory::get_instance()->newTaskOperation( type, tag ) );
 		runtime_assert( new_t_o );
 		data.add("task_operations", name, new_t_o );
 		TR << "Defined TaskOperation named \"" << name << "\" of type " << type << std::endl;

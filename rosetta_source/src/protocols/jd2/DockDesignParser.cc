@@ -241,10 +241,7 @@ DockDesignParser::generate_mover_from_pose( JobCOP job, Pose & pose, MoverOP & i
 			TagPtrs const apply_tags( curr_tag->getTags() );
 			bool has_profile( false ); // This mutual-exclusion check has been disabled., has_fnr( false ); // to see that the user hasn't turned both on by mistake
 
-			for( TagPtrs::const_iterator apply_tag_it=apply_tags.begin(); apply_tag_it!=apply_tags.end();
-				  ++apply_tag_it ) {
-				TagPtr const apply_tag_ptr = *apply_tag_it;
-
+			foreach(TagPtr apply_tag_ptr, apply_tags){
 				std::string const mover_type( apply_tag_ptr->getName() );
 				if( mover_type == "profile" ){
 					using namespace core::sequence;
@@ -294,19 +291,18 @@ DockDesignParser::generate_mover_from_pose( JobCOP job, Pose & pose, MoverOP & i
 		////// Filters
 		if ( curr_tag->getName() == "FILTERS" ) {
 
-			TagPtrs const TO_tags( curr_tag->getTags() );
-			for( TagPtrs::const_iterator tp( TO_tags.begin() ), tp_e( TO_tags.end() ); tp != tp_e; ++tp ) {
-				std::string const type( (*tp)->getName() );
-				if ( ! (*tp)->hasOption("name") )
+			foreach(TagPtr tag_ptr, curr_tag->getTags()){
+				std::string const type( tag_ptr->getName() );
+				if ( ! tag_ptr->hasOption("name") )
 					utility_exit_with_message("Can't define unnamed Filter of type " + type );
-				std::string const user_defined_name( (*tp)->getOption<std::string>("name") );
+				std::string const user_defined_name( tag_ptr->getOption<std::string>("name") );
 				bool const name_exists( filters.find( user_defined_name ) != filters.end() );
 				if ( name_exists ) {
 					TR.Error << "ERROR filter of name \"" << user_defined_name << "\" (with type " << type
 						<< ") already exists. \n" << tag << std::endl;
 					utility_exit_with_message("Duplicate definition of Filter with name " + user_defined_name);
 				}
-				protocols::filters::FilterOP new_ddf( protocols::filters::FilterFactory::get_instance()->newFilter( *tp, data, filters, movers, pose ) );
+				protocols::filters::FilterOP new_ddf( protocols::filters::FilterFactory::get_instance()->newFilter( tag_ptr, data, filters, movers, pose ) );
 				runtime_assert( new_ddf );
 				filters.insert( std::make_pair( user_defined_name, new_ddf ) );
 				TR << "Defined filter named \"" << user_defined_name << "\" of type " << type << std::endl;
@@ -317,12 +313,11 @@ DockDesignParser::generate_mover_from_pose( JobCOP job, Pose & pose, MoverOP & i
 
 		////// MOVERS
 		if( curr_tag->getName() == "MOVERS" ){
-			TagPtrs const TO_tags( curr_tag->getTags() );
-			for( TagPtrs::const_iterator tp( TO_tags.begin() ), tp_e( TO_tags.end() ); tp != tp_e; ++tp ) {
-				std::string const type( (*tp)->getName() );
-				if ( ! (*tp)->hasOption("name") )
+			foreach(TagPtr tag_ptr, curr_tag->getTags()){
+				std::string const type( tag_ptr->getName() );
+				if ( ! tag_ptr->hasOption("name") )
 					utility_exit_with_message("Can't define unnamed Mover of type " + type );
-				std::string const user_defined_name( (*tp)->getOption<std::string>("name") );
+				std::string const user_defined_name( tag_ptr->getOption<std::string>("name") );
 				bool const name_exists( movers.find( user_defined_name ) != movers.end() );
 				if ( name_exists ) {
 					TR.Error << "ERROR mover of name \"" << user_defined_name << "\" (with type " << type
@@ -330,7 +325,7 @@ DockDesignParser::generate_mover_from_pose( JobCOP job, Pose & pose, MoverOP & i
 					utility_exit_with_message("Duplicate definition of Mover with name " + user_defined_name);
 				}
 				/// APL -- singleton factory replacement.
-				MoverOP new_mover( MoverFactory::get_instance()->newMover( *tp, data, filters, movers, pose ) );
+				MoverOP new_mover( MoverFactory::get_instance()->newMover( tag_ptr, data, filters, movers, pose ) );
 				runtime_assert( new_mover );
 				movers.insert( std::make_pair( user_defined_name, new_mover ) );
 				TR << "Defined mover named \"" << user_defined_name << "\" of type " << type << std::endl;

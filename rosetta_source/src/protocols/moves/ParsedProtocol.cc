@@ -55,6 +55,9 @@
 //Auto Headers
 #include <utility/options/keys/BooleanOptionKey.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace moves {
@@ -154,11 +157,10 @@ ParsedProtocol::get_name() const {
 void
 ParsedProtocol::report_all( Pose const & pose ) const {
 	TR_report<<"=============Starting final report================"<<std::endl;
-	for( utility::vector1< mover_filter_pair >::const_iterator mover_it = movers_.begin();
-		 mover_it!=movers_.end(); ++mover_it ){
-		TR_report<<"============Begin report for "<<(*mover_it).second->get_user_defined_name()<<"=================="<<std::endl;
-		(*mover_it).second->report( TR_report, pose );
-		TR_report<<"============End report for "<<(*mover_it).second->get_user_defined_name()<<"=================="<<std::endl;
+	foreach(mover_filter_pair mover_pair, movers_){
+		TR_report<<"============Begin report for "<<mover_pair.second->get_user_defined_name()<<"=================="<<std::endl;
+		mover_pair.second->report( TR_report, pose );
+		TR_report<<"============End report for "<<mover_pair.second->get_user_defined_name()<<"=================="<<std::endl;
 	}
 	TR_report.flush();
 }

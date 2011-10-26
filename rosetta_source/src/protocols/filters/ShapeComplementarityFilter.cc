@@ -29,7 +29,9 @@
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.hh>
 
-//Auto Headers
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 
 //// C++ headers
@@ -95,13 +97,10 @@ core::Size ShapeComplementarityFilter::compute( Pose const & pose ) const
 	scc_.Reset();
 
 	if(!residues1_.empty() && !residues2_.empty()) {
-		for(utility::vector1<Size>::const_iterator r = residues1_.begin();
-			r != residues1_.end(); ++r)
-				scc_.AddResidue(0, pose.residue(*r));
-
-		for(utility::vector1<Size>::const_iterator r = residues2_.begin();
-			r != residues2_.end(); ++r)
-				scc_.AddResidue(1, pose.residue(*r));
+		foreach(Size r, residues1_)
+			scc_.AddResidue(0, pose.residue(r));
+		foreach(Size r, residues2_)
+			scc_.AddResidue(1, pose.residue(r));
 
 		if(!scc_.Calc())
 			return 0;

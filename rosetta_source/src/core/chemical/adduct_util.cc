@@ -39,22 +39,18 @@
 #include <core/chemical/VariantType.hh>
 #include <utility/options/StringVectorOption.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
-
 static basic::Tracer TR("core.chemical.adduct_util");
 
 namespace core {
 namespace chemical {
 
 /// @brief Convert input string to map of adducts->max usage
-AdductMap
+std::map< std::string, int >
 parse_adduct_string(
 	utility::options::StringVectorOption & add_vec
 )
 {
-	AdductMap add_map;
+	std::map< std::string, int > add_map;
 	// walk via an index, plucking a second string each time if
 	// it is an integer
 	Size index( 1 );
@@ -73,16 +69,23 @@ parse_adduct_string(
 		add_map[ this_adduct ] = max_uses_for_this_adduct;
 	}
 
+	// Debug - remove later
+//	for( std::map< std::string, int >::iterator iter = add_map.begin() ;
+//				iter != add_map.end() ; iter++ ) {
+//		TR << "Adduct map " << iter->first << "\t" << iter->second << std::endl;
+//	}
+
+
 	return add_map;
 }
 
 
 /// @brief Make sure any adducts requested actually exist
 void
-error_check_requested_adducts( AdductMap const & add_map,
+error_check_requested_adducts( std::map< std::string, int > const & add_map,
 	 ResidueTypeCAPs const & rsd_types ) {
 
-	for( AdductMap::const_iterator this_add = add_map.begin() ;
+	for( std::map< std::string, int >::const_iterator this_add = add_map.begin() ;
 				this_add != add_map.end() ; ++this_add ) {
 		bool not_found( true );
 
@@ -125,29 +128,30 @@ ResidueTypeOP apply_adducts_to_residue( ResidueType const & rsd,
 
 	// Throw in all the applicable adducts
 	utility::vector1< bool >::iterator mask_iter = add_mask.begin();
-	foreach(Adduct adduct, rsd.defined_adducts()){
+	for( utility::vector1< Adduct >::const_iterator add_iter = rsd.defined_adducts().begin() ,
+				end_add_iter = rsd.defined_adducts().end() ; add_iter != end_add_iter ;
+				++add_iter, ++mask_iter )  {
+
 		// Skip adducts if dictated by the mask
 		if( !(*mask_iter) ) continue;
 
 		// Add the adduct and it's information
-		PatchOperationOP poop1 = new AddAtom( adduct.atom_name(), adduct.atom_type_name(),
-			adduct.mm_atom_type_name(), adduct.atom_charge() );
+		PatchOperationOP poop1 = new AddAtom( add_iter->atom_name(), add_iter->atom_type_name(),
+			add_iter->mm_atom_type_name(), add_iter->atom_charge() );
 		temp_patch_case.add_operation( poop1 );
-		PatchOperationOP poop2 = new AddBond( adduct.atom_name(), adduct.stub_atom1() );
+		PatchOperationOP poop2 = new AddBond( add_iter->atom_name(), add_iter->stub_atom1() );
 		temp_patch_case.add_operation( poop2 );
-		PatchOperationOP poop3 = new SetICoor( adduct.atom_name(), radians( adduct.phi() ),
-			radians( adduct.theta() ), adduct.d(), adduct.stub_atom1(), adduct.stub_atom2(),
-			adduct.stub_atom3() );
-		TR.Debug << "Making a patch op for residue " << rsd.name() << " adduct " << adduct.adduct_name() <<
-			" phi raw " << adduct.phi() << " theta raw " << adduct.theta() << " d raw " << adduct.d() << std::endl;
-		TR.Debug << "Using stub atoms " << adduct.stub_atom1() << " , " << adduct.stub_atom2() << " , " <<
-			adduct.stub_atom3() << std::endl;
+		PatchOperationOP poop3 = new SetICoor( add_iter->atom_name(), radians( add_iter->phi() ),
+			radians( add_iter->theta() ), add_iter->d(), add_iter->stub_atom1(), add_iter->stub_atom2(),
+			add_iter->stub_atom3() );
+		TR.Debug << "Making a patch op for residue " << rsd.name() << " adduct " << add_iter->adduct_name() <<
+			" phi raw " << add_iter->phi() << " theta raw " << add_iter->theta() << " d raw " << add_iter->d() << std::endl;
+		TR.Debug << "Using stub atoms " << add_iter->stub_atom1() << " , " << add_iter->stub_atom2() << " , " <<
+			add_iter->stub_atom3() << std::endl;
 		temp_patch_case.add_operation( poop3 );
 
 		// Append the adduct name
-		new_rsd_name = new_rsd_name + "_adduct:" + adduct.atom_name();
-
-		++mask_iter;
+		new_rsd_name = new_rsd_name + "_adduct:" + add_iter->atom_name();
 	}
 
 	// Apply the Patch operations

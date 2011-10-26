@@ -60,7 +60,7 @@ public:
 	///
 	/// @details This exists to allow setup on stored reference poses for properties that
 	/// don't get saved/restored in PDB format, like covalent constraints for enzyme design.
-	utility::vector1< core::pose::PoseOP > const & all_ref_poses() const;
+	core::pose::PoseOPs const & all_ref_poses() const;
 
 private:
 	core::import_pose::atom_tree_diffs::AtomTreeDiff atom_tree_diff_;

@@ -26,6 +26,9 @@
 // Utility headers
 #include <utility/tag/Tag.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace jd2 {
@@ -47,9 +50,7 @@ void ScoreFunctionLoader::load_data(
 
 	TagPtrs const scorefxn_tags( tag->getTags() );
 
-	for( TagPtrs::const_iterator scorefxn_tag_it=scorefxn_tags.begin(); scorefxn_tag_it!=scorefxn_tags.end();
-			++scorefxn_tag_it ) {//read user defined scorefxns
-		TagPtr const scorefxn_tag = *scorefxn_tag_it;
+	foreach(TagPtr scorefxn_tag, scorefxn_tags){
 		using namespace core::scoring;
 		using namespace core::scoring::symmetry;
 
@@ -70,9 +71,7 @@ void ScoreFunctionLoader::load_data(
 			in_scorefxn->reset();
 			TR << "***WARNING***: No weights/patch defined. Defining " << scorefxn_name << " with all-zero weights.\n";
 		}
-		utility::vector0< TagPtr > const scorefxn_mod_tags( scorefxn_tag->getTags() );
-		for( utility::vector0< TagPtr >::const_iterator mod_it=scorefxn_mod_tags.begin(); mod_it!=scorefxn_mod_tags.end(); ++mod_it ) {
-			TagPtr const mod_tag = *mod_it;
+		foreach(TagPtr mod_tag, scorefxn_tag->getTags()){
 			if( mod_tag->getName() == "Reweight" ) {
 				std::string const scoretype_name( mod_tag->getOption<std::string>( "scoretype" ) );
 				core::Real const weight( mod_tag->getOption<core::Real>( "weight" ) );

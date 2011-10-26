@@ -32,6 +32,10 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/constraints/XYZ_Func.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 //#include <core/id/SequenceMapping.hh>
 
 
@@ -91,8 +95,8 @@ SequenceCouplingConstraint::SequenceCouplingConstraint(
 	seqpos2_( seqpos2 ),
 	sequence_coupling_( sequence_coupling )
 {
-	for( utility::vector1< AtomID >::const_iterator at_it( atoms_in.begin() ), end( atoms_in.end() ); at_it != end; ++at_it ) {
-		atom_ids_.push_back( *at_it );
+	foreach(AtomID atom_id, atoms_in){
+		atom_ids_.push_back( atom_id );
 	}
 }
 

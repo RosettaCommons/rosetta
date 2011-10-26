@@ -589,12 +589,11 @@ void ResidueTypeSet:: create_adduct_combinations(
 		// Make this combo and return;
 //		std::cout << "Making an adduct" << std::endl;
 
-//		utility::vector1< Adduct >::const_iterator add_iter = rsd.defined_adducts().begin() ;
-//		for( utility::vector1< bool >::iterator make_iter = add_mask.begin(),
-//				end_iter = add_mask.end();
-//				make_iter != end_iter ; ++make_iter, ++add_iter ) {
-//			std::cout << "Adduct " << add_iter->adduct_name() << " make is " << (*make_iter) << std::endl;
-//		}
+		utility::vector1< Adduct >::const_iterator add_iter = rsd.defined_adducts().begin() ;
+		foreach(bool make, add_mask){
+			std::cout << "Adduct " << add_iter->adduct_name() << " make is " << make << std::endl;
+			++add_iter;
+		}
 
 		// Farm this out to a helper function
 		residue_types_.push_back( apply_adducts_to_residue( rsd, add_mask ) );

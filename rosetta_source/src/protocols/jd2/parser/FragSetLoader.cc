@@ -30,6 +30,10 @@
 // Basic headers
 #include <basic/Tracer.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 static basic::Tracer TR( "protocols.jd2.parser.FragSetLoader" );
 
 namespace protocols {
@@ -54,9 +58,8 @@ void FragSetLoader::load_data(
 
 	FragmentReaderMap frag_readers_map;
 	if ( tag->hasTag( "FRAGMENTS" ) ) {
-		TagPtrs const TO_tags( tag->getTag( "FRAGMENTS" )->getTags() );
-		for( TagPtrs::const_iterator tp( TO_tags.begin() ), tp_e( TO_tags.end() ); tp != tp_e; ++tp ) {
-			TagPtr tag( *tp );
+		foreach(TagPtr tag, tag->getTag( "FRAGMENTS" )->getTags()){
+			TagPtr tag( tag );
 			std::string const name ( tag->getName() ); // this name is used when fragsets are defined later.
 			runtime_assert( !name.empty() );
 			FragmentReaderOP frop = new FragmentReader( tag );
@@ -67,10 +70,7 @@ void FragSetLoader::load_data(
 		runtime_assert( false );
 	}
 
-	TagPtrs const TO_tags( tag->getTags() );
-	for( TagPtrs::const_iterator tp( TO_tags.begin() ), tp_e( TO_tags.end() ); tp != tp_e; ++tp ) {
-
-		TagPtr tag( *tp );
+	foreach(TagPtr tag, tag->getTag( "FRAGMENTS" )->getTags()){
 		std::string const name ( tag->getName() );
 		if( name == "FRAGMENTS" ) continue;
 
@@ -80,14 +80,14 @@ void FragSetLoader::load_data(
 
 		core::fragment::FragSetOP fragset = new core::fragment::OrderedFragSet;
 		utility::vector1< std::string > fnames ( utility::string_split( frag_name, ',' ) );
-		for( utility::vector1<std::string>::const_iterator it( fnames.begin() ), ite( fnames.end() ); it!=ite; ++it ) {
+		foreach(std::string fname, fnames){
 			std::map< std::string, FragmentReaderOP >::const_iterator itr;
-			itr = frag_readers_map.find( *it );
+			itr = frag_readers_map.find( fname );
 			if ( itr != frag_readers_map.end() ){
-				FragmentReaderOP frop ( frag_readers_map[ *it ] );
+				FragmentReaderOP frop ( frag_readers_map[ fname ] );
 				frop->apply( fragset );
 			}else{
-				TR << "frag_name " << *it << " does not exist." << std::endl;
+				TR << "frag_name " << fname << " does not exist." << std::endl;
 				runtime_assert( false );
 			}
 		}

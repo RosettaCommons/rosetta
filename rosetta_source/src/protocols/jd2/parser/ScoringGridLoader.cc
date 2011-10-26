@@ -24,6 +24,9 @@
 // Utility headers
 #include <utility/tag/Tag.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace jd2 {
@@ -65,8 +68,8 @@ void ScoringGridLoader::load_data(
 		TR <<"WARNING WARNING grid manager will be empty" <<std::endl;
 	}
 
-	for( TagPtrs::const_iterator tp( grid_tags.begin() ), tp_e( grid_tags.end() ); tp != tp_e; ++tp ) {
-		grid_manager->make_new_grid(*tp);
+	foreach(TagPtr tag, grid_tags){
+		grid_manager->make_new_grid(tag);
 	}
 
 	TR.flush();

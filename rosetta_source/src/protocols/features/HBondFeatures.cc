@@ -54,6 +54,10 @@
 #include <cppdb/frontend.h>
 #include <cppdb/errors.h>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 // C++ Headers
 #include <cmath>
 #include <algorithm>
@@ -581,11 +585,8 @@ HBondFeatures::insert_hbond_row(
 	if (don_partners.size() > 1){
 		donRank++;
 	}
-	for( vector1< HBondCOP >::const_iterator
-		i = don_partners.begin(), i_end = don_partners.end();
-		i != i_end; ++i){
-		HBond const & candidate_hbond( **i);
-		if(hbond == candidate_hbond){
+	foreach(HBondCOP candidate_hbond, don_partners){
+		if(hbond == *candidate_hbond){
 			ASSERT_ONLY( found_don_partner = true; )
 			break;
 		} else {
@@ -602,11 +603,8 @@ HBondFeatures::insert_hbond_row(
 		accRank++;
 	}
 
-	for( vector1< HBondCOP >::const_iterator
-		i = acc_partners.begin(), i_end = acc_partners.end();
-		i != i_end; ++i){
-		HBond const & candidate_hbond( **i);
-		if(hbond == candidate_hbond){
+	foreach(HBondCOP candidate_hbond, acc_partners){
+		if(hbond == *candidate_hbond){
 			ASSERT_ONLY( found_acc_partner = true; )
 			break;
 		} else {

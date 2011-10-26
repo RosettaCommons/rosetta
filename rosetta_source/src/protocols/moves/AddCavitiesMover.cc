@@ -39,6 +39,10 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/datacache/CacheablePoseRawPtr.hh>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 namespace protocols {
 namespace moves {
 
@@ -100,7 +104,9 @@ namespace moves {
 		CavBalls cbpr  = prune_cavity_balls( spheres, cbph, opts );
 		compute_cav_ball_neighbor_count( spheres, cbpr, nbdis );
 		CavBalls cbbur;
-		for( CavBallIter i = cbpr.begin(); i != cbpr.end(); ++i ) if( i->anb > nbcount ) cbbur.push_back( *i );
+		foreach(CavityBall cavity_ball, cbpr){
+			if( cavity_ball.anb > nbcount ) cbbur.push_back( cavity_ball );
+		}
 		CavBalls selcb = select_cav_balls(cbbur,minsep);
 
 		CavBalls cb;

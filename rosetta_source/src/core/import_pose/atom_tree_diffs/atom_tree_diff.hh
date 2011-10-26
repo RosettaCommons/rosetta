@@ -43,11 +43,20 @@ class AtomTreeDiff; // fwd declaration
 typedef utility::pointer::owning_ptr< AtomTreeDiff > AtomTreeDiffOP;
 typedef utility::pointer::owning_ptr< AtomTreeDiff const > AtomTreeDiffCOP;
 
+typedef std::pair<std::string, core::Real> ScorePair;
 typedef std::map< std::string, core::Real > Scores;
+typedef std::pair< std::string, Scores > ScoresPair;
+
 //typedef std::map< std::string, Scores > ScoresMap;
 /// Just like ScoresMap, but can be sorted into some particular order *by scores*.
 /// Maps can only be sorted by key, which here is just a pose tag.
-typedef utility::vector1< std::pair< std::string, Scores > > ScoresPairList;
+typedef utility::vector1< ScoresPair > ScoresPairList;
+
+typedef std::pair<std::string, int> RefTag;
+typedef std::map<std::string, int> RefTags;
+
+typedef std::pair<std::string, Size> TagScorePair;
+typedef std::map<std::string, Size> TagScoreMap;
 
 
 ///@brief An object wrapper for reading atom_tree_diff files,
@@ -92,12 +101,12 @@ public:
 	/// @brief Allows access to and mutation of (!) the references poses stored in this file.  Use with caution.
 	/// @details This exists to allow setup on stored reference poses for properties that don't get saved/restored
 	/// in PDB format, like covalent constraints for enzyme design.
-	utility::vector1< core::pose::PoseOP > const & all_ref_poses() const
+	core::pose::PoseOPs const & all_ref_poses() const
 	{ return unique_ref_poses_; }
 
-	std::map<std::string, int> const & get_ref_tags() const {return ref_tags_;}
+	RefTags const & get_ref_tags() const {return ref_tags_;}
 
-	std::map< std::string, core::Size > const & get_tag_score_map() const{return tag_idx_;}
+	TagScoreMap const & get_tag_score_map() const{return tag_idx_;}
 
 	int count(std::string const & tag) const{
 		std::map<std::string, int>::const_iterator const iter= ref_tags_.find(tag);
@@ -113,10 +122,10 @@ private:
 
 	/// Maps reference tags to how many associated atom_tree_diff structs exist...
 	/// int is needed here because there are 0 atom tree diffs to start with
-	std::map<std::string, int> ref_tags_;
+	RefTags ref_tags_;
 
 	/// Maps tags to indices in scores_
-	std::map< std::string, core::Size > tag_idx_;
+	TagScoreMap tag_idx_;
 
 	/// The map of (tag, file position) for getting random access to the structural data.
 	std::map< std::string, long > offsets_;
@@ -125,7 +134,7 @@ private:
 	std::map< std::string, core::pose::PoseOP > ref_poses_;
 
 	/// All references poses from the file, one copy each for convenience.
-	utility::vector1< core::pose::PoseOP > unique_ref_poses_;
+	core::pose::PoseOPs unique_ref_poses_;
 
 	// The file being read.
 	std::ifstream in_;

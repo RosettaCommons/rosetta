@@ -55,8 +55,9 @@
 #include <protocols/moves/kinematic_closure/KinematicPerturber.hh>
 #include <numeric/conversions.hh>
 
-
-
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 static numeric::random::RandomGenerator RG(43135);
 static basic::Tracer TR("protocols.moves.KinematicMover");
@@ -504,9 +505,8 @@ void KinematicMover::apply( core::pose::Pose & pose )
 
 			if( filters_.size() != 0 ){
 				bool all_filters_passed( true );
-				for( utility::vector1< protocols::filters::FilterCOP >::const_iterator filter_it = filters_.begin();
-						 filter_it != filters_.end(); ++filter_it ){
-					if( ! (*filter_it)->apply( pose ) ) {
+				foreach(protocols::filters::FilterCOP filter, filters_){
+					if( ! filter->apply( pose ) ) {
 						all_filters_passed = false;
 						break;
 					}

@@ -22,7 +22,9 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
-//Auto Headers
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 
 static basic::Tracer TR("protocols.filters.Filter");
@@ -37,10 +39,8 @@ typedef utility::tag::TagPtr TagPtr;
 bool
 FilterCollection::apply( core::pose::Pose const & pose ) const
 {
-
-	for( utility::vector1< protocols::filters::FilterCOP >::const_iterator filter_it = filters_.begin();
-			 filter_it != filters_.end(); ++filter_it ){
-		if( ! (*filter_it)->apply( pose ) ){
+	foreach(protocols::filters::FilterCOP filter, filters_){
+		if( ! filter->apply( pose ) ){
 			return false;
 		}
 	}
@@ -51,9 +51,8 @@ FilterCollection::apply( core::pose::Pose const & pose ) const
 void
 FilterCollection::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
-	for( utility::vector1< protocols::filters::FilterCOP >::const_iterator filter_it = filters_.begin();
-			 filter_it != filters_.end(); ++filter_it ) {
-		(*filter_it)->report( out, pose );
+	foreach(protocols::filters::FilterCOP filter, filters_){
+		filter->report( out, pose );
 	}
 }
 

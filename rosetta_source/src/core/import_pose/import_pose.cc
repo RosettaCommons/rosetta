@@ -81,6 +81,10 @@
 
 #include <string>
 
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
+
 /// A temporary copy of the pose_from_pdb code from the demo directory.
 /// Will be phased out in favor of file_data routines soon.
 ///
@@ -183,14 +187,13 @@ pose_from_pdb(
 
 	std::string res;
 
-	std::vector<std::string>::const_iterator begin= filenames.begin();
-	for(; begin != filenames.end(); ++begin){
-		utility::io::izstream file( *begin );
+	foreach(std::string filename, filenames){
+		utility::io::izstream file( filename );
 		if (!file) {
-			TR.Error << "PDB File:" << *begin << " not found!" << std::endl;
-			utility_exit_with_message( "Cannot open PDB file \"" + *begin + "\"" );
+			TR.Error << "PDB File:" << filename << " not found!" << std::endl;
+			utility_exit_with_message( "Cannot open PDB file \"" + filename + "\"" );
 		} else {
-			TR.Debug << "read file: " << *begin << std::endl;
+			TR.Debug << "read file: " << filename << std::endl;
 		}
 		utility::slurp( file, res );
 	}
