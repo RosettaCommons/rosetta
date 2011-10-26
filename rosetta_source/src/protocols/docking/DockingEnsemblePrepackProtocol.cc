@@ -176,7 +176,7 @@ void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 	for ( Size i=1; i<=ensemble1_->size(); ++i ) {
 		protocols::moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 		to_centroid.apply( pose );
-		switch_mover->SwitchConformer( pose, i );
+		switch_mover->switch_conformer( pose, i );
 
 		//Move each partners away from the others
 		for( DockJumps::const_iterator jump = movable_jumps().begin() ; jump != movable_jumps().end() ; ++jump ) {
@@ -206,7 +206,7 @@ void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 		protocols::moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 		to_centroid.apply( pose );
 
-		switch_mover->SwitchConformer( pose, i );
+		switch_mover->switch_conformer( pose, i );
 
 		//Move each partners away from the others
 		for( DockJumps::const_iterator jump = movable_jumps().begin() ; jump != movable_jumps().end() ; ++jump ) {

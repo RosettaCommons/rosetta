@@ -64,7 +64,7 @@ public:
 
 	virtual void apply( core::pose::Pose & pose );
 
-	void SwitchConformer(
+	void switch_conformer(
 		core::pose::Pose & pose,
 		core::Size conf_num
 	);

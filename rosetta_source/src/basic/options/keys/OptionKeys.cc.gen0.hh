@@ -250,6 +250,7 @@ namespace docking { BooleanOptionKey const docking( "docking" );  }
 namespace docking { BooleanOptionKey const view( "docking:view" );  }
 namespace docking { BooleanOptionKey const no_filters( "docking:no_filters" );  }
 namespace docking { StringVectorOptionKey const design_chains( "docking:design_chains" );  }
+namespace docking { FileOptionKey const recover_sidechains( "docking:recover_sidechains" );  }
 namespace docking { StringOptionKey const partners( "docking:partners" );  }
 namespace docking { BooleanOptionKey const docking_local_refine( "docking:docking_local_refine" );  }
 namespace docking { BooleanOptionKey const low_res_protocol_only( "docking:low_res_protocol_only" );  }
@@ -576,4 +577,3 @@ namespace abinitio { BooleanOptionKey const only_stage1( "abinitio:only_stage1" 
 namespace abinitio { RealOptionKey const end_bias( "abinitio:end_bias" );  }
 namespace abinitio { IntegerOptionKey const symmetry_residue( "abinitio:symmetry_residue" );  }
 namespace abinitio { RealOptionKey const vdw_weight_stage1( "abinitio:vdw_weight_stage1" );  }
-namespace abinitio { BooleanOptionKey const override_vdw_all_stages( "abinitio:override_vdw_all_stages" );  }

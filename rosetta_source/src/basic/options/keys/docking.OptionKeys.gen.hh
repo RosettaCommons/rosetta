@@ -26,6 +26,7 @@ namespace docking { extern BooleanOptionKey const docking; }
 namespace docking { extern BooleanOptionKey const view; }
 namespace docking { extern BooleanOptionKey const no_filters; }
 namespace docking { extern StringVectorOptionKey const design_chains; }
+namespace docking { extern FileOptionKey const recover_sidechains; }
 namespace docking { extern StringOptionKey const partners; }
 namespace docking { extern BooleanOptionKey const docking_local_refine; }
 namespace docking { extern BooleanOptionKey const low_res_protocol_only; }

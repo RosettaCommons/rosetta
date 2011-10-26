@@ -237,6 +237,7 @@ DockingProtocol::set_default()
 	ensemble2_ = NULL;
 	ensemble1_filename_ = "";
 	ensemble2_filename_ = "";
+	recover_sidechains_filename_ = "";
 
 }
 
@@ -430,6 +431,10 @@ DockingProtocol::init_from_options()
 	if ( option[ OptionKeys::docking::ensemble2 ].user() ) {
 		set_ensemble2(option[ OptionKeys::docking::ensemble2 ]());
 	}
+
+	if ( option[ OptionKeys::docking::recover_sidechains ].user() ) {
+		set_recover_sidechains_filename(option[ OptionKeys::docking::recover_sidechains ]());
+	}
 }
 
 void
@@ -451,7 +456,7 @@ DockingProtocol::register_options()
 	option.add_relevant( OptionKeys::in::file::native );
 	option.add_relevant( OptionKeys::docking::use_legacy_protocol );
 	option.add_relevant( OptionKeys::docking::ignore_default_docking_task );
-
+	option.add_relevant( OptionKeys::docking::recover_sidechains );
 	// low res protocol options
 	option.add_relevant( OptionKeys::docking::docking_centroid_inner_cycles );
 	option.add_relevant( OptionKeys::docking::docking_centroid_outer_cycles );
@@ -515,14 +520,20 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 //		set_highres_scorefxn( docking_highres_ens, docking_scorefxn_pack_ ); // sets csts for mc and minimization, but not packing
 //		// pass the score function to the high res mover
 //		docking_highres_mover_->set_scorefxn( docking_scorefxn_high_ );
-	} else {
-		if ( get_input_pose() && get_input_pose()->is_fullatom() ) {
+	} else { //if ensemble docking
+		if ( recover_sidechains_filename_ != "" ) {
+			if ( !recover_sidechains_ ) {
+				core::pose::Pose a_pose;
+				core::import_pose::pose_from_pdb( a_pose, recover_sidechains_filename_ );
+				recover_sidechains_ = new protocols::moves::ReturnSidechainMover( a_pose );
+			} //first initialization ?
+		} else if ( get_input_pose() && get_input_pose()->is_fullatom() ) {
 			recover_sidechains_ = new protocols::moves::ReturnSidechainMover( *get_input_pose() );
 		} else {
-			// recover sidechains mover is not needed with ensemble docking since the sidechains are recovered from the partners in the ensemble file
+			// recover sidechains mover is not needed with ensemble docking since the sidechains are recovered from the partners in the ensemble fi
 			recover_sidechains_ = NULL;
 		}
-	}
+	} //if ensemble docking
 
 	// pass the ensemble movers to the lowres protocol
 	if ( docking_lowres_mover_ ) {

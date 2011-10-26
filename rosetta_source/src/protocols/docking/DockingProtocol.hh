@@ -170,7 +170,7 @@ public:
 
 	// inline setters
 	void set_autofoldtree( bool const autofoldtree ){ autofoldtree_ = autofoldtree; }
-	void set_partners( std::string const partners ){ partners_=partners; }
+	void set_partners( std::string const& partners ){ partners_=partners; }
 	void set_inner_cycles( core::Size inner_cycles ) { lowres_inner_cycles_=inner_cycles; }
 	void set_outer_cycles( core::Size outer_cycles ) { lowres_outer_cycles_=outer_cycles; }
 	void set_design( bool const design ) { design_ = design; } // for RosettaScripts.  to be deprecated when legacy high res disappears
@@ -178,9 +178,9 @@ public:
 	void set_ignore_default_docking_task(bool const ignore_default_docking_task){ignore_default_docking_task_ = ignore_default_docking_task;}
 	void set_movable_jumps( DockJumps const jump_numbers ){ movable_jumps_ = jump_numbers; }
 	void set_reporting( bool report ) { reporting_ = report; }
-	void set_ensemble1( std::string ensemble1 ) { ensemble1_filename_ = ensemble1; }
-	void set_ensemble2( std::string ensemble2 ) { ensemble2_filename_ = ensemble2; }
-
+	void set_ensemble1( std::string  const& ensemble1 ) { ensemble1_filename_ = ensemble1; }
+	void set_ensemble2( std::string  const& ensemble2 ) { ensemble2_filename_ = ensemble2; }
+	void set_recover_sidechains_filename( std::string const& file ) { recover_sidechains_filename_ = file; }
 	// Other member functions
 	void add_jump( core::Size const jump_number ){ movable_jumps_.push_back( int( jump_number ) ); }
 
@@ -254,6 +254,9 @@ private:
 	protocols::moves::ConstraintSetMoverOP docking_constraint_;
 
 	protocols::moves::ReturnSidechainMoverOP recover_sidechains_;
+
+	//if side-chains are to be taken from specified pdb file... it is set here...
+	std::string recover_sidechains_filename_;
 
 	core::pack::task::TaskFactoryOP init_task_factory_; // use this to restrict the packer task for docking protocol
 	bool design_; // for RosettaScripts.  to be deprecated when legacy high res disappears

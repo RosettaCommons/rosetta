@@ -118,7 +118,7 @@ void ConformerSwitchMover::apply( core::pose::Pose & pose )
 	}
 
 	TR << "Switching partner with conformer: " << conf_num << std::endl;
-	SwitchConformer( pose, conf_num );
+	switch_conformer( pose, conf_num );
 	ensemble_->set_current_confnum( conf_num );
 
 	// make sure that the pose has ARBITRARY_FLOAT_DATA in the DataCache
@@ -147,7 +147,7 @@ void ConformerSwitchMover::GenerateProbTable( core::pose::Pose & pose )
 	prob_table_.clear();
 
 	for( Size i = 1; i <= ensemble_->size(); i++){
-		SwitchConformer( complex_pose, i );
+		switch_conformer( complex_pose, i );
 		// the score takes the reference energy into consideration
 		core::Real complex_score = (*(ensemble_->scorefxn_low()))(complex_pose) - ensemble_->lowres_reference_energy(i);
 		complex_pose = pose;
@@ -171,7 +171,7 @@ void ConformerSwitchMover::GenerateProbTable( core::pose::Pose & pose )
 
 }
 
-void ConformerSwitchMover::SwitchConformer(
+void ConformerSwitchMover::switch_conformer(
 	core::pose::Pose & pose,
 	core::Size conf_num
 	)

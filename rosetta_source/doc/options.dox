@@ -1196,6 +1196,10 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Pass in the one-letter chain identifiers, separated by space, for each chain to design: -design_chains A B</dd><br>
 </dl>
 <dl>
+<dt><b>-recover_sidechains</b> \<File\><dt>
+<dd>usually side-chains are taken from the input structure if it is fullatom - this overrides this behavior and takes sidechains from the pdb-file</dd><br>
+</dl>
+<dl>
 <dt><b>-partners</b> \<String\><dt>
 <dd>defines docking partners by ChainID, example: docking chains L+H with A is -partners LH_A</dd><br>
 <dd>Default: "_"</dd><br>
@@ -9486,6 +9490,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-two_chain_tree</b> \<Integer\><dt>
 <dd>label the start of the second chain</dd><br>
+</dl>
+<dl>
+<dt><b>-repeat_structuer</b> \<Integer\><dt>
+<dd>build identical repeats this many times</dd><br>
+<dd>Default: 1</dd><br>
 </dl>
  </li>
 <li><h2>remodel:domainFusion</h2>

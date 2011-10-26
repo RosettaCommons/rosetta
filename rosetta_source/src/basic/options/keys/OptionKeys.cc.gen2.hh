@@ -1,3 +1,4 @@
+namespace wum { IntegerOptionKey const n_masters( "wum:n_masters" );  }
 namespace wum { IntegerOptionKey const memory_limit( "wum:memory_limit" );  }
 namespace wum { StringOptionKey const extra_scorefxn( "wum:extra_scorefxn" );  }
 namespace wum { FileOptionKey const extra_scorefxn_ref_structure( "wum:extra_scorefxn_ref_structure" );  }
@@ -576,4 +577,3 @@ namespace AnchoredDesign { namespace filters { BooleanOptionKey const omega( "An
 namespace AnchoredDesign { namespace akash { BooleanOptionKey const akash( "AnchoredDesign:akash" );  } }
 namespace AnchoredDesign { namespace akash { IntegerOptionKey const dyepos( "AnchoredDesign:akash:dyepos" );  } }
 namespace AnchoredDesign { namespace testing { BooleanOptionKey const testing( "AnchoredDesign:testing" );  } }
-namespace AnchoredDesign { namespace testing { RealOptionKey const VDW_weight( "AnchoredDesign:testing:VDW_weight" );  } }
