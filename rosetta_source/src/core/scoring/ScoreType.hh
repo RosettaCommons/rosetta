@@ -335,6 +335,9 @@ enum ScoreType {
 	// for ResidueConstraint
 	res_type_constraint,
 
+  // Residue Type linking constraint
+	res_type_linking_constraint,
+
 	// for PocketConstraint
 	pocket_constraint,
 

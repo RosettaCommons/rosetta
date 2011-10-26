@@ -59,6 +59,7 @@ ConstraintsEnergyCreator::score_types_for_method() const {
 	sts.push_back( coordinate_constraint );
 	sts.push_back( dof_constraint );
 	sts.push_back( res_type_constraint );
+	sts.push_back( res_type_linking_constraint );
 	sts.push_back( backbone_stub_constraint );
 	sts.push_back( big_bin_constraint );
 	sts.push_back( dunbrack_constraint );
