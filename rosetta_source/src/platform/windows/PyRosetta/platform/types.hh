@@ -36,7 +36,7 @@ namespace platform {
 
 typedef long unsigned int Size;
 typedef long          int SSize;
-typedef std::size_t  uint;
+typedef long unsigned uint;
 
 
 	// Floating point precision control scalar

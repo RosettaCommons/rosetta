@@ -615,9 +615,9 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path):
         obj = os.path.join( obj_dir, f[:-3]+'obj')
 
         if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(source):
-            execute('Compiling %s' % (dir_name+f), 'cl /MD /GR /Gy /DWIN32 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /c %s /I. \
-                    /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta \
-    /Ic:\Python27\include /DWIN_PYROSETTA_PASS_2  \
+            execute('Compiling %s\\%s' % (dir_name, f), 'cl /MD /GR /Gy /DWIN32 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /c %s /I. \
+                    /I../external/include /IC:/WPyRosetta/boost_1_47_0 /I../external/dbio /Iplatform/windows/PyRosetta \
+    /Ic:\Python27\include /DWIN_PYROSETTA_PASS_2 /DBOOST_PYTHON_MAX_ARITY=20 \
     /Fo%s /EHsc' % (source, obj) ) 
             #  /Iplatform/windows/32/msvc
             #  /I../external/boost_1_46_1

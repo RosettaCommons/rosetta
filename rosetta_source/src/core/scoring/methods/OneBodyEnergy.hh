@@ -34,6 +34,11 @@
 // Utility headers
 #include <utility/vector1.fwd.hh>
 
+#ifdef PYROSETTA
+	#include <core/scoring/DerivVectorPair.hh>
+#endif
+
+
 namespace core {
 namespace scoring {
 namespace methods {

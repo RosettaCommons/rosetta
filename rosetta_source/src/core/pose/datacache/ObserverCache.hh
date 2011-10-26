@@ -26,8 +26,9 @@
 #include <basic/datacache/DataCache.hh>
 
 //Auto Headers
-#include <core/pose/datacache/CacheableObserver.fwd.hh>
+#include <core/pose/datacache/CacheableObserver.hh>
 #include <utility/vector1_bool.hh>
+
 
 
 
