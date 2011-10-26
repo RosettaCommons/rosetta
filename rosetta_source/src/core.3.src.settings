@@ -127,6 +127,7 @@ sources = {
 		"BigBinConstraint",
 		"ConstraintIO",
 		"ResidueTypeConstraint",
+		"ResidueTypeLinkingConstraint",
 		"NonResidueTypeConstraint",
 		"SquareWellFunc",
 		"XYZ_Func",
