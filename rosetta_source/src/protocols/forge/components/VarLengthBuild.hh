@@ -271,7 +271,7 @@ public: // mutators
 
 
 	/// @brief set ScoreFunction used during build
-	void scorefunction( ScoreFunctionOP sfx );
+	void scorefunction( ScoreFunctionOP const & sfx );
 
 
 	/// @brief set build manager; also clears any cached fragments

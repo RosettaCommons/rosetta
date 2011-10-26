@@ -271,7 +271,7 @@ public: // mutators
 
 
 	/// @brief set the centroid level score function
-	void centroid_scorefunction( ScoreFunctionOP sfx );
+	void centroid_scorefunction( ScoreFunctionOP const & sfx );
 
 
 	/// @brief set the full-atom level score function
@@ -279,7 +279,7 @@ public: // mutators
 
 
 	/// @brief set the full-atom level score function
-	void fullatom_scorefunction( ScoreFunctionOP sfx );
+	void fullatom_scorefunction( ScoreFunctionOP const & sfx );
 
 
 public: // calculators

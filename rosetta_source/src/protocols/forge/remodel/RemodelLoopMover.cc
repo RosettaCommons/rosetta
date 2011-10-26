@@ -24,6 +24,8 @@
 
 // project headers
 #include <core/conformation/Residue.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/id/TorsionID.hh>
 #include <core/fragment/FragSet.hh>
@@ -47,6 +49,7 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 //#include <basic/options/keys/Remodel.OptionKeys.gen.hh>
+#include <core/scoring/constraints/ResidueTypeLinkingConstraint.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
 
 // numeric headers
@@ -225,16 +228,18 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 	using namespace core::pose;
 	using core::Size;
 	using namespace basic::options;
+
 	//testing repeat units
 	//two pose symmetry strategy
 
 	core::pose::Pose non_terminal_pose(pose);
-	//core::pose::Pose repeat_pose;
+
   if (option[ OptionKeys::remodel::repeat_structuer].user()){
+
 	//remove the extra tail from pose, but still use the pose with tail to build
 		non_terminal_pose.conformation().delete_residue_slow(pose.total_residue());
 		repeat_pose=non_terminal_pose;
-  	core::pose::remove_lower_terminus_type_from_pose_residue(non_terminal_pose, 1);
+    core::pose::remove_lower_terminus_type_from_pose_residue(non_terminal_pose, 1);
 
     Size repeatFactor = option[ OptionKeys::remodel::repeat_structuer];
     Size count = 1;
@@ -267,6 +272,7 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 		core::kinematics::FoldTree f;
 		f.simple_tree(repeat_pose.total_residue());
 		repeat_pose.fold_tree(f);
+
 		//repeat_pose.dump_pdb("repeat.pdb");
   //  pose = repeat_pose;
 	//	std::cout << repeat_pose.fold_tree()<< std::endl;
@@ -344,8 +350,8 @@ void RemodelLoopMover::repeat_propagation( //utility function
 		}
 	}
   //pose = repeat_pose;
- //   pose.dump_pdb("test_repeat1.pdb");
-//		repeat_pose.dump_pdb("repeat2.pdb");
+  //pose.dump_pdb("test_repeat1.pdb");
+  //repeat_pose.dump_pdb("repeat2.pdb");
 }
 
 
@@ -355,6 +361,7 @@ void RemodelLoopMover::repeat_propagation( //utility function
 void RemodelLoopMover::apply( Pose & pose ) {
 
   using namespace basic::options;
+  using namespace core::scoring::constraints;
 	using core::kinematics::FoldTree;
 	using protocols::jd2::JobDistributor;
 	using protocols::forge::methods::fold_tree_from_pose;
@@ -370,6 +377,19 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	}
 	if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
 			repeat_generation_with_additional_residue(pose, repeat_pose_);
+
+			//take care of constraints:
+
+			Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structuer];
+			Real bonus = 10;
+
+		  Size segment_length = (repeat_pose_.n_residue())/repeat_number;
+		  for (Size rep = 0; rep < repeat_number; rep++){ //start from 2 because first segment is built
+			  for (Size res = 1; res <= segment_length; res++){
+					 repeat_pose_.add_constraint( new ResidueTypeLinkingConstraint(repeat_pose_, res, res+(segment_length*rep), 10));
+			  }
+		  }
+
 			if (basic::options::option[ OptionKeys::constraints::cst_file ].user()){ //only use this type of cst file in this case
 				protocols::moves::ConstraintSetMoverOP repeat_constraint = new protocols::moves::ConstraintSetMover();
 				repeat_constraint->apply( repeat_pose_ );
@@ -393,6 +413,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	// within simultaneous and independent stages
 	ScoreFunctionOP sfxOP = sfx_;
 	sfxOP->set_weight( core::scoring::linear_chainbreak, 0.0 );
+
 	//REPEAT TEST
 	if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
 		sfxOP->set_weight(core::scoring::atom_pair_constraint, 1.0 * basic::options::option[ OptionKeys::remodel::repeat_structuer] );
@@ -778,13 +799,15 @@ void RemodelLoopMover::simultaneous_stage(
 	}
 
 	// report status
-	mc.score_function().show_line_headers( TR );
-	TR << std::endl;
+//	mc.score_function().show_line_headers( TR );
+//	TR << std::endl;
 
   if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
-		mc.score_function().show_line( TR, repeat_pose_ );
+//		mc.score_function().show_line( TR, repeat_pose_ );
+		mc.score_function().show( TR, repeat_pose_ );
+//		repeat_pose_.dump_scored_pdb("checkRepeat1.pdb", mc.score_function());
 	}	else {
-		mc.score_function().show_line( TR, pose );
+		mc.score_function().show( TR, pose );
 	}
 
 	TR << std::endl;
@@ -959,13 +982,15 @@ void RemodelLoopMover::independent_stage(
 		}
 
 		// report status
-		mc.score_function().show_line_headers( TR );
-		TR << std::endl;
+	//	mc.score_function().show_line_headers( TR );
+//	TR << std::endl;
 
 		if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
-			mc.score_function().show_line( TR, repeat_pose_ );
+	//		mc.score_function().show_line( TR, repeat_pose_ );
+			mc.score_function().show( TR, repeat_pose_ );
+	//	repeat_pose_.dump_scored_pdb("checkRepeat2.pdb", mc.score_function());
 		}	else {
-			mc.score_function().show_line( TR, pose );
+			mc.score_function().show( TR, pose );
 		}
 
 		TR << std::endl;
@@ -1160,13 +1185,15 @@ void RemodelLoopMover::boost_closure_stage(
 
 
 		// report status
-		mc.score_function().show_line_headers( TR );
-		TR << std::endl;
+	//	mc.score_function().show_line_headers( TR );
+//		TR << std::endl;
 
 		if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
-			mc.score_function().show_line( TR, repeat_pose_ );
+	//		mc.score_function().show_line( TR, repeat_pose_ );
+			mc.score_function().show( TR, repeat_pose_ );
+	//	repeat_pose_.dump_scored_pdb("checkRepeat3.pdb", mc.score_function());
 		}	else {
-			mc.score_function().show_line( TR, pose );
+			mc.score_function().show( TR, pose );
 		}
 
 		TR << std::endl;

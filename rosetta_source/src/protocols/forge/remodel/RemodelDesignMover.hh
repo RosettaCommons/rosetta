@@ -54,7 +54,7 @@ public: //constructor/destructor
 
 	RemodelDesignMover();
 
-	RemodelDesignMover(RemodelData remodel_data, RemodelWorkingSet const & working_model, ScoreFunctionOP sfxn);
+	RemodelDesignMover(RemodelData const & remodel_data, RemodelWorkingSet const & working_model, ScoreFunctionOP const & sfxn);
 
 	virtual
 	~RemodelDesignMover();
@@ -105,7 +105,7 @@ public: // accessors
 	core::pack::task::PackerTaskOP &  task();
 
 
-	void scorefunction(ScoreFunctionOP sfxn);
+	void scorefunction(ScoreFunctionOP const & sfxn);
 
 //	MoveMap const & movemap() const;
 

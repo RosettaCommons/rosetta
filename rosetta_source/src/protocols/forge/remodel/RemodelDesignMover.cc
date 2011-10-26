@@ -69,7 +69,7 @@ RemodelDesignMover::RemodelDesignMover(){
 }
 
 /// @brief value constructor
-RemodelDesignMover::RemodelDesignMover(RemodelData remodel_data, RemodelWorkingSet const & working_model, ScoreFunctionOP sfxn)
+RemodelDesignMover::RemodelDesignMover(RemodelData const & remodel_data, RemodelWorkingSet const & working_model, ScoreFunctionOP const & sfxn)
 {
 	using namespace basic::options;
 	using core::pose::metrics::CalculatorFactory;
@@ -86,9 +86,9 @@ RemodelDesignMover::RemodelDesignMover(RemodelData remodel_data, RemodelWorkingS
 	std::set< core:: Size > und_pos;
 
   std::set< core::Size > uup = working_model.manager.union_of_intervals_containing_undefined_positions();
-  for ( std::set<core::Size>::iterator i = uup.begin(); i!=uup.end(); i++){
-	    TR << *i <<  " UUP in DesignMover" <<  std::endl;
-  }
+//  for ( std::set<core::Size>::iterator i = uup.begin(); i!=uup.end(); i++){
+//	    TR << *i <<  " UUP in DesignMover" <<  std::endl;
+ // }
 
 	if (option[ OptionKeys::remodel::repeat_structuer].user()){
 		Size repeatCount = option[ OptionKeys::remodel::repeat_structuer];
@@ -96,8 +96,8 @@ RemodelDesignMover::RemodelDesignMover(RemodelData remodel_data, RemodelWorkingS
 			for (std::set< core::Size >::iterator it = uup.begin(); it != uup.end(); ++it){
 			//DEBUG
 				//std::cout << *it + remodel_data.blueprint.size()*rep << std::endl;
-				std::cout << "manger size"  << working_model.manager.union_of_intervals_containing_undefined_positions().size() <<  std::endl;
-				std::cout << *it  << std::endl;
+	//			std::cout << "manger size"  << working_model.manager.union_of_intervals_containing_undefined_positions().size() <<  std::endl;
+	//			std::cout << *it  << std::endl;
 				und_pos.insert(*it + remodel_data.blueprint.size()*rep);
 			}
 		}
@@ -193,6 +193,7 @@ void RemodelDesignMover::apply( Pose & pose )
 	//debug
 //TR <<  *working_model_.task << std::endl;
 	core::pack::pack_rotamers(pose, *score_fxn_ , working_model_.task);
+	score_fxn_->show(TR, pose);
 // pose.dump_pdb("junkCheck.pdb");
 //	core::pack::pack_rotamers(pose, *scorefxn , working_model_.task);
 //	core::pack::pack_rotamers(pose, *scorefxn , working_model_.task);
@@ -647,7 +648,7 @@ RemodelDesignMover::task(){
 	return working_model_.task;
 }
 
-void RemodelDesignMover::scorefunction( ScoreFunctionOP sfxn) {
+void RemodelDesignMover::scorefunction( ScoreFunctionOP const & sfxn) {
 	score_fxn_ = sfxn->clone();
 }
 

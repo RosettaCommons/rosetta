@@ -132,22 +132,42 @@ RemodelMover::register_user_options()
 	using namespace core::scoring;
 
 	//set optional weights
+	if ( option[OptionKeys::remodel::vdw].user() ){
+		centroid_sfx_-> set_weight(vdw, option[OptionKeys::remodel::vdw]);
+		TR << "USER OVERWRITE VDW: " << option[OptionKeys::remodel::vdw] << std::endl;
+	}
+
+	if ( option[OptionKeys::remodel::cbeta].user() ){
+		centroid_sfx_-> set_weight(cbeta, option[OptionKeys::remodel::cbeta]);
+		TR << "USER OVERWRITE CBETA: " << option[OptionKeys::remodel::cbeta] << std::endl;
+	}
+
+	if ( option[OptionKeys::remodel::cenpack].user() ){
+		centroid_sfx_-> set_weight(cenpack, option[OptionKeys::remodel::cenpack]);
+		TR << "USER OVERWRITE CENPACK: " << option[OptionKeys::remodel::cenpack] << std::endl;
+	}
+
 	if ( option[OptionKeys::remodel::hb_lrbb].user() ){
 		centroid_sfx_-> set_weight(hbond_lr_bb, option[OptionKeys::remodel::hb_lrbb]);
+		TR << "USER OVERWRITE HB_LRBB: " << option[OptionKeys::remodel::hb_lrbb] << std::endl;
 	}
 
 	if ( option[OptionKeys::remodel::hb_srbb].user() ){
 		centroid_sfx_-> set_weight(hbond_sr_bb, option[OptionKeys::remodel::hb_srbb]);
+		TR << "USER OVERWRITE HB_SRBB: " << option[OptionKeys::remodel::hb_srbb] << std::endl;
 	}
 	if ( option[OptionKeys::remodel::rg].user() ){
 		centroid_sfx_-> set_weight(rg, option[OptionKeys::remodel::rg]);
+		TR << "USER OVERWRITE RG: " << option[OptionKeys::remodel::rg] << std::endl;
 	}
 
 	if ( option[OptionKeys::remodel::rsigma].user() ){
-		centroid_sfx_-> set_weight(rsigma, option[OptionKeys::remodel::hb_lrbb]);
+		centroid_sfx_-> set_weight(rsigma, option[OptionKeys::remodel::rsigma]);
+		TR << "USER OVERWRITE RSIGMA: " << option[OptionKeys::remodel::rsigma] << std::endl;
 	}
 	if ( option[OptionKeys::remodel::ss_pair].user() ){
 		centroid_sfx_-> set_weight(ss_pair, option[OptionKeys::remodel::ss_pair]);
+		TR << "USER OVERWRITE SSPAIR: " << option[OptionKeys::remodel::ss_pair] << std::endl;
 	}
 }
 
@@ -242,7 +262,7 @@ void RemodelMover::centroid_scorefunction( ScoreFunction const & sfx ) {
 
 
 /// @brief set the centroid level score function
-void RemodelMover::centroid_scorefunction( ScoreFunctionOP sfx ) {
+void RemodelMover::centroid_scorefunction( ScoreFunctionOP const & sfx ) {
 	centroid_sfx_ = sfx->clone();
 }
 
@@ -254,7 +274,7 @@ void RemodelMover::fullatom_scorefunction( ScoreFunction const & sfx ) {
 
 
 /// @brief set the full-atom level score function
-void RemodelMover::fullatom_scorefunction( ScoreFunctionOP sfx ) {
+void RemodelMover::fullatom_scorefunction( ScoreFunctionOP const & sfx ) {
 	fullatom_sfx_ = sfx->clone();
 }
 
@@ -326,7 +346,7 @@ void RemodelMover::apply( Pose & pose ) {
 
 
 
-
+/*
 //  DEBUG
 	std::set<core::Size> up = working_model.manager.undefined_positions();
   for ( std::set<core::Size>::iterator i = up.begin(); i!=up.end(); i++){
@@ -336,6 +356,7 @@ void RemodelMover::apply( Pose & pose ) {
 	for ( std::set<core::Size>::iterator i = uup.begin(); i!=uup.end(); i++){
 		TR << *i <<  " UUP" <<  std::endl;
 	}
+	*/
 //
 //	Pose testArc;
 //	testArc = pose;
@@ -358,7 +379,7 @@ if (working_model.manager.size()!= 0){
 	);
 
 }
-
+/*
 	up = working_model.manager.undefined_positions();
   for ( std::set<core::Size>::iterator i = up.begin(); i!=up.end(); i++){
 	  TR << *i << std::endl;
@@ -367,7 +388,7 @@ if (working_model.manager.size()!= 0){
 	for ( std::set<core::Size>::iterator i = uup.begin(); i!=uup.end(); i++){
 		TR << *i <<  " UUP2" <<  std::endl;
 	}
-
+*/
 //	manager_.dummy_modify(testArc.n_residue());
 //	core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID, true);
 //	core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD, true);
@@ -417,7 +438,7 @@ if (working_model.manager.size()!= 0){
       new NeighborhoodByDistanceCalculator( manager_.union_of_intervals_containing_undefined_positions() )
     );
 }
-
+/*
    up = working_model.manager.undefined_positions();
   for ( std::set<core::Size>::iterator i = up.begin(); i!=up.end(); i++){
     TR << *i << std::endl;
@@ -427,6 +448,11 @@ if (working_model.manager.size()!= 0){
     TR << *i <<  " UUP2" <<  std::endl;
   }
 
+*/
+	if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+		//turning on the res_type_linking constraint weight for designs
+		fullatom_sfx_->set_weight( core::scoring::res_type_linking_constraint, 10.0);
+	}
 
 	RemodelDesignMover designMover(remodel_data, working_model, fullatom_sfx_);
 
@@ -828,6 +854,7 @@ bool RemodelMover::design_refine_seq_relax(
   sfx->set_weight(core::scoring::angle_constraint, 1.0 );
   sfx->set_weight(core::scoring::dihedral_constraint, 1.0 );
   sfx->set_weight(core::scoring::res_type_constraint, 1.0);
+  sfx->set_weight(core::scoring::res_type_linking_constraint, 1.0);
 	protocols::relax::FastRelax relaxMover(sfx);
 
 	// run design-refine cycle
@@ -844,6 +871,7 @@ bool RemodelMover::design_refine_seq_relax(
   sfx->set_weight(core::scoring::angle_constraint, 0.0 );
   sfx->set_weight(core::scoring::dihedral_constraint, 0.0 );
   sfx->set_weight(core::scoring::res_type_constraint, 0.0);
+  sfx->set_weight(core::scoring::res_type_linking_constraint, 0.0);
 
 	(*sfx)( pose );
 

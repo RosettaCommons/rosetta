@@ -189,7 +189,7 @@ void VarLengthBuild::scorefunction( ScoreFunction const & sfx ) {
 
 
 /// @brief set ScoreFunction used during build
-void VarLengthBuild::scorefunction( ScoreFunctionOP sfx ) {
+void VarLengthBuild::scorefunction( ScoreFunctionOP const & sfx ) {
 	sfx_ = sfx->clone();
 }
 
@@ -526,7 +526,6 @@ bool VarLengthBuild::centroid_build(
     cstOP->apply(pose);
     cstOP->enable_constraint_scoreterms(sfx_);
   }
-
 
 	// setup loop building protocol
 	MoverOP loop_mover = loop_mover_instance( loops, manager_.movemap() );
