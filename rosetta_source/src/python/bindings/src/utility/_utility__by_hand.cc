@@ -186,7 +186,11 @@ void wrap_owning_pointer(char * name)
 
 
 
-template< class T >  T * wrap_access_pointer_get_function( pointer::access_ptr<T> rs ) {  return rs.get(); }
+#ifndef _MSC_VER
+	template< class T >  T * wrap_access_pointer_get_function( pointer::access_ptr<T> rs ) {  return rs.get(); }
+#else
+	template< class T >  T * wrap_access_pointer_get_function( pointer::access_ptr<T> const & rs ) {  return rs.get(); }
+#endif
 
 template< class T >
 void wrap_access_pointer(std::string class_name)
