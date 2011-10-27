@@ -34,10 +34,6 @@
 #include <iomanip>
 #include <sstream>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
-
 // Operating system headers
 
 // Forward declarations
@@ -117,7 +113,12 @@ MetricRecorder::parse_my_tag(
 	stride_ = tag->getOption< core::Size >( "stride", 100 );
 	file_name_ = tag->getOption< std::string >( "filename", "metrics.txt" );
 
-	foreach(utility::tag::TagPtr subtag, tag->getTags()){
+	utility::vector0< utility::tag::TagPtr > const subtags( tag->getTags() );
+
+	for( utility::vector0< utility::tag::TagPtr >::const_iterator subtag_it = subtags.begin(); subtag_it != subtags.end(); ++subtag_it ) {
+
+		TagPtr const subtag = *subtag_it;
+
 		protocols::moves::MoverOP mover;
 
 		if (subtag->getName() == "Torsion") {

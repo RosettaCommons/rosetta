@@ -55,10 +55,6 @@ using basic::Warning;
 
 static basic::Tracer TR("protocols.docking.DockTaskFactory");
 
-// Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
-
 using namespace core;
 
 namespace protocols {
@@ -217,8 +213,8 @@ DockTaskFactory::create_and_attach_task_factory(
 	}
     
     // Add user specified task operations
-    foreach(core::pack::task::operation::TaskOperationOP task_operation, additional_task_operations_){
-        tf->push_back( task_operation );
+    for( utility::vector1< core::pack::task::operation::TaskOperationOP>::const_iterator operation = additional_task_operations_.begin(); operation != additional_task_operations_.end(); ++operation ) {
+        tf->push_back( *operation );
     }
     
     docker->set_task_factory(tf);

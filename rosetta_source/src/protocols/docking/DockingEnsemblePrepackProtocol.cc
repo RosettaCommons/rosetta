@@ -47,10 +47,6 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
-
 // Utility Headers
 #include <basic/Tracer.hh>
 
@@ -183,15 +179,15 @@ void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 		switch_mover->switch_conformer( pose, i );
 
 		//Move each partners away from the others
-		foreach(int jump, movable_jumps()){
-			RigidBodyTransMoverOP translate_away( new RigidBodyTransMover(pose, jump) );
+		for( DockJumps::const_iterator jump = movable_jumps().begin() ; jump != movable_jumps().end() ; ++jump ) {
+			RigidBodyTransMoverOP translate_away( new RigidBodyTransMover(pose, *jump) );
 			translate_away->step_size( trans_magnitude_ );
 			translate_away->apply(pose);
 		}
 		ensemble1_->calculate_lowres_ref_energy( pose );
 		//bringing the packed structures together
-		foreach(int jump, movable_jumps()){
-			RigidBodyTransMoverOP translate_back ( new RigidBodyTransMover(pose, jump) );
+		for(  DockJumps::const_iterator jump= movable_jumps().begin() ; jump != movable_jumps().end(); ++jump ) {
+			RigidBodyTransMoverOP translate_back ( new RigidBodyTransMover(pose, *jump) );
 			translate_back->step_size( trans_magnitude_ );
 			translate_back->trans_axis().negate();
 			translate_back->apply(pose);
@@ -213,15 +209,15 @@ void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 		switch_mover->switch_conformer( pose, i );
 
 		//Move each partners away from the others
-		foreach(int jump, movable_jumps()){
-			RigidBodyTransMoverOP translate_away( new RigidBodyTransMover(pose, jump) );
+		for( DockJumps::const_iterator jump = movable_jumps().begin() ; jump != movable_jumps().end() ; ++jump ) {
+			RigidBodyTransMoverOP translate_away( new RigidBodyTransMover(pose, *jump) );
 			translate_away->step_size( trans_magnitude_ );
 			translate_away->apply(pose);
 		}
 		ensemble2_->calculate_lowres_ref_energy( pose );
 		//bringing the packed structures together
-		foreach(int jump, movable_jumps()){
-			RigidBodyTransMoverOP translate_back ( new RigidBodyTransMover(pose, jump) );
+		for(  DockJumps::const_iterator jump= movable_jumps().begin() ; jump != movable_jumps().end(); ++jump ) {
+			RigidBodyTransMoverOP translate_back ( new RigidBodyTransMover(pose, *jump) );
 			translate_back->step_size( trans_magnitude_ );
 			translate_back->trans_axis().negate();
 			translate_back->apply(pose);

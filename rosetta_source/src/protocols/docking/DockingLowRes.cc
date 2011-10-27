@@ -62,10 +62,6 @@
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
-
 using basic::T;
 using basic::Error;
 using basic::Warning;
@@ -163,9 +159,8 @@ void DockingLowRes::sync_objects_with_flags()
 	movemap_ = new kinematics::MoveMap();
 	movemap_->set_chi( chi_ ); // is this right?
 	movemap_->set_bb( bb_ ); // is this right?
-
-	foreach(int jump, movable_jumps_){
-		movemap_->set_jump( jump, true );
+	for( DockJumps::const_iterator it = movable_jumps_.begin(); it != movable_jumps_.end(); ++it ) {
+		movemap_->set_jump( *it, true );
 	}
 
 	// setup the mc object

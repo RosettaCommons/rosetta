@@ -45,10 +45,6 @@
 
 #include <core/pack/task/operation/TaskOperation.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
-
 using basic::T;
 using namespace protocols::docking;
 using namespace protocols::moves;
@@ -158,8 +154,8 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 	score_and_output("initial",pose);
 
 	//Move each partners away from the others
-	foreach(int jump, movable_jumps()){
-		RigidBodyTransMoverOP translate_away( new RigidBodyTransMover(pose, jump) );
+	for( DockJumps::const_iterator jump = movable_jumps().begin() ; jump != movable_jumps().end() ; ++jump ) {
+		RigidBodyTransMoverOP translate_away( new RigidBodyTransMover(pose, *jump) );
 		translate_away->step_size( trans_magnitude_ );
 		translate_away->apply(pose);
 	}
@@ -170,8 +166,8 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 	score_and_output("away_packed",pose);
 
 	//bringing the packed structures together
-	foreach(int jump, movable_jumps()){
-		RigidBodyTransMoverOP translate_back ( new RigidBodyTransMover(pose, jump) );
+	for(  DockJumps::const_iterator jump= movable_jumps().begin() ; jump != movable_jumps().end(); ++jump ) {
+		RigidBodyTransMoverOP translate_back ( new RigidBodyTransMover(pose, *jump) );
 		translate_back->step_size( trans_magnitude_ );
 		translate_back->trans_axis().negate();
 		translate_back->apply(pose);

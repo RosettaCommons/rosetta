@@ -32,9 +32,6 @@
 // Utility headers
 #include <basic/Tracer.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 //// C++ headers
 static basic::Tracer tr("protocols.filters.PackerNeighborGraphFilter");
@@ -120,8 +117,9 @@ PackerNeighborGraphFilter::apply( core::pose::Pose const & pose ) const {
 	utility::vector1< RegionalConnections >::const_iterator regions_end = required_connections_between_regions_.end();
 
 	//reset all the regions
-	foreach(RegionalConnections regional_connections, required_connections_between_regions_){
-		regional_connections.reset_num_connections();
+	for( utility::vector1< RegionalConnections >::const_iterator reg_it = required_connections_between_regions_.begin();
+				 reg_it != regions_end; ++reg_it ){
+		reg_it->reset_num_connections();
 	}
 
 	//first, we create the packer neighbor graph
@@ -158,8 +156,9 @@ PackerNeighborGraphFilter::apply( core::pose::Pose const & pose ) const {
 		}
 
 		//now check whether these two residues belong to regions that we care about
-		foreach(RegionalConnections regional_connections, required_connections_between_regions_){
-			regional_connections.check_if_connected_residues_belong_to_regions( res1, res2 );
+		for( utility::vector1< RegionalConnections >::const_iterator reg_it = required_connections_between_regions_.begin();
+				 reg_it != regions_end; ++reg_it ){
+			reg_it->check_if_connected_residues_belong_to_regions( res1, res2 );
 		}
 
 	} //iteration over graph edges
@@ -179,8 +178,9 @@ PackerNeighborGraphFilter::apply( core::pose::Pose const & pose ) const {
 	}
 
 	//second, check whether all the regions have the right number of connections
-	foreach(RegionalConnections regional_connections, required_connections_between_regions_){
-		if( ! regional_connections.enough_connections() ) return false;
+	for( utility::vector1< RegionalConnections >::const_iterator reg_it = required_connections_between_regions_.begin();
+				 reg_it != regions_end; ++reg_it ){
+		if( ! reg_it->enough_connections() ) return false;
 	}
 
 	//yay! if we've made it till here, that means all the requirements are met

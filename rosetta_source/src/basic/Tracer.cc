@@ -29,10 +29,6 @@
 #include <iostream>
 #include <algorithm>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
-
 namespace basic {
 
 otstreamOP Tracer::ios_hook_;
@@ -83,8 +79,8 @@ std::vector< Tracer * > & Tracer::all_tracers()
 
 void Tracer::flush_all_tracers()
 {
-	foreach( Tracer * tracer, all_tracers()){
-		tracer->flush_all_channels();
+	for(std::vector<Tracer *>::iterator it=all_tracers().begin(); it < all_tracers().end(); ++it) {
+		(*it)->flush_all_channels();
 	}
 }
 

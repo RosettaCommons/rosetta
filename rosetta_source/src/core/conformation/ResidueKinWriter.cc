@@ -21,10 +21,6 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
-
 // C++ headers
 #include <iostream>
 
@@ -167,7 +163,9 @@ ResidueKinWriter::write_rsd_coords(
 
 	if ( ! is_instance ) {
 		for( core::Size atom_i = 1; atom_i <= rsd.natoms(); ++atom_i) {
-			foreach(core::Size atom_j, rsd.nbrs(atom_i)){
+			core::conformation::Residue::AtomIndices const & nbrs = rsd.nbrs(atom_i);
+			for(core::conformation::Residue::AtomIndices::const_iterator j = nbrs.begin(), end_j = nbrs.end(); j != end_j; ++j) {
+				core::Size atom_j = *j;
 				if(atom_j <= atom_i) continue; // so we draw each bond just once, not twice
 				bool const is_H = rsd.atom_is_hydrogen(atom_j) || rsd.atom_is_hydrogen(atom_i);
 

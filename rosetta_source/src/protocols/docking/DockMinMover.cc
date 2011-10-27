@@ -27,10 +27,6 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
-
 using namespace protocols::moves;
 using namespace core;
 
@@ -106,8 +102,8 @@ void DockMinMover::set_default() {
 	movemap_ = new kinematics::MoveMap();
 	movemap_->set_chi( false );
 	movemap_->set_bb( false );
-	foreach(int jump, movable_jumps()){
-		movemap_->set_jump( jump, true );
+	for( DockJumps::const_iterator it = movable_jumps().begin(); it != movable_jumps().end(); ++it ) {
+		movemap_->set_jump( *it, true );
 	}
 
 	//sets up minimization parameters

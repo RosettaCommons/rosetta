@@ -73,10 +73,6 @@
 #include <protocols/loops/LoopMover_Backrub.hh>
 #include <protocols/loops/LoopMover_CCD.hh>
 
-// Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
-
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
 
@@ -217,9 +213,8 @@ void DockingHighResLegacy::set_default( core::pose::Pose & pose ) {
 	movemap_ = new kinematics::MoveMap();
 	movemap_->set_chi( chi_ );
 	movemap_->set_bb( bb_ );
-
-	foreach(int jump, movable_jumps()){
-		movemap_->set_jump( jump, true );
+	for( DockJumps::const_iterator it = movable_jumps().begin(); it != movable_jumps().end(); ++it ) {
+		movemap_->set_jump( *it, true );
 	}
 
 	//sets up minimization parameters
@@ -596,18 +591,16 @@ void DockingHighResLegacy::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 	//set up translate-by-axis movers
 	Real trans_magnitude = 1000;
 	utility::vector1< RigidBodyTransMoverOP > trans_away_vec;
-
-	foreach(int jump, movable_jumps()){
-		core::Size const rb_jump = jump;
+	for( DockJumps::const_iterator it = movable_jumps().begin(); it != movable_jumps().end(); ++it ) {
+		core::Size const rb_jump = *it;
 		RigidBodyTransMoverOP translate_away ( new RigidBodyTransMover( pose, rb_jump ) );
 		translate_away->step_size( trans_magnitude );
 		trans_away_vec.push_back( translate_away );
 	}
 
 	utility::vector1< RigidBodyTransMoverOP > trans_back_vec;
-
-	foreach(int jump, movable_jumps()){
-		core::Size const rb_jump = jump;
+	for( DockJumps::const_iterator it = movable_jumps().begin(); it != movable_jumps().end(); ++it ) {
+		core::Size const rb_jump = *it;
 		RigidBodyTransMoverOP translate_back ( new RigidBodyTransMover( pose, rb_jump ) );
 		translate_back->step_size( trans_magnitude );
 		translate_back->trans_axis().negate();
@@ -623,14 +616,14 @@ void DockingHighResLegacy::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 	// set up protocol
 	docking_highres_protocol_mover_ = new SequenceMover;
 	if ( sc_min() ) docking_highres_protocol_mover_->add_mover( scmin_mover );
-	foreach(RigidBodyTransMoverOP rb_trans_mover, trans_away_vec){
-		docking_highres_protocol_mover_->add_mover( rb_trans_mover );
+	for( utility::vector1< RigidBodyTransMoverOP >::iterator it = trans_away_vec.begin(); it != trans_back_vec.end(); ++it ) {
+		docking_highres_protocol_mover_->add_mover( *it );
 	}
 	docking_highres_protocol_mover_->add_mover( prepack_full_repack );
 	if ( rt_min() ) docking_highres_protocol_mover_->add_mover( rtmin_mover );
 	if ( sc_min() ) docking_highres_protocol_mover_->add_mover( scmin_mover );
-	foreach(RigidBodyTransMoverOP rb_trans_mover, trans_back_vec){
-		docking_highres_protocol_mover_->add_mover( rb_trans_mover );
+	for( utility::vector1< RigidBodyTransMoverOP >::iterator it = trans_back_vec.begin(); it != trans_back_vec.end(); ++it ) {
+		docking_highres_protocol_mover_->add_mover( *it );
 	}
 }
 
@@ -658,9 +651,9 @@ void DockingHighResLegacy::setup_packing( core::pose::Pose & pose ) {
 			}
 		}
 		if( repack_chains.size() > 0 ) {
-			foreach(int jump, repack_chains){
-				TR << "Not designing chain " << jump << std::endl;
-				local_tf->push_back( new protocols::toolbox::task_operations::RestrictChainToRepackingOperation( jump ) ); //
+			for( DockJumps::const_iterator it = repack_chains.begin(); it != repack_chains.end(); ++it ) {
+				TR << "Not designing chain " << *it << std::endl;
+				local_tf->push_back( new protocols::toolbox::task_operations::RestrictChainToRepackingOperation( *it ) ); //
 			}
 		}
 	}
