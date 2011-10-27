@@ -129,15 +129,8 @@ public:
 	/// @brief translate along a randomly chosen vector by dist_in
 	void random_trans( const float dist_in );
 
-	/// @brief Applies delta_trans and delta_rot to the translation and
-	/// rotation componenets of this jump
-	void explicit_gaussian_move(int dir, double delta_trans, double delta_rot);
-
 	/// @brief Given the desired magnitude of the translation and rotation
-	/// components, applies Gaussian perturbation to this jump. In contrast
-	/// to the similarly named method explicit_gaussian_move(), the caller
-	/// of this method provides only the magnitudes of the rotation and
-	/// translation moves, not the raw delta values.
+	/// components, applies Gaussian perturbation to this jump.
 	void gaussian_move(int const dir, float const trans_mag, float const rot_mag);
 
 	 // @brief make a gaussian move with one selected rb dof

@@ -159,16 +159,6 @@ Jump::random_trans( const float dist_in )
 												z_rotation_matrix_degrees(theta) ).col_z() );
 }
 
-/// @TODO(cmiles) unify explicit_gaussian_move and gaussian_move
-void Jump::explicit_gaussian_move(int dir, double delta_trans, double delta_rot) {
-	fold_in_rb_deltas();
-	for (int i = 1; i <= 3; ++i) {
-		set_rb_delta(i, dir, delta_trans);
-		set_rb_delta(i + 3, dir, delta_rot);
-	}
-	fold_in_rb_deltas();
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 /// @details clear existing rb_delta first if any and then apply the gaussian move
 void Jump::gaussian_move(int const dir, float const trans_mag, float const rot_mag) {
