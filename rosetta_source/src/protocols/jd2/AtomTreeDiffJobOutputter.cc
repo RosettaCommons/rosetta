@@ -93,10 +93,15 @@ AtomTreeDiffJobOutputter::~AtomTreeDiffJobOutputter(){}
 
 void
 AtomTreeDiffJobOutputter::final_pose( JobCOP job, core::pose::Pose const & pose ){
-	Job::StringRealPairs::const_iterator begin= job->output_string_real_pairs_begin();
-	Job::StringRealPairs::const_iterator end= job->output_string_real_pairs_end();
+	std::map< std::string, core::Real > scores;
+	for( Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end());
+			 it != end; ++it) {
+		// Need to use operator[], as we want later (more recent) items in the string_real_pairs list to overwrite the earlier ones
+		// (e.g. if we've recomputed a value that was read in from the inital silent file.)
+		// Standard constructors/copy functions ignores items which are already in map.
+		scores[it->first] = it->second;
+	}
 
-	std::map< std::string, core::Real > scores(begin, end);
 	std::string output= output_name(job);
 	dump_pose( output, pose, scores, job);
 

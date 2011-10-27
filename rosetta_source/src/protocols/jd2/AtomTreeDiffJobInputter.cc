@@ -115,41 +115,46 @@ void protocols::jd2::AtomTreeDiffJobInputter::fill_jobs( Jobs & jobs ){
 	FileName file_name= atom_tree_diff_files.at(1);
 	tr.Debug << "reading " << file_name << std::endl;
 
-		atom_tree_diff_.read_file( file_name );
+	atom_tree_diff_.read_file( file_name );
 
 	core::Size const nstruct(	get_nstruct()	);
 
+	core::import_pose::atom_tree_diffs::TagScoreMap tags;
 
 	if ( option[ in::file::tags ].user() ) {
+		core::import_pose::atom_tree_diffs::TagScoreMap const & atd_tsm= atom_tree_diff_.get_tag_score_map();
 		foreach(string tag, option[ in::file::tags ]()){
-			assert(atom_tree_diff_.has_tag(tag));
-			InnerJobOP ijob( new InnerJob( tag, nstruct ) );
-			for(core::Size i=1; i<=nstruct; ++i){
-				jobs.push_back( JobOP( new Job( ijob, i) ) );
-			}
+			if ( ! atom_tree_diff_.has_tag(tag) ) {
+				utility_exit_with_message("Input AtomTreeDiff file does not have tag "+tag);
+ 			}
+			core::import_pose::atom_tree_diffs::TagScoreMap::const_iterator tag_score_iter(atd_tsm.find(tag));
+			assert( tag_score_iter != atd_tsm.end() ); // Shouldn't happen - we've checked it was present
+			tags[tag] = tag_score_iter->second;
 		}
+	} else {
+		tags = atom_tree_diff_.get_tag_score_map();
+ 	}
+
+	if ( ! tags.size() ) {
+		utility_exit_with_message("No valid input structures found for AtomTreeDiff file.");
 	}
-	else{
-		core::import_pose::atom_tree_diffs::TagScoreMap const & tags= atom_tree_diff_.get_tag_score_map();
 
-		foreach(core::import_pose::atom_tree_diffs::TagScorePair tag, tags){
-			InnerJobOP ijob( new InnerJob( tag.first, nstruct ) );
-			core::import_pose::atom_tree_diffs::ScoresPairList::const_iterator pairs= atom_tree_diff_.scores().begin();
-			core::import_pose::atom_tree_diffs::ScoresPairList::const_iterator const end= atom_tree_diff_.scores().end();
-			for(; pairs != end; ++pairs){
-				if(pairs->first == tag.first) break;
-			}
-			assert(pairs != end);
+	core::import_pose::atom_tree_diffs::ScoresPairList const & all_scores( atom_tree_diff_.scores() );
+	foreach(core::import_pose::atom_tree_diffs::TagScorePair tag_score, tags){
+		InnerJobOP ijob( new InnerJob( tag_score.first, nstruct ) );
 
-			core::import_pose::atom_tree_diffs::Scores scores= pairs->second;
+		//second entry in tag_score is index to entry in ScoresPairList
+		assert( tag_score.first == all_scores[tag_score.second].first );
+		core::import_pose::atom_tree_diffs::Scores scores= all_scores[tag_score.second].second;
 
-			for(core::Size j=1; j<=nstruct; ++j){
-				JobOP job = new Job( ijob, j);
+		for(core::Size j=1; j<=nstruct; ++j){
+			JobOP job = new Job( ijob, j);
+			if( basic::options::option[ basic::options::OptionKeys::in::file::keep_input_scores ] ) {
 				foreach(core::import_pose::atom_tree_diffs::ScorePair score, scores){
 					job->add_string_real_pair(score.first, score.second);
 				}
-				jobs.push_back( job );
 			}
+			jobs.push_back( job );
 		}
 	}
 
