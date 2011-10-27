@@ -63,6 +63,7 @@ private :
 	
 	Real bound_total_energy_;
 	Real unbound_total_energy_;
+	Size repeats_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 	void fill_energy_vector( Pose const & pose, std::map<ScoreType, Real > & energy_map );
 	void fill_per_residue_energy_vector(Pose const & pose, std::map<Size,Real> & energy_map);

@@ -102,6 +102,7 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in, core::Size const jump/*=1
 	symmetry_ = symmetry;
 	per_residue_ddg_ = false;
 	repack_ = true;
+	repeats_ = 1;
 	
 }
 
@@ -116,6 +117,7 @@ void ddG::parse_my_tag(
 	symmetry_ = tag->getOption<bool>("symmetry",0);
 	per_residue_ddg_ = tag->getOption<bool>("per_residue_ddg",0);
 	repack_ = tag->getOption<bool>("repack",0);
+	repeats_ = tag->getOption<Size>("repeats",1);
 	
 	std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn", "score12" ) );
 	scorefxn_ = new ScoreFunction( *(data.get< ScoreFunction * >( "scorefxns", scorefxn_name )) );
@@ -133,18 +135,45 @@ void ddG::apply(Pose & pose)
 		
 	}
 	
-	calculate(pose);
-	core::Real total_ddg = sum_ddG();
-	report_ddG(TR);
+	Real average_ddg = 0.0;
+	std::map<Size, Real> average_per_residue_ddgs;
+	
+	for(Size repeat = 1; repeat <= repeats_; ++repeat)
+	{
+		calculate(pose);
+		average_ddg += sum_ddG();
+		report_ddG(TR);
+		if(per_residue_ddg_)
+		{
+			for(core::Size i = 1; i <= pose.n_residue();++i)
+			{
+				core::Real bound_energy = bound_per_residue_energies_[i];
+				core::Real unbound_energy = unbound_per_residue_energies_[i];
+				core::Real residue_ddg = bound_energy - unbound_energy;
+				if(average_per_residue_ddgs.find(i) == average_per_residue_ddgs.end())
+				{
+					average_per_residue_ddgs[i] = residue_ddg;
+				}else
+				{
+					average_per_residue_ddgs[i] += residue_ddg;
+				}
+			}
+		}
+	}
+	
+	average_ddg /= repeats_;
+	for(std::map<Size,Real>::iterator avg_it = average_per_residue_ddgs.begin(); avg_it != average_per_residue_ddgs.end();++avg_it)
+	{
+		avg_it->second /= repeats_;
+	}
+	
 	jd2::JobOP job(jd2::JobDistributor::get_instance()->current_job());
-	job->add_string_real_pair("ddg",total_ddg);
+	job->add_string_real_pair("ddg",average_ddg);
 	if (per_residue_ddg_)
 	{
 		for (core::Size i = 1; i <= pose.n_residue(); ++i) {
-			core::Real bound_energy = bound_per_residue_energies_[i];
-			core::Real unbound_energy = unbound_per_residue_energies_[i];
 			std::string residue_string(utility::to_string<core::Size>(i));
-			job->add_string_real_pair("residue_ddg_"+residue_string, bound_energy - unbound_energy);
+			job->add_string_real_pair("residue_ddg_"+residue_string,average_per_residue_ddgs[i]);
 		}
 	}
 	
@@ -164,6 +193,7 @@ ddG::fill_energy_vector( pose::Pose const & pose, std::map< ScoreType, core::Rea
 	
 void ddG::fill_per_residue_energy_vector(pose::Pose const & pose, std::map<Size, Real> & energy_map)
 {
+	energy_map.clear();
 	for(core::Size resid = 1; resid <= pose.total_residue(); ++resid)
 	{
 		core::Real energy = 0.0;
