@@ -61,7 +61,7 @@
 
 // ObjexxFCL headers
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
+// Auto-header: duplicate removed #include <ObjexxFCL/string.functions.hh>
 
 //Auto Headers
 #include <core/chemical/AtomType.hh>

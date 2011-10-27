@@ -45,7 +45,7 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 
 
 

@@ -40,7 +40,7 @@
 //#include <core/io/silent/SilentFileData.hh>
 //#include <core/io/silent/ScoreFileSilentStruct.hh>
 
-#include <core/id/SequenceMapping.hh>
+// Auto-header: duplicate removed #include <core/id/SequenceMapping.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/SequenceAlignment.hh>
 
@@ -68,9 +68,9 @@
 #include <protocols/relax/cst_util.hh>
 
 //utilities
-#include <utility/file/FileName.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
+// Auto-header: duplicate removed #include <utility/file/FileName.hh>
+// Auto-header: duplicate removed #include <utility/io/izstream.hh>
+// Auto-header: duplicate removed #include <utility/io/ozstream.hh>
 #include <utility/options/keys/FileOptionKey.fwd.hh>
 #include <utility/options/keys/FileOptionKey.hh>
 #include <utility/options/keys/FileVectorOptionKey.fwd.hh>

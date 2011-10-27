@@ -66,8 +66,8 @@
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/option.hh>
 #include <core/pose/util.hh>
-#include <protocols/moves/PackRotamersMover.hh>
-#include <basic/options/option.hh>
+// Auto-header: duplicate removed #include <protocols/moves/PackRotamersMover.hh>
+// Auto-header: duplicate removed #include <basic/options/option.hh>
 #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
 
 static basic::Tracer TR("protocols.moves.GraftMover");

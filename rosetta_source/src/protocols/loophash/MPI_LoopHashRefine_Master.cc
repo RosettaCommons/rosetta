@@ -47,7 +47,7 @@
 #include <ObjexxFCL/format.hh>
 /// ObjexxFCL headers
 #include <ObjexxFCL//string.functions.hh>
-#include <ObjexxFCL/format.hh>
+// Auto-header: duplicate removed #include <ObjexxFCL/format.hh>
 
 #include <numeric/random/random.hh>
 
@@ -61,7 +61,7 @@
 #include <boost/algorithm/string.hpp>
 
 //Auto Headers
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 using namespace ObjexxFCL;

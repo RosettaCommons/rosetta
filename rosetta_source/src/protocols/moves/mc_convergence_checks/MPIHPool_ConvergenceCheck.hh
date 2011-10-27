@@ -15,7 +15,7 @@
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <utility/vector1.hh>
-#include <core/pose/Pose.hh>
+// Auto-header: duplicate removed #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
 #ifdef USEMPI

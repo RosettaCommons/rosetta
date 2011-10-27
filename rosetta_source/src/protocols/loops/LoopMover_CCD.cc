@@ -66,7 +66,7 @@
 
 // option key includes
 
-#include <basic/options/option.hh>
+// Auto-header: duplicate removed #include <basic/options/option.hh>
 #include <basic/options/keys/MonteCarlo.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 

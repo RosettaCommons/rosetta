@@ -39,7 +39,7 @@
 #include <basic/options/option.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/moves/RigidBodyMover.hh>
-#include <protocols/rosetta_scripts/util.hh>
+// Auto-header: duplicate removed #include <protocols/rosetta_scripts/util.hh>
 
 //Auto Headers
 #include <core/pose/Pose.hh>

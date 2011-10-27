@@ -67,7 +67,7 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <basic/options/option.hh>
 

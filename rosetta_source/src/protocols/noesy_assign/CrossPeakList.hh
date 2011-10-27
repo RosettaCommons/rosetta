@@ -16,7 +16,7 @@
 // Package Headers
 #include <protocols/noesy_assign/CrossPeak.hh>
 #include <protocols/noesy_assign/PeakFileFormat.fwd.hh>
-#include <protocols/noesy_assign/PeakAssignmentResidueMap.hh>
+#include <protocols/noesy_assign/PeakAssignmentResidueMap.fwd.hh>
 #include <protocols/noesy_assign/PeakCalibrator.fwd.hh>
 //#include <devel/noesy_assign/PeakAssignment.hh>
 //#include <devel/noesy_assign/ResonanceList.fwd.hh>

@@ -22,7 +22,7 @@
 
 #include <protocols/wum/WorkUnitManager.hh>
 #include <protocols/wum/MPI_WorkUnitManager.hh>
-#include <protocols/wum/MPI_WorkUnitManager_Slave.hh>
+//  you cannot #include yourself #include <protocols/wum/MPI_WorkUnitManager_Slave.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 

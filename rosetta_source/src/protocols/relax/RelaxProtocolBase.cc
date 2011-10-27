@@ -27,7 +27,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+// Auto-header: duplicate removed #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/rms_util.hh>
 
 #include <core/pack/task/PackerTask.hh>

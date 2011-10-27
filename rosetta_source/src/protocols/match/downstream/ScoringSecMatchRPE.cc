@@ -48,7 +48,7 @@
 #include <utility/io/ozstream.hh>
 #include <time.h>
 #include <stdlib.h>
-#include <stdio.h>
+// Auto-header: duplicate removed #include <stdio.h>
 #include <core/io/pdb/file_data.hh>
 #include <basic/Tracer.hh>
 

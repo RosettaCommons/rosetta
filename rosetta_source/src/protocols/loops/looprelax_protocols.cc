@@ -72,9 +72,9 @@
 
 //Auto Headers
 #include <core/pose/util.hh>
-#include <core/scoring/Energies.hh>
+// Auto-header: duplicate removed #include <core/scoring/Energies.hh>
 #include <utility/io/mpistream.hh>
-#include <numeric/random/random.hh>
+// Auto-header: duplicate removed #include <numeric/random/random.hh>
 #include <ObjexxFCL/format.hh>
 
 

@@ -44,7 +44,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// Auto-header: duplicate removed #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <numeric/random/random.hh>
 
 // Boost Headers

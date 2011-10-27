@@ -79,7 +79,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <protocols/rbsegment_moves/RBSegment.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <basic/options/option.hh>

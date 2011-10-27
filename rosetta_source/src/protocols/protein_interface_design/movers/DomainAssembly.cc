@@ -40,7 +40,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/options/option.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// Auto-header: duplicate removed #include <core/scoring/ScoreFunctionFactory.hh>
 
 
 namespace protocols {

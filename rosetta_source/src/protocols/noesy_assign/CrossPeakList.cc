@@ -20,6 +20,8 @@
 
 // Package Headers
 #include <protocols/noesy_assign/PeakAssignmentParameters.hh>
+#include <protocols/noesy_assign/PeakAssignmentResidueMap.hh>
+#include <protocols/noesy_assign/PeakCalibrator.hh>
 #include <protocols/noesy_assign/ResonanceList.hh>
 #include <protocols/noesy_assign/PeakFileFormat.hh>
 #include <protocols/noesy_assign/DistanceScoreMover.hh>

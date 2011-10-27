@@ -49,7 +49,7 @@
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/conformation/signals/LengthEvent.hh>
+// Auto-header: duplicate removed #include <core/conformation/signals/LengthEvent.hh>
 #include <map>
 
 

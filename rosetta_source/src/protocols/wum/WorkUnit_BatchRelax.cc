@@ -31,7 +31,7 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <core/chemical/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

@@ -27,7 +27,7 @@
 #include <protocols/moves/DataMap.hh>
 
 // Utility headers
-#include <utility/tag/Tag.hh>
+// Auto-header: duplicate removed #include <utility/tag/Tag.hh>
 
 // C++ headers
 #include <string>

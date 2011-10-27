@@ -20,7 +20,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <protocols/loops/LoopMover.hh>
+// Auto-header: duplicate removed #include <protocols/loops/LoopMover.hh>
 #include <protocols/loops/Loops.hh>
 
 ///////////////////////////////////////////////////////////////////////////////

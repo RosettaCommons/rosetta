@@ -43,18 +43,18 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
-#include <protocols/forge/build/BuildInstruction.hh>
-#include <protocols/forge/build/BuildManager.hh>
+// Auto-header: duplicate removed #include <protocols/forge/build/BuildInstruction.hh>
+// Auto-header: duplicate removed #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/constraints/NtoC_RCG.hh>
 #include <protocols/forge/constraints/ConstraintFileRCG.hh>
 #include <protocols/forge/constraints/SheetConstraintsRCG.hh>
-#include <protocols/forge/components/VarLengthBuild.hh>
+// Auto-header: duplicate removed #include <protocols/forge/components/VarLengthBuild.hh>
 #include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
 #include <protocols/forge/remodel/RemodelLoopMover.hh>
-#include <protocols/forge/build/SegmentInsert.hh>
+// Auto-header: duplicate removed #include <protocols/forge/build/SegmentInsert.hh>
 #include <protocols/forge/build/SegmentRebuild.hh>
-#include <protocols/forge/methods/pose_mod.hh>
-#include <protocols/fldsgn/BluePrint.hh>
+// Auto-header: duplicate removed #include <protocols/forge/methods/pose_mod.hh>
+// Auto-header: duplicate removed #include <protocols/fldsgn/BluePrint.hh>
 
 #include <protocols/moves/DataMap.hh>
 #include <protocols/toolbox/pose_manipulation.hh>

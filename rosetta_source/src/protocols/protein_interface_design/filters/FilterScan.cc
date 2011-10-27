@@ -34,7 +34,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/rosetta_scripts/util.hh>
+// Auto-header: duplicate removed #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/jd2/util.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH

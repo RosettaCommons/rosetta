@@ -37,7 +37,7 @@
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
 #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
+// Auto-header: duplicate removed #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH

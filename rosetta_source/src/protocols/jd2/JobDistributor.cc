@@ -64,7 +64,7 @@
 #include <iterator>
 #include <vector>
 
-#include <utility/exit.hh>
+// Auto-header: duplicate removed #include <utility/exit.hh>
 #include <csignal>
 #include <cstdlib>
 

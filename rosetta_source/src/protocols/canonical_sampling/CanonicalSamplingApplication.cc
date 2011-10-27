@@ -22,7 +22,7 @@
 #include <protocols/moves/BackrubMover.hh>
 #include <protocols/moves/BBConRotMover.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/MoveMap.hh>
+// Auto-header: duplicate removed #include <core/kinematics/MoveMap.hh>
 
 #include <protocols/jd2/NoOutputJobOutputter.hh>
 #include <protocols/jd2/JobDistributor.hh>

@@ -17,7 +17,7 @@
 #include <protocols/noesy_assign/CrossPeakInfo.hh>
 #include <protocols/noesy_assign/PeakAssignment.hh>
 #include <protocols/noesy_assign/ResonanceList.hh>
-#include <protocols/noesy_assign/PeakCalibrator.hh>
+#include <protocols/noesy_assign/PeakCalibrator.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>

@@ -65,7 +65,7 @@
 #include <fstream> //testing
 #include <utility/io/izstream.hh>
 
-#include <utility/io/izstream.hh>
+// Auto-header: duplicate removed #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
 #if (defined WIN32) //&& (!defined WIN_PYROSETTA)

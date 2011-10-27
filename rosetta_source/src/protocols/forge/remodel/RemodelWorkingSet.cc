@@ -47,7 +47,7 @@
 #include <core/pack/task/ResfileReader.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-#include <protocols/forge/components/VarLengthBuild.hh>
+// Auto-header: duplicate removed #include <protocols/forge/components/VarLengthBuild.hh>
 
 #include <protocols/loops/LoopMover_QuickCCD_Moves.hh>
 /*

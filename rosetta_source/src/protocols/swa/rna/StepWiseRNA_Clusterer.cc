@@ -53,7 +53,7 @@
 #include <sstream>
 #include <map>
 #include <core/io/pdb/pose_io.hh>
-#include <core/pose/Pose.hh>
+// Auto-header: duplicate removed #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 //#include <utility/io/ozstream.hh>
 //#include <utility/io/izstream.hh>

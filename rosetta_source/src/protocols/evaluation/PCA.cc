@@ -198,15 +198,20 @@ static basic::Tracer tr("protocols.evaluation.PCA",basic::t_info);
 
 using namespace core;
 
-#define dump_matrix( nr, a ) {}
-#define dump_matrix_no( nr, a ) \
-	{	int i,k; \
-	for ( i =0 ; i<nr; i++ ) { \
-		for ( k =0 ; k<nr; k++ ) \
-			tr.Debug << a[i][k] << " "; \
-		tr.Debug << "\n";\
-	}\
-} \
+
+/// @brief A function (not a macro) that will not print a square matrix to tr.Debug
+template< class T > void dump_matrix( Size nr, T const & a, basic::Tracer & tr) {}
+
+/// @brief A function (not a macro) that will print a square matrix to tr.Debug
+template< class T > void dump_matrix_no( Size nr, T const & a, basic::Tracer & tr)
+{
+	int i,k;
+	for ( i =0 ; i<nr; i++ ) {
+		for ( k =0 ; k<nr; k++ )
+			tr.Debug << a[i][k] << " ";
+		tr.Debug << "\n";
+	}
+}
 
 /// some low-level helper routines
 
@@ -344,7 +349,7 @@ void PCA::eval( pose::Pose const& pose, ProjectionVector& proj ) {
 
   //compute rotation matrix
   calc_fit_R( nfit_, xrefgmx, xgmx, Rot );
-  dump_matrix( 3, Rot );
+  dump_matrix( 3, Rot, tr );
 
   fill_coordinates( pose, ipca_, x );
   //transfer into C-style arrays
@@ -471,7 +476,7 @@ void PCA::calc_fit_R(int natoms,rvec *xp,rvec const* x,matrix R)
       }
     }
   }
-  dump_matrix(DIM, u);
+  dump_matrix(DIM, u, tr);
   /*construct omega*/
   /*omega is symmetric -> omega==omega' */
   for(r=0; r<DIM6; r++)
@@ -483,7 +488,7 @@ void PCA::calc_fit_R(int natoms,rvec *xp,rvec const* x,matrix R)
 	omega[r][c]=0;
 	omega[c][r]=0;
       }
-  dump_matrix(DIM6, omega);
+  dump_matrix(DIM6, omega, tr);
   /*determine h and k*/
   jacobi( omega,d,om,&irot);
   /*real   **omega = input matrix a[0..n-1][0..n-1] must be symmetric
@@ -492,8 +497,8 @@ void PCA::calc_fit_R(int natoms,rvec *xp,rvec const* x,matrix R)
    *real       **v = v[0..n-1][0..n-1] contains the vectors in columns
    *int      *irot = number of jacobi rotations
    */
-  dump_matrix( 2*DIM, omega );
-  dump_matrix ( 2*DIM, om );
+  dump_matrix( 2*DIM, omega, tr );
+  dump_matrix ( 2*DIM, om, tr );
   index=0; /* For the compiler only */
 
   /* Copy only the first two eigenvectors */
@@ -515,12 +520,12 @@ void PCA::calc_fit_R(int natoms,rvec *xp,rvec const* x,matrix R)
    * prevents problems with completely flat reference structures.
    */
 
-  dump_matrix( DIM, vh );
-  dump_matrix( DIM, vk );
+  dump_matrix( DIM, vh, tr );
+  dump_matrix( DIM, vk, tr );
   oprod(vh[0],vh[1],vh[2]);
   oprod(vk[0],vk[1],vk[2]);
-  dump_matrix( DIM, vh );
-  dump_matrix( DIM, vk );
+  dump_matrix( DIM, vh, tr );
+  dump_matrix( DIM, vk, tr );
 
   /*determine R*/
   for(r=0; r<DIM; r++)
@@ -528,7 +533,7 @@ void PCA::calc_fit_R(int natoms,rvec *xp,rvec const* x,matrix R)
       R[r][c] = vk[0][r]*vh[0][c] +
 	vk[1][r]*vh[1][c] +
 	vk[2][r]*vh[2][c];
-  dump_matrix( DIM, R );
+  dump_matrix( DIM, R, tr );
 }
 
 

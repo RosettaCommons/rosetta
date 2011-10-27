@@ -39,7 +39,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.hh> 
-#include <protocols/rosetta_scripts/util.hh>
+// Auto-header: duplicate removed #include <protocols/rosetta_scripts/util.hh>
 
 //loops
 #include <protocols/loops/Loop.hh>

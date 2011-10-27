@@ -35,7 +35,7 @@
 #include <protocols/forge/build/SegmentSwap.hh>
 #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/build/Interval.hh>
-#include <protocols/forge/build/SegmentSwap.hh>
+// Auto-header: duplicate removed #include <protocols/forge/build/SegmentSwap.hh>
 #include <protocols/forge/build/SegmentRebuild.hh>
 
 #include <protocols/forge/methods/fold_tree_functions.hh>
@@ -44,7 +44,7 @@
 #include <utility/tag/Tag.hh>
 
 //Auto Headers
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 
 //#include <protocols/moves/DataMap.hh>
 

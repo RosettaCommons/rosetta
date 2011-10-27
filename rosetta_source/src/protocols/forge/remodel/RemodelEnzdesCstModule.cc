@@ -24,9 +24,9 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// Auto-header: duplicate removed #include <core/conformation/ResidueFactory.hh>
+// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
+// Auto-header: duplicate removed #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <utility/vector1.hh>
 #include <core/scoring/ScoreFunction.hh>

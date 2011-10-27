@@ -25,7 +25,7 @@
 #include <core/types.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <basic/database/sql_utils.hh>
+// Auto-header: duplicate removed #include <basic/database/sql_utils.hh>
 
 // Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>

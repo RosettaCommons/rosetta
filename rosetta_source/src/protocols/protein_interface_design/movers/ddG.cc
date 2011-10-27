@@ -45,7 +45,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 
 
-#include <protocols/moves/RigidBodyMover.hh>
+// Auto-header: duplicate removed #include <protocols/moves/RigidBodyMover.hh>
 #include <protocols/moves/DataMap.hh>
 
 #include <ObjexxFCL/format.hh>

@@ -12,6 +12,7 @@
 
 // Unit Header
 //#include <devel/NoesyAssign/StructureIndependentPeakCalibrator.fwd.hh>
+#include <protocols/noesy_assign/PeakCalibrator.hh>
 
 // Package Headers
 // #include <devel/NoesyAssign/StructureIndependentPeakCalibratorInfo.hh>

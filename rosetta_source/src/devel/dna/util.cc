@@ -72,7 +72,7 @@ typedef numeric::xyzVector< core::Real > xyzVec;
 // AUTO-REMOVED #include <ctime>
 
 //Auto Headers
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <utility/options/keys/BooleanOptionKey.hh>
 #include <numeric/random/random.fwd.hh>
 #include <ObjexxFCL/format.hh>

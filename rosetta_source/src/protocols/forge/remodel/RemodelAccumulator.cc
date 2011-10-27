@@ -32,7 +32,7 @@
 #include <protocols/forge/build/BuildInstruction.hh> // REQUIRED FOR WINDOWS
 
 //Auto Headers
-#include <core/import_pose/import_pose.hh>
+// Auto-header: duplicate removed #include <core/import_pose/import_pose.hh>
 
 
 // numeric headers

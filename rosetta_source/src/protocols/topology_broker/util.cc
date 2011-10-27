@@ -50,8 +50,8 @@
 #include <protocols/topology_broker/weights/LargeFragWeight.hh>
 #include <protocols/topology_broker/weights/SmallFragWeight.hh>
 #include <protocols/topology_broker/weights/SmoothFragWeight.hh>
-#include <basic/options/keys/broker.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
+// Auto-header: duplicate removed #include <basic/options/keys/broker.OptionKeys.gen.hh>
+// Auto-header: duplicate removed #include <basic/options/option.hh>
 
 static basic::Tracer tr("protocols.topo_broker",basic::t_info);
 

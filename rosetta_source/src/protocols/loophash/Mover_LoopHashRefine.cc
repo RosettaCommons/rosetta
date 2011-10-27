@@ -89,8 +89,8 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/Pose.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <basic/datacache/CacheableData.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 

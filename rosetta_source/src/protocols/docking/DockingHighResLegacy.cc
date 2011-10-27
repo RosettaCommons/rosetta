@@ -92,7 +92,7 @@
 
 #include <basic/Tracer.hh>
 
-#include <core/pack/task/PackerTask.hh>
+// Auto-header: duplicate removed #include <core/pack/task/PackerTask.hh>
 using basic::T;
 
 // option key includes

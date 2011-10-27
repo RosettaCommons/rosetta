@@ -41,7 +41,7 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/surface_docking/CentroidRelaxMover.fwd.hh>
-#include <core/types.hh>
+// Auto-header: duplicate removed #include <core/types.hh>
 
 #include <protocols/moves/DataMap.fwd.hh>
 // ObjexxFCL Headers

@@ -24,11 +24,11 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
-#include <core/io/silent/SilentStruct.hh>
+// Auto-header: duplicate removed #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <utility/pointer/ReferenceCount.hh>
+// Auto-header: duplicate removed #include <utility/pointer/ReferenceCount.hh>
 #include <utility/exit.hh>
 #include <string>
 #include <vector>

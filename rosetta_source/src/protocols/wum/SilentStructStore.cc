@@ -29,7 +29,7 @@
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
-#include <core/import_pose/pose_stream/util.hh>
+// Auto-header: duplicate removed #include <core/import_pose/pose_stream/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -43,7 +43,7 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
-#include <core/io/silent/SilentStruct.fwd.hh>
+// Auto-header: duplicate removed #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
@@ -71,7 +71,7 @@
 
 //Auto Headers
 #include <basic/datacache/CacheableData.hh>
-#include <core/pose/Pose.hh>
+// Auto-header: duplicate removed #include <core/pose/Pose.hh>
 #include <numeric/random.functions.hh>
 #include <numeric/random/random.hh>
 

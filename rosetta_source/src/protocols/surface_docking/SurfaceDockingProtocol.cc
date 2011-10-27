@@ -50,7 +50,7 @@
 //Utility Headers
 #include <utility/exit.hh>
 #include <basic/prof.hh>
-#include <basic/Tracer.hh>
+// Auto-header: duplicate removed #include <basic/Tracer.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <string>
 

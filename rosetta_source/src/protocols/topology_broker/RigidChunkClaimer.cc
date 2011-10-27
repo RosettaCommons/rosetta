@@ -34,9 +34,9 @@
 #include <core/chemical/VariantType.hh>
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/option.hh>
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <basic/options/option.hh>
+// Auto-header: duplicate removed #include <basic/options/option.hh>
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>

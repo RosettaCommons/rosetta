@@ -38,7 +38,7 @@
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 
 //Minimizer stuff
-#include <core/kinematics/MoveMap.hh>
+// Auto-header: duplicate removed #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <numeric/xyzVector.hh>

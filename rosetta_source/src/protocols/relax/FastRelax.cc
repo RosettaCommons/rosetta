@@ -167,7 +167,7 @@ endrepeat
 #include <utility/tag/Tag.hh>
 
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
+// Auto-header: duplicate removed #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <numeric/random/random.fwd.hh>
 
@@ -185,7 +185,7 @@ endrepeat
 
 
 //Auto Headers
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/string_util.hh>
 #include <utility/io/mpistream.hh>

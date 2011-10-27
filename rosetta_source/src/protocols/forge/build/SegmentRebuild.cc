@@ -27,7 +27,7 @@
 #include <core/conformation/util.hh>
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/util.hh>
+// Auto-header: duplicate removed #include <core/conformation/util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/constants.hh>

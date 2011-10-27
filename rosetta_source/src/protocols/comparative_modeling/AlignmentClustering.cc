@@ -41,7 +41,7 @@
 #include <protocols/comparative_modeling/PartialThreadingMover.hh>
 
 //utilities
-#include <utility/io/ozstream.hh>
+// Auto-header: duplicate removed #include <utility/io/ozstream.hh>
 
 // option key includes
 #include <basic/options/option.hh>

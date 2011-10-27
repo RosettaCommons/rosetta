@@ -32,13 +32,13 @@
 
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/types.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
+// Auto-header: duplicate removed #include <core/conformation/Conformation.hh>
+// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/string_util.hh>
 #include <boost/foreach.hpp>
-#include <core/types.hh>
+// Auto-header: duplicate removed #include <core/types.hh>
 #include <protocols/moves/DataMap.hh>
 #include <utility/tag/Tag.hh>
 // C++ headers
@@ -49,12 +49,12 @@
 #define foreach BOOST_FOREACH
 
 #include <basic/Tracer.hh>
-#include <protocols/moves/DataMap.hh>
+// Auto-header: duplicate removed #include <protocols/moves/DataMap.hh>
 #include <utility/vector1.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <utility/tag/Tag.hh>
+// Auto-header: duplicate removed #include <utility/tag/Tag.hh>
 
 //pose
 #include <core/pose/util.hh>
@@ -63,9 +63,9 @@
 
 
 //constraints
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+// Auto-header: duplicate removed #include <core/scoring/constraints/ConstraintSet.hh>
+// Auto-header: duplicate removed #include <core/scoring/constraints/Func.hh>
+// Auto-header: duplicate removed #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/XYZ_Func.hh>
 
 namespace protocols {

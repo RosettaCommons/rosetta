@@ -75,7 +75,7 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/atom_tree_diffs/atom_tree_diff.hh>
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/file/file_sys_util.hh>

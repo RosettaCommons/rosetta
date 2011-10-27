@@ -16,11 +16,12 @@
 
 // Unit Headers
 #include <protocols/noesy_assign/PeakAssignmentResidueMap.fwd.hh>
-#include <protocols/noesy_assign/CrossPeakList.hh>
+#include <protocols/noesy_assign/CrossPeakList.fwd.hh>
 #include <protocols/noesy_assign/ResonanceList.hh>
 #include <core/types.hh>
 
 // Package Headers
+#include <protocols/noesy_assign/PeakAssignment.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 
 // Project Headers

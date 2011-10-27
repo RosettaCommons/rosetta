@@ -47,7 +47,7 @@
 #include <ObjexxFCL/format.hh>
 /// ObjexxFCL headers
 #include <ObjexxFCL//string.functions.hh>
-#include <ObjexxFCL/format.hh>
+// Auto-header: duplicate removed #include <ObjexxFCL/format.hh>
 
 #include <numeric/random/random.hh>
 

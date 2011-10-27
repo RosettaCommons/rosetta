@@ -199,7 +199,7 @@
 #include <ObjexxFCL/FArray5A.fwd.hh>
 #include <ObjexxFCL/FArray5P.fwd.hh>
 #include <ObjexxFCL/FArray5.all.fwd.hh>
-#include <ObjexxFCL/FArray.all.fwd.hh>
+// Auto-header: duplicate removed #include <ObjexxFCL/FArray.all.fwd.hh>
 #include <ObjexxFCL/FArray.hh>
 #include <ObjexxFCL/FArrayInitializer.fwd.hh>
 #include <ObjexxFCL/FArrayInitializer.hh>
@@ -360,15 +360,33 @@ void CA_superimpose( core::pose::Pose const&  ref_pose, core::pose::Pose& fit_po
 
 void calc_fit_R(int natoms, Real const* weights, rvec const* xp,rvec const*x, matrix R );
 void jacobi(double a[6][6],double d[],double v[6][6],int *nrot);
-#define dump_matrix( nr, a ) {}
-#define dump_matrix_no( nr, a ) \
-	{	int i,k; \
-	for ( i =0 ; i<nr; i++ ) { \
-		for ( k =0 ; k<nr; k++ ) \
-			tr.Debug << a[i][k] << " "; \
-		tr.Debug << "\n";\
-	}\
-} \
+
+/// @brief A function (not a macro) that will not print a square matrix to tr.Debug
+template< class T > void dump_matrix( Size nr, T const & a, basic::Tracer & tr) {}
+
+/// @brief A function (not a macro) that will print a square matrix to tr.Debug
+template< class T > void dump_matrix_no( Size nr, T const & a, basic::Tracer & tr)
+{
+	int i,k;
+	for ( i =0 ; i<nr; i++ ) {
+		for ( k =0 ; k<nr; k++ )
+			tr.Debug << a[i][k] << " ";
+		tr.Debug << "\n";
+	}
+}
+
+// Evil, unnecessary macros that could just be functions
+// Replaced by code above.
+//
+///#define dump_matrix( nr, a ) {}
+//#define dump_matrix_no( nr, a )								\
+//	{	int i,k;																	\
+//	for ( i =0 ; i<nr; i++ ) {									\
+//		for ( k =0 ; k<nr; k++ )									\
+//			tr.Debug << a[i][k] << " ";							\
+//		tr.Debug << "\n";													\
+//	}																						\
+//}
 
 /// some low-level helper routines
 
@@ -529,7 +547,7 @@ void calc_fit_R(int natoms, Real const* weights, rvec const* xref, rvec const*x,
       }
     }
   }
-  dump_matrix(DIM, u);
+  dump_matrix(DIM, u, tr);
   /*construct omega*/
   /*omega is symmetric -> omega==omega' */
   for(r=0; r<DIM6; r++) {
@@ -543,7 +561,7 @@ void calc_fit_R(int natoms, Real const* weights, rvec const* xref, rvec const*x,
       }
 		}
 	}
-  dump_matrix(DIM6, omega);
+  dump_matrix(DIM6, omega, tr);
   /*determine h and k*/
   jacobi( omega,d,om,&irot);
   /*real   **omega = input matrix a[0..n-1][0..n-1] must be symmetric
@@ -552,8 +570,8 @@ void calc_fit_R(int natoms, Real const* weights, rvec const* xref, rvec const*x,
    *real       **v = v[0..n-1][0..n-1] contains the vectors in columns
    *int      *irot = number of jacobi rotations
    */
-  dump_matrix( 2*DIM, omega );
-  dump_matrix ( 2*DIM, om );
+  dump_matrix( 2*DIM, omega, tr );
+  dump_matrix ( 2*DIM, om, tr );
   index=0; /* For the compiler only */
 
   /* Copy only the first two eigenvectors */
@@ -575,12 +593,12 @@ void calc_fit_R(int natoms, Real const* weights, rvec const* xref, rvec const*x,
    * prevents problems with completely flat reference structures.
    */
 
-  dump_matrix( DIM, vh );
-  dump_matrix( DIM, vk );
+  dump_matrix( DIM, vh, tr );
+  dump_matrix( DIM, vk, tr );
   oprod(vh[0],vh[1],vh[2]);
   oprod(vk[0],vk[1],vk[2]);
-  dump_matrix( DIM, vh );
-  dump_matrix( DIM, vk );
+  dump_matrix( DIM, vh, tr );
+  dump_matrix( DIM, vk, tr );
 
   /*determine R*/
   for(r=0; r<DIM; r++)
@@ -588,7 +606,7 @@ void calc_fit_R(int natoms, Real const* weights, rvec const* xref, rvec const*x,
       R[r][c] = vk[0][r]*vh[0][c] +
 				vk[1][r]*vh[1][c] +
 				vk[2][r]*vh[2][c];
-  dump_matrix( DIM, R );
+  dump_matrix( DIM, R, tr );
 }
 
 #define ROTATE(a,i,j,k,l) g=a[i][j];h=a[k][l];a[i][j]=g-s*(h+g*tau);	\

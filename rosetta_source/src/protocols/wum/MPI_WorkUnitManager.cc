@@ -40,7 +40,7 @@
 #include <basic/options/keys/wum.OptionKeys.gen.hh>
 /// ObjexxFCL headers
 #include <numeric/random/random.hh>
-#include <ObjexxFCL//string.functions.hh>
+#include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
 

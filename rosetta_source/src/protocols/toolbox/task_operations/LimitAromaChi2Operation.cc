@@ -27,7 +27,7 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <utility/tag/Tag.hh>
 
-#include <core/pack/task/PackerTask.hh> // REQUIRED FOR WINDOWS
+// Auto-header: duplicate removed #include <core/pack/task/PackerTask.hh> // REQUIRED FOR WINDOWS
 #include <core/graph/Graph.hh> // REQUIRED FOR WINDOWS
 
 

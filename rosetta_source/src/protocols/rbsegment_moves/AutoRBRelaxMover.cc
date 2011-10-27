@@ -31,7 +31,7 @@
 #include <protocols/rbsegment_moves/RBSegmentMover.hh>
 #include <protocols/rbsegment_moves/RBSegment.hh>
 #include <protocols/rbsegment_moves/util.hh>
-#include <protocols/loops/loops_main.hh>
+// Auto-header: duplicate removed #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/ccd_closure.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -63,8 +63,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <basic/options/option.hh>
-#include <protocols/rbsegment_moves/RBSegment.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+// Auto-header: duplicate removed #include <protocols/rbsegment_moves/RBSegment.hh>
+// Auto-header: duplicate removed #include <protocols/moves/SwitchResidueTypeSetMover.hh>
 #include <core/fragment/FragSet.hh>
 #include <protocols/basic_moves/FragmentMover.hh>
 #include <numeric/random/random.hh>

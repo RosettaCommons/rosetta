@@ -28,7 +28,7 @@
 #include <protocols/loops/Loops.hh>
 
 #include <utility/string_util.hh>
-#include <protocols/loops/Loops.fwd.hh>
+// Auto-header: duplicate removed #include <protocols/loops/Loops.fwd.hh>
 
 namespace protocols {
 namespace seeded_abinitio {

@@ -20,7 +20,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <protocols/rna/RNA_MatchType.hh>
+// you cannot #include yourself #include <protocols/rna/RNA_MatchType.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ Headers

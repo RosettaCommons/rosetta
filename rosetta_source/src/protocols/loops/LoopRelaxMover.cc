@@ -90,7 +90,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// Auto-header: duplicate removed #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
@@ -98,15 +98,15 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/option.hh>
-#include <core/pose/util.hh>
-#include <core/scoring/Energies.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/scoring/Energies.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/MiniRelax.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <numeric/random/random.fwd.hh>
-#include <basic/options/option.hh>
+// Auto-header: duplicate removed #include <basic/options/option.hh>
 
 
 #if defined(WIN32) || defined(__CYGWIN__)

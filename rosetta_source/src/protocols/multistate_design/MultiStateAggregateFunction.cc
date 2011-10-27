@@ -25,7 +25,7 @@
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/multistate_design/MultiStateAggregateFunction.hh>
+// Auto-header: duplicate removed #include <protocols/multistate_design/MultiStateAggregateFunction.hh>
 #include <protocols/multistate_design/MultiStateFitnessFunction.hh>
 #include <protocols/multistate_design/SingleState.fwd.hh>
 #include <protocols/multistate_design/SingleState.hh>

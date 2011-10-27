@@ -51,7 +51,7 @@
 #include <utility/tag/Tag.hh>
 
 //Auto Headers
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>

@@ -32,7 +32,7 @@
 #include <core/scoring/constraints/Constraint.fwd.hh>
 /*
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreType.hh>
+// Auto-header: duplicate removed #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 */

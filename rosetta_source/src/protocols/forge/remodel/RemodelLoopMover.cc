@@ -35,7 +35,7 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/conformation/symmetry/util.hh>
-#include <core/conformation/Residue.hh>
+// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/Tracer.hh>

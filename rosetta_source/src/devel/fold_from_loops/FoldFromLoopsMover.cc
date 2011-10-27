@@ -89,7 +89,7 @@
 
 //Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <protocols/relax/ClassicRelax.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 

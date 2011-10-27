@@ -41,7 +41,7 @@
 #include <core/graph/Graph.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/chemical/AA.hh>
+// Auto-header: duplicate removed #include <core/chemical/AA.hh>
 #include <core/scoring/Energies.hh>
 
 // Neil headers 110621

@@ -32,7 +32,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
+// Auto-header: duplicate removed #include <utility/string_util.hh>
 
 //Auto Headers
 #include <core/pose/util.hh>

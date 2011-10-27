@@ -16,7 +16,7 @@
 
 #include <basic/Tracer.hh>
 #include <protocols/toolbox/DecoySetEvaluation.hh>
-#include <protocols/toolbox/KCluster.hh>
+// Auto-header: duplicate removed #include <protocols/toolbox/KCluster.hh>
 #include <protocols/toolbox/superimpose.hh>
 
 #include <ObjexxFCL/FArray3D.hh>
@@ -36,7 +36,7 @@
 
 #include <numeric/xyzMatrix.hh>
 
-#include <basic/Tracer.hh>
+// Auto-header: duplicate removed #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>

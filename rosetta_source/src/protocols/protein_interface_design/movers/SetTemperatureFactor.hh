@@ -18,7 +18,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
+// Auto-header: duplicate removed #include <protocols/filters/Filter.fwd.hh>
 
 namespace protocols {
 namespace protein_interface_design {

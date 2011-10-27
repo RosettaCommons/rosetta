@@ -45,7 +45,7 @@ RotamerRecoveryMoverCreator::mover_name()
 
 
 // Unit Headers
-#include <protocols/moves/RotamerRecoveryMover.hh>
+// Auto-header: duplicate removed #include <protocols/moves/RotamerRecoveryMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/rotamer_recovery/RotamerRecovery.hh>
@@ -92,7 +92,7 @@ RotamerRecoveryMoverCreator::mover_name()
 #include <algorithm>
 #include <iostream>
 #include <fstream>
-#include <string>
+// Auto-header: duplicate removed #include <string>
 
 //using std::ios::app;
 using std::endl;

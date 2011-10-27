@@ -28,7 +28,7 @@
 #include <protocols/docking/DockingHighRes.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
 #include <protocols/docking/DockFilters.hh> // get error if you did not include
-#include <protocols/docking/DockingHighRes.hh>
+// Auto-header: duplicate removed #include <protocols/docking/DockingHighRes.hh>
 #include <protocols/moves/RigidBodyMover.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
@@ -54,7 +54,7 @@
 // C++ Headers
 #include <utility/exit.hh>
 #include <basic/prof.hh>
-#include <basic/Tracer.hh>
+// Auto-header: duplicate removed #include <basic/Tracer.hh>
 
 #include <core/pack/task/operation/TaskOperation.hh>
 

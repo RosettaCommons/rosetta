@@ -114,7 +114,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <core/pose/datacache/ObserverCache.fwd.hh>
 #include <core/pose/metrics/PoseMetricContainer.fwd.hh>
 #include <core/pose/signals/ConformationEvent.fwd.hh>

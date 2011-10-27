@@ -11,6 +11,9 @@
 /// @brief
 /// @author Mike Tyka
 
+#ifndef INCLUDED_protocols_wum_WorkUnitManager_hh
+#define INCLUDED_protocols_wum_WorkUnitManager_hh
+
 #include <protocols/wum/WorkUnitManager.fwd.hh>
 #include <protocols/wum/WorkUnitBase.hh>
 #include <protocols/wum/WorkUnitList.hh>
@@ -22,14 +25,10 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverList.hh>
 #include <protocols/wum/SilentStructStore.hh>
-#include <utility/pointer/ReferenceCount.hh>
+// Auto-header: duplicate removed #include <utility/pointer/ReferenceCount.hh>
 
 #include <string>
 #include <vector>
-
-
-#ifndef INCLUDED_protocols_wum_WorkUnitManager_hh
-#define INCLUDED_protocols_wum_WorkUnitManager_hh
 
 
 namespace protocols {

@@ -280,7 +280,7 @@
 #include <ObjexxFCL/FArray5A.fwd.hh>
 #include <ObjexxFCL/FArray5P.fwd.hh>
 #include <ObjexxFCL/FArray5.all.fwd.hh>
-#include <ObjexxFCL/FArray.all.fwd.hh>
+// Auto-header: duplicate removed #include <ObjexxFCL/FArray.all.fwd.hh>
 #include <ObjexxFCL/FArray.hh>
 #include <ObjexxFCL/FArrayInitializer.fwd.hh>
 #include <ObjexxFCL/FArrayInitializer.hh>

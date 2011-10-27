@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file CrossPeakList.hh
+/// @file   protocols/noesy_assign/PeakAssignment.hh
 /// @author Oliver Lange
 
 #ifndef INCLUDED_protocols_noesy_assign_PeakAssignment_HH
@@ -18,7 +18,7 @@
 #include <protocols/noesy_assign/PeakAssignment.fwd.hh>
 
 // Package Headers
-#include <protocols/noesy_assign/CrossPeak.hh>
+#include <protocols/noesy_assign/CrossPeak.fwd.hh>
 #include <protocols/noesy_assign/ResonanceList.hh>
 #include <protocols/noesy_assign/Resonance.hh>
 

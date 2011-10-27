@@ -84,7 +84,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <algorithm>
 #include <cassert>
 #include <cmath>

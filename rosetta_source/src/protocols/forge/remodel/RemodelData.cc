@@ -26,7 +26,7 @@
 
 #include <protocols/viewer/viewers.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// Auto-header: duplicate removed #include <core/io/pdb/pose_io.hh>
 
 #include <core/chemical/ResidueType.hh>
  // for switch typeset

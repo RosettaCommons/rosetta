@@ -49,7 +49,7 @@
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/Energies.hh>
 
-#include <basic/Tracer.hh>
+// Auto-header: duplicate removed #include <basic/Tracer.hh>
 
 // C++ Headers
 #include <ostream>

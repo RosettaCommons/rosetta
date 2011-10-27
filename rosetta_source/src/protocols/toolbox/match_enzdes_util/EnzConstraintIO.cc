@@ -37,7 +37,7 @@
 
 #include <core/scoring/ScoreFunction.hh> //scoring ambiguous constraints
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+// Auto-header: duplicate removed #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/Constraints.hh>
 //#include <core/scoring/constraints/ResidueTypeConstraint.hh>
 

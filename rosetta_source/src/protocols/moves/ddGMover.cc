@@ -45,7 +45,7 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
+// Auto-header: duplicate removed #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/Func.hh>
 
@@ -85,7 +85,7 @@
 #include <ObjexxFCL/format.hh>
 
 //new includes for rotamer constraints
-#include <core/scoring/Energies.hh>
+// Auto-header: duplicate removed #include <core/scoring/Energies.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
@@ -93,10 +93,10 @@
 
 // C++ headers
 #include <cstdlib>
-#include <fstream>
-#include <iostream>
+// Auto-header: duplicate removed #include <fstream>
+// Auto-header: duplicate removed #include <iostream>
 #include <string>
-#include <sstream>
+// Auto-header: duplicate removed #include <sstream>
 #include <sys/stat.h>
 
 #include <basic/Tracer.hh>

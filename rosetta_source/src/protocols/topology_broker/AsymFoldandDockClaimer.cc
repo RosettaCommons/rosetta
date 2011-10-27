@@ -20,7 +20,7 @@
 #include <protocols/topology_broker/DofClaim.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/docking/DockingInitialPerturbation.hh>
+// Auto-header: duplicate removed #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/docking/DockingProtocol.hh>
 #include <protocols/docking/util.hh>
 #include <basic/Tracer.hh>

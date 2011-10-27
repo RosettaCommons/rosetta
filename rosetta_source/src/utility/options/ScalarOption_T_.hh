@@ -24,7 +24,7 @@
 // Package headers
 #include <utility/options/ScalarOption.hh>
 #include <utility/Bound.hh>
-#include <utility/options/mpi_stderr.hh>
+// Auto-header: duplicate removed #include <utility/options/mpi_stderr.hh>
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
 

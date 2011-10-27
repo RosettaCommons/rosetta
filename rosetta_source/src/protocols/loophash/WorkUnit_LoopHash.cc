@@ -37,12 +37,12 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/wum/SilentStructStore.hh>
+// Auto-header: duplicate removed #include <protocols/wum/SilentStructStore.hh>
 #include <protocols/loophash/LocalInserter.hh>
 #include <protocols/loophash/LoopHashSampler.hh>
 
 //Auto Headers
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 

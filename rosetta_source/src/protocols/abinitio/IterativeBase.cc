@@ -100,7 +100,7 @@
 // Utility headers
 #include <basic/options/option_macros.hh>
 #include <numeric/random/random_permutation.hh>
-#include <numeric/random/random.hh>
+// Auto-header: duplicate removed #include <numeric/random/random.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>

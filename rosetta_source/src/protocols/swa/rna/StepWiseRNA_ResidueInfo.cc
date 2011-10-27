@@ -37,9 +37,9 @@
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
-#include <iostream>
-#include <fstream>
-#include <sstream>
+// Auto-header: duplicate removed #include <iostream>
+// Auto-header: duplicate removed #include <fstream>
+// Auto-header: duplicate removed #include <sstream>
 
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>

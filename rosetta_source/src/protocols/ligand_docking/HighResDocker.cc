@@ -43,7 +43,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
-#include <core/kinematics/MoveMap.hh>
+// Auto-header: duplicate removed #include <core/kinematics/MoveMap.hh>
 
 // Project Headers
 #include <core/chemical/ResidueType.hh>

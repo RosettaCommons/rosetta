@@ -17,7 +17,7 @@
 // Unit headers
 #include <protocols/scoring/InterchainPotential.hh>
 #include <protocols/scoring/InterfaceInfo.hh>
-#include <protocols/scoring/InterfaceInfo.hh>
+// Auto-header: duplicate removed #include <protocols/scoring/InterfaceInfo.hh>
 
 #include <core/scoring/AtomVDW.hh>
 #include <core/scoring/EnvPairPotential.hh>

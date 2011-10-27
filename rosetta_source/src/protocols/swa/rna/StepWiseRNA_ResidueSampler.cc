@@ -72,7 +72,7 @@
 #include <sstream>
 
 //Auto Headers
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 
 
 
@@ -148,7 +148,7 @@ namespace rna {
 	}
 
 
-	/*	//Note: Currently testing this function to build bulge...once this work will integrate back with Build_single_nucleotide, Dec 21, 2009 */
+	/* Note: Currently testing this function to build bulge...once this work will integrate back with Build_single_nucleotide, Dec 21, 2009 */
 	void
 	StepWiseRNA_ResidueSampler::Build_dinucleotide( core::pose::Pose & /* pose */) {
 	}

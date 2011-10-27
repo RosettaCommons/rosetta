@@ -30,7 +30,7 @@
 #include <protocols/forge/components/VarLengthBuild.fwd.hh>
 #include <protocols/forge/constraints/SheetConstraintsRCG.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/fldsgn/BluePrint.fwd.hh>
+// Auto-header: duplicate removed #include <protocols/fldsgn/BluePrint.fwd.hh>
 
 
 // C++ headers

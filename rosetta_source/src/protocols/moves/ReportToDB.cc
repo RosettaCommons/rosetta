@@ -66,7 +66,7 @@ ReportToDBCreator::mover_name()
 // Project Headers
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableString.hh>
-#include <basic/database/sql_utils.hh>
+// Auto-header: duplicate removed #include <basic/database/sql_utils.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/features.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>

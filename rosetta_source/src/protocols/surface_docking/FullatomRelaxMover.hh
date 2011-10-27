@@ -42,7 +42,7 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/docking/DockingHighRes.hh>
-#include <core/types.hh>
+// Auto-header: duplicate removed #include <core/types.hh>
 #include <utility/vector1_bool.hh>
 
 

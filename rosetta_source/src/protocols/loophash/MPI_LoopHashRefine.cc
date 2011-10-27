@@ -50,8 +50,8 @@
 #include <ObjexxFCL/format.hh>
 
 /// ObjexxFCL headers
-#include <ObjexxFCL//string.functions.hh>
-#include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/string.functions.hh>
+// Auto-header: duplicate removed #include <ObjexxFCL/format.hh>
 
 // Utility headers
 #include <numeric/random/random.hh>
@@ -63,7 +63,7 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 using namespace ObjexxFCL;

@@ -102,8 +102,8 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/util.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
+// Auto-header: duplicate removed #include <core/pose/datacache/CacheableDataType.hh>
+// Auto-header: duplicate removed #include <basic/datacache/BasicDataCache.hh>
 #include <basic/MetricValue.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
@@ -155,9 +155,9 @@
 #include <protocols/loops/SlidingWindowLoopClosure.hh>
 #include <protocols/loops/WidthFirstSlidingWindowLoopClosure.hh>
 #include <protocols/loops/FASelectSlidingWindowLoopClosure.hh>
-#include <protocols/loops/Loops.hh>
+// Auto-header: duplicate removed #include <protocols/loops/Loops.hh>
 #include <protocols/loops/LoopMover.hh>
-#include <protocols/loops/util.hh>
+// Auto-header: duplicate removed #include <protocols/loops/util.hh>
 #include <protocols/loops/Exceptions.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/RGFilter.hh>
@@ -191,8 +191,8 @@
 #include <core/fragment/FrameList.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
-#include <core/scoring/Energies.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/scoring/Energies.hh>
 #include <core/scoring/constraints/FuncFactory.hh>
 #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 #include <core/scoring/constraints/Constraint.hh>

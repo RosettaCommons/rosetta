@@ -22,7 +22,7 @@
 #include <core/scoring/constraints/Constraint.hh>
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
-#include <core/conformation/Residue.hh>
+// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/kinematics/Jump.hh>
 #include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>

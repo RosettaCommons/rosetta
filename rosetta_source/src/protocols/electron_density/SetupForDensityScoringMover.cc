@@ -29,7 +29,7 @@
 #include <numeric/xyzVector.hh>
 #include <protocols/moves/DataMap.hh>
 
-#include <core/id/AtomID.hh>
+// Auto-header: duplicate removed #include <core/id/AtomID.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -44,7 +44,7 @@
 #include <protocols/moves/symmetry/SymMinMover.hh>
 #include <protocols/geometry/RB_geometry.hh>
 
-#include <core/pose/Pose.hh>
+// Auto-header: duplicate removed #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
 #include <core/scoring/ScoreFunction.hh>

@@ -11,10 +11,12 @@
 /// @brief
 /// @author Mike Tyka
 
+#ifndef INCLUDED_protocols_wum_WorkUnitBase_hh
+#define INCLUDED_protocols_wum_WorkUnitBase_hh
 
 #include <protocols/wum/WorkUnitBase.fwd.hh>
 
-#include <protocols/wum/WorkUnitList.hh>
+//#include <protocols/wum/WorkUnitList.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -27,14 +29,8 @@
 #include <vector>
 #include <iostream>
 
-#ifndef INCLUDED_protocols_wum_WorkUnitBase_hh
-#define INCLUDED_protocols_wum_WorkUnitBase_hh
-
-
 namespace protocols {
 namespace wum {
-
-
 
 /// @brief  The base class for all work units
 

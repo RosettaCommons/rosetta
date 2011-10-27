@@ -63,7 +63,7 @@
 
 //Auto Headers
 #include <basic/datacache/CacheableData.hh>
-#include <core/pose/Pose.hh>
+// Auto-header: duplicate removed #include <core/pose/Pose.hh>
 
 
 #if defined(WIN32) || defined(__CYGWIN__)

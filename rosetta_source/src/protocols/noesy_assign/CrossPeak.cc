@@ -22,6 +22,7 @@
 // Package Headers
 #include <protocols/noesy_assign/Exceptions.hh>
 #include <protocols/noesy_assign/PeakAssignmentParameters.hh>
+#include <protocols/noesy_assign/PeakCalibrator.hh>
 
 // Project Headers
 #include <core/chemical/AA.hh>

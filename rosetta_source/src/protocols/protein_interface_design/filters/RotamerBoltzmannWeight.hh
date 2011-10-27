@@ -27,7 +27,7 @@
 #include <core/chemical/AA.hh>
 
 //Auto Headers
-#include <core/pack/task/TaskFactory.fwd.hh>
+// Auto-header: duplicate removed #include <core/pack/task/TaskFactory.fwd.hh>
 
 // Unit headers
 
