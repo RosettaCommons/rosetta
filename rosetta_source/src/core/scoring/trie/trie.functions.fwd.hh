@@ -18,7 +18,7 @@
 // Package Headers
 #include <core/scoring/trie/CPDataCorrespondence.fwd.hh>
 #include <core/scoring/trie/RotamerTrieBase.fwd.hh>
-#include <core/scoring/trie/CPDataCorrespondence.fwd.hh>
+// Auto-header: duplicate removed #include <core/scoring/trie/CPDataCorrespondence.fwd.hh>
 #include <core/conformation/RotamerSetBase.fwd.hh>
 
 

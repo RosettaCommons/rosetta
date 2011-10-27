@@ -24,7 +24,7 @@
 #include <core/conformation/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/util.hh>
+// Auto-header: duplicate removed #include <core/conformation/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 // AUTO-REMOVED
 #include <core/chemical/ResidueTypeSet.hh>

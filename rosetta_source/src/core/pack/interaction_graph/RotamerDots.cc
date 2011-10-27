@@ -22,7 +22,7 @@
 #include <core/types.hh>
 
 
-#include <core/conformation/Atom.hh>
+// Auto-header: duplicate removed #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
 
 // ObjexxFCL Headers

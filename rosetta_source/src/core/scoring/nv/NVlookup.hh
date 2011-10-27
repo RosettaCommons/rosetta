@@ -30,7 +30,7 @@
 // AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <numeric/interpolation/spline/SplineGenerator.hh>
 // AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
-#include <core/types.hh>
+// Auto-header: duplicate removed #include <core/types.hh>
 
 
 //STL header

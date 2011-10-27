@@ -59,7 +59,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
 
-#include <core/conformation/Conformation.fwd.hh>
+// Auto-header: duplicate removed #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
@@ -169,7 +169,7 @@
 #include <iosfwd>
 #include <iostream>
 #include <limits>
-#include <list>
+// Auto-header: duplicate removed #include <list>
 #include <map>
 #include <ostream>
 #include <string>

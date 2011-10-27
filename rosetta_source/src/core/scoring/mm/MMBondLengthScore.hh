@@ -16,7 +16,7 @@
 #define INCLUDED_core_scoring_mm_MMBondLengthScore_hh
 
 // Unit headers
-#include <core/scoring/mm/MMBondLengthScore.hh>
+/// you cannot #include yourself #include <core/scoring/mm/MMBondLengthScore.hh>
 #include <core/scoring/mm/MMBondLengthLibrary.hh>
 
 // Project headers

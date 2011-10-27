@@ -53,7 +53,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// Auto-header: duplicate removed #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/exit.hh>

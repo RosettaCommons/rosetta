@@ -14,7 +14,7 @@
 #ifndef INCLUDED_core_pack_interaction_graph_RotamerDots_fwd_hh
 #define INCLUDED_core_pack_interaction_graph_RotamerDots_fwd_hh
 
-//#include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace pack {
@@ -31,7 +31,6 @@ typedef utility::pointer::owning_ptr< RotamerDots const > RotamerDotsCOP;
 typedef utility::pointer::owning_ptr< InvRotamerDots > InvRotamerDotsOP;
 typedef utility::pointer::owning_ptr< InvRotamerDots const > InvRotamerDotsCOP;
 
-//typedef utility::pointer::owning_ptr< RotamerDotsCache > RotamerDotsCacheOP;
 
 } // interaction_graph
 } // pack

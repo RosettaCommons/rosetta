@@ -243,7 +243,7 @@
 #include <core/scoring/methods/TwoBodyEnergy.hh>
 #include <core/scoring/methods/WholeStructureEnergy.fwd.hh>
 #include <core/scoring/trie/CPDataCorrespondence.fwd.hh>
-#include <core/scoring/trie/RotamerDescriptor.hh>
+// Auto-header: duplicate removed #include <core/scoring/trie/RotamerDescriptor.hh>
 #include <core/scoring/trie/RotamerTrie.fwd.hh>
 #include <core/scoring/trie/RotamerTrieBase.fwd.hh>
 #include <core/scoring/trie/RotamerTrieBase.hh>

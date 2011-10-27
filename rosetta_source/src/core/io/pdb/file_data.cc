@@ -56,7 +56,7 @@
 #include <ObjexxFCL/format.hh>
 
 // option key includes
-#include <basic/options/option.hh>
+// Auto-header: duplicate removed #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>

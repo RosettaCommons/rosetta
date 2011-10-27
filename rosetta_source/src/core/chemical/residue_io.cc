@@ -60,7 +60,7 @@
 
 
 //option
-#include <basic/options/option.hh>
+// Auto-header: duplicate removed #include <basic/options/option.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 // Boost Headers

@@ -18,7 +18,7 @@
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 
-#include <core/scoring/hbonds/HBondOptions.fwd.hh>
+// Auto-header: duplicate removed #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 #include <core/scoring/hbonds/types.hh>
 
 // Utility Headers

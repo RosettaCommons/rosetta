@@ -47,7 +47,7 @@
 //Auto Headers
 #include <core/pose/util.hh>
 
-#include <core/pose/Pose.hh>
+// Auto-header: duplicate removed #include <core/pose/Pose.hh>
 #include <list>
 
 namespace core{

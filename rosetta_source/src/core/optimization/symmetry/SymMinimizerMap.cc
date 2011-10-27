@@ -28,7 +28,7 @@
 #include <core/kinematics/MinimizerMapBase.hh>
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 
@@ -37,7 +37,7 @@
 #include <numeric/conversions.hh>
 
 //Auto Headers
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 
 
 namespace core {

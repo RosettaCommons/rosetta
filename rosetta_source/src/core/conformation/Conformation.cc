@@ -70,7 +70,7 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/conformation/util.hh>
+// Auto-header: duplicate removed #include <core/conformation/util.hh>
 #include <core/conformation/PointGraphData.hh>
 #include <core/graph/UpperEdgeGraph.hh>
 #include <numeric/random/random.fwd.hh>

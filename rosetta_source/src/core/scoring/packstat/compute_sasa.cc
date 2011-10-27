@@ -20,7 +20,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <basic/options/keys/packstat.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
+// Auto-header: duplicate removed #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/packstat/compute_sasa.hh>

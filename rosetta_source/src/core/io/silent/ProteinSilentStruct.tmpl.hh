@@ -46,7 +46,7 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/EnergyNames.hh>
 #include <core/io/silent/SharedSilentData.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
+/// #include <core/io/silent/ProteinSilentStruct.hh> apl -- removing circular include
 #include <core/io/raw_data/DisulfideFile.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>

@@ -10,7 +10,6 @@
 /// @brief
 /// @author
 
-
 // Unit Headers
 #include <core/scoring/memb_etable/MembEtable.hh>
 #include <core/scoring/etable/Etable.hh>

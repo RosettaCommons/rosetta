@@ -29,9 +29,9 @@
 
 
 //Auto Headers
-#include <core/conformation/Residue.hh>
+// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/scoring/EnergyMap.hh>
+// Auto-header: duplicate removed #include <core/scoring/EnergyMap.hh>
 
 
 namespace core{

@@ -42,7 +42,7 @@
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/constants.hh>
 #include <core/scoring/hbonds/hbonds.hh> //ws
-#include <core/scoring/hbonds/types.hh> //ws
+// Auto-header: duplicate removed #include <core/scoring/hbonds/types.hh> //ws
 #include <core/scoring/hbonds/HBondTypeManager.hh> //ws
 
 // AUTO-REMOVED #include <numeric/constants.hh>

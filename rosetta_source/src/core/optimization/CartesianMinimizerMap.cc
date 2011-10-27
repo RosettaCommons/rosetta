@@ -27,7 +27,7 @@
 #include <cstdlib>
 
 //Auto Headers
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
 
 
 namespace core {

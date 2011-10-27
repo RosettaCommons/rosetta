@@ -44,7 +44,7 @@
 #include <core/pose/Pose.hh>
 
 #include <core/io/pdb/pose_io.hh>
-#include <core/io/pdb/pdb_dynamic_reader.hh>
+// Auto-header: duplicate removed #include <core/io/pdb/pdb_dynamic_reader.hh>
 
 #include <core/conformation/Residue.fwd.hh>
 

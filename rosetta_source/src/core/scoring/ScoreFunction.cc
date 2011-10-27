@@ -45,7 +45,7 @@
 #include <core/scoring/methods/TwoBodyEnergy.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
+// Auto-header: duplicate removed #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>

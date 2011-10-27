@@ -45,7 +45,7 @@
 
 // Symmetry extras
 // AUTO-REMOVED #include <core/conformation/RotamerSetBase.hh> // TMP HACK
-#include <core/scoring/hbonds/HBondSet.hh> //TMP HACK
+// Auto-header: duplicate removed #include <core/scoring/hbonds/HBondSet.hh> //TMP HACK
 #include <core/scoring/EnvPairPotential.hh>
 #include <basic/datacache/CacheableData.hh> //TMP HACK
 //#include <core/scoring/symmetry/NBListCache.hh>

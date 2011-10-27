@@ -46,7 +46,7 @@
 #include <protocols/wum/SilentStructStore.hh>
 #include <ObjexxFCL/format.hh>
 /// ObjexxFCL headers
-#include <ObjexxFCL//string.functions.hh>
+#include <ObjexxFCL/string.functions.hh>
 // Auto-header: duplicate removed #include <ObjexxFCL/format.hh>
 
 #include <numeric/random/random.hh>

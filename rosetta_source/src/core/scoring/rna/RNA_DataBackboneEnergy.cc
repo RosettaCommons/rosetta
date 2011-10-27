@@ -33,7 +33,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/constraints/FadeFunc.hh>
-#include <core/conformation/Residue.hh>
+// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>

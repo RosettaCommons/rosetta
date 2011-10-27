@@ -45,7 +45,7 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-#include <utility/io/izstream.hh>
+// Auto-header: duplicate removed #include <utility/io/izstream.hh>
 #include <algorithm>
 // option key includes
 

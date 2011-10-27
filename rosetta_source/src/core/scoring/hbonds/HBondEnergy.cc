@@ -47,7 +47,7 @@
 #include <basic/datacache/BasicDataCache.hh>
 
 //#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/TenANeighborGraph.hh>
+// Auto-header: duplicate removed #include <core/scoring/TenANeighborGraph.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>

@@ -120,7 +120,7 @@
 #include <core/scoring/methods/Methods.hh>
 #include <core/scoring/methods/TwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.fwd.hh>
-#include <core/scoring/mm/MMBondAngleResidueTypeParamSet.fwd.hh>
+// Auto-header: duplicate removed #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/id/SequenceMapping.hh>
 #include <basic/MetricValue.fwd.hh>

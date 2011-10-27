@@ -26,7 +26,7 @@
 #include <basic/Tracer.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/id/SequenceMapping.hh>
+// Auto-header: duplicate removed #include <core/id/SequenceMapping.hh>
 
 // Numeric headers
 // AUTO-REMOVED #include <numeric/xyz.functions.hh>
@@ -34,7 +34,7 @@
 #include <numeric/deriv/angle_deriv.hh>
 
 //Auto Headers
-#include <core/id/NamedAtomID.hh>
+// Auto-header: duplicate removed #include <core/id/NamedAtomID.hh>
 
 
 namespace core {

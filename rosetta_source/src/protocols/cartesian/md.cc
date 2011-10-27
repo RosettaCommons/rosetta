@@ -46,7 +46,7 @@
 // // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/string.functions.hh>
+// Auto-header: duplicate removed #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
 // // Numeric headers

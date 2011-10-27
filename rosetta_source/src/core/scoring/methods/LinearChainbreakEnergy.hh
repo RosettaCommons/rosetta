@@ -29,7 +29,7 @@
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 
 // Project headers
-#include <core/pose/Pose.fwd.hh>
+// Auto-header: duplicate removed #include <core/pose/Pose.fwd.hh>
 
 // Third-party headers
 #include <boost/scoped_ptr.hpp>

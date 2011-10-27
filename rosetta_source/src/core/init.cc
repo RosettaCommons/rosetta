@@ -201,7 +201,7 @@ using basic::Warning;
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// Auto-header: duplicate removed #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 

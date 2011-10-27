@@ -63,7 +63,7 @@
 
 //Auto Headers
 #include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/fragment/FrameIterator.hh>
+// Auto-header: duplicate removed #include <core/fragment/FrameIterator.hh>
 #include <core/import_pose/import_pose.hh>
 
 

@@ -20,7 +20,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/pack/dunbrack/DunbrackConstraint.hh>
+// Auto-header: duplicate removed #include <core/pack/dunbrack/DunbrackConstraint.hh>
 #include <core/scoring/constraints/XYZ_Func.hh>
 
 #include <basic/Tracer.hh>
