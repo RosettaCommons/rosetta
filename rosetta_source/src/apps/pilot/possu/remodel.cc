@@ -41,6 +41,8 @@
 #include <protocols/jumping/Dssp.hh>
 #include <protocols/viewer/viewers.hh>
 
+#include <protocols/moves/PyMolMover.hh>
+
 // utility headers
 #include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>
@@ -455,13 +457,13 @@ void * graphics_main( void * ) {
 //	bdr->redesign_loop_neighborhood( !option[ ufv::no_neighborhood_design ].value() );
 //	bdr->dr_cycles( option[ ufv::dr_cycles ] );
 
-	String centroid_sfx = option[ ufv::centroid_sfx ].user() ? option[ ufv::centroid_sfx ].value() : "remodel_cen";
-	String centroid_sfx_patch = option[ ufv::centroid_sfx_patch ].user() ? option[ ufv::centroid_sfx_patch ].value() : String();
-	String fullatom_sfx = option[ ufv::fullatom_sfx ].user() ? option[ ufv::fullatom_sfx ].value() : core::scoring::STANDARD_WTS;
-	String fullatom_sfx_patch = option[ ufv::fullatom_sfx_patch ].user() ? option[ ufv::fullatom_sfx_patch ].value() : core::scoring::SCORE12_PATCH;
+//String centroid_sfx = option[ ufv::centroid_sfx ].user() ? option[ ufv::centroid_sfx ].value() : "remodel_cen";
+//String centroid_sfx_patch = option[ ufv::centroid_sfx_patch ].user() ? option[ ufv::centroid_sfx_patch ].value() : String();
+//String fullatom_sfx = option[ ufv::fullatom_sfx ].user() ? option[ ufv::fullatom_sfx ].value() : core::scoring::STANDARD_WTS;
+//String fullatom_sfx_patch = option[ ufv::fullatom_sfx_patch ].user() ? option[ ufv::fullatom_sfx_patch ].value() : core::scoring::SCORE12_PATCH;
 
-	rmdl->centroid_scorefunction( core::scoring::ScoreFunctionFactory::create_score_function( centroid_sfx, centroid_sfx_patch ) );
-	rmdl->fullatom_scorefunction( core::scoring::ScoreFunctionFactory::create_score_function( fullatom_sfx, fullatom_sfx_patch ) );
+//rmdl->centroid_scorefunction( core::scoring::ScoreFunctionFactory::create_score_function( centroid_sfx, centroid_sfx_patch ) );
+//rmdl->fullatom_scorefunction( core::scoring::ScoreFunctionFactory::create_score_function( fullatom_sfx, fullatom_sfx_patch ) );
 
 	// resfile only if requested
 	if ( option[ packing::resfile ].user() ) {
