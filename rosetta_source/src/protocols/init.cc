@@ -55,6 +55,38 @@
 #include <protocols/constraints_additional/AdditionalConstraintCreators.hh>
 #include <protocols/constraints_additional/BindingSiteConstraint.hh>
 
+/// FeaturesReporter creators
+#include <protocols/features/FeaturesReporterCreator.hh>
+#include <protocols/features/FeaturesReporterFactory.hh>
+#include <protocols/features/AtomAtomPairFeaturesCreator.hh>
+#include <protocols/features/GeometricSolvationFeaturesCreator.hh>
+#include <protocols/features/HBondFeaturesCreator.hh>
+#include <protocols/features/HBondParameterFeaturesCreator.hh>
+#include <protocols/features/JobDataFeaturesCreator.hh>
+#include <protocols/features/OrbitalsFeaturesCreator.hh>
+#include <protocols/features/PairFeaturesCreator.hh>
+#include <protocols/features/PoseCommentsFeaturesCreator.hh>
+#include <protocols/features/PoseConformationFeaturesCreator.hh>
+#include <protocols/features/ProteinBackboneTorsionAngleFeaturesCreator.hh>
+#include <protocols/features/ProteinBackboneAtomAtomPairFeaturesCreator.hh>
+#include <protocols/features/ProteinResidueConformationFeaturesCreator.hh>
+#include <protocols/features/ProteinRMSDFeaturesCreator.hh>
+#include <protocols/features/ProtocolFeaturesCreator.hh>
+#include <protocols/features/PdbDataFeaturesCreator.hh>
+#include <protocols/features/RadiusOfGyrationFeaturesCreator.hh>
+#include <protocols/features/ResidueFeaturesCreator.hh>
+#include <protocols/features/ResidueTypesFeaturesCreator.hh>
+#include <protocols/features/ResidueConformationFeaturesCreator.hh>
+#include <protocols/features/RotamerRecoveryFeaturesCreator.hh>
+#include <protocols/features/RotamerBoltzmannWeightFeaturesCreator.hh>
+#include <protocols/features/ResidueBurialFeaturesCreator.hh>
+#include <protocols/features/ResidueSecondaryStructureFeaturesCreator.hh>
+#include <protocols/features/SaltBridgeFeaturesCreator.hh>
+#include <protocols/features/ScoreTypeFeaturesCreator.hh>
+#include <protocols/features/StructureFeaturesCreator.hh>
+#include <protocols/features/StructureScoresFeaturesCreator.hh>
+
+
 /// Mover creators
 #include <protocols/moves/InterfaceAnalyzerMoverCreator.hh>
 #include <protocols/contact_map/ContactMapCreator.hh>
@@ -263,6 +295,37 @@ static core::scoring::constraints::ConstraintRegistrator< protocols::constraints
 static core::scoring::constraints::ConstraintRegistrator< protocols::constraints_additional::SequenceCoupling1BDConstraintCreator > SequenceCoupling1BDConstraintCreator_registrator;
 static core::scoring::constraints::ConstraintRegistrator< protocols::constraints_additional::BindingSiteConstraintCreator > BindingSiteConstraintCreator_registrator;
 static core::scoring::constraints::ConstraintRegistrator< protocols::constraints_additional::PocketConstraintCreator > PocketConstraintCreator_registrator;
+
+
+using namespace protocols::features;
+static FeaturesReporterRegistrator< AtomAtomPairFeaturesCreator > AtomAtomPairFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< GeometricSolvationFeaturesCreator > GeometricSolvationFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< HBondFeaturesCreator > HBondFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< HBondParameterFeaturesCreator > HBondParameterFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< JobDataFeaturesCreator > JobDataFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< OrbitalsFeaturesCreator > OrbitalsFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< PairFeaturesCreator > PairFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< PdbDataFeaturesCreator > PdbDataFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< PoseCommentsFeaturesCreator > PoseCommentsFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< PoseConformationFeaturesCreator > PoseConformationFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ProteinBackboneAtomAtomPairFeaturesCreator > ProteinBackboneAtomAtomPairFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ProteinBackboneTorsionAngleFeaturesCreator > ProteinBackboneTorsionAngleFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ProteinResidueConformationFeaturesCreator > ProteinResidueConformationFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ProteinRMSDFeaturesCreator > ProteinRMSDFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ProtocolFeaturesCreator > ProtocolFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< RadiusOfGyrationFeaturesCreator > RadiusOfGyrationFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ResidueBurialFeaturesCreator > ResidueBurialFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ResidueConformationFeaturesCreator > ResidueConformationFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ResidueFeaturesCreator > ResidueFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ResidueSecondaryStructureFeaturesCreator > ResidueSecondaryStructureFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ResidueTypesFeaturesCreator > ResidueTypesFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< RotamerBoltzmannWeightFeaturesCreator > RotamerBoltzmannWeightFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< RotamerRecoveryFeaturesCreator > RotamerRecoveryFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< SaltBridgeFeaturesCreator > SaltBridgeFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< ScoreTypeFeaturesCreator > ScoreTypeFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< StructureFeaturesCreator > StructureFeaturesCreator_registrator;
+static FeaturesReporterRegistrator< StructureScoresFeaturesCreator > StructureScoresFeaturesCreator_registrator;
+
 
 using namespace core::pack::task::operation;
 

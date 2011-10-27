@@ -8,43 +8,29 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   protocols/features/FeaturesReporterFactory.cc
-/// @brief  Create FeaturesReporters
+/// @brief  Factory for creating FeaturesReporters objects
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
-
-/// @detail Right now this is a big switch statement, but it might be
-/// worth refactoring this into a load-time factory registration
-/// system like the score terms, movers etc.
 
 // Unit Headers
 #include <protocols/features/FeaturesReporterFactory.hh>
+#include <protocols/features/FeaturesReporter.hh>
+#include <protocols/features/FeaturesReporterCreator.hh>
 
-// Project Headers
-#include <protocols/features/AtomAtomPairFeatures.hh>
-#include <protocols/features/GeometricSolvationFeatures.hh>
-#include <protocols/features/HBondFeatures.hh>
-#include <protocols/features/HBondParameterFeatures.hh>
-#include <protocols/features/OrbitalsFeatures.hh>
-#include <protocols/features/PairFeatures.hh>
-#include <protocols/features/PoseCommentsFeatures.hh>
-#include <protocols/features/PoseConformationFeatures.hh>
-#include <protocols/features/ProteinBackboneTorsionAngleFeatures.hh>
-#include <protocols/features/ProteinBackboneAtomAtomPairFeatures.hh>
-#include <protocols/features/ProteinResidueConformationFeatures.hh>
-#include <protocols/features/ProtocolFeatures.hh>
-#include <protocols/features/PdbDataFeatures.hh>
-#include <protocols/features/RadiusOfGyrationFeatures.hh>
-#include <protocols/features/ResidueFeatures.hh>
-#include <protocols/features/ResidueTypesFeatures.hh>
-#include <protocols/features/RotamerRecoveryFeatures.hh>
-#include <protocols/features/RotamerBoltzmannWeightFeatures.hh>
-#include <protocols/features/ResidueBurialFeatures.hh>
-#include <protocols/features/ResidueSecondaryStructureFeatures.hh>
-#include <protocols/features/SaltBridgeFeatures.hh>
-#include <protocols/features/StructureFeatures.hh>
-#include <protocols/features/StructureScoresFeatures.hh>
+// Package Headers
+#include <basic/Tracer.hh>
+#include <protocols/moves/Mover.hh>
+#include <utility/tag/Tag.hh>
+#include <protocols/filters/Filter.hh>
+#include <protocols/moves/DataMap.hh>
+#include <core/scoring/ScoreFunction.hh>
+
+// Boost Headers
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 // C++ Headers
 #include <sstream>
+
 
 namespace protocols {
 namespace features {
@@ -52,8 +38,19 @@ namespace features {
 using std::endl;
 using std::string;
 using std::stringstream;
+using core::pose::Pose;
 using core::scoring::ScoreFunctionOP;
+using protocols::filters::Filters_map;
+using protocols::moves::DataMap;
+using protocols::moves::Movers_map;
+using utility::vector1;
+using utility::tag::TagPtr;
 
+static basic::Tracer tr("protocols.features.FeaturesReporterFactory");
+
+FeaturesReporterFactory * FeaturesReporterFactory::instance_( 0 );
+
+/// @details Private constructor insures correctness of singleton.
 FeaturesReporterFactory::FeaturesReporterFactory() {}
 
 FeaturesReporterFactory::FeaturesReporterFactory(
@@ -62,88 +59,72 @@ FeaturesReporterFactory::FeaturesReporterFactory(
 
 FeaturesReporterFactory::~FeaturesReporterFactory() {}
 
-FeaturesReporterOP
-FeaturesReporterFactory::create_features_reporter(
-	string const & name,
-	ScoreFunctionOP scfxn
-) {
 
-	if(name == "AtomAtomPairFeatures"){
-		return new AtomAtomPairFeatures;
-	} else if(name == "GeometricSolvationFeatures") {
-		return new GeometricSolvationFeatures;
-	} else if(name == "HBondFeatures") {
-		if ( scfxn == 0 ) {
-			utility_exit_with_message( "HBondFeatures requires a ScoreFunctionOP in its constructor, but was given a null pointer.\n"
-				"If you are using the HBondFeatures with Rosetta Scripts, the tag must be of the following form:\n"
-				"\n"
-				"     <feature name=HBondFeatures scorefxn=(name_of_score_function) />\n" );
-		}
-		return new HBondFeatures(scfxn);
-	} else if(name == "HBondParameterFeatures") {
-		return new HBondParameterFeatures;
-	} else if (name == "OrbitalsFeatures") {
-		return new OrbitalsFeatures;
-	} else if (name == "PairFeatures") {
-		return new PairFeatures;
-	} else if (name == "PdbDataFeatures") {
-		return new PdbDataFeatures;
-	} else if (name == "PoseCommentsFeatures") {
-		return new PoseCommentsFeatures;
-	} else if (name == "PoseConformationFeatures") {
-		return new PoseConformationFeatures;
-	} else if (name == "ProteinBackboneTorsionAngleFeatures") {
-		return new ProteinBackboneTorsionAngleFeatures;
-	} else if (name == "ProteinBackboneAtomAtomPairFeatures") {
-		return new ProteinBackboneAtomAtomPairFeatures;
-	} else if (name == "ProteinResidueConformationFeatures") {
-		return new ProteinResidueConformationFeatures;
-	} else if (name == "ProtocolFeatures") {
-		return new ProtocolFeatures;
-	} else if (name == "RadiusOfGyrationFeatures") {
-		return new RadiusOfGyrationFeatures;
-	} else if (name == "ResidueFeatures") {
-		return new ResidueFeatures;
-	} else if (name == "ResidueTypesFeatures") {
-		return new ResidueTypesFeatures;
-	} else if (name == "RotamerBoltzmannWeightFeatures") {
-		if ( scfxn == 0 ) {
-			utility_exit_with_message( "RotamerBoltzmannWeightFeatures requires a ScoreFunctionOP in its constructor, but was given a null pointer\n"
-				"If you are using the RotamerBoltzmannWeightFeatures with Rosetta Scripts, the tag must be of the following form:\n"
-				"\n"
-				"     <feature name=RotamerBoltzmannWeightFeatures scorefxn=(name_of_score_function) />\n" );
-		}
-		return new RotamerBoltzmannWeightFeatures(scfxn);
-	} else if (name == "RotamerRecoveryFeatures") {
-		if ( scfxn == 0 ) {
-			utility_exit_with_message( "RotamerRecoveryFeatures requires a ScoreFunctionOP in its constructor, but was given a null pointer\n"
-				"If you are using the RotamerRecoveryFeatures with Rosetta Scripts, the tag must be of the following form:\n"
-				"\n"
-				"     <feature name=RotamerRecoveryFeatures scorefxn=(name_of_score_function) />\n" );
-		}
-		return new RotamerRecoveryFeatures(scfxn);
-	} else if (name == "ResidueBurialFeatures") {
-		return new ResidueBurialFeatures;
-	} else if (name == "ResidueSecondaryStructureFeatures") {
-		return new ResidueSecondaryStructureFeatures;
-	} else if (name == "SaltBridgeFeatures") {
-		return new SaltBridgeFeatures;
-	} else if (name == "StructureFeatures") {
-		return new StructureFeatures;
-	} else if (name == "StructureScoresFeatures") {
-		if ( scfxn == 0 ) {
-			utility_exit_with_message( "StructureScoresFeatures requires a ScoreFunctionOP in its constructor, but was given a null pointer\n"
-				"If you are using the StructureScoresFeatures with Rosetta Scripts, the tag must be of the following form:\n"
-				"\n"
-				"     <feature name=StructureScoresFeatures scorefxn=(name_of_score_function) />\n" );
-		}
-		return new StructureScoresFeatures(scfxn);
-	} else {
-		stringstream error_message;
-		error_message << "Attempting to create unrecognized FeaturesReporter '" << name << "'." << endl;
-		utility_exit_with_message(error_message.str());
+FeaturesReporterFactory *
+FeaturesReporterFactory::get_instance()
+{
+	if ( instance_ == 0 ) {
+		instance_ = new FeaturesReporterFactory;
 	}
-	return NULL;
+	return instance_;
+}
+
+
+void
+FeaturesReporterFactory::factory_register(
+	FeaturesReporterCreatorCOP creator
+) {
+	types_[ creator->type_name() ] = creator;
+}
+
+
+FeaturesReporterOP
+FeaturesReporterFactory::get_features_reporter(
+	string const & type_name
+) {
+	tr.Trace << "generate features reporter of type " << type_name << std::endl;
+	FeaturesReporterCreatorMap::const_iterator iter = types_.find( type_name );
+	if (iter != types_.end()) {
+		return iter->second->create_features_reporter();
+	} else {
+
+		stringstream error_msg;
+		error_msg
+			<< "Attempting to create unrecognized FeaturesReporter "
+			<< "'" << type_name << "'." << endl
+			<< "check spelling or "
+			<< "register a new FeaturesReporter in the FeaturesReporterFactory" << endl
+			<< "known FeaturesReporter types are:" << endl;
+
+		foreach(const FeaturesReporterCreatorMap::value_type& type, types_){
+			error_msg << "\t" << type.first << endl;
+		}
+		utility_exit_with_message(error_msg.str());
+	}
+	return 0;
+}
+
+FeaturesReporterOP
+FeaturesReporterFactory::get_features_reporter(
+	TagPtr const tag,
+	DataMap & data,
+	Filters_map const & filters,
+	Movers_map const & movers,
+	Pose const & pose
+) {
+	assert(tag->getName() == "feature");
+
+	string type_name;
+	if(!tag->hasOption("name")){
+		utility_exit_with_message("'feature' tags require a name field");
+	} else {
+		type_name = tag->getOption<string>("name");
+	}
+
+	FeaturesReporterOP features_reporter(get_features_reporter(type_name));
+
+	features_reporter->parse_my_tag(tag, data, filters, movers, pose);
+	return features_reporter;
 }
 
 } // namespace

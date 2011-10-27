@@ -22,9 +22,11 @@
 #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/types.hh>
+#include <protocols/moves/DataMap.hh>
 
 // Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 
 // External Headers
@@ -34,10 +36,15 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
+// C++ Headers
+#include <sstream>
+
 namespace protocols{
 namespace features{
 
+
 using std::string;
+using std::stringstream;
 using std::endl;
 using core::Size;
 using core::Real;
@@ -46,10 +53,15 @@ using core::chemical::BondName;
 using core::chemical::AtomIndices;
 using core::chemical::ResidueType;
 using core::scoring::ScoreFunctionOP;
+using core::scoring::ScoreFunction;
 using core::scoring::getScoreFunction;
 using core::scoring::hbonds::HBondDatabase;
 using core::scoring::hbonds::HBondDatabaseCOP;
+using protocols::filters::Filters_map;
+using protocols::moves::DataMap;
+using protocols::moves::Movers_map;
 using utility::sql_database::sessionOP;
+using utility::tag::TagPtr;
 using utility::vector1;
 using cppdb::statement;
 using cppdb::result;
@@ -83,6 +95,27 @@ string
 HBondParameterFeatures::schema() const {
 	HBondDatabaseCOP hb_database(HBondDatabase::get_database());
 	return hb_database->report_parameter_features_schema();
+}
+
+void
+HBondParameterFeatures::parse_my_tag(
+	TagPtr const tag,
+	DataMap & data,
+	Filters_map const & /*filters*/,
+	Movers_map const & /*movers*/,
+	Pose const & /*pose*/
+) {
+	if(tag->hasOption("scorefxn")){
+		string scorefxn_name = tag->getOption<string>("scorefxn");
+		scfxn_ = data.get<ScoreFunction*>("scorefxns", scorefxn_name);
+	} else {
+		stringstream error_msg;
+		error_msg
+			<< "The " << type_name() << " reporter requires a 'scorefxn' tag:" << endl
+			<< endl
+			<< "    <feature name=" << type_name() <<" scorefxn=(name_of_score_function) />" << endl;
+		utility_exit_with_message(error_msg.str());
+	}
 }
 
 Size

@@ -28,7 +28,9 @@
 // Project Headers
 #include <basic/Tracer.hh>
 #include <core/types.hh>
+#include <protocols/moves/DataMap.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 
 // External Headers
@@ -36,15 +38,19 @@
 
 // C++ Headers
 #include <string>
+#include <sstream>
 
 namespace protocols{
 namespace features{
 
 using std::string;
+using std::stringstream;
+using std::endl;
 using basic::Tracer;
 using core::Size;
 using core::Real;
 using core::scoring::ScoreFunctionOP;
+using core::scoring::ScoreFunction;
 using core::scoring::getScoreFunction;
 using core::pose::Pose;
 using core::pack::task::PackerTaskOP;
@@ -52,11 +58,15 @@ using core::pack::task::TaskFactory;
 using core::pack::task::TaskFactoryOP;
 using core::pack::task::operation::InitializeFromCommandline;
 using core::pack::task::operation::RestrictToRepacking;
+using protocols::filters::Filters_map;
+using protocols::moves::DataMap;
+using protocols::moves::Movers_map;
 using protocols::rotamer_recovery::RRReporterSQLite;
 using protocols::rotamer_recovery::RRReporterSQLiteOP;
 using protocols::rotamer_recovery::RRComparerAutomorphicRMSD;
 using protocols::rotamer_recovery::RotamerRecovery;
 using utility::sql_database::sessionOP;
+using utility::tag::TagPtr;
 using utility::vector1;
 using cppdb::statement;
 
@@ -87,6 +97,31 @@ RotamerRecoveryFeatures::schema() const {
 	return RRReporterSQLite::schema(
 		RRReporterSQLite::OutputLevel::features );
 }
+
+
+
+void
+RotamerRecoveryFeatures::parse_my_tag(
+	TagPtr const tag,
+	DataMap & data,
+	Filters_map const & /*filters*/,
+	Movers_map const & /*movers*/,
+	Pose const & /*pose*/
+) {
+	if(tag->hasOption("scorefxn")){
+		string scorefxn_name = tag->getOption<string>("scorefxn");
+		scfxn_ = data.get<ScoreFunction*>("scorefxns", scorefxn_name);
+	} else {
+		stringstream error_msg;
+		error_msg
+			<< "The " << type_name() << " reporter requires a 'scorefxn' tag:" << endl
+			<< endl
+			<< "    <feature name=" << type_name() <<" scorefxn=(name_of_score_function) />" << endl;
+		utility_exit_with_message(error_msg.str());
+	}
+}
+
+
 
 Size
 RotamerRecoveryFeatures::report_features(

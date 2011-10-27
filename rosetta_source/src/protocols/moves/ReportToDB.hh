@@ -22,6 +22,7 @@
 #include <protocols/features/ProtocolFeatures.hh>
 #include <protocols/features/StructureFeatures.hh>
 #include <protocols/features/FeaturesReporter.hh>
+#include <protocols/features/FeaturesReporterFactory.hh>
 
 // Project Headers
 #include <basic/options/option.hh>
@@ -148,6 +149,7 @@ private:
 	// initialized in parse_my_tag
 	core::pack::task::TaskFactoryOP task_factory_;
 
+	protocols::features::FeaturesReporterFactory * features_reporter_factory_;
 	protocols::features::ProtocolFeaturesOP protocol_features_;
 	protocols::features::StructureFeaturesOP structure_features_;
 	utility::vector1< protocols::features::FeaturesReporterOP > features_reporters_;

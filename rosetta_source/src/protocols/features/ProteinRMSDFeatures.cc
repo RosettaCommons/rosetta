@@ -16,19 +16,26 @@
 
 // Project Headers
 #include <core/pose/util.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/util.hh>
+
 
 // Platform Headers
+#include <basic/Tracer.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
-
+#include <protocols/rosetta_scripts/util.hh>
 
 // Utility Headers
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
+#include <utility/tag/Tag.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Basic Headers
@@ -54,16 +61,38 @@ namespace features{
 
 using std::string;
 using std::list;
+using std::endl;
 using core::Size;
+using core::import_pose::pose_from_pdb;
 using core::pose::Pose;
 using core::pose::PoseCOP;
+using core::pose::PoseOP;
+using protocols::filters::Filters_map;
+using protocols::moves::DataMap;
+using protocols::moves::Movers_map;
+using protocols::rosetta_scripts::saved_reference_pose;
 using utility::vector1;
 using utility::sql_database::sessionOP;
+using utility::tag::TagPtr;
 using cppdb::statement;
+
+static basic::Tracer tr("protocols.features.ProteinRMSDFeatures");
 
 string
 ProteinRMSDFeatures::type_name() const { return "ProteinRMSDFeatures"; }
 
+
+PoseCOP
+ProteinRMSDFeatures::reference_pose() const {
+	return reference_pose_;
+}
+
+void
+ProteinRMSDFeatures::reference_pose(
+	PoseCOP pose
+) {
+	reference_pose_ = pose;
+}
 
 ProteinRMSDFeatures::ProteinRMSDFeatures(
 	PoseCOP reference_pose ) :
@@ -112,6 +141,35 @@ ProteinRMSDFeatures::schema() const {
 	}
 }
 
+void
+ProteinRMSDFeatures::parse_my_tag(
+	TagPtr const tag,
+	DataMap & data,
+	Filters_map const & /*filters*/,
+	Movers_map const & /*movers*/,
+	Pose const & pose
+) {
+	runtime_assert(tag->getOption<string>("name") == type_name());
+
+	if(tag->hasOption("reference_name")){
+		// Use with SavePoseMover
+		// WARNING! reference_pose is not initialized until apply time
+		reference_pose(saved_reference_pose(tag, data));
+	} else {
+		using namespace basic::options;
+		if (option[OptionKeys::in::file::native].user()) {
+			PoseOP ref_pose;
+			string native_pdb_fname(option[OptionKeys::in::file::native]());
+			pose_from_pdb(*ref_pose, native_pdb_fname);
+			tr << "Adding features reporter '" << type_name() << "' referencing '"
+				<< " the -in:file:native='" << native_pdb_fname << "'" << endl;
+			reference_pose(ref_pose);
+		} else {
+			tr << "Setting '" << type_name() << "' to reference the starting structure." << endl;
+			reference_pose(new Pose(pose));
+		}
+	}
+}
 
 Size
 ProteinRMSDFeatures::report_features(
@@ -126,7 +184,6 @@ ProteinRMSDFeatures::report_features(
 	for(Size i = 1; i <= relevant_residues.size(); ++i){
 		if(relevant_residues[i]) subset_residues.push_back(i);
 	}
-
 
 	statement stmt = (*db_session)
 		<< "INSERT INTO protein_rmsd VALUES (?,?,?,?,?,?,?,?,?,?);"
@@ -145,8 +202,6 @@ ProteinRMSDFeatures::report_features(
 		<< rmsd_with_super(*reference_pose_, pose, subset_residues, is_nbr_atom)
 		<< all_atom_rmsd(*reference_pose_, pose, subset_residues);
 	basic::database::safely_write_to_database(stmt);
-
-
 
 	return 0;
 }

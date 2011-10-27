@@ -21,6 +21,9 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <protocols/filters/Filter.fwd.hh>
+#include <protocols/moves/Mover.fwd.hh>
+#include <protocols/moves/DataMap.fwd.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/vector1.fwd.hh>
 
@@ -32,15 +35,16 @@ namespace features{
 
 class ProteinRMSDFeatures : public FeaturesReporter {
 public:
+
+	/// @details If you use this constructore, before applying, make
+	/// sure the reference pose is specified, either through the
+	/// set_reference_pose method or parse_my_tag.
+	ProteinRMSDFeatures() {}
+
 	ProteinRMSDFeatures(
 		core::pose::PoseCOP reference_pose
 	);
 
-// please use the constructor that takes a reference pose
-private:
-	ProteinRMSDFeatures() {}
-
-public:
 	ProteinRMSDFeatures(
 		ProteinRMSDFeatures const & ) :
 		FeaturesReporter()
@@ -55,6 +59,18 @@ public:
 	///@brief return sql statements that setup the right tables
 	std::string
 	schema() const;
+
+	core::pose::PoseCOP reference_pose() const;
+	void reference_pose(core::pose::PoseCOP);
+
+	virtual
+	void
+	parse_my_tag(
+		utility::tag::TagPtr const tag,
+		protocols::moves::DataMap & data,
+		protocols::filters::Filters_map const & /*filters*/,
+		protocols::moves::Movers_map const & /*movers*/,
+		core::pose::Pose const & pose);
 
 	///@brief collect all the feature data for the pose
 	core::Size

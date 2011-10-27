@@ -28,7 +28,6 @@
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
 #include <core/scoring/hbonds/hbonds.hh>
-// Auto-header: duplicate removed #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/HBondTypeManager.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>

@@ -78,7 +78,6 @@ ReportToDBCreator::mover_name()
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID_Map.fwd.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -146,7 +145,6 @@ using basic::Error;
 using basic::Warning;
 using basic::datacache::CacheableString;
 using core::Size;
-using core::import_pose::pose_from_pdb;
 using core::pack::task::PackerTaskCOP;
 using core::pack::task::TaskFactory;
 using core::pose::Pose;
@@ -167,7 +165,6 @@ using protocols::features::StructureFeatures;
 using protocols::features::FeaturesReporterFactory;
 using protocols::jd2::JobDistributor;
 using protocols::rosetta_scripts::parse_task_operations;
-using protocols::rosetta_scripts::saved_reference_pose;
 using std::string;
 using std::endl;
 using std::accumulate;
@@ -196,6 +193,7 @@ ReportToDB::ReportToDB():
 	use_transactions_(true),
 	cache_size_(2000),
 	task_factory_(new TaskFactory()),
+	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	features_reporters_(),
 	initialized( false )
 {
@@ -211,6 +209,7 @@ ReportToDB::ReportToDB(string const & name):
 	cache_size_(2000),
 	use_transactions_(true),
 	task_factory_(new TaskFactory()),
+	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	features_reporters_(),
 	initialized( false )
 {
@@ -232,6 +231,7 @@ ReportToDB::ReportToDB(
 	use_transactions_(use_transactions),
 	cache_size_(cache_size),
 	task_factory_(new TaskFactory()),
+	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	features_reporters_(),
 	initialized( false )
 {
@@ -247,6 +247,7 @@ ReportToDB::ReportToDB( ReportToDB const & src):
 	use_transactions_(src.use_transactions_),
 	cache_size_(src.cache_size_),
 	task_factory_(src.task_factory_),
+	features_reporter_factory_(FeaturesReporterFactory::get_instance()),
 	protocol_features_(src.protocol_features_),
 	structure_features_(src.structure_features_),
 	features_reporters_(src.features_reporters_),
@@ -377,71 +378,14 @@ ReportToDB::parse_cache_size_tag_item(
 }
 
 
-void
-ReportToDB::parse_feature_tag(
-	TagPtr const feature_tag,
-	DataMap & data,
-	Pose const & pose
-) {
-	assert(feature_tag->getName() == "feature");
-
-	string name;
-	if(!feature_tag->hasOption("name")){
-		utility_exit_with_message("'feature' tags require a name field");
-	} else {
-		name = feature_tag->getOption<string>("name");
-	}
-
-
-	// The ProteinRMSDFeatures FeaturesReporter is special because it
-	// takes a reference structure that must be determined at parse time.
-	if(name == "ProteinRMSDFeatures"){
-		if(feature_tag->hasOption("reference_name")){
-			// Use with SavePoseMover
-			// WARNING! reference_pose is not initialized until apply time
-			PoseOP reference_pose(saved_reference_pose(feature_tag, data));
-			if(!reference_pose) utility_exit();
-			TR << "Adding features reporter '" << name << "' referencing '"
-				<<	feature_tag->getOption<string>("reference_name") << "'."<< endl;
-			features_reporters_.push_back(new ProteinRMSDFeatures(reference_pose));
-		} else {
-			using namespace basic::options;
-			if (option[OptionKeys::in::file::native].user()) {
-				PoseOP reference_pose;
-				string native_pdb_fname(option[OptionKeys::in::file::native]());
-				pose_from_pdb(*reference_pose, native_pdb_fname);
-				TR << "Adding features reporter '" << name << "' referencing '"
-					<< " the -in:file:native='" << native_pdb_fname << "'" << endl;
-				features_reporters_.push_back(new ProteinRMSDFeatures(reference_pose));
-			} else {
-				TR << "Adding features reporter '" << name << "' referencing '"
-					<< " the starting structure." << endl;
-				features_reporters_.push_back(new ProteinRMSDFeatures(new Pose(pose)));
-			}
-		}
-		return;
-	}
-
-	ScoreFunctionOP scorefxn;
-	if(feature_tag->hasOption("scorefxn")){
-		string scorefxn_name = feature_tag->getOption<string>("scorefxn");
-		scorefxn = data.get<ScoreFunction*>("scorefxns", scorefxn_name);
-	}
-
-	TR << "Adding features reporter '" << name << "'" << endl;
-	features_reporters_.push_back(
-		FeaturesReporterFactory::create_features_reporter(name, scorefxn));
-
-}
-
 /// Allow ReportToDB to be called from RosettaScripts
 /// See
 void
 ReportToDB::parse_my_tag(
 	TagPtr const tag,
 	DataMap & data,
-	Filters_map const & /*filters*/,
-	Movers_map const & /*movers*/,
+	Filters_map const & filters,
+	Movers_map const & movers,
 	Pose const & pose )
 {
 
@@ -494,7 +438,9 @@ ReportToDB::parse_my_tag(
 			utility_exit();
 		}
 
-		parse_feature_tag(feature_tag, data, pose);
+		features_reporters_.push_back(
+			features_reporter_factory_->get_features_reporter(
+				feature_tag, data, filters, movers, pose));
 	}
 
 }

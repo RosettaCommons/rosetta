@@ -18,6 +18,7 @@
 #include <basic/Tracer.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/string_util.hh>
+#include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -51,9 +52,14 @@ using core::Size;
 using core::pose::Pose;
 using cppdb::statement;
 using cppdb::cppdb_error;
+using protocols::filters::Filters_map;
 using protocols::jd2::JobDistributor;
+using protocols::moves::DataMap;
+using protocols::moves::Movers_map;
 using std::endl;
 using std::string;
+using utility::tag::TagPtr;
+
 using utility::trim;
 using utility::vector1;
 using utility::sql_database::sessionOP;
@@ -77,7 +83,7 @@ FeaturesReporter::write_schema_to_db(
 				stmt.exec();
 			} catch (cppdb_error e) {
 				TR.Error
-					<< "ERROR reading schema for FeatureReporter: " << type_name() << "\n"
+					<< "ERROR reading schema for FeaturesReporter: " << type_name() << "\n"
 					<< trimmed_stmt_str << endl;
 				TR.Error << e.what() << endl;
 			}
@@ -114,6 +120,18 @@ FeaturesReporter::report_features(
 ){
 	Size dummy_parent_id(0);
 	return dummy_parent_id;
+}
+
+
+void
+FeaturesReporter::parse_my_tag(
+	TagPtr const tag,
+	DataMap & /*data*/,
+	Filters_map const & /*filters*/,
+	Movers_map const & /*movers*/,
+	Pose const & /*pose*/
+) {
+	runtime_assert(tag->getName() == "feature");
 }
 
 

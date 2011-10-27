@@ -22,12 +22,17 @@
 #include <core/types.hh>
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <protocols/filters/Filter.fwd.hh>
+#include <protocols/moves/Mover.fwd.hh>
+#include <protocols/moves/DataMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/sql_database/DatabaseSessionManager.hh>
+
 
 // C++ Headers
 #include <string>
@@ -53,6 +58,15 @@ public:
 	///@brief return sql statements that setup the right tables
 	std::string
 	schema() const;
+
+	virtual
+	void
+	parse_my_tag(
+		utility::tag::TagPtr const tag,
+		protocols::moves::DataMap & data,
+		protocols::filters::Filters_map const & /*filters*/,
+		protocols::moves::Movers_map const & /*movers*/,
+		core::pose::Pose const & /*pose*/);
 
 	///@brief collect all the feature data for the pose
 	core::Size

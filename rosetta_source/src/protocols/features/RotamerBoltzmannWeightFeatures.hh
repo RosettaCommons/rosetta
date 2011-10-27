@@ -23,6 +23,9 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <protocols/filters/Filter.fwd.hh>
+#include <protocols/moves/Mover.fwd.hh>
+#include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/protein_interface_design/filters/RotamerBoltzmannWeight.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.fwd.hh>
@@ -52,6 +55,15 @@ public:
 	///@brief return sql statements that setup the right tables
 	std::string
 	schema() const;
+
+	virtual
+	void
+	parse_my_tag(
+		utility::tag::TagPtr const tag,
+		protocols::moves::DataMap & data,
+		protocols::filters::Filters_map const & /*filters*/,
+		protocols::moves::Movers_map const & /*movers*/,
+		core::pose::Pose const & /*pose*/);
 
 	///@brief collect all the feature data for the pose
 	core::Size

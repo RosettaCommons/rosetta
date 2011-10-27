@@ -18,6 +18,7 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 
 // Project Headers
+#include <basic/database/sql_utils.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.fwd.hh>
@@ -36,16 +37,16 @@
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
 #include <core/scoring/hbonds/hbonds.hh>
-// Auto-header: duplicate removed #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/HBondTypeManager.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/types.hh>
-#include <basic/database/sql_utils.hh>
+#include <protocols/moves/DataMap.hh>
 
 // Utility Headers
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
+#include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 #include <utility/assert.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
@@ -70,6 +71,7 @@ using std::string;
 using std::endl;
 using std::sort;
 using std::sqrt;
+using std::stringstream;
 using core::Size;
 using core::Real;
 using core::Vector;
@@ -86,6 +88,7 @@ using core::scoring::calc_per_atom_sasa;
 using core::scoring::EnergyMap;
 using core::scoring::getScoreFunction;
 using core::scoring::ScoreFunctionOP;
+using core::scoring::ScoreFunction;
 using core::scoring::ScoringManager;
 using core::scoring::ScoreTypes;
 using core::scoring::TenANeighborGraph;
@@ -104,7 +107,11 @@ using core::scoring::fa_rep;
 using core::scoring::fa_sol;
 using numeric::xyzVector;
 using numeric::dihedral_radians;
+using protocols::filters::Filters_map;
+using protocols::moves::DataMap;
+using protocols::moves::Movers_map;
 using utility::sql_database::sessionOP;
+using utility::tag::TagPtr;
 using cppdb::statement;
 using utility::vector1;
 using basic::Tracer;
@@ -297,6 +304,27 @@ HBondFeatures::schema() const {
 		"		DEFERRABLE INITIALLY DEFERRED,\n"
 		"	PRIMARY KEY(struct_id, hbond_id));\n";
 
+}
+
+void
+HBondFeatures::parse_my_tag(
+	TagPtr const tag,
+	DataMap & data,
+	Filters_map const & /*filters*/,
+	Movers_map const & /*movers*/,
+	Pose const & /*pose*/
+) {
+	if(tag->hasOption("scorefxn")){
+		string scorefxn_name = tag->getOption<string>("scorefxn");
+		scfxn_ = data.get<ScoreFunction*>("scorefxns", scorefxn_name);
+	} else {
+		stringstream error_msg;
+		error_msg
+			<< "The " << type_name() << " reporter requires a 'scorefxn' tag:" << endl
+			<< endl
+			<< "    <feature name=" << type_name() <<" scorefxn=(name_of_score_function) />" << endl;
+		utility_exit_with_message(error_msg.str());
+	}
 }
 
 Size
