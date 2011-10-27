@@ -131,6 +131,13 @@ RemodelDesignMover::RemodelDesignMover(RemodelData const & remodel_data, Remodel
 
 void RemodelDesignMover::apply( Pose & pose )
 {
+
+  if ( basic::options::option[basic::options::OptionKeys::remodel::design::no_design].user() ){
+		TR << "bypassing design due to invokation of -no_design" << std::endl;
+		return;
+	}
+
+
 	// make decision as to which mode to apply
 	bool manual = remodel_data_.has_design_info_;
 	bool neighbor = basic::options::option[basic::options::OptionKeys::remodel::design::find_neighbors].user();
