@@ -1,0 +1,9 @@
+cen_hb 2.0
+rama 0.2
+omega 0.2
+rg 2.0
+cen_env_smooth 1.0
+cen_pair_smooth 1.0
+cbeta_smooth 1.0
+cenpack_smooth 1.0
+vdw 1.0
