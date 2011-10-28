@@ -27,6 +27,9 @@
 // Project headers
 #include <utility/file/gzip_util.hh>
 #include <utility/vector1.hh>
+#ifdef NATCL
+#include <utility/inline_file_provider.hh>
+#endif
 
 // C++ headers
 #include <fstream>
@@ -68,6 +71,10 @@ public: // Creation
 	izstream() :
 		compression_( NONE ),
 		zip_stream_p_( 0 )
+#ifdef NATCL
+		,file_provider_stream( &bad_stream )
+#endif
+
 	{}
 
 
@@ -80,6 +87,10 @@ public: // Creation
 	) :
 		compression_( NONE ),
 		zip_stream_p_( 0 )
+#ifdef NATCL		
+		,file_provider_stream( &bad_stream )
+#endif
+
 	{
 		open( filename_a, open_mode );
 	}
@@ -103,6 +114,9 @@ public: // Methods: conversion
 	inline
 	operator bool() const
 	{
+		#ifdef NATCL
+			return file_provider_stream->good();
+		#endif
 		//return ( zip_stream_p_ ? zip_stream_p_->good() : if_stream_.good() );
 		// proper behavior is actually ( ! fail() )
 		return ( zip_stream_p_ ? !zip_stream_p_->fail() : !!if_stream_ );
@@ -113,6 +127,9 @@ public: // Methods: conversion
 	inline
 	operator std::istream const &() const
 	{
+		#ifdef NATCL
+			return *file_provider_stream;
+		#endif
 		return ( zip_stream_p_
 		 ? static_cast< std::istream const & >( *zip_stream_p_ )
 		 : static_cast< std::istream const & >( if_stream_ ) );
@@ -123,6 +140,9 @@ public: // Methods: conversion
 	inline
 	operator std::istream &()
 	{
+		#ifdef NATCL
+			return *file_provider_stream;
+		#endif
 		return ( zip_stream_p_
 		 ? static_cast< std::istream & >( *zip_stream_p_ )
 		 : static_cast< std::istream & >( if_stream_ ) );
@@ -176,6 +196,10 @@ public: // Methods: i/o
 	void
 	clear()
 	{
+	 	#ifdef NATCL
+	  file_provider_stream->clear();
+		return;
+		#endif
 		if_stream_.clear();
 		if ( zip_stream_p_ ) zip_stream_p_->clear();
 	}
@@ -186,6 +210,10 @@ public: // Methods: i/o
 	void
 	close()
 	{
+	 	#ifdef NATCL
+	  //file_provider_stream->clear();
+		return;
+		#endif
 		compression_ = NONE;
 		if_stream_.close();
 		if_stream_.clear();
@@ -199,6 +227,12 @@ public: // Methods: i/o
 	void
 	seek_beg()
 	{
+	 	#ifdef NATCL
+	  file_provider_stream->clear();
+		file_provider_stream->seekg( std::ios_base::beg );
+	  file_provider_stream->clear();
+		return;
+		#endif
 		if_stream_.clear();
 		if_stream_.seekg( std::ios_base::beg );
 		if_stream_.clear();
@@ -431,6 +465,9 @@ public: // Properties
 	std::istream const &
 	operator ()() const
 	{
+		#ifdef NATCL
+			return *file_provider_stream;
+		#endif
 		return ( zip_stream_p_
 		 ? static_cast< std::istream const & >( *zip_stream_p_ )
 		 : static_cast< std::istream const & >( if_stream_ ) );
@@ -442,6 +479,9 @@ public: // Properties
 	std::istream &
 	operator ()()
 	{
+		#ifdef NATCL
+			return *file_provider_stream;
+		#endif
 		return ( zip_stream_p_
 		 ? static_cast< std::istream & >( *zip_stream_p_ )
 		 : static_cast< std::istream & >( if_stream_ ) );
@@ -453,6 +493,9 @@ public: // Properties
 	std::istream const &
 	stream() const
 	{
+		#ifdef NATCL
+			return *file_provider_stream;
+		#endif
 		return ( zip_stream_p_
 		 ? static_cast< std::istream const & >( *zip_stream_p_ )
 		 : static_cast< std::istream const & >( if_stream_ ) );
@@ -464,6 +507,9 @@ public: // Properties
 	std::istream &
 	stream()
 	{
+		#ifdef NATCL
+			return *file_provider_stream;
+		#endif
 		return ( zip_stream_p_
 		 ? static_cast< std::istream & >( *zip_stream_p_ )
 		 : static_cast< std::istream & >( if_stream_ ) );
@@ -657,6 +703,10 @@ private: // Fields
 	/// library comes before the basic library), so setting the
 	/// alternate search paths is it the responsibility of core::init()
 	static vector1< std::string > alternative_search_paths_;
+#ifdef NATCL 
+	std::istream *file_provider_stream;
+	std::stringstream bad_stream;
+#endif
 
 }; // izstream
 

@@ -20,6 +20,9 @@
 
 // Project headers
 #include <utility/file/file_sys_util.hh>
+#ifdef NATCL
+#include <utility/inline_file_provider.hh>
+#endif
 #include <utility/exit.hh>
 
 // C++ headers
@@ -67,6 +70,18 @@ ozstream::open(
 		using utility::file::file_extension;
 		using utility::file::trytry_ofstream_open;
 		using zlib_stream::zip_ostream;
+
+
+	#ifdef NATCL
+		utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
+		
+		if(!provider->get_ostream( filename_a , &file_provider_stream )){
+			 std::cerr << "Cannot find inline file: " << filename_a << std::endl;	
+			 file_provider_stream = &bad_stream;
+			 file_provider_stream->setstate( ios_base::failbit | ios_base::badbit );
+		}
+		return;
+	#endif
 
 		// Close the file if open and reset the state
 		close();

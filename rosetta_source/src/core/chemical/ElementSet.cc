@@ -18,6 +18,7 @@
 // Project headers
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
+#include <utility/io/izstream.hh>  
 
 // C++ headers
 #include <fstream>
@@ -44,7 +45,7 @@ ElementSet::~ElementSet() {}
 void
 ElementSet::read_file( std::string const & filename )
 {
-	std::ifstream data( filename.c_str() ); // change to izstream!
+	 utility::io::izstream data( filename.c_str() ); 
 
 	if ( !data.good() ) utility_exit_with_message( "Unable to open element file: "+filename );
 

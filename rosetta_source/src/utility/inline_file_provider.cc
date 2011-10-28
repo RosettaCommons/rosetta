@@ -66,11 +66,39 @@ bool Inline_File_Provider::file_exists( const std::string& filename )
 			return true;	
 		}
 	}
+	
+	// now look through outfiles
+	for( std::vector < std::pair < std::string, std::stringstream* > >::iterator it = output_files.begin();
+	     it != output_files.end(); ++it ){
+		if( it->first == filtered_filename ){
+			return true;
+		}
+	}
 	return false;
 }
 
-bool Inline_File_Provider::get_istream( const std::string& filename, std::istream **the_stream )
+bool Inline_File_Provider::get_ostream( const std::string& filename, std::ostream **the_stream )
 {
+	std::cout << "Creating inline file: '" << filename << "'" << std::endl; 
+	std::stringstream *newstream = new std::stringstream( );
+
+	std::string filtered_filename( standardise_filename( filename ) );
+	output_files.push_back( std::make_pair( filtered_filename, newstream ) ); 
+	(*the_stream) = newstream;
+	return true;
+}
+
+
+
+
+bool Inline_File_Provider::get_istream( const std::string& filename, std::istream **the_stream ){
+	std::stringstream *the_sstream;
+	bool result = get_sstream( filename, &the_sstream );
+	(*the_stream) = the_sstream;
+	return result;
+}
+
+bool Inline_File_Provider::get_sstream( const std::string& filename, std::stringstream **the_stream ){
 	std::string filtered_filename( standardise_filename( filename ) );
 	std::cout << "Looking for inline file: '" << filtered_filename << "'" << std::endl; 
 	
@@ -81,13 +109,30 @@ bool Inline_File_Provider::get_istream( const std::string& filename, std::istrea
 			break;
 		}
 	}
-	if( i >= static_database_size ) return false; 
-	int data = i;
-	const char *the_data = static_database[i][1];
-	std::stringstream *newstream = new std::stringstream( the_data );
-	streambucket.push_back( newstream );
-	(*the_stream) = streambucket[ streambucket.size()-1 ];
-	return true;
+	// did we find it ?
+	if( i <  static_database_size ){
+		int data = i;
+		const char *the_data = static_database[i][1];
+		std::stringstream *newstream = new std::stringstream( the_data );
+		streambucket.push_back( newstream );
+		(*the_stream) = streambucket[ streambucket.size()-1 ];
+		return true;
+	}
+
+	// now look through outfiles
+	std::vector < std::pair < std::string, std::stringstream* > >::iterator it = output_files.begin();
+	for( ; it != output_files.end(); ++it ){
+		if( it->first == filtered_filename ){
+			break;	
+		}
+	}
+
+	if( it != output_files.end() ){
+		(*the_stream) = it->second; 
+		return true;
+	}
+	
+	return false;
 }
 
 

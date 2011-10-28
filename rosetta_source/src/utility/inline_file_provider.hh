@@ -21,6 +21,7 @@
 
 // C++ headers
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 
@@ -37,11 +38,17 @@ class Inline_File_Provider {
 		static Inline_File_Provider* get_instance();
 		void show_contents();
 		bool file_exists( const std::string& filename );
+		
+		bool get_ostream( const std::string& filename, std::ostream **the_stream );
+		
 		bool get_istream( const std::string& filename, std::istream **the_stream );
+		bool get_sstream( const std::string& filename, std::stringstream **the_stream );
 	private:
 		std::string standardise_filename( std::string filename );
 		static Inline_File_Provider* instance_;
 		std::vector < std::stringstream* > streambucket;
+
+		std::vector < std::pair < std::string, std::stringstream* > > output_files;
 };
 
 

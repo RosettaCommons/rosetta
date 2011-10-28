@@ -30,6 +30,11 @@ namespace options {
 
 
 void mpi_safe_std_err( std::string msg ) {
+#ifdef NATCL
+	throw( std::string( msg ) ); // exceptions provide a good mechanism to get the rror message back to where the browser can display it. stdout/stderr are useless here.
+	return;
+#endif
+
 	int mpi_rank( 0 );
 #ifdef USEMPI
 	/// Give a different RNG to each processor

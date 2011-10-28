@@ -40,6 +40,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/mpistream.hh>
+#include <utility/inline_file_provider.hh>
 // C++ headers
 #include <iostream>
 
@@ -76,6 +77,10 @@ namespace file {
 bool
 file_exists( std::string const & path )
 { // NOTE: this is not entirely reliable, stat may fail also when a file does exist
+	#ifdef NATCL
+		utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
+		return provider->file_exists( path ); 
+	#endif
 	struct stat buf;
 	return !stat( path.c_str(), &buf ); // stat() returns zero on success
 }
@@ -205,6 +210,7 @@ create_directory(
 	std::string const & dir_path
 )
 {
+#ifndef NATCL
 #if (defined WIN32)
 	// Windows code
 	return !mkdir(dir_path.c_str());
@@ -212,6 +218,8 @@ create_directory(
 	// non-Windows code
 	return !mkdir(dir_path.c_str(), 0777);
 #endif // _WIN32
+#endif
+return false;
 }
 
 

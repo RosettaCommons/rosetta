@@ -29,6 +29,9 @@
 
 // Project headers
 #include <utility/file/gzip_util.hh>
+#ifdef NATCL
+#include <utility/inline_file_provider.hh>
+#endif
 
 // Utility headers
 #include <utility/io/zipstream.hpp>
@@ -79,6 +82,10 @@ public: // Creation
 		char_buffer_p_( NULL ),
 		zip_stream_p_( 0 ),
 		mpi_stream_p_( 0 )
+#ifdef NATCL	
+		,file_provider_stream( &bad_stream ) 
+#endif
+
 	{}
 
 
@@ -97,6 +104,10 @@ public: // Creation
 		char_buffer_p_( NULL ),
 		zip_stream_p_( 0 ),
 		mpi_stream_p_( 0 )
+#ifdef NATCL		
+		,file_provider_stream( &bad_stream )
+#endif
+
 	{
 		buffer_size( buf_size ); // set buffer
 		open( filename_a, open_mode );
@@ -119,6 +130,9 @@ public: // Methods: conversion
 	inline
 	operator bool() const
 	{
+		#ifdef NATCL
+			return file_provider_stream->good();
+		#endif
 		return ( zip_stream_p_ ? !zip_stream_p_->fail() : ( mpi_stream_p_ ? !mpi_stream_p_->fail() : !!of_stream_ ));
 	}
 
@@ -127,6 +141,9 @@ public: // Methods: conversion
 	inline
 	operator std::ostream const &() const
 	{
+		#ifdef NATCL
+			return *file_provider_stream;
+		#endif
 		return ( zip_stream_p_
 		 ? static_cast< std::ostream const & >( *zip_stream_p_ )
 			: ( mpi_stream_p_ ? static_cast< std::ostream const& > ( *mpi_stream_p_ )
@@ -139,6 +156,9 @@ public: // Methods: conversion
 	inline
 	operator std::ostream &()
 	{
+		#ifdef NATCL
+			return *file_provider_stream;
+		#endif
 		return ( zip_stream_p_
 		 ? static_cast< std::ostream & >( *zip_stream_p_ )
 			: ( mpi_stream_p_ ? static_cast< std::ostream & > ( *mpi_stream_p_ )
@@ -156,6 +176,10 @@ public: // Methods: formatting
 	ozstream &
 	operator <<( T const & t )
 	{
+		#ifdef NATCL
+			(*file_provider_stream) << t;
+			return *this;
+		#endif
 		if ( zip_stream_p_ ) {
 			(*zip_stream_p_) << t;
 		} else if ( mpi_stream_p_ ) {
@@ -176,14 +200,26 @@ public: // Methods: formatting
 		static manipulator const std_endl = std::endl;
 		static manipulator const std_flush = std::flush;
 		if ( m == std_endl && ( mpi_stream_p_ || zip_stream_p_ ) )  {
+			#ifdef NATCL
+				(*file_provider_stream) << '\n';
+				return *this;
+			#endif
 			if ( zip_stream_p_ ) { // Output newline instead
 				(*zip_stream_p_) << '\n';
 			} else if ( mpi_stream_p_ ) {
 				(*mpi_stream_p_) << '\n';
 			}
 		} else if ( ( m == std_flush ) && ( zip_stream_p_ || mpi_stream_p_) ) {
+			#ifdef NATCL
+				file_provider_stream->flush();
+				return *this;
+			#endif
 			flush(); // ozstream::flush()
 		} else {
+			#ifdef NATCL
+				(*file_provider_stream) << m;
+				return *this;
+			#endif
 			of_stream_ << m;
 		}
 		return *this;
@@ -214,6 +250,11 @@ public: // Methods: i/o
 	ozstream &
 	put( char const c )
 	{
+		#ifdef NATCL
+			file_provider_stream->put( c );
+			return *this;
+		#endif
+
 		if ( zip_stream_p_ ) {
 			zip_stream_p_->put( c );
 		} else if ( mpi_stream_p_ ) {
@@ -230,6 +271,10 @@ public: // Methods: i/o
 	ozstream &
 	write( char const * str, std::streamsize const count )
 	{
+		#ifdef NATCL
+			file_provider_stream->write( str, count );
+			return *this;
+		#endif
 		if ( zip_stream_p_ ) {
 			zip_stream_p_->write( str, count );
 		} else if ( mpi_stream_p_ ) {
@@ -267,6 +312,10 @@ public: // Methods: i/o
 	ozstream &
 	flush()
 	{
+		#ifdef NATCL
+			file_provider_stream->flush();
+			return *this;
+		#endif
 		// comment out the zflush_finalize() containing line and uncomment
 		// the flush() containing line to switch to "regular" flush behavior
 		if ( zip_stream_p_ ) zip_stream_p_->zflush_finalize();
@@ -291,6 +340,10 @@ public: // Methods: i/o
 	ozstream &
 	flush_finalize()
 	{
+		#ifdef NATCL
+			file_provider_stream->flush();
+			return *this;
+		#endif
 		if ( zip_stream_p_ ) zip_stream_p_->zflush_finalize();
 		if ( mpi_stream_p_ ) {
 			mpi_stream_p_->flush();
@@ -307,6 +360,9 @@ public: // Methods: i/o
 	void
 	zflush()
 	{
+		#ifdef NATCL
+			return;
+		#endif
 		if ( zip_stream_p_ ) zip_stream_p_->zflush();
 	}
 
@@ -322,6 +378,9 @@ public: // Methods: i/o
 	void
 	zflush_finalize()
 	{
+		#ifdef NATCL
+			return;
+		#endif
 		if ( zip_stream_p_ ) zip_stream_p_->zflush_finalize();
 	}
 
@@ -330,6 +389,10 @@ public: // Methods: i/o
 	void
 	clear()
 	{
+		#ifdef NATCL
+			file_provider_stream->clear();
+			return;
+		#endif
 		of_stream_.clear();
 		if ( zip_stream_p_ ) zip_stream_p_->clear();
 		if ( mpi_stream_p_ ) mpi_stream_p_->clear();
@@ -341,6 +404,9 @@ public: // Methods: i/o
 	void
 	close()
 	{
+		#ifdef NATCL
+			return;
+		#endif
 		if ( zip_stream_p_ ) {
 			zip_stream_p_->zflush_finalize();
 			delete zip_stream_p_; zip_stream_p_ = 0;
@@ -368,6 +434,9 @@ public: // Properties
 	std::ostream const &
 	operator ()() const
 	{
+		#ifdef NATCL
+		  return (*file_provider_stream);
+		#endif
 		return ( zip_stream_p_
 			? static_cast< std::ostream const & >( *zip_stream_p_ )
 			: ( mpi_stream_p_ ? static_cast< std::ostream const & >( *mpi_stream_p_ )
@@ -380,6 +449,9 @@ public: // Properties
 	std::ostream &
 	operator ()()
 	{
+		#ifdef NATCL
+		  return (*file_provider_stream);
+		#endif
 		return ( zip_stream_p_
 		 ? static_cast< std::ostream & >( *zip_stream_p_ )
 			: ( mpi_stream_p_ ? static_cast< std::ostream & >( *mpi_stream_p_ )
@@ -392,6 +464,9 @@ public: // Properties
 	std::ostream const &
 	stream() const
 	{
+		#ifdef NATCL
+		  return (*file_provider_stream);
+		#endif
 		return ( zip_stream_p_
 		 ? static_cast< std::ostream const & >( *zip_stream_p_ )
 			: ( mpi_stream_p_ ? static_cast< std::ostream const & >( *mpi_stream_p_ )
@@ -404,6 +479,9 @@ public: // Properties
 	std::ostream &
 	stream()
 	{
+		#ifdef NATCL
+		  return (*file_provider_stream);
+		#endif
 		return ( zip_stream_p_
 		 ? static_cast< std::ostream & >( *zip_stream_p_ )
 			: ( mpi_stream_p_ ? static_cast< std::ostream & >( *mpi_stream_p_ )
@@ -648,6 +726,11 @@ private: // Fields
 
 	static bool bMPI_reroute_stream_;
 	static int mpi_FileBuf_master_rank_;
+
+#ifdef NATCL 
+	std::ostream *file_provider_stream;
+	std::stringstream bad_stream;
+#endif
 
 }; // ozstream
 
