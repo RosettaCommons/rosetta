@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/medal/MedalFreeMover.hh
+/// @file protocols/medal/MedalExchangeMover.hh
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_MEDAL_MEDAL_FREE_MOVER_HH_
-#define PROTOCOLS_MEDAL_MEDAL_FREE_MOVER_HH_
+#ifndef PROTOCOLS_MEDAL_MEDAL_EXCHANGE_MOVER_HH_
+#define PROTOCOLS_MEDAL_MEDAL_EXCHANGE_MOVER_HH_
 
 // Unit header
-#include <protocols/medal/MedalFreeMover.fwd.hh>
+#include <protocols/medal/MedalExchangeMover.fwd.hh>
 
 // C/C++ headers
 #include <string>
@@ -33,11 +33,9 @@ namespace medal {
 /// 1. Fragment insertion moves with no chainbreak and short-range constraints
 /// 2. Fragment insertion moves with no chainbreak and medium-range constraints
 /// 3. Alternating fragment insertion and rigid body moves with chainbreak and all constraints
-class MedalFreeMover : public MedalMover {
-  typedef utility::vector1<double> Probabilities;
-
+class MedalExchangeMover : public MedalMover {
  public:
-  MedalFreeMover();
+  MedalExchangeMover();
   void apply(core::pose::Pose& pose);
 
   // -- jd2 -- //
@@ -49,4 +47,4 @@ class MedalFreeMover : public MedalMover {
 }  // namespace medal
 }  // namespace protocols
 
-#endif  // PROTOCOLS_MEDAL_MEDAL_FREE_MOVER_HH_
+#endif  // PROTOCOLS_MEDAL_MEDAL_EXCHANGE_MOVER_HH_

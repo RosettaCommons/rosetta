@@ -47,7 +47,8 @@ sources = {
 	],
 	"pilot/cmiles" : [
 		"medal",
-		"medal_free",
+                "medal_abinitio",
+		"medal_exchange",
 		"nonlocal_abinitio",
 	],
 	"pilot/delucasl" : [

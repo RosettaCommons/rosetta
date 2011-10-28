@@ -30,23 +30,37 @@
 #include <protocols/moves/Mover.hh>
 
 // Package headers
+#include <protocols/medal/MedalAbinitioMover.hh>
+#include <protocols/medal/MedalExchangeMover.hh>
 #include <protocols/medal/MedalMover.hh>
-#include <protocols/medal/MedalFreeMover.hh>
 
 namespace protocols {
 namespace medal {
 
 const std::string ERROR_PREFIX = "Failed to specify required option ";
 
-void check_required() {
+/// @detail Standard options
+void check_required_common() {
+  using namespace basic::options;
+  using namespace basic::options::OptionKeys;
+
+  if (!option[in::file::fasta].user())
+    utility_exit_with_message(ERROR_PREFIX + "-in:file:fasta");
+
+  if (!option[in::file::frag3].user())
+    utility_exit_with_message(ERROR_PREFIX + "-in:file:frag3");
+
+  if (!option[in::file::frag9].user())
+    utility_exit_with_message(ERROR_PREFIX + "-in:file:frag9");
+}
+
+/// @detail Comparative modeling options
+void check_required_cm() {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
 
   if (!option[cm::aln_format].user())
     utility_exit_with_message(ERROR_PREFIX + "-cm:aln_format");
-
-  if (!option[in::file::fasta].user())
-    utility_exit_with_message(ERROR_PREFIX + "-in:file:fasta");
 
   if (!option[in::file::alignment].user())
     utility_exit_with_message(ERROR_PREFIX + "-in:file:alignment");
@@ -55,14 +69,9 @@ void check_required() {
     utility_exit_with_message(ERROR_PREFIX + "-in:file:template_pdb");
 }
 
-void* Medal_main(void*) {
+void* graphics_main(protocols::moves::MoverOP mover) {
   using protocols::jd2::JobDistributor;
-  using protocols::moves::MoverOP;
 
-  // Ensure that required arguments have been specified
-  check_required();
-
-  MoverOP mover = new MedalMover();
   try {
     JobDistributor::get_instance()->go(mover);
   } catch (utility::excn::EXCN_Base& e) {
@@ -72,21 +81,21 @@ void* Medal_main(void*) {
   return 0;
 }
 
-void* MedalFree_main(void*) {
-  using protocols::jd2::JobDistributor;
-  using protocols::moves::MoverOP;
+void* Medal_main(void*) {
+  check_required_common();
+  check_required_cm();
+  return graphics_main(new MedalMover());
+}
 
-  // Ensure that required arguments have been specified
-  check_required();
+void* MedalAbinitio_main(void*) {
+  check_required_common();
+  return graphics_main(new MedalAbinitioMover());
+}
 
-  MoverOP mover = new MedalFreeMover();
-  try {
-    JobDistributor::get_instance()->go(mover);
-  } catch (utility::excn::EXCN_Base& e) {
-    std::cerr << "Exception: " << std::endl;
-    e.show(std::cerr);
-  }
-  return 0;
+void* MedalExchange_main(void*) {
+  check_required_common();
+  check_required_cm();
+  return graphics_main(new MedalExchangeMover());
 }
 
 }  // namespace medal

@@ -20,5 +20,5 @@
 int main(int argc, char* argv[]) {
   devel::init(argc, argv);
   protocols::viewer::viewer_main(
-      protocols::medal::MedalFree_main);
+      protocols::medal::MedalExchange_main);
 }

@@ -7,25 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/medal/MedalMain.hh
+/// @file apps/pilot/cmiles/medal_abinitio.cc
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef PROTOCOLS_MEDAL_MEDAL_MAIN_HH_
-#define PROTOCOLS_MEDAL_MEDAL_MAIN_HH_
+// Utility headers
+#include <devel/init.hh>
 
-namespace protocols {
-namespace medal {
+// Project headers
+#include <protocols/medal/MedalMain.hh>
+#include <protocols/viewer/viewers.hh>
 
-/// @brief Entry point for Medal protocol
-void* Medal_main(void*);
-
-/// @brief Entry point for MedalExchange protocol
-void* MedalExchange_main(void*);
-
-/// @brief Entry point for MedalAbinitio protocol
-void* MedalAbinitio_main(void*);
-
-}  // namespace medal
-}  // namespace protocols
-
-#endif  // PROTOCOLS_MEDAL_MEDAL_MAIN_HH_
+int main(int argc, char* argv[]) {
+  devel::init(argc, argv);
+  protocols::viewer::viewer_main(
+      protocols::medal::MedalAbinitio_main);
+}

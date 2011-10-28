@@ -9510,6 +9510,21 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
  </li>
 <li><h2>remodel</h2>
 <dl>
+<dt><b>-vdw</b> \<Real\><dt>
+<dd>set vdw weight</dd><br>
+<dd>Default: 1.0</dd><br>
+</dl>
+<dl>
+<dt><b>-cbeta</b> \<Real\><dt>
+<dd>set cbeta weight</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
+<dt><b>-cenpack</b> \<Real\><dt>
+<dd>set cenpack weight</dd><br>
+<dd>Default: 0.0</dd><br>
+</dl>
+<dl>
 <dt><b>-hb_lrbb</b> \<Real\><dt>
 <dd>set hbond_lrbb weight</dd><br>
 <dd>Default: 0.0</dd><br>

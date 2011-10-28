@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file protocols/medal/MedalFreeMover.cc
+/// @file protocols/medal/MedalExchangeMover.cc
 /// @author Christopher Miles (cmiles@uw.edu)
 
 // Unit headers
-#include <protocols/medal/MedalFreeMover.hh>
+#include <protocols/medal/MedalExchangeMover.hh>
 
 // C/C++ headers
 #include <iostream>
@@ -49,11 +49,11 @@
 namespace protocols {
 namespace medal {
 
-static basic::Tracer TR("protocols.medal.MedalFreeMover");
+static basic::Tracer TR("protocols.medal.MedalExchangeMover");
 
-MedalFreeMover::MedalFreeMover() : MedalMover() {}
+MedalExchangeMover::MedalExchangeMover() : MedalMover() {}
 
-void MedalFreeMover::apply(core::pose::Pose& pose) {
+void MedalExchangeMover::apply(core::pose::Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::scoring::ScoreFunctionOP;
@@ -114,22 +114,23 @@ void MedalFreeMover::apply(core::pose::Pose& pose) {
   // Loop closure
   builder.tear_down(&pose);
   do_loop_closure(&pose);
+  protocols::nonlocal::remove_cutpoint_variants(&pose);
 
   // Return to centroid representation and rescore
   core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
   score_pose(*score, "Final model", &pose);
 }
 
-std::string MedalFreeMover::get_name() const {
-  return "MedalFreeMover";
+std::string MedalExchangeMover::get_name() const {
+  return "MedalExchangeMover";
 }
 
-protocols::moves::MoverOP MedalFreeMover::clone() const {
-  return new MedalFreeMover(*this);
+protocols::moves::MoverOP MedalExchangeMover::clone() const {
+  return new MedalExchangeMover(*this);
 }
 
-protocols::moves::MoverOP MedalFreeMover::fresh_instance() const {
-  return new MedalFreeMover();
+protocols::moves::MoverOP MedalExchangeMover::fresh_instance() const {
+  return new MedalExchangeMover();
 }
 
 }  // namespace medal

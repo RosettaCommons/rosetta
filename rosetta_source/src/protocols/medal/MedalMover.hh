@@ -34,6 +34,7 @@ namespace medal {
 /// @class Alternating rigid body and fragment insertion moves with
 /// a linearly increasing chainbreak
 class MedalMover : public protocols::moves::Mover {
+ protected:
   typedef utility::vector1<double> Probabilities;
 
  public:

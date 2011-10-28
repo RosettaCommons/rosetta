@@ -14,8 +14,9 @@ sources = {
 		"ScoreMap",
 	],
         "protocols/medal" : [
+            "MedalAbinitioMover",
+            "MedalExchangeMover",
             "MedalMain",
-            "MedalFreeMover",
             "MedalMover",
             "util",
         ],
