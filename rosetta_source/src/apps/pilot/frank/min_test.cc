@@ -171,6 +171,7 @@ main( int argc, char * argv [] )
 			std::cout << "MIN TIME: " << time << " sec \n";
 		} else {
 			core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_verbose );
+			options.nblist_auto_update( true );
 			core::optimization::AtomTreeMinimizer minimizer;
 			std::cout << "TORSION MINTEST: " << "\n";
 			std::cout << "start score: " << (*scorefxn)(*pose) << "\n";

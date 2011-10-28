@@ -110,6 +110,9 @@ enum ScoreType {
 	vdw,     // centroid
 	cenpack, // centroid
 
+	cenpack_smooth,   //fpd  smooth cenpack
+	cen_hb,           //fpd  centroid bb hbonding
+
 	hybrid_vdw,     // hybrid centroid+fa
 
 	rna_vdw,          // low res clash check for RNA
@@ -191,6 +194,7 @@ enum ScoreType {
 	occ_sol_exact,
 
 	pair, // centroid
+	cen_pair_smooth,  //fpd  smooth centroid pair
 	Mpair,
 	// sucker atom energy
 	suck,
@@ -253,6 +257,8 @@ enum ScoreType {
 
 	/// Whole structure energies
 	/// centroid whole structure energies
+	cen_env_smooth,   //fpd smooth centroid env
+	cbeta_smooth,     //fpd smooth cbeta
 	env,
 	cbeta,
 	DFIRE,

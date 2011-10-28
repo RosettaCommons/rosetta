@@ -20,17 +20,14 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
 
-// AUTO-REMOVED #include <core/scoring/EnvPairPotential.hh>
-//#include <core/scoring/ScoringManager.hh>
-// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
-
 // Project headers
 #include <core/pose/Pose.hh>
-// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
-
+#include <core/id/AtomID.hh>
 
 // Utility headers
 #include <basic/prof.hh>
+#include <basic/datacache/BasicDataCache.hh>
+#include <core/pose/datacache/CacheableDataType.hh>
 
 //Auto Headers
 #include <core/scoring/EnergyMap.hh>
@@ -189,6 +186,92 @@ RG_Energy_Fast::calculate_rg_score(
 	return sqrt( rg_score );
 
 }
+
+
+void
+RG_Energy_Fast::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const {
+	RG_MinData &mindata = nonconst_mindata_from_pose( pose );
+
+	// calculate center of mass
+	Size const nres( pose.total_residue() );
+	mindata.nres_scored = 0;
+	mindata.com = Vector( 0, 0, 0 );
+	for ( Size i = 1; i <= nres; ++i ) {
+		// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
+		if ( pose.residue(i).has_variant_type( "REPLONLY" ) ) continue;
+		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
+
+		Vector const v( pose.residue(i).nbr_atom_xyz() );
+		mindata.com += v;
+		mindata.nres_scored++;
+	}
+	mindata.com /= mindata.nres_scored;
+
+	// calulate score
+	mindata.rg = 0;
+	for ( Size i = 1; i <= nres; ++i ) {
+		// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
+		if ( pose.residue(i).has_variant_type( "REPLONLY" ) ) continue;
+		if ( pose.residue(i).aa() == core::chemical::aa_vrt ) continue;
+
+		Vector const v( pose.residue(i).nbr_atom_xyz() );
+		mindata.rg += v.distance_squared( mindata.com );
+	}
+	mindata.rg = sqrt( mindata.rg / (mindata.nres_scored - 1) );
+}
+
+
+void
+RG_Energy_Fast::eval_atom_derivative(
+	id::AtomID const & id,
+	pose::Pose const & pose,
+	kinematics::DomainMap const &, // domain_map,
+	ScoreFunction const & ,
+	EnergyMap const & weights,
+	Vector & F1,
+	Vector & F2
+) const {
+	RG_MinData const &mindata = mindata_from_pose( pose );
+
+	int resid = id.rsd();
+	int atmid = id.atomno();
+	core::conformation::Residue const &rsd_i = pose.residue(resid);
+	numeric::xyzVector<core::Real> X = pose.xyz(id);
+
+	if (atmid != rsd_i.nbr_atom())
+		return;
+
+	numeric::xyzVector<core::Real> drg_dx = (X-mindata.com) / (mindata.rg*(mindata.nres_scored - 1));
+
+	numeric::xyzVector<core::Real> atom_x = X;
+	numeric::xyzVector<core::Real> const f2( drg_dx );
+	numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;
+	Vector const f1( atom_x.cross( atom_y ) );
+
+	F1 += weights[ rg ] * f1;
+	F2 += weights[ rg ] * f2;
+}
+
+
+RG_MinData const & 
+RG_Energy_Fast::mindata_from_pose( pose::Pose const & pose) const {
+	using namespace core::pose::datacache;
+	return *( static_cast< RG_MinData const * >( pose.data().get_const_ptr( CacheableDataType::RG_MINDATA )() ));
+
+}
+
+RG_MinData &
+RG_Energy_Fast::nonconst_mindata_from_pose( pose::Pose & pose) const {
+	if ( pose.data().has( core::pose::datacache::CacheableDataType::RG_MINDATA ) ) {
+		return *( static_cast< RG_MinData* >( pose.data().get_ptr( core::pose::datacache::CacheableDataType::RG_MINDATA )() ));
+	}
+	// else
+	RG_MinDataOP rgmindata = new RG_MinData;
+	pose.data().set( core::pose::datacache::CacheableDataType::RG_MINDATA, rgmindata );
+	return *rgmindata;
+}
+
+
 
 core::Size
 RG_Energy_Fast::version() const

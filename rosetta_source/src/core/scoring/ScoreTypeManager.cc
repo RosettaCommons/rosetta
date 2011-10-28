@@ -97,6 +97,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "dna_bp" ] = dna_bp;
 	name2score_type_[ "pro_close" ] = pro_close;
 	name2score_type_[ "vdw" ] = vdw;
+	name2score_type_[ "cen_hb" ] = cen_hb;
 	name2score_type_[ "cenpack" ] = cenpack;
 	name2score_type_[ "hybrid_vdw" ] = hybrid_vdw;
 	name2score_type_[ "fa_cust_pair_dist" ] = fa_cust_pair_dist;
@@ -218,6 +219,13 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "pcs2" ] = pcs2;
 	name2score_type_[ "dock_ens_conf" ] = dock_ens_conf;
 
+	//fpd smooth (differentiable) centroid terms
+	name2score_type_[ "cen_hb" ] = cen_hb;
+	name2score_type_[ "cen_env_smooth" ] = cen_env_smooth;
+	name2score_type_[ "cen_pair_smooth" ] = cen_pair_smooth;
+	name2score_type_[ "cbeta_smooth" ] = cbeta_smooth;
+	name2score_type_[ "cenpack_smooth" ] = cenpack_smooth;
+	
 	name2score_type_[ "hs_pair" ] = hs_pair;
 	name2score_type_[ "ss_pair" ] = ss_pair;
 	name2score_type_[ "rsigma" ] = rsigma;

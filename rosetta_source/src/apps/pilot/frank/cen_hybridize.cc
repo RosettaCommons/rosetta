@@ -190,7 +190,7 @@ public:
 	                numeric::xyzMatrix< core::Real > &R, numeric::xyzVector< core::Real > &preT, numeric::xyzVector< core::Real > &postT) {
 		// com of both
 		core::Size len = frag.total_residue();
-		core::Size aln_len = std::min( (core::Size)9, len );
+		core::Size aln_len = std::min( (core::Size)999, len );
 		core::Size aln_start = numeric::random::random_range(1, len-aln_len+1 );
 
 		preT = postT = numeric::xyzVector< core::Real >(0,0,0);

@@ -21,6 +21,8 @@
 #include <core/scoring/carbon_hbonds/CarbonHBondPotential.hh>
 #include <core/scoring/PairEPotential.hh>
 #include <core/scoring/EnvPairPotential.hh>
+#include <core/scoring/SmoothEnvPairPotential.hh>
+#include <core/scoring/CenHBPotential.hh>
 #include <core/scoring/MembranePotential.hh>
 #include <core/scoring/Membrane_FAPotential.hh> //pba
 #include <core/scoring/SecondaryStructurePotential.hh>
@@ -194,7 +196,9 @@ ScoringManager::ScoringManager() :
 	rama2b_( 0 ),
 	omega_( 0 ),
 	env_pair_potential_( 0 ),
+	smooth_env_pair_potential_( 0 ),
 	secondary_structure_potential_( 0 ),
+	cen_hb_potential_( 0 ),
 	atom_vdw_(),
 	rna_atom_vdw_( 0 ),
 	occ_hbond_sol_database_( 0 ),
@@ -274,6 +278,28 @@ ScoringManager::get_EnvPairPotential() const
 		env_pair_potential_ = new EnvPairPotential();
 	}
 	return *env_pair_potential_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+SmoothEnvPairPotential const &
+ScoringManager::get_SmoothEnvPairPotential() const
+{
+	if (smooth_env_pair_potential_ == 0 )
+	{
+		smooth_env_pair_potential_ = new SmoothEnvPairPotential();
+	}
+	return *smooth_env_pair_potential_;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+CenHBPotential const &
+ScoringManager::get_CenHBPotential() const
+{
+	if (cen_hb_potential_ == 0 )
+	{
+		cen_hb_potential_ = new CenHBPotential();
+	}
+	return *cen_hb_potential_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

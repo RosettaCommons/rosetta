@@ -115,10 +115,10 @@ namespace methods {
 static basic::Tracer TR("core.scoring.CartesianBondedEnergy");
 
 // default spring constants
-static const Real K_ANGLE=600.0;
-static const Real K_BOND=600.0;
-static const Real K_TORSION=300.0;
-static const Real K_TORSION_PROTON=60.0;  // proton chi
+static const Real K_ANGLE=450.0;
+static const Real K_BOND=150.0;
+static const Real K_TORSION=100.0;
+static const Real K_TORSION_PROTON=15.0;  // proton chi
 
 //////////////////////
 /// EnergyMethod Creator

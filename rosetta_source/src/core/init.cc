@@ -114,6 +114,9 @@
 #include <core/scoring/methods/PoissonBoltzmannEnergyCreator.hh>
 #include <core/scoring/methods/ResidualDipolarCouplingEnergyCreator.hh>
 #include <core/scoring/methods/ResidualDipolarCouplingEnergy_RohlCreator.hh>
+#include <core/scoring/methods/SmoothCenPairEnergyCreator.hh>
+#include <core/scoring/methods/SmoothEnvEnergyCreator.hh>
+#include <core/scoring/methods/CenHBEnergyCreator.hh>
 #include <core/scoring/methods/SuckerEnergyCreator.hh>
 #include <core/pack/interaction_graph/SurfaceEnergyCreator.hh>
 #include <core/pack/interaction_graph/HPatchEnergyCreator.hh>
@@ -299,6 +302,9 @@ static EnergyMethodRegistrator< scoring::methods::MembraneCbetaEnergyCreator > M
 static EnergyMethodRegistrator< scoring::methods::MembraneCenPairEnergyCreator > MembraneCenPairEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::MembraneEnvEnergyCreator > MembraneEnvEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::MembraneEnvPenaltiesCreator > MembraneEnvPenaltiesCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::SmoothCenPairEnergyCreator > SmoothCenPairEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::SmoothEnvEnergyCreator > SmoothEnvEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::CenHBEnergyCreator > CenHBEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::MembraneLipoCreator > MembraneLipoCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::MembraneEnvSmoothEnergyCreator > MembraneEnvSmoothEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::pHEnergyCreator > pHEnergyCreator_registrator;

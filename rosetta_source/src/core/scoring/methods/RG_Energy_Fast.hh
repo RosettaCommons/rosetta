@@ -17,6 +17,8 @@
 
 
 // Package headers
+#include <basic/datacache/CacheableData.hh>
+
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -32,6 +34,20 @@ namespace core {
 namespace scoring {
 namespace methods {
 
+class RG_MinData:  public basic::datacache::CacheableData {
+public:
+	RG_MinData(): com(0,0,0), rg(0), nres_scored(0) {}
+
+	basic::datacache::CacheableDataOP clone() const {
+		return new RG_MinData(*this);
+	}
+
+	numeric::xyzVector< core::Real > com;
+	core::Real rg;
+	core::Size nres_scored;
+};
+
+typedef utility::pointer::owning_ptr< RG_MinData > RG_MinDataOP;
 
 class RG_Energy_Fast : public WholeStructureEnergy  {
 public:
@@ -67,8 +83,23 @@ public:
 		pose::Pose const & pose,
 		utility::vector1< bool > const & relevant_residues) const;
 
-virtual
-core::Size version() const;
+	// derivatives
+	virtual void setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const;
+
+	virtual void
+	eval_atom_derivative(
+		id::AtomID const & id,
+		pose::Pose const & pose,
+		kinematics::DomainMap const &domain_map,
+		ScoreFunction const & sfxn,
+		EnergyMap const & weights,
+		Vector & F1,
+		Vector & F2
+	) const;
+
+
+	virtual
+	core::Size version() const;
 
 	void
 	indicate_required_context_graphs(
@@ -76,8 +107,8 @@ core::Size version() const;
 	) const {}
 
 private:
-
-
+	RG_MinData const & mindata_from_pose( pose::Pose const & ) const;
+	RG_MinData & nonconst_mindata_from_pose( pose::Pose & ) const;
 };
 
 

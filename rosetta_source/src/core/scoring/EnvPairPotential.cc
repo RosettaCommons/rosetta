@@ -29,6 +29,7 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/prof.hh>
+#include <core/scoring/TwelveANeighborGraph.hh>
 // Utility headers
 #include <utility/io/izstream.hh>
 
@@ -305,7 +306,6 @@ EnvPairPotential::compute_centroid_environment(
 
 	/// Energy graph contains edges for all residue pairs with
 	/// centroids w/i cen_dist_cutoff_12_pad
-
 	EnergyGraph const & energy_graph( pose.energies().energy_graph() );
 	Size const nres( energy_graph.num_nodes() );
 
@@ -316,27 +316,27 @@ EnvPairPotential::compute_centroid_environment(
 		// changed its sequence lenght since the last cenlist update
 		cenlist.initialize( pose );
 
-		for ( Size i = 1; i < nres; ++i ) {
-			conformation::Residue const & rsd1 ( pose.residue(i) );
-			if ( !rsd1.is_protein() ) continue;
-			for ( graph::Graph::EdgeListConstIter
-					iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
-					irue = energy_graph.get_node(i)->const_upper_edge_list_end();
-					iru != irue; ++iru ) {
-				EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
-				Size const j( edge->get_second_node_ind() );
-				conformation::Residue const & rsd2 ( pose.residue(j) );
-				if ( !rsd2.is_protein() ) continue;
-
-				Real const cendist = edge->square_distance();
-
-				//  compute arrays needed for C-beta  energy function
-				//  first do a coarse grain reality check on centroid separations
-				if ( cendist <= cen_dist_cutoff_12_pad ) {
-					fill_cenlist( cenlist, i, j, cendist );
-				}
-			}
-		}
+ 		for ( Size i = 1; i < nres; ++i ) {
+ 			conformation::Residue const & rsd1 ( pose.residue(i) );
+ 			if ( !rsd1.is_protein() ) continue;
+ 			for ( graph::Graph::EdgeListConstIter
+ 					iru  = energy_graph.get_node(i)->const_upper_edge_list_begin(),
+ 					irue = energy_graph.get_node(i)->const_upper_edge_list_end();
+ 					iru != irue; ++iru ) {
+ 				EnergyEdge const * edge( static_cast< EnergyEdge const *> (*iru) );
+ 				Size const j( edge->get_second_node_ind() );
+ 				conformation::Residue const & rsd2 ( pose.residue(j) );
+ 				if ( !rsd2.is_protein() ) continue;
+ 
+ 				Real const cendist = edge->square_distance();
+ 
+ 				//  compute arrays needed for C-beta  energy function
+ 				//  first do a coarse grain reality check on centroid separations
+ 				if ( cendist <= cen_dist_cutoff_12_pad ) {
+ 					fill_cenlist( cenlist, i, j, cendist );
+ 				}
+ 			}
+ 		}
 
 		truncate_cenlist_values( cenlist );
 		cenlist.calculated() = true;

@@ -26,6 +26,8 @@
 #include <core/scoring/Ramachandran2B.fwd.hh>
 #include <core/scoring/OmegaTether.fwd.hh>
 #include <core/scoring/EnvPairPotential.fwd.hh>
+#include <core/scoring/SmoothEnvPairPotential.fwd.hh>
+#include <core/scoring/CenHBPotential.fwd.hh>
 #include <core/scoring/MembranePotential.fwd.hh>
 #include <core/scoring/Membrane_FAPotential.fwd.hh> //pba
 //#include <core/scoring/InterchainPotential.fwd.hh>
@@ -113,6 +115,10 @@ public:
 	Ramachandran const & get_Ramachandran() const;
 
 	OmegaTether const & get_OmegaTether() const;
+
+	SmoothEnvPairPotential const & get_SmoothEnvPairPotential() const;
+
+	CenHBPotential const & get_CenHBPotential() const;
 
 	EnvPairPotential const & get_EnvPairPotential() const;
 
@@ -228,6 +234,8 @@ private:
 	mutable Ramachandran2B * rama2b_;
 	mutable OmegaTether * omega_;
 	mutable EnvPairPotential * env_pair_potential_;
+	mutable SmoothEnvPairPotential * smooth_env_pair_potential_;
+	mutable CenHBPotential * cen_hb_potential_;
 	mutable SecondaryStructurePotential * secondary_structure_potential_;
 	mutable std::map< std::string, AtomVDW * > atom_vdw_;
 	mutable rna::RNA_AtomVDW * rna_atom_vdw_;
