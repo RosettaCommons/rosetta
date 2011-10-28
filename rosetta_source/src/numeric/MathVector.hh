@@ -37,8 +37,13 @@
 #define INCLUDED_numeric_MathVector_hh
 
 
-#include <core/types.hh>
+// Package headers
+#include <numeric/types.hh>
+
+// Utility headers
 #include <utility/exit.hh>
+
+// C++ headers
 #include <math.h>
 #include <numeric>
 #include <algorithm> //needed for std::transform, std::find_if
@@ -70,7 +75,7 @@ public:
 	/// @brief construct from size and possible filler
 	/// @param SIZE number fo elements in Vector
 	/// @param FILL_VALUE assign every element to that value
-	explicit MathVector< T>( const core::Size SIZE, const T &FILL_VALUE= T( 0)) :
+	explicit MathVector< T>( const Size SIZE, const T &FILL_VALUE= T( 0)) :
 		size_( SIZE),
 		data_( new T[ SIZE])
 	{
@@ -80,7 +85,7 @@ public:
 	}
 
 	/// @brief construct from length and pointer to data
-	MathVector< T>( const core::Size SIZE, const T *DATA) :
+	MathVector< T>( const Size SIZE, const T *DATA) :
 		size_( SIZE),
 		data_( new T[ SIZE])
 	{
@@ -118,7 +123,7 @@ public:
 
 	/// @brief size of vector
 	/// @return size of Vector
-	core::Size size() const
+	Size size() const
 	{
 		return size_;
 	}
@@ -152,7 +157,7 @@ public:
 	}
 
 	/*     /// return number of elements
-core::Size size() const
+Size size() const
 {
 return size_;
 }*/
@@ -224,14 +229,14 @@ return size_;
 
 
 	/// return reference to changeable element ( POS)
-	T &operator()( const core::Size POS)
+	T &operator()( const Size POS)
 	{
 		assert_valid_position( POS);
 		return data_[ POS];
 	}
 
 	/// return copy of element ( POS)
-	const T &operator()( const core::Size POS) const
+	const T &operator()( const Size POS) const
 	{
 		assert_valid_position( POS);
 		return data_[ POS];
@@ -369,7 +374,7 @@ return size_;
 protected:
 
 	/// check whether position is valid
-	bool assert_valid_position( const core::Size POS) const
+	bool assert_valid_position( const Size POS) const
 	{
 		if(POS > size_){
 			utility_exit_with_message("cannot access element outside of range!");
@@ -386,7 +391,7 @@ private:
 	//////////
 
 	/// length of vector
-	core::Size size_;
+	Size size_;
 
 	/// range of dynamically allocated memory of size size_
 	T *data_;

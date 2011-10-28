@@ -18,7 +18,7 @@
 #include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/VirtualCoordinate.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+//#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 

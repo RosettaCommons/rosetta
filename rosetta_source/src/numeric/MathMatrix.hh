@@ -34,10 +34,14 @@
 #ifndef INCLUDED_numeric_MathMatrix_hh
 #define INCLUDED_numeric_MathMatrix_hh
 
-
-#include <core/types.hh>
-#include <utility/exit.hh>
+// Package headers
+#include <numeric/types.hh>
 #include <numeric/MathVector.hh>
+
+// Utility headers
+#include <utility/exit.hh>
+
+// C++ headers
 #include <math.h>
 #include <iostream>
 
@@ -70,8 +74,8 @@ public:
 	/// @param FILL_VALUE assign every element to that value
 	explicit MathMatrix< T>
 	(
-			const core::Size NUMBER_ROWS,
-			const core::Size NUMBER_COLS,
+			const Size NUMBER_ROWS,
+			const Size NUMBER_COLS,
 			const T &FILL_VALUE = T( 0)
 	) :
 	NumberRows_( NUMBER_ROWS),
@@ -90,8 +94,8 @@ public:
 	/// @param DATA pointer to field of data
 	MathMatrix< T>
 	(
-			const core::Size NUMBER_ROWS,
-			const core::Size NUMBER_COLS,
+			const Size NUMBER_ROWS,
+			const Size NUMBER_COLS,
 			const T *DATA
 	) :
 	NumberRows_( NUMBER_ROWS),
@@ -136,28 +140,28 @@ public:
 
 	/// @brief get number of rows
 	/// @return number of rows
-	core::Size get_number_rows() const
+	Size get_number_rows() const
 	{
 		return NumberRows_;
 	}
 
 	/// @brief get number of columns
 	/// @return number of columns
-	core::Size get_number_cols() const
+	Size get_number_cols() const
 	{
 		return NumberCols_;
 	}
 
 	/// @brief number of elements
 	/// @return total number of elements in matrix
-	core::Size get_number_elements() const
+	Size get_number_elements() const
 	{
 		return NumberRows_ * NumberCols_;
 	}
 
 	/// @brief number of elements
 	/// @return total number of elements in matrix
-	core::Size size() const
+	Size size() const
 	{
 		return NumberRows_ * NumberCols_;
 	}
@@ -192,13 +196,13 @@ public:
 
 
 	/// @return Row of Matrix
-	MathVector< T> get_row( const core::Size ROW) const
+	MathVector< T> get_row( const Size ROW) const
 		{
 		return MathVector< T>( NumberCols_, operator[]( ROW));
 		}
 
 	/// @return Col of Matrix
-	MathVector< T> get_col( const core::Size COL) const
+	MathVector< T> get_col( const Size COL) const
 		{
 		//create a vector of the size of NumberRows
 		MathVector< T> col( NumberRows_);
@@ -207,7 +211,7 @@ public:
 		T *ptr = col.begin();
 
 		//iterate over all rows
-		for( core::Size i( 0); i < NumberRows_; ++i, ++ptr)
+		for( Size i( 0); i < NumberRows_; ++i, ++ptr)
 		{
 			( *ptr) = operator()( i, COL);
 		}
@@ -237,9 +241,9 @@ public:
 		}
 
 		// check that all but the elements in the diagonal are 0
-		for( core::Size i = 0; i < NumberRows_ - 1; i++)
+		for( Size i = 0; i < NumberRows_ - 1; i++)
 		{
-			for( core::Size j = i + 1; j < NumberCols_; j++)
+			for( Size j = i + 1; j < NumberCols_; j++)
 			{
 				if( operator()( j, i) != T( 0) || operator()( i, j) != T( 0))
 				{
@@ -263,9 +267,9 @@ public:
 		}
 
 		// check that all but the inner three diagonal elements are 0
-		for( core::Size i( 0); i < NumberRows_ - 2; i++)
+		for( Size i( 0); i < NumberRows_ - 2; i++)
 		{
-			for( core::Size j( i + 2); j < NumberCols_; j++)
+			for( Size j( i + 2); j < NumberCols_; j++)
 			{
 				if( operator()( j, i) != T( 0) || operator()( i, j) != T( 0))
 				{
@@ -364,9 +368,9 @@ public:
 	inline MathMatrix< T> & transpose()
 		{
 		MathMatrix< T> newthis( NumberCols_, NumberRows_);
-		for( core::Size i( 0); i < newthis.NumberRows_; ++i)
+		for( Size i( 0); i < newthis.NumberRows_; ++i)
 		{
-			for( core::Size j( 0); j < newthis.NumberCols_; ++j)
+			for( Size j( 0); j < newthis.NumberCols_; ++j)
 			{
 				newthis( i, j) = operator()( j, i);
 			}
@@ -426,9 +430,9 @@ public:
 		MathMatrix< T> newmatrix( NumberRows_, NumberCols_);
 		newmatrix.set_unit();
 
-		for( core::Size k( 0); k < NumberRows_; ++k)
+		for( Size k( 0); k < NumberRows_; ++k)
 		{
-			core::Size index( pivot( k));
+			Size index( pivot( k));
 
 			if( index != 0)
 			{
@@ -436,12 +440,12 @@ public:
 			}
 
 			T a1 = operator()( k, k);
-			for( core::Size j( 0); j < NumberRows_; ++j)
+			for( Size j( 0); j < NumberRows_; ++j)
 			{
 				operator()( k, j) /= a1;
 				newmatrix(  k, j) /= a1;
 			}
-			for( core::Size i( 0); i < NumberRows_; ++i)
+			for( Size i( 0); i < NumberRows_; ++i)
 			{
 				if( i == k)
 				{
@@ -449,7 +453,7 @@ public:
 				}
 
 				const T a2 = operator()( i, k);
-				for( core::Size j( 0); j < NumberRows_; ++j)
+				for( Size j( 0); j < NumberRows_; ++j)
 				{
 					operator()( i, j) -= a2 * operator()( k, j);
 					newmatrix(  i, j) -= a2 * newmatrix(  k, j);
@@ -464,7 +468,7 @@ public:
 
 	inline MathMatrix< T> & inverse_diagonal_matrix()
 		{
-		for( core::Size i( 0); i < NumberRows_; ++i)
+		for( Size i( 0); i < NumberRows_; ++i)
 		{
 			if( operator()( i, i) != T( 0))
 			{
@@ -482,29 +486,29 @@ public:
 	/// invert tridiagonal matrix for all diagonal elements
 	inline MathMatrix< T> & inverse_tridiagonal_matrix()
 		{
-		core::Size n( NumberRows_);
+		Size n( NumberRows_);
 		MathMatrix< T> newmatrix( n, n);
 
 		// LU decomposition (in lower and upper triangular matrix)
-		for( core::Size i( 1); i < n; ++i)
+		for( Size i( 1); i < n; ++i)
 		{
 			operator()( i, i) -= operator()( i - 1, i) * operator()( i, i - 1) / operator()( i - 1, i - 1);
 			operator()( i, i - 1) /= operator()( i - 1, i - 1);
 		}
 
 		// compute inverse form L and U
-		for( core::Size j( 0); j < n; ++j)
+		for( Size j( 0); j < n; ++j)
 		{
 			// Solve L * y = b.
 			MathVector< T> y( n, T( 0));
-			for( core::Size i( j); i < n; ++i)
+			for( Size i( j); i < n; ++i)
 			{
 				if( i == j) y( i) = T( 1);
 				if( i  > j) y( i) -= operator()( i, i - 1) * y( i - 1);
 			}
 
 			// Solve U * x = y.
-			for( core::Size i( n - 1); i > 0; i--)
+			for( Size i( n - 1); i > 0; i--)
 			{
 				newmatrix( i, j) = y( i) / operator()( i, i);
 				y( i - 1) -= operator()( i - 1, i) * newmatrix( i, j);
@@ -528,7 +532,7 @@ public:
 		set_zero();
 
 		//iterate over diagonal of matrix and set elements to T( 1)
-		for( core::Size i = 0; i < NumberRows_ && i < NumberCols_; i++)
+		for( Size i = 0; i < NumberRows_ && i < NumberCols_; i++)
 		{
 			( *this)( i, i) = T( 1);
 		}
@@ -537,9 +541,9 @@ public:
 		}
 
 	/// @return private helper function for computing the determinante / inverting a square matrix
-	inline core::Size pivot( const core::Size ROW)
+	inline Size pivot( const Size ROW)
 	{
-		core::Size k( ROW);
+		Size k( ROW);
 
 		if( k != ROW)
 		{
@@ -553,7 +557,7 @@ public:
 	/// @return copies elements of argument VECTOR into this object at position (ROW)
 	inline MathMatrix< T> & replace_row
 	(
-			const core::Size ROW,
+			const Size ROW,
 			const MathVector< T> &VECTOR
 	)
 	{
@@ -573,7 +577,7 @@ public:
 	/// @return copies elements of argument VECTOR into this object at position (COL)
 	inline MathMatrix< T> & replace_col
 	(
-			const core::Size COL,
+			const Size COL,
 			const MathVector< T> &VECTOR
 	)
 	{
@@ -583,7 +587,7 @@ public:
 
 		const T *dat( VECTOR.begin()), *dat_end( VECTOR.end());
 		// copy elements
-		for( core::Size i( 0); i < NumberRows_ && dat != dat_end; ++i, ++dat)
+		for( Size i( 0); i < NumberRows_ && dat != dat_end; ++i, ++dat)
 		{
 			operator()( i, COL) = ( *dat);
 		}
@@ -595,15 +599,15 @@ public:
 	/// @return swap rows ROW_A and ROW_B
 	inline MathMatrix< T> &swap_rows
 	(
-			const core::Size ROW_A,
-			const core::Size ROW_B
+			const Size ROW_A,
+			const Size ROW_B
 	)
 	{
 		IsValidPosition( ROW_A, 0);
 		IsValidPosition( ROW_B, 0);
 
 		//swap each pair in rows
-		for( core::Size i( 0); i < NumberCols_; ++i)
+		for( Size i( 0); i < NumberCols_; ++i)
 		{
 			std::swap( operator()( ROW_A, i), operator()( ROW_B, i));
 		}
@@ -613,13 +617,13 @@ public:
 	}
 
 	/// @return swap columns COL_A and COL_B
-	inline MathMatrix< T> & swap_cols( const core::Size COL_A, const core::Size COL_B)
+	inline MathMatrix< T> & swap_cols( const Size COL_A, const Size COL_B)
 		{
 		IsValidPosition( 0, COL_A);
 		IsValidPosition( 0, COL_B);
 
 		//swap each pair in cols
-		for( core::Size i( 0); i < NumberRows_; ++i)
+		for( Size i( 0); i < NumberRows_; ++i)
 		{
 			std::swap( operator()( i, COL_A), operator()(  i, COL_B));
 		}
@@ -636,7 +640,7 @@ public:
 
 
 	/// @return check whether position is valid
-	bool IsValidPosition( const core::Size ROW, const core::Size COL) const
+	bool IsValidPosition( const Size ROW, const Size COL) const
 	{
 		if(ROW > NumberRows_){
 			utility_exit_with_message("ROW extends size of Matrix");
@@ -660,7 +664,7 @@ public:
 	/// @param ROW the row number, starting with 0
 	/// @param COL the col number, starting with 0
 	/// @return changable reference to the element defined bey ROW and COL number
-	T &operator()( const core::Size ROW, const core::Size COL)
+	T &operator()( const Size ROW, const Size COL)
 	{
 		return data_[ ROW * NumberCols_ + COL];
 	}
@@ -669,7 +673,7 @@ public:
 	/// @param ROW the row number, starting with 0
 	/// @param COL the col number, starting with 0
 	/// @return const element defined bey ROW and COL number
-	const T &operator()( const core::Size ROW, const core::Size COL) const
+	const T &operator()( const Size ROW, const Size COL) const
 	{
 		return data_[ ROW * NumberCols_ + COL];
 	}
@@ -719,14 +723,14 @@ public:
 	}
 
 	/// C-style data access with [] gives a pointer on a ROW
-	T *operator[]( const core::Size ROW)
+	T *operator[]( const Size ROW)
 	{
 		//VectorMatrixTensorBase< t_DataType>::IsValidPosition( ROW * m_NumberCols);
 		return (data_ + ROW * NumberCols_);
 	}
 
 	/// C-style data access with [] gives a pointer on a ROW
-	const T *operator[]( const core::Size ROW) const
+	const T *operator[]( const Size ROW) const
 	{
 		//VectorMatrixTensorBase< t_DataType>::IsValidPosition( ROW * m_NumberCols);
 		return (data_ + ROW * NumberCols_);
@@ -738,11 +742,11 @@ public:
 		{
 
 		MathMatrix< T> newthis( NumberRows_, MATRIX.NumberCols_);
-		for( core::Size i( 0); i < newthis.NumberRows_; ++i)
+		for( Size i( 0); i < newthis.NumberRows_; ++i)
 		{
-			for( core::Size j( 0); j < newthis.NumberCols_; ++j)
+			for( Size j( 0); j < newthis.NumberCols_; ++j)
 			{
-				for( core::Size k( 0); k < NumberCols_; ++k)
+				for( Size k( 0); k < NumberCols_; ++k)
 				{
 					newthis( i, j) += operator()( i, k) * MATRIX( k, j);
 				}
@@ -759,11 +763,11 @@ public:
 		MathMatrix< T> newthis( NumberRows_, 1);
 
 		const T *const vector_data( VECTOR.begin());
-		for( core::Size i( 0); i < NumberRows_; ++i)
+		for( Size i( 0); i < NumberRows_; ++i)
 		{
 			T sum_of_products( 0);
 			T * const row = operator[]( i);
-			for( core::Size j( 0); j < NumberCols_; ++j)
+			for( Size j( 0); j < NumberCols_; ++j)
 			{
 				sum_of_products += row[ j] * vector_data[ j];
 			}
@@ -780,8 +784,8 @@ public:
 
 
 private:
-	core::Size NumberRows_; //number of rows
-	core::Size NumberCols_; //number columns
+	Size NumberRows_; //number of rows
+	Size NumberCols_; //number columns
 	T *data_;
 
 };

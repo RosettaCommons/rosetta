@@ -297,11 +297,11 @@ MathMatrix< T> operator * ( const MathMatrix< T> &MATRIX_LHS, const MathMatrix< 
 
 
 	MathMatrix< T> new_matrix( MATRIX_LHS.get_number_rows(), MATRIX_RHS.get_number_cols());
-	for( core::Size i( 0); i < new_matrix.get_number_rows(); ++i)
+	for( Size i( 0); i < new_matrix.get_number_rows(); ++i)
 	{
-		for( core::Size j( 0); j < new_matrix.get_number_cols(); ++j)
+		for( Size j( 0); j < new_matrix.get_number_cols(); ++j)
 		{
-			for( core::Size k( 0); k < MATRIX_LHS.get_number_cols(); ++k)
+			for( Size k( 0); k < MATRIX_LHS.get_number_cols(); ++k)
 			{
 				new_matrix( i, j) += MATRIX_LHS.operator()( i, k) * MATRIX_RHS( k, j);
 			}
@@ -391,9 +391,9 @@ inline
 MathVector< T> operator * ( const MathMatrix< T> &MATRIX_LHS, const MathVector< T> &VECTOR_RHS )
 {
 	MathVector< T> new_vector( MATRIX_LHS.get_number_rows());
-	for( core::Size i( 0); i < MATRIX_LHS.get_number_rows(); ++i)
+	for( Size i( 0); i < MATRIX_LHS.get_number_rows(); ++i)
 	{
-		for( core::Size j( 0); j < MATRIX_LHS.get_number_cols(); ++j)
+		for( Size j( 0); j < MATRIX_LHS.get_number_cols(); ++j)
 		{
 			new_vector( i ) += MATRIX_LHS.operator()( i, j) * VECTOR_RHS( j);
 		}

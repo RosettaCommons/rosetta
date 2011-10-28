@@ -56,6 +56,7 @@
 #ifndef INCLUDED_numeric_interpolation_spline_Bicubic_spline_hh
 #define INCLUDED_numeric_interpolation_spline_Bicubic_spline_hh
 
+#include <numeric/types.hh>
 #include <numeric/interpolation/spline/Cubic_spline.fwd.hh>
 #include <numeric/MathMatrix.hh>
 #include <numeric/MathVector.hh>
@@ -89,17 +90,17 @@ public:
 
 
       /// get the second order derivatives of the spline
-      MathMatrix< core::Real> const &get_dsecox() const
+      MathMatrix< Real> const &get_dsecox() const
       {
         return dsecox_;
       }
 
-      MathMatrix< core::Real> const &get_dsecoy() const
+      MathMatrix< Real> const &get_dsecoy() const
       {
         return dsecoy_;
       }
 
-      MathMatrix< core::Real> const &get_dsecoxy() const
+      MathMatrix< Real> const &get_dsecoxy() const
       {
         return dsecoxy_;
       }
@@ -113,25 +114,25 @@ public:
     ////////////////
 
       /// @return value at (x, y)
-      core::Real F( const MathVector< core::Real> &ARGUMENTS) const;
+      Real F( const MathVector< Real> &ARGUMENTS) const;
 
       /// @return partial derivative at (x, y) for x
-      core::Real dFdx( const MathVector< core::Real> &ARGUMENTS) const;
+      Real dFdx( const MathVector< Real> &ARGUMENTS) const;
 
       /// @return partial derivative at (x, y) for y
-      core::Real dFdy( const MathVector< core::Real> &ARGUMENTS) const;
+      Real dFdy( const MathVector< Real> &ARGUMENTS) const;
 
       /// @return value and derivative at (x, y)
-      std::pair< core::Real, MathVector< core::Real> > FdF( const MathVector< core::Real> &ARGUMENTS) const;
+      std::pair< Real, MathVector< Real> > FdF( const MathVector< Real> &ARGUMENTS) const;
 
       /// train BicubicSpline
       void train
       (
-        const BorderFlag BORDER[2], const core::Real START[2], const core::Real DELTA[2], const MathMatrix< core::Real> &RESULTS,
-        const bool LINCONT[2], const std::pair< core::Real, core::Real> FIRSTBE[2]
+        const BorderFlag BORDER[2], const Real START[2], const Real DELTA[2], const MathMatrix< Real> &RESULTS,
+        const bool LINCONT[2], const std::pair< Real, Real> FIRSTBE[2]
       );
 
-      inline  core::Real sqr ( const core::Real & x ) const{
+      inline  Real sqr ( const Real & x ) const{
       	return x*x;
       }
 
@@ -139,14 +140,14 @@ public:
 private:
 	BorderFlag border_[2];   ///< controls the behavior at x/y_0 and x/y_dim-1
 
-	core::Real start_[2], delta_[2];    ///< gives the arguments as a sequence of equidistant points
+	Real start_[2], delta_[2];    ///< gives the arguments as a sequence of equidistant points
 
-	MathMatrix< core::Real> values_;     ///< f(x)
-	MathMatrix< core::Real> dsecox_;     ///< second order derivatives for x
-	MathMatrix< core::Real> dsecoy_;     ///< second order derivatives for y
-	MathMatrix< core::Real> dsecoxy_;    ///< second order derivatives for x and y
+	MathMatrix< Real> values_;     ///< f(x)
+	MathMatrix< Real> dsecox_;     ///< second order derivatives for x
+	MathMatrix< Real> dsecoy_;     ///< second order derivatives for y
+	MathMatrix< Real> dsecoxy_;    ///< second order derivatives for x and y
 
-	std::pair< core::Real, core::Real> firstbe_[2]; ///< first order derivative at x_0/dim-1, y_0/dim-1, z_0/dim-1 can be set for BorderFlag FIRSTDER
+	std::pair< Real, Real> firstbe_[2]; ///< first order derivative at x_0/dim-1, y_0/dim-1, z_0/dim-1 can be set for BorderFlag FIRSTDER
 
 	bool LinCont_[2];    ///< if the argument x is outside the range decide if the spline should be continued linearly
 

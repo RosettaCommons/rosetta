@@ -59,7 +59,6 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 
 namespace core {

@@ -16,6 +16,9 @@
 #ifndef INCLUDED_core_io_silent_ProteinSilentStruct_tmpl_hh
 #define INCLUDED_core_io_silent_ProteinSilentStruct_tmpl_hh
 
+// Unit headers
+#include <core/io/silent/ProteinSilentStruct.hh>
+
 // C++ Headers
 #include <algorithm>
 #include <cmath>
@@ -46,7 +49,6 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/EnergyNames.hh>
 #include <core/io/silent/SharedSilentData.hh>
-/// #include <core/io/silent/ProteinSilentStruct.hh> apl -- removing circular include
 #include <core/io/raw_data/DisulfideFile.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>

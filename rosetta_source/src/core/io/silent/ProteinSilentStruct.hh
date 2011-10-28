@@ -310,4 +310,6 @@ private:
 
 #endif
 
+// I will be removing this #include in not too long; if you need to use
+// this class, you'll also have to #include the .tmpl.hh file.
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>

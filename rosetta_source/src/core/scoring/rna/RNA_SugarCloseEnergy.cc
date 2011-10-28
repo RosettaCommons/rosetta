@@ -24,10 +24,8 @@
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
-
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pack/task/PackerTask.hh>
 
 // Utility headers
 #include <numeric/conversions.hh>

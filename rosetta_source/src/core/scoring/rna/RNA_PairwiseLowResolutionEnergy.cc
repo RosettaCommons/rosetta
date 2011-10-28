@@ -33,7 +33,6 @@
 // Project headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-//#include <core/pack/task/PackerTask.hh>
 
 // Utility headers
 

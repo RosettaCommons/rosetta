@@ -60,6 +60,7 @@
 #ifndef INCLUDED_numeric_interpolation_spline_Cubic_spline_hh
 #define INCLUDED_numeric_interpolation_spline_Cubic_spline_hh
 
+#include <numeric/types.hh>
 #include <numeric/MathMatrix.hh>
 #include <numeric/MathVector.hh>
 
@@ -95,16 +96,16 @@ public:
 	CubicSpline & train
 	      (
 	        const BorderFlag BORDER,
-	        const core::Real START,
-	        const core::Real DELTA,
-	        const MathVector< core::Real> &RESULTS,
-	        const std::pair< core::Real, core::Real> &FIRSTBE
+	        const Real START,
+	        const Real DELTA,
+	        const MathVector< Real> &RESULTS,
+	        const std::pair< Real, Real> &FIRSTBE
 	      );
 
 
-	core::Real F( const core::Real &ARGUMENT) const;
+	Real F( const Real &ARGUMENT) const;
 
-    inline  core::Real sqr ( const core::Real x ) const{
+    inline  Real sqr ( const Real x ) const{
     	return x*x;
     }
 
@@ -114,12 +115,12 @@ public:
     //! @brief return derivative at ARGUMENT
     //! @param ARGUMENT x value
     //! @return derivative at ARGUMENT
-    core::Real dF( const core::Real &ARGUMENT) const;
+    Real dF( const Real &ARGUMENT) const;
 
     //! @brief return value and derivative at ARGUMENT
     //! @param ARGUMENT x value
     //! @return value and derivative at ARGUMENT
-    std::pair< core::Real, core::Real> FdF( const double &ARGUMENT) const;
+    std::pair< Real, Real> FdF( const double &ARGUMENT) const;
 
 	//////////////////
 	////data access/////
@@ -129,28 +130,28 @@ public:
 
     //! @brief get the second order derivatives of the spline
     //! @return the second order derivatives at the support points of the spline
-    MathVector< core::Real> const & get_dsecox() const
+    MathVector< Real> const & get_dsecox() const
     {
       return dsecox_;
     }
 
     //! @brief access to the start value
     //! @return the start of the interval the spline is defined on
-    core::Real get_start() const
+    Real get_start() const
     {
       return start_;
     }
 
     //! @brief access to the delta value
     //! @return the distance between two support points of the spline
-    core::Real get_delta() const
+    Real get_delta() const
     {
       return delta_;
     }
 
     //! @brief access to the values
     //! @return the function values at the support points of the spline
-    const MathVector< core::Real> & get_values() const
+    const MathVector< Real> & get_values() const
     {
       return values_;
     }
@@ -158,9 +159,9 @@ public:
 
 private:
 	BorderFlag border_; //!< controls the behavior at x_0 and x_dim-1
-	core::Real start_, delta_; //!< gives the arguments as a sequence of equidistant points
-	MathVector<core::Real> values_; //!< f(x)
-	MathVector<core::Real> dsecox_; //!< second order derivatives
+	Real start_, delta_; //!< gives the arguments as a sequence of equidistant points
+	MathVector<Real> values_; //!< f(x)
+	MathVector<Real> dsecox_; //!< second order derivatives
 
 
 
@@ -169,7 +170,7 @@ private:
     //! @param INDEX_RIGHT index of right grid point
     //! @param DXP relative distance from left grid point, must be element [0, 1]
     //! @return function depending on relative distance DXP
-    core::Real Function( const int INDEX_LEFT, const int INDEX_RIGHT, const core::Real DXP) const;
+    Real Function( const int INDEX_LEFT, const int INDEX_RIGHT, const Real DXP) const;
 
 
     //! @brief calculate derivative between two cells
@@ -177,7 +178,7 @@ private:
     //! @param INDEX_RIGHT index of right grid point
     //! @param DXP relative distance from left grid point, must be element [0, 1]
     //! @return derivative depending on relative distance DXP
-    core::Real Derivative( const int INDEX_LEFT, const int INDEX_RIGHT, const core::Real DXP) const;
+    Real Derivative( const int INDEX_LEFT, const int INDEX_RIGHT, const Real DXP) const;
 
 
 

@@ -23,6 +23,8 @@
 #include <numeric/MathVector_operations.hh>
 #include <numeric/MathMatrix_operations.hh>
 
+#include <numeric/types.hh>
+
 namespace numeric {
 namespace interpolation {
 namespace spline {
@@ -39,10 +41,10 @@ namespace spline {
 CubicSpline &CubicSpline::train
 (
 		const BorderFlag BORDER,
-		const core::Real START,
-		const core::Real DELTA,
-		const MathVector< core::Real> &RESULTS,
-		const std::pair< core::Real, core::Real> &FIRSTBE
+		const Real START,
+		const Real DELTA,
+		const MathVector< Real> &RESULTS,
+		const std::pair< Real, Real> &FIRSTBE
 )
 {
 
@@ -55,13 +57,13 @@ CubicSpline &CubicSpline::train
 	delta_  = DELTA;
 
 	// auxiliary variables
-	const core::Real delta1( DELTA / 6), delta2( 2 * DELTA / 3);
+	const Real delta1( DELTA / 6), delta2( 2 * DELTA / 3);
 
 	values_  = RESULTS;
 
 
-	MathMatrix< core::Real> coeffs( dim, dim);
-	MathVector< core::Real> derivs( dim);
+	MathMatrix< Real> coeffs( dim, dim);
+	MathVector< Real> derivs( dim);
 
 	// train once for the values of fxx
 	// those values are equivalent for every type of spline considered here
@@ -121,7 +123,7 @@ CubicSpline &CubicSpline::train
 /// @brief return value at certain ARGUMENT
 /// @param ARGUMENT x value
 /// @return function value at ARGUMENT
-core::Real CubicSpline::F( const core::Real &ARGUMENT) const
+Real CubicSpline::F( const Real &ARGUMENT) const
 {
 	// number of grid points
 	const int dim( values_.size());
@@ -142,7 +144,7 @@ core::Real CubicSpline::F( const core::Real &ARGUMENT) const
 			if( i == 0)
 			{
 				// see Numerical recipes in C++, pages 116-118
-				core::Real dxp( fmod( ARGUMENT - start_, delta_) / delta_); // relative offset from the beginning of the actual interval
+				Real dxp( fmod( ARGUMENT - start_, delta_) / delta_); // relative offset from the beginning of the actual interval
 				if( dxp < 0.0)
 				{
 					dxp += 1.0;
@@ -159,7 +161,7 @@ core::Real CubicSpline::F( const core::Real &ARGUMENT) const
 		}
 		else
 		{
-			return Function( 0, 1, core::Real( 0)) + ( ARGUMENT - start_) * Derivative( 0, 1, core::Real( 0));
+			return Function( 0, 1, Real( 0)) + ( ARGUMENT - start_) * Derivative( 0, 1, Real( 0));
 		}
 	}
 	// not within supporting points - right
@@ -177,7 +179,7 @@ core::Real CubicSpline::F( const core::Real &ARGUMENT) const
 			if( i == 0)
 			{
 				// see Numerical recipes in C++, pages 116-118
-				const core::Real dxp( fmod( ARGUMENT - start_, delta_) / delta_); // relative offset from the beginning of the actual interval
+				const Real dxp( fmod( ARGUMENT - start_, delta_) / delta_); // relative offset from the beginning of the actual interval
 
 				// return
 				return Function( end, 0, dxp);
@@ -191,7 +193,7 @@ core::Real CubicSpline::F( const core::Real &ARGUMENT) const
 	}
 
 	// see Numerical recipes in C++, pages 116-118
-	core::Real dxp( fmod( ARGUMENT - start_, delta_) / delta_); // delta_akt is an offset from the beginning of the actual interval\n";
+	Real dxp( fmod( ARGUMENT - start_, delta_) / delta_); // delta_akt is an offset from the beginning of the actual interval\n";
 	if( dxp < 0.0)
 	{
 		dxp += 1.0;
@@ -206,7 +208,7 @@ core::Real CubicSpline::F( const core::Real &ARGUMENT) const
 /// @brief return derivative at certain ARGUMENT
 /// @param ARGUMENT x value
 /// @return derivative at ARGUMENT
-core::Real CubicSpline::dF( const core::Real &ARGUMENT) const
+Real CubicSpline::dF( const Real &ARGUMENT) const
 {
 	// number of grid points
 	const int dim( values_.size());
@@ -227,7 +229,7 @@ core::Real CubicSpline::dF( const core::Real &ARGUMENT) const
 			if( i == 0)
 			{
 				// see Numerical recipes in C++, pages 116-118
-				core::Real dxp( fmod( ARGUMENT - start_, delta_) / delta_); // relative offset from the beginning of the actual interval
+				Real dxp( fmod( ARGUMENT - start_, delta_) / delta_); // relative offset from the beginning of the actual interval
 				if( dxp < 0.0)
 				{
 					dxp += 1.0;
@@ -244,7 +246,7 @@ core::Real CubicSpline::dF( const core::Real &ARGUMENT) const
 		}
 		else
 		{
-			return Derivative( 0, 1, core::Real( 0));
+			return Derivative( 0, 1, Real( 0));
 		}
 	}
 	// not within supporting points - right
@@ -262,7 +264,7 @@ core::Real CubicSpline::dF( const core::Real &ARGUMENT) const
 			if( i == 0)
 			{
 				// see Numerical recipes in C++, pages 116-118
-				const core::Real dxp( fmod( ARGUMENT - start_, delta_) / delta_); // relative offset from the beginning of the actual interval
+				const Real dxp( fmod( ARGUMENT - start_, delta_) / delta_); // relative offset from the beginning of the actual interval
 
 				// return
 				return Derivative( end, 0, dxp);
@@ -276,7 +278,7 @@ core::Real CubicSpline::dF( const core::Real &ARGUMENT) const
 	}
 
 	// see Numerical recipes in C++, pages 116-118
-	core::Real dxp( fmod( ARGUMENT - start_, delta_) / delta_); // delta_akt is an offset from the beginning of the actual interval\n";
+	Real dxp( fmod( ARGUMENT - start_, delta_) / delta_); // delta_akt is an offset from the beginning of the actual interval\n";
 	if( dxp < 0.0)
 	{
 		dxp += 1.0;
@@ -288,9 +290,9 @@ core::Real CubicSpline::dF( const core::Real &ARGUMENT) const
 /// @brief return derivative and value at certain ARGUMENT
 /// @param ARGUMENT x value
 /// @return value and derivative at ARGUMENT
-std::pair< core::Real, core::Real> CubicSpline::FdF( const core::Real &ARGUMENT) const
+std::pair< Real, Real> CubicSpline::FdF( const Real &ARGUMENT) const
 {
-	return std::pair<core::Real, core::Real>( F( ARGUMENT), dF( ARGUMENT));
+	return std::pair<Real, Real>( F( ARGUMENT), dF( ARGUMENT));
 }
 
 
@@ -304,13 +306,13 @@ std::pair< core::Real, core::Real> CubicSpline::FdF( const core::Real &ARGUMENT)
 /// @param INDEX_RIGHT index of right grid point
 /// @param DXP relative distance from left grid point, must be element [0, 1]
 /// @return function depending on relative distance DXP
-core::Real CubicSpline::Function( const int INDEX_LEFT, const int INDEX_RIGHT, const core::Real DXP) const
+Real CubicSpline::Function( const int INDEX_LEFT, const int INDEX_RIGHT, const Real DXP) const
 {
 	// see Numerical recipes in C++, pages 116-118
 	// relative distance from right grid point
-	const core::Real dxm( 1 - DXP);
-	const core::Real dx3p( ( DXP * DXP * DXP - DXP) * sqr( delta_) / 6); // =0 at the gridpoints, adds cubic part of the spline
-	const core::Real dx3m( ( dxm * dxm * dxm - dxm) * sqr( delta_) / 6); // =0 at the gridpoints, adds cubic part of the spline
+	const Real dxm( 1 - DXP);
+	const Real dx3p( ( DXP * DXP * DXP - DXP) * sqr( delta_) / 6); // =0 at the gridpoints, adds cubic part of the spline
+	const Real dx3m( ( dxm * dxm * dxm - dxm) * sqr( delta_) / 6); // =0 at the gridpoints, adds cubic part of the spline
 
 	return
 			dxm * values_( INDEX_LEFT) + DXP  * values_( INDEX_RIGHT)
@@ -324,11 +326,11 @@ core::Real CubicSpline::Function( const int INDEX_LEFT, const int INDEX_RIGHT, c
 /// @param INDEX_RIGHT index of right grid point
 /// @param DXP relative distance from left grid point, must be element [0, 1]
 /// @return derivative depending on relative distance DXP
-core::Real CubicSpline::Derivative( const int INDEX_LEFT, const int INDEX_RIGHT, const core::Real DXP) const
+Real CubicSpline::Derivative( const int INDEX_LEFT, const int INDEX_RIGHT, const Real DXP) const
 {
 	// see Numerical recipes in C++, pages 116-118
 	// relative distance from right grid point
-	const core::Real dxm( 1 - DXP);
+	const Real dxm( 1 - DXP);
 
 	return
 			( values_( INDEX_RIGHT) - values_( INDEX_LEFT)) / delta_

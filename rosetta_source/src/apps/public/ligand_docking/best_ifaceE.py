@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# for f in *silent.out; do ~/mini/bin/extract_atomtree_diffs.linuxiccrelease @EXTRACT.txt -s $f -tags $(../best_ifaceE.py -n3 $f); done
+# for f in *silent.out; do ~/rosetta/rosetta_source/bin/extract_atomtree_diffs.linuxiccrelease @EXTRACT.txt -s $f -tags $(../best_ifaceE.py -n3 $f); done
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
 # (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
