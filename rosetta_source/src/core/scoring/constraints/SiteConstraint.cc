@@ -53,7 +53,7 @@ SiteConstraint::show( std::ostream& out) const
 	for( ConstraintCOPs::const_iterator cst_it = member_constraints().begin(); cst_it != member_constraints().end(); cst_it++){
 		(*cst_it)->show(out);
 	}
-    
+
 	out << " ...all member constraints of this SiteConstraint shown." << std::endl;
 }
 
@@ -72,26 +72,26 @@ SiteConstraint::read_def(
     std::string func_type;
     std::string type;
     data >> name >> tempres >> chain >> func_type;
-    
+
     ConstraintIO::parse_residue( pose, tempres, res );
     TR.Info << "read: " << name << " " << res << " " << "constrain to chain: " << chain << " func: " << func_type << std::endl;
-    
-    
-    
+
+
+
     FuncOP aFunc = func_factory.new_func( func_type );
     aFunc->read_data( data );
-    
+
     if ( TR.Debug.visible() ) {
         aFunc->show_definition( TR.Debug ); TR.Debug<<std::endl;
     }
     setup_csts( res, name, chain, pose, aFunc );
-    
+
     if ( data.good() ) {
         //chu skip the rest of line since this is a single line defintion.
 		while( data.good() && (data.get() != '\n') ) {}
 		if ( !data.good() ) data.setstate( std::ios_base::eofbit );
 	}
-    
+
 	if ( TR.Debug.visible() ) {
 		aFunc->show_definition( TR.Debug );
 		TR.Debug << std::endl;
@@ -109,19 +109,20 @@ SiteConstraint::setup_csts(
     id::AtomID target_atom( pose.residue_type( res ).atom_index( name ), res );
     Size target_chain = pose.chain( res );
     Size constraint_chain = pose::get_chain_id_from_chain( chain, pose );
-    
+
     Size start_res = pose.conformation().chain_begin( constraint_chain );
     Size end_res = pose.conformation().chain_end( constraint_chain );
-    
+
     for (Size j = start_res ; j < end_res ; ++j ) {
                 id::AtomID atom2( pose.residue_type( j ).atom_index( "CA" ), j );
                 runtime_assert( target_atom.valid() && atom2.valid() );
                 add_individual_constraint( new AtomPairConstraint( target_atom, atom2, func ) );
     }
- 
+
 } // setup_csts
-    
+
 } // constraints
 } // scoring
 } // core
+
 

@@ -42,38 +42,38 @@
 namespace core {
 namespace scoring {
 namespace constraints {
-            
-            
+
+
 class SiteConstraint : public AmbiguousConstraint {
 public:
-    
+
     /// @brief Constructor
     SiteConstraint();
-    
+
     /// @brief Constructor
     SiteConstraint( ConstraintCOPs & cst_in ) ;
-    
+
     ///
     virtual
     ConstraintOP clone() const {
         return new SiteConstraint(*this);
     }
-                    
+
     std::string type() const {
         return "SiteConstraint";
     }
-    
+
     /// @brief read in constraint defiinition
     void
     read_def( std::istream& data, pose::Pose const& pose, FuncFactory const& func_factory );
-                    
+
     void show( std::ostream& out) const;
     void setup_csts( Size res, std::string name, std::string chain, core::pose::Pose const & pose, FuncOP const & func );
-    
+
 private:
 
-    
-    
+
+
 }; //SiteConstraint
 
 } //constraints
