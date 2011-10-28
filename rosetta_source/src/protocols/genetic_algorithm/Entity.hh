@@ -185,7 +185,7 @@ bool eq_OP_deref(
 struct
 Vec1Hash {
 	std::size_t operator() ( EntityElements const & vec1 ) const {
-		core::Size seed = 0;
+		std::size_t seed = 0;
 		for ( EntityElements::const_iterator
 				iter = vec1.begin(), iter_end = vec1.end(); iter != iter_end; ++iter ) {
 			boost::hash_combine( seed, (*iter)->hash() );

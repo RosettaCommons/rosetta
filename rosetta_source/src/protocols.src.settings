@@ -954,6 +954,7 @@ sources = {
 	"protocols/moves/kinematic_closure" : [
 		"bridgeObjects",
 		"dixon",
+		"sturm",
 		"kinematic_closure_helpers",
 		"KinematicPerturber"
 	],

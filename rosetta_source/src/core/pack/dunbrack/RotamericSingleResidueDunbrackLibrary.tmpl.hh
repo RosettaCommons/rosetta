@@ -305,7 +305,7 @@ RotamericSingleResidueDunbrackLibrary< T >::rotamer_energy_deriv(
 	// p0 - the base probability -- not modified by the chi-dev penalty
 	Real const rotprob( scratch.rotprob() );
 
-	Size const nbb( std::min( rsd.mainchain_torsions().size(), DUNBRACK_MAX_BBTOR) );
+	Size const nbb( std::min( (Size)rsd.mainchain_torsions().size(), DUNBRACK_MAX_BBTOR) );
 
 	Real const invp( ( rotprob == Real( 0.0 ) ) ? 0.0 : -1.0 / rotprob );
 

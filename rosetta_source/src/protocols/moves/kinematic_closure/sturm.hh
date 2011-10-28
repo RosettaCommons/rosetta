@@ -54,8 +54,8 @@ typedef  	struct	p {
 	double	coef[MAX_ORDER+1];
 } poly;
 
-double RELERROR;
-int MAXIT, MAX_ITER_SECANT;
+extern double RELERROR;
+extern int MAXIT, MAX_ITER_SECANT;
 
 /* set termination criteria for polynomial solver */
 inline

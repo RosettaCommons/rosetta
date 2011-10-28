@@ -18,14 +18,15 @@
 
 // C++ headers
 //#include <stdint.h> // int64_t, uint64_t, intptr_t, uintptr_t
-#include <basetsd.h>
 
-/// @brief Fixed size types
-typedef  INT32  int32_t; // 32-bit unsigned integer
-typedef  UINT32 uint32_t; // 32-bit unsigned integer
-typedef  INT64  int64_t; // 64-bit signed integer
-typedef  UINT64  uint64_t; // 64-bit unsigned integer
-
+#ifdef WIN_PYROSETTA
+	#include <basetsd.h>
+	/// @brief Fixed size types
+	typedef  INT32  int32_t; // 32-bit unsigned integer
+	typedef  UINT32 uint32_t; // 32-bit unsigned integer
+	typedef  INT64  int64_t; // 64-bit signed integer
+	typedef  UINT64  uint64_t; // 64-bit unsigned integer
+#endif
 
 /// @brief Fixed size types:
 // int64_t  64-bit signed integer
@@ -37,16 +38,25 @@ typedef  UINT64  uint64_t; // 64-bit unsigned integer
 // uintptr_t  Pointer-sized unsigned integer
 //typedef  long int  ssize_t; // Signed size
 
-#ifndef HAVE_SSIZE_T
-    #define HAVE_SSIZE_T
-	typedef  long int  ssize_t; // Signed size
+#ifdef WIN_PYROSETTA
+	#ifndef HAVE_SSIZE_T
+		#define HAVE_SSIZE_T
+		typedef  int  ssize_t; // Signed size
+	#endif
 #endif
+
 
 namespace platform {
 
-typedef size_t       Size;
-typedef long int     SSize;
-typedef size_t       uint;
+#ifdef WIN_PYROSETTA
+	typedef size_t  Size;
+	typedef int     SSize;
+	typedef size_t  uint;
+#else
+	typedef unsigned int  Size;
+	typedef int           SSize;
+	typedef unsigned int  uint;
+#endif
 
 	// Floating point precision control scalar
 #ifdef ROSETTA_FLOAT // Real == float

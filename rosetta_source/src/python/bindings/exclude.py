@@ -93,7 +93,6 @@ BannedFiles = ['utility/PyHelper.hh', 'utility/keys', 'utility/options', 'utilit
 
     #'protocols/frag_picker', # whole dir not in scons (ie been moved now), temporary
 
-
 # Lion workarround
     # problem with gccxml using gcc 4.2.1 ???
     #'utility/signals',
@@ -1231,11 +1230,10 @@ def finalize(fname, dest, path, mb, module_name='_noname', add_by_hand=False, fi
 
         if True:
             output = set()
-            cc_file = files[0].replace('.hh', '.cc')
-            if os.path.isfile(cc_file):
-                #print 'File %s found! Appending includes...' % cc_file
-                files.append(cc_file)
-            #else: print 'No %s file found!' % cc_file
+            for f in files[:]:
+                cc_file = f.replace('.hh', '.cc')
+                if os.path.isfile(cc_file):
+                    files.append(cc_file)
 
             for f in files:
                 #print f
@@ -1245,6 +1243,8 @@ def finalize(fname, dest, path, mb, module_name='_noname', add_by_hand=False, fi
                         + commands.getoutput("cat %s | grep '^#include <protocols'" % f) + '\n' \
                         + commands.getoutput("cat %s | grep '^#include <basic'" % f) + '\n' \
                         + commands.getoutput("cat %s | grep '^#include <ObjexxFCL'" % f) + '\n'
+
+                #print f, lines
 
                 for i in lines.split('\n'):
                     if i:

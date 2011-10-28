@@ -137,12 +137,12 @@ def main(args):
       default='python2.5',
       action="store",
       help="Name of python dynamic library.",
-      )
+    )
 
     parser.add_option("--update-IncludeDict",
-                      action="store_true", dest='sort_IncludeDict', default=False,
+      action="store_true", dest='sort_IncludeDict', default=False,
       help="Developers only. Save sorter IncludeDict back to file.",
-      )
+    )
 
     parser.add_option("--one-lib-file", action="store_true", dest="one_lib_file", default=True,
       help="Generate only one lib file for name spaces [experimental]."
@@ -167,6 +167,11 @@ def main(args):
       help="Mostly for Windows native build: Path to pre-generated PyRosetta C++ source files.",
     )
 
+    parser.add_option("--use-windows-platform-types",
+      action="store_true", dest='use_windows_platform_types', default=False,
+      help="Generate bindings and target Windows cross platform build, this will result in different Size/SSize types. This also implies skipping the binding compilation.",
+    )
+
     parser.add_option("-j", "--jobs",
       default=1,
       type="int",
@@ -187,6 +192,7 @@ def main(args):
     print "--one-lib-file", options.one_lib_file
     print "--boost_lib", options.boost_lib
     print '--update', options.update
+    #print '--use-windows-platform-types', options.use_windows_platform_types
 
     if (Options.jobs > 1) and Options.sort_IncludeDict:
         print 'Option --update-IncludeDict could be used only with -j1... exiting...'
@@ -559,36 +565,36 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
         print 'Building Rosetta lib...'
         # Generate svn_version
         execute('Generate svn_version.cc...', 'cd .. && python svn_version.py')
-    
+
         for s in external:
             try: os.makedirs( os.path.join( build_dir, os.path.split(s)[0]) )
             except OSError: pass
-    
+
             obj = os.path.join(build_dir,s) + '.obj'
             s = '../external/' + s
-    
+
             if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
                 execute('Compiling %s' % s, 'cl /MD /GR /Gy /D "WIN32" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /DSQLITE_DISABLE_LFS /DSQLITE_OMIT_LOAD_EXTENSION /DSQLITE_THREADSAFE=0 /DCPPDB_EXPORTS /DCPPDB_LIBRARY_SUFFIX=\\".dylib\\" /DCPPDB_LIBRARY_PREFIX=\\"lib\\" /DCPPDB_DISABLE_SHARED_OBJECT_LOADING /DCPPDB_DISABLE_THREAD_SAFETY /DCPPDB_SOVERSION=\\"0\\" /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj),)
-    
+
         for s in sources:
             #s = s.replace('/', '\\')
-    
+
             try: os.makedirs( os.path.join( build_dir, os.path.split(s)[0]) )
             except OSError: pass
-    
+
             obj = os.path.join(build_dir,s) + '.obj'
-    
+
             if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
                 execute('Compiling %s' % s, 'cl /MD /GR /Gy /DWIN32 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj),
                         )  # return_=True)
-    
+
         # Now creating DLL
         dll = os.path.join(bindings_path, 'rosetta.dll')
         objs = ' '.join( [ f + '.obj' for f in external] ) + ' ' + ' '.join( [f + '.obj' for f in sources] )
         file(os.path.join(build_dir,'objs') , 'w').write( objs )
         #execute('Creating DLL %s...' % dll, 'cd ..\\build\\windows && link /dll @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib /out:%s' % dll )
         execute('Creating lib %s...' % dll, 'cd ..\\build\\windows && lib @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib /out:lib_rosetta.lib')
-        
+
         # libcmt.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
         #execute('Creating DLL %s...' % s, 'cd ..\\build\\windows && cl /link /DLL @objs /OUT:%s' % dll )
 
@@ -605,14 +611,14 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
 __global = 0
 def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path):
     files = sorted( filter(lambda f: f.endswith('.cpp'), files) )
-    
+
     if files:
         sub_dir = dir_name[ len(base_dir)+1: ]
         #print dir_name, base_dir, sub_dir, files
-    
+
         obj_dir = os.path.join(bindings_path, sub_dir)
         if not os.path.isdir(obj_dir): os.makedirs(obj_dir)
-    
+
         # compiling...
         latest = None
         objs = []
@@ -622,40 +628,40 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path):
             source = os.path.join(dir_name, f)
             obj = os.path.join( obj_dir, f[:-3]+'obj')
             objs.append(obj)
-    
+
             if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(source):
-                execute('Compiling %s\\%s' % (dir_name, f), ('cl %s /c %s /I.' 
+                execute('Compiling %s\\%s' % (dir_name, f), ('cl %s /c %s /I.'
                    + ' /I../external/include /IC:/WPyRosetta/boost_1_47_0 /I../external/dbio /Iplatform/windows/PyRosetta'
                    + ' /Ic:\Python27\include /DWIN_PYROSETTA_PASS_2 /DBOOST_PYTHON_MAX_ARITY=20'
-                   + ' /Fo%s ') % (_CL_Options_, source, obj) ) 
+                   + ' /Fo%s ') % (_CL_Options_, source, obj) )
                 #  /Iplatform/windows/32/msvc
                 #  /I../external/boost_1_46_1
                 #  /IBOOST_MSVC    /link rosetta_lib
-    
+
                 # c:\\mingw\\bin\\
                 """execute('Compiling %s' % (dir_name+f), 'gcc -DPYROSETTA -c %s -I. \
                         -I../external/include -IC:/WPyRosetta/boost_1_47_0 -I../external/dbio -Iplatform/windows/PyRosetta \
     -Ic:\Python27\include -c -pipe -O3 -ffast-math -funroll-loops -finline-functions -DBOOST_PYTHON_MAX_ARITY=20 \
         -o %s' % (source, obj) )"""
-        
+
             latest = max(latest, os.path.getmtime(obj) )
-            
+
         #
         pyd = os.path.join( obj_dir, '__%s_all_at_once_.pyd' % dir_name.split('\\')[-1])
         if (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < latest:
-            execute('Creating DLL %s...' % pyd, 
+            execute('Creating DLL %s...' % pyd,
                     'link  /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:c:/WPyRosetta/boost_1_47_0/stage/lib  %s %s/../../../../build/windows/lib_rosetta.lib /out:%s' % (' '.join(objs), bindings_path, pyd) )
-            
-        
+
+
 
 #-c -pipe -O3 -ffast-math -funroll-loops -finline-functions -fPIC -DBOOST_PYTHON_MAX_ARITY=20 -I../external/include  -I../external/dbio
-#-I/Users/sergey/work/trunk/PyRosetta.develop.Python-2.7/PyRosetta.Develop.64/include -I/Users/sergey/work/trunk/PyRosetta.develop.Python-2.7/PyRosetta.Develop.64/include/boost 
+#-I/Users/sergey/work/trunk/PyRosetta.develop.Python-2.7/PyRosetta.Develop.64/include -I/Users/sergey/work/trunk/PyRosetta.develop.Python-2.7/PyRosetta.Develop.64/include/boost
 #-I/System/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7 -I../src/platform/linux -I../src
 
 
         #cl /MD p_qwe.cpp /EHsc /I. /Ic:\T\boost_1_47_0_ /Ic:\Python27\include /c /GR /Gy /W3 /GS-
 
-    #global __global;  __global += 1    
+    #global __global;  __global += 1
     #if __global>3: sys.exit(1)
 
 
@@ -759,6 +765,8 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
     #if Platform == 'cygwin': runtime_libpaths = ' '
 
     cpp_defines = '-DPYROSETTA -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK -DBOOST_NO_INITIALIZER_LISTS'
+    if Options.use_windows_platform_types: cpp_defines += ' -I../src/platform/windows/PyRosetta'
+    else: cpp_defines += ' -I../src/platform/linux'
 
     cc_files = []
     add_option  = getCompilerOptions()
@@ -848,7 +856,7 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
         # we need  -DBOOST_NO_INITIALIZER_LISTS or gccxml choke on protocols/genetic_algorithm/GeneticAlgorithm.hh
         # GCCXML version
         # -DPYROSETTA
-        if execute('Generating XML representation...', 'gccxml  %s -fxml=%s %s -I. -I../src/platform/linux  -I../external/include -I../external/boost_1_46_1 -I../external/dbio ' % (source_hh, xml_name, cpp_defines), not Options.continue_): continue
+        if execute('Generating XML representation...', 'gccxml  %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_46_1 -I../external/dbio ' % (source_hh, xml_name, cpp_defines), not Options.continue_): continue
 
         namespaces_to_wrap = ['::'+path.replace('/', '::')+'::']
         # Temporary injecting Mover in to protocols level
@@ -919,7 +927,7 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
 
         if xml_recompile or (not Options.update):
 
-            if execute('Generating XML representation...', 'gccxml  %s -fxml=%s %s -I. -I../src/platform/linux  -I../external/include -I../external/boost_1_46_1  -I../external/dbio ' % (all_at_once_source_cpp, all_at_once_xml, cpp_defines), not Options.continue_ ):
+            if execute('Generating XML representation...', 'gccxml  %s -fxml=%s %s -I. -I../external/include -I../external/boost_1_46_1  -I../external/dbio ' % (all_at_once_source_cpp, all_at_once_xml, cpp_defines), not Options.continue_ ):
                 return new_headers
 
             namespaces_to_wrap = ['::'+path.replace('/', '::')+'::']
@@ -947,24 +955,28 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
                 comiler_dict = dict(add_option=add_option, fname=all_at_once_N_cpp, obj_name=all_at_once_N_obj, include_paths=include_paths, compiler=Options.compiler)
 
                 failed = False
-                if execute("Compiling...", comiler_cmd % comiler_dict, True):
-                    if Options.compiler != 'clang': failed = True
-                    elif execute("Compiling...", comiler_cmd % dict(comiler_dict, compiler='gcc'), True): failed = True
+
+                if not Options.use_windows_platform_types:
+                    if execute("Compiling...", comiler_cmd % comiler_dict, True):
+                        if Options.compiler != 'clang': failed = True
+                        elif execute("Compiling...", comiler_cmd % dict(comiler_dict, compiler='gcc'), True): failed = True
 
                 if not Options.continue_  and failed: return new_headers
 
                 objs_list.append(all_at_once_N_obj)
 
-            execute("Linking...", # -fPIC -ffloat-store -ffor-scope
-                "cd %(dest)s/../ && %(compiler)s %(obj)s %(add_option)s  \
-                -lmini -lstdc++ -lz\
-                 -l%(python_lib)s \
-                 -l%(boost_lib)s \
-                 %(libpaths)s %(runtime_libpaths)s -o %(dst)s" % dict(add_option=add_loption, obj=' '.join(objs_list),
-                    dst=all_at_once_lib, libpaths=libpaths, runtime_libpaths=runtime_libpaths, dest=dest, boost_lib=Options.boost_lib,
-                    python_lib=Options.python_lib, compiler=Options.compiler
-                    ),
-                 not Options.continue_)
+            if not Options.use_windows_platform_types:
+                execute("Linking...", # -fPIC -ffloat-store -ffor-scope
+                    "cd %(dest)s/../ && %(compiler)s %(obj)s %(add_option)s  \
+                    -lmini -lstdc++ -lz\
+                     -l%(python_lib)s \
+                     -l%(boost_lib)s \
+                     %(libpaths)s %(runtime_libpaths)s -o %(dst)s" % dict(add_option=add_loption, obj=' '.join(objs_list),
+                        dst=all_at_once_lib, libpaths=libpaths, runtime_libpaths=runtime_libpaths, dest=dest, boost_lib=Options.boost_lib,
+                        python_lib=Options.python_lib, compiler=Options.compiler
+                        ),
+                     not Options.continue_)
+            else: execute("Toching %s file..." % all_at_once_lib, 'cd %(dest)s/../ && touch %(dst)s' % dict(dest=dest, dst=all_at_once_lib) )
 
 
 
