@@ -2691,6 +2691,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'min_rms'  , 'Real', default='0.0' ),
 		Option( 'max_rms'  , 'Real', default='100.0' ),
 		Option( 'max_radius'  , 'Integer', default='4' ),
+		Option( 'max_struct'  , 'Integer', default='10' ),
+		Option( 'max_struct_per_radius'  , 'Integer', default='10' ),
 		Option( 'grid_space_multiplier'  , 'Real', default = '1' ),
 		Option( 'grid_angle_multiplier'  , 'Real', default = '2.5' ),
 		Option( 'skim_size', 'Integer', default='100' ),

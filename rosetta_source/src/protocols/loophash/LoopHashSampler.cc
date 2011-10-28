@@ -55,6 +55,8 @@ LoopHashSampler::LoopHashSampler(
 	max_bbrms_ ( 100000.0 ),
 	min_rms_   ( 0.0 ),
 	max_rms_   ( 100.0 ),
+	max_struct_ (10),
+	max_struct_per_radius_ (10),
 	nprefilter_ ( 0 ), // OBSOLETE?
 	nonideal_ ( false )
 {
@@ -74,6 +76,8 @@ LoopHashSampler::set_defaults(){
 	set_max_bbrms(  option[ lh::max_bbrms ] ()  );
 	set_min_rms(    option[ lh::min_rms ]() );
 	set_max_rms(    option[ lh::max_rms ]() );
+	set_max_struct(    option[ lh::max_struct ]() );
+	set_max_struct_per_radius(    option[ lh::max_struct_per_radius ]() );
 	set_max_nstruct( 10000000 ); // OBSOLETE?
 }
 
@@ -188,12 +192,14 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 				// make up some function that uses sample weight to generate model number cutoffs
 				// and one that gives a max_bbrms and min_bbrms
 				// Make it slightly dependent on round
-				core::Size sw_nmodels = (int)(avg_sw/5*(1.0+(round-1)/60));
+				//core::Size sw_nmodels = (int)(avg_sw/5*(1.0+(round-1)/60));
+				core::Size sw_nmodels = (int)(avg_sw*max_struct_/50*(1.0+(round-1)/60));
 				core::Size sw_nfrags = (int)avg_sw*10;
 				
 				// Limit how many structures chosen from a given radius
 				// Make it dependent on round, less for higher rounds
-				core::Size sw_nmodels_per_rad = (int)(avg_sw/50*3);
+				//core::Size sw_nmodels_per_rad = (int)(avg_sw/50*3);
+				core::Size sw_nmodels_per_rad = (int)(avg_sw*max_struct_per_radius_/50);
 
 				/* dont change these based on avg_sw for now
 				set_min_rms(  avg_sw/10   );

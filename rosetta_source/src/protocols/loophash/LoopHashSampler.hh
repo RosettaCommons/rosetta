@@ -68,6 +68,8 @@ class LoopHashSampler : public utility::pointer::ReferenceCount  {
   void set_min_rms  ( core::Real  value ) {  min_rms_    = value; }
   void set_max_rms  ( core::Real  value ) {  max_rms_    = value; }
   void set_max_radius  ( core::Size value ) {  max_radius_    = value; }
+  void set_max_struct  ( core::Size  value ) {  max_struct_    = value; }
+  void set_max_struct_per_radius  ( core::Size  value ) {  max_struct_per_radius_    = value; }
   void set_max_nstruct  ( core::Size  value ) {  max_nstruct_    = value; }
   void set_nonideal  ( bool value ) {  nonideal_  = value; }
 	// This is meant for model creation, not mpi refinement!
@@ -103,6 +105,8 @@ class LoopHashSampler : public utility::pointer::ReferenceCount  {
 		core::Real max_bbrms_;
 		core::Real min_rms_  ;
 		core::Real max_rms_  ;
+		core::Size max_struct_;
+		core::Size max_struct_per_radius_;
 		core::Size max_radius_;
 		core::Size max_nstruct_;
 		bool nonideal_;

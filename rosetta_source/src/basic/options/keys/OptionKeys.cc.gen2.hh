@@ -1,5 +1,3 @@
-namespace wum { StringOptionKey const extra_scorefxn( "wum:extra_scorefxn" );  }
-namespace wum { FileOptionKey const extra_scorefxn_ref_structure( "wum:extra_scorefxn_ref_structure" );  }
 namespace wum { IntegerOptionKey const extra_scorefxn_relax( "wum:extra_scorefxn_relax" );  }
 namespace wum { RealOptionKey const trim_proportion( "wum:trim_proportion" );  }
 namespace lh { BooleanOptionKey const lh( "lh" );  }
@@ -16,6 +14,8 @@ namespace lh { RealOptionKey const max_bbrms( "lh:max_bbrms" );  }
 namespace lh { RealOptionKey const min_rms( "lh:min_rms" );  }
 namespace lh { RealOptionKey const max_rms( "lh:max_rms" );  }
 namespace lh { IntegerOptionKey const max_radius( "lh:max_radius" );  }
+namespace lh { IntegerOptionKey const max_struct( "lh:max_struct" );  }
+namespace lh { IntegerOptionKey const max_struct_per_radius( "lh:max_struct_per_radius" );  }
 namespace lh { RealOptionKey const grid_space_multiplier( "lh:grid_space_multiplier" );  }
 namespace lh { RealOptionKey const grid_angle_multiplier( "lh:grid_angle_multiplier" );  }
 namespace lh { IntegerOptionKey const skim_size( "lh:skim_size" );  }
@@ -578,3 +578,4 @@ namespace AnchoredDesign { namespace testing { BooleanOptionKey const testing( "
 namespace AnchoredDesign { namespace testing { RealOptionKey const VDW_weight( "AnchoredDesign:testing:VDW_weight" );  } }
 namespace AnchoredDesign { namespace testing { BooleanOptionKey const anchor_via_constraints( "AnchoredDesign:testing:anchor_via_constraints" );  } }
 namespace AnchoredDesign { namespace testing { BooleanOptionKey const delete_interface_native_sidechains( "AnchoredDesign:testing:delete_interface_native_sidechains" );  } }
+namespace AnchoredDesign { namespace testing { FileOptionKey const RMSD_only_this( "AnchoredDesign:testing:RMSD_only_this" );  } }
