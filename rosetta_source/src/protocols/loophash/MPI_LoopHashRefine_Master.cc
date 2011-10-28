@@ -59,6 +59,7 @@
 #include <fstream>
 #include <utility/string_util.hh>
 #include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 
 //Auto Headers
 // Auto-header: duplicate removed #include <core/pose/util.hh>
@@ -482,27 +483,38 @@ MPI_LoopHashRefine_Master::load_sample_weight() {
 				std::string pathtofile = option[ OptionKeys::lh::sample_weight_file ]();
 				std::ifstream file( pathtofile.c_str() ); 
 				if (!file) utility_exit_with_message( "Failed to open sample_weight file.  Check path." );
-				std::string line;
-				getline( file, line );
+				std::string line, tmp;
+				while(getline( file, line ) ) {
 
-				boost::trim(line);
+					boost::trim(line);
+					std::vector < std::string > r;
+					boost::split(r, line, boost::is_any_of("\t "));
+					
 				
-				// Check for correct format
-				for( int i = 0; i < line.length(); i++ ) {
-					#ifdef WIN32
-						if( !std::isdigit(line[i], std::locale::classic()) && line[i] != ' ') utility_exit_with_message( "Sample weight file has characters other than digits and spaces. Please reformat." );
-					#else
-						if( !std::isdigit(line[i]) && line[i] != ' ') utility_exit_with_message( "Sample weight file has characters other than digits and spaces. Please reformat." );
-					#endif		
-				}
+					int i;
+					// Check for correct format
+					try {
+						i = boost::lexical_cast<int> (r[1] );
+					} catch( boost::bad_lexical_cast &) {
+							utility_exit_with_message( "Sample weight second column can't be casted to an int.");
+					}
 
+					if ( ! (i >= 0 && i <=100 )) {
+							utility_exit_with_message( "Sample weight second column is not an int between 0 and 100." );
+						} else {
+							tmp += r[1] + " ";
+						}
+				}
 				// check for correct length
+				boost::trim(tmp);
 				std::list < std::string > t;
-				t = utility::split_to_list(line);
+				t = utility::split_to_list(tmp);
 				if( t.size() != (*(library_central().begin()))->nres() )
-				utility_exit_with_message( "Sample weight file either improperly formatted or does not have same number of residues as structure." );
-				sample_weight_str_ = line;
+					utility_exit_with_message( "Sample weight file either improperly formatted or does not have same number of residues as structure." );
+				TR << "Sample weight file successfully loaded" << std::endl;
+				sample_weight_str_ = tmp;
 		} else {
+				TR << "Using default sample weight of 50 for every residue" << std::endl;
 				std::string t = "50";
 				for( int i = 0; i < (*(library_central().begin()))->nres() - 1; i++ ) {
 						t += " 50";

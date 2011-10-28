@@ -180,6 +180,10 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 						avg_sw += sample_weight[m];
 				}
 				avg_sw = avg_sw/loop_size;
+				if (avg_sw == 0 ) {
+					//TR << "Sample Weight is 0" << std::endl;
+					break;
+				}
 
 				// make up some function that uses sample weight to generate model number cutoffs
 				// and one that gives a max_bbrms and min_bbrms
