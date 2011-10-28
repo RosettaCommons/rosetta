@@ -22,6 +22,10 @@
 #include <protocols/forge/build/Interval.fwd.hh>
 #include <protocols/forge/build/BuildInstruction.fwd.hh>
 
+#ifdef WIN_PYROSETTA
+	#include <protocols/forge/build/BuildInstruction.hh>
+#endif
+
 // project headers
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>

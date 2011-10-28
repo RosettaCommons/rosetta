@@ -22,6 +22,8 @@
 #include <protocols/forge/build/ConnectRight.hh>
 #include <protocols/forge/build/RelativeSequencePosition.fwd.hh>
 
+#include <protocols/forge/build/BuildInstruction.fwd.hh>
+
 
 namespace protocols {
 namespace forge {
