@@ -37,7 +37,7 @@ class CAcstGenerator : public protocols::moves::Mover {
 
   CAcstGenerator();
 
-  bool is_seed  ( protocols::loops::Loops & loops, core::Size & residue );
+  // undefined, commenting out to fix PyRosetta build  bool is_seed  ( protocols::loops::Loops & loops, core::Size & residue );
 
   void apply( core::pose::Pose & pose );
 

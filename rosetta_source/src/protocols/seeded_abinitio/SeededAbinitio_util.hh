@@ -48,9 +48,9 @@ namespace protocols {
 namespace seeded_abinitio {
 
 void adjust_mm_to_length( core::pose::Pose const & pose, core::kinematics::MoveMapOP & mm );
-		
-		
-void combine_two_poses( core::pose::Pose & design_pose , core::pose::PoseOP & target_chain );
+
+
+void combine_two_poses( core::pose::Pose & design_pose , core::pose::PoseOP target_chain );
 
 
 }

@@ -66,10 +66,10 @@ public:
 		core::pose::Pose const & pose);
 
 	/// @brief Replace the load-time FeaturesReporterCreator with another creator.
-	void replace_creator( FeaturesReporterCreatorCOP creator );
+	// undefined, commenting out to fix PyRosetta build  void replace_creator( FeaturesReporterCreatorCOP creator );
 
-	FeaturesReporterCreatorCOP
-	get_creator( std::string const & type_name );
+	// undefined, commenting out to fix PyRosetta build  FeaturesReporterCreatorCOP
+	// get_creator( std::string const & type_name );
 
 private:
 
