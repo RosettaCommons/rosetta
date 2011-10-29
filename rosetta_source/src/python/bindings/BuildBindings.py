@@ -550,8 +550,15 @@ def getAllRosettaSourceFiles():
     return extra_objs, all_sources
 
 
-# Windows MSVC compiler common options
-_CL_Options_ = '/MD /GR /Gy /DWIN32 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /EHsc'
+# Windows MSVC compiler common options (no optimization, but it works)
+#_CL_Options_ = '/MD /GR /Gy /DWIN32 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DNDEBUG /EHsc'
+
+# MSVC release options: /O2 /Oi /GL /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /FD /EHsc /MD /Gy /Yu"stdafx.h" /Fp"Release\SimpleConsoleApp.pch" /Fo"Release\\" /Fd"Release\vc90.pdb" /W3 /nologo /c /Zi /TP /errorReport:prompt
+# /Zi is 'generate omplete debugging information' - removing it
+# /W3 is just warning level
+_CL_Options_ = '/O2 /Oi /GL /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA'
+ 
+
 
 def BuildRosettaOnWindows(build_dir, bindings_path):
     ''' bypassing scones and build rosetta on windows native
@@ -585,7 +592,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
             obj = os.path.join(build_dir,s) + '.obj'
 
             if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
-                execute('Compiling %s' % s, 'cl /MD /GR /Gy /DWIN32 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj),
+                execute('Compiling %s' % s, 'cl %s /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s' % (_CL_Options_, s, obj),
                         )  # return_=True)
 
         # Now creating DLL
@@ -618,43 +625,48 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path):
 
     init_file_src = os.path.join(dir_name, '__init__.py')
     if os.path.isfile(init_file_src): shutil.copyfile(init_file_src, os.path.join(os.path.join(bindings_path, sub_dir), '__init__.py') )
-    
+
+    pyd = os.path.join( obj_dir, '__%s_all_at_once_.pyd' % dir_name.split('\\')[-1])
+
     if files:
         #print dir_name, base_dir, sub_dir, files
-    
     
         # compiling...
         latest = None
         objs = []
         rosetta_dll = os.path.join(bindings_path, 'rosetta.dll')
         rosetta_lib = os.path.join(bindings_path, 'rosetta.lib')
-        for f in files:
-            source = os.path.join(dir_name, f)
-            obj = os.path.join( obj_dir, f[:-3]+'obj')
-            objs.append(obj)
-    
-            if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(source):
-                execute('Compiling %s\\%s' % (dir_name, f), ('cl %s /c %s /I.' 
-                   + ' /I../external/include /IC:/WPyRosetta/boost_1_47_0 /I../external/dbio /Iplatform/windows/PyRosetta'
-                   + ' /Ic:\Python27\include /DWIN_PYROSETTA_PASS_2 /DBOOST_PYTHON_MAX_ARITY=20'
-                   + ' /Fo%s ') % (_CL_Options_, source, obj) ) 
-                #  /Iplatform/windows/32/msvc
-                #  /I../external/boost_1_46_1
-                #  /IBOOST_MSVC    /link rosetta_lib
-    
-                # c:\\mingw\\bin\\
-                """execute('Compiling %s' % (dir_name+f), 'gcc -DPYROSETTA -c %s -I. \
-                        -I../external/include -IC:/WPyRosetta/boost_1_47_0 -I../external/dbio -Iplatform/windows/PyRosetta \
-    -Ic:\Python27\include -c -pipe -O3 -ffast-math -funroll-loops -finline-functions -DBOOST_PYTHON_MAX_ARITY=20 \
-        -o %s' % (source, obj) )"""
         
-            latest = max(latest, os.path.getmtime(obj) )
+        
+        if (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < max( [os.path.getmtime( os.path.join(dir_name, f) ) for f in files] ):
+        
+            for f in files:
+                source = os.path.join(dir_name, f)
+                obj = os.path.join( obj_dir, f[:-3]+'obj')
+                objs.append(obj)
+        
+                if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(source):
+                    execute('Compiling %s\\%s' % (dir_name, f), ('cl %s /c %s /I.' 
+                       + ' /I../external/include /IC:/WPyRosetta/boost_1_47_0 /I../external/dbio /Iplatform/windows/PyRosetta'
+                       + ' /Ic:\Python27\include /DWIN_PYROSETTA_PASS_2 /DBOOST_PYTHON_MAX_ARITY=20'
+                       + ' /Fo%s ') % (_CL_Options_, source, obj) ) 
+                    #  /Iplatform/windows/32/msvc
+                    #  /I../external/boost_1_46_1
+                    #  /IBOOST_MSVC    /link rosetta_lib
+        
+                    # c:\\mingw\\bin\\
+                    """execute('Compiling %s' % (dir_name+f), 'gcc -DPYROSETTA -c %s -I. \
+                            -I../external/include -IC:/WPyRosetta/boost_1_47_0 -I../external/dbio -Iplatform/windows/PyRosetta \
+        -Ic:\Python27\include -c -pipe -O3 -ffast-math -funroll-loops -finline-functions -DBOOST_PYTHON_MAX_ARITY=20 \
+            -o %s' % (source, obj) )"""
+            
+                latest = max(latest, os.path.getmtime(obj) )
             
         #
-        pyd = os.path.join( obj_dir, '__%s_all_at_once_.pyd' % dir_name.split('\\')[-1])
         if (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < latest:
             execute('Creating DLL %s...' % pyd, 
                     'link  /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:c:/WPyRosetta/boost_1_47_0/stage/lib  %s %s/../../../../build/windows/lib_rosetta.lib /out:%s' % (' '.join(objs), bindings_path, pyd) )
+            map(os.remove, objs)
             
         
 
