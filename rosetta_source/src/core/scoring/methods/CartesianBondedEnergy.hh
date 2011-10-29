@@ -60,9 +60,9 @@ namespace methods {
 
 ///////////////////
 //fpd  cache ideal torsions for fast lookup
-class TorsionDatabase {
+class TorsionDatabase  : public utility::pointer::ReferenceCount {
 public:
-	TorsionDatabase();
+	TorsionDatabase(Real k_tors, Real k_tors_prot);
 
 	// lookup ideal bondangle; insert in DB if not there
 	void
@@ -76,15 +76,15 @@ private:
 	boost::unordered_map< residx_atm_quad, core::Real > torsion_steps_;
 	boost::unordered_map< residx_atm_quad, core::Real > Kphis_;
 
-	Real k_torsion, k_torsion_proton;  // defaults
+	Real k_torsion, k_torsion_proton;   // can only be set in constructor
 };
 
 
 ///////////////////
 //fpd  cache ideal bond angles for fast lookup
-class BondAngleDatabase {
+class BondAngleDatabase  : public utility::pointer::ReferenceCount {
 public:
-	BondAngleDatabase();
+	BondAngleDatabase(Real k_ang);
 
 	// lookup ideal bondangle; insert in DB if not there
 	void
@@ -96,15 +96,15 @@ private:
 	boost::unordered_map< residx_atm_triple, core::Real > bondangles_;
 	boost::unordered_map< residx_atm_triple, core::Real > Kangles_;
 
-	Real k_angle;  // defaults
+	Real k_angle;  // can only be set in constructor
 };
 
 
 ///////////////////
 //fpd  cache ideal bond lengths for fast lookup
-class BondLengthDatabase {
+class BondLengthDatabase  : public utility::pointer::ReferenceCount {
 public:
-	BondLengthDatabase();
+	BondLengthDatabase(Real k_len);
 
 	// lookup ideal bondlength; insert in DB if not there
 	void
@@ -116,7 +116,7 @@ private:
 	boost::unordered_map< residx_atm_pair, core::Real > bondlengths_;
 	boost::unordered_map< residx_atm_pair, core::Real > Kbonds_;
 
-	Real k_bond;  // defaults
+	Real k_bond;  // can only be set in constructor
 };
 
 
@@ -193,11 +193,13 @@ public:
 
 private:
 
-	mutable BondAngleDatabase db_angle_;
-	mutable BondLengthDatabase db_length_;
-	mutable TorsionDatabase db_torsion_;
+	mutable BondAngleDatabaseOP db_angle_;
+	mutable BondLengthDatabaseOP db_length_;
+	mutable TorsionDatabaseOP db_torsion_;
 
+	// options
 	bool linear_bonded_potential_;
+	core::Real cartbonded_len_, cartbonded_ang_, cartbonded_tors_, cartbonded_proton_;
 
 private:
 

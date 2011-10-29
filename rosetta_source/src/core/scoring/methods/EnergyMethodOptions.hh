@@ -182,6 +182,34 @@ public:
 		ScoreType const & type,
 		utility::vector1< Real > const & wts);
 
+	///@brief get the harmonic bond angle and bond-length spring constants
+	void
+	get_cartesian_bonded_parameters( Real &len, Real &ang, Real &tors, Real &proton ) const {
+		len=cartbonded_len_;
+		ang=cartbonded_ang_;
+		tors=cartbonded_tors_;
+		proton=cartbonded_proton_;
+	}		
+
+	///@brief set the harmonic bond angle and bond-length spring constants
+	void
+	set_cartesian_bonded_parameters( Real len, Real ang, Real tors, Real proton ) {
+		cartbonded_len_=len;
+		cartbonded_ang_=ang;
+		cartbonded_tors_=tors;
+		cartbonded_proton_=proton;
+	}	
+
+	///@brief get the harmonic bond angle and bond-length spring constants
+	bool get_cartesian_bonded_linear() const {
+		return cartbonded_linear_;
+	}
+
+	///@brief set the harmonic bond angle and bond-length spring constants
+	void set_cartesian_bonded_linear( bool lin_in ) {
+		cartbonded_linear_ = lin_in;
+	}	
+
 	/// used inside ScoreFunctionInfo::operator==
 	friend
 	bool
@@ -216,6 +244,8 @@ private:
 	hbonds::HBondOptionsOP hbond_options_;
 
 	core::Size cst_max_seq_sep_;
+	core::Real cartbonded_len_, cartbonded_ang_, cartbonded_tors_, cartbonded_proton_;
+	bool cartbonded_linear_;
 
 	/// deprecated
 	utility::vector1<std::string> bond_angle_central_atoms_to_score_;

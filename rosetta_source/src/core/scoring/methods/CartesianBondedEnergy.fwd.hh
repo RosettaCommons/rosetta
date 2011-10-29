@@ -8,8 +8,8 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file   core/scoring/methods/CartesianBondedEnergy.fwd.hh
-/// @brief  molecular mechanics bond angle energy forward declaration
-/// @author Colin A. Smith (colin.smith@ucsf.edu)
+/// @brief
+/// @author Frank DiMaio
 
 #ifndef INCLUDED_core_scoring_methods_CartesianBondedEnergy_fwd_hh
 #define INCLUDED_core_scoring_methods_CartesianBondedEnergy_fwd_hh
@@ -21,8 +21,15 @@ namespace core {
 namespace scoring {
 namespace methods {
 
-class CartesianBondedEnergy;
+class TorsionDatabase;
+class BondAngleDatabase;
+class BondLengthDatabase;
 
+typedef  utility::pointer::owning_ptr< TorsionDatabase > TorsionDatabaseOP;
+typedef  utility::pointer::owning_ptr< BondAngleDatabase > BondAngleDatabaseOP;
+typedef  utility::pointer::owning_ptr< BondLengthDatabase > BondLengthDatabaseOP;
+
+class CartesianBondedEnergy;
 typedef  utility::pointer::access_ptr< CartesianBondedEnergy > CartesianBondedEnergyAP;
 typedef  utility::pointer::access_ptr< CartesianBondedEnergy const > CartesianBondedEnergyCAP;
 typedef  utility::pointer::owning_ptr< CartesianBondedEnergy > CartesianBondedEnergyOP;

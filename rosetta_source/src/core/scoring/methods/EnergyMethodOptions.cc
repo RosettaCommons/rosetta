@@ -41,6 +41,11 @@ EnergyMethodOptions::EnergyMethodOptions():
 	exclude_monomer_hack_elec_(false),
 	exclude_DNA_DNA_(true), // rosetta++ default
 	hbond_options_(new hbonds::HBondOptions()),
+	cartbonded_len_(-1.0),
+	cartbonded_ang_(-1.0),
+	cartbonded_tors_(-1.0),
+	cartbonded_proton_(-1.0),
+	cartbonded_linear_(false),
 	cst_max_seq_sep_(core::SZ_MAX),
 	bond_angle_residue_type_param_set_(NULL) {}
 		
@@ -68,6 +73,12 @@ EnergyMethodOptions::operator=(EnergyMethodOptions const & src) {
 	cst_max_seq_sep_ = src.cst_max_seq_sep_;
 	bond_angle_central_atoms_to_score_ = src.bond_angle_central_atoms_to_score_;
 	bond_angle_residue_type_param_set_ = src.bond_angle_residue_type_param_set_;
+	cartbonded_len_ = src.cartbonded_len_;
+	cartbonded_ang_ = src.cartbonded_ang_;
+	cartbonded_tors_ = src.cartbonded_tors_;
+	cartbonded_proton_ = src.cartbonded_proton_;
+	cartbonded_linear_ = src.cartbonded_linear_;
+
 	return *this;
 }
 
@@ -246,6 +257,11 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.exclude_DNA_DNA_ == b.exclude_DNA_DNA_ ) &&
 		( * (a.hbond_options_) == * (b.hbond_options_) ) &&
 		( a.cst_max_seq_sep_ == b.cst_max_seq_sep_ ) &&
+		( a.cartbonded_len_ == b.cartbonded_len_ ) &&
+		( a.cartbonded_ang_ == b.cartbonded_ang_ ) &&
+		( a.cartbonded_tors_ == b.cartbonded_tors_ ) &&
+		( a.cartbonded_proton_ == b.cartbonded_proton_ ) &&
+		( a.cartbonded_linear_ == b.cartbonded_linear_ ) &&
 		( a.bond_angle_central_atoms_to_score_ == b.bond_angle_central_atoms_to_score_ ) &&
 		( a.bond_angle_residue_type_param_set_ == b.bond_angle_residue_type_param_set_ ) );
 }

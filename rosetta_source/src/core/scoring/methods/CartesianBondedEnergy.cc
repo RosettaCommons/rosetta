@@ -156,23 +156,32 @@ std::string get_restag( core::chemical::ResidueType const & restype ) {
 
 ////////////////////////
 // constructors
-BondLengthDatabase::BondLengthDatabase() {
-	k_bond = K_BOND;
-	if (basic::options::option[ basic::options::OptionKeys::score::bonded_params ].user()) {
+BondLengthDatabase::BondLengthDatabase(Real k_bond_in) {
+	// check energy method options first, then command flag, then go to default
+	if (k_bond_in >= 0) {
+		k_bond = k_bond_in;
+	} else if (basic::options::option[ basic::options::OptionKeys::score::bonded_params ].user()) {
 		utility::vector1<core::Real> params = basic::options::option[ basic::options::OptionKeys::score::bonded_params ]();
 		k_bond = params[1];
+	} else {
+		k_bond = K_BOND;
 	}
 }
 
-BondAngleDatabase::BondAngleDatabase() {
-	k_angle = K_ANGLE;
-	if (basic::options::option[ basic::options::OptionKeys::score::bonded_params ].user()) {
+BondAngleDatabase::BondAngleDatabase(Real k_angle_in) {
+	// check energy method options first, then command flag, then go to default
+	if (k_angle_in >= 0) {
+		k_angle = k_angle_in;
+	} else if (basic::options::option[ basic::options::OptionKeys::score::bonded_params ].user()) {
 		utility::vector1<core::Real> params = basic::options::option[ basic::options::OptionKeys::score::bonded_params ]();
 		k_angle = params[2];
+	} else {
+		k_angle = K_ANGLE;
 	}
 }
 
-TorsionDatabase::TorsionDatabase() {
+TorsionDatabase::TorsionDatabase(Real k_tors_in, Real k_prot_tors_in) {
+	// check energy method options first, then command flag, then go to default
 	k_torsion = K_TORSION;
 	k_torsion_proton = K_TORSION_PROTON;
 	if (basic::options::option[ basic::options::OptionKeys::score::bonded_params ].user()) {
@@ -180,6 +189,10 @@ TorsionDatabase::TorsionDatabase() {
 		k_torsion = params[3];
 		k_torsion_proton = params[4];
 	}
+	if (k_tors_in >= 0)
+		k_torsion = k_tors_in;
+	if (k_prot_tors_in >= 0)
+		k_torsion_proton = k_prot_tors_in;
 }
 
 
@@ -450,13 +463,23 @@ BondLengthDatabase::lookup
 /// EnergyMethod
 CartesianBondedEnergy::CartesianBondedEnergy( methods::EnergyMethodOptions const & options ) :
 	parent( new CartesianBondedEnergyCreator ) {
-	linear_bonded_potential_ = basic::options::option[ basic::options::OptionKeys::score::linear_bonded_potential ]();
+	// if flag _or_ energy method wants a linear potential, make the potential linear
+	linear_bonded_potential_ = 
+		basic::options::option[ basic::options::OptionKeys::score::linear_bonded_potential ]() ||
+		options.get_cartesian_bonded_linear();
+
+	// initialize databases
+	options.get_cartesian_bonded_parameters( cartbonded_len_, cartbonded_ang_, cartbonded_tors_, cartbonded_proton_ );
+	db_angle_ = new BondAngleDatabase(cartbonded_len_);
+	db_length_ = new BondLengthDatabase(cartbonded_ang_);
+	db_torsion_ = new TorsionDatabase(cartbonded_tors_, cartbonded_proton_);
 }
 
 CartesianBondedEnergy::CartesianBondedEnergy( CartesianBondedEnergy const & src ) : parent( src ) {
 	linear_bonded_potential_ = src.linear_bonded_potential_;
 	db_angle_ = src.db_angle_;
 	db_length_ = src.db_length_;
+	db_torsion_ = src.db_torsion_;
 }
 
 CartesianBondedEnergy::~CartesianBondedEnergy() {}
@@ -555,7 +578,7 @@ CartesianBondedEnergy::residue_pair_energy(
 
 			// lookup Ktheta and theta0
 			Real Ktheta, theta0;
-			db_angle_.lookup( rsd1.type(), res1_lower_atomno, resconn_atomno1, -resconn_id1, Ktheta, theta0 );
+			db_angle_->lookup( rsd1.type(), res1_lower_atomno, resconn_atomno1, -resconn_id1, Ktheta, theta0 );
 
 			if (Ktheta == 0.0) continue;
 
@@ -584,7 +607,7 @@ CartesianBondedEnergy::residue_pair_energy(
 
 			// lookup Ktheta and theta0
 			Real Ktheta, theta0;
-			db_angle_.lookup( rsd2.type(), res2_lower_atomno, resconn_atomno2, -resconn_id2, Ktheta, theta0 );
+			db_angle_->lookup( rsd2.type(), res2_lower_atomno, resconn_atomno2, -resconn_id2, Ktheta, theta0 );
 
 			if (Ktheta == 0.0) continue;
 			Real const angle = numeric::angle_radians(
@@ -612,7 +635,7 @@ CartesianBondedEnergy::residue_pair_energy(
 
 		// lookup Ktheta and theta0
 		Real Kd, d0;
-		db_length_.lookup( rsd1.type(), resconn_atomno1, -resconn_id1, Kd, d0 );
+		db_length_->lookup( rsd1.type(), resconn_atomno1, -resconn_id1, Kd, d0 );
 
 		//if (0.5*Kd*(length-d0) * (length-d0) > 10.0) {
 		//	TR << rsd1.seqpos() << " -- " << rsd2.seqpos() << "  "
@@ -655,7 +678,7 @@ CartesianBondedEnergy::eval_intrares_energy(
 
 		// lookup Ktheta and theta0
 		Real Kphi, phi0, phi_step;
-		db_torsion_.lookup( rsd.type(), rt1, rt2, rt3, rt4, Kphi, phi0, phi_step );
+		db_torsion_->lookup( rsd.type(), rt1, rt2, rt3, rt4, Kphi, phi0, phi_step );
 		if (Kphi == 0.0) continue;
 
 		// get angle
@@ -698,7 +721,7 @@ CartesianBondedEnergy::eval_intrares_energy(
 
 		// lookup Ktheta and theta0
 		Real Ktheta, theta0;
-		db_angle_.lookup( rsd.type(), rt1, rt2, rt3, Ktheta, theta0 );
+		db_angle_->lookup( rsd.type(), rt1, rt2, rt3, Ktheta, theta0 );
 		if (Ktheta == 0.0) continue;
 
 		// get angle
@@ -736,7 +759,7 @@ CartesianBondedEnergy::eval_intrares_energy(
 
 				// lookup Ktheta and theta0
 				Real Kd, d0;
-				db_length_.lookup( rsd.type(), atm_i, atm_j, Kd, d0 );
+				db_length_->lookup( rsd.type(), atm_i, atm_j, Kd, d0 );
 				if (Kd == 0.0) continue;
 
 				Real const d = ( rsd.atom( atm_i ).xyz()-rsd.atom( atm_j ).xyz() ).length();
@@ -825,8 +848,7 @@ CartesianBondedEnergy::eval_atom_derivative(
 
 		// lookup Kphi and phi0
 		Real Kphi, phi0, phi_step;
-		db_torsion_.lookup( res.type(), ii_dihed.key1(), ii_dihed.key2(), ii_dihed.key3(), ii_dihed.key4(), Kphi, phi0, phi_step);
-
+		db_torsion_->lookup( res.type(), ii_dihed.key1(), ii_dihed.key2(), ii_dihed.key3(), ii_dihed.key4(), Kphi, phi0, phi_step);
 		if (Kphi == 0.0) continue;
 
 		Real del_phi = basic::subtract_radian_angles(phi, phi0);
@@ -850,7 +872,7 @@ CartesianBondedEnergy::eval_atom_derivative(
 
 		// lookup Ktheta and theta0
 		Real Ktheta, theta0;
-		db_angle_.lookup( res.type(), ii_bangle.key1(), ii_bangle.key2(), ii_bangle.key3(), Ktheta, theta0);
+		db_angle_->lookup( res.type(), ii_bangle.key1(), ii_bangle.key2(), ii_bangle.key3(), Ktheta, theta0);
 		if (Ktheta == 0.0) continue;
 
 		Vector f1(0.0), f2(0.0);
@@ -888,7 +910,7 @@ CartesianBondedEnergy::eval_atom_derivative(
 
 		// lookup Kd and d0
 		Real Kd, d0;
-		db_length_.lookup( res.type(), atomno, atm2, Kd, d0 );
+		db_length_->lookup( res.type(), atomno, atm2, Kd, d0 );
 		if (Kd == 0.0) continue;
 
 		Vector f1(0.0), f2(0.0);
@@ -903,6 +925,7 @@ CartesianBondedEnergy::eval_atom_derivative(
 		} else {
 			dE_dd = weights[ cart_bonded ] * Kd * (d - d0);
 		}
+
 		LF1 += dE_dd * f1;
 		LF2 += dE_dd * f2;
 	}
@@ -929,7 +952,7 @@ CartesianBondedEnergy::eval_atom_derivative(
 
 		// lookup Ktheta and theta0
 		Real Ktheta, theta0;
-		db_angle_.lookup( res.type(), -ii_resconn, ii_pair.key1(), ii_pair.key2(), Ktheta, theta0 );
+		db_angle_->lookup( res.type(), -ii_resconn, ii_pair.key1(), ii_pair.key2(), Ktheta, theta0 );
 		if (Ktheta == 0.0) continue;
 
 		Vector f1(0.0), f2(0.0);
@@ -990,7 +1013,7 @@ CartesianBondedEnergy::eval_atom_derivative(
 
 			// lookup Ktheta and theta0
 			Real Ktheta, theta0;
-			db_angle_.lookup( neighb_res.type(), -neighb_resconn, neighb_atom1, neighb_atom2, Ktheta, theta0 );
+			db_angle_->lookup( neighb_res.type(), -neighb_resconn, neighb_atom1, neighb_atom2, Ktheta, theta0 );
 			if (Ktheta == 0.0) continue;
 
 			numeric::deriv::angle_p1_deriv(
@@ -1009,7 +1032,6 @@ CartesianBondedEnergy::eval_atom_derivative(
 
 			LF1 += dE_dtheta * f1;
 			LF2 += dE_dtheta * f2;
-
 		}
 	}
 
@@ -1032,7 +1054,7 @@ CartesianBondedEnergy::eval_atom_derivative(
 
 		// lookup Kd and d0
 		Real Kd, d0;
-		db_length_.lookup( res.type(), atomno, -ii_resconn, Kd, d0 );
+		db_length_->lookup( res.type(), atomno, -ii_resconn, Kd, d0 );
 		if (Kd == 0.0) continue;
 
 		Vector f1(0.0), f2(0.0);
