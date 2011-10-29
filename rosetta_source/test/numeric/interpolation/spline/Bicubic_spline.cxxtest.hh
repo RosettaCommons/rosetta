@@ -55,7 +55,7 @@ public:
 
 	void test_bicubic_spline_data_access(){
 
-		core::Real values[] =
+		numeric::Real values[] =
 		{
 				26,  3,   1,  2, 1, 3, 6, 3, 8, 2, 7, 8, 3, 4, 2, 1, 2,  5,  30,  0,  2,  4, 6, 3, 4, 3, 3, 4, 11, 5, 8, 5, 2, 0, 2,  2,
 				2,   0,   0,  1, 2, 0, 2, 1, 1, 3, 3, 0, 1, 0, 0, 1, 0,  0,  4,   0,  0,  0, 1, 3, 0, 5, 0, 0, 1,  1, 1, 0, 0, 3, 0,  0,
@@ -65,14 +65,14 @@ public:
 		};
 
 
-		numeric::MathMatrix<core::Real> input_values(5,36, values);
+		numeric::MathMatrix<numeric::Real> input_values(5,36, values);
 
 		numeric::interpolation::spline::BorderFlag behavior[2] = {numeric::interpolation::spline::e_Natural, 			numeric::interpolation::spline::e_Periodic};
-		const core::Real start[2] = {10, -180};
-		const core::Real delta[2] = {10, 10};
+		const numeric::Real start[2] = {10, -180};
+		const numeric::Real delta[2] = {10, 10};
 		const bool lin_cont[2] ={true, true};
 
-		const std::pair<core::Real, core::Real> first_be[2] = {std::pair<core::Real, core::Real>(10,10), std::pair<core::Real, core::Real>(10,10) };
+		const std::pair<numeric::Real, numeric::Real> first_be[2] = {std::pair<numeric::Real, numeric::Real>(10,10), std::pair<numeric::Real, numeric::Real>(10,10) };
 
 
 

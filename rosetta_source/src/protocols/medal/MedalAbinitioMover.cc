@@ -65,7 +65,6 @@ protocols::moves::MoverOP MedalAbinitioMover::fragment_mover(const core::pose::P
   using core::fragment::FragSetOP;
   using protocols::nonlocal::BiasedFragmentMover;
   using utility::vector1;
-  assert(pose);
 
   // Equiprobable residue selection
   vector1<double> probs;

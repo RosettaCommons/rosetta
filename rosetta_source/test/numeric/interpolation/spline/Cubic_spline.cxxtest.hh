@@ -54,19 +54,19 @@ public:
 	void test_cubic_spline_data_access(){
 
 
-		const core::Real values[] =
+		const numeric::Real values[] =
 		{
 				26, 3, 1, 2, 1, 3, 6, 3, 8,
 				2, 7, 8, 3, 4, 2, 1, 2, 5,
 				30, 0, 2, 4, 6, 3, 4, 3, 3,
 				4, 11, 5, 8, 5, 2, 0, 2, 2
 		};
-		const numeric::MathVector<core::Real> input_values(36, values);
+		const numeric::MathVector<numeric::Real> input_values(36, values);
 
 		numeric::interpolation::spline::CubicSpline naturalspline;
 
 
-		naturalspline.train(numeric::interpolation::spline::e_Natural, -180, 10, input_values, std::pair<core::Real, core::Real>(10,10));
+		naturalspline.train(numeric::interpolation::spline::e_Natural, -180, 10, input_values, std::pair<numeric::Real, numeric::Real>(10,10));
 
 
 		TS_ASSERT_DELTA(26.8509, naturalspline.F(-180.30) , .001);
