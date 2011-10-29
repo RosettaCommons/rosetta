@@ -31,6 +31,8 @@
 
 namespace basic {
 
+std::ostream *final_channel = &std::cout;
+
 otstreamOP Tracer::ios_hook_;
 bool Tracer::ios_hook_raw_;
 utility::vector1<std::string> Tracer::monitoring_list_;
@@ -304,7 +306,7 @@ void Tracer::t_flush(std::string const &str)
 	}
 
 	if ( !super_mute_ && visible_ ){
-		prepend_channel_name<std::ostream>( std::cout, str );
+		prepend_channel_name<std::ostream>( *final_channel, str );
 	}
 }
 

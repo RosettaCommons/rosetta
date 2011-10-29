@@ -32,6 +32,7 @@
 namespace basic {
 
 
+extern std::ostream *final_channel;
 
 /// @brief
 /// Priority levels for T() and Tracer object, modeled on the log4j project and its offspring.
@@ -240,6 +241,9 @@ private: /// Data members
 
 	/// @brief is channel muted ?
 	mutable bool muted_;
+
+	/// @brief above which level is channel muted ?
+	mutable int mute_level_;
 
 	/// @brief is channel muted by default?
 	bool muted_by_default_;

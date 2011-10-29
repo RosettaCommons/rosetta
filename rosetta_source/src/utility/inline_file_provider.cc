@@ -18,9 +18,9 @@
 #include <sstream>
 #include <string>
 
-namespace utility {
-
 #include <utility/static_database.hh>
+
+namespace utility {
 
 
 Inline_File_Provider* Inline_File_Provider::get_instance(){
