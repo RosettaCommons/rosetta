@@ -25,6 +25,7 @@
 #include <core/scoring/etable/Etable.hh>
 //#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Energies.hh>
 
 #include <core/scoring/Ramachandran.hh>
@@ -57,6 +58,7 @@
 #include <basic/basic.hh>
 //#include <devel/init.hh>
 #include <protocols/init.hh>
+#include <core/init.hh>
 #include <core/types.hh>
 
 #include <utility/vector1.hh>
@@ -155,13 +157,17 @@ int main( int argc, char * argv [] )
 
 	using namespace core;
 
-	protocols::init(argc, argv);
+	//protocols::init(argc, argv);
+	core::init(argc, argv);
 
 	{
 		core::pose::Pose pose;
 		core::import_pose::pose_from_pdb(pose, "src/python/bindings/test/data/test_in.pdb");
-		core::scoring::ScoreFunction scorefxn;
-		scorefxn(pose);
+		//core::scoring::ScoreFunction scorefxn;
+		core::scoring::ScoreFunctionOP scorefxn = core::scoring::ScoreFunctionFactory::create_score_function("standard");
+		T("Score:") << scorefxn->score(pose)  << std::endl;
+
+		//scorefxn(pose);
 		pose.energies().residue_total_energies(1);
 		T("Scoring done!") << "---------------------" << std::endl;
 	}

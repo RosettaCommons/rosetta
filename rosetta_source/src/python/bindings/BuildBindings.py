@@ -83,6 +83,11 @@ def main(args):
       help="Debug only. Try to check time stamp of files before building them.",
       )
 
+    parser.add_option("--debug",
+      action="store_true", default=False,
+      help="Perform a Debug build when possible.",
+      )
+
     parser.add_option("-u",
       action="store_true", dest="update",
       help="Debug only. Try to check time stamp of files before building them.",
@@ -192,6 +197,7 @@ def main(args):
     print "--one-lib-file", options.one_lib_file
     print "--boost_lib", options.boost_lib
     print '--update', options.update
+    print '--debug', options.debug
     #print '--use-windows-platform-types', options.use_windows_platform_types
 
     if (Options.jobs > 1) and Options.sort_IncludeDict:
@@ -207,6 +213,7 @@ def main(args):
 
     if Platform == "windows":  # we dealing with windows native build
         build_path = os.path.join(mini_path, 'build\windows')
+        if Options.debug: build_path += '_debug' 
         BuildRosettaOnWindows(build_path, bindings_path)
         sys.exit(0)
 
@@ -550,13 +557,15 @@ def getAllRosettaSourceFiles():
     return extra_objs, all_sources
 
 
-# Windows MSVC compiler common options (no optimization, but it works)
-#_CL_Options_ = '/MD /GR /Gy /DWIN32 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /DNDEBUG /EHsc'
-
-# MSVC release options: /O2 /Oi /GL /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /FD /EHsc /MD /Gy /Yu"stdafx.h" /Fp"Release\SimpleConsoleApp.pch" /Fo"Release\\" /Fd"Release\vc90.pdb" /W3 /nologo /c /Zi /TP /errorReport:prompt
-# /Zi is 'generate omplete debugging information' - removing it
-# /W3 is just warning level
-_CL_Options_ = '/O2 /Oi /GL /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA'
+def get_CL_Options():
+    if Options.debug:
+        # Windows MSVC compiler common options (no optimization, but it works)
+        return '/MD /GR /Gy /DWIN32 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /EHsc'  # /DNDEBUG
+    else:
+        # MSVC release options: /O2 /Oi /GL /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /FD /EHsc /MD /Gy /Yu"stdafx.h" /Fp"Release\SimpleConsoleApp.pch" /Fo"Release\\" /Fd"Release\vc90.pdb" /W3 /nologo /c /Zi /TP /errorReport:prompt
+        # /Zi is 'generate omplete debugging information' - removing it
+        # /W3 is just warning level
+        return '/O2 /Oi /GL /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA'
  
 
 
@@ -592,22 +601,30 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
             obj = os.path.join(build_dir,s) + '.obj'
 
             if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
-                execute('Compiling %s' % s, 'cl %s /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s' % (_CL_Options_, s, obj),
+                execute('Compiling %s' % s, 'cl %s /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s' % (get_CL_Options(), s, obj),
                         )  # return_=True)
 
         # Now creating DLL
         dll = os.path.join(bindings_path, 'rosetta.dll')
         objs = ' '.join( [ f + '.obj' for f in external] ) + ' ' + ' '.join( [f + '.obj' for f in sources] )
         file(os.path.join(build_dir,'objs') , 'w').write( objs )
-        #execute('Creating DLL %s...' % dll, 'cd ..\\build\\windows && link /dll @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib /out:%s' % dll )
-        execute('Creating lib %s...' % dll, 'cd ..\\build\\windows && lib @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib /out:lib_rosetta.lib')
+        execute('Creating DLL %s...' % dll, 'cd %s && link /OPT:NOREF /dll @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib /out:%s' % (build_dir, dll) )
+        #execute('Creating lib %s...' % dll, 'cd %s && lib @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib /out:rosetta.lib' % build_dir)
 
         # libcmt.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
         #execute('Creating DLL %s...' % s, 'cd ..\\build\\windows && cl /link /DLL @objs /OUT:%s' % dll )
 
+    rosetta_lib = os.path.join(build_dir, 'rosetta.lib')
+
+    pdb_test = 'apps/pilot/sergey/PDBTest.cc'
+    pdb_test_exe = os.path.join(build_dir, 'PDBTest.exe')   
+    pdb_test_obj = os.path.join(build_dir, 'PDBTest.obj')   
+    if (not os.path.isfile(pdb_test_exe))   or  os.path.getmtime(pdb_test_exe) < os.path.getmtime(pdb_test):
+        execute('Compiling test executable %s' % pdb_test, 'cl %s %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta %s /Fe%s /Fo%s' % (get_CL_Options(), pdb_test, rosetta_lib, pdb_test_exe, pdb_test_obj) ) 
+
     print 'Building bindings...'
     def visit(base_dir, dir_name, names):
-        wn_buildOneNamespace(base_dir, dir_name, names, bindings_path)
+        wn_buildOneNamespace(base_dir, dir_name, names, bindings_path, build_dir)
         #buildModule(dir_name, dest, include_paths, libpaths, runtime_libpaths, gccxml_path) )
 
     os.path.walk(Options.use_pre_generated_sources, visit, Options.use_pre_generated_sources)
@@ -616,7 +633,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
 
 
 __global = 0
-def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path):
+def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir):
     files = sorted( filter(lambda f: f.endswith('.cpp'), files) )
     sub_dir = dir_name[ len(base_dir)+1: ]
 
@@ -634,9 +651,9 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path):
         # compiling...
         latest = None
         objs = []
-        rosetta_dll = os.path.join(bindings_path, 'rosetta.dll')
-        rosetta_lib = os.path.join(bindings_path, 'rosetta.lib')
-        
+        #rosetta_dll = os.path.join(bindings_path, 'rosetta.dll')
+        rosetta_lib = os.path.join(build_dir, 'rosetta.lib')
+        #rosetta_lib = os.path.join(bindings_path, 'rosetta.lib')
         
         if (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < max( [os.path.getmtime( os.path.join(dir_name, f) ) for f in files] ):
         
@@ -649,7 +666,7 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path):
                     execute('Compiling %s\\%s' % (dir_name, f), ('cl %s /c %s /I.' 
                        + ' /I../external/include /IC:/WPyRosetta/boost_1_47_0 /I../external/dbio /Iplatform/windows/PyRosetta'
                        + ' /Ic:\Python27\include /DWIN_PYROSETTA_PASS_2 /DBOOST_PYTHON_MAX_ARITY=20'
-                       + ' /Fo%s ') % (_CL_Options_, source, obj) ) 
+                       + ' /Fo%s ') % (get_CL_Options(), source, obj) ) 
                     #  /Iplatform/windows/32/msvc
                     #  /I../external/boost_1_46_1
                     #  /IBOOST_MSVC    /link rosetta_lib
@@ -665,7 +682,7 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path):
         #
         if (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < latest:
             execute('Creating DLL %s...' % pyd, 
-                    'link  /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:c:/WPyRosetta/boost_1_47_0/stage/lib  %s %s/../../../../build/windows/lib_rosetta.lib /out:%s' % (' '.join(objs), bindings_path, pyd) )
+                    'link  /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:c:/WPyRosetta/boost_1_47_0/stage/lib  %s %s /out:%s' % (' '.join(objs), rosetta_lib, pyd) )
             map(os.remove, objs)
             
         
