@@ -104,7 +104,6 @@ void register_options() {
 	OPT( OptionKeys::evaluation::pool );
 	OPT( option[ OptionKeys::evaluation::constraints );
 	OPT( in::file::native );
-
 }
 
 void invert_include_residues( Size nres, core::scoring::ResidueSelectionVector const& include_list, core::scoring::ResidueSelectionVector& exclude_list ) {

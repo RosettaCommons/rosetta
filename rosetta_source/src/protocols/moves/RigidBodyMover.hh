@@ -102,7 +102,7 @@ public:
 
 	virtual
 	bool
-	preserve_detailed_balance() const { return true };
+	preserve_detailed_balance() const { return true; }
 
 	/// @brief set whether detailed balance is preserved (i.e. no branch angle optimization during moves)
 	virtual
@@ -110,6 +110,12 @@ public:
 	set_preserve_detailed_balance(
 		bool preserve_detailed_balance
 	) {};
+
+	/// @brief get the TorsionIDs perturbed by the mover during moves, along with their ranges
+	virtual
+	utility::vector1<core::id::TorsionID_Range>
+	torsion_id_ranges( core::pose::Pose & pose );
+
 
 	// data
 protected:

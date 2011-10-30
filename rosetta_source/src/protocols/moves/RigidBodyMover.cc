@@ -96,6 +96,14 @@ RigidBodyMover::get_name() const {
 	return "RigidBodyMover";
 }
 
+utility::vector1<core::id::TorsionID_Range>
+SmallMover::torsion_id_ranges(
+	core::pose::Pose & //pose
+)
+{
+	return utility::vector1<core::id::TorsionID_Range>();
+}
+
 
 
 RigidBodyPerturbMover::RigidBodyPerturbMover() :
