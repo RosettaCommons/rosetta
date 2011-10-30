@@ -77,7 +77,7 @@
 
 
 // option key includes
-
+#include <basic/options/option_macros.hh>
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -93,16 +93,17 @@ namespace protocols {
 namespace evaluation {
 using namespace core;
 
-static options_registered_=false;
+static bool options_registered_=false;
 
 void register_options() {
+	using namespace basic::options;
 	if ( options_registered_ ) return;
 	options_registered_ = true;
-	OPT( OptionKeys::evaluation::rmsd );
-	OPT( OptionKeys::evaluation::gdtmm );
-	OPT( OptionKeys::evaluation::rdc );
-	OPT( OptionKeys::evaluation::pool );
-	OPT( option[ OptionKeys::evaluation::constraints );
+	OPT( evaluation::rmsd );
+	OPT( evaluation::gdtmm );
+	OPT( evaluation::rdc );
+	OPT( evaluation::pool );
+	OPT( evaluation::constraints );
 	OPT( in::file::native );
 }
 
