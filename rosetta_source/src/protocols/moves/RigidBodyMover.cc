@@ -60,7 +60,7 @@ static numeric::random::RandomGenerator RG(43225);
 const Real max_allowed_rot_mag ( 60.0 );
 
 // default constructor
-RigidBodyMover::RigidBodyMover() : Mover(), rb_jump_( 1 ), dir_( n2c ), rot_center_( 0.0 )
+RigidBodyMover::RigidBodyMover() : ThermodynamicMover(), rb_jump_( 1 ), dir_( n2c ), rot_center_( 0.0 )
 {
 	Mover::type( "RigidBodyBase" );
 }
@@ -70,7 +70,7 @@ RigidBodyMover::RigidBodyMover(
 	int const rb_jump_in,
 	Direction dir_in
 ):
-	Mover(),
+	ThermodynamicMover(),
 	rb_jump_( rb_jump_in ), dir_( dir_in ), rot_center_( 0.0 )
 {
 	Mover::type( "RigidBodyBase" );
@@ -83,7 +83,7 @@ RigidBodyMover::RigidBodyMover(
 
 RigidBodyMover::RigidBodyMover( RigidBodyMover const & src ) :
 	//utility::pointer::ReferenceCount(), parent( src ),
-	Mover( src ),
+	ThermodynamicMover( src ),
 	rb_jump_( src.rb_jump_ ),
 	dir_( src.dir_ ),
 	rot_center_( src.rot_center_ )
@@ -97,7 +97,7 @@ RigidBodyMover::get_name() const {
 }
 
 utility::vector1<core::id::TorsionID_Range>
-SmallMover::torsion_id_ranges(
+RigidBodyMover::torsion_id_ranges(
 	core::pose::Pose & //pose
 )
 {
