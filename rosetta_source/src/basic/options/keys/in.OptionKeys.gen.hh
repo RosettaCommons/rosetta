@@ -74,6 +74,8 @@ namespace in { namespace file { extern FileVectorOptionKey const atom_tree_diff;
 namespace in { namespace file { extern StringOptionKey const zip; } }
 namespace in { namespace file { extern FileVectorOptionKey const boinc_wu_zip; } }
 namespace in { namespace file { extern BooleanOptionKey const fullatom; } }
+namespace in { namespace file { extern BooleanOptionKey const centroid_input; } }
+namespace in { namespace file { extern BooleanOptionKey const centroid; } }
 namespace in { namespace file { extern StringOptionKey const residue_type_set; } }
 namespace in { namespace file { extern FileOptionKey const pca; } }
 namespace in { namespace file { extern RealOptionKey const silent_energy_cut; } }
@@ -85,7 +87,6 @@ namespace in { namespace file { extern BooleanOptionKey const silent_read_throug
 namespace in { namespace file { extern StringOptionKey const silent_score_prefix; } }
 namespace in { namespace file { extern IntegerOptionKey const silent_select_random; } }
 namespace in { namespace file { extern StringVectorOptionKey const silent_scores_wanted; } }
-namespace in { namespace file { extern BooleanOptionKey const centroid_input; } }
 namespace in { namespace file { extern FileVectorOptionKey const fasta; } }
 namespace in { namespace file { extern FileVectorOptionKey const pssm; } }
 namespace in { namespace file { extern StringVectorOptionKey const seq; } }

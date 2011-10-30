@@ -21,7 +21,7 @@
 #include <protocols/moves/RigidBodyMover.fwd.hh>
 
 // Package headers
-#include <protocols/moves/Mover.hh>
+#include <protocols/moves/ThermodynamicMover.hh>
 //#include <protocols/geometry/RB_geometry.hh>
 
 #include <core/types.hh>
@@ -71,9 +71,9 @@ enum Direction {
 /// jump from the mobile jumps in a MoveMap.
 /// If you want a random choice among jumps, put multiple RigidBodyMovers
 /// into a RandomMover (which will give you more control, anyway).
-class RigidBodyMover : public Mover {
+class RigidBodyMover : public ThermodynamicMover {
 public:
-	typedef Mover parent;
+	typedef ThermodynamicMover parent;
 
 public:
 
@@ -99,6 +99,17 @@ public:
 
 	virtual void apply( core::pose::Pose & pose ) = 0;
 	virtual std::string get_name() const;
+
+	virtual
+	bool
+	preserve_detailed_balance() const { return true };
+
+	/// @brief set whether detailed balance is preserved (i.e. no branch angle optimization during moves)
+	virtual
+	void
+	set_preserve_detailed_balance(
+		bool preserve_detailed_balance
+	) {};
 
 	// data
 protected:

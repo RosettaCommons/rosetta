@@ -228,8 +228,18 @@ pose_from_pdb(
 	using namespace chemical;
 	using namespace basic::options::OptionKeys;
 
-	ResidueTypeSetCAP residue_set(
-		option[ in::file::centroid_input ].value() ?
+	bool want_centroid( option[ in::file::centroid_input ]()
+		|| option[ in::file::centroid ]()
+		|| ( option[ in::file::fullatom ].user() && !option[ in::file::fullatom ]() )
+		|| ( option[ in::file::residue_type_set ].user() && option[ in::file::residue_type_set ]() == "centroid" ) );
+
+	if ( want_centroid &&
+		( option[ in::file::fullatom ]()
+			|| ( option[ in::file::residue_type_set ].user() && option[ in::file::residue_type_set ]() == "fa_standard" ) ) ) {
+		TR.Warning << "conflicting command line flags for centroid/full-atom input. Choosing fullatom!" << std::endl;
+		want_centroid = false;
+	}
+	ResidueTypeSetCAP residue_set( want_centroid ?
 		ChemicalManager::get_instance()->residue_type_set( CENTROID ) :
 		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )
 	);
@@ -512,7 +522,7 @@ set_reasonable_fold_tree(
 {
 	// An empty pose doesn't have jumps through ligands
 	// (Will encounter a SegFault otherwise)
-	if( pose.total_residue() == 0 ) { 
+	if( pose.total_residue() == 0 ) {
 		return;
 	}
 

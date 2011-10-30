@@ -48,7 +48,8 @@ public:
 	virtual ~Filter();
   // allows reporting of filter values to a stream
 	virtual void report( std::ostream &, core::pose::Pose const & ) const {}
-/// @brief used to report filter internals through a score or silent file
+
+	/// @brief used to report filter internals through a score or silent file
   // to determine that derived class has not overridden }
 	virtual core::Real report_sm( core::pose::Pose const & ) const { return -99999; }
 

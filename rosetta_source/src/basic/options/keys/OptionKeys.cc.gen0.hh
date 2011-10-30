@@ -68,6 +68,8 @@ namespace in { namespace file { FileVectorOptionKey const atom_tree_diff( "in:fi
 namespace in { namespace file { StringOptionKey const zip( "in:file:zip" );  } }
 namespace in { namespace file { FileVectorOptionKey const boinc_wu_zip( "in:file:boinc_wu_zip" );  } }
 namespace in { namespace file { BooleanOptionKey const fullatom( "in:file:fullatom" );  } }
+namespace in { namespace file { BooleanOptionKey const centroid_input( "in:file:centroid_input" );  } }
+namespace in { namespace file { BooleanOptionKey const centroid( "in:file:centroid" );  } }
 namespace in { namespace file { StringOptionKey const residue_type_set( "in:file:residue_type_set" );  } }
 namespace in { namespace file { FileOptionKey const pca( "in:file:pca" );  } }
 namespace in { namespace file { RealOptionKey const silent_energy_cut( "in:file:silent_energy_cut" );  } }
@@ -79,7 +81,6 @@ namespace in { namespace file { BooleanOptionKey const silent_read_through_error
 namespace in { namespace file { StringOptionKey const silent_score_prefix( "in:file:silent_score_prefix" );  } }
 namespace in { namespace file { IntegerOptionKey const silent_select_random( "in:file:silent_select_random" );  } }
 namespace in { namespace file { StringVectorOptionKey const silent_scores_wanted( "in:file:silent_scores_wanted" );  } }
-namespace in { namespace file { BooleanOptionKey const centroid_input( "in:file:centroid_input" );  } }
 namespace in { namespace file { FileVectorOptionKey const fasta( "in:file:fasta" );  } }
 namespace in { namespace file { FileVectorOptionKey const pssm( "in:file:pssm" );  } }
 namespace in { namespace file { StringVectorOptionKey const seq( "in:file:seq" );  } }
@@ -578,4 +579,3 @@ namespace abinitio { RealOptionKey const end_bias( "abinitio:end_bias" );  }
 namespace abinitio { IntegerOptionKey const symmetry_residue( "abinitio:symmetry_residue" );  }
 namespace abinitio { RealOptionKey const vdw_weight_stage1( "abinitio:vdw_weight_stage1" );  }
 namespace abinitio { BooleanOptionKey const override_vdw_all_stages( "abinitio:override_vdw_all_stages" );  }
-namespace abinitio { IntegerVectorOptionKey const recover_low_in_stages( "abinitio:recover_low_in_stages" );  }

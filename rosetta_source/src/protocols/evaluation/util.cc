@@ -93,8 +93,18 @@ namespace protocols {
 namespace evaluation {
 using namespace core;
 
+static options_registered_=false;
+
 void register_options() {
-	protocols::noesy_assign::NoesyModule::register_options();
+	if ( options_registered_ ) return;
+	options_registered_ = true;
+	OPT( OptionKeys::evaluation::rmsd );
+	OPT( OptionKeys::evaluation::gdtmm );
+	OPT( OptionKeys::evaluation::rdc );
+	OPT( OptionKeys::evaluation::pool );
+	OPT( option[ OptionKeys::evaluation::constraints );
+	OPT( in::file::native );
+
 }
 
 void invert_include_residues( Size nres, core::scoring::ResidueSelectionVector const& include_list, core::scoring::ResidueSelectionVector& exclude_list ) {

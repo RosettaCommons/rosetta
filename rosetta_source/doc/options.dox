@@ -319,6 +319,16 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-centroid_input</b> \<Boolean\><dt>
+<dd>why input in the name twice ? in:file:centroid_input Enable centroid inputs of PDBs</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-centroid</b> \<Boolean\><dt>
+<dd>Enable centroid inputs of PDBs</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-residue_type_set</b> \<String\><dt>
 <dd>ResidueTypeSet for input files</dd><br>
 <dd>Default: "fa_standard"</dd><br>
@@ -369,11 +379,6 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dl>
 <dt><b>-silent_scores_wanted</b> \<StringVector\><dt>
 <dd>Only put these silent-scores into the Pose.</dd><br>
-</dl>
-<dl>
-<dt><b>-centroid_input</b> \<Boolean\><dt>
-<dd>Enable centroid inputs of PDBs</dd><br>
-<dd>Default: false</dd><br>
 </dl>
 <dl>
 <dt><b>-fasta</b> \<FileVector\><dt>

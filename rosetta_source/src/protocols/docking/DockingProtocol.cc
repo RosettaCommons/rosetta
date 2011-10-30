@@ -559,8 +559,14 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 	//initialize docking filters
 	if ( highres_filter_ ) highres_filter_->set_score_cutoff( score_cutoff_ );
 
-    // finish setting up constraints
-    setup_constraints( pose );
+	if ( docking_constraint_ ) {
+			TR << "setting up the constraint set mover" << std::endl;
+			docking_constraint_->apply( pose );
+			if ( cst_weight_ == 0.0 ) cst_weight_ = 1.0;
+			// finish setting up constraints
+	}
+
+	setup_constraints( pose );
 }
 
 //destructor
@@ -857,16 +863,11 @@ DockingProtocol::apply( pose::Pose & pose )
 		previous_sequence_ = pose.sequence();
 	}
 
-	if ( docking_constraint_ ) {
-		TR << "setting up the constraint set mover" << std::endl;
-		docking_constraint_->apply( pose );
-		if ( cst_weight_ == 0.0 ) cst_weight_ = 1.0;
-	}
-
 	if ( first_apply_with_current_setup_ ){
 		finalize_setup( pose );
 		first_apply_with_current_setup_ = false;
 	}
+
 	pose.fold_tree( fold_tree_ );
 	show(TR);
 
@@ -877,6 +878,14 @@ DockingProtocol::apply( pose::Pose & pose )
 	if ( docking_lowres_mover_ ) {
 		// convert to centroid mode
 		to_centroid_->apply( pose );
+		if ( docking_constraint_ ) {
+			TR << "setting up the constraint set mover" << std::endl;
+			docking_constraint_->apply( pose );
+			if ( cst_weight_ == 0.0 ) cst_weight_ = 1.0;
+			// finish setting up constraints
+			setup_constraints( pose );
+		}
+
 		TR << pose.fold_tree() << std::endl;
 		// make starting perturbations based on command-line flags over each movable jump
 		if ( perturber_ ) {
@@ -912,6 +921,14 @@ DockingProtocol::apply( pose::Pose & pose )
 		if ( !pose.is_fullatom() ) {
 			// Convert pose to high resolution and recover sidechains
 			to_all_atom_->apply( pose );
+			if ( docking_constraint_ ) {
+				TR << "setting up the constraint set mover" << std::endl;
+				docking_constraint_->apply( pose );
+				if ( cst_weight_ == 0.0 ) cst_weight_ = 1.0;
+				// finish setting up constraints
+				setup_constraints( pose );
+
+			}
 			(*docking_highres_mover_->scorefxn())( pose );
 			jd2::write_score_tracer( pose, "Docking_to_all_atom" );
 			if ( recover_sidechains_ ) {
