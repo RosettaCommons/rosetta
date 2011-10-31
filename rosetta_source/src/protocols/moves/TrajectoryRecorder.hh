@@ -47,60 +47,20 @@ namespace moves {
 
 
 	/// @brief
-class TrajectoryRecorder : public ThermodynamicObserver
-{
-	// Friends
-
-
-public: // Types
-
-
-private: // Types
-
-
-
-
-public: // Constants
-
-
-private: // Constants
-
-
-
-
-public: // Creation
-
-
+class TrajectoryRecorder : public ThermodynamicObserver {
+public:
 	/// @brief Constructor
 	TrajectoryRecorder();
-
 
 	/// @brief Destructor
 	~TrajectoryRecorder();
 
-
 	/// @brief Copy constructor
 	TrajectoryRecorder( TrajectoryRecorder const & );
-
-
-private: // Creation
-
-
-
-
-public: // Methods: assignment
-
 
 	/// @brief operator=
 	TrajectoryRecorder&
 	operator=( TrajectoryRecorder const & );
-
-
-public: // Methods: comparison
-
-
-
-public: // Methods
 
 	virtual
 	MoverOP
@@ -199,15 +159,6 @@ private:
 	write_model(
 		core::pose::Pose const & pose
 	);
-
-
-
-public: // Properties
-
-
-
-
-private: // Fields
 
 	std::string file_name_;
 	core::Size stride_;
