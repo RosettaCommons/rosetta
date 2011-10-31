@@ -44,6 +44,7 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/symmetry/SetupNCSMover.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
@@ -380,20 +381,41 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 			//take care of constraints:
 
-			Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structuer];
-			Real bonus = 10;
+			//user defined constraint from file, make sure to do this first as it
+			//replaces cst object in pose and that wipes out everything already set.
 
-		  Size segment_length = (repeat_pose_.n_residue())/repeat_number;
-		  for (Size rep = 0; rep < repeat_number; rep++){ //start from 2 because first segment is built
-			  for (Size res = 1; res <= segment_length; res++){
-					 repeat_pose_.add_constraint( new ResidueTypeLinkingConstraint(repeat_pose_, res, res+(segment_length*rep), 10));
-			  }
-		  }
+			//only use this type of cst file in this case
+			if (basic::options::option[ OptionKeys::constraints::cst_file ].user()){
 
-			if (basic::options::option[ OptionKeys::constraints::cst_file ].user()){ //only use this type of cst file in this case
 				protocols::moves::ConstraintSetMoverOP repeat_constraint = new protocols::moves::ConstraintSetMover();
 				repeat_constraint->apply( repeat_pose_ );
 			}
+
+			// ResidueTypeLinkingConstraints
+			Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structuer];
+			Real bonus = 10;
+			//std::cout << "RESIDUETYPELINKING CST" << std::endl;
+		  Size segment_length = (repeat_pose_.n_residue())/repeat_number;
+		  for (Size rep = 1; rep < repeat_number; rep++ ){ // from 1 since first segment don't need self-linking
+			  for (Size res = 1; res <= segment_length; res++){
+					 repeat_pose_.add_constraint( new ResidueTypeLinkingConstraint(repeat_pose_, res, res+(segment_length*rep), bonus));
+	//				std::cout << res << " " << res+(segment_length*rep) << std::endl;
+			  }
+		  }
+
+			std::stringstream templateRangeSS;
+			templateRangeSS << "1-" << segment_length;
+
+			//Dihedral (NCS) Constraints
+			//std::cout << "NCS CST" << std::endl;
+			protocols::moves::symmetry::SetupNCSMover setup_ncs;
+		  for (Size rep = 1; rep < repeat_number; rep++){ // from 1 since first segment don't need self-linking
+				std::stringstream targetSS;
+				targetSS << 1+(segment_length*rep) << "-" << segment_length + (segment_length*rep);
+		//		std::cout << templateRangeSS.str() << " " << targetSS.str() << std::endl;
+
+					setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
+		  }
 	}
 
 	// for accumulation of closed structures (only return the best)
@@ -417,6 +439,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	//REPEAT TEST
 	if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
 		sfxOP->set_weight(core::scoring::atom_pair_constraint, 1.0 * basic::options::option[ OptionKeys::remodel::repeat_structuer] );
+		sfxOP->set_weight(core::scoring::res_type_linking_constraint, 1.0 );
 		}
 
 	// randomize loops
