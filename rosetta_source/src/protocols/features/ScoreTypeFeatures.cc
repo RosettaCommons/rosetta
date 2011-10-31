@@ -116,7 +116,7 @@ ScoreTypeFeatures::schema() const {
 			"	protocol_id INTEGER,\n"
 			"	score_type_id INTEGER,\n"
 			"	score_type_name TEXT,\n"
-			"   PRIMARY KEY (protocol_id, score_type_id)\n"
+			"   PRIMARY KEY (protocol_id, score_type_id),\n"
 			"	FOREIGN KEY (protocol_id) REFERENCES protocols (protocol_id));\n"
 			"\n";
 	}else
@@ -141,7 +141,7 @@ void ScoreTypeFeatures::delete_record(
 ){
 
 	statement stmt = (*db_session) <<
-		"DELETE FROM structure_scores WHERE struct_id == ?;\n" << struct_id;
+		"DELETE FROM structure_scores WHERE struct_id = ?;\n" << struct_id;
 	basic::database::safely_write_to_database(stmt);
 
 }
@@ -153,38 +153,29 @@ ScoreTypeFeatures::insert_score_type_rows(
 ) {
 	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
 
-	//cppdb::transaction transact_guard(*db_session);
+	std::string statement_string;
+	if(db_mode == "sqlite3")
+	{
+		statement_string = "INSERT OR IGNORE INTO score_types VALUES (?,?,?);";
+	}else if(db_mode == "mysql")
+	{
+		statement_string = "INSERT INTO score_types VALUES (?,?,?);";
+	}else
+	{
+		utility_exit_with_message("the database mode needs to be 'mysql' or 'sqlite3'");
+	}
+
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+
 	for(Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id){
 		ScoreType type(static_cast<ScoreType>(score_type_id));
 
 		string const score_type( ScoreTypeManager::name_from_score_type(type) );
+		stmt.bind(1,protocol_id);
+		stmt.bind(2,score_type_id);
+		stmt.bind(3,score_type);
+		basic::database::safely_write_to_database(stmt);
 
-		// I <3 all the tiny differences between SQL dialects,
-		//it makes the code so much more vibrant and diverse
-		if(db_mode == "sqlite3")
-		{
-
-			statement stmt = (*db_session)
-				<< "INSERT OR IGNORE INTO score_types VALUES (?,?,?);"
-				<< protocol_id
-				<< score_type_id
-				<< score_type;
-			basic::database::safely_write_to_database(stmt);
-
-		}else if(db_mode == "mysql")
-		{
-
-			statement stmt = (*db_session)
-				<< "INSERT IGNORE INTO score_types VALUES (?,?,?);"
-				<< protocol_id
-				<< score_type_id
-				<< score_type;
-			basic::database::safely_write_to_database(stmt);
-
-		}else
-		{
-			utility_exit_with_message("the database mode needs to be 'mysql' or 'sqlite3'");
-		}
 
 	}
 	//transact_guard.commit();

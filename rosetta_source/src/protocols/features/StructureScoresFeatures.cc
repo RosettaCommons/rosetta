@@ -122,6 +122,12 @@ StructureScoresFeatures::schema() const {
 	}else if(db_mode == "mysql")
 	{
 		return
+			"CREATE TABLE IF NOT EXISTS score_types (\n"
+			"	protocol_id INTEGER REFERENCES protocols (protocol_id),\n"
+			"	score_type_id INTEGER PRIMARY KEY,\n"
+			"	score_type_name TEXT);\n"
+			//"	FOREIGN KEY (protocol_id) REFERENCES protocols (protocol_id));\n"
+			"\n"
 			"CREATE TABLE IF NOT EXISTS structure_scores (\n"
 			"	struct_id INTEGER,\n"
 			"	score_type_id INTEGER,\n"
@@ -178,8 +184,9 @@ void StructureScoresFeatures::delete_record(
 	utility::sql_database::sessionOP db_session
 ){
 
-	statement stmt = (*db_session) <<
-		"DELETE FROM structure_scores WHERE struct_id == ?;\n" << struct_id;
+	std::string statement_string = "DELETE FROM structure_scores WHERE struct_id = ?;\n";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,struct_id);
 	basic::database::safely_write_to_database(stmt);
 
 }
@@ -198,24 +205,22 @@ StructureScoresFeatures::insert_structure_score_rows(
 
 	core::Real total_score= 0.0;
 
+	std::string statement_string = "INSERT INTO structure_scores VALUES (?,?,?);";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	for(Size score_type_id=1; score_type_id <= n_score_types; ++score_type_id){
 		ScoreType type(static_cast<ScoreType>(score_type_id));
 		Real const score_value( energies.weights()[type] * emap[type] );
 		if(!score_value) continue;
 		total_score += score_value;
-		statement stmt = (*db_session)
-			<< "INSERT INTO structure_scores VALUES (?,?,?);"
-			<< struct_id
-			<< score_type_id
-			<< score_value;
+		stmt.bind(1,struct_id);
+		stmt.bind(2,score_type_id);
+		stmt.bind(3,score_value);
 		basic::database::safely_write_to_database(stmt);
 	}
 	// add the total_score type
-	statement stmt = (*db_session)
-		<< "INSERT INTO structure_scores VALUES (?,?,?);"
-		<< struct_id
-		<< n_score_types
-		<< total_score;
+	stmt.bind(1,struct_id);
+	stmt.bind(2,n_score_types);
+	stmt.bind(3,total_score);
 	basic::database::safely_write_to_database(stmt);
 }
 

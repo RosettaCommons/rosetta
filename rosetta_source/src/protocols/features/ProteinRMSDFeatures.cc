@@ -185,22 +185,20 @@ ProteinRMSDFeatures::report_features(
 		if(relevant_residues[i]) subset_residues.push_back(i);
 	}
 
-	statement stmt = (*db_session)
-		<< "INSERT INTO protein_rmsd VALUES (?,?,?,?,?,?,?,?,?,?);"
-		<< struct_id
-		<< find_tag(*reference_pose_)
-		<< rmsd_with_super(*reference_pose_, pose, subset_residues, is_protein_CA)
-		<< rmsd_with_super(
-			*reference_pose_, pose, subset_residues, is_protein_CA_or_CB)
-		<< rmsd_with_super(
-			*reference_pose_, pose, subset_residues, is_protein_backbone)
-		<< rmsd_with_super(
-			*reference_pose_, pose, subset_residues, is_protein_backbone_including_O)
-		<< rmsd_with_super(
-			*reference_pose_, pose, subset_residues, is_protein_sidechain_heavyatom)
-		<< rmsd_with_super(*reference_pose_, pose, subset_residues, is_heavyatom)
-		<< rmsd_with_super(*reference_pose_, pose, subset_residues, is_nbr_atom)
-		<< all_atom_rmsd(*reference_pose_, pose, subset_residues);
+	std::string statement_string = "INSERT INTO protein_rmsd VALUES (?,?,?,?,?,?,?,?,?,?);";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+
+	stmt.bind(1,struct_id);
+	stmt.bind(2,find_tag(*reference_pose_));
+	stmt.bind(3,rmsd_with_super(*reference_pose_, pose, subset_residues, is_protein_CA));
+	stmt.bind(4,rmsd_with_super(*reference_pose_, pose, subset_residues, is_protein_CA_or_CB));
+	stmt.bind(5,rmsd_with_super(*reference_pose_, pose, subset_residues, is_protein_backbone));
+	stmt.bind(6,rmsd_with_super(*reference_pose_, pose, subset_residues, is_protein_backbone_including_O));
+	stmt.bind(7,rmsd_with_super(*reference_pose_, pose, subset_residues, is_protein_sidechain_heavyatom));
+	stmt.bind(8,rmsd_with_super(*reference_pose_, pose, subset_residues, is_heavyatom));
+	stmt.bind(9,rmsd_with_super(*reference_pose_, pose, subset_residues, is_nbr_atom));
+	stmt.bind(10,all_atom_rmsd(*reference_pose_, pose, subset_residues));
+
 	basic::database::safely_write_to_database(stmt);
 
 	return 0;

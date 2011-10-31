@@ -29,6 +29,8 @@ utility::sql_database::sessionOP get_db_session(
 	bool const readonly = false,
 	bool const separate_db_per_mpi_process = false);
 
+cppdb::statement safely_prepare_statement(std::string const & statement_string, utility::sql_database::sessionOP db_session);
+
 void safely_write_to_database(cppdb::statement & statement);
 
 cppdb::result safely_read_from_database(cppdb::statement & statement);

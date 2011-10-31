@@ -465,17 +465,17 @@ HBondFeatures::insert_site_row(
 		atmType = pose.residue(resNum).atom_type(atmNum).name();
 	}
 
-	statement stmt = (*db_session)
-		<< "INSERT INTO hbond_sites VALUES (?,?,?,?,?,?,?,?,?);"
-		<< struct_id
-		<< site_id
-		<< resNum
-		<< atmNum
-		<< is_donor
-		<< chain
-		<< resType
-		<< atmType
-		<< HBChemType;
+	std::string statement_string = "INSERT INTO hbond_sites VALUES (?,?,?,?,?,?,?,?,?);";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,struct_id);
+	stmt.bind(2,site_id);
+	stmt.bind(3,resNum);
+	stmt.bind(4,atmNum);
+	stmt.bind(5,is_donor);
+	stmt.bind(6,chain);
+	stmt.bind(7,resType);
+	stmt.bind(8,atmType);
+	stmt.bind(9,HBChemType);
 	basic::database::safely_write_to_database(stmt);
 
 }
@@ -500,16 +500,15 @@ HBondFeatures::insert_site_pdb_row(
 	Real const pdb_heavy_atom_occupancy(
 		pose.pdb_info()->occupancy(resNum, heavy_atmNum) );
 
-
-	statement stmt = (*db_session)
-		<< "INSERT INTO hbond_sites_pdb VALUES (?,?,?,?,?,?,?);"
-		<< struct_id
-		<< site_id
-		<< pdb_chain
-		<< pdb_resNum
-		<< pdb_iCode
-		<< pdb_heavy_atom_temperature
-		<< pdb_heavy_atom_occupancy;
+	std::string statement_string = "INSERT INTO hbond_sites_pdb VALUES (?,?,?,?,?,?,?);";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,struct_id);
+	stmt.bind(2,site_id);
+	stmt.bind(3,pdb_chain);
+	stmt.bind(4,pdb_resNum);
+	stmt.bind(5,pdb_iCode);
+	stmt.bind(6,pdb_heavy_atom_temperature);
+	stmt.bind(7,pdb_heavy_atom_occupancy);
 	basic::database::safely_write_to_database(stmt);
 }
 

@@ -121,17 +121,16 @@ RotamerBoltzmannWeightFeatures::report_features(
 	sessionOP db_session
 ){
 
+	std::string statement_string = "INSERT INTO rotamer_boltzmann_weight VALUES (?,?,?);";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
 		if(!relevant_residues[resNum]) continue;
 		Real const boltzmann_weight(
 			rotamer_boltzmann_weight_->compute_Boltzmann_weight(pose, resNum));
 
-
-		statement stmt = (*db_session)
-			<< "INSERT INTO rotamer_boltzmann_weight VALUES (?,?,?);"
-			<< struct_id
-			<< resNum
-			<< boltzmann_weight;
+		stmt.bind(1,struct_id);
+		stmt.bind(2,resNum);
+		stmt.bind(3,boltzmann_weight);
 		basic::database::safely_write_to_database(stmt);
 
 	}

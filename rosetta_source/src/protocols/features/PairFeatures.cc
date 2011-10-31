@@ -113,6 +113,9 @@ PairFeatures::report_residue_pairs(
 
 	TenANeighborGraph const & tenA( pose.energies().tenA_neighbor_graph() );
 
+	std::string statement_string = "INSERT INTO residue_pairs VALUES (?,?,?,?,?,?,?);";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+
 	for(Size resNum1=1; resNum1 <= pose.total_residue(); ++resNum1){
 		if(!relevant_residues[resNum1]) continue;
 		Residue res1( pose.residue(resNum1) );
@@ -134,15 +137,13 @@ PairFeatures::report_residue_pairs(
 
 			int polymeric_sequence_dist(res1.polymeric_sequence_distance(res2));
 
-			statement stmt = (*db_session)
-				<< "INSERT INTO residue_pairs VALUES (?,?,?,?,?,?,?);"
-				<< struct_id
-				<< resNum1
-				<< resNum2
-				<< res1_10A_neighbors
-				<< res2_10A_neighbors
-				<< actcoord_dist
-				<< polymeric_sequence_dist;
+			stmt.bind(1,struct_id);
+			stmt.bind(2,resNum1);
+			stmt.bind(3,resNum2);
+			stmt.bind(4,res1_10A_neighbors);
+			stmt.bind(5,res2_10A_neighbors);
+			stmt.bind(6,actcoord_dist);
+			stmt.bind(7,polymeric_sequence_dist);
 			basic::database::safely_write_to_database(stmt);
 		}
 	}

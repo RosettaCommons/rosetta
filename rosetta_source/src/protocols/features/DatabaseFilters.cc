@@ -32,6 +32,7 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
+#include <utility/excn/Exceptions.hh>
 
 
 // C++ Headers
@@ -89,7 +90,14 @@ WriteDeletePair get_write_delete_pair(
 	core::Size struct_id = 0;
 	core::Real cutoff_score = 0.0;
 	core::Real current_model_score = 0.0;
-	core::Size score_type_id = get_score_type_id_from_score_term(db_session,protocol_id,score_term);
+	core::Size score_type_id = 0;
+	try
+	{
+		score_type_id = get_score_type_id_from_score_term(db_session,protocol_id,score_term);
+	}catch(utility::excn::EXCN_Base &)
+	{
+		std::cout << "no score type term, looking in the job data map" <<std::endl;
+	}
 	//Some applications (most ligand docking) store score terms in the job data.
 	//If this is the case score_type_id will return 0
 	//otherwise, we know that the score term in question is a normal scoring function term

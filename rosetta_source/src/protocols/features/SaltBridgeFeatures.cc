@@ -145,7 +145,7 @@ SaltBridgeFeatures::report_features(
 
 	// Note: these are all pairs of potential salt bridge sites, not
 	// just the ones involved in hydrogen bonds
-	statement stmt = (*db_session) <<
+	std::string hbond_string =
 		"SELECT\n"
 		"	acc.site_id, acc.resNum, acc.atmNum,\n"
 		"	don.site_id, don.resNum, don.atmNum\n"
@@ -156,15 +156,20 @@ SaltBridgeFeatures::report_features(
 		"	(don.HBChemType = 'hbdon_GDH' OR don.HBChemType = 'hbdon_GDE' OR\n"
 		"	don.HBChemType = 'hbdon_AMO' OR don.HBChemType = 'hbdon_IMD' OR\n"
 		"  don.HBChemType = 'hbdon_IME') AND\n"
-		"	(acc.HBChemType = 'hbacc_CXA' OR acc.HBChemType = 'hbacc_CXL');\n"
-		<< struct_id << struct_id;
+		"	(acc.HBChemType = 'hbacc_CXA' OR acc.HBChemType = 'hbacc_CXL');\n";
+	statement hbond_stmt(basic::database::safely_prepare_statement(hbond_string,db_session));
+	hbond_stmt.bind(1,struct_id);
+	hbond_stmt.bind(2,struct_id);
 
-	result res(basic::database::safely_read_from_database(stmt));
+	result res(basic::database::safely_read_from_database(hbond_stmt));
 
 	Size acc_site_id, acc_resNum, acc_atmNum;
 	Size don_site_id, don_resNum, don_atmNum;
 	PointPosition  bb, b, c, o_proj;
 	Angle psi, theta;
+	std::string salt_bridge_string = "INSERT INTO salt_bridges VALUES (?,?,?,?,?,?,?)";
+	statement salt_bridge_statement(basic::database::safely_prepare_statement(salt_bridge_string,db_session));
+
 	while(res.next()){
 		res >> acc_site_id >> acc_resNum >> acc_atmNum;
 		res >> don_site_id >> don_resNum >> don_atmNum;
@@ -225,16 +230,14 @@ SaltBridgeFeatures::report_features(
 
 		Length const rho(c.distance(o));
 
-		statement stmt = (*db_session)
-			<< "INSERT INTO salt_bridges VALUES (?,?,?,?,?,?,?)"
-			<< struct_id
-			<< don_site_id
-			<< acc_site_id
-			<< psi
-			<< theta
-			<< rho
-			<< orbital;
-		basic::database::safely_write_to_database(stmt);
+		salt_bridge_statement.bind(1,struct_id);
+		salt_bridge_statement.bind(2,don_site_id);
+		salt_bridge_statement.bind(3,acc_site_id);
+		salt_bridge_statement.bind(4,psi);
+		salt_bridge_statement.bind(5,theta);
+		salt_bridge_statement.bind(6,rho);
+		salt_bridge_statement.bind(7,orbital);
+		basic::database::safely_write_to_database(salt_bridge_statement);
 	}
 
 	return 0;

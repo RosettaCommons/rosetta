@@ -946,51 +946,56 @@ HBondDatabase::report_parameter_features(
 
 	string const & database_tag(params_database_tag_ );
 
-	statement stmt = (*db_session)
-		<< "SELECT * FROM hbond_evaluation_types WHERE database_tag = ?;"
-		<< database_tag;
-	result res(basic::database::safely_read_from_database(stmt));
+	std::string select_string = "SELECT * FROM hbond_evaluation_types WHERE database_tag = ?;";
+	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
+	select_statement.bind(1,database_tag);
+	result res(basic::database::safely_read_from_database(select_statement));
 	if(res.next()) return 0;
 
 
 	pair<string, FadeIntervalCOP> fade_name_interval;
+	std::string hbond_interval_string = "INSERT INTO hbond_fade_interval VALUES (?,?,?,?,?,?,?);";
+	statement hbond_interval_statement(basic::database::safely_prepare_statement(hbond_interval_string,db_session));
 	foreach(fade_name_interval, HBFadeInterval_lookup_by_name_){
-		statement stmt = (*db_session)
-			<< "INSERT INTO hbond_fade_interval VALUES (?,?,?,?,?,?,?);"
-			<< database_tag
-			<< fade_name_interval.first
-			<< (fade_name_interval.second->get_smooth() ? "smooth" : "piecewise_linear")
-			<< fade_name_interval.second->get_min0()
-			<< fade_name_interval.second->get_fmin()
-			<< fade_name_interval.second->get_fmax()
-			<< fade_name_interval.second->get_max0();
-		basic::database::safely_write_to_database(stmt);
+		hbond_interval_statement.bind(1,database_tag);
+		hbond_interval_statement.bind(2,fade_name_interval.first);
+		hbond_interval_statement.bind(3,(fade_name_interval.second->get_smooth() ? "smooth" : "piecewise_linear"));
+		hbond_interval_statement.bind(4,fade_name_interval.second->get_min0());
+		hbond_interval_statement.bind(5,fade_name_interval.second->get_fmin());
+		hbond_interval_statement.bind(6,fade_name_interval.second->get_fmax());
+		hbond_interval_statement.bind(7,fade_name_interval.second->get_max0());
+		basic::database::safely_write_to_database(hbond_interval_statement);
 
 	}
 
 	pair<string, Polynomial_1dCOP> poly_name_fn;
+	std::string hbond_polynomial_string = "INSERT INTO hbond_polynomial_1d VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+	statement hbond_polynomial_statement(basic::database::safely_prepare_statement(hbond_polynomial_string,db_session));
 	foreach(poly_name_fn, HBPoly1D_lookup_by_name_){
-		statement stmt = (*db_session)
-			<< "INSERT INTO hbond_polynomial_1d VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
-			<< database_tag
-			<< poly_name_fn.first
-			<< HBondTypeManager::name_from_geo_dim_type(poly_name_fn.second->geometric_dimension())
-			<< poly_name_fn.second->xmin()
-			<< poly_name_fn.second->xmax()
-			<< poly_name_fn.second->min_val()
-			<< poly_name_fn.second->max_val()
-			<< poly_name_fn.second->root1()
-			<< poly_name_fn.second->root2()
-			<< poly_name_fn.second->degree();
+		hbond_polynomial_statement.bind(1,database_tag);
+		hbond_polynomial_statement.bind(2,poly_name_fn.first);
+		hbond_polynomial_statement.bind(3,HBondTypeManager::name_from_geo_dim_type(poly_name_fn.second->geometric_dimension()));
+		hbond_polynomial_statement.bind(4,poly_name_fn.second->xmin());
+		hbond_polynomial_statement.bind(5,poly_name_fn.second->xmax());
+		hbond_polynomial_statement.bind(6,poly_name_fn.second->min_val());
+		hbond_polynomial_statement.bind(7,poly_name_fn.second->max_val());
+		hbond_polynomial_statement.bind(8,poly_name_fn.second->root1());
+		hbond_polynomial_statement.bind(9,poly_name_fn.second->root2());
+		hbond_polynomial_statement.bind(10,poly_name_fn.second->degree());
+		Size index = 10;
 		for(Size i = 1; i <= poly_name_fn.second->degree(); ++i){
-			stmt << poly_name_fn.second->coefficients()[i];
+			index++;
+			hbond_polynomial_statement.bind(index,poly_name_fn.second->coefficients()[i]);
 		}
 		for(Size i = 1; i <= 11-poly_name_fn.second->degree(); ++i){
-			stmt << cppdb::null;
+			index++;
+			hbond_polynomial_statement.bind_null(index);
 		}
-		basic::database::safely_write_to_database(stmt);
+		basic::database::safely_write_to_database(hbond_polynomial_statement);
 	}
 
+	std::string hbond_evaluation_string = "INSERT INTO hbond_evaluation_types VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+	statement hbond_evaluation_statement(basic::database::safely_prepare_statement(hbond_evaluation_string,db_session));
 	for (Size hbdon=1; hbdon <= hbdon_MAX; ++hbdon){
 		string const & don_chem_type(HBondTypeManager::name_from_don_chem_type(HBDonChemType(hbdon)));
 		for (Size hbacc=1; hbacc <= hbacc_MAX; ++hbacc){
@@ -1001,23 +1006,21 @@ HBondDatabase::report_parameter_features(
 				HBEvalType const hbe(HBEval_lookup(hbdon, hbacc, hbseq_sep));
 				if(!hbe) continue;
 
-				statement stmt = (*db_session)
-					<< "INSERT INTO hbond_evaluation_types VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
-					<< database_tag
-					<< don_chem_type
-					<< acc_chem_type
-					<< separation
-					<< AHdist_short_fade_lookup(hbe)->get_name()
-					<< AHdist_long_fade_lookup(hbe)->get_name()
-					<< cosBAH_fade_lookup(hbe)->get_name()
-					<< cosAHD_fade_lookup(hbe)->get_name()
-					<< AHdist_poly_lookup(hbe)->name()
-					<< cosBAH_short_poly_lookup(hbe)->name()
-					<< cosBAH_long_poly_lookup(hbe)->name()
-					<< cosAHD_short_poly_lookup(hbe)->name()
-					<< cosAHD_long_poly_lookup(hbe)->name()
-					<< HBondTypeManager::name_from_weight_type(weight_type_lookup(hbe));
-				basic::database::safely_write_to_database(stmt);
+				hbond_evaluation_statement.bind(1,database_tag);
+				hbond_evaluation_statement.bind(2,don_chem_type);
+				hbond_evaluation_statement.bind(3,acc_chem_type);
+				hbond_evaluation_statement.bind(4,separation);
+				hbond_evaluation_statement.bind(5,AHdist_short_fade_lookup(hbe)->get_name());
+				hbond_evaluation_statement.bind(6,AHdist_long_fade_lookup(hbe)->get_name());
+				hbond_evaluation_statement.bind(7,cosBAH_fade_lookup(hbe)->get_name());
+				hbond_evaluation_statement.bind(8,cosAHD_fade_lookup(hbe)->get_name());
+				hbond_evaluation_statement.bind(9,AHdist_poly_lookup(hbe)->name());
+				hbond_evaluation_statement.bind(10,cosBAH_short_poly_lookup(hbe)->name());
+				hbond_evaluation_statement.bind(11,cosBAH_long_poly_lookup(hbe)->name());
+				hbond_evaluation_statement.bind(12,cosAHD_short_poly_lookup(hbe)->name());
+				hbond_evaluation_statement.bind(13,cosAHD_long_poly_lookup(hbe)->name());
+				hbond_evaluation_statement.bind(14,HBondTypeManager::name_from_weight_type(weight_type_lookup(hbe)));
+				basic::database::safely_write_to_database(hbond_evaluation_statement);
 
 			}
 		}

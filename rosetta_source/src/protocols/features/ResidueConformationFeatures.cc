@@ -106,6 +106,7 @@ ResidueConformationFeatures::schema() const {
 			"	psi DOUBLE,\n"
 			"	omega DOUBLE,\n"
 			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id));"
+			//"	PRIMARY KEY (struct_id, seqpos));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS nonprotein_residue_angles (\n"
 			"	struct_id INTEGER,\n"
@@ -113,6 +114,7 @@ ResidueConformationFeatures::schema() const {
 			"	chinum INTEGER,\n"
 			"	chiangle DOUBLE,\n"
 			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id));"
+			//"	PRIMARY KEY (struct_id, seqpos));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS residue_atom_coords (\n"
 			"	struct_id INTEGER,\n"
@@ -122,6 +124,7 @@ ResidueConformationFeatures::schema() const {
 			"	y DOUBLE,\n"
 			"	z DOUBLE,\n"
 			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id));";
+			//"	PRIMARY KEY (struct_id,seqpos));";
 	}else
 	{
 		return "";
@@ -148,6 +151,15 @@ ResidueConformationFeatures::report_features(
 		}
 	}
 
+	std::string conformation_string = "INSERT INTO nonprotein_residue_conformation VALUES (?,?,?,?,?)";
+	std::string angle_string = "INSERT INTO nonprotein_residue_angles VALUES (?,?,?,?)";
+	std::string coords_string = "INSERT INTO residue_atom_coords VALUES(?,?,?,?,?,?)";
+
+	statement conformation_stmt(basic::database::safely_prepare_statement(conformation_string,db_session));
+	statement angle_stmt(basic::database::safely_prepare_statement(angle_string,db_session));
+	statement coords_stmt(basic::database::safely_prepare_statement(coords_string,db_session));
+
+
 	//cppdb::transaction transact_guard(*db_session);
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
 		if(!relevant_residues[i]) continue;
@@ -166,28 +178,34 @@ ResidueConformationFeatures::report_features(
 			omega= resi.mainchain_torsion(3);
 		}
 
-		statement stmt = (*db_session) <<
-			"INSERT INTO nonprotein_residue_conformation VALUES (?,?,?,?,?)" <<
-			struct_id << i << phi << psi << omega ;
-		basic::database::safely_write_to_database(stmt);
+		conformation_stmt.bind(1,struct_id);
+		conformation_stmt.bind(2,i);
+		conformation_stmt.bind(3,phi);
+		conformation_stmt.bind(4,psi);
+		conformation_stmt.bind(5,omega);
+		basic::database::safely_write_to_database(conformation_stmt);
 	
 		for(core::Size chi_num = 1; chi_num <= resi.nchi();++chi_num){
 			core::Real chi_angle = resi.chi(chi_num);
 
-			statement stmt = (*db_session) <<
-					"INSERT INTO nonprotein_residue_angles VALUES (?,?,?,?)" <<
-					struct_id << i << chi_num << chi_angle;
-			basic::database::safely_write_to_database(stmt);
+			angle_stmt.bind(1,struct_id);
+			angle_stmt.bind(2,i);
+			angle_stmt.bind(3,chi_num);
+			angle_stmt.bind(4,chi_angle);
+			basic::database::safely_write_to_database(angle_stmt);
 
 		}
 		if(!ideal || resi.is_ligand()){ // always store coords for a ligand
 			for(Size atom = 1; atom <= resi.natoms(); ++atom){
 				core::Vector coords = resi.xyz(atom);
 
-				statement stmt = (*db_session) <<
-					"INSERT INTO residue_atom_coords VALUES(?,?,?,?,?,?)" <<
-					struct_id << i << atom << coords.x() << coords.y() <<coords.z();
-				basic::database::safely_write_to_database(stmt);
+				coords_stmt.bind(1,struct_id);
+				coords_stmt.bind(2,i);
+				coords_stmt.bind(3,atom);
+				coords_stmt.bind(4,coords.x());
+				coords_stmt.bind(5,coords.y());
+				coords_stmt.bind(6,coords.z());
+				basic::database::safely_write_to_database(coords_stmt);
 
 			}
 		}
@@ -202,12 +220,15 @@ ResidueConformationFeatures::delete_record(
 	sessionOP db_session
 ){
 
-	statement stmt = (*db_session) << "DELETE FROM nonprotein_residue_conformation WHERE struct_id == ?;\n"<<struct_id;
-	basic::database::safely_write_to_database(stmt);
-	stmt = (*db_session) << "DELETE FROM nonprotein_residue_angles WHERE struct_id == ?;\n" << struct_id;
-	basic::database::safely_write_to_database(stmt);
-	stmt = (*db_session) << "DELETE FROM residue_atom_coords WHERE struct_id == ?;" << struct_id;
-	basic::database::safely_write_to_database(stmt);
+	statement conformation_stmt(basic::database::safely_prepare_statement("DELETE FROM nonprotein_residue_conformation WHERE struct_id = ?;\n",db_session));
+	conformation_stmt.bind(1,struct_id);
+	basic::database::safely_write_to_database(conformation_stmt);
+	statement angle_stmt(basic::database::safely_prepare_statement("DELETE FROM nonprotein_residue_angles WHERE struct_id = ?;\n",db_session));
+	angle_stmt.bind(1,struct_id);
+	basic::database::safely_write_to_database(angle_stmt);
+	statement coords_stmt(basic::database::safely_prepare_statement("DELETE FROM residue_atom_coords WHERE struct_id = ?;",db_session));
+	coords_stmt.bind(1,struct_id);
+	basic::database::safely_write_to_database(coords_stmt);
 
 }
 
@@ -231,7 +252,7 @@ ResidueConformationFeatures::load_conformation(
 
 	if(pose.is_fullatom()){
 
-		statement protein_stmt = (*db_session) <<
+		std::string protein_string =
 			"SELECT\n"
 			"	seqpos,\n"
 			"	phi,\n"
@@ -240,8 +261,12 @@ ResidueConformationFeatures::load_conformation(
 			"FROM\n"
 			"	nonprotein_residue_conformation\n"
 			"WHERE\n"
-			"	nonprotein_residue_conformation.struct_id=?;" << struct_id;
-		statement conformation_stmt = (*db_session) <<
+			"	nonprotein_residue_conformation.struct_id=?;";
+
+		statement protein_stmt(basic::database::safely_prepare_statement(protein_string,db_session));
+		protein_stmt.bind(1,struct_id);
+
+		std::string conformation_string =
 			"SELECT\n"
 			"	seqpos,\n"
 			"	chinum,\n"
@@ -249,7 +274,11 @@ ResidueConformationFeatures::load_conformation(
 			"FROM\n"
 			"	nonprotein_residue_angles\n"
 			"WHERE\n"
-			"	nonprotein_residue_angles.struct_id=?;" << struct_id;
+			"	nonprotein_residue_angles.struct_id=?;";
+
+		statement conformation_stmt(basic::database::safely_prepare_statement(conformation_string,db_session));
+		conformation_stmt.bind(1,struct_id);
+
 
 		result protein_res(basic::database::safely_read_from_database(protein_stmt));
 		while(protein_res.next()){
@@ -275,7 +304,7 @@ ResidueConformationFeatures::load_conformation(
 
 	}else{
 
-		statement protein_stmt = (*db_session) <<
+		std::string protein_string  =
 			"SELECT\n"
 			"	seqpos,\n"
 			"	phi,\n"
@@ -284,7 +313,11 @@ ResidueConformationFeatures::load_conformation(
 			"FROM\n"
 			"	nonprotein_residue_conformation\n"
 			"WHERE\n"
-			"	nonprotein_residue_conformation.struct_id=?;" << struct_id;
+			"	nonprotein_residue_conformation.struct_id=?;";
+
+		statement protein_stmt(basic::database::safely_prepare_statement(protein_string,db_session));
+		protein_stmt.bind(1,struct_id);
+
 		result protein_res(basic::database::safely_read_from_database(protein_stmt));
 		while(protein_res.next()){
 			Size seqpos;
@@ -311,16 +344,21 @@ void ResidueConformationFeatures::set_coords_for_residue(
 		Pose & pose
 ){
 
-	statement stmt = (*db_session) <<
-			"SELECT\n"
-			"	atomno,\n"
-			"	x,\n"
-			"	y,\n"
-			"	z\n"
-			"FROM\n"
-			"	residue_atom_coords\n"
-			"WHERE\n"
-			"residue_atom_coords.struct_id=? AND residue_atom_coords.seqpos=?;" << struct_id <<	seqpos;
+	std::string statement_string =
+		"SELECT\n"
+		"	atomno,\n"
+		"	x,\n"
+		"	y,\n"
+		"	z\n"
+		"FROM\n"
+		"	residue_atom_coords\n"
+		"WHERE\n"
+		"residue_atom_coords.struct_id=? AND residue_atom_coords.seqpos=?;";
+
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,struct_id);
+	stmt.bind(2,seqpos);
+
 	result res(basic::database::safely_read_from_database(stmt));
 	while(res.next()){
 		Size atomno;

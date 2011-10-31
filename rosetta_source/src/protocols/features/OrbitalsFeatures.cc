@@ -164,6 +164,14 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 ){
 	//should match max_dist_squared_^1/2
 
+	std::string sc_bb_string = "INSERT INTO HPOL_sc_H_bb_orb VALUES (?,?,?,?,?,?,?,?,?);";
+	std::string bb_sc_string = "INSERT INTO HPOL_bb_H_sc_orb VALUES (?,?,?,?,?,?,?,?,?);";
+	std::string sc_sc_string = "INSERT INTO HPOL_sc_H_sc_orb VALUES (?,?,?,?,?,?,?,?,?);";
+
+	statement sc_bb_statement(basic::database::safely_prepare_statement(sc_bb_string,db_session));
+	statement bb_sc_statement(basic::database::safely_prepare_statement(bb_sc_string,db_session));
+	statement sc_sc_statement(basic::database::safely_prepare_statement(sc_sc_string,db_session));
+
 	for(Size resNum1 = 1; resNum1 <= pose.n_residue(); ++resNum1){
 		Residue const res1 = pose.residue(resNum1);
 		foreach(Size const atm1, res1.atoms_with_orb_index()){
@@ -206,34 +214,46 @@ OrbitalsFeatures::report_hpol_orbital_interactions(
 				}
 				}
 			if(dist <=10.0){
-								Residue const res2 = pose.residue(resNum2);
-									if(res1.atom_is_backbone(atm) && !res2.atom_is_backbone(hpolNum2)){//HPOL_sc_H_bb_orb
-										statement stmt = (*db_session)
-															<< "INSERT INTO HPOL_sc_H_bb_orb VALUES (?,?,?,?,?,?,?,?,?);"
-															<< struct_id
-															<< resNum1 << orbNum1 << orbName1
-															<< resNum2 << hpolNum2
-															<< dist << AOH_angle << DHO_angle;
-										basic::database::safely_write_to_database(stmt);
-									}
-									else if(!res1.atom_is_backbone(atm) && res2.atom_is_backbone(hpolNum2)){//HPOL_bb_H_sc_orb
-										statement stmt = (*db_session)
-															<< "INSERT INTO HPOL_bb_H_sc_orb VALUES (?,?,?,?,?,?,?,?,?);"
-															<< struct_id
-															<< resNum1 << orbNum1 << orbName1
-															<< resNum2 << hpolNum2
-															<< dist << AOH_angle << DHO_angle;
-										basic::database::safely_write_to_database(stmt);
-									}
-									else if(!res1.atom_is_backbone(atm) && !res2.atom_is_backbone(hpolNum2)){//HPOL_sc_H_sc_orb
-										statement stmt = (*db_session)
-															<< "INSERT INTO HPOL_sc_H_sc_orb VALUES (?,?,?,?,?,?,?,?,?);"
-															<< struct_id
-															<< resNum1 << orbNum1 << orbName1
-															<< resNum2 << hpolNum2
-															<< dist << AOH_angle << DHO_angle;
-										basic::database::safely_write_to_database(stmt);
-									}
+				Residue const res2 = pose.residue(resNum2);
+					if(res1.atom_is_backbone(atm) && !res2.atom_is_backbone(hpolNum2)){//HPOL_sc_H_bb_orb
+
+						sc_bb_statement.bind(1,struct_id);
+						sc_bb_statement.bind(2,resNum1);
+						sc_bb_statement.bind(3,orbNum1);
+						sc_bb_statement.bind(4,orbName1);
+						sc_bb_statement.bind(5,resNum2);
+						sc_bb_statement.bind(6,hpolNum2);
+						sc_bb_statement.bind(7,dist);
+						sc_bb_statement.bind(8,AOH_angle);
+						sc_bb_statement.bind(9,DHO_angle);
+						basic::database::safely_write_to_database(sc_bb_statement);
+					}
+					else if(!res1.atom_is_backbone(atm) && res2.atom_is_backbone(hpolNum2)){//HPOL_bb_H_sc_orb
+
+						bb_sc_statement.bind(1,struct_id);
+						bb_sc_statement.bind(2,resNum1);
+						bb_sc_statement.bind(3,orbNum1);
+						bb_sc_statement.bind(4,orbName1);
+						bb_sc_statement.bind(5,resNum2);
+						bb_sc_statement.bind(6,hpolNum2);
+						bb_sc_statement.bind(7,dist);
+						bb_sc_statement.bind(8,AOH_angle);
+						bb_sc_statement.bind(9,DHO_angle);
+						basic::database::safely_write_to_database(bb_sc_statement);
+					}
+					else if(!res1.atom_is_backbone(atm) && !res2.atom_is_backbone(hpolNum2)){//HPOL_sc_H_sc_orb
+
+						sc_sc_statement.bind(1,struct_id);
+						sc_sc_statement.bind(2,resNum1);
+						sc_sc_statement.bind(3,orbNum1);
+						sc_sc_statement.bind(4,orbName1);
+						sc_sc_statement.bind(5,resNum2);
+						sc_sc_statement.bind(6,hpolNum2);
+						sc_sc_statement.bind(7,dist);
+						sc_sc_statement.bind(8,AOH_angle);
+						sc_sc_statement.bind(9,DHO_angle);
+						basic::database::safely_write_to_database(sc_sc_statement);
+					}
 
 			}
 		}
@@ -249,6 +269,8 @@ OrbitalsFeatures::report_haro_orbital_interactions(
 	Size const struct_id,
 	sessionOP db_session
 ){
+	std::string statement_string = "INSERT INTO HARO_sc_H_sc_orb VALUES (?,?,?,?,?,?,?,?,?);";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	for(Size resNum1 = 1; resNum1 <= pose.n_residue(); ++resNum1){
 		Residue const res1 = pose.residue(resNum1);
 		foreach(Size const atm1, res1.atoms_with_orb_index()){
@@ -288,12 +310,16 @@ OrbitalsFeatures::report_haro_orbital_interactions(
 			}
 			if(dist <=10.0){
 				Residue const res2 = pose.residue(resNum2);
-				statement stmt = (*db_session)
-													<< "INSERT INTO HARO_sc_H_sc_orb VALUES (?,?,?,?,?,?,?,?,?);"
-													<< struct_id
-													<< resNum1 << orbNum1 << orbName1
-													<< resNum2 << haroNum2
-													<< dist << AOH_angle << DHO_angle;
+
+				stmt.bind(1,struct_id);
+				stmt.bind(2,resNum1);
+				stmt.bind(3,orbNum1);
+				stmt.bind(4,orbName1);
+				stmt.bind(5,resNum2);
+				stmt.bind(6,haroNum2);
+				stmt.bind(7,dist);
+				stmt.bind(8,AOH_angle);
+				stmt.bind(9,DHO_angle);
 				basic::database::safely_write_to_database(stmt);
 			}
 		}

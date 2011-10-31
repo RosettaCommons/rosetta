@@ -86,6 +86,7 @@ FeaturesReporter::write_schema_to_db(
 					<< "ERROR reading schema for FeaturesReporter: " << type_name() << "\n"
 					<< trimmed_stmt_str << endl;
 				TR.Error << e.what() << endl;
+				utility_exit();
 			}
 		}
 	}

@@ -13,7 +13,10 @@
 #include <protocols/features/DatabaseStatements.hh>
 
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/excn/Exceptions.hh>
 #include <basic/database/sql_utils.hh>
+
+
 
 // External Headers
 #include <cppdb/frontend.h>
@@ -48,19 +51,23 @@ cppdb::statement get_structure_count_statement(
 		std::string const & input_tag
 ){
 	if( input_tag.empty()){
-		return (*db_session) <<
-				"SELECT\n"
-				"	count(*)\n"
-				"FROM\n"
-				"	structures;\n";
+		std::string statement_string =
+			"SELECT\n"
+			"	count(*)\n"
+			"FROM\n"
+			"	structures;";
+		return basic::database::safely_prepare_statement(statement_string,db_session);
 	}else{
-		return 	(*db_session) <<
-				"SELECT\n"
-				"	count(*)\n"
-				"FROM\n"
-				"	structures\n"
-				"WHERE\n"
-				"	structures.input_tag=?;" << input_tag;
+		std::string statement_string =
+			"SELECT\n"
+			"	count(*)\n"
+			"FROM\n"
+			"	structures\n"
+			"WHERE\n"
+			"	structures.input_tag=?;";
+		cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
+		statement.bind(1,input_tag);
+		return statement;
 	}
 }
 
@@ -70,7 +77,8 @@ core::Size get_score_type_id_from_score_term(
 	std::string const & score_term
 )
 {
-	cppdb::statement statement = (*db_session) <<
+
+	std::string statement_string =
 		"SELECT\n"
 		"	score_type_id\n"
 		"FROM\n"
@@ -78,11 +86,14 @@ core::Size get_score_type_id_from_score_term(
 		"WHERE\n"
 		"	protocol_id=?\n"
 		"AND\n"
-		"	score_type_name=?;" << protocol_id << score_term;
+		"	score_type_name=?;";
 
+	cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
+	statement.bind(1,protocol_id);
+	statement.bind(2,score_term);
 	try{
 		return get_something_from_database(statement, core::Size());
-	}catch(utility::excn::EXCN_Msg_Exception){
+	}catch(utility::excn::EXCN_Msg_Exception &){
 		utility_exit_with_message("No score_term "+score_term+" with protocol_id "+utility::to_string(protocol_id));
 	}
 }
@@ -94,34 +105,44 @@ cppdb::statement get_nth_lowest_score_from_job_data_statement(
 		std::string const & input_tag
 ){
 	if(input_tag.empty()){
-		return 	(*db_session) <<
-				"SELECT\n"
-				"	job_string_real_data.struct_id\n"
-				"FROM\n"
-				"	job_string_real_data\n"
-				"WHERE\n"
-				"	job_string_real_data.data_key== ?\n"
-				"ORDER BY\n"
-				"	job_string_real_data.data_value\n"
-				"LIMIT ?,1;" << score_term << cutoff_index-1;
+		std::string statement_string =
+			"SELECT\n"
+			"	job_string_real_data.struct_id\n"
+			"FROM\n"
+			"	job_string_real_data\n"
+			"WHERE\n"
+			"	job_string_real_data.data_key = ?\n"
+			"ORDER BY\n"
+			"	job_string_real_data.data_value\n"
+			"LIMIT ?,1;";
+		cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
+		statement.bind(1,score_term);
+		statement.bind(2,cutoff_index-1);
+		return statement;
 	}
 	else{
-		return (*db_session) <<
-				"SELECT\n"
-				"	job_string_real_data.struct_id\n"
-				"FROM\n"
-				"	job_string_real_data\n"
-				"INNER JOIN\n"
-				"	structures\n"
-				"ON\n"
-				"	job_string_real_data.struct_id == structures.struct_id\n"
-				"WHERE\n"
-				"	job_string_real_data.data_key== ?\n"
-				"AND\n"
-				"	structures.input_tag == ?\n"
-				"ORDER BY\n"
-				"	job_string_real_data.data_value\n"
-				"LIMIT ?,1;" << score_term << input_tag << cutoff_index-1;
+
+		std::string statement_string =
+			"SELECT\n"
+			"	job_string_real_data.struct_id\n"
+			"FROM\n"
+			"	job_string_real_data\n"
+			"INNER JOIN\n"
+			"	structures\n"
+			"ON\n"
+			"	job_string_real_data.struct_id = structures.struct_id\n"
+			"WHERE\n"
+			"	job_string_real_data.data_key = ?\n"
+			"AND\n"
+			"	structures.input_tag = ?\n"
+			"ORDER BY\n"
+			"	job_string_real_data.data_value\n"
+			"LIMIT ?,1;";
+		cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
+		statement.bind(1,score_term);
+		statement.bind(2,input_tag);
+		statement.bind(3,cutoff_index-1);
+		return statement;
 	}
 }
 
@@ -132,34 +153,43 @@ cppdb::statement get_nth_lowest_score_from_score_data_statement(
 		std::string const & input_tag
 ){
 	if(input_tag.empty()){
-		return (*db_session) <<
-				"SELECT\n"
-				"	structure_scores.struct_id\n"
-				"FROM\n"
-				"	structure_scores\n"
-				"WHERE\n"
-				"	structure_scores.score_type_id == ?\n"
-				"ORDER BY\n"
-				"	structure_scores.score_value\n"
-				"LIMIT ?,1;" << score_type_id << cutoff_index-1;
+		std::string statement_string =
+			"SELECT\n"
+			"	structure_scores.struct_id\n"
+			"FROM\n"
+			"	structure_scores\n"
+			"WHERE\n"
+			"	structure_scores.score_type_id = ?\n"
+			"ORDER BY\n"
+			"	structure_scores.score_value\n"
+			"LIMIT ?,1;";
+		cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
+		statement.bind(1,score_type_id);
+		statement.bind(2,cutoff_index-1);
+		return statement;
 	}
 	else{
-		return (*db_session) <<
-				"SELECT\n"
-				"	structure_scores.struct_id\n"
-				"FROM\n"
-				"	structure_scores\n"
-				"INNER JOIN\n"
-				"	structures\n"
-				"ON\n"
-				"	structure_scores.struct_id == structures.struct_id\n"
-				"WHERE\n"
-				"	structure_scores.score_type_id == ?\n"
-				"AND\n"
-				"	structures.input_tag == ?\n"
-				"ORDER BY\n"
-				"	structure_scores.score_value\n"
-				"LIMIT ?,1;" << score_type_id << input_tag << cutoff_index-1;
+		std::string statement_string =
+			"SELECT\n"
+			"	structure_scores.struct_id\n"
+			"FROM\n"
+			"	structure_scores\n"
+			"INNER JOIN\n"
+			"	structures\n"
+			"ON\n"
+			"	structure_scores.struct_id = structures.struct_id\n"
+			"WHERE\n"
+			"	structure_scores.score_type_id = ?\n"
+			"AND\n"
+			"	structures.input_tag = ?\n"
+			"ORDER BY\n"
+			"	structure_scores.score_value\n"
+			"LIMIT ?,1;";
+		cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
+		statement.bind(1,score_type_id);
+		statement.bind(2,input_tag);
+		statement.bind(3,cutoff_index-1);
+		return statement;
 	}
 }
 
@@ -169,34 +199,41 @@ cppdb::statement get_highest_score_from_job_data_statement(
 		std::string const & input_tag
 ){
 	if(input_tag.empty()){
-		return 	(*db_session) <<
-				"SELECT\n"
-				"	job_string_real_data.struct_id\n"
-				"FROM\n"
-				"	job_string_real_data\n"
-				"WHERE\n"
-				"	job_string_real_data.data_key== ?\n"
-				"ORDER BY\n"
-				"	job_string_real_data.data_value DESC\n"
-				"LIMIT 1;" << score_term;
+		std::string statement_string =
+			"SELECT\n"
+			"	job_string_real_data.struct_id\n"
+			"FROM\n"
+			"	job_string_real_data\n"
+			"WHERE\n"
+			"	job_string_real_data.data_key = ?\n"
+			"ORDER BY\n"
+			"	job_string_real_data.data_value DESC\n"
+			"LIMIT 1;";
+		cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
+		statement.bind(1,score_term);
+		return statement;
 	}
 	else{
-		return (*db_session) <<
-				"SELECT\n"
-				"	job_string_real_data.struct_id\n"
-				"FROM\n"
-				"	job_string_real_data\n"
-				"INNER JOIN\n"
-				"	structures\n"
-				"ON\n"
-				"	job_string_real_data.struct_id == structures.struct_id\n"
-				"WHERE\n"
-				"	job_string_real_data.data_key== ?\n"
-				"AND\n"
-				"	structures.input_tag == ?\n"
-				"ORDER BY\n"
-				"	job_string_real_data.data_value DESC\n"
-				"LIMIT 1;" << score_term << input_tag;
+		std::string statement_string =
+			"SELECT\n"
+			"	job_string_real_data.struct_id\n"
+			"FROM\n"
+			"	job_string_real_data\n"
+			"INNER JOIN\n"
+			"	structures\n"
+			"ON\n"
+			"	job_string_real_data.struct_id = structures.struct_id\n"
+			"WHERE\n"
+			"	job_string_real_data.data_key = ?\n"
+			"AND\n"
+			"	structures.input_tag = ?\n"
+			"ORDER BY\n"
+			"	job_string_real_data.data_value DESC\n"
+			"LIMIT 1;";
+		cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
+		statement.bind(1,score_term);
+		statement.bind(2,input_tag);
+		return statement;
 	}
 }
 
@@ -206,34 +243,41 @@ cppdb::statement get_highest_score_from_score_data_statement(
 		std::string const & input_tag
 ){
 	if(input_tag.empty()){
-		return (*db_session) <<
-				"SELECT\n"
-				"	structure_scores.struct_id\n"
-				"FROM\n"
-				"	structure_scores\n"
-				"WHERE\n"
-				"	structure_scores.score_type_id == ?\n"
-				"ORDER BY\n"
-				"	structure_scores.score_value DESC\n"
-				"LIMIT 1;" << score_type_id;
+		std::string statement_string =
+			"SELECT\n"
+			"	structure_scores.struct_id\n"
+			"FROM\n"
+			"	structure_scores\n"
+			"WHERE\n"
+			"	structure.score_type_id = ?\n"
+			"ORDER BY\n"
+			"	structure_scores.score_value DESC\n"
+			"LIMIT 1;";
+		cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
+		statement.bind(1,score_type_id);
+		return statement;
 	}
 	else{
-		return (*db_session) <<
-				"SELECT\n"
-				"	structure_scores.struct_id\n"
-				"FROM\n"
-				"	structure_scores\n"
-				"INNER JOIN\n"
-				"	structures\n"
-				"ON\n"
-				"	structure_scores.struct_id == structures.struct_id\n"
-				"WHERE\n"
-				"	structure_scores.score_type_id == ?\n"
-				"AND\n"
-				"	structures.input_tag == ?\n"
-				"ORDER BY\n"
-				"	structure_scores.score_value DESC\n"
-				"LIMIT 1;" << score_type_id << input_tag;
+		std::string statement_string =
+			"SELECT\n"
+			"	structure_scores.struct_id\n"
+			"FROM\n"
+			"	structure_scores\n"
+			"INNER JOIN\n"
+			"	structures\n"
+			"ON\n"
+			"	structure_scores.struct_id = structures.struct_id\n"
+			"WHERE\n"
+			"	structure_scores.score_type_id = ?\n"
+			"AND\n"
+			"	structures.input_tag = ?\n"
+			"ORDER BY\n"
+			"	structure_scores.score_value DESC\n"
+			"LIMIT 1;";
+		cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
+		statement.bind(1,score_type_id);
+		statement.bind(2,input_tag);
+		return statement;
 	}
 }
 
@@ -327,15 +371,18 @@ core::Real get_score_for_struct_id_and_score_term_from_job_data(
 	std::string const & score_term
 ){
 
-	cppdb::statement statement = (*db_session) <<
+	std::string statement_string =
 		"SELECT\n"
 		"	job_string_real_data.data_value\n"
 		"FROM\n"
 		"	job_string_real_data\n"
 		"WHERE\n"
-		"	job_string_real_data.data_key == ?\n"
+		"	job_string_real_data.data_key = ?\n"
 		"AND\n"
-		"	job_string_real_data.struct_id == ?\n;" << score_term <<struct_id;
+		"	job_string_real_data.struct_id = ?\n;";
+	cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
+	statement.bind(1,score_term);
+	statement.bind(2,struct_id);
 
 	try{
 		return get_something_from_database(statement, core::Real());
@@ -350,15 +397,18 @@ core::Real get_score_for_struct_id_and_score_term_from_score_data(
 	core::Size const & score_type_id)
 {
 
-	cppdb::statement statement = (*db_session) <<
+	std::string statement_string =
 		"SELECT\n"
 		"	structure_scores.score_value\n"
 		"FROM\n"
 		"	structure_scores\n"
 		"WHERE\n"
-		"	structure_scores.struct_id == ?\n"
+		"	structure_scores.struct_id = ?\n"
 		"AND\n"
-		"	structure_scores.score_type_id == ?;" << struct_id << score_type_id;
+		"	structure_scores.score_type_id = ?;";
+	cppdb::statement statement(basic::database::safely_prepare_statement(statement_string,db_session));
+	statement.bind(1,struct_id);
+	statement.bind(2,score_type_id);
 
 	try{
 		return get_something_from_database(statement, core::Real());

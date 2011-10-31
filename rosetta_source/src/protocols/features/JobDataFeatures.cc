@@ -78,22 +78,22 @@ std::string JobDataFeatures::schema() const
 		return
 				"CREATE TABLE IF NOT EXISTS job_string_data (\n"
 				"	struct_id INTEGER,\n"
-				"	data_key TEXT,\n"
-				"	FOREIGN KEY (struct_id)	REFERENCES structures(struct_id)\n"
+				"	data_key VARCHAR(255),\n"
+				"	FOREIGN KEY (struct_id)	REFERENCES structures(struct_id),\n"
 				"	PRIMARY KEY (struct_id,data_key));\n"
 				"\n"
 				"CREATE TABLE IF NOT EXISTS job_string_string_data (\n"
 				"	struct_id INTEGER,\n"
-				"	data_key TEXT,\n"
+				"	data_key VARCHAR(255),\n"
 				"	data_value TEXT,\n"
-				"	FOREIGN KEY (struct_id)	REFERENCES structures(struct_id)\n"
+				"	FOREIGN KEY (struct_id)	REFERENCES structures(struct_id),\n"
 				"	PRIMARY KEY (struct_id,data_key));\n"
 				"\n"
 				"CREATE TABLE IF NOT EXISTS job_string_real_data (\n"
 				"	struct_id INTEGER,\n"
-				"	data_key TEXT,\n"
+				"	data_key VARCHAR(255),\n"
 				"	data_value REAL,\n"
-				"	FOREIGN KEY (struct_id)	REFERENCES structures(struct_id)\n"
+				"	FOREIGN KEY (struct_id)	REFERENCES structures(struct_id),\n"
 				"	PRIMARY KEY (struct_id, data_key));";
 	}else
 	{
@@ -134,24 +134,32 @@ void JobDataFeatures::delete_record(
 	)
 {
 
-	cppdb::statement stmt = (*db_session) << "DELETE FROM job_string_data WHERE struct_id == ?;\n" <<struct_id;
-	basic::database::safely_write_to_database(stmt);
-	stmt = (*db_session) << "DELETE FROM job_string_string_data WHERE struct_id == ?;\n" <<struct_id;
-	basic::database::safely_write_to_database(stmt);
-	stmt = (*db_session) << "DELETE FROM job_string_real_data WHERE struct_id == ?;" << struct_id ;
-	basic::database::safely_write_to_database(stmt);
+	std::string delete_js_string = "DELETE FROM job_string_data WHERE struct_id = ?;\n";
+	cppdb::statement delete_js_statement(basic::database::safely_prepare_statement(delete_js_string,db_session));
+	delete_js_statement.bind(1,struct_id);
+	basic::database::safely_write_to_database(delete_js_statement);
+
+	std::string delete_ss_string = "DELETE FROM job_string_string_data WHERE struct_id = ?;\n";
+	cppdb::statement delete_ss_statement(basic::database::safely_prepare_statement(delete_ss_string,db_session));
+	delete_ss_statement.bind(1,struct_id);
+	basic::database::safely_write_to_database(delete_ss_statement);
+
+	std::string delete_sr_string = "DELETE FROM job_string_real_data WHERE struct_id = ?;";
+	cppdb::statement delete_sr_statement(basic::database::safely_prepare_statement(delete_sr_string,db_session));
+	delete_sr_statement.bind(1,struct_id);
+	basic::database::safely_write_to_database(delete_sr_statement);
 
 }
 
 void JobDataFeatures::insert_string_rows(core::Size struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
 {
 	protocols::jd2::Job::Strings::const_iterator it(job->output_strings_begin());
+	std::string statement_string = "INSERT INTO job_string_data VALUES (?,?);";
+	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,struct_id);
 	for(; it != job->output_strings_end(); ++it)
 	{
-		cppdb::statement stmt = (*db_session)
-			<< "INSERT INTO job_string_data VALUES (?,?);"
-			<< struct_id
-			<< *it;
+		stmt.bind(2,*it);
 		basic::database::safely_write_to_database(stmt);
 	}
 }
@@ -164,13 +172,15 @@ JobDataFeatures::load_string_data(
 ){
 	if(!table_exists(db_session, "job_string_data")) return;
 
-	cppdb::statement stmt = (*db_session) <<
-			"SELECT\n"
-			"	data_key\n"
-			"FROM\n"
-			"	job_string_data\n"
-			"WHERE\n"
-			"	job_string_data.struct_id = ?;" << struct_id;
+	std::string statement_string =
+		"SELECT\n"
+		"	data_key\n"
+		"FROM\n"
+		"	job_string_data\n"
+		"WHERE\n"
+		"	job_string_data.struct_id = ?;";
+	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,struct_id);
 	cppdb::result res(basic::database::safely_read_from_database(stmt));
 
 	while(res.next()){
@@ -184,14 +194,13 @@ JobDataFeatures::load_string_data(
 void JobDataFeatures::insert_string_string_rows(core::Size struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
 {
 	protocols::jd2::Job::StringStringPairs::const_iterator it(job->output_string_string_pairs_begin());
+	std::string statement_string = "INSERT INTO job_string_string_data VALUES (?,?,?);";
+	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,struct_id);
 	for(; it != job->output_string_string_pairs_end();++it)
 	{
-
-		cppdb::statement stmt = (*db_session)
-			<< "INSERT INTO job_string_string_data VALUES (?,?,?);"
-			<< struct_id
-			<< it->first
-			<< it->second;
+		stmt.bind(2,it->first);
+		stmt.bind(3,it->second);
 		basic::database::safely_write_to_database(stmt);
 	}
 }
@@ -203,14 +212,16 @@ JobDataFeatures::load_string_string_data(
 		core::pose::Pose & pose
 ){
 	if(!table_exists(db_session, "job_string_string_data")) return;
-	cppdb::statement stmt = (*db_session) <<
-			"SELECT\n"
-			"	data_key,\n"
-			"	data_value\n"
-			"FROM\n"
-			"	job_string_string_data\n"
-			"WHERE\n"
-			"	job_string_string_data.struct_id = ?;" << struct_id;
+	std::string statement_string =
+		"SELECT\n"
+		"	data_key,\n"
+		"	data_value\n"
+		"FROM\n"
+		"	job_string_string_data\n"
+		"WHERE\n"
+		"	job_string_string_data.struct_id = ?;";
+	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,struct_id);
 	cppdb::result res(basic::database::safely_read_from_database(stmt));
 
 	while(res.next()){
@@ -224,14 +235,14 @@ JobDataFeatures::load_string_string_data(
 void JobDataFeatures::insert_string_real_rows(core::Size struct_id, utility::sql_database::sessionOP db_session, protocols::jd2::JobCOP job) const
 {
 	protocols::jd2::Job::StringRealPairs::const_iterator it(job->output_string_real_pairs_begin());
+	std::string statement_string = "INSERT INTO job_string_real_data VALUES (?,?,?);";
+	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,struct_id);
+
 	for(; it != job->output_string_real_pairs_end();++it)
 	{
-
-		cppdb::statement stmt = (*db_session)
-			<< "INSERT INTO job_string_real_data VALUES (?,?,?);"
-			<< struct_id
-			<< it->first
-			<< it->second;
+		stmt.bind(2,it->first);
+		stmt.bind(3,it->second);
 		basic::database::safely_write_to_database(stmt);
 
 	}
@@ -244,14 +255,16 @@ JobDataFeatures::load_string_real_data(
 		core::pose::Pose & pose
 ){
 	if(!table_exists(db_session, "job_string_real_data")) return;
-	cppdb::statement stmt = (*db_session) <<
-			"SELECT\n"
-			"	data_key,\n"
-			"	data_value\n"
-			"FROM\n"
-			"	job_string_real_data\n"
-			"WHERE\n"
-			"	job_string_real_data.struct_id = ?;" << struct_id;
+	std::string statement_string =
+		"SELECT\n"
+		"	data_key,\n"
+		"	data_value\n"
+		"FROM\n"
+		"	job_string_real_data\n"
+		"WHERE\n"
+		"	job_string_real_data.struct_id = ?;";
+	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,struct_id);
 	cppdb::result res(basic::database::safely_read_from_database(stmt));
 
 	while(res.next()){

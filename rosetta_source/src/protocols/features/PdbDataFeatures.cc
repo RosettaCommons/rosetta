@@ -85,8 +85,8 @@ string PdbDataFeatures::schema() const
 			"	chain_id TEXT,\n"
 			"	insertion_code TEXT,\n"
 			"	pdb_residue_number INTEGER,\n"
-			"	FOREIGN KEY (struct_id, residue_number)\n"
-			"		REFERENCES residue (struct_id, resNum)\n"
+			"	FOREIGN KEY (struct_id)\n"
+			"		REFERENCES structures (struct_id)\n"
 			"		DEFERRABLE INITIALLY DEFERRED,\n"
 			"	PRIMARY KEY(struct_id, residue_number));\n"
 			"\n"
@@ -99,8 +99,8 @@ string PdbDataFeatures::schema() const
 			"	min_occupancy REAL,\n"
 			"	min_bb_occupancy REAL,\n"
 			"	min_sc_occupancy REAL,\n"
-			"	FOREIGN KEY (struct_id, residue_number)\n"
-			"		REFERENCES residue (struct_id, resNum)\n"
+			"	FOREIGN KEY (struct_id)\n"
+			"		REFERENCES structures (struct_id)\n"
 			"		DEFERRABLE INITIALLY DEFERRED,\n"
 			"	PRIMARY KEY(struct_id, residue_number));";
 	}else if(db_mode=="mysql")
@@ -112,9 +112,8 @@ string PdbDataFeatures::schema() const
 			"	chain_id TEXT,\n"
 			"	insertion_code TEXT,\n"
 			"	pdb_residue_number INTEGER,\n"
-			"	FOREIGN KEY (struct_id, residue_number)\n"
-			"		REFERENCES residue (struct_id, resNum),\n"
-			"	PRIMARY KEY(struct_id, residue_number);\n"
+			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
+			"	PRIMARY KEY (struct_id, residue_number));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS residue_pdb_confidence (\n"
 			"	struct_id INTEGER,\n"
@@ -125,9 +124,8 @@ string PdbDataFeatures::schema() const
 			"	min_occupancy REAL,\n"
 			"	min_bb_occupancy REAL,\n"
 			"	min_sc_occupancy REAL,\n"
-			"	FOREIGN KEY (struct_id, residue_number)\n"
-			"		REFERENCES residue (struct_id, resNum),\n"
-			"	PRIMARY KEY(struct_id, residue_number));";
+			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
+			"	PRIMARY KEY (struct_id, residue_number));";
 	}else
 	{
 		return "";
@@ -148,8 +146,15 @@ void PdbDataFeatures::delete_record(
 	Size struct_id,
 	sessionOP db_session)
 {
-	statement stmt = (*db_session) << "DELETE FROM residue_pdb_identification WHERE struct_id == ?;\n" <<struct_id;
-	stmt.exec();
+	std::string id_statement_string = "DELETE FROM residue_pdb_identification WHERE struct_id = ?;\n";
+	statement id_stmt(basic::database::safely_prepare_statement(id_statement_string,db_session));
+	id_stmt.bind(1,struct_id);
+	basic::database::safely_write_to_database(id_stmt);
+
+	std::string confidence_statement_string = "DELETE FROM residue_pdb_confidence WHERE struct_id = ?;\n";
+	statement confidence_stmt(basic::database::safely_prepare_statement(confidence_statement_string,db_session));
+	confidence_stmt.bind(1,struct_id);
+	basic::database::safely_write_to_database(confidence_stmt);
 }
 
 void PdbDataFeatures::load_into_pose(
@@ -170,7 +175,7 @@ void PdbDataFeatures::load_residue_pdb_identification(
 	vector1<Size> pdb_numbers;
 	vector1<char> pdb_chains;
 	vector1<char> insertion_codes;
-	statement stmt = (*db_session) <<
+	std::string statement_string =
 		"SELECT\n"
 		"	residue_number,\n"
 		"	chain_id,\n"
@@ -179,8 +184,10 @@ void PdbDataFeatures::load_residue_pdb_identification(
 		"FROM\n"
 		"	residue_pdb_identification\n"
 		"WHERE\n"
-		"	residue_pdb_identification.struct_id=?;" <<struct_id;
+		"	residue_pdb_identification.struct_id=?;";
 
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,struct_id);
 	result res(safely_read_from_database(stmt));
 
 	while(res.next()) {
@@ -213,19 +220,19 @@ void PdbDataFeatures::insert_residue_pdb_identification_rows(
 	Pose const & pose)
 {
 	Size res_num(pose.n_residue());
+	std::string statement_string = "INSERT INTO residue_pdb_identification VALUES (?,?,?,?,?);";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	for(Size index =1 ; index <= res_num; ++index)
 	{
 		string chain_id(& pose.pdb_info()->chain(index),1);
 		string insertion_code(&pose.pdb_info()->icode(index),1);
 		Size pdb_residue_number = pose.pdb_info()->number(index);
 
-		statement stmt = (*db_session)
-			<< "INSERT INTO residue_pdb_identification VALUES (?,?,?,?,?);"
-			<< struct_id
-			<< index
-			<< chain_id
-			<< insertion_code
-			<< pdb_residue_number;
+		stmt.bind(1,struct_id);
+		stmt.bind(2,index);
+		stmt.bind(3,chain_id);
+		stmt.bind(4,insertion_code);
+		stmt.bind(5,pdb_residue_number);
 		safely_write_to_database(stmt);
 	}
 }
@@ -240,6 +247,8 @@ void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 	PDBInfoCOP pdb_info(pose.pdb_info());
 	if(!pdb_info) return;
 
+	std::string statement_string = "INSERT INTO residue_pdb_confidence VALUES (?,?,?,?,?,?,?,?);";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	for(Size ri=1; pose.n_residue(); ++ri) {
 		Residue const & r(pose.residue(ri));
 		Real max_bb_temperature(-1), max_sc_temperature(-1);
@@ -257,12 +266,15 @@ void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 		Real const max_temperature = max(max_bb_temperature, max_sc_temperature);
 		Real const min_occupancy = min(min_bb_occupancy, min_sc_occupancy);
 
-		statement stmt = (*db_session)
-			<< "INSERT INTO residue_pdb_identification VALUES (?,?,?,?,?,?,?,?);"
-			<< struct_id << ri
-			<< max_temperature << max_bb_temperature << max_sc_temperature
-			<< min_occupancy << min_bb_occupancy << min_sc_occupancy;
-		stmt.exec();
+		stmt.bind(1,struct_id);
+		stmt.bind(2,ri);
+		stmt.bind(3,max_temperature);
+		stmt.bind(4,max_bb_temperature);
+		stmt.bind(5,max_sc_temperature);
+		stmt.bind(6,min_occupancy);
+		stmt.bind(7,min_bb_occupancy);
+		stmt.bind(8,min_sc_occupancy);
+		basic::database::safely_write_to_database(stmt);
 	}
 }
 

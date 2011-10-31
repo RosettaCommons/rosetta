@@ -161,21 +161,22 @@ AtomAtomPairFeatures::report_atom_pairs(
 		}
 	}
 
+	std::string stmt_string = "INSERT INTO atom_pairs VALUES (?,?,?,?,?,?,?);";
+	cppdb::statement stmt(basic::database::safely_prepare_statement(stmt_string,db_session));
+
 	for(Size aa1=1; aa1 <= max_res; ++aa1){
 		for(Size aa2=1; aa2 <= max_res; ++aa2){
 			for(Size atmNum1=1; atmNum1 <= max_atm; ++atmNum1){
 				for(Size atmNum2=1; atmNum2 <= max_atm; ++atmNum2){
 					for(Size dist_bin=1; dist_bin <= 15; ++dist_bin){
 						Size const count(counts(aa1, atmNum1, aa2, atmNum2, dist_bin));
-						statement stmt = (*db_session)
-							<< "INSERT INTO atom_pairs VALUES (?,?,?,?,?,?,?);"
-							<< struct_id
-							<< aa1
-							<< atmNum1
-							<< aa2
-							<< atmNum2
-							<< dist_bin
-							<< count;
+						stmt.bind(1,struct_id);
+						stmt.bind(2,aa1);
+						stmt.bind(3,atmNum1);
+						stmt.bind(4,aa2);
+						stmt.bind(5,atmNum2);
+						stmt.bind(6,dist_bin);
+						stmt.bind(7,count);
 						basic::database::safely_write_to_database(stmt);
 					}
 				}

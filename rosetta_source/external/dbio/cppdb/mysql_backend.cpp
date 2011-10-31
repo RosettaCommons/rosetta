@@ -40,8 +40,7 @@ class cppdb_myerror : public cppdb_error
 public:
 	cppdb_myerror(std::string const &str) : 
 		cppdb_error("cppdb::mysql::" + str)
-	{
-	}
+	{ }
 };
 namespace unprep {
 	class result : public backend::result {

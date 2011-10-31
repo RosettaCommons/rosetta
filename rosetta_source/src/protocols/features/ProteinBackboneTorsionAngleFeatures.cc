@@ -72,6 +72,8 @@ ProteinBackboneTorsionAngleFeatures::report_features(
 	Size const struct_id,
 	sessionOP db_session
 ){
+	std::string statement_string ="INSERT INTO protein_backbone_torsion_angles VALUES (?,?,?,?,?)";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
 		if(!relevant_residues[i]) continue;
 
@@ -80,9 +82,11 @@ ProteinBackboneTorsionAngleFeatures::report_features(
 		Real psi  (resi.mainchain_torsion(2));
 		Real omega(resi.mainchain_torsion(3));
 
-		statement stmt = (*db_session) <<
-			"INSERT INTO protein_backbone_torsion_angles VALUES (?,?,?,?,?)" <<
-			struct_id << i << phi << psi << omega;
+		stmt.bind(1,struct_id);
+		stmt.bind(2,i);
+		stmt.bind(3,phi);
+		stmt.bind(4,psi);
+		stmt.bind(5,omega);
 		basic::database::safely_write_to_database(stmt);
 
 	}

@@ -81,8 +81,8 @@ StructureFeatures::schema() const {
 			"	protocol_id INTEGER REFERENCES protocols(protocol_id),\n"
 			"	tag VARCHAR(255),\n"
 			"	input_tag VARCHAR(255),\n"
-			"	UNIQUE (protocol_id, tag)\n"
-			"	FOREIGN KEY (protocol_id) REFERENCES protocols (protocol_id));";
+			"	UNIQUE (protocol_id, tag));";
+			//"	FOREIGN KEY (protocol_id) REFERENCES protocols (protocol_id));";
 	}else
 	{
 		return "";
@@ -124,17 +124,18 @@ StructureFeatures::report_features(
 	string const & tag,
 	string const & input_tag
 ){
-	statement stmt;
-	stmt = (*db_session)
-		<< "INSERT INTO structures VALUES (NULL,?,?,?);"
-		<< protocol_id
-		<< tag
-		<< input_tag;
+	std::string statement_string = "INSERT INTO structures VALUES (?,?,?,?);";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+
+	stmt.bind_null(1);
+	stmt.bind(2,protocol_id);
+	stmt.bind(3,tag);
+	stmt.bind(4,input_tag);
 	basic::database::safely_write_to_database(stmt);
 
 	return stmt.last_insert_id();
 }
-
+//%TODO you stopped here
 Size
 StructureFeatures::report_features(
 	Pose const &,
@@ -145,13 +146,14 @@ StructureFeatures::report_features(
 	string const & tag,
 	string const & input_tag
 ){
-	statement stmt;
-	stmt = (*db_session)
-		<< "INSERT INTO structures VALUES (?,?,?,?);"
-		<< struct_id
-		<< protocol_id
-		<< tag
-		<< input_tag;
+
+	std::string statement_string = "INSERT INTO structures VALUES (?,?,?,?);";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+
+	stmt.bind(1,struct_id);
+	stmt.bind(2,protocol_id);
+	stmt.bind(3,tag);
+	stmt.bind(4,input_tag);
 	basic::database::safely_write_to_database(stmt);
 
 	return stmt.last_insert_id();
@@ -161,8 +163,9 @@ void StructureFeatures::delete_record(
 	utility::sql_database::sessionOP db_session
 ){
 
-	statement stmt = (*db_session)
-		<< "DELETE FROM structures WHERE struct_id == ?;" << struct_id;
+	std::string statement_string = "DELETE FROM structures WHERE struct_id = ?;";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,struct_id);
 	basic::database::safely_write_to_database(stmt);
 
 }
@@ -182,13 +185,17 @@ StructureFeatures::load_tag(
 	Size struct_id,
 	Pose & pose) {
 
-	statement stmt = (*db_session) <<
+	std::string statement_string =
 		"SELECT\n"
 		"	tag\n"
 		"FROM\n"
 		"	structures\n"
 		"WHERE\n"
-		"	structures.struct_id=?" << struct_id;
+		"	structures.struct_id=?";
+
+	statement stmt(basic::database::safely_prepare_statement(statement_string, db_session))	;
+	stmt.bind(1,struct_id);
+
 
 	result res(basic::database::safely_read_from_database(stmt));
 	if(!res.next()){
@@ -207,13 +214,17 @@ StructureFeatures::get_struct_id(
 	sessionOP db_session,
 	string const & tag
 ){
-	statement stmt = (*db_session) <<
+
+	std::string statement_string =
 		"SELECT\n"
 		"	struct_id\n"
 		"FROM\n"
 		"	structures\n"
 		"WHERE\n"
-		"	structures.tag=?;" << tag;
+		"	structures.tag=?;";
+
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,tag);
 
 	result res(basic::database::safely_read_from_database(stmt));
 	if(!res.next()){

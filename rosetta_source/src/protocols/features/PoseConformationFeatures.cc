@@ -160,7 +160,8 @@ PoseConformationFeatures::schema() const {
 			"	stop_atom TEXT,\n"
 			"	label INTEGER,\n"
 			"	keep_stub_in_residue BOOLEAN,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id));\n"
+			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
+			"	PRIMARY KEY (struct_id, label));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS jumps (\n"
 			"	struct_id INTEGER,\n"
@@ -177,12 +178,14 @@ PoseConformationFeatures::schema() const {
 			"	x DOUBLE,\n"
 			"	y DOUBLE,\n"
 			"	z DOUBLE,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id));\n"
+			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),\n"
+			"	PRIMARY KEY (struct_id, jump_id));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS chain_endings (\n"
 			"	struct_id INTEGER,\n"
 			"	end_pos INTEGER,\n"
-			"	FOREIGN KEY (struct_id ) REFERENCES structures (struct_id));";
+			"	FOREIGN KEY (struct_id ) REFERENCES structures (struct_id),\n"
+			"	PRIMARY KEY (struct_id, end_pos));";
 	}else
 	{
 		return "";
@@ -213,19 +216,28 @@ PoseConformationFeatures::report_features(
 	FoldTree const & fold_tree(pose->conformation().fold_tree());
 	//assume non-trivial fold_tree only if more than one edge, i.e., EDGE 1 <nres> -1
 	//cppdb::transaction transact_guard(*db_session);
+
+	std::string fold_tree_string = "INSERT INTO fold_trees VALUES (?,?,?,?,?,?,?);";
+	statement fold_tree_statement(basic::database::safely_prepare_statement(fold_tree_string,db_session));
 	for (FoldTree::const_iterator
-				 it = fold_tree.begin(), it_end = fold_tree.end(); it != it_end; ++it) {
+			it = fold_tree.begin(), it_end = fold_tree.end(); it != it_end; ++it) {
 		int start_res(it->start()), stop_res(it->stop()), label(it->label());
 		string start_atom(it->start_atom()), stop_atom(it->stop_atom());
 		bool keep_stub_in_residue(it->keep_stub_in_residue());
 
-		statement stmt = (*db_session) <<
-			"INSERT INTO fold_trees VALUES (?,?,?,?,?,?,?);" << struct_id <<
-			start_res << start_atom << stop_res << stop_atom <<
-			label << keep_stub_in_residue;
-		basic::database::safely_write_to_database(stmt);
+		fold_tree_statement.bind(1,struct_id);
+		fold_tree_statement.bind(2,start_res);
+		fold_tree_statement.bind(3,start_atom);
+		fold_tree_statement.bind(4,stop_res);
+		fold_tree_statement.bind(5,stop_atom);
+		fold_tree_statement.bind(6,label);
+		fold_tree_statement.bind(7,keep_stub_in_residue);
+		basic::database::safely_write_to_database(fold_tree_statement);
 
 	}
+
+	std::string jump_string = "INSERT INTO jumps VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+	statement jump_statement(basic::database::safely_prepare_statement(jump_string,db_session));
  	for (Size nr = 1; nr <= fold_tree.num_jump(); nr++)  {
 		Jump const & jump(pose->jump(nr));
 		xyzMatrix< Real > const & r(jump.get_rotation());
@@ -235,17 +247,30 @@ PoseConformationFeatures::report_features(
 		Vector const & t(jump.get_translation());
 		Real x(t.x()), y(t.y()), z(t.z());
 
-		statement stmt = (*db_session) <<
-			"INSERT INTO jumps VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);" << struct_id << nr <<
-			xx << xy << xz << yx << yy << yz << zx << zy << zz << x << y << z;
-		basic::database::safely_write_to_database(stmt);
+		jump_statement.bind(1,struct_id);
+		jump_statement.bind(2,nr);
+		jump_statement.bind(3,xx);
+		jump_statement.bind(4,xy);
+		jump_statement.bind(5,xz);
+		jump_statement.bind(6,yx);
+		jump_statement.bind(7,yy);
+		jump_statement.bind(8,yz);
+		jump_statement.bind(9,zx);
+		jump_statement.bind(10,zy);
+		jump_statement.bind(11,zz);
+		jump_statement.bind(12,x);
+		jump_statement.bind(13,y);
+		jump_statement.bind(14,z);
+		basic::database::safely_write_to_database(jump_statement);
 	}
 
+ 	std::string chain_ending_string = "INSERT INTO chain_endings VALUES (?,?);";
+ 	statement chain_ending_statement(basic::database::safely_prepare_statement(chain_ending_string,db_session));
 	foreach(Size end_pos, pose->conformation().chain_endings()){
 
-		statement stmt = (*db_session) <<
-			"INSERT INTO chain_endings VALUES (?,?);" << struct_id << end_pos;
-		basic::database::safely_write_to_database(stmt);
+		chain_ending_statement.bind(1,struct_id);
+		chain_ending_statement.bind(2,end_pos);
+		basic::database::safely_write_to_database(chain_ending_statement);
 
 	}
 
@@ -263,12 +288,15 @@ PoseConformationFeatures::report_features(
 
 	string annotated_sequence(pose->annotated_sequence(true));
 
-	statement stmt = (*db_session)
-		<< "INSERT INTO pose_conformations VALUES (?,?,?,?);" << struct_id
-		<< annotated_sequence
-		<< pose->total_residue()
-		<< pose->is_fullatom();
-	basic::database::safely_write_to_database(stmt);
+	std::string pose_conformation_string = "INSERT INTO pose_conformations VALUES (?,?,?,?);";
+	statement pose_conformation_statement(basic::database::safely_prepare_statement(pose_conformation_string,db_session));
+
+	pose_conformation_statement.bind(1,struct_id);
+	pose_conformation_statement.bind(2,annotated_sequence);
+	pose_conformation_statement.bind(3,pose->total_residue());
+	pose_conformation_statement.bind(4,pose->is_fullatom());
+
+	basic::database::safely_write_to_database(pose_conformation_statement);
 
 	//transact_guard.commit();
 	return 0;
@@ -279,14 +307,21 @@ void PoseConformationFeatures::delete_record(
 	sessionOP db_session
 ){
 
-	statement stmt = (*db_session) << "DELETE FROM pose_conformations WHERE struct_id == ?;\n" << struct_id;
-	basic::database::safely_write_to_database(stmt);
-	stmt = (*db_session) << "DELETE FROM fold_trees WHERE struct_id == ?;\n"  << struct_id;
-	basic::database::safely_write_to_database(stmt);
-	stmt = (*db_session) << "DELETE FROM jumps WHERE struct_id == ?;\n" <<struct_id;
-	basic::database::safely_write_to_database(stmt);
-	stmt = (*db_session) << "DELETE FROM chain_endings WHERE struct_id == ?;" << struct_id;
-	basic::database::safely_write_to_database(stmt);
+	statement conf_stmt(basic::database::safely_prepare_statement("DELETE FROM pose_conformations WHERE struct_id = ?;\n",db_session));
+	conf_stmt.bind(1,struct_id);
+	basic::database::safely_write_to_database(conf_stmt);
+
+	statement fold_stmt(basic::database::safely_prepare_statement("DELETE FROM fold_trees WHERE struct_id = ?;\n",db_session));
+	fold_stmt.bind(1,struct_id);
+	basic::database::safely_write_to_database(fold_stmt);
+
+	statement jump_stmt(basic::database::safely_prepare_statement("DELETE FROM jumps WHERE struct_id = ?;\n",db_session));
+	jump_stmt.bind(1,struct_id);
+	basic::database::safely_write_to_database(jump_stmt);
+
+	statement chain_stmt(basic::database::safely_prepare_statement("DELETE FROM chain_endings WHERE struct_id = ?;",db_session));
+	chain_stmt.bind(1,struct_id);
+	basic::database::safely_write_to_database(chain_stmt);
 }
 
 void
@@ -308,16 +343,17 @@ PoseConformationFeatures::load_sequence(
 	Pose & pose
 ){
 
-	statement stmt = (*db_session) <<
-				"SELECT\n"
-				"	annotated_sequence,\n"
-				"	total_residue,\n"
-				"	fullatom\n"
-				"FROM\n"
-				"	pose_conformations\n"
-				"WHERE\n"
-				"	pose_conformations.struct_id = ?;" << struct_id;
-
+	std::string statement_string =
+		"SELECT\n"
+		"	annotated_sequence,\n"
+		"	total_residue,\n"
+		"	fullatom\n"
+		"FROM\n"
+		"	pose_conformations\n"
+		"WHERE\n"
+		"	pose_conformations.struct_id = ?;";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,struct_id);
 	result res(basic::database::safely_read_from_database(stmt));
 
 	if(!res.next()){
@@ -388,8 +424,7 @@ PoseConformationFeatures::load_jumps(
 	statement stmt;
 	if(db_mode == "sqlite3")
 	{
-
-		stmt = (*db_session) <<
+		std::string statement_string =
 			"SELECT\n"
 			"	jump_id,\n"
 			"	xx REAL,\n"
@@ -407,13 +442,13 @@ PoseConformationFeatures::load_jumps(
 			"FROM\n"
 			"	jumps\n"
 			"WHERE\n"
-			"	jumps.struct_id=?;" << struct_id;
-
+			"	jumps.struct_id=?;";
+		stmt = basic::database::safely_prepare_statement(statement_string,db_session);
 
 	}else if(db_mode == "mysql")
 	{
 
-		stmt = (*db_session) <<
+		std::string statement_string =
 			"SELECT\n"
 			"	jump_id,\n"
 			"	xx ,\n"
@@ -421,6 +456,7 @@ PoseConformationFeatures::load_jumps(
 			"	xz ,\n"
 			"	yx ,\n"
 			"	yy ,\n"
+			"	yz ,\n"
 			"	zx ,\n"
 			"	zy ,\n"
 			"	zz ,\n"
@@ -430,14 +466,15 @@ PoseConformationFeatures::load_jumps(
 			"FROM\n"
 			"	jumps\n"
 			"WHERE\n"
-			"	jumps.struct_id=?;" << struct_id;
-
+			"	jumps.struct_id=?;";
+		stmt = basic::database::safely_prepare_statement(statement_string,db_session);
 
 	}else
 	{
 		utility_exit_with_message("the database mode needs to be 'mysql' or 'sqlite3'");
 	}
 
+	stmt.bind(1,struct_id);
 	result res(basic::database::safely_read_from_database(stmt));
 	while(res.next()){
 		Size jump_id;
@@ -460,13 +497,17 @@ PoseConformationFeatures::load_chain_endings(
 
 	//note the Conformation object sorts the chain_endings after they are passed in.
 
-	statement stmt = (*db_session) <<
+	std::string statement_string =
 		"SELECT\n"
 		"	end_pos\n"
 		"FROM\n"
 		"	chain_endings\n"
 		"WHERE\n"
-		"	chain_endings.struct_id=?;" << struct_id;
+		"	chain_endings.struct_id=?;";
+
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,struct_id);
+
 
 	result res(basic::database::safely_read_from_database(stmt));
 

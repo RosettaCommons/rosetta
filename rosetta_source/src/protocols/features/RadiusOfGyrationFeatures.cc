@@ -69,10 +69,10 @@ RadiusOfGyrationFeatures::report_features(
 ){
 	RG_Energy_Fast rg;
 
-	statement stmt = (*db_session)
-		<< "INSERT INTO radius_of_gyration VALUES (?,?);"
-		<< struct_id
-		<< rg.calculate_rg_score(pose, relevant_residues);
+	std::string statement_string =  "INSERT INTO radius_of_gyration VALUES (?,?);";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,struct_id);
+	stmt.bind(2,rg.calculate_rg_score(pose, relevant_residues));
 	basic::database::safely_write_to_database(stmt);
 	return 0;
 }

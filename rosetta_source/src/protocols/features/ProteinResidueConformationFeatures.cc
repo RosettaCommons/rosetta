@@ -108,6 +108,7 @@ ProteinResidueConformationFeatures::schema() const {
 			"	chi3 DOUBLE,\n"
 			"	chi4 DOUBLE,\n"
 			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id));"
+			//"	PRIMARY KEY (struct_id, seqpos));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS residue_atom_coords (\n"
 			"	struct_id INTEGER,\n"
@@ -117,6 +118,7 @@ ProteinResidueConformationFeatures::schema() const {
 			"	y DOUBLE,\n"
 			"	z DOUBLE,\n"
 			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id));";
+			//"	PRIMARY KEY (struct_id, seqpos));";
 	}else
 	{
 		return "";
@@ -148,6 +150,12 @@ ProteinResidueConformationFeatures::report_features(
 	}
 
 	//cppdb::transaction transact_guard(*db_session);
+	std::string conformation_string = "INSERT INTO protein_residue_conformation VALUES (?,?,?,?,?,?,?,?,?,?)";
+	std::string atom_string = "INSERT INTO residue_atom_coords VALUES(?,?,?,?,?,?)";
+
+	statement conformation_statement(basic::database::safely_prepare_statement(conformation_string,db_session));
+	statement atom_statement(basic::database::safely_prepare_statement(atom_string,db_session));
+
 	for (Size i = 1; i <= pose.total_residue(); ++i) {
 		if(!relevant_residues[i]) continue;
 		Residue const & resi = pose.residue(i);
@@ -178,10 +186,17 @@ ProteinResidueConformationFeatures::report_features(
 		Real chi4 = fullatom && resi.nchi() >= 4 ? resi.chi(4) : 0.0;
 
 
-		statement stmt = (*db_session) <<
-			"INSERT INTO protein_residue_conformation VALUES (?,?,?,?,?,?,?,?,?,?)" <<
-			struct_id << i << secstruct << phi << psi << omega << chi1 << chi2 << chi3 << chi4 ;
-		basic::database::safely_write_to_database(stmt);
+		conformation_statement.bind(1,struct_id);
+		conformation_statement.bind(2,i);
+		conformation_statement.bind(3,secstruct);
+		conformation_statement.bind(4,phi);
+		conformation_statement.bind(5,psi);
+		conformation_statement.bind(6,omega);
+		conformation_statement.bind(7,chi1);
+		conformation_statement.bind(8,chi2);
+		conformation_statement.bind(9,chi3);
+		conformation_statement.bind(10,chi4);
+		basic::database::safely_write_to_database(conformation_statement);
 
 		if(!ideal)
 		{
@@ -189,11 +204,14 @@ ProteinResidueConformationFeatures::report_features(
 			{
 				core::Vector coords = resi.xyz(atom);
 
-				statement stmt = (*db_session) <<
-					"INSERT INTO residue_atom_coords VALUES(?,?,?,?,?,?)" <<
-					struct_id << i << atom << coords.x() << coords.y() <<coords.z();
+				atom_statement.bind(1,struct_id);
+				atom_statement.bind(2,i);
+				atom_statement.bind(3,atom);
+				atom_statement.bind(4,coords.x());
+				atom_statement.bind(5,coords.y());
+				atom_statement.bind(6,coords.z());
 					//std::cout <<"*" << i << " " << resi.atom_name(atom) << " " << coords.x() << " " << coords.y() << " "<< coords.z() <<std::endl;
-				basic::database::safely_write_to_database(stmt);
+				basic::database::safely_write_to_database(atom_statement);
 
 			}
 		}
@@ -209,10 +227,12 @@ ProteinResidueConformationFeatures::delete_record(
 	utility::sql_database::sessionOP db_session
 ){
 
-	statement stmt = (*db_session) << "DELETE FROM protein_residue_conformation WHERE struct_id == ?;\n" << struct_id;
-	basic::database::safely_write_to_database(stmt);
-	stmt = (*db_session) << "DELETE FROM residue_atom_coords WHERE struct_id == ?;\n" << struct_id;
-	basic::database::safely_write_to_database(stmt);
+	statement conf_stmt(basic::database::safely_prepare_statement("DELETE FROM protein_residue_conformation WHERE struct_id = ?;\n",db_session));
+	conf_stmt.bind(1,struct_id);
+	basic::database::safely_write_to_database(conf_stmt);
+	statement atom_stmt(basic::database::safely_prepare_statement("DELETE FROM residue_atom_coords WHERE struct_id = ?;\n",db_session));
+	atom_stmt.bind(1,struct_id);
+	basic::database::safely_write_to_database(atom_stmt);
 
 }
 
@@ -237,7 +257,7 @@ ProteinResidueConformationFeatures::load_conformation(
 
 
 	if(pose.is_fullatom()){
-		statement stmt = (*db_session) <<
+		std::string statement_string =
 			"SELECT\n"
 			"	seqpos,\n"
 			"	secstruct,\n"
@@ -251,7 +271,9 @@ ProteinResidueConformationFeatures::load_conformation(
 			"FROM\n"
 			"	protein_residue_conformation\n"
 			"WHERE\n"
-			"	protein_residue_conformation.struct_id=?;" << struct_id;
+			"	protein_residue_conformation.struct_id=?;";
+		statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+		stmt.bind(1,struct_id);
 
 		result res(basic::database::safely_read_from_database(stmt));
 
@@ -318,7 +340,8 @@ void ProteinResidueConformationFeatures::set_coords_for_residues(
 	// roughly O(n*log(n) + k) where n is the size of the tables and k
 	// is the number of rows returned. Doing it all at once means you
 	// only have to pay the n*log(n) cost once.
-	statement stmt = (*db_session) <<
+
+	std::string statement_string =
 		"SELECT\n"
 		"	seqpos,\n"
 		"	atomno,\n"
@@ -328,7 +351,10 @@ void ProteinResidueConformationFeatures::set_coords_for_residues(
 		"FROM\n"
 		"	residue_atom_coords\n"
 		"WHERE\n"
-		"	residue_atom_coords.struct_id=?;" << struct_id;
+		"	residue_atom_coords.struct_id=?;";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,struct_id);
+
 	result res(basic::database::safely_read_from_database(stmt));
 
 	vector1< AtomID > atom_ids;

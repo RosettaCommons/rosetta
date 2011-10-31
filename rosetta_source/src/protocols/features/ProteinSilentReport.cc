@@ -116,8 +116,8 @@ ProteinSilentReport::write_schema_to_db(
 	sessionOP db_session
 ) const {
 	protocol_features_->write_schema_to_db(db_session);
-	pdb_data_features_->write_schema_to_db(db_session);
 	structure_features_->write_schema_to_db(db_session);
+	pdb_data_features_->write_schema_to_db(db_session);
 	structure_scores_features_->write_schema_to_db(db_session);
 	score_type_features_->write_schema_to_db(db_session);
 	pose_conformation_features_->write_schema_to_db(db_session);
@@ -145,12 +145,13 @@ ProteinSilentReport::apply(
 
 	vector1< bool > relevant_residues(pose.total_residue(), true);
 
+	//cppdb::transaction transact_guard(*db_session);
 	if (!initialized_){
 		write_schema_to_db(db_session);
 		write_protocol_report(db_session);
 		initialized_ = true;
 	}
-
+	//transact_guard.commit();
 	if(!database_filter_){
 		write_full_report(pose,db_session,tag);
 		return;
@@ -194,8 +195,15 @@ void
 ProteinSilentReport::write_protocol_report(
 		utility::sql_database::sessionOP db_session
 ){
+	//MYSQL innoDB tables cannot defer foreign constraint checking, so we explicitly wrap these
+	//Calls in transaction guards to make sure the protocol and type_id features are set up properly
+	cppdb::transaction protocol_transaction(*db_session);
 	protocol_features_->report_features(protocol_id_, db_session);
+	protocol_transaction.commit();
+
+	cppdb::transaction score_type_transaction(*db_session);
 	score_type_features_->report_features(protocol_id_, db_session);
+	score_type_transaction.commit();
 }
 void
 ProteinSilentReport::write_full_report(
@@ -238,14 +246,18 @@ void ProteinSilentReport::delete_pose(utility::sql_database::sessionOP db_sessio
 
 void ProteinSilentReport::delete_pose(utility::sql_database::sessionOP db_session, core::Size const & struct_id)
 {
-	structure_features_->delete_record(struct_id,db_session);
-	pose_conformation_features_->delete_record(struct_id,db_session);
-	pdb_data_features_->delete_record(struct_id,db_session);
-	structure_scores_features_->delete_record(struct_id,db_session);
-	pose_comments_features_->delete_record(struct_id,db_session);
-	protein_residue_conformation_features_->delete_record(struct_id,db_session);
-	residue_conformation_features_->delete_record(struct_id,db_session);
+
 	job_data_features_->delete_record(struct_id,db_session);
+	residue_conformation_features_->delete_record(struct_id,db_session);
+	protein_residue_conformation_features_->delete_record(struct_id,db_session);
+	pose_comments_features_->delete_record(struct_id,db_session);
+	structure_scores_features_->delete_record(struct_id,db_session);
+	pdb_data_features_->delete_record(struct_id,db_session);
+	pose_conformation_features_->delete_record(struct_id,db_session);
+	structure_features_->delete_record(struct_id,db_session);
+
+
+
 }
 
 

@@ -150,6 +150,9 @@ ResidueFeatures::insert_residue_rows(
 	sessionOP db_session
 ){
 
+	std::string statement_string = "INSERT INTO residues VALUES (?,?,?,?);";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
 		if(!relevant_residues[resNum]) continue;
 		Residue res = pose.residue(resNum);
@@ -157,14 +160,11 @@ ResidueFeatures::insert_residue_rows(
 		string const name3( res.name3() );
 		string const res_type( res.name() );
 
-		statement stmt = (*db_session)
-			<< "INSERT INTO residues VALUES (?,?,?,?);"
-			<< struct_id
-			<< resNum
-			<< name3
-			<< res_type;
+		stmt.bind(1,struct_id);
+		stmt.bind(2,resNum);
+		stmt.bind(3,name3);
+		stmt.bind(4,res_type);
 		basic::database::safely_write_to_database(stmt);
-
 	}
 }
 
@@ -211,6 +211,11 @@ ResidueFeatures::insert_residue_scores_rows(
 	ScoreTypes ci_2b( scfxn_->ci_2b_types() );
 	ScoreTypes cd_2b( scfxn_->cd_2b_types() );
 
+	std::string oneb_string = "INSERT INTO residue_scores_1b VALUES (?,?,?,?,?);";
+	std::string twob_string = "INSERT INTO residue_scores_2b VALUES (?,?,?,?,?,?);";
+
+	statement oneb_stmt(basic::database::safely_prepare_statement(oneb_string,db_session));
+	statement twob_stmt(basic::database::safely_prepare_statement(twob_string,db_session));
 
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
 		if(!relevant_residues[resNum]) continue;
@@ -224,15 +229,12 @@ ResidueFeatures::insert_residue_scores_rows(
 				string const score_type( ScoreTypeManager::name_from_score_type(*st) );
 				Real const score_value( emap[*st] );
 
-
-				statement stmt = (*db_session)
-					<< "INSERT INTO residue_scores_1b VALUES (?,?,?,?,?);"
-					<< struct_id
-					<< resNum
-					<< score_type
-					<< score_value
-					<< false;
-				basic::database::safely_write_to_database(stmt);
+				oneb_stmt.bind(1,struct_id);
+				oneb_stmt.bind(2,resNum);
+				oneb_stmt.bind(3,score_type);
+				oneb_stmt.bind(4,score_value);
+				oneb_stmt.bind(5,false);
+				basic::database::safely_write_to_database(oneb_stmt);
 			}
 		}
 		{ // Context Dependent One Body Energies
@@ -247,14 +249,12 @@ ResidueFeatures::insert_residue_scores_rows(
 				string const score_type( ScoreTypeManager::name_from_score_type(*st) );
 				Real const score_value( emap[*st] );
 
-				statement stmt = (*db_session)
-					<< "INSERT INTO residue_scores_1b VALUES (?,?,?,?,?);"
-					<< struct_id
-					<< resNum
-					<< score_type
-					<< score_value
-					<< true;
-				basic::database::safely_write_to_database(stmt);
+				oneb_stmt.bind(1,struct_id);
+				oneb_stmt.bind(2,resNum);
+				oneb_stmt.bind(3,score_type);
+				oneb_stmt.bind(4,score_value);
+				oneb_stmt.bind(5,true);
+				basic::database::safely_write_to_database(oneb_stmt);
 
 			}
 		}
@@ -273,15 +273,13 @@ ResidueFeatures::insert_residue_scores_rows(
 					string const score_type(ScoreTypeManager::name_from_score_type(*st));
 					Real const score_value( emap[*st] );
 
-					statement stmt = (*db_session)
-						<< "INSERT INTO residue_scores_2b VALUES (?,?,?,?,?,?);"
-						<< struct_id
-						<< resNum
-						<< otherResNum
-						<< score_type
-						<< score_value
-						<< false;
-					basic::database::safely_write_to_database(stmt);
+					twob_stmt.bind(1,struct_id);
+					twob_stmt.bind(2,resNum);
+					twob_stmt.bind(3,otherResNum);
+					twob_stmt.bind(4,score_type);
+					twob_stmt.bind(5,score_value);
+					twob_stmt.bind(6,false);
+					basic::database::safely_write_to_database(twob_stmt);
 
 				}
 			}
@@ -293,15 +291,13 @@ ResidueFeatures::insert_residue_scores_rows(
 					string const score_type(ScoreTypeManager::name_from_score_type(*st));
 					Real const score_value( emap[*st] );
 
-					statement stmt = (*db_session)
-						<< "INSERT INTO residue_scores_2b VALUES (?,?,?,?,?,?);"
-						<< struct_id
-						<< resNum
-						<< otherResNum
-						<< score_type
-						<< score_value
-						<< true;
-					basic::database::safely_write_to_database(stmt);
+					twob_stmt.bind(1,struct_id);
+					twob_stmt.bind(2,resNum);
+					twob_stmt.bind(3,otherResNum);
+					twob_stmt.bind(4,score_type);
+					twob_stmt.bind(5,score_value);
+					twob_stmt.bind(6,true);
+					basic::database::safely_write_to_database(twob_stmt);
 
 				}
 			}

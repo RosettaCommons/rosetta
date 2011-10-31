@@ -107,11 +107,12 @@ PoseCommentsFeatures::report_features(
 
 	typedef map< string, string >::value_type kv_pair;
 	//cppdb::transaction transact_guard(*db_session);
+	std::string statement_string = "INSERT INTO pose_comments VALUES (?,?,?);";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	foreach(kv_pair const & kv, get_all_comments(pose)){
-
-		statement stmt = (*db_session) <<
-			"INSERT INTO pose_comments VALUES (?,?,?);" <<
-			struct_id << kv.first << kv.second;
+		stmt.bind(1,struct_id);
+		stmt.bind(2,kv.first);
+		stmt.bind(3,kv.second);
 		basic::database::safely_write_to_database(stmt);
 	}
 	//transact_guard.commit();
@@ -123,8 +124,9 @@ void PoseCommentsFeatures::delete_record(
 	utility::sql_database::sessionOP db_session
 ) {
 
-	statement stmt = (*db_session) <<
-		"DELETE FROM pose_comments where struct_id == ?;" <<struct_id;
+	std::string statement_string = "DELETE FROM pose_comments where struct_id = ?;";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,struct_id);
 	basic::database::safely_write_to_database(stmt);
 
 }
@@ -135,14 +137,16 @@ PoseCommentsFeatures::load_into_pose(
 	Size struct_id,
 	Pose & pose){
 
-	statement stmt = (*db_session) <<
+	std::string statement_string =
 		"SELECT\n"
 		"	comment_key,\n"
 		"	value\n"
 		"FROM\n"
 		"	pose_comments\n"
 		"WHERE\n"
-		"	pose_comments.struct_id = ?;" << struct_id;
+		"	pose_comments.struct_id = ?;";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,struct_id);
 
 	result res(basic::database::safely_read_from_database(stmt));
 

@@ -275,21 +275,21 @@ RRReporterSQLite::report_rotamer_recovery_full(
 		struct2_name = JobDistributor::get_instance()->current_job()->input_tag();
 	}
 
+	std::string statement_string = "INSERT INTO rotamer_recovery VALUES (?,?,?,?,?,?,?,?,?,?,?,?);";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session_));
 
-	statement stmt = (*db_session_)
-		<< "INSERT INTO rotamer_recovery VALUES (?,?,?,?,?,?,?,?,?,?,?,?);"
-		<< struct1_name
-		<< res1.name1()
-		<< res1.type().name()
-		<< res1.chain()
-		<< res1.seqpos()
-		<< struct2_name
-		<< res2.chain()
-		<< res2.seqpos()
-		<< comparer_name_
-		<< comparer_params_
-		<< score
-		<< recovered;
+	stmt.bind(1,struct1_name);
+	stmt.bind(2,res1.name1());
+	stmt.bind(3,res1.type().name());
+	stmt.bind(4,res1.chain());
+	stmt.bind(5,res1.seqpos());
+	stmt.bind(6,struct2_name);
+	stmt.bind(7,res2.chain());
+	stmt.bind(8,res2.seqpos());
+	stmt.bind(9,comparer_name_);
+	stmt.bind(10,comparer_params_);
+	stmt.bind(11,score);
+	stmt.bind(12,recovered);
 	basic::database::safely_write_to_database(stmt);
 
 }
@@ -302,11 +302,12 @@ RRReporterSQLite::report_rotamer_recovery_features(
 ){
 
 
-	statement stmt = (*db_session_)
-		<< "INSERT INTO rotamer_recovery VALUES (?,?,?);"
-		<< struct_id1
-		<< res1.seqpos()
-		<< score;
+	std::string statement_string = "INSERT INTO rotamer_recovery VALUES (?,?,?);";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session_));
+
+	stmt.bind(1,struct_id1);
+	stmt.bind(2,res1.seqpos());
+	stmt.bind(3,score);
 	basic::database::safely_write_to_database(stmt);
 
 }

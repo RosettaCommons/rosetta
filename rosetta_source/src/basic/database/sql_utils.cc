@@ -86,6 +86,20 @@ sessionOP get_db_session(
 }
 
 
+cppdb::statement safely_prepare_statement(std::string const & statement_string, utility::sql_database::sessionOP db_session)
+{
+	cppdb::statement stmt;
+	try
+	{
+		stmt = db_session->prepare(statement_string);
+		return stmt;
+	}catch(cppdb::cppdb_error error)
+	{
+		utility_exit_with_message(error.what());
+	}
+	return stmt; //there's no way this should happen
+}
+
 void safely_write_to_database(cppdb::statement & statement)
 {
 	while(true)
@@ -118,7 +132,8 @@ void safely_write_to_database(cppdb::statement & statement)
 			utility_exit_with_message(except.what());
 		}catch(cppdb::cppdb_error & except)
 		{
-			TR <<except.what() <<std::endl;
+			utility_exit_with_message(except.what());
+			//TR <<except.what() <<std::endl;
 			#ifndef WIN32
 				usleep(10);
 			#endif
@@ -158,7 +173,8 @@ cppdb::result safely_read_from_database(cppdb::statement & statement)
 			utility_exit_with_message(except.what());
 		}catch(cppdb::cppdb_error & except)
 		{
-			TR <<except.what() <<std::endl;
+			utility_exit_with_message(except.what());
+			//TR <<except.what() <<std::endl;
 			#ifndef WIN32
 				usleep(10);
 			#endif
@@ -175,8 +191,25 @@ table_exists(
 	sessionOP db_session,
 	string const & table_name
 ) {
-	cppdb::result res = (*db_session)
-		<< "SELECT name FROM sqlite_master WHERE name=?;" << table_name;
+	std::string db_mode(basic::options::option[basic::options::OptionKeys::inout::database_mode]);
+	std::string db_name(basic::options::option[basic::options::OptionKeys::inout::database_filename].value_string());
+
+	cppdb::statement stmt;
+	if(db_mode == "sqlite3")
+	{
+		std::string statement_string = "SELECT name FROM sqlite_master WHERE name=?;";
+		stmt = safely_prepare_statement(statement_string,db_session);
+	}else if(db_mode == "mysql")
+	{
+		std::string statement_string = "SHOW TABLES WHERE Tables_in_"+db_name+" = ?;";
+		stmt = safely_prepare_statement(statement_string,db_session);
+	}else
+	{
+		utility_exit_with_message("unknown database mode");
+	}
+
+	stmt.bind(1,table_name);
+	cppdb::result res = stmt.query();
 
 	if(res.next()){
 		return true;

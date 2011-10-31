@@ -102,7 +102,7 @@ ProtocolFeatures::schema() const {
 		{
 			return
 				"CREATE TABLE IF NOT EXISTS protocols (\n"
-				"	protocol_id INTEGER PRIMARY KEY UNIQUE,\n"
+				"	protocol_id INTEGER PRIMARY KEY,\n"
 				"	command_line TEXT,\n"
 				"	specified_options TEXT,\n"
 				"	svn_url TEXT,\n"
@@ -157,14 +157,17 @@ ProtocolFeatures::report_features(
 	}
 
 	//if -out:database_protocol_id is specified we need to make sure the protocol hasn't already been specified
-
-	cppdb::statement stmt = (*db_session) <<
+	std::string statement_string =
 		"SELECT\n"
 		"	count(*)\n"
 		"FROM\n"
 		"	protocols\n"
 		"WHERE\n"
-		"	protocols.protocol_id == ?;" << protocol_id;
+		"	protocols.protocol_id = ?;";
+	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+	stmt.bind(1,protocol_id);
+
+	//<< protocol_id;
 
 	cppdb::result res(basic::database::safely_read_from_database(stmt));
 	if(res.next())
@@ -177,23 +180,22 @@ ProtocolFeatures::report_features(
 		}
 	}
 
-
+	std::string insert_string("INSERT INTO protocols VALUES (?,?,?,?,?,?);");
+	cppdb::statement insert_statement(basic::database::safely_prepare_statement(insert_string,db_session));
 	if(protocol_id){
-		stmt = (*db_session)
-			<< "INSERT INTO protocols VALUES (?,?,?,?,?,?);"
-			<< protocol_id;
-	} else {
-		stmt = (*db_session)
-			<< "INSERT INTO protocols VALUES (NULL,?,?,?,?,?);";
+		insert_statement.bind(1,protocol_id);
+	}else {
+		insert_statement.bind_null(1);
 	}
-	stmt
-		<< command_line
-		<< specified_options
-		<< svn_url
-		<< svn_version
-		<< script;
-	basic::database::safely_write_to_database(stmt);
-	return stmt.sequence_last("");
+
+	insert_statement.bind(2,command_line);
+	insert_statement.bind(3,specified_options);
+	insert_statement.bind(4,svn_url);
+	insert_statement.bind(5,svn_version);
+	insert_statement.bind(6,script);
+
+	basic::database::safely_write_to_database(insert_statement);
+	return insert_statement.sequence_last("");
 
 }
 

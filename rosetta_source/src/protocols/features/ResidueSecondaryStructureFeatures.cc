@@ -106,11 +106,11 @@ ResidueSecondaryStructureFeatures::report_features(
 			break;
 		}
 
-		statement stmt = (*db_session)
-			<< "INSERT INTO residue_secondary_structure VALUES (?,?,?);"
-			<< struct_id
-			<< resNum
-			<< string(1, all_dssp.get_dssp_secstruct(resNum));
+		std::string statement_string = "INSERT INTO residue_secondary_structure VALUES (?,?,?);";
+		statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+		stmt.bind(1,struct_id);
+		stmt.bind(2,resNum);
+		stmt.bind(3,string(1, all_dssp.get_dssp_secstruct(resNum)));
 		basic::database::safely_write_to_database(stmt);
 
 	}

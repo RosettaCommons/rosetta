@@ -109,7 +109,7 @@ GeometricSolvationFeatures::report_features(
 	sessionOP db_session
 ){
 
-	statement stmt = (*db_session) <<
+	std::string select_string =
 		"SELECT\n"
 		"	site.site_id,\n"
 		"	site.resNum,\n"
@@ -117,9 +117,10 @@ GeometricSolvationFeatures::report_features(
 		"FROM\n"
 		"	hbond_sites as site\n"
 		"WHERE\n"
-		"	site.struct_id = ?;" << struct_id;
-
-	result res(basic::database::safely_read_from_database(stmt));
+		"	site.struct_id = ?;";
+	statement select_statement(basic::database::safely_prepare_statement(select_string,db_session));
+	select_statement.bind(1,struct_id);
+	result res(basic::database::safely_read_from_database(select_statement));
 
 	while(res.next()){
 		Size site_id, resNum, atmNum;
@@ -131,13 +132,12 @@ GeometricSolvationFeatures::report_features(
 			pose.residue(resNum),
 			atmNum));
 
-
-		statement stmt = (*db_session)
-			<< "INSERT INTO geometric_solvation VALUES (?,?,?)"
-			<< struct_id
-			<< site_id
-			<< geometric_solvation_exact;
-		basic::database::safely_write_to_database(stmt);
+		std::string insert_string = "INSERT INTO geometric_solvation VALUES (?,?,?)";
+		statement insert_statement(basic::database::safely_prepare_statement(insert_string,db_session));
+		insert_statement.bind(1,struct_id);
+		insert_statement.bind(2,site_id);
+		insert_statement.bind(3,geometric_solvation_exact);
+		basic::database::safely_write_to_database(insert_statement);
 	}
 
 	// locate the polar sites from the hbond_sites table

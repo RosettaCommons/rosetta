@@ -109,6 +109,9 @@ ProteinBackboneAtomAtomPairFeatures::report_features(
 ){
 	TenANeighborGraph const & tenA(pose.energies().tenA_neighbor_graph());
 
+	std::string statement_string = "INSERT INTO protein_backbone_atom_atom_pairs VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+
 	for(Size resNum1=1; resNum1 <= pose.total_residue(); ++resNum1){
 		if(!relevant_residues[resNum1]) continue;
 		Residue const & res1 = pose.residue(resNum1);
@@ -133,25 +136,26 @@ ProteinBackboneAtomAtomPairFeatures::report_features(
 			Vector const & C2(res2.xyz("C"));
 			Vector const & O2(res2.xyz("O"));
 
-			statement stmt = (*db_session)
-				<< "INSERT INTO protein_backbone_atom_atom_pairs VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);"
-				<< struct_id << resNum1 << resNum2
-				<< N1.distance(N2)
-				<< N1.distance(Ca2)
-				<< N1.distance(C2)
-				<< N1.distance(O2)
-				<< Ca1.distance(N2)
-				<< Ca1.distance(Ca2)
-				<< Ca1.distance(C2)
-				<< Ca1.distance(O2)
-				<< C1.distance(N2)
-				<< C1.distance(Ca2)
-				<< C1.distance(C2)
-				<< C1.distance(O2)
-				<< O1.distance(N2)
-				<< O1.distance(Ca2)
-				<< O1.distance(C2)
-				<< O1.distance(O2);
+			stmt.bind(1,struct_id);
+			stmt.bind(2,resNum1);
+			stmt.bind(3,resNum2);
+			stmt.bind(4,N1.distance(N2));
+			stmt.bind(5,N1.distance(Ca2));
+			stmt.bind(6,N1.distance(C2));
+			stmt.bind(7,N1.distance(O2));
+			stmt.bind(8,Ca1.distance(N2));
+			stmt.bind(9,Ca1.distance(Ca2));
+			stmt.bind(10,Ca1.distance(C2));
+			stmt.bind(11,Ca1.distance(O2));
+			stmt.bind(12,C1.distance(N2));
+			stmt.bind(13,C1.distance(Ca2));
+			stmt.bind(14,C1.distance(C2));
+			stmt.bind(15,C1.distance(O2));
+			stmt.bind(16,O1.distance(N2));
+			stmt.bind(17,O1.distance(Ca2));
+			stmt.bind(18,O1.distance(C2));
+			stmt.bind(19,O1.distance(O2));
+
 			basic::database::safely_write_to_database(stmt);
 		} //res2
 	} //res1

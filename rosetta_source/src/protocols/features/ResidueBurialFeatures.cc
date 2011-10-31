@@ -101,20 +101,23 @@ ResidueBurialFeatures::report_features(
 	TenANeighborGraph const & tenA( pose.energies().tenA_neighbor_graph() );
 	TwelveANeighborGraph const & twelveA( pose.energies().twelveA_neighbor_graph() );
 
-  Real const probe_radius_s(1.0);
-  AtomID_Map< Real > atom_sasa_s;
-  vector1< Real > residue_sasa_s;
-  calc_per_atom_sasa( pose, atom_sasa_s, residue_sasa_s, probe_radius_s);
+	Real const probe_radius_s(1.0);
+	AtomID_Map< Real > atom_sasa_s;
+	vector1< Real > residue_sasa_s;
+	calc_per_atom_sasa( pose, atom_sasa_s, residue_sasa_s, probe_radius_s);
 
-  Real const probe_radius_m(1.4);
-  AtomID_Map< Real > atom_sasa_m;
-  vector1< Real > residue_sasa_m;
-  calc_per_atom_sasa( pose, atom_sasa_m, residue_sasa_m, probe_radius_m);
+	Real const probe_radius_m(1.4);
+	AtomID_Map< Real > atom_sasa_m;
+	vector1< Real > residue_sasa_m;
+	calc_per_atom_sasa( pose, atom_sasa_m, residue_sasa_m, probe_radius_m);
 
-  Real const probe_radius_l(2.0);
-  AtomID_Map< Real > atom_sasa_l;
-  vector1< Real > residue_sasa_l;
-  calc_per_atom_sasa( pose, atom_sasa_l, residue_sasa_l, probe_radius_l);
+	Real const probe_radius_l(2.0);
+	AtomID_Map< Real > atom_sasa_l;
+	vector1< Real > residue_sasa_l;
+	calc_per_atom_sasa( pose, atom_sasa_l, residue_sasa_l, probe_radius_l);
+
+	std::string statement_string = "INSERT INTO residue_burial VALUES (?,?,?,?,?,?,?,?);";
+	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
 		if(!relevant_residues[resNum]) continue;
@@ -126,16 +129,14 @@ ResidueBurialFeatures::report_features(
 		EnergyMap nv_emap;
 		nv_score_->residue_energy(res, pose, nv_emap);
 
-		statement stmt = (*db_session)
-			<< "INSERT INTO residue_burial VALUES (?,?,?,?,?,?,?,?);"
-			<< struct_id
-			<< resNum
-			<< ten_a_neighbors
-			<< twelve_a_neighbors
-			<< nv_emap[neigh_vect_raw]
-			<< residue_sasa_s[resNum]
-			<< residue_sasa_m[resNum]
-			<< residue_sasa_l[resNum];
+		stmt.bind(1,struct_id);
+		stmt.bind(2,resNum);
+		stmt.bind(3,ten_a_neighbors);
+		stmt.bind(4,twelve_a_neighbors);
+		stmt.bind(5,nv_emap[neigh_vect_raw]);
+		stmt.bind(6,residue_sasa_s[resNum]);
+		stmt.bind(7,residue_sasa_m[resNum]);
+		stmt.bind(8,residue_sasa_l[resNum]);
 		basic::database::safely_write_to_database(stmt);
 	}
 	return 0;

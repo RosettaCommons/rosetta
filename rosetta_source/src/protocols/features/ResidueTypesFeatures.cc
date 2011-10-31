@@ -192,18 +192,16 @@ ResidueTypesFeatures::report_features(
 		if(!relevant_residues[i]) continue;
 		res_types.insert(&pose.residue_type(i));
 	}
-
+	std::string status_string = "SELECT * FROM residue_type WHERE residue_type_set_name = ? AND name = ?;";
+	cppdb::statement status_statement(basic::database::safely_prepare_statement(status_string,db_session));
 	foreach(ResidueType const * res_type, res_types){
 		string const & residue_type_set_name(res_type->residue_type_set().name());
 
 		// Is this residue type already in the database?
-		cppdb::statement statement = (*db_session)
-				<< "SELECT * FROM residue_type\n"
-				"WHERE residue_type_set_name = ? AND name = ?;"
-				<< residue_type_set_name << res_type->name();
 
-		cppdb::result res(basic::database::safely_read_from_database(statement));
-
+		status_statement.bind(1,residue_type_set_name);
+		status_statement.bind(2,res_type->name());
+		cppdb::result res(basic::database::safely_read_from_database(status_statement));
 
 		if(res.next()) continue;
 
@@ -235,19 +233,19 @@ ResidueTypesFeatures::report_residue_type(
 		if(!res_type.is_upper_terminus()) upper_terminus = res_type.upper_connect_atom();
 	}
 
+	std::string statement_string = "INSERT INTO residue_type VALUES (?,?,?,?,?,?,?,?,?,?);";
+	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 
-	cppdb::statement stmt = (*db_session)
-		<< "INSERT INTO residue_type VALUES (?,?,?,?,?,?,?,?,?,?);"
-		<< residue_type_set_name
-		<< version_
-		<< res_type.name()
-		<< res_type.name3()
-		<< name1.str()
-		<< res_type.aa()
-		<< lower_terminus
-		<< upper_terminus
-		<< res_type.nbr_atom()
-		<< res_type.nbr_radius();
+	stmt.bind(1,residue_type_set_name);
+	stmt.bind(2,version_);
+	stmt.bind(3,res_type.name());
+	stmt.bind(4,res_type.name3());
+	stmt.bind(5,name1.str());
+	stmt.bind(6,res_type.aa());
+	stmt.bind(7,lower_terminus);
+	stmt.bind(8,upper_terminus);
+	stmt.bind(9,res_type.nbr_atom());
+	stmt.bind(10,res_type.nbr_radius());
 	basic::database::safely_write_to_database(stmt);
 
 }
@@ -259,19 +257,19 @@ ResidueTypesFeatures::report_residue_type_atom(
 	sessionOP db_session
 ) const {
 
+	std::string statement_string = "INSERT INTO residue_type_atom VALUES (?,?,?,?,?,?,?,?);";
+	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	// AtomTypeSet?
 	for(Size i=1; i <= res_type.natoms(); ++i){
 
-		cppdb::statement stmt = (*db_session)
-			<< "INSERT INTO residue_type_atom VALUES (?,?,?,?,?,?,?,?);"
-			<< residue_type_set_name
-			<< res_type.name()
-			<< i
-			<< res_type.atom_name(i)
-			<< res_type.atom_type(i).atom_type_name()
-			<< res_type.mm_atom_name(i)
-			<< res_type.atomic_charge(i)
-			<< res_type.atom_is_backbone(i);
+		stmt.bind(1,residue_type_set_name);
+		stmt.bind(2,res_type.name());
+		stmt.bind(3,i);
+		stmt.bind(4,res_type.atom_name(i));
+		stmt.bind(5,res_type.atom_type(i).atom_type_name());
+		stmt.bind(6,res_type.mm_atom_name(i));
+		stmt.bind(7,res_type.atomic_charge(i));
+		stmt.bind(8,res_type.atom_is_backbone(i));
 		basic::database::safely_write_to_database(stmt);
 
 	}
@@ -284,19 +282,19 @@ ResidueTypesFeatures::report_residue_type_bond(
 	sessionOP db_session
 ) const {
 
+	std::string statement_string = "INSERT INTO residue_type_bond VALUES (?,?,?,?,?);";
+	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	for(Size atm=1; atm <= res_type.natoms(); ++atm){
 		AtomIndices const & neighbors(res_type.bonded_neighbor(atm));
 		vector1<BondName> const & types(res_type.bonded_neighbor_types(atm));
 		for(Size nbr=1; nbr <= neighbors.size(); ++nbr){
 			if(atm >= neighbors[nbr]) continue;
 
-			cppdb::statement stmt = (*db_session)
-				<< "INSERT INTO residue_type_bond VALUES (?,?,?,?,?);"
-				<< residue_type_set_name
-				<< res_type.name()
-				<< atm
-				<< neighbors[nbr]
-				<< types[nbr];
+			stmt.bind(1,residue_type_set_name);
+			stmt.bind(2,res_type.name());
+			stmt.bind(3,atm);
+			stmt.bind(4,neighbors[nbr]);
+			stmt.bind(5,types[nbr]);
 			basic::database::safely_write_to_database(stmt);
 		}
 	}
@@ -309,15 +307,18 @@ ResidueTypesFeatures::report_residue_type_cut_bond(
 	sessionOP db_session
 ) const {
 
+	std::string statement_string = "INSERT INTO residue_type_cut_bond VALUES (?,?,?,?);";
+	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+
 	for(Size i=1; i <= res_type.natoms(); ++i){
 		foreach(Size const j, res_type.cut_bond_neighbor(i)){
 			if(i>=j) continue;
-			cppdb::statement stmt = (*db_session)
-				<< "INSERT INTO residue_type_cut_bond VALUES (?,?,?,?);"
-				<< residue_type_set_name
-				<< res_type.name()
-				<< i
-				<< j;
+
+
+			stmt.bind(1,residue_type_set_name);
+			stmt.bind(2,res_type.name());
+			stmt.bind(3,i);
+			stmt.bind(4,j);
 			basic::database::safely_write_to_database(stmt);
 		}
 	}
@@ -330,18 +331,20 @@ ResidueTypesFeatures::report_residue_type_chi(
 	ResidueType const & res_type,
 	sessionOP db_session
 ) const {
+
+	std::string statement_string = "INSERT INTO residue_type_chi VALUES (?,?,?,?,?,?,?);";
+	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
+
 	for(Size i=1; i <= res_type.nchi(); ++i){
 		AtomIndices const & chi_atoms(res_type.chi_atoms(i));
 
-		cppdb::statement stmt = (*db_session)
-			<< "INSERT INTO residue_type_chi VALUES (?,?,?,?,?,?,?);"
-			<< residue_type_set_name
-			<< res_type.name()
-			<< i
-			<< chi_atoms[1]
-			<< chi_atoms[2]
-			<< chi_atoms[3]
-			<< chi_atoms[4];
+		stmt.bind(1,residue_type_set_name);
+		stmt.bind(2,res_type.name());
+		stmt.bind(3,i);
+		stmt.bind(4,chi_atoms[1]);
+		stmt.bind(5,chi_atoms[2]);
+		stmt.bind(6,chi_atoms[3]);
+		stmt.bind(7,chi_atoms[4]);
 		basic::database::safely_write_to_database(stmt);
 	}
 
@@ -353,17 +356,18 @@ ResidueTypesFeatures::report_residue_type_chi_rotamer(
 	ResidueType const & res_type,
 	sessionOP db_session
 ) const {
+
+	std::string statement_string = "INSERT INTO residue_type_chi_rotamer VALUES (?,?,?,?,?);";
+	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	for(Size chi=1; chi <= res_type.nchi(); ++chi){
 		pair<Real, Real> mean_sdev;
 		foreach(mean_sdev, res_type.chi_rotamers(chi)){
 
-			cppdb::statement stmt = (*db_session)
-				<< "INSERT INTO residue_type_chi_rotamer VALUES (?,?,?,?,?);"
-				<< residue_type_set_name
-				<< res_type.name()
-				<< chi
-				<< mean_sdev.first
-				<< mean_sdev.second;
+			stmt.bind(1,residue_type_set_name);
+			stmt.bind(2,res_type.name());
+			stmt.bind(3,chi);
+			stmt.bind(4,mean_sdev.first);
+			stmt.bind(5,mean_sdev.second);
 			basic::database::safely_write_to_database(stmt);
 		}
 	}
@@ -375,39 +379,35 @@ ResidueTypesFeatures::report_residue_type_proton_chi(
 	ResidueType const & res_type,
 	sessionOP db_session
 ) const {
+
+	std::string statement_string = "INSERT INTO residue_type_proton_chi VALUES (?,?,?,?,?);";
+	cppdb::statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	for(Size proton_chi=1; proton_chi <= res_type.n_proton_chi(); ++proton_chi){
 		Size const chi(res_type.proton_chi_2_chi(proton_chi));
 		foreach(Real const sample, res_type.proton_chi_samples(proton_chi)){
 
-			cppdb::statement stmt_sample = (*db_session)
-				<< "INSERT INTO residue_type_proton_chi VALUES (?,?,?,?,?);"
-				<< residue_type_set_name
-				<< res_type.name()
-				<< chi
-				<< sample
-				<< false;
-			basic::database::safely_write_to_database(stmt_sample);
-
+			stmt.bind(1,residue_type_set_name);
+			stmt.bind(2,res_type.name());
+			stmt.bind(3,chi);
+			stmt.bind(4,sample);
+			stmt.bind(5,false);
+			basic::database::safely_write_to_database(stmt);
 
 			foreach(Real const extra_sample, res_type.proton_chi_extra_samples(proton_chi)){
 
-				cppdb::statement stmt_neg_extra = (*db_session)
-					<< "INSERT INTO residue_type_proton_chi VALUES (?,?,?,?,?);"
-					<< residue_type_set_name
-					<< res_type.name()
-					<< chi
-					<< sample - extra_sample
-					<< true;
-				basic::database::safely_write_to_database(stmt_neg_extra);
+				stmt.bind(1,residue_type_set_name);
+				stmt.bind(2,res_type.name());
+				stmt.bind(3,chi);
+				stmt.bind(4,sample - extra_sample);
+				stmt.bind(5,true);
+				basic::database::safely_write_to_database(stmt);
 
-				cppdb::statement stmt_pos_extra = (*db_session)
-					<< "INSERT INTO residue_type_proton_chi VALUES (?,?,?,?,?);"
-					<< residue_type_set_name
-					<< res_type.name()
-					<< chi
-					<< sample + extra_sample
-					<< true;
-				basic::database::safely_write_to_database(stmt_pos_extra);
+				stmt.bind(1,residue_type_set_name);
+				stmt.bind(2,res_type.name());
+				stmt.bind(3,chi);
+				stmt.bind(4,sample + extra_sample);
+				stmt.bind(5,true);
+				basic::database::safely_write_to_database(stmt);
 
 			}
 		}
