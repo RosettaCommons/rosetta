@@ -3,6 +3,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/smhybrid.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
+#include <basic/options/option_macros.hh>
 #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/AtomType.hh>
@@ -46,6 +47,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/constraints/CircularHarmonicFunc.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/constraints/XYZ_Func.hh>
@@ -97,6 +99,10 @@ using core::conformation::symmetry::SymmetryInfo;
 using core::conformation::symmetry::SymmetryInfoOP;
 using core::pose::symmetry::make_symmetric_pose;
 using protocols::moves::symmetry::SymMinMover;
+
+
+OPT_KEY( String, hub_ss )
+OPT_KEY( IntegerVector, hub_ho_cst )
 
 
 static core::io::silent::SilentFileData sfd;
@@ -215,7 +221,8 @@ int main(int argc, char *argv[]) {
 	core::init(argc,argv);
 	using namespace core::scoring;
 
-	string ss = option[OptionKeys::smhybrid::ss]();
+	string ss = option[OptionKeys::hub_ss]();
+	vector1<Size> hocst = option[OptionKeys::hub_ho_cst]();
 
 	ScoreFunctionOP sfsym  = getScoreFunction();
 	ScoreFunctionOP sfasym = new ScoreFunction(*sfsym);
@@ -225,7 +232,14 @@ int main(int argc, char *argv[]) {
 	ScoreFunctionOP sf2 = new symmetry::SymmetricScoreFunction(ScoreFunctionFactory::create_score_function("score2"));
 	ScoreFunctionOP sf3 = new symmetry::SymmetricScoreFunction(ScoreFunctionFactory::create_score_function("score3"));
 	ScoreFunctionOP sf5 = new symmetry::SymmetricScoreFunction(ScoreFunctionFactory::create_score_function("score5"));
-
+	sf1->set_weight(core::scoring::atom_pair_constraint,1.0);
+	sf1->set_weight(core::scoring::    angle_constraint,1.0);
+	sf2->set_weight(core::scoring::atom_pair_constraint,1.0);
+	sf2->set_weight(core::scoring::    angle_constraint,1.0);
+	sf5->set_weight(core::scoring::atom_pair_constraint,1.0);
+	sf5->set_weight(core::scoring::    angle_constraint,1.0);
+	sf3->set_weight(core::scoring::atom_pair_constraint,1.0);
+	sf3->set_weight(core::scoring::    angle_constraint,1.0);
 
 	core::chemical::ResidueTypeSetCAP rtsfa = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
 	rtsfa->name_map("CHC");
@@ -264,25 +278,42 @@ int main(int argc, char *argv[]) {
 
 	core::util::switch_to_residue_type_set(p,"centroid");
 
+	sf3->set_weight(core::scoring::ss_pair,10.0);
+	sf3->set_weight(core::scoring::sheet,10.0);
+
+	std::map<string, vector1<core::fragment::FragDataOP> > fds( get_frags_map() );
+	core::fragment::FragSetOP frags3 = make_frag_set(ss,fds);
+	protocols::moves::MoverOP fragins = new protocols::basic_moves::ClassicFragmentMover(frags3);
 	Pose init(p);
 	for(int iter = 1; iter < 99999999; ++iter) {
-		Pose p(init);
-		std::map<string, vector1<core::fragment::FragDataOP> > fds( get_frags_map() );
-		core::fragment::FragSetOP frags3 = make_frag_set(ss,fds);
-		protocols::moves::MoverOP fragins = new protocols::basic_moves::ClassicFragmentMover(frags3);
+		Pose tmp(init);
+		
+		for(vector1<Size>::const_iterator i = hocst.begin(); i != hocst.end(); ++i) {
+			using namespace core::scoring::constraints;
+			Size ir = *(  i);
+			Size jr = *(++i);
+			tmp.add_constraint( new AtomPairConstraint( AtomID(tmp.residue(ir).atom_index("H"),ir),
+				                                        AtomID(tmp.residue(ir).atom_index("O"),jr),	
+														new HarmonicFunc(1.8,0.5)));
+			tmp.add_constraint( new AngleConstraint( AtomID(tmp.residue(ir).atom_index("N"),ir),	
+					                                 AtomID(tmp.residue(ir).atom_index("H"),ir),
+				                                     AtomID(tmp.residue(ir).atom_index("O"),jr),	
+													 new CircularHarmonicFunc(3.14159,0.5)));
+		}
+		
 
 		Real temp = 2.0;
-		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( p, *sf3, temp );
+		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( tmp, *sf3, temp );
 		mc->set_autotemp( true, temp );
 		mc->set_temperature( temp );
-		protocols::moves::RepeatMover( new protocols::moves::TrialMover( fragins, mc ), 100000.0 ).apply( p );
-		mc->reset( p );
+		protocols::moves::RepeatMover( new protocols::moves::TrialMover( fragins, mc ), 10000.0 ).apply( tmp );
+		mc->reset( tmp );
 
 		string dumbtag = ss+str(uniform());
-		p.dump_pdb(dumbtag+".pdb");
+		tmp.dump_pdb(dumbtag+".pdb");
 
 		core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
-	  	ss_out->fill_struct(p,dumbtag+".pdb");
+	  	ss_out->fill_struct(tmp,dumbtag+".pdb");
 
 	  	// // Write the scorefile
 	  	sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]() );
