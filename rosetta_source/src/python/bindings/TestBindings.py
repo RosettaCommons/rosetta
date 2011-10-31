@@ -10,7 +10,7 @@
 ## @author Sergey Lyskov
 
 
-import sys, commands, datetime
+import os, sys, commands, datetime
 
 
 def execute(message, commandline, return_=False, untilSuccesses=False):
@@ -37,11 +37,13 @@ def execute(message, commandline, return_=False, untilSuccesses=False):
 
 
 def main(args):
-    tests = execute('getting list of tests...', 'ls test/T*.py', return_= 'output').split()
+    #tests = execute('getting list of tests...', 'ls test/T*.py', return_= 'output').split()
+    tests = filter(lambda x: x.startswith('T') and x.endswith('.py'), os.listdir('test/') )
+    print 'Preparingn to run:\n%s\n' % '\n'.join(tests)
 
     for t in args[1:] or tests:
         print '\nRunning %s...' % t
-        __import__( t.replace('/', '.')[:-3] )
+        __import__( 'test.' + t[:-3] )
 
         #execute('Executing %s...' % t, 'export PYTHONPATH=`pwd`:$PYTHONPATH && python %s' % t)
         #execute('Executing %s...' % t, 'source SetPyRosettaEnvironment.sh && python %s' % t)

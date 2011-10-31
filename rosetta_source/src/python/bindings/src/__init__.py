@@ -11,6 +11,7 @@ warnings.filterwarnings("ignore", "to-Python converter for .+ already registered
 if sys.platform.startswith("linux"): Platform = "linux" # can be linux1, linux2, etc
 elif sys.platform == "darwin" : Platform = "macos"
 elif sys.platform == "cygwin" : Platform = "cygwin"
+elif sys.platform == 'win32'  : Platform = 'windows'
 else: Platform = "_unknown_"
 PlatformBits = platform.architecture()[0][:2]
 

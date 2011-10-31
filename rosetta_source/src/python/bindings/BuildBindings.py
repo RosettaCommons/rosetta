@@ -559,12 +559,14 @@ def getAllRosettaSourceFiles():
 def get_CL_Options():
     if Options.debug:
         # Windows MSVC compiler common options (no optimization, but it works)
-        return '/MD /GR /Gy /DWIN32 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /EHsc'  # /DNDEBUG
+        return '/MD /GR /Gy /DWIN32 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /EHsc /nologo'  # /DNDEBUG
     else:
         # MSVC release options: /O2 /Oi /GL /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /FD /EHsc /MD /Gy /Yu"stdafx.h" /Fp"Release\SimpleConsoleApp.pch" /Fo"Release\\" /Fd"Release\vc90.pdb" /W3 /nologo /c /Zi /TP /errorReport:prompt
         # /Zi is 'generate omplete debugging information' - removing it
         # /W3 is just warning level
-        return '/O2 /Oi /GL /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA'
+        # old one, 'the originale': return '/O2 /Oi /GL /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA'
+        # removing /GL
+        return '/O2 /Oi /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA'
  
 
 
@@ -576,50 +578,57 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
 
     os.chdir( './../../' )
 
-    if Options.BuildMiniLibs:
-        print 'Building Rosetta lib...'
-        # Generate svn_version
-        execute('Generate svn_version.cc...', 'cd .. && python svn_version.py')
+    #if Options.BuildMiniLibs:
+    print 'Building Rosetta lib...'
+    # Generate svn_version
+    if (not os.path.isfile('core/svn_version.cc')): execute('Generate svn_version.cc...', 'cd .. && python svn_version.py')
 
-        for s in external:
-            try: os.makedirs( os.path.join( build_dir, os.path.split(s)[0]) )
-            except OSError: pass
+    for s in external:
+        try: os.makedirs( os.path.join( build_dir, os.path.split(s)[0]) )
+        except OSError: pass
 
-            obj = os.path.join(build_dir,s) + '.obj'
-            s = '../external/' + s
+        obj = os.path.join(build_dir,s) + '.obj'
+        s = '../external/' + s
 
-            if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
-                execute('Compiling %s' % s, 'cl /MD /GR /Gy /D "WIN32" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /DSQLITE_DISABLE_LFS /DSQLITE_OMIT_LOAD_EXTENSION /DSQLITE_THREADSAFE=0 /DCPPDB_EXPORTS /DCPPDB_LIBRARY_SUFFIX=\\".dylib\\" /DCPPDB_LIBRARY_PREFIX=\\"lib\\" /DCPPDB_DISABLE_SHARED_OBJECT_LOADING /DCPPDB_DISABLE_THREAD_SAFETY /DCPPDB_SOVERSION=\\"0\\" /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj),)
+        if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
+            execute('Compiling %s' % s, 'cl /MD /GR /Gy /D "WIN32" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /DSQLITE_DISABLE_LFS /DSQLITE_OMIT_LOAD_EXTENSION /DSQLITE_THREADSAFE=0 /DCPPDB_EXPORTS /DCPPDB_LIBRARY_SUFFIX=\\".dylib\\" /DCPPDB_LIBRARY_PREFIX=\\"lib\\" /DCPPDB_DISABLE_SHARED_OBJECT_LOADING /DCPPDB_DISABLE_THREAD_SAFETY /DCPPDB_SOVERSION=\\"0\\" /DCPPDB_WITH_SQLITE3 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s /EHsc' % (s, obj),)
 
-        for s in sources:
-            #s = s.replace('/', '\\')
+    latest = None
+    for s in sources:
+        #s = s.replace('/', '\\')
 
-            try: os.makedirs( os.path.join( build_dir, os.path.split(s)[0]) )
-            except OSError: pass
+        try: os.makedirs( os.path.join( build_dir, os.path.split(s)[0]) )
+        except OSError: pass
 
-            obj = os.path.join(build_dir,s) + '.obj'
+        obj = os.path.join(build_dir,s) + '.obj'
 
-            if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
-                execute('Compiling %s' % s, 'cl %s /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s' % (get_CL_Options(), s, obj),
-                        )  # return_=True)
+        if (not os.path.isfile(obj))   or  os.path.getmtime(obj) < os.path.getmtime(s):
+            execute('Compiling %s' % s, 'cl %s /c %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta /Fo%s' % (get_CL_Options(), s, obj),
+                    )  # return_=True)
+                    
+        latest = max(latest, os.path.getmtime(obj) )
 
-        # Now creating DLL
-        dll = os.path.join(bindings_path, '..\\rosetta.dll')
-        objs = ' '.join( [ f + '.obj' for f in external] ) + ' ' + ' '.join( [f + '.obj' for f in sources] )
-        file(os.path.join(build_dir,'objs') , 'w').write( objs )
-        #execute('Creating DLL %s...' % dll, 'cd %s && link /OPT:NOREF /dll @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib /out:%s' % (build_dir, dll) )
-        #execute('Creating lib %s...' % dll, 'cd %s && lib @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib /out:rosetta.lib' % build_dir)
 
-        # libcmt.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
-        #execute('Creating DLL %s...' % s, 'cd ..\\build\\windows && cl /link /DLL @objs /OUT:%s' % dll )
+    # Now creating DLL
+    dll = os.path.join(bindings_path, '..\\rosetta.dll')
+    rosetta_lib = os.path.join(build_dir, 'rosetta_lib.lib')  # we purposly name 'real' lib somewhat different to avoid confusion with rosetta.lib file that belong to DLL
+    objs = ' '.join( [ f + '.obj' for f in external] ) + ' ' + ' '.join( [f + '.obj' for f in sources] )
+    file(os.path.join(build_dir,'objs') , 'w').write( objs )
+    #execute('Creating DLL %s...' % dll, 'cd %s && link /OPT:NOREF /dll @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib /out:%s' % (build_dir, dll) )
+    
+    if (not os.path.isfile(rosetta_lib))   or  os.path.getmtime(rosetta_lib) < latest:
+        execute('Creating lib %s...' % rosetta_lib, 'cd %s && lib @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib /out:%s' % (build_dir, rosetta_lib))
+        latest = max(latest, os.path.getmtime(rosetta_lib) )
 
-    rosetta_lib = os.path.join(build_dir, 'rosetta.lib')
+    # libcmt.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
+    #execute('Creating DLL %s...' % s, 'cd ..\\build\\windows && cl /link /DLL @objs /OUT:%s' % dll )
 
     pdb_test = 'apps/pilot/sergey/PDBTest.cc'
     pdb_test_exe = os.path.join(build_dir, 'PDBTest.exe')   
     pdb_test_obj = os.path.join(build_dir, 'PDBTest.obj')   
-    if (not os.path.isfile(pdb_test_exe))   or  os.path.getmtime(pdb_test_exe) < os.path.getmtime(pdb_test):
-        execute('Compiling test executable %s' % pdb_test, 'cl %s %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta %s /Fe%s /Fo%s' % (get_CL_Options(), pdb_test, rosetta_lib, pdb_test_exe, pdb_test_obj) ) 
+    if (not os.path.isfile(pdb_test_exe))   or  os.path.getmtime(pdb_test_exe) < os.path.getmtime(pdb_test)  or  os.path.getmtime(pdb_test_exe) < latest:
+        execute('Compiling test executable %s' % pdb_test, 'cl %s %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta %s /Fe%s /Fo%s' % (get_CL_Options(), pdb_test, rosetta_lib, pdb_test_exe, pdb_test_obj) )
+        
 
     print 'Building bindings...'
     
@@ -630,6 +639,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
 
     objs = []
     symbols = []
+    latest = None  # keeping track of dates of local .def files
     for dir_name, _, files in os.walk(Options.use_pre_generated_sources):
         wn_buildOneNamespace(Options.use_pre_generated_sources, dir_name, files, bindings_path, build_dir, symbols)
 
@@ -706,21 +716,21 @@ def wn_buildOneNamespace(base_dir, dir_name, files, bindings_path, build_dir, al
     
             #if (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < latest:
             res = execute('Getting list of missed symbols... Creating DLL %s...' % dummy, 
-                            'link %s /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:c:/WPyRosetta/boost_1_47_0/stage/lib /out:%s' % (' '.join(objs), dummy), return_='output', print_output=False)
+                            'link %s ..\\external\\lib\\win_pyrosetta_z.lib /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:c:/WPyRosetta/boost_1_47_0/stage/lib /out:%s' % (' '.join(objs), dummy), return_='output', print_output=False)
             symbols = []    
             for l in res.split('\n'):
                 if   l.find('error LNK2001: unresolved external symbol __DllMainCRTStartup') >=0 : continue  # error LNK2001: unresolved external symbol __DllMainCRTStartup@12
                 elif l.find('error LNK2019: unresolved external symbol') >=0 : symbols.append( l.partition('" (')[2].partition(') referenced in function')[0] )
                 elif l.find('error LNK2001: unresolved external symbol') >=0 : symbols.append( l.partition('" (')[2][:-2]) # + ' DATA')
             f = file(symbols_file, 'w');  f.write( '\n'.join(symbols) );  f.close()
-            print '\nAdding %s symbols... Tottal now is:%s\n' % (len(symbols), len(all_symbols+symbols))
+            print '\nAdding %s symbols... Tottal now is:%s\n' % (len(symbols), len(set(all_symbols+symbols)))
             
         all_symbols.extend( file(symbols_file).read().split('\n') )
         
         if link:
             if (not os.path.isfile(pyd))   or  os.path.getmtime(pyd) < latest:
                 execute('Creating DLL %s...' % pyd, 
-                        'link  /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:c:/WPyRosetta/boost_1_47_0/stage/lib  %s %s /out:%s' % (' '.join(objs), rosetta_lib, pyd) )
+                        'link  /INCREMENTAL:NO /dll /libpath:c:/Python27/libs /libpath:c:/WPyRosetta/boost_1_47_0/stage/lib  %s %s ..\\external\\lib\\win_pyrosetta_z.lib /out:%s' % (' '.join(objs), rosetta_lib, pyd) )
                 #map(os.remove, objs)
                         
         

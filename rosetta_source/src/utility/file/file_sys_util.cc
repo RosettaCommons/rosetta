@@ -46,11 +46,11 @@
 
 // Platforms headers
 #include <errno.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 #ifndef _WIN32
 #include <dirent.h>
 #endif
-#include <sys/types.h>
 
 // Platform headers - Win32
 #ifndef _WIN32
@@ -59,8 +59,9 @@
 
 // C POSIX library header for directory manipulation
 #if (defined WIN32) //&& (!defined WIN_PYROSETTA)
-#include <windows.h>
-#include <direct.h>
+	#include <windows.h>
+	#include <direct.h>
+	#include <io.h>
 #endif
 
 #ifdef WIN_PYROSETTA
@@ -81,8 +82,22 @@ file_exists( std::string const & path )
 		utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
 		return provider->file_exists( path ); 
 	#endif
-	struct stat buf;
-	return !stat( path.c_str(), &buf ); // stat() returns zero on success
+	
+	#ifdef _WIN32
+	    /*bool res = false;
+		std::fstream f;
+		f.open( path.c_str(), std::ios::in );
+		if( f.is_open() ) res = true;
+		f.close();
+		return res; */
+		
+		if( access(path.c_str(), 0) ) return false;
+		else return true;
+				
+	#else
+		struct stat buf;
+		return !stat( path.c_str(), &buf ); // stat() returns zero on success
+	#endif
 }
 
 
