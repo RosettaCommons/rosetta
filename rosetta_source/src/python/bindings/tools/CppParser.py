@@ -1170,8 +1170,8 @@ def wrapModule(name, name_spaces, context, relevant_files_list, max_funcion_size
             code.append( module_addon+'%s\n\n%s\nvoid %s_partial_%s(void)\n{\n%s\n}\n\n' % (generateIncludes(includes), prefix_code, name, len(code), s)  )
             s, prefix_code, includes = '', '', []
 
-    #r += '%s\n\n%s\nBOOST_PYTHON_MODULE( %s ){\n' % (generateIncludes(includes), prefix_code, name)
-    r += '%s\n\n%s\n#ifndef __PYROSETTA_ONE_LIB__\n  BOOST_PYTHON_MODULE( %s ) {\n#else\n  void __wrap%s() {\n#endif\n' % (generateIncludes(includes), prefix_code, name, name_spaces[0].replace('::', '__'))
+    r += '%s\n\n%s\nBOOST_PYTHON_MODULE( %s ){\n' % (generateIncludes(includes), prefix_code, name)
+    #r += '%s\n\n%s\n#ifndef __PYROSETTA_ONE_LIB__\n  BOOST_PYTHON_MODULE( %s ) {\n#else\n  void __wrap%s() {\n#endif\n' % (generateIncludes(includes), prefix_code, name, name_spaces[0].replace('::', '__'))
     for i in range( len(code) ): r += '\n  %s_partial_%s();\n' % (name, i)
     r += '\n' + s + '}\n'
     return code+[r]
