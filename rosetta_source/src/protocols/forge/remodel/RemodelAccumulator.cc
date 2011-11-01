@@ -22,6 +22,9 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
+#include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#include <protocols/moves/ConstraintSetMover.hh>
+#include <core/scoring/constraints/ResidueTypeLinkingConstraint.hh>
 #include <basic/options/option.hh>
 #include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <fstream>
@@ -175,8 +178,10 @@ void RemodelAccumulator::write_checkpoint(core::Size progress_point){
 core::Size RemodelAccumulator::recover_checkpoint()
 {
 		using namespace core::scoring;
+		using namespace core::scoring::constraints;
 		using core::import_pose::pose_from_pdb;
- 		using namespace protocols::protein_interface_design;
+		using namespace protocols::protein_interface_design;
+		using namespace basic::options;
 
 		//if reading checkpoint, make sure there's no info stored
 		pose_store_.clear();
@@ -207,6 +212,27 @@ core::Size RemodelAccumulator::recover_checkpoint()
 				//RemodelDesignMover designMover(remodel_data_, working_model_);
 				//designMover.set_state("stage");
 				//designMover.apply(dummyPose);
+
+				//special case for repeat proteins.  they need to carry constraints
+				//from the start.  Build constraints are set in RemodelLoopMover, a bit
+				//different from everything else
+
+				if (option[ OptionKeys::remodel::repeat_structuer].user()){
+					if (option[ OptionKeys::constraints::cst_file ].user()){
+						protocols::moves::ConstraintSetMoverOP repeat_constraint = new protocols::moves::ConstraintSetMover();
+						repeat_constraint->apply( dummyPose );
+					}
+
+					// ResidueTypeLinkingConstraints
+					Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structuer];
+					Real bonus = 10;
+					Size segment_length = (dummyPose.n_residue())/repeat_number;
+					for (Size rep = 1; rep < repeat_number; rep++ ){ // from 1 since first segment don't need self-linking
+						for (Size res = 1; res <= segment_length; res++){
+							dummyPose.add_constraint( new ResidueTypeLinkingConstraint(dummyPose, res, res+(segment_length*rep), bonus));
+						}
+					}
+				}
 
 				this->apply(dummyPose);
 

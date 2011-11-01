@@ -874,7 +874,11 @@ bool RemodelMover::design_refine_seq_relax(
 	// collect loops
 	Loops loops = intervals_to_loops( loop_intervals.begin(), loop_intervals.end() );
 
-	protocols::forge::methods::fill_non_loop_cst_set(pose, loops);
+  if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+		//do nothing
+	} else {
+		protocols::forge::methods::fill_non_loop_cst_set(pose, loops);
+	}
 
 	// safety, clear the energies object
 	pose.energies().clear();
@@ -904,15 +908,24 @@ bool RemodelMover::design_refine_seq_relax(
 				Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structuer];
 				Size segment_length = (pose.n_residue())/repeat_number;
 
-				std::stringstream templateRangeSS;
-				templateRangeSS << "1-" << segment_length;
 
-				for (Size rep = 1; rep < repeat_number; rep++){ // from 1 since first segment don't need self-linking
+				for (Size rep = 1; rep < repeat_number-1; rep++){ // from 1 since first segment don't need self-linking
+					std::stringstream templateRangeSS;
+					templateRangeSS << "2-" << segment_length+1; // offset by one to work around the termini
 					std::stringstream targetSS;
-					targetSS << 1+(segment_length*rep) << "-" << segment_length + (segment_length*rep);
-					//    std::cout << templateRangeSS.str() << " " << targetSS.str() << std::endl;
+					targetSS << 1+(segment_length*rep)+1 << "-" << segment_length + (segment_length*rep)+1;
+				  TR << "NCS " << templateRangeSS.str() << " " << targetSS.str() << std::endl;
 					setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
 				}
+
+				std::stringstream templateRangeSS;
+				//take care of the terminal repeat, since the numbers are offset.
+				templateRangeSS << "2-" << segment_length-1; // offset by one to work around the termini
+				std::stringstream targetSS;
+				targetSS << 1+(segment_length*(repeat_number-1))+1 << "-" << segment_length + (segment_length*(repeat_number-1))-1;
+				TR << "NCS " << templateRangeSS.str() << " " << targetSS.str() << std::endl;
+				setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
+
 	}
 
 	// run design-refine cycle
