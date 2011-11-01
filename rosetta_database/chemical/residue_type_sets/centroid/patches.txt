@@ -10,3 +10,6 @@ patches/N_acetylated.txt
 patches/C_methylamidated.txt
 patches/RepulsiveOnly_centroid.txt
 #patches/ser_phosphorylated.txt
+patches/LowerDNA.txt
+patches/UpperDNA.txt
+patches/VirtualDNAPhosphate.txt

@@ -29,5 +29,11 @@ residue_types/TYR.params
 residue_types/VAL.params
 residue_types/VRT.params
 residue_types/metal_ions/ZN.params
+residue_types/metal_ions/MG.params
+residue_types/metal_ions/CA.params
 residue_types/08A.params
 residue_types/08B.params
+residue_types/GUA.params
+residue_types/CYT.params
+residue_types/ADE.params
+residue_types/THY.params
