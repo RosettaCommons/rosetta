@@ -208,12 +208,13 @@ def main(args):
     mini_path = os.path.abspath('./../../../')
 
     bindings_path = os.path.abspath('./rosetta')
+    if Options.debug: bindings_path += '_debug' 
     if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
     shutil.copyfile('src/__init__.py', 'rosetta/__init__.py')
 
     if Platform == "windows":  # we dealing with windows native build
         build_path = os.path.join(mini_path, 'build\windows')
-        if Options.debug: build_path += '_debug' 
+        if Options.debug: build_path    += '_debug'             
         BuildRosettaOnWindows(build_path, bindings_path)
         sys.exit(0)
 
@@ -559,14 +560,15 @@ def getAllRosettaSourceFiles():
 def get_CL_Options():
     if Options.debug:
         # Windows MSVC compiler common options (no optimization, but it works)
-        return '/MD /GR /Gy /DWIN32 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /EHsc /nologo'  # /DNDEBUG
+        return '/MD /GR /Gy /NDEBUG /DWIN32 /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA /EHsc /nologo'  # /DNDEBUG
     else:
         # MSVC release options: /O2 /Oi /GL /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_UNICODE" /D "UNICODE" /FD /EHsc /MD /Gy /Yu"stdafx.h" /Fp"Release\SimpleConsoleApp.pch" /Fo"Release\\" /Fd"Release\vc90.pdb" /W3 /nologo /c /Zi /TP /errorReport:prompt
         # /Zi is 'generate omplete debugging information' - removing it
         # /W3 is just warning level
         # old one, 'the originale': return '/O2 /Oi /GL /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA'
         # removing /GL
-        return '/O2 /Oi /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA'
+        # adding /bigobj
+        return '/bigobj /O2 /Oi /DWIN32 /D "NDEBUG" /D "_CONSOLE" /FD /EHsc /MD /Gy /nologo /TP /DBOOST_NO_MT /DPYROSETTA /DWIN_PYROSETTA'
  
 
 
@@ -622,13 +624,14 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
 
     # libcmt.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib
     #execute('Creating DLL %s...' % s, 'cd ..\\build\\windows && cl /link /DLL @objs /OUT:%s' % dll )
-
+    '''
     pdb_test = 'apps/pilot/sergey/PDBTest.cc'
     pdb_test_exe = os.path.join(build_dir, 'PDBTest.exe')   
     pdb_test_obj = os.path.join(build_dir, 'PDBTest.obj')   
     if (not os.path.isfile(pdb_test_exe))   or  os.path.getmtime(pdb_test_exe) < os.path.getmtime(pdb_test)  or  os.path.getmtime(pdb_test_exe) < latest:
-        execute('Compiling test executable %s' % pdb_test, 'cl %s %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta %s /Fe%s /Fo%s' % (get_CL_Options(), pdb_test, rosetta_lib, pdb_test_exe, pdb_test_obj) )
-        
+        execute('Compiling test executable %s' % pdb_test, 'cl /c %s %s /I. /I../external/include /I../external/boost_1_46_1 /I../external/dbio /Iplatform/windows/PyRosetta %s /Fe%s /Fo%s' % (get_CL_Options(), pdb_test, rosetta_lib, pdb_test_exe, pdb_test_obj) )
+        execute('Linking test executable %s' % pdb_test, 'link %s %s /out:' % (pdb_test_obj, rosetta_lib, pdb_test_exe) )
+        ''' 
 
     print 'Building bindings...'
     
