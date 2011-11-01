@@ -57,6 +57,7 @@ namespace remodel { extern IntegerOptionKey const repeat_structuer; }
 namespace remodel { namespace domainFusion { extern BooleanOptionKey const domainFusion; } }
 namespace remodel { namespace domainFusion { extern FileOptionKey const insert_segment_from_pdb; } }
 namespace remodel { extern RealOptionKey const vdw; }
+namespace remodel { extern RealOptionKey const rama; }
 namespace remodel { extern RealOptionKey const cbeta; }
 namespace remodel { extern RealOptionKey const cenpack; }
 namespace remodel { extern RealOptionKey const hb_lrbb; }

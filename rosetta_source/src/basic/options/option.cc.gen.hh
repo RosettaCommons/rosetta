@@ -1971,6 +1971,7 @@ option.add( basic::options::OptionKeys::remodel::repeat_structuer, "build identi
 option.add( basic::options::OptionKeys::remodel::domainFusion::domainFusion, "domainFusion option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::remodel::domainFusion::insert_segment_from_pdb, "segment pdb file to be inserted [insert pdb file name]." ).def("");
 option.add( basic::options::OptionKeys::remodel::vdw, "set vdw weight" ).def(1.0);
+option.add( basic::options::OptionKeys::remodel::rama, "set rama weight" ).def(0.1);
 option.add( basic::options::OptionKeys::remodel::cbeta, "set cbeta weight" ).def(0.0);
 option.add( basic::options::OptionKeys::remodel::cenpack, "set cenpack weight" ).def(0.0);
 option.add( basic::options::OptionKeys::remodel::hb_lrbb, "set hbond_lrbb weight" ).def(0.0);

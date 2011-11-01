@@ -3918,6 +3918,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
                         #Option(  'rigid_segment_in_refinement', 'Boolean', desc=' rigid segment in refinement.'),
 		),
 		Option(  'vdw', 'Real', desc='set vdw weight', default = '1.0'),
+		Option(  'rama', 'Real', desc='set rama weight', default = '0.1'),
 		Option(  'cbeta', 'Real', desc='set cbeta weight', default = '0.0'),
 		Option(  'cenpack', 'Real', desc='set cenpack weight', default = '0.0'),
 		Option(  'hb_lrbb', 'Real', desc='set hbond_lrbb weight', default = '0.0'),

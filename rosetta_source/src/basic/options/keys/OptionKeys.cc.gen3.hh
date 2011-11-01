@@ -217,6 +217,7 @@ namespace remodel { IntegerOptionKey const repeat_structuer( "remodel:repeat_str
 namespace remodel { namespace domainFusion { BooleanOptionKey const domainFusion( "remodel:domainFusion" );  } }
 namespace remodel { namespace domainFusion { FileOptionKey const insert_segment_from_pdb( "remodel:domainFusion:insert_segment_from_pdb" );  } }
 namespace remodel { RealOptionKey const vdw( "remodel:vdw" );  }
+namespace remodel { RealOptionKey const rama( "remodel:rama" );  }
 namespace remodel { RealOptionKey const cbeta( "remodel:cbeta" );  }
 namespace remodel { RealOptionKey const cenpack( "remodel:cenpack" );  }
 namespace remodel { RealOptionKey const hb_lrbb( "remodel:hb_lrbb" );  }
