@@ -3386,12 +3386,7 @@ bool ElectronDensity::readMRCandResize( std::string mapfile, core::Real reso , c
 	max_del_grid = std::max( cellDimensions[0]/((double)this->grid[0]) , cellDimensions[1]/((double)this->grid[1]) );
 	max_del_grid = std::max( max_del_grid , cellDimensions[2]/((double)this->grid[2]) );
 
-	// patterson scoring low-res limit
-	if (lowres_cut/2 > max_del_grid)
-		max_del_grid = lowres_cut/2;
-
 	// density scoring low res limit
-	//   --> not sure why two flags are needed to do the same thing
 	if (reso/2 > max_del_grid)
 		max_del_grid = reso/2;
 
