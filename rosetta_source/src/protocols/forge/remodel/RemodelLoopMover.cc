@@ -44,7 +44,7 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/symmetry/SetupNCSMover.hh>
+//#include <protocols/moves/symmetry/SetupNCSMover.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
@@ -402,7 +402,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	//				std::cout << res << " " << res+(segment_length*rep) << std::endl;
 			  }
 		  }
-
+/*
 			std::stringstream templateRangeSS;
 			templateRangeSS << "1-" << segment_length;
 
@@ -416,6 +416,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 					setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
 		  }
+*/
 	}
 
 	// for accumulation of closed structures (only return the best)
@@ -439,7 +440,6 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	//REPEAT TEST
 	if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
 		sfxOP->set_weight(core::scoring::atom_pair_constraint, 1.0 * basic::options::option[ OptionKeys::remodel::repeat_structuer] );
-		sfxOP->set_weight(core::scoring::res_type_linking_constraint, 1.0 );
 		}
 
 	// randomize loops

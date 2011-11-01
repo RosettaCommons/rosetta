@@ -139,6 +139,11 @@ RemodelMover::register_user_options()
 		TR << "USER OVERWRITE VDW: " << option[OptionKeys::remodel::vdw] << std::endl;
 	}
 
+	if ( option[OptionKeys::remodel::rama].user() ){
+		centroid_sfx_-> set_weight(rama, option[OptionKeys::remodel::rama]);
+		TR << "USER OVERWRITE RAMA: " << option[OptionKeys::remodel::rama] << std::endl;
+	}
+
 	if ( option[OptionKeys::remodel::cbeta].user() ){
 		centroid_sfx_-> set_weight(cbeta, option[OptionKeys::remodel::cbeta]);
 		TR << "USER OVERWRITE CBETA: " << option[OptionKeys::remodel::cbeta] << std::endl;
@@ -171,6 +176,7 @@ RemodelMover::register_user_options()
 		centroid_sfx_-> set_weight(ss_pair, option[OptionKeys::remodel::ss_pair]);
 		TR << "USER OVERWRITE SSPAIR: " << option[OptionKeys::remodel::ss_pair] << std::endl;
 	}
+
 }
 
 
@@ -480,6 +486,14 @@ if (working_model.manager.size()!= 0){
 			}
 		}
 
+		if (option[ OptionKeys::remodel::repeat_structuer].user()) {
+			//should fold this pose to match just the first segment of a repeat, and that will be used for next round of building
+			for (Size res = 1; res <= cached_modified_pose.n_residue(); res++){
+				cached_modified_pose.set_phi(res, pose.phi(res));
+				cached_modified_pose.set_psi(res, pose.phi(res));
+				cached_modified_pose.set_omega(res, pose.phi(res));
+			}
+		}
 		//test
 		//pose.dump_pdb("check.pdb");
 /*
@@ -893,8 +907,6 @@ bool RemodelMover::design_refine_seq_relax(
 				std::stringstream templateRangeSS;
 				templateRangeSS << "1-" << segment_length;
 
-
-				protocols::moves::symmetry::SetupNCSMover setup_ncs;
 				for (Size rep = 1; rep < repeat_number; rep++){ // from 1 since first segment don't need self-linking
 					std::stringstream targetSS;
 					targetSS << 1+(segment_length*rep) << "-" << segment_length + (segment_length*rep);
