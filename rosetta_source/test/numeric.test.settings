@@ -10,6 +10,7 @@
 sources = {
 	"" : [
 		"color_util",
+                "interpolate",
 		"util",
 		"conversions",
 		"HomogeneousTransform",
