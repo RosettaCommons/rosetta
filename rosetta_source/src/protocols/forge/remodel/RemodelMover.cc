@@ -27,6 +27,7 @@
 #include <protocols/forge/methods/pose_mod.hh>
 #include <protocols/forge/methods/util.hh>
 #include <protocols/enzdes/EnzdesCacheableObserver.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
@@ -62,6 +63,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/Constraint.hh>
+#include <protocols/moves/symmetry/SetupNCSMover.hh> //dihedral constraint
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
 #include <protocols/jumping/Dssp.hh>
@@ -292,6 +294,7 @@ void RemodelMover::apply( Pose & pose ) {
 	using namespace core::scoring;
 	using namespace protocols::protein_interface_design;
 	using namespace basic::options;
+	using namespace core::scoring::constraints;
 
 #if defined GL_GRAPHICS
   protocols::viewer::add_conformation_viewer( pose.conformation(), "Remodel" );
@@ -451,6 +454,7 @@ if (working_model.manager.size()!= 0){
 */
 	if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
 		//turning on the res_type_linking constraint weight for designs
+		fullatom_sfx_->set_weight( core::scoring::atom_pair_constraint, 1.0);
 		fullatom_sfx_->set_weight( core::scoring::res_type_linking_constraint, 10.0);
 	}
 
@@ -477,7 +481,17 @@ if (working_model.manager.size()!= 0){
 		}
 
 		//test
-		pose.dump_pdb("check.pdb");
+		//pose.dump_pdb("check.pdb");
+/*
+		//extract the constraint currently in Pose for later Recycling
+		ConstraintSetOP cst_set_post_built;
+		if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+
+		// at this stage it should hold generic cstfile and res_type_linking
+		// constraints
+			cst_set_post_built = new ConstraintSet( *pose.constraint_set());
+		}
+*/
 
 		designMover.set_state("stage");
 
@@ -828,6 +842,9 @@ bool RemodelMover::design_refine_seq_relax(
 	using protocols::loops::LoopMover_Refine_CCD;
 	using protocols::moves::PackRotamersMover;
 	using protocols::toolbox::task_operations::RestrictToNeighborhoodOperation;
+	using namespace core::scoring::constraints;
+	using namespace basic::options;
+
 
 	using core::pose::annotated_to_oneletter_sequence;
 	using protocols::forge::methods::intervals_to_loops;
@@ -857,13 +874,53 @@ bool RemodelMover::design_refine_seq_relax(
   sfx->set_weight(core::scoring::res_type_linking_constraint, 1.0);
 	protocols::relax::FastRelax relaxMover(sfx);
 
+
+	ConstraintSetOP cst_set_post_built;
+	if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+
+	// at this stage it should hold generic cstfile and res_type_linking
+	// constraints
+		cst_set_post_built = new ConstraintSet( *pose.constraint_set() );
+	}
+
+	protocols::moves::symmetry::SetupNCSMover setup_ncs;
+	if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+				//Dihedral (NCS) Constraints, need to be updated each mutation cycle for sidechain symmetry
+
+				Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structuer];
+				Size segment_length = (pose.n_residue())/repeat_number;
+
+				std::stringstream templateRangeSS;
+				templateRangeSS << "1-" << segment_length;
+
+
+				protocols::moves::symmetry::SetupNCSMover setup_ncs;
+				for (Size rep = 1; rep < repeat_number; rep++){ // from 1 since first segment don't need self-linking
+					std::stringstream targetSS;
+					targetSS << 1+(segment_length*rep) << "-" << segment_length + (segment_length*rep);
+					//    std::cout << templateRangeSS.str() << " " << targetSS.str() << std::endl;
+					setup_ncs.add_group(templateRangeSS.str(), targetSS.str());
+				}
+	}
+
 	// run design-refine cycle
 	for ( Size i = 0; i < dr_cycles_; ++i ) {
 
+
 		designMover.set_state("finish");
 		designMover.apply(pose);
+
+		//update dihedral constraint for repeat structures
+		if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+			setup_ncs.apply(pose);
+		}
+
 		relaxMover.apply(pose);
+
+		//reset constraints without NCS
+		pose.constraint_set(cst_set_post_built);
 	}
+
 
 //turning off weights
   sfx->set_weight(core::scoring::coordinate_constraint, 0.0 );
