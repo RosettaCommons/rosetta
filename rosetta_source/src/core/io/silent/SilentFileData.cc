@@ -22,6 +22,7 @@
 #include <list>
 #include <string>
 #include <map>
+#include <set>
 #include <sstream>
 
 // mini headers
@@ -418,6 +419,8 @@ SilentFileData::read_stream(
 														std::string filename /** for error reporting **/
 ){
 
+	// put the tags on a set to avoid repetition and fast search
+  std::set<std::string> tagset(tags.begin(), tags.end());
 	std::string sequence_line, score_line, line;
 	bool success = false;
 	// read SEQUENCE line:
@@ -458,10 +461,11 @@ SilentFileData::read_stream(
 	mylines.push_back( sequence_line );
 	mylines.push_back( score_line    );
 
-	if ( tags.size() )  tr.Info << "Reading " << tags.size()
+	if ( tagset.size() )  tr.Info << "Reading " << tagset.size()
 		<< " structures from " << filename
 		<< std::endl;
 	else  tr.Info << "Reading all structures from " << filename << std::endl;
+	bool all_tags = (tagset.size()) ? false : true;
 
 	// start looping over the structures
 	bool line_ok( true );
@@ -491,18 +495,29 @@ SilentFileData::read_stream(
 				//tr.Debug << "candidate structure " << tmp_struct->decoy_tag()
 				//	<< std::endl;
 				PROF_START( basic::SILENT_READ_TAG_TEST );
-				// only add structure if we want to add this tag.
-				using std::find;
-				bool add_struct(
-					init_good &&
-					( tags.size() == 0 || find( tags.begin(), tags.end(), tmp_struct->decoy_tag() ) != tags.end() )
-				);
+
+				// Look for the tag in the tagset, if it is present set
+				// add the structure and remove the tag from the tagset.
+				// if afer removal of the tag tagset becames empty break
+				// because that means that all the structures that we want
+				// have been read.
+				bool good_tag = false;
+				if(!all_tags){
+					std::set<std::string>::iterator tag_it = tagset.find(tmp_struct->decoy_tag());
+					if(tag_it != tagset.end()){
+						good_tag = true;
+						tagset.erase(tag_it);
+			   	}
+				}
+				bool add_struct( init_good && ( all_tags || good_tag ));
 				PROF_STOP( basic::SILENT_READ_TAG_TEST );
 
 				if (record_source_) tmp_struct->add_comment("SOURCE",filename);
 
 				if ( add_struct ) {
 					add_structure( tmp_struct );
+					// check if there are any tags left in the tagset, if not break
+					// since there is no need to read the rest of the file.
 				}
 
 				tmp_struct = create_SilentStructOP();
@@ -517,16 +532,21 @@ SilentFileData::read_stream(
 		mylines.push_back( line );
 
 		line_ok = getline(data,line);
+		 if(!all_tags && tagset.empty())
+					break;
 	} // while( getline(data,line) )
 
 	// don't forget to initialize last structure!
 	bool init_good = tmp_struct->init_from_lines( mylines, *this );
 	if ( !init_good && throw_exception_on_bad_structs ) throw utility::excn::EXCN_BadInput( "failure to read decoy "+tmp_struct->decoy_tag()+" from silent-file " +filename);
 
-	bool add_struct(
-			init_good && ( tags.size() == 0 ||
-				find( tags.begin(), tags.end(), tmp_struct->decoy_tag() ) != tags.end() )
-	);
+  bool good_tag = false;
+  std::set<std::string>::iterator tag_it = tagset.find(tmp_struct->decoy_tag());
+  if(tag_it != tagset.end()){
+  	good_tag = true;
+  }
+
+	bool add_struct( init_good && ( all_tags || good_tag ));
 
 	if ( add_struct ) {
 		add_structure( tmp_struct );
