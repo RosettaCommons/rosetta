@@ -34,6 +34,7 @@ BoltzmannFilter::BoltzmannFilter() :
 {
 	positive_filters_.clear();
 	negative_filters_.clear();
+	anchors_.clear();
 }
 
 
@@ -77,6 +78,16 @@ BoltzmannFilter::add_negative_filter( protocols::filters::FilterOP f ){
 	negative_filters_.push_back( f );
 }
 
+void
+BoltzmannFilter::anchors( utility::vector1< int > const anchors ){
+	anchors_ = anchors;
+}
+
+utility::vector1< int >
+BoltzmannFilter::anchors() const{
+	return anchors_;
+}
+
 bool
 BoltzmannFilter::apply(core::pose::Pose const & pose ) const
 {
@@ -85,14 +96,24 @@ BoltzmannFilter::apply(core::pose::Pose const & pose ) const
 }
 
 /// NOTICE that this returns -Fitness [-1:0] for use in optimization
+/// F = Sum_{+}( -E/T ) / [ Sum_{-}( -E/T ) + Sum_{+} ( -E/T ) + Sum_{+}(( E - anchor )/T) ]
+/// This is the standard fitness function, except for anchor. Anchor can be (but doesn't have to be)
+/// defined for each positive state and sets a threshold above which energy increases in the positive
+/// state substantially reduce fitness, irrespective of what happened to all negative states.
+/// Can be used to ensure that the stability of a target state is not compromised during design.
+/// Set this to a very large number (99999) to eliminate the effects of the anchor, or specify no anchors at all
 core::Real
 BoltzmannFilter::compute( core::pose::Pose const & pose ) const{
 	using protocols::filters::FilterCOP;
 
 	core::Real positive_sum( 0.0 ), negative_sum( 0.0 );
 
-	foreach( FilterCOP filter, get_positive_filters() )
-		positive_sum += exp( -filter->report_sm( pose ) / temperature() );
+	for( core::Size index = 1; index <= get_positive_filters().size(); ++index ){
+		core::Real const filter_val( get_positive_filters()[ index ]->report_sm( pose ));
+		positive_sum += exp( -filter_val / temperature() );
+		if( anchors_.size() >= index )
+			negative_sum += exp( ( filter_val - anchors_[ index ] ) / temperature() );
+	}
 
 	foreach( FilterCOP filter, get_negative_filters() )
 		negative_sum += exp( -filter->report_sm( pose ) / temperature() );
@@ -123,12 +144,19 @@ BoltzmannFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	temperature( tag->getOption< core::Real >( "temperature", 0.6 ) );
 	utility::vector1< std::string > const positive_filter_names( utility::string_split( tag->getOption< std::string >( "positive_filters" ), ',' ) );
 	utility::vector1< std::string > const negative_filter_names( utility::string_split( tag->getOption< std::string >( "negative_filters" ), ',' ) );
+	utility::vector1< std::string > const anchors_string( utility::string_split( tag->getOption< std::string >( "anchors"), ',' ));
 	foreach( std::string const positive_filter_name, positive_filter_names )
 		add_positive_filter( protocols::rosetta_scripts::parse_filter( positive_filter_name, filters ) );
 	foreach( std::string const negative_filter_name, negative_filter_names )
 		add_negative_filter( protocols::rosetta_scripts::parse_filter( negative_filter_name, filters ) );
+	foreach( std::string const anchor_str, anchors_string )
+		anchors_.push_back( utility::string2int( anchor_str ) );
 
 	TR<<"with options temperature: "<<temperature()<<" fitness_threshold "<<fitness_threshold()<<"  "<<get_positive_filters().size()<<" positive and "<<get_negative_filters().size()<<" negative filters."<<std::endl;
+	if( anchors().size() > 0 ){
+		TR<<"defined "<<anchors().size()<<" anchors"<<std::endl;
+		runtime_assert( get_positive_filters().size() == anchors().size());
+	}
 }
 
 protocols::filters::FilterOP
