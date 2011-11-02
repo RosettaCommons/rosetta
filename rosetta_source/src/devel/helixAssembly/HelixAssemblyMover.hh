@@ -62,7 +62,7 @@ public:
 
         void init_from_options();
 
-        core::pose::Pose combinePoses(const core::pose::Pose & pose1, const core::pose::Pose & pose2);
+        void combinePoses(core::pose::Pose & pose1, const core::pose::Pose & pose2);
 
         utility::vector1<HelicalFragment> findHelices(const core::pose::Pose & pose);
 
@@ -90,6 +90,12 @@ public:
         void superimposeBundles(const core::pose::Pose & query_structure, core::pose::Pose & results_structure, std::pair< HelicalFragment, HelicalFragment> matching_pair);
 
         core::Real bb_score(core::pose::Pose & pose, core::Size unique_chain_num, core::scoring::ScoreFunctionOP & scorefxn);
+
+        void removeDuplicateFragmentPairs(const core::pose::Pose & pose,
+        		utility::vector1< std::pair<HelicalFragment,HelicalFragment> > & helix_pairs);
+
+        void removeDuplicateFragments(const core::pose::Pose & pose, const utility::vector1<HelicalFragment> & all_helix_fragments,
+        		utility::vector1<HelicalFragment> & helix_fragments);
 
         std::vector<HelixAssemblyJob> apply(HelixAssemblyJob & job);
 

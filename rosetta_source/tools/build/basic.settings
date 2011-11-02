@@ -612,6 +612,18 @@ settings = {
             "defines"       : [ "USEMYSQL" ],
         },
     },
+		
+    "gcc, boost_mpi" : {
+        "appends" : {
+            "libraries"     : [ "libboost_serialization", "libboost_mpi" ],
+            "library_path"  : [ "/usr/local/lib" ],
+            "defines"       : [ "USEBOOSTMPI" ],
+        },
+        "overrides" : {
+            "cc"            : "mpicc",
+            "cxx"           : "mpiCC",
+        },
+    },
 
     "gcc, 4.3, mpi" : {
         "appends" : {
@@ -1100,6 +1112,18 @@ settings = {
     "clang, mpi" : {
         "appends" : {
             "defines"       : [ "USEMPI" ],
+        },
+        "overrides" : {
+            "cc"            : "mpicc",
+            "cxx"           : "mpiCC",
+        },
+    },
+    "clang, boost_mpi" : {
+        "appends" : {
+            "libraries"     : [ "libboost_mpi" ],
+            "libraries"     : [ "libboost_serialization" ],
+            "library_path"  : [ "/usr/local/lib" ],
+            "defines"       : [ "USEBOOSTMPI" ],
         },
         "overrides" : {
             "cc"            : "mpicc",

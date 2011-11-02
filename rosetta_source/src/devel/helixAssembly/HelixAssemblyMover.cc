@@ -211,34 +211,18 @@ void HelixAssemblyMover::init_from_options(){
   set_helix_cap_distance_cutoff(basic::options::option[HelixAssembly::helix_cap_distance_cutoff]);
 }
 
-Pose HelixAssemblyMover::combinePoses(Pose const & pose1, Pose const & pose2){
-  Pose newPose;
-
-  if(pose1.total_residue()>=1){
-      newPose.append_residue_by_jump(pose1.residue(1), newPose.total_residue() , "", "", false/*start new chain*/);
-      for(Size i=2; i<=pose1.total_residue(); i++){
-          if(pose1.residue(i).is_lower_terminus() || pose1.residue(i).is_upper_terminus()){
-              newPose.append_residue_by_jump(pose1.residue(i), newPose.total_residue(), "","", false);
-          }
-          else{
-              newPose.append_residue_by_bond(pose1.residue(i));
-          }
-      }
-  }
-
+void HelixAssemblyMover::combinePoses(Pose & pose1, Pose const & pose2){
   if(pose2.total_residue()>=1){
-      newPose.append_residue_by_jump(pose2.residue(1), newPose.total_residue() , "", "", true/*start new chain*/);
+      pose1.append_residue_by_jump(pose2.residue(1), pose1.total_residue() , "", "", true/*start new chain*/);
       for(Size i=2; i<=pose2.total_residue(); i++){
           if(pose2.residue(i).is_lower_terminus() || pose2.residue(i).is_upper_terminus()){
-              newPose.append_residue_by_jump(pose2.residue(i), newPose.total_residue(), "","", false);
+        	  pose1.append_residue_by_jump(pose2.residue(i), pose1.total_residue(), "","", false);
           }
           else{
-              newPose.append_residue_by_bond(pose2.residue(i));
+        	  pose1.append_residue_by_bond(pose2.residue(i));
           }
       }
   }
-
-  return newPose;
 }
 
 utility::vector1<HelicalFragment> HelixAssemblyMover::findHelices(Pose const & pose){
@@ -653,6 +637,62 @@ std::map<core::id::AtomID, core::id::AtomID> HelixAssemblyMover::getFragmentPair
   return atom_map_1;
 }
 
+void HelixAssemblyMover::removeDuplicateFragmentPairs(const core::pose::Pose & pose,
+		utility::vector1< std::pair<HelicalFragment,HelicalFragment> > & helix_pairs){
+	for(core::Size i=1; i<=helix_pairs.size(); ++i){
+		for(core::Size j=i+1; j<=helix_pairs.size(); ++j){
+
+
+			std::map<core::id::AtomID, core::id::AtomID> atom_map(getFragmentPairMap(pose, pose, helix_pairs[i], helix_pairs[j]));
+			core::Real rms(core::scoring::rms_at_all_corresponding_atoms(pose, pose, atom_map));
+
+
+			std::string frag_pair_1(pose.sequence().substr(helix_pairs[i].first.get_start(), helix_pairs[i].first.get_size()) + " " +
+					pose.sequence().substr(helix_pairs[i].second.get_start(), helix_pairs[i].second.get_size()));
+			std::string frag_pair_2(pose.sequence().substr(helix_pairs[j].first.get_start(), helix_pairs[j].first.get_size()) + " " +
+					pose.sequence().substr(helix_pairs[j].second.get_start(), helix_pairs[j].second.get_size()));
+
+//			cout << frag_pair_1 << endl;
+//			cout << frag_pair_2 << endl;
+//			cout << "RMS: " << rms << endl;
+
+			if(rms < 0.1){
+				helix_pairs.erase(helix_pairs.begin()+j-1);
+			}
+		}
+	}
+}
+
+void HelixAssemblyMover::removeDuplicateFragments(const core::pose::Pose & pose,
+		const utility::vector1<HelicalFragment> & all_helix_fragments,
+		utility::vector1<HelicalFragment> & helix_fragments){
+	for(core::Size i=1; i<=all_helix_fragments.size(); ++i){
+		for(core::Size j=1; j<=helix_fragments.size(); ++j){
+			bool remove_j=true;
+
+			std::string frag_pair_1(pose.sequence().substr(all_helix_fragments[i].get_start(), all_helix_fragments[i].get_size()));
+			std::string frag_pair_2(pose.sequence().substr(helix_fragments[j].get_start(), helix_fragments[j].get_size()));
+
+			cout << "REMOVAL TESTING:" << endl;
+			cout << frag_pair_1 << endl;
+			cout << frag_pair_2 << endl;
+
+			if(all_helix_fragments[i].get_size() == helix_fragments[j].get_size()){
+				for(core::Size offset=0; offset<all_helix_fragments[i].get_size(); offset++){
+					core::Size i_res=all_helix_fragments[i].get_start()+offset;
+					core::Size j_res=helix_fragments[j].get_start()+offset;
+					if(pose.residue(i_res).aa() != pose.residue(j_res).aa()){
+						remove_j=false;
+					}
+				}
+				if(remove_j){
+					helix_fragments.erase(helix_fragments.begin()+j-1);
+				}
+			}
+		}
+	}
+}
+
 ///@details
 std::vector<HelixAssemblyJob> HelixAssemblyMover::apply(HelixAssemblyJob & job){
 
@@ -734,9 +774,13 @@ std::vector<HelixAssemblyJob> HelixAssemblyMover::apply(HelixAssemblyJob & job){
     cout << close_helix_pairs.size() << " out of " << frag1_matches.size()*frag2_matches.size() <<
         " helix pairs were close enough for further investigation" << endl;
 
+//    removeDuplicateFragmentPairs(search_structure, close_helix_pairs);
+
+    cout << close_helix_pairs.size() << " helix pairs left after duplication removal" << endl;
 
     //loop through lists of fragments for each helix and check rmsd to the full query structure
     Size new_helix_counter(0);
+    utility::vector1<HelicalFragment> all_helix_partners;
     for(Size i=1; i<=close_helix_pairs.size(); ++i){
 
         cout << "examining close helix pair (" << close_helix_pairs[i].first.get_start() << "," << close_helix_pairs[i].first.get_end() <<
@@ -761,6 +805,11 @@ std::vector<HelixAssemblyJob> HelixAssemblyMover::apply(HelixAssemblyJob & job){
 
             cout << "found " << helix_partners.size() << " suitable helix partners" << endl;
 
+            removeDuplicateFragments(search_structure, all_helix_partners, helix_partners);
+            all_helix_partners.insert(all_helix_partners.end(), helix_partners.begin(), helix_partners.end());
+
+            cout << helix_partners.size() << " partners left after duplication removal" << endl;
+
             for(Size k=1; k<=helix_partners.size(); k++){
 
                 //superimpose the search structure onto the query structure so a helix can be stolen for bundle creation
@@ -772,7 +821,8 @@ std::vector<HelixAssemblyJob> HelixAssemblyMover::apply(HelixAssemblyJob & job){
 
                 //combine query structure with third helix
                 Size third_helix_start(query_structure.total_residue()+1);
-                Pose new_bundle = combinePoses(query_structure, third_helix);
+                Pose new_bundle(query_structure);
+                combinePoses(new_bundle, third_helix);
                 Size new_chain = new_bundle.chain(new_bundle.total_residue());
                 Size third_helix_end(new_bundle.total_residue());
                 cout << "New bundle created" << endl;

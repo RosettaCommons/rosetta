@@ -37,22 +37,28 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+#ifdef USEBOOSTMPI
+
 //Boost MPI includes
 #include <boost/mpi.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>
+BOOST_IS_MPI_DATATYPE(HelixAssemblyJob)
+#endif
 
 // C++ headers
 #include <stdio.h>
 
-BOOST_IS_MPI_DATATYPE(HelixAssemblyJob)
 static basic::Tracer TR("mpi_helixAssembly");
 
 // run protocol
 int
 main( int argc, char * argv [] )
 {
+
+#ifdef USEBOOSTMPI
+
   using namespace std;
   using namespace utility;
   using namespace core;
@@ -330,4 +336,7 @@ main( int argc, char * argv [] )
   }
   MPI_Finalize();
   TR << "------------DONE!------------" << endl;
+
+#endif
+
 }

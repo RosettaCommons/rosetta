@@ -18,6 +18,9 @@
 #include<core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragmentIO.hh>
+#include <core/fragment/FragSetCollection.hh>
 
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
@@ -26,6 +29,7 @@
 #include<devel/helixAssembly/AddResiduesRotamerSetOperation.hh>
 #include<devel/helixAssembly/DeleteAllRotamerSetOperation.hh>
 #include<devel/helixAssembly/NativeResidueReader.hh>
+#include<devel/helixAssembly/BridgeFragmentMover.hh>
 
 // Protocols
 #include <protocols/moves/MinPackMover.hh>
@@ -47,9 +51,13 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
+// utility
+#include <utility/io/izstream.hh>
+
 //local options
 namespace basic{ namespace options{ namespace OptionKeys{
 basic::options::FileOptionKey const native_residue_files("native_residue_files");
+basic::options::FileOptionKey const bridge_fragments("bridge_fragments");
 }}}//basic::options::OptionKeys
 
 int
@@ -62,17 +70,45 @@ main( int argc, char * argv [] )
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// setup
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	option.add( native_residue_files, "File with all native residue files").def("");
+	option.add( native_residue_files, "File with all native residue files");
+	option.add( bridge_fragments, "File containing bridge fragments");
 	devel::init(argc, argv);
 
-	// make symmetric pose if necessary
 	if ( !option[ native_residue_files ].user() )  {
 		utility::exit("Must provide a native residue file for helix design executable!", 1);
 	}
-	NativeResidueReader native_res_reader;
 	utility::file::FileName native_res_file( option[ native_residue_files ]() );
 
+	if ( !option[ bridge_fragments ].user() )  {
+		utility::exit("Must provide a bridge fragments file for helix design executable!", 1);
+	}
+	utility::file::FileName bridge_fragment_list_file( option[ bridge_fragments ]() );
+
+
+	utility::vector1<utility::file::FileName> bridge_fragment_files;
+	utility::io::izstream fragments_stream( bridge_fragment_list_file );
+	if ( !fragments_stream.good() ) {
+		utility_exit_with_message("unable to open input file file: "+bridge_fragment_list_file.name()+"\n");
+	}
+	while ( fragments_stream.good() ) {
+		std::string name;
+		fragments_stream.getline(name);
+		if ( fragments_stream.good() ) bridge_fragment_files.push_back( utility::file::FileName(name) );
+	}
+
+	utility::vector1<core::fragment::FragSetOP> frag_sets;
+	for(core::Size i=1; i<=bridge_fragment_files.size(); ++i){
+		core::fragment::FragSetOP frag_set(core::fragment::FragmentIO().read_data(bridge_fragment_files[i].name()));
+		frag_sets.push_back(frag_set);
+	}
+
+
+	BridgeFragmentMoverOP bridge_frag_mover = new BridgeFragmentMover(frag_sets);
+	protocols::jd2::JobDistributor::get_instance()->go(bridge_frag_mover);
+
+	exit(1);
+
+	NativeResidueReader native_res_reader;
 	std::map<core::Size, utility::vector1<core::conformation::ResidueOP> > nat_ro_map =
 			native_res_reader.generateResiduesFromFile(native_res_file.name());
 
@@ -137,7 +173,7 @@ main( int argc, char * argv [] )
 	cout << "GO GO GO GO GO!!!!" << endl;
 
 //	protocols::jd2::JobDistributor::get_instance()->go(seq_mover);
-	protocols::jd2::JobDistributor::get_instance()->go(pack_mover);
+//	protocols::jd2::JobDistributor::get_instance()->go(pack_mover);
 
 	cout << "-------------DONE-------------" << endl;
 }
