@@ -190,7 +190,12 @@ def install_links_with_stripped_target(target, source, env):
     stripped_target = ".".join(split_target_name[:-2] + split_target_name[-1:])
 
     if os.__dict__.has_key("symlink"):
+        try: os.unlink(target)
+        except: pass
         os.symlink(source, target)
+
+        try: os.unlink(stripped_target)
+        except: pass
         os.symlink(source, stripped_target)
     else:
         import shutil
