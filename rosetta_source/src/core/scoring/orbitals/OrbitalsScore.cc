@@ -346,6 +346,12 @@ void OrbitalsScore::get_orb_H_distance_and_energy(
 		core::Real temp_dist_squared = orbital_xyz.distance_squared( H_xyz );
 		if(temp_dist_squared < max_orbital_dist_squared_){
 			core::chemical::orbitals::orbital_type_enum orbital_type = res1.orbital_type(*orbital_index).orbital_enum();
+			if(orbital_type==core::chemical::orbitals::O_pi_sp2_bb){
+				orbital_type=core::chemical::orbitals::O_pi_sp2;
+			}
+			if(orbital_type==core::chemical::orbitals::O_p_sp2_bb){
+				orbital_type=core::chemical::orbitals::O_p_sp2;
+			}
 			if(lookup_table_.check_distance(temp_dist_squared, htype, orbital_type)){
 				core::Real AOH_angle(cos_of(atom_xyz, orbital_xyz, H_xyz));//atom-orbital-hydrogen angle
 				if(lookup_table_.check_AOH_angle(AOH_angle, htype, orbital_type)){

@@ -50,6 +50,9 @@ void OrbitalTypeMapper::map_orbital_name_to_enum()
 	orbital_type_2_enum_["O.p.sp2"]=O_p_sp2;
 	orbital_type_2_enum_["O.p.sp3"]=O_p_sp3;
 	orbital_type_2_enum_["S.p.sp3"]=S_p_sp3;
+	orbital_type_2_enum_["O.pi.sp2.bb"]= O_pi_sp2_bb;
+	orbital_type_2_enum_["O.p.sp2.bb"] = O_p_sp2_bb;
+
 
 }
 

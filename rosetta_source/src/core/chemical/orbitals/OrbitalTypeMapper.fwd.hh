@@ -24,7 +24,9 @@ enum orbital_type_enum{
 	O_p_sp2,
 	O_p_sp3,
 	S_p_sp3,
-	num_orbital_types= S_p_sp3
+	O_pi_sp2_bb,
+	O_p_sp2_bb,
+	num_orbital_types= O_p_sp2_bb
 };
 
 
