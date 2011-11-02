@@ -38,6 +38,7 @@
 #include <protocols/moves/MinMover.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/Job.hh>
 
 #include <devel/init.hh>
 
