@@ -17,7 +17,7 @@
 
 // Unit headers
 #include <core/chemical/ElementSet.fwd.hh>
-#include <core/chemical/Element.hh>
+// AUTO-REMOVED #include <core/chemical/Element.hh>
 
 // Project headers
 
@@ -31,6 +31,10 @@
 #include <map>
 
 #include <utility/vector1_bool.hh>
+
+#include <core/types.hh>
+#include <core/chemical/Element.fwd.hh>
+
 
 
 

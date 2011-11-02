@@ -23,10 +23,10 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/constraints/HarmonicFunc.fwd.hh>
-#include <protocols/filters/Filter.hh>
-#include <core/pack/task/TaskFactory.hh>
+// AUTO-REMOVED #include <protocols/filters/Filter.hh>
+// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 
 // C++ headers
 
@@ -34,8 +34,8 @@
 #include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 
-//Auto Headers
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -18,7 +18,7 @@
 #include <protocols/fldsgn/BluePrint.fwd.hh>
 
 //
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 #include <protocols/fldsgn/topology/StrandPairing.fwd.hh>
 #include <protocols/fldsgn/topology/HelixPairing.fwd.hh>
@@ -33,6 +33,10 @@
 
 #include <string>
 #include <map>
+
+#include <core/kinematics/MoveMap.fwd.hh>
+#include <utility/vector1.hh>
+
 
 // to be removed
 // #include <core/scoring/SS_Info.hh>

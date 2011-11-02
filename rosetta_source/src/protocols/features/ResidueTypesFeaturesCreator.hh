@@ -15,11 +15,15 @@
 #define INCLUDED_protocols_features_ResidueTypesFeaturesCreator_hh
 
 // Unit Headers
-#include <protocols/features/ResidueTypesFeatures.hh>
+// AUTO-REMOVED #include <protocols/features/ResidueTypesFeatures.hh>
 #include <protocols/features/FeaturesReporterCreator.hh>
 
 // c++ headers
-#include <string>
+// AUTO-REMOVED #include <string>
+
+#include <core/types.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace features {

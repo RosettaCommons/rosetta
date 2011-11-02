@@ -20,15 +20,15 @@
 
 // Package headers
 //#include <protocols/match/downstream/DownstreamBuilder.hh>
-#include <protocols/match/BumpGrid.fwd.hh>
-#include <protocols/match/Hit.hh>
+// AUTO-REMOVED #include <protocols/match/BumpGrid.fwd.hh>
+// AUTO-REMOVED #include <protocols/match/Hit.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.fwd.hh>
@@ -41,6 +41,12 @@
 
 // C++ headers
 #include <list>
+
+#include <core/id/AtomID.fwd.hh>
+#include <protocols/match/Hit.fwd.hh>
+#include <utility/fixedsizearray1.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace match {

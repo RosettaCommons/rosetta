@@ -95,8 +95,9 @@
 #include <iostream>
 #include <fstream>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
+#include <utility/vector1.hh>
+#include <ObjexxFCL/FArray3D.hh>
 
 
 

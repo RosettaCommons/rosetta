@@ -46,11 +46,9 @@
 #include <string>
 #include <map>
 
-//Auto Headers
-#include <core/scoring/constraints/Constraint.hh>
-#include <protocols/abinitio/Template.hh>
+#include <protocols/abinitio/Template.fwd.hh>
 #include <protocols/jumping/PairingsList.hh>
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

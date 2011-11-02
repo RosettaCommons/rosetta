@@ -20,14 +20,17 @@
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
-#include <core/scoring/PoissonBoltzmannPotential.hh>
-#include <core/scoring/PoissonBoltzmannPotential.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/PoissonBoltzmannPotential.hh>
+// AUTO-REMOVED #include <core/scoring/PoissonBoltzmannPotential.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

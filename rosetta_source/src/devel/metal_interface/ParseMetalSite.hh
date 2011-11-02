@@ -15,9 +15,13 @@
 
 #include <devel/metal_interface/ParseMetalSite.fwd.hh>
 #include <devel/metal_interface/MetalSiteResidue.fwd.hh> // abbrev. msr
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
+
+#include <core/types.hh>
+#include <core/pose/Pose.fwd.hh>
+
 
 
 namespace devel {

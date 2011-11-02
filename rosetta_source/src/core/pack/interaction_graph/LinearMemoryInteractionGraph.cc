@@ -18,9 +18,9 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/conformation/Residue.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/after_opts.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
@@ -28,7 +28,7 @@
 
 #include <iostream>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1A.hh>
 
 

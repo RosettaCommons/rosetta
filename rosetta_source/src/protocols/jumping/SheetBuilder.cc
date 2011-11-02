@@ -51,6 +51,9 @@
 //// C++ headers
 #include <cstdlib>
 
+#include <utility/vector1.hh>
+
+
 static basic::Tracer tr("protocols.jumping");
 static numeric::random::RandomGenerator RG(14934);  // <- Magic number, do not change
 

@@ -24,9 +24,9 @@
 #include <core/scoring/hbonds/FadeInterval.hh>
 
 // Project Headers
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/scoring/ScoringManager.fwd.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.fwd.hh>
 
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
@@ -43,12 +43,15 @@
 #include <cppdb/frontend.h>
 
 // Boost Headers
-#include <boost/tokenizer.hpp>
+// AUTO-REMOVED #include <boost/tokenizer.hpp>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
 // C++ headers
 #include <cmath>
+
+#include <ObjexxFCL/FArray3D.hh>
+
 
 
 namespace core {

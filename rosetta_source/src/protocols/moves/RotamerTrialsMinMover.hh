@@ -27,10 +27,13 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace moves {

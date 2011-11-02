@@ -33,6 +33,9 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
 
+#include <utility/vector1.hh>
+
+
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;
 

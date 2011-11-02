@@ -22,11 +22,10 @@
 // Unit headers
 #include <core/conformation/Atom.hh>
 
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
 //Auto Headers
-#include <utility/stream_util.hh>
 
 
 using basic::T;

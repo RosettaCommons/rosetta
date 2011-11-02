@@ -23,6 +23,11 @@
 #include <numeric/interpolation/util.hh>
 #include <utility/tag/Tag.hh>
 
+#include <core/pose/Pose.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {

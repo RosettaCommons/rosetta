@@ -49,8 +49,11 @@
 #include <limits>
 
 //#include <basic/options/keys/orbitals.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

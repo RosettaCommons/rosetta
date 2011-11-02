@@ -27,8 +27,7 @@
 #include <core/scoring/ScoreType.hh>
 
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 
 // ObjexxFCL Headers

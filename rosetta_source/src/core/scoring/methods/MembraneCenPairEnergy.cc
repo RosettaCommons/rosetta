@@ -34,12 +34,12 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
-//Auto Headers
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/MembraneTopology.hh>
+#include <utility/vector1.hh>
 
 
 

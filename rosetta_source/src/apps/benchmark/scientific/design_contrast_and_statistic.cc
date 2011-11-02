@@ -33,7 +33,7 @@
 
 
 // Project Headers
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/io/sequence_comparation/DesignContrast.hh>
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/pose/util.hh>
@@ -55,8 +55,8 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector0.hh>
 
 
 

@@ -43,7 +43,7 @@
 
 // // Numeric headers
 #include <numeric/constants.hh>
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 // #include <numeric/xyzVector.hh>
 // #include <numeric/xyz.functions.hh>
 
@@ -58,8 +58,9 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/kinematics/tree/Atom.hh>
+#include <core/optimization/MinimizerMap.hh>
+#include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;

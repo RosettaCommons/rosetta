@@ -24,6 +24,10 @@
 #include <basic/Tracer.hh>
 #include <boost/unordered_map.hpp>
 
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 
 static basic::Tracer tr("protocols.sparta");
 

@@ -29,16 +29,16 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
 // C++ Headers
 #include <iostream>
 
 //Auto Headers
-#include <core/import_pose/import_pose.hh>
+#include <utility/vector1.hh>
 
 
 

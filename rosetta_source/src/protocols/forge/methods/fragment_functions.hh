@@ -21,9 +21,7 @@
 #include <core/fragment/ConstantLengthFragSet.fwd.hh>
 // AUTO-REMOVED #include <core/fragment/FrameIterator.hh>
 
-//Auto Headers
 #include <core/fragment/FrameIterator.fwd.hh>
-#include <iostream>
 
 
 

@@ -25,57 +25,22 @@
 #include <test/core/init_util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
-#include <basic/options/keys/broker.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/broker.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 
 #include <protocols/abinitio/AbrelaxMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <core/conformation/Atom.fwd.hh>
-#include <core/fragment/FragID_Iterator.fwd.hh>
-#include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID_Mask.hh>
-#include <core/id/DOF_ID_Map.hh>
-#include <core/id/DOF_ID_Mask.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/id/SequenceMapping.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/io/silent/EnergyNames.fwd.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/types.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
-#include <core/id/SequenceMapping.hh>
-#include <protocols/scoring/methods/pcs/GridSearchIterator.fwd.hh>
-#include <utility/stream_util.hh>
-#include <protocols/evaluation/ConstraintEvaluator.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributorFactory.hh>
-#include <protocols/jumping/PairingLibrary.hh>
-#include <protocols/jumping/PairingsList.hh>
-#include <protocols/loops/Loops.hh>
-#include <protocols/moves/BoolMover.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
-#include <protocols/topology_broker/ClaimerMessage.hh>
-#include <protocols/topology_broker/TopologyClaimer.hh>
 #include <protocols/scoring/methods/pcs/GridSearchIterator.fwd.hh>
 #include <utility/fix_boinc_read.hh>
-#include <numeric/xyz.functions.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
-#include <ObjexxFCL/format.hh>
-#include <iterator>
-#include <time.h>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <basic/options/keys/OptionKeys.hh>
 
 
 

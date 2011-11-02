@@ -14,6 +14,9 @@
 
 // Unit Headers
 #include <core/pack/rotamer_set/RotamerSet.hh>
+
+#include <utility/vector1.hh>
+
 //#include <core/pack/rotamer_set/RotamerSetCacheableDataType.hh>
 
 namespace core {

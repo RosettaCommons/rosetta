@@ -19,19 +19,25 @@
 #include <protocols/noesy_assign/NoesyModule.fwd.hh>
 
 // Package Headers
-#include <protocols/noesy_assign/CrossPeak.hh>
-#include <protocols/noesy_assign/PeakFileFormat.fwd.hh>
-#include <protocols/noesy_assign/PeakAssignmentResidueMap.hh>
-#include <protocols/noesy_assign/PeakAssignmentParameters.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/CrossPeak.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/PeakFileFormat.fwd.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/PeakAssignmentResidueMap.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/PeakAssignmentParameters.hh>
 //#include <devel/noesy_assign/ResonanceList.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
+
+#include <core/pose/Pose.fwd.hh>
+#include <protocols/noesy_assign/CrossPeakList.fwd.hh>
+#include <protocols/noesy_assign/ResonanceList.fwd.hh>
+#include <string>
+
 
 //// C++ headers
 // #include <cstdlib>

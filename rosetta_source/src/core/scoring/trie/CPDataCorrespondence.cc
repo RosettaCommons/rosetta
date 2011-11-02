@@ -19,6 +19,9 @@
 #include <core/conformation/PseudoBond.hh>
 #include <core/conformation/RotamerSetBase.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace scoring {
 namespace trie {

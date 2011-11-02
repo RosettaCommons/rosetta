@@ -18,15 +18,16 @@
 // Project Headers
 #include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/dssp/Dssp.hh>
+// AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/sasa.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
-//Auto Headers
+#include <core/chemical/AtomType.hh>
 #include <core/pose/util.hh>
+#include <fstream>
 
 using basic::T;
 using basic::Error;

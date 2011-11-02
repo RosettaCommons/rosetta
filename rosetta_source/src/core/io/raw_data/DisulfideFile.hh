@@ -23,8 +23,7 @@
 #include <string>
 // AUTO-REMOVED #include <utility>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

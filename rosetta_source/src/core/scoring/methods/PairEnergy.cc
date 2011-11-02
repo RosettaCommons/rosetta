@@ -31,8 +31,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/RotamerSetBase.hh>
 
-//Auto Headers
-#include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 

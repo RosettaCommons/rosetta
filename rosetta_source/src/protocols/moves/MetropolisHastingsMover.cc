@@ -41,7 +41,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <core/conformation/Residue.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <core/conformation/Residue.hh> // REQUIRED FOR WINDOWS
 
 // numeric headers
 #include <numeric/random/random.hh>
@@ -50,6 +50,11 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
+
+#include <core/chemical/ResidueType.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 // C++ Headers
 

@@ -36,7 +36,7 @@
 
 // // C++ Headers
 #include <cassert>
-#include <cstdlib>
+// AUTO-REMOVED #include <cstdlib>
 #include <string>
 #include <vector>
 

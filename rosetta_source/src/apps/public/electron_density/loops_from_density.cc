@@ -54,9 +54,8 @@ using basic::Error;
 #include <iostream>
 #include <string>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <protocols/jumping/StrandPairing.hh>
+#include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/moves/MoverStatistics.hh>
 
 

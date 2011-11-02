@@ -43,9 +43,9 @@
 // #include <string>
 // AUTO-REMOVED #include <list>
 
-//Auto Headers
 #include <core/chemical/ResidueType.hh>
 #include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

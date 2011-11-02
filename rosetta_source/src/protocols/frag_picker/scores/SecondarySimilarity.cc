@@ -24,10 +24,13 @@
 
 #include <core/fragment/SecondaryStructure.hh>
 
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 
 // project headers
 #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace frag_picker {

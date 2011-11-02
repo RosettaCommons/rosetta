@@ -33,10 +33,8 @@
 // Numeric headers
 // AUTO-REMOVED #include <numeric/xyzVector.hh>
 
-//Auto Headers
 #include <core/id/AtomID.fwd.hh>
-#include <utility/vector1_bool.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 

@@ -17,8 +17,13 @@
 #include <protocols/fldsgn/topology/StrandPairing.fwd.hh>
 #include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
-#include <core/scoring/dssp/Dssp.hh>
+// AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/forge/build/Interval.fwd.hh>
+
+#include <core/types.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace fldsgn {

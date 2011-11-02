@@ -22,7 +22,7 @@
 #include <protocols/flexpep_docking/FlexPepDockingFlags.hh>
 #include <protocols/flexpep_docking/FlexPepDockingAbInitio.fwd.hh>
 #include <core/fragment/ConstantLengthFragSet.fwd.hh>
-#include <core/fragment/FragSet.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FragSet.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -31,9 +31,12 @@
 #include <protocols/moves/MinMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 // Auto-header: duplicate removed #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+// AUTO-REMOVED #include <utility/options/keys/BooleanOptionKey.hh>
 #include <string>
 #include <set>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace flexpep_docking {

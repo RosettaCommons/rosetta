@@ -30,6 +30,9 @@
 
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 // Utility Headers
 // #include <core/types.hh>
 

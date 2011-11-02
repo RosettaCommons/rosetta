@@ -20,19 +20,19 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 // Auto-header: duplicate removed #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/optimization/MinimizerOptions.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 // Auto-header: duplicate removed #include <utility/pointer/ReferenceCount.hh>
 #include <utility/exit.hh>
 #include <string>
 #include <vector>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 
 namespace protocols {
 namespace wum {

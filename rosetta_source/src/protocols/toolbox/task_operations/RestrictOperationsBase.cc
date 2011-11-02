@@ -29,6 +29,9 @@
 // C++ headers
 #include <set>
 
+#include <utility/vector1.hh>
+
+
 //using basic::Error;
 //using basic::Warning;
 //static basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictOperationsBase" );

@@ -35,7 +35,7 @@
 /// basic headers
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility/sort_predicates.hh>
@@ -46,6 +46,10 @@
 
 // C++ headers
 #include <fstream>
+
+#include <protocols/jd2/Job.hh>
+#include <utility/vector1.hh>
+
 
 
 OPT_1GRP_KEY( String, sfxnfprnt, output_fingerprint_file )

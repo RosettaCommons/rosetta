@@ -43,8 +43,8 @@
 
 #include <fstream>
 
-//Auto Headers
 #include <protocols/match/downstream/DownstreamBuilder.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

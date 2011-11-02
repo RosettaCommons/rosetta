@@ -22,9 +22,9 @@
 #include <devel/inv_kin_lig_loop_design/Fragment.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 
-//Auto Headers
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace devel {

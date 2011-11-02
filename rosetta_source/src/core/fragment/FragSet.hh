@@ -25,7 +25,7 @@
 #include <core/fragment/FragID.fwd.hh>
 #include <core/fragment/Frame.fwd.hh>
 // AUTO-REMOVED #include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FrameList.hh>
+// AUTO-REMOVED #include <core/fragment/FrameList.hh>
 
 // Project headers
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -34,9 +34,9 @@
 // AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
-#include <core/fragment/FrameIterator.hh>
-#include <iostream>
+#include <core/fragment/FrameIterator.fwd.hh>
+#include <core/fragment/FrameList.fwd.hh>
+#include <utility/vector1.hh>
 
 
 // Package Headers

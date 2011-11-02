@@ -27,7 +27,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -37,7 +37,11 @@
 #include <core/types.hh>
 
 #include <basic/Tracer.hh>
-#include <basic/basic.hh>
+// AUTO-REMOVED #include <basic/basic.hh>
+
+//Auto Headers
+#include <utility/vector1.hh>
+
 
 using basic::T;
 using basic::Error;

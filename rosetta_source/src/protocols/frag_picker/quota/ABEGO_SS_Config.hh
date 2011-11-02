@@ -21,7 +21,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <map>
+// AUTO-REMOVED #include <map>
 #include <string>
 
 namespace protocols {

@@ -27,7 +27,10 @@
 #include <utility/tag/Tag.fwd.hh>
 
 // C++ Headers
-#include <string>
+// AUTO-REMOVED #include <string>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace pack {

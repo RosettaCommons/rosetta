@@ -18,6 +18,70 @@
 
 #include <core/scoring/constraints/ConstraintIO.hh>
 
+#include <platform/types.hh>
+#include <core/types.hh>
+#include <core/conformation/Conformation.fwd.hh>
+#include <core/conformation/signals/LengthEvent.fwd.hh>
+#include <core/id/AtomID.fwd.hh>
+#include <core/id/AtomID.hh>
+#include <core/id/SequenceMapping.fwd.hh>
+#include <core/id/SequenceMapping.hh>
+#include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/scoring/EnergyMap.fwd.hh>
+#include <core/scoring/EnergyMap.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreType.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
+#include <core/scoring/constraints/ConstraintCreator.fwd.hh>
+#include <core/scoring/constraints/ConstraintFactory.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
+#include <core/scoring/constraints/Func.fwd.hh>
+#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/constraints/FuncFactory.fwd.hh>
+#include <core/scoring/constraints/HarmonicFunc.fwd.hh>
+#include <core/scoring/constraints/HarmonicFunc.hh>
+#include <core/scoring/constraints/KofNConstraint.fwd.hh>
+#include <core/scoring/constraints/MultiConstraint.fwd.hh>
+#include <core/scoring/constraints/MultiConstraint.hh>
+#include <core/scoring/constraints/XYZ_Func.fwd.hh>
+#include <utility/down_cast.hh>
+#include <utility/exit.hh>
+#include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
+#include <utility/vector1_bool.hh>
+#include <utility/vectorL.fwd.hh>
+#include <utility/vectorL.hh>
+#include <utility/vectorL_Selector.hh>
+#include <utility/vectorL_bool.hh>
+#include <utility/factory/WidgetRegistrator.hh>
+#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/access_ptr.fwd.hh>
+#include <utility/pointer/access_ptr.hh>
+#include <utility/pointer/owning_ptr.functions.hh>
+#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
+#include <numeric/xyzVector.fwd.hh>
+#include <numeric/random/random.fwd.hh>
+#include <algorithm>
+#include <cassert>
+#include <cstddef>
+#include <iosfwd>
+#include <iostream>
+#include <limits>
+#include <map>
+#include <sstream>
+#include <string>
+#include <vector>
+
+//Auto using namespaces
+namespace std { } using namespace std; // AUTO USING NS
+namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
+namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+//Auto using namespaces end
+
+
 namespace core {
 namespace scoring {
 namespace constraints {

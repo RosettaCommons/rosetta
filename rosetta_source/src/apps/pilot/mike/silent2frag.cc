@@ -20,7 +20,7 @@
 #include <protocols/jd2/util.hh>
 
 // C++ headers
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 
@@ -35,6 +35,10 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 using basic::T;
 using basic::Error;

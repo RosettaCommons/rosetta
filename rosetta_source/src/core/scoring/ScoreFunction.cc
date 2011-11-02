@@ -48,6 +48,7 @@
 // Auto-header: duplicate removed #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/LREnergyContainer.hh>
+#include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
 #include <core/scoring/Energies.hh>
 
@@ -67,6 +68,10 @@
 #include <ObjexxFCL/format.hh>
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
+
+#include <core/id/DOF_ID.hh>
+#include <utility/vector1.hh>
+
 
 static basic::Tracer tr("core.scoring");
 

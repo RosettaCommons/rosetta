@@ -19,11 +19,11 @@
 #include <test/UTracer.hh>
 
 // Core Headers
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/init.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Protocol Headers
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
@@ -33,19 +33,9 @@
 #include <numeric/conversions.hh>
 
 //Auto Headers
-#include <core/chemical/VariantType.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/ScoreFunctionInfo.fwd.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <protocols/moves/MoverStatistics.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <ObjexxFCL/format.hh>
+#include <core/chemical/ResidueType.hh>
+#include <utility/vector1.hh>
+#include <utility/keys/Key3Vector.hh>
 
 
 using namespace core;

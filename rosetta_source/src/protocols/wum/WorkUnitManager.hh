@@ -19,16 +19,19 @@
 #include <protocols/wum/WorkUnitList.hh>
 
 #include <utility/pointer/ReferenceCount.hh>
-#include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
+// AUTO-REMOVED #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverList.hh>
+// AUTO-REMOVED #include <protocols/moves/MoverList.hh>
 #include <protocols/wum/SilentStructStore.hh>
 // Auto-header: duplicate removed #include <utility/pointer/ReferenceCount.hh>
 
 #include <string>
 #include <vector>
+
+#include <utility/vector1.hh>
+
 
 
 namespace protocols {

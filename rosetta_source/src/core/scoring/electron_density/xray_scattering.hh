@@ -16,12 +16,8 @@
 
 #include <core/types.hh>
 
-//Auto Headers
-#include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.fwd.hh>
-#include <ObjexxFCL/FArray3D.hh>
-#include <iostream>
-#include <math.h>
+#include <cmath>
+#include <string>
 
 
 #ifdef WIN32

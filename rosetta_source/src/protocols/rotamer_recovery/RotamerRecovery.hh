@@ -24,14 +24,17 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers
-#include <ostream>
+// AUTO-REMOVED #include <ostream>
+
+#include <protocols/moves/Mover.fwd.hh>
+
 
 namespace protocols {
 namespace rotamer_recovery {

@@ -24,8 +24,8 @@
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
+#include <utility/vector1.hh>
 
 
 

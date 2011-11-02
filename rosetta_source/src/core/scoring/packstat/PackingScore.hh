@@ -24,9 +24,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
-#include <iostream>
 
 
 namespace core {
@@ -50,7 +48,7 @@ typedef utility::pointer::owning_ptr< PackingScoreResData const > PackingScoreRe
 
 struct PackingScore : public utility::pointer::ReferenceCount {
 	PackingScore( Size nrad, Size npr, bool /*compprob = false*/ ) :
-		nrad_(nrad), npr_(npr), weights_(nrad*npr,0.0), centers_(nrad*npr,0.0), compprob_(compprob_) {}
+		nrad_(nrad), npr_(npr), weights_(nrad*npr,0.0), centers_(nrad*npr,0.0), compprob_( false /*compprob_*/ ) {}
 	Size  npr() const { return npr_; }
 	Size nrad() const { return nrad_; }
 	core::Real       & weight( Size rad, Size pr )       { return weights_[ (rad-1)*npr_ + pr ]; }

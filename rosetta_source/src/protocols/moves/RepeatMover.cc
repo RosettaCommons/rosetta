@@ -14,6 +14,9 @@
 // Unit Headers
 #include <protocols/moves/RepeatMover.hh>
 
+#include <utility/vector1.hh>
+
+
 // Package headers
 
 // Project headers

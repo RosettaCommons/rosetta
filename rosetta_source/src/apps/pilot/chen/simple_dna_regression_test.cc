@@ -34,8 +34,8 @@
 // AUTO-REMOVED #include <core/scoring/dna/BasePartner.hh>
 // AUTO-REMOVED #include <core/scoring/dna/DNA_BasePotential.hh>
 // AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Func.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/HarmonicFunc.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
@@ -109,7 +109,7 @@
 #include <numeric/xyzMatrix.hh>
 // AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <ObjexxFCL/format.hh>
 // AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
@@ -129,11 +129,10 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Jump.hh>
+#include <utility/vector0.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <core/scoring/constraints/Constraint.hh>
 
 
 //static numeric::random::RandomGenerator RG(12323); // <- Magic number, do not change it!!!

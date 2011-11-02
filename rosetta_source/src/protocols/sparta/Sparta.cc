@@ -67,7 +67,7 @@
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 #include <basic/database/open.hh>
 
-#include <stdio.h>
+// AUTO-REMOVED #include <stdio.h>
 
 namespace protocols {
 namespace sparta {

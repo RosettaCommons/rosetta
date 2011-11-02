@@ -17,35 +17,26 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 #include <core/scoring/constraints/GaussianFunc.hh>
 #include <core/scoring/constraints/GaussianFunc.fwd.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
 
 #include <core/types.hh>
 
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
 //Auto Headers
-#include <core/conformation/Atom.fwd.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/types.hh>
-#include <core/id/SequenceMapping.hh>
-#include <utility/stream_util.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
+#include <utility/vector1.hh>
 
 
 

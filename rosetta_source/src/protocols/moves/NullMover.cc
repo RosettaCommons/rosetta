@@ -13,6 +13,9 @@
 // Unit Headers
 #include <protocols/moves/NullMover.hh>
 
+#include <utility/vector1.hh>
+
+
 // C++ Headers
 
 // ObjexxFCL Headers

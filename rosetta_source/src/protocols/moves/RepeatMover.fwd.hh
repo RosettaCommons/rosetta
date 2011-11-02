@@ -28,9 +28,7 @@
 // AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
 // AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
-//Auto Headers
 #include <utility/pointer/owning_ptr.hh>
-#include <sstream>
 
 
 namespace protocols {

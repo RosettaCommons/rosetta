@@ -16,8 +16,8 @@
 
 // Package headers
 #include <core/scoring/hbonds/types.hh>
-#include <core/scoring/hbonds/HBondSet.fwd.hh>
-#include <core/scoring/hbonds/hbtrie/HBAtom.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/hbtrie/HBAtom.hh>
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 #include <core/scoring/DerivVectorPair.fwd.hh>
@@ -25,6 +25,9 @@
 // Project headers
 #include <core/chemical/types.hh>
 #include <core/conformation/Residue.fwd.hh>
+
+#include <core/scoring/hbonds/hbtrie/HBAtom.fwd.hh>
+
 
 
 

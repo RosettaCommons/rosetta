@@ -51,8 +51,8 @@
 // C++ headers
 #include <algorithm>
 
-//Auto Headers
 #include <core/pose/annotated_sequence.hh>
+#include <utility/vector1.hh>
 
 
 // AUTO-REMOVED #include <iterator>

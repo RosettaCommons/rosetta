@@ -21,9 +21,7 @@
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 
-//Auto Headers
 #include <ObjexxFCL/FArray3.fwd.hh>
-#include <iostream>
 
 
 namespace protocols {

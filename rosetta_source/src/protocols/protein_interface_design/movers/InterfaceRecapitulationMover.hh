@@ -25,6 +25,9 @@
 // C++ headers
 #include <string>
 
+#include <utility/vector1.hh>
+
+
 // Unit headers
 
 namespace protocols {

@@ -28,12 +28,12 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.hh>
+// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
-#include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
@@ -50,6 +50,12 @@
 
 
 #include <utility/sort_predicates.hh>
+
+#include <core/chemical/ChemicalManager.fwd.hh>
+#include <core/pose/util.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace loophash {

@@ -23,7 +23,6 @@
 // AUTO-REMOVED #include <ObjexxFCL/format.hh>
 // AUTO-REMOVED #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <sstream>
 
 

@@ -14,7 +14,7 @@
 #include <devel/init.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/packing/PoseBalls.hh>
 
 #include <core/scoring/sasa.hh>
@@ -26,16 +26,16 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
-#include <pstream.h>
+// AUTO-REMOVED #include <pstream.h>
 
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
 
 // option key includes
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector1.hh>
 
 
 

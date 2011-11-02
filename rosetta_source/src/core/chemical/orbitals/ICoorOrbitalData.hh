@@ -39,17 +39,16 @@
 
 
 // Project headers
-#include <core/chemical/ResidueType.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueType.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.fwd.hh>
 // AUTO-REMOVED #include <core/id/AtomID.hh>
 
 // Utility headers
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 
-//Auto Headers
-#include <core/id/AtomID.fwd.hh>
-#include <ostream>
+#include <core/types.hh>
+#include <string>
 #ifndef INCLUDED_core_chemical_orbitals_ICoorOrbitalData_hh
 #define INCLUDED_core_chemical_orbitals_ICoorOrbitalData_hh
 

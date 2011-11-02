@@ -64,9 +64,7 @@
 
 #include <numeric/random/random.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
-// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 namespace protocols {

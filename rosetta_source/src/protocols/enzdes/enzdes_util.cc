@@ -50,9 +50,9 @@
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <protocols/ligand_docking/ligand_functions.hh> //for minimizing ligand torsions
-#include <core/kinematics/MoveMap.hh>
-#include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/ligand_docking/ligand_functions.hh> //for minimizing ligand torsions
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
@@ -64,10 +64,9 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
-//Auto Headers
-#include <core/id/AtomID.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

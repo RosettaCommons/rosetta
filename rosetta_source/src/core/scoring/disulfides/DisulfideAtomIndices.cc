@@ -17,6 +17,9 @@
 // Project headers
 #include <core/conformation/Residue.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace scoring {
 namespace disulfides {

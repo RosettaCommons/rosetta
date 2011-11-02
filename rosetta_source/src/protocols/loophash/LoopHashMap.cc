@@ -41,9 +41,9 @@
 
 #include <numeric/HomogeneousTransform.hh>
 #include <protocols/match/Hit.fwd.hh>
-#include <protocols/match/Hit.hh>
+// AUTO-REMOVED #include <protocols/match/Hit.hh>
 #include <protocols/match/SixDHasher.hh>
-#include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
 #include <utility/fixedsizearray1.hh>
@@ -57,12 +57,12 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-#include <boost/algorithm/string.hpp>
+// AUTO-REMOVED #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
 
-//Auto Headers
-#include <basic/datacache/CacheableData.hh>
+#include <protocols/moves/Mover.fwd.hh>
+#include <utility/vector1.hh>
 // Auto-header: duplicate removed #include <core/pose/Pose.hh>
 
 

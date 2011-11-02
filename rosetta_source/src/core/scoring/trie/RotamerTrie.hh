@@ -52,7 +52,6 @@
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

@@ -30,7 +30,7 @@
 //Utility Headers
 
 /// ObjexxFCL headers
-#include <ObjexxFCL/string.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 // C++ Headers
 #include <iostream>
@@ -40,11 +40,18 @@
 	#include <ctime>
 #endif
 // option key includes
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 #include <numeric/random/random.hh>
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
+
+#include <utility/vector1.hh>
+
+//Auto using namespaces
+namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+//Auto using namespaces end
+
 
 
 

@@ -155,12 +155,12 @@ endrepeat
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/viewer/viewers.hh>
+// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
 
 //symmetry
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <protocols/moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/symmetry/SymMinMover.hh>
@@ -184,14 +184,11 @@ endrepeat
 #endif
 
 
-//Auto Headers
-// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/string_util.hh>
-#include <utility/io/mpistream.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <fstream>
-#include <math.h>
-#include <string>
 
 
 

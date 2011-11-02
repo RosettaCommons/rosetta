@@ -49,10 +49,10 @@
 //C++ headers
 #include <iostream>
 
-//Auto Headers
+#include <core/chemical/AtomType.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

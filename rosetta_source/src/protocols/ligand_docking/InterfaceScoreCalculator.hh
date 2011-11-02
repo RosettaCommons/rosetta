@@ -22,12 +22,15 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/qsar/scoring_grid/GridManager.hh>
+// AUTO-REMOVED #include <protocols/qsar/scoring_grid/GridManager.hh>
 
 //// Project Headers
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <protocols/jd2/Job.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 ///////////////////////////////////////////////////////////////////////
 

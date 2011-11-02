@@ -44,14 +44,14 @@
 
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 // AUTO-REMOVED #include <core/id/AtomID.hh>
 
 // Utility headers
 #include <utility/exit.hh>
 #include <numeric/xyz.functions.hh>
-//Auto Headers
-#include <ostream>
+#include <core/kinematics/Jump.hh>
+#include <utility/vector1.hh>
 namespace core{
 namespace chemical{
 namespace orbitals{

@@ -19,9 +19,8 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/id/TorsionID.hh>
-#include <numeric/xyz.functions.hh>
+#include <utility/vector1.hh>
 
 
 

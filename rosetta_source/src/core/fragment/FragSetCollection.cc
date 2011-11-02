@@ -37,8 +37,8 @@
 // AUTO-REMOVED #include <ostream>
 // AUTO-REMOVED #include <set>
 
-//Auto Headers
 #include <core/fragment/FrameIterator.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

@@ -20,6 +20,9 @@
 #include <protocols/moves/ExtendedPoseMover.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace moves {
 

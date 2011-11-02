@@ -18,23 +18,31 @@
 
 // Unit headers
 #include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.hh>
+#ifdef USEMPI
 #include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorUtil.hh>
+#endif
 #include <protocols/jd2/MPIWorkPoolJobDistributor.hh>
 
 // Package headers
-#include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 
 // Project headers
 #include <core/scoring/ScoreType.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+#ifdef USEMPI
 #include <utility/exit.hh>
+#endif
 #include <utility/assert.hh>
 
 // C++ headers
 #include <string>
+
+#include <utility/vector1.hh>
+#include <basic/options/keys/OptionKeys.hh>
+
 
 static basic::Tracer TR("protocols.UnfoldedStateEnergyCalculator.UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor");
 

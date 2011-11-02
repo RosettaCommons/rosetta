@@ -107,20 +107,20 @@
 #include <basic/MetricValue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <protocols/toolbox/pose_metric_calculators/SasaCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceSasaDefinitionCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceDeltaEnergeticsCalculator.hh>
+// AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
+// AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/InterfaceSasaDefinitionCalculator.hh>
+// AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/InterfaceDeltaEnergeticsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
 
 // Utility headers
 #include <core/init.hh>
-#include <basic/options/util.hh>
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
+// Auto-header: duplicate removed #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 #include <utility/vector1.hh>
 
 // Numeric headers
@@ -128,9 +128,13 @@
 
 // C++ headers
 #include <iostream>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <string>
 #include <sstream>
+
+#include <utility/vector0.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
+
 
 // Namespaces
 using namespace core;

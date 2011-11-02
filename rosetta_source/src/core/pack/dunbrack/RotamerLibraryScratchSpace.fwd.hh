@@ -21,9 +21,7 @@
 #include <utility/pointer/owning_ptr.hh>
 // AUTO-REMOVED #include <utility/fixedsizearray1.hh>
 
-//Auto Headers
 #include <utility/fixedsizearray1.fwd.hh>
-#include <iterator>
 
 
 namespace core {

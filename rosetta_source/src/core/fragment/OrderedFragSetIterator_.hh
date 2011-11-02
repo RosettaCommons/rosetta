@@ -30,7 +30,7 @@
 //#include <core/fragment/Frame.fwd.hh>
 // AUTO-REMOVED #include <core/fragment/FrameIterator.hh>
 
-#include <core/fragment/OrderedFragSet.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/OrderedFragSet.fwd.hh>
 
 // Project Headers
 //#include <core/pose/Pose.hh>
@@ -46,8 +46,8 @@
 // std Headers
 // AUTO-REMOVED #include <iterator>
 
-//Auto Headers
 #include <core/fragment/Frame.hh>
+#include <utility/vector1.hh>
 
 
 /* Just a mad thought: with fragments becoming ever more "Residue" like one might want to use the

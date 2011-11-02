@@ -61,8 +61,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector0.hh>
 
 
 

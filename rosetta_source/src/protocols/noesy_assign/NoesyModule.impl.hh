@@ -12,7 +12,7 @@
 
 // Unit Header
 #include <protocols/noesy_assign/NoesyModule.hh>
-#include <protocols/noesy_assign/CrossPeakList.impl.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/CrossPeakList.impl.hh>
 // Package Headers
 
 // Project Headers
@@ -24,6 +24,10 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <basic/prof.hh>
+
+#include <protocols/noesy_assign/CrossPeakList.hh>
+#include <protocols/noesy_assign/PeakAssignmentParameters.hh>
+
 
 //// C++ headers
 // #include <cstdlib>

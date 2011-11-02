@@ -21,7 +21,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 
@@ -45,6 +45,12 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
+
+#include <core/chemical/ResidueType.hh>
+#include <core/kinematics/Jump.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 // Auto-header: duplicate removed #include <core/pose/util.hh>
 
 

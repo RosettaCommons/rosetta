@@ -73,9 +73,8 @@
 
 #include <boost/lexical_cast.hpp>
 
-//Auto Headers
 #include <core/pose/annotated_sequence.hh>
-#include <utility/io/mpistream.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer tr("core.io.silent");

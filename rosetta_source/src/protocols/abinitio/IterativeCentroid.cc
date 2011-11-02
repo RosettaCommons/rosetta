@@ -24,7 +24,7 @@
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 
-#include <core/io/silent/SilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStruct.hh>
 // AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 
 // AUTO-REMOVED #include <core/fragment/ConstantLengthFragSet.hh>
@@ -76,7 +76,7 @@
 // //#include <basic/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-#include <cstdlib>
+// AUTO-REMOVED #include <cstdlib>
 #include <string>
 // AUTO-REMOVED #include <ctime>
 // AUTO-REMOVED #include <iterator>
@@ -84,9 +84,8 @@
 // Utility headers
 // AUTO-REMOVED #include <basic/options/option_macros.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <utility/io/mpistream.hh>
 
 
 static basic::Tracer tr("protocols.iterative");

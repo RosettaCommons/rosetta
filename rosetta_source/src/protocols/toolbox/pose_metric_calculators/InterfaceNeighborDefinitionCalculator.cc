@@ -30,9 +30,9 @@
 
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/conformation/PointGraphData.hh>
 #include <core/graph/UpperEdgeGraph.hh>
+#include <utility/vector1.hh>
 
 
 

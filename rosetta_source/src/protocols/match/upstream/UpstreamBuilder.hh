@@ -36,7 +36,6 @@
 // C++ headers
 #include <list>
 
-//Auto Headers
 #include <protocols/match/Hit.fwd.hh>
 
 

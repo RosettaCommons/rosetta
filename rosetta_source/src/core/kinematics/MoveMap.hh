@@ -32,10 +32,9 @@
 
 // C++ headers
 #include <map>
-#include <utility>
+// AUTO-REMOVED #include <utility>
 #include <vector>
 
-//Auto Headers
 #include <core/id/AtomID_Mask.fwd.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
 

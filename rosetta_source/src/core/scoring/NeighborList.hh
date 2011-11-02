@@ -39,9 +39,8 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
 #include <core/kinematics/DomainMap.fwd.hh>
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
 

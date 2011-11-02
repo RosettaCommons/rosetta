@@ -19,6 +19,9 @@
 #include <core/types.hh>
 #include <basic/MetricValue.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <utility/vector1.hh>
 
 namespace protocols{

@@ -30,21 +30,26 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 // Utility headers
-#include <protocols/moves/PyMolMover.hh>
+// AUTO-REMOVED #include <protocols/moves/PyMolMover.hh>
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.io.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/conversions.hh>
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
+
+//Auto using namespaces
+namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+//Auto using namespaces end
+
 
 namespace protocols {
 namespace moves {

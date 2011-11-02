@@ -16,7 +16,7 @@
 
 
 // Unit Headers
-#include <protocols/topology_broker/FoldandDockClaimer.fwd.hh>
+// AUTO-REMOVED #include <protocols/topology_broker/FoldandDockClaimer.fwd.hh>
 
 // Package Headers
 #include <protocols/topology_broker/DofClaim.fwd.hh>

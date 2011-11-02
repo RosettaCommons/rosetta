@@ -23,9 +23,9 @@
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <core/scoring/Energies.hh>
 
-//Auto Headers
-
-#include <basic/Tracer.hh>
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

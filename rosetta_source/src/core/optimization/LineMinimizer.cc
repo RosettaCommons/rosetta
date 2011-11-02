@@ -31,6 +31,9 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
 
+#include <utility/vector1.hh>
+
+
 
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS

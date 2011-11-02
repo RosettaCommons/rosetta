@@ -49,8 +49,8 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <cmath>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector1.hh>
 
 
 using namespace core;

@@ -15,7 +15,7 @@
 
 #include <protocols/frag_picker/VallChunk.hh>
 #include <protocols/frag_picker/VallResidue.hh>
-#include <protocols/frag_picker/VallProvider.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/VallProvider.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #ifdef WIN32
@@ -23,24 +23,21 @@
 #endif
 
 // option key includes
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 #include <basic/Tracer.hh>
 
 // utils
-//Auto Headers
+#include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
-#include <iostream>
-#include <string>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

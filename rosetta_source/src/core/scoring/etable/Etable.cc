@@ -56,7 +56,6 @@
 
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
-//Auto Headers
 #include <core/chemical/AtomType.hh>
 
 

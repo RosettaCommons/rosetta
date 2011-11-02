@@ -16,12 +16,12 @@
 #include <core/scoring/disulfides/DisulfideMatchingDatabase.hh>
 
 // Project Headers
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <basic/database/open.hh>
-#include <core/scoring/constraints/util.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 #include <core/conformation/Atom.hh>
 #include <core/kinematics/RT.hh>
 
@@ -32,12 +32,7 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <numeric/xyz.functions.hh>
-#include <ObjexxFCL/FArray2A.hh>
-#include <ObjexxFCL/FArray2A.fwd.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzMatrix.fwd.hh>
+#include <core/kinematics/Jump.hh>
 
 static basic::Tracer TR("core.scoring.disulfides.CentroidMatchingDatabase");
 

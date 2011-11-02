@@ -31,9 +31,9 @@
 #include <protocols/match/downstream/SecMatchResiduePairEvaluator.hh>
 #include <protocols/match/downstream/SecondaryMatcherToUpstreamResidue.hh>
 #include <protocols/match/upstream/ScaffoldBuildPoint.hh>
-#include <protocols/match/upstream/ProteinUpstreamBuilder.hh>
+// AUTO-REMOVED #include <protocols/match/upstream/ProteinUpstreamBuilder.hh>
 #include <protocols/match/upstream/UpstreamBuilder.hh>
-#include <protocols/match/BumpGrid.hh>
+// AUTO-REMOVED #include <protocols/match/BumpGrid.hh>
 #include <core/pose/Pose.hh>
 
 // Project headers
@@ -50,8 +50,7 @@
 #include <list>
 #include <string>
 
-//Auto Headers
-#include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 
 
 

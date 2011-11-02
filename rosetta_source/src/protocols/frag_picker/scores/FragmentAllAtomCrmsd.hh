@@ -16,7 +16,7 @@
 
 // package headers
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
-#include <protocols/frag_picker/scores/CachingScoringMethod.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/scores/CachingScoringMethod.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 
 // mini
@@ -27,10 +27,9 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
-//Auto Headers
 #include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.fwd.hh>
-#include <iostream>
+#include <protocols/frag_picker/scores/FragmentScoringMethod.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

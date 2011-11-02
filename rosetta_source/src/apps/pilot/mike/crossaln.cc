@@ -21,11 +21,11 @@
 #include <core/sequence/Sequence.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
-#include <core/sequence/NWAligner.hh>
-#include <core/sequence/SWAligner.hh>
-#include <core/sequence/ScoringScheme.hh>
+// AUTO-REMOVED #include <core/sequence/NWAligner.hh>
+// AUTO-REMOVED #include <core/sequence/SWAligner.hh>
+// AUTO-REMOVED #include <core/sequence/ScoringScheme.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
-#include <core/sequence/SimpleScoringScheme.hh>
+// AUTO-REMOVED #include <core/sequence/SimpleScoringScheme.hh>
 // AUTO-REMOVED #include <core/sequence/ScoringSchemeFactory.hh>
 
 #include <utility/vector1.hh>
@@ -40,10 +40,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-
-//Auto Headers
-#include <basic/Tracer.fwd.hh>
-
 
 ///////////////////////////////////////////////////////////////////////////////
 

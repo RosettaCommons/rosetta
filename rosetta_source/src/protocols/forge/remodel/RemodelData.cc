@@ -17,18 +17,18 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 
 //fragset
-#include <core/fragment/OrderedFragSet.hh>
+// AUTO-REMOVED #include <core/fragment/OrderedFragSet.hh>
 
-#include <protocols/viewer/viewers.hh>
+// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 
 // Auto-header: duplicate removed #include <core/io/pdb/pose_io.hh>
 
-#include <core/chemical/ResidueType.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
  // for switch typeset
 
 
@@ -36,10 +36,10 @@
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/ResfileReader.fwd.hh>
 
-#include <protocols/forge/components/VarLengthBuild.hh>
+// AUTO-REMOVED #include <protocols/forge/components/VarLengthBuild.hh>
 
-#include <protocols/loops/LoopMover_QuickCCD_Moves.hh>
-#include <protocols/forge/build/BuildInstruction.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <protocols/loops/LoopMover_QuickCCD_Moves.hh>
+// AUTO-REMOVED #include <protocols/forge/build/BuildInstruction.hh> // REQUIRED FOR WINDOWS
 
 /*
 //yab headers
@@ -68,14 +68,13 @@
 
 
 // Utility Headers
-#include <utility/basic_sys_util.hh>
+// AUTO-REMOVED #include <utility/basic_sys_util.hh>
 #include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/ocstream.hh>
-#include <utility/file/file_sys_util.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/io/ocstream.hh>
+// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 #include <utility/vector1.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
 
 

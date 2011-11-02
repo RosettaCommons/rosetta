@@ -28,7 +28,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/database/sql_utils.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
@@ -36,7 +36,7 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <cppdb/errors.h>
+// AUTO-REMOVED #include <cppdb/errors.h>
 
 // C++ Headers
 #include <string>

@@ -48,6 +48,9 @@
 
 #include <basic/Tracer.hh>
 
+#include <utility/vector1.hh>
+
+
 using namespace core;
 using basic::T;
 

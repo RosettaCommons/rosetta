@@ -51,8 +51,7 @@
 // AUTO-REMOVED #include <istream>
 #include <string>
 
-//Auto Headers
-#include <utility/io/mpistream.hh>
+#include <utility/vector1.hh>
 
 
 // option key includes

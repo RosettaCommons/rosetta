@@ -51,20 +51,15 @@
 
 // option key includes
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/ms.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <protocols/multistate_design/MultiStateAggregateFunction.hh>
-#include <protocols/multistate_design/MultiStateFitnessFunction.hh>
-#include <protocols/toolbox/pose_metric_calculators/MetricValueGetter.hh>
+#include <protocols/genetic_algorithm/GeneticAlgorithm.hh>
 #include <protocols/rosetta_scripts/util.hh>
-
-#include <ObjexxFCL/string.functions.hh> // string_split
-
-
-#include <math.h>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <ObjexxFCL/format.hh>
 
 namespace protocols {
 namespace protein_interface_design {

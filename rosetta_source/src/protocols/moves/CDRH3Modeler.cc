@@ -26,7 +26,7 @@
 #include <core/id/types.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/util.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -45,8 +45,8 @@
 // AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/ConstraintFactory.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintFactory.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 #include <basic/Tracer.hh>
 
@@ -61,7 +61,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/LoopMover.fwd.hh>
 #include <protocols/loops/LoopMover.hh>
-#include <protocols/loops/LoopRelaxMover.hh>
+// AUTO-REMOVED #include <protocols/loops/LoopRelaxMover.hh>
 #include <protocols/moves/BackboneMover.hh>
 #include <protocols/moves/CDRH3Modeler.hh>
 #include <protocols/moves/ChangeFoldTreeMover.hh>
@@ -72,7 +72,7 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/ReturnSidechainMover.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
-#include <protocols/moves/RotamerTrialsMinMover.hh>
+// AUTO-REMOVED #include <protocols/moves/RotamerTrialsMinMover.hh>
 #include <protocols/moves/SwitchResidueTypeSetMover.hh>
 
 #include <utility/exit.hh>
@@ -80,17 +80,9 @@
 #include <utility/pointer/owning_ptr.hh>
 // AUTO-REMOVED #include <utility/vector1.functions.hh>
 
-//Auto Headers
-#include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/Jump.hh>
-// Auto-header: duplicate removed #include <core/pose/util.hh>
-#include <algorithm>
-#include <cassert>
-#include <cmath>
-#include <cstddef>
-#include <limits>
-#include <utility/tag/Tag.hh>  // REQUIRED FOR WINDOWS
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 static numeric::random::RandomGenerator RG(11141980);
 

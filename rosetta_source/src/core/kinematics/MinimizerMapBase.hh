@@ -28,18 +28,19 @@
 
 // Project headers
 //#include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
+// AUTO-REMOVED #include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
 //#include <core/id/AtomID_Map.hh>
 //#include <core/id/DOF_ID_Map.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
+#include <core/id/AtomID.fwd.hh>
+#include <core/id/DOF_ID.fwd.hh>
+#include <core/id/types.hh>
 #include <core/kinematics/DomainMap.fwd.hh>
-#include <ObjexxFCL/FArray1D.hh>
 
 
 

@@ -17,7 +17,7 @@
 // Package headers
 #include <core/pack/scmin/SCMinMultifunc.hh>
 #include <core/pack/scmin/SCMinMinimizerMap.hh>
-#include <core/pack/scmin/AtomTreeCollection.hh>
+// AUTO-REMOVED #include <core/pack/scmin/AtomTreeCollection.hh>
 
 #include <core/pack/rtmin.hh>
 
@@ -29,38 +29,38 @@
 #include <platform/types.hh>
 
 #include <core/graph/Graph.hh>
-#include <core/kinematics/AtomTree.hh>
+// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/DOF_Node.hh>
 #include <core/optimization/NumericalDerivCheckResult.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/rotamer_set/RotamerSetFactory.hh>
-#include <core/pack/rotamer_trials.hh>
-#include <core/pack/packer_neighbors.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSetFactory.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
+// AUTO-REMOVED #include <core/pack/packer_neighbors.hh>
 
 //#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 
 #include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/LREnergyContainer.hh>
+// AUTO-REMOVED #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
+// AUTO-REMOVED #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
 
 /// Etable
 #include <core/scoring/ResidueNeighborList.hh>
@@ -70,42 +70,29 @@
 #include <core/optimization/AtomTreeMultifunc.hh>
 
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/Minimizer.hh>
+// AUTO-REMOVED #include <core/optimization/Minimizer.hh>
 #include <core/optimization/atom_tree_minimize.hh>
 
 #include <core/types.hh>
 
-#include <basic/Tracer.hh>
-#include <basic/basic.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/basic.hh>
 
-#include <numeric/constants.hh>
-#include <numeric/random/random.hh>
-#include <numeric/angle.functions.hh>
+// AUTO-REMOVED #include <numeric/constants.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/angle.functions.hh>
 
 #include <test/UTracer.hh>
 
 // Numeric headers
-#include <numeric/random/random.hh>
-#include <numeric/random/random_permutation.hh>
+// Auto-header: duplicate removed #include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random_permutation.hh>
 
 //Auto Headers
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/types.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <utility/stream_util.hh>
-#include <utility/string_util.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
+#include <core/kinematics/DomainMap.hh>
+#include <core/optimization/MinimizerMap.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 using basic::T;

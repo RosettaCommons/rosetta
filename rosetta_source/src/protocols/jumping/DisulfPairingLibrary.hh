@@ -50,9 +50,8 @@
 #include <map>
 // AUTO-REMOVED #include <vector>
 
-//Auto Headers
 #include <protocols/jumping/DisulfPairingsList.fwd.hh>
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -23,25 +23,25 @@
 #include <protocols/protein_interface_design/movers/PlaceUtils.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <string>
 #include <protocols/loops/loops_main.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 #include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>
-//Auto Headers
-#include <numeric/xyz.functions.hh>
-#include <protocols/protein_interface_design/filters/RotamerBoltzmannWeight.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
 //#include <core/pose/Pose.hh>
+
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-
-//Auto Headers
+#include <core/scoring/ScoreFunction.hh>
 #include <protocols/moves/DataMap.hh>
-#include <utility/tag/Tag.hh>
+#include <protocols/protein_interface_design/filters/RotamerBoltzmannWeight.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <utility/tag/Tag.hh>
+#include <numeric/xyz.functions.hh>
+#include <basic/Tracer.hh>
 
 
 namespace protocols {

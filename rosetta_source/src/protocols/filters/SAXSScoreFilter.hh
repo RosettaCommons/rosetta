@@ -19,10 +19,9 @@
 #include <protocols/filters/SAXSScoreFilter.fwd.hh>
 #include <core/scoring/saxs/SAXSEnergyFA.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <basic/options/keys/OptionKeys.hh>
+// AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
 
-//Auto Headers
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

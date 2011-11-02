@@ -22,8 +22,8 @@
 #include <core/chemical/AtomICoor.hh>
 #include <core/types.hh>
 
-//Auto Headers
 #include <core/kinematics/Jump.hh>
+#include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
 

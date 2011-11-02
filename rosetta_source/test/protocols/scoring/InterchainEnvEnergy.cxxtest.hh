@@ -23,18 +23,18 @@
 #include <core/types.hh>
 
 // Unit headers
-#include <protocols/scoring/methods/InterchainEnvEnergy.hh>
+// AUTO-REMOVED #include <protocols/scoring/methods/InterchainEnvEnergy.hh>
 
 // Package headers
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
 //Auto Headers
-#include <core/io/pdb/file_data.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/scoring/types.hh>
+#include <protocols/scoring/Interface.fwd.hh>
+#include <utility/vector1.hh>
 
 
 using basic::T;

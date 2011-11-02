@@ -21,11 +21,11 @@
 // Package headers
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/carbon_hbonds/CarbonHBondPotential.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/types.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/types.hh>
 
 // Project headers
 #include <ObjexxFCL/format.hh>
@@ -36,15 +36,20 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #include <core/chemical/AtomType.hh>  //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType Oct 14, 2009
-#include <core/chemical/AtomTypeSet.hh>  //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType Oct 14, 2009
+// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>  //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType Oct 14, 2009
 
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <basic/prof.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
+
+#include <core/scoring/DerivVectorPair.hh>
+#include <utility/vector1.hh>
+#include <boost/bind.hpp>
+
 
 // AUTO-REMOVED #include <numeric/xyz.io.hh>
 // AUTO-REMOVED #include <numeric/deriv/angle_deriv.hh>

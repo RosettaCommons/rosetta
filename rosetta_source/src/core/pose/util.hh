@@ -20,7 +20,7 @@
 #include <set>
 
 // Utility headers
-#include <basic/datacache/BasicDataCache.hh>
+// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.fwd.hh>
 
@@ -32,7 +32,7 @@
 #include <core/chemical/VariantType.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/id/DOF_ID_Map.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Map.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/NamedStubID.fwd.hh>
@@ -47,6 +47,9 @@
 // Package headers
 #include <core/pose/Pose.hh>
 #include <core/pose/MiniPose.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace pose {

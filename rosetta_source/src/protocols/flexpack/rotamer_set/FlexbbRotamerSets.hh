@@ -40,10 +40,8 @@
 /// Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
 #include <protocols/flexpack/rotamer_set/FlexbbRotamerSet.fwd.hh>
-#include <utility/vector1_bool.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 

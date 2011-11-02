@@ -63,14 +63,14 @@
 //#include <protocols/protein_interface_design/dock_design_filters.hh>
 
 #include <core/scoring/packstat/compute_sasa.hh>
-#include <protocols/moves/PackStatMover.hh>
+// AUTO-REMOVED #include <protocols/moves/PackStatMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/packstat.OptionKeys.gen.hh>
 
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
 
@@ -88,9 +88,9 @@
 #include <set>
 #include <string>
 
-//Auto Headers
-#include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 using basic::T;

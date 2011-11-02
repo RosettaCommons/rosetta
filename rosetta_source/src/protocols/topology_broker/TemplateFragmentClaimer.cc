@@ -39,6 +39,10 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 
+#include <core/fragment/FragData.hh>
+#include <utility/vector1.hh>
+
+
 //// C++ headers
 // AUTO-REMOVED #include <fstream>
 

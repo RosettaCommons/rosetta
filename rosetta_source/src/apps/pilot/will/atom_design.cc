@@ -14,65 +14,65 @@
 #include <core/chemical/VariantType.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/symmetry/SymmData.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/init.hh>
-#include <basic/database/open.hh>
+// AUTO-REMOVED #include <basic/database/open.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
-#include <core/io/silent/ScoreFileSilentStruct.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
+// AUTO-REMOVED #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/pack/optimizeH.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pose/annotated_sequence.hh>
+// AUTO-REMOVED #include <core/pose/annotated_sequence.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/constraints/util.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/rms_util.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <numeric/model_quality/rms.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/symmetry/SymMinMover.hh>
-#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/symmetric_docking/SymDockingLowRes.hh>
+// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
+// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
+// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
+// AUTO-REMOVED #include <protocols/moves/RepeatMover.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SymMinMover.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SymPackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 #include <sstream>
-#include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
-
-
+#include <protocols/moves/MoverStatistics.hh>
+#include <protocols/moves/PackRotamersMover.hh>
 #include <apps/pilot/will/will_util.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 using numeric::conversions::radians;
 

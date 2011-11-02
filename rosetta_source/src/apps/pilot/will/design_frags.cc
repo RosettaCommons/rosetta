@@ -21,6 +21,9 @@
 #include <numeric/xyz.functions.hh>
 #include <utility/string_util.hh>
 
+#include <utility/vector1.hh>
+
+
 // core::kinematics::Stub getxform(core::conformation::Residue const & downstream_resi, core::conformation::Residue const & upstream_resi) {
 // 	core::kinematics::Stub s;
 // 	numeric::xyzVector<Real> A1 = downstream_resi.xyz("N" ) - downstream_resi.xyz("C");

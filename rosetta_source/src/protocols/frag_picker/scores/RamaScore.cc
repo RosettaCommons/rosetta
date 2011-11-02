@@ -33,6 +33,9 @@
 #include <utility/io/ozstream.hh>
 #include <ObjexxFCL/string.functions.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace frag_picker {
 namespace scores {

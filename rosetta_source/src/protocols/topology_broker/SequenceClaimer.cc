@@ -37,12 +37,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/pose/annotated_sequence.hh>
-
-//// C++ headers
-#include <string>
-#include <iterator>
+#include <utility/vector1.hh>
 
 static basic::Tracer tr("protocols.topo_broker",basic::t_info);
 

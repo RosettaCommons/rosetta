@@ -17,6 +17,9 @@
 #include <protocols/medal/MedalMain.hh>
 #include <protocols/viewer/viewers.hh>
 
+#include <utility/vector1.hh>
+
+
 int main(int argc, char* argv[]) {
   devel::init(argc, argv);
   protocols::viewer::viewer_main(

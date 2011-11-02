@@ -36,7 +36,7 @@
 
 // option key includes
 #include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
@@ -45,12 +45,12 @@
 // AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 // AUTO-REMOVED #include <core/id/AtomID_Mask.hh>
 
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 // AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.hh>
 
 #include <core/pack/pack_missing_sidechains.hh>
 #include <core/pack/optimizeH.hh>
-#include <core/io/raw_data/DisulfideFile.hh>
+// AUTO-REMOVED #include <core/io/raw_data/DisulfideFile.hh>
 #include <core/pose/PDBInfo.hh>
 
 #include <core/io/pdb/pdb_dynamic_reader.hh>
@@ -72,16 +72,9 @@
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
-//Auto Headers
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/kinematics/Jump.hh>
-
-#include <string>
-
-// Boost Headers
+#include <utility/vector1.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 

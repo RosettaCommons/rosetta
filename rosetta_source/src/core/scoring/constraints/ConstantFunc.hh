@@ -20,7 +20,7 @@
 
 // C++ Headers
 
-#include <ostream>
+// AUTO-REMOVED #include <ostream>
 
 namespace core {
 namespace scoring {

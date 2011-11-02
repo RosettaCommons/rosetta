@@ -30,15 +30,13 @@
 #include <numeric/conversions.hh>
 
 // C++ headers
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <string>
 
 //Auto Headers
-#include <core/chemical/MMAtomType.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <utility/keys/Key2Tuple.hh>
 #include <utility/keys/Key3Tuple.hh>
-#include <utility/keys/Key4Tuple.hh>
 
 
 using namespace core;

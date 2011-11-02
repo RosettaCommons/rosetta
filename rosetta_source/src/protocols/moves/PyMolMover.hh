@@ -24,7 +24,7 @@
 #include <core/scoring/ScoreType.hh>
 
 
-#include <sys/types.h>
+// AUTO-REMOVED #include <sys/types.h>
 
 // REQUIRED FOR WINDOWS
 #ifndef NATCL
@@ -49,6 +49,9 @@
 
 
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace moves {

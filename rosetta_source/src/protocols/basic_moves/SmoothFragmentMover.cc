@@ -41,8 +41,7 @@
 #include <cstdlib>
 #include <string>
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

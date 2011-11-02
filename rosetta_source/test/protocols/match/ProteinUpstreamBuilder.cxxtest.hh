@@ -42,21 +42,10 @@
 #include <sstream>
 
 //Auto Headers
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/types.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
-#include <core/scoring/types.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
-// AUTO-REMOVED #include <basic/OStream.fwd.hh>
-#include <basic/Tracer.fwd.hh>
+// Auto-header: duplicate removed #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <protocols/match/BumpGrid.hh>
 #include <protocols/match/Hit.hh>
-#include <protocols/match/downstream/ExternalGeomSampler.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
+#include <utility/vector1.hh>
 #include <boost/unordered/unordered_map_fwd.hpp>
 
 

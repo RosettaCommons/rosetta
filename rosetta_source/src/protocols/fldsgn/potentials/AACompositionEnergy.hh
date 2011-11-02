@@ -35,6 +35,9 @@
 // Utility headers
 #include <map>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace fldsgn {
 namespace potentials {

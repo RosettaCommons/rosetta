@@ -36,7 +36,6 @@
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
 #include <utility/exit.hh>
 #include <string>
 

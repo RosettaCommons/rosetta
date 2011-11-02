@@ -19,7 +19,6 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/after_opts.hh>
 
-//Auto Headers
 #include <platform/types.hh>
 #include <utility/Bound.fwd.hh>
 #include <utility/Bound.hh>

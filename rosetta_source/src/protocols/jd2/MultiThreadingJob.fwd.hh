@@ -16,9 +16,6 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-//Auto Headers
-#include <utility/vector1.fwd.hh>
-
 namespace protocols {
 namespace jd2 {
 

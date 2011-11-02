@@ -34,21 +34,21 @@
 #include <core/chemical/AtomType.hh> //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType
 #include <core/chemical/AtomTypeSet.hh> //Need this to get AtomType integers
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
+// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/dna/setup.hh>
+// AUTO-REMOVED #include <core/scoring/dna/setup.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/rms_util.hh>
@@ -74,9 +74,12 @@
 
 // Option Key Includes
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
-#include <basic/options/keys/dna.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/keys/dna.OptionKeys.gen.hh>
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace motifs {

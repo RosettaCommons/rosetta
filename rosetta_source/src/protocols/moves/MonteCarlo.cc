@@ -35,8 +35,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/mc.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
+#include <utility/vector1.hh>
 
 
 // for rosetta++ like boinc graphics

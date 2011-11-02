@@ -26,7 +26,7 @@
 // Project Headers
 #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/constraints/Func.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Func.hh>
 
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/types.hh>
@@ -37,10 +37,13 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
-#include <cstdlib>
+// AUTO-REMOVED #include <cstdlib>
 #include <string>
-#include <list>
+// AUTO-REMOVED #include <list>
 #include <map>
+
+#include <core/scoring/constraints/Func.fwd.hh>
+
 
 namespace protocols {
 namespace noesy_assign {

@@ -31,6 +31,9 @@
 // utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace moves {
 namespace mc_convergence_checks {

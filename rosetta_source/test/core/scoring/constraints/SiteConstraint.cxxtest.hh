@@ -19,12 +19,16 @@
 #include <test/util/pose_funcs.hh>
 
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/constraints/SiteConstraint.hh>
 #include <core/scoring/constraints/FlatHarmonicFunc.hh>
 #include <core/scoring/constraints/XYZ_Func.hh>
 #include <basic/Tracer.hh>
+
+//Auto Headers
+#include <utility/vector1.hh>
+
 
 using basic::T;
 using basic::Error;

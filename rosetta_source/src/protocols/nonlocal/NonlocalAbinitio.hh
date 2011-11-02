@@ -24,15 +24,20 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/fragment/FragSet.hh>
+// AUTO-REMOVED #include <core/fragment/FragSet.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/sequence/SequenceAlignment.hh>
+// AUTO-REMOVED #include <core/sequence/SequenceAlignment.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Package headers
 #include <protocols/nonlocal/TreeBuilder.fwd.hh>
+
+#include <core/fragment/FragSet.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/sequence/SequenceAlignment.fwd.hh>
+
 
 namespace protocols {
 namespace nonlocal {

@@ -29,6 +29,9 @@
 #include <utility/string_util.hh>
 #include <fstream>
 
+#include <utility/vector1.hh>
+
+
 void
 match_main();
 

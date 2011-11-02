@@ -14,8 +14,14 @@
 #ifndef INCLUDED_devel_metal_interface_FindClosestAtom_HH
 #define INCLUDED_devel_metal_interface_FindClosestAtom_HH
 
-#include <core/conformation/Residue.hh>
-#include <numeric/xyzVector.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.hh>
+
+#include <core/types.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <utility/vector1.hh>
+#include <string>
+
 
 namespace devel{
 namespace metal_interface{

@@ -20,8 +20,7 @@
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 
-//Auto Headers
-#include <iostream>
+#include <utility/vector1.hh>
 
 // C++ headers
 

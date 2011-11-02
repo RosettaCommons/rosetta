@@ -27,7 +27,6 @@
 // C++ headers
 #include <iostream>
 
-//Auto Headers
 #include <core/types.hh>
 
 

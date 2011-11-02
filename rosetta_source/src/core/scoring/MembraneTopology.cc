@@ -37,6 +37,9 @@
 #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <utility/utility.functions.hh>
 
 // just for debugging

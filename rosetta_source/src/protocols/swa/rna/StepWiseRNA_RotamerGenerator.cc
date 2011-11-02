@@ -17,15 +17,18 @@
 #include <protocols/swa/rna/StepWiseRNA_RotamerGenerator.hh>
 
 #include <core/id/TorsionID.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
 #include <basic/Tracer.hh>
 
-#include <ObjexxFCL/FArray1D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 using namespace core;
 using core::Real;

@@ -26,8 +26,7 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 
 // ObjexxFCL Headers

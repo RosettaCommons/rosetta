@@ -60,36 +60,36 @@
 #include <core/io/silent/BinaryProteinSilentStruct.hh>
 
 #include <basic/options/util.hh>
-#include <basic/options/after_opts.hh>
+// AUTO-REMOVED #include <basic/options/after_opts.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/ddg.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-#include <core/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
-#include <core/pack/task/ResfileReader.hh>
+// AUTO-REMOVED #include <core/pack/task/ResfileReader.hh>
 
 #include <protocols/moves/RigidBodyMover.hh>
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include <ios>
-#include <utility/io/izstream.hh>
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ios>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 //new includes for rotamer constraints
 // Auto-header: duplicate removed #include <core/scoring/Energies.hh>
-#include <core/pack/dunbrack/RotamerConstraint.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <protocols/moves/ScoreMover.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/RotamerConstraint.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
+// AUTO-REMOVED #include <protocols/moves/ScoreMover.hh>
 
 // C++ headers
 #include <cstdlib>
@@ -100,6 +100,10 @@
 #include <sys/stat.h>
 
 #include <basic/Tracer.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 using basic::T;
 using basic::Error;
 using basic::Warning;

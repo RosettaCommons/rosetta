@@ -23,8 +23,8 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/protein_interface_design/filters/DesignableResiduesFilter.fwd.hh>
 
-//Auto Headers
 #include <core/pack/task/TaskFactory.fwd.hh>
+#include <utility/vector1.hh>
 
 // Unit headers
 

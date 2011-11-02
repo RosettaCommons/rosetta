@@ -15,9 +15,13 @@
 #define INCLUDED_devel_metal_interface_MatchGrafter_HH
 
 #include <devel/metal_interface/MatchGrafter.fwd.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
+
+#include <core/types.hh>
+#include <core/pose/Pose.fwd.hh>
+
 
 
 namespace devel {

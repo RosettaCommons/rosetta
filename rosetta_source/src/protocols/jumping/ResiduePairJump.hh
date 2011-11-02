@@ -52,8 +52,8 @@
 #include <map>
 // AUTO-REMOVED #include <vector>
 
-//Auto Headers
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

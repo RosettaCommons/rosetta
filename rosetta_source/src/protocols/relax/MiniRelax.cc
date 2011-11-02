@@ -17,14 +17,14 @@
 #include <protocols/relax/cst_util.hh>
 
 
-#include <core/chemical/ResidueType.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 
-#include <core/conformation/Residue.functions.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.functions.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/pose/Pose.hh>
@@ -38,9 +38,11 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <core/pose/util.hh>
+#include <core/kinematics/Jump.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/pack/task/TaskFactory.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer TR("protocols.relax.MiniRelax");

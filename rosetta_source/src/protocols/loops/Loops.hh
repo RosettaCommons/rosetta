@@ -20,8 +20,8 @@
 #include <protocols/loops/Loops.fwd.hh>
 
 // C/C++ headers
-#include <iostream>
-#include <string>
+// AUTO-REMOVED #include <iostream>
+// AUTO-REMOVED #include <string>
 
 // Utility headers
 #include <numeric/xyzVector.fwd.hh>

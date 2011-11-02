@@ -29,9 +29,9 @@
 // AUTO-REMOVED #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <utility/exit.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer TR("protocols.moves.SetReturningPackRotamersMover");

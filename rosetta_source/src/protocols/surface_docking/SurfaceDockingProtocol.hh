@@ -31,9 +31,9 @@
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/surface_docking/SurfaceParameters.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
+// AUTO-REMOVED #include <protocols/surface_docking/SurfaceParameters.hh>
+// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
+// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 // ObjexxFCL Headers
 
@@ -46,8 +46,7 @@
 #include <map>
 #include <list>
 
-//Auto Headers
-#include <sstream>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

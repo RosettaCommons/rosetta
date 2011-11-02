@@ -36,15 +36,10 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/Fmath.hh>
 
-#include <map>
+// AUTO-REMOVED #include <map>
 
-//Auto Headers
 #include <core/id/AtomID_Map.fwd.hh>
-
-//Auto using namespaces
-//namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-// ^^^ interfere with PyRosetta build system, commenting out and using direct ObjexxFCL:: where needed.
-//Auto using namespaces end
+#include <utility/vector1.hh>
 
 
 

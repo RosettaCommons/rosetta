@@ -40,9 +40,9 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/LoopMover_KIC.hh>
 #include <core/id/AtomID.hh>
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
-#include <protocols/hotspot_hashing/HotspotStub.hh>
+// AUTO-REMOVED #include <protocols/hotspot_hashing/HotspotStub.hh>
 #include <protocols/loops/KinematicWrapper.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -50,6 +50,12 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 #include <numeric/random/random.hh>
+
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <utility/options/IntegerVectorOption.hh>
+
 
 static numeric::random::RandomGenerator RG( 14071789 );
 

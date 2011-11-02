@@ -47,9 +47,9 @@
 // AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/optimization/MinimizerMap.hh>
+#include <utility/vector1.hh>
 
 
 using basic::T;

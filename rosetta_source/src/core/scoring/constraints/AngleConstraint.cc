@@ -33,7 +33,7 @@
 #include <numeric/trig.functions.hh>
 #include <numeric/deriv/angle_deriv.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 // Auto-header: duplicate removed #include <core/id/NamedAtomID.hh>
 
 

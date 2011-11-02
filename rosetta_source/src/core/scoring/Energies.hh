@@ -55,7 +55,7 @@
 // STL Headers
 #include <map>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
 

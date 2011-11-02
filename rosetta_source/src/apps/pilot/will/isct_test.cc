@@ -35,6 +35,9 @@
 
 #include <apps/pilot/will/will_util.hh>
 
+#include <utility/vector1.hh>
+
+
 static basic::Tracer TR("isct_test");
 
 using core::Size;

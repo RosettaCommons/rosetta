@@ -37,10 +37,8 @@
 // C++ Headers
 #include <iostream>
 
-//Auto Headers
 #include <core/chemical/AtomTypeSet.hh>
-
-// Boost Headers
+#include <utility/vector1.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 

@@ -35,7 +35,7 @@
 // AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-#include <core/pack/task/TaskFactory.hh>
+// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 
 using basic::T;
 using basic::Error;
@@ -55,6 +55,9 @@ using basic::Warning;
 // option key includes
 
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+
+#include <utility/vector1.hh>
+
 
 
 

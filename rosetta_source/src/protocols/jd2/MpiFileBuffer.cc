@@ -21,8 +21,8 @@
 #include <basic/MemTracer.hh>
 // AUTO-REMOVED #include <iterator>
 
-//Auto Headers
 #include <protocols/jd2/SingleFileBuffer.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

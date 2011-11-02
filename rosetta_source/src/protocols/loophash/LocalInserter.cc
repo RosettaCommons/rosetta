@@ -12,11 +12,11 @@
 /// @author Mike Tyka
 
 #include <protocols/loophash/LocalInserter.hh>
-#include <protocols/loophash/LoopHashMap.hh>
+// AUTO-REMOVED #include <protocols/loophash/LoopHashMap.hh>
 #include <protocols/loophash/BackboneDB.hh>
 
 #include <core/pose/util.hh>
-#include <core/scoring/constraints/util.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/rms_util.hh>
 #include <protocols/loops/Loop.hh>
@@ -28,6 +28,9 @@
 #include <core/conformation/util.hh>
 
 #include <protocols/relax/cst_util.hh>
+
+#include <utility/vector1.hh>
+
 
 
 

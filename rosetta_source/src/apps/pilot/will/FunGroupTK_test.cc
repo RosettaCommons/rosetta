@@ -32,16 +32,16 @@
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/optimizeH.hh>
+// AUTO-REMOVED #include <core/pack/optimizeH.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/scoring/dssp/Dssp.hh>
+// AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
@@ -49,12 +49,15 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <sstream>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
-#include "apps/pilot/will/will_util.hh"
+#include <apps/pilot/will/will_util.hh>
 
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
+
+#include <utility/vector1.hh>
+
 
 using namespace protocols::kinmatch;
 

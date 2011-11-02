@@ -24,13 +24,13 @@
 #include <core/kinematics/Stub.hh>
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/RotamerSetBase.hh>
+// AUTO-REMOVED #include <core/conformation/RotamerSetBase.hh>
 #include <numeric/xyzMatrix.hh>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 
 // ObjexxFCL headers
 

@@ -26,7 +26,9 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
-//Auto Headers
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <complex>
 
 

@@ -26,7 +26,7 @@
 #include <core/conformation/Conformation.fwd.hh>
 
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/util.hh>
+// AUTO-REMOVED #include <protocols/loops/util.hh>
 #include <protocols/loops/loopfinder.hh>
 
 
@@ -40,9 +40,11 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-//Auto Headers
 #include <protocols/moves/DataMap.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
+#include <basic/Tracer.hh>
 
 
 

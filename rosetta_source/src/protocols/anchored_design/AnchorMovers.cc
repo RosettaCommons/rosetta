@@ -86,7 +86,7 @@
 #include <numeric/angle.functions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.io.hh>
+// AUTO-REMOVED #include <numeric/xyz.io.hh>
 
 // C++ Headers
 #include <iostream>
@@ -97,6 +97,11 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/AnchoredDesign.OptionKeys.gen.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <numeric/xyzVector.io.hh>
+
 
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>

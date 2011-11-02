@@ -16,7 +16,7 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/pockets/Fingerprint.fwd.hh>
-#include <protocols/pockets/FingerprintMultifunc.fwd.hh>
+// AUTO-REMOVED #include <protocols/pockets/FingerprintMultifunc.fwd.hh>
 #include <protocols/pockets/PocketGrid.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
@@ -26,6 +26,9 @@
 #include <utility/vector1_bool.hh>
 #include <list>
 #include <cmath>
+
+#include <utility/vector1.hh>
+
 
 
 

@@ -21,7 +21,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // c++ headers
-#include <string>
+// AUTO-REMOVED #include <string>
 
 namespace protocols {
 namespace moves {

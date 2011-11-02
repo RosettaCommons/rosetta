@@ -40,6 +40,9 @@
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray2A.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 //// C++ headers
 //#include <cstdlib>
 //#include <string>

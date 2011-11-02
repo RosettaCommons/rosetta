@@ -18,14 +18,14 @@
 #include <protocols/jd2/archive/ArchiveManager.fwd.hh>
 #include <protocols/jd2/archive/ArchiveBase.hh>
 //#include <protocols/jd2/archive/EvaluatedArchive.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 
 // Package headers
 #include <core/io/silent/silent.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
-#include <protocols/evaluation/PoseEvaluator.hh>
+// AUTO-REMOVED #include <protocols/evaluation/PoseEvaluator.hh>
 
 // Utility headers
 #include <core/types.hh>
@@ -36,8 +36,10 @@
 #include <string>
 #include <list>
 
-//Auto Headers
-#include <core/scoring/ResidualDipolarCoupling.hh>
+#include <core/scoring/ResidualDipolarCoupling.fwd.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
+#include <protocols/evaluation/PoseEvaluator.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

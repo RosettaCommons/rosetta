@@ -18,6 +18,9 @@
 #include <protocols/match/SixDHasher.hh>
 #include <basic/Tracer.hh>
 
+#include <boost/foreach.hpp>
+
+
 
 namespace protocols {
 namespace match {

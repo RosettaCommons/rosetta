@@ -31,7 +31,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 
 #include <protocols/moves/DataMap.fwd.hh>
 
@@ -40,6 +40,11 @@
 #include <protocols/filters/Filter.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
+
+#include <core/pack/task/operation/TaskOperation.fwd.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace flxbb{

@@ -37,6 +37,9 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 
+#include <utility/vector0.hh>
+
+
 // C++ headers
 
 static basic::Tracer TR( "protocols.RosettaScripts.util" );

@@ -38,7 +38,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/id/AtomID.hh>
-#include <utility/excn/Exceptions.hh>
+// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -46,6 +46,9 @@
 #include <utility/io/ozstream.hh>
 
 #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer tr("core.io.constraints");
 

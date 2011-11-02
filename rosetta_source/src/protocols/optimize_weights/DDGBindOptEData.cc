@@ -25,7 +25,7 @@
 // option key includes
 // AUTO-REMOVED #include <basic/options/keys/optE.OptionKeys.gen.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 

@@ -17,7 +17,7 @@
 
 // Package Headers
 #include <core/scoring/rna/RNA_Util.hh>
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/HarmonicFunc.fwd.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
@@ -29,11 +29,10 @@
 
 // Utility headers
 #include <numeric/conversions.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
-//Auto Headers
 #include <core/conformation/Residue.hh>
-#include <core/scoring/EnergyMap.hh>
+#include <utility/vector1.hh>
 
 
 // C++

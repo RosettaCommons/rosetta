@@ -23,6 +23,9 @@
 #include <protocols/constraints_additional/BindingSiteConstraint.hh>
 #include <protocols/constraints_additional/PocketConstraint.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace constraints_additional {
 

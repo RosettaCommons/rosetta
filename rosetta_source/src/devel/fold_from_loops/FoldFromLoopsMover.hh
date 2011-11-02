@@ -23,6 +23,9 @@
 #include <protocols/loops/Loops.hh>
 #include <devel/fold_from_loops/FoldFromLoopsMover.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace devel {
 namespace fold_from_loops {

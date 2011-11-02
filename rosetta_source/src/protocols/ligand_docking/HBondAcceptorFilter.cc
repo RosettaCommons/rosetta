@@ -24,11 +24,12 @@
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
-#include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <utility/exit.hh>
 
 #include <basic/Tracer.hh>
-//Auto Headers
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

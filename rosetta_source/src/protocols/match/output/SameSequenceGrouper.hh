@@ -35,7 +35,6 @@
 // C++ headers
 #include <map>
 
-//Auto Headers
 #include <utility/OrderedTuple.fwd.hh>
 
 

@@ -35,7 +35,6 @@
 #include <protocols/viewer/GraphicsState.hh>
 #include <protocols/viewer/triangle.hh>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

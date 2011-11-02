@@ -28,6 +28,9 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/DomainMap.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 // Utility headers
 
 

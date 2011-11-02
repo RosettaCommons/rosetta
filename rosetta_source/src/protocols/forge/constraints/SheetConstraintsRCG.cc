@@ -16,7 +16,7 @@
 #include <protocols/forge/constraints/SheetConstraintsRCG.hh>
 
 // Package headers
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <protocols/fldsgn/BluePrint.hh>
 #include <protocols/flxbb/utility.hh>
@@ -25,7 +25,11 @@
 // Project headers
 #include <basic/Tracer.hh>
 
-#include <protocols/fldsgn/topology/HSSTriplet.hh>
+// AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh>
+
+#include <core/id/types.hh>
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR( "protocols.forge.constraints.SheetConstraintsRCG" );
 

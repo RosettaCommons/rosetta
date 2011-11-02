@@ -26,8 +26,8 @@
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.hh>
 
-//Auto Headers
 #include <core/scoring/EnergyMap.hh>
+#include <utility/vector1.hh>
 
 
 

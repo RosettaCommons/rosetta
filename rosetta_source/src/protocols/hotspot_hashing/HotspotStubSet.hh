@@ -42,9 +42,7 @@
 #include <vector>
 #include <set>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
-#include <utility/io/mpistream.hh>
+#include <utility/vector1.hh>
 #include <utility/io/ozstream.fwd.hh>
 
 

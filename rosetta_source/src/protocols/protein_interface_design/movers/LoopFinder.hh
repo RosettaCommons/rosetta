@@ -19,9 +19,9 @@
 //#include <protocols/moves/Mover.hh>
 #include <core/types.hh>
 #include <protocols/loops/Loops.fwd.hh>
-#include <protocols/loops/Loops.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/loops/util.hh>
+// AUTO-REMOVED #include <protocols/loops/util.hh>
 
 // the following must be included because LoopFinder is derived from DRMover
 //#include <core/scoring/ScoreFunction.fwd.hh>
@@ -29,8 +29,7 @@
 //#include <core/pack/task/PackerTask.fwd.hh>
 //#include <core/pack/task/TaskFactory.fwd.hh>
 
-//Auto Headers
-#include <iostream>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace protein_interface_design {

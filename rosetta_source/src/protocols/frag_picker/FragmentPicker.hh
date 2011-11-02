@@ -21,7 +21,7 @@
 #include <protocols/frag_picker/VallChunk.fwd.hh>
 #include <protocols/frag_picker/VallChunkFilter.hh>
 #include <protocols/frag_picker/CandidatesCollector.hh>
-#include <protocols/frag_picker/quota/QuotaCollector.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/quota/QuotaCollector.hh>
 #include <protocols/frag_picker/FragmentSelectingRule.hh>
 #include <protocols/frag_picker/scores/FragmentScoreManager.hh>
 #include <protocols/frag_picker/scores/PValuedFragmentScoreManager.hh>
@@ -33,12 +33,18 @@
 
 #include <core/fragment/SecondaryStructure.hh>
 #include <core/sequence/SequenceProfile.hh>
-#include <core/fragment/ConstantLengthFragSet.hh>
+// AUTO-REMOVED #include <core/fragment/ConstantLengthFragSet.hh>
 
 // C++
 #include <string>
 #include <map>
 #include <sstream>
+
+#include <core/fragment/ConstantLengthFragSet.fwd.hh>
+#include <protocols/frag_picker/FragmentCandidate.hh>
+#include <protocols/frag_picker/quota/QuotaCollector.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace frag_picker {

@@ -24,6 +24,9 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
+
+#include <utility/vector1.hh>
+
 // #include <protocols/protein_interface_design/design_utils.hh>
 
 namespace protocols {

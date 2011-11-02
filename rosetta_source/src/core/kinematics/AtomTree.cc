@@ -50,10 +50,10 @@
 #include <cstdlib>
 // AUTO-REMOVED #include <cstdio>
 
-//Auto Headers
 #include <core/kinematics/AtomWithDOFChange.hh>
 #include <core/kinematics/types.hh>
 #include <core/kinematics/tree/Atom.hh>
+#include <utility/vector1.hh>
 
 
 

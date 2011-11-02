@@ -26,13 +26,13 @@
 
 // Utility header
 #include <utility/vector1.hh>
-#include <utility/pointer/access_ptr.hh>
+// AUTO-REMOVED #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
-#include <string>
-#include <map>
+// AUTO-REMOVED #include <string>
+// AUTO-REMOVED #include <map>
 
 namespace core {
 namespace scoring {

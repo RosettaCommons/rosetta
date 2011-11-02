@@ -28,6 +28,9 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace scoring {
 namespace rna {

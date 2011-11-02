@@ -28,6 +28,9 @@
 // option key includes
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
+#include <utility/vector1.hh>
+
+
 int
 main( int argc, char * argv [] )
 {

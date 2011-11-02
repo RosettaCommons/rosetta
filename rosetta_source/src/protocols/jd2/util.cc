@@ -32,19 +32,19 @@
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/jd2.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/parser.OptionKeys.gen.hh>
-#include <basic/options/keys/enzdes.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/parser.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 
 
 #include <core/chemical/ChemicalManager.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <protocols/moves/Mover.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -27,8 +27,7 @@
 
 // option key includes
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 static numeric::random::RandomGenerator my_RG(810106); // <- Magic number, do not change it!!! That's Ian Davis's thing- not sure why
 

@@ -27,6 +27,9 @@
 #include <ostream>
 #include <sstream>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <string>
 
 

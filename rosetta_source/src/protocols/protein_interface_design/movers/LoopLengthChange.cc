@@ -28,6 +28,10 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace protein_interface_design {
 namespace movers {

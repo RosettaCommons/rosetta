@@ -16,9 +16,7 @@
 #include <numeric/xyzVector.hh>
 
 //Auto Headers
-#include <utility/vector0_bool.hh>
-#include <ObjexxFCL/FArray1D.hh>
-#include <ostream>
+#include <utility/vector1.hh>
 
 
 class CartGridTest : public CxxTest::TestSuite {

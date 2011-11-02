@@ -31,8 +31,9 @@
 #include <protocols/filters/Filter.fwd.hh> //Filters_map
 #include <protocols/rosetta_scripts/util.hh>
 #include <basic/Tracer.hh>
-//Auto Headers
 #include <core/kinematics/Jump.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 // Utility Headers

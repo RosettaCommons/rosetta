@@ -20,7 +20,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 
 #include <protocols/dna/typedefs.hh>
-#include <protocols/dna/DnaDesignDef.hh>
+// AUTO-REMOVED #include <protocols/dna/DnaDesignDef.hh>
 #include <protocols/dna/DnaChains.fwd.hh>
 #include <protocols/dna/PDBOutput.fwd.hh>
 
@@ -37,6 +37,11 @@
 
 #include <map>
 #include <string>
+
+#include <protocols/dna/DnaDesignDef.fwd.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace dna {

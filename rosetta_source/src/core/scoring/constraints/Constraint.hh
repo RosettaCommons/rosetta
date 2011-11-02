@@ -29,7 +29,7 @@
 #include <numeric/random/random.fwd.hh>
 #include <core/scoring/constraints/Func.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/id/SequenceMapping.hh>
+// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 
 //Utility Headers
@@ -40,10 +40,11 @@
 // C++ Headers
 // AUTO-REMOVED #include <ostream>
 
-//Auto Headers
 #include <core/id/AtomID.fwd.hh>
+#include <core/id/SequenceMapping.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/constraints/XYZ_Func.fwd.hh>
+#include <utility/vector1.hh>
 #include <sstream>
 
 

@@ -39,6 +39,10 @@
 
 #include <iostream>
 
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 using namespace ObjexxFCL;
 static numeric::random::RandomGenerator FBBCRSA_RG(63556); // <- Magic number, do not change it!!!
 

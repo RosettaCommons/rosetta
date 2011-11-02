@@ -61,6 +61,9 @@
 #include <list>
 #include <map>
 
+#include <utility/vector1.hh>
+
+
 //auto headers
 #ifdef WIN32
 #include <core/id/AtomID.hh>

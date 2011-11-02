@@ -17,7 +17,7 @@
 
 // Project Headers
 #include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/types.hh>
 #include <protocols/comparative_modeling/IgnoreSubsetConstraintSet.hh>
@@ -33,6 +33,9 @@
 //// C++ headers
 #include <string>
 #include <set>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer tr("protocols.comparative_modeling");
 

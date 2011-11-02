@@ -26,10 +26,10 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/io/silent/SilentStruct.fwd.hh>
-#include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStruct.fwd.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 #include <core/fragment/FragSet.fwd.hh>
-#include <protocols/noesy_assign/NoesyModule.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/NoesyModule.hh>
 
 // Utility headers
 // AUTO-REMOVED #include <utility/vector1.hh>
@@ -41,6 +41,10 @@
 
 //// C++ headers
 #include <string>
+
+#include <protocols/noesy_assign/NoesyModule.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace abinitio {

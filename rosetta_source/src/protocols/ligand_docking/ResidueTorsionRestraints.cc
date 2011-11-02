@@ -26,10 +26,8 @@
 
 #include <numeric/conversions.hh>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
-
-// Boost Headers
+#include <utility/vector1.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 

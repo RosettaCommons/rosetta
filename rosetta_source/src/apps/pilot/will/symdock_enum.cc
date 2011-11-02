@@ -17,9 +17,9 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/symmetry/SymmData.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/init.hh>
@@ -29,14 +29,17 @@
 #include <core/pose/util.hh>
 #include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyz.io.hh>
+// AUTO-REMOVED #include <numeric/xyz.io.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <utility/string_util.hh>
-#include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR("symdock_enum");
 

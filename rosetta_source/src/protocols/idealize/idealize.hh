@@ -21,6 +21,9 @@
 
 #include <utility/vector1_bool.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace protocols {
 namespace idealize {

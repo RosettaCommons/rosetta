@@ -20,6 +20,9 @@
 // Project Headers
 #include <core/conformation/Residue.hh>
 
+#include <utility/vector1.hh>
+
+
 // Utility Headers
 
 // C++ Headers

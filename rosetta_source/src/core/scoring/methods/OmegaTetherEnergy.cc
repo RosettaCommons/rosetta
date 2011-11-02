@@ -29,8 +29,8 @@
 // Utility headers
 #include <numeric/conversions.hh>
 
-//Auto Headers
 #include <core/conformation/Residue.hh>
+#include <utility/vector1.hh>
 
 
 // C++

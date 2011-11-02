@@ -19,6 +19,9 @@
 #include <core/fragment/picking_old/vall/gen/SecStructGen.fwd.hh>
 #include <core/fragment/picking_old/vall/gen/VallFragmentGen.hh>
 
+#include <utility/vector1.hh>
+
+
 // C++ headers
 // AUTO-REMOVED #include <string>
 

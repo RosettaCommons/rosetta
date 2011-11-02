@@ -62,8 +62,8 @@
 #include <iostream>
 #include <string>
 
-//Auto Headers
-#include <core/scoring/constraints/Constraint.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 

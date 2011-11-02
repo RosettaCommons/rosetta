@@ -30,6 +30,9 @@
 // Numeric headers
 #include <numeric/xyzVector.hh>
 
+#include <utility/vector1.hh>
+
+
 //STL headers
 
 namespace core {

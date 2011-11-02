@@ -18,7 +18,8 @@
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
 #include <utility/tag/Tag.hh>
 
-//Auto Headers
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

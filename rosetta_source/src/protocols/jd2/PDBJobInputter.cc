@@ -18,7 +18,7 @@
 
 ///Project headers
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 
 ///Utility headers
@@ -30,7 +30,6 @@
 ///C++ headers
 #include <string>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
 
 

@@ -19,14 +19,17 @@
 
 // Unit headers
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/types.hh>
 
 // Package headers
 #include <basic/database/open.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+
+//Auto Headers
+
 
 using basic::T;
 using basic::Error;

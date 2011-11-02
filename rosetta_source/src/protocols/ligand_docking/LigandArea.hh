@@ -16,12 +16,12 @@
 
 //// Unit Headers
 #include <protocols/ligand_docking/LigandArea.fwd.hh>
-#include <protocols/ligand_docking/ligand_options/Interface.fwd.hh>
+// AUTO-REMOVED #include <protocols/ligand_docking/ligand_options/Interface.fwd.hh>
 
 //// Package Headers
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
+// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
 
 //// Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -30,7 +30,7 @@
 
 //// C++ headers
 
-#include <set>
+// AUTO-REMOVED #include <set>
 
 ///////////////////////////////////////////////////////////////////////
 

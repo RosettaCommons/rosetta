@@ -50,7 +50,7 @@
 #include <numeric/random/random_permutation.hh>
 
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 
@@ -59,8 +59,8 @@
 #include <ctime>
 #endif
 
-//Auto Headers
 #include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <utility/vector0.hh>
 
 
 namespace core {

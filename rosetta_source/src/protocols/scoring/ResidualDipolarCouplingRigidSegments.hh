@@ -24,11 +24,9 @@
 // AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/pose/Pose.fwd.hh>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
-
-#include <protocols/loops/Loops.hh>
 #include <core/scoring/ResidualDipolarCoupling.hh>
+#include <protocols/loops/Loops.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace scoring {

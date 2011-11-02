@@ -70,13 +70,14 @@
 #include <basic/options/keys/MonteCarlo.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/pose/util.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 #include <fstream>
 
 //Auto using namespaces
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt;
+namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
 //Auto using namespaces end
 
 namespace protocols {

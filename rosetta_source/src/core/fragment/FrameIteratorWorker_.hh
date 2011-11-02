@@ -30,8 +30,8 @@
 // Project Headers
 // AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 
-#include <core/fragment/FrameIterator.fwd.hh>
-#include <core/fragment/FragID_Iterator.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FrameIterator.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FragID_Iterator.fwd.hh>
 
 
 // Utility headers
@@ -41,7 +41,6 @@
 // std Headers
 // AUTO-REMOVED #include <iterator>
 
-//Auto Headers
 #include <core/fragment/Frame.fwd.hh>
 #include <iostream>
 

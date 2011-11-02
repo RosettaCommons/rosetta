@@ -26,6 +26,9 @@
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 
 ///////////////////////////////////////////////////////////////////////
 

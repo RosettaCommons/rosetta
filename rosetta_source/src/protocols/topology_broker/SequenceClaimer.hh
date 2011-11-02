@@ -44,6 +44,9 @@
 // AUTO-REMOVED #include <istream>
 #include <string>
 
+#include <utility/vector1.hh>
+
+
 // option key includes
 
 

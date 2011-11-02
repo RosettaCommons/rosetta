@@ -45,6 +45,9 @@
 #include <map>
 #include <algorithm>
 
+#include <utility/vector1.hh>
+
+
 /////////////////////////////////////////////////////////////////////////
 // Following should be easy to generalize for protein, RNA, DNA.
 // This may eventually be critical as we start to look at mixed systems.

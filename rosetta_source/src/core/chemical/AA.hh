@@ -26,7 +26,6 @@
 
 // AUTO-REMOVED #include <basic/Tracer.fwd.hh>
 
-//Auto Headers
 #include <ostream>
 
 

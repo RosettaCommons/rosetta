@@ -27,7 +27,7 @@
 //#include <basic/options/keys/OptionKeys.hh>
 //#include <basic/options/keys/in.OptionKeys.gen.hh>
 //#include <basic/options/keys/frags.OptionKeys.gen.hh>
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 #include <utility/excn/EXCN_Base.hh>
 //#include <utility/vector1.hh>
 
@@ -35,6 +35,9 @@
 
 // C/C++ headers
 #include <iostream>
+
+#include <utility/vector1.hh>
+
 //#include <string>
 
 namespace protocols  {

@@ -30,6 +30,9 @@
 // AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
+#include <utility/vector1.hh>
+
+
 // Utility headers
 
 

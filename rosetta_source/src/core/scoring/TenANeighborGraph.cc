@@ -17,7 +17,7 @@
 // Boost Headers
 #include <core/graph/unordered_object_pool.hpp>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <boost/pool/pool.hpp>
 
 

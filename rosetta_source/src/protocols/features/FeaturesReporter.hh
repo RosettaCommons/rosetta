@@ -25,12 +25,16 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.fwd.hh>
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 
 // C++ Headers
 #include <string>
+
+#include <utility/vector1.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
+
 
 namespace protocols{
 namespace features{

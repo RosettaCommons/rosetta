@@ -22,10 +22,13 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-#include <numeric/interpolation/spline/Interpolator.hh>
+// AUTO-REMOVED #include <numeric/interpolation/spline/Interpolator.hh>
 
-#include <string>
-#include <iostream>
+// AUTO-REMOVED #include <string>
+// AUTO-REMOVED #include <iostream>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

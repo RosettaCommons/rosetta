@@ -27,6 +27,9 @@
 // Utility headers
 #include <basic/Tracer.hh>
 
+#include <utility/vector1.hh>
+
+
 static basic::Tracer TR("core.pack.interaction_graph.SurfaceEnergy");
 
 // C++ headers

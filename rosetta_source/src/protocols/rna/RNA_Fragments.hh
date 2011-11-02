@@ -15,10 +15,13 @@
 
 #include <protocols/rna/RNA_Fragments.fwd.hh>
 #include <protocols/rna/AllowInsert.fwd.hh>
-#include <protocols/rna/RNA_MatchType.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_MatchType.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols{
 namespace rna{

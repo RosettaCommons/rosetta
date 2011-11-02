@@ -25,8 +25,8 @@
 #include <core/io/pdb/pose_io.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
-#include <basic/options/option_macros.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/option_macros.hh>
 
 #include <basic/options/keys/match.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -43,24 +43,24 @@
 #include <protocols/match/output/ProcessorFactory.hh>
 #include <protocols/match/output/MatchProcessor.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// Auto-header: duplicate removed #include <core/chemical/ChemicalManager.hh>
+// Auto-header: duplicate removed #include <core/chemical/ResidueTypeSet.hh>
 
-#include <core/io/pdb/pose_io.hh>
-#include <core/io/pdb/pdb_dynamic_reader.hh>
-#include <core/io/pdb/file_data.hh>
+// Auto-header: duplicate removed #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pdb_dynamic_reader.hh>
+// Auto-header: duplicate removed #include <core/io/pdb/file_data.hh>
 
-#include <core/pose/Pose.hh>
+// Auto-header: duplicate removed #include <core/pose/Pose.hh>
 
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh>
 
 #include <basic/Tracer.hh>
 
 #include <utility/string_util.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector1.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>

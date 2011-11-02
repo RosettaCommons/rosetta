@@ -34,16 +34,20 @@
 #include <core/pack/pack_rotamers.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <core/pack/task/PackerTask_.hh>
+// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask_.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
-#include <protocols/toolbox/task_operations/RestrictOperationsBase.hh>
+// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictOperationsBase.hh>
 #include <core/pack/task/ResfileReader.hh>
-#include <protocols/forge/build/BuildInstruction.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <protocols/forge/build/BuildInstruction.hh> // REQUIRED FOR WINDOWS
 
 // numeric headers
 #include <numeric/random/random.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 // boost headers
 

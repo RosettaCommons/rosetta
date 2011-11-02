@@ -16,7 +16,7 @@
 
 // unit headers
 #include <protocols/fldsgn/potentials/SetAACompositionPotential.fwd.hh>
-#include <protocols/fldsgn/potentials/AACompositionEnergy.fwd.hh>
+// AUTO-REMOVED #include <protocols/fldsgn/potentials/AACompositionEnergy.fwd.hh>
 
 // project headers
 #include <core/chemical/AA.hh>
@@ -31,6 +31,9 @@
 #include <map>
 #include <string>
 #include <utility/tag/Tag.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace fldsgn {

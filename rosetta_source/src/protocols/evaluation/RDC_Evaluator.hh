@@ -25,7 +25,7 @@
 #include <protocols/evaluation/PoseEvaluator.hh>
 #include <protocols/evaluation/RDC_Evaluator.fwd.hh>
 // Package Headers
-#include <protocols/evaluation/util.hh>
+// AUTO-REMOVED #include <protocols/evaluation/util.hh>
 // AUTO-REMOVED #include <core/scoring/ResidualDipolarCoupling.hh>
 
 // Project Headers
@@ -41,9 +41,9 @@
 //// C++ headers
 #include <list>
 
-//Auto Headers
 #include <core/scoring/ResidualDipolarCoupling.fwd.hh>
-#include <iostream>
+#include <core/scoring/rms_util.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

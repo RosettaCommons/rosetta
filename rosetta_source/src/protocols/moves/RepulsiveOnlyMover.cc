@@ -18,7 +18,7 @@
 // Package headers 
 
 // Project headers 
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
@@ -36,6 +36,9 @@
 
 // C++ Headers
 #include <iostream>
+
+#include <utility/vector1.hh>
+
 
 // ObjexxFCL Headers
 

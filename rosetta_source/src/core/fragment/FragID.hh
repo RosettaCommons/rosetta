@@ -32,6 +32,9 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 // a very lightweight class ( only two memory cells )
 // copy by value, don't use OPs -- not derived from ReferenceCount.
 // FragID identifies a physical fragment by its Frame and intra_frame reference number.

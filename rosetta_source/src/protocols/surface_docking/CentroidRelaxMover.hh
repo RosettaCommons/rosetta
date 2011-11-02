@@ -32,12 +32,12 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/BackboneMover.hh>
-#include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/MonteCarlo.hh>
+// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/moves/BackboneMover.hh>
+// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
+// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/surface_docking/CentroidRelaxMover.fwd.hh>
@@ -55,11 +55,10 @@
 #include <map>
 #include <list>
 
-//Auto Headers
-#include <sstream>
-
-//@Robin Added
-#include <utility/vector1_bool.hh>
+#include <protocols/moves/BackboneMover.fwd.hh>
+#include <protocols/moves/MinMover.fwd.hh>
+#include <protocols/moves/TrialMover.fwd.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace surface_docking {

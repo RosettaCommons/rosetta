@@ -34,9 +34,7 @@
 #include <basic/options/after_opts.hh>
 #endif
 
-//Auto Headers
-#include <utility/io/mpistream.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <iostream>
 
 
 #ifdef BOINC

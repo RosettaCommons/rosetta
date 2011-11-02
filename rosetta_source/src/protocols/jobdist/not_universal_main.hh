@@ -24,8 +24,7 @@
 // C++ headers
 // AUTO-REMOVED #include <string>
 
-//Auto Headers
-#include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

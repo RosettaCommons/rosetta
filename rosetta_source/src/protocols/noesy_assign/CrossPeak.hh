@@ -15,7 +15,7 @@
 
 // Package Headers
 #include <protocols/noesy_assign/CrossPeakInfo.hh>
-#include <protocols/noesy_assign/PeakAssignment.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/PeakAssignment.hh>
 #include <protocols/noesy_assign/ResonanceList.hh>
 #include <protocols/noesy_assign/PeakCalibrator.fwd.hh>
 
@@ -23,7 +23,7 @@
 #include <core/types.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/chemical/AA.hh>
-#include <core/scoring/constraints/AmbiguousNMRConstraint.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRConstraint.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -33,11 +33,14 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
-#include <cstdlib>
+// AUTO-REMOVED #include <cstdlib>
 #include <string>
 //#include <list>
 //#include <map>
 #include <set>
+
+#include <protocols/noesy_assign/PeakAssignment.fwd.hh>
+
 
 namespace protocols {
 namespace noesy_assign {

@@ -18,9 +18,9 @@
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <protocols/constraints_additional/SequenceProfileConstraint.fwd.hh>
+#include <utility/vector1.hh>
 
 using namespace core;
 	using namespace scoring;

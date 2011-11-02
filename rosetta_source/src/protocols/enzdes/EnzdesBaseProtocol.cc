@@ -72,9 +72,11 @@
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
+#include <core/id/SequenceMapping.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 

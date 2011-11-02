@@ -26,7 +26,7 @@
 #include <core/types.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/tools/make_vector1.hh>
 

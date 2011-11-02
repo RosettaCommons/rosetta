@@ -64,13 +64,10 @@ using namespace core;
 
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <utility/io/mpistream.hh>
 #include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
 #define foreach BOOST_FOREACH
 

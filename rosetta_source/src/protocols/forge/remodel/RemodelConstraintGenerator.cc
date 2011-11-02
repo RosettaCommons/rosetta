@@ -20,6 +20,9 @@
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/id/SequenceMapping.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols{
 namespace forge{
 namespace remodel{

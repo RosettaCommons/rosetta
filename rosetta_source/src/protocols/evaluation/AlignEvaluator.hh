@@ -17,7 +17,7 @@
 
 #include <core/sequence/SequenceAlignment.fwd.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
-#include <protocols/evaluation/util.hh>
+// AUTO-REMOVED #include <protocols/evaluation/util.hh>
 
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -25,6 +25,10 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <core/types.hh>
+
+#include <utility/exit.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace evaluation {

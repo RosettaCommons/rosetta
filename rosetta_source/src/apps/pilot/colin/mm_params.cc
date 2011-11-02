@@ -38,10 +38,11 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/conversions.hh>
 
-//Auto Headers
 #include <core/chemical/MMAtomType.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/pose/annotated_sequence.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer TR("mm_params");

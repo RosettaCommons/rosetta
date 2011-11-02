@@ -33,11 +33,10 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ Headers
-#include <string>
+// AUTO-REMOVED #include <string>
 // AUTO-REMOVED #include <map>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

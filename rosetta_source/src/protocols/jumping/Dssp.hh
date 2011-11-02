@@ -42,8 +42,8 @@
 #include <string>
 #include <cmath>
 
-//Auto Headers
 #include <protocols/jumping/StrandPairing.fwd.hh>
+#include <utility/vector1.hh>
 
 //#include <vector>
 

@@ -22,16 +22,20 @@
 #include <protocols/checkpoint/CheckPointer.hh>
 
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentStructFactory.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/moves/MoverCreator.hh>
+// AUTO-REMOVED #include <protocols/moves/MoverCreator.hh>
 
 //// C++ headers
 #include <string>
+
+#include <core/io/silent/silent.fwd.hh>
+#include <utility/vector1.hh>
+
 
 
 namespace protocols {

@@ -30,14 +30,14 @@
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
-#include <core/pack/task/operation/OptH.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/OptH.hh>
 #include <core/pack/task/operation/ResFilters.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
@@ -50,8 +50,8 @@
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/ConstraintFactory.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintFactory.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -62,16 +62,16 @@
 using namespace ObjexxFCL::fmt;
 
 #include <protocols/ScoreMap.hh>
-#include <protocols/basic_moves/FragmentMover.hh>
+// AUTO-REMOVED #include <protocols/basic_moves/FragmentMover.hh>
 #include <protocols/antibody/AntibodyClass.hh>
 #include <protocols/antibody/AntibodyModeler.hh>
 #include <protocols/docking/SidechainMinMover.hh>
 #include <protocols/geometry/RB_geometry.hh>
 //#include <protocols/evaluation/PoseEvaluator.hh>
 //#include <protocols/evaluation/RmsdEvaluator.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobOutputter.hh>
+// AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
+// AUTO-REMOVED #include <protocols/jd2/Job.hh>
+// AUTO-REMOVED #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/CDRH3Modeler.hh>
@@ -89,11 +89,9 @@ using namespace ObjexxFCL::fmt;
 #include <protocols/moves/RotamerTrialsMinMover.hh>
 #include <protocols/moves/TrialMover.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
-// Auto-header: duplicate removed #include <core/pose/util.hh>
-
-#include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;

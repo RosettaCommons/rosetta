@@ -13,8 +13,8 @@
 /// @brief
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobOutputter.hh>
+// AUTO-REMOVED #include <protocols/jd2/Job.hh>
+// AUTO-REMOVED #include <protocols/jd2/JobOutputter.hh>
 
 
 #include <protocols/jobdist/standard_mains.hh>
@@ -25,6 +25,9 @@
 
 #include <protocols/antibody/AntibodyModeler.hh>
 #include <protocols/moves/Mover.hh>
+
+#include <utility/vector1.hh>
+
 
 ////////////////////////////////////////////////////////
 using basic::T;

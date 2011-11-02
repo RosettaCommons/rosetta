@@ -17,9 +17,8 @@
 #include <core/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
-#include <sstream>
 #include <cmath>
+#include <sstream>
 
 // C++ Headers
 namespace core {

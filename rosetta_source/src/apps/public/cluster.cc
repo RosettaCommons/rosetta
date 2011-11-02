@@ -41,6 +41,9 @@
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
+#include <utility/vector1.hh>
+
+
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>
 #endif

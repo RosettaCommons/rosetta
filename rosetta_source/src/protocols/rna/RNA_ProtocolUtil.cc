@@ -26,8 +26,8 @@
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/FadeFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/tree/Atom.hh>
@@ -43,7 +43,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 
@@ -62,9 +62,9 @@
 #include <fstream>
 // AUTO-REMOVED #include <ctime>
 
-//Auto Headers
+#include <protocols/rna/RNA_MatchType.hh>
+#include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/conversions.hh>
 #include <ObjexxFCL/format.hh>
 
 

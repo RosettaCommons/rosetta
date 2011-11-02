@@ -15,16 +15,20 @@
 #define INCLUDED_protocols_scoring_methods_ImplicitFastClashCheck_hh
 
 #include <core/types.hh>
-#include <core/kinematics/Stub.hh>
+// AUTO-REMOVED #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzTriple.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <utility/vector1.hh>
-#include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <platform/types.hh>
+
+#include <core/kinematics/Stub.fwd.hh>
+#include <utility/io/ozstream.fwd.hh>
+
 
 namespace protocols {
 namespace scoring {

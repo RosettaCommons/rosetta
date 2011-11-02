@@ -19,8 +19,7 @@
 #include <core/pack/task/PackerTask.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 
-//Auto Headers
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 

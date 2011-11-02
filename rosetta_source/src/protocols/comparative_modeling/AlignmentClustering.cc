@@ -49,7 +49,7 @@
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 #include <fstream>
 #include <map>
@@ -57,9 +57,13 @@
 #include <sstream>
 #include <algorithm>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
+#include <utility/vector1.hh>
+
+//Auto using namespaces
+namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+//Auto using namespaces end
 
 
 

@@ -23,8 +23,8 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

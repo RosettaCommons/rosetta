@@ -28,6 +28,9 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace pack {
 namespace task {

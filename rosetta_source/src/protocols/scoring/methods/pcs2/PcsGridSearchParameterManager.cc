@@ -48,6 +48,9 @@
 // C++ headers
 #include <iostream>
 
+#include <utility/vector1.hh>
+
+
 static basic::Tracer TR_PcsGridSearchParameterManager("protocols.scoring.methods.pcs.PcsGridSearchParameterManager");
 
 namespace protocols{

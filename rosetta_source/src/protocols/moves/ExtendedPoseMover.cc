@@ -24,11 +24,16 @@
 #include <protocols/loops/util.hh>
 
 // Package headers
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 
 // C/C++ headers
 #include <string>
+
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace moves {

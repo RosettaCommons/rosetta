@@ -40,6 +40,10 @@
 #include <string>
 #include <sstream>
 
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+
+
 namespace protocols{
 namespace features{
 

@@ -17,8 +17,8 @@
 #include <core/scoring/packstat/PackingScore.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 
-//Auto Headers
 #include <cmath>
+#include <iostream>
 
 
 namespace core {

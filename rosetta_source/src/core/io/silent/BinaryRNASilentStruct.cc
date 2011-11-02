@@ -65,10 +65,9 @@
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <utility/io/mpistream.hh>
+#include <utility/vector1.hh>
 
 
 

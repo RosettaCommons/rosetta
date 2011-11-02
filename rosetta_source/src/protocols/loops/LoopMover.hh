@@ -29,6 +29,9 @@
 
 #include <protocols/checkpoint/CheckPointer.hh>
 
+#include <utility/vector1.hh>
+
+
 // C++ Headers
 
 

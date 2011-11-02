@@ -28,8 +28,11 @@
 #include <protocols/moves/MinMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 // Auto-header: duplicate removed #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+// AUTO-REMOVED #include <utility/options/keys/BooleanOptionKey.hh>
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace flexpep_docking {

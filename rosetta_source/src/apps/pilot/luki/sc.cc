@@ -16,7 +16,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/import_pose/import_pose.hh>
+// AUTO-REMOVED #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
@@ -25,10 +25,13 @@
 #include <devel/init.hh>
 
 // option key includes
-#include <basic/options/keys/run.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // option key includes
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
+
+#include <utility/vector1.hh>
+
 
 // local options
 namespace basic{ namespace options{ namespace OptionKeys{ namespace sc{

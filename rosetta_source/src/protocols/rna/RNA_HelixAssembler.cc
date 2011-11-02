@@ -28,13 +28,13 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rna/RNA_Util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <protocols/rna/RNA_StructureParameters.fwd.hh>
-#include <protocols/rna/RNA_StructureParameters.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_StructureParameters.fwd.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_StructureParameters.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 
 //Minimizer stuff
@@ -42,15 +42,15 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 
 
 // External library headers
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 #include <numeric/random/random.hh>
 
 //C++ headers
@@ -58,7 +58,6 @@
 #include <string>
 #include <sstream>
 
-//Auto Headers
 #include <core/pose/annotated_sequence.hh>
 
 

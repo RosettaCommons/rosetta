@@ -16,6 +16,9 @@
 #include <core/id/AtomID.hh>
 #include <numeric/xyzVector.hh>
 
+#include <utility/vector1.hh>
+
+
 
 typedef numeric::xyzVector<core::Real> point;
 

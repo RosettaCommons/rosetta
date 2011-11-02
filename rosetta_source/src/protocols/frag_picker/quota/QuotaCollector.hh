@@ -27,11 +27,7 @@
 
 #include <core/fragment/SecondaryStructure.fwd.hh>
 
-//Auto Headers
-#include <utility/vector1.fwd.hh>
-#include <core/types.hh>
-
-#include <utility>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace frag_picker {

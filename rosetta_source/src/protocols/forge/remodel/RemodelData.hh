@@ -10,6 +10,9 @@
 
 #include <ObjexxFCL/FArray1D.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace protocols{
 namespace forge{

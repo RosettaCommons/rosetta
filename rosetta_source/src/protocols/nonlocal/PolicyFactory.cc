@@ -32,6 +32,9 @@
 #include <protocols/nonlocal/SmoothPolicy.hh>
 #include <protocols/nonlocal/UniformPolicy.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace nonlocal {
 

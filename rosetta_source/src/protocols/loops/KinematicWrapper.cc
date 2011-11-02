@@ -35,8 +35,8 @@
 // option key includes
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <protocols/loops/Loop.hh>
+#include <utility/vector1.hh>
 
 
 

@@ -22,6 +22,9 @@
 // Package headers
 #include <protocols/nonlocal/Policy.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace nonlocal {
 

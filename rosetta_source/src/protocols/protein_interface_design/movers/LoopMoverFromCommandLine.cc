@@ -31,15 +31,15 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/forge/methods/util.hh>
-#include <protocols/forge/remodel/RemodelLoopMover.hh>
+// AUTO-REMOVED #include <protocols/forge/remodel/RemodelLoopMover.hh>
 
 
 #include <protocols/protein_interface_design/movers/SaveAndRetrieveSidechains.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
-#include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
 
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
@@ -54,32 +54,32 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <core/pack/task/operation/OperateOnCertainResidues.hh>
-#include <core/pack/task/operation/ResLvlTaskOperations.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/OperateOnCertainResidues.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 
-#include <protocols/moves/PackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/loops.OptionKeys.gen.hh>
 //create option keys for loop movers
 
-#include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
+// AUTO-REMOVED #include <core/fragment/ConstantLengthFragSet.hh>
+// AUTO-REMOVED #include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/FragSet.hh>
 #ifdef WIN32
 #include <core/fragment/FragID.hh>
 #endif
 
-#include <core/fragment/Frame.hh>
-#include <core/fragment/picking_old/vall/util.hh>
-#include <core/fragment/picking_old/FragmentLibraryManager.hh>
+// AUTO-REMOVED #include <core/fragment/Frame.hh>
+// AUTO-REMOVED #include <core/fragment/picking_old/vall/util.hh>
+// AUTO-REMOVED #include <core/fragment/picking_old/FragmentLibraryManager.hh>
 
-//Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/fragment/FrameIterator.hh>
-#include <protocols/moves/MonteCarlo.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

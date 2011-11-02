@@ -58,8 +58,7 @@
 // Utility headers
 #include <ObjexxFCL/format.hh>
 
-//Auto Headers
-#include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer tr( "core.scoring.geometric_solvation.OccludedHbondSolEnergy" );

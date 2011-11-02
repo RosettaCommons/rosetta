@@ -23,19 +23,17 @@
 //Project headers
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/scoring/constraints/Func.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Func.hh>
 
 //Utility Headers
 // AUTO-REMOVED #include <numeric/interpolation/Histogram.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-//Auto Headers
-#include <iostream>
-
-#include <core/kinematics/RT.hh>
-#include <ObjexxFCL/FArray2A.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <utility/vector1.hh>
+#include <numeric/xyzMatrix.fwd.hh>
 #include <ObjexxFCL/FArray2A.fwd.hh>
 
 namespace core {

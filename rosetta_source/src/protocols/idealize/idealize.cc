@@ -21,7 +21,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/util.hh>
 
 #include <core/kinematics/MoveMap.hh>
@@ -35,21 +35,21 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/HarmonicFunc.hh>
 
 #include <core/pose/PDBInfo.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <basic/basic.hh>
 #include <basic/Tracer.hh> // tracer output
 
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -63,9 +63,8 @@
 #include <ObjexxFCL/format.hh>
 // Auto-header: duplicate removed #include <ObjexxFCL/string.functions.hh>
 
-//Auto Headers
-#include <core/chemical/AtomType.hh>
 #include <core/chemical/VariantType.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace idealize {

@@ -24,8 +24,8 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 
-#include <string>
-#include <map>
+// AUTO-REMOVED #include <string>
+// AUTO-REMOVED #include <map>
 
 namespace protocols {
 namespace swa {

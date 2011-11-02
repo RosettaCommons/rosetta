@@ -30,9 +30,8 @@
 
 // C++ headers
 
-//Auto Headers
 #include <core/scoring/disulfides/CentroidDisulfidePotential.fwd.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 // Unit headers

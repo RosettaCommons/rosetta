@@ -21,6 +21,9 @@
 #include <utility/io/izstream.hh>
 #include <string>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace evaluation {
 

@@ -39,8 +39,8 @@
 // AUTO-REMOVED #include <fstream>
 #include <cassert>
 
-//Auto Headers
 #include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
+#include <utility/vector1.hh>
 
 
 

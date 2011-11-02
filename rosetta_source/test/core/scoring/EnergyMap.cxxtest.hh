@@ -22,12 +22,11 @@
 // Unit headers
 #include <core/scoring/EnergyMap.hh>
 
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
 //Auto Headers
-#include <utility/stream_util.hh>
-#include <string>
+#include <utility/vector1.hh>
 
 
 using basic::T;

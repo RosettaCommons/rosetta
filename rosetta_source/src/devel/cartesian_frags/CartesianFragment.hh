@@ -33,6 +33,9 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 // AUTO-REMOVED #include <utility/vector1.hh>

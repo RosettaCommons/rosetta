@@ -19,6 +19,11 @@
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
 
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace protein_interface_design {
 namespace movers {

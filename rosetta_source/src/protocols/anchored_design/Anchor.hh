@@ -27,6 +27,9 @@
 // C++ Headers
 #include <string>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols{
 namespace anchored_design{
 

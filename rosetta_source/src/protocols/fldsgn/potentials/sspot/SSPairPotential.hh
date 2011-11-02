@@ -28,11 +28,14 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray3D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray4D.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace fldsgn {

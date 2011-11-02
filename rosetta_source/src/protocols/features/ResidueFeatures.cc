@@ -15,24 +15,24 @@
 #include <protocols/features/ResidueFeatures.hh>
 
 // Package Headers
-#include <core/scoring/hbonds/HBondSet.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
 
 // Project Headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreTypeManager.hh>
-#include <core/scoring/TenANeighborGraph.hh>
-#include <core/scoring/etable/EtableEnergy.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/hbonds/hbonds_geom.hh>
-#include <core/scoring/hbonds/HBondTypeManager.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
+// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
+// AUTO-REMOVED #include <core/scoring/etable/EtableEnergy.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/hbonds_geom.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondTypeManager.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/types.hh>
-#include <protocols/jumping/Dssp.hh>
+// AUTO-REMOVED #include <protocols/jumping/Dssp.hh>
 #include <basic/database/sql_utils.hh>
 // Utility Headers
 #include <numeric/xyzVector.hh>

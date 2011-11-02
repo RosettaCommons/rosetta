@@ -27,6 +27,10 @@
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.fwd.hh>
 
+#include <utility/vector1.hh>
+#include <numeric/xyzVector.hh>
+
+
 // Utility headers
 
 

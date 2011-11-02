@@ -18,9 +18,13 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
-#include <numeric/random.functions.hh>
-#include <ObjexxFCL/format.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <numeric/random.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+#include <sstream>
+
 
 // C++ Headers
 

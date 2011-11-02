@@ -18,16 +18,22 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <boost/cstdint.hpp>
+// AUTO-REMOVED #include <boost/cstdint.hpp>
 #include <boost/unordered_map.hpp>
-#include <protocols/match/Hit.fwd.hh>
-#include <protocols/match/Hit.hh>
-#include <protocols/match/SixDHasher.hh>
-#include <protocols/frag_picker/VallChunk.hh>
+// AUTO-REMOVED #include <protocols/match/Hit.fwd.hh>
+// AUTO-REMOVED #include <protocols/match/Hit.hh>
+// AUTO-REMOVED #include <protocols/match/SixDHasher.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/VallChunk.hh>
 
-#include <string>
+// AUTO-REMOVED #include <string>
 #include <vector>
 #include <map>
+
+#include <protocols/frag_picker/VallChunk.fwd.hh>
+#include <protocols/match/SixDHasher.fwd.hh>
+#include <utility/vector1.hh>
+#include <numeric/geometry/BoundingBox.fwd.hh>
+
 
 namespace protocols {
 namespace loophash {

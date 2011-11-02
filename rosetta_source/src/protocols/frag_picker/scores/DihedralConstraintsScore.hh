@@ -29,8 +29,8 @@
 #include <core/scoring/constraints/FuncFactory.hh>
 #include <numeric/xyzVector.hh>
 
-//Auto Headers
 #include <protocols/frag_picker/scores/FourAtomsConstraintData.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -61,10 +61,11 @@
 #include <string>
 #include <fstream>
 
-//Auto Headers
 #include <core/fragment/ConstantLengthFragSet.hh>
-// Auto-header: duplicate removed #include <core/fragment/FrameIterator.hh>
+#include <core/fragment/FragData.hh>
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

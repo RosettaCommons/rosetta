@@ -25,6 +25,9 @@
 #include <utility/vector1_bool.hh>
 #include <map>
 
+#include <utility/vector1.hh>
+
+
 
 namespace protocols {
 namespace frag_picker {

@@ -25,8 +25,11 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 // C++ Headers
 

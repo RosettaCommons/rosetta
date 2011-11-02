@@ -18,25 +18,24 @@
 #include <core/scoring/sasa.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
  // for core::pose::make_pose_from_sequence
 
-#include <core/scoring/types.hh>
+// AUTO-REMOVED #include <core/scoring/types.hh>
 
 // Package Headers
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
 
 //Auto Headers
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
+#include <utility/vector1.hh>
 
 
 

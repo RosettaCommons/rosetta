@@ -27,12 +27,9 @@
 #include <core/types.hh>
 #include <core/conformation/Atom.hh>
 
-//Auto Headers
 #include <core/scoring/EnergyMap.fwd.hh>
-//XRW_B_T1
-//#include <core/scoring/etable/CoarseEtableEnergy.fwd.hh>
-//XRW_E_T1
 #include <core/scoring/etable/EtableEnergy.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

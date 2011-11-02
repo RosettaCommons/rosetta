@@ -45,11 +45,11 @@
 //
 #include <string>
 
-//Auto Headers
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/rbsegment_moves/RBSegment.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

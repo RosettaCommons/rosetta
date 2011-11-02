@@ -16,6 +16,9 @@
 #include <core/id/SequenceMapping.hh>
 #include <protocols/comparative_modeling/features/ResidueFeature.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace protocols {
 namespace comparative_modeling {

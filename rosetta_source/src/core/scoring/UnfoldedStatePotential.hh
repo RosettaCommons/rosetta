@@ -21,21 +21,20 @@
 // AUTO-REMOVED #include <core/scoring/types.hh>
 
 // Project headers
-#include <core/chemical/AA.hh>
+// AUTO-REMOVED #include <core/chemical/AA.hh>
 
 #include <core/scoring/EnergyMap.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // c++ headers
-#include <string>
+// AUTO-REMOVED #include <string>
 #include <map>
 
 // Utility headers
 // AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

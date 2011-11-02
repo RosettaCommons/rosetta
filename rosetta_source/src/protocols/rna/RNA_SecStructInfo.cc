@@ -25,6 +25,9 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
+#include <utility/vector1.hh>
+
+
 // Utility headers
 // AUTO-REMOVED #include <numeric/xyzMatrix.hh>
 // AUTO-REMOVED #include <numeric/xyz.functions.hh>

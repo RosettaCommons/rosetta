@@ -27,10 +27,7 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
-
-#include <cmath>
+#include <utility/vector1.hh>
 
 namespace core {
 namespace optimization {

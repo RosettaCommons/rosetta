@@ -31,13 +31,16 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 
 #include <basic/Tracer.hh>
 
 #include <algorithm>
 #include <iostream>
-#include <iterator>
+// AUTO-REMOVED #include <iterator>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

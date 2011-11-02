@@ -44,8 +44,8 @@
 #include <basic/options/option.hh> // for quick-test from run:dry_run
 #include <basic/options/keys/jumps.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <protocols/jumping/PairingsList.hh>
+#include <utility/vector1.hh>
 
 static basic::Tracer tr("protocols.jumping");
 

@@ -21,7 +21,7 @@
 #include <protocols/frag_picker/FragmentSelectingRule.hh>
 
 // package headers
-#include <protocols/frag_picker/CommonFragmentComparators.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/CommonFragmentComparators.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 
@@ -30,6 +30,9 @@
 
 // C++ headers
 #include <set>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace frag_picker {

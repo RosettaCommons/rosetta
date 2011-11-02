@@ -24,10 +24,8 @@
 
 #include <ObjexxFCL/format.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
-#include <iostream>
-#include <algorithm>
 
 namespace core {
 namespace io {

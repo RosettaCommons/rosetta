@@ -14,6 +14,9 @@
 
 #include <core/pack/task/operation/TaskOperationCreator.hh>
 
+#include <string>
+
+
 namespace protocols {
 namespace toolbox {
 namespace task_operations {

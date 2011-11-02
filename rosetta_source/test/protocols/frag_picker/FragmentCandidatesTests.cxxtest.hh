@@ -27,11 +27,15 @@
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 //#include <utility/stream_util.hh>
 
 #include <iostream>
+
+//Auto Headers
+#include <utility/vector1.hh>
+
 
 static basic::Tracer tr("protocols.frag_picker.FragmentCandidatesTests.cxxtest");
 

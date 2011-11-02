@@ -23,7 +23,7 @@
 // project headers
 #include <core/types.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -32,21 +32,8 @@
 #include <core/kinematics/Edge.hh>
 
 //Auto Headers
-#include <core/conformation/Atom.fwd.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/io/pdb/file_data.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/types.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <protocols/moves/MoverStatistics.hh>
-#include <numeric/xyzVector.io.hh>
-#include <numeric/random/random.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
-#include <ObjexxFCL/format.hh>
+#include <utility/vector1.hh>
 
 
 // --------------- Test Class --------------- //

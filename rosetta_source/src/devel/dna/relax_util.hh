@@ -19,9 +19,8 @@
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 
-//Auto Headers
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <ostream>
+#include <utility/vector1.hh>
 
 
 namespace devel {

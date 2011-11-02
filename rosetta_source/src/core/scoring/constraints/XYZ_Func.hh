@@ -25,10 +25,6 @@
 //Utility Headers
 // AUTO-REMOVED #include <numeric/xyzVector.hh>
 
-//Auto Headers
-#include <iostream>
-
-
 // C++ Headers
 
 namespace core {

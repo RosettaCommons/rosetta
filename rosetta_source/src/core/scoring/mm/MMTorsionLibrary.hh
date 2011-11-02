@@ -29,7 +29,6 @@
 // C++ headers
 #include <map>
 
-//Auto Headers
 #include <utility/keys/Key3Tuple.fwd.hh>
 #include <utility/keys/Key4Tuple.fwd.hh>
 

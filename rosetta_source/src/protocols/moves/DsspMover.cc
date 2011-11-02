@@ -25,13 +25,13 @@
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 // Auto-header: duplicate removed #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/filters/Filter.hh>
-#include <utility/tag/Tag.hh>  // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <utility/tag/Tag.hh>  // REQUIRED FOR WINDOWS
 
 //
 #include <string>
 
-//Auto Headers
-#include <iostream>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer TR( "protocols.DsspMover" );

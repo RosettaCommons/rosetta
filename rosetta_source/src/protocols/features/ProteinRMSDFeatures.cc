@@ -39,7 +39,7 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Basic Headers
-#include <basic/options/option.hh>
+// Auto-header: duplicate removed #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
 
@@ -55,6 +55,9 @@
 #include <map>
 #include <list>
 #include <sstream>
+
+#include <utility/vector0.hh>
+
 
 namespace protocols{
 namespace features{

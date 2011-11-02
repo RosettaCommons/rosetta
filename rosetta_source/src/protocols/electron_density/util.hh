@@ -18,18 +18,17 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/loops/Loops.hh>
-#include <protocols/electron_density/SetupForDensityScoringMover.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.hh>
+// AUTO-REMOVED #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 
 //// C++ headers
 // AUTO-REMOVED #include <cstdlib>
 #include <string>
 
-//Auto Headers
 #include <protocols/loops/Loops.fwd.hh>
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 

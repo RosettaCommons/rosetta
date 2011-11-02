@@ -32,8 +32,8 @@
 
 #include <cmath>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
+#include <utility/vector1.hh>
 
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS

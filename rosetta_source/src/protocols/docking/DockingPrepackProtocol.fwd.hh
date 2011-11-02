@@ -19,6 +19,7 @@
 #define INCLUDED_protocols_docking_DockingPrepackProtocol_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
+
 namespace protocols {
 namespace docking{
 

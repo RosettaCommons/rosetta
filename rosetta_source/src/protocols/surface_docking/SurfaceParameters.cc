@@ -24,11 +24,14 @@
 //#include <basic/datacache/BasicDataCache.hh>
 
 // Utility Headers
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyz.io.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.io.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
+
+#include <numeric/xyzVector.io.hh>
+
 
 
 static basic::Tracer TR("protocols.surfaceDocking.SurfaceParameters");

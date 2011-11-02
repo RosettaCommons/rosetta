@@ -17,19 +17,19 @@
 #include <core/types.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.fwd.hh>
 
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 
-#include <core/conformation/Residue.functions.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.functions.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID_Mask.fwd.hh>
-#include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 
 #include <core/sequence/SWAligner.hh>
 #include <core/sequence/Sequence.hh>
@@ -49,10 +49,10 @@
 #include <string>
 
 // option key includes
-#include <basic/options/option.hh>
-#include <basic/options/keys/cm.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/cm.OptionKeys.gen.hh>
 
-//Auto Headers
+#include <basic/options/keys/OptionKeys.hh>
 // Auto-header: duplicate removed #include <core/pose/util.hh>
 
 

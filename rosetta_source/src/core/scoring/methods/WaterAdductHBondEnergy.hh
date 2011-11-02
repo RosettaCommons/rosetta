@@ -30,8 +30,8 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
-//Auto Headers
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

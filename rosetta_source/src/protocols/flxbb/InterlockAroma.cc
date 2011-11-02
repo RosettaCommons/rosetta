@@ -41,7 +41,11 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>
 
-#include <protocols/fldsgn/topology/HSSTriplet.hh>
+// AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh>
+
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+
 
 static basic::Tracer TR("protocols.flxbb.InterlockAroma");
 

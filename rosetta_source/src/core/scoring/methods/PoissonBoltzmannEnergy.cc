@@ -35,8 +35,11 @@
 
 // option
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR("core.scoring.methods.PoissonBoltzmannEnergy");
 

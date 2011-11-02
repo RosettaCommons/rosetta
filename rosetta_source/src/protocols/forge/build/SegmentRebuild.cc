@@ -18,7 +18,7 @@
 #include <protocols/forge/methods/fold_tree_functions.hh>
 #include <protocols/forge/methods/pose_mod.hh>
 #include <protocols/forge/methods/util.hh>
-#include <protocols/loops/util.hh>
+// AUTO-REMOVED #include <protocols/loops/util.hh>
 
 // project headers
 
@@ -28,7 +28,7 @@
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/conformation/ResidueFactory.hh>
 // Auto-header: duplicate removed #include <core/conformation/util.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/constants.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -51,9 +51,7 @@
 #include <iostream>
 #include <set>
 
-//Auto Headers
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
 
 
 

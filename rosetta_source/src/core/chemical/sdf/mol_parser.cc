@@ -23,6 +23,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
 #include <fstream>
+
 namespace core {
 namespace chemical {
 namespace sdf {

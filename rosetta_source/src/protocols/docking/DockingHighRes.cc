@@ -25,7 +25,7 @@
 #include <protocols/docking/DockTaskFactory.hh>
 
 // Project Headers
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -41,6 +41,9 @@
 #include <utility/tools/make_vector1.hh>
 
 #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+
 
 // C++ Headers
 

@@ -27,6 +27,11 @@
 #include <protocols/moves/DataMap.fwd.hh>
 #include <utility/tag/Tag.hh>
 
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 // Utility headers
 
 //// C++ headers

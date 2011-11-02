@@ -29,9 +29,12 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/prof.hh>
-#include <core/scoring/TwelveANeighborGraph.hh>
+// AUTO-REMOVED #include <core/scoring/TwelveANeighborGraph.hh>
 // Utility headers
 #include <utility/io/izstream.hh>
+
+#include <utility/vector1.hh>
+
 
 // AUTO-REMOVED #include <utility/utility.functions.hh>
 

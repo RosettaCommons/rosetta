@@ -21,7 +21,7 @@
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/CircularHarmonicFunc.hh>
 #include <core/conformation/Residue.hh>
@@ -35,15 +35,18 @@
 
 // Numeric Headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.io.hh> // to print a point
+// AUTO-REMOVED #include <numeric/xyz.io.hh> // to print a point
 #include <numeric/conversions.hh> //degrees-radians
 #include <numeric/xyz.functions.hh>
-#include <core/pose/PDBInfo.hh>
-#include <utility/file/FileName.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <utility/file/FileName.hh>
 #include <core/id/AtomID.hh>
 
 // C++ headers
 #include <string>
+
+#include <numeric/xyzVector.io.hh>
+
 
 typedef numeric::xyzVector<core::Real> point;
 

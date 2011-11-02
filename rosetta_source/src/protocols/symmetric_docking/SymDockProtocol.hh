@@ -17,7 +17,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/symmetric_docking/SymDockProtocol.fwd.hh>
-#include <protocols/symmetric_docking/SymDockBaseProtocol.hh>
+// AUTO-REMOVED #include <protocols/symmetric_docking/SymDockBaseProtocol.hh>
 
 #include <core/types.hh>
 
@@ -29,10 +29,10 @@
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
-//Auto Headers
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

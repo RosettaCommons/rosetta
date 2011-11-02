@@ -31,6 +31,9 @@
 
 #include <cmath>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace scoring {
 namespace geometric_solvation {

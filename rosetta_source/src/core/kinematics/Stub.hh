@@ -24,13 +24,13 @@
 // Numeric headers
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>  // Do not remove, it is required for global2local and local2global
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>  // Do not remove, it is required for global2local and local2global
 
 // C++ headers
 #include <cmath>
 
-//Auto Headers
 #include <core/types.hh>
+#include <utility/vector1.hh>
 
 namespace core {
 namespace kinematics {

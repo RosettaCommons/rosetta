@@ -35,7 +35,6 @@
 #include <utility/pointer/owning_ptr.hh>
 // AUTO-REMOVED #include <utility/pointer/access_ptr.hh>
 
-//Auto Headers
 #include <utility/pointer/access_ptr.fwd.hh>
 
 

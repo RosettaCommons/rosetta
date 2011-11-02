@@ -35,6 +35,9 @@
 // Numceric Headers
 #include <numeric/xyzVector.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 // C++
 
 namespace core {

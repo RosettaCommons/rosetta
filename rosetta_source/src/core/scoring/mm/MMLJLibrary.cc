@@ -27,12 +27,12 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // Numeric headers
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 
 // C++ headers
 #include <string>
 #include <map>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 
 namespace core {
 namespace scoring {

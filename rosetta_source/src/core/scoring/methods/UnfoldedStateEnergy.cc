@@ -27,6 +27,9 @@
 // Project headers
 #include <core/conformation/Residue.hh>
 
+#include <utility/vector1.hh>
+
+
 static basic::Tracer TR("core.scoring.methods.UnfoldedStateEnergy");
 
 namespace core {

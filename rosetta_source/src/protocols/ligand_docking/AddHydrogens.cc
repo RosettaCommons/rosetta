@@ -26,12 +26,8 @@
 // option key includes
 #include <utility/tag/Tag.hh>
 
-//Auto Headers
-#include <core/pose/Pose.hh>
-#include <core/conformation/Conformation.hh>
-//#include <numeric/random/random.hh>
-
-// Boost Headers
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 

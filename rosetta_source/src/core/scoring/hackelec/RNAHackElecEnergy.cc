@@ -34,8 +34,8 @@
 #include <core/conformation/RotamerSetBase.hh>
 // AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 
 
 // ObjexxFCL headers

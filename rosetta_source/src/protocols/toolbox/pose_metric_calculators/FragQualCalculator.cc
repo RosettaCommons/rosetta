@@ -39,9 +39,12 @@
 #include <cmath>
 #include <ObjexxFCL/format.hh>
 
-//Auto Headers
-#include <core/pose/util.hh>
+#include <core/chemical/AtomType.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/id/types.hh>
+#include <core/kinematics/Jump.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <utility/vector0.hh>
 
 
 static basic::Tracer TR("protocols.toolbox.PoseMetricCalculators.FragQualCalculator");

@@ -16,33 +16,33 @@
 #define INCLUDED_core_scoring_SS_Killhairpins_Info_hh
 
 /// Unit headers
-#include <core/scoring/SS_Info.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/SS_Info.fwd.hh>
 
 /// Package headers
 #include <core/types.hh>
-#include <core/chemical/ResidueType.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueType.fwd.hh>
+// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 #include <basic/datacache/CacheableData.hh>
 
 // utility headers
-#include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 /// Utility headers
 // AUTO-REMOVED #include <utility/vector1.hh>
 
 /// Numeric headers
-#include <numeric/xyzVector.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
 // C++ headers
-#include <string>
+// AUTO-REMOVED #include <string>
 #include <iosfwd>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
+#include <utility/io/izstream.fwd.hh>
 
 
 namespace core {

@@ -22,8 +22,8 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
-#include <ObjexxFCL/format.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // C++ Headers
 

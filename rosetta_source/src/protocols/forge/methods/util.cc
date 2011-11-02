@@ -46,6 +46,9 @@
 // C++ headers
 #include <set>
 
+#include <utility/vector1.hh>
+
+
 // REQUIRED FOR WINDOWS
 #ifdef _WIN32
 #include <cstdio>

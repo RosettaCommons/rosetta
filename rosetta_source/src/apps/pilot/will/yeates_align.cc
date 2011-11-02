@@ -30,9 +30,9 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 
-#include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 #include <sstream>
-#include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
 #include <numeric/xyz.functions.hh>
@@ -40,11 +40,9 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <utility/string_util.hh>
-
 #include <apps/pilot/will/will_util.hh>
+#include <utility/vector1.hh>
 
 static basic::Tracer TR("yeates_align");
 

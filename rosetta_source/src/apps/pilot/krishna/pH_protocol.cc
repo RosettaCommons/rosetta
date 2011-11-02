@@ -13,21 +13,21 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/pHEnergy.hh>
 
-#include <core/pack/pack_rotamers.hh>
+// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 
 #include <basic/options/option.hh>
 #include <core/init.hh>
 #include <core/conformation/Residue.hh>
 
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/SidechainMover.hh>
-#include <protocols/moves/MoverContainer.hh>
+// AUTO-REMOVED #include <protocols/moves/SidechainMover.hh>
+// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <basic/Tracer.hh>
@@ -39,15 +39,20 @@
 
 //JD headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/Job.hh>
+// Auto-header: duplicate removed #include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/jd2/JobOutputter.hh>
+// AUTO-REMOVED #include <protocols/jd2/Job.hh>
 
 
 // option key includes
 
 #include <basic/options/keys/pH.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+
+#include <core/kinematics/Jump.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 
 static basic::Tracer TR("apps.pilot.krishna.PhProtocol");

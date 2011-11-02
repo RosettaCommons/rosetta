@@ -20,11 +20,11 @@
 
 #include <core/scoring/ScoringManager.hh>
 
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 
 // Utility header
-#include <utility/keys/Key4Tuple.hh>
-#include <utility/keys/Key3Tuple.hh>
+// AUTO-REMOVED #include <utility/keys/Key4Tuple.hh>
+// AUTO-REMOVED #include <utility/keys/Key3Tuple.hh>
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -34,6 +34,9 @@
 #include <string>
 #include <map>
 #include <math.h>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

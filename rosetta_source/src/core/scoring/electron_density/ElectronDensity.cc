@@ -33,8 +33,8 @@
 #include <basic/options/option.hh>
 #include <core/scoring/electron_density/xray_scattering.hh>
 #include <basic/Tracer.hh>
-#include <core/conformation/PointGraph.hh>
-#include <core/conformation/find_neighbors.hh>
+// AUTO-REMOVED #include <core/conformation/PointGraph.hh>
+// AUTO-REMOVED #include <core/conformation/find_neighbors.hh>
 
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
@@ -43,7 +43,7 @@
 #include <numeric/statistics.functions.hh>
 #include <numeric/fourier/FFT.hh>
 
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 //
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
@@ -56,11 +56,10 @@
 #include <fstream>
 #include <limits>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/id/AtomID.hh>
-#include <core/kinematics/RT.hh>
+#include <utility/vector1.hh>
 
 #ifndef WIN32
 	#include <pthread.h>

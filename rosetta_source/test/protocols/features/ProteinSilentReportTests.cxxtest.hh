@@ -21,7 +21,7 @@
 
 // Project Headers
 #include <basic/Tracer.hh>
-#include <core/init.hh>
+// AUTO-REMOVED #include <core/init.hh>
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
 #include <core/conformation/Residue.hh>
@@ -40,6 +40,10 @@
 
 // C++ Headers
 #include <sstream>
+
+//Auto Headers
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR("protocols.features.ProteinSilentReportTests.cxxtest");
 

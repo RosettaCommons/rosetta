@@ -25,14 +25,17 @@
 #include <core/pose/util.hh>
 #include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyz.io.hh>
+// AUTO-REMOVED #include <numeric/xyz.io.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <sstream>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR("protocols.kinmatchFunGroupTK");
 

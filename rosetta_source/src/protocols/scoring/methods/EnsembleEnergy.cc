@@ -20,7 +20,7 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableStringFloatMap.hh>
 
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 // AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 
@@ -33,8 +33,8 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/scoring/EnergyMap.hh>
+#include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;

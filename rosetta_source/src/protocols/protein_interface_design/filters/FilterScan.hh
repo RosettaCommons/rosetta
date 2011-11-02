@@ -24,8 +24,8 @@
 #include <protocols/protein_interface_design/filters/FilterScan.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-//Auto Headers
 #include <core/pack/task/TaskFactory.fwd.hh>
+#include <utility/vector1.hh>
 
 // Unit headers
 

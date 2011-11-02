@@ -35,6 +35,9 @@
 // AUTO-REMOVED #include <math.h>
 #include <string>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace scoring {
 namespace dna {

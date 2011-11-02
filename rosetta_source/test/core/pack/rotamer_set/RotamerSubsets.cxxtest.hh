@@ -31,13 +31,18 @@
 // Core headers
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+
+//Auto Headers
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 using namespace core;
 

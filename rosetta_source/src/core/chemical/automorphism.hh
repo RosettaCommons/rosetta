@@ -18,6 +18,9 @@
 
 #include <core/chemical/ResidueType.hh>
 
+#include <utility/vector1.hh>
+
+
 // Commented by inclean daemon #include <utility/vector1.hh>
 // Commented by inclean daemon #include <utility/pointer/ReferenceCount.hh>
 

@@ -29,7 +29,11 @@
 // C++ headers
 #include <iostream>
 #include <map>
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
+
+#include <utility/vector1.hh>
+#include <utility/options/IntegerVectorOption.hh>
+
 
 #define PI 3.141592
 

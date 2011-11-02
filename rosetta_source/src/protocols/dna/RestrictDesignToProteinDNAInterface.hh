@@ -24,12 +24,8 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 
-//Auto Headers
-#ifdef WIN32
-#include <protocols/dna/DnaDesignDef.hh>
-#endif
 #include <protocols/dna/DnaDesignDef.fwd.hh>
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

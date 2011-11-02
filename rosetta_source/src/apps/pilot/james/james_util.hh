@@ -31,7 +31,6 @@
 
 #include <cmath>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
 
 #ifndef JAMES_UTIL

@@ -37,10 +37,9 @@
 #include <map>
 // AUTO-REMOVED #include <string>
 
-//Auto Headers
-#include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
-#include <utility/vector1_bool.hh>
-#include <ostream>
+#include <protocols/moves/mc_convergence_checks/ConvergenceCheck.fwd.hh>
+#include <utility/vector1.hh>
+#include <string>
 
 
 // Forward declarations

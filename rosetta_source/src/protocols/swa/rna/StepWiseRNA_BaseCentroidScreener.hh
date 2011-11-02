@@ -30,7 +30,7 @@
 
 
 #include <string>
-#include <map>
+// AUTO-REMOVED #include <map>
 
 namespace protocols {
 namespace swa {

@@ -19,6 +19,24 @@
 #include <string>
 #include <sstream>
 
+#include <platform/types.hh>
+#include <utility/down_cast.hh>
+#include <utility/exit.hh>
+#include <utility/vector1_bool.hh>
+#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/owning_ptr.functions.hh>
+#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
+#include <cassert>
+#include <cstddef>
+#include <iosfwd>
+#include <ostream>
+#include <basic/MetricValue.fwd.hh>
+#include <basic/Tracer.fwd.hh>
+#include <basic/Tracer.hh>
+
+
 using utility::vector1;
 
 namespace basic {

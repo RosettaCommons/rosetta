@@ -18,7 +18,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/id/types.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <basic/options/util.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -33,13 +33,13 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/ConstraintFactory.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintFactory.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 #include <basic/Tracer.hh>
 
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyz.io.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.io.hh>
 
 #include <protocols/antibody/AntibodyClass.hh>
 #include <protocols/loops/loops_main.hh>
@@ -56,19 +56,16 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/ReturnSidechainMover.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
-#include <protocols/moves/RotamerTrialsMinMover.hh>
+// AUTO-REMOVED #include <protocols/moves/RotamerTrialsMinMover.hh>
 #include <protocols/moves/SwitchResidueTypeSetMover.hh>
 
 #include <utility/exit.hh>
 // AUTO-REMOVED #include <utility/vector1.functions.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <basic/options/option.hh>
 #include <core/pose/util.hh>
-// Auto-header: duplicate removed #include <protocols/moves/PackRotamersMover.hh>
-// Auto-header: duplicate removed #include <basic/options/option.hh>
-#include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 static basic::Tracer TR("protocols.moves.GraftMover");
 static basic::Tracer TRO("protocols.moves.GraftOneMover");

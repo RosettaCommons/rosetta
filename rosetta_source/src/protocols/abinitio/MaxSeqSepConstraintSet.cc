@@ -61,10 +61,11 @@
 #include <string>
 // AUTO-REMOVED #include <fstream>
 
-//Auto Headers
-#include <core/kinematics/FoldTree.hh>
 #include <core/id/SequenceMapping.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <core/kinematics/FoldTree.hh>
+// Auto-header: duplicate removed #include <core/scoring/EnergyMap.fwd.hh>
+// Auto-header: duplicate removed #include <core/scoring/ScoreFunction.fwd.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer tr("protocols.abinitio.foldconstraints",basic::t_info);

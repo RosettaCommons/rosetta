@@ -51,9 +51,8 @@
 // AUTO-REMOVED #include <vector>
 #include <map>
 
-//Auto Headers
-#include <core/scoring/constraints/Constraint.hh>
 #include <protocols/abinitio/Templates.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

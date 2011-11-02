@@ -23,7 +23,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <basic/options/option.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.hh>
@@ -73,7 +73,7 @@
 // AUTO-REMOVED #include <fstream>
 #include <string>
 #include <sstream>
-#include <utility/assert.hh> //ASSERT_ONLY makes release build happy
+// AUTO-REMOVED #include <utility/assert.hh> //ASSERT_ONLY makes release build happy
 // AUTO-REMOVED #include <ctime>
 // AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
@@ -83,15 +83,12 @@
 #include <basic/options/keys/DenovoProteinDesign.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <protocols/jumping/StrandPairing.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/relax/FastRelax.hh>
-#include <utility/io/mpistream.hh>
+#include <utility/vector0.hh>
 
 
 

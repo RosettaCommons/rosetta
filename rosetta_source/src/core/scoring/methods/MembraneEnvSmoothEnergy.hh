@@ -20,7 +20,7 @@
 
 // Package headers
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
-#include <core/scoring/MembranePotential.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/MembranePotential.fwd.hh>
 
 // Project headers
 #include <core/chemical/AA.hh>
@@ -30,6 +30,9 @@
 
 // Utility headers
 #include <ObjexxFCL/FArray3D.hh>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

@@ -22,15 +22,15 @@
 
 // Unit headers
 #include <core/scoring/Membrane_FAPotential.fwd.hh> //pba
-#include <core/scoring/MembranePotential.hh> //pba
+// AUTO-REMOVED #include <core/scoring/MembranePotential.hh> //pba
 #include <core/scoring/MembranePotential.fwd.hh>
-#include <core/scoring/MembraneTopology.fwd.hh>
-#include <core/scoring/MembraneTopology.hh>
+// AUTO-REMOVED #include <core/scoring/MembraneTopology.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/MembraneTopology.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnvPairPotential.hh>
 
 // Package headers
-#include <core/scoring/EnergyGraph.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 // Project headers
@@ -44,7 +44,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/FArray4D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray4D.hh>
 
 // C++
 

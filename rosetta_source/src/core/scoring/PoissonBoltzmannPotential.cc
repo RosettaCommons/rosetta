@@ -32,8 +32,8 @@
 #include <core/pose/Pose.hh>
 
 // Numeric Headers
-#include <numeric/angle.functions.hh>
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/angle.functions.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -47,6 +47,10 @@
 #include <numeric/xyzVector.hh>
 // Auto-header: duplicate removed #include <utility/io/izstream.hh>
 #include <algorithm>
+
+#include <core/chemical/AtomType.hh>
+#include <utility/vector1.hh>
+
 // option key includes
 
 static basic::Tracer TR("core.scoring.PoissonBoltzmannPotential");

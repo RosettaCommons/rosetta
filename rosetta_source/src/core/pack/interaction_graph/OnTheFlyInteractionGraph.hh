@@ -37,11 +37,14 @@
 #include <numeric/xyzVector.hh>
 
 /// C++ headers
-#include <utility> // std::pair
+// AUTO-REMOVED #include <utility> // std::pair
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
+
+#include <utility/vector1.hh>
+
 
 // Utility headers
 // AUTO-REMOVED #include <utility/vector1.hh>

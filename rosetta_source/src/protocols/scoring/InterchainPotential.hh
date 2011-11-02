@@ -21,11 +21,11 @@
 // Unit headers
 #include <core/scoring/AtomVDW.fwd.hh>
 #include <protocols/scoring/InterchainPotential.fwd.hh>
-#include <protocols/scoring/InterfaceInfo.hh>
+// AUTO-REMOVED #include <protocols/scoring/InterfaceInfo.hh>
 #include <core/scoring/EnvPairPotential.hh>
 
 // Package headers
-#include <protocols/scoring/Interface.hh>
+// AUTO-REMOVED #include <protocols/scoring/Interface.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 #include <basic/datacache/CacheableData.hh>
@@ -33,6 +33,10 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
+
+#include <protocols/scoring/InterfaceInfo.fwd.hh>
+#include <utility/vector1.hh>
+
 
 // C++
 

@@ -18,12 +18,15 @@
 // Package headers
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
 
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

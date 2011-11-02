@@ -51,8 +51,8 @@
 #include <vector>
 #include <iostream>
 
-//Auto Headers
 #include <core/scoring/dssp/PairingsList.hh>
+#include <utility/vector1.hh>
 
 
 

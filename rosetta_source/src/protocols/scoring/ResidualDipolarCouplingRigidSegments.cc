@@ -20,8 +20,8 @@
 // Package headers
 
 // Project headers
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 
 // AUTO-REMOVED #include <basic/options/after_opts.hh>
 #include <basic/options/option.hh>
@@ -35,22 +35,22 @@
 
 
 // ObjexxFCL headers
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 //C++ headers
 #include <iostream>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <string>
 //#include <iostream.h>
 
 /// Utility headers
-#include <utility/excn/Exceptions.hh>
-#include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 // AUTO-REMOVED #include <basic/options/option_macros.hh>
 
 // option key includes
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/rdc.OptionKeys.gen.hh>
 
 static basic::Tracer tr("core.scoring.ResidualDipolarCouplingRigidSegments");

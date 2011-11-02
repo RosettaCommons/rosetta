@@ -65,9 +65,7 @@ using basic::T;
 
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/io/pdb/file_data.hh>
-#include <core/scoring/constraints/Constraint.hh>
 
 
 

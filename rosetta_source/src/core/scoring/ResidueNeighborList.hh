@@ -19,19 +19,19 @@
 #include <core/scoring/ResidueNeighborList.fwd.hh>
 
 // Package headers
-#include <core/scoring/NeighborList.hh>
+// AUTO-REMOVED #include <core/scoring/NeighborList.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/conformation/Atom.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/Atom.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <basic/datacache/CacheableData.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
-#include <utility/in_place_list.hh>
+// AUTO-REMOVED #include <utility/in_place_list.hh>
 
 namespace core {
 namespace scoring {

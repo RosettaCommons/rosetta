@@ -26,6 +26,9 @@
 #include <core/sequence/SequenceProfile.hh>
 #include <core/sequence/ScoringScheme.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace frag_picker {
 namespace scores {

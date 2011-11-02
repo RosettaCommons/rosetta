@@ -45,8 +45,8 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <core/kinematics/tree/Atom.hh>
+#include <core/optimization/CartesianMinimizerMap.hh>
+#include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;

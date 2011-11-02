@@ -23,7 +23,7 @@
 
 #include <core/chemical/ChemicalManager.hh>
 // AUTO-REMOVED
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
@@ -44,8 +44,8 @@
 //#include <basic/options/option.hh>
 #include <numeric/random/random.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector1.hh>
 
 
 //// C++ headers

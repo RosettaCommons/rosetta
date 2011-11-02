@@ -40,19 +40,20 @@
 
 #include <protocols/jumping/Dssp.hh>
 
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
 #include <utility/exit.hh>
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
 
 #include <string>
 
-//Auto Headers
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <utility/vector1.hh>
+#include <utility/io/mpistream.hh>
 
 
 using namespace core;

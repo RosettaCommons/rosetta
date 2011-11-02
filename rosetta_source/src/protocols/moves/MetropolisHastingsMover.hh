@@ -20,14 +20,18 @@
 
 // Project Headers
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/moves/ThermodynamicMover.hh>
-#include <protocols/moves/ThermodynamicObserver.hh>
+// AUTO-REMOVED #include <protocols/moves/ThermodynamicMover.hh>
+// AUTO-REMOVED #include <protocols/moves/ThermodynamicObserver.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/random/WeightedSampler.hh>
 
 // Utility Headers
 #include <core/types.hh>
 #include <utility/vector1.hh>
+
+#include <protocols/moves/ThermodynamicMover.fwd.hh>
+#include <protocols/moves/ThermodynamicObserver.fwd.hh>
+
 
 namespace protocols {
 namespace moves {

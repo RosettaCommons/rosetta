@@ -29,6 +29,11 @@
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
 
+#include <protocols/noesy_assign/CrossPeak.hh>
+#include <utility/vector1.hh>
+#include <cmath>
+
+
 //// C++ headers
 
 

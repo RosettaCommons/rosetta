@@ -15,8 +15,8 @@
 
 // Package Headers
 #include <protocols/noesy_assign/CrossPeak.hh>
-#include <protocols/noesy_assign/PeakFileFormat.hh>
-#include <protocols/noesy_assign/PeakAssignmentResidueMap.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/PeakFileFormat.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/PeakAssignmentResidueMap.hh>
 #include <protocols/noesy_assign/DistanceScoreMover.hh>
 #include <protocols/noesy_assign/PeakAssignmentParameters.hh>
 #include <protocols/jumping/JumpSample.hh>
@@ -28,7 +28,7 @@
 #include <core/types.hh>
 //#include <core/id/NamedAtomID.fwd.hh>
 #include <core/chemical/AA.hh>
-#include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 //#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/pose/Pose.hh>
 

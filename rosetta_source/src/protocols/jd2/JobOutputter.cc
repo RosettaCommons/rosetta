@@ -38,6 +38,9 @@
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
+#include <utility/vector1.hh>
+
+
 ///C++ headers
 //#include <string> //in the .hh anyway
 

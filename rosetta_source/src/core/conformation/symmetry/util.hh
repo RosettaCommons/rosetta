@@ -20,7 +20,7 @@
 //#include <core/scoring/Energies.fwd.hh>
 #include <core/conformation/symmetry/SymmData.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 //#include <core/pose/Pose.fwd.hh>
 //#include <core/pack/task/PackerTask.fwd.hh>
@@ -28,10 +28,6 @@
 #include <core/types.hh>
 
 // AUTO-REMOVED #include <utility/vector1.hh>
-
-//Auto Headers
-#include <utility/vector1.fwd.hh>
-
 
 namespace core {
 namespace conformation {

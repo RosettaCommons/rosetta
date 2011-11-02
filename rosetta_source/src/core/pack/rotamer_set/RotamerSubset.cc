@@ -17,7 +17,7 @@
 // Project Headers
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
-#include <core/graph/Graph.hh>
+// AUTO-REMOVED #include <core/graph/Graph.hh>
 #include <core/scoring/methods/Methods.hh>
 #include <basic/Tracer.hh>
 
@@ -25,8 +25,8 @@
 #include <string>
 #include <iostream>
 
-//Auto Headers
-#include <core/scoring/trie/RotamerTrieBase.hh>
+#include <core/conformation/AbstractRotamerTrie.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

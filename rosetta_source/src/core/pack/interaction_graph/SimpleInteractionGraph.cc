@@ -22,16 +22,19 @@
 #include <core/pose/Pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionInfo.hh>
-#include <core/scoring/TenANeighborGraph.hh>
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.hh>
+// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/util.hh>
-#include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-#include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
+// AUTO-REMOVED #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
+// AUTO-REMOVED #include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

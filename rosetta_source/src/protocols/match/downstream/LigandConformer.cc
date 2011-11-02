@@ -29,6 +29,11 @@
 // Utility headers
 #include <utility/vector1.functions.hh>
 
+#include <core/id/AtomID.hh>
+#include <protocols/match/Hit.hh>
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace match {
 namespace downstream {

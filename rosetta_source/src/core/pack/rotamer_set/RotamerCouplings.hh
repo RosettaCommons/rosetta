@@ -23,7 +23,6 @@
 
 // AUTO-REMOVED #include <utility>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 // utility headers

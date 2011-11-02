@@ -23,7 +23,7 @@
 // AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 #include <core/scoring/ScoreFunction.hh>
@@ -55,7 +55,7 @@
 // AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <sstream>
-#include <ios>
+// AUTO-REMOVED #include <ios>
 // AUTO-REMOVED #include <utility/io/izstream.hh>
 
 // C++ headers
@@ -149,9 +149,9 @@ using basic::Error;
 // Auto-header: duplicate removed #include <iostream>
 // Auto-header: duplicate removed #include <string>
 
-//Auto Headers
-#include <utility/io/mpistream.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 

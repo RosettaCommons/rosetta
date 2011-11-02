@@ -31,7 +31,10 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
+
+#include <map>
+
 
 using namespace core::pack::task;
 

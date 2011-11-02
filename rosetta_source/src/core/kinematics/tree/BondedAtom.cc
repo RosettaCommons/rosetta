@@ -17,7 +17,7 @@
 
 // Package headers
 #include <core/id/DOF_ID.hh>
-#include <core/id/DOF_ID_Mask.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Mask.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/MinimizerMapBase.hh>
 
@@ -40,7 +40,7 @@
 #include <cassert>
 #include <iostream>
 
-//Auto Headers
+#include <core/id/DOF_ID_Map.hh>
 #include <core/kinematics/types.hh>
 
 

@@ -20,8 +20,11 @@
 #define ANN_H
 
 #include <boost/unordered_map.hpp>
-#include <protocols/sparta/GDB.hh>
+// AUTO-REMOVED #include <protocols/sparta/GDB.hh>
 #include <utility/vector0.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace sparta {

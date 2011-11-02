@@ -18,6 +18,11 @@
 #include <ObjexxFCL/format.hh>
 #include <numeric/xyz.functions.hh>
 
+#include <core/kinematics/Stub.hh>
+#include <utility/vector1.hh>
+#include <utility/io/ozstream.hh>
+
+
 namespace protocols {
 namespace scoring {
 

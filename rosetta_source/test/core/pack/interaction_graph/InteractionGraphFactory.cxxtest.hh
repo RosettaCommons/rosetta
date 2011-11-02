@@ -27,10 +27,10 @@
 #include <core/pack/interaction_graph/SurfaceInteractionGraph.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pack/packer_neighbors.hh>
 
@@ -39,6 +39,12 @@
 #include <core/pack/rotamer_set/RotamerSets.hh>
 
 #include <core/util/SwitchResidueTypeSet.hh>
+
+//Auto Headers
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <ObjexxFCL/FArray1.io.hh>
+
 
 //using namespace core;
 using namespace core::pack;

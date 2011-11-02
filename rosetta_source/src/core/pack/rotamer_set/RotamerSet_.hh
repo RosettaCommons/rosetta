@@ -38,8 +38,8 @@
 #include <utility/pointer/owning_ptr.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-//Auto Headers
-#include <iostream>
+#include <core/scoring/trie/RotamerTrieBase.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

@@ -19,6 +19,9 @@
 #include <protocols/moves/Mover.hh> // we need to store a pose
 #include <core/pose/Pose.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace moves {
 

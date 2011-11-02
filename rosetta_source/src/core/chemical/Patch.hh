@@ -22,6 +22,9 @@
 #include <core/chemical/PatchOperation.hh>
 #include <core/chemical/ResidueSelector.hh>
 
+#include <utility/vector1.hh>
+
+
 // Project headers
 // AUTO-REMOVED #include <basic/Tracer.hh>
 

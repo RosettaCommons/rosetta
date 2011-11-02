@@ -28,8 +28,7 @@
 
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-//Auto Headers
-#include <core/import_pose/import_pose.hh>
+#include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 

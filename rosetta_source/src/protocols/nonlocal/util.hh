@@ -14,22 +14,25 @@
 #define PROTOCOLS_NONLOCAL_UTIL_HH_
 
 // C/C++ headers
-#include <string>
+// AUTO-REMOVED #include <string>
 
 // Utility headers
 #include <utility/vector1.hh>
 
 // Project headers
 #include <core/types.hh>
-#include <core/id/SequenceMapping.fwd.hh>
+// AUTO-REMOVED #include <core/id/SequenceMapping.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
 #include <protocols/jd2/ThreadingJob.fwd.hh>
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
+// AUTO-REMOVED #include <protocols/loops/Loop.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 // Package headers
 #include <core/scoring/ScoreType.hh>
+
+#include <protocols/loops/Loops.fwd.hh>
+
 
 namespace protocols {
 namespace nonlocal {

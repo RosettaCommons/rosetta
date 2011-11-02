@@ -44,9 +44,9 @@
 //
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
+#include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;

@@ -17,6 +17,9 @@
 #include <protocols/nonlocal/NonlocalAbinitioMain.hh>
 #include <protocols/viewer/viewers.hh>
 
+#include <utility/vector1.hh>
+
+
 // Non-traditional main() function due to inclusion in BOINC.
 // See protocols/nonlocal/NonlocalAbinitioMain.cc.
 int main(int argc, char* argv[]) {

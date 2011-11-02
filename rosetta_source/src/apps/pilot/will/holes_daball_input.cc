@@ -14,39 +14,40 @@
 #include <devel/init.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/packing/PoseBalls.hh>
 #include <core/scoring/packing/HolesParamsRes.hh>
 
-#include <core/scoring/packing/compute_holes_score_res.hh>
+// AUTO-REMOVED #include <core/scoring/packing/compute_holes_score_res.hh>
 
 #include <core/id/AtomID_Map.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 
-#include <numeric/model_quality/rms.hh>
+// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
 
 #include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <pstream.h>
 
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
 
 #include <sstream>
 #include <fstream>
 
-#include <ObjexxFCL/FArray2D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <core/kinematics/Jump.hh>
+#include <utility/vector1.hh>
 
 
 using std::string;

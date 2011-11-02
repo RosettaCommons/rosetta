@@ -22,6 +22,9 @@
 
 #include <utility/exit.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace comparative_modeling {
 namespace features {

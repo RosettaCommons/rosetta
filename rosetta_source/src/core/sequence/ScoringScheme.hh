@@ -30,7 +30,7 @@ every element of S is bigger than -2 * e.
 #include <core/types.hh>
 #include <core/sequence/Sequence.fwd.hh>
 
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 #include <utility/io/izstream.fwd.hh>
 #include <utility/file/FileName.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>

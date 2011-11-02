@@ -43,6 +43,9 @@ using utility::string_split;
 
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 
+#include <utility/vector0.hh>
+
+
 using namespace ObjexxFCL::fmt;
 
 namespace protocols {

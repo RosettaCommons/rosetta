@@ -22,11 +22,10 @@
 // Project headers
 
 // Utility headers
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 
-//Auto Headers
-#include <core/conformation/Residue.hh>
 #include <core/scoring/EnergyMap.hh>
+#include <utility/vector1.hh>
 
 
 // C++

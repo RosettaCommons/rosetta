@@ -21,24 +21,26 @@
 // Project Headers
 #include <devel/init.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/operation/TaskOperationFactory.hh>
-#include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperationFactory.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 // Utility Headers
-#include <utility/excn/Exceptions.hh>
+// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <utility/excn/EXCN_Base.hh>
 
 
 using std::endl;

@@ -45,8 +45,8 @@
 //// C++ headers
 // AUTO-REMOVED #include <list>
 
-//Auto Headers
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

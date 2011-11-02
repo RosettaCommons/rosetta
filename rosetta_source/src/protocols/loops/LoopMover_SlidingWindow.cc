@@ -49,9 +49,9 @@
 
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/pose/util.hh>
 #include <protocols/basic_moves/FragmentMover.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

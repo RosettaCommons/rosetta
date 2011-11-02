@@ -23,7 +23,6 @@
 // Utility headers
 #include <utility/exit.hh>
 
-//Auto Headers
 #include <utility/OrderedTuple.hh>
 
 

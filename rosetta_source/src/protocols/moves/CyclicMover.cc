@@ -18,10 +18,14 @@
 #include <vector>
 
 // Project headers
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Package headers
 #include <protocols/moves/Mover.hh>
+
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace moves {

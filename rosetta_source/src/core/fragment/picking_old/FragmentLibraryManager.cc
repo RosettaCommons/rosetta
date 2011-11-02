@@ -23,6 +23,9 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace core {
 namespace fragment {

@@ -16,7 +16,7 @@
 
 // package headers
 #include <protocols/frag_picker/LazySortedVector1.hh>
-#include <protocols/frag_picker/BoundedPriorityQueue.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/BoundedPriorityQueue.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/BoundedCollector.fwd.hh>
@@ -28,12 +28,19 @@
 // utility headers
 #include <core/types.hh>
 
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 
 /// ObjexxFCL headers
 #include <ObjexxFCL/format.hh>
 
 #include <iostream>
+
+#include <utility/vector1.hh>
+
+//Auto using namespaces
+namespace std { } using namespace std; // AUTO USING NS
+//Auto using namespaces end
+
 //#include <algorithm>
 
 namespace protocols {

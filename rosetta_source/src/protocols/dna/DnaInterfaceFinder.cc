@@ -19,6 +19,9 @@
 
 #include <utility/exit.hh> // runtime_assert
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace dna {
 

@@ -56,6 +56,10 @@
 #include <map>
 #include <boost/foreach.hpp>
 
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 #define foreach BOOST_FOREACH
 
 using namespace protocols::protein_interface_design;

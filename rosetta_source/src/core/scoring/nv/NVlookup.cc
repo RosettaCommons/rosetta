@@ -19,7 +19,7 @@
 #include <numeric/interpolation/spline/SplineGenerator.hh>
 // AUTO-REMOVED #include <numeric/interpolation/spline/SimpleInterpolator.hh>
 #include <algorithm>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <fstream>
 #include <sstream>
 // AUTO-REMOVED #include <string>

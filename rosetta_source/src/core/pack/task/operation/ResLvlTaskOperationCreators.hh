@@ -19,6 +19,9 @@
 
 #include <core/pack/task/operation/ResLvlTaskOperation.fwd.hh>
 
+#include <string>
+
+
 namespace core {
 namespace pack {
 namespace task {

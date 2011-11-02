@@ -15,27 +15,32 @@
 #include <protocols/moves/MinPackMover.hh>
 #include <protocols/moves/MinPackMoverCreator.hh>
 
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/pack/min_pack.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 
 // option key includes
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <basic/options/keys/OptionKeys.hh>
+
 
 namespace protocols {
 namespace moves {

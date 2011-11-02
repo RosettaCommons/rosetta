@@ -34,16 +34,11 @@
 
 // option key includes
 
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <basic/options/option.hh>
-
-
-
-// C++ headers
-#include <iterator>
-#include <vector>
+#include <protocols/evaluation/util.hh>
+#include <utility/exit.hh>
+#include <utility/vector1.hh>
 static basic::Tracer tr("protocols.evalution.RMSD");
 
 namespace protocols {

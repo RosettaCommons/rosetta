@@ -44,7 +44,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
 
 // Numeric headers
 

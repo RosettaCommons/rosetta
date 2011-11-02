@@ -26,6 +26,9 @@
 // Utility Headers
 #include <utility/keys/Key3Vector.hh>
 
+#include <utility/vector1.hh>
+
+
 // C++ Headers
 
 using namespace core;

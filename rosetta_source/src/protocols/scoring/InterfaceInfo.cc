@@ -17,9 +17,9 @@
 // Unit headers
 #include <protocols/scoring/InterchainPotential.hh>
 
-#include <core/scoring/AtomVDW.hh>
+// AUTO-REMOVED #include <core/scoring/AtomVDW.hh>
 #include <core/scoring/EnvPairPotential.hh>
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 
 // Package headers
 
@@ -30,14 +30,14 @@
 // AUTO-REMOVED #include <core/chemical/VariantType.hh>
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <basic/database/open.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <basic/database/open.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
+// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
 
 // Utility headers
-#include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 // AUTO-REMOVED #include <utility/utility.functions.hh>
 
 // just for debugging
@@ -45,8 +45,8 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <core/chemical/ChemicalManager.fwd.hh>
+#include <protocols/scoring/InterfaceInfo.hh>
+#include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;

@@ -19,7 +19,7 @@
 #include <protocols/frag_picker/FragmentSelectingRule.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 
-#include <core/pose/Pose.fwd.hh>
+// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 
 #include <core/types.hh>
 
@@ -27,6 +27,9 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 #include <utility/vector1.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 
 namespace protocols {

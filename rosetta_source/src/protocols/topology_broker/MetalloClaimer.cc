@@ -50,6 +50,10 @@
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
 
+#include <core/chemical/ResidueType.hh>
+#include <utility/vector1.hh>
+
+
 static basic::Tracer tr("protocols.topo_broker",basic::t_info);
 
 namespace protocols {

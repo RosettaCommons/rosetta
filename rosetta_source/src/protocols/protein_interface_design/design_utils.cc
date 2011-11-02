@@ -54,12 +54,9 @@
 // C++ headers
 #include <map>
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
-
+#include <core/scoring/hbonds/HBondOptions.hh>
+#include <utility/vector0.hh>
 #include <boost/lexical_cast.hpp>
-
-#include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
 
 // option key includes
 

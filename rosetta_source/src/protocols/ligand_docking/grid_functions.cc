@@ -24,10 +24,9 @@
 #include <numeric/random/random_permutation.hh>
 #include <utility/vector1.hh>
 
-//Auto Headers
 #include <core/conformation/Residue.hh>
-#include <core/grid/CartGrid.hh>
 #include <core/pose/Pose.hh>
+#include <utility/vector0.hh>
 
 
 namespace protocols {

@@ -26,13 +26,16 @@
 #include <basic/database/sql_utils.hh>
 
 // Numeric Headers
-#include <numeric/xyzVector.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
 
 // C++ Headers
 #include <sstream>
+
+#include <utility/vector0.hh>
+
 
 namespace protocols{
 namespace features{

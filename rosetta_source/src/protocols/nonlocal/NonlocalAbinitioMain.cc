@@ -32,6 +32,9 @@
 // Package headers
 #include <protocols/nonlocal/NonlocalAbinitio.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols  {
 namespace nonlocal {
 

@@ -36,6 +36,9 @@
 // AUTO-REMOVED
 #include <cstdio>
 #include <algorithm>
+
+#include <utility/vector1.hh>
+
 //#include <cstdlib>
 //#include <map>
 //#include <vector>

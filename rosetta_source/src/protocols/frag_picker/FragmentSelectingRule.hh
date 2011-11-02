@@ -24,11 +24,6 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
-#include <utility/vector1.fwd.hh>
-#include <vector>
-
-
 namespace protocols {
 namespace frag_picker {
 

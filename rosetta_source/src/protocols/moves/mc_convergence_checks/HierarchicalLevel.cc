@@ -26,18 +26,21 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
-#include <sys/stat.h>
-#include <stdio.h>
-#include <errno.h>
-#include <math.h>
+// AUTO-REMOVED #include <sys/stat.h>
+// AUTO-REMOVED #include <stdio.h>
+// AUTO-REMOVED #include <errno.h>
+// AUTO-REMOVED #include <math.h>
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/option_macros.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/mc.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
+
+#include <utility/vector1.hh>
+
 
 //this is actually only for debugging
 #ifdef USEMPI

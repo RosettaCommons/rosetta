@@ -24,7 +24,7 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
@@ -33,8 +33,7 @@
 #include <core/scoring/methods/Methods.hh>
 #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <core/chemical/ChemicalManager.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

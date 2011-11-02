@@ -48,6 +48,9 @@
 #include <vector>
 #include <core/chemical/orbitals/OrbitalTypeMapper.hh>
 
+#include <utility/vector1.hh>
+
+
 
 
 namespace core{

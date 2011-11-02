@@ -45,12 +45,7 @@
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <platform/types.hh>
-#include <core/types.hh>
-#include <core/chemical/ResidueType.hh>
-// Auto-header: duplicate removed #include <core/conformation/signals/LengthEvent.hh>
-#include <map>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -25,6 +25,9 @@
 // Project headers
 #include <core/pose/Pose.hh>
 
+#include <utility/vector1.hh>
+
+
 // Utility headers
 
 

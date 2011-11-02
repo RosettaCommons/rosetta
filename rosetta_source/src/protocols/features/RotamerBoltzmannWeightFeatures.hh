@@ -21,17 +21,22 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-#include <protocols/protein_interface_design/filters/RotamerBoltzmannWeight.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+// AUTO-REMOVED #include <protocols/protein_interface_design/filters/RotamerBoltzmannWeight.hh>
+// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <string>
+
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <protocols/protein_interface_design/filters/RotamerBoltzmannWeight.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols{
 namespace features{

@@ -59,12 +59,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <core/chemical/VariantType.hh>
-#include <core/id/types.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/Constraints.hh>
-#include <utility/stream_util.hh>
-#include <utility/keys/Key2Tuple.hh>
+#include <utility/vector1.hh>
 
 
 

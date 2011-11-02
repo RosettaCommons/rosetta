@@ -24,12 +24,12 @@
 #include <basic/basic.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
+// AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <basic/options/keys/bbg.OptionKeys.gen.hh>
 
-#include <core/id/DOF_ID_Range.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Range.hh>
 #include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/Stub.hh>
 
@@ -44,8 +44,11 @@
 #include <numeric/internal/RowVectors.hh>
 
 #include <iostream>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <sstream>
+
+#include <utility/vector1.hh>
+
 
 using namespace std;
 using namespace core;

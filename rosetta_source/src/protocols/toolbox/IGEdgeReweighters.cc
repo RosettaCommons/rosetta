@@ -19,6 +19,9 @@
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace protocols{
 namespace toolbox{

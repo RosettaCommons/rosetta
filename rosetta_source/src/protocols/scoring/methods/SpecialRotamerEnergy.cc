@@ -22,8 +22,7 @@
 // Project headers
 #include <core/conformation/Residue.hh>
 
-//Auto Headers
-#include <core/chemical/AtomType.hh>
+#include <utility/vector1.hh>
 
 
 

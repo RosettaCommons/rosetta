@@ -23,11 +23,14 @@
 
 #include <ObjexxFCL/string.functions.hh>
 
-#include <numeric>
+// AUTO-REMOVED #include <numeric>
 #include <iostream>
 #include <string>
 
 #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace sequence {

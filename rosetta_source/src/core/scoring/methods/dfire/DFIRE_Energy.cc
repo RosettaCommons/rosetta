@@ -19,19 +19,23 @@
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/methods/dfire/DFIRE_Potential.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/methods/Methods.hh>
 
 // Project headers
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
 // Utility headers
-#include <ObjexxFCL/format.hh>
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <basic/Tracer.hh>
+
+#include <core/chemical/ResidueType.hh>
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR("core.scoring.methods.DFIRE_Energy");
 

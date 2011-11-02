@@ -35,8 +35,8 @@
 // C++ Headers
 #include <string>
 
-//Auto Headers
 #include <core/io/silent/SilentStruct.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

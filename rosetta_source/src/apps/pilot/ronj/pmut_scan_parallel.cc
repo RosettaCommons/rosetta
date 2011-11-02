@@ -27,9 +27,12 @@
 
 #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/util.hh>
+// Auto-header: duplicate removed #include <basic/options/util.hh>
 
 #include <utility/file/file_sys_util.hh>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR("apps.pmut_scan_parallel");
 

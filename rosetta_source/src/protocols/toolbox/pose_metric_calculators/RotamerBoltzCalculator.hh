@@ -21,20 +21,20 @@
 #include <protocols/moves/MinMover.fwd.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/TaskFactory.fwd.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/types.hh>
 //#include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSetFactory.fwd.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSetFactory.fwd.hh>
 #include <utility/vector0.fwd.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
+#include <utility/vector1.hh>
 
 
 

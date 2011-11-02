@@ -30,16 +30,16 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 #include <basic/Tracer.hh>
 
 #include <ObjexxFCL/format.hh>
 
-//Auto Headers
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
+#include <utility/vector1.hh>
 
 
 using namespace ObjexxFCL::fmt;

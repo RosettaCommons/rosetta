@@ -20,8 +20,8 @@
 
 // Project headers
 #include <core/id/AtomID_Map.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/conformation/Atom.fwd.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/conformation/Atom.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <core/pack/interaction_graph/RotamerDots.fwd.hh>
@@ -30,11 +30,11 @@
 #include <basic/MetricValue.fwd.hh>
 
 // Objexx Headers
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/ubyte.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/ubyte.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 //Utilitiy Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -43,6 +43,9 @@
 
 //C++ Headers
 #include <vector>
+
+#include <ObjexxFCL/FArray2D.fwd.hh>
+
 
 
 namespace devel {

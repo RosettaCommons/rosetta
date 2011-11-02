@@ -21,7 +21,7 @@
 
 // Package Headers
 #include <protocols/noesy_assign/PeakCalibrator.hh>
-#include <protocols/noesy_assign/Exceptions.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/Exceptions.hh>
 #include <core/id/NamedAtomID.hh>
 // Project Headers
 #include <core/chemical/AA.hh>
@@ -42,9 +42,12 @@
 //#include <basic/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-#include <cstdlib>
+// AUTO-REMOVED #include <cstdlib>
 #include <string>
-#include <deque>
+// AUTO-REMOVED #include <deque>
+
+#include <utility/vector1.hh>
+
 
 
 static basic::Tracer tr("protocols.noesy_assign.resonances");

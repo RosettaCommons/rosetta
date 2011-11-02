@@ -27,10 +27,6 @@
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray4D.hh>
 
-//Auto Headers
-#include <iostream>
-
-
 namespace core {
 namespace scoring {
 namespace dna {

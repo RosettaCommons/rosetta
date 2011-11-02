@@ -38,8 +38,7 @@
 // Utility headers
 #include <basic/options/option_macros.hh>
 
-//Auto Headers
-#include <utility/io/mpistream.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer tr("protocols.iterative");

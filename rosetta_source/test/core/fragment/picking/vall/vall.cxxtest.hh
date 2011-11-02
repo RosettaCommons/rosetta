@@ -22,8 +22,8 @@
 
 #include <test/core/init_util.hh>
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/fragment/picking_old/vall/vall_io.hh>
 #include <core/fragment/picking_old/vall/VallSection.hh>
 #include <core/fragment/picking_old/vall/VallLibrary.hh>
@@ -35,21 +35,8 @@
 #include <string>
 
 //Auto Headers
-#include <core/conformation/Atom.fwd.hh>
-#include <core/fragment/picking_old/vall/util.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/id/TorsionID.hh>
-#include <core/kinematics/types.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/types.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <utility/stream_util.hh>
 #include <utility/fix_boinc_read.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
-#include <ctime>
+#include <utility/vector1.hh>
 
 
 class VallTests : public CxxTest::TestSuite

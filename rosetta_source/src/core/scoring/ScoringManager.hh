@@ -53,7 +53,7 @@
 #include <core/scoring/mm/MMBondAngleLibrary.fwd.hh>
 #include <core/scoring/mm/MMBondLengthLibrary.fwd.hh>
 
-#include <core/chemical/ResidueType.fwd.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueType.fwd.hh>
 #include <core/scoring/nv/NVlookup.fwd.hh>
 #include <core/scoring/orbitals/OrbitalsLookup.hh>
 #include <core/scoring/interface/DDPlookup.fwd.hh>
@@ -77,9 +77,7 @@
 // C++ headers
 #include <map>
 
-//Auto Headers
-#include <core/types.hh>
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

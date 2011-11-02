@@ -35,10 +35,9 @@
 // C++ Headers
 #include <string> //making sure that residue_type.name() comparison works
 
-//Auto Headers
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/Jump.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/pose/util.hh>
+#include <utility/vector1.hh>
 
 
 using basic::T;

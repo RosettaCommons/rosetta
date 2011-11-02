@@ -26,9 +26,9 @@
 
 // AUTO-REMOVED #include <time.h>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
 #include <core/pose/util.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/Fmath.hh>
 
 //Auto using namespaces

@@ -36,7 +36,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/evaluation/TimeEvaluator.hh>
-#include <protocols/viewer/viewers.hh>
+// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 
 #include <protocols/moves/PyMolMover.hh>
 
@@ -58,15 +58,8 @@
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <basic/datacache/CacheableData.hh>
-
-#include <iterator>
-#include <vector>
-
-// Auto-header: duplicate removed #include <utility/exit.hh>
+#include <utility/vector1.hh>
 #include <csignal>
-#include <cstdlib>
 
 namespace protocols {
 namespace jd2 {

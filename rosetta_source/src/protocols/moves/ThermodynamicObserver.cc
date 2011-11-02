@@ -19,14 +19,17 @@
 // Package Headers
 
 // Project Headers
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 
 
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
+
+#include <utility/vector1.hh>
+
 
 // C++ Headers
 

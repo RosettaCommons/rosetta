@@ -27,7 +27,6 @@
 // STL Headers
 #include <iosfwd>
 
-//Auto Headers
 #include <platform/types.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/vector1_bool.hh>
@@ -39,6 +38,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
+#include <limits>
 #include <vector>
 
 

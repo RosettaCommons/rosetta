@@ -33,9 +33,9 @@
 // Utility headers
 // AUTO-REMOVED #include <basic/prof.hh>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
 #include <core/scoring/EnergyMap.hh>
+#include <utility/vector1.hh>
 
 
 

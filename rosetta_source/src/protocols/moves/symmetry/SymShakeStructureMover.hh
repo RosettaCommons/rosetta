@@ -33,8 +33,7 @@
 //#include <protocols/moves/BackboneMover.hh>
 #include <protocols/moves/BackboneMover.fwd.hh>
 
-//Auto Headers
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 

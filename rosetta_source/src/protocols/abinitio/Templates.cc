@@ -67,13 +67,10 @@
 #include <string>
 #include <vector>
 
-//Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/import_pose/import_pose.hh>
-// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <utility/io/mpistream.hh>
 
 
 

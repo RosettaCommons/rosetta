@@ -47,8 +47,11 @@
 
 //#include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
+
+#include <core/pose/Pose.fwd.hh>
+
 
 
 #ifndef INCLUDED_protocols_toolbox_pose_metric_calculators_RotamerRecovery_hh

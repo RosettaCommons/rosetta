@@ -21,15 +21,15 @@
 
 /// Project headers
 #include <basic/prof.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 
-#include <core/scoring/ResidueNeighborList.hh>
+// AUTO-REMOVED #include <core/scoring/ResidueNeighborList.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/etable/EtableEnergy.hh>
+// AUTO-REMOVED #include <core/scoring/etable/EtableEnergy.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
-#include <core/scoring/MinimizationGraph.hh>
+// AUTO-REMOVED #include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/Ramachandran.hh>
@@ -38,6 +38,9 @@
 
 /// Utility headers
 #include <utility/string_util.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace optimization {

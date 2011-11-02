@@ -32,8 +32,7 @@
 #include <boost/tuple/tuple.hpp>
 // AUTO-REMOVED #include <boost/algorithm/string.hpp>
 
-//Auto Headers
-#include <utility/io/mpistream.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -23,6 +23,9 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace moves {
 

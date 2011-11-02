@@ -19,7 +19,6 @@
 // Utility headers
 #include <utility/options/keys/all.hh>
 
-//Auto Headers
 #include <platform/types.hh>
 #include <utility/down_cast.hh>
 #include <utility/keys/AutoKey.fwd.hh>

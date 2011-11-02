@@ -22,8 +22,7 @@
 // AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
 
-//Auto Headers
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 namespace core {

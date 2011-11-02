@@ -34,9 +34,9 @@
 #include <iostream>
 // AUTO-REMOVED #include <utility>
 
-//Auto Headers
 #include <core/id/NamedStubID.hh>
 #include <core/id/SequenceMapping.hh>
+#include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
 

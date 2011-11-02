@@ -18,32 +18,15 @@
 #include <test/util/pose_funcs.hh>
 
 #include <basic/Tracer.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <protocols/jumping/util.hh>
 
 #include <string>
 
 //Auto Headers
-#include <core/fragment/ConstantLengthFragSet.fwd.hh>
-#include <core/fragment/FragCache.fwd.hh>
-#include <core/fragment/FragData.fwd.hh>
-#include <core/fragment/FragSet.fwd.hh>
-#include <core/fragment/Frame.fwd.hh>
-#include <core/fragment/SingleResidueFragData.fwd.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/ScoreFunctionInfo.fwd.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <utility/stream_util.hh>
-#include <protocols/Protocol.fwd.hh>
-#include <protocols/checkpoint/CheckPointer.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
+#include <utility/vector1.hh>
 
 
 

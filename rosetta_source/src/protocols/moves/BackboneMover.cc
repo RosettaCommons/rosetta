@@ -39,6 +39,12 @@
 
 #include <basic/Tracer.hh>
 
+#include <core/id/TorsionID_Range.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <utility/options/IntegerVectorOption.hh>
+
+
 using basic::T;
 using basic::Error;
 using basic::Warning;

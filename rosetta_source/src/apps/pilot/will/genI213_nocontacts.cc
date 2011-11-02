@@ -23,9 +23,9 @@
 #include <core/chemical/util.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/symmetry/SymDof.hh>
-#include <core/conformation/symmetry/SymmData.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymDof.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
@@ -78,10 +78,14 @@
 // #include <devel/init.hh>
 
 // #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
-#include "apps/pilot/will/will_util.hh"
-#include "mynamespaces.hh"
+#include <apps/pilot/will/will_util.hh>
+#include <apps/pilot/will/mynamespaces.hh>
 
 #include <sys/stat.h>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 
 #define CONTACT_D2 36.0

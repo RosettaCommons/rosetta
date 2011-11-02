@@ -16,6 +16,9 @@
 
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 
+#include <string>
+
+
 namespace core {
 namespace pack {
 namespace task {

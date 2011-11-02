@@ -52,10 +52,11 @@
 //C++ headers
 #include <iostream>
 
-//Auto Headers
 #include <core/scoring/EnergyMap.hh>
-#include <utility/string_util.hh>
-#include <ObjexxFCL/format.hh>
+
+//Auto using namespaces
+namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+//Auto using namespaces end
 
 
 static basic::Tracer tr("core.scoring.ResidualDipolarCouplingRigidSegments");

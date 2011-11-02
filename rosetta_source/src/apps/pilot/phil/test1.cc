@@ -138,9 +138,9 @@
 #include <basic/options/keys/phil.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
+// Auto-header: duplicate removed #include <core/pose/util.hh>
+#include <utility/vector0.hh>
 #include <numeric/xyz.functions.hh>
 
 

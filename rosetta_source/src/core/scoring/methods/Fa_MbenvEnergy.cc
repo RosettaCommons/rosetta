@@ -30,13 +30,16 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh> //pba
 
 //#include <ObjexxFCL/formatted.o.hh>
 #include <ObjexxFCL/FArray1.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

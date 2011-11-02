@@ -30,8 +30,8 @@
 // C++ headers
 #include <string>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector0.hh>
 
 
 namespace protocols {

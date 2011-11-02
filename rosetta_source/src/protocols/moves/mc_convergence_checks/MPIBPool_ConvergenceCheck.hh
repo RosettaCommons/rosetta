@@ -4,10 +4,13 @@
 #include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
 #include <protocols/moves/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 #include <protocols/moves/mc_convergence_checks/MPIBPool_ConvergenceCheck.fwd.hh>
-#include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <core/pose/Pose.hh>
+
+#include <utility/vector1.hh>
+
 
 #ifdef USEMPI
 #include <mpi.h>

@@ -31,7 +31,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/graph/Graph.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <iostream>
 
 

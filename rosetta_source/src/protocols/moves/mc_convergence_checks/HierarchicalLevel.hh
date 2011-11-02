@@ -6,13 +6,13 @@
 #include <protocols/moves/mc_convergence_checks/HierarchicalLevel.fwd.hh>
 #include <protocols/moves/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 #include <core/types.hh>
-#include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 #include <utility/vector1.hh>
 #include <list>
-#include <set>
+// AUTO-REMOVED #include <set>
 
 namespace protocols {
 namespace moves {

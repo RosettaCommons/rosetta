@@ -25,35 +25,21 @@
 
 
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/conformation/Residue.hh>
 
-#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreType.hh>
 
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 
 #include <basic/database/open.hh>
 
 //Auto Headers
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/types.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <basic/Tracer.fwd.hh>
-#include <basic/datacache/CacheableData.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
-#include <ObjexxFCL/FArray2D.hh>
+#include <utility/vector1.hh>
 
 
 

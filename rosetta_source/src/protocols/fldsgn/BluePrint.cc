@@ -16,10 +16,10 @@
 
 // Package header
 
-#include <protocols/fldsgn/topology/SS_Info2.hh>
-#include <protocols/fldsgn/topology/StrandPairing.hh>
-#include <protocols/fldsgn/topology/HelixPairing.hh>
-#include <protocols/fldsgn/topology/HSSTriplet.hh>
+// AUTO-REMOVED #include <protocols/fldsgn/topology/SS_Info2.hh>
+// AUTO-REMOVED #include <protocols/fldsgn/topology/StrandPairing.hh>
+// AUTO-REMOVED #include <protocols/fldsgn/topology/HelixPairing.hh>
+// AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh>
 
 // Project header
 #include <core/types.hh>
@@ -32,8 +32,8 @@
 #include <utility/string_util.hh>
 #include <boost/lexical_cast.hpp>
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer TR("protocols.fldsgn.BluePrint");

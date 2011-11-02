@@ -58,12 +58,12 @@
 
 // AUTO-REMOVED #include <basic/options/keys/residues.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 

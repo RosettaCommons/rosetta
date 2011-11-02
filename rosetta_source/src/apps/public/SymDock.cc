@@ -11,14 +11,14 @@
 
 // libRosetta headers
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
-#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/moves/MoverContainer.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
+// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 
 
 //#include <core/pose/Pose.fwd.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
-#include <protocols/jd2/JobDistributor.hh>
+// AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
 
 //#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -27,10 +27,16 @@
 
 // C++ headers
 //#include <cstdlib>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <string>
 
 #include <basic/Tracer.hh>
+
+#include <protocols/jd2/JobInputter.fwd.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.fwd.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 // option key includes
 

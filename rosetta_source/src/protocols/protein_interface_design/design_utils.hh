@@ -20,11 +20,14 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 
 // C++ headers
 #include <list>
 #include <set>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace protein_interface_design {

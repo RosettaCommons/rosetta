@@ -20,13 +20,16 @@
 
 #include <core/pack/task/PackerTask.hh>
 
-#include <core/pose/metrics/CalculatorFactory.hh>
+// AUTO-REMOVED #include <core/pose/metrics/CalculatorFactory.hh>
 // AUTO-REMOVED #include <basic/MetricValue.hh>
 
 // Utility Headers
 #include <core/types.hh>
 #include <utility/vector1_bool.hh>
 #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+
 
 // C++ Headers
 // AUTO-REMOVED #include <set>

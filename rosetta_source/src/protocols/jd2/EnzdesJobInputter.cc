@@ -41,8 +41,7 @@
 // option key includes
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer TR("protocols.jd2.EnzdesJobInputter");

@@ -44,12 +44,15 @@
 //loops
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.fwd.hh>
-#include <protocols/loops/loops_main.hh>
+// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 
 //util
 #include <utility/vector1.hh>
 //#include <set>
 #include <boost/foreach.hpp>
+
+#include <utility/vector0.hh>
+
 
 #define foreach BOOST_FOREACH
 

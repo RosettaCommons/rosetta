@@ -15,7 +15,7 @@
 #include <core/scoring/hbonds/polynomial.hh>
 
 // Package headers
-#include <core/scoring/hbonds/HBondOptions.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/HBondTypeManager.hh>
 #include <core/scoring/hbonds/types.hh>
 

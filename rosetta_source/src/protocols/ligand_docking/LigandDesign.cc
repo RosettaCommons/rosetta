@@ -40,14 +40,9 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <utility/tag/Tag.hh>
 
-//Auto Headers
-#include <core/pose/Pose.hh>
-#include <core/conformation/Conformation.hh>
-
-// Auto-header: duplicate removed #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <numeric/random/random.hh>
-
-// Boost Headers
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 

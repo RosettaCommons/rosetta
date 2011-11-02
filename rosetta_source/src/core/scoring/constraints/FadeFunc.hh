@@ -22,7 +22,7 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // C++ Headers
 

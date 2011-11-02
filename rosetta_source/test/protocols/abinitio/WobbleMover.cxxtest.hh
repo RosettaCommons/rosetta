@@ -20,19 +20,19 @@
 #include <protocols/basic_moves/WobbleMover.hh>
 
 #include <protocols/basic_moves/GunnCost.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/TrialMover.hh>
+// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreType.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/fragment/util.hh>
+// AUTO-REMOVED #include <core/fragment/util.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 
 
@@ -42,26 +42,10 @@
 #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <core/fragment/FragID_Iterator.fwd.hh>
-#include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
-#include <core/fragment/JumpingFrame.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID_Mask.hh>
-#include <core/id/DOF_ID_Map.hh>
-#include <core/id/DOF_ID_Mask.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/io/pdb/file_data.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/ScoreFunctionInfo.fwd.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <utility/stream_util.hh>
 #include <utility/fix_boinc_read.hh>
-#include <ObjexxFCL/format.hh>
-#include <set>
+#include <utility/vector1.hh>
 
 
 using basic::T;

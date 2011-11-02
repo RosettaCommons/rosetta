@@ -41,6 +41,11 @@
 // Numeric headers
 #include <numeric/random/random.hh>
 
+#include <protocols/jobdist/Jobs.hh>
+#include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorJobDistributor.hh>
+#include <utility/vector0.hh>
+
+
 // C++ Headers
 
 using namespace core;

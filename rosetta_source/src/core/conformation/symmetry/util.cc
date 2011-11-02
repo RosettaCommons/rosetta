@@ -26,16 +26,16 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/id/AtomID.hh>
 
 // Basic Headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-#include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
 
 // Numeric headers
 #include <numeric/random/random.hh>
@@ -48,7 +48,10 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

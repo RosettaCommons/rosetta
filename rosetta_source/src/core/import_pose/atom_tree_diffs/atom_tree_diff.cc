@@ -42,12 +42,6 @@
 #include <set>
 #include <sstream>
 
-//Auto Headers
-#include <core/chemical/AtomType.hh>
-#include <core/kinematics/tree/Atom.hh>
-
-// Boost Headers
-#include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
 namespace core {

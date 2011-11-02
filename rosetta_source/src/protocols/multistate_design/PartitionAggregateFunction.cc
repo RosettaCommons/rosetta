@@ -25,11 +25,10 @@
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
-#include <protocols/multistate_design/MultiStateAggregateFunction.hh>
+#include <protocols/multistate_design/MultiStateFitnessFunction.hh>
 #include <protocols/multistate_design/SingleState.hh>
-#include <protocols/viewer/viewers.hh>
-#include <core/pose/Pose.hh> // REQUIRED FOR WINDOWS
+#include <utility/exit.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace multistate_design {

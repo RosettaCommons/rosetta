@@ -23,13 +23,13 @@
 #include <protocols/match/Matcher.hh>
 #include <protocols/match/Hit.hh>
 #include <protocols/match/downstream/DownstreamAlgorithm.hh>
-#include <protocols/match/downstream/LigandConformer.hh> // REQUIRED FOR WINDOWS
-#include <protocols/match/downstream/LigandConformerBuilder.hh>
-#include <protocols/match/downstream/RigidLigandBuilder.hh>
+// AUTO-REMOVED #include <protocols/match/downstream/LigandConformer.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <protocols/match/downstream/LigandConformerBuilder.hh>
+// AUTO-REMOVED #include <protocols/match/downstream/RigidLigandBuilder.hh>
 #include <protocols/match/downstream/SecMatchResiduePairEvaluator.hh>
 #include <protocols/match/upstream/ScaffoldBuildPoint.hh>
 #include <protocols/match/upstream/UpstreamBuilder.hh>
-#include <protocols/match/upstream/ProteinUpstreamBuilder.hh>
+// AUTO-REMOVED #include <protocols/match/upstream/ProteinUpstreamBuilder.hh>
 
 // Project headers
 #include <core/chemical/ResidueType.hh>
@@ -47,8 +47,8 @@
 // Boost headers
 #include <boost/unordered_map.hpp>
 
-//Auto Headers
 #include <utility/OrderedTuple.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

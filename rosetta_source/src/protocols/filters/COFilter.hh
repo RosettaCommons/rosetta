@@ -24,8 +24,7 @@
 // AUTO-REMOVED #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
-//Auto Headers
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 // ObjexxFCL Headers

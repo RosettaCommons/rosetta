@@ -26,7 +26,7 @@
 
 #include <apps/benchmark/benchmark.hh>
 
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
 #include <fstream>
 
 #if  !defined(WINDOWS) && !defined(WIN32)
@@ -59,13 +59,13 @@ MinimizerBenchmark_dfpmin_armijo_nonmonotone MinimizerBenchmark_dfpmin_armijo_no
 DockingBenchmark_low DockingLow("protocols.docking.DockingLowRes");
 DockingBenchmark_high DockingHigh("protocols.docking.DockingHighRes");
 
-#include <apps/benchmark/Design.bench.hh>
+// AUTO-REMOVED #include <apps/benchmark/Design.bench.hh>
 //DesignBenchmark design("protocols.moves.PackRotamersMover");
 
-#include <apps/benchmark/LigandDock.bench.hh>
+// AUTO-REMOVED #include <apps/benchmark/LigandDock.bench.hh>
 //LigandDockBenchmark ligand_dock("protocols.ligand_docking.LigandDockProtocol");
 
-#include <apps/benchmark/LigandDockScript.bench.hh>
+// AUTO-REMOVED #include <apps/benchmark/LigandDockScript.bench.hh>
 //LigandDockScriptBenchmark ligand_dock_script("protocols.ligand_docking.LigandDockScript");
 
 #include <apps/benchmark/pdb_io.bench.hh>
@@ -73,9 +73,14 @@ PDB_IOBenchmark PDB_IO_("core_pdb_import_pdb");
 
 // option key includes
 
-#include <basic/options/keys/james.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/james.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+
+#include <core/optimization/MinimizerOptions.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 
 using basic::T;

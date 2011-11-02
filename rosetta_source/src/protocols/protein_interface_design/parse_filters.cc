@@ -33,8 +33,9 @@
 #include <map>
 #include <string>
 
-//Auto Headers
 #include <core/chemical/AA.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 using namespace core;
 using namespace core::scoring;

@@ -20,7 +20,7 @@
 // Package Headers
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/util.hh>
+// AUTO-REMOVED #include <protocols/jd2/util.hh>
 
 #include <protocols/jd2/AtomTreeDiffJobOutputter.hh>
 
@@ -49,6 +49,10 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
+
+#include <protocols/jd2/Job.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace ligand_docking {

@@ -24,8 +24,8 @@
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
 
-//Auto Headers
 #include <core/pose/util.hh>
+#include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
 

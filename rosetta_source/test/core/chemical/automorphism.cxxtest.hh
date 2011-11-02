@@ -18,12 +18,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 
 //Auto Headers
-#include <core/chemical/VariantType.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/types.hh>
-// AUTO-REMOVED #include <basic/OStream.fwd.hh>
-#include <basic/Tracer.fwd.hh>
-#include <utility/keys/Key2Tuple.hh>
+#include <utility/vector1.hh>
 
 
 class AutomorphismTest : public CxxTest::TestSuite {

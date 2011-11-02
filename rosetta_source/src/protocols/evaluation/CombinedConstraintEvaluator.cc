@@ -25,27 +25,30 @@
 
 // Project Headers
 #include <core/io/silent/SilentStruct.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/NamedAtomPairConstraint.hh>
-#include <core/id/Exceptions.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
+// AUTO-REMOVED #include <core/id/Exceptions.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 
 
-#include <core/chemical/VariantType.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <protocols/jumping/JumpSample.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <protocols/jumping/JumpSample.hh>
 // ObjexxFCL Headers
 // AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <core/scoring/rms_util.hh>
-#include <utility/file/file_sys_util.hh>
+// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
+
+#include <utility/vector1.hh>
+
 
 // C++ headers
 

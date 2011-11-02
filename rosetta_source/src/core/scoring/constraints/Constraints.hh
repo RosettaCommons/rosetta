@@ -37,9 +37,7 @@
 // AUTO-REMOVED #include <numeric/xyzVector.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 // C++ Headers

@@ -33,13 +33,8 @@
 #include <map>
 #include <complex>
 
-//Auto Headers
 #include <core/kinematics/RT.hh>
-#include <utility/vector1_bool.hh>
-
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

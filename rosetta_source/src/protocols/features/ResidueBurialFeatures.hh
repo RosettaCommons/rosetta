@@ -21,14 +21,18 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/nv/NVscore.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/nv/NVscore.hh>
+// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <string>
+
+#include <core/scoring/nv/NVscore.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols{
 namespace features{

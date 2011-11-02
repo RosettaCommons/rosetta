@@ -14,15 +14,15 @@
 #include <protocols/noesy_assign/CrossPeakInfo.fwd.hh>
 
 // Package Headers
-#include <protocols/noesy_assign/ResonanceList.fwd.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/ResonanceList.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
-#include <core/id/NamedAtomID.fwd.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.fwd.hh>
 #include <core/chemical/AA.hh>
 
 // Utility headers
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 // #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -35,10 +35,10 @@
 //#include <basic/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-#include <cstdlib>
-#include <string>
-#include <list>
-#include <map>
+// AUTO-REMOVED #include <cstdlib>
+// AUTO-REMOVED #include <string>
+// AUTO-REMOVED #include <list>
+// AUTO-REMOVED #include <map>
 
 namespace protocols {
 namespace noesy_assign {

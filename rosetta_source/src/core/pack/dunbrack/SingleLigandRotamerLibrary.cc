@@ -48,6 +48,9 @@
 #include <string>
 #include <set>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace pack {
 namespace dunbrack {

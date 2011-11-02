@@ -21,13 +21,13 @@
 #include <core/scoring/disulfides/DisulfideAtomIndices.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/CircularHarmonicFunc.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/CircularHarmonicFunc.hh>
 #include <core/scoring/constraints/CircularSigmoidalFunc.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
+// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 
 // ObjexxFCL headers
 // AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
@@ -35,6 +35,9 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <numeric/interpolation/Histogram.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

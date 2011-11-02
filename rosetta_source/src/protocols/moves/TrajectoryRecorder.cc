@@ -23,7 +23,7 @@
 #include <core/scoring/Energies.hh>
 #include <protocols/moves/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/ThermodynamicMover.hh>  // required for Windows build
+// AUTO-REMOVED #include <protocols/moves/ThermodynamicMover.hh>  // required for Windows build
 #include <protocols/ScoreMap.hh>
 #include <utility/tag/Tag.hh>
 
@@ -31,6 +31,11 @@
 
 // C++ headers
 #include <iomanip>
+
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 // Operating system headers
 

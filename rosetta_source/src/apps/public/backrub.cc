@@ -68,13 +68,14 @@
 #include <basic/options/keys/backrub.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-//Auto Headers
+#include <core/graph/Graph.fwd.hh>
+#include <core/id/DOF_ID_Range.hh>
+#include <core/id/TorsionID_Range.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-#include <protocols/moves/MoverStatistics.hh>
-#include <utility/io/mpistream.hh>
-#include <fstream>
+#include <utility/vector0.hh>
+#include <utility/keys/Key3Vector.hh>
 
 
 

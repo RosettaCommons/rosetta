@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_multistate_design_MultiStatePacker_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/vector1.fwd.hh>
+// AUTO-REMOVED #include <utility/vector1.fwd.hh>
 
 namespace protocols {
 namespace multistate_design {

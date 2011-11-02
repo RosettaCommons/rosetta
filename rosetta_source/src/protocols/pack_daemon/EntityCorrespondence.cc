@@ -15,7 +15,7 @@
 #include <protocols/pack_daemon/EntityCorrespondence.hh>
 
 // C/C++ headers
-#include <ctype.h>
+// AUTO-REMOVED #include <ctype.h>
 
 // Project headers
 #include <core/pose/Pose.hh>

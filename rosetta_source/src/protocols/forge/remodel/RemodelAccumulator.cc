@@ -29,12 +29,12 @@
 #include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <fstream>
 #include <sys/stat.h>
-#include <ObjexxFCL/format.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
-#include <protocols/forge/build/BuildInstruction.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <protocols/forge/build/BuildInstruction.hh> // REQUIRED FOR WINDOWS
 
-//Auto Headers
+#include <utility/vector1.hh>
 // Auto-header: duplicate removed #include <core/import_pose/import_pose.hh>
 
 

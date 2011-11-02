@@ -46,7 +46,11 @@
 #include <utility/vector1.functions.hh>
 
 /// C++ Headers
-#include <ctime>
+// AUTO-REMOVED #include <ctime>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace moves {

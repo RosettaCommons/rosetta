@@ -24,7 +24,7 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -36,6 +36,10 @@
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
+
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector1.hh>
+
 
 
 static basic::Tracer tr("protocols");

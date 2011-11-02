@@ -11,7 +11,7 @@
 /// @brief  reading/writing of Vall libraries
 /// @author Yih-En Andrew Ban (yab@u.washington.edu)
 
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
 // unit headers
 #include <core/fragment/picking_old/vall/vall_io.hh>
 
@@ -32,6 +32,9 @@
 // AUTO-REMOVED #include <ctime>
 #include <sstream>
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

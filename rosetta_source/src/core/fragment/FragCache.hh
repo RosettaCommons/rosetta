@@ -20,7 +20,7 @@
 #include <core/fragment/FragCache.fwd.hh>
 
 // Package Headers
-#include <core/fragment/FragData.hh>
+// AUTO-REMOVED #include <core/fragment/FragData.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/BaseCacheUnit.hh>
 #include <core/fragment/FragID_Iterator.hh>
@@ -36,6 +36,9 @@
 
 // C++ STL Headers
 #include <map>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

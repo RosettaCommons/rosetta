@@ -22,7 +22,7 @@
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/protein_interface_design/filters/BoltzmannFilter.fwd.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 
 // Unit headers
 

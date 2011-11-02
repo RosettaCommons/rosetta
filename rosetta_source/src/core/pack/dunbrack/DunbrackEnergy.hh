@@ -28,6 +28,9 @@
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
 #include <core/id/DOF_ID.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace pack {
 namespace dunbrack {

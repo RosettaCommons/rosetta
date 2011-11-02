@@ -43,8 +43,8 @@
 
 #include <numeric/xyzVector.hh>
 
-//Auto Headers
 #include <core/scoring/EnergyMap.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

@@ -19,6 +19,9 @@
 #include <protocols/abinitio/ClassicAbinitio.hh>
 #include <devel/init.hh>
 
+#include <utility/vector1.hh>
+
+
 
 ////////////////////////////////////////////////////////
 void *

@@ -24,8 +24,6 @@
 /// Project headers
 #include <core/pack/annealer/SimAnnealerBase.hh>
 
-//Auto Headers
-#include <core/types.hh>
 #include <utility/vector1.fwd.hh>
 
 

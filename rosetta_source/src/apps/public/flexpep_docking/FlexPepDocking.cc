@@ -31,7 +31,7 @@
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/jobdist/JobDistributors.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/util.hh>
+// AUTO-REMOVED #include <protocols/jd2/util.hh>
 
 #include <protocols/moves/Mover.hh>
 
@@ -53,12 +53,12 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <basic/datacache/BasicDataCache.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>

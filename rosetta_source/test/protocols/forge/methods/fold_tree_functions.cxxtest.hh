@@ -16,26 +16,15 @@
 
 #include <test/core/init_util.hh>
 #include <core/types.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <protocols/forge/methods/fold_tree_functions.hh>
 
 //Auto Headers
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/ScoreFunctionInfo.fwd.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <basic/Tracer.fwd.hh>
-#include <utility/keys/Key2Tuple.hh>
+#include <utility/vector1.hh>
 
 
 // non-camel case to be consistent with library function file

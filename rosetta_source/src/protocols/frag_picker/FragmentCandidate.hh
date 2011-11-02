@@ -24,8 +24,8 @@
 #include <core/fragment/FragData.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
 #include <core/fragment/BBTorsionSRFD.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
 

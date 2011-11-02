@@ -21,6 +21,9 @@
 #include <basic/Tracer.hh>
 #include <iterator>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace jd2 {
 using namespace core;

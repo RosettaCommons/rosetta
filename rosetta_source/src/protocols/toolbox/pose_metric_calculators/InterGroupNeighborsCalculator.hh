@@ -34,6 +34,9 @@
 // option key includes
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols{
 namespace toolbox {
 namespace pose_metric_calculators {

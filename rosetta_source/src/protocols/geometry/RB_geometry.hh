@@ -24,7 +24,10 @@
 #include <numeric/xyzMatrix.fwd.hh>
 
 // C++ Headers
-#include <utility>
+// AUTO-REMOVED #include <utility>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace geometry {

@@ -34,8 +34,7 @@
 //utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

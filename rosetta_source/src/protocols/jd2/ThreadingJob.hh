@@ -20,7 +20,7 @@
 #include <core/sequence/SequenceAlignment.hh>
 
 //project headers
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <protocols/jd2/Parser.fwd.hh> //for friendship
 
@@ -30,11 +30,10 @@
 
 //C++ headers
 #include <string>
-#include <list>
+// AUTO-REMOVED #include <list>
 
-//Auto Headers
-#include <protocols/loops/Loops.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <protocols/loops/Loops.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

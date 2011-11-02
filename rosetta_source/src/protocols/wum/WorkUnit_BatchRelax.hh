@@ -15,6 +15,9 @@
 #include <protocols/wum/WorkUnitBase.hh>
 #include <core/pose/Pose.hh>
 
+#include <utility/vector1.hh>
+
+
 
 #ifndef INCLUDED_protocols_wum_WorkUnit_BatchRelax_hh
 #define INCLUDED_protocols_wum_WorkUnit_BatchRelax_hh

@@ -51,8 +51,11 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
-#include <cstdlib>
+// AUTO-REMOVED #include <cstdlib>
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 
 namespace protocols {

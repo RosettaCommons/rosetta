@@ -19,11 +19,11 @@
 #include <utility/exit.hh>
 
 // C++ headers
-#include <iostream>
-#include <cmath>
+// AUTO-REMOVED #include <iostream>
+// AUTO-REMOVED #include <cmath>
 
 //Auto Headers
-#include <utility/stream_util.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer TR("core.optimization.ParticleSwarmMinimizer.cxxtest");

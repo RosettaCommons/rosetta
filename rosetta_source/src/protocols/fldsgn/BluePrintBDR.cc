@@ -64,10 +64,10 @@
 #include <utility>
 
 // boost
-#include <boost/lexical_cast.hpp>
+// AUTO-REMOVED #include <boost/lexical_cast.hpp>
 
-//Auto Headers
-#include <core/fragment/FragSet.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace fldsgn {

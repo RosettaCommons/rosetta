@@ -27,7 +27,7 @@
 #include <protocols/evaluation/PoseEvaluator.hh>
 
 // Package Headers
-#include <protocols/noesy_assign/NoesyModule.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/NoesyModule.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -37,6 +37,10 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
+
+#include <protocols/noesy_assign/CrossPeakList.fwd.hh>
+#include <utility/vector1.hh>
+
 
 // AUTO-REMOVED #include <utility/vector1.hh>
 

@@ -16,8 +16,13 @@
 #define INCLUDED_core_scoring_methods_EnergyMethodRegisterer_hh
 
 // Package headers
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <utility/factory/WidgetRegistrator.hh>
+
+#include <core/types.hh>
+#include <core/scoring/ScoringManager.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

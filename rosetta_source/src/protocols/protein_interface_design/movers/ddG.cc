@@ -55,10 +55,10 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
-#include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
-#include <utility/string_util.hh>
+#include <protocols/jd2/Job.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <utility/tag/Tag.hh>
 
 
 namespace protocols {

@@ -88,13 +88,13 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
+#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/util.hh>
 #include <protocols/moves/kinematic_closure/KinematicPerturber.hh>
-
-#include <vector>  // REQUIRED FOR WINDOWS
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols{

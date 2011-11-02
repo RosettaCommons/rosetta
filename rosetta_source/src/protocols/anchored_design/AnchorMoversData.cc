@@ -72,6 +72,9 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+#include <utility/vector1.hh>
+
+
 using basic::T;
 using basic::Error;
 using basic::Warning;

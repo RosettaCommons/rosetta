@@ -22,7 +22,11 @@
 #include <core/pose/Pose.hh>
 
 #include <utility/exit.hh>
-#include <utility/tag/Tag.hh>
+// AUTO-REMOVED #include <utility/tag/Tag.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace pack {

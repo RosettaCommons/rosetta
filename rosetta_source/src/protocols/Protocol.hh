@@ -36,7 +36,6 @@
 // AUTO-REMOVED #include <protocols/moves/BoolMover.hh>
 #include <protocols/checkpoint/CheckPointer.hh>
 #include <utility/vector1.hh>
-//Auto Headers
 #include <utility/exit.hh>
 
 

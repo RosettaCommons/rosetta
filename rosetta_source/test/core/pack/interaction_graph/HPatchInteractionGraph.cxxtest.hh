@@ -18,10 +18,10 @@
 // Core Headers
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 
-#include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <core/pack/annealer/AnnealerFactory.hh>
@@ -40,13 +40,13 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/TenANeighborGraph.hh>
+// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/sasa.hh>
 
 #include <core/types.hh>
 
 // ObjexxFCL Header
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -58,26 +58,13 @@
 #include <test/UTracer.hh>
 
 //Auto Headers
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/graph/Graph.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/types.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <core/scoring/hbonds/HBondSet.fwd.hh>
-#include <basic/datacache/CacheableData.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
-#include <ObjexxFCL/ObjexxFCL.Project.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <ObjexxFCL/FArray1.io.hh>
 #include <assert.h>
-#include <typeinfo>
+#include <basic/options/option.hh>
 
 
 static basic::Tracer TR("test.core.pack.interactiongraph.hig");

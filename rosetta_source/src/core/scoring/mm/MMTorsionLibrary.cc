@@ -34,12 +34,11 @@
 // C++ headers
 #include <string>
 #include <map>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <sstream>
 #include <fstream>
 #include <cassert>
 
-//Auto Headers
 #include <core/chemical/MMAtomType.hh>
 
 

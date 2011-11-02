@@ -46,7 +46,7 @@
 
 
 // Utility headers
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 #include <utility/io/izstream.hh>
@@ -55,7 +55,7 @@
 #include <iomanip>
 #include <string>
 
-//Auto Headers
+#include <utility/vector1.hh>
 //#include <core/import_pose/import_pose.hh>
 
 

@@ -29,7 +29,7 @@
 
 #include <core/scoring/EnergyGraph.hh>
 
-#include <basic/basic.hh>
+// AUTO-REMOVED #include <basic/basic.hh>
 
 #include <basic/options/option.hh>
 
@@ -55,13 +55,16 @@
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
 #include <core/scoring/symmetry/SymmetricEnergies.fwd.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 // option key includes
 
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/matdes.OptionKeys.gen.hh>
+
+#include <utility/vector1.hh>
+
 
 
 using basic::T;

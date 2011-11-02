@@ -45,7 +45,7 @@
 // AUTO-REMOVED #include <numeric/random/random.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 
 

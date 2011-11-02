@@ -23,9 +23,8 @@
 #include <map>
 // AUTO-REMOVED #include <string>
 
-//Auto Headers
-#include <utility/vector1.fwd.hh>
 #include <core/types.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace core {
 namespace io {

@@ -14,7 +14,7 @@
 #include <core/chemical/orbitals/OrbitalTypeMapper.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <map>
-#include <string>
+// AUTO-REMOVED #include <string>
 
 
 namespace core{

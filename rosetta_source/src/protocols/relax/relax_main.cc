@@ -16,13 +16,13 @@
 #include <protocols/relax/RelaxProtocolBase.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-#include <basic/datacache/BasicDataCache.hh> //pba
-#include <core/pose/datacache/CacheableDataType.hh> //pba
+// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh> //pba
+// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh> //pba
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/electron_density/util.hh>
@@ -42,16 +42,18 @@
 #include <protocols/jd2/util.hh>
 
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/electron_density/util.hh>
+// AUTO-REMOVED #include <protocols/electron_density/util.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/relax/util.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;

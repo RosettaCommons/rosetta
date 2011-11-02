@@ -44,6 +44,10 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 //local options
 namespace basic{ namespace options{ namespace OptionKeys{
 basic::options::BooleanOptionKey const minimize_sidechains("minimize_sidechains");

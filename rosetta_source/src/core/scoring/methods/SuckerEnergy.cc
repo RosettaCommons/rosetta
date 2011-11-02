@@ -28,8 +28,8 @@
 #include <utility/io/izstream.hh>
 #include <sstream>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 
 
 

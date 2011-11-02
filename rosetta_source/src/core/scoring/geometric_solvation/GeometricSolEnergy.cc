@@ -41,9 +41,13 @@
 #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <basic/prof.hh>
 
-//Auto Headers
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
+#include <core/id/AtomID.hh>
+#include <core/id/types.hh>
+#include <core/scoring/hbonds/HBondDatabase.hh>
+#include <utility/vector1.hh>
+#include <utility/options/IntegerVectorOption.hh>
+#include <utility/options/StringVectorOption.hh>
+#include <ObjexxFCL/FArray3D.hh>
 
 
 static basic::Tracer tr( "core.scoring.geometric_solvation.GeomtricSolEnergy" );

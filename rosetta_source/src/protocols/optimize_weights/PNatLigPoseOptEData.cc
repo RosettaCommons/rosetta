@@ -36,8 +36,7 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;

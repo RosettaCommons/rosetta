@@ -15,11 +15,15 @@
 #define INCLUDED_protocols_features_ProteinBackboneAtomAtomPairFeaturesCreator_hh
 
 // Unit Headers
-#include <protocols/features/ProteinBackboneAtomAtomPairFeatures.hh>
+// AUTO-REMOVED #include <protocols/features/ProteinBackboneAtomAtomPairFeatures.hh>
 #include <protocols/features/FeaturesReporterCreator.hh>
 
 // c++ headers
-#include <string>
+// AUTO-REMOVED #include <string>
+
+#include <core/types.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace features {

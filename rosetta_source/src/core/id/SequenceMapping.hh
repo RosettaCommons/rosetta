@@ -26,10 +26,9 @@
 #include <utility/exit.hh>
 
 // C++ headers
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <string>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

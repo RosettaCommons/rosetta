@@ -38,14 +38,14 @@
 #include <protocols/features/ResidueSecondaryStructureFeatures.hh>
 #include <protocols/features/RotamerBoltzmannWeightFeatures.hh>
 #include <protocols/features/RotamerRecoveryFeatures.hh>
-#include <protocols/features/SaltBridgeFeatures.hh>
+// AUTO-REMOVED #include <protocols/features/SaltBridgeFeatures.hh>
 #include <protocols/features/StructureFeatures.hh>
 #include <protocols/features/StructureScoresFeatures.hh>
 
 
 // Project Headers
 #include <basic/Tracer.hh>
-#include <core/init.hh>
+// AUTO-REMOVED #include <core/init.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -61,6 +61,10 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+
+//Auto Headers
+#include <utility/vector1.hh>
+
 
 static basic::Tracer tr("protocols.features.FeaturesReporterTests.cxxtest");
 

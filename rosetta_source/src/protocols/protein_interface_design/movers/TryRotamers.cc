@@ -37,8 +37,9 @@
 #include <basic/Tracer.hh>
 #include <protocols/moves/DataMap.hh>
 
-//Auto Headers
 #include <core/pose/util.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

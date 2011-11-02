@@ -28,6 +28,9 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace protocols {
 namespace jobdist {

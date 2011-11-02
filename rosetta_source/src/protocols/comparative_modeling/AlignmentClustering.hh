@@ -20,12 +20,16 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/sequence/SequenceAlignment.hh>
+// AUTO-REMOVED #include <core/sequence/SequenceAlignment.hh>
 
-#include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <map>
+
+#include <core/sequence/SequenceAlignment.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace comparative_modeling {

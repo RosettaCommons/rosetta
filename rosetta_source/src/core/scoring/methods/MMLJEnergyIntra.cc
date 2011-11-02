@@ -46,6 +46,11 @@
 // C++ headers
 #include <iostream>
 
+#include <core/scoring/mm/MMLJEnergyTable.hh>
+#include <core/scoring/mm/MMLJLibrary.hh>
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace scoring {
 namespace methods {

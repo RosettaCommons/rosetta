@@ -36,6 +36,12 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
+
+#include <protocols/ligand_docking/LigandArea.hh>
+#include <protocols/ligand_docking/ligand_options/Interface.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 #define foreach BOOST_FOREACH
 
 using basic::T;

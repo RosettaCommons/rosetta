@@ -26,7 +26,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/cluster/cluster.hh>
 #include <protocols/idealize/IdealizeMover.hh>
-#include <protocols/evaluation/RmsdEvaluator.hh>
+// AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/file/FileName.hh>
@@ -49,10 +49,8 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <core/kinematics/Jump.hh>
-#include <basic/options/option.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <protocols/evaluation/PoseEvaluator.fwd.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
 

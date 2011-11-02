@@ -29,6 +29,36 @@
 #include <iostream>
 #include <algorithm>
 
+#include <platform/types.hh>
+#include <utility/down_cast.hh>
+#include <utility/exit.hh>
+#include <utility/stream_util.hh>
+#include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
+#include <utility/vector1_bool.hh>
+#include <utility/vectorL.fwd.hh>
+#include <utility/vectorL.hh>
+#include <utility/vectorL_Selector.hh>
+#include <utility/vectorL_bool.hh>
+#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/owning_ptr.functions.hh>
+#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
+#include <cassert>
+#include <cstddef>
+#include <iosfwd>
+#include <list>
+#include <map>
+#include <ostream>
+#include <sstream>
+#include <string>
+#include <typeinfo>
+#include <vector>
+#include <basic/Tracer.fwd.hh>
+#include <boost/algorithm/string/erase.hpp>
+
+
 namespace basic {
 
 std::ostream *final_channel = &std::cout;

@@ -20,9 +20,9 @@
 #include <test/core/init_util.hh>
 
 // Package Headers
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -34,24 +34,11 @@
 #include <string>
 
 //Auto Headers
-#include <core/chemical/VariantType.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/io/pdb/file_data.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/EnergyNames.fwd.hh>
-#include <core/pack/task/operation/ResFilterFactory.hh>
-#include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/ScoreFunctionInfo.fwd.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <utility/stream_util.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <basic/options/option.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 using basic::T;

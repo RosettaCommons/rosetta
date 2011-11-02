@@ -24,8 +24,8 @@
 /// C++ headers
 #include <iostream>
 
-//Auto Headers
 #include <protocols/flexpack/rotamer_set/FlexbbRotamerSet.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1A.hh>
 
 

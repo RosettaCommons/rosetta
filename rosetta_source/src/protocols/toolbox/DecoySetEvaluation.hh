@@ -24,9 +24,12 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
-#include <core/io/silent/silent.fwd.hh>
+// AUTO-REMOVED #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
+
+#include <utility/vector1.hh>
+
 
 
 namespace protocols {

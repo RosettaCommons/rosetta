@@ -25,10 +25,9 @@
 #include <core/scoring/constraints/Constraint.fwd.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-//Auto Headers
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

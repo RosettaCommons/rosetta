@@ -20,10 +20,16 @@
 //#include <protocols/qsar/qsarTypeManager.fwd.hh>
 #include <protocols/qsar/qsarMap.fwd.hh>
 #include <numeric/xyzVector.hh>
-#include <utility/io/ozstream.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <list>
+
+#include <core/conformation/Residue.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <utility/vector1.hh>
+#include <utility/io/ozstream.fwd.hh>
+
 
 namespace protocols {
 namespace qsar {

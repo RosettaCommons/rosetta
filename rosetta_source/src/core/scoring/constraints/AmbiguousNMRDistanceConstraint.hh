@@ -17,18 +17,17 @@
 
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
 
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/EnergyMap.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 #include <core/id/AtomID.hh>
-#include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 
-//Auto Headers
-#include <numeric/xyzVector.hh>
+#include <core/id/NamedAtomID.fwd.hh>
 #include <utility/vector1.hh>
 
 

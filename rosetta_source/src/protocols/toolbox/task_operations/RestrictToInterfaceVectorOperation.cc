@@ -36,7 +36,10 @@
 #include <utility/tag/Tag.hh>
 
 // C++ Headers
-#include <set>
+// AUTO-REMOVED #include <set>
+
+#include <utility/vector0.hh>
+
 
 using basic::Error;
 using basic::Warning;

@@ -21,16 +21,19 @@
 #include <protocols/match/output/MatchFilter.hh>
 #include <protocols/match/output/UpstreamDownstreamCollisionFilter.hh>
 #include <protocols/match/output/OutputWriter.hh>
-#include <protocols/match/Hit.hh> // REQUIRED FOR WINDOWS
-#include <protocols/match/downstream/DownstreamBuilder.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <protocols/match/Hit.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <protocols/match/downstream/DownstreamBuilder.hh> // REQUIRED FOR WINDOWS
 
 //Project headers
 #include <basic/Tracer.hh>
-#include <core/id/AtomID.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <core/id/AtomID.hh> // REQUIRED FOR WINDOWS
 
 
 // Utility headers
 #include <utility/exit.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace match {

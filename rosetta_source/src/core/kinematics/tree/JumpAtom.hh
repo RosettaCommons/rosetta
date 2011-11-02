@@ -22,7 +22,7 @@
 #include <core/kinematics/ResidueCoordinateChangeList.fwd.hh>
 
 // Project headers
-#include <core/id/AtomID_Map.hh>
+// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 
 // Numeric headers
@@ -31,6 +31,9 @@
 
 // C++ headers
 #include <algorithm>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

@@ -38,11 +38,14 @@
 
 // Auto-header: duplicate removed #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/option_macros.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/mc.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR("protocols.hcluster");
 

@@ -15,10 +15,10 @@
 
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperationCreator.hh>
-#include <core/pack/task/operation/ResLvlTaskOperation.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperation.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationCreator.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
-#include <core/pack/task/operation/ResFilter.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/ResFilter.hh>
 #include <core/pack/task/operation/ResFilterCreator.hh>
 #include <core/pack/task/operation/ResFilterFactory.hh>
 
@@ -29,8 +29,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 
-//Auto Headers
-#include <iostream>
+#include <utility/vector0.hh>
 
 namespace core {
 namespace pack {

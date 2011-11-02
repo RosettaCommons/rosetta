@@ -30,6 +30,10 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
 
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace protein_interface_design {
 namespace movers {

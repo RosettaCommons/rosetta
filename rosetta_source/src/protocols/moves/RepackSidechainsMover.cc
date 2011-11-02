@@ -15,13 +15,13 @@
 // Unit headers
 #include <protocols/moves/RepackSidechainsMover.hh>
 #include <protocols/moves/RepackSidechainsMoverCreator.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/pack_missing_sidechains.hh>
 
 #include <core/id/AtomID_Mask.fwd.hh>
@@ -33,10 +33,16 @@
 // Utility Headers
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh> // string_split
+// AUTO-REMOVED #include <utility/string_util.hh> // string_split
 
 // option key includes
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <utility/options/BooleanVectorOption.hh>
+#include <basic/Tracer.hh>
+
 
 namespace protocols {
 namespace moves {

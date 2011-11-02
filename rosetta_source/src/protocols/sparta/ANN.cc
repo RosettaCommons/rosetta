@@ -23,10 +23,14 @@
 // Utility headers
 #include <basic/Tracer.hh>
 
-#include <cmath>
+// AUTO-REMOVED #include <cmath>
 #include <stdio.h>
 
 #include <utility/vector0.hh>
+
+#include <protocols/sparta/GDB.hh>
+#include <utility/vector1.hh>
+
 
 
 static basic::Tracer tr("protocols.sparta");

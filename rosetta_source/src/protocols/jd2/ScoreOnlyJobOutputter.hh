@@ -18,7 +18,7 @@
 //unit headers
 #include <protocols/jd2/FileJobOutputter.hh>
 #include <protocols/jd2/ScoreOnlyJobOutputter.fwd.hh>
-#include <protocols/jd2/Job.hh>
+// AUTO-REMOVED #include <protocols/jd2/Job.hh>
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
@@ -26,6 +26,10 @@
 //utility headers
 //C++ headers
 #include <string>
+
+#include <core/types.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace jd2 {

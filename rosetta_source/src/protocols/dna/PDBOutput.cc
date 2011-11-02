@@ -51,7 +51,6 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
 #include <utility/io/ozstream.hh>
 #include <ObjexxFCL/format.hh>

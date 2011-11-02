@@ -29,10 +29,6 @@
 #include <protocols/frag_picker/scores/FragmentScoringMethod.hh>
 #include <utility>
 
-//Auto Headers
-#include <utility/io/mpistream.hh>
-
-
 static basic::Tracer trace("fragmentpicker_integration_demo");
 
 using namespace core;

@@ -48,7 +48,7 @@
 #include <basic/database/open.hh>
 
 // AUTO-REMOVED #include <core/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <numeric/xyzVector.hh>
 // AUTO-REMOVED #include <numeric/random/random.hh>
@@ -71,8 +71,9 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
 using basic::T;

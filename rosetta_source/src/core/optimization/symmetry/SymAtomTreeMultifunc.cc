@@ -32,7 +32,7 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/symmetry/SymmetricEnergies.hh>
+// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricEnergies.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -42,6 +42,9 @@
 
 /// Numeric headers
 #include <numeric/xyz.functions.hh>
+
+#include <utility/vector1.hh>
+
 
 
 

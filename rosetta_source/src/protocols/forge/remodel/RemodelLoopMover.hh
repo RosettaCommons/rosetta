@@ -34,7 +34,6 @@
 
 #include <string>
 
-//Auto Headers
 #include <protocols/moves/MonteCarlo.fwd.hh>
 
 

@@ -324,7 +324,9 @@ struct CL {
     err_=clSetKernelArg(kernels_[kname],4,sizeof(cl_mem),&a5); if(err_!=CL_SUCCESS) handle_error(s+"5 of 5 type cl_mem for "+kname+"! ERR="+str(err_));
   }
 
-#include "apps/pilot/will/gpu/CL_args.hh"
+
+#include <apps/pilot/will/gpu/CL_args.hh>
+
   // void setargs(std::string kname, cl_mem m1) { std::string const s("Error: Failed to set kernel argument "); err_ = 0;
   //   err_=clSetKernelArg(kernels_[kname],0,sizeof(cl_mem),&m1);if(err_!=CL_SUCCESS)handle_error(s+"1 of 1 (cl_mem) for "+kname+"! ERR="+errstr(err_));
   // }

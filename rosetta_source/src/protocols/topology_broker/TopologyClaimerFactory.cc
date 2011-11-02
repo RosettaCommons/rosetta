@@ -42,6 +42,9 @@
 #include <sstream>
 #include <string>
 
+#include <utility/vector1.hh>
+
+
 static basic::Tracer tr("protocols.topo_broker", basic::t_info);
 
 namespace protocols {

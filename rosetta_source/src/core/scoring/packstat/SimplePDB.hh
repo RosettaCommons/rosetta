@@ -24,7 +24,6 @@
 
 // AUTO-REMOVED #include <vector>
 
-//Auto Headers
 #include <core/scoring/packstat/AtomRadiusMap.fwd.hh>
 
 

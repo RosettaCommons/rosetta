@@ -22,7 +22,7 @@
 
 // Project Headers
 #include <core/conformation/Residue.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/types.hh>
 
 // Utility Headers
@@ -30,9 +30,9 @@
 #include <utility/vector1.hh>
 
 // C++ Headers
-#include <map>
-#include <set>
-#include <string>
+// AUTO-REMOVED #include <map>
+// AUTO-REMOVED #include <set>
+// AUTO-REMOVED #include <string>
 
 namespace protocols {
 namespace motifs {

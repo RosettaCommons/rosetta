@@ -33,7 +33,7 @@
 
 // Package headers
 #include <protocols/scoring/methods/pcs2/PcsInputCenter.fwd.hh>
-#include <protocols/scoring/methods/pcs2/PcsInputLine.hh>
+// AUTO-REMOVED #include <protocols/scoring/methods/pcs2/PcsInputLine.hh>
 #include <protocols/scoring/methods/pcs2/PcsDataLanthanide.hh>
 
 // Project headers
@@ -50,7 +50,7 @@
 // ObjexxFCL headers
 
 // c++ headers
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 
 namespace protocols{
 namespace scoring{

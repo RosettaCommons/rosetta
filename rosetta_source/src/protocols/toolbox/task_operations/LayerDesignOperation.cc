@@ -39,13 +39,13 @@
 #include <protocols/toolbox/task_operations/LayerDesignOperationCreator.hh>
 
 // Project Headers
-#include <core/id/AtomID_Map.hh>
+// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/PackerTask_.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask_.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/sasa.hh>
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <core/scoring/sasa.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <protocols/flxbb/SelectResiduesByLayer.hh>
 
@@ -61,8 +61,9 @@ using basic::Error;
 using basic::Warning;
 
 
-//Auto Headers
+#include <utility/vector0.hh>
 #include <ObjexxFCL/format.hh>
+#include <basic/options/keys/OptionKeys.hh>
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

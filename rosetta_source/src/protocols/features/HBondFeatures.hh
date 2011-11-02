@@ -31,7 +31,7 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 
 
 // C++ Headers

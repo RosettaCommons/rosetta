@@ -18,6 +18,7 @@
 
 // Unit headers
 #include <utility/factory/WidgetFactory.fwd.hh>
+#include <utility/exit.hh>
 
 // Package headers
 #include <utility/pointer/owning_ptr.hh>

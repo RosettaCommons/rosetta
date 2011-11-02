@@ -10,10 +10,6 @@
 // AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <protocols/moves/Mover.hh>
 
-//Auto Headers
-#include <sstream>
-
-
 namespace protocols {
 	int ddG_main();
 }

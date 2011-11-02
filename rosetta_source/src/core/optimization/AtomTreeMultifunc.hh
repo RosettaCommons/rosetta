@@ -18,12 +18,16 @@
 // Package headers
 #include <core/optimization/types.hh>
 #include <core/optimization/Multifunc.hh>
-#include <core/optimization/MinimizerMap.hh>
+// AUTO-REMOVED #include <core/optimization/MinimizerMap.hh>
 #include <core/optimization/NumericalDerivCheckResult.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
+
+#include <core/optimization/MinimizerMap.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace optimization {

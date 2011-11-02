@@ -32,6 +32,9 @@
 #include <iosfwd>
 #include <map>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <string>
 
 //namespace apps{

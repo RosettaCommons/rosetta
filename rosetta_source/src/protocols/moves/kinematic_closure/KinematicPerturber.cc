@@ -36,8 +36,8 @@
 // option key includes
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/kinematics/MoveMap.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -18,14 +18,14 @@
 
 // AUTO-REMOVED #include <protocols/jd2/Job.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/qsar/scoring_grid/GridManager.fwd.hh>
+// AUTO-REMOVED #include <protocols/qsar/scoring_grid/GridManager.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <protocols/moves/Mover.hh>
 #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <protocols/jd2/Job.fwd.hh>
 #include <core/types.hh>
+#include <protocols/jd2/Job.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

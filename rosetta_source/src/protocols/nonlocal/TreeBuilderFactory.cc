@@ -27,6 +27,9 @@
 #include <protocols/nonlocal/StarTreeBuilder.hh>
 #include <protocols/nonlocal/TreeBuilder.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace nonlocal {
 

@@ -35,7 +35,7 @@
 
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <basic/options/option.hh>
 
 

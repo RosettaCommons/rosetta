@@ -34,6 +34,11 @@
 
 #include <iostream>
 
+#include <core/pack/rotamer_set/FixbbRotamerSets.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 using namespace ObjexxFCL;
 
 #ifndef NDEBUG

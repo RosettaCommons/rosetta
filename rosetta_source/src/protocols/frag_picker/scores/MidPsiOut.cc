@@ -17,18 +17,18 @@
 // AUTO-REMOVED #include <protocols/frag_picker/scores/FragmentCrmsd.hh>
 // AUTO-REMOVED #include <protocols/frag_picker/scores/FragmentScoreManager.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
-#include <protocols/frag_picker/FragmentPicker.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/FragmentPicker.hh>
 
 // option key includes
 // AUTO-REMOVED #include <core/init.hh>
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // AUTO-REMOVED #include <core/pose/util.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // AUTO-REMOVED #include <protocols/Protocol.hh>
 
@@ -36,7 +36,7 @@
 
 // utils
 #include <ObjexxFCL/FArray1D.hh>
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 
 // C++
 // AUTO-REMOVED #include <math.h>
@@ -45,10 +45,9 @@
 
 // Boost
 // AUTO-REMOVED #include <boost/algorithm/string.hpp>
-#include <boost/tuple/tuple.hpp>
+// AUTO-REMOVED #include <boost/tuple/tuple.hpp>
 
-//Auto Headers
-#include <core/pose/Pose.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

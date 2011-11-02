@@ -17,8 +17,11 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <utility/vector1.hh>
+
+#include <numeric/xyzVector.hh>
+
 #ifdef WIN32
 #include <string>
 #endif

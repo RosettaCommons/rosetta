@@ -23,6 +23,9 @@
 
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 
+#include <utility/vector1.hh>
+
+
 #ifdef USEMPI
 #include <mpi.h>
 #endif

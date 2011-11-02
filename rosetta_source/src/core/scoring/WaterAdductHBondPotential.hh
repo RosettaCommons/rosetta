@@ -34,9 +34,8 @@
 #include <utility/pointer/owning_ptr.hh>
 // AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 //////////////////////////////////////////////////////////////////////////////////

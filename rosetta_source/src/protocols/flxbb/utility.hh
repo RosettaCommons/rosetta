@@ -17,10 +17,13 @@
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 
 #include <protocols/fldsgn/BluePrint.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace flxbb {

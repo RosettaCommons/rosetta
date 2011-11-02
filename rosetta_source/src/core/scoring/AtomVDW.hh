@@ -30,7 +30,6 @@
 // C++ Headers
 #include <string>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

@@ -18,8 +18,8 @@
 // project headers
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 
-//Auto Headers
 #include <core/pose/datacache/CacheableObserver.hh>
+#include <utility/vector1.hh>
 #include <iostream>
 
 

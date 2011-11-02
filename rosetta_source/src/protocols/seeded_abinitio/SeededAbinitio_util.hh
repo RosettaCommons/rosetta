@@ -18,8 +18,8 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <protocols/moves/DataMap.fwd.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.fwd.hh>
+// AUTO-REMOVED #include <core/pack/task/TaskFactory.fwd.hh>
 //#include <core/pack/task/operation/TaskOperation.fwd.hh>
 //#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -28,13 +28,16 @@
 
 
 // Utillity Headers
-#include <utility/tag/Tag.fwd.hh>
+// AUTO-REMOVED #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ headers
-#include <string>
+// AUTO-REMOVED #include <string>
 // Auto-header: duplicate removed #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.fwd.hh>
+
+#include <utility/vector1.hh>
+
 // Auto-header: duplicate removed #include <core/types.hh>
 //#include <core/scoring/constraints/Constraint.fwd.hh>
 

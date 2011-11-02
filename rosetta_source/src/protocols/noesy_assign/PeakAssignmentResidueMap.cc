@@ -47,6 +47,10 @@
 #include <cstdlib>
 #include <string>
 
+#include <protocols/noesy_assign/CrossPeak.hh>
+#include <utility/vector1.hh>
+
+
 
 static basic::Tracer tr("protocols.noesy_assign.assignments");
 

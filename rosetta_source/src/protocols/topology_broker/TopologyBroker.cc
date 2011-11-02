@@ -47,13 +47,13 @@
 #include <core/chemical/VariantType.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/pose/util.hh>
-#include <protocols/jumping/StrandPairing.hh>
+// AUTO-REMOVED #include <protocols/jumping/StrandPairing.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 // for symmetry
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 
 // ObjexxFCL Headers
@@ -64,9 +64,13 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <iterator>
+// AUTO-REMOVED #include <iterator>
 #include <sstream>
 #include <vector>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 namespace ObjexxFCL { } using namespace ObjexxFCL;
 

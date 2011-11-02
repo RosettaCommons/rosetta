@@ -37,7 +37,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
-#include "apps/pilot/will/will_util.hh"
+#include <apps/pilot/will/will_util.hh>
 
 typedef numeric::xyzVector<core::Real> Vec;
 typedef numeric::xyzMatrix<core::Real> Mat;

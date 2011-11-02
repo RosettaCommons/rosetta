@@ -17,7 +17,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 // AUTO-REMOVED #include <string>
-#include <map>
+// AUTO-REMOVED #include <map>
 
 // Package headers
 

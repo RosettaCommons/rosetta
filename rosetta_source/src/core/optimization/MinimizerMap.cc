@@ -44,7 +44,7 @@
 // C++ headers
 #include <cstdlib>
 
-//Auto Headers
+#include <utility/vector1.hh>
 // Auto-header: duplicate removed #include <core/pose/util.hh>
 
 

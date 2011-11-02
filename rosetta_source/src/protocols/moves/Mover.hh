@@ -27,7 +27,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
-#include <protocols/jobdist/Jobs.hh>
+// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 // ObjexxFCL Headers
 
@@ -40,8 +40,8 @@
 #include <map>
 #include <list>
 
-//Auto Headers
-#include <sstream>
+#include <protocols/jobdist/Jobs.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

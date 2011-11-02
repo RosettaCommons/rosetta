@@ -20,7 +20,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/rdc.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/rdc.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 #include <protocols/frag_picker/FragmentPicker.hh>
@@ -34,10 +34,6 @@
 
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
-
-//Auto Headers
-#include <utility/io/mpistream.hh>
-
 
 static basic::Tracer trace("fragment_picker");
 

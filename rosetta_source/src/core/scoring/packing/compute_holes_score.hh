@@ -35,8 +35,8 @@
 #include <utility/exit.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-//Auto Headers
 #include <core/kinematics/Jump.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

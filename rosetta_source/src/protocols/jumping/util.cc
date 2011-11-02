@@ -62,9 +62,8 @@
 // #include <string>
 #include <list>
 
-//Auto Headers
 #include <core/chemical/ResidueType.hh>
-#include <protocols/jumping/StrandPairing.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 

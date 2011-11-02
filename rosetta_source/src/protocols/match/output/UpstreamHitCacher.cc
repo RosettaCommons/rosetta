@@ -31,8 +31,8 @@
 // C++ headers
 #include <map>
 
-//Auto Headers
 #include <utility/OrderedTuple.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

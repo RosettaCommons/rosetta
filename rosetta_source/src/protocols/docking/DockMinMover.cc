@@ -27,6 +27,9 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
 
+#include <utility/vector1.hh>
+
+
 using namespace protocols::moves;
 using namespace core;
 

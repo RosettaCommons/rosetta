@@ -32,6 +32,9 @@
 #include <utility/exit.hh>
 #include <ObjexxFCL/string.functions.hh>
 
+#include <utility/vector1.hh>
+
+
 // C++ Headers
 
 namespace core {

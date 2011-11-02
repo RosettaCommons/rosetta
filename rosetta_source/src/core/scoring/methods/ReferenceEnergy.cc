@@ -23,6 +23,9 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace scoring {
 namespace methods {

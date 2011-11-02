@@ -22,7 +22,7 @@
 // Package headers
 #include <core/optimization/types.hh>
 #include <core/optimization/MinimizerMap.hh>
-#include <core/optimization/Multifunc.hh>
+// AUTO-REMOVED #include <core/optimization/Multifunc.hh>
 #include <core/optimization/DOF_Node.hh>
 
 // Project headers
@@ -32,7 +32,10 @@
 #include <core/kinematics/MoveMap.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/FArray2D.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2D.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 
 namespace protocols {

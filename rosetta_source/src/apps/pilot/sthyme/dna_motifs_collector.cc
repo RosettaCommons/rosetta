@@ -61,11 +61,15 @@ static basic::Tracer TR("apps.pilot.dna_motifs_collector");
 // Option Key Includes
 #include <basic/options/option.hh>
 #include <basic/options/util.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 ///////////////////////////////////////////////////////////////////////////////
 

@@ -22,12 +22,10 @@
 // mini
 #include <core/types.hh>
 
-#include <ObjexxFCL/FArray1D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
-//Auto Headers
 #include <protocols/frag_picker/JCouplingIO.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

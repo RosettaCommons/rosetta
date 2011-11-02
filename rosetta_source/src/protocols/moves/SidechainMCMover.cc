@@ -41,21 +41,27 @@
 #include <utility/tag/Tag.hh>
 
 // Numeric Headers
-#include <numeric/angle.functions.hh>
-#include <numeric/constants.hh>
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/angle.functions.hh>
+// AUTO-REMOVED #include <numeric/constants.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
 
-#include <core/scoring/TenANeighborGraph.hh>
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 
 // Auto-header: duplicate removed #include <basic/Tracer.hh>
 
 // C++ Headers
 #include <ostream>
 #include <sstream>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <utility/fixedsizearray1.hh>
+
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/string_util.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 #ifdef WIN_PYROSETTA
 	#include <protocols/moves/ThermodynamicObserver.hh>

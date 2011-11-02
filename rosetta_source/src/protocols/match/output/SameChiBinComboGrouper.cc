@@ -23,15 +23,15 @@
 
 // Project headers
 #include <core/conformation/Residue.hh>
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 
 // Utility headers
 #include <utility/exit.hh>
 
-//Auto Headers
 #include <utility/OrderedTuple.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -34,8 +34,8 @@
 // // Utility headers
 #include <utility/io/izstream.fwd.hh>
 
-//Auto Headers
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
+#include <utility/vector1.hh>
 
 // #include <utility/pointer/owning_ptr.hh>
 // #include <utility/vector1.hh>

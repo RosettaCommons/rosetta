@@ -32,6 +32,9 @@
 // Unit headers
 #include <protocols/moves/ParsedProtocol.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace moves {
 

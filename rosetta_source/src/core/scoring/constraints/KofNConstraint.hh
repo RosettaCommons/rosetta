@@ -33,8 +33,7 @@
 //Utility Headers
 #include <numeric/xyzVector.fwd.hh>
 
-//Auto Headers
-#include <core/scoring/EnergyMap.hh>
+#include <utility/vector1.hh>
 
 
 

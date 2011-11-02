@@ -26,7 +26,6 @@
 // Numeric Headers
 // AUTO-REMOVED #include <numeric/xyzVector.hh>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

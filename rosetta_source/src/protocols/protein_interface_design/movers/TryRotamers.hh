@@ -22,6 +22,9 @@
 #include <core/scoring/ScoreFunction.hh> /// EVIL
 #include <core/pack/rotamer_set/RotamerSet.hh> /// EVIL
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace protein_interface_design {
 namespace movers {

@@ -25,12 +25,16 @@
 #include <protocols/filters/Filter.fwd.hh>
 
 //// Scoring grid headers
-#include <protocols/qsar/scoring_grid/GridManager.fwd.hh>
+// AUTO-REMOVED #include <protocols/qsar/scoring_grid/GridManager.fwd.hh>
 
 //// Project Headers
 #include <core/kinematics/Jump.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/grid/CartGrid.fwd.hh>
+
+#include <core/conformation/Residue.fwd.hh>
+#include <utility/vector1.hh>
+
 
 // Auto-header: duplicate removed #include <core/pose/Pose.hh> ///TODO why can't I do a .fwd?
 

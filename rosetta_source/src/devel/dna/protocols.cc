@@ -68,7 +68,7 @@
 #include <string>
 #include <vector>
 
-//Auto Headers
+#include <utility/vector0.hh>
 #include <ObjexxFCL/format.hh>
 
 

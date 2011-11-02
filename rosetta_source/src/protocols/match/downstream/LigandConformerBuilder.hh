@@ -24,7 +24,7 @@
 #include <protocols/match/downstream/DownstreamBuilder.hh>
 #include <protocols/match/downstream/LigandConformer.fwd.hh>
 #include <protocols/match/BumpGrid.fwd.hh>
-#include <protocols/match/Hit.hh>
+// AUTO-REMOVED #include <protocols/match/Hit.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -33,13 +33,17 @@
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 
 // Numeric headers
-#include <numeric/HomogeneousTransform.hh>
+// AUTO-REMOVED #include <numeric/HomogeneousTransform.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
 #include <list>
+
+#include <utility/fixedsizearray1.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace match {

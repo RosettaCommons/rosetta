@@ -41,6 +41,9 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <utility/vector1.hh>
+
+
 //#include <basic/options/option_macros.hh>
 
 //// C++ headers

@@ -12,7 +12,7 @@
 
 // Unit Headers
 #include <protocols/noesy_assign/CrossPeakInfo.hh>
-#include <protocols/noesy_assign/CrossPeak.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/CrossPeak.hh>
 
 // Package Headers
 
@@ -22,7 +22,7 @@
 //#include <core/chemical/AA.hh>
 
 // Utility headers
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 // #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -35,10 +35,15 @@
 //#include <basic/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-#include <cstdlib>
-#include <string>
-#include <list>
-#include <map>
+// AUTO-REMOVED #include <cstdlib>
+// AUTO-REMOVED #include <string>
+// AUTO-REMOVED #include <list>
+// AUTO-REMOVED #include <map>
+
+#include <protocols/noesy_assign/CrossPeak.fwd.hh>
+#include <protocols/noesy_assign/PeakAssignment.fwd.hh>
+#include <protocols/noesy_assign/ResonanceList.fwd.hh>
+
 
 namespace protocols {
 namespace noesy_assign {

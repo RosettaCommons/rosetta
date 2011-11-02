@@ -14,7 +14,7 @@
 
 #include <core/scoring/constraints/SiteConstraint.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
 #include <core/scoring/constraints/FuncFactory.hh>
 #include <core/scoring/constraints/Func.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
@@ -25,6 +25,9 @@
 #include <core/pose/util.hh>
 
 #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR("core.scoring.constraints.SiteConstraint");
 

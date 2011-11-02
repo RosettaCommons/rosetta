@@ -20,7 +20,7 @@
 // Project headers
 #include <core/types.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <map>
 #include <string>

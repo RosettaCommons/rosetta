@@ -24,13 +24,17 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
+// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <string>
+
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols{
 namespace features{

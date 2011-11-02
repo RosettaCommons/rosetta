@@ -38,6 +38,9 @@
 #include <numeric/random/random.fwd.hh>
 #include <utility/assert.hh>
 
+#include <utility/vector1.hh>
+
+
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;
 

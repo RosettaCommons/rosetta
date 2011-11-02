@@ -21,7 +21,7 @@
 // Package Headers
 #include <core/conformation/Residue.fwd.hh>
 
-#include <protocols/match/Hit.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <protocols/match/Hit.hh> // REQUIRED FOR WINDOWS
 #include <protocols/match/Hit.fwd.hh>
 #include <protocols/match/MatcherTask.fwd.hh>
 // AUTO-REMOVED #include <protocols/match/downstream/DownstreamBuilder.hh>
@@ -37,10 +37,10 @@
 #include <map>
 #include <set>
 
-//Auto Headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/match/downstream/DownstreamBuilder.fwd.hh>
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
+#include <iterator>
 
 
 namespace protocols {

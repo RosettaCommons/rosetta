@@ -23,9 +23,7 @@
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/fragment/JumpingFrame.fwd.hh>
 
-//Auto Headers
-#include <utility/vector1.fwd.hh>
-#include <ostream>
+#include <utility/vector1.hh>
 
 
 namespace core {

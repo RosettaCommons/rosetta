@@ -66,13 +66,10 @@
 #include <sstream>
 #include <utility>
 
-//Auto Headers
 #include <protocols/jd2/JobDistributor.fwd.hh>
-
-// utility header
-#include <utility/exit.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh>
 #include <boost/lexical_cast.hpp>
 
 namespace protocols {

@@ -22,7 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/rna/RNA_DataReader.fwd.hh>
 #include <protocols/rna/RNA_Fragments.fwd.hh>
-#include <protocols/rna/RNA_StructureParameters.fwd.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_StructureParameters.fwd.hh>
 #include <protocols/rna/RNA_StructureParameters.hh>
 #include <protocols/rna/RNA_LoopCloser.fwd.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
@@ -31,8 +31,8 @@
 #include <protocols/rna/RNA_Minimizer.fwd.hh>
 #include <protocols/rna/RNA_Relaxer.fwd.hh>
 #include <protocols/rna/RNA_ChunkLibrary.fwd.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
 //Oooh.
 #include <ObjexxFCL/FArray1D.hh>
@@ -41,8 +41,10 @@
 #include <cstdlib>
 #include <string>
 
-//Auto Headers
 #include <core/io/silent/silent.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <protocols/moves/MonteCarlo.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

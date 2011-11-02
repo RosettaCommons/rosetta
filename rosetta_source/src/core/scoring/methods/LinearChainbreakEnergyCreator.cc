@@ -12,11 +12,14 @@
 /// @author Christopher Miles (cmiles@uw.edu)
 
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/types.hh>
+// AUTO-REMOVED #include <core/scoring/types.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/LinearChainbreakEnergy.hh>
 #include <core/scoring/methods/LinearChainbreakEnergyCreator.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
   namespace scoring {

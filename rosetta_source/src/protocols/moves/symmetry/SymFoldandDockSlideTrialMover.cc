@@ -33,9 +33,10 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <core/conformation/symmetry/SymSlideInfo.hh>
+#include <core/conformation/symmetry/SymDof.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

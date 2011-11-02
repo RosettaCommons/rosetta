@@ -16,18 +16,18 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
 #include <core/sequence/util.hh>
-#include <core/sequence/Sequence.hh>
+// AUTO-REMOVED #include <core/sequence/Sequence.hh>
 #include <core/sequence/Sequence.fwd.hh>
 #include <core/id/SequenceMapping.hh>
 
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 
 //Auto Headers
-#include <utility/stream_util.hh>
+#include <utility/vector1.hh>
 
 
 

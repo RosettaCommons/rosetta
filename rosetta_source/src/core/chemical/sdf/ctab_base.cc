@@ -17,9 +17,13 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomType.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/chemical/sdf/mol_util.hh>
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace chemical {

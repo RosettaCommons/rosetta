@@ -35,8 +35,7 @@
 // Utility Headers
 // AUTO-REMOVED #include <numeric/random/random.hh>
 
-//Auto Headers
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

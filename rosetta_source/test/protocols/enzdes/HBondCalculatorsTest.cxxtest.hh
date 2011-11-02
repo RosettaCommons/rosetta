@@ -18,7 +18,7 @@
 #include <test/core/init_util.hh>
 //#include <core/conformation/Residue.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 //#include <core/kinematics/MoveMap.hh>
 
@@ -29,8 +29,8 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/chemical/ChemicalManager.hh> //need for additional residue
 #include <core/chemical/ResidueTypeSet.hh>
 #include <basic/options/option.hh> //needed to set option
@@ -51,7 +51,7 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
 
 
 #include <basic/Tracer.hh>
@@ -61,21 +61,9 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <core/chemical/VariantType.hh>
-#include <core/conformation/Atom.fwd.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/id/SequenceMapping.hh>
-#include <core/io/pdb/file_data.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/types.hh>
-#include <utility/stream_util.hh>
-#include <protocols/moves/MoverStatistics.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
-#include <ObjexxFCL/format.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 

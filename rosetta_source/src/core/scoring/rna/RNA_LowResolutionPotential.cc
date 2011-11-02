@@ -52,8 +52,8 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
 

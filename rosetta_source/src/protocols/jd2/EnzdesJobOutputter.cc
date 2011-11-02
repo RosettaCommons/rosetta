@@ -40,6 +40,9 @@
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/ozstream.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace jd2 {
 

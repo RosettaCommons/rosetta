@@ -16,10 +16,13 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/id/NamedAtomID.fwd.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/ReferenceCount.hh>
+// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
+
+#include <iosfwd>
+
 
 //// C++ headers
 

@@ -14,6 +14,9 @@
 // Unit headers
 #include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
 
+#include <utility/vector1.hh>
+
+
 // Package headers
 
 

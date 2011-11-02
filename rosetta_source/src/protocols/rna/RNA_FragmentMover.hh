@@ -21,7 +21,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/rna/RNA_Fragments.fwd.hh>
 #include <protocols/rna/AllowInsert.fwd.hh>
-#include <ObjexxFCL/FArray1D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 #include <core/pose/Pose.fwd.hh>
 
 //// C++ headers
@@ -29,8 +29,8 @@
 #include <vector>
 #include <map>
 
-//Auto Headers
-#include <iostream>
+#include <utility/vector1.hh>
+#include <ObjexxFCL/FArray1D.fwd.hh>
 
 namespace protocols {
 namespace rna {

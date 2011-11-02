@@ -66,10 +66,8 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <utility/io/ozstream.hh>
-#include <ObjexxFCL/format.hh>
 
 std::map< std::string, core::pose::Pose >
 poses_from_cmd_line(

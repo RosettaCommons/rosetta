@@ -15,14 +15,14 @@
 #define INCLUDED_protocols_frag_picker_quota_ABEGO_SS_Map_hh
 
 #include <protocols/frag_picker/quota/ABEGO_SS_Map.fwd.hh>
-#include <protocols/frag_picker/quota/QuotaPool.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/quota/QuotaPool.hh>
 
 // package headers
-#include <protocols/frag_picker/BoundedCollector.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/BoundedCollector.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
-#include <protocols/frag_picker/CommonFragmentComparators.hh>
-#include <core/fragment/SecondaryStructure.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/CommonFragmentComparators.hh>
+// AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
 
 // utility headers
 #include <core/types.hh>
@@ -31,7 +31,7 @@
 
 // C++ headers
 #include <string>
-#include <utility>
+// AUTO-REMOVED #include <utility>
 
 namespace protocols {
 namespace frag_picker {

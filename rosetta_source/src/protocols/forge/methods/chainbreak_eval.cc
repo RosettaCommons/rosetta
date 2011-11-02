@@ -28,6 +28,9 @@
 #include <core/scoring/methods/LinearChainbreakEnergy.hh>
 #include <core/scoring/methods/ChainbreakEnergy.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace protocols {
 namespace forge {

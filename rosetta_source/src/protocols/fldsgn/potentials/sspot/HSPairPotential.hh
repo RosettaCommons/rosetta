@@ -22,15 +22,19 @@
 #include <core/scoring/EnergyGraph.fwd.hh>
 #include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 #include <protocols/fldsgn/topology/BB_Pos.fwd.hh>
-#include <protocols/fldsgn/topology/DimerPairing.fwd.hh>
+// AUTO-REMOVED #include <protocols/fldsgn/topology/DimerPairing.fwd.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray3D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray4D.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
+
+#include <utility/vector1.hh>
+#include <ObjexxFCL/FArray1D.fwd.hh>
+
 
 namespace protocols {
 namespace fldsgn {

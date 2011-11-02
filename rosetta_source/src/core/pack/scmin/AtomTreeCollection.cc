@@ -31,10 +31,13 @@
 
 // Numeric headers
 #include <numeric/constants.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace pack {

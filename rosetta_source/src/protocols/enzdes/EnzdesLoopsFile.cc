@@ -27,6 +27,9 @@
 
 #include <sstream>
 
+#include <utility/vector1.hh>
+
+
 
 static basic::Tracer tr("protocols.enzdes.EnzdesLoopsFile");
 

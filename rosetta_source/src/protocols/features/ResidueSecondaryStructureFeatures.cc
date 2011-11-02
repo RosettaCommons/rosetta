@@ -18,7 +18,7 @@
 #include <basic/Tracer.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
 #include <protocols/jumping/Dssp.hh>
 #include <basic/database/sql_utils.hh>

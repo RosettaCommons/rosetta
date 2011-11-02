@@ -16,17 +16,21 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/Tracer.hh>
-#include <core/sequence/util.hh>
+// AUTO-REMOVED #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
 
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 #include <numeric/angle.functions.hh>
+
+#include <core/chemical/ResidueType.hh>
+#include <utility/vector1.hh>
+
 
 static basic::Tracer tr("protocols.evalution.Align_RotamerEvaluator");
 

@@ -23,8 +23,11 @@
 
 #include <utility/exit.hh>
 
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace sequence {

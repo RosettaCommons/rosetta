@@ -25,8 +25,8 @@
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -48,15 +48,16 @@
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/ThreadingJob.hh>
-#include <protocols/jd2/MultiThreadingJob.hh>
+// AUTO-REMOVED #include <protocols/jd2/MultiThreadingJob.hh>
 
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/comparative_modeling/StealSideChainsMover.hh>
-#include <protocols/comparative_modeling/MultiThreadingMover.hh>
+// AUTO-REMOVED #include <protocols/comparative_modeling/MultiThreadingMover.hh>
 #include <protocols/moves/RepulsiveOnlyMover.hh>
 
-//Auto Headers
-#include <core/import_pose/import_pose.hh>
+#include <protocols/electron_density/SetupForDensityScoringMover.hh>
+#include <protocols/jd2/Job.hh>
+#include <utility/vector0.hh>
 
 namespace protocols {
 namespace loops {

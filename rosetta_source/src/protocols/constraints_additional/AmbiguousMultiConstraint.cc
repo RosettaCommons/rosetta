@@ -22,6 +22,9 @@
 //C++ headers
 #include <list>
 
+#include <utility/vector1.hh>
+
+
 
 namespace protocols {
 namespace constraints_additional {

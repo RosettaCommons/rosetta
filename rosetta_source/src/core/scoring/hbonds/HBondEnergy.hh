@@ -19,7 +19,7 @@
 // Unit Headers
 #include <core/scoring/hbonds/HBondEnergy.fwd.hh>
 //pba
-#include <core/scoring/MembraneTopology.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/MembraneTopology.fwd.hh>
 #include <core/scoring/Membrane_FAPotential.fwd.hh>
 
 // Package headers
@@ -27,20 +27,22 @@
 #include <core/scoring/hbonds/hbtrie/HBondTrie.fwd.hh>
 #include <core/scoring/hbonds/constants.hh>
 //pba
-#include <core/scoring/hbonds/HBondSet.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
 
 #include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/hbonds/HBondDatabase.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondOptions.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondDatabase.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/kinematics/MinimizerMapBase.hh>
+// AUTO-REMOVED #include <core/kinematics/MinimizerMapBase.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/EnergyMap.hh>
 
-//Auto Headers
-#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
+#include <core/scoring/hbonds/HBondDatabase.fwd.hh>
+#include <core/scoring/hbonds/HBondOptions.fwd.hh>
+#include <core/scoring/hbonds/HBondSet.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

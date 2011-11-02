@@ -26,7 +26,6 @@
 // Utility Headers
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

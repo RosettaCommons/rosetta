@@ -9,9 +9,14 @@
 #define ORBITALSASSIGNED_HH_
 
 #include <utility/vector1.hh>
-#include <numeric/xyzVector.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/types.hh>
+
+//Auto Headers
+#include <core/conformation/Residue.fwd.hh>
+#include <string>
+
 
 namespace core{
 namespace scoring{

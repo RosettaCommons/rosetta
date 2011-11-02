@@ -16,7 +16,7 @@
 #include <core/conformation/RotamerSetBase.hh>
 
 // Package headers
-#include <core/conformation/AbstractRotamerTrie.hh>
+// AUTO-REMOVED #include <core/conformation/AbstractRotamerTrie.hh>
 #include <core/conformation/RotamerSetCacheableDataType.hh>
 
 // Project headers
@@ -24,6 +24,9 @@
 
 // Utility headers
 #include <basic/datacache/BasicDataCache.hh>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

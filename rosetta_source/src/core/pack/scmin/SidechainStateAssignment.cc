@@ -17,7 +17,11 @@
 // Package Headers
 #include <core/pack/scmin/AtomTreeCollection.hh>
 
-#include <core/conformation/Residue.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <core/conformation/Residue.hh> // REQUIRED FOR WINDOWS
+
+#include <core/chemical/ResidueType.hh>
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace pack {

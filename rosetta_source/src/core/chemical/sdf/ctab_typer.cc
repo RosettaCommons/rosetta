@@ -15,7 +15,7 @@
 #include <basic/Tracer.hh>
 #include <core/chemical/sdf/ctab_typer.hh>
 #include <core/chemical/AtomType.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 //#include <core/chemical/ResidueType.hh>
 //#include <protocols/ligand_docking/ColoredGraph.hh>
 #include <utility/exit.hh>
@@ -24,8 +24,12 @@
 #include <algorithm>
 #include <map>
 #include <sstream>
-#include <cstring>
-#include <stdlib.h>
+// AUTO-REMOVED #include <cstring>
+// AUTO-REMOVED #include <stdlib.h>
+
+#include <core/chemical/ResidueType.hh>
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace chemical {

@@ -22,9 +22,9 @@
 #include <core/scoring/sasa.hh>
 #include <core/conformation/Residue.hh>
 #include <core/types.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 
 // Utility Headers
@@ -32,14 +32,16 @@
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.io.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 
 // Test headers
 #include <test/core/init_util.hh>
 #include <test/UTracer.hh>
 
 //Auto Headers
-#include <core/import_pose/import_pose.hh>
+// Auto-header: duplicate removed #include <core/import_pose/import_pose.hh>
+#include <ObjexxFCL/FArray2D.hh>
+#include <ObjexxFCL/ubyte.hh>
 
 
 static basic::Tracer TR("test.core.pack.interaction_graph.rotamerdots");

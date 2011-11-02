@@ -49,12 +49,11 @@
 #include <string>
 // AUTO-REMOVED #include <vector>
 
-//Auto Headers
 #include <core/scoring/constraints/AtomPairConstraint.fwd.hh>
-#include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/NamedAtomPairConstraint.fwd.hh>
 #include <protocols/jumping/PairingsList.fwd.hh>
 #include <protocols/jumping/StrandPairing.fwd.hh>
+#include <utility/vector1.hh>
 
 
 

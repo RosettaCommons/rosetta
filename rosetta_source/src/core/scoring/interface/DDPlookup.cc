@@ -12,6 +12,9 @@
 #include <basic/Tracer.hh>
 #include <utility/io/izstream.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace scoring {
 namespace interface {

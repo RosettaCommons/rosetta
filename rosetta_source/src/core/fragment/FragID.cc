@@ -20,6 +20,10 @@
 // Package Headers
 #include <core/fragment/Frame.hh>
 
+#include <core/fragment/FragData.hh>
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace fragment {
 

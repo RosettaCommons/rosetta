@@ -39,12 +39,17 @@
 #include <core/scoring/methods/EnergyMethod.hh>
 
 //TEMP
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Utility headers
 // AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
+
+#include <core/scoring/constraints/Constraint.fwd.hh>
+#include <utility/vector1.hh>
+#include <basic/options/keys/OptionKeys.hh>
+
 
 // ObjexxFCL Headers
 

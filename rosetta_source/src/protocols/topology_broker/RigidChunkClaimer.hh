@@ -28,6 +28,9 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/topology_broker/ClaimerMessage.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace topology_broker {
 

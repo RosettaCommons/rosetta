@@ -22,9 +22,10 @@
 
 // Utility Headers
 #include <core/types.hh>
-#include <utility/tag/Tag.hh>
+// AUTO-REMOVED #include <utility/tag/Tag.hh>
 
-//Auto Headers
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 
 namespace protocols {

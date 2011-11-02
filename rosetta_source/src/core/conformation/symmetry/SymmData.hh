@@ -33,10 +33,8 @@
 // C++ headers
 #include <map>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 #include <numeric/xyzMatrix.fwd.hh>
-#include <iostream>
 
 
 namespace core {

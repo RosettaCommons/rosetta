@@ -24,25 +24,15 @@
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 
 //Auto Headers
-#include <core/conformation/Atom.fwd.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/types.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
+#include <utility/vector1.hh>
 
 
 // --------------- Test Class --------------- //

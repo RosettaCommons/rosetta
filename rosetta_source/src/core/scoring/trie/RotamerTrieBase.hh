@@ -55,7 +55,7 @@
 
 // STL Headers
 #include <map>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 
 namespace core {
 namespace scoring {

@@ -22,11 +22,10 @@
 // Utility headers
 
 // ObjexxFCL header
-#include <ObjexxFCL/FArray2D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
-//Auto Headers
-#include <utility/vector1.fwd.hh>
-#include <ObjexxFCL/ubyte.hh> // temp ronj
+#include <utility/vector1.hh>
+#include <ObjexxFCL/FArray2D.fwd.hh>
 
 // C++
 

@@ -34,6 +34,9 @@
 #include <protocols/medal/MedalExchangeMover.hh>
 #include <protocols/medal/MedalMover.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace medal {
 

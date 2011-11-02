@@ -44,9 +44,8 @@
 //// C++ headers
 #include <list>
 
-//Auto Headers
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

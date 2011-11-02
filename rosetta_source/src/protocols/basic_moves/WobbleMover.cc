@@ -30,6 +30,9 @@
 // Utility headers
 #include <numeric/random/random.hh>
 
+#include <utility/vector1.hh>
+
+
 // C++ headers
 
 static basic::Tracer TR("protocol.abinitio.WobbleMover");

@@ -22,8 +22,8 @@
 
 
 // Project headers
-#include <numeric/MultiDimensionalHistogram.hh>
-#include <core/id/DOF_ID.hh>
+// AUTO-REMOVED #include <numeric/MultiDimensionalHistogram.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID.hh>
 #include <core/id/DOF_ID_Range.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -34,7 +34,14 @@
 
 
 // C++ headers
-#include <string>
+// AUTO-REMOVED #include <string>
+
+#include <core/id/DOF_ID.fwd.hh>
+#include <core/id/types.hh>
+#include <utility/vector0.hh>
+#include <numeric/MultiDimensionalHistogram.fwd.hh>
+#include <numeric/types.hh>
+
 
 
 // Operating system headers

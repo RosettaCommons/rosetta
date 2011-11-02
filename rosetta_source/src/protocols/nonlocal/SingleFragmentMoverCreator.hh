@@ -14,7 +14,7 @@
 #define PROTOCOLS_NONLOCAL_SINGLEFRAGMENTMOVERCREATOR_HH_
 
 // C/C++ headers
-#include <string>
+// AUTO-REMOVED #include <string>
 
 // Project headers
 #include <protocols/moves/Mover.fwd.hh>

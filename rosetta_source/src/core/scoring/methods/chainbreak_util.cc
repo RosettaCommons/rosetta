@@ -16,12 +16,15 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <boost/unordered/unordered_set.hpp>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

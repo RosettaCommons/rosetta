@@ -18,9 +18,14 @@
 #include <core/types.hh>
 
 // package headers
-#include <protocols/frag_picker/FragmentPicker.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/FragmentPicker.hh>
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
+
+#include <protocols/frag_picker/FragmentCandidate.hh>
+#include <protocols/frag_picker/scores/FragmentScoringMethod.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace frag_picker {

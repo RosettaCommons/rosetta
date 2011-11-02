@@ -27,7 +27,6 @@
 // C++ headers
 #include <cassert>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 #include <numeric/xyzVector.hh>
 

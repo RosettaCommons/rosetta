@@ -25,8 +25,8 @@
 // mini
 #include <core/sequence/SequenceProfile.fwd.hh>
 
-//Auto Headers
 #include <core/pose/Pose.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

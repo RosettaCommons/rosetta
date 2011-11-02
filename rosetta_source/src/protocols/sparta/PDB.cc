@@ -16,14 +16,18 @@
 #include <boost/unordered_map.hpp>
 #include <protocols/sparta/PDB.hh>
 #include <fstream>
-#include <cmath>
+// AUTO-REMOVED #include <cmath>
 #include <sstream>
 #include <core/pose/Pose.hh>
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 // Utility headers
 #include <basic/Tracer.hh>
 #include <protocols/sparta/util.hh>
 #include <protocols/sparta/constants.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace sparta {

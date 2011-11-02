@@ -41,7 +41,7 @@
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -61,10 +61,11 @@
 #include <sstream>
 #include <iostream>
 #include <string>
-#include <stdlib.h>
+// AUTO-REMOVED #include <stdlib.h>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer TR("apps.pilot.stranges.min_pack_min");

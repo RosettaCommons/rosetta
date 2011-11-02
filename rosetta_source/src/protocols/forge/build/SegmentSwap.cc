@@ -25,8 +25,8 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
 
-//Auto Headers
 #include <core/conformation/util.hh>
+#include <utility/vector1.hh>
 
 
 

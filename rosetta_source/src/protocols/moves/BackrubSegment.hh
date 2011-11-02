@@ -26,6 +26,9 @@
 // Utility Headers
 #include <utility/keys/Key3Vector.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 // C++ Headers
 
 namespace protocols {

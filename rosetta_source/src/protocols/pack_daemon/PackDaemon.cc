@@ -52,14 +52,18 @@
 
 #include <utility/exit.hh>
 #include <utility/integer_mapping.hh>
-#include <utility/mpi_util.hh>
 #include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
 #include <utility/excn/Exceptions.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+#ifdef USEMPI
+#include <utility/mpi_util.hh>
+#endif
 
 
 namespace protocols {

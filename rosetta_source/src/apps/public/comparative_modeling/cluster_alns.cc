@@ -16,6 +16,9 @@
 #include <devel/init.hh>
 #include <protocols/comparative_modeling/AlignmentClustering.hh>
 
+#include <utility/vector1.hh>
+
+
 int main( int argc, char * argv [] ) {
 	using namespace protocols::comparative_modeling;
 	devel::init(argc, argv);

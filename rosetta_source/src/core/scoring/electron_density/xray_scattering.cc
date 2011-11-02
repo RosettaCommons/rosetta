@@ -15,15 +15,18 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
+// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 #include <iostream>
 #include <map>
+
+#include <utility/vector1.hh>
+
 
 // C++ Headers
 

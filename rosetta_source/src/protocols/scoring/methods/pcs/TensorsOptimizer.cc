@@ -33,7 +33,7 @@
 // Unit headers
 #include <protocols/scoring/methods/pcs/TensorsOptimizer.hh>
 #include <protocols/scoring/methods/pcs/PseudocontactShiftData.hh>
-#include <protocols/scoring/methods/pcs/PseudocontactShiftInput.hh> // REQUIRED FOR WINDOWS 
+// AUTO-REMOVED #include <protocols/scoring/methods/pcs/PseudocontactShiftInput.hh> // REQUIRED FOR WINDOWS 
 // Package headers
 
 // Project headers
@@ -50,6 +50,9 @@
 // C++ headers
 #include <sstream>
 #include <iostream>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols{
 namespace scoring{

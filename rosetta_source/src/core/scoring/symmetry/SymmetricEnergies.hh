@@ -27,7 +27,11 @@
 #include <core/scoring/ContextGraphTypes.hh>
 
 // Numeric headers
-#include <numeric/xyzMatrix.hh>
+// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
+
+#include <utility/vector1.hh>
+#include <numeric/xyzMatrix.fwd.hh>
+
 
 namespace core {
 namespace scoring {

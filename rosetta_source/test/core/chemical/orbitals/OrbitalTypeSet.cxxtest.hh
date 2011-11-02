@@ -27,7 +27,11 @@
 #include <utility/pointer/owning_ptr.hh> // for some reason, AtomTypeSet.fwd.hh does not #include owning_ptr.hh
 
 // C++ headers, for debugging your tests
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
+
+//Auto Headers
+#include <utility/vector1.hh>
+
 
 using namespace core;
 using namespace core::chemical;

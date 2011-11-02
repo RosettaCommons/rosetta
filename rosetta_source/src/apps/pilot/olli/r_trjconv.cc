@@ -22,10 +22,10 @@
 #include <core/conformation/Conformation.hh>
 
 #include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/fragment/OrderedFragSet.hh>
-#include <core/fragment/BBTorsionSRFD.hh>
-#include <core/fragment/JumpSRFD.hh>
-#include <core/fragment/FragData.hh>
+// AUTO-REMOVED #include <core/fragment/OrderedFragSet.hh>
+// AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
+// AUTO-REMOVED #include <core/fragment/JumpSRFD.hh>
+// AUTO-REMOVED #include <core/fragment/FragData.hh>
 #include <core/fragment/util.hh>
 #include <core/fragment/FragmentIO.hh>
 
@@ -34,23 +34,23 @@
 #include <protocols/abinitio/ClassicAbinitio.hh>
 // AUTO-REMOVED #include <protocols/relax_protocols.hh>
 // AUTO-REMOVED #include <protocols/abinitio/FoldConstraints.hh>
-#include <core/fragment/SecondaryStructure.hh>
+// AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
 
 #include <protocols/evaluation/PoseEvaluator.hh>
-#include <protocols/evaluation/RmsdEvaluator.hh>
+// AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
 
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 
-#include <protocols/loops/util.hh>
-#include <protocols/loops/Loops.hh>
+// AUTO-REMOVED #include <protocols/loops/util.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 
 // AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -63,23 +63,23 @@
 //#include <basic/options/OptionKeys.hh>
 #include <basic/options/after_opts.hh>
 #include <basic/options/option_macros.hh>
-#include <protocols/evaluation/ChemicalShiftEvaluator.hh>
+// AUTO-REMOVED #include <protocols/evaluation/ChemicalShiftEvaluator.hh>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/evaluation.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 // C++ headers
 // AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 
-#include <protocols/viewer/viewers.hh>
+// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 #include <basic/Tracer.hh>
 
-#include <core/id/NamedStubID.hh>
+// AUTO-REMOVED #include <core/id/NamedStubID.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/id/types.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 
 basic::Tracer tracer("r_trjconv");
@@ -91,16 +91,10 @@ using namespace abinitio;
 
 
 
-#include <core/scoring/rms_util.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 
-//Auto Headers
-#include <core/fragment/JumpingFrame.hh>
-#include <core/id/TorsionID.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <utility/excn/EXCN_Base.hh>
 
 

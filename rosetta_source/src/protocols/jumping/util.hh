@@ -26,8 +26,8 @@
 #include <core/fragment/JumpingFrame.fwd.hh>
 // AUTO-REMOVED #include <protocols/checkpoint/CheckPointer.hh>
 
-//Auto Headers
 #include <protocols/checkpoint/CheckPointer.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

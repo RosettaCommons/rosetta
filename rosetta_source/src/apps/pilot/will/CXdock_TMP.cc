@@ -75,7 +75,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
-#include "apps/pilot/will/will_util.hh"
+#include <apps/pilot/will/will_util.hh>
 
 using core::id::AtomID;
 using core::id::DOF_ID;

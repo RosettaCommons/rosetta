@@ -19,14 +19,17 @@
 #include <protocols/features/PairFeatures.fwd.hh>
 
 // Project Headers
-#include <core/scoring/TenANeighborGraph.hh>
+// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols{
 namespace features{

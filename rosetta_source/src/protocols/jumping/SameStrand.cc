@@ -49,6 +49,9 @@
 #include <numeric/random/random.hh>
 #include <utility/exit.hh>
 
+#include <utility/vector1.hh>
+
+
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
 //Auto using namespaces end

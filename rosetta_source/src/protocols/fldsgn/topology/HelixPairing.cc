@@ -33,6 +33,9 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
 
+#include <utility/vector1.hh>
+
+
 static basic::Tracer TR( "protocols.topology.HelixPairing" );
 
 using namespace core;

@@ -17,8 +17,8 @@
 
 // Unit Headers
 #include <core/types.hh>
-#include <core/fragment/util.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/fragment/util.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -31,8 +31,12 @@
 
 // C/C++
 #include <iostream>
-#include <utility>
+// AUTO-REMOVED #include <utility>
 #include <vector>
+
+//Auto Headers
+#include <utility/vector1.hh>
+
 
 using basic::Tracer;
 using core::kinematics::MoveMap;

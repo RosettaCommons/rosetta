@@ -52,6 +52,9 @@
 // C++ Headers
 #include <string>
 
+#include <protocols/jd2/Job.hh>
+
+
 static basic::Tracer ProteinSilentReportTracer("protocols.features.ProteinSilentReport");
 
 namespace protocols{

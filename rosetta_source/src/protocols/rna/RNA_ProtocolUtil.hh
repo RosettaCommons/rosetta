@@ -21,7 +21,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/rna/RNA_MatchType.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_MatchType.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/io/ozstream.fwd.hh>
 
@@ -36,7 +36,7 @@
 #include <string>
 // AUTO-REMOVED #include <vector>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
 
 

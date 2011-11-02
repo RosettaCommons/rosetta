@@ -22,6 +22,9 @@
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/patterson.OptionKeys.gen.hh>
 
+#include <utility/vector1.hh>
+
+
 // C++ Headers
 
 namespace core {

@@ -35,6 +35,10 @@
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <core/scoring/DerivVectorPair.hh>
+#include <utility/options/BooleanVectorOption.hh>
+
+
 namespace core {
 namespace pack {
 namespace scmin {

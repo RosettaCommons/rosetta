@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_filters_BasicFilterCreators_hh
 
 // Unit Headers
-#include <protocols/filters/BasicFilters.fwd.hh>
+// AUTO-REMOVED #include <protocols/filters/BasicFilters.fwd.hh>
 
 // Package Headers
 #include <protocols/filters/FilterCreator.hh>

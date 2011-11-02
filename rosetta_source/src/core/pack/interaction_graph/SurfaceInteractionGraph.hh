@@ -34,14 +34,13 @@
 
 //ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray1.io.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1.io.hh>
 
 //C++ Headers
 #include <vector>
 // AUTO-REMOVED #include <typeinfo> //required by GCC 4.3.2
 
-//Auto Headers
-#include <utility/stream_util.hh>
+#include <utility/vector1.hh>
 
 
 /// Tracer instance for this file

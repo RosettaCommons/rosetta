@@ -19,9 +19,9 @@
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
 // AUTO-REMOVED #include <utility/tag/Tag.hh>
 
-//Auto Headers
 #include <core/pack/task/operation/ResFilter.hh>
-#include <iostream>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 namespace core {
 namespace pack {

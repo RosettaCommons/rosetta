@@ -26,8 +26,8 @@
 #include <numeric/conversions.hh>
 #include <utility/string_util.hh>
 
-//Auto Headers
 #include <core/chemical/MMAtomType.hh>
+#include <utility/vector1.hh>
 
 
 // C++ headers

@@ -97,7 +97,6 @@
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzVector.fwd.hh>
 
-//Auto Headers
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
@@ -106,8 +105,7 @@
 #include <core/pose/signals/DestructionEvent.fwd.hh>
 #include <core/pose/signals/EnergyEvent.fwd.hh>
 #include <core/pose/signals/GeneralEvent.fwd.hh>
-#include <utility/vector1_bool.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 // C++ Headers

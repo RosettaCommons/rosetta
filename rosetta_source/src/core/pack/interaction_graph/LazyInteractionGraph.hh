@@ -23,6 +23,10 @@
 
 #include <ObjexxFCL/FArray3D.hh>
 
+#include <utility/vector1.hh>
+#include <ObjexxFCL/FArray1A.hh>
+
+
 //Lazy interaction graph uses as much memory as a PDInteractionGraph, but it evaulates
 //rotamer pair energies only as it needs them and stores them for later, instead
 //of requiring an extensive precomputation phase.

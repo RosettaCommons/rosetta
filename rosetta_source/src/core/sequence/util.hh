@@ -15,7 +15,7 @@
 #define INCLUDED_core_sequence_util_hh
 
 // C/C++ headers
-#include <string>
+// AUTO-REMOVED #include <string>
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
@@ -23,13 +23,17 @@
 // Project headers
 #include <core/types.hh>
 #include <core/id/SequenceMapping.fwd.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Package headers
 #include <core/sequence/Sequence.fwd.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
 #include <core/sequence/DerivedSequenceMapping.fwd.hh>
+
+#include <core/pose/Pose.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace sequence {

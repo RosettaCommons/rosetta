@@ -24,6 +24,9 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/exit.hh>
 
+#include <utility/vector1.hh>
+
+
 // C++ Headers
 // AUTO-REMOVED #include <sstream>
 

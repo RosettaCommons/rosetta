@@ -19,7 +19,7 @@
 
 // Package Headers
 #include <core/pack/interaction_graph/OnTheFlyInteractionGraph.hh>
-#include <core/pack/interaction_graph/AminoAcidNeighborSparseMatrix.hh>
+// AUTO-REMOVED #include <core/pack/interaction_graph/AminoAcidNeighborSparseMatrix.hh>
 
 #include <core/pack/rotamer_set/RotamerSetsBase.fwd.hh>
 
@@ -29,6 +29,9 @@
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray1D.hh>
+
+#include <utility/vector1.hh>
+
 
 // The double-lazy interaction graph is lazy both in its computation of
 // rotamer pair energies and in its allocation of memory for rotamer

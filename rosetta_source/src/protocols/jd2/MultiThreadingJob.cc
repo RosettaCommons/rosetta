@@ -12,12 +12,16 @@
 
 #include <protocols/jd2/MultiThreadingJob.hh>
 #include <protocols/jd2/MultiThreadingJob.fwd.hh>
-#include <core/sequence/SequenceAlignment.hh>
+// AUTO-REMOVED #include <core/sequence/SequenceAlignment.hh>
 
-#include <protocols/comparative_modeling/util.hh>
-#include <protocols/loops/Loops.hh>
+// AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 #include <core/types.hh>
+
+#include <protocols/jd2/InnerMultiThreadingJob.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace jd2 {

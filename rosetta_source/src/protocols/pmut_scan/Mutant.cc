@@ -11,21 +11,25 @@
 // Project Headers
 #include <protocols/pmut_scan/Mutant.hh>
 
-#include <core/graph/Graph.hh>
+// AUTO-REMOVED #include <core/graph/Graph.hh>
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/EnergyMap.fwd.hh>
+// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyMap.fwd.hh>
 
-#include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
 
 // Utility headers
 
 // ObjexxFCL header
 
 // C++
-#include <string>
+// AUTO-REMOVED #include <string>
 #include <iostream>
+
+#include <utility/vector1.hh>
+#include <sstream>
+
 
 namespace protocols {
 namespace pmut_scan {

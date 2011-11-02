@@ -15,19 +15,23 @@
 #define INCLUDED_protocols_multistate_design_MultiStateEntity_hh
 
 #include <protocols/genetic_algorithm/Entity.hh>
-#include <protocols/multistate_design/SingleStateEntityData.hh>
+// AUTO-REMOVED #include <protocols/multistate_design/SingleStateEntityData.hh>
 
 #include <core/types.hh>
-#include <basic/MetricValue.hh>
+// AUTO-REMOVED #include <basic/MetricValue.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // C++ Headers
 #include <map>
+
+#include <protocols/multistate_design/SingleStateEntityData.fwd.hh>
+#include <utility/vector1.hh>
+
 
 // AUTO-REMOVED #include <utility>
 

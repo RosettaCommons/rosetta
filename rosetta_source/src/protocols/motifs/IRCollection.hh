@@ -26,7 +26,7 @@
 #include <utility/vector1.hh>
 
 #include <map>
-#include <string>
+// AUTO-REMOVED #include <string>
 
 namespace protocols {
 namespace motifs {

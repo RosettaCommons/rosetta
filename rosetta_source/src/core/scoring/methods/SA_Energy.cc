@@ -18,12 +18,12 @@
 
 // Package headers
 #include <core/scoring/sasa.hh>
-#include <core/scoring/packing/surf_vol.hh>
+// AUTO-REMOVED #include <core/scoring/packing/surf_vol.hh>
 // Project headers
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
-//Auto Headers
 #include <core/scoring/EnergyMap.hh>
+#include <utility/vector1.hh>
 
 namespace core {
 namespace scoring {

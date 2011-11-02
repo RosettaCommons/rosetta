@@ -30,7 +30,8 @@
 //utility headers
 #include <utility/string_util.hh>
 
-//Auto Headers
+#include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -14,7 +14,7 @@
 #include <protocols/noesy_assign/CrossPeakList.fwd.hh>
 
 // Package Headers
-#include <protocols/noesy_assign/CrossPeak.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/CrossPeak.hh>
 #include <protocols/noesy_assign/PeakFileFormat.fwd.hh>
 #include <protocols/noesy_assign/PeakAssignmentResidueMap.fwd.hh>
 #include <protocols/noesy_assign/PeakCalibrator.fwd.hh>
@@ -24,13 +24,13 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/NamedAtomID.fwd.hh>
-#include <core/chemical/AA.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.fwd.hh>
+// AUTO-REMOVED #include <core/chemical/AA.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 // Utility headers
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 // #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -43,10 +43,14 @@
 //#include <core/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-#include <cstdlib>
-#include <string>
+// AUTO-REMOVED #include <cstdlib>
+// AUTO-REMOVED #include <string>
 #include <list>
-#include <map>
+// AUTO-REMOVED #include <map>
+
+#include <protocols/noesy_assign/CrossPeak.fwd.hh>
+#include <protocols/noesy_assign/ResonanceList.fwd.hh>
+
 
 namespace protocols {
 namespace noesy_assign {

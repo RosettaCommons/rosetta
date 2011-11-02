@@ -44,25 +44,26 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-#include <basic/basic.hh>
+// AUTO-REMOVED #include <basic/basic.hh>
 #include <basic/Tracer.hh> // tracer output
 
 // symmetry
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // Numeric headers
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 // // C++ Headers

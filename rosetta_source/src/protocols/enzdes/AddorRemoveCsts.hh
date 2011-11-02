@@ -22,6 +22,9 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace protocols {
 namespace enzdes {

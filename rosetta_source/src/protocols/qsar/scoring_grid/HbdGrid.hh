@@ -16,6 +16,9 @@
 #include <protocols/qsar/scoring_grid/HbdGrid.fwd.hh>
 #include <protocols/qsar/scoring_grid/GridBase.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace protocols {
 namespace qsar {

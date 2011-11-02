@@ -30,6 +30,9 @@
 #include <cmath>
 #include <iostream>
 #include <algorithm>
+
+#include <utility/vector1.hh>
+
 #ifdef WIN32
 #include <functional>
 #endif

@@ -16,8 +16,11 @@
 #define INCLUDED_core_pack_task_operation_ResLvlTaskOperationRegistrator_hh
 
 // Package headers
-#include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
 #include <utility/factory/WidgetRegistrator.hh>
+
+#include <core/pack/task/operation/ResLvlTaskOperationFactory.fwd.hh>
+
 
 namespace core {
 namespace pack {

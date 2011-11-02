@@ -43,8 +43,9 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
 
-//Auto Headers
+#include <core/fragment/FragData.hh>
 #include <core/fragment/FrameIterator.hh>
+#include <utility/vector1.hh>
 
 
 //// C++ headers

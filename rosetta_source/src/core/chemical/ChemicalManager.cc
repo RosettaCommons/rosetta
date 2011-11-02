@@ -58,6 +58,9 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
+#include <core/chemical/ResidueType.hh>
+
+
 
 
 namespace core {

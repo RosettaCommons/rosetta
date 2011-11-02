@@ -25,7 +25,6 @@
 #include <ObjexxFCL/CArrayP.fwd.hh>
 // AUTO-REMOVED #include <ObjexxFCL/FArray.all.fwd.hh>
 
-//Auto Headers
 #include <ObjexxFCL/FArray1D.fwd.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
 #include <ObjexxFCL/FArray3D.fwd.hh>

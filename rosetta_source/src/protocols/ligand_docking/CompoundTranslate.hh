@@ -16,11 +16,14 @@
 // Unit Headers
 #include <protocols/ligand_docking/Translate.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.hh>
-#include <protocols/filters/Filter.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/filters/Filter.hh>
 
 //// Project Headers
-#include <core/grid/CartGrid.fwd.hh>
+// AUTO-REMOVED #include <core/grid/CartGrid.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 ///////////////////////////////////////////////////////////////////////
 

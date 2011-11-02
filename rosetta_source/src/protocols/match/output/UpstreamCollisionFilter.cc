@@ -34,8 +34,8 @@
 // C++ headers
 #include <iostream>
 
-//Auto Headers
 #include <protocols/match/Hit.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

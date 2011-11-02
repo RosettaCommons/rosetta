@@ -44,6 +44,9 @@
 // ObjexxFCL
 #include <ObjexxFCL/FArray1D.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace protocols {
 namespace flexpack {

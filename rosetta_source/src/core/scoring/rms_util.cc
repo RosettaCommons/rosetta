@@ -39,7 +39,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 // Utility headers
 #include <basic/prof.hh>
@@ -52,6 +52,9 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <utility/exit.hh>
+
+#include <utility/vector1.hh>
+
 
 using namespace ObjexxFCL;
 

@@ -27,7 +27,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 
 namespace protocols {
 namespace match {

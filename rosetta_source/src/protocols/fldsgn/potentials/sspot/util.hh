@@ -18,6 +18,9 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace fldsgn {
 namespace potentials {

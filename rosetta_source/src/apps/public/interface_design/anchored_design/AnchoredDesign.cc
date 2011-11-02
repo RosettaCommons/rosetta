@@ -24,8 +24,11 @@
 // Numeric headers
 
 // C++ headers
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 // option key includes
 

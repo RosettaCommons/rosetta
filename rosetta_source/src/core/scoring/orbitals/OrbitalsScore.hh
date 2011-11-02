@@ -12,17 +12,21 @@
 
 #include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <numeric/xyzVector.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.hh>
 #include <core/scoring/orbitals/OrbitalsLookup.hh>
 #include <core/scoring/orbitals/OrbitalsScore.fwd.hh>
-#include <core/scoring/etable/EtableEnergy.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
+// AUTO-REMOVED #include <core/scoring/etable/EtableEnergy.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/chemical/orbitals/OrbitalTypeMapper.fwd.hh>
 
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <map>
-#include <list>
+// AUTO-REMOVED #include <list>
+
+#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace core{
 namespace scoring{

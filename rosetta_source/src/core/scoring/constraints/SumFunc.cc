@@ -27,7 +27,6 @@
 // C++ Headers
 // AUTO-REMOVED #include <string>
 
-//Auto Headers
 #include <sstream>
 
 

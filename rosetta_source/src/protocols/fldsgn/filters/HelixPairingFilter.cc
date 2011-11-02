@@ -21,7 +21,7 @@
 #include <protocols/fldsgn/topology/HelixPairing.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/fldsgn/BluePrint.hh>
-#include <protocols/fldsgn/topology/HSSTriplet.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh> // REQUIRED FOR WINDOWS
 
 // Project Headers
 #include <core/types.hh>
@@ -33,9 +33,8 @@
 // Parser headers
 #include <utility/tag/Tag.hh>
 
-//Auto Headers
-#include <numeric/xyzVector.hh>
-#include <numeric/conversions.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 //// C++ headers
 static basic::Tracer TR("protocols.fldsgn.filters.HelixPairingFilter");

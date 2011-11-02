@@ -40,7 +40,7 @@
 #include <protocols/scoring/methods/pcs2/PcsDataCenterManager.fwd.hh>
 #include <protocols/scoring/methods/pcs2/PcsDataCenterManagerSingleton.fwd.hh>
 #include <protocols/scoring/methods/pcs2/PcsTensor.fwd.hh>
-#include <protocols/scoring/methods/pcs2/PcsDataLanthanide.fwd.hh>
+// AUTO-REMOVED #include <protocols/scoring/methods/pcs2/PcsDataLanthanide.fwd.hh>
 #include <protocols/scoring/methods/pcs2/GridSearchIteratorCA.fwd.hh>
 
 // Project headers
@@ -51,6 +51,9 @@
 
 // Numeric headers
 #include <numeric/xyzVector.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 // Objexx headers
 

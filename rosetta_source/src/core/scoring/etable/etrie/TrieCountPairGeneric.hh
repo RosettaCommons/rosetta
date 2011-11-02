@@ -43,9 +43,8 @@
 // Objexx FCL Headers
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
-//Auto Headers
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 namespace core {

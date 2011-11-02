@@ -38,8 +38,8 @@
 #include <list>
 #include <map>
 
-//Auto Headers
-#include <core/pose/util.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 

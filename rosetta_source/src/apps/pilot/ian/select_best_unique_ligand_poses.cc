@@ -30,7 +30,7 @@
 #include <devel/init.hh>
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
 #include <core/scoring/rms_util.hh>
 #include <basic/Tracer.hh>
@@ -52,9 +52,9 @@
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
+#include <utility/vector1.hh>
 
 
 

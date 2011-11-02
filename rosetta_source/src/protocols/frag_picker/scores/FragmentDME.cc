@@ -29,21 +29,17 @@
 #include <basic/Tracer.hh>
 
 
-#include <numeric/model_quality/rms.hh>
+// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
 
 // utils
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <basic/prof.hh>
 
-//Auto Headers
 #include <core/id/NamedAtomID.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/pose/Pose.hh>
-#include <utility/io/izstream.hh>
-#include <iostream>
-#include <string>
+#include <utility/vector1.hh>
+#include <fstream>
 
 
 namespace protocols {

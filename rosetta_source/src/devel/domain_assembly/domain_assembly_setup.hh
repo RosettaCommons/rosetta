@@ -9,6 +9,9 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <string>
 
 // a class to hold information about the domains that will be assembled together

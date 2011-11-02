@@ -39,6 +39,9 @@
 #include <protocols/nonlocal/Chunk.hh>
 #include <protocols/nonlocal/Policy.hh>
 
+#include <core/fragment/FragData.hh>
+
+
 namespace protocols {
 namespace nonlocal {
 

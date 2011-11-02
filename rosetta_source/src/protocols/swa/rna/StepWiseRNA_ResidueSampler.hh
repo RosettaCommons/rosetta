@@ -23,7 +23,7 @@
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <protocols/moves/GreenPacker.fwd.hh>
 #include <core/pose/Pose.fwd.hh>

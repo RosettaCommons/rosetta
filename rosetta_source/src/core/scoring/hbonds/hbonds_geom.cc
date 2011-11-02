@@ -45,7 +45,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 // Numeric Headers
@@ -58,10 +58,12 @@
 //Utility Headers
 #include <utility/basic_sys_util.hh>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
-#include <ObjexxFCL/FArray2D.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
+#include <core/scoring/hbonds/hbtrie/HBAtom.hh>
+#include <utility/vector1.hh>
+#include <ObjexxFCL/FArray3D.hh>
 
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt;
 

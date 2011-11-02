@@ -40,7 +40,7 @@
 #include <core/scoring/ScoreFunction.hh>
 
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 
@@ -67,9 +67,10 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/pose/util.hh>
 #include <protocols/moves/kinematic_closure/KinematicPerturber.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 #include <fstream>
 

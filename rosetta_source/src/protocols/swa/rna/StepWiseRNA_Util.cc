@@ -44,12 +44,14 @@
 #include <numeric/conversions.hh>
 
 #include <iostream>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <sstream>
 #include <ObjexxFCL/format.hh>
 
-//Auto Headers
+#include <core/kinematics/MoveMap.hh>
 #include <core/pose/util.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 using namespace core;

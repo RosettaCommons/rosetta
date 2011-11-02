@@ -21,6 +21,9 @@
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/MoverStatus.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace protein_interface_design {
 namespace movers {

@@ -53,10 +53,9 @@
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 
-//Auto Headers
 #include <core/chemical/VariantType.hh>
 #include <core/pose/util.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 
 // C++ Headers

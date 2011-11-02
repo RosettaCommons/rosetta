@@ -46,8 +46,9 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/pose/Pose.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;

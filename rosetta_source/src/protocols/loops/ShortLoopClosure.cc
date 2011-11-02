@@ -57,8 +57,8 @@
 // AUTO-REMOVED #include <cstdlib>
 #include <string>
 
-//Auto Headers
 #include <core/pose/annotated_sequence.hh>
+#include <utility/vector1.hh>
 
 
 // AUTO-REMOVED #include <fstream>

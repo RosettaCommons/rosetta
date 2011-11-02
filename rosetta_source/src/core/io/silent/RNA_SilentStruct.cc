@@ -54,9 +54,8 @@
 
 #include <numeric/model_quality/rms.hh>
 
-//Auto Headers
 #include <core/pose/annotated_sequence.hh>
-#include <utility/io/mpistream.hh>
+#include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 #include <ObjexxFCL/format.hh>
 

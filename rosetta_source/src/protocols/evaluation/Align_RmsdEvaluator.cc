@@ -22,11 +22,11 @@
 // Utility headers
 #include <basic/Tracer.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/sequence/util.hh>
+// AUTO-REMOVED #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
 #include <protocols/comparative_modeling/coord_util.hh>
 
@@ -37,10 +37,9 @@
 
 // option key includes
 
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <basic/options/option.hh>
+#include <utility/vector1.hh>
 
 // C++ headers
 

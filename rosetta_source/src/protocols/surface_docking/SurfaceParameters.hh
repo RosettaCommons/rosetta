@@ -30,12 +30,12 @@
 #include <core/types.hh>
 #include <utility/vector1_bool.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyz.io.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.io.hh>
 
 // C++ headers
 #include <iostream>
-#include <map>
+// AUTO-REMOVED #include <map>
 #include <string>
 
 

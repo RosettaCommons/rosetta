@@ -26,9 +26,7 @@
 // C++ headers
 #include <map>
 
-//Auto Headers
 #include <utility/keys/Key2Tuple.fwd.hh>
-#include <utility/keys/Key3Tuple.fwd.hh>
 
 
 namespace core {

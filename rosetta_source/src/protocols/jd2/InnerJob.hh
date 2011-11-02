@@ -18,7 +18,7 @@
 #define INCLUDED_protocols_jd2_InnerJob_hh
 
 //unit headers
-#include <protocols/jd2/Job.fwd.hh>
+// AUTO-REMOVED #include <protocols/jd2/Job.fwd.hh>
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
@@ -33,7 +33,10 @@
 
 //C++ headers
 #include <string>
-#include <list>
+// AUTO-REMOVED #include <list>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace jd2 {

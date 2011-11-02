@@ -46,6 +46,9 @@
 // C++ headers
 #include <iostream>
 
+#include <utility/vector1.hh>
+
+
 static basic::Tracer TR_PcsGridSearchParameter("protocols.scoring.methods.pcs.PcsGridSearchParameter");
 
 

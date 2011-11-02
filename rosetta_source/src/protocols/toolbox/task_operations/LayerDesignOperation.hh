@@ -39,15 +39,18 @@
 #define INCLUDED_protocols_toolbox_task_operations_LayerDesignOperation_hh
 
 #include <core/types.hh>
-#include <core/chemical/AA.hh>
+// AUTO-REMOVED #include <core/chemical/AA.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <protocols/toolbox/task_operations/LayerDesignOperation.fwd.hh>
 #include <protocols/flxbb/SelectResiduesByLayer.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <utility/vector1.hh>
+
+#include <string>
+
 
 // Utility Headers
 

@@ -73,7 +73,7 @@
 
 // Numeric Headers
 #include <numeric/conversions.hh>
-#include <numeric/xyz.io.hh>
+// AUTO-REMOVED #include <numeric/xyz.io.hh>
 
 // Utility Headers
 #include <devel/init.hh>
@@ -92,6 +92,9 @@
 #include <basic/options/keys/AnchoredDesign.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
+
+#include <utility/vector0.hh>
+
 
 //local options
 basic::options::FileOptionKey const UBQpdb("UBQpdb");

@@ -36,7 +36,7 @@
 // AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/MinimizationData.fwd.hh>
-#include <core/kinematics/MinimizerMapBase.hh>
+// AUTO-REMOVED #include <core/kinematics/MinimizerMapBase.hh>
 
 // ObjexxFCL Headers
 
@@ -47,9 +47,7 @@
 // AUTO-REMOVED #include <cstdlib>
 #include <string>
 
-//Auto Headers
-#include <core/kinematics/FoldTree.fwd.hh>
-#include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
+#include <utility/vector1.hh>
 
 
 

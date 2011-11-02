@@ -26,7 +26,7 @@
 // AUTO-REMOVED #include <protocols/ScoreMap.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 
@@ -51,8 +51,8 @@
 #include <iostream>
 #include <string>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector1.hh>
 
 
 // AUTO-REMOVED #include <sstream>

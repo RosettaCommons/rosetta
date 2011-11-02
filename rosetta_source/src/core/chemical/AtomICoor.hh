@@ -28,9 +28,7 @@
 // Utility headers
 #include <utility/exit.hh>
 
-//Auto Headers
 #include <core/id/AtomID.fwd.hh>
-#include <ostream>
 
 
 // Commented by inclean daemon #include <ObjexxFCL/string.functions.hh>

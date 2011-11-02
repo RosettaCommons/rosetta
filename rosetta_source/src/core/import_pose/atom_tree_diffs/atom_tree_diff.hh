@@ -25,13 +25,12 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <fstream>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <map>
 // AUTO-REMOVED #include <string>
 // AUTO-REMOVED #include <set>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

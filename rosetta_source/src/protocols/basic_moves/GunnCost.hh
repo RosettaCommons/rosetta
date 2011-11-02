@@ -40,6 +40,9 @@
 // C++ headers
 #include <map>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace basic_moves {
 

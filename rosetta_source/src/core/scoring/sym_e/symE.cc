@@ -31,9 +31,10 @@
 // AUTO-REMOVED #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 
-//Auto Headers
+#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer TR("core.scoring.symE");

@@ -22,7 +22,7 @@
 
 #include <protocols/docking/types.hh>
 #include <protocols/docking/DockMCMCycle.fwd.hh>
-#include <protocols/docking/DockTaskFactory.hh>
+// AUTO-REMOVED #include <protocols/docking/DockTaskFactory.hh>
 
 // Package headers
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -35,18 +35,9 @@
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-//Auto Headers
-#include <core/types.hh>
-#include <utility/vector1.hh>
-
-// C++ headers
-#include <iostream>
-
-
-
-
-//JQX headers
 #include <protocols/moves/MoverContainer.fwd.hh>
+#include <utility/vector1.hh>
+#include <iostream>
 
 
 

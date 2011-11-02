@@ -43,13 +43,13 @@
 // C++ headers
 #include <fstream>
 
-//Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/import_pose/import_pose.hh>
-#include <basic/options/keys/broker.OptionKeys.gen.hh>
 #include <protocols/topology_broker/weights/LargeFragWeight.hh>
 #include <protocols/topology_broker/weights/SmallFragWeight.hh>
 #include <protocols/topology_broker/weights/SmoothFragWeight.hh>
+#include <utility/vector1.hh>
+#include <basic/options/keys/broker.OptionKeys.gen.hh>
 // Auto-header: duplicate removed #include <basic/options/keys/broker.OptionKeys.gen.hh>
 // Auto-header: duplicate removed #include <basic/options/option.hh>
 

@@ -47,6 +47,11 @@
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 static basic::Tracer TR("protocols.moves.GenericMonteCarloMover");
 static basic::Tracer TR_energies("protocols.moves.GenericMonteCarloMover.individual_energies");
 static numeric::random::RandomGenerator mc_RG(61452); // <- Magic number, do not change it!!!

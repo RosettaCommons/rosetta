@@ -31,15 +31,14 @@
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
-#include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
-#include <stdlib.h>
+// AUTO-REMOVED #include <stdlib.h>
 
 #ifndef WIN32
 #ifndef NATCL
 #include <pstream.h>
 
-//Auto Headers
 // Auto-header: duplicate removed #include <core/pose/util.hh>
 
 #endif

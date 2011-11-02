@@ -48,10 +48,9 @@
 //
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <protocols/loops/Loops.hh>
-#include <utility/io/mpistream.hh>
-#include <numeric/xyzVector.io.hh>
+#include <utility/vector1.hh>
+#include <numeric/xyz.functions.hh>
 
 using basic::T;
 using basic::Error;

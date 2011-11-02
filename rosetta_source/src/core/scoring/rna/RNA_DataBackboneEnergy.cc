@@ -25,8 +25,8 @@
 #include <core/scoring/rna/RNA_Util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/id/AtomID.hh>
 
 // Project headers
@@ -40,13 +40,16 @@
 #include <core/chemical/ChemicalManager.hh>
 
 // Utility headers
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <utility/exit.hh>
 
 
 // C++
 #include <numeric/xyzVector.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

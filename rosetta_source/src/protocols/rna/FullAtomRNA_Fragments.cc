@@ -44,7 +44,8 @@
 #include <fstream>
 #include <iostream>
 
-//Auto Headers
+#include <utility/vector1.hh>
+#include <utility/options/BooleanVectorOption.hh>
 #include <numeric/random/random.fwd.hh>
 
 //Auto using namespaces

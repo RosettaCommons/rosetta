@@ -14,12 +14,21 @@
 #define INCLUDED_protocols_qsar_scoring_grid_GridManager_hh
 
 #include <map>
-#include <utility/pointer/ReferenceCount.hh>
+// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/qsar/qsarMap.hh>
-#include <protocols/qsar/scoring_grid/GridBase.hh>
+// AUTO-REMOVED #include <protocols/qsar/qsarMap.hh>
+// AUTO-REMOVED #include <protocols/qsar/scoring_grid/GridBase.hh>
 #include <protocols/qsar/scoring_grid/GridManager.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
+
+#include <core/types.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <protocols/qsar/qsarMap.fwd.hh>
+#include <protocols/qsar/scoring_grid/GridBase.fwd.hh>
+#include <utility/vector1.hh>
+#include <string>
+
 
 namespace protocols {
 namespace qsar {

@@ -23,10 +23,6 @@
 
 // AUTO-REMOVED #include <ObjexxFCL/FArray1A.hh>
 
-//Auto Headers
-#include <iostream>
-
-
 
 namespace core {
 namespace scoring {

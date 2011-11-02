@@ -35,9 +35,12 @@
 #include <cassert>
 #include <iostream>
 #include <sstream>
-#include <boost/lexical_cast.hpp>
+// AUTO-REMOVED #include <boost/lexical_cast.hpp>
 #include <basic/Tracer.hh>
 #include <map>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR( "protocols.topology.util" );
 

@@ -28,11 +28,14 @@
 #include <protocols/docking/DockingEnsemble.fwd.hh>
 
 // Project headers
-#include <protocols/moves/ConformerSwitchMover.fwd.hh>
+// AUTO-REMOVED #include <protocols/moves/ConformerSwitchMover.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/moves/RigidBodyMover.fwd.hh>
 #include <protocols/moves/PackRotamersMover.fwd.hh>
 #include <protocols/moves/RotamerTrialsMinMover.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace docking{

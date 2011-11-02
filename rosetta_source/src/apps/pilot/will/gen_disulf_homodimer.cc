@@ -9,7 +9,7 @@
 /// @file /src/apps/pilat/will/genmatch.cc
 /// @brief ???
 
-#include "boost/tuple/tuple.hpp"
+#include <boost/tuple/tuple.hpp>
 #include <basic/database/open.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -29,17 +29,17 @@
 #include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/util.hh>
-#include <core/conformation/symmetry/VirtualCoordinate.hh>
-#include <core/fragment/BBTorsionSRFD.hh>
-#include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/fragment/FragData.hh>
-#include <core/fragment/FragmentIO.hh>
-#include <core/fragment/FragSet.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/VirtualCoordinate.hh>
+// AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
+// AUTO-REMOVED #include <core/fragment/ConstantLengthFragSet.hh>
+// AUTO-REMOVED #include <core/fragment/FragData.hh>
+// AUTO-REMOVED #include <core/fragment/FragmentIO.hh>
+// AUTO-REMOVED #include <core/fragment/FragSet.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
@@ -47,10 +47,10 @@
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <core/pack/optimizeH.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
+// AUTO-REMOVED #include <core/pack/optimizeH.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/annotated_sequence.hh>
@@ -58,56 +58,61 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/MultiConstraint.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/electron_density/util.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/packstat/compute_sasa.hh>
-#include <core/scoring/rms_util.hh>
+// AUTO-REMOVED #include <core/scoring/electron_density/util.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/packstat/compute_sasa.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-#include <numeric/model_quality/rms.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/basic_moves/FragmentMover.hh>
-#include <protocols/electron_density/util.hh>
-#include <protocols/flxbb/FlxbbDesign.hh>
-#include <protocols/jobdist/standard_mains.hh>
-#include <protocols/moves/MonteCarlo.hh>
+// AUTO-REMOVED #include <protocols/basic_moves/FragmentMover.hh>
+// AUTO-REMOVED #include <protocols/electron_density/util.hh>
+// AUTO-REMOVED #include <protocols/flxbb/FlxbbDesign.hh>
+// AUTO-REMOVED #include <protocols/jobdist/standard_mains.hh>
+// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
-#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
+// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
+// AUTO-REMOVED #include <protocols/moves/RepeatMover.hh>
+// AUTO-REMOVED #include <protocols/moves/RigidBodyMover.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/moves/symmetry/SymMinMover.hh>
 #include <protocols/moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/moves/TrialMover.hh>
+// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <protocols/symmetric_docking/SymDockingInitialPerturbation.hh>
-#include <protocols/symmetric_docking/SymDockingLowRes.hh>
-#include <protocols/viewer/viewers.hh>
+// AUTO-REMOVED #include <protocols/symmetric_docking/SymDockingLowRes.hh>
+// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
 // #include <devel/init.hh>
 
 // #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
-#include "apps/pilot/will/will_util.hh"
-#include "mynamespaces.hh"
+#include <apps/pilot/will/will_util.hh>
+#include <apps/pilot/will/mynamespaces.hh>
+
+#include <protocols/moves/MoverStatistics.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 using core::kinematics::Stub;
 using protocols::scoring::ImplicitFastClashCheck;

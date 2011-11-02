@@ -21,8 +21,8 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
-#include <core/kinematics/AtomTree.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/optimization/atom_tree_minimize.hh>
@@ -33,6 +33,11 @@
 
 // Numeric headers
 #include <numeric/constants.hh>
+
+#include <core/kinematics/Jump.hh>
+#include <core/optimization/DOF_Node.hh>
+#include <core/scoring/DerivVectorPair.hh>
+
 
 namespace core {
 namespace pack {

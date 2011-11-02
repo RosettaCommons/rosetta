@@ -13,7 +13,7 @@
 // Package Headers
 #include <core/pose/Pose.hh>
 #include <core/pack/task/ResfileReader.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 // Project Headers
 
@@ -30,8 +30,8 @@ using basic::Warning;
 #include <fstream>
 #include <map>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector1.hh>
 
 
 using namespace core;

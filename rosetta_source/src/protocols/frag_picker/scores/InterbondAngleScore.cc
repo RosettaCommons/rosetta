@@ -37,7 +37,6 @@
 
 #include <basic/prof.hh>
 
-//Auto Headers
 #include <protocols/frag_picker/scores/FourAtomsConstraintData.hh>
 
 

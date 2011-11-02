@@ -49,7 +49,7 @@
 
 //RNA stuff.
 #include <protocols/rna/RNA_DeNovoProtocol.hh>
-#include <protocols/rna/RNA_DataReader.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_DataReader.hh>
 #include <protocols/rna/RNA_StructureParameters.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 
@@ -65,12 +65,9 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/sequence/Sequence.hh>
-#include <protocols/moves/MoverStatistics.hh>
-#include <utility/io/mpistream.hh>
 
 
 

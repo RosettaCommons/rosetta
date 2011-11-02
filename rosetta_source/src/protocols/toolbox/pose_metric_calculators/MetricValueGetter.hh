@@ -21,9 +21,9 @@
 
 // AUTO-REMOVED #include <string>
 
-//Auto Headers
-#include <basic/MetricValue.fwd.hh>
+#include <utility/vector1.hh>
 #include <ostream>
+#include <basic/MetricValue.fwd.hh>
 
 
 namespace protocols{

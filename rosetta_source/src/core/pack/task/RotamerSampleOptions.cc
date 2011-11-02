@@ -21,9 +21,13 @@
 // AUTO-REMOVED #include <utility/vector0.hh>
 // AUTO-REMOVED #include <utility/string_util.hh>
 
-//Auto Headers
 #include <utility/vector0_bool.hh>
-#include <sstream>
+
+//Auto using namespaces
+namespace std { } using namespace std; // AUTO USING NS
+namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
+namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+//Auto using namespaces end
 
 
 namespace core {

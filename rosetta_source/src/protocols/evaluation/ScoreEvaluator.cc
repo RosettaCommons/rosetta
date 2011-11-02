@@ -30,7 +30,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <basic/options/option.hh>
-#include <iterator>
+// AUTO-REMOVED #include <iterator>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -43,6 +43,11 @@ static basic::Tracer tr("protocols.evalution.Score");
 
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+
+#include <protocols/evaluation/RDC_Evaluator.hh>
+#include <protocols/evaluation/util.hh>
+#include <utility/vector1.hh>
+
 
 
 // ObjexxFCL Headers

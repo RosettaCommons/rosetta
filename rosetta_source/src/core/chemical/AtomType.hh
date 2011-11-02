@@ -48,7 +48,6 @@
 // C++ headers
 #include <string>
 
-//Auto Headers
 #include <core/types.hh>
 #include <utility/vector1_bool.hh>
 

@@ -14,7 +14,7 @@
 #define PROTOCOLS_MOVES_EXTENDEDPOSEMOVERCREATOR_HH_
 
 // C/C++ headers
-#include <string>
+// AUTO-REMOVED #include <string>
 
 // Package headers
 #include <protocols/moves/Mover.fwd.hh>

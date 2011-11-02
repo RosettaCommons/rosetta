@@ -20,6 +20,9 @@
 #include <utility/exit.hh>
 #include <utility/file/file_sys_util.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace sequence {
 

@@ -33,7 +33,7 @@
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.fwd.hh>
-#include <core/scoring/trie/RotamerTrieBase.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/trie/RotamerTrieBase.fwd.hh>
 
 #ifdef WIN32 //VC++ needs full class declaration
 #include <core/scoring/trie/RotamerTrieBase.hh>
@@ -48,6 +48,9 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace pack {

@@ -32,8 +32,8 @@
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 
-//Auto Headers
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

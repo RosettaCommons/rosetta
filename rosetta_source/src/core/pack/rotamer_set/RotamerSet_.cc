@@ -68,8 +68,8 @@
 #include <iostream>
 // AUTO-REMOVED #include <fstream>
 
-//Auto Headers
-#include <core/scoring/trie/RotamerTrieBase.hh>
+#include <core/conformation/AbstractRotamerTrie.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

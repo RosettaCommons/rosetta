@@ -33,11 +33,16 @@
 #include <cppdb/frontend.h>
 
 // Boost Headers
-#include <boost/foreach.hpp>
+// AUTO-REMOVED #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
 // C++ Headers
 #include <sstream>
+
+#include <core/chemical/ResidueType.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
+#include <utility/vector0.hh>
+
 
 namespace protocols{
 namespace features{

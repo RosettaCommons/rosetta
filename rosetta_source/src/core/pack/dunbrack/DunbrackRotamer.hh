@@ -39,7 +39,6 @@
 // AUTO-REMOVED #include <utility/vector1.hh>
 // AUTO-REMOVED #include <utility/exit.hh>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

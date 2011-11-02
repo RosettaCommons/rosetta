@@ -17,12 +17,15 @@
 // Unit Headers
 #include <protocols/anchored_design/AnchorMovers.fwd.hh>
 #include <protocols/anchored_design/AnchorMoversData.fwd.hh>
-#include <protocols/anchored_design/Anchor.fwd.hh>
+// AUTO-REMOVED #include <protocols/anchored_design/Anchor.fwd.hh>
 #include <protocols/moves/InterfaceAnalyzerMover.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
+
+#include <utility/vector1.hh>
+
 
 // Utility Headers
 

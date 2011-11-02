@@ -30,6 +30,9 @@
 // AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace pack {
 namespace dunbrack {

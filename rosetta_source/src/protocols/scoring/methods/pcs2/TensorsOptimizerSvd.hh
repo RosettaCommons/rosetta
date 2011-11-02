@@ -34,7 +34,7 @@
 
 // Package headers
 #include <protocols/scoring/methods/pcs2/PcsDataCenter.fwd.hh>
-#include <protocols/scoring/methods/pcs2/TensorsOptimizer.hh>
+// AUTO-REMOVED #include <protocols/scoring/methods/pcs2/TensorsOptimizer.hh>
 
 // Project headers
 #include <core/optimization/Multifunc.hh>
@@ -42,7 +42,10 @@
 // Utility headers
 
 // Numeric headers
-#include <numeric/constants.hh>
+// AUTO-REMOVED #include <numeric/constants.hh>
+
+#include <utility/vector1.hh>
+
 
 // Objexx headers
 

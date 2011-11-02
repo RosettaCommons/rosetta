@@ -23,7 +23,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
@@ -37,6 +37,9 @@ using ObjexxFCL::fmt::I;
 
 // C++ headers
 #include <map>
+
+#include <utility/vector1.hh>
+
 
 using namespace core;
 using core::id::AtomID;

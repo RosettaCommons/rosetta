@@ -40,8 +40,11 @@
 
 //// C++ headers
 #include <vector>
-#include <map>
+// AUTO-REMOVED #include <map>
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 #ifdef USECUDA
 #include <time.h>

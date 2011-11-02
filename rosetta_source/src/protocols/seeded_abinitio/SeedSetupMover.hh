@@ -14,7 +14,7 @@
 #define INCLUDED_protocols_seeded_abinitio_SeedSetupMover_hh
 
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -27,7 +27,8 @@
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/Loops.hh>
 
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
+
 // Auto-header: duplicate removed #include <protocols/loops/Loops.fwd.hh>
 
 namespace protocols {

@@ -23,6 +23,10 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 
+//Auto Headers
+#include <utility/vector1.hh>
+
+
 namespace {
 
 #define TOLERANCE 0.00001

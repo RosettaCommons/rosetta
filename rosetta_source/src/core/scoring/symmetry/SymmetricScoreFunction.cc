@@ -52,9 +52,12 @@
 //#include <core/scoring/symmetry/NBListCache.fwd.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

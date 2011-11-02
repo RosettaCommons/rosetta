@@ -62,11 +62,12 @@
 
 #include <basic/options/option_macros.hh>
 
-//Auto Headers
+#include <core/fragment/FragData.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/MoverStatistics.hh>
 #include <protocols/relax/FastRelax.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
 //Auto using namespaces

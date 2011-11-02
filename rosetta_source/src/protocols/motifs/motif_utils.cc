@@ -87,10 +87,7 @@
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
 #include <basic/options/keys/motifs.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
-
-#include <protocols/motifs/MotifHit.hh>
 
 namespace protocols {
 namespace motifs {

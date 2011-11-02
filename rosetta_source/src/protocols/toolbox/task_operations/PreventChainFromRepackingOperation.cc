@@ -18,7 +18,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 
-#include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 // Utility Headers
@@ -29,7 +29,11 @@
 #include <utility/tag/Tag.hh>
 
 // C++ Headers
-#include <set>
+// AUTO-REMOVED #include <set>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 using basic::Error;
 using basic::Warning;

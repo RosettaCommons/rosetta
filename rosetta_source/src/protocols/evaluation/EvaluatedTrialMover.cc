@@ -39,9 +39,10 @@
 #include <utility/file/file_sys_util.hh>
 #include <basic/prof.hh>
 
-//Auto Headers
+#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/evaluation/ScoreEvaluator.hh>
+#include <utility/vector1.hh>
 
 // C++ headers
 

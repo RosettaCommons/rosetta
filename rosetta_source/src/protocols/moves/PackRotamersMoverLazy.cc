@@ -7,29 +7,36 @@
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/PackRotamersMoverLazyCreator.hh>
 
-#include <protocols/moves/DataMap.hh>
-#include <protocols/rosetta_scripts/util.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
 
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
+// AUTO-REMOVED #include <core/pack/interaction_graph/InteractionGraphBase.hh>
+// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
-#include <utility/string_util.hh> // string_split
+// AUTO-REMOVED #include <utility/string_util.hh> // string_split
 
 // option key includes
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
+
+#include <core/pack/task/operation/TaskOperation.fwd.hh>
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <basic/options/keys/OptionKeys.hh>
+
 
 namespace protocols {
 namespace moves {

@@ -48,9 +48,7 @@
 //C++ headers
 #include <iostream>
 
-//Auto Headers
 #include <core/pose/util.hh>
-//#include <core/import_pose/import_pose.hh>
 #include <core/scoring/EnergyMap.hh>
 
 

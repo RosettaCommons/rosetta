@@ -26,6 +26,9 @@
 
 #include <string>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace frag_picker {
 namespace scores {

@@ -21,6 +21,9 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace core {
 namespace fragment {

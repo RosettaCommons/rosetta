@@ -36,8 +36,8 @@
 #include <utility/vector1.fwd.hh>
 #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <core/pose/annotated_sequence.hh>
+#include <core/fragment/FragData.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

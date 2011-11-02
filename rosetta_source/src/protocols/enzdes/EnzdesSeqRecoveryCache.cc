@@ -28,6 +28,11 @@
 #include <set>
 #include <string>
 
+#include <core/id/SequenceMapping.hh>
+#include <core/pose/Pose.hh>
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace enzdes {
 

@@ -60,6 +60,11 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <utility/keys/Key3Vector.hh>
+
+
 namespace protocols {
 namespace loops {
 

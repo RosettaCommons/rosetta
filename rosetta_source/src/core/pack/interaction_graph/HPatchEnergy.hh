@@ -18,7 +18,7 @@
 #include <core/pack/interaction_graph/HPatchEnergy.fwd.hh>
 
 // Package headers
-#include <core/scoring/EnergyMap.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -27,6 +27,9 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

@@ -32,6 +32,9 @@
 #include <basic/Tracer.hh>
 #include <protocols/constraints_additional/AmbiguousMultiConstraint.hh>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <protocols/enzdes/MatchConstraintFileInfo.hh>
 // AUTO-REMOVED #include <protocols/enzdes/EnzConstraintParameters.hh>
 

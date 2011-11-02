@@ -29,6 +29,10 @@
 // Utility headers
 #include <utility/io/izstream.hh>
 
+#include <core/chemical/ResidueType.hh>
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace scoring {
 namespace rna {

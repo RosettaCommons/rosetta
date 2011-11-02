@@ -21,7 +21,7 @@
 // Project headers
 #include <core/id/AtomID_Map.hh>
 #include <core/id/DOF_ID.hh>
-#include <core/id/DOF_ID_Mask.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Mask.hh>
 
 // Numeric headers
 #include <numeric/xyz.functions.hh>
@@ -32,6 +32,10 @@
 // C++ headers
 #include <cassert>
 #include <iostream>
+
+#include <core/id/DOF_ID_Map.hh>
+#include <utility/vector1.hh>
+
 
 
 namespace core {

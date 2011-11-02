@@ -22,6 +22,9 @@
 
 #include <protocols/flexpack/rotamer_set/FlexbbRotamerSets.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 // Package Headers
 
 namespace protocols {

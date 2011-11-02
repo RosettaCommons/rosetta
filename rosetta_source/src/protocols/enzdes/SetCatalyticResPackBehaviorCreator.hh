@@ -12,6 +12,9 @@
 
 #include <core/pack/task/operation/TaskOperationCreator.hh>
 
+#include <string>
+
+
 namespace protocols {
 namespace enzdes {
 

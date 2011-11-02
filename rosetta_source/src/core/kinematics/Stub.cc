@@ -16,7 +16,7 @@
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/RT.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
 

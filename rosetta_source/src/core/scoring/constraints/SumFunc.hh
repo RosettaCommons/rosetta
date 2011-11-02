@@ -23,9 +23,7 @@
 
 // AUTO-REMOVED #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
-#include <ostream>
 
 
 // C++ Headers

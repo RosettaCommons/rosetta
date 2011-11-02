@@ -31,7 +31,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 
-#include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
@@ -42,6 +42,10 @@
 #include <string>
 
 #include <core/scoring/hbonds/HBondSet.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 //tracers
 using basic::Error;

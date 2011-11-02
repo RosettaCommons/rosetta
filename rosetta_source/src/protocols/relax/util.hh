@@ -18,12 +18,15 @@
 
 #ifndef INCLUDED_protocols_relax_util_hh
 #define INCLUDED_protocols_relax_util_hh
-#include <core/scoring/MembraneTopology.fwd.hh> //pba
+// AUTO-REMOVED #include <core/scoring/MembraneTopology.fwd.hh> //pba
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <protocols/relax/RelaxProtocolBase.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 //// C++ headers
 // AUTO-REMOVED #include <cstdlib>

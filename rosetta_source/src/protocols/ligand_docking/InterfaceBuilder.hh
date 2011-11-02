@@ -17,7 +17,7 @@
 //// Unit Headers
 #include <protocols/ligand_docking/InterfaceBuilder.fwd.hh>
 #include <protocols/ligand_docking/ligand_options/Interface.fwd.hh>
-#include <protocols/ligand_docking/LigandArea.hh>
+// AUTO-REMOVED #include <protocols/ligand_docking/LigandArea.hh>
 
 //// Package Headers
 #include <core/types.hh>
@@ -32,7 +32,10 @@
 
 //// C++ headers
 #include <map>
-#include <set>
+// AUTO-REMOVED #include <set>
+
+#include <protocols/ligand_docking/LigandArea.fwd.hh>
+
 
 ///////////////////////////////////////////////////////////////////////
 

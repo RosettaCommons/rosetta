@@ -45,9 +45,9 @@
 // C++ headers
 #include <list>
 
-//Auto Headers
 #include <core/id/AtomID.fwd.hh>
 #include <protocols/match/Hit.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

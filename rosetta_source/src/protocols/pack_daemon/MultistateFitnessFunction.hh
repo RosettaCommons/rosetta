@@ -20,7 +20,7 @@
 #include <protocols/pack_daemon/MultistateAggregateFunction.fwd.hh>
 
 // Package headers
-#include <protocols/pack_daemon/EntityCorrespondence.fwd.hh>
+// AUTO-REMOVED #include <protocols/pack_daemon/EntityCorrespondence.fwd.hh>
 #include <protocols/pack_daemon/PackDaemon.fwd.hh>
 
 // Project headers
@@ -28,13 +28,13 @@
 #include <protocols/genetic_algorithm/FitnessFunction.hh>
 
 // Utility headers
-#include <utility/heap.fwd.hh>
+// AUTO-REMOVED #include <utility/heap.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/vector0.hh>
 
 // C++ headers
 #include <list>
-#include <utility>
+// AUTO-REMOVED #include <utility>
 
 namespace protocols {
 namespace pack_daemon {

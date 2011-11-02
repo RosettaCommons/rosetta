@@ -20,7 +20,7 @@
 #include <core/scoring/ScoringManager.hh>
 
 // Utility header
-#include <utility/keys/Key3Tuple.hh>
+// AUTO-REMOVED #include <utility/keys/Key3Tuple.hh>
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -30,7 +30,7 @@
 #include <string>
 #include <map>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <utility/keys/Key2Tuple.hh>
 
 

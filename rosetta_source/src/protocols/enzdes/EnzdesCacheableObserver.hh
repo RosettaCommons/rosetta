@@ -27,7 +27,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/constraints/Constraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
 #include <core/types.hh>
 #include <core/conformation/signals/LengthEvent.fwd.hh>
 
@@ -35,6 +35,10 @@
 #include <utility/signals/Link.hh>
 
 #include <map>
+
+#include <core/scoring/constraints/Constraint.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace enzdes {

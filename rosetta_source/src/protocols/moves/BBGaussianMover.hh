@@ -19,7 +19,7 @@
 //core
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 //protocols
 #include <protocols/moves/Mover.hh>
 //movemap
@@ -29,6 +29,10 @@
 
 //std
 #include <string>
+
+#include <core/conformation/Residue.fwd.hh>
+#include <numeric/xyzVector.hh>
+
 
 using namespace std;
 

@@ -16,7 +16,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <basic/database/open.hh>
 #include <core/kinematics/MoveMap.hh>
 // AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
@@ -38,10 +38,8 @@
 #include <protocols/moves/MinMover.hh>
 // AUTO-REMOVED #include <protocols/docking/DockingProtocol.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <core/scoring/constraints/Constraint.hh>
 
 
 

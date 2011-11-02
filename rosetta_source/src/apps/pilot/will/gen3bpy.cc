@@ -22,14 +22,14 @@
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/symmetry/SymDof.hh>
-#include <core/conformation/symmetry/SymmData.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymDof.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/init.hh>
 #include <core/io/pdb/pose_io.hh>
-#include <core/io/silent/ScoreFileSilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -65,8 +65,12 @@
 // #include <devel/init.hh>
 
 // #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
-#include "apps/pilot/will/will_util.hh"
-#include "mynamespaces.hh"
+#include <apps/pilot/will/will_util.hh>
+#include <apps/pilot/will/mynamespaces.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 using core::kinematics::Stub;
 using protocols::scoring::ImplicitFastClashCheck;

@@ -15,9 +15,9 @@
 //#include <protocols/match/LoopGrid.hh>
 #include <devel/loop_grids/LoopGrid.hh>
 
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
@@ -26,6 +26,10 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+
+#include <protocols/match/BumpGrid.hh>
+#include <utility/vector1.hh>
+
 
 using namespace std;
 using namespace core;

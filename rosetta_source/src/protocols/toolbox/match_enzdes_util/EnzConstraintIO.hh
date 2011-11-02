@@ -21,7 +21,7 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 
 
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
+// AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
 
 
 #ifdef WIN32
@@ -39,7 +39,7 @@
 // Project headers
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/types.hh>
 
@@ -49,11 +49,8 @@
 #include <utility/vector1.fwd.hh>
 // AUTO-REMOVED #include <set>
 
-//Auto Headers
-#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.fwd.hh>
-#include <utility/vector1_bool.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 

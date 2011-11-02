@@ -28,15 +28,14 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 // utils
 #include <ObjexxFCL/FArray1D.hh>
 #include <basic/prof.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/Pose.hh>
+#include <utility/vector1.hh>
 
 
 // C++

@@ -32,6 +32,9 @@
 //#include <sstream>
 #include <basic/Tracer.hh> // tracer output
 
+#include <utility/vector1.hh>
+
+
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 //Auto using namespaces end

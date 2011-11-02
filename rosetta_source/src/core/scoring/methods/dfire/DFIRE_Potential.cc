@@ -21,9 +21,12 @@
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.hh>
 #include <boost/algorithm/string/trim.hpp>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

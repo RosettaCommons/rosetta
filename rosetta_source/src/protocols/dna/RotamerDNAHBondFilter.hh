@@ -28,6 +28,9 @@
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace dna {
 

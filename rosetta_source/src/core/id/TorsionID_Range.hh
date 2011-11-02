@@ -30,7 +30,7 @@
 //#include <utility/exit.hh>
 
 // C++ header
-#include <cassert>
+// AUTO-REMOVED #include <cassert>
 #include <iostream>
 
 

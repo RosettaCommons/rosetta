@@ -25,10 +25,10 @@
 //#include <core/chemical/AA.hh>
 
 // Utility headers
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 // #include <utility/excn/Exceptions.hh>
 // #include <utility/vector1.fwd.hh>
 // #include <utility/pointer/ReferenceCount.hh>
@@ -41,9 +41,12 @@
 //#include <basic/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <cstdlib>
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 
 static basic::Tracer tr("protocols.noesy_assign.crosspeaks");

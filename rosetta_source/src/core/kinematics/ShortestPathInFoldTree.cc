@@ -44,9 +44,6 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <iostream>
-
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
 //Auto using namespaces end

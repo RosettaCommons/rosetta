@@ -56,6 +56,10 @@
 // Utility headers
 #include <basic/Tracer.hh>
 
+#include <core/fragment/FragData.hh>
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <numeric/random/random.hh>
 // Auto-header: duplicate removed #include <basic/Tracer.hh>
 

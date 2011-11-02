@@ -20,7 +20,7 @@
 #include <test/core/init_util.hh>
 
 // Package headers
-#include <core/scoring/methods/EnergyMethodOptions.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
 /*#include <core/conformation/Residue.hh>
@@ -31,19 +31,22 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>*/
 
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 
-#include <core/id/DOF_ID.hh>
-#include <core/id/TorsionID.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID.hh>
+// AUTO-REMOVED #include <core/id/TorsionID.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 
 
 // Utility headers
 #include <utility/vector1.hh>
+
+//Auto Headers
+
 
 using namespace core;
 

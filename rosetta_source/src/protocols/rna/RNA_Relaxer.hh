@@ -22,15 +22,15 @@
 #include <core/pose/Pose.fwd.hh>
 
 //Oooh.
-#include <ObjexxFCL/FArray1D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
 //// C++ headers
 #include <string>
 #include <vector>
 
-//Auto Headers
 #include <protocols/rna/RNA_FragmentMover.hh>
 #include <protocols/rna/RNA_Minimizer.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

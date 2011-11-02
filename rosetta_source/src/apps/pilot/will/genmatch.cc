@@ -9,7 +9,7 @@
 /// @file /src/apps/pilat/will/genmatch.cc
 /// @brief ???
 
-#include "boost/tuple/tuple.hpp"
+#include <boost/tuple/tuple.hpp>
 #include <basic/database/open.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -104,8 +104,8 @@
 // #include <devel/init.hh>
 
 // #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
-#include "apps/pilot/will/will_util.hh"
-#include "mynamespaces.hh"
+#include <apps/pilot/will/will_util.hh>
+#include <apps/pilot/will/mynamespaces.hh>
 
 using core::kinematics::Stub;
 using protocols::scoring::ImplicitFastClashCheck;

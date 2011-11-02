@@ -20,13 +20,13 @@
 
 #include <core/types.hh>
 #include <core/sequence/Sequence.hh>
-#include <core/sequence/SequenceProfile.hh>
+// AUTO-REMOVED #include <core/sequence/SequenceProfile.hh>
 
 #include <utility/file/FileName.fwd.hh>
-#include <ObjexxFCL/string.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 
 namespace core {
 namespace sequence {

@@ -46,8 +46,8 @@
 #include <string>
 #include <iostream>
 
-//Auto Headers
 #include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

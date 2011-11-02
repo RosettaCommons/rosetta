@@ -37,11 +37,8 @@
 #include <algorithm>
 #include <utility/tag/Tag.hh>
 
-//Auto Headers
-#include <core/grid/CartGrid.hh>
-
-// Boost Headers
-#include <boost/foreach.hpp>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #define foreach BOOST_FOREACH
 
 using basic::T;

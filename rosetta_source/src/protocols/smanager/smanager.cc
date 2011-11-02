@@ -17,9 +17,14 @@
 
 #include <core/pose/Pose.hh>
 
+// C++ headers
+#include <iostream>
 #include <sstream>
 #include <fstream>
 #include <iomanip>
+
+#include <utility/vector1.hh>
+
 
 #ifdef WIN32
 // apparently this is required for a Visual Studio build.

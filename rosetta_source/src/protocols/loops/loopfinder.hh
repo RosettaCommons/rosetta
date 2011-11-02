@@ -21,9 +21,7 @@
 #include <protocols/loops/Loops.fwd.hh>
 #include <core/types.hh>
 
-//Auto Headers
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

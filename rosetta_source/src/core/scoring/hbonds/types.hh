@@ -22,12 +22,15 @@
 
 #include <core/types.hh>
 #include <core/chemical/types.hh>
-#include <ObjexxFCL/FArray3D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 
 
 #include <numeric/xyzVector.fwd.hh>
 
-#include <utility>
+// AUTO-REMOVED #include <utility>
+
+#include <ObjexxFCL/FArray3D.fwd.hh>
+
 
 
 namespace core {

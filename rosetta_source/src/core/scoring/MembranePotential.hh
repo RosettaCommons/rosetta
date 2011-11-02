@@ -19,7 +19,7 @@
 
 // Unit headers
 #include <core/scoring/MembranePotential.fwd.hh>
-#include <core/scoring/MembraneTopology.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/MembraneTopology.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/MembraneTopology.hh>
 #include <core/scoring/EnvPairPotential.hh>
 
@@ -39,6 +39,9 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray4D.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

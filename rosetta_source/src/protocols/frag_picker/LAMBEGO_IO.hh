@@ -17,7 +17,6 @@
 #include <core/types.hh>
 #include <iostream>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

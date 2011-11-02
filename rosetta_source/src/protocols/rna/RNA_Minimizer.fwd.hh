@@ -11,10 +11,6 @@
 /// @brief  Pose forward declarations header
 /// @author Phil Bradley
 
-// AUTO-REMOVED #include <core/types.hh>
-
-//Auto Headers
-
 #ifndef INCLUDED_protocols_rna_RNA_Minimizer_FWD_HH
 #define INCLUDED_protocols_rna_RNA_Minimizer_FWD_HH
 
@@ -23,8 +19,8 @@
 namespace protocols{
 namespace rna{
 
-	class RNA_Minimizer;
-	typedef utility::pointer::owning_ptr< RNA_Minimizer > RNA_MinimizerOP;
+class RNA_Minimizer;
+typedef utility::pointer::owning_ptr< RNA_Minimizer > RNA_MinimizerOP;
 
 }
 }

@@ -55,6 +55,9 @@
 #include <core/scoring/methods/TwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 #ifdef WIN32 //VC++ needs full class declaration
 #include <core/scoring/methods/EnergyMethod.hh> // WIN32 INCLUDE
 #include <core/scoring/methods/EnergyMethodOptions.hh> // WIN32 INCLUDE

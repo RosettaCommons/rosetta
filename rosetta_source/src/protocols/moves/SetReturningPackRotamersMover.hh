@@ -29,8 +29,7 @@
 #include <utility/vector1.hh>
 
 
-//Auto Headers
-#include <iostream>
+#include <utility/vector0.hh>
 
 
 namespace protocols {

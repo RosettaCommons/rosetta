@@ -43,7 +43,7 @@
 
 // C/C++ headers
 #include <vector>
-#include <utility>
+// AUTO-REMOVED #include <utility>
 
 namespace core {
 namespace fragment {

@@ -23,8 +23,9 @@
 #include <protocols/antibody/AntibodyClass.hh>
 #include <protocols/loops/Loops.hh>
 
-//Auto Headers
+#include <core/chemical/AtomType.hh>
 #include <core/pose/util.hh>
+#include <utility/vector1.hh>
 
 
 // AUTO-REMOVED #include <utility/vector1.hh>

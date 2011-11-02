@@ -21,7 +21,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/conformation/Residue.fwd.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/id/AtomID_Mask.fwd.hh>
 
 #include <basic/Tracer.fwd.hh>
@@ -32,8 +32,7 @@
 // C++ headers
 #include <iosfwd>
 
-//Auto Headers
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 namespace core {

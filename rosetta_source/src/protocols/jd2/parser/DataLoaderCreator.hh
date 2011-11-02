@@ -16,10 +16,13 @@
 
 // Package headers
 #include <protocols/jd2/parser/DataLoader.fwd.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
+
+#include <core/types.hh>
+
 
 namespace protocols {
 namespace jd2 {

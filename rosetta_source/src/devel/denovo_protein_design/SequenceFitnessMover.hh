@@ -22,6 +22,9 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 // Utility Headers
 // AUTO-REMOVED #include <core/types.hh>
 

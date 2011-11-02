@@ -42,8 +42,8 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Func.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/electron_density/util.hh>
 
 #include <core/pose/Pose.hh>
@@ -63,7 +63,7 @@
 
 // AUTO-REMOVED #include <basic/basic.hh>
 // AUTO-REMOVED #include <basic/database/open.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/id/AtomID.hh>
 
@@ -124,14 +124,11 @@ static basic::Tracer TZ("pilot_apps::ca_to_allatom");
 #include <iostream>
 #include <string>
 
-//Auto Headers
 #include <core/fragment/FragSet.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <protocols/rbsegment_moves/RBSegment.hh>
+#include <protocols/evaluation/util.hh>
 #include <protocols/moves/MoverStatistics.hh>
+#include <protocols/rbsegment_moves/RBSegment.hh>
 #include <numeric/xyzVector.io.hh>
 
 

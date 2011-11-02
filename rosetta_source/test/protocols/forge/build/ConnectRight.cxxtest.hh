@@ -27,20 +27,8 @@
 #include <string>
 
 //Auto Headers
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/kinematics/types.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/ScoreFunctionInfo.fwd.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <basic/Tracer.fwd.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <numeric/xyz.functions.hh>
+#include <utility/vector1.hh>
 
 
 class ConnectRightTests : public CxxTest::TestSuite

@@ -30,6 +30,9 @@
 #include <core/scoring/constraints/MultiConstraint.hh>
 #include <core/scoring/constraints/SiteConstraint.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace scoring {
 namespace constraints {

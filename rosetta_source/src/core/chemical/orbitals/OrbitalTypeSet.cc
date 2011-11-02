@@ -36,6 +36,10 @@
 #include <core/chemical/orbitals/OrbitalType.hh>
 #include <utility/io/izstream.hh>
 
+#include <utility/exit.hh>
+#include <utility/vector1.hh>
+
+
 namespace core{
 namespace chemical{
 namespace orbitals{

@@ -28,7 +28,7 @@
 #include <basic/options/option.hh>
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 
 // C++ Headers
 #include <string>
@@ -36,6 +36,9 @@
 
 // option key includes
 #include <basic/options/keys/AnchoredDesign.OptionKeys.gen.hh>
+
+#include <utility/vector1.hh>
+
 
 using basic::T;
 using basic::Error;

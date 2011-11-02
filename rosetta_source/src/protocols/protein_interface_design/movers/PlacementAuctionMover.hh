@@ -15,12 +15,12 @@
 #define INCLUDED_protocols_protein_interface_design_movers_PlacementAuctionMover_hh
 
 // Project Headers
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
-#include <protocols/hotspot_hashing/HotspotStubSet.hh>
-#include <protocols/hotspot_hashing/HotspotStub.hh>
+// AUTO-REMOVED #include <protocols/hotspot_hashing/HotspotStubSet.hh>
+// AUTO-REMOVED #include <protocols/hotspot_hashing/HotspotStub.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
@@ -28,10 +28,14 @@
 #include <utility/vector1.hh>
 
 // C/C++ headers
-#include <iterator>
+// AUTO-REMOVED #include <iterator>
 #include <map>
 #include <string>
-#include <utility>
+// AUTO-REMOVED #include <utility>
+
+#include <protocols/hotspot_hashing/HotspotStub.fwd.hh>
+#include <protocols/hotspot_hashing/HotspotStubSet.fwd.hh>
+
 
 namespace protocols {
 namespace protein_interface_design {

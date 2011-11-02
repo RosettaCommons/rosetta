@@ -17,7 +17,7 @@
 
 #include <string>
 #include <vector>
-#include <utility>
+// AUTO-REMOVED #include <utility>
 
 namespace devel {
   namespace inv_kin_lig_loop_design {

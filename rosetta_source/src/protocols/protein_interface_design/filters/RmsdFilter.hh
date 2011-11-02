@@ -21,6 +21,9 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <list>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace protein_interface_design {
 namespace filters {

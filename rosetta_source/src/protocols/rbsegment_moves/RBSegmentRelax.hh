@@ -41,12 +41,11 @@
 // AUTO-REMOVED #include <vector>
 // AUTO-REMOVED #include <cmath>
 
-//Auto Headers
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

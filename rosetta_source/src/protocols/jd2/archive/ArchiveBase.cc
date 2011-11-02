@@ -22,13 +22,13 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/io/raw_data/DisulfideFile.hh>
-#include <core/scoring/ResidualDipolarCoupling.hh>
+// AUTO-REMOVED #include <core/io/raw_data/DisulfideFile.hh>
+// AUTO-REMOVED #include <core/scoring/ResidualDipolarCoupling.hh>
 
 // Auto-header: duplicate removed #include <core/pose/Pose.hh>
 
 
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <basic/MemTracer.hh>
 
@@ -48,12 +48,16 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 //C++
-#include <iterator>
+// AUTO-REMOVED #include <iterator>
 
 static basic::Tracer tr("protocols.jd2.Archive");
 using basic::mem_tr;
 // Utility headers
 #include <basic/options/option_macros.hh>
+
+#include <utility/vector1.hh>
+#include <boost/algorithm/string/erase.hpp>
+
 //
 OPT_1GRP_KEY( Integer, iterative, pool_size )
 

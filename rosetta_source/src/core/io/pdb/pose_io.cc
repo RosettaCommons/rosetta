@@ -51,23 +51,17 @@
 // option key includes
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/inout.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 // Auto-header: duplicate removed #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
-#include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
-//Auto Headers
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/id/AtomID_Map.hh>
-//#include <core/import_pose/import_pose.hh>
-#include <core/kinematics/Jump.hh>
-
-// Boost Headers
+#include <utility/vector1.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 

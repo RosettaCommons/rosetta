@@ -13,12 +13,16 @@
 #ifndef INCLUDED_protocols_ligand_docking_Transform_hh
 #define INCLUDED_protocols_ligand_docking_Transform_hh
 
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/ligand_docking/Transform.fwd.hh>
-#include <protocols/qsar/scoring_grid/GridManager.hh>
-#include <numeric/numeric.functions.hh>
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <protocols/qsar/scoring_grid/GridManager.hh>
+// AUTO-REMOVED #include <numeric/numeric.functions.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
+
+#include <core/conformation/Residue.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace ligand_docking {

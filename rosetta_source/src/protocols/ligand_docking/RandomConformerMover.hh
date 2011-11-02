@@ -19,8 +19,7 @@
 #include <protocols/ligand_docking/RandomConformerMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-//Auto Headers
-#include <core/types.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

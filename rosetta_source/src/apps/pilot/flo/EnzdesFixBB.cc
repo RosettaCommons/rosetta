@@ -48,12 +48,10 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <core/import_pose/import_pose.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <basic/datacache/BasicDataCache.hh>
+#include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
+#include <basic/datacache/BasicDataCache.hh>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>

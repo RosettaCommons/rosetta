@@ -19,17 +19,21 @@
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/jd2/DatabaseJobInputter.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
-#include <protocols/features/ProteinSilentReport.hh>
+// AUTO-REMOVED #include <protocols/features/ProteinSilentReport.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
 
 //C++ Headers
 #include <string>
+
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <protocols/features/ProteinSilentReport.fwd.hh>
+
 
 namespace protocols {
 namespace jd2 {

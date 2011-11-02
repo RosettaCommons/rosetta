@@ -23,46 +23,46 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 //#include <core/pose/util.hh>
 
 //#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 //#include <core/conformation/util.hh>
 //#include <protocols/loops/SlidingWindowLoopClosure.hh>
-#include <protocols/loops/loops_main.hh> //for getting ss from dssp
+// AUTO-REMOVED #include <protocols/loops/loops_main.hh> //for getting ss from dssp
 #include <protocols/jumping/Dssp.hh>
 
-#include <core/fragment/SecondaryStructure.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/HarmonicFunc.hh>
 
-#include <core/conformation/util.hh> //idealize
-#include <core/fragment/Frame.hh>
-#include <core/fragment/FrameList.hh>
-#include <core/fragment/FragSet.hh>
+// AUTO-REMOVED #include <core/conformation/util.hh> //idealize
+// AUTO-REMOVED #include <core/fragment/Frame.hh>
+// AUTO-REMOVED #include <core/fragment/FrameList.hh>
+// AUTO-REMOVED #include <core/fragment/FragSet.hh>
 #ifdef WIN32
 #include <core/fragment/FragID.hh>
 #endif
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 //
 #include <core/id/AtomID.hh>
-#include <core/scoring/rms_util.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/loops.OptionKeys.gen.hh>
 // Auto-header: duplicate removed #include <protocols/loops/loops_main.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -71,11 +71,10 @@
 
 //// C++ headers
 // #include <string>
-#include <list>
+// AUTO-REMOVED #include <list>
 
-//Auto Headers
-#include <core/id/NamedAtomID.hh>
-#include <protocols/jumping/StrandPairing.hh>
+#include <core/conformation/Conformation.hh>
+#include <utility/vector1.hh>
 
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS

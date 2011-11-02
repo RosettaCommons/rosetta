@@ -38,7 +38,9 @@
 
 // C++ headers
 
-//Auto Headers
+#include <protocols/jd2/Job.hh>
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
 
 
 namespace protocols {

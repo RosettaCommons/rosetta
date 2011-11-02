@@ -16,7 +16,7 @@
 #include <protocols/qsar/qsarMover.fwd.hh>
 #include <protocols/qsar/qsarMap.fwd.hh>
 //#include <protocols/qsar/qsarTypeManager.fwd.hh>
-#include <protocols/qsar/scoring_grid/GridManager.fwd.hh>
+// AUTO-REMOVED #include <protocols/qsar/scoring_grid/GridManager.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>

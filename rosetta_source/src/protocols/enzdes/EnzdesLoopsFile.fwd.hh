@@ -19,7 +19,10 @@
 #define INCLUDED_protocols_enzdes_EnzdesLoopsFile_fwd_hh
 
 
-#include <utility/pointer/ReferenceCount.hh>
+// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
+
+#include <utility/pointer/owning_ptr.hh>
+
 
 namespace protocols{
 namespace enzdes{

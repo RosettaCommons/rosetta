@@ -16,6 +16,9 @@
 
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace core {
 namespace import_pose {

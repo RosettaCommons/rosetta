@@ -35,9 +35,7 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <platform/types.hh>
-#include <basic/options/keys/OptionKeys.hh>
 #include <utility/Bound.fwd.hh>
 #include <utility/Bound.hh>
 #include <utility/down_cast.hh>
@@ -168,6 +166,7 @@
 #include <iomanip>
 #include <iosfwd>
 #include <iostream>
+#include <istream>
 #include <limits>
 #include <list>
 #include <map>
@@ -177,6 +176,8 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <basic/Tracer.fwd.hh>
+#include <basic/options/keys/OptionKeys.hh>
 #include <zlib/zlib.h>
 #include <zlib/zutil.h>
 

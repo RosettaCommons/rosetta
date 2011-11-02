@@ -33,6 +33,9 @@
 // utility headers
 #include <basic/Tracer.hh>
 
+#include <utility/vector1.hh>
+
+
 static basic::Tracer tr("core.scoring.DistanceChainbreak",basic::t_info);
 
 namespace core {

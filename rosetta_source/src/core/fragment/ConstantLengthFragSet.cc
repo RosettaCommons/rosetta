@@ -46,9 +46,8 @@
 #include <sstream>
 #include <string>
 
-//Auto Headers
 #include <core/fragment/FrameIterator.hh>
-#include <utility/exit.hh>
+#include <utility/vector1.hh>
 
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt;
 

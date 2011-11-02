@@ -19,6 +19,9 @@
 #include <protocols/comparative_modeling/features/ResidueFeature.fwd.hh>
 #include <protocols/comparative_modeling/features/TorsionFeature.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 #ifndef protocols_comparative_modeling_features_TorsionFeature_HH
 #define protocols_comparative_modeling_features_TorsionFeature_HH
 

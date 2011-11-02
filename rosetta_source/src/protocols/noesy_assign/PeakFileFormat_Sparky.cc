@@ -22,7 +22,7 @@
 #include <protocols/noesy_assign/ResonanceList.hh>
 
 // Package Headers
-#include <protocols/noesy_assign/Exceptions.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/Exceptions.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -32,7 +32,7 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 // #include <utility/excn/Exceptions.hh>
 // #include <utility/vector1.fwd.hh>
 // #include <utility/pointer/ReferenceCount.hh>
@@ -45,10 +45,14 @@
 //#include <basic/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-#include <cstdlib>
+// AUTO-REMOVED #include <cstdlib>
 #include <string>
 
-#include <basic/options/option_macros.hh>
+// AUTO-REMOVED #include <basic/options/option_macros.hh>
+
+#include <protocols/noesy_assign/PeakAssignment.hh>
+#include <utility/vector1.hh>
+
 
 static basic::Tracer tr("protocols.noesy_assign.io");
 

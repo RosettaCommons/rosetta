@@ -25,6 +25,9 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/ResId.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace filters {
 

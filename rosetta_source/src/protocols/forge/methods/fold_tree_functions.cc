@@ -44,8 +44,8 @@
 #include <string>
 #include <vector>
 
-//Auto Headers
 #include <core/pose/util.hh>
+#include <utility/vector1.hh>
 
 
 

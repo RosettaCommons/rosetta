@@ -17,17 +17,18 @@
 
 // Package headers
 #include <core/optimization/types.hh>
-#include <core/optimization/CartesianMinimizerMap.hh>
+// AUTO-REMOVED #include <core/optimization/CartesianMinimizerMap.hh>
 #include <core/optimization/NumericalDerivCheckResult.fwd.hh>
-#include <core/optimization/DOF_Node.fwd.hh>
-#include <core/kinematics/tree/Atom.fwd.hh>
+// AUTO-REMOVED #include <core/optimization/DOF_Node.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/tree/Atom.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-//Auto Headers
+#include <core/optimization/CartesianMinimizerMap.fwd.hh>
 #include <core/optimization/CartesianMultifunc.fwd.hh>
+#include <utility/vector1.hh>
 
 
 

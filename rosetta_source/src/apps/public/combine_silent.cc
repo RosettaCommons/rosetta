@@ -31,6 +31,9 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
+#include <utility/vector1.hh>
+
+
 int
 main( int argc, char* argv [] ) {
 	using namespace basic::options;

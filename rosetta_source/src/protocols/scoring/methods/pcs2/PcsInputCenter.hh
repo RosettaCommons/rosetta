@@ -48,7 +48,7 @@
 // Objexx headers
 
 // C++ headers
-#include <string>
+// AUTO-REMOVED #include <string>
 #include <map>
 
 namespace protocols{

@@ -72,6 +72,10 @@
 #include <utility/io/izstream.hh>
 #include <utility/tag/Tag.hh>
 
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 using namespace core;
 using namespace core::scoring;
 using namespace ObjexxFCL::fmt;

@@ -18,7 +18,7 @@
 #define INCLUDED_protocols_swa_StepWiseScreener_hh
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>

@@ -1,3 +1,6 @@
+
+//Auto using namespaces
+//Auto using namespaces end
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 // vi: set ts=2 noet:
 //  CVS information:
@@ -14,7 +17,7 @@
 #define INCLUDED_protocols_rna_FullAtomRNA_Fragments_HH
 
 #include <protocols/rna/FullAtomRNA_Fragments.fwd.hh>
-#include <protocols/rna/AllowInsert.hh>
+// AUTO-REMOVED #include <protocols/rna/AllowInsert.hh>
 #include <protocols/rna/RNA_Fragments.hh>
 
 // ObjexxFCL Headers
@@ -31,6 +34,9 @@
 #include <string>
 #include <map>
 #include <vector>
+
+#include <utility/vector1.hh>
+
 
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS

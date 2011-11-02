@@ -17,15 +17,18 @@
 // Package headers
 #include <protocols/genetic_algorithm/Entity.hh>
 #include <protocols/multistate_design/MultiStatePacker.hh>
-#include <protocols/multistate_design/SingleState.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <protocols/multistate_design/SingleState.hh> // REQUIRED FOR WINDOWS
 
 // Project headers
 #include <core/chemical/ResidueType.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pose/Pose.hh> // REQUIRED FOR WINDOWS 
+// AUTO-REMOVED #include <core/pose/Pose.hh> // REQUIRED FOR WINDOWS 
 
 // C++ headers
 #include <set>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace multistate_design {

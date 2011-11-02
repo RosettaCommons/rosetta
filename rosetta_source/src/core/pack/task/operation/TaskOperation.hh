@@ -34,11 +34,9 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ Headers
-#include <string>
+// AUTO-REMOVED #include <string>
 
-//Auto Headers
-#include <core/pack/task/operation/ResFilterFactory.fwd.hh>
-#include <core/pack/task/operation/ResLvlTaskOperationFactory.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

@@ -23,14 +23,12 @@
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <core/id/AtomID.hh>
-#include <core/pose/Pose.hh>
+#include <core/id/NamedAtomID.hh>
+#include <core/id/SequenceMapping.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/constraints/XYZ_Func.hh>
-#include <core/id/SequenceMapping.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

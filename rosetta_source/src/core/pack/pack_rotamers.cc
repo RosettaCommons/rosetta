@@ -31,7 +31,7 @@
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 // Project Headers
@@ -50,9 +50,9 @@
 
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <basic/options/option.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 

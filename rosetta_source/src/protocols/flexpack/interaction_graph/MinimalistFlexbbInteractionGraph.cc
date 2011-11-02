@@ -20,8 +20,8 @@
 /// C++ headers
 #include <iostream>
 
-//Auto Headers
 #include <utility/exit.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

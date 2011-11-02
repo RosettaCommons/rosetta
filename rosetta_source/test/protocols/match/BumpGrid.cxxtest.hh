@@ -31,12 +31,12 @@
 // C++ headers
 #include <string>
 #include <iostream>
-#include <sstream>
-#include <fstream>
-#include <ctime>
+// AUTO-REMOVED #include <sstream>
+// AUTO-REMOVED #include <fstream>
+// AUTO-REMOVED #include <ctime>
 
 //Auto Headers
-#include <protocols/match/Hit.hh>
+#include <utility/vector1.hh>
 #include <boost/unordered/unordered_map_fwd.hpp>
 
 

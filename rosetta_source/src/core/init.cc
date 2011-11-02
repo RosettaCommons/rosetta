@@ -191,8 +191,8 @@ using basic::Warning;
 
 // Windows headers
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
-#include <windows.h>
-#include <wincrypt.h>
+// AUTO-REMOVED #include <windows.h>
+// AUTO-REMOVED #include <wincrypt.h>
 #endif
 
 // STL headers
@@ -207,6 +207,14 @@ using basic::Warning;
 // Auto-header: duplicate removed #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+
+#include <core/pack/task/operation/ResFilterFactory.hh>
+#include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
+#include <core/pack/task/operation/TaskOperationFactory.hh>
+#include <core/scoring/ScoringManager.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 #ifdef UNICODE
 typedef std::wostringstream ostringstream_t;

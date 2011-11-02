@@ -21,8 +21,11 @@
 #include <protocols/flexpep_docking/FlexPepDockingFlags.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <map>
-#include <cstdlib>
+// AUTO-REMOVED #include <cstdlib>
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace flexpep_docking {

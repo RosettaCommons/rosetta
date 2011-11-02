@@ -27,6 +27,9 @@
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace toolbox {
 namespace rotamer_set_operations {

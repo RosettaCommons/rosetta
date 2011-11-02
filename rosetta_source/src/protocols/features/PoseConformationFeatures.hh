@@ -21,13 +21,16 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
-#include <core/id/AtomID_Map.fwd.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/id/AtomID_Map.fwd.hh>
+// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols{
 namespace features{

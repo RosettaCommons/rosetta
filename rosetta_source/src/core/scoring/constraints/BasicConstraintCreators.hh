@@ -18,7 +18,7 @@
 #include <core/scoring/constraints/ConstraintCreator.hh>
 
 // c++ headers
-#include <string>
+// AUTO-REMOVED #include <string>
 
 namespace core {
 namespace scoring {

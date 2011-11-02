@@ -25,8 +25,8 @@
 #include <core/id/AtomID.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <numeric/random/random.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Stub.hh>
@@ -37,15 +37,18 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 // Numeric headers
-#include <numeric/constants.hh>
+// AUTO-REMOVED #include <numeric/constants.hh>
 
 // C++ headers
 // AUTO-REMOVED #include <fstream>
 #include <iostream>
+
+#include <utility/vector1.hh>
+
 
 
 static numeric::random::RandomGenerator RG(2380934);  // <- Magic number, do not change it!

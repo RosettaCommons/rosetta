@@ -19,7 +19,7 @@
 #include <core/optimization/CartesianMinimizerMap.fwd.hh>
 
 // Package headers
-#include <core/optimization/DOF_Node.hh>
+// AUTO-REMOVED #include <core/optimization/DOF_Node.hh>
 #include <core/optimization/types.hh>
 
 #include <core/id/TorsionID.hh>
@@ -31,13 +31,12 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/id/DOF_ID_Map.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Map.hh>
 #include <core/scoring/DerivVectorPair.hh>
 
-#include <list>
+// AUTO-REMOVED #include <list>
 
-//Auto Headers
-#include <core/kinematics/DomainMap.fwd.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
 

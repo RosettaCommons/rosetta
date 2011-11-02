@@ -25,10 +25,8 @@
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/conformation/Atom.hh>
 
-//Auto Headers
 #include <core/chemical/ResidueType.fwd.hh>
 #include <utility/vector1_bool.hh>
-#include <iostream>
 
 
 namespace core {

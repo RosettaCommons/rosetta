@@ -34,10 +34,6 @@
 #include <iostream>
 #include <string>
 
-//Auto Headers
-#include <complex>
-
-
 namespace core {
 namespace sequence {
 

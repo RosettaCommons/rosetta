@@ -57,9 +57,8 @@
 #include <cstdlib>
 #include <string>
 
-//Auto Headers
-#include <core/import_pose/import_pose.hh>
 #include <protocols/jumping/PairingsList.hh>
+#include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
 static basic::Tracer tr("protocols.jumping");

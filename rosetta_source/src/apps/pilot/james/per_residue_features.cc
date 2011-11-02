@@ -18,10 +18,10 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
-#include <basic/options/option.hh>
-#include <basic/database/open.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/database/open.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
@@ -36,10 +36,14 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <platform/types.hh>
 #include <core/id/types.hh>
+
+#include <utility/vector1.hh>
+#include <basic/options/keys/OptionKeys.hh>
+
 
 ///////////////////////////////////////////////////////////////////////////////
 

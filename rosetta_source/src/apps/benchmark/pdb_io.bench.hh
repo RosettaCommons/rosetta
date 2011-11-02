@@ -13,14 +13,17 @@
 /// @brief  Performance benchmark for PDB input and output
 /// @author Matthew O'Meara
 
-#include "benchmark.hh"
+#include <apps/benchmark/benchmark.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <utility/io/izstream.hh>
-#include <iostream>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <iostream>
 #include <fstream>
+
+#include <utility/vector1.hh>
+
 
 using namespace core;
 

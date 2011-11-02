@@ -20,8 +20,7 @@
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/comparative_modeling/StealLigandMover.hh>
 
-//Auto Headers
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 

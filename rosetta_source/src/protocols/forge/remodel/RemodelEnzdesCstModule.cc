@@ -20,9 +20,9 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 // Auto-header: duplicate removed #include <core/conformation/ResidueFactory.hh>
 // Auto-header: duplicate removed #include <core/conformation/Residue.hh>
@@ -35,7 +35,11 @@
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <protocols/enzdes/EnzdesCacheableObserver.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
-#include <protocols/forge/build/BuildInstruction.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <protocols/forge/build/BuildInstruction.hh> // REQUIRED FOR WINDOWS
+
+#include <core/chemical/ResidueType.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+
 
 
 namespace protocols{

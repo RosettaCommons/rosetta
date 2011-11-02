@@ -21,15 +21,15 @@
 
 //#include <protocols/jd2/PDBJobOutputter.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/qsar.OptionKeys.gen.hh>
-#include <basic/database/open.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/qsar.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/database/open.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 
 // Utility headers
 #include <utility/io/izstream.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/exit.hh>
@@ -37,6 +37,10 @@
 #include <iostream>
 #include <fstream>
 #include <map>
+
+#include <protocols/qsar/qsarMap.hh>
+#include <utility/vector0.hh>
+
 
 namespace protocols {
 namespace qsar {

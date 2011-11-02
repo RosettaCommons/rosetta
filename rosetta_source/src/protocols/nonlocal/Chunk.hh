@@ -18,7 +18,7 @@
 
 // External headers
 #include <boost/scoped_ptr.hpp>
-#include <boost/math/distributions/normal.hpp>
+// AUTO-REMOVED #include <boost/math/distributions/normal.hpp>
 
 // Package headers
 #include <protocols/nonlocal/Region.hh>
@@ -30,6 +30,9 @@
 // Utility headers
 #include <numeric/random/DistributionSampler.hh>
 #include <utility/pointer/ReferenceCount.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace nonlocal {

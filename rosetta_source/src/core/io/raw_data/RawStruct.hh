@@ -30,7 +30,7 @@
 // C++ Headers
 // AUTO-REMOVED #include <string>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <map>
 #include <ostream>
 

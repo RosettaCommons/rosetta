@@ -37,12 +37,13 @@
 
 #include <core/chemical/ChemicalManager.hh>
 // AUTO-REMOVED
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-//Auto Headers
 #include <core/conformation/Conformation.hh>
 #include <core/import_pose/import_pose.hh>
 #include <protocols/moves/MoverContainer.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer tr("protocols.topo_broker.fibril_modeling",basic::t_info);

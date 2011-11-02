@@ -18,7 +18,10 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace protein_interface_design {

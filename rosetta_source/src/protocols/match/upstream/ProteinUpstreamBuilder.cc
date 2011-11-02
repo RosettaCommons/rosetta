@@ -40,8 +40,8 @@
 #include <utility/string_util.hh>
 #include <utility/LexicographicalIterator.hh>
 
-//Auto Headers
 #include <protocols/match/Hit.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

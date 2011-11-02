@@ -21,16 +21,16 @@
 #include <protocols/docking/DockTaskFactory.fwd.hh>
 
 // Package headers
-#include <protocols/docking/DockingHighRes.hh>
+// AUTO-REMOVED #include <protocols/docking/DockingHighRes.hh>
 
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <protocols/toolbox/task_operations/InterfaceTaskOperation.fwd.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.fwd.hh>
-#include <core/pack/task/TaskFactory.fwd.hh>
+// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictToInterface.fwd.hh>
+// AUTO-REMOVED #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-//Auto Headers
 #include <core/types.hh>
+#include <protocols/docking/DockingHighRes.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 // option key includes

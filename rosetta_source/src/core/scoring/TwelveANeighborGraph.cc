@@ -14,6 +14,9 @@
 // Unit Headers
 #include <core/scoring/TwelveANeighborGraph.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace core {
 namespace scoring {

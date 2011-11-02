@@ -30,9 +30,9 @@
 
 #include <string>
 
-//Auto Headers
-#include <protocols/rbsegment_moves/RBSegment.fwd.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/rbsegment_moves/RBSegment.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

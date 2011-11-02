@@ -32,6 +32,10 @@
 
 #include <sstream>
 
+//Auto Headers
+#include <utility/vector1.hh>
+
+
 using namespace protocols::genetic_algorithm;
 using namespace core;
 

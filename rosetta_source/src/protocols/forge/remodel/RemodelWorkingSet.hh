@@ -9,8 +9,11 @@
 #include <core/pack/task/PackerTask.hh>
 #include <protocols/forge/remodel/RemodelData.hh>
 
-#include <ObjexxFCL/FArray1D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
+
+#include <utility/vector1.hh>
+
 
 
 namespace protocols{

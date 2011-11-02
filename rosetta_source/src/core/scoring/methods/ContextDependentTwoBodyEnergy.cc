@@ -17,6 +17,9 @@
 // Project Headers
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
+#include <utility/vector1.hh>
+
+
 // ObjexxFCL Headers
 // AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 

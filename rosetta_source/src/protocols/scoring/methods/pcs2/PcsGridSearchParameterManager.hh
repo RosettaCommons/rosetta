@@ -26,6 +26,9 @@
 // Project Headers
 #include <core/types.hh>
 
+#include <utility/vector1.hh>
+
+
 // ObjexxFCL Headers
 
 // Utility headers

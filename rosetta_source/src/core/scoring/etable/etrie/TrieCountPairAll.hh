@@ -36,10 +36,6 @@
 // ObjexxFLC Headers
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
-//Auto Headers
-#include <core/types.hh>
-
-
 namespace core {
 namespace scoring {
 namespace etable {

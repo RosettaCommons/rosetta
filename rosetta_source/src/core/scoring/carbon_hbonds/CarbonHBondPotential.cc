@@ -38,7 +38,7 @@
 // Auto-header: duplicate removed #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 
 

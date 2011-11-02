@@ -14,13 +14,16 @@
 #define INCLUDED_protocols_evaluation_Align_RotamerEvaluator_hh
 
 #include <protocols/evaluation/AlignEvaluator.hh>
-#include <protocols/evaluation/util.hh>
+// AUTO-REMOVED #include <protocols/evaluation/util.hh>
 
 #include <core/sequence/SequenceAlignment.fwd.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/types.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace evaluation {

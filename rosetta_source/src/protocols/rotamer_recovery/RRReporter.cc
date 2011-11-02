@@ -18,14 +18,17 @@
 #include <protocols/rotamer_recovery/RRReporter.hh>
 
 // Project Headers
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 
 //C++ Headers
 #include <ostream>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace rotamer_recovery {

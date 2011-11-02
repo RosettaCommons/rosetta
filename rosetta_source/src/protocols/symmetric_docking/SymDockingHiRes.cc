@@ -32,17 +32,17 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
+// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
 #include <core/conformation/Residue.hh> // for design() flag
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <core/pack/task/operation/OperateOnCertainResidues.hh>
-#include <core/pack/task/operation/ResLvlTaskOperations.hh> // PreventRepackingRLT
-#include <core/pack/task/operation/ResFilters.hh> // ResidueLacksProperty
+// AUTO-REMOVED #include <core/pack/task/operation/OperateOnCertainResidues.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperations.hh> // PreventRepackingRLT
+// AUTO-REMOVED #include <core/pack/task/operation/ResFilters.hh> // ResidueLacksProperty
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Conformation.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -50,7 +50,7 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymDof.hh>
 
@@ -61,22 +61,22 @@
 #include <protocols/moves/symmetry/SymPackRotamersMover.hh>
 // AUTO-REMOVED #include <protocols/moves/OutputMovers.hh>
 #include <protocols/moves/symmetry/SymRotamerTrialsMover.hh>
-#include <protocols/moves/RotamerTrialsMinMover.hh>
+// AUTO-REMOVED #include <protocols/moves/RotamerTrialsMinMover.hh>
 #include <protocols/moves/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
-#include <protocols/moves/ChangeFoldTreeMover.hh>
+// AUTO-REMOVED #include <protocols/moves/ChangeFoldTreeMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 //for resfile reading
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 // Auto-header: duplicate removed #include <basic/options/option.hh>
 
-#include <protocols/loops/loops_main.hh>
-#include <protocols/loops/Loops.hh>
-#include <protocols/loops/LoopMover.fwd.hh>
-#include <protocols/loops/LoopMover_KIC.hh>
-#include <protocols/loops/LoopMover_Backrub.hh>
-#include <protocols/loops/LoopMover_CCD.hh>
+// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.hh>
+// AUTO-REMOVED #include <protocols/loops/LoopMover.fwd.hh>
+// AUTO-REMOVED #include <protocols/loops/LoopMover_KIC.hh>
+// AUTO-REMOVED #include <protocols/loops/LoopMover_Backrub.hh>
+// AUTO-REMOVED #include <protocols/loops/LoopMover_CCD.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
@@ -87,7 +87,7 @@
 #include <numeric/trig.functions.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 
-#include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
 
 #include <basic/Tracer.hh>
 using basic::T;
@@ -95,6 +95,10 @@ using basic::T;
 // option key includes
 
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 using basic::Error;
 using basic::Warning;

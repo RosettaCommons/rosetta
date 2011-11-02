@@ -31,7 +31,7 @@
 
 // C++ header
 #include <cassert>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 
 
 namespace core {

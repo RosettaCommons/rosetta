@@ -20,15 +20,20 @@
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
-#include <core/pack/rotamer_set/RotamerSet_.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <utility/tag/Tag.hh>
 
 // Auto-header: duplicate removed #include <core/pack/task/PackerTask.hh> // REQUIRED FOR WINDOWS
-#include <core/graph/Graph.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <core/graph/Graph.hh> // REQUIRED FOR WINDOWS
+
+#include <core/pack/rotamer_set/RotamerSet.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 
 namespace protocols {

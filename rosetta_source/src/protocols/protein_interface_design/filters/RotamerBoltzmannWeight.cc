@@ -45,10 +45,13 @@
 #include <core/scoring/Energies.hh>
 
 // Neil headers 110621
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pack/make_symmetric_task.hh>
 #include <protocols/moves/symmetry/SymMinMover.hh>
+
+#include <utility/vector0.hh>
+
 
 namespace protocols {
 namespace protein_interface_design{

@@ -35,7 +35,6 @@
 #include <vector>
 #include <iostream>
 
-//Auto Headers
 #include <utility/vector1.fwd.hh>
 
 

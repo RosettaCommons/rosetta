@@ -29,6 +29,9 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace frag_picker {
 

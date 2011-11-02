@@ -51,7 +51,10 @@
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 // Auto-header: duplicate removed #include <core/scoring/ScoreFunction.hh>
 #include <protocols/abinitio/MaxSeqSepConstraintSet.hh>
-#include <utility/io/mpistream.hh>
+// AUTO-REMOVED #include <utility/io/mpistream.hh>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer tr("protocols.abinitio");
 

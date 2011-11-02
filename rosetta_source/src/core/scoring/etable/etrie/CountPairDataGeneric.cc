@@ -20,6 +20,9 @@
 // STL Headers
 #include <iostream>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <cassert>
 
 namespace core {

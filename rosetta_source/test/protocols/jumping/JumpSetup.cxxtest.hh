@@ -29,8 +29,8 @@
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIteratorWorker_.hh>
@@ -49,7 +49,7 @@
 
 //#include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 // #include <core/fragment/FragData.hh>
 // #include <core/fragment/FragCache.hh>
@@ -77,29 +77,11 @@
 #include <fstream>
 
 //Auto Headers
-#include <core/chemical/VariantType.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/fragment/FragID_Iterator.fwd.hh>
-#include <core/fragment/FrameIterator.hh>
-#include <core/id/AtomID_Map.hh>
+#include <core/fragment/FragData.hh>
 #include <core/id/AtomID_Mask.hh>
-#include <core/id/DOF_ID_Map.hh>
-#include <core/id/DOF_ID_Mask.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/io/silent/EnergyNames.fwd.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/ScoreFunctionInfo.fwd.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <utility/stream_util.hh>
 #include <utility/fix_boinc_read.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/model_quality/maxsub.hh>
-#include <basic/options/option.hh>
+#include <utility/vector1.hh>
 
 // #include <numeric/random/random.hh>
 // #include <numeric/numeric.functions.hh>

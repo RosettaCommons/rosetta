@@ -16,7 +16,7 @@
 #include <core/scoring/UnfoldedStatePotential.hh>
 
 // Project headers
-#include <basic/database/open.hh>
+// AUTO-REMOVED #include <basic/database/open.hh>
 
 #include <core/conformation/Residue.hh>
 
@@ -37,8 +37,7 @@
 // C++ headers
 #include <iostream>
 
-//Auto Headers
-#include <ObjexxFCL/format.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

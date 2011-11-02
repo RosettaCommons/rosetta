@@ -18,6 +18,9 @@
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintCreator.hh>
 
+#include <utility/vector1.hh>
+
+
 //#include <core/scoring/constraints/AtomPairConstraint.hh>
 //#include <core/scoring/constraints/DunbrackConstraint.hh>
 //#include <core/scoring/constraints/AmbiguousConstraint.hh>

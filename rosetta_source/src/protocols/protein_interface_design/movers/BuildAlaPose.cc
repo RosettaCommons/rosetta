@@ -19,7 +19,7 @@
 #include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -27,8 +27,12 @@
 #include <basic/Tracer.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
 #include <utility/tag/Tag.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace protein_interface_design {

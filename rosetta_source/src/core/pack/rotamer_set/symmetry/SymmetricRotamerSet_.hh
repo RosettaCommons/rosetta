@@ -34,9 +34,9 @@
 #include <utility/pointer/owning_ptr.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-//Auto Headers
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/kinematics/Jump.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

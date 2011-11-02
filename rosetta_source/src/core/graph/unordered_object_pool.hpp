@@ -17,7 +17,7 @@
 #include <core/graph/unordered_object_pool.fwd.hpp>
 
 // boost::pool
-#include <boost/pool/pool.hpp>
+// AUTO-REMOVED #include <boost/pool/pool.hpp>
 
 // The following code will be put into Boost.Config in a later revision
 #if defined(BOOST_MSVC) || defined(__KCC)

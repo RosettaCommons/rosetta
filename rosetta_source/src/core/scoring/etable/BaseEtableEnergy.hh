@@ -46,9 +46,9 @@ CoarseEtable can be shared between threads
 
 // Project headers
 #include <core/conformation/Atom.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 
@@ -56,15 +56,11 @@ CoarseEtable can be shared between threads
 
 #include <ObjexxFCL/FArray3D.hh>
 
-//Auto Headers
 #include <core/scoring/etable/Etable.fwd.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 #include <core/scoring/etable/etrie/EtableAtom.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
-
-// C++ headers
-/// TEMP
-#include <iostream>
+#include <utility/vector1.hh>
 
 namespace core {
 namespace scoring {

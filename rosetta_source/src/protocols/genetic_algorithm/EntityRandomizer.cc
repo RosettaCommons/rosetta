@@ -27,6 +27,9 @@
 
 #include <algorithm> // std::copy
 
+#include <utility/exit.hh>
+
+
 namespace protocols {
 namespace genetic_algorithm {
 

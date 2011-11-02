@@ -33,8 +33,8 @@
 // Utility Headers
 // AUTO-REMOVED #include <utility/vector0.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
-#include <numeric/conversions.hh>
-#include <utility/keys/Key3Vector.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
+// AUTO-REMOVED #include <utility/keys/Key3Vector.hh>
 
 // Numeric Headers
 #include <numeric/IntervalSet.fwd.hh>
@@ -42,8 +42,9 @@
 // C++ Headers
 #include <map>
 
-//Auto Headers
 #include <utility/vector0_bool.hh>
+#include <utility/vector1.hh>
+#include <numeric/NumericTraits.hh>
 
 
 namespace protocols {

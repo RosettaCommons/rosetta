@@ -29,13 +29,13 @@
 #include <protocols/enzdes/EnzdesCacheableObserver.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
-#include <core/pack/pack_rotamers.hh>
+// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <core/conformation/symmetry/util.hh>
-#include <core/pose/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 #include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
@@ -43,7 +43,7 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
-#include <core/io/pdb/file_data.hh>
+// AUTO-REMOVED #include <core/io/pdb/file_data.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
@@ -62,7 +62,7 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/Constraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
 #include <protocols/moves/symmetry/SetupNCSMover.hh> //dihedral constraint
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
@@ -71,33 +71,33 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/LoopMover_CCD.hh>
 #include <protocols/loops/LoopMover_KIC.hh>
-#include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/toolbox/pose_manipulation.hh>
+// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/toolbox/pose_manipulation.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
-#include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
-#include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
+// AUTO-REMOVED #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
+// AUTO-REMOVED #include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
 #include <protocols/forge/remodel/RemodelDesignMover.hh>
 #include <protocols/forge/remodel/RemodelAccumulator.hh>
 #include <protocols/forge/remodel/RemodelEnzdesCstModule.hh>
-#include <protocols/viewer/viewers.hh>
-#include <protocols/moves/PyMolMover.hh>
+// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
+// AUTO-REMOVED #include <protocols/moves/PyMolMover.hh>
 
 
 //test
-#include <protocols/protein_interface_design/movers/DockAndRetrieveSidechains.hh>
-#include <protocols/moves/ReturnSidechainMover.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+// AUTO-REMOVED #include <protocols/protein_interface_design/movers/DockAndRetrieveSidechains.hh>
+// AUTO-REMOVED #include <protocols/moves/ReturnSidechainMover.hh>
+// AUTO-REMOVED #include <protocols/moves/SwitchResidueTypeSetMover.hh>
 
 // C++ headers
 #include <utility>
 
-//Auto Headers
 #include <core/pose/annotated_sequence.hh>
-// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <utility/tag/Tag.hh>
+#include <protocols/moves/PackRotamersMover.fwd.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace forge {

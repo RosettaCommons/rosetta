@@ -19,7 +19,7 @@
 #endif
 
 #if _MSC_VER >= 1400
-#include "windows.h"
+// AUTO-REMOVED #include "windows.h"
 #endif
 
 

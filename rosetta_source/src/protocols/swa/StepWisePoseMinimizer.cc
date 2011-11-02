@@ -24,8 +24,8 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/constraints/util.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -34,10 +34,14 @@
 #include <core/kinematics/MoveMap.hh>
 
 //#include <utility/basic_sys_util.hh>
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
 
 
 #include <string>
+
+#include <core/io/silent/SilentFileData.hh>
+#include <utility/vector1.hh>
+
 
 using namespace core;
 using core::Real;

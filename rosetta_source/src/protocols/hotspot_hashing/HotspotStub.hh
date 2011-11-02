@@ -16,7 +16,7 @@
 
 // Unit headers
 #include <protocols/hotspot_hashing/HotspotStub.fwd.hh>
-#include <protocols/hotspot_hashing/HotspotStubSet.hh>
+// AUTO-REMOVED #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/filters/Filter.hh>
@@ -26,9 +26,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
-#include <vector>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace hotspot_hashing {

@@ -25,9 +25,7 @@
 // AUTO-REMOVED #include <map>
 // AUTO-REMOVED #include <set>
 
-//Auto Headers
 #include <core/conformation/Residue.fwd.hh>
-#include <iostream>
 
 
 ///////////////////////////////////////////////////////////////////////

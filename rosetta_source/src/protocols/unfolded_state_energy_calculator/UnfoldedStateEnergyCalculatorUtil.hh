@@ -17,10 +17,13 @@
 // Project headers
 #include <core/types.hh>
 
-#include <core/scoring/EnergyMap.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
+
+#include <core/scoring/EnergyMap.fwd.hh>
+
 
 namespace protocols {
 namespace unfolded_state_energy_calculator {

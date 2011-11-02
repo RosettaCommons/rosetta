@@ -17,8 +17,8 @@
 #include <test/core/init_util.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/id/SequenceMapping.hh>
@@ -29,6 +29,10 @@
 
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
+
+//Auto Headers
+#include <utility/vector1.hh>
+
 
 class ExtraThreadingMover_Tests : public CxxTest::TestSuite {
 

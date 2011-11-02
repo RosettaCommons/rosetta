@@ -20,11 +20,12 @@
 #endif
 
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
-#include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
 
-//Auto Headers
 #include <core/pack/task/operation/ResLvlTaskOperation.hh>
 #include <core/pack/task/operation/ResLvlTaskOperationCreator.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <iostream>
 
 

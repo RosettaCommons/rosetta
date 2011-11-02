@@ -15,13 +15,17 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 //parsing
-#include <utility/tag/Tag.hh>
+// AUTO-REMOVED #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace filters {

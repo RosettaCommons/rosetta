@@ -22,7 +22,11 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <basic/prof.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
+
+#include <utility/vector1.hh>
+#include <basic/Tracer.hh>
+
 
 namespace protocols {
 namespace moves {

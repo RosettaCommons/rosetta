@@ -16,6 +16,9 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/CompositionMover.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace moves {
 

@@ -17,6 +17,10 @@
 
 #include <ObjexxFCL/string.functions.hh>
 
+#include <utility/vector1.hh>
+#include <utility/options/StringVectorOption.hh>
+
+
 
 namespace devel {
 namespace cartesian_frags {

@@ -83,24 +83,22 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <basic/Tracer.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
 #include <core/scoring/electron_density/util.hh>
-#include <core/scoring/constraints/util.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 
-//Auto Headers
-#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/import_pose/import_pose.hh>
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/prof.hh>
-
-#include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
-#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/jd2/Job.hh>
 #include <protocols/moves/MoverContainer.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <basic/options/keys/docking.OptionKeys.gen.hh>
+#include <basic/prof.hh>
 
 namespace protocols {
 namespace symmetric_docking {

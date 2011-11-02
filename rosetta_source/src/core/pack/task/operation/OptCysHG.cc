@@ -27,6 +27,9 @@
 // AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace core {
 namespace pack {

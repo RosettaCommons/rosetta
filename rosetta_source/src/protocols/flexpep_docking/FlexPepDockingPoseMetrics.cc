@@ -36,7 +36,7 @@
 #include <protocols/toolbox/pose_metric_calculators/SasaCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <protocols/viewer/viewers.hh>
+// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 
 // Utility headers
 #include <utility/file/FileName.hh>
@@ -46,6 +46,9 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <limits>
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 using basic::T;
 using basic::Error;

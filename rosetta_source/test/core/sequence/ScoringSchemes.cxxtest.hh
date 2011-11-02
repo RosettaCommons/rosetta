@@ -16,10 +16,10 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 #include <core/types.hh>
-#include <core/sequence/util.hh>
+// AUTO-REMOVED #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
@@ -27,7 +27,7 @@
 #include <core/sequence/PairScoringScheme.fwd.hh>
 
 //Auto Headers
-#include <utility/stream_util.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer TR("test.core.sequence.ScoringSchemes");

@@ -35,7 +35,10 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 #include <utility/exit.hh>
-#include <utility/io/mpistream.hh>
+// AUTO-REMOVED #include <utility/io/mpistream.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace io {

@@ -20,14 +20,14 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
-#include <core/scoring/etable/count_pair/CountPairFactory.hh>
-#include <core/scoring/etable/count_pair/types.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
+// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.hh>
+// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFactory.hh>
+// AUTO-REMOVED #include <core/scoring/etable/count_pair/types.hh>
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <core/id/AtomID.hh>
 
 
 #include <numeric/xyz.functions.hh>
@@ -35,8 +35,11 @@
 #include <numeric/conversions.hh>
 #include <numeric/deriv/distance_deriv.hh>
 #include <numeric/deriv/angle_deriv.hh>
-#include <numeric/deriv/dihedral_deriv.hh>
+// AUTO-REMOVED #include <numeric/deriv/dihedral_deriv.hh>
 #include <numeric/numeric.functions.hh>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

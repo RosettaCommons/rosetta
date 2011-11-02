@@ -34,6 +34,9 @@
 // ObjexxFCL
 #include <ObjexxFCL/FArray2D.hh>
 
+#include <utility/vector1.hh>
+
+
 // C++
 
 namespace core {

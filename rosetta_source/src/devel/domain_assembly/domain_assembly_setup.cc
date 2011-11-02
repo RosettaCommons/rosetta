@@ -23,7 +23,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueType.hh>
 
-#include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 
 #include <core/conformation/Conformation.hh>
 
@@ -44,7 +44,6 @@
 
 #include <basic/options/keys/DomainAssembly.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/pose/util.hh>
 
 

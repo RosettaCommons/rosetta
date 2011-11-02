@@ -18,7 +18,12 @@
 // Package headers
 #include <core/optimization/types.hh>
 #include <core/optimization/Multifunc.hh>
-#include <protocols/pockets/Fingerprint.hh>
+// AUTO-REMOVED #include <protocols/pockets/Fingerprint.hh>
+
+#include <protocols/pockets/Fingerprint.fwd.hh>
+#include <protocols/pockets/FingerprintMultifunc.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace pockets {

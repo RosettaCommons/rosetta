@@ -25,8 +25,8 @@
 
 //Project headers
 #include <core/conformation/Residue.fwd.hh>
-#include <core/chemical/ResidueType.fwd.hh>
-#include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueType.fwd.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/trie/RotamerTrieBase.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
@@ -37,8 +37,8 @@
 #include <utility/pointer/owning_ptr.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-//Auto Headers
-#include <iostream>
+#include <core/scoring/trie/RotamerTrieBase.fwd.hh>
+#include <utility/vector1.hh>
 
 #ifdef WIN32
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>

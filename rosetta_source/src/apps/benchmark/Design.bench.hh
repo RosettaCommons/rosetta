@@ -23,12 +23,14 @@
 //#include <core/pack/task/TaskFactory.hh>
 //#include <core/pack/task/operation/TaskOperations.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
-#include "benchmark.hh"
-#include "init_util.hh"
+#include <apps/benchmark/benchmark.hh>
+// AUTO-REMOVED #include <apps/benchmark/init_util.hh>
 
 //Auto Headers
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 //#include <platform/types.hh>
 //#include <core/types.hh>
 //#include <core/chemical/AA.hh>

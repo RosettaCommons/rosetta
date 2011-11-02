@@ -32,6 +32,9 @@ using basic::T;
 
 #include <basic/options/keys/packstat.OptionKeys.gen.hh>
 
+#include <utility/vector1.hh>
+
+
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
 //Auto using namespaces end

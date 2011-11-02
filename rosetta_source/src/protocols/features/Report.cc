@@ -15,6 +15,10 @@
 #include <protocols/features/Report.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <protocols/features/FeaturesReporter.hh>
+#include <utility/vector1.hh>
+
+
 namespace protocols{
 namespace features{
 

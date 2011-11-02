@@ -27,7 +27,6 @@
 //#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/types.hh>
 
-//Auto Headers
 #include <utility/pointer/owning_ptr.hh>
 
 

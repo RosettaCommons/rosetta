@@ -70,6 +70,10 @@
 // C++ headers
 #include <fstream>
 
+#include <protocols/scoring/methods/pcs2/PcsInputLine.hh>
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace scoring {
 namespace methods {

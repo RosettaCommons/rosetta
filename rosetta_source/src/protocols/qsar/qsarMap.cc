@@ -18,6 +18,9 @@
 #include <utility/string_util.hh>
 #include <map>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace qsar {
 

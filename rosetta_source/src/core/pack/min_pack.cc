@@ -60,6 +60,10 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
+#include <core/pack/dunbrack/DunbrackRotamer.hh>
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace pack {
 

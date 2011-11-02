@@ -23,6 +23,10 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>
 
+//Auto Headers
+#include <utility/vector1.hh>
+
+
 namespace {
 
 using core::Size;

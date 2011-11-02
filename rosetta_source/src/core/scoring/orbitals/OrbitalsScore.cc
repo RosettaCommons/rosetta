@@ -14,7 +14,7 @@
 #include <core/scoring/orbitals/OrbitalsLookup.hh>
 #include <core/scoring/orbitals/OrbitalsScore.hh>
 #include <core/scoring/orbitals/OrbitalsScoreCreator.hh>
-#include <core/scoring/orbitals/OrbitalsAssigned.hh>
+// AUTO-REMOVED #include <core/scoring/orbitals/OrbitalsAssigned.hh>
 #include <core/chemical/orbitals/OrbitalTypeMapper.fwd.hh>
 #include <map>
 #include <numeric/deriv/angle_deriv.hh>
@@ -33,22 +33,19 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
-#include <numeric/xyzTriple.hh>
+// AUTO-REMOVED #include <numeric/xyzTriple.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/orbitals.OptionKeys.gen.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/etable/Etable.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/orbitals.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
+// AUTO-REMOVED #include <core/scoring/etable/Etable.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
-//Auto Headers
-#include <core/pose/util.hh>
-
-// Auto-header: duplicate removed #include <core/pose/Pose.hh>
-#include <list>
+#include <core/id/types.hh>
+#include <core/kinematics/Jump.hh>
 
 namespace core{
 namespace scoring{

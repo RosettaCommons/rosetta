@@ -41,9 +41,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-//Auto Headers
-#include <utility/io/mpistream.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

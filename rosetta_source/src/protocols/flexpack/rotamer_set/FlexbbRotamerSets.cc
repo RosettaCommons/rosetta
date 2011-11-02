@@ -52,9 +52,9 @@
 // C++
 #include <fstream>
 
-//Auto Headers
-#include <core/scoring/trie/RotamerTrieBase.hh>
+#include <core/conformation/AbstractRotamerTrie.hh>
 #include <protocols/flexpack/rotamer_set/FlexbbRotamerSet.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

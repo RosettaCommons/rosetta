@@ -36,7 +36,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
-#include <core/kinematics/DomainMap.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/DomainMap.fwd.hh>
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -46,6 +46,9 @@
 
 // C++ headers
 #include <list>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

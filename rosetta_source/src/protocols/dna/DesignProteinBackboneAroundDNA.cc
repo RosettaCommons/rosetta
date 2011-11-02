@@ -56,7 +56,8 @@ using utility::vector1;
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-//Auto Headers
+#include <utility/vector0.hh>
+#include <utility/keys/Key3Vector.hh>
 #include <iterator>
 
 

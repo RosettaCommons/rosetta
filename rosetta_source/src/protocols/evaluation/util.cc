@@ -83,9 +83,10 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-//Auto Headers
+#include <core/fragment/SecondaryStructure.hh>
 #include <core/import_pose/import_pose.hh>
 #include <protocols/evaluation/util.hh>
+#include <utility/vector0.hh>
 
 static basic::Tracer tr("protocols.evalution");
 

@@ -23,7 +23,6 @@
 #include <iostream>
 #include <sstream>
 
-//Auto Headers
 #include <numeric/xyzVector.io.hh>
 
 

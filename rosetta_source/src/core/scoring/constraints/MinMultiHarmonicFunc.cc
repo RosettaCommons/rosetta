@@ -23,7 +23,8 @@
 // AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
 
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
+
 // AUTO-REMOVED #include <string>
 
 

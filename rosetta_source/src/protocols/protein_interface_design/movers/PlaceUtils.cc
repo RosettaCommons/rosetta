@@ -68,6 +68,9 @@
 #include <map>
 #include <algorithm>
 
+#include <utility/vector0.hh>
+
+
 using namespace core::scoring;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceUtils" );

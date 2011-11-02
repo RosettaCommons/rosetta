@@ -24,12 +24,9 @@
 #include <utility/FixedSizeLexicographicalIterator.hh>
 #include <utility/FixedSizeLexicographicalIterator.tmpl.hh>
 
-//Auto Headers
 #include <protocols/match/Hit.hh>
-
-// C++ headers
+#include <utility/vector1.hh>
 #include <set>
-#include <iostream>
 
 namespace protocols {
 namespace match {

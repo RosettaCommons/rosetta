@@ -20,6 +20,9 @@
 
 #include <iostream>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace topology_broker {
 

@@ -41,7 +41,7 @@
 // AUTO-REMOVED #include <ObjexxFCL/FArray2A.hh>
 #include <ObjexxFCL/FArray3D.fwd.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2A.fwd.hh>
 
 

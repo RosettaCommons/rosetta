@@ -9,7 +9,7 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/ScoreType.hh>
@@ -24,6 +24,9 @@
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+
 
 using namespace core;
 

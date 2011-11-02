@@ -23,6 +23,9 @@
 
 #include <complex>
 
+#include <utility/vector1.hh>
+
+
 
 namespace core {
 namespace sequence {

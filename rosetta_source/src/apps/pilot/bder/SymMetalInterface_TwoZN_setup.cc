@@ -36,18 +36,21 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <numeric/conversions.hh>
-#include <numeric/xyz.io.hh>
+// AUTO-REMOVED #include <numeric/xyz.io.hh>
 #include <numeric/xyzVector.hh>
 
 #include <utility/exit.hh>
 #include <utility/file/FileName.hh>
 #include <utility/vector1.hh>
 
-#include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
 #include <sstream>
+
+#include <utility/vector0.hh>
+
 
 
 typedef core::pose::Pose Pose;

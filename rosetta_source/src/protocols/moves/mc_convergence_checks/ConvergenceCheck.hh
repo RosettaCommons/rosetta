@@ -36,6 +36,9 @@
 // AUTO-REMOVED #include <map>
 #include <string>
 
+#include <utility/vector1.hh>
+
+
 // Forward declarations
 
 namespace protocols {

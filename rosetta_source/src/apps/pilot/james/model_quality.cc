@@ -33,7 +33,7 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-#include "james_util.hh"
+#include <apps/pilot/james/james_util.hh>
 
 // C++ headers
 #include <iostream>

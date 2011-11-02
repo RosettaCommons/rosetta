@@ -23,7 +23,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
-#include <core/id/AtomID_Mask.hh>
+// AUTO-REMOVED #include <core/id/AtomID_Mask.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MinimizerMapBase.hh>
 #include <core/pose/util.hh>
@@ -36,7 +36,9 @@
 /// Numeric headers
 #include <numeric/conversions.hh>
 
-//Auto Headers
+#include <core/scoring/DerivVectorPair.hh>
+#include <utility/vector1.hh>
+#include <utility/options/BooleanVectorOption.hh>
 // Auto-header: duplicate removed #include <core/pose/util.hh>
 
 

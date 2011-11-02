@@ -52,12 +52,15 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/broker.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/broker.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/abrelax.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <basic/MemTracer.hh>
 #include <numeric/random/random.hh>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer tr("protocols.general_abinitio", basic::t_info);
 

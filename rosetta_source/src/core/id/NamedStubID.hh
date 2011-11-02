@@ -19,15 +19,14 @@
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/types.hh>
-#include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <core/id/AtomID.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <iosfwd>
+// AUTO-REMOVED #include <iosfwd>
 
-//Auto Headers
 // AUTO-REMOVED #include <basic/OStream.fwd.hh>
 
 

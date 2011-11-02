@@ -11,7 +11,8 @@
 /// @author Sam DeLuca
 
 #include <protocols/qsar/scoring_grid/GridCreator.hh>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
+
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {

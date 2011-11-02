@@ -13,7 +13,7 @@
 
 
 #include <core/scoring/constraints/util.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/MixtureFunc.hh>
 
 #include <core/types.hh>
@@ -35,6 +35,9 @@
 // option key includes
 
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

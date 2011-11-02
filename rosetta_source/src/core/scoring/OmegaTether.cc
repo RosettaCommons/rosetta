@@ -38,9 +38,8 @@
 // AUTO-REMOVED #include <ObjexxFCL/FArray2A.hh>
 // AUTO-REMOVED #include <ObjexxFCL/FArray4D.hh>
 
-//Auto Headers
 #include <core/conformation/Residue.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

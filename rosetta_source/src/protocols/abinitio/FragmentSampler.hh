@@ -36,7 +36,7 @@
 #include <protocols/checkpoint/CheckPointer.hh>
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
@@ -57,8 +57,8 @@
 #include <string>
 #include <vector>
 
-//Auto Headers
 #include <protocols/moves/MonteCarlo.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

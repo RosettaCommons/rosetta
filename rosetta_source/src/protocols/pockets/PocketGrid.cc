@@ -45,6 +45,10 @@
 #include <cmath>
 #include <map>
 
+#include <utility/vector1.hh>
+#include <numeric/xyz.functions.hh>
+
+
 namespace protocols {
 namespace pockets {
 

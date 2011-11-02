@@ -16,28 +16,28 @@
 
 // Unit Headers
 // Package Headers
-#include <protocols/noesy_assign/CrossPeakList.fwd.hh>
-#include <protocols/noesy_assign/CrossPeak.fwd.hh>
-#include <protocols/noesy_assign/ResonanceList.hh>
-#include <protocols/noesy_assign/Resonance.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/CrossPeakList.fwd.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/CrossPeak.fwd.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/ResonanceList.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/Resonance.hh>
 
 
 // Project Headers
-#include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.fwd.hh>
+// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <utility/pointer/ReferenceCount.hh>
+// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
 
 //// C++ headers
-#include <cstdlib>
-#include <string>
-#include <list>
-#include <map>
+// AUTO-REMOVED #include <cstdlib>
+// AUTO-REMOVED #include <string>
+// AUTO-REMOVED #include <list>
+// AUTO-REMOVED #include <map>
 
 namespace protocols {
 namespace noesy_assign {

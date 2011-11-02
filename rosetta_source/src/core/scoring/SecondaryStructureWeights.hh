@@ -28,10 +28,6 @@
 // C++ headers
 // AUTO-REMOVED #include <string>
 
-//Auto Headers
-#include <iostream>
-
-
 namespace core {
 namespace scoring {
 

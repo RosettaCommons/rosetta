@@ -38,7 +38,7 @@
 #include <protocols/comparative_modeling/features/TorsionFeature.hh>
 #include <protocols/comparative_modeling/features/SSFeature.hh>
 
-#include "james_util.hh"
+#include <apps/pilot/james/james_util.hh>
 
 // C++ headers
 #include <fstream>

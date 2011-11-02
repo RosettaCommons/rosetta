@@ -90,16 +90,16 @@
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/DiagnosticData.hh>
+// AUTO-REMOVED #include <basic/datacache/DiagnosticData.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 // Numeric Headers
@@ -111,8 +111,11 @@
 // C++ headers
 #include <algorithm>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <protocols/jd2/Job.hh>
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 using basic::Error;

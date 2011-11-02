@@ -32,8 +32,8 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 
-//Auto Headers
 #include <protocols/moves/MonteCarlo.fwd.hh>
+#include <utility/vector1.hh>
 
 
 // ObjexxFCL Headers

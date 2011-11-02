@@ -20,12 +20,16 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ Headers
 #include <string>
+
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols{
 namespace features{

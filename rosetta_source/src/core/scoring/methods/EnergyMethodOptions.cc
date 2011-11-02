@@ -18,12 +18,10 @@
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
 
-//Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/scoring/ScoringManager.fwd.hh>
-
-// C/C++ Headers
-#include <string>
+#include <utility/exit.hh>
+#include <utility/vector1.hh>
 
 using std::string;
 using utility::vector1;

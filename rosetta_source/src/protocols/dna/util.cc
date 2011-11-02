@@ -58,10 +58,8 @@ typedef numeric::xyzVector< core::Real > xyzVec;
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/chemical/VariantType.hh>
 #include <core/import_pose/import_pose.hh>
-#include <protocols/moves/Mover.hh>
 #include <ObjexxFCL/format.hh>
 
 

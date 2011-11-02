@@ -51,7 +51,7 @@ using core::Size;
 using core::Real;
 using utility::vector1;
 
-#include "james_util.hh"
+#include <apps/pilot/james/james_util.hh>
 
 // C++ headers
 #include <string>

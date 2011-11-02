@@ -22,7 +22,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/rotamer_trials.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
@@ -39,6 +39,11 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
+
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 
 using basic::T;

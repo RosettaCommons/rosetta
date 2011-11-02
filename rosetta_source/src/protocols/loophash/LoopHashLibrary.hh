@@ -17,16 +17,16 @@
 #define INCLUDED_protocols_loophash_LoopHashLibrary_hh
 
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
-#include <protocols/loophash/LoopHashSampler.fwd.hh>
-#include <protocols/loophash/LocalInserter.fwd.hh>
+// AUTO-REMOVED #include <protocols/loophash/LoopHashSampler.fwd.hh>
+// AUTO-REMOVED #include <protocols/loophash/LocalInserter.fwd.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/loops/Loop.hh>
+// AUTO-REMOVED #include <protocols/loops/Loop.hh>
 #include <protocols/loophash/LoopHashMap.hh>
-#include <protocols/frag_picker/VallChunk.hh>
-#include <protocols/frag_picker/VallProvider.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/VallChunk.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/VallProvider.hh>
 #include <utility/vector1.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -34,6 +34,9 @@
 #include <string>
 #include <vector>
 #include <map>
+
+#include <protocols/loops/Loop.fwd.hh>
+
 
 namespace protocols {
 namespace loophash {

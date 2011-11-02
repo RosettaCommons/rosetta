@@ -47,10 +47,10 @@ using basic::Warning;
 //STL headers
 #include <algorithm> // for std::min, find_if
 
-//Auto Headers
-#include <core/kinematics/tree/Atom.hh>
-//#include <core/pose/util.hh>
 #include <core/pose/util.hh>
+#include <protocols/ligand_docking/LigandArea.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

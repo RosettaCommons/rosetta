@@ -35,23 +35,15 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
-#include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
+// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/filters/Filter.hh>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
-
-// Utility Headers
-#include <basic/Tracer.hh>
-#include <utility/string_util.hh>
+#include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/tag/Tag.hh>
-
-// C++ headers
-#include <map>
-#include <algorithm>
+#include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.protein_interface_design.util" );
 

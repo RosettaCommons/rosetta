@@ -35,8 +35,8 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/chemical/VariantType.hh>
+#include <utility/vector1.hh>
 #include <utility/options/StringVectorOption.hh>
 
 static basic::Tracer TR("core.chemical.adduct_util");

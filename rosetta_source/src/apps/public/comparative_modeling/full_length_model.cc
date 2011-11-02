@@ -21,7 +21,7 @@
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
-#include <core/sequence/SWAligner.hh>
+// AUTO-REMOVED #include <core/sequence/SWAligner.hh>
 #include <core/sequence/NWAligner.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
@@ -36,12 +36,12 @@
 #include <core/io/pdb/pose_io.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 
 #include <core/fragment/FragSet.hh>
@@ -50,11 +50,11 @@
 #include <protocols/relax/MiniRelax.cc>
 
 #include <protocols/loophash/FastGapMover.hh>
-#include <protocols/loops/loops_main.hh>
-#include <protocols/comparative_modeling/util.hh>
+// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
+// AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
 #include <protocols/comparative_modeling/ThreadingMover.hh>
-#include <protocols/comparative_modeling/StealSideChainsMover.hh>
-#include <protocols/comparative_modeling/RecoverSideChainsMover.hh>
+// AUTO-REMOVED #include <protocols/comparative_modeling/StealSideChainsMover.hh>
+// AUTO-REMOVED #include <protocols/comparative_modeling/RecoverSideChainsMover.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -63,12 +63,12 @@
 #include <string>
 
 // option key includes
-#include <basic/options/keys/cm.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/pose/annotated_sequence.hh>
+#include <utility/vector0.hh>
 
 
 void restore_hack( core::pose::Pose & pose ) {

@@ -24,21 +24,24 @@
 #include <protocols/wum/MPI_WorkUnitManager_Slave.hh>
 #include <protocols/wum/SilentStructStore.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStructFactory.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <basic/Tracer.hh>
-#include <core/pose/Pose.hh>
-#include <core/import_pose/pose_stream/util.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
 
 /// ObjexxFCL headers
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
+
+#include <utility/vector1.hh>
+
 
 
 #if defined(WIN32) || defined(__CYGWIN__)

@@ -47,9 +47,12 @@
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/jd2/InnerJob.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/ThreadingJob.hh>
+// AUTO-REMOVED #include <protocols/jd2/ThreadingJob.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
+
+#include <protocols/jd2/Job.hh>
+
 
 namespace protocols {
 namespace nonlocal {

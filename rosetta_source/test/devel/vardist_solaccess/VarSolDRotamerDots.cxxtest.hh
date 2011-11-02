@@ -23,11 +23,15 @@
 // Core headers
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueKinWriter.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueKinWriter.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
+
+//Auto Headers
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR("VarSolDRotamerDots.cxxtest");
 

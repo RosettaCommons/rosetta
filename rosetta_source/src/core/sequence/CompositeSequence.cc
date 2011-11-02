@@ -17,10 +17,15 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-#include <core/chemical/AA.hh>
+// AUTO-REMOVED #include <core/chemical/AA.hh>
 
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <string>
+
+#include <utility/exit.hh>
+#include <utility/vector1.hh>
+#include <ObjexxFCL/string.functions.hh>
+
 
 namespace core {
 namespace sequence {

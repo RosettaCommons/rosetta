@@ -15,15 +15,15 @@
 #include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/symmetric_docking/SymDockingInitialPerturbation.hh>
 
-#include <protocols/moves/DataMap.hh>
-#include <protocols/rosetta_scripts/util.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
 
 // Package headers
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
@@ -34,6 +34,11 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
+
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace moves {

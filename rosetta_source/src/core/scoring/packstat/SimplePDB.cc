@@ -20,8 +20,8 @@
 
 #include <set>
 
-//Auto Headers
 #include <core/scoring/packstat/AtomRadiusMap.hh>
+#include <utility/vector1.hh>
 
 static basic::Tracer TR("protocols.packstat.SimplePDB");
 

@@ -21,7 +21,10 @@
 // Utility Headers
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzMatrix.hh>
+// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace moves {

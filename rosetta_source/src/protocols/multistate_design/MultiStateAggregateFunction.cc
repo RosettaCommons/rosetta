@@ -20,32 +20,10 @@
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
-#include <platform/types.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <protocols/moves/MonteCarlo.fwd.hh>
-// Auto-header: duplicate removed #include <protocols/multistate_design/MultiStateAggregateFunction.hh>
 #include <protocols/multistate_design/MultiStateFitnessFunction.hh>
-#include <protocols/multistate_design/SingleState.fwd.hh>
 #include <protocols/multistate_design/SingleState.hh>
-#include <protocols/multistate_design/SingleStateFitnessFunction.fwd.hh>
-#include <protocols/multistate_design/SingleStateFitnessFunction.hh>
-#include <protocols/viewer/viewers.hh>
-#include <utility/down_cast.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
-#include <utility/pointer/access_ptr.fwd.hh>
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.functions.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <numeric/xyzVector.fwd.hh>
-#include <cassert>
-#include <cstddef>
-#include <iosfwd>
-#include <iostream>
+#include <utility/exit.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

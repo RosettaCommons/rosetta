@@ -52,27 +52,28 @@
 
 #include <utility/string_util.hh>
 #include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
+// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 //from comput_sasa.cc
 #include <basic/options/keys/packstat.OptionKeys.gen.hh>
 #include <ObjexxFCL/format.hh>
 #include <utility/exit.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 //from
-#include <core/graph/Graph.hh>
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/graph/Graph.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/TenANeighborGraph.hh>
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
+// AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
+// Auto-header: duplicate removed #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/etable/Etable.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector1.hh>
+#include <fstream>
 
 
 using namespace std;

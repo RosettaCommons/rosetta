@@ -21,7 +21,6 @@
 #include <deque>
 #include <protocols/toolbox/DecoySetEvaluation.fwd.hh>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

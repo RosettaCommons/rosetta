@@ -22,6 +22,9 @@
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <basic/MetricValue.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 
 // AUTO-REMOVED #include <utility/vector1.hh>

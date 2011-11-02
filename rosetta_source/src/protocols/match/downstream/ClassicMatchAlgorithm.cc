@@ -36,8 +36,9 @@
 // C++ headers
 #include <list>
 
-//Auto Headers
 #include <protocols/match/Hit.hh>
+#include <utility/vector1.hh>
+#include <utility/options/StringVectorOption.hh>
 
 
 namespace protocols {

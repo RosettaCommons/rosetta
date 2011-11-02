@@ -36,7 +36,7 @@
 // AUTO-REMOVED #include <protocols/abinitio/PairingStatistics.hh>
 
 //#include <core/types.hh>
-#include <core/pose/Pose.hh>  // Needed so PyRosetta can generate copy constructor
+// AUTO-REMOVED #include <core/pose/Pose.hh>  // Needed so PyRosetta can generate copy constructor
 
 //#include <protocols/loops/Loops.hh>
 #include <protocols/jd2/archive/ArchiveManager.fwd.hh>
@@ -53,7 +53,7 @@
 //#include <cstdlib>
 //#include <string>
 
-//Auto Headers
+#include <utility/vector1.hh>
 //#include <core/scoring/constraints/Constraint.hh>
 
 

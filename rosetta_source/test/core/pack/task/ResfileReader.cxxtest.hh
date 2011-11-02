@@ -20,36 +20,28 @@
 #include <test/core/init_util.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
-#include <utility/file/file_sys_util.hh>
-#include <utility/io/izstream.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <core/pack/task/ResfileReader.hh>
 
 #include <string>
 #include <sstream> //stringstreams can convert integers into strings type-safely for comparisons en masse
-#include <iterator>
+// AUTO-REMOVED #include <iterator>
 
 //Auto Headers
-#include <core/chemical/VariantType.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/ScoreFunctionInfo.fwd.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <basic/options/option.hh>
+#include <core/chemical/ResidueType.hh>
+// Auto-header: duplicate removed #include <core/import_pose/import_pose.hh>
+#include <utility/vector1.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
 
 //I'm lazy using's
 using namespace core;

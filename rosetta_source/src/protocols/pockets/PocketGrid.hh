@@ -18,19 +18,23 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/pockets/PocketGrid.fwd.hh>
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/constraints/XYZ_Func.fwd.hh>
 
 // Numeric Headers
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 
 #include <utility/vector1_bool.hh>
 #include <list>
 #include <string>
+
+#include <core/pose/Pose.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace pockets {

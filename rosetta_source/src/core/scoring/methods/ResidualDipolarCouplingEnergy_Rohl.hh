@@ -34,8 +34,8 @@
 // AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 // AUTO-REMOVED #include <ObjexxFCL/Fmath.hh>
 
-//Auto Headers
 #include <core/scoring/ResidualDipolarCoupling_Rohl.fwd.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
 

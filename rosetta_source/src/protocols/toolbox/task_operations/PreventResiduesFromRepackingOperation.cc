@@ -32,7 +32,12 @@
 #include <utility/tag/Tag.hh>
 
 // C++ Headers
-#include <set>
+// AUTO-REMOVED #include <set>
+
+#include <utility/string_util.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 using basic::Error;
 using basic::Warning;

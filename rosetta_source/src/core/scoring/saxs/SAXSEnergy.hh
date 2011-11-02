@@ -17,18 +17,18 @@
 
 // Package headers
 #include <core/scoring/saxs/DistanceHistogram.hh>
-#include <core/scoring/saxs/FormFactorManager.hh>
+// AUTO-REMOVED #include <core/scoring/saxs/FormFactorManager.hh>
 #include <core/scoring/saxs/FormFactor.hh>
 #include <core/scoring/saxs/SAXSEnergyCreatorCEN.hh>
 #include <core/scoring/saxs/SAXSEnergyCreatorFA.hh>
 #include <core/scoring/saxs/SAXSEnergyCreator.hh>
 
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 
-#include <core/scoring/EnergyMap.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -37,6 +37,12 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <string>
+
+#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/scoring/saxs/FormFactorManager.fwd.hh>
+#include <utility/vector1.hh>
+#include <map>
+
 
 namespace core {
 namespace scoring {

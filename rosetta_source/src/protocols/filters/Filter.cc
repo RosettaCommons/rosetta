@@ -19,11 +19,15 @@
 #include <protocols/filters/Filter.hh>
 
 // Project Headers
-#include <utility/tag/Tag.hh>
+// AUTO-REMOVED #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
 // Boost Headers
 #include <boost/foreach.hpp>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 #define foreach BOOST_FOREACH
 
 

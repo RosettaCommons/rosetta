@@ -23,11 +23,14 @@
 
 // Package headers
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/hbonds/HBondSet.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.fwd.hh>
 
 // Project headers
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

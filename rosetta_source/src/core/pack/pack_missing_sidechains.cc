@@ -32,8 +32,9 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/id/AtomID_Map.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 // ObjexxFCL headers

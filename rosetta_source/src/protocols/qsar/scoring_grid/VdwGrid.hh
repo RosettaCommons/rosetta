@@ -17,6 +17,9 @@
 #include <protocols/qsar/scoring_grid/GridBase.hh>
 #include <numeric/interpolation/spline/SplineGenerator.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace protocols {
 namespace qsar {

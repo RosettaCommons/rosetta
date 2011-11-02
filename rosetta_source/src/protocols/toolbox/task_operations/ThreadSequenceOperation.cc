@@ -26,7 +26,10 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <core/pack/task/operation/ResLvlTaskOperations.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperations.hh>
+
+#include <utility/vector0.hh>
+
 // Auto-header: duplicate removed #include <core/pack/task/operation/TaskOperations.hh>
 
 using basic::Error;

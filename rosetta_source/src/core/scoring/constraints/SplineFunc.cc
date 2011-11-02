@@ -37,10 +37,6 @@
 #include <sstream>
 #include <string>
 
-//Auto Headers
-#include <utility/io/mpistream.hh>
-
-
 static
 basic::Tracer TR( "core.scoring.constraints.SplineFunc");
 

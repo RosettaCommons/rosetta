@@ -33,7 +33,6 @@
 
 #include <map>
 
-//Auto Headers
 #include <utility/vector1.fwd.hh>
 
 

@@ -14,8 +14,8 @@
 
 // Unit headers
 #include <core/id/AtomID.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/id/NamedStubID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedStubID.hh>
 //#include <core/chemical/ResidueType.hh>
 
 #include <utility/exit.hh>
@@ -25,6 +25,9 @@
 
 // C++ headers
 #include <ostream>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

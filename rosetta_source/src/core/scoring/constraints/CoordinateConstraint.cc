@@ -36,9 +36,9 @@
 #include <iostream>
 // AUTO-REMOVED #include <utility>
 
-//Auto Headers
 #include <core/id/NamedAtomID.hh>
 #include <core/id/SequenceMapping.hh>
+#include <utility/vector1.hh>
 
 
 

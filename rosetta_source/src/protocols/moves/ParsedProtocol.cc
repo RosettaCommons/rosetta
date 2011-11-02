@@ -23,8 +23,8 @@
 #include <protocols/moves/MoverStatus.hh>
 
 #include <core/kinematics/Jump.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 
 #include <basic/Tracer.hh>
@@ -40,8 +40,8 @@
 
 // Utility Headers
 
-#include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 //Numeric Headers
 #include <numeric/random/random.hh>
@@ -49,13 +49,13 @@
 // C++ headers
 #include <map>
 #include <string>
-#include <set>
+// AUTO-REMOVED #include <set>
 #include <algorithm>
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
-
-// Boost Headers
+#include <protocols/jd2/Job.hh>
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 

@@ -28,8 +28,8 @@
 // STL Headers
 #include <cassert>
 
-//Auto Headers
 #include <core/scoring/disulfides/DisulfideAtomIndices.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

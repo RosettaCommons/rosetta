@@ -19,16 +19,23 @@
 
 // Project Headers
 #include <protocols/moves/ThermodynamicMover.hh>
-#include <protocols/moves/BackrubMover.hh>
-#include <protocols/moves/SidechainMover.hh>
+// AUTO-REMOVED #include <protocols/moves/BackrubMover.hh>
+// AUTO-REMOVED #include <protocols/moves/SidechainMover.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Numeric Headers
-#include <numeric/MultiDimensionalHistogram.hh>
+// AUTO-REMOVED #include <numeric/MultiDimensionalHistogram.hh>
 
 // Utility Headers
 #include <core/types.hh>
 #include <utility/vector1.hh>
+
+#include <core/pack/task/TaskFactory.fwd.hh>
+#include <protocols/moves/BackrubMover.fwd.hh>
+#include <protocols/moves/SidechainMover.fwd.hh>
+#include <utility/vector0.hh>
+#include <numeric/MultiDimensionalHistogram.fwd.hh>
+
 
 namespace protocols {
 namespace moves {

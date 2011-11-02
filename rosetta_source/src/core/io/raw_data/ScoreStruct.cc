@@ -21,6 +21,9 @@
 #include <core/pose/Pose.hh>
 #include <core/io/raw_data/ScoreStruct.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace io {
 namespace raw_data {

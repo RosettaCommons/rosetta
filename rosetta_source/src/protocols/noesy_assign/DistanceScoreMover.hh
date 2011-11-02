@@ -18,10 +18,10 @@
 #include <protocols/noesy_assign/DistanceScoreMover.fwd.hh>
 
 // Package Headers
-#include <protocols/noesy_assign/CrossPeakList.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/CrossPeakList.hh>
 #include <protocols/noesy_assign/ResonanceList.fwd.hh>
 #include <protocols/noesy_assign/PeakAssignment.hh>
-#include <core/scoring/constraints/AmbiguousNMRConstraint.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRConstraint.fwd.hh>
 
 // Project Headers
 #include <protocols/moves/Mover.hh>
@@ -32,6 +32,9 @@
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
+
+#include <protocols/noesy_assign/CrossPeakList.fwd.hh>
+
 
 //// C++ headers
 

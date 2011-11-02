@@ -37,9 +37,7 @@
 // C++ Headers
 #include <map>
 
-//Auto Headers
 #include <core/kinematics/Edge.fwd.hh>
-#include <ostream>
 
 
 

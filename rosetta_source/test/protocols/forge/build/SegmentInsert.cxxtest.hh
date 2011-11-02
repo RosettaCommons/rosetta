@@ -33,29 +33,17 @@
 #include <string>
 
 //Auto Headers
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/id/AtomID_Mask.hh>
-#include <core/id/DOF_ID_Map.hh>
-#include <core/id/DOF_ID_Mask.hh>
-#include <core/id/NamedStubID.hh>
 #include <core/kinematics/AtomPointer.hh>
-#include <core/kinematics/AtomWithDOFChange.hh>
 #include <core/kinematics/DomainMap.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/ScoreFunctionInfo.fwd.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <basic/Tracer.fwd.hh>
+#include <utility/vector1.hh>
 #include <utility/io/all.fwd.hh>
-#include <utility/keys/Key2Tuple.hh>
+#include <utility/io/icstream.fwd.hh>
+#include <utility/io/ocstream.fwd.hh>
+#include <numeric/BodyPosition.fwd.hh>
+#include <numeric/Quaternion.fwd.hh>
 #include <numeric/all.fwd.hh>
-#include <numeric/xyz.functions.hh>
-#include <list>
-#include <utility>
 
 
 class SegmentInsertTests : public CxxTest::TestSuite

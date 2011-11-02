@@ -23,14 +23,14 @@
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
 #include <core/conformation/Residue.hh> // for design() flag
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <core/pack/task/operation/OperateOnCertainResidues.hh>
-#include <core/pack/task/operation/ResLvlTaskOperations.hh> // PreventRepackingRLT
-#include <core/pack/task/operation/ResFilters.hh> // ResidueLacksProperty
+// AUTO-REMOVED #include <core/pack/task/operation/OperateOnCertainResidues.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperations.hh> // PreventRepackingRLT
+// AUTO-REMOVED #include <core/pack/task/operation/ResFilters.hh> // ResidueLacksProperty
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
-#include <core/pack/dunbrack/RotamerConstraint.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/RotamerConstraint.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 
 //for resfile reading
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
@@ -41,13 +41,19 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
-#include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
 
 // option key includes
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
 // C++ headers
 #include <string>
+
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Jump.hh>
+#include <protocols/docking/DockingHighRes.hh>
+#include <utility/vector0.hh>
+
 
 using basic::T;
 using basic::Error;

@@ -15,8 +15,8 @@
 
 
 // Unit headers
-#include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.fwd.hh>
 #include <core/scoring/Energies.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/symmetry/SymmData.fwd.hh>
@@ -29,9 +29,7 @@
 
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-//Auto Headers
-#include <utility/vector1.fwd.hh>
-
+#include <utility/vector1.hh>
 #include <string>
 
 namespace core {

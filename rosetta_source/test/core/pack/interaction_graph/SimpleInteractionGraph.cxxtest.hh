@@ -22,9 +22,9 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -42,6 +42,10 @@
 
 // C++ headers
 #include <iostream>
+
+//Auto Headers
+#include <utility/vector1.hh>
+
 
 class SimpleInteractionGraphTests : public CxxTest::TestSuite {
 public:

@@ -26,9 +26,8 @@
 
 // AUTO-REMOVED #include <basic/options/keys/holes.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
+#include <map>
 
 
 namespace core {

@@ -20,6 +20,9 @@
 
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
+
+#include <utility/vector1.hh>
+
 // AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 namespace protocols {

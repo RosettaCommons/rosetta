@@ -18,13 +18,18 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ Headers
-#include <ostream>
+// AUTO-REMOVED #include <ostream>
+
+#include <core/conformation/Residue.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace rotamer_recovery {

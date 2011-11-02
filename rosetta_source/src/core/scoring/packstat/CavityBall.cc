@@ -21,7 +21,6 @@
 #include <iostream>
 #include <sstream>
 
-//Auto Headers
 #include <ObjexxFCL/format.hh>
 
 

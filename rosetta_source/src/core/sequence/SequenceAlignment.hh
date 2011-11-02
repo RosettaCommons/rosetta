@@ -15,8 +15,8 @@
 #define INCLUDED_core_sequence_SequenceAlignment_hh
 
 // C/C++ headers
-#include <functional>
-#include <iostream>
+// AUTO-REMOVED #include <functional>
+// AUTO-REMOVED #include <iostream>
 #include <map>
 #include <string>
 
@@ -35,6 +35,9 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace sequence {

@@ -22,6 +22,9 @@
 #include <core/scoring/MembranePotential.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 // Project headers
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 

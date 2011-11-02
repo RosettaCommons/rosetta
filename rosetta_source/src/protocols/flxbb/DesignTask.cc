@@ -21,7 +21,7 @@
 #include <protocols/flxbb/FilterStructs.hh>
 
 // Project Headers
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/chemical/AA.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
@@ -33,6 +33,9 @@
 
 // option key includes
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR("protocols.flxbb.DesignTask");
 

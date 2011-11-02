@@ -17,13 +17,13 @@
 #include <protocols/moves/Mover.hh>
 
 // Project headers
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 
@@ -31,6 +31,13 @@
 
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>
+
+#include <core/chemical/AA.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 #ifndef INCLUDED_protocols_moves_ddGMover_hh
 #define INCLUDED_protocols_moves_ddGMover_hh

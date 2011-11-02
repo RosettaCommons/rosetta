@@ -43,7 +43,7 @@
 //#include <protocols/basic_moves/FragmentMover.hh>
 #include <core/fragment/SecondaryStructure.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
-#include <protocols/evaluation/ConstraintEvaluator.hh>
+// AUTO-REMOVED #include <protocols/evaluation/ConstraintEvaluator.hh>
 
 // ObjexxFCL Headers
 
@@ -55,9 +55,9 @@
 #include <string>
 // AUTO-REMOVED #include <vector>
 
-//Auto Headers
-#include <core/scoring/constraints/Constraint.hh>
+#include <protocols/evaluation/ConstraintEvaluator.fwd.hh>
 #include <protocols/loops/Loop.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

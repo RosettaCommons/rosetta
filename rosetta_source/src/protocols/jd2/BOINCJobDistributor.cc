@@ -39,8 +39,8 @@ If you got this message, something is wrong with your build settings.
 #include <protocols/jd2/Job.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -48,11 +48,8 @@ If you got this message, something is wrong with your build settings.
 // C++ headers
 #include <string>
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
-#include <utility/io/ozstream.hh>
-#include <numeric/random/random.hh>
-#include <utility/file/file_sys_util.hh>
+#include <utility/vector1.hh>
+#include <basic/options/keys/OptionKeys.hh>
 
 
 static basic::Tracer TR("protocols.jd2.BOINCJobDistributor");

@@ -21,8 +21,8 @@
 #include <protocols/flxbb/SelectResiduesByLayer.fwd.hh>
 
 #include <map>
-#include <fstream>
-#include <string>
+// AUTO-REMOVED #include <fstream>
+// AUTO-REMOVED #include <string>
 #include <utility/vector1.hh>
 
 #include <utility/pointer/ReferenceCount.hh>

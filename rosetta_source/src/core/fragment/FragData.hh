@@ -33,8 +33,11 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // C/C++ headers
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace fragment {

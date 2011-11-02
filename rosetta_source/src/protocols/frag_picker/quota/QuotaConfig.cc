@@ -19,6 +19,9 @@
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace frag_picker {
 namespace quota {

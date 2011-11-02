@@ -22,6 +22,11 @@
 #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/util.hh>
 
+//Auto Headers
+#include <core/fragment/FrameIteratorWorker_.hh>
+#include <utility/vector1.hh>
+
+
 namespace {
 
 using core::Size;

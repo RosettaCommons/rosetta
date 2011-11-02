@@ -46,10 +46,8 @@
 #include <ObjexxFCL/FArray4D.hh>
 #include <ObjexxFCL/FArray5D.hh>
 
-//Auto Headers
 #include <core/kinematics/Stub.fwd.hh>
-#include <utility/vector1_bool.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 // C++

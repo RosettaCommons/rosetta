@@ -37,6 +37,9 @@
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/conformation/RotamerSetCacheableDataType.hh>
 
+#include <utility/vector1.hh>
+
+
 // Utility headers
 
 

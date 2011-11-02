@@ -30,8 +30,11 @@
 #include <string>
 #include <map>
 
-#include <utility/options/keys/BooleanOptionKey.hh>
-#include <iostream>
+// AUTO-REMOVED #include <utility/options/keys/BooleanOptionKey.hh>
+// AUTO-REMOVED #include <iostream>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace io {

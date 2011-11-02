@@ -53,7 +53,6 @@
 //C++ headers
 #include <iostream>
 
-//Auto Headers
 #include <core/scoring/EnergyMap.hh>
 #include <utility/string_util.hh>
 #include <ObjexxFCL/format.hh>

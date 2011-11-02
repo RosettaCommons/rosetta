@@ -16,8 +16,8 @@
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/conformation/Residue.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

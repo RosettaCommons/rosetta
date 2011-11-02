@@ -12,7 +12,7 @@
 /// @author James Thompson
 
 
-#include <core/scoring/constraints/ConstraintIO.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/GaussianFunc.hh>
 
 #include <core/scoring/constraints/util.hh>
@@ -29,6 +29,9 @@
 // C++ Headers
 
 #include <iostream>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

@@ -33,15 +33,15 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/BackboneMover.hh>
-#include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/MonteCarlo.hh>
+// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/moves/BackboneMover.hh>
+// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
+// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
-#include <protocols/docking/DockingHighRes.hh>
+// AUTO-REMOVED #include <protocols/docking/DockingHighRes.hh>
 // Auto-header: duplicate removed #include <core/types.hh>
 #include <utility/vector1_bool.hh>
 
@@ -55,8 +55,10 @@
 #include <map>
 #include <list>
 
-//Auto Headers
-#include <sstream>
+#include <protocols/moves/BackboneMover.fwd.hh>
+#include <protocols/moves/MinMover.fwd.hh>
+#include <protocols/moves/TrialMover.fwd.hh>
+#include <utility/vector1.hh>
 
 
 

@@ -36,6 +36,9 @@
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 namespace protocols {

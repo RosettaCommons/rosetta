@@ -18,10 +18,10 @@
 
 #include <basic/options/option.hh>
 
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 
 #include <core/io/raw_data/DisulfideFile.hh>
 
@@ -30,7 +30,7 @@
 
 // option key includes
 
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/james.OptionKeys.gen.hh>
 

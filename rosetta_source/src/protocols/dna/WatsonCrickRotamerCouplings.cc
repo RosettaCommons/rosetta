@@ -15,16 +15,21 @@
 
 #include <core/conformation/ResidueMatcher.hh> // WatsonCrickResidueMatcher
 #include <core/chemical/ResidueType.hh>
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh>
+// AUTO-REMOVED #include <utility/tag/Tag.hh>
 
 // option key includes
-#include <basic/options/keys/dna.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/dna.OptionKeys.gen.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <basic/options/keys/OptionKeys.hh>
+
 
 namespace protocols {
 namespace dna {

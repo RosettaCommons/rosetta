@@ -48,8 +48,8 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
-//Auto Headers
 #include <core/scoring/packstat/AtomRadiusMap.hh>
+#include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.io.hh>
 #include <numeric/random/random.fwd.hh>

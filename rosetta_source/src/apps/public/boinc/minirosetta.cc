@@ -37,7 +37,7 @@
 #include <protocols/ddg/ddG_main.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingApplication.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingMover.hh>
-#include <protocols/moves/BBGaussianMover.hh>
+// AUTO-REMOVED #include <protocols/moves/BBGaussianMover.hh>
 #include <protocols/frag_picker/nonlocal/NonlocalFragsMain.hh>
 
 #ifdef BOINC
@@ -69,23 +69,21 @@
 // AUTO-REMOVED #include <basic/options/after_opts.hh>
 
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
 
 // option key includes
 
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/boinc.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/boinc.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <core/import_pose/import_pose.hh>
 #include <protocols/checkpoint/Checkpoint.hh>
 #include <protocols/jd2/BOINCJobDistributor.hh>
-#include <protocols/moves/Mover.hh>
 #include <protocols/relax/relax_main.hh>
-#include <utility/excn/EXCN_Base.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 int
 main( int argc, char * argv [] )

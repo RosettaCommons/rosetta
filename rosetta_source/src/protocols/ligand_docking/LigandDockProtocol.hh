@@ -34,8 +34,8 @@
 
 #include <map>
 
-//Auto Headers
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

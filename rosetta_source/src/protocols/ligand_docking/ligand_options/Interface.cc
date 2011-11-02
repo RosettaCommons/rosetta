@@ -17,6 +17,7 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
+
 #define foreach BOOST_FOREACH
 
 // AUTO-REMOVED #include <utility/assert.hh>

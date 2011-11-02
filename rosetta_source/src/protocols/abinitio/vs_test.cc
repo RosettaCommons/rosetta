@@ -51,10 +51,9 @@
 // AUTO-REMOVED #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <core/pose/annotated_sequence.hh>
+#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
+#include <utility/vector1.hh>
 #include <numeric/random/random.fwd.hh>
-#include <ObjexxFCL/format.hh>
 
 
 

@@ -33,7 +33,7 @@
 
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 //#include <core/import_pose/import_pose.hh>
 
 

@@ -21,12 +21,12 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/TwelveANeighborGraph.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/nv/NVscore.hh>
-#include <core/scoring/nv/NVscoreCreator.hh>
+// AUTO-REMOVED #include <core/scoring/nv/NVscoreCreator.hh>
 #include <core/types.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
@@ -37,6 +37,9 @@
 
 // External Headers
 #include <cppdb/frontend.h>
+
+#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
+
 
 namespace protocols{
 namespace features{

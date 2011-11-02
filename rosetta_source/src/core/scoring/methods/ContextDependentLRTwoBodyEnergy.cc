@@ -18,6 +18,9 @@
 // AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
+#include <utility/vector1.hh>
+
+
 // Project Headers
 // AUTO-REMOVED #include <core/conformation/RotamerSetBase.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.hh>

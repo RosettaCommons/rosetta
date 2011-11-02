@@ -32,8 +32,7 @@
 // Unit headers
 #include <protocols/protein_interface_design/movers/DesignRepackMover.fwd.hh>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

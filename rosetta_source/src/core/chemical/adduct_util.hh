@@ -25,9 +25,8 @@
 // Utility headers
 // AUTO-REMOVED #include <utility/options/StringVectorOption.hh>
 
-//Auto Headers
-#include <utility/options/keys/StringVectorOptionKey.hh>
-#include <iostream>
+#include <utility/options/StringVectorOption.fwd.hh>
+#include <map>
 
 
 // C++ headers

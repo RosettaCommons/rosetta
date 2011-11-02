@@ -18,12 +18,12 @@
 #include <protocols/rna/AllowInsert.hh>
 #include <protocols/rna/AllowInsert.fwd.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
 #include <core/pose/Pose.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray3D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -41,13 +41,9 @@
 // AUTO-REMOVED #include <fstream>
 // AUTO-REMOVED #include <ctime>
 
-//Auto Headers
-#include <core/id/TorsionID.hh>
-#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
-
-#include <core/id/AtomID.hh>
+#include <protocols/rna/RNA_MatchType.hh>
+#include <utility/vector1.hh>
 
 using namespace core;
 using basic::T;

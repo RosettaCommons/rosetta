@@ -53,7 +53,7 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <cppdb/errors.h>
+// AUTO-REMOVED #include <cppdb/errors.h>
 
 // Boost Headers
 #include <boost/foreach.hpp>
@@ -62,7 +62,10 @@
 // C++ Headers
 #include <cmath>
 #include <algorithm>
-#include <stdlib.h>
+// AUTO-REMOVED #include <stdlib.h>
+
+#include <utility/vector0.hh>
+
 
 namespace protocols{
 namespace features{

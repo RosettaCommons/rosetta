@@ -22,7 +22,7 @@
 #include <utility/file/FileName.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <string>
 #include <complex>
 

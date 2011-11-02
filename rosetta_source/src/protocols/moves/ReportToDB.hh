@@ -19,25 +19,33 @@
 #include <protocols/moves/ReportToDB.fwd.hh>
 
 // Package Headers
-#include <protocols/features/ProtocolFeatures.hh>
-#include <protocols/features/StructureFeatures.hh>
-#include <protocols/features/FeaturesReporter.hh>
-#include <protocols/features/FeaturesReporterFactory.hh>
+// AUTO-REMOVED #include <protocols/features/ProtocolFeatures.hh>
+// AUTO-REMOVED #include <protocols/features/StructureFeatures.hh>
+// AUTO-REMOVED #include <protocols/features/FeaturesReporter.hh>
+// AUTO-REMOVED #include <protocols/features/FeaturesReporterFactory.hh>
 
 // Project Headers
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/pack/task/TaskFactory.hh>
+// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 
 // C++ Headers
 #include <string>
+
+#include <core/pack/task/TaskFactory.fwd.hh>
+#include <protocols/features/FeaturesReporter.fwd.hh>
+#include <protocols/features/FeaturesReporterFactory.fwd.hh>
+#include <protocols/features/ProtocolFeatures.fwd.hh>
+#include <protocols/features/StructureFeatures.fwd.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
+
 
 namespace protocols{
 namespace moves{

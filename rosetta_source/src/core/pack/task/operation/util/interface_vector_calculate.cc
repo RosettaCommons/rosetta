@@ -36,8 +36,8 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 // Utility headers
-#include <basic/MetricValue.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/MetricValue.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 //#include <utility/exit.hh>
 #include <utility/string_util.hh>
 //#include <basic/options/option.hh>
@@ -51,11 +51,11 @@
 
 // option key includes
 
-#include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
-//Auto Headers
-//#include <core/conformation/PointGraphData.hh>
+#include <core/conformation/PointGraphData.hh>
 #include <core/graph/UpperEdgeGraph.hh>
+#include <utility/vector1.hh>
 
 namespace core{
 namespace pack{

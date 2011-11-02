@@ -25,8 +25,8 @@
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
 
 // Package Headers
-#include <core/fragment/SecondaryStructure.hh>
-#include <protocols/loops/Loops.hh>
+// AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -36,9 +36,9 @@
 //// C++ headers
 #include <list>
 
-//Auto Headers
-#include <core/types.hh>
-#include <utility/vector1.fwd.hh>
+#include <core/fragment/SecondaryStructure.fwd.hh>
+#include <protocols/loops/Loops.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

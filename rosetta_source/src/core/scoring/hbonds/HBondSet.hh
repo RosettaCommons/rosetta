@@ -27,7 +27,7 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <basic/datacache/CacheableData.hh>
 // AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
 
@@ -44,8 +44,7 @@
 // C++
 #include <map> // what is the right header for std::pair ?
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
+#include <core/id/AtomID.fwd.hh>
 
 //#include <set>
 

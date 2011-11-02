@@ -40,7 +40,6 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
-//Auto Headers
 #include <core/fragment/SecondaryStructure.fwd.hh>
 
 

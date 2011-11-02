@@ -39,9 +39,8 @@
 #include <string>
 // AUTO-REMOVED #include <vector>
 
-//Auto Headers
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

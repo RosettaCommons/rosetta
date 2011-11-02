@@ -25,6 +25,9 @@
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <utility>
 
 namespace protocols {

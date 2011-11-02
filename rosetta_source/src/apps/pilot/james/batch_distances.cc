@@ -13,7 +13,7 @@
 /// @author Christopher Miles (cmiles@uw.edu)
 
 // Unit headers
-#include "james_util.hh"
+#include <apps/pilot/james/james_util.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -26,7 +26,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <devel/init.hh>
 
 // Objexx

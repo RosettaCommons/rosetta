@@ -21,7 +21,7 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
@@ -40,10 +40,12 @@
 
 #include <basic/Tracer.hh>
 
-#include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 
-//Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <basic/datacache/BasicDataCache.hh>
 
 using basic::T;
 using basic::Error;

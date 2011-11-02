@@ -53,9 +53,9 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
-//Auto Headers
 #include <core/scoring/constraints/Constraint.hh>
-#include <protocols/filters/Filter.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 using namespace protocols::protein_interface_design;
 

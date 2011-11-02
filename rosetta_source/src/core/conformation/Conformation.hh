@@ -30,7 +30,7 @@
 #include <core/types.hh>
 
 #include <core/id/AtomID.hh>
-#include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 #include <core/id/AtomID_Map.hh>
 // AUTO-REMOVED #include <core/id/AtomID_Mask.hh>
 #include <core/id/DOF_ID.hh>
@@ -53,9 +53,10 @@
 // C++ headers
 // AUTO-REMOVED #include <list>
 
-//Auto Headers
+#include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/kinematics/tree/Atom.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

@@ -30,7 +30,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Residue.functions.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.functions.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.fwd.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator_Private.hh>
@@ -50,7 +50,10 @@
 #include <vector>
 #include <map>
 #include <string>
-#include <math.h>
+// AUTO-REMOVED #include <math.h>
+
+#include <utility/vector1.hh>
+
 
 // Cuda headers
 #ifdef USECUDA

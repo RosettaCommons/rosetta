@@ -33,6 +33,9 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 // C++ headers
 
 namespace protocols {

@@ -21,8 +21,8 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <core/io/raw_data/DisulfideFile.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/raw_data/DisulfideFile.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 //#include <core/util/Tracer.hh>
 
 #include <utility/io/izstream.hh>
@@ -31,10 +31,9 @@
 #include <ObjexxFCL/FArray1D.hh>
 //#include <core/util/prof.hh>
 
-#include <boost/tuple/tuple.hpp>
+// AUTO-REMOVED #include <boost/tuple/tuple.hpp>
 
-//Auto Headers
-#include <core/pose/Pose.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -31,8 +31,8 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
 #include <core/types.hh>
+#include <utility/vector1.hh>
 
 
 

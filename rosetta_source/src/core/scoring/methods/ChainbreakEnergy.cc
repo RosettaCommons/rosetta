@@ -28,8 +28,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/VariantType.hh>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 
 
 // Numeric headers

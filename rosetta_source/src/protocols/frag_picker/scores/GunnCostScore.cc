@@ -22,15 +22,13 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 
 #include <protocols/frag_picker/scores/GunnCost.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/pose/Pose.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

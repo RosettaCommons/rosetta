@@ -30,9 +30,7 @@
 // Boost headers
 // AUTO-REMOVED #include <boost/unordered/unordered_map_fwd.hpp>
 
-//Auto Headers
 #include <utility/fixedsizearray1.fwd.hh>
-#include <iterator>
 
 
 namespace protocols {

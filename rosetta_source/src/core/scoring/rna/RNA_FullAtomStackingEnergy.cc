@@ -33,7 +33,7 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/chemical/AtomType.hh>  //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType Oct 14, 2009
-#include <core/chemical/AtomTypeSet.hh>  //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType Oct 14, 2009
+// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>  //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType Oct 14, 2009
 
 // Utility headers
 
@@ -41,8 +41,8 @@
 #include <numeric/xyzVector.hh>
 // AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 
 
 

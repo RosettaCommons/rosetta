@@ -29,6 +29,9 @@
 // C++ headers
 #include <iostream>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace scoring {
 namespace methods {

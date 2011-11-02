@@ -15,33 +15,39 @@
 #include <protocols/wum/WorkUnitBase.hh>
 #include <protocols/wum/SilentStructStore.hh>
 
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStructFactory.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
-#include <core/scoring/rms_util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/wum.OptionKeys.gen.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <core/scoring/constraints/util.hh>
-#include <core/id/AtomID_Map.hh>
+// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>
 // Auto-header: duplicate removed #include <core/pose/util.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/moves/SuperimposeMover.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-#include <protocols/electron_density/util.hh>
+// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+// AUTO-REMOVED #include <protocols/electron_density/util.hh>
+
+#include <core/chemical/ChemicalManager.fwd.hh>
+#include <core/chemical/ResidueType.hh>
+#include <protocols/electron_density/SetupForDensityScoringMover.hh>
+#include <utility/vector1.hh>
+
 
 
 #if defined(WIN32) || defined(__CYGWIN__)

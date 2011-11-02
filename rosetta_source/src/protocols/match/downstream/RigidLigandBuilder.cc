@@ -31,15 +31,15 @@
 #include <basic/Tracer.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/FArray2D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-#include <utility/vector1.functions.hh>
+// AUTO-REMOVED #include <utility/vector1.functions.hh>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
 #include <core/id/AtomID.hh>
 #include <protocols/match/Hit.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

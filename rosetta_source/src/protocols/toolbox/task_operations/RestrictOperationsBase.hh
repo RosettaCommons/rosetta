@@ -27,10 +27,9 @@
 // AUTO-REMOVED #include <utility/vector1_bool.hh>
 
 // C++ Headers
-#include <string>
+// AUTO-REMOVED #include <string>
 
-//Auto Headers
-#include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

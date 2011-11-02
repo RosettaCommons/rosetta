@@ -28,8 +28,8 @@
 // Utility headers
 #include <utility/exit.hh>
 
-//Auto Headers
 #include <utility/OrderedTuple.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

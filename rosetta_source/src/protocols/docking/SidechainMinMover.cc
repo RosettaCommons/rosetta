@@ -35,7 +35,10 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 
-#include <core/pack/task/operation/TaskOperation.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
+
+#include <utility/vector1.hh>
+
 
 using basic::T;
 using basic::Error;

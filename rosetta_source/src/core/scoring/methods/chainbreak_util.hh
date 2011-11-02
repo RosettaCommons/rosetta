@@ -12,9 +12,13 @@
 /// @author James Thompson
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/id/AtomID.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <utility/vector1.hh>
+
+#include <core/types.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
+
 
 namespace core {
 namespace scoring {

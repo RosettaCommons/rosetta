@@ -49,7 +49,11 @@
 // Objexx headers
 
 // C++ headers
-#include <iomanip>
+// AUTO-REMOVED #include <iomanip>
+
+#include <protocols/scoring/methods/pcs2/TensorsOptimizer.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols{
 namespace scoring{

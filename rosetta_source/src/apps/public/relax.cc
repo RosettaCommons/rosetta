@@ -11,7 +11,7 @@
 /// @brief
 
 // libRosetta headers
-#include <protocols/jd2/JobDistributor.hh>
+// AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
 #include <basic/options/option.hh>
 #include <protocols/init.hh>
@@ -28,9 +28,9 @@
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/relax/relax_main.hh>
+#include <utility/vector1.hh>
 
 
 

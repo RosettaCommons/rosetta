@@ -28,10 +28,8 @@
 //utility headers
 #include <map>
 
-//Auto Headers
 #include <core/sequence/SequenceAlignment.fwd.hh>
-#include <utility/vector1_bool.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace jd2 {

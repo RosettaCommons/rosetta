@@ -53,7 +53,7 @@
 // AUTO-REMOVED #include <protocols/loops/LoopMoverFactory.hh>
 // AUTO-REMOVED #include <protocols/loops/looprelax_protocols.hh>
 #include <protocols/loops/LoopBuild.hh>
-#include <protocols/viewer/viewers.hh>
+// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 // AUTO-REMOVED #include <protocols/relax_protocols.hh>
 // AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
 // AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
@@ -77,7 +77,7 @@
 // AUTO-REMOVED #include <protocols/abinitio/ClassicAbinitio.hh>
 #include <utility/exit.hh>
 
-#include <protocols/electron_density/util.hh>
+// AUTO-REMOVED #include <protocols/electron_density/util.hh>
 #include <core/scoring/electron_density/util.hh>
 
 #include <protocols/evaluation/PoseEvaluator.hh>
@@ -112,13 +112,10 @@
 
 #include <protocols/loops/LoopRelaxMover.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <protocols/electron_density/SetupForDensityScoringMover.hh>
+#include <utility/vector1.hh>
 #include <basic/options/option.hh>
-
-//Auto using namespaces
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-//Auto using namespaces end
 
 
 

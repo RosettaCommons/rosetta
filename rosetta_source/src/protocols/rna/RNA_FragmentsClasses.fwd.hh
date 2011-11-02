@@ -29,7 +29,6 @@
 // AUTO-REMOVED #include <map>
 // AUTO-REMOVED #include <vector>
 
-//Auto Headers
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 

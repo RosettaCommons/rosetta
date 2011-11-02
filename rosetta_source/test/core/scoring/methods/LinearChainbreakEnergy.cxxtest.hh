@@ -15,7 +15,7 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <core/scoring/methods/LinearChainbreakEnergy.hh>
+// AUTO-REMOVED #include <core/scoring/methods/LinearChainbreakEnergy.hh>
 
 #include <platform/types.hh>
 
@@ -26,31 +26,23 @@
 #include <test/core/init_util.hh>
 
 #include <core/id/DOF_ID.hh>
-#include <core/id/TorsionID.hh>
+// AUTO-REMOVED #include <core/id/TorsionID.hh>
 #include <core/chemical/VariantType.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
+// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
+// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
 
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 
 //Auto Headers
-#include <core/conformation/Atom.fwd.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
 #include <core/pose/util.hh>
-#include <core/scoring/types.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
+#include <utility/vector1.hh>
 
 
 // --------------- Test Class --------------- //

@@ -15,8 +15,11 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
-#include <boost/dynamic_bitset.hpp>
+// AUTO-REMOVED #include <boost/dynamic_bitset.hpp>
 #include <algorithm>
+
+#include <utility/vector1.hh>
+
 
 #ifndef INCLUDED_protocols_evaluation_ContactMapEvaluator_hh
 #define INCLUDED_protocols_evaluation_ContactMapEvaluator_hh

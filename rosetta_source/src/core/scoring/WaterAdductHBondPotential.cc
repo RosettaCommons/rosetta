@@ -43,8 +43,8 @@
 // Utility headers
 #include <utility/exit.hh>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
+#include <utility/vector1.hh>
 
 
 

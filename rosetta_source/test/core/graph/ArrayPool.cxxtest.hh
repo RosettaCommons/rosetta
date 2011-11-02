@@ -18,6 +18,10 @@
 // Unit headers
 #include <core/graph/ArrayPool.hh>
 
+//Auto Headers
+#include <utility/vector1.hh>
+
+
 
 using namespace core;
 using namespace core::graph;

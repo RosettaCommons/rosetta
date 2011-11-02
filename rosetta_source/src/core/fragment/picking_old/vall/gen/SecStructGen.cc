@@ -14,6 +14,9 @@
 // unit headers
 #include <core/fragment/picking_old/vall/gen/SecStructGen.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace core {
 namespace fragment {

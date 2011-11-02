@@ -29,14 +29,15 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
-
-// Utility headers
-#include <basic/database/open.hh>
+#include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
-#include <ObjexxFCL/format.hh>
+#include <basic/database/open.hh>
+
+//Auto using namespaces
+namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+//Auto using namespaces end
 
 // C++
 static basic::Tracer TR("core.scoring.methods.MembraneEnvSmoothEnergy",basic::t_info);

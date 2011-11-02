@@ -26,9 +26,13 @@
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 #include <basic/Tracer.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/kinematics/FoldTree.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace protein_interface_design {

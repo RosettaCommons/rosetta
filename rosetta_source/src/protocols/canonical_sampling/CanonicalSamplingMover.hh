@@ -15,16 +15,23 @@
 #ifndef INCLUDED_protocols_moves_CanonicalSamplingMover_HH
 #define INCLUDED_protocols_moves_CanonicalSamplingMover_HH
 
-#include <protocols/moves/CanonicalSamplingMover.fwd.hh>
+// AUTO-REMOVED #include <protocols/moves/CanonicalSamplingMover.fwd.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
 
-#include <protocols/moves/MoverContainer.hh>
+// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
+// AUTO-REMOVED #include <protocols/loops/Loop.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.hh>
+
+#include <protocols/loops/Loops.fwd.hh>
+#include <protocols/moves/Mover.hh>
+#include <protocols/moves/MoverContainer.fwd.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 
 

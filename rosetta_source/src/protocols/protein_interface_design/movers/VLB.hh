@@ -22,6 +22,9 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace protocols {
 namespace protein_interface_design {

@@ -27,7 +27,6 @@
 
 #include <vector>
 
-//Auto Headers
 #include <ObjexxFCL/FArray3D.fwd.hh>
 #include <ObjexxFCL/FArray4D.fwd.hh>
 

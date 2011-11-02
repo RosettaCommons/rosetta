@@ -25,7 +25,7 @@
 #include <core/fragment/FrameIteratorWorker_.hh>
 // AUTO-REMOVED #include <core/fragment/FrameIterator.fwd.hh>
 
-#include <core/fragment/ConstantLengthFragSet.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/ConstantLengthFragSet.fwd.hh>
 
 
 // Project Headers
@@ -38,8 +38,8 @@
 // std Headers
 // AUTO-REMOVED #include <iterator>
 
-//Auto Headers
 #include <core/fragment/Frame.hh>
+#include <utility/vector1.hh>
 
 
 /* Just a mad thought: with fragments becoming ever more "Residue" like one might want to use the

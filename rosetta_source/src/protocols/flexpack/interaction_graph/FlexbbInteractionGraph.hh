@@ -31,9 +31,8 @@
 
 /// C++ headers
 /// TEMP
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 
-//Auto Headers
 #include <utility/vector0_bool.hh>
 #include <ObjexxFCL/FArray1A.fwd.hh>
 

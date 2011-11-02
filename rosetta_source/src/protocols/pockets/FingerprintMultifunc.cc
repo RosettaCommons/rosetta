@@ -15,6 +15,9 @@
 #include <protocols/pockets/FingerprintMultifunc.hh>
 #include <protocols/pockets/Fingerprint.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols{
 namespace pockets {
 

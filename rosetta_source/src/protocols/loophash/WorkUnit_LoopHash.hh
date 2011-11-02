@@ -15,6 +15,9 @@
 #include <protocols/wum/WorkUnitBase.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
 
+#include <utility/vector1.hh>
+
+
 
 
 #ifndef INCLUDED_protocols_loophash_WorkUnit_LoopHash_hh

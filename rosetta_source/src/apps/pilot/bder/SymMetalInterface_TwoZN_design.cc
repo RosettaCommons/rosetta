@@ -23,22 +23,22 @@
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
+// AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
 
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
+// AUTO-REMOVED #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyz.io.hh> //print a point
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.io.hh> //print a point
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 
@@ -47,19 +47,24 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <basic/MetricValue.hh>
+// AUTO-REMOVED #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
 
 //SYMMETRY
 #include <protocols/moves/symmetry/SetupForSymmetryMover.hh> //create symmetric homodimer from input monomer via symmetry:symmetry_definition option
 #include <protocols/moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/moves/symmetry/SymRotamerTrialsMover.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SymRotamerTrialsMover.hh>
 #include <protocols/moves/symmetry/SymMinMover.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-#include <core/conformation/symmetry/util.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.hh>
 
 #include <sstream>
+
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/Jump.hh>
+#include <utility/vector0.hh>
+
 
 
 

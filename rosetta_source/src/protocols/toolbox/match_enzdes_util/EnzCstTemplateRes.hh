@@ -26,7 +26,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 
@@ -40,8 +40,9 @@
 // C++ Headers
 #include <map>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
+#include <core/id/AtomID.fwd.hh>
+#include <utility/vector1.hh>
+#include <string>
 
 
 namespace protocols {

@@ -16,15 +16,19 @@
 
 #include <core/scoring/CenHBPotential.fwd.hh>
 
-#include <core/conformation/Residue.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
+// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 #include <numeric/constants.hh>
 
-#include <basic/datacache/CacheableData.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableData.hh>
 
 #include <utility/vector1_bool.hh>
+
+#include <utility/vector1.hh>
+#include <numeric/xyzVector.hh>
+
 
 
 namespace core {

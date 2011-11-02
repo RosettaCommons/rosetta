@@ -21,7 +21,7 @@
 
 // Package headers
 #include <protocols/pack_daemon/MultistateAggregateFunction.hh>
-#include <protocols/pack_daemon/PackDaemon.hh>
+// AUTO-REMOVED #include <protocols/pack_daemon/PackDaemon.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -35,7 +35,11 @@
 // C++ headers
 #include <map>
 #include <set>
-#include <string>
+// AUTO-REMOVED #include <string>
+
+#include <protocols/pack_daemon/PackDaemon.fwd.hh>
+#include <utility/vector0.hh>
+
 
 namespace protocols {
 namespace pack_daemon {

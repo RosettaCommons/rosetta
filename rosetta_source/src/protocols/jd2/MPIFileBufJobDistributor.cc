@@ -33,17 +33,22 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <utility/exit.hh>
-#include <utility/assert.hh>
+// AUTO-REMOVED #include <utility/assert.hh>
 
 // Option headers
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#ifdef USEMPI
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
+#endif
 
 // C++ headers
 #include <string>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer tr("protocols.jd2.MPIFileBufJobDistributor");
 

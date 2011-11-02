@@ -43,12 +43,15 @@
 
 // C++ headers
 #include <iostream>
-#include <istream>
+// AUTO-REMOVED #include <istream>
 #include <sstream>
 #include <fstream>
 #include <string>
 #include <iomanip>
 #include <cmath>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace MakeRotLib {

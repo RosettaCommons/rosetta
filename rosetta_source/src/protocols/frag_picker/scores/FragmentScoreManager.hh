@@ -17,7 +17,7 @@
 // package headers
 #include <protocols/frag_picker/scores/FragmentScoreManager.fwd.hh>
 #include <protocols/frag_picker/scores/FragmentScoringMethod.hh>
-#include <protocols/frag_picker/scores/FragmentScoreMap.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 #include <protocols/frag_picker/FragmentPicker.fwd.hh>
 #include <protocols/frag_picker/VallChunk.fwd.hh>
@@ -27,7 +27,10 @@
 
 // C++
 #include <map>
-#include <set>
+// AUTO-REMOVED #include <set>
+
+#include <utility/vector1_bool.hh>
+
 
 namespace protocols {
 namespace frag_picker {

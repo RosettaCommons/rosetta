@@ -21,7 +21,7 @@
 // unit headers
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentEnergy.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.fwd.hh>
 
 // mini headers
 #include <core/types.hh>
@@ -38,8 +38,7 @@
 #include <string>
 #include <map>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
 

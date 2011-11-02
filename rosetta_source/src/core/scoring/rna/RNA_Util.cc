@@ -29,8 +29,8 @@
 // Project headers
 #include <numeric/constants.hh>
 
-//Auto Headers
 #include <core/kinematics/tree/Atom.hh>
+#include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
 

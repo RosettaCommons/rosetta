@@ -36,8 +36,8 @@
 //// C++ headers
 #include <cmath>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
+#include <utility/options/BooleanVectorOption.hh>
 
 
 static basic::Tracer tr("protocols.toolbox.PoseMetricCalculators.NcontactsCalculator");

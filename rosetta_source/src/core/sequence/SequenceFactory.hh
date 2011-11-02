@@ -14,7 +14,7 @@
 #ifndef INCLUDED_core_sequence_SequenceFactory_hh
 #define INCLUDED_core_sequence_SequenceFactory_hh
 
-#include <core/pose/Pose.fwd.hh>
+// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 #include <core/sequence/Sequence.fwd.hh>
 #include <core/sequence/SequenceCreator.fwd.hh>
 

@@ -27,11 +27,7 @@
 
 // boost headers
 #include <boost/tuple/tuple.hpp>
-//Auto Headers
-#include <utility/io/mpistream.hh>
-
-/// C++ Headers
-#include <iostream>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace frag_picker {

@@ -91,6 +91,10 @@
 #include <basic/options/keys/parser.OptionKeys.gen.hh>
 #include <protocols/moves/DataMap.hh>
 
+#include <utility/vector0.hh>
+#include <basic/Tracer.hh>
+
+
 namespace protocols {
 namespace jd2 { // why is this in namespace jd2?
 

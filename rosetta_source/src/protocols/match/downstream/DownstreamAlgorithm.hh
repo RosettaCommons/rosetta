@@ -44,10 +44,8 @@
 #include <list>
 // AUTO-REMOVED #include <string>
 
-//Auto Headers
+#include <core/id/AtomID.fwd.hh>
 #include <protocols/match/Hit.fwd.hh>
-#include <iostream>
-#include <core/id/AtomID.hh>
 
 namespace protocols {
 namespace match {

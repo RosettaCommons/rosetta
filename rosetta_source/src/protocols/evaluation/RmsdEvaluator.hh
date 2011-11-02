@@ -25,7 +25,7 @@
 #include <protocols/evaluation/PoseEvaluator.hh>
 
 // Package Headers
-#include <protocols/evaluation/util.hh>
+// AUTO-REMOVED #include <protocols/evaluation/util.hh>
 
 // Project Headers
 #include <core/io/silent/silent.fwd.hh>
@@ -39,6 +39,11 @@
 
 //// C++ headers
 #include <list>
+
+#include <core/scoring/rms_util.hh>
+#include <protocols/loops/Loops.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace evaluation {

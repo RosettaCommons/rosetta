@@ -17,12 +17,10 @@
 // Unit headers
 #include <protocols/moves/ScoreMover.hh>
 
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <utility/stream_util.hh>
-#include <protocols/moves/MoverStatistics.hh>
-#include <ObjexxFCL/format.hh>
+#include <utility/vector1.hh>
 
 
 using namespace core;

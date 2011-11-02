@@ -24,6 +24,9 @@
 
 #include <core/fragment/SecondaryStructure.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace frag_picker {
 namespace scores {

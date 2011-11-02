@@ -20,6 +20,9 @@
 #include <protocols/comparative_modeling/features/SSFeature.fwd.hh>
 #include <protocols/comparative_modeling/features/ResidueFeature.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace comparative_modeling {
 namespace features {

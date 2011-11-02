@@ -18,6 +18,9 @@
 #include <utility/vector1.fwd.hh>
 #include <numeric/xyzVector.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {

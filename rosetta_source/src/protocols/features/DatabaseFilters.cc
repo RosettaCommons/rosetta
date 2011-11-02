@@ -38,6 +38,9 @@
 // C++ Headers
 #include <string>
 
+#include <protocols/jd2/Job.hh>
+
+
 namespace protocols{
 namespace features{
 

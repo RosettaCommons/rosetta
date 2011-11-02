@@ -20,6 +20,9 @@
 // Package Headers
 #include <protocols/motifs/Motif.hh>
 
+#include <utility/vector1.hh>
+
+
 // Project Headers
 
 // Utility Headers

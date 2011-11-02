@@ -16,7 +16,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/NullMover.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
-#include <protocols/moves/MoverContainer.hh>
+// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 
 #include <devel/init.hh>
 
@@ -26,14 +26,10 @@
 
 // option key includes
 
-//Auto Headers
-#include <basic/options/option.hh>
-
-#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
 
 //static basic::Tracer TR("apps.jscore");
 

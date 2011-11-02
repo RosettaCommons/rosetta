@@ -18,10 +18,14 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/jobdist/Jobs.hh>
+// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
 #include <protocols/moves/Mover.fwd.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/types.hh>
+
+#include <protocols/jobdist/Jobs.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace jobdist {

@@ -21,15 +21,13 @@
 
 // Package Headers
 //because PointGraph is a typedef, not a 'real class', this header needs to include other full headers for downstream compilation.  Think of it as PointGraph inheriting from these two.
-#include <core/conformation/PointGraphData.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+// AUTO-REMOVED #include <core/conformation/PointGraphData.hh>
+// AUTO-REMOVED #include <core/graph/UpperEdgeGraph.hh>
 
 // Project Headers
 #include <core/conformation/Conformation.fwd.hh>
 
-//Auto Headers
 #include <core/types.hh>
-#include <iostream>
 
 
 namespace core {

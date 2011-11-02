@@ -29,10 +29,10 @@
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
-#include <protocols/moves/DataMap.hh>
-#include <protocols/rosetta_scripts/util.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
 
 #include <basic/Tracer.hh>
@@ -45,6 +45,9 @@ static basic::Tracer TR("protocols.moves.symmetry.SymPackRotamersMover");
 // Utility Headers
 #include <utility/exit.hh>
 #include <utility/vector0.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace moves {

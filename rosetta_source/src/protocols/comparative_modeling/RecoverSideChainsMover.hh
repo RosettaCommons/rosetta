@@ -18,8 +18,7 @@
 // AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 #include <protocols/moves/Mover.hh>
 
-//Auto Headers
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

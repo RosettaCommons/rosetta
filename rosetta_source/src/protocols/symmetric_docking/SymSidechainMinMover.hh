@@ -29,6 +29,9 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MinMover.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace symmetric_docking {
 

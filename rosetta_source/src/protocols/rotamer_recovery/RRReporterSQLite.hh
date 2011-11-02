@@ -26,7 +26,11 @@
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 // C++ Headers
-#include <ostream>
+// AUTO-REMOVED #include <ostream>
+
+#include <utility/vector1.hh>
+#include <iostream>
+
 
 namespace protocols {
 namespace rotamer_recovery {

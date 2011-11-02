@@ -26,7 +26,7 @@
 // package headers
 #include <protocols/forge/build/BuildInstruction.fwd.hh>
 #include <protocols/forge/build/BuildManager.hh>
-#include <protocols/forge/build/Interval.hh>
+// AUTO-REMOVED #include <protocols/forge/build/Interval.hh>
 #include <protocols/forge/components/VarLengthBuild.fwd.hh>
 
 // project headers

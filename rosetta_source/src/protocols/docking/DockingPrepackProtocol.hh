@@ -34,6 +34,9 @@
 #include <protocols/moves/PackRotamersMover.fwd.hh>
 #include <protocols/moves/RotamerTrialsMinMover.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace docking{
 

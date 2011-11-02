@@ -19,14 +19,14 @@
 // Project Headers
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-#include <core/scoring/constraints/NamedAtomPairConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <protocols/constraints_additional/AdditionalConstraintCreators.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <core/scoring/constraints/FuncFactory.hh>
 
 //numeric headers
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -46,6 +46,9 @@
 
 // C/C++ headers
 #include <iostream>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer tr("main");
 

@@ -13,7 +13,7 @@
 #ifndef INCLUDED_protocols_qsar_RenderGridsToKinemage_HH_
 #define INCLUDED_protocols_qsar_RenderGridsToKinemage_HH_
 
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <utility/io/ozstream.fwd.hh>
@@ -24,6 +24,9 @@
 
 #include <protocols/qsar/RenderGridsToKinemage.fwd.hh>
 #include <numeric/xyzVector.hh>
+
+#include <utility/vector1.hh>
+
 
 
 namespace protocols {

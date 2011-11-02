@@ -21,13 +21,10 @@
 
 #include <core/pose/Pose.fwd.hh>
 
-//Auto Headers
-#include <core/types.hh>
-#include <core/id/AtomID.fwd.hh>
-#include <core/scoring/hbonds/HBondSet.fwd.hh>
-#include <core/scoring/hbonds/HBondOptions.fwd.hh>
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
-#include <iostream>
+#include <core/scoring/hbonds/HBondOptions.fwd.hh>
+#include <core/scoring/hbonds/HBondSet.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

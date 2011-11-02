@@ -33,8 +33,8 @@
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 // Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 
-//Auto Headers
 #include <core/scoring/EnergyMap.hh>
+#include <utility/vector1.hh>
 
 
 //#include <basic/prof.hh>

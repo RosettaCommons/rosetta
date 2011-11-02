@@ -21,6 +21,9 @@
 #include <utility/vector1.fwd.hh>
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
 
+#include <utility/vector1.hh>
+
+
 //// C++ headers
 // AUTO-REMOVED #include <cstdlib>
 // AUTO-REMOVED #include <string>

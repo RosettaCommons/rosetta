@@ -27,18 +27,8 @@
 #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/ScoreFunctionInfo.fwd.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <utility/stream_util.hh>
-#include <protocols/moves/MoverStatistics.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/format.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 /// We want to isolate static instances of DummyMover so we put it inside privet namespace.

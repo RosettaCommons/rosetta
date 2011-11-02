@@ -22,7 +22,7 @@
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -31,6 +31,9 @@
 #include <protocols/moves/Mover.hh>
 #include <string>
 #include <map>
+
+#include <core/id/AtomID.fwd.hh>
+
 
 namespace protocols {
 namespace swa {

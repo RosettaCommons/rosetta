@@ -30,6 +30,9 @@
 #include <string>
 #include <vector>
 
+#include <utility/vector1.hh>
+
+
 
 namespace protocols {
 namespace wum {

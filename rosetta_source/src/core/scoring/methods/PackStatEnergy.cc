@@ -24,8 +24,8 @@
 // Project headers
 #include <core/pose/Pose.hh>
 
-//Auto Headers
 #include <core/scoring/EnergyMap.hh>
+#include <utility/vector1.hh>
 
 
 

@@ -13,7 +13,6 @@
 
 #include <protocols/multistate_design/SingleStateEntityData.hh>
 
-//Auto Headers
 #include <basic/MetricValueIO.hh>
 
 

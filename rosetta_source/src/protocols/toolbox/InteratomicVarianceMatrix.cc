@@ -36,7 +36,6 @@
 #include <string>
 #include <iostream>
 
-//Auto Headers
 #include <numeric/model_quality/RmsData.hh>
 #include <ObjexxFCL/FArray3.hh>
 

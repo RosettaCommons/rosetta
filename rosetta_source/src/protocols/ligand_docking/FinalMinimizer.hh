@@ -16,9 +16,9 @@
 
 // Unit Headers
 #include <protocols/ligand_docking/FinalMinimizer.fwd.hh>
-#include <protocols/ligand_docking/MinimizeBackbone.fwd.hh>
+// AUTO-REMOVED #include <protocols/ligand_docking/MinimizeBackbone.fwd.hh>
 #include <protocols/ligand_docking/MoveMapBuilder.fwd.hh>
-#include <protocols/ligand_docking/InterfaceBuilder.fwd.hh>
+// AUTO-REMOVED #include <protocols/ligand_docking/InterfaceBuilder.fwd.hh>
 
 // Package Headers
 //// Project Headers
@@ -33,8 +33,7 @@
 
 // Utility Headers
 
-//Auto Headers
-#include <protocols/loops/Loop.fwd.hh>
+#include <utility/vector1.hh>
 
 ///////////////////////////////////////////////////////////////////////
 

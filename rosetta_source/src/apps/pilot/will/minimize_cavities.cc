@@ -26,7 +26,7 @@
 #include <core/chemical/residue_io.hh>
 #include <core/chemical/VariantType.hh>
 
-#include "core/scoring/ScoreFunctionFactory.hh"
+#include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -71,7 +71,7 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/io.hh>
 
-#include "ObjexxFCL/format.hh"
+#include <ObjexxFCL/format.hh>
 
 #include <fstream>
 

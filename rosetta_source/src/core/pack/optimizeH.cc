@@ -37,8 +37,9 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/id/AtomID_Map.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 

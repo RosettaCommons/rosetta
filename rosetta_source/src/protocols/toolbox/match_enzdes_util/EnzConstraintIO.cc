@@ -58,6 +58,9 @@
 // option key includes
 
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
+
+#include <utility/vector1.hh>
+
 //#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 

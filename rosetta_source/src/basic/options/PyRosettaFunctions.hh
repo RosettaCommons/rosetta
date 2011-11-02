@@ -20,6 +20,19 @@
 
 #include <string>
 
+#include <platform/types.hh>
+#include <utility/vector1.fwd.hh>
+#include <utility/vector1_bool.hh>
+#include <utility/vectorL.fwd.hh>
+#include <utility/vectorL.hh>
+#include <utility/vectorL_Selector.hh>
+#include <utility/vectorL_bool.hh>
+#include <algorithm>
+#include <cassert>
+#include <cstddef>
+#include <vector>
+
+
 
 namespace basic {
 namespace options {

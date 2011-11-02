@@ -31,9 +31,8 @@
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 
-//Auto Headers
 #include <core/scoring/carbon_hbonds/CarbonHBondPotential.fwd.hh>
-
+#include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 
 namespace core {

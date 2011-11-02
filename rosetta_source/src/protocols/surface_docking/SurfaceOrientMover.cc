@@ -31,10 +31,14 @@
 
 //Utility Headers
 #include <utility/exit.hh>
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
 #include <algorithm>
+
+#include <utility/vector1.hh>
+#include <numeric/xyzVector.io.hh>
+
 
 using basic::T;
 using basic::Error;

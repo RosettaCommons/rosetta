@@ -27,17 +27,21 @@
 #include <core/scoring/hbonds/hbonds.hh>
 
 // Project headers
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/types.hh>
-#include <basic/Tracer.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/scoring/hbonds/HBondOptions.hh>
+
 
 using namespace core;
   using namespace conformation;

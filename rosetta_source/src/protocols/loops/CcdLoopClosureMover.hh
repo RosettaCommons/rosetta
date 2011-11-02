@@ -41,8 +41,8 @@
 #include <string>
 // AUTO-REMOVED #include <vector>
 
-//Auto Headers
 #include <protocols/loops/Loop.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

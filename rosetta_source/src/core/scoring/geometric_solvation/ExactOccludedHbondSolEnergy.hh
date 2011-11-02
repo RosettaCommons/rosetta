@@ -23,13 +23,17 @@
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 #include <core/scoring/hbonds/HBondOptions.fwd.hh>
-#include <core/chemical/AtomTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
 
 // Utility headers
 // AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
 #include <map>
+
+#include <core/chemical/AtomTypeSet.fwd.hh>
+#include <utility/vector1.hh>
+
 
 // AUTO-REMOVED #include <vector>
 

@@ -34,8 +34,9 @@ using namespace core;
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <protocols/moves/MoverStatistics.hh>
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 OPT_KEY( Real, atom_pair_constraint_weight )

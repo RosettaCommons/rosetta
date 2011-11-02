@@ -26,7 +26,6 @@
 #include <map>
 // AUTO-REMOVED #include <string>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

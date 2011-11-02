@@ -35,6 +35,11 @@
 // C/C++ headers
 #include <iostream>
 
+//Auto Headers
+#include <core/fragment/FrameIteratorWorker_.hh>
+#include <utility/vector1.hh>
+
+
 using namespace core::fragment;
 using namespace std;
 

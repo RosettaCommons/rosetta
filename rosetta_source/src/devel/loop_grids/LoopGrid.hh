@@ -18,12 +18,18 @@
 
 // Unit headers
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
-#include <protocols/match/BumpGrid.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <protocols/match/BumpGrid.hh>
 #include <protocols/loops/Loop.hh>
 
 //#include <protocols/match/LoopGrid.fwd.hh>
 #include <devel/loop_grids/LoopGrid.fwd.hh>
+
+#include <protocols/match/BumpGrid.fwd.hh>
+#include <protocols/match/SixDHasher.fwd.hh>
+#include <utility/vector1.hh>
+#include <numeric/geometry/BoundingBox.fwd.hh>
+
 
 namespace protocols {
 namespace match {

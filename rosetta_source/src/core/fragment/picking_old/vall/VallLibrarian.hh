@@ -14,7 +14,7 @@
 #ifndef INCLUDED_core_fragment_picking_old_vall_VallLibrarian_hh
 #define INCLUDED_core_fragment_picking_old_vall_VallLibrarian_hh
 
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
 
 // unit headers
 #include <core/fragment/picking_old/vall/VallLibrarian.fwd.hh>
@@ -42,6 +42,9 @@
 // C++ headers
 // AUTO-REMOVED #include <ctime>
 #include <functional>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

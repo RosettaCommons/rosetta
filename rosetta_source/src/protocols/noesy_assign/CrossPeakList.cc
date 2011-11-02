@@ -46,12 +46,15 @@
 #include <basic/prof.hh>
 
 //// C++ headers
-#include <math.h> //for isnan
+// AUTO-REMOVED #include <math.h> //for isnan
 
 #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/file/FileName.hh>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer tr("protocols.noesy_assign.crosspeaks");
 

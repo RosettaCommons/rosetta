@@ -24,22 +24,22 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <core/types.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 
-#include <utility/file/file_sys_util.hh> // file_exists
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/file/file_sys_util.hh> // file_exists
+// AUTO-REMOVED #include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <utility/pointer/owning_ptr.hh>
 // AUTO-REMOVED #include <utility/pointer/access_ptr.hh>
 #include <utility/vector1.hh>
 
-#include <numeric/random/random.fwd.hh>
+// AUTO-REMOVED #include <numeric/random/random.fwd.hh>
 
 #include <boost/unordered_map.hpp>
 
 #include <algorithm> // std::copy
-#include <iostream>
-#include <set>
+// AUTO-REMOVED #include <iostream>
+// AUTO-REMOVED #include <set>
 
 namespace protocols {
 namespace genetic_algorithm {

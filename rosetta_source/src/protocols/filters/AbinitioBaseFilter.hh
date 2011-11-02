@@ -25,6 +25,9 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
+#include <utility/vector1.hh>
+
+
 // ObjexxFCL Headers
 // AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 // AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>

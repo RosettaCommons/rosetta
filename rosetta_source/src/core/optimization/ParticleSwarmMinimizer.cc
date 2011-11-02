@@ -22,6 +22,9 @@
 
 #include <algorithm>
 
+#include <utility/vector1.hh>
+
+
 static numeric::random::RandomGenerator my_RG(6172008); // <- Magic number, do not change it!!!
 
 namespace core {

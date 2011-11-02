@@ -29,8 +29,8 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/PDBPoseMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
-//Auto Headers
-#include <core/chemical/AtomType.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

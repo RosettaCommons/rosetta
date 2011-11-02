@@ -20,7 +20,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/chemical/ResidueType.fwd.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueType.fwd.hh>
 
 //protocols
 #include <protocols/moves/Mover.hh>

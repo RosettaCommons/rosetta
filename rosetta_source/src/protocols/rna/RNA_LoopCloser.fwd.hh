@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_rna_RNA_LoopCloser_fwd_hh
 
 
-//Auto Headers
 #include <utility/pointer/owning_ptr.hh>
 
 

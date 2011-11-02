@@ -12,14 +12,17 @@
 /// @author James Thompson
 
 #include <utility/pointer/ReferenceCount.hh>
-#include <numeric/util.hh>
+// AUTO-REMOVED #include <numeric/util.hh>
 
 #include <core/scoring/constraints/SOGFunc.hh>
 #include <core/scoring/constraints/SOGFunc_Impl.hh>
 #include <core/types.hh>
 
 // C++ Headers
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

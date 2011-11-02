@@ -34,10 +34,10 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // std Headers
-#include <iterator>
+// AUTO-REMOVED #include <iterator>
 
-//Auto Headers
 #include <core/fragment/FrameIterator.hh>
+#include <utility/vector1.hh>
 
 
 /* Just a mad thought: with fragments becoming ever more "Residue" like one might want to use the

@@ -19,7 +19,7 @@
 #include <core/pose/Pose.hh>
 
 // Utility headers
-#include <core/sequence/util.hh>
+// AUTO-REMOVED #include <core/sequence/util.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/conformation/Residue.hh>
@@ -27,6 +27,9 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 #include <numeric/xyzVector.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace comparative_modeling {

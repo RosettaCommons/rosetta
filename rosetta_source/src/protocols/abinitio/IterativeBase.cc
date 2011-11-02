@@ -94,7 +94,7 @@
 #include <cstdlib>
 #include <string>
 // AUTO-REMOVED #include <ctime>
-#include <iterator>
+// AUTO-REMOVED #include <iterator>
 #include <vector>
 
 // Utility headers
@@ -102,11 +102,11 @@
 #include <numeric/random/random_permutation.hh>
 // Auto-header: duplicate removed #include <numeric/random/random.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
-
-#include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh> // REQUIRED FOR WINDOWS
+#include <protocols/noesy_assign/CrossPeakList.impl.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 static basic::Tracer tr("protocols.iterative");
 using basic::mem_tr;

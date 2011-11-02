@@ -12,7 +12,7 @@
 #define INCLUDED_core_graph_DisjointSets_hh
 
 // Project Headers
-#include <platform/types.hh>
+// AUTO-REMOVED #include <platform/types.hh>
 
 // Utility Headers
 // AUTO-REMOVED #include <utility/vector1.hh>
@@ -20,7 +20,6 @@
 // C++ headers
 #include <map>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

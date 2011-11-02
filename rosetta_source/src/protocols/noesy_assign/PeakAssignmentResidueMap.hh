@@ -17,7 +17,7 @@
 // Unit Headers
 #include <protocols/noesy_assign/PeakAssignmentResidueMap.fwd.hh>
 #include <protocols/noesy_assign/CrossPeakList.fwd.hh>
-#include <protocols/noesy_assign/ResonanceList.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/ResonanceList.hh>
 #include <core/types.hh>
 
 // Package Headers
@@ -27,7 +27,7 @@
 // Project Headers
 
 // Utility headers
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 // #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
@@ -40,11 +40,14 @@
 //#include <core/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-#include <cstdlib>
-#include <string>
+// AUTO-REMOVED #include <cstdlib>
+// AUTO-REMOVED #include <string>
 #include <list>
 #include <set>
 #include <map>
+
+#include <protocols/noesy_assign/ResonanceList.fwd.hh>
+
 
 namespace protocols {
 namespace noesy_assign {

@@ -21,6 +21,9 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 // Utility headers
 
 namespace core {

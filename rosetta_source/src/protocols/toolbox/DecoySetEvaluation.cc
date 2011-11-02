@@ -48,8 +48,8 @@
 #include <iostream>
 #include <cstdio>
 
-//Auto Headers
 #include <core/id/NamedStubID.hh>
+#include <utility/vector1.hh>
 
 OPT_1GRP_KEY( Real, dist_cst, max_dist )
 OPT_1GRP_KEY( Real, dist_cst, sd )

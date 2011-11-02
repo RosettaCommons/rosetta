@@ -61,11 +61,11 @@
 #include <map>
 // AUTO-REMOVED #include <list>
 
-//Auto Headers
 #include <core/id/AtomID_Map.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
 #include <core/kinematics/AtomPointer.fwd.hh>
 #include <core/kinematics/AtomWithDOFChange.fwd.hh>
+#include <utility/vector1.hh>
 
 
 

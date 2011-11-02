@@ -40,7 +40,10 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
+
+#include <utility/vector1.hh>
+
 
 // Numeric headers
 

@@ -26,8 +26,7 @@
 
 #include <numeric/xyzVector.hh>
 
-//Auto Headers
-#include <core/types.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

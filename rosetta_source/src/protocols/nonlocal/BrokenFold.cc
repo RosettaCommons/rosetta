@@ -20,7 +20,7 @@
 #include <string>
 
 // External headers
-#include <boost/format.hpp>
+// AUTO-REMOVED #include <boost/format.hpp>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -35,11 +35,11 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/optimization/MinimizerOptions.hh>
+// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -49,7 +49,7 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <protocols/abinitio/MaxSeqSepConstraintSet.hh>
-#include <protocols/filters/Filter.hh>
+// AUTO-REMOVED #include <protocols/filters/Filter.hh>
 #include <protocols/moves/RationalMonteCarlo.hh>
 
 // Package headers
@@ -57,6 +57,9 @@
 #include <protocols/nonlocal/PolicyFactory.hh>
 #include <protocols/nonlocal/SingleFragmentMover.hh>
 #include <protocols/nonlocal/util.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace nonlocal {

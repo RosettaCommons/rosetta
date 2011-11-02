@@ -11,7 +11,7 @@
 /// @author Phil bradley
 /// @author Christopher Miles (cmiles@uw.edu)
 /// @brief
-#include <protocols/idealize/idealize.hh>
+// AUTO-REMOVED #include <protocols/idealize/idealize.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/idealize/IdealizeMover.fwd.hh>
 #include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
@@ -27,6 +27,11 @@
 
 // C++ headers
 #include <iostream>
+
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 OPT_KEY( Real, atom_pair_constraint_weight )
 OPT_KEY( Real, coordinate_constraint_weight )

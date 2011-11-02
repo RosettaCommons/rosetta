@@ -37,7 +37,8 @@
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

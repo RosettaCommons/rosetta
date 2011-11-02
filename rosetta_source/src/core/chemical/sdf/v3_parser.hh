@@ -16,6 +16,9 @@
 #include <core/chemical/sdf/v3_parser.fwd.hh>
 #include <core/chemical/sdf/ctab_base.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace chemical {
 namespace sdf{

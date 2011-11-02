@@ -21,7 +21,10 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 
-#include <string>
+// AUTO-REMOVED #include <string>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace pose {

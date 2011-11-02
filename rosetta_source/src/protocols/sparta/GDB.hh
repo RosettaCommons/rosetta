@@ -14,9 +14,9 @@
 #ifndef GDB_H
 #define GDB_H
 
-#include <string>
+// AUTO-REMOVED #include <string>
 #include <vector>
-#include <map>
+// AUTO-REMOVED #include <map>
 #include <boost/unordered_map.hpp>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

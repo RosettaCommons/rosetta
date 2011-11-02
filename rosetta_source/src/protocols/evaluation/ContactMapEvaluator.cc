@@ -24,6 +24,9 @@
 #include <boost/dynamic_bitset.hpp>
 #include <algorithm>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace evaluation {
 

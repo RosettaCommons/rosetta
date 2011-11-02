@@ -58,11 +58,10 @@
 //// C++ headers
 // AUTO-REMOVED #include <fstream>
 
-//Auto Headers
+#include <protocols/jobdist/Jobs.hh>
 #include <protocols/jumping/JumpSample.hh>
 #include <protocols/loops/Loops.hh>
-#include <utility/io/mpistream.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer tr("protocols.general_abinitio",basic::t_info);

@@ -161,10 +161,10 @@
 //#include <utility/vector1.hh>
 //#include <utility/pointer/ReferenceCount.hh>
 #include <utility/string_util.hh>
-#include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 
-//Auto Headers
 #include <core/scoring/methods/EnergyMethod.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

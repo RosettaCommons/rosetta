@@ -29,7 +29,7 @@
 #include <basic/database/sql_utils.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray5D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray5D.hh>
 
 // External Headers
 #include <cppdb/frontend.h>

@@ -44,7 +44,7 @@
 #include <protocols/match/upstream/OriginalScaffoldBuildPoint.hh>
 #include <protocols/match/upstream/UpstreamBuilder.hh>
 
-#include <protocols/match/downstream/LigandConformer.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <protocols/match/downstream/LigandConformer.hh> // REQUIRED FOR WINDOWS
 
 // Project headers
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
@@ -75,15 +75,7 @@
 // AUTO-REMOVED #include <fstream>
 #include <string>
 
-//Auto Headers
-#include <core/conformation/Residue.hh>
-#include <utility/io/mpistream.hh>
-
-#if defined(WIN32) || defined(__CYGWIN__)
-	#include <ctime>
-#endif
-// TEMP!
-#include <ctime>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

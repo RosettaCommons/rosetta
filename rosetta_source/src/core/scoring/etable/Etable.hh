@@ -46,7 +46,6 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
 #include <ObjexxFCL/FArray1.fwd.hh>
 #include <ObjexxFCL/FArray2.fwd.hh>
 

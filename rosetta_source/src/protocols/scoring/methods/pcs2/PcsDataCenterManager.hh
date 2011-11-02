@@ -38,6 +38,9 @@
 #include <basic/datacache/CacheableData.hh>
 #include <core/types.hh>
 
+#include <utility/vector1.hh>
+
+
 // Utility headers
 
 // Numeric headers

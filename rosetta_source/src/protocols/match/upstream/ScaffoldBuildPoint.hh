@@ -35,9 +35,8 @@
 // Numeric headers
 // AUTO-REMOVED #include <numeric/xyzVector.hh>
 
-//Auto Headers
 #include <protocols/match/Hit.fwd.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

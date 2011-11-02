@@ -35,7 +35,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 // Auto-header: duplicate removed #include <core/id/AtomID.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <numeric/random/random.hh>
 
 // Package Headers
@@ -47,10 +47,10 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
-//Auto Headers
 #include <core/conformation/symmetry/SymmData.hh>
-#include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/pose/util.hh>
+#include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
 

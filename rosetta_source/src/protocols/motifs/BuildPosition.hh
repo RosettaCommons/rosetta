@@ -32,7 +32,7 @@
 
 // C++ Headers
 #include <set>
-#include <string>
+// AUTO-REMOVED #include <string>
 
 namespace protocols {
 namespace motifs {

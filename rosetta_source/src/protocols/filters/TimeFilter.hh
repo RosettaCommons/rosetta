@@ -22,6 +22,9 @@
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace filters {
 

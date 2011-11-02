@@ -17,7 +17,7 @@
 
 // Package headers
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/ScalarWeightedFunc.hh>
@@ -26,6 +26,10 @@
 
 // Project headers
 #include <basic/Tracer.hh>
+
+#include <core/chemical/ResidueType.hh>
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR( "protocols.forge.constraints.NtoC_RCG" );
 

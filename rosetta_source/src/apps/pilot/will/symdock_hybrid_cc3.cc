@@ -26,27 +26,25 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/types.hh>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <numeric/random/random.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
 
-#include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 #include <sstream>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <utility/string_util.hh>
-
 #include <apps/pilot/will/will_util.hh>
+#include <utility/vector1.hh>
 
 static basic::Tracer TR("symdock_hybrid");
 

@@ -30,6 +30,9 @@
 // c++ headers
 #include <map>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace protein_interface_design {
 

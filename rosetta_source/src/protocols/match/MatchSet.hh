@@ -30,13 +30,12 @@
 // AUTO-REMOVED #include <utility/vector1.hh>
 
 /// Boost headers
-#include <boost/cstdint.hpp>
+// AUTO-REMOVED #include <boost/cstdint.hpp>
 #include <boost/unordered_map.hpp>
 
 /// C++ headers
 #include <list>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

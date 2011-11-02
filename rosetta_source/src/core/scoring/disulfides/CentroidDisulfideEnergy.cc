@@ -33,8 +33,8 @@
 #include <core/scoring/methods/Methods.hh>
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

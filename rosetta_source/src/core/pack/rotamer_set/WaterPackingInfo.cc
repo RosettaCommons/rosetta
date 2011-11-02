@@ -18,10 +18,6 @@
 #include <core/pack/rotamer_set/WaterAnchorInfo.hh>
 #include <core/pack/rotamer_set/WaterPackingInfo.hh>
 
-//Auto Headers
-#include <iostream>
-
-
 // utility headers
 // AUTO-REMOVED #include <utility/vector1.hh>
 

@@ -45,7 +45,8 @@
 // Utility headers
 #include <utility/io/izstream.hh>
 
-//Auto Headers
+#include <core/chemical/ResidueType.hh>
+#include <utility/vector1.hh>
 #include <numeric/random/random.fwd.hh>
 
 

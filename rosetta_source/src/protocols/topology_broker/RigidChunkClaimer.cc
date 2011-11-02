@@ -47,7 +47,11 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 #include <vector>
-#include <iterator>
+// AUTO-REMOVED #include <iterator>
+
+#include <protocols/jd2/Job.hh>
+#include <utility/vector1.hh>
+
 
 static basic::Tracer tr("protocols.topo_broker", basic::t_info);
 static numeric::random::RandomGenerator RG(188428234);

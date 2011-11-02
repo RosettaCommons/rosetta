@@ -29,7 +29,6 @@
 // C++ STL Headers
 // AUTO-REMOVED #include <map>
 
-//Auto Headers
 #include <core/fragment/FragID.fwd.hh>
 #include <utility/vector1_bool.hh>
 

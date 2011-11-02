@@ -42,6 +42,9 @@
 // C++ headers
 #include <set>
 
+#include <utility/vector1.hh>
+
+
 //debug headers
 //#include <fstream>
 //#include <core/io/pdb/pose_io.hh>

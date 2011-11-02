@@ -50,8 +50,8 @@
 //// C++ headers
 #include <fstream>
 
-//Auto Headers
-#include <iterator>
+#include <utility/vector1.hh>
+#include <boost/algorithm/string/erase.hpp>
 
 
 // option key includes

@@ -38,7 +38,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 // AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <iostream>
 
 

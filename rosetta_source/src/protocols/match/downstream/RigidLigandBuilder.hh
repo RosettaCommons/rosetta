@@ -36,7 +36,7 @@
 #endif
 
 // Numeric headers
-#include <numeric/HomogeneousTransform.hh>
+// AUTO-REMOVED #include <numeric/HomogeneousTransform.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -44,9 +44,8 @@
 // C++ headers
 #include <list>
 
-//Auto Headers
 #include <utility/fixedsizearray1.hh>
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -14,12 +14,17 @@
 #define INCLUDED_protocols_protein_interface_design_ReportPSSMDifference_hh
 
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <utility/vector1.hh>
-#include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 
 #include <map>
+
+#include <core/chemical/AA.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+
 
 namespace protocols {
 namespace protein_interface_design {

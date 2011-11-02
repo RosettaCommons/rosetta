@@ -22,10 +22,7 @@
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 
-//Auto Headers
 #include <protocols/frag_picker/scores/FragmentScoreManager.fwd.hh>
-#include <utility/vector1.fwd.hh>
-#include <map>
 
 
 namespace protocols {

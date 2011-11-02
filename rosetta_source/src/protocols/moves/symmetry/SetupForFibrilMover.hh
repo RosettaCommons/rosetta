@@ -21,9 +21,9 @@
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <protocols/moves/symmetry/fibril_util.hh>
 
-//Auto Headers
 #include <core/kinematics/Jump.hh>
 #include <protocols/loops/Loops.fwd.hh>
+#include <utility/vector1.hh>
 
 
 // Utility Headers

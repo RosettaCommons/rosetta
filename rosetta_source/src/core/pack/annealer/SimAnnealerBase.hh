@@ -32,11 +32,9 @@
 // STL Headers
 // AUTO-REMOVED #include <vector>
 
-//Auto Headers
-
 #include <core/pack/rotamer_set/RotamerSetsBase.fwd.hh>
-#include <ObjexxFCL/FArray1D.fwd.hh>
 #include <ObjexxFCL/FArray1.fwd.hh>
+#include <ObjexxFCL/FArray1D.fwd.hh>
 
 
 namespace core {

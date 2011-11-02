@@ -19,13 +19,12 @@
 #include <test/UTracer.hh>
 
 #include <core/types.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/scoring/constraints/util.hh>
 
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <utility/stream_util.hh>
 
 
 using namespace core;

@@ -21,6 +21,9 @@
 //mover creators
 #include <devel/enzdes/EnzdesRemodelMoverCreator.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace devel {
 
 static protocols::moves::MoverRegistrator< enzdes::EnzdesRemodelMoverCreator > reg_EnzdesRemodelMoverCreator;

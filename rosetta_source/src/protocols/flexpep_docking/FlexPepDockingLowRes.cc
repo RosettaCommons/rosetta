@@ -41,7 +41,11 @@
 #include <protocols/moves/TrialMover.hh>
 #include <utility/exit.hh>
 #include <string>
-#include <cstdio>
+// AUTO-REMOVED #include <cstdio>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 using namespace protocols::flexpep_docking;
 

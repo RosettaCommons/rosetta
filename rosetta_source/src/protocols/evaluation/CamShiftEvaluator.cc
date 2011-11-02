@@ -37,8 +37,7 @@
 #include <utility/exit.hh>
 // AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 // C++ headers
 

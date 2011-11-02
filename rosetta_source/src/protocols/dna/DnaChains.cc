@@ -18,6 +18,9 @@
 
 #include <ObjexxFCL/format.hh> // I()
 
+#include <utility/vector1.hh>
+
+
 using utility::vector1;
 
 namespace protocols {

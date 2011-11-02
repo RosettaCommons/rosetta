@@ -16,13 +16,13 @@
 #define INCLUDED_core_scoring_saxs_FastSAXSEnergy_hh
 
 // Package headers
-#include <core/scoring/saxs/FastSAXSEnergyCreator.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/scoring/saxs/FastSAXSEnergyCreator.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
 
-#include <core/scoring/EnergyMap.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -31,6 +31,10 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <string>
+
+#include <utility/vector1.hh>
+#include <numeric/xyzVector.hh>
+
 
 namespace core {
 namespace scoring {

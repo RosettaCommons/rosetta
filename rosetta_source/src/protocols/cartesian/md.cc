@@ -19,18 +19,18 @@
 
 // Unit headers
 #include <protocols/cartesian/md.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
+// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
 
 // Package headers
 #include <core/id/AtomID.hh>
 #include <core/optimization/types.hh>
-#include <core/optimization/Multifunc.hh>
+// AUTO-REMOVED #include <core/optimization/Multifunc.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
 #include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/DomainMap.hh>
+// AUTO-REMOVED #include <core/kinematics/DomainMap.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -38,10 +38,10 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/NeighborList.hh>
-#include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <core/io/pdb/file_data.hh>
+// AUTO-REMOVED #include <core/scoring/NeighborList.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
+// AUTO-REMOVED #include <core/io/pdb/file_data.hh>
 
 // // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>
@@ -50,15 +50,20 @@
 #include <ObjexxFCL/format.hh>
 
 // // Numeric headers
-#include <numeric/conversions.hh>
-#include <numeric/random.functions.hh>
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/random.functions.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <iostream>
 #include <fstream>
-#include <core/optimization/MinimizerOptions.hh>
+// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 
 #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+#include <numeric/NumericTraits.hh>
+#include <numeric/random/random.fwd.hh>
+
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;

@@ -21,7 +21,7 @@
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 // AUTO-REMOVED #include <protocols/frags/TorsionFragment.fwd.hh>
-#include <protocols/loops/Loop.fwd.hh>
+// AUTO-REMOVED #include <protocols/loops/Loop.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
@@ -31,6 +31,9 @@
 
 // AUTO-REMOVED #include <map>
 #include <vector>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace loops {

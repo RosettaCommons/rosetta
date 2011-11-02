@@ -27,8 +27,8 @@
 #include <core/scoring/constraints/FuncFactory.hh>
 #include <numeric/xyzVector.hh>
 
-//Auto Headers
 #include <core/scoring/constraints/Func.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

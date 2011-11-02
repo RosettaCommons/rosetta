@@ -31,6 +31,9 @@
 // C++ headers
 #include <string>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace jd2 {
 

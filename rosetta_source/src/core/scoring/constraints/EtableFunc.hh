@@ -20,9 +20,8 @@
 // AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ Headers
-#include <ostream>
+// AUTO-REMOVED #include <ostream>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

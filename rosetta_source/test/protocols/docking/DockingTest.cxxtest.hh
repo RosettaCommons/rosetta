@@ -33,40 +33,24 @@
 
 // project headers
 #include <core/types.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Edge.hh>
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/operation/NoRepackDisulfides.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/NoRepackDisulfides.hh>
 
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 //Auto Headers
-#include <core/conformation/Atom.fwd.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID_Mask.hh>
-#include <core/id/DOF_ID_Map.hh>
-#include <core/id/DOF_ID_Mask.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pack/task/operation/ResFilterFactory.hh>
-#include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
-#include <core/scoring/Energies.fwd.hh>
-#include <core/scoring/types.hh>
-#include <protocols/moves/MoverStatistics.hh>
-#include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
-#include <numeric/xyzVector.io.hh>
-#include <numeric/random/random.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
-#include <ObjexxFCL/format.hh>
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 ///////////////////////////////////////////////////////////////////////////

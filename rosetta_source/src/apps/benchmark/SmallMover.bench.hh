@@ -21,7 +21,10 @@
 
 #include <core/kinematics/MoveMap.hh>
 
-#include "benchmark.hh"
+#include <apps/benchmark/benchmark.hh>
+
+#include <utility/vector1.hh>
+
 
 using namespace core;
 

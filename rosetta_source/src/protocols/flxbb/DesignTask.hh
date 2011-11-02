@@ -34,9 +34,7 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
-//Auto Headers
 #include <core/types.hh>
-#include <iostream>
 
 
 namespace protocols {

@@ -21,7 +21,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <basic/options/option.hh>
@@ -64,7 +64,7 @@
 #include <devel/denovo_protein_design/util.hh>
 
 // Utility Headers
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <utility/exit.hh>
 #include <numeric/random/random.hh>
@@ -76,17 +76,10 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-#include <utility/assert.hh> //ASSERT_ONLY makes release build happy
+// AUTO-REMOVED #include <utility/assert.hh> //ASSERT_ONLY makes release build happy
 // AUTO-REMOVED #include <ctime>
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
-
-//Auto Headers
-#include <core/pose/annotated_sequence.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <protocols/jumping/StrandPairing.hh>
-#include <utility/io/mpistream.hh>
-
 
 
 namespace devel {

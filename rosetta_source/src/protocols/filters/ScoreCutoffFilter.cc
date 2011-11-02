@@ -30,12 +30,16 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <basic/Tracer.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 // ObjexxFCL Headers
 #include <ObjexxFCL/format.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 
 //// C++ headers

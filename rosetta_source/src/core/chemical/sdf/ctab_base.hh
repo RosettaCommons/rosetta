@@ -20,7 +20,11 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/chemical/sdf/MolData.hh>
-#include <core/chemical/sdf/mol_util.hh>
+// AUTO-REMOVED #include <core/chemical/sdf/mol_util.hh>
+
+#include <core/chemical/sdf/mol_util.fwd.hh>
+#include <set>
+
 
 namespace core {
 namespace chemical {

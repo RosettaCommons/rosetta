@@ -16,18 +16,15 @@
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/id/AtomID_Map.hh>
+// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/types.hh>
 
 // Utility headers
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
-
-// C++ headers
-#include <set>
+#include <core/id/AtomID.fwd.hh>
+#include <utility/vector1.hh>
 #include <map>
 
 

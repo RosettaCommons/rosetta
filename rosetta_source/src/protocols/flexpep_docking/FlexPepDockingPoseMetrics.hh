@@ -23,11 +23,10 @@
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray1D.fwd.hh>
 
-//Auto Headers
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -46,17 +46,22 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/option_macros.hh>
+// AUTO-REMOVED #include <basic/options/after_opts.hh>
+// AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <basic/options/keys/mc.OptionKeys.gen.hh>
-#include <basic/options/keys/bbg.OptionKeys.gen.hh>
-#include <basic/options/keys/backrub.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/bbg.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/backrub.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/cluster.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <basic/options/keys/canonical_sampling.OptionKeys.gen.hh>
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
+
+#include <core/chemical/ResidueType.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 
 

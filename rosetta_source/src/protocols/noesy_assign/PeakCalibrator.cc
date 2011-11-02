@@ -31,6 +31,9 @@
 #include <cmath>
 #include <map>
 
+#include <utility/vector1.hh>
+
+
 static basic::Tracer tr("protocols.noesy_assign.crosspeaks");
 
 using core::Real;

@@ -42,6 +42,9 @@
 // Utility headers
 #include <basic/Tracer.hh>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <utility/io/izstream.hh>
 
 //// C++ headers

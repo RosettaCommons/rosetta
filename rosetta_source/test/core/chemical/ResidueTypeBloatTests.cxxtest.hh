@@ -17,7 +17,7 @@
 #include <test/core/init_util.hh>
 
 // Unit Headers
-#include <core/chemical/ResidueType.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
 // Project Headers
@@ -33,6 +33,10 @@
 // C++ Headers
 #include <string>
 #include <ostream>
+
+//Auto Headers
+#include <utility/vector1.hh>
+
 
 using std::endl;
 using std::string;

@@ -56,7 +56,7 @@
 #include <utility/vector1.hh>
 
 
-#include <math.h> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <math.h> // REQUIRED FOR WINDOWS
 
 #include <map>
 
@@ -64,8 +64,8 @@
 //option headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/orbitals.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 
 

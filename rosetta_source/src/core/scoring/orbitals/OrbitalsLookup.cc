@@ -21,13 +21,13 @@
 #include <sstream>
 #include <utility/io/izstream.hh>
 #include <core/scoring/orbitals/OrbitalsLookup.hh>
-#include <core/scoring/orbitals/OrbitalsScore.hh>
-#include <core/scoring/orbitals/OrbitalsScoreCreator.hh>
-#include <core/chemical/orbitals/OrbitalTypeMapper.hh>
+// AUTO-REMOVED #include <core/scoring/orbitals/OrbitalsScore.hh>
+// AUTO-REMOVED #include <core/scoring/orbitals/OrbitalsScoreCreator.hh>
+// AUTO-REMOVED #include <core/chemical/orbitals/OrbitalTypeMapper.hh>
 #include <basic/database/open.hh>
-#include <map>
-#include <basic/options/option.hh>
-#include <basic/options/keys/orbitals.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <map>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/orbitals.OptionKeys.gen.hh>
 
 
 

@@ -48,6 +48,9 @@
 #include <map>
 #include <vector>
 
+#include <utility/vector1.hh>
+
+
 
 using namespace core;
 using namespace ObjexxFCL;

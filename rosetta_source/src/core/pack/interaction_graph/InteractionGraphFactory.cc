@@ -34,10 +34,12 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-//Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <utility/options/BooleanVectorOption.hh>
 
 
 namespace core {

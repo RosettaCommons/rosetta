@@ -20,37 +20,37 @@
 #include <core/scoring/Membrane_FAPotential.hh>
 #include <core/scoring/Membrane_FAPotential.fwd.hh>
 #include <core/scoring/MembranePotential.hh>
-#include <core/scoring/MembraneTopology.hh>
+// AUTO-REMOVED #include <core/scoring/MembraneTopology.hh>
 
 // Package headers
 
-#include <core/scoring/EnergyGraph.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/EnvPairPotential.hh>
 
 // Project headers
 #include <core/chemical/AA.hh>
-#include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
-#include <basic/database/open.hh>
+// AUTO-REMOVED #include <basic/database/open.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
+// AUTO-REMOVED #include <basic/options/after_opts.hh>
 #include <basic/options/keys/membrane.OptionKeys.gen.hh>
 
 // Utility headers
-#include <utility/io/izstream.hh>
-#include <utility/utility.functions.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/utility.functions.hh>
 #include <core/types.hh>
 
 
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/random/random.hh>
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>

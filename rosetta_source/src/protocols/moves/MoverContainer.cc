@@ -31,6 +31,10 @@
 //
 #include <string>
 
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 static basic::Tracer tr("protocols.moves.MoverContainer");
 
 

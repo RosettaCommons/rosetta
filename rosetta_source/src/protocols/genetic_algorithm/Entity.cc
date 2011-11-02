@@ -29,9 +29,7 @@ using namespace ObjexxFCL;
 #include <iostream>
 #include <sstream>
 
-//Auto Headers
-#include <utility/vector1.fwd.hh>
-#include <utility/pointer/access_ptr.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

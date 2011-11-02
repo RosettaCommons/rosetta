@@ -24,8 +24,8 @@
 
 // AUTO-REMOVED #include <core/conformation/Residue.hh>
 
-//Auto Headers
 #include <core/conformation/Residue.fwd.hh>
+#include <utility/vector1.hh>
 
 
 

@@ -36,10 +36,10 @@
 #include <basic/MetricValue.hh>
 #include <basic/prof.hh>
 #include <core/pose/metrics/PoseMetricContainer.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -49,7 +49,7 @@
 #include <iostream>
 #include <fstream>
 //#include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
-#include <core/scoring/mm/MMBondAngleResidueTypeParamSet.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.fwd.hh>
 //#include <core/optimization/MinimizerMap.fwd.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
@@ -61,10 +61,10 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableObserver.fwd.hh>
-#include <core/pose/datacache/CacheableObserver.hh>
+// AUTO-REMOVED #include <core/pose/datacache/CacheableObserver.hh>
 #include <core/pose/datacache/ObserverCache.fwd.hh>
-#include <core/pose/metrics/PoseMetricCalculatorBase.fwd.hh>
-#include <core/pose/metrics/PoseMetricCalculatorBase.hh>
+// AUTO-REMOVED #include <core/pose/metrics/PoseMetricCalculatorBase.fwd.hh>
+// AUTO-REMOVED #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <core/pose/metrics/PoseMetricContainer.fwd.hh>
 #include <core/pose/signals/ConformationEvent.fwd.hh>
 #include <core/pose/signals/ConformationEvent.hh>
@@ -87,11 +87,11 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionInfo.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoringManager.fwd.hh>
-#include <core/scoring/SecondaryStructureWeights.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/SecondaryStructureWeights.hh>
 #include <core/scoring/TenANeighborGraph.fwd.hh>
 #include <core/scoring/TwelveANeighborGraph.fwd.hh>
-#include <core/scoring/types.hh>
+// AUTO-REMOVED #include <core/scoring/types.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
@@ -105,7 +105,7 @@
 #include <core/scoring/constraints/HarmonicFunc.fwd.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/XYZ_Func.fwd.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
 //#include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
 #include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.fwd.hh>
@@ -115,14 +115,14 @@
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/Methods.hh>
 #include <core/scoring/methods/TwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.fwd.hh>
 // Auto-header: duplicate removed #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
-#include <core/id/SequenceMapping.hh>
+// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 #include <basic/MetricValue.fwd.hh>
 // AUTO-REMOVED #include <basic/OStream.fwd.hh>
 #include <utility/stream_util.hh>
@@ -153,13 +153,13 @@
 #include <utility/file/FileName.hh>
 #include <utility/file/PathName.fwd.hh>
 #include <utility/file/PathName.hh>
-#include <utility/io/all.fwd.hh>
-#include <utility/io/icstream.fwd.hh>
-#include <utility/io/irstream.fwd.hh>
-#include <utility/io/izstream.fwd.hh>
-#include <utility/io/ocstream.fwd.hh>
-#include <utility/io/orstream.fwd.hh>
-#include <utility/io/ozstream.fwd.hh>
+// AUTO-REMOVED #include <utility/io/all.fwd.hh>
+// AUTO-REMOVED #include <utility/io/icstream.fwd.hh>
+// AUTO-REMOVED #include <utility/io/irstream.fwd.hh>
+// AUTO-REMOVED #include <utility/io/izstream.fwd.hh>
+// AUTO-REMOVED #include <utility/io/ocstream.fwd.hh>
+// AUTO-REMOVED #include <utility/io/orstream.fwd.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.fwd.hh>
 #include <utility/keys/AutoKey.fwd.hh>
 #include <utility/keys/AutoKey.hh>
 #include <utility/keys/Key.fwd.hh>
@@ -276,10 +276,10 @@
 #include <utility/signals/PausableSignalHub.hh>
 #include <utility/signals/SignalHub.fwd.hh>
 #include <utility/signals/SignalHub.hh>
-#include <numeric/BodyPosition.fwd.hh>
+// AUTO-REMOVED #include <numeric/BodyPosition.fwd.hh>
 #include <numeric/NumericTraits.hh>
-#include <numeric/Quaternion.fwd.hh>
-#include <numeric/all.fwd.hh>
+// AUTO-REMOVED #include <numeric/Quaternion.fwd.hh>
+// AUTO-REMOVED #include <numeric/all.fwd.hh>
 #include <numeric/conversions.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/trig.functions.hh>
@@ -287,7 +287,7 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzMatrix.hh>
-#include <numeric/xyzTriple.fwd.hh>
+// AUTO-REMOVED #include <numeric/xyzTriple.fwd.hh>
 #include <numeric/xyzVector.fwd.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/internal/ColPointers.hh>
@@ -296,44 +296,44 @@
 #include <numeric/internal/RowPointers.hh>
 #include <numeric/internal/RowVectors.hh>
 #include <numeric/internal/RowsPointer.hh>
-#include <ObjexxFCL/CArray.fwd.hh>
-#include <ObjexxFCL/CArrayP.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/CArray.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/CArrayP.fwd.hh>
 #include <ObjexxFCL/Dimension.fwd.hh>
 #include <ObjexxFCL/Dimension.hh>
 #include <ObjexxFCL/DimensionExpression.hh>
 #include <ObjexxFCL/DynamicIndexRange.fwd.hh>
 #include <ObjexxFCL/DynamicIndexRange.hh>
-#include <ObjexxFCL/FArray.all.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray.all.fwd.hh>
 #include <ObjexxFCL/FArray.hh>
-#include <ObjexxFCL/FArray1.all.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1.all.fwd.hh>
 #include <ObjexxFCL/FArray1.fwd.hh>
 #include <ObjexxFCL/FArray1.hh>
-#include <ObjexxFCL/FArray1A.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1A.fwd.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray1P.fwd.hh>
-#include <ObjexxFCL/FArray2.all.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1P.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2.all.fwd.hh>
 #include <ObjexxFCL/FArray2.fwd.hh>
 #include <ObjexxFCL/FArray2.hh>
-#include <ObjexxFCL/FArray2A.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2A.fwd.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray2P.fwd.hh>
-#include <ObjexxFCL/FArray3.all.fwd.hh>
-#include <ObjexxFCL/FArray3.fwd.hh>
-#include <ObjexxFCL/FArray3A.fwd.hh>
-#include <ObjexxFCL/FArray3D.fwd.hh>
-#include <ObjexxFCL/FArray3P.fwd.hh>
-#include <ObjexxFCL/FArray4.all.fwd.hh>
-#include <ObjexxFCL/FArray4.fwd.hh>
-#include <ObjexxFCL/FArray4A.fwd.hh>
-#include <ObjexxFCL/FArray4D.fwd.hh>
-#include <ObjexxFCL/FArray4P.fwd.hh>
-#include <ObjexxFCL/FArray5.all.fwd.hh>
-#include <ObjexxFCL/FArray5.fwd.hh>
-#include <ObjexxFCL/FArray5A.fwd.hh>
-#include <ObjexxFCL/FArray5D.fwd.hh>
-#include <ObjexxFCL/FArray5P.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2P.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray3.all.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray3.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray3A.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray3D.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray3P.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray4.all.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray4.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray4A.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray4D.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray4P.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray5.all.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray5.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray5A.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray5D.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray5P.fwd.hh>
 #include <ObjexxFCL/FArrayInitializer.fwd.hh>
 #include <ObjexxFCL/FArrayInitializer.hh>
 #include <ObjexxFCL/FArraySection.fwd.hh>
@@ -342,9 +342,9 @@
 #include <ObjexxFCL/FArrayTraits.hh>
 #include <ObjexxFCL/IndexRange.fwd.hh>
 #include <ObjexxFCL/IndexRange.hh>
-#include <ObjexxFCL/KeyFArray1D.fwd.hh>
-#include <ObjexxFCL/KeyFArray2D.fwd.hh>
-#include <ObjexxFCL/KeyFArray3D.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/KeyFArray1D.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/KeyFArray2D.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/KeyFArray3D.fwd.hh>
 #include <ObjexxFCL/Observer.fwd.hh>
 #include <ObjexxFCL/Observer.hh>
 #include <ObjexxFCL/ObserverMulti.hh>
@@ -373,10 +373,13 @@
 #include <utility>
 #include <vector>
 #include <boost/bind.hpp>
-#include <boost/config.hpp>
+// AUTO-REMOVED #include <boost/config.hpp>
 #include <boost/function.hpp>
-#include <boost/pool/detail/mutex.hpp>
+// AUTO-REMOVED #include <boost/pool/detail/mutex.hpp>
 #include <boost/pool/poolfwd.hpp>
+
+#include <core/id/NamedAtomID.hh>
+
 
 
 namespace core {

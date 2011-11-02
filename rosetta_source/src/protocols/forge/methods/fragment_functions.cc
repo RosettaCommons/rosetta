@@ -18,8 +18,8 @@
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/FrameIteratorWorker_.hh>
 
-//Auto Headers
 #include <core/fragment/FrameIterator.hh>
+#include <utility/vector1.hh>
 #ifdef WIN32
 #include <core/fragment/FragID.hh>
 #endif

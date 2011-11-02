@@ -26,26 +26,26 @@
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/rna/RNA_TorsionPotential.hh>
+// AUTO-REMOVED #include <core/scoring/rna/RNA_TorsionPotential.hh>
 #include <core/scoring/rna/RNA_Util.hh>
 #include <basic/Tracer.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/BinaryRNASilentStruct.hh>
 
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 
 #include <core/id/TorsionID.hh>
-#include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 
-#include <core/chemical/AtomType.hh> //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType Oct 14, 2009
+// AUTO-REMOVED #include <core/chemical/AtomType.hh> //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType Oct 14, 2009
 #include <core/conformation/Conformation.hh>
 #include <protocols/rna/RNA_LoopCloser.hh>
 
@@ -53,17 +53,21 @@
 #include <core/optimization/MinimizerOptions.hh>
 
 
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/exit.hh>
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
 
 #include <string>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <map>
+
+#include <core/kinematics/MoveMap.hh>
+#include <utility/vector1.hh>
+
 
 
 using namespace core;

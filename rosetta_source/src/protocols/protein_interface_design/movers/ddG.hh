@@ -18,13 +18,16 @@
 // Package headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/types.hh>
 #include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 #include <protocols/protein_interface_design/movers/ddG.fwd.hh>
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace protein_interface_design {

@@ -24,14 +24,14 @@
 
 // Unit Headers
 #include <protocols/abinitio/AbrelaxMover.fwd.hh>
-#include <protocols/abinitio/FragmentSampler.hh>
+// AUTO-REMOVED #include <protocols/abinitio/FragmentSampler.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/SlidingWindowLoopClosure.fwd.hh>
 #include <protocols/relax/RelaxProtocolBase.fwd.hh>
 
 // Package Headers
 #include <protocols/topology_broker/TopologyBroker.fwd.hh>
-#include <protocols/checkpoint/CheckPointer.hh>
+// AUTO-REMOVED #include <protocols/checkpoint/CheckPointer.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -39,6 +39,10 @@
 
 // C++ headers
 #include <string>
+
+#include <protocols/abinitio/FragmentSampler.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace abinitio {

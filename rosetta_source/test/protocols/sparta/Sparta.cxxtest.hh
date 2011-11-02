@@ -18,6 +18,10 @@
 #include <utility/vector1.hh>
 #include <numeric>
 
+//Auto Headers
+#include <utility/vector0.hh>
+
+
 static numeric::random::RandomGenerator rg(840184); // <- Magic number, do not change it!!!
 
 class SpartaTest : public CxxTest::TestSuite {

@@ -18,6 +18,9 @@
 
 #include <protocols/optimize_weights/DGBindOptEData.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace optimize_weights {
 

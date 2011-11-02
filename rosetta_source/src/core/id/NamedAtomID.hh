@@ -16,15 +16,14 @@
 
 // Unit headers
 #include <core/id/NamedAtomID.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
+// AUTO-REMOVED #include <core/id/AtomID.fwd.hh>
 
 // C++ headers
-#include <iosfwd>
+// AUTO-REMOVED #include <iosfwd>
 #ifdef WIN32
 #include <string>
 #endif
 
-//Auto Headers
 #include <core/types.hh>
 #include <ostream>
 

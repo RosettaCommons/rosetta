@@ -15,7 +15,7 @@
 
 //unit headers
 #include <protocols/jd2/Job.hh>
-#include <protocols/jd2/InnerMultiThreadingJob.hh>
+// AUTO-REMOVED #include <protocols/jd2/InnerMultiThreadingJob.hh>
 #include <protocols/jd2/MultiThreadingJob.fwd.hh>
 
 //project headers
@@ -28,6 +28,9 @@
 
 //C++ headers
 #include <string>
+
+#include <protocols/jd2/InnerMultiThreadingJob.fwd.hh>
+
 
 namespace protocols {
 namespace jd2 {

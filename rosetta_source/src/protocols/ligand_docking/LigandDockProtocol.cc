@@ -44,7 +44,7 @@
 #include <protocols/ligand_docking/RandomConformerMover.hh>
 #include <protocols/ligand_docking/ResidueTorsionRestraints.hh>
 #include <protocols/ligand_docking/UnconstrainedTorsionsMover.hh>
-#include <protocols/ligand_docking/MinimizeLigand.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <protocols/ligand_docking/MinimizeLigand.hh> // REQUIRED FOR WINDOWS
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
@@ -79,10 +79,9 @@
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/pose/Pose.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
-#include <utility/io/mpistream.hh>
+#include <utility/vector0.hh>
 
 
 

@@ -24,6 +24,9 @@
 
 #include <utility/vector1.hh>
 
+#include <string>
+
+
 namespace core {
 namespace pack {
 namespace task {

@@ -31,9 +31,9 @@
 #include <core/conformation/Residue.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
-//Auto Headers
 #include <core/kinematics/Jump.hh>
 #include <core/scoring/EnergyMap.hh>
+#include <utility/vector1.hh>
 
 
 // Utility headers

@@ -16,7 +16,7 @@
 
 // Package headers
 #include <protocols/docking/metrics.hh>
-#include <protocols/filters/BasicFilters.hh>
+// AUTO-REMOVED #include <protocols/filters/BasicFilters.hh>
 
 // Project headers
 #include <basic/Tracer.hh>
@@ -25,15 +25,18 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/string.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 // C++ Headers
 #include <string>
 
 //Utility Headers
 #include <utility/tools/make_vector1.hh>
-#include <numeric/trig.functions.hh>
-#include <numeric/xyzMatrix.fwd.hh>
+// AUTO-REMOVED #include <numeric/trig.functions.hh>
+// AUTO-REMOVED #include <numeric/xyzMatrix.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 using basic::T;
 using basic::Error;

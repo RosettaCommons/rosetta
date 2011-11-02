@@ -16,8 +16,8 @@
 
 // Unit headers
 #include <core/scoring/methods/MMLJEnergyIntra.fwd.hh>
-#include <core/scoring/mm/MMLJLibrary.hh>
-#include <core/scoring/mm/MMLJEnergyTable.hh>
+// AUTO-REMOVED #include <core/scoring/mm/MMLJLibrary.hh>
+// AUTO-REMOVED #include <core/scoring/mm/MMLJEnergyTable.hh>
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
@@ -29,6 +29,10 @@
 
 // C++ headers
 #include <iostream>
+
+#include <core/scoring/mm/MMLJEnergyTable.fwd.hh>
+#include <utility/vector1.hh>
+
 
 
 namespace core {

@@ -16,10 +16,14 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/sequence/SequenceAlignment.hh>
+// AUTO-REMOVED #include <core/sequence/SequenceAlignment.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/id/AtomID.fwd.hh>
+// AUTO-REMOVED #include <core/id/AtomID.fwd.hh>
+
+#include <core/sequence/SequenceAlignment.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace relax {

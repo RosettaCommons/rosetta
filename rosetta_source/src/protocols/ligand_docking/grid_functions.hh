@@ -23,11 +23,10 @@
 
 #include <iostream>
 
-//Auto Headers
-#include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/grid/CartGrid.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace ligand_docking {

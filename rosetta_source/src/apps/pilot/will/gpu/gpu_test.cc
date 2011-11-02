@@ -45,8 +45,9 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
-#include "apps/pilot/will/will_util.hh"
-#include "apps/pilot/will/mynamespaces.hh"
+#include <apps/pilot/will/will_util.hh>
+#include <apps/pilot/will/mynamespaces.hh>
+
 
 static basic::Tracer TR("gpu_test");
 

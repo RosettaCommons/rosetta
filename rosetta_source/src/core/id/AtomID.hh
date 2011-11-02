@@ -21,11 +21,9 @@
 // AUTO-REMOVED #include <basic/Tracer.fwd.hh>
 #include <utility/exit.hh>
 // C++ headers
-#include <iosfwd>
+// AUTO-REMOVED #include <iosfwd>
 
-//Auto Headers
 #include <core/types.hh>
-#include <ostream>
 
 
 

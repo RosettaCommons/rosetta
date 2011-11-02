@@ -48,7 +48,10 @@
 #include <map> // what is the right header for std::pair ?
 
 // option key includes
-#include <utility/options/keys/BooleanOptionKey.hh>
+// AUTO-REMOVED #include <utility/options/keys/BooleanOptionKey.hh>
+
+#include <utility/vector1.hh>
+
 
 
 

@@ -12,7 +12,7 @@
 /// @author
 
 #include <core/scoring/packing/PoseBallsLite.hh>
-#include <core/scoring/packstat/AtomRadiusMap.hh>
+// AUTO-REMOVED #include <core/scoring/packstat/AtomRadiusMap.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/util.hh>
@@ -21,10 +21,10 @@
 
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

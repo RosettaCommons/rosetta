@@ -22,13 +22,8 @@
 ///Project headers
 #include <core/pose/Pose.hh>
 
-//Auto Headers
 #include <utility/exit.hh>
-
-
-///Utility headers
-
-///C++ headers
+#include <utility/vector1.hh>
 #include <sstream>
 
 namespace protocols {

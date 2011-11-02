@@ -18,7 +18,7 @@
 #include <string>
 #include <utility/vector1.hh>
 #include <core/types.hh>
-#include <numeric/xyzVector.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>

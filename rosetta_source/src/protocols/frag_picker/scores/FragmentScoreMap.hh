@@ -16,14 +16,14 @@
 
 // package headers
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
-#include <protocols/frag_picker/scores/FragmentScoreManager.fwd.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/scores/FragmentScoreManager.fwd.hh>
 
 // utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/types.hh>
 #include <utility/vector1_bool.hh>
 
-#include <string>
+// AUTO-REMOVED #include <string>
 
 namespace protocols {
 namespace frag_picker {

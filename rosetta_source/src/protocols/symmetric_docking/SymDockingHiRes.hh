@@ -33,7 +33,7 @@
 #include <protocols/moves/symmetry/SymRotamerTrialsMover.fwd.hh>
 #include <protocols/moves/symmetry/SymMinMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/loops/Loops.fwd.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.fwd.hh>
 
 // For symmetry
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
@@ -41,9 +41,7 @@
 
 #include <string>
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

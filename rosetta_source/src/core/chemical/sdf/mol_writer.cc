@@ -16,11 +16,15 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <utility/string_util.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <set>
 
 // Boost Headers
 #include <boost/foreach.hpp>
+
+#include <utility/vector1.hh>
+#include <utility/io/ozstream.hh>
+
 #define foreach BOOST_FOREACH
 
 namespace core {

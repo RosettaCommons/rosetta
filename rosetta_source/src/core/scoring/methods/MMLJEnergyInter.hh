@@ -16,7 +16,7 @@
 
 // Unit headers
 #include <core/scoring/methods/MMLJEnergyInter.fwd.hh>
-#include <core/scoring/mm/MMLJLibrary.hh>
+// AUTO-REMOVED #include <core/scoring/mm/MMLJLibrary.hh>
 #include <core/scoring/mm/MMLJEnergyTable.hh>
 
 #include <core/scoring/mm/mmtrie/MMEnergyTableAtom.hh>
@@ -26,8 +26,8 @@
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 
 #include <core/scoring/trie/RotamerTrieBase.fwd.hh>
-#include <core/scoring/trie/RotamerTrie.fwd.hh>
-#include <core/scoring/trie/TrieCountPairBase.hh>
+// AUTO-REMOVED #include <core/scoring/trie/RotamerTrie.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/trie/TrieCountPairBase.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
@@ -35,6 +35,10 @@
 
 // C++ headers
 #include <iostream>
+
+#include <core/scoring/trie/TrieCountPairBase.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

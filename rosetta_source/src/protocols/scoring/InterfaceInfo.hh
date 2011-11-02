@@ -19,7 +19,7 @@
 #include <core/types.hh>
 
 // Unit headers
-#include <core/scoring/AtomVDW.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/AtomVDW.fwd.hh>
 #include <protocols/scoring/InterfaceInfo.fwd.hh>
 
 // Package headers
@@ -29,8 +29,11 @@
 #include <basic/datacache/CacheableData.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace scoring {

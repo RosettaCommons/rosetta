@@ -14,23 +14,22 @@
 #define INCLUDED_protocols_rna_RNA_MatchType_HH
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 
-#include <core/pose/Pose.fwd.hh>
+// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 // you cannot #include yourself #include <protocols/rna/RNA_MatchType.hh>
-#include <utility/pointer/ReferenceCount.hh>
+// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
 
 // C++ Headers
-#include <string>
-#include <map>
+// AUTO-REMOVED #include <string>
+// AUTO-REMOVED #include <map>
 #include <vector>
 
-//Auto using namespaces
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-//Auto using namespaces end
+#include <utility/vector1.hh>
+
 
 
 

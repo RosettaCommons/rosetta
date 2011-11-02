@@ -21,6 +21,9 @@
 // package headers
 #include <protocols/forge/build/BuildInstruction.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace protocols {
 namespace forge {

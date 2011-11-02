@@ -18,7 +18,7 @@
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
 #include <core/id/SequenceMapping.hh>
-#include <core/sequence/util.hh>
+// AUTO-REMOVED #include <core/sequence/util.hh>
 
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/loops/Loops.hh>
@@ -26,6 +26,10 @@
 #include <basic/Tracer.hh>
 
 #include <core/types.hh>
+
+#include <core/pose/Pose.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace jd2 {

@@ -33,9 +33,9 @@
 
 // C++ headers
 
-//Auto Headers
 #include <core/scoring/disulfides/CentroidDisulfidePotential.hh>
-
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
 namespace protocols {

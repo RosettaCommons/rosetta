@@ -23,33 +23,19 @@
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
-#include <core/io/pdb/pose_io.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/io/pdb/pose_io.hh>
+// Auto-header: duplicate removed #include <core/io/pdb/pose_io.hh>
 
 // Utility headers
 
 // C++ headers
 #include <iostream>
-#include <iomanip>
+// AUTO-REMOVED #include <iomanip>
 
 //Auto Headers
-#include <core/chemical/MMAtomType.hh>
-#include <core/chemical/MMAtomTypeSet.hh>
-#include <core/conformation/Atom.fwd.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/types.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <utility/keys/Key3Tuple.hh>
-#include <utility/keys/Key4Tuple.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
+#include <utility/vector1.hh>
 
 
 using namespace core;

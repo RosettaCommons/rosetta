@@ -20,14 +20,14 @@
 #include <core/pose/Pose.hh>
 
 // AUTO-REMOVED #include <core/conformation/Interface.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 // Auto-header: duplicate removed #include <core/conformation/util.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 // AUTO-REMOVED
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -48,8 +48,8 @@
 // C++ headers
 // AUTO-REMOVED #include <utility>
 
-//Auto Headers
-#include <core/chemical/VariantType.hh>
+#include <core/kinematics/Jump.hh>
+#include <utility/vector0.hh>
 
 
 namespace core {

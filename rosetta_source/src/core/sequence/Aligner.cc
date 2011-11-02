@@ -19,13 +19,16 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
 
-#include <core/sequence/ScoringScheme.hh>  // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <core/sequence/ScoringScheme.hh>  // REQUIRED FOR WINDOWS
 #include <core/sequence/ScoringScheme.fwd.hh>  // REQUIRED FOR WINDOWS
 
 #include <iostream>
 #include <string>
 
 #include <utility/exit.hh>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

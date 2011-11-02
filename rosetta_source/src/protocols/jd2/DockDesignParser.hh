@@ -27,7 +27,12 @@
 #include <core/pose/Pose.fwd.hh>
 
 //utility headers
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+
+#include <utility/vector1.hh>
+#include <utility/options/StringVectorOption.fwd.hh>
+#include <iostream>
+
 
 namespace protocols {
 namespace jd2 {

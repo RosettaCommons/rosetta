@@ -38,7 +38,7 @@
 
 #include <core/scoring/dssp/Dssp.hh>
 
-#include <protocols/jd2/JobOutputter.hh>
+// AUTO-REMOVED #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/moves/Mover.hh>
@@ -53,6 +53,11 @@
 
 // option key includes
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
+
+#include <core/conformation/PointGraphData.hh>
+#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/vector1.hh>
+
 
 // C++ headers
 //#include <string>

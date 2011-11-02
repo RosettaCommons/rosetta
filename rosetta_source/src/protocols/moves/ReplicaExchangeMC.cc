@@ -21,6 +21,9 @@
 #include <protocols/moves/ReplicaExchangeMC.hh>
 #include <utility/exit.hh>
 
+#include <utility/vector1.hh>
+
+
 static basic::Tracer TR("protocols.ReplicaExchangeMC");
 static numeric::random::RandomGenerator re_RG(1801); // <- Magic number, do not change it!!!
 

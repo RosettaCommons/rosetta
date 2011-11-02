@@ -90,9 +90,9 @@
 //utility includes
 #include <utility/tag/Tag.hh>
 
-//Auto Headers
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
-#include <protocols/jumping/StrandPairing.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 namespace devel{

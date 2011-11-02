@@ -26,6 +26,9 @@
 #include <iostream>
 #include <cmath>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace optimize_weights {
 

@@ -16,12 +16,11 @@
 
 // Package Headers
 // AUTO-REMOVED #include <core/graph/Graph.hh>
-#include <platform/types.hh>
+// AUTO-REMOVED #include <platform/types.hh>
 
 // Utility Headers
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-//Auto Headers
 #include <core/graph/Graph.fwd.hh>
 #include <utility/vector1_bool.hh>
 

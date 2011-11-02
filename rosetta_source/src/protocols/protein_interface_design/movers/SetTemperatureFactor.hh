@@ -18,6 +18,9 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
+
+#include <utility/vector1.hh>
+
 // Auto-header: duplicate removed #include <protocols/filters/Filter.fwd.hh>
 
 namespace protocols {

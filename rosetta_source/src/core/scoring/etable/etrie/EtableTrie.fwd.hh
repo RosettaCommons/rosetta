@@ -16,7 +16,6 @@
 
 #include <core/scoring/trie/RotamerTrieBase.fwd.hh>
 
-//Auto Headers
 #include <utility/pointer/owning_ptr.hh>
 
 

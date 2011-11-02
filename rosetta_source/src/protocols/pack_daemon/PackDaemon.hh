@@ -42,14 +42,17 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // ObjexxFCL headers
-#include <ObjexxFCL/FArray1D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
 // C++ headers
-#include <utility>
+// AUTO-REMOVED #include <utility>
 #include <list>
 
 // Boost headers
 #include <boost/unordered_map.hpp>
+
+#include <utility/vector1.hh>
+
 
 
 namespace protocols {

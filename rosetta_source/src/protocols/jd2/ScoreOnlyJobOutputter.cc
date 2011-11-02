@@ -14,6 +14,10 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
+#include <protocols/jd2/Job.hh>
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace jd2 {
 

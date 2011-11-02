@@ -41,7 +41,7 @@
 #include <utility/exit.hh>
 
 // Numeric headers
-#include <numeric/constants.hh>
+// AUTO-REMOVED #include <numeric/constants.hh>
 #include <numeric/xyzVector.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
@@ -50,6 +50,9 @@
 
 // C++ headers
 #include <iostream>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols{
 namespace scoring{

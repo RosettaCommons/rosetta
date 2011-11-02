@@ -13,7 +13,7 @@
 // Unit headers
 #include <protocols/moves/asym_fold_and_dock/AsymFoldandDockRbTrialMover.hh>
 #include <protocols/moves/RigidBodyMover.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -30,6 +30,9 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace moves {

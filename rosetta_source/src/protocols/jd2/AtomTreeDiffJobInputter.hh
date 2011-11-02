@@ -24,6 +24,9 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/import_pose/atom_tree_diffs/atom_tree_diff.hh>
 
+#include <utility/vector1.hh>
+
+
 //utility headers
 
 namespace protocols {

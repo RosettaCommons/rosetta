@@ -17,6 +17,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 
 #include <protocols/moves/MoverCreator.hh>
+
 // you cannot #include yourself #include <protocols/ligand_docking/StartFromCreator.hh>
 
 namespace protocols {

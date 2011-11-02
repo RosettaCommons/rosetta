@@ -20,12 +20,12 @@
 // Package headers
 #include <protocols/moves/Mover.hh>
 #include <protocols/docking/DockingEnsemble.fwd.hh>
-#include <protocols/docking/DockFilters.hh>
+// AUTO-REMOVED #include <protocols/docking/DockFilters.hh>
 
 #include <core/types.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
 //Option key includes
 
@@ -38,8 +38,8 @@
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <protocols/docking/DockFilters.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

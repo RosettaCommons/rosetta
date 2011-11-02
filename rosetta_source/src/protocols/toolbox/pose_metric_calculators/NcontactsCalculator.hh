@@ -24,6 +24,9 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 // Utility headers
 // AUTO-REMOVED #include <utility/vector1.hh>
 

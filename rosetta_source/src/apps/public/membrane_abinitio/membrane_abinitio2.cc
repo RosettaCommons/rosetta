@@ -22,6 +22,9 @@
 #include <protocols/viewer/viewers.hh>
 #include <protocols/abinitio/AbrelaxApplication.hh>
 
+#include <utility/vector1.hh>
+
+
 void*
 my_main( void *)
 {

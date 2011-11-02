@@ -18,10 +18,9 @@
 
 // AUTO-REMOVED #include <vector>
 // AUTO-REMOVED #include <fstream>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 // AUTO-REMOVED #include <string>
 
-//Auto Headers
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -30,7 +29,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 

@@ -50,6 +50,9 @@
 
 #include <basic/options/option_macros.hh>
 
+#include <utility/vector1.hh>
+
+
 OPT_1GRP_KEY( RealVector, noesy_weights, tolerances )
 
 bool protocols::noesy_assign::PeakFileFormat::options_registered_( false );

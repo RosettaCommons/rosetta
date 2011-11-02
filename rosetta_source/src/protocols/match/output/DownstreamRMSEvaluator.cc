@@ -24,9 +24,9 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
 #include <protocols/match/Hit.hh>
+#include <utility/vector1.hh>
 
 
 

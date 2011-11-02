@@ -13,6 +13,9 @@
 // unit headers
 #include <protocols/make_rot_lib/RotData.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace MakeRotLib {
 

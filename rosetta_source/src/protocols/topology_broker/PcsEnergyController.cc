@@ -38,11 +38,15 @@
 #include <protocols/scoring/methods/pcs2/PcsGridSearchParameterManager.hh>
 
 // Project Headers
-#include <core/scoring/constraints/Constraint.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+#include <basic/options/keys/OptionKeys.hh>
+
 
 // ObjexxFCL Headers
 

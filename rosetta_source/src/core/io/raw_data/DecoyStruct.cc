@@ -34,10 +34,9 @@
 
 #include <numeric/model_quality/rms.hh>
 
-//Auto Headers
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <utility/io/mpistream.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
 

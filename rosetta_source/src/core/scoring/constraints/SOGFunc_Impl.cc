@@ -17,12 +17,15 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/types.hh>
 #include <basic/options/option.hh>
-#include <basic/options/keys/james.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/james.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 // C++ Headers
 
 #include <iostream>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

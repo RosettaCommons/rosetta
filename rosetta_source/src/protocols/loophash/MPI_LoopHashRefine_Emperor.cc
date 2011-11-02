@@ -40,7 +40,7 @@
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <protocols/wum/SilentStructStore.hh>
@@ -52,7 +52,10 @@
 #include <numeric/random/random.hh>
 
 #ifndef _WIN32 // REQUIRED FOR WINDOWS
-#include <unistd.h>
+// AUTO-REMOVED #include <unistd.h>
+
+#include <utility/vector1.hh>
+
 #endif
 
 using namespace ObjexxFCL;

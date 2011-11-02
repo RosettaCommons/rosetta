@@ -14,8 +14,13 @@
 #ifndef INCLUDED_protocols_multistate_design_util_hh
 #define INCLUDED_protocols_multistate_design_util_hh
 
-#include <protocols/genetic_algorithm/Entity.hh>
+// AUTO-REMOVED #include <protocols/genetic_algorithm/Entity.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
+
+#include <core/types.hh>
+#include <protocols/genetic_algorithm/Entity.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace multistate_design {

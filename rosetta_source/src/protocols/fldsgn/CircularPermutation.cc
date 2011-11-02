@@ -36,14 +36,16 @@
 #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/build/Interval.hh>
 // Auto-header: duplicate removed #include <protocols/forge/build/SegmentSwap.hh>
-#include <protocols/forge/build/SegmentRebuild.hh>
+// AUTO-REMOVED #include <protocols/forge/build/SegmentRebuild.hh>
 
 #include <protocols/forge/methods/fold_tree_functions.hh>
 
 // Headers for Paser block
 #include <utility/tag/Tag.hh>
 
-//Auto Headers
+#include <protocols/forge/build/SegmentRebuild.fwd.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 // Auto-header: duplicate removed #include <core/pose/util.hh>
 
 //#include <protocols/moves/DataMap.hh>

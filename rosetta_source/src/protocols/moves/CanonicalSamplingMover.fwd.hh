@@ -17,6 +17,9 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
+//Auto Headers
+
+
 namespace protocols {
 namespace moves {
 

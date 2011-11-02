@@ -24,10 +24,9 @@
 #include <utility/vector1.fwd.hh>
 #include <protocols/protein_interface_design/filters/StubScoreFilter.fwd.hh>
 
-//Auto Headers
 #include <protocols/hotspot_hashing/HotspotStub.fwd.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.fwd.hh>
-#include <utility/io/mpistream.hh>
+#include <utility/vector1.hh>
 
 
 // Unit headers

@@ -92,6 +92,11 @@
 #include <cstdio>
 #include <algorithm>
 
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <utility/keys/Key3Vector.hh>
+
+
 using basic::T;
 using basic::Error;
 using basic::Warning;

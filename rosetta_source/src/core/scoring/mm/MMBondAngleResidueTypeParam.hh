@@ -32,7 +32,6 @@
 // AUTO-REMOVED #include <string>
 #include <map>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

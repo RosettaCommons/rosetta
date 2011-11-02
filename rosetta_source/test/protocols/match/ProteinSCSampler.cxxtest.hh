@@ -33,11 +33,8 @@
 #include <iostream>
 
 //Auto Headers
-#include <core/pack/task/PackerTask.fwd.hh>
-#include <core/scoring/types.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
-#include <protocols/match/Hit.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
+#include <utility/vector1.hh>
 
 
 using namespace protocols::match;

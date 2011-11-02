@@ -39,6 +39,9 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace core {
 namespace scoring {

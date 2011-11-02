@@ -53,7 +53,7 @@
 /// Constraint creators
 #include <core/scoring/constraints/ConstraintFactory.hh>
 #include <protocols/constraints_additional/AdditionalConstraintCreators.hh>
-#include <protocols/constraints_additional/BindingSiteConstraint.hh>
+// AUTO-REMOVED #include <protocols/constraints_additional/BindingSiteConstraint.hh>
 
 /// FeaturesReporter creators
 #include <protocols/features/FeaturesReporterCreator.hh>
@@ -235,7 +235,7 @@
 #include <protocols/filters/BasicFilterCreators.hh>
 #include <protocols/filters/ConservedPosMutationFilterCreator.hh>
 #include <protocols/filters/ContingentFilterCreator.hh>
-#include <protocols/filters/RGFilterCreator.hh>
+// AUTO-REMOVED #include <protocols/filters/RGFilterCreator.hh>
 #include <protocols/filters/ScoreCutoffFilterCreator.hh>
 #include <protocols/filters/AtomicContactFilterCreator.hh>
 #include <protocols/filters/TimeFilterCreator.hh>
@@ -276,6 +276,12 @@
 #include <protocols/scoring/methods/InterchainEnvEnergyCreator.hh>
 #include <protocols/scoring/methods/InterchainPairEnergyCreator.hh>
 #include <protocols/scoring/methods/saxs/PDDFEnergyCreator.hh>
+
+#include <core/pack/task/operation/TaskOperationFactory.hh>
+#include <core/scoring/ScoringManager.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 

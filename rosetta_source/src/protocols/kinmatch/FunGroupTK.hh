@@ -16,12 +16,20 @@
 #define INCLUDED_protocols_kinmatch_FunGroupTK_hh
 
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/Stub.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/kinematics/Stub.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <numeric/xyzVector.hh>
+
+#include <core/types.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/kinematics/Stub.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <utility/vector1.hh>
+#include <map>
+
 
 namespace protocols {
 namespace kinmatch {

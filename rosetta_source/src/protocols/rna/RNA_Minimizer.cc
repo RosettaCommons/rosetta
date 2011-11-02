@@ -15,11 +15,11 @@
 
 #include <protocols/rna/RNA_Minimizer.hh>
 #include <protocols/rna/AllowInsert.hh>
-#include <protocols/rna/RNA_ProtocolUtil.hh>
-#include <protocols/moves/MonteCarlo.fwd.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_ProtocolUtil.hh>
+// AUTO-REMOVED #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -32,17 +32,17 @@
 #include <core/kinematics/AtomTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/annotated_sequence.hh>
+// AUTO-REMOVED #include <core/pose/annotated_sequence.hh>
 #include <core/scoring/rna/RNA_Util.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+// AUTO-REMOVED #include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
 
-#include <protocols/viewer/viewers.hh>
+// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
 
@@ -68,7 +68,7 @@
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 
 // External library headers
 
@@ -88,10 +88,8 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <core/chemical/AtomType.hh>
-#include <core/conformation/Conformation.hh>
-#include <numeric/xyz.functions.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 using namespace core;
 using basic::T;

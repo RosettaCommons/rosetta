@@ -30,6 +30,10 @@
 // C++ Headers
 #include <sstream>
 
+//Auto Headers
+#include <utility/vector1.hh>
+
+
 
 class SplineFuncTests : public CxxTest::TestSuite {
 

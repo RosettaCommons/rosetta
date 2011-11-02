@@ -18,11 +18,14 @@
 
 #include <protocols/ligand_docking/AddHydrogen.fwd.hh>
 
-#include <core/kinematics/MoveMap.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 //#include <core/conformation/Residue.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace ligand_docking {

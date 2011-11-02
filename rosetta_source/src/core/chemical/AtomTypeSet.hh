@@ -48,7 +48,6 @@
 // Commented by inclean daemon #include <string>
 #include <map>
 
-//Auto Headers
 #include <core/types.hh>
 #include <core/chemical/AtomType.fwd.hh>
 #include <utility/vector1_bool.hh>

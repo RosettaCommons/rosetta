@@ -18,9 +18,9 @@
 // Project headers
 #include <core/pose/PDBInfo.hh>
 
-//Auto Headers
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <utility/vector1.hh>
 
 
 namespace devel {

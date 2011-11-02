@@ -37,7 +37,7 @@
 // C++ headers
 #include <list>
 
-//Auto Headers
+#include <utility/vector0.hh>
 #include <utility/vector1_bool.hh>
 
 

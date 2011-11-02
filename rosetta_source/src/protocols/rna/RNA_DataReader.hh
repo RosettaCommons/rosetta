@@ -14,7 +14,7 @@
 #define INCLUDED_protocols_rna_RNA_DataReader_hh
 
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/rna/RNA_JumpLibrary.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_JumpLibrary.hh>
 #include <core/scoring/rna/RNA_DataInfo.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/types.hh>
@@ -24,16 +24,19 @@
 
 // C++ Headers
 #include <string>
-#include <map>
+// AUTO-REMOVED #include <map>
 #include <iostream>
-#include <list>
+// AUTO-REMOVED #include <list>
+
+#include <utility/vector1.hh>
+
 
 
 
 namespace protocols {
 namespace rna {
 
-#include <utility/pointer/owning_ptr.hh>
+// Auto-header: duplicate removed #include <utility/pointer/owning_ptr.hh>
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 class RNA_DataReader : public utility::pointer::ReferenceCount {

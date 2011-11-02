@@ -39,7 +39,7 @@
 
 // AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 static basic::Tracer tr("protocols.jd2.AtomTreeDiffJobInputter");

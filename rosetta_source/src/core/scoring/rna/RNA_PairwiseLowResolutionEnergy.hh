@@ -29,8 +29,8 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
-//Auto Headers
 #include <core/kinematics/Stub.fwd.hh>
+#include <utility/vector1.hh>
 
 
 // Utility headers

@@ -21,7 +21,7 @@
 
 // Package headers
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueType.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueSelector.fwd.hh>
 // Commented by inclean daemon #include <core/chemical/AtomTypeSet.hh>
 // Commented by inclean daemon #include <core/chemical/MMAtomTypeSet.hh>
@@ -39,6 +39,19 @@
 
 // STL headers
 #include <list>
+
+#include <core/chemical/Adduct.fwd.hh>
+#include <core/chemical/AtomTypeSet.fwd.hh>
+#include <core/chemical/ElementSet.fwd.hh>
+#include <core/chemical/MMAtomTypeSet.fwd.hh>
+#include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/VariantType.fwd.hh>
+#include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
+#include <utility/exit.hh>
+#include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <map>
+
 
 namespace core {
 namespace chemical {

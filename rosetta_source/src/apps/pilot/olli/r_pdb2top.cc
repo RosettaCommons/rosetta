@@ -15,17 +15,17 @@
 #include <protocols/abinitio/Templates.hh>
 #include <protocols/abinitio/TemplateJumpSetup.hh>
 #include <protocols/abinitio/PairingStatistics.hh>
-#include <protocols/abinitio/StrandConstraints.hh>
+// AUTO-REMOVED #include <protocols/abinitio/StrandConstraints.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/silent.fwd.hh>
-#include <core/io/silent/SilentStructFactory.hh>
-#include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
+// Auto-header: duplicate removed #include <core/io/silent/SilentFileData.hh>
 
 
 // Utility headers
@@ -38,11 +38,10 @@
 #include <ObjexxFCL/format.hh>
 // option key includes
 
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/jumps.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
 
 

@@ -15,6 +15,10 @@
 #include <devel/inv_kin_lig_loop_design/std_extra.hh>
 #include <utility/tag/Tag.hh>
 
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 namespace devel {
 
   namespace inv_kin_lig_loop_design {

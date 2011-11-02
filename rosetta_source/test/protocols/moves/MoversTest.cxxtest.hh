@@ -18,8 +18,7 @@
 #include <protocols/moves/BackboneMover.hh>
 
 //Auto Headers
-#include <protocols/moves/MoverStatistics.hh>
-#include <ObjexxFCL/format.hh>
+#include <utility/vector1.hh>
 
 
 using namespace core;

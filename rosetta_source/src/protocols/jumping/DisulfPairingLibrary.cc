@@ -69,8 +69,8 @@
 #include <string>
 // AUTO-REMOVED #include <ctime>
 
-//Auto Headers
 #include <protocols/jumping/DisulfPairingsList.hh>
+#include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
 

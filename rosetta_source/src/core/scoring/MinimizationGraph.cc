@@ -15,13 +15,13 @@
 #include <core/scoring/MinimizationGraph.hh>
 
 // Package Headers
-#include <core/scoring/DerivVectorPair.hh>
+// AUTO-REMOVED #include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/OneBodyEnergy.hh>
 #include <core/scoring/methods/TwoBodyEnergy.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 // Boost Headers
 #include <core/graph/unordered_object_pool.hpp>
@@ -29,7 +29,7 @@
 // C++ headers
 #include <iostream>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <boost/pool/pool.hpp>
 
 

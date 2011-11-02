@@ -19,7 +19,7 @@
 #include <protocols/filters/PDDFScoreFilter.hh>
 
 // Project Headers
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
 #include <basic/options/option.hh>
@@ -29,6 +29,9 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+
 
 
 

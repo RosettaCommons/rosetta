@@ -38,10 +38,6 @@
 #include <map>
 #include <vector>
 
-//Auto Headers
-#include <iostream>
-
-
 
 namespace core {
 namespace scoring {

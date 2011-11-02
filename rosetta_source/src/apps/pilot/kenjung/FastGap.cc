@@ -18,10 +18,10 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/pose/annotated_sequence.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 
 #include <protocols/loophash/FastGapMover.hh>
 
@@ -29,19 +29,24 @@
 #include <utility/exit.hh>
 #include <utility/file/file_sys_util.hh>
 
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/util.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/util.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Residue.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/util/SwitchResidueTypeSet.hh>
 
 
 // C++ headers
 #include <map>
 #include <core/init.hh>
+
+#include <core/kinematics/Jump.hh>
+#include <core/pose/Pose.hh>
+#include <utility/vector1.hh>
+
 
 using namespace core;
 using namespace io;

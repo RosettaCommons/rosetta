@@ -15,25 +15,25 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinaryProteinSilentStruct.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <utility/file/file_sys_util.hh>
 
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
@@ -41,26 +41,9 @@
 #include <iostream>
 
 //Auto Headers
-#include <core/chemical/VariantType.hh>
-#include <core/conformation/Atom.fwd.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/import_pose/import_pose.hh>
+// Auto-header: duplicate removed #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/EnergyNames.fwd.hh>
-#include <core/kinematics/types.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/types.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <utility/stream_util.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/model_quality/maxsub.hh>
-#include <basic/options/option.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer TR("test.core.io.silent.symm_protein_silent");

@@ -29,6 +29,9 @@
 // AUTO-REMOVED #include <utility/vector1.hh>
 #include <core/pose/Pose.hh>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <string>
 
 namespace protocols {

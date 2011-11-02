@@ -26,8 +26,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <utility/exit.hh>
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 
 // C++ headers

@@ -30,13 +30,13 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/constraints/Constraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
 
 #ifdef WIN32	// for visual studio
 #else
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #endif
-#include <core/scoring/constraints/ConstraintSet.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <core/io/silent/silent.fwd.hh>
 
@@ -45,6 +45,10 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
+
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
+#include <utility/vector1.hh>
+
 
 // AUTO-REMOVED #include <utility/vector1.hh>
 

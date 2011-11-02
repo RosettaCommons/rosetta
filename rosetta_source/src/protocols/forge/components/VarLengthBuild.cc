@@ -34,7 +34,7 @@
 
 // project headers
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
@@ -47,7 +47,7 @@
 #include <core/fragment/picking_old/FragmentLibraryManager.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/constraints/Constraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -61,9 +61,7 @@
 // utility headers
 #include <utility/vector1.hh>
 
-//Auto Headers
 #include <core/fragment/FrameIterator.hh>
-#include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #ifdef WIN32
 #include <core/fragment/FragID.hh>

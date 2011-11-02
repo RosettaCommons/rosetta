@@ -34,8 +34,8 @@
 
 #include <string>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
+#include <utility/pointer/ReferenceCount.hh>
 
 
 namespace protocols{

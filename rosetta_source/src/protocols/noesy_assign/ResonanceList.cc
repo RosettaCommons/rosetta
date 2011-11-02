@@ -49,6 +49,9 @@
 #include <string>
 #include <deque>
 
+#include <utility/vector1.hh>
+
+
 
 static basic::Tracer tr("protocols.noesy_assign.resonances");
 

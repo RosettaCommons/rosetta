@@ -32,6 +32,9 @@
 #include <string>
 #include <map>
 
+#include <utility/vector0.hh>
+
+
 namespace core {
 namespace pack {
 namespace task {

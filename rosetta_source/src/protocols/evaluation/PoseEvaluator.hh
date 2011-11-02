@@ -40,6 +40,9 @@
 // due to template function
 #include <core/io/silent/SilentStruct.hh>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <utility/exit.hh>
 
 namespace protocols {

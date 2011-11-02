@@ -17,7 +17,7 @@
 
 // Project Headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+// AUTO-REMOVED #include <protocols/jd2/Job.hh>
 
 #include <protocols/moves/Mover.hh>
 
@@ -33,6 +33,9 @@
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
+
+#include <utility/vector1.hh>
+
 
 using basic::T;
 using basic::Error;

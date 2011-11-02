@@ -47,6 +47,9 @@
 #include <string>
 #include <map>
 
+#include <utility/vector1.hh>
+
+
 // //silly using/typedef
 
 namespace devel {

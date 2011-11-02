@@ -35,10 +35,13 @@
 #include <core/id/AtomID.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh> //pba
-#include <core/scoring/constraints/AngleConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
 
-#include <numeric/constants.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/constants.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

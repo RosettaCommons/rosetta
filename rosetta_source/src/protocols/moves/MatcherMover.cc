@@ -39,6 +39,10 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>
 #endif

@@ -33,9 +33,11 @@
 #include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
 
 
-//Auto Headers
+#include <core/chemical/AtomType.hh>
 #include <core/conformation/Conformation.hh>
 #include <protocols/moves/MoverContainer.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 // Project Headers

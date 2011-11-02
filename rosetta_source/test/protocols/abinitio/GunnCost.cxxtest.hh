@@ -16,68 +16,47 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/fragment/FrameIterator.hh>
+// AUTO-REMOVED #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/FragID_Iterator.hh>
 
 #include <core/fragment/Frame.hh>
-#include <core/fragment/FragData.hh>
+// AUTO-REMOVED #include <core/fragment/FragData.hh>
 #include <core/fragment/FragCache.hh>
-#include <core/fragment/BBTorsionSRFD.hh>
-#include <core/fragment/util.hh>
+// AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
+// AUTO-REMOVED #include <core/fragment/util.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-#include <core/pack/rotamer_trials.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 
 
 
 #include <core/pose/Pose.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
 #include <core/types.hh>
 
 #include <basic/Tracer.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <numeric/random.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
+// AUTO-REMOVED #include <numeric/random.functions.hh>
 
 #include <protocols/basic_moves/GunnCost.hh>
 
 //Auto Headers
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/fragment/FragID_Iterator.fwd.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
-#include <core/fragment/JumpingFrame.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID_Mask.hh>
-#include <core/id/DOF_ID_Map.hh>
-#include <core/id/DOF_ID_Mask.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/io/pdb/file_data.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/types.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <utility/stream_util.hh>
-#include <protocols/moves/MoverStatistics.hh>
 #include <utility/fix_boinc_read.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
-#include <ObjexxFCL/format.hh>
-#include <set>
+#include <utility/vector1.hh>
 
 
 using basic::T;

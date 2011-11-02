@@ -16,7 +16,10 @@
 #include <core/id/DOF_ID.hh>
 
 // C++ headers
-#include <ostream>
+// AUTO-REMOVED #include <ostream>
+
+#include <iostream>
+
 
 
 namespace core {

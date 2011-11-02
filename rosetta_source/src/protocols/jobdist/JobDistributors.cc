@@ -35,7 +35,7 @@
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <numeric/numeric.functions.hh>
 
 #include <utility/exit.hh>
@@ -60,7 +60,6 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <protocols/checkpoint/Checkpoint.hh>
 #include <numeric/random/random.fwd.hh>
 

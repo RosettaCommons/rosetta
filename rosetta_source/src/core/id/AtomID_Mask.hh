@@ -23,7 +23,6 @@
 // AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 
 //Auto Headers
-#include <ostream>
 
 
 

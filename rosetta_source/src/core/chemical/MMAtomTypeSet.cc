@@ -24,6 +24,9 @@
 #include <iostream>
 #include <utility/io/izstream.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace chemical {
 

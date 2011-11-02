@@ -20,10 +20,9 @@
 #include <protocols/optimize_weights/Arithmetic.hh>
 
 /// C++ headers
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 
 //Auto Headers
-#include <string>
 
 
 using namespace protocols::optimize_weights;

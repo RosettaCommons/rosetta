@@ -37,7 +37,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymDof.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
@@ -56,8 +56,9 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <protocols/moves/MoverContainer.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;

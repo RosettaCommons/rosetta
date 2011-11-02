@@ -32,8 +32,8 @@
 // C++ headers
 #include <string>
 
-//Auto Headers
 #include <core/scoring/SS_Info.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

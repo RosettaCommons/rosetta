@@ -16,10 +16,15 @@
 
 //project headers
 #include <core/pose/Pose.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <utility/tag/Tag.hh>
+
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 // C++ Headers
 
 // ObjexxFCL Headers

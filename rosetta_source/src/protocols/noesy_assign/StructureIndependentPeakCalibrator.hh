@@ -46,6 +46,9 @@
 #include <map>
 #include <bitset>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace noesy_assign {
 

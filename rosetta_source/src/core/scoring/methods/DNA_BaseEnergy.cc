@@ -30,8 +30,8 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/scoring/EnergyMap.hh>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 
 
 // ObjexxFCL headers

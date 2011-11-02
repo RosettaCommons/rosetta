@@ -18,6 +18,9 @@
 #include <core/import_pose/PDBSilentStruct.hh>
 #include <core/import_pose/PDBSilentStructCreator.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace import_pose {
 

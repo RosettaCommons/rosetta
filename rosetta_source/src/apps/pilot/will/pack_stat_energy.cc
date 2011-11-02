@@ -17,10 +17,10 @@
 #include <basic/options/option.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-#include "core/scoring/ScoreFunctionFactory.hh"
-#include "core/scoring/ScoreFunction.hh"
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.hh>
 
 #include <utility/io/izstream.hh>
 
@@ -28,8 +28,8 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector1.hh>
 
 
 

@@ -12,11 +12,15 @@
 
 #include <protocols/qsar/scoring_grid/GridBase.hh>
 #include <core/conformation/Residue.hh>
-#include <protocols/qsar/qsarMap.hh>
+// AUTO-REMOVED #include <protocols/qsar/qsarMap.hh>
 #include <core/grid/CartGrid.hh>
-#include <protocols/ligand_docking/grid_functions.hh>
+// AUTO-REMOVED #include <protocols/ligand_docking/grid_functions.hh>
 #include <basic/Tracer.hh>
 #include <algorithm>
+
+#include <utility/vector1.hh>
+#include <utility/io/ozstream.hh>
+
 //#include <protocols/qsar/qsarTypeManager.hh>
 
 namespace protocols {

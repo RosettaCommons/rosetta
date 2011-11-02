@@ -28,7 +28,7 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/rms_util.hh>
+// Auto-header: duplicate removed #include <core/scoring/rms_util.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
@@ -45,25 +45,25 @@
 #include <protocols/rna/RNA_HelixAssembler.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 //#include <basic/database/open.hh>
 #include <core/init.hh>
 #include <core/io/pdb/pose_io.hh>
 
 #include <utility/vector1.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 
 #include <numeric/xyzVector.hh>
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 // C++ headers
 //#include <cstdlib>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 
@@ -73,7 +73,7 @@
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 using namespace core;
 using namespace protocols;

@@ -26,8 +26,7 @@
 
 #include <utility/vector0.hh>
 
-//Auto Headers
-#include <core/pack/rotamer_set/RotamerSets.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

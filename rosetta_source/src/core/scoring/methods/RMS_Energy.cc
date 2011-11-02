@@ -41,11 +41,9 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
-//#include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/file_data.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <cmath>
+#include <utility/vector1.hh>
 
 
 

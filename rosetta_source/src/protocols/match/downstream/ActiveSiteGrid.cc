@@ -29,6 +29,9 @@
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace match {
 namespace downstream {

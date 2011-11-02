@@ -39,12 +39,8 @@
 
 // AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
-
-// C++ headers
-#include <iterator>
-#include <vector>
+#include <protocols/evaluation/util.hh>
+#include <utility/vector1.hh>
 
 static basic::Tracer tr("protocols.evalution.RMSD");
 

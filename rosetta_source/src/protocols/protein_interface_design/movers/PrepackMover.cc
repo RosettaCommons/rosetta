@@ -41,8 +41,10 @@
 #include <protocols/moves/RigidBodyMover.hh>
 // Auto-header: duplicate removed #include <protocols/rosetta_scripts/util.hh>
 
-//Auto Headers
 #include <core/pose/Pose.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
 
 namespace protocols {

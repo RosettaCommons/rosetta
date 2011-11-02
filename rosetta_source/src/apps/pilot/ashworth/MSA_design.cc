@@ -57,8 +57,8 @@ using utility::vector1;
 // AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector0.hh>
 
 
 using namespace core;

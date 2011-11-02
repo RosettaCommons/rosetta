@@ -28,6 +28,10 @@
 #include <string>
 #include <iostream>
 
+//Auto Headers
+#include <utility/vector1.hh>
+
+
 using namespace protocols::match;
 using namespace protocols::match::downstream;
 

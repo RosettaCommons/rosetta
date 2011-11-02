@@ -21,8 +21,11 @@
 #include <core/id/SequenceMapping.hh>
 
 // Project headers
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer tr( "protocols.forge.constraints.ConstraintFileRCG" );
 

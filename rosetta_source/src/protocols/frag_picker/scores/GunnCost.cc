@@ -16,7 +16,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <basic/Tracer.hh>
@@ -32,9 +32,8 @@
 #include <cstdlib>
 #include <string>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace frag_picker {

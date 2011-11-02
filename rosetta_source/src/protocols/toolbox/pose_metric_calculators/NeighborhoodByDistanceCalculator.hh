@@ -25,10 +25,14 @@
 //Utility headers
 #include <core/types.hh>
 
-#include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
 //C++ headers
 #include <set>
+
+#include <utility/vector1.hh>
+#include <map>
+
 
 namespace protocols{
 namespace toolbox {

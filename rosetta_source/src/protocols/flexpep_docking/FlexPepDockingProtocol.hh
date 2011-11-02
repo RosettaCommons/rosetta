@@ -26,15 +26,20 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/loops/LoopRelaxMover.fwd.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/flexpep_docking/FlexPepDockingFlags.fwd.hh>
 #include <protocols/flexpep_docking/FlexPepDockingPoseMetrics.hh>
-#include <utility/tag/Tag.hh>
+// AUTO-REMOVED #include <utility/tag/Tag.hh>
 #include <string>
-#include <set>
+// AUTO-REMOVED #include <set>
+
+#include <protocols/moves/PackRotamersMover.fwd.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 
 namespace protocols {

@@ -17,13 +17,13 @@
 
 // Unit headers
 #include <core/scoring/mm/MMLJScore.fwd.hh>
-#include <core/scoring/mm/MMLJLibrary.hh>
+// AUTO-REMOVED #include <core/scoring/mm/MMLJLibrary.hh>
 
 // Project headers
-#include <core/chemical/MMAtomTypeSet.fwd.hh>
+// AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.fwd.hh>
 
-#include <core/scoring/EnergyMap.fwd.hh>
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyMap.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 
 #include <core/types.hh>
 
@@ -31,8 +31,12 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <string>
-#include <map>
+// AUTO-REMOVED #include <string>
+// AUTO-REMOVED #include <map>
+
+#include <core/scoring/mm/MMLJLibrary.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
+
 
 namespace core {
 namespace scoring {

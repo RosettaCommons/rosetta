@@ -19,7 +19,7 @@
 #define INCLUDED_core_conformation_find_neighbors_hh
 
 // Package Headers
-#include <core/conformation/PointGraph.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/PointGraph.fwd.hh>
 #include <core/conformation/find_neighbors.fwd.hh>
 #include <core/types.hh>
 
@@ -49,13 +49,9 @@
 #include <map>
 #include <vector>
 
-//Auto Headers
-#include <core/conformation/PointGraphData.hh>
-#include <core/graph/UpperEdgeGraph.hh>
-#include <utility/vector1.fwd.hh>
-#include <basic/prof.hh>
-#include <basic/options/option.hh>
+#include <utility/vector1.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/prof.hh>
 
 
 namespace core {

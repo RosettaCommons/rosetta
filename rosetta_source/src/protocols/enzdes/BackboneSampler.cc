@@ -30,13 +30,13 @@
 #include <protocols/moves/MonteCarlo.hh>
 
 // Project Headers
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
-#include <core/pose/datacache/cacheable_observers.hh>
-#include <core/pose/datacache/CacheableObserverType.hh>
-#include <core/pose/datacache/ObserverCache.hh>
+// AUTO-REMOVED #include <core/pose/datacache/cacheable_observers.hh>
+// AUTO-REMOVED #include <core/pose/datacache/CacheableObserverType.hh>
+// AUTO-REMOVED #include <core/pose/datacache/ObserverCache.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
@@ -52,6 +52,11 @@
 
 //basic includes
 #include <basic/Tracer.hh>
+
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/Jump.hh>
+#include <utility/vector0.hh>
+
 
 namespace protocols {
 namespace enzdes {

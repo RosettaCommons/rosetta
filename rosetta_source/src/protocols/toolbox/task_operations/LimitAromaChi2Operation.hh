@@ -38,10 +38,6 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
 
-//Auto Headers
-#include <core/types.hh>
-
-
 namespace protocols {
 namespace toolbox {
 namespace task_operations {

@@ -39,7 +39,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorJobDistributor.hh>
-#include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.hh>
+// AUTO-REMOVED #include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.hh>
 
 #include <basic/options/option.hh>
 
@@ -50,6 +50,9 @@
 // C++ Headers
 #include <iostream>
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 using namespace core;
 using namespace core::scoring;

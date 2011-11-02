@@ -15,10 +15,10 @@
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
 
 // Project Headers
-#include <core/scoring/hbonds/HBondOptions.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/polynomial.fwd.hh>
 #include <core/scoring/hbonds/types.hh>
-#include <core/scoring/hbonds/FadeInterval.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/FadeInterval.hh>
 
 #ifdef WIN32
 #include <core/scoring/hbonds/polynomial.hh>
@@ -31,6 +31,9 @@
 
 // C++
 #include <map>
+
+#include <core/scoring/hbonds/FadeInterval.fwd.hh>
+
 
 #ifndef INCLUDED_core_scoring_hbonds_HBondDatabase_hh
 #define INCLUDED_core_scoring_hbonds_HBondDatabase_hh

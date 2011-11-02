@@ -23,11 +23,9 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-//Auto Headers
-#include <utility/vector1.fwd.hh>
-
-//C++ headers
+#include <utility/vector1.hh>
 #include <set>
+#include <string>
 
 
 namespace protocols{

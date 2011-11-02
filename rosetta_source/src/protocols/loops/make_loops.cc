@@ -25,7 +25,7 @@
 
 #include <algorithm>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <numeric/random/random.fwd.hh>
 
 

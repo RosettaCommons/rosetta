@@ -54,7 +54,7 @@
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/exit.hh>
 #include <utility/file/file_sys_util.hh>
@@ -62,6 +62,10 @@
 
 #include <sstream>
 #include <fstream>
+
+#include <core/kinematics/MoveMap.hh>
+#include <utility/vector1.hh>
+
 
 static numeric::random::RandomGenerator RG(10420);  // Magic Number
 

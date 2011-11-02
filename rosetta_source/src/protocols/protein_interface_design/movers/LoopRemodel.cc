@@ -70,12 +70,15 @@
 #include <core/fragment/picking_old/vall/util.hh>
 #include <core/fragment/picking_old/FragmentLibraryManager.hh>
 
-//Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/fragment/FrameIterator.hh>
-#include <core/pose/util.hh>
-#include <protocols/moves/MonteCarlo.hh>
+#include <core/kinematics/Jump.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <protocols/moves/MonteCarlo.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <basic/Tracer.hh>
 
 
 

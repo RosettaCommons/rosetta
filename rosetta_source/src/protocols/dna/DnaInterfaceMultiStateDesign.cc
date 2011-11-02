@@ -50,8 +50,10 @@
 #include <basic/options/keys/ms.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <protocols/toolbox/pose_metric_calculators/MetricValueGetter.hh>
+#include <protocols/genetic_algorithm/GeneticAlgorithm.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <ObjexxFCL/format.hh>
 
 
 namespace protocols {

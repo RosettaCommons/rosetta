@@ -22,7 +22,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 // AUTO-REMOVED #include <ObjexxFCL/FArray1Da.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray2A.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2A.hh>
 
 // STL Headers
 #include <list>
@@ -35,8 +35,8 @@
 //Utility Headers
 // AUTO-REMOVED #include <utility/basic_sys_util.hh>
 
-//Auto Headers
 #include <utility/exit.hh>
+#include <utility/vector1.hh>
 
 
 using namespace ObjexxFCL;

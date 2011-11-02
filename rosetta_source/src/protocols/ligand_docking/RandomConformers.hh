@@ -14,16 +14,8 @@
 #ifndef INCLUDED_protocols_ligand_docking_RandomConformers_hh
 #define INCLUDED_protocols_ligand_docking_RandomConformers_hh
 
-//Auto Headers
-#include <core/scoring/constraints/Constraint.hh>
-#include <protocols/ligand_docking/ResidueTorsionRestraints.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <set>
-
-//// Scripter Headers
-#include <utility/tag/Tag.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
+#include <utility/vector1.hh>
 
 ///////////////////////////////////////////////////////////////////////
 

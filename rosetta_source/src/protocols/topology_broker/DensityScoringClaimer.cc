@@ -23,7 +23,7 @@
 // Project Headers
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 // AUTO-REMOVED
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/pose/util.hh>
 
 // AUTO-REMOVED #include <protocols/jumping/ResiduePairJumpSetup.hh>
@@ -44,8 +44,8 @@
 //// C++ headers
 // AUTO-REMOVED #include <fstream>
 
-//Auto Headers
 #include <protocols/jumping/JumpSetup.fwd.hh>
+#include <utility/vector1.hh>
 
 
 // option key includes

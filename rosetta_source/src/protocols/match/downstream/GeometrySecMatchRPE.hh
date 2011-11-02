@@ -34,7 +34,6 @@
 // AUTO-REMOVED #include <list>
 // AUTO-REMOVED #include <string>
 
-//Auto Headers
 #include <core/chemical/ResidueType.fwd.hh>
 #include <utility/vector1_bool.hh>
 

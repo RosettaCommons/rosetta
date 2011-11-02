@@ -48,6 +48,9 @@
 // C++ Headers
 #include <sstream>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace motifs {
 

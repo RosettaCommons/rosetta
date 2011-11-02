@@ -16,6 +16,7 @@
 #define INCLUDED_protocols_enzdes_ModifyStoredLigandRBConfsMovers_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
+
 //#include <utility/pointer/access_ptr.hh>
 
 namespace protocols {

@@ -42,12 +42,17 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-#include <utility/vector1.functions.hh>
+// AUTO-REMOVED #include <utility/vector1.functions.hh>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 
 //numeric headers
 #include <numeric/model_quality/rms.hh>
+
+#include <core/id/AtomID.hh>
+#include <protocols/match/Hit.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace match {

@@ -25,7 +25,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 //#include <basic/Tracer.hh>
 // AUTO-REMOVED #include <basic/prof.hh>
@@ -37,6 +37,9 @@
 // C++ Headers
 #include <map>
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 // Utility Headers
 

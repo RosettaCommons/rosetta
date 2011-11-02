@@ -30,6 +30,12 @@
 // C++ Headers
 #include <set>
 
+#include <core/conformation/PointGraphData.hh>
+#include <core/graph/UpperEdgeGraph.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 static basic::Tracer TR( "protocols.toolbox.TaskOperations.RestrictNonSurfaceToRepackingOperation" );
 
 namespace protocols {

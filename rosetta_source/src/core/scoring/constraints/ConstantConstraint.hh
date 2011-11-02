@@ -23,6 +23,9 @@
 #include <core/id/AtomID.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace scoring {
 namespace constraints {

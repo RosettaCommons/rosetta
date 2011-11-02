@@ -39,7 +39,7 @@
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <core/kinematics/FoldTree.fwd.hh>
@@ -61,10 +61,9 @@
 // AUTO-REMOVED #include <cstdlib>
 #include <string>
 
-//Auto Headers
-#include <core/scoring/constraints/Constraint.hh>
 #include <protocols/abinitio/MaxSeqSepConstraintSet.fwd.hh>
 #include <protocols/moves/MinMover.fwd.hh>
+#include <utility/vector1.hh>
 
 
 

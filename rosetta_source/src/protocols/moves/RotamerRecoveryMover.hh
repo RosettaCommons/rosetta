@@ -20,20 +20,26 @@
 #include <protocols/moves/Mover.hh>
 
 // program Headers
-#include <protocols/rotamer_recovery/RotamerRecovery.hh>
+// AUTO-REMOVED #include <protocols/rotamer_recovery/RotamerRecovery.hh>
 
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
+// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 
 // C++ Headers
 #include <string>
+
+#include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <protocols/rotamer_recovery/RotamerRecovery.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace moves {

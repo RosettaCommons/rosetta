@@ -26,12 +26,11 @@
 
 #include <utility/exit.hh>
 
-//Auto Headers
 #include <core/id/NamedAtomID.hh>
+#include <core/id/SequenceMapping.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/constraints/XYZ_Func.hh>
-#include <core/id/SequenceMapping.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 namespace core {
 namespace scoring {

@@ -15,6 +15,9 @@
 // unit headers
 #include <core/pose/datacache/CacheableObserver.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace core {
 namespace pose {

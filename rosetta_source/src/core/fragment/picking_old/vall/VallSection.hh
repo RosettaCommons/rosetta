@@ -21,6 +21,9 @@
 #include <core/fragment/picking_old/concepts/Book.hh>
 #include <core/fragment/picking_old/vall/VallResidue.hh>
 
+#include <utility/vector1.hh>
+
+
 // utility headers
 // AUTO-REMOVED #include <utility/vector1.hh>
 

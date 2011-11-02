@@ -31,20 +31,19 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 //for parse_task_operations
-#include <boost/foreach.hpp>
+// AUTO-REMOVED #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
-#include <core/pack/task/operation/TaskOperation.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
+// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 // Utility Headers
 // AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
 // AUTO-REMOVED #include <set>
 
-//Auto Headers
-#include <core/types.hh>
-#include <iostream>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <utility/vector1.hh>
 
 
 

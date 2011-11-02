@@ -53,9 +53,9 @@
 #include <core/scoring/etable/etrie/CountPairData_1_2.hh>
 #include <core/scoring/etable/etrie/CountPairData_1_3.hh>
 #include <core/scoring/etable/etrie/TrieCountPair1BC3.hh>
-#include <core/scoring/etable/etrie/TrieCountPair1BC4.hh>
+// AUTO-REMOVED #include <core/scoring/etable/etrie/TrieCountPair1BC4.hh>
 #include <core/scoring/etable/etrie/TrieCountPairAll.hh>
-#include <core/scoring/etable/etrie/TrieCountPairNone.hh>
+// AUTO-REMOVED #include <core/scoring/etable/etrie/TrieCountPairNone.hh>
 
 // Auto-header: duplicate removed #include <core/conformation/RotamerSetBase.hh>
 //#include <core/pack/rotamer_set/RotamerSetFactory.hh>
@@ -65,6 +65,10 @@
 
 // C++ headers
 #include <iostream>
+
+#include <core/scoring/mm/MMLJLibrary.hh>
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

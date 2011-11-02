@@ -15,11 +15,15 @@
 
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/hotspot_hashing/HotspotStubSet.hh>
+// AUTO-REMOVED #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <core/types.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+
+#include <protocols/hotspot_hashing/HotspotStubSet.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace protein_interface_design {

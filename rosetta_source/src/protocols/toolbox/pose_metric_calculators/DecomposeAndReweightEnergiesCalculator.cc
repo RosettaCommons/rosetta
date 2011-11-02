@@ -36,7 +36,7 @@
 // C++ headers
 #include <cassert>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <set>
 
 

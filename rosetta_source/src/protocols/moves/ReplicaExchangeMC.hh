@@ -15,9 +15,12 @@
 #define INCLUDED_protocols_moves_ReplicaExchangeMC_hh
 
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/ReplicaExchangeMC.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace moves {

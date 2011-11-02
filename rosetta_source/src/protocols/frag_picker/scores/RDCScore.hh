@@ -25,9 +25,7 @@
 // type headers
 #include <core/types.hh>
 
-//Auto Headers
-#include <iostream>
-#include <core/pose/Pose.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

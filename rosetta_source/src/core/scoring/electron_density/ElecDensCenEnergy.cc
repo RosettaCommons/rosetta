@@ -30,7 +30,7 @@
 #include <numeric/statistics.functions.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 // Project headers
@@ -43,8 +43,8 @@
 //
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/scoring/electron_density/ElectronDensity.hh>
+#include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;

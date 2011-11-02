@@ -23,6 +23,9 @@
 // Auto-header: duplicate removed #include <protocols/loops/LoopMover.hh>
 #include <protocols/loops/Loops.hh>
 
+#include <utility/vector1.hh>
+
+
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
 namespace loops {

@@ -20,10 +20,6 @@
 // STL Headers
 // AUTO-REMOVED #include <algorithm>
 
-//Auto Headers
-#include <core/types.hh>
-
-
 namespace core {
 namespace scoring {
 namespace trie {

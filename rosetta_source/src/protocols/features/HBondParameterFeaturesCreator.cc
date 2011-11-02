@@ -17,7 +17,11 @@
 // Package Headers
 
 #include <protocols/features/FeaturesReporterCreator.hh>
-#include <protocols/features/FeaturesReporterFactory.hh>
+// AUTO-REMOVED #include <protocols/features/FeaturesReporterFactory.hh>
+
+#include <protocols/features/HBondParameterFeatures.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace features {

@@ -15,12 +15,15 @@
 #define INCLUDED_protocols_ligand_docking_AtomCountFilter_hh
 
 
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <protocols/filters/Filter.hh>
 
 #include <utility/tag/Tag.fwd.hh>
-#include <list>
+// AUTO-REMOVED #include <list>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace ligand_docking {

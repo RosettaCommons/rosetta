@@ -21,7 +21,7 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/Func.fwd.hh>
 #include <core/scoring/constraints/SumFunc.fwd.hh>
 #include <core/scoring/constraints/SumFunc.hh>
@@ -30,12 +30,12 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 
-//Auto Headers
 #include <core/conformation/Residue.fwd.hh>
+#include <core/id/AtomID.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <utility/vector1_bool.hh>
-#include <map>
+#include <core/scoring/EnergyMap.fwd.hh>
+#include <utility/vector1.hh>
+#include <string>
 
 
 namespace core {

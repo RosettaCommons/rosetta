@@ -32,6 +32,10 @@
 #include <string>
 #include <sstream>
 
+#include <core/pose/Pose.hh>
+#include <utility/vector1.hh>
+
+
 using std::string;
 using std::stringstream;
 using std::endl;

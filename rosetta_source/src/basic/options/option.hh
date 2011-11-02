@@ -17,7 +17,6 @@
 // Package headers
 #include <basic/options/keys/OptionKeys.hh> // Convenience
 
-//Auto Headers
 #include <platform/types.hh>
 #include <utility/Bound.fwd.hh>
 #include <utility/Bound.hh>
@@ -129,6 +128,20 @@
 #include <ObjexxFCL/TypeTraits.hh>
 #include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/string.functions.hh>
+#include <algorithm>
+#include <cassert>
+#include <cstddef>
+#include <cstdlib>
+#include <iomanip>
+#include <iosfwd>
+#include <iostream>
+#include <list>
+#include <map>
+#include <set>
+#include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
 
 #ifndef INCLUDED_basic_options_option_hh
 #define INCLUDED_basic_options_option_hh

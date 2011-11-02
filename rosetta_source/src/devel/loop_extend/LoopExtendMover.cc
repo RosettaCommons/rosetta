@@ -34,6 +34,9 @@
 
 #include <protocols/loops/loops_main.hh>
 
+#include <utility/vector1.hh>
+
+
 //movers
 // will need LoopMover_KIC
 

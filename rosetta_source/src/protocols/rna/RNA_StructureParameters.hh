@@ -20,13 +20,16 @@
 #include <core/types.hh>
 #include <utility/pointer/ReferenceCount.hh>
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
 // C++ Headers
 #include <string>
 #include <map>
 #include <iostream>
 #include <list>
+
+#include <utility/vector1.hh>
+
 
 
 namespace protocols {

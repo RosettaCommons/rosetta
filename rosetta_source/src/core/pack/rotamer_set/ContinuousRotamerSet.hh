@@ -20,7 +20,7 @@
 #include <core/pack/rotamer_set/ContinuousRotamerSet.fwd.hh>
 
 // Package Headers
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 
 // Project Headers
@@ -32,6 +32,10 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
+
+#include <core/chemical/ResidueType.fwd.hh>
+#include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
+
 
 namespace core {
 namespace pack {

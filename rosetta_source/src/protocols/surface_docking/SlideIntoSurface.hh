@@ -38,8 +38,7 @@
 #include <map>
 #include <list>
 
-//Auto Headers
-#include <sstream>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace surface_docking {

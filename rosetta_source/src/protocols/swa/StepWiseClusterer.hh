@@ -20,7 +20,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>

@@ -33,11 +33,9 @@
 // C++ Headers
 // AUTO-REMOVED #include <string>
 
-//Auto Headers
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <utility/vector1.fwd.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 //#include <sstream>
 //#include <utility/vector1.hh>

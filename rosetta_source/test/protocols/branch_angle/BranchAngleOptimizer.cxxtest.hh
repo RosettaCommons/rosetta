@@ -20,14 +20,15 @@
 #include <test/UTracer.hh>
 
 // Core Headers
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/conformation/Conformation.hh>
-#include <core/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+#include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Protocol Headers
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
@@ -36,34 +37,21 @@
 #include <core/kinematics/tree/Atom.hh>
 
 // Numeric Headers
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 
 //Auto Headers
 #include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/MMAtomType.hh>
-#include <core/chemical/MMAtomTypeSet.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/id/AtomID_Mask.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/id/TorsionID.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/kinematics/AtomPointer.hh>
-#include <core/kinematics/AtomWithDOFChange.hh>
 #include <core/kinematics/DomainMap.hh>
-#include <core/kinematics/types.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/ScoreFunctionInfo.fwd.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <core/scoring/mm/MMBondAngleLibrary.hh>
-#include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
+#include <utility/vector1.hh>
 #include <utility/io/all.fwd.hh>
+#include <utility/io/icstream.fwd.hh>
+#include <utility/io/ocstream.fwd.hh>
+#include <numeric/BodyPosition.fwd.hh>
+#include <numeric/Quaternion.fwd.hh>
 #include <numeric/all.fwd.hh>
-#include <numeric/xyz.functions.hh>
 
 
 using namespace core;

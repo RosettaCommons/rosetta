@@ -21,7 +21,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <basic/basic.hh>
+// AUTO-REMOVED #include <basic/basic.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/ScoringManager.hh>
@@ -29,14 +29,14 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // for debug usage
-#include <protocols/match/Matcher.hh>
+// AUTO-REMOVED #include <protocols/match/Matcher.hh>
 #include <core/io/pdb/pose_io.hh>
 
-#include <protocols/match/Hit.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <protocols/match/Hit.hh> // REQUIRED FOR WINDOWS
 
 // Numeric headers
-#include <numeric/constants.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/constants.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -46,14 +46,17 @@
 #include <list>
 
 #include <utility/io/ozstream.hh>
-#include <time.h>
-#include <stdlib.h>
+// AUTO-REMOVED #include <time.h>
+// AUTO-REMOVED #include <stdlib.h>
 // Auto-header: duplicate removed #include <stdio.h>
-#include <core/io/pdb/file_data.hh>
+// AUTO-REMOVED #include <core/io/pdb/file_data.hh>
 #include <basic/Tracer.hh>
 
 #if (defined _WIN32) && (!defined WIN_PYROSETTA)
-#include <windows.h>
+// AUTO-REMOVED #include <windows.h>
+
+#include <utility/vector1.hh>
+
 #endif
 
 namespace protocols {

@@ -17,9 +17,9 @@
 
 // Unit Headers
 #include <protocols/fldsgn/potentials/sspot/NatbiasSecondaryStructureEnergy.fwd.hh>
-#include <protocols/fldsgn/potentials/sspot/NatbiasStrandPairPotential.hh>
-#include <protocols/fldsgn/potentials/sspot/NatbiasHelixPairPotential.hh>
-#include <protocols/fldsgn/potentials/sspot/NatbiasHelicesSheetPotential.hh>
+// AUTO-REMOVED #include <protocols/fldsgn/potentials/sspot/NatbiasStrandPairPotential.hh>
+// AUTO-REMOVED #include <protocols/fldsgn/potentials/sspot/NatbiasHelixPairPotential.hh>
+// AUTO-REMOVED #include <protocols/fldsgn/potentials/sspot/NatbiasHelicesSheetPotential.hh>
 
 // Package headers
 #include <core/scoring/methods/WholeStructureEnergy.hh>
@@ -32,6 +32,12 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
+
+#include <protocols/fldsgn/potentials/sspot/NatbiasHelicesSheetPotential.fwd.hh>
+#include <protocols/fldsgn/potentials/sspot/NatbiasHelixPairPotential.fwd.hh>
+#include <protocols/fldsgn/potentials/sspot/NatbiasStrandPairPotential.fwd.hh>
+#include <utility/vector1.hh>
+
 
 // Utility headers
 

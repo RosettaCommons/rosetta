@@ -25,9 +25,8 @@
 #include <core/pose/Pose.fwd.hh>
 #include <basic/datacache/DataCache.hh>
 
-//Auto Headers
-#include <core/pose/datacache/CacheableObserver.hh>
-#include <utility/vector1_bool.hh>
+#include <core/pose/datacache/CacheableObserver.fwd.hh>
+#include <utility/vector1.hh>
 
 
 

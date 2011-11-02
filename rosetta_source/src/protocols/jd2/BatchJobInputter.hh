@@ -25,6 +25,9 @@
 // AUTO-REMOVED #include <protocols/moves/Mover.fwd.hh>
 #include <utility/options/OptionCollection.hh>
 
+#include <utility/vector1.hh>
+
+
 //utility headers
 
 namespace protocols {

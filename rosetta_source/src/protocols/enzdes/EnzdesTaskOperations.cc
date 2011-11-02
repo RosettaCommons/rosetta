@@ -62,12 +62,13 @@
 // AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
-#include <basic/options/keys/motifs.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/motifs.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/docking.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/chemical/VariantType.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols{

@@ -19,7 +19,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
+// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 

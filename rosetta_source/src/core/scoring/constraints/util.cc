@@ -35,8 +35,8 @@
 // option key includes
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <cmath>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 namespace core {
 namespace scoring {

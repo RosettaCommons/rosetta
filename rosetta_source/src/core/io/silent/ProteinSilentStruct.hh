@@ -21,7 +21,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/SymDof.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymDof.hh>
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -31,6 +31,9 @@
 
 // C++ Headers
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace io {
@@ -312,4 +315,4 @@ private:
 
 // I will be removing this #include in not too long; if you need to use
 // this class, you'll also have to #include the .tmpl.hh file.
-#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
+// #include <core/io/silent/ProteinSilentStruct.tmpl.hh>

@@ -28,7 +28,7 @@
 //#include <utility/integer_mapping.hh>
 
 // C++
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 
 
 namespace core {

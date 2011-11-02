@@ -23,7 +23,7 @@
 #include <core/pose/Pose.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/io/izstream.hh>
@@ -35,6 +35,9 @@
 // C++ headers
 #include <fstream>
 #include <iostream>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols{
 namespace rna{

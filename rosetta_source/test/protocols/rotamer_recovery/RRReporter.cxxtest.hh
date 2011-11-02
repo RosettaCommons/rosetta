@@ -23,14 +23,14 @@
 #include <test/core/init_util.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
 // C++ Headers
 #include <iostream>
 
 //Auto Headers
-#include <core/import_pose/import_pose.hh>
+#include <utility/vector1.hh>
 
 
 

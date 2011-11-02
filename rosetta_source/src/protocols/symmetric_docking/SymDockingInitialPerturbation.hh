@@ -16,11 +16,11 @@
 // Package headers
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 //#include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+// AUTO-REMOVED #include <protocols/moves/RigidBodyMover.hh>
 
 // AUTO-REMOVED #include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
@@ -34,9 +34,9 @@
 //utility
 #include <utility/vector1.hh>
 
-//Auto Headers
-#include <core/types.hh>
-#include <core/conformation/symmetry/SymDof.hh>
+#include <core/conformation/symmetry/SymDof.fwd.hh>
+#include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
+#include <protocols/moves/RigidBodyMover.fwd.hh>
 
 
 namespace protocols {

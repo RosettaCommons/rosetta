@@ -41,9 +41,93 @@
 #include <protocols/loophash/LocalInserter.hh>
 #include <protocols/loophash/LoopHashSampler.hh>
 
-//Auto Headers
-// Auto-header: duplicate removed #include <core/pose/util.hh>
+#include <platform/types.hh>
+#include <core/types.hh>
+#include <core/chemical/AA.hh>
+#include <core/chemical/ResidueType.fwd.hh>
+#include <core/conformation/Conformation.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/conformation/signals/XYZEvent.fwd.hh>
+#include <core/id/AtomID.fwd.hh>
+#include <core/id/DOF_ID.fwd.hh>
+#include <core/id/JumpID.hh>
+#include <core/id/NamedAtomID.fwd.hh>
+#include <core/id/NamedStubID.fwd.hh>
+#include <core/id/TorsionID.fwd.hh>
+#include <core/id/TorsionID.hh>
+#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
+#include <core/kinematics/AtomTree.fwd.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
+#include <core/kinematics/Jump.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/kinematics/Stub.fwd.hh>
+#include <core/pose/PDBInfo.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/pose/datacache/ObserverCache.fwd.hh>
+#include <core/pose/metrics/PoseMetricContainer.fwd.hh>
+#include <core/pose/signals/ConformationEvent.fwd.hh>
+#include <core/pose/signals/DestructionEvent.fwd.hh>
+#include <core/pose/signals/EnergyEvent.fwd.hh>
+#include <core/pose/signals/GeneralEvent.fwd.hh>
+#include <core/scoring/Energies.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <protocols/filters/Filter.fwd.hh>
+#include <protocols/frag_picker/VallChunk.fwd.hh>
+#include <protocols/moves/DataMap.fwd.hh>
+#include <protocols/moves/Mover.fwd.hh>
+#include <utility/down_cast.hh>
+#include <utility/exit.hh>
+#include <utility/vector0_bool.hh>
+#include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
+#include <utility/vector1_bool.hh>
+#include <utility/vectorL.fwd.hh>
+#include <utility/vectorL.hh>
+#include <utility/vectorL_Selector.hh>
+#include <utility/vectorL_bool.hh>
+#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/access_ptr.fwd.hh>
+#include <utility/pointer/access_ptr.hh>
+#include <utility/pointer/owning_ptr.functions.hh>
+#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
+#include <utility/signals/BufferedSignalHub.fwd.hh>
+#include <utility/signals/BufferedSignalHub.hh>
+#include <utility/signals/Link.fwd.hh>
+#include <utility/signals/Link.hh>
+#include <utility/signals/LinkUnit.fwd.hh>
+#include <utility/signals/LinkUnit.hh>
+#include <utility/signals/SignalHub.fwd.hh>
+#include <utility/signals/SignalHub.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <numeric/xyzMatrix.fwd.hh>
+#include <numeric/xyzVector.fwd.hh>
+#include <algorithm>
+#include <cassert>
+#include <cstddef>
+#include <iosfwd>
+#include <iostream>
+#include <limits>
+#include <map>
+#include <ostream>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <basic/MetricValue.fwd.hh>
+#include <basic/Tracer.fwd.hh>
+#include <basic/datacache/BasicDataCache.fwd.hh>
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+
+//Auto using namespaces
+namespace std { } using namespace std; // AUTO USING NS
+namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
+namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+//Auto using namespaces end
 
 
 

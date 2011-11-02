@@ -36,8 +36,7 @@
 #include <numeric/random/random.hh>
 
 
-//Auto Headers
-#include <utility/exit.hh>
+#include <utility/vector1.hh>
 
 
 using namespace ObjexxFCL;

@@ -16,8 +16,12 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
+// AUTO-REMOVED #include <protocols/loops/Loop.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.hh>
+
+#include <protocols/loops/Loops.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace relax {

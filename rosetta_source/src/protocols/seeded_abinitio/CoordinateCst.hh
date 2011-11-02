@@ -20,12 +20,12 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <utility/string_util.hh>
-#include <protocols/loops/Loops.fwd.hh>
-#include <protocols/loops/Loops.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.fwd.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.fwd.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {

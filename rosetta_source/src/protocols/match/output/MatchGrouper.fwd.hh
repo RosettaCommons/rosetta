@@ -25,7 +25,6 @@
 // C++ headers
 // AUTO-REMOVED #include <list>
 
-//Auto Headers
 #include <utility/pointer/owning_ptr.hh>
 
 

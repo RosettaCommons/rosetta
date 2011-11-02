@@ -22,7 +22,7 @@
 // Package Headers
 #include <core/kinematics/FoldTree.fwd.hh> 
 #include <core/kinematics/Edge.fwd.hh>
-#include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <core/id/AtomID.hh>
 
 //// Project Headers
 #include <protocols/moves/Mover.hh>
@@ -32,8 +32,9 @@
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
-//Auto Headers
+#include <core/id/AtomID.fwd.hh>
 #include <protocols/loops/Loop.fwd.hh>
+#include <utility/vector1.hh>
 
 ///////////////////////////////////////////////////////////////////////
 

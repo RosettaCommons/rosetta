@@ -26,6 +26,9 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 
 //#include <ObjexxFCL/FArray3D.hh>
 

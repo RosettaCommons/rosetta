@@ -15,7 +15,7 @@
 
 // Package headers
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 // ObjexxFCL Headers
@@ -25,9 +25,10 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 
-//Auto Headers
+#include <protocols/jobdist/Jobs.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/symmetry/fibril_util.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

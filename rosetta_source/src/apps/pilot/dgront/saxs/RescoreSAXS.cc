@@ -11,20 +11,23 @@
 
 #include <core/chemical/ChemicalManager.hh>
 
-#include <core/scoring/methods/EnergyMethod.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/saxs/SAXSEnergy.hh>
-#include <core/scoring/saxs/SAXSEnergyCreatorFA.hh>
+// AUTO-REMOVED #include <core/scoring/saxs/SAXSEnergy.hh>
+// AUTO-REMOVED #include <core/scoring/saxs/SAXSEnergyCreatorFA.hh>
 
 #include <core/pose/Pose.hh>
 
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+
 
 using namespace core;
 

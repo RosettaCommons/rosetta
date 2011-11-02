@@ -18,6 +18,9 @@
 #include <sstream>
 #include <string>
 
+#include <utility/vector1.hh>
+
+
 #define FORVC(Iter,Type,Vec)  for( vector<Type>::const_iterator Iter  = (Vec).begin(); Iter != (Vec).end(); ++Iter)
 
 namespace devel {

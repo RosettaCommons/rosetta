@@ -49,13 +49,11 @@
 
 // AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
 #include <core/id/TorsionID.hh>
 #include <protocols/moves/kinematic_closure/KinematicPerturber.hh>
+#include <utility/vector1.hh>
 #include <numeric/conversions.hh>
-
-// Boost Headers
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 

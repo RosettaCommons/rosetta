@@ -31,8 +31,8 @@
 #include <numeric/angle.functions.hh>
 #include <numeric/conversions.hh>
 
-//Auto Headers
 #include <core/pose/Pose.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

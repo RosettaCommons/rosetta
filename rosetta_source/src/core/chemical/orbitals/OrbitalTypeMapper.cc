@@ -10,6 +10,9 @@
 #include <core/chemical/orbitals/OrbitalTypeMapper.hh>
 #include <map>
 
+#include <string>
+
+
 namespace core{
 namespace chemical{
 namespace orbitals{

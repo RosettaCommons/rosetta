@@ -26,7 +26,7 @@
 
 #include <basic/Tracer.hh>
 
-#include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 // option key includes
 

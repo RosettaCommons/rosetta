@@ -21,6 +21,9 @@
 #include <protocols/frag_picker/FragmentPicker.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace frag_picker {
 namespace scores {

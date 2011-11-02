@@ -60,7 +60,12 @@
 #endif
 
 //graphix
-#include <protocols/viewer/viewers.hh>
+// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
+
+#include <protocols/jd2/Job.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 // REQUIRED FOR WINDOWS
 #ifdef BOINC

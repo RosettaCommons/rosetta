@@ -25,6 +25,9 @@
 #include <core/fragment/Frame.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace nonlocal {
 

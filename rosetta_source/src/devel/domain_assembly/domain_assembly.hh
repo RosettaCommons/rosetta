@@ -15,10 +15,8 @@
 // AUTO-REMOVED #include <utility/vector1.hh>
 #include <protocols/rna/RNA_FragmentsClasses.fwd.hh>
 
-//Auto Headers
-#include <utility/vector1.fwd.hh>
-#include <iostream>
-#include <ObjexxFCL/FArray1D.hh>
+#include <utility/vector1.hh>
+#include <ObjexxFCL/FArray1D.fwd.hh>
 
 
 

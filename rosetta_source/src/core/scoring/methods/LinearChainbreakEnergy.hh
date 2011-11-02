@@ -35,7 +35,10 @@
 #include <boost/scoped_ptr.hpp>
 
 // C++ headers
-#include <cstdlib>
+// AUTO-REMOVED #include <cstdlib>
+
+#include <utility/vector1.hh>
+
 
 using boost::scoped_ptr;
 using core::Size;

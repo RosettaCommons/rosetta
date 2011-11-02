@@ -22,11 +22,11 @@
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/rms_util.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
 
-#include <protocols/scoring/Interface.hh>
+// AUTO-REMOVED #include <protocols/scoring/Interface.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/ReturnSidechainMover.hh>
@@ -43,8 +43,9 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
-//Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;

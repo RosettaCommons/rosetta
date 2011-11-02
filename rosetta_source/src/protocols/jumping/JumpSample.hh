@@ -48,9 +48,9 @@
 #include <cstdlib>
 #include <string>
 
-//Auto Headers
-#include <core/fragment/SecondaryStructure.fwd.hh>
 #include <core/fragment/FrameIterator.fwd.hh>
+#include <core/fragment/SecondaryStructure.fwd.hh>
+#include <utility/vector1.hh>
 
 
 

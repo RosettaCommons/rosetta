@@ -23,6 +23,9 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace conformation {
 

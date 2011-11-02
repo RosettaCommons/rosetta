@@ -49,8 +49,7 @@
 // C++ headers
 #include <sstream>
 
-//Auto Headers
-#include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

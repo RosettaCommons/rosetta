@@ -16,14 +16,24 @@
 //j#include <basic/options/keys/wum.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
+
+#ifdef USEMPI
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
+#include <utility/excn/Exceptions.hh>
+#endif
+
 #include <basic/Tracer.hh>
+
 // C++ headers
 #include <iostream>
-#include <utility/excn/Exceptions.hh>
 
 #include <core/init.hh>
+
+#include <core/types.hh>
+#include <protocols/loophash/LoopHashSampler.fwd.hh>
+#include <utility/vector1.hh>
+
 
 #ifdef USEMPI
 #include <mpi.h>
@@ -57,8 +67,8 @@ main( int argc, char * argv [] )
 	int assigned_num = 1;
 // No point in doing this without MPI
 #ifndef USEMPI
-	std::cerr << "You cannot use loophash_createfiltereddb without MPI!" << std::endl; 
-	std::cout << "You cannot use loophash_createfiltereddb without MPI!" << std::endl; 
+	std::cerr << "You cannot use loophash_createfiltereddb without MPI!" << std::endl;
+	std::cout << "You cannot use loophash_createfiltereddb without MPI!" << std::endl;
 #endif
 
 #ifdef USEMPI
@@ -70,17 +80,17 @@ main( int argc, char * argv [] )
 	// unless you are rank under number of partitions, do nothing
 	if( mpi_rank_ < num_partitions ) {
         assigned_num = mpi_rank_;
-        
+
         utility::vector1 < core::Size > loop_sizes = option[lh::loopsizes]();
 				utility::vector1< core::Real > rms_cutoff = option[lh::createdb_rms_cutoff]();
 				if( rms_cutoff.size() != loop_sizes.size() ) {
 						TR << "Number of RMS cutoff values does not match number of loop sizes" << std::endl;
-						MPI_Abort( MPI_COMM_WORLD, 1 ); 
+						MPI_Abort( MPI_COMM_WORLD, 1 );
 				}
 
         LoopHashLibraryOP loop_hash_library = new LoopHashLibrary( loop_sizes, num_partitions, assigned_num );
-       
-				
+
+
         TR << "Creating partition..." << std::endl;
 				loop_hash_library->create_db();
         TR << "Saving partition..." << std::endl;
@@ -106,7 +116,7 @@ main( int argc, char * argv [] )
 
 				// divide and conquer merge!
 				core::Size divisor = 1;
-				while( (float)num_partitions / divisor > 1 ) { 
+				while( (float)num_partitions / divisor > 1 ) {
 					divisor = divisor * 2;
 					if(mpi_rank_ == 0)TR << "Divisor = " << divisor << std::endl;
 					if( mpi_rank_ % divisor != 0 || mpi_rank_ + divisor/2 >= num_partitions) {
@@ -148,7 +158,7 @@ main( int argc, char * argv [] )
 					// delete intermediate partition
 					loop_hash_library->delete_db();
 				}
-			 
+
    }
    MPI_Finalize();
 	long endtime = time(NULL);

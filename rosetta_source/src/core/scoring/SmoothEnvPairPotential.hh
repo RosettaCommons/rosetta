@@ -24,11 +24,15 @@
 
 #include <basic/datacache/CacheableData.hh>
 
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 
 #include <utility/vector1_bool.hh>
+
+#include <utility/vector1.hh>
+#include <numeric/xyzVector.hh>
+
 
 
 namespace core {

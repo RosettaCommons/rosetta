@@ -20,10 +20,9 @@
 #include <core/id/DOF_ID_Mask.fwd.hh>
 
 // Package headers
-#include <core/id/DOF_ID_Map.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Map.hh>
 
-//Auto Headers
-#include <iostream>
+#include <core/types.hh>
 
 
 

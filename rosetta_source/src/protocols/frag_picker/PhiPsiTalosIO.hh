@@ -24,7 +24,6 @@
 // boost headers
 #include <boost/tuple/tuple.hpp>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

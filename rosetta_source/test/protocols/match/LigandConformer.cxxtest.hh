@@ -18,10 +18,10 @@
 
 #include <protocols/match/downstream/LigandConformer.hh>
 
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/etable/count_pair/CountPairFunction.hh>
+// AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
@@ -38,7 +38,9 @@
 #include <sstream>
 
 //Auto Headers
-#include <core/import_pose/import_pose.hh>
+#include <core/id/AtomID.hh>
+#include <protocols/match/Hit.hh>
+#include <utility/vector1.hh>
 
 
 using namespace protocols::match;

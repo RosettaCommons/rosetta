@@ -26,12 +26,12 @@
 #include <core/kinematics/types.hh>
 
 // Project headers
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueConnection.hh>
-#include <core/chemical/ResConnID.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueConnection.hh>
+// AUTO-REMOVED #include <core/chemical/ResConnID.hh>
 
-#include <core/id/DOF_ID_Map.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Map.hh>
 #include <basic/Tracer.hh>
 
 // Numeric headers
@@ -39,6 +39,9 @@
 
 // C++ headers
 #include <cassert>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

@@ -25,11 +25,10 @@
 #include <utility/exit.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/toolbox/Cluster.hh>
-#include <protocols/toolbox/DecoySetEvaluation.impl.hh>
+// AUTO-REMOVED #include <protocols/toolbox/DecoySetEvaluation.impl.hh>
 #include <core/io/silent/SilentStruct.hh>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
+#include <protocols/toolbox/DecoySetEvaluation.hh>
 
 namespace protocols {
 namespace toolbox {

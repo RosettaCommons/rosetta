@@ -32,8 +32,7 @@
 // Utility headers
 #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <cmath>
+#include <utility/vector1.hh>
 
 
 

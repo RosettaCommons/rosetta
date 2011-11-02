@@ -20,6 +20,7 @@
 #include <test/UTracer.hh>
 
 // Unit headers
+#include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
 #include <core/scoring/methods/MMBondAngleEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -29,41 +30,25 @@
 #include <test/core/init_util.hh>
 
 #include <core/kinematics/DomainMap.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// Auto-header: duplicate removed #include <core/io/pdb/pose_io.hh>
 
 // Utility headers
 
 // C++ headers
 #include <iostream>
-#include <iomanip>
+// AUTO-REMOVED #include <iomanip>
 
 //Auto Headers
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/chemical/MMAtomType.hh>
-#include <core/chemical/MMAtomTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/ScoringManager.fwd.hh>
-#include <core/scoring/types.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
-#include <ObjexxFCL/FArray1D.hh>
-
+#include <utility/vector1.hh>
+#include <utility/keys/Key2Tuple.hh>
+#include <utility/keys/Key3Tuple.hh>
+#include <utility/keys/Key4Tuple.hh>
 
 using namespace core;
 using namespace core::pose;

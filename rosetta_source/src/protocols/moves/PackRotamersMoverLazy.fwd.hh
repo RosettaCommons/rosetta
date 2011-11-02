@@ -15,6 +15,7 @@
 #define INCLUDED_protocols_moves_PackRotamersMoverLazy_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
+
 namespace protocols {
 namespace moves {
 class PackRotamersMoverLazy;

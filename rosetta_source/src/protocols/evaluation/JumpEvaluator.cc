@@ -35,7 +35,7 @@
 // AUTO-REMOVED #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <core/scoring/rms_util.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
 // C++ headers

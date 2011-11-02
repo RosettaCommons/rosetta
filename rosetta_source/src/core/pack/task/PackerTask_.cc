@@ -47,6 +47,9 @@
 // AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
+#include <utility/vector1.hh>
+
+
 
 
 namespace core {

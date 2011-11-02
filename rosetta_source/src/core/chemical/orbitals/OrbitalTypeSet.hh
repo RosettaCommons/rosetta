@@ -32,12 +32,15 @@
 
 // Project headers
 #include <core/chemical/orbitals/OrbitalType.hh>
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <map>
 #include <core/types.hh>
 #include <utility/vector1_bool.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core{
 namespace chemical{

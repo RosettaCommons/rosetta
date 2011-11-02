@@ -22,7 +22,6 @@
 #include <core/sequence/Sequence.fwd.hh>
 #include <core/sequence/ScoringScheme.hh>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

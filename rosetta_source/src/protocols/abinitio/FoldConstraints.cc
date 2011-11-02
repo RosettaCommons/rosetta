@@ -53,14 +53,14 @@
 
 // Auto-header: duplicate removed #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/fragment/FragSet.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/basic_moves/FragmentMover.hh>
 #include <protocols/abinitio/MaxSeqSepConstraintSet.hh>
+#include <protocols/basic_moves/FragmentMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
+#include <utility/vector1.hh>
 
 
 

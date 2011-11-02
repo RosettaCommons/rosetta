@@ -26,12 +26,7 @@
 // Project headers
 #include <core/pose/Pose.hh>
 
-//Auto Headers
-#include <core/scoring/etable/etrie/CountPairData_1_1.hh>
-#include <core/scoring/etable/etrie/CountPairData_1_2.hh>
-#include <core/scoring/etable/etrie/CountPairData_1_3.hh>
-#include <core/scoring/etable/etrie/EtableAtom.hh>
-#include <core/scoring/trie/trie.functions.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

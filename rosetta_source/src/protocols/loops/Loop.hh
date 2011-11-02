@@ -31,8 +31,11 @@
 
 // C++ headers
 #include <algorithm>
-#include <functional>
+// AUTO-REMOVED #include <functional>
 #include <ostream>
+
+#include <utility/vector1.hh>
+
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {

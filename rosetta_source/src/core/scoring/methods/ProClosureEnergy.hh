@@ -25,6 +25,9 @@
 
 #include <core/kinematics/DomainMap.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace core {
 namespace scoring {

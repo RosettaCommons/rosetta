@@ -20,7 +20,7 @@
 
 // Package headers
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 // options
@@ -34,9 +34,7 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

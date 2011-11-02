@@ -26,7 +26,7 @@
 
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
 
 

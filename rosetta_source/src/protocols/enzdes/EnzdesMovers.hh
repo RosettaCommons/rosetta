@@ -16,7 +16,7 @@
 #define INCLUDED_protocols_enzdes_EnzdesMovers_hh
 
 #include <protocols/enzdes/EnzdesMovers.fwd.hh>
-#include <protocols/enzdes/EnzdesBaseProtocol.fwd.hh>
+// AUTO-REMOVED #include <protocols/enzdes/EnzdesBaseProtocol.fwd.hh>
 
 // Unit headers
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
@@ -26,7 +26,7 @@
 
 // Package headers
 // AUTO-REMOVED #include <core/scoring/constraints/Constraints.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Func.fwd.hh>
 #include <core/scoring/constraints/MultiConstraint.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -43,8 +43,7 @@
 #include <utility/tag/Tag.fwd.hh>
 // AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 
-//Auto Headers
-#include <core/scoring/constraints/Constraint.hh>
+#include <utility/vector1.hh>
 
 
 //Utility Headers

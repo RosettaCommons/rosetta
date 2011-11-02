@@ -14,15 +14,15 @@
 #include <protocols/nonlocal/Chunk.hh>
 
 // C/C++ headers
-#include <cmath>
+// AUTO-REMOVED #include <cmath>
 
 // External headers
 #include <boost/scoped_ptr.hpp>
 #include <boost/accumulators/accumulators.hpp>
-#include <boost/accumulators/statistics/mean.hpp>
+// AUTO-REMOVED #include <boost/accumulators/statistics/mean.hpp>
 #include <boost/accumulators/statistics/stats.hpp>
 #include <boost/accumulators/statistics/variance.hpp>
-#include <boost/math/distributions/normal.hpp>
+// AUTO-REMOVED #include <boost/math/distributions/normal.hpp>
 
 // Package headers
 #include <protocols/nonlocal/Region.hh>
@@ -34,6 +34,9 @@
 // Utility headers
 #include <numeric/random/DistributionSampler.hh>
 #include <utility/pointer/ReferenceCount.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace nonlocal {

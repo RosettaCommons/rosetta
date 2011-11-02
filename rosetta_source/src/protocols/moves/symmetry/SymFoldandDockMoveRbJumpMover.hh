@@ -22,6 +22,9 @@
 // AUTO-REMOVED #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 // Utility Headers
 
 namespace protocols {

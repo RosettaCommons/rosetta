@@ -26,8 +26,8 @@
 // Unit Headers
 #include <boost/unordered_map.hpp>
 #include <protocols/sparta/SpartaUtil.hh>
-#include <protocols/sparta/constants.hh>
-#include <protocols/sparta/util.hh>
+// AUTO-REMOVED #include <protocols/sparta/constants.hh>
+// AUTO-REMOVED #include <protocols/sparta/util.hh>
 
 #include <core/types.hh>
 
@@ -36,10 +36,10 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-#include <cstdlib>
+// AUTO-REMOVED #include <cstdlib>
 #include <cstdio>
 #include <string>
-#include <cmath>
+// AUTO-REMOVED #include <cmath>
 
 #include <iostream>
 
@@ -48,9 +48,9 @@
 #else
 #include <dirent.h>
 #include <sys/stat.h>
-#include <sys/timeb.h>
+// AUTO-REMOVED #include <sys/timeb.h>
 #endif
-#include <stdio.h> // BR 11/2010: required for sprintf in some systems. The actual solution would be to remove sprintf and use streaming instead
+// AUTO-REMOVED #include <stdio.h> // BR 11/2010: required for sprintf in some systems. The actual solution would be to remove sprintf and use streaming instead
 
 static basic::Tracer tr("protocols.sparta");
 

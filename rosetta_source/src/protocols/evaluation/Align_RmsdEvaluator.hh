@@ -14,7 +14,7 @@
 #define INCLUDED_protocols_evaluation_Align_RmsdEvaluator_hh
 
 #include <protocols/evaluation/AlignEvaluator.hh>
-#include <protocols/evaluation/util.hh>
+// AUTO-REMOVED #include <protocols/evaluation/util.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
 
 #include <core/io/silent/silent.fwd.hh>
@@ -24,6 +24,9 @@
 
 #include <ObjexxFCL/FArray2D.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace evaluation {

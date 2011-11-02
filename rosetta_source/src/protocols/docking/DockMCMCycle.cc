@@ -20,26 +20,26 @@
 /// @author Modified by Jacob Corn
 
 #include <protocols/docking/DockMCMCycle.hh>
-#include <protocols/docking/SidechainMinMover.hh>
-#include <protocols/docking/DockTaskFactory.hh>
+// AUTO-REMOVED #include <protocols/docking/SidechainMinMover.hh>
+// AUTO-REMOVED #include <protocols/docking/DockTaskFactory.hh>
 
 // Rosetta Headers
 #include <core/kinematics/MoveMap.hh>
 
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
-#include <core/conformation/Residue.hh> // for design() flag
-#include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <core/pack/task/operation/OperateOnCertainResidues.hh>
-#include <core/pack/task/operation/ResLvlTaskOperations.hh> // PreventRepackingRLT
-#include <core/pack/task/operation/ResFilters.hh> // ResidueLacksProperty
-#include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
-#include <core/pack/dunbrack/RotamerConstraint.hh>
+// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
+// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh> // for design() flag
+// AUTO-REMOVED #include <core/pack/task/operation/NoRepackDisulfides.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/OperateOnCertainResidues.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperations.hh> // PreventRepackingRLT
+// AUTO-REMOVED #include <core/pack/task/operation/ResFilters.hh> // ResidueLacksProperty
+// AUTO-REMOVED #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/RotamerConstraint.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -52,9 +52,9 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/PyMolMover.hh>
+// AUTO-REMOVED #include <protocols/moves/PyMolMover.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
-#include <protocols/moves/RotamerTrialsMinMover.hh>
+// AUTO-REMOVED #include <protocols/moves/RotamerTrialsMinMover.hh>
 #include <protocols/moves/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 
@@ -68,14 +68,21 @@
 #include <string>
 
 //Utility Headers
-#include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
 
 #include <basic/Tracer.hh>
 using basic::T;
 
 // option key includes
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/docking.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
+
+#include <protocols/toolbox/task_operations/InterfaceTaskOperation.fwd.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <utility/options/IntegerVectorOption.hh>
+#include <basic/options/keys/OptionKeys.hh>
+
 
 using basic::Error;
 using basic::Warning;

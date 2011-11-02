@@ -21,10 +21,10 @@
 #include <basic/database/open.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh> // temp
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh> // temp
 #include <core/scoring/sasa.hh>
 #include <core/types.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/ubyte.hh>
@@ -38,13 +38,16 @@
 
 // Utility Headers
 #include <utility/io/izstream.hh>
-#include <utility/string_util.hh> // temp
+// AUTO-REMOVED #include <utility/string_util.hh> // temp
 
 // C++ Headers
 #include <cmath>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+
+#include <utility/vector1.hh>
+
 
 //#define FILE_DEBUG 1
 

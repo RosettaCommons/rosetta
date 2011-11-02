@@ -20,11 +20,11 @@
 #include <core/chemical/ResidueType.hh>
 
 // Project Headers
-#include <core/chemical/AtomTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ElementSet.hh>
-#include <core/chemical/MMAtomTypeSet.hh>
-#include <core/chemical/orbitals/OrbitalTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ElementSet.hh>
+// AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/orbitals/OrbitalTypeSet.hh>
 
 // Platform Headers
 #include <utility/vector1.hh>
@@ -33,6 +33,9 @@
 // C++ Headers
 #include <string>
 #include <ostream>
+
+//Auto Headers
+
 
 using std::endl;
 using std::string;

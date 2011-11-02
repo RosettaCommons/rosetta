@@ -28,7 +28,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // AUTO-REMOVED #include <core/pose/util.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/Tracer.hh>
 
 // AUTO-REMOVED #include <protocols/Protocol.hh>
@@ -48,9 +48,8 @@
 // AUTO-REMOVED #include <boost/algorithm/string.hpp>
 #include <boost/tuple/tuple.hpp>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/Pose.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

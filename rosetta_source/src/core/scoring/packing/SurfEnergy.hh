@@ -25,6 +25,9 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 
 // AUTO-REMOVED #include <utility/vector1.hh>
 

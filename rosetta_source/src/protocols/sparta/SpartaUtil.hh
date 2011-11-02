@@ -31,10 +31,10 @@
 #include <boost/unordered_map.hpp>
 
 #include <protocols/sparta/GDB.hh>
-#include <protocols/sparta/PDB.hh>
-#include <protocols/sparta/ANN.hh>
+// AUTO-REMOVED #include <protocols/sparta/PDB.hh>
+// AUTO-REMOVED #include <protocols/sparta/ANN.hh>
 
-#include <core/pose/Pose.fwd.hh>
+// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 
 #include <core/types.hh>
 #include <utility/vector1.hh>

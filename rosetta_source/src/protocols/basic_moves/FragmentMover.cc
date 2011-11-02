@@ -30,7 +30,7 @@
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
@@ -40,7 +40,7 @@
 
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
 

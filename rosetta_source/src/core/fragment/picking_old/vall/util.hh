@@ -18,6 +18,9 @@
 #include <core/fragment/FragData.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 
+#include <utility/vector1.hh>
+
+
 // C++ headers
 // AUTO-REMOVED #include <string>
 

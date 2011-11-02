@@ -22,6 +22,9 @@
 #include <core/pack/task/PackerTask_.hh> // only place in all of mini where this gets #included (except PackerTask_.cc)
 #include <core/pack/task/operation/TaskOperation.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace pack {
 namespace task {

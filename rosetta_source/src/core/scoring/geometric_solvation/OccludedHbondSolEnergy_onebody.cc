@@ -52,14 +52,17 @@
 
 // Project headers
 #include <numeric/trig.functions.hh>
-#include <numeric/deriv/distance_deriv.hh>
-#include <numeric/deriv/angle_deriv.hh>
+// AUTO-REMOVED #include <numeric/deriv/distance_deriv.hh>
+// AUTO-REMOVED #include <numeric/deriv/angle_deriv.hh>
 
 // Utility headers
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
-//Auto Headers
-#include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
+
+//Auto using namespaces
+namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+//Auto using namespaces end
 
 
 static basic::Tracer tr( "core.scoring.geometric_solvation.OccludedHbondSolEnergy_onebody" );

@@ -17,22 +17,22 @@
 
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/jd2/Job.hh>
+// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/jd2/Job.hh>
 
 #include <core/kinematics/FoldTree.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.hh>
 
-#include <core/optimization/MinimizerOptions.hh>
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/pack/dunbrack/RotamerConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/RotamerConstraint.hh>
 
 #include <core/types.hh>
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 #include <core/scoring/ScoreType.hh>
 
 #include <basic/Tracer.hh>
@@ -43,29 +43,22 @@
 
 #include <core/chemical/PatchOperation.hh>
 
-#include <utility/file/file_sys_util.hh>
+// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 // option key includes
 
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <core/chemical/ResidueSelector.hh>
+// AUTO-REMOVED #include <basic/options/keys/docking.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <utility/tag/Tag.hh>
+// AUTO-REMOVED #include <utility/tag/Tag.hh>
 
-//Auto Headers
-#include <core/pose/Pose.hh>
-#include <core/conformation/Conformation.hh>
-
-// Auto-header: duplicate removed #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <numeric/random/random.hh>
-
-// Auto-header: duplicate removed #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-
-#include <numeric/random/random.fwd.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <numeric/random/random.hh>
 
 namespace protocols {
 namespace ligand_docking {

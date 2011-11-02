@@ -33,8 +33,37 @@
 // C++ Headers
 #include <string>
 
-//Auto Headers
+#include <platform/types.hh>
+#include <utility/down_cast.hh>
+#include <utility/exit.hh>
+#include <utility/vector1.fwd.hh>
+#include <utility/vector1_bool.hh>
+#include <utility/vectorL.fwd.hh>
+#include <utility/vectorL.hh>
+#include <utility/vectorL_Selector.hh>
+#include <utility/vectorL_bool.hh>
+#include <utility/pointer/access_ptr.fwd.hh>
+#include <utility/pointer/access_ptr.hh>
+#include <utility/pointer/owning_ptr.functions.hh>
+#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
+#include <numeric/numeric.functions.hh>
+#include <numeric/sphericalVector.fwd.hh>
+#include <numeric/trig.functions.hh>
+#include <numeric/xyz.functions.fwd.hh>
+#include <numeric/xyzMatrix.fwd.hh>
+#include <numeric/xyzVector.fwd.hh>
+#include <numeric/xyzVector.hh>
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <cstddef>
+#include <cstdlib>
+#include <iomanip>
+#include <iosfwd>
 #include <iostream>
+#include <limits>
+#include <vector>
 
 
 namespace protocols {

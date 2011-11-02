@@ -35,6 +35,9 @@
 // Package headers
 #include <protocols/scoring/methods/pcs2/PcsEnergyParameter.hh>
 
+#include <utility/vector1.hh>
+
+
 // Project headers
 
 // Utility headers

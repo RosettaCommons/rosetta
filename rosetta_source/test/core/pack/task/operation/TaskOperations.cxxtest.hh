@@ -24,16 +24,17 @@
 // project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 
 // utility headers
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <core/import_pose/import_pose.hh>
+// Auto-header: duplicate removed #include <core/import_pose/import_pose.hh>
+#include <utility/vector1.hh>
 
 
 

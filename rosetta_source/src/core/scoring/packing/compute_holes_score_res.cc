@@ -57,7 +57,6 @@
 
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/conformation/Residue.hh>
 
 

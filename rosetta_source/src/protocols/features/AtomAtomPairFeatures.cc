@@ -36,7 +36,7 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <cppdb/errors.h>
+// AUTO-REMOVED #include <cppdb/errors.h>
 
 namespace protocols{
 namespace features{

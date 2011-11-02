@@ -13,7 +13,7 @@
 /// @brief  Scoring benchmark
 /// @author Sergey Lyskov
 
-#include "benchmark.hh"
+#include <apps/benchmark/benchmark.hh>
 
 #include <core/pose/Pose.hh>
 //#include <core/import_pose/import_pose.hh>
@@ -21,7 +21,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 //#include <platform/types.hh>
 //#include <core/types.hh>
 //#include <core/chemical/AA.hh>

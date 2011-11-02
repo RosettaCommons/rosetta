@@ -28,7 +28,10 @@
 
 // C++ Headers
 #include <string>
-#include <set>
+// AUTO-REMOVED #include <set>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace toolbox {

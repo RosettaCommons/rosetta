@@ -15,9 +15,9 @@
 #define INCLUDED_core_scoring_PoissonBoltzmannPotential_HH
 
 // core
-#include <core/pose/Pose.hh>
-#include <core/scoring/types.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/scoring/types.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
 // Unit Headers
 #include <core/scoring/PoissonBoltzmannPotential.fwd.hh>
@@ -27,6 +27,12 @@
 #include <ObjexxFCL/FArray3D.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
+
+#include <core/types.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <utility/vector1.hh>
+
 
 
 namespace core {

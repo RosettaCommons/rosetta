@@ -22,7 +22,7 @@
 #include <core/chemical/ChemicalManager.hh> //need for additional residue
 #include <core/chemical/ResidueTypeSet.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <basic/options/option.hh> //needed to set option
@@ -41,7 +41,7 @@
 #include <core/scoring/constraints/HarmonicFunc.hh>
 
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //function for reading cstfiles
-#include <protocols/enzdes/AddorRemoveCsts.hh> //for parser testing
+// AUTO-REMOVED #include <protocols/enzdes/AddorRemoveCsts.hh> //for parser testing
 #include <protocols/moves/MoverFactory.hh> //for parser testing
 
 #include <protocols/moves/DataMap.hh> //for parser test
@@ -52,7 +52,7 @@
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <math.h>  //need for sqrt taking
+// AUTO-REMOVED #include <math.h>  //need for sqrt taking
 
 #include <basic/Tracer.hh>
 
@@ -67,28 +67,11 @@
 #include <utility/tag/Tag.hh>
 
 //Auto Headers
-#include <core/chemical/VariantType.hh>
-#include <core/conformation/Atom.fwd.hh>
-#include <core/id/AtomID_Map.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/id/AtomID_Mask.hh>
-#include <core/id/DOF_ID_Map.hh>
-#include <core/id/DOF_ID_Mask.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/id/SequenceMapping.hh>
-#include <core/io/pdb/file_data.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/types.hh>
-#include <utility/stream_util.hh>
-#include <basic/datacache/CacheableData.hh>
-#include <protocols/moves/MoverStatistics.hh>
-#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/format.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 

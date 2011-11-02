@@ -16,7 +16,10 @@
 // Project headers
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/loops/Loops.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace nonlocal {

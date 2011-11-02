@@ -62,8 +62,8 @@
 
 #include <cassert>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
+#include <utility/vector1.hh>
 
 
 

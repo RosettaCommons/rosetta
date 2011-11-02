@@ -38,9 +38,8 @@
 #include <list>
 #include <map>
 
-//Auto Headers
 #include <core/id/AtomID.fwd.hh>
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -50,6 +50,9 @@
 #include <numeric/random/random.hh>
 #include <numeric/random/reservoir_sample.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace io {
 namespace silent {

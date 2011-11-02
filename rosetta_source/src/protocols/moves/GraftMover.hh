@@ -22,10 +22,9 @@
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
 
-//Auto Headers
-#include <protocols/moves/PackRotamersMover.fwd.hh>
-
 #include <core/pack/task/TaskFactory.fwd.hh>
+#include <protocols/moves/PackRotamersMover.fwd.hh>
+#include <utility/vector1.hh>
 
 
 // ObjexxFCL Headers

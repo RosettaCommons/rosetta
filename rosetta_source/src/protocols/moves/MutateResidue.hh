@@ -28,6 +28,9 @@
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <protocols/filters/Filter.fwd.hh> //Filters_map
 
+#include <utility/vector1.hh>
+
+
 // Utility headers
 // AUTO-REMOVED #include <utility/vector1.hh>
 

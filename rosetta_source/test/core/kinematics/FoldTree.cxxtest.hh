@@ -15,7 +15,7 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit Headers
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
@@ -25,7 +25,11 @@
 #include <test/core/init_util.hh>
 
 // C/C++
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
+
+//Auto Headers
+#include <utility/vector1.hh>
+
 
 using core::kinematics::FoldTree;
 using core::pose::Pose;

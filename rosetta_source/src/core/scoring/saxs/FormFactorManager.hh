@@ -25,7 +25,7 @@
 #include <utility/vector1.hh>
 
 #include <map>
-#include <set>
+// AUTO-REMOVED #include <set>
 #include <string>
 
 namespace core {

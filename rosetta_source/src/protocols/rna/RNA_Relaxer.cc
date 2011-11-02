@@ -38,7 +38,7 @@
 //Relaxer stuff
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -63,8 +63,8 @@
 
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/kinematics/Jump.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
 //Auto using namespaces

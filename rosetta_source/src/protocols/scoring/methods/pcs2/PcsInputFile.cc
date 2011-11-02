@@ -50,6 +50,9 @@
 #include <fstream>
 #include <iostream>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols{
 namespace scoring{
 namespace methods{

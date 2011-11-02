@@ -23,10 +23,9 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 #include <ObjexxFCL/FArray2.fwd.hh>
-#include <iostream>
 
 
 namespace protocols {

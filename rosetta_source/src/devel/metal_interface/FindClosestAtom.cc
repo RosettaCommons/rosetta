@@ -26,6 +26,9 @@ using basic::Warning;
 // C++ headers
 #include <string>
 
+#include <utility/vector1.hh>
+
+
 //tracers
 // using basic::Error;
 // using basic::Warning;

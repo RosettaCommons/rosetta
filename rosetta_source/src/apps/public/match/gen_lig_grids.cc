@@ -38,23 +38,25 @@
 
 #include <basic/Tracer.hh>
 
-#include <core/scoring/packstat/compute_sasa.hh>
+// AUTO-REMOVED #include <core/scoring/packstat/compute_sasa.hh>
 
 
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 #include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
+// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 //from comput_sasa.cc
-#include <basic/options/keys/packstat.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/packstat.OptionKeys.gen.hh>
 #include <ObjexxFCL/format.hh>
 #include <utility/exit.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <core/scoring/packstat/types.hh>
+#include <utility/vector1.hh>
+#include <fstream>
 
 
 using namespace std;

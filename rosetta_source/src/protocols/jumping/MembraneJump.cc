@@ -47,8 +47,6 @@
 #include <cstdlib>
 #include <string>
 
-//Auto Headers
-#include <core/import_pose/import_pose.hh>
 // Auto-header: duplicate removed #include <core/pose/util.hh>
 
 namespace protocols {

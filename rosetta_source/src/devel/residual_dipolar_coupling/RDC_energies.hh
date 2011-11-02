@@ -42,8 +42,8 @@
 // AUTO-REMOVED #include <vector>
 #include <map>
 
-//Auto Headers
 #include <core/pose/Pose.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace devel {

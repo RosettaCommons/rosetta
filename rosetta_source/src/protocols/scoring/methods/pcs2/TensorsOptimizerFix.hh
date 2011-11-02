@@ -39,6 +39,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
+
 // Numeric headers
 
 // Objexx headers

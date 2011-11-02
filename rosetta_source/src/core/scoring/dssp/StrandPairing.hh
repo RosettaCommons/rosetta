@@ -36,9 +36,8 @@
 #include <string>
 // AUTO-REMOVED #include <vector>
 
-//Auto Headers
 #include <core/scoring/dssp/PairingsList.fwd.hh>
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

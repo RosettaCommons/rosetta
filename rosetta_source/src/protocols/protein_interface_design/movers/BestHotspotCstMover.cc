@@ -27,8 +27,10 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <utility/tag/Tag.hh>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
+#include <protocols/hotspot_hashing/HotspotStubSet.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

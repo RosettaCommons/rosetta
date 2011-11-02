@@ -14,7 +14,7 @@
 #include <core/types.hh>
 #include <protocols/rna/RNA_FragmentMover.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 

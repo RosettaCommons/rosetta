@@ -20,7 +20,10 @@
 #include <protocols/optimize_weights/OptEData.hh>
 
 #include <iostream>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace optimize_weights {

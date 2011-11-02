@@ -26,7 +26,7 @@
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.tmpl.hh>
 #include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh>
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 
 // Project headers
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
@@ -64,7 +64,7 @@
 #include <iostream>
 #include <fstream>
 #if defined(WIN32) || defined(__CYGWIN__)
-#include <ctime>
+// AUTO-REMOVED #include <ctime>
 #endif
 
 // Boost Headers
@@ -81,12 +81,12 @@ using basic::T;
 // option key includes
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
+#include <utility/vector1.hh>
 
 
 

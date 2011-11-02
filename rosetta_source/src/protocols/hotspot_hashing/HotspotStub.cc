@@ -38,9 +38,8 @@
 
 // Auto-header: duplicate removed #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/pose/util.hh>
-#include <utility/io/mpistream.hh>
+#include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;

@@ -34,12 +34,9 @@
 
 // C++ headers
 // AUTO-REMOVED #include <string>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <fstream>
 
-//Auto Headers
-#include <core/id/AtomID.fwd.hh>
-#include <protocols/match/downstream/DownstreamBuilder.fwd.hh>
 #include <utility/vector1_bool.hh>
 
 

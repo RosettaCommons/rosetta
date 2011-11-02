@@ -25,8 +25,8 @@
 #include <core/id/DOF_ID_Map.hh>
 #include <core/kinematics/MinimizerMapBase.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/DerivVectorPair.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/DerivVectorPair.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 #include <core/kinematics/MoveMap.fwd.hh>
@@ -36,6 +36,10 @@
 
 // C++ headers
 #include <list>
+
+#include <core/scoring/DerivVectorPair.fwd.hh>
+#include <ObjexxFCL/FArray1D.hh>
+
 
 namespace core {
 namespace optimization {

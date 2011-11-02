@@ -57,7 +57,7 @@
 // #include <devel/init.hh>
 
 // #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
-#include "apps/pilot/will/will_util.hh"
+#include <apps/pilot/will/will_util.hh>
 
 using core::Real;
 using core::Size;

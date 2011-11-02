@@ -30,50 +30,7 @@
 //c++ headers
 #include <set>
 
-//Auto Headers
-#include <platform/types.hh>
-#include <core/types.hh>
-#include <core/conformation/signals/ConnectionEvent.fwd.hh>
-#include <core/conformation/signals/ConnectionEvent.hh>
-#include <core/conformation/signals/GeneralEvent.fwd.hh>
-#include <core/conformation/signals/GeneralEvent.hh>
-#include <core/conformation/signals/IdentityEvent.fwd.hh>
-#include <core/conformation/signals/IdentityEvent.hh>
-#include <core/conformation/signals/LengthEvent.fwd.hh>
-#include <core/conformation/signals/XYZEvent.fwd.hh>
-#include <core/conformation/signals/XYZEvent.hh>
-#include <core/pose/datacache/CacheableObserver.fwd.hh>
-#include <core/pose/datacache/CacheableObserver.hh>
-#include <core/pose/metrics/PoseMetricContainer.fwd.hh>
-#include <core/pose/signals/ConformationEvent.fwd.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.fwd.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.fwd.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/pose/signals/GeneralEvent.fwd.hh>
-#include <core/pose/signals/GeneralEvent.hh>
-#include <basic/datacache/BasicDataCache.fwd.hh>
-#include <basic/datacache/CacheableData.fwd.hh>
-#include <basic/datacache/CacheableData.hh>
-#include <basic/datacache/DataCache.fwd.hh>
-#include <basic/datacache/DataCache.hh>
-#include <core/pose/datacache/cacheable_observers.fwd.hh>
-#include <utility/exit.hh>
-#include <utility/signals/BufferedSignalHub.fwd.hh>
-#include <utility/signals/BufferedSignalHub.hh>
-#include <utility/signals/Link.fwd.hh>
-#include <utility/signals/Link.hh>
-#include <utility/signals/LinkUnit.fwd.hh>
-#include <utility/signals/LinkUnit.hh>
-#include <utility/signals/PausableSignalHub.fwd.hh>
-#include <utility/signals/PausableSignalHub.hh>
-#include <utility/signals/SignalHub.fwd.hh>
-#include <utility/signals/SignalHub.hh>
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
-
-// Boost Headers
+#include <utility/vector1.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 

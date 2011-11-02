@@ -15,7 +15,7 @@
 
 #include <protocols/enzdes/EnzdesFixBBProtocol.hh>
 #include <protocols/enzdes/EnzdesBaseProtocol.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+// AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/enzdes/EnzdesMovers.hh>
 #include <protocols/enzdes/ModifyStoredLigandRBConfsMovers.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueType.hh>
@@ -34,8 +34,8 @@
 
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-//Auto Headers
-#include <utility/options/OptionCollection.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 namespace protocols{
 namespace enzdes{

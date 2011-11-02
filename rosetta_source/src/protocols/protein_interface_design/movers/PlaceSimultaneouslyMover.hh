@@ -20,7 +20,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <core/scoring/constraints/Constraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
 // C++ headers
@@ -33,6 +33,9 @@
 #include <protocols/protein_interface_design/movers/PlacementAuctionMover.fwd.hh>
 #include <protocols/protein_interface_design/movers/PlacementMinimizationMover.fwd.hh>
 #include <protocols/protein_interface_design/filters/StubScoreFilter.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace protein_interface_design {

@@ -25,9 +25,12 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/optimization/types.hh>
 
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 
 #include <map>
+
+#include <utility/vector1.hh>
+
 // AUTO-REMOVED #include <string>
 
 namespace protocols {

@@ -13,36 +13,36 @@
 // Unit headers
 #include <core/pack/make_symmetric_task.hh>
 #include <core/conformation/symmetry/SymmData.hh>
-#include <core/conformation/symmetry/SymDof.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/VirtualCoordinate.hh>
-#include <core/scoring/symmetry/SymmetricEnergies.hh>
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/VirtualCoordinate.hh>
+// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricEnergies.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/PackerTask.hh>
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // Utility functions
-#include <basic/options/option.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-#include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
 #include <core/id/AtomID.hh>
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 // AUTO-REMOVED #include <numeric/xyzTriple.hh>
 
 // Package Headers
 #include <core/kinematics/Edge.hh>
 #include <core/pose/symmetry/util.hh>
 
-#include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -50,7 +50,10 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

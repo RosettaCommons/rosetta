@@ -29,9 +29,9 @@
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
+// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/rtmin.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -41,6 +41,10 @@
 // C++ headers
 #include <ostream>
 #include <string>
+
+#include <core/pack/task/TaskFactory.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace rotamer_recovery {

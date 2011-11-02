@@ -24,7 +24,7 @@
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/Func.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
 #include <protocols/moves/Mover.hh>
 
@@ -32,7 +32,8 @@
 
 #include <set>
 
-//Auto Headers
+#include <core/conformation/Residue.fwd.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
 
 

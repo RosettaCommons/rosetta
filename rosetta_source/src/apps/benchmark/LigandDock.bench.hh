@@ -15,17 +15,18 @@
 /// @author Gordon Lemmon
 
 
-#include "benchmark.hh"
-#include "init_util.hh"
+#include <apps/benchmark/benchmark.hh>
+// AUTO-REMOVED #include <apps/benchmark/init_util.hh>
 #include <core/import_pose/import_pose.hh>
-#include "core/pose/Pose.hh"
-#include "protocols/ligand_docking/LigandDockProtocol.hh"
-#include "basic/options/option.hh"
+#include <core/pose/Pose.hh>
+#include <protocols/ligand_docking/LigandDockProtocol.hh>
+#include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <core/import_pose/import_pose.hh>
+// Auto-header: duplicate removed #include <core/import_pose/import_pose.hh>
 
 //Auto Headers
+#include <utility/vector1.hh>
 //#include <platform/types.hh>
 //#include <core/types.hh>
 //#include <core/chemical/AA.hh>

@@ -25,6 +25,21 @@
 #include <map>
 #include <string>
 
+#include <platform/types.hh>
+#include <utility/down_cast.hh>
+#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/access_ptr.fwd.hh>
+#include <utility/pointer/access_ptr.hh>
+#include <utility/pointer/owning_ptr.functions.hh>
+#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
+#include <cassert>
+#include <cstddef>
+#include <iosfwd>
+#include <basic/datacache/CacheableData.fwd.hh>
+
+
 
 namespace basic {
 namespace datacache {

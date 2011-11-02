@@ -60,14 +60,12 @@
 #include <iostream>
 #include <string>
 
-//Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/VariantType.hh>
-
-#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
-
+#include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <utility/vector0.hh>
 
 
 namespace devel {

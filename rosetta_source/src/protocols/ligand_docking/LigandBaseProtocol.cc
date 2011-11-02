@@ -70,10 +70,9 @@
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
-#include <core/kinematics/tree/Atom.hh>
 #include <core/pose/util.hh>
+#include <utility/vector1.hh>
 
 
 

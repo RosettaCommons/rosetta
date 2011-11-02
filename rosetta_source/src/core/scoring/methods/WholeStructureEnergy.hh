@@ -22,8 +22,11 @@
 #include <core/scoring/methods/EnergyMethod.hh>
 
 // Project headers
-#include <core/conformation/Residue.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
 #include <core/types.hh>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

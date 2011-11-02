@@ -15,7 +15,7 @@
 #ifndef PDB_H
 #define PDB_H
 
-#include <string>
+// AUTO-REMOVED #include <string>
 #include <vector>
 #include <map>
 #include <algorithm>
@@ -24,6 +24,9 @@
 #include <utility/vector0.hh>
 
 #include <core/pose/Pose.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace sparta {

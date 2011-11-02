@@ -22,7 +22,7 @@
 //#include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/OrderedFragSetIterator_.hh>
 #include <core/fragment/Frame.hh>
-#include <core/fragment/FragData.hh>
+// AUTO-REMOVED #include <core/fragment/FragData.hh>
 
 // Project Headers
 // AUTO-REMOVED #include <core/pose/Pose.hh>
@@ -38,10 +38,8 @@
 #include <basic/Tracer.hh>
 #include <ostream>
 
-//Auto Headers
 #include <core/fragment/FrameIterator.hh>
-#include <iterator>
-#include <vector>
+#include <utility/vector1.hh>
 
 namespace core {
 namespace fragment {

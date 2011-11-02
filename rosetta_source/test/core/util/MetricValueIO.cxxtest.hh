@@ -25,11 +25,9 @@
 #include <string>
 
 // C++ headers, for debugging your tests
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 
 //Auto Headers
-#include <utility/stream_util.hh>
-#include <istream>
 
 
 using std::string;

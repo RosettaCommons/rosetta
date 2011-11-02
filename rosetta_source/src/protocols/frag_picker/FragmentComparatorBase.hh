@@ -16,8 +16,14 @@
 
 // package headers
 #include <protocols/frag_picker/FragmentComparatorBase.fwd.hh>
-#include <protocols/frag_picker/FragmentCandidate.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
+
+#include <core/types.hh>
+#include <protocols/frag_picker/FragmentCandidate.fwd.hh>
+#include <utility/vector1.hh>
+#include <utility/pointer/ReferenceCount.hh>
+
 
 namespace protocols {
 namespace frag_picker {

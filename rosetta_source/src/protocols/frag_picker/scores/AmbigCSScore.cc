@@ -30,7 +30,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 
 // Boost
 #include <boost/tuple/tuple.hpp>
@@ -38,8 +38,8 @@
 // project headers
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <protocols/frag_picker/CS2ndShift.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

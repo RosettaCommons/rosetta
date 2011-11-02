@@ -34,7 +34,7 @@
 #include <utility/file/FileName.hh>
 
 // Option Headers
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <basic/MemTracer.hh>
 
@@ -44,6 +44,11 @@
 
 // Utility headers
 #include <basic/options/option_macros.hh>
+
+#include <core/scoring/ScoreFunction.hh>
+#include <protocols/noesy_assign/NoesyModule.hh>
+#include <utility/vector1.hh>
+
 
 static basic::Tracer tr("protocols.iterative");
 using basic::mem_tr;

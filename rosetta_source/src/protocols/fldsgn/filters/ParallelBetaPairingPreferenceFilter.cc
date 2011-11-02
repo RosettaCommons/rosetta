@@ -34,8 +34,8 @@
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.hh>
 
-//Auto Headers
-#include <ObjexxFCL/FArray2D.fwd.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <boost/lexical_cast.hpp>
 
 //// C++ headers

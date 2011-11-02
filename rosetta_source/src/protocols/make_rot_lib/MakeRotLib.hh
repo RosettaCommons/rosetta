@@ -21,7 +21,10 @@
 #include <protocols/make_rot_lib/RotData.hh>
 
 // c++ headers
-#include <string>
+// AUTO-REMOVED #include <string>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace MakeRotLib {

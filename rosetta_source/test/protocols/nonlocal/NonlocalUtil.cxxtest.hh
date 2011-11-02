@@ -40,6 +40,9 @@
 #include <protocols/nonlocal/StarTreeBuilder.hh>
 #include <protocols/nonlocal/util.hh>
 
+//Auto Headers
+
+
 namespace {
 using boost::unordered_map;
 using core::Real;

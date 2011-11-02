@@ -21,6 +21,9 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 #ifdef WIN32
 #include <string>
 #endif

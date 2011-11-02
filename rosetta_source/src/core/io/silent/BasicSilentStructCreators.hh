@@ -15,11 +15,15 @@
 #define INCLUDED_core_io_silent_BasicSilentStructCreators_hh
 
 // Unit Headers
-#include <core/io/silent/SilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructCreator.hh>
 
 // c++ headers
-#include <string>
+// AUTO-REMOVED #include <string>
+
+#include <core/types.hh>
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace io {

@@ -24,21 +24,24 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
+// AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <basic/options/keys/bbg.OptionKeys.gen.hh>
 
 //util
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/constants.hh>
-#include <numeric/internal/RowVectors.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
+// AUTO-REMOVED #include <numeric/constants.hh>
+// AUTO-REMOVED #include <numeric/internal/RowVectors.hh>
 
 #include <iostream>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <sstream>
+
+#include <utility/vector1.hh>
+
 
 using namespace std;
 using namespace core;

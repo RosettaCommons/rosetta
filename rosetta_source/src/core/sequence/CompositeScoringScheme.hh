@@ -21,9 +21,7 @@
 #include <core/sequence/ScoringScheme.hh>
 #include <core/sequence/CompositeScoringScheme.fwd.hh>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
-#include <utility/file/FileName.fwd.hh>
 
 namespace core {
 namespace sequence {

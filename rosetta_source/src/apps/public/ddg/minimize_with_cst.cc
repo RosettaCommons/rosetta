@@ -40,51 +40,51 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <basic/options/util.hh>
-#include <basic/options/after_opts.hh>
+// AUTO-REMOVED #include <basic/options/after_opts.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
-#include <core/pack/task/ResfileReader.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
+// AUTO-REMOVED #include <core/pack/task/ResfileReader.hh>
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include <ios>
+// AUTO-REMOVED #include <ios>
 #include <utility/io/izstream.hh>
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // C++ headers
 #include <cstdlib>
-#include <fstream>
-#include <iostream>
+// Auto-header: duplicate removed #include <fstream>
+// Auto-header: duplicate removed #include <iostream>
 #include <string>
-#include <sstream>
+// Auto-header: duplicate removed #include <sstream>
 
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 
 
-#include <core/types.hh>
+// Auto-header: duplicate removed #include <core/types.hh>
 
-#include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
+// Auto-header: duplicate removed #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/conformation/ResidueFactory.hh>
+// Auto-header: duplicate removed #include <core/conformation/ResidueFactory.hh>
 
-#include <core/scoring/sasa.hh>
-#include <core/scoring/rms_util.hh>
+// AUTO-REMOVED #include <core/scoring/sasa.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 //#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// Auto-header: duplicate removed #include <core/scoring/ScoreFunction.hh>
+// Auto-header: duplicate removed #include <core/scoring/ScoreFunctionFactory.hh>
 //#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
+// Auto-header: duplicate removed #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/Func.hh>
 #include <core/id/AtomID_Map.hh>
@@ -93,48 +93,48 @@
 #include <core/id/DOF_ID.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/kinematics/MoveMap.hh>
+// Auto-header: duplicate removed #include <core/kinematics/MoveMap.hh>
 
-#include <core/pose/Pose.hh>
+// Auto-header: duplicate removed #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <devel/init.hh>
+// Auto-header: duplicate removed #include <devel/init.hh>
 
-#include <basic/options/util.hh>
+// Auto-header: duplicate removed #include <basic/options/util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/keys/OptionKeys.hh>
+// Auto-header: duplicate removed #include <basic/options/after_opts.hh>
+// Auto-header: duplicate removed #include <basic/options/keys/OptionKeys.hh>
 
 //#include <core/util/basic.hh>
-#include <basic/Tracer.hh>
+// Auto-header: duplicate removed #include <basic/Tracer.hh>
 //#include <core/io/database/open.hh>
-#include <core/io/pdb/pose_io.hh>
+// Auto-header: duplicate removed #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/rotamer_trials.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
+// Auto-header: duplicate removed #include <core/pack/pack_rotamers.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
+// Auto-header: duplicate removed #include <core/pack/task/PackerTask.hh>
+// Auto-header: duplicate removed #include <core/pack/task/TaskFactory.hh>
+// Auto-header: duplicate removed #include <core/kinematics/MoveMap.hh>
+// Auto-header: duplicate removed #include <core/optimization/AtomTreeMinimizer.hh>
+// Auto-header: duplicate removed #include <core/optimization/MinimizerOptions.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/BinaryProteinSilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
+// Auto-header: duplicate removed #include <core/io/silent/ProteinSilentStruct.hh>
+// Auto-header: duplicate removed #include <core/io/silent/SilentFileData.hh>
 
 
 //protocols
-#include <protocols/moves/RotamerTrialsMover.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/evaluation/RmsdEvaluator.hh>
+// AUTO-REMOVED #include <protocols/moves/RotamerTrialsMover.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
 //#include <protocols/looprelax/looprelax_main.hh>
 
 #include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/vector1.hh>
-#include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
 //new options stuff?
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -142,14 +142,17 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/casp.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/casp.OptionKeys.gen.hh>
 // C++ headers
-#include <fstream>
-#include <iostream>
-#include <string>
+// Auto-header: duplicate removed #include <fstream>
+// Auto-header: duplicate removed #include <iostream>
+// Auto-header: duplicate removed #include <string>
 
 //C++ filechek
 #include <sys/stat.h>
+
+#include <utility/vector0.hh>
+
 
 
 using namespace core;

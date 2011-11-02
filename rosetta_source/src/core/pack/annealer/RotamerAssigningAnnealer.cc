@@ -30,7 +30,8 @@
 /// C++ headers
 #include <iostream>
 
-//Auto Headers
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1.hh>
 
 

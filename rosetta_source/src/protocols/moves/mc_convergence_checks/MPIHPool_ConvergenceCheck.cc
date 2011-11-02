@@ -1,44 +1,51 @@
+#ifdef USEMPI
+#include <mpi.h>
+#endif
+
 #include <protocols/moves/mc_convergence_checks/MPIHPool_ConvergenceCheck.hh>
 #include <protocols/moves/mc_convergence_checks/MPIHPool_ConvergenceCheck.fwd.hh>
 #include <protocols/moves/mc_convergence_checks/Pool_ConvergenceCheck.hh>
-#include <protocols/moves/mc_convergence_checks/HPool.hh>
 #include <protocols/moves/mc_convergence_checks/pool_util.hh>
 #include <protocols/moves/mc_convergence_checks/HierarchicalLevel.hh>
 #include <protocols/moves/mc_convergence_checks/HierarchicalLevel.fwd.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/mc.OptionKeys.gen.hh>
-#include <basic/options/keys/cluster.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/option_macros.hh>
 
-#include <protocols/toolbox/superimpose.hh>
-
+// MPI only headers (wrapping these headers in an ifdef block will prevent my #inclusion-removal script from removing them)
+#ifdef USEMPI
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
+
+#include <protocols/moves/mc_convergence_checks/HPool.hh>
+#include <protocols/jd2/MPIFileBufJobDistributor.hh>
+#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/toolbox/superimpose.hh>
+
+#include <utility/exit.hh>
+#include <utility/file/file_sys_util.hh>
+#include <basic/prof.hh>
+#include <basic/options/keys/cluster.OptionKeys.gen.hh>
+#include <basic/options/keys/mc.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#endif
+
+#include <core/io/silent/SilentStruct.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <basic/prof.hh>
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/MPIFileBufJobDistributor.hh>
 
-#include <utility/file/file_sys_util.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
-#include <numeric/xyzVector.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <ctime>
 
-#include <ctime>
+#include <utility/vector1.hh>
 
-#ifdef USEMPI
-#include <mpi.h>
-#endif
 
 static basic::Tracer tr("MPIHPool_ConvergenceCheck");
 

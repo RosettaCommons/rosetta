@@ -18,8 +18,11 @@
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/jd2/PoseInputStreamJobInputter.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace jd2 {

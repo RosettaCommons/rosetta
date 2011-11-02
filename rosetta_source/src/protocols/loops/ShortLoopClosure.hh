@@ -23,6 +23,9 @@
 // Package Headers
 #include <protocols/loops/LoopClosure.hh>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 

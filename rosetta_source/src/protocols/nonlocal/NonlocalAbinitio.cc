@@ -40,14 +40,14 @@
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/sequence/util.hh>
+// AUTO-REMOVED #include <core/sequence/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <protocols/comparative_modeling/util.hh>
+// AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
 #include <protocols/jd2/ThreadingJob.hh>
 #include <protocols/loops/LoopRelaxMover.hh>
 #include <protocols/loops/LoopRelaxThreadingMover.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/util.hh>
+// AUTO-REMOVED #include <protocols/loops/util.hh>
 #include <protocols/relax/FastRelax.hh>
 
 // Package headers
@@ -55,6 +55,9 @@
 #include <protocols/nonlocal/TreeBuilder.hh>
 #include <protocols/nonlocal/TreeBuilderFactory.hh>
 #include <protocols/nonlocal/util.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace nonlocal {

@@ -21,14 +21,14 @@
 
 // Project headers
 #include <core/chemical/ResidueType.hh>
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 
 #include <utility/string_util.hh>
 
-//Auto Headers
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

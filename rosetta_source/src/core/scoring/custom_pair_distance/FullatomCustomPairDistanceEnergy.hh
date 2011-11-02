@@ -29,16 +29,21 @@
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 
 #include <core/chemical/ResidueType.fwd.hh>
-#include <basic/datacache/CacheableData.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableData.hh>
 
 // Utility headers
-#include <utility/OrderedTuple.hh>
-#include <utility/fixedsizearray1.hh>
+// AUTO-REMOVED #include <utility/OrderedTuple.hh>
+// AUTO-REMOVED #include <utility/fixedsizearray1.hh>
 #include <numeric/interpolation/Histogram.hh>
 
 // C++ headers
 #include <map>
 #include <list>
+
+#include <utility/OrderedTuple.fwd.hh>
+#include <utility/fixedsizearray1.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

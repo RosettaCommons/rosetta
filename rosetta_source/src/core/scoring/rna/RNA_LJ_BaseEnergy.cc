@@ -34,9 +34,8 @@
 // AUTO-REMOVED #include <numeric/constants.hh>
 // AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <utility/vector1.hh>
 
 
 ////////////////////////////////////////////////////////////////////////////////

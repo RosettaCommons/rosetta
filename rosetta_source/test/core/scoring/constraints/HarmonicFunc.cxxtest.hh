@@ -20,10 +20,9 @@
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/HarmonicFunc.fwd.hh>
 #include <core/types.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <utility/stream_util.hh>
 
 
 //static basic::Tracer TR("core.scoring.constraints.HarmonicFunc.cxxtest");

@@ -14,6 +14,9 @@
 #include <core/scoring/saxs/SAXSEnergyCEN.hh>
 #include <core/scoring/saxs/SAXSEnergyCreatorCEN.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace core {
 namespace scoring {

@@ -30,7 +30,10 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <stdlib.h>
+// AUTO-REMOVED #include <stdlib.h>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR("protocols.flexPepDocking.FlexPepDockingFlags");
 

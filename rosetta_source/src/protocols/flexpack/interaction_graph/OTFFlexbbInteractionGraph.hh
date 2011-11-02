@@ -39,6 +39,9 @@
 /// ObjexxFCL headers
 #include <ObjexxFCL/FArray4D.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace flexpack {
 namespace interaction_graph {

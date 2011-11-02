@@ -72,12 +72,12 @@
 #include <map>
 #include <algorithm>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/pose/util.hh>
-#include <basic/Tracer.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <numeric/NumericTraits.hh>
+#include <basic/Tracer.hh>
 
 using namespace core::scoring;
 

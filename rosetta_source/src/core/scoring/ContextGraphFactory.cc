@@ -19,10 +19,13 @@
 #include <core/scoring/TwelveANeighborGraph.hh>
 
 // STL Headers
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 
 // Utility Headers
 #include <utility/exit.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

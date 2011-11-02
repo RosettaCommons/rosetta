@@ -23,7 +23,7 @@
 
 // AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 
@@ -32,6 +32,11 @@
 // C++ Headers
 #include <iostream>
 #include <string>
+
+#include <core/conformation/symmetry/SymDof.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace io {

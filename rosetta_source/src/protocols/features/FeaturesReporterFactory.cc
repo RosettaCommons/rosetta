@@ -20,9 +20,9 @@
 #include <basic/Tracer.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/moves/DataMap.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <protocols/filters/Filter.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
 // Boost Headers
 #include <boost/foreach.hpp>
@@ -30,6 +30,12 @@
 
 // C++ Headers
 #include <sstream>
+
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 
 namespace protocols {

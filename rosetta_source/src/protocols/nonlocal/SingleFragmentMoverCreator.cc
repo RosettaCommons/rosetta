@@ -22,6 +22,9 @@
 // Package headers
 #include <protocols/nonlocal/SingleFragmentMover.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace nonlocal {
 

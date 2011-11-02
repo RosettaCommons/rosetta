@@ -32,10 +32,9 @@
 // AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 // AUTO-REMOVED #include <ObjexxFCL/FArray4D.hh>
 
-//Auto Headers
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 namespace core {

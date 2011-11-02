@@ -17,16 +17,16 @@
 // Platform Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <core/graph/Graph.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/graph/Graph.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
@@ -37,6 +37,11 @@
 // C++ Headers
 #include <sstream>
 #include <string>
+
+#include <core/graph/Graph.fwd.hh>
+#include <core/scoring/Energies.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
+
 
 namespace protocols{
 namespace features{

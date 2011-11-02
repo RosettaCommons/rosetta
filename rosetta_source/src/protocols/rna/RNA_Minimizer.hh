@@ -25,9 +25,8 @@
 //// C++ headers
 #include <string>
 
-//Auto Headers
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace rna {

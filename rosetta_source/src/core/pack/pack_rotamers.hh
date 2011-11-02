@@ -36,6 +36,9 @@
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray1D.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <string>
 // #include <vector>
 

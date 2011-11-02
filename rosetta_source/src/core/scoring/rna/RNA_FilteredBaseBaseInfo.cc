@@ -38,7 +38,7 @@
 #include <ObjexxFCL/FArray2D.hh>
 // AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
 

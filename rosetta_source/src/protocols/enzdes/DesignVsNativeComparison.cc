@@ -38,8 +38,8 @@
 
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector1.hh>
 
 
 

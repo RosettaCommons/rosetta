@@ -20,11 +20,11 @@
 #include <protocols/pmut_scan/PointMutScanDriver.hh>
 #include <protocols/pmut_scan/Mutant.hh>
 
-#include <core/graph/Graph.hh>
+// AUTO-REMOVED #include <core/graph/Graph.hh>
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
@@ -32,6 +32,10 @@
 
 // Package Headers
 #include <test/core/init_util.hh>
+
+//Auto Headers
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR("test.protocols.pmut_scan.PointMutScanDriverTests");
 

@@ -19,6 +19,9 @@
 #include <protocols/docking/DockingProtocol.hh>
 #include <protocols/docking/stateless/SaneDockingProtocol.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace docking {
 namespace stateless {

@@ -78,9 +78,10 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <core/chemical/ChemicalManager.fwd.hh>
+// Auto-header: duplicate removed #include <core/chemical/ChemicalManager.fwd.hh>
 #include <protocols/moves/MoverStatistics.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 #if defined(WIN32) || defined(__CYGWIN__)

@@ -21,7 +21,7 @@
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
+// AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/mc.OptionKeys.gen.hh>
@@ -36,11 +36,14 @@
 
 #include <iostream>
 #include <string>
-#include <cstring>
+// AUTO-REMOVED #include <cstring>
 #include <fstream>
 #include <sstream>
 #include <cstdio>
 #include <algorithm>
+
+#include <utility/vector1.hh>
+
 
 using namespace std;
 using namespace core;

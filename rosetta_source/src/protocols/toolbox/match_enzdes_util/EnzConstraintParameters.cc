@@ -68,9 +68,9 @@
 
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/pose/util.hh>
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
+#include <utility/vector1.hh>
 
 
 

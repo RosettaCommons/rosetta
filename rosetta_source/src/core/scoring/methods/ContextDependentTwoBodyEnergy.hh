@@ -31,6 +31,9 @@
 // ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace scoring {
 namespace methods {

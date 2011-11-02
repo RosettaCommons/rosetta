@@ -20,19 +20,22 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/chemical/ResidueType.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // C++ Headers
 #include <string>
+
+#include <core/scoring/ScoreFunction.fwd.hh>
+
 
 namespace protocols{
 namespace features{

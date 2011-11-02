@@ -28,7 +28,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/types.hh>
 
 
@@ -40,9 +40,9 @@
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.hh>
 
-//Auto Headers
 #include <core/pose/util.hh>
-#include <protocols/moves/DataMap.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 //// C++ headers
 static basic::Tracer tr("protocols.fldsgn.filters.CoreDunbrackFilter");

@@ -60,6 +60,9 @@
 #include <iostream>
 #include <iomanip>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols{
 namespace scoring{
 namespace methods{

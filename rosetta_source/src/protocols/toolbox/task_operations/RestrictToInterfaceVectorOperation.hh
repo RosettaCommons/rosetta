@@ -25,6 +25,9 @@
 //#include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 // Utility Headers
 //#include <core/types.hh>
 

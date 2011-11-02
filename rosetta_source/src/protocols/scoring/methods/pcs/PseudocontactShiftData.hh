@@ -50,7 +50,10 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 // C++ headers
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols{
 namespace scoring{

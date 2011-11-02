@@ -28,7 +28,10 @@
 
 // C++ headers
 //#include <list>
-#include <string> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <string> // REQUIRED FOR WINDOWS
+
+#include <utility/vector1.hh>
+
 
 namespace protocols{
 namespace match{

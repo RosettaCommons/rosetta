@@ -20,7 +20,6 @@
 // project headers
 #include <core/pose/Pose.hh>
 
-//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -49,14 +48,20 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <basic/MetricValue.fwd.hh>
-#include <basic/datacache/BasicDataCache.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MonteCarloStatus.hh>
 #include <protocols/moves/mc_convergence_checks/ConvergenceCheck.fwd.hh>
+#include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
 #include <utility/down_cast.hh>
 #include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
 #include <utility/vector1_bool.hh>
+#include <utility/vectorL.fwd.hh>
+#include <utility/vectorL.hh>
+#include <utility/vectorL_Selector.hh>
+#include <utility/vectorL_bool.hh>
+#include <utility/excn/EXCN_Base.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/pointer/ReferenceCount.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/access_ptr.fwd.hh>
@@ -77,11 +82,17 @@
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
+#include <cstdlib>
 #include <iosfwd>
 #include <iostream>
+#include <limits>
 #include <map>
 #include <ostream>
+#include <sstream>
+#include <string>
 #include <vector>
+#include <basic/MetricValue.fwd.hh>
+#include <basic/datacache/BasicDataCache.fwd.hh>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 

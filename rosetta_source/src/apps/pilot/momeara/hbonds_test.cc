@@ -32,7 +32,7 @@
 #include <basic/Tracer.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/HBondEnergy.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondEnergy.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/types.hh>
 #include <core/conformation/Residue.hh>
@@ -51,8 +51,9 @@
 #include <string>
 #include <sstream>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <core/scoring/hbonds/HBondDatabase.hh>
+#include <core/scoring/hbonds/HBondOptions.hh>
 
 
 // namespaces

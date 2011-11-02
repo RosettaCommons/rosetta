@@ -22,11 +22,11 @@
 // Project headers
 #include <core/types.hh>
 
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
+// AUTO-REMOVED #include <core/pack/interaction_graph/InteractionGraphBase.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 //#ifdef __clang__
-#include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 //#endif
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -35,6 +35,10 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+#include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
+#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
+
 
 
 

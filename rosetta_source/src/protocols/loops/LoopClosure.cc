@@ -56,6 +56,10 @@
 #include <cstdlib>
 #include <string>
 
+#include <core/fragment/FragData.hh>
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <fstream>
 
 namespace protocols {

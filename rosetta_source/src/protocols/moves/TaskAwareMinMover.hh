@@ -26,6 +26,9 @@
 //#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 // Utility Headers
 // AUTO-REMOVED #include <core/types.hh>
 

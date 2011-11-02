@@ -26,6 +26,10 @@
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 
+#include <utility/vector1.hh>
+#include <string>
+
+
 namespace protocols {
 namespace toolbox {
 namespace task_operations {

@@ -16,8 +16,8 @@
 #include <core/scoring/methods/RG_Energy_Fast.hh>
 
 // Project Headers
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <basic/database/sql_utils.hh>
 

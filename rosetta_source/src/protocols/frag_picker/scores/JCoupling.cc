@@ -15,7 +15,7 @@
 
 #include <protocols/frag_picker/VallChunk.hh>
 #include <protocols/frag_picker/VallResidue.hh>
-#include <protocols/frag_picker/VallProvider.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/VallProvider.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #ifdef WIN32
 #include <protocols/frag_picker/FragmentPicker.hh>
@@ -25,19 +25,18 @@
 #include <numeric/conversions.hh>
 
 // option key includes
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <basic/Tracer.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 // utils
-#include <ObjexxFCL/FArray1D.hh>
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 
-//Auto Headers
-#include <core/pose/Pose.hh>
+#include <utility/vector1.hh>
 
 
 // C++

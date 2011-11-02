@@ -25,7 +25,6 @@
 #include <algorithm>
 #include <functional>
 
-//Auto Headers
 #include <utility/vector1.fwd.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
 

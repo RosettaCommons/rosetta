@@ -23,15 +23,16 @@
 // Project headers
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-#include <utility/tag/Tag.hh>  // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <utility/tag/Tag.hh>  // REQUIRED FOR WINDOWS
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 
 // tracer
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <protocols/jobdist/Jobs.hh>
 #include <utility/exit.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 // C++ Headers

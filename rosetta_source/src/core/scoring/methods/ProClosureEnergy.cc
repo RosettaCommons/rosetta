@@ -35,10 +35,8 @@
 // STL Headers
 #include <string>
 
-//Auto Headers
-#include <core/id/AtomID.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

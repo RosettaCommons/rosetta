@@ -34,25 +34,9 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 
 //Auto Headers
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/conformation/Atom.fwd.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID_Mask.hh>
-#include <core/id/DOF_ID_Map.hh>
-#include <core/id/DOF_ID_Mask.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/pack/task/operation/ResFilterFactory.hh>
-#include <core/pack/task/operation/ResLvlTaskOperationFactory.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/types.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <basic/Tracer.fwd.hh>
-#include <protocols/moves/MoverStatistics.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
-#include <ObjexxFCL/format.hh>
-#include <utility>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 // --------------- Test Class --------------- //

@@ -28,6 +28,9 @@
 #include <utility/vector1.fwd.hh>
 #include <ObjexxFCL/format.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace sequence {
 

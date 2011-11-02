@@ -42,7 +42,9 @@ using basic::Warning;
 //
 #include <string>
 
-//Auto Headers
+#include <core/id/TorsionID_Range.hh>
+#include <utility/vector1.hh>
+#include <utility/options/IntegerVectorOption.hh>
 #include <numeric/xyz.functions.hh>
 
 namespace protocols {

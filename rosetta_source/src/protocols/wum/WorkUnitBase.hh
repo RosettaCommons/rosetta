@@ -17,7 +17,7 @@
 #include <protocols/wum/WorkUnitBase.fwd.hh>
 
 //#include <protocols/wum/WorkUnitList.hh>
-#include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
+// AUTO-REMOVED #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 //#include <protocols/loops/BackboneDB.hh>
@@ -27,7 +27,10 @@
 
 #include <string>
 #include <vector>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace wum {

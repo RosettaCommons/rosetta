@@ -69,9 +69,9 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/ddg.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/chemical/ResidueType.hh>
-#include <core/import_pose/import_pose.hh>
+// Auto-header: duplicate removed #include <core/import_pose/import_pose.hh>
+#include <utility/vector0.hh>
 
 
 

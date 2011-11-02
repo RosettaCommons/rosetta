@@ -76,8 +76,9 @@
 
 #include <cassert>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
+#include <utility/vector1.hh>
+#include <numeric/constants.hh>
 
 
 

@@ -27,14 +27,14 @@
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/RT.hh>
 #include <basic/options/option.hh>
-#include <core/import_pose/pose_stream/util.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
@@ -43,27 +43,27 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/BinaryProteinSilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/SilentStructFactory.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 
 #include <core/init.hh>
-#include <numeric/HomogeneousTransform.hh>
-#include <protocols/loops/Loop.hh>
-#include <protocols/wum/SilentStructStore.hh>
+// AUTO-REMOVED #include <numeric/HomogeneousTransform.hh>
+// AUTO-REMOVED #include <protocols/loops/Loop.hh>
+// AUTO-REMOVED #include <protocols/wum/SilentStructStore.hh>
 #include <protocols/relax/FastRelax.hh>
-#include <protocols/loops/Loops.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <protocols/match/Hit.fwd.hh>
-#include <protocols/match/Hit.hh>
+// AUTO-REMOVED #include <protocols/match/Hit.hh>
 #include <protocols/match/SixDHasher.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/topology_broker/TopologyBroker.hh>
-#include <protocols/topology_broker/util.hh>
-#include <utility/excn/Exceptions.hh>
+// AUTO-REMOVED #include <protocols/topology_broker/TopologyBroker.hh>
+// AUTO-REMOVED #include <protocols/topology_broker/util.hh>
+// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 
-#include <core/optimization/AtomTreeMinimizer.hh>
+// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
@@ -81,18 +81,18 @@
 #include <cstdio>
 
 // option key includes
-#include <basic/options/keys/broker.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/broker.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <basic/datacache/CacheableData.hh>
+#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector1.hh>
+#include <utility/excn/EXCN_Base.hh>
 
 
 

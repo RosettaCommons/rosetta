@@ -21,12 +21,13 @@
 #include <core/kinematics/MoveMap.hh>
 
 // Numeric headers
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 
 // C++ headers
 #include <cstdlib>
 
-//Auto Headers
+#include <core/id/DOF_ID_Map.hh>
+#include <utility/vector1.hh>
 // Auto-header: duplicate removed #include <core/pose/util.hh>
 
 

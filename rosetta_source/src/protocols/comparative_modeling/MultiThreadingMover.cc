@@ -22,9 +22,9 @@
 
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 
-#include <core/conformation/Residue.functions.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.functions.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 #include <core/fragment/FragSet.fwd.hh>
@@ -34,41 +34,38 @@
 #include <core/id/AtomID_Mask.fwd.hh>
 
 #include <core/sequence/Sequence.hh>
-#include <core/sequence/SWAligner.hh>
+// AUTO-REMOVED #include <core/sequence/SWAligner.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
-#include <core/sequence/SimpleScoringScheme.hh>
+// AUTO-REMOVED #include <core/sequence/SimpleScoringScheme.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
-#include <core/sequence/util.hh>
+// AUTO-REMOVED #include <core/sequence/util.hh>
 
-#include <core/pack/optimizeH.hh>
-#include <core/pack/pack_missing_sidechains.hh>
+// AUTO-REMOVED #include <core/pack/optimizeH.hh>
+// AUTO-REMOVED #include <core/pack/pack_missing_sidechains.hh>
 
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <basic/Tracer.hh>
 
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <utility/vector1.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 
 // C++ headers
 #include <string>
 
 // option key includes
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/cm.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/cm.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/id/NamedAtomID.hh>
 // Auto-header: duplicate removed #include <core/pose/util.hh>
 
 namespace protocols {

@@ -26,15 +26,8 @@
 #include <string>
 
 //Auto Headers
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/ScoreFunctionInfo.fwd.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <basic/Tracer.fwd.hh>
+#include <utility/vector1.hh>
 
 
 class BridgeTests : public CxxTest::TestSuite

@@ -17,7 +17,7 @@
 #ifndef INCLUDED_core_chemical_sdf_mol_parser_HH_
 #define INCLUDED_core_chemical_sdf_mol_parser_HH_
 
-#include <core/chemical/ResidueType.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 #include <utility/vector1.hh>
 #include <core/chemical/sdf/mol_parser.fwd.hh>
 #include <core/chemical/sdf/MolData.hh>
@@ -25,6 +25,13 @@
 
 
 #include <string>
+
+#include <core/chemical/AtomTypeSet.fwd.hh>
+#include <core/chemical/ElementSet.fwd.hh>
+#include <core/chemical/MMAtomTypeSet.fwd.hh>
+#include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
+
 
 
 namespace core {

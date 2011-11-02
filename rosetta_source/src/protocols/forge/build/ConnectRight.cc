@@ -30,6 +30,9 @@
 // C++ headers
 #include <limits>
 
+#include <utility/vector1.hh>
+
+
 
 namespace protocols {
 namespace forge {

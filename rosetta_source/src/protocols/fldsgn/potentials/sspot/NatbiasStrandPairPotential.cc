@@ -21,12 +21,12 @@
 #include <core/scoring/EnergyGraph.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/fldsgn/topology/BB_Pos.hh>
-#include <protocols/fldsgn/topology/DimerPairing.hh>
+// AUTO-REMOVED #include <protocols/fldsgn/topology/DimerPairing.hh>
 #include <protocols/fldsgn/potentials/sspot/util.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 
 #include <core/pose/symmetry/util.hh>
-#include <core/scoring/symmetry/SymmetricEnergies.hh>
+// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricEnergies.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
@@ -42,6 +42,11 @@
 #include <iostream>
 
 #include <ObjexxFCL/format.hh>
+
+#include <core/scoring/symmetry/SymmetricEnergies.fwd.hh>
+#include <utility/vector1.hh>
+#include <ObjexxFCL/FArray3D.hh>
+
 
 
 static basic::Tracer TR("protocols.fldsgn.potentials.sspot.NatbiasStrandPairPotential",basic::t_info);

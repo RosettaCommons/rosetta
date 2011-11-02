@@ -20,13 +20,17 @@
 #include <string>
 
 // Project headers
-#include <core/fragment/FragSet.hh>
+// AUTO-REMOVED #include <core/fragment/FragSet.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
+
+#include <core/fragment/FragSet.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace medal {

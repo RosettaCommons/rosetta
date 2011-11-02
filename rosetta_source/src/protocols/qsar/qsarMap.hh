@@ -14,12 +14,18 @@
 #define INCLUDED_protocols_qsar_qsarMap_hh
 
 #include <map>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <utility/pointer/ReferenceCount.hh>
-#include <core/grid/CartGrid.fwd.hh>
+// AUTO-REMOVED #include <core/grid/CartGrid.fwd.hh>
 #include <protocols/qsar/qsarMap.fwd.hh>
 //#include <protocols/qsar/qsarTypeManager.fwd.hh>
 #include <core/chemical/sdf/MolData.fwd.hh>
+
+#include <core/types.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <utility/vector1.hh>
+#include <iostream>
+
 
 namespace protocols {
 namespace qsar {

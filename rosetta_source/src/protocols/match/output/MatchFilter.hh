@@ -25,6 +25,9 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <iterator>
+
+
 namespace protocols {
 namespace match {
 namespace output {

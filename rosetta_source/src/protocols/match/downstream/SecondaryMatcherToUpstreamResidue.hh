@@ -46,8 +46,9 @@
 #include <map>
 #include <string>
 
-//Auto Headers
+#include <core/id/AtomID.hh>
 #include <utility/OrderedTuple.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

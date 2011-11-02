@@ -24,9 +24,9 @@
 
 #include <numeric/xyzVector.hh>
 
-//Auto Headers
 #include <core/kinematics/Jump.hh>
 #include <core/scoring/packing/HolesParamsRes.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

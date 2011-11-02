@@ -22,17 +22,16 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <core/io/raw_data/DisulfideFile.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // utils
 #include <ObjexxFCL/FArray1D.hh>
 #include <basic/prof.hh>
 
-#include <boost/tuple/tuple.hpp>
+// AUTO-REMOVED #include <boost/tuple/tuple.hpp>
 
-//Auto Headers
-#include <core/pose/Pose.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

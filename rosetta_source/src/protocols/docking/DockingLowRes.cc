@@ -19,10 +19,10 @@
 // Rosetta Headers
 #include <core/kinematics/MoveMap.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
 
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -33,7 +33,7 @@
 #include <protocols/moves/ConformerSwitchMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/OutputMovers.hh>
+// AUTO-REMOVED #include <protocols/moves/OutputMovers.hh>
 #include <protocols/moves/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
@@ -58,9 +58,9 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;

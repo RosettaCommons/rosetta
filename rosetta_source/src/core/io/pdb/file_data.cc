@@ -61,14 +61,11 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/pH.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
-//#include <core/io/pdb/import_pose.hh>
 #include <core/pose/util.hh>
+#include <utility/vector1.hh>
 
 namespace core {
 namespace io {

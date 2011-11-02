@@ -12,19 +12,22 @@
 /// @author Steven Lewis smlewi@gmail.com
 
 ///Unit headers
-#include <protocols/jd2/Job.hh>
+// AUTO-REMOVED #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerMultiThreadingJob.hh>
 
 ///Project headers
 #include <core/pose/Pose.hh>
-#include <core/sequence/SequenceAlignment.hh>
+// AUTO-REMOVED #include <core/sequence/SequenceAlignment.hh>
 
 ///Utility headers
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 
 ///C++ headers
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR("protocols.jd2.InnerMultiThreadingJob");
 

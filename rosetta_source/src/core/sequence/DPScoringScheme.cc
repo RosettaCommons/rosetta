@@ -21,7 +21,10 @@
 #include <iostream>
 #include <string>
 
-#include <complex>
+// AUTO-REMOVED #include <complex>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

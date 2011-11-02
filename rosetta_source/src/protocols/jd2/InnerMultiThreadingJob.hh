@@ -13,7 +13,7 @@
 #ifndef INCLUDED_protocols_jd2_InnerMultiThreadingJob_hh
 #define INCLUDED_protocols_jd2_InnerMultiThreadingJob_hh
 
-#include <protocols/jd2/Job.hh>
+// AUTO-REMOVED #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerJob.hh>
 #include <protocols/jd2/InnerMultiThreadingJob.fwd.hh>
 

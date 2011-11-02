@@ -32,7 +32,10 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
 
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR( "protocols.fldsgn.topology.BetaAlphaBetaMotif" );
 

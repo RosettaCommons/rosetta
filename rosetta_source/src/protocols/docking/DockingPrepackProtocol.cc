@@ -26,7 +26,7 @@
 
 // Project headers
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 #include <protocols/jd2/JobOutputter.hh>
@@ -43,7 +43,12 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 
-#include <core/pack/task/operation/TaskOperation.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
+
+#include <protocols/jd2/Job.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 using basic::T;
 using namespace protocols::docking;

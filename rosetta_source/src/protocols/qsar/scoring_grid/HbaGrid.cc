@@ -17,6 +17,12 @@
 #include <core/chemical/AtomType.hh>
 #include <utility/tag/Tag.hh>
 
+#include <core/pose/Pose.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <utility/io/mpistream.hh>
+
+
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {

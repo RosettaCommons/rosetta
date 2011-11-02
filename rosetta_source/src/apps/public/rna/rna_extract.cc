@@ -64,11 +64,6 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <core/import_pose/import_pose.hh>
-#include <utility/io/mpistream.hh>
-
-
 
 using namespace core;
 using namespace protocols;

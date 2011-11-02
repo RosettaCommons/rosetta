@@ -24,10 +24,10 @@
 
 // Project headers
 
-#include <protocols/docking/DockingInitialPerturbation.hh>
+// AUTO-REMOVED #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/docking/DockingHighRes.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
-#include <protocols/docking/DockFilters.hh> // get error if you did not include
+// AUTO-REMOVED #include <protocols/docking/DockFilters.hh> // get error if you did not include
 // Auto-header: duplicate removed #include <protocols/docking/DockingHighRes.hh>
 #include <protocols/moves/RigidBodyMover.hh>
 
@@ -38,7 +38,7 @@
 #include <protocols/moves/MinMover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
 
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -47,16 +47,25 @@
 #include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 
 // C++ Headers
 #include <utility/exit.hh>
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 // Auto-header: duplicate removed #include <basic/Tracer.hh>
 
-#include <core/pack/task/operation/TaskOperation.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
+
+#include <core/kinematics/MoveMap.hh>
+#include <protocols/moves/BackboneMover.hh>
+#include <protocols/moves/MinMover.hh>
+#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/TrialMover.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 using basic::T;
 using basic::Error;

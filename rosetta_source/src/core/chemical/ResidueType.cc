@@ -76,15 +76,14 @@
 
 // Options and Option key includes (needed for protonated versions of the residues - pH mode)
 #include <basic/options/option.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/pH.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/Element.hh>
 #include <core/chemical/MMAtomType.hh>
-#include <core/chemical/orbitals/OrbitalType.hh>
 #include <core/chemical/VariantType.hh>
-#include <utility/io/mpistream.hh>
+#include <utility/vector1.hh>
 
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS

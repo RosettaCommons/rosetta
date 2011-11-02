@@ -17,11 +17,17 @@
 #include <utility/tag/Tag.fwd.hh>
 
 // Project headers
-#include <protocols/filters/Filter.hh>
+// AUTO-REMOVED #include <protocols/filters/Filter.hh>
 
 // Package headers
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.fwd.hh>
+
+#include <core/types.hh>
+#include <protocols/filters/Filter.fwd.hh>
+#include <protocols/moves/Mover.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace moves {

@@ -22,9 +22,8 @@
 
 // AUTO-REMOVED #include <vector>
 
-//Auto Headers
 #include <core/optimization/Multifunc.fwd.hh>
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

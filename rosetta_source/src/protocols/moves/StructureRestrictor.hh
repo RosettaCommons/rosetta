@@ -26,6 +26,9 @@
 #include <map>
 #include <string>
 
+#include <utility/vector1.hh>
+
+
 using namespace std;
 using namespace core;
   using namespace pose;

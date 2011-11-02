@@ -28,7 +28,7 @@
 // Package Headers
 
 // Project headers
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
@@ -44,7 +44,16 @@
 
 //Utility Headers
 #include <utility/exit.hh>
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
+
+#include <core/kinematics/MoveMap.hh>
+#include <protocols/moves/BackboneMover.hh>
+#include <protocols/moves/MinMover.hh>
+#include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/TrialMover.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 // Auto-header: duplicate removed #include <basic/Tracer.hh>
 
 

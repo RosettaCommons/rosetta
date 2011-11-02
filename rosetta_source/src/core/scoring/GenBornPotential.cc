@@ -38,10 +38,10 @@
 // Utility headers
 #include <utility/exit.hh>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
 

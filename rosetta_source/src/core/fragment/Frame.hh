@@ -21,7 +21,7 @@
 #include <core/fragment/Frame.fwd.hh>
 
 // Package Headers
-#include <core/fragment/FragData.hh>
+// AUTO-REMOVED #include <core/fragment/FragData.hh>
 #include <core/fragment/BaseCacheUnit.hh>
 
 // Project Headers
@@ -47,7 +47,12 @@
 // C++ STL Headers
 #include <map>
 // AUTO-REMOVED #include <set>
-#include <ostream>
+// AUTO-REMOVED #include <ostream>
+
+#include <core/types.hh>
+#include <core/fragment/FragData.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace fragment {

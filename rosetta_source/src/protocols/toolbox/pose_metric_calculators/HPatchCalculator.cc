@@ -25,11 +25,15 @@
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 #include <cassert>
 #include <iostream>
 #include <sstream>
+
+#include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
+
 
 using namespace core;
 

@@ -13,7 +13,7 @@
 
 // C++ headers
 // AUTO-REMOVED #include <cstdlib>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 // Utility headers
 // AUTO-REMOVED #include <utility/vector1.hh>
 // Rosetta Headers

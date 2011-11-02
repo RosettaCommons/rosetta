@@ -16,7 +16,7 @@
 #include <protocols/electron_density/SetupForDensityScoringMoverCreator.hh>
 #include <protocols/electron_density/util.hh>
 
-#include <protocols/jumping/Dssp.hh>
+// AUTO-REMOVED #include <protocols/jumping/Dssp.hh>
 
 #include <core/scoring/electron_density/util.hh>
 
@@ -27,28 +27,28 @@
 #include <core/id/AtomID.hh>
 #include <core/chemical/AA.hh>
 #include <numeric/xyzVector.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 
 // Auto-header: duplicate removed #include <core/id/AtomID.hh>
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/conformation/Residue.hh>
 
 // Symmetry
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
-#include <protocols/moves/symmetry/SymMinMover.hh>
-#include <protocols/geometry/RB_geometry.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SymMinMover.hh>
+// AUTO-REMOVED #include <protocols/geometry/RB_geometry.hh>
 
 // Auto-header: duplicate removed #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <basic/options/option.hh>
 
@@ -58,10 +58,9 @@
 //
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <protocols/loops/Loops.hh>
-#include <utility/io/mpistream.hh>
-#include <numeric/xyzVector.io.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;

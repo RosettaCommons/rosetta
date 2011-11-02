@@ -50,6 +50,9 @@
 
 #include <core/scoring/constraints/ConstraintSet.hh>
 
+#include <utility/vector1.hh>
+
+
 // ObjexxFCL Headers
 
 // Utility headers

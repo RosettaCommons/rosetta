@@ -29,8 +29,12 @@
 #include <basic/Tracer.hh>
 
 // C/C++ headers
-#include <iterator>
+// AUTO-REMOVED #include <iterator>
 #include <vector>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 static basic::Tracer tr("protocols.topo_broker",basic::t_info);
 

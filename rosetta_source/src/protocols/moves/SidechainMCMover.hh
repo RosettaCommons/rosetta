@@ -32,7 +32,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
@@ -44,11 +44,8 @@
 // AUTO-REMOVED #include <utility/vector1.hh>
 // AUTO-REMOVED #include <numeric/conversions.hh>
 
-//Auto Headers
-#include <core/pack/task/TaskFactory.fwd.hh>
-#include <utility/vector1_bool.hh>
-
 #include <core/scoring/ScoreFunction.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace moves {

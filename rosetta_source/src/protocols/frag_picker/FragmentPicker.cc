@@ -71,6 +71,10 @@
 #include <iostream>
 #include <fstream>
 
+#include <core/fragment/ConstantLengthFragSet.hh>
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace frag_picker {
 

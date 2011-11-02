@@ -24,14 +24,18 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
-#include <basic/options/option.hh>
-#include <utility/exit.hh>
-#include <utility/assert.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/assert.hh>
 #include <utility/vector1.hh>
 
 // C++ headers
 #include <algorithm>
-#include <cmath>
+// AUTO-REMOVED #include <cmath>
+
+#include <protocols/jobdist/Jobs.hh>
+#include <basic/options/keys/OptionKeys.hh>
+
 
 static basic::Tracer TR("protocols.UnfoldedStateEnergyCalculator.UnfoldedStateEnergyCalculatorJobDistributor");
 

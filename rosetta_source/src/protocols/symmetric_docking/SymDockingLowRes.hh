@@ -26,9 +26,8 @@
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RigidBodyMover.fwd.hh>
 
-//Auto Headers
-#include <core/types.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

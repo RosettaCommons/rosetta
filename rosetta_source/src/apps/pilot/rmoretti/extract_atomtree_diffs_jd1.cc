@@ -31,7 +31,7 @@
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
 // AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 // AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
@@ -76,9 +76,10 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 

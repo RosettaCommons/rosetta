@@ -16,19 +16,17 @@
 
 
 #include <protocols/multistate_design/MultiStateFitnessFunction.fwd.hh>
-#include <protocols/multistate_design/MultiStateFitnessFunction.hh>
+// AUTO-REMOVED #include <protocols/multistate_design/MultiStateFitnessFunction.hh>
 
 #include <core/types.hh>
-#include <basic/Tracer.hh>
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
 #include <protocols/multistate_design/MultiStateAggregateFunction.hh>
-#include <protocols/multistate_design/SingleState.hh>
-#include <protocols/viewer/viewers.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace multistate_design {

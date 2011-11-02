@@ -59,6 +59,9 @@
 // C++ headers
 #include <list>
 
+#include <utility/vector0.hh>
+
+
 namespace protocols {
 namespace match {
 namespace output {

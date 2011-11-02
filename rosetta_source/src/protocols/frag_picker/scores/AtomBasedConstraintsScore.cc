@@ -18,12 +18,10 @@
 #include <core/chemical/ResidueType.hh>
 #include <numeric/xyzVector.hh>
 
-//Auto Headers
-#include <protocols/frag_picker/VallChunk.hh>
-#include <protocols/frag_picker/scores/AtomBasedConstraintsScore.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/pose/Pose.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <protocols/frag_picker/scores/AtomBasedConstraintsScore.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

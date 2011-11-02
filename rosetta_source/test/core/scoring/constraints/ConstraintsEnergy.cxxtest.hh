@@ -19,46 +19,32 @@
 #include <test/util/deriv_funcs.hh>
 #include <test/util/pose_funcs.hh>
 
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 
 // Project headers
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/optimization/MinimizerMap.hh>
-#include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
+// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/optimization/MinimizerMap.hh>
+// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
+// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
 
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <numeric/constants.hh>
 
 //Auto Headers
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/ScoreFunctionInfo.fwd.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <core/id/SequenceMapping.hh>
-#include <utility/stream_util.hh>
-#include <utility/keys/Key2Tuple.hh>
+#include <utility/vector1.hh>
 
 
 using basic::T;

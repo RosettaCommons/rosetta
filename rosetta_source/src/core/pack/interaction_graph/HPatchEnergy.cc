@@ -24,6 +24,10 @@
 // Utility headers
 #include <basic/Tracer.hh>
 
+#include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
+
+
 static basic::Tracer TR("core.pack.interaction_graph.HPatchEnergy");
 
 // C++ headers

@@ -29,8 +29,7 @@
 // utility includes
 #include <utility/tag/Tag.fwd.hh>
 
-//Auto Headers
-#include <core/id/SequenceMapping.fwd.hh>
+#include <utility/vector1.hh>
 
 namespace devel{
 namespace enzdes{

@@ -75,8 +75,9 @@
 #include <basic/options/keys/backrub.OptionKeys.gen.hh>
 #include <boost/foreach.hpp>
 
-//Auto Headers
 #include <core/scoring/ScoreFunction.hh>
+#include <utility/vector0.hh>
+#include <utility/keys/Key3Vector.hh>
 
 #define foreach BOOST_FOREACH
 

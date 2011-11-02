@@ -33,8 +33,8 @@
 #include <core/scoring/methods/Methods.hh>
 #include <basic/datacache/CacheableData.hh>
 
-//Auto Headers
 #include <core/scoring/disulfides/DisulfideAtomIndices.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

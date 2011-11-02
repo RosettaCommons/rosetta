@@ -47,8 +47,8 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
-#include "will_util.hh"
-#include "mynamespaces.hh"
+#include <will_util.hh>
+#include <apps/pilot/will/mynamespaces.hh>
 
 static basic::Tracer TR("rsd_canonical_units");
 

@@ -41,18 +41,21 @@
 // Numeric Headers
 #include <numeric/constants.hh> // pi
 #include <numeric/xyzVector.hh> // to get distance
-#include <numeric/xyzVector.io.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
-#include <utility/vector1.functions.hh>
+// AUTO-REMOVED #include <utility/vector1.functions.hh>
 #include <utility/string_util.hh>
 
 // C++ Headers
-#include <cstring>
+// AUTO-REMOVED #include <cstring>
 #include <vector>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <iostream>
+
+#include <core/chemical/AtomType.hh>
+
 
 static basic::Tracer TR_DS("core.pack.interaction_graph.RotamerDots.DotSphere");
 static basic::Tracer TR_RD("core.pack.interaction_graph.RotamerDots.RotamerDots");

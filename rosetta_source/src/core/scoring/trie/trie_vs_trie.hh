@@ -25,7 +25,7 @@
 
 
 // STL Headers
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 
 // ObjexxFCL Headers
 // AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
@@ -36,7 +36,6 @@
 // Utility Headers
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

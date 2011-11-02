@@ -20,8 +20,8 @@
 
 // Project headers
 #include <core/id/AtomID.fwd.hh>
-#include <core/scoring/mm/MMBondAngleLibrary.hh>
-#include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
+// AUTO-REMOVED #include <core/scoring/mm/MMBondAngleLibrary.hh>
+// AUTO-REMOVED #include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -33,8 +33,9 @@
 // C++ headers
 #include <map>
 
-//Auto Headers
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/scoring/mm/MMBondAngleLibrary.fwd.hh>
+#include <core/scoring/mm/MMBondAngleResidueTypeParam.fwd.hh>
 #include <utility/vector1_bool.hh>
 #include <string>
 

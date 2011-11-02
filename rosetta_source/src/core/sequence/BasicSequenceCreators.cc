@@ -13,7 +13,7 @@
 
 #include <core/sequence/BasicSequenceCreators.hh>
 
-#include <core/sequence/SequenceFactory.hh>
+// AUTO-REMOVED #include <core/sequence/SequenceFactory.hh>
 
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/Sequence.fwd.hh>
@@ -21,6 +21,9 @@
 #include <core/sequence/SequenceCoupling.hh>
 #include <core/sequence/CompositeSequence.hh>
 #include <core/sequence/ChemicalShiftSequence.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace sequence {

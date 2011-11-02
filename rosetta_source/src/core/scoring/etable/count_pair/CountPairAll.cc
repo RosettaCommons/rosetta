@@ -15,11 +15,10 @@
 #include <core/scoring/etable/count_pair/CountPairAll.hh>
 #include <core/scoring/etable/atom_pair_energy_inline.hh>
 
-//Auto Headers
-//XRW_B_T1
-//#include <core/scoring/etable/CoarseEtableEnergy.hh>
-//XRW_E_T1
+#include <core/chemical/AtomTypeSet.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
+#include <utility/vector1.hh>
+#include <basic/options/option.hh>
 
 
 namespace core {

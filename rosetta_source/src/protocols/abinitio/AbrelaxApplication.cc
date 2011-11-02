@@ -108,7 +108,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/evaluation.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 #include <basic/options/keys/filters.OptionKeys.gen.hh>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -133,7 +133,7 @@
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
 #include <protocols/toolbox/pose_metric_calculators/ClashCountCalculator.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/raw_data/DisulfideFile.hh>
@@ -151,7 +151,7 @@
 #include <protocols/evaluation/PoseMetricEvaluator.hh>
 #include <protocols/evaluation/ConstraintEvaluator.hh>
 #include <protocols/evaluation/util.hh>
-#include <protocols/evaluation/ChemicalShiftEvaluator.hh>
+// AUTO-REMOVED #include <protocols/evaluation/ChemicalShiftEvaluator.hh>
 #include <protocols/loops/SlidingWindowLoopClosure.hh>
 #include <protocols/loops/WidthFirstSlidingWindowLoopClosure.hh>
 #include <protocols/loops/FASelectSlidingWindowLoopClosure.hh>
@@ -180,28 +180,25 @@
 
 // C++ headers
 #include <cstdlib>
-#include <iterator>
+// AUTO-REMOVED #include <iterator>
 #include <string>
 #include <utility>
 #include <vector>
 
-//Auto Headers
+#include <core/fragment/FragData.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/FrameList.hh>
+#include <core/id/SequenceMapping.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
-// Auto-header: duplicate removed #include <core/pose/util.hh>
-// Auto-header: duplicate removed #include <core/scoring/Energies.hh>
 #include <core/scoring/constraints/FuncFactory.hh>
-#include <core/scoring/constraints/NamedAtomPairConstraint.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/id/SequenceMapping.hh>
+#include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/abinitio/KinematicAbinitio.hh>
 #include <protocols/relax/ClassicRelax.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/util.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
+#include <utility/vector0.hh>
 #include <ObjexxFCL/format.hh>
 
 //Auto using namespaces

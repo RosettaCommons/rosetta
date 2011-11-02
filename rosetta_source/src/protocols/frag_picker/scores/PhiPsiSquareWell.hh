@@ -24,10 +24,8 @@
 
 #include <ObjexxFCL/FArray1D.hh>
 
-//Auto Headers
 #include <protocols/frag_picker/PhiPsiTalosIO.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -34,11 +34,9 @@
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.hh>
 
-//Auto Headers
-#include <core/pose/util.hh>
-#include <protocols/moves/DataMap.hh>
-
-#include <protocols/fldsgn/topology/HSSTriplet.hh>
+#include <core/kinematics/Jump.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 //// C++ headers
 static basic::Tracer tr("protocols.fldsgn.filters.InterlockingAromaFilter");

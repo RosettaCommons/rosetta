@@ -27,9 +27,9 @@
 // Project Headers
 #include <core/conformation/Residue.fwd.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/graph/Graph.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+// AUTO-REMOVED #include <core/graph/Graph.fwd.hh>
+// AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>

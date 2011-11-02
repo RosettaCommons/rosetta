@@ -17,7 +17,7 @@
 #include <protocols/jd2/Job.hh>
 
 ///Project headers
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #ifdef WIN32
 // required for VS2005 build
@@ -32,8 +32,7 @@
 
 // option key includes
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer TR("protocols.protein_interface_design.ParserJobInputter");

@@ -28,7 +28,6 @@
 // AUTO-REMOVED #include <string>
 #include <sstream>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

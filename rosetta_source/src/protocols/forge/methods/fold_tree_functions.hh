@@ -20,7 +20,7 @@
 // project headers
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <protocols/loops/Loops.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
@@ -30,8 +30,8 @@
 // C++ headers
 #include <string>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
+#include <protocols/loops/Loops.fwd.hh>
+#include <utility/vector1.hh>
 
 
 

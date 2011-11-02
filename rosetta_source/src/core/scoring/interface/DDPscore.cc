@@ -28,8 +28,6 @@
 #include <core/scoring/EnergyMap.hh>
 
 
-//Auto Headers
-// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
 // Auto-header: duplicate removed #include <core/scoring/EnergyMap.hh>
 

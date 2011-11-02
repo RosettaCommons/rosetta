@@ -23,14 +23,14 @@
 #include <core/conformation/Residue.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/chemical/ResidueType.hh>
 #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
@@ -40,6 +40,10 @@
 #define foreach BOOST_FOREACH
 #include <protocols/moves/RigidBodyMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
+
+#include <protocols/jd2/Job.hh>
+#include <utility/vector0.hh>
+
 
 namespace protocols {
 namespace protein_interface_design{

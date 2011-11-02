@@ -92,7 +92,7 @@
 // #include <devel/init.hh>
 #include <apps/pilot/will/will_util.hh>
 
-#include "mynamespaces.hh"
+#include <apps/pilot/will/mynamespaces.hh>
 using core::conformation::symmetry::SymmData;
 using core::conformation::symmetry::SymmDataOP;
 using core::conformation::symmetry::SymmetryInfo;

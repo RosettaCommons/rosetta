@@ -23,7 +23,6 @@
 // AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 
-//Auto Headers
 #include <core/types.hh>
 #include <utility/vector1.fwd.hh>
 

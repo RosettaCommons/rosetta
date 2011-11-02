@@ -26,6 +26,9 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
 
+#include <utility/vector1.hh>
+
+
 using namespace core;
 
 namespace protocols {

@@ -14,10 +14,16 @@
 #define MINIMAL_CST_RELAX_UTIL
 
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
-#include <core/sequence/SequenceAlignment.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/sequence/SequenceAlignment.hh>
 #include <set>
 #include <map>
+
+#include <core/pose/Pose.fwd.hh>
+#include <core/scoring/constraints/ConstraintSet.fwd.hh>
+#include <core/sequence/SequenceAlignment.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace devel {
 namespace cstEnergyBalance {

@@ -70,10 +70,8 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/scoring/constraints/Constraint.hh>
 #include <numeric/xyz.functions.hh>
 #include <ObjexxFCL/format.hh>
 

@@ -39,14 +39,17 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 
 // Numeric headers
 
 // Objexx headers
 
 // C++ headers
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace scoring {

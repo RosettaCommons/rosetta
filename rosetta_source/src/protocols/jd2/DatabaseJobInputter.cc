@@ -21,12 +21,12 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <basic/options/keys/mysql.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/mysql.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -40,11 +40,15 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <cppdb/errors.h>
+// AUTO-REMOVED #include <cppdb/errors.h>
 
 
 // C++ headers
 #include <string>
+
+#include <core/scoring/ScoreFunction.hh>
+#include <protocols/features/ProteinSilentReport.hh>
+
 
 static basic::Tracer tr("protocols.jd2.DatabaseJobInputter");
 

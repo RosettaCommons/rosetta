@@ -45,7 +45,7 @@
 #include "utility/io/ozstream.hh"
 
 // AUTO-REMOVED #include "numeric/xyz.functions.hh"
-#include "numeric/random/random.hh"
+// AUTO-REMOVED #include "numeric/random/random.hh"
 
 #include <iostream>
 #include <fstream>
@@ -61,7 +61,6 @@
 #include <basic/options/keys/packstat.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <ObjexxFCL/format.hh>
 
 

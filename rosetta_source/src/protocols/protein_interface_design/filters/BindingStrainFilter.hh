@@ -25,7 +25,7 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 
 // Unit headers
 

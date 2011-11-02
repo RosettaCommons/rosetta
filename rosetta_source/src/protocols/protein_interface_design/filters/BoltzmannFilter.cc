@@ -11,15 +11,19 @@
 #include <protocols/protein_interface_design/filters/BoltzmannFilter.hh>
 #include <protocols/protein_interface_design/filters/BoltzmannFilterCreator.hh>
 #include <utility/string_util.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 #include <math.h>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace protein_interface_design{

@@ -42,6 +42,11 @@
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
 
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 static basic::Tracer TR("protocols.topo_broker.membrane_topology",basic::t_info);
 static numeric::random::RandomGenerator RG(786137);
 

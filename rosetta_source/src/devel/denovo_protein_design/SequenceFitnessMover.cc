@@ -43,7 +43,7 @@
 #include <basic/options/option.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 
-#include <protocols/evaluation/RmsdEvaluator.hh>
+// AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
 #include <core/scoring/rms_util.hh>
 
 // Utility Headers
@@ -56,8 +56,8 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <protocols/relax/FastRelax.hh>
+#include <utility/vector1.hh>
 
 
 

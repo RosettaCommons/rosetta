@@ -18,13 +18,14 @@
 
 #include <protocols/moves/Mover.hh>
 #include <core/types.hh>
-#include <numeric/xyzVector.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 
 //// Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
+
 ///////////////////////////////////////////////////////////////////////
 
 namespace protocols {

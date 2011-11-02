@@ -16,7 +16,7 @@
 #include <cxxtest/TestSuite.h>
 
 #include <test/core/init_util.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <test/UTracer.hh>
 
 #include <core/sequence/util.hh>
@@ -24,15 +24,19 @@
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/id/SequenceMapping.hh>
 
-#include <core/sequence/NWAligner.hh>
+// AUTO-REMOVED #include <core/sequence/NWAligner.hh>
 #include <core/sequence/SWAligner.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
 
-#include <numeric/random/random.hh>
-#include <utility/file/file_sys_util.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
+// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
-#include <utility/stream_util.hh>
+// AUTO-REMOVED #include <utility/stream_util.hh>
+
+//Auto Headers
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR("test.core.sequence.SequenceAlignment");
 

@@ -16,9 +16,9 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <basic/database/open.hh>
+// AUTO-REMOVED #include <basic/database/open.hh>
 #include <core/scoring/mm/MMBondAngleLibrary.hh>
-#include <core/types.hh>
+// AUTO-REMOVED #include <core/types.hh>
 
 // Project headers
 #include <test/core/init_util.hh>
@@ -30,11 +30,10 @@
 #include <numeric/conversions.hh>
 
 // C++ headers
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <string>
 
 //Auto Headers
-#include <core/chemical/MMAtomType.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
 #include <utility/keys/Key2Tuple.hh>
 #include <utility/keys/Key3Tuple.hh>

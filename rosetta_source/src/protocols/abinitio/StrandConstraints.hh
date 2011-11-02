@@ -49,6 +49,9 @@
 // AUTO-REMOVED #include <vector>
 #include <map>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace abinitio {
 

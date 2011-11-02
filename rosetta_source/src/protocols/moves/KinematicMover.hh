@@ -31,10 +31,9 @@
 // Utility headers
 #include <utility/LexicographicalIterator.hh>
 
-//Auto Headers
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/kinematic_closure/KinematicPerturber.fwd.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

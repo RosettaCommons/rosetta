@@ -42,7 +42,7 @@
 
 // Utility headers
 #include <basic/prof.hh>
-#include <basic/database/open.hh>
+// AUTO-REMOVED #include <basic/database/open.hh>
 #include <basic/Tracer.hh>
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
@@ -50,10 +50,10 @@
 // C++
 #include <iomanip>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
+#include <core/kinematics/Jump.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

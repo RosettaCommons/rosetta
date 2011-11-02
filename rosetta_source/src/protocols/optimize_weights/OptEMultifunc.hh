@@ -36,9 +36,9 @@
 // AUTO-REMOVED #include <string>
 #include <iosfwd>
 
-//Auto Headers
 #include <core/scoring/EnergyMap.hh>
 #include <protocols/optimize_weights/OptEData.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

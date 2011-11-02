@@ -55,6 +55,10 @@
 #include <cstdio>
 #include  <math.h>
 
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 using namespace protocols::flexpep_docking;
 
 static basic::Tracer TR("protocols.flexPepDockingAbInitio");

@@ -24,6 +24,9 @@
 // utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace core {
 namespace pose {

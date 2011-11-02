@@ -34,19 +34,14 @@
 // utils
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray1D.hh>
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 
-//Auto Headers
-#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/pose/Pose.hh>
-#include <utility/io/izstream.hh>
-#include <iostream>
-#include <string>
+#include <utility/vector1.hh>
+#include <fstream>
 
 
 namespace protocols {

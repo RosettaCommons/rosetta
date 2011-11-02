@@ -25,6 +25,9 @@
 
 #include <list>
 
+#include <utility/vector1.hh>
+
+
 using namespace core;
 using core::Real;
 

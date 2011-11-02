@@ -18,6 +18,9 @@
 #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace fldsgn {
 namespace potentials {

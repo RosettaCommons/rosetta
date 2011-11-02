@@ -17,13 +17,12 @@
 #include <core/types.hh>
 
 #include <string>
-#include <map>
+// AUTO-REMOVED #include <map>
 
 // boost headers
-#include <boost/tuple/tuple.hpp>
+// AUTO-REMOVED #include <boost/tuple/tuple.hpp>
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

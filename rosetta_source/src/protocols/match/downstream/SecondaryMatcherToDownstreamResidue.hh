@@ -41,6 +41,9 @@
 // C++ headers
 #include <list>
 
+#include <core/id/AtomID.hh>
+
+
 namespace protocols {
 namespace match {
 namespace downstream {

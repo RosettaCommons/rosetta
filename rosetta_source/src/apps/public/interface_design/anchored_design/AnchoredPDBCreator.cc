@@ -38,9 +38,12 @@
 #include <basic/Tracer.hh>
 
 // option key includes
-#include <basic/options/keys/AnchoredDesign.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/AnchoredDesign.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
+
+#include <utility/vector1.hh>
+
 
 
 using basic::T;

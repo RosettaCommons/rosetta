@@ -50,13 +50,14 @@
 #include <utility/vector1.hh>
 #include <map>
 #include <core/types.hh>
-#include <core/chemical/orbitals/OrbitalType.hh>
-#include <core/scoring/orbitals/OrbitalStatistics.fwd.hh>
-#include <iostream>
-#include <iomanip>
+// AUTO-REMOVED #include <core/chemical/orbitals/OrbitalType.hh>
+// AUTO-REMOVED #include <core/scoring/orbitals/OrbitalStatistics.fwd.hh>
+// AUTO-REMOVED #include <iostream>
+// AUTO-REMOVED #include <iomanip>
 #include <fstream>
-#include <string>
-#include <sstream>
+// AUTO-REMOVED #include <string>
+// AUTO-REMOVED #include <sstream>
+
 namespace core{
 namespace scoring{
 namespace orbitals{

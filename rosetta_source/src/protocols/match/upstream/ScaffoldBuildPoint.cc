@@ -20,6 +20,9 @@
 // AUTO-REMOVED #include <protocols/match/output/PoseInserter.hh>
 #include <protocols/match/upstream/OriginalScaffoldBuildPoint.hh>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <protocols/match/upstream/UpstreamBuilder.hh>
 
 // Project headers

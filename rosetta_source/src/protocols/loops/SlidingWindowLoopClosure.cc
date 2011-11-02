@@ -71,9 +71,11 @@
 //numeric headers
 // Auto-header: duplicate removed #include <numeric/random/random.hh>
 
-//Auto Headers
+#include <core/fragment/FragData.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <protocols/evaluation/ConstraintEvaluator.hh>
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector1.hh>
 
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS

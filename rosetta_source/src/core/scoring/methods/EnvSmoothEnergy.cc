@@ -33,8 +33,8 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 
 
 

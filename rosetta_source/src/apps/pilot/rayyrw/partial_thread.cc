@@ -18,8 +18,8 @@
 #include <basic/Tracer.hh>
 
 #include <core/chemical/util.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/scoring/rms_util.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 
 #include <basic/options/option.hh>
 
@@ -27,9 +27,9 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
 
-#include <core/sequence/ScoringScheme.hh>
-#include <core/sequence/CompositeScoringScheme.hh>
-#include <core/sequence/ScoringSchemeFactory.hh>
+// AUTO-REMOVED #include <core/sequence/ScoringScheme.hh>
+// AUTO-REMOVED #include <core/sequence/CompositeScoringScheme.hh>
+// AUTO-REMOVED #include <core/sequence/ScoringSchemeFactory.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -54,12 +54,12 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <utility/io/ozstream.hh>
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 std::map< std::string, core::pose::Pose >
 poses_from_cmd_line(

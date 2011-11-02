@@ -30,10 +30,9 @@
 // AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 
-//Auto Headers
 #include <protocols/multistate_design/MultiStateFitnessFunction.fwd.hh>
 #include <protocols/toolbox/pose_metric_calculators/MetricValueGetter.fwd.hh>
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 #include <map>
 
 

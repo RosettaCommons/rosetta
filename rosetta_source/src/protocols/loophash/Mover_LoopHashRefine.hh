@@ -18,20 +18,19 @@
 
 
 // libRosetta headers
-#include <protocols/jd2/JobDistributor.hh>
+// AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
 #include <protocols/loophash/LoopHashMap.hh>
-#include <protocols/loophash/LoopHashSampler.hh>
-#include <protocols/loophash/LocalInserter.hh>
+// AUTO-REMOVED #include <protocols/loophash/LoopHashSampler.hh>
+// AUTO-REMOVED #include <protocols/loophash/LocalInserter.hh>
 #include <protocols/loophash/BackboneDB.hh>
 #include <protocols/checkpoint/CheckPointer.hh>
 
-//Auto Headers
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+#include <core/kinematics/Jump.hh>
+#include <utility/vector1.hh>
 		
 namespace protocols {
 namespace loophash {

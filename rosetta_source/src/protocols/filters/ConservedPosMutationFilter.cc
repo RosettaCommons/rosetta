@@ -26,11 +26,15 @@
 #include <core/sequence/SequenceProfile.hh>
 #include <core/types.hh>
 
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 
 // Utility headers
 #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 //// C++ headers
 static basic::Tracer tr("protocols.filters.ConservedPosMutationFilter");

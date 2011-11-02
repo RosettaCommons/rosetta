@@ -29,7 +29,6 @@
 // C++ headers
 #include <iostream>
 
-//Auto Headers
 #include <platform/types.hh>
 #include <utility/Bound.fwd.hh>
 #include <utility/Bound.hh>
@@ -138,16 +137,22 @@
 #include <utility/options/keys/VectorOptionKey.fwd.hh>
 #include <utility/options/keys/VectorOptionKey.hh>
 #include <utility/options/keys/all.hh>
+#include <ObjexxFCL/Fstring.fwd.hh>
 #include <ObjexxFCL/TypeTraits.hh>
+#include <ObjexxFCL/byte.fwd.hh>
 #include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/string.functions.hh>
+#include <ObjexxFCL/ubyte.fwd.hh>
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 #include <complex>
 #include <cstddef>
 #include <cstdlib>
 #include <iomanip>
 #include <iosfwd>
+#include <istream>
+#include <limits>
 #include <list>
 #include <map>
 #include <set>

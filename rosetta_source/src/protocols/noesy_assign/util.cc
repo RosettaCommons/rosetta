@@ -17,9 +17,9 @@
 
 // Unit Headers
 //#include <protocols/noesy_assign/PeakAssignment.hh>
-#include <protocols/noesy_assign/CrossPeakList.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/CrossPeakList.hh>
 
-#include <protocols/noesy_assign/ResonanceList.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/ResonanceList.hh>
 
 // Package Headers
 //#include <protocols/noesy_assign/Exceptions.hh>
@@ -27,11 +27,11 @@
 // Project Headers
 #include <core/id/NamedAtomID.hh>
 
-#include <core/chemical/ResidueType.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
-#include <core/scoring/constraints/AmbiguousNMRConstraint.hh>
-#include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
 
 // Utility headers
 //#include <ObjexxFCL/format.hh>
@@ -43,7 +43,10 @@
 // #include <utility/pointer/ReferenceCount.hh>
 // #include <numeric/numeric.functions.hh>
 // #include <core/util/prof.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+
 // #include <core/options/option.hh>
 // #include <core/options/keys/abinitio.OptionKeys.gen.hh>
 // #include <core/options/keys/run.OptionKeys.gen.hh>

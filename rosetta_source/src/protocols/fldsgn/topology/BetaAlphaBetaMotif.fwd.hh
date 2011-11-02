@@ -17,7 +17,6 @@
 // AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 
-//Auto Headers
 #include <utility/vector1.fwd.hh>
 
 

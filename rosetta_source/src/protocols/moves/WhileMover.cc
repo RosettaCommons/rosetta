@@ -27,8 +27,7 @@
 // tracer
 #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <iostream>
+#include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;

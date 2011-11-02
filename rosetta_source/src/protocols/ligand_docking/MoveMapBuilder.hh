@@ -16,24 +16,26 @@
 
 // Unit Headers
 #include <protocols/ligand_docking/MoveMapBuilder.fwd.hh>
-#include <protocols/ligand_docking/ligand_options/Interface.hh>
+// AUTO-REMOVED #include <protocols/ligand_docking/ligand_options/Interface.hh>
 #include <protocols/ligand_docking/InterfaceBuilder.fwd.hh>
 
 // Package Headers
 #include <core/kinematics/MoveMap.fwd.hh>
 
 //// Project Headers
-#include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 
 //// Scripter Headers
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
-#include <protocols/loops/Loop.fwd.hh>
+#include <core/types.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <protocols/moves/DataMap.fwd.hh>
+#include <utility/vector1.hh>
 
 ///////////////////////////////////////////////////////////////////////
 

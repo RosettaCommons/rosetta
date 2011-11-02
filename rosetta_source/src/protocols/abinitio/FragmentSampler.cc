@@ -50,10 +50,9 @@
 #include <cstdlib>
 #include <string>
 
-//Auto Headers
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
-#include <utility/io/mpistream.hh>
+#include <utility/vector1.hh>
 
 static basic::Tracer tr("protocols.abinitio");
 

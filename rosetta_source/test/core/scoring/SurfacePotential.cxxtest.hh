@@ -18,8 +18,8 @@
 #include <core/pack/interaction_graph/SurfacePotential.hh>
 #include <core/chemical/AA.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -28,8 +28,8 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 
 #include "platform/types.hh"
@@ -39,22 +39,9 @@
 #include <test/util/pose_funcs.hh>
 
 //Auto Headers
-#include <core/chemical/VariantType.hh>
-#include <core/conformation/Atom.fwd.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/import_pose/import_pose.hh>
+#include <core/id/AtomID.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/types.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <basic/datacache/CacheableData.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
-#include <ObjexxFCL/FArray2D.hh>
+#include <utility/vector1.hh>
 
 
 

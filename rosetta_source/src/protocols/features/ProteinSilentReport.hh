@@ -34,10 +34,13 @@
 // Platform Headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // C++ Headers
 #include <map>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols{
 namespace features{

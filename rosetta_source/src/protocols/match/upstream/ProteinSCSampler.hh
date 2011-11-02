@@ -29,9 +29,7 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
-#include <iterator>
 
 
 namespace protocols {

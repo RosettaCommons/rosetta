@@ -26,6 +26,9 @@
 
 #include <iosfwd>
 
+#include <utility/vector1.hh>
+
+
 #ifdef WIN32
 #include <string>
 #endif

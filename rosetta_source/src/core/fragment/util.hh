@@ -17,22 +17,22 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <core/kinematics/Stub.hh>
+// AUTO-REMOVED #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility headers
-#include <numeric/xyzVector.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.hh>
 #include <utility/vector1.fwd.hh>
 
-//Auto Headers
 #include <core/fragment/ConstantLengthFragSet.fwd.hh>
 #include <core/fragment/FragData.fwd.hh>
 #include <core/fragment/FragID.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/Frame.fwd.hh>
 #include <core/fragment/FrameList.fwd.hh>
-#include <iostream>
+#include <core/kinematics/Stub.fwd.hh>
+#include <utility/vector1.hh>
 #include <set>
 
 namespace core {

@@ -33,7 +33,11 @@
 // Parser headers
 #include <utility/tag/Tag.hh>
 
-#include <protocols/fldsgn/topology/HSSTriplet.hh>
+// AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 //// C++ headers
 static basic::Tracer TR("protocols.fldsgn.filters.HelixKinkFilter");

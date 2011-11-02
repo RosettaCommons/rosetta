@@ -42,10 +42,10 @@
 #include <sstream>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
-#include "apps/pilot/will/will_util.hh"
-#include "apps/pilot/will/mynamespaces.hh"
-#include <apps/pilot/will/gpu/CL.hh>
-#include <apps/pilot/will/gpu/gpu_mat_vec.hh>
+#include <apps/pilot/will/will_util.hh>
+#include <apps/pilot/will/mynamespaces.hh>
+#include <apps/pilot/will/CL.hh>
+#include <apps/pilot/will/gpu_mat_vec.hh>
 #include <apps/pilot/will/PoseOctree_v0.hh>
 
 static basic::Tracer TR("gpu_cbdock");

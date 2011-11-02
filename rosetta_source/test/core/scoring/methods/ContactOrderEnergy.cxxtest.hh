@@ -25,24 +25,13 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 #include <core/io/silent/SilentFileData.hh>
 
 //Auto Headers
-#include <core/conformation/Atom.fwd.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/io/pdb/file_data.hh>
 #include <core/io/silent/EnergyNames.fwd.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/types.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
-#include <ObjexxFCL/FArray2D.hh>
+#include <utility/vector1.hh>
 
 
 // --------------- Test Class --------------- //

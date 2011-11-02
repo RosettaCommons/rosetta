@@ -40,6 +40,9 @@
 // Package headers
 #include <protocols/loops/Loop.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace loops {
 

@@ -24,7 +24,10 @@
 #include <protocols/relax/FastRelax.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
-#include <set>
+// AUTO-REMOVED #include <set>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace loophash {

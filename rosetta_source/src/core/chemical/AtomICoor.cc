@@ -31,7 +31,7 @@
 // AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
 //Auto using namespaces

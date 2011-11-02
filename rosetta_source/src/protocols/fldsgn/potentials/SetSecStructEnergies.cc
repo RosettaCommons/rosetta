@@ -45,7 +45,12 @@
 #include <utility>
 
 // boost
-#include <boost/lexical_cast.hpp>
+// AUTO-REMOVED #include <boost/lexical_cast.hpp>
+
+#include <protocols/fldsgn/potentials/sspot/NatbiasStrandPairPotential.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 
 namespace protocols {

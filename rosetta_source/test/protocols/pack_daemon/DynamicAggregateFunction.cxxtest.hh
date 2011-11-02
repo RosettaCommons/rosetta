@@ -17,19 +17,19 @@
 
 #include <protocols/pack_daemon/DynamicAggregateFunction.hh>
 #include <protocols/pack_daemon/PackDaemon.hh>
-#include <protocols/pack_daemon/EntityCorrespondence.hh>
+// AUTO-REMOVED #include <protocols/pack_daemon/EntityCorrespondence.hh>
 
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
 
 // Core headers
-#include <core/chemical/AA.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
+// AUTO-REMOVED #include <core/chemical/AA.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -42,6 +42,11 @@
 
 // C++ headers
 #include <sstream>
+
+//Auto Headers
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 //static basic::Tracer TR("PackDaemonTest.cxxtest");
 

@@ -36,7 +36,7 @@
 #include <core/kinematics/FoldTree.hh>
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
 
 #include <protocols/jd2/util.hh>
 
@@ -47,7 +47,13 @@
 
 #include <ObjexxFCL/format.hh>
 
-#include <core/pack/task/operation/TaskOperation.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
+
+#include <protocols/docking/DockTaskFactory.hh>
+#include <utility/exit.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 using basic::T;
 using basic::Error;

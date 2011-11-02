@@ -15,13 +15,13 @@
 
 #include <core/conformation/AtomGraph.fwd.hh>
 
-#include <core/conformation/AtomGraphData.hh>
-#include <core/graph/UpperEdgeGraph.hh>
+// AUTO-REMOVED #include <core/conformation/AtomGraphData.hh>
+// AUTO-REMOVED #include <core/graph/UpperEdgeGraph.hh>
 
 #include <core/conformation/Conformation.fwd.hh>
 
 #include <core/types.hh>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 
 namespace core {
 namespace conformation {

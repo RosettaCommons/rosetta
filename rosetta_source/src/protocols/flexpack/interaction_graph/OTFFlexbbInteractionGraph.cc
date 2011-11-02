@@ -28,10 +28,14 @@
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionInfo.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
 
 #include <utility/string_util.hh>
+
+#include <utility/vector1.hh>
+#include <utility/options/IntegerVectorOption.hh>
+
 
 namespace protocols {
 namespace flexpack {

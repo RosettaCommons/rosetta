@@ -28,7 +28,7 @@
 
 // C++ headers
 #include <string>
-#include <utility>
+// AUTO-REMOVED #include <utility>
 #include <map>
 
 namespace core {

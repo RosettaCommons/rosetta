@@ -48,17 +48,17 @@
 #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondOptions.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.hh>
 // AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
 // AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
 
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
@@ -67,13 +67,17 @@
 #include <numeric/random/random.hh>
 #include <numeric/random/random_permutation.hh>
 
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // STL headers
 // AUTO-REMOVED #include <ctime>
 
-//Auto Headers
 #include <core/kinematics/Jump.hh>
+#include <utility/vector0.hh>
+
+//Auto using namespaces
+namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+//Auto using namespaces end
 
 
 namespace core {

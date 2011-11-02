@@ -16,14 +16,17 @@
 #include <core/sequence/DerivedSequenceMapping.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/signals/LengthEvent.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-#include <core/kinematics/AtomWithDOFChange.hh>
+// AUTO-REMOVED #include <core/kinematics/AtomWithDOFChange.hh>
 
 #include <algorithm> // for max_element
 
 // ObjexxFCL headers
-#include <ObjexxFCL/string.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace sequence {

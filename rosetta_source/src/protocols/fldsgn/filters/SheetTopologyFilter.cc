@@ -20,7 +20,7 @@
 #include <protocols/fldsgn/topology/SheetFoldTypeManager.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/fldsgn/topology/util.hh>
-#include <protocols/fldsgn/topology/HSSTriplet.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh> // REQUIRED FOR WINDOWS
 
 // Project Headers
 #include <core/types.hh>
@@ -38,7 +38,8 @@
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.hh>
 
-//Auto Headers
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 //// C++ headers

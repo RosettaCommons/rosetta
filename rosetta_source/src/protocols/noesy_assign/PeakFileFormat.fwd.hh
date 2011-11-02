@@ -17,7 +17,7 @@
 
 
 // Utility headers
-#include <utility/pointer/access_ptr.fwd.hh>
+// AUTO-REMOVED #include <utility/pointer/access_ptr.fwd.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 

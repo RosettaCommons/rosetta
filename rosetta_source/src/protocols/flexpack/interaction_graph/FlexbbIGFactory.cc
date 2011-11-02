@@ -19,6 +19,9 @@
 #include <protocols/flexpack/interaction_graph/MinimalistFlexbbInteractionGraph.hh>
 #include <protocols/flexpack/rotamer_set/FlexbbRotamerSets.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace flexpack {
 namespace interaction_graph{

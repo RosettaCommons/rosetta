@@ -20,7 +20,10 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace protein_interface_design {

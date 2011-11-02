@@ -21,17 +21,16 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/electron_density/util.hh>
+// AUTO-REMOVED #include <core/scoring/electron_density/util.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/loops/Loops.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 //// C++ headers
 // AUTO-REMOVED #include <cstdlib>
 #include <string>
 
-//Auto Headers
 #include <protocols/loops/Loops.fwd.hh>
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace electron_density {

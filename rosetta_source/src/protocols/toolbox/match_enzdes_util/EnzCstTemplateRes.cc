@@ -46,8 +46,8 @@
 
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
+#include <utility/vector1.hh>
 
 
 

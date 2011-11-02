@@ -16,7 +16,7 @@
 
 #include <core/types.hh>
 
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 
 #include <utility/vector1.fwd.hh>
 

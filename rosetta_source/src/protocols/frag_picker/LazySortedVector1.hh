@@ -18,7 +18,7 @@
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <algorithm>
 
 namespace protocols {

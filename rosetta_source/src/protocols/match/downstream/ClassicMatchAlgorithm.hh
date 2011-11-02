@@ -40,8 +40,8 @@
 #include <list>
 #include <string>
 
-//Auto Headers
 #include <utility/fixedsizearray1.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

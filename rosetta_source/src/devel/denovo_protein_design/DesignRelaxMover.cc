@@ -38,7 +38,7 @@
 #include <protocols/loops/Loops.hh>
 // AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/LoopMover_KIC.hh>
-#include <protocols/loops/util.hh>
+// AUTO-REMOVED #include <protocols/loops/util.hh>
 #include <protocols/loops/loopfinder.hh>
 #include <protocols/moves/KinematicMover.hh>
 #include <protocols/loops/KinematicWrapper.hh>
@@ -55,11 +55,13 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 
-//Auto Headers
+#include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/pose/util.hh>
-#include <protocols/relax/ClassicRelax.hh>
+#include <core/kinematics/Jump.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <protocols/relax/ClassicRelax.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 // C++ Headers

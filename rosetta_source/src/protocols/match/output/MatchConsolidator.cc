@@ -25,12 +25,16 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/sort_predicates.hh>
-#include <utility/vector1.functions.hh>
+// AUTO-REMOVED #include <utility/sort_predicates.hh>
+// AUTO-REMOVED #include <utility/vector1.functions.hh>
 
 // C++ headers
 #include <algorithm>
 #include <iostream>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace match {

@@ -22,15 +22,15 @@
 
 // Project Headers
 #include <test/core/init_util.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 
 //Auto Headers
-#include <core/import_pose/import_pose.hh>
+#include <utility/vector1.hh>
 
 
 

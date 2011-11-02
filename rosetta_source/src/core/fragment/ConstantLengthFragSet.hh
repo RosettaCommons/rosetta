@@ -26,7 +26,7 @@
 #include <core/fragment/FrameList.hh>
 
 // Project Headers
-#include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/types.hh>
 
@@ -35,6 +35,10 @@
 // Utility headers
 // AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
+
+#include <utility/vector1.hh>
+#include <utility/io/izstream.fwd.hh>
+
 
 // Package Headers
 // AUTO-REMOVED #include <core/fragment/FrameIterator.hh>

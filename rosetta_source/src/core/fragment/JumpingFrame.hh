@@ -35,8 +35,9 @@
 // C++ STL Headers
 #include <map>
 
-//Auto Headers
+#include <core/fragment/FragData.hh>
 #include <utility/exit.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

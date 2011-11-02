@@ -24,7 +24,7 @@
 // project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <protocols/features/ProteinSilentReport.hh>
+// AUTO-REMOVED #include <protocols/features/ProteinSilentReport.hh>
 
 // utility Headers
 #include <utility/file/FileName.hh>
@@ -32,6 +32,9 @@
 
 // C++ headers
 #include <string>
+
+#include <protocols/features/ProteinSilentReport.fwd.hh>
+
 
 namespace protocols {
 namespace jd2 {

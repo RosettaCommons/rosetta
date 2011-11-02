@@ -36,12 +36,15 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <basic/options/option_macros.hh>
+// AUTO-REMOVED #include <basic/options/option_macros.hh>
 
 
 //// C++ headers
 #include <cstdlib>
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer tr("protocols.noesy_assign.assignment");
 

@@ -17,6 +17,9 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <basic/MetricValue.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace multistate_design {
 

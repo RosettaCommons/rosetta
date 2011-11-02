@@ -34,6 +34,9 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/keys/Key3Tuple.hh> //container holds Loop, movemap, movemap (OPs)
 
+#include <utility/vector1.hh>
+
+
 
 // C++ Headers
 // AUTO-REMOVED #include <string>

@@ -24,7 +24,7 @@
 // AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
+// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
 // AUTO-REMOVED #include <core/scoring/rms_util.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
@@ -48,8 +48,7 @@
 #include <iostream>
 #include <string>
 
-//Auto Headers
-#include <core/scoring/constraints/Constraint.hh>
+#include <utility/vector1.hh>
 
 
 

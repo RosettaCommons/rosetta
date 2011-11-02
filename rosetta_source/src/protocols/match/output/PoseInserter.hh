@@ -22,8 +22,8 @@
 // Package headers
 #include <protocols/match/upstream/UpstreamBuilder.hh>
 
-//Auto Headers
 #include <core/pose/Pose.fwd.hh>
+#include <utility/vector1.hh>
 
 
 

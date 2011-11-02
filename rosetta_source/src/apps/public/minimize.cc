@@ -14,14 +14,14 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/Energies.hh>
-#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/DunbrackRotamer.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
+// Auto-header: duplicate removed #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -31,22 +31,27 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <core/types.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/DiagnosticData.hh>
+// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
+// AUTO-REMOVED #include <basic/datacache/DiagnosticData.hh>
 #include <basic/Tracer.hh>
 #include <protocols/init.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/ScoreMap.hh>
-#include <utility/tag/Tag.hh>
+// AUTO-REMOVED #include <protocols/ScoreMap.hh>
+// AUTO-REMOVED #include <utility/tag/Tag.hh>
 #include <numeric/random/random.hh>
 #include <string>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 #include <ObjexxFCL/string.functions.hh>
+
+#include <core/kinematics/Jump.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>

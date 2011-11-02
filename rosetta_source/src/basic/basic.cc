@@ -23,6 +23,16 @@
 // Numeric Headers
 #include <numeric/constants.hh>
 
+#include <platform/types.hh>
+#include <numeric/types.hh>
+#include <numeric/xyzVector.fwd.hh>
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <cstddef>
+#include <limits>
+
+
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 //Auto using namespaces end

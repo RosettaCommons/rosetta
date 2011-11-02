@@ -12,10 +12,13 @@
 /// @author Nikolas Sgourakis
 
 #include <core/scoring/constraints/KarplusFunc.hh>
-#include <numeric/angle.functions.hh>
+// AUTO-REMOVED #include <numeric/angle.functions.hh>
 #include <core/types.hh>
 
 #include <iostream>
+
+#include <cmath>
+
 
 namespace core {
 namespace scoring {

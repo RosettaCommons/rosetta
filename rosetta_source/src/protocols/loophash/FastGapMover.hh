@@ -22,6 +22,9 @@
 #include <protocols/loophash/LoopHashLibrary.hh>
 #include <protocols/loophash/LocalInserter.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace loophash {
 

@@ -26,10 +26,9 @@
 #include <core/kinematics/RT.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-//Auto Headers
 #include <core/types.hh>
 #include <devel/cartesian_frags/Direction.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 

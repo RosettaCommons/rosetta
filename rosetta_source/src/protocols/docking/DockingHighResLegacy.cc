@@ -36,18 +36,18 @@
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
 #include <core/conformation/Residue.hh> // for design() flag
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <core/pack/task/operation/OperateOnCertainResidues.hh>
-#include <core/pack/task/operation/ResLvlTaskOperations.hh> // PreventRepackingRLT
-#include <core/pack/task/operation/ResFilters.hh> // ResidueLacksProperty
+// AUTO-REMOVED #include <core/pack/task/operation/OperateOnCertainResidues.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperations.hh> // PreventRepackingRLT
+// AUTO-REMOVED #include <core/pack/task/operation/ResFilters.hh> // ResidueLacksProperty
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -80,7 +80,7 @@
 #include <string>
 
 //Utility Headers
-#include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
 // AUTO-REMOVED #include <numeric/conversions.hh>
 
 #include <numeric/trig.functions.hh>
@@ -94,6 +94,11 @@ using basic::T;
 // option key includes
 
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
+
+#include <core/kinematics/Jump.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 // Auto-header: duplicate removed #include <basic/options/keys/packing.OptionKeys.gen.hh>
 

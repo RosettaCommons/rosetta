@@ -20,6 +20,9 @@
 #include <protocols/match/BumpGrid.hh>
 #include <protocols/match/upstream/ProteinUpstreamBuilder.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace protocols {
 namespace match {

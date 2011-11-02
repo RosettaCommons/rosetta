@@ -28,13 +28,16 @@
 #include <protocols/forge/build/BuildInstruction.fwd.hh>
 #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/components/VarLengthBuild.fwd.hh>
-#include <protocols/forge/constraints/SheetConstraintsRCG.fwd.hh>
+// AUTO-REMOVED #include <protocols/forge/constraints/SheetConstraintsRCG.fwd.hh>
 #include <protocols/moves/Mover.hh>
 // Auto-header: duplicate removed #include <protocols/fldsgn/BluePrint.fwd.hh>
 
 
 // C++ headers
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 
 namespace protocols {

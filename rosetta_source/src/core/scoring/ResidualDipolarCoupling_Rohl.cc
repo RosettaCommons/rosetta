@@ -35,6 +35,9 @@
 /// Utility headers
 #include <utility/io/izstream.hh>
 
+#include <utility/vector1.hh>
+
+
 static basic::Tracer tr("core.scoring.ResidualDipolarCoupling_Rohl");
 
 namespace core {

@@ -16,8 +16,10 @@
 
 // Unit Headers
 #include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorMover.fwd.hh>
-#include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorJobDistributor.hh>
+// AUTO-REMOVED #include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorJobDistributor.hh>
+#ifdef USEMPI
 #include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorMPIWorkPoolJobDistributor.hh>
+#endif
 
 // Package headers
 #include <protocols/moves/Mover.hh>
@@ -27,6 +29,10 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
+
+#include <protocols/unfolded_state_energy_calculator/UnfoldedStateEnergyCalculatorJobDistributor.fwd.hh>
+#include <utility/vector1.hh>
+
 
 // Utility Headers
 

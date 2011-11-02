@@ -40,7 +40,7 @@ using namespace protocols::multistate_design;
 #include <core/chemical/ResidueType.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -52,7 +52,7 @@ using namespace protocols::multistate_design;
 #include <core/scoring/ScoreFunctionFactory.hh>
 //#include <core/scoring/dna/setup.hh>
 
-#include <utility/file/file_sys_util.hh> // file_exists
+// AUTO-REMOVED #include <utility/file/file_sys_util.hh> // file_exists
 #include <utility/file/FileName.hh>
 #include <utility/vector1.hh>
 // AUTO-REMOVED #include <utility/string_util.hh>
@@ -67,7 +67,7 @@ basic::Tracer TR("app.sequence_tolerance");
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh> // lead_zero_string_of
 
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 #include <list> // PackerTask allowed_residue_types
@@ -92,8 +92,9 @@ using namespace protocols::toolbox::pose_metric_calculators;
 
 #include <basic/options/option_macros.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector0.hh>
+#include <basic/MetricValue.hh>
 
 
 

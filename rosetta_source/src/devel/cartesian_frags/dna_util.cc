@@ -36,9 +36,8 @@
 #include <numeric/constants.hh>
 // AUTO-REMOVED #include <numeric/random/random.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/random/random.fwd.hh>
 
 
 // // // C++ headers

@@ -30,9 +30,7 @@
 // C++ headers
 // AUTO-REMOVED #include <list>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
-#include <iostream>
 
 
 namespace protocols {

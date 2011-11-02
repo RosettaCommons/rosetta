@@ -17,7 +17,7 @@
 #include <devel/init.hh>
 
 #include <cstring>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>

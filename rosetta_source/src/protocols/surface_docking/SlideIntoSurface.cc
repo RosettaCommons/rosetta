@@ -33,13 +33,17 @@
 #include <protocols/surface_docking/SurfaceParameters.fwd.hh>
 #include <protocols/surface_docking/SurfaceParameters.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
+// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
 //Utility Headers
 #include <utility/exit.hh>
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+#include <numeric/xyzVector.io.hh>
+
 
 
 using basic::T;

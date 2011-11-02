@@ -22,6 +22,9 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyMap.hh>
 
+#include <utility/vector1.hh>
+
+
 // Project headers
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 

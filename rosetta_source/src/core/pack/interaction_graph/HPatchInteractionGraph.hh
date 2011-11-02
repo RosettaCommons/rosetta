@@ -18,13 +18,13 @@
 //Rosetta Headers
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
+// AUTO-REMOVED #include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 
 #include <core/graph/DisjointSets.hh>
 
@@ -45,23 +45,21 @@
 #include <basic/Tracer.hh>
 
 //Utility Headers
-#include <numeric/xyzVector.io.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 #include <utility/vector1.hh>
-#include <utility/vector1.functions.hh>  // to get arg_max
+// AUTO-REMOVED #include <utility/vector1.functions.hh>  // to get arg_max
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 
 //ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray1.io.hh>
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1.io.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 //C++ Headers
 #include <vector>
-#include <fstream>
-#include <ctime>
-
-//Auto Headers
+// AUTO-REMOVED #include <fstream>
+// AUTO-REMOVED #include <ctime>
 
 //#define DOUBLE_CHECK_COUNTS 1
 //#define FILE_DEBUG 1

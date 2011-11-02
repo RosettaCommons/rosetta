@@ -29,6 +29,9 @@
 #include <core/types.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace protocols{
 namespace forge{

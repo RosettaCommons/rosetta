@@ -22,6 +22,9 @@
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace scoring {
 namespace methods {

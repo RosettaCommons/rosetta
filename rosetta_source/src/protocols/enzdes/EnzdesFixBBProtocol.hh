@@ -20,11 +20,14 @@
 
 
 #include <protocols/enzdes/EnzdesBaseProtocol.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+// AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 
 //#include <protocols/ligand_docking/LigandBaseProtocol.hh>
 //#include <core/scoring/EnergyMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 //#include <core/pack/task/PackerTask.fwd.hh>
 //#include <core/chemical/ResidueTypeSet.fwd.hh>

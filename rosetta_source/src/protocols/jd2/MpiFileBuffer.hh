@@ -36,9 +36,7 @@
 #include <map>
 #include <list>
 
-//Auto Headers
 #include <protocols/jd2/SingleFileBuffer.fwd.hh>
-#include <utility/io/mpistream.hh>
 
 
 namespace protocols {

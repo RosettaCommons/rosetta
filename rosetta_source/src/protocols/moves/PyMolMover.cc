@@ -25,12 +25,16 @@
 
 #include <core/scoring/Energies.hh>
 
-#include <utility/io/zipstream.hpp>
+// AUTO-REMOVED #include <utility/io/zipstream.hpp>
 
 #include <basic/Tracer.hh>
 
 
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
+
+#include <utility/vector1.hh>
+#include <utility/io/zipstream.ipp>
+
 //#include <cstdlib.h>
 
 /*#if  !defined(WINDOWS) && !defined(WIN32)

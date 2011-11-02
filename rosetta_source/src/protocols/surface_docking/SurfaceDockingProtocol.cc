@@ -30,7 +30,7 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/BackboneMover.fwd.hh>
 #include <protocols/moves/MinMover.fwd.hh>
-#include <protocols/moves/MoverContainer.hh>
+// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/PyMolMover.hh>
 #include <protocols/moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/surface_docking/SurfaceParameters.fwd.hh>
@@ -40,19 +40,23 @@
 #include <protocols/jd2/Job.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueType.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 
 //Utility Headers
 #include <utility/exit.hh>
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 // Auto-header: duplicate removed #include <basic/Tracer.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <string>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 
 using basic::T;

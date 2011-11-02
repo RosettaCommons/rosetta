@@ -24,7 +24,7 @@
 
 #include <utility/exit.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
-#include <ObjexxFCL/FArray1A.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1A.fwd.hh>
 
 #include <utility/vector1.fwd.hh>
 

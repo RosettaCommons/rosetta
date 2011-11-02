@@ -28,7 +28,10 @@
 // AUTO-REMOVED
 #include <cstdio>
 #include <iostream>
-#include <sstream>
+// AUTO-REMOVED #include <sstream>
+
+#include <utility/vector1.hh>
+
 
 // AUTO-REMOVED #include <sstream>
 // AUTO-REMOVED #include <string>

@@ -25,7 +25,6 @@
 // AUTO-REMOVED #include <utility/vector1.hh>
 // AUTO-REMOVED #include <utility/exit.hh>
 
-//Auto Headers
 #include <utility/fixedsizearray1.hh>
 
 

@@ -20,8 +20,8 @@
 #include <core/id/TorsionID.hh>
 
 // C++ headers
-#include <iterator>
-#include <utility>
+// AUTO-REMOVED #include <iterator>
+// AUTO-REMOVED #include <utility>
 #include <vector>
 
 // Objexx headers
@@ -31,6 +31,9 @@
 #include <utility/PyAssert.hh>
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
+
+#include <utility/vector1.hh>
+
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;

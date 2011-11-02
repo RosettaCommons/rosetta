@@ -24,9 +24,30 @@
 #endif
 #include <basic/datacache/DataCache.hh>
 
-//Auto Headers
-#include <basic/datacache/CacheableData.fwd.hh>
+#include <platform/types.hh>
+#include <utility/down_cast.hh>
+#include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
 #include <utility/vector1_bool.hh>
+#include <utility/vectorL.fwd.hh>
+#include <utility/vectorL.hh>
+#include <utility/vectorL_Selector.hh>
+#include <utility/vectorL_bool.hh>
+#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/access_ptr.fwd.hh>
+#include <utility/pointer/access_ptr.hh>
+#include <utility/pointer/owning_ptr.functions.hh>
+#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
+#include <algorithm>
+#include <cassert>
+#include <cstddef>
+#include <iosfwd>
+#include <vector>
+#include <basic/datacache/CacheableData.fwd.hh>
+#include <basic/datacache/CacheableData.hh>
+#include <basic/datacache/DataCache.fwd.hh>
 
 
 

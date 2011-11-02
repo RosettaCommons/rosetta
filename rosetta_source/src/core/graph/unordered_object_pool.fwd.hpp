@@ -6,13 +6,13 @@
 #ifndef BOOST_unordered_object_pool_fwd_hpp
 #define BOOST_unordered_object_pool_fwd_hpp
 
-#include <boost/config.hpp> // for workarounds
+// AUTO-REMOVED #include <boost/config.hpp> // for workarounds
 
 // std::size_t
-#include <cstddef>
+// AUTO-REMOVED #include <cstddef>
 
 // boost::details::pool::default_mutex
-#include <boost/pool/detail/mutex.hpp>
+// AUTO-REMOVED #include <boost/pool/detail/mutex.hpp>
 
 #include <boost/pool/poolfwd.hpp>
 

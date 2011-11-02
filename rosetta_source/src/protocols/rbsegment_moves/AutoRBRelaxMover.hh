@@ -9,17 +9,17 @@
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/rbsegment_moves/RBSegment.hh>
+// AUTO-REMOVED #include <protocols/rbsegment_moves/RBSegment.hh>
 
-//Auto Headers
-#include <sstream>
+#include <protocols/rbsegment_moves/RBSegment.fwd.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace rbsegment_moves {

@@ -24,7 +24,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
-#include <protocols/evaluation/ConstraintEvaluator.hh>
+// AUTO-REMOVED #include <protocols/evaluation/ConstraintEvaluator.hh>
 #include <protocols/evaluation/ScoreEvaluator.hh>
 #include <protocols/evaluation/util.hh>
 #include <protocols/jumping/JumpSample.hh>
@@ -37,15 +37,20 @@
 #include <basic/prof.hh>
 
 //for DebugArchive
-#include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 
 //for setup_default_evaluators
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/jumps.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/jumps.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+
+#include <core/scoring/ResidualDipolarCoupling.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
+#include <utility/vector1.hh>
+
 
 static basic::Tracer tr("protocols.jd2.Archive");
 

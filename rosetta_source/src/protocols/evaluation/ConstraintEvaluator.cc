@@ -31,7 +31,7 @@
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/util.hh>
-#include <core/scoring/constraints/NamedAtomPairConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 #include <core/id/Exceptions.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 
@@ -39,7 +39,7 @@
 #include <core/scoring/ScoreType.hh>
 
 
-#include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/jumping/JumpSample.hh>
 // ObjexxFCL Headers
@@ -49,6 +49,10 @@
 #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <utility/file/file_sys_util.hh>
+
+#include <core/id/SequenceMapping.hh>
+#include <utility/vector1.hh>
+
 
 // C++ headers
 

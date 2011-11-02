@@ -31,8 +31,8 @@
 // AUTO-REMOVED #include <core/scoring/trie/TrieCountPairBase.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
 
-//Auto Headers
 #include <core/scoring/trie/TrieCountPairBase.fwd.hh>
+#include <utility/vector1.hh>
 
 
 // Utility headers

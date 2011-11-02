@@ -37,8 +37,8 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
-//Auto Headers
 #include <core/scoring/EnergyMap.hh>
+#include <utility/vector1.hh>
 
 
 using namespace std;

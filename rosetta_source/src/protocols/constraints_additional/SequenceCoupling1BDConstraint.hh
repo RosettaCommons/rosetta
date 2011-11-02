@@ -19,13 +19,12 @@
 #include <core/scoring/constraints/Constraint.hh>
 
 // AUTO-REMOVED #include <core/chemical/AA.hh>
-#include <core/sequence/SequenceCoupling.hh>
+// AUTO-REMOVED #include <core/sequence/SequenceCoupling.hh>
 
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
-#include <core/id/AtomID.hh>
+#include <core/sequence/SequenceCoupling.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

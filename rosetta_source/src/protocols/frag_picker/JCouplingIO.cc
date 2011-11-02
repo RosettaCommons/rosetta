@@ -27,16 +27,9 @@
 #include <utility/exit.hh>
 
 // boost headers
-#include <boost/tuple/tuple.hpp>
-//Auto Headers
-#include <utility/io/mpistream.hh>
-
-#include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
+// AUTO-REMOVED #include <boost/tuple/tuple.hpp>
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
-
-/// C++ Headers
-#include <iostream>
+#include <basic/options/option.hh>
 
 namespace protocols {
 namespace frag_picker {

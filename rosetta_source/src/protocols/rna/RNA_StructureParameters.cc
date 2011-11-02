@@ -36,7 +36,7 @@
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 
@@ -59,10 +59,8 @@
 #include <iostream>
 #include <list>
 
-//Auto Headers
 #include <core/chemical/VariantType.hh>
-#include <core/kinematics/tree/Atom.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <utility/vector1.hh>
 
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS

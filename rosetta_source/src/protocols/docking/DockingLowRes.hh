@@ -31,8 +31,8 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/RigidBodyMover.fwd.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/filters/ScoreCutoffFilter.hh>
+// AUTO-REMOVED #include <protocols/filters/Filter.hh>
+// AUTO-REMOVED #include <protocols/filters/ScoreCutoffFilter.hh>
 
 #include <string>
 
@@ -42,10 +42,7 @@
 
 // AUTO-REMOVED #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <core/types.hh>
 #include <utility/vector1.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
 #include <iostream>
 
 

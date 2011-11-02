@@ -36,14 +36,16 @@
 #include <utility/vector1.functions.hh>
 #include <utility/mpi_util.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 // C++ headers
-#include <cmath>
-#include <cctype>
+// AUTO-REMOVED #include <cmath>
+// AUTO-REMOVED #include <cctype>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <protocols/pack_daemon/PackDaemon.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

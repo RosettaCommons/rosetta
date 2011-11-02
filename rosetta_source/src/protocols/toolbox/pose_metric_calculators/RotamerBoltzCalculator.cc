@@ -8,7 +8,7 @@
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/graph/Graph.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
@@ -19,15 +19,17 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-#include <protocols/rosetta_scripts/util.hh>
+// AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/PackRotamersMoverLazy.hh>
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
+#include <utility/string_util.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <cmath>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 

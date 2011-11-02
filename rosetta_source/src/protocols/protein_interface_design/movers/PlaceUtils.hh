@@ -30,6 +30,9 @@
 #include <utility/vector1.fwd.hh>
 #include <numeric/xyzVector.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 // C++ headers
 
 // Unit headers

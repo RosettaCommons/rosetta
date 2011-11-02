@@ -12,7 +12,6 @@
 #include <iostream>
 #include <queue>
 
-//Auto Headers
 #include <cassert>
 
 #if defined(WIN32) || defined(__CYGWIN__)

@@ -44,7 +44,7 @@
 #include <protocols/basic_moves/FragmentMover.hh>
 
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 
@@ -76,8 +76,8 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/pose/util.hh>
+#include <utility/vector1.hh>
 
 
 

@@ -29,6 +29,9 @@
 
 #include <basic/options/keys/residues.OptionKeys.gen.hh>
 
+#include <utility/vector1.hh>
+
+
 
 
 // Commented by inclean daemon #include <utility/vector1.hh>

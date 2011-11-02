@@ -19,6 +19,9 @@
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/conformation/Residue.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace pack {
 namespace dunbrack {

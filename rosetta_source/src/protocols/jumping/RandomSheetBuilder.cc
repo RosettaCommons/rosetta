@@ -59,8 +59,9 @@
 //// C++ headers
 #include <cstdlib>
 
-//Auto Headers
 #include <core/fragment/SecondaryStructure.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 //#include <string>
 //#include <vector>

@@ -27,12 +27,14 @@
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
 #include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <utility/string_util.hh>
 #include <core/kinematics/FoldTree.hh>
 
-//Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -32,8 +32,9 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/id/SequenceMapping.hh>
+#include <core/scoring/constraints/XYZ_Func.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer tr("core.io.constraints");

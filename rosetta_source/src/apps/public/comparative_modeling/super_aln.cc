@@ -19,7 +19,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/rms_util.hh>
 
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
@@ -46,7 +46,6 @@ using utility::vector1;
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/pose/util.hh>
 
 

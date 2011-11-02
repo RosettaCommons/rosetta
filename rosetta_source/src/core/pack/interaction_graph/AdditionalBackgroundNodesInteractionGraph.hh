@@ -23,7 +23,6 @@
 
 #include <iostream>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

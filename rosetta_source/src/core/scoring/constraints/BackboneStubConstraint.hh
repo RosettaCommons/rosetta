@@ -24,9 +24,8 @@
 // AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 
-//Auto Headers
 #include <core/conformation/Residue.fwd.hh>
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 
 

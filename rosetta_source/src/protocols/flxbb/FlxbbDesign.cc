@@ -50,16 +50,12 @@
 #include <protocols/moves/DataMap.hh>
 #include <utility/tag/Tag.hh>
 
-//Auto Headers
-// Auto-header: duplicate removed #include <core/pose/util.hh>
-#include <protocols/relax/ClassicRelax.hh>
-#include <protocols/relax/FastRelax.hh>
-#include <protocols/relax/RelaxProtocolBase.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/moves/MakePolyXMover.hh>
+#include <protocols/relax/ClassicRelax.hh>
+#include <protocols/relax/FastRelax.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
-
-#include <protocols/fldsgn/topology/HSSTriplet.hh>
+#include <utility/vector0.hh>
 
 static basic::Tracer TR("protocols.flxbb.FlxbbDesign");
 

@@ -21,9 +21,9 @@
 // AUTO-REMOVED #include <core/conformation/symmetry/SymmData.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
 #include <core/scoring/ScoreFunction.hh>
 #include <utility/exit.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

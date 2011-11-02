@@ -33,10 +33,9 @@
 // AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
 
 // C++ headers
-#include <iostream>
-#include <map>
+// AUTO-REMOVED #include <iostream>
+// AUTO-REMOVED #include <map>
 
-//Auto Headers
 #include <core/fragment/BBTorsionSRFD.fwd.hh>
 #include <utility/vector1_bool.hh>
 

@@ -35,6 +35,9 @@
 
 #include <basic/Tracer.hh>
 
+#include <utility/vector0.hh>
+
+
 namespace protocols {
 namespace moves {
 namespace symmetry {

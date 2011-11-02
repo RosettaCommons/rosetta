@@ -29,6 +29,9 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 
+#include <utility/vector1.hh>
+
+
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>
 #endif

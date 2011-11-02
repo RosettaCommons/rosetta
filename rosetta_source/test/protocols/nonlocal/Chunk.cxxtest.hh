@@ -24,6 +24,10 @@
 #include <protocols/nonlocal/Chunk.hh>
 #include <protocols/nonlocal/Region.hh>
 
+//Auto Headers
+#include <utility/vector1.hh>
+
+
 namespace {
 using core::Size;
 using core::kinematics::MoveMap;

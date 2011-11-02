@@ -16,7 +16,7 @@
 
 // package headers
 #include <protocols/frag_picker/FragmentCandidate.fwd.hh>
-#include <protocols/frag_picker/PhiPsiTalosIO.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/PhiPsiTalosIO.hh>
 
 #include <protocols/frag_picker/scores/CachingScoringMethod.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
@@ -26,9 +26,7 @@
 
 #include <ObjexxFCL/FArray1D.hh>
 
-//Auto Headers
-#include <core/pose/Pose.fwd.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

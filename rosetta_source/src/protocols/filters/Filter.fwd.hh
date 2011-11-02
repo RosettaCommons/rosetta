@@ -23,7 +23,6 @@
 #include <map>
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-//Auto Headers
 #include <utility/vector1.fwd.hh>
 
 

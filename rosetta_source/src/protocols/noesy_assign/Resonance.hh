@@ -23,10 +23,10 @@
 #include <protocols/noesy_assign/PeakCalibrator.fwd.hh>
 
 // Project Headers
-#include <core/chemical/AA.hh>
+// AUTO-REMOVED #include <core/chemical/AA.hh>
 
 // Utility headers
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 // #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 //#include <utility/pointer/ReferenceCount.hh>
@@ -39,9 +39,9 @@
 //#include <basic/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-#include <cstdlib>
-#include <string>
-#include <map>
+// AUTO-REMOVED #include <cstdlib>
+// AUTO-REMOVED #include <string>
+// AUTO-REMOVED #include <map>
 
 namespace protocols {
 namespace noesy_assign {

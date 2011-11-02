@@ -23,7 +23,7 @@
 #include <protocols/protein_interface_design/filters/RelativePoseFilter.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 
 // Unit headers
 

@@ -33,9 +33,9 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/Residue.hh>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.fwd.hh>
+#include <utility/vector1.hh>
 
 
 

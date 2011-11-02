@@ -42,7 +42,6 @@
 
 #include <basic/options/keys/MM.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/chemical/MMAtomType.hh>
 
 

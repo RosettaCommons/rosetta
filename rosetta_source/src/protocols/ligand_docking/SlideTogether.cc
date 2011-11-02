@@ -24,9 +24,9 @@
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 
-//Auto Headers
 #include <core/pose/util.hh>
-#include <iostream>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

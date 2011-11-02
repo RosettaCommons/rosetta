@@ -22,7 +22,7 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/pdb/file_data.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.fwd.hh>
 
 
 #include <core/chemical/ResidueTypeSet.fwd.hh>
@@ -31,6 +31,9 @@
 
 // C++ Headers
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace import_pose {

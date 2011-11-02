@@ -42,7 +42,7 @@
 #include <numeric/kdtree/KDPointList.hh>
 #include <numeric/kdtree/WrappedReal.hh>
 
-#include "james_util.hh"
+#include <apps/pilot/james/james_util.hh>
 
 // C++ headers
 #include <iostream>

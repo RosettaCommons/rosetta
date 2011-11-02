@@ -17,7 +17,7 @@
 #include <protocols/jd2/InnerJob.hh>
 
 // Project headers
-#include <core/pose/annotated_sequence.hh>
+// AUTO-REMOVED #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 #include <core/sequence/util.hh>
 #include <protocols/moves/ExtendedPoseMover.hh>

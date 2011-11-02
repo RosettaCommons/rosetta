@@ -23,7 +23,7 @@
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 #include <protocols/frag_picker/CommonFragmentComparators.hh>
-#include <core/fragment/SecondaryStructure.hh>
+// AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
 
 // utility headers
 #include <core/types.hh>

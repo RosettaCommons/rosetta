@@ -42,12 +42,12 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>
-#include <protocols/scoring/InterchainPotential.hh>
+// AUTO-REMOVED #include <protocols/scoring/InterchainPotential.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/constraints/ConstraintFactory.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintFactory.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/DiagnosticData.hh>
@@ -61,9 +61,9 @@ using namespace ObjexxFCL::fmt;
 
 #include <protocols/antibody/Ubiquitin_E2C_Modeler.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
-#include <protocols/docking/DockingLowRes.hh>
+// AUTO-REMOVED #include <protocols/docking/DockingLowRes.hh>
 #include <protocols/geometry/RB_geometry.hh>
-#include <protocols/loops/loops_main.hh>
+// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 #include <protocols/moves/BackboneMover.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
 #include <protocols/moves/MinMover.hh>
@@ -80,7 +80,12 @@ using namespace ObjexxFCL::fmt;
 #include <protocols/ScoreMap.hh>
 
 //#include <utility/vector1.hh>
-#include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
+
+#include <protocols/scoring/InterfaceInfo.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 using basic::T;
 using basic::Error;

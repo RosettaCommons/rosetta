@@ -23,7 +23,10 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+
+#include <utility/vector1.hh>
+
 
 
 namespace protocols {

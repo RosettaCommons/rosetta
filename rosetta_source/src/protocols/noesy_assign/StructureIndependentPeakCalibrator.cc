@@ -19,7 +19,7 @@
 #include <protocols/noesy_assign/StructureIndependentPeakCalibrator.hh>
 
 // Package Headers
-#include <protocols/noesy_assign/CrossPeakList.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/CrossPeakList.hh>
 
 // Project Headers
 
@@ -27,7 +27,10 @@
 #include <basic/Tracer.hh>
 
 //// C++ headers
-#include <cmath>
+// AUTO-REMOVED #include <cmath>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer tr("protocols.noesy_assign.crosspeaks");
 

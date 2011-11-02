@@ -12,39 +12,38 @@
 /// @author Frank DiMaio
 /// @author Srivatsan Raman
 #include <protocols/rbsegment_moves/RBSegmentMover.hh>
-#include <protocols/rbsegment_moves/util.hh>
+// AUTO-REMOVED #include <protocols/rbsegment_moves/util.hh>
 
 // Rosetta Headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 
-#include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/BoundConstraint.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/AmbiguousConstraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/BoundConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <basic/basic.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <basic/basic.hh>
 #include <basic/Tracer.hh>
 
 // Random number generator
-#include <numeric/xyzVector.io.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>
-#include <ObjexxFCL/FArray1D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
 //
 #include <string>
 
-//Auto Headers
-#include <core/id/NamedAtomID.hh>
-#include <core/id/SequenceMapping.hh>
+#include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -36,7 +36,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/id/AtomID.hh>
 #include <numeric/random/random.hh>
 // AUTO-REMOVED #include <numeric/xyzTriple.hh>
@@ -53,7 +53,10 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>
-#include <numeric/xyzVector.io.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

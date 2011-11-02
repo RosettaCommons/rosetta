@@ -25,6 +25,9 @@
 #include <protocols/moves/mc_convergence_checks/HPool.fwd.hh>
 #include <deque>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace moves {
 namespace mc_convergence_checks {

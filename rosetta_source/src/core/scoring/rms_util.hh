@@ -18,7 +18,7 @@
 #define core_scoring_rms_util_HH
 
 // C/C++ headers
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <list>
 #include <map>
 #include <string>
@@ -36,6 +36,9 @@
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

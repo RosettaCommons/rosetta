@@ -10,10 +10,6 @@
 // AUTO-REMOVED #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <protocols/moves/Mover.hh>
 
-//Auto Headers
-#include <sstream>
-
-
 namespace protocols {
 //namespace rbsegment_moves {
 	int RBSegmentRelax_main( bool boinc_mode );

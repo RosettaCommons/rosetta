@@ -47,9 +47,9 @@
 //#include <map>
 // AUTO-REMOVED #include <string>
 
-//Auto Headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/optimize_weights/OptEMultifunc.fwd.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

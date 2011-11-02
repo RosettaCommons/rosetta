@@ -24,12 +24,15 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 
 // Utility Headers
-#include <core/init.hh>
+// AUTO-REMOVED #include <core/init.hh>
 #include <core/types.hh>
-#include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 #include <set>
+
+#include <core/id/AtomID.fwd.hh>
+
 
 
 namespace protocols {

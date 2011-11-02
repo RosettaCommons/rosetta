@@ -31,8 +31,7 @@
 #include <core/types.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 namespace devel {

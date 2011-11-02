@@ -30,15 +30,14 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 /// Boost headers
-#include <boost/cstdint.hpp>
-#include <boost/foreach.hpp>
+// AUTO-REMOVED #include <boost/cstdint.hpp>
+// AUTO-REMOVED #include <boost/foreach.hpp>
 #include <boost/unordered_map.hpp>
 
 /// C++ headers
 #include <cmath>
 #include <vector>
 
-//Auto Headers
 #include <protocols/match/Hit.fwd.hh>
 #include <utility/fixedsizearray1.hh>
 

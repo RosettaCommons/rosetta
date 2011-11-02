@@ -20,13 +20,16 @@
 #include <utility/file/FileName.hh>
 #include <utility/pointer/owning_ptr.hh>
 
-#include <core/chemical/AA.hh>
+// AUTO-REMOVED #include <core/chemical/AA.hh>
 
 #include <map>
 #include <iostream>
 #include <string>
 
 #include <ObjexxFCL/format.hh>
+
+#include <utility/vector1.hh>
+
 
 
 namespace core {

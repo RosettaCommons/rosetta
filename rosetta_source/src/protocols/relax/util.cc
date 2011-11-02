@@ -30,20 +30,20 @@
 
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/electron_density/util.hh>
-#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/moves/SuperimposeMover.hh>
-#include <protocols/moves/ConstraintSetMover.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
+// AUTO-REMOVED #include <protocols/moves/SuperimposeMover.hh>
+// AUTO-REMOVED #include <protocols/moves/ConstraintSetMover.hh>
 
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-#include <protocols/moves/MoverContainer.hh>
-#include <protocols/electron_density/util.hh>
+// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
+// AUTO-REMOVED #include <protocols/electron_density/util.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
@@ -54,8 +54,9 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <protocols/relax/util.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;

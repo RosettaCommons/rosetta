@@ -35,7 +35,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
-#include <core/id/TorsionID.fwd.hh>
+// AUTO-REMOVED #include <core/id/TorsionID.fwd.hh>
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/conformation/signals/LengthEvent.fwd.hh> //for observing conformation length changes
@@ -47,6 +47,9 @@
 
 // C++ Headers
 #include <map>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

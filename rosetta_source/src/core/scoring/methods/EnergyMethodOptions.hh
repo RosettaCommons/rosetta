@@ -32,15 +32,14 @@
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.fwd.hh>
 
 /// Utility headers
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ Headers
-#include <string>
+// AUTO-REMOVED #include <string>
 #include <map>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

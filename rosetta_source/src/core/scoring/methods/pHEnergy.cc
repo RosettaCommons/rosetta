@@ -29,16 +29,19 @@
 #include <core/scoring/ScoreType.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/VariantType.hh>
 
 
 // Option Key includes
 #include <basic/options/keys/pH.OptionKeys.gen.hh>
+
+#include <utility/vector1.hh>
+
 
 // C++
 

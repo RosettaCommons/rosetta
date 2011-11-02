@@ -37,8 +37,7 @@
 // AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 // AUTO-REMOVED #include <ObjexxFCL/FArray4D.hh>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 
 
 // C++

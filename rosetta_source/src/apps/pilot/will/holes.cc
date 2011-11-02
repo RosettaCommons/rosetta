@@ -33,7 +33,7 @@
 // AUTO-REMOVED #include <basic/prof.hh>
 #include <fstream>
 // AUTO-REMOVED #include <numeric/model_quality/rms.hh>
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <protocols/jobdist/not_universal_main.hh>
@@ -48,12 +48,10 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <basic/database/open.hh>
-#include <utility/io/mpistream.hh>
 #include <utility/string_util.hh>
-#include <utility/io/mpistream.hh>
+#include <utility/vector1.hh>
+#include <basic/database/open.hh>
 
 
 static basic::Tracer TR("RosettaHoles");

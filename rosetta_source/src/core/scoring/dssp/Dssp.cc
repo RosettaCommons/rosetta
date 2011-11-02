@@ -51,9 +51,9 @@
 #include <vector>
 #include <iostream>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
 #include <core/scoring/dssp/StrandPairing.hh>
+#include <utility/vector1.hh>
 
 
 

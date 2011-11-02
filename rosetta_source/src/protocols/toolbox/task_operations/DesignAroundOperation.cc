@@ -19,8 +19,8 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -30,13 +30,13 @@
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
-#include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 #include <core/pack/task/operation/OperateOnCertainResidues.hh>
-#include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
-#include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
-#include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/NoRepackDisulfides.hh>
+// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
+// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
+// AUTO-REMOVED #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
 // Auto-header: duplicate removed #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <boost/foreach.hpp>
@@ -44,6 +44,9 @@
 
 // C++ Headers
 #include <set>
+
+#include <utility/vector0.hh>
+
 
 using basic::Error;
 using basic::Warning;

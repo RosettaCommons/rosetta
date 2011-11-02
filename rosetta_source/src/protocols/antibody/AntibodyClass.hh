@@ -20,6 +20,7 @@
 #include <core/types.hh>
 #include <protocols/loops/Loops.hh>
 #include <utility/vector1.hh>
+
 // C++ Headers
 
 // Utility Headers

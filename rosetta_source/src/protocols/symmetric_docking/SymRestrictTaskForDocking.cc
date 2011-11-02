@@ -25,8 +25,8 @@
 
 #include <protocols/scoring/Interface.hh>
 
-//Auto Headers
 #include <core/kinematics/Jump.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

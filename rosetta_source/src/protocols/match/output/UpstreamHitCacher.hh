@@ -34,7 +34,6 @@
 // C++ headers
 #include <map>
 
-//Auto Headers
 #include <utility/OrderedTuple.fwd.hh>
 #include <utility/vector1_bool.hh>
 

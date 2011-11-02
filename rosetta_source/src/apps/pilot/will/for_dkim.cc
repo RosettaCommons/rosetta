@@ -47,11 +47,11 @@ sheffler_voids( core::pose::Pose & pose ) {
 }
 
 #include <core/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <iostream>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector1.hh>
 
 
 int main (int argc, char *argv[])

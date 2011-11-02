@@ -36,8 +36,7 @@
 #include <utility/string_util.hh>
 // AUTO-REMOVED #include <utility/basic_sys_util.hh>
 
-//Auto Headers
-#include <utility/exit.hh>
+#include <utility/vector1.hh>
 
 
 using namespace ObjexxFCL;

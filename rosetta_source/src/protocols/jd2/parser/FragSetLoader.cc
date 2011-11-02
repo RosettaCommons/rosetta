@@ -32,6 +32,11 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
+
+#include <protocols/moves/DataMap.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 #define foreach BOOST_FOREACH
 
 static basic::Tracer TR( "protocols.jd2.parser.FragSetLoader" );

@@ -26,6 +26,12 @@
 #include <protocols/moves/Mover.hh>
 #include <basic/Tracer.hh>
 
+#include <protocols/jd2/Job.hh>
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 using namespace protocols::protein_interface_design;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.SubroutineMover" );

@@ -38,7 +38,6 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

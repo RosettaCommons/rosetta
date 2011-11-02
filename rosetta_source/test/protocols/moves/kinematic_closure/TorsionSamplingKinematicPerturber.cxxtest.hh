@@ -23,27 +23,23 @@
 // Unit header
 #include <protocols/moves/KinematicMover.hh>
 #include <protocols/moves/kinematic_closure/KinematicPerturber.hh>
-#include <protocols/loops/KinematicWrapper.hh>
+// AUTO-REMOVED #include <protocols/loops/KinematicWrapper.hh>
 
 // project headers
 #include <core/types.hh>
 
-#include <core/io/pdb/pose_io.hh>
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/AtomTree.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
 
 // #include <core/scoring/Ramachandran.hh>
 // #include <core/chemical/AA.hh>
 
-#include <numeric/xyz.io.hh>
+// AUTO-REMOVED #include <numeric/xyz.io.hh>
 
 //Auto Headers
-//#include <basic/options/option.hh>
-
-// C++ headers
-#include <iostream>
-#include <iomanip>
+#include <utility/vector1.hh>
 
 // --------------- Test Class --------------- //
 

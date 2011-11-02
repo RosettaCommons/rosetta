@@ -29,7 +29,10 @@
 #include <utility/vector1.fwd.hh>
 
 // C++ headers
-#include <utility>
+// AUTO-REMOVED #include <utility>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace util {

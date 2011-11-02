@@ -26,12 +26,12 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueType.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ChemicalManager.hh>
 //#include <core/chemical/ResidueSelector.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 //#include <core/scoring/ScoreFunction.hh>
 //#include <core/scoring/ScoreFunctionFactory.hh>
 //#include <core/pack/pack_rotamers.hh>
@@ -44,12 +44,15 @@
 #include <core/pose/Pose.hh>
 //#include <core/options/util.hh>
 #include <core/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 //#include <numeric/xyzVector.hh>
 #include <numeric/random/random.hh>
 //#include <core/conformation/ResidueFactory.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
+
+#include <utility/vector1.hh>
+
 
 // C++ headers
 

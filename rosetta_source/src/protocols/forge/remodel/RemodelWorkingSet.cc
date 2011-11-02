@@ -19,22 +19,22 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 
 //fragset
 //#include <core/fragment/OrderedFragSet.hh>
 
-#include <protocols/viewer/viewers.hh>
+// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/chemical/ResidueType.hh>
  // for switch typeset
 
 // for yab managers
-#include <protocols/forge/components/VarLengthBuild.hh>
+// AUTO-REMOVED #include <protocols/forge/components/VarLengthBuild.hh>
 #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/build/Interval.hh>
 #include <protocols/forge/methods/util.hh>
@@ -49,7 +49,7 @@
 
 // Auto-header: duplicate removed #include <protocols/forge/components/VarLengthBuild.hh>
 
-#include <protocols/loops/LoopMover_QuickCCD_Moves.hh>
+// AUTO-REMOVED #include <protocols/loops/LoopMover_QuickCCD_Moves.hh>
 /*
 //yab headers
 #include "AtomPoint.hh"
@@ -75,7 +75,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <vector>
 #include <string>
 #include <list>
@@ -84,16 +84,18 @@
 
 
 // Utility Headers
-#include <utility/basic_sys_util.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/ocstream.hh>
-#include <utility/file/file_sys_util.hh>
+// AUTO-REMOVED #include <utility/basic_sys_util.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/io/ocstream.hh>
+// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 #include <utility/vector1.hh>
 
-//Auto Headers
-#include <core/pose/util.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
+#include <core/chemical/AtomType.hh>
+#include <core/fragment/ConstantLengthFragSet.fwd.hh>
+#include <core/fragment/Frame.fwd.hh>
+#include <core/fragment/OrderedFragSet.fwd.hh>
+#include <core/kinematics/Jump.hh>
 
 
 

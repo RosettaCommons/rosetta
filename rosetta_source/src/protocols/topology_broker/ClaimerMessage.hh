@@ -49,7 +49,6 @@
 #include <string>
 #include <typeinfo>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

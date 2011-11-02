@@ -23,7 +23,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
 #include <utility/tag/Tag.hh>
 #include <numeric/random/random.hh>
 #include <core/chemical/ResidueType.hh>
@@ -32,6 +32,9 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <boost/foreach.hpp>
+
+#include <utility/vector0.hh>
+
 #define foreach BOOST_FOREACH
 
 namespace protocols {

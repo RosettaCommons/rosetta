@@ -27,6 +27,10 @@
 #include <fstream>
 #include <sstream>
 
+#include <protocols/frag_picker/VallChunk.hh>
+#include <utility/vector1.hh>
+
+
 using namespace core;
 using namespace core::pose;
 using namespace kinematics;

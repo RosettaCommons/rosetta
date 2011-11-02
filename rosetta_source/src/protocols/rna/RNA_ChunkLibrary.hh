@@ -24,13 +24,13 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.fwd.hh>
-#include <numeric/xyzVector.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.hh>
 #include <protocols/rna/AllowInsert.hh>
 //#include <protocols/rna/AllowInsert.fwd.hh>
 //#include <core/kinematics/tree/Atom.fwd.hh>
-#include <core/kinematics/tree/Atom.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <core/kinematics/tree/Atom.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/id/AtomID.hh>
 
 
 // ObjexxFCL Headers
@@ -40,10 +40,7 @@
 #include <string>
 #include <map>
 
-//Auto Headers
-#include <core/id/AtomID.fwd.hh>
-#include <utility/vector1_bool.hh>
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 

@@ -33,7 +33,7 @@
 #include <core/types.hh>
 
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.io.hh> //print 'metalsite_atoms_'
+// AUTO-REMOVED #include <numeric/xyz.io.hh> //print 'metalsite_atoms_'
 #include <utility/vector1.hh>
 
 #include <basic/Tracer.hh>

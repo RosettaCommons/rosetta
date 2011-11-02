@@ -16,6 +16,9 @@
 #include <protocols/dna/WatsonCrickRotamerCouplings.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace dna {
 

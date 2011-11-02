@@ -26,12 +26,15 @@
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
-#include <core/pack/task/ResfileReader.fwd.hh>
+// AUTO-REMOVED #include <core/pack/task/ResfileReader.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
 // C++ headers
 #include <set>
 #include <iostream>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace forge {

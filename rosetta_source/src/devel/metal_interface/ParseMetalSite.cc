@@ -18,11 +18,15 @@
 #include <core/pose/Pose.hh>
 
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.io.hh> // to print a point
+// AUTO-REMOVED #include <numeric/xyz.io.hh> // to print a point
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
 #include <basic/Tracer.hh>
+
+#include <core/conformation/Residue.hh>
+#include <numeric/xyzVector.io.hh>
+
 
 
 static basic::Tracer TR("devel.metal_interface.ParseMetalSite");

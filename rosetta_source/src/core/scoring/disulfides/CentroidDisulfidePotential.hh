@@ -29,9 +29,7 @@
 // AUTO-REMOVED #include <numeric/interpolation/Histogram.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-//Auto Headers
 #include <numeric/interpolation/Histogram.fwd.hh>
-#include <iostream>
 
 
 namespace core {

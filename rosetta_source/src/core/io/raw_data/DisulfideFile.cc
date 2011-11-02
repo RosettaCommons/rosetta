@@ -22,6 +22,9 @@
 // AUTO-REMOVED #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 
+#include <utility/vector1.hh>
+
+
 // Auto-header: duplicate removed #include <basic/Tracer.hh>
 
 namespace core {

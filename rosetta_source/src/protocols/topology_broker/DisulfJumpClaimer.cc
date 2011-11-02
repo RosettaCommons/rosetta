@@ -45,6 +45,9 @@
 //#include <utility/io/util.hh>
 #include <basic/Tracer.hh>
 
+#include <utility/vector1.hh>
+
+
 //#include <basic/options/option.hh>
 
 //// C++ headers

@@ -45,8 +45,8 @@
 //// C++ headers
 // AUTO-REMOVED #include <fstream>
 
-//Auto Headers
 #include <core/id/SequenceMapping.hh>
+#include <utility/vector1.hh>
 
 
 // option key includes

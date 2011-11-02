@@ -18,7 +18,7 @@
 #include <devel/init.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/ThreadingJob.hh>
-#include <protocols/viewer/viewers.hh>
+// Auto-header: duplicate removed #include <protocols/viewer/viewers.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/electron_density/util.hh>
 #include <protocols/loops/loops_main.hh>
@@ -32,7 +32,7 @@
 #include <protocols/loops/LoopRelaxMover.hh>
 
 #include <protocols/relax/RelaxProtocolBase.hh>
-#include <protocols/relax/util.hh>
+// Auto-header: duplicate removed #include <protocols/relax/util.hh>
 
 #include <protocols/rbsegment_moves/AutoRBRelaxMover.hh>
 #include <protocols/rbsegment_moves/util.hh>
@@ -92,21 +92,28 @@
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
-#include <basic/options/keys/packing.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/relax.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 //
 #include <iostream>
 #include <string>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <sstream>
+
+#include <protocols/electron_density/SetupForDensityScoringMover.hh>
+#include <protocols/jd2/Job.hh>
+#include <protocols/rbsegment_moves/RBSegment.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 OPT_1GRP_KEY(Integer, MR, max_gaplength_to_model)
 OPT_1GRP_KEY(Integer, MR, nrebuildcycles)

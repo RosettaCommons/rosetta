@@ -16,20 +16,23 @@
 
 // Unit headers
 #include <core/scoring/rna/RNA_DataInfo.hh>
-#include <core/scoring/rna/RNA_DataInfo.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/rna/RNA_DataInfo.fwd.hh>
 
 // Package headers
-#include <core/scoring/rna/RNA_Util.hh>
+// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
 
 // Project headers
-#include <core/chemical/AA.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/chemical/AA.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Utility headers
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
+
+#include <utility/vector1.hh>
+
 
 // C++
 

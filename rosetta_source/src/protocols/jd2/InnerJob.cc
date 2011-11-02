@@ -16,20 +16,19 @@
 
 ///Project headers
 
-#include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/JobInputter.hh>
+// AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
+// AUTO-REMOVED #include <protocols/jd2/JobInputter.hh>
 
 #include <core/pose/Pose.hh>
 
 ///Utility headers
 #include <basic/Tracer.hh>
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 
 ///C++ headers
 #include <string>
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 static basic::Tracer TR("protocols.jd2.InnerJob");
 

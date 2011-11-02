@@ -58,10 +58,9 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+// Auto-header: duplicate removed #include <core/scoring/ScoreFunction.hh>
 
 
 using namespace ObjexxFCL;
@@ -201,14 +200,24 @@ ligand_dock_main_jd1()
 
 #include <devel/init.hh>
 // AUTO-REMOVED #include <basic/options/option_macros.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// Auto-header: duplicate removed #include <basic/options/keys/in.OptionKeys.gen.hh>
+// Auto-header: duplicate removed #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
-#include <basic/options/keys/enzdes.OptionKeys.gen.hh>
+// Auto-header: duplicate removed #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <basic/options/option.hh>
+#include <core/chemical/ResidueType.hh>
+// Auto-header: duplicate removed #include <core/import_pose/import_pose.hh>
+// Auto-header: duplicate removed #include <core/pose/Pose.hh>
+// Auto-header: duplicate removed #include <core/scoring/ScoreFunction.hh>
+// Auto-header: duplicate removed #include <devel/init.hh>
+#include <utility/vector0.hh>
+// Auto-header: duplicate removed #include <basic/options/keys/docking.OptionKeys.gen.hh>
+// Auto-header: duplicate removed #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
+// Auto-header: duplicate removed #include <basic/options/keys/in.OptionKeys.gen.hh>
+// Auto-header: duplicate removed #include <basic/options/keys/out.OptionKeys.gen.hh>
+// Auto-header: duplicate removed #include <basic/options/keys/packing.OptionKeys.gen.hh>
+// Auto-header: duplicate removed #include <basic/options/option.hh>
 
 
 /// This wrapper exists so David Kim's BOINC executable can call my real main() method.

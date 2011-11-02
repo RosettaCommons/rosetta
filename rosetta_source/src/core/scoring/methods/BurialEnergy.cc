@@ -32,6 +32,9 @@
 #include <utility/file/FileName.hh>
 #include <ObjexxFCL/string.functions.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace scoring {
 namespace methods {

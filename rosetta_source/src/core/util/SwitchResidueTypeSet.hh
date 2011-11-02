@@ -14,7 +14,12 @@
 #define INCLUDED_core_util_SwitchResidueTypeSet_hh
 
 // Unit headers
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+
+#include <core/types.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace util {

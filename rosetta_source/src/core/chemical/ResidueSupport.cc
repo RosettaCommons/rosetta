@@ -22,7 +22,7 @@
 // Project Headers
 #include <core/graph/Graph.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 

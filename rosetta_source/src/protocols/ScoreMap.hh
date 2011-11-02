@@ -25,8 +25,7 @@
 #include <map>
 // AUTO-REMOVED #include <string>
 
-//Auto Headers
-#include <ostream>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

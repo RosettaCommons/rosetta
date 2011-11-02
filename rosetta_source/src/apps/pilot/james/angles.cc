@@ -31,14 +31,12 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-#include "james_util.hh"
+#include <apps/pilot/james/james_util.hh>
 
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <platform/types.hh>
-#include <core/id/types.hh>
+#include <utility/vector1.hh>
 
 using namespace core;
 using ObjexxFCL::string_of;

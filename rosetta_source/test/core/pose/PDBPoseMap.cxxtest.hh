@@ -23,7 +23,6 @@
 #include <test/core/init_util.hh> //necessary if there is tracer output
 
 //Auto Headers
-#include <core/pose/Pose.fwd.hh>
 
 
 

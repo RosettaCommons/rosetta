@@ -23,16 +23,19 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
+// AUTO-REMOVED #include <core/id/AtomID.fwd.hh>
 #include <core/optimization/Multifunc.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/EnergyMap.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/MinimizationGraph.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
+
+#include <core/scoring/ScoreType.hh>
+
 
 namespace core {
 namespace pack {

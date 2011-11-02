@@ -19,29 +19,33 @@
 #include <test/util/pose_funcs.hh>
 
 // Package headers
-#include <core/scoring/hbonds/hbonds_geom.hh>
-#include <core/scoring/hbonds/types.hh>
-#include <core/scoring/hbonds/HBondDatabase.hh>
-#include <core/scoring/hbonds/HBondTypeManager.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/hbonds.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/hbonds_geom.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/types.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondDatabase.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondTypeManager.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
 
 // Project headers
-#include <core/types.hh>
-#include <basic/Tracer.hh>
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/types.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 
 // Numeric headers
-#include <numeric/constants.hh>
-#include <numeric/deriv/angle_deriv.hh>
-#include <numeric/deriv/distance_deriv.hh>
+// AUTO-REMOVED #include <numeric/constants.hh>
+// AUTO-REMOVED #include <numeric/deriv/angle_deriv.hh>
+// AUTO-REMOVED #include <numeric/deriv/distance_deriv.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/scoring/hbonds/HBondOptions.fwd.hh>
+
 
 using namespace core;
 	using namespace conformation;

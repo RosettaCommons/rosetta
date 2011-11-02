@@ -14,6 +14,9 @@
 // Unit Headers
 #include <protocols/jd2/parser/DataLoader.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace jd2 {
 namespace parser {

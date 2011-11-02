@@ -44,7 +44,6 @@
 // AUTO-REMOVED #include <utility/vector1.hh> // DOH! switch all to vector1
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
 #include <core/id/types.hh>
 #include <utility/vector0_bool.hh>
 

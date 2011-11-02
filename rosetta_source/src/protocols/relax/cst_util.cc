@@ -20,7 +20,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 
-#include <core/scoring/constraints/BoundConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
@@ -36,6 +36,9 @@
 #include <core/conformation/Conformation.hh>
 
 #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer tr("protocols.relax.cst_util");
 

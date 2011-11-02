@@ -25,6 +25,9 @@
 
 #include <core/scoring/constraints/GaussianFunc.hh>
 
+#include <utility/vector1.hh>
+
+
 // Numeric headers
 
 

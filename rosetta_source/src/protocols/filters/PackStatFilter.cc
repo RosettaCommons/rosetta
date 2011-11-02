@@ -18,7 +18,7 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 
 // Utility headers
@@ -28,7 +28,8 @@
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.hh>
 
-//Auto Headers
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 //// C++ headers

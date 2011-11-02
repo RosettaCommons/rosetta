@@ -35,9 +35,8 @@
 #include <string>
 #include <vector>
 
-//Auto Headers
-#include <core/scoring/constraints/Constraint.hh>
 #include <protocols/abinitio/MaxSeqSepConstraintSet.fwd.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace abinitio {

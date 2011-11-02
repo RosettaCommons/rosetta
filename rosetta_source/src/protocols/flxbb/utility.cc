@@ -33,7 +33,7 @@
 #include <core/scoring/constraints/ScalarWeightedFunc.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
-#include <protocols/fldsgn/topology/HSSTriplet.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh> // REQUIRED FOR WINDOWS
 
 /// Numeric headers
 #include <numeric/xyzVector.hh>
@@ -41,8 +41,7 @@
 // Utility headers
 #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <protocols/jumping/StrandPairing.hh>
+#include <utility/vector1.hh>
 
 static basic::Tracer TR("protocols.flxbb.FlxbbDesign.utility");
 

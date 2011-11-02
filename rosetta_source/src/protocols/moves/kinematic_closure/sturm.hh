@@ -20,7 +20,7 @@
 
 // C++ headers
 #include <cmath>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 
 // Utility headers
 // AUTO-REMOVED #include <utility/vector1.hh>
@@ -29,9 +29,7 @@
 
 // AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
 
 
 

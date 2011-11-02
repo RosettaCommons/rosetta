@@ -24,12 +24,15 @@
 
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
-#include <core/fragment/FragSet.hh>
-#include <core/fragment/FragSet.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FragSet.hh>
+// AUTO-REMOVED #include <core/fragment/FragSet.fwd.hh>
 
 // C++ headers
-#include <set>
+// AUTO-REMOVED #include <set>
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 
 namespace protocols {

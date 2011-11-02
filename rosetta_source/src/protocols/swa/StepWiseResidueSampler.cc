@@ -19,14 +19,14 @@
 
 //////////////////////////////////
 #include <core/types.hh>
-#include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Ramachandran.hh>
+// AUTO-REMOVED #include <core/scoring/Ramachandran.hh>
 #include <basic/Tracer.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -35,16 +35,19 @@
 #include <protocols/moves/GreenPacker.hh>
 #include <protocols/moves/GreenPacker.fwd.hh>
 
-#include <numeric/angle.functions.hh>
+// AUTO-REMOVED #include <numeric/angle.functions.hh>
 
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
 #include <utility/exit.hh>
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
 
 #include <string>
+
+#include <utility/vector1.hh>
+
 
 using namespace core;
 using core::Real;

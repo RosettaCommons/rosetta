@@ -18,15 +18,15 @@
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>
 
-#include "core/scoring/ScoreFunctionFactory.hh"
-#include "core/scoring/ScoreFunction.hh"
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/scoring/ScoreFunction.hh>
 
 #include <core/scoring/packstat/types.hh>
 #include <core/scoring/packstat/PackingScore.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 #include <core/scoring/packstat/LeeRichards.hh>
-#include "core/scoring/packstat/AtomRadiusMap.hh"
-#include "core/scoring/packstat/SimplePDB.hh"
+#include <core/scoring/packstat/AtomRadiusMap.hh>
+#include <core/scoring/packstat/SimplePDB.hh>
 
 #include <protocols/moves/MinMover.hh>
 #include <core/kinematics/MoveMap.hh>

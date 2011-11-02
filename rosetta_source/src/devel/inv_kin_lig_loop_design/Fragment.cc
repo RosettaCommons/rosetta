@@ -26,14 +26,6 @@
 
 #include <basic/database/open.hh>
 
-//Auto Headers
-#include <utility/io/izstream.fwd.hh>
-#include <cassert>
-#include <map>
-#include <string>
-#include <vector>
-
-
 namespace {
   using namespace std;
 

@@ -35,6 +35,9 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
+#include <utility/vector1.hh>
+
+
 
 namespace core {
 namespace scoring {

@@ -16,14 +16,14 @@
 
 #include <basic/Tracer.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/cm.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/cm.OptionKeys.gen.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>
-#include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 
 #include <protocols/loophash/LoopHashSampler.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
@@ -31,20 +31,25 @@
 
 
 #include <utility/exit.hh>
-#include <utility/file/file_sys_util.hh>
+// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/util.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
 // C++ headems
-#include <ctime>
+// AUTO-REMOVED #include <ctime>
 #include <algorithm>
+
+#include <core/chemical/ChemicalManager.fwd.hh>
+#include <utility/vector1.hh>
+#include <basic/options/keys/OptionKeys.hh>
+
 
 namespace protocols {
 namespace loophash {

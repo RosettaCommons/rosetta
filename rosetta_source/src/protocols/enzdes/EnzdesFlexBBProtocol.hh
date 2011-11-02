@@ -20,7 +20,7 @@
 
 
 #include <protocols/enzdes/EnzdesBaseProtocol.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+// AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/enzdes/EnzdesLoopsFile.hh>
 
 #include <protocols/moves/BackrubMover.fwd.hh>
@@ -31,6 +31,9 @@
 
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FragData.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols{
 namespace enzdes{

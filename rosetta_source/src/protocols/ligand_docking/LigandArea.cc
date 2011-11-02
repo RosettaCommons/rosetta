@@ -22,6 +22,10 @@
 // Utility headers
 #include <utility/tag/Tag.hh>
 
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace ligand_docking {
 

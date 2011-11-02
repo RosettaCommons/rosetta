@@ -36,7 +36,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 
 #include <protocols/Protocol.hh>
 #include <protocols/moves/TrialMover.fwd.hh>
@@ -51,9 +51,8 @@
 #include <string>
 #include <vector>
 
-//Auto Headers
 #include <core/fragment/FragSet.fwd.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -30,6 +30,9 @@
 #include <iostream>
 #include <sstream>
 
+#include <utility/vector1.hh>
+
+
 using namespace core;
 
 namespace protocols {

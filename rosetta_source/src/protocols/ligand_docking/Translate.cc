@@ -29,12 +29,11 @@
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <utility/tag/Tag.hh>
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 
-//Auto Headers
-#include <core/grid/CartGrid.hh>
-#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <numeric/xyzVector.io.hh>
 
 using basic::T;

@@ -20,7 +20,7 @@
 
 // Package headers
 #include <protocols/scoring/InterchainPotential.hh>
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 // AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 
 // Project headers
@@ -32,8 +32,8 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/scoring/EnergyMap.hh>
+#include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;

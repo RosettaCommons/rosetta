@@ -25,14 +25,15 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
-//Auto Headers
+#include <core/kinematics/Jump.hh>
 #include <core/scoring/EnergyMap.hh>
+#include <utility/vector1.hh>
 
 namespace core {
 namespace scoring {

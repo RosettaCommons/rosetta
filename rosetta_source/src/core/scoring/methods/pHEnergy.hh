@@ -30,10 +30,13 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

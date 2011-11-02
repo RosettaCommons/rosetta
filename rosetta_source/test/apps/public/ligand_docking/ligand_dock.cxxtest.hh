@@ -12,78 +12,42 @@
 #include <test/core/init_util.hh>
 #include <test/UTracer.hh>
 
-#include <utility/file/file_sys_util.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
-#include <protocols/ligand_docking/ligand_dock_impl.hh>
-#include <protocols/jobdist/JobDistributors.hh>
+// AUTO-REMOVED #include <protocols/ligand_docking/ligand_dock_impl.hh>
+// AUTO-REMOVED #include <protocols/jobdist/JobDistributors.hh>
 
 #include <core/import_pose/atom_tree_diffs/atom_tree_diff.hh>
 
 #include <core/types.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/import_pose/import_pose.hh>
-#include <basic/options/option.hh>
-#include <basic/prof.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/import_pose/import_pose.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
 
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //for addding constraints if demanded by user
-#include <protocols/jobdist/Jobs.hh>
-#include <protocols/jobdist/standard_mains.hh>
-#include <protocols/ligand_docking/LigandDockProtocol.hh>
+// AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //for addding constraints if demanded by user
+// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
+// AUTO-REMOVED #include <protocols/jobdist/standard_mains.hh>
+// AUTO-REMOVED #include <protocols/ligand_docking/LigandDockProtocol.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <numeric/random/random.hh>
-#include <numeric/random/random_permutation.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random_permutation.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <utility/file/FileName.hh>
-#include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/file/FileName.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
-#include <ctime>
+// AUTO-REMOVED #include <ctime>
 #include <fstream>
 
 //Auto Headers
-#include <core/svn_version.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/grid/CartGrid.fwd.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/io/raw_data/DecoyFileData.hh>
-#include <core/io/raw_data/ScoreFileData.hh>
 #include <core/io/silent/EnergyNames.fwd.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStructFactory.hh>
-#include <core/io/silent/util.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/types.hh>
-#include <core/scoring/constraints/Constraints.hh>
-#include <utility/stream_util.hh>
-#include <basic/datacache/CacheableData.hh>
-#include <protocols/checkpoint/Checkpoint.hh>
-#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
-#include <protocols/moves/MoverStatistics.hh>
-#include <utility/io/izstream.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/format.hh>
-#include <time.h>
+#include <protocols/ligand_docking/LigandBaseProtocol.hh>
+#include <utility/vector0.hh>
 
 
 

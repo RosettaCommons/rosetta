@@ -21,7 +21,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
+// AUTO-REMOVED #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/build/RelativeConnectRight.hh>
@@ -31,23 +31,9 @@
 #include <string>
 
 //Auto Headers
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID_Mask.hh>
-#include <core/id/DOF_ID_Map.hh>
-#include <core/id/DOF_ID_Mask.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/ScoreFunctionInfo.fwd.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <basic/Tracer.fwd.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <numeric/xyz.functions.hh>
-#include <utility>
+#include <utility/vector1.hh>
 
 
 class RelativeConnectRightTests : public CxxTest::TestSuite

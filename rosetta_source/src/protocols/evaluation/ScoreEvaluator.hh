@@ -26,17 +26,17 @@
 
 // Package Headers
 #include <protocols/evaluation/PoseEvaluator.hh>
-#include <protocols/evaluation/RDC_Evaluator.hh>
+// AUTO-REMOVED #include <protocols/evaluation/RDC_Evaluator.hh>
 // Project Headers
 #include <core/io/silent/silent.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-#include <protocols/evaluation/util.hh>
+// AUTO-REMOVED #include <protocols/evaluation/util.hh>
 #include <core/scoring/rms_util.hh>
 
-//Auto Headers
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <iostream>
+#include <protocols/evaluation/RDC_Evaluator.fwd.hh>
+#include <utility/vector1.hh>
 
 
 // ObjexxFCL Headers

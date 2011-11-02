@@ -37,7 +37,7 @@
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/AtomPointer.hh>
+// AUTO-REMOVED #include <core/kinematics/AtomPointer.hh>
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/constants.hh>
 #include <core/kinematics/util.hh>
@@ -67,10 +67,13 @@
 // #include <cstddef>
 // #include <iostream>
 // #include <fstream>
-#include <utility>
+// AUTO-REMOVED #include <utility>
 #include <basic/Tracer.hh>
 
 #include <core/chemical/ChemicalManager.hh>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR( "core.conformation.util" );
 

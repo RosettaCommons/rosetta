@@ -37,6 +37,7 @@
 
 //Auto Headers
 #include <protocols/match/Hit.hh>
+#include <utility/vector1.hh>
 #include <boost/unordered/unordered_map_fwd.hpp>
 
 

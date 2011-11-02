@@ -25,12 +25,15 @@
 
 // Project headers
 #include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
-#include <core/id/TorsionID.hh>
+// AUTO-REMOVED #include <core/id/TorsionID.hh>
 
 // Utility headers
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

@@ -59,24 +59,22 @@
 #include <basic/datacache/CacheableData.hh>
 
 // Option Keys Headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/corrections.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
 // Numeric Headers
 #include <numeric/numeric.functions.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
-#include <ObjexxFCL/FArray2D.hh>
-
-// Utility Headers
-#include <utility/basic_sys_util.hh>
-#include <utility/excn/Exceptions.hh>
+#include <core/id/types.hh>
+#include <core/scoring/MembranePotential.hh>
+#include <core/scoring/hbonds/HBondDatabase.hh>
+#include <utility/vector1.hh>
 
 namespace core {
 namespace scoring {

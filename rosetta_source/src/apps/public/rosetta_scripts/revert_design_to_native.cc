@@ -40,8 +40,9 @@
 
 #include <basic/options/option.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 using namespace core;

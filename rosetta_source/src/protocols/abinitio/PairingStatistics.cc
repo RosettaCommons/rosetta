@@ -67,13 +67,9 @@
 
 // C++ headers
 #include <cstdlib>
-#include <iterator>
+// AUTO-REMOVED #include <iterator>
 #include <string>
 #include <vector>
-
-//Auto Headers
-#include <utility/io/mpistream.hh>
-
 
 
 static basic::Tracer tr("protocols.abinitio.PairingStats");

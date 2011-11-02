@@ -23,7 +23,7 @@
 #include <protocols/match/upstream/UpstreamBuilder.hh>
 // AUTO-REMOVED #include <protocols/match/upstream/ScaffoldBuildPoint.hh>
 #include <protocols/match/downstream/DownstreamBuilder.hh>
-#include <protocols/match/downstream/LigandConformer.hh>
+// AUTO-REMOVED #include <protocols/match/downstream/LigandConformer.hh>
 
 //Project header
 #include <core/conformation/Residue.hh>
@@ -35,8 +35,9 @@
 // C++ headers
 #include <list>
 
-//Auto Headers
+#include <core/id/AtomID.hh>
 #include <protocols/match/Hit.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

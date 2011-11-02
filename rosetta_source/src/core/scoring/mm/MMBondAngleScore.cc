@@ -38,7 +38,7 @@
 #include <map>
 // AUTO-REMOVED #include <math.h>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <utility/keys/Key2Tuple.hh>
 
 

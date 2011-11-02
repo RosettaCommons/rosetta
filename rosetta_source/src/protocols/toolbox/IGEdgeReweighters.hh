@@ -21,6 +21,9 @@
 //#include <core/pack/task/PackerTask.fwd.hh>
 #include <set>
 
+#include <utility/vector1.hh>
+
+
 
 namespace protocols {
 namespace toolbox {

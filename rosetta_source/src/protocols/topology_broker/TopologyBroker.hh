@@ -22,7 +22,7 @@
 #include <protocols/topology_broker/TopologyBroker.fwd.hh>
 
 // Package Headers
-#include <protocols/topology_broker/TopologyClaimer.hh>
+// AUTO-REMOVED #include <protocols/topology_broker/TopologyClaimer.hh>
 #include <protocols/topology_broker/DofClaim.fwd.hh>
 #include <protocols/topology_broker/ClaimerMessage.fwd.hh>
 
@@ -47,6 +47,9 @@
 // C/C++ headers
 #include <cassert>
 #include <string>
+
+#include <protocols/topology_broker/TopologyClaimer.fwd.hh>
+
 
 // option key includes
 /* Topology Broker is the central class for the broking mechanism. The broker maintains a list of ToplogyClaimers. These Claimers

@@ -30,10 +30,6 @@
 
 // AUTO-REMOVED #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <ostream>
-
-
 // C++ Headers
 
 namespace core {

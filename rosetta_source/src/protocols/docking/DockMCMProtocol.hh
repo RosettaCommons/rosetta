@@ -23,12 +23,16 @@
 // Unit Headers
 #include <protocols/docking/DockingHighRes.hh>
 #include <protocols/docking/DockMCMProtocol.fwd.hh>
-#include <protocols/docking/DockMCMCycle.hh>
+// AUTO-REMOVED #include <protocols/docking/DockMCMCycle.hh>
 
 // Package headers
 #include <core/pose/Pose.fwd.hh>
 
 #include <protocols/docking/DockFilters.fwd.hh>
+
+#include <protocols/docking/DockMCMCycle.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace docking {

@@ -14,7 +14,7 @@
 
 
 //////////////////////////////////
-#include <protocols/swa/rna/StepWiseRNA_Util.hh>
+// AUTO-REMOVED #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_ResidueInfo.hh>
 //////////////////////////////////
 #include <ObjexxFCL/format.hh>
@@ -22,7 +22,7 @@
 #include <string>
 
 #include <iostream>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <sstream>
 #include <utility/vector1.hh>
 #include <map>
@@ -34,7 +34,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
 // Auto-header: duplicate removed #include <iostream>
@@ -55,6 +55,57 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
+
+#include <core/types.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/id/AtomID.fwd.hh>
+#include <core/id/AtomID.hh>
+#include <core/id/AtomID_Map.fwd.hh>
+#include <core/id/AtomID_Mask.fwd.hh>
+#include <core/id/DOF_ID.fwd.hh>
+#include <core/id/DOF_ID.hh>
+#include <core/id/DOF_ID_Map.fwd.hh>
+#include <core/id/DOF_ID_Mask.fwd.hh>
+#include <core/id/JumpID.fwd.hh>
+#include <core/id/JumpID.hh>
+#include <core/id/TorsionID.hh>
+#include <core/id/types.hh>
+#include <core/io/silent/SharedSilentData.hh>
+#include <core/io/silent/SilentEnergy.hh>
+#include <core/io/silent/SilentFileData.fwd.hh>
+#include <core/io/silent/SilentStruct.fwd.hh>
+#include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/silent.fwd.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/types.hh>
+#include <utility/PyAssert.hh>
+#include <utility/keys/AutoKey.fwd.hh>
+#include <utility/keys/AutoKey.hh>
+#include <utility/keys/Key.fwd.hh>
+#include <utility/keys/Key.hh>
+#include <utility/keys/KeyLess.fwd.hh>
+#include <utility/keys/KeyLookup.fwd.hh>
+#include <utility/keys/KeyLookup.hh>
+#include <utility/keys/NoClient.fwd.hh>
+#include <utility/keys/NoClient.hh>
+#include <utility/keys/SmallKeyVector.fwd.hh>
+#include <utility/keys/UserKey.fwd.hh>
+#include <utility/keys/VariantKey.fwd.hh>
+#include <utility/keys/VariantKey.hh>
+#include <utility/options/BooleanOption.fwd.hh>
+#include <utility/options/Option.fwd.hh>
+#include <utility/options/keys/BooleanOptionKey.fwd.hh>
+#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/options/keys/OptionKey.fwd.hh>
+#include <utility/options/keys/OptionKey.hh>
+#include <utility/options/keys/ScalarOptionKey.fwd.hh>
+#include <utility/options/keys/ScalarOptionKey.hh>
+#include <numeric/NumericTraits.hh>
+#include <numeric/angle.functions.hh>
+#include <ObjexxFCL/FArray2D.fwd.hh>
+#include <set>
+#include <utility>
+
 */
 
 using namespace core;

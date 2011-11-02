@@ -33,9 +33,9 @@
 // STL Headers
 #include <iostream>
 
-//Auto Headers
 #include <core/scoring/etable/etrie/EtableAtom.hh>
 #include <core/scoring/trie/RotamerTrie.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

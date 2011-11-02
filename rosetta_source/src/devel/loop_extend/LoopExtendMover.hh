@@ -25,8 +25,8 @@
 // Utility Headers
 #include <core/types.hh>
 
-//Auto Headers
 #include <protocols/loops/Loop.hh>
+#include <utility/vector1.hh>
 
 
 namespace devel {

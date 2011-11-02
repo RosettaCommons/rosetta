@@ -31,17 +31,17 @@
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
 
-#include <core/conformation/symmetry/SymmetryInfo.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/patterson.OptionKeys.gen.hh>
 
 // Utility headers
@@ -49,9 +49,9 @@
 //
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/chemical/AtomType.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
+#include <utility/vector1.hh>
 
 #ifdef WIN32
 	#define _USE_MATH_DEFINES

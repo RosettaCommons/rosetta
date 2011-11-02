@@ -27,8 +27,7 @@
 #include <utility/exit.hh>
 // AUTO-REMOVED #include <utility/string_util.hh>
 
-//Auto Headers
-#include <core/conformation/Atom.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

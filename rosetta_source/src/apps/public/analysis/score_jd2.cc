@@ -32,7 +32,7 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/electron_density/util.hh>
 
-#include <protocols/electron_density/util.hh>
+// AUTO-REMOVED #include <protocols/electron_density/util.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
 #include <protocols/topology_broker/util.hh>
 
@@ -53,9 +53,10 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <basic/datacache/CacheableData.hh>
 #include <core/pose/Pose.hh>
+#include <protocols/electron_density/SetupForDensityScoringMover.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 

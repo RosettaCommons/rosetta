@@ -15,9 +15,9 @@
 #define INCLUDED_core_scoring_methods_DFIRE_Potential_HH
 
 // core
-#include <core/pose/Pose.hh>
-#include <core/scoring/types.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/scoring/types.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
 // Unit Headers
 #include <core/scoring/methods/dfire/DFIRE_Potential.fwd.hh>
@@ -25,9 +25,14 @@
 #include <boost/unordered_map.hpp>
 
 // Utility headers
-#include <ObjexxFCL/FArray3D.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
+// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.hh>
+
+#include <core/types.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

@@ -21,7 +21,7 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
 //#include <core/chemical/ResidueTypeSet.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
@@ -39,7 +39,7 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <numeric/conversions.hh>
 #include <numeric/xyzMatrix.hh>
 

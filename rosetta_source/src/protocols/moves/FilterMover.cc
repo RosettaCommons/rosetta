@@ -26,6 +26,9 @@ static basic::Tracer TR( "protocols.FilterMover" );
 //
 #include <string>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace moves {
 

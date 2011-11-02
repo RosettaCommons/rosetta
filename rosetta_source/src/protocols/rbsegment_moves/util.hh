@@ -16,22 +16,27 @@
 #define INCLUDED_protocols_rbsegment_moves_util_hh
 
 // Package headers
-#include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/rbsegment_moves/RBSegment.fwd.hh>
-#include <protocols/rbsegment_moves/RBSegment.hh>
+// AUTO-REMOVED #include <protocols/rbsegment_moves/RBSegment.hh>
 
-#include <map>
+// AUTO-REMOVED #include <map>
 
-#include <numeric/xyzVector.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
-#include <utility/pointer/ReferenceCount.hh>
+// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
 
-#include <numeric/conversions.hh>
-#include <numeric/xyzMatrix.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
+
+#include <core/id/SequenceMapping.fwd.hh>
+#include <protocols/loops/Loops.fwd.hh>
+#include <utility/vector1.hh>
+
 
 
 namespace protocols {

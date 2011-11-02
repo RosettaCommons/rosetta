@@ -40,6 +40,10 @@
 //#include <ObjexxFCL/FArray1Da.hh>
 #include <ObjexxFCL/format.hh>
 
+#include <utility/vector1.hh>
+#include <ObjexxFCL/FArray3D.hh>
+
+
 static basic::Tracer TR("protocols.fldsgn.potentials.sspot.SSPairPotential", basic::t_info);
 
 namespace protocols {

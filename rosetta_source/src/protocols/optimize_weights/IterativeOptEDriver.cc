@@ -120,9 +120,8 @@
 #include <basic/options/keys/optE.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/kinematics/Jump.hh>
+#include <utility/vector0.hh>
 #include <ObjexxFCL/format.hh>
 
 //Auto using namespaces

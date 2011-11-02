@@ -32,7 +32,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 
 
 namespace protocols {

@@ -34,7 +34,6 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <numeric/xyz.functions.hh>
 
 static basic::Tracer TR("core.scoring.disulfides.CentroidDisulfidePotential");

@@ -34,6 +34,10 @@
 // C++ headers
 #include <string>
 
+#include <core/id/TorsionID.fwd.hh>
+#include <utility/vector1.hh>
+
+
 
 // Operating system headers
 

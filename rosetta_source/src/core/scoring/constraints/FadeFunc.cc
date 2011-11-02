@@ -18,11 +18,14 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
-#include <numeric/random.functions.hh>
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <numeric/random.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // C++ Headers
 #include <iostream>
+
+#include <utility/vector1.hh>
+
 
 namespace core {
 namespace scoring {

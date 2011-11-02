@@ -23,9 +23,9 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include "benchmark.hh"
+#include <apps/benchmark/benchmark.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 //#include <platform/types.hh>
 //#include <core/types.hh>
 //#include <core/chemical/AA.hh>

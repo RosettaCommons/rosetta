@@ -29,9 +29,14 @@
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 #include <utility/exit.hh>
+
+#include <protocols/loops/Loops.hh>
+#include <protocols/moves/Mover.fwd.hh>
+#include <utility/vector1.hh>
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -31,10 +31,10 @@
 // C++ headers
 #include <iostream>
 
-//Auto Headers
 #include <core/id/AtomID_Map.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/types.hh>
+#include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
 namespace core {

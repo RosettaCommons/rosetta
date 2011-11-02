@@ -19,9 +19,12 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
-#include <core/io/silent/SilentFileData.hh> // needed for default initialization of SilentFileDataOP
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh> // needed for default initialization of SilentFileDataOP
 #include <core/types.hh>
-#include <string>
+// AUTO-REMOVED #include <string>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace swa {

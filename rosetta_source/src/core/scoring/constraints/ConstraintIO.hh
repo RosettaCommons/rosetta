@@ -24,9 +24,8 @@
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-//Auto Headers
 #include <core/scoring/constraints/FuncFactory.fwd.hh>
-#include <ostream>
+#include <utility/vector1.hh>
 
 
 //Utility Headers

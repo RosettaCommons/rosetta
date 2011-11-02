@@ -19,6 +19,9 @@
 
 #include <sstream>
 
+#include <utility/options/BooleanVectorOption.hh>
+
+
 namespace protocols {
 namespace frag_picker {
 namespace quota {

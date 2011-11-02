@@ -23,15 +23,15 @@
 
 #include <protocols/comparative_modeling/ThreadingMover.hh>
 
-#include <basic/options/option_macros.hh>
+// AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <core/types.hh>
 
-//Auto Headers
 #include <core/pose/annotated_sequence.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

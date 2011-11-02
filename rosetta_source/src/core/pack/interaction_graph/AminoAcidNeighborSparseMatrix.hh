@@ -21,7 +21,7 @@
 // AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.Project.hh>
 #include <ObjexxFCL/FArray1.hh>
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray1A.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1A.hh>
 #include <ObjexxFCL/FArray2.hh>
 #include <ObjexxFCL/FArray2D.hh>
 

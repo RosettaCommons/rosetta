@@ -16,9 +16,6 @@
 #define INCLUDED_core_scoring_dssp_Dssp_fwd_hh
 
 
-//Auto Headers
-#include <utility/vector1.fwd.hh>
-
 namespace core {
 namespace scoring {
 namespace dssp {

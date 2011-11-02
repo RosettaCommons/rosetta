@@ -87,11 +87,10 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
-// Auto-header: duplicate removed #include <core/pose/util.hh>
-#include <protocols/relax/ClassicRelax.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <protocols/relax/ClassicRelax.hh>
+#include <utility/vector1.hh>
 
 
 using namespace core;

@@ -54,9 +54,9 @@
 //// C++ headers
 #include <string>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

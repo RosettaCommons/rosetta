@@ -47,6 +47,9 @@
 // Numeric headers
 #include <numeric/xyzVector.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 // Objexx headers
 
 // C++ headers

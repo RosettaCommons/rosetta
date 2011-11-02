@@ -31,9 +31,8 @@
 // Utility headers
 #include <core/types.hh>
 
-//Auto Headers
-#include <protocols/jd2/Job.hh>
-#include <utility/vector1_bool.hh>
+#include <protocols/jd2/Job.fwd.hh>
+#include <utility/vector1.hh>
 #include <string>
 
 namespace protocols {

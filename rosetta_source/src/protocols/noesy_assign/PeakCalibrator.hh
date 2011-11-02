@@ -45,6 +45,10 @@
 #include <map>
 #include <bitset>
 
+#include <protocols/noesy_assign/PeakCalibrator.fwd.hh>
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace noesy_assign {
 

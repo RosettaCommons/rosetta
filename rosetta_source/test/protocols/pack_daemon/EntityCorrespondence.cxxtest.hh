@@ -21,13 +21,17 @@
 #include <test/util/pose_funcs.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <sstream>
+
+//Auto Headers
+#include <utility/vector1.hh>
+
 
 //static basic::Tracer TR("EntityCorrespondenceTest.cxxtest");
 

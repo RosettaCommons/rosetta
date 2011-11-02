@@ -19,17 +19,15 @@
 // Project headers
 #include <core/types.hh>
 #include <protocols/fldsgn/topology/DimerPairing.fwd.hh>
-#include <protocols/fldsgn/topology/SS_Info2.hh>
+// AUTO-REMOVED #include <protocols/fldsgn/topology/SS_Info2.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
+#include <protocols/fldsgn/topology/SS_Info2.fwd.hh>
 #include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
-
-#include <string>
 #include <map>
+#include <string>
 
 
 namespace protocols {

@@ -31,10 +31,10 @@
 #include <basic/Tracer.hh>
 #include <basic/MemTracer.hh>
 
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 // C++ headers
 

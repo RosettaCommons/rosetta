@@ -59,11 +59,10 @@
 //Map
 #include <map>
 
-//Auto Headers
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/scoring/constraints/Constraint.hh>
 #include <core/id/SequenceMapping.hh>
+#include <core/kinematics/MoveMap.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

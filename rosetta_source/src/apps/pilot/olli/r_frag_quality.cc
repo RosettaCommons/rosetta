@@ -65,11 +65,11 @@
 //#include <basic/options/keys/OptionKeys.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//Auto Headers
+#include <core/fragment/FragData.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 #include <ObjexxFCL/format.hh>
 

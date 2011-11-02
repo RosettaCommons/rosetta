@@ -27,6 +27,7 @@
 #include <core/id/AtomID.hh>
 #include <basic/database/open.hh>
 #include <core/scoring/mm/MMBondAngleLibrary.hh>
+#include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
 #include <core/pose/Pose.hh>
 #include <core/chemical/ResidueConnection.hh>
@@ -41,6 +42,9 @@
 // Utility Headers
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
+
+#include <utility/vector1.hh>
+
 
 using namespace core;
 using namespace core::scoring::mm;

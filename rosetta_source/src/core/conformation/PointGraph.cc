@@ -22,9 +22,9 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Conformation.hh>
 
-//Auto Headers
 #include <core/conformation/PointGraphData.hh>
 #include <core/graph/UpperEdgeGraph.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

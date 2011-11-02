@@ -60,6 +60,9 @@ static basic::Tracer TR( "protocols.moves.PeptideStapleMover" );
 // C++ Headers
 #include <sstream>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <fstream>
 
 // ObjexxFCL Headers

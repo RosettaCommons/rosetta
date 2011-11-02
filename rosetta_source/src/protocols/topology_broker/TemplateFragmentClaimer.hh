@@ -41,8 +41,8 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
 #include <protocols/abinitio/Templates.hh>
+#include <utility/vector1.hh>
 
 
 //#include <basic/options/option_macros.hh>

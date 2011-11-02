@@ -16,12 +16,12 @@
 
 // Package headers
 #include <protocols/pack_daemon/MultistateAggregateFunction.hh>
-#include <protocols/pack_daemon/EntityCorrespondence.hh>
+// AUTO-REMOVED #include <protocols/pack_daemon/EntityCorrespondence.hh>
 #include <protocols/pack_daemon/PackDaemon.hh>
 
 // Project headers
-#include <core/io/pdb/pose_io.hh>
-#include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 
@@ -32,9 +32,14 @@
 #include <utility/string_util.hh>
 
 // C++ headers
-#include <ctime>
+// AUTO-REMOVED #include <ctime>
+#include <iostream>
 
 #include <core/import_pose/import_pose.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 
 static basic::Tracer TR("protocols.pack_daemon.MultistateFitnessFunction");

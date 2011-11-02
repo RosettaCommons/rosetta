@@ -46,8 +46,8 @@
 //// C++ headers
 // AUTO-REMOVED #include <fstream>
 
-//Auto Headers
 #include <core/fragment/Frame.hh>
+#include <utility/vector1.hh>
 
 
 // option key includes

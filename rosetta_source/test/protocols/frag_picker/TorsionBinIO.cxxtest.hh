@@ -22,7 +22,7 @@
 #include <utility/io/izstream.hh>
 
 //Auto Headers
-#include <utility/stream_util.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer tr("protocols.frag_picker.TorsionBinIO.cxxtest");

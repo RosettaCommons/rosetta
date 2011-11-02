@@ -21,13 +21,16 @@
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
-#include <core/scoring/AtomVDW.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/AtomVDW.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 // Utility headers
 

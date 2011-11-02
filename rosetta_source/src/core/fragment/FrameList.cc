@@ -31,9 +31,9 @@
 #include <utility/vector1.fwd.hh>
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/fragment/FragID.hh>
 #include <utility/exit.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

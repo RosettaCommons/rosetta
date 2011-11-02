@@ -27,6 +27,9 @@
 #include <core/id/SequenceMapping.hh>
 #include <basic/Tracer.hh>
 
+#include <utility/vector1.hh>
+
+
 static basic::Tracer tr( "protocols.forge.constraints.InverseRotamersRCG" );
 
 namespace protocols{

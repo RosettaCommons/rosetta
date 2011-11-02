@@ -34,15 +34,7 @@
 #include <iostream>
 
 //Auto Headers
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/types.hh>
-// AUTO-REMOVED #include <basic/OStream.fwd.hh>
-#include <basic/Tracer.fwd.hh>
-#include <protocols/match/Hit.hh>
-#include <utility/keys/Key2Tuple.hh>
+#include <utility/vector1.hh>
 
 
 using namespace protocols::match;

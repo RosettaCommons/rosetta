@@ -24,8 +24,8 @@
 // AUTO-REMOVED #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <core/fragment/FragData.hh>
+#include <utility/vector1.hh>
 
 
 // ObjexxFCL Headers

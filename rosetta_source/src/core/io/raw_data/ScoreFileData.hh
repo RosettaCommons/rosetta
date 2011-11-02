@@ -26,6 +26,9 @@
 // AUTO-REMOVED #include <string>
 #include <map>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace io {
 namespace raw_data {

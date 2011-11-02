@@ -18,15 +18,15 @@
 
 // Package headers
 #include <core/kinematics/tree/Atom.fwd.hh>
-#include <core/kinematics/Edge.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/Edge.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <core/kinematics/AtomTree.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/AtomTree.fwd.hh>
 #include <core/kinematics/AtomPointer.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 // AUTO-REMOVED #include <core/id/AtomID_Map.hh> // FWD doesnt get AtomMap for slice
-#include <core/id/DOF_ID_Map.fwd.hh>
-#include <core/id/DOF_ID_Mask.fwd.hh>
-#include <core/id/TorsionID.fwd.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Map.fwd.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Mask.fwd.hh>
+// AUTO-REMOVED #include <core/id/TorsionID.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 // AUTO-REMOVED #include <core/kinematics/types.hh>
 
@@ -37,9 +37,7 @@
 // Numeric headers
 // AUTO-REMOVED #include <numeric/xyzMatrix.fwd.hh>
 
-//Auto Headers
 #include <core/types.hh>
-#include <ostream>
 
 
 

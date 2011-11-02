@@ -22,10 +22,8 @@
 // ObjexxFCL Headers
 // AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
-//Auto Headers
 #include <core/chemical/ResidueType.fwd.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
-#include <iostream>
 
 
 namespace core {

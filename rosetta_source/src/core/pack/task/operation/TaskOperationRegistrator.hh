@@ -16,8 +16,13 @@
 #define INCLUDED_core_pack_task_operation_TaskOperationRegistrator_hh
 
 // Package headers
-#include <core/pack/task/operation/TaskOperationFactory.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <utility/factory/WidgetRegistrator.hh>
+
+#include <core/pack/task/operation/TaskOperationFactory.fwd.hh>
+#include <utility/vector0.hh>
+#include <iostream>
+
 
 namespace core {
 namespace pack {

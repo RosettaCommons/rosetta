@@ -15,9 +15,7 @@
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <protocols/loops/LoopMover.fwd.hh>
 
-//Auto Headers
 #include <protocols/loops/Loops.fwd.hh>
-#include <ostream>
 
 
 namespace protocols {

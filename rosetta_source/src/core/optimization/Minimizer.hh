@@ -18,8 +18,13 @@
 // Package headers
 #include <core/optimization/types.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/Multifunc.hh>
-#include <core/optimization/LineMinimizer.hh>
+// AUTO-REMOVED #include <core/optimization/Multifunc.hh>
+// AUTO-REMOVED #include <core/optimization/LineMinimizer.hh>
+
+#include <core/optimization/LineMinimizer.fwd.hh>
+#include <core/optimization/Multifunc.fwd.hh>
+#include <utility/vector1.hh>
+
 
 
 namespace core {

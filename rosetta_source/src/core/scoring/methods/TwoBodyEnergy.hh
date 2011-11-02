@@ -39,6 +39,10 @@
 // Utility Headers
 #include <utility/vector1.fwd.hh>
 
+#include <core/scoring/DerivVectorPair.fwd.hh>
+#include <utility/vector1.hh>
+
+
 /// The Two Body Energy Method specifies an interface for all two body methods: both
 /// long and short range, both context dependent and independent.  Any two body method
 /// must implement this interface as well as the EnergyMethod interface.

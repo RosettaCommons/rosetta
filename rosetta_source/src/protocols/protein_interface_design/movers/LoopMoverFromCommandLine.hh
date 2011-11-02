@@ -20,15 +20,15 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 #include <core/types.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/fragment/FragSet.fwd.hh>
-#include <protocols/loops/Loops.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/fragment/FragSet.fwd.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <protocols/protein_interface_design/movers/LoopMoverFromCommandLine.fwd.hh>
 
 #include <protocols/filters/Filter.fwd.hh>
 
-//Auto Headers
-#include <core/fragment/FragSet.hh>
+#include <protocols/loops/Loops.fwd.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace protein_interface_design {

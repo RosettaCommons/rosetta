@@ -17,8 +17,8 @@
 #define INCLUDED_protocols_ligand_docking_AddHydrogens_hh
 
 #include <protocols/ligand_docking/AddHydrogens.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 
@@ -26,6 +26,9 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace ligand_docking {

@@ -17,10 +17,13 @@
 #include <vector>
 #include <sstream>
 #include <iterator>
-#include <algorithm>
+// AUTO-REMOVED #include <algorithm>
 #include <utility/exit.hh>
 
 #include <stdio.h>
+
+#include <utility/vector0.hh>
+
 
 namespace protocols {
 namespace sparta {

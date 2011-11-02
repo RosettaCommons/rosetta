@@ -47,7 +47,10 @@
 // Objexx headers
 
 // C++ headers
-#include <iomanip>
+// AUTO-REMOVED #include <iomanip>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols{
 namespace scoring{

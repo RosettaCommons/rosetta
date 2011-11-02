@@ -27,17 +27,17 @@
 
 // Package Headers
 #include <protocols/evaluation/PoseEvaluator.hh>
-#include <protocols/evaluation/ConstraintEvaluator.hh> // Necessary because this class contains a vector of ConstraintEvaluators, instead of, e.g. a vector of ConstraintEvaluatorOPs.
+// AUTO-REMOVED #include <protocols/evaluation/ConstraintEvaluator.hh> // Necessary because this class contains a vector of ConstraintEvaluators, instead of, e.g. a vector of ConstraintEvaluatorOPs.
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/constraints/Constraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
 
 #ifdef WIN32	// for visual studio
 #else
-#include <core/scoring/constraints/Constraint.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Constraint.fwd.hh>
 #endif
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 #include <core/io/silent/silent.fwd.hh>
 
@@ -46,6 +46,10 @@
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
+
+#include <protocols/evaluation/ConstraintEvaluator.fwd.hh>
+#include <utility/vector1.hh>
+
 
 // AUTO-REMOVED #include <utility/vector1.hh>
 

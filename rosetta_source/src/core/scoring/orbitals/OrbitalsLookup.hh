@@ -19,17 +19,13 @@
 
 #include <numeric/interpolation/spline/Bicubic_spline.hh>
 #include <numeric/interpolation/spline/Cubic_spline.hh>
-#include <numeric/interpolation/spline/Interpolator.hh>
+// AUTO-REMOVED #include <numeric/interpolation/spline/Interpolator.hh>
 //#include <map>
 
 //STL header
 
 //#include <map>
 #include <vector>
-
-//Auto Headers
-#include <iostream>
-
 
 namespace core {
 namespace scoring {

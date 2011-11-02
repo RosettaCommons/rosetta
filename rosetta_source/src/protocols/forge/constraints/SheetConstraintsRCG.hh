@@ -27,7 +27,10 @@
 #include <core/types.hh>
 #include <protocols/fldsgn/BluePrint.fwd.hh>
 
-#include <string>
+// AUTO-REMOVED #include <string>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols{
 namespace forge{

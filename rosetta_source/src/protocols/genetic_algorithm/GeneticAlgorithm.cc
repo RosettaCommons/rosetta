@@ -37,6 +37,9 @@
 #include <iostream>
 #include <set>
 
+#include <utility/exit.hh>
+
+
 namespace protocols {
 namespace genetic_algorithm {
 

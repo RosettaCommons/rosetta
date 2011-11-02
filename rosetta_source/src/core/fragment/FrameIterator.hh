@@ -27,7 +27,7 @@
 // header graph.
 // can't expect users of these classes to figure out that they have to include it, too.
 // AUTO-REMOVED #include <core/fragment/FrameIteratorWorker_.hh>
-#include <core/fragment/Frame.hh>
+// AUTO-REMOVED #include <core/fragment/Frame.hh>
 // AUTO-REMOVED #include <core/fragment/FragID_Iterator.fwd.hh>
 
 // Project Headers
@@ -42,9 +42,9 @@
 // std Headers
 // AUTO-REMOVED #include <iterator>
 
-//Auto Headers
-#include <core/fragment/FrameIteratorWorker_.hh>
-#include <iostream>
+#include <core/fragment/Frame.fwd.hh>
+#include <core/fragment/FrameIteratorWorker_.fwd.hh>
+#include <utility/vector1.hh>
 
 
 /*

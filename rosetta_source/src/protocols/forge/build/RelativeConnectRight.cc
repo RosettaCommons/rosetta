@@ -19,6 +19,9 @@
 // project headers
 #include <core/pose/Pose.hh>
 
+#include <utility/vector1.hh>
+
+
 #ifdef WIN32
 // apparently this is required for a Visual Studio build.
 #include <core/conformation/Residue.hh>

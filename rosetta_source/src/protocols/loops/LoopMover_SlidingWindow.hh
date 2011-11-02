@@ -28,6 +28,9 @@
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 
+#include <utility/vector1.hh>
+
+
 // C++ Headers
 // AUTO-REMOVED #include <vector>
 

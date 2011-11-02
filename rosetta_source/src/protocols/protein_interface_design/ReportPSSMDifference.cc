@@ -29,6 +29,9 @@
 #include <fstream>
 #include <protocols/protein_interface_design/ReportPSSMDifference.hh>
 
+#include <core/pack/task/PackerTask.hh>
+
+
 static basic::Tracer TR( "protocols.protein_interface_design.movers.InterfaceRecapitulationMover" );
 
 bool

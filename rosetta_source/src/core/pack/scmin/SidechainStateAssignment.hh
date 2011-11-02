@@ -15,10 +15,14 @@
 #define INCLUDED_core_pack_scmin_SidechainStateAssignment_HH
 
 // Package Headers
-#include <core/pack/scmin/AtomTreeCollection.hh>
+// AUTO-REMOVED #include <core/pack/scmin/AtomTreeCollection.hh>
 
 // utility
 #include <utility/vector1.hh>
+
+#include <core/types.hh>
+#include <core/pack/scmin/AtomTreeCollection.fwd.hh>
+
 
 namespace core {
 namespace pack {

@@ -27,6 +27,9 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/id/AtomID_Map.hh>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <utility/vector1.hh>
 
 //Objexx headers

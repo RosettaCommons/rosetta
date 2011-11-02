@@ -36,7 +36,7 @@
 
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/types.hh>
-#include <core/scoring/hbonds/constants.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/constants.hh>
 
 // AUTO-REMOVED #include <numeric/constants.hh>
 #include <numeric/xyzVector.hh>
@@ -57,13 +57,10 @@
 #include <iomanip>
 #include <map>
 
-//Auto Headers
+#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
-#include <utility/io/mpistream.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
 #include <numeric/xyz.functions.hh>
-#include <ObjexxFCL/FArray2D.hh>
 
 
 

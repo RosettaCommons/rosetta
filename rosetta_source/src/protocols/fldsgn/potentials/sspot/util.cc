@@ -20,6 +20,9 @@
 #include <numeric/trig.functions.hh>
 #include <numeric/xyzVector.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace fldsgn {
 namespace potentials {

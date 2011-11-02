@@ -19,12 +19,9 @@
 #include <core/graph/Graph.hh>
 
 // C++ headers, for debugging your tests
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 
 //Auto Headers
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <list>
 
 
 

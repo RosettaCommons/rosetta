@@ -18,7 +18,7 @@
 #include <protocols/domain_assembly/AssembleLinkerMover.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/fragment/FragSet.hh>
 #include <utility/vector1.hh>

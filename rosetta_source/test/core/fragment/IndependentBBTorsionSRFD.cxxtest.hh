@@ -24,8 +24,8 @@
 
 #include <core/fragment/IndependentBBTorsionSRFD.hh>
 #include <core/id/TorsionID.hh>
-#include <core/kinematics/Edge.hh>
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/Edge.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
 
@@ -35,20 +35,11 @@
 #include <string>
 
 //Auto Headers
-#include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID_Mask.hh>
-#include <core/id/DOF_ID_Map.hh>
-#include <core/id/DOF_ID_Mask.hh>
-#include <core/id/NamedStubID.hh>
+#include <core/kinematics/Edge.fwd.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/ScoreFunctionInfo.fwd.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <basic/Tracer.fwd.hh>
 #include <utility/fix_boinc_read.hh>
-#include <utility>
+#include <utility/vector1.hh>
 
 
 class IndependentBBTorsionSRFDTests : public CxxTest::TestSuite

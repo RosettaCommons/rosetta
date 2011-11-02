@@ -16,17 +16,20 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/match/Hit.fwd.hh>
-#include <protocols/match/Hit.hh>
+// AUTO-REMOVED #include <protocols/match/Hit.hh>
 #include <protocols/match/SixDHasher.hh>
 #include <boost/unordered_map.hpp>
-#include <boost/cstdint.hpp>
-#include <numeric/HomogeneousTransform.hh>
+// AUTO-REMOVED #include <boost/cstdint.hpp>
+// AUTO-REMOVED #include <numeric/HomogeneousTransform.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/loophash/BackboneDB.hh>
 
 #include <string>
 #include <vector>
 #include <map>
+
+#include <utility/vector1.hh>
+
 
 
 #ifndef INCLUDED_protocols_loophash_LoopHashMap_hh

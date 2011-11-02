@@ -16,7 +16,6 @@
 // Unit header
 #include <protocols/boinc/watchdog.hh>
 
-//Auto Headers
 #include <iostream>
 
 

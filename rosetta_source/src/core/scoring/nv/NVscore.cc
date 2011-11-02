@@ -28,7 +28,7 @@
 #include <core/scoring/ContextGraphTypes.hh>
 #include <numeric/constants.hh>
 
-//Auto Headers
+#include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/scoring/EnergyMap.hh>

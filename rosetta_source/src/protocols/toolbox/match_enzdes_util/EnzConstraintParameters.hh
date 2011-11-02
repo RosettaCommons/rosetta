@@ -33,12 +33,11 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <set>
 
-//Auto Headers
 #include <core/types.hh>
-#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.fwd.hh>
-#include <utility/vector1_bool.hh>
+#include <utility/vector1.hh>
 #include <iostream>
 
 

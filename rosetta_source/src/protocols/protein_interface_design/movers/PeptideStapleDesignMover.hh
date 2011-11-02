@@ -19,7 +19,11 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-#include <protocols/moves/PeptideStapleMover.hh>
+// AUTO-REMOVED #include <protocols/moves/PeptideStapleMover.hh>
+
+#include <protocols/moves/PeptideStapleMover.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace protein_interface_design {

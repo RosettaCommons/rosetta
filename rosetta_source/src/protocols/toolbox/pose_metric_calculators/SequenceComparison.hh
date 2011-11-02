@@ -40,12 +40,17 @@
 #ifndef INCLUDED_protocols_toolbox_pose_metric_calculators_SequenceComparison_hh
 #define INCLUDED_protocols_toolbox_pose_metric_calculators_SequenceComparison_hh
 
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
-#include <core/pack/task/TaskFactory.hh>
+// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 
 // C++ headers
 #include <set>
+
+#include <core/types.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+
 
 
 namespace protocols{

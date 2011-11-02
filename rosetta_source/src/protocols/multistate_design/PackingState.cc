@@ -25,8 +25,7 @@
 // Utility headers
 #include <utility/vector0.hh>
 
-//Auto Headers
-#include <iostream>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

@@ -33,7 +33,7 @@
 
 // Unit headers
 #include <protocols/scoring/methods/pcs2/PcsInputCenterManager.hh>
-#include <protocols/scoring/methods/pcs2/PcsInputCenter.fwd.hh>
+// AUTO-REMOVED #include <protocols/scoring/methods/pcs2/PcsInputCenter.fwd.hh>
 //#include <protocols/scoring/methods/pcs2/PcsGridSearchParameterManager.hh>
 //#include <protocols/scoring/methods/pcs2/PcsEnergyParameterManager.hh>
 
@@ -50,6 +50,9 @@
 
 // C++ headers
 #include <iostream>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols{
 namespace scoring{

@@ -14,7 +14,7 @@
 
 #include <core/pose/Pose.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <basic/MetricValue.hh>
 
 

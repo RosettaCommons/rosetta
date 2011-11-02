@@ -20,7 +20,6 @@
 #include <utility/vector1.fwd.hh>
 #include <string>
 
-//Auto Headers
 #include <platform/types.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <utility/Bound.fwd.hh>

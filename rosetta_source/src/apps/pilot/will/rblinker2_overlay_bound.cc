@@ -62,7 +62,7 @@
 //#include <utility/io/ozstream.hh>
 
 #include <apps/pilot/will/will_util.hh>
-#include "mynamespaces.hh"
+#include <apps/pilot/will/mynamespaces.hh>
 
 using core::kinematics::Stub;
 using core::conformation::Residue;

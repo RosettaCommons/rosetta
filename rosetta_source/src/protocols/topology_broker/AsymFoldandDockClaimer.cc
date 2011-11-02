@@ -32,12 +32,13 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 
-//Auto Headers
 #include <core/conformation/Conformation.hh>
 #include <protocols/moves/MoverContainer.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 // Project Headers

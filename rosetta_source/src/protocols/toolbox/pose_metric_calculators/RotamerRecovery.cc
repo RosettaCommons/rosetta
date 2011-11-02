@@ -42,19 +42,19 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
-#include <basic/options/option.hh>
-#include <basic/database/open.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/database/open.hh>
 //#include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 
-#include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
-#include <core/import_pose/pose_stream/util.hh>
+// AUTO-REMOVED #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
+// AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
 
 #include <protocols/jumping/util.hh>
 
@@ -67,7 +67,7 @@
 #include <protocols/toolbox/pose_metric_calculators/RotamerRecovery.hh>
 
 // option key includes
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 
 

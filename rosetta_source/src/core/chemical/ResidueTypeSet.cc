@@ -51,6 +51,9 @@
 
 // Boost Headers
 #include <boost/foreach.hpp>
+
+#include <utility/vector1.hh>
+
 #define foreach BOOST_FOREACH
 
 namespace core {

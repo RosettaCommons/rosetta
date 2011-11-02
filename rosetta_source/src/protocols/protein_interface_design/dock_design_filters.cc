@@ -36,14 +36,14 @@
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <basic/MetricValue.hh>
 #include <numeric/random/random.hh>
-#include <boost/foreach.hpp>
+// AUTO-REMOVED #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 #include <core/chemical/AtomType.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
@@ -60,13 +60,11 @@
 // C++ headers
 #include <map>
 
-//Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
-
-#include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
 
 using namespace core;
 using namespace core::scoring;

@@ -46,6 +46,9 @@
 // Utility headers
 #include <utility/exit.hh>
 
+#include <utility/vector1.hh>
+
+
 // Numeric headers
 
 // Objexx headers

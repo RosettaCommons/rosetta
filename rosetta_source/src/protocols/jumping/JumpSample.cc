@@ -46,15 +46,13 @@
 #include <string>
 #include <fstream>
 
-//Auto Headers
 #include <core/chemical/VariantType.hh>
-#include <core/conformation/Residue.hh>
-#include <core/fragment/SecondaryStructure.hh>
 #include <core/fragment/FrameIterator.hh>
+#include <core/fragment/SecondaryStructure.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/util.hh>
 #include <protocols/jumping/JumpSample.hh>
-#include <numeric/random/random.fwd.hh>
+#include <utility/vector1.hh>
 
 namespace core {
 namespace scoring {

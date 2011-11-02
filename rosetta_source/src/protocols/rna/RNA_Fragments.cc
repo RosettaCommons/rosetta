@@ -15,11 +15,15 @@
 #include <protocols/rna/RNA_Fragments.hh>
 #include <protocols/rna/AllowInsert.fwd.hh>
 
-#include <protocols/rna/AllowInsert.hh>
-#include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <protocols/rna/AllowInsert.hh>
+// AUTO-REMOVED #include <core/id/AtomID.hh>
 
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
+
+#include <utility/vector1.hh>
+#include <iostream>
+
 
 namespace protocols{
 namespace rna{

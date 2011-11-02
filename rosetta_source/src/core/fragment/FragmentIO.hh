@@ -26,9 +26,9 @@
 #include <utility/vector1.fwd.hh>
 
 // C/C++
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <map>
-#include <string>
+// AUTO-REMOVED #include <string>
 
 namespace core {
 namespace fragment {

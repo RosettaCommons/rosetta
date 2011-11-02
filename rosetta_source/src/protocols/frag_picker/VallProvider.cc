@@ -41,8 +41,8 @@
 #include <sstream>
 #include <string>
 
-//Auto Headers
 #include <core/pose/annotated_sequence.hh>
+#include <utility/vector1.hh>
 
 
 // Tracer instance for this file

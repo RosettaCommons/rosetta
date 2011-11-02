@@ -22,7 +22,7 @@
 // AUTO-REMOVED #include <core/optimization/DOF_Node.hh>
 
 // Symmetry
-#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.hh>
 
 // Project headers
@@ -32,11 +32,9 @@
 // ObjexxFCL headers
 // AUTO-REMOVED #include <ObjexxFCL/FArray2D.fwd.hh>
 
-//Auto Headers
-#include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/optimization/MinimizerMap.fwd.hh>
 #include <core/optimization/Multifunc.fwd.hh>
+#include <utility/vector1.hh>
 
 
 

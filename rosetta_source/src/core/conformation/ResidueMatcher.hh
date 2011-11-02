@@ -26,10 +26,6 @@
 //#include <utility/pointer/access_ptr.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
-#include <ostream>
-
-
 // C++ headers
 
 

@@ -33,9 +33,8 @@
 // Parser headers
 #include <utility/tag/Tag.hh>
 
-//Auto Headers
-#include <numeric/xyzVector.hh>
-#include <numeric/conversions.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 //// C++ headers
 static basic::Tracer TR("protocols.fldsgn.filters.HSSTripletFilter");

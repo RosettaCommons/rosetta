@@ -25,17 +25,16 @@
 #include <numeric/random/random.hh>
 #include <string>
 
-//Auto Headers
-#include <numeric/xyz.functions.hh>
-
-#include <core/scoring/ScoreFunction.hh>
 //#include <core/pose/Pose.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
 
-//Auto Headers
-#include <protocols/moves/DataMap.hh>
+// Auto-header: duplicate removed #include <core/pack/task/PackerTask.hh>
+// Auto-header: duplicate removed #include <core/pack/task/TaskFactory.hh>
+// Auto-header: duplicate removed #include <core/scoring/ScoreFunction.hh>
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
+// Auto-header: duplicate removed #include <numeric/xyz.functions.hh>
 
 
 

@@ -20,9 +20,8 @@
 // AUTO-REMOVED #include <protocols/protein_interface_design/DockDesign.hh>
 // AUTO-REMOVED #include <boost/foreach.hpp>
 
-//Auto Headers
 #include <protocols/filters/Filter.fwd.hh>
-#include <sstream>
+#include <utility/pointer/ReferenceCount.hh>
 
 #define foreach BOOST_FOREACH
 

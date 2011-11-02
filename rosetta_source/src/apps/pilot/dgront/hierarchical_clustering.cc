@@ -28,6 +28,9 @@
 
 #include <string>
 
+#include <utility/vector1.hh>
+
+
 basic::Tracer TR("cluster_anything");
 
 OPT_1GRP_KEY( Integer, clustering, n )

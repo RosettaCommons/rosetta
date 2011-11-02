@@ -50,7 +50,7 @@
 // AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <sstream>
-#include <ios>
+// AUTO-REMOVED #include <ios>
 // AUTO-REMOVED #include <utility/io/izstream.hh>
 // AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
@@ -144,8 +144,7 @@ using basic::Error;
 // Auto-header: duplicate removed #include <iostream>
 // Auto-header: duplicate removed #include <string>
 
-//Auto Headers
-#include <utility/io/mpistream.hh>
+#include <utility/vector0.hh>
 
 
 

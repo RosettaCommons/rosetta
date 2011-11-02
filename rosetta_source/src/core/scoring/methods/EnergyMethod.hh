@@ -20,7 +20,7 @@
 
 // Package headers
 #include <core/types.hh>
-#include <core/scoring/DerivVectorPair.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/DerivVectorPair.fwd.hh>
 #include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/ScoreType.hh>
@@ -36,15 +36,15 @@
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 
 #include <core/id/AtomID.fwd.hh>
-#include <core/id/DOF_ID.fwd.hh>
-#include <core/id/TorsionID.fwd.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID.fwd.hh>
+// AUTO-REMOVED #include <core/id/TorsionID.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 // Numeric headers
-#include <numeric/xyzVector.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 
 namespace core {

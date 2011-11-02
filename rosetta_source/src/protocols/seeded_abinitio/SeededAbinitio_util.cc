@@ -18,20 +18,20 @@
 #include <protocols/protein_interface_design/dock_design_filters.hh>
 
 // Project Headers
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBPoseMap.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 
 //#include <core/conformation/Conformation.hh>
 // Auto-header: duplicate removed #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 
 // Auto-header: duplicate removed #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueSelector.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 //#include <core/conformation/ResidueFactory.hh>
 // Auto-header: duplicate removed #include <core/kinematics/FoldTree.hh>
@@ -48,25 +48,25 @@
 // Auto-header: duplicate removed #include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
 
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 // Auto-header: duplicate removed #include <core/pose/PDBInfo.hh>
 
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
-#include <core/id/AtomID_Map.hh>
-#include <core/import_pose/import_pose.hh>
-#include <core/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
+// AUTO-REMOVED #include <core/import_pose/import_pose.hh>
+// AUTO-REMOVED #include <core/init.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 // Auto-header: duplicate removed #include <core/pose/Pose.hh>
 // Auto-header: duplicate removed #include <core/pose/util.hh>
-#include <core/scoring/rms_util.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 
 // Auto-header: duplicate removed #include <core/conformation/Conformation.hh>
 // Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 // Auto-header: duplicate removed #include <core/chemical/ResidueSelector.hh>
 // Auto-header: duplicate removed #include <core/chemical/ResidueTypeSet.fwd.hh>
 
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 // Auto-header: duplicate removed #include <core/kinematics/FoldTree.hh>
 // Auto-header: duplicate removed #include <core/types.hh>
@@ -75,18 +75,8 @@
 // Auto-header: duplicate removed #include <core/pose/util.hh>
 // Auto-header: duplicate removed #include <core/pose/PDBInfo.hh>
 
-//Auto Headers
-#include <core/chemical/AtomType.hh>
-
-// Utility Headers
-// Auto-header: duplicate removed #include <basic/Tracer.hh>
-#include <utility/string_util.hh>
-// Auto-header: duplicate removed #include <utility/vector1.hh>
-#include <utility/tag/Tag.hh>
-
-// C++ headers
-#include <map>
-#include <algorithm>
+#include <core/kinematics/Jump.hh>
+#include <utility/vector0.hh>
 
 static basic::Tracer TR( "seeded_abinitio.SeededAbinitio_util" );
 

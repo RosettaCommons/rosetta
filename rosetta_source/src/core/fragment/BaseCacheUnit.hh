@@ -31,7 +31,6 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
 #include <utility/pointer/access_ptr.fwd.hh>
 
 

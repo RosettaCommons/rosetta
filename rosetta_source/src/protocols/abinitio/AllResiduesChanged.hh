@@ -16,6 +16,9 @@
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace abinitio {
 

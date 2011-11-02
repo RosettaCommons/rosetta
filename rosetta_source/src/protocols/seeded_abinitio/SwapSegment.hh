@@ -19,7 +19,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/scoring/ScoreFunction.hh>

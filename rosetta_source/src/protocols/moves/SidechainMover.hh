@@ -28,7 +28,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/id/DOF_ID_Range.fwd.hh>
 
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
@@ -36,10 +36,13 @@
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 
 // Numeric Headers
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
+
+#include <numeric/random/random.fwd.hh>
+
 
 namespace protocols {
 namespace moves {

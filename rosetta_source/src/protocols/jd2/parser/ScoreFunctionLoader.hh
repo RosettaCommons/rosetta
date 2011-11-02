@@ -24,6 +24,9 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace jd2 {
 namespace parser {

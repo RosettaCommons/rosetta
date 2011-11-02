@@ -17,7 +17,7 @@
 
 // Package headers
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
 #include <core/chemical/ResidueType.hh>
@@ -27,17 +27,17 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 
 // Numeric headers
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/deriv/distance_deriv.hh>
 
 // C++ headers
 #include <iostream>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
+#include <utility/vector1.hh>
 
 
 namespace core {

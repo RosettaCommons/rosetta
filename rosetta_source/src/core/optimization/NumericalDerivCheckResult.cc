@@ -14,6 +14,9 @@
 
 #include <core/optimization/NumericalDerivCheckResult.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace optimization {
 

@@ -26,7 +26,7 @@
 #include <utility/tag/Tag.fwd.hh>
 
 // c++ headers
-#include <string>
+// AUTO-REMOVED #include <string>
 #include <map>
 
 namespace core {

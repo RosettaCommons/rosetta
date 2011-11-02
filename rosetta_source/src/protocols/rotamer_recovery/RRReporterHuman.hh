@@ -49,17 +49,20 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers
-#include <ostream>
+// AUTO-REMOVED #include <ostream>
 #include <map>
+
+#include <iostream>
+
 
 namespace protocols {
 namespace rotamer_recovery {

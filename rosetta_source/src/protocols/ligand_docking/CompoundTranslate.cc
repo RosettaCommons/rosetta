@@ -15,23 +15,21 @@
 #include <protocols/ligand_docking/CompoundTranslate.hh>
 #include <protocols/ligand_docking/CompoundTranslateCreator.hh>
 #include <protocols/ligand_docking/Translate.hh>
-#include <protocols/ligand_docking/grid_functions.hh>
-#include <protocols/geometry/RB_geometry.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+// AUTO-REMOVED #include <protocols/ligand_docking/grid_functions.hh>
+// AUTO-REMOVED #include <protocols/geometry/RB_geometry.hh>
+// AUTO-REMOVED #include <protocols/moves/RigidBodyMover.hh>
 
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <numeric/random/random_permutation.hh>
 
-//Auto Headers
-#include <core/grid/CartGrid.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <numeric/xyzVector.io.hh>
+#include <core/chemical/AtomType.hh>
+#include <core/kinematics/Jump.hh>
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-
-// Boost Headers
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 

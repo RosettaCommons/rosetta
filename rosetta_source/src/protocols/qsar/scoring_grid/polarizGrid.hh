@@ -17,6 +17,9 @@
 #include <protocols/qsar/scoring_grid/GridBase.hh>
 #include <map>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace qsar {
 namespace scoring_grid {

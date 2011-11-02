@@ -32,6 +32,9 @@
 #include <string>
 #include <sstream>
 
+#include <protocols/jd2/Job.hh>
+
+
 namespace protocols{
 namespace features{
 

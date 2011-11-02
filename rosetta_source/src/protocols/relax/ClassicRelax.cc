@@ -69,6 +69,10 @@
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
 
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+
 #ifdef BOINC_GRAPHICS
 #include <protocols/boinc/boinc.hh>
 #endif

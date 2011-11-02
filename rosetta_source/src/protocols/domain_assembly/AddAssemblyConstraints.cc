@@ -16,26 +16,26 @@
 #include <protocols/moves/Mover.hh>
 #include <core/pose/Pose.hh>
 
-#include <protocols/loops/LoopMoverFactory.hh>
-#include <protocols/loops/LoopMover.hh>
-#include <protocols/loops/Loop.hh>
-#include <protocols/loops/Loops.hh>
+// AUTO-REMOVED #include <protocols/loops/LoopMoverFactory.hh>
+// AUTO-REMOVED #include <protocols/loops/LoopMover.hh>
+// AUTO-REMOVED #include <protocols/loops/Loop.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
-#include <protocols/loops/loops_main.hh>
-#include <core/fragment/FragSet.hh>
-#include <core/fragment/FragSet.fwd.hh>
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
+// AUTO-REMOVED #include <core/fragment/FragSet.hh>
+// AUTO-REMOVED #include <core/fragment/FragSet.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 // Auto-header: duplicate removed #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 
-#include <core/chemical/ChemicalManager.fwd.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.fwd.hh>
 
 #include <core/scoring/constraints/Func.hh>
 #include <core/scoring/constraints/Constraint.hh>
@@ -45,9 +45,9 @@
 
 
 // Auto-header: duplicate removed #include <protocols/moves/Mover.hh>
-#include <protocols/moves/ScoreMover.hh>
-#include <protocols/moves/CompositionMover.hh>
-#include <protocols/moves/ConstraintSetMover.hh>
+// AUTO-REMOVED #include <protocols/moves/ScoreMover.hh>
+// AUTO-REMOVED #include <protocols/moves/CompositionMover.hh>
+// AUTO-REMOVED #include <protocols/moves/ConstraintSetMover.hh>
 
 //#include <devel/init.hh>
 
@@ -55,9 +55,12 @@
 #include <iostream>
 #include <string>
 
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
+
+#include <core/kinematics/Jump.hh>
+
 
 namespace protocols {
 namespace domain_assembly {

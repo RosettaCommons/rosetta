@@ -26,7 +26,11 @@
 #include <basic/options/keys/mysql.OptionKeys.gen.hh>
 
 // Utility Headers
-#include <utility/excn/Exceptions.hh>
+// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
+
+#include <utility/vector1.hh>
+#include <utility/excn/EXCN_Base.hh>
+
 
 using std::cout;
 using std::endl;

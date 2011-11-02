@@ -22,19 +22,19 @@
 
 // Project Headers
 #include <basic/Tracer.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableString.hh>
+// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableString.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
 
 #include <core/types.hh>
-#include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobDistributor.hh>
+// AUTO-REMOVED #include <protocols/jd2/Job.hh>
+// AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -50,6 +50,10 @@
 #include <ostream>
 #include <string>
 #include <map>
+
+#include <protocols/jd2/JobDistributor.fwd.hh>
+#include <basic/datacache/CacheableString.fwd.hh>
+
 
 using std::endl;
 using std::ostream;

@@ -45,10 +45,13 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/james.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/james.OptionKeys.gen.hh>
 
 #include <numeric/deriv/distance_deriv.hh>
+
+#include <utility/vector1.hh>
+
 
 // Utility headers
 

@@ -38,7 +38,6 @@
 // AUTO-REMOVED #include <vector>
 #include <map>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 #include <iostream>
 

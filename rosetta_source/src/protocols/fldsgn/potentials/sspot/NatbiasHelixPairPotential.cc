@@ -17,11 +17,14 @@
 // Package headers
 
 // Project headers
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/fldsgn/topology/HelixPairing.hh>
 #include <numeric/numeric.functions.hh>
 #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+
 
 static basic::Tracer TR("protocols.fldsgn.potentials.sspot.NatbiasHelixPairPotential", basic::t_info);
 

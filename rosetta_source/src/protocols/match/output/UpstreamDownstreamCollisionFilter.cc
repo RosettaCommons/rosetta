@@ -25,9 +25,9 @@
 #include <core/conformation/Residue.hh>
 #include	<core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/etable/EtableEnergy.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/etable/EtableEnergy.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -35,9 +35,10 @@
 // C++ headers
 #include <iostream>
 
-//Auto Headers
 #include <core/id/AtomID.hh>
+#include <core/scoring/methods/ShortRangeTwoBodyEnergy.hh>
 #include <protocols/match/Hit.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

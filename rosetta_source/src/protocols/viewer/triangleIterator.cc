@@ -23,7 +23,7 @@
 #include <utility/exit.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <ObjexxFCL/FArray4D.hh>
 
 

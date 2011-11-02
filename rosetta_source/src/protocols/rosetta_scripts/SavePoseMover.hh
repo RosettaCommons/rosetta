@@ -23,6 +23,9 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <core/types.hh>
 
 

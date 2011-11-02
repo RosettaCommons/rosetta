@@ -27,7 +27,7 @@
 
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/rbsegment_moves/AutoRBRelaxMover.hh>
-#include <protocols/rbsegment_moves/RBSegmentRelax.hh>
+// AUTO-REMOVED #include <protocols/rbsegment_moves/RBSegmentRelax.hh>
 #include <protocols/rbsegment_moves/RBSegmentMover.hh>
 #include <protocols/rbsegment_moves/RBSegment.hh>
 #include <protocols/rbsegment_moves/util.hh>
@@ -36,32 +36,32 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RigidBodyMover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/electron_density/util.hh>
+// AUTO-REMOVED #include <protocols/electron_density/util.hh>
 #include <protocols/relax/FastRelax.hh>
 
 #include <core/scoring/electron_density/util.hh>
 #include <core/scoring/constraints/util.hh>
 
-#include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <core/pack/task/operation/OperateOnCertainResidues.hh>
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/OperateOnCertainResidues.hh>
+// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
+// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 
 
-#include <protocols/viewer/viewers.hh>
-#include <protocols/jumping/Dssp.hh>
+// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
+// AUTO-REMOVED #include <protocols/jumping/Dssp.hh>
 
-#include <core/io/silent/SilentStructFactory.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 
 
-#include <core/chemical/ChemicalManager.fwd.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/silent/SilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStruct.hh>
 #include <basic/options/option.hh>
 // Auto-header: duplicate removed #include <protocols/rbsegment_moves/RBSegment.hh>
 // Auto-header: duplicate removed #include <protocols/moves/SwitchResidueTypeSetMover.hh>
@@ -70,17 +70,22 @@
 #include <numeric/random/random.hh>
 
 // C++ headers
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 
 
 //options
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/RBSegmentRelax.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/loops.OptionKeys.gen.hh>
+
+#include <core/kinematics/MoveMap.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 using basic::T;
 using basic::Error;

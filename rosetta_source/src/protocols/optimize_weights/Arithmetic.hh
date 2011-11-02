@@ -30,7 +30,6 @@
 #include <list>
 #include <map>
 
-//Auto Headers
 #include <utility/vector1_bool.hh>
 
 

@@ -32,7 +32,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/MembraneTopology.fwd.hh>
 #include <core/scoring/MembranePotential.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 
 #include <protocols/Protocol.hh>
 #include <protocols/moves/TrialMover.hh>
@@ -42,9 +42,9 @@
 //// C++ headers
 #include <string>
 
-//Auto Headers
 #include <core/fragment/FragSet.fwd.hh>
 #include <protocols/moves/MonteCarlo.hh>
+#include <utility/vector1.hh>
 
 
 namespace protocols {

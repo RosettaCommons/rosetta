@@ -49,8 +49,8 @@
 // AUTO-REMOVED #include <istream>
 #include <string>
 
-//Auto Headers
 #include <core/kinematics/Jump.hh>
+#include <utility/vector1.hh>
 
 
 // option key includes

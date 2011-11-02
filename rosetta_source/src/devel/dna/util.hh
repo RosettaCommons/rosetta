@@ -32,6 +32,9 @@
 
 #include <iosfwd>
 
+#include <utility/vector1.hh>
+
+
 // AUTO-REMOVED #include <string>
 // AUTO-REMOVED #include <list>
 

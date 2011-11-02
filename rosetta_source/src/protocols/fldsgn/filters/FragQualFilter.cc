@@ -22,7 +22,7 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 #include <basic/MetricValue.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/toolbox/pose_metric_calculators/FragQualCalculator.hh>
 
 // Utility headers
@@ -32,7 +32,8 @@
 #include <protocols/filters/Filter.hh>
 #include <utility/tag/Tag.hh>
 
-//Auto Headers
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 //// C++ headers
 static basic::Tracer tr("protocols.fldsgn.filters.FragQualFilter");

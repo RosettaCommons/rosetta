@@ -21,9 +21,7 @@
 #include <protocols/idealize/IdealizeMover.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-//Auto Headers
-#include <utility/vector1_bool.hh>
-#include <protocols/idealize/IdealizeMoverCreator.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace idealize {

@@ -25,7 +25,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
@@ -43,6 +43,10 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
+
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 // AUTO-REMOVED #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 

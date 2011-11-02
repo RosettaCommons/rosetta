@@ -24,19 +24,22 @@
 
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/symmetry/SymMinMover.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
+
+#include <utility/vector1.hh>
+
 
 using basic::T;
 using basic::Error;

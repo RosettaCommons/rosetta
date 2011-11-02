@@ -42,7 +42,6 @@
 // Utility headers
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-//Auto Headers
 #include <core/id/AtomID_Map.fwd.hh>
 #include <utility/vector1.fwd.hh>
 

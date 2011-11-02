@@ -18,28 +18,28 @@
 #include <basic/Tracer.hh>
 
 #include <core/chemical/util.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 #include <basic/options/option.hh>
 
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
-#include <core/sequence/SequenceProfile.hh>
+// AUTO-REMOVED #include <core/sequence/SequenceProfile.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/ScoringScheme.hh>
 #include <core/sequence/SimpleScoringScheme.hh>
-#include <core/sequence/ScoringSchemeFactory.hh>
+// AUTO-REMOVED #include <core/sequence/ScoringSchemeFactory.hh>
 #include <core/sequence/SWAligner.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
 
-#include <core/io/pdb/pose_io.hh>
-#include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/ScoreFileSilentStruct.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <core/io/silent/ScoreFileSilentStruct.hh>
 
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
@@ -49,7 +49,7 @@
 
 #include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/FArray2D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
 // C++ headers
 #include <map>
@@ -62,11 +62,11 @@
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/annotated_sequence.hh>
+#include <core/io/silent/SilentFileData.fwd.hh>
+#include <core/kinematics/Jump.hh>
+#include <core/sequence/SequenceProfile.fwd.hh>
 #include <utility/io/ozstream.hh>
-#include <ObjexxFCL/format.hh>
 
 std::map< std::string, core::pose::Pose >
 poses_from_cmd_line(

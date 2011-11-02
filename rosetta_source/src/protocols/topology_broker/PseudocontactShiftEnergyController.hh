@@ -37,8 +37,7 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
-//Auto Headers
-#include <core/scoring/constraints/Constraint.hh>
+#include <utility/vector1.hh>
 
 
 //// C++ headers

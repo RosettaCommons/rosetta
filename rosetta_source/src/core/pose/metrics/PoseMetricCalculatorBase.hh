@@ -26,6 +26,9 @@
 // C++ Headers
 #include <iostream>
 
+#include <utility/vector1.hh>
+
+
 namespace core {
 namespace pose {
 namespace metrics {

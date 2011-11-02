@@ -56,7 +56,11 @@
 #include <basic/options/keys/rdc.OptionKeys.gen.hh>
 
 #include <numeric/nls/lmmin.hh>
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
+
+#include <utility/vector1.hh>
+#include <numeric/random/random.fwd.hh>
+
 
 static basic::Tracer tr("core.scoring.ResidualDipolarCoupling");
 

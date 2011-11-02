@@ -20,10 +20,10 @@
 #include <core/kinematics/AtomPointer.fwd.hh>
 
 // Package headers
-#include <core/id/AtomID_Map.hh>
+// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 
 //Auto Headers
-#include <ostream>
+#include <core/types.hh>
 
 
 

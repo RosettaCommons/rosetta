@@ -23,13 +23,13 @@
 
 #include <core/graph/Graph.hh>
 
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/RotamerSet.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.hh>
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -38,6 +38,10 @@
 // Test headers
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
+
+//Auto Headers
+#include <utility/vector1.hh>
+
 
 class FASTERInteractionGraphTests : public CxxTest::TestSuite {
 public:

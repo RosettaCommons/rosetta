@@ -27,21 +27,24 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/constraints/XYZ_Func.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <basic/Tracer.hh>
 #include <string>
 #include <ObjexxFCL/string.functions.hh>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/pocket_grid.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #ifndef _WIN32
-#include <sys/time.h>
+// AUTO-REMOVED #include <sys/time.h>
+
+#include <utility/vector1.hh>
+
 #endif
 
 namespace protocols {

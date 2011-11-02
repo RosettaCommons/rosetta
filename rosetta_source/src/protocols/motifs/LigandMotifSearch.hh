@@ -25,10 +25,10 @@
 
 // Project Headers
 #include <core/conformation/Residue.fwd.hh>
-#include <core/chemical/ResidueType.fwd.hh>
-#include <protocols/toolbox/rotamer_set_operations/SpecialRotamerRotSetOps.fwd.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueType.fwd.hh>
+// AUTO-REMOVED #include <protocols/toolbox/rotamer_set_operations/SpecialRotamerRotSetOps.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
@@ -40,6 +40,9 @@
 #include <map>
 #include <set>
 #include <string>
+
+#include <core/pack/task/PackerTask.fwd.hh>
+
 
 namespace protocols {
 namespace motifs {

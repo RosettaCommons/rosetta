@@ -21,7 +21,7 @@
 #include <protocols/jobdist/Jobs.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
+// AUTO-REMOVED #include <basic/options/after_opts.hh>
 
 #include <core/types.hh>
 
@@ -33,42 +33,8 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <core/svn_version.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/NamedStubID.hh>
-#include <core/import_pose/atom_tree_diffs/atom_tree_diff.hh>
-#include <core/import_pose/atom_tree_diffs/atom_tree_diff.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/io/raw_data/DecoyFileData.hh>
-#include <core/io/raw_data/ScoreFileData.hh>
 #include <core/io/silent/EnergyNames.fwd.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStructFactory.hh>
-#include <core/io/silent/util.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/types.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <utility/stream_util.hh>
-#include <basic/datacache/CacheableData.hh>
-#include <protocols/checkpoint/Checkpoint.hh>
-#include <utility/file/file_sys_util.hh>
-#include <utility/io/izstream.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <numeric/random/random.hh>
-#include <ObjexxFCL/FArray.fwd.hh>
-#include <ObjexxFCL/FArray2D.hh>
+#include <utility/vector1.hh>
 
 
 

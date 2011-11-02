@@ -79,10 +79,9 @@
 // AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 
-//Auto Headers
 #include <core/io/silent/silent.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 
 
 

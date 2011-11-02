@@ -83,9 +83,9 @@
 
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
-//Auto Headers
+#include <core/fragment/FragData.hh>
 #include <core/import_pose/import_pose.hh>
-// Auto-header: duplicate removed #include <core/pose/util.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
 

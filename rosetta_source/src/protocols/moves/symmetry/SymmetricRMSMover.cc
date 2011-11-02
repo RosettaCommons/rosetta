@@ -34,6 +34,9 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace moves {
 namespace symmetry {

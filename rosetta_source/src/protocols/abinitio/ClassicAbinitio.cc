@@ -75,8 +75,9 @@
 //debug
 // AUTO-REMOVED #include <core/fragment/FragmentIO.hh>
 
-//Auto Headers
 #include <protocols/moves/MonteCarlo.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 static basic::Tracer tr("protocols.abinitio");

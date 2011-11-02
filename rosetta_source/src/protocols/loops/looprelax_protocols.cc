@@ -70,11 +70,9 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 
-//Auto Headers
 #include <core/pose/util.hh>
-// Auto-header: duplicate removed #include <core/scoring/Energies.hh>
-#include <utility/io/mpistream.hh>
-// Auto-header: duplicate removed #include <numeric/random/random.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
 

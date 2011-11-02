@@ -39,12 +39,12 @@
 #include <core/scoring/Membrane_FAPotential.hh>
 #include <core/scoring/Membrane_FAPotential.fwd.hh>
 #include <core/scoring/MembranePotential.hh>
-#include <core/scoring/MembraneTopology.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/membrane.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <core/scoring/MembraneTopology.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/membrane.OptionKeys.gen.hh>
 
-//Auto Headers
-#include <ObjexxFCL/FArray2D.hh>
+#include <utility/vector1.hh>
+#include <basic/options/keys/OptionKeys.hh>
 
 
 //#include <core/scoring/Energies.hh>

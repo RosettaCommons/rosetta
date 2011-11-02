@@ -38,7 +38,7 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
-//Auto Headers
+#include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
 

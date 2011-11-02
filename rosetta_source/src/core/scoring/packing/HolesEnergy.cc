@@ -53,7 +53,6 @@
 //C++ headers
 #include <iostream>
 
-//Auto Headers
 #include <core/pose/util.hh>
 #include <core/scoring/EnergyMap.hh>
 

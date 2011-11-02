@@ -32,6 +32,41 @@
 #include <string>
 #include <deque>
 
+#include <platform/types.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <protocols/jd2/InnerJob.fwd.hh>
+#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/JobDistributor.fwd.hh>
+#include <protocols/jd2/JobInputter.fwd.hh>
+#include <protocols/jd2/JobOutputter.fwd.hh>
+#include <protocols/jd2/MPIFileBufJobDistributor.fwd.hh>
+#include <protocols/jd2/Parser.fwd.hh>
+#include <utility/down_cast.hh>
+#include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
+#include <utility/vector1_bool.hh>
+#include <utility/vectorL.fwd.hh>
+#include <utility/vectorL.hh>
+#include <utility/vectorL_Selector.hh>
+#include <utility/vectorL_bool.hh>
+#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/access_ptr.fwd.hh>
+#include <utility/pointer/access_ptr.hh>
+#include <utility/pointer/owning_ptr.functions.hh>
+#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
+#include <numeric/xyzVector.fwd.hh>
+#include <algorithm>
+#include <cassert>
+#include <cstddef>
+#include <iosfwd>
+#include <limits>
+#include <list>
+#include <map>
+#include <vector>
+
+
 namespace protocols {
 namespace jd2 {
 namespace archive {

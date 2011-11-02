@@ -18,18 +18,19 @@
 
 // Utility headers
 #include <utility/fixedsizearray1.hh>
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 
 /// Project headers
 #include <core/types.hh>
 #include <protocols/match/output/MatchConsolidator.hh>
 
 // C++ headers
-#include <string>
-#include <iostream>
+// AUTO-REMOVED #include <string>
+// AUTO-REMOVED #include <iostream>
 
 //Auto Headers
 #include <protocols/match/Hit.hh>
+#include <utility/vector0.hh>
 #include <boost/unordered/unordered_map_fwd.hpp>
 
 

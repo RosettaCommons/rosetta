@@ -14,7 +14,7 @@
 // Unit headers
 #include <protocols/seeded_abinitio/SeedSetupMover.hh>
 #include <protocols/seeded_abinitio/SeedSetupMoverCreator.hh>
-#include <protocols/seeded_abinitio/SeededAbinitio_util.hh>
+// AUTO-REMOVED #include <protocols/seeded_abinitio/SeededAbinitio_util.hh>
 
 //#include <protocols/protein_interface_design/util.hh>
 //#include <utility/string_util.hh>
@@ -58,20 +58,11 @@
 #include <utility/tag/Tag.hh>
 #include <utility/string_util.hh>
 
-//Auto Headers
-#include <core/pose/util.hh>
-#include <core/pose/Pose.fwd.hh>
-
-//protocols
-#include <protocols/loops/loops_main.hh>
-
-// Auto-header: duplicate removed #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
-
-// C++ headers
-#include <fstream>
-#include <iostream>
-#include <string>
+#include <core/chemical/AtomType.hh>
+#include <core/conformation/Conformation.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+#include <basic/options/keys/OptionKeys.hh>
 
 //this class takes in the info of the seed into a task so that the packer within downstream mover doesnt change them. 
 //Given that the task is transferred 

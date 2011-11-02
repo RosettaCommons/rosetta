@@ -52,6 +52,9 @@ using basic::T;
 
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
+#include <utility/vector1.hh>
+
+
 
 using basic::Error;
 using basic::Warning;

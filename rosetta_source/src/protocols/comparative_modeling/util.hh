@@ -20,14 +20,11 @@
 
 #include <protocols/comparative_modeling/AlignmentSet.fwd.hh>
 
-//Auto Headers
 #include <core/id/AtomID_Mask.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
-#include <utility/vector1.fwd.hh>
-
+#include <utility/vector1.hh>
 #include <map>
-#include <string>
 
 namespace protocols {
 namespace comparative_modeling {

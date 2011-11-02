@@ -47,8 +47,8 @@
 
 #include <basic/Tracer.hh>
 
-//Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
+#include <utility/vector1.hh>
 
 using basic::T;
 using basic::Error;

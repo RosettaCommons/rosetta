@@ -36,6 +36,9 @@
 #include <utility/vector1.hh>
 #include <string>
 
+#include <utility/vector0.hh>
+
+
 static basic::Tracer tr("protocols.toolbox.tas_operations.SeqprofConsensusOperation");
 
 namespace protocols{

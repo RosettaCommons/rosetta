@@ -21,9 +21,9 @@
 
 // C++ Headers
 
-#include <ostream>
+// AUTO-REMOVED #include <ostream>
 
-//Auto Headers
+#include <utility/vector1.hh>
 
 
 namespace core {

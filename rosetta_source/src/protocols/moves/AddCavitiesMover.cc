@@ -39,6 +39,9 @@
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/datacache/CacheablePoseRawPtr.hh>
 
+#include <utility/vector1.hh>
+
+
 namespace protocols {
 namespace moves {
 

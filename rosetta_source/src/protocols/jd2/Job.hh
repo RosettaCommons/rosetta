@@ -16,7 +16,7 @@
 
 //unit headers
 #include <protocols/jd2/Job.fwd.hh>
-#include <protocols/jd2/InnerJob.fwd.hh>
+// AUTO-REMOVED #include <protocols/jd2/InnerJob.fwd.hh>
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
@@ -28,6 +28,9 @@
 //C++ headers
 #include <string>
 #include <list>
+
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace jd2 {

@@ -14,8 +14,14 @@
 #define INCLUDE_src_protocols_comparative_modeling_coord_util_hh
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/sequence/SequenceAlignment.hh>
-#include <ObjexxFCL/FArray2D.hh>
+// AUTO-REMOVED #include <core/sequence/SequenceAlignment.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
+
+#include <core/types.hh>
+#include <core/sequence/SequenceAlignment.fwd.hh>
+#include <utility/vector1.hh>
+#include <ObjexxFCL/FArray2D.fwd.hh>
+
 
 namespace protocols {
 namespace comparative_modeling {

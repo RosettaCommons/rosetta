@@ -20,7 +20,7 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/exit.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/factory/WidgetFactory.hh>
 #include <utility/factory/WidgetRegistrator.hh>
@@ -35,7 +35,7 @@
 ///using namespace ObjexxFCL;
 
 // C++ headers
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <map>
 
 namespace protocols {

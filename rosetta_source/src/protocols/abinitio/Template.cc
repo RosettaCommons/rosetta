@@ -47,7 +47,7 @@
 #include <string>
 #include <vector>
 
-//Auto Headers
+#include <core/fragment/FragData.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameList.hh>
 #include <protocols/jumping/PairingsList.hh>
