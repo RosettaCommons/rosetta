@@ -175,6 +175,34 @@ def install_links(target, source, env):
 #    os.chmod(target, stat.S_IMODE(status[stat.ST_MODE]) | stat.S_IWRITE)
     return 0
 
+def install_links_with_stripped_target(target, source, env):
+    """Install via symlink if possible, otherwise via copy.  The
+       stripped target removes the second to last part of the
+       extensions. For example:
+
+       target: app_name.default.linuxgccrelease
+       stripped_target: app_name.linuxgccrelease
+    """
+    import os
+    source = "%s/%s" % (relative_path(source, target), source)
+
+    split_target_name = str(target).split(".")
+    stripped_target = ".".join(split_target_name[:-2] + split_target_name[-1:])
+
+    if os.__dict__.has_key("symlink"):
+        os.symlink(source, target)
+        os.symlink(source, stripped_target)
+    else:
+        import shutil
+        shutil.copy2(source, target)
+        shutil.copy2(source, stripped_target)
+# XXX: Not sure if this works yet.
+#    import stat
+#    status = os.stat(source)
+#    os.chmod(target, stat.S_IMODE(status[stat.ST_MODE]) | stat.S_IWRITE)
+    return 0
+
+
 def salt(build_options, separator = "_"):
     """Generate string to disambiguate binary names for different build variants.
     Currently only 'mode' is used.

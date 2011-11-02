@@ -13,6 +13,7 @@ Import("build", "project")
 # Python imports
 from tools.build.settings import Settings, ProjectSettings
 from tools.build import utility
+from os import symlink
 
 # Load the project settings.
 if ( "my" in map(str, BUILD_TARGETS) or "my_pilot_apps" in map(str, BUILD_TARGETS) ) and project == "pilot_apps" :
@@ -117,10 +118,8 @@ for entry in actual.sources:
     target =  last_list_entry[0:len(last_list_entry)-3] + "." + "".join(build.options.extras)+ "." + build.options.os + build.options.cxx + build.options.mode
   last_target = last_list_entry[0:len(last_list_entry)-3] + "." + build.options.os + build.options.cxx + build.options.mode
   exe = env.Program( target, entry )
-  default_exe = env.Program(last_target, entry)
   Alias("#bin/" + target, "#build/src/" + build.platform + "/" + target)
   Alias("#bin/" + last_target, "#build/src/" + build.platform+ "/" + target)
-  env["INSTALL"] = utility.install_links
+  env["INSTALL"] = utility.install_links_with_stripped_target
   install_bin = env.Install("#bin", exe)
-  install_bin = env.Install("#bin",default_exe)
 
