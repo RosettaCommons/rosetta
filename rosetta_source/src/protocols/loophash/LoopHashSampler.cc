@@ -197,7 +197,7 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 				// Make it slightly dependent on round
 				//core::Size sw_nmodels = (int)(avg_sw/5*(1.0+(round-1)/60));
 				core::Size sw_nmodels = (int)(avg_sw*max_struct_/50*(1.0+(round-1)/60));
-				core::Size sw_nfrags = (int)avg_sw*10;
+				core::Size sw_nfrags = (int)avg_sw*400;
 				
 				// Limit how many structures chosen from a given radius
 				// Make it dependent on round, less for higher rounds
@@ -418,6 +418,8 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 
     core::pose::Pose original_pose = start_pose;
     core::pose::Pose edit_pose = start_pose;
+
+
 	 	TR.Debug  << "Setting options.." << std::endl;
 	  //core::optimization::MinimizerOptions options( "dfpmin", 0.2, true , false );
 	  //core::optimization::MinimizerOptions options2( "dfpmin", 0.02,true , false );
