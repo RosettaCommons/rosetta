@@ -572,7 +572,7 @@ sources = {
 		"pmut_scan_parallel",
 		#"hydrophobic_patch_stats_calculator",
 		#"rss_energy_calculator",
-		#"report_hbonds_for_plugin",
+		"report_hbonds_for_plugin",
 		#"hydrophobic_patch_finder",
 		#"report_cavities_for_plugin",
 	],
