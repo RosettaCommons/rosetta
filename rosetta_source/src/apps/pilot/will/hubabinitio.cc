@@ -283,7 +283,11 @@ Vec center_heavy(Pose const & p, Size st = 1, Size nres = 0) {
 
 void calc_c3_rmsd(Size const nres, Pose p, Pose const & native, Vec const & natcom, Vec const & natcomca, Real & carmsd, Real & aarmsd) {
 	if(native.n_residue() == 0) return;
-	if(native.n_residue()+1 != nres) utility_exit_with_message("native should be 1 chain w/o hub");
+	if(native.n_residue()+1 != nres) {
+		cout << p.sequence() << endl;
+		cout << " " << native.sequence() << endl;		
+		utility_exit_with_message("native should be 1 chain w/o hub");
+	}
 	core::pose::symmetry::make_asymmetric_pose(p);
 	Real aarmsd1 = 0.0; {
 		Vec com   = center_heavy(p,2,nres);
@@ -292,12 +296,12 @@ void calc_c3_rmsd(Size const nres, Pose p, Pose const & native, Vec const & natc
 		rot_pose(p,Vec(0,0,1),ang);
 		Size naa = 0;
 		for(Size ir = 1; ir < nres; ++ir) {
-			if(native.residue(ir).nheavyatoms() != p.residue(ir+1).nheavyatoms()) {
+			if( native.residue(ir).name() != p.residue(ir+1).name() {
+			    native.residue(ir).nheavyatoms() != p.residue(ir+1).nheavyatoms()) {
 				native.dump_pdb("debug_native.pdb");
 				p.dump_pdb("debug_p.pdb");
-				cout << "nat " << ir   << " " << native.residue(ir).nheavyatoms() 
-				     << "  p " << ir+1 << " " << p.residue(ir+1).nheavyatoms() 
-				     << p.residue(ir+1).name() << endl;
+				cout << "nat " << ir   << " " << native.residue(ir  ).nheavyatoms() << " " << native.residue(ir  ).name();
+				     << "  p " << ir+1 << " " <<      p.residue(ir+1).nheavyatoms() << " " <<      p.residue(ir+1).name() << endl;
 				utility_exit_with_message("mismatched native residue "+str(ir));
 			}
 			for(Size ia = 1; ia <= native.residue(ir).nheavyatoms(); ++ia) {
