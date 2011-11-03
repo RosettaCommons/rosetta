@@ -19,8 +19,8 @@
 
 // Project Headers
 #include <protocols/moves/MetropolisHastingsMover.fwd.hh>
-// AUTO-REMOVED #include <core/id/DOF_ID_Range.hh>
-// AUTO-REMOVED #include <core/id/TorsionID_Range.hh>
+#include <core/id/DOF_ID_Range.hh>
+#include <core/id/TorsionID_Range.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -28,7 +28,6 @@
 #include <core/types.hh>
 
 #include <core/id/DOF_ID_Range.fwd.hh>
-#include <core/id/TorsionID_Range.fwd.hh>
 #include <utility/vector1.hh>
 
 
