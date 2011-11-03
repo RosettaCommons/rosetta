@@ -155,7 +155,11 @@ endrepeat
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
+
+#ifdef GL_GRAPHICS
+#include <protocols/viewer/viewers.hh>
+#endif
+
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
 
 //symmetry

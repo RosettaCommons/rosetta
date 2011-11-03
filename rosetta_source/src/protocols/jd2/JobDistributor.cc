@@ -36,7 +36,9 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/evaluation/TimeEvaluator.hh>
-// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
+#ifdef GL_GRAPHICS
+#include <protocols/viewer/viewers.hh>
+#endif
 
 #include <protocols/moves/PyMolMover.hh>
 

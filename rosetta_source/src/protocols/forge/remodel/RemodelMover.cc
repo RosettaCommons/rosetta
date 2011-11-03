@@ -81,7 +81,11 @@
 #include <protocols/forge/remodel/RemodelDesignMover.hh>
 #include <protocols/forge/remodel/RemodelAccumulator.hh>
 #include <protocols/forge/remodel/RemodelEnzdesCstModule.hh>
-// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
+
+#ifdef GL_GRAPHICS
+#include <protocols/viewer/viewers.hh>
+#endif
+
 // AUTO-REMOVED #include <protocols/moves/PyMolMover.hh>
 
 

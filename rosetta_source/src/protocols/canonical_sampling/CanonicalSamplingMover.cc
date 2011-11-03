@@ -59,8 +59,9 @@
 #include <mpi.h>
 #endif
 
-//graphix
-// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
+#ifdef GL_GRAPHICS
+#include <protocols/viewer/viewers.hh>
+#endif
 
 #include <protocols/jd2/Job.hh>
 #include <utility/vector0.hh>
