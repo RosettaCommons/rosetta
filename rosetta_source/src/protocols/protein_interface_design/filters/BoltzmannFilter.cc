@@ -83,11 +83,11 @@ BoltzmannFilter::add_negative_filter( protocols::filters::FilterOP f ){
 }
 
 void
-BoltzmannFilter::anchors( utility::vector1< int > const anchors ){
+BoltzmannFilter::anchors( utility::vector1< core::Real > const anchors ){
 	anchors_ = anchors;
 }
 
-utility::vector1< int >
+utility::vector1< core::Real >
 BoltzmannFilter::anchors() const{
 	return anchors_;
 }
@@ -154,7 +154,7 @@ BoltzmannFilter::parse_my_tag( utility::tag::TagPtr const tag,
 	foreach( std::string const negative_filter_name, negative_filter_names )
 		add_negative_filter( protocols::rosetta_scripts::parse_filter( negative_filter_name, filters ) );
 	foreach( std::string const anchor_str, anchors_string )
-		anchors_.push_back( utility::string2int( anchor_str ) );
+		anchors_.push_back( (core::Real) utility::string2float( anchor_str ) );
 
 	TR<<"with options temperature: "<<temperature()<<" fitness_threshold "<<fitness_threshold()<<"  "<<get_positive_filters().size()<<" positive and "<<get_negative_filters().size()<<" negative filters."<<std::endl;
 	if( anchors().size() > 0 ){

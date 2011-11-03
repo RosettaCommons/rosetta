@@ -52,8 +52,8 @@ public:
 		core::pose::Pose const & );
 	void add_positive_filter( protocols::filters::FilterOP f );
 	void add_negative_filter( protocols::filters::FilterOP f );
-	void anchors( utility::vector1< int > const anchors );
-	utility::vector1< int > anchors() const;
+	void anchors( utility::vector1< core::Real > const anchors );
+	utility::vector1< core::Real > anchors() const;
 	utility::vector1< protocols::filters::FilterOP > get_positive_filters() const;
 	utility::vector1< protocols::filters::FilterOP > get_negative_filters() const;
 	void temperature( core::Real const temp );
@@ -63,7 +63,7 @@ public:
 private:
 	utility::vector1< protocols::filters::FilterOP > positive_filters_;
 	utility::vector1< protocols::filters::FilterOP > negative_filters_;
-	utility::vector1< int > anchors_; // anchors to positive states, to ensure that they don't drift upwards in energy too much. Defaults to empty vector, in which case this is not applied.
+	utility::vector1< core::Real > anchors_; // anchors to positive states, to ensure that they don't drift upwards in energy too much. Defaults to empty vector, in which case this is not applied.
 
 	core::Real temperature_;
 	core::Real fitness_threshold_;
