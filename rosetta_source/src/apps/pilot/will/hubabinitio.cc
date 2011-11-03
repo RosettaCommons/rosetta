@@ -296,11 +296,11 @@ void calc_c3_rmsd(Size const nres, Pose p, Pose const & native, Vec const & natc
 		rot_pose(p,Vec(0,0,1),ang);
 		Size naa = 0;
 		for(Size ir = 1; ir < nres; ++ir) {
-			if( native.residue(ir).name() != p.residue(ir+1).name() {
+			if( native.residue(ir).name() != p.residue(ir+1).name() ||
 			    native.residue(ir).nheavyatoms() != p.residue(ir+1).nheavyatoms()) {
 				native.dump_pdb("debug_native.pdb");
 				p.dump_pdb("debug_p.pdb");
-				cout << "nat " << ir   << " " << native.residue(ir  ).nheavyatoms() << " " << native.residue(ir  ).name();
+				cout << "nat " << ir   << " " << native.residue(ir  ).nheavyatoms() << " " << native.residue(ir  ).name()
 				     << "  p " << ir+1 << " " <<      p.residue(ir+1).nheavyatoms() << " " <<      p.residue(ir+1).name() << endl;
 				utility_exit_with_message("mismatched native residue "+str(ir));
 			}
