@@ -52,7 +52,7 @@
 // AUTO-REMOVED #include <utility/io/izstream.hh>
 // AUTO-REMOVED #include <utility/io/ozstream.hh>
 
-#include <apps/pilot/will/will_util.hh>
+#include <apps/pilot/will/will_util.ihh>
 
 // AUTO-REMOVED #include <time.h>
 

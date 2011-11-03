@@ -70,7 +70,7 @@
 #include <core/pose/util.hh>
 #include <protocols/moves/MoverStatistics.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <apps/pilot/will/will_util.hh>
+#include <apps/pilot/will/will_util.ihh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 

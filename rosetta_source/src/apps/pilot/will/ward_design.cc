@@ -69,7 +69,7 @@
 //Auto Headers
 
 
-#include <apps/pilot/will/will_util.hh>
+#include <apps/pilot/will/will_util.ihh>
 
 using numeric::conversions::radians;
 

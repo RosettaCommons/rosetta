@@ -84,7 +84,7 @@
 #include <core/pack/task/ResfileReader.hh>
 //Auto Headers
 
-#include <apps/pilot/will/will_util.hh>
+#include <apps/pilot/will/will_util.ihh>
 
 
 static basic::Tracer TR("mkresfile_i213");

@@ -100,7 +100,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
-#include <apps/pilot/will/mynamespaces.hh>
+#include <apps/pilot/will/mynamespaces.ihh>
 
 
 static basic::Tracer TR("organopv");

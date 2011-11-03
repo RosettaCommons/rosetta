@@ -19,17 +19,17 @@
 #include <vector>
 #include <map>
 
-#include "core/init.hh"
-#include "core/types.hh"
+#include <core/init.hh>
+#include <core/types.hh>
 
-#include "numeric/random/random.hh"
+#include <numeric/random/random.hh>
 
-#include "utility/query/types.hh"
-#include "utility/query/Metric.hh"
+#include <utility/query/types.hh>
+#include <utility/query/Metric.hh>
 
-#include "utility/pointer/owning_ptr.hh"
+#include <utility/pointer/owning_ptr.hh>
 
-#include "ObjexxFCL/string.functions.hh"
+#include <ObjexxFCL/string.functions.hh>
 
 numeric::random::RandomGenerator RG(897987987);
 

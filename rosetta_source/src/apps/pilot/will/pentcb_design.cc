@@ -80,8 +80,8 @@
 // #include <devel/init.hh>
 
 // #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
-#include <apps/pilot/will/will_util.hh>
-#include <apps/pilot/will/mynamespaces.hh>
+#include <apps/pilot/will/will_util.ihh>
+#include <apps/pilot/will/mynamespaces.ihh>
 
 #include <sys/stat.h>
 

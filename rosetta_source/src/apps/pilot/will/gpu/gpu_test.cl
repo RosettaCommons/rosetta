@@ -1,7 +1,6 @@
 #include </Users/sheffler/mini/src/apps/pilot/will/gpu/gpu_mat_vec.cl>
 //#include </Users/sheffler/mini/src/apps/pilot/will/gpu/gpu_refold.cl>
 
-
 #define _N 0u
 #define CA 3u
 #define _C 6u
@@ -512,6 +511,9 @@ void copy_torsions(uint N, __global float *a, __global float const *b) {
   }
 }
 
+
+#pragma OPENCL EXTENSION cl_amd_printf : enable
+
 __kernel void abinitio(
                      __global       float *tors,
                      __global const uint  *nres,
@@ -527,6 +529,7 @@ __kernel void abinitio(
 
   uint N = nres[0];
   __local float scratch[3u];
+  printf("initial refold %i",N);
   refold(tors,N,coord7,aas,CB_LCOR,CEN_LCOR,scratch,scratchN,scores);
 
   __local float      score;

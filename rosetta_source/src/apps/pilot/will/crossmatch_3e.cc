@@ -81,7 +81,7 @@
 #include <utility/string_util.hh>
 #include <utility/exit.hh>
 
-#include <apps/pilot/will/will_util.hh>
+#include <apps/pilot/will/will_util.ihh>
 
 // #include <devel/init.hh>
 // #include <core/scoring/constraints/LocalCoordinateConstraint.hh>

@@ -41,7 +41,7 @@
 #include <basic/Tracer.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <apps/pilot/will/will_util.hh>
+#include <apps/pilot/will/will_util.ihh>
 #include <utility/vector1.hh>
 
 static basic::Tracer TR("yeates_align");

@@ -4,6 +4,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
+#include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/orbitals/OrbitalType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -47,8 +48,8 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
-#include <will_util.hh>
-#include <apps/pilot/will/mynamespaces.hh>
+#include <apps/pilot/will/will_util.ihh>
+#include <apps/pilot/will/mynamespaces.ihh>
 
 static basic::Tracer TR("rsd_canonical_units");
 

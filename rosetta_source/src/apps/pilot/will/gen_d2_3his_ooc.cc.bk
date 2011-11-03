@@ -79,8 +79,8 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
-#include <apps/pilot/will/will_util.hh>
-#include <apps/pilot/will/mynamespaces.hh>
+#include <apps/pilot/will/will_util.ihh>
+#include <apps/pilot/will/mynamespaces.ihh>
 
 using core::kinematics::Stub;
 using protocols::scoring::ImplicitFastClashCheck;

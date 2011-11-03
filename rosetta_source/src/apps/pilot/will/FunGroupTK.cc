@@ -80,8 +80,8 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
-#include <apps/pilot/will/will_util.hh>
-// AUTO-REMOVED #include <apps/pilot/will/mynamespaces.hh>
+#include <apps/pilot/will/will_util.ihh>
+#include <apps/pilot/will/mynamespaces.ihh>
 
 // AUTO-REMOVED #include <time.h>
 

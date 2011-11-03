@@ -79,9 +79,9 @@
 #include <sstream>
 // AUTO-REMOVED #include <utility/io/izstream.hh>
 // AUTO-REMOVED #include <utility/io/ozstream.hh>
-
-#include <apps/pilot/will/will_util.hh>
-// AUTO-REMOVED #include <apps/pilot/will/mynamespaces.hh>
+#include <utility/io/izstream.hh>
+#include <apps/pilot/will/will_util.ihh>
+#include <apps/pilot/will/mynamespaces.ihh>
 
 #include <protocols/moves/MoverStatistics.hh>
 #include <utility/vector0.hh>

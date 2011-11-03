@@ -18,10 +18,10 @@
 #include <iostream>
 #include <vector>
 
-#include "utility/query/all.hh"
+#include <utility/query/all.hh>
 
-#include "utility/pointer/owning_ptr.hh"
-#include "ObjexxFCL/string.functions.hh"
+#include <utility/pointer/owning_ptr.hh>
+#include <ObjexxFCL/string.functions.hh>
 
 
 using utility::pointer::owning_ptr;
@@ -48,7 +48,7 @@ void test_int() {
 }
 
 
-#include "Vec.hh"
+#include <Vec.hh>
 
 typedef utility::pointer::owning_ptr< FilterBase<Vec> > TF_Vec_OP;
 Filter<Vec> __cplusplus_is_stupid__;

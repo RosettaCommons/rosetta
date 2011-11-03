@@ -21,8 +21,8 @@
 #include <string>
 #include <iostream>
 
-#include "core/types.hh"
-#include "utility/query/types.hh"
+#include <core/types.hh>
+#include <utility/query/types.hh>
 
 using namespace utility::query;
 using core::Real;

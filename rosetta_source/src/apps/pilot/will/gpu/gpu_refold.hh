@@ -176,10 +176,12 @@ void gpu_refold_test(uint const NITER) {
   // tmp.dump_pdb("refold_cpu.pdb");
 
   ScoreFunctionOP sf = new ScoreFunction();
-  sf->set_weight(core::scoring::vdw,1.0);
-  sf->set_weight(core::scoring::rg,1.0);
-  sf->set_weight(core::scoring::pair,1.0);
-  sf->set_weight(core::scoring::env,1.0);
+  sf->set_weight(core::scoring::rg     ,1.0);
+  sf->set_weight(core::scoring::vdw    ,1.0);
+  sf->set_weight(core::scoring::pair   ,1.0);
+  sf->set_weight(core::scoring::env    ,1.0);
+  sf->set_weight(core::scoring::cbeta  ,1.0);
+  sf->set_weight(core::scoring::cenpack,1.0);
 
   vector1<xyzVector<Real> > ros_crd(3*N), idl_crd(3*N);
   double tros = 0.0;

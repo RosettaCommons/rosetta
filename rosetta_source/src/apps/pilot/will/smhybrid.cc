@@ -97,7 +97,7 @@
 // #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
 // #include <devel/init.hh>
 
-#include <apps/pilot/will/mynamespaces.hh>
+#include <apps/pilot/will/mynamespaces.ihh>
 
 typedef numeric::xyzVector<Real> Vec;
 typedef numeric::xyzMatrix<Real> Mat;
