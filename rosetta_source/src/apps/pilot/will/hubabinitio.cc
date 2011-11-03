@@ -271,7 +271,7 @@ int main(int argc, char *argv[]) {
 		make_symmetric_pose(native);
 		//native.dump_pdb("native.pdb");
 		tagpref = utility::file_basename(option[OptionKeys::in::file::native]());
-		tagpref = pretag.substr(0,pretag.size()-4);
+		tagpref = tagpref.substr(0,tagpref.size()-4);
 	}
 
 	ScoreFunctionOP sfsym  = getScoreFunction();
@@ -312,7 +312,7 @@ int main(int argc, char *argv[]) {
 	make_symmetric_pose(p);
 	p.conformation().detect_bonds();
 	FoldTree ft = p.fold_tree();
-	for(Size i = 1; i <= ft.num_jump(); ++i) cout << i << " " << ft.jump_edge(i) << endl;
+//	for(Size i = 1; i <= ft.num_jump(); ++i) cout << i << " " << ft.jump_edge(i) << endl;
 	// cout << ft << endl;
 	ft.set_jump_atoms( 1, "ORIG", "CA");
 	ft.set_jump_atoms( 2, "ORIG", "CA");
@@ -399,7 +399,7 @@ int main(int argc, char *argv[]) {
 		rlx.apply(p);
 		//p.dump_pdb("relaxed_"+lzs(iter,7)+".pdb");
 
-		string fn = option[OptionKeys::out::file::o]() + "/" + tagpref+str(uniform).substr(2,8)+".gz";
+		string fn = option[OptionKeys::out::file::o]() + "/" + tagpref + str(uniform()).substr(2,8) + ".gz";
 
 		Real carmsd = -1.0, aarmsd = -1.0;
 		if(native.n_residue() > 0) {
