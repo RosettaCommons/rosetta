@@ -45,8 +45,9 @@ def coloring_demo(pose):
     for t in range(12000):
         N = pose.total_residue()
         for r in range(1, N+1 ):
-            C = { r : 'red', N-r-1: 'white'}
-            pymol.send_colors(pose, C, default_color='blue')
+            C = { r : rosetta.protocols.moves.XC_red, 1+N-r: rosetta.protocols.moves.XC_white}
+            #print r, N, C
+            pymol.send_colors(pose, C, default_color=rosetta.protocols.moves.XC_blue)
 
             #pymol.send_energy( pose_s )
 

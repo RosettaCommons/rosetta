@@ -57,7 +57,8 @@ namespace protocols {
 namespace moves {
 
 enum X11Colors {
-	XC_black = 0,		// 0 0 0
+	XC_first_color = 0,
+	XC_black = XC_first_color,	// 0 0 0
 	XC_AntiqueWhite = 1,		// 250 235 215
 	XC_BlanchedAlmond = 2,		// 255 235 205
 	XC_BlueViolet = 3,		// 138 43 226
@@ -226,7 +227,8 @@ enum X11Colors {
 	XC_violet = 166,		// 238 130 238
 	XC_wheat = 167,		// 245 222 179
 	XC_white = 168,		// 255 255 255
-	XC_yellow = 169		// 255 255 0
+	XC_yellow = 169,	// 255 255 0
+	XC_last_color
 };
 
 
@@ -269,6 +271,8 @@ private:
 class PyMolMover : public protocols::moves::Mover
 {
 public:
+	typedef std::map<int, int> ColorMap;
+
 	PyMolMover() : update_energy_(false), energy_type_(core::scoring::total_score),
 	               keep_history_(false), update_interval_(0), last_packet_sent_time_(0), name_() {};
 
@@ -290,7 +294,7 @@ public:
     void send_RAW_Energies(Pose const &, std::string energyType, utility::vector1<int> const & energies);
 
 	/// @brief Tell PyMOL to color protein with supplied custom colors
-    void send_colors(Pose const &, std::map<int, int> colors, X11Colors default_color=protocols::moves::XC_blue );
+    virtual void send_colors(Pose const &, ColorMap const & colors, X11Colors default_color=protocols::moves::XC_blue );
 
 
 	bool update_energy() { return update_energy_; }

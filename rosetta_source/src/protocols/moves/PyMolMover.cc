@@ -35,6 +35,8 @@
 #include <utility/vector1.hh>
 #include <utility/io/zipstream.ipp>
 
+#include <utility/PyAssert.hh>
+
 //#include <cstdlib.h>
 
 /*#if  !defined(WINDOWS) && !defined(WIN32)
@@ -309,11 +311,14 @@ void PyMolMover::send_energy(Pose const &pose, core::scoring::ScoreType score_ty
 	}
 }
 
-void PyMolMover::send_colors(Pose const &pose, std::map<int, int> colors, X11Colors default_color)
+void PyMolMover::send_colors(Pose const &pose, ColorMap const & colors, X11Colors default_color)
 {
 	utility::vector1<int> energies( pose.total_residue(), default_color);  // energies = [ X11Colors[default_color][0] ] * pose.total_residue()
 
 	for(std::map<int, int>:: const_iterator i = colors.begin(); i!=colors.end(); ++i) {
+		PyAssert( (*i).first >=1 && (*i).first <= pose.total_residue(), "PyMolMover::send_colors residue index is out of range!");
+		PyAssert( (*i).second >= XC_first_color && (*i).second <= XC_last_color, "PyMolMover::send_colors color index is out of range!");
+
 		energies[ (*i).first ] = (*i).second;  // for r in colors: energies[r-1] = X11Colors[ colors[r] ][0]
 	}
 	send_RAW_Energies(pose, "X11Colors", energies);  //self._send_RAW_Energies(pose, 'X11Colors', energies, autoscale=False)

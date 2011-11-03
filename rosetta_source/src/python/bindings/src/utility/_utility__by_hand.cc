@@ -57,6 +57,9 @@ using namespace utility;
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include <boost/python/suite/indexing/map_indexing_suite.hpp>
+
 // Some subclassing testing functions
 void Q_Test_CI1B(core::scoring::methods::ContextIndependentOneBodyEnergyOP )
 {
@@ -174,6 +177,14 @@ void wrap_vector1_part(char * name) {
   ;
 }
 
+// std::map --------------------------------------------------------------------------------------------------------------------
+template< class T >
+void wrap_std_map(char * name)
+{
+	bp::class_< T >(name)
+		.def( bp::map_indexing_suite< T >())
+		;
+}
 
 template< class Type >
 void wrap_owning_pointer(char * name)
@@ -380,6 +391,8 @@ void wrap__utility__by_hand()
     .def("__getitem__", &vector1_bool_get )
     .def("__iter__",bp::range(&vector1_begin<bool>,&vector1_end<bool>))
     ;
+
+    wrap_std_map< std::map<int, int> >("map_int_int");
 
     // bp::class_< vector1<vector1<size_t> > >("utility___vec1_vec1_size")
     //   .def(bp::vector_indexing_suite< vector1<vector1<size_t> > >() );

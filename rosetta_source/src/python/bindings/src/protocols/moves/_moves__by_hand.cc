@@ -13,11 +13,15 @@
 //#include <protocols/moves/MonteCarlo.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#include <protocols/moves/PyMolMover.hh>
 
 #include <iostream>
 
+#include <boost/python/suite/indexing/map_indexing_suite.hpp>
+
 namespace bp = boost::python;
 
+/*
 class PyMover : public protocols::moves::Mover
 {
 public:
@@ -44,7 +48,7 @@ struct Wrapper_PyMover : public PyMover, bp::wrapper<PyMover>
     	this->PyMover::apply(pose);
     }
 };
-
+*/
 
 #include <protocols/moves/MinMover.hh>
 
@@ -74,7 +78,7 @@ void wrap__moves__by_hand()
     bp::implicitly_convertible< utility::pointer::owning_ptr< ::protocols::moves::Mover >
                               , utility::pointer::owning_ptr< ::protocols::moves::Mover const > >();
 
-	bp::implicitly_convertible< utility::pointer::owning_ptr<  PyMover >
+	/*bp::implicitly_convertible< utility::pointer::owning_ptr<  PyMover >
                               , utility::pointer::owning_ptr< ::protocols::moves::Mover > >();
 
 
@@ -90,7 +94,7 @@ void wrap__moves__by_hand()
     boost::python::class_<Wrapper_PyMover, utility::pointer::owning_ptr<Wrapper_PyMover>, boost::noncopyable>( "PyMover" )
 		.def("apply", &PyMover::apply, &Wrapper_PyMover::default_apply)
     ;
-
+	*/
 
   /*  bp::def("toMover", toMover);
     bp::def("toMC", toMC);
@@ -104,4 +108,8 @@ void wrap__moves__by_hand()
     bp::implicitly_convertible< utility::pointer::owning_ptr< ::protocols::moves::ShearMover >
                               , utility::pointer::owning_ptr< ::protocols::moves::Mover > >();
 */
+
+	bp::class_< ::protocols::moves::PyMolMover::ColorMap >("ColorMap")
+		.def( bp::map_indexing_suite< ::protocols::moves::PyMolMover::ColorMap >())
+		;
 }

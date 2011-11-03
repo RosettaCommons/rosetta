@@ -610,10 +610,22 @@ class PySocketClient:
         self.socket.sendto(buf, (self.udp_ip, self.udp_port) )
 
 
+#PyMOL_Mover = rosetta.protocols.moves.PyMolMover  # for now we use one implementation for both Rosetta C++ and PyRosetta
+#__Deprecated_do_not_use_
+class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
+    def __init__(self, *args): rosetta.protocols.moves.PyMolMover.__init__(self, *args)
 
-class PyMOL_Mover(rosetta.protocols.moves.PyMover):
+    def send_colors(self, pose, colors, default_color=protocols.moves.XC_blue):
+        cm = rosetta.protocols.moves.ColorMap()
+        for c in colors: cm[c] = colors[c]
+
+        rosetta.protocols.moves.PyMolMover.send_colors(self, pose, cm, default_color)
+
+
+
+class __Deprecated_do_not_use_PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
     def __init__(self, keep_history=False, update_energy=False, energy_type='total_score'):
-        rosetta.protocols.moves.PyMover.__init__(self)
+        rosetta.protocols.moves.PyMolMover.__init__(self)
         self.keep_history = keep_history
         self.update_energy = update_energy
         self.energy_type = energy_type

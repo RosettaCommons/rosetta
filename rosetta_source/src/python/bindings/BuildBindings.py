@@ -208,6 +208,8 @@ def main(args):
     mini_path = os.path.abspath('./../../../')
 
     bindings_path = os.path.abspath('./rosetta')
+    if Options.use_windows_platform_types: bindings_path += '.windows'
+
     if Options.debug: bindings_path += '_debug'
     if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
     shutil.copyfile('src/__init__.py', 'rosetta/__init__.py')
