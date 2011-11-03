@@ -100,7 +100,7 @@ RotamerRecovery::RotamerRecovery(
 		comparer_ = new RRComparerRotBins();
 	}
 
-	if( reporter.compare("RRRepoterSimple") == 0 ){
+	if( reporter.compare("RRReporterSimple") == 0 ){
 		reporter_ = new RRReporterSimple();
 	} else if ( reporter.compare( "RRReporterHuman" ) == 0 ) {
 		reporter_ = new RRReporterHuman();

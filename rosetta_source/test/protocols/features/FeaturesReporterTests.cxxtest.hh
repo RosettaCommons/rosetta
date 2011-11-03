@@ -64,6 +64,8 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 
 static basic::Tracer tr("protocols.features.FeaturesReporterTests.cxxtest");
@@ -74,12 +76,15 @@ public:
 
 	void
 	setUp() {
+
 		using core::scoring::getScoreFunction;
 		using utility::sql_database::DatabaseSessionManager;
 		using namespace protocols::features;
 		std::string database_filename("features_reporter_tests.db3");
 
 		core_init();
+		//Need this to run the features reporter. Adds orbitals to residues
+		basic::options::option[ basic::options::OptionKeys::in::add_orbitals](true);
 		pose_1ten_ = fullatom_poseop_from_string( pdb_string_1ten() );
 		score_function_ = getScoreFunction();
 
