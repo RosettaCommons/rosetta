@@ -255,6 +255,107 @@ static core::io::silent::SilentFileData sfd;
 // 	std::string get_name() const { return "HubAbinitioMover"; }
 // };
 
+Vec center_ca(Pose const & p, Size st = 1, Size nres = 0) {
+	if(0==nres) nres = p.n_residue();
+	Vec com(0,0,0);
+	Size n = 0;
+	for(Size i = st; i <= nres; ++i) {
+		if(p.residue(i).has("CA")) {
+			com += p.residue(i).xyz("CA");
+			n++;
+		}
+	}
+	return com / (Real)n;
+}
+
+Vec center_heavy(Pose const & p, Size st = 1, Size nres = 0) {
+	if(0==nres) nres = p.n_residue();
+	Vec com(0,0,0);
+	Size n = 0;
+	for(Size i = st; i <= nres; ++i) {
+		for(Size ia = 1; ia <= p.residue(i).nheavyatoms(); ++ia) {
+			com += p.xyz(AtomID(ia,i));
+			n++;
+		}
+	}
+	return com / (Real)n;
+}
+
+void calc_c3_rmsd(Size const nres, Pose p, Pose const & native, Vec const & natcom, Vec const & natcomca, Real & carmsd, Real & aarmsd) {
+	if(native.n_residue() == 0) return;
+	if(native.n_residue()+1 != nres) utility_exit_with_message("native should be 1 chain w/o hub");
+	core::pose::symmetry::make_asymmetric_pose(p);
+	Real aarmsd1 = 0.0; {
+		Vec com   = center_heavy(p,2,nres);
+		Real ang   = dihedral_degrees(com  ,Vec(0,0,0),Vec(0,0,1),natcom  );
+		trans_pose(p,Vec(0,0,natcom.z()-com.z()));
+		rot_pose(p,Vec(0,0,1),ang);
+		Size naa = 0;
+		for(Size ir = 1; ir < nres; ++ir) {
+			if(native.residue(ir).nheavyatoms() != p.residue(ir+1).nheavyatoms()) {
+				native.dump_pdb("debug_native.pdb");
+				p.dump_pdb("debug_p.pdb");
+				cout << "nat " << ir   << " " << native.residue(ir).nheavyatoms() 
+				     << "  p " << ir+1 << " " << p.residue(ir+1).nheavyatoms() 
+				     << p.residue(ir+1).name() << endl;
+				utility_exit_with_message("mismatched native residue "+str(ir));
+			}
+			for(Size ia = 1; ia <= native.residue(ir).nheavyatoms(); ++ia) {
+				aarmsd1 += native.xyz(AtomID(ia,ir)).distance_squared(p.xyz(AtomID(ia,ir+1)));
+				naa++;
+			}
+		}
+		aarmsd1 = sqrt(aarmsd1/(Real)naa);
+	}
+	Real carmsd1 = 0.0; {
+		Vec com   = center_ca(p,2,nres);
+		Real ang  = dihedral_degrees(com  ,Vec(0,0,0),Vec(0,0,1),natcomca  );
+		trans_pose(p,Vec(0,0,natcomca.z()-com.z()));
+		rot_pose(p,Vec(0,0,1),ang);
+		Size naa = 0;
+		for(Size ir = 1; ir < nres; ++ir) {
+			carmsd1 += native.xyz(AtomID(2,ir)).distance_squared(p.xyz(AtomID(2,ir+1)));
+			naa++;
+		}
+		carmsd1 = sqrt(carmsd1/(Real)naa);
+	}
+	rot_pose(p,Vec(1,0,0),180.0,Vec(0,0,0));
+	Real aarmsd2 = 0.0; {
+		Vec com   = center_heavy(p,2,nres);
+		Real ang   = dihedral_degrees(com  ,Vec(0,0,0),Vec(0,0,1),natcom  );
+		trans_pose(p,Vec(0,0,natcom.z()-com.z()));
+		rot_pose(p,Vec(0,0,1),ang);
+		Size naa = 0;
+		for(Size ir = 1; ir < nres; ++ir) {
+			if(native.residue(ir).nheavyatoms() != p.residue(ir+1).nheavyatoms()) utility_exit_with_message("mismatched native residue "+str(ir));
+			for(Size ia = 1; ia <= native.residue(ir).nheavyatoms(); ++ia) {
+				aarmsd2 += native.xyz(AtomID(ia,ir)).distance_squared(p.xyz(AtomID(ia,ir+1)));
+				naa++;
+			}
+		}
+		aarmsd2 = sqrt(aarmsd2/(Real)naa);
+	}
+	Real carmsd2 = 0.0; {
+		Vec com   = center_ca(p,2,nres);
+		Real ang  = dihedral_degrees(com  ,Vec(0,0,0),Vec(0,0,1),natcomca  );
+		trans_pose(p,Vec(0,0,natcomca.z()-com.z()));
+		rot_pose(p,Vec(0,0,1),ang);
+		Size naa = 0;
+		for(Size ir = 1; ir < nres; ++ir) {
+			carmsd2 += native.xyz(AtomID(2,ir)).distance_squared(p.xyz(AtomID(2,ir+1)));
+			naa++;
+		}
+		carmsd2 = sqrt(carmsd2/(Real)naa);
+	}
+	if(carmsd1 < carmsd2) {
+		carmsd = carmsd1;
+		aarmsd = aarmsd1;		
+	} else {
+		carmsd = carmsd2;
+		aarmsd = aarmsd2;
+	}
+}
+
 int main(int argc, char *argv[]) {
 	register_options();
 	core::init(argc,argv);
@@ -263,15 +364,18 @@ int main(int argc, char *argv[]) {
 	string seq = option[OptionKeys::hub_sequence]();
 	if( seq[0] != 'Z' ) utility_exit_with_message("first residue must be Z!!");
 
-
 	Pose native;
 	string tagpref = "";
+	Vec natcomca,natcom;
 	if(option[OptionKeys::in::file::native].user()) {
 		native = *core::import_pose::pose_from_pdb(option[OptionKeys::in::file::native]());
-		make_symmetric_pose(native);
-		//native.dump_pdb("native.pdb");
 		tagpref = utility::file_basename(option[OptionKeys::in::file::native]());
 		tagpref = tagpref.substr(0,tagpref.size()-4);
+		natcomca = center_ca   (native);
+		natcom   = center_heavy(native);
+		Pose tmp(native);
+		core::pose::symmetry::make_symmetric_pose(tmp);
+		tmp.dump_pdb(option[OptionKeys::out::file::o]() + "/native_trimer.pdb");
 	}
 
 	ScoreFunctionOP sfsym  = getScoreFunction();
@@ -319,10 +423,6 @@ int main(int argc, char *argv[]) {
 	ft.set_jump_atoms( 3, "ORIG", "CA");		
 	p.fold_tree(ft);
 	// cout << ft << endl;
-
-	if(native.n_residue() > 0) {
-		cout << core::scoring::CA_rmsd(native,p) << endl;
-	}
 
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
   	movemap->set_jump(false);
@@ -399,14 +499,11 @@ int main(int argc, char *argv[]) {
 		rlx.apply(p);
 		//p.dump_pdb("relaxed_"+lzs(iter,7)+".pdb");
 
-		string fn = option[OptionKeys::out::file::o]() + "/" + tagpref + str(uniform()).substr(2,8) + ".gz";
+		string fn = option[OptionKeys::out::file::o]() + "/" + tagpref +"_"+ str(uniform()).substr(2,8) + ".pdb.gz";
 
 		Real carmsd = -1.0, aarmsd = -1.0;
-		if(native.n_residue() > 0) {
-			carmsd = core::scoring::CA_rmsd(native,p);
-			aarmsd = core::scoring::all_atom_rmsd(native,p);			
-		}
-		
+		calc_c3_rmsd(nres,p,native,natcom,natcomca,carmsd,aarmsd);
+
 		core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 	  	ss_out->fill_struct(p,fn);
 	  	ss_out->add_energy( "carmsd", carmsd );
