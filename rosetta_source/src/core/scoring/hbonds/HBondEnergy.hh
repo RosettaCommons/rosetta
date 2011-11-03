@@ -44,6 +44,11 @@
 #include <core/scoring/hbonds/HBondSet.fwd.hh>
 #include <utility/vector1.hh>
 
+#ifdef PYROSETTA
+	#include <core/scoring/hbonds/HBondOptions.hh>
+	#include <core/scoring/hbonds/HBondDatabase.hh>
+#endif
+
 
 namespace core {
 namespace scoring {

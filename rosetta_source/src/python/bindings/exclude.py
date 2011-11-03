@@ -1242,7 +1242,8 @@ def finalize(fname, dest, path, mb, module_name='_noname', add_by_hand=False, fi
                         + commands.getoutput("cat %s | grep '^#include <utility'" % f) + '\n'   \
                         + commands.getoutput("cat %s | grep '^#include <protocols'" % f) + '\n' \
                         + commands.getoutput("cat %s | grep '^#include <basic'" % f) + '\n' \
-                        + commands.getoutput("cat %s | grep '^#include <ObjexxFCL'" % f) + '\n'
+                        + commands.getoutput("cat %s | grep '^#include <ObjexxFCL'" % f) + '\n' \
+                        + commands.getoutput("cat %s | grep '^#include <boost'" % f) + '\n'
 
                 #print f, lines
 

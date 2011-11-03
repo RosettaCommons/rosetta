@@ -42,6 +42,10 @@
 
 #include <utility/vector1.hh>
 
+#ifdef PYROSETTA
+	#include <core/id/SequenceMapping.hh>
+#endif
+
 
 namespace core {
 namespace pack {

@@ -273,7 +273,10 @@ p = PythonDerived()
 DemoTesterFunction(p)
 */
 
-
+class OOO
+{
+public:
+};
 
 void wrap__utility__by_hand()
 {
@@ -429,4 +432,13 @@ void wrap__utility__by_hand()
     wrap_access_pointer< core::id::TorsionID >("core_id_TorsionID_");
     */
     wrap_access_pointer< utility::vector1< bool > >("utility_vector1_bool_");
+
+
+    boost::python::class_<OOO> my_obj("OOO");
+    //boost::python::object my_obj;
+
+    boost::python::scope within(my_obj);
+    bp::def("Q_Test_CI1B", Q_Test_CI1B);
+    bp::def("Q_Test_EnergyMethodCreator", Q_Test_EnergyMethodCreator);
+
 }

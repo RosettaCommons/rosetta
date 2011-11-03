@@ -40,6 +40,10 @@
 #include <string>
 #include <vector>
 
+#ifdef PYROSETTA
+	#include <core/id/SequenceMapping.hh>
+#endif
+
 namespace core {
 namespace kinematics {
 
