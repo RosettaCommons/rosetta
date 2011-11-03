@@ -373,6 +373,7 @@ int main(int argc, char *argv[]) {
 	Vec natcomca,natcom;
 	if(option[OptionKeys::in::file::native].user()) {
 		native = *core::import_pose::pose_from_pdb(option[OptionKeys::in::file::native]());
+		core::pose::remove_lower_terminus_type_from_pose_residue(native,1);
 		tagpref = utility::file_basename(option[OptionKeys::in::file::native]());
 		tagpref = tagpref.substr(0,tagpref.size()-4);
 		natcomca = center_ca   (native);
