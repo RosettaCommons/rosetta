@@ -280,6 +280,8 @@ public:
 	/// @brief Actually our mover does not change the Pose object, so we have additional const version...
 	virtual void apply( Pose const & );
 
+	/// @brief Send message for PyMol to print
+	void print(std::string const & message);
 
 	/// @brief Send specified energy to PyMOL.
 	void send_energy(Pose const &, core::scoring::ScoreType stype = core::scoring::total_score);
@@ -317,6 +319,8 @@ public:
 	core::Real update_interval() { return update_interval_; };
 
 private:
+	//void send_message(std::string const & message_type, bool keep_history, std::string const & name, std::string const &message);
+
 	std::string get_PyMol_model_name(Pose const & pose) const;
 
 	bool is_it_time();

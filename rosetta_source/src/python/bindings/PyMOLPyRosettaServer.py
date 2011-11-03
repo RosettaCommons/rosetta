@@ -82,8 +82,8 @@ class PR_PyMOLServer:
         if etype == 'X11Colors': palette = 'X'
         else: palette = 'R'
 
-        for i in range(0, len(s), 8):
-            pymol.cmd.color( palette +  ('%s' % s[i+6:i+8]), '%s and chain %s and resi %s' % (name, s[i], s[i+1:i+6]))
+        for i in range(0, len(s), 7):
+            pymol.cmd.color( palette +  ('%s' % s[i+5:i+7]), '%s and chain %s and resi %s' % (name, s[i], s[i+1:i+5]))
 
 
     def processPacket(self, msg):
@@ -110,6 +110,9 @@ class PR_PyMOLServer:
             #pymol.cmd.show("cartoon", name)
             #pymol.cmd.forward()
             #pymol.cmd.refresh()
+
+        if ptype == 'Text    ':   # string is just text string that we need to print
+            print data.tostring()
 
         elif ptype == 'PDB.gzip':   # string is just a pdb file, gzip compression
             #print 'Getting PDB.gzip packet "%s"...' % name

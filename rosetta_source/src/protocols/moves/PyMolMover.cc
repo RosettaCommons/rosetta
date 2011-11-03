@@ -172,7 +172,10 @@ bool PyMolMover::is_it_time()
 
 void PyMolMover::apply( Pose const & pose)
 {
+	TR.Trace << "PyMolMover::apply( Pose const & pose)..." << std::endl;
+
 	if( !is_it_time() ) return;
+	TR.Trace << "PyMOL_Mover::apply It is time!" << std::endl;
 
 	std::string name = get_PyMol_model_name(pose);
 
@@ -205,6 +208,15 @@ void PyMolMover::apply( Pose & pose)
 {
 	Pose const & p(pose);
 	apply(p);
+}
+
+void PyMolMover::print(std::string const & message)
+{
+	if( !is_it_time() ) return;
+
+	std::string msg =  std::string("Text    ") + char(keep_history_) + char(0) /* Place holder for name size = 0 */ + message;
+
+	link_.sendMessage(msg);
 }
 
 void PyMolMover::send_RAW_Energies(Pose const &pose, std::string energyType, utility::vector1<int> const & energies)

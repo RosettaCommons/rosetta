@@ -70,14 +70,19 @@ int main( int argc, char * argv [] )
 
 	core::Real a = 0.;
 
+	pymol.print("Hi PyMOL!\n");
 
 	for(int j=0; j<16; j++) {
 		pose.set_phi(50, a);
 		a += 1.;
 
-		scorefxn->score(pose);
+		std::ostringstream msg;
+		msg << "Tottal energy=" << scorefxn->score(pose);
+		pymol.print(msg.str());
 
+		//TR << "Sending pose..." << std::endl;
 		pymol.apply(pose);
+		//TR << "Sending energies..." << std::endl;
 		pymol.send_energy(pose);
 
 		usleep(1000000);
