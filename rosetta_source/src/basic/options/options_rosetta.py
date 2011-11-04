@@ -2694,6 +2694,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'max_bbrms', 'Real', default='100000.0' ),
 		Option( 'min_rms'  , 'Real', default='0.0' ),
 		Option( 'max_rms'  , 'Real', default='100.0' ),
+		Option( 'filter_by_phipsi',  'Boolean', default = 'true' ),
 		Option( 'max_radius'  , 'Integer', default='4' ),
 		Option( 'max_struct'  , 'Integer', default='10' ),
 		Option( 'max_struct_per_radius'  , 'Integer', default='10' ),

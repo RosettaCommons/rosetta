@@ -82,6 +82,8 @@ LoopHashSampler::set_defaults(){
 	set_max_struct(    option[ lh::max_struct ]() );
 	set_max_struct_per_radius(    option[ lh::max_struct_per_radius ]() );
 	set_max_nstruct( 10000000 ); // OBSOLETE?
+	
+	filter_by_phipsi_ = option[ lh::filter_by_phipsi ]();  
 }
 
 bool cmp( core::pose::Pose a, core::pose::Pose b) {
@@ -114,6 +116,7 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 		long starttime = time(NULL);
 
 		Size impossible_torsion_rejects = 0;
+		Size impossible_torsion_candidates = 0;
     std::string sequence = start_pose.sequence();
 
     core::pose::Pose original_pose = start_pose;
@@ -250,36 +253,41 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 							// Next part is ported from score_fragment.f so these are magical cutoffs
 							const std::vector< core::Real > phi = new_bs.phi();
 							const std::vector< core::Real > psi = new_bs.psi();
-							bool offlimits;
 							// Check phi/psi angles against the sequence
 							// Pose counts residues starting from one, so offset that
-							for( core::Size m = ir - 1; m < jr - 1; m++ ) {
+							bool offlimits=false;
+							if( get_filter_by_phipsi() ){
+								for( core::Size bs_position = 0; bs_position < phi.size() ; ++bs_position ){
+									int sequence_position = ir - 1 + bs_position;
 									offlimits = true;
 									// Proline
-									if( sequence[m] == 'P' ) {
-										 if( phi[m] < -103 || phi[m] > -33 ) break;
+									if( sequence[sequence_position] == 'P' ) {
+										 if( phi[bs_position] < -103 || phi[bs_position] > -33 ) break;
 									}
 									// Beta branched residues
-									if( sequence[m] == 'I' || sequence[m] == 'V' || sequence[m] == 'T' ) {
-											if( phi[m] > -40 ) break; 
+									if( sequence[sequence_position] == 'I' || sequence[sequence_position] == 'V' || sequence[sequence_position] == 'T' ) {
+											if( phi[bs_position] > -40 ) break; 
 									}
 									// Non glycine residues are confined to only part of the positive phi region
 									// populated by glycine residues
-									if( sequence[m] != 'I' || sequence[m] != 'V' || sequence[m] != 'T' || 
-											sequence[m] != 'P'||  sequence[m] != 'G' ) {
-											if( phi[m] > 70 ) break; 
+									if( sequence[sequence_position] != 'I' || sequence[sequence_position] != 'V' || sequence[sequence_position] != 'T' || 
+											sequence[sequence_position] != 'P'||  sequence[sequence_position] != 'G' ) {
+											if( phi[bs_position] > 70 ) break; 
 									}
-									if( sequence[m] != 'G' ) {
-										 if( psi[m] < -75 && psi[m] > -170 ) break;
+									if( sequence[sequence_position] != 'G' ) {
+										 if( psi[bs_position] < -75 && psi[bs_position] > -170 ) break;
 									}
 									// Residues other than glycine preceding prolines are quite restricted
-									if( sequence[m] == 'P' ) {
-										 if( phi[m] < 40 && sequence[m] != 'G' ) {
-													if( psi[m] > -25 || phi[m] < -90 ) break;
-										 }
-									}
+//									if( sequence[sequence_position] == 'P' ) {
+//										 if( phi[bs_position] < 40 && sequence[sequence_position] != 'G' ) {
+//													if( psi[bs_position] > -25 || phi[bs_position] < -90 ) break;
+//										 }
+//									}
 									offlimits = false;
+								}
 							}
+							
+							impossible_torsion_candidates++;
 							if( offlimits ) {
 									impossible_torsion_rejects++;
 							} else {
@@ -380,7 +388,7 @@ bool cmp( core::pose::Pose a, core::pose::Pose b) {
 		long endtime = time(NULL);
 
 
-		TR.Info << "LHS: " << start_res << "-" << stop_res << ":  " <<lib_structs.size() << "structures " << endtime - starttime << " seconds, ia rejected " << impossible_torsion_rejects << std::endl;
+		TR.Info << "LHS: " << start_res << "-" << stop_res << ":  " <<lib_structs.size() << "struc " << endtime - starttime << " secs, rej: " << impossible_torsion_rejects << "/" << impossible_torsion_candidates << std::endl;
 
 		for( std::vector< core::io::silent::SilentStructOP >::iterator it=lib_structs.begin();
 				it != lib_structs.end(); ++it ){

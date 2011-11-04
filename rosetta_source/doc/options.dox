@@ -5715,6 +5715,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: 100.0</dd><br>
 </dl>
 <dl>
+<dt><b>-filter_by_phipsi</b> \<Boolean\><dt>
+<dd>No description</dd><br>
+<dd>Default: true</dd><br>
+</dl>
+<dl>
 <dt><b>-max_radius</b> \<Integer\><dt>
 <dd>No description</dd><br>
 <dd>Default: 4</dd><br>
@@ -9528,6 +9533,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dt><b>-vdw</b> \<Real\><dt>
 <dd>set vdw weight</dd><br>
 <dd>Default: 1.0</dd><br>
+</dl>
+<dl>
+<dt><b>-rama</b> \<Real\><dt>
+<dd>set rama weight</dd><br>
+<dd>Default: 0.1</dd><br>
 </dl>
 <dl>
 <dt><b>-cbeta</b> \<Real\><dt>

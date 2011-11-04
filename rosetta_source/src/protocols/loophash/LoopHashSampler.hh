@@ -75,6 +75,7 @@ class LoopHashSampler : public utility::pointer::ReferenceCount  {
   void set_max_struct_per_radius  ( core::Size  value ) {  max_struct_per_radius_    = value; }
   void set_max_nstruct  ( core::Size  value ) {  max_nstruct_    = value; }
   void set_nonideal  ( bool value ) {  nonideal_  = value; }
+  void set_filter_by_phipsi ( bool value) {  filter_by_phipsi_ = value; }
 	// This is meant for model creation, not mpi refinement!
 
   core::Size get_start_res() { return  start_res_ ; }
@@ -84,6 +85,7 @@ class LoopHashSampler : public utility::pointer::ReferenceCount  {
   core::Real get_min_rms  () { return  min_rms_   ; }
   core::Real get_max_rms  () { return  max_rms_   ; }
   core::Size get_max_nstruct() { return  max_nstruct_; }
+  bool       get_filter_by_phipsi() { return  filter_by_phipsi_; }
 
 	//fpd pre-filter structures with a scorefunction
 	//fpd   this is done using a chainbroken pose (before constraint minimization!)
@@ -113,7 +115,8 @@ class LoopHashSampler : public utility::pointer::ReferenceCount  {
 		core::Size max_radius_;
 		core::Size max_nstruct_;
 		bool nonideal_;
-
+		bool filter_by_phipsi_; 
+		
 		/// @brief (fpd) pre-filtering options
 		core::Size nprefilter_;
 		core::scoring::ScoreFunctionOP score_filt_;
