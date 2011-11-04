@@ -212,7 +212,7 @@ def main(args):
 
     if Options.debug: bindings_path += '_debug'
     if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
-    shutil.copyfile('src/__init__.py', 'rosetta/__init__.py')
+    shutil.copyfile('src/__init__.py', bindings_path + '/__init__.py')
 
     if Platform == "windows":  # we dealing with windows native build
         build_path = os.path.join(mini_path, 'build\windows')

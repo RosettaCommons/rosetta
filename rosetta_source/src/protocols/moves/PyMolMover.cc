@@ -314,7 +314,7 @@ void PyMolMover::send_energy(Pose const &pose, core::scoring::ScoreType score_ty
 	}
 }
 
-void PyMolMover::send_colors(Pose const &pose, ColorMap const & colors, X11Colors default_color)
+void PyMolMover::send_colors(Pose const &pose, std::map<int, int> const & colors, X11Colors default_color)
 {
 	utility::vector1<int> energies( pose.total_residue(), default_color);  // energies = [ X11Colors[default_color][0] ] * pose.total_residue()
 

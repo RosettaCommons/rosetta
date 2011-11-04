@@ -616,7 +616,7 @@ class PyMOL_Mover(rosetta.protocols.moves.PyMolMover):
     def __init__(self, *args): rosetta.protocols.moves.PyMolMover.__init__(self, *args)
 
     def send_colors(self, pose, colors, default_color=protocols.moves.XC_blue):
-        cm = rosetta.protocols.moves.ColorMap()
+        cm = rosetta.utility.map_int_int()
         for c in colors: cm[c] = colors[c]
 
         rosetta.protocols.moves.PyMolMover.send_colors(self, pose, cm, default_color)

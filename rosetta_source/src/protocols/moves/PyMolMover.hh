@@ -273,8 +273,6 @@ private:
 class PyMolMover : public protocols::moves::Mover
 {
 public:
-	typedef std::map<int, int> ColorMap;
-
 	PyMolMover() : update_energy_(false), energy_type_(core::scoring::total_score),
 	               keep_history_(false), update_interval_(0), last_packet_sent_time_(0), name_() {};
 
@@ -296,7 +294,7 @@ public:
     void send_RAW_Energies(Pose const &, std::string energyType, utility::vector1<int> const & energies);
 
 	/// @brief Tell PyMOL to color protein with supplied custom colors
-    virtual void send_colors(Pose const &, ColorMap const & colors, X11Colors default_color=protocols::moves::XC_blue );
+    virtual void send_colors(Pose const &, std::map<int, int> const & colors, X11Colors default_color=protocols::moves::XC_blue );
 
 
 	bool update_energy() { return update_energy_; }

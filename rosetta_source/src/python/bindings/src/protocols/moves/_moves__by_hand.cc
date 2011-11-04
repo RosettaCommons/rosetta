@@ -13,11 +13,9 @@
 //#include <protocols/moves/MonteCarlo.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <protocols/moves/PyMolMover.hh>
-
 #include <iostream>
 
-#include <boost/python/suite/indexing/map_indexing_suite.hpp>
+//#include <boost/python/suite/indexing/map_indexing_suite.hpp>
 
 namespace bp = boost::python;
 
@@ -109,7 +107,8 @@ void wrap__moves__by_hand()
                               , utility::pointer::owning_ptr< ::protocols::moves::Mover > >();
 */
 
+	/*
 	bp::class_< ::protocols::moves::PyMolMover::ColorMap >("ColorMap")
 		.def( bp::map_indexing_suite< ::protocols::moves::PyMolMover::ColorMap >())
-		;
+		; */
 }
