@@ -26,29 +26,18 @@
 
 // Project headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-// AUTO-REMOVED #include <protocols/abinitio/MaxSeqSepConstraintSet.hh>
-// AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
 #include <protocols/jd2/ThreadingJob.hh>
-// AUTO-REMOVED #include <protocols/loops/LoopRelaxMover.hh>
 #include <protocols/loops/LoopRelaxThreadingMover.hh>
 #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <protocols/loops/util.hh>
 #include <protocols/nonlocal/StarTreeBuilder.hh>
 #include <protocols/nonlocal/util.hh>
-
-// Package headers
-// AUTO-REMOVED #include <protocols/medal/util.hh>
-
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <utility/vector1.hh>
-
 
 namespace protocols {
 namespace medal {

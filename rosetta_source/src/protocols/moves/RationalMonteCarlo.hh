@@ -29,7 +29,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
+#include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <protocols/moves/MonteCarlo.fwd.hh>

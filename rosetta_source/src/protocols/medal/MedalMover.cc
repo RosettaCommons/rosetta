@@ -59,13 +59,10 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-// AUTO-REMOVED #include <protocols/abinitio/MaxSeqSepConstraintSet.hh>
-// AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
 #include <protocols/jd2/ThreadingJob.hh>
 #include <protocols/loops/LoopRelaxMover.hh>
 #include <protocols/loops/LoopRelaxThreadingMover.hh>
 #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <protocols/loops/util.hh>
 #include <protocols/moves/BackboneMover.hh>
 #include <protocols/moves/CyclicMover.hh>
 #include <protocols/moves/RationalMonteCarlo.hh>
