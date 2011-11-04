@@ -219,10 +219,10 @@ if ( $lattice_chain ne '' ) {
 	my ($R_lattice,$rmsd, $COM_i, $COM_ij) = rms_align( $chains{ $primary_chain } , $chains{ $lattice_chain } );
 	$delCOM_lattice = vsub ($COM_i, $COM_0);
 	if (!is_identity($R_lattice)) {
-		print STDERR "     ".$R->[0][0].",".$R->[0][1].",".$R->[0][2]."\n";
-		print STDERR " R = ".$R->[1][0].",".$R->[1][1].",".$R->[1][2]."\n";
-		print STDERR "     ".$R->[2][0].",".$R->[2][1].",".$R->[2][2]."\n";
-		die "Lattice symmetry must not have rotation!\n";  ##?? recover from this instead?
+		print STDERR "     ".$R_lattice->[0][0].",".$R_lattice->[0][1].",".$R_lattice->[0][2]."\n";
+		print STDERR " R = ".$R_lattice->[1][0].",".$R_lattice->[1][1].",".$R_lattice->[1][2]."\n";
+		print STDERR "     ".$R_lattice->[2][0].",".$R_lattice->[2][1].",".$R_lattice->[2][2]."\n";
+		die "Lattice symmetry ($primary_chain,$lattice_chain) must not have rotation!\n";  ##?? recover from this instead?
 	}
 	$ptgp_sep = vnorm( $delCOM_lattice );
 } else {

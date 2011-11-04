@@ -214,7 +214,7 @@ public:
 			numeric::xyzVector< core::Real > y_2 = pose.residue(frag.pdb_info()->number(i)).atom(" O  ").xyz();
 			numeric::xyzVector< core::Real > y_3 = pose.residue(frag.pdb_info()->number(i)).atom(" CA ").xyz();
 			numeric::xyzVector< core::Real > y_4 = pose.residue(frag.pdb_info()->number(i)).atom(" N  ").xyz();
-			postT += x_1+x_2+x_3+x_4;
+			postT += y_1+y_2+y_3+y_4;
 			for (int j=0; j<3; ++j) { 
 				init_coords(j+1,4*(i-1)+1) = x_1[j];
 				init_coords(j+1,4*(i-1)+2) = x_2[j];

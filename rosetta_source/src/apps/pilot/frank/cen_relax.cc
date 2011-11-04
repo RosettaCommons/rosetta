@@ -13,6 +13,7 @@
 #include <protocols/moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -41,6 +42,7 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 
 static basic::Tracer TR("cen_relax");
@@ -66,6 +68,10 @@ public:
 
 		// scorefunction0 -- weakly restrain bondlengths
 		core::scoring::ScoreFunctionOP scorefxn0 = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth_cart");
+		if ( option[ score::weights ].user() ) {
+			scorefxn0 = core::scoring::getScoreFunction();
+		}
+
 		core::scoring::methods::EnergyMethodOptions options0(scorefxn0->energy_method_options());
 		options0.set_cartesian_bonded_linear(true);
 		options0.set_cartesian_bonded_parameters(2,0,0,0);
@@ -74,6 +80,9 @@ public:
 		minimizer.run( pose, mm, *scorefxn0, minoptions );
 
 		core::scoring::ScoreFunctionOP scorefxn1 = core::scoring::ScoreFunctionFactory::create_score_function("score4_smooth_cart");
+		if ( option[ score::weights ].user() ) {
+			scorefxn1 = core::scoring::getScoreFunction();
+		}
 		core::scoring::methods::EnergyMethodOptions options1(scorefxn1->energy_method_options());
 		options1.set_cartesian_bonded_linear(true);
 		scorefxn1->set_energy_method_options(options1);
@@ -101,6 +110,7 @@ my_main( void* ) {
 	using namespace protocols::moves;
 
 	SequenceMoverOP seq( new SequenceMover() );
+	seq->add_mover( new protocols::moves::symmetry::SetupForSymmetryMover() );
 	seq->add_mover( new protocols::moves::SwitchResidueTypeSetMover("centroid") );
 	seq->add_mover( new CenRelaxMover() );
 
