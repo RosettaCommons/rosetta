@@ -16,7 +16,8 @@
 
 #include <protocols/moves/PyMolMover.hh>
 
-//#include <numeric/random/mt19937.hh>
+//#ifndef WIN_PYROSETTA  // CL compiler got horribly confused if our numeric header got included after <winsock2.h>
+
 #include <numeric/random/random.hh>
 
 #include <core/pose/Pose.hh>
@@ -37,6 +38,8 @@
 
 #include <utility/PyAssert.hh>
 
+//#endif
+
 //#include <cstdlib.h>
 
 /*#if  !defined(WINDOWS) && !defined(WIN32)
@@ -47,7 +50,7 @@
 namespace protocols {
 namespace moves {
 
-static basic::Tracer TR("protocols.moves.PyMOLDemo");
+static basic::Tracer TR("protocols.moves.PyMolMover");
 
 //static numeric::random::RandomGenerator RG(9636236);
 
@@ -76,30 +79,30 @@ UDPSocketClient::UDPSocketClient() : sentCount_(0)
 		max_packet_size_ = 64512; /* 1024*63*/
 	#endif
 
-	#ifndef WIN_PYROSETTA
-		// generating random uuid by hands
-		for(unsigned int i=0; i<sizeof(uuid_.shorts_)/sizeof(uuid_.shorts_[0]); i++) uuid_.shorts_[i] = (unsigned short) getRG()->getRandom()*65536;  //RG.random_range(0, 65536);
+	//#ifndef WIN_PYROSETTA
+	// generating random uuid by hands
+	for(unsigned int i=0; i<sizeof(uuid_.shorts_)/sizeof(uuid_.shorts_[0]); i++) uuid_.shorts_[i] = (unsigned short) getRG()->getRandom()*65536;  //RG.random_range(0, 65536);
 
-		memset(&socket_addr_, '\0', sizeof(sockaddr_in));
+	memset(&socket_addr_, '\0', sizeof(sockaddr_in));
 
-		socket_addr_.sin_family = AF_INET;     // host byte order
-		socket_addr_.sin_port = htons(65000);  // short, network byte order
-		socket_addr_.sin_addr.s_addr = inet_addr("127.0.0.1");
+	socket_addr_.sin_family = AF_INET;     // host byte order
+	socket_addr_.sin_port = htons(65000);  // short, network byte order
+	socket_addr_.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-		socket_h_ = socket(AF_INET, SOCK_DGRAM, 0);
-	#endif
+	socket_h_ = socket(AF_INET, SOCK_DGRAM, 0);
+	//#endif
 #endif
 }
 
 UDPSocketClient::~UDPSocketClient()
 {
-	#ifndef WIN_PYROSETTA
-		#ifdef WIN32
-			closesocket(socket_h_);
-		#else
-			close(socket_h_);
-		#endif
+	//#ifndef WIN_PYROSETTA
+	#ifdef WIN32
+		closesocket(socket_h_);
+	#else
+		close(socket_h_);
 	#endif
+	//#endif
 }
 
 void UDPSocketClient::sendMessage(std::string msg)
@@ -127,9 +130,9 @@ void UDPSocketClient::sendRAWMessage(int globalPacketID, int packetI, int packet
 		memcpy(&buf[i], &packetI, 2);  i+=2;
 		memcpy(&buf[i], &packetCount, 2);  i+=2;
 		memcpy(&buf[i], msg_begin, msg_end-msg_begin);  i+=msg_end-msg_begin;
-		#ifndef WIN_PYROSETTA
-			sendto(socket_h_, &buf[0], buf.size(), 0 , (struct sockaddr *)&socket_addr_, sizeof(struct sockaddr_in));
-		#endif
+		//#ifndef WIN_PYROSETTA
+		sendto(socket_h_, &buf[0], buf.size(), 0 , (struct sockaddr *)&socket_addr_, sizeof(struct sockaddr_in));
+		//#endif
 	#endif
 }
 
@@ -341,3 +344,14 @@ PyMolObserverOP AddPyMolObserver(core::pose::Pose &p, bool keep_history, core::R
 } // protocols
 
 #endif // INCLUDED_protocols_moves_PyMolMover_CC
+
+/*
+#if (defined min) && (defined WIN32)  // Workaround for MSVC and windows.h include which used #define min
+	#undef min
+#endif
+
+#if (defined max) && (defined WIN32) // Workaround for MSVC and windows.h include which used #define max
+	#undef max
+#endif
+
+*/

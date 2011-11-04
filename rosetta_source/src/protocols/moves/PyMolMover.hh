@@ -24,14 +24,19 @@
 #include <core/scoring/ScoreType.hh>
 
 
+#include <string>
+
+#include <utility/vector1.hh>
+
 // AUTO-REMOVED #include <sys/types.h>
+
 
 // REQUIRED FOR WINDOWS
 #ifndef NATCL
 	#ifdef WIN32
-		#ifndef WIN_PYROSETTA
-			#include <winsock2.h>
-		#endif
+		#include <winsock2.h>
+		#undef min
+		#undef max
 	#else
 		#include <sys/socket.h>
 		#include <netinet/in.h>
@@ -43,14 +48,11 @@
   typedef int sockaddr_in;
 #endif
 
-#ifdef WIN_PYROSETTA
-  typedef int sockaddr_in;
-#endif
+//#ifdef WIN_PYROSETTA
+//  typedef int sockaddr_in;
+//#endif
 
 
-#include <string>
-
-#include <utility/vector1.hh>
 
 
 namespace protocols {

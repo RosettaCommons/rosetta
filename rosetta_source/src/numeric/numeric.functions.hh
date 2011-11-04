@@ -31,6 +31,13 @@ namespace numeric {
 
 // min functions: Specializations for built-in types pass by value for speed
 
+#if (defined min) && (defined WIN32)  // Workaround for MSVC and windows.h include which used #define min
+	#undef min
+#endif
+
+#if (defined max) && (defined WIN32) // Workaround for MSVC and windows.h include which used #define max
+	#undef max
+#endif
 
 /// @brief min( short int, short int )
 inline
