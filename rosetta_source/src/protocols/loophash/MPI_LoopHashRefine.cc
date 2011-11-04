@@ -530,7 +530,13 @@ MPI_LoopHashRefine::dump_structures( const SilentStructStore &new_structs, bool 
 	for( SilentStructStore::const_iterator it = new_structs.begin();
 		 it != new_structs.end(); ++it )
 	{
-		sfd.write_silent_struct( *(*it), filename, score_only );
+		// don't add round 0 structures (they have conflicting silent struct headers and
+		// mess up columns in the output
+		if( (*it)->get_energy("round") > 0 ){
+			sfd.write_silent_struct( *(*it), filename, score_only );
+		}else{
+			TR << "Trying to dump structure of round == 0. Refusing plainly. " << std::endl;	
+		}
 	}
 	core::Real write_time = start_timer( TIMING_CPU );
 	TR << "Write time: " << write_time << std::endl;
@@ -539,7 +545,7 @@ MPI_LoopHashRefine::dump_structures( const SilentStructStore &new_structs, bool 
 void
 MPI_LoopHashRefine::send_random_library_struct( core::Size dest_rank, core::Size newssid ) const {
 	if( library_central_.size() == 0 ){
-	 	std::cout << "ERROR: Havce no structure to send" << std::endl;
+	 	TR.Error << "ERROR: Havce no structure to send" << std::endl;
 		return;
 	}
 

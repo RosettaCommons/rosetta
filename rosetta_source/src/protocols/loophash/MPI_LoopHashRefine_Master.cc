@@ -583,7 +583,7 @@ MPI_LoopHashRefine_Master::process_inbound_wus(){
 	using namespace protocols::loops;
 
 	check_library_expiry_dates();
-	TR << "Finished checking library dates"<<std::endl;
+	TRDEBUG << "Finished checking library dates"<<std::endl;
 	if( inbound().size() > 0 ){
 		TRDEBUG << "Processing inbound WUs on master.." << std::endl;
 	}
@@ -644,7 +644,8 @@ MPI_LoopHashRefine_Master::process_inbound_wus(){
 			print_library();
 			add_structures_to_library( decoys, "add_n_limit" );
 			print_library();
-			dump_structures( decoys, mpi_master_save_score_only_ );
+			// dont dump structures that came straight from emperor. 
+			//dump_structures( decoys, mpi_master_save_score_only_ );
 		} else
 		if ( structure_wu->get_wu_type() == "batchrelax" ){
 			decoys.all_sort_silent_scores();
@@ -684,7 +685,7 @@ MPI_LoopHashRefine_Master::process_outbound_wus(){
 				 (*it)->add_energy( "lhcount",  (*it)->get_energy("lhcount") + 1.0 );
 				create_loophash_WUs( *it );
 			}else{
-					finished_structures = 1;
+					finished_structures += 1;
 					TRDEBUG << "Already done: " << (*it) << "  " << (*it)->get_energy("lhcount") << std::endl;
 			}
 		}
@@ -810,7 +811,7 @@ MPI_LoopHashRefine_Master::check_library_expiry_dates(){
 	for( SilentStructStore::iterator jt =  library_central().begin();
 									jt != library_central().end(); jt ++ )
 	{
-		TR << "Checking structure.." << std::endl;
+		TR.Debug << "Checking structure.." << std::endl;
 		core::Size struct_time = (core::Size)(*jt)->get_energy("ltime");
 		core::Size ssid        = (core::Size)(*jt)->get_energy("ssid");
 		core::Size round       = (core::Size)(*jt)->get_energy("round");
