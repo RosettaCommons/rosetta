@@ -13,6 +13,7 @@
 
 
 
+
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/util.hh>
 #include <protocols/wum/WorkUnitList.hh>
@@ -27,6 +28,8 @@
 #include <basic/options/keys/wum.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ChemicalManager.fwd.hh>
 
 #include <cstdio>
 
