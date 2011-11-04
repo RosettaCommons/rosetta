@@ -304,7 +304,7 @@ void MPI_WorkUnitManager::receive_MPI_workunit( core::Size MPI_ONLY(node_rank) )
 	(*qualified_wu) = (*wu);
 	(*qualified_wu).last_received_from_ = status.MPI_SOURCE;
 	TRDEBUG << "  Received: " << std::endl;
-	if( TRDEBUG.visible() ) qualified_wu->print( TR );
+	//if( TRDEBUG.visible() ) qualified_wu->print( TR );
 
 	qualified_wu->deserialize( );
 	qualified_wu->clear_serial_data();
