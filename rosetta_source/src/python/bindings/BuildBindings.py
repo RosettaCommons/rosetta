@@ -172,8 +172,8 @@ def main(args):
       help="Mostly for Windows native build: Path to pre-generated PyRosetta C++ source files.",
     )
 
-    parser.add_option("--use-windows-platform-types",
-      action="store_true", dest='use_windows_platform_types', default=False,
+    parser.add_option("--cross-compile",
+      action="store_true", dest='cross_compile', default=False,
       help="Generate bindings and target Windows cross platform build, this will result in different Size/SSize types. This also implies skipping the binding compilation.",
     )
 
@@ -198,7 +198,7 @@ def main(args):
     print "--boost_lib", options.boost_lib
     print '--update', options.update
     print '--debug', options.debug
-    #print '--use-windows-platform-types', options.use_windows_platform_types
+    #print '--cross-compile', options.cross_compile
 
     if (Options.jobs > 1) and Options.sort_IncludeDict:
         print 'Option --update-IncludeDict could be used only with -j1... exiting...'
@@ -208,7 +208,7 @@ def main(args):
     mini_path = os.path.abspath('./../../../')
 
     bindings_path = os.path.abspath('./rosetta')
-    if Options.use_windows_platform_types: bindings_path += '.windows'
+    if Options.cross_compile: bindings_path += '.windows'
 
     if Options.debug: bindings_path += '_debug'
     if not os.path.isdir(bindings_path): os.makedirs(bindings_path)
@@ -665,6 +665,8 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
     for dir_name, _, files in os.walk(Options.use_pre_generated_sources):
         wn_buildOneNamespace(Options.use_pre_generated_sources, dir_name, files, bindings_path, build_dir, link=True)
 
+    print 'Done building PyRosetta bindings for Windows!'
+
 
     #for o in objs: print o
 
@@ -850,8 +852,8 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
     runtime_libpaths = ' -Xlinker -rpath '.join( [''] + runtime_libpaths + ['rosetta'] )
     #if Platform == 'cygwin': runtime_libpaths = ' '
 
-    cpp_defines = '-DPYROSETTA -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK'
-    if Options.use_windows_platform_types: cpp_defines += ' -I../src/platform/windows/PyRosetta'
+    cpp_defines = '-DPYROSETTA -DPYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK -DBOOST_NO_MT'
+    if Options.cross_compile: cpp_defines += ' -I../src/platform/windows/PyRosetta'
     else: cpp_defines += ' -I../src/platform/linux'
 
     cc_files = []
@@ -1042,7 +1044,7 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
 
                 failed = False
 
-                if not Options.use_windows_platform_types:
+                if not Options.cross_compile:
                     if execute("Compiling...", comiler_cmd % comiler_dict, True):
                         if Options.compiler != 'clang': failed = True
                         elif execute("Compiling...", comiler_cmd % dict(comiler_dict, compiler='gcc'), True): failed = True
@@ -1051,7 +1053,7 @@ def buildModule_UsingCppParser(path, dest, include_paths, libpaths, runtime_libp
 
                 objs_list.append(all_at_once_N_obj)
 
-            if not Options.use_windows_platform_types:
+            if not Options.cross_compile:
                 execute("Linking...", # -fPIC -ffloat-store -ffor-scope
                     "cd %(dest)s/../ && %(compiler)s %(obj)s %(add_option)s  \
                     -lmini -lstdc++ -lz\
