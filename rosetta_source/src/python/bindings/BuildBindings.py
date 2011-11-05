@@ -660,7 +660,7 @@ def BuildRosettaOnWindows(build_dir, bindings_path):
     def_file = os.path.join(build_dir, 'rosetta_symbols.def')
     f = file(def_file, 'w'); f .write('LIBRARY rosetta\nEXPORTS\n  ' + '\n  '.join(symbols) + '\n' );  f.close()
 
-    execute('Creating DLL %s...' % dll, 'cd %s && link /OPT:NOREF /dll @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib /DEF:%s /out:%s' % (build_dir, def_file, dll) )
+    execute('Creating DLL %s...' % dll, 'cd %s && link /OPT:NOREF /dll @objs ..\\..\\external\\lib\\win_pyrosetta_z.lib Ws2_32.lib /DEF:%s /out:%s' % (build_dir, def_file, dll) )
 
     for dir_name, _, files in os.walk(Options.use_pre_generated_sources):
         wn_buildOneNamespace(Options.use_pre_generated_sources, dir_name, files, bindings_path, build_dir, link=True)
