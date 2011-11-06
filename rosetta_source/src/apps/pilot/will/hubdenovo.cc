@@ -72,6 +72,7 @@
 #include <protocols/basic_moves/FragmentMover.hh>
 #include <protocols/electron_density/util.hh>
 #include <protocols/flxbb/FlxbbDesign.hh>
+#include <protocols/relax/FastRelax.hh>
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
@@ -224,24 +225,47 @@ core::fragment::FragSetOP make_frag_set_9mers(Size nres) {
 	return frags;
 }
 
-void cen_fold(Pose & p, ScoreFunctionOP sf3, MoverOP fragmove3, vector1<std::pair<Size,Size> > & hocsts){
-	using namespace core::scoring;
+void add_ho_csts(Size ir, Size jr, Pose & p, Size nres) {
 	using namespace core::scoring::constraints;
-
-	for(vector1<std::pair<Size,Size> >::const_iterator i = hocsts.begin(); i != hocsts.end(); ++i) {
-		Size ir = i->first; Size jr = i->second;
-		cout << "turn on cst " << ir << " " << jr << endl;
+	cout << "bond (name H and resi " << ir << "), (name O and resi " << jr << ")" << endl;
+	p.add_constraint( new AtomPairConstraint( AtomID(p.residue(ir).atom_index("H"),ir),
+		                                      AtomID(p.residue(jr).atom_index("O"),jr),	
+											  new HarmonicFunc(2.0,0.5)) );
+	p.add_constraint( new AngleConstraint( AtomID(p.residue(ir).atom_index("N"),ir),	
+			                               AtomID(p.residue(ir).atom_index("H"),ir),
+		                                   AtomID(p.residue(jr).atom_index("O"),jr),	
+									       new CircularHarmonicFunc(3.14159,1.0)) );
+	p.add_constraint( new AngleConstraint( AtomID(p.residue(ir).atom_index("H"),ir),
+			                               AtomID(p.residue(jr).atom_index("O"),jr),
+		                                   AtomID(p.residue(jr).atom_index("C"),jr),	
+									       new CircularHarmonicFunc(3.14159,1.0)) );
+	if( ir > nres || jr > nres ) {
+		cout << "sym cst!" << endl;
+		if(ir > nres) ir -=   nres;
+		else          ir += 2*nres;
+		if(jr > nres) jr -=   nres;
+		else          jr += 2*nres;
+		cout << "bond (name H and resi " << ir << "), (name O and resi " << jr << ")" << endl;			
 		p.add_constraint( new AtomPairConstraint( AtomID(p.residue(ir).atom_index("H"),ir),
-			                                      AtomID(p.residue(ir).atom_index("O"),jr),	
-												  new HarmonicFunc(1.8,0.5)) );
-		p.add_constraint( new AngleConstraint( AtomID(p.residue(ir).atom_index("N"),ir),	
+			                                      AtomID(p.residue(jr).atom_index("O"),jr),	
+												  new HarmonicFunc(2.0,0.5)) );
+		p.add_constraint( new AngleConstraint( AtomID(p.residue(ir).atom_index("N"),ir),
 				                               AtomID(p.residue(ir).atom_index("H"),ir),
-			                                   AtomID(p.residue(ir).atom_index("O"),jr),	
+			                                   AtomID(p.residue(jr).atom_index("O"),jr),	
 										       new CircularHarmonicFunc(3.14159,1.0)) );
 		p.add_constraint( new AngleConstraint( AtomID(p.residue(ir).atom_index("H"),ir),	
 				                               AtomID(p.residue(ir).atom_index("O"),ir),
-			                                   AtomID(p.residue(ir).atom_index("C"),jr),	
+			                                   AtomID(p.residue(jr).atom_index("C"),jr),	
 										       new CircularHarmonicFunc(3.14159,1.0)) );
+	}
+
+}
+
+void cen_fold(Pose & p, ScoreFunctionOP sf3, MoverOP fragmove3, vector1<std::pair<Size,Size> > & hocsts, Size nres){
+
+	for(vector1<std::pair<Size,Size> >::const_iterator i = hocsts.begin(); i != hocsts.end(); ++i) {
+		Size ir = i->first; Size jr = i->second;
+		add_ho_csts(ir,jr,p,nres);
 		Real temp = 2.0;
 		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( p, *sf3, temp );
 		mc->set_autotemp( true, temp );	mc->set_temperature( temp );
@@ -256,8 +280,33 @@ void cen_fold(Pose & p, ScoreFunctionOP sf3, MoverOP fragmove3, vector1<std::pai
 	//sf3->show(p);
 }
 
+
+
 bool hocstcmp (std::pair<Size,Size> i, std::pair<Size,Size> j) { 
 	return abs(i.first-i.second) < abs(j.first-j.second);
+}
+
+
+void min_as_poly_ala(Pose & p, ScoreFunctionOP sf, vector1<std::pair<Size,Size> > & hocsts, Size nres) {
+	for(Size i = 2; i <= nres; ++i) {
+		if(p.residue(i).name3()=="GLY") continue;
+		core::pose::replace_pose_residue_copying_existing_coordinates(p,i,p.residue(i).residue_type_set().name_map("ALA"));
+	}
+			// reapply csts
+		p.remove_constraints();
+		for(vector1<std::pair<Size,Size> >::const_iterator i = hocsts.begin(); i != hocsts.end(); ++i) 
+			add_ho_csts(i->first,i->second,p,nres);
+
+	sf->show(p);
+	sf->set_weight(core::scoring::atom_pair_constraint,1.0);
+	sf->set_weight(core::scoring::    angle_constraint,1.0);
+	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+  	movemap->set_jump(false);
+  	movemap->set_bb(true);
+  	movemap->set_chi(true);
+	protocols::moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
+	sf->set_weight(core::scoring::atom_pair_constraint,1.0);
+	sf->set_weight(core::scoring::    angle_constraint,1.0);
 }
 
 int main(int argc, char *argv[]) {
@@ -276,11 +325,14 @@ int main(int argc, char *argv[]) {
 	for(Size i = 1; i <= hocsts.size(); ++i) cout << hocsts[i].first << " " << hocsts[i].second << endl;
 
 	ScoreFunctionOP sfsym  = getScoreFunction();
+	ScoreFunctionOP sfsymnocst  = getScoreFunction();
 	ScoreFunctionOP sfasym = new ScoreFunction(*sfsym);
+	sfsym->set_weight(atom_pair_constraint,1.0);
+	sfsym->set_weight(    angle_constraint,1.0);
 
 	ScoreFunctionOP sf3 = new symmetry::SymmetricScoreFunction(ScoreFunctionFactory::create_score_function("score3"));
-	sf3->set_weight(atom_pair_constraint,2.0);
-	sf3->set_weight(    angle_constraint,2.0);
+	sf3->set_weight(atom_pair_constraint,1.0);
+	sf3->set_weight(    angle_constraint,1.0);
 
 
 	core::chemical::ResidueTypeSetCAP rtsfa = core::chemical::ChemicalManager::get_instance()->residue_type_set("fa_standard");
@@ -313,24 +365,21 @@ int main(int argc, char *argv[]) {
 
 	p.conformation().detect_bonds();
 
-	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-  	movemap->set_jump(false);
-  	movemap->set_bb(true);
-  	movemap->set_chi(true);
-	protocols::moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
-
-	core::util::switch_to_residue_type_set(p,"centroid");
-
 
 	std::map<string, vector1<core::fragment::FragDataOP> > fds( get_frags_map() );
 	core::fragment::FragSetOP frags3 = make_frag_set(ss,fds);
 	protocols::moves::MoverOP fragins = new protocols::basic_moves::ClassicFragmentMover(frags3);
+	protocols::flxbb::FlxbbDesign des( sfsym, sfsym );
+	protocols::relax::FastRelax rlxcst(sfsym);
+	protocols::relax::FastRelax rlxnocst(sfsymnocst);
+	core::util::switch_to_residue_type_set(p,"centroid");
 	Pose init(p);
 	for(int iter = 1; iter < 99999999; ++iter) {
 		Pose tmp(init);
 		
-		cen_fold(tmp,sf3,fragins,hocsts);
-		if(tmp.energies().total_energies()[atom_pair_constraint] > 40.0) {
+		cen_fold(tmp,sf3,fragins,hocsts,nres);
+
+		if(tmp.energies().total_energies()[atom_pair_constraint] > 60.0) {
 			cout << "cst fail " << tmp.energies().total_energies()[atom_pair_constraint] << endl;
 			continue;
 		}
@@ -338,11 +387,38 @@ int main(int argc, char *argv[]) {
 		string fn = option[OptionKeys::out::file::o]() + "/" + ss +"_"+ str(uniform()).substr(2,8) + ".pdb.gz";
 		cout << "HIT " << fn << endl;
 
-		protocols::flxbb::FlxbbDesign des( sfsym, sfsym );
-		des.apply(p);
+		tmp.dump_pdb(fn+"_cen.pdb.gz");
+		core::util::switch_to_residue_type_set(tmp,"fa_standard");
+		// reapply csts
+		tmp.remove_constraints();
+		for(vector1<std::pair<Size,Size> >::const_iterator i = hocsts.begin(); i != hocsts.end(); ++i) 
+			add_ho_csts(i->first,i->second,tmp,nres);
+
+
+		{
+			sfsym->set_weight(core::scoring::atom_pair_constraint,10.0);
+			sfsym->set_weight(core::scoring::    angle_constraint,10.0);
+			core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+		  	movemap->set_jump(false); movemap->set_bb(true); movemap->set_chi(true);
+			rlxcst.apply(tmp); // no cst
+			// protocols::moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(tmp);
+			sfsym->set_weight(core::scoring::atom_pair_constraint,1.0);
+			sfsym->set_weight(core::scoring::    angle_constraint,1.0);
+			// min_as_poly_ala(tmp,sfsym,hocsts,nres);
+			sfsym->show(tmp);
+			tmp.dump_pdb(fn+"_min.pdb.gz");
+			tmp.constraint_set()->show_violations(cout,tmp,1,1.0);
+		}
+		tmp.remove_constraints();
+
+		cout << "flxbb" << endl;
+		des.apply(tmp); // with cst
+
+		cout << "rlx nocst" << endl;
+		rlxnocst.apply(tmp); // no cst
+		sfsym->show(tmp); // rescore with cst
 
 		tmp.dump_pdb(fn);
-
 		core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
 	  	ss_out->fill_struct(tmp,fn);
 
