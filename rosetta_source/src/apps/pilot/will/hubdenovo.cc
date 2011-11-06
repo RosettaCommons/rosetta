@@ -387,7 +387,7 @@ int main(int argc, char *argv[]) {
 		string fn = option[OptionKeys::out::file::o]() + "/" + ss +"_"+ str(uniform()).substr(2,8) + ".pdb.gz";
 		cout << "HIT " << fn << endl;
 
-		tmp.dump_pdb(fn+"_cen.pdb.gz");
+		//tmp.dump_pdb(fn+"_cen.pdb.gz");
 		core::util::switch_to_residue_type_set(tmp,"fa_standard");
 		// reapply csts
 		tmp.remove_constraints();
@@ -406,13 +406,13 @@ int main(int argc, char *argv[]) {
 			sfsym->set_weight(core::scoring::    angle_constraint,1.0);
 			// min_as_poly_ala(tmp,sfsym,hocsts,nres);
 			sfsym->show(tmp);
-			tmp.dump_pdb(fn+"_min.pdb.gz");
+			//tmp.dump_pdb(fn+"_min.pdb.gz");
 			tmp.constraint_set()->show_violations(cout,tmp,1,1.0);
 		}
 		tmp.remove_constraints();
 
-		cout << "flxbb" << endl;
-		des.apply(tmp); // with cst
+		// cout << "flxbb" << endl;
+		// des.apply(tmp); // with cst
 
 		cout << "rlx nocst" << endl;
 		rlxnocst.apply(tmp); // no cst
