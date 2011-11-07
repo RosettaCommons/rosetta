@@ -46,6 +46,7 @@ sources = {
 		#"contact_map_from_homologs",
 	],
 	"pilot/cmiles" : [
+                #"helix_rotate",
 		"medal",
                 "medal_abinitio",
 		"medal_exchange",

@@ -1,0 +1,165 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+
+/// @file protocols/moves/HelixRotate.cc
+/// @author Christopher Miles (cmiles@uw.edu)
+
+// Unit headers
+#include <protocols/moves/HelixRotate.hh>
+
+// C/C++ headers
+#include <iostream>
+#include <string>
+
+// Utility header
+#include <basic/Tracer.hh>
+#include <numeric/xyzVector.hh>
+
+// Project headers
+#include <core/conformation/Conformation.hh>
+#include <core/id/NamedAtomID.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Jump.hh>
+#include <core/kinematics/Stub.hh>
+#include <core/pose/Pose.hh>
+#include <protocols/loops/Loop.hh>
+#include <protocols/loops/Loops.hh>
+#include <protocols/nonlocal/StarTreeBuilder.hh>
+
+// Package headers
+#include <protocols/moves/Mover.hh>
+
+namespace protocols {
+namespace moves {
+
+static basic::Tracer TR("protocols.moves.HelixRotate");
+
+HelixRotate::HelixRotate() {
+  initialize(protocols::loops::Loop(), 0.0);
+}
+
+HelixRotate::HelixRotate(const protocols::loops::Loop& helix, double degrees) {
+  initialize(helix, degrees);
+}
+
+void HelixRotate::initialize(const protocols::loops::Loop& helix, double degrees) {
+  helix_ = helix;
+  degrees_ = degrees;
+}
+
+void HelixRotate::apply(core::pose::Pose& pose) {
+  using core::id::NamedAtomID;
+  using core::kinematics::FoldTree;
+  using core::kinematics::Jump;
+  using core::kinematics::Stub;
+  using numeric::xyzVector;
+  using protocols::loops::Loops;
+  using protocols::nonlocal::StarTreeBuilder;
+
+  if (!is_valid()) {
+    TR.Warning << "HelixRotate::apply() invoked with invalid or incomplete information." << std::endl;
+    TR.Warning << "  helix_ => " << get_helix() << std::endl;
+    TR.Warning << "  degrees_ => " << get_degrees() << std::endl;
+    return;
+  }
+
+  // Retain a copy of the input fold tree, since we're responsible for restoring it
+  FoldTree input_tree = pose.fold_tree();
+
+  // Configure new kinematics
+  Loops chunks;
+  decompose_structure(pose.total_residue(), &chunks);
+
+  StarTreeBuilder builder;
+  builder.set_up(chunks, &pose);
+  TR.Debug << pose.fold_tree() << std::endl;
+
+  // Define the axis of translation as the vector between the first and last residues of the helix
+  xyzVector<double> axis = pose.xyz(NamedAtomID("CA", helix_.stop())) - pose.xyz(NamedAtomID("CA", helix_.start()));
+
+  // Define the point around which to rotate
+  xyzVector<double> center = pose.xyz(NamedAtomID("CA", helix_.start() + (helix_.stop() - helix_.start()) / 2));
+
+  // Rotation about the axis
+  unsigned jump_num = jump_containing_helix(chunks);
+  Jump jump = pose.jump(jump_num);
+  jump.rotation_by_axis(pose.conformation().upstream_jump_stub(jump_num), axis, center, get_degrees());
+  pose.set_jump(jump_num, jump);
+
+  // Restore input fold tree
+  builder.tear_down(&pose);
+  pose.fold_tree(input_tree);
+}
+
+unsigned HelixRotate::jump_containing_helix(const protocols::loops::Loops& chunks) const {
+  for (unsigned i = 1; i <= chunks.num_loop(); ++i) {
+    if (chunks[i].start() == helix_.start())
+      return i;
+  }
+  return 0;  // invalid
+}
+
+void HelixRotate::decompose_structure(unsigned num_residues, protocols::loops::Loops* chunks) const {
+  using protocols::loops::Loop;
+  assert(chunks);
+  assert(num_residues > 0);
+
+  const unsigned start = get_helix().start();
+  const unsigned stop = get_helix().stop();
+
+  // Residues 1 to (helix - 1)
+  if (start > 1) {
+    chunks->add_loop(Loop(1, start - 1));
+  }
+
+  // Helix
+  chunks->add_loop(Loop(start, stop));
+
+  // Residues (helix + 1) to end
+  if (stop < num_residues) {
+    chunks->add_loop(Loop(stop + 1, num_residues));
+  }
+
+  chunks->sequential_order();
+}
+
+bool HelixRotate::is_valid() const {
+  return helix_.start() > 0 && helix_.start() < helix_.stop();
+}
+
+const protocols::loops::Loop& HelixRotate::get_helix() const {
+  return helix_;
+}
+
+void HelixRotate::set_helix(const protocols::loops::Loop& helix) {
+  helix_ = helix;
+}
+
+double HelixRotate::get_degrees() const {
+  return degrees_;
+}
+
+void HelixRotate::set_degrees(double degrees) {
+  degrees_ = degrees;
+}
+
+std::string HelixRotate::get_name() const {
+  return "HelixRotate";
+}
+
+MoverOP HelixRotate::fresh_instance() const {
+  return new HelixRotate();
+}
+
+MoverOP HelixRotate::clone() const {
+  return new HelixRotate(*this);
+}
+
+}  // namespace moves
+}  // namespace protocols
