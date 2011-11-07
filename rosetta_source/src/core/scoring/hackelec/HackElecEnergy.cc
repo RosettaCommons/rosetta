@@ -171,7 +171,9 @@ HackElecEnergy::initialize() {
 	//Real const HackElecEnergy::max_dis( 5.5 );
 	max_dis = basic::options::option[basic::options::OptionKeys::score::hackelec_max_dis ]();
 	// add option to modify max_dis on command-line
-	min_dis =  1.5 ;
+	//min_dis =  1.5 ;
+	min_dis = basic::options::option[basic::options::OptionKeys::score::hackelec_min_dis ]();
+
 	r_option =  basic::options::option[ basic::options::OptionKeys::score::hackelec_r_option ]();
 	if (  r_option ) {
 		max_dis2 =  max_dis ;

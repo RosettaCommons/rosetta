@@ -3633,6 +3633,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: -1</dd><br>
 </dl>
 <dl>
+<dt><b>-hackelec_min_dis</b> \<Real\><dt>
+<dd>changes the minimum distance cut-off for hack-elec energy</dd><br>
+<dd>Default: 1.5</dd><br>
+</dl>
+<dl>
 <dt><b>-hackelec_max_dis</b> \<Real\><dt>
 <dd>changes the maximum distance cut-off for hack-elec energy</dd><br>
 <dd>Default: 5.5</dd><br>

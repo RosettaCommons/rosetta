@@ -171,6 +171,7 @@ namespace score { namespace saxs { RealOptionKey const q_step( "score:saxs:q_ste
 namespace score { namespace saxs { BooleanOptionKey const fit_pddf_area( "score:saxs:fit_pddf_area" );  } }
 namespace score { IntegerVectorOptionKey const sidechain_buried( "score:sidechain_buried" );  }
 namespace score { IntegerVectorOptionKey const sidechain_exposed( "score:sidechain_exposed" );  }
+namespace score { RealOptionKey const hackelec_min_dis( "score:hackelec_min_dis" );  }
 namespace score { RealOptionKey const hackelec_max_dis( "score:hackelec_max_dis" );  }
 namespace score { RealOptionKey const hackelec_die( "score:hackelec_die" );  }
 namespace score { BooleanOptionKey const hackelec_r_option( "score:hackelec_r_option" );  }
@@ -579,4 +580,3 @@ namespace wum { IntegerOptionKey const n_masters( "wum:n_masters" );  }
 namespace wum { IntegerOptionKey const memory_limit( "wum:memory_limit" );  }
 namespace wum { StringOptionKey const extra_scorefxn( "wum:extra_scorefxn" );  }
 namespace wum { FileOptionKey const extra_scorefxn_ref_structure( "wum:extra_scorefxn_ref_structure" );  }
-namespace wum { IntegerOptionKey const extra_scorefxn_relax( "wum:extra_scorefxn_relax" );  }
