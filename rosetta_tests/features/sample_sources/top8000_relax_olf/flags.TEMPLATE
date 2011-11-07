@@ -1,7 +1,6 @@
 #
 #
 -score:weights standard
--score:patch sc12_fullsrbbhb
 #
 # The chi term correction
 -score::hb_sp2_chipen
@@ -27,7 +26,7 @@
 -in
  -path %(sample_source_path)s/input/top8000_chains_eds_70_rosetta_named_hydrogens
  -file
-  -l %(sample_source_path)s/input/filtered_pdbs.list
+  -l %(sample_source_path)s/input/all_pdbs.list
 #
 # Since the important output is the feature database,
 # ignore the job distributor output.

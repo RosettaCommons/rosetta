@@ -1,4 +1,20 @@
 #
+#
+-score:weights standard
+#
+# The chi term correction
+-score:hb_sp2_chipen
+#
+#
+# HBond OH donor correction
+-lj_hbond_hdis 1.75
+-lj_hbond_OH_donor_dis 2.6
+#
+#ref_SER -= 0.1; ref_THR -= 0.1;
+#
+#
+-hbond_params OLF_params
+#
 -options
  -user
 #

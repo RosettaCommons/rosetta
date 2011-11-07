@@ -8,7 +8,6 @@
 		<ReportToDB name=features_reporter db="%(output_dir)s/%(sample_source_id)s/features_%(sample_source_id)s.db3" sample_source="%(sample_source_description)s">
 			<feature name=HBondFeatures scorefxn=s/>
 			<feature name=HBondParameterFeatures scorefxn=s/>
-			<feature name=OrbitalsFeatures/>
 			<feature name=PairFeatures/>
 			<feature name=PoseCommentsFeatures/>
 			<feature name=PoseConformationFeatures/>

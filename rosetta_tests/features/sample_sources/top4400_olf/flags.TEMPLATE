@@ -1,7 +1,6 @@
 #
 #
 -score:weights standard
--score:patch sc12_fullsrbbhb
 #
 # The chi term correction
 -score::hb_sp2_chipen
@@ -14,7 +13,7 @@
 #ref_SER -= 0.1; ref_THR -= 0.1;
 #
 #
--hbond_params OLF_params
+-hbond_params OLF_params_4m
 #
 -options
  -user
@@ -38,9 +37,9 @@
 #
 #Read in pronation states from input data (use with
 #caution for runs that do more than extract features)
--pH
- -pH_mode
-
+#-pH
+# -pH_mode
+#
 -parser
  -protocol %(output_dir)s/%(sample_source_id)s/features.xml
 #

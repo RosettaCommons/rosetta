@@ -27,39 +27,10 @@
  -delete_old_poses
 #
 #
--chemical
- -exclude_patches \
-	LowerDNA \
-	UpperDNA \
-	Cterm_amidation \
-	SpecialRotamer \
-	protein_cutpoint_upper \
-	protein_cutpoint_lower \
-	ShoveBB \
-	VirtualDNAPhosphate \
-	CTermConnect \
-	pro_hydroxylated_case1 \
-	pro_hydroxylated_case2 \
-	ser_phosphorylated \
-	thr_phosphorylated \
-	tyr_phosphorylated \
-	tyr_sulfated \
-	lys_dimethylated \
-	lys_monomethylated \
-	lys_trimethylated \
-	lys_acetylated \
-	glu_carboxylated \
-	cys_acetylated \
-	tyr_diiodinated \
-	N_acetylated \
-	C_methylamidated \
-	MethylatedProteinCterm
 #
 #
--mute protocols.jd2
 -mute core.io.pdb.file_data
 -mute core.scoring.etable
 -mute core.io.database
--mute core.scoring.ScoreFunctionFactory
 -mute core.pack.task
 -mute protocols.ProteinInterfaceDesign.DockDesign
