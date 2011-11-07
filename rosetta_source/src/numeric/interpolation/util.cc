@@ -18,6 +18,8 @@
 #include <utility/exit.hh>
 #include <iostream>
 
+#include <boost/algorithm/string.hpp>
+
 namespace numeric {
 namespace interpolation {
 
@@ -47,7 +49,7 @@ spline::SplineGenerator spline_from_file(std::string const &  filename,platform:
 		{
 			continue;
 		}
-
+		boost::trim(line);
 		std::vector<std::string>  split_fields(utility::string_split(line,'\t'));
 		if(split_fields[0] == "x_axis")
 		{
@@ -81,13 +83,18 @@ spline::SplineGenerator spline_from_file(std::string const &  filename,platform:
 	}
 
 	numeric::interpolation::spline::SplineGenerator spline(lower_bound_x,lower_bound_y,0 /*lbdy*/,upper_bound_x,upper_bound_y,0/*ubdy*/);
+	//std::cout << "entering for loop in util.cc..." << std::endl;
 	for(platform::Size index = 1; index <= bins_vect.size(); ++index)
 	{
 		spline.add_known_value(bins_vect[index],potential_vect[index]);
+
+		//std::cout << "bins_vect.size() is:  " << bins_vect.size() << std::endl;
+		//std::cout << "current index is:  " << index << " current bins_vect value is:  " << bins_vect[index]
+		  // << " current potential_vect_value is:  " << potential_vect[index] << std::endl;	}
 	}
-
 	return spline;
-}
 
+
+}
 }
 }

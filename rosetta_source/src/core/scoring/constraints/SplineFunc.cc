@@ -145,9 +145,14 @@ namespace core {
 			numeric::interpolation::spline::SplineGenerator common_spline(numeric::interpolation::spline_from_file(filename_,bin_size_));
 			interpolator_ = common_spline.get_interpolator();
 			lower_bound_x_ = common_spline.get_lbx();
+			//std::cout << "now in SplineFunc..." << std::endl;
+			//std::cout << "histogram_lbx: " << lower_bound_x_ << std::endl;
 			upper_bound_x_ = common_spline.get_ubx();
+			//std::cout << "histogram_ubx: " << upper_bound_x_ << std::endl;
 			lower_bound_y_ = common_spline.get_lby();
+			//std::cout << "histogram_lby: " << lower_bound_y_ << std::endl;
 			upper_bound_x_ = common_spline.get_ubx();
+			//std::cout << "" << "histogram_uby: " << upper_bound_y_ << std::endl;
 			lower_bound_dy_ = common_spline.get_lbdy();
 			upper_bound_dy_ = common_spline.get_ubdy();
 			bins_vect_size_ = common_spline.get_num_points();
@@ -184,18 +189,42 @@ namespace core {
 			}
 			else // for other cases that are not EPR Distance restraints, just return potential for x, not sl-cb
 			{
-				if( x >= lower_bound_x_ && x <= upper_bound_x_ )
+				if(KB_description_ == "difference")
 				{
-					interpolator_->interpolate( x, potential_energy, delta_potential_energy);
-					weighted_potential_energy = ( weight_*potential_energy);
-					return weighted_potential_energy;
+					//std::cout << "using difference!" << std::endl;
+					//calculate exp_distance - CB distance
+					core::Real diff = exp_val_ - x; // for AtomPair constraints, x is the distance between atoms/residues in the model
+
+					//std::cout << "x is:  " << x << " and difference is:  " << diff << " and weight is:  " << weight_ << std::endl;
+					if( diff >= lower_bound_x_ && diff <= upper_bound_x_ )
+					{
+						interpolator_->interpolate( diff, potential_energy, delta_potential_energy);
+						weighted_potential_energy = ( weight_*potential_energy);
+						return weighted_potential_energy;
+					}
+					else
+					{
+						// Return potential = 0 for x values outside of lowest and highest values in histogram
+						potential_energy = 0;
+						return potential_energy;
+					}
+					//std::cout << "potential energy is:  " << potential_energy<< " and " << weighted_potential_energy << std::endl;
 				}
 				else
 				{
-					// Return potential = 0 for x values outside of lowest and highest values in histogram
-					potential_energy = 0;
-					return potential_energy;
-				}
+					if( x >= lower_bound_x_ && x <= upper_bound_x_ )
+					{
+						interpolator_->interpolate( x, potential_energy, delta_potential_energy);
+						weighted_potential_energy = ( weight_*potential_energy);
+						return weighted_potential_energy;
+					}
+					else
+					{
+						// Return potential = 0 for x values outside of lowest and highest values in histogram
+						potential_energy = 0;
+						return potential_energy;
+					}//else
+				}//else
 			}
 
 		} // SplineFunc::func()
@@ -296,7 +325,7 @@ namespace core {
 				if ( verbose_level > 100 )
 					{
 						out << "SPLINEFUNC:" << "\t" << "Description:  " << KB_description_ << "\t" << "exp_val:  " << exp_val_ << "\t"
-						<< "model_dist:  " << x << "\t" << "weighted_potential:  " << weighted_potential_energy
+						<< "model_dist:  " << x << "\t" << "exp_val - x:  " << exp_val_ - x  << "\t" << "weighted_potential:  " << weighted_potential_energy
 						<< "\t" << "weight:" << weight_ << std::endl;
 					}
 				else if ( verbose_level > 70 )
