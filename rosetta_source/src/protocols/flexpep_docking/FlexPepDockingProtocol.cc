@@ -1039,7 +1039,7 @@ FlexPepDockingProtocol::apply( pose::Pose & pose )
 		//		core::io::pdb::traced_dump_pdb(TR, pose, "./output/minimized.pdb"); // DEBUG
 	}
 	// Main protocol:
-	else if(flags_.torsionsMCM || flags_.rbMCM || flags_.lowres_preoptimize) {
+	else if(flags_.torsionsMCM || flags_.rbMCM || flags_.lowres_preoptimize || flags_.lowres_abinitio) {
 			bool passed_filter = false;
 			core::pose::Pose current_pose = pose;
 		  while (!passed_filter) {
@@ -1236,6 +1236,8 @@ FlexPepDockingProtocol::storeJobStatistics
 	FArray1D_bool native_interface_residues ( native_pose.total_residue(), false );
 	markNativeInterface(superpos_partner, native_interface_residues);
 
+	
+
 	// start pose statistics:
 	using core::scoring::rmsd_no_super_subset;
 	using core::scoring::is_protein_CA;
@@ -1277,7 +1279,7 @@ FlexPepDockingProtocol::storeJobStatistics
 
  	if(flags_.score_only)
 		{
-			if(flags_.pep_fold_only){
+			if(!flags_.pep_fold_only){
 				//fraction of native contacts
 				cur_job->add_string_real_pair( "fnat5",
 							 fpdock_metrics_.calc_frac_native_contacts(native_pose, final_pose, 5.0 /*RMS threashold*/) );
@@ -1332,7 +1334,7 @@ FlexPepDockingProtocol::storeJobStatistics
 		}
 
 	// low-res stats:
-	if(flags_.lowres_preoptimize) {
+	if(flags_.lowres_preoptimize || flags_.lowres_abinitio) {
 		addLowResStatistics(start_pose, pose_after_lowres);
 	}
 
@@ -1369,7 +1371,7 @@ void FlexPepDockingProtocol::parse_my_tag(
 		{
 			flags_.randomRBstart = true;
 		}
-  flags_.pep_refine = tag->getOption<bool>( "pep_refine", flags_.pep_refine);
+	flags_.pep_refine = tag->getOption<bool>( "pep_refine", flags_.pep_refine);
 	if(flags_.pep_refine || flags_.lowres_abinitio || flags_.lowres_preoptimize)
 		{ // overrides obsolete rbMCM and torsionsMCM
 			flags_.rbMCM = true;
@@ -1378,7 +1380,7 @@ void FlexPepDockingProtocol::parse_my_tag(
 	flags_.peptide_loop_model = tag->getOption<bool>( "peptide_loop_model", flags_.peptide_loop_model) ;
 	flags_.smove_angle_range =tag->getOption<float> ( "smove_angle_range", flags_.smove_angle_range) ;
 	flags_.design_peptide = tag->getOption<bool>( "design_peptide", flags_.design_peptide) ;
-	flags_.backrub_opt = tag->getOption<bool>( "backrub_opt", flags_.backrub_opt) ;
+	flags_.backrub_opt = tag->getOption<bool>( "backrub_opt", flags_.backrub_opt) ;	
 	flags_.boost_fa_atr = tag->getOption<bool>( "boost_fa_atr", flags_.boost_fa_atr) ;
 	flags_.ramp_fa_rep = tag->getOption<bool>( "ramp_fa_rep", flags_.ramp_fa_rep) ;
 	flags_.ramp_rama = tag->getOption<bool>( "ramp_rama", flags_.ramp_rama) ;

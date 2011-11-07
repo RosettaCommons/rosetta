@@ -62,6 +62,9 @@ namespace flexPepDocking { extern RealOptionKey const frag5_weight; }
 namespace flexPepDocking { extern RealOptionKey const frag3_weight; }
 namespace flexPepDocking { extern BooleanOptionKey const pSer2Asp_centroid; }
 namespace flexPepDocking { extern BooleanOptionKey const pSer2Glu_centroid; }
+namespace flexPepDocking { extern BooleanOptionKey const dumpPDB_abinitio; }
+namespace flexPepDocking { extern BooleanOptionKey const dumpPDB_lowres; }
+namespace flexPepDocking { extern BooleanOptionKey const dumpPDB_hires; }
 
 } // namespace OptionKeys
 } // namespace options

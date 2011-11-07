@@ -118,8 +118,11 @@ protocols::flexpep_docking::FlexPepDockingFlags::FlexPepDockingFlags
 	frag3_weight  = option[ OptionKeys::flexPepDocking::frag3_weight ]();
 	frag5_weight  = option[ OptionKeys::flexPepDocking::frag5_weight ]();
 	frag9_weight  = option[ OptionKeys::flexPepDocking::frag9_weight ]();
-	pSer2Asp_centroid = option[ OptionKeys::flexPepDocking::pSer2Asp_centroid ]();;
-	pSer2Glu_centroid = option[ OptionKeys::flexPepDocking::pSer2Glu_centroid ]();;
+	pSer2Asp_centroid = option[ OptionKeys::flexPepDocking::pSer2Asp_centroid ]();
+	pSer2Glu_centroid = option[ OptionKeys::flexPepDocking::pSer2Glu_centroid ]();
+	dumpPDB_abinitio = option[ OptionKeys::flexPepDocking::dumpPDB_abinitio ]();
+	dumpPDB_lowres = option[ OptionKeys::flexPepDocking::dumpPDB_lowres ]();
+	dumpPDB_hires = option[ OptionKeys::flexPepDocking::dumpPDB_hires ]();
 
 
   if ( option[ OptionKeys::flexPepDocking::receptor_chain ].user() )
@@ -143,8 +146,8 @@ protocols::flexpep_docking::FlexPepDockingFlags::FlexPepDockingFlags
 			updateChainsAndAnchors_fromParamsFile(params_file);
 		}
 	valid_peptide_chain_ = valid_peptide_chain_;
-	runtime_assert_msg(! (pep_fold_only && (rbMCM || min_receptor_bb || valid_receptor_chain_) ),
-										 "The flag -pep_fold_only is incompatible with receptor flags like -rbMCM, -min_receptor_bb and -receptor chain");
+	runtime_assert_msg(! (pep_fold_only && (min_receptor_bb || valid_receptor_chain_) ),
+										 "The flag -pep_fold_only is incompatible with receptor flags like -min_receptor_bb and -receptor chain");
 	int mut_ex_opts = 0;
 	if(min_only) mut_ex_opts++;
 	if(ppk_only) mut_ex_opts++;

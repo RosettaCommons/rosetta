@@ -10533,6 +10533,21 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>convert pSer to Glu during centroid mode</dd><br>
 <dd>Default: false</dd><br>
 </dl>
+<dl>
+<dt><b>-dumpPDB_abinitio</b> \<Boolean\><dt>
+<dd>dump PDB during Monte-Carlo ab-initio</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-dumpPDB_lowres</b> \<Boolean\><dt>
+<dd>dump PDB during Monte-Carlo low-res</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
+<dt><b>-dumpPDB_hires</b> \<Boolean\><dt>
+<dd>dump PDB during Monte-Carlo hi-res</dd><br>
+<dd>Default: false</dd><br>
+</dl>
  </li>
 <li><h2>threadsc</h2>
 <dl>

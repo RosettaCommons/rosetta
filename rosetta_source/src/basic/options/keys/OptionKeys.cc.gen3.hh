@@ -1,6 +1,3 @@
-namespace AnchoredDesign { namespace testing { BooleanOptionKey const delete_interface_native_sidechains( "AnchoredDesign:testing:delete_interface_native_sidechains" );  } }
-namespace AnchoredDesign { namespace testing { FileOptionKey const RMSD_only_this( "AnchoredDesign:testing:RMSD_only_this" );  } }
-namespace AnchoredDesign { namespace testing { BooleanOptionKey const anchor_noise_constraints_mode( "AnchoredDesign:testing:anchor_noise_constraints_mode" );  } }
 namespace DenovoProteinDesign { BooleanOptionKey const DenovoProteinDesign( "DenovoProteinDesign" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_core( "DenovoProteinDesign:redesign_core" );  }
 namespace DenovoProteinDesign { BooleanOptionKey const redesign_loops( "DenovoProteinDesign:redesign_loops" );  }
@@ -421,6 +418,9 @@ namespace flexPepDocking { RealOptionKey const frag5_weight( "flexPepDocking:fra
 namespace flexPepDocking { RealOptionKey const frag3_weight( "flexPepDocking:frag3_weight" );  }
 namespace flexPepDocking { BooleanOptionKey const pSer2Asp_centroid( "flexPepDocking:pSer2Asp_centroid" );  }
 namespace flexPepDocking { BooleanOptionKey const pSer2Glu_centroid( "flexPepDocking:pSer2Glu_centroid" );  }
+namespace flexPepDocking { BooleanOptionKey const dumpPDB_abinitio( "flexPepDocking:dumpPDB_abinitio" );  }
+namespace flexPepDocking { BooleanOptionKey const dumpPDB_lowres( "flexPepDocking:dumpPDB_lowres" );  }
+namespace flexPepDocking { BooleanOptionKey const dumpPDB_hires( "flexPepDocking:dumpPDB_hires" );  }
 namespace threadsc { BooleanOptionKey const threadsc( "threadsc" );  }
 namespace threadsc { StringOptionKey const src_chain( "threadsc:src_chain" );  }
 namespace threadsc { StringOptionKey const trg_chain( "threadsc:trg_chain" );  }

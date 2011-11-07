@@ -579,3 +579,4 @@ namespace abinitio { RealOptionKey const end_bias( "abinitio:end_bias" );  }
 namespace abinitio { IntegerOptionKey const symmetry_residue( "abinitio:symmetry_residue" );  }
 namespace abinitio { RealOptionKey const vdw_weight_stage1( "abinitio:vdw_weight_stage1" );  }
 namespace abinitio { BooleanOptionKey const override_vdw_all_stages( "abinitio:override_vdw_all_stages" );  }
+namespace abinitio { IntegerVectorOptionKey const recover_low_in_stages( "abinitio:recover_low_in_stages" );  }

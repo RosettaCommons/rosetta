@@ -4329,6 +4329,15 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option('pSer2Glu_centroid', 'Boolean',
 					 desc='convert pSer to Glu during centroid mode',
 					 default='false'),
+		Option('dumpPDB_abinitio', 'Boolean',
+					 desc='dump PDB during Monte-Carlo ab-initio',
+					 default='false'),
+		Option('dumpPDB_lowres', 'Boolean',
+					 desc='dump PDB during Monte-Carlo low-res',
+					 default='false'),
+		Option('dumpPDB_hires', 'Boolean',
+					 desc='dump PDB during Monte-Carlo hi-res',
+					 default='false'),
 	), # flexpepdocking
 
 	# thread side-chains tools (barak) -----------------------------------------------------------

@@ -245,11 +245,11 @@ FlexPepDockingAbInitio::torsions_monte_carlo
   //  small_mover->apply(pose);
   //  shear_mover->apply(pose);
   // run Monte-Carlo
-  TR << "start MC " <<std::endl;
+  //  TR << "start MC " <<std::endl;
   for( int i=1; i<=cycles; ++i ) {
     mc_trial->apply( pose );
   }
-  TR << "finsihed MC " <<std::endl;
+  //  TR << "finsihed MC " <<std::endl;
   // extract best pose and return statistics
   pose = mc_->lowest_score_pose();
   mc_->reset( pose );

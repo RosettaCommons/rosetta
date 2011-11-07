@@ -175,6 +175,9 @@ public:
 	double frag9_weight;
 	bool pSer2Asp_centroid;
 	bool pSer2Glu_centroid;
+	bool dumpPDB_abinitio;
+	bool dumpPDB_lowres;
+	bool dumpPDB_hires;
 }; // class FlexPepDockingFlags
 
 } // namespace flexpep_docking
