@@ -34,7 +34,8 @@ namespace moves {
 /// the axis defined by its first and last residues. Makes no assumptions about the
 /// kinematics of the system.
 ///
-/// TODO(cmiles) Consider having the user define the axis of translation
+/// TODO(cmiles) Consider having the user define the axis of translation.
+/// TODO(cmiles) Improved handling of curved sheets
 class SheetTranslate : public Mover {
  public:
   SheetTranslate();
