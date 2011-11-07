@@ -50,6 +50,7 @@ sources = {
                 "medal_abinitio",
 		"medal_exchange",
 		"nonlocal_abinitio",
+                #"sheet_translate",
 	],
 	"pilot/delucasl" : [
 		"RotamerDump",

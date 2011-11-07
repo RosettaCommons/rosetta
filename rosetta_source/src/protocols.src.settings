@@ -931,6 +931,7 @@ sources = {
 		"ScoreMover",
 		"SetReturningPackRotamersMover",
 		"ShakeStructureMover",
+                "SheetTranslate",
 		"StructureRestrictor",
 		"SidechainMover",
 		"SidechainMCMover",
