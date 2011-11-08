@@ -61,8 +61,6 @@
 // AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 //Auto Headers
 #include <core/chemical/AtomType.hh>
