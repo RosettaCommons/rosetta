@@ -49,7 +49,7 @@
 
 // symmetry
 #include <core/pose/symmetry/util.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
+#include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -60,10 +60,12 @@
 // ObjexxFCL headers
 // AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
+#include <protocols/rosetta_scripts/util.hh>
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
+//Auto Headers
 #include <core/chemical/AtomType.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
 
 
 // // C++ Headers
@@ -121,10 +123,12 @@ IdealizeMover::setup_idealize_constraints( core::pose::Pose & pose ) {
 
 	if ( atom_pair_constraint_weight_ != 0.0 || symm_info ) {
 		for ( Size i=1; i<= nres-1; ++i ) {
+			if( std::find( ignore_residues_in_csts().begin(), ignore_residues_in_csts().end(), i ) != ignore_residues_in_csts().end() ) continue;
 			Residue const & i_rsd( pose.residue(i) );
 			if (i_rsd.aa() == core::chemical::aa_vrt) continue;
 
 			for ( Size j=i+1; j<= nres-1; ++j ) {
+				if( std::find( ignore_residues_in_csts().begin(), ignore_residues_in_csts().end(), j ) != ignore_residues_in_csts().end() ) continue;
 				Residue const & j_rsd( pose.residue(j) );
 				if (j_rsd.aa() == core::chemical::aa_vrt) continue;
 
@@ -294,13 +298,26 @@ IdealizeMover::get_name() const {
 }
 
 void
-IdealizeMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ){
+IdealizeMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose ){
 	atom_pair_constraint_weight( tag->getOption< core::Real >( "atom_pair_constraint_weight", 0.0 ) );
 	coordinate_constraint_weight( tag->getOption< core::Real >( "coordinate_constraint_weight", 0.01 ) );
 	fast( tag->getOption< bool >( "fast", false ) );
 	chainbreaks( tag->getOption< bool >( "chainbreaks", false ) );
 	report_CA_rmsd( tag->getOption< bool >( "report_CA_rmsd", true ) );
+	if( tag->hasOption( "ignore_residues_in_csts" ) )
+		ignore_residues_in_csts( protocols::rosetta_scripts::get_resnum_list( tag, "ignore_residues_in_csts", pose ) );
+
 	TR<<"IdealizeMover with atom_pair_constraint_weight="<<atom_pair_constraint_weight_<<" coordinate_constraint_weight="<<coordinate_constraint_weight_<<" fast="<<fast_<<" chainbreaks="<<chainbreaks_<<" and report CA_rmsd_="<<report_CA_rmsd_<<std::endl;
+}
+
+void
+IdealizeMover::ignore_residues_in_csts( utility::vector1< core::Size > const i ){
+	ignore_residues_in_csts_ = i;
+}
+
+utility::vector1< core::Size >
+IdealizeMover::ignore_residues_in_csts() const{
+	return ignore_residues_in_csts_;
 }
 
 } // namespace idealize

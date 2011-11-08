@@ -21,7 +21,9 @@
 #include <protocols/idealize/IdealizeMover.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-#include <utility/vector1.hh>
+//Auto Headers
+#include <utility/vector1_bool.hh>
+#include <protocols/idealize/IdealizeMoverCreator.hh>
 
 namespace protocols {
 namespace idealize {
@@ -46,7 +48,9 @@ public:
 		fast_( false ),
 		chainbreaks_( false ),
 		report_CA_rmsd_(true)
-	{}
+	{
+		ignore_residues_in_csts_.clear();
+	}
 
 	/// @brief clone has to be overridden only if clone invocation is expected.
 	virtual moves::MoverOP clone() const {
@@ -80,8 +84,7 @@ public:
 	}
 
 	IdealizeMover &
-	chainbreaks( bool const setting )
-	{
+	chainbreaks( bool const setting ){
 		chainbreaks_ = setting;
 		return *this;
 	}
@@ -104,6 +107,8 @@ public:
 	}
 
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
+	utility::vector1< core::Size > ignore_residues_in_csts() const;
+	void ignore_residues_in_csts( utility::vector1< core::Size > const i );
 
 private:
 	// methods
@@ -116,6 +121,7 @@ private:
 
 	Real atom_pair_constraint_weight_;
 	Real coordinate_constraint_weight_;
+	utility::vector1< core::Size > ignore_residues_in_csts_; // dflt empty; residues that don't carry constraints, e.g., residues that were inserted without closing loops etc.
 	bool fast_;
 	bool chainbreaks_;
 	bool report_CA_rmsd_;
