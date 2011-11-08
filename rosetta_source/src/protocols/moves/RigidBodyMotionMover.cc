@@ -14,7 +14,6 @@
 #include <protocols/moves/RigidBodyMotionMover.hh>
 
 // C/C++ headers
-// AUTO-REMOVED #include <iterator>
 #include <set>
 #include <string>
 
@@ -30,9 +29,6 @@
 
 // Package headers
 #include <protocols/moves/Mover.hh>
-
-#include <utility/vector1.hh>
-
 
 namespace protocols {
 namespace moves {
