@@ -31,7 +31,7 @@ def find_file(regex, paths, required=True):
         if len(hits) == 1:
             return os.path.join(path, hits[0])
         elif len(hits) > 1:
-            if required: raise ValueError("Multiple hits for '%s' in '%s'" % (regex.pattern, path))
+            if required: raise ValueError("Multiple hits for '%s' in '%s' (try using the --compile-tag option)" % (regex.pattern, path))
             else: return None
     if required: raise ValueError("'%s' not found" % regex.pattern)
     else: return None
@@ -603,11 +603,11 @@ setup_docking_case()
     l="$2"
     pl="${1}_${2}"
     mkdir -p "work/minnat/$pl"
-    echo "${Executable} @COMMON.flags @MINNAT.flags -in:file:s native/$pl.pdb -in:file:native native/$pl.pdb -packing:unboundrot unbound/$p.pdb -out:path:pdb work/minnat/$pl > log/err.minnat.${pl}.log 2> log/out.minnat.${pl}.log &"  >> "$minnatfile"
+    echo "${Executable} @COMMON.flags @MINNAT.flags -in:file:s native/$pl.pdb -in:file:native native/$pl.pdb -packing:unboundrot unbound/$p.pdb -out:path:pdb work/minnat/$pl > log/err.minnat.${pl}.log 2> log/out.minnat.${pl}.log"  >> "$minnatfile"
     echo >> "$minnatfile"
     for((i=0;i<$3;i++)); do
         mkdir -p "work/$pl/$i"
-        echo "${Executable} @COMMON.flags @DOCK.flags -in:file:s input/$pl.pdb -in:file:native native/$pl.pdb -packing:unboundrot unbound/$p.pdb -out:path:pdb work/$pl/$i -run:seed_offset $i -out:suffix _$i > log/out.${pl}.${i}.log 2> log/err.${pl}.${i}.log &" >> "$dockfile"
+        echo "${Executable} @COMMON.flags @DOCK.flags -in:file:s input/$pl.pdb -in:file:native native/$pl.pdb -packing:unboundrot unbound/$p.pdb -out:path:pdb work/$pl/$i -run:seed_offset $i -out:suffix _$i > log/out.${pl}.${i}.log 2> log/err.${pl}.${i}.log" >> "$dockfile"
     done
     echo >> "$dockfile"
 }
@@ -628,11 +628,11 @@ echo
 echo "  nohup nice $minnatfile    # if you want minimized natives"
 echo "  nohup nice $dockfile      # the actual docking calculations"
 echo
-echo " Or something like:"
+echo " Or for multiple processors something like:"
 echo
-echo "  nohup nice parallel < $minnatfile  # if you want minimized natives"
-echo "  nohup nice parallel < $dockfile    # the actual docking calculations"
-''')
+echo "  %s -j %s < $minnatfile  # if you want minimized natives"
+echo "  %s -j %s < $dockfile    # the actual docking calculations"
+''' % (progs['parallel'], options.num_procs, progs['parallel'], options.num_procs) )
 #}}}
 
 
@@ -799,16 +799,17 @@ def main(argv):
 
     The protein file should only contain standard amino acid residues.
     The cofactor and ligand files should contain a single conformation
-       (unless --skip-omega) of a single compound.
-    The MiniRosetta database should be in ~/minirosetta_database;
+       of a single compound (unless using --skip-omega).
+    The MiniRosetta database should be in ~/rosetta/rosetta_database;
         otherwise use --database.
     OpenEye's Omega should be in ~/openeye or on your PATH;
         otherwise use --openeye or --skip-omega.
     The OpenEye QUACPAC toolkit should be on your PYTHONPATH
         for charges to be assigned (else use --skip-charges).
-    You can specify which clustering software to use for the docking runs with
-        --cluster. Specifying BASH will result in a standard "nohup"-type submission.
-        for those without clustering software (It is recommended to also set --njobs.)
+    You can specify which clustering software to set up the docking runs for with
+        --cluster. Specifying BASH will result in a standard shell script-type submission.
+        for those without clustering software (It is recommended to also set --njobs.) You
+        also can use the BASH output file with MOAB/TORQUE/PBS style clustering software.
     '''  # Preformatted
 
     def up_dir(path, num_steps=1):
@@ -912,7 +913,7 @@ def main(argv):
         if not os.path.isdir(options.database):
             raise ValueError("Cannot find Rosetta database;  please specify with --database")
         if not options.skip_omega and not os.path.isdir(options.openeye):
-            raise ValueError("Cannot find OpenEye tools;  please specify with --openeye")
+            raise ValueError("Cannot find OpenEye tools;  please specify with --openeye (or use --skip-omega)")
 
         if not os.path.isdir(options.target_dir):
             os.mkdir(options.target_dir)
