@@ -121,6 +121,11 @@ public:
   /// @brief Apply the FastRelax. Overloaded apply function from mover base class.
 	virtual void apply( core::pose::Pose & pose );
 
+	/// @brief sets the movemap to not allow DNA to move during relax.
+
+	void makeDnaRigid( core::pose::Pose & pose, core::kinematics::MoveMapOP mm );
+
+
   /// @brief Batch Relax, a new even faster way to relax entire batches of structures.
 	void batch_apply( std::vector < core::io::silent::SilentStructOP > &  input_structs );
 
@@ -163,7 +168,7 @@ private:   // options
   /// @brief Cutoff for calling a rama 'bad'
 	core::Real ramady_cutoff_;
 
-  /// @brief Force ramady to be run (normally skip rate of 10%) 
+  /// @brief Force ramady to be run (normally skip rate of 10%)
 	bool ramady_force_;
 
   /// @brief Allow Chi angles to move ?

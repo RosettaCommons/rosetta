@@ -468,6 +468,8 @@ void FastRelax::apply( core::pose::Pose & pose ){
 	// the "constrain to coordinates" codes will wanna mess witht the movemap..
 	core::kinematics::MoveMapOP local_movemap = get_movemap()->clone();
 	initialize_movemap( pose, *local_movemap );
+	makeDnaRigid(pose,local_movemap);
+	set_movemap(local_movemap);
 
 	// Deal with constraint options and add coodrinate constraints for all or parts of the structure.
 	set_up_constraints( pose, *local_movemap );
@@ -1021,7 +1023,7 @@ void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
 			if ( core::pose::symmetry::is_symmetric( pose )  )  {
 				core::pose::symmetry::make_symmetric_movemap( pose, *local_movemap );
 			}
-		 
+
 			if ( basic::options::option[ basic::options::OptionKeys::run::debug ]() ) {
 				kinematics::simple_visualize_fold_tree_and_movemap_bb_chi( pose.fold_tree(),  *local_movemap, TR );
 			}
@@ -1285,7 +1287,18 @@ void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
 
 }
 
-
+void FastRelax::makeDnaRigid( core::pose::Pose & pose, core::kinematics::MoveMapOP mm ){
+	using namespace chemical;
+	//if DNA present set so it doesn't move
+	for ( Size i=1; i<=pose.total_residue() ; ++i )      {
+		if( pose.aa( i ) == core::chemical::na_ade or pose.aa( i ) == core::chemical::na_gua or pose.aa( i ) == core::chemical::na_cyt or pose.aa( i ) == core::chemical::na_thy ) {
+			TR << "turning off DNA bb and chi move" << std::endl;
+			mm->set_bb( i, false );
+			mm->set_chi( i, false );
+		}
+	}
+	//end DNA rigidity
+}
 
 
 } // namespace relax
