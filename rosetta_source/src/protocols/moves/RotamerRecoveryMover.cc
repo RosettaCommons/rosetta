@@ -45,7 +45,6 @@ RotamerRecoveryMoverCreator::mover_name()
 
 
 // Unit Headers
-// Auto-header: duplicate removed #include <protocols/moves/RotamerRecoveryMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/rotamer_recovery/RotamerRecovery.hh>
@@ -70,8 +69,11 @@ RotamerRecoveryMoverCreator::mover_name()
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/types.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/rotamer_recovery/RRReporter.hh>
+#include <protocols/rotamer_recovery/RotamerRecoveryFactory.hh>
+#include <protocols/rotamer_recovery/RRProtocol.hh>
+#include <protocols/rotamer_recovery/RRProtocolMover.hh>
 #include <protocols/rotamer_recovery/RRComparer.hh>
+#include <protocols/rotamer_recovery/RRReporter.hh>
 
 // Option System Headers
 #include <basic/options/option.hh>
@@ -263,11 +265,12 @@ RotamerRecoveryMoverCreator::mover_name()
 #include <protocols/jobdist/Jobs.fwd.hh>
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
+#include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverCreator.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/moves/PackRotamersMover.fwd.hh>
 #include <protocols/moves/RotamerRecoveryMover.fwd.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/rotamer_recovery/RRComparer.fwd.hh>
 #include <protocols/rotamer_recovery/RRReporter.fwd.hh>
 #include <protocols/rotamer_recovery/RotamerRecovery.fwd.hh>
@@ -502,8 +505,6 @@ RotamerRecoveryMoverCreator::mover_name()
 #include <boost/pool/detail/mutex.hpp>
 #include <boost/pool/poolfwd.hpp>
 
-// Auto-header: duplicate removed #include <string>
-
 //using std::ios::app;
 using std::endl;
 using std::max;
@@ -522,17 +523,16 @@ using core::pack::task::operation::RestrictToRepacking;
 using core::scoring::getScoreFunction;
 using core::scoring::ScoreFunction;
 using core::scoring::ScoreFunctionOP;
-using core::pack::dunbrack::RotVector;
-using core::pack::dunbrack::rotamer_from_chi;
-using core::scoring::TenANeighborGraph;
 using basic::Tracer;
 using utility::vector1;
+using protocols::moves::MoverOP;
+using protocols::rotamer_recovery::RRProtocolOP;
+using protocols::rotamer_recovery::RRProtocolMover;
+using protocols::rotamer_recovery::RRComparerOP;
+using protocols::rotamer_recovery::RRReporterOP;
 using protocols::rotamer_recovery::RotamerRecovery;
-using protocols::rotamer_recovery::RRComparerRotBins;
-using protocols::rotamer_recovery::RRReporterSimple;
-
-
-
+using protocols::rotamer_recovery::RotamerRecoveryFactory;
+using protocols::rosetta_scripts::parse_mover;
 
 namespace protocols {
 namespace moves {
@@ -550,12 +550,15 @@ RotamerRecoveryMover::RotamerRecoveryMover() :
 }
 
 RotamerRecoveryMover::RotamerRecoveryMover(
+	string const & protocol,
+	string const & comparer,
 	string const & reporter,
 	string const & output_fname,
-	string const & comparer,
 	ScoreFunctionOP scfxn,
 	TaskFactoryOP task_factory) :
-	rotamer_recovery_( new RotamerRecovery( reporter, output_fname, comparer ) ),
+	rotamer_recovery_(
+		RotamerRecoveryFactory::get_instance()->get_rotamer_recovery(
+			protocol, comparer, reporter )),
 	scfxn_( scfxn ),
 	task_factory_( task_factory ),
 	output_fname_( output_fname )
@@ -604,23 +607,13 @@ RotamerRecoveryMover::reinitialize_for_new_input() const {
 }
 
 void
-RotamerRecoveryMover::apply( Pose & pose )
-{
-
+RotamerRecoveryMover::apply( Pose & pose
+) {
 	assert( rotamer_recovery_ );
-
-	ScoreFunctionOP scfxn( get_scorefunction());
+	ScoreFunctionOP scfxn( score_function());
 	scfxn->setup_for_scoring(pose);
-
-
 	PackerTaskOP packer_task( task_factory_->create_task_and_apply_taskoperations( pose ));
-
-
-	rotamer_recovery_->rtmin_rotamer_recovery(
-		pose,
-		*scfxn,
-		*packer_task);
-
+	rotamer_recovery_->run(pose, *scfxn, *packer_task);
 }
 
 string
@@ -644,41 +637,46 @@ RotamerRecoveryMover::parse_my_tag(
 	utility::tag::TagPtr const tag,
 	DataMap & datamap,
 	Filters_map const & /*filters*/,
-	Movers_map const & /*movers*/,
+	Movers_map const & movers,
 	Pose const & /*pose*/ )
 {
-	string const scorefxn_key( tag->getOption<std::string>("scorefxn", "score12" ));
-	if ( datamap.has( "scorefxns", scorefxn_key ) ) {
-		set_scorefunction( datamap.get< ScoreFunction * >("scorefxns", scorefxn_key) );
-	} else {
-		utility_exit_with_message("ScoreFunction " + scorefxn_key + " not found in OADataMap.");
-	}
-
+	string const & scorefxn_key( tag->getOption<std::string>("scorefxn", "score12" ));
+	score_function( datamap.get< ScoreFunction * >("scorefxns", scorefxn_key) );
 
 	if( rotamer_recovery_ ){
 		TR << "WARNING: Attempting to redefine rotamer_recovery_ object from Parser Script" << endl;
+		utility_exit();
 	}
 
-	string comparer;
-	if( tag->hasOption("comparer") ) {
-		comparer = tag->getOption<string>("comparer");
+	if(tag->hasOption("protocol") && (tag->hasOption("mover") || tag->hasOption("mover_name"))){
+		utility_exit_with_message("Please either the 'protocol' field or the 'mover' field but not both.");
 	}
 
-	string reporter;
-	if( tag->hasOption("reporter") ){
-		reporter = tag->getOption<string>("reporter");
-	}
+	RotamerRecoveryFactory * factory(RotamerRecoveryFactory::get_instance());
 
-	// store this for writing out at the end if requested
-	if( tag->hasOption("output_fname") ){
-		output_fname_ = tag->getOption<string>("output_fname");
+	RRProtocolOP protocol;
+	if(tag->hasOption("mover") || tag->hasOption("mover_name")){
+		MoverOP mover = parse_mover(tag->hasOption("mover") ?
+			tag->getOption<string>("mover") : tag->getOption<string>("mover_name"), movers);
+		protocol = new RRProtocolMover(mover);
+	} else {
+		protocol = factory->get_rotamer_recovery_protocol(tag->getOption<string>("protocol", "RRProtocolMinPack"));
 	}
+	RRComparerOP comparer(
+		factory->get_rotamer_recovery_comparer(
+			tag->getOption<string>("comparer", "RRComparerAutomorphicRMSD")));
 
-	rotamer_recovery_ = new RotamerRecovery( reporter, output_fname_, comparer );
+	RRReporterOP reporter(
+		factory->get_rotamer_recovery_reporter(
+			tag->getOption<string>("reporter", "RRReporterSimple")));
+
+	reporter->output_fname(tag->getOption<string>("output_fname"));
+
+	rotamer_recovery_ = new RotamerRecovery(protocol, comparer, reporter);
 }
 
 ScoreFunctionOP
-RotamerRecoveryMover::get_scorefunction(){
+RotamerRecoveryMover::score_function(){
 	if ( !scfxn_ )
 		scfxn_ = getScoreFunction();
 
@@ -686,7 +684,7 @@ RotamerRecoveryMover::get_scorefunction(){
 }
 
 void
-RotamerRecoveryMover::set_scorefunction(
+RotamerRecoveryMover::score_function(
 	ScoreFunctionOP scorefunction
 ) {
 	scfxn_ = scorefunction;

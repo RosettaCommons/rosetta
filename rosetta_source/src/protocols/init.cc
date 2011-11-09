@@ -86,6 +86,10 @@
 #include <protocols/features/StructureFeaturesCreator.hh>
 #include <protocols/features/StructureScoresFeaturesCreator.hh>
 
+// RotamerRecovery creators
+#include <protocols/rotamer_recovery/RotamerRecoveryFactory.hh>
+#include <protocols/rotamer_recovery/RotamerRecoveryCreator.hh>
+
 
 /// Mover creators
 #include <protocols/moves/InterfaceAnalyzerMoverCreator.hh>
@@ -332,6 +336,15 @@ static FeaturesReporterRegistrator< ScoreTypeFeaturesCreator > ScoreTypeFeatures
 static FeaturesReporterRegistrator< StructureFeaturesCreator > StructureFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< StructureScoresFeaturesCreator > StructureScoresFeaturesCreator_registrator;
 
+using namespace protocols::rotamer_recovery;
+static RotamerRecoveryRegistrator< RRProtocolRTMinCreator > RRProtocolRTMinCreator_registrator;
+static RotamerRecoveryRegistrator< RRProtocolMinPackCreator > RRProtocolMinPackCreator_registrator;
+static RotamerRecoveryRegistrator< RRProtocolMoverCreator > RRProtocolMoverCreator_registrator;
+static RotamerRecoveryRegistrator< RRComparerRotBinsCreator > RRComparerRotBinsCreator_registrator;
+static RotamerRecoveryRegistrator< RRComparerAutomorphicRMSDCreator > RRComparerAutomorphicRMSDCreator_registrator;
+static RotamerRecoveryRegistrator< RRReporterSimpleCreator > RRReporterSimpleCreator_registrator;
+static RotamerRecoveryRegistrator< RRReporterHumanCreator > RRReporterHumanCreator_registrator;
+static RotamerRecoveryRegistrator< RRReporterSQLiteCreator > RRReporterSQLiteCreator_registrator;
 
 using namespace core::pack::task::operation;
 

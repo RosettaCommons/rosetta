@@ -24,11 +24,9 @@
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
+#include <utility/vector1.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <ostream>
-
-#include <utility/vector1.hh>
 #include <iostream>
 
 
@@ -70,11 +68,18 @@ public: // public interface
 	schema(
 		OutputLevel::e output_level = OutputLevel::full);
 
-	virtual
+	void
+	set_protocol_info(
+		std::string const & protocol_name,
+		std::string const & protocol_params);
+
 	void
 	set_comparer_info(
 		std::string const & comparer_name,
 		std::string const & comparer_params);
+
+	utility::sql_database::sessionOP
+	db_session();
 
 	void
 	set_output_level(
@@ -151,12 +156,16 @@ private: // data members
 	core::Size struct_id1_;
 	core::Size struct_id2_;
 
+	std::string protocol_name_;
+	std::string protocol_params_;
+
 	std::string comparer_name_;
 	std::string comparer_params_;
 
 	core::Size residues_considered_;
 	core::Size rotamers_recovered_;
 
+	std::string database_fname_;
 	utility::sql_database::sessionOP db_session_;
 
 };

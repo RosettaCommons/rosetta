@@ -16,49 +16,39 @@
 
 // Unit Headers
 #include <protocols/rotamer_recovery/RotamerRecovery.hh>
+#include <protocols/rotamer_recovery/RRProtocolMinPack.hh>
 #include <protocols/rotamer_recovery/RRReporter.hh>
-#include <protocols/rotamer_recovery/RRReporterHuman.hh>
-#include <protocols/rotamer_recovery/RRReporterSQLite.hh>
-#include <protocols/rotamer_recovery/RRComparer.hh>
 #include <protocols/rotamer_recovery/RRComparerAutomorphicRMSD.hh>
 
 // Project Headers
 #include <core/types.hh>
-#include <core/chemical/AA.hh>
-#include <core/conformation/Residue.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/task/PackerTask.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/rtmin.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <protocols/moves/Mover.hh>
+
+// Utility Headers
+#include <utility/vector1.hh>
 
 // option key includes
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // C++ headers
+#include <sstream>
 #include <ostream>
 #include <string>
-
-#include <core/pack/task/TaskFactory.fwd.hh>
-#include <utility/vector1.hh>
-
 
 namespace protocols {
 namespace rotamer_recovery {
 
 using std::string;
+using std::stringstream;
 using std::endl;
 using std::ostream;
 using core::Size;
 using core::Real;
-using core::conformation::Residue;
-using core::pack::RTMin;
 using core::pack::task::PackerTask;
-using core::pack::task::PackerTaskOP;
-using core::pack::task::TaskFactory;
 using core::pose::Pose;
 using core::scoring::ScoreFunction;
 using basic::Tracer;
@@ -67,60 +57,25 @@ using utility::vector1;
 
 static Tracer TR("protocol.rotamer_recovery.RotamerRecovery");
 
-
-
 RotamerRecovery::RotamerRecovery() :
+	protocol_( new RRProtocolMinPack),
+	comparer_( new RRComparerAutomorphicRMSD),
 	reporter_( new RRReporterSimple),
-	comparer_( new RRComparerRotBins),
 	ignore_unrecognized_res_(false)
 {}
 
 RotamerRecovery::RotamerRecovery(
-	RRReporterOP reporter,
-	RRComparerOP comparer ) :
-	reporter_( reporter ),
+	RRProtocolOP protocol,
+	RRComparerOP comparer,
+	RRReporterOP reporter) :
+	protocol_( protocol ),
 	comparer_( comparer ),
+	reporter_( reporter ),
 	ignore_unrecognized_res_(false)
 {
+	reporter_->set_protocol_info( protocol_->get_name(), protocol_->get_parameters() );
 	reporter_->set_comparer_info( comparer_->get_name(), comparer_->get_parameters() );
 }
-
-RotamerRecovery::RotamerRecovery(
-	string const & reporter,
-	string const & output_fname,
-	string const & comparer) {
-
-	if( comparer.compare("RRComparerRotBins") == 0 ){
-		comparer_ = new RRComparerRotBins();
-	} else if( comparer.compare("RRComparerAutomorphicRMSD") == 0 ){
-		comparer_ = new RRComparerAutomorphicRMSD();
-	} else {
-		TR << "Unrecognized rotamer recovery comparer '" << comparer << "'." << endl;
-		TR << "Using default comparer 'RRComparerRotBins'." << endl;
-		comparer_ = new RRComparerRotBins();
-	}
-
-	if( reporter.compare("RRReporterSimple") == 0 ){
-		reporter_ = new RRReporterSimple();
-	} else if ( reporter.compare( "RRReporterHuman" ) == 0 ) {
-		reporter_ = new RRReporterHuman();
-	}
-	else if ( reporter.compare("RRReporterSQLite") == 0 ){
-		reporter_ = new RRReporterSQLite( output_fname );
-	}
-	else {
-		TR << "Unrecongized rotamer recovery reporter '" << reporter << "'." << endl;
-		TR << "Using default reporter 'RRReporterSimple'." << endl;
-		reporter_ = new RRReporterSimple();
-	}
-
-	reporter_->set_comparer_info( comparer_->get_name(), comparer_->get_parameters() );
-
-}
-
-
-
-
 
 RotamerRecovery::~RotamerRecovery() {}
 
@@ -136,7 +91,6 @@ void
 RotamerRecovery::reset_recovery(
 ) {
 	reporter_->reset_recovery();
-	//comparer_->reset_recovery();
 }
 
 void
@@ -149,80 +103,14 @@ RotamerRecovery::register_options() const {
 }
 
 
-bool
-RotamerRecovery::measure_rotamer_recovery(
-	Pose const & pose1,
-	Pose const & pose2,
-	Residue const & res1,
-	Residue const & res2
-) {
-
-	Real score;
-	bool recovered;
-	if(comparer_->measure_rotamer_recovery(
-			pose1, pose2, res1, res2, score, recovered)){
-		reporter_->report_rotamer_recovery(
-			pose1, pose2, res1, res2, score, recovered );
-	}
-	return recovered;
-}
-
 Real
-RotamerRecovery::rtmin_rotamer_recovery(
+RotamerRecovery::run(
 	Pose const & pose,
-	ScoreFunction const & score_function,
+	ScoreFunction const &  score_function,
 	PackerTask const & packer_task
 ) {
-
-	using core::chemical::aa_unk;
-
-	// Assume score_function.setup_for_scoring(pose) has already been called.
-
-	PackerTaskOP one_res_task( packer_task.clone() );
-
-	RTMin rtmin;
-
-	// I don't know if rtmin looks at more than pack_residue(..)
-	one_res_task->temporarily_fix_everything();
-
-	// For each residue in the packer task,
-	// rtmin residue -> and measure recovery
-	for( Size ii = 1; ii <= pose.total_residue(); ++ii ){
-		if ( !packer_task.pack_residue(ii) ) continue;
-		if ( ignore_unrecognized_res_ && pose.residue(ii).aa() == aa_unk ){
-			continue;
-		}
-		Pose working_pose = pose;  // deep copy
-		one_res_task->temporarily_set_pack_residue( ii, true );
-		rtmin.rtmin( working_pose, score_function, one_res_task );
-		measure_rotamer_recovery(
-			pose, working_pose,
-			pose.residue(ii), working_pose.residue(ii) );
-		one_res_task->temporarily_set_pack_residue( ii, false );
-	}
+	protocol_->run(comparer_, reporter_, pose, score_function, packer_task);
 	return reporter_->recovery_rate();
-}
-
-
-void
-RotamerRecovery::compare_rotamers(
-	Pose const & ref_pose,
-	Mover & mover,
-	vector1< Size > const & res_ids
-) {
-
-	Pose pose = ref_pose;
-	mover.apply(pose);
-
-	for( Size resi = 1; resi <= res_ids.size(); ++resi ){
-		if (res_ids[resi]){
-			measure_rotamer_recovery(
-				ref_pose,
-				pose,
-				ref_pose.residue(resi),
-				pose.residue(resi) );
-		}
-	}
 }
 
 void

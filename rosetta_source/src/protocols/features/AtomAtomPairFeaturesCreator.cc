@@ -15,9 +15,7 @@
 #include <protocols/features/AtomAtomPairFeaturesCreator.hh>
 
 // Package Headers
-
 #include <protocols/features/FeaturesReporterCreator.hh>
-// AUTO-REMOVED #include <protocols/features/FeaturesReporterFactory.hh>
 
 #include <protocols/features/AtomAtomPairFeatures.hh>
 #include <utility/vector1.hh>

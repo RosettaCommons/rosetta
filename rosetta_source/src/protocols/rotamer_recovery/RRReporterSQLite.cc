@@ -46,6 +46,8 @@ using std::endl;
 using std::ostream;
 using std::string;
 using basic::datacache::CacheableString;
+using basic::database::safely_prepare_statement;
+using basic::database::safely_write_to_database;
 using basic::Tracer;
 using core::Size;
 using core::Real;
@@ -56,21 +58,21 @@ using utility::sql_database::DatabaseSessionManager;
 using utility::sql_database::sessionOP;
 using cppdb::statement;
 
-static Tracer TR("protocols.rotamer_recovery.rRReporterSQLite");
+static Tracer TR("protocols.rotamer_recovery.RRReporterSQLite");
 
 RRReporterSQLite::RRReporterSQLite() :
 	output_level_( OutputLevel::full ),
 	struct_id1_( 0 ),
 	struct_id2_( 0 ),
+	protocol_name_(),
+	protocol_params_(),
 	comparer_name_(),
 	comparer_params_(),
 	residues_considered_( 0 ),
 	rotamers_recovered_( 0 ),
+	database_fname_("rotamer_recovery.db3"),
 	db_session_()
-{
-	db_session_ =
-			DatabaseSessionManager::get_instance()->get_session("rotamer_recovery.db3");
-}
+{}
 
 RRReporterSQLite::RRReporterSQLite(
 	string const & database_fname,
@@ -79,19 +81,15 @@ RRReporterSQLite::RRReporterSQLite(
 	output_level_( output_level ),
 	struct_id1_( 0 ),
 	struct_id2_( 0 ),
+	protocol_name_(),
+	protocol_params_(),
 	comparer_name_(),
 	comparer_params_(),
 	residues_considered_( 0 ),
 	rotamers_recovered_( 0 ),
+	database_fname_(database_fname),
 	db_session_()
-{
-	db_session_ =
-		DatabaseSessionManager::get_instance()->get_session(database_fname);
-
-	statement stmt = (*db_session_) << schema(output_level);
-	stmt.exec();
-
-}
+{}
 
 RRReporterSQLite::RRReporterSQLite(
 	sessionOP db_session,
@@ -100,10 +98,13 @@ RRReporterSQLite::RRReporterSQLite(
 	output_level_( output_level ),
 	struct_id1_( 0 ),
 	struct_id2_( 0 ),
+	protocol_name_(),
+	protocol_params_(),
 	comparer_name_(),
 	comparer_params_(),
 	residues_considered_( 0 ),
 	rotamers_recovered_( 0 ),
+ 	database_fname_(),
 	db_session_( db_session )
 {}
 
@@ -114,10 +115,13 @@ RRReporterSQLite::RRReporterSQLite( RRReporterSQLite const & src ) :
 	output_level_( src.output_level_ ),
 	struct_id1_( src.struct_id1_ ),
 	struct_id2_( src.struct_id2_ ),
+	protocol_name_( src.protocol_name_ ),
+	protocol_params_( src.protocol_params_ ),
 	comparer_name_( src.comparer_name_ ),
 	comparer_params_( src.comparer_params_ ),
 	residues_considered_( src.residues_considered_ ),
 	rotamers_recovered_( src.rotamers_recovered_ ),
+	database_fname_( src.database_fname_ ),
 	db_session_( src.db_session_ )
 {}
 
@@ -141,10 +145,12 @@ RRReporterSQLite::schema(
 			"	struct2_name TEXT,\n"
 			"	chain2 TEXT,\n"
 			"	res2 INTEGER,\n"
+			"	protocol_name TEXT,\n"
+			"	protocol_params TEXT,\n"
 			"	comparer_name TEXT,\n"
 			"	comparer_params TEXT,\n"
 			"	score REAL,\n"
-			"	recovered BOOLEAN,"
+			"	recovered BOOLEAN,\n"
 			"	PRIMARY KEY (struct1_name, chain1, res1, struct2_name, chain2, res2));\n";
 		break;
 
@@ -206,12 +212,35 @@ RRReporterSQLite::get_struct_id2(
 }
 
 void
+RRReporterSQLite::set_protocol_info(
+	string const & protocol_name,
+	string const & protocol_params
+)	{
+	protocol_name_ = protocol_name;
+	protocol_params_ = protocol_params;
+}
+
+void
 RRReporterSQLite::set_comparer_info(
 	string const & comparer_name,
 	string const & comparer_params
 )	{
 	comparer_name_ = comparer_name;
 	comparer_params_ = comparer_params;
+}
+
+sessionOP
+RRReporterSQLite::db_session(){
+	if(!db_session_){
+		db_session_ =
+			DatabaseSessionManager::get_instance()->get_session(database_fname_);
+
+		statement stmt(
+			safely_prepare_statement(
+				schema(get_output_level()), db_session_));
+		safely_write_to_database(stmt);
+	}
+	return db_session_;
 }
 
 void
@@ -279,10 +308,10 @@ RRReporterSQLite::report_rotamer_recovery_full(
 	}
 
 	std::string statement_string = "INSERT INTO rotamer_recovery VALUES (?,?,?,?,?,?,?,?,?,?,?,?);";
-	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session_));
+	statement stmt(safely_prepare_statement(statement_string,db_session()));
 
 	stmt.bind(1,struct1_name);
-	stmt.bind(2,res1.name1());
+	stmt.bind(2,string(res1.name1(),1));
 	stmt.bind(3,res1.type().name());
 	stmt.bind(4,res1.chain());
 	stmt.bind(5,res1.seqpos());
@@ -293,7 +322,7 @@ RRReporterSQLite::report_rotamer_recovery_full(
 	stmt.bind(10,comparer_params_);
 	stmt.bind(11,score);
 	stmt.bind(12,recovered);
-	basic::database::safely_write_to_database(stmt);
+	safely_write_to_database(stmt);
 
 }
 
@@ -306,12 +335,12 @@ RRReporterSQLite::report_rotamer_recovery_features(
 
 
 	std::string statement_string = "INSERT INTO rotamer_recovery VALUES (?,?,?);";
-	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session_));
+	statement stmt(safely_prepare_statement(statement_string,db_session_));
 
 	stmt.bind(1,struct_id1);
 	stmt.bind(2,res1.seqpos());
 	stmt.bind(3,score);
-	basic::database::safely_write_to_database(stmt);
+	safely_write_to_database(stmt);
 
 }
 

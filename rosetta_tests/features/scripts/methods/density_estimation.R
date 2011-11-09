@@ -21,6 +21,9 @@ estimate_density_1d <-function(
 	if(!(class(data) == "data.frame")){
 		stop(paste("The data argument must be a data.frame, instead it is of class '", class(data), "'"))
 	}
+	if(nrow(data) == 0){
+		stop(paste("Unable to compute density estimation because the data argument has no rows."))
+	}
 	for(id in ids){
 		if(!(id %in% names(data))){
 			stop(paste("The id variable '", id, "' is not a column name of the data. The ids are used to group the data instances for computing the density estimation.", sep=""))
@@ -63,6 +66,9 @@ estimate_density_1d_wrap <-function(
   ...){
 	if(!(class(data) == "data.frame")){
 		stop(paste("The data argument must be a data.frame, instead it is of class '", class(data), "'"))
+	}
+	if(nrow(data) == 0){
+		stop(paste("Unable to compute density estimation because the data argument has no rows."))
 	}
 	for(id in ids){
 		if(!(id %in% names(data))){
@@ -113,6 +119,9 @@ estimate_density_1d_reflect_boundary <-function(
   ...){
 	if(!(class(data) == "data.frame")){
 		stop(paste("The data argument must be a data.frame, instead it is of class '", class(data), "'"))
+	}
+	if(nrow(data) == 0){
+		stop(paste("Unable to compute density estimation because the data argument has no rows."))
 	}
 	for(id in ids){
 		if(!(id %in% names(data))){
@@ -176,6 +185,9 @@ estimate_density_1d_logspline <-function(
 	if(!(class(data) == "data.frame")){
 		stop(paste("The data argument must be a data.frame, instead it is of class '", class(data), "'", sep=""))
 	}
+	if(nrow(data) == 0){
+		stop(paste("Unable to compute density estimation because the data argument has no rows."))
+	}
 	for(id in ids){
 		if(!(id %in% names(data))){
 			stop(paste("The id variable '", id, "' is not a column name of the data. The ids are used to group the data instances for computing the density estimation.", sep=""))
@@ -230,6 +242,9 @@ estimate_density_2d <-function(
   ...){
 	if(!(class(data) == "data.frame")){
 		stop(paste("The data argument must be a data.frame, instead it is of class '", class(data), "'", sep=""))
+	}
+	if(nrow(data) == 0){
+		stop(paste("Unable to compute density estimation because the data argument has no rows."))
 	}
 	for(id in ids){
 		if(!(id %in% names(data))){

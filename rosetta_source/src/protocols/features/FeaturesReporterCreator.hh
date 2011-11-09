@@ -23,9 +23,6 @@
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
 
-// c++ headers
-// AUTO-REMOVED #include <string>
-
 namespace protocols {
 namespace features {
 

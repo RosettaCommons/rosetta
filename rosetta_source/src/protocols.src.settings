@@ -1176,6 +1176,12 @@ sources = {
 
 	"protocols/rotamer_recovery" : [
 		"RotamerRecovery",
+		"RotamerRecoveryCreator",
+		"RotamerRecoveryFactory",
+		"RRProtocol",
+		"RRProtocolRTMin",
+		"RRProtocolMinPack",
+		"RRProtocolMover",
 		"RRComparer",
 		"RRComparerAutomorphicRMSD",
 		"RRReporter",

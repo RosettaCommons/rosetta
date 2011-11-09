@@ -16,29 +16,26 @@
 #define INCLUDED_protocols_moves_RotamerRecoveryMover_hh
 
 // Unit Headers
+#include <protocols/rotamer_recovery/RotamerRecovery.fwd.hh>
 #include <protocols/moves/RotamerRecoveryMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
-// program Headers
-// AUTO-REMOVED #include <protocols/rotamer_recovery/RotamerRecovery.hh>
-
 // Project Headers
-#include <core/types.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/types.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
+#include <utility/vector1.hh>
 
 // C++ Headers
 #include <string>
 
-#include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/rotamer_recovery/RotamerRecovery.fwd.hh>
-#include <utility/vector1.hh>
+
+
+
 
 
 namespace protocols {
@@ -54,9 +51,10 @@ public: // constructors destructors
 
 
 	RotamerRecoveryMover(
+		std::string const & protocol,
+		std::string const & comparer,
 		std::string const & reporter,
 		std::string const & output_fname,
-		std::string const & comparer,
 		core::scoring::ScoreFunctionOP scfxn,
 		core::pack::task::TaskFactoryOP task_factory);
 
@@ -110,13 +108,11 @@ public: // functional interface
 	bool
 	reinitialize_for_new_input() const;
 
-	virtual
 	core::scoring::ScoreFunctionOP
-	get_scorefunction();
+	score_function();
 
-	virtual
 	void
-	set_scorefunction(
+	score_function(
 		core::scoring::ScoreFunctionOP);
 
 	virtual

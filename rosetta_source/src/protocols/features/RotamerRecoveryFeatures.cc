@@ -21,9 +21,13 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
+#include <protocols/moves/Mover.hh>
+#include <protocols/rosetta_scripts/util.hh>
 #include <protocols/rotamer_recovery/RotamerRecovery.hh>
+#include <protocols/rotamer_recovery/RotamerRecoveryFactory.hh>
 #include <protocols/rotamer_recovery/RRReporterSQLite.hh>
-#include <protocols/rotamer_recovery/RRComparerAutomorphicRMSD.hh>
+#include <protocols/rotamer_recovery/RRProtocolMover.hh>
+
 
 // Project Headers
 #include <basic/Tracer.hh>
@@ -64,11 +68,14 @@ using core::pack::task::operation::InitializeFromCommandline;
 using core::pack::task::operation::RestrictToRepacking;
 using protocols::filters::Filters_map;
 using protocols::moves::DataMap;
+using protocols::moves::MoverOP;
 using protocols::moves::Movers_map;
+using protocols::rosetta_scripts::parse_mover;
+using protocols::rotamer_recovery::RotamerRecovery;
+using protocols::rotamer_recovery::RotamerRecoveryFactory;
+using protocols::rotamer_recovery::RRProtocolMover;
 using protocols::rotamer_recovery::RRReporterSQLite;
 using protocols::rotamer_recovery::RRReporterSQLiteOP;
-using protocols::rotamer_recovery::RRComparerAutomorphicRMSD;
-using protocols::rotamer_recovery::RotamerRecovery;
 using utility::sql_database::sessionOP;
 using utility::tag::TagPtr;
 using utility::vector1;
@@ -77,18 +84,24 @@ using cppdb::statement;
 static Tracer TR("protocols.features.RotamerRecoveryFeatures");
 
 RotamerRecoveryFeatures::RotamerRecoveryFeatures() :
-	scfxn_(getScoreFunction())
+	scfxn_(getScoreFunction()),
+	protocol_(),
+	comparer_()
 {}
 
 RotamerRecoveryFeatures::RotamerRecoveryFeatures(
 	ScoreFunctionOP scfxn) :
-	scfxn_(scfxn)
+	scfxn_(scfxn),
+	protocol_(),
+	comparer_()
 {}
 
 RotamerRecoveryFeatures::RotamerRecoveryFeatures(
 	RotamerRecoveryFeatures const & src) :
 	FeaturesReporter(),
-	scfxn_(src.scfxn_)
+	scfxn_(src.scfxn_),
+	protocol_(),
+	comparer_()
 {}
 
 RotamerRecoveryFeatures::~RotamerRecoveryFeatures() {}
@@ -102,14 +115,12 @@ RotamerRecoveryFeatures::schema() const {
 		RRReporterSQLite::OutputLevel::features );
 }
 
-
-
 void
 RotamerRecoveryFeatures::parse_my_tag(
 	TagPtr const tag,
 	DataMap & data,
 	Filters_map const & /*filters*/,
-	Movers_map const & /*movers*/,
+	Movers_map const & movers,
 	Pose const & /*pose*/
 ) {
 	if(tag->hasOption("scorefxn")){
@@ -123,6 +134,20 @@ RotamerRecoveryFeatures::parse_my_tag(
 			<< "    <feature name=" << type_name() <<" scorefxn=(name_of_score_function) />" << endl;
 		utility_exit_with_message(error_msg.str());
 	}
+
+	RotamerRecoveryFactory * factory(RotamerRecoveryFactory::get_instance());
+
+	if(tag->hasOption("mover") || tag->hasOption("mover_name")){
+		MoverOP mover = parse_mover(tag->hasOption("mover") ?
+			tag->getOption<string>("mover") : tag->getOption<string>("mover_name"), movers);
+		protocol_ = new RRProtocolMover(mover);
+	} else {
+		string const & protocol_name(tag->getOption<string>("protocol", "RRProtocolMinPack"));
+		protocol_ = factory->get_rotamer_recovery_protocol(protocol_name);
+	}
+
+	string const & comparer_name(tag->getOption<string>("comparer", "RRComparerAutomorphicRMSD"));
+	comparer_ = factory->get_rotamer_recovery_comparer(comparer_name);
 }
 
 
@@ -137,11 +162,8 @@ RotamerRecoveryFeatures::report_features(
 	RRReporterSQLiteOP reporter(
 		new RRReporterSQLite(db_session, RRReporterSQLite::OutputLevel::features));
 
-	reporter->set_struct_id1( struct_id );
-
-	RotamerRecovery rotamer_recovery(
-		reporter, new RRComparerAutomorphicRMSD() );
-
+	reporter->set_struct_id1(struct_id);
+	RotamerRecovery rotamer_recovery(protocol_, comparer_, reporter);
 
 	// I would like to assert that this has been called but I don't know how.
 	//scfxn.setup_for_scoring(pose);
@@ -151,7 +173,7 @@ RotamerRecoveryFeatures::report_features(
 	packer_task->restrict_to_repacking();
 	packer_task->restrict_to_residues(relevant_residues);
 
-	rotamer_recovery.rtmin_rotamer_recovery(pose, *scfxn_, *packer_task);
+	rotamer_recovery.run(pose, *scfxn_, *packer_task);
 
 	return 0;
 }

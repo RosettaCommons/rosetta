@@ -49,16 +49,13 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <ostream>
 #include <map>
 
 #include <iostream>
@@ -154,6 +151,11 @@ public: // public interface
 		std::string const & comparer_name,
 		std::string const & comparer_params);
 
+	void
+	set_protocol_info(
+		std::string const & protocol_name,
+		std::string const & protocol_params);
+
 	virtual
 	void
 	reset_recovery();
@@ -183,6 +185,8 @@ public: // public interface
 
 private:
 
+	std::string protocol_name_;
+	std::string protocol_params_;
 	std::string comparer_name_;
 	std::string comparer_params_;
 	std::string output_fname_;

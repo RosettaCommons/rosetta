@@ -22,19 +22,14 @@
 
 // Project Headers
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
-// AUTO-REMOVED #include <basic/datacache/CacheableString.hh>
+#include <basic/datacache/CacheableString.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
-// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
-
 #include <core/types.hh>
-// AUTO-REMOVED #include <protocols/jd2/Job.hh>
-// AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/JobDistributor.fwd.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -51,10 +46,6 @@
 #include <string>
 #include <map>
 
-#include <protocols/jd2/JobDistributor.fwd.hh>
-#include <basic/datacache/CacheableString.fwd.hh>
-
-
 using std::endl;
 using std::ostream;
 using std::string;
@@ -68,7 +59,6 @@ using core::pack::dunbrack::RotVector;
 using core::pack::dunbrack::rotamer_from_chi;
 using core::pose::Pose;
 using core::pose::tag_from_pose;
-////using core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG;
 using protocols::jd2::JobDistributor;
 using utility::vector1;
 using numeric::statistics::mean;
@@ -255,6 +245,8 @@ PerNativeRRReporterHuman::show(
 
 
 RRReporterHuman::RRReporterHuman() :
+	protocol_name_(),
+	protocol_params_(),
 	comparer_name_(),
 	comparer_params_(),
 	column_width_(12),
@@ -268,6 +260,8 @@ RRReporterHuman::RRReporterHuman() :
 
 RRReporterHuman::RRReporterHuman( RRReporterHuman const & src ) :
 	RRReporter(),
+	protocol_name_(src.protocol_name_),
+	protocol_params_(src.protocol_params_),
 	comparer_name_(src.comparer_name_),
 	comparer_params_(src.comparer_params_),
 	output_fname_(src.output_fname_),
@@ -283,6 +277,15 @@ RRReporterHuman::RRReporterHuman( RRReporterHuman const & src ) :
 RRReporterHuman::~RRReporterHuman() {}
 
 void
+RRReporterHuman::set_protocol_info(
+	string const & protocol_name,
+	string const & protocol_params
+){
+	protocol_name_ = protocol_name;
+	protocol_params_ = protocol_params;
+}
+
+void
 RRReporterHuman::set_comparer_info(
 	string const & comparer_name,
 	string const & comparer_params
@@ -290,7 +293,6 @@ RRReporterHuman::set_comparer_info(
 	comparer_name_ = comparer_name;
 	comparer_params_ = comparer_params;
 }
-
 
 void
 RRReporterHuman::reset_recovery(){
@@ -333,6 +335,8 @@ void
 RRReporterHuman::write_header( ostream & out ) const {
 
 	out << "#Rotamer Recovery Benchmark" << endl;
+	out << "#Protocol: " << protocol_name_ << endl;
+	out << "#Protocol Paremeters: " << protocol_params_ << endl;
 	out << "#Comparer: " << comparer_name_ << endl;
 	out << "#Comparer Paremeters: " << comparer_params_ << endl;
 	out << "#Number of native structures: " << per_native_recovery_.size() << endl;

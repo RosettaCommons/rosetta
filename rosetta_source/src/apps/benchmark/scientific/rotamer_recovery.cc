@@ -21,31 +21,25 @@
 // Project Headers
 #include <devel/init.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/Tracer.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperationFactory.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
+#include <utility/excn/EXCN_Base.hh>
 #include <utility/exit.hh>
-
-#include <core/import_pose/import_pose.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#include <utility/excn/EXCN_Base.hh>
+
 
 
 using std::endl;
 using std::string;
-
 using basic::Tracer;
 using core::pose::PoseOP;
 using core::import_pose::pose_from_pdb;
@@ -64,8 +58,9 @@ using utility::excn::EXCN_Base;
 
 static Tracer TR("apps.benchmark.scientific.rotamer_recovery");
 
-OPT_1GRP_KEY( String, rotamer_recovery, reporter )
+OPT_1GRP_KEY( String, rotamer_recovery, protocol )
 OPT_1GRP_KEY( String, rotamer_recovery, comparer )
+OPT_1GRP_KEY( String, rotamer_recovery, reporter )
 //OPT_2GRP_KEY( File, rotamer_recovery, native_vs_decoy )
 //OPT_2GRP_KEY( File, out, rotamer_recovery, method )
 OPT_2GRP_KEY( File, out, file, rotamer_recovery )
@@ -80,9 +75,10 @@ register_options() {
 	OPT( in::file::native );
 	OPT( packing::use_input_sc );
 	OPT( packing::resfile );
-	NEW_OPT( rotamer_recovery::reporter, "Rotamer Recovery Reporter component.", "");
+	NEW_OPT( rotamer_recovery::protocol, "Rotamer Recovery Protocol component.", "RRProtocolMinPack");
+	NEW_OPT( rotamer_recovery::comparer, "Rotamer Recovery Comparer component.", "RRComparerAutomorphicRMSD");
+	NEW_OPT( rotamer_recovery::reporter, "Rotamer Recovery Reporter component.", "RRReporterHuman");
 	//	NEW_OPT( rotamer_recovery::native_vs_decoy, "Table of describing which native structures the decoys are modeling.  The first column is native pdb filename and the second column is the decoy pdb filename.", "");
-	NEW_OPT( rotamer_recovery::comparer, "Rotamer Recovery Comparer component.", "");
 	NEW_OPT( out::file::rotamer_recovery, "Output File  Name for reporters that write their results to a file.", "");
 
 }
@@ -98,9 +94,10 @@ main( int argc, char * argv [] )
   using namespace basic::options::OptionKeys;
   using namespace basic::options::OptionKeys::out::file;
 
-	string reporter( option[ rotamer_recovery::reporter ].value() );
-	string output_fname( option[ out::file::rotamer_recovery ].value() );
-	string comparer( option[ rotamer_recovery::comparer ].value() );
+	string const & protocol( option[ rotamer_recovery::protocol ].value() );
+	string const & reporter( option[ rotamer_recovery::reporter ].value() );
+	string const & output_fname( option[ out::file::rotamer_recovery ].value() );
+	string const & comparer( option[ rotamer_recovery::comparer ].value() );
 	ScoreFunctionOP scfxn( getScoreFunction() );
 	TaskFactoryOP task_factory( new TaskFactory );
 	task_factory->push_back( new InitializeFromCommandline );
@@ -111,9 +108,10 @@ main( int argc, char * argv [] )
 
   RotamerRecoveryMoverOP rr(
 		new RotamerRecoveryMover(
+			protocol,
+			comparer,
 			reporter,
 			output_fname,
-			comparer,
 			scfxn,
 			task_factory
 		)

@@ -19,9 +19,7 @@
 
 // Project Headers
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <basic/Tracer.hh>
 

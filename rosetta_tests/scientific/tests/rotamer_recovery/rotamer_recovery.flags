@@ -1,6 +1,7 @@
 -l list.txt
 -ignore_unrecognized_res
 -out:nooutput
+-rotamer_recovery:protocol RRProtocolMinPack
 -rotamer_recovery:comparer RRComparerAutomorphicRMSD
 -rotamer_recovery:reporter RRReporterSQLite
 -out:file:rotamer_recovery outputs/rotamer_recovery_results.db3

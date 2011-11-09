@@ -15,11 +15,7 @@
 #define INCLUDED_protocols_features_RotamerRecoveryFeaturesCreator_hh
 
 // Unit Headers
-// AUTO-REMOVED #include <protocols/features/RotamerRecoveryFeatures.hh>
 #include <protocols/features/FeaturesReporterCreator.hh>
-
-// c++ headers
-// AUTO-REMOVED #include <string>
 
 #include <core/types.hh>
 #include <utility/vector1.hh>

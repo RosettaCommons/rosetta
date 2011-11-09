@@ -17,19 +17,14 @@
 #include <protocols/rotamer_recovery/RRReporter.fwd.hh>
 
 // Project Headers
+#include <core/conformation/Residue.fwd.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
-
-// C++ Headers
-// AUTO-REMOVED #include <ostream>
-
-#include <core/conformation/Residue.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
-
+#include <utility/exit.hh>
 
 namespace protocols {
 namespace rotamer_recovery {
@@ -46,11 +41,33 @@ public: // constructors destructors
 
 public: // public interface
 
+	// These can be optionally implemented in derived clases
+	virtual
+	void
+	output_fname(
+		std::string const & output_fname) {
+		utility_exit_with_message("Not Implemented");
+	}
+
+	virtual
+	std::string
+	output_fname() const {
+		utility_exit_with_message("Not Implemented");
+		return "";
+	}
+
+	virtual
+	void
+	set_protocol_info(
+		std::string const & protocol_name,
+		std::string const & protocol_params) = 0;
+
 	virtual
 	void
 	set_comparer_info(
 		std::string const & comparer_name,
 		std::string const & comparer_params) = 0;
+
 
 	virtual
 	void
@@ -93,6 +110,11 @@ public: // constructors destructors
 
 
 public: // public interface
+
+	void
+	set_protocol_info(
+		std::string const & /*protocol_name*/,
+		std::string const & /*protocol_params*/){}
 
 	void
 	set_comparer_info(

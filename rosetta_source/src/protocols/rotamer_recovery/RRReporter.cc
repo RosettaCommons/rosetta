@@ -13,28 +13,23 @@
 /// protocols::optimize_weights::IterativeOptEDriver::measure_rotamer_recovery()
 /// and apps::pilot::doug::rotamer_prediction_benchmark()
 
-
 // Unit Headers
 #include <protocols/rotamer_recovery/RRReporter.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
+#include <utility/vector1.hh>
 
 //C++ Headers
 #include <ostream>
-
-#include <utility/vector1.hh>
-
 
 namespace protocols {
 namespace rotamer_recovery {
 
 using std::endl;
 using std::ostream;
+using std::string;
 using core::Real;
 using core::pose::Pose;
 using core::conformation::Residue;
@@ -54,13 +49,6 @@ RRReporterSimple::RRReporterSimple( RRReporterSimple const & src ) :
 {}
 
 RRReporterSimple::~RRReporterSimple() {}
-
-
-//void
-//RRReporterSimple::set_comparer_info(
-//	string const & /*comparer_name*/,
-//	string const & /*comparer_params*/
-//){ }
 
 void
 RRReporterSimple::reset_recovery(){

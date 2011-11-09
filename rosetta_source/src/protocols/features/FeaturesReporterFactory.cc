@@ -20,9 +20,11 @@
 #include <basic/Tracer.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/tag/Tag.hh>
-// AUTO-REMOVED #include <protocols/filters/Filter.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+
+// Project Headers
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <protocols/jobdist/Jobs.hh>
+#include <utility/vector0.hh>
 
 // Boost Headers
 #include <boost/foreach.hpp>
@@ -31,10 +33,8 @@
 // C++ Headers
 #include <sstream>
 
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/jobdist/Jobs.hh>
-#include <utility/vector0.hh>
-#include <utility/vector1.hh>
+
+
 
 
 
@@ -49,7 +49,6 @@ using core::scoring::ScoreFunctionOP;
 using protocols::filters::Filters_map;
 using protocols::moves::DataMap;
 using protocols::moves::Movers_map;
-using utility::vector1;
 using utility::tag::TagPtr;
 
 static basic::Tracer tr("protocols.features.FeaturesReporterFactory");

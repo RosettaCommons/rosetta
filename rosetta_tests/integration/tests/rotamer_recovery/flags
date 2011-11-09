@@ -9,6 +9,7 @@
   -tags S_56 S_73 S_84 S_93 S_107
 -out
  -nooutput
+-rotamer_recovery:protocol RTProtocolRTMin
 -rotamer_recovery:comparer RRComparerAutomorphicRMSD
 -rotamer_recovery:reporter RRReporterHuman
 -out:file:rotamer_recovery rotamer_recovery.results

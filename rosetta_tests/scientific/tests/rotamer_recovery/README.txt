@@ -31,12 +31,12 @@ ____________________________________________________
 2) Compile Rosetta
 
    cd mini_base_dir
-   ./scons.py bin mode=release extras=sqlite -j<num_processors>
+   ./scons.py bin mode=release -j<num_processors>
 
 3) Run test
 
    cd mini_base_dir/test/scientific
-   ./scientific.py rotamer_recovery -d mini_database_dir --extras=sqlite
+   ./scientific.py rotamer_recovery -d mini_database_dir
 
 4) Investigate results
 

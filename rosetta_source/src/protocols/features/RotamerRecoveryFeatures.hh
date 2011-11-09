@@ -17,6 +17,8 @@
 // Unit Headers
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/RotamerRecoveryFeatures.fwd.hh>
+#include <protocols/rotamer_recovery/RRProtocol.hh>
+#include <protocols/rotamer_recovery/RRComparer.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -24,9 +26,6 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
-// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ Headers
@@ -65,7 +64,7 @@ public:
 		utility::tag::TagPtr const tag,
 		protocols::moves::DataMap & data,
 		protocols::filters::Filters_map const & /*filters*/,
-		protocols::moves::Movers_map const & /*movers*/,
+		protocols::moves::Movers_map const & movers,
 		core::pose::Pose const & /*pose*/);
 
 	///@brief collect all the feature data for the pose
@@ -78,6 +77,8 @@ public:
 
 private:
 	core::scoring::ScoreFunctionOP scfxn_;
+	protocols::rotamer_recovery::RRProtocolOP protocol_;
+	protocols::rotamer_recovery::RRComparerOP comparer_;
 
 };
 

@@ -14,9 +14,11 @@
 #define INCLUDED_protocols_rotamer_recovery_RotamerRecovery_hh
 
 // Unit Headers
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/rotamer_recovery/RotamerRecovery.fwd.hh>
-#include <protocols/rotamer_recovery/RRReporter.fwd.hh>
 #include <protocols/rotamer_recovery/RRComparer.fwd.hh>
+#include <protocols/rotamer_recovery/RRProtocol.fwd.hh>
+#include <protocols/rotamer_recovery/RRReporter.fwd.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -24,16 +26,12 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
 
-// C++ Headers
-// AUTO-REMOVED #include <ostream>
 
-#include <protocols/moves/Mover.fwd.hh>
 
 
 namespace protocols {
@@ -48,15 +46,9 @@ public: // constructors destructors
 
 	///@brief specify comparer and reporter
 	RotamerRecovery(
-		RRReporterOP reporter,
-		RRComparerOP comparer);
-
-	//@brief convience constructor that selects reporter and comparer based on the names given.
-	RotamerRecovery(
-		std::string const & reporter,
-		std::string const & output_fname,
-		std::string const & comparer);
-
+		RRProtocolOP protocol,
+		RRComparerOP comparer,
+		RRReporterOP reporter);
 
 	///@brief destructor
 	virtual ~RotamerRecovery();
@@ -74,29 +66,11 @@ public: // public interface
 	void
 	register_options() const;
 
-	virtual
-	bool
-	measure_rotamer_recovery(
-		core::pose::Pose const & pose1,
-		core::pose::Pose const & pose2,
-		core::conformation::Residue const & res1,
-		core::conformation::Residue const & res2
-	);
-
 	core::Real
-	rtmin_rotamer_recovery(
+	run(
 		core::pose::Pose const & pose,
 		core::scoring::ScoreFunction const & score_function,
 		core::pack::task::PackerTask const & packer_task
-	);
-
-
-	virtual
-	void
-	compare_rotamers(
-		core::pose::Pose const & pose,
-		moves::Mover & mover,
-		utility::vector1< core::Size > const & res_ids
 	);
 
 	void
@@ -129,8 +103,9 @@ public: // public interface
 
 private: // data
 
-	RRReporterOP reporter_;
+	RRProtocolOP protocol_;
 	RRComparerOP comparer_;
+	RRReporterOP reporter_;
 
 	bool ignore_unrecognized_res_;
 };

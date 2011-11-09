@@ -17,10 +17,13 @@
 #include <util/pose_funcs.hh>
 
 // Unit Headers
+#include <protocols/rotamer_recovery/RRProtocol.hh>
+#include <protocols/rotamer_recovery/RRProtocolRTMin.hh>
 #include <protocols/rotamer_recovery/RRReporter.hh>
 #include <protocols/rotamer_recovery/RRComparer.hh>
 #include <protocols/rotamer_recovery/RRComparerAutomorphicRMSD.hh>
 #include <protocols/rotamer_recovery/RotamerRecovery.hh>
+#include <protocols/rotamer_recovery/RotamerRecoveryFactory.hh>
 
 // Project Headers
 #include <test/core/init_util.hh>
@@ -29,10 +32,8 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
 // C++ Headers
 #include <iostream>
@@ -66,48 +67,7 @@ public:
 	}
 
 	void test_RotamerRecovery_main() {
-		do_test_RotamerRecovery_manual_construction();
 		do_test_RotamerRecovery_automatic_construction();
-	}
-
-	void
-	do_test_RotamerRecovery_manual_construction(){
-
-		using core::Real;
-		using protocols::rotamer_recovery::RRReporterSimple;
-		using protocols::rotamer_recovery::RRReporterSimpleOP;
-		using protocols::rotamer_recovery::RRComparerRotBins;
-		using protocols::rotamer_recovery::RRComparerRotBinsOP;
-		using protocols::rotamer_recovery::RRComparerAutomorphicRMSD;
-		using protocols::rotamer_recovery::RRComparerAutomorphicRMSDOP;
-		using protocols::rotamer_recovery::RotamerRecovery;
-
-		{
-			RRReporterSimpleOP reporter( new RRReporterSimple() );
-			RRComparerRotBinsOP comparer( new RRComparerRotBins() );
-			RotamerRecovery rr( reporter, comparer );
-
-			rr.measure_rotamer_recovery( pose_1ten_, pose_1ten_, pose_1ten_.residue(2), pose_1ten_.residue(11) );
-			rr.show( TR );
-
-			TS_ASSERT_DELTA( rr.recovery_rate(), 0, .0001 );
-		}
-
-		{
-			RRReporterSimpleOP reporter( new RRReporterSimple() );
-			RRComparerAutomorphicRMSDOP comparer( new RRComparerAutomorphicRMSD() );
-			comparer->set_recovery_threshold(.01);
-
-			RotamerRecovery rr( reporter, comparer );
-
-			rr.measure_rotamer_recovery( pose_1ten_, pose_1ten_, pose_1ten_.residue(2), pose_1ten_.residue(11) );
-			rr.show( TR );
-
-			TS_ASSERT_DELTA( rr.recovery_rate(), 0, .0001 );
-		}
-
-
-
 	}
 
 	void
@@ -115,21 +75,28 @@ public:
 
 		using std::endl;
 		using core::Real;
-		using protocols::rotamer_recovery::RotamerRecovery;
+		using protocols::rotamer_recovery::RotamerRecoveryOP;
+    using protocols::rotamer_recovery::RotamerRecoveryFactory;
 		score_function_->setup_for_scoring(pose_1ten_);
 
+    RotamerRecoveryFactory* factory(RotamerRecoveryFactory::get_instance());
 		{
-			RotamerRecovery rr( "RRReporterSimple", "", "RRComparerRotBins" );
-			rr.rtmin_rotamer_recovery( pose_1ten_,*score_function_,*packer_task_1ten_);
-			rr.show( TR );
-			TS_ASSERT_DELTA( rr.recovery_rate(), Real(64)/Real(89) , .001 );
+      RotamerRecoveryOP rr(
+        factory->get_rotamer_recovery(
+          "RRProtocolRTMin", "RRComparerRotBins", "RRReporterSimple"));
+
+			rr->run( pose_1ten_,*score_function_,*packer_task_1ten_);
+			rr->show( TR );
+			TS_ASSERT_DELTA( rr->recovery_rate(), Real(64)/Real(89) , .001 );
 		}
 
 		{
-			RotamerRecovery rr( "RRReporterSimple", "", "RRComparerAutomorphicRMSD" );
-			rr.rtmin_rotamer_recovery( pose_1ten_,*score_function_,*packer_task_1ten_);
-			rr.show( TR );
-			TS_ASSERT_DELTA( rr.recovery_rate(), Real(22)/Real(89) , .001 );
+      RotamerRecoveryOP rr(
+        factory->get_rotamer_recovery(
+          "RRProtocolRTMin", "RRComparerAutomorphicRMSD", "RRReporterSimple"));
+			rr->run( pose_1ten_,*score_function_,*packer_task_1ten_);
+			rr->show( TR );
+			TS_ASSERT_DELTA( rr->recovery_rate(), Real(22)/Real(89) , .001 );
 		}
 
 

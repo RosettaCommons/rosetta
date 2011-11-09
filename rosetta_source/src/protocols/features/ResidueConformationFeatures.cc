@@ -75,7 +75,8 @@ ResidueConformationFeatures::schema() const {
 			"	omega REAL,\n"
 			"	FOREIGN KEY (struct_id)\n"
 			"		REFERENCES structures (struct_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED);"
+			"		DEFERRABLE INITIALLY DEFERRED,\n"
+			"	PRIMARY KEY (struct_id, seqpos));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS nonprotein_residue_angles (\n"
 			"	struct_id INTEGER,\n"
@@ -84,7 +85,8 @@ ResidueConformationFeatures::schema() const {
 			"	chiangle REAL,\n"
 			"	FOREIGN KEY (struct_id)\n"
 			"		REFERENCES structures (struct_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED);"
+			"		DEFERRABLE INITIALLY DEFERRED,\n"
+			"	PRIMARY KEY (struct_id, seqpos, chinum));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS residue_atom_coords (\n"
 			"	struct_id INTEGER,\n"
@@ -95,7 +97,8 @@ ResidueConformationFeatures::schema() const {
 			"	z REAL,\n"
 			"	FOREIGN KEY (struct_id)\n"
 			"		REFERENCES structures (struct_id)\n"
-			"		DEFERRABLE INITIALLY DEFERRED);";
+			"		DEFERRABLE INITIALLY DEFERRED,\n"
+			"	PRIMARY KEY (struct_id, seqpos, atomno));\n";
 	}else if(db_mode == "mysql")
 	{
 		return
@@ -105,16 +108,16 @@ ResidueConformationFeatures::schema() const {
 			"	phi DOUBLE,\n"
 			"	psi DOUBLE,\n"
 			"	omega DOUBLE,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id));"
-			//"	PRIMARY KEY (struct_id, seqpos));\n"
+			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),"
+			"	PRIMARY KEY (struct_id, seqpos));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS nonprotein_residue_angles (\n"
 			"	struct_id INTEGER,\n"
 			"	seqpos INTEGER,\n"
 			"	chinum INTEGER,\n"
 			"	chiangle DOUBLE,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id));"
-			//"	PRIMARY KEY (struct_id, seqpos));\n"
+			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),"
+			"	PRIMARY KEY (struct_id, seqpos, chinum));\n"
 			"\n"
 			"CREATE TABLE IF NOT EXISTS residue_atom_coords (\n"
 			"	struct_id INTEGER,\n"
@@ -123,8 +126,8 @@ ResidueConformationFeatures::schema() const {
 			"	x DOUBLE,\n"
 			"	y DOUBLE,\n"
 			"	z DOUBLE,\n"
-			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id));";
-			//"	PRIMARY KEY (struct_id,seqpos));";
+			"	FOREIGN KEY (struct_id) REFERENCES structures (struct_id),";
+			"	PRIMARY KEY (struct_id, seqpos, atomno));";
 	}else
 	{
 		return "";
