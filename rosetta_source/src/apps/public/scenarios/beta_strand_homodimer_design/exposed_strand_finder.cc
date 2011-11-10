@@ -575,8 +575,8 @@ void ExposedStrandMover::apply (core::pose::Pose & pose ) {
             utility_exit_with_message_status( "Lengths for pose input are not big enough \n", 1 );
 
           // look for fragments that are beta_length in the given regions
-          Size nfrags_pose   (floor ( (pose_sheet_length-beta_length_+2)/2 ) );
-          Size nfrags_native (floor ( (native_sheet_length-beta_length_+2)/2 ) );
+          Size nfrags_pose   = Size( floor( (pose_sheet_length-beta_length_+2)/2 ) );
+					Size nfrags_native =  Size( floor( (native_sheet_length-beta_length_+2)/2 ) );
 
           Size native_current (native_start), pose_current;
           for(Size jj = 1; jj<=nfrags_native; ++jj){
