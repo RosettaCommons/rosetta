@@ -1159,7 +1159,7 @@ namespace rna {
 
 		conformation::Residue const & rsd=pose.residue(id.rsd());
 
-		bool Is_virtual_atom=( rsd.atom_type(id.atomno()).name()=="VIRT");
+		bool Is_virtual_atom=( rsd.is_virtual(id.atomno()) );
 
 		if(Is_virtual_atom && verbose_){
 			tr.Info << " In Should_score_atomfunction" << std::endl;
@@ -1209,7 +1209,7 @@ namespace rna {
 		conformation::Residue const & rsd_3=pose.residue(id3.rsd());
 		conformation::Residue const & rsd_4=pose.residue(id4.rsd());
 
-		bool Is_virtual_torsion=( rsd_1.atom_type(id1.atomno()).name()=="VIRT" || rsd_2.atom_type(id2.atomno()).name()=="VIRT"  || rsd_3.atom_type(id3.atomno()).name()=="VIRT"  || rsd_4.atom_type(id4.atomno()).name()=="VIRT");
+		bool Is_virtual_torsion=( rsd_1.is_virtual(id1.atomno()) || rsd_2.is_virtual(id2.atomno()) || rsd_3.is_virtual(id3.atomno()) || rsd_4.is_virtual(id4.atomno()) );
 
 		if(Is_virtual_torsion && verbose_){
 			tr.Info << " Torsion containing one or more virtual atom(s)" << std::endl;

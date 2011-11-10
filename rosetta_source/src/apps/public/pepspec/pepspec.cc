@@ -734,7 +734,7 @@ dump_efactor_pdb(
 
 			//skip outputing virtual atom unless specified
 //			if ( !options::option[ options::OptionKeys::out::file::output_virtual ]() &&
-//				(int)atom.type() == (int)rsd.atom_type_set().n_atomtypes() ) continue;
+//				rsd.is_virtual(j) ) continue;
 
 			++number;
 			assert( rsd.chain() < int(chains.size()) ); // silly restriction

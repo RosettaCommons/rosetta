@@ -180,11 +180,11 @@ public:
 		return rsd_type_.atomic_charge( atomno );
 	}
 
-	/// @brief  Check atom is virtual based on number of atom type.
+	/// @brief  Check if atom is virtual.
 	bool
 	is_virtual( Size const & atomno ) const;
 
-	/// @brief  Check atom is virtual based on number of atom type.
+	/// @brief  Check if residue is virtual.
 	bool
 	is_virtual_residue() const
 	{

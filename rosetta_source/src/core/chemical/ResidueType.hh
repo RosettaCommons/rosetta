@@ -1372,6 +1372,10 @@ public:
 		return is_methylated_cterminus_;
 	}
 
+	/// @brief  Check if atom is virtual.
+	bool
+	is_virtual( Size const & atomno ) const;
+
 	/// @brief  Check if residue is 'VIRTUAL_RESIDUE'
 	bool
 	is_virtual_residue() const;

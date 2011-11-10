@@ -903,14 +903,11 @@ Residue::n_bonded_neighbor_all_res(
 	bool virt // = false
 ) const
 {
-	static std::string const virt_string("VIRT");
-	Size const virt_atom_type_index(atom_type_set().atom_type_index( virt_string ));
-
 	Size num_neighbors(0);
 
 	chemical::AtomIndices const & intrares_atomnos(bonded_neighbor(atomno));
 	for (Size i = 1; i <= intrares_atomnos.size(); ++i) {
-		if (virt || atom_type_index(intrares_atomnos[i]) != virt_atom_type_index) ++num_neighbors;
+		if (virt || ! is_virtual(intrares_atomnos[i]) ) ++num_neighbors;
 	}
 
 	Size const num_connections(n_residue_connections());
@@ -1082,8 +1079,8 @@ std::ostream & operator << ( std::ostream & os, Atom const & atom )
 bool
 Residue::is_virtual( Size const & atomno ) const
 {
-	assert( atom_type_set().atom_type_index( "VIRT" )  == atom_type_set().n_atomtypes() );
-	return ( (int)atom( atomno ).type() == (int)atom_type_set().n_atomtypes() );
+	//assert( atom_type_set().atom_type_index( "VIRT" )  == atom_type_set().n_atomtypes() );
+	return rsd_type_.is_virtual(atomno);
 }
 
 } // conformation

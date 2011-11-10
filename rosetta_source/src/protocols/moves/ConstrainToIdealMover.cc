@@ -338,7 +338,7 @@ ConstrainToIdealMover::i_want_this_atom_to_move( core::conformation::Residue con
 	if (k > residue2.first_sidechain_atom() &&
 		k != core::scoring::rna::first_base_atom_index( residue2 ) ) return false;
 
-	if ( residue2.atom_type( k ).name() == "VIRT" ) {
+	if ( residue2.is_virtual( k ) ) {
 		//		std::cout << "Is this virtual? " << residue2.atom_name( k ) << std::endl;
 		return false;
 	}

@@ -45,7 +45,7 @@ static basic::Tracer TR("core.pack.pack_missing_sidechains");
 namespace core {
 namespace pack {
 
-///@details this function will run rotamer trials on sidechains with missing density.  It first sets up a PackerTask with repacking freedom for residues with sidechain missing atoms in the missing AtomID_Mask, then runs rotamer_trials.  This function is smart enough to ignore missing virtual atoms (type VIRT)
+///@details this function will run rotamer trials on sidechains with missing density.  It first sets up a PackerTask with repacking freedom for residues with sidechain missing atoms in the missing AtomID_Mask, then runs rotamer_trials.  This function is smart enough to ignore missing virtual atoms
 void
 pack_missing_sidechains(
 	core::pose::Pose & pose,
@@ -89,7 +89,7 @@ bool figure_out_repackable_residues( core::pose::Pose & pose,
 			core::id::AtomID atomid(atomno, resid);
 			//if the atom is to_repack and not a virtual atom...
 			if ( to_repack.get(atomid) &&
-				restype.atom_type(atomno).name() != "VIRT"  &&
+				! restype.is_virtual(atomno) &&
 				restype.atom_type(atomno).name() != "ORBS"  &&
 				restype.atom_type(atomno).name() != "LPbb"
 			) {

@@ -1862,7 +1862,7 @@ draw_sidechains( GraphicsState & gs, utility::vector1< core::conformation::Resid
 			for ( Size jj=1; jj<= nbrs.size(); ++jj ) {
 				Size const j( nbrs[jj] );
 				if ( j < i ) continue;
-				if ( (int)residues[r]->atom(j).type() == (int)residues[r]->atom_type_set().n_atomtypes() ) continue; //no virtual atoms
+				if ( residues[r]->is_virtual(j) ) continue; //no virtual atoms
 				if ( residues[r]->atom_type(j).is_hydrogen() && gs.show_H_state == SHOW_NO_H ) continue;
 				//if ( pose.residue(r).atom_is_backbone(j) && pose.residue(r).atom_name(j) != "CA" ) continue;
 
@@ -1975,7 +1975,7 @@ draw_sphere( GraphicsState & gs, utility::vector1< core::conformation::ResidueCO
 		for ( int j = atom_begin; j <= atom_end; ++j ) {
 			conformation::Atom const & atom( rsd.atom(j) );
 
-			if ( (int)atom.type() == (int)rsd.atom_type_set().n_atomtypes() ) continue; //no virtual atoms
+			if ( rsd.is_virtual(j) ) continue; //no virtual atoms
 
 			Vector const xyz( rsd.xyz(j) );
 

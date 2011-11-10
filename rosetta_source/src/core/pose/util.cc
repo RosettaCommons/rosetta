@@ -1497,7 +1497,7 @@ setup_atom_id_map(
 		for ( Size j = 1; j <= rsd_type.natoms(); j++ ) {
 			// HEY NEED TO FIX THIS LATER. DO WE NEED TO BE CAREFUL ABOUT VIRT?
 			// MUCH BETTER TO MAKE VARIANTS MATCH *BEFORE* CALLING COPY_DOFS();
-			//			if ( rsd_type.atom_type( j ).name() == "VIRT" ) continue;
+			//			if ( rsd_type.is_virtual( j ) ) continue;
 			count++;
 			atom_id_map[  AtomID( j, i ) ] = AtomID( count, i_scratch_pose );
 		}
@@ -1531,7 +1531,7 @@ setup_atom_id_map_match_atom_names(
 		for ( Size j1 = 1; j1 <= rsd_type1.natoms(); j1++ ) {
 
 			// Hey do we need this?
-			if ( ignore_virtual && rsd_type1.atom_type( j1 ).name() == "VIRT" ) continue;
+			if ( ignore_virtual && rsd_type1.is_virtual( j1 ) ) continue;
 
 			std::string const & atom_name1 = rsd_type1.atom_name( j1 );
 
@@ -1544,11 +1544,11 @@ setup_atom_id_map_match_atom_names(
 			Size const j2 = rsd_type2.atom_index( atom_name1 );
 
 			// Hey do we need this?
-			if ( ignore_virtual && rsd_type2.atom_type( j2 ).name() == "VIRT" ) continue;
+			if ( ignore_virtual && rsd_type2.is_virtual( j2 ) ) continue;
 
 			// this is new (Dec. 2010) -- be careful!
-			//			if ( rsd_type1.atom_type( j1 ).name() == "VIRT" && rsd_type2.atom_type( j2 ).name() != "VIRT" ) continue;
-			//			if ( rsd_type1.atom_type( j1 ).name() != "VIRT" && rsd_type2.atom_type( j2 ).name() == "VIRT" ) continue;
+			//			if ( rsd_type1.is_virtual( j1 ) && ! rsd_type2.is_virtual( j2 ) ) continue;
+			//			if ( ! rsd_type1.is_virtual( j1 ) && rsd_type2.is_virtual( j2 ) ) continue;
 
 			atom_id_map[  AtomID( j1, i1 ) ] = AtomID( j2, i2 );
 		}

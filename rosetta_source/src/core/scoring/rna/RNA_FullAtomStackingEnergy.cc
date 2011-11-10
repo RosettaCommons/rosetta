@@ -173,7 +173,7 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
   for ( Size m = rsd1.first_sidechain_atom(); m <= rsd1.nheavyatoms(); ++m ) {
 	//Need to be careful nheavyatoms count includes hydrogen! when the hydrogen is made virtual..
 
-		if(rsd1.atom_type(m).name()=="VIRT"){
+		if(rsd1.is_virtual(m)){
 //			conformation::Residue const & residue_object=rsd1;
 //			Size atomno=m;
 //			std::cout << "ONE  ";
@@ -192,7 +192,7 @@ RNA_FullAtomStackingEnergy::residue_pair_energy_one_way(
 
     for ( Size n = atom_num_start; n <= rsd2.nheavyatoms(); ++n ) {
 
-			if(rsd2.atom_type(n).name()=="VIRT"){
+			if(rsd2.is_virtual(n)){
 //				conformation::Residue const & residue_object=rsd2;
 //				Size atomno=n;
 //				std::cout << "TWO  ";
@@ -270,7 +270,7 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 	Size const m( atom_id.atomno() );
 	conformation::Residue const & rsd1( pose.residue( i ) );
 
-		if(rsd1.atom_type(m).name()=="VIRT"){
+		if(rsd1.is_virtual(m)){
 //			conformation::Residue const & residue_object=rsd1;
 //			Size atomno=m;
 //			std::cout << "THREE  ";
@@ -321,7 +321,7 @@ RNA_FullAtomStackingEnergy::eval_atom_derivative(
 
 		for ( Size n = 1; n <= rsd2.nheavyatoms(); ++n ) {
 
-			if(rsd2.atom_type(n).name()=="VIRT"){
+			if(rsd2.is_virtual(n)){
 //				conformation::Residue const & residue_object=rsd2;
 //				Size atomno=n;
 //				std::cout << "FOUR  ";

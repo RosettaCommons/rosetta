@@ -293,7 +293,6 @@ private:
 	//mutable Real wbb_sc_;
 	//mutable Real wsc_sc_;
 
-	std::string virt_string_; // so this doesn't have to be constructed/destroyed each time it's used
 virtual
 core::Size version() const;
 };

@@ -91,8 +91,7 @@ CarbonHBondEnergy::CarbonHBondEnergy() :
 	max_dis2_( max_dis_*max_dis_ ),
 	path_dist_cutoff_( 4 ),
 	orientation_dep_rna_ch_o_bonds_( ! basic::options::option[ basic::options::OptionKeys::score::disable_orientation_dependent_rna_ch_o_bonds ]),
-	verbose_( false ),
-	virt_string_( "VIRT" )
+	verbose_( false )
 {}
 
 /// copy ctor
@@ -103,8 +102,7 @@ CarbonHBondEnergy::CarbonHBondEnergy( CarbonHBondEnergy const & src ):
 	max_dis2_( max_dis_*max_dis_ ),
 	path_dist_cutoff_( src.path_dist_cutoff_ ),
 	orientation_dep_rna_ch_o_bonds_( 	src.orientation_dep_rna_ch_o_bonds_ ),
-	verbose_( src.verbose_ ),
-	virt_string_( "VIRT" )
+	verbose_( src.verbose_ )
 {}
 
 /// clone

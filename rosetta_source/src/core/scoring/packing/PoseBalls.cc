@@ -99,7 +99,7 @@ PoseBalls::PoseBalls(
 	for( core::Size ir = 1; ir <= pose.total_residue(); ++ir ) {
 		for( core::Size ia = 1; ia <= pose.residue(ir).natoms(); ++ia ) {
 // std::cerr << "PoseBalls.cc:91 (" << ")" << std::endl;
-			if( "VIRT" == pose.residue(ir).atom_type(ia).name() ) continue;
+			if( pose.residue(ir).is_virtual(ia) ) continue;
 			if ( Hmode == 0 ) { // no H's
 				if( pose.residue(ir).atom_type(ia).is_hydrogen() ) {
 					skippedH++;

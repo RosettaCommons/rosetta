@@ -49,6 +49,7 @@
 
 // Utility headers
 #include <utility/exit.hh>
+#include <basic/Tracer.hh>
 
 // C++ headers
 
@@ -59,6 +60,14 @@ namespace chemical {
 /// @details S-H bond length in CYS.
 Real const MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH = { 1.35 };
 
+///@brief is atom type virtual?
+bool AtomType::is_virtual() const
+{
+	if ( ! atom_is_virtual_ && name_ == "VIRT" ) {
+		basic::Warning() << "WARNING: An atom is virtual by its name, but not by its properties -- Treating it as non-virtual!" << std::endl;
+	}	
+  return (atom_is_virtual_);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 /// @brief set LJ and LK solvation parameter for this atom type

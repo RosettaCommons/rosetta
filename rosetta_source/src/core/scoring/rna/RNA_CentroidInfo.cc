@@ -77,7 +77,7 @@ RNA_CentroidInfo::get_base_centroid( conformation::Residue const & rsd ) const
 /*		/////////////////////////////////////////////////////////////////////Parin Sep 23, 2009/////////////////////////////////////////////////////
 		std::cout << "atom " << i  << " " << 	"name= " << rsd.type().atom_name(i) << " type= " << rsd.atom_type(i).name()  << " " << rsd.atom_type_index(i) << " " << rsd.atomic_charge(i);
 
-		if(rsd.atom_type(i).name()=="VIRT"){
+		if(rsd.is_virtual(i)){
 			std::cout << "  Virtual type: Ignore! " << std::endl;
 			continue;
 		}
@@ -110,7 +110,7 @@ get_base_centroid( conformation::Residue const & rsd , bool verbose=false)
 
 		if(verbose) std::cout << "atom " << i  << " " << 	"name= " << rsd.type().atom_name(i) << " type= " << rsd.atom_type(i).name()  << " " << rsd.atom_type_index(i) << " " << rsd.atomic_charge(i);
 
-		if(rsd.atom_type(i).name()=="VIRT"){
+		if(rsd.is_virtual(i)){
 			if(verbose) std::cout << "  Virtual type: Ignore! " << std::endl;
 			continue;
 		}

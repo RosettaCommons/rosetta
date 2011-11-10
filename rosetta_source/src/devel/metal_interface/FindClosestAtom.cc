@@ -46,7 +46,7 @@ std::string find_closest_atom( core::conformation::Residue const & res, core::Ve
 	//atom ordering rules are in ResidueType.hh; briefly sidechain heavy atoms are between first_sidechain_heavyatom and nheavyatoms
 	for( core::Size i(res.first_sidechain_atom()); i <= res.nheavyatoms(); ++i){
 		temp_dis = res.xyz(i).distance(xyz);
-		if (res.atom_type(i).name() == "VIRT"){
+		if (res.is_virtual(i)){
 			continue;
 		}
 		if ( (temp_dis < dis) && (res.atom_type(i).element() != "C") ){ //Carbon is not a metal-coordinating atom

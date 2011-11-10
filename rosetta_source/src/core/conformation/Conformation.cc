@@ -2861,7 +2861,7 @@ Conformation::show_residue_connections() const
 
 
 /// @detailed
-/// virtual ("VIRT") atoms are excluded by default
+/// virtual atoms are excluded by default
 utility::vector1<id::AtomID>
 Conformation::bonded_neighbor_all_res(
 	id::AtomID atomid,
@@ -2869,15 +2869,13 @@ Conformation::bonded_neighbor_all_res(
 ) const
 {
 	conformation::Residue const & primary_residue(residue(atomid.rsd()));
-	static std::string const virt_string("VIRT");
-	Size const virt_atom_type_index(primary_residue.atom_type_set().atom_type_index( virt_string ));
 
 	utility::vector1<id::AtomID> neighbors;
 
 	// add all the atoms in the same residue
 	chemical::AtomIndices const & intrares_atomnos(primary_residue.bonded_neighbor(atomid.atomno()));
 	for (Size i = 1; i <= intrares_atomnos.size(); ++i) {
-		if (virt || primary_residue.atom_type_index(intrares_atomnos[i]) != virt_atom_type_index) {
+		if (virt || ! primary_residue.is_virtual(intrares_atomnos[i]) ) {
 			neighbors.push_back(id::AtomID(intrares_atomnos[i], atomid.rsd()));
 		}
 	}
@@ -2889,7 +2887,7 @@ Conformation::bonded_neighbor_all_res(
 				!primary_residue.connection_incomplete(i)) {
 			chemical::ResConnID resconid(primary_residue.actual_residue_connection(i));
 			Size connected_atomno(residue(resconid.resid()).residue_connect_atom_index(resconid.connid()));
-			if (virt || residue(resconid.resid()).atom_type(connected_atomno).name() != virt_string) {
+			if (virt || ! residue(resconid.resid()).is_virtual(connected_atomno)) {
 				neighbors.push_back(id::AtomID(connected_atomno, resconid.resid()));
 			}
 		}
@@ -2926,7 +2924,7 @@ Conformation::fill_missing_atoms(
 				AtomID const id( j, i );
 				if ( missing[ id ] ) {
 					// Virtual atoms don't get written to the PDB file, so we shouldn't expect them in input.
-					if ( rsd.atom_type(j).is_heavyatom() && rsd.atom_type(j).name() != "VIRT") {
+					if ( rsd.atom_type(j).is_heavyatom() && ! rsd.is_virtual(j)) {
 						TR.Warning << "[ WARNING ] missing heavyatom: " << rsd.atom_name(j) <<
 							" on residue " << rsd.name() << ' ' << i << std::endl;
 					}

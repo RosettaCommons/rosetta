@@ -158,10 +158,7 @@ public:
 	}
 
 	///@brief is atom type virtual?
-	bool is_virtual() const
-	{
-		return (atom_is_virtual_);
-	}
+	bool is_virtual() const;
 
 	/// @brief whether atom is a water
 	bool
