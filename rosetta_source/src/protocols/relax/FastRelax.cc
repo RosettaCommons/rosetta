@@ -1288,10 +1288,10 @@ void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
 }
 
 void FastRelax::makeDnaRigid( core::pose::Pose & pose, core::kinematics::MoveMapOP mm ){
-	using namespace chemical;
+	using namespace core::conformation;
 	//if DNA present set so it doesn't move
 	for ( Size i=1; i<=pose.total_residue() ; ++i )      {
-		if( pose.aa( i ) == core::chemical::na_ade or pose.aa( i ) == core::chemical::na_gua or pose.aa( i ) == core::chemical::na_cyt or pose.aa( i ) == core::chemical::na_thy ) {
+		if( pose.residue(i).is_DNA()){
 			TR << "turning off DNA bb and chi move" << std::endl;
 			mm->set_bb( i, false );
 			mm->set_chi( i, false );
