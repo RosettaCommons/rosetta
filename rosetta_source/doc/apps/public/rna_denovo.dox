@@ -209,7 +209,18 @@ rna_torsion                                      RNA torsional potential.
 atom_pair_constraint                             Harmonic constraints between atoms involved in Watson-Crick base pairs
                                                  specified by the user in the params file
 angle_constraint                                 (not in use)
+
+N_WC                                             number of watson-crick base pairs
+N_NWC                                            number of non-watson-crick base pairs
+N_BS                                             number of base stacks
+
+[Following are provided if the user gives a native structure for reference]
 rms                                              all-heavy-atom RMSD to the native structure
+rms_stem                                         all-heavy-atom RMSD to helical segments in the native structure, defined by 'STEM' entries in the parameters file.
+f_natWC                                          fraction of native Watson-Crick base pairs recovered
+f_natNWC                                         fraction of native non-Watson-Crick base pairs recovered
+f_natBP                                          fraction of base pairs recovered
+
 @endverbatim
 
 
