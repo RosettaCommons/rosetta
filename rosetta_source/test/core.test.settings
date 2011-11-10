@@ -22,6 +22,7 @@ sources = {
 	"conformation" : [
 		"Atom",
 		"Conformation",
+                "Residue",
 	],
 	"conformation/symmetry" : [
 		"SymmetricConformation",
@@ -197,6 +198,7 @@ testinputfiles = [
 	"chemical/mm_atom_properties.txt",
 	"chemical/orbitals/orbital_properties.txt",
 	"chemical/uk002.params",
+        "conformation/4gatA.pdb",
 	"conformation/dock_in.pdb",
 	"conformation/symmetry/symm_def1.dat",
 	"conformation/symmetry/symm_def2.dat",
