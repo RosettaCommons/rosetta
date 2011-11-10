@@ -1,0 +1,8 @@
+-s 2a7b_mpm.pdb.gz 
+-run::chain A
+-sheet_start 806
+-sheet_stop 812
+-window_size 5 
+-ignore_unrecognized_res 
+-mute core protocols.moves.RigidBodyMover basic.io.database
+#-struct_file s_file

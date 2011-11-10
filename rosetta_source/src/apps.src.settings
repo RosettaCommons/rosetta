@@ -138,7 +138,10 @@ sources = {
 #       		"FloppyTailACAT", # /* Barak Raveh */
 		"ca_to_allatom", # /* Frank DiMaio, doc/apps/public/scenarios/ca_to_allatom.dox */
                 "UBQ_E2_thioester", # /* Steven Lewis, doc/apps/public/scenarios/UBQ_E2_thioester.dox, test/integration/tests/UBQ_E2_thioester/ */
-                "doug_dock_design_min_mod2_cal_cal"
+                "doug_dock_design_min_mod2_cal_cal",
+                "beta_strand_homodimer_design/homodimer_design",
+                "beta_strand_homodimer_design/homodimer_maker",
+                "beta_strand_homodimer_design/exposed_strand_finder",
 	],
         "public/ncaa_utilities" : [
                "make_rot_lib",

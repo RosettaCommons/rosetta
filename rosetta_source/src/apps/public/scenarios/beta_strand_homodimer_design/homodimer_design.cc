@@ -6,17 +6,24 @@
 // (C) 199x-2009 Rosetta Commons participating institutions and developers.
 // For more information, see http://www.rosettacommons.org/.
 
-/// @file /src/apps/pilot/stranges/homodimer_design.cc
+/// @file  /src/apps/public/scenarios/beta_strand_homodimer_design/homodimer_design.cc
 /// @brief  Symmetric homodimer design
 
-//core library
 
-#include <core/init.hh>
+// Unit headers
+//none
+
+// devel headers
+#include <devel/init.hh>
+
+//core headers
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
+#include <core/import_pose/import_pose.hh>
+#include <core/pose/metrics/CalculatorFactory.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
-//#include <core/chemical/ResidueType.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -25,28 +32,23 @@
 #include <core/scoring/ScoreFunctionInfo.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/rms_util.hh>
-
 #include <core/scoring/Energies.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/dssp/Dssp.hh>
-
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/Constraints.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <core/scoring/ScoreType.hh>
 
-#include <core/pose/metrics/CalculatorFactory.hh>
+//basic
 #include <basic/MetricValue.hh>
-
 #include <basic/datacache/CacheableData.hh>
-
-#include <core/conformation/Conformation.hh>
+#include <basic/Tracer.hh>
 
 //protocols
 #include <protocols/moves/MoverContainer.hh>
@@ -59,13 +61,8 @@
 #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
 #include <protocols/protein_interface_design/movers/SaveAndRetrieveSidechains.hh>
 #include <protocols/protein_interface_design/movers/ddG.hh>
-
-//#include <devel/AnchoredDesign/InterfaceAnalyzerMover.hh>
 #include <protocols/protein_interface_design/movers/ddG.hh>
-#include <protocols/moves/PymolMover.hh>
-#include <core/io/pdb/pose_io.hh> //for dumping pdbs
-
-
+//#include <protocols/moves/PymolMover.hh>
 //symmetry
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
 #include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
@@ -76,7 +73,6 @@
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
-
 
 //JD2
 #include <protocols/jd2/JobDistributor.hh>
@@ -94,9 +90,8 @@
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
-
 // Utility Headers
-#include <basic/Tracer.hh>
+#include <utility/vector1.hh>
 
 // C++ headers
 #include <sstream>
@@ -104,13 +99,9 @@
 #include <string>
 #include <stdlib.h>
 
-#include <core/import_pose/import_pose.hh>
-
-
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("HomodimerDesign");
-
+static basic::Tracer TR("apps.public.beta_strand_homodimer_design.homodimer_design");
 
 using namespace core;
 using namespace utility;
@@ -136,9 +127,7 @@ basic::options::IntegerOptionKey const pack_min_runs( "pack_min_runs" );
 basic::options::BooleanOptionKey const find_bb_hbond_E( "find_bb_hbond_E" );
 basic::options::BooleanOptionKey const skip_hd_docking( "skip_hd_docking" );
 basic::options::StringOptionKey const disallow_res( "disallow_res" );
-basic::options::BooleanOptionKey const pymolreport( "pymolreport" );
-
-
+//basic::options::BooleanOptionKey const pymolreport( "pymolreport" );
 
 // mover deffinition
 class HDdesignMover : public Mover {
@@ -185,7 +174,7 @@ private:
 	//kinematics::MoveMapOP movemap_;
 	pack::task::PackerTaskOP task_design_;
 	Size monomer_nres_;
-	bool ala_interface_, find_bb_binding_E_, skip_hd_docking_, pymolreport_;
+	bool ala_interface_, find_bb_binding_E_, skip_hd_docking_;// pymolreport_;
 	int n_pack_min_runs_;
 	std::string disallow_res_;
 
@@ -213,7 +202,7 @@ HDdesignMover::HDdesignMover() {
 	find_bb_binding_E_ = option[ find_bb_hbond_E ];
 	disallow_res_ =  option[ disallow_res ];
 	skip_hd_docking_ = option[ skip_hd_docking ];
-	pymolreport_ = option[ pymolreport ];
+	//pymolreport_ = option[ pymolreport ];
 	//EM options for bb-bb hbond output
  	//scoring::methods::EnergyMethodOptions energymethodoptions( scorefxn_->energy_method_options() );
  	//energymethodoptions.hbond_options()->decompose_bb_hb_into_pair_energies(true);
@@ -454,10 +443,10 @@ core::Real HDdesignMover::calc_bb_E(core::pose::Pose & pose,
 /////////////////////////////////////////////////
 void HDdesignMover::apply (pose::Pose & pose ) {
 
-	//for pymol viewing
-	if( pymolreport_ ){
-		protocols::moves::PyMolObserverOP pymol_ob = 	protocols::moves::AddPyMolObserver(pose, false, 0.1);
-	}
+	// //for pymol viewing
+	// if( pymolreport_ ){
+	// 	protocols::moves::PyMolObserverOP pymol_ob = 	protocols::moves::AddPyMolObserver(pose, false, 0.1);
+	// }
 
   TR << "Homodimer Design start."<<std::endl;
   //get job info
@@ -593,11 +582,11 @@ main( int argc, char * argv [] )
 	option.add( pack_min_runs, "Number of runs of repack/minimize" ).def(1);
 	option.add( find_bb_hbond_E, "Find the energy of bb-bb interactions").def(false);
 	option.add( skip_hd_docking, "skips docking step and just does design").def(false);
-	option.add( pymolreport, "Report to pymol observer").def(false);
+	//option.add( pymolreport, "Report to pymol observer").def(false);
 	option.add( disallow_res, "String of residues not allowed unless native").def("");
 
   // init
-  core::init(argc, argv);
+  devel::init(argc, argv);
 
   protocols::jd2::JobDistributor::get_instance()->go( new HDdesignMover );
 

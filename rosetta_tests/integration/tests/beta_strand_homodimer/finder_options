@@ -1,0 +1,16 @@
+#general options
+-ignore_unrecognized_res true
+-packing::pack_missing_sidechains
+-out::nooutput #this protocol manages its own output, prevent job distributor from helping
+-s 2a7b_mpm.pdb.gz
+
+#-struct_file /path/to/structure/restrictor/filename.csv
+#app specific options
+-beta_length 5 #how long of an exposed strand do you look for
+-sat_allow 2 #how many satisfied bb atoms do you allow in this range
+#allow alignment of a found strand to some target protein
+-check_rmsd false #setting this to false prevents the rest from being read
+#-native anti_model.pdb
+#-strand_span B 5 11
+
+-mute core basic protocols.jd2.PDBJobInputter

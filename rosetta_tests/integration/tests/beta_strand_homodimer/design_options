@@ -1,0 +1,24 @@
+-s 2a7b_mpm_A806_anti_wind_1_step_1_INPUT.pdb.gz
+#-native $native 
+-symmetry:symmetry_definition symmdef
+-nstruct 1 #try 5000 or so for production runs
+# -out::pdb_gz true #do this for production runs
+-pack_min_runs 1
+-make_ala_interface true 
+-find_bb_hbond_E true 
+-no_his_his_pairE true 
+#-favor_native_res 0.5
+-disallow_res CGP  # prevents design up Gly, Cys, Pro
+-run:min_type dfpmin
+-pose_metrics:interface_cutoff 8.0 
+-use_input_sc
+#-ex1
+#-ex2 
+#-overwrite
+#old options for docking 
+-docking::docking_local_refine true
+-docking::sc_min true 
+-docking::dock_ppk false 
+#-symmetry:perturb_rigid_body_dofs 3 5 
+-out::file::fullatom 
+-mute core.io.pdb.file_data core.conformation.symmetry.SymmData core.chemical core.conformation.SymmetryInfo core.io.database core.pack.task core.util.switchresiduetypeset basic.io.database
