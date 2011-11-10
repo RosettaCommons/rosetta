@@ -17,22 +17,34 @@
 // Project headers
 #include <protocols/loops/Loop.hh>
 
-//Auto Headers
-#include <utility/vector1.hh>
-
-
 namespace {
+
+using namespace protocols::loops;
 
 class LoopTest : public CxxTest::TestSuite {
  public:
-	void test_length() {
-		// default constructor
-		protocols::loops::Loop l1;
-		TS_ASSERT_EQUALS(l1.length(), 1);
+  void test_length() {
+    // default constructor
+    Loop l1;
+    TS_ASSERT_EQUALS(l1.length(), 1);
 
-		// input constructor
-		protocols::loops::Loop l2(3, 8);
-		TS_ASSERT_EQUALS(l2.length(), 6);
-	}
+    // input constructor
+    Loop l2(3, 8);
+    TS_ASSERT_EQUALS(l2.length(), 6);
+  }
+
+  void test_increasing() {
+    Loop l(1, 5);
+    TS_ASSERT(l.increasing());
+    TS_ASSERT(!l.decreasing());
+  }
+
+  void test_midpoint() {
+    Loop l1(1, 3);
+    TS_ASSERT_EQUALS(2, l1.midpoint());
+
+    Loop l2(1, 4);
+    TS_ASSERT_EQUALS(3, l2.midpoint());
+  }
 };
 }  // anonymous namespace
