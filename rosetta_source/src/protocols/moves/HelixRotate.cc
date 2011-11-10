@@ -78,23 +78,57 @@ void HelixRotate::apply(core::pose::Pose& pose) {
 
   StarTreeBuilder builder;
   builder.set_up(chunks, &pose);
-  TR.Debug << pose.fold_tree() << std::endl;
 
-  // Define the axis of translation as the vector between the first and last residues of the helix
-  xyzVector<double> axis = pose.xyz(NamedAtomID("CA", helix_.stop())) - pose.xyz(NamedAtomID("CA", helix_.start()));
-
-  // Define the point around which to rotate
-  xyzVector<double> center = pose.xyz(NamedAtomID("CA", helix_.start() + (helix_.stop() - helix_.start()) / 2));
+  // Define the axis of translation
+  xyzVector<double> axis, point;
+  get_rotation_parameters(pose, &axis, &point);
 
   // Rotation about the axis
   unsigned jump_num = jump_containing_helix(chunks);
   Jump jump = pose.jump(jump_num);
-  jump.rotation_by_axis(pose.conformation().upstream_jump_stub(jump_num), axis, center, get_degrees());
+  jump.rotation_by_axis(pose.conformation().upstream_jump_stub(jump_num), axis, point, get_degrees());
   pose.set_jump(jump_num, jump);
 
   // Restore input fold tree
   builder.tear_down(&pose);
   pose.fold_tree(input_tree);
+}
+
+void avg_ca_position(const core::pose::Pose& pose,
+                     const protocols::loops::Loop& region,
+                     numeric::xyzVector<double>* point) {
+  assert(point);
+
+  point->zero();
+  for (unsigned i = region.start(); i <= region.stop(); ++i)
+    (*point) += pose.xyz(core::id::NamedAtomID("CA", i));
+
+  (*point) /= region.length();
+}
+
+void HelixRotate::get_rotation_parameters(const core::pose::Pose& pose,
+                                         numeric::xyzVector<double>* axis,
+                                         numeric::xyzVector<double>* point) const {
+  using core::id::NamedAtomID;
+  using numeric::xyzVector;
+  using protocols::loops::Loop;
+  assert(axis);
+  assert(point);
+
+  // Define the point of rotation to be the average of the midpoint +/- 1 residue
+  avg_ca_position(pose, Loop(helix_.midpoint() - 1, helix_.midpoint() + 1), point);
+
+  if (helix_.length() < 6) {
+    *axis = pose.xyz(NamedAtomID("CA", helix_.stop())) - pose.xyz(NamedAtomID("CA", helix_.start()));
+    return;
+  }
+
+  // Given a sufficient number of points, define the axis of rotation by the
+  // average position of the first and last 3 CA atoms.
+  xyzVector<double> a, b;
+  avg_ca_position(pose, Loop(helix_.start(), helix_.start() + 2), &a);
+  avg_ca_position(pose, Loop(helix_.stop() - 2, helix_.stop()), &b);
+  *axis = b - a;
 }
 
 unsigned HelixRotate::jump_containing_helix(const protocols::loops::Loops& chunks) const {

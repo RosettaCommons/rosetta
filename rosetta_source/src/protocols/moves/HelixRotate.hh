@@ -19,6 +19,9 @@
 // C/C++ headers
 #include <string>
 
+// Utility headers
+#include <numeric/xyzVector.hh>
+
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/loops/Loop.hh>
@@ -78,6 +81,11 @@ class HelixRotate : public Mover {
 
   /// @brief Searches chunks for the member representing the helix, returning its index
   unsigned jump_containing_helix(const protocols::loops::Loops& chunks) const;
+
+  /// @brief Computes rotational parameters-- axis and point
+  void get_rotation_parameters(const core::pose::Pose& pose,
+                               numeric::xyzVector<double>* axis,
+                               numeric::xyzVector<double>* point) const;
 
   /// @brief Stretch of contiguous residues representing the helix to be rotated
   protocols::loops::Loop helix_;
