@@ -1,21 +1,7 @@
-Generated HBond parameters by Matthew O'Meara in 2010
+Generated HBond parameters by Matthew O'Meara and Andrew Leaver-Fay (OLF) in 2011 
 
 
-Adjusting hydrogen bond potentials for hydroxyl donors (newOH_params)
-New OH potentials:
-These are modeled off of the poly_AHdist_4 potential just shifted closer
-poly_AHdist_4 has a peak at 1.902
-poly_AHdist_dOH_1 has a peak at 1.735
-poly_AHdist_dOH_2 has a peak at 1.753
-poly_AHdist_dOH_3 has a peak at 1.84
-AHX donors with PBA, HXL, CXA or CXL acceptors have polynomial poly_AHdist_dOH_1
-HXL donors with PBA, AHX, HXL, CXA or CXL acceptors and dAHXaAHX have polynomial poly_AHdist_dOH_2
-AHX or HXL donors to IMD or IME acceptors have polynomial poly_AHdist_dOH_3 
-
-For each hydrogen bond class that uses the new OH parameters, shift
-the fading functions in closer as well.
-
-
+These are the OLF_params_6i set.
 
 README.txt: this file
 schema.sql: sql schema definition for tables

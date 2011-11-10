@@ -7,9 +7,11 @@
 -- (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 -- (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 --
--- @file scoring/score_functions/hbonds/OLF_params/schema.sql
+-- @file scoring/score_functions/hbonds/standard_params/schema.sql
 -- @brief Schema for Hydrogen bonds parameters database
--- @author Andrew Leaver-Fay (aleaverfay@gmail.com), Matthew OMeara (mattjomeara@gmail.com)
+-- @author Matthew O'Meara (mattjomeara@gmail.com)
+-- '
+
 
 
 DROP TABLE IF EXISTS HBondWeightType;
@@ -90,6 +92,7 @@ CREATE TABLE HBEval (
     cosBAH_long TEXT,
     cosAHD_short TEXT,
     cosAHD_long TEXT,
+    --chi TEXT,
     weight_type TEXT,
     comment TEXT);
 
