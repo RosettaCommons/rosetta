@@ -10,46 +10,61 @@
 /// @file apps/pilot/cmiles/sheet_translate.cc
 /// @author Christopher Miles (cmiles@uw.edu)
 
-// C/C++ headers
-#include <iostream>
-
 // Utility headers
 #include <devel/init.hh>
-#include <numeric/xyzVector.hh>
 
 // Project headers
-#include <core/id/NamedAtomID.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/loops/Loop.hh>
+#include <protocols/moves/Mover.hh>
+#include <protocols/moves/RationalMonteCarlo.hh>
 #include <protocols/moves/SheetTranslate.hh>
+#include <protocols/viewer/viewers.hh>
 
-int main(int argc, char* argv[]) {
-  using core::id::NamedAtomID;
+void run(protocols::moves::MoverOP base_mover, core::pose::Pose* pose) {
+  using core::scoring::ScoreFunctionFactory;
+  using protocols::moves::RationalMonteCarlo;
+  assert(pose);
+
+  RationalMonteCarlo mc(
+      base_mover,
+      ScoreFunctionFactory::create_score_function("score0"),
+      1000,
+      10.0,
+      false);
+
+  mc.apply(*pose);
+}
+
+void* viewer_main(void* ) {
   using core::pose::Pose;
-  using numeric::xyzVector;
   using protocols::loops::Loop;
+  using protocols::moves::MoverOP;
   using protocols::moves::SheetTranslate;
 
-  devel::init(argc, argv);
-  const Pose input = *core::import_pose::pose_from_pdb("/work/tex/casp9_benchmark/meval/fast_cm/T0552/2oxgZ_1.pdb_full_length.pdb");
+  Pose input  = *core::import_pose::pose_from_pdb("/work/tex/casp9_benchmark/meval/fast_cm/T0552/2oxgZ_1.pdb_full_length.pdb");
   Pose output = *core::import_pose::pose_from_pdb("/work/tex/casp9_benchmark/meval/fast_cm/T0552/2oxgZ_1.pdb_full_length.pdb");
+
+  core::util::switch_to_residue_type_set(input, core::chemical::CENTROID);
+  core::util::switch_to_residue_type_set(output, core::chemical::CENTROID);
 
   // Translate the specified sheet
   Loop sheet(51, 53);
-  double dist = 4.3;
+  double dist = 0.005;
 
-  SheetTranslate mover(sheet, dist);
-  mover.apply(output);
+  MoverOP fw_mover = new SheetTranslate(sheet, +dist);
+  MoverOP bw_mover = new SheetTranslate(sheet, -dist);
 
-  for (unsigned i = sheet.start(); i <= sheet.stop(); ++i) {
-    xyzVector<double> xyz_input = input.xyz(NamedAtomID("CA", i));
-    xyzVector<double> xyz_output = output.xyz(NamedAtomID("CA", i));
-    std::cout << "Distance between residue " << i << " in input and output => "
-              << xyz_input.distance(xyz_output) << std::endl;
-  }
+  run(fw_mover, &output);
+  run(bw_mover, &output);
+}
 
-  // Write result to disk
-  core::io::pdb::dump_pdb(output, "output.pdb");
+int main(int argc, char* argv[]) {
+  devel::init(argc, argv);
+  protocols::viewer::viewer_main(viewer_main);
 }

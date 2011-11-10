@@ -10,46 +10,49 @@
 /// @file apps/pilot/cmiles/helix_rotate.cc
 /// @author Christopher Miles (cmiles@uw.edu)
 
-// C/C++ headers
-#include <iostream>
-
 // Utility headers
 #include <devel/init.hh>
-#include <numeric/xyzVector.hh>
 
 // Project headers
-#include <core/id/NamedAtomID.hh>
-#include <core/io/pdb/pose_io.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/moves/HelixRotate.hh>
+#include <protocols/moves/Mover.hh>
+#include <protocols/moves/RationalMonteCarlo.hh>
+#include <protocols/viewer/viewers.hh>
 
-int main(int argc, char* argv[]) {
-  using core::id::NamedAtomID;
+void* viewer_main(void* ) {
   using core::pose::Pose;
-  using numeric::xyzVector;
+  using core::scoring::ScoreFunctionOP;
+  using core::scoring::ScoreFunctionFactory;
   using protocols::loops::Loop;
   using protocols::moves::HelixRotate;
+  using protocols::moves::MoverOP;
+  using protocols::moves::RationalMonteCarlo;
 
-  devel::init(argc, argv);
-  const Pose input = *core::import_pose::pose_from_pdb("/work/tex/casp9_benchmark/meval/fast_cm/T0538/2kruA_1.pdb_full_length.pdb");
+  Pose input  = *core::import_pose::pose_from_pdb("/work/tex/casp9_benchmark/meval/fast_cm/T0538/2kruA_1.pdb_full_length.pdb");
   Pose output = *core::import_pose::pose_from_pdb("/work/tex/casp9_benchmark/meval/fast_cm/T0538/2kruA_1.pdb_full_length.pdb");
+
+  core::util::switch_to_residue_type_set(input, core::chemical::CENTROID);
+  core::util::switch_to_residue_type_set(output, core::chemical::CENTROID);
 
   // Translate the specified sheet
   Loop helix(41, 52);
-  double dist = 15.0;
+  double dist = 10.0;
 
-  HelixRotate mover(helix, dist);
-  mover.apply(output);
+  MoverOP base_mover = new HelixRotate(helix, dist);
+  ScoreFunctionOP score = ScoreFunctionFactory::create_score_function("score0");
 
-  for (unsigned i = helix.start(); i <= helix.stop(); ++i) {
-    xyzVector<double> xyz_input = input.xyz(NamedAtomID("CA", i));
-    xyzVector<double> xyz_output = output.xyz(NamedAtomID("CA", i));
-    std::cout << "Distance between residue " << i << " in input and output => "
-              << xyz_input.distance(xyz_output) << std::endl;
-  }
+  RationalMonteCarlo mc(base_mover, score, 10000, 2.0, false);
+  mc.apply(output);
+}
 
-  // Write result to disk
-  core::io::pdb::dump_pdb(output, "output.pdb");
+int main(int argc, char* argv[]) {
+  devel::init(argc, argv);
+  protocols::viewer::viewer_main(viewer_main);
 }
