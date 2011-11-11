@@ -1,6 +1,6 @@
 
 
-import sys, shutil, subprocess
+import sys, shutil, subprocess, os
 import heapq
 
 class MergeDatabases:
@@ -145,7 +145,6 @@ ERROR:     <ReportToDB ... protocol_id=(%string) ...>
 
 
     def merge_database(self, source_fname, target_fname):
-        print "merging database '%s' into '%s'..." % (source_fname, target_fname)
         for table_name in self.table_names:
             insert_stmt = "INSERT OR IGNORE INTO %(table_name)s SELECT * FROM input_db.%(table_name)s;"
             insert_stmt = insert_stmt % {"table_name" : table_name}
@@ -172,14 +171,16 @@ ERROR:     <ReportToDB ... protocol_id=(%string) ...>
         clusters = []
         [heapq.heappush(clusters, (self.get_nstruct(input_fname), input_fname)) for input_fname in input_fnames]
         for i in range(len(input_fnames) - 1):
-            print "clusters:", clusters
             n1, input_fname1 = heapq.heappop(clusters)
             n2, input_fname2 = heapq.heappop(clusters)
+            print "merging '%s' -> '%s', giving %s structs. %s dbs remaining..."%\
+                (input_fname1, input_fname2, n1 + n2, len(input_fnames)-1-i)
             self.merge_database(input_fname1, input_fname2)
-            heapq.heappush(clusters, (n1 + n2, input_fname1))
-
-                    
-
+            heapq.heappush(clusters, (n1 + n2, input_fname2))
+            os.remove(input_fname1)
+        nstruct, last_fname = heapq.heappop(clusters)
+        print "Moving last db '%s' to output db '%s'." % (last_fname, output_fname)
+        shutil.move(last_fname, output_fname)
 
             
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-# -*- tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+ # -*- tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
 # vi: set ts=2 noet:
 #
 # (c) Copyright Rosetta Commons Member Institutions.
@@ -13,29 +13,30 @@ plot_id <- "rotamer_recovery_by_res_type"
 
 sele <-"
 SELECT
-  rr.divergence AS divergence,
-  res.name3 AS res_type
+	rr.divergence AS divergence,
+	res.name3 AS res_type
 FROM
-  rotamer_recovery AS rr,
-  residues AS res
+	rotamer_recovery AS rr,
+	residues AS res,
+	residue_pdb_confidence AS res_confidence
 WHERE
-  res.resNum = rr.resNum AND
-  res.struct_id = rr.struct_id;"
+	res.resNum = rr.resNum AND
+	res.struct_id = rr.struct_id AND
+	res_confidence.struct_id = res.struct_id AND
+	res_confidence.residue_number = res.resNum AND
+	res_confidence.max_temperature < 20;"
 
-all_geom <-  query_sample_sources(sample_sources, sele)
+f <- query_sample_sources(sample_sources, sele)
 
 dens <- estimate_density_1d(
-  data = all_geom,
-  ids = c("sample_source", "res_type"),
-  variable = "divergence")
+	data = f,
+	ids = c("sample_source", "res_type"),
+	variable = "divergence")
 
-p <- ggplot(data=dens, aes(x=log(x+1), y=log(y+1), color=sample_source, indicator=counts))
-p <- p + geom_line()
-p <- p + geom_indicator()
-p <- p + facet_wrap( ~ res_type )
-p <- p + opts(title = "Rotamer Recovery by Score Type")
-p <- p + labs(x="log(Automorphic RMSD + 1)",
-              y="log(FeatureDensity + 1)")
-p <- p + theme_bw()
-
+ggplot(data=dens) + theme_bw() +
+	geom_line(aes(x=log(x+1), y=log(y+1), colour=sample_source)) +
+	geom_indicator(aes(indicator=counts, colour=sample_source)) +
+	facet_wrap( ~ res_type ) +
+	opts(title = "Rotamer Recovery by Residue Type, B-Factor < 20") +
+	labs(x="log(Automorphic RMSD + 1)", y="log(FeatureDensity + 1)") +
 save_plots(plot_id, sample_sources, output_dir, output_formats)

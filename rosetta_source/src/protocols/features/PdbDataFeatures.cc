@@ -24,16 +24,14 @@
 
 //Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
+#include <utility/vector1.hh>
 
 // External Headers
 #include <cppdb/frontend.h>
 
 // C++ Headers
 #include <algorithm>
-
-#include <utility/vector1.hh>
-
-
+#include <limits>
 
 namespace protocols {
 namespace features {
@@ -41,6 +39,7 @@ namespace features {
 using std::string;
 using std::max;
 using std::min;
+using std::numeric_limits;
 using core::Size;
 using core::Real;
 using core::conformation::Residue;
@@ -142,6 +141,7 @@ Size PdbDataFeatures::report_features(
 	sessionOP db_session )
 {
 	insert_residue_pdb_identification_rows(struct_id,db_session,pose);
+	insert_residue_pdb_confidence_rows(struct_id, db_session, pose);
 	return 0;
 }
 
@@ -252,10 +252,11 @@ void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 
 	std::string statement_string = "INSERT INTO residue_pdb_confidence VALUES (?,?,?,?,?,?,?,?);";
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
-	for(Size ri=1; pose.n_residue(); ++ri) {
+	for(Size ri=1; ri <= pose.n_residue(); ++ri) {
 		Residue const & r(pose.residue(ri));
 		Real max_bb_temperature(-1), max_sc_temperature(-1);
-		Real min_bb_occupancy(-1), min_sc_occupancy(-1);
+		Real min_bb_occupancy(numeric_limits<Real>::max());
+		Real min_sc_occupancy(numeric_limits<Real>::max());
 		Size const n_bb(r.n_mainchain_atoms());
 		Size const n_sc(r.nheavyatoms() - r.n_mainchain_atoms());
 		for(Size ai=1; ai <= n_bb; ++ai){
