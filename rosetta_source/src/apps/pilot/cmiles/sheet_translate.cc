@@ -34,7 +34,7 @@ void run(protocols::moves::MoverOP base_mover, core::pose::Pose* pose) {
   RationalMonteCarlo mc(
       base_mover,
       ScoreFunctionFactory::create_score_function("score0"),
-      1000,
+      800,
       10.0,
       false);
 
@@ -55,13 +55,15 @@ void* viewer_main(void* ) {
 
   // Translate the specified sheet
   Loop sheet(51, 53);
-  double dist = 0.005;
+  double dist = 0.01;
 
   MoverOP fw_mover = new SheetTranslate(sheet, +dist);
   MoverOP bw_mover = new SheetTranslate(sheet, -dist);
 
-  run(fw_mover, &output);
-  run(bw_mover, &output);
+  for (unsigned i = 1; i <= 10; ++i) {
+    run(fw_mover, &output);
+    run(bw_mover, &output);
+  }
 }
 
 int main(int argc, char* argv[]) {
