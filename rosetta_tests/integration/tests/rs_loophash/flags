@@ -1,0 +1,7 @@
+-s in/pdb.pdb.gz
+-mute core.util.prof ## dont show timing info
+-mute core.io.database
+-parser:protocol protocols/test_loop_hashing.xml
+-overwrite
+-use_input_sc
+-ignore_unrecognized_res
