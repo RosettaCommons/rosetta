@@ -16,6 +16,7 @@ sources = {
 		"ClusteringTreeNode",
 		"agglomerative_hierarchical_clustering",
 		"MultiDimensionalHistogram",
+		"polynomial",
                 "prob_util",
 		"util",
 	],

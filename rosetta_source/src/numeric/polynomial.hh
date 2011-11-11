@@ -6,17 +6,18 @@
 // (C) 199x-2009 Rosetta Commons participating institutions and developers.
 // For more information, see http://www.rosettacommons.org/.
 
-/// @file   core/scoring/hbonds/polynomial.hh
-/// @brief  Polynomial objects for hydrogen bond score term
+/// @file   numeric/polynomial.hh
+/// @brief  Polynomial evaluation class
 /// @author Matthew O'Meara (mattjomeara@gmail.com)
 
-#ifndef INCLUDED_core_scoring_hbonds_polynomial_hh
-#define INCLUDED_core_scoring_hbonds_polynomial_hh
+#ifndef INCLUDED_numeric_polynomial_hh
+#define INCLUDED_numeric_polynomial_hh
 
 // Unit Headers
-#include <core/scoring/hbonds/polynomial.fwd.hh>
-#include <numeric/polynomial.hh>
-#include <core/scoring/hbonds/types.hh>
+#include <numeric/polynomial.fwd.hh>
+
+// Numeric Headers
+#include <numeric/types.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -26,18 +27,15 @@
 #include <string>
 #include <iostream>
 
-namespace core {
-namespace scoring {
-namespace hbonds {
+namespace numeric {
 
-class Polynomial_1d : public numeric::Polynomial_1d {
+class Polynomial_1d : public utility::pointer::ReferenceCount {
 
 public:
 	//Polynomial_1d();
 
 	Polynomial_1d(
 		std::string const & polynomial_name,
-		HBGeoDimType const geometric_dimension,
 		Real const xmin,
 		Real const xmax,
 		Real const min_val,
@@ -47,27 +45,63 @@ public:
 		Size degree,
 		utility::vector1< Real > const & coefficients);
 
-	Polynomial_1d(Polynomial_1d const & src);
+	Polynomial_1d(Polynomial_1d const & src );
 
-	HBGeoDimType
-	geometric_dimension() const;
+	~Polynomial_1d();
+
+	std::string
+	name() const;
+
+	Real
+	xmin() const;
+
+	Real
+	xmax() const;
+
+	Real
+	min_val() const;
+
+	Real
+	max_val() const;
+
+	Real
+	root1() const;
+
+	Real
+	root2() const;
+
+	Size
+	degree() const;
+
+	utility::vector1< Real > const &
+	coefficients() const;
+
+	///@brief Evaluate the polynomial and its derivative
+	void
+	operator()(
+		double const variable,
+		double & value,
+		double & deriv) const;
 
 	void
 	show( std::ostream & out ) const;
 
-	std::string
-	show_values() const;
-
 private:
-	HBGeoDimType geometric_dimension_;
+	std::string polynomial_name_;
+	Real xmin_;
+	Real xmax_;
+	Real min_val_;
+	Real max_val_;
+	Real root1_;
+	Real root2_;
+	Size degree_;
+	utility::vector1< Real > coefficients_;
+
 };
 
 std::ostream &
 operator<< ( std::ostream & out, const Polynomial_1d & poly );
 
+} // numeric
 
-} // hbonds
-} // scoring
-} // core
-
-#endif // INCLUDED_core_scoring_hbonds_polynomial_HH
+#endif // INCLUDED_numeric_polynomial_HH

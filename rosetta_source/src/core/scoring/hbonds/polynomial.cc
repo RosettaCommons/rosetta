@@ -15,7 +15,6 @@
 #include <core/scoring/hbonds/polynomial.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/HBondTypeManager.hh>
 #include <core/scoring/hbonds/types.hh>
 
@@ -26,6 +25,7 @@
 #include <utility/vector1.hh>
 
 // Numeric headers
+#include <numeric/polynomial.hh>
 #include <numeric/conversions.hh>
 
 // ObjexxFCL headers
@@ -57,141 +57,19 @@ Polynomial_1d::Polynomial_1d(
 	Real const root2,
 	Size degree,
 	vector1< Real > const & coefficients):
-	polynomial_name_(polynomial_name),
-	geometric_dimension_(geometric_dimension),
-	xmin_(xmin), xmax_(xmax), min_val_(min_val), max_val_(max_val), root1_(root1), root2_(root2),
-	degree_(degree),
-	coefficients_(coefficients)
+	numeric::Polynomial_1d(polynomial_name, xmin, xmax, min_val, max_val, root1, root2, degree, coefficients),
+	geometric_dimension_(geometric_dimension)
 {}
 
 Polynomial_1d::Polynomial_1d(Polynomial_1d const & src):
-	utility::pointer::ReferenceCount( src ),
-	polynomial_name_(src.polynomial_name_),
-	geometric_dimension_(src.geometric_dimension_),
-	xmin_(src.xmin_), xmax_(src.xmax_), root1_(src.root1_), root2_(src.root2_),
-	degree_(src.degree_),
-	coefficients_(src.coefficients_)
+	numeric::Polynomial_1d(src),
+	geometric_dimension_(src.geometric_dimension_)
 {}
-
-Polynomial_1d::~Polynomial_1d(){}
 
 HBGeoDimType
 Polynomial_1d::geometric_dimension() const
 {
 	return geometric_dimension_;
-}
-
-string
-Polynomial_1d::name() const
-{
-	return polynomial_name_;
-}
-
-Real
-Polynomial_1d::xmin() const
-{
-	return xmin_;
-}
-
-Real
-Polynomial_1d::xmax() const
-{
-	return xmax_;
-}
-
-Real
-Polynomial_1d::min_val() const
-{
-	return min_val_;
-}
-
-Real
-Polynomial_1d::max_val() const
-{
-	return max_val_;
-}
-
-Real
-Polynomial_1d::root1() const
-{
-	return root1_;
-}
-
-Real
-Polynomial_1d::root2() const
-{
-	return root2_;
-}
-
-Size
-Polynomial_1d::degree() const
-{
-	return degree_;
-}
-
-vector1< Real > const &
-Polynomial_1d::coefficients() const
-{
-	return coefficients_;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-/// @begin operator()
-///
-/// @brief evaluate the polynomial and its derivative.
-///
-/// @detailed
-///
-/// @param  variable - [in] - evaluate polynomial(value)
-/// @param  value - [out] - returned output
-/// @param  deriv - [out] - returned output
-///
-/// @global_read
-///
-/// @global_write
-///
-/// @remarks
-///  Note the coefficients must be in reverse order: low to high
-///
-///  Polynomial value and derivative using Horner's rule
-///  value = Sum_(i = 1,...,N) [ coeff_i * variable^(i-1) ]
-///  deriv = Sum_(i = 2,...,N) [ ( i - 1 ) * coeff_i * variable^(i-2) ]
-///  JSS: Horner's rule for evaluating polynomials is based on rewriting the polynomial as:
-///  JSS: p(x)  = a0 + x*(a1 + x*(a2 + x*(...  x*(aN)...)))
-///  JSS: or value_k = a_k + x*value_k+1 for k = N-1 to 0
-///  JSS: and the derivative is
-///  JSS: deriv_k = value_k+1 + deriv_k+1 for k = N-1 to 1
-///
-/// @references
-///
-/// @authors Jack Snoeyink
-/// @authors Matthew O'Meara
-///
-/// @last_modified Matthew O'Meara
-/////////////////////////////////////////////////////////////////////////////////
-void
-Polynomial_1d::operator()(
-	double const variable,
-	double & value,
-	double & deriv) const
-{
-	if(variable <= xmin_){
-		value = min_val_;
-		deriv = 0.0;
-		return;
-	}
-	if(variable >= xmax_){
-		value = max_val_;
-		deriv = 0.0;
-		return;
-	}
-
-	value = coefficients_[1];
-	deriv = 0.0;
-	for(Size i=2; i <= degree_; i++){
-		(deriv *= variable) += value;
-		(value *= variable) += coefficients_[i];
-	}
 }
 
 ostream &
@@ -202,27 +80,27 @@ operator<< ( ostream & out, const Polynomial_1d & poly ){
 
 void
 Polynomial_1d::show( ostream & out ) const{
-	out << polynomial_name_ << " "
-			<< "geometric dimension:" <<HBondTypeManager::name_from_geo_dim_type(geometric_dimension_) << " "
-			<< "domain:(" << xmin_ << "," << xmax_ << ") "
-			<< "out_of_range_vals:(" << min_val_ << "," << max_val_ << ") "
-			<< "roots:[" << root1_ << "," << root2_ << "] "
-			<< "degree:" << degree_ << " "
-			<< "y=";
-	for(Size i=1; i <= degree_; ++i){
+	out << name() << " "
+	<< "geometric dimension:" << HBondTypeManager::name_from_geo_dim_type(geometric_dimension()) << " "
+	<< "domain:(" << xmin() << "," << xmax() << ") "
+	<< "out_of_range_vals:(" << min_val() << "," << max_val() << ") "
+	<< "roots:[" << root1() << "," << root2() << "] "
+	<< "degree:" << degree() << " "
+	<< "y=";
+	for(Size i=1; i <= degree(); ++i){
 		if (i >1){
-			if (coefficients_[i] > 0 ){
+			if (coefficients()[i] > 0 ){
 				out << "+";
-			} else if (coefficients_[i] < 0 ){
+			} else if (coefficients()[i] < 0 ){
 				out << "-";
 			} else{
 				continue;
 			}
 		}
-		out << std::abs(coefficients_[i]);
-		if (degree_-i >1){
-			out << "x^" << degree_-i;
-		} else if (degree_-i == 1){
+		out << std::abs(coefficients()[i]);
+		if (degree()-i >1){
+			out << "x^" << degree()-i;
+		} else if (degree()-i == 1){
 			out << "x";
 		} else {}
 	}
@@ -235,7 +113,7 @@ Polynomial_1d::show_values( ) const{
 
 	Real energy, deriv;
 	stringstream out;
-	out << polynomial_name_;
+	out << name();
 
 	switch(geometric_dimension_){
 	case(hbgd_NONE):
