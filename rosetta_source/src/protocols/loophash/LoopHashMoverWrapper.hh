@@ -83,7 +83,7 @@ private:
 
 	// params
 	Real min_bbrms_, max_bbrms_, min_rms_, max_rms_;  // loophash centroid generation params
-	Size start_res_, stop_res_;                       // residues to loophash over
+	Size start_res_, stop_res_, max_struct_, max_radius_, max_struct_per_radius_;                       // residues to loophash over
 	Size max_nstruct_;                                // maximum number of residues per position to generate
 	Size ncentroid_, nfullatom_;                      // number of structures to carry over to subsequent stages
 	Size batch_size_;                                 // batch relax batch size
@@ -94,8 +94,9 @@ private:
 	core::scoring::ScoreFunctionOP prefilter_scorefxn_;
 
 	// structure store
-	bool ideal_;  // should we save space and assume structure is ideal?
+	bool ideal_, filter_by_phipsi_;  // should we save space and assume structure is ideal?
 	std::vector< std::pair< Real, core::io::silent::SilentStructOP > > all_structs_;
+	core::Size sample_weight_const_; //dflt 50; sets the same sample weight throughout the pose
 };
 
 

@@ -105,7 +105,8 @@ LoopHashMoverWrapper::LoopHashMoverWrapper() :
 	ideal_( false ),
 	cenfilter_( NULL ),
 	fafilter_( NULL ),
-	ranking_fafilter_( NULL )
+	ranking_fafilter_( NULL ),
+	sample_weight_const_( 50 )
 {
 	loop_sizes_.clear();
 }
@@ -142,9 +143,17 @@ LoopHashMoverWrapper::apply( Pose & pose )
   lsampler.set_max_nstruct( max_nstruct() );
   lsampler.set_nonideal( !ideal_ );
 	lsampler.use_prefiltering( prefilter_scorefxn_, nprefilter_ );
+	lsampler.set_max_radius( max_radius_ );//all hardcoded for testing
+	lsampler.set_max_struct( max_struct_ );
+	lsampler.set_max_struct_per_radius( max_struct_per_radius_ );
+	lsampler.set_filter_by_phipsi( filter_by_phipsi_ );
 
 	std::vector< SilentStructOP > lib_structs;
 	Size starttime = time( NULL );
+	std::string sample_weight( "" );
+	for( Size resi = 1; resi <= pose.total_residue(); ++resi )
+		sample_weight += utility::to_string( sample_weight_const_ ) + " ";
+	core::pose::add_comment( pose, "sample_weight", sample_weight );
 	lsampler.build_structures( pose, lib_structs );
 	Size endtime = time( NULL );
 	Size nstructs = lib_structs.size();
@@ -300,6 +309,11 @@ LoopHashMoverWrapper::parse_my_tag( TagPtr const tag,
 	max_rms_ = tag->getOption< Real >( "max_rms",   4.0 );
 	max_nstruct_ = tag->getOption< Size >( "max_nstruct",   1000000 );
 	ideal_ = tag->getOption< bool >( "ideal",  false );  // by default, assume structure is nonideal
+	max_radius_ = tag->getOption< Size >( "max_radius", 4 );
+	max_struct_ = tag->getOption< Size >( "max_struct", 10 );
+	max_struct_per_radius_ = tag->getOption< Size >( "max_struct_per_radius", 10 );
+	filter_by_phipsi_ = tag->getOption< bool >( "filter_by_phipsi", 1 );
+	sample_weight_const_ = tag->getOption< Size >( "sample_weight_const", 50 );
 
 	start_res_ = 2;
 	stop_res_ = 0;
