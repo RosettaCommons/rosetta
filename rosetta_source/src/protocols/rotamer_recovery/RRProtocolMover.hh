@@ -51,9 +51,7 @@ public: // public interface
 	std::string
 	get_parameters() const;
 
-	void
-	set_mover(
-		protocols::moves::MoverOP mover);
+	// Undefined, commenting out to fix PyRosetta build  void set_mover(protocols::moves::MoverOP mover);
 
 	void
 	run(
