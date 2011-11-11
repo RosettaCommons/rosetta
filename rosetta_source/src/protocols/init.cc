@@ -149,6 +149,7 @@
 #include <protocols/moves/IfMoverCreator.hh>
 #include <protocols/moves/IteratedConvergenceMoverCreator.hh>
 #include <protocols/moves/MutateResidueCreator.hh>
+#include <protocols/moves/SetTorsionCreator.hh>
 #include <protocols/moves/DsspMoverCreator.hh>
 #include <protocols/moves/MatcherMoverCreator.hh>
 #include <protocols/moves/MakePolyXMoverCreator.hh>
@@ -435,6 +436,7 @@ static MoverRegistrator< forge::remodel::RemodelLoopMoverCreator > reg_RemodelLo
 static MoverRegistrator< moves::IfMoverCreator > reg_IfMoverCreator;
 static MoverRegistrator< moves::IteratedConvergenceMoverCreator > reg_IteratedConvergenceMoverCreator;
 static MoverRegistrator< moves::MutateResidueCreator > reg_MutateResidueCreator;
+static MoverRegistrator< moves::SetTorsionCreator > reg_SetTorsionCreator;
 static MoverRegistrator< moves::DsspMoverCreator > reg_DsspMoverCreator;
 static MoverRegistrator< moves::MakePolyXMoverCreator > reg_MakePolyXMoverCreator;
 static MoverRegistrator< moves::MatcherMoverCreator > reg_MatcherMoverCreator;

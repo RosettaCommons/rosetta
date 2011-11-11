@@ -139,7 +139,7 @@ sources = {
 		"BindingSiteConstraint",
 		"PocketConstraint",
 	],
-	
+
 	"protocols/contact_map" : [
 		"ContactMap"
 	],
@@ -931,6 +931,7 @@ sources = {
 		"RotateJumpAxisMover",
 		"ScoreMover",
 		"SetReturningPackRotamersMover",
+		"SetTorsion",
 		"ShakeStructureMover",
                 "SheetTranslate",
 		"StructureRestrictor",
@@ -1224,7 +1225,7 @@ sources = {
 		"SymRestrictTaskForDocking",
 		"SymSidechainMinMover",
 	],
-	
+
         "protocols/seeded_abinitio" : [
                 "CAcstGenerator",
                 "SeededAbinitio_util",
