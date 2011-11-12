@@ -22,7 +22,8 @@
 #include <core/pose/Pose.hh>
 
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/tag/Tag.hh>
+
+#include <utility/tag/Tag.hh>  // It actually needed - TagPtr is used at line 93  // AUTO-REMOVED #include <utility/tag/Tag.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

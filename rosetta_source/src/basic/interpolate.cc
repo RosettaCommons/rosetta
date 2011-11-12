@@ -57,7 +57,6 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdio>
-#include <execinfo.h>
 #include <iosfwd>
 #include <limits>
 #include <string>

@@ -40,11 +40,13 @@
 // AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <ctime>
 #include <functional>
 
 #include <utility/vector1.hh>
 
+#ifdef WIN32
+	#include <ctime>
+#endif
 
 
 namespace core {

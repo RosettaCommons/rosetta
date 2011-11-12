@@ -29,6 +29,11 @@
 // AUTO-REMOVED #include <string>
 #include <map>
 
+#ifdef PYROSETTA
+	#include <utility/tag/Tag.hh>
+#endif
+
+
 namespace core {
 namespace pack {
 namespace task {

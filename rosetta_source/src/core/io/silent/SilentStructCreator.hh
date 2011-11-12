@@ -24,7 +24,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // c++ headers
-// AUTO-REMOVED #include <string>
+#include <string>
 
 namespace core {
 namespace io {

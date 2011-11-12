@@ -19,9 +19,12 @@
 
 //package headers
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
+
 #ifdef WIN32
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+	#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+	#include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
 #endif
+
 //project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>

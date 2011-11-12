@@ -266,7 +266,6 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
-#include <execinfo.h>
 #include <fstream>
 #include <iomanip>
 #include <iosfwd>
@@ -458,7 +457,7 @@ read_topology_file(
 		if (!l.eof()) {
 			l >> parse_charge;
 		}
-		
+
     if ( ! basic::options::option[ basic::options::OptionKeys::corrections::chemical::parse_charge ]() ) {
 			rsd->add_atom( atom_name, atom_type_name, mm_atom_type_name, charge );
 		}

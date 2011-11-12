@@ -40,10 +40,12 @@
 #include <core/pose/datacache/ObserverCache.fwd.hh>
 #include <core/pose/metrics/PoseMetricContainer.fwd.hh>
 #ifdef WIN32
-#include <core/pose/signals/ConformationEvent.hh>
-#include <core/pose/signals/DestructionEvent.hh>
-#include <core/pose/signals/EnergyEvent.hh>
-#include <core/pose/signals/GeneralEvent.hh>
+	#include <core/pose/signals/ConformationEvent.hh>
+	#include <core/pose/signals/DestructionEvent.hh>
+	#include <core/pose/signals/EnergyEvent.hh>
+	#include <core/pose/signals/GeneralEvent.hh>
+	#include <core/conformation/Residue.hh> // WIN32 INCLUDE
+	#include <core/pose/datacache/CacheableObserver.hh>
 #endif
 
 // Project headers
@@ -53,10 +55,6 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
-#ifdef WIN32
-// required for Visual Studio compilation
-#include <core/conformation/Residue.hh> // WIN32 INCLUDE
-#endif
 
 // AUTO-REMOVED #include <core/id/AtomID.hh>
 // AUTO-REMOVED #include <core/id/DOF_ID.hh>

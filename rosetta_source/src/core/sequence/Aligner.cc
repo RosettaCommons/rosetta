@@ -19,8 +19,6 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceAlignment.hh>
 
-// AUTO-REMOVED #include <core/sequence/ScoringScheme.hh>  // REQUIRED FOR WINDOWS
-#include <core/sequence/ScoringScheme.fwd.hh>  // REQUIRED FOR WINDOWS
 
 #include <iostream>
 #include <string>
@@ -29,6 +27,11 @@
 
 #include <utility/vector1.hh>
 
+#include <core/sequence/ScoringScheme.fwd.hh>
+
+#ifdef WIN32
+	#include <core/sequence/ScoringScheme.hh>
+#endif
 
 
 namespace core {

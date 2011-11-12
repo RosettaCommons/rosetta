@@ -256,7 +256,6 @@
 #include <cassert>
 #include <cstddef>
 #include <cstdio>
-#include <execinfo.h>
 #include <iomanip>
 #include <iosfwd>
 #include <istream>

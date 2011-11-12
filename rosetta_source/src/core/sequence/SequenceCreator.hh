@@ -24,7 +24,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // c++ headers
-// AUTO-REMOVED #include <string>
+#include <string>
 
 namespace core {
 namespace sequence {
@@ -41,7 +41,7 @@ public:
 	virtual std::string keyname() const = 0;
 };
 
-} //namespace 
+} //namespace
 } //namespace core
 
 #endif

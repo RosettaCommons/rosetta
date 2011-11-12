@@ -27,7 +27,8 @@
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 //#include <core/chemical/CSDAtomTypeSet.fwd.hh>
 // Auto-header: duplicate removed #include <core/chemical/ResidueTypeSet.fwd.hh>
-// AUTO-REMOVED #include <string>
+
+#include <string>
 
 // Utility headers
 

@@ -34,7 +34,8 @@
 // Auto-header: duplicate removed #include <core/types.hh>
 
 #ifdef WIN32
-#include <core/kinematics/AtomTree.hh>
+	#include <core/kinematics/AtomTree.hh>
+	#include <core/conformation/Residue.hh>
 #endif
 
 //#include <core/pose/Pose.fwd.hh>

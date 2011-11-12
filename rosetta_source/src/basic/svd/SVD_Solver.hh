@@ -106,7 +106,6 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdio>
-#include <execinfo.h>
 #include <iosfwd>
 #include <string>
 #include <vector>

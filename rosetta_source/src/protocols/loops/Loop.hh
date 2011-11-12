@@ -32,6 +32,7 @@
 // C++ headers
 #include <algorithm>
 #include <ostream>
+#include <functional>
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {

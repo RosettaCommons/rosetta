@@ -21,7 +21,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <iostream>
-// AUTO-REMOVED #include <string>
+#include <string>
 #include <vector>
 
 namespace core {

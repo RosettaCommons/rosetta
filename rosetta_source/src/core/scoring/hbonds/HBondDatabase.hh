@@ -18,11 +18,6 @@
 // AUTO-REMOVED #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/polynomial.fwd.hh>
 #include <core/scoring/hbonds/types.hh>
-// AUTO-REMOVED #include <core/scoring/hbonds/FadeInterval.hh>
-
-#ifdef WIN32
-#include <core/scoring/hbonds/polynomial.hh>
-#endif
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -33,6 +28,12 @@
 #include <map>
 
 #include <core/scoring/hbonds/FadeInterval.fwd.hh>
+
+#ifdef WIN32
+	#include <core/scoring/hbonds/polynomial.hh>
+	#include <core/scoring/hbonds/FadeInterval.hh>
+#endif
+
 
 
 #ifndef INCLUDED_core_scoring_hbonds_HBondDatabase_hh

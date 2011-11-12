@@ -29,13 +29,15 @@
 #include <utility/io/izstream.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <ctime>
 #include <sstream>
 #include <string>
 
 #include <utility/vector1.hh>
 
 
+#ifdef WIN32
+	#include <ctime>
+#endif
 
 namespace core {
 namespace fragment {

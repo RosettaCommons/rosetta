@@ -17,7 +17,6 @@
 // Project Headers
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/graph/Graph.hh>
 #include <core/scoring/methods/Methods.hh>
 #include <basic/Tracer.hh>
 

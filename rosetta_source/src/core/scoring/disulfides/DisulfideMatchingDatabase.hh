@@ -29,7 +29,7 @@
 // AUTO-REMOVED #include <numeric/interpolation/Histogram.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-#include <core/kinematics/RT.fwd.hh>
+#include <core/kinematics/RT.hh>
 #include <utility/vector1.hh>
 
 namespace core {

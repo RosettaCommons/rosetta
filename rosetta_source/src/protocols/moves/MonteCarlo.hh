@@ -22,7 +22,6 @@
 // unit headers
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MonteCarloStatus.hh>
-// AUTO-REMOVED #include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
 
 // package headers
 #include <core/pose/Pose.fwd.hh>
@@ -40,6 +39,10 @@
 #include <protocols/moves/mc_convergence_checks/ConvergenceCheck.fwd.hh>
 #include <utility/vector1.hh>
 #include <string>
+
+#ifdef WIN32
+	#include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
+#endif
 
 
 // Forward declarations

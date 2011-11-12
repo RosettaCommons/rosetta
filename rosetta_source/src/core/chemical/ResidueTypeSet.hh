@@ -40,7 +40,7 @@
 // STL headers
 #include <list>
 
-#include <core/chemical/Adduct.fwd.hh>
+#include <core/chemical/Adduct.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
@@ -51,6 +51,11 @@
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <map>
+
+#ifdef PYROSETTA
+	#include <core/chemical/ResidueType.hh>
+#endif
+
 
 
 namespace core {

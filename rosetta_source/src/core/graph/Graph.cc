@@ -68,7 +68,6 @@
 #include <ObjexxFCL/proxy_const_assert.hh>
 #include <cstddef>
 #include <cstdio>
-#include <execinfo.h>
 #include <iosfwd>
 #include <string>
 #include <boost/pool/pool.hpp>

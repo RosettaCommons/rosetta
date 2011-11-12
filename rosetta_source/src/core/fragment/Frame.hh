@@ -40,8 +40,10 @@
 #include <utility/fix_boinc_read.hh>
 
 #endif
+
 #ifdef WIN32
-#include <string>
+	#include <string>
+	#include <core/fragment/FragData.hh>
 #endif
 
 // C++ STL Headers
