@@ -22,7 +22,6 @@
 #include <protocols/topology_broker/TopologyBroker.fwd.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/topology_broker/TopologyClaimer.hh>
 #include <protocols/topology_broker/DofClaim.fwd.hh>
 #include <protocols/topology_broker/ClaimerMessage.fwd.hh>
 
@@ -49,6 +48,10 @@
 #include <string>
 
 #include <protocols/topology_broker/TopologyClaimer.fwd.hh>
+
+#ifdef WIN32
+	#include <protocols/topology_broker/TopologyClaimer.hh>
+#endif
 
 
 // option key includes

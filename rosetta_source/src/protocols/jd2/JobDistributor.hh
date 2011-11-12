@@ -35,6 +35,10 @@
 #include <utility/vector1.hh>
 #include <string>
 
+#ifdef WIN32
+	#include <protocols/jd2/Job.hh>
+#endif
+
 namespace protocols {
 namespace jd2 {
 

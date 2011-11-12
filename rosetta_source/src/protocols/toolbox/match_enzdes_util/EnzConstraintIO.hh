@@ -21,17 +21,14 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 
 
-// AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
+// AUTO-REMOVED
 
 
 #ifdef WIN32
-#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
-#endif
-
-// Package headers
-#ifdef WIN32
-#include <core/scoring/constraints/Constraints.hh>
+	#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
+	#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+	#include <core/scoring/constraints/Constraints.hh>
+	#include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
 #endif
 
 #include <core/scoring/ScoreFunction.fwd.hh>

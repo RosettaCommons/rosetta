@@ -21,7 +21,6 @@
 #include <core/pose/PDBInfo.hh>
 
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <utility/tag/Tag.hh>
 
 // option key includes
 // AUTO-REMOVED #include <basic/options/keys/dna.OptionKeys.gen.hh>
@@ -29,6 +28,10 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>
+
+#ifdef WIN32
+	#include <utility/tag/Tag.hh>
+#endif
 
 
 namespace protocols {

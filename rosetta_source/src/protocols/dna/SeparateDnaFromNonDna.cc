@@ -18,7 +18,6 @@
 #include <core/pose/PDBInfo.hh>
 // note: Pose.hh includes Conformation.hh, FoldTree.hh, Jump.hh, and ResidueType.hh
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS
 #include <basic/Tracer.hh>
 
 #include <utility/vector0.hh>

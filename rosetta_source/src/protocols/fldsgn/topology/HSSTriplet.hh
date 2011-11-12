@@ -39,8 +39,6 @@ public:
 	typedef core::Vector Vector;
 
 	typedef protocols::fldsgn::topology::SS_Info2_COP SS_Info2_COP;
-
-
 public:
 
 
@@ -316,6 +314,11 @@ private: //data
 
 
 }; // HSSTripletSet
+
+
+typedef HSSTriplets::const_iterator HSSConstIterator;
+typedef HSSTriplets::iterator HSSIterator;
+
 
 } // namespace topology
 } // namespace fldsgn

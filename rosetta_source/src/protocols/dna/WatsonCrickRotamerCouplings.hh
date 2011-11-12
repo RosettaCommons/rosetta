@@ -18,6 +18,8 @@
 
 #include <utility/vector1.hh>
 
+#include <utility/tag/Tag.fwd.hh>
+
 
 namespace protocols {
 namespace dna {

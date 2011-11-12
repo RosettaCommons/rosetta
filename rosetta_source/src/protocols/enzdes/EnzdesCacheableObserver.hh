@@ -27,7 +27,6 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
 #include <core/types.hh>
 #include <core/conformation/signals/LengthEvent.fwd.hh>
 
@@ -38,6 +37,10 @@
 
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <utility/vector1.hh>
+
+#ifdef WIN32
+	#include <core/scoring/constraints/Constraint.hh>
+#endif
 
 
 namespace protocols {

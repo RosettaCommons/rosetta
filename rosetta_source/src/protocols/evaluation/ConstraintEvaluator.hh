@@ -32,10 +32,8 @@
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
 
-#ifdef WIN32	// for visual studio
-#else
 #include <core/scoring/constraints/Constraint.fwd.hh>
-#endif
+
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <core/io/silent/silent.fwd.hh>

@@ -21,7 +21,6 @@
 // AUTO-REMOVED #include <protocols/noesy_assign/CrossPeakList.hh>
 #include <protocols/noesy_assign/ResonanceList.fwd.hh>
 #include <protocols/noesy_assign/PeakAssignment.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRConstraint.fwd.hh>
 
 // Project Headers
 #include <protocols/moves/Mover.hh>
@@ -34,6 +33,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <protocols/noesy_assign/CrossPeakList.fwd.hh>
+
 
 
 //// C++ headers

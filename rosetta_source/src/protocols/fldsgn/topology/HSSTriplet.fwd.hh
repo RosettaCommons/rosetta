@@ -30,9 +30,6 @@ namespace topology {
 	typedef utility::pointer::owning_ptr< HSSTripletSet const > HSSTripletSetCOP;
 	typedef utility::vector1< HSSTripletOP > HSSTriplets;
 
-	typedef HSSTriplets::const_iterator HSSConstIterator;
-	typedef HSSTriplets::iterator HSSIterator;
-
 } // namespace topology
 } // namespace fldsgn
 } // namespace protocols

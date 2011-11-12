@@ -28,13 +28,14 @@
 #include <utility/tag/Tag.hh>
 
 // Auto-header: duplicate removed #include <core/pack/task/PackerTask.hh> // REQUIRED FOR WINDOWS
-// AUTO-REMOVED #include <core/graph/Graph.hh> // REQUIRED FOR WINDOWS
 
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-
+#ifdef WIN32
+	#include <core/graph/Graph.hh>
+#endif
 
 namespace protocols {
 namespace toolbox {

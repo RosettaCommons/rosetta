@@ -35,6 +35,11 @@
 #include <utility/pointer/ReferenceCount.hh>
 // option key includes
 
+#ifdef WIN32
+	#include <core/pack/task/operation/TaskOperation.hh>
+#endif
+
+
 namespace protocols {
 namespace docking {
 
@@ -87,7 +92,7 @@ private:
 	utility::vector1< char > design_chains_;
     utility::vector1< core::pack::task::operation::TaskOperationOP > additional_task_operations_;
 	bool prepack_only_;  //JQX
-    
+
     toolbox::task_operations::InterfaceTaskOperationOP restrict_to_interface_;
 
 //	core::pack::task::TaskFactoryOP init_tf_;

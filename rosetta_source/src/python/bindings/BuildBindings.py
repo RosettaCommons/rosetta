@@ -554,7 +554,7 @@ def getAllRosettaSourceFiles():
 
     #all_sources += [ '../external/' + x for x in extra_objs ]
 
-    #all_sources.sort()
+    all_sources.sort()
     #for i in all_sources: print i
     return extra_objs, all_sources
 

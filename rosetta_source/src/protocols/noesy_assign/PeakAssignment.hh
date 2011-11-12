@@ -24,7 +24,7 @@
 
 
 // Project Headers
-#include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.fwd.hh>
+#include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/Func.hh>
 

@@ -13,7 +13,6 @@
 
 // Unit Headers
 #include <protocols/abinitio/Templates.fwd.hh>
-// AUTO-REMOVED #include <protocols/abinitio/Template.hh>
 
 // Package Headers
 #include <protocols/abinitio/PairingStatistics.fwd.hh>
@@ -49,6 +48,10 @@
 #include <protocols/abinitio/Template.fwd.hh>
 #include <protocols/jumping/PairingsList.hh>
 #include <utility/vector1.hh>
+
+#ifdef WIN32
+	#include <protocols/abinitio/Template.hh>
+#endif
 
 
 namespace protocols {
@@ -143,8 +146,8 @@ private:
 
 	bool good_;
 
-  TemplateMap templates_;
-  jumping::PairingsList pairings_;
+	TemplateMap templates_;
+	jumping::PairingsList pairings_;
 	std::string target_sequence_;
 
 	PairingStatisticsCOP strand_stats_;
