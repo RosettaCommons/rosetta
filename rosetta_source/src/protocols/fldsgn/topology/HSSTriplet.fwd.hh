@@ -21,14 +21,19 @@ namespace protocols {
 namespace fldsgn {
 namespace topology {
 
-	class HSSTriplet;
-	class HSSTripletSet;
+class HSSTriplet;
+class HSSTripletSet;
 
-	typedef utility::pointer::owning_ptr< HSSTriplet > HSSTripletOP;
-	typedef utility::pointer::owning_ptr< HSSTripletSet > HSSTripletSetOP;
-	typedef utility::pointer::owning_ptr< HSSTriplet const > HSSTripletCOP;
-	typedef utility::pointer::owning_ptr< HSSTripletSet const > HSSTripletSetCOP;
-	typedef utility::vector1< HSSTripletOP > HSSTriplets;
+typedef utility::pointer::owning_ptr< HSSTriplet > HSSTripletOP;
+typedef utility::pointer::owning_ptr< HSSTripletSet > HSSTripletSetOP;
+typedef utility::pointer::owning_ptr< HSSTriplet const > HSSTripletCOP;
+typedef utility::pointer::owning_ptr< HSSTripletSet const > HSSTripletSetCOP;
+typedef utility::vector1< HSSTripletOP > HSSTriplets;
+
+#ifndef WIN32
+	typedef HSSTriplets::const_iterator HSSConstIterator;
+	typedef HSSTriplets::iterator HSSIterator;
+#endif
 
 } // namespace topology
 } // namespace fldsgn

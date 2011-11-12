@@ -316,8 +316,10 @@ private: //data
 }; // HSSTripletSet
 
 
-typedef HSSTriplets::const_iterator HSSConstIterator;
-typedef HSSTriplets::iterator HSSIterator;
+#ifdef WIN32
+	typedef HSSTriplets::const_iterator HSSConstIterator;
+	typedef HSSTriplets::iterator HSSIterator;
+#endif
 
 
 } // namespace topology
