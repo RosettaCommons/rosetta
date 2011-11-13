@@ -47,7 +47,9 @@ public:
 		coordinate_constraint_weight_( 0.01 ),
 		fast_( false ),
 		chainbreaks_( false ),
-		report_CA_rmsd_(true)
+		report_CA_rmsd_(true),
+		impose_constraints_( true ),
+		constraints_only_( false )
 	{
 		ignore_residues_in_csts_.clear();
 	}
@@ -109,6 +111,10 @@ public:
 	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 	utility::vector1< core::Size > ignore_residues_in_csts() const;
 	void ignore_residues_in_csts( utility::vector1< core::Size > const i );
+	void impose_constraints( bool const i ){ impose_constraints_ = i; }
+	bool impose_constraints() const{ return( impose_constraints_ ); }
+	bool constraints_only() const{ return constraints_only_; }
+	void constraints_only( bool const c ){ constraints_only_ = c; }
 
 private:
 	// methods
@@ -125,6 +131,8 @@ private:
 	bool fast_;
 	bool chainbreaks_;
 	bool report_CA_rmsd_;
+	bool impose_constraints_; //dflt true; should the mover impose its own constraints or respect the incoming ones;
+	bool constraints_only_; //dflt false; jump out after imposing the idealize constraints?
 };
 
 } // idealize

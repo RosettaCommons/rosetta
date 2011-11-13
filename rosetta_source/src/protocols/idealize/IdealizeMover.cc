@@ -193,7 +193,8 @@ IdealizeMover::apply( pose::Pose & pose ) {
 
 	// save a copy of the pose's constraints
 	scoring::constraints::ConstraintSetOP original_cst_set( pose.constraint_set()->clone() );
-	pose.constraint_set( NULL );
+	if( impose_constraints() )
+		pose.constraint_set( NULL );
 	// add virtual residue at the end
 	//Size const old_root( pose.fold_tree().root() );
 	if ( pose.residue( pose.total_residue() ).aa() != core::chemical::aa_vrt ) {
@@ -240,9 +241,11 @@ IdealizeMover::apply( pose::Pose & pose ) {
 		scorefxn->set_weight( dslf_ss_dst, 0.5 );//SG-SG bond length
 		scorefxn->set_weight( dslf_cs_ang, 2.0 );//CB-SG-SG covalent bond angle
 	}
-
 	// setup constraints
-	setup_idealize_constraints( pose );
+	if( impose_constraints() )
+		setup_idealize_constraints( pose );
+	if( constraints_only() )
+		return;
 
 	// by default idealize everything
 	//fpd  ... unless symmetric, then only idealize master
@@ -256,7 +259,7 @@ IdealizeMover::apply( pose::Pose & pose ) {
 	}
 
 
-	if( !option[ basic::options::OptionKeys::run::dry_run ]() ){
+	if( !(option[ basic::options::OptionKeys::run::dry_run ]() )){
 		basic_idealize( pose, pos_list_, *scorefxn, fast_, chainbreaks_ );
 	}
 
@@ -304,8 +307,10 @@ IdealizeMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::D
 	report_CA_rmsd( tag->getOption< bool >( "report_CA_rmsd", true ) );
 	if( tag->hasOption( "ignore_residues_in_csts" ) )
 		ignore_residues_in_csts( protocols::rosetta_scripts::get_resnum_list( tag, "ignore_residues_in_csts", pose ) );
+	impose_constraints( tag->getOption< bool >( "impose_constraints", 1 ) );
+	constraints_only( tag->getOption< bool >( "constraints_only", 0 ) );
 
-	TR<<"IdealizeMover with atom_pair_constraint_weight="<<atom_pair_constraint_weight_<<" coordinate_constraint_weight="<<coordinate_constraint_weight_<<" fast="<<fast_<<" chainbreaks="<<chainbreaks_<<" and report CA_rmsd_="<<report_CA_rmsd_<<std::endl;
+	TR<<"IdealizeMover with atom_pair_constraint_weight="<<atom_pair_constraint_weight_<<" coordinate_constraint_weight="<<coordinate_constraint_weight_<<" fast="<<fast_<<" chainbreaks="<<chainbreaks_<<" and report CA_rmsd_="<<report_CA_rmsd_<<" impose constraints "<<impose_constraints()<<std::endl;
 }
 
 void
