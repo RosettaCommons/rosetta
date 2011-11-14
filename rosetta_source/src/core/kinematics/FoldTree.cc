@@ -2552,22 +2552,29 @@ void FoldTree::reassign_atoms_for_intra_residue_stubs() {
 
 	for ( Size jump_nr = 1; jump_nr <= num_jump(); ++jump_nr ) {
 		if ( !jump_edge( jump_nr ).keep_stub_in_residue() ) continue; // do nothing
-		if ( jump_edge( jump_nr ).start() == root() ) continue;
-		Edge anchor_edge = get_residue_edge( jump_edge( jump_nr ).start() );
 
-		//work out upstream Jump Atom from upstream folding direction
 		std::string anchor = "";
-		if ( !anchor_edge.is_jump() ) {
-			bool bN2C = anchor_edge.start() < anchor_edge.stop();
-			if ( bN2C ) {
-				anchor = "C";
+
+		if ( jump_edge( jump_nr ).start() == root() ) {
+			anchor = "N";
+		} else {
+
+			Edge anchor_edge = get_residue_edge( jump_edge( jump_nr ).start() );
+			//work out upstream Jump Atom from upstream folding direction
+
+			if ( !anchor_edge.is_jump() ) {
+				bool bN2C = anchor_edge.start() < anchor_edge.stop();
+				if ( bN2C ) {
+					anchor = "C";
+				} else {
+					anchor = "N";
+				}
 			} else {
+				//if it is a jump it will be an N now or later when we get to it.
 				anchor = "N";
 			}
-		} else {
-			//if it is a jump it will be an N now or later when we get to it.
-			anchor = "N";
 		}
+
 		// choosing the root to be N and setting keep_Stub_in_resiude makes N-CA-C the stub
 		// C-->CA-->N
 		std::string root = "N";
