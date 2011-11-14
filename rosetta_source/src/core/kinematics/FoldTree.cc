@@ -1792,6 +1792,89 @@ FoldTree::partition_by_jump(
 		}
 	}
 }
+
+/////////////////////////////////////////////////////////////////////////////
+/// @details partition the fold tree in two parts if a cut would be introduced between seqpos and seqpos+1.
+/// Function is an analog to partition_by_jump() -- its goal to find all residues
+///  connecting to the jump starting residue and flag
+/// them in the partner1(n_res) array as true. The residues on the other side are
+/// flagged as false. Useful to distinguish two docking partners when fold tree is
+/// properly set up.void
+void
+FoldTree::partition_by_residue(
+	int const seqpos,
+	FArray1D_bool & partner1
+) const
+{
+	check_topology(); // update derived data if necessary
+
+	assert( seqpos <= nres_ );
+	assert( int(partner1.size1()) >= nres_ );
+
+	partner1 = false;
+
+	// mark part of starting edge as linked.
+
+	// First have to find edge. Standard get_residue_edge() has problem with root? Why?
+	//	Edge edge = get_residue_edge( seqpos );
+	Edge edge;
+	bool found_edge( false );
+	partner1( seqpos ) = true;
+	for ( const_iterator it = begin(), it_end = end(); it != it_end; ++it ) {
+
+		int const start( std::min( it->start(), it->stop() ) );
+		int const stop ( std::max( it->start(), it->stop() ) );
+		if ( it->is_polymer() && start <= seqpos && stop >= seqpos ) {
+			edge = *it;
+			found_edge = true;
+
+			//	std::cout << "FOUND START EDGE: " << edge.start() << " " << edge.stop() << std::endl;
+			int const seqpos_edge_start( std::min( edge.start(), edge.stop() ) );
+			for ( int i = seqpos_edge_start; i< seqpos; ++i ) partner1( i ) = true;
+
+		}
+	}
+	if (!found_edge) return;
+
+	bool new_member ( true );
+
+	// get pointers to the beginning and end of the edge_list_
+	// const_iterator is a typedef in fold_tree.h:
+	//
+	// typedef std::vector< Edge > EdgeList;
+	// typedef EdgeList::iterator iterator;
+	// typedef EdgeList::const_iterator const_iterator;
+
+	const_iterator it_begin( edge_list_.begin() );
+	const_iterator it_end  ( edge_list_.end() );
+
+	while ( new_member ) {     // keep adding new members
+		new_member = false;
+		for ( const_iterator it = it_begin; it != it_end; ++it ) {
+
+			int const start( std::min( it->start(), it->stop() ) );
+			int const stop ( std::max( it->start(), it->stop() ) );
+
+			if ( it->is_polymer() && start <= seqpos && stop >= seqpos ) continue; // skip input edge.
+
+			if ( ( partner1( start ) && !partner1( stop ) ) ||
+					 ( partner1( stop ) && !partner1( start ) ) ) {
+				new_member = true;
+				if ( it->is_polymer() ) {
+					// all the residues
+					for ( int i=start; i<= stop; ++i ) {
+						partner1( i ) = true;
+					}
+				} else {
+					// just the vertices
+					partner1( start ) = true;
+					partner1( stop ) = true;
+				}
+			}
+		}
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////
 /// @details
 /// To keep the fold tree non-cyclic, for each jump added, there should be

@@ -447,6 +447,13 @@ public:
 										ObjexxFCL::FArray1D_bool & partner1
 										) const ;
 
+	/// @brief partition the fold tree in two parts if a cut would be introduced between seqpos and seqpos+1
+	void
+	partition_by_residue(
+											 int const seqpos,
+											 ObjexxFCL::FArray1D_bool & partner1
+											 ) const ;
+
 	/// @brief Returns the corresponding cutpoint position for jump  <jump_number>
 	/// WARNING: if you look for all cutpoints by cycling thru jump_numbers you may be dissapointed
 	/// you will get most likely the same cutpoint for several different jump_numbers
