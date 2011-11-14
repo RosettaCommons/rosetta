@@ -125,8 +125,11 @@ SecondarySimilarity::SecondarySimilarity(Size priority, Real lowest_acceptable_v
 			Size sequence_length, utility::vector1<Size> & frag_sizes, Size longest_vall_chunk) :
 		CachingScoringMethod(priority, lowest_acceptable_value, use_lowest,
 				"SecondarySimilarity") , prediction_name_(prediction_name) {
+
 		query_len_ = sequence_length;
 		query_ss_ = query_prediction;
+
+		runtime_assert( query_prediction->total_residue() == query_len_ );
 
 		for (Size i = 1; i <= query_len_; ++i) {
 			utility::vector1<Real> row(longest_vall_chunk);
