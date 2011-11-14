@@ -30,6 +30,12 @@ namespace id {
 
 using namespace ObjexxFCL;
 
+/// @brief ctor
+SequenceMapping::SequenceMapping( utility::vector1< Size > const & mapping ):
+	size2_( mapping.size() ),
+	mapping_( mapping )
+{}
+
 SequenceMapping::SequenceMapping(
 	conformation::signals::LengthEvent const & event
 )

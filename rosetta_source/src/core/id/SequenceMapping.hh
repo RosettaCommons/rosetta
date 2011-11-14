@@ -50,6 +50,9 @@ public:
 		mapping_(s1,0)
 	{}
 
+	/// @brief ctor
+	SequenceMapping( utility::vector1< Size > const & mapping );
+
 	/// @brief convenience constructor from LengthEvent
 	SequenceMapping( conformation::signals::LengthEvent const & event );
 
