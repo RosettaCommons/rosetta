@@ -45,6 +45,8 @@ extern VariantType const PROTONATED;
 extern VariantType const DEPROTONATED;
 extern VariantType const SPECIAL_ROT;
 extern VariantType const VIRTUAL_PHOSPHATE;
+extern VariantType const VIRTUAL_RNA_RESIDUE;
+extern VariantType const VIRTUAL_O2STAR_HYDROGEN;
 
 // The following are added by Andy M. Chen in July 2009 to be used for PTM patches/variants
 extern VariantType const PHOSPHORYLATION;
@@ -58,6 +60,11 @@ extern VariantType const DIIODINATION;
 
 extern VariantType const ACTYLATED_NTERMINUS;
 extern VariantType const METHYLATED_CTERMINUS;
+
+// this has different geometry/atoms then ACTYLATED_NTERMINUS above:
+extern VariantType const N_ACETYLATION;
+// this is distinct from METHYLATED_CTERMINUS above:
+extern VariantType const C_METHYLAMIDATION;
 
 extern VariantType const SC_ORBITALS;
 

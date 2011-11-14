@@ -123,6 +123,9 @@ public:
 	AtomID const &
 	atom( Size const n ) const;
 
+	void
+	set_atom( Size const index, AtomID const atom_id );
+
 	Real
 	dist( pose::Pose const & pose ) const;
 

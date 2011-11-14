@@ -178,6 +178,72 @@ ConstraintOP ConstraintIO::parse_atom_pair_constraint(
 	return cst_op;
 } // parse_atom_pair_constraint
 
+void
+ConstraintIO::read_cst_coordinates(
+	std::istream & data,
+	std::string & next_section_name,
+	ConstraintSet & cst_set,
+	pose::Pose const & pose
+) {
+
+	tr.Debug << "ConstraintIO::read_cst_coordinate" << std::endl;
+	std::string line;
+	while( getline( data, line ) ) {
+
+	Real x, y, z;
+	Size res1, res2;
+	std::string name1, name2;
+	std::string func_type;
+	std::string type;
+
+	std::istringstream line_stream( line );
+
+	line_stream
+		>> name1;
+
+	if ( name1.find("[" )!=std::string::npos ) { //end of this section
+		tr.Debug << "section end detected in line " << line << std::endl;
+		next_section_name = line;
+		return;
+	}
+
+	line_stream >> res1
+							>> name2 >> res2
+							>> x >> y >> z
+							>> func_type;
+
+	tr.Debug 	<< "read: " << name1 << " " << name2 << " "
+							<< res1 << " " << res2 << " func: " << func_type
+							<< std::endl;
+
+		if ( res1>pose.total_residue() || res2> pose.total_residue() ||
+		     ( !pose.residue_type( res1 ).has_atom_name( name1 ) ) ||
+		     ( !pose.residue_type( res2 ).has_atom_name( name2 ) )
+		){
+			tr.Error << "error in constraint (no such atom in pose!)"
+									<< name1 << " " << name2 << " " << res1 << " " << res2 << " func: " << func_type << std::endl;
+			utility_exit_with_message ("Constraint data referred to atom which is not present in pose");
+		}
+
+
+		id::AtomID atom1( pose.residue_type( res1 ).atom_index( name1 ), res1 );
+		id::AtomID atom2( pose.residue_type( res2 ).atom_index( name2 ), res2 );
+
+		FuncOP aFunc = func_factory_.func_types_[ func_type ]->clone();
+		aFunc->read_data( line_stream );
+
+		if ( tr.Debug.visible() ) {
+			aFunc->show_definition( std::cout ); std::cout<<std::endl;
+		}
+
+		Vector transform( x, y, z );
+		cst_set.add_constraint( new CoordinateConstraint( atom1, atom2, transform, aFunc ) );
+
+	} // while getline
+	tr.Debug << "end of file reached" << std::endl;
+	next_section_name = "";
+}
+
 ConstraintOP ConstraintIO::parse_coordinate_constraint(
 	std::istream & data,
 	core::pose::Pose pose

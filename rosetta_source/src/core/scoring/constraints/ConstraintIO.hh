@@ -95,6 +95,7 @@ public:
 protected:
 	static void read_cst_bindingsites( std::istream &data, std::string& next_section,  ConstraintSet&, pose::Pose const&  );
 	static void read_cst_atom_pairs( std::istream &data, std::string& next_section,  ConstraintSet&, pose::Pose const&  );
+	static void read_cst_coordinates( std::istream &data, std::string& next_section,  ConstraintSet&, pose::Pose const&  );
 	static void read_cst_angles( std::istream &data, std::string& next_section,  ConstraintSet&, pose::Pose const&  );
 
 

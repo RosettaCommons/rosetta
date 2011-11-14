@@ -134,34 +134,41 @@ RNA_CentroidInfo::get_base_coordinate_system( conformation::Residue const & rsd,
 
   Vector x,y,z;
 
-  // Make an axis pointing from base centroid to Watson-Crick edge.
-  std::string WC_atom;
-  if ( res_type == na_rad ) WC_atom = " N1 ";
-  if ( res_type == na_rcy ) WC_atom = " N3 ";
-  if ( res_type == na_rgu ) WC_atom = " N1 ";
-  if ( res_type == na_ura ) WC_atom = " N3 ";
+	if ( rsd.has( " CEN" ) ) {
+		x = rsd.xyz(" X  ") - rsd.xyz(" CEN" );
+		y = rsd.xyz(" Y  ") - rsd.xyz(" CEN" );
+		z = cross( x, y );
+	} else {
 
-  Vector const WC_coord (rsd.xyz( WC_atom ) );
-  x = WC_coord - centroid;
-  x.normalize();
+		// Make an axis pointing from base centroid to Watson-Crick edge.
+		std::string WC_atom;
+		if ( res_type == na_rad ) WC_atom = " N1 ";
+		if ( res_type == na_rcy ) WC_atom = " N3 ";
+		if ( res_type == na_rgu ) WC_atom = " N1 ";
+		if ( res_type == na_ura ) WC_atom = " N3 ";
 
-  // Make a perpendicular axis pointing from centroid towards
-  // Hoogstein edge (e.g., major groove in a double helix).
-  std::string H_atom;
-  if ( res_type == na_rad ) H_atom = "N7";
-  if ( res_type == na_rcy ) H_atom = "C5";
-  if ( res_type == na_rgu ) H_atom = "N7";
-  if ( res_type == na_ura ) H_atom = "C5";
+		Vector const WC_coord (rsd.xyz( WC_atom ) );
+		x = WC_coord - centroid;
+		x.normalize();
 
-  Vector const H_coord (rsd.xyz( H_atom ) );
-  y = H_coord - centroid; //not orthonormal yet...
-  z = cross(x, y);
-  z.normalize(); // Should point roughly 5' to 3' if in a double helix.
+		// Make a perpendicular axis pointing from centroid towards
+		// Hoogstein edge (e.g., major groove in a double helix).
+		std::string H_atom;
+		if ( res_type == na_rad ) H_atom = "N7";
+		if ( res_type == na_rcy ) H_atom = "C5";
+		if ( res_type == na_rgu ) H_atom = "N7";
+		if ( res_type == na_ura ) H_atom = "C5";
 
-  y = cross(z, x);
-  y.normalize(); //not necessary but doesn't hurt.
+		Vector const H_coord (rsd.xyz( H_atom ) );
+		y = H_coord - centroid; //not orthonormal yet...
+		z = cross(x, y);
+		z.normalize(); // Should point roughly 5' to 3' if in a double helix.
 
-  //  std::cout << "WC : " << WC_coord << "   H : " << H_coord << "    centroid: " << centroid << std::endl;
+		y = cross(z, x);
+		y.normalize(); //not necessary but doesn't hurt.
+
+		//  std::cout << "WC : " << WC_coord << "   H : " << H_coord << "    centroid: " << centroid << std::endl;
+	}
 
   return kinematics::Stub( Matrix::cols( x, y, z ), centroid );
 }

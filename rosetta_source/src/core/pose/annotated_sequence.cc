@@ -214,6 +214,7 @@ void make_pose_from_sequence(
 
 		// do the actual append
 		if ( rsd_type.has_variant_type( chemical::LOWER_TERMINUS ) ||
+				 rsd_type.has_variant_type( chemical::N_ACETYLATION ) ||
 			new_rsd->aa() == chemical::aa_unk || new_rsd->aa() == chemical::aa_vrt ||
 				jump_to_next ) {
 			if ( new_rsd->aa() == chemical::aa_unk  || new_rsd->aa() == chemical::aa_vrt ) {

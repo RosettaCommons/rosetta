@@ -29,7 +29,7 @@ public:
 	HarmonicFunc( Real const x0_in, Real const sd_in ): x0_( x0_in ), sd_( sd_in ){}
 
 	FuncOP
-	clone() const { return new HarmonicFunc( *this ); }
+	clone() const; // { return new HarmonicFunc( *this ); }
 
 	Real func( Real const x ) const;
 	Real dfunc( Real const x ) const;

@@ -33,6 +33,12 @@ namespace core {
 namespace scoring {
 namespace constraints {
 
+FuncOP
+HarmonicFunc::clone() const
+{
+	return new HarmonicFunc( x0_, sd_ );
+}
+
 Real
 HarmonicFunc::func( Real const x ) const
 {
