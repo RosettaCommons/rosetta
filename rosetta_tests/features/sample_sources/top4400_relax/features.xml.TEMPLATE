@@ -9,6 +9,7 @@
 			<feature name=HBondFeatures scorefxn=s/>
 			<feature name=HBondParameterFeatures scorefxn=s/>
 			<feature name=PairFeatures/>
+			<feature name=PdbDataFeatures/>
 			<feature name=PoseCommentsFeatures/>
 			<feature name=PoseConformationFeatures/>
  			<feature name=ProteinBackboneAtomAtomPairFeatures/>
@@ -18,7 +19,6 @@
 			<feature name=ResidueFeatures/>
 			<feature name=ResidueSecondaryStructureFeatures/>
 			<feature name=ResidueTypesFeatures/>
-			<feature name=RotamerRecoveryFeatures scorefxn=s/>
 			<feature name=SaltBridgeFeatures/>
 			<feature name=StructureScoresFeatures scorefxn=s/>
                 </ReportToDB>
