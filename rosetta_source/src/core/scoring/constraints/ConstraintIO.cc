@@ -479,6 +479,8 @@ ConstraintIO::read_constraints(
 		tr.Info << "read constraints section --" << section << "---" << std::endl;
 		if ( section ==  "atompairs" ) {
 			read_cst_atom_pairs( data, pre_read, *cset, pose );
+		} else if ( section == "coordinates" ) {
+			read_cst_coordinates( data, pre_read, *cset, pose );
 		} else if ( section == "angles" ) {
 			read_cst_angles( data, pre_read, *cset, pose );
 		} else if ( section == "bindingsites" ) {
