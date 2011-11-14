@@ -237,6 +237,8 @@ pose_from_pdb(
 		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )
 	);
 
+	if ( option[ in::file::residue_type_set ].user() && option[ in::file::residue_type_set]()  == "rna" ) residue_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
+
 	core::import_pose::pose_from_pdb( pose, *residue_set, filename, read_fold_tree );
 }
 
