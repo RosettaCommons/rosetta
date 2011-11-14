@@ -1039,14 +1039,14 @@ Residue::determine_nonstandard_polymer_status()
 {
 	if ( is_polymer() ) {
 		if ( ! is_upper_terminus() &&
-				 ( //type().upper_connect_id() == 0 ||
+				 ( type().upper_connect_id() == 0 ||
 					connect_map_[ type().upper_connect_id() ].incomplete() ||
 					connect_map_[ type().upper_connect_id() ].resid() != seqpos() + Size( 1 )) ) {
 			nonstandard_polymer_ = true;
 			return;
 		}
 		if ( ! is_lower_terminus() &&
-				 ( //type().lower_connect_id() == 0 ||
+				 ( type().lower_connect_id() == 0 ||
 					 connect_map_[ type().lower_connect_id() ].incomplete() ||
 					 connect_map_[ type().lower_connect_id() ].resid() != seqpos() - Size( 1 )) ) {
 			nonstandard_polymer_ = true;
