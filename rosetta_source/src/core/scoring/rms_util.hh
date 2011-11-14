@@ -29,6 +29,8 @@
 // Utility headers
 #include <ObjexxFCL/FArray2D.fwd.hh>
 #include <utility/vector1_bool.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -154,6 +156,83 @@ is_nbr_atom(
 	core::Size resno,
 	core::Size atomno
 );
+
+/////////////////////////////////////////////
+// Predicate classes for more complex control
+
+class Predicate: public utility::pointer::ReferenceCount {
+public:
+	Predicate() {};
+	virtual ~Predicate() {}
+	virtual bool operator()(
+			core::pose::Pose const & pose1,
+			core::pose::Pose const & pose2,
+			core::Size resno,
+			core::Size atomno) const = 0;
+};
+
+typedef utility::pointer::owning_ptr< Predicate > PredicateOP;
+typedef utility::pointer::owning_ptr< Predicate const > PredicateCOP;
+
+class IsProteinCAPredicate: public Predicate {
+public:
+	IsProteinCAPredicate() {}
+	virtual ~IsProteinCAPredicate() {}
+	virtual bool operator()(
+			core::pose::Pose const & pose1,
+			core::pose::Pose const & pose2,
+			core::Size resno,
+			core::Size atomno) const { return is_protein_CA(pose1, pose2, resno, atomno); }
+};
+
+// (Fill in others as needed.)
+
+//////////////////////
+// Combining Predicates
+
+class ResRangePredicate: public Predicate {
+public:
+	ResRangePredicate( core::Size start, core::Size end, PredicateCOP predicate ) : start_(start), end_(end), pred_(predicate) {}
+	virtual ~ResRangePredicate() {}
+	virtual bool operator()(
+			core::pose::Pose const & pose1,
+			core::pose::Pose const & pose2,
+			core::Size resno,
+			core::Size atomno) const;
+private:
+	core::Size start_;
+	core::Size end_;
+	PredicateCOP pred_;
+};
+
+class SelectedResPredicate: public Predicate {
+public:
+	SelectedResPredicate( std::list< core::Size > const & selected, PredicateCOP predicate ) : selected_(selected), pred_(predicate) {}
+	virtual ~SelectedResPredicate() {}
+	virtual bool operator()(
+			core::pose::Pose const & pose1,
+			core::pose::Pose const & pose2,
+			core::Size resno,
+			core::Size atomno) const;
+private:
+	std::list< core::Size > selected_;
+	PredicateCOP pred_;
+};
+
+class ExcludedResPredicate: public Predicate {
+public:
+	ExcludedResPredicate( utility::vector1< Size > const & excluded, PredicateCOP predicate ) : excluded_(excluded), pred_(predicate) {}
+	virtual ~ExcludedResPredicate() {}
+	virtual bool operator()(
+			core::pose::Pose const & pose1,
+			core::pose::Pose const & pose2,
+			core::Size resno,
+			core::Size atomno) const;
+private:
+	utility::vector1< Size > const & excluded_;
+	PredicateCOP pred_;
+};
+
 
 //////////////////////////////////////////////////////////////////////////////
 

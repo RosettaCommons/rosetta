@@ -21,6 +21,7 @@
 // C/C++ headers
 #include <string>
 #include <utility>
+#include <algorithm>
 
 // External headers
 #include <boost/unordered/unordered_map.hpp>
@@ -325,6 +326,39 @@ is_nbr_atom(
 	return rsd.nbr_atom() == atomno;
 }
 
+/////////////////////////////////////////////
+// Predicate classes for more complex control
+
+bool ResRangePredicate::operator()(
+		core::pose::Pose const & pose1,
+		core::pose::Pose const & pose2,
+		core::Size resno,
+		core::Size atomno) const {
+	if ( resno < start_ || resno > end_ ) { return false; }
+	else { return (*pred_)(pose1, pose2, resno, atomno); }
+}
+
+bool SelectedResPredicate::operator()(
+		core::pose::Pose const & pose1,
+		core::pose::Pose const & pose2,
+		core::Size resno,
+		core::Size atomno) const {
+	if ( std::find( selected_.begin(), selected_.end(), resno ) == selected_.end() ) { return false; }
+	else { return (*pred_)(pose1, pose2, resno, atomno); }
+}
+
+bool ExcludedResPredicate::operator()(
+		core::pose::Pose const & pose1,
+		core::pose::Pose const & pose2,
+		core::Size resno,
+		core::Size atomno) const {
+	if ( std::find( excluded_.begin(), excluded_.end(), resno ) != excluded_.end() ) { return false; }
+	else { return (*pred_)(pose1, pose2, resno, atomno); }
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+
 core::Real
 CA_rmsd(
 	const core::pose::Pose & pose1,
@@ -349,32 +383,12 @@ CA_rmsd(
 	int natoms;
 	FArray2D< core::Real > p1a;
 	FArray2D< core::Real > p2a;
-	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, is_protein_CA );
-	if ( (int) end > natoms ) tr.Warning << "WARNING: CA_rmsd out of range... range" << start << " " << end << " requested "
-																 << "but only " << natoms << " CA atoms found in fill_rmsd_coordinates " << std::endl;
+	PredicateOP pred( new ResRangePredicate( start, end, new IsProteinCAPredicate ) );
+	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred() );
 
-	// if poses have different size or the range start..end doesn't fit we have
-	// to get a different selection. would be nicer to that in
-	// fill_rmsd_coordinates: best by refactoring the predicates to be a class
-	// that can have some member variables that stores info's like ranges and
-	// stuff quick hack instead of refactoring the whole RMSD code: refill Farray
-	// with the appropriate range
-	if ( pose1.total_residue() > end || pose2.total_residue() > end || start > 1 ) {
-		FArray2D< core::Real > r1a( 3, end-start+1 );
-		FArray2D< core::Real > r2a( 3, end-start+1 );
-		for ( Size i = start; i<= (Size) std::min( (int)end, natoms); i++ ) {
-			for ( Size d = 1; d<=3; d++ ) {
-				r1a( d, i-start+1 ) = p1a( d, i );
-				r2a( d, i-start+1 ) = p2a( d, i );
-			}
-		}
-		natoms = end-start+1;
-		Real rms = numeric::model_quality::rms_wrapper( natoms, r1a, r2a );
-		if(rms < 0.00001) rms = 0.0;
-		PROF_STOP( basic::CA_RMSD_EVALUATION );
-		return rms;
-	}
-	// Calc rms
+	if ( (int) (end - start + 1) > natoms ) { tr.Warning << "WARNING: In CA_rmsd, residue range " << start << " to " << end
+			<< " requested but only " << natoms << " protein CA atoms found." << std::endl; }
+
 	Real rms = numeric::model_quality::rms_wrapper( natoms, p1a, p2a );
 	if(rms < 0.00001) rms = 0.0;
 	PROF_STOP( basic::CA_RMSD_EVALUATION );
@@ -395,33 +409,9 @@ CA_rmsd(
 	int natoms;
 	FArray2D< core::Real > p1a;//( 3, pose1.total_residue() );
 	FArray2D< core::Real > p2a;//( 3, pose2.total_residue() );
-	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, is_protein_CA );
-	if ( (int) end > natoms ) tr.Warning << "WARNING: CA_rmsd out of range... range" << start << " " << end << " requested "
-																 << "but only " << natoms << " CA atoms found in fill_rmsd_coordinates " << std::endl;
+	PredicateOP pred( new ResRangePredicate( start, end, new ExcludedResPredicate( exclude, new IsProteinCAPredicate )) );
+	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred() );
 
-	// if poses have different size or the range start..end doesn't fit we have to
-	// get a different selection. would be nicer to that in fill_rmsd_coordinates: best by refactoring the predicates to be
-	// a class that can have some member variables that stores info's like ranges and stuff
-	// quick hack instead of refactoring the whole RMSD code: refill Farray with the appropriate range
-	if ( pose1.total_residue() > end || pose2.total_residue() > end || start > 1 ) {
-		FArray2D< core::Real > r1a( 3, end-start+1 );
-		FArray2D< core::Real > r2a( 3, end-start+1 );
-		Size npos = 1;
-		for ( Size i = start; i<= (Size) std::min( (int)end, natoms); i++ ) {
-			utility::vector1< Size >::const_iterator iter = find( exclude.begin(),exclude.end(), i );
-			if ( iter != exclude.end() ) continue;
-			for ( Size d = 1; d<=3; d++ ) {
-				r1a( d, npos ) = p1a( d, i );
-				r2a( d, npos ) = p2a( d, i );
-			}
-			npos++;
-		}
-		natoms = npos-1;
-		Real rms = numeric::model_quality::rms_wrapper( natoms, r1a, r2a );
-		if(rms < 0.00001) rms = 0.0;
-		PROF_STOP( basic::CA_RMSD_EVALUATION );
-		return rms;
-	}
 	// Calc rms
 	Real rms = numeric::model_quality::rms_wrapper( natoms, p1a, p2a );
 	if(rms < 0.00001) rms = 0.0;
@@ -493,37 +483,15 @@ CA_rmsd(
 	int natoms;
 	FArray2D< core::Real > p1a;//( 3, pose1.total_residue() );
 	FArray2D< core::Real > p2a;//( 3, pose2.total_residue() );
-	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, is_protein_CA );
+	PredicateOP pred( new SelectedResPredicate( residue_selection, new IsProteinCAPredicate ) );
+	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred() );
 
-	// if poses have different size or the range start..end doesn't fit we have to
-	// get a different selection. would be nicer to that in fill_rmsd_coordinates: best by refactoring the predicates to be
-	// a class that can have some member variables that stores info's like ranges and stuff
-	// quick hack instead of refactoring the whole RMSD code: refill Farray with the appropriate range
-	residue_selection.sort();
-	residue_selection.unique();
-	int final_atoms = residue_selection.size();
-	FArray2D< core::Real > r1a( 3, final_atoms );
-	FArray2D< core::Real > r2a( 3, final_atoms );
-	std::list< Size >::const_iterator sel_it = residue_selection.begin();
-	std::list< Size >::const_iterator esel_it = residue_selection.end();
-	int ct = 0;
-	for ( Size i = 1; i<= (Size) natoms; i++ ) {
-		if ( i == *sel_it ) {
-			++sel_it;
-			++ct;
-			if( ct <= final_atoms ){
-				for ( Size d = 1; d<=3; d++ ) {
-					r1a( d, ct ) = p1a( d, i );
-					r2a( d, ct ) = p2a( d, i );
-				}
-			}else std::cerr << "CA_rmsd error" << std::endl;
-			if ( sel_it == esel_it ) break;
-		}
-	}
-	runtime_assert( ct == final_atoms );
+	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "WARNING: In CA_rmsd " << residue_selection.size()
+				<< " residues selected but only " << natoms << " protein CA atoms found." << std::endl; }
+
 	// Calc rms
 	PROF_STOP( basic::CA_RMSD_EVALUATION );
-	return numeric::model_quality::rms_wrapper( final_atoms, r1a, r2a );
+	return numeric::model_quality::rms_wrapper( natoms, p1a, p2a );
 } // CA_rmsd
 
 core::Real
@@ -560,41 +528,7 @@ nbr_atom_rmsd(
 	return rms;
 } // nbr_atom_rmsd
 
-// takes two poses and fills the appropriate coordinates into p1a and p2a.
-void
-fill_rmsd_coordinates(
-	int & /*natoms*/,
-	ObjexxFCL::FArray2D< core::Real > & /*p1a*/,
-	ObjexxFCL::FArray2D< core::Real > & /*p2a*/,
-	const core::pose::Pose & /*pose1*/,
-	const core::pose::Pose & /*pose2*/,
-	std::string /*atom_name*/
-)
-{
-	utility_exit_with_message( "fill_rmsd_coordinates not implemented!" );
-//
-// 	using namespace core;
-//
-// 	int const nres1 = pose1.total_residue();
-// 	int const nres2 = pose2.total_residue();
-// 	//runtime_assert( nres1 == nres2 );
-// 	int const nres = std::min( nres1, nres2 );
-// 	if ( nres1 != nres2 ) trWarning << "compute RMSD of poses with different number of residues: uses only first " << nres << " residues\n";
-// 	natoms = 0;
-// 	for ( int i = 1; i <= nres; ++i ) {
-// 		if ( !pose1.residue(i).is_protein() ) continue;
-//
-// 		++natoms;
-//
-// 		const numeric::xyzVector< Real > & vec1( pose1.residue(i).xyz( atom_name ) );
-// 		const numeric::xyzVector< Real > & vec2( pose2.residue(i).xyz( atom_name ) );
-//
-// 		for ( int k = 0; k < 3; ++k ) { // k = X, Y and Z
-// 			p1a(k+1,natoms) = vec1[k];
-// 			p2a(k+1,natoms) = vec2[k];
-// 		}
-// 	} // for ( int i = 1; i <= nres1; ++i )
-} // fill_rmsd_coordinates_CA
+// fill_rmsd_coordinates() is in rms_util.tmpl.hh
 
 int
 CA_maxsub(
@@ -632,36 +566,15 @@ CA_maxsub(
 	int natoms;
 	FArray2D< core::Real > p1a;//( 3, pose1.total_residue() );
 	FArray2D< core::Real > p2a;//( 3, pose2.total_residue() );
-	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, is_protein_CA );
+	PredicateOP pred( new SelectedResPredicate( residue_selection, new IsProteinCAPredicate ) );
+	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred() );
 
-	// if poses have different size or the range start..end doesn't fit we have to
-	// get a different selection. would be nicer to that in fill_rmsd_coordinates: best by refactoring the predicates to be
-	// a class that can have some member variables that stores info's like ranges and stuff
-	// quick hack instead of refactoring the whole RMSD code: refill Farray with the appropriate range
-	residue_selection.sort();
-	residue_selection.unique();
-	int final_atoms = residue_selection.size();
-	FArray2D< core::Real > r1a( 3, final_atoms );
-	FArray2D< core::Real > r2a( 3, final_atoms );
-	std::list< Size >::const_iterator sel_it = residue_selection.begin();
-	std::list< Size >::const_iterator esel_it = residue_selection.end();
-	int ct = 0;
-	for ( Size i = 1; i<= (Size) natoms; i++ ) {
-		if ( i == *sel_it ) {
-			++sel_it;
-			++ct;
-			for ( Size d = 1; d<=3; d++ ) {
-				r1a( d, ct ) = p1a( d, i );
-				r2a( d, ct ) = p2a( d, i );
-			}
-			if ( sel_it == esel_it ) break;
-		}
-	}
-	runtime_assert( ct == final_atoms );
+	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "WARNING: In CA_maxsub " << residue_selection.size()
+			<< " residues selected but only " << natoms << " protein CA atoms found." << std::endl; }
 
 	double mxrms, mxpsi, mxzscore, mxscore, mxeval;
 	int nali;
-	numeric::model_quality::maxsub( final_atoms, r1a, r2a, mxrms, mxpsi, nali, mxzscore, mxeval, mxscore, rms );
+	numeric::model_quality::maxsub( natoms, p1a, p2a, mxrms, mxpsi, nali, mxzscore, mxeval, mxscore, rms );
 	//logeval = std::log(mxeval);
 	return nali;
 }
@@ -714,49 +627,13 @@ CA_gdtmm(
 	int natoms;
 	FArray2D< core::Real > p1a( 3, pose1.total_residue() );
 	FArray2D< core::Real > p2a( 3, pose2.total_residue() );
-	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, is_protein_CA );
+	PredicateOP pred( new SelectedResPredicate( residue_selection, new IsProteinCAPredicate ) );
+	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred() );
 
-	// if poses have different size or the range start..end doesn't fit we have to
-	// get a different selection. would be nicer to that in fill_rmsd_coordinates: best by refactoring the predicates to be
-	// a class that can have some member variables that stores info's like ranges and stuff
-	// quick hack instead of refactoring the whole RMSD code: refill Farray with the appropriate range
-	residue_selection.sort();
-	residue_selection.unique();
-	int final_atoms;
+	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "WARNING: In CA_gdtmm " << residue_selection.size()
+			<< " residues selected but only " << natoms << " protein CA atoms found." << std::endl; }
 
-	// count how many final atoms there
-	std::list< Size >::const_iterator sel_it = residue_selection.begin();
-	std::list< Size >::const_iterator esel_it = residue_selection.end();
-	int ct = 0;
-	for ( Size i = 1; i<= (Size) natoms; i++ ) {
-		if ( i == *sel_it ) {
-			++sel_it;
-			++ct;
-			if ( sel_it == esel_it ) break;
-		}
-	}
-	final_atoms = ct;
-
-	// now make an appropriately sized array
-	FArray2D< core::Real > r1a( 3, final_atoms );
-  FArray2D< core::Real > r2a( 3, final_atoms );
-	sel_it = residue_selection.begin();
-	esel_it = residue_selection.end();
-	ct = 0;
-	for ( Size i = 1; i<= (Size) natoms; i++ ) {
-		if ( i == *sel_it ) {
-			++sel_it;
-			++ct;
-			for ( Size d = 1; d<=3; d++ ) {
-				r1a( d, ct ) = p1a( d, i );
-				r2a( d, ct ) = p2a( d, i );
-			}
-			if ( sel_it == esel_it ) break;
-		}
-	}
-	runtime_assert( ct == final_atoms );
-
-	core::Real gdtmm = xyz_gdtmm( r1a, r2a, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4 );
+	core::Real gdtmm = xyz_gdtmm( p1a, p2a, m_1_1, m_2_2, m_3_3, m_4_3, m_7_4 );
 	return gdtmm;
 }
 
@@ -999,12 +876,6 @@ CA_rmsd_symmetric(
   FArray2D< core::Real > p1a;//( 3, pose1.total_residue() );
   FArray2D< core::Real > p2a;//( 3, pose2.total_residue() );
   fill_rmsd_coordinates( natoms, p1a, p2a, native_pose, pose, is_protein_CA );
-  if ( nres != natoms ) {
-		tr.Warning << "WARNING: CA_rmsd out of range... range " << 1 << " " << nres << " requested "
-                                 << "but only " << natoms << " CA atoms found in fill_rmsd_coordinates " << std::endl;
-		tr.Warning << "WARNING: CA_rmsd calculation aborted. Setting rmsd to -1" << std::endl;
-		return -1.0;
-	}
 	if (natoms%nres_monomer != 0 ) {
 		tr.Warning << "CA atoms in fill_rmsd " << natoms << "is not a multiple of number of residues per subunit " << nres_monomer << std::endl;
 	}
