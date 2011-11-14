@@ -19,7 +19,7 @@
 /// no magical meaning. It is a name handler.
 ///
 /// @author
-/// Phil Bradely
+/// Phil Bradley
 /// Steven Combs - comments only
 ///
 /// @last_modified October 22 2010
@@ -76,6 +76,8 @@ VariantType const DEPROTONATED( "DEPROTONATED" );
 VariantType const SPECIAL_ROT( "SPECIAL_ROT" );
 
 VariantType const VIRTUAL_PHOSPHATE( "VIRTUAL_PHOSPHATE" );
+VariantType const VIRTUAL_RNA_RESIDUE( "VIRTUAL_RNA_RESIDUE" );
+VariantType const VIRTUAL_O2STAR_HYDROGEN( "VIRTUAL_O2STAR_HYDROGEN" );
 
 // The following are added by Andy M. Chen in July 2009 to be used for PTM patches/variants
 VariantType const PHOSPHORYLATION( "PHOSPHORYLATION" );
@@ -92,6 +94,10 @@ VariantType const ACTYLATED_NTERMINUS( "ACTYLATED_NTERMINUS" );
 /// @brief Methylated C-terminus cap, written for creating amino acid dipeptides for NCAA rotamer libraries
 VariantType const METHYLATED_CTERMINUS( "METHYLATED_CTERMINUS" );
 VariantType const SC_ORBITALS("SC_ORBITALS");
+
+///@brief Cap extensions at termini to include peptide bonds, written for stepwise assembly (SWA) code.
+VariantType const N_ACETYLATION( "N_ACETYLATION" );
+VariantType const C_METHYLAMIDATION( "C_METHYLAMIDATION" );
 
 // @ brief only the repulsive energy will be considered during structure calculations
 VariantType const REPLONLY("REPLONLY");
