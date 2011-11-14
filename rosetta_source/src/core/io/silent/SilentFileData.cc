@@ -217,6 +217,11 @@ bool SilentFileData::write_silent_struct(
 	//atomic version of opening procedure... writes header only if file is new -- appends if file already exists.
 	output.open_append_if_existed( filename, header );
 
+	// to prevent jobs from proceeding blithely when a directory doesn't exist.
+	if ( !output.good() ){
+		utility_exit_with_message( "Could not make "+filename );
+	}
+
 	write_silent_struct( s, output, bWriteScoreOnly );
 
 	output.close();

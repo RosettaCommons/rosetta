@@ -647,7 +647,9 @@ void BinaryProteinSilentStruct::print_conformation(
 	output << "REMARK BINARY SILENTFILE\n";
 
 	// fold tree
-	if ( fold_tree().size() > 1 ) { //assume non-trivial fold_tree only if more than one edge, i.e., EDGE 1 <nres> -1
+	// assume non-trivial fold_tree only if more than one edge, i.e., EDGE 1 <nres> -1?
+	// no -- can have a fold tree with a single jump, actually.
+	if ( fold_tree().size() > 1 || fold_tree().num_jump() > 1 ) {
 		output << "FOLD_TREE ";
 		for ( kinematics::FoldTree::const_iterator
 				it = fold_tree().begin(), it_end = fold_tree().end();

@@ -11,8 +11,6 @@
 /// @file core/io/silent/BinaryRNASilentStruct.cc
 ///
 /// @brief
-/// @author Frank DiMaio
-/// @author Mike Tyka
 /// @author Rhiju Das
 
 // C++ Headers
@@ -85,7 +83,7 @@ BinaryRNASilentStruct::BinaryRNASilentStruct( Size const nres_in )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	fullatom_    = option[ in::file::fullatom ]();
+	fullatom_    = true; //option[ in::file::fullatom ]();
 	bJumps_use_IntraResStub_ = false;
 	nres  ( nres_in );
 	resize( nres_in );
@@ -96,7 +94,7 @@ BinaryRNASilentStruct::BinaryRNASilentStruct()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	fullatom_    = option[ in::file::fullatom ]();
+	fullatom_    = true; //ption[ in::file::fullatom ]();
 	bJumps_use_IntraResStub_ = false;
 	nres( 0 );
 	decoy_tag( "empty" );
@@ -122,7 +120,7 @@ BinaryRNASilentStruct::fill_struct(
 
 	if ( tag == "empty_tag" ) set_tag_from_pose( pose );
 
-	fullatom_ = pose.is_fullatom();
+	fullatom_ = !pose.residue(1).is_coarse();
 	//	using namespace core::chemical;
 	//	if ( pose.residue(1).residue_type_set().name() == ChemicalManager::get_instance()->residue_type_set(FA_STANDARD)->name() ) {
 	//		fullatom_ = true;
@@ -408,7 +406,11 @@ void BinaryRNASilentStruct::fill_pose (
 	using namespace core::chemical;
 	ResidueTypeSetCAP residue_set;
 	//std::cout << "RESIDUE TYPE SET RNA " << std::endl;
-	residue_set = ChemicalManager::get_instance()->residue_type_set( RNA );
+	if ( atm_coords_[1].size() < 8 ) { //hmm, may be dangerous.
+		residue_set = ChemicalManager::get_instance()->residue_type_set( COARSE_RNA );
+	} else {
+		residue_set = ChemicalManager::get_instance()->residue_type_set( RNA );
+	}
 	fill_pose( pose, *residue_set );
 } // fill_pose
 
@@ -474,14 +476,18 @@ void
 BinaryRNASilentStruct::print_header( std::ostream& out ) const
 {
 	SilentStruct::print_header( out );
-	out << "REMARK BINARY_SILENTFILE RNA \n";
+	if ( fullatom_ ) {
+		out << "REMARK BINARY_SILENTFILE RNA \n";
+	} else {
+		out << "REMARK BINARY_SILENTFILE RNA COARSE\n";
+	}
 }
 
 
 void BinaryRNASilentStruct::print_conformation(
 	std::ostream & output
 ) const {
-	if ( fold_tree().size() > 1 ) { //assume non-trivial fold_tree only if more than one edge, i.e., EDGE 1 <nres> -1
+	if ( fold_tree().size() > 1 || fold_tree().num_jump() > 0 ) { //assume non-trivial fold_tree only if more than one edge, i.e., EDGE 1 <nres> -1
 		output << "FOLD_TREE ";
 		for ( kinematics::FoldTree::const_iterator
 					it = fold_tree().begin(), it_end = fold_tree().end();

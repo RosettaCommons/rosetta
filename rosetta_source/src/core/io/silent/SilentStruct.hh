@@ -183,6 +183,8 @@ namespace silent {
 		/// @brief Returns the SilentEnergy associated with this scorename.
 		SilentEnergy const & get_silent_energy( std::string const & scorename ) const;
 
+		utility::vector1< SilentEnergy > get_silent_energies(){ return silent_energies_;}
+
 		void set_valid_energies( utility::vector1< std::string > valid );
 
 		/// @brief Clear all of the energies in the SilentStruct. Doesn't just
