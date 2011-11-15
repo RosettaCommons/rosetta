@@ -146,6 +146,7 @@ namespace PCS { FileOptionKey const write_extra( "PCS:write_extra" );  }
 namespace PCS { IntegerOptionKey const normalization_id( "PCS:normalization_id" );  }
 namespace inout { BooleanOptionKey const inout( "inout" );  }
 namespace inout { BooleanOptionKey const fold_tree_io( "inout:fold_tree_io" );  }
+namespace inout { BooleanOptionKey const dump_connect_info( "inout:dump_connect_info" );  }
 namespace inout { FileOptionKey const database_filename( "inout:database_filename" );  }
 namespace inout { StringOptionKey const database_mode( "inout:database_mode" );  }
 namespace out { BooleanOptionKey const out( "out" );  }

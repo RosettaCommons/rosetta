@@ -23,6 +23,7 @@ namespace OptionKeys {
 
 namespace inout { extern BooleanOptionKey const inout; }
 namespace inout { extern BooleanOptionKey const fold_tree_io; }
+namespace inout { extern BooleanOptionKey const dump_connect_info; }
 namespace inout { extern FileOptionKey const database_filename; }
 namespace inout { extern StringOptionKey const database_mode; }
 
