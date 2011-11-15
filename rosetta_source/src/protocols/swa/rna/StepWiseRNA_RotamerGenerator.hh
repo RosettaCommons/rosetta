@@ -27,6 +27,11 @@
 // AUTO-REMOVED #include <string>
 // AUTO-REMOVED #include <map>
 
+#ifdef WIN32
+	#include <core/id/TorsionID.hh>
+#endif
+
+
 namespace protocols {
 namespace swa {
 namespace rna {

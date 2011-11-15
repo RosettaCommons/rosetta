@@ -33,7 +33,6 @@
 
 // Package headers
 #include <protocols/scoring/methods/pcs2/PcsInputCenter.fwd.hh>
-// AUTO-REMOVED #include <protocols/scoring/methods/pcs2/PcsInputLine.hh>
 #include <protocols/scoring/methods/pcs2/PcsDataLanthanide.hh>
 
 // Project headers
@@ -51,6 +50,11 @@
 
 // c++ headers
 // AUTO-REMOVED #include <iostream>
+
+#ifdef WIN32
+	#include <protocols/scoring/methods/pcs2/PcsInputLine.hh>
+#endif
+
 
 namespace protocols{
 namespace scoring{

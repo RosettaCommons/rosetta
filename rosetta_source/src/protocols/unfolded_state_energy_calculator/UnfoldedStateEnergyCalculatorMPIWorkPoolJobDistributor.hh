@@ -29,6 +29,11 @@
 // Utility headers
 #include <utility/vector1.hh>
 
+#ifdef WIN32
+	#include <protocols/moves/Mover.hh>
+#endif
+
+
 namespace protocols {
 namespace unfolded_state_energy_calculator {
 

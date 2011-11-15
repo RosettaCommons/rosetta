@@ -54,6 +54,13 @@
 
 #include <utility/vector1.hh>
 
+#ifdef WIN32
+	#include <protocols/scoring/methods/pcs/PseudocontactShiftInput.hh>
+	#include <protocols/scoring/methods/pcs/PseudocontactShiftTensor.hh>
+	#include <protocols/scoring/methods/pcs/PseudocontactShiftData.hh>
+#endif
+
+
 
 namespace protocols{
 namespace scoring{

@@ -28,6 +28,10 @@
 
 #include <utility/vector1.hh>
 
+#ifdef WIN32
+	#include <ctime>
+#endif
+
 
 namespace protocols {
 namespace swa {
