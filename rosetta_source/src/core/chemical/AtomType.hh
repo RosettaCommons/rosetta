@@ -79,6 +79,7 @@ public:
 		is_donor_( false ),
 		is_polar_hydrogen_( false ),
 		is_h2o_( name_in == "HOH" ),
+		is_aromatic_( name_in == "aroC" || name_in == "Ntrp" || name_in == "Nhis" || name_in == "Oaro" ), //this will only work for fa_standard -- generalize?
 		atom_has_orbitals_(false),
 		atom_is_virtual_(false),
 		hybridization_( UNKNOWN_HYBRID )
@@ -165,6 +166,13 @@ public:
 	is_h2o() const
 	{
 		return is_h2o_;
+	}
+
+	/// @brief whether atom is aromatic
+	bool
+	is_aromatic() const
+	{
+		return is_aromatic_;
 	}
 
 	/// @brief atom has an orbital attached
@@ -262,6 +270,7 @@ private:
 	bool is_donor_;
 	bool is_polar_hydrogen_;
 	bool is_h2o_;
+	bool is_aromatic_;
 	bool atom_has_orbitals_;
 	bool atom_is_virtual_;
 

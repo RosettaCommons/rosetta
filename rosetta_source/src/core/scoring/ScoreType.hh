@@ -145,6 +145,7 @@ enum ScoreType {
 	fa_stack,          // stacking interaction modeled as pairwise atom-atom interactions
 	//	fa_stack_purine,          // stacking interaction modeled as pairwise atom-atom interactions FOR PURINE
 	//	fa_stack_pyrimidine,          // stacking interaction modeled as pairwise atom-atom interactions FOR PYRIMIDINE
+	fa_stack_aro,
 
 	fa_cust_pair_dist,  // custom short range 2b
 	custom_atom_pair,

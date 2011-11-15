@@ -1405,6 +1405,9 @@ RNA_LowResolutionPotential::rna_base_backbone_pair_energy_one_way(
 	if ( !rsd1.is_RNA() ) return 0.0;
 	if ( !rsd2.is_RNA() ) return 0.0;
 
+	if ( rsd1.is_coarse() ) return 0.0;  //coarse-grained!
+	if ( rsd2.is_coarse() ) return 0.0;  //coarse-grained!
+
 	Size const i = rsd1.seqpos();
 	Size const j = rsd2.seqpos();
 
@@ -1674,6 +1677,9 @@ RNA_LowResolutionPotential::rna_backbone_backbone_pair_energy_one_way(
 	if ( !rsd1.is_RNA() ) return 0.0;
 	if ( !rsd2.is_RNA() ) return 0.0;
 
+	if ( rsd1.is_coarse() ) return 0.0;  //coarse-grained!
+	if ( rsd2.is_coarse() ) return 0.0;  //coarse-grained!
+
 	Real rna_backbone_backbone_score = 0.0;
 
 	//  static Real const dist_cutoff ( 6.0 );
@@ -1926,6 +1932,9 @@ RNA_LowResolutionPotential::rna_repulsive_pair_energy_one_way(
 
 	if ( !rsd1.is_RNA() ) return 0.0;
 	if ( !rsd2.is_RNA() ) return 0.0;
+
+	if ( rsd1.is_coarse() ) return 0.0;  //coarse-grained!
+	if ( rsd2.is_coarse() ) return 0.0;  //coarse-grained!
 
 	//Could use pair-moved to make this faster.
 

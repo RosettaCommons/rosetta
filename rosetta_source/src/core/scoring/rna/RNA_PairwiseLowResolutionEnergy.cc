@@ -201,10 +201,6 @@ RNA_PairwiseLowResolutionEnergy::residue_pair_energy(
 	////////////////////////////////////////////////////////////////////////////////
 	emap[ rna_base_backbone ]     += rna_low_resolution_potential_.rna_base_backbone_pair_energy( rsd1, rsd2,
 																													centroid1, centroid2, stub1, stub2);
-	//	if ( rsd1.seqpos() == 4 && rsd2.seqpos() == 9) {
-	//		std::cout << "blah " << centroid1(1) << " " << centroid2(1) << " " << rna_low_resolution_potential_.rna_base_backbone_pair_energy( rsd1, rsd2,
-	//																																												 centroid1, centroid2, stub1, stub2) << std::endl;
-	//	}
 
 	////////////////////////////////////////////////////////////////////////////////
 	emap[ rna_backbone_backbone ] += rna_low_resolution_potential_.rna_backbone_backbone_pair_energy( rsd1, rsd2 );

@@ -63,6 +63,9 @@ RNA_RawBaseBaseInfo::RNA_RawBaseBaseInfo( RNA_RawBaseBaseInfo const & src ) :
 void
 RNA_RawBaseBaseInfo::resize( Size const & total_residue )
 {
+
+	if ( base_pair_array_.size1() == total_residue ) return;
+
   base_pair_array_.dimension( total_residue, total_residue, 3 );
   base_stagger_array_.dimension( total_residue, total_residue, 3 );
   base_axis_array_.dimension( total_residue, total_residue, 3 );

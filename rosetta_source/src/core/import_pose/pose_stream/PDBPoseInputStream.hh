@@ -42,6 +42,12 @@ public:
 		set_filenames( fns );
 	}
 
+	PDBPoseInputStream( utility::file::FileName const & fn	) {
+		utility::vector1< utility::file::FileName > fns;
+		fns.push_back( fn );
+		set_filenames( fns );
+	}
+
 	PDBPoseInputStream(
 		utility::vector1< utility::file::FileName > fns,
 		utility::vector1< utility::file::FileName > list_fns

@@ -109,6 +109,13 @@ RNA_DataBackboneEnergy::initialize_atom_numbers_sugar() {
 	atom_numbers_sugar_.push_back( rsd_type->atom_index( " C3*" ) );
 	atom_numbers_sugar_.push_back( rsd_type->atom_index( " C4*" ) );
 	atom_numbers_sugar_.push_back( rsd_type->atom_index( " C5*" ) );
+
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( COARSE_RNA );
+	ResidueTypeCAP const & rsd_type_coarse( rsd_set->aa_map( na_rad )[ 1 ] ); //Check out adenine.
+
+	atom_numbers_sugar_coarse_.clear();
+	atom_numbers_sugar_coarse_.push_back( rsd_type_coarse->atom_index( " S  " ) );
+
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -120,6 +127,8 @@ RNA_DataBackboneEnergy::initialize_atom_numbers_sugar() {
 void
 RNA_DataBackboneEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 {
+	// need to make sure scoring info is in there...
+	rna::RNA_ScoringInfo & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
 
 	pose.update_residue_neighbors();
 }
@@ -196,12 +205,15 @@ RNA_DataBackboneEnergy::get_sugar_env_score( core::conformation::Residue const &
 	Real score( 0.0 );
 
 	//	Vector const mean_sugar_pos = get_mean_sugar_pos( rsd_buried );
+	bool is_coarse = ( rsd_buried.is_coarse() );
 
-	Size const num_sugar_atoms( atom_numbers_sugar_.size() );
+	utility::vector1< Size > const & atom_numbers_sugar = ( is_coarse ? atom_numbers_sugar_coarse_ : atom_numbers_sugar_ );
+
+	Size const num_sugar_atoms( atom_numbers_sugar.size() );
 
 	for ( Size j = 1; j <= num_sugar_atoms; j++ ) {
 
-		numeric::xyzVector< Real > const & sugar_atom( rsd_buried.xyz( atom_numbers_sugar_[j] ) );
+		numeric::xyzVector< Real > const & sugar_atom( rsd_buried.xyz( atom_numbers_sugar[j] ) );
 
 		for ( Size m = 1; m <= rsd_other.nheavyatoms(); m++ ) {
 

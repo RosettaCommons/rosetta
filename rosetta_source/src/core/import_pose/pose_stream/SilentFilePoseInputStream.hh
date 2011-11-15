@@ -68,6 +68,16 @@ public:
 
 	SilentFilePoseInputStream(
 		utility::vector1< FileName > fns,
+		bool order_by_energy
+	)
+		: renumber_decoys_( false ), energy_cut_( 1.0 ), order_by_energy_( order_by_energy ), record_source_( false )
+	{
+		sfd_ = new core::io::silent::SilentFileData;
+		filenames(fns);
+	}
+
+	SilentFilePoseInputStream(
+		utility::vector1< FileName > fns,
 		core::Real energy_cut
 	)
 		: renumber_decoys_( false ), energy_cut_( energy_cut ), order_by_energy_( false ), record_source_( false )

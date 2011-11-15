@@ -144,8 +144,8 @@ private:
 	Real const dist_fade_;
 	Real const well_depth_burial_;
 	Real const well_depth_exposed_;
-	utility::vector1< std::string > atom_names_sugar_;
 	utility::vector1< Size > atom_numbers_sugar_;
+	utility::vector1< Size > atom_numbers_sugar_coarse_;
 	constraints::FuncOP burial_function_;
 virtual
 core::Size version() const;

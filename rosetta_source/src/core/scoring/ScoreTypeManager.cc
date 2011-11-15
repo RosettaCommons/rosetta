@@ -228,7 +228,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "cen_pair_smooth" ] = cen_pair_smooth;
 	name2score_type_[ "cbeta_smooth" ] = cbeta_smooth;
 	name2score_type_[ "cenpack_smooth" ] = cenpack_smooth;
-	
+
 	name2score_type_[ "hs_pair" ] = hs_pair;
 	name2score_type_[ "ss_pair" ] = ss_pair;
 	name2score_type_[ "rsigma" ] = rsigma;
@@ -272,6 +272,7 @@ ScoreTypeManager::setup_score_type_names()
 	name2score_type_[ "fa_stack"] = fa_stack;
 	//	name2score_type_[ "fa_stack_purine"] = fa_stack_purine;
 	//	name2score_type_[ "fa_stack_pyrimidine"] = fa_stack_pyrimidine;
+	name2score_type_[ "fa_stack_aro"] = fa_stack_aro;
 	name2score_type_[ "rna_torsion"] = rna_torsion;
 	name2score_type_[ "rna_sugar_close"] = rna_sugar_close;
 	name2score_type_[ "rna_bond_geometry"] = rna_bond_geometry;

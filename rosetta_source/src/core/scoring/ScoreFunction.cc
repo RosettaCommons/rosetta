@@ -242,6 +242,9 @@ ScoreFunction::_add_weights_from_file( std::string const & filename, bool patch/
 			energy_method_options_->hbond_options().use_hb_env_dep_DNA( false );
 		} else if ( tag == "NO_SMOOTH_HB_ENV_DEP" ) {
 			energy_method_options_->hbond_options().smooth_hb_env_dep( false );
+		} else if ( tag == "COARSE_RNA" ) {
+			std::cout << "ATOM_VDW set to COARSE_RNA" << std::endl;
+			energy_method_options_->atom_vdw_atom_type_set_name( "coarse_rna" );
 		} else if ( tag == "INCLUDE_HB_DNA_DNA" ) {
 			energy_method_options_->hbond_options().exclude_DNA_DNA( false );
 		} else if ( tag == "BOND_ANGLE_CENTRAL_ATOMS_TO_SCORE" ) {

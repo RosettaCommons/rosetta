@@ -16,7 +16,6 @@
 
 // Unit headers
 #include <core/scoring/rna/RNA_FilteredBaseBaseInfo.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_FilteredBaseBaseInfo.fwd.hh>
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
 #include <core/scoring/rna/RNA_DataInfo.hh>
@@ -26,20 +25,16 @@
 
 // Project headers
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
-
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray2D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
+
+#include <basic/options/option.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 
 // C++
@@ -64,7 +59,7 @@ RNA_FilteredBaseBaseInfo::RNA_FilteredBaseBaseInfo():
 	scale_axis_stagger_( true ),
 	basepair_axis_stagger_scaling_( 0.1 ),
 	basestack_axis_scaling_( 1.0 ),
-	include_neighbor_base_stacks_( false ),
+	include_neighbor_base_stacks_( basic::options::option[ basic::options::OptionKeys::score::include_neighbor_base_stacks ]() ),
 	calculated_( false ),
 	rna_verbose_( false )
 {}

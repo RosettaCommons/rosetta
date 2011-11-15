@@ -13,79 +13,20 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_core_scoring_rna_RNA_FullAtomStackingEnergy_hh
-#define INCLUDED_core_scoring_rna_RNA_FullAtomStackingEnergy_hh
+#ifndef INCLUDED_core_scoring_rna_RNA_FullAtomStackingEnergy_HH
+#define INCLUDED_core_scoring_rna_RNA_FullAtomStackingEnergy_HH
 
 // Unit Headers
 #include <core/scoring/rna/RNA_FullAtomStackingEnergy.fwd.hh>
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 
-// Utility headers
-// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
-
-#include <platform/types.hh>
-#include <core/types.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/RotamerSetBase.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
-#include <core/id/DOF_ID.fwd.hh>
-#include <core/id/TorsionID.fwd.hh>
-#include <core/kinematics/DomainMap.fwd.hh>
-#include <core/kinematics/MinimizerMapBase.fwd.hh>
-#include <core/scoring/DerivVectorPair.fwd.hh>
-#include <core/scoring/EnergyMap.fwd.hh>
-#include <core/scoring/MinimizationData.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/methods/ContextIndependentTwoBodyEnergy.fwd.hh>
-#include <core/scoring/methods/EnergyMethod.fwd.hh>
-#include <core/scoring/methods/EnergyMethod.hh>
-#include <core/scoring/methods/EnergyMethodCreator.fwd.hh>
-#include <core/scoring/methods/ShortRangeTwoBodyEnergy.hh>
-#include <core/scoring/methods/TwoBodyEnergy.fwd.hh>
-#include <core/scoring/methods/TwoBodyEnergy.hh>
-#include <utility/down_cast.hh>
-#include <utility/exit.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
-#include <utility/vectorL.hh>
-#include <utility/vectorL_Selector.hh>
-#include <utility/vectorL_bool.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/pointer/access_ptr.fwd.hh>
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.functions.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <numeric/numeric.functions.hh>
-#include <numeric/sphericalVector.fwd.hh>
-#include <numeric/trig.functions.hh>
-#include <numeric/xyz.functions.fwd.hh>
+//Auto Headers
 #include <numeric/xyzMatrix.fwd.hh>
-#include <numeric/xyzVector.fwd.hh>
-#include <numeric/xyzVector.hh>
-#include <ObjexxFCL/FArray1D.fwd.hh>
-#include <ObjexxFCL/FArray2D.fwd.hh>
-#include <algorithm>
-#include <cassert>
-#include <cmath>
-#include <cstddef>
-#include <cstdlib>
-#include <iomanip>
-#include <iosfwd>
-#include <iostream>
-#include <limits>
-#include <string>
-#include <vector>
 
 
 
@@ -195,7 +136,8 @@ private:
 	residue_pair_energy_one_way(
 															conformation::Residue const & rsd1,
 															conformation::Residue const & rsd2,
-															pose::Pose const & pose
+															pose::Pose const & pose,
+															Real & score_aro
 															) const;
 
 	bool
@@ -204,13 +146,19 @@ private:
 		 conformation::Residue const & rsd2,
 		 Size const & m, Size const & n ) const;
 
+	bool
+	is_aro(
+				 conformation::Residue const & rsd1,
+				 Size const & m ) const;
+
+	virtual
+	core::Size version() const;
+
   Real const prefactor_;
   Distance const full_stack_cutoff_;
   Distance const dist_cutoff_;
   Real const dist_cutoff2_;
 	bool const base_base_only_;
-virtual
-core::Size version() const;
 
 };
 
