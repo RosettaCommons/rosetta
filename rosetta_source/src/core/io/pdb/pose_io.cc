@@ -27,23 +27,13 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/orbitals/OrbitalType.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
-// AUTO-REMOVED #include <core/chemical/residue_io.hh>
 #include <core/kinematics/FoldTree.hh>
-
 #include <core/scoring/Energies.hh>
 
-// AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
-// AUTO-REMOVED #include <core/id/AtomID_Mask.hh>
 
 #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.hh>
-
-
-//#include <core/io/pdb/pdb_dynamic_reader.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
@@ -51,9 +41,6 @@
 // option key includes
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/inout.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-// Auto-header: duplicate removed #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -499,6 +486,86 @@ void extract_scores(
 	out << "#END_POSE_ENERGIES_TABLE " << out.filename() << "\n";
 }
 
+
+/////////////////////////////////////////////////////////////////////
+void
+dump_connect_info(
+	pose::Pose const & pose,
+	std::ostream & out,
+	std::map< id::AtomID, Size > & atom_id_output ){
+
+	// It might be better to put this in file_data.cc, and to make use of the file_data to get the
+	// numbering exactly right.
+	Real const CUTOFF( 3.0 );
+	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+
+		conformation::Residue const & rsd( pose.residue(i) );
+
+		for ( Size j=1; j<= rsd.natoms(); ++j ) {
+
+			id::AtomID const atom_id( j, i );
+
+			if ( !atom_id_output[ atom_id ] ) continue;
+
+			utility::vector1<core::id::AtomID>	const & nbr_ids(  pose.conformation().bonded_neighbor_all_res( atom_id, true /*virt*/) );
+			for ( Size n = 1; n <= nbr_ids.size(); n++ ) {
+
+				id::AtomID const & nbr_id = nbr_ids[ n ];
+
+				if ( !atom_id_output[ nbr_id ] ) continue;
+
+				if ( atom_id.rsd() > nbr_id.rsd()   ) continue;
+				if ( atom_id.rsd() == nbr_id.rsd()  && atom_id.atomno() > nbr_id.atomno()  ) continue;
+
+				if ( ( pose.xyz( atom_id ) - pose.xyz( nbr_id ) ).length() < CUTOFF ) continue;
+
+				// Final check: actually look for a connection in the atom tree.
+				core::kinematics::tree::Atom const * atom( & pose.atom_tree().atom_dont_do_update( atom_id ) );
+				core::kinematics::tree::Atom const * nbr( & pose.atom_tree().atom_dont_do_update( nbr_id ) );
+
+				if( ( nbr->parent() != atom ) && ( atom->parent() != nbr ) ) continue;
+
+				out << "CONECT" << I(5,atom_id_output[ atom_id ]) << I(5,atom_id_output[  nbr_id  ]) << std::endl;
+
+			}
+
+		 }
+	 }
+
+ }
+
+/////////////////////////////////////////////////////////////////////
+// useful for centroid poses -- spit out "CONECT" information on bonded atoms
+//  that might otherwise be ignored by pymol/rasmol.
+void
+dump_connect_info(
+	pose::Pose const & pose,
+	std::ostream & out ){
+
+	std::map< id::AtomID, Size  > atom_id_output;
+
+	// It might be better to put this in file_data.cc, and to make use of the file_data to get the
+	// numbering exactly right.
+	Size count( 0 );
+
+	for ( Size i=1; i<= pose.total_residue(); ++i ) {
+		 conformation::Residue const & rsd( pose.residue(i) );
+		 for ( Size j=1; j<= rsd.natoms(); ++j ) {
+
+			 //skip outputting virtual atom unless specified
+			 atom_id_output[ id::AtomID(j,i) ] = 0;
+
+			 if ( !basic::options::option[ basic::options::OptionKeys::out::file::output_virtual ]() &&	rsd.is_virtual( j ) ) continue;
+
+			 count++;
+			 atom_id_output[ id::AtomID(j,i) ] = count;
+
+		 }
+	 }
+
+	 dump_connect_info( pose, out, atom_id_output );
+
+}
 
 } // namespace pdb
 } // namespace io

@@ -140,9 +140,6 @@ FileData::append_residue(
 		ai.z = atom.xyz()(3);
 		ai.occupancy = 1.0; // dummy occupancy, can be overridden by PDBInfo
 
-
-
-
 		// output with pdb specific info if possible
 		if ( use_PDB && rsd.seqpos() <= pdb_info->nres() ) {
 			// residue
@@ -467,10 +464,18 @@ write_additional_pdb_data(
 	bool write_fold_tree
 )
 {
-	if ( write_fold_tree | basic::options::option[ basic::options::OptionKeys::inout::fold_tree_io ].user() ) {
+
+	using namespace basic::options;
+
+	// added by rhiju --> "CONECT" lines. Useful for coarse-grained/centroid poses, so that
+	//  rasmol/pymol draws bonds between atoms 'bonded' in Rosetta that are far apart.
+	//  perhaps turn on with a flag?
+	if ( pose.residue(1).is_coarse() || option[ OptionKeys::inout::dump_connect_info]() )  dump_connect_info( pose, out );
+
+	if ( write_fold_tree || option[ OptionKeys::inout::fold_tree_io ].user() ) {
 		out << "REMARK " << pose.fold_tree();
 	}
-	if ( basic::options::option[ basic::options::OptionKeys::out::file::pdb_parents]() ) {
+	if ( basic::options::option[ OptionKeys::out::file::pdb_parents]() ) {
 		std::string value;
 		bool has_parents = core::pose::get_comment( pose, "parents", value );
 		if( has_parents ){
