@@ -18,7 +18,6 @@
 // AUTO-REMOVED #include <protocols/frag_picker/scores/FragmentCrmsd.hh>
 // AUTO-REMOVED #include <protocols/frag_picker/scores/FragmentScoreManager.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
-// AUTO-REMOVED #include <protocols/frag_picker/FragmentPicker.hh>
 
 // option key includes
 // AUTO-REMOVED #include <core/init.hh>
@@ -49,6 +48,11 @@
 // AUTO-REMOVED #include <boost/tuple/tuple.hpp>
 
 #include <utility/vector1.hh>
+
+#ifdef WIN32
+	#include <protocols/frag_picker/FragmentPicker.hh>
+#endif
+
 
 
 namespace protocols {

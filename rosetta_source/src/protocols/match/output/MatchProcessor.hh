@@ -32,6 +32,11 @@
 // c++ headers
 #include <map>
 
+#ifdef WIN32
+	#include <protocols/match/Hit.hh>
+#endif
+
+
 namespace protocols {
 namespace match {
 namespace output {

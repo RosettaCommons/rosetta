@@ -34,6 +34,7 @@
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <numeric/random/random.hh>
 
+
 #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 
@@ -46,6 +47,11 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <utility/vector1.hh>
+
+#ifdef WIN32
+	#include <core/conformation/Residue.hh>
+#endif
+
 
 namespace protocols {
 namespace moves {

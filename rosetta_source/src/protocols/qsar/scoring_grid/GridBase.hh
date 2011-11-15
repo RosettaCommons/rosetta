@@ -30,6 +30,10 @@
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.fwd.hh>
 
+#ifdef WIN32
+	#include <protocols/qsar/qsarMap.hh>
+#endif
+
 
 namespace protocols {
 namespace qsar {

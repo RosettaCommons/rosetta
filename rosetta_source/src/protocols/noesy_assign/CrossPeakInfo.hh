@@ -36,7 +36,7 @@
 
 //// C++ headers
 // AUTO-REMOVED #include <cstdlib>
-// AUTO-REMOVED #include <string>
+#include <string>
 // AUTO-REMOVED #include <list>
 // AUTO-REMOVED #include <map>
 

@@ -44,6 +44,11 @@
 #include <utility/fixedsizearray1.hh>
 #include <utility/vector1.hh>
 
+#ifdef WIN32
+	#include <protocols/match/downstream/LigandConformer.hh>
+#endif
+
+
 
 namespace protocols {
 namespace match {

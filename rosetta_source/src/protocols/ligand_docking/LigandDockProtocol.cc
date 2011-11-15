@@ -44,7 +44,6 @@
 #include <protocols/ligand_docking/RandomConformerMover.hh>
 #include <protocols/ligand_docking/ResidueTorsionRestraints.hh>
 #include <protocols/ligand_docking/UnconstrainedTorsionsMover.hh>
-// AUTO-REMOVED #include <protocols/ligand_docking/MinimizeLigand.hh> // REQUIRED FOR WINDOWS
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>

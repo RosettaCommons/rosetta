@@ -38,6 +38,10 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+#ifdef WIN32
+	#include <protocols/fldsgn/topology/HSSTriplet.hh>
+#endif
+
 
 //// C++ headers
 static basic::Tracer TR("protocols.fldsgn.filters.HelixKinkFilter");

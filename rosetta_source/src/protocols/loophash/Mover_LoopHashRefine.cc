@@ -94,6 +94,11 @@
 #include <utility/vector1.hh>
 #include <utility/excn/EXCN_Base.hh>
 
+#ifdef WIN32
+	#include <ctime>
+#endif
+
+
 static basic::Tracer TR("main");
 
 using namespace protocols::moves;

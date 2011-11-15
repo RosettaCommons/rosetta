@@ -41,6 +41,10 @@
 
 #include <protocols/noesy_assign/PeakAssignment.fwd.hh>
 
+#ifdef WIN32
+	#include <protocols/noesy_assign/PeakAssignment.hh>
+#endif
+
 
 namespace protocols {
 namespace noesy_assign {

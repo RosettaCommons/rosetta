@@ -39,14 +39,6 @@
 #include <core/pose/PDBInfo.fwd.hh>
 #include <core/pose/datacache/ObserverCache.fwd.hh>
 #include <core/pose/metrics/PoseMetricContainer.fwd.hh>
-#ifdef WIN32
-	#include <core/pose/signals/ConformationEvent.hh>
-	#include <core/pose/signals/DestructionEvent.hh>
-	#include <core/pose/signals/EnergyEvent.hh>
-	#include <core/pose/signals/GeneralEvent.hh>
-	#include <core/conformation/Residue.hh> // WIN32 INCLUDE
-	#include <core/pose/datacache/CacheableObserver.hh>
-#endif
 
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
@@ -104,6 +96,17 @@
 #include <core/pose/signals/EnergyEvent.fwd.hh>
 #include <core/pose/signals/GeneralEvent.fwd.hh>
 #include <utility/vector1.hh>
+
+
+#ifdef WIN32
+	#include <core/pose/signals/ConformationEvent.hh>
+	#include <core/pose/signals/DestructionEvent.hh>
+	#include <core/pose/signals/EnergyEvent.hh>
+	#include <core/pose/signals/GeneralEvent.hh>
+	#include <core/conformation/Residue.hh> /
+	#include <core/pose/datacache/CacheableObserver.hh>
+	#include <core/id/AtomID.hh>
+#endif
 
 
 // C++ Headers

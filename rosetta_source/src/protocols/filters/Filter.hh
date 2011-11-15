@@ -37,6 +37,10 @@
 //// C++ headers
 #include <string>
 
+#ifdef WIN32
+	#include <utility/tag/Tag.hh>
+#endif
+
 namespace protocols {
 namespace filters {
 

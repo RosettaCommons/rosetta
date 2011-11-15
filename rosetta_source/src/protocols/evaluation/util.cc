@@ -88,6 +88,11 @@
 #include <protocols/evaluation/util.hh>
 #include <utility/vector0.hh>
 
+#ifdef WIN32
+	#include <core/scoring/constraints/Constraint.hh>
+#endif
+
+
 static basic::Tracer tr("protocols.evalution");
 
 namespace protocols {

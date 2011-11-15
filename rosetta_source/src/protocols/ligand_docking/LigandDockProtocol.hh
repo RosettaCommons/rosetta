@@ -25,9 +25,6 @@
 // AUTO-REMOVED #include <protocols/enzdes/EnzConstraintIO.hh> //for adding constraints if demanded by user
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
 #include <protocols/ligand_docking/ResidueTorsionRestraints.fwd.hh>
-#ifdef WIN32
-#include <protocols/ligand_docking/ResidueTorsionRestraints.hh> // WIN32 INCLUDE
-#endif
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
@@ -37,6 +34,11 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 #include <utility/vector1.hh>
 
+
+#ifdef WIN32
+	#include <protocols/ligand_docking/ResidueTorsionRestraints.hh>
+	#include <protocols/ligand_docking/MinimizeLigand.hh>
+#endif
 
 namespace protocols {
 namespace ligand_docking {

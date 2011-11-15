@@ -30,7 +30,6 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
 
 #include <core/scoring/constraints/Constraint.fwd.hh>
 
@@ -52,6 +51,11 @@
 
 //// C++ headers
 // AUTO-REMOVED #include <list>
+
+#ifdef WIN32
+	#include <core/scoring/constraints/Constraint.hh>
+#endif
+
 
 namespace protocols {
 namespace evaluation {

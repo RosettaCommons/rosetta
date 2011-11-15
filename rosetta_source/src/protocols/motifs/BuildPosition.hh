@@ -34,6 +34,11 @@
 #include <set>
 // AUTO-REMOVED #include <string>
 
+#ifdef WIN32
+	#include <protocols/motifs/MotifHit.hh>
+#endif
+
+
 namespace protocols {
 namespace motifs {
 

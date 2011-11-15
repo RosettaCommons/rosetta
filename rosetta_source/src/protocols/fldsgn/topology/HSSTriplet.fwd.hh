@@ -30,10 +30,8 @@ typedef utility::pointer::owning_ptr< HSSTriplet const > HSSTripletCOP;
 typedef utility::pointer::owning_ptr< HSSTripletSet const > HSSTripletSetCOP;
 typedef utility::vector1< HSSTripletOP > HSSTriplets;
 
-#ifndef WIN32
-	typedef HSSTriplets::const_iterator HSSConstIterator;
-	typedef HSSTriplets::iterator HSSIterator;
-#endif
+typedef HSSTriplets::const_iterator HSSConstIterator;
+typedef HSSTriplets::iterator HSSIterator;
 
 } // namespace topology
 } // namespace fldsgn

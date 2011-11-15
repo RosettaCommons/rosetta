@@ -22,6 +22,10 @@
 
 #include <utility/vector1.hh>
 
+#ifdef WIN32
+	#include <protocols/rna/AllowInsert.hh>
+#endif
+
 
 namespace protocols{
 namespace rna{

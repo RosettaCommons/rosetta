@@ -23,6 +23,8 @@
 // Package headers
 #include <protocols/nonlocal/Policy.fwd.hh>
 
+#include <string>
+
 namespace protocols {
 namespace nonlocal {
 

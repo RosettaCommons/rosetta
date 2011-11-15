@@ -39,6 +39,10 @@
 #include <set>
 #include <string>
 
+#ifdef WIN32
+	#include <protocols/motifs/BuildPosition.hh>
+#endif
+
 namespace protocols {
 namespace motifs {
 

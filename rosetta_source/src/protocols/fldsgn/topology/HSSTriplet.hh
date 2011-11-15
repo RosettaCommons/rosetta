@@ -316,12 +316,6 @@ private: //data
 }; // HSSTripletSet
 
 
-#ifdef WIN32
-	typedef HSSTriplets::const_iterator HSSConstIterator;
-	typedef HSSTriplets::iterator HSSIterator;
-#endif
-
-
 } // namespace topology
 } // namespace fldsgn
 } // namespace protocols

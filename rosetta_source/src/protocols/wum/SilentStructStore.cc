@@ -476,7 +476,6 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
-#include <execinfo.h>
 #include <iomanip>
 #include <ios>
 #include <iosfwd>

@@ -19,7 +19,6 @@
 // AUTO-REMOVED #include <protocols/fldsgn/topology/SS_Info2.hh>
 // AUTO-REMOVED #include <protocols/fldsgn/topology/StrandPairing.hh>
 // AUTO-REMOVED #include <protocols/fldsgn/topology/HelixPairing.hh>
-// AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh>
 
 // Project header
 #include <core/types.hh>
@@ -34,6 +33,11 @@
 
 #include <core/kinematics/MoveMap.hh>
 #include <utility/vector1.hh>
+
+
+#ifdef WIN32
+	#include <protocols/fldsgn/topology/HSSTriplet.hh>
+#endif
 
 
 static basic::Tracer TR("protocols.fldsgn.BluePrint");
@@ -405,7 +409,7 @@ BluePrint::insert_ss_into_pose( Pose & pose )
 		pose.set_secstruct( i, boost::lexical_cast<char>( ss ) );
 	}
 }
-	
+
 
 } // ns fldsgn
 } // ns protocols

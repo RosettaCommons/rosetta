@@ -507,7 +507,6 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
-#include <execinfo.h>
 #include <fstream>
 #include <iomanip>
 #include <iosfwd>

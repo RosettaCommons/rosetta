@@ -18,7 +18,7 @@
 #include <protocols/features/Report.fwd.hh>
 
 // Package Headers
-// AUTO-REMOVED #include <protocols/features/FeaturesReporter.hh>
+#include <protocols/features/FeaturesReporter.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -28,7 +28,6 @@
 #include <utility/vector1.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
-#include <protocols/features/FeaturesReporter.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
 

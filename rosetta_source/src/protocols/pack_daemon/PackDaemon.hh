@@ -53,6 +53,9 @@
 
 #include <utility/vector1.hh>
 
+#ifdef WIN32
+	#include <core/pack/task/PackerTask.hh>
+#endif
 
 
 namespace protocols {
@@ -378,8 +381,8 @@ public:
 		core::pose::Pose const & pose,
 		core::pack::task::PackerTask const & task
 	); // no-op default implementation
-		
-	
+
+
 	virtual
 	core::Real
 	calculate( core::pose::Pose const & p ) = 0;

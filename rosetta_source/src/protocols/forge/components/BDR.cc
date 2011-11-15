@@ -515,7 +515,6 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
-#include <execinfo.h>
 #include <functional>
 #include <iomanip>
 #include <iosfwd>

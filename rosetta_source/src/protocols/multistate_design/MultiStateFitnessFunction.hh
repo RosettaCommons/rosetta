@@ -35,6 +35,11 @@
 #include <utility/vector1.hh>
 #include <map>
 
+#ifdef WIN32
+	#include <protocols/multistate_design/SingleState.hh>
+	#include <core/pose/Pose.hh>
+#endif
+
 
 namespace protocols {
 namespace multistate_design {

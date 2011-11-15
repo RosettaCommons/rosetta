@@ -21,7 +21,10 @@
 #include <protocols/loops/Loops.fwd.hh>
 #include <iostream>
 
-// AUTO-REMOVED #include <functional> // REQUIRED FOR WINDOWS
+#ifdef WIN32
+	#include <functional>
+#endif
+
 
 namespace protocols {
 namespace rbsegment_moves {

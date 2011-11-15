@@ -29,6 +29,11 @@
 // C++ Headers
 #include <map>
 
+#ifdef WIN32
+	#include <core/id/AtomID.hh>
+#endif
+
+
 namespace protocols {
 namespace rna {
 
