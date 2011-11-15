@@ -57,10 +57,22 @@ void RigidBodyMotionMover::apply(core::pose::Pose& pose) {
   if (jumps_.size() < 2)  // No sensible action possible
     return;
 
-  int jump_num = random_jump();
-  core::kinematics::Jump jump = pose.jump(jump_num);  // intentional copy
-  jump.gaussian_move(1, magnitude_translation(), magnitude_rotation());
-  pose.set_jump(jump_num, jump);
+  int i = random_jump();
+  core::kinematics::Jump jump = pose.jump(i);
+
+  // translation
+  jump.set_rb_delta(TRANS_X, 1, numeric::random::gaussian() * magnitude_translation());
+  jump.set_rb_delta(TRANS_Y, 1, numeric::random::gaussian() * magnitude_translation());
+  jump.set_rb_delta(TRANS_Z, 1, numeric::random::gaussian() * magnitude_translation());
+
+  // rotation
+  jump.set_rb_delta(ROT_X, 1, numeric::random::gaussian() * magnitude_rotation());
+  jump.set_rb_delta(ROT_Y, 1, numeric::random::gaussian() * magnitude_rotation());
+  jump.set_rb_delta(ROT_Z, 1, numeric::random::gaussian() * magnitude_rotation());
+
+  // update the jump
+  jump.fold_in_rb_deltas();
+  pose.set_jump(i, jump);
 }
 
 double RigidBodyMotionMover::magnitude_rotation() const {

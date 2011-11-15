@@ -32,6 +32,14 @@ namespace moves {
 class RigidBodyMotionMover : public Mover {
   typedef std::set<int> Jumps;
 
+ protected:
+  static const int TRANS_X = 1;
+  static const int TRANS_Y = 2;
+  static const int TRANS_Z = 3;
+  static const int ROT_X = 4;
+  static const int ROT_Y = 5;
+  static const int ROT_Z = 6;
+
  public:
   RigidBodyMotionMover();
   explicit RigidBodyMotionMover(const Jumps& jumps);
