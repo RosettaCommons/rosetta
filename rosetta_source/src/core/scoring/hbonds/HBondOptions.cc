@@ -49,6 +49,7 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 	use_hb_env_dep_ ( true ),
 	use_hb_env_dep_DNA_( true ),
 	smooth_hb_env_dep_( true ),
+	bb_donor_acceptor_check_( true ),
 	decompose_bb_hb_into_pair_energies_( false ),
 	params_database_tag_(params_db_tag),
 	use_incorrect_deriv_( true ),
@@ -72,6 +73,7 @@ HBondOptions::HBondOptions():
 	use_hb_env_dep_ ( true ),
 	use_hb_env_dep_DNA_( true ),
 	smooth_hb_env_dep_( true ),
+	bb_donor_acceptor_check_( true ),
 	decompose_bb_hb_into_pair_energies_( false ),
 	params_database_tag_("standard_params"),
 	use_incorrect_deriv_( false ),
@@ -109,6 +111,7 @@ HBondOptions::operator=( HBondOptions const & src )
 	use_hb_env_dep_ = src.use_hb_env_dep_;
 	use_hb_env_dep_DNA_ = src.use_hb_env_dep_DNA_;
 	smooth_hb_env_dep_ = src.smooth_hb_env_dep_;
+  bb_donor_acceptor_check_ = src.bb_donor_acceptor_check_;
 	decompose_bb_hb_into_pair_energies_ = src.decompose_bb_hb_into_pair_energies_;
 	params_database_tag_ = src.params_database_tag_;
 	use_incorrect_deriv_ = src.use_incorrect_deriv_;
@@ -206,6 +209,20 @@ HBondOptions::decompose_bb_hb_into_pair_energies( bool const setting )
 }
 
 ///
+bool
+HBondOptions::bb_donor_acceptor_check() const
+{
+	return bb_donor_acceptor_check_;
+}
+
+///
+void
+HBondOptions::bb_donor_acceptor_check( bool const setting )
+{
+	bb_donor_acceptor_check_ = setting;
+}
+
+///
 std::string const &
 HBondOptions::params_database_tag() const
 {
@@ -266,6 +283,7 @@ operator==( HBondOptions const & a, HBondOptions const & b )
 		( a.use_hb_env_dep_ == b.use_hb_env_dep_ ) &&
 		( a.use_hb_env_dep_DNA_ == b.use_hb_env_dep_DNA_ ) &&
 		( a.smooth_hb_env_dep_ == b.smooth_hb_env_dep_ ) &&
+		( a.bb_donor_acceptor_check_ == b.bb_donor_acceptor_check_ ) &&
 		( a.decompose_bb_hb_into_pair_energies_ == b.decompose_bb_hb_into_pair_energies_ ) &&
 		( a.params_database_tag_ == b.params_database_tag_ ) &&
 		( a.use_incorrect_deriv_ == b.use_incorrect_deriv_ ) &&
@@ -299,6 +317,8 @@ HBondOptions::show( std::ostream & out ) const
 		<<( use_hb_env_dep_DNA_ ? "true" : "false" ) << std::endl;
 	out <<"HBondOptions::show: smooth_hb_env_dep: "
 		<<( smooth_hb_env_dep_ ? "true" : "false " ) << std::endl;
+	out <<"HBondOptions::show: bb_donor_acceptor_check: "
+		<<( bb_donor_acceptor_check_ ? "true" : "false " ) << std::endl;
 	out <<"HBondOptions::show: decompose_bb_hb_into_pair_energies: "
 		<<( decompose_bb_hb_into_pair_energies_ ? "true" : "false" ) << std::endl;
 	out <<"HBondOptions::show: params_database_tag_: "

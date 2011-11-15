@@ -485,17 +485,19 @@ HBondSet::append_hbond(
 
 	// update hbcheck
 	// note: these dimension checks could be removed completely & replaced by pose-aware dimensioning
-	if ( dhatm_is_protein_backbone || aatm_is_protein_backbone ) {
-		Size const max_pos( std::max( acc_pos, don_pos ) );
-		if ( max_pos > backbone_backbone_donor_.size() ||
-			max_pos > backbone_backbone_acceptor_.size() ) {
-			// this could be more efficient if we require specifying nres ahead of time
-			// Specify nres in setup_for_residue_pair_energy
-			resize_bb_donor_acceptor_arrays( max_pos );
-		}
-		if ( dhatm_is_protein_backbone && aatm_is_protein_backbone ) {
-			backbone_backbone_donor_   [ don_pos ] = true;
-			backbone_backbone_acceptor_[ acc_pos ] = true;
+	if ( options_->bb_donor_acceptor_check() /* actually we could save a LOT of computation if we implement the removal of bb_donor_acceptor_check correctly... */ ){
+		if ( dhatm_is_protein_backbone || aatm_is_protein_backbone ) {
+			Size const max_pos( std::max( acc_pos, don_pos ) );
+			if ( max_pos > backbone_backbone_donor_.size() ||
+					 max_pos > backbone_backbone_acceptor_.size() ) {
+				// this could be more efficient if we require specifying nres ahead of time
+				// Specify nres in setup_for_residue_pair_energy
+				resize_bb_donor_acceptor_arrays( max_pos );
+			}
+			if ( dhatm_is_protein_backbone && aatm_is_protein_backbone ) {
+				backbone_backbone_donor_   [ don_pos ] = true;
+				backbone_backbone_acceptor_[ acc_pos ] = true;
+			}
 		}
 	}
 }
@@ -776,8 +778,8 @@ HBondSet::show(pose::Pose & pose, std::ostream & out) const
 			weight = hbond((int)i).weight();
 			hbE = hbond((int)i).energy();
 
-			out << "# " << I(5,don_res) << I(4,don_name) << I(5,don_atom_name) 
-				<< I(5,acc_res) << I(4,acc_name) << I(5,acc_atom_name) 
+			out << "# " << I(5,don_res) << I(4,don_name) << I(5,don_atom_name)
+				<< I(5,acc_res) << I(4,acc_name) << I(5,acc_atom_name)
 				<< F(6,2,HAdist)
 				<< F(7,1,DHAangle) << F(7,1,HABangle)
 				<< F(7,3,weight) << F(7,3,hbE) << std::endl;
