@@ -25,7 +25,6 @@
 #include <core/id/SequenceMapping.fwd.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
-// AUTO-REMOVED #include <basic/OStream.fwd.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -35,8 +34,6 @@
 #include <boost/functional/hash.hpp>
 
 // // C++ Headers
-#include <cassert>
-// AUTO-REMOVED #include <cstdlib>
 #include <string>
 #include <vector>
 
@@ -111,6 +108,23 @@ public:
 	}
 
 	// non-modifying access /////////////////////////////////////////////////////
+
+	/// @brief Returns the starting residue of the kinematic chunk to which res belongs
+	Size boundary_left(Size res) const {
+		assert(res > 0);
+		assert(res <= nres());
+		assert(!is_root(res));
+		return get_residue_edge(res).start();
+	}
+
+	/// @brief Returns the ending residue of the kinematic chunk to which res belongs
+	Size boundary_right(Size res) const {
+		assert(res > 0);
+		assert(res <= nres());
+		assert(!is_root(res));
+		return get_residue_edge(res).stop();
+	}
+
 
 	/// @brief Returns the number of edges in the FoldTree
 	///

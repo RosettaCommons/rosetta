@@ -68,7 +68,9 @@ class FoldTreeTest : public CxxTest::TestSuite {
       if (tree.is_root(i))
         continue;
 
+      // Latter is a shortcut to the former
       TS_ASSERT_EQUALS(n, tree.get_residue_edge(i).stop());
+      TS_ASSERT_EQUALS(n, tree.boundary_right(i));
     }
   }
 
@@ -79,7 +81,9 @@ class FoldTreeTest : public CxxTest::TestSuite {
       if (tree.is_root(i) || i == tree.nres())
         continue;
 
+      // Latter is a shortcut to the former
       TS_ASSERT_EQUALS(1, tree.get_residue_edge(i).start());
+      TS_ASSERT_EQUALS(1, tree.boundary_left(i));
     }
   }
 };
