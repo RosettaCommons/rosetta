@@ -15,28 +15,16 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit Headers
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/kinematics/Edge.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <basic/Tracer.hh>
 
 // Project headers
 #include <test/core/init_util.hh>
 
-// C/C++
-// AUTO-REMOVED #include <iostream>
-
-//Auto Headers
-#include <utility/vector1.hh>
-
-
 using core::kinematics::FoldTree;
 using core::pose::Pose;
-
-namespace {
-
-basic::Tracer TR("core.kinematics.FoldTree.cxxtest");
 
 class FoldTreeTest : public CxxTest::TestSuite {
  public:
@@ -47,37 +35,51 @@ class FoldTreeTest : public CxxTest::TestSuite {
     core::import_pose::pose_from_pdb(pose_, "core/kinematics/test.pdb");
   }
 
-  void tearDown() {}
-
   // Ensure that repeated calls to hash value yield identical results when
-	// applied to the same FoldTree
+  // applied to the same FoldTree
   void test_hash_value_unmodified() {
-		TS_ASSERT_EQUALS(pose_.fold_tree().hash_value(),
-										 pose_.fold_tree().hash_value());
+    TS_ASSERT_EQUALS(pose_.fold_tree().hash_value(),
+                     pose_.fold_tree().hash_value());
   }
 
   // Ensure that operations that modify the FoldTree have an effect on the
   // calculation of the hash value
   void test_hash_value_modified() {
-		using std::endl;
-
     FoldTree mod_tree(pose_.fold_tree());
     mod_tree.new_jump(1, 3, 2);
 
     size_t hash_orig = pose_.fold_tree().hash_value();
     size_t hash_mod = mod_tree.hash_value();
-
-    TR << "Original fold-tree: " << hash_orig << endl
-       << "Modified fold-tree: " << hash_mod << endl;
-
     TS_ASSERT_DIFFERS(hash_orig, hash_mod);
   }
 
-	/// @brief A quick check to see whether the FoldTree considers the final
-	/// residues in a simple fold tree to be a cutpoint
-	void test_last_residue_is_cutpoint() {
-		FoldTree tree(pose_.fold_tree());
-		TS_ASSERT(tree.is_cutpoint(pose_.total_residue()));
-	}
+  /// @brief A quick check to see whether the FoldTree considers the final
+  /// residues in a simple fold tree to be a cutpoint
+  void test_last_residue_is_cutpoint() {
+    const FoldTree& tree(pose_.fold_tree());
+    TS_ASSERT(tree.is_cutpoint(pose_.total_residue()));
+  }
+
+  void test_boundary_right() {
+    const FoldTree& tree = pose_.fold_tree();
+    const unsigned n = pose_.total_residue();
+
+    for (unsigned i = 1; i <= pose_.total_residue(); ++i) {
+      if (tree.is_root(i))
+        continue;
+
+      TS_ASSERT_EQUALS(n, tree.get_residue_edge(i).stop());
+    }
+  }
+
+  void test_boundary_left() {
+    const FoldTree& tree = pose_.fold_tree();
+
+    for (unsigned i = 1; i < pose_.total_residue(); ++i) {
+      if (tree.is_root(i) || i == tree.nres())
+        continue;
+
+      TS_ASSERT_EQUALS(1, tree.get_residue_edge(i).start());
+    }
+  }
 };
-}  // anonymous namespace
