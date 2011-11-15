@@ -1059,10 +1059,12 @@ sources = {
 		"RmsdFilter",
 		"RotamerBoltzmannWeight",
 		"SequenceRecoveryFilter",
-		"StubScoreFilter"
+		"StubScoreFilter",
+		"TorsionFilter"
 	],
 
 	"protocols/protein_interface_design/movers" : [
+		"AddChainBreak",
 		"AddSidechainConstraintsToHotspots",
 		"BestHotspotCstMover",
 		"BackrubDDMover",

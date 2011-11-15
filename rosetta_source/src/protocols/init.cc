@@ -127,6 +127,7 @@
 #include <protocols/protein_interface_design/movers/DisulfideMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/DumpPdbCreator.hh>
 #include <protocols/protein_interface_design/movers/SetAtomTreeCreator.hh>
+#include <protocols/protein_interface_design/movers/AddChainBreakCreator.hh>
 #include <protocols/protein_interface_design/movers/MapHotspotCreator.hh>
 #include <protocols/protein_interface_design/movers/BestHotspotCstMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/BuildAlaPoseCreator.hh>
@@ -224,6 +225,7 @@
 #include <protocols/protein_interface_design/filters/DesignableResiduesFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/RmsdFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/DeltaFilterCreator.hh>
+#include <protocols/protein_interface_design/filters/TorsionFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/RelativePoseFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/BindingStrainFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/AverageDegreeFilterCreator.hh>
@@ -409,6 +411,7 @@ static MoverRegistrator< protein_interface_design::movers::InterfaceRecapitulati
 static MoverRegistrator< protein_interface_design::movers::DisulfideMoverCreator > reg_DisulfideMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::DumpPdbCreator > reg_DumpPdbCreator;
 static MoverRegistrator< protein_interface_design::movers::SetAtomTreeCreator > reg_SetAtomTreeCreator;
+static MoverRegistrator< protein_interface_design::movers::AddChainBreakCreator > reg_AddChainBreakCreator;
 static MoverRegistrator< protein_interface_design::movers::MapHotspotCreator > reg_MapHotspotCreator;
 static MoverRegistrator< protein_interface_design::movers::BestHotspotCstMoverCreator > reg_BestHotspotCstMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::BuildAlaPoseCreator > reg_BuildAlaPoseCreator;
@@ -555,6 +558,7 @@ static FilterRegistrator< protocols::protein_interface_design::filters::RmsdFilt
 static FilterRegistrator< protocols::protein_interface_design::filters::AverageDegreeFilterCreator > reg_AverageFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::BoltzmannFilterCreator > reg_BoltzmannCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::DeltaFilterCreator > reg_DeltaFilterCreator;
+static FilterRegistrator< protocols::protein_interface_design::filters::TorsionCreator > reg_TorsionCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::RelativePoseFilterCreator > reg_RelativePoseFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::BindingStrainFilterCreator > reg_BindingStrainFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::FilterScanFilterCreator > reg_FilterScanFilterCreator;
