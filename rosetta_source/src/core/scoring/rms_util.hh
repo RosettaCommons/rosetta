@@ -320,6 +320,7 @@ nbr_atom_rmsd(
 	const core::pose::Pose & pose2
 );
 
+/*
 void
 fill_rmsd_coordinates(
 	int & natoms,
@@ -328,7 +329,7 @@ fill_rmsd_coordinates(
 	const core::pose::Pose & pose1,
 	const core::pose::Pose & pose2,
 	std::string atom_name
-);
+); */
 
 // other model-quality related functions
 
