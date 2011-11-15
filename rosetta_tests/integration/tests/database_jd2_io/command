@@ -42,6 +42,7 @@ cd %(workdir)s
 if type -P sqlite3 &>/dev/null; then
    sqlite3 structures.db3 'UPDATE protocols SET svn_url = "";'
    sqlite3 structures.db3 'UPDATE protocols SET svn_version = "";'
+   sqlite3 structures.db3 'DROP TABLE structure_scores;'
    sqlite3 structures.db3 '.dump' > structures.db3.dump
 else
    echo "Please install the sqlite3 command line application to correctly run this test."

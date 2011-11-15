@@ -26,7 +26,6 @@
 			<feature name=ResidueSecondaryStructureFeatures/>
 			<feature name=RotamerRecoveryFeatures scorefxn=s protocol=RRProtocolRTMin comparer=RRComparerAutomorphicRMSD/>
 			<feature name=SaltBridgeFeatures/>
-			<feature name=StructureScoresFeatures scorefxn=s/>
                 </ReportToDB>
 	</MOVERS>
 	<PROTOCOLS>
