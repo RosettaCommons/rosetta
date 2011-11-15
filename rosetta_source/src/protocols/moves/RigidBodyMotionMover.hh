@@ -33,20 +33,48 @@ class RigidBodyMotionMover : public Mover {
   typedef std::set<int> Jumps;
 
  public:
+  RigidBodyMotionMover();
   explicit RigidBodyMotionMover(const Jumps& jumps);
 
   /// @brief Randomly selects a chunk and perturbs its rigid body transformation
   void apply(core::pose::Pose& pose);
 
-  // jd2
+  /// @brief Returns the magnitude of translation
+  double magnitude_translation() const;
+
+  /// @brief Returns the magnitude of rotation
+  double magnitude_rotation() const;
+
+  /// @brief Updates the magnitude of translation
+  void set_magnitude_translation(double mag_trans);
+
+  /// @brief Updates the magnitude of rotation
+  void set_magnitude_rotation(double mag_rot);
+
+  /// @brief Returns the name of this mover
   std::string get_name() const;
+
+  /// @brief Returns a new instance created by the copy constructor
   MoverOP clone() const;
 
- private:
-	/// @brief Returns a randomly selected jump
-	int random_jump() const;
+  /// @brief Returns a new instance created by the default constructor
+  MoverOP fresh_instance() const;
 
+ private:
+  /// @brief Shared initialization
+  void initialize(const Jumps& jumps);
+
+  /// @brief Returns a randomly selected jump
+  int random_jump() const;
+
+  /// @brief Collection of jumps to manipulate
   Jumps jumps_;
+
+  /// @brief Magnitude of rotation. Unless otherwise specified, equal to -rigid:rotation.
+  double mag_rot_;
+
+  /// @brief Magnitude of translation. Unless otherwise specified, equal to -rigid:translation.
+  double mag_trans_;
 };
 
 }  // namespace moves
