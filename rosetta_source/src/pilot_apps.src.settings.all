@@ -48,7 +48,7 @@ sources = {
 	"pilot/cmiles" : [
                 #"helix_rotate",
 		"medal",
-                "medal_abinitio",
+		"medal_abinitio",
 		"medal_exchange",
 		"nonlocal_abinitio",
                 #"sheet_translate",
@@ -203,8 +203,10 @@ sources = {
 	],
 
 	"pilot/james" : [
+		"analyze_casp9",
 		"per_residue_features",
 		"jdock",
+		"superdev",
 		#"make_artificial_centroids",
 		#"frag_hack",
 		#"zafer_frag_rmsd",
@@ -235,8 +237,8 @@ sources = {
 		#"jidealize",
 		#"boost_hacks",
 		#"exhaustive_align",
-		#"ss_features",
-		#"jcluster",
+		"template_features",
+		"jcluster",
 		#"ca_build",
 		#"silent_cst_quality",
 		#"prof_search",
@@ -253,7 +255,7 @@ sources = {
 		#"dp_align",
 		"distances",
 		"angles",
-		#"cst_quality",
+		"cst_quality",
 		#"constraints_matrix",
 		#"score_silent_cst",
 		#"constraints_viewer",
@@ -519,7 +521,7 @@ sources = {
 		#"Superimpose_Pdbs", # /* ????,Documentation Location,Demo Location */
 	],
 
-	"pilot/chu" : [ 
+	"pilot/chu" : [
 		#"zinc_stat", # /* Chu Wang,Documentation Location,Demo Location */
 	],
 

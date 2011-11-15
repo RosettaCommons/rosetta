@@ -106,7 +106,7 @@ int main( int argc, char* argv [] ) {
 					for ( Size n = 1; n <= resj.natoms(); ++n ) {
 						if ( atoms_wanted.size() > 0 ) {
 							std::string const & atom_m( resi.atom_type(m).name() );
-							std::string const & atom_n( resi.atom_type(n).name() );
+							std::string const & atom_n( resj.atom_type(n).name() );
 							utility::vector1< std::string >::const_iterator find_m( 
 								std::find(atoms_wanted.begin(),atoms_wanted.end(),atom_m)
 							);

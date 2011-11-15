@@ -103,7 +103,8 @@ sources = {
 		"super_aln",
 		"full_length_model",
 		"cluster_alns",
-                "fix_alignment_to_match_pdb",
+		"fix_alignment_to_match_pdb",
+		#"fast_cm",
 	],
 
 	"public/electron_density" : [
