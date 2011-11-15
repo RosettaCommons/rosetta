@@ -184,7 +184,8 @@ private:
 	void calc_centroid_dG ( core::pose::Pose complex_pose, core::pose::Pose separated_pose );
 	///@brief fill in later
 	void calc_hbond_sasaE( core::pose::Pose pose );
-
+	///@brief find the interface shape compementarity value between the chains
+	void compute_interface_sc( core::Size & interface_jump, core::pose::Pose const & complexed_pose);
 private:
 	///@brief jump to define which interface is interesting
 	core::Size interface_jump_;
@@ -200,6 +201,8 @@ private:
 	core::Size chain2_;
 	std::string chain1_char_;
 	std::string chain2_char_;
+	std::set<core::Size> upstream_chains_;
+	std::set<core::Size> downstream_chains_;
 
 	///@brief output to tracer or PDB/silent file
 	bool tracer_;
@@ -258,6 +261,9 @@ private:
 	//core::Real total_hb_sasa_;
 	///@brief total energy of interface Hbonds
 	core::Real total_hb_E_;
+
+	///@breif shape complementarity values
+	core::Real sc_value_;
 
 	///@brief set of residues at the interface in question
 	std::set< core::Size > interface_set_;

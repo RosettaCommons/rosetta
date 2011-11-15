@@ -28,6 +28,7 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/sasa.hh>
+#include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 //#include <core/scoring/Energies.hh>
 //#include <core/scoring/EnergyMap.hh>
 #include <core/chemical/ChemicalManager.hh> //for centroid switch
@@ -182,9 +183,12 @@ namespace moves{
   //hbond_exposure_ratio_(0),
   //total_hb_sasa_(0),
   total_hb_E_(0),
+	sc_value_(0.0),
   task_(0)//,
   {
     protocols::moves::Mover::type( "InterfaceAnalyzer" );
+		upstream_chains_.insert(0);
+		downstream_chains_.insert(0);
   }
 
   //Alternate constructor for multichain poses
@@ -242,6 +246,7 @@ namespace moves{
   //hbond_exposure_ratio_(0),
   //total_hb_sasa_(0),
   total_hb_E_(0),
+	sc_value_(0.0),
   //interface_set_,
   //chain_groups_,
   task_(0)//,
@@ -254,6 +259,8 @@ namespace moves{
   //InterGroupNeighborsCalculator_,
   {
     protocols::moves::Mover::type( "InterfaceAnalyzer" );
+		upstream_chains_.insert(0);
+		downstream_chains_.insert(0);
   }
 
 
@@ -372,6 +379,9 @@ namespace moves{
     //find the change in interface hbonds
     compute_interface_delta_hbond_unsat( complexed_pose, separated_pose );
 
+		//find the shape complementarity stats for the interface
+		compute_interface_sc(interface_jump_, complexed_pose);
+
     //always will fill a selection option to get the pymol selection
     print_pymol_selection_of_interface_residues( complexed_pose, interface_set_);
 
@@ -409,7 +419,11 @@ namespace moves{
     chain2_ = pose.residue(pose.fold_tree().downstream_jump_residue(interface_jump_)).chain();
     chain1_char_ = pose.pdb_info()->chain(pose.conformation().chain_end(chain1_));
     chain2_char_ = pose.pdb_info()->chain(pose.conformation().chain_end(chain2_));
-
+		//set here_ will be later replaced by multichain constructor if need be
+		upstream_chains_.clear();
+		downstream_chains_.clear();
+		upstream_chains_.insert(chain1_);
+		downstream_chains_.insert( chain2_);
   }
 
   ///@details makes the interface sets for either constructor
@@ -493,14 +507,23 @@ namespace moves{
     using namespace core;
     using namespace utility;
     std::set<Size> fixed_side_residues, other_side_residues;
+		std::set<core::Size> fixed_chain_nums ;
+		std::set<core::Size> other_chain_nums;
     //itterate over all residues determine what part of the interface they are
+		//also select what chain(s) are upstream and downstream of the interface
     for( Size ii = 1; ii<= pose.total_residue(); ++ii){
-        if( fixed_chains.count( pose.chain( ii ) ) )
+			if( fixed_chains.count( pose.chain( ii ) ) ){
           fixed_side_residues.insert( ii );
-        else
+					fixed_chain_nums.insert( pose.chain( ii ) );
+			}
+			else{
           other_side_residues.insert( ii );
+					other_chain_nums.insert( pose.chain( ii ) );
+			}
     }
-
+		//now assign the correct chains
+		upstream_chains_ = fixed_chain_nums;
+		downstream_chains_= other_chain_nums;
     //debugging
     //TR << "Fixed residues: " << fixed_side_residues.size() << "   Other side residues: " << other_side_residues.size() << std::endl;
 
@@ -699,7 +722,7 @@ namespace moves{
 				T(posename_base_) << "HBOND ENERGY/ SEPARATED INTERAFCE ENERGY: " << total_hb_E_ / separated_interface_energy_ << std::endl;
         if (compute_packstat_)
           T(posename_base_) << "INTERFACE PACK STAT: " << interface_packstat_ << std::endl;
-
+				T(posename_base_) << "SHAPE COMPLEMENTARITY VALUE: " << sc_value_ << std::endl;
         //results <<  pymol_sel_interface_;
         //	results <<  pymol_sel_hbond_unsat_;
         //if(compute_packstat_)
@@ -729,6 +752,8 @@ namespace moves{
         current_job->add_string_real_pair("side2_normalized", (side2_score_/(core::Real(side2_nres_))) );
         current_job->add_string_real_pair("complex_normalized", complex_energy_/(core::Real(nres_)) );
         current_job->add_string_real_pair("hbond_E_fraction", total_hb_E_/separated_interface_energy_);
+        current_job->add_string_real_pair("sc_value", sc_value_);
+
     }
 
   }
@@ -1264,6 +1289,43 @@ namespace moves{
   // void hbond_info_calculate( core::scoring::hbonds::HBond hbond ){
   // 	//does nothing for now, figure out later
   // }
+
+void
+InterfaceAnalyzerMover::compute_interface_sc( core::Size & interface_jump, core::pose::Pose const & complexed_pose){
+
+	core::scoring::sc::ShapeComplementarityCalculator sc_calc;
+	// Split PDB into two surfaces
+	for(core::Size i = 1; i <= complexed_pose.n_residue(); i++) {
+		if(upstream_chains_.count( complexed_pose.chain( i ) ) )
+			sc_calc.AddResidue(0, complexed_pose.residue(i));
+		else if(downstream_chains_.count( complexed_pose.chain( i ) ) )
+			sc_calc.AddResidue(1, complexed_pose.residue(i));
+		else
+			continue;
+	}
+		//now claculate and print results
+		TR << "Computing Shape Complementarity Score..." << std::endl;
+		TR << "Upstream chain(s) numbers: ";
+		for( std::set< core::Size >::const_iterator it(upstream_chains_.begin()), end(upstream_chains_.end());
+        it != end; ++it){
+			TR << *it << ", ";
+    }
+		TR << std::endl;
+
+		TR << "Downstream chain(s) numbers: ";
+		for( std::set< core::Size >::const_iterator it(downstream_chains_.begin()), end(downstream_chains_.end());
+				 it != end; ++it){
+			TR << *it << ", ";
+    }
+		TR << std::endl;
+
+		//actual calculate function
+		sc_calc.Calc();
+		core::scoring::sc::RESULTS const results = sc_calc.GetResults();
+		sc_value_ = results.sc;
+
+}//end compute_interface_sc
+
 
   ///@details  Mutate all residues to GlY rescore complex energy and separated energy
   void InterfaceAnalyzerMover::mut_to_gly( core::pose::Pose complex_pose, core::pose::Pose separated_pose ) {
