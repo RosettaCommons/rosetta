@@ -179,6 +179,12 @@ StructureScoresFeatures::report_features(
 	Size struct_id,
 	sessionOP db_session
 ){
+	if(!pose.energies().energies_updated()){
+		stringstream err_msg;
+		err_msg << "Attempting to extract structure score features from pose, however the energies are not up to date. Please score the pose with a ScoreFunction first.";
+		utility_exit_with_message(err_msg.str());
+	}
+
 	insert_structure_score_rows(pose, relevant_residues, struct_id, db_session);
 	return 0;
 }

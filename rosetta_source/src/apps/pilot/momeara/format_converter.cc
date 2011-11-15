@@ -133,7 +133,7 @@ main( int argc, char* argv [] ) {
 	cout << "      -ignore_waters                              Ignore only the water molecules" << endl;
 	cout << endl;
 	cout << "   PDB input:" << endl;
-	cout << "      -in:file:s *.pdb   or                       PDB input file name" << endl;
+	cout << "      -in:file:s *.pdb                            PDB input file name" << endl;
 	cout << "      -in:file:l  list_of_pdbs                    File containing list of PDB input file names" << endl;
 	cout << endl;
 	cout << "   Silent input:" << endl;
@@ -147,7 +147,7 @@ main( int argc, char* argv [] ) {
 	cout << endl;
 	cout << "   General Database:" << endl;
 	cout << "      -inout:database_mode                        Specify database backend. default: 'sqlite3'" << endl;
-	cout << "      -inout:database_fname                       If sqlite3 the filename for the database" << endl;
+	cout << "      -inout:database_filename                    If sqlite3 the filename for the database" << endl;
 	cout << "      -mysql:host                                 Note to use mysql as a backend:" << endl;
 	cout << "	     -mysql:user                                   compile with 'extras=mysql'" << endl;
 	cout << "      -mysql:password                               and use the '-input:datbase_mode mysql' flag" << endl;

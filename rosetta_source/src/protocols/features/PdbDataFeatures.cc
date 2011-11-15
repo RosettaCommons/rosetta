@@ -166,6 +166,11 @@ void PdbDataFeatures::load_into_pose(
 	Pose & pose)
 {
 	load_residue_pdb_identification(db_session,struct_id,pose);
+
+	// Currently temperature/occupancy information is only extracted at
+	// the residue level rather than at the atom level. So, don't try to
+	// put that information back into the AtomRecords in the PDBInfo
+	// object.
 }
 
 void PdbDataFeatures::load_residue_pdb_identification(
@@ -175,19 +180,19 @@ void PdbDataFeatures::load_residue_pdb_identification(
 {
 	if(!table_exists(db_session, "residue_pdb_identification")) return;
 
-	vector1<Size> pdb_numbers;
+	vector1<int> pdb_numbers;
 	vector1<char> pdb_chains;
 	vector1<char> insertion_codes;
 	std::string statement_string =
 		"SELECT\n"
-		"	residue_number,\n"
-		"	chain_id,\n"
-		"	insertion_code,\n"
-		"	pdb_residue_number\n"
+		"	r_id.residue_number,\n"
+		"	r_id.chain_id,\n"
+		"	r_id.insertion_code,\n"
+		"	r_id.pdb_residue_number\n"
 		"FROM\n"
-		"	residue_pdb_identification\n"
+		"	residue_pdb_identification AS r_id\n"
 		"WHERE\n"
-		"	residue_pdb_identification.struct_id=?;";
+		"	r_id.struct_id=?;";
 
 	statement stmt(basic::database::safely_prepare_statement(statement_string,db_session));
 	stmt.bind(1,struct_id);
@@ -198,11 +203,11 @@ void PdbDataFeatures::load_residue_pdb_identification(
 		//cppdb doesn't do char's
 		string chain_id;
 		string insertion_code;
-		Size pdb_residue_number;
+		int pdb_residue_number;
 
 		res >> residue_number >> chain_id >> insertion_code >> pdb_residue_number;
 
-		pdb_numbers.push_back(residue_number);
+		pdb_numbers.push_back(pdb_residue_number);
 		pdb_chains.push_back(chain_id[0]);
 		insertion_codes.push_back(insertion_code[0]);
 	}
@@ -229,7 +234,7 @@ void PdbDataFeatures::insert_residue_pdb_identification_rows(
 	{
 		string chain_id(& pose.pdb_info()->chain(index),1);
 		string insertion_code(&pose.pdb_info()->icode(index),1);
-		Size pdb_residue_number = pose.pdb_info()->number(index);
+		int pdb_residue_number = pose.pdb_info()->number(index);
 
 		stmt.bind(1,struct_id);
 		stmt.bind(2,index);
@@ -281,6 +286,9 @@ void PdbDataFeatures::insert_residue_pdb_confidence_rows(
 		basic::database::safely_write_to_database(stmt);
 	}
 }
+
+
+
 
 }
 }

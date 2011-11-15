@@ -35,6 +35,7 @@
 
 // Platform Headers
 #include <core/pose/Pose.hh>
+#include <core/scoring/Energies.hh>
 #include <core/pose/util.hh>
 
 #include <core/scoring/ScoreType.hh>
@@ -227,8 +228,12 @@ ProteinSilentReport::write_full_report(
 		pose, relevant_residues, struct_id, db_session);
 	pdb_data_features_->report_features(
 		pose,relevant_residues,struct_id,db_session);
-	structure_scores_features_->report_features(
-		pose, relevant_residues, struct_id, db_session);
+
+	if(pose.energies().energies_updated()){
+		structure_scores_features_->report_features(
+			pose, relevant_residues, struct_id, db_session);
+	}
+
 	pose_comments_features_->report_features(
 		pose, relevant_residues, struct_id, db_session);
 	protein_residue_conformation_features_->report_features(
