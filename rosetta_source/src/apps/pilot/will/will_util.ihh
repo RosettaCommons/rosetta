@@ -19,6 +19,7 @@
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <numeric/constants.hh>
 #include <numeric/xyz.io.hh>
+#include <ObjexxFCL/format.hh>
 
 using core::Real;
 using core::Size;
