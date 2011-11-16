@@ -33,11 +33,12 @@
 
 // Option headers
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/jd2.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 
 // C++ headers
 #include <string>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
@@ -53,7 +54,7 @@
 #include <protocols/jd2/MPIWorkPoolJobDistributor.fwd.hh>
 #include <protocols/jd2/Parser.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
-#include <protocols/jobdist/Jobs.hh>
+// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverStatus.hh>

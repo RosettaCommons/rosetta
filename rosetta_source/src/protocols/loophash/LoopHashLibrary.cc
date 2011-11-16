@@ -55,7 +55,7 @@
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 
-// AUTO-REMOVED #include <boost/cstdint.hpp>
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -151,9 +151,9 @@
 #include <core/optimization/AtomTreeMinimizer.fwd.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
 #include <core/optimization/NumericalDerivCheckResult.fwd.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pack/task/operation/TaskOperation.fwd.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/pose/MiniPose.fwd.hh>
 #include <core/pose/PDBInfo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -175,7 +175,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Func.fwd.hh>
 #include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.fwd.hh>
 #include <core/scoring/methods/ContextDependentTwoBodyEnergy.fwd.hh>
@@ -214,7 +214,7 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverCreator.hh>
+// AUTO-REMOVED #include <protocols/moves/MoverCreator.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/relax/RelaxProtocolBase.fwd.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
@@ -435,8 +435,8 @@
 #include <basic/MetricValue.fwd.hh>
 #include <basic/Tracer.fwd.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
-#include <basic/datacache/CacheableData.fwd.hh>
-#include <basic/datacache/CacheableData.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableData.fwd.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableData.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>
@@ -445,10 +445,8 @@
 #include <boost/unordered/unordered_map.hpp>
 #include <boost/unordered_map.hpp>
 
-//Auto using namespaces
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>

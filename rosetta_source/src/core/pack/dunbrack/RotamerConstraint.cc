@@ -28,6 +28,7 @@
 
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -36,7 +37,7 @@
 #include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
@@ -49,7 +50,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.fwd.hh>
-#include <core/chemical/types.hh>
+// AUTO-REMOVED #include <core/chemical/types.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
@@ -61,7 +62,7 @@
 #include <core/conformation/PseudoBond.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/orbitals/OrbitalXYZCoords.hh>
-#include <core/conformation/signals/LengthEvent.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/signals/LengthEvent.fwd.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
 #include <core/graph/Graph.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
@@ -72,7 +73,7 @@
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
-#include <core/id/SequenceMapping.hh>
+// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/io/pdb/file_data.fwd.hh>
 #include <core/io/pdb/file_data.hh>

@@ -40,7 +40,7 @@
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
 #include <core/io/pdb/pose_io.hh>
-#include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
@@ -79,6 +79,7 @@
 #include <sstream>
 #include <map>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -444,11 +445,8 @@
 #include <zlib/zlib.h>
 #include <zlib/zutil.h>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 
 
 

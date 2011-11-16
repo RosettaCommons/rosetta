@@ -40,6 +40,7 @@
 #include <map>
 #include <string>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.fwd.hh>
@@ -75,7 +76,7 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
-#include <protocols/jd2/InnerJob.fwd.hh>
+// AUTO-REMOVED #include <protocols/jd2/InnerJob.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
 #include <protocols/jd2/JobDistributor.fwd.hh>
 #include <protocols/jd2/JobInputter.fwd.hh>
@@ -249,7 +250,7 @@
 #include <ObjexxFCL/FArraySection.hh>
 #include <ObjexxFCL/FArrayTraits.fwd.hh>
 #include <ObjexxFCL/FArrayTraits.hh>
-#include <ObjexxFCL/Fstring.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/Fstring.fwd.hh>
 #include <ObjexxFCL/IndexRange.fwd.hh>
 #include <ObjexxFCL/IndexRange.hh>
 #include <ObjexxFCL/InitializerSentinel.hh>
@@ -262,24 +263,24 @@
 #include <ObjexxFCL/Star.fwd.hh>
 #include <ObjexxFCL/Star.hh>
 #include <ObjexxFCL/TypeTraits.hh>
-#include <ObjexxFCL/byte.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/byte.fwd.hh>
 #include <ObjexxFCL/char.functions.hh>
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/proxy_const_assert.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <ObjexxFCL/ubyte.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/ubyte.fwd.hh>
 #include <algorithm>
 #include <cassert>
 #include <cmath>
-#include <complex>
+// AUTO-REMOVED #include <complex>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <iomanip>
 #include <iosfwd>
 #include <iostream>
-#include <istream>
+// AUTO-REMOVED #include <istream>
 #include <limits>
 #include <list>
 #include <ostream>
@@ -297,6 +298,9 @@
 #include <basic/prof.hh>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
+
+//Auto Headers
+
 
 static basic::Tracer tr("protocols.moves.mc_convergence_check.Pool",basic::t_info);
 

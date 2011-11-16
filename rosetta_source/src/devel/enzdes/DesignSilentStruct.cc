@@ -41,6 +41,7 @@
 #include <basic/MetricValue.hh>
 // Auto-header: duplicate removed #include <core/pose/Pose.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -426,11 +427,6 @@
 #include <boost/functional/hash.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/pool/poolfwd.hpp>
-
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-//Auto using namespaces end
 
 //#include <devel/PoseMetricCalculators/InterfaceDeltaEnergeticsCalculator.hh> //needed for type checking
 

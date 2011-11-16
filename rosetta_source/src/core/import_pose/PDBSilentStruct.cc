@@ -54,6 +54,7 @@
 // option key includes
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -270,11 +271,8 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 
 namespace core {
 namespace import_pose {

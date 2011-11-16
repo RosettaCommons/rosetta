@@ -30,6 +30,7 @@
 #include <sstream>
 #include <set>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -147,23 +148,20 @@
 #include <iosfwd>
 #include <iostream>
 #include <limits>
-#include <list>
+// AUTO-REMOVED #include <list>
 #include <map>
 #include <ostream>
 #include <string>
-#include <typeinfo>
+// AUTO-REMOVED #include <typeinfo>
 #include <vector>
 #include <basic/MetricValue.fwd.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
-#include <boost/algorithm/string/erase.hpp>
+// AUTO-REMOVED #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 
 
 // Operating system headers

@@ -73,6 +73,7 @@
 #include <algorithm>
 #include <string>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.fwd.hh>
@@ -80,7 +81,7 @@
 #include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
@@ -94,7 +95,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.fwd.hh>
-#include <core/chemical/types.hh>
+// AUTO-REMOVED #include <core/chemical/types.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
@@ -118,7 +119,7 @@
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
-#include <core/id/SequenceMapping.hh>
+// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/types.hh>
 #include <core/import_pose/import_pose.hh>
@@ -171,7 +172,7 @@
 #include <core/scoring/constraints/XYZ_Func.fwd.hh>
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/jd2/InnerJob.fwd.hh>
+// AUTO-REMOVED #include <protocols/jd2/InnerJob.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.fwd.hh>
@@ -181,7 +182,7 @@
 #include <protocols/jd2/Parser.fwd.hh>
 #include <protocols/jd2/SilentFileJobInputter.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
-#include <protocols/jobdist/Jobs.hh>
+// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
 #include <protocols/loops/Loop.fwd.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.fwd.hh>
@@ -192,8 +193,8 @@
 #include <utility/Bound.fwd.hh>
 #include <utility/Bound.hh>
 #include <utility/down_cast.hh>
-#include <utility/stream_util.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/stream_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/vector1_bool.hh>
 #include <utility/vectorL.fwd.hh>
@@ -328,16 +329,16 @@
 #include <utility/signals/SignalHub.fwd.hh>
 #include <utility/signals/SignalHub.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/constants.hh>
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/NumericTraits.hh>
+// AUTO-REMOVED #include <numeric/constants.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/sphericalVector.fwd.hh>
-#include <numeric/sphericalVector.hh>
+// AUTO-REMOVED #include <numeric/sphericalVector.hh>
 #include <numeric/trig.functions.hh>
-#include <numeric/types.hh>
+// AUTO-REMOVED #include <numeric/types.hh>
 #include <numeric/xyz.functions.fwd.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.fwd.hh>
@@ -412,7 +413,7 @@
 #include <map>
 #include <set>
 #include <sstream>
-#include <typeinfo>
+// AUTO-REMOVED #include <typeinfo>
 #include <utility>
 #include <vector>
 #include <basic/MetricValue.fwd.hh>
@@ -421,7 +422,7 @@
 #include <basic/options/after_opts.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/option.hh>
-#include <boost/algorithm/string/erase.hpp>
+// AUTO-REMOVED #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <zlib/zlib.h>

@@ -17,13 +17,14 @@
 // Package Headers
 
 #include <core/io/silent/SilentStruct.fwd.hh>
-#include <core/io/silent/SilentStructFactory.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/BinaryProteinSilentStruct.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -157,7 +158,7 @@
 #include <utility/vectorL.hh>
 #include <utility/vectorL_Selector.hh>
 #include <utility/vectorL_bool.hh>
-#include <utility/factory/WidgetRegistrator.hh>
+// AUTO-REMOVED #include <utility/factory/WidgetRegistrator.hh>
 #include <utility/file/FileName.fwd.hh>
 #include <utility/file/FileName.hh>
 #include <utility/file/PathName.fwd.hh>
@@ -392,6 +393,9 @@
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/lexical_cast.hpp>
+
+//Auto Headers
+
 
 
 namespace core {

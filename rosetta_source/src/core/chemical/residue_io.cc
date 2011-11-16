@@ -48,6 +48,7 @@
 // Numeric headers
 #include <numeric/conversions.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -68,7 +69,7 @@
 #include <core/chemical/types.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
-#include <core/chemical/orbitals/OrbitalTypeMapper.fwd.hh>
+// AUTO-REMOVED #include <core/chemical/orbitals/OrbitalTypeMapper.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 #include <core/chemical/sdf/MolData.fwd.hh>
 #include <core/chemical/sdf/MolData.hh>
@@ -290,12 +291,13 @@
 #include <boost/foreach.hpp>
 #include <zlib/zlib.h>
 #include <zlib/zutil.h>
+
+//Auto Headers
+
 #define foreach BOOST_FOREACH
 
 //Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
 //Auto using namespaces end
 
 

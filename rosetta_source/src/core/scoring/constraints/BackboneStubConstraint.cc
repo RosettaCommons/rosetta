@@ -30,6 +30,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -38,7 +39,7 @@
 #include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
@@ -52,7 +53,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.fwd.hh>
-#include <core/chemical/types.hh>
+// AUTO-REMOVED #include <core/chemical/types.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
@@ -84,7 +85,7 @@
 #include <core/id/DOF_ID_Map.fwd.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
-#include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/id/SequenceMapping.hh>
@@ -239,11 +240,8 @@
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 
 namespace core {
 namespace scoring {

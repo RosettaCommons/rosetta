@@ -24,7 +24,7 @@
 #include <protocols/moves/ProlineFixMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
-#include <protocols/electron_density/util.hh>
+// AUTO-REMOVED #include <protocols/electron_density/util.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
 #include <protocols/topology_broker/util.hh>
 
@@ -63,6 +63,7 @@
 #include <basic/options/keys/krassk.OptionKeys.gen.hh>
 #include <basic/options/keys/broker.OptionKeys.gen.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -72,12 +73,12 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/RotamerSetBase.fwd.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
-#include <core/fragment/FragData.fwd.hh>
-#include <core/fragment/FragData.hh>
+// AUTO-REMOVED #include <core/fragment/FragData.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.fwd.hh>
-#include <core/fragment/Frame.fwd.hh>
-#include <core/fragment/SingleResidueFragData.fwd.hh>
-#include <core/fragment/SingleResidueFragData.hh>
+// AUTO-REMOVED #include <core/fragment/Frame.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/SingleResidueFragData.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/SingleResidueFragData.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.fwd.hh>
@@ -90,7 +91,7 @@
 #include <core/id/JumpID.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/NamedStubID.fwd.hh>
-#include <core/id/SequenceMapping.fwd.hh>
+// AUTO-REMOVED #include <core/id/SequenceMapping.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
@@ -348,6 +349,9 @@
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
+
+//Auto Headers
+
 
 //Auto using namespaces
 namespace std { } using namespace std; // AUTO USING NS

@@ -44,24 +44,25 @@
 // option key includes
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/RotamerSetBase.fwd.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
-#include <core/fragment/FragData.fwd.hh>
-#include <core/fragment/FragData.hh>
+// AUTO-REMOVED #include <core/fragment/FragData.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FragData.hh>
 #include <core/fragment/FragID.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/Frame.fwd.hh>
 #include <core/fragment/FrameIterator.fwd.hh>
 #include <core/fragment/FrameList.fwd.hh>
-#include <core/fragment/SingleResidueFragData.fwd.hh>
-#include <core/fragment/SingleResidueFragData.hh>
+// AUTO-REMOVED #include <core/fragment/SingleResidueFragData.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/SingleResidueFragData.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.fwd.hh>
@@ -320,11 +321,8 @@
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 
 
 

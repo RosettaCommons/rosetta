@@ -68,12 +68,12 @@
 
 
 // option key includes
-
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
@@ -117,7 +117,7 @@
 #include <core/scoring/ScoreFunctionInfo.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Func.fwd.hh>
 #include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.fwd.hh>
 #include <core/scoring/methods/ContextDependentTwoBodyEnergy.fwd.hh>
@@ -222,8 +222,10 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+//Auto Headers
+
+
 //Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
 //Auto using namespaces end

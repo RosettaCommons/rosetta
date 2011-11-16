@@ -30,7 +30,7 @@
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStructFactory.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
@@ -39,8 +39,8 @@
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/util.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
@@ -61,6 +61,7 @@
 // AUTO-REMOVED #include <unistd.h>
 #endif
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -68,7 +69,7 @@
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
-#include <core/fragment/BBTorsionSRFD.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
@@ -142,6 +143,9 @@
 #include <basic/datacache/BasicDataCache.fwd.hh>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
+
+//Auto Headers
+
 
 //Auto using namespaces
 namespace std { } using namespace std; // AUTO USING NS

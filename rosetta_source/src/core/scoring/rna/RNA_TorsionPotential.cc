@@ -49,6 +49,7 @@
 
 #include <basic/Tracer.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -104,7 +105,7 @@
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
-#include <core/id/SequenceMapping.hh>
+// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
@@ -123,7 +124,7 @@
 #include <core/kinematics/RT.fwd.hh>
 #include <core/kinematics/RT.hh>
 #include <core/kinematics/ResidueCoordinateChangeList.fwd.hh>
-#include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
@@ -142,16 +143,16 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/CircularHarmonicFunc.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
-#include <core/scoring/constraints/Constraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/FadeFunc.fwd.hh>
 #include <core/scoring/constraints/Func.fwd.hh>
 #include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/FuncFactory.fwd.hh>
-#include <core/scoring/constraints/HarmonicFunc.fwd.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/FuncFactory.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/HarmonicFunc.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/SumFunc.fwd.hh>
-#include <core/scoring/constraints/XYZ_Func.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.fwd.hh>
 #include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
 #include <core/scoring/rna/RNA_TorsionPotential.fwd.hh>
 #include <utility/Bound.fwd.hh>
@@ -306,7 +307,7 @@
 #include <numeric/internal/RowPointers.hh>
 #include <numeric/internal/RowVectors.hh>
 #include <numeric/internal/RowsPointer.hh>
-#include <numeric/random/random.fwd.hh>
+// AUTO-REMOVED #include <numeric/random/random.fwd.hh>
 #include <ObjexxFCL/Dimension.fwd.hh>
 #include <ObjexxFCL/Dimension.hh>
 #include <ObjexxFCL/DimensionExpression.hh>
@@ -351,7 +352,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <iomanip>
 #include <iosfwd>
 #include <iostream>
@@ -377,10 +378,8 @@
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 ///////////////////////////
 
 

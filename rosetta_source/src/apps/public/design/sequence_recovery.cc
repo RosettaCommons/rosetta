@@ -27,7 +27,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
+// AUTO-REMOVED #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
@@ -39,15 +39,15 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <basic/MetricValue.hh>
+// AUTO-REMOVED #include <basic/MetricValue.hh>
 #include <basic/prof.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
 
 // Option keys
-#include <basic/options/keys/optE.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/optE.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // Numeric Headers
@@ -59,6 +59,7 @@
 // C++ headers
 #include <sstream>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -67,7 +68,7 @@
 #include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
@@ -80,7 +81,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.fwd.hh>
-#include <core/chemical/types.hh>
+// AUTO-REMOVED #include <core/chemical/types.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
@@ -146,8 +147,8 @@
 #include <core/pose/Remarks.fwd.hh>
 #include <core/pose/Remarks.hh>
 #include <core/pose/datacache/ObserverCache.fwd.hh>
-#include <core/pose/metrics/PoseMetricCalculatorBase.fwd.hh>
-#include <core/pose/metrics/PoseMetricCalculatorBase.hh>
+// AUTO-REMOVED #include <core/pose/metrics/PoseMetricCalculatorBase.fwd.hh>
+// AUTO-REMOVED #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <core/pose/metrics/PoseMetricContainer.fwd.hh>
 #include <core/pose/signals/ConformationEvent.fwd.hh>
 #include <core/pose/signals/DestructionEvent.fwd.hh>

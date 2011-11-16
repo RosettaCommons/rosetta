@@ -29,18 +29,18 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/init.hh>
 #include <basic/database/open.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/optimizeH.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
+// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
@@ -66,6 +66,7 @@
 // #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
 #include <apps/pilot/will/will_util.ihh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -74,7 +75,7 @@
 #include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
@@ -116,9 +117,9 @@
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
 #include <core/conformation/signals/XYZEvent.hh>
-#include <core/conformation/symmetry/SymmData.fwd.hh>
-#include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
-#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymmData.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/graph/ArrayPool.hh>
 #include <core/graph/Graph.fwd.hh>
 #include <core/graph/Graph.hh>
@@ -132,15 +133,15 @@
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/DOF_ID_Map.fwd.hh>
-#include <core/id/DOF_ID_Map.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Map.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
 #include <core/id/JumpID.fwd.hh>
 #include <core/id/JumpID.hh>
 #include <core/id/NamedAtomID.fwd.hh>
-#include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
-#include <core/id/SequenceMapping.hh>
+// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
@@ -177,20 +178,20 @@
 #include <core/pack/dunbrack/RotamerLibrary.fwd.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.fwd.hh>
-#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.fwd.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.fwd.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
-#include <core/pack/interaction_graph/OnTheFlyInteractionGraph.fwd.hh>
-#include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.fwd.hh>
-#include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
-#include <core/pack/rotamer_set/FixbbRotamerSets.hh>
+// AUTO-REMOVED #include <core/pack/interaction_graph/InteractionGraphBase.hh>
+// AUTO-REMOVED #include <core/pack/interaction_graph/OnTheFlyInteractionGraph.fwd.hh>
+// AUTO-REMOVED #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.fwd.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/FixbbRotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/RotamerSetsBase.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSetsBase.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSetsBase.fwd.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSetsBase.hh>
 #include <core/pack/task/IGEdgeReweightContainer.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
@@ -253,7 +254,7 @@
 #include <core/scoring/constraints/ResidueTypeConstraint.fwd.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <core/scoring/constraints/XYZ_Func.fwd.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
 #include <core/scoring/disulfides/CentroidDisulfidePotential.fwd.hh>
 #include <core/scoring/disulfides/DisulfideMatchingPotential.fwd.hh>
 #include <core/scoring/disulfides/FullatomDisulfidePotential.fwd.hh>
@@ -298,7 +299,7 @@
 #include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
-#include <protocols/jobdist/Jobs.hh>
+// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/MinMover.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
@@ -308,11 +309,11 @@
 #include <utility/Bound.fwd.hh>
 #include <utility/Bound.hh>
 #include <utility/PyAssert.hh>
-#include <utility/assert.hh>
+// AUTO-REMOVED #include <utility/assert.hh>
 #include <utility/down_cast.hh>
 #include <utility/exit.hh>
 #include <utility/fixedsizearray1.fwd.hh>
-#include <utility/fixedsizearray1.hh>
+// AUTO-REMOVED #include <utility/fixedsizearray1.hh>
 #include <utility/stream_util.hh>
 #include <utility/string_util.hh>
 #include <utility/vector0.fwd.hh>
@@ -486,7 +487,7 @@
 #include <numeric/interpolation/spline/Bicubic_spline.hh>
 #include <numeric/interpolation/spline/Cubic_spline.fwd.hh>
 #include <numeric/interpolation/spline/Cubic_spline.hh>
-#include <numeric/interpolation/spline/Interpolator.hh>
+// AUTO-REMOVED #include <numeric/interpolation/spline/Interpolator.hh>
 #include <numeric/random/random.fwd.hh>
 #include <numeric/random/random.hh>
 #include <numeric/random/uniform.fwd.hh>
@@ -532,7 +533,7 @@
 #include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/proxy_const_assert.hh>
 #include <ObjexxFCL/ubyte.fwd.hh>
-#include <ObjexxFCL/ubyte.hh>
+// AUTO-REMOVED #include <ObjexxFCL/ubyte.hh>
 #include <algorithm>
 #include <cassert>
 #include <cmath>
@@ -547,7 +548,7 @@
 #include <iosfwd>
 #include <iostream>
 #include <istream>
-#include <iterator>
+// AUTO-REMOVED #include <iterator>
 #include <limits>
 #include <list>
 #include <map>
@@ -571,10 +572,10 @@
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>
-#include <boost/config.hpp>
+// AUTO-REMOVED #include <boost/config.hpp>
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
-#include <boost/pool/detail/mutex.hpp>
+// AUTO-REMOVED #include <boost/pool/detail/mutex.hpp>
 #include <boost/pool/poolfwd.hpp>
 #include <boost/unordered/unordered_map.hpp>
 #include <zlib/zlib.h>

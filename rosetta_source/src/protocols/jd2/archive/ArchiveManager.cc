@@ -58,12 +58,12 @@
 
 // C++ headers
 #include <string>
-#include <ctime>
+// AUTO-REMOVED #include <ctime>
 #include <sstream>
 #include <iterator>
 
 //Debug headers
-#include <protocols/abinitio/AbrelaxMover.hh>
+// AUTO-REMOVED #include <protocols/abinitio/AbrelaxMover.hh>
 #include <fstream> //testing
 #include <utility/io/izstream.hh>
 
@@ -71,54 +71,55 @@
 #include <utility/io/ozstream.hh>
 
 #if (defined WIN32) //&& (!defined WIN_PYROSETTA)
-#include <windows.h>
+// AUTO-REMOVED #include <windows.h>
 #endif
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueType.fwd.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/RotamerSetBase.fwd.hh>
-#include <core/conformation/signals/ConnectionEvent.fwd.hh>
-#include <core/conformation/signals/LengthEvent.fwd.hh>
-#include <core/conformation/signals/XYZEvent.fwd.hh>
-#include <core/fragment/BaseCacheUnit.hh>
-#include <core/fragment/FragData.fwd.hh>
-#include <core/fragment/FragData.hh>
-#include <core/fragment/FragID.fwd.hh>
-#include <core/fragment/FragID_Iterator.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/RotamerSetBase.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/signals/ConnectionEvent.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/signals/LengthEvent.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/signals/XYZEvent.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/BaseCacheUnit.hh>
+// AUTO-REMOVED #include <core/fragment/FragData.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FragData.hh>
+// AUTO-REMOVED #include <core/fragment/FragID.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FragID_Iterator.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
-#include <core/fragment/FragSet.hh>
-#include <core/fragment/Frame.fwd.hh>
-#include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIterator.fwd.hh>
-#include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FrameIteratorWorker_.fwd.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
-#include <core/fragment/FrameList.fwd.hh>
-#include <core/fragment/FrameList.hh>
-#include <core/fragment/SingleResidueFragData.fwd.hh>
-#include <core/fragment/SingleResidueFragData.hh>
-#include <core/id/AtomID.fwd.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.fwd.hh>
-#include <core/id/AtomID_Mask.fwd.hh>
-#include <core/id/DOF_ID.fwd.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/DOF_ID_Map.fwd.hh>
-#include <core/id/DOF_ID_Mask.fwd.hh>
-#include <core/id/JumpID.fwd.hh>
-#include <core/id/JumpID.hh>
+// AUTO-REMOVED #include <core/fragment/FragSet.hh>
+// AUTO-REMOVED #include <core/fragment/Frame.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/Frame.hh>
+// AUTO-REMOVED #include <core/fragment/FrameIterator.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FrameIterator.hh>
+// AUTO-REMOVED #include <core/fragment/FrameIteratorWorker_.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FrameIteratorWorker_.hh>
+// AUTO-REMOVED #include <core/fragment/FrameList.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FrameList.hh>
+// AUTO-REMOVED #include <core/fragment/SingleResidueFragData.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/SingleResidueFragData.hh>
+// AUTO-REMOVED #include <core/id/AtomID.fwd.hh>
+// AUTO-REMOVED #include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <core/id/AtomID_Map.fwd.hh>
+// AUTO-REMOVED #include <core/id/AtomID_Mask.fwd.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID.fwd.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Map.fwd.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Mask.fwd.hh>
+// AUTO-REMOVED #include <core/id/JumpID.fwd.hh>
+// AUTO-REMOVED #include <core/id/JumpID.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/id/NamedStubID.fwd.hh>
-#include <core/id/SequenceMapping.fwd.hh>
-#include <core/id/SequenceMapping.hh>
-#include <core/id/TorsionID.fwd.hh>
-#include <core/id/TorsionID.hh>
+// AUTO-REMOVED #include <core/id/NamedStubID.fwd.hh>
+// AUTO-REMOVED #include <core/id/SequenceMapping.fwd.hh>
+// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
+// AUTO-REMOVED #include <core/id/TorsionID.fwd.hh>
+// AUTO-REMOVED #include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
 #include <core/io/silent/SharedSilentData.hh>
 #include <core/io/silent/SilentEnergy.hh>
@@ -126,68 +127,68 @@
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/silent.fwd.hh>
-#include <core/kinematics/AtomTree.fwd.hh>
-#include <core/kinematics/DomainMap.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/AtomTree.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/DomainMap.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <core/kinematics/Jump.fwd.hh>
-#include <core/kinematics/MinimizerMapBase.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/Jump.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/MinimizerMapBase.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
-#include <core/kinematics/Stub.fwd.hh>
-#include <core/kinematics/types.hh>
-#include <core/pose/PDBInfo.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/Stub.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/types.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/datacache/ObserverCache.fwd.hh>
-#include <core/pose/metrics/PoseMetricContainer.fwd.hh>
-#include <core/pose/signals/ConformationEvent.fwd.hh>
-#include <core/pose/signals/DestructionEvent.fwd.hh>
-#include <core/pose/signals/EnergyEvent.fwd.hh>
-#include <core/pose/signals/GeneralEvent.fwd.hh>
-#include <core/scoring/Energies.fwd.hh>
-#include <core/scoring/EnergyGraph.fwd.hh>
-#include <core/scoring/EnergyMap.fwd.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/LREnergyContainer.fwd.hh>
-#include <core/scoring/MinimizationData.fwd.hh>
-#include <core/scoring/MinimizationGraph.fwd.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/datacache/ObserverCache.fwd.hh>
+// AUTO-REMOVED #include <core/pose/metrics/PoseMetricContainer.fwd.hh>
+// AUTO-REMOVED #include <core/pose/signals/ConformationEvent.fwd.hh>
+// AUTO-REMOVED #include <core/pose/signals/DestructionEvent.fwd.hh>
+// AUTO-REMOVED #include <core/pose/signals/EnergyEvent.fwd.hh>
+// AUTO-REMOVED #include <core/pose/signals/GeneralEvent.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyMap.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
+// AUTO-REMOVED #include <core/scoring/LREnergyContainer.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/MinimizationData.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/MinimizationGraph.fwd.hh>
 #include <core/scoring/ResidualDipolarCoupling.fwd.hh>
-#include <core/scoring/ResidualDipolarCoupling.hh>
+// AUTO-REMOVED #include <core/scoring/ResidualDipolarCoupling.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionInfo.fwd.hh>
-#include <core/scoring/ScoreType.hh>
-#include <core/scoring/constraints/AmbiguousNMRConstraint.fwd.hh>
-#include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreType.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRConstraint.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
-#include <core/scoring/constraints/Constraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <core/scoring/constraints/Constraints.hh>
-#include <core/scoring/constraints/DOF_Constraint.fwd.hh>
-#include <core/scoring/constraints/DOF_Constraint.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/FuncFactory.fwd.hh>
-#include <core/scoring/constraints/HarmonicFunc.fwd.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/constraints/XYZ_Func.fwd.hh>
-#include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.fwd.hh>
-#include <core/scoring/methods/ContextDependentOneBodyEnergy.fwd.hh>
-#include <core/scoring/methods/ContextDependentTwoBodyEnergy.fwd.hh>
-#include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.fwd.hh>
-#include <core/scoring/methods/ContextIndependentOneBodyEnergy.fwd.hh>
-#include <core/scoring/methods/ContextIndependentTwoBodyEnergy.fwd.hh>
-#include <core/scoring/methods/EnergyMethod.fwd.hh>
-#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
-#include <core/scoring/methods/LongRangeTwoBodyEnergy.fwd.hh>
-#include <core/scoring/methods/TwoBodyEnergy.fwd.hh>
-#include <core/scoring/methods/WholeStructureEnergy.fwd.hh>
-#include <protocols/abinitio/AbrelaxMover.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Constraints.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Constraints.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/DOF_Constraint.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/DOF_Constraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Func.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Func.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/FuncFactory.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/HarmonicFunc.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/HarmonicFunc.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/ContextDependentOneBodyEnergy.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/ContextDependentTwoBodyEnergy.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/ContextIndependentOneBodyEnergy.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethod.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/LongRangeTwoBodyEnergy.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/TwoBodyEnergy.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/WholeStructureEnergy.fwd.hh>
+// AUTO-REMOVED #include <protocols/abinitio/AbrelaxMover.fwd.hh>
 #include <protocols/abinitio/FragmentSampler.fwd.hh>
-#include <protocols/abinitio/FragmentSampler.hh>
+// AUTO-REMOVED #include <protocols/abinitio/FragmentSampler.hh>
 #include <protocols/abinitio/IterativeBase.hh>
 #include <protocols/abinitio/IterativeCentroid.hh>
 #include <protocols/abinitio/IterativeFullatom.hh>
@@ -195,8 +196,8 @@
 #include <protocols/checkpoint/CheckPointer.fwd.hh>
 #include <protocols/checkpoint/CheckPointer.hh>
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
-#include <protocols/evaluation/PoseEvaluator.hh>
-#include <protocols/filters/Filter.fwd.hh>
+// AUTO-REMOVED #include <protocols/evaluation/PoseEvaluator.hh>
+// AUTO-REMOVED #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jd2/BatchJobInputter.fwd.hh>
 #include <protocols/jd2/InnerJob.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
@@ -222,46 +223,46 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/SlidingWindowLoopClosure.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+// AUTO-REMOVED #include <protocols/loops/SlidingWindowLoopClosure.fwd.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/MonteCarloStatus.hh>
+// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
+// AUTO-REMOVED #include <protocols/moves/MonteCarloStatus.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverContainer.fwd.hh>
-#include <protocols/moves/MoverStatus.hh>
-#include <protocols/moves/mc_convergence_checks/ConvergenceCheck.fwd.hh>
-#include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/moves/MoverContainer.fwd.hh>
+// AUTO-REMOVED #include <protocols/moves/MoverStatus.hh>
+// AUTO-REMOVED #include <protocols/moves/mc_convergence_checks/ConvergenceCheck.fwd.hh>
+// AUTO-REMOVED #include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
 #include <protocols/noesy_assign/CrossPeak.fwd.hh>
 #include <protocols/noesy_assign/CrossPeak.hh>
 #include <protocols/noesy_assign/CrossPeakInfo.fwd.hh>
 #include <protocols/noesy_assign/CrossPeakInfo.hh>
-#include <protocols/noesy_assign/CrossPeakList.fwd.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/CrossPeakList.fwd.hh>
 #include <protocols/noesy_assign/NoesyModule.fwd.hh>
-#include <protocols/noesy_assign/NoesyModule.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/NoesyModule.hh>
 #include <protocols/noesy_assign/PeakAssignment.fwd.hh>
-#include <protocols/noesy_assign/PeakAssignment.hh>
-#include <protocols/noesy_assign/PeakAssignmentParameters.hh>
-#include <protocols/noesy_assign/PeakAssignmentResidueMap.fwd.hh>
-#include <protocols/noesy_assign/PeakAssignmentResidueMap.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/PeakAssignment.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/PeakAssignmentParameters.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/PeakAssignmentResidueMap.fwd.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/PeakAssignmentResidueMap.hh>
 #include <protocols/noesy_assign/PeakCalibrator.fwd.hh>
-#include <protocols/noesy_assign/PeakFileFormat.fwd.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/PeakFileFormat.fwd.hh>
 #include <protocols/noesy_assign/Resonance.hh>
 #include <protocols/noesy_assign/ResonanceList.fwd.hh>
 #include <protocols/noesy_assign/ResonanceList.hh>
-#include <protocols/relax/RelaxProtocolBase.fwd.hh>
+// AUTO-REMOVED #include <protocols/relax/RelaxProtocolBase.fwd.hh>
 #include <protocols/topology_broker/ClaimerMessage.fwd.hh>
 #include <protocols/topology_broker/DofClaim.fwd.hh>
-#include <protocols/topology_broker/DofClaim.hh>
+// AUTO-REMOVED #include <protocols/topology_broker/DofClaim.hh>
 #include <protocols/topology_broker/TopologyBroker.fwd.hh>
 #include <protocols/topology_broker/TopologyClaimer.fwd.hh>
-#include <protocols/topology_broker/TopologyClaimer.hh>
-#include <protocols/topology_broker/weights/AbinitioMoverWeight.hh>
-#include <protocols/topology_broker/weights/ConstAbinitioMoverWeight.hh>
+// AUTO-REMOVED #include <protocols/topology_broker/TopologyClaimer.hh>
+// AUTO-REMOVED #include <protocols/topology_broker/weights/AbinitioMoverWeight.hh>
+// AUTO-REMOVED #include <protocols/topology_broker/weights/ConstAbinitioMoverWeight.hh>
 #include <utility/Bound.fwd.hh>
 #include <utility/Bound.hh>
-#include <utility/PyAssert.hh>
+// AUTO-REMOVED #include <utility/PyAssert.hh>
 #include <utility/down_cast.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
@@ -386,31 +387,31 @@
 #include <utility/pointer/owning_ptr.functions.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/signals/BufferedSignalHub.fwd.hh>
-#include <utility/signals/BufferedSignalHub.hh>
-#include <utility/signals/Link.fwd.hh>
-#include <utility/signals/Link.hh>
-#include <utility/signals/LinkUnit.fwd.hh>
-#include <utility/signals/LinkUnit.hh>
-#include <utility/signals/SignalHub.fwd.hh>
-#include <utility/signals/SignalHub.hh>
-#include <utility/tag/Tag.fwd.hh>
-#include <numeric/numeric.functions.hh>
-#include <numeric/sphericalVector.fwd.hh>
-#include <numeric/trig.functions.hh>
-#include <numeric/xyz.functions.fwd.hh>
-#include <numeric/xyzMatrix.fwd.hh>
+// AUTO-REMOVED #include <utility/signals/BufferedSignalHub.fwd.hh>
+// AUTO-REMOVED #include <utility/signals/BufferedSignalHub.hh>
+// AUTO-REMOVED #include <utility/signals/Link.fwd.hh>
+// AUTO-REMOVED #include <utility/signals/Link.hh>
+// AUTO-REMOVED #include <utility/signals/LinkUnit.fwd.hh>
+// AUTO-REMOVED #include <utility/signals/LinkUnit.hh>
+// AUTO-REMOVED #include <utility/signals/SignalHub.fwd.hh>
+// AUTO-REMOVED #include <utility/signals/SignalHub.hh>
+// AUTO-REMOVED #include <utility/tag/Tag.fwd.hh>
+// AUTO-REMOVED #include <numeric/numeric.functions.hh>
+// AUTO-REMOVED #include <numeric/sphericalVector.fwd.hh>
+// AUTO-REMOVED #include <numeric/trig.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.fwd.hh>
+// AUTO-REMOVED #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzVector.fwd.hh>
-#include <numeric/xyzVector.hh>
-#include <numeric/random/random.fwd.hh>
-#include <ObjexxFCL/FArray1D.fwd.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.hh>
+// AUTO-REMOVED #include <numeric/random/random.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.fwd.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
 #include <ObjexxFCL/TypeTraits.hh>
 #include <ObjexxFCL/char.functions.hh>
 #include <algorithm>
 #include <bitset>
 #include <cassert>
-#include <cmath>
+// AUTO-REMOVED #include <cmath>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
@@ -429,11 +430,11 @@
 #include <time.h>
 #include <utility>
 #include <vector>
-#include <basic/MetricValue.fwd.hh>
+// AUTO-REMOVED #include <basic/MetricValue.fwd.hh>
 #include <basic/Tracer.fwd.hh>
-#include <basic/datacache/BasicDataCache.fwd.hh>
-#include <basic/datacache/CacheableData.fwd.hh>
-#include <basic/datacache/CacheableData.hh>
+// AUTO-REMOVED #include <basic/datacache/BasicDataCache.fwd.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableData.fwd.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableData.hh>
 #include <basic/options/after_opts.hh>
 #include <basic/options/keys/AnchoredDesign.OptionKeys.gen.hh>
 #include <basic/options/keys/DenovoProteinDesign.OptionKeys.gen.hh>
@@ -537,12 +538,15 @@
 #include <basic/options/keys/willmatch.OptionKeys.gen.hh>
 #include <basic/options/keys/wum.OptionKeys.gen.hh>
 #include <basic/options/option.cc.include.gen.hh>
-#include <basic/prof.hh>
+// Auto-header: duplicate removed #include <basic/prof.hh>
 #include <boost/bind.hpp>
-#include <boost/function.hpp>
+// AUTO-REMOVED #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
 #include <zlib/zlib.h>
 #include <zlib/zutil.h>
+
+//Auto Headers
+
 
 static basic::Tracer tr("protocols.jd2.Archive");
 using basic::mem_tr;

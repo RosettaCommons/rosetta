@@ -34,6 +34,7 @@
 
 #include <basic/Tracer.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -118,7 +119,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Func.fwd.hh>
 #include <core/scoring/disulfides/DisulfideMatchingPotential.fwd.hh>
 #include <utility/Bound.fwd.hh>
 #include <utility/Bound.hh>
@@ -316,11 +317,11 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <iomanip>
 #include <iosfwd>
 #include <iostream>
-#include <istream>
+// AUTO-REMOVED #include <istream>
 #include <limits>
 #include <list>
 #include <map>
@@ -342,11 +343,8 @@
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 
 
 static basic::Tracer TR("core.scoring.disulfides.CentroidMatchingPotential");

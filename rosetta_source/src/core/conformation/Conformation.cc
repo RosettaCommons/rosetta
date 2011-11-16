@@ -21,7 +21,7 @@
 #include <core/conformation/signals/IdentityEvent.hh>
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/conformation/signals/XYZEvent.hh>
-#include <core/kinematics/util.hh>
+// AUTO-REMOVED #include <core/kinematics/util.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/NamedAtomID.hh>
@@ -66,6 +66,7 @@
 
 // Auto-header: duplicate removed #include <basic/Tracer.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -138,7 +139,7 @@
 #include <core/kinematics/Jump.fwd.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/RT.fwd.hh>
 #include <core/kinematics/RT.hh>
 #include <core/kinematics/ResidueCoordinateChangeList.fwd.hh>
@@ -370,6 +371,9 @@
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/unordered_map.hpp>
+
+//Auto Headers
+
 #define foreach BOOST_FOREACH
 
 using basic::T;
@@ -391,6 +395,17 @@ Conformation::~Conformation()
 }
 
 
+Conformation::Conformation() :
+	utility::pointer::ReferenceCount(),
+	residue_coordinates_need_updating_( false ),
+	residue_torsions_need_updating_( false ),
+	structure_moved_( true ),
+	atom_tree_( new AtomTree ),
+	fold_tree_( new FoldTree )
+{
+
+}
+
 /// @details copy constructor
 Conformation::Conformation( Conformation const & src ) :
 	utility::pointer::ReferenceCount()
@@ -402,8 +417,8 @@ Conformation::Conformation( Conformation const & src ) :
 	}
 
 	// kinematics
-	fold_tree_ = src.fold_tree_;
-	atom_tree_ = src.atom_tree_;
+	fold_tree_ = new FoldTree( *src.fold_tree_ );
+	atom_tree_ = new AtomTree( *src.atom_tree_ );
 
 	// chain info
 	chain_endings_ = src.chain_endings_;
@@ -445,8 +460,8 @@ Conformation::operator=( Conformation const & src )
 		}
 
 		// kinematics
-		fold_tree_ = src.fold_tree_;
-		atom_tree_ = src.atom_tree_;
+		(*fold_tree_) = (*src.fold_tree_);
+		(*atom_tree_) = (*src.atom_tree_);
 
 		// chain info
 		chain_endings_ = src.chain_endings_;
@@ -527,7 +542,7 @@ Conformation::fold_tree( FoldTree const & fold_tree_in )
 		utility_exit_with_message( msg );
 	}
 	update_residue_coordinates();
-	fold_tree_ = fold_tree_in;
+	(*fold_tree_) = fold_tree_in;
 	setup_atom_tree();
 }
 
@@ -613,7 +628,7 @@ Conformation::replace_residue(
 	}
 
 
-	replace_residue_in_atom_tree( new_rsd, fold_tree_, const_residues(), atom_tree_ );
+	replace_residue_in_atom_tree( new_rsd, *fold_tree_, const_residues(), *atom_tree_ );
 
 	residue_torsions_need_updating_ = true;
 // 	if ( !residue_torsions_need_updating_ ) update_residue_torsions( seqpos );
@@ -820,7 +835,7 @@ Conformation::append_residue(
 	pre_nresidue_change();
 
 	Size const seqpos( size() + 1 );
-	assert( seqpos == fold_tree_.nres() + 1 );
+	assert( seqpos == fold_tree_->nres() + 1 );
 
 	// is this the first residue?
 	bool const first_residue( seqpos == 1 );
@@ -835,7 +850,7 @@ Conformation::append_residue(
 	if ( anchor_id.atom().size() ) anchor_atomno = residues_[ anchor_id.rsd() ]->atom_index( anchor_id.atom() );
 	// update the fold_tree
 	if ( first_residue ) {
-		fold_tree_.simple_tree( 1 );
+		fold_tree_->simple_tree( 1 );
 	} else {
 		int root_atomno = 0;
 		if ( root_atom.size() ) root_atomno = new_rsd.atom_index( root_atom );
@@ -849,9 +864,9 @@ Conformation::append_residue(
 			// must be a chemical bond since the criteria for a polymer connection are not met
 			TR << "appending residue by a chemical bond in the foldtree: " << seqpos << ' ' <<
 				new_rsd.name() << " anchor: " << anchor_id << " root: " << root_atom <<  std::endl;
-			fold_tree_.append_residue_by_chemical_bond( anchor_id.rsd(), anchor_id.atom(), root_atom );
+			fold_tree_->append_residue_by_chemical_bond( anchor_id.rsd(), anchor_id.atom(), root_atom );
 		} else {
-			fold_tree_.append_residue( attach_by_jump, anchor_id.rsd(), anchor_id.atom(), root_atom );
+			fold_tree_->append_residue( attach_by_jump, anchor_id.rsd(), anchor_id.atom(), root_atom );
 		}
 	}
 
@@ -861,11 +876,11 @@ Conformation::append_residue(
 	// good thing we set it already.
 
 	if ( first_residue ) {
-		assert( atom_tree_.empty() );
+		assert( atom_tree_->empty() );
 		setup_atom_tree(); // just this once
 
 	} else {
-		insert_residue_into_atom_tree( new_rsd, fold_tree_, const_residues(), atom_tree_ );
+		insert_residue_into_atom_tree( new_rsd, *fold_tree_, const_residues(), *atom_tree_ );
 
 	}
 
@@ -1005,7 +1020,7 @@ Conformation::append_polymer_residue_after_seqpos(
 			*this );
 	}
 	bool const join_lower( true );
-	bool const join_upper( !fold_tree_.is_cutpoint( seqpos ) );
+	bool const join_upper( !fold_tree_->is_cutpoint( seqpos ) );
 
 	if ( build_ideal_geometry ) insert_polymer_residue( *ideal_geometry_rsd, seqpos+1, join_lower, join_upper );
 	else                        insert_polymer_residue(             new_rsd, seqpos+1, join_lower, join_upper );
@@ -1057,7 +1072,7 @@ Conformation::prepend_polymer_residue_before_seqpos(
 	}
 
 	bool const join_upper( true );
-	bool const join_lower( !fold_tree_.is_cutpoint( seqpos-1 ) );
+	bool const join_lower( !fold_tree_->is_cutpoint( seqpos-1 ) );
 
 	if ( build_ideal_geometry ) insert_polymer_residue( *ideal_geometry_rsd, seqpos, join_lower, join_upper );
 	else                        insert_polymer_residue(             new_rsd, seqpos, join_lower, join_upper );
@@ -1083,7 +1098,7 @@ void
 Conformation::delete_residue_slow( Size const seqpos )
 {
 	pre_nresidue_change();
-	fold_tree_.delete_seqpos( seqpos );
+	fold_tree_->delete_seqpos( seqpos );
 
 	residues_delete( seqpos );
 
@@ -1091,7 +1106,7 @@ Conformation::delete_residue_slow( Size const seqpos )
 
 	residue_torsions_need_updating_ = true;
 
-	assert( atom_tree_.size() == size() && Size(fold_tree_.nres()) == size() );
+	assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
 	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_DELETE, seqpos, -1, NULL ), false );
 }
@@ -1106,7 +1121,7 @@ Conformation::delete_residue_range_slow( Size const range_begin, Size const rang
 	Size const range_size( range_end - range_begin + 1 );
 	assert( range_size >= 1);
 	for ( Size i=1; i<= range_size; ++i ) {
-		fold_tree_.delete_seqpos( range_begin );
+		fold_tree_->delete_seqpos( range_begin );
 		residues_delete( range_begin );
 	}
 
@@ -1114,7 +1129,7 @@ Conformation::delete_residue_range_slow( Size const range_begin, Size const rang
 
 	residue_torsions_need_updating_ = true;
 
-	assert( atom_tree_.size() == size() && Size(fold_tree_.nres()) == size() );
+	assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
 	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_DELETE, range_begin, -range_size,  NULL ), false );
 }
@@ -1127,19 +1142,19 @@ void
 Conformation::delete_polymer_residue( Size const seqpos )
 {
 	pre_nresidue_change();
-	assert( !fold_tree_.is_jump_point( seqpos ) );
+	assert( !fold_tree_->is_jump_point( seqpos ) );
 
 	residues_delete( seqpos ); // handles renumbering of residues, _moved, chains
 
 	// delete from AtomTree, foldtree
 	// this atom_tree_ call could be more robust if we passed in the fold_tree_
 	// currently it assumes 1 incoming connxn,  <=1 outgoing connxn
-	atom_tree_.delete_seqpos( seqpos );
-	fold_tree_.delete_seqpos( seqpos );
+	atom_tree_->delete_seqpos( seqpos );
+	fold_tree_->delete_seqpos( seqpos );
 
 	residue_torsions_need_updating_ = true; // could reupdate before and after
 
-	assert( atom_tree_.size() == size() && Size(fold_tree_.nres()) == size() );
+	assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
 	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_DELETE, seqpos, -1, NULL ), false );
 }
@@ -1166,13 +1181,13 @@ Conformation::insert_polymer_residue(
 
 	Residue const & new_rsd( residue_( seqpos ) );
 
-	fold_tree_.insert_polymer_residue( seqpos, join_lower, join_upper );
+	fold_tree_->insert_polymer_residue( seqpos, join_lower, join_upper );
 
-	insert_residue_into_atom_tree( new_rsd, fold_tree_, const_residues(), atom_tree_ );
+	insert_residue_into_atom_tree( new_rsd, *fold_tree_, const_residues(), *atom_tree_ );
 
 	residue_torsions_need_updating_ = true; // could reupdate before and after
 
-	assert( atom_tree_.size() == size() && Size(fold_tree_.nres()) == size() );
+	assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
 	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_PREPEND, seqpos, 1, &new_rsd ), false );
 }
@@ -1193,7 +1208,7 @@ Conformation::insert_residue_by_jump(
 	pre_nresidue_change();
 	ASSERT_ONLY(Size const old_size( size() );) //, new_size( old_size+1 );
 	assert( old_size );
-	assert( fold_tree_.is_cutpoint( seqpos-1 ) );
+	assert( fold_tree_->is_cutpoint( seqpos-1 ) );
 
 	int anchor_atomno( 0 );
 	if ( anchor_atom.size() ) anchor_atomno = residues_[ anchor_pos ]->atom_index( anchor_atom );
@@ -1207,13 +1222,13 @@ Conformation::insert_residue_by_jump(
 
 	assert( new_rsd.seqpos() == seqpos );
 
-	fold_tree_.insert_residue_by_jump( seqpos, anchor_pos /* in the OLD numbering system */, anchor_atom, root_atom );
+	fold_tree_->insert_residue_by_jump( seqpos, anchor_pos /* in the OLD numbering system */, anchor_atom, root_atom );
 
-	insert_residue_into_atom_tree( new_rsd, fold_tree_, const_residues(), atom_tree_ );
+	insert_residue_into_atom_tree( new_rsd, *fold_tree_, const_residues(), *atom_tree_ );
 
 	residue_torsions_need_updating_ = true;
 
-	assert( atom_tree_.size() == size() && Size(fold_tree_.nres()) == size() );
+	assert( atom_tree_->size() == size() && Size(fold_tree_->nres()) == size() );
 
 	notify_length_obs( LengthEvent( this, LengthEvent::RESIDUE_PREPEND, seqpos, 1, &new_rsd ), false );
 }
@@ -1248,7 +1263,7 @@ Conformation::insert_conformation_by_jump(
 	assert( old_size );
 
 	/// sanity checks
-	bool const fold_tree_polymer_bond( !fold_tree_.is_cutpoint( insert_seqpos-1 ) );
+	bool const fold_tree_polymer_bond( !fold_tree_->is_cutpoint( insert_seqpos-1 ) );
 	bool const residues_polymer_bond( insert_seqpos > 1 && insert_seqpos <= old_size &&
 																		residue( insert_seqpos-1 ).is_polymer_bonded( insert_seqpos ) );
 	if ( fold_tree_polymer_bond || residues_polymer_bond ) {
@@ -1299,7 +1314,7 @@ Conformation::insert_conformation_by_jump(
 	}
 
 	/// FoldTree
-	fold_tree_.insert_fold_tree_by_jump( conf.fold_tree(), insert_seqpos, insert_jumppos, anchor_pos, anchor_jump_number,
+	fold_tree_->insert_fold_tree_by_jump( conf.fold_tree(), insert_seqpos, insert_jumppos, anchor_pos, anchor_jump_number,
 																			 anchor_atom, root_atom );
 
 	/// AtomTree
@@ -1322,7 +1337,7 @@ Conformation::jump_atom_id( int const jump_number ) const
 	// to determine the exact AtomID of the corresponding JumpAtom
 	//
 
-	kinematics::Edge const & edge( fold_tree_.jump_edge( jump_number ) );
+	kinematics::Edge const & edge( fold_tree_->jump_edge( jump_number ) );
 
 	Size const seqpos( edge.stop() );
 
@@ -1345,7 +1360,7 @@ Conformation::set_xyz(
 )
 {
 	// update atomtree coords
-	if ( !atom_tree_.empty() ) atom_tree_.set_xyz( id, position );
+	if ( !atom_tree_->empty() ) atom_tree_->set_xyz( id, position );
 
 	// update residue coords
 	residues_[ id.rsd() ]->set_xyz( id.atomno(), position );
@@ -1363,7 +1378,7 @@ Conformation::batch_set_xyz(
 	runtime_assert( ids.size() == positions.size() );
 
 	// update atomtree coords
-	if ( !atom_tree_.empty() ) atom_tree_.batch_set_xyz( ids, positions );
+	if ( !atom_tree_->empty() ) atom_tree_->batch_set_xyz( ids, positions );
 
 	// update residue coords
 	for (core::Size i=1; i<=ids.size(); ++i)
@@ -1412,7 +1427,7 @@ Conformation::dof_id_from_torsion_id( TorsionID const & tor_id ) const
 			// probably a backbone torsion undefined b/c of a cutpoint
 			return id::BOGUS_DOF_ID;
 		}
-		return atom_tree_.torsion_angle_dof_id( id1, id2, id3, id4 );
+		return atom_tree_->torsion_angle_dof_id( id1, id2, id3, id4 );
 	}
 }
 
@@ -1425,7 +1440,7 @@ Conformation::torsion( TorsionID const & tor_id ) const
 
 	if ( tor_id.type() == id::JUMP ) {
 		// jump rigid-body offset
-		return atom_tree_.dof( dof_id_from_torsion_id( tor_id ) );
+		return atom_tree_->dof( dof_id_from_torsion_id( tor_id ) );
 
 	} else {
 		// get torsion angle from the Residue
@@ -1457,7 +1472,7 @@ Conformation::set_torsion(
 	if ( tor_id.type() == id::JUMP ) {
 		// jump rigid-body offset degree of freedom
 		DOF_ID const dof_id( dof_id_from_torsion_id( tor_id ) );
-		atom_tree_.set_dof( dof_id, setting );
+		atom_tree_->set_dof( dof_id, setting );
 
 		// update book-keeping to reflect that this torsion has changed
 		set_dof_moved( dof_id );
@@ -1482,7 +1497,7 @@ Conformation::set_torsion(
 
 		// atomtree works in radians
 		DOF_ID const dof_id
-			( atom_tree_.set_torsion_angle( id1, id2, id3, id4, radians(setting) ) );
+			( atom_tree_->set_torsion_angle( id1, id2, id3, id4, radians(setting) ) );
 
 		if ( !dof_id.valid() ) {
 			//
@@ -1542,7 +1557,7 @@ Conformation::set_torsion_angle(
 )
 {
 	residue_torsions_need_updating_ = true;
-	DOF_ID const dof_id( atom_tree_.set_torsion_angle( atom1, atom2, atom3, atom4, setting ) );
+	DOF_ID const dof_id( atom_tree_->set_torsion_angle( atom1, atom2, atom3, atom4, setting ) );
 	if ( dof_id.valid() ) {
 		set_dof_moved( dof_id );
 	} else {
@@ -1644,7 +1659,7 @@ Conformation::set_bond_angle(
 	Real const setting
 )
 {
-	DOF_ID const dof_id( atom_tree_.set_bond_angle( atom1, atom2, atom3, setting ) );
+	DOF_ID const dof_id( atom_tree_->set_bond_angle( atom1, atom2, atom3, setting ) );
 	if ( dof_id.valid() ) {
 		set_dof_moved( dof_id );
 	}
@@ -1658,7 +1673,7 @@ Conformation::set_bond_length(
 	Real const setting
 )
 {
-	DOF_ID const dof_id( atom_tree_.set_bond_length( atom1, atom2, setting ) );
+	DOF_ID const dof_id( atom_tree_->set_bond_length( atom1, atom2, setting ) );
 	if ( dof_id.valid() ) {
 		set_dof_moved( dof_id );
 	}
@@ -1674,7 +1689,7 @@ Conformation::insert_fragment(
 {
 	utility::vector1< AtomID > moved_atoms;
 
-	atom_tree_.insert_fragment( instub_id, outstub_transforms, frag_xyz, moved_atoms );
+	atom_tree_->insert_fragment( instub_id, outstub_transforms, frag_xyz, moved_atoms );
 
 	for ( Size i=1; i<= moved_atoms.size(); ++i ) {
 		set_dof_moved( moved_atoms[i] );
@@ -2382,7 +2397,7 @@ Conformation::backbone_torsion_angle_atoms(
 		id1.rsd()    = seqpos;
 		id1.atomno() = mainchain[ torsion-1 ];
 	} else {
-		if ( fold_tree_.is_cutpoint( seqpos-1 ) ) { // seems like this should be a bug if seqpos==1
+		if ( fold_tree_->is_cutpoint( seqpos-1 ) ) { // seems like this should be a bug if seqpos==1
 			if ( rsd.has_variant_type( chemical::CUTPOINT_UPPER ) ) {
 				id1.rsd() = seqpos;
 				id1.atomno() = rsd.atom_index( "OVU1" );
@@ -2418,7 +2433,7 @@ Conformation::backbone_torsion_angle_atoms(
 		id4.atomno() = mainchain[ torsion+2 ];
 
 	} else {
-		if ( fold_tree_.is_cutpoint( seqpos ) ) {
+		if ( fold_tree_->is_cutpoint( seqpos ) ) {
 			if ( rsd.has_variant_type( chemical::CUTPOINT_LOWER ) ) {
 				if ( torsion+1 == ntorsions ) {
 					id3.rsd()    = seqpos;
@@ -2478,7 +2493,7 @@ Conformation::backbone_torsion_angle_atoms(
 					id4.atomno() = next_mainchain[ 2 ];
 				} else {
 					// tricky... a single-mainchain-atom polymer residue.
-					if ( fold_tree_.is_cutpoint( seqpos+1 ) ) {
+					if ( fold_tree_->is_cutpoint( seqpos+1 ) ) {
 						if ( residue_( seqpos+1 ).has_variant_type( chemical::CUTPOINT_LOWER ) ) {
 							id4.rsd()    = seqpos+1;
 							id4.atomno() = residue_( seqpos+1 ).atom_index( "OVL1" );
@@ -2515,7 +2530,7 @@ Conformation::atom_tree_torsion( TorsionID const & tor_id ) const
 
 	if ( tor_id.type() == id::JUMP ) {
 		// jump rigid-body offset
-		return atom_tree_.dof( dof_id_from_torsion_id( tor_id ) );
+		return atom_tree_->dof( dof_id_from_torsion_id( tor_id ) );
 
 	} else {
 		// bb or chi
@@ -2529,7 +2544,7 @@ Conformation::atom_tree_torsion( TorsionID const & tor_id ) const
 		}
 
 		// atomtree works in radians
-		return degrees( atom_tree_.torsion_angle( id1, id2, id3, id4 ) );
+		return degrees( atom_tree_->torsion_angle( id1, id2, id3, id4 ) );
 	}
 }
 
@@ -2553,10 +2568,10 @@ Conformation::setup_atom_tree()
 {
 	/// this owns the tree
 	kinematics::AtomPointer2D atom_pointer;
-	build_tree( fold_tree_, const_residues(), atom_pointer );
+	build_tree( *fold_tree_, const_residues(), atom_pointer );
 
 	// replace the current data in the atom_tree
-	atom_tree_.replace_tree( atom_pointer );
+	atom_tree_->replace_tree( atom_pointer );
 
 	residue_coordinates_need_updating_ = false;
 	residue_torsions_need_updating_ = true;
@@ -2570,7 +2585,7 @@ Conformation::update_domain_map( DomainMap & domain_map ) const
 {
 	domain_map.dimension( size() );
 	domain_map = 0;
-	atom_tree_.update_domain_map( domain_map, dof_moved_, xyz_moved_ );
+	atom_tree_->update_domain_map( domain_map, dof_moved_, xyz_moved_ );
 }
 
 
@@ -2594,11 +2609,11 @@ Conformation::update_residue_coordinates() const
 	//
 
 	PROF_START( basic::UPDATE_RESIDUE_COORDINATES );
-	for ( kinematics::ResidueListIterator iter = atom_tree_.residue_xyz_change_list_begin(),
-		iter_end = atom_tree_.residue_xyz_change_list_end(); iter != iter_end; ++iter ) {
+	for ( kinematics::ResidueListIterator iter = atom_tree_->residue_xyz_change_list_begin(),
+		iter_end = atom_tree_->residue_xyz_change_list_end(); iter != iter_end; ++iter ) {
 		update_residue_coordinates( *iter, false );
 	}
-	atom_tree_.note_coordinate_change_registered();
+	atom_tree_->note_coordinate_change_registered();
 	PROF_STOP( basic::UPDATE_RESIDUE_COORDINATES );
 
 	notify_xyz_obs( XYZEvent( this ) );
@@ -2612,7 +2627,7 @@ Conformation::update_residue_coordinates( Size const seqpos, bool const fire_sig
 	//std::cout << "Conformation:: updating coordinates for " << seqpos << std::endl;
 	Residue & rsd( *residues_[ seqpos ] );
 	for ( Size j=1, j_end = rsd.natoms(); j<= j_end; ++j ) {
-		rsd.set_xyz( j, atom_tree_.xyz( AtomID(j,seqpos) ) );
+		rsd.set_xyz( j, atom_tree_->xyz( AtomID(j,seqpos) ) );
 	}
 	rsd.update_actcoord();
 
@@ -2736,8 +2751,8 @@ Conformation::debug_residue_torsions( bool verbose ) const
 					( get_torsion_angle_atom_ids( tor_id, atom1, atom2, atom3, atom4 ) );
 				if ( fail ) {
 					if ( ( r == 1 ) &&
-							( ( j ==   1 && fold_tree_.is_cutpoint( i-1 ) ) ||
-							( j >= n-1 && fold_tree_.is_cutpoint( i ) ) ) ) continue;
+							( ( j ==   1 && fold_tree_->is_cutpoint( i-1 ) ) ||
+							( j >= n-1 && fold_tree_->is_cutpoint( i ) ) ) ) continue;
 
 					my_tracer << " missed torsion: " << tor_id << std::endl;
 					continue;
@@ -2750,10 +2765,10 @@ Conformation::debug_residue_torsions( bool verbose ) const
 							residue(atom4.rsd()).atom(atom4.atomno()).xyz()));
 
 				Real const atom_tree_dihedral
-					( numeric::dihedral( atom_tree_.xyz( atom1 ),
-						atom_tree_.xyz( atom2 ),
-						atom_tree_.xyz( atom3 ),
-						atom_tree_.xyz( atom4 ) ) );
+					( numeric::dihedral( atom_tree_->xyz( atom1 ),
+						atom_tree_->xyz( atom2 ),
+						atom_tree_->xyz( atom3 ),
+						atom_tree_->xyz( atom4 ) ) );
 
 				Real const rsd_torsion
 					( r == 1 ? rsd.mainchain_torsion(j) : rsd.chi(j) );
@@ -2829,8 +2844,8 @@ Conformation::clear()
 {
 	pre_nresidue_change(); // nuke old atom tree update-data before destroying coordinates.
 
-	fold_tree_.clear();
-	atom_tree_.clear();
+	fold_tree_->clear();
+	atom_tree_->clear();
 	residues_.clear();
 	dof_moved_.clear();
 	xyz_moved_.clear();
@@ -3460,8 +3475,8 @@ Conformation::in_place_copy(
 	/// END IN PLACE OPTIMIZATION
 
 	// kinematics
-	fold_tree_ = src.fold_tree_;
-	atom_tree_ = src.atom_tree_; // internally performs an in-place copy if it can
+	(*fold_tree_) = (*src.fold_tree_);
+	(*atom_tree_) = (*src.atom_tree_); // internally performs an in-place copy if it can
 
 	// chain info
 	chain_endings_ = src.chain_endings_;
@@ -3554,6 +3569,165 @@ Conformation::is_residue_typeset( std::string tag ) const {
 	return correct;
 }
 
+  void
+  Conformation::set_stub_transform(
+    id::StubID const & stub_id1,
+    id::StubID const & stub_id2,
+    kinematics::RT const & target_rt
+  )
+  {
+    set_dof_moved( atom_tree_->set_stub_transform( stub_id1, stub_id2, target_rt ) );
+  }
+
+/// @brief  get the transform between two stubs
+kinematics::RT
+Conformation::get_stub_transform(
+	id::StubID const & stub_id1,
+	id::StubID const & stub_id2
+) const
+{
+	return atom_tree_->get_stub_transform( stub_id1, stub_id2 );
+}
+
+
+  void
+  Conformation::set_jump_atom_stub_id( id::StubID const& id )
+  {
+    atom_tree_->set_jump_atom_stub_id( id );
+  }
+
+kinematics::Stub
+Conformation::stub_from_id( id::StubID const& id ) const {
+	return atom_tree_->stub_from_id( id );
+}
+
+/// @brief Returns the AtomTree degree of freedom (DOF)  <id>
+  Real
+  Conformation::dof( DOF_ID const & id ) const
+  {
+    return atom_tree_->dof( id );
+  }
+
+/// @brief Sets the AtomTree degree of freedom (DOF)  <id>  to  <setting>
+  void
+  Conformation::set_dof( DOF_ID const & id, Real const setting )
+  {
+    set_dof_moved( id );
+    residue_torsions_need_updating_ = true; // might have been a torsion angle
+    atom_tree_->set_dof( id, setting );
+  }
+
+/// @brief Returns the torsion angle defined by  <atom[1-4]>
+  Real
+  Conformation::torsion_angle(
+    AtomID const & atom1,
+    AtomID const & atom2,
+    AtomID const & atom3,
+    AtomID const & atom4
+  ) const
+  {
+    return atom_tree_->torsion_angle( atom1, atom2, atom3, atom4 );
+  }
+
+/// @brief Returns the bond angle defined by  <atom[1-3]>
+  Real
+  Conformation::bond_angle(
+    AtomID const & atom1,
+    AtomID const & atom2,
+    AtomID const & atom3
+  ) const
+  {
+    return atom_tree_->bond_angle( atom1, atom2, atom3 );
+  }
+
+/// @brief Returns the bond length between  <atom1>  and  <atom2>
+  Real
+  Conformation::bond_length(
+    AtomID const & atom1,
+    AtomID const & atom2
+  ) const
+  {
+    return atom_tree_->bond_length( atom1, atom2 );
+  }
+
+	Conformation::Jump const &
+	Conformation::jump( int const jump_number ) const
+	{
+		return atom_tree_->jump( jump_atom_id( jump_number ) );
+	}
+
+/// @brief Sets the jump  <jump_number>  to  <new_jump>
+  void
+  Conformation::set_jump(
+    int const jump_number,
+    Jump const & new_jump
+  )
+  {
+    assert( new_jump.ortho_check() );
+    AtomID const id( jump_atom_id( jump_number ) );
+    atom_tree_->set_jump( id, new_jump );
+    set_dof_moved( id );
+  }
+
+/// @brief Sets a jump and forces immediate calculation of affected XYZ coords
+  void
+  Conformation::set_jump_now(
+    int const jump_number,
+    Jump const & new_jump
+  )
+  {
+    AtomID const id( jump_atom_id( jump_number ) );
+    assert( new_jump.ortho_check() );
+    atom_tree_->set_jump_now( id, new_jump );
+    set_dof_moved( id );
+  }
+
+/// @brief access a jump
+	Conformation::Jump const &
+  Conformation::jump( AtomID const & id ) const
+  {
+    return atom_tree_->jump( id );
+  }
+
+  void
+  Conformation::set_jump(
+    AtomID const & id,
+    Jump const & new_jump
+  )
+  {
+    assert( new_jump.ortho_check() );
+    atom_tree_->set_jump( id, new_jump );
+    set_dof_moved( id );
+  }
+
+/// @brief The upstream and downstream Stubs are the coordinate frames between which this jump is transforming
+kinematics::Stub
+Conformation::upstream_jump_stub( int const jump_number ) const
+{
+	return atom_tree_->atom( jump_atom_id( jump_number ) ).get_input_stub();
+}
+
+/// @brief  The upstream and downstream Stubs are the coordinate frames between which this jump is transforming
+kinematics::Stub
+Conformation::downstream_jump_stub( int const jump_number ) const
+{
+	return atom_tree_->atom( jump_atom_id( jump_number ) ).get_stub();
+}
+
+/// @brief access xyz coordinates of an atom
+  PointPosition const &
+  Conformation::xyz( AtomID const & id ) const
+  {
+    return atom_tree_->xyz( id );
+  }
+
+  void
+  Conformation::reset_move_data()
+  {
+    structure_moved_ = false;
+    dof_moved_.fill_with( false );
+    xyz_moved_.fill_with( false );
+  }
 
 } // namespace kinematics
 } // namespace core
@@ -3587,7 +3761,7 @@ Conformation::backbone_bond_angle_atoms(
 		id1.rsd()    = seqpos;
 		id1.atomno() = mainchain[ torsion-1 ];
 	} else {
-		if ( fold_tree_.is_cutpoint( seqpos-1 ) ) {
+		if ( fold_tree_->is_cutpoint( seqpos-1 ) ) {
 			if ( rsd.has_variant_type( chemical::CUTPOINT_UPPER ) ) {
 				id1.rsd() = seqpos;
 				id1.atomno() = rsd.atom_index( "OVU1" );
@@ -3616,7 +3790,7 @@ Conformation::backbone_bond_angle_atoms(
 
 	} else {
 		assert( torsion == ntorsions );
-		if ( fold_tree_.is_cutpoint( seqpos ) ) {
+		if ( fold_tree_->is_cutpoint( seqpos ) ) {
 			if ( rsd.has_variant_type( chemical::CUTPOINT_LOWER ) ) {
 				id3.rsd()    = seqpos;
 				id3.atomno() = rsd.atom_index( "OVL1" );
@@ -3662,7 +3836,7 @@ Conformation::backbone_bond_length_atoms(
 		id1.rsd()    = seqpos;
 		id1.atomno() = mainchain[ torsion-1 ];
 	} else {
-		if ( fold_tree_.is_cutpoint( seqpos-1 ) ) {
+		if ( fold_tree_->is_cutpoint( seqpos-1 ) ) {
 			if ( rsd.has_variant_type( chemical::CUTPOINT_UPPER ) ) {
 				id1.rsd() = seqpos;
 				id1.atomno() = rsd.atom_index( "OVU1" );

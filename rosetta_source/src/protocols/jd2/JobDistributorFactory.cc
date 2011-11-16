@@ -58,6 +58,7 @@
 // Utility headers
 #include <utility/exit.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -65,7 +66,7 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/RotamerSetBase.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/RotamerSetBase.fwd.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
@@ -84,10 +85,10 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/kinematics/AtomTree.fwd.hh>
-#include <core/kinematics/DomainMap.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/DomainMap.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/Jump.fwd.hh>
-#include <core/kinematics/MinimizerMapBase.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/MinimizerMapBase.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
 #include <core/pose/PDBInfo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -99,50 +100,50 @@
 #include <core/pose/signals/EnergyEvent.fwd.hh>
 #include <core/pose/signals/GeneralEvent.fwd.hh>
 #include <core/scoring/Energies.fwd.hh>
-#include <core/scoring/EnergyGraph.fwd.hh>
-#include <core/scoring/EnergyMap.fwd.hh>
-#include <core/scoring/EnergyMap.hh>
-#include <core/scoring/LREnergyContainer.fwd.hh>
-#include <core/scoring/MinimizationGraph.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyMap.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
+// AUTO-REMOVED #include <core/scoring/LREnergyContainer.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/MinimizationGraph.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionInfo.fwd.hh>
-#include <core/scoring/ScoreType.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.fwd.hh>
-#include <core/scoring/methods/ContextDependentOneBodyEnergy.fwd.hh>
-#include <core/scoring/methods/ContextDependentTwoBodyEnergy.fwd.hh>
-#include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.fwd.hh>
-#include <core/scoring/methods/ContextIndependentOneBodyEnergy.fwd.hh>
-#include <core/scoring/methods/ContextIndependentTwoBodyEnergy.fwd.hh>
-#include <core/scoring/methods/EnergyMethod.fwd.hh>
-#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
-#include <core/scoring/methods/LongRangeTwoBodyEnergy.fwd.hh>
-#include <core/scoring/methods/TwoBodyEnergy.fwd.hh>
-#include <core/scoring/methods/WholeStructureEnergy.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/ContextDependentOneBodyEnergy.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/ContextDependentTwoBodyEnergy.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/ContextIndependentOneBodyEnergy.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethod.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/LongRangeTwoBodyEnergy.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/TwoBodyEnergy.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/methods/WholeStructureEnergy.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
 #include <protocols/enzdes/EnzFilters.fwd.hh>
 #include <protocols/enzdes/EnzdesLoopsFile.fwd.hh>
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
-#include <protocols/features/DatabaseFilters.fwd.hh>
-#include <protocols/features/FeaturesReporter.fwd.hh>
-#include <protocols/features/FeaturesReporter.hh>
-#include <protocols/features/JobDataFeatures.fwd.hh>
-#include <protocols/features/PdbDataFeatures.fwd.hh>
-#include <protocols/features/PoseCommentsFeatures.fwd.hh>
-#include <protocols/features/PoseConformationFeatures.fwd.hh>
-#include <protocols/features/ProteinResidueConformationFeatures.fwd.hh>
+// AUTO-REMOVED #include <protocols/features/DatabaseFilters.fwd.hh>
+// AUTO-REMOVED #include <protocols/features/FeaturesReporter.fwd.hh>
+// AUTO-REMOVED #include <protocols/features/FeaturesReporter.hh>
+// AUTO-REMOVED #include <protocols/features/JobDataFeatures.fwd.hh>
+// AUTO-REMOVED #include <protocols/features/PdbDataFeatures.fwd.hh>
+// AUTO-REMOVED #include <protocols/features/PoseCommentsFeatures.fwd.hh>
+// AUTO-REMOVED #include <protocols/features/PoseConformationFeatures.fwd.hh>
+// AUTO-REMOVED #include <protocols/features/ProteinResidueConformationFeatures.fwd.hh>
 #include <protocols/features/ProteinSilentReport.fwd.hh>
-#include <protocols/features/ProteinSilentReport.hh>
-#include <protocols/features/ProtocolFeatures.fwd.hh>
-#include <protocols/features/Report.fwd.hh>
-#include <protocols/features/Report.hh>
-#include <protocols/features/ResidueConformationFeatures.fwd.hh>
-#include <protocols/features/ScoreTypeFeatures.fwd.hh>
-#include <protocols/features/StructureFeatures.fwd.hh>
-#include <protocols/features/StructureScoresFeatures.fwd.hh>
-#include <protocols/filters/Filter.fwd.hh>
+// AUTO-REMOVED #include <protocols/features/ProteinSilentReport.hh>
+// AUTO-REMOVED #include <protocols/features/ProtocolFeatures.fwd.hh>
+// AUTO-REMOVED #include <protocols/features/Report.fwd.hh>
+// AUTO-REMOVED #include <protocols/features/Report.hh>
+// AUTO-REMOVED #include <protocols/features/ResidueConformationFeatures.fwd.hh>
+// AUTO-REMOVED #include <protocols/features/ScoreTypeFeatures.fwd.hh>
+// AUTO-REMOVED #include <protocols/features/StructureFeatures.fwd.hh>
+// AUTO-REMOVED #include <protocols/features/StructureScoresFeatures.fwd.hh>
+// AUTO-REMOVED #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jd2/AtomTreeDiffJobInputter.fwd.hh>
 #include <protocols/jd2/AtomTreeDiffJobOutputter.fwd.hh>
 #include <protocols/jd2/DatabaseJobInputter.fwd.hh>
@@ -176,7 +177,7 @@
 #include <protocols/jd2/SilentFileJobOutputter.fwd.hh>
 #include <protocols/jd2/ThreadingJobInputter.fwd.hh>
 #include <protocols/jd2/archive/MPIArchiveJobDistributor.fwd.hh>
-#include <protocols/moves/DataMap.fwd.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverFactory.fwd.hh>
 #include <protocols/protein_interface_design/ParserJobInputter.fwd.hh>
@@ -310,12 +311,12 @@
 #include <utility/signals/LinkUnit.hh>
 #include <utility/signals/SignalHub.fwd.hh>
 #include <utility/signals/SignalHub.hh>
-#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
-#include <utility/tag/Tag.fwd.hh>
+// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
+// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
+// AUTO-REMOVED #include <utility/tag/Tag.fwd.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzVector.fwd.hh>
-#include <ObjexxFCL/FArray1D.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.fwd.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
 #include <ObjexxFCL/TypeTraits.hh>
 #include <ObjexxFCL/char.functions.hh>
@@ -346,8 +347,8 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <cppdb/frontend.h>
+// AUTO-REMOVED #include <boost/scoped_ptr.hpp>
+// AUTO-REMOVED #include <cppdb/frontend.h>
 #include <zlib/zlib.h>
 #include <zlib/zutil.h>
 

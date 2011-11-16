@@ -45,6 +45,7 @@
 #include <basic/options/keys/OptionKeys.hh>
 // Auto-header: duplicate removed #include <basic/options/option.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -356,10 +357,8 @@
 #include <zlib/zlib.h>
 #include <zlib/zutil.h>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 
 
 

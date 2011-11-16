@@ -16,7 +16,7 @@
 #include <protocols/seeded_abinitio/CAcstGeneratorCreator.hh>
 
 //#include <protocols/protein_interface_design/util.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <boost/foreach.hpp>
 
@@ -25,15 +25,16 @@
 #define foreach BOOST_FOREACH
 
 #include <basic/Tracer.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <utility/vector1.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <utility/tag/Tag.hh>
 // Auto-header: duplicate removed #include <utility/string_util.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.fwd.hh>
@@ -78,7 +79,7 @@
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
 #include <core/conformation/signals/XYZEvent.hh>
-#include <core/fragment/FragSet.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FragSet.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.fwd.hh>
@@ -87,13 +88,13 @@
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/DOF_ID_Map.fwd.hh>
-#include <core/id/DOF_ID_Map.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Map.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
-#include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
-#include <core/id/SequenceMapping.hh>
+// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/types.hh>
 #include <core/import_pose/import_pose.hh>
@@ -121,14 +122,14 @@
 #include <core/kinematics/tree/Atom.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
-#include <core/pose/MiniPose.fwd.hh>
+// AUTO-REMOVED #include <core/pose/MiniPose.fwd.hh>
 #include <core/pose/PDBInfo.fwd.hh>
-#include <core/pose/PDBPoseMap.fwd.hh>
-#include <core/pose/PDBPoseMap.hh>
+// AUTO-REMOVED #include <core/pose/PDBPoseMap.fwd.hh>
+// AUTO-REMOVED #include <core/pose/PDBPoseMap.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/Remarks.fwd.hh>
-#include <core/pose/Remarks.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/Remarks.fwd.hh>
+// AUTO-REMOVED #include <core/pose/Remarks.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/pose/datacache/ObserverCache.fwd.hh>
 #include <core/pose/metrics/PoseMetricContainer.fwd.hh>
 #include <core/pose/signals/ConformationEvent.fwd.hh>
@@ -137,7 +138,7 @@
 #include <core/pose/signals/GeneralEvent.fwd.hh>
 #include <core/scoring/Energies.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
-#include <core/scoring/EnergyMap.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/MinimizationData.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
@@ -157,26 +158,26 @@
 #include <core/scoring/constraints/HarmonicFunc.fwd.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/XYZ_Func.fwd.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
-#include <protocols/jobdist/Jobs.hh>
+// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
 #include <protocols/loops/Loop.fwd.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/loops_main.hh>
+// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverCreator.hh>
 #include <protocols/moves/MoverStatus.hh>
-#include <utility/Bound.fwd.hh>
-#include <utility/Bound.hh>
-#include <utility/PyAssert.hh>
+// AUTO-REMOVED #include <utility/Bound.fwd.hh>
+// AUTO-REMOVED #include <utility/Bound.hh>
+// AUTO-REMOVED #include <utility/PyAssert.hh>
 #include <utility/down_cast.hh>
 #include <utility/exit.hh>
-#include <utility/stream_util.hh>
+// AUTO-REMOVED #include <utility/stream_util.hh>
 #include <utility/vector0.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector0_bool.hh>
@@ -186,11 +187,11 @@
 #include <utility/vectorL.hh>
 #include <utility/vectorL_Selector.hh>
 #include <utility/vectorL_bool.hh>
-#include <utility/file/FileName.fwd.hh>
-#include <utility/file/FileName.hh>
-#include <utility/file/PathName.fwd.hh>
-#include <utility/file/PathName.hh>
-#include <utility/io/ozstream.fwd.hh>
+// AUTO-REMOVED #include <utility/file/FileName.fwd.hh>
+// AUTO-REMOVED #include <utility/file/FileName.hh>
+// AUTO-REMOVED #include <utility/file/PathName.fwd.hh>
+// AUTO-REMOVED #include <utility/file/PathName.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.fwd.hh>
 #include <utility/keys/AutoKey.fwd.hh>
 #include <utility/keys/AutoKey.hh>
 #include <utility/keys/Key.fwd.hh>
@@ -207,53 +208,53 @@
 #include <utility/keys/NoClient.fwd.hh>
 #include <utility/keys/NoClient.hh>
 #include <utility/keys/SmallKeyVector.fwd.hh>
-#include <utility/keys/SmallKeyVector.hh>
+// AUTO-REMOVED #include <utility/keys/SmallKeyVector.hh>
 #include <utility/keys/UserKey.fwd.hh>
 #include <utility/keys/VariantKey.fwd.hh>
 #include <utility/keys/VariantKey.hh>
 #include <utility/options/AnyOption.fwd.hh>
-#include <utility/options/AnyOption.hh>
-#include <utility/options/AnyVectorOption.fwd.hh>
-#include <utility/options/AnyVectorOption.hh>
+// AUTO-REMOVED #include <utility/options/AnyOption.hh>
+// AUTO-REMOVED #include <utility/options/AnyVectorOption.fwd.hh>
+// AUTO-REMOVED #include <utility/options/AnyVectorOption.hh>
 #include <utility/options/BooleanOption.fwd.hh>
-#include <utility/options/BooleanOption.hh>
+// AUTO-REMOVED #include <utility/options/BooleanOption.hh>
 #include <utility/options/BooleanVectorOption.fwd.hh>
-#include <utility/options/BooleanVectorOption.hh>
+// AUTO-REMOVED #include <utility/options/BooleanVectorOption.hh>
 #include <utility/options/FileOption.fwd.hh>
-#include <utility/options/FileOption.hh>
+// AUTO-REMOVED #include <utility/options/FileOption.hh>
 #include <utility/options/FileVectorOption.fwd.hh>
-#include <utility/options/FileVectorOption.hh>
+// AUTO-REMOVED #include <utility/options/FileVectorOption.hh>
 #include <utility/options/IntegerOption.fwd.hh>
-#include <utility/options/IntegerOption.hh>
+// AUTO-REMOVED #include <utility/options/IntegerOption.hh>
 #include <utility/options/IntegerVectorOption.fwd.hh>
-#include <utility/options/IntegerVectorOption.hh>
+// AUTO-REMOVED #include <utility/options/IntegerVectorOption.hh>
 #include <utility/options/Option.fwd.hh>
-#include <utility/options/Option.hh>
-#include <utility/options/OptionCollection.fwd.hh>
-#include <utility/options/OptionCollection.hh>
+// AUTO-REMOVED #include <utility/options/Option.hh>
+// AUTO-REMOVED #include <utility/options/OptionCollection.fwd.hh>
+// AUTO-REMOVED #include <utility/options/OptionCollection.hh>
 #include <utility/options/PathOption.fwd.hh>
-#include <utility/options/PathOption.hh>
+// AUTO-REMOVED #include <utility/options/PathOption.hh>
 #include <utility/options/PathVectorOption.fwd.hh>
-#include <utility/options/PathVectorOption.hh>
+// AUTO-REMOVED #include <utility/options/PathVectorOption.hh>
 #include <utility/options/RealOption.fwd.hh>
-#include <utility/options/RealOption.hh>
+// AUTO-REMOVED #include <utility/options/RealOption.hh>
 #include <utility/options/RealVectorOption.fwd.hh>
-#include <utility/options/RealVectorOption.hh>
-#include <utility/options/ScalarOption.fwd.hh>
-#include <utility/options/ScalarOption.hh>
-#include <utility/options/ScalarOption_T_.fwd.hh>
-#include <utility/options/ScalarOption_T_.hh>
+// AUTO-REMOVED #include <utility/options/RealVectorOption.hh>
+// AUTO-REMOVED #include <utility/options/ScalarOption.fwd.hh>
+// AUTO-REMOVED #include <utility/options/ScalarOption.hh>
+// AUTO-REMOVED #include <utility/options/ScalarOption_T_.fwd.hh>
+// AUTO-REMOVED #include <utility/options/ScalarOption_T_.hh>
 #include <utility/options/StringOption.fwd.hh>
-#include <utility/options/StringOption.hh>
+// AUTO-REMOVED #include <utility/options/StringOption.hh>
 #include <utility/options/StringVectorOption.fwd.hh>
-#include <utility/options/StringVectorOption.hh>
-#include <utility/options/VariantOption.fwd.hh>
-#include <utility/options/VariantOption.hh>
-#include <utility/options/VectorOption.fwd.hh>
-#include <utility/options/VectorOption.hh>
-#include <utility/options/VectorOption_T_.fwd.hh>
-#include <utility/options/VectorOption_T_.hh>
-#include <utility/options/mpi_stderr.hh>
+// AUTO-REMOVED #include <utility/options/StringVectorOption.hh>
+// AUTO-REMOVED #include <utility/options/VariantOption.fwd.hh>
+// AUTO-REMOVED #include <utility/options/VariantOption.hh>
+// AUTO-REMOVED #include <utility/options/VectorOption.fwd.hh>
+// AUTO-REMOVED #include <utility/options/VectorOption.hh>
+// AUTO-REMOVED #include <utility/options/VectorOption_T_.fwd.hh>
+// AUTO-REMOVED #include <utility/options/VectorOption_T_.hh>
+// AUTO-REMOVED #include <utility/options/mpi_stderr.hh>
 #include <utility/options/keys/AnyOptionKey.fwd.hh>
 #include <utility/options/keys/AnyOptionKey.hh>
 #include <utility/options/keys/AnyVectorOptionKey.fwd.hh>
@@ -308,16 +309,16 @@
 #include <utility/signals/SignalHub.fwd.hh>
 #include <utility/signals/SignalHub.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/constants.hh>
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/NumericTraits.hh>
+// AUTO-REMOVED #include <numeric/constants.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/sphericalVector.fwd.hh>
-#include <numeric/sphericalVector.hh>
+// AUTO-REMOVED #include <numeric/sphericalVector.hh>
 #include <numeric/trig.functions.hh>
-#include <numeric/types.hh>
+// AUTO-REMOVED #include <numeric/types.hh>
 #include <numeric/xyz.functions.fwd.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.fwd.hh>
@@ -361,17 +362,17 @@
 #include <ObjexxFCL/SetWrapper.fwd.hh>
 #include <ObjexxFCL/Star.fwd.hh>
 #include <ObjexxFCL/Star.hh>
-#include <ObjexxFCL/TypeTraits.hh>
-#include <ObjexxFCL/char.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/TypeTraits.hh>
+// AUTO-REMOVED #include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/proxy_const_assert.hh>
-#include <ObjexxFCL/string.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 #include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <functional>
 #include <iomanip>
 #include <iosfwd>
@@ -383,27 +384,30 @@
 #include <set>
 #include <sstream>
 #include <string>
-#include <typeinfo>
+// AUTO-REMOVED #include <typeinfo>
 #include <utility>
 #include <vector>
 #include <basic/MetricValue.fwd.hh>
 #include <basic/Tracer.fwd.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableData.fwd.hh>
-#include <basic/datacache/CacheableData.hh>
-#include <basic/datacache/DataCache.fwd.hh>
-#include <basic/datacache/DataCache.hh>
+// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableData.fwd.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableData.hh>
+// AUTO-REMOVED #include <basic/datacache/DataCache.fwd.hh>
+// AUTO-REMOVED #include <basic/datacache/DataCache.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/fold_from_loops.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
-#include <boost/algorithm/string/erase.hpp>
+// AUTO-REMOVED #include <basic/options/keys/fold_from_loops.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/loops.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
+
+//Auto Headers
+
 
 
 namespace protocols {

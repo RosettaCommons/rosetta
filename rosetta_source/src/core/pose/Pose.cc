@@ -28,12 +28,12 @@
 
 #include <core/id/TorsionID.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunctionInfo.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/io/pdb/file_data.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <basic/datacache/BasicDataCache.hh>
-#include <basic/MetricValue.hh>
+// AUTO-REMOVED #include <basic/MetricValue.hh>
 #include <basic/prof.hh>
 #include <core/pose/metrics/PoseMetricContainer.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
@@ -53,6 +53,7 @@
 //#include <core/optimization/MinimizerMap.fwd.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
+//Auto Headers
 //#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 //#include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pose/PDBInfo.fwd.hh>
@@ -126,8 +127,8 @@
 #include <basic/MetricValue.fwd.hh>
 // AUTO-REMOVED #include <basic/OStream.fwd.hh>
 #include <utility/stream_util.hh>
-#include <basic/Tracer.fwd.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.fwd.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
 #include <basic/datacache/CacheableData.fwd.hh>
 #include <basic/datacache/CacheableData.hh>
@@ -379,6 +380,9 @@
 #include <boost/pool/poolfwd.hpp>
 
 #include <core/id/NamedAtomID.hh>
+
+//Auto Headers
+
 
 
 

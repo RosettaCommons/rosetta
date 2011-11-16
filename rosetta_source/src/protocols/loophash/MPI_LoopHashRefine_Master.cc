@@ -29,14 +29,14 @@
 #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
-#include <core/import_pose/pose_stream/util.hh>
+// AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStructFactory.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
@@ -61,6 +61,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -143,7 +144,7 @@
 #include <core/io/silent/SilentEnergy.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
-#include <core/io/silent/SilentStructCreator.fwd.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStructCreator.fwd.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/kinematics/AtomPointer.fwd.hh>
 #include <core/kinematics/AtomTree.fwd.hh>
@@ -200,37 +201,37 @@
 #include <core/scoring/methods/TwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.fwd.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
-#include <core/sequence/Sequence.fwd.hh>
-#include <core/sequence/Sequence.hh>
-#include <core/sequence/SequenceProfile.fwd.hh>
-#include <core/sequence/SequenceProfile.hh>
+// AUTO-REMOVED #include <core/sequence/Sequence.fwd.hh>
+// AUTO-REMOVED #include <core/sequence/Sequence.hh>
+// AUTO-REMOVED #include <core/sequence/SequenceProfile.fwd.hh>
+// AUTO-REMOVED #include <core/sequence/SequenceProfile.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/frag_picker/ContactTypes.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/ContactTypes.hh>
 #include <protocols/frag_picker/VallChunk.fwd.hh>
-#include <protocols/frag_picker/VallChunk.hh>
-#include <protocols/frag_picker/VallProvider.fwd.hh>
-#include <protocols/frag_picker/VallProvider.hh>
-#include <protocols/frag_picker/VallResidue.fwd.hh>
-#include <protocols/frag_picker/VallResidue.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/VallChunk.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/VallProvider.fwd.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/VallProvider.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/VallResidue.fwd.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/VallResidue.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
-#include <protocols/jobdist/Jobs.hh>
+// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
 #include <protocols/loophash/BackboneDB.hh>
-#include <protocols/loophash/LocalInserter.fwd.hh>
+// AUTO-REMOVED #include <protocols/loophash/LocalInserter.fwd.hh>
 #include <protocols/loophash/LoopHashLibrary.fwd.hh>
 #include <protocols/loophash/LoopHashLibrary.hh>
 #include <protocols/loophash/LoopHashMap.hh>
-#include <protocols/loophash/LoopHashSampler.fwd.hh>
+// AUTO-REMOVED #include <protocols/loophash/LoopHashSampler.fwd.hh>
 #include <protocols/loops/Loop.fwd.hh>
-#include <protocols/loops/Loop.hh>
+// AUTO-REMOVED #include <protocols/loops/Loop.hh>
 #include <protocols/match/Hit.fwd.hh>
-#include <protocols/match/Hit.hh>
+// AUTO-REMOVED #include <protocols/match/Hit.hh>
 #include <protocols/match/SixDHasher.fwd.hh>
 #include <protocols/match/SixDHasher.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverList.hh>
+// AUTO-REMOVED #include <protocols/moves/MoverList.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/wum/MPI_WorkUnitManager.fwd.hh>
 #include <protocols/wum/MPI_WorkUnitManager.hh>
@@ -254,7 +255,7 @@
 #include <utility/vectorL.hh>
 #include <utility/vectorL_Selector.hh>
 #include <utility/vectorL_bool.hh>
-#include <utility/factory/WidgetRegistrator.hh>
+// AUTO-REMOVED #include <utility/factory/WidgetRegistrator.hh>
 #include <utility/file/FileName.fwd.hh>
 #include <utility/file/FileName.hh>
 #include <utility/file/PathName.fwd.hh>
@@ -378,7 +379,7 @@
 #include <utility/signals/SignalHub.fwd.hh>
 #include <utility/signals/SignalHub.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <numeric/HomogeneousTransform.hh>
+// AUTO-REMOVED #include <numeric/HomogeneousTransform.hh>
 #include <numeric/NumericTraits.hh>
 #include <numeric/constants.hh>
 #include <numeric/conversions.hh>
@@ -461,7 +462,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
-#include <functional>
+// AUTO-REMOVED #include <functional>
 #include <iomanip>
 #include <ios>
 #include <iosfwd>
@@ -492,14 +493,13 @@
 #include <basic/prof.hh>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>
-#include <boost/foreach.hpp>
+// AUTO-REMOVED #include <boost/foreach.hpp>
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/unordered_map.hpp>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 
 using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;

@@ -24,7 +24,7 @@
 #include <core/scoring/ContextGraphTypes.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/EnergyMap.fwd.hh>
+#include <core/scoring/EnergyMap.hh>
 #include <core/scoring/LREnergyContainer.fwd.hh>
 #include <core/scoring/methods/Methods.hh>
 #include <core/scoring/MinimizationGraph.fwd.hh>
@@ -40,6 +40,7 @@
 #endif
 
 // Project headers
+#include <core/graph/Graph.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/conformation/PointGraph.fwd.hh>
@@ -717,7 +718,7 @@ private:
 	/// live independently of a Pose!
 	pose::PoseAP owner_;
 
-	mutable EnergyGraph energy_graph_;
+	mutable EnergyGraphOP energy_graph_;
 
 	/// @brief The collection of context graphs used by the context-dependent energy components
 	/// which the Energies object is responsible for maintaining.  Context graphs
@@ -804,16 +805,6 @@ Energies::require_scoring() const
 			"Energies:: operation only permitted during scoring." );
 	}
 }
-
-
-inline
-bool
-Energies::res_moved( int const seqpos ) const
-{
-	require_scoring();
-	return energy_graph_.get_energy_node( seqpos )->moved();
-}
-
 
 
 } // namespace scoring

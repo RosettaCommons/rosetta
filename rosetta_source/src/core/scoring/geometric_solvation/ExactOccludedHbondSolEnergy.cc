@@ -41,9 +41,9 @@
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/types.hh>
 #include <core/scoring/hbonds/constants.hh>
-#include <core/scoring/hbonds/hbonds.hh> //ws
+// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh> //ws
 // Auto-header: duplicate removed #include <core/scoring/hbonds/types.hh> //ws
-#include <core/scoring/hbonds/HBondTypeManager.hh> //ws
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondTypeManager.hh> //ws
 
 // AUTO-REMOVED #include <numeric/constants.hh>
 #include <numeric/xyzVector.hh>
@@ -66,6 +66,7 @@
 #include <map>
 #include <vector>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.fwd.hh>
@@ -368,11 +369,8 @@
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 
 
 

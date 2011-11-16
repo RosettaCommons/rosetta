@@ -16,10 +16,10 @@
 #include <core/chemical/AA.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueMatcher.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueMatcher.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -47,17 +47,17 @@
 #include <basic/database/open.hh>
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <core/pack/task/ResfileReader.hh>
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include <ios>
-#include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <ios>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <ObjexxFCL/format.hh>
 
 // C++ headers
@@ -68,13 +68,14 @@
 // Auto-header: duplicate removed #include <sstream>
 #include <protocols/moves/ddGMover.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/chemical/Adduct.fwd.hh>
 #include <core/chemical/Adduct.hh>
 #include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
@@ -88,7 +89,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.fwd.hh>
-#include <core/chemical/types.hh>
+// AUTO-REMOVED #include <core/chemical/types.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
@@ -101,8 +102,8 @@
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/RotamerSetBase.fwd.hh>
 #include <core/conformation/orbitals/OrbitalXYZCoords.hh>
-#include <core/conformation/signals/ConnectionEvent.fwd.hh>
-#include <core/conformation/signals/LengthEvent.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/signals/ConnectionEvent.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/signals/LengthEvent.fwd.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
@@ -119,7 +120,7 @@
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
-#include <core/id/SequenceMapping.hh>
+// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
@@ -131,7 +132,7 @@
 #include <core/kinematics/Jump.fwd.hh>
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 #include <core/kinematics/Stub.fwd.hh>
 #include <core/kinematics/types.hh>
 #include <core/optimization/MinimizerOptions.fwd.hh>
@@ -160,25 +161,25 @@
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/LREnergyContainer.fwd.hh>
-#include <core/scoring/MinimizationData.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/MinimizationData.fwd.hh>
 #include <core/scoring/MinimizationGraph.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionInfo.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
-#include <core/scoring/constraints/Constraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/Constraints.fwd.hh>
-#include <core/scoring/constraints/Constraints.hh>
-#include <core/scoring/constraints/DOF_Constraint.fwd.hh>
-#include <core/scoring/constraints/DOF_Constraint.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
-#include <core/scoring/constraints/Func.hh>
-#include <core/scoring/constraints/FuncFactory.fwd.hh>
-#include <core/scoring/constraints/HarmonicFunc.fwd.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/constraints/XYZ_Func.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Constraints.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Constraints.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/DOF_Constraint.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/DOF_Constraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Func.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Func.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/FuncFactory.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/HarmonicFunc.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/HarmonicFunc.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.fwd.hh>
 #include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.fwd.hh>
 #include <core/scoring/methods/ContextDependentTwoBodyEnergy.fwd.hh>
@@ -193,7 +194,7 @@
 #include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
-#include <protocols/jobdist/Jobs.hh>
+// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -218,13 +219,13 @@
 #include <utility/file/FileName.hh>
 #include <utility/file/PathName.fwd.hh>
 #include <utility/file/PathName.hh>
-#include <utility/file/gzip_util.hh>
-#include <utility/io/irstream.fwd.hh>
-#include <utility/io/irstream.hh>
+// AUTO-REMOVED #include <utility/file/gzip_util.hh>
+// AUTO-REMOVED #include <utility/io/irstream.fwd.hh>
+// AUTO-REMOVED #include <utility/io/irstream.hh>
 #include <utility/io/izstream.fwd.hh>
-#include <utility/io/ozstream.fwd.hh>
-#include <utility/io/zipstream.hpp>
-#include <utility/io/zipstream.ipp>
+// AUTO-REMOVED #include <utility/io/ozstream.fwd.hh>
+// AUTO-REMOVED #include <utility/io/zipstream.hpp>
+// AUTO-REMOVED #include <utility/io/zipstream.ipp>
 #include <utility/keys/AutoKey.fwd.hh>
 #include <utility/keys/AutoKey.hh>
 #include <utility/keys/Key.fwd.hh>
@@ -346,9 +347,9 @@
 #include <numeric/xyz.functions.fwd.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzVector.fwd.hh>
-#include <numeric/random/random.fwd.hh>
-#include <numeric/random/uniform.fwd.hh>
-#include <numeric/random/uniform.hh>
+// AUTO-REMOVED #include <numeric/random/random.fwd.hh>
+// AUTO-REMOVED #include <numeric/random/uniform.fwd.hh>
+// AUTO-REMOVED #include <numeric/random/uniform.hh>
 #include <ObjexxFCL/Dimension.fwd.hh>
 #include <ObjexxFCL/Dimension.hh>
 #include <ObjexxFCL/DimensionExpression.hh>
@@ -412,14 +413,11 @@
 #include <basic/options/option.hh>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
-#include <zlib/zlib.h>
-#include <zlib/zutil.h>
+// AUTO-REMOVED #include <zlib/zlib.h>
+// AUTO-REMOVED #include <zlib/zutil.h>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 using basic::T;
 using basic::Error;
 using basic::Warning;

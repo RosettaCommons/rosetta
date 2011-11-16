@@ -61,7 +61,7 @@
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/BackboneStubConstraint.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
 #include <core/scoring/rms_util.hh>
 #include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <protocols/filters/Filter.hh>
@@ -97,16 +97,17 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/hotspot.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <boost/foreach.hpp>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/chemical/Adduct.fwd.hh>
 #include <core/chemical/Adduct.hh>
 #include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
@@ -119,7 +120,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.fwd.hh>
-#include <core/chemical/types.hh>
+// AUTO-REMOVED #include <core/chemical/types.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
@@ -159,15 +160,15 @@
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/DOF_ID_Map.fwd.hh>
-#include <core/id/DOF_ID_Map.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Map.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
 #include <core/id/DOF_ID_Range.fwd.hh>
 #include <core/id/DOF_ID_Range.hh>
 #include <core/id/NamedAtomID.fwd.hh>
-#include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
-#include <core/id/SequenceMapping.hh>
+// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/TorsionID_Range.fwd.hh>
@@ -196,18 +197,18 @@
 #include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
-#include <core/pack/interaction_graph/OnTheFlyInteractionGraph.fwd.hh>
-#include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.fwd.hh>
+// AUTO-REMOVED #include <core/pack/interaction_graph/InteractionGraphBase.hh>
+// AUTO-REMOVED #include <core/pack/interaction_graph/OnTheFlyInteractionGraph.fwd.hh>
+// AUTO-REMOVED #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.fwd.hh>
 #include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
-#include <core/pack/rotamer_set/FixbbRotamerSets.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/FixbbRotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/RotamerSetsBase.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSetsBase.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSetsBase.fwd.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSetsBase.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.fwd.hh>
 #include <core/pack/task/IGEdgeReweightContainer.fwd.hh>
 #include <core/pack/task/ResfileReader.fwd.hh>
@@ -290,7 +291,7 @@
 #include <protocols/hotspot_hashing/HotspotStub.fwd.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
-#include <protocols/jobdist/Jobs.hh>
+// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
 #include <protocols/moves/ConstraintSetMover.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/MetropolisHastingsMover.fwd.hh>
@@ -501,7 +502,7 @@
 #include <ObjexxFCL/TypeTraits.hh>
 #include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/proxy_const_assert.hh>
-#include <ObjexxFCL/ubyte.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/ubyte.fwd.hh>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
@@ -537,10 +538,8 @@
 #include <zlib/zlib.h>
 #include <zlib/zutil.h>
 
-//Auto using namespaces
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 
 #define foreach BOOST_FOREACH
 

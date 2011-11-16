@@ -17,9 +17,9 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/symmetry/SymmData.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/init.hh>
@@ -37,9 +37,10 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <utility/string_util.hh>
-#include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -48,7 +49,7 @@
 #include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
@@ -63,7 +64,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.fwd.hh>
-#include <core/chemical/types.hh>
+// AUTO-REMOVED #include <core/chemical/types.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
@@ -86,13 +87,13 @@
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
 #include <core/conformation/signals/XYZEvent.hh>
-#include <core/conformation/symmetry/SymDof.fwd.hh>
-#include <core/conformation/symmetry/SymSlideInfo.fwd.hh>
-#include <core/conformation/symmetry/SymSlideInfo.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymDof.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymSlideInfo.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymSlideInfo.hh>
 #include <core/conformation/symmetry/SymmData.fwd.hh>
-#include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-#include <core/conformation/symmetry/VirtualCoordinate.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/VirtualCoordinate.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/id/AtomID_Map.hh>
@@ -100,10 +101,10 @@
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/DOF_ID_Map.fwd.hh>
-#include <core/id/DOF_ID_Map.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Map.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
-#include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
@@ -161,9 +162,9 @@
 #include <utility/file/PathName.fwd.hh>
 #include <utility/file/PathName.hh>
 #include <utility/file/gzip_util.hh>
-#include <utility/io/irstream.fwd.hh>
-#include <utility/io/irstream.hh>
-#include <utility/io/izstream.fwd.hh>
+// AUTO-REMOVED #include <utility/io/irstream.fwd.hh>
+// AUTO-REMOVED #include <utility/io/irstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.fwd.hh>
 #include <utility/io/mpistream.hh>
 #include <utility/io/orstream.fwd.hh>
 #include <utility/io/orstream.hh>
@@ -354,7 +355,7 @@
 #include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/proxy_const_assert.hh>
 #include <ObjexxFCL/ubyte.fwd.hh>
-#include <ObjexxFCL/ubyte.hh>
+// AUTO-REMOVED #include <ObjexxFCL/ubyte.hh>
 #include <algorithm>
 #include <cassert>
 #include <cmath>
@@ -382,11 +383,11 @@
 #include <basic/MetricValue.fwd.hh>
 #include <basic/Tracer.fwd.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableData.fwd.hh>
-#include <basic/datacache/CacheableData.hh>
-#include <basic/datacache/DataCache.fwd.hh>
-#include <basic/datacache/DataCache.hh>
+// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableData.fwd.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableData.hh>
+// AUTO-REMOVED #include <basic/datacache/DataCache.fwd.hh>
+// AUTO-REMOVED #include <basic/datacache/DataCache.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>

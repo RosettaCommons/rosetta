@@ -42,7 +42,7 @@
 // Package Headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/constraints/ResidueTypeConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 // Auto-header: duplicate removed #include <core/kinematics/MoveMap.hh>
 
 // Project Headers
@@ -70,6 +70,7 @@
 
 #include <set>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.fwd.hh>
@@ -77,7 +78,7 @@
 #include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
@@ -90,7 +91,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.fwd.hh>
-#include <core/chemical/types.hh>
+// AUTO-REMOVED #include <core/chemical/types.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
@@ -124,17 +125,17 @@
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/DOF_ID_Map.fwd.hh>
-#include <core/id/DOF_ID_Map.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Map.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
 #include <core/id/DOF_ID_Range.fwd.hh>
 #include <core/id/DOF_ID_Range.hh>
 #include <core/id/JumpID.fwd.hh>
 #include <core/id/JumpID.hh>
 #include <core/id/NamedAtomID.fwd.hh>
-#include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
-#include <core/id/SequenceMapping.hh>
+// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/TorsionID_Range.fwd.hh>
@@ -163,19 +164,19 @@
 #include <core/optimization/MinimizerOptions.fwd.hh>
 #include <core/pack/dunbrack/ChiSet.fwd.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
-#include <core/pack/interaction_graph/InteractionGraphBase.hh>
-#include <core/pack/interaction_graph/OnTheFlyInteractionGraph.fwd.hh>
-#include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.fwd.hh>
-#include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
-#include <core/pack/rotamer_set/FixbbRotamerSets.hh>
+// AUTO-REMOVED #include <core/pack/interaction_graph/InteractionGraphBase.hh>
+// AUTO-REMOVED #include <core/pack/interaction_graph/OnTheFlyInteractionGraph.fwd.hh>
+// AUTO-REMOVED #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.fwd.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/FixbbRotamerSets.fwd.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/FixbbRotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pack/rotamer_set/RotamerSetsBase.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSetsBase.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSetsBase.fwd.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSetsBase.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.fwd.hh>
 #include <core/pack/task/IGEdgeReweightContainer.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
@@ -209,7 +210,7 @@
 #include <core/scoring/constraints/FuncFactory.fwd.hh>
 #include <core/scoring/constraints/HarmonicFunc.fwd.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/constraints/ResidueTypeConstraint.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ResidueTypeConstraint.fwd.hh>
 #include <core/scoring/constraints/XYZ_Func.fwd.hh>
 #include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.fwd.hh>
@@ -224,13 +225,13 @@
 #include <core/scoring/methods/WholeStructureEnergy.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
-#include <protocols/jobdist/Jobs.hh>
+// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
 #include <protocols/ligand_docking/HighResDocker.fwd.hh>
 #include <protocols/ligand_docking/InterfaceBuilder.fwd.hh>
 #include <protocols/ligand_docking/LigandArea.fwd.hh>
 #include <protocols/ligand_docking/LigandArea.hh>
-#include <protocols/ligand_docking/MinimizeBackbone.fwd.hh>
-#include <protocols/ligand_docking/MinimizeBackbone.hh>
+// AUTO-REMOVED #include <protocols/ligand_docking/MinimizeBackbone.fwd.hh>
+// AUTO-REMOVED #include <protocols/ligand_docking/MinimizeBackbone.hh>
 #include <protocols/ligand_docking/MinimizeLigand.fwd.hh>
 #include <protocols/ligand_docking/MoveMapBuilder.fwd.hh>
 #include <protocols/ligand_docking/ResidueTorsionRestraints.fwd.hh>
@@ -238,7 +239,7 @@
 #include <protocols/ligand_docking/TetherLigand.fwd.hh>
 #include <protocols/ligand_docking/UnconstrainedTorsionsMover.fwd.hh>
 #include <protocols/ligand_docking/ligand_options/Interface.fwd.hh>
-#include <protocols/loops/Loop.fwd.hh>
+// AUTO-REMOVED #include <protocols/loops/Loop.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/MetropolisHastingsMover.fwd.hh>
 #include <protocols/moves/MinMover.fwd.hh>
@@ -253,7 +254,7 @@
 #include <protocols/moves/ThermodynamicMover.fwd.hh>
 #include <protocols/moves/ThermodynamicMover.hh>
 #include <protocols/moves/mc_convergence_checks/ConvergenceCheck.fwd.hh>
-#include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
+// AUTO-REMOVED #include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
 #include <utility/Bound.fwd.hh>
 #include <utility/Bound.hh>
 #include <utility/PyAssert.hh>
@@ -270,8 +271,8 @@
 #include <utility/vectorL.hh>
 #include <utility/vectorL_Selector.hh>
 #include <utility/vectorL_bool.hh>
-#include <utility/excn/EXCN_Base.hh>
-#include <utility/excn/Exceptions.hh>
+// AUTO-REMOVED #include <utility/excn/EXCN_Base.hh>
+// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 #include <utility/file/FileName.fwd.hh>
 #include <utility/file/FileName.hh>
 #include <utility/file/PathName.fwd.hh>
@@ -393,16 +394,16 @@
 #include <utility/signals/SignalHub.fwd.hh>
 #include <utility/signals/SignalHub.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/constants.hh>
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/NumericTraits.hh>
+// AUTO-REMOVED #include <numeric/constants.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/sphericalVector.fwd.hh>
-#include <numeric/sphericalVector.hh>
+// AUTO-REMOVED #include <numeric/sphericalVector.hh>
 #include <numeric/trig.functions.hh>
-#include <numeric/types.hh>
+// AUTO-REMOVED #include <numeric/types.hh>
 #include <numeric/xyz.functions.fwd.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.fwd.hh>
@@ -470,17 +471,20 @@
 #include <basic/MetricValue.fwd.hh>
 #include <basic/Tracer.fwd.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableData.fwd.hh>
-#include <basic/datacache/CacheableData.hh>
-#include <basic/datacache/DataCache.fwd.hh>
-#include <basic/datacache/DataCache.hh>
+// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableData.fwd.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableData.hh>
+// AUTO-REMOVED #include <basic/datacache/DataCache.fwd.hh>
+// AUTO-REMOVED #include <basic/datacache/DataCache.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/enzdes.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
+
+//Auto Headers
+
 
 namespace protocols {
 namespace ligand_docking {

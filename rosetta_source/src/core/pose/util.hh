@@ -536,29 +536,12 @@ num_chi_angles(
 /// @brief Initialize a DOF_ID_Map for a given Pose using the DOF_ID_Map's current default fill values
 template< typename T >
 void
-initialize_dof_id_map( id::DOF_ID_Map< T > & dof_map, Pose const & pose )
-{
-	Size const n_res( pose.n_residue() );
-	dof_map.clear();
-	dof_map.resize( n_res );
-	for ( Size i = 1; i <= n_res; ++i ) {
-		dof_map.resize( i, pose.residue(i).natoms() );
-	}
-}
-
+initialize_dof_id_map( id::DOF_ID_Map< T > & dof_map, Pose const & pose );
 
 /// @brief Initialize a DOF_ID_Map for a given Pose using a specified fill value
 template< typename T >
 void
-initialize_dof_id_map( id::DOF_ID_Map< T > & dof_map, Pose const & pose, T const & value )
-{
-	Size const n_res( pose.n_residue() );
-	dof_map.clear();
-	dof_map.resize( n_res );
-	for ( Size i = 1; i <= n_res; ++i ) {
-		dof_map.resize( i, pose.residue(i).natoms(), value );
-	}
-}
+initialize_dof_id_map( id::DOF_ID_Map< T > & dof_map, Pose const & pose, T const & value );
 
 ///@brief returns a Distance
 core::Real
@@ -567,113 +550,49 @@ pose_max_nbr_radius( pose::Pose const & pose );
 /// @brief Initialize an AtomID_Map for a given Pose using the AtomID_Map's current default fill values
 template< typename T >
 void
-initialize_atomid_map( id::AtomID_Map< T > & atom_map, pose::Pose const & pose )
-{
-	Size const n_res( pose.n_residue() );
-	atom_map.clear();
-	atom_map.resize( n_res );
-	for ( Size i = 1; i <= n_res; ++i ) {
-		atom_map.resize( i, pose.residue_type(i).natoms() );
-	}
-}
-
+initialize_atomid_map( id::AtomID_Map< T > & atom_map, pose::Pose const & pose );
 
 /// @brief Initialize an AtomID_Map for a given Pose using a specified fill value
 template< typename T >
 void
-initialize_atomid_map( id::AtomID_Map< T > & atom_map, pose::Pose const & pose, T const & value )
-{
-	Size const n_res( pose.n_residue() );
-	atom_map.clear();
-	atom_map.resize( n_res );
-	for ( Size i = 1; i <= n_res; ++i ) {
-		atom_map.resize( i, pose.residue_type(i).natoms(), value );
-	}
-}
-
+initialize_atomid_map( id::AtomID_Map< T > & atom_map, pose::Pose const & pose, T const & value );
 
 /// @brief Initialize an AtomID_Map for a given Conformation using the AtomID_Map's current default fill values
 template< typename T >
 void
-initialize_atomid_map( id::AtomID_Map< T > & atom_map, conformation::Conformation const & conformation )
-{
-	Size const n_res( conformation.size() );
-	atom_map.clear();
-	atom_map.resize( n_res );
-	for ( Size i = 1; i <= n_res; ++i ) {
-		atom_map.resize( i, conformation.residue_type(i).natoms() );
-	}
-}
+initialize_atomid_map( id::AtomID_Map< T > & atom_map, conformation::Conformation const & conformation );
 
 
 /// @brief Initialize an AtomID_Map for a given Conformation using a specified fill value
 template< typename T >
 void
-initialize_atomid_map( id::AtomID_Map< T > & atom_map, conformation::Conformation const & conformation, T const & value )
-{
-	Size const n_res( conformation.size() );
-	atom_map.clear();
-	atom_map.resize( n_res );
-	for ( Size i = 1; i <= n_res; ++i ) {
-		atom_map.resize( i, conformation.residue_type(i).natoms(), value );
-	}
-}
+initialize_atomid_map( id::AtomID_Map< T > & atom_map, conformation::Conformation const & conformation, T const & value );
 
 /// @brief Initialize an AtomID_Map for a given Pose using the AtomID_Map's current default fill values
 template< typename T >
 void
-initialize_atomid_map_heavy_only( id::AtomID_Map< T > & atom_map, pose::Pose const & pose )
-{
-	Size const n_res( pose.n_residue() );
-	atom_map.clear();
-	atom_map.resize( n_res );
-	for ( Size i = 1; i <= n_res; ++i ) {
-		atom_map.resize( i, pose.residue_type(i).nheavyatoms() );
-	}
-}
-
+initialize_atomid_map_heavy_only( id::AtomID_Map< T > & atom_map, pose::Pose const & pose );
 
 /// @brief Initialize an AtomID_Map for a given Pose using a specified fill value
 template< typename T >
 void
-initialize_atomid_map_heavy_only( id::AtomID_Map< T > & atom_map, pose::Pose const & pose, T const & value )
-{
-	Size const n_res( pose.n_residue() );
-	atom_map.clear();
-	atom_map.resize( n_res );
-	for ( Size i = 1; i <= n_res; ++i ) {
-		atom_map.resize( i, pose.residue_type(i).nheavyatoms(), value );
-	}
-}
-
+initialize_atomid_map_heavy_only( id::AtomID_Map< T > & atom_map, pose::Pose const & pose, T const & value );
 
 /// @brief Initialize an AtomID_Map for a given Conformation using the AtomID_Map's current default fill values
 template< typename T >
 void
-initialize_atomid_map_heavy_only( id::AtomID_Map< T > & atom_map, conformation::Conformation const & conformation )
-{
-	Size const n_res( conformation.size() );
-	atom_map.clear();
-	atom_map.resize( n_res );
-	for ( Size i = 1; i <= n_res; ++i ) {
-		atom_map.resize( i, conformation.residue_type(i).nheavyatoms() );
-	}
-}
-
+initialize_atomid_map_heavy_only( id::AtomID_Map< T > & atom_map, conformation::Conformation const & conformation );
 
 /// @brief Initialize an AtomID_Map for a given Conformation using a specified fill value
 template< typename T >
 void
-initialize_atomid_map_heavy_only( id::AtomID_Map< T > & atom_map, conformation::Conformation const & conformation, T const & value )
-{
-	Size const n_res( conformation.size() );
-	atom_map.clear();
-	atom_map.resize( n_res );
-	for ( Size i = 1; i <= n_res; ++i ) {
-		atom_map.resize( i, conformation.residue_type(i).nheavyatoms(), value );
-	}
-}
+initialize_atomid_map_heavy_only( id::AtomID_Map< T > & atom_map, conformation::Conformation const & conformation, T const & value );
+
+
 } // pose
 } // core
+
+// APL TEMP!
+#include <core/pose/util.tmpl.hh>
 
 #endif // INCLUDED_core_pose_util_HH

@@ -17,6 +17,7 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -25,7 +26,7 @@
 #include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
@@ -38,7 +39,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.fwd.hh>
-#include <core/chemical/types.hh>
+// AUTO-REMOVED #include <core/chemical/types.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
@@ -70,10 +71,10 @@
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/DOF_ID_Map.fwd.hh>
-#include <core/id/DOF_ID_Map.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Map.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
-#include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
@@ -119,7 +120,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <protocols/jd2/InnerJob.fwd.hh>
+// AUTO-REMOVED #include <protocols/jd2/InnerJob.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
 #include <protocols/jd2/JobDistributor.fwd.hh>
 #include <protocols/jd2/JobInputter.fwd.hh>
@@ -128,8 +129,8 @@
 #include <utility/Bound.fwd.hh>
 #include <utility/Bound.hh>
 #include <utility/down_cast.hh>
-#include <utility/stream_util.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/stream_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 #include <utility/vector0_bool.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/vector1_bool.hh>
@@ -256,16 +257,16 @@
 #include <utility/signals/PausableSignalHub.hh>
 #include <utility/signals/SignalHub.fwd.hh>
 #include <utility/signals/SignalHub.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/constants.hh>
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/NumericTraits.hh>
+// AUTO-REMOVED #include <numeric/constants.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/sphericalVector.fwd.hh>
-#include <numeric/sphericalVector.hh>
+// AUTO-REMOVED #include <numeric/sphericalVector.hh>
 #include <numeric/trig.functions.hh>
-#include <numeric/types.hh>
+// AUTO-REMOVED #include <numeric/types.hh>
 #include <numeric/xyz.functions.fwd.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.fwd.hh>
@@ -327,22 +328,25 @@
 #include <ostream>
 #include <set>
 #include <sstream>
-#include <typeinfo>
+// AUTO-REMOVED #include <typeinfo>
 #include <utility>
 #include <vector>
 #include <basic/MetricValue.fwd.hh>
 #include <basic/Tracer.fwd.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableData.fwd.hh>
-#include <basic/datacache/CacheableData.hh>
-#include <basic/datacache/DataCache.fwd.hh>
-#include <basic/datacache/DataCache.hh>
+// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableData.fwd.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableData.hh>
+// AUTO-REMOVED #include <basic/datacache/DataCache.fwd.hh>
+// AUTO-REMOVED #include <basic/datacache/DataCache.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <boost/algorithm/string/erase.hpp>
+// AUTO-REMOVED #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
+
+//Auto Headers
+
 
 
 

@@ -53,6 +53,7 @@
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -61,7 +62,7 @@
 #include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
@@ -74,7 +75,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.fwd.hh>
-#include <core/chemical/types.hh>
+// AUTO-REMOVED #include <core/chemical/types.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
@@ -421,10 +422,8 @@
 #include <boost/pool/poolfwd.hpp>
 #include <boost/unordered_map.hpp>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 
 
 static basic::Tracer tr("core.scoring.Energies");
@@ -438,6 +437,7 @@ Energies::Energies()
 : utility::pointer::ReferenceCount(),
 	size_(0),
 	owner_( 0 ),
+	energy_graph_( new EnergyGraph ),
 	context_graphs_( scoring::num_context_graph_types, 0 ),
 	externally_required_context_graphs_( scoring::num_context_graph_types, false ),
 	required_context_graphs_( scoring::num_context_graph_types, false ),
@@ -464,7 +464,7 @@ Energies::Energies( Energies const & other )
 : utility::pointer::ReferenceCount(),
 	size_( other.size_ ),
 	owner_( 0 ),
-	energy_graph_( other.energy_graph_ ),
+	energy_graph_( new EnergyGraph( *other.energy_graph_ ) ),
 	context_graphs_( scoring::num_context_graph_types, 0 ),
 	externally_required_context_graphs_( other.externally_required_context_graphs_ ),
 	required_context_graphs_( other.required_context_graphs_ ),
@@ -502,7 +502,7 @@ Energies::operator = ( Energies const & rhs )
 	if ( this == &rhs ) return *this;
 
 	size_ =  rhs.size_;
-	energy_graph_ = rhs.energy_graph_;
+	(*energy_graph_) = (*rhs.energy_graph_);
 	context_graphs_.resize( scoring::num_context_graph_types);
 	use_nblist_ =  rhs.use_nblist_;
 	use_nblist_auto_update_ = rhs.use_nblist_auto_update_;
@@ -607,7 +607,7 @@ Energies::EnergyGraph const &
 Energies::energy_graph() const
 {
 	assert( graph_state_ == GOOD );
-	return energy_graph_;
+	return *energy_graph_;
 }
 
 /// @brief get the energy graph - see comments for const version of this method
@@ -615,7 +615,7 @@ Energies::EnergyGraph &
 Energies::energy_graph()
 {
 	assert( graph_state_ == GOOD );
-	return energy_graph_;
+	return *energy_graph_;
 }
 
 /// @details IA: Note derived classes may need access to graph before it has been initalized!
@@ -623,7 +623,7 @@ Energies::energy_graph()
 Energies::EnergyGraph &
 Energies::energy_graph_no_state_check()
 {
-	return energy_graph_;
+	return *energy_graph_;
 }
 
 /// @details convenience function -- this function violates the idea that the
@@ -809,7 +809,7 @@ Energies::clear_energies()
 		residue_total_energy_.resize( size_ );
 		std::fill( residue_total_energy_.begin(), residue_total_energy_.end(), (Real) 0.0 );
 	}
- 	energy_graph_.drop_all_edges();
+ 	energy_graph_->drop_all_edges();
 	for ( uint ii = 1; ii <= context_graphs_.size(); ++ii ) {
 		if ( context_graphs_[ ii ] ) context_graphs_[ ii ]->drop_all_edges();
 	}
@@ -828,13 +828,13 @@ Energies::prepare_neighbor_graphs()
 {
 	// The graph state should either be GOOD (no work requried) or MOD (correct, mod the domain map)
 	assert( graph_state_ != BAD );
-	delete_graph_edges_using_domain_map( energy_graph_ );
+	delete_graph_edges_using_domain_map( *energy_graph_ );
 
 	// Later, the absence of edges from the energy_graph_ is taken as a signal
 	// that all residues have moved with respect to each other, and therefore
 	// all found neighbor pairs will have edges added in the context graphs.
 	// The context graphs must be empty to avoid an edge duplication event.
-	if ( energy_graph_.num_edges() != 0 ) {
+	if ( energy_graph_->num_edges() != 0 ) {
 		for ( uint ii = 1; ii <= context_graphs_.size(); ++ii ) {
 			if ( context_graphs_[ ii ] ) delete_graph_edges_using_domain_map( *context_graphs_[ ii ] );
 		}
@@ -1172,7 +1172,7 @@ Energies::reset_nblist()
 void
 Energies::reset_res_moved( int const seqpos )
 {
-	energy_graph_.get_energy_node( seqpos )->moved( false );
+	energy_graph_->get_energy_node( seqpos )->moved( false );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1181,11 +1181,11 @@ Energies::set_size( Size const new_size )
 {
 	if ( size_ == new_size ) {
 		assert( domain_map_.size() == size_ &&
-			Size(energy_graph_.num_nodes()) == size_ );
+			Size(energy_graph_->num_nodes()) == size_ );
 		return;
 	}
 	size_ = new_size;
-	energy_graph_.set_num_nodes( size_ );
+	energy_graph_->set_num_nodes( size_ );
 	for ( uint ii = 1; ii <= context_graphs_.size(); ++ii ) {
 		if ( context_graphs_[ ii ] ) context_graphs_[ ii ]->set_num_nodes( size_ );
 	}
@@ -1280,8 +1280,8 @@ Energies::internalize_new_domain_map()
 	for ( uint ii = 1, ii_end = size_; ii <= ii_end; ++ii ) {
 
 		if ( domain_map_(ii) == 0) {
-			//energy_graph_.get_energy_node( ii )->moved( true );
-			energy_graph_.get_energy_node( ii )->moved( true );
+			//energy_graph_->get_energy_node( ii )->moved( true );
+			energy_graph_->get_energy_node( ii )->moved( true );
 
 			/// moved from scoring_begin()
 			// onebody residue energies are still valid unless bb/chi changed
@@ -1337,8 +1337,8 @@ Energies::accumulate_residue_total_energies() const
 
 	for ( Size i=1, i_end = residue_total_energies_.size(); i<= i_end; ++i ) {
 		for ( graph::Graph::EdgeListConstIter
-				iru  = energy_graph_.get_node(i)->const_upper_edge_list_begin(),
-				irue = energy_graph_.get_node(i)->const_upper_edge_list_end();
+				iru  = energy_graph_->get_node(i)->const_upper_edge_list_begin(),
+				irue = energy_graph_->get_node(i)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
 
 			EnergyEdge const & edge( static_cast< EnergyEdge const & > (**iru) );
@@ -1402,8 +1402,8 @@ Energies::accumulate_residue_total_energy() const
 		//conformation::Residue const & resl( pose.residue( i ) );
 
 		for ( graph::Graph::EdgeListConstIter
-				iru  = energy_graph_.get_node(ii)->const_upper_edge_list_begin(),
-				irue = energy_graph_.get_node(ii)->const_upper_edge_list_end();
+				iru  = energy_graph_->get_node(ii)->const_upper_edge_list_begin(),
+				irue = energy_graph_->get_node(ii)->const_upper_edge_list_end();
 				iru != irue; ++iru ) {
 			EnergyEdge const & edge( static_cast< EnergyEdge const & > (**iru) );
 			Size const jj( edge.get_second_node_ind() );
@@ -1493,7 +1493,7 @@ Energies::set_scorefxn_info( scoring::ScoreFunctionInfoOP info )
 			active.push_back( (ScoreType) ii );
 		}
 	}
-	energy_graph_.active_score_types( active );
+	energy_graph_->active_score_types( active );
 	scorefxn_info_ = info;
 }
 
@@ -1528,7 +1528,7 @@ Energies::update_neighbor_links(
 	// According to the domain map, add some of the edges detected by the octree to
 	// the energy graph and to the context graphs
 
-	bool all_moved( energy_graph_.num_edges() == 0 );
+	bool all_moved( energy_graph_->num_edges() == 0 );
 
 	utility::vector1< ContextGraphOP > context_graphs_present;
 	for ( uint ii = 1, ii_end = context_graphs_.size(); ii <= ii_end; ++ii ) {
@@ -1558,7 +1558,7 @@ Energies::update_neighbor_links(
 				// if ( std::sqrt( square_distance ) < ( ii_intxn_radius + jj_res.nbr_radius() ) ) {
  				if ( ii_intxn_radius + jjradius > 0 ) {
 					if ( square_distance < (ii_intxn_radius + jjradius )*(ii_intxn_radius + jjradius )) {
-						energy_graph_.add_energy_edge( ii, jj, square_distance );
+						energy_graph_->add_energy_edge( ii, jj, square_distance );
 					}
 					for ( uint kk = 1; kk <= context_graphs_present.size(); ++kk ) {
 						context_graphs_present[ kk ]->conditionally_add_edge( ii, jj, square_distance );
@@ -1756,6 +1756,13 @@ Energies::scoring_end( scoring::ScoreFunction const &  )
 {
 	scoring_ = false;
 	energy_state_ = GOOD;
+}
+
+bool
+Energies::res_moved( int const seqpos ) const
+{
+  require_scoring();
+  return energy_graph_->get_energy_node( seqpos )->moved();
 }
 
 

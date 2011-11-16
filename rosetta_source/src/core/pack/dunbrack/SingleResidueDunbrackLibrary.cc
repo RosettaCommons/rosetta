@@ -53,6 +53,7 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -435,6 +436,9 @@
 #include <boost/pool/poolfwd.hpp>
 #include <zlib/zlib.h>
 #include <zlib/zutil.h>
+
+//Auto Headers
+
 
 
 // Numeric headers

@@ -689,6 +689,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Ignore 'CHECKPOINT' file and the overwrite the PDB file(s)</dd><br>
 </dl>
 <dl>
+<dt><b>-dump_connect_info</b> \<Boolean\><dt>
+<dd>Output CONECT info between bonded atoms that are beyond 3.0 A apart; useful for coarse-grained representations.</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-database_filename</b> \<File\><dt>
 <dd>SQLite3 database filename (or mysql database name) to manage persistant data.</dd><br>
 </dl>

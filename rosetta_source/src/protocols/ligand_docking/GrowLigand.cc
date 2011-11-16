@@ -36,6 +36,7 @@
 #include <core/chemical/AtomTypeSet.hh>
 #include <utility/tag/Tag.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.fwd.hh>
@@ -134,7 +135,7 @@
 #include <utility/keys/Key3Tuple.hh>
 #include <utility/keys/Key4Tuple.fwd.hh>
 #include <utility/keys/Key4Tuple.hh>
-#include <utility/options/StringOption.hh>
+// AUTO-REMOVED #include <utility/options/StringOption.hh>
 #include <utility/pointer/ReferenceCount.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/pointer/access_ptr.fwd.hh>
@@ -202,9 +203,9 @@
 #include <ObjexxFCL/SetWrapper.fwd.hh>
 #include <ObjexxFCL/Star.fwd.hh>
 #include <ObjexxFCL/Star.hh>
-#include <ObjexxFCL/TypeTraits.hh>
+// AUTO-REMOVED #include <ObjexxFCL/TypeTraits.hh>
 #include <ObjexxFCL/proxy_const_assert.hh>
-#include <ObjexxFCL/string.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 #include <algorithm>
 #include <cassert>
 #include <cmath>
@@ -221,26 +222,23 @@
 #include <set>
 #include <sstream>
 #include <string>
-#include <typeinfo>
+// AUTO-REMOVED #include <typeinfo>
 #include <utility>
 #include <vector>
 #include <basic/MetricValue.fwd.hh>
 #include <basic/Tracer.fwd.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
-#include <basic/datacache/CacheableData.fwd.hh>
-#include <basic/datacache/CacheableData.hh>
-#include <basic/datacache/DataCache.hh>
-#include <boost/algorithm/string/erase.hpp>
+// AUTO-REMOVED #include <basic/datacache/CacheableData.fwd.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableData.hh>
+// AUTO-REMOVED #include <basic/datacache/DataCache.hh>
+// AUTO-REMOVED #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 #define foreach BOOST_FOREACH
 
 namespace protocols {

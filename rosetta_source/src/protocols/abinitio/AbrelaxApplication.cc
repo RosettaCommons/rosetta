@@ -93,7 +93,7 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/scoring/SS_Killhairpins_Info.hh>
-#include <core/scoring/SS_Killhairpins_Info.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/SS_Killhairpins_Info.fwd.hh>
 #include <core/scoring/methods/ContactOrderEnergy.hh>
 
 // Project Headers
@@ -200,6 +200,9 @@
 #include <protocols/relax/util.hh>
 #include <utility/vector0.hh>
 #include <ObjexxFCL/format.hh>
+
+//Auto Headers
+
 
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS

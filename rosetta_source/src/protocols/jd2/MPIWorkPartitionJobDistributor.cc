@@ -39,6 +39,7 @@
 ///C++ headers
 #include <string>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
@@ -54,7 +55,7 @@
 #include <protocols/jd2/MPIWorkPartitionJobDistributor.fwd.hh>
 #include <protocols/jd2/Parser.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
-#include <protocols/jobdist/Jobs.hh>
+// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverStatus.hh>

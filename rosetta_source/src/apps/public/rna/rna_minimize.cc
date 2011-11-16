@@ -17,9 +17,9 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/sequence/util.hh>
+// AUTO-REMOVED #include <core/sequence/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
@@ -37,7 +37,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 //RNA stuff.
-#include <protocols/rna/RNA_DeNovoProtocol.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_DeNovoProtocol.hh>
 #include <protocols/rna/RNA_Minimizer.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 
@@ -51,6 +51,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.fwd.hh>
@@ -58,7 +59,7 @@
 #include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
@@ -72,7 +73,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.fwd.hh>
-#include <core/chemical/types.hh>
+// AUTO-REMOVED #include <core/chemical/types.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
@@ -105,10 +106,10 @@
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/DOF_ID_Map.fwd.hh>
-#include <core/id/DOF_ID_Map.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Map.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
-#include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
@@ -173,50 +174,50 @@
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/TwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.fwd.hh>
-#include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>
-#include <core/scoring/rna/RNA_LowResolutionPotential.hh>
-#include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
-#include <core/sequence/DerivedSequenceMapping.fwd.hh>
-#include <core/sequence/ScoringScheme.fwd.hh>
-#include <core/sequence/Sequence.fwd.hh>
-#include <core/sequence/Sequence.hh>
-#include <core/sequence/SequenceAlignment.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
+// AUTO-REMOVED #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
+// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
+// AUTO-REMOVED #include <core/sequence/DerivedSequenceMapping.fwd.hh>
+// AUTO-REMOVED #include <core/sequence/ScoringScheme.fwd.hh>
+// AUTO-REMOVED #include <core/sequence/Sequence.fwd.hh>
+// AUTO-REMOVED #include <core/sequence/Sequence.hh>
+// AUTO-REMOVED #include <core/sequence/SequenceAlignment.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
-#include <protocols/jobdist/Jobs.hh>
+// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/MonteCarloStatus.hh>
+// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
+// AUTO-REMOVED #include <protocols/moves/MonteCarloStatus.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/MoverStatistics.hh>
+// AUTO-REMOVED #include <protocols/moves/MoverStatistics.hh>
 #include <protocols/moves/MoverStatus.hh>
-#include <protocols/moves/mc_convergence_checks/ConvergenceCheck.fwd.hh>
-#include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
+// AUTO-REMOVED #include <protocols/moves/mc_convergence_checks/ConvergenceCheck.fwd.hh>
+// AUTO-REMOVED #include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
 #include <protocols/rna/AllowInsert.fwd.hh>
 #include <protocols/rna/AllowInsert.hh>
-#include <protocols/rna/RNA_ChunkLibrary.fwd.hh>
-#include <protocols/rna/RNA_DataReader.fwd.hh>
-#include <protocols/rna/RNA_FragmentMover.fwd.hh>
-#include <protocols/rna/RNA_FragmentMover.hh>
-#include <protocols/rna/RNA_Fragments.fwd.hh>
-#include <protocols/rna/RNA_JumpLibrary.fwd.hh>
-#include <protocols/rna/RNA_LoopCloser.fwd.hh>
-#include <protocols/rna/RNA_MatchType.hh>
-#include <protocols/rna/RNA_Minimizer.fwd.hh>
-#include <protocols/rna/RNA_Relaxer.fwd.hh>
-#include <protocols/rna/RNA_StructureParameters.fwd.hh>
-#include <protocols/rna/RNA_StructureParameters.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_ChunkLibrary.fwd.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_DataReader.fwd.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_FragmentMover.fwd.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_FragmentMover.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_Fragments.fwd.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_JumpLibrary.fwd.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_LoopCloser.fwd.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_MatchType.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_Minimizer.fwd.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_Relaxer.fwd.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_StructureParameters.fwd.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_StructureParameters.hh>
 #include <protocols/viewer/GraphicsState.hh>
 #include <protocols/viewer/triangle.hh>
 #include <utility/Bound.fwd.hh>
 #include <utility/Bound.hh>
 #include <utility/down_cast.hh>
 #include <utility/exit.hh>
-#include <utility/stream_util.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/stream_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 #include <utility/vector0_bool.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/vector1_bool.hh>
@@ -224,13 +225,13 @@
 #include <utility/vectorL.hh>
 #include <utility/vectorL_Selector.hh>
 #include <utility/vectorL_bool.hh>
-#include <utility/excn/EXCN_Base.hh>
-#include <utility/excn/Exceptions.hh>
+// AUTO-REMOVED #include <utility/excn/EXCN_Base.hh>
+// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 #include <utility/file/FileName.fwd.hh>
 #include <utility/file/FileName.hh>
 #include <utility/file/PathName.fwd.hh>
 #include <utility/file/PathName.hh>
-#include <utility/io/mpistream.hh>
+// AUTO-REMOVED #include <utility/io/mpistream.hh>
 #include <utility/io/ozstream.fwd.hh>
 #include <utility/keys/AutoKey.fwd.hh>
 #include <utility/keys/AutoKey.hh>
@@ -349,16 +350,16 @@
 #include <utility/signals/SignalHub.fwd.hh>
 #include <utility/signals/SignalHub.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/constants.hh>
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/NumericTraits.hh>
+// AUTO-REMOVED #include <numeric/constants.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/sphericalVector.fwd.hh>
-#include <numeric/sphericalVector.hh>
+// AUTO-REMOVED #include <numeric/sphericalVector.hh>
 #include <numeric/trig.functions.hh>
-#include <numeric/types.hh>
+// AUTO-REMOVED #include <numeric/types.hh>
 #include <numeric/xyz.functions.fwd.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.fwd.hh>
@@ -384,18 +385,18 @@
 #include <ObjexxFCL/FArray2.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/FArray3.fwd.hh>
-#include <ObjexxFCL/FArray3.hh>
-#include <ObjexxFCL/FArray3D.fwd.hh>
-#include <ObjexxFCL/FArray3D.hh>
-#include <ObjexxFCL/FArray4.fwd.hh>
-#include <ObjexxFCL/FArray4.hh>
-#include <ObjexxFCL/FArray4D.fwd.hh>
-#include <ObjexxFCL/FArray4D.hh>
-#include <ObjexxFCL/FArray5.fwd.hh>
-#include <ObjexxFCL/FArray5.hh>
-#include <ObjexxFCL/FArray5D.fwd.hh>
-#include <ObjexxFCL/FArray5D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray3.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray3.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray3D.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray4.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray4.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray4D.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray4D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray5.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray5.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray5D.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray5D.hh>
 #include <ObjexxFCL/FArrayInitializer.fwd.hh>
 #include <ObjexxFCL/FArrayInitializer.hh>
 #include <ObjexxFCL/FArraySection.fwd.hh>
@@ -416,7 +417,7 @@
 #include <ObjexxFCL/TypeTraits.hh>
 #include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/proxy_const_assert.hh>
-#include <ObjexxFCL/string.functions.hh>
+// Auto-header: duplicate removed #include <ObjexxFCL/string.functions.hh>
 #include <algorithm>
 #include <cassert>
 #include <cmath>
@@ -425,7 +426,7 @@
 #include <cstdlib>
 #include <execinfo.h>
 #include <iomanip>
-#include <ios>
+// AUTO-REMOVED #include <ios>
 #include <iosfwd>
 #include <limits>
 #include <list>
@@ -433,21 +434,21 @@
 #include <ostream>
 #include <set>
 #include <sstream>
-#include <typeinfo>
+// AUTO-REMOVED #include <typeinfo>
 #include <utility>
 #include <vector>
 #include <basic/MetricValue.fwd.hh>
 #include <basic/Tracer.fwd.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableData.fwd.hh>
-#include <basic/datacache/CacheableData.hh>
-#include <basic/datacache/DataCache.fwd.hh>
-#include <basic/datacache/DataCache.hh>
+// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableData.fwd.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableData.hh>
+// AUTO-REMOVED #include <basic/datacache/DataCache.fwd.hh>
+// AUTO-REMOVED #include <basic/datacache/DataCache.hh>
 #include <basic/options/after_opts.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <boost/algorithm/string/erase.hpp>
+// AUTO-REMOVED #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>

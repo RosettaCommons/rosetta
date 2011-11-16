@@ -21,7 +21,7 @@
 // Unit headers
 #include <protocols/jd2/archive/MPIArchiveJobDistributor.hh>
 #include <protocols/jd2/archive/ArchiveManager.hh>
-#include <protocols/jd2/BatchJobInputter.hh> //for BOGUS_BATCH_ID
+// AUTO-REMOVED #include <protocols/jd2/BatchJobInputter.hh> //for BOGUS_BATCH_ID
 // Package headers
 // AUTO-REMOVED #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
@@ -36,7 +36,7 @@
 #include <basic/MemTracer.hh>
 #include <basic/options/option.hh>
 #include <utility/exit.hh>
-#include <utility/assert.hh>
+// AUTO-REMOVED #include <utility/assert.hh>
 #include <basic/prof.hh>
 #include <ObjexxFCL/string.functions.hh>
 
@@ -49,37 +49,38 @@
 // C++ headers
 #include <string>
 // AUTO-REMOVED #include <ctime>
-#include <math.h>
+// AUTO-REMOVED #include <math.h>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/io/silent/SharedSilentData.hh>
-#include <core/io/silent/SilentEnergy.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStruct.fwd.hh>
-#include <core/io/silent/SilentStruct.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.fwd.hh>
+// AUTO-REMOVED #include <core/io/silent/SharedSilentData.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentEnergy.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.fwd.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStruct.fwd.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/silent.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/scoring/ResidualDipolarCoupling.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/ResidualDipolarCoupling.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/ScoreType.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreType.hh>
 #include <protocols/abinitio/AbrelaxMover.fwd.hh>
 #include <protocols/abinitio/FragmentSampler.fwd.hh>
-#include <protocols/abinitio/FragmentSampler.hh>
-#include <protocols/checkpoint/CheckPointer.fwd.hh>
-#include <protocols/checkpoint/CheckPointer.hh>
+// AUTO-REMOVED #include <protocols/abinitio/FragmentSampler.hh>
+// AUTO-REMOVED #include <protocols/checkpoint/CheckPointer.fwd.hh>
+// AUTO-REMOVED #include <protocols/checkpoint/CheckPointer.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/jd2/BatchJobInputter.fwd.hh>
+// AUTO-REMOVED #include <protocols/jd2/BatchJobInputter.fwd.hh>
 #include <protocols/jd2/InnerJob.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
 #include <protocols/jd2/JobDistributor.fwd.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobDistributorFactory.fwd.hh>
 #include <protocols/jd2/JobInputter.fwd.hh>
-#include <protocols/jd2/JobInputter.hh>
+// AUTO-REMOVED #include <protocols/jd2/JobInputter.hh>
 #include <protocols/jd2/JobOutputter.fwd.hh>
 #include <protocols/jd2/MPIFileBufJobDistributor.fwd.hh>
 #include <protocols/jd2/MPIFileBufJobDistributor.hh>
@@ -91,16 +92,16 @@
 #include <protocols/jd2/archive/ArchiveManager.fwd.hh>
 #include <protocols/jd2/archive/MPIArchiveJobDistributor.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
-#include <protocols/jobdist/Jobs.hh>
+// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
 #include <protocols/loops/SlidingWindowLoopClosure.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-#include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/MonteCarloStatus.hh>
+// AUTO-REMOVED #include <protocols/moves/MonteCarlo.fwd.hh>
+// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
+// AUTO-REMOVED #include <protocols/moves/MonteCarloStatus.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverStatus.hh>
-#include <protocols/moves/mc_convergence_checks/ConvergenceCheck.fwd.hh>
-#include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
+// AUTO-REMOVED #include <protocols/moves/mc_convergence_checks/ConvergenceCheck.fwd.hh>
+// AUTO-REMOVED #include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
 #include <protocols/relax/RelaxProtocolBase.fwd.hh>
 #include <protocols/topology_broker/TopologyBroker.fwd.hh>
 #include <utility/Bound.fwd.hh>
@@ -228,7 +229,7 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <numeric/xyzVector.fwd.hh>
-#include <ObjexxFCL/FArray2D.fwd.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2D.fwd.hh>
 #include <ObjexxFCL/TypeTraits.hh>
 #include <ObjexxFCL/char.functions.hh>
 #include <algorithm>

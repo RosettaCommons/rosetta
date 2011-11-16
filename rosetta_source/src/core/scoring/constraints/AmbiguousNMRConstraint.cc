@@ -23,22 +23,23 @@
 #include <utility/excn/Exceptions.hh>
 #include <basic/prof.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/signals/LengthEvent.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/signals/LengthEvent.fwd.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
-#include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
-#include <core/id/SequenceMapping.hh>
+// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/kinematics/AtomTree.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>

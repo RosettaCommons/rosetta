@@ -35,6 +35,7 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <utility/Bound.fwd.hh>
 #include <utility/Bound.hh>
@@ -153,7 +154,7 @@
 #include <utility/pointer/owning_ptr.functions.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
-#include <numeric/xyzVector.fwd.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.fwd.hh>
 #include <ObjexxFCL/TypeTraits.hh>
 #include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/string.functions.hh>

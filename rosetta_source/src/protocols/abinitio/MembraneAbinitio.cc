@@ -36,7 +36,7 @@
 #include <core/scoring/MembranePotential.fwd.hh>
 
 // AUTO-REMOVED #include <core/scoring/rms_util.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -83,6 +83,7 @@
 #include <ctime>
 #endif
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.fwd.hh>
@@ -124,10 +125,10 @@
 #include <core/fragment/BaseCacheUnit.hh>
 #include <core/fragment/ConstantLengthFragSet.fwd.hh>
 #include <core/fragment/FragData.fwd.hh>
-#include <core/fragment/FragData.hh>
+// AUTO-REMOVED #include <core/fragment/FragData.hh>
 #include <core/fragment/FragID.fwd.hh>
 #include <core/fragment/FragID.hh>
-#include <core/fragment/FragID_Iterator.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FragID_Iterator.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.fwd.hh>
@@ -137,7 +138,7 @@
 #include <core/fragment/FrameList.fwd.hh>
 #include <core/fragment/FrameList.hh>
 #include <core/fragment/SingleResidueFragData.fwd.hh>
-#include <core/fragment/SingleResidueFragData.hh>
+// AUTO-REMOVED #include <core/fragment/SingleResidueFragData.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.fwd.hh>
@@ -446,6 +447,9 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
+
+//Auto Headers
+
 
 //Auto using namespaces
 namespace std { } using namespace std; // AUTO USING NS

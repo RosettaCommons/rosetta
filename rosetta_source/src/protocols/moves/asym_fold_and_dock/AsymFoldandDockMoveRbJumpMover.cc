@@ -30,6 +30,7 @@
 #include <utility/exit.hh>
 #include <numeric/random/random.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -306,7 +307,7 @@
 #include <set>
 #include <sstream>
 #include <string>
-#include <typeinfo>
+// AUTO-REMOVED #include <typeinfo>
 #include <utility>
 #include <vector>
 #include <basic/MetricValue.fwd.hh>
@@ -315,16 +316,13 @@
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <boost/algorithm/string/erase.hpp>
+// AUTO-REMOVED #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 
 
 namespace protocols {

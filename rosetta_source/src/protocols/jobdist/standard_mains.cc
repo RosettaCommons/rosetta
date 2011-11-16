@@ -42,11 +42,11 @@
 #include <basic/datacache/DiagnosticData.hh>
 #include <basic/Tracer.hh>
 
-#include <protocols/viewer/viewers.hh>
+// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/idealize/IdealizeMover.hh>
-#include <protocols/evaluation/RmsdEvaluator.hh>
+// AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
 #include <numeric/random/random_permutation.hh>
 #include <utility/exit.hh>
 #include <utility/file/FileName.hh>
@@ -72,6 +72,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.fwd.hh>
@@ -125,9 +126,9 @@
 #include <core/conformation/symmetry/SymmData.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/fragment/FragSet.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/SecondaryStructure.fwd.hh>
-#include <core/fragment/SecondaryStructure.hh>
+// AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.fwd.hh>
@@ -219,17 +220,17 @@
 #include <protocols/idealize/IdealizeMover.fwd.hh>
 #include <protocols/jobdist/JobDistributors.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
-#include <protocols/loops/Loop.fwd.hh>
-#include <protocols/loops/Loop.hh>
+// AUTO-REMOVED #include <protocols/loops/Loop.fwd.hh>
+// AUTO-REMOVED #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.fwd.hh>
-#include <protocols/loops/Loops.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-#include <protocols/moves/MonteCarlo.fwd.hh>
+// AUTO-REMOVED #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverCreator.hh>
 #include <protocols/moves/MoverStatus.hh>
-#include <protocols/viewer/GraphicsState.hh>
-#include <protocols/viewer/triangle.hh>
+// AUTO-REMOVED #include <protocols/viewer/GraphicsState.hh>
+// AUTO-REMOVED #include <protocols/viewer/triangle.hh>
 #include <utility/Bound.fwd.hh>
 #include <utility/Bound.hh>
 #include <utility/down_cast.hh>
@@ -493,11 +494,8 @@
 #include <zlib/zlib.h>
 #include <zlib/zutil.h>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 
 
 namespace protocols {

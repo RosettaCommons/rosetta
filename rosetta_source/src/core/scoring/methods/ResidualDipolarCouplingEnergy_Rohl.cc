@@ -44,6 +44,7 @@
 //C++ headers
 #include <iostream>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -52,7 +53,7 @@
 #include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
@@ -97,7 +98,7 @@
 #include <core/pose/signals/DestructionEvent.fwd.hh>
 #include <core/pose/signals/EnergyEvent.fwd.hh>
 #include <core/pose/signals/GeneralEvent.fwd.hh>
-#include <core/scoring/DerivVectorPair.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/DerivVectorPair.fwd.hh>
 #include <core/scoring/Energies.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/EnergyMap.hh>
@@ -309,11 +310,8 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 
 
 namespace core {

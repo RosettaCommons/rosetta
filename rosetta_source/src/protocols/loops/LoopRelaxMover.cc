@@ -45,7 +45,7 @@
 #include <core/scoring/electron_density/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <protocols/checkpoint/CheckPointer.hh>
@@ -66,7 +66,7 @@
 #include <protocols/loops/util.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/viewer/viewers.hh>
+// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 #include <utility/exit.hh>
 
 // symmetry
@@ -80,7 +80,7 @@
 
 
 // C++ headers
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 
@@ -94,6 +94,7 @@
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.fwd.hh>
@@ -145,23 +146,23 @@
 #include <core/conformation/symmetry/SymmData.fwd.hh>
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
-#include <core/fragment/BaseCacheUnit.hh>
-#include <core/fragment/FragData.fwd.hh>
-#include <core/fragment/FragData.hh>
+// AUTO-REMOVED #include <core/fragment/BaseCacheUnit.hh>
+// AUTO-REMOVED #include <core/fragment/FragData.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FragData.hh>
 #include <core/fragment/FragID.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/Frame.fwd.hh>
-#include <core/fragment/Frame.hh>
+// AUTO-REMOVED #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.fwd.hh>
-#include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FrameIteratorWorker_.fwd.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
+// AUTO-REMOVED #include <core/fragment/FrameIterator.hh>
+// AUTO-REMOVED #include <core/fragment/FrameIteratorWorker_.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/FrameList.fwd.hh>
-#include <core/fragment/FrameList.hh>
+// AUTO-REMOVED #include <core/fragment/FrameList.hh>
 #include <core/fragment/SecondaryStructure.fwd.hh>
-#include <core/fragment/SecondaryStructure.hh>
-#include <core/fragment/SingleResidueFragData.fwd.hh>
-#include <core/fragment/SingleResidueFragData.hh>
+// AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
+// AUTO-REMOVED #include <core/fragment/SingleResidueFragData.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/SingleResidueFragData.hh>
 #include <core/graph/ArrayPool.hh>
 #include <core/graph/Graph.fwd.hh>
 #include <core/graph/Graph.hh>
@@ -186,11 +187,11 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/file_data.fwd.hh>
 #include <core/io/silent/SilentEnergy.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentStructCreator.fwd.hh>
-#include <core/io/silent/SilentStructFactory.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStructCreator.fwd.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 #include <core/kinematics/AtomPointer.fwd.hh>
 #include <core/kinematics/AtomTree.fwd.hh>
 #include <core/kinematics/AtomTree.hh>
@@ -215,7 +216,7 @@
 #include <core/kinematics/tree/Atom.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.fwd.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pack/rotamer_set/symmetry/SymmetricRotamerSets.fwd.hh>
@@ -270,7 +271,7 @@
 #include <core/scoring/methods/Methods.hh>
 #include <core/scoring/methods/TwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.fwd.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
@@ -288,8 +289,8 @@
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/MiniRelax.hh>
 #include <protocols/relax/util.hh>
-#include <protocols/viewer/GraphicsState.hh>
-#include <protocols/viewer/triangle.hh>
+// AUTO-REMOVED #include <protocols/viewer/GraphicsState.hh>
+// AUTO-REMOVED #include <protocols/viewer/triangle.hh>
 #include <utility/Bound.fwd.hh>
 #include <utility/Bound.hh>
 #include <utility/PyAssert.hh>
@@ -306,7 +307,7 @@
 #include <utility/vectorL.hh>
 #include <utility/vectorL_Selector.hh>
 #include <utility/vectorL_bool.hh>
-#include <utility/factory/WidgetRegistrator.hh>
+// AUTO-REMOVED #include <utility/factory/WidgetRegistrator.hh>
 #include <utility/file/FileName.fwd.hh>
 #include <utility/file/FileName.hh>
 #include <utility/file/PathName.fwd.hh>
@@ -527,11 +528,8 @@
 #include <boost/pool/poolfwd.hpp>
 #include <boost/unordered/unordered_map.hpp>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 // Auto-header: duplicate removed #include <basic/options/option.hh>
 
 

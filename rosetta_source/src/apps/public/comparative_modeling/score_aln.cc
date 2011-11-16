@@ -34,7 +34,7 @@
 #include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
@@ -64,6 +64,7 @@
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.fwd.hh>
@@ -71,7 +72,7 @@
 #include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
@@ -85,7 +86,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.fwd.hh>
-#include <core/chemical/types.hh>
+// AUTO-REMOVED #include <core/chemical/types.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
@@ -108,23 +109,23 @@
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/conformation/signals/XYZEvent.fwd.hh>
 #include <core/conformation/signals/XYZEvent.hh>
-#include <core/fragment/BaseCacheUnit.hh>
-#include <core/fragment/FragData.fwd.hh>
-#include <core/fragment/FragData.hh>
+// AUTO-REMOVED #include <core/fragment/BaseCacheUnit.hh>
+// AUTO-REMOVED #include <core/fragment/FragData.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FragData.hh>
 #include <core/fragment/FragID.fwd.hh>
-#include <core/fragment/FragID_Iterator.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FragID_Iterator.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.fwd.hh>
-#include <core/fragment/Frame.hh>
+// AUTO-REMOVED #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.fwd.hh>
-#include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FrameIteratorWorker_.fwd.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
+// AUTO-REMOVED #include <core/fragment/FrameIterator.hh>
+// AUTO-REMOVED #include <core/fragment/FrameIteratorWorker_.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/FrameList.fwd.hh>
-#include <core/fragment/FrameList.hh>
-#include <core/fragment/SingleResidueFragData.fwd.hh>
-#include <core/fragment/SingleResidueFragData.hh>
+// AUTO-REMOVED #include <core/fragment/FrameList.hh>
+// AUTO-REMOVED #include <core/fragment/SingleResidueFragData.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/SingleResidueFragData.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.fwd.hh>
@@ -133,10 +134,10 @@
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/DOF_ID_Map.fwd.hh>
-#include <core/id/DOF_ID_Map.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Map.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
-#include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
@@ -190,7 +191,7 @@
 #include <core/sequence/SequenceProfile.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
-#include <protocols/jobdist/Jobs.hh>
+// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -335,16 +336,16 @@
 #include <utility/signals/SignalHub.fwd.hh>
 #include <utility/signals/SignalHub.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/constants.hh>
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/NumericTraits.hh>
+// AUTO-REMOVED #include <numeric/constants.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/sphericalVector.fwd.hh>
-#include <numeric/sphericalVector.hh>
+// AUTO-REMOVED #include <numeric/sphericalVector.hh>
 #include <numeric/trig.functions.hh>
 #include <numeric/types.hh>
 #include <numeric/xyz.functions.fwd.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.fwd.hh>
@@ -411,7 +412,7 @@
 #include <cstdlib>
 #include <execinfo.h>
 #include <fstream>
-#include <functional>
+// AUTO-REMOVED #include <functional>
 #include <iomanip>
 #include <ios>
 #include <iosfwd>
@@ -427,11 +428,11 @@
 #include <basic/MetricValue.fwd.hh>
 #include <basic/Tracer.fwd.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableData.fwd.hh>
-#include <basic/datacache/CacheableData.hh>
-#include <basic/datacache/DataCache.fwd.hh>
-#include <basic/datacache/DataCache.hh>
+// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableData.fwd.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableData.hh>
+// AUTO-REMOVED #include <basic/datacache/DataCache.fwd.hh>
+// AUTO-REMOVED #include <basic/datacache/DataCache.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>

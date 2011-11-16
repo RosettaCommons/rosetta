@@ -68,8 +68,10 @@ class Conformation : public utility::pointer::ReferenceCount {
 public: // typedefs
 
 	typedef kinematics::Jump Jump;
-	typedef kinematics::FoldTree FoldTree;
-	typedef kinematics::AtomTree AtomTree;
+	typedef kinematics::FoldTree   FoldTree;
+	typedef kinematics::FoldTreeOP FoldTreeOP;
+	typedef kinematics::AtomTree   AtomTree;
+	typedef kinematics::AtomTreeOP AtomTreeOP;
 	typedef id::AtomID AtomID;
 
 	//typedef id::AtomID_Map AtomID_Map;
@@ -102,12 +104,12 @@ public:
 
 	/// @brief constructor
 	/// if you are using PyRosetta, you should NOT BE HERE!
-	Conformation():
-		utility::pointer::ReferenceCount(),
-		residue_coordinates_need_updating_( false ),
-		residue_torsions_need_updating_( false ),
-		structure_moved_( true )
-	{}
+	Conformation();
+		//	utility::pointer::ReferenceCount(),
+		//residue_coordinates_need_updating_( false ),
+		//residue_torsions_need_updating_( false ),
+		//structure_moved_( true )
+		//{}
 
 	/// @brief default destructor
 	virtual
@@ -197,14 +199,14 @@ public:
 	virtual FoldTree const &
 	fold_tree() const
 	{
-		return fold_tree_;
+		return *fold_tree_;
 	}
 
 	/// @brief Returns the conformation's AtomTree
 	AtomTree const &
 	atom_tree() const
 	{
-		return atom_tree_;
+		return *atom_tree_;
 	}
 
 	/// @brief Sets the FoldTree to  <fold_tree_in>
@@ -422,32 +424,33 @@ public:
 		id::StubID const & stub_id1,
 		id::StubID const & stub_id2,
 		kinematics::RT const & target_rt
-	)
-	{
-		set_dof_moved( atom_tree_.set_stub_transform( stub_id1, stub_id2, target_rt ) );
-	}
+	);
+	//{
+	//	set_dof_moved( atom_tree_.set_stub_transform( stub_id1, stub_id2, target_rt ) );
+	//}
 
 	/// @brief  get the transform between two stubs
 	kinematics::RT
 	get_stub_transform(
 		id::StubID const & stub_id1,
 		id::StubID const & stub_id2
-	) const
-	{
-		return atom_tree_.get_stub_transform( stub_id1, stub_id2 );
-	}
+	) const;
+	//{
+	//	return atom_tree_.get_stub_transform( stub_id1, stub_id2 );
+	//}
 
 
 	void
-	set_jump_atom_stub_id( id::StubID const& id )
-	{
-		atom_tree_.set_jump_atom_stub_id( id );
-	}
+	set_jump_atom_stub_id( id::StubID const& id );
+	//{
+	//	atom_tree_.set_jump_atom_stub_id( id );
+	//}
 
 	kinematics::Stub
-	stub_from_id( id::StubID const& id ) const {
-		return atom_tree_.stub_from_id( id );
-	}
+	stub_from_id( id::StubID const& id ) const;
+	//{
+	//	return atom_tree_.stub_from_id( id );
+	//}
 
 	void
 	rebuild_residue_connection_dependent_atoms( Size const seqpos, Size const connid );
@@ -462,20 +465,20 @@ public:
 
 	/// @brief Returns the AtomTree degree of freedom (DOF)  <id>
 	Real
-	dof( DOF_ID const & id ) const
-	{
-		return atom_tree_.dof( id );
-	}
+	dof( DOF_ID const & id ) const;
+	//{
+	//	return atom_tree_.dof( id );
+	//}
 
 	/// @brief Sets the AtomTree degree of freedom (DOF)  <id>  to  <setting>
 	virtual
 	void
-	set_dof( DOF_ID const & id, Real const setting )
-	{
-		set_dof_moved( id );
-		residue_torsions_need_updating_ = true; // might have been a torsion angle
-		atom_tree_.set_dof( id, setting );
-	}
+	set_dof( DOF_ID const & id, Real const setting );
+	//{
+	//	set_dof_moved( id );
+	//	residue_torsions_need_updating_ = true; // might have been a torsion angle
+	//	atom_tree_.set_dof( id, setting );
+	//}
 
 	/// @brief Returns the torsion angle  <id>
 	Real
@@ -538,10 +541,10 @@ public:
 		AtomID const & atom2,
 		AtomID const & atom3,
 		AtomID const & atom4
-	) const
-	{
-		return atom_tree_.torsion_angle( atom1, atom2, atom3, atom4 );
-	}
+	) const;
+	//{
+	//	return atom_tree_.torsion_angle( atom1, atom2, atom3, atom4 );
+	//}
 
 	/// @brief Returns the bond angle defined by  <atom[1-3]>
 	Real
@@ -549,28 +552,28 @@ public:
 		AtomID const & atom1,
 		AtomID const & atom2,
 		AtomID const & atom3
-	) const
-	{
-		return atom_tree_.bond_angle( atom1, atom2, atom3 );
-	}
+	) const;
+	//{
+	//	return atom_tree_.bond_angle( atom1, atom2, atom3 );
+	//}
 
 	/// @brief Returns the bond length between  <atom1>  and  <atom2>
 	Real
 	bond_length(
 		AtomID const & atom1,
 		AtomID const & atom2
-	) const
-	{
-		return atom_tree_.bond_length( atom1, atom2 );
-	}
+	) const;
+	//{
+	//	return atom_tree_.bond_length( atom1, atom2 );
+	//}
 
 
 	/// @brief Returns the Jump with jump number  <jump_number>
 	const Jump &
-	jump( int const jump_number ) const
-	{
-		return atom_tree_.jump( jump_atom_id( jump_number ) );
-	}
+	jump( int const jump_number ) const;
+	//{
+	//	return atom_tree_.jump( jump_atom_id( jump_number ) );
+	//}
 
 	/// @brief Sets the jump  <jump_number>  to  <new_jump>
 	virtual
@@ -578,13 +581,13 @@ public:
 	set_jump(
 		int const jump_number,
 		Jump const & new_jump
-	)
-	{
-		assert( new_jump.ortho_check() );
-		AtomID const id( jump_atom_id( jump_number ) );
-		atom_tree_.set_jump( id, new_jump );
-		set_dof_moved( id );
-	}
+	);
+	//{
+	//	assert( new_jump.ortho_check() );
+	//	AtomID const id( jump_atom_id( jump_number ) );
+	//	atom_tree_.set_jump( id, new_jump );
+	//	set_dof_moved( id );
+	//}
 
 	/// @brief Sets a jump and forces immediate calculation of affected XYZ coords
 	virtual
@@ -592,20 +595,20 @@ public:
 	set_jump_now(
 		int const jump_number,
 		Jump const & new_jump
-	)
-	{
-		AtomID const id( jump_atom_id( jump_number ) );
-		assert( new_jump.ortho_check() );
-		atom_tree_.set_jump_now( id, new_jump );
-		set_dof_moved( id );
-	}
+	);
+	//{
+	//	AtomID const id( jump_atom_id( jump_number ) );
+	//	assert( new_jump.ortho_check() );
+	//	atom_tree_.set_jump_now( id, new_jump );
+	//	set_dof_moved( id );
+	//}
 
 	/// @brief access a jump
 	const Jump &
-	jump( AtomID const & id ) const
-	{
-		return atom_tree_.jump( id );
-	}
+	jump( AtomID const & id ) const;
+	//{
+	//	return atom_tree_.jump( id );
+	//}
 
 	/// @brief set a jump
 	virtual
@@ -613,12 +616,12 @@ public:
 	set_jump(
 		AtomID const & id,
 		Jump const & new_jump
-	)
-	{
-		assert( new_jump.ortho_check() );
-		atom_tree_.set_jump( id, new_jump );
-		set_dof_moved( id );
-	}
+	);
+	//{
+	//	assert( new_jump.ortho_check() );
+	//	atom_tree_.set_jump( id, new_jump );
+	//	set_dof_moved( id );
+	//}
 
 	/// @brief identify polymeric connections
 	void
@@ -653,24 +656,24 @@ public:
 
 	/// @brief The upstream and downstream Stubs are the coordinate frames between which this jump is transforming
 	kinematics::Stub
-	upstream_jump_stub( int const jump_number ) const
-	{
-		return atom_tree_.atom( jump_atom_id( jump_number ) ).get_input_stub();
-	}
+	upstream_jump_stub( int const jump_number ) const;
+	//{
+	//	return atom_tree_.atom( jump_atom_id( jump_number ) ).get_input_stub();
+	//}
 
 	/// @brief  The upstream and downstream Stubs are the coordinate frames between which this jump is transforming
 	kinematics::Stub
-	downstream_jump_stub( int const jump_number ) const
-	{
-		return atom_tree_.atom( jump_atom_id( jump_number ) ).get_stub();
-	}
+	downstream_jump_stub( int const jump_number ) const;
+	//{
+	//	return atom_tree_.atom( jump_atom_id( jump_number ) ).get_stub();
+	//}
 
 	/// @brief access xyz coordinates of an atom
 	PointPosition const &
-	xyz( AtomID const & id ) const
-	{
-		return atom_tree_.xyz( id );
-	}
+	xyz( AtomID const & id ) const;
+	//{
+	//	return atom_tree_.xyz( id );
+	//}
 
 	///
 	virtual
@@ -748,12 +751,12 @@ public:
 		 called after domain map information is transferred to the Energies class
 	**/
 	void
-	reset_move_data()
-	{
-		structure_moved_ = false;
-		dof_moved_.fill_with( false );
-		xyz_moved_.fill_with( false );
-	}
+	reset_move_data();
+	//{
+	//	structure_moved_ = false;
+	//	dof_moved_.fill_with( false );
+	//	xyz_moved_.fill_with( false );
+	//}
 
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -1267,9 +1270,9 @@ private:
 	utility::vector1< Size > chain_endings_;
 
 	/// @brief fold tree for the kinematics
-	FoldTree fold_tree_;
+	FoldTreeOP fold_tree_;
 	/// @brief atom tree for the kinematics
-	AtomTree atom_tree_;
+	AtomTreeOP atom_tree_;
 
 	/// @brief do we need to update the coordinates in the Residues?
 	mutable bool residue_coordinates_need_updating_;

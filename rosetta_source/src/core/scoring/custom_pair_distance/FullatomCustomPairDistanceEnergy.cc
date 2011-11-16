@@ -25,7 +25,7 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
+// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/database/open.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -34,6 +34,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -130,11 +131,8 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 
 // Numeric headers
 //#include <numeric/deriv/distance_deriv.hh>

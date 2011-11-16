@@ -25,6 +25,7 @@
 #include <protocols/noesy_assign/ResonanceList.hh>
 #include <protocols/noesy_assign/PeakFileFormat.hh>
 #include <protocols/noesy_assign/PeakAssignmentParameters.hh>
+#include <protocols/noesy_assign/PeakAssignmentResidueMap.hh>
 #include <protocols/noesy_assign/PeakFileFormat_Sparky.hh>
 //#include <devel/noesy_assign/DistanceScoreMover.hh>
 
@@ -50,7 +51,7 @@
 #include <basic/prof.hh>
 
 //// C++ headers
-#include <math.h> //for isnan
+// AUTO-REMOVED #include <math.h> //for isnan
 
 
 
@@ -157,7 +158,7 @@ using namespace basic::options;
 #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
-#include <core/id/SequenceMapping.hh>
+// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/types.hh>
 #include <core/io/silent/SharedSilentData.hh>
@@ -190,11 +191,11 @@ using namespace basic::options;
 #include <core/pose/signals/GeneralEvent.fwd.hh>
 #include <core/scoring/Energies.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
-#include <core/scoring/EnergyMap.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/MinimizationData.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/constraints/AmbiguousNMRConstraint.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRConstraint.fwd.hh>
 #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/Constraint.hh>
@@ -211,10 +212,10 @@ using namespace basic::options;
 #include <core/scoring/constraints/HarmonicFunc.fwd.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/XYZ_Func.fwd.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
-#include <protocols/jobdist/Jobs.hh>
+// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
 #include <protocols/jumping/JumpSample.hh>
 #include <protocols/jumping/JumpSetup.fwd.hh>
 #include <protocols/jumping/PairingLibrary.hh>
@@ -235,9 +236,9 @@ using namespace basic::options;
 #include <protocols/noesy_assign/NoesyModule.fwd.hh>
 #include <protocols/noesy_assign/PeakAssignment.fwd.hh>
 #include <protocols/noesy_assign/PeakAssignment.hh>
-#include <protocols/noesy_assign/PeakAssignmentParameters.hh>
+// Auto-header: duplicate removed #include <protocols/noesy_assign/PeakAssignmentParameters.hh>
 #include <protocols/noesy_assign/PeakAssignmentResidueMap.fwd.hh>
-#include <protocols/noesy_assign/PeakAssignmentResidueMap.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/PeakAssignmentResidueMap.hh>
 #include <protocols/noesy_assign/PeakCalibrator.fwd.hh>
 #include <protocols/noesy_assign/PeakCalibrator.hh>
 #include <protocols/noesy_assign/PeakFileFormat.fwd.hh>
@@ -249,8 +250,8 @@ using namespace basic::options;
 #include <utility/Bound.hh>
 #include <utility/down_cast.hh>
 #include <utility/exit.hh>
-#include <utility/stream_util.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/stream_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/vector1_bool.hh>
@@ -383,16 +384,16 @@ using namespace basic::options;
 #include <utility/signals/SignalHub.fwd.hh>
 #include <utility/signals/SignalHub.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/constants.hh>
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/NumericTraits.hh>
+// AUTO-REMOVED #include <numeric/constants.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/sphericalVector.fwd.hh>
-#include <numeric/sphericalVector.hh>
+// AUTO-REMOVED #include <numeric/sphericalVector.hh>
 #include <numeric/trig.functions.hh>
-#include <numeric/types.hh>
+// AUTO-REMOVED #include <numeric/types.hh>
 #include <numeric/xyz.functions.fwd.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.fwd.hh>
@@ -462,7 +463,7 @@ using namespace basic::options;
 #include <sstream>
 #include <string>
 #include <time.h>
-#include <typeinfo>
+// AUTO-REMOVED #include <typeinfo>
 #include <utility>
 #include <vector>
 #include <basic/MetricValue.fwd.hh>
@@ -472,12 +473,15 @@ using namespace basic::options;
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <boost/algorithm/string/erase.hpp>
+// AUTO-REMOVED #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
 #include <zlib/zlib.h>
 #include <zlib/zutil.h>
+
+//Auto Headers
+
 
 
 

@@ -95,6 +95,7 @@
 //#include <string>
 #include <fstream>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.fwd.hh>
@@ -152,17 +153,17 @@
 #include <core/fragment/BaseCacheUnit.hh>
 #include <core/fragment/ConstantLengthFragSet.fwd.hh>
 #include <core/fragment/FragData.fwd.hh>
-#include <core/fragment/FragData.hh>
+// AUTO-REMOVED #include <core/fragment/FragData.hh>
 #include <core/fragment/FragID.fwd.hh>
 #include <core/fragment/FragID.hh>
-#include <core/fragment/FragID_Iterator.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FragID_Iterator.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/Frame.fwd.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.fwd.hh>
-#include <core/fragment/FrameIterator.hh>
-#include <core/fragment/FrameIteratorWorker_.fwd.hh>
-#include <core/fragment/FrameIteratorWorker_.hh>
+// AUTO-REMOVED #include <core/fragment/FrameIterator.hh>
+// AUTO-REMOVED #include <core/fragment/FrameIteratorWorker_.fwd.hh>
+// AUTO-REMOVED #include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/FrameList.fwd.hh>
 #include <core/fragment/FrameList.hh>
 #include <core/fragment/JumpingFrame.fwd.hh>
@@ -170,7 +171,7 @@
 #include <core/fragment/SecondaryStructure.fwd.hh>
 #include <core/fragment/SecondaryStructure.hh>
 #include <core/fragment/SingleResidueFragData.fwd.hh>
-#include <core/fragment/SingleResidueFragData.hh>
+// AUTO-REMOVED #include <core/fragment/SingleResidueFragData.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.fwd.hh>
@@ -190,7 +191,7 @@
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/NamedStubID.hh>
 #include <core/id/SequenceMapping.fwd.hh>
-#include <core/id/SequenceMapping.hh>
+// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/TorsionID_Range.fwd.hh>
@@ -578,11 +579,8 @@
 #include <zlib/zlib.h>
 #include <zlib/zutil.h>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 
 
 // option key includes

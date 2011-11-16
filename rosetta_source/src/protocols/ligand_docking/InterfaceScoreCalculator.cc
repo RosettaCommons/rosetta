@@ -26,6 +26,7 @@
 #include <core/pose/util.hh>
 #include <protocols/ligand_docking/ligand_scores.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.fwd.hh>
@@ -33,7 +34,7 @@
 #include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomType.fwd.hh>
@@ -46,7 +47,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.fwd.hh>
-#include <core/chemical/types.hh>
+// AUTO-REMOVED #include <core/chemical/types.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
@@ -78,7 +79,7 @@
 #include <core/graph/Graph.hh>
 #include <core/graph/UpperEdgeGraph.fwd.hh>
 #include <core/graph/unordered_object_pool.fwd.hpp>
-#include <core/grid/CartGrid.hh>
+// AUTO-REMOVED #include <core/grid/CartGrid.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.fwd.hh>
@@ -87,10 +88,10 @@
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/DOF_ID_Map.fwd.hh>
-#include <core/id/DOF_ID_Map.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Map.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
-#include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
@@ -191,18 +192,18 @@
 #include <utility/file/FileName.hh>
 #include <utility/file/PathName.fwd.hh>
 #include <utility/file/PathName.hh>
-#include <utility/file/gzip_util.hh>
-#include <utility/io/irstream.fwd.hh>
-#include <utility/io/irstream.hh>
-#include <utility/io/izstream.fwd.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/mpistream.hh>
-#include <utility/io/orstream.fwd.hh>
-#include <utility/io/orstream.hh>
-#include <utility/io/ozstream.fwd.hh>
-#include <utility/io/ozstream.hh>
-#include <utility/io/zipstream.hpp>
-#include <utility/io/zipstream.ipp>
+// AUTO-REMOVED #include <utility/file/gzip_util.hh>
+// AUTO-REMOVED #include <utility/io/irstream.fwd.hh>
+// AUTO-REMOVED #include <utility/io/irstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.fwd.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/mpistream.hh>
+// AUTO-REMOVED #include <utility/io/orstream.fwd.hh>
+// AUTO-REMOVED #include <utility/io/orstream.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.fwd.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/io/zipstream.hpp>
+// AUTO-REMOVED #include <utility/io/zipstream.ipp>
 #include <utility/keys/AutoKey.fwd.hh>
 #include <utility/keys/AutoKey.hh>
 #include <utility/keys/Key.fwd.hh>
@@ -320,16 +321,16 @@
 #include <utility/signals/SignalHub.fwd.hh>
 #include <utility/signals/SignalHub.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/constants.hh>
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/NumericTraits.hh>
+// AUTO-REMOVED #include <numeric/constants.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/sphericalVector.fwd.hh>
-#include <numeric/sphericalVector.hh>
+// AUTO-REMOVED #include <numeric/sphericalVector.hh>
 #include <numeric/trig.functions.hh>
-#include <numeric/types.hh>
+// AUTO-REMOVED #include <numeric/types.hh>
 #include <numeric/xyz.functions.fwd.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.fwd.hh>
@@ -382,12 +383,12 @@
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <iomanip>
-#include <ios>
+// AUTO-REMOVED #include <ios>
 #include <iosfwd>
 #include <iostream>
-#include <istream>
+// AUTO-REMOVED #include <istream>
 #include <limits>
 #include <list>
 #include <map>
@@ -413,14 +414,11 @@
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/pool/poolfwd.hpp>
-#include <zlib/zlib.h>
-#include <zlib/zutil.h>
+// AUTO-REMOVED #include <zlib/zlib.h>
+// AUTO-REMOVED #include <zlib/zutil.h>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
+//Auto Headers
+
 
 #define foreach BOOST_FOREACH
 
