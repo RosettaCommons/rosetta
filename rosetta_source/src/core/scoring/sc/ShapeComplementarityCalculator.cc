@@ -353,7 +353,11 @@ core::Size ShapeComplementarityCalculator::AddResidue(
 	if(!Init())
 		return 0;
 
+	// Only use heavy atoms for SC calculation
 	for(Size i = 1; i <= residue.nheavyatoms(); ++i) {
+		// Skip virtual atoms
+		if(residue.is_virtual(i))
+			continue;
 		numeric::xyzVector<Real> xyz = residue.xyz(i);
 		scatom.x(xyz.x());
 		scatom.y(xyz.y());
