@@ -13,14 +13,10 @@
 
 // Unit headers
 #include <protocols/viewer/viewers.hh>
-// AUTO-REMOVED #include <protocols/viewer/triangleIterator.hh>
-// AUTO-REMOVED #include <protocols/viewer/ConformationViewer.hh>
-// AUTO-REMOVED #include <protocols/viewer/ConformationViewer.fwd.hh>
 
 #include <protocols/viewer/SilentObserver.hh>
 #include <protocols/viewer/SilentObserver.fwd.hh>
 #include <core/chemical/AtomType.hh>
-// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
 
 // Package headers
 #include <protocols/moves/MonteCarlo.hh>
@@ -29,15 +25,22 @@
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <core/scoring/electron_density/ElectronDensity.hh>
+#include <core/scoring/electron_density/ElectronDensity.hh>  //should not be auto-removed!! needed for graphics!
 //#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 // Project headers
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
+
+#ifdef GL_GRAPHICS
+#include <protocols/viewer/triangleIterator.hh> //should not be auto-removed!! needed for graphics!
+#include <protocols/viewer/ConformationViewer.hh>  //should not be auto-removed!! needed for graphics!
+#include <protocols/viewer/ConformationViewer.fwd.hh>  //should not be auto-removed!! needed for graphics!
+#include <ObjexxFCL/string.functions.hh>  //should not be auto-removed!! needed for graphics!
+#include <core/chemical/ResidueTypeSet.hh>   //should not be auto-removed!! needed for graphics!
+#include <core/chemical/ChemicalManager.hh>  //should not be auto-removed!! needed for graphics!
+#include <core/chemical/AtomTypeSet.hh>
+#endif
 
 // C++ Headers
 
@@ -444,11 +447,11 @@ namespace graphics {
   core::Real const ligand_sphere_shininess( 1.0);
   core::Real const protein_sphere_shininess( 1.0 );
 	//lin parameters for ball and stick
-	core::Real const protein_wireframeScale( 0.1 );
+	core::Real const protein_wireframeScale( 0.2 );
 	core::Real const protein_stickScale( 0.2 );
 	core::Real const protein_sphereScale( 0.2 );
   int sphereDisplayList = 0;
-	core::Real const BOND_LENGTH_CUTOFF2 = 4.0*4.0;
+	core::Real const BOND_LENGTH_CUTOFF2 = 6.0*6.0;
 }
 
 #endif
@@ -1070,7 +1073,7 @@ Vector get_atom_color(
 			rainbow_color( float(r)/ float(residues.size()), red, green, blue, true /*mute_color*/);
 			return Vector(red, green, blue);
 		case RESIDUE_CPK_COLOR:
-			if ( !residues[r]->atom_is_backbone(i)  ) { //non carbone atoms
+			if ( !residues[r]->atom_is_backbone(i)  ) { //non carbon atoms
 				return atom_color_by_element( residues[r]->atom_type(i).element());
 			}
 			if (sidechain_color_rhiju.find(residues[r]->name3()) != sidechain_color_rhiju.end() )
@@ -1150,7 +1153,8 @@ Vector get_rna_color( conformation::Residue const & rsd, Size const & atomno, Si
 Vector get_color( conformation::Residue const & rsd, Size const & atomno, Size const nres ){
 
 	// Consider having this on by default:
-	static bool const rainbow_color_backbone( false );
+	//static bool const rainbow_color_backbone( false );
+	static bool const rainbow_color_backbone( true );
 	if ( rainbow_color_backbone) {
 		if ( atomno < rsd.first_sidechain_atom() ) {
 			return residue_color_by_group( rsd, nres );
