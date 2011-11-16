@@ -23,18 +23,16 @@
 #include <boost/function.hpp>
 #include <boost/unordered/unordered_map.hpp>
 
+// Utility headers
+#include <utility/vector1.hh>
+
 // Project headers
-#include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 
 // Package headers
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
-
-#include <protocols/moves/MonteCarlo.fwd.hh>
-#include <utility/vector1.hh>
-
 
 namespace protocols {
 namespace moves {
@@ -46,23 +44,21 @@ typedef boost::unordered_map<int, RationalMonteCarloTrigger> Triggers;
 /// @class Trial-based Monte Carlo minization primitive. Do not modify this
 /// class; almost anything you could possibly want to add is a bad idea.
 class RationalMonteCarlo : public protocols::moves::Mover {
-  typedef core::Real Real;
-  typedef core::Size Size;
   typedef core::pose::Pose Pose;
   typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;
 
  public:
   RationalMonteCarlo(MoverOP mover,
                      ScoreFunctionOP score,
-                     Size num_trials,
-                     Real temperature,
+                     unsigned num_trials,
+                     double temperature,
                      bool recover_low);
 
   /// @brief Applies the underlying mover to <pose> the specified number of times
   void apply(Pose& pose);
 
   /// @brief Returns the number of trials to be attempted in calls to apply()
-  Size num_trials() const;
+  unsigned num_trials() const;
 
   /// @brief Returns true if we should recover the low scoring pose at the end
   /// of apply, false otherwise.
@@ -71,18 +67,39 @@ class RationalMonteCarlo : public protocols::moves::Mover {
   /// @brief Returns this mover's name
   std::string get_name() const;
 
+
+  // -- Triggers -- //
+
   /// @brief Registers the specified trigger with this instance. Returns a unique
   /// identifier for referring to this trigger for subsequent operations (e.g. remove).
   int add_trigger(const RationalMonteCarloTrigger& trigger);
 
-  /// @brief Unregisters the specified trigger.
+  /// @brief Unregisters the specified trigger, warning the user if one is not found.
   void remove_trigger(int trigger_id);
+
+
+  // -- Analytics -- //
+
+  /// @brief Sets the native pose, enabling a variety of analytics to be collected.
+  /// Clears the contents of gdtmss() and rmsds().
+  void set_native(const core::pose::Pose& native);
+
+  /// @brief Returns gdtmm as a function of time. Requires a native structure.
+  const utility::vector1<double>& gdtmms() const;
+
+  /// @brief Returns rmsd as a function of time. Requires a native structure.
+  const utility::vector1<double>& rmsds() const;
+
 
  protected:
   /// @brief Executes all triggers attached to this instance. The order of trigger
   /// execution is undefined. Do not assume, depend, or in any way rely upon a
   /// partiular ordering.
   void fire_all_triggers(const Pose& pose);
+
+  /// @brief Built-in trigger for computing analytics given the native structure
+  void compute_analytics(const core::pose::Pose& pose);
+
 
  private:
   /// @brief Underlying mover
@@ -93,7 +110,7 @@ class RationalMonteCarlo : public protocols::moves::Mover {
   MonteCarloOP mc_;
 
   /// @brief Number of times to execute the underlying mover in calls to apply()
-  Size num_trials_;
+  unsigned num_trials_;
 
   /// @brief Determines whether the low scoring pose should be recovered at the
   /// conclusion of the apply() method
@@ -103,7 +120,16 @@ class RationalMonteCarlo : public protocols::moves::Mover {
   Triggers triggers_;
 
   /// @brief Next trigger id to be assigned
-  Size next_trigger_id_;
+  unsigned next_trigger_id_;
+
+  /// @brief Native structure
+  Pose native_;
+
+  /// @brief Tracks gdtmm as a function of time if a native was provided
+  utility::vector1<double> gdtmms_;
+
+  /// @brief Tracks rmsd as a function of time if a native was provided
+  utility::vector1<double> rmsds_;
 };
 
 }  // namespace moves

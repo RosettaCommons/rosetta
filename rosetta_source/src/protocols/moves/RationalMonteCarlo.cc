@@ -23,9 +23,10 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
+#include <utility/vector1.hh>
 
 // Project headers
-#include <core/types.hh>
+#include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/viewer/viewers.hh>
@@ -34,14 +35,10 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 
-#include <utility/vector1.hh>
-
-
 namespace protocols {
 namespace moves {
 
-using core::Real;
-using core::Size;
+using core::pose::Pose;
 using core::scoring::ScoreFunctionOP;
 using protocols::moves::MoverOP;
 
@@ -49,25 +46,22 @@ typedef protocols::moves::Mover Parent;
 
 static basic::Tracer TR("protocols.moves.RationalMonteCarlo");
 
-RationalMonteCarlo::RationalMonteCarlo(MoverOP mover, ScoreFunctionOP score, Size num_trials, Real temperature, bool recover_low)
+
+RationalMonteCarlo::RationalMonteCarlo(MoverOP mover, ScoreFunctionOP score, unsigned num_trials, double temperature, bool recover_low)
     : Parent("RationalMonteCarlo"), mover_(mover), num_trials_(num_trials), recover_low_(recover_low), next_trigger_id_(0) {
   mc_ = new protocols::moves::MonteCarlo(*score, temperature);
   protocols::viewer::add_monte_carlo_viewer(*mc_, "RationalMonteCarlo");
 }
 
-Size RationalMonteCarlo::num_trials() const {
+unsigned RationalMonteCarlo::num_trials() const {
   return num_trials_;
 }
 
-void RationalMonteCarlo::apply(core::pose::Pose& pose) {
-  using core::pose::Pose;
-
-  // Initialize the MonteCarlo object
+void RationalMonteCarlo::apply(Pose& pose) {
   mc_->reset(pose);
   mc_->reset_counters();
 
-  for (Size i = 1; i <= num_trials(); ++i) {
-    // retain a copy of the pose in the event that the move is rejected
+  for (unsigned i = 1; i <= num_trials(); ++i) {
     Pose copy(pose);
     mover_->apply(pose);
 
@@ -78,14 +72,28 @@ void RationalMonteCarlo::apply(core::pose::Pose& pose) {
     }
   }
 
-  // optionally recover the low-scoring pose
   if (recover_low())
     mc_->recover_low(pose);
 
-  // show simulation statistics
+  // Show simulation statistics
   mc_->show_counters();
   mc_->score_function().show(TR, pose);
   TR.flush();
+}
+
+void RationalMonteCarlo::set_native(const Pose& native) {
+  native_ = native;
+  gdtmms_.clear();
+  rmsds_.clear();
+  boost::bind(&protocols::moves::RationalMonteCarlo::compute_analytics, _1);
+}
+
+const utility::vector1<double>& RationalMonteCarlo::gdtmms() const {
+  return gdtmms_;
+}
+
+const utility::vector1<double>& RationalMonteCarlo::rmsds() const {
+  return rmsds_;
 }
 
 std::string RationalMonteCarlo::get_name() const {
@@ -96,17 +104,14 @@ bool RationalMonteCarlo::recover_low() const {
   return recover_low_;
 }
 
-/// @detail Adds the specified trigger, returning a unique trigger id
 int RationalMonteCarlo::add_trigger(const RationalMonteCarloTrigger& trigger) {
-  const int tid = ++next_trigger_id_;
+  unsigned tid = ++next_trigger_id_;
   triggers_[tid] = trigger;
   return tid;
 }
 
-/// @detail Attempts to remove the trigger with the given id. Issues a
-/// warning if one is not found.
 void RationalMonteCarlo::remove_trigger(int trigger_id) {
-  Triggers::iterator i = triggers_.find(trigger_id);
+  Triggers::const_iterator i = triggers_.find(trigger_id);
   if (i == triggers_.end()) {
     TR.Warning << "Attempt to remove invalid trigger_id => " << trigger_id << std::endl;
     return;
@@ -114,12 +119,16 @@ void RationalMonteCarlo::remove_trigger(int trigger_id) {
   triggers_.erase(i);
 }
 
-/// @detail Invokes all triggers registered with the pose
 void RationalMonteCarlo::fire_all_triggers(const Pose& pose) {
   for (Triggers::iterator i = triggers_.begin(); i != triggers_.end(); ++i) {
     RationalMonteCarloTrigger& t = i->second;
     t(pose);
   }
+}
+
+void RationalMonteCarlo::compute_analytics(const Pose& pose) {
+  rmsds_.push_back(core::scoring::native_CA_rmsd(native_, pose));
+  gdtmms_.push_back(core::scoring::native_CA_gdtmm(native_, pose));
 }
 
 }  // namespace moves
