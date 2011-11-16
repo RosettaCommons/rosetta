@@ -40,6 +40,8 @@
 
 // AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <list>
 
@@ -47,6 +49,8 @@ using namespace core;
 using core::Real;
 
 static basic::Tracer TR( "protocols.swa.stepwise_clusterer" ) ;
+using namespace basic::options;
+using namespace basic::options::OptionKeys;
 
 namespace protocols {
 namespace swa {
@@ -59,7 +63,8 @@ namespace swa {
 		cluster_radius_( 1.5 ),
 		cluster_by_all_atom_rmsd_( true ),
 		score_diff_cut_( 1000000.0 ),
-		rename_tags_( false )
+		rename_tags_( false ),
+		rsd_type_set_(option[ in::file::residue_type_set ]() )
 		//		scorefxn_( core::scoring::getScoreFunction() )
   {
 		input_  = new core::import_pose::pose_stream::SilentFilePoseInputStream();
@@ -73,7 +78,8 @@ namespace swa {
 		cluster_radius_( 1.5 ),
 		cluster_by_all_atom_rmsd_( true ),
 		score_diff_cut_( 1000000.0 ),
-		rename_tags_( false )
+		rename_tags_( false ),
+		rsd_type_set_(option[ in::file::residue_type_set ]() )
 		//		scorefxn_( core::scoring::getScoreFunction() )
 	{
 		input_  = new core::import_pose::pose_stream::SilentFilePoseInputStream();
@@ -90,7 +96,8 @@ namespace swa {
 		cluster_radius_( 1.5 ),
 		cluster_by_all_atom_rmsd_( true ),
 		score_diff_cut_( 1000000.0 ),
-		rename_tags_( false )
+		rename_tags_( false ),
+		rsd_type_set_(option[ in::file::residue_type_set ]() )
 		//		scorefxn_( core::scoring::getScoreFunction() )
 	{
 		input_  = new core::import_pose::pose_stream::SilentFilePoseInputStream();
@@ -143,7 +150,7 @@ namespace swa {
 
 		// setup residue types
 		core::chemical::ResidueTypeSetCAP rsd_set;
-		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+		rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( rsd_type_set_ );
 
 		/////////////////////////////
 		// Read in all the poses.

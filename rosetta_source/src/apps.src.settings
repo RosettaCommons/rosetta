@@ -88,6 +88,7 @@ sources = {
 	"public/rna" : [
 		"rna_denovo",
 		"rna_extract",
+		"rna_cluster",
 		"rna_database",
 		"rna_design",
                 "rna_helix",

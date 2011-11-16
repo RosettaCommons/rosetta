@@ -27,6 +27,7 @@
 #include <core/io/silent/SilentStruct.fwd.hh>
 
 #include <map>
+#include <string>
 
 namespace protocols {
 namespace swa {
@@ -60,6 +61,8 @@ namespace swa {
 
 		void set_score_diff_cut( core::Real const & setting ){ score_diff_cut_ = setting; }
 
+		void set_rsd_type_set( std::string const & setting ){ rsd_type_set_ = setting; }
+
 		void cluster();
 
 		void
@@ -80,6 +83,7 @@ namespace swa {
 		bool cluster_by_all_atom_rmsd_;
 		core::Real score_diff_cut_;
 		bool rename_tags_;
+		std::string rsd_type_set_;
 
 		//		core::scoring::ScoreFunctionOP scorefxn_;
 
