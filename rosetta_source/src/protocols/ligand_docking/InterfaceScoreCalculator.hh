@@ -48,6 +48,10 @@ public:
 	virtual protocols::moves::MoverOP fresh_instance() const;
 	virtual std::string get_name() const;
 
+	void chains(std::vector<std::string> const & chains);
+
+	void score_fxn(core::scoring::ScoreFunctionOP const & score_fxn);
+
 	void parse_my_tag(
 		utility::tag::TagPtr const tag,
 		protocols::moves::DataMap &,

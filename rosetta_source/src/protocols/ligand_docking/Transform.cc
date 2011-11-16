@@ -65,6 +65,23 @@ Transform::Transform(): Mover("Transform"), transform_info_()
 
 }
 
+Transform::Transform(
+	std::string const & chain,
+	core::Real const & box_size,
+	core::Real const & move_distance,
+	core::Real const & angle,
+	core::Size const & cycles,
+	core::Real const & temp
+) : Mover("Transform"), transform_info_()
+{
+	transform_info_.chain = chain;
+	transform_info_.box_size = box_size;
+	transform_info_.move_distance = move_distance;
+	transform_info_.angle = angle;
+	transform_info_.cycles = cycles;
+	transform_info_.temperature = temp;
+}
+
 Transform::~Transform()
 {
 	//

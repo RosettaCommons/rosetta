@@ -26,6 +26,10 @@
 
 // Unit Headers
 
+//STL headers
+#include <string>
+
+
 ///////////////////////////////////////////////////////////////////////
 
 namespace protocols {
@@ -37,11 +41,13 @@ class SlideTogether : public protocols::moves::Mover
 {
 public:
 	SlideTogether();
+	SlideTogether(std::string const & chain);
 	virtual ~SlideTogether();
 	SlideTogether(SlideTogether const & that);
 
 	virtual void apply( core::pose::Pose & pose );
 
+	void chain(std::string const & chain);
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
 	virtual std::string get_name() const;

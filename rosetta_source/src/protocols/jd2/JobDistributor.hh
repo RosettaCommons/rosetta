@@ -111,6 +111,10 @@ public:
 	JobInputterOP
 	job_inputter() const;
 
+	///@brief should the go() function call MPI_finalize()? It probably should, this is true by default.
+	virtual
+	void mpi_finalize(bool finalize);
+
 	/// @brief The input source for the current JobInputter.
 	JobInputterInputSource::Enum
 	job_inputter_input_source() const;

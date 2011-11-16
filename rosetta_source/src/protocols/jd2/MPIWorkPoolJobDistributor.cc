@@ -214,7 +214,8 @@ MPIWorkPoolJobDistributor::MPIWorkPoolJobDistributor() :
   current_job_id_( 0 ),
 	next_job_to_assign_( 0 ),
 	bad_job_id_( 0 ),
-	repeat_job_( false )
+	repeat_job_( false ),
+	finalize_MPI_( true )
 {
   // set npes and rank based on whether we are using MPI or not
 #ifdef USEMPI
@@ -249,7 +250,10 @@ MPIWorkPoolJobDistributor::go( protocols::moves::MoverOP mover )
 	//MPI::COMM_WORLD.Barrier();
   //MPI::Finalize();
 	MPI_Barrier( MPI_COMM_WORLD );
-	MPI_Finalize();
+	if(finalize_MPI_)
+	{
+		MPI_Finalize();
+	}
 #endif
 }
 
@@ -500,6 +504,11 @@ MPIWorkPoolJobDistributor::job_succeeded(core::pose::Pose & pose, core::Real /*r
   } else {
     slave_job_succeeded( pose );
   }
+}
+
+void MPIWorkPoolJobDistributor::mpi_finalize(bool finalize)
+{
+	finalize_MPI_ = finalize;
 }
 
 void

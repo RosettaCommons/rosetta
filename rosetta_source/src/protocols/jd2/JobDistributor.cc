@@ -552,6 +552,14 @@ JobDistributor::get_jobs() const { return jobs_; }
 JobInputterOP
 JobDistributor::job_inputter() const { return job_inputter_; }
 
+
+
+void JobDistributor::mpi_finalize(bool )
+{
+	//dummy default implementation
+}
+
+
 ParserOP
 JobDistributor::parser() const { return parser_; }
 

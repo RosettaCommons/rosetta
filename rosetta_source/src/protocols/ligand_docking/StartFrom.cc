@@ -128,6 +128,16 @@ StartFrom::parse_my_tag(
 	}
 }
 
+void StartFrom::coords(core::Vector const & coords)
+{
+	starting_points_.push_back(coords);
+}
+
+void StartFrom::chain(std::string const & chain)
+{
+	chain_ = chain;
+}
+
 void StartFrom::apply(core::pose::Pose & pose){
 	assert(!starting_points_.empty());
 	int const starting_point_index= numeric::random::RG.random_range(1, starting_points_.size());

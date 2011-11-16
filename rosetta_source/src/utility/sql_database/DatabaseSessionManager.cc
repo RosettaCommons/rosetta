@@ -119,7 +119,7 @@ using cppdb::cppdb_error;
 #ifdef USEMYSQL
 	  	sessionOP s(new session());
 	  	std::string port_string(utility::to_string<int>(port));
-	  	s->open("mysql:host="+host+";user="+user+";password="+password+";database="+database+";port="+port_string);
+	  	s->open("mysql:host="+host+";user="+user+";password="+password+";database="+database+";port="+port_string+";opt_reconnect=1");
 	  	return s;
 #else
 	  	utility_exit_with_message("You shouldn't be here, also if you want to use mysql specify extras=mysql when you build");

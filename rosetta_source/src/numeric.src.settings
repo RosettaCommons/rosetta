@@ -12,6 +12,7 @@ sources = {
 		"color_util",
 		"constants",
 		"random.functions",
+		"roc_curve",
 		"statistics.functions",
 		"ClusteringTreeNode",
 		"agglomerative_hierarchical_clustering",

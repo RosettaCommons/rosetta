@@ -59,6 +59,17 @@ GridManager* GridManager::get_instance()
 	return instance_;
 }
 
+void GridManager::reset()
+{
+	grid_map_.clear();
+	score_map_.clear();
+	last_tag_ = "";
+	width_ = 40;
+	resolution_ = 0.25;
+	qsar_map_ = 0;
+	initialized_ = false;
+}
+
 GridManager::GridManager() : last_tag_(""),width_(40), resolution_(0.25), qsar_map_(0),initialized_(false)
 {
 	grid_map_.clear();

@@ -41,6 +41,8 @@ class GridManager
 {
 public:
 	static GridManager* get_instance();
+	///@brief reset GridManager to the default settings
+	void reset();
 	///@brief set width (must be done before initialization)
 	void set_width(core::Real width);
 	///@brief set resolution (must be done before initialization)

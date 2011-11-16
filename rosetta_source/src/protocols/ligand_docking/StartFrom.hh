@@ -14,6 +14,8 @@
 #ifndef INCLUDED_protocols_ligand_docking_StartFrom_hh
 #define INCLUDED_protocols_ligand_docking_StartFrom_hh
 
+#include <protocols/ligand_docking/StartFrom.fwd.hh>
+
 #include <core/pose/Pose.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
@@ -49,6 +51,10 @@ public:
 		protocols::moves::Movers_map const &,
 		core::pose::Pose const &
 	);
+
+	void coords(core::Vector const & coords);
+
+	void chain(std::string const & chain);
 
 	void apply(core::pose::Pose & pose);
 

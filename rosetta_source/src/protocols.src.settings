@@ -1111,6 +1111,7 @@ sources = {
 	"protocols/qsar" : [
 		"qsarMap",
 		"qsarMover",
+		"qsarOptFunc",
 		"RenderGridsToKinemage",
 	],
 

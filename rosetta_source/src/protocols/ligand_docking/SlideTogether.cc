@@ -53,6 +53,11 @@ SlideTogetherCreator::mover_name()
 
 SlideTogether::SlideTogether(){}
 
+SlideTogether::SlideTogether(std::string const & chain)
+{
+	chain_ = chain;
+}
+
 SlideTogether::SlideTogether(SlideTogether const & that):
 	    //utility::pointer::ReferenceCount(),
 		protocols::moves::Mover( that ),
@@ -87,6 +92,11 @@ SlideTogether::parse_my_tag(
 	if ( ! tag->hasOption("chain") ) utility_exit_with_message("'SlideTogether' mover requires chain tag");
 
 	chain_= tag->getOption<std::string>("chain");//.c_str() ;
+}
+
+void SlideTogether::chain(std::string const & chain)
+{
+	chain_ = chain;
 }
 
 void

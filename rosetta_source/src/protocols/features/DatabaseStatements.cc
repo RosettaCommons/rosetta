@@ -97,7 +97,8 @@ core::Size get_score_type_id_from_score_term(
 	try{
 		return get_something_from_database(statement, core::Size());
 	}catch(utility::excn::EXCN_Msg_Exception &){
-		utility_exit_with_message("No score_term "+score_term+" with protocol_id "+utility::to_string(protocol_id));
+		throw;
+		//utility_exit_with_message("No score_term "+score_term+" with protocol_id "+utility::to_string(protocol_id));
 	}
 }
 

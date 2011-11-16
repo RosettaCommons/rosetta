@@ -54,7 +54,9 @@ sources = {
                 #"sheet_translate",
 	],
 	"pilot/delucasl" : [
-		"RotamerDump",
+		#"roc_test",
+	#:	"roc_optimizer",
+		#"RotamerDump",
 		#"process_mdl"
 		#"map_testing"
 	],

@@ -164,7 +164,7 @@ ScoreTypeFeatures::insert_score_type_rows(
 		statement_string = "INSERT OR IGNORE INTO score_types VALUES (?,?,?);";
 	}else if(db_mode == "mysql")
 	{
-		statement_string = "INSERT INTO score_types VALUES (?,?,?);";
+		statement_string = "INSERT IGNORE INTO score_types VALUES (?,?,?);";
 	}else
 	{
 		utility_exit_with_message("the database mode needs to be 'mysql' or 'sqlite3'");

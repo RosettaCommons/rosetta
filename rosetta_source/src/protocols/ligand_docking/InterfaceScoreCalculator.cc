@@ -478,6 +478,18 @@ std::string InterfaceScoreCalculator::get_name() const{
 	return "InterfaceScoreCalculator";
 }
 
+void InterfaceScoreCalculator::chains(std::vector<std::string> const & chains)
+{
+	chains_ = chains;
+}
+
+
+void InterfaceScoreCalculator::score_fxn(core::scoring::ScoreFunctionOP const & score_fxn)
+{
+	score_fxn_ = score_fxn;
+}
+
+
 ///@brief parse XML (specifically in the context of the parser/scripting scheme)
 void
 InterfaceScoreCalculator::parse_my_tag(
@@ -564,10 +576,12 @@ InterfaceScoreCalculator::append_ligand_docking_scores(
 		assert( core::pose::has_chain(chain, after));
 		core::Size jump_id = core::pose::get_jump_id_from_chain(chain, after);
 		append_interface_deltas(jump_id, job, after, score_fxn_);
-		if(native_){
+
+		if(native_)
+		{
 			assert( core::pose::has_chain(chain, *native_));
-			append_ligand_docking_scores(jump_id, after, job);
 		}
+		append_ligand_docking_scores(jump_id, after, job);
 	}
 }
 
@@ -578,10 +592,16 @@ InterfaceScoreCalculator::append_ligand_docking_scores(
 	core::pose::Pose const & after,
 	protocols::jd2::JobOP job
 ) const {
+
+	if(native_)
+	{
+
 		append_ligand_travel(jump_id, job, *native_, after);
 		append_radius_of_gyration(jump_id, job, *native_);
 		append_ligand_RMSD(jump_id, job, *native_, after);
-		append_ligand_grid_scores(jump_id,job,after);
+	}
+
+	append_ligand_grid_scores(jump_id,job,after);
 }
 
 

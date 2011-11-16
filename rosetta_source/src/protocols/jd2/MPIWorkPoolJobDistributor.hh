@@ -70,8 +70,8 @@ namespace jd2 {
 ///@brief Tags used to tag messeges sent by MPI functions used to decide whether a slave is requesting a new job id or
 ///flagging as job as being a bad input
 enum mpi_tags {
-  NEW_JOB_ID_TAG = 10,
-  BAD_INPUT_TAG = 20,
+	NEW_JOB_ID_TAG = 10,
+	BAD_INPUT_TAG = 20,
 	JOB_SUCCESS_TAG = 30
 };
 
@@ -85,87 +85,92 @@ enum mpi_tags {
 class MPIWorkPoolJobDistributor : public JobDistributor
 {
 protected:
-  ///@brief ctor is protected; singleton pattern
-  MPIWorkPoolJobDistributor();
+	///@brief ctor is protected; singleton pattern
+	MPIWorkPoolJobDistributor();
 
-  virtual void handle_interrupt() {}
+	virtual void handle_interrupt() {}
 
 public:
 	///WARNING WARNING!  SINGLETONS' DESTRUCTORS ARE NEVER CALLED IN MINI!  DO NOT TRY TO PUT THINGS IN THIS FUNCTION!
 	///here's a nice link explaining why: http://www.research.ibm.com/designpatterns/pubs/ph-jun96.txt
-  virtual ~MPIWorkPoolJobDistributor();
+	virtual ~MPIWorkPoolJobDistributor();
 
 	///@brief dummy for master/slave version
-  virtual
-  void
-  go( protocols::moves::MoverOP mover );
+	virtual
+	void
+	go( protocols::moves::MoverOP mover );
 
 	///@brief dummy for master/slave version
-  virtual
-  core::Size
-  get_new_job_id();
+	virtual
+	core::Size
+	get_new_job_id();
 
 	///@brief dummy for master/slave version
-  virtual
-  void
-  mark_current_job_id_for_repetition();
+	virtual
+	void
+	mark_current_job_id_for_repetition();
+
 
 	///@brief dummy for master/slave version
-  virtual
-  void
-  remove_bad_inputs_from_job_list();
+	virtual
+	void
+	remove_bad_inputs_from_job_list();
 
 	///@brief dummy for master/slave version
 	virtual
 	void
 	job_succeeded(core::pose::Pose & pose, core::Real run_time);
 
-  friend class JobDistributorFactory; //ctor access
+	///@brief should the go() function call MPI_finalize()? It probably should, this is true by default.
+	virtual
+	void mpi_finalize(bool finalize);
+
+	friend class JobDistributorFactory; //ctor access
 
 protected:
 
-  ///@brief Handles the receiving of job requests and the sending of job ids to and from slaves
+	///@brief Handles the receiving of job requests and the sending of job ids to and from slaves
 	virtual
-  void
-  master_go( protocols::moves::MoverOP mover );
+	void
+	master_go( protocols::moves::MoverOP mover );
 
-  ///@brief Proceeds to the parent class go_main() as usual
+	///@brief Proceeds to the parent class go_main() as usual
 	virtual
-  void
-  slave_go( protocols::moves::MoverOP mover );
+	void
+	slave_go( protocols::moves::MoverOP mover );
 
-  ///@brief Always returns zero, simply increments next_job_to_assign_ to the next job that should be run based
-  ///on what has been completeted and the overwrite flags
+	///@brief Always returns zero, simply increments next_job_to_assign_ to the next job that should be run based
+	///on what has been completeted and the overwrite flags
 	virtual
-  core::Size
-  master_get_new_job_id();
+	core::Size
+	master_get_new_job_id();
 
-  ///@brief requests, receives, and returns a new job id from the master node or returns the current job id if the
-  ///repeat_job_ flag is set to true
+	///@brief requests, receives, and returns a new job id from the master node or returns the current job id if the
+	///repeat_job_ flag is set to true
 	virtual
-  core::Size
-  slave_get_new_job_id();
+	core::Size
+	slave_get_new_job_id();
 
-  ///@brief This should never be called as this is handled internally by the slave nodes, it utility_exits
+	///@brief This should never be called as this is handled internally by the slave nodes, it utility_exits
 	virtual
-  void
-  master_mark_current_job_id_for_repetition();
+	void
+	master_mark_current_job_id_for_repetition();
 
-  ///@brief Sets the repeat_job_ flag to true
+	///@brief Sets the repeat_job_ flag to true
 	virtual
-  void
-  slave_mark_current_job_id_for_repetition();
+	void
+	slave_mark_current_job_id_for_repetition();
 
-  ///@brief Simply increments next_job_to_assign_ to the next job that should be run based on what has been
-  ///completed and if the input job tag of the job marked as having bad input
+	///@brief Simply increments next_job_to_assign_ to the next job that should be run based on what has been
+	///completed and if the input job tag of the job marked as having bad input
 	virtual
-  void
-  master_remove_bad_inputs_from_job_list();
+	void
+	master_remove_bad_inputs_from_job_list();
 
-  ///@brief Sends a message to the head node that contains the id of a job that had bad input
+	///@brief Sends a message to the head node that contains the id of a job that had bad input
 	virtual
-  void
-  slave_remove_bad_inputs_from_job_list();
+	void
+	slave_remove_bad_inputs_from_job_list();
 
 	///@brief This should never be called as this is handled internally by the slave nodes, it utility_exits
 	virtual
@@ -179,23 +184,27 @@ protected:
 
 protected:
 
-  ///@brief total number of processing elements
+	///@brief total number of processing elements
 	core::Size npes_;
 
-  ///@brief rank of the "local" instance
+	///@brief rank of the "local" instance
 	core::Size rank_;
 
-  ///@brief where slave jobs store current job id
-  core::Size current_job_id_;
+	///@brief where slave jobs store current job id
+	core::Size current_job_id_;
 
-  ///@brief where master stores next job to assign (in a good state after get_new_job_id up until it's used)
-  core::Size next_job_to_assign_;
+	///@brief where master stores next job to assign (in a good state after get_new_job_id up until it's used)
+	core::Size next_job_to_assign_;
 
-  ///@brief where master temporarily stores id of jobs with bad input
-  core::Size bad_job_id_;
+	///@brief where master temporarily stores id of jobs with bad input
+	core::Size bad_job_id_;
 
 	///@brief where slave stores whether it should repeat its current job id
 	bool repeat_job_;
+
+	///@brief should the go() function call MPI_finalize?  There are very few cases where this should be false
+	bool finalize_MPI_;
+
 
 };
 

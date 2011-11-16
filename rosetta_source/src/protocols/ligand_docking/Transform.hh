@@ -46,6 +46,14 @@ class Transform: public protocols::moves::Mover
 {
 public:
 	Transform();
+	Transform(
+		std::string const & chain,
+		core::Real const & box_size,
+		core::Real const & move_distance,
+		core::Real const & angle,
+		core::Size const & cycles,
+		core::Real const & temp
+	);
 	virtual ~Transform();
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;

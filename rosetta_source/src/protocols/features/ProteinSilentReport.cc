@@ -243,6 +243,7 @@ ProteinSilentReport::write_full_report(
 	job_data_features_->report_features(
 		pose, relevant_residues,struct_id,db_session);
 
+
 	transact_guard.commit();
 }
 
