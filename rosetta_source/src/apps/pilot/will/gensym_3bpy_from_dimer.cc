@@ -49,7 +49,7 @@
 #include <core/pack/make_symmetric_task.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pose/annotated_sequence.hh>b
+#include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>

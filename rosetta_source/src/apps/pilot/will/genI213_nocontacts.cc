@@ -93,8 +93,8 @@
 #define CONTACT_TH1 12
 #define CONTACT_TH2 15
 
-
-
+#define ATET 54.735610317245360079 // asin(sr2/sr3)
+#define AOCT 35.264389682754668343 // asin(sr1/sr3)
 
 using core::kinematics::Stub;
 using protocols::scoring::ImplicitFastClashCheck;
@@ -1108,10 +1108,10 @@ vector1<Hit> dock(Pose & init, string fname) {
   vector1<Hit> hits;
   for(Size iaxs = 0; iaxs < 120; ++iaxs) {
     if(iaxs%12==0) TR << fname << " " << iaxs << std::endl;
-    for(Size isg1 = 1; isg1 <= 1; ++isg1) {
+    for(Size isg1 = 0; isg1 <= 0; ++isg1) {
       for(Size isg2 = 0; isg2 <= 1; ++isg2) {
         Vec axs(0,0,1);
-        Real ang = isg1 ? 54.7356393899 : 37.5089292277;
+        Real ang = isg1 ? ATET : AOCT;
         if(isg2) ang = 180.0-ang;
         axs = rotation_matrix_degrees(Vec(1,0,0),      ang     ) * axs;
         axs = rotation_matrix_degrees(Vec(0,0,1),Real(iaxs)/2.0) * axs;
