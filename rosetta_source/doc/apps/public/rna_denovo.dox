@@ -13,7 +13,7 @@
 @page rna_denovo Documentation for RNA 3D structure modeling: <em>rna_denovo</em>, <em>rna_database</em>, and <em>rna_extract</em> applications
 
 @section metadata Metadata
-This document updates documentation written in 2008 by Rhiju Das (rhiju [at] stanford.edu) into the latest documentation format. Last update: April 2011.
+Written in 2008. Last update: Nov. 2011 by Rhiju Das (rhiju [at] stanford.edu).
 
 @section code_demos Code and Demo
 The central code for the <em>rna_denovo</em> application is in <code>src/protocols/rna/RNA_DeNovoProtocol.cc</code>.
@@ -30,11 +30,11 @@ or
 @section refs References
 Das, R. and Baker, D. (2007), "Automated de novo prediction of native-like RNA tertiary structures", PNAS 104: 14664-14669. [for fragment assembly]
 
-Das, R., Kudaravalli, M., et al. (2007) "Structural inference of native and partially folded RNA by high throughput contact mapping", Proceedings of the National Academy of Sciences U.S.A 105, 4144-4149. [for modeling large RNAs with contraints]
+Das, R., Kudaravalli, M., et al. (2007) "Structural inference of native and partially folded RNA by high throughput contact mapping", PNAS, 4144-4149. [for modeling large RNAs with constraints]
 
 Das, R., Karanicolas, J., and Baker, D. (2010), "Atomic accuracy in predicting and designing noncanonical RNA structure". Nature Methods 7:291-294. [for high resolution refinement]
 
-Sripakdeevong, P., Kladwang, W., and Das, R. (2011), "Resolving a sampling bottleneck in biopolymer structure prediction: RNA loops by a stepwise ansatz", submitted. [for loop modeling]
+Sripakdeevong, P., Kladwang, W., and Das, R. (2011), "Resolving a sampling bottleneck in biopolymer structure prediction: RNA loops by a stepwise ansatz", PNAS in press. [for loop modeling]
 
 (Preprints/reprints of these papers are available at http://daslab.stanford.edu/pubs.html).
 
@@ -156,7 +156,7 @@ Less commonly used, but useful
 @subsection format Note on PDB format for RNA
  Input and output PDB models have residues marked rA, rC, rG, and rU, due to historical reasons. If you have a "standard" PDB file,  there is a python script available to convert it to Rosetta format:
 @verbatim
-demo/rna/make_rna_rosetta_ready.py <pdb file>
+rosetta_demos/rna/make_rna_rosetta_ready.py <pdb file>
 @endverbatim
 
 @subsection obligate Can I specify non-Watson-Crick pairs?
@@ -228,24 +228,32 @@ f_natBP                                          fraction of base pairs recovere
 
 To get a score of an input PDB, you can run the 'denovo' protocol but ask there to be no fragment assembly cycles and no rounds of minimization:
 @verbatim
-rna_denovo.<exe> -database <path to database> -cycles 0 -minimize_rna  -minimize_rounds 0  -s <your pdb file>  -fasta <the sequence of the pdb> -out:file:silent SCORE.out
+rna_score.<exe> -database <path to database>  -s <pdb file> [<pdb file 2> ...] -out:file:silent SCORE.out  [-native <native pdb>]
 @endverbatim
 
-   Then you can check the score in SCORE.out:
+ If you want to minimize under the low resolution RNA potential (used in FARNA), add the flag '-score:weights rna_lores.wts'.  Then you can check the score in SCORE.out:
 @verbatim
  grep SCORE SCORE.out
 @endverbatim
 
+But this is not recommended if you are trying to score a model deposited in the PDB or created by other software -- see next @just_minimize.
+
 @subsection just_minimize How do I just minimize?
 If you take a PDB created outside Rosetta, very small clashes may be strongly penalized by the Rosetta all-atom potential. Instead of scoring, you should probably do a short minimize, run:
+
 @verbatim
-rna_denovo.<exe> -database <path to database> -cycles 0 -minimize_rna  -s <your pdb file> -fasta <fasta with sequence of the pdb> -out:file:silent MINIMIZE.out
+rna_minimize.<exe> -database <path to database>  -s <pdb file> [<pdb file 2> ...] -out:file:silent MINIMIZE.out  [-native <native pdb>]
 @endverbatim
 
-Then grep SCORE MINIMIZE.out
+ If you want to minimize under the low resolution RNA potential (used in FARNA), add the flag '-score:weights rna_lores.wts'. Then check out the scores in MINIMIZE.out.
+
+@verbatim
+ grep SCORE MINIMIZE.out
+@endverbatim
 
 
- You will have to change the "-out:file:silent <file>" flag for each input file, or you will get a message that the job is already done. This is admittedly cumbersome; future releases will include a separate executable for minimizing.
+You can extract models from silent files as described in [@ref extract], but you'll also get models with the same names as your input with the suffix '_minimize.pdb'.
+
 
 @section outputs Expected Outputs
 You will typically use the protocol to produce a silent file -- how do you get the models out?
@@ -259,9 +267,19 @@ rna_extract.<exe>  -in:file:silent test.out -in:file:silent_struct_type  rna -da
 @endverbatim
 Note that the PDBs have residue types marked as rA, rC, rG, and rU.
 
+@subsection rna_cluster How can I cluster models?
+There is one executable for clustering, it currently requires that all the models be in a silent file and have scores. (If you don't have such a silent file, use the rna_score executable described in @ref just_score). Here's the command line:
+
+@verbatim
+ rna_cluster.<exe>   -database <path to database>    -in:file:silent <silent file with models> -out:file:silent <silent file with clustered models>   [-cluster:radius <rmsd threshold>] [-nstruct <maximum number of clusters>]
+@endverbatim
+
+The way this clustering works is it simply goes through the models in order of energy, and if a model is more than the rmsd threshold than the existing clusters, it spawns a new cluster.
+
+
 
 @section rna_new_stuff New things since last release
-The code has not been changed since the first release (Rosetta 3.0), but the code was removed in release 3.3 because the documentation was not upgraded to the Rosetta community standards. Rosetta 3.4 onwards restores <em>rna_denovo</em> with proper documentation!
+Added applications rna_minimize, rna_helix, rna_cluster.  Updated torsional potential to be smooth.
 
 
 */
