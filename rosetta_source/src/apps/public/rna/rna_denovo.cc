@@ -9,47 +9,29 @@
 
 /// @file
 /// @brief
-
+/// @authors Rhiju Das
 
 // libRosetta headers
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-
 #include <core/chemical/ChemicalManager.hh>
-//#include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_ScoringInfo.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
-
 #include <core/sequence/util.hh>
-// AUTO-REMOVED #include <core/io/silent/RNA_SilentStruct.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
-
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <basic/basic.hh>
-// AUTO-REMOVED #include <basic/database/open.hh>
 #include <devel/init.hh>
-
 #include <core/io/pdb/pose_io.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <utility/io/izstream.hh>
-// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 //RNA stuff.
 #include <protocols/rna/RNA_DeNovoProtocol.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_DataReader.hh>
 #include <protocols/rna/RNA_StructureParameters.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 
