@@ -4,6 +4,7 @@
 #include <basic/options/option.cc.include.gen.hh>
 #include <utility/options/OptionCollection.hh>
 inline void add_rosetta_options_0( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::rigid::rigid, "rigid option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::rigid::chainbreak_bias, "Strength of bias applied to the translation component of rigid body moves to close chainbreak" ).def(0.00);
 option.add( basic::options::OptionKeys::rigid::close_loops, "Perform loop closure at the end of medal" ).def(true);
 option.add( basic::options::OptionKeys::rigid::fragment_cycles, "Number of fragment insertion/rigid body cycles" ).def(10000);
 option.add( basic::options::OptionKeys::rigid::log_accepted_moves, "Write accepted moves to silent file output" ).def(false);

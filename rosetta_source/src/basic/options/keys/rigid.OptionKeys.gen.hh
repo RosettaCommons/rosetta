@@ -22,6 +22,7 @@ namespace options {
 namespace OptionKeys {
 
 namespace rigid { extern BooleanOptionKey const rigid; }
+namespace rigid { extern RealOptionKey const chainbreak_bias; }
 namespace rigid { extern BooleanOptionKey const close_loops; }
 namespace rigid { extern IntegerOptionKey const fragment_cycles; }
 namespace rigid { extern BooleanOptionKey const log_accepted_moves; }

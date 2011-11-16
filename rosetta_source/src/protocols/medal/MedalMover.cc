@@ -367,11 +367,8 @@ protocols::moves::MoverOP MedalMover::create_fragment_and_rigid_mover(
   using namespace protocols::moves;
   using namespace protocols::nonlocal;
 
-  Jumps jumps;
-  core::pose::jumps_from_pose(pose, &jumps);
-
   CyclicMoverOP meta = new CyclicMover();
-  meta->enqueue(new RigidBodyMotionMover(jumps));
+  meta->enqueue(new RigidBodyMotionMover(pose.fold_tree()));
   meta->enqueue(new BiasedFragmentMover(fragments,
                                         PolicyFactory::get_policy(policy, fragments, library_size),
                                         probs));

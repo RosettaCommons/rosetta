@@ -85,6 +85,7 @@ Options = Option_Group( '',
 
   # Rigid body motion options
   Option_Group( 'rigid',
+    Option('chainbreak_bias', 'Real', desc = 'Strength of bias applied to the translation component of rigid body moves to close chainbreak', default = '0.00'),
     Option('close_loops', 'Boolean', desc = 'Perform loop closure at the end of medal', default = 'true'),
 		Option('fragment_cycles', 'Integer', desc = 'Number of fragment insertion/rigid body cycles', default = '10000'),
 		Option('log_accepted_moves', 'Boolean', desc = 'Write accepted moves to silent file output', default = 'false'),

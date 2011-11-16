@@ -8,6 +8,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>rigid option group</dd><br>
 </dl>
 <dl>
+<dt><b>-chainbreak_bias</b> \<Real\><dt>
+<dd>Strength of bias applied to the translation component of rigid body moves to close chainbreak</dd><br>
+<dd>Default: 0.00</dd><br>
+</dl>
+<dl>
 <dt><b>-close_loops</b> \<Boolean\><dt>
 <dd>Perform loop closure at the end of medal</dd><br>
 <dd>Default: true</dd><br>

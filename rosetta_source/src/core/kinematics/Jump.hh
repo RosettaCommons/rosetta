@@ -19,8 +19,6 @@
 // Unit headers
 #include <core/kinematics/Jump.fwd.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.fwd.hh>
-
 // Package Headers
 #include <core/kinematics/RT.hh>
 #include <core/kinematics/Stub.fwd.hh>
@@ -30,14 +28,7 @@
 #include <numeric/xyzMatrix.fwd.hh>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
-
-// C++ Headers
-// AUTO-REMOVED #include <iosfwd>
-
 #include <utility/vector1.hh>
-
-
 
 namespace core {
 namespace kinematics {
@@ -48,11 +39,14 @@ static const utility::vector1<Real> ZERO( 6, 0.0 );
 ///
 /// See @ref atomtree_overview "AtomTree overview and concepts" for details.
 ///
-class Jump
-{
-
-public: // Types
-
+class Jump {
+ public: // Types
+	static const int TRANS_X = 1;
+	static const int TRANS_Y = 2;
+	static const int TRANS_Z = 3;
+	static const int ROT_X = 4;
+	static const int ROT_Y = 5;
+	static const int ROT_Z = 6;
 
 	typedef  numeric::xyzVector< Real >  Vector; // DOUBLE!
 	typedef  numeric::xyzMatrix< Real >  Matrix; // DOUBLE!

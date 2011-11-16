@@ -136,9 +136,7 @@ void MedalAbinitioMover::apply(core::pose::Pose& pose) {
   const double cb_start = score->get_weight(core::scoring::linear_chainbreak);
   const double cb_stop = cb_start * 2;
 
-  Jumps jumps;
-  core::pose::jumps_from_pose(pose, &jumps);
-  MoverOP rigid_mover = new RigidBodyMotionMover(jumps);
+  MoverOP rigid_mover = new RigidBodyMotionMover(pose.fold_tree());
 
   unsigned num_stages = option[OptionKeys::rigid::stages]();
   for (unsigned stage = 1; stage <= num_stages; ++stage) {

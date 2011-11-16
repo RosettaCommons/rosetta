@@ -1,4 +1,5 @@
 namespace rigid { BooleanOptionKey const rigid( "rigid" );  }
+namespace rigid { RealOptionKey const chainbreak_bias( "rigid:chainbreak_bias" );  }
 namespace rigid { BooleanOptionKey const close_loops( "rigid:close_loops" );  }
 namespace rigid { IntegerOptionKey const fragment_cycles( "rigid:fragment_cycles" );  }
 namespace rigid { BooleanOptionKey const log_accepted_moves( "rigid:log_accepted_moves" );  }
