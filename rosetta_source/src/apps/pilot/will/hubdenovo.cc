@@ -162,9 +162,9 @@ Real calc_c3_carmsd(Size const nres, Pose p, Pose const & native) {
 
 
 
-bool hocstcmp (std::pair<Size,Size> i, std::pair<Size,Size> j) { 
-	return abs(i.first-i.second) < abs(j.first-j.second);
-}
+// bool hocstcmp (std::pair<Size,Size> i, std::pair<Size,Size> j) { 
+// 	return abs(i.first-i.second) < abs(j.first-j.second);
+// }
 string peek(std::istream & in) {
 	std::streampos i = in.tellg();
 	string r;
