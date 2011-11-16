@@ -105,7 +105,6 @@ LoopLengthChange::parse_my_tag( TagPtr const tag, protocols::moves::DataMap &, p
 	loop_end( parse_resnum( tag->getOption< std::string >( "loop_end" ), pose ) );
 	delta( tag->getOption< int >( "delta" ) );
 
-  runtime_assert( delta() != 0 );
   runtime_assert( loop_end() > loop_start() );
   runtime_assert( loop_end() + delta() >= loop_start() );
 
