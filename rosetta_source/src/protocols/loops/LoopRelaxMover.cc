@@ -66,7 +66,9 @@
 #include <protocols/loops/util.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
+#ifdef GL_GRAPHICS
+#include <protocols/viewer/viewers.hh>  // this was auto-removed but is needed for graphics builds!
+#endif
 #include <utility/exit.hh>
 
 // symmetry
