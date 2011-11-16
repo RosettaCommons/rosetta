@@ -570,16 +570,22 @@ SilentFileData::read_stream(
 }
 
 bool SilentFileData::read_silent_struct_type_from_remark( std::string const& line, bool header ) {
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
 	bool changed( false );
+
 	if ( line.substr(0,6) != "SCORE:" ) {
 		if (( line.find( "BINARY_SILENTFILE" ) != std::string::npos ) || ( line.find ("BINARY SILENTFILE" ) != std::string::npos )) {
-			if ( line.find( "RNA" ) != std::string::npos ) {
+			if ( line.find( "RNA" ) != std::string::npos || option[ in::file::residue_type_set ]() == "rna" ) {
 				silent_struct_type_ = "binary_rna";
 			} else {
 				silent_struct_type_ = "binary";
 			}
 			changed = true;
-		} else if ( header && ( line.find( "RNA" ) != std::string::npos ) ) {
+		} else if ( header && ( line.find( "RNA" ) != std::string::npos || option[ in::file::residue_type_set ]() == "rna") &&
+								silent_struct_type_ != "binary_rna" && silent_struct_type_ != "rna" ) {
 			silent_struct_type_ = "rna";
 			changed = true;
 		} else if (( line.find( "PROTEIN_SILENTFILE" ) != std::string::npos ) || ( line.find( "PROTEIN SILENTFILE" ) != std::string::npos ) ) {
