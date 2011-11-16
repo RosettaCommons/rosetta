@@ -893,8 +893,8 @@ int main(int argc, char *argv[]) {
 
 	string cstcfg = option[OptionKeys::hub_cst_cfg]();
 
-	cout << "USING input/run/cylindrin_hairpin.hubdenovo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
-	HubDenovo hd("input/run/cylindrin_hairpin.hubdenovo");
+	//cout << "USING input/run/cylindrin_hairpin.hubdenovo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
+	HubDenovo hd(cstcfg);
 
 	hd.run(option[OptionKeys::out::nstruct]());
 
