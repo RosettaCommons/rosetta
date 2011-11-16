@@ -11,6 +11,8 @@
 #include <protocols/protein_interface_design/filters/TorsionFilter.hh>
 #include <protocols/protein_interface_design/filters/TorsionFilterCreator.hh>
 
+#include <core/conformation/Residue.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
@@ -38,19 +40,29 @@ Torsion::apply(core::pose::Pose const & pose ) const
 {
 	if( resnum() == 0 ){ // just print all torsions
 		for( core::Size i = 1; i <= pose.total_residue(); ++i ){
+			TR<<"Residue "<<pose.residue( i ).name1()<<pose.pdb_info()->number( i )<<pose.pdb_info()->chain( i )<<'\t';
 			if( torsion() == "phi" || torsion() == "" )
-				TR<<"Residue "<<i<<" phi "<<pose.phi( i )<<std::endl;
+				TR<<" phi "<<pose.phi( i )<<'\t';
 			if( torsion() == "psi" || torsion() == "" )
-				TR<<"Residue "<<i<<" psi "<<pose.psi( i )<<std::endl;
+				TR<<" psi "<<pose.psi( i )<<std::endl;
 		}
+		return true;
 	}
 	else{
-			if( torsion() == "phi" || torsion() == "" )
-				TR<<"Residue "<<resnum()<<" phi "<<pose.phi( resnum() )<<std::endl;
-			if( torsion() == "psi" || torsion() == "" )
-				TR<<"Residue "<<resnum()<<" psi "<<pose.psi( resnum() )<<std::endl;
+		TR<<"Residue "<<pose.residue( resnum() ).name1()<<pose.pdb_info()->number( resnum() )<<pose.pdb_info()->chain( resnum() )<<'\t';
+		if( torsion() == "phi" || torsion() == "" ){
+			core::Real const phi( pose.phi( resnum() ) );
+			TR<<" phi "<<phi<<std::endl;
+			if( torsion() == "phi" )
+				return( phi>=lower() && phi<=upper() );
 		}
-
+		if( torsion() == "psi" || torsion() == "" ){
+			core::Real const psi( pose.psi( resnum() ) );
+			TR<<" psi "<<pose.psi( resnum() )<<std::endl;
+			if( torsion() == "psi" )
+				return( psi>=lower() && psi<=upper() );
+		}
+	}
 }
 
 core::Real
