@@ -168,12 +168,28 @@ RNA_JumpLibrary::get_random_base_pair_jump(
 {
   // key for looking up the template geometry:
   BasePairType key( aa1, aa2, edge1, edge2, orientation);
+  Size ntemplates = 0;
+  
+  
+  if( rna_pairing_template_map_.find( key ) == rna_pairing_template_map_.end() ){
 
+    std::cout << "Can't seem to find a pairing inside database with aa1: " <<  aa1 << " aa2: " << aa2 << " edge1: " << edge1 << " edge2: " << edge2 << " orientation: " << orientation << std::endl;
+
+    std::cerr << "Can't seem to find a pairing inside database with aa1: " <<  aa1 << " aa2: " << aa2 << " edge1: " << edge1 << " edge2: " << edge2 << " orientation: " << orientation << std::endl;
+
+    //		utility::exit( EXIT_FAILURE, __FILE__, __LINE__);
+    success = false;
+    atom_name1 = "XXXX";
+    atom_name2 = "XXXX";
+    return core::kinematics::Jump(); //default garbage jump.
+
+  }
+  
   RNA_PairingTemplateList const & templates( rna_pairing_template_map_.find( key )->second );
-
-  Size const ntemplates = templates.size();
-
-  if (ntemplates < 1){
+  
+  ntemplates = templates.size();
+  
+  if( ntemplates < 1 ){
 
     std::cout << "Can't seem to find a pairing inside database with aa1: " <<  aa1 << " aa2: " << aa2 << " edge1: " << edge1 << " edge2: " << edge2 << " orientation: " << orientation << std::endl;
 
