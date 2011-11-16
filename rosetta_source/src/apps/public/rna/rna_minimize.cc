@@ -17,9 +17,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
 #include <core/scoring/ScoreFunction.hh>
-// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
-// AUTO-REMOVED #include <core/sequence/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
@@ -37,7 +35,6 @@
 #include <ObjexxFCL/string.functions.hh>
 
 //RNA stuff.
-// AUTO-REMOVED #include <protocols/rna/RNA_DeNovoProtocol.hh>
 #include <protocols/rna/RNA_Minimizer.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 
@@ -59,7 +56,6 @@
 #include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
@@ -73,7 +69,6 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.fwd.hh>
-// AUTO-REMOVED #include <core/chemical/types.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
@@ -106,10 +101,8 @@
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/DOF_ID_Map.fwd.hh>
-// AUTO-REMOVED #include <core/id/DOF_ID_Map.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
-// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedStubID.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
@@ -174,50 +167,21 @@
 #include <core/scoring/methods/LongRangeTwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/TwoBodyEnergy.fwd.hh>
 #include <core/scoring/methods/WholeStructureEnergy.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_LowResolutionPotential.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
-// AUTO-REMOVED #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
-// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/sequence/DerivedSequenceMapping.fwd.hh>
-// AUTO-REMOVED #include <core/sequence/ScoringScheme.fwd.hh>
-// AUTO-REMOVED #include <core/sequence/Sequence.fwd.hh>
-// AUTO-REMOVED #include <core/sequence/Sequence.hh>
-// AUTO-REMOVED #include <core/sequence/SequenceAlignment.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
-// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/moves/MonteCarloStatus.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/MoverStatistics.hh>
 #include <protocols/moves/MoverStatus.hh>
-// AUTO-REMOVED #include <protocols/moves/mc_convergence_checks/ConvergenceCheck.fwd.hh>
-// AUTO-REMOVED #include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
 #include <protocols/rna/AllowInsert.fwd.hh>
 #include <protocols/rna/AllowInsert.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_ChunkLibrary.fwd.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_DataReader.fwd.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_FragmentMover.fwd.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_FragmentMover.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_Fragments.fwd.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_JumpLibrary.fwd.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_LoopCloser.fwd.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_MatchType.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_Minimizer.fwd.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_Relaxer.fwd.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_StructureParameters.fwd.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_StructureParameters.hh>
 #include <protocols/viewer/GraphicsState.hh>
 #include <protocols/viewer/triangle.hh>
 #include <utility/Bound.fwd.hh>
 #include <utility/Bound.hh>
 #include <utility/down_cast.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/stream_util.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 #include <utility/vector0_bool.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/vector1_bool.hh>
@@ -225,13 +189,10 @@
 #include <utility/vectorL.hh>
 #include <utility/vectorL_Selector.hh>
 #include <utility/vectorL_bool.hh>
-// AUTO-REMOVED #include <utility/excn/EXCN_Base.hh>
-// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 #include <utility/file/FileName.fwd.hh>
 #include <utility/file/FileName.hh>
 #include <utility/file/PathName.fwd.hh>
 #include <utility/file/PathName.hh>
-// AUTO-REMOVED #include <utility/io/mpistream.hh>
 #include <utility/io/ozstream.fwd.hh>
 #include <utility/keys/AutoKey.fwd.hh>
 #include <utility/keys/AutoKey.hh>
