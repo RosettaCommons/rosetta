@@ -1556,6 +1556,12 @@ LoopRelaxMoverCreator::mover_name()
 	return "LoopRelaxMover";
 }
 
+protocols::moves::MoverOP
+LoopRelaxMover::fresh_instance() const{ return protocols::moves::MoverOP( new LoopRelaxMover() ); }
+
+protocols::moves::MoverOP
+LoopRelaxMover::clone() const{ return protocols::moves::MoverOP( new LoopRelaxMover( *this ) ); }
+
 
 } // namespace loops
 } // namespace protocols

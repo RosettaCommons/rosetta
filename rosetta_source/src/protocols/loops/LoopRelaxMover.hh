@@ -138,8 +138,8 @@ public:
 
 	utility::vector1< core::fragment::FragSetOP > frag_libs() const;
 
-	protocols::moves::MoverOP clone() const { return protocols::moves::MoverOP( new LoopRelaxMover( *this ) ); }
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new LoopRelaxMover ); }
+	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP fresh_instance() const;
 	void compute_rmsd( bool const c ){ compute_rmsd_ = c; }
 	bool compute_rmsd() const { return compute_rmsd_; }
 
