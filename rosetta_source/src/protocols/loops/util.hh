@@ -62,6 +62,10 @@ core::scoring::ScoreFunctionOP get_cen_scorefxn();
 
 void add_coordinate_constraints_to_pose( core::pose::Pose & pose, const core::pose::Pose &constraint_target_pose,  protocols::loops::Loops &exclude_regions );
 
+/// loop_str has the format: start:end:cut,start:end:cut and can use rosetta or pdb numbering. The return value is a Loops object encoding that loop
+Loops
+loops_from_string( std::string const loop_str, core::pose::Pose const & pose );
+
 } //loops
 } //protocols
 

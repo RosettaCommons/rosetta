@@ -16,14 +16,19 @@
 // include these first for building on Visual Studio
 
 #include <protocols/loops/LoopRelaxMover.hh>
+#include <protocols/loops/LoopRelaxMoverCreator.hh>
 
 #ifdef BOINC_GRAPHICS
 #include <protocols/boinc/boinc.hh>
 #endif // BOINC_GRAPHICS
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 // Project Headers
 
 #include <core/chemical/ResidueTypeSet.hh>
+#include <protocols/rosetta_scripts/util.hh>
+#include <utility/tag/Tag.hh>
 
 #include <core/conformation/ResidueFactory.hh>
 #include <core/fragment/FragSet.hh>
@@ -939,11 +944,13 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	////  Halfway stats
 	////
 	////
-	setPoseExtraScores( pose, "cen_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
-	if ( option[ in::file::native ].user() ) {
-		setPoseExtraScores( pose, "cen_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
-		setPoseExtraScores( pose, "cen_looprms",  loops::loop_rmsd(native_pose_super, pose, loops ) );
-		setPoseExtraScores( pose, "cen_loopcarms",  loops::loop_rmsd(native_pose_super, pose, loops, true ) );
+	if( compute_rmsd() ){
+		setPoseExtraScores( pose, "cen_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+		if ( option[ in::file::native ].user() ) {
+			setPoseExtraScores( pose, "cen_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+			setPoseExtraScores( pose, "cen_looprms",  loops::loop_rmsd(native_pose_super, pose, loops ) );
+			setPoseExtraScores( pose, "cen_loopcarms",  loops::loop_rmsd(native_pose_super, pose, loops, true ) );
+		}
 	}
 
 
@@ -1216,15 +1223,17 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 
 		TR << pose.fold_tree() << std::endl;
-		setPoseExtraScores( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
-		if ( option[ in::file::native ].user() ) {
-			if(  option[ OptionKeys::loops::superimpose_native ]()  ){
-				core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
+		if( compute_rmsd() ){
+			setPoseExtraScores( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+			if ( option[ in::file::native ].user() ) {
+				if(  option[ OptionKeys::loops::superimpose_native ]()  ){
+					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
+				}
+				setPoseExtraScores( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, loops, corelength ) );
+				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, loops ) );
+				setPoseExtraScores( pose, "brlx_loopcarms",  loops::loop_rmsd(native_pose_super, pose, loops,true ) );
 			}
-			setPoseExtraScores( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
-			setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, loops, corelength ) );
-			setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, loops ) );
-			setPoseExtraScores( pose, "brlx_loopcarms",  loops::loop_rmsd(native_pose_super, pose, loops,true ) );
 		}
 
 		if ( !checkpoints_.recover_checkpoint( pose, curr_job_tag, "relax", true , true) ) {
@@ -1258,14 +1267,16 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 		long starttime = time(NULL);
 
-		setPoseExtraScores( pose, "bref_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
-		if ( option[ in::file::native ].user() ) {
-			if(  option[ OptionKeys::loops::superimpose_native ]()  ){
-				core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
+		if( compute_rmsd() ){
+			setPoseExtraScores( pose, "bref_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+			if ( option[ in::file::native ].user() ) {
+				if(  option[ OptionKeys::loops::superimpose_native ]()  ){
+					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
+				}
+				setPoseExtraScores( pose, "bref_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+				setPoseExtraScores( pose, "bref_corerms", native_loop_core_CA_rmsd(native_pose, pose, loops, corelength ) );
+				setPoseExtraScores( pose, "bref_looprms",  loops::loop_rmsd(native_pose_super, pose, loops ) );
 			}
-			setPoseExtraScores( pose, "bref_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
-			setPoseExtraScores( pose, "bref_corerms", native_loop_core_CA_rmsd(native_pose, pose, loops, corelength ) );
-			setPoseExtraScores( pose, "bref_looprms",  loops::loop_rmsd(native_pose_super, pose, loops ) );
 		}
 
 		core::kinematics::FoldTree f_new, f_orig=pose.fold_tree();
@@ -1356,14 +1367,16 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 
 		TR << pose.fold_tree() << std::endl;
-		setPoseExtraScores( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
-		if ( option[ in::file::native ].user() ) {
-			if(  option[ OptionKeys::loops::superimpose_native ]()  ){
-				core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
+		if( compute_rmsd() ){
+			setPoseExtraScores( pose, "brlx_irms",  core::scoring::CA_rmsd( start_pose, pose ) );
+			if ( option[ in::file::native ].user() ) {
+				if(  option[ OptionKeys::loops::superimpose_native ]()  ){
+					core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
+				}
+				setPoseExtraScores( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
+				setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, loops, corelength ) );
+				setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, loops ) );
 			}
-			setPoseExtraScores( pose, "brlx_rms",   core::scoring::native_CA_rmsd(native_pose, pose ) );
-			setPoseExtraScores( pose, "brlx_corerms", native_loop_core_CA_rmsd(native_pose, pose, loops, corelength ) );
-			setPoseExtraScores( pose, "brlx_looprms",  loops::loop_rmsd(native_pose_super, pose, loops ) );
 		}
 
 		if ( !checkpoints_.recover_checkpoint( pose, curr_job_tag, "relax", true , true) ) {
@@ -1424,22 +1437,23 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	TR << "===" << std::endl;
 	TR << "===" << std::endl;
 
-	setPoseExtraScores(
-		pose, "irms",  core::scoring::CA_rmsd( start_pose, pose )
-	);
-
-	if ( option[ in::file::native ].user() ) {
-		if(  option[ OptionKeys::loops::superimpose_native ]()  ){
-			core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
-		}
-		setPoseExtraScores(	pose, "rms",     core::scoring::native_CA_rmsd( native_pose, pose ));
-		setPoseExtraScores(	pose, "looprms", loops::loop_rmsd( native_pose_super, pose, loops, false /*CA_only*/, true /*bb_only*/ ));
-		setPoseExtraScores(	pose, "loop_heavy_rms", loops::loop_rmsd( native_pose_super, pose, loops, false /*CA_only*/, false /*bb_only*/ ));
-		setPoseExtraScores(	pose, "loopcarms", loops::loop_rmsd( native_pose_super, pose, loops, true ));
-		setPoseExtraScores(	pose, "corerms", native_loop_core_CA_rmsd( native_pose, pose, loops, corelength )	);
-		setPoseExtraScores( pose, "corelen", corelength );
+	if( compute_rmsd() ){
+		setPoseExtraScores(
+			pose, "irms",  core::scoring::CA_rmsd( start_pose, pose )
+		);
+		if ( option[ in::file::native ].user() ) {
+			if(  option[ OptionKeys::loops::superimpose_native ]()  ){
+				core::scoring::superimpose_pose( native_pose_super, pose, atom_map );
+			}
+			setPoseExtraScores(	pose, "rms",     core::scoring::native_CA_rmsd( native_pose, pose ));
+			setPoseExtraScores(	pose, "looprms", loops::loop_rmsd( native_pose_super, pose, loops, false /*CA_only*/, true /*bb_only*/ ));
+			setPoseExtraScores(	pose, "loop_heavy_rms", loops::loop_rmsd( native_pose_super, pose, loops, false /*CA_only*/, false /*bb_only*/ ));
+			setPoseExtraScores(	pose, "loopcarms", loops::loop_rmsd( native_pose_super, pose, loops, true ));
+			setPoseExtraScores(	pose, "corerms", native_loop_core_CA_rmsd( native_pose, pose, loops, corelength )	);
+			setPoseExtraScores( pose, "corelen", corelength );
 		//if( pose.is_fullatom() ) addScoresForLoopParts( pose, loops, (*fa_scorefxn_), native_pose, 10 );
 		//else                     addScoresForLoopParts( pose, loops, (*cen_scorefxn_), native_pose, 10 );
+		}
 	}
 
 	core::Real final_score;
@@ -1472,6 +1486,7 @@ void LoopRelaxMover::set_defaults_() {
 	relax_           = option[ OptionKeys::loops::relax ]();
 	n_rebuild_tries_ = 1;
 	rebuild_filter_  = 999.0;
+	compute_rmsd( true );
 
 	// use score4L by default (will be symm if needed)
 	cen_scorefxn_ = get_cen_scorefxn();
@@ -1480,6 +1495,67 @@ void LoopRelaxMover::set_defaults_() {
 	// get cmd line scorefxn by default (will be symm if needed)
 	fa_scorefxn_ = get_fa_scorefxn();
 }
+
+using namespace utility::tag;
+using namespace protocols::moves;
+void
+LoopRelaxMover::parse_my_tag( TagPtr const tag, DataMap &data, protocols::filters::Filters_map const &, Movers_map const &, core::pose::Pose const & pose )
+{
+	cmd_line_csts( tag->getOption< bool >( "cmd_line_csts", true ) );
+	copy_sidechains( tag->getOption< bool >( "copy_sidechains", true ) );
+	rebuild_filter( tag->getOption< core::Real >( "rebuild_filter", 999 ) );
+	compute_rmsd( tag->getOption< bool >( "compute_rmsd", true ) );
+	n_rebuild_tries( tag->getOption< core::Size >( "n_rebuild_tries", 10 ) );
+	remodel( tag->getOption< std::string >( "remodel", "quick_ccd" ) );
+	intermedrelax( tag->getOption< std::string >( "intermedrelax", "no" ) );
+	refine( tag->getOption< std::string >( "refine", "refine_ccd" ) );
+	relax( tag->getOption< std::string >( "relax", "no" ) );
+	if( tag->getOption< bool >( "read_fragments", false ) )
+		read_loop_fragments( frag_libs_ );
+
+	fa_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data, "score12" ) );
+	cen_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data, "score4L" ) );
+	cen_scorefxn_->set_weight( core::scoring::chainbreak, 10.0 / 3.0 );
+
+	utility::vector1< std::string > const loops_vec( utility::string_split( tag->getOption< std::string >( "loops" ), ',' ) );
+
+/// each loop should have the format loop_start:loop_end:cut
+/// if cut is not set then it's taken to be 0. Residue numbering can follow the
+/// pdb numbering
+ 	protocols::loops::Loops loops_from_tag;
+	foreach( std::string const residue_pair, loops_vec ){
+		utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ) );
+		runtime_assert( residues.size() == 2 || residues.size() == 3 );
+		core::Size const loop_start( protocols::rosetta_scripts::parse_resnum( residues[ 1 ], pose ) );
+		core::Size const loop_stop( protocols::rosetta_scripts::parse_resnum( residues[ 2 ], pose ) );
+		core::Size loop_cut( 0 );
+		if( residues.size() == 3 )
+			loop_cut = protocols::rosetta_scripts::parse_resnum( residues[ 3 ], pose );
+		runtime_assert( loop_start <= loop_stop );
+		runtime_assert( loop_start >= 1 );
+		runtime_assert( loop_stop <= pose.total_residue() );
+		loops_from_tag.add_loop( loop_start, loop_stop, loop_cut );
+	}
+	loops( loops_from_tag );
+}
+
+std::string
+LoopRelaxMoverCreator::keyname() const
+{
+	return LoopRelaxMoverCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+LoopRelaxMoverCreator::create_mover() const {
+	return new LoopRelaxMover;
+}
+
+std::string
+LoopRelaxMoverCreator::mover_name()
+{
+	return "LoopRelaxMover";
+}
+
 
 } // namespace loops
 } // namespace protocols

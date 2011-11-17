@@ -20,6 +20,8 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/conformation/Residue.hh>
+#include <boost/foreach.hpp>
+#define foreach BOOST_FOREACH
 
 // Rosetta Headers
 #include <core/chemical/VariantType.hh>
@@ -545,12 +547,16 @@ void LoopMover_Refine_CCD::set_task_factory(
 
 core::pack::task::TaskFactoryCOP LoopMover_Refine_CCD::get_task_factory() const { return task_factory_; }
 
+
 void
-LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & ){
+LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap & data, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & pose ){
 
 	//using parser implies that the fold tree probably isn't set correctly
-	set_fold_tree_from_loops_ = true;
-
+	set_fold_tree_from_loops( tag->getOption< bool >( "set_fold_tree_from_loops", true ) );
+	if( tag->hasOption( "loops" ) ){
+		std::string const loops_str( tag->getOption< std::string >( "loops" ) );
+		loops( loops_from_string( loops_str, pose ) );
+	}
 	if( tag->hasOption( "scorefxn" ) ) this->set_scorefxn( new core::scoring::ScoreFunction( *data.get< core::scoring::ScoreFunction * >( "scorefxns", tag->getOption<std::string>( "scorefxn" ) ) ) );
 
 	if( tag->hasOption("task_operations") ){
@@ -561,10 +567,8 @@ LoopMover_Refine_CCD::parse_my_tag( utility::tag::TagPtr const tag, protocols::m
 
 	if( tag->hasOption( "loops_from_cache" ) ) loops_from_observer_cache_ = tag->getOption<bool>( "loops_from_cache", 1 );
 
-	if( tag->hasOption( "outer_cycles" ) ) outer_cycles_ = tag->getOption<core::Size>( "outer_cycles", 1 );
-	if( tag->hasOption( "max_inner_cycles" ) ) max_inner_cycles_ = tag->getOption<core::Size>( "max_inner_cycles", 1 );
-
-
+	if( tag->hasOption( "outer_cycles" ) ) outer_cycles_ = tag->getOption<core::Size>( "outer_cycles", 3 );
+	if( tag->hasOption( "max_inner_cycles" ) ) max_inner_cycles_ = tag->getOption<core::Size>( "max_inner_cycles", 250 );
 }
 
 void LoopMover_Refine_CCD::apply(

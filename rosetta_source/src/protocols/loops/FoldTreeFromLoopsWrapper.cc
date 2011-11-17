@@ -14,7 +14,6 @@
 // Unit headers
 #include <protocols/loops/FoldTreeFromLoopsWrapper.hh>
 #include <protocols/loops/FoldTreeFromLoopsWrapperCreator.hh>
-#include <utility/string_util.hh>
 // Package headers
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -25,8 +24,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/loops/loops_main.hh>
 #include <utility/vector1.hh>
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
+#include <protocols/loops/util.hh>
 
 namespace protocols {
 namespace loops {
@@ -65,28 +63,8 @@ FoldTreeFromLoops::~FoldTreeFromLoops() {}
 void
 FoldTreeFromLoops::apply( core::pose::Pose & pose )
 {
-	if( loops().empty() ){
-	  utility::vector1< std::string > const loops_vec( utility::string_split( loop_str(), ',' ) );
-
-/// each loop should have the format loop_start:loop_end:cut
-/// if cut is not set then it's taken to be 0. Residue numbering can follow the
-/// pdb numbering
-	  Loops loops_from_tag;
- 	 	foreach( std::string const residue_pair, loops_vec ){
- 	    utility::vector1< std::string > const residues( utility::string_split( residue_pair, ':' ) );
- 	    runtime_assert( residues.size() == 2 || residues.size() == 3 );
- 	    core::Size const loop_start( protocols::rosetta_scripts::parse_resnum( residues[ 1 ], pose ) );
- 	    core::Size const loop_stop( protocols::rosetta_scripts::parse_resnum( residues[ 2 ], pose ) );
-	    core::Size loop_cut( 0 );
-  	  if( residues.size() == 3 )
-        loop_cut = protocols::rosetta_scripts::parse_resnum( residues[ 3 ], pose );
-	    runtime_assert( loop_start <= loop_stop );
-  	  runtime_assert( loop_start >= 1 );
-      runtime_assert( loop_stop <= pose.total_residue() );
- 	    loops_from_tag.add_loop( loop_start, loop_stop, loop_cut );
-  	}
-  	loops( loops_from_tag );
-	}
+	if( loops().empty() )
+		loops( loops_from_string( loop_str(), pose ) );
 	FoldTree f;
 	fold_tree_from_loops( pose, loops(), f );
 	TR<<"old foldtree "<<pose.fold_tree()<<"\nNew foldtree ";

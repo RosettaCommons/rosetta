@@ -127,6 +127,8 @@ public:
 	void repack_period( core::Size value ) { repack_period_ = value; }
 	void temp_initial( core::Real value ) { temp_initial_ = value; }
 	void temp_final( core::Real value ) { temp_final_ = value; }
+	void set_fold_tree_from_loops( bool const s ){ set_fold_tree_from_loops_ = s; }
+	bool set_fold_tree_from_loops() const{ return set_fold_tree_from_loops_; }
 
 protected:
 	void read_options();

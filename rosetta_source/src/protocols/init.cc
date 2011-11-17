@@ -208,6 +208,7 @@
 #include <protocols/moves/symmetry/SymMinMoverCreator.hh>
 #include <protocols/electron_density/SetupForDensityScoringMoverCreator.hh>
 #include <protocols/loops/LoopMover_CCDCreator.hh>
+#include <protocols/loops/LoopRelaxMoverCreator.hh>
 #include <protocols/loops/FoldTreeFromLoopsWrapperCreator.hh>
 #include <protocols/rosetta_scripts/SavePoseMoverCreator.hh>
 #include <protocols/loophash/LoopHashMoverWrapperCreator.hh>
@@ -506,6 +507,7 @@ static MoverRegistrator< ligand_docking::HighResDockerCreator > reg_HighResDocke
 static MoverRegistrator< ligand_docking::FinalMinimizerCreator > reg_FinalMinimizerCreator;
 static MoverRegistrator< ligand_docking::InterfaceScoreCalculatorCreator > reg_InterfaceScoreCalculatorCreator;
 static MoverRegistrator< loops::LoopMover_Refine_CCDCreator > reg_LoopMover_Refine_CCDCreator;
+static MoverRegistrator< loops::LoopRelaxMoverCreator > reg_LoopRelaxMoverCreator;
 static MoverRegistrator< loops::FoldTreeFromLoopsCreator > reg_FoldTreeFromLoops_Creator;
 static MoverRegistrator< rosetta_scripts::SavePoseMoverCreator > SavePoseMoverCreator;
 static MoverRegistrator< loophash::LoopHashMoverWrapperCreator > reg_LoopHashMoverWrapperCreator;

@@ -16,8 +16,11 @@
 #include <core/types.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-
+#include <utility/tag/Tag.fwd.hh>
+#include <protocols/filters/Filter.fwd.hh>
+#include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/LoopRelaxMover.fwd.hh>
 
@@ -135,6 +138,12 @@ public:
 
 	utility::vector1< core::fragment::FragSetOP > frag_libs() const;
 
+	protocols::moves::MoverOP clone() const { return protocols::moves::MoverOP( new LoopRelaxMover( *this ) ); }
+	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new LoopRelaxMover ); }
+	void compute_rmsd( bool const c ){ compute_rmsd_ = c; }
+	bool compute_rmsd() const { return compute_rmsd_; }
+
+	void parse_my_tag( utility::tag::TagPtr const tag, protocols::moves::DataMap &, protocols::filters::Filters_map const &, protocols::moves::Movers_map const &, core::pose::Pose const & );
 
 private:
 	void set_defaults_();
@@ -156,6 +165,7 @@ private:
 	core::scoring::ScoreFunctionOP fa_scorefxn_;
 
 	utility::vector1< core::fragment::FragSetOP > frag_libs_;
+	bool compute_rmsd_; //dflt true; but set to false if you change the pose length between start and rmsd measurements;
 };
 
 } // namespace loops

@@ -74,6 +74,7 @@ public:
 		return loops_;
 	}
 
+	void loops( protocols::loops::Loops const l ){ loops_ = l; }
 	/// @brief Extend a loop
 	virtual void set_extended_torsions(
 		core::pose::Pose & pose,

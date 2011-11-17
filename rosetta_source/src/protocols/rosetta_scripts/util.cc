@@ -277,9 +277,9 @@ get_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap c
 /// @details Utility function to find a scorefunction from parser-provided data. This is essentially a shameless
 /// copy of Justin's PackRotamersMover::parse_score_function.
 core::scoring::ScoreFunctionOP
-parse_score_function( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data )
+parse_score_function( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data, std::string const dflt_key/*="score12"*/ )
 {
-	std::string const scorefxn_key( tag->getOption<std::string>("scorefxn", "score12" ) );
+	std::string const scorefxn_key( tag->getOption<std::string>("scorefxn", dflt_key ) );
 	if ( ! data.has( "scorefxns", scorefxn_key ) ) {
 		utility_exit_with_message("ScoreFunction " + scorefxn_key + " not found in DataMap.");
 	}

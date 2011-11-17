@@ -74,7 +74,7 @@ core::pack::task::TaskFactoryOP
 parse_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data );
 
 core::scoring::ScoreFunctionOP
-parse_score_function( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data );
+parse_score_function( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data, std::string const dflt_key="score12" );
 
 
 /// @brief convenience function to access pointers to poses that will be stored

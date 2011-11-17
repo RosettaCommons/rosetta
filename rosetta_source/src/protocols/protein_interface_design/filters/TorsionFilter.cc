@@ -94,6 +94,7 @@ Torsion::parse_my_tag( utility::tag::TagPtr const tag,
 {
 	lower( tag->getOption< core::Real >( "lower", 0 ) );
 	upper( tag->getOption< core::Real >( "upper", 0 ) );
+	torsion( tag->getOption< std::string >( "torsion", "" ) );
 	if( tag->hasOption( "resnum" ))
 		resnum( protocols::rosetta_scripts::parse_resnum( tag->getOption< std::string >( "resnum" ), pose ) );
 	else resnum( 0 );
