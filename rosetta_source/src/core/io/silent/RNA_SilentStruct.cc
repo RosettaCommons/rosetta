@@ -439,6 +439,14 @@ void RNA_SilentStruct::fill_pose(
 	finish_pose( pose );
 } // fill_pose
 
+
+void
+RNA_SilentStruct::print_header( std::ostream& out ) const
+{
+	SilentStruct::print_header( out );
+	out << "REMARK RNA \n";
+}
+
 void RNA_SilentStruct::print_conformation( std::ostream & output ) const {
 
 	if ( fold_tree().size() > 1 ) { //assume non-trivial fold_tree only if more than one edge, i.e., EDGE 1 <nres> -1

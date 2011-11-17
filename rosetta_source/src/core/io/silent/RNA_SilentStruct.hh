@@ -137,6 +137,9 @@ public:
 	/// @brief opposite of fill_pose
 	virtual void fill_struct( core::pose::Pose const & pose, std::string tag );
 
+	/// @brief print header information
+	virtual void print_header( std::ostream& out ) const;
+
 	/// @brief Prints the conformation information within this RNA_SilentStruct to the given std::ostream.
 	virtual void print_conformation( std::ostream & output ) const;
 

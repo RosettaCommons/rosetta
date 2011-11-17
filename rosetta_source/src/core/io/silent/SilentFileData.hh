@@ -335,6 +335,8 @@ private:
 		//some utility function for the reading process --- returns bool if new type
 	bool read_silent_struct_type_from_remark( std::string const& line, bool header=false /*make true if this is one of the first 3 lines*/ );
 
+	bool check_if_rna_from_sequence_line( std::string const& sequence_line );
+
 public:
 	/// @brief Iterator class for SilentFileData container.
 	class iterator {

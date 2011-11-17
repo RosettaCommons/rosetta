@@ -440,6 +440,8 @@ SilentFileData::read_stream(
 		return success;
 	}
 
+	check_if_rna_from_sequence_line( sequence_line );
+
 	// read header SCORE line
 	getline( data, score_line );
 	if ( score_line.substr(0,7) != "SCORE: " ) {
@@ -598,9 +600,29 @@ bool SilentFileData::read_silent_struct_type_from_remark( std::string const& lin
 		}
 	}
 	if ( changed ) tr.Trace << "found new silent_struct_type_ " << silent_struct_type_ << " from line " << line << std::endl;
+
 	return changed;
 }
 
+
+/// @brief This is somewhat redundant if the silent file has a "REMARK RNA" line, but some older silent files didn't do that.
+bool SilentFileData::check_if_rna_from_sequence_line( std::string const& line ){
+	std::istringstream l( line );
+	std::string dummy, sequence;
+	l >> dummy;
+	l >> sequence;
+	bool is_rna( true );
+	for ( Size n = 0; n < sequence.size(); n++ ) {
+		if ( sequence[n] != 'a' && sequence[n] != 'g' && sequence[n] != 'c' && sequence[n] != 'u' ) {
+			is_rna = false; break;
+		}
+	}
+
+	if ( is_rna ) silent_struct_type_ = "rna";
+	// could also be binary_rna type, but historically we always made sure to include a "REMARK BINARY_RNA" line in those silent files, and
+	// this will be picked up later.
+
+}
 
 /// @brief creates a SilentStructOP using command-line options. Just a wrapper
 /// around SilentStructFactory::get_instance()->get_silent_struct_in().
