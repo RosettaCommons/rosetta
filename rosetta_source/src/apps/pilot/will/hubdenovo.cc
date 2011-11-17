@@ -458,10 +458,10 @@ struct ConstraintConfig {
 							if( bk + j <= nres*nsub ) ssmap[symbol] = Sizes(1,bk+j);
 						}
 					}
-					for(std::map<string,Sizes >::const_iterator i = ssmap.begin(); i != ssmap.end(); ++i) {
-						cout << "SSMAP " << i->first << " " << i->second.front() << "-" << i->second.back() << endl;
-					}
-					utility_exit_with_message("debug");
+					// for(std::map<string,Sizes >::const_iterator i = ssmap.begin(); i != ssmap.end(); ++i) {
+					// 	cout << "SSMAP " << i->first << " " << i->second.front() << "-" << i->second.back() << endl;
+					// }
+					// utility_exit_with_message("debug");
 				}
 			} else
 			if("SEQUENCE"==op) {
@@ -690,7 +690,7 @@ struct ConstraintConfig {
 			}
 			AtomID id1( p.residue(i->rsd1).atom_index(i->atm1), i->rsd1 );
 			AtomID id2( p.residue(i->rsd2).atom_index(i->atm2), i->rsd2 );
-			cout << "DCST " << i->atm1 << " " << i->rsd1 << " " << i->atm2 << " " << i->rsd2 << " " << i->d << " " << i->sd << endl;
+			//cout << "DCST " << i->atm1 << " " << i->rsd1 << " " << i->atm2 << " " << i->rsd2 << " " << i->d << " " << i->sd << endl;
 			add_sym_cst( p, id1, id2, i->d, i->sd );
 		}
 	}
