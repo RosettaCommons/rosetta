@@ -1,0 +1,4 @@
+-in:file:silent chunk002_1lnt_denovo_run.out
+-out:file:silent chunk002_1lnt_denovo_run.CLUSTER.out
+-cluster:radius 2.0
+-nstruct 2

@@ -1,0 +1,3 @@
+-nstruct 1 
+-fasta stem2_add.fasta 
+-out:file:silent stem2_add.out
