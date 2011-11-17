@@ -10,7 +10,7 @@
 ///@author Rhiju Das
 /*!
 
-@page rna_denovo Documentation for RNA 3D structure modeling: <em>rna_denovo</em>, <em>rna_database</em>, and <em>rna_extract</em> applications
+@page rna_denovo Documentation for RNA 3D structure modeling: <em>rna_denovo</em>, <em>rna_database</em>, <em>rna_extract</em>, <em>rna_score</em>, <em>rna_minimize</em>, and <em>rna_cluster</em>   applications
 
 @section metadata Metadata
 Written in 2008. Last update: Nov. 2011 by Rhiju Das (rhiju [at] stanford.edu).
@@ -20,7 +20,7 @@ The central code for the <em>rna_denovo</em> application is in <code>src/protoco
 
 For a 'minimal' demo example of the RNA fragment assembly and full-atom minimization protocol and input files, see
 
-<code>test/integration/tests/rna_denovo/</code>   [in the developer's SVN repository]
+<code>rosetta_tests/integration/tests/rna_denovo/</code>
 
 or
 
@@ -251,8 +251,10 @@ rna_minimize.<exe> -database <path to database>  -s <pdb file> [<pdb file 2> ...
  grep SCORE MINIMIZE.out
 @endverbatim
 
-
 You can extract models from silent files as described in [@ref extract], but you'll also get models with the same names as your input with the suffix '_minimize.pdb'.
+
+@subsection other How can I model RNA helices? Large RNAs?
+Check this section: @ref rna_assembly.
 
 
 @section outputs Expected Outputs
