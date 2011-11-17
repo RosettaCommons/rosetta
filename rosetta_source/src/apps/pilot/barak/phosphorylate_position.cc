@@ -22,17 +22,21 @@
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/util.hh>
+//#include <core/chemical/util.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/io/pdb/pose_io.hh>
-#include <core/options/util.hh>
-#include <core/options/keys/in.OptionKeys.gen.hh>
-#include <core/options/keys/out.OptionKeys.gen.hh>
-#include <core/options/keys/run.OptionKeys.gen.hh>
-#include <core/options/keys/threadsc.OptionKeys.gen.hh>
+#include <basic/options/util.hh>
+#include <basic/options/option.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+//#include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/threadsc.OptionKeys.gen.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
-#include <core/util/basic.hh>
-#include <core/util/Tracer.hh>
+#include <core/pose/util.hh>
+//#include <core/util/basic.hh>
+#include <basic/Tracer.hh>
 
 // C++ headers
 //#include <cstdlib>
@@ -40,15 +44,15 @@
 #include <iostream>
 #include <string>
 
-using core::util::T;
-using core::util::Error;
-using core::util::Warning;
+using basic::T;
+using basic::Error;
+using basic::Warning;
 using core::pose::Pose;
 
 
 static numeric::random::RandomGenerator RG(12321); // <- Magic number, do not change it!!!
 
-static core::util::Tracer TR("pilot_app.phoshporylate_position");
+static basic::Tracer TR("pilot_app.phoshporylate_position");
 
 
 
@@ -58,7 +62,7 @@ int
 main( int argc, char * argv [] )
 {
   using namespace core;
-  using namespace options;
+  using namespace basic::options;
   using namespace std;
 
   devel::init(argc, argv);
@@ -78,7 +82,8 @@ main( int argc, char * argv [] )
   }
 
   // read params and poses
-  io::pdb::pose_from_pdb( pose, options::start_file() );
+	std::string start_file = option[ OptionKeys::in::file::s ][0];
+	core::import_pose::pose_from_pdb( pose, start_file );
   string chain = option[ OptionKeys::run::chain ];
   Size pdb_res = option[ OptionKeys::threadsc::nres ];
   string output_fname = option[ OptionKeys::out::file::o ];
@@ -86,7 +91,7 @@ main( int argc, char * argv [] )
 	// phosphorylate
   core::pose::PDBInfoCOP pdbinfo = pose.pdb_info();
   Size pose_res = pdbinfo->pdb2pose(chain[0], pdb_res);
-	chemical::add_variant_type_to_pose_residue( pose , chemical::PHOSPHORYLATION, pose_res );
+	core::pose::add_variant_type_to_pose_residue( pose , chemical::PHOSPHORYLATION, pose_res );
   core::io::pdb::dump_pdb(pose, output_fname);
 
   exit(0);
