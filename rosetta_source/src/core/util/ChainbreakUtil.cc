@@ -22,11 +22,15 @@ namespace core {
 namespace util {
 
 // Static member initialization
-core::scoring::ScoreFunctionOP ChainbreakUtil::score_ = new core::scoring::ScoreFunction();
-
+core::scoring::ScoreFunctionOP ChainbreakUtil::score_ = 0;
 
 bool ChainbreakUtil::has_chainbreak(const core::pose::Pose& pose) {
   using core::pose::Pose;
+
+  if (!score_) {
+    score_ = new core::scoring::ScoreFunction();
+		score_->set_weight( core::scoring::linear_chainbreak, 1.0 );
+  }
 
   Pose copy(pose);
   add_cutpoint_variants(&copy);
