@@ -86,7 +86,7 @@ void RationalMonteCarlo::set_native(const Pose& native) {
   native_ = native;
   gdtmms_.clear();
   rmsds_.clear();
-  boost::bind(&protocols::moves::RationalMonteCarlo::compute_analytics, _1);
+  add_trigger(boost::bind(&protocols::moves::RationalMonteCarlo::compute_analytics, this, _1));
 }
 
 const utility::vector1<double>& RationalMonteCarlo::gdtmms() const {
