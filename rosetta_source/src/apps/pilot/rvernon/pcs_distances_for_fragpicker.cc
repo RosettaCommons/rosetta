@@ -21,7 +21,7 @@
 
 #include <core/scoring/rms_util.hh>
 
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 #include <core/pose/Pose.hh>
 

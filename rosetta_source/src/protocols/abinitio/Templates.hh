@@ -28,9 +28,9 @@
 #include <core/fragment/SingleResidueFragData.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <protocols/jumping/PairingsList.fwd.hh>
+#include <core/scoring/dssp/PairingsList.fwd.hh>
 #include <core/fragment/SecondaryStructure.fwd.hh>
-// AUTO-REMOVED #include <protocols/jumping/StrandPairing.hh>
+// AUTO-REMOVED #include <core/scoring/dssp/StrandPairing.hh>
 #ifdef __clang__
 #include <core/pose/Pose.hh>
 #include <core/fragment/SecondaryStructure.hh>
@@ -46,7 +46,7 @@
 #include <map>
 
 #include <protocols/abinitio/Template.fwd.hh>
-#include <protocols/jumping/PairingsList.hh>
+#include <core/scoring/dssp/PairingsList.hh>
 #include <utility/vector1.hh>
 
 #ifdef WIN32
@@ -72,7 +72,7 @@ public:
 	core::fragment::FragSetOP pick_frags( core::fragment::FragSetOP, core::fragment::FragDataOP frag_type, Size min_nr_frags, Size ncopies = 1 ) const;
 	Size pick_frags( core::fragment::FragSet&, core::fragment::FragDataOP frag_type, Size ncopies = 1 ) const;
 
-	void read_pairings( std::string const& filename, jumping::PairingsList& ) const;
+	void read_pairings( std::string const& filename, core::scoring::dssp::PairingsList& ) const;
 
 	TemplateJumpSetupOP create_jump_def( core::fragment::SecondaryStructureCOP = NULL ) const;
 
@@ -80,7 +80,7 @@ public:
 		return pairings_.size();
 	}
 
-	jumping::PairingsList const& pairings() const {
+	core::scoring::dssp::PairingsList const& pairings() const {
 		return pairings_;
 	}
 
@@ -147,7 +147,7 @@ private:
 	bool good_;
 
 	TemplateMap templates_;
-	jumping::PairingsList pairings_;
+	core::scoring::dssp::PairingsList pairings_;
 	std::string target_sequence_;
 
 	PairingStatisticsCOP strand_stats_;

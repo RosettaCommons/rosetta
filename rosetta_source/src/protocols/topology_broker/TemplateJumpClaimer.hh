@@ -29,7 +29,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/jumping/JumpSetup.hh>
 #include <protocols/jumping/JumpSample.hh>
-#include <protocols/jumping/PairingsList.hh>
+#include <core/scoring/dssp/PairingsList.hh>
 #include <core/fragment/SecondaryStructure.hh>
 #include <protocols/jumping/SheetBuilder.hh>
 // ObjexxFCL Headers
@@ -89,7 +89,7 @@ private:
 	abinitio::TemplatesOP templates_;
 
 	// or should we make jumps in the old-fashioned way with SheetBuilder?
-	jumping::PairingsList pairings_;
+	core::scoring::dssp::PairingsList pairings_;
 	bool bRandomSheet_;
 	core::fragment::SecondaryStructureOP ss_def_;
 	jumping::SheetBuilder::SheetTopology sheets_;

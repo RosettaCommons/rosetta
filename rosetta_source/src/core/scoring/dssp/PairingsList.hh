@@ -7,67 +7,98 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file
-/// @brief
+/// @file src/core/scoring/dssp/PairingTemplate
+/// @brief header file for ClassicAbinitio protocol
 /// @detailed
 ///  from converting jumping_pairings.cc of rosetta++ into mini
 ///
-///
-///
-/// @author olange: ported from original bblum-rosetta++ version $
+/// @author Oliver Lange
+/// @author Christopher Miles (cmiles@uw.edu)
 
 #ifndef INCLUDED_core_scoring_dssp_PairingsList_hh
 #define INCLUDED_core_scoring_dssp_PairingsList_hh
 
+// Unit Headers
 #include <core/scoring/dssp/PairingsList.fwd.hh>
+
+// Project Headers
 #include <core/types.hh>
 
+// Utility headers
+// we need it because of declarations in fwd.hh
+#include <utility/vector1.hh>
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/vector1.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray1A.fwd.hh>
 
-#include <utility/vector1.fwd.hh>
-
+// ObjexxFCL Headers
+#include <ObjexxFCL/FArray1A.fwd.hh>
 
 //// C++ headers
-#include <cmath>
-// AUTO-REMOVED #include <cstdlib> //required by GCC 4.3.2
+#include <cstdlib> //required by GCC 4.3.2
 #include <string>
 
 namespace core {
 namespace scoring {
 namespace dssp {
 
-class Pairing {
-public:
-  core::Size pos1;
-  core::Size pos2;
-  core::Size orientation;
-  core::Size pleating;
+using core::Size;
 
+class Pairing {
+ public:
 	Pairing() :
-		pos1( 0 ),
-		pos2( 0 ),
-		orientation( 0 ),
-		pleating( 0 )
+		pos1_( 0 ),
+		pos2_( 0 ),
+		orientation_( 0 ),
+		pleating_( 0 )
 	{}
 
 	Pairing( core::Size pos1_in, core::Size pos2_in ) :
-		pos1( pos1_in),
-		pos2( pos2_in),
-		orientation( 0 ),
-		pleating( 0 )
+		pos1_( pos1_in),
+		pos2_( pos2_in),
+		orientation_( 0 ),
+		pleating_( 0 )
 	{}
 
 	//c'stor to translate from old-style version of pairing
-	//Pairing( ObjexxFCL::FArray1A_int );
+	Pairing( ObjexxFCL::FArray1A_int );
 
 	Pairing( core::Size pos1_in, core::Size pos2_in, core::Size ori_in, core::Size pleat_in ) :
-		pos1( pos1_in),
-		pos2( pos2_in),
-		orientation( ori_in),
-		pleating( pleat_in )
+		pos1_( pos1_in),
+		pos2_( pos2_in),
+		orientation_( ori_in),
+		pleating_( pleat_in )
 	{}
+
+	Size Pos1() const {
+    return pos1_;
+	}
+
+	void Pos1(Size pos1) {
+		pos1_ = pos1;
+	}
+
+  Size Pos2() const {
+		return pos2_;
+	}
+
+	void Pos2(Size pos2) {
+		pos2_ = pos2;
+	}
+
+	Size Orientation() const {
+		return orientation_;
+	}
+
+	void Orientation(Size orientation) {
+		orientation_ = orientation;
+	}
+
+	Size Pleating() const {
+		return pleating_;
+	}
+
+	void Pleating(Size pleating) {
+		pleating_ = pleating;
+	}
 
 	///@brief constant values that define orientation
 	static core::Size const ANTI = 1;
@@ -76,68 +107,71 @@ public:
 	static core::Size const INWARDS = 2;
 
 	///@brief reverses the Pairing
-	//Pairing reverse();
+	Pairing reverse();
 
 	///@brief returns a new reversed pairing
-	//Pairing generate_reversed() const;
+	Pairing generate_reversed() const;
 
 	///
 	bool is_parallel() const {
-		runtime_assert( orientation );
-		return orientation == PARALLEL;
+		runtime_assert( orientation_ );
+		return orientation_ == PARALLEL;
 	}
 
 	///
 	bool is_anti() const {
-		runtime_assert( orientation );
-		return orientation == ANTI;
+		runtime_assert( orientation_ );
+		return orientation_ == ANTI;
 	}
 
 	bool is_inwards() const {
-		runtime_assert( pleating );
-		return pleating == INWARDS;
+		runtime_assert( pleating_ );
+		return pleating_ == INWARDS;
 	}
 
 	bool is_outwards() const {
-		runtime_assert( pleating );
-		return pleating == OUTWARDS;
+		runtime_assert( pleating_ );
+		return pleating_ == OUTWARDS;
 	}
 
 	bool operator ==( Pairing const& p ) const {
-		return ( (p.pos1 == pos1)
-			&& ( p.pos2 == pos2 )
-			&& ( p.orientation == orientation )
-			&& ( p.pleating == pleating )
+		return ( (p.Pos1() == Pos1())
+					&& ( p.Pos2() == Pos2() )
+				  && ( p.Orientation() == Orientation() )
+				  && ( p.Pleating() == Pleating() )
 		);
-	};
-
-	core::Size get_register()  {
-		return is_anti() ? pos1 + pos2 : std::abs( (int) pos1 - (int) pos2 );
 	}
 
+	Size get_register()  {
+		return is_anti() ? Pos1() + Pos2() : std::abs( (int) Pos1() - (int) Pos2() );
+	}
 
 	bool operator < ( Pairing const& p ) const {
-		return p.pos1 != pos1  ?  pos1 < p.pos1  :
-			 (  p.pos2 != pos2  ? pos2 < p.pos2 :
-				 ( p.orientation != orientation ? orientation < p.orientation : pleating < p.pleating ) );
-	};
+		return p.Pos1() != Pos1() ? Pos1() < p.Pos1() :
+			( p.Pos2() != Pos2() ? Pos2() < p.Pos2() :
+				( p.Orientation() != Orientation() ? Orientation() < p.Orientation() : Pleating() < p.Pleating() ) );
+	}
+
+ private:
+  Size pos1_;
+  Size pos2_;
+  Size orientation_;
+  Size pleating_;
 };
 
 ///@brief list of pairings
-//typedef utility::vector1<Pairing> PairingsList;
-
-//extern std::ostream& operator<< ( std::ostream& out, Pairing const& );
+extern std::ostream& operator<< ( std::ostream& out, Pairing const& );
 extern std::ostream& operator<< ( std::ostream& out, PairingsList const& p);
 
 ///@brief add pairings in pairing_file to list "pairings"
-//extern void read_pairing_list( std::string pairing_file, PairingsList& pairings);
-//extern void read_pairing_list( std::istream &is, PairingsList& pairings);
+extern void read_pairing_list( std::string pairing_file, PairingsList& pairings);
+extern void read_pairing_list( std::istream &is, PairingsList& pairings);
 
-//extern bool has_orientation_and_pleating( PairingsList const& );
+extern bool has_orientation_and_pleating( PairingsList const& );
 
-} //dssp
-} //scoring
-} //core
+} // dssp
+} // scoring
+} // core
 
 #endif
 

@@ -50,8 +50,8 @@
 #include <core/fragment/FragData.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameList.hh>
-#include <protocols/jumping/PairingsList.hh>
-#include <protocols/jumping/StrandPairing.hh>
+#include <core/scoring/dssp/PairingsList.hh>
+#include <core/scoring/dssp/StrandPairing.hh>
 #include <fstream>
 
 static basic::Tracer tr("protocols.abinitio.Templates");
@@ -167,14 +167,14 @@ Template::Template(
   reverse_mapping_.reverse();
 
 	// get strand pairings
-	strand_pairings_ = new jumping::StrandPairingSet( *pose_ );
+	strand_pairings_ = new core::scoring::dssp::StrandPairingSet( *pose_ );
 	tr.Info << "strand pairings \n" << *strand_pairings_;
 
 	// for shits and giggles -- write out the pairings for the target
-	jumping::PairingList template_pairings, target_pairings;
+	core::scoring::dssp::PairingList template_pairings, target_pairings;
 	strand_pairings().get_beta_pairs( template_pairings );
 	map_pairings2target( template_pairings, target_pairings );
-	jumping::StrandPairingSet target_strand_pairings( target_pairings );
+	core::scoring::dssp::StrandPairingSet target_strand_pairings( target_pairings );
 	tr.Info << " strand_pairings of " << name << " aligned to target \n" << target_strand_pairings << std::endl;
 
   // for information purpose: write sequence where alignment starts. should be the same as seen in hhr file
@@ -287,7 +287,7 @@ Template::steal_frags( FrameList const& frames, FragSet &accumulator, Size ncopi
 }
 
 bool
-Template::map_pairing( jumping::Pairing const& in, jumping::Pairing &out, core::sequence::DerivedSequenceMapping const& map ) const {
+Template::map_pairing( core::scoring::dssp::Pairing const& in, core::scoring::dssp::Pairing &out, core::sequence::DerivedSequenceMapping const& map ) const {
   out.Pos1(map[in.Pos1()]);
   out.Pos2(map[in.Pos2()]);
   out.Orientation(in.Orientation());
@@ -296,19 +296,19 @@ Template::map_pairing( jumping::Pairing const& in, jumping::Pairing &out, core::
 }
 
 void
-Template::map_pairings2template( jumping::PairingsList const& in, jumping::PairingsList &out ) const {
-  for ( jumping::PairingsList::const_iterator it = in.begin(),
+Template::map_pairings2template( core::scoring::dssp::PairingsList const& in, core::scoring::dssp::PairingsList &out ) const {
+  for ( core::scoring::dssp::PairingsList::const_iterator it = in.begin(),
 	  eit = in.end(); it!=eit; ++it ) {
-    jumping::Pairing pairing;
+    core::scoring::dssp::Pairing pairing;
     if ( map_pairing( *it, pairing, mapping_ ) ) out.push_back( pairing );
   }
 }
 
 void
-Template::map_pairings2target( jumping::PairingsList const& in, jumping::PairingsList &out ) const {
-  for ( jumping::PairingsList::const_iterator it = in.begin(),
+Template::map_pairings2target( core::scoring::dssp::PairingsList const& in, core::scoring::dssp::PairingsList &out ) const {
+  for ( core::scoring::dssp::PairingsList::const_iterator it = in.begin(),
 	  eit = in.end(); it!=eit; ++it ) {
-    jumping::Pairing pairing;
+    core::scoring::dssp::Pairing pairing;
     if ( map_pairing( *it, pairing, reverse_mapping_ ) ) out.push_back( pairing );
 		tr.Trace << "template: "<<*it<< "     target: " << pairing;
   }

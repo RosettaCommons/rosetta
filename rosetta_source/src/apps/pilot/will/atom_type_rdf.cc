@@ -25,7 +25,7 @@
 
 #include <utility/io/ozstream.hh>
 
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/jobdist/not_universal_main.hh>
 
@@ -98,7 +98,7 @@ public:
 
 		std::cout << "counting pairs for " << tag_from_pose(pose) << std::endl;
 
-		protocols::jumping::Dssp dssp(pose);
+		core::scoring::dssp::Dssp dssp(pose);
 		dssp.insert_ss_into_pose( pose );
 
 		if( 0==type_names_.size() ) {

@@ -40,14 +40,14 @@
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <protocols/jumping/StrandPairing.hh>
+// AUTO-REMOVED #include <core/scoring/dssp/StrandPairing.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
@@ -633,7 +633,7 @@ void TopologyBroker::apply( core::pose::Pose& pose ) {
 	if ( !repack_scorefxn_ ) repack_scorefxn_ = core::scoring::getScoreFunction();
 
 	// initialize secondary structure from DSSP.
-	protocols::jumping::Dssp dssp_obj( pose );
+	core::scoring::dssp::Dssp dssp_obj( pose );
 	dssp_obj.insert_ss_into_pose( pose );
 
 	// Fix disulfides if a file is given

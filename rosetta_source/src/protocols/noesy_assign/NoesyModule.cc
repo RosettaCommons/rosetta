@@ -219,8 +219,8 @@ using namespace basic::options;
 #include <protocols/jumping/JumpSample.hh>
 #include <protocols/jumping/JumpSetup.fwd.hh>
 #include <protocols/jumping/PairingLibrary.hh>
-#include <protocols/jumping/PairingsList.fwd.hh>
-#include <protocols/jumping/PairingsList.hh>
+#include <core/scoring/dssp/PairingsList.fwd.hh>
+#include <core/scoring/dssp/PairingsList.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>

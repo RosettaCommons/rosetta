@@ -53,7 +53,7 @@
 
 // AUTO-REMOVED #include <protocols/loops/loops_main.hh> //for getting ss from dssp
 
-#include <protocols/jumping/Dssp.hh>// dssp info
+#include <core/scoring/dssp/Dssp.hh>// dssp info
 
 // AUTO-REMOVED #include <protocols/moves/Mover.fwd.hh> //MoverOP
 //#include <protocols/moves/BackboneMover.hh> //Small/ShearMover
@@ -103,7 +103,7 @@ void design_setup( core::pose::Pose & pose, core::pack::task::TaskFactoryOP desi
 	utility::vector1< bool > packablePositions(pose.n_residue(),false); // packable doesn't imply designing
 
 	// get dssp info
-	protocols::jumping::Dssp dssp( pose );
+	core::scoring::dssp::Dssp dssp( pose );
   dssp.insert_ss_into_pose( pose );
 
 	utility::vector1< core::Size > ind_neighbors; // neighbors at each position
@@ -202,7 +202,7 @@ void design_setup( core::pose::Pose & pose, core::pack::task::TaskFactoryOP desi
 
 core::Size numberhelices( core::pose::Pose & pose ){
 
-	 protocols::jumping::Dssp dssp( pose );
+	 core::scoring::dssp::Dssp dssp( pose );
 	 dssp.insert_ss_into_pose( pose );
 
 	 utility::vector1< core::Size > Ind_SS_E;
@@ -252,7 +252,7 @@ void create_nucleated_sequence_from_template_pdb( std::string & nucleated_sequen
 	core::import_pose::pose_from_pdb( template_pose, template_pdb );
 
 	// get the template poses secondary structure information
-	protocols::jumping::Dssp dssp( template_pose );
+	core::scoring::dssp::Dssp dssp( template_pose );
 	dssp.insert_ss_into_pose( template_pose);
 
 	// get nucleated sequence from template pose B/P pattern or use template sequence

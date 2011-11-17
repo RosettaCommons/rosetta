@@ -21,7 +21,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
 #include <core/chemical/AA.hh>
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreType.hh>

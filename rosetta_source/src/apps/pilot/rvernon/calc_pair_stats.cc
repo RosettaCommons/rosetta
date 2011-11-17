@@ -17,7 +17,7 @@
 
 #include <core/chemical/AA.hh>
 
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 #include <core/pose/Pose.hh>
 // Auto-header: duplicate removed #include <devel/init.hh>
@@ -111,7 +111,7 @@ main( int argc, char* argv [] )
 
 
 		for ( utility::vector1< core::pose::PoseOP >::iterator it = pdb_chains.begin(), end = pdb_chains.end(); it != end; ++it ) {
-			protocols::jumping::Dssp dssp(**it);
+			core::scoring::dssp::Dssp dssp(**it);
 			dssp.insert_ss_into_pose( **it );
 
 

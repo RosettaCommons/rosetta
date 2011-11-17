@@ -27,7 +27,7 @@
 // Package Headers
 #include <core/fragment/SecondaryStructure.hh>
 #include <protocols/jumping/SameStrand.hh>
-#include <protocols/jumping/PairingsList.hh>
+#include <core/scoring/dssp/PairingsList.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -127,7 +127,7 @@ using namespace core;
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-SheetBuilder::SheetBuilder( core::fragment::SecondaryStructureOP ss, PairingsList const& pairings, SheetTopology const& sheet_topol) :
+SheetBuilder::SheetBuilder( core::fragment::SecondaryStructureOP ss, core::scoring::dssp::PairingsList const& pairings, SheetTopology const& sheet_topol) :
   total_residue_( ss->total_residue() ),
   pairings_( pairings ),
   same_strand_( new SameStrand( ss ) ),
@@ -229,8 +229,8 @@ SheetBuilder::check_two_pairings(
 
 	common_strands = 0;
 
-	Pairing p1 ( pairing1 );
- 	Pairing p2 ( pairing2 );
+	core::scoring::dssp::Pairing p1 ( pairing1 );
+	core::scoring::dssp::Pairing p2 ( pairing2 );
 
 	if ( same_strand_->eval( p1.Pos1(), p2.Pos1() ) && same_strand_->eval( p1.Pos2(), p2.Pos2() ) ) {
 		common_strands = 2;
@@ -296,7 +296,7 @@ JumpSample SheetBuilder::create_jump_sample() const{
 	sheet_sizes_ = create_new_random_topol();
 	FArray1A_int cuts;
 	for ( int trial = 1; trial < 10; trial ++ ) {
-		PairingsList jump_pairings;
+		core::scoring::dssp::PairingsList jump_pairings;
 		bool success = builder_loop( jump_pairings );
 		if ( !success ) {
 			sheet_sizes_ = create_new_random_topol();
@@ -308,7 +308,7 @@ JumpSample SheetBuilder::create_jump_sample() const{
 			tr.Debug << "same_strand: ";
 			typedef utility::vector1< int > Int_List;
 			Int_List jres;
-			for ( PairingsList::const_iterator it = jump_pairings.begin(),
+			for ( core::scoring::dssp::PairingsList::const_iterator it = jump_pairings.begin(),
 							eit = jump_pairings.end(); it != eit; ++it ) {
 				jres.push_back( it->Pos1() );
 				jres.push_back( it->Pos2() );
@@ -330,7 +330,7 @@ JumpSample SheetBuilder::create_jump_sample() const{
 }
 
 bool
-SheetBuilder::builder_loop( PairingsList& jump_pairings ) const {
+SheetBuilder::builder_loop( core::scoring::dssp::PairingsList& jump_pairings ) const {
   Size const max_sheet_size( 40 );
   Size const max_sheets( 40 ); // can we determine these from something ?
 	int num_sheets( sheet_sizes_.size() );
@@ -396,7 +396,7 @@ SheetBuilder::builder_loop( PairingsList& jump_pairings ) const {
   for ( int sheet = 1; sheet <= num_sheets; ++sheet ) {
     for ( int pairing = 1, pe = sheet_sizes_[sheet]; pairing <= pe; ++pairing ) {
 
-      Pairing p( sheet_pairing( 1,pairing,sheet) );
+			core::scoring::dssp::Pairing p( sheet_pairing( 1,pairing,sheet) );
 			jump_pairings.push_back( p );
 
       tr.Debug << "sheet_pairing:" << SS(sheet) << SS(pairing) << ' ' <<

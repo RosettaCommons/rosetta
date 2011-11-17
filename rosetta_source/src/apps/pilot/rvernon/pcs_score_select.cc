@@ -17,7 +17,7 @@
 
 #include <core/chemical/AA.hh>
 
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 #include <core/pose/Pose.hh>
 // Auto-header: duplicate removed #include <core/init.hh>

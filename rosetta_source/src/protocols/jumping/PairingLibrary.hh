@@ -32,7 +32,7 @@
 #include <core/fragment/FragData.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 
-// AUTO-REMOVED #include <protocols/jumping/PairingsList.hh>
+// AUTO-REMOVED #include <core/scoring/dssp/PairingsList.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -49,7 +49,7 @@
 #include <map>
 // AUTO-REMOVED #include <vector>
 
-#include <protocols/jumping/PairingsList.fwd.hh>
+#include <core/scoring/dssp/PairingsList.fwd.hh>
 #include <utility/vector1.hh>
 
 
@@ -89,7 +89,7 @@ public:
 
 	virtual void
 	generate_jump_frags(
-		PairingsList const& pairings,
+		core::scoring::dssp::PairingsList const& pairings,
 		core::kinematics::MoveMap const& mm,
 		bool bWithTorsion,
 		core::fragment::FragSet& frags_accumulator
@@ -145,7 +145,7 @@ public:
 
 	void
 	generate_jump_frags(
-		PairingsList const & pairings,
+		core::scoring::dssp::PairingsList const & pairings,
 		core::kinematics::MoveMap const & mm,
 		bool bWithTorsion,
 		core::fragment::FragSet & frags_accumulator

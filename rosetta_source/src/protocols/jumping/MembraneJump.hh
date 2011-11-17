@@ -24,7 +24,7 @@
 // Package Headers
 // AUTO-REMOVED #include <protocols/jumping/PairingLibrary.fwd.hh>
 #include <protocols/jumping/PairingLibrary.hh>
-#include <protocols/jumping/PairingsList.fwd.hh>
+#include <core/scoring/dssp/PairingsList.fwd.hh>
 
 
 // Project Headers
@@ -90,7 +90,7 @@ setup_fold_tree(core::pose::Pose & pose, core::Size njumps) const;
 
 private:
 	PairingLibrary templates_;
-	PairingList pairings_;
+	core::scoring::dssp::PairingList pairings_;
 	core::Size template_size_;
 	core::Size pairings_size_;
 

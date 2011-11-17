@@ -40,6 +40,7 @@ public:
   virtual void apply( core::pose::Pose& pose );
 
   virtual protocols::moves::MoverOP clone() const {
+		//Stupid and useless comment
     return new FoldTreeOutputter( *this );
   }
 
@@ -59,11 +60,13 @@ FoldTreeOutputter::FoldTreeOutputter() {}
 
 void FoldTreeOutputter::apply(core::pose::Pose & pose){
   std::cout << pose.fold_tree() << std::endl;
+  std::cout << "------DONE------" << std::endl;
 }
 
 int
 main( int argc, char * argv [] )
 {
+	//Another useless comment
   using namespace std;
   using namespace utility;
   using namespace core;

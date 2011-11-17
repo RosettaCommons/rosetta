@@ -29,7 +29,7 @@
 #include <protocols/relax_protocols.hh>
 #include <protocols/abinitio/FoldConstraints.hh>
 #include <protocols/idealize/idealize.hh>
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 #include <protocols/evaluation/PoseEvaluator.hh>
 #include <protocols/evaluation/RmsdEvaluator.hh>
@@ -94,7 +94,7 @@ int main(int argc, char **argv) {
 	for (int i=0; i<pdb_file_names.size(); ++i) {
 		core::import_pose::pose_from_pdb( pose, *core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ), pdb_file_names[i] );
 
-		protocols::jumping::Dssp dssp_obj( pose );
+		core::scoring::dssp::Dssp dssp_obj( pose );
 		dssp_obj.insert_ss_into_pose( pose );
 
 		core::Size nres = pose.total_residue();

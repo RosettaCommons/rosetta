@@ -39,7 +39,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/viewer/viewers.hh>
 
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/LoopRelaxMover.hh>
@@ -490,7 +490,7 @@ void read_template_structures(utility::vector1 <core::pose::PoseOP> & template_s
 		template_structures[i_ref] = new core::pose::Pose();
 		core::import_pose::pose_from_pdb( *(template_structures[i_ref]), ref_filenames[i_ref] );
 		
-		protocols::jumping::Dssp dssp_obj( *template_structures[i_ref] );
+		core::scoring::dssp::Dssp dssp_obj( *template_structures[i_ref] );
 		dssp_obj.insert_ss_into_pose( *template_structures[i_ref] );
 	}
 
@@ -498,7 +498,7 @@ void read_template_structures(utility::vector1 <core::pose::PoseOP> & template_s
 
 void 
 split_pdb_into_ss_chunks(core::pose::PoseOP const pose, utility::vector1< SecondaryStructureChunk > & ss_chunks) {
-	protocols::jumping::Dssp dssp_obj( *pose );
+	core::scoring::dssp::Dssp dssp_obj( *pose );
 	dssp_obj.insert_ss_into_pose( *pose );
 
 	std::string secstruct = pose->secstruct();
@@ -539,7 +539,7 @@ initialize_template_structures() {
 		seqpos_alignments_.push_back(seqpos_alignment);
 		
 		// Build the star fold tree, identify jumps
-		protocols::jumping::Dssp dssp_obj( *template_structures_[i_template] );
+		core::scoring::dssp::Dssp dssp_obj( *template_structures_[i_template] );
 		dssp_obj.insert_ss_into_pose( *template_structures_[i_template] );
 
 		template_ss_chunks_[i_template] = extract_secondary_structure_chunks(*template_structures_[i_template]);

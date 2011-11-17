@@ -27,7 +27,7 @@
 
 #include <protocols/jumping/SheetBuilder.hh>
 #include <protocols/jumping/JumpSetup.hh>
-#include <protocols/jumping/PairingsList.hh>
+#include <core/scoring/dssp/PairingsList.hh>
 #include <protocols/jumping/SecondaryStructure.hh>
 
 // Project Headers

@@ -13,7 +13,7 @@
 //#include <devel/remodel/helpMenu.hh>
 
 //for DSSP
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
@@ -339,7 +339,7 @@ protocols::forge::remodel::RemodelData::collectInsertionPose(){
 
 	core::import_pose::pose_from_pdb( insertPose, basic::options::option[basic::options::OptionKeys::remodel::domainFusion::insert_segment_from_pdb]());
 	insertionSize = (int)insertPose.total_residue();
-	protocols::jumping::Dssp dssp(insertPose);
+	core::scoring::dssp::Dssp dssp(insertPose);
 	ObjexxFCL::FArray1D_char dsspSS((int)insertPose.total_residue());
 	dssp.dssp_reduced(dsspSS);
 	for (int i = 1; i <= (int)dsspSS.size(); i++){

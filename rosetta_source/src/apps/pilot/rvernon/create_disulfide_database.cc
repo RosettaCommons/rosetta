@@ -17,7 +17,7 @@
 
 #include <core/chemical/AA.hh>
 
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 #include <core/pose/Pose.hh>
 // Auto-header: duplicate removed #include <devel/init.hh>
@@ -287,7 +287,7 @@ main( int argc, char* argv [] )
 		core::import_pose::pose_from_pdb( pdb, pdb_file_location );
 		std::cout << "PROCESSING COMPLETE: " << pdb_file_location << std::endl;
 
-		protocols::jumping::Dssp dssp( pdb );
+		core::scoring::dssp::Dssp dssp( pdb );
 		dssp.insert_ss_into_pose( pdb );
 
 
@@ -366,7 +366,7 @@ main( int argc, char* argv [] )
 	// 	utility::vector1< pose::PoseOP > pdb_chains(pdb.split_by_chain());
 
 // 		for ( utility::vector1< core::pose::PoseOP >::iterator it = pdb_chains.begin(), end = pdb_chains.end(); it != end; ++it ) {
-// 			protocols::jumping::Dssp dssp(**it);
+// 			core::scoring::dssp::Dssp dssp(**it);
 // 			dssp.insert_ss_into_pose( **it );
 
 // 			core::Size n1(1);

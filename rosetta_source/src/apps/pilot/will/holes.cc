@@ -37,7 +37,7 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <protocols/jobdist/not_universal_main.hh>
-// AUTO-REMOVED #include <protocols/jumping/Dssp.hh>
+// AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/moves/MinMover.hh>
 // AUTO-REMOVED #include <pstream.h>

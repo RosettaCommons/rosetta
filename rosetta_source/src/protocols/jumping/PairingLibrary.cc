@@ -57,7 +57,7 @@
 #include <cstdlib>
 #include <string>
 
-#include <protocols/jumping/PairingsList.hh>
+#include <core/scoring/dssp/PairingsList.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
@@ -660,7 +660,7 @@ void PairingLibrary::create_jump_fragments(
 
 void
 PairingLibrary::generate_jump_frags(
-	PairingsList const& pairings,
+	core::scoring::dssp::PairingsList const& pairings,
 	kinematics::MoveMap const& mm,
 	bool bWithTorsion,
 	core::fragment::FragSet& frags_accumulator
@@ -673,7 +673,7 @@ PairingLibrary::generate_jump_frags(
 	typedef std::map< std::pair< Size, Size >, JumpList > JumpOrientations;
 	JumpOrientations jump_kind;
 	Size jump_nr ( 1 );
-	for ( PairingsList::const_iterator it = pairings.begin(), eit = pairings.end();
+	for ( core::scoring::dssp::PairingsList::const_iterator it = pairings.begin(), eit = pairings.end();
 				it != eit; ++it ) {
 		Size o_key ( it->Orientation() ); // < 0 ? 1 : 2 );
 		Size p_key ( it->Pleating() ); // < 0 ? 1 : 2 );

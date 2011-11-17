@@ -51,7 +51,7 @@
 
 // AUTO-REMOVED #include <protocols/loops/loops_main.hh> //for getting ss from dssp
 
-#include <protocols/jumping/Dssp.hh>// dssp info
+#include <core/scoring/dssp/Dssp.hh>// dssp info
 
 #include <protocols/moves/Mover.fwd.hh> //MoverOP
 #include <protocols/moves/BackboneMover.hh> //Small/ShearMover
@@ -167,7 +167,7 @@ void CreateStartingStructureMover::apply( core::pose::Pose & pose ){
 
 	// put secondary structure info into nucleated pose - need to do this for all methods of creating starting structures
 	if ( basic::options::option[ basic::options::OptionKeys::DenovoProteinDesign::create_from_template_pdb ].user() ) {
-		protocols::jumping::Dssp dssp( template_pose );
+		core::scoring::dssp::Dssp dssp( template_pose );
 		dssp.insert_ss_into_pose(template_pose);
 		for(Size ii = 1; ii<=template_pose.n_residue(); ++ii){
 			nucleated_pose.set_secstruct(ii, template_pose.secstruct(ii));

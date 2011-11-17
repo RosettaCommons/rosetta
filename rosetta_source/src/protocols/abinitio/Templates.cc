@@ -212,7 +212,7 @@ Templates::Templates( std::string const& config_file, pose::PoseCOP native ) :
 		}
 	}
 	PairingStatisticsOP strand_stats = new PairingStatistics( *this );
-	if ( native_ ) strand_stats->set_native_topology( jumping::StrandPairingSet( *native_ ) );
+	if ( native_ ) strand_stats->set_native_topology( core::scoring::dssp::StrandPairingSet( *native_ ) );
 	strand_stats_ = strand_stats;
 
 	tr.Info << "statistics of pairings: \n\n\n" << *strand_stats_ << std::endl;
@@ -425,7 +425,7 @@ Size Templates::pick_large_frags(
 
 
 void
-Templates::read_pairings( std::string const& filename, jumping::PairingsList& pairings ) const {
+Templates::read_pairings( std::string const& filename, core::scoring::dssp::PairingsList& pairings ) const {
 	pairings.clear();
 
 	utility::io::izstream in( filename );
@@ -436,7 +436,7 @@ Templates::read_pairings( std::string const& filename, jumping::PairingsList& pa
 	std::string pdb;
 	in >> pdb;
 
-	jumping::PairingsList raw_pairings;
+	core::scoring::dssp::PairingsList raw_pairings;
 	read_pairing_list( in, raw_pairings );
 	tr.Debug << " read pairings for template " << pdb << "\n" << raw_pairings << std::endl;
 	const_iterator iter = templates_.find( pdb );
@@ -459,7 +459,7 @@ TemplateJumpSetupOP Templates::create_jump_def( core::fragment::SecondaryStructu
 // 	for ( Size i = 1; i<=ss_def->total_residue(); i++ ) {
 // 		dump << i << " " << ss_def->loop_fraction()(i) << std::endl;
 // 	}
-	jumping::PairingsList helix_pairings;
+	core::scoring::dssp::PairingsList helix_pairings;
 	if ( option[ templates::helix_pairings ].user() ) read_pairings( option[ templates::helix_pairings ], helix_pairings );
 	return new TemplateJumpSetup( this, ss_def, strand_stats_, helix_pairings );
 }

@@ -40,7 +40,7 @@
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/BackboneMover.hh>
 // AUTO-REMOVED #include <protocols/relax_protocols.hh>
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 // AUTO-REMOVED #include <core/io/silent/silent.fwd.hh>
 // AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
@@ -141,7 +141,7 @@ void test( std::string fname ) {
 	for ( core::Size i = 1; i <= N; ++i )
 		std::cout << pose.secstruct(i);
 	std::cout << std::endl;
-	protocols::jumping::Dssp dssp_obj( pose );
+	core::scoring::dssp::Dssp dssp_obj( pose );
 	dssp_obj.insert_ss_into_pose( pose );
 	for ( core::Size i = 1; i <= N; ++i )
 		std::cout << pose.secstruct(i);

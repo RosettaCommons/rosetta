@@ -326,7 +326,7 @@ void JumpingTest::test_SheetBuilder() {
 
 	SecondaryStructureOP ss( new SecondaryStructure( fragset3mer_ ) );
 
-	PairingsList pairings;
+	core::scoring::dssp::PairingsList pairings;
 	read_pairing_list( "protocols/jumping/pairings.dat", pairings );
 
 	{ //scoping

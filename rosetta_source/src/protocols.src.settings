@@ -627,12 +627,12 @@ sources = {
 	],
 
 	"protocols/jumping" : [
-		"Dssp",
+		#"Dssp",
 		"JumpSetup",
 		"JumpSample",
 		"MembraneJump",
 		"PairingLibrary",
-		"PairingsList",
+		#"PairingsList",
 		"DisulfPairingLibrary",
 		"DisulfPairingsList",
 		"RandomSheetBuilder",
@@ -640,7 +640,7 @@ sources = {
 		"ResiduePairJumpSetup",
 		"SameStrand",
 		"SheetBuilder",
-		"StrandPairing",
+		#"StrandPairing",
 		"util",
 	],
 

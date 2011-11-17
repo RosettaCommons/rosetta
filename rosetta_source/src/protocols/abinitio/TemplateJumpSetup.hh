@@ -27,7 +27,7 @@
 #include <core/fragment/FragData.fwd.hh>
 #include <core/fragment/FrameList.fwd.hh>
 
-#include <protocols/jumping/PairingsList.hh>
+#include <core/scoring/dssp/PairingsList.hh>
 #include <protocols/jumping/PairingLibrary.hh>
 #include <protocols/jumping/JumpSample.hh>
 
@@ -55,7 +55,7 @@ public:
 				 TemplatesCOP templates,
 				 core::fragment::SecondaryStructureCOP secstruct,
 				 PairingStatisticsCOP,
-				 jumping::PairingList const& helix_pairings
+				 core::scoring::dssp::PairingList const& helix_pairings
 	);
 
 	~TemplateJumpSetup();
@@ -72,20 +72,20 @@ public:
   virtual
 	core::fragment::FragSetOP generate_jump_frags( jumping::JumpSample const&, core::kinematics::MoveMap const& ) const;
 
-	bool is_helix_jump( jumping::Pairing const& p ) const;
+	bool is_helix_jump( core::scoring::dssp::Pairing const& p ) const;
 
 private:
   TemplatesCOP templates_;
   core::fragment::SecondaryStructureCOP secstruct_;
 
 	PairingStatisticsCOP strand_stats_;
-	jumping::PairingList helix_pairings_;
+	core::scoring::dssp::PairingList helix_pairings_;
 	//jumping::BasePairingLibraryOP geometry_library_; ///eventually plug in other sources for geometries .. needs a new interface -- not now
 };
 
 class FixTemplateJumpSetup : public TemplateJumpSetup {
 public:
-  FixTemplateJumpSetup( TemplatesCOP templates, core::fragment::SecondaryStructureCOP secstruct, PairingStatisticsCOP, jumping::PairingList const&,
+  FixTemplateJumpSetup( TemplatesCOP templates, core::fragment::SecondaryStructureCOP secstruct, PairingStatisticsCOP, core::scoring::dssp::PairingList const&,
 		jumping::BaseJumpSetupOP jump_def );
 	~FixTemplateJumpSetup();
 

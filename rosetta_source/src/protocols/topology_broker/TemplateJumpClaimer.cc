@@ -32,7 +32,7 @@
 #include <protocols/jumping/JumpSetup.hh>
 #include <protocols/abinitio/TemplateJumpSetup.hh>
 #include <protocols/abinitio/PairingStatistics.hh>
-#include <protocols/jumping/PairingsList.hh>
+#include <core/scoring/dssp/PairingsList.hh>
 #include <protocols/jumping/RandomSheetBuilder.hh>
 #include <core/fragment/SecondaryStructure.hh>
 #include <basic/options/keys/templates.OptionKeys.gen.hh>
@@ -98,7 +98,7 @@ void TemplateJumpClaimer::read_topol_file( std::string const& file ) {
 		abinitio::PairingStatisticsOP ps = new abinitio::PairingStatistics;
 		is >> *ps;
 		tr.Info << *ps << std::endl;
-		jumping::PairingList helix_pairings; //empty for now
+		core::scoring::dssp::PairingList helix_pairings; //empty for now
 		core::fragment::SecondaryStructureOP ss_def = new core::fragment::SecondaryStructure;
 		ss_def->extend( 1500 ); //HACK number of residues
 		set_jump_def( new abinitio::TemplateJumpSetup( NULL, ss_def, ps, helix_pairings ) );

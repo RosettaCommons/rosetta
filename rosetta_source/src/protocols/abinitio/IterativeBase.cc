@@ -38,7 +38,7 @@
 
 #ifdef WIN32
 #include <core/fragment/FragID.hh>
-#include <protocols/jumping/PairingsList.hh>
+#include <core/scoring/dssp/PairingsList.hh>
 #endif
 
 #include <core/sequence/util.hh>
@@ -1490,7 +1490,7 @@ PairingStatisticsOP IterativeBase::compute_beta_topology() {
 		(*it)->fill_pose( pose );
 
 		// get strand pairings
-		jumping::StrandPairingSet strand_pairings( pose );
+		core::scoring::dssp::StrandPairingSet strand_pairings( pose );
 
 		tag = right_string_of( ct, 4, '0');
 		beta_topol->add_topology( strand_pairings, tag );

@@ -33,7 +33,7 @@
 #include <core/fragment/picking/vall/eval/EnergyEval.hh>
 #include <core/fragment/picking/vall/gen/LengthGen.hh>
 #include <core/fragment/picking/vall/scores/VallFragmentScore.hh>
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/viewer/viewers.hh>
 
@@ -53,7 +53,7 @@ static basic::Tracer TR( "apps.pilot.yab.vllb" );
 void * ligand_test( void * ) {
 	using core::pose::Pose;
 	using core::import_pose::pose_from_pdb;
-	using protocols::jumping::Dssp;
+	using core::scoring::dssp::Dssp;
 	using protocols::moves::MS_SUCCESS;
 
 	using protocols::forge::build::BuildManager;
@@ -97,7 +97,7 @@ void * ligand_test( void * ) {
 void * vlb_test( void * ) {
 	using core::pose::Pose;
 	using core::import_pose::pose_from_pdb;
-	using protocols::jumping::Dssp;
+	using core::scoring::dssp::Dssp;
 	using protocols::moves::MS_SUCCESS;
 
 	using protocols::forge::build::BuildManager;
@@ -152,7 +152,7 @@ void * connect_test( void * ) {
 	using core::chemical::ResidueTypeSetCAP;
 	using core::pose::Pose;
 	using core::import_pose::pose_from_pdb;
-	using protocols::jumping::Dssp;
+	using core::scoring::dssp::Dssp;
 	using protocols::moves::MS_SUCCESS;
 
 	using protocols::forge::build::BuildManager;

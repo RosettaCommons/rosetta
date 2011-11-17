@@ -149,6 +149,7 @@ sources = {
 
 	"core/scoring/dssp" : [
 		"Dssp",
+		"PairingsList",
 		"StrandPairing",
 		"util",
 	],

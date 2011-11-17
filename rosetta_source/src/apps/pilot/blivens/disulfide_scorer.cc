@@ -44,7 +44,7 @@
 // AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/scoring/disulfides/CentroidDisulfidePotential.hh>
 #include <core/pose/PDBInfo.hh>
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 #include <apps/pilot/blivens/disulfides.hh>
 
@@ -298,7 +298,7 @@ int main( int argc, char * argv [] )
 		core::import_pose::centroid_pose_from_pdb( pose, *infile_it );
 
 		//Assign secodary structure
-		protocols::jumping::Dssp dssp(pose);
+		core::scoring::dssp::Dssp dssp(pose);
 		dssp.insert_ss_into_pose(pose);
 
 		TR << pose.secstruct() << endl;

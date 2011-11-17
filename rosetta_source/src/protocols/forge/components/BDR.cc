@@ -40,7 +40,7 @@
 #include <core/scoring/constraints/Constraint.hh>
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/LoopMover_CCD.hh>
 #include <protocols/moves/PackRotamersMover.hh>
@@ -261,9 +261,9 @@
 #include <protocols/forge/remodel/RemodelData.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
 #include <protocols/jobdist/Jobs.hh>
-#include <protocols/jumping/PairingsList.fwd.hh>
-#include <protocols/jumping/StrandPairing.fwd.hh>
-#include <protocols/jumping/StrandPairing.hh>
+#include <core/scoring/dssp/PairingsList.fwd.hh>
+//#include <protocols/jumping/StrandPairing.fwd.hh>
+//#include <protocols/jumping/StrandPairing.hh>
 #include <protocols/loops/IndependentLoopMover.hh>
 #include <protocols/loops/Loop.fwd.hh>
 #include <protocols/loops/Loop.hh>
@@ -681,7 +681,7 @@ void BDR::fullatom_scorefunction( ScoreFunctionOP sfx ) {
 void BDR::apply( Pose & pose ) {
 	using core::pose::metrics::CalculatorFactory;
 	using basic::MetricValue;
-	using protocols::jumping::Dssp;
+	using core::scoring::dssp::Dssp;
 	using protocols::moves::MS_SUCCESS;
 	using protocols::moves::FAIL_DO_NOT_RETRY;
 	using protocols::moves::FAIL_RETRY;

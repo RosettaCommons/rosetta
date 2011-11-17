@@ -29,7 +29,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
 #include <protocols/jobdist/not_universal_main.hh>
-// AUTO-REMOVED #include <protocols/jumping/Dssp.hh>
+// AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/moves/MinMover.hh>
 
@@ -39,7 +39,7 @@
 #include <core/types.hh>
 #include <numeric/model_quality/rms.hh>
 #include <ObjexxFCL/FArray2D.hh>
-// Auto-header: duplicate removed #include <protocols/jumping/Dssp.hh>
+// Auto-header: duplicate removed #include <core/scoring/dssp/Dssp.hh>
 #include <pstream.h>
 // AUTO-REMOVED #include <time.h>
 // AUTO-REMOVED #include <utility/io/izstream.hh>
@@ -143,7 +143,7 @@ parse_ss_regions(
  )
 {
 	// using core::Size;
-	// protocols::jumping::Dssp dssp(pose);
+	// core::scoring::dssp::Dssp dssp(pose);
 	// dssp.insert_ss_into_pose( pose );
 	// utility::vector1<core::Size> ssreg(pose.n_residue());
 	// Size regcount = 1;
@@ -263,7 +263,7 @@ apply(
 		return;
 	}
 
-	// protocols::jumping::Dssp dssp(pose); // done by PoseBalls now
+	// core::scoring::dssp::Dssp dssp(pose); // done by PoseBalls now
 	// dssp.insert_ss_into_pose( pose );
 	int  hmode = basic::options::option[ OptionKeys::holes::h_mode ](); // default 0
 	bool ignore_water = !basic::options::option[ OptionKeys::holes::water ]();

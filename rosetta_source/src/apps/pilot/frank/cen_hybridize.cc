@@ -17,7 +17,7 @@
 #include <protocols/rbsegment_moves/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <protocols/comparative_modeling/coord_util.hh>
 
 #include <protocols/evaluation/Align_RmsdEvaluator.hh>

@@ -32,7 +32,7 @@
 //#include <core/conformation/util.hh>
 //#include <protocols/loops/SlidingWindowLoopClosure.hh>
 // AUTO-REMOVED #include <protocols/loops/loops_main.hh> //for getting ss from dssp
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 // AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/util.hh>
@@ -95,7 +95,7 @@ loopfinder( core::pose::Pose & pose , loops::Loops & loops ){
 	// this function will not find terminal loops
 	// get dssp info
 	core::Size lastres = pose.total_residue();
-	protocols::jumping::Dssp dssp( pose );
+	core::scoring::dssp::Dssp dssp( pose );
 	dssp.insert_ss_into_pose( pose );
 
 	utility::vector1< utility::vector1< core::Size > >all_loops;

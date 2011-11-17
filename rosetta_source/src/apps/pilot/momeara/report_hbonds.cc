@@ -58,7 +58,7 @@
 #include <basic/datacache/CacheableString.hh>
 #include <basic/Tracer.hh>
 
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/ShakeStructureMover.hh>
@@ -303,7 +303,7 @@ apply( Pose& pose ){
 
 
   // compute dssp
-  protocols::jumping::Dssp dssp( pose );
+  core::scoring::dssp::Dssp dssp( pose );
   dssp.insert_ss_into_pose( pose );
 
   core::Real hbond_energies = 0; // to get average energy for structure;

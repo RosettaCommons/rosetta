@@ -91,7 +91,7 @@ namespace abinitio {
 static numeric::random::RandomGenerator RG(5651234);  // <- Magic number, do not change it!
 
 using namespace core;
-using namespace jumping;
+//using namespace jumping;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
 
@@ -99,14 +99,14 @@ using namespace basic::options::OptionKeys;
 
 PairingStatEntry::PairingStatEntry() {}
 
-PairingStatEntry::PairingStatEntry( StrandPairing const& strand, Model const& id ) :
+PairingStatEntry::PairingStatEntry( core::scoring::dssp::StrandPairing const& strand, Model const& id ) :
   strand_pairing_( strand ),
 	weight_( -1.0 )
 {
   models_.push_back( id );
 }
 
-bool PairingStatEntry::add_pairing( StrandPairing const& new_strand, Model const& id ) {
+bool PairingStatEntry::add_pairing( core::scoring::dssp::StrandPairing const& new_strand, Model const& id ) {
   bool success( true );
   if ( models_.size() ) {
     success = strand_pairing_.merge( new_strand, true /*do_merge */);
@@ -118,7 +118,7 @@ bool PairingStatEntry::add_pairing( StrandPairing const& new_strand, Model const
 }
 
 
-bool PairingStatEntry::compatible( StrandPairing const& strand ) const {
+bool PairingStatEntry::compatible( core::scoring::dssp::StrandPairing const& strand ) const {
   return strand_pairing_.mergeable( strand );
 }
 
@@ -129,9 +129,9 @@ bool PairingStatEntry::has_model( std::string const& model ) const {
 	return false;
 }
 
-void PairingStatistics::add_topology( StrandPairingSet const& topology, Model const& id ) {
+void PairingStatistics::add_topology( core::scoring::dssp::StrandPairingSet const& topology, Model const& id ) {
 	//	if (! topology.size() ) return; //also add empty sets  -- otherwise the modelname floats around and can't be found in this list
-  for ( StrandPairingSet::const_iterator it = topology.begin(), eit = topology.end();
+  for ( core::scoring::dssp::StrandPairingSet::const_iterator it = topology.begin(), eit = topology.end();
 	it != eit; ++it  ) {
     bool merged ( false );
     for ( StatEntries::iterator itentry = entries_.begin(), eitentry = entries_.end();
@@ -149,24 +149,24 @@ void PairingStatistics::compute( Templates const& templates ) {
   for ( Templates::const_iterator it = templates.begin(), eit = templates.end();
 	it != eit; ++it ) {
     Template const& model( *it->second );
-    PairingList template_pairings, target_pairings;
+    core::scoring::dssp::PairingList template_pairings, target_pairings;
     model.strand_pairings().get_beta_pairs( template_pairings );
     model.map_pairings2target( template_pairings, target_pairings );
-    add_topology( StrandPairingSet( target_pairings ), model.name() );
+    add_topology( core::scoring::dssp::StrandPairingSet( target_pairings ), model.name() );
     model_freq[ model.name().substr(0,4) ] += 1;
   }
   compute_model_weights( model_freq );
 }
 
 
-PairingStatistics::PairingStatistics( jumping::StrandPairingSet const& topology ) {
+PairingStatistics::PairingStatistics( core::scoring::dssp::StrandPairingSet const& topology ) {
 	 add_topology( topology, "SINGLE_TOP" );
 	 ModelFreq model_freq;
 	 model_freq[ "SING" ] = 1;
 	 compute_model_weights( model_freq );
 }
 
-core::Real PairingStatistics::strand_weight( jumping::StrandPairing const& pairing ) const {
+core::Real PairingStatistics::strand_weight( core::scoring::dssp::StrandPairing const& pairing ) const {
   for ( StatEntries::const_iterator entry= entries_.begin(), eentry = entries_.end();
 	entry != eentry; ++entry ) {
     if ( entry->compatible( pairing ) ) {
@@ -192,7 +192,7 @@ void PairingStatistics::compute_model_weights(  ModelFreq& model_freq ) {
     Real score( 0 );
     Real const norm( sqrt( (Real)  model_freq[ top->first.substr(0,4) ]  ) );
     // loop over pairings and find them in entries_
-    for ( jumping::StrandPairingSet::const_iterator pairing = top->second.begin(),
+    for ( core::scoring::dssp::StrandPairingSet::const_iterator pairing = top->second.begin(),
 	    epairing = top->second.end(); pairing != epairing; ++pairing ) {
       // find pairing in entries
       for ( StatEntries::iterator entry= entries_.begin(), eentry = entries_.end();
@@ -216,7 +216,8 @@ void PairingStatistics::compute_model_weights(  ModelFreq& model_freq ) {
   copy( weight_list.begin(), weight_list.end(), std::back_inserter( model_weight_ ) );
 }
 
-StrandPairingSet const& PairingStatistics::suggest_topology( std::string& topol_id ) const {
+core::scoring::dssp::StrandPairingSet const &
+PairingStatistics::suggest_topology( std::string& topol_id ) const {
 	runtime_assert( nr_models() );
 
   if ( !option[ templates::force_native_topology ] ) {
@@ -264,7 +265,7 @@ std::ostream& operator<< ( std::ostream& out, PairingStatistics const& ps ) {
   for ( PairingStatistics::ModelWeight::const_iterator it = ps.model_weight_.begin(), eit = ps.model_weight_.end();
 	it != eit; ++it ) {
 		out << "\nSTRAND_TOPOLOGY " << " " << ps.topology( it->second ).size() << " " << it->first << " " << it->second;
-    for ( jumping::StrandPairingSet::const_iterator isp = ps.topology( it->second ).begin(),
+    for ( core::scoring::dssp::StrandPairingSet::const_iterator isp = ps.topology( it->second ).begin(),
 	    eisp = ps.topology( it->second ).end(); isp != eisp; ++isp ) {
 			if ( !isp->range_check() ) {
 				tr.Error << "[ERROR] skip inconsistent pairing... " << *isp << std::endl;
@@ -348,9 +349,9 @@ std::istream & operator>>( std::istream &is, PairingStatistics &ps) {
 			is.setstate( std::ios_base::failbit );
 			return is;
 		}
-		StrandPairingSet sps;
+		core::scoring::dssp::StrandPairingSet sps;
 		for ( Size ct = 1; ct <= nstrand; ct++ ) {
-			StrandPairing pairing;
+			core::scoring::dssp::StrandPairing pairing;
 			Real weight;
 			char ntag;
 			std::string entry_tag;

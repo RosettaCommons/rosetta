@@ -28,7 +28,7 @@
 // Package Headers
 //#include <protocols/jumping/SecondaryStructure.hh>
 //#include <protocols/jumping/SameStrand.hh>
-//#include <protocols/jumping/PairingsList.hh>
+//#include <core/scoring/dssp/PairingsList.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -142,7 +142,7 @@ using namespace core;
 //////////////////////////////////////////////////////////////////////////////
 
 
-RandomSheetBuilder::RandomSheetBuilder( core::fragment::SecondaryStructureOP ss, PairingsList const& pairings, SheetTopology const& sheet_topol) :
+RandomSheetBuilder::RandomSheetBuilder( core::fragment::SecondaryStructureOP ss, core::scoring::dssp::PairingsList const& pairings, SheetTopology const& sheet_topol) :
   SheetBuilder( ss, pairings, sheet_topol ),
 	input_sheet_sizes_( sheet_topol )
 {

@@ -193,7 +193,7 @@ private:
 class JumpsFromAllPairings : public BaseJumpSetup {
 	public:
 
-		JumpsFromAllPairings( const core::Size total_residue, PairingsList const& jumps, ObjexxFCL::FArray1D_float const& cut_probability ) : total_residue_(total_residue), jumps_(jumps), cut_prob_(cut_probability) {
+	JumpsFromAllPairings( const core::Size total_residue, core::scoring::dssp::PairingsList const& jumps, ObjexxFCL::FArray1D_float const& cut_probability ) : total_residue_(total_residue), jumps_(jumps), cut_prob_(cut_probability) {
 		}
 
 		JumpSample create_jump_sample() const {
@@ -202,7 +202,7 @@ class JumpsFromAllPairings : public BaseJumpSetup {
 
 	private:
 		core::Size total_residue_;
-		PairingsList jumps_;
+		core::scoring::dssp::PairingsList jumps_;
 		ObjexxFCL::FArray1D_float cut_prob_;
 };
 

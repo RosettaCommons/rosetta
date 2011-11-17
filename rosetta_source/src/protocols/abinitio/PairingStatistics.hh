@@ -33,9 +33,9 @@
 // AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
-#include <protocols/jumping/PairingsList.fwd.hh>
+#include <core/scoring/dssp/PairingsList.fwd.hh>
 // AUTO-REMOVED #include <core/fragment/SecondaryStructure.fwd.hh>
-#include <protocols/jumping/StrandPairing.hh>
+#include <core/scoring/dssp/StrandPairing.hh>
 
 
 // ObjexxFCL Headers
@@ -65,11 +65,11 @@ public:
   typedef utility::vector1< Model > ModelList;
 
   PairingStatEntry();
-  PairingStatEntry( jumping::StrandPairing const& strand, Model const& id );
+  PairingStatEntry( core::scoring::dssp::StrandPairing const& strand, Model const& id );
 
   core::Size frequency() const { return models_.size(); };
-  bool add_pairing( jumping::StrandPairing const&, Model const& );
-  bool compatible( jumping::StrandPairing const& ) const;
+  bool add_pairing( core::scoring::dssp::StrandPairing const&, Model const& );
+  bool compatible( core::scoring::dssp::StrandPairing const& ) const;
 
   void show( std::ostream& ) const;
 
@@ -89,7 +89,7 @@ public:
 		return pairing().contact_order();
 	}
 
-	jumping::StrandPairing const& pairing() const {
+	core::scoring::dssp::StrandPairing const& pairing() const {
 		return strand_pairing_;
 	}
 
@@ -107,7 +107,7 @@ public:
 
 private:
   ModelList models_;
-  jumping::StrandPairing strand_pairing_;
+  core::scoring::dssp::StrandPairing strand_pairing_;
   core::Real weight_;
 };
 
@@ -122,7 +122,7 @@ class PairingStatistics : public utility::pointer::ReferenceCount {
 public:
   typedef StatEntries::const_iterator const_iterator;
   typedef PairingStatEntry::Model Model; //String ID !!!
-  typedef std::map< Model, jumping::StrandPairingSet > Topologies;
+  typedef std::map< Model, core::scoring::dssp::StrandPairingSet > Topologies;
   typedef std::map< Model, core::Size > ModelFreq;
   typedef utility::vector1< std::pair< core::Real, Model > > ModelWeight;
   typedef std::map< Model, core::Real > Weights;
@@ -133,13 +133,13 @@ public:
     compute( templates );
   };
 
-	PairingStatistics( jumping::StrandPairingSet const& topology );
+	PairingStatistics( core::scoring::dssp::StrandPairingSet const& topology );
 
-  void set_native_topology( jumping::StrandPairingSet const& topology ) {
+  void set_native_topology( core::scoring::dssp::StrandPairingSet const& topology ) {
     native_topology_ = topology;
   }
 
-  jumping::StrandPairingSet const& get_native_topology() const {
+  core::scoring::dssp::StrandPairingSet const& get_native_topology() const {
     return native_topology_;
   }
 
@@ -170,7 +170,7 @@ public:
 //		return weights_[ id ];
   //	}
 
-  jumping::StrandPairingSet const& topology( Model id ) const {
+  core::scoring::dssp::StrandPairingSet const& topology( Model id ) const {
     Topologies::const_iterator iter ( topols_.find( id ) );
     if ( iter == topols_.end() ) {
       utility_exit_with_message("Model name not known: " + id );
@@ -178,20 +178,20 @@ public:
     return iter->second;
   };
 
-  core::Real strand_weight( jumping::StrandPairing const& pairing ) const;
+  core::Real strand_weight( core::scoring::dssp::StrandPairing const& pairing ) const;
 
-  jumping::StrandPairingSet const& suggest_topology( std::string& topol_id ) const;
+  core::scoring::dssp::StrandPairingSet const& suggest_topology( std::string& topol_id ) const;
 
   friend std::ostream& operator<< ( std::ostream&, PairingStatistics const& ps );
 	friend std::istream& operator>> ( std::istream& is, PairingStatistics& ps );
 
-  bool is_native_pairing( jumping::StrandPairing const& pairing ) const {
+  bool is_native_pairing( core::scoring::dssp::StrandPairing const& pairing ) const {
     return native_topology_.has_pairing( pairing );
   }
 
 	static void register_options();
 
-  void add_topology( jumping::StrandPairingSet const& topology, Model const& id );
+  void add_topology( core::scoring::dssp::StrandPairingSet const& topology, Model const& id );
 
   void compute_model_weights( ModelFreq& );
 
@@ -204,7 +204,7 @@ private:
   Topologies topols_;
   ModelWeight model_weight_; // for each model (full length name) a weight
   //	Weights weights_; // same as in ModelWeight, but as a map MODEL --> weight
-  jumping::StrandPairingSet native_topology_;
+  core::scoring::dssp::StrandPairingSet native_topology_;
 };
 
 extern std::ostream& operator<< ( std::ostream&, PairingStatistics const& ps );

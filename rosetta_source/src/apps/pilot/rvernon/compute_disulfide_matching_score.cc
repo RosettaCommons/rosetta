@@ -17,7 +17,7 @@
 
 #include <core/chemical/AA.hh>
 
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -276,7 +276,7 @@ main( int argc, char* argv [] )
 		core::import_pose::centroid_pose_from_pdb( pdb, pdb_file_location );
 		std::cout << "PROCESSING COMPLETE: " << pdb_file_location << std::endl;
 
-		protocols::jumping::Dssp dssp( pdb );
+		core::scoring::dssp::Dssp dssp( pdb );
 		dssp.insert_ss_into_pose( pdb );
 
 

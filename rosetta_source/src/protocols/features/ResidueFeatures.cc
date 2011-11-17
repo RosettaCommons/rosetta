@@ -32,7 +32,7 @@
 // AUTO-REMOVED #include <core/scoring/hbonds/HBondTypeManager.hh>
 // AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <protocols/jumping/Dssp.hh>
+// AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
 #include <basic/database/sql_utils.hh>
 // Utility Headers
 #include <numeric/xyzVector.hh>

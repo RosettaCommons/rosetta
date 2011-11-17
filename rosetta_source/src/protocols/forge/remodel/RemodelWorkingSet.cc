@@ -15,7 +15,7 @@
 //#include <devel/remodel/helpMenu.hh>
 
 //for DSSP
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>

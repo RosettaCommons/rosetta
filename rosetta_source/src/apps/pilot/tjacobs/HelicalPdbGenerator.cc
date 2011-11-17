@@ -59,6 +59,7 @@ HelicalPdbGeneratorMover::HelicalPdbGeneratorMover() {}
 
 void HelicalPdbGeneratorMover::apply(core::pose::Pose & pose){
   //set up dssp info - necessary in order to find helices based on secondary structure
+	//....duh
 
   if(pose.total_residue() > 0){
 

@@ -38,7 +38,7 @@
 #include <basic/Tracer.hh>
 #include <core/kinematics/Jump.hh>
 
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 // AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -287,7 +287,7 @@ namespace swa {
 		core::util::switch_to_residue_type_set( pose, core::chemical::CENTROID );
 
 		// get DSSP, assign secondary structure
-		protocols::jumping::Dssp dssp_obj( pose );
+		core::scoring::dssp::Dssp dssp_obj( pose );
 		dssp_obj.insert_ss_into_pose( pose );
 		//pose.dump_pdb( "CENTROID.pdb" );
 

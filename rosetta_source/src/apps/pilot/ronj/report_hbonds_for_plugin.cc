@@ -33,7 +33,7 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/Tracer.hh>
 
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/relax/FastRelax.hh>
@@ -254,7 +254,7 @@ apply( pose::Pose& pose ) {
 	scoring::calc_per_atom_sasa( pose, atom_sasa, residue_sasa, probe_radius );
 
 	// compute dssp
-	protocols::jumping::Dssp dssp( pose );
+	core::scoring::dssp::Dssp dssp( pose );
 	dssp.insert_ss_into_pose( pose );
 
 	core::Real hbond_energies = 0; // to get average energy for structure;

@@ -33,7 +33,7 @@
 #include <core/fragment/FragSet.fwd.hh>
 
 // AUTO-REMOVED #include <protocols/jumping/DisulfPairingsList.hh>
-// AUTO-REMOVED #include <protocols/jumping/PairingsList.hh>
+// AUTO-REMOVED #include <core/scoring/dssp/PairingsList.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>

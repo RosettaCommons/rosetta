@@ -36,7 +36,7 @@
 #include <protocols/evaluation/PoseMetricEvaluator.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <protocols/viewer/viewers.hh>
 
 // utility headers
@@ -297,7 +297,7 @@ void setup_segment_insert( protocols::forge::components::BDR & bdr ) {
 	using protocols::forge::build::SegmentInsertConnectionScheme::C;
 	using protocols::forge::build::SegmentInsertConnectionScheme::N;
 	using protocols::forge::build::SegmentInsertConnectionScheme::RANDOM_SIDE;
-	using protocols::jumping::Dssp;
+	using core::scoring::dssp::Dssp;
 
 	using core::import_pose::pose_from_pdb;
 

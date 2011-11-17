@@ -31,9 +31,9 @@
 //#include <core/scoring/constraints/AtomPairConstraint.fwd.hh>
 //#include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
-#include <protocols/jumping/PairingsList.fwd.hh>
+#include <core/scoring/dssp/PairingsList.fwd.hh>
 //#include <core/fragment/SecondaryStructure.fwd.hh>
-#include <protocols/jumping/StrandPairing.hh>
+#include <core/scoring/dssp/StrandPairing.hh>
 
 
 // ObjexxFCL Headers
@@ -58,9 +58,9 @@ namespace abinitio {
 class AlternativePairings {
 public:
 	//	AlternativePairings();
-	bool compatible( jumping::StrandPairing const& pairing ) const;
+	bool compatible( core::scoring::dssp::StrandPairing const& pairing ) const;
 	bool antiparallel() const { return anti_; };
-	//	bool add_pairing( jumping::StrandPairing const&, std::string model = "NO_MODEL" );
+	//	bool add_pairing( core::scoring::dssp::StrandPairing const&, std::string model = "NO_MODEL" );
 	bool add_pairing( PairingStatEntry const& );
 	void show( std::ostream& ) const;
 
@@ -79,7 +79,7 @@ class StrandConstraints : public utility::pointer::ReferenceCount {
 
 public:
 	StrandConstraints( PairingStatistics const& strand_stats_ );
-	void add_pairing( jumping::StrandPairing const&, std::string model = "NO_MODEL" );
+	void add_pairing( core::scoring::dssp::StrandPairing const&, std::string model = "NO_MODEL" );
 	void add_pairing( PairingStatEntry const& );
 
  //const pose: no constraints are added

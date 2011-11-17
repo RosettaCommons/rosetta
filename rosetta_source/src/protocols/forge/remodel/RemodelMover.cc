@@ -66,7 +66,7 @@
 #include <protocols/moves/symmetry/SetupNCSMover.hh> //dihedral constraint
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/LoopMover_CCD.hh>
@@ -295,7 +295,7 @@ void RemodelMover::fullatom_scorefunction( ScoreFunctionOP const & sfx ) {
 void RemodelMover::apply( Pose & pose ) {
 	using core::pose::metrics::CalculatorFactory;
 	using basic::MetricValue;
-	using protocols::jumping::Dssp;
+	using core::scoring::dssp::Dssp;
 	using protocols::moves::MS_SUCCESS;
 	using protocols::moves::FAIL_DO_NOT_RETRY;
 	using protocols::moves::FAIL_RETRY;

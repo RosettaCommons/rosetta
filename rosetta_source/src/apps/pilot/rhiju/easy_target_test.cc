@@ -106,7 +106,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/SidechainMover.hh>
 
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 // C++ headers
 //#include <cstdlib>
@@ -776,7 +776,7 @@ setup_secstruct( pose::Pose & template_pose, std::string const & template_secstr
 void
 setup_secstruct_dssp( pose::Pose & pose )
 {
-	protocols::jumping::Dssp dssp( pose );
+	core::scoring::dssp::Dssp dssp( pose );
 	FArray1D_char dssp_secstruct( pose.total_residue() );
 	dssp.dssp_reduced( dssp_secstruct );
 	for (Size i = 1; i <= pose.total_residue(); i++ ) {

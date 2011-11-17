@@ -33,9 +33,9 @@
 #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 #endif
 
-// AUTO-REMOVED #include <protocols/jumping/PairingsList.hh>
+// AUTO-REMOVED #include <core/scoring/dssp/PairingsList.hh>
 // AUTO-REMOVED #include <core/fragment/SecondaryStructure.fwd.hh>
-// AUTO-REMOVED #include <protocols/jumping/StrandPairing.hh>
+// AUTO-REMOVED #include <core/scoring/dssp/StrandPairing.hh>
 
 // ObjexxFCL Headers
 
@@ -51,8 +51,8 @@
 
 #include <core/scoring/constraints/AtomPairConstraint.fwd.hh>
 #include <core/scoring/constraints/NamedAtomPairConstraint.fwd.hh>
-#include <protocols/jumping/PairingsList.fwd.hh>
-#include <protocols/jumping/StrandPairing.fwd.hh>
+#include <core/scoring/dssp/PairingsList.fwd.hh>
+#include <core/scoring/dssp/StrandPairing.fwd.hh>
 #include <utility/vector1.hh>
 
 
@@ -80,8 +80,8 @@ public:
 	Size steal_frags( core::fragment::FrameList const& target_frames, core::fragment::FragSet& accumulator, Size ncopies = 1 ) const;
 
 	//@brief maps pairings from target to template ( or the reverse )
-	void map_pairings2template( jumping::PairingList const& in, jumping::PairingList& out ) const;
-	void map_pairings2target( jumping::PairingList const& in, jumping::PairingList& out ) const;
+	void map_pairings2template( core::scoring::dssp::PairingList const& in, core::scoring::dssp::PairingList& out ) const;
+	void map_pairings2target( core::scoring::dssp::PairingList const& in, core::scoring::dssp::PairingList& out ) const;
 
 	//@brief generate new list of frames aligned to the target --> only alignable frames in target_frames
 	void map2target( core::fragment::FrameList const& template_frames, core::fragment::FrameList& target_frames ) const;
@@ -117,7 +117,7 @@ public:
 		//		return cstset_.size();
 	}
 
-	jumping::StrandPairingSet const& strand_pairings() const {
+	core::scoring::dssp::StrandPairingSet const& strand_pairings() const {
 		return *strand_pairings_;
 	}
 
@@ -152,7 +152,7 @@ public:
   bool is_good() const { return good_; }
 
 private:
-	bool map_pairing( jumping::Pairing const&, jumping::Pairing&, core::sequence::DerivedSequenceMapping const& map ) const;
+	bool map_pairing( core::scoring::dssp::Pairing const&, core::scoring::dssp::Pairing&, core::sequence::DerivedSequenceMapping const& map ) const;
 	void _read_constraints( std::string const& cst_file ) const;
 
 	core::sequence::DerivedSequenceMapping mapping_; //target2template
@@ -166,7 +166,7 @@ private:
 	//constraints template numbering
 	mutable NamedAtomPairConstraintList cstset_; //because of lazy read
 
-	jumping::StrandPairingSetOP strand_pairings_;
+	core::scoring::dssp::StrandPairingSetOP strand_pairings_;
 
 	std::string cstfile_;
 

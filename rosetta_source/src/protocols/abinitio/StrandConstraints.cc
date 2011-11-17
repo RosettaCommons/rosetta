@@ -53,7 +53,7 @@
 // AUTO-REMOVED #include <protocols/jumping/JumpSample.hh>
 
 #ifdef WIN32
-#include <protocols/jumping/PairingsList.hh>
+#include <core/scoring/dssp/PairingsList.hh>
 #endif
 
 
@@ -87,14 +87,14 @@ using namespace basic;
 namespace protocols {
 namespace abinitio {
 
-using namespace jumping;
+//using namespace jumping;
 
 Size register_cutoff( 5 );
 Size residue_cutoff( 5 );
 
 //static numeric::random::RandomGenerator RG(1123123544);  // <- Magic number, do not change it!
 typedef utility::vector1< Size > SizeList;
-bool AlternativePairings::compatible( jumping::StrandPairing const& strand_pairing ) const {
+bool AlternativePairings::compatible( core::scoring::dssp::StrandPairing const& strand_pairing ) const {
   if ( pairings_.size() == 0 ) return true;
   if ( strand_pairing.antiparallel() != antiparallel() ) return false;
   Size const new_reg ( strand_pairing.get_register() );
@@ -256,7 +256,7 @@ std::ostream& operator<< ( std::ostream& out, AlternativePairings const& alt_pai
   return out;
 }
 
-void StrandConstraints::add_pairing( jumping::StrandPairing const& pairing, std::string model ) {
+void StrandConstraints::add_pairing( core::scoring::dssp::StrandPairing const& pairing, std::string model ) {
   add_pairing( PairingStatEntry( pairing, model ) );
 }
 

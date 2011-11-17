@@ -24,7 +24,7 @@
 
 // Package Headers
 #include <protocols/jumping/SameStrand.fwd.hh>
-#include <protocols/jumping/PairingsList.hh>
+#include <core/scoring/dssp/PairingsList.hh>
 #include <protocols/jumping/JumpSetup.hh>
 #include <core/fragment/SecondaryStructure.fwd.hh>
 
@@ -56,7 +56,7 @@ namespace jumping {
 ///@detail this class encapsulates the functionality of choose_random_pairings in jumping_pairings.cc of Rosetta++
 class RandomSheetBuilder : public SheetBuilder {
 public:
-	RandomSheetBuilder( core::fragment::SecondaryStructureOP, PairingsList const&, SheetTopology const& );
+	RandomSheetBuilder( core::fragment::SecondaryStructureOP, core::scoring::dssp::PairingsList const&, SheetTopology const& );
 
 protected:
 	//default do nothing always use input_sheet_sizes_ as sheet_sizes_.

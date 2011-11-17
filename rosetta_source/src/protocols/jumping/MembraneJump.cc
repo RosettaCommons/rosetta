@@ -16,8 +16,8 @@
 // Unit Headers
 #include <protocols/jumping/MembraneJump.hh>
 #include <protocols/jumping/PairingLibrary.hh>
-#include <protocols/jumping/PairingsList.hh>
-#include <protocols/jumping/PairingsList.fwd.hh>
+#include <core/scoring/dssp/PairingsList.hh>
+#include <core/scoring/dssp/PairingsList.fwd.hh>
 
 // Project Headers
 #include <core/chemical/VariantType.hh>
@@ -85,7 +85,7 @@ MembraneJump::setup_fold_tree(core::pose::Pose & pose, core::Size njumps) const
 	core::kinematics::FoldTree f(nres);
 	Size tries(0);
 	core::scoring::MembraneTopology const & topology(*( static_cast< core::scoring::MembraneTopology const * >( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY )() )));
-	PairingList selected_pairings;
+	core::scoring::dssp::PairingList selected_pairings;
 	FArray1D_int tmh(pose.total_residue());
 	FArray1D_int tmh2(pose.total_residue(),0);
 	Size total_tmhelix(topology.tmhelix());

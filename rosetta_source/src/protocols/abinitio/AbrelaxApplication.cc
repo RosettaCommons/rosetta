@@ -82,10 +82,10 @@
 #include <protocols/jumping/SheetBuilder.hh>
 #include <protocols/jumping/RandomSheetBuilder.hh>
 #include <protocols/jumping/JumpSetup.hh>
-#include <protocols/jumping/PairingsList.hh>
+#include <core/scoring/dssp/PairingsList.hh>
 #include <protocols/jumping/ResiduePairJumpSetup.hh>
 #include <core/fragment/SecondaryStructure.hh>
-#include <protocols/jumping/StrandPairing.hh>
+#include <core/scoring/dssp/StrandPairing.hh>
 #include <protocols/jumping/util.hh>
 #include <protocols/jumping/MembraneJump.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
@@ -1268,7 +1268,7 @@ void AbrelaxApplication::setup_templates() {
 		return;
 	}
 
-	if ( native_pose_ ) tr.Info << "native strand pairings " << jumping::StrandPairingSet( *native_pose_ );
+	if ( native_pose_ ) tr.Info << "native strand pairings " << core::scoring::dssp::StrandPairingSet( *native_pose_ );
 	templates_ = new Templates( option[ templates::config ], native_pose_ );
 	templates_->target_sequence() = sequence_; // a hack until class SequenceMapping works better
 	// want to pick fragments from templates... make sure they are not initialized yet
@@ -1326,7 +1326,7 @@ void AbrelaxApplication::setup_templates() {
 
 		ss_def_->show( tr.Trace );
 		// get pairings file
-		PairingsList pairings;
+		core::scoring::dssp::PairingsList pairings;
 		if ( option[ jumps::pairing_file ].user() )
 			read_pairing_list( option[ jumps::pairing_file ](), pairings );
 
@@ -1353,7 +1353,7 @@ void AbrelaxApplication::setup_templates() {
 			utility_exit_with_message(" error reading file: " + std::string( option[ jumps::topology_file ]() ) );
 		}
 		tr.Info << *ps << std::endl;
-		jumping::PairingList helix_pairings; //empty for now
+		core::scoring::dssp::PairingList helix_pairings; //empty for now
 		jump_def_ = new TemplateJumpSetup( NULL, ss_def_, ps, helix_pairings );
 	}
 

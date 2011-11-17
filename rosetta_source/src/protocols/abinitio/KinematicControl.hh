@@ -29,7 +29,7 @@
 
 // Package Headers
 // AUTO-REMOVED #include <protocols/jumping/PairingLibrary.hh>
-// AUTO-REMOVED #include <protocols/jumping/PairingsList.hh>
+// AUTO-REMOVED #include <core/scoring/dssp/PairingsList.hh>
 // AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
 
 // Project Headers

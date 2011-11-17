@@ -28,7 +28,7 @@
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/util.hh>
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 #include <apps/pilot/blivens/disulfides.hh>
 
@@ -77,7 +77,7 @@ int main( int argc, char * argv [] )
 	core::import_pose::pose_from_pdb( pose, pdbs[1] );
 
     //Assign secodary structure
-    protocols::jumping::Dssp dssp(pose);
+    core::scoring::dssp::Dssp dssp(pose);
     dssp.insert_ss_into_pose(pose);
 
     TR << pose.secstruct() << endl;

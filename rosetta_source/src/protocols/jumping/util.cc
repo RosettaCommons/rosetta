@@ -17,7 +17,7 @@
 
 // Unit Headers
 #include <protocols/jumping/util.hh>
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 // Package Headers
 // AUTO-REMOVED #include <protocols/Protocol.hh>
@@ -45,7 +45,7 @@
 #include <protocols/checkpoint/CheckPointer.hh>
 
 #ifdef WIN32
-#include <protocols/jumping/PairingsList.hh>
+#include <core/scoring/dssp/PairingsList.hh>
 #endif
 
 //
@@ -473,8 +473,8 @@ if ( orientation < 0 ) {
   }
 
 void assign_ss_dssp( core::pose::Pose & pose ) {
-	Dssp dssp( pose );
-	dssp.insert_ss_into_pose( pose );
+  core::scoring::dssp::Dssp dssp( pose );
+  dssp.insert_ss_into_pose( pose );
 }
 
 } // jumping

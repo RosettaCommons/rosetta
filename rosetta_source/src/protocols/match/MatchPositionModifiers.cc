@@ -33,7 +33,7 @@
 #include <core/scoring/TenANeighborGraph.hh>
 #include <basic/Tracer.hh>
 
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 
@@ -107,7 +107,7 @@ SecondaryStructureMPM::modified_match_positions(
 	utility::vector1< core::Size > to_return;
 	std::string remove_string("");
 
-	protocols::jumping::Dssp pose_ss( match_pose );
+	core::scoring::dssp::Dssp pose_ss( match_pose );
 
 	for( core::Size i =1; i <= original_positions.size(); ++i ){
 

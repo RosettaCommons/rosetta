@@ -14,7 +14,7 @@
 #include <protocols/rbsegment_moves/RBSegmentMover.hh>
 #include <protocols/rbsegment_moves/util.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 // Rosetta Headers
 #include <core/pose/Pose.hh>
@@ -167,8 +167,8 @@
 #include <core/scoring/constraints/XYZ_Func.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
-// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
-#include <protocols/jumping/StrandPairing.fwd.hh>
+#include <protocols/jobdist/Jobs.hh>
+#include <core/scoring/dssp/StrandPairing.fwd.hh>
 #include <protocols/loops/Loop.fwd.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.fwd.hh>
@@ -801,7 +801,7 @@ void guess_rbsegs_from_pose(
 	loops.clear();
 
 	// dssp parse
-	protocols::jumping::Dssp secstruct( pose );
+	core::scoring::dssp::Dssp secstruct( pose );
 	ObjexxFCL::FArray1D< char > dssp_pose( nres );
 	secstruct.dssp_reduced (dssp_pose);
 	//secstruct.insert_ss_into_pose( pose );

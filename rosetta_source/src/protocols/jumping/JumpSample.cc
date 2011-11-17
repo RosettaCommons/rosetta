@@ -18,7 +18,7 @@
 
 // Package Headers
 #include <protocols/jumping/util.hh>
-#include <protocols/jumping/PairingsList.hh>
+#include <core/scoring/dssp/PairingsList.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -142,7 +142,7 @@ JumpSample::JumpSample ( Size total_residue, Size njump, FArray2D_int jumps, FAr
 	jumps2pairings();
 }
 
-JumpSample::JumpSample ( Size total_residue, PairingsList const& jump_pairings, core::fragment::SecondaryStructure const& ssdef, Size root ) :
+JumpSample::JumpSample ( Size total_residue, core::scoring::dssp::PairingsList const& jump_pairings, core::fragment::SecondaryStructure const& ssdef, Size root ) :
   total_residue_( total_residue ),
 	jump_pairings_( jump_pairings ),
   bValidTree_( false )
@@ -151,7 +151,7 @@ JumpSample::JumpSample ( Size total_residue, PairingsList const& jump_pairings, 
 
 	// first fill jumps_ array:
 	njump_ = 0;
-	for ( PairingsList::const_iterator it = jump_pairings.begin(),
+	for ( core::scoring::dssp::PairingsList::const_iterator it = jump_pairings.begin(),
 					eit = jump_pairings.end(); it != eit; ++it ) {
 		njump_++;
 		jumps_(1,njump_) = it->Pos1();
@@ -169,7 +169,7 @@ JumpSample::JumpSample ( Size total_residue, PairingsList const& jump_pairings, 
 	}
 }
 
-JumpSample::JumpSample ( Size total_residue, PairingsList const& jump_pairings, FArray1D_float const& cut_probability, Size root) :
+JumpSample::JumpSample ( Size total_residue, core::scoring::dssp::PairingsList const& jump_pairings, FArray1D_float const& cut_probability, Size root) :
   total_residue_( total_residue ),
 	jump_pairings_( jump_pairings ),
   bValidTree_( false )
@@ -178,7 +178,7 @@ JumpSample::JumpSample ( Size total_residue, PairingsList const& jump_pairings, 
 
 	// first fill jumps_ array:
 	njump_ = 0;
-	for ( PairingsList::const_iterator it = jump_pairings.begin(),
+	for ( core::scoring::dssp::PairingsList::const_iterator it = jump_pairings.begin(),
 					eit = jump_pairings.end(); it != eit; ++it ) {
 		njump_++;
 		jumps_(1,njump_) = it->Pos1();
@@ -219,7 +219,7 @@ void
 JumpSample::jumps2pairings() {
 	jump_pairings_.clear();
 	for ( Size jump_nr = 1; jump_nr <= size(); jump_nr++ ) {
-		jump_pairings_.push_back( Pairing( jumps_(1, jump_nr ), jumps_(2, jump_nr), 0, 0 ) ); //initialized with 0 = unknown orientation/pleating
+		jump_pairings_.push_back( core::scoring::dssp::Pairing( jumps_(1, jump_nr ), jumps_(2, jump_nr), 0, 0 ) ); //initialized with 0 = unknown orientation/pleating
 	}
 }
 
@@ -413,7 +413,7 @@ void
 JumpSample::steal_orientation_and_pleating( core::pose::Pose &native_pose ) {
   for ( Size jump_nr=1; jump_nr<=size(); jump_nr++ ) {
     // get native orientation to select the correct jump-geometries
-		Pairing &p = jump_pairings_[ jump_nr ];
+		core::scoring::dssp::Pairing & p = jump_pairings_[ jump_nr ];
     tr.Info << "detect orientation and pleating for jump " << jump_nr <<" from " << p.Pos1() << " to " << p.Pos2() << std::endl;
     //compute_orientation_and_pleating
 		core::Size orientation, pleating;
@@ -425,17 +425,18 @@ JumpSample::steal_orientation_and_pleating( core::pose::Pose &native_pose ) {
 }
 
 bool JumpSample::has_orientation_and_pleating() const {
-	return jumping::has_orientation_and_pleating( jump_pairings_ );
+	return core::scoring::dssp::has_orientation_and_pleating( jump_pairings_ );
 }
 
-Pairing JumpSample::get_pairing( Size res1, Size res2 ) const {
+core::scoring::dssp::Pairing
+JumpSample::get_pairing( Size res1, Size res2 ) const {
 	runtime_assert ( has_orientation_and_pleating() );
-	for ( PairingsList::const_iterator it = jump_pairings_.begin(), eit = jump_pairings_.end();
+	for ( core::scoring::dssp::PairingsList::const_iterator it = jump_pairings_.begin(), eit = jump_pairings_.end();
 				it != eit; ++it ) {
 		if ( it->Pos1() == res1 && it->Pos2() == res2 ) return *it;
 		if ( it->Pos1() == res2 && it->Pos2() == res1 ) return it->generate_reversed();
 	}
-	return Pairing( 0, 0, 0, 0 );
+	return core::scoring::dssp::Pairing( 0, 0, 0, 0 );
 }
 
 //@brief generate fragset with RTs from library, take orientation and pleating from native_pose
@@ -457,7 +458,7 @@ JumpSample::generate_jump_frags(
   typedef std::map< std::pair< Size, Size >, JumpList > JumpOrientations;
 	JumpOrientations jump_kind;
 	Size jump_nr ( 1 );
-	for ( PairingsList::const_iterator it = jump_pairings_.begin(), eit = jump_pairings_.end();
+	for ( core::scoring::dssp::PairingsList::const_iterator it = jump_pairings_.begin(), eit = jump_pairings_.end();
 				it != eit; ++it ) {
 		Size o_key ( it->Orientation() ); // < 0 ? 1 : 2 );
 		Size p_key ( it->Pleating() ); // < 0 ? 1 : 2 );

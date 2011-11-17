@@ -54,7 +54,7 @@
 
 
 // AUTO-REMOVED #include <protocols/viewer/viewers.hh>
-// AUTO-REMOVED #include <protocols/jumping/Dssp.hh>
+// AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
 
 // AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 

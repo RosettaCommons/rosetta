@@ -20,7 +20,7 @@
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <basic/database/sql_utils.hh>
 // Utility Headers
 #include <utility/sql_database/DatabaseSessionManager.hh>
@@ -33,7 +33,7 @@ namespace protocols{
 namespace features{
 
 using std::string;
-using protocols::jumping::Dssp;
+using core::scoring::dssp::Dssp;
 using core::Size;
 using core::conformation::Residue;
 using core::pose::Pose;
@@ -93,7 +93,7 @@ ResidueSecondaryStructureFeatures::report_features(
 	sessionOP db_session
 ){
 	// compute dssp
-	protocols::jumping::Dssp all_dssp(pose);
+	core::scoring::dssp::Dssp all_dssp(pose);
 
 	for(Size resNum=1; resNum <= pose.total_residue(); ++resNum){
 		if(!relevant_residues[resNum]) continue;

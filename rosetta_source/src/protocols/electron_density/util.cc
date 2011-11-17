@@ -14,7 +14,7 @@
 
 #include <protocols/electron_density/util.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 #include <core/scoring/electron_density/util.hh>
 
@@ -121,7 +121,7 @@ protocols::loops::Loops findLoopFromDensity( core::pose::Pose & pose, core::Real
 	while (!pose.residue(nres).is_polymer()) nres--;
 
 	// get dssp parse
-	protocols::jumping::Dssp secstruct( pose );
+	core::scoring::dssp::Dssp secstruct( pose );
 	ObjexxFCL::FArray1D< char > dssp_pose( nres );
 	secstruct.dssp_reduced (dssp_pose);
 	utility::vector1< core::Real > perResCC( nres ), smoothPerResCC( nres );

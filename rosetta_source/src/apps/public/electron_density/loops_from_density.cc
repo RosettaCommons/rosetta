@@ -33,7 +33,7 @@
 #include <basic/options/option.hh>
 #include <core/io/pdb/pose_io.hh>
 
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
@@ -118,7 +118,7 @@ main( int argc, char* argv [] )
 		utility::vector1< core::Real > perResCC( nres ), smoothPerResCC( nres );
 
 		// get dssp parse
-		protocols::jumping::Dssp secstruct( pose );
+		core::scoring::dssp::Dssp secstruct( pose );
 		ObjexxFCL::FArray1D< char > dssp_pose( nres );
 		secstruct.dssp_reduced (dssp_pose);
 

@@ -22,6 +22,10 @@
 #include <devel/init.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
+#include <core/scoring/dssp/Dssp.hh>
+#include <core/scoring/dssp/PairingsList.hh>
+#include <core/scoring/dssp/StrandPairing.hh>
+
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/silent.fwd.hh>
 // AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
@@ -50,9 +54,10 @@
 static basic::Tracer tr("main");
 
 using namespace core;
+using namespace core::scoring::dssp;
 using namespace protocols;
 using namespace abinitio;
-using namespace jumping;
+//using namespace jumping;
 using namespace pose;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;

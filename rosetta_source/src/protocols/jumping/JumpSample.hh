@@ -22,7 +22,7 @@
 
 // Package Headers
 #include <protocols/jumping/PairingLibrary.hh>
-#include <protocols/jumping/PairingsList.hh>
+#include <core/scoring/dssp/PairingsList.hh>
 // AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
 
 // Project Headers
@@ -77,10 +77,10 @@ public:
   JumpSample ( core::Size total_residue, core::Size njump, ObjexxFCL::FArray2D_int jumps, ObjexxFCL::FArray2D<std::string> jump_atoms, ObjexxFCL::FArray1D_int cuts, core::Size root = 1);
 
 	// this one is not safe due to FArray,  generate random fold-tree  ( as used by SheetBuilder )
-  JumpSample ( core::Size total_residue, PairingsList const& jumps, ObjexxFCL::FArray1D_float const& cut_probability, core::Size root=1);
+  JumpSample ( core::Size total_residue, core::scoring::dssp::PairingsList const& jumps, ObjexxFCL::FArray1D_float const& cut_probability, core::Size root=1);
 
 	// generate random fold-tree  ( as used by SheetBuilder )
-  JumpSample ( core::Size total_residue, PairingsList const& jumps, core::fragment::SecondaryStructure const& ss_def, core::Size root=1 );
+  JumpSample ( core::Size total_residue, core::scoring::dssp::PairingsList const& jumps, core::fragment::SecondaryStructure const& ss_def, core::Size root=1 );
 
 
 	// wrap to a copy of an existing Fold-Tree
@@ -203,7 +203,8 @@ public:
 	void
 	dump_pymol( std::string fn ) const;
 
-	Pairing get_pairing( core::Size res1, core::Size res2 ) const;
+	core::scoring::dssp::Pairing
+	get_pairing( core::Size res1, core::Size res2 ) const;
 
 private:
 	void
@@ -224,7 +225,7 @@ private:
 	core::Size njump_;
 
 	// the latter two contain redundant information
-	PairingsList jump_pairings_;
+	core::scoring::dssp::PairingsList jump_pairings_;
 	ObjexxFCL::FArray2D_int jumps_;
 	ObjexxFCL::FArray2D< std::string > jump_atoms_;
 

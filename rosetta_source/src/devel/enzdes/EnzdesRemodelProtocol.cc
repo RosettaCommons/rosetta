@@ -76,7 +76,7 @@
 
 #include <protocols/filters/ScoreCutoffFilter.hh>
 #include <protocols/filters/PackerNeighborGraphFilter.hh>
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 #include <protocols/toolbox/pose_metric_calculators/NonlocalContactsCalculator.hh>
 
 // option key includes
@@ -713,7 +713,7 @@ EnzdesRemodelMover::setup_packer_neighbor_graph_filter( core::pose::Pose const &
 std::string
 EnzdesRemodelMover::generate_secstruct_string( core::pose::Pose & pose ) const {
 
-	protocols::jumping::Dssp pose_ss( pose );
+	core::scoring::dssp::Dssp pose_ss( pose );
 	pose_ss.insert_ss_into_pose( pose );
 	//pose_ss.insert_ss_into_pose( pose );
 

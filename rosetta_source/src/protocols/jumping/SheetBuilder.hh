@@ -23,7 +23,7 @@
 
 // Package Headers
 #include <protocols/jumping/SameStrand.fwd.hh>
-#include <protocols/jumping/PairingsList.hh>
+#include <core/scoring/dssp/PairingsList.hh>
 #include <protocols/jumping/JumpSetup.hh>
 #include <core/fragment/SecondaryStructure.fwd.hh>
 
@@ -59,7 +59,7 @@ namespace jumping {
 class SheetBuilder : public BaseJumpSetup {
 public:
 	typedef utility::vector1< core::Size > SheetTopology;
-	SheetBuilder( core::fragment::SecondaryStructureOP, PairingsList const&, SheetTopology const& );
+	SheetBuilder( core::fragment::SecondaryStructureOP, core::scoring::dssp::PairingsList const&, SheetTopology const& );
 
 	//copy c'stor
 	SheetBuilder( SheetBuilder const& );
@@ -88,7 +88,7 @@ protected:
 	{ return sheet_sizes_; };
 
 private:
-	bool builder_loop( PairingsList &jump_pairings ) const;
+	bool builder_loop( core::scoring::dssp::PairingsList &jump_pairings ) const;
 	void choose_next_pairing( ObjexxFCL::FArray3D_int &, core::Size, core::Size ) const;
 	bool check_next_pairing(  ObjexxFCL::FArray3D_int &, core::Size, core::Size ) const;
 
@@ -107,7 +107,7 @@ private:
 	bool check_pairing_intersect( ObjexxFCL::FArray1A_int, ObjexxFCL::FArray1A_int ) const;
 
 	core::Size total_residue_;
-	PairingsList pairings_;
+	core::scoring::dssp::PairingsList pairings_;
 	SameStrandOP same_strand_;
 	core::fragment::SecondaryStructureOP secondary_structure_;
 	mutable SheetTopology sheet_sizes_;

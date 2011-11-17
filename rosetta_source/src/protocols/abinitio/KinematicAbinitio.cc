@@ -296,8 +296,8 @@
 #include <protocols/idealize/IdealizeMover.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
 #include <protocols/jumping/JumpSetup.fwd.hh>
-#include <protocols/jumping/PairingsList.fwd.hh>
-#include <protocols/jumping/PairingsList.hh>
+#include <core/scoring/dssp/PairingsList.fwd.hh>
+#include <core/scoring/dssp/PairingsList.hh>
 #include <protocols/loops/Loop.fwd.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.fwd.hh>
@@ -834,10 +834,10 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 			//generate fragments from all homologes
 			core::fragment::FrameList jump_frames;
 			target_jumps.generate_jump_frames( jump_frames, kinematics().movemap() );
-			PairingsList library_pairings;
+			core::scoring::dssp::PairingsList library_pairings;
 			for ( FrameList::iterator jump_frame = jump_frames.begin();
 						jump_frame != jump_frames.end(); ++jump_frame ) {
-				Pairing target_pairing( target_jumps.get_pairing( (*jump_frame)->start(), (*jump_frame)->stop() ) );
+				core::scoring::dssp::Pairing target_pairing( target_jumps.get_pairing( (*jump_frame)->start(), (*jump_frame)->stop() ) );
 				library_pairings.push_back( target_pairing );
 			}
 			//fill remaining frames from ss-library

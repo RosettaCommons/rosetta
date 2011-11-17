@@ -21,7 +21,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
 #include <core/chemical/AA.hh>
-#include <protocols/jumping/Dssp.hh>
+#include <core/scoring/dssp/Dssp.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreType.hh>
@@ -130,7 +130,7 @@ main( int argc, char* argv [] ) {
 		(*scorefxn)(current_pose);
 		EnergyMap weights( current_pose.energies().weights() );
 
-		protocols::jumping::Dssp dssp( current_pose );
+		core::scoring::dssp::Dssp dssp( current_pose );
 		dssp.insert_ss_into_pose( current_pose );
 		std::string secstruct(current_pose.secstruct());
 

@@ -16,7 +16,7 @@
 #include <protocols/electron_density/SetupForDensityScoringMoverCreator.hh>
 #include <protocols/electron_density/util.hh>
 
-// AUTO-REMOVED #include <protocols/jumping/Dssp.hh>
+// AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
 
 #include <core/scoring/electron_density/util.hh>
 

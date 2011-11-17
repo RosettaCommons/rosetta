@@ -271,8 +271,8 @@
 #include <protocols/jd2/Parser.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
 #include <protocols/jobdist/Jobs.hh>
-#include <protocols/jumping/Dssp.hh>
-#include <protocols/jumping/StrandPairing.fwd.hh>
+#include <core/scoring/dssp/Dssp.hh>
+#include <core/scoring/dssp/StrandPairing.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.fwd.hh>
