@@ -185,6 +185,7 @@ sources = {
 		"SequenceUtil",
 	],
 	"util" : [
+                #"ChainbreakUtil",
 		"MetricValueIO",
 	],
 }

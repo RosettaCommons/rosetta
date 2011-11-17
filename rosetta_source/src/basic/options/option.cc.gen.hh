@@ -586,10 +586,10 @@ option.add( basic::options::OptionKeys::abinitio::end_bias, "set the endbias for
 option.add( basic::options::OptionKeys::abinitio::symmetry_residue, "hacky symmetry mode for dimers, fragments are inserted at i and i + SR - 1" ).def(-1);
 option.add( basic::options::OptionKeys::abinitio::vdw_weight_stage1, "vdw weight in stage1" ).def(1.0);
 option.add( basic::options::OptionKeys::abinitio::override_vdw_all_stages, "apply vdw_weight_stage1 for all stages" ).def(false);
-option.add( basic::options::OptionKeys::abinitio::recover_low_in_stages, "say default: 2 3 4 recover_low happens in stages 2 3 4" ).def(0);
 
 }
-inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::skip_stages, "say: 2 3 4, and it will skip stages 2 3 4" ).def(0);
+inline void add_rosetta_options_1( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::abinitio::recover_low_in_stages, "say default: 2 3 4 recover_low happens in stages 2 3 4" ).def(0);
+option.add( basic::options::OptionKeys::abinitio::skip_stages, "say: 2 3 4, and it will skip stages 2 3 4" ).def(0);
 option.add( basic::options::OptionKeys::abinitio::close_chbrk, "Chain break closure during classic abinito " ).def(false);
 option.add( basic::options::OptionKeys::abinitio::include_stage5, "stage5 contains small moves only" ).def(false);
 option.add( basic::options::OptionKeys::abinitio::close_loops_by_idealizing, "close loops by idealizing the structure after stage 4" ).def(false);
@@ -1171,10 +1171,10 @@ option.add( basic::options::OptionKeys::wum::n_masters, "Manual override for -n_
 option.add( basic::options::OptionKeys::wum::memory_limit, "Memory limit for queues (in kB) " ).def(0);
 option.add( basic::options::OptionKeys::wum::extra_scorefxn, "Extra score function for post-batchrelax-rescoring" );
 option.add( basic::options::OptionKeys::wum::extra_scorefxn_ref_structure, "Extra score function for post-batchrelax-rescoring reference structure for superimposition (for scorefunctions that depend on absolute coordinates such as electron denisty)" );
-option.add( basic::options::OptionKeys::wum::extra_scorefxn_relax, "After doing batch relax and adding any extra_scorefunction terms do another N fast relax rounds (defaut=0)" ).def(0);
 
 }
-inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::wum::trim_proportion, "No description" ).def(0.0);
+inline void add_rosetta_options_2( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::wum::extra_scorefxn_relax, "After doing batch relax and adding any extra_scorefunction terms do another N fast relax rounds (defaut=0)" ).def(0);
+option.add( basic::options::OptionKeys::wum::trim_proportion, "No description" ).def(0.0);
 option.add( basic::options::OptionKeys::lh::lh, "lh option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::lh::db_prefix, "stem for loop database" ).def("loopdb");
 option.add( basic::options::OptionKeys::lh::loopsizes, "Which loopsizes to use" ).def(10).def(15).def(20);
@@ -1756,10 +1756,10 @@ option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_via_cons
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::delete_interface_native_sidechains, "benchmarking option.  delete input sidechains as prepacking step before running centroid or fullatom phases.  use if also using use_input_sc and doing benchmarking.  use_input_sc is used because of sidechain minimization, not to maintain input sidechains." );
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::RMSD_only_this, "Perform only RMSD calculations without modifying input.  Only used for re-running metrics during benchmarking/debugging." );
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_noise_constraints_mode, "Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor's placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer's commentary." ).def(false);
-option.add( basic::options::OptionKeys::DenovoProteinDesign::DenovoProteinDesign, "DenovoProteinDesign option group" ).legal(true).def(true);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "redesign core of pdb" ).def(false);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::DenovoProteinDesign, "DenovoProteinDesign option group" ).legal(true).def(true);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "redesign core of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_loops, "redesign loops of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "redesign surface of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_complete, "complete redesign of pdb" ).def(false);

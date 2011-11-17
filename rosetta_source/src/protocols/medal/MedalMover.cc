@@ -56,6 +56,7 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/sequence/SequenceAlignment.hh>
+#include <core/util/ChainbreakUtil.hh>
 #include <core/util/kinematics_util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/jd2/ThreadingJob.hh>
@@ -246,11 +247,12 @@ void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::kinematics::FoldTree;
+  using core::util::ChainbreakUtil;
   using protocols::loops::LoopRelaxMover;
   using protocols::loops::Loops;
   assert(pose);
 
-  if (!option[OptionKeys::rigid::close_loops]())
+  if (!option[OptionKeys::rigid::close_loops]() || !ChainbreakUtil::has_chainbreak(*pose))
     return;
 
   // Choose chainbreaks automatically
