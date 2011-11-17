@@ -20,7 +20,7 @@
 #include <string>
 
 // External headers
-// AUTO-REMOVED #include <boost/format.hpp>
+#include <boost/format.hpp>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -35,11 +35,8 @@
 
 // Project headers
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -48,8 +45,8 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/util/kinematics_util.hh>
 #include <protocols/abinitio/MaxSeqSepConstraintSet.hh>
-// AUTO-REMOVED #include <protocols/filters/Filter.hh>
 #include <protocols/moves/RationalMonteCarlo.hh>
 
 // Package headers
@@ -57,9 +54,6 @@
 #include <protocols/nonlocal/PolicyFactory.hh>
 #include <protocols/nonlocal/SingleFragmentMover.hh>
 #include <protocols/nonlocal/util.hh>
-
-#include <utility/vector1.hh>
-
 
 namespace protocols {
 namespace nonlocal {
@@ -177,7 +171,7 @@ void BrokenFold::apply(core::pose::Pose& pose) {
   using protocols::abinitio::MaxSeqSepConstraintSetOP;
 
   // Add applicable cutpoint variants and constraints
-  add_cutpoint_variants(&pose);
+  core::util::add_cutpoint_variants(&pose);
   core::scoring::constraints::add_constraints_from_cmdline_to_pose(pose);
 
   // Take note of the current constraints, as we are responsible for restoring them
@@ -198,7 +192,7 @@ void BrokenFold::apply(core::pose::Pose& pose) {
   }
 
   // Remove cutpoint variants and restore the pose's original constraints
-  remove_cutpoint_variants(&pose);
+  core::util::remove_cutpoint_variants(&pose);
   pose.constraint_set(orig_constraints);
 }
 

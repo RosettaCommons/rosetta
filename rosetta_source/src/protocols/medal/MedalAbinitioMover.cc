@@ -36,6 +36,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/util.hh>
+#include <core/util/kinematics_util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>
@@ -128,7 +129,7 @@ void MedalAbinitioMover::apply(core::pose::Pose& pose) {
   estimate_residue_positions(&pose);
 
   // Set up the pose
-  protocols::nonlocal::add_cutpoint_variants(&pose);
+  core::util::add_cutpoint_variants(&pose);
   core::scoring::constraints::add_constraints_from_cmdline_to_pose(pose);
 
   // Folding
@@ -169,7 +170,7 @@ void MedalAbinitioMover::apply(core::pose::Pose& pose) {
   // Restore simple kinematics, close remaining loops
   builder.tear_down(&pose);
   do_loop_closure(&pose);
-  protocols::nonlocal::remove_cutpoint_variants(&pose);
+  core::util::remove_cutpoint_variants(&pose);
 
   // Return to centroid representation and rescore
   // TODO(tex) score the pose with whatever score function you want in the output

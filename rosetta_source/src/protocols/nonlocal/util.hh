@@ -68,12 +68,6 @@ void emit_intermediate(const core::pose::Pose& pose, const std::string& file);
 /// @brief Retrieves the current job from the JobDistributor
 protocols::jd2::ThreadingJob const * const current_job();
 
-/// @brief Adds cutpoint variants to pose
-void add_cutpoint_variants(core::pose::Pose* pose);
-
-/// @brief Removes cutpoint variants from pose
-void remove_cutpoint_variants(core::pose::Pose* pose);
-
 /// @brief Extract secondary structure chunks from the pose, using multiple secondary structure types
 /// this function requires that the pose object already have secstruct information
 /// to get this information from structure (DSSP), call

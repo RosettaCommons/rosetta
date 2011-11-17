@@ -145,6 +145,7 @@ sources = {
         "core/util" : [
                 "ABEGOManager",
                 "disulfide_util",
+                "kinematics_util",
                 "SwitchResidueTypeSet",
         ],
 }

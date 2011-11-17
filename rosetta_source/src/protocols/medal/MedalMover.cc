@@ -41,16 +41,14 @@
 #include <utility/vector1.hh>
 
 // Project headers
-#include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/VariantType.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FragSet.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -58,6 +56,7 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/sequence/SequenceAlignment.hh>
+#include <core/util/kinematics_util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/jd2/ThreadingJob.hh>
 #include <protocols/loops/LoopRelaxMover.hh>
@@ -80,7 +79,6 @@ namespace protocols {
 namespace medal {
 
 typedef boost::function<void(const core::pose::Pose&)> Trigger;
-typedef std::set<int> Jumps;
 
 static basic::Tracer TR("protocols.medal.MedalMover");
 
@@ -134,8 +132,7 @@ void MedalMover::compute_per_residue_probabilities(
   // Emit sampling probabilities
   TR << "Residue" << setw(15) << "Probability" << endl;
   for (unsigned i = 1; i <= probs->size(); ++i) {
-    TR << i;
-    TR << fixed << setw(15) << setprecision(5) << (*probs)[i] << endl;
+    TR.Debug << i << fixed << setw(15) << setprecision(5) << (*probs)[i] << endl;
   }
   TR.flush_all_channels();
 }
@@ -170,6 +167,7 @@ MedalMover::MedalMover() {
 void MedalMover::apply(core::pose::Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
+  using core::pose::PoseOP;
   using core::scoring::ScoreFunctionOP;
   using core::sequence::SequenceAlignment;
   using protocols::jd2::ThreadingJob;
@@ -178,8 +176,14 @@ void MedalMover::apply(core::pose::Pose& pose) {
   using namespace protocols::moves;
   using namespace protocols::nonlocal;
 
+  // Information about the current set of inputs
   ThreadingJob const * const job = protocols::nonlocal::current_job();
   const unsigned num_residues = pose.total_residue();
+
+  // Load the native structure (if available) to compute trajectory analytics
+  PoseOP native;
+  if (option[OptionKeys::in::file::native].user())
+    native = core::import_pose::pose_from_pdb(option[OptionKeys::in::file::native]());
 
   // Build up a threading model
   LoopRelaxThreadingMover closure;
@@ -205,7 +209,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
   // Alternating rigid body and fragment insertion moves with increasing linear_chainbreak weight.
   // Early stages select fragments uniformly from the top 25, later stages select fragments according
   // to Gunn cost using the entire fragment library.
-  protocols::nonlocal::add_cutpoint_variants(&pose);
+  core::util::add_cutpoint_variants(&pose);
   ScoreFunctionOP score = score_function();
 
   const double cb_start = score->get_weight(core::scoring::linear_chainbreak);
@@ -217,7 +221,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
                       numeric::linear_interpolate(cb_start, cb_stop, stage, num_stages));
 
     MoverOP mover =
-        create_fragment_and_rigid_mover(pose, score, fragments_sm_, probs,
+        create_fragment_and_rigid_mover(pose, native, score, fragments_sm_, probs,
                                         (stage < (num_stages / 2)) ? "uniform" : "smooth",
                                         (stage < (num_stages / 2)) ? 25 : 200);
 
@@ -225,9 +229,9 @@ void MedalMover::apply(core::pose::Pose& pose) {
   }
 
   // Alternating small and shear moves
-  MoverOP mover = create_small_mover(score);
+  MoverOP mover = create_small_mover(native, score);
   mover->apply(pose);
-  protocols::nonlocal::remove_cutpoint_variants(&pose);
+  core::util::remove_cutpoint_variants(&pose);
 
   // Loop closure
   builder.tear_down(&pose);
@@ -235,16 +239,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
 
   // Return to centroid representation and rescore
   core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
-  score_pose(*score, "Final model", &pose);
-}
-
-void MedalMover::score_pose(const core::scoring::ScoreFunction& score,
-                            const std::string& message,
-                            core::pose::Pose* pose) const {
-  assert(pose);
-  TR << message << std::endl;
-  score.show(TR, *pose);
-  TR.flush_all_channels();
+  score->show(TR, pose);
 }
 
 void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
@@ -328,6 +323,7 @@ protocols::moves::MoverOP MedalMover::fresh_instance() const {
 }
 
 protocols::moves::MoverOP MedalMover::create_fragment_mover(
+    core::pose::PoseOP native,
     core::scoring::ScoreFunctionOP score,
     core::fragment::FragSetOP fragments,
     const Probabilities& probs,
@@ -351,11 +347,15 @@ protocols::moves::MoverOP MedalMover::create_fragment_mover(
     if (option[OptionKeys::rigid::log_accepted_moves]())
       mover->add_trigger(boost::bind(&on_pose_accept, _1));
 
+    if (native)
+      mover->set_native(*native);
+
     return mover;
 }
 
 protocols::moves::MoverOP MedalMover::create_fragment_and_rigid_mover(
     const core::pose::Pose& pose,
+    core::pose::PoseOP native,
     core::scoring::ScoreFunctionOP score,
     core::fragment::FragSetOP fragments,
     const Probabilities& probs,
@@ -384,10 +384,13 @@ protocols::moves::MoverOP MedalMover::create_fragment_and_rigid_mover(
   if (option[OptionKeys::rigid::log_accepted_moves]())
     mover->add_trigger(boost::bind(&on_pose_accept, _1));
 
+  if (native)
+    mover->set_native(*native);
+
   return mover;
 }
 
-protocols::moves::MoverOP MedalMover::create_small_mover(core::scoring::ScoreFunctionOP score) const {
+protocols::moves::MoverOP MedalMover::create_small_mover(core::pose::PoseOP native, core::scoring::ScoreFunctionOP score) const {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using namespace protocols::moves;
@@ -416,6 +419,9 @@ protocols::moves::MoverOP MedalMover::create_small_mover(core::scoring::ScoreFun
   // Optionally record accepted moves
   if (option[OptionKeys::rigid::log_accepted_moves]())
     mover->add_trigger(boost::bind(&on_pose_accept, _1));
+
+  if (native)
+    mover->set_native(*native);
 
   return mover;
 }

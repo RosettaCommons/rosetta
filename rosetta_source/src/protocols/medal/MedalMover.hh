@@ -19,18 +19,17 @@
 // C/C++ headers
 #include <string>
 
+// Utility headers
+#include <utility/vector1.hh>
+
 // Project headers
-// AUTO-REMOVED #include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/moves/Mover.hh>
-
-#include <core/fragment/FragSet.fwd.hh>
-#include <utility/vector1.hh>
-
 
 namespace protocols {
 namespace medal {
@@ -51,11 +50,6 @@ class MedalMover : public protocols::moves::Mover {
   protocols::moves::MoverOP fresh_instance() const;
 
  protected:
-  /// @brief Scores the pose, writing the result to tracer
-  void score_pose(const core::scoring::ScoreFunction& score,
-                  const std::string& message,
-                  core::pose::Pose* pose) const;
-
   /// @brief Closes chainbreaks in <pose>
   void do_loop_closure(core::pose::Pose* pose) const;
 
@@ -74,6 +68,7 @@ class MedalMover : public protocols::moves::Mover {
 
   /// @brief Configures a mover for biased fragment insertion
   protocols::moves::MoverOP create_fragment_mover(
+      core::pose::PoseOP native,
       core::scoring::ScoreFunctionOP score,
       core::fragment::FragSetOP fragments,
       const Probabilities& probs,
@@ -84,6 +79,7 @@ class MedalMover : public protocols::moves::Mover {
   /// and rigid body moves
   protocols::moves::MoverOP create_fragment_and_rigid_mover(
       const core::pose::Pose& pose,
+      core::pose::PoseOP native,
       core::scoring::ScoreFunctionOP score,
       core::fragment::FragSetOP fragments,
       const Probabilities& probs,
@@ -91,7 +87,8 @@ class MedalMover : public protocols::moves::Mover {
       unsigned library_size) const;
 
   /// @brief Configures a mover for performing alternating small and shear moves
-  protocols::moves::MoverOP create_small_mover(core::scoring::ScoreFunctionOP score) const;
+  protocols::moves::MoverOP create_small_mover(core::pose::PoseOP native,
+                                               core::scoring::ScoreFunctionOP score) const;
 
   /// @brief Configures a basic score functions which callers can then specialize
   core::scoring::ScoreFunctionOP score_function() const;

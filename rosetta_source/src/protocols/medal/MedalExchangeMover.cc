@@ -21,17 +21,20 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/jumps.OptionKeys.gen.hh>
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <core/util/kinematics_util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/jd2/ThreadingJob.hh>
 #include <protocols/loops/LoopRelaxThreadingMover.hh>
@@ -49,6 +52,7 @@ MedalExchangeMover::MedalExchangeMover() : MedalMover() {}
 void MedalExchangeMover::apply(core::pose::Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
+  using core::pose::PoseOP;
   using core::scoring::ScoreFunctionOP;
   using core::scoring::methods::EnergyMethodOptions;
   using protocols::jd2::ThreadingJob;
@@ -57,8 +61,14 @@ void MedalExchangeMover::apply(core::pose::Pose& pose) {
   using namespace protocols::moves;
   using namespace protocols::nonlocal;
 
+  // Information about the current set of inputs
   ThreadingJob const * const job = protocols::nonlocal::current_job();
   const unsigned num_residues = pose.total_residue();
+
+  // Load the native structure (if available) to compute trajectory analytics
+  PoseOP native;
+  if (option[OptionKeys::in::file::native].user())
+    native = core::import_pose::pose_from_pdb(option[OptionKeys::in::file::native]());
 
   // Build up a threading model
   LoopRelaxThreadingMover closure;
@@ -82,36 +92,36 @@ void MedalExchangeMover::apply(core::pose::Pose& pose) {
   compute_per_residue_probabilities(num_residues, job->alignment(), chunks, pose.fold_tree(), *fragments_sm_, &probs);
 
   // Fragment insertion with short range constraints and no chainbreak
-  protocols::nonlocal::add_cutpoint_variants(&pose);
+  core::util::add_cutpoint_variants(&pose);
   ScoreFunctionOP score = score_function();
   EnergyMethodOptions options(score->energy_method_options());
 
   options.cst_max_seq_sep(option[OptionKeys::rigid::short_range_seqsep]());
   score->set_energy_method_options(options);
-  MoverOP stage1 = create_fragment_mover(score, fragments_sm_, probs, "uniform", 25);
+  MoverOP stage1 = create_fragment_mover(native, score, fragments_sm_, probs, "uniform", 25);
   stage1->apply(pose);
 
   // Fragment insertion with medium range constraints and no chainbreak
   options.cst_max_seq_sep(option[OptionKeys::rigid::medium_range_seqsep]());
   score->set_energy_method_options(options);
-  MoverOP stage2 = create_fragment_mover(score, fragments_sm_, probs, "uniform", 25);
+  MoverOP stage2 = create_fragment_mover(native, score, fragments_sm_, probs, "uniform", 25);
   stage2->apply(pose);
 
   // Fragment insertion with long range constraints and chainbreak
   options.cst_max_seq_sep(num_residues);
   score->set_energy_method_options(options);
   score->set_weight(core::scoring::linear_chainbreak, 2 * option[OptionKeys::jumps::increase_chainbreak]());
-  MoverOP stage3 = create_fragment_and_rigid_mover(pose, score, fragments_sm_, probs, "uniform", 25);
+  MoverOP stage3 = create_fragment_and_rigid_mover(pose, native, score, fragments_sm_, probs, "uniform", 25);
   stage3->apply(pose);
 
   // Loop closure
   builder.tear_down(&pose);
   do_loop_closure(&pose);
-  protocols::nonlocal::remove_cutpoint_variants(&pose);
+  core::util::remove_cutpoint_variants(&pose);
 
   // Return to centroid representation and rescore
   core::util::switch_to_residue_type_set(pose, core::chemical::CENTROID);
-  score_pose(*score, "Final model", &pose);
+  score->show(TR, pose);
 }
 
 std::string MedalExchangeMover::get_name() const {
