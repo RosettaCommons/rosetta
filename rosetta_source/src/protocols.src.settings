@@ -734,6 +734,7 @@ sources = {
 		"ccd_closure",
 		"CcdLoopClosureMover",
 		"FASelectSlidingWindowLoopClosure",
+		"FoldTreeFromLoopsWrapper",
 		"KinematicWrapper",
 		"LoopBuild",
 		"Loop",
