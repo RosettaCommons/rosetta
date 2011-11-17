@@ -120,6 +120,7 @@ void register_options() {
 }
 static core::io::silent::SilentFileData sfd;
 
+#define MULT 2.0
 
 
 /*
@@ -201,6 +202,12 @@ Strings getline(std::istream & in) {
 	while(iss >> s) v.push_back(s);
 	return v;
 }
+struct DCST {
+	string atm1,atm2;
+	Size rsd1,rsd2;
+	Real d,sd;
+	DCST( string _atm1, Size _rsd1, string _atm2, Size _rsd2, Real _d, Real _sd ) : atm1(_atm1), rsd1(_rsd1), atm2(_atm2), rsd2(_rsd2), d(_d), sd(_sd) {}
+};
 struct CST {
 	int tplt,grp,dres1,tres1,dres2,tres2;
 	CST(int _tplt, int _grp, int a, int b, int c, int d) : tplt(_tplt),grp(_grp),dres1(a),tres1(b),dres2(c),tres2(d) {}
@@ -223,6 +230,7 @@ struct ConstraintConfig {
 	vector1<std::map<Size,Size> > template_map;
 	vector1<Size> template_sc,template_sc_resi;
 	vector1<CST> cst_sc,cst_bb,cst_ex;
+	vector1<DCST> dcst;
 	core::chemical::ResidueTypeSetCAP crs,frs;
 	ConstraintConfig() {
 		init();
@@ -361,6 +369,26 @@ struct ConstraintConfig {
 		r.push_back(residue_names_from_sequence(s));
 		return r;
 	}
+	void add_sym_cst(Pose & p, AtomID id1, AtomID id2, Real d, Real sd) const {
+		if(nsub > 11) utility_exit_with_message("residue mapping unclear!!!!!!!!");
+		//cout << "add sym cst " << id1 << " " << id2 << endl;
+		using namespace core::scoring::constraints;
+		if(id1.rsd() > id2.rsd()) {
+			AtomID tmp(id1);
+			id1 = id2;
+			id2 = tmp;
+		}
+		if(id2.rsd() > nsub*nres) utility_exit_with_message("2nd constraint rsd "+str(id2.rsd())+" outside of nres*nsub");
+		if(id1.rsd() > nres     ) return;//utility_exit_with_message("1st constraint rsd "+str(id1.rsd())+" outside of primary subunit");
+		p.add_constraint( new AtomPairConstraint( id1 , id2 , new HarmonicFunc(d,sd) ) );
+		int sub2 = (id2.rsd()-1)/nres + 1;
+		if(sub2 > 1) {
+			AtomID id1B( id2.atomno(), id2.rsd() - nres * (sub2-1)             );
+			AtomID id2B( id1.atomno(), id1.rsd() - nres * (sub2-1) + nsub*nres );
+			//cout << "SYMCST " << id1.rsd() << "-" << id2.rsd() << " " << id1B.rsd() << "-" << id2B.rsd() << endl;
+			p.add_constraint( new AtomPairConstraint( id1B, id2B, new HarmonicFunc(d,sd) ) );		
+		}
+	}
 	void parse_config_file(std::istream & in) {
 		string op,op2,val;
 		while(true) {
@@ -418,6 +446,22 @@ struct ConstraintConfig {
 						}
 						// cout << endl;
 					}
+					for(std::map<string,Sizes >::const_iterator i = ssmap.begin(); i != ssmap.end(); ++i) {
+						if(i->second.size() == 0) utility_exit_with_message("ssmap of 0 size! "+i->first);
+						if(i->second.size() == 1) continue;
+						int fr = i->second.front();
+						int bk = i->second.back();
+						for(int j = 1; j < 10; ++j) {
+							string symbol = i->first + str(-j);
+							if( fr - j >= 1         ) ssmap[symbol] = Sizes(1,fr-j);
+							symbol = i->first + "+" + str( j);
+							if( bk + j <= nres*nsub ) ssmap[symbol] = Sizes(1,bk+j);
+						}
+					}
+					for(std::map<string,Sizes >::const_iterator i = ssmap.begin(); i != ssmap.end(); ++i) {
+						cout << "SSMAP " << i->first << " " << i->second.front() << "-" << i->second.back() << endl;
+					}
+					utility_exit_with_message("debug");
 				}
 			} else
 			if("SEQUENCE"==op) {
@@ -427,6 +471,7 @@ struct ConstraintConfig {
 					while(peek(in).size() && peek(in)[0]=='#') std::getline(in,buf);
 					if("TEMPLATE" ==peek(in)) break;
 					if("SECSTRUCT"==peek(in)) break;
+					if("CONSTRAINT"==peek(in)) break;
 					if("SEQUENCE" ==peek(in)) break;
 					if("SUBUNITS" ==peek(in)) utility_exit_with_message("BAD9679867");
 					if(!(read_ignore_comments(in,op2))) break;
@@ -453,6 +498,17 @@ struct ConstraintConfig {
 					// }
 				}
 				cout << "SEQUENCE" << endl;
+			} else
+			if("CONSTRAINT"==op) {
+				if(ssmap.size()==0) utility_exit_with_message("SECSTRUCT must come before CONSTRAINT");
+				string atm1,rsd1,atm2,rsd2;
+				Real d,sd;				
+				in >> atm1 >> rsd1 >> atm2 >> rsd2 >> d >> sd;
+				Sizes tmp1 = parse_residues(rsd1);
+				if( tmp1.size() != 1 ) utility_exit_with_message("bad resi for DCST: "+rsd1);
+				Sizes tmp2 = parse_residues(rsd2);
+				if( tmp2.size() != 1 ) utility_exit_with_message("bad resi for DCST: "+rsd2);
+				dcst.push_back(DCST(atm1,tmp1[1],atm2,tmp2[1],d,sd));
 			} else
 			if("TEMPLATE"==op) {
 				string tpdb,rsd;
@@ -562,8 +618,6 @@ struct ConstraintConfig {
 		}
 	}
 
-#define MULT 2.0
-
 	void apply_bb_csts(Pose & p, Size ssep=0) const {
 		using namespace core::scoring::constraints;
 		vector1<string> anames; anames.push_back("N"); anames.push_back("CA"); anames.push_back("C"); anames.push_back("O"); /*anames.push_back("CB");*/ anames.push_back("H");
@@ -577,7 +631,8 @@ struct ConstraintConfig {
 					Real d = t.residue(i->tres1).xyz(anames[an1]).distance( t.residue(i->tres2).xyz(anames[an2]) );
 					AtomID id1( p.residue(i->dres1).atom_index(anames[an1]), i->dres1 );
 					AtomID id2( p.residue(i->dres2).atom_index(anames[an2]), i->dres2 );			
-					p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT*sqrt(d)) ) );
+					add_sym_cst( p, id1, id2, d, MULT*sqrt(d) );
+					// p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT*sqrt(d)) ) );
 				}
 			}
 			// {
@@ -606,7 +661,8 @@ struct ConstraintConfig {
 					Real d = t.residue(i->tres1).xyz(anames[an1]).distance( t.residue(i->tres2).xyz(anames[an2]) );
 					AtomID id1( p.residue(i->dres1).atom_index(anames[an1]), i->dres1 );
 					AtomID id2( p.residue(i->dres2).atom_index(anames[an2]), i->dres2 );			
-					p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT*sqrt(d)) ) );
+					add_sym_cst( p, id1, id2, d, MULT*sqrt(d) );
+					//p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT*sqrt(d)) ) );
 				}
 			}
 			// {
@@ -625,6 +681,19 @@ struct ConstraintConfig {
 			// }
 		}		
 	}
+	void apply_dcsts(Pose & p, Size ssep=0) const {
+		using namespace core::scoring::constraints;
+		for(vector1<DCST>::const_iterator i = dcst.begin(); i != dcst.end(); ++i) {
+			if(ssep && (abs(i->rsd1-i->rsd2) != ssep) ) continue;
+			if( !p.residue(i->rsd1).has(i->atm1) || !p.residue(i->rsd2).has(i->atm2) ) {
+				utility_exit_with_message("CONSTRAINT missing atom "+i->atm1+" "+str(i->rsd1)+" "+i->atm2+" "+str(i->rsd2)+" "+str(i->d)+" "+str(i->sd) );
+			}
+			AtomID id1( p.residue(i->rsd1).atom_index(i->atm1), i->rsd1 );
+			AtomID id2( p.residue(i->rsd2).atom_index(i->atm2), i->rsd2 );
+			cout << "DCST " << i->atm1 << " " << i->rsd1 << " " << i->atm2 << " " << i->rsd2 << " " << i->d << " " << i->sd << endl;
+			add_sym_cst( p, id1, id2, i->d, i->sd );
+		}
+	}
 	void apply_cen_csts(Pose & p, Size ssep=0) const {
 		using namespace core::scoring::constraints;
 		vector1<string> anames; anames.push_back("CB"); anames.push_back("CEN");
@@ -639,7 +708,7 @@ struct ConstraintConfig {
 					Real d = t.residue(i->tres1).xyz(anames[an1]).distance( t.residue(i->tres2).xyz(anames[an2]) );
 					AtomID id1( p.residue(i->dres1).atom_index(anames[an1]), i->dres1 );
 					AtomID id2( p.residue(i->dres2).atom_index(anames[an2]), i->dres2 );			
-					p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT*sqrt(d)) ) );
+					add_sym_cst( p, id1, id2, d, MULT*sqrt(d) );
 				}
 			}
 			// Real d = t.residue(i->tres1).xyz("CEN").distance( t.residue(i->tres2).xyz("CEN") );
@@ -649,6 +718,7 @@ struct ConstraintConfig {
 			// p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT*sqrt(d)) ) );
 		}
 		apply_bb_csts(p,ssep);
+		apply_dcsts(p,ssep);
 	}
 	void apply_fa_csts(Pose & p, Size ssep=0) const {
 		using namespace core::scoring::constraints;
@@ -669,11 +739,13 @@ struct ConstraintConfig {
 					AtomID id1( p.residue(i->dres1).atom_index(aname1), i->dres1 );
 					AtomID id2( p.residue(i->dres2).atom_index(aname2), i->dres2 );
 					//cout << "constraint: " << ssep << " " << i->dres1 << "," << aname1 << " " << i->dres2 << "," << aname2 << " " << d << endl;
+					add_sym_cst( p, id1, id2, d, MULT/2.0*sqrt(d) );
 					p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT/2.0*sqrt(d)) ) );
 				}
 			}
 		}
 		apply_bb_csts(p,ssep);
+		apply_dcsts(p,ssep);
 	}
 	void apply_csts(Pose & p, Size ssep=0) const {
 		if(  p.is_centroid() &&  p.is_fullatom() ) utility_exit_with_message("MADNESS!");
@@ -835,35 +907,35 @@ struct HubDenovo {
 			string fn = option[OptionKeys::out::file::o]() + "/" + cfg.ssstr() +"_"+ str(uniform()).substr(2,8) + ".pdb.gz";
 			cout << "HIT " << tmp.energies().total_energy() << " " << fn << endl;
 
-			// tmp.dump_pdb(fn+"_cen.pdb.gz");
+			tmp.dump_pdb(fn+"_cen.pdb.gz");
 
-			// core::util::switch_to_residue_type_set(tmp,"fa_standard");
-			// // reapply csts
+			core::util::switch_to_residue_type_set(tmp,"fa_standard");
+			// reapply csts
+			tmp.remove_constraints();
+			cfg.apply_csts(tmp);
+
+			{
+				sfsym->set_weight(core::scoring::atom_pair_constraint,10.0);
+				sfsym->set_weight(core::scoring::    angle_constraint,10.0);
+				core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+			  	movemap->set_jump(false); movemap->set_bb(true); movemap->set_chi(true);
+				rlxcst->apply(tmp); // no cst
+				// protocols::moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(tmp);
+				sfsym->set_weight(core::scoring::atom_pair_constraint,1.0);
+				sfsym->set_weight(core::scoring::    angle_constraint,1.0);
+				// min_as_poly_ala(tmp,sfsym,hocsts,cfg.nres);
+				sfsym->show(tmp);
+				//tmp.dump_pdb(fn+"_min.pdb.gz");
+				tmp.constraint_set()->show_violations(cout,tmp,1,1.0);
+			}
+			// Real cstsc = tmp.energies().total_energies()[core::scoring::atom_pair_constraint];
 			// tmp.remove_constraints();
-			// cfg.apply_csts(tmp);
+			tmp.dump_pdb(fn+"_cst.pdb.gz");
 
-			// {
-			// 	sfsym->set_weight(core::scoring::atom_pair_constraint,10.0);
-			// 	sfsym->set_weight(core::scoring::    angle_constraint,10.0);
-			// 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-			//   	movemap->set_jump(false); movemap->set_bb(true); movemap->set_chi(true);
-			// 	rlxcst->apply(tmp); // no cst
-			// 	// protocols::moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(tmp);
-			// 	sfsym->set_weight(core::scoring::atom_pair_constraint,1.0);
-			// 	sfsym->set_weight(core::scoring::    angle_constraint,1.0);
-			// 	// min_as_poly_ala(tmp,sfsym,hocsts,cfg.nres);
-			// 	sfsym->show(tmp);
-			// 	//tmp.dump_pdb(fn+"_min.pdb.gz");
-			// 	tmp.constraint_set()->show_violations(cout,tmp,1,1.0);
-			// }
-			// // Real cstsc = tmp.energies().total_energies()[core::scoring::atom_pair_constraint];
-			// // tmp.remove_constraints();
-			// tmp.dump_pdb(fn+"_cst.pdb.gz");
+			cout << "rlx nocst" << endl;
+			rlxnocst->apply(tmp); // no cst
 
-			// cout << "rlx nocst" << endl;
-			// rlxnocst->apply(tmp); // no cst
-
-			// sfsym->score(tmp); // rescore with cst
+			sfsym->score(tmp); // rescore with cst
 
 			tmp.dump_pdb(fn);
 			core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
