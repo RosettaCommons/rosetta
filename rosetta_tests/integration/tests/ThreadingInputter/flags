@@ -13,6 +13,7 @@
 -out:level 500
 -mute core.chemical 
 -mute protocols.jumping
+-mute core.scoring.dssp
 
 -frag3 input/boinc_aat286_03_05.200_v1_3.gz
 -frag9 input/boinc_aat286_09_05.200_v1_3.gz
