@@ -21,7 +21,7 @@
 #include <core/chemical/ResidueSelector.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/VariantType.hh>
-
+#include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 //#include <core/scoring/ScoringManager.hh>
@@ -45,6 +45,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/id/AtomID_Map.hh>
+#include <core/id/AtomID_Map.Pose.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/kinematics/AtomTree.hh>
@@ -65,11 +66,11 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/util.hh>
+#include <core/options/option.hh>
+#include <core/options/after_opts.hh>
+#include <core/options/util.hh>
 
-#include <basic/options/option_macros.hh>
+#include <core/options/option_macros.hh>
 #include <protocols/idealize.hh>
 #include <protocols/relax_protocols.hh>
 #include <protocols/evaluation/RmsdEvaluator.hh>
@@ -79,9 +80,9 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
-#include <basic/basic.hh>
+#include <core/util/basic.hh>
 
-#include <basic/database/open.hh>
+#include <core/io/database/open.hh>
 
 #include <devel/init.hh>
 
@@ -116,30 +117,25 @@
 
 //silly using/typedef
 
-#include <basic/Tracer.hh>
-using basic::T;
+#include <core/util/Tracer.hh>
+using core::util::T;
 
 // option key includes
 
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/OptionKeys.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/backrub.OptionKeys.gen.hh>
-
-//Auto Headers
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/util.hh>
+#include <core/options/keys/out.OptionKeys.gen.hh>
+#include <core/options/keys/score.OptionKeys.gen.hh>
+#include <core/options/keys/OptionKeys.OptionKeys.gen.hh>
+#include <core/options/keys/run.OptionKeys.gen.hh>
+#include <core/options/keys/in.OptionKeys.gen.hh>
+#include <core/options/keys/backrub.OptionKeys.gen.hh>
 
 
-
-using basic::Error;
-using basic::Warning;
+using core::util::Error;
+using core::util::Warning;
 
 using namespace core;
 using namespace protocols;
-using namespace basic::options::OptionKeys;
+using namespace core::options::OptionKeys;
 
 using utility::vector1;
 
@@ -307,7 +303,7 @@ setup_mask(
 	////////////////////////////////////////////////
 	// Save into a file.
 	Size count( 0 );
-	utility::io::ozstream out( basic::options::option[ basic::options::OptionKeys::sequence_mask_file ]  );
+	utility::io::ozstream out( options::option[ options::OptionKeys::sequence_mask_file ]  );
 	for (Size i = 1; i <= alignment_length; i++ ) {
 		if (sequences[1][i-1] == '-' ) continue; //Assume native numbering
 		count++;
@@ -408,8 +404,8 @@ void
 setup_t469_zn_tether( pose::Pose & pose ){
 	using namespace id;
 	using namespace scoring::constraints;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace options;
+	using namespace options::OptionKeys;
 
 	ConstraintSetOP cst_set( 	pose.constraint_set()->clone() ) ;
 
@@ -473,8 +469,8 @@ prepare_start_model( pose::Pose const & template_pose,
 
 	using namespace scoring;
 	using namespace scoring::constraints;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace options;
+	using namespace options::OptionKeys;
 
 	scoring::ScoreFunction scorefxn = scorefxn_input;
 
@@ -558,8 +554,8 @@ prepare_start_model( pose::Pose const & template_pose,
 
 	using namespace scoring;
 	using namespace scoring::constraints;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace options;
+	using namespace options::OptionKeys;
 
 	scoring::ScoreFunction scorefxn = scorefxn_input;
 
@@ -589,8 +585,8 @@ repack(	 pose::Pose & pose, scoring::ScoreFunction const & scorefxn )
 {
 	using namespace scoring;
 	using namespace scoring::constraints;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace options;
+	using namespace options::OptionKeys;
 
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line();
@@ -1029,8 +1025,8 @@ setup_rhiju_fold_tree( pose::Pose & pose )
 	//OK, let's do the chainbreak variant thing, except at obligate cutpoints.
 	for (Size n = 1; n < num_segments; n++ ){
 		if ( obligate_cutpoint( n ) ) continue;
-		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cuts(n) );
-		core::pose::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cuts(n)+1 );
+		chemical::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_LOWER, cuts(n) );
+		chemical::add_variant_type_to_pose_residue( pose, chemical::CUTPOINT_UPPER, cuts(n)+1 );
 		pose.set_psi  ( cuts(n),   start_pose.psi( cuts(n) ) );
 		pose.set_omega( cuts(n),   start_pose.omega( cuts(n) ) );
 		pose.set_phi  ( cuts(n+1), start_pose.phi( cuts(n+1) ) );
@@ -1044,8 +1040,8 @@ setup_rhiju_fold_tree( pose::Pose & pose )
 void
 read_soft_segment_file( FArray1D_bool & in_soft_segment ) {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 
 	in_soft_segment = false;
 	if ( !option[ soft_segment_file ].user() ) return;
@@ -1068,8 +1064,8 @@ setup_CA_constraints( pose::Pose & pose, pose::Pose const & src_pose ) {
 
 	using namespace id;
 	using namespace scoring::constraints;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace options;
+	using namespace options::OptionKeys;
 
 	static Real const CA_cutoff( 9.0 );
 
@@ -1078,7 +1074,7 @@ setup_CA_constraints( pose::Pose & pose, pose::Pose const & src_pose ) {
 	//Don't constrain residues within 2 residues of a gap/cutpoint...
 	// similar to loop-rebuild protocol
 	FArray1D_bool allow_constraint( nres, true );
-	static int const DISTANCE_TO_GAP_CUTOFF( basic::options::option[ basic::options::OptionKeys::cst_trim_loop ] );
+	static int const DISTANCE_TO_GAP_CUTOFF( options::option[ options::OptionKeys::cst_trim_loop ] );
 	for (int i = 1; i <= int(nres); i++ ) {
 
 		for (int offset = 0; offset < DISTANCE_TO_GAP_CUTOFF; offset++ )  {
@@ -1335,8 +1331,8 @@ backrub_protocol( pose::Pose const & native_pose, pose::PoseOP & pose, scoring::
 	using namespace core::optimization;
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 
 	core::pack::task::TaskFactoryOP main_task_factory = new core::pack::task::TaskFactory;
 	main_task_factory->push_back( new core::pack::task::operation::InitializeFromCommandline );
@@ -1482,8 +1478,8 @@ minimize_protocol( pose::Pose const & native_pose, pose::Pose & pose, scoring::S
 	using namespace core::optimization;
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 
 	Real init_rmsd = CA_rmsd( native_pose, pose );
 
@@ -1583,8 +1579,8 @@ output_constraints_for_full_length( pose::Pose const & pose,
 void
 easy_target_test(){
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::scoring;
 	using namespace core::pose;
 
@@ -1609,11 +1605,11 @@ easy_target_test(){
 	Pose & pose( *pose_op );
 
 	std::string native_file = option[ in::file::native ];
-	core::import_pose::pose_from_pdb( native_pose, native_file );
+	io::pdb::pose_from_pdb( native_pose, native_file );
 
 	//Read in template pdb.
 	std::string template_file = option[ in::file::s ][1];
-	core::import_pose::pose_from_pdb( template_pose, template_file );
+	io::pdb::pose_from_pdb( template_pose, template_file );
 
 	//Read in secstruct?
 	//	std::string template_secstruct_file = option[ secstruct_file ];
@@ -1813,8 +1809,8 @@ easy_loop_model_test(){
 
 	//Gee whiz, I think I might need to write this from scratch!
 	// Then worry about integrating with the protocol above.
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::scoring;
 	using namespace core::pose;
 
@@ -1839,11 +1835,11 @@ easy_loop_model_test(){
 	Pose & pose( *pose_op );
 
 	std::string native_file = option[ in::file::native ];
-	core::import_pose::pose_from_pdb( native_pose, native_file );
+	io::pdb::pose_from_pdb( native_pose, native_file );
 
 	//Read in template pdb.
 	std::string template_file = option[ in::file::s ][1];
-	core::import_pose::pose_from_pdb( template_pose, template_file );
+	io::pdb::pose_from_pdb( template_pose, template_file );
 
 	prepare_full_length_start_model( template_pose, pose, sequences, sequence_mask,  alignment2sequence, pdb_names, template_file );
 
@@ -1870,8 +1866,8 @@ easy_loop_model_test(){
 void
 initialize_sequence_mask( pose::Pose & pose, FArray1D_bool & sequence_mask ) {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 
 	sequence_mask.dimension( pose.total_residue() );
 	sequence_mask = true;
@@ -1890,12 +1886,12 @@ initialize_sequence_mask( pose::Pose & pose, FArray1D_bool & sequence_mask ) {
 void
 chi_stats_test()
 {
-	using namespace basic::options;
+	using namespace core::options;
 	using namespace core::scoring;
 
 	pose::Pose native_pose;
 	std::string native_file = option[ in::file::native ];
-	core::import_pose::pose_from_pdb( native_pose, native_file );
+	io::pdb::pose_from_pdb( native_pose, native_file );
 
 	///////////////////////////////////
 	// To setup neighbors, burial info.
@@ -1919,7 +1915,7 @@ chi_stats_test()
 		std::string const pdb_file = pdb_files[n];
 
 		std::cout << " About to read in: " << pdb_file << std::endl;
-		core::import_pose::pose_from_pdb( pose, pdb_file );
+		io::pdb::pose_from_pdb( pose, pdb_file );
 
 		//if ( pose.sequence() != native_pose.sequence() ) continue;
 		output_chi_stats( native_pose, pose, sequence_mask, out, pdb_file, n );
@@ -1933,8 +1929,8 @@ void
 cst_relax_test()
 {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::scoring;
 	using namespace core::pose;
 	using namespace core::io::silent;
@@ -1945,7 +1941,7 @@ cst_relax_test()
 	bool use_native( false );
 	if ( option[ in::file::native  ].user() ) {
 		std::string native_file = option[ in::file::native ];
-		core::import_pose::pose_from_pdb( *native_pose_op, native_file );
+		io::pdb::pose_from_pdb( *native_pose_op, native_file );
 		use_native = true;
 	}
 
@@ -1965,14 +1961,14 @@ cst_relax_test()
 
 	//READ IN FIRST POSE.
 	Pose pose, input_pose;
-	core::import_pose::pose_from_pdb( input_pose, start_files[1] );
+	io::pdb::pose_from_pdb( input_pose, start_files[1] );
 	pose = input_pose;
 	//graphics!
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
 	for (Size j = 1; j <= start_files.size(); j++ ) {
 
-		if ( j > 1 ) core::import_pose::pose_from_pdb( input_pose, start_files[j] );
+		if ( j > 1 ) io::pdb::pose_from_pdb( input_pose, start_files[j] );
 		//		pose.dump_pdb( "start.pdb" );
 
 		// Main loop
@@ -2017,7 +2013,7 @@ void*
 my_main( void* )
 {
 
-	using namespace basic::options;
+	using namespace core::options;
 
 	if ( option[ chi_stats]() ) {
 		chi_stats_test();
@@ -2038,7 +2034,7 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-	using namespace basic::options;
+	using namespace core::options;
 
 	//Uh, options?
 	NEW_OPT( chi_stats, "", false );

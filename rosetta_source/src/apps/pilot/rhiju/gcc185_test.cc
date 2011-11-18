@@ -38,7 +38,7 @@
 
 #include <core/scoring/sasa.hh>
 
-#include <basic/prof.hh> // profiling
+#include <core/util/prof.hh> // profiling
 
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/MMAtomTypeSet.hh>
@@ -51,7 +51,7 @@
 #include <core/chemical/ResidueSelector.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/VariantType.hh>
-
+#include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 #include <core/scoring/etable/Etable.hh>
@@ -59,7 +59,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/Ramachandran.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
+#include <core/scoring/dunbrack/RotamerLibrary.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
@@ -72,6 +72,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/id/AtomID_Map.hh>
+#include <core/id/AtomID_Map.Pose.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/kinematics/AtomTree.hh>
@@ -83,21 +84,21 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/keys/OptionKeys.hh>
+#include <core/options/option.hh>
+#include <core/options/after_opts.hh>
+#include <core/options/keys/OptionKeys.hh>
 
-#include <basic/options/after_opts.hh>
+#include <core/options/after_opts.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
-#include <basic/options/util.hh>//option.hh>
-//#include <basic/options/after_opts.hh>
+#include <core/options/util.hh>//option.hh>
+//#include <core/options/after_opts.hh>
 
-#include <basic/basic.hh>
+#include <core/util/basic.hh>
 
-#include <basic/database/open.hh>
+#include <core/io/database/open.hh>
 
 #include <devel/init.hh>
 
@@ -133,13 +134,10 @@
 //silly using/typedef
 
 
-//Auto Headers
-#include <core/import_pose/import_pose.hh>
-
-#include <basic/Tracer.hh>
-using basic::T;
-using basic::Error;
-using basic::Warning;
+#include <core/util/Tracer.hh>
+using core::util::T;
+using core::util::Error;
+using core::util::Warning;
 
 //static numeric::random::RandomGenerator RG(12321); // <- Magic number, do not change it!!!
 
@@ -505,8 +503,8 @@ repack_minimize_test( ){
 	using namespace kinematics;
 	using namespace id;
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::chemical;
 
 	//Read in PDB
@@ -517,7 +515,7 @@ repack_minimize_test( ){
 
 	//	std::string const pdb = "3bbp_threecoiledcoilturns";
 
-	core::import_pose::pose_from_pdb( pose, pdb+".pdb" );
+	io::pdb::pose_from_pdb( pose, pdb+".pdb" );
 
 	int const nres = pose.total_residue();
 	std::cout << "NRES: " << nres << std::endl;
@@ -560,8 +558,8 @@ repack_minimize_test( ){
 int
 main( int argc, char * argv [] )
 {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// setup

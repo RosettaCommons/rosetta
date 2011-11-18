@@ -20,8 +20,9 @@
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-
+#include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 #include <core/scoring/ScoringManager.hh>
@@ -36,6 +37,7 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
+#include <core/io/pose_stream/SilentFilePoseInputStream.hh>
 
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
@@ -43,11 +45,11 @@
 #include <core/pack/task/TaskFactory.hh>
 
 
-#include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/util.hh>
+#include <core/options/option.hh>
+#include <core/options/after_opts.hh>
+#include <core/options/util.hh>
 
-#include <basic/options/option_macros.hh>
+#include <core/options/option_macros.hh>
 #include <protocols/idealize/idealize.hh>
 #include <protocols/viewer/viewers.hh>
 
@@ -67,8 +69,8 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <basic/basic.hh>
-#include <basic/database/open.hh>
+#include <core/util/basic.hh>
+#include <core/io/database/open.hh>
 #include <core/init.hh>
 #include <core/io/pdb/pose_io.hh>
 
@@ -98,27 +100,22 @@
 
 //silly using/typedef
 
-#include <basic/Tracer.hh>
-using basic::T;
+#include <core/util/Tracer.hh>
+using core::util::T;
 
 // option key includes
 
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-
-//Auto Headers
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/annotated_sequence.hh>
+#include <core/options/keys/out.OptionKeys.gen.hh>
+#include <core/options/keys/score.OptionKeys.gen.hh>
+#include <core/options/keys/in.OptionKeys.gen.hh>
 
 
-
-using basic::Error;
-using basic::Warning;
+using core::util::Error;
+using core::util::Warning;
 
 using namespace core;
 using namespace protocols;
-using namespace basic::options::OptionKeys;
+using namespace core::options::OptionKeys;
 
 using utility::vector1;
 
@@ -131,6 +128,7 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 // i.e., OPT_KEY( Type, key ) -->  OptionKey::key
 // to have them in a namespace use OPT_1GRP_KEY( Type, grp, key ) --> OptionKey::grp::key
 OPT_KEY( Boolean, build_helix_test )
+OPT_KEY( Boolean, build_helix_precompute )
 OPT_KEY( Boolean, all_combinations )
 OPT_KEY( Boolean, minimize )
 OPT_KEY( String,  params_file )
@@ -147,8 +145,8 @@ void
 rna_assemble_test()
 {
  	using namespace core::scoring;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::io::silent;
 	using namespace protocols::rna;
 	using namespace core::kinematics;
@@ -176,17 +174,19 @@ rna_assemble_test()
 		utility_exit_with_message( "Need to specify -fasta <fasta file> or -seq <sequence>." );
 	}
 
-	core::pose::make_pose_from_sequence( pose,	seq_in,	*rsd_set );
+	make_pose_from_sequence( pose,	seq_in,	*rsd_set );
 
 	RNA_StructureParametersOP rna_structure_parameters( new RNA_StructureParameters );
-	std::string jump_library_file( basic::database::full_name("1jj2_RNA_jump_library.dat" ) );
+	std::string jump_library_file( io::database::full_name("1jj2_RNA_jump_library.dat" ) );
 	std::string rna_params_file( 	option[ params_file ] );
 
 	rna_structure_parameters->initialize( pose, rna_params_file, jump_library_file, false );
 
 	// Fill in helical segments with A-form jumps and torsion angles.
 	// This will be new!!! Can do it last.
-	rna_structure_parameters->setup_jumps( pose, true /*initialize_jumps*/ );
+
+	//	rna_structure_parameters->setup_jumps( pose, true /*initialize_jumps*/ );
+	rna_structure_parameters->setup_fold_tree_and_jumps_and_variants( pose );
 
 	pose.dump_pdb( "init.pdb");
 
@@ -255,8 +255,8 @@ score_and_minimize( pose::Pose & pose, pose::Pose const & native_pose,
 
 	using namespace core::io::silent;
 	using namespace core::scoring;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 
 	static ScoreFunctionOP lores_scorefxn = ScoreFunctionFactory::create_score_function( RNA_LORES_WTS );
 	lores_scorefxn->set_weight( atom_pair_constraint, 1.0 );
@@ -303,8 +303,8 @@ insert_chunk( pose::Pose & pose, protocols::rna::RNA_ChunkLibrary const & rna_ch
 							pose::Pose const & native_pose )
 {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 
 
 	static Size const total_jobs_user = option[ total_jobs ];
@@ -341,8 +341,8 @@ void
 rna_assemble_all_combinations_test()
 {
  	using namespace core::scoring;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::io::silent;
 	using namespace protocols::rna;
 
@@ -358,17 +358,18 @@ rna_assemble_all_combinations_test()
 	//Prepare starting structure from scratch --> read from fasta.
 	std::string const fasta_file = option[ in::file::fasta ]()[1];
 	core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
-	core::pose::make_pose_from_sequence( pose,	fasta_sequence->sequence(),	*rsd_set );
+	make_pose_from_sequence( pose,	fasta_sequence->sequence(),	*rsd_set );
 
 	RNA_StructureParametersOP rna_structure_parameters( new RNA_StructureParameters );
-	std::string jump_library_file( basic::database::full_name("1jj2_RNA_jump_library.dat" ) );
+	std::string jump_library_file( io::database::full_name("1jj2_RNA_jump_library.dat" ) );
 	std::string rna_params_file( 	option[ params_file ] );
 
 	rna_structure_parameters->initialize( pose, rna_params_file, jump_library_file, false );
 
 	// Fill in helical segments with A-form jumps and torsion angles.
 	// This will be new!!! Can do it last.
-	rna_structure_parameters->setup_jumps( pose, true /*initialize_jumps*/ );
+	//	rna_structure_parameters->setup_jumps( pose, true /*initialize_jumps*/ );
+	rna_structure_parameters->setup_fold_tree_and_jumps_and_variants( pose );
 
 	pose.dump_pdb( "init.pdb");
 
@@ -377,7 +378,7 @@ rna_assemble_all_combinations_test()
 
 	pose::Pose native_pose;
 	std::string native_pdb_file  = option[ in::file::native ];
-	core::import_pose::pose_from_pdb( native_pose, *rsd_set, native_pdb_file );
+	io::pdb::pose_from_pdb( native_pose, *rsd_set, native_pdb_file );
 
 	using namespace core::scoring::constraints;
 	if ( option[ cst_file ].user() ) {
@@ -400,12 +401,12 @@ rna_assemble_all_combinations_test()
 
 /////////////////////////////////////////////////
 void
-rna_build_helix_test(){
+rna_build_helix_test_OLD(){
 
  	using namespace core::scoring;
  	using namespace core::chemical;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::pose;
 	using namespace core::kinematics;
 	using namespace core::io::silent;
@@ -434,7 +435,7 @@ rna_build_helix_test(){
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
 
 	pose::Pose pose;
-	core::pose::make_pose_from_sequence( pose, full_sequence,	*rsd_set );
+	make_pose_from_sequence( pose, full_sequence,	*rsd_set );
 
 	RNA_HelixAssembler rna_helix_assembler;
 	//rna_helix_assembler.random_perturbation( true );
@@ -447,11 +448,150 @@ rna_build_helix_test(){
 
 		std::string const tag( "S_"+lead_zero_string_of(n, 3) );
 		if ( output_silent ) {
-			RNA_SilentStruct s( pose, tag );
+			BinaryRNASilentStruct s( pose, tag );
 			silent_file_data.write_silent_struct( s, silent_file, false /*write score only*/ );
 		}
 		pose.dump_pdb( full_sequence+".pdb" );
 	}
+
+}
+
+
+
+/////////////////////////////////////////////////
+void
+rna_build_helix_test_precompute(){
+
+ 	using namespace core::scoring;
+ 	using namespace core::chemical;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
+	using namespace core::pose;
+	using namespace core::kinematics;
+	using namespace core::conformation;
+	using namespace core::io::silent;
+	using namespace core::io::pose_stream;
+	using namespace protocols::rna;
+
+	std::string full_sequence;
+	if ( option[ in::file::fasta ].user() ) {
+		std::string const fasta_file = option[ in::file::fasta ]()[1];
+		core::sequence::SequenceOP fasta_sequence = core::sequence::read_fasta_file( fasta_file )[1];
+		full_sequence = fasta_sequence->sequence();
+	} else if ( option[ seq ].user() ){
+		full_sequence = option[ seq ]();
+	} else {
+		utility_exit_with_message( "Need to specify -fasta <fasta file> or -seq <sequence>." );
+	}
+
+	std::string silent_file = "";
+	bool output_silent( false );
+	if ( option[ out::file::silent ].user() ) {
+		silent_file = option[ out::file::silent  ]();
+		output_silent = true;
+	}
+	SilentFileData silent_file_data;
+
+	ResidueTypeSetCAP rsd_set;
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( RNA );
+
+	pose::Pose pose;
+	//	make_pose_from_sequence( pose, full_sequence,	*rsd_set );
+
+
+	///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
+	// Move following to its own class when ready.
+	///////////////////////////////////////////////////////////
+
+	// six kinds of base pairs, so 36 kinds of 'base_pair_to_base_pair' files.
+	// read them in from database.
+	std::map< std::string, PoseOP > base_doublet_pose, base_pair_to_base_pair_pose;
+	utility::vector1< std::string > base_doublets;
+	base_doublets.push_back( "a_u" );
+	base_doublets.push_back( "c_g" );
+	base_doublets.push_back( "g_c" );
+	base_doublets.push_back( "g_u" );
+	base_doublets.push_back( "u_a" );
+	base_doublets.push_back( "u_g" );
+
+	for ( Size i = 1; i <= base_doublets.size(); i++ ){
+		PoseOP pose = new Pose;
+		std::string const outfile  = base_doublets[ i ] + "_anti_anti_north_north_antiparallel_00001.out";
+		SilentFilePoseInputStream stream( outfile );
+		stream.fill_pose( *pose, *rsd_set );
+		base_doublet_pose[ pose->sequence() ] = pose;
+	}
+
+	for ( Size i = 1; i <= base_doublets.size(); i++ ){
+		for ( Size j = 1; j <= base_doublets.size(); j++ ){
+			PoseOP pose = new Pose;
+			std::string const outfile  = base_doublets[ i ] + "_anti_anti_north_north_antiparallel_00001" + "_TO_" +
+				base_doublets[ j ] +"_anti_anti_north_north_antiparallel_00001.out";
+			SilentFilePoseInputStream stream( outfile );
+			stream.fill_pose( *pose, *rsd_set );
+			std::cout << "got it: " << pose->sequence() << std::endl;
+			base_pair_to_base_pair_pose[ pose->sequence() ] = pose;
+		}
+	}
+
+	Size nres = full_sequence.size();
+
+	// starting doublet
+	std::string sequence_start = full_sequence.substr(0,1) + full_sequence.substr(nres-1,1);
+	make_pose_from_sequence( pose, sequence_start,	*rsd_set );
+	FoldTree f( 2 );
+	f.new_jump(1,2,1);
+	f.set_jump_atoms( 1,
+										core::scoring::rna::chi1_torsion_atom( pose.residue(1) ),
+										core::scoring::rna::chi1_torsion_atom( pose.residue(2) ) );
+	pose.fold_tree( f );
+	PoseOP reference_pose_start = base_doublet_pose[ sequence_start ];
+
+	ResMap res_map;
+	res_map[1] = 1;
+	res_map[2] = 2;
+	std::cout << "SEQUENCE! " << pose.sequence() << std::endl;
+	std::cout << "SEQ_REF!  " << reference_pose_start->sequence() << std::endl;
+	std::cout << "BLAH!" << std::endl;
+	copy_dofs_match_atom_names( pose, *reference_pose_start, res_map );
+	std::cout << "PAST COPY_DOFS" << std::endl;
+
+	for ( Size n = 2; n <= nres/2; n++ ){
+		/////////////////////////////////////
+		//this will become 'add base pair'
+		/////////////////////////////////////
+		char const seq1 = full_sequence[n-1];
+		char const seq2 = full_sequence[nres-n];
+
+		ResidueOP rsd1( ResidueFactory::create_residue( *(rsd_set->aa_map( aa_from_oneletter_code( seq1 ) )[1] ) ) );
+		pose.append_polymer_residue_after_seqpos(   *rsd1, n - 1, true /*build_ideal_geometry*/ );
+
+		ResidueOP rsd2( ResidueFactory::create_residue( *(rsd_set->aa_map( aa_from_oneletter_code( seq2 ) )[1] ) ) );
+		pose.insert_residue_by_jump( *rsd2, n+1, n,
+																 core::scoring::rna::chi1_torsion_atom( *rsd2 ),
+																 core::scoring::rna::chi1_torsion_atom( *rsd1 ) );
+
+
+		std::string base_pair_to_base_pair_seq = full_sequence.substr( n-2, 1)	+ full_sequence.substr(n-1,1)
+			+ full_sequence.substr(nres-n,1) + full_sequence.substr(nres-n+1,1);
+		PoseOP reference_pose = base_pair_to_base_pair_pose[ base_pair_to_base_pair_seq ];
+
+		res_map.clear();
+		res_map[ n-1 ] = 1;
+		res_map[ n   ] = 2;
+		res_map[ n+1 ] = 3;
+		res_map[ n+2 ] = 4;
+
+		std::cout << "SEQUENCE! " << std::endl;
+		std::cout << "SEQ!    " << pose.sequence() << std::endl;
+		std::cout << "BPSEQ!  " << base_pair_to_base_pair_seq << std::endl;
+		std::cout << "REF_SEQ " << reference_pose->sequence() << std::endl;
+
+		copy_dofs_match_atom_names( pose, *reference_pose, res_map );
+	}
+
+	pose.dump_pdb( "BLAH.pdb" );
 
 }
 
@@ -460,15 +600,19 @@ void*
 my_main( void* )
 {
 
-	using namespace basic::options;
+	using namespace core::options;
 
 	if ( option[ build_helix_test ] ){
-		rna_build_helix_test();
+		rna_build_helix_test_OLD();
+	} else if ( option[ build_helix_precompute ] ){
+		rna_build_helix_test_precompute();
 	}	else if ( option[ all_combinations ] ){
 			rna_assemble_all_combinations_test();
 	} else {
 		rna_assemble_test();
 	}
+
+	protocols::viewer::clear_conformation_viewers();
 	exit( 0 );
 
 }
@@ -478,10 +622,11 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-	using namespace basic::options;
+	using namespace core::options;
 
 	//Uh, options?
 	NEW_OPT( build_helix_test, "build_helix_test", false );
+	NEW_OPT( build_helix_precompute, "build_helix_test_precompute", false );
 	NEW_OPT( minimize, "minimize", false );
 	NEW_OPT( params_file, "Input file for pairings", "default.prm" );
 	NEW_OPT( seq, "Input sequence", "" );
@@ -501,5 +646,6 @@ main( int argc, char * argv [] )
 	////////////////////////////////////////////////////////////////////////////
 
 	protocols::viewer::viewer_main( my_main );
+
 
 }

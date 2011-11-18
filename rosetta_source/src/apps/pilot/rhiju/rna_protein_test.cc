@@ -21,7 +21,7 @@
 // AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
 // AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 // AUTO-REMOVED #include <core/chemical/VariantType.hh>
-// AUTO-REMOVED
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 // AUTO-REMOVED #include <core/sequence/util.hh>
@@ -60,17 +60,17 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-// AUTO-REMOVED #include <basic/options/util.hh>
+#include <core/options/option.hh>
+#include <core/options/after_opts.hh>
+// AUTO-REMOVED #include <core/options/util.hh>
 
-#include <basic/options/option_macros.hh>
+#include <core/options/option_macros.hh>
 
 #include <core/pose/Pose.hh>
 
-// AUTO-REMOVED #include <basic/basic.hh>
+// AUTO-REMOVED #include <core/util/basic.hh>
 
-// AUTO-REMOVED #include <basic/database/open.hh>
+// AUTO-REMOVED #include <core/io/database/open.hh>
 
 
 #include <devel/init.hh>
@@ -105,16 +105,15 @@
 
 //silly using/typedef
 
-#include <basic/Tracer.hh>
-using basic::T;
+#include <core/util/Tracer.hh>
+using core::util::T;
 
 // option key includes
 
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <core/options/keys/out.OptionKeys.gen.hh>
+#include <core/options/keys/in.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <core/import_pose/import_pose.hh>
 #include <core/io/atom_tree_diffs/atom_tree_diff.hh>
 
 //Auto using namespaces
@@ -123,12 +122,12 @@ namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUT
 
 
 
-using basic::Error;
-using basic::Warning;
+using core::util::Error;
+using core::util::Warning;
 
 using namespace core;
 using namespace protocols;
-using namespace basic::options::OptionKeys;
+using namespace core::options::OptionKeys;
 
 using utility::vector1;
 
@@ -155,8 +154,8 @@ void
 rna_protein_repack_test()
 {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 
@@ -166,7 +165,7 @@ rna_protein_repack_test()
 
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];
-	core::import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+	io::pdb::pose_from_pdb( pose, *rsd_set, pdb_file );
 
 	dump_pdb( pose, "start.pdb");
 
@@ -196,8 +195,8 @@ void
 rna_protein_prepack_test()
 {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 
@@ -207,7 +206,7 @@ rna_protein_prepack_test()
 
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];
-	core::import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+	io::pdb::pose_from_pdb( pose, *rsd_set, pdb_file );
 
 	dump_pdb( pose, "start.pdb");
 
@@ -280,7 +279,7 @@ pack_interface( pose::Pose & pose, scoring::ScoreFunction & scorefxn, ObjexxFCL:
 	kinematics::FoldTree f_save = pose.fold_tree();
 
 	kinematics::FoldTree f ( nres );
-	if ( basic::options::option[ capri15 ] ) f.new_jump( 102+10,284+10,283+10 );
+	if ( options::option[ capri15 ] ) f.new_jump( 102+10,284+10,283+10 );
 	pose.fold_tree( f );
 
 	std::cout << "Packing residues: " ;
@@ -309,7 +308,7 @@ create_random_pose( pose::Pose & pose ){
 	using namespace protocols::moves;
 
 	Partner p( partner_downstream );
-	if ( basic::options::option[ capri15 ] ) p = partner_upstream; //Ooops, need RNA before protein/SAM.
+	if ( options::option[ capri15 ] ) p = partner_upstream; //Ooops, need RNA before protein/SAM.
 	RigidBodyRandomizeMover mover( pose, 1 /* rb_jump_*/ ,  p );
 	mover.apply( pose );
 
@@ -320,7 +319,7 @@ create_random_pose( pose::Pose & pose ){
 
 	// Keep jump atoms close, within some Gaussian sphere.
 	Real trans_sigma = 4.0;
-	if ( basic::options::option[capri15] ) trans_sigma = 3.0;
+	if ( options::option[capri15] ) trans_sigma = 3.0;
 	//	RigidBodyPerturbMoverOP rb_mover = new RigidBodyPerturbMover(
 	//																															 pose, 1 /*jump_num*/, 0.0 /*rot*/, trans_sigma );
 	//	rb_mover->apply( pose );
@@ -397,8 +396,8 @@ check_protein_rna_clash( pose::Pose const & pose, ObjexxFCL::FArray1D< bool > & 
 void
 rna_protein_rb_test(){
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 
@@ -406,7 +405,7 @@ rna_protein_rb_test(){
 
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];
-	core::import_pose::pose_from_pdb( pose, pdb_file );
+	io::pdb::pose_from_pdb( pose, pdb_file );
 
 	Size const nres = pose.total_residue();
 
@@ -474,7 +473,7 @@ rna_protein_rb_test(){
 	//  hey, this probably goes well in the job distributor? anyway.
 	pose::Pose native_pose;
 	bool const use_native = option[in::file::native].active();
-	if (use_native) 	core::import_pose::pose_from_pdb( native_pose, option( in::file::native ) );
+	if (use_native) 	io::pdb::pose_from_pdb( native_pose, option( in::file::native ) );
 
 	////////////////////////////////////////////////////////////////////
 	// MAIN LOOP
@@ -682,15 +681,15 @@ check_oxygen_contact_and_output( conformation::Residue const & rsd1,
 void
 rna_protein_pdbstats_test(){
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 
 	//Should make this a loop over several pdb files.
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];
-	core::import_pose::pose_from_pdb( pose, pdb_file );
+	io::pdb::pose_from_pdb( pose, pdb_file );
 
 	Size const nres = pose.total_residue();
 
@@ -795,8 +794,8 @@ juke_sam_test(){
 
 	using namespace core::conformation;
 	using namespace core::kinematics;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
@@ -810,7 +809,7 @@ juke_sam_test(){
 	for (Size n = 1; n <= pdb_files.size(); n++ ){
 
 		std::string const pdb_file = pdb_files[n];
-		core::import_pose::pose_from_pdb( pose, pdb_file );
+		io::pdb::pose_from_pdb( pose, pdb_file );
 
 		Size const nres = pose.total_residue();
 
@@ -953,7 +952,7 @@ juke_sam_test(){
 int
 main( int argc, char * argv [] )
 {
-	using namespace basic::options;
+	using namespace core::options;
 
 	//Uh, options?
 	NEW_OPT( repack_test, "Test repack with RNA/protein system", false );

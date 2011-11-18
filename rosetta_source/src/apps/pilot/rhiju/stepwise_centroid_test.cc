@@ -30,7 +30,7 @@
 #include <core/chemical/ResidueSelector.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/VariantType.hh>
-
+#include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 #include <core/sequence/util.hh>
@@ -54,6 +54,7 @@
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/id/AtomID_Map.hh>
+#include <core/id/AtomID_Map.Pose.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/kinematics/AtomTree.hh>
@@ -93,26 +94,26 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/util.hh>
+#include <core/options/option.hh>
+#include <core/options/after_opts.hh>
+#include <core/options/util.hh>
 
-#include <basic/options/option_macros.hh>
+#include <core/options/option_macros.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
-#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
-#include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableString.hh>
+#include <core/io/pose_stream/PoseInputStream.hh>
+#include <core/io/pose_stream/PoseInputStream.fwd.hh>
+#include <core/io/pose_stream/SilentFilePoseInputStream.hh>
+#include <core/io/pose_stream/PDBPoseInputStream.hh>
+#include <core/util/datacache/BasicDataCache.hh>
+#include <core/util/datacache/CacheableString.hh>
 
-#include <basic/basic.hh>
+#include <core/util/basic.hh>
 
-#include <basic/database/open.hh>
+#include <core/io/database/open.hh>
 
 
 #include <core/init.hh>
@@ -151,30 +152,25 @@
 
 //silly using/typedef
 
-#include <basic/Tracer.hh>
-using basic::T;
+#include <core/util/Tracer.hh>
+using core::util::T;
 
 // option key includes
 
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/cluster.OptionKeys.gen.hh>
-#include <basic/options/keys/abinitio.OptionKeys.gen.hh>
-#include <basic/options/keys/frags.OptionKeys.gen.hh>
-
-//Auto Headers
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/annotated_sequence.hh>
+#include <core/options/keys/out.OptionKeys.gen.hh>
+#include <core/options/keys/in.OptionKeys.gen.hh>
+#include <core/options/keys/score.OptionKeys.gen.hh>
+#include <core/options/keys/cluster.OptionKeys.gen.hh>
+#include <core/options/keys/abinitio.OptionKeys.gen.hh>
+#include <core/options/keys/frags.OptionKeys.gen.hh>
 
 
-
-using basic::Error;
-using basic::Warning;
+using core::util::Error;
+using core::util::Warning;
 
 using namespace core;
 using namespace protocols;
-using namespace basic::options::OptionKeys;
+using namespace core::options::OptionKeys;
 
 using utility::vector1;
 
@@ -427,15 +423,15 @@ void
 rebuild_centroid_test()
 {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
 	using namespace core::io::silent;
 	using namespace core::pose;
-	using namespace core::import_pose::pose_stream;
+	using namespace core::io::pose_stream;
 	using namespace core::fragment;
 
 	////////////////////////////////////////////////////
@@ -463,7 +459,7 @@ rebuild_centroid_test()
 	if (option[ in::file::native ].user() ) {
 		native_pose = PoseOP( new Pose );
 		std::string native_pdb_file  = option[ in::file::native ];
-		core::import_pose::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
+		io::pdb::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
 		native_exists = true;
 		if ( min_res_ > 0 ) slice_pdb( *native_pose, min_res_, max_res_ );
 		//		native_pose->dump_pdb( "NATIVE.pdb" );
@@ -522,7 +518,7 @@ rebuild_centroid_test()
 	///////////////////////////////////
 	// pose initialize.
 	Pose pose;
-	core::pose::make_pose_from_sequence( pose, desired_sequence, *rsd_set, false /*auto_termini*/);
+	make_pose_from_sequence( pose, desired_sequence, *rsd_set, false /*auto_termini*/);
 
 	// make extended chain
 	for ( Size pos = 1; pos <= pose.total_residue(); pos++ ) {
@@ -539,7 +535,7 @@ rebuild_centroid_test()
 	ConstraintSetOP cst_set;
 	if ( option[ cst_file ].user() ) {
 		Pose full_pose; /* Need to make this full_pose for constraint machinery atom ID checking */
-		core::pose::make_pose_from_sequence( full_pose, desired_sequence_full, *rsd_set, false /*auto_termini*/);
+		make_pose_from_sequence( full_pose, desired_sequence_full, *rsd_set, false /*auto_termini*/);
 		cst_set = ConstraintIO::get_instance()->read_constraints( option[cst_file], new ConstraintSet, full_pose );
 		if ( min_res_ > 0 ) cst_set = constraint_set_slice( cst_set, min_res_, max_res_ );
 		scorefxn->set_weight( atom_pair_constraint, 1.0 );
@@ -646,8 +642,8 @@ rebuild_centroid_test()
 void
 cluster_outfile_test(){
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 
 	utility::vector1< std::string > const silent_files_in( option[ in::file::silent ]() );
 	protocols::swa::StepWiseClusterer stepwise_clusterer( silent_files_in );
@@ -675,7 +671,7 @@ void*
 my_main( void* )
 {
 
-	using namespace basic::options;
+	using namespace core::options;
 
 	if ( option[ cluster_test ] ){
 		cluster_outfile_test();
@@ -690,7 +686,7 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-	using namespace basic::options;
+	using namespace core::options;
 
 	//Uh, options?
 	NEW_OPT( start_from_scratch, "start from scratch", false );

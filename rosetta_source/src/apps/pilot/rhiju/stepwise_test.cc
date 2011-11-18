@@ -14,8 +14,8 @@
 // libRosetta headers
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
-#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
+#include <core/scoring/dunbrack/SingleResidueDunbrackLibrary.hh>
+#include <core/scoring/dunbrack/DunbrackRotamer.hh>
 #include <core/scoring/Energies.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -26,7 +26,7 @@
 #include <core/chemical/ResidueSelector.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/VariantType.hh>
-
+#include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 #include <core/sequence/util.hh>
@@ -50,6 +50,7 @@
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/id/AtomID_Map.hh>
+#include <core/id/AtomID_Map.Pose.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/kinematics/AtomTree.hh>
@@ -60,15 +61,15 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/RigidBodyMover.hh>
 
-//StepWise!
-#include <protocols/swa/StepWiseFilterer.hh>
+//StepWiseProtein!
 #include <protocols/swa/StepWiseClusterer.hh>
-#include <protocols/swa/StepWisePoseMinimizer.hh>
-#include <protocols/swa/StepWisePoseSetup.hh>
-#include <protocols/swa/StepWiseScreener.hh>
-#include <protocols/swa/StepWiseUtil.hh>
-#include <protocols/swa/StepWiseResidueSampler.hh>
-#include <protocols/swa/MainChainTorsionSet.hh>
+#include <protocols/swa/protein/StepWiseProteinFilterer.hh>
+#include <protocols/swa/protein/StepWiseProteinPoseMinimizer.hh>
+#include <protocols/swa/protein/StepWiseProteinPoseSetup.hh>
+#include <protocols/swa/protein/StepWiseProteinScreener.hh>
+#include <protocols/swa/protein/StepWiseProteinUtil.hh>
+#include <protocols/swa/protein/StepWiseProteinResidueSampler.hh>
+#include <protocols/swa/protein/MainChainTorsionSet.hh>
 
 //clustering
 #include <protocols/cluster/cluster.hh>
@@ -90,26 +91,31 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/util.hh>
+#include <core/options/option.hh>
+#include <core/options/after_opts.hh>
+#include <core/options/util.hh>
 
-#include <basic/options/option_macros.hh>
+#include <core/options/option_macros.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
-#include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
-#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableString.hh>
+#include <core/io/pose_stream/PoseInputStream.hh>
+#include <core/io/pose_stream/PoseInputStream.fwd.hh>
+#include <core/io/pose_stream/PDBPoseInputStream.hh>
+#include <core/io/pose_stream/SilentFilePoseInputStream.hh>
+#include <core/util/datacache/BasicDataCache.hh>
+#include <core/util/datacache/CacheableString.hh>
 
-#include <basic/basic.hh>
+#include <core/util/basic.hh>
 
-#include <basic/database/open.hh>
+#include <core/io/database/open.hh>
+////
+#include <core/scoring/etable/Etable.hh>
+#include <core/scoring/etable/count_pair/CountPairFunction.hh>
+#include <core/scoring/etable/count_pair/CountPairFactory.hh>
 
 
 #include <core/init.hh>
@@ -149,30 +155,23 @@
 
 //silly using/typedef
 
-#include <basic/Tracer.hh>
-using basic::T;
+#include <core/util/Tracer.hh>
+using core::util::T;
 
 // option key includes
 
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/cluster.OptionKeys.gen.hh>
-
-//Auto Headers
-#include <core/import_pose/import_pose.hh>
-#include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
+#include <core/options/keys/out.OptionKeys.gen.hh>
+#include <core/options/keys/in.OptionKeys.gen.hh>
+#include <core/options/keys/score.OptionKeys.gen.hh>
+#include <core/options/keys/cluster.OptionKeys.gen.hh>
 
 
-
-using basic::Error;
-using basic::Warning;
+using core::util::Error;
+using core::util::Warning;
 
 using namespace core;
 using namespace protocols;
-using namespace basic::options::OptionKeys;
+using namespace core::options::OptionKeys;
 
 using utility::vector1;
 
@@ -194,6 +193,7 @@ OPT_KEY( Boolean, make_ideal_helix )
 OPT_KEY( Boolean, cluster_test )
 OPT_KEY( Boolean, cluster_by_all_atom_rmsd )
 OPT_KEY( Boolean, sample_trp )
+OPT_KEY( Boolean, sample_trp_tyr )
 OPT_KEY( Boolean, score12_plot )
 OPT_KEY( Boolean, filter_native_big_bins )
 OPT_KEY( Boolean, rename_tags )
@@ -208,6 +208,8 @@ OPT_KEY( Boolean, no_sample_junction )
 OPT_KEY( Boolean, entropy_test )
 OPT_KEY( Boolean, centroid_output )
 OPT_KEY( Boolean, ghost_loops )
+OPT_KEY( Boolean, trans_omega )
+OPT_KEY( Boolean, color_by_lj )
 OPT_KEY( Real, filter_rmsd )
 OPT_KEY( Real, score_diff_cut )
 OPT_KEY( Real, centroid_score_diff_cut )
@@ -216,6 +218,7 @@ OPT_KEY( Integer, start_res )
 OPT_KEY( Integer, end_res )
 OPT_KEY( Integer, n_sample )
 OPT_KEY( Integer, nstruct_centroid )
+OPT_KEY( IntegerVector, sample_res )
 OPT_KEY( String, pack_weights )
 OPT_KEY( String, cst_file )
 OPT_KEY( String, centroid_weights )
@@ -245,19 +248,20 @@ pdbslice( core::pose::Pose & pose,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// now deprecated!!!??
 void
 sample_rama_test()
 {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::io::silent;
 	using namespace ObjexxFCL::fmt;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace protocols::swa;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
+	using namespace protocols::swa::protein;
 
 	// Read in protein
 	ResidueTypeSetCAP rsd_set;
@@ -268,7 +272,7 @@ sample_rama_test()
 	pose::Pose & pose( *pose_op );
 
 	std::string pdb_file  = option[ in::file::s ][1];
-	core::import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+	io::pdb::pose_from_pdb( pose, *rsd_set, pdb_file );
 
 	Size n1 = option[ sample_residue ]();
 	if ( option[ start_res ].user() ){
@@ -285,7 +289,7 @@ sample_rama_test()
 
 	pose::PoseOP native_pose = pose_op;
 	pose::Pose fa_pose = pose;
-	core::util::switch_to_residue_type_set( pose, CENTROID );
+	switch_to_residue_type_set( pose, CENTROID );
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
@@ -317,7 +321,7 @@ sample_rama_test()
 
 	// Can we recreate the pose from scratch?
 	if ( option[ make_ideal_helix ]() ) {
-		core::pose::make_pose_from_sequence( pose, pose.sequence(), *rsd_set );
+		make_pose_from_sequence( pose, pose.sequence(), *rsd_set );
 		for ( Size i = 1; i <= pose.total_residue(); i++ ) {
 			pose.set_phi( i, -70.0 );
 			pose.set_psi( i, -40.0 );
@@ -327,22 +331,27 @@ sample_rama_test()
 
 	pose.dump_pdb( "start.pdb" );
 
-	StepWiseScreener stepwise_screener( moving_residues );
-	stepwise_screener.set_rmsd_cutoff( option[ filter_rmsd ]() );
-	stepwise_screener.set_n_sample( option[ n_sample ]() );
-	stepwise_screener.set_native_pose( native_pose );
+	///////////////
+	///////////////
+	// DEPRECATED!!
+	///////////////
+	///////////////
+// 	StepWiseProteinScreener stepwise_screener( moving_residues );
+// 	stepwise_screener.set_rmsd_cutoff( option[ filter_rmsd ]() );
+// 	stepwise_screener.set_n_sample( option[ n_sample ]() );
+// 	stepwise_screener.set_native_pose( native_pose );
 
-	stepwise_screener.apply( pose );
-	utility::vector1< MainChainTorsionSetList >const & main_chain_torsion_set_lists
-		= stepwise_screener.main_chain_torsion_set_lists();
+// 	stepwise_screener.apply( pose );
+// 	utility::vector1< MainChainTorsionSetList >const & main_chain_torsion_set_lists
+// 		= stepwise_screener.main_chain_torsion_set_lists();
 
-	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	StepWiseResidueSampler stepwise_residue_sampler( moving_residues, main_chain_torsion_set_lists );
-	ScoreFunctionOP pack_scorefxn = ScoreFunctionFactory::create_score_function( option[pack_weights] );
-	stepwise_residue_sampler.set_native_pose( native_pose );
-	stepwise_residue_sampler.set_scorefxn( pack_scorefxn );
-	stepwise_residue_sampler.set_silent_file( silent_file );
-	stepwise_residue_sampler.apply( pose );
+// 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// 	StepWiseProteinResidueSampler stepwise_residue_sampler( moving_residues, main_chain_torsion_set_lists );
+// 	ScoreFunctionOP pack_scorefxn = ScoreFunctionFactory::create_score_function( option[pack_weights] );
+// 	stepwise_residue_sampler.set_native_pose( native_pose );
+// 	stepwise_residue_sampler.set_scorefxn( pack_scorefxn );
+// 	stepwise_residue_sampler.set_silent_file( silent_file );
+// 	stepwise_residue_sampler.apply( pose );
 
 	std::cout << "--- DONE! --" << std::endl;
 
@@ -355,16 +364,16 @@ void
 minimizer_test()
 {
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::scoring;
 	using namespace core::kinematics;
 	using namespace core::optimization;
 	using namespace core::io::silent;
-	using namespace core::import_pose::pose_stream;
+	using namespace core::io::pose_stream;
 	using namespace core::pose;
-	using namespace protocols::swa;
+	using namespace protocols::swa::protein;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
@@ -374,7 +383,7 @@ minimizer_test()
 	if ( option[ in::file::native ].user() ) {
 		std::string native_pdb_file  = option[ in::file::native ];
 		native_pose_op = new Pose;
-		core::import_pose::pose_from_pdb( *native_pose_op, *rsd_set, native_pdb_file );
+		io::pdb::pose_from_pdb( *native_pose_op, *rsd_set, native_pdb_file );
 	}
 
 
@@ -396,12 +405,23 @@ minimizer_test()
 	if ( option[ in::file::s].user() ) {
 
 		std::string pdb_file  = option[ in::file::s ][1];
-		core::import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+		io::pdb::pose_from_pdb( pose, *rsd_set, pdb_file );
+
+		if ( option[ trans_omega ]() ) for ( Size n = 1; n <= pose.total_residue(); n++ ) pose.set_omega( n, 180.0 );
+
+		(*scorefxn)( pose );
+		scorefxn->show( std::cout, pose );
+
+		exit( 0 );
 
 		minimizer.run( pose, mm, *scorefxn, options );
 
+		(*scorefxn)( pose );
+		scorefxn->show( std::cout, pose );
+
 		std::string const out_file =  "minimize.pdb";
 		dump_pdb( pose, out_file );
+
 
 	} else {
 
@@ -415,10 +435,16 @@ minimizer_test()
 
 			input->fill_pose( pose, *rsd_set );
 
+			(*scorefxn)( pose );
+			scorefxn->show( std::cout, pose );
+
+			exit( 0 );
+
 			minimizer.run( pose, mm, *scorefxn, options );
 
 			//			SilentStructOP s = new BinaryProteinSilentStruct( pose, tag_from_pose( pose ) );
 			//			silent_file_data.write_silent_struct( *s, silent_file_out, false /*write score only*/ );
+
 			output_silent_struct( pose, native_pose_op, silent_file_out, tag_from_pose( pose ) );
 
 		}
@@ -439,8 +465,8 @@ repack_test(){
 	using namespace core::chemical;
 	using namespace core::optimization;
 	using namespace core::pose;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 
 
 	ResidueTypeSetCAP rsd_set;
@@ -448,7 +474,7 @@ repack_test(){
 	//rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( CENTROID );
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];
-	core::import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+	io::pdb::pose_from_pdb( pose, *rsd_set, pdb_file );
 
 	pack::task::PackerTaskOP task( pack::task::TaskFactory::create_packer_task( pose ));
 	task->initialize_from_command_line();
@@ -493,8 +519,8 @@ sample_trp_test()
 	using namespace core::chemical;
 	using namespace core::optimization;
 	using namespace core::pose;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace protocols::moves;
 	using namespace core::pack;
 	using namespace core::pack::task;
@@ -506,7 +532,7 @@ sample_trp_test()
 
 	pose::Pose pose;
 	std::string pdb_file  = option[ in::file::s ][1];
-	core::import_pose::pose_from_pdb( pose, *rsd_set, pdb_file );
+	io::pdb::pose_from_pdb( pose, *rsd_set, pdb_file );
 
 	Size n = option[ sample_residue ](); //tryptophan.
 
@@ -544,7 +570,7 @@ sample_trp_test()
 
 	PoseOP native_pose_op = new Pose;
 	std::string native_pdb_file  = option[ in::file::native ];
-	core::import_pose::pose_from_pdb( *native_pose_op, *rsd_set, native_pdb_file );
+	io::pdb::pose_from_pdb( *native_pose_op, *rsd_set, native_pdb_file );
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
@@ -555,17 +581,228 @@ sample_trp_test()
 	for (Size i1 = 1; i1 <= N_SAMPLE; i1++ ) {
 		for (Size j1 = 1; j1 <= N_SAMPLE; j1++ ) {
 
-			pose.set_chi( 1, n, protocols::swa::get_rotamer_angle( i1, N_SAMPLE ) );
-			pose.set_chi( 2, n, protocols::swa::get_rotamer_angle( j1, N_SAMPLE ) );
+			pose.set_chi( 1, n, protocols::swa::protein::get_rotamer_angle( i1, N_SAMPLE ) );
+			pose.set_chi( 2, n, protocols::swa::protein::get_rotamer_angle( j1, N_SAMPLE ) );
 			green_packer->apply( pose );
 
 			( *scorefxn )( pose );
 			setPoseExtraScores( pose, "trp_rms", get_sidechain_rmsd( pose, start_pose, n )  );
 			std::string const tag = "S_"+ lead_zero_string_of( ++count, 5 );
-			protocols::swa::output_silent_struct( pose, native_pose_op, silent_file, tag );
+			protocols::swa::protein::output_silent_struct( pose, native_pose_op, silent_file, tag );
 
 		}
 	}
+
+}
+
+
+///////////////////////////////////////////////////////////////////////
+void
+add_chi_tags( core::pose::Pose & pose, core::pose::Pose const & native_pose, Size const n_trp, Size const n_tyr ){
+
+	if ( pose.residue_type( n_trp ).nchi() > 1 ) {
+		setPoseExtraScores( pose, "trp_chi1", pose.chi( 1, n_trp ) );
+		setPoseExtraScores( pose, "trp_chi2", pose.chi( 2, n_trp ) );
+	} else {
+		setPoseExtraScores( pose, "trp_chi1", native_pose.chi( 1, n_trp) );
+		setPoseExtraScores( pose, "trp_chi2", native_pose.chi( 2, n_trp) );
+	}
+
+	if ( pose.residue_type( n_tyr ).nchi() > 1 ) {
+		setPoseExtraScores( pose, "tyr_chi1", pose.chi( 1, n_tyr ) );
+		setPoseExtraScores( pose, "tyr_chi2", pose.chi( 2, n_tyr ) );
+	} else {
+		setPoseExtraScores( pose, "tyr_chi1", native_pose.chi( 1, n_tyr) );
+		setPoseExtraScores( pose, "tyr_chi2", native_pose.chi( 2, n_tyr) );
+	}
+
+}
+
+///////////////////////////////////////////////////////////////////////
+void
+sample_trp_tyr_test()
+{
+
+	using namespace core::io::silent;
+	using namespace core::scoring;
+	using namespace core::chemical;
+	using namespace core::optimization;
+	using namespace core::pose;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
+	using namespace protocols::moves;
+	using namespace core::pack;
+	using namespace core::pack::task;
+	using namespace core::pack::task::operation;
+
+	ResidueTypeSetCAP rsd_set;
+	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+
+	pose::Pose pose, pose_trp_tyr, pose_trp, pose_tyr, pose_null, pose_input;
+	std::string pdb_file  = option[ in::file::s ][1];
+	io::pdb::pose_from_pdb( pose_input, *rsd_set, pdb_file );
+
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
+
+	//std::string const silent_file = option[ out::file::silent ]();
+	std::string const silent_file_trp_tyr = "sample_trp_tyr.out";
+	std::string const silent_file_trp     = "sample_trp.out";
+	std::string const silent_file_tyr     = "sample_tyr.out";
+	std::string const silent_file_null     = "sample_null.out";
+
+	// substitute everything except n1, n2 to ala/gly.
+	std::string const input_sequence = pose_input.sequence();
+	std::string new_sequence_trp_tyr, new_sequence_trp, new_sequence_tyr, new_sequence_null;
+	Size n_trp( 0 ), n_tyr(  0 );
+	std::map< Size, Size > res_map;
+
+	for (Size n = 1; n <= pose_input.total_residue(); n++ ){
+		res_map[ n ] = n;
+		if ( input_sequence[n-1] == 'W' ) {
+			n_trp = n;
+		} else if ( input_sequence[n-1] == 'Y' ) {
+			n_tyr = n;
+		} else if ( input_sequence[n-1] != 'G' ) {
+			new_sequence_trp_tyr += 'A'; continue;
+		}
+		new_sequence_trp_tyr += input_sequence[ n-1 ];
+	}
+
+	for (Size n = 1; n <= pose_input.total_residue(); n++ ){
+		if ( n == n_tyr )
+			new_sequence_trp += 'A';
+		else
+			new_sequence_trp += new_sequence_trp_tyr[ n-1 ];
+	}
+
+	for (Size n = 1; n <= pose_input.total_residue(); n++ ){
+		if ( n == n_trp )
+			new_sequence_tyr += 'A';
+		else
+			new_sequence_tyr += new_sequence_trp_tyr[ n-1 ];
+	}
+
+	for (Size n = 1; n <= pose_input.total_residue(); n++ ){
+		if ( n == n_trp || n == n_tyr )
+			new_sequence_null += 'A';
+		else
+			new_sequence_null += new_sequence_trp_tyr[ n-1 ];
+	}
+
+
+	std::cout << "Found trp and tyr at " << n_trp << " and " << n_tyr << std::endl;
+
+	make_pose_from_sequence( pose_trp_tyr, new_sequence_trp_tyr, *rsd_set );
+	make_pose_from_sequence( pose_trp, new_sequence_trp, *rsd_set );
+	make_pose_from_sequence( pose_tyr, new_sequence_tyr, *rsd_set );
+	make_pose_from_sequence( pose_null, new_sequence_null, *rsd_set );
+
+	std::cout << new_sequence_trp_tyr << std::endl;
+	std::cout << new_sequence_trp << std::endl;
+	std::cout << new_sequence_tyr << std::endl;
+	std::cout << new_sequence_null << std::endl;
+
+	copy_dofs_match_atom_names( pose_trp_tyr, pose_input, res_map );
+	copy_dofs_match_atom_names( pose_trp, pose_input, res_map );
+	copy_dofs_match_atom_names( pose_tyr, pose_input, res_map );
+	copy_dofs_match_atom_names( pose_null, pose_input, res_map );
+
+
+
+	ScoreFunctionOP scorefxn = getScoreFunction();
+
+	PoseOP start_pose_op;
+	//Pose & start_pose = *start_pose_op;
+	//start_pose.dump_pdb( "START.pdb" );
+
+	Pose native_pose = pose_input;
+
+	// no sampling -- just gly/ala
+	std::string silent_file = silent_file_null;
+	{
+		std::string tag = "S_0";
+		protocols::swa::protein::output_silent_struct( pose_null, start_pose_op, silent_file, tag );
+	}
+	pose = pose_null;
+	(*scorefxn)( pose );
+	scorefxn->show( pose );
+
+	Size const N_SAMPLE( option[ n_sample]() );
+	Size count( 0 );
+
+	//trp only
+	pose = pose_trp;
+	pose.dump_pdb( "TRP.pdb" );
+	(*scorefxn)( pose );
+	scorefxn->show( pose );
+	silent_file = silent_file_trp;
+	for (Size i1 = 1; i1 <= N_SAMPLE; i1++ ) {
+		for (Size j1 = 1; j1 <= N_SAMPLE; j1++ ) {
+
+			pose.set_chi( 1, n_trp, protocols::swa::protein::get_rotamer_angle( i1, N_SAMPLE ) );
+			pose.set_chi( 2, n_trp, protocols::swa::protein::get_rotamer_angle( j1, N_SAMPLE ) );
+
+			( *scorefxn )( pose );
+			add_chi_tags( pose, native_pose, n_trp, n_tyr );
+			std::string const tag = "S_"+ lead_zero_string_of( ++count, 5 );
+			protocols::swa::protein::output_silent_struct( pose, start_pose_op, silent_file, tag );
+
+		}
+	}
+
+	//tyr only
+	count = 0;
+	pose = pose_tyr;
+	(*scorefxn)( pose );
+	scorefxn->show( pose );
+	silent_file = silent_file_tyr;
+	for (Size i1 = 1; i1 <= N_SAMPLE; i1++ ) {
+		for (Size j1 = 1; j1 <= N_SAMPLE; j1++ ) {
+
+			pose.set_chi( 1, n_tyr, protocols::swa::protein::get_rotamer_angle( i1, N_SAMPLE ) );
+			pose.set_chi( 2, n_tyr, protocols::swa::protein::get_rotamer_angle( j1, N_SAMPLE ) );
+
+			( *scorefxn )( pose );
+			add_chi_tags( pose, native_pose, n_trp, n_tyr );
+			std::string const tag = "S_"+ lead_zero_string_of( ++count, 5 );
+			protocols::swa::protein::output_silent_struct( pose, start_pose_op, silent_file, tag );
+
+		}
+	}
+
+
+	//trp and tyr
+	count = 0;
+	pose = pose_trp_tyr;
+	(*scorefxn)( pose );
+	scorefxn->show( pose );
+
+	return; // early exit.
+	silent_file = silent_file_trp_tyr;
+	for (Size i1 = 1; i1 <= N_SAMPLE; i1++ ) {
+		for (Size j1 = 1; j1 <= N_SAMPLE; j1++ ) {
+
+			pose.set_chi( 1, n_trp, protocols::swa::protein::get_rotamer_angle( i1, N_SAMPLE ) );
+			pose.set_chi( 2, n_trp, protocols::swa::protein::get_rotamer_angle( j1, N_SAMPLE ) );
+
+			for (Size p1 = 1; p1 <= N_SAMPLE; p1++ ) {
+				for (Size q1 = 1; q1 <= N_SAMPLE; q1++ ) {
+
+					pose.set_chi( 1, n_tyr, protocols::swa::protein::get_rotamer_angle( p1, N_SAMPLE ) );
+					pose.set_chi( 2, n_tyr, protocols::swa::protein::get_rotamer_angle( q1, N_SAMPLE ) );
+
+					( *scorefxn )( pose );
+					add_chi_tags( pose, native_pose, n_trp, n_tyr );
+					std::string const tag = "S_"+ lead_zero_string_of( ++count, 5 );
+					protocols::swa::protein::output_silent_struct( pose, start_pose_op, silent_file, tag );
+
+				}
+			}
+
+		}
+	}
+
+	return;
 
 }
 
@@ -588,8 +825,8 @@ get_file_name( std::string const & silent_file, std::string const & tag )
 void
 rebuild_test(){
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::scoring;
@@ -597,7 +834,7 @@ rebuild_test(){
 	using namespace core::io::silent;
 	using namespace core::pose;
 	using namespace core::pack;
-	using namespace protocols::swa;
+	using namespace protocols::swa::protein;
 
 	// A lot of the following might be better handled by a JobDistributor!?
 
@@ -617,7 +854,7 @@ rebuild_test(){
 	if (option[ in::file::native ].user() ) {
 		native_pose = PoseOP( new Pose );
 		std::string native_pdb_file  = option[ in::file::native ];
-		core::import_pose::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
+		io::pdb::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
 		native_exists = true;
 	}
 
@@ -644,7 +881,7 @@ rebuild_test(){
 	////////////////////////////////////////////////////
 	// Setup
 	////////////////////////////////////////////////////
-	StepWisePoseSetup stepwise_pose_setup( desired_sequence, start_tags /*could be empty vector*/, silent_files_in);
+	StepWiseProteinPoseSetup stepwise_pose_setup( desired_sequence, start_tags /*could be empty vector*/, silent_files_in);
 	if ( option[ n_terminus ] ) stepwise_pose_setup.set_n_terminus( true );
 	if ( option[ c_terminus ] ) stepwise_pose_setup.set_c_terminus( true );
 	if ( option[ add_peptide_plane ] ) stepwise_pose_setup.set_add_peptide_plane( true );
@@ -653,7 +890,7 @@ rebuild_test(){
 	stepwise_pose_setup.apply( pose );
 	utility::vector1 < Size > moving_residues = stepwise_pose_setup.moving_residues();
 
-	//pose.dump_pdb( "START.pdb" );
+	pose.dump_pdb( "after_setup.pdb" );
 
 	// Constraints...
 	ConstraintSetOP cst_set;
@@ -672,94 +909,96 @@ rebuild_test(){
 	// Screen that predefines (phi, psi, omega)  for moving residues
 	// --> input for later mover carries out all the green packer moves.
 	/////////////////////////////////////////////
-	ScoreFunctionOP centroid_scorefxn = ScoreFunctionFactory::create_score_function( option[centroid_weights] );
-	StepWiseScreener stepwise_screener( moving_residues );
-	stepwise_screener.set_rmsd_cutoff( option[ filter_rmsd ]() );
-	stepwise_screener.set_n_sample( option[ n_sample ]() );
-	stepwise_screener.set_filter_native_big_bins( option[ filter_native_big_bins ]  );
-	if (native_exists) stepwise_screener.set_native_pose( native_pose );
-	if ( option[ centroid_output ] ) stepwise_screener.set_silent_file( silent_file_centroid );
-	if ( option[ centroid_screen] ) {
-		stepwise_screener.set_centroid_screen( true );
-		stepwise_screener.set_centroid_score_diff_cut( option[ centroid_score_diff_cut ] );
+// 	ScoreFunctionOP centroid_scorefxn = ScoreFunctionFactory::create_score_function( option[centroid_weights] );
+// 	StepWiseProteinScreener stepwise_screener( moving_residues );
+// 	stepwise_screener.set_rmsd_cutoff( option[ filter_rmsd ]() );
+// 	stepwise_screener.set_n_sample( option[ n_sample ]() );
+// 	stepwise_screener.set_filter_native_big_bins( option[ filter_native_big_bins ]  );
+// 	if (native_exists) stepwise_screener.set_native_pose( native_pose );
+// 	if ( option[ centroid_output ] ) stepwise_screener.set_silent_file( silent_file_centroid );
+// 	if ( option[ centroid_screen] ) {
+// 		stepwise_screener.set_centroid_screen( true );
+// 		stepwise_screener.set_centroid_score_diff_cut( option[ centroid_score_diff_cut ] );
 
-		if ( option[ ghost_loops ] ){
-			// Trying a mode where loops are not included in scoring.
-			// the idea was to cut out poses where secondary structure elements
-			// are in contact -- energy less than a reference pose in which
-			// the secondary structure elements are really far apart.
-			stepwise_screener.set_ghost_loops( true );
-			stepwise_screener.set_centroid_score_diff_cut( 0.0 );
-			// if reference is "expanded", rg doesn't make sense.
-			centroid_scorefxn->set_weight( rg, 0.0 );
-			// disallow steric clashes beyond what it in expanded pose.
-			stepwise_screener.set_apply_vdw_cut( true );
-		}
+// 		if ( option[ ghost_loops ] ){
+// 			// Trying a mode where loops are not included in scoring.
+// 			// the idea was to cut out poses where secondary structure elements
+// 			// are in contact -- energy less than a reference pose in which
+// 			// the secondary structure elements are really far apart.
+// 			stepwise_screener.set_ghost_loops( true );
+// 			stepwise_screener.set_centroid_score_diff_cut( 0.0 );
+// 			// if reference is "expanded", rg doesn't make sense.
+// 			centroid_scorefxn->set_weight( rg, 0.0 );
+// 			// disallow steric clashes beyond what it in expanded pose.
+// 			stepwise_screener.set_apply_vdw_cut( true );
+// 		}
 
-		stepwise_screener.set_centroid_scorefxn( centroid_scorefxn );
-		stepwise_screener.set_nstruct_centroid( option[ nstruct_centroid ]() );
+// 		stepwise_screener.set_centroid_scorefxn( centroid_scorefxn );
+// 		stepwise_screener.set_nstruct_centroid( option[ nstruct_centroid ]() );
 
-	}
+// 	}
 
-	stepwise_screener.apply( pose );
+// 	stepwise_screener.apply( pose );
 
-	utility::vector1< MainChainTorsionSetList >const & main_chain_torsion_set_lists
-		= stepwise_screener.main_chain_torsion_set_lists();
+// 	pose.dump_pdb( "after_screen.pdb" );
 
-	//////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////
-	// StepWiseResidueSampler -- iterative and enumerative sampling
-	//   of backbone degrees of freedom.
-	//////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////
-	ScoreFunctionOP pack_scorefxn = ScoreFunctionFactory::create_score_function( option[pack_weights] );
-	if (pose.constraint_set()->has_constraints() )	pack_scorefxn->set_weight( atom_pair_constraint, 1.0 );
-	StepWiseResidueSampler stepwise_residue_sampler( moving_residues, main_chain_torsion_set_lists );
-	if (native_exists) stepwise_residue_sampler.set_native_pose( native_pose );
-	stepwise_residue_sampler.set_scorefxn( pack_scorefxn );
-	stepwise_residue_sampler.set_silent_file( silent_file_sample /*useful for checkpointing*/ );
-	stepwise_residue_sampler.apply( pose );
+// 	utility::vector1< MainChainTorsionSetList >const & main_chain_torsion_set_lists
+// 		= stepwise_screener.main_chain_torsion_set_lists();
+
+// 	//////////////////////////////////////////////////////////////////////////
+// 	//////////////////////////////////////////////////////////////////////////
+// 	// StepWiseProteinResidueSampler -- iterative and enumerative sampling
+// 	//   of backbone degrees of freedom.
+// 	//////////////////////////////////////////////////////////////////////////
+// 	//////////////////////////////////////////////////////////////////////////
+// 	ScoreFunctionOP pack_scorefxn = ScoreFunctionFactory::create_score_function( option[pack_weights] );
+// 	if (pose.constraint_set()->has_constraints() )	pack_scorefxn->set_weight( atom_pair_constraint, 1.0 );
+// 	StepWiseProteinResidueSampler stepwise_residue_sampler( moving_residues, main_chain_torsion_set_lists );
+// 	if (native_exists) stepwise_residue_sampler.set_native_pose( native_pose );
+// 	stepwise_residue_sampler.set_scorefxn( pack_scorefxn );
+// 	stepwise_residue_sampler.set_silent_file( silent_file_sample /*useful for checkpointing*/ );
+// 	stepwise_residue_sampler.apply( pose );
 
 
-	/////////////////////////////
-	// Cluster...
-	/////////////////////////////
-	// Have an option to read structure back in from disk?  may be useful for checkpointing.
-	// For now just take in silent structs prepared by the stepwise_residue_sampler.
-	StepWiseClusterer stepwise_clusterer(  stepwise_residue_sampler.silent_file_data() );
-	Size max_decoys( 400 );
-	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
-	stepwise_clusterer.set_max_decoys( max_decoys );
-	stepwise_clusterer.set_cluster_radius(	option[ OptionKeys::cluster::radius ]()	);
-	stepwise_clusterer.set_cluster_by_all_atom_rmsd( option[ cluster_by_all_atom_rmsd ] ); // false by default
-	stepwise_clusterer.set_rename_tags( true /*option[ rename_tags ]*/ );
-	stepwise_clusterer.cluster();
+// 	/////////////////////////////
+// 	// Cluster...
+// 	/////////////////////////////
+// 	// Have an option to read structure back in from disk?  may be useful for checkpointing.
+// 	// For now just take in silent structs prepared by the stepwise_residue_sampler.
+// 	protocols::swa::StepWiseClusterer stepwise_clusterer(  stepwise_residue_sampler.silent_file_data() );
+// 	Size max_decoys( 400 );
+// 	if ( option[ out::nstruct].user() )	 max_decoys =  option[ out::nstruct ];
+// 	stepwise_clusterer.set_max_decoys( max_decoys );
+// 	stepwise_clusterer.set_cluster_radius(	option[ OptionKeys::cluster::radius ]()	);
+// 	stepwise_clusterer.set_cluster_by_all_atom_rmsd( option[ cluster_by_all_atom_rmsd ] ); // false by default
+// 	stepwise_clusterer.set_rename_tags( true /*option[ rename_tags ]*/ );
+// 	stepwise_clusterer.cluster();
 
-		// Perhaps we should output decoys into a silent file at this point -- for checkpointing.
+// 		// Perhaps we should output decoys into a silent file at this point -- for checkpointing.
 
-	if ( option[ minimize ] ){
-		// Minimize...
-		PoseList minimize_pose_list = stepwise_clusterer.clustered_pose_list();
+// 	if ( option[ minimize ] ){
+// 		// Minimize...
+// 		PoseList minimize_pose_list = stepwise_clusterer.clustered_pose_list();
 
-		//StepWiseFilterer stepwise_filterer;
-		//		stepwise_filterer.set_final_number( option[ n_minimize ]()  );
-		//		stepwise_filterer.filter( pose_list, minimize_pose_list );
-		//		std::cout << "FILTER " << pose_list.size() << " " << minimize_pose_list.size() << std::endl;
+// 		//StepWiseProteinFilterer stepwise_filterer;
+// 		//		stepwise_filterer.set_final_number( option[ n_minimize ]()  );
+// 		//		stepwise_filterer.filter( pose_list, minimize_pose_list );
+// 		//		std::cout << "FILTER " << pose_list.size() << " " << minimize_pose_list.size() << std::endl;
 
-		StepWisePoseMinimizer stepwise_pose_minimizer( minimize_pose_list, moving_residues );
-    ScoreFunctionOP minimize_scorefxn( core::scoring::getScoreFunction() );
-		if (pose.constraint_set()->has_constraints() )	minimize_scorefxn->set_weight( atom_pair_constraint, 1.0 );
-		stepwise_pose_minimizer.set_scorefxn( minimize_scorefxn );
-		stepwise_pose_minimizer.set_silent_file( silent_file );
-		//stepwise_pose_minimizer.set_constraint_set( cst_set );
-		if (native_exists) stepwise_pose_minimizer.set_native_pose( native_pose );
+// 		StepWiseProteinPoseMinimizer stepwise_pose_minimizer( minimize_pose_list, moving_residues );
+//     ScoreFunctionOP minimize_scorefxn( core::scoring::getScoreFunction() );
+// 		if (pose.constraint_set()->has_constraints() )	minimize_scorefxn->set_weight( atom_pair_constraint, 1.0 );
+// 		stepwise_pose_minimizer.set_scorefxn( minimize_scorefxn );
+// 		stepwise_pose_minimizer.set_silent_file( silent_file );
+// 		//stepwise_pose_minimizer.set_constraint_set( cst_set );
+// 		if (native_exists) stepwise_pose_minimizer.set_native_pose( native_pose );
 
-		// also outputs to silent file.
-		stepwise_pose_minimizer.apply( pose );
+// 		// also outputs to silent file.
+// 		stepwise_pose_minimizer.apply( pose );
 
-	} else {
-		stepwise_clusterer.output_silent_file( silent_file );
-	}
+// 	} else {
+// 		stepwise_clusterer.output_silent_file( silent_file );
+// 	}
 
 	//	protocols::viewer::clear_conformation_viewers();
 }
@@ -776,11 +1015,11 @@ cluster_outfile_test_OLD(){
 	//eventually will allow for readin of several files, cluster across all of them.
 
 	using namespace core::scoring;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::io::silent;
 	using namespace protocols::cluster;
-	using namespace core::import_pose::pose_stream;
+	using namespace core::io::pose_stream;
 	using namespace core::chemical;
 
 	// setup residue types
@@ -805,7 +1044,7 @@ cluster_outfile_test_OLD(){
 
 	clustering->set_cluster_radius(		option[ OptionKeys::cluster::radius ]()	);
 
-	clustering->do_clustering( option[ OptionKeys::cluster::max_total_cluster ]() );
+	clustering->do_clustering();
 	clustering->do_redistribution();
 	clustering->sort_each_group_by_energy();
 	//	clustering->sort_groups_by_energy();
@@ -858,14 +1097,14 @@ cluster_outfile_test_OLD(){
 void
 peptide_plane_test(){
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::scoring;
 	using namespace core::scoring::constraints;
 	using namespace core::io::silent;
-	using namespace core::import_pose::pose_stream;
+	using namespace core::io::pose_stream;
 	using namespace core::pose;
 	using namespace core::pack;
 	using namespace core::id;
@@ -893,8 +1132,8 @@ peptide_plane_test(){
 void
 peptide_plane_test_OLD(){
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::scoring;
@@ -914,7 +1153,7 @@ peptide_plane_test_OLD(){
 	ScoreFunctionOP scorefxn( core::scoring::getScoreFunction() );
 
 	Pose pose;
-	core::pose::make_pose_from_sequence( pose, desired_sequence, *rsd_set, false /*auto_termini*/);
+	make_pose_from_sequence( pose, desired_sequence, *rsd_set, false /*auto_termini*/);
 	pose.set_chi( 1, 1, 60.0 );
 	pose.set_chi( 2, 1, 60.0 );
 
@@ -926,8 +1165,8 @@ peptide_plane_test_OLD(){
 	{
 		Pose termini_pose = pose;
 
-		core::pose::add_lower_terminus_type_to_pose_residue( termini_pose, 1   );
-		core::pose::add_upper_terminus_type_to_pose_residue( termini_pose, termini_pose.total_residue()   );
+		chemical::add_lower_terminus_type_to_pose_residue( termini_pose, 1   );
+		chemical::add_upper_terminus_type_to_pose_residue( termini_pose, termini_pose.total_residue()   );
 
 		std::cout << " ADDED TERMINI" << std::endl;
 		(*scorefxn)( termini_pose );
@@ -957,7 +1196,7 @@ peptide_plane_test_OLD(){
 							 << std::endl;
 		}
 
-		core::pose::add_variant_type_to_pose_residue( peptide_plane_pose, "N_ACETYLATION", 1   );
+		chemical::add_variant_type_to_pose_residue( peptide_plane_pose, "N_ACETYLATION", 1   );
 
 		if ( false ){
 			//ResidueTypeCAP new_rsd_type( ResidueSelector().set_name1( 'W' ).set_property( "N_ACETYLATION" ).select( *rsd_set )[1] );
@@ -1012,7 +1251,7 @@ peptide_plane_test_OLD(){
 
 	{
 
-		core::pose::add_variant_type_to_pose_residue( peptide_plane_pose, "C_METHYLAMIDATION", 1   );
+		chemical::add_variant_type_to_pose_residue( peptide_plane_pose, "C_METHYLAMIDATION", 1   );
 
 		std::cout << " ADDED PEPTIDE_PLANE2" << std::endl;
 		(*scorefxn)( peptide_plane_pose );
@@ -1035,7 +1274,7 @@ peptide_plane_test_OLD(){
 
 	{
 
-		core::pose::remove_variant_type_from_pose_residue( peptide_plane_pose, "N_ACETYLATION", 1   );
+		chemical::remove_variant_type_from_pose_residue( peptide_plane_pose, "N_ACETYLATION", 1   );
 
 		std::cout << " REMOVED PEPTIDE_PLANE3" << std::endl;
 		(*scorefxn)( peptide_plane_pose );
@@ -1043,7 +1282,7 @@ peptide_plane_test_OLD(){
 
 		peptide_plane_pose.dump_pdb( "remove_peptide_plane3.pdb" );
 
-		core::pose::add_variant_type_to_pose_residue( peptide_plane_pose, "N_ACETYLATION", 1   );
+		chemical::add_variant_type_to_pose_residue( peptide_plane_pose, "N_ACETYLATION", 1   );
 		(*scorefxn)( peptide_plane_pose );
 		scorefxn->show( std::cout, peptide_plane_pose );
 
@@ -1058,8 +1297,8 @@ peptide_plane_test_OLD(){
 void
 cluster_outfile_test(){
 
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 
 	utility::vector1< std::string > const silent_files_in( option[ in::file::silent ]() );
 	protocols::swa::StepWiseClusterer stepwise_clusterer( silent_files_in );
@@ -1092,11 +1331,11 @@ score12_plot_test()
 	//eventually will allow for readin of several files, cluster across all of them.
 
 	using namespace core::scoring;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::io::silent;
 	using namespace protocols::cluster;
-	using namespace core::import_pose::pose_stream;
+	using namespace core::io::pose_stream;
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::pose;
@@ -1137,7 +1376,7 @@ score12_plot_test()
 		//		f.new_jump( 1, 2, 1);
 		//		pose.fold_tree( f );
 
-		core::pose::make_pose_from_sequence( pose, sequence, *rsd_set );
+		make_pose_from_sequence( pose, sequence, *rsd_set );
 
 		// main loop
 		Size const N_SAMPLE( option[ n_sample]() );
@@ -1145,8 +1384,8 @@ score12_plot_test()
 		for (Size i1 = 1; i1 <= N_SAMPLE; i1++ ) {
 			for (Size j1 = 1; j1 <= N_SAMPLE; j1++ ) {
 
-				Real const phi = protocols::swa::get_rotamer_angle( i1, N_SAMPLE );
-				Real const psi = protocols::swa::get_rotamer_angle( j1, N_SAMPLE );
+				Real const phi = protocols::swa::protein::get_rotamer_angle( i1, N_SAMPLE );
+				Real const psi = protocols::swa::protein::get_rotamer_angle( j1, N_SAMPLE );
 				pose.set_phi( 2, phi );
 				pose.set_psi( 2, psi );
 
@@ -1188,142 +1427,184 @@ score12_plot_test()
 
 }
 
-/////////////////////////////////////////////////////////////
-Real
-sidechain_sample( pose::Pose & pose )
+
+
+////////////////////////////////////////////////////////
+// Move ths out of stepwise_protein_test.cc!!
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////
+void
+eval_lj(
+	conformation::Atom const & atom1,
+	conformation::Atom const & atom2,
+	Real const & d2,
+	Real & fa_atr_score,
+	Real & fa_rep_score,
+	scoring::etable::Etable const & etable
+)
 {
 
-	using namespace core::chemical;
-	using namespace core::scoring;
-	using namespace core::pack::dunbrack;
-	using namespace core::io::silent;
-	using namespace core::pose;
-	using namespace ObjexxFCL::fmt;
+	ObjexxFCL::FArray3D< Real > const & ljatr_ = etable.ljatr();
+	ObjexxFCL::FArray3D< Real > const & ljrep_ = etable.ljrep();
 
-	core::pack::dunbrack::RotamerLibrary const & rotamer_library_( core::pack::dunbrack::RotamerLibrary::get_instance() )
+	//	Real temp_score( 0.0 );
+	fa_atr_score = 0.0;
+	fa_rep_score = 0.0;
 
-	Pose pose_start = pose;
-	static const ScoreFunctionOP scorefxn = getScoreFunction();
+	Real const & safe_max_dis2_ =  etable.get_safe_max_dis2();
+	Real const & get_bins_per_A2_ =  etable.get_bins_per_A2();
 
-	Real const start_score = (*scorefxn)( pose );
-	//	std::cout << "STARTING SCORE: " << F(8,3,score) << std::endl;
-	Real delG_diff_tot( 0.0 );
+	if ( ( d2 < safe_max_dis2_) && ( d2 != Real(0.0) ) ) {
 
-	for ( Size n = 1; n <= pose.total_residue(); n++ ) {
+		Real const d2_bin = d2 * get_bins_per_A2_;
+		int	disbin = static_cast< int >( d2_bin ) + 1;
+		Real	frac = d2_bin - ( disbin - 1 );
 
-		pose = pose_start;
+		// l1 and l2 are FArray LINEAR INDICES for fast lookup:
+		// [ l1 ] == (disbin  ,attype2,attype1)
+		// [ l2 ] == (disbin+1,attype2,attype1)
 
-		// Figure out how many alternative rotamers there might be.
-		core::chemical::ResidueTypeCAP residue_type( pose.residue( n ).type() );
-
-		SingleResidueRotamerLibraryCAP residue_rotamer_library	( rotamer_library_.get_rsd_library(*residue_type) );
-		SingleResidueDunbrackLibraryCAP	residue_dunbrack_library( dynamic_cast< core::pack::dunbrack::SingleResidueDunbrackLibrary const * >(residue_rotamer_library.get())	);
-
-		if ( !residue_dunbrack_library){
-			//std::cout << " no rotamers for position " << n << std::endl;
-			continue;
+		{
+			int const l1 = ljatr_.index( disbin, atom2.type(), atom1.type() );
+			int const l2 = l1 + 1;
+			fa_atr_score = ( (1.-frac)* ljatr_[ l1 ] + frac * ljatr_[ l2 ]);
 		}
 
-		utility::vector1< DunbrackRotamerSampleData> rotamer_samples = residue_dunbrack_library->get_all_rotamer_samples(pose.phi(n), pose.psi(n) );
 
-		Size const nrots( rotamer_samples.size() );
-		//		std::cout << "FOUND " << nrots << " rotamers for position  " << n << " with amino acid " << residue_type->name1() << std::endl;
-
-		// Cycle through rotamers -- gobbledygook from protocols/SidechainMover.cc
-		Size closest_rot( 0 );
-		Real closest_chi_dist( 999999999999999999999.99999);
-		utility::vector1< Real > delta_scores;
-
-		for (Size rotnum = 1; rotnum <= nrots ; rotnum++) {
-
-			DunbrackRotamerSampleData const & rotamer_sample_data = rotamer_samples[ rotnum ];
-
-			Real4 const & chi_means( rotamer_sample_data.chi_mean() );
-
-			// closest rotamer check?
-			Real chi_dist( 0.0 );
-
-			for ( Size chinum = 1; chinum <= rotamer_sample_data.nchi(); ++chinum) {
-				Real const chi_val = chi_means[ chinum ];
-				//std::cout << " " << F(8,3,chi_val);
-				pose.set_chi(chinum, n, chi_val );
-
-				chi_dist += numeric::principal_angle_degrees( chi_val - pose_start.chi( chinum, n ) );
-
-			}
-
-			if ( chi_dist < closest_chi_dist ) {
-				closest_rot = rotnum;
-				closest_chi_dist = chi_dist;
-			}
-
-			Real const score = (*scorefxn)( pose );
-			//std::cout << " --> " << F(8,3,score) << std::endl;
-			Real const delta_score = score - start_score;
-			delta_scores.push_back( delta_score );
+		{
+			int const l1 = ljrep_.index( disbin, atom2.type(), atom1.type() );
+			int const l2 = l1 + 1;
+			fa_rep_score = ( (1.-frac)* ljrep_[ l1 ] + frac * ljrep_[ l2 ]);
 		}
-
-		// Replace closest rotamer score with current score.
-		delta_scores[ closest_rot ] = 0.0;
-
-		Real const temperature( 1.0 );
-		Real Z( 0.0 );
-		for (Size rotnum = 1; rotnum <= nrots ; rotnum++) {
-			Z += exp( -1.0 * delta_scores[ rotnum ]/ temperature );
-		}
-		Real const delG_diff = - temperature * log( Z );
-		//std::cout << "delG " << delG_diff << std::endl;
-		delG_diff_tot += delG_diff;
 
 	}
 
-	pose = pose_start;
-
-	return delG_diff_tot;
-
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////
+Real
+get_lj_atom_score( core::id::AtomID const atom_id, core::pose::Pose const & pose,
+									 scoring::etable::Etable const & etable ){
 
-////////////////////////////////////////////////////////////////
+	Size const i( atom_id.rsd() );
+	Size const m( atom_id.atomno() );
+	conformation::Residue const & rsd1( pose.residue( i ) );
+
+	Vector const heavy_atom_i( rsd1.xyz( m ) );
+
+	Real score = 0.0;
+
+	for ( Size j = 1; j < pose.total_residue(); j ++ ) {
+
+		if ( i == j ) continue;
+
+		conformation::Residue const & rsd2( pose.residue( j ) );
+
+		using namespace scoring::etable::count_pair;
+		CountPairFunctionOP cpfxn =
+			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
+
+		for ( Size n = 1; n <= rsd2.natoms(); ++n ) {
+
+			Real cp_weight = 1.0;
+
+			if ( cpfxn->count(m, n, cp_weight ) ) {
+
+				Vector const heavy_atom_j( rsd2.xyz( n ) );
+				Vector const d_ij = heavy_atom_j - heavy_atom_i;
+				Real const d2 = d_ij.length_squared();
+				//Real const d = std::sqrt( d2 );
+				Vector const d_ij_norm = d_ij.normalized();
+
+				Real fa_atr( 0.0 ), fa_rep( 0.0 );
+				eval_lj( rsd1.atom(m), rsd2.atom(n), d2, fa_atr, fa_rep, etable );
+
+				// In principle could pass in an emap and weight the components
+				// by the Emap.
+				score += cp_weight * ( fa_atr + fa_rep );
+      }
+		}
+	}
+
+	return score;
+}
+
+////////////////////////////////////////////////////////
+// Move ths out of stepwise_protein_test.cc!!
+////////////////////////////////////////////////////////
 void
-entropy_calculate_test() {
-
+color_by_lj_test()
+{
+	// Read in pdb.
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::chemical;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::io::silent;
 	using namespace core::pose;
-	using namespace core::import_pose::pose_stream;
+	using namespace core::io::pose_stream;
+	using namespace core::id;
+	using namespace core::scoring;
+	using namespace core::kinematics;
+	using namespace protocols::rna;
+	using namespace core::scoring::etable;
 
 	ResidueTypeSetCAP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
+	ScoreFunctionOP scorefxn = getScoreFunction();
 
-	PoseInputStreamOP input;
-
-	if ( option[ in::file::s].user() ) {
-		input = new PDBPoseInputStream( option[ in::file::s ]() );
-	} else if ( option[ in::file::silent].user() ) {
-		input = new SilentFilePoseInputStream( option[ in::file::silent ]()  );
-	}
+	EtableOP etable_ptr
+		( new Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ),
+									EtableOptions() ) );
 
 	Pose pose;
-	while( input->has_another_pose() ) {
 
-		///////////////////////////////////////////////////////////////
+	PoseInputStreamOP input;
+	if ( option[ in::file::silent ].user() ) {
+		if ( option[ in::file::tags ].user() ) {
+			input = new SilentFilePoseInputStream(
+				option[ in::file::silent ](),
+				option[ in::file::tags ]()
+			);
+		} else {
+			input = new SilentFilePoseInputStream( option[ in::file::silent ]() );
+		}
+	} else {
+		input = new PDBPoseInputStream( option[ in::file::s ]() );
+	}
+
+	utility::vector1< Size > sample_residues = option[ sample_res ]();
+
+	Size count( 0 );
+	while ( input->has_another_pose() ){
+
 		input->fill_pose( pose, *rsd_set );
-		Real const delG_sc_sample = sidechain_sample( pose );
 
-		///////////////////////////////////////////////////////////////
-		std::string const tag = tag_from_pose( pose );
-		std::cout << " Total delG from alternative side chain sampling: " << delG_sc_sample << std::endl;
+		PDBInfoOP pdb_info(  new PDBInfo( pose, true ) );
 
-		// hey, will this copy in extra energies?
-    BinaryProteinSilentStruct s( pose, tag );
-		s.add_energy( "sc_sample", delG_sc_sample );
+		(*scorefxn)( pose );
+		scorefxn->show( std::cout, pose );
 
-    static const SilentFileData silent_file_data;
-    silent_file_data.write_silent_struct( s, option[ out::file::silent ](), false /*write score only*/ );
+		if ( sample_residues.size() == 0 ) {
+			for ( Size n = 1; n <= pose.total_residue(); n++ ) sample_residues.push_back( n );
+		}
+
+		for ( Size n = 1; n <= sample_residues.size(); n++ ) {
+
+			Size const i = sample_residues[ n ];
+
+			for (Size j = 1; j <= pose.residue( i ) .natoms(); j++ ) {
+				Real const score =	get_lj_atom_score(  id::AtomID( j, i ), pose, *etable_ptr );
+				//std::cout << i <<  " " << j << " " <<  score << std::endl;
+				pdb_info->temperature( i, j, score );
+
+			}
+		}
+
+		pose.pdb_info( pdb_info );
+
+		std::string pdb_name =  "COLOR_" + string_of(count++) + ".pdb";
+		std::cout << "About to output: " << pdb_name  << std::endl;
+		pose.dump_pdb( pdb_name );
 
 	}
 
@@ -1335,7 +1616,7 @@ void*
 my_main( void* )
 {
 
-	using namespace basic::options;
+	using namespace core::options;
 
 	if ( option[ rebuild ] ){
 		rebuild_test();
@@ -1343,6 +1624,8 @@ my_main( void* )
 		cluster_outfile_test();
 	} else if ( option[ sample_trp ] ){
 		sample_trp_test();
+	} else if ( option[ sample_trp_tyr ] ){
+		sample_trp_tyr_test();
 	} else if ( option[ repack ] ){
 		repack_test();
 	} else if ( option[ score12_plot ] ){
@@ -1351,12 +1634,13 @@ my_main( void* )
 		peptide_plane_test_OLD();
 	} else if ( option[ minimize_test ] ){
 		minimizer_test();
-	} else if ( option[ entropy_test ] ){
-		entropy_calculate_test();
+	} else if ( option[ color_by_lj ] ){
+		color_by_lj_test();
 	} else {
 		sample_rama_test();
 	}
 
+	protocols::viewer::clear_conformation_viewers();
 	exit( 0 );
 }
 
@@ -1364,7 +1648,10 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-	using namespace basic::options;
+	using namespace core::options;
+
+	utility::vector1< Size > blank_size_vector;
+	utility::vector1< std::string > blank_string_vector;
 
 	//Uh, options?
 	NEW_OPT( fullatom, "fullatom", false );
@@ -1375,6 +1662,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( cluster_test, "cluster", false );
 	NEW_OPT( cluster_by_all_atom_rmsd, "cluster by all atom rmsd", false );
 	NEW_OPT( sample_trp, "sample trp in trp cage", false );
+	NEW_OPT( sample_trp_tyr, "sample trp an tyr in trp cage", false );
 	NEW_OPT( repack, "repack", false );
 	NEW_OPT( centroid_output, "output centroid structure during screening", false );
 	NEW_OPT( sample_residue, "residue to sample", 5 );
@@ -1382,6 +1670,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( end_res, "ending residue", 0 );
 	NEW_OPT( n_sample, "number of samples per torsion angle", 18 );
 	NEW_OPT( filter_rmsd, "for fast sampling", -1.0 );
+	NEW_OPT( trans_omega, "omega->180.0", false );
 	NEW_OPT( score_diff_cut, "score difference cut for clustering", 1000000.0 );
 	NEW_OPT( centroid_score_diff_cut, "score difference cut for clustering", 1000000.0 );
 	NEW_OPT( filter_native_big_bins, "Figure out various terms for score12", false );
@@ -1401,6 +1690,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( entropy_test, "Entropy test", false );
 	NEW_OPT( ghost_loops, "Virtualize loops in centroid screening", false );
 	NEW_OPT( nstruct_centroid, "Number of decoys to output from centroid screening", 0 );
+	NEW_OPT( sample_res, "residues to build, the first element is the actual sample res while the other are the bulge residues", blank_size_vector ); //I am here.
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup

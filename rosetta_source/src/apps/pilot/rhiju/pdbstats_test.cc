@@ -24,9 +24,9 @@
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/Jump.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/option_macros.hh>
+#include <core/options/option.hh>
+#include <core/options/after_opts.hh>
+#include <core/options/option_macros.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -54,17 +54,16 @@
 
 //silly using/typedef
 
-#include <basic/Tracer.hh>
-using basic::T;
+#include <core/util/Tracer.hh>
+using core::util::T;
 
 // option key includes
 
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <core/options/keys/out.OptionKeys.gen.hh>
+#include <core/options/keys/in.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <core/conformation/Conformation.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <numeric/xyz.functions.hh>
 
@@ -73,12 +72,12 @@ namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUT
 //Auto using namespaces end
 
 
-using basic::Error;
-using basic::Warning;
+using core::util::Error;
+using core::util::Warning;
 
 using namespace core;
 //using namespace protocols;
-using namespace basic::options::OptionKeys;
+using namespace core::options::OptionKeys;
 
 using utility::vector1;
 using io::pdb::dump_pdb;
@@ -86,6 +85,7 @@ using io::pdb::dump_pdb;
 OPT_KEY( Boolean, ch_o_bonds )
 OPT_KEY( Boolean, fa_cenpack )
 OPT_KEY( Boolean, aro_pack )
+OPT_KEY( Boolean, proline_rama )
 
 typedef  numeric::xyzMatrix< Real > Matrix;
 
@@ -499,6 +499,44 @@ aro_pack_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Siz
 
 }
 
+///////////////////////////////////////////////////////////////////////////////
+void
+proline_rama_pdbstats_from_pose( utility::io::ozstream & out, pose::Pose & pose, Size const count, char const chain, Size & total_residues )
+{
+
+	using namespace core::conformation;
+	using namespace core::chemical;
+
+	static Real const DIST_CUTOFF ( 8.0 );
+
+	Size const nres = pose.total_residue();
+
+	Size res_count( 0 );
+
+	static bool init( false );
+
+	for (Size i = 2; i <= nres; i++) {
+
+		if ( chain !='?' && pose.pdb_info()->chain(i) != chain ) continue;
+
+		if ( pose.residue( i ).aa() != aa_pro ) continue;
+
+		res_count++;
+
+		out << I(4, count )
+				<< " " << F(8,3,pose.omega( i - 1 ))
+				<< " " << F(8,3,pose.phi( i )) << " " << F(8,3,pose.psi( i ))
+				<< " " << F(8,3,pose.omega( i ))
+				<< std::endl;
+
+	} // i
+
+	std::cout << "Processed " << res_count << " residues from chain " << chain << std::endl;
+
+	total_residues += res_count;
+
+}
+
 //////////////////////////////////////////
 void output_centroid_stats( utility::io::ozstream & out )
 {
@@ -526,8 +564,8 @@ void lowercase(char string[])
 void
 rhiju_pdbstats()
 {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 
 	//	utility::vector1 < std::string> pdb_files( option[ in::file::s ]() );
 	std::string const file_path( option[ in::path::pdb ]( 1 ) );
@@ -567,7 +605,7 @@ rhiju_pdbstats()
 
 		if (chain == '_' ) chain = ' ';
 
-		core::import_pose::pose_from_pdb( pose, file_path + '/' + pdb_file );
+		io::pdb::pose_from_pdb( pose, file_path + '/' + pdb_file );
 
 		count++;
 		std::cout << "Doing input file " << I(4,count) << " ==> " << pdb_file << " " << chain << std::endl;
@@ -578,6 +616,8 @@ rhiju_pdbstats()
 			fa_cenpack_pdbstats_from_pose( out, pose, count, chain, total_residues );
 		} else if ( option[ aro_pack ] ) {
 			aro_pack_pdbstats_from_pose( out, pose, count, chain, total_residues );
+		} else if ( option[ proline_rama ] ) {
+			proline_rama_pdbstats_from_pose( out, pose, count, chain, total_residues );
 		}
 		std::cout << "TOTAL RESIDUES Processed: " << total_residues << std::endl;
 
@@ -597,11 +637,12 @@ int
 main( int argc, char * argv [] )
 {
 
-	using namespace basic::options;
+	using namespace core::options;
 
 	NEW_OPT( ch_o_bonds, "Testing existence of CH<-->O bonds", false );
 	NEW_OPT( fa_cenpack, "Centroid-centroid pairwise correlations", false );
 	NEW_OPT( aro_pack, "Aromatic geometry", false );
+	NEW_OPT( proline_rama, "Proline ramachandran inference", false );
 
 	////////////////////////////////////////////////////////////////////////////
 	// setup

@@ -16,7 +16,7 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-
+#include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 //#include <core/scoring/ScoringManager.hh>
@@ -38,18 +38,18 @@
 #include <core/pack/task/TaskFactory.hh>
 
 
-#include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/util.hh>
+#include <core/options/option.hh>
+#include <core/options/after_opts.hh>
+#include <core/options/util.hh>
 
-#include <basic/options/option_macros.hh>
+#include <core/options/option_macros.hh>
 #include <protocols/idealize/idealize.hh>
 
 #include <protocols/viewer/viewers.hh>
 
 #include <core/pose/Pose.hh>
-#include <basic/basic.hh>
-#include <basic/database/open.hh>
+#include <core/util/basic.hh>
+#include <core/io/database/open.hh>
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
 
@@ -76,26 +76,22 @@
 
 //silly using/typedef
 
-#include <basic/Tracer.hh>
-using basic::T;
+#include <core/util/Tracer.hh>
+using core::util::T;
 
 // option key includes
 
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-
-//Auto Headers
-#include <core/import_pose/import_pose.hh>
+#include <core/options/keys/out.OptionKeys.gen.hh>
+#include <core/options/keys/score.OptionKeys.gen.hh>
+#include <core/options/keys/in.OptionKeys.gen.hh>
 
 
-
-using basic::Error;
-using basic::Warning;
+using core::util::Error;
+using core::util::Warning;
 
 using namespace core;
 using namespace protocols;
-using namespace basic::options::OptionKeys;
+using namespace core::options::OptionKeys;
 
 using utility::vector1;
 
@@ -116,8 +112,8 @@ benzene_pair_score_test()
 {
 	using namespace core::chemical;
 	using namespace core::conformation;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
 	using namespace core::scoring;
 
 	//////////////////////////////////////////////////
@@ -128,7 +124,7 @@ benzene_pair_score_test()
 	//         -extra_res_fa BZN.params -s two_benzenes.pdb
 	pose::Pose pose;
 	std::string infile  = option[ in ::file::s ][1];
-	core::import_pose::pose_from_pdb( pose, *rsd_set, infile );
+	io::pdb::pose_from_pdb( pose, *rsd_set, infile );
 
 	//This is only for graphics...
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
@@ -205,7 +201,7 @@ void*
 my_main( void* )
 {
 
-	using namespace basic::options;
+	using namespace core::options;
 
 	benzene_pair_score_test();
 
@@ -218,7 +214,7 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-	using namespace basic::options;
+	using namespace core::options;
 
 	//Uh, options?
 	NEW_OPT( blah, "blah", false );
