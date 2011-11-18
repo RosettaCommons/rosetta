@@ -11,6 +11,10 @@
 /// @file Mike Tyka
 /// @brief
 
+// MPI headers
+#ifdef USEMPI
+#include <mpi.h> //keep this first
+#endif
 
 // libRosetta headers
 #include <protocols/jd2/JobDistributor.hh>

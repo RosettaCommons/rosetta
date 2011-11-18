@@ -14,6 +14,7 @@
 // MPI headers
 #ifdef USEMPI
 #include <mpi.h> //keep this first
+#include <basic/options/keys/jd2.OptionKeys.gen.hh> //inside ifdef to protect from Andrew's script
 #endif
 
 // Unit headers
@@ -33,7 +34,7 @@
 
 // Option headers
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/jd2.OptionKeys.gen.hh>
+// needed only in MPI #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 
 // C++ headers
 #include <string>
