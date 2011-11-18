@@ -622,6 +622,7 @@ bool SilentFileData::check_if_rna_from_sequence_line( std::string const& line ){
 	// could also be binary_rna type, but historically we always made sure to include a "REMARK BINARY_RNA" line in those silent files, and
 	// this will be picked up later.
 
+	return false;
 }
 
 /// @brief creates a SilentStructOP using command-line options. Just a wrapper
