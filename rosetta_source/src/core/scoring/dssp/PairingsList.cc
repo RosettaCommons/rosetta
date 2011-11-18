@@ -33,7 +33,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer tr("protocols.jumping");
+static basic::Tracer tr("core.scoring.dssp");
 
 namespace core {
 namespace scoring {
