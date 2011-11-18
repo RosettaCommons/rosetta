@@ -71,7 +71,7 @@
 #include <utility/io/ozstream.hh>
 
 #if (defined WIN32) //&& (!defined WIN_PYROSETTA)
-// AUTO-REMOVED #include <windows.h>
+	#include <windows.h>
 #endif
 
 //Auto Headers

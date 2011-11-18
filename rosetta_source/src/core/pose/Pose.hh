@@ -103,7 +103,7 @@
 	#include <core/pose/signals/DestructionEvent.hh>
 	#include <core/pose/signals/EnergyEvent.hh>
 	#include <core/pose/signals/GeneralEvent.hh>
-	#include <core/conformation/Residue.hh> /
+	#include <core/conformation/Residue.hh>
 	#include <core/pose/datacache/CacheableObserver.hh>
 	#include <core/id/AtomID.hh>
 #endif

@@ -38,6 +38,11 @@
 // Package headers
 #include <protocols/moves/Mover.hh>
 
+#ifdef WIN32
+	#define _USE_MATH_DEFINES
+	#include <math.h>
+#endif
+
 namespace protocols {
 namespace moves {
 
