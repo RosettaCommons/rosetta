@@ -76,6 +76,7 @@ ThreadSequenceOperation::apply( core::pose::Pose const & pose, core::pack::task:
 	PreventRepacking pr;
 	for( core::Size resi( 1 ); resi <= pose.total_residue(); ++resi ){
 		if( resi >= start_res() && resi <= start_res() + target_sequence().length() - 1 ){
+			if( target_sequence()[ resi - start_res() ] == ' ' || target_sequence()[ resi - start_res() ] == 'x' ) continue; // allows for 'wildcard' residues that can be allowed to design to anything within the threaded sequence
 			RestrictAbsentCanonicalAAS racaas;
 			utility::vector1< bool > keep_aas( num_canonical_aas, false );
 			keep_aas[ aa_from_oneletter_code( target_sequence()[ resi-start_res() ] ) ] = true;
