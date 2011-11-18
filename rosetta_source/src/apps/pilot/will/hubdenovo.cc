@@ -108,6 +108,7 @@ OPT_KEY( String, hub_sequence )
 OPT_KEY( File, hub_cst_cfg )
 OPT_KEY( IntegerVector, hub_ho_cst )
 OPT_KEY( Real, hub_cen_energy_cut )
+OPT_KEY( Boolean, hub_no_fa )
 
 void register_options() {
   using namespace basic::options;
@@ -117,18 +118,21 @@ void register_options() {
   NEW_OPT( hub_cst_cfg  ,"", "" );
   NEW_OPT( hub_ho_cst   ,"", utility::vector1< Size >() );
   NEW_OPT( hub_cen_energy_cut   ,"", 200.0 );
+  NEW_OPT( hub_no_fa   ,"", false );
 }
 static core::io::silent::SilentFileData sfd;
 
-#define MULT 2.0
+#define MULT 5.0
+
+static basic::Tracer tr("hubdenovo");
 
 
 /*
 Real calc_c3_carmsd(Size const nres, Pose p, Pose const & native) {
 	if(native.n_residue() == 0) return;
 	if(native.n_residue()+1 != nres) {
-		cout << p.sequence() << endl;
-		cout << " " << native.sequence() << endl;		
+		tr << p.sequence() << endl;
+		tr << " " << native.sequence() << endl;		
 		utility_exit_with_message("native should be 1 chain w/o hub");
 	}
 	core::pose::symmetry::make_asymmetric_pose(p);
@@ -220,8 +224,7 @@ typedef utility::vector1<CST> CSTs;
 
 // fixed SS
 struct ConstraintConfig {
-	Size nres;
-	Size nsub;
+	Size nres,nsub,nhub;
 	vector1<char> ss;
 	std::map<string,Sizes> ssmap;
 	std::map<Size,Strings> seq;
@@ -238,7 +241,8 @@ struct ConstraintConfig {
 	ConstraintConfig(string cfgfile) {
 		init();
 		parse_config_file(cfgfile);
-		show_cst_grids(cout);
+		show_cst_grids(tr);
+		show_sequence(tr);
 	}
 	void init() {
 		nsub = 0;
@@ -263,7 +267,18 @@ struct ConstraintConfig {
 		}
 		return rn;
 	}
-	void show_cst_grids(std::ostream & out = std::cout) const {
+	void show_sequence(std::ostream & out = tr) const {
+		for(Size i = 1; i <= nres; ++i) {
+			tr << I(4,i);
+			if(seq.count(i)==1) {
+				for(Size j = 1; j <= seq.find(i)->second.size(); ++j) tr << " " << seq.find(i)->second[j];
+			} else {
+				tr << " default";
+			}
+			tr << endl;
+		}
+	}
+	void show_cst_grids(std::ostream & out = tr) const {
 		string alpha = "0abcdefghijklmnop";
 		string ALPHA = "0ABCDEFGHIJKLMNOP";
 		vector1<ObjexxFCL::FArray2D<char> > grids;
@@ -347,7 +362,7 @@ struct ConstraintConfig {
 				utility_exit_with_message("parse_residues "+s);	
 			}
 		}
-		// cout << "parse_residues " << s << " " << r << endl;
+		// tr << "parse_residues " << s << " " << r << endl;
 		return r;
 	}
 	Sizes parse_residues(Strings s, bool aliases=true) const {
@@ -356,7 +371,7 @@ struct ConstraintConfig {
 			Sizes r = parse_residues(*i,aliases);
 			res.insert(res.end(),r.begin(),r.end());
 		}	
-		//cout << "parse_residues '" << s << "'' " << res << endl;
+		//tr << "parse_residues '" << s << "'' " << res << endl;
 		return res;
 	}
 	Size resi_to_primary(Size resi) const {
@@ -369,9 +384,10 @@ struct ConstraintConfig {
 		r.push_back(residue_names_from_sequence(s));
 		return r;
 	}
+
 	void add_sym_cst(Pose & p, AtomID id1, AtomID id2, Real d, Real sd) const {
 		if(nsub > 11) utility_exit_with_message("residue mapping unclear!!!!!!!!");
-		//cout << "add sym cst " << id1 << " " << id2 << endl;
+		//tr << "add sym cst " << id1 << " " << id2 << endl;
 		using namespace core::scoring::constraints;
 		if(id1.rsd() > id2.rsd()) {
 			AtomID tmp(id1);
@@ -382,21 +398,34 @@ struct ConstraintConfig {
 		if(id1.rsd() > nres     ) return;//utility_exit_with_message("1st constraint rsd "+str(id1.rsd())+" outside of primary subunit");
 		p.add_constraint( new AtomPairConstraint( id1 , id2 , new HarmonicFunc(d,sd) ) );
 		int sub2 = (id2.rsd()-1)/nres + 1;
-		if(sub2 > 1) {
+		if(sub2 > 1 && sub2 <= nhub) {
 			AtomID id1B( id2.atomno(), id2.rsd() - nres * (sub2-1)             );
-			AtomID id2B( id1.atomno(), id1.rsd() - nres * (sub2-1) + nsub*nres );
-			//cout << "SYMCST " << id1.rsd() << "-" << id2.rsd() << " " << id1B.rsd() << "-" << id2B.rsd() << endl;
+			AtomID id2B( id1.atomno(), id1.rsd() - nres * (sub2-1) + nhub*nres );
+			//tr << "SYMCST " << id1.rsd() << "-" << id2.rsd() << " " << id1B.rsd() << "-" << id2B.rsd() << endl;
 			p.add_constraint( new AtomPairConstraint( id1B, id2B, new HarmonicFunc(d,sd) ) );		
 		}
+		if(sub2 > nhub) { // !!!!!!!!!!!!!! assuming dimer cst on higher sym!
+			AtomID id1B( id2.atomno(), id2.rsd() - nres * (sub2-1) );
+			AtomID id2B( id1.atomno(), id1.rsd() + nres * (sub2-1) );
+			//tr << "SYMCST " << id1.rsd() << "-" << id2.rsd() << " " << id1B.rsd() << "-" << id2B.rsd() << endl;
+			p.add_constraint( new AtomPairConstraint( id1B, id2B, new HarmonicFunc(d,sd) ) );					
+		}
+	}
+	int hub_seq_sep(int r1, int r2) const {
+		if(r1 >  r2) { int tmp = r1; r1 = r2; r2 = tmp;	}
+		if(r1 >  nres) return nsub*nres;
+		if(r2 <= nhub*nres) return (r2-1)%nres+1 + (r1-1)%nres+1;
+		if(r2 >  nhub*nres) return nhub*nres+1;
 	}
 	void parse_config_file(std::istream & in) {
 		string op,op2,val;
 		while(true) {
-			//cout << "ROOT peak: " << (char)in.peek() << endl;
+			//tr << "ROOT peak: " << (char)in.peek() << endl;
 			if(!(read_ignore_comments(in,op))) break;
 			if("SUBUNITS"==op) {
+				read_ignore_comments(in,nhub);
 				read_ignore_comments(in,nsub);
-				//cout << "SUBUNITS: " << nsub << endl;
+				//tr << "SUBUNITS: " << nsub << endl;
 			} else
 			if("SECSTRUCT"==op) {
 				if(!nsub) utility_exit_with_message("SUBUNITS not set before SECSTRUCT");
@@ -413,7 +442,7 @@ struct ConstraintConfig {
 				for(Size i = 1; i <= nsub; ++i) {
 					for(Size j = 0; j < ssstr.size(); ++j) ss.push_back(ssstr[j]);
 				}
-				cout << "SECSTRUCT " << ss.size() << endl;
+				tr << "SECSTRUCT " << ss.size() << endl;
 				{ // make ssmap
 					std::map<char,Size> nss; nss['H']=0; nss['E']=0; nss['L']=0; nss['*']=0;
 					char prev = '@';
@@ -438,13 +467,13 @@ struct ConstraintConfig {
 					for(Size is = ssst; is <= ss.size(); ++is) v.push_back(is);
 					ssmap[symbol] = v;
 					for(std::map<string,Sizes >::const_iterator i = ssmap.begin(); i != ssmap.end(); ++i) {
-						// cout << "ssmap['" << i->first << "'] = ";
+						// tr << "ssmap['" << i->first << "'] = ";
 						char ssc = i->first[0];
 						for(Sizes::const_iterator iv = i->second.begin(); iv != i->second.end(); ++iv) {
-							// cout << " " << *iv;
+							// tr << " " << *iv;
 							if(ss[*iv] != ssc) utility_exit_with_message("SECSTRUCT parse issue: "+i->first+" "+str(*iv));
 						}
-						// cout << endl;
+						// tr << endl;
 					}
 					for(std::map<string,Sizes >::const_iterator i = ssmap.begin(); i != ssmap.end(); ++i) {
 						if(i->second.size() == 0) utility_exit_with_message("ssmap of 0 size! "+i->first);
@@ -459,7 +488,7 @@ struct ConstraintConfig {
 						}
 					}
 					// for(std::map<string,Sizes >::const_iterator i = ssmap.begin(); i != ssmap.end(); ++i) {
-					// 	cout << "SSMAP " << i->first << " " << i->second.front() << "-" << i->second.back() << endl;
+					// 	tr << "SSMAP " << i->first << " " << i->second.front() << "-" << i->second.back() << endl;
 					// }
 					// utility_exit_with_message("debug");
 				}
@@ -490,14 +519,14 @@ struct ConstraintConfig {
 						if(seq.count(r[i])) utility_exit_with_message("multiple AA sets at position "+str(r[i])+", "+op2+" "+tmp);
 						seq[r[i]] = s[i];
 					}
-					// cout << "sequence: " << op2 << " " << tmp << endl;
+					// tr << "sequence: " << op2 << " " << tmp << endl;
 					// for(Size i = 1; i <= r.size(); ++i) {
-					// 	cout << "   " << r[i];
-					// 	for(Size j = 1; j <= s[i].size(); ++j) cout << " " << s[i][j];
-					// 	cout << endl;
+					// 	tr << "   " << r[i];
+					// 	for(Size j = 1; j <= s[i].size(); ++j) tr << " " << s[i][j];
+					// 	tr << endl;
 					// }
 				}
-				cout << "SEQUENCE" << endl;
+				tr << "SEQUENCE" << endl;
 			} else
 			if("CONSTRAINT"==op) {
 				if(ssmap.size()==0) utility_exit_with_message("SECSTRUCT must come before CONSTRAINT");
@@ -521,20 +550,21 @@ struct ConstraintConfig {
 				templates_cen.push_back( pose_from_pdb(*crs,tpdb) );
 				Size wcount = 0;
 				while(true) {
+					if("TEMPLATE"==peek(in)) break;
 					if(!(read_ignore_comments(in,op2))) break;
 					while(true) {					
 						++wcount;
 						if(wcount > 100) utility_exit_with_message("TEMPLATE "+tpdb+" parse error on "+op2);
-						if("MAPPING"==peek(in)||"SIDECHAINS"==peek(in)||"BACKBONE"==peek(in)||"DISTANCES"==peek(in)||""==peek(in)) break;
+						if("MAPPING"==peek(in)||"SIDECHAINS"==peek(in)||"BACKBONE"==peek(in)||"DISTANCES"==peek(in)||"TEMPLATE"==peek(in)||""==peek(in)) break;
 						if("MAPPING"==op2) {
-							cout << "MAPPING" << endl;
+							tr << "MAPPING" << endl;
 							Sizes dres = parse_residues(getline(in));
 							Sizes tres = parse_residues(getline(in));
 							if(dres.size()!=tres.size()) utility_exit_with_message("MAPPING res no. mismatch in template "+str(tpdb)+" MAPPING");
 							std::map<Size,Size> m;
 							for(Size i = 1; i <= dres.size(); ++i) m[tres[i]] = dres[i];
 							template_map.push_back(m);
-							cout << "MAPPING {t:d} " << tpdb << " " << m << endl;
+							tr << "MAPPING {t:d} " << tpdb << " " << m << endl;
 							break;
 						} else {
 							if(template_map.size()!=templates_fa.size()) utility_exit_with_message("MAPPING must be defined first in TEMPLATE");
@@ -562,7 +592,7 @@ struct ConstraintConfig {
 								scgrp++;
 								for(Size i = 1; i <= tres.size(); ++i) {
 									for(Size j = 1; j < i; ++j) {
-										cout << "add cst " << templates_fname.size() << " " << dres[i] << " " << tres[i] << " " << dres[j] << " " << tres[j] << endl;
+										tr << "add cst " << templates_fname.size() << " " << dres[i] << " " << tres[i] << " " << dres[j] << " " << tres[j] << endl;
 										cst_sc.push_back(CST(templates_fname.size(),scgrp,dres[i],tres[i],dres[j],tres[j]));
 									}
 								}
@@ -622,7 +652,7 @@ struct ConstraintConfig {
 		using namespace core::scoring::constraints;
 		vector1<string> anames; anames.push_back("N"); anames.push_back("CA"); anames.push_back("C"); anames.push_back("O"); /*anames.push_back("CB");*/ anames.push_back("H");
 		for(CSTs::const_iterator i = cst_bb.begin(); i != cst_bb.end(); ++i) {
-			if(ssep && (abs(i->dres1-i->dres2) != ssep) ) continue;
+			if(ssep && (hub_seq_sep(i->dres1,i->dres2) != ssep) ) continue;
 			Pose & t(*templates_cen[i->tplt]);
 			for(Size an1 = 1; an1 <= anames.size(); ++an1) {
 				if(!p.residue(i->dres1).has(anames[an1]) || !t.residue(i->tres1).has(anames[an1])) continue;
@@ -639,20 +669,20 @@ struct ConstraintConfig {
 			// 	Real d = t.residue(i->tres1).xyz("H").distance( t.residue(i->tres2).xyz("O") );
 			// 	AtomID id1( p.residue(i->dres1).atom_index("H"), i->dres1 );
 			// 	AtomID id2( p.residue(i->dres2).atom_index("O"), i->dres2 );			
-			// 	//cout << "constraint: " << ssep << " " << i->dres1 << ",H " << i->dres2 << ",O " << d << endl;
+			// 	//tr << "constraint: " << ssep << " " << i->dres1 << ",H " << i->dres2 << ",O " << d << endl;
 			// 	p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT*sqrt(d)) ) );
 			// }
 			// {
 			// 	Real d = t.residue(i->tres1).xyz("O").distance( t.residue(i->tres2).xyz("H") );
 			// 	AtomID id1( p.residue(i->dres1).atom_index("O"), i->dres1 );
 			// 	AtomID id2( p.residue(i->dres2).atom_index("H"), i->dres2 );			
-			// 	//cout << "constraint: " << ssep << " " << i->dres1 << ",O " << i->dres2 << ",H " << d << endl;
+			// 	//tr << "constraint: " << ssep << " " << i->dres1 << ",O " << i->dres2 << ",H " << d << endl;
 			// 	p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT*sqrt(d)) ) );
 			// }
 		}
 		for(CSTs::const_iterator i = cst_ex.begin(); i != cst_ex.end(); ++i) {
-			//cout << "apply ex cst " << ssep << " " << i->dres1-i->dres2 << "   " << *i << endl;
-			if(ssep && (abs(i->dres1-i->dres2) != ssep) ) continue;
+			//tr << "apply ex cst " << ssep << " " << i->dres1-i->dres2 << "   " << *i << endl;
+			if(ssep && (hub_seq_sep(i->dres1,i->dres2) != ssep) ) continue;
 			Pose & t(*templates_cen[i->tplt]);
 			for(Size an1 = 1; an1 <= anames.size(); ++an1) {
 				if(!p.residue(i->dres1).has(anames[an1]) || !t.residue(i->tres1).has(anames[an1])) continue;
@@ -669,14 +699,14 @@ struct ConstraintConfig {
 			// 	Real d = t.residue(i->tres1).xyz("H").distance( t.residue(i->tres2).xyz("O") );
 			// 	AtomID id1( p.residue(i->dres1).atom_index("H"), i->dres1 );
 			// 	AtomID id2( p.residue(i->dres2).atom_index("O"), i->dres2 );			
-			// 	//cout << "constraint: " << ssep << " " << i->dres1 << ",H " << i->dres2 << ",O " << d << endl;
+			// 	//tr << "constraint: " << ssep << " " << i->dres1 << ",H " << i->dres2 << ",O " << d << endl;
 			// 	p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT*sqrt(d)) ) );
 			// }
 			// {
 			// 	Real d = t.residue(i->tres1).xyz("O").distance( t.residue(i->tres2).xyz("H") );
 			// 	AtomID id1( p.residue(i->dres1).atom_index("O"), i->dres1 );
 			// 	AtomID id2( p.residue(i->dres2).atom_index("H"), i->dres2 );			
-			// 	//cout << "constraint: " << ssep << " " << i->dres1 << ",O " << i->dres2 << ",H " << d << endl;
+			// 	//tr << "constraint: " << ssep << " " << i->dres1 << ",O " << i->dres2 << ",H " << d << endl;
 			// 	p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT*sqrt(d)) ) );
 			// }
 		}		
@@ -684,13 +714,13 @@ struct ConstraintConfig {
 	void apply_dcsts(Pose & p, Size ssep=0) const {
 		using namespace core::scoring::constraints;
 		for(vector1<DCST>::const_iterator i = dcst.begin(); i != dcst.end(); ++i) {
-			if(ssep && (abs(i->rsd1-i->rsd2) != ssep) ) continue;
+			if(ssep && (hub_seq_sep(i->rsd1,i->rsd2) != ssep) ) continue;
 			if( !p.residue(i->rsd1).has(i->atm1) || !p.residue(i->rsd2).has(i->atm2) ) {
 				utility_exit_with_message("CONSTRAINT missing atom "+i->atm1+" "+str(i->rsd1)+" "+i->atm2+" "+str(i->rsd2)+" "+str(i->d)+" "+str(i->sd) );
 			}
 			AtomID id1( p.residue(i->rsd1).atom_index(i->atm1), i->rsd1 );
 			AtomID id2( p.residue(i->rsd2).atom_index(i->atm2), i->rsd2 );
-			//cout << "DCST " << i->atm1 << " " << i->rsd1 << " " << i->atm2 << " " << i->rsd2 << " " << i->d << " " << i->sd << endl;
+			//tr << "DCST " << i->atm1 << " " << i->rsd1 << " " << i->atm2 << " " << i->rsd2 << " " << i->d << " " << i->sd << endl;
 			add_sym_cst( p, id1, id2, i->d, i->sd );
 		}
 	}
@@ -699,7 +729,7 @@ struct ConstraintConfig {
 		vector1<string> anames; anames.push_back("CB"); anames.push_back("CEN");
 		if(p.is_fullatom()) utility_exit_with_message("apply_cen_csts called on fa pose!");
 		for(CSTs::const_iterator i = cst_sc.begin(); i != cst_sc.end(); ++i) {
-			if(ssep && (abs(i->dres1-i->dres2) != ssep) ) continue;
+			if(ssep && (hub_seq_sep(i->dres1,i->dres2) != ssep) ) continue;
 			Pose & t(*templates_cen[i->tplt]);
 			for(Size an1 = 1; an1 <= anames.size(); ++an1) {
 				if(!p.residue(i->dres1).has(anames[an1]) || !t.residue(i->tres1).has(anames[an1])) continue;
@@ -714,7 +744,7 @@ struct ConstraintConfig {
 			// Real d = t.residue(i->tres1).xyz("CEN").distance( t.residue(i->tres2).xyz("CEN") );
 			// AtomID id1( p.residue(i->dres1).atom_index("CEN"), i->dres1 );
 			// AtomID id2( p.residue(i->dres2).atom_index("CEN"), i->dres2 );			
-			// //cout << "constraint: " << ssep << " " << i->dres1 << ",CEN " << i->dres2 << ",CEN " << d << endl;
+			// //tr << "constraint: " << ssep << " " << i->dres1 << ",CEN " << i->dres2 << ",CEN " << d << endl;
 			// p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT*sqrt(d)) ) );
 		}
 		apply_bb_csts(p,ssep);
@@ -724,12 +754,12 @@ struct ConstraintConfig {
 		using namespace core::scoring::constraints;
 		if(p.is_centroid()) utility_exit_with_message("apply_fa_csts called on cen pose!");
 		for(CSTs::const_iterator i = cst_sc.begin(); i != cst_sc.end(); ++i) {
-			if(ssep && (abs(i->dres1-i->dres2) != ssep) ) continue;
+			if(ssep && (hub_seq_sep(i->dres1,i->dres2) != ssep) ) continue;
 			Pose & t(*templates_fa[i->tplt]);
 			for(Size a1 = 6; a1 <= p.residue(i->dres1).nheavyatoms(); ++a1) {
 				string aname1 = p.residue(i->dres1).atom_name(a1);
 				if(!t.residue(i->tres1).has(aname1)) {
-					for(Size ia = 1; ia <= t.residue(i->tres1).nheavyatoms(); ++ia) cout << t.residue(i->tres1).atom_name(ia) << endl;
+					for(Size ia = 1; ia <= t.residue(i->tres1).nheavyatoms(); ++ia) tr << t.residue(i->tres1).atom_name(ia) << endl;
 					utility_exit_with_message("can't find atom "+aname1+" in template residue "+str(i->tres1)+" t.aa "+t.residue(i->tres1).name()+" d.aa "+p.residue(i->dres1).name());
 				}
 				for(Size a2 = 6; a2 <= p.residue(i->dres2).nheavyatoms(); ++a2) {
@@ -738,7 +768,7 @@ struct ConstraintConfig {
 					Real d = t.residue(i->tres1).xyz(aname1).distance( t.residue(i->tres2).xyz(aname2) );
 					AtomID id1( p.residue(i->dres1).atom_index(aname1), i->dres1 );
 					AtomID id2( p.residue(i->dres2).atom_index(aname2), i->dres2 );
-					//cout << "constraint: " << ssep << " " << i->dres1 << "," << aname1 << " " << i->dres2 << "," << aname2 << " " << d << endl;
+					//tr << "constraint: " << ssep << " " << i->dres1 << "," << aname1 << " " << i->dres2 << "," << aname2 << " " << d << endl;
 					add_sym_cst( p, id1, id2, d, MULT/2.0*sqrt(d) );
 					p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT/2.0*sqrt(d)) ) );
 				}
@@ -760,7 +790,9 @@ struct ConstraintConfig {
 				Strings const & choices( seq.find(i)->second );
 				s += choices[ (Size)std::ceil( numeric::random::uniform()*((Real)choices.size()) ) ];
 			} else {
-				s += "G";
+				if(ss[i]=='H') s += "L";
+				if(ss[i]=='E') s += "V";
+				if(ss[i]=='L') s += "G";								
 			}
 		}
 		return s;
@@ -807,7 +839,7 @@ struct HubDenovo {
 	  	movemap->set_jump(false);
 	  	movemap->set_bb(true);
 	  	movemap->set_chi(true);
-		cenmin = new protocols::moves::symmetry::SymMinMover( movemap, sf3, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+		cenmin = new protocols::moves::symmetry::SymMinMover( movemap, sf3, "dfpmin_armijo_nonmonotone", 1e-3, true, false, false );
 
 		hub = *core::import_pose::pose_from_pdb(*rtsfa,"input/CHC_HUB_FA.pdb");
 
@@ -817,7 +849,7 @@ struct HubDenovo {
 		core::pose::remove_upper_terminus_type_from_pose_residue(p,1);
 
 		string seq = cfg.pick_sequence();
-		// cout << "start sequence " << seq << endl;
+		// tr << "start sequence " << seq << endl;
 		for(Size ir = 2; ir <= cfg.nres; ++ir) {
 			core::conformation::ResidueOP tmp = core::conformation::ResidueFactory::create_residue(
 				*p.residue(1).residue_type_set().aa_map(core::chemical::aa_from_oneletter_code(seq[ir-1]))[1] );
@@ -832,13 +864,13 @@ struct HubDenovo {
 
 		make_symmetric_pose(p);
 		FoldTree ft = p.fold_tree();
-		//for(Size i = 1; i <= ft.num_jump(); ++i) cout << i << " " << ft.jump_edge(i) << endl;
-		// cout << ft << endl;
+		//for(Size i = 1; i <= ft.num_jump(); ++i) tr << i << " " << ft.jump_edge(i) << endl;
+		// tr << ft << endl;
 		ft.set_jump_atoms( 1, "ORIG", "CA");
 		ft.set_jump_atoms( 2, "ORIG", "CA");
 		ft.set_jump_atoms( 3, "ORIG", "CA");		
 		p.fold_tree(ft);
-		// cout << ft << endl;
+		// tr << ft << endl;
 
 		p.conformation().detect_bonds();
 
@@ -849,26 +881,33 @@ struct HubDenovo {
 	}
 
 	void cen_fold(Pose & p) {
-
-		Size nheldback = 0;
-		for(Size icst = 1; icst <= cfg.nres; ++icst) {
+		Real temp = 2.0;
+		Pose last_cor_ori = p;
+		for(Size icst = 1; icst <= 2*cfg.nres; ++icst) {
 			cfg.apply_csts(p,icst);
-			Real temp = 2.0;
 			protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( p, *sf3, temp );
 			mc->set_autotemp( true, temp );	mc->set_temperature( temp );
-			protocols::moves::RepeatMover( new protocols::moves::TrialMover( fragins, mc ), 2000/cfg.nres ).apply( p );
+			protocols::moves::RepeatMover( new protocols::moves::TrialMover( fragins, mc ), 3000/cfg.nres ).apply( p );
 			mc->reset( p );
-			cenmin->apply(p);
+			if(icst%5==0) {
+				tr << "cen min" << endl;
+				cenmin->apply(p);
+			}
+			if( center_of_geom(p).z() < 0.0 ) p = last_cor_ori;
+			else                              last_cor_ori = p;
+			tr << icst << " " << sf3->score(p) << endl;
 		}
-		for(Size icst=cfg.nres+1; icst <= cfg.nsub*cfg.nres; ++icst) {
+		for(Size icst = 2*cfg.nres+1; icst <= cfg.nsub*cfg.nres; ++icst) {
 			cfg.apply_csts(p,icst);			
 		}
-		Real temp = 2.0;
-		protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( p, *sf3, temp );
-		mc->set_autotemp( true, temp );	mc->set_temperature( temp );
-		protocols::moves::RepeatMover( new protocols::moves::TrialMover( fragins, mc ), 2000 ).apply( p );
-		mc->reset( p );
-		//sf3->show(p);
+		for(Size i = 1; i < 5; ++i) {
+			protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( p, *sf3, temp );
+			mc->set_autotemp( true, temp );	mc->set_temperature( temp );
+			protocols::moves::RepeatMover( new protocols::moves::TrialMover( fragins, mc ), 600 ).apply( p );
+			mc->reset( p );
+			cenmin->apply(p);
+			tr << i << " fin " << sf3->score(p) << endl;
+		}
 	}
 	
 	void min_as_poly_ala(Pose & p, ScoreFunctionOP sf) {
@@ -896,46 +935,54 @@ struct HubDenovo {
 		using namespace core::scoring;
 		for(int iter = 1; iter < NITER; ++iter) {
 			Pose tmp = make_start_pose();
+			string fn = option[OptionKeys::out::file::o]() + "/" + cfg.ssstr() +"_"+ str(uniform()).substr(2,8) + ".pdb.gz";
 			
 			cen_fold(tmp);
 
+			{
+				core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
+			  	ss_out->fill_struct(tmp,fn);
+			  	sfd.write_silent_struct( *ss_out, option[OptionKeys::out::file::o]() + "/" + option[ OptionKeys::out::file::silent ]()+"_cen.sc" );
+			}
+
 			if(tmp.energies().total_energy() > option[OptionKeys::hub_cen_energy_cut]() ) {
-				cout << "CEN fail " << tmp.energies().total_energy() << endl;
+				tr << "CEN fail " << tmp.energies().total_energy() << endl;
 				continue;
 			}
 
-			string fn = option[OptionKeys::out::file::o]() + "/" + cfg.ssstr() +"_"+ str(uniform()).substr(2,8) + ".pdb.gz";
-			cout << "HIT " << tmp.energies().total_energy() << " " << fn << endl;
+			tr << "HIT " << tmp.energies().total_energy() << " " << fn << endl;
 
-			tmp.dump_pdb(fn+"_cen.pdb.gz");
+			if(!option[OptionKeys::hub_no_fa]()) {
+				tmp.dump_pdb(fn+"_cen.pdb.gz");
 
-			core::util::switch_to_residue_type_set(tmp,"fa_standard");
-			// reapply csts
-			tmp.remove_constraints();
-			cfg.apply_csts(tmp);
+				core::util::switch_to_residue_type_set(tmp,"fa_standard");
+				// reapply csts
+				tmp.remove_constraints();
+				cfg.apply_csts(tmp);
 
-			{
-				sfsym->set_weight(core::scoring::atom_pair_constraint,10.0);
-				sfsym->set_weight(core::scoring::    angle_constraint,10.0);
-				core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
-			  	movemap->set_jump(false); movemap->set_bb(true); movemap->set_chi(true);
-				rlxcst->apply(tmp); // no cst
-				// protocols::moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(tmp);
-				sfsym->set_weight(core::scoring::atom_pair_constraint,1.0);
-				sfsym->set_weight(core::scoring::    angle_constraint,1.0);
-				// min_as_poly_ala(tmp,sfsym,hocsts,cfg.nres);
-				sfsym->show(tmp);
-				//tmp.dump_pdb(fn+"_min.pdb.gz");
-				tmp.constraint_set()->show_violations(cout,tmp,1,1.0);
+				{
+					sfsym->set_weight(core::scoring::atom_pair_constraint,10.0);
+					sfsym->set_weight(core::scoring::    angle_constraint,10.0);
+					core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
+				  	movemap->set_jump(false); movemap->set_bb(true); movemap->set_chi(true);
+					rlxcst->apply(tmp); // no cst
+					// protocols::moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(tmp);
+					sfsym->set_weight(core::scoring::atom_pair_constraint,1.0);
+					sfsym->set_weight(core::scoring::    angle_constraint,1.0);
+					// min_as_poly_ala(tmp,sfsym,hocsts,cfg.nres);
+					sfsym->show(tmp);
+					//tmp.dump_pdb(fn+"_min.pdb.gz");
+					tmp.constraint_set()->show_violations(tr,tmp,1,1.0);
+				}
+				// Real cstsc = tmp.energies().total_energies()[core::scoring::atom_pair_constraint];
+				// tmp.remove_constraints();
+				tmp.dump_pdb(fn+"_cst.pdb.gz");
+
+				tr << "rlx nocst" << endl;
+				rlxnocst->apply(tmp); // no cst
+
+				sfsym->score(tmp); // rescore with cst
 			}
-			// Real cstsc = tmp.energies().total_energies()[core::scoring::atom_pair_constraint];
-			// tmp.remove_constraints();
-			tmp.dump_pdb(fn+"_cst.pdb.gz");
-
-			cout << "rlx nocst" << endl;
-			rlxnocst->apply(tmp); // no cst
-
-			sfsym->score(tmp); // rescore with cst
 
 			tmp.dump_pdb(fn);
 			core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
@@ -965,7 +1012,7 @@ int main(int argc, char *argv[]) {
 
 	string cstcfg = option[OptionKeys::hub_cst_cfg]();
 
-	//cout << "USING input/run/cylindrin_hairpin.hubdenovo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
+	//tr << "USING input/run/cylindrin_hairpin.hubdenovo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
 	HubDenovo hd(cstcfg);
 
 	hd.run(option[OptionKeys::out::nstruct]());
@@ -980,7 +1027,7 @@ int main(int argc, char *argv[]) {
 	// 	// Size ir = hocsts[i].first;
 	// 	// Size jr = hocsts[i].second;
 	// 	using namespace core::scoring::constraints;
-	// 	cout << "bond (name H and resi " << ir << "), (name O and resi " << jr << ")" << endl;
+	// 	tr << "bond (name H and resi " << ir << "), (name O and resi " << jr << ")" << endl;
 	// 	p.add_constraint( new AtomPairConstraint( AtomID(p.residue(ir).atom_index("H"),ir),
 	// 		                                      AtomID(p.residue(jr).atom_index("O"),jr),	
 	// 											  new HarmonicFunc(2.0,0.5)) );
@@ -993,12 +1040,12 @@ int main(int argc, char *argv[]) {
 	// 		                                   AtomID(p.residue(jr).atom_index("C"),jr),	
 	// 									       new CircularHarmonicFunc(3.14159,1.0)) );
 	// 	if( ir > nres || jr > nres ) {
-	// 		cout << "sym cst!" << endl;
+	// 		tr << "sym cst!" << endl;
 	// 		if(ir > nres) ir -=   nres;
 	// 		else          ir += 2*nres;
 	// 		if(jr > nres) jr -=   nres;
 	// 		else          jr += 2*nres;
-	// 		cout << "bond (name H and resi " << ir << "), (name O and resi " << jr << ")" << endl;			
+	// 		tr << "bond (name H and resi " << ir << "), (name O and resi " << jr << ")" << endl;			
 	// 		p.add_constraint( new AtomPairConstraint( AtomID(p.residue(ir).atom_index("H"),ir),
 	// 			                                      AtomID(p.residue(jr).atom_index("O"),jr),	
 	// 												  new HarmonicFunc(2.0,0.5)) );

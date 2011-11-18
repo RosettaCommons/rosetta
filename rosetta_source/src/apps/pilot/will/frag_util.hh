@@ -30,7 +30,7 @@ void read_fragdata( vector1< core::fragment::FragDataOP > & fds, std::istream & 
 std::map<string, vector1<core::fragment::FragDataOP> >
 get_frags_map( ) {
 	using namespace core::fragment;
-	cout << "reading frags" << std::endl;
+	//cout << "reading frags" << std::endl;
 	utility::io::izstream in;
 	std::map<string,vector1<FragDataOP> > fds;
 	basic::database::open(in,"ss_fragfiles/EEE.fragfile"); read_fragdata(fds["EEE"],in); in.close();
@@ -87,7 +87,7 @@ core::fragment::FragSetOP make_frag_set(std::string ss, std::map<string, vector1
 			}
 		}}}
 		frags->add(frame);
-		cout << "make frag " << i << ": " << ss3 << std::endl;
+		//coutcout << "make frag " << i << ": " << ss3 << std::endl;
 	}
 	if(frags->size() == 0) return NULL;
 	return frags;
@@ -101,7 +101,6 @@ core::fragment::FragSetOP make_frag_set(vector1<char> ss, std::map<string, vecto
 
 core::fragment::FragSetOP make_frag_set_9mers(Size nres) {
 	using namespace core::fragment;
-
 	vector1<core::fragment::FragDataOP> fds9;
 	std::ifstream in("input/loop_helix.9mers");
 	read_fragdata(fds9,in);
