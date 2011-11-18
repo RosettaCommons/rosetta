@@ -19,10 +19,10 @@
 
 #include <protocols/swa/RigidBodySampler.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
+#include <core/pose/Pose.hh>
+#include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <utility/io/ozstream.fwd.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>

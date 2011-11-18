@@ -20,7 +20,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/rna/AllowInsert.fwd.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/id/DOF_ID.fwd.hh>
+#include <core/id/DOF_ID.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>

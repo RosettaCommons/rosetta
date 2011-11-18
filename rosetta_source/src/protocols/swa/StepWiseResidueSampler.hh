@@ -51,8 +51,6 @@ public:
 
 	virtual std::string get_name() const;
 
-	virtual std::string get_name() const;
-
 	void
 	set_silent_file( std::string const & setting );
 

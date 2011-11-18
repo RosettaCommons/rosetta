@@ -61,8 +61,6 @@ public:
 
 	virtual std::string get_name() const;
 
-	virtual std::string get_name() const;
-
 	StepWiseRNA_JobParametersOP & job_parameters();
 
 	void
