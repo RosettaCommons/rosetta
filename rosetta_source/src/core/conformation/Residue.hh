@@ -443,7 +443,7 @@ public:
 	}
 	Atoms::const_iterator heavyAtoms_end() const
 	{
-		return atoms_.begin() + nheavyatoms() - 1;
+		return atoms_.begin() + nheavyatoms();
 	}
 
 	/// @brief Returns this residue's Atom with index number  <atm_index>  (const)
