@@ -18,6 +18,11 @@ or individual sub libraries:
 
 make core
 
+if you are compiling an app and you haven't touch neither core or protocols
+you can skip checking this dependencies by using /fast. for example:
+
+make myapp/fast
+
 
 
 If you want to see the actual g++ commands the make issues (good for debugging)
