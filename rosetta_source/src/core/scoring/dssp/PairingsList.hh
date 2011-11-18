@@ -174,4 +174,3 @@ extern bool has_orientation_and_pleating( PairingsList const& );
 } // core
 
 #endif
-
