@@ -76,17 +76,23 @@ EnzRepackMinimizeCreator::mover_name()
 
 EnzRepackMinimize::EnzRepackMinimize() :
 	protocols::moves::Mover( "EnzRepackMinimize" ),
-	design_( false ), min_rb_( true ), min_sc_( false ), min_bb_( false ), min_lig_( false ), task_factory_(NULL)
-{
-	cst_opt_= false;
-}
+	cst_opt_( false ),
+	design_( false ), repack_( false ), fix_catalytic_( false ),
+	minimize_in_stages_( false ), min_rb_( true ), min_sc_( false ), min_bb_( false ),
+	min_lig_( false ), minimize_prot_jumps_( false ), backrub_( false ),
+	task_factory_(NULL),
+	n_cycles_( 1 )
+{}
 
 EnzRepackMinimize::EnzRepackMinimize(std::string const name) :
 	protocols::moves::Mover ( name ),
-	design_( false ), min_rb_( true ), min_bb_( false ), min_lig_( false ), task_factory_(NULL)
-{
-	cst_opt_ = false;
-}
+	cst_opt_( false ),
+	design_( false ), repack_( false ), fix_catalytic_( false ),
+	minimize_in_stages_( false ), min_rb_( true ), min_sc_( false ), min_bb_( false ),
+	min_lig_( false ), minimize_prot_jumps_( false ), backrub_( false ),
+	task_factory_(NULL),
+	n_cycles_( 1 )
+{}
 
 EnzRepackMinimize::~EnzRepackMinimize() {}
 
