@@ -51,6 +51,9 @@ public:
 
 	/// @brief Apply the minimizer to one pose
 	virtual void apply( core::pose::Pose & pose_to_visualize );
+
+	virtual std::string get_name() const;
+
 	virtual std::string get_name() const;
 
 	void set_silent_file( std::string const & setting );

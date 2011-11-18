@@ -42,6 +42,10 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <utility/vector1.hh>
 
+#ifdef WIN32
+	#include <ctime>
+#endif
+
 
 using namespace core;
 using core::Real;

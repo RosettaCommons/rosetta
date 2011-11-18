@@ -14,21 +14,21 @@
 /// @author Parin Sripakdeevong
 
 
-#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_Clusterer_hh
-#define INCLUDED_protocols_swa_rna_StepWiseRNA_Clusterer_hh
+#ifndef INCLUDED_protocols_swa_SWA_RNA_Clusterer_HH
+#define INCLUDED_protocols_swa_SWA_RNA_Clusterer_HH
 
 #include <string>
 #include <map>
 
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_ResidueInfo.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <protocols/moves/Mover.hh>
+#include <protocols/moves/Mover.hh>
 
 
 
@@ -54,8 +54,8 @@ namespace rna {
 		void
 		set_cluster_mode( std::string const & cluster_mode);
 
-		//void
-		//set_input_pose_data_list(utility::vector1 <pose_data_struct2> const & input_pose_data_list);
+		void
+		set_input_pose_data_list(utility::vector1 <pose_data_struct2> const & input_pose_data_list);
 
 		void
 		create_cluster_residue_list(utility::vector1< core::Size > const & cluster_res_seq_num_list,

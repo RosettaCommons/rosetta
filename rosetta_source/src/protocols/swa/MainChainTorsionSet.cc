@@ -23,6 +23,8 @@
 // AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 // AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
+
+#include <core/pose/util.hh>
 // AUTO-REMOVED #include <core/scoring/rms_util.hh>
 // AUTO-REMOVED #include <core/scoring/rms_util.tmpl.hh>
 

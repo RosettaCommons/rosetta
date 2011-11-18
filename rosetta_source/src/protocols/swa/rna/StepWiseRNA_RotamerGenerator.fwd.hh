@@ -13,8 +13,8 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGenerator_fwd_hh
-#define INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGenerator_fwd_hh
+#ifndef INCLUDED_protocols_STEPWISE_ROTAMER_GENERATOR_FWD_HH
+#define INCLUDED_protocols_STEPWISE_ROTAMER_GENERATOR_FWD_HH
 
 namespace protocols{
 namespace swa{

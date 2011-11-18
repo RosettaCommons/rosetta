@@ -14,8 +14,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_rna_StepWiseResidueSampler_hh
-#define INCLUDED_protocols_swa_rna_StepWiseResidueSampler_hh
+#ifndef INCLUDED_protocols_swa_SWA_ResidueSampler_HH
+#define INCLUDED_protocols_swa_SWA_ResidueSampler_HH
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -48,6 +48,9 @@ namespace swa {
 
     /// @brief Apply the minimizer to one pose
     virtual void apply( core::pose::Pose & pose_to_visualize );
+
+	virtual std::string get_name() const;
+
 
     void
 		set_silent_file( std::string const & setting );

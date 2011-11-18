@@ -14,15 +14,15 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_Minimizer_hh
-#define INCLUDED_protocols_swa_rna_StepWiseRNA_Minimizer_hh
+#ifndef INCLUDED_protocols_swa_SWA_Minimizer_HH
+#define INCLUDED_protocols_swa_SWA_Minimizer_HH
 
 //#include <numeric/xyzMatrix.hh>
 //#include <numeric/xyzVector.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
-#include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/swa/StepWiseJobParameters.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
@@ -32,77 +32,78 @@
 #include <string>
 #include <map>
 
-#include <core/id/AtomID.fwd.hh>
-
-
 namespace protocols {
 namespace swa {
 namespace rna {
 
-//	typedef std::map< std::string, core::pose::PoseOP > PoseList;
+	//	typedef std::map< std::string, core::pose::PoseOP > PoseList;
 
-/////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////
-class StepWiseRNA_Minimizer: public protocols::moves::Mover {
-public:
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  class StepWiseRNA_Minimizer: public protocols::moves::Mover {
+  public:
 
-	//constructor!
-	StepWiseRNA_Minimizer(
-		utility::vector1 <pose_data_struct2> const & pose_data_list,
-		StepWiseRNA_JobParametersCOP & job_parameters
-	);
 
-	//destructor -- necessary?
-	~StepWiseRNA_Minimizer();
+    //constructor!
+    StepWiseRNA_Minimizer(
+            utility::vector1 <pose_data_struct2> const & pose_data_list,
+						protocols::swa::StepWiseJobParametersCOP & job_parameters );
 
-	/// @brief Apply the minimizer to one pose
-	virtual void apply( core::pose::Pose & pose_to_visualize );
+    //destructor -- necessary?
+    ~StepWiseRNA_Minimizer();
+
+    /// @brief Apply the minimizer to one pose
+    virtual void apply( core::pose::Pose & pose_to_visualize );
+
 	virtual std::string get_name() const;
 
-	void
-	set_silent_file( std::string const & silent_file );
 
-	void
-	set_move_map_list(utility::vector1 <core::kinematics::MoveMap> const & move_map_list);
+    void
+		set_silent_file( std::string const & silent_file );
 
-	void
-	set_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn );
+		void
+		set_move_map_list(utility::vector1 <core::kinematics::MoveMap> const & move_map_list);
 
-	core::io::silent::SilentFileDataOP & silent_file_data();
+		void
+		set_scorefxn( core::scoring::ScoreFunctionOP const & scorefxn );
 
-	void
-	set_base_centroid_screener( StepWiseRNA_BaseCentroidScreenerOP & screener );
+		core::io::silent::SilentFileDataOP & silent_file_data();
 
-private:
+		void
+		set_base_centroid_screener( StepWiseRNA_BaseCentroidScreenerOP & screener );
 
-	utility::vector1 <core::kinematics::MoveMap>
-	Get_default_movemap( core::pose::Pose const & pose ) const;
+		void
+		set_minimize_rounds( Size const value ){ minimize_rounds_ = value; }
 
-	void
-	Figure_out_moving_residues( core::kinematics::MoveMap & mm, core::pose::Pose const & pose ) const;
+  private:
 
-	bool
-	Pose_screening(core::pose::Pose & pose, std::string tag, core::io::silent::SilentFileData & silent_file_data) const;
+		utility::vector1 <core::kinematics::MoveMap>
+		Get_default_movemap( core::pose::Pose const & pose ) const;
 
-private:
+		bool
+		Pose_screening(core::pose::Pose & pose, std::string tag, core::io::silent::SilentFileData & silent_file_data) const;
 
-	utility::vector1 <pose_data_struct2> const pose_data_list_;
-	StepWiseRNA_JobParametersCOP job_parameters_;
+	private:
 
-	core::io::silent::SilentFileDataOP sfd_;
-	utility::vector1 <core::kinematics::MoveMap> move_map_list_;
-	core::scoring::ScoreFunctionOP scorefxn_;
-	std::string silent_file_;
-	bool const verbose_;
-	bool const native_screen_;
-	bool const rmsd_cutoff_;
-	std::map< core::id::AtomID, core::id::AtomID > pose_to_native_map_;
+		utility::vector1 <pose_data_struct2> const pose_data_list_;
+		protocols::swa::StepWiseJobParametersCOP job_parameters_;
 
-	utility::vector1< core::Size > fixed_res_;
+		core::io::silent::SilentFileDataOP sfd_;
+		utility::vector1 <core::kinematics::MoveMap> move_map_list_;
+		core::scoring::ScoreFunctionOP scorefxn_;
+		std::string silent_file_;
+		bool const verbose_;
+		bool const native_screen_;
+		bool const rmsd_cutoff_;
+		std::map< core::id::AtomID, core::id::AtomID > pose_to_native_map_;
 
-	StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener_;
+		utility::vector1< core::Size > fixed_res_;
 
-};
+		StepWiseRNA_BaseCentroidScreenerOP base_centroid_screener_;
+
+		Size minimize_rounds_;
+
+  };
 
 }
 } //swa

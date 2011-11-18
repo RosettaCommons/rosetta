@@ -29,6 +29,8 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/pose/Pose.hh>
+
+#include <core/util/SwitchResidueTypeSet.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -150,7 +152,7 @@ namespace swa {
 
 		// Figure out sequence of a pose without the loops (i.e., the "moving residues" );
 		std::string const full_sequence = pose.sequence();
-		FArray1D<bool> moving_array( full_sequence.size(), false );
+		ObjexxFCL::FArray1D<bool> moving_array( full_sequence.size(), false );
 		for ( Size n = 1; n <= moving_residues_.size(); n++ ) moving_array( moving_residues_[n] ) = true;
 
 		ghost_map_.clear();

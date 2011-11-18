@@ -16,13 +16,14 @@
 //////////////////////////////////
 #include <protocols/swa/rna/StepWiseRNA_Clusterer.hh>
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
+#include <protocols/swa/StepWiseUtil.hh>
 
 //////////////////////////////////
 #include <core/types.hh>
 //#include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-// AUTO-REMOVED #include <core/scoring/rms_util.tmpl.hh>
+#include <core/scoring/rms_util.tmpl.hh>
 
 
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
@@ -35,30 +36,26 @@
 #include <basic/Tracer.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/BinaryRNASilentStruct.hh>
+#include <core/io/silent/BinaryRNASilentStruct.hh>
 
-// AUTO-REMOVED #include <core/chemical/VariantType.hh>
+#include <core/chemical/VariantType.hh>
+#include <core/chemical/util.hh>
+#include <core/chemical/AtomType.hh> //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType Oct 14, 2009
 
-// AUTO-REMOVED #include <core/chemical/AtomType.hh> //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType Oct 14, 2009
-
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
+#include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/string.functions.hh>
 
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <time.h>
+#include <time.h>
 
 #include <string>
-// AUTO-REMOVED #include <fstream>
+#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <map>
 #include <core/io/pdb/pose_io.hh>
-// Auto-header: duplicate removed #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
-
-#include <core/scoring/rms_util.hh>
-#include <utility/vector1.hh>
-
+#include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 //#include <utility/io/ozstream.hh>
 //#include <utility/io/izstream.hh>
 //#include <basic/basic.hh>
@@ -116,7 +113,7 @@ namespace rna {
 				std::cout << ::std::endl;
   		}
 
-		  core::chemical::ResidueTypeSetCAP rsd_set;
+		  core::chemical::ResidueTypeSetCAP rsd_set; 
 			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "rna" );
 
 
@@ -144,7 +141,7 @@ namespace rna {
 				core::io::silent::SilentStructOP silent_struct( input->next_struct() );
 				silent_struct->fill_pose( *pose_data.pose_OP, *rsd_set );
 
-				core::Real score( 0.0 );
+				Real score( 0.0 );
 				getPoseExtraScores( *pose_data.pose_OP, "score", score);
 				pose_data.score = score; //Problem with converting from float to Real variable
 

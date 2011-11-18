@@ -13,8 +13,8 @@
 #ifndef INCLUDED_protocols_rna_RNA_DataReader_hh
 #define INCLUDED_protocols_rna_RNA_DataReader_hh
 
+#include <protocols/rna/RNA_DataReader.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <protocols/rna/RNA_JumpLibrary.hh>
 #include <core/scoring/rna/RNA_DataInfo.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/types.hh>

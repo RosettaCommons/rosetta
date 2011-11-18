@@ -91,6 +91,26 @@ RigidBodyMover::RigidBodyMover( RigidBodyMover const & src ) :
 	rot_center_( src.rot_center_ )
 {}
 
+RigidBodyPerturbMover::RigidBodyPerturbMover(
+		int const rb_jump_in,
+		core::Real const rot_mag_in,
+		core::Real const trans_mag_in,
+		Partner const partner_in,
+		bool interface_in      //rot_center calculated at interface
+	):
+		RigidBodyMover( rb_jump_in ),
+		rot_mag_( rot_mag_in ),
+		trans_mag_( trans_mag_in ),
+		partner_( partner_in ),
+		interface_(interface_in)
+{
+	movable_jumps_.push_back( rb_jump_in );
+	TRBM.Debug << "rb_jump " << rb_jump_in << std::endl;
+	TRBM.Debug << "rot_mag " << rot_mag_ << std::endl;
+	TRBM.Debug << "trans_mag " << trans_mag_ << std::endl;
+	Mover::type( "RigidBodyPerturb" );
+}
+
 RigidBodyMover::~RigidBodyMover() {}
 
 std::string
@@ -107,7 +127,6 @@ RigidBodyMover::torsion_id_ranges(
 }
 
 
-
 RigidBodyPerturbMover::RigidBodyPerturbMover() :
 	RigidBodyMover(),
 	rot_mag_( 3.0 ),
@@ -116,19 +135,19 @@ RigidBodyPerturbMover::RigidBodyPerturbMover() :
 	Mover::type( "RigidBodyPerturb" );
 }
 
-
 RigidBodyPerturbMover::RigidBodyPerturbMover(
 		int const rb_jump_in,
 		core::Real const rot_mag_in,
 		core::Real const trans_mag_in,
 		Partner const partner_in,
-		bool interface_in      //rot_center calculated at interface
+		utility::vector1< bool > ok_for_centroid_calculation
 	):
 		RigidBodyMover( rb_jump_in ),
 		rot_mag_( rot_mag_in ),
 		trans_mag_( trans_mag_in ),
 		partner_( partner_in ),
-		interface_(interface_in)
+		interface_( false ),
+		ok_for_centroid_calculation_( ok_for_centroid_calculation )
 {
 	movable_jumps_.push_back( rb_jump_in );
 	TRBM.Debug << "rb_jump " << rb_jump_in << std::endl;
@@ -212,7 +231,7 @@ void RigidBodyPerturbMover::apply( core::pose::Pose & pose )
 	if (interface_){
 		protocols::geometry::centroids_by_jump_int(pose, rb_jump_, dummy_up, dummy_down);
 	} else {
-		protocols::geometry::centroids_by_jump(pose, rb_jump_, dummy_up, dummy_down);
+		protocols::geometry::centroids_by_jump(pose, rb_jump_, dummy_up, dummy_down, ok_for_centroid_calculation_ );
 	}
 
 	if ( partner_ == partner_downstream ) rot_center_ = dummy_down;

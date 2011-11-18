@@ -23,6 +23,8 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/pose/Pose.hh>
+
+#include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 

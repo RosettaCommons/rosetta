@@ -107,6 +107,12 @@ sources = {
 		"cluster",
 	],
 
+	"protocols/coarse_rna" : [
+                 "CoarseRNA_DeNovoProtocol",
+                 "CoarseRNA_Fragments",
+                 "CoarseRNA_LoopCloser",
+                 ],
+
 	"protocols/comparative_modeling" : [
 		"cm_main",
 		"AlignmentClustering",
@@ -1153,6 +1159,7 @@ sources = {
 	"protocols/rna" : [
 		"AllowInsert",
 		"FullAtomRNA_Fragments",
+		"MultipleDomainMover",
 		"RNA_BasePairClassifier",
 		"RNA_ChunkLibrary",
 		"RNA_DataReader",
@@ -1194,30 +1201,58 @@ sources = {
 		"RRReporterSQLite",
 	],
 
-	"protocols/swa/rna" : [
-		"StepWiseRNA_BaseCentroidScreener",
-		"StepWiseRNA_Clusterer",
-		"StepWiseRNA_JobParameters",
-		"StepWiseRNA_Minimizer",
-		"StepWiseRNA_ResidueInfo",
-		"StepWiseRNA_ResidueSampler",
-		"StepWiseRNA_RotamerGenerator",
-		"StepWiseRNA_Util",
-	],
 
 	"protocols/smanager" : [
 		"smanager",
 	],
 
 	"protocols/swa" : [
+                 "InputStreamWithResidueInfo",
+                 "PoseFilter_RMSD_Screen",
+                 "RigidBodySampler",
+                 "StepWiseClusterer",
+                 "StepWiseCombineSampleGenerator",
+                 "StepWiseDoNothingSampleGenerator",
+                 "StepWiseJobParameters",
+                 "StepWiseIdentitySampleGenerator",
+                 "StepWisePoseCombineSampleGenerator",
+                 "StepWisePoseSetup",
+                 "StepWiseUtil"
+                 ],
+
+	"protocols/swa/protein" : [
 		"MainChainTorsionSet",
-		"StepWiseClusterer",
-		"StepWiseFilterer",
-		"StepWisePoseMinimizer",
-		"StepWisePoseSetup",
-		"StepWiseResidueSampler",
-		"StepWiseScreener",
-		"StepWiseUtil",
+                "StepWiseBetaAntiParallelJumpSampleGenerator",
+                "StepWiseBetaAntiParallelUtil",
+		"StepWiseProteinCCD_Closer",
+		"StepWiseProteinFilterer",
+                "StepWiseProteinFragmentSampleGenerator",
+                "StepWiseProteinJumpSampleGenerator",
+                "StepWiseProteinMainChainSampleGenerator",
+		"StepWiseProteinLoopBridger",
+		"StepWiseProteinPacker",
+		"StepWiseProteinPoseMinimizer",
+		"StepWiseProteinPoseSetup",
+		"StepWiseProteinResidueSampler",
+                "StepWiseProteinScreener",
+		"StepWiseProteinUtil",
+	],
+
+	"protocols/swa/rna" : [
+                "determinants",
+                "rigid_body_settings",
+		"StepWiseRNA_BaseCentroidScreener",
+                "StepWiseRNA_Clusterer",
+		"StepWiseRNA_Minimizer",
+		"StepWiseRNA_ResidueInfo",
+		"StepWiseRNA_ResidueSampler",
+		"StepWiseRNA_RotamerGenerator",
+		"StepWiseRNA_RotamerGenerator_Wrapper",
+                "StepWiseRNA_Base_Sugar_Rotamer",
+		"StepWiseRNA_Util",
+                "StepWiseRNA_Dinucleotide_Sampler_Util",
+                "RNA_AnalyticLoopCloser",
+                "RNA_LoopCloseSampler"
 	],
 
 	"protocols/symmetric_docking" : [

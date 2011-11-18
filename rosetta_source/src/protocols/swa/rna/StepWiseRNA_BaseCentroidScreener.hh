@@ -15,14 +15,14 @@
 /// @author Parin Sripakdeevong
 
 
-#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_BaseCentroidScreener_hh
-#define INCLUDED_protocols_swa_rna_StepWiseRNA_BaseCentroidScreener_hh
+#ifndef INCLUDED_protocols_swa_SWA_RNA_BaseCentroidScreener_HH
+#define INCLUDED_protocols_swa_SWA_RNA_BaseCentroidScreener_HH
 
 #include <core/types.hh>
 #include <core/kinematics/Stub.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.fwd.hh>
-#include <protocols/swa/rna/StepWiseRNA_JobParameters.fwd.hh>
+#include <protocols/swa/StepWiseJobParameters.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <ObjexxFCL/FArray1D.hh> /* for some reason, can't get away with just .fwd.hh */
@@ -30,7 +30,7 @@
 
 
 #include <string>
-// AUTO-REMOVED #include <map>
+#include <map>
 
 namespace protocols {
 namespace swa {
@@ -40,15 +40,15 @@ namespace rna {
 	public:
 
 	// Constructor
-		StepWiseRNA_BaseCentroidScreener( core::pose::Pose const & pose, StepWiseRNA_JobParametersCOP & job_parameters );
+		StepWiseRNA_BaseCentroidScreener( core::pose::Pose const & pose, StepWiseJobParametersCOP & job_parameters );
 
 		~StepWiseRNA_BaseCentroidScreener();
 
 		bool
 		Update_base_stub_list_and_Check_centroid_interaction( core::pose::Pose const & pose );
 
-		//bool
-		//non_adjacent_and_stack_base(core::pose::Pose const & pose,  Size const & pos1, Size const & pos2, bool const verbose = false  );
+		bool
+		non_adjacent_and_stack_base(core::pose::Pose const & pose,  Size const & pos1, Size const & pos2, bool const verbose = false  );
 
 		bool
 		Update_base_stub_list_and_Check_that_terminal_res_are_unstacked( core::pose::Pose const & pose, bool const reinitialize = false );
@@ -56,8 +56,8 @@ namespace rna {
 		bool
 		Check_that_terminal_res_are_unstacked( bool const verbose = false );
 
-		//utility::vector1< core::Size > const &
-		//moving_residues() const;
+		utility::vector1< core::Size > const &
+		moving_residues() const;
 
 	private:
 
@@ -85,7 +85,7 @@ namespace rna {
 
 	private:
 
-		StepWiseRNA_JobParametersCOP job_parameters_;
+		StepWiseJobParametersCOP job_parameters_;
 		core::scoring::rna::RNA_CentroidInfoOP rna_centroid_info_;
 
 		core::Real const base_stack_dist_cutoff_;

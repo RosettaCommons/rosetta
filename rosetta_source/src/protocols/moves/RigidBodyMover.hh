@@ -145,6 +145,15 @@ public:
 		bool interface_in=false //rot_center calculated at interface
 	);
 
+	// constructor with arguments (rb_jump defined)
+	RigidBodyPerturbMover(
+		int const rb_jump_in,
+		core::Real const rot_mag_in,
+		core::Real const trans_mag_in,
+		Partner const partner_in,
+		utility::vector1< bool > ok_for_centroid_calculation
+	);
+
 	// constructor with arguments (movable jumps defined by a movemap)
 	RigidBodyPerturbMover(
 		core::pose::Pose const & pose_in,
@@ -184,6 +193,7 @@ private:
 	Partner partner_;
 	bool interface_;
 	utility::vector1<core::Size> movable_jumps_;
+	utility::vector1< bool > ok_for_centroid_calculation_;
 };
 
 ///@brief does a perturbation defined by the rotational and translational magnitudes

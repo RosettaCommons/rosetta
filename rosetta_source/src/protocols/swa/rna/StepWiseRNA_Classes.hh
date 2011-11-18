@@ -7,88 +7,159 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file SWA_ResidueSampler.hh
+/// @file StepWiseRNA_Classes.hh
 /// @brief
 /// @detailed
 ///
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_Classes_hh
-#define INCLUDED_protocols_swa_rna_StepWiseRNA_Classes_hh
+#ifndef INCLUDED_protocols_swa_SWA_RNAClasses_HH
+#define INCLUDED_protocols_swa_SWA_RNAClasses_HH
+
 
 #include <core/pose/Pose.fwd.hh>
+#include <numeric/xyzMatrix.hh>
+#include <numeric/xyzVector.hh>
+#include <core/id/TorsionID.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/GreenPacker.fwd.hh>
-#include <protocols/swa/MainChainTorsionSet.hh> // should make a .fwd.hh probably
 #include <string>
 #include <map>
+
+
+typedef  numeric::xyzMatrix< core::Real > Matrix;
 
 namespace protocols {
 namespace swa {
 namespace rna {
 
-struct Residue_info_struct{
+enum PuckerState{ ALL, NORTH, SOUTH };
+enum BaseState{ BOTH, ANTI, NONE };
 
-	std::string name;
-	Size seq_num; //Full_pose_seq_number
+class Jump_point{
+
+		public:
+
+		Jump_point():
+		five_prime_seq_num( 0 ),
+		five_prime_atom("O3*"),
+		three_prime_seq_num( 0 ),
+		three_prime_atom("P"),
+		cut_point( 0 )
+	{
+	}
+
+	~Jump_point(){};
+
+	public:
+
+	core::Size five_prime_seq_num;
+	std::string five_prime_atom;
+	core::Size three_prime_seq_num;
+	std::string three_prime_atom;
+	core::Size cut_point; //Choose the residue five_prime of the actual cutpoint position
 
 };
 
-struct base_struct{
-	numeric::xyzVector<Real> centroid;
-	Matrix base_coordiate_matrix;
-	Residue_info_struct residue_info;
-};
-
-
+// Why don't we just keep this in a "regular" kinematics::Stub?
 struct base_stub{
-	numeric::xyzVector<Real> centroid;
-	Matrix base_coordiate_matrix;
+  numeric::xyzVector<core::Real> centroid;
+  Matrix base_coordinate_matrix;
 };
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-struct pose_data_struct2 {
-//	Real rmsd;
-//	Size group_rotamer;
-//	Size subgroup_rotamer;
-//	std::vector< Real> diff_torsions;
- 	Real O3_C5_distance; //This is only used in the connect_double_strand_pose_overlap function
-
-	Real score;
-	pose::PoseOP pose_OP;
+struct pose_data_struct2{
+	core::Real score;
+	core::pose::PoseOP pose_OP;
 	std::string tag;
 };
 
-struct count_struct{
-	Size output_pose_count;
-	Size good_rep_rotamer_count;
-	Size good_atr_rotamer_count;
-	Size good_angle_count;
-	Size good_distance_count;
-	Size C5_O3_distance_count;
-	Size Near_Native_Rotamer_Count;
-	Size base_pairing_count;
-	Size base_stack_count;
-	Size both_count;
-	Size tot_rotamer_count;
-	Size fine_rmsd_count;
-	Size rmsd_count;
-	Size native_minimize_pass_count;
-	Size native_minimize_fail_count;
-	Size pass_before_last_res_reb_chain_break_U;
-	Size total_before_last_res_reb_chain_break_U;
-	Size pass_before_last_res_reb_chain_break_M;
-	Size total_before_last_res_reb_chain_break_M;
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+struct Torsion_Info{
+	core::id::TorsionID id;
+	core::Real value;
 };
 
+/*
+class Torsion_Info{
+	public:
+	 Torsion_Info():
+			value(0.0)
+		{
+		}
+		
+		~Torsion_Info(){};
 
-////////////////////////////////
+	core::id::TorsionID id;
+	core::Real value;
 
-enum PuckerState{ ALL, NORTH, SOUTH };
+};
+*/
 
+
+
+struct output_data_struct {
+
+	core::Real rmsd_wrt_correct_minimized;
+	core::Real rmsd_wrt_minimized;
+	core::Real rmsd;
+	core::Real loop_rmsd_wrt_correct_minimized;
+	core::Real loop_rmsd_wrt_minimized;
+	core::Real loop_rmsd;
+	core::Real diff_torsions;
+	core::Real current_score;
+	core::Real O3_C5_distance;
+};
+
+class SillyCountStruct{
+
+public:
+
+  SillyCountStruct():
+    output_pose_count( 0 ),
+    good_rep_rotamer_count( 0 ),
+    good_atr_rotamer_count( 0 ),
+    good_angle_count( 0 ),
+    good_distance_count( 0 ),
+    chain_closable_count( 0 ),
+    Near_Native_Rotamer_Count( 0 ),
+    base_pairing_count( 0 ),
+    base_stack_count( 0 ),
+    both_count( 0 ),
+    tot_rotamer_count( 0 ),
+    fine_rmsd_count( 0 ),
+    rmsd_count( 0 )
+    {
+  }
+
+
+  ~SillyCountStruct(){};
+
+public:
+
+  core::Size output_pose_count;
+  core::Size good_rep_rotamer_count;
+  core::Size good_atr_rotamer_count;
+  core::Size good_angle_count;
+  core::Size good_distance_count;
+  core::Size chain_closable_count;
+  core::Size Near_Native_Rotamer_Count;
+  core::Size base_pairing_count;
+  core::Size base_stack_count;
+  core::Size both_count;
+  core::Size tot_rotamer_count;
+  core::Size fine_rmsd_count;
+  core::Size rmsd_count;
+};
+
+////////////////////////////////////////////////////////////
+}
+}
+}
+
+#endif

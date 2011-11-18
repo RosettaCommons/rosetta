@@ -90,6 +90,22 @@ centroids_by_jump(
 	core::Vector & downstream_ctrd //< output
 )
 {
+	utility::vector1< bool > ok_for_centroid_calculation; //empty is fine.
+	centroids_by_jump( pose, jump_id, upstream_ctrd, downstream_ctrd, ok_for_centroid_calculation );
+}
+
+/// @brief Unweighted centroids of all atoms upstream of the jump
+///  vs. all atoms downstream of the jump.
+/// @details Deliberately includes H -- is this OK?
+void
+centroids_by_jump(
+	core::pose::Pose const & pose,
+	core::Size const jump_id,
+	core::Vector & upstream_ctrd, //< output
+	core::Vector & downstream_ctrd, //< output
+	utility::vector1< bool > ok_for_centroid_calculation
+)
+{
 	FArray1D_bool is_upstream ( pose.total_residue(), false );
 	pose.fold_tree().partition_by_jump( jump_id, is_upstream );
 
@@ -101,6 +117,12 @@ centroids_by_jump(
 		int & natoms = ( is_upstream(ii) ? upstream_atoms : downstream_atoms );
 		core::Vector & ctrd = ( is_upstream(ii) ? upstream_ctrd : downstream_ctrd );
 		core::conformation::Residue const & rsd = pose.residue(ii);
+
+		if ( ok_for_centroid_calculation.size() > 0 && !ok_for_centroid_calculation[ ii ] ) {
+			//			std::cout << "skipping res  "<< ii << std::endl;
+			continue;
+		}
+
 		for(int jj = 1, jj_end = rsd.natoms(); jj <= jj_end; ++jj) {
 			ctrd += rsd.xyz(jj);
 			natoms += 1;

@@ -43,6 +43,16 @@ centroids_by_jump(
 	core::Vector & downstream_ctrd //< output
 );
 
+void
+centroids_by_jump(
+	core::pose::Pose const & pose,
+	core::Size const jump_id,
+	core::Vector & upstream_ctrd, //< output
+	core::Vector & downstream_ctrd, //< output
+	utility::vector1< bool > ok_for_centroid_calculation
+);
+
+
 std::pair < core::Vector, core::Vector > centroid_pair_by_jump(
 	core::pose::Pose const & pose,
 	core::Size jump_id

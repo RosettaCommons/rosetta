@@ -14,99 +14,19 @@
 
 
 //////////////////////////////////
-// AUTO-REMOVED #include <protocols/swa/rna/StepWiseRNA_Util.hh>
+#include <protocols/swa/rna/StepWiseRNA_Util.hh>
 #include <protocols/swa/rna/StepWiseRNA_ResidueInfo.hh>
 //////////////////////////////////
 #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
+#include <ObjexxFCL/string.functions.hh> 
 #include <string>
 
 #include <iostream>
-// AUTO-REMOVED #include <fstream>
+#include <fstream>
 #include <sstream>
 #include <utility/vector1.hh>
 #include <map>
 
-
-//./src/ObjexxFCL/string.functions.hh
-/*
-#include <core/types.hh>
-
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.fwd.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
-// Auto-header: duplicate removed #include <iostream>
-// Auto-header: duplicate removed #include <fstream>
-// Auto-header: duplicate removed #include <sstream>
-
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/rotamer_trials.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/scoring/rna/RNA_TorsionPotential.hh>
-#include <core/scoring/rms_util.tmpl.hh>
-#include <numeric/conversions.hh>
-#include <core/chemical/VariantType.hh>
-
-
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
-
-#include <core/types.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.fwd.hh>
-#include <core/id/AtomID_Mask.fwd.hh>
-#include <core/id/DOF_ID.fwd.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/DOF_ID_Map.fwd.hh>
-#include <core/id/DOF_ID_Mask.fwd.hh>
-#include <core/id/JumpID.fwd.hh>
-#include <core/id/JumpID.hh>
-#include <core/id/TorsionID.hh>
-#include <core/id/types.hh>
-#include <core/io/silent/SharedSilentData.hh>
-#include <core/io/silent/SilentEnergy.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
-#include <core/io/silent/SilentStruct.fwd.hh>
-#include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/silent.fwd.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/types.hh>
-#include <utility/PyAssert.hh>
-#include <utility/keys/AutoKey.fwd.hh>
-#include <utility/keys/AutoKey.hh>
-#include <utility/keys/Key.fwd.hh>
-#include <utility/keys/Key.hh>
-#include <utility/keys/KeyLess.fwd.hh>
-#include <utility/keys/KeyLookup.fwd.hh>
-#include <utility/keys/KeyLookup.hh>
-#include <utility/keys/NoClient.fwd.hh>
-#include <utility/keys/NoClient.hh>
-#include <utility/keys/SmallKeyVector.fwd.hh>
-#include <utility/keys/UserKey.fwd.hh>
-#include <utility/keys/VariantKey.fwd.hh>
-#include <utility/keys/VariantKey.hh>
-#include <utility/options/BooleanOption.fwd.hh>
-#include <utility/options/Option.fwd.hh>
-#include <utility/options/keys/BooleanOptionKey.fwd.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
-#include <utility/options/keys/OptionKey.fwd.hh>
-#include <utility/options/keys/OptionKey.hh>
-#include <utility/options/keys/ScalarOptionKey.fwd.hh>
-#include <utility/options/keys/ScalarOptionKey.hh>
-#include <numeric/NumericTraits.hh>
-#include <numeric/angle.functions.hh>
-#include <ObjexxFCL/FArray2D.fwd.hh>
-#include <set>
-#include <utility>
-
-*/
 
 using namespace core;
 using namespace ObjexxFCL;
@@ -117,15 +37,15 @@ namespace rna {
 
 	void
 	Output_residue_struct(Residue_info const & residue){
-
+	
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::fmt;
-
-		std::cout << Get_one_letter_name(residue.name);
+	
+		std::cout << Get_one_letter_name(residue.name);			
 		std::cout << lead_zero_string_of(residue.seq_num, 2);
 		std::cout << A(1," ");
 	}
-
+	
 
 	std::string
 	Get_one_letter_name(std::string const & three_letter_name){
@@ -145,14 +65,14 @@ namespace rna {
 		if(one_letter_name=="G") return "RGU";
 		std::cout << "In get_three_letter_name_function, an invalid one_letter_name was passed into the function: " << one_letter_name <<std::endl;
 		exit (1);
-	}
+	}				
 
 
 
-
+	
 	Size
 	get_max_seq_num_from_res_map(std::map< core::Size, core::Size > const & my_map){
-
+	
 		Size max_seq_num=0;
 	  for (std::map< Size, Size>::const_iterator it=my_map.begin(); it!=my_map.end(); it++ ){
 	    std::cout << it->first << " => " << it->second << std::endl;
@@ -161,30 +81,30 @@ namespace rna {
 		return max_seq_num;
 	}
 
-	void
+	void	
 	output_res_map(std::map< core::Size, core::Size > const & my_map, Size const max_seq_num){
 
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::fmt;
-		using namespace std;
+		using namespace std;	
 		Size spacing=4;
 		std::cout << std::setw(30) << "full_pose_seq_num:";
-		for(Size seq_num=1; seq_num<=max_seq_num; seq_num++){
+		for(Size seq_num=1; seq_num<=max_seq_num; seq_num++){ 
 			std::cout << std::setw(spacing) << seq_num;
 		}
 		std::cout << std::endl;
 
-		std::cout << std::setw(30) << "partial_pose_seq_num:";
-		for(Size seq_num=1; seq_num<=max_seq_num; seq_num++){
+		std::cout << std::setw(30) << "partial_pose_seq_num:";			
+		for(Size seq_num=1; seq_num<=max_seq_num; seq_num++){ 
 			if(my_map.find(seq_num)!=my_map.end()){
-				std::cout << std::setw(spacing) << my_map.find(seq_num)->second;
+				std::cout << std::setw(spacing) << my_map.find(seq_num)->second;							
 			}else{
 				std::cout << A(spacing,"-");
 			}
-
+	
 		}
 		std::cout << std::endl;
-
+	
 	}
 
 	void
@@ -200,8 +120,8 @@ namespace rna {
 		}
 */
 		Size spacing=4;
-		std::cout << std::setw(30) << "Is_residue_prepend:";
-		for(Size seq_num=1; seq_num<=max_seq_num; seq_num++){
+		std::cout << std::setw(30) << "Is_residue_prepend:";				
+		for(Size seq_num=1; seq_num<=max_seq_num; seq_num++){ 
 			char prepend_char;
 			if(my_map.find(seq_num)!=my_map.end()){
 				prepend_char = (my_map.find(seq_num)->second) ? 'P' : 'A';
@@ -212,7 +132,7 @@ namespace rna {
 		}
 		std::cout << std::endl;
 
-	}
+	}		
 
 
 	void
@@ -220,31 +140,31 @@ namespace rna {
 		using namespace ObjexxFCL;
 		using namespace ObjexxFCL::fmt;
 
-
+			
 		sort_residue_list(residue_list); //maybe sure the list is sorted
 
 		Size seq_num=1;
 		for(Size n=1; n<=residue_list.size(); n++){
 			Residue_info residue=residue_list[n];
-
+			
 			while(seq_num<residue.seq_num){
 				std::cout << A(4," ");
 				seq_num++;
 			}
-
+			
 			Output_residue_struct(residue);
 			seq_num++;
 		}
-
+				
 		std::cout << std::endl;
 
 	}
 
 	utility::vector1< Residue_info >
 	Get_residue_list_from_fasta(std::string const full_fasta_sequence){
-
+		
 		utility::vector1< Residue_info > full_residue_list;
-
+		
 		for(Size n=0; n<=full_fasta_sequence.size()-1; n++){
 			std::string one_letter_name=string_of(full_fasta_sequence[n]);
 			Residue_info residue;
@@ -253,10 +173,10 @@ namespace rna {
 			if(one_letter_name=="C" || one_letter_name=="c") residue.name="RCY";
 			if(one_letter_name=="U" || one_letter_name=="u") residue.name="URA";
 			if(one_letter_name=="G" || one_letter_name=="g") residue.name="RGU";
-
+			
 			full_residue_list.push_back(residue);
-		}
-
+		}			
+		
 		return full_residue_list;
 	}
 
@@ -268,7 +188,7 @@ namespace rna {
 			if(seq_num==residue_list[i].seq_num){
 				return residue_list[i];
 			}
-		}
+		}	
 		std::cout << "Error, in Get_residue_from_seq_num function. The seq_num " << seq_num << " does not exist in the residue_list" << 	std::endl;
 		exit (1);
 	}
@@ -280,32 +200,32 @@ namespace rna {
 		for(Size j=1; j<=residue_list.size(); j++){
 			if(seq_num==residue_list[j].seq_num) {
 				return true;
-			}
+			}		
 		}
 		return false;
 	}
-
+	
 	utility::vector1 < utility::vector1 <Residue_info> >
 	Create_strand_list(utility::vector1 <Residue_info> const & residue_list){
 
 		utility::vector1 < utility::vector1 <Residue_info> >residue_group_list;
 
 		utility::vector1 <Residue_info> Sorted_residue_list = residue_list;
-		//Sort by seq_number, lowest sequence number at the top of the vector list.
+		//Sort by seq_number, lowest sequence number at the top of the vector list.	
 		sort_residue_list(Sorted_residue_list);
-
+	
 		Size j=1;
 		while(j<=Sorted_residue_list.size()){
 
-			Size first_element=j;
-
+			Size first_element=j;		
+			
 			//Test if Sorted_residue_list[j] contain an adjacent residue at the three_prime_end
 			while((j<Sorted_residue_list.size()) && ((Sorted_residue_list[j].seq_num+1)==Sorted_residue_list[j+1].seq_num)){
 				j++;
 			}
 			Size last_element=j;
 
-			utility::vector1 <Residue_info> residue_group;
+			utility::vector1 <Residue_info> residue_group;			
 
 			for(Size element=first_element; element<=last_element; element++){
 				residue_group.push_back(Sorted_residue_list[element]);
@@ -321,33 +241,33 @@ namespace rna {
 
 	utility::vector1 <Residue_info>
 	Set_Difference(utility::vector1 <Residue_info> const & residue_list_1, utility::vector1 <Residue_info> const & residue_list_2){
-
+		
 		utility::vector1 <Residue_info>	set_difference_residue_list;
-
+	
 		for(Size i=1; i<= residue_list_1.size(); i++){
 			if(Contain_residue_at_seq_num(residue_list_1[i].seq_num, residue_list_2)) continue;
-			set_difference_residue_list.push_back(residue_list_1[i]);
+			set_difference_residue_list.push_back(residue_list_1[i]);		
 		}
-
+	
 		return set_difference_residue_list;
 
 	}
 
 	utility::vector1 <Residue_info>
 	Set_Union(utility::vector1 <Residue_info> const & residue_list_1, utility::vector1 <Residue_info> const & residue_list_2){
-
+	
 		utility::vector1 <Residue_info> union_residue_list= residue_list_1;
 
 		for(Size i=1; i<=residue_list_2.size(); i++){
 			if(Contain_residue_at_seq_num(residue_list_2[i].seq_num, union_residue_list)==false){
 				union_residue_list.push_back(residue_list_2[i]);
-			}
+			} 
 		}
 
 		return union_residue_list;
 
 	}
-
+	
 	bool
 	residue_list_sort_citeria(Residue_info residue_info_1, Residue_info residue_info_2){
 		//Sort by seq_number, lowest sequence number at the top of the vector list.
@@ -355,7 +275,7 @@ namespace rna {
 	}
 
 	void
-	sort_residue_list(utility::vector1<Residue_info>& residue_list) {
+	sort_residue_list(utility::vector1<Residue_info>& residue_list) {	
 		//Need to check if this work with vector1, if not switch to std::vector
 		sort(residue_list.begin(), residue_list.end(), residue_list_sort_citeria);
 	}

@@ -22,16 +22,13 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <basic/Tracer.hh>
-#include <protocols/swa/rna/StepWiseRNA_JobParameters.hh>
+#include <protocols/swa/StepWiseJobParameters.hh>
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 #include <string>
-
-#include <utility/vector1.hh>
-
 
 using namespace core;
 using core::Real;
@@ -45,13 +42,13 @@ namespace rna {
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 	// Constructor
-	StepWiseRNA_BaseCentroidScreener::StepWiseRNA_BaseCentroidScreener( core::pose::Pose const & pose, StepWiseRNA_JobParametersCOP & job_parameters ):
+	StepWiseRNA_BaseCentroidScreener::StepWiseRNA_BaseCentroidScreener( core::pose::Pose const & pose, StepWiseJobParametersCOP & job_parameters ):
 		job_parameters_( job_parameters ),
 		rna_centroid_info_( new core::scoring::rna::RNA_CentroidInfo ),
 		base_stack_dist_cutoff_( 6.364 ),
 		base_stack_z_offset_max_( 4.5 ),
 		base_stack_z_offset_min_( 2.5 ),
-		base_stack_axis_cutoff_( 0.707 ),
+		base_stack_axis_cutoff_( 0.650 /*allow more slop than parin (0.707) */ ),
 		base_stack_planarity_cutoff_( 0.5 /*allow more slop than parin (0.707) */ ),
 		base_pair_dist_min_( 5.0 ),
 		base_pair_dist_max_( 12.0 ),
@@ -61,7 +58,7 @@ namespace rna {
 		base_pair_rho_min_( 5 ),
 		base_pair_rho_max_( 10 )
 	{
-		Initialize_base_stub_list( pose, true /*verbose*/ );
+		Initialize_base_stub_list( pose, false /*verbose*/ );
 		Initialize_terminal_res( pose );
 	}
 
@@ -135,18 +132,15 @@ namespace rna {
 
 			for ( Size m = 1; m <= nres; m++ ) {
 
-				//if( ( terminal_res == 1 || terminal_res == 24) &&
-				//						( m == 12 || m == 13 ) ){
-				//					std::cout << "CHECKING STACK " << terminal_res << " " << m << std::endl;
-				//					bool const blah = check_stack_base( terminal_res, m, true /*verbose*/ );
-				//					std::cout << " Was there a stack? " << blah << std::endl;
-				//				}
+				//				std::cout << " about to check stack: --- " << std::endl;
+				//				std::cout << " TERMINAL_RES " << terminal_res << " " << is_moving_res_( terminal_res ) <<  " " << is_fixed_res_( terminal_res ) << std::endl;
+				//				std::cout << " M            " << m << " " << is_moving_res_( m ) <<  " " << is_fixed_res_( m ) << std::endl;
 
 				if ( ( is_moving_res_( terminal_res )  && is_moving_res_( m ) ) ||
 						 ( is_fixed_res_(  terminal_res )  && is_fixed_res_(  m ) ) ){
 
 					stacked_on_terminal_res_in_original_pose_( terminal_res, m )  = check_stack_base( terminal_res, m );
-					if ( stacked_on_terminal_res_in_original_pose_( terminal_res, m ) ) std::cout << "ALREADY STACKED: " << terminal_res << " " << m << std::endl;
+					//if ( stacked_on_terminal_res_in_original_pose_( terminal_res, m ) ) std::cout << "ALREADY STACKED: " << terminal_res << " " << m << std::endl;
 
 				}
 			}
@@ -311,7 +305,7 @@ namespace rna {
 		} else {
 			Update_base_stub_list( pose );
 		}
-		bool const passed = Check_that_terminal_res_are_unstacked( true /*verbose*/ );
+		bool const passed = Check_that_terminal_res_are_unstacked( false /*verbose*/ );
 		return passed;
 	}
 
@@ -337,12 +331,14 @@ namespace rna {
 
 			for ( Size m = 1; m <= moving_residues_.size(); m++ ) {
 				Size const & moving_res = moving_residues_[ m ];
+				if (verbose) std::cout << "about to check stack: " << terminal_res << " " << moving_res << " " << stacked_on_terminal_res_in_original_pose_( terminal_res, moving_res ) << std::endl;
 				if ( !stacked_on_terminal_res_in_original_pose_( terminal_res, moving_res ) &&
 						 check_stack_base( terminal_res, moving_res, verbose  ) ) return false;
 			}
 
 			for ( Size m = 1; m <= fixed_residues_.size(); m++ ) {
 				Size const & fixed_res = fixed_residues_[ m ];
+				if (verbose) std::cout << "about to check stack: " << terminal_res << " " << fixed_res << " " << stacked_on_terminal_res_in_original_pose_( terminal_res, fixed_res ) << std::endl;
 				if ( !stacked_on_terminal_res_in_original_pose_( terminal_res, fixed_res ) &&
 						 check_stack_base( terminal_res, fixed_res, verbose  ) ) return false;
 			}
