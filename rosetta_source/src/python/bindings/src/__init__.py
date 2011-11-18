@@ -1113,7 +1113,7 @@ def init(*args):
 
 
 def version():
-    return "PyRosetta-2.011-r%s retrieved from: %s" % (rosetta.core.minirosetta_svn_version(), rosetta.core.minirosetta_svn_url()) + \
+    return "PyRosetta 2.011 [r%s] retrieved from: %s" % (rosetta.core.minirosetta_svn_version(), rosetta.core.minirosetta_svn_url()) + \
     '\n(C) Copyright Rosetta Commons Member Institutions.\nCreated in JHU by Sergey Lyskov and PyRosetta Team.\n'
 
 

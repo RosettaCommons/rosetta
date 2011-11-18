@@ -233,162 +233,7 @@ def namespace(ns):
 
 
 
-exclude_header_list = [
-                       'protocols/moves/CompositionMover.hh',
-
-                       # Not needed (?)
-                       'utility/fix_boinc_read.hh',
-                       'utility/all.hh',
-                       'utility/sort_predicates.hh',
-                       'utility/random.functions.hh',
-                       'utility/vector0_bool.hh',
-                       'utility/vectorL_bool.hh',
-                       'numeric/random.functions.hh',
-                       'numeric/fourier/FFT.hh',
-                       'numeric/fourier/kiss_fft_state.hh',
-                       'numeric/kdtree/KDNode.hh',
-                       'numeric/kdtree/WrappedChar.hh',
-
-                       'protocols/abinitio/AllResiduesChanged.hh',
-                       'protocols/abinitio/FragmentCost.hh',
-                       'protocols/abinitio/JumpingFoldConstraints.hh',
-                       'protocols/constraints_additional/SequenceProfileConstraint.hh',
-                       'protocols/jd2/ThreadingJob.hh',
-                       'protocols/protein_interface_design/movers/SetupHotspotConstraintsMover.hh',
-                       'protocols/protein_interface_design/movers/KinematicLoop.hh', # in active development now, will re-add later
-
-
-                       # Parsing problem
-                       #'utility/utility.functions.hh',
-                       #'utility/Show.hh',
-                       #'utility/string_util.hh',
-                       #'utility/exit.hh',
-                       #'utility/basic_sys_util.hh',
-                       #'utility/PeriodicSplineReader.hh',
-                       'core/scoring/EnergyGraph.hh',
-               #'core/scoring/constraints/Func.hh',
-                   #'core/pack/task/PackerTask.hh',
-
-                       # 'after parsing' probelm
-                       'core/optimization/AtomTreeMultifunc.hh',
-                       'core/optimization/SingleResidueMultifunc.hh',
-                       'core/io/pose_stream/PoseOutputStream.hh',
-                       'core/io/atom_tree_diffs/atom_tree_diff.hh',
-                       'core/scoring/electron_density/ElecDensEnergy.hh',
-                       'core/scoring/OneToAllEnergyContainer.hh',
-                       'core/scoring/electron_density/ElectronDensity.hh',
-                       'core/scoring/dssp/PairingsList.hh',
-                       'basic/datacache/CacheablePoseRawPtr.hh',
-                       'basic/datacache/DiagnosticData.hh',
-
-
-                       'numeric/random/mt19937.hh', # nwC
-                       'core/scoring/TenANeighborGraph.hh',  # nwC
-                       'core/scoring/TwelveANeighborGraph.hh', # nwC
-                       'core/scoring/constraints/ConstraintGraph.hh', # nwC
-                       'core/pack/annealer/RotamerAssigningAnnealer.hh', # nwC
-                       'core/fragment/picking/concepts/Book.hh',    # Teamplate class
-                       'core/fragment/picking/concepts/Bookmark.hh',# Teamplate class
-                       'protocols/flexpack/interaction_graph/OTFFlexbbInteractionGraph.hh', # nwC
-                       'protocols/flexpack/interaction_graph/PrecomputedFlexbbInteractionGraph.hh', # nwC
-
-                       #'protocols/protein_interface_design/Filter.fwd.hh',
-
-                       'core/kinematics/CAlpha.hh',
-                       'core/scoring/dna/scoring.hh',
-                       'core/graph/DisjointSets.hh',
-                       'core/scoring/dna/BasePartner.hh',
-                       #"core/scoring/constraints/ConstraintSet.hh", # temp for class
-                       'core/scoring/methods/MembraneEnvEnergy.hh',
-                       'core/sequence/ExtendAlignerSW.hh',
-
-                       'core/chemical/adduct_util.hh', # generate some warnings, probably not needed
-
-                       'protocols/MultiResolutionProtocol.hh',
-                       'protocols/dna/util.hh',
-                       'protocols/protein_interface_design/movers/BackrubDDMover.hh',
-                       'protocols/protein_interface_design/es.hh',
-                       'protocols/protein_interface_design/dock_design_filters.hh',
-                       'protocols/protein_interface_design/dock_design_movers.hh',
-                       'protocols/protein_interface_design/movers/TryRotamers.hh',
-                       'protocols/flexpack/interaction_graph/FlexbbInteractionGraph.hh',
-                       'protocols/flexpack/interaction_graph/MinimalistFlexbbInteractionGraph.hh',
-                       'protocols/ligand_docking/grid_functions.hh',
-                       'protocols/ligand_docking/ligand_dock_impl.hh',
-                       'protocols/ligand_docking/ligand_options/BaseOptions.hh',
-                       'protocols/ligand_docking/ligand_options/Minimize_backbone.hh',
-                       'protocols/ligand_docking/ligand_options/Minimize_ligand.hh',
-                       'protocols/ligand_docking/ligand_options/Mutate_same_name3.hh',
-                       'protocols/ligand_docking/ligand_options/ProtocolOption.hh',
-                       'protocols/topology_broker/Exceptions.hh',
-                       'protocols/moves/HelicalPeptideLengthMover.hh',
-
-                       # Compiliaion problem
-                       'utility/vectorL.hh',
-                       'core/kinematics/AtomTree.hh',
-                       'protocols/dna/DnaPacker.hh',
-                       'core/scoring/constraints/Constraints.hh',  # Pure virtual class, can not be created
-                       'core/pack/task/IGEdgeReweightContainer.hh',
-                       'protocols/abinitio/SmoothFragmentMover.hh',
-                       'protocols/abinitio/SymmetricFragmentMover.hh',
-                       'protocols/topology_broker/RigidChunkClaimer.hh',
-
-                       # Templates
-                       "core/scoring/NeighborList.tmpl.hh",
-                       'core/id/AtomID_Map.hh',
-                       'core/graph/UpperEdgeGraph.hh',
-
-                       # Import problem
-                       'protocols/abinitio/FragmentSampler.hh',
-
-                       # not in scons
-                       'core/chemical/CSDAtomTypeSet.hh',
-                       'protocols/moves/GreenPacker.hh',
-                       'core/fragment/SRFD_Implementations.hh',
-                       'core/fragment/TorsionSRFD.hh',
-                       'core/scoring/dna/scoring.hh',
-                       'core/scoring/rna/RNA_FA_Stack.hh',
-                       'core/scoring/rna/RNA_BaseBaseEnergy.hh',
-                       'core/scoring/methods/RG_Energy.hh',
-                       'core/scoring/methods/CSD_TorsionEnergy.hh',
-                       'core/io/pose_stream/SilentFilePoseOutputStream.hh',
-                       'core/pack/annealer/DebuggingAnnealer.hh',
-                       'protocols/flxbb/DesignTask.hh',
-                       'protocols/flxbb/utility.hh',
-
-                       'protocols/abinitio/vs_test.hh',
-
-                       'protocols/moves/OutputMovers.hh', # Tracer in .hh file - will deal with it later
-
-                       'core/svn_version.hh',
-                       # Done by hands
-                       'core/io/pdb/file_data.hh',
-                       'core/io/pdb/pdb_dynamic_reader.hh',
-                       #'core/io/pdb/pose_io.hh',
-
-                       # python import problems
-                       'core/scoring/hbonds/constants.hh',
-                       'core/scoring/hbonds/hbonds_geom.hh',
-
-                       #'core/scoring/EnergyMap.hh',
-                       #'core/scoring/LREnergyContainer.hh',
-                       #'core/scoring/ScoreFunction.hh',
-
-
-                       #'core/conformation/ConformationObserver.hh',
-                       #'core/conformation/ConformationEvent.hh',
-#'core/conformation/Atom.hh',
-#'core/conformation/Conformation.hh',
-#c  'core/conformation/Interface.hh',
-#'core/conformation/MinimalistConformationObserver.hh', 'core/conformation/PseudoBond.hh',
-#'core/conformation/Residue.functions.hh',
-#'core/conformation/Residue.hh',
-#'core/conformation/ResidueFactory.hh', 'core/conformation/ResidueMatcher.hh',
-#'core/conformation/util.hh',
-
-]
-
-
+exclude_header_list = []
 
 
 def mb_exclude(path, mb, hfile):
@@ -415,20 +260,8 @@ def mb_exclude(path, mb, hfile):
 
 
     if path == 'core/pose':
-        #mb.class_( "PDBInfo" ).member_function( "clone" ).exclude()
-
-        #mb.class_( "PDBPoseMap" ).member_function( "clone" ).exclude()
-        #mb.class_( "PDBInfo" ).exclude()
-        #mb.class_( "Pose" ).exclude()
-        #class_from_full_path(mb,'core::kinematics::MoveMap').add_code('def("__iter__", bp::range( &core::kinematics::MoveMap::dof_begin, &core::kinematics::MoveMap::dof_end ))')
-        #class_from_full_path(mb,"core::conformation::Residue").add_code('def("__iter__", bp::range( ( core::conformation::Atoms::iterator (core::conformation::Residue::*)() )( &core::conformation::Residue::atom_begin), ( core::conformation::Atoms::iterator (core::conformation::Residue::*)() )( &core::conformation::Residue::atom_end) ))')
-        #class_from_full_path(mb,"core::pose::Pose"   ).add_code('def("__iter__", bp::range( &core::pose::Pose::res_begin, &core::pose::Pose::res_end))')
-
         try:
             pass
-            #mb.class_( "Pose" ).member_function( "res_begin" ).exclude() -- apl note: removing this member function; so commenting out this line
-            #mb.class_( "Pose" ).member_function( "res_end" ).exclude() -- apl note: removing this member function; so commenting out this line
-            #mb.class_( "Pose" ).documentation = '"QQQQQ"'
         except pygccxml.declarations.matcher.declaration_not_found_t: pass
 
         if hfile == 'core/pose/util.hh':
@@ -450,22 +283,6 @@ def mb_exclude(path, mb, hfile):
         def fff(name):
             if name.find( 'std::map<core::id::StubID,core::kinematics::RT') >= 0: return True
             else: return False
-
-
-        #t = mb.decls( lambda decl: decl.name.startswith( 'std::map<core::id::StubID,core::kinematics::RT') )
-        #for i in t: i.exclude()
-
-        #try: mb.decl("map<core::id::StubID,core::kinematics::RT,std::less<core::id::StubID>,std::allocator<std::pair<const core::id::StubID, core::kinematics::RT> > >").exclude()
-        #except pygccxml.declarations.matcher.declaration_not_found_t: pass
-        #mb.class_('map< core::id::StubID, core::kinematics::RT >').exclude()
-        #for c in mb.vars(): print c
-        #for c in mb.decls(): print c
-
-        #mb.decl('std::map<core::id::StubID, core::kinematics::RT, std::less<core::id::StubID>, std::allocator<std::pair<const core::id::StubID, core::kinematics::RT> > >').exclude()
-
-        #E('decl', "map<core::id::StubID,core::kinematics::RT,std::less<core::id::StubID>,std::allocator<std::pair<const core::id::StubID, core::kinematics::RT> > >", 'exclude')
-        #E_('' )
-        #mb.decl("map<core::id::StubID, core::kinematics::RT, std::less<core::id::StubID>, std::allocator<std::pair<const core::id::StubID, core::kinematics::RT> > >").exclude()
 
         try:
             mb.class_("Conformation").mem_funs('insert_fragment').exclude()
@@ -508,19 +325,6 @@ def mb_exclude(path, mb, hfile):
         #E_(" mb.class_('SecstructSRFD').mem_funs('clone').exclude() ")
 
         #E('class_', "BBTorsionSRFD", 'mem_funs', "clone", 'exclude') # mb.class_("BBTorsionSRFD").mem_funs("clone").exclude()
-        #E('class_', "ConstantLengthFragSet", 'mem_funs', "clone", 'exclude') #mb.class_("ConstantLengthFragSet").mem_funs("clone").exclude()
-        #E('class_', "ConstantLengthFragSet", 'mem_funs', "empty_clone", 'exclude') #  mb.class_("ConstantLengthFragSet").mem_funs("empty_clone").exclude()
-        #E('class_', "ConstantLengthFragSet", 'mem_funs', "add_", 'exclude')  #mb.class_("ConstantLengthFragSet").mem_funs("add_").exclude()
-        #E('class_', "DownJumpSRFD", 'mem_funs', "clone", 'exclude')  #mb.class_("DownJumpSRFD").mem_funs("clone").exclude()
-        #E('class_', "FragSetCollection", 'mem_funs', "clone", 'exclude')  #mb.class_("FragSetCollection").mem_funs("clone").exclude()
-        #E('class_', "OrderedFragSet", 'mem_funs', "add_", 'exclude')  #mb.class_("OrderedFragSet").mem_funs("add_").exclude()
-        #E('class_', "OrderedFragSet", 'mem_funs', "clone", 'exclude') #mb.class_("OrderedFragSet").mem_funs("clone").exclude()
-        #E('class_', "OrderedFragSet", 'mem_funs', "empty_clone", 'exclude')  #mb.class_("OrderedFragSet").mem_funs("empty_clone").exclude()
-        #E('class_', "FragSetCollection", 'mem_funs', "empty_clone", 'exclude') #mb.class_("FragSetCollection").mem_funs("empty_clone").exclude()
-        #E('class_', "FragSetCollection", 'mem_funs', "add_", 'exclude') #mb.class_("FragSetCollection").mem_funs("add_").exclude()
-        #E('class_', "UpJumpSRFD", 'mem_funs', "clone", 'exclude') #mb.class_("UpJumpSRFD").mem_funs("clone").exclude()
-        #E('class_', "JumpingFrame", 'mem_funs', "clone", 'exclude') #mb.class_("JumpingFrame").mem_funs("clone").exclude()
-
 
 
     if path == 'core/graph':
@@ -655,9 +459,6 @@ def mb_exclude(path, mb, hfile):
 
         if hfile=='core/scoring/ScoringManager.hh':
             mb.class_("ScoringManager").mem_fun("get_DDPLookupTable").exclude()  # for some reason boost look up this function in core::conformation instead of core::scoring
-
-
-
 
 
     if path == 'core/scoring/constraints':
