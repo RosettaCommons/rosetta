@@ -63,6 +63,8 @@ Torsion::apply(core::pose::Pose const & pose ) const
 				return( psi>=lower() && psi<=upper() );
 		}
 	}
+
+	return false;
 }
 
 core::Real
