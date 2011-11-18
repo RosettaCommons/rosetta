@@ -4,3 +4,4 @@ extras/gen_born_params.txt
 extras/NACCESS_sasa_radii.txt
 extras/memb_fa_params.txt
 extras/std_charges.txt
+extras/atom_orbital_hybridization.txt
