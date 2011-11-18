@@ -20,7 +20,6 @@
 
 // Project Headers
 #include <protocols/moves/MonteCarlo.fwd.hh>
-// AUTO-REMOVED #include <protocols/moves/ThermodynamicObserver.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/random/WeightedSampler.hh>
 
@@ -33,6 +32,7 @@
 
 #ifdef WIN32
 	#include <protocols/moves/ThermodynamicMover.hh>
+	#include <protocols/moves/ThermodynamicObserver.hh>
 #endif
 
 
