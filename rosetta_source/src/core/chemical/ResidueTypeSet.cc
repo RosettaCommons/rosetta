@@ -48,6 +48,8 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/pH.OptionKeys.gen.hh>
 #include <basic/options/keys/chemical.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <core/chemical/orbitals/AssignOrbitals.hh>
 
 // Boost Headers
 #include <boost/foreach.hpp>
@@ -136,6 +138,10 @@ ResidueTypeSet::ResidueTypeSet(
 		foreach(std::string filename, extra_res_param_files){
 			ResidueTypeOP rsd_type( read_topology_file( filename, atom_types, elements, mm_atom_types, orbital_types, this ) ); //, csd_atom_types ) );
 			// kwk commenting out csd atom types until they have been fully implemented
+			if(basic::options::option[ basic::options::OptionKeys::in::add_orbitals]){
+				orbitals::AssignOrbitals add_orbitals_to_residue(rsd_type);
+				add_orbitals_to_residue.assign_orbitals();
+			}
 			residue_types_.push_back( rsd_type );
 		}
 

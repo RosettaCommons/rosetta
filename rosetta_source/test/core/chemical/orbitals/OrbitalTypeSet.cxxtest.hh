@@ -19,12 +19,16 @@
 #include <core/chemical/orbitals/OrbitalTypeSet.hh>
 #include <core/chemical/orbitals/OrbitalType.hh>
 #include <core/types.hh>
+#include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/AtomType.hh>
+#include <core/chemical/ChemicalManager.hh>
+
 
 // Project headers
 #include <test/core/init_util.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.hh> // for some reason, AtomTypeSet.fwd.hh does not #include owning_ptr.hh
+#include <utility/pointer/owning_ptr.hh> // for some reason, atom_type_set.fwd.hh does not #include owning_ptr.hh
 
 // C++ headers, for debugging your tests
 // AUTO-REMOVED #include <iostream>
@@ -44,6 +48,7 @@ class OrbitalTypeSetTests : public CxxTest::TestSuite {
 
 	// Shared data elements go here.
 	orbitals::OrbitalTypeSetOP orbitaltypeset;
+	//atom_type_setOP atom_type_set;
 	double delta_percent;
 
 	// --------------- Suite-level Fixture --------------- //
@@ -57,7 +62,8 @@ class OrbitalTypeSetTests : public CxxTest::TestSuite {
 		// Want to read the properties file in only once for all the tests in this suite
 		// so do it in the constructor for the test suite.
 		orbitaltypeset = new orbitals::OrbitalTypeSet( "core/chemical/orbitals/");
-		//atomtypeset->read_file( "core/chemical/atom_properties.txt" );
+		//atom_type_set = new atom_type_set( "core/chemical/");
+		//atom_type_set->read_file( "core/chemical/atom_properties.txt" );
 	}
 
 	virtual ~OrbitalTypeSetTests() {}
@@ -99,6 +105,75 @@ class OrbitalTypeSetTests : public CxxTest::TestSuite {
 		TS_ASSERT_EQUALS( orbitaltypeset->orbital_type_index("O.p.sp2"), 5 );
 		TS_ASSERT_EQUALS( orbitaltypeset->orbital_type_index("O.p.sp3"), 6 );
 		TS_ASSERT_EQUALS( orbitaltypeset->orbital_type_index("S.p.sp3"), 7 );
+
+	}
+
+	void test_orbital_atom_pairing_for_ligand(){
+		core::chemical::ChemicalManager* chemical_manager = core::chemical::ChemicalManager::get_instance();
+		orbitals::OrbitalTypeSetCAP orbital_set = chemical_manager->orbital_type_set("fa_standard");
+		core::chemical::AtomTypeSetCAP atom_type_set = chemical_manager->atom_type_set("fa_standard");
+
+
+		orbitals::OrbitalType c_pi_sp2=orbital_set->operator [](1);
+		core::Size atom_type_index = atom_type_set->atom_type_index("CNH2");
+		core::Size parameter_bohrradius = atom_type_set->extra_parameter_index("BOHR_RADIUS");
+		core::Real ligand_dist = atom_type_set->operator[](atom_type_index).extra_parameter(parameter_bohrradius);
+		TS_ASSERT_EQUALS(c_pi_sp2.distance(), ligand_dist);
+
+		atom_type_index = atom_type_set->atom_type_index("CNH2");
+		ligand_dist = atom_type_set->operator[](atom_type_index).extra_parameter(parameter_bohrradius);
+		TS_ASSERT_EQUALS(c_pi_sp2.distance(), ligand_dist);
+
+		atom_type_index = atom_type_set->atom_type_index("CObb");
+		ligand_dist = atom_type_set->operator[](atom_type_index).extra_parameter(parameter_bohrradius);
+		TS_ASSERT_EQUALS(c_pi_sp2.distance(), ligand_dist);
+
+
+		atom_type_index = atom_type_set->atom_type_index("aroC");
+		ligand_dist = atom_type_set->operator[](atom_type_index).extra_parameter(parameter_bohrradius);
+		TS_ASSERT_EQUALS(c_pi_sp2.distance(), ligand_dist);
+
+		orbitals::OrbitalType n_pi_sp2=orbital_set->operator [](2);
+		atom_type_index = atom_type_set->atom_type_index("Ntrp");
+		ligand_dist = atom_type_set->operator[](atom_type_index).extra_parameter(parameter_bohrradius);
+		TS_ASSERT_EQUALS(n_pi_sp2.distance(), ligand_dist);
+
+		orbitals::OrbitalType n_p_sp2=orbital_set->operator [](3);
+		atom_type_index = atom_type_set->atom_type_index("Nhis");
+		ligand_dist = atom_type_set->operator[](atom_type_index).extra_parameter(parameter_bohrradius);
+		TS_ASSERT_EQUALS(n_p_sp2.distance(), ligand_dist);
+
+		atom_type_index = atom_type_set->atom_type_index("NH2O");
+		ligand_dist = atom_type_set->operator[](atom_type_index).extra_parameter(parameter_bohrradius);
+		TS_ASSERT_EQUALS(n_p_sp2.distance(), ligand_dist);
+
+		atom_type_index = atom_type_set->atom_type_index("Narg");
+		ligand_dist = atom_type_set->operator[](atom_type_index).extra_parameter(parameter_bohrradius);
+		TS_ASSERT_EQUALS(n_p_sp2.distance(), ligand_dist);
+
+		atom_type_index = atom_type_set->atom_type_index("Nbb");
+		ligand_dist = atom_type_set->operator[](atom_type_index).extra_parameter(parameter_bohrradius);
+		TS_ASSERT_EQUALS(n_p_sp2.distance(), ligand_dist);
+
+		orbitals::OrbitalType o_pi_sp2=orbital_set->operator [](4);
+		atom_type_index = atom_type_set->atom_type_index("OH");
+		ligand_dist = atom_type_set->operator[](atom_type_index).extra_parameter(parameter_bohrradius);
+		TS_ASSERT_EQUALS(o_pi_sp2.distance(), ligand_dist);
+
+		orbitals::OrbitalType o_p_sp2=orbital_set->operator [](5);
+		atom_type_index = atom_type_set->atom_type_index("ONH2");
+		ligand_dist = atom_type_set->operator[](atom_type_index).extra_parameter(parameter_bohrradius);
+		TS_ASSERT_EQUALS(o_p_sp2.distance(), ligand_dist);
+
+		orbitals::OrbitalType o_p_sp3=orbital_set->operator [](6);
+		atom_type_index = atom_type_set->atom_type_index("OOC");
+		ligand_dist = atom_type_set->operator[](atom_type_index).extra_parameter(parameter_bohrradius);
+		TS_ASSERT_EQUALS(o_p_sp3.distance(), ligand_dist);
+
+		atom_type_index = atom_type_set->atom_type_index("OCbb");
+		ligand_dist = atom_type_set->operator[](atom_type_index).extra_parameter(parameter_bohrradius);
+		TS_ASSERT_EQUALS(o_p_sp3.distance(), ligand_dist);
+
 	}
 
 	void test_operator_brackets() {

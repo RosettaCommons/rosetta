@@ -1,0 +1,493 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+#include <core/chemical/ResidueType.hh>
+#include <core/chemical/orbitals/AssignOrbitals.hh>
+#include <core/chemical/orbitals/OrbitalType.hh>
+#include <map>
+#include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/AtomTypeSet.hh>
+#include <core/chemical/AtomType.hh>
+#include <utility/vector1.hh>
+#include <utility/string_util.hh>
+#include <numeric/xyz.functions.hh>
+#include <ObjexxFCL/FArray2D.hh>
+#include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/string.functions.hh>
+#include <numeric/conversions.hh>
+#include <numeric/constants.hh>
+
+namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+
+
+namespace core{
+namespace chemical{
+namespace orbitals{
+
+using namespace ObjexxFCL;
+using namespace ObjexxFCL::fmt;
+
+inline
+std::string
+strip_whitespace( std::string const & name )
+{
+	std::string trimmed_name( name );
+	left_justify( trimmed_name ); trim( trimmed_name ); // simpler way to do this?
+	return trimmed_name;
+}
+AssignOrbitals::AssignOrbitals(core::chemical::ResidueTypeOP const restype) :
+		restype_(restype),
+		n_orbitals_(0)
+
+{
+
+}
+
+void AssignOrbitals::assign_orbitals( )
+{
+	core::chemical::ChemicalManager* chemical_manager = core::chemical::ChemicalManager::get_instance();
+	core::chemical::AtomTypeSetCAP atom_type_set = chemical_manager->atom_type_set("fa_standard");
+
+	// Get the chemical atom_type for each atom by it index number in this residue
+	for (core::Size atm_index = 1; atm_index <= restype_->natoms(); ++atm_index ){
+		OrbInfo orbital_info;
+		core::chemical::AtomType atmtype(restype_->atom_type(atm_index));
+
+		//core::chemical::orbitals::OrbitalType obtype (restype_->orbital_xyz(orbital_index));
+
+		// determine if atom has an orbital, if yes,
+		if (atmtype.atom_has_orbital()){
+			//get hybridization state of atom_type and orbital type associated with atom type
+			core::Size atom_type_index = atom_type_set->atom_type_index(atmtype.atom_type_name());
+			core::Size parameter_hybridization = atom_type_set->extra_parameter_index("ORBITAL_HYBRIDIZATION");
+			core::Size parameter_orbitaltypes = atom_type_set->extra_parameter_index("ORBITAL_TYPES");
+			core::Size parameter_bohrradius = atom_type_set->extra_parameter_index("BOHR_RADIUS");
+
+			orbital_info.atom_index = atm_index;
+			orbital_info.hybridization = atom_type_set->operator[](atom_type_index).extra_parameter(parameter_hybridization);
+			orbital_info.orbitaltypes = atom_type_set->operator[](atom_type_index).extra_parameter(parameter_orbitaltypes);
+			orbital_info.dist = atom_type_set->operator[](atom_type_index).extra_parameter(parameter_bohrradius);
+			orbital_info.bondedatoms = restype_->bonded_neighbor(atm_index);
+
+
+			if(orbital_info.bondedatoms.size()== 1 && orbital_info.hybridization == 2){
+				if(orbital_info.orbitaltypes == 1){
+				//	assign_only_pi_orbitals_to_atom(orbital_info, atmtype);
+				}else if(orbital_info.orbitaltypes == 4){
+					assign_sp2_sp_orbitals_to_one_bonded_atom(orbital_info, atmtype);
+				}else {//if orbitaltypes == 2
+					utility_exit_with_message("Both P and Pi orbitals exist if # bonded atoms=1 and hybridization = 2 in case of C=0");
+				}
+			}
+			if(orbital_info.bondedatoms.size()== 2 && orbital_info.hybridization == 2){
+				//Consider this situation C=N-H, the C-N,N-H sigma bonds and the nitrogen lone-pair hybrid orbital are coplanar.
+				//the un-hybridazed p orbital at a right anlge to the plane forming a pi bond.
+				//utility_exit_with_message("Both P and Pi orbitals exist if # bonded atoms=2 and hybridization = 2, as seen in >C=N-");
+				if (orbital_info.orbitaltypes == 1){
+					assign_only_pi_orbitals_to_atom(orbital_info, atmtype);
+				}
+				if (orbital_info.orbitaltypes == 4){
+					//Currently, the atm_index is N1 which is sp2 hybridized and bonded to 2 atoms.N1 has both P and Pi orbitals.
+					//Now we need to determine neighbor atoms in order to define a plane to place the orbitals.
+					core::Size atm_index2(orbital_info.bondedatoms[1]);
+					core::Size atm_index3(orbital_info.bondedatoms[2]);
+
+					//We first want to add pi orbitals to the Nitrogen,
+					assign_only_pi_orbitals_to_atom(orbital_info, atmtype);
+
+					//Place one lone pair of P orbitals on sp2 hybridized Nhis atom, which are bonded to two atoms.
+					std::string const stub1(strip_whitespace(restype_->atom_name(atm_index)));
+					std::string const stub2(strip_whitespace(restype_->atom_name(atm_index2)));
+					std::string const stub3(strip_whitespace(restype_->atom_name(atm_index3)));
+
+					core::Real const phi(numeric::conversions::radians(180.0));
+					core::Real const theta(numeric::conversions::radians(54.0));
+
+					std::string orbital_type_full_name(make_orbital_type_name(atmtype, "p", orbital_info.hybridization) );
+					std::string const orbital_element_name( make_orbital_element_name() );
+					set_orbital_type_and_bond(atm_index, orbital_element_name, orbital_type_full_name);
+					restype_->set_orbital_icoor_id( orbital_element_name,phi,theta,orbital_info.dist,stub1,stub2,stub3);
+				}
+			}
+			if(orbital_info.bondedatoms.size()== 3 && orbital_info.hybridization== 2){//as seen in COO,NH2O and aroC.
+				if (orbital_info.orbitaltypes == 1 || orbital_info.orbitaltypes == 3){	//Assign pi orbitals
+					core::Size atm_index2(orbital_info.bondedatoms[1]);
+					core::Size atm_index3(orbital_info.bondedatoms[2]);
+					utility::vector1< numeric::xyzVector<core::Real> > orbital_xyz_vectors = cross_product_helper(atm_index,atm_index2,atm_index3,orbital_info.dist);
+					add_orbitals_to_restype(atm_index2, atm_index3, orbital_info, atmtype, "pi",orbital_xyz_vectors);
+				}
+				if (orbital_info.orbitaltypes == 2){
+					utility_exit_with_message("P orbital does not exist if # bonded atoms=3 and hybridization = 2, as seen in >C=C<");
+				}
+			}
+			if(orbital_info.bondedatoms.size()== 1 && orbital_info.hybridization== 3){
+				//this instance exists in PO4-, which has one P=O double bond and then three P-O single bonds.
+				// The oxygens that are singly bonded have 3 sets of lone pairs and each has a -1 charge.
+
+			}
+			//sp3 hybrdization
+			if(orbital_info.bondedatoms.size()== 2 && orbital_info.hybridization== 3){
+/*				if(orbital_info.orbitaltypes != 2){
+					utility_exit_with_message("Pi orbital does not exist if # bonded atoms=3 and hybridization = 3");
+				}*/
+
+				if(orbital_info.orbitaltypes == 3){//assign P orbitals to -O-, or -S-, such as -OH
+					core::Size atm_index2(orbital_info.bondedatoms[1]);
+					core::Size atm_index3(orbital_info.bondedatoms[2]);
+
+					std::string const stub1(strip_whitespace(restype_->atom_name(atm_index)));
+					std::string const stub2(strip_whitespace(restype_->atom_name(atm_index2)));
+					std::string const stub3(strip_whitespace(restype_->atom_name(atm_index3)));
+
+					core::Real const phi(numeric::conversions::radians(120.0));
+					core::Real const theta(numeric::conversions::radians(70.0));
+
+					core::Real const phi_De(numeric::conversions::radians(180.0));
+					core::Real const theta_De(numeric::conversions::radians(70.0));
+
+					std::string orbital_type_full_name(make_orbital_type_name(atmtype, "p",orbital_info.hybridization) );
+					std::string const orbital_element_name( make_orbital_element_name() );
+					std::string const orbital_element_name2( make_orbital_element_name() );
+					std::string const orbital_element_name3( make_orbital_element_name() );
+
+					set_orbital_type_and_bond(atm_index, orbital_element_name, orbital_type_full_name);
+					set_orbital_type_and_bond(atm_index, orbital_element_name2, orbital_type_full_name);
+					set_orbital_type_and_bond(atm_index, orbital_element_name3, orbital_type_full_name);
+
+					restype_->set_orbital_icoor_id( orbital_element_name,phi,theta,orbital_info.dist,stub1,stub2,stub3);
+					restype_->set_orbital_icoor_id( orbital_element_name2,-phi,theta,orbital_info.dist,stub1,stub2,stub3);
+					restype_->set_orbital_icoor_id( orbital_element_name3,phi_De,theta_De,orbital_info.dist,stub1,stub2,stub3);
+
+				}
+			}
+			if(orbital_info.bondedatoms.size()== 3 && orbital_info.hybridization == 3){
+				if(orbital_info.orbitaltypes != 2){
+					utility_exit_with_message("Pi orbital does not exist if # bonded atoms=3 and hybridization = 3");
+				}
+
+				if(orbital_info.orbitaltypes == 2){// assign one p orbital to a sp3 N bonded to 3 atoms, as seen in -NH-
+					core::Size atm_index2(orbital_info.bondedatoms[1]);
+					core::Size atm_index3(orbital_info.bondedatoms[2]);
+					core::Size atm_index4(orbital_info.bondedatoms[3]);
+
+                    utility::vector1< numeric::xyzVector<core::Real> >  lp_orbital_xyz_vector = Coordinates_Tetrahedral_bondedto3atoms_helper(atm_index, atm_index2, atm_index3, atm_index4, orbital_info.dist);
+					for(core::Size vector_index = 1; vector_index <= lp_orbital_xyz_vector.size(); ++vector_index){
+						//std::cout << "orb_index=" << vector_index << " x=" << lp_orbital_xyz_vector[vector_index].x() << " y="<< lp_orbital_xyz_vector[vector_index].y() << " z="<< lp_orbital_xyz_vector[vector_index].z() << std::endl;
+						std::string orbital_type_full_name(make_orbital_type_name(atmtype, "p", orbital_info.hybridization) );
+						std::string orbital_element_name( make_orbital_element_name() );
+						set_orbital_type_and_bond(atm_index, orbital_element_name, orbital_type_full_name);
+						calculate_orbital_icoor(lp_orbital_xyz_vector[vector_index], atm_index, atm_index2,atm_index3, orbital_element_name);
+					}
+				}
+			}
+
+		}
+	}
+	restype_->finalize();
+}
+
+
+
+void AssignOrbitals::assign_only_pi_orbitals_to_atom(OrbInfo const & orbital_info, core::chemical::AtomType const & atmtype){
+	core::Size atm_index2(orbital_info.bondedatoms[1]);//atom index of the only bonded neighbor.
+	//get the atom indices of the bonded neighbors of atm_index2.
+	utility::vector1<core::Size> neighbor_bonded_atms2(restype_->bonded_neighbor(atm_index2));
+
+	core::Size atm_index3(500);
+
+	for(core::Size x=1; x<= neighbor_bonded_atms2.size(); ++x){
+		//if atm_index is not equal to the index in neighbor bonded atoms to C2,do nothing,continue the loop.
+		//crappy hack and causes the neighbor_bonded_atms2 to be somewhat random according to index
+		//makes for hard debugging
+		if(orbital_info.atom_index != neighbor_bonded_atms2[x])
+		{
+			atm_index3 = neighbor_bonded_atms2[x];
+		}
+	}
+
+	utility::vector1< numeric::xyzVector<core::Real> > orbital_xyz_vectors = cross_product_helper(orbital_info.atom_index,atm_index2,atm_index3,orbital_info.dist);
+	add_orbitals_to_restype(atm_index2, atm_index3, orbital_info, atmtype, "pi", orbital_xyz_vectors);
+}
+
+void AssignOrbitals::assign_sp2_sp_orbitals_to_one_bonded_atom(OrbInfo const & orbital_info, core::chemical::AtomType const & atmtype){
+	//Consider this situation. >C1-C2=O1 (C single bond C double bond O). O1 needs two Pi and three P orbitals,
+	core::Size atm_index2(orbital_info.bondedatoms[1]);//atom index of the only bonded neighbor.
+	//get the atom indices of the bonded neighbors of atm_index2.
+	utility::vector1<core::Size> neighbor_bonded_atms2(restype_->bonded_neighbor(atm_index2));
+
+	core::Size atm_index3(500);
+
+	for(core::Size x=1; x<= neighbor_bonded_atms2.size(); ++x){
+		//if atm_index is not equal to the index in neighbor bonded atoms to C2,do nothing,continue the loop, .
+		if(orbital_info.atom_index != neighbor_bonded_atms2[x])
+		{
+			atm_index3 = neighbor_bonded_atms2[x];
+		}
+	}
+	utility::vector1< numeric::xyzVector<core::Real> > orbital_xyz_vectors = cross_product_helper(orbital_info.atom_index,atm_index2,atm_index3,orbital_info.dist);
+	add_orbitals_to_restype(atm_index2, atm_index3, orbital_info, atmtype, "pi", orbital_xyz_vectors);
+
+
+	//Place two lone pair of P orbitals on sp2 hybridized O atom, which are bonded to one atoms.
+	orbital_xyz_vectors = Coordinates_TriganolPlanar_bondedto1atom_helper(orbital_info.atom_index,atm_index2,atm_index3,orbital_info.dist);
+	add_orbitals_to_restype(atm_index2, atm_index3, orbital_info, atmtype, "p",	orbital_xyz_vectors);
+}
+
+// To get a pair of pi orbitals, we calculate the cross products of two vectors both pointing towards the atom with an index of atm_index1.
+// The two cross products are perpendicular to the plane; one is above and the other is below the plane.
+// core::Real dist is the Bohr radius of H plus the Bohr radius of the first atom with atm_index1
+utility::vector1< numeric::xyzVector<core::Real> > AssignOrbitals::cross_product_helper
+(
+		core::Size const atm_index1,
+		core::Size const atm_index2,
+		core::Size const atm_index3,
+		core::Real const dist
+)
+{
+
+	    //std::cout << "atm_index1: " << atm_index1 << " index 2: " << atm_index2 << " index3 " << atm_index3 << std::endl;
+
+		//define two vectors, both pointing back to the central atom with atm_index2
+		numeric::xyzVector<core::Real> vector_d( restype_->xyz(atm_index1) - restype_->xyz(atm_index2));
+		numeric::xyzVector<core::Real> vector_f( restype_->xyz(atm_index1) - restype_->xyz(atm_index3));
+
+		//Create an object of Class utility::vector1 to hold the xyz coordinates of orbitals(e.g., cross products)
+		//Get two cross products of the two vectors, one is above, the other is below the plane defined by the two vectors
+		utility::vector1< numeric::xyzVector<core::Real> > pi_orbital_xyz_vector;
+		numeric::xyzVector<core::Real> xyz_right = cross_product(vector_d, vector_f);
+		numeric::xyzVector<core::Real> xyz_left = cross_product(-vector_d, vector_f);
+
+		//Normalize the two new vectors, xyz_right and xyz_left to get a unit vector.
+		//pi_orbital_xyz_vector now stores the new xyz coordinates of the pi orbitals.
+		pi_orbital_xyz_vector.push_back((xyz_right.normalized() * dist) + restype_->xyz(atm_index1));
+		pi_orbital_xyz_vector.push_back((xyz_left.normalized() *  dist) + restype_->xyz(atm_index1));
+
+		return pi_orbital_xyz_vector;
+
+}
+
+
+void AssignOrbitals::add_orbitals_to_restype(
+		core::Size const atm_index2,
+		core::Size const atm_index3,
+		OrbInfo const & orbital_info,
+		core::chemical::AtomType const & atmtype,
+		std::string const atom_hybridization,
+		utility::vector1< numeric::xyzVector<core::Real> > const orbital_xyz_vectors
+){
+	for(core::Size vector_index = 1; vector_index <= orbital_xyz_vectors.size(); ++vector_index){
+		std::string p_orbital_type_full_name(make_orbital_type_name(atmtype, atom_hybridization, orbital_info.hybridization) );
+		std::string p_orbital_element_name( make_orbital_element_name() );
+		set_orbital_type_and_bond(orbital_info.atom_index, p_orbital_element_name, p_orbital_type_full_name);
+		calculate_orbital_icoor(orbital_xyz_vectors[vector_index],orbital_info.atom_index, atm_index2, atm_index3, p_orbital_element_name);
+	}
+}
+
+std::string AssignOrbitals::make_orbital_type_name
+(
+		AtomType const atmtype,
+		std::string const orbitaltype,
+		core::Size const hybridization
+)
+{
+	std::string atm_element( atmtype.element() );
+
+	std::string hyb;
+	if(hybridization == 1 ){
+		hyb = "sp";
+	}else if(hybridization ==2 ){
+		hyb="sp2";
+	}else if(hybridization ==3 ){
+		hyb="sp3";
+	}
+
+	std::string orbital_type_full_name(atm_element+"."+orbitaltype+"."+hyb);
+	return orbital_type_full_name;
+}
+
+std::string AssignOrbitals::make_orbital_element_name()
+{
+	++n_orbitals_;
+	std::string orbital_name("LP");
+	std::string orb_index_string = utility::to_string<core::Size>(n_orbitals_) ;
+	std::string orbital_element_name(orbital_name+orb_index_string);
+	return orbital_element_name;
+}
+
+
+//Assign orbital types and bond information which will be passed to the function restype_->set_orbital_icoor_id to get
+//icoord for all orbitals.
+void AssignOrbitals::set_orbital_type_and_bond(
+		core::Size atom_index,
+		std::string orbital_element_name,
+		std::string orbital_type_full_name
+
+){
+	// Orbital names are given by concatenate two strings:'LP" and the indices of the orbitals on the residue(restype);
+	std::string atm_name(strip_whitespace(restype_->atom_name(atom_index)));
+
+	restype_->add_orbital(orbital_element_name, orbital_type_full_name);
+	restype_->add_orbital_bond(atm_name, orbital_element_name);
+
+}
+
+
+
+void AssignOrbitals::calculate_orbital_icoor(
+		numeric::xyzVector<core::Real> const orbital_xyz,
+		core::Size const atm_index1,
+		core::Size const atm_index2,
+		core::Size const atm_index3,
+		std::string const orbital_element_name
+)
+{
+	Vector const stub1_xyz = restype_->xyz(atm_index1);
+	Vector const stub2_xyz = restype_->xyz(atm_index2);
+	Vector const stub3_xyz = restype_->xyz(atm_index3);
+
+	core::Real const distance(orbital_xyz.distance(stub1_xyz) );
+
+	core::Real theta(0.0);
+	core::Real phi(0.0);
+
+	if(distance <1e-2)
+	{
+		std::cout << "WARNING: extremely small distance=" << distance << " for " <<
+				orbital_element_name << " ,using 0.0 for theta and phi."<<
+				" If you were not expecting this warning, something is very wrong" <<std::endl;
+	}else
+	{
+		theta =  numeric::angle_radians<core::Real>(orbital_xyz,stub1_xyz,stub2_xyz);
+		if( (theta < 1e-2) || (theta > 3.14-1e-2) )
+		{
+			phi = 0.0;
+		}else
+		{
+			phi = numeric::dihedral_radians<core::Real>(orbital_xyz,stub1_xyz,stub2_xyz,stub3_xyz);
+		}
+
+	}
+
+	std::string const stub1(strip_whitespace(restype_->atom_name(atm_index1)));
+	std::string const stub2(strip_whitespace(restype_->atom_name(atm_index2)));
+	std::string const stub3(strip_whitespace(restype_->atom_name(atm_index3)));
+	core::Real const const_theta(theta);
+	core::Real const const_phi(phi);
+	std::string const const_name(orbital_element_name);
+
+
+	//restype_->add_orbital( orbital_element_name, );
+	//restype_->add_orbital_bond(stub1, orbital_element_name);
+
+
+
+	//tr << orbital << " " << stub_atom1 << " "<< stub_atom2 << " " <<stub_atom3 << " " <<distance << " " << phi << " " << theta <<std::endl;
+	restype_->set_orbital_icoor_id( const_name,const_phi,const_theta,distance,stub1,stub2,stub3);
+}
+
+
+utility::vector1< numeric::xyzVector<core::Real> >  AssignOrbitals::Coordinates_TriganolPlanar_bondedto1atom_helper(
+		core::Size const atm_index1,
+		core::Size const atm_index2,
+		core::Size const atm_index3,
+		core::Real const dist
+
+){
+
+	//create a new vector to hold coordinates of P orbitals.
+	utility::vector1< numeric::xyzVector<core::Real> > lp_xyz_vector;
+
+	numeric::xyzVector<core::Real> vector_a = restype_->xyz(atm_index1);
+	numeric::xyzVector<core::Real> vector_b = restype_->xyz(atm_index2);
+	numeric::xyzVector<core::Real> vector_c = restype_->xyz(atm_index3);
+
+	//core::Real distance_xa = 01.0;
+		core::Real angle_xab = numeric::constants::r::pi_over_3; //60 degrees
+		//for one point it should be 180 for another it should be 0
+		//core::Real dihedral_xabc = numeric::constants::r::pi;
+
+		numeric::xyzVector<core::Real> a( (vector_a - vector_b).normalized());
+		numeric::xyzVector<core::Real> b((vector_b - vector_c).normalized());
+		numeric::xyzVector<core::Real> c(cross_product(a,b).normalized());
+		numeric::xyzVector<core::Real> d(cross_product(a,c).normalized());
+
+		core::Real dihedral_xabc1 = numeric::constants::r::pi;
+		core::Real dihedral_xabc2 = 0;
+
+		numeric::xyzVector<core::Real> v1 = a * std::cos(numeric::constants::r::pi - angle_xab);
+		numeric::xyzVector<core::Real> v2 = c * std::sin(numeric::constants::r::pi - angle_xab);
+		numeric::xyzVector<core::Real> v3 = d * std::sin(numeric::constants::r::pi - angle_xab);
+
+		numeric::xyzVector<core::Real> x1
+		(
+				(
+						v1 - v2 * std::sin(dihedral_xabc1) +	v3 * std::cos(dihedral_xabc1)
+				) * dist
+		);
+
+		numeric::xyzVector<core::Real> x2
+		(
+				(
+						v1 - v2 * std::sin(dihedral_xabc2) +	v3 * std::cos(dihedral_xabc2)
+				) * dist
+		);
+
+		numeric::xyzVector<core::Real> x3
+		(
+			(
+					-(vector_a - vector_b).normalized()
+			) * dist
+		);
+
+		lp_xyz_vector.push_back(vector_a+x1);
+		lp_xyz_vector.push_back(vector_a+x2);
+		lp_xyz_vector.push_back(vector_a+x3);
+
+		return lp_xyz_vector;
+}
+
+
+// Get the coordinates of one P orbital (x1)attached to a sp3 hybridized atom which is boned to three atoms (e.g. -NH-).
+// The second orbital is a degenerate P orbital (x2).
+utility::vector1< numeric::xyzVector<core::Real> >  AssignOrbitals::Coordinates_Tetrahedral_bondedto3atoms_helper(
+		core::Size const atm_index1,
+		core::Size const atm_index2,
+		core::Size const atm_index3,
+		core::Size const atm_index4,
+		core::Real const dist
+
+ ){
+
+	 utility::vector1< numeric::xyzVector<core::Real> > lp_xyz_vector;
+
+	 numeric::xyzVector<core::Real> vector_a = restype_->xyz(atm_index1);
+	 numeric::xyzVector<core::Real> vector_b = restype_->xyz(atm_index2);
+	 numeric::xyzVector<core::Real> vector_c = restype_->xyz(atm_index3);
+	 numeric::xyzVector<core::Real> vector_d = restype_->xyz(atm_index4);
+
+	 numeric::xyzVector<core::Real> x
+    (
+      ( ( vector_a - vector_b).normalized()
+        + ( vector_a - vector_c).normalized() + ( vector_a - vector_d).normalized()).normalized() * dist
+    );
+
+
+	 lp_xyz_vector.push_back(vector_a+x);
+
+    return lp_xyz_vector;
+ }
+
+
+
+}//namespace
+}//namespace
+}//namespace
+
+
+
+

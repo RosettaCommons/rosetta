@@ -51,6 +51,7 @@ sources = {
 		"OrbitalTypeSet",
 		"ICoorOrbitalData",
 		"OrbitalTypeMapper",
+		"AssignOrbitals",
 	],	
 
 	"core/chemical/sdf" : [

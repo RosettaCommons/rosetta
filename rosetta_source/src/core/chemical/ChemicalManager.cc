@@ -62,7 +62,6 @@
 
 
 
-
 namespace core {
 namespace chemical {
 
