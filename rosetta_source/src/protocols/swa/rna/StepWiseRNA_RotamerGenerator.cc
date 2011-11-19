@@ -60,7 +60,7 @@ namespace rna {
 		pucker2_specified_( pucker2 ),
 		sample_extra_rotamers_( true ),
 		fast_( false ),
-		bin_size_( bin_size ), // must be 20, 10, or 5
+		bin_size_( int( bin_size ) ), // must be 20, 10, or 5
 		bins1_( int(360/bin_size_) ), //This is total bins, default is 18
 		bins2_( int( bins1_/2 ) ), //This is total bins divided by 2; default is 9
 		bins3_( int( bins1_/3  ) ), //This is total bins divided by 3; default is 6
