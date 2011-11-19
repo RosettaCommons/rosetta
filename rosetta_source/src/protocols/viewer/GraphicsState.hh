@@ -36,8 +36,8 @@ namespace graphics_states_param {
 	enum SCdisplayState { SHOW_NOSC, SHOW_STICK, SHOW_WIREFRAME };
 
 	//lin color state
-	const size_t Num_ColorModes = 6;
-  enum ColorMode { RAINBOW_COLOR, CPK_COLOR, RESIDUE_COLOR, CHAIN_COLOR, RAINBOW_CPK_COLOR, RESIDUE_CPK_COLOR };
+	const size_t Num_ColorModes = 8;
+  enum ColorMode { RAINBOW_COLOR, CPK_COLOR, RESIDUE_COLOR, CHAIN_COLOR, RAINBOW_CPK_COLOR, RESIDUE_CPK_COLOR, RHIJU_COLOR };
 
 	//lin trajectory state
 	const size_t Num_TrajectoryState = 5;

@@ -105,7 +105,6 @@ viewer_main( VoidFunc worker_main ){ worker_main(NULL); return 0; }
 
 void set_bg_color( core::Vector new_bg_color );
 
-
 #else // GL_GRAPHICS ////////////////////////////////////////////////////
 
 void
@@ -140,17 +139,18 @@ display_residues(
 	core::id::AtomID const & anchor_id
 );
 
-void
-display_residues_wireframe(
-	utility::vector1< core::conformation::ResidueCOP > const & residues,
-	core::id::AtomID const & anchor_id
-);
+//void
+//display_residues_wireframe(
+//	utility::vector1< core::conformation::ResidueCOP > const & residues,
+//	core::id::AtomID const & anchor_id
+//);
 
 void
 display_residues_wireframe(
-	utility::vector1< core::conformation::ResidueCOP > const & residues,
-	core::Vector const & center
-);
+													 GraphicsState & gs,
+													 utility::vector1< core::conformation::ResidueCOP > const & residues,
+													 core::Vector const & center
+													 );
 
 void set_bg_color( core::Vector new_bg_color );
 
@@ -180,7 +180,6 @@ draw_conformation_and_density(
 			GraphicsState & gs,
 			core::Vector const & center);
 
-
 #endif ////////////////////////////////////////////////////////////////
 
 void
@@ -191,6 +190,9 @@ add_monte_carlo_silent_viewer(
 );
 
 /// @brief Allows for graceful exit of graphics viewers.
+void
+clear_conformation_viewers();
+
 void
 clear_conformation_viewers();
 

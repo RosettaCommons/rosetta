@@ -307,18 +307,21 @@ conformation_viewer_display( void )
 void
 idle_func( void )
 {
+
 	check_for_new_conformation_viewers();
 
-	//pthread_mutex_lock( &conformation_viewers_mut );
+	//	pthread_mutex_lock( &conformation_viewers_mut );
 
 	for ( ConformationViewers::const_iterator iter = conformation_viewers.begin(), iter_end = conformation_viewers.end();
 				iter != iter_end; ++iter ) {
 		iter->second->display_if_necessary();
 	}
 
-	//pthread_mutex_unlock( &conformation_viewers_mut );
+	//	pthread_mutex_unlock( &conformation_viewers_mut );
 
 }
+
+
 
 /////////////////////////////////////////////////////////////////////////
 // GRAPHICS THREAD
@@ -441,6 +444,7 @@ add_conformation_viewer(
 
 	// allow main to start if this is the 1st window
 	pthread_cond_broadcast( &start_cond );
+
 }
 
 
@@ -537,12 +541,15 @@ viewer_main( VoidFunc worker_main )
 
 	// wait for a window to get created::
 	pthread_mutex_lock( &start_mut );
-	pthread_cond_wait( &start_cond, &start_mut );
+	if ( new_conformation_viewers.empty() )  {
+		pthread_cond_wait( &start_cond, &start_mut );
+	}
 	pthread_mutex_unlock( &start_mut );
 
 	check_for_new_conformation_viewers();
 
 	glutIdleFunc( idle_func );
+
 	glutMainLoop();
 	return 0;
 
@@ -719,11 +726,15 @@ std::map<std::string, Vector>  get_sidechain_color_rhiju() {
     sidechain_color_rhiju[ "RAD" ] = Vector( 0.5, 0.5, 0.0); //yellow
     sidechain_color_rhiju[ "RCY" ] = Vector( 0.0, 0.5, 0.0); //green
     sidechain_color_rhiju[ "URA" ] = Vector( 0.5, 0.0, 0.0); //red
+    sidechain_color_rhiju[ " rG" ] = Vector( 0.0, 0.0, 0.5); //blue
+    sidechain_color_rhiju[ " rA" ] = Vector( 0.5, 0.5, 0.0); //yellow
+    sidechain_color_rhiju[ " rC" ] = Vector( 0.0, 0.5, 0.0); //green
+    sidechain_color_rhiju[ " rU" ] = Vector( 0.5, 0.0, 0.0); //red
 
     return sidechain_color_rhiju;
 }
 
-
+////////////////////////////////////////////////////////////////////
 Vector get_atom_color(
 					GraphicsState & gs,
 					utility::vector1< core::conformation::ResidueCOP > const & residues,
@@ -732,7 +743,7 @@ Vector get_atom_color(
 	float red,green,blue;
 	static std::map<std::string, Vector> sidechain_color_rhiju = get_sidechain_color_rhiju();
 	switch ( gs.Color_mode ) {
-		case CPK_COLOR:
+	  case CPK_COLOR:
 			return atom_color_by_element( residues[r]->atom_type(i).element());
 		case RAINBOW_COLOR:
 			rainbow_color( float(r)/ float(residues.size()), red, green, blue, true /*mute_color*/);
@@ -745,7 +756,7 @@ Vector get_atom_color(
 			chain_color( residues[r]->chain(), red, green, blue );
 			return Vector(red, green, blue);
 		case RAINBOW_CPK_COLOR:
-			if ( !residues[r]->atom_is_backbone(i)  ) { //non carbone atoms
+			if ( !residues[r]->atom_is_backbone(i)  ) { //non carbon atoms
 				return atom_color_by_element( residues[r]->atom_type(i).element());
 			}
 			rainbow_color( float(r)/ float(residues.size()), red, green, blue, true /*mute_color*/);
@@ -757,106 +768,30 @@ Vector get_atom_color(
 			if (sidechain_color_rhiju.find(residues[r]->name3()) != sidechain_color_rhiju.end() )
 				return sidechain_color_rhiju[residues[r]->name3()];
 			return Vector( 1.0, 1.0, 1.0);
+	  case RHIJU_COLOR:
+			if ( residues[r]->atom_is_backbone(i)  ) {
+				rainbow_color( float(r)/ float(residues.size()), red, green, blue, false /*mute_color*/);
+				return Vector(red, green, blue);
+			}	else if ( sidechain_color_rhiju.find(residues[r]->name3()) != sidechain_color_rhiju.end() ) {
+				return sidechain_color_rhiju[ residues[r]->name3() ];
+			}
 	}
 	return Vector( 1.0, 1.0, 1.0);
 }
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/*
-void
-display_residues(
-	utility::vector1< core::conformation::ResidueCOP > const & residues,
-	core::id::AtomID const & anchor_id
-)
-{
-	using namespace conformation;
-	using namespace chemical;
-	using namespace graphics;
-
-	// clear
-	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
-	//Set background color
-	glClearColor( bg_color.x(), bg_color.y(), bg_color.z(), 1.0 );
-
-	if ( false ){
-		core::Vector center_of_mass( 0, 0, 0 );
-		Size const nres( residues.size() );
-		for ( core::Size i = 1; i <= nres; ++i ) {
-			core::Vector const v( residues[i]->nbr_atom_xyz() );
-			center_of_mass += v;
-		}
-		center_of_mass /= nres;
-		display_residues_wireframe( residues, center_of_mass );
-	} else {
-		display_residues_wireframe( residues, anchor_id );
-	}
-
-} // void display_residues
-
-void
-display_residues_wireframe(
-	utility::vector1< core::conformation::ResidueCOP > const & residues,
-	core::id::AtomID const & anchor_id
-) {
-	Vector const center( residues[ anchor_id.rsd() ]->xyz( anchor_id.atomno() ) );
-	display_residues_wireframe( residues, center );
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-Vector get_rna_color( conformation::Residue const & rsd, Size const & atomno, Size const nres ){
-
-	using namespace chemical;
-	assert ( rsd.is_RNA() );
-
-	if ( atomno < rsd.first_sidechain_atom() ) {
-		return residue_color_by_group( rsd, nres );
-	} else {
-		switch ( Size( rsd.aa() ) ) {
-		case na_rgu:
-			return Vector( 0.0, 0.0, 0.5 ); // blue
-		case na_rad:
-			return Vector( 0.5, 0.5, 0.0 ); // yellow
-		case na_rcy:
-			return Vector( 0.0, 0.5, 0.0 ); // green
-		case na_ura:
-			return Vector( 0.5, 0.0, 0.0); //red
-		}
-	}
-	return Vector( 0.5, 0.5, 0.5 );
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-Vector get_color( conformation::Residue const & rsd, Size const & atomno, Size const nres ){
-
-	// Consider having this on by default:
-	//static bool const rainbow_color_backbone( false );
-	static bool const rainbow_color_backbone( true );
-	if ( rainbow_color_backbone) {
-		if ( atomno < rsd.first_sidechain_atom() ) {
-			return residue_color_by_group( rsd, nres );
-		}
-	}
-
-	//Rhiju's favorite coloring scheme for RNA.
-	if ( rsd.is_RNA() ) return get_rna_color( rsd, atomno, nres );
-
-	return atom_color_by_element( rsd.atom_type( atomno ).element() );
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
 void
 display_residues_wireframe(
-	utility::vector1< core::conformation::ResidueCOP > const & residues,
-	Vector const & center )
+													 GraphicsState & gs,
+													 utility::vector1< core::conformation::ResidueCOP > const & residues,
+													 Vector const & center )
 {
 	using namespace conformation;
 	using namespace chemical;
 
 	// could get these from some runtime-configurable options set
 	//Real const bond_width( 0.1 );
-
 
 	// In case the view has been rotated... set z to be the axis pointing out of the screen
 	glMatrixMode(GL_MODELVIEW);
@@ -872,20 +807,19 @@ display_residues_wireframe(
 
 		// draw connection to previous residue
 		if ( i>1 && !rsd.is_lower_terminus() && rsd.is_polymer() ) {
+
 			Residue const & prev_rsd( *(residues[i-1]));
 			int const atom1( prev_rsd.mainchain_atoms()[ prev_rsd.n_mainchain_atoms() ] );
 			int const atom2( rsd.mainchain_atoms()[ 1 ] );
 
-			Vector const color1( get_color( prev_rsd, atom1, nres ) );
-			Vector const color2( get_color(      rsd, atom2, nres ) );
-			// Vector const color1( residue_color_by_group( prev_rsd, nres ) );
-			// Vector const color2( residue_color_by_group(      rsd, nres ) );
+			Vector const color1( get_atom_color( gs, residues, i,   atom1 ) );
+			Vector const color2( get_atom_color( gs, residues, i-1, atom2 ) );
 
 			Vector const xyz1( prev_rsd.xyz( atom1 ) - center );
 			Vector const xyz2(      rsd.xyz( atom2 ) - center );
 
 			Vector const bond( xyz2 - xyz1 );
-			if (bond.length_squared() > graphics::BOND_LENGTH_CUTOFF2 ) continue;
+			//if (bond.length_squared() > graphics::BOND_LENGTH_CUTOFF2 ) continue;
 
 			Vector width( cross( bond, z ) );
 			if ( width.length_squared() ) width.normalize();
@@ -908,26 +842,25 @@ display_residues_wireframe(
 		utility::vector1< Vector > prev1( natoms ), prev2( natoms );
 		utility::vector1< bool > prev_set( natoms, false );
 
-		for ( Size i=1; i<= natoms; ++i ) {
-			AtomIndices const & nbrs( rsd.bonded_neighbor(i) );
+		for ( Size m=1; m<= natoms; ++m ) {
+
+			AtomIndices const & nbrs( rsd.bonded_neighbor(m) );
 
 			for ( Size jj=1; jj<= nbrs.size(); ++jj ) {
-				Size const j( nbrs[jj] );
-				if ( j < i ) continue;
-				if ( rsd.atom_type(j).is_hydrogen() && graphics::exclude_hydrogens ) continue;
+				Size const n( nbrs[jj] );
+				if ( n < m ) continue;
+				//if ( rsd.atom_type(m).is_hydrogen() && graphics::exclude_hydrogens ) continue;
 
-				Vector const color1( get_color( rsd, i, nres ) );
-				Vector const color2( get_color( rsd, j, nres) );
-				// Vector const color1( residue_color_by_group( rsd, nres ) );
-				// Vector const color2( residue_color_by_group( rsd, nres ) );
+				Vector const color1( get_atom_color( gs, residues, i, m ) );
+				Vector const color2( get_atom_color( gs, residues, i, n ) );
 
-				Vector const xyz1( rsd.xyz(i) - center );
-				Vector const xyz2( rsd.xyz(j) - center );
+				Vector const xyz1( rsd.xyz(m) - center );
+				Vector const xyz2( rsd.xyz(n) - center );
 
 				Vector const bond( xyz2 - xyz1 );
 
 				// check for chainbreaks
-				if (bond.length_squared() > graphics::BOND_LENGTH_CUTOFF2 ) break;
+				//if (bond.length_squared() > graphics::BOND_LENGTH_CUTOFF2 ) break;
 
 				Vector width( cross( bond, z ) );
 				if ( width.length_squared() ) width.normalize();
@@ -935,18 +868,18 @@ display_residues_wireframe(
 
 				glColor3fxyz( color1 );
 
-				if ( prev_set[ i ] ) {
+				if ( prev_set[ m ] ) {
 					// draw the elbow
 					glBegin(GL_POLYGON);
-					glVertex3fxyz ( prev1[i] );
+					glVertex3fxyz ( prev1[m] );
 					glVertex3fxyz ( xyz1 + width );
 					glVertex3fxyz ( xyz1 - width );
-					glVertex3fxyz ( prev2[i] );
+					glVertex3fxyz ( prev2[m] );
 					glEnd();
 				} else {
-					prev_set[i] = true;
-					prev1[i] = xyz1 - width;
-					prev2[i] = xyz1 + width;
+					prev_set[m] = true;
+					prev1[m] = xyz1 - width;
+					prev2[m] = xyz1 + width;
 				}
 
 				glBegin(GL_POLYGON);
@@ -957,25 +890,25 @@ display_residues_wireframe(
 				glVertex3fxyz ( xyz2 + width );
 				glEnd();
 
-				if ( !prev_set[j] ) {
-					// for drawing the elbow at atomj
-					prev_set[j] = true;
-					prev1[j] = xyz2 + width;
-					prev2[j] = xyz2 - width;
+				if ( !prev_set[n] ) {
+					// for drawing the elbow at atomn
+					prev_set[n] = true;
+					prev1[n] = xyz2 + width;
+					prev2[n] = xyz2 - width;
 				} else {
 					// draw the elbow
 					glBegin(GL_POLYGON);
-					glVertex3fxyz ( prev1[j] );
+					glVertex3fxyz ( prev1[n] );
 					glVertex3fxyz ( xyz2 - width );
 					glVertex3fxyz ( xyz2 + width );
-					glVertex3fxyz ( prev2[j] );
+					glVertex3fxyz ( prev2[n] );
 					glEnd();
 				}
 			} // jj
 		} // i
 	} // nres
 } // void display_residues_wireframe
-*/
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1912,7 +1845,10 @@ void draw_conformation( utility::vector1< conformation::ResidueCOP > const & res
 	glPushMatrix();
 	glTranslatef(-center.x(), -center.y(), -center.z());
 
-	if ( total_residue > 0 ) {
+	if ( total_residue > 0 && residues[1]->is_RNA() ) {
+		gs.Color_mode = RHIJU_COLOR;
+		display_residues_wireframe( gs, residues, center );
+	} else {
 		draw_backbone( gs, residues, ss );
 		draw_sidechains( gs, residues, 1, total_residue );
 		draw_sphere( gs, residues );
@@ -1950,8 +1886,6 @@ void draw_pose(
 }
 
 
-
-
 #endif
 
 /// @brief
@@ -1984,6 +1918,7 @@ clear_conformation_viewers()
 	conformation_viewers.clear();
 #endif
 }
+
 
 } // viewer
 } // protocols

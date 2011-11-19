@@ -59,6 +59,7 @@ int const BAD_WINDOW( -999 );
 /// @brief default constructor
 ConformationViewer::ConformationViewer() :
 	Super(),
+	new_conformation_( true ),
 	use_debug_pause_( false ),
 	conf_( NULL )
 {}
@@ -67,6 +68,7 @@ ConformationViewer::ConformationViewer() :
 ConformationViewer::ConformationViewer(std::string const & name_in ):
 	Super(),
 	name_( name_in ),
+	new_conformation_( true ),
 	my_window_( BAD_WINDOW ),
 	length_( 900 ),
 	width_( 900 ),
@@ -79,6 +81,7 @@ ConformationViewer::ConformationViewer(std::string const & name_in ):
 ConformationViewer::ConformationViewer(std::string const & name_in, int length, int width, bool debug_pause ):
 	Super(),
 	name_( name_in ),
+	new_conformation_( true ),
 	my_window_( BAD_WINDOW ),
 	length_( length ),
 	width_( width ),
@@ -127,12 +130,15 @@ ConformationViewer::display_func()
 void
 ConformationViewer::display_if_necessary()
 {
+
 	if ( new_conformation_ && my_window_ != BAD_WINDOW ) {
 		//std::cout << "display_if_necessary new_conf=true" << std::endl;
 		new_conformation_ = false;
 		glutSetWindow( my_window_ );
 		glutPostRedisplay();
+
 	}
+
 }
 
 /////////////////////////////////////////////////////////////////
