@@ -6,11 +6,7 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-
-/// @file   core/scoring/methods/RNA_BaseBasePotential.hh
-/// @brief  Statistically derived rotamer pair potential class implementation
-/// @author Phil Bradley
-/// @author Andrew Leaver-Fay
+/// @author Rhiju Das
 
 #ifndef INCLUDED_protocols_rna_RNA_SecStructInfo_fwd_hh
 #define INCLUDED_protocols_rna_RNA_SecStructInfo_fwd_hh

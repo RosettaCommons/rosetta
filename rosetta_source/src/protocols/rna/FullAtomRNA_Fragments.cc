@@ -9,6 +9,10 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
+/// @file FullAtomRNA_Fragments
+/// @brief RNA fragments from database,
+/// @detailed
+/// @author Rhiju Das
 
 
 // Rosetta Headers

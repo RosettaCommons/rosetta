@@ -6,10 +6,7 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-
-/// @file   core/pose/Pose.fwd.hh
-/// @brief  Pose forward declarations header
-/// @author Phil Bradley
+/// @author Rhiju Das
 
 
 #ifndef INCLUDED_protocols_rna_RNA_Relaxer_fwd_hh

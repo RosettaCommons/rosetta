@@ -9,7 +9,7 @@
 
 /// @file   protocols/rna/RNA_ChunkLibrary.hh
 /// @brief  Forward declarations header
-/// @author rhiju
+/// @author Rhiju Das
 
 
 #ifndef INCLUDED_protocols_rna_RNA_ChunkLibrary_fwd_hh
