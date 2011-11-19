@@ -448,6 +448,7 @@ namespace loops { IntegerOptionKey const max_kic_perturber_samples( "loops:max_k
 namespace loops { BooleanOptionKey const nonpivot_torsion_sampling( "loops:nonpivot_torsion_sampling" );  }
 namespace loops { BooleanOptionKey const fix_ca_bond_angles( "loops:fix_ca_bond_angles" );  }
 namespace loops { BooleanOptionKey const kic_use_linear_chainbreak( "loops:kic_use_linear_chainbreak" );  }
+namespace loops { BooleanOptionKey const sample_omega_at_pre_prolines( "loops:sample_omega_at_pre_prolines" );  }
 namespace loops { BooleanOptionKey const allow_omega_move( "loops:allow_omega_move" );  }
 namespace loops { BooleanOptionKey const allow_takeoff_torsion_move( "loops:allow_takeoff_torsion_move" );  }
 namespace loops { IntegerOptionKey const extend_length( "loops:extend_length" );  }
@@ -580,4 +581,3 @@ namespace AnchoredDesign { namespace testing { RealOptionKey const VDW_weight( "
 namespace AnchoredDesign { namespace testing { BooleanOptionKey const anchor_via_constraints( "AnchoredDesign:testing:anchor_via_constraints" );  } }
 namespace AnchoredDesign { namespace testing { BooleanOptionKey const delete_interface_native_sidechains( "AnchoredDesign:testing:delete_interface_native_sidechains" );  } }
 namespace AnchoredDesign { namespace testing { FileOptionKey const RMSD_only_this( "AnchoredDesign:testing:RMSD_only_this" );  } }
-namespace AnchoredDesign { namespace testing { BooleanOptionKey const anchor_noise_constraints_mode( "AnchoredDesign:testing:anchor_noise_constraints_mode" );  } }

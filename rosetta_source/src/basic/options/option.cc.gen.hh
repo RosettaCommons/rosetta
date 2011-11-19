@@ -1623,6 +1623,7 @@ option.add( basic::options::OptionKeys::loops::max_kic_perturber_samples, "Maxim
 option.add( basic::options::OptionKeys::loops::nonpivot_torsion_sampling, "enables sampling of non-pivot residue torsions when the kinematic loop closure segment length is > 3" ).legal(true).legal(false).def(true);
 option.add( basic::options::OptionKeys::loops::fix_ca_bond_angles, "Freezes N-CA-C bond angles in KIC loop sampling" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::loops::kic_use_linear_chainbreak, "Use linear_chainbreak instead of (harmonic) chainbreak in KIC loop sampling" ).legal(true).legal(false).def(false);
+option.add( basic::options::OptionKeys::loops::sample_omega_at_pre_prolines, "Sample omega in KIC loop sampling" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::loops::allow_omega_move, "Allow loop omega to minimize during loop modeling" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::loops::allow_takeoff_torsion_move, "Allow takeoff phi/psi to move during loop modeling" ).legal(true).legal(false).def(false);
 option.add( basic::options::OptionKeys::loops::extend_length, "Number of alanine residues to append after cutpoint in loopextend app" ).lower(0).def(0);
@@ -1755,10 +1756,10 @@ option.add( basic::options::OptionKeys::AnchoredDesign::testing::VDW_weight, "ce
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_via_constraints, "allow anchor&jump to move; anchor held in place via constraints - you must specify constraints!" ).def(false);
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::delete_interface_native_sidechains, "benchmarking option.  delete input sidechains as prepacking step before running centroid or fullatom phases.  use if also using use_input_sc and doing benchmarking.  use_input_sc is used because of sidechain minimization, not to maintain input sidechains." );
 option.add( basic::options::OptionKeys::AnchoredDesign::testing::RMSD_only_this, "Perform only RMSD calculations without modifying input.  Only used for re-running metrics during benchmarking/debugging." );
-option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_noise_constraints_mode, "Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor's placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer's commentary." ).def(false);
 
 }
-inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::DenovoProteinDesign::DenovoProteinDesign, "DenovoProteinDesign option group" ).legal(true).def(true);
+inline void add_rosetta_options_3( utility::options::OptionCollection &option ) {option.add( basic::options::OptionKeys::AnchoredDesign::testing::anchor_noise_constraints_mode, "Hold the anchor loosely (via constraints), not rigidly.  Automatically generate the constraints from the starting pose.  Mildly randomize the anchor's placement before modeling (up to 1 angstrom in x,y,z from initial placement.)  Only compatible with single-residue anchors.  Used to meet a reviewer's commentary." ).def(false);
+option.add( basic::options::OptionKeys::DenovoProteinDesign::DenovoProteinDesign, "DenovoProteinDesign option group" ).legal(true).def(true);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_core, "redesign core of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_loops, "redesign loops of pdb" ).def(false);
 option.add( basic::options::OptionKeys::DenovoProteinDesign::redesign_surface, "redesign surface of pdb" ).def(false);

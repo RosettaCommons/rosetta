@@ -3430,6 +3430,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='Use linear_chainbreak instead of (harmonic) chainbreak in KIC loop sampling',
 			legal=['true','false'], default='false'
 		),
+		Option( 'sample_omega_at_pre_prolines', 'Boolean',
+			desc='Sample omega in KIC loop sampling',
+			legal=['true','false'], default='false'
+		),
 		Option( 'allow_omega_move', 'Boolean',
 			desc='Allow loop omega to minimize during loop modeling',
 			legal=['true','false'], default='false'

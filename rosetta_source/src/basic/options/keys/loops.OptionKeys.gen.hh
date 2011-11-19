@@ -77,6 +77,7 @@ namespace loops { extern IntegerOptionKey const max_kic_perturber_samples; }
 namespace loops { extern BooleanOptionKey const nonpivot_torsion_sampling; }
 namespace loops { extern BooleanOptionKey const fix_ca_bond_angles; }
 namespace loops { extern BooleanOptionKey const kic_use_linear_chainbreak; }
+namespace loops { extern BooleanOptionKey const sample_omega_at_pre_prolines; }
 namespace loops { extern BooleanOptionKey const allow_omega_move; }
 namespace loops { extern BooleanOptionKey const allow_takeoff_torsion_move; }
 namespace loops { extern IntegerOptionKey const extend_length; }
