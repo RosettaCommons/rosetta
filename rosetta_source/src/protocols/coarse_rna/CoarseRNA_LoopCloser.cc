@@ -24,6 +24,7 @@
 #include <core/conformation/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
+#include <core/id/TorsionID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -311,8 +312,11 @@ CoarseRNA_LoopCloser::filter_path( utility::vector1< core::Size > & upstream_res
 		Size const i( upstream_res[ n ] );
 		AtomID atom_id = named_atom_id_to_atom_id( NamedAtomID( " P  ", i ), pose );
 
+		//		if ( !is_filter_res[ i ] &&
+		//				 allow_insert_->get( atom_id ) )  new_upstream_res.push_back( i );
+
 		if ( !is_filter_res[ i ] &&
-				 allow_insert_->get( atom_id ) )  new_upstream_res.push_back( i );
+				 allow_insert_->get( id::TorsionID( i, id::BB, 1 ), pose.conformation() ) )  new_upstream_res.push_back( i );
 
 	}
 

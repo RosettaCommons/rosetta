@@ -826,16 +826,16 @@ display_residues_wireframe(
 			width *= graphics::protein_wireframeScale;
 
 			// also need to draw the elbow?
-			if (bond.length_squared() < 9.0 ){
-				glColor3fxyz( color1 );
-				glBegin(GL_POLYGON);
-				glVertex3fxyz ( xyz1 + width );
-				glVertex3fxyz ( xyz1 - width );
-				glColor3fxyz( color2 );
-				glVertex3fxyz ( xyz2 - width );
-				glVertex3fxyz ( xyz2 + width );
-				glEnd();
-			}
+			//			if (bond.length_squared() < 9.0 ){
+			glColor3fxyz( color1 );
+			glBegin(GL_POLYGON);
+			glVertex3fxyz ( xyz1 + width );
+			glVertex3fxyz ( xyz1 - width );
+			glColor3fxyz( color2 );
+			glVertex3fxyz ( xyz2 - width );
+			glVertex3fxyz ( xyz2 + width );
+			glEnd();
+			//			}
 		}
 
 		// draw the atom bonds

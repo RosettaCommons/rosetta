@@ -1893,6 +1893,7 @@ Conformation::detect_pseudobonds()
 {
 	for ( Size ii = 1; ii <= size(); ++ii ) {
 		Residue const & ii_res( residue_( ii ) );
+		if ( ii_res.is_coarse() ) continue;
 		Size const ii_nresconn = ii_res.type().n_residue_connections();
 		for ( Size jj = 1; jj <= ii_nresconn; ++jj ) {
 			Size const jj_atid = ii_res.residue_connection( jj ).atomno();

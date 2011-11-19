@@ -1339,11 +1339,16 @@ enumerate_map_test(){
 	utility::vector1< TorsionID > moving_torsions;
 	utility::vector1< bool > is_moving_res;
 
-	for ( Size i = 1; i <= pose.total_residue(); i++ ){
+	for ( Size i = 2; i <= pose.total_residue(); i++ ){
 
 		is_moving_res.push_back( false );
 
-		if ( allow_insert_->get( AtomID(1,i) /*phosphate*/ )  ) {
+		//		bool check_domain_boundary = ( allow_insert_->get_domain( AtomID(1,i) /*phosphate*/ ) != allow_insert_->get_domain( AtomID(2,i-1) /*sugar*/) );
+		//		std::cout << "CHECK " << i << ' ' << allow_insert_->get( AtomID(i,1) ) << ' ' << check_domain_boundary << std::endl;
+
+		if// (allow_insert_->get( AtomID(i,1) ) && check_domain_boundary ){
+			(allow_insert_->get( TorsionID( i-1, BB, 2 ), pose.conformation() ) &&
+			 allow_insert_->get( TorsionID( i, BB, 1 ), pose.conformation() ) ){
 			if ( sample_res == 0 ) sample_res = i;
 			std::cout << "FOUND SAMPLE RES: " << i << std::endl;
 			moving_torsions.push_back( TorsionID( i - 1, BB, 2 ) );
@@ -1406,6 +1411,7 @@ enumerate_map_test(){
 			Real const tau1( i * bin_size );
 			pose.set_torsion( torsion1, tau1 );
 			std::cout << "Doing " << I( 5,i) << " out of " <<  I( 5, nbins ) << std::endl;
+			//std::cout <<  torsion1 << ' ' << tau1 << std::endl;
 
 			for ( Size j = 1; j <= nbins; j++ ){
 
@@ -1419,6 +1425,8 @@ enumerate_map_test(){
 				rna_loop_closer_->get_all_solutions( pose, pose_list );
 
 				(*scorefxn)( pose ); //just to see something in the viewer.
+
+				//std::cout << "POSE_LIST_SIZE: " << pose_list.size() << std::endl;
 
 				for ( Size n = 1; n <= pose_list.size(); n++ ){
 					Real const score = (*scorefxn)( *pose_list[n] );
