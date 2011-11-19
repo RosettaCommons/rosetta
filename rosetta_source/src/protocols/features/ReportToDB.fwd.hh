@@ -7,24 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/moves/ReportToDB.fwd.hh
+/// @file   protocols/features/ReportToDB.fwd.hh
 /// @brief  report data to sqlite database
 /// @author Matthew O'Meara
 
-#ifndef INCLUDED_protocols_moves_ReportToDB_fwd_hh
-#define INCLUDED_protocols_moves_ReportToDB_fwd_hh
+#ifndef INCLUDED_protocols_features_ReportToDB_fwd_hh
+#define INCLUDED_protocols_features_ReportToDB_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols{
-namespace moves{
+namespace features{
 
 class ReportToDB;
 typedef utility::pointer::owning_ptr< ReportToDB > ReportToDBOP;
 typedef utility::pointer::owning_ptr< ReportToDB const > ReportToDBCOP;
 
-}//moves
-}//protocols
+}
+}
 
-#endif //INCLUDED_protocols_moves_ReportToDB_FWD_HH
+#endif //INCLUDED_protocols_features_ReportToDB_FWD_HH

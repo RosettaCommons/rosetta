@@ -7,22 +7,22 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-///@file protocols/moves/ReportToDBCreator.hh
+///@file protocols/features/ReportToDBCreator.hh
 ///@brief This class will create instances of Mover ReportToDB for the MoverFactory
 ///@author Andrew Leaver-Fay via code_writer.py (aleaverfay@gmail.com)
 ///@author Matthew O'Meara via (mattjomeara@gmail.com)
 
-#ifndef INCLUDED_protocols_moves_ReportToDBCreator_hh
-#define INCLUDED_protocols_moves_ReportToDBCreator_hh
+#ifndef INCLUDED_protocols_features_ReportToDBCreator_hh
+#define INCLUDED_protocols_features_ReportToDBCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-namespace moves {
+namespace features {
 
 class ReportToDBCreator : public protocols::moves::MoverCreator {
 public:
-	virtual MoverOP create_mover() const;
+	virtual moves::MoverOP create_mover() const;
 	virtual std::string keyname() const;
 	static std::string mover_name();
 };

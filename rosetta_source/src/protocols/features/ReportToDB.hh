@@ -7,34 +7,25 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/moves/ReportToDB.hh
+/// @file   protocols/features/ReportToDB.hh
 /// @brief  report feature data to sqlite database
 /// @author Matthew O'Meara
 
-#ifndef INCLUDED_protocols_moves_ReportToDB_hh
-#define INCLUDED_protocols_moves_ReportToDB_hh
+#ifndef INCLUDED_protocols_features_ReportToDB_hh
+#define INCLUDED_protocols_features_ReportToDB_hh
 
 // Unit Headers
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/ReportToDB.fwd.hh>
-
-// Package Headers
-// AUTO-REMOVED #include <protocols/features/ProtocolFeatures.hh>
-// AUTO-REMOVED #include <protocols/features/StructureFeatures.hh>
-// AUTO-REMOVED #include <protocols/features/FeaturesReporter.hh>
-// AUTO-REMOVED #include <protocols/features/FeaturesReporterFactory.hh>
+#include <protocols/features/ReportToDB.fwd.hh>
 
 // Project Headers
-// AUTO-REMOVED #include <basic/options/option.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/exit.hh>
 
 // C++ Headers
 #include <string>
@@ -48,7 +39,7 @@
 
 
 namespace protocols{
-namespace moves{
+namespace features{
 
 class ReportToDB : public protocols::moves::Mover {
 
@@ -73,9 +64,9 @@ public:
 	void
 	register_options() const;
 
-	virtual MoverOP fresh_instance() const;
+	virtual moves::MoverOP fresh_instance() const;
 
-	virtual MoverOP clone() const;
+	virtual moves::MoverOP clone() const;
 
 	virtual std::string get_name() const { return "ReportToDB"; }
 

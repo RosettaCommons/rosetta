@@ -6,7 +6,7 @@
 // (C) 199x-2009 Rosetta Commons participating institutions and developers.
 // For more information, see http://www.rosettacommons.org/.
 
-/// @file   protocols/moves/ReportToDB.cc
+/// @file   protocols/features/ReportToDB.cc
 ///
 /// @brief  report all data to a database
 /// @author Matthew O'Meara
@@ -16,11 +16,11 @@
 #include <mpi.h>
 #endif
 
-#include <protocols/moves/ReportToDB.hh>
+#include <protocols/features/ReportToDB.hh>
 #include <string>
 
 // Setup Mover
-#include <protocols/moves/ReportToDBCreator.hh>
+#include <protocols/features/ReportToDBCreator.hh>
 
 #include <basic/database/sql_utils.hh>
 
@@ -279,7 +279,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverCreator.hh>
 #include <protocols/moves/MoverStatus.hh>
-#include <protocols/moves/ReportToDB.fwd.hh>
+#include <protocols/features/ReportToDB.fwd.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/Bound.fwd.hh>
 #include <utility/Bound.hh>
@@ -557,7 +557,7 @@
 
 
 namespace protocols{
-namespace moves{
+namespace features{
 
 std::string
 ReportToDBCreator::keyname() const
@@ -565,7 +565,7 @@ ReportToDBCreator::keyname() const
   return ReportToDBCreator::mover_name();
 }
 
-MoverOP
+moves::MoverOP
 ReportToDBCreator::create_mover() const {
   return new ReportToDB;
 }
@@ -605,6 +605,9 @@ using protocols::features::ProtocolFeatures;
 using protocols::features::StructureFeatures;
 using protocols::features::FeaturesReporterFactory;
 using protocols::jd2::JobDistributor;
+using protocols::moves::MoverOP;
+using protocols::moves::DataMap;
+using protocols::moves::Movers_map;
 using protocols::rosetta_scripts::parse_task_operations;
 using std::string;
 using std::endl;
@@ -617,7 +620,7 @@ using utility::tag::TagPtr;
 using utility::sql_database::DatabaseSessionManager;
 using utility::sql_database::session;
 
-static Tracer TR("protocols.moves.ReportToDB");
+static Tracer TR("protocols.features.ReportToDB");
 
 Size ReportToDB::struct_id_ = 0;
 Size ReportToDB::protocol_id_ = 0;

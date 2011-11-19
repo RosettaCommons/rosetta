@@ -74,6 +74,7 @@
 #include <protocols/features/ProtocolFeaturesCreator.hh>
 #include <protocols/features/PdbDataFeaturesCreator.hh>
 #include <protocols/features/RadiusOfGyrationFeaturesCreator.hh>
+#include <protocols/features/ReportToDBCreator.hh>
 #include <protocols/features/ResidueFeaturesCreator.hh>
 #include <protocols/features/ResidueTypesFeaturesCreator.hh>
 #include <protocols/features/ResidueConformationFeaturesCreator.hh>
@@ -169,7 +170,6 @@
 #include <protocols/moves/MonteCarloRecoverCreator.hh>
 #include <protocols/moves/SidechainMCMoverCreator.hh>
 #include <protocols/moves/TaskAwareMinMoverCreator.hh>
-#include <protocols/moves/ReportToDBCreator.hh>
 #include <protocols/moves/RotamerRecoveryMoverCreator.hh>
 #include <protocols/moves/MetropolisHastingsMoverCreator.hh>
 #include <protocols/moves/BackboneMoverCreator.hh>
@@ -316,6 +316,7 @@ static core::scoring::constraints::ConstraintRegistrator< protocols::constraints
 
 
 using namespace protocols::features;
+static moves::MoverRegistrator< ReportToDBCreator > reg_ReportToDBCreator;
 static FeaturesReporterRegistrator< AtomAtomPairFeaturesCreator > AtomAtomPairFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< GeometricSolvationFeaturesCreator > GeometricSolvationFeaturesCreator_registrator;
 static FeaturesReporterRegistrator< HBondFeaturesCreator > HBondFeaturesCreator_registrator;
@@ -462,7 +463,6 @@ static MoverRegistrator< moves::MonteCarloTestCreator > reg_MonteCarloTestCreato
 static MoverRegistrator< moves::MonteCarloRecoverCreator > reg_GenericMonteCarloRecoverCreator;
 static MoverRegistrator< moves::SidechainMCMoverCreator > reg_SidechainMCMoverCreator;
 static MoverRegistrator< moves::TaskAwareMinMoverCreator > reg_TaskAwareMinMoverCreator;
-static MoverRegistrator< moves::ReportToDBCreator > reg_ReportToDBCreator;
 static MoverRegistrator< moves::RotamerRecoveryMoverCreator > reg_RotamerRecoveryMoverCreator;
 static MoverRegistrator< moves::MetropolisHastingsMoverCreator > reg_MetropolisHastingsMoverCreator;
 static MoverRegistrator< moves::SmallMoverCreator > reg_SmallMoverCreator;
