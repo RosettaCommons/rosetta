@@ -34,6 +34,7 @@
 #include <protocols/rna/RNA_DeNovoProtocol.hh>
 #include <protocols/rna/RNA_StructureParameters.hh>
 #include <protocols/rna/RNA_ProtocolUtil.hh>
+//#include <protocols/moves/PyMolMover.hh>
 
 
 // C++ headers
@@ -213,6 +214,9 @@ rna_denovo_test()
 
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
 
+	//	protocols::moves::AddPyMolObserver( pose, false, 0.01);
+
+
 	rna_de_novo_protocol.apply( pose );
 
 }
@@ -223,6 +227,7 @@ void*
 my_main( void* )
 {
 	rna_denovo_test();
+  protocols::viewer::clear_conformation_viewers();
 	exit( 0 );
 }
 
