@@ -189,7 +189,6 @@ private:
 	std::string protocol_params_;
 	std::string comparer_name_;
 	std::string comparer_params_;
-	std::string output_fname_;
 	core::Size column_width_;
 	core::Size precision_;
 	std::map< std::string, PerNativeRRReporterHuman > per_native_recovery_;

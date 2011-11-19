@@ -307,7 +307,7 @@ RRReporterSQLite::report_rotamer_recovery_full(
 		struct2_name = JobDistributor::get_instance()->current_job()->input_tag();
 	}
 
-	std::string statement_string = "INSERT INTO rotamer_recovery VALUES (?,?,?,?,?,?,?,?,?,?,?,?);";
+	std::string statement_string = "INSERT INTO rotamer_recovery VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);";
 	statement stmt(safely_prepare_statement(statement_string,db_session()));
 
 	stmt.bind(1,struct1_name);
@@ -318,10 +318,12 @@ RRReporterSQLite::report_rotamer_recovery_full(
 	stmt.bind(6,struct2_name);
 	stmt.bind(7,res2.chain());
 	stmt.bind(8,res2.seqpos());
-	stmt.bind(9,comparer_name_);
-	stmt.bind(10,comparer_params_);
-	stmt.bind(11,score);
-	stmt.bind(12,recovered);
+	stmt.bind(9,protocol_name_);
+	stmt.bind(10,protocol_params_);
+	stmt.bind(11,comparer_name_);
+	stmt.bind(12,comparer_params_);
+	stmt.bind(13,score);
+	stmt.bind(14,recovered);
 	safely_write_to_database(stmt);
 
 }
@@ -349,7 +351,7 @@ RRReporterSQLite::show( ostream & out ) const {
 
 	out
 		<< "Recovered " << rotamers_recovered_
-		<< " at " << residues_considered_
+		<< " at " << residues_considered_ << " residues considered"
 		<< " for a recovery rate of " << recovery_rate() << "." << endl;
 }
 
@@ -360,7 +362,7 @@ RRReporterSQLite::show( ) const {
 
 Real
 RRReporterSQLite::recovery_rate() const {
-	return Real( rotamers_recovered_ / residues_considered_ );
+	return Real(rotamers_recovered_) / Real(residues_considered_);
 }
 
 } // namespace

@@ -264,7 +264,6 @@ RRReporterHuman::RRReporterHuman( RRReporterHuman const & src ) :
 	protocol_params_(src.protocol_params_),
 	comparer_name_(src.comparer_name_),
 	comparer_params_(src.comparer_params_),
-	output_fname_(src.output_fname_),
 	column_width_(src.column_width_),
 	precision_(src.precision_),
 	per_native_recovery_(src.per_native_recovery_),
@@ -385,7 +384,7 @@ RRReporterHuman::show( ostream & out ) const {
 void
 RRReporterHuman::show( ) const {
 	TR << "Recovered " << rotamers_recovered_ << " rotamers"
-		<< " at " << residues_considered_ << " locations"
+		<< " at " << residues_considered_ << " residues"
 		<< " for a recovery rate of " << recovery_rate() << "." << endl;
 }
 

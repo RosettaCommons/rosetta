@@ -49,12 +49,8 @@ public: // constructors destructors
 	/// @brief default constructor
 	RotamerRecoveryMover();
 
-
 	RotamerRecoveryMover(
-		std::string const & protocol,
-		std::string const & comparer,
-		std::string const & reporter,
-		std::string const & output_fname,
+		rotamer_recovery::RotamerRecoveryOP rotamer_recovery,
 		core::scoring::ScoreFunctionOP scfxn,
 		core::pack::task::TaskFactoryOP task_factory);
 
@@ -125,24 +121,11 @@ public: // functional interface
 		std::ostream & out
 	);
 
-	///@ brief use stored member for output_fname
-	virtual
-	void
-	write_to_file();
-
-	virtual
-	void
-	write_to_file(
-		std::string const & output_fname
-	);
-
 private: // data
 
 	rotamer_recovery::RotamerRecoveryOP rotamer_recovery_;
 	core::scoring::ScoreFunctionOP scfxn_;
 	core::pack::task::TaskFactoryOP task_factory_;
-	std::string output_fname_;
-
 };
 
 } // namespace moves

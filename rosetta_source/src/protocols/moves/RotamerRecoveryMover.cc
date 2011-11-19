@@ -510,7 +510,6 @@ RotamerRecoveryMoverCreator::mover_name()
 //using std::ios::app;
 using std::endl;
 using std::max;
-using std::ofstream;
 using std::ostream;
 using std::string;
 using core::Real;
@@ -533,6 +532,7 @@ using protocols::rotamer_recovery::RRProtocolMover;
 using protocols::rotamer_recovery::RRComparerOP;
 using protocols::rotamer_recovery::RRReporterOP;
 using protocols::rotamer_recovery::RotamerRecovery;
+using protocols::rotamer_recovery::RotamerRecoveryOP;
 using protocols::rotamer_recovery::RotamerRecoveryFactory;
 using protocols::rosetta_scripts::parse_mover;
 
@@ -544,27 +544,20 @@ static Tracer TR("protocol.moves.RotamerRecoveryMover");
 RotamerRecoveryMover::RotamerRecoveryMover() :
 	rotamer_recovery_( NULL ),
 	scfxn_(NULL),
-	task_factory_(new TaskFactory),
-	output_fname_("rotamer_recovery.out")
+	task_factory_(new TaskFactory)
 {
 	task_factory_->push_back( new InitializeFromCommandline );
 	task_factory_->push_back( new RestrictToRepacking );
 }
 
 RotamerRecoveryMover::RotamerRecoveryMover(
-	string const & protocol,
-	string const & comparer,
-	string const & reporter,
-	string const & output_fname,
+	RotamerRecoveryOP rotamer_recovery,
 	ScoreFunctionOP scfxn,
 	TaskFactoryOP task_factory) :
-	rotamer_recovery_(
-		RotamerRecoveryFactory::get_instance()->get_rotamer_recovery(
-			protocol, comparer, reporter )),
+	rotamer_recovery_(rotamer_recovery),
 	scfxn_( scfxn ),
-	task_factory_( task_factory ),
-	output_fname_( output_fname )
-	{ }
+	task_factory_( task_factory )
+{}
 
 RotamerRecoveryMover::~RotamerRecoveryMover(){}
 
@@ -611,7 +604,7 @@ RotamerRecoveryMover::reinitialize_for_new_input() const {
 void
 RotamerRecoveryMover::apply( Pose & pose
 ) {
-	assert( rotamer_recovery_ );
+	runtime_assert( rotamer_recovery_ );
 	ScoreFunctionOP scfxn( score_function());
 	scfxn->setup_for_scoring(pose);
 	PackerTaskOP packer_task( task_factory_->create_task_and_apply_taskoperations( pose ));
@@ -672,8 +665,6 @@ RotamerRecoveryMover::parse_my_tag(
 		factory->get_rotamer_recovery_reporter(
 			tag->getOption<string>("reporter", "RRReporterSimple")));
 
-	reporter->output_fname(tag->getOption<string>("output_fname"));
-
 	rotamer_recovery_ = new RotamerRecovery(protocol, comparer, reporter);
 }
 
@@ -703,31 +694,6 @@ RotamerRecoveryMover::show(
 ) {
 	rotamer_recovery_->show( out );
 }
-
-
-void
-RotamerRecoveryMover::write_to_file(){
-	write_to_file( output_fname_ );
-}
-
-void
-RotamerRecoveryMover::write_to_file(
-	string const & output_fname
-) {
-	ofstream fout;
-	fout.open( output_fname.c_str(), std::ios::out );
-	if( !fout.is_open() ){
-		TR << "Unable to open output file '" << output_fname << "'." << endl;
-		utility_exit();
-	}
-
-	rotamer_recovery_->show( fout );
-
-	fout.close();
-
-}
-
-
 
 } // namespace moves
 } // namespace protocols

@@ -183,6 +183,5 @@ RotamerRecoveryFactory::get_rotamer_recovery(
 		get_rotamer_recovery_reporter(reporter_name));
 }
 
-
 } // namespace
 } // namespace

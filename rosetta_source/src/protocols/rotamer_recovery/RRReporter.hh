@@ -38,23 +38,7 @@ class RRReporter : public utility::pointer::ReferenceCount {
 
 public: // constructors destructors
 
-
 public: // public interface
-
-	// These can be optionally implemented in derived clases
-	virtual
-	void
-	output_fname(
-		std::string const & output_fname) {
-		utility_exit_with_message("Not Implemented");
-	}
-
-	virtual
-	std::string
-	output_fname() const {
-		utility_exit_with_message("Not Implemented");
-		return "";
-	}
 
 	virtual
 	void

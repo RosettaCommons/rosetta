@@ -72,8 +72,9 @@ RRReporterSimple::report_rotamer_recovery(
 void
 RRReporterSimple::show( ostream & out ) const {
 
-	out << "Recovered " << rotamers_recovered_
-		<< " at " << residues_considered_
+	out
+		<< "Recovered " << rotamers_recovered_
+		<< " at " << residues_considered_ << " residues considered"
 		<< " for a recovery rate of " << recovery_rate() << "." << endl;
 }
 
@@ -81,7 +82,7 @@ void
 RRReporterSimple::show( ) const {
 
 	TR << "Recovered " << rotamers_recovered_ << " rotamers"
-		<< " at " << residues_considered_ << " locations"
+		<< " at " << residues_considered_ << " residues considered"
 		<< " for a recovery rate of " << recovery_rate() << "." << endl;
 }
 

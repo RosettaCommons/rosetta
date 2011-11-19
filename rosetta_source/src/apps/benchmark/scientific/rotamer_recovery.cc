@@ -16,6 +16,8 @@
 // Unit Headers
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/RotamerRecoveryMover.hh>
+#include <protocols/rotamer_recovery/RotamerRecovery.hh>
+#include <protocols/rotamer_recovery/RotamerRecoveryFactory.hh>
 
 
 // Project Headers
@@ -36,9 +38,11 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-
+// c++ Headers
+#include <fstream>
 
 using std::endl;
+using std::ofstream;
 using std::string;
 using basic::Tracer;
 using core::pose::PoseOP;
@@ -51,6 +55,8 @@ using core::pack::task::operation::RestrictToRepacking;
 using core::scoring::getScoreFunction;
 using core::scoring::ScoreFunctionOP;
 using devel::init;
+using protocols::rotamer_recovery::RotamerRecoveryOP;
+using protocols::rotamer_recovery::RotamerRecoveryFactory;
 using protocols::moves::RotamerRecoveryMover;
 using protocols::moves::RotamerRecoveryMoverOP;
 using protocols::jd2::JobDistributor;
@@ -106,21 +112,30 @@ main( int argc, char * argv [] )
 	}
 	task_factory->push_back( new RestrictToRepacking );
 
-  RotamerRecoveryMoverOP rr(
-		new RotamerRecoveryMover(
-			protocol,
-			comparer,
-			reporter,
-			output_fname,
-			scfxn,
-			task_factory
-		)
-	);
+  RotamerRecoveryOP rotamer_recovery(
+		RotamerRecoveryFactory::get_instance()->get_rotamer_recovery(
+			protocol, comparer, reporter));
+
+	RotamerRecoveryMoverOP rotamer_recovery_mover(
+		new RotamerRecoveryMover(rotamer_recovery, scfxn, task_factory));
 
 
   try{
-    JobDistributor::get_instance()->go( rr );
-		rr->show();
+    JobDistributor::get_instance()->go( rotamer_recovery_mover );
+
+		rotamer_recovery_mover->show();
+
+		// if requsted write output to disk
+		if(option[ out::file::rotamer_recovery].user()){
+			ofstream fout;
+			fout.open( output_fname.c_str(), std::ios::out );
+			if( !fout.is_open() ){
+				TR << "Unable to open output file '" << output_fname << "'." << endl;
+				utility_exit();
+			}
+			rotamer_recovery_mover->show( fout );
+			fout.close();
+		}
   } catch (EXCN_Base & excn ) {
     TR.Error << "Exception: " << endl;
     excn.show( TR.Error );
@@ -130,11 +145,7 @@ main( int argc, char * argv [] )
   }
 
   return 0;
-
 }
-
-
-
 
 
 
