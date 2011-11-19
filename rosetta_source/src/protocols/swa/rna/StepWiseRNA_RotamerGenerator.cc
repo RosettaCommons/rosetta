@@ -61,10 +61,10 @@ namespace rna {
 		sample_extra_rotamers_( true ),
 		fast_( false ),
 		bin_size_( bin_size ), // must be 20, 10, or 5
-		bins1_( 360/bin_size_ ), //This is total bins, default is 18
-		bins2_( bins1_/2 ), //This is total bins divided by 2; default is 9
-		bins3_( bins1_/3  ), //This is total bins divided by 3; default is 6
-		bins4_( 1 + 40/bin_size_ ), //This is the bin for chi and episilon, these two torsion angles vary from -20+mean to 20+mean
+		bins1_( int(360/bin_size_) ), //This is total bins, default is 18
+		bins2_( int( bins1_/2 ) ), //This is total bins divided by 2; default is 9
+		bins3_( int( bins1_/3  ) ), //This is total bins divided by 3; default is 6
+		bins4_( 1 + int(40/bin_size_) ), //This is the bin for chi and episilon, these two torsion angles vary from -20+mean to 20+mean
 		verbose_(true)
 	{
 		Output_title_text("Enter StepWiseRNA_RotamerGenerator Constructor");

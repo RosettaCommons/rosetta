@@ -396,12 +396,12 @@ namespace rna {
 		int const euler_angle_bin_min=-180/euler_angle_bin_size; //Should be -180/euler_angle_bin_size
 		int const euler_angle_bin_max=180/euler_angle_bin_size-1;  //Should be 180/euler_angle_bin_size-1
 
-		int const euler_z_bin_min=-1/euler_z_bin_size;
-		int const euler_z_bin_max=(1/euler_z_bin_size)-1;
+		int const euler_z_bin_min=-int(1/euler_z_bin_size);
+		int const euler_z_bin_max= int(1/euler_z_bin_size)-1;
 
 		Real const max_distance=12;
-		int const centroid_bin_min=-max_distance/static_cast<Real>(centroid_bin_size);
-		int const centroid_bin_max=(max_distance/static_cast<Real>(centroid_bin_size))-1;
+		int const centroid_bin_min = -int(max_distance/static_cast<Real>(centroid_bin_size));
+		int const centroid_bin_max =  int((max_distance/static_cast<Real>(centroid_bin_size))-1);
 
 		std::cout << "euler_angle_bin min= " << euler_angle_bin_min << " max " << euler_angle_bin_max << std::endl;
 		std::cout << "euler_z_bin_min min= " << euler_z_bin_min << " max " << euler_z_bin_max << std::endl;
