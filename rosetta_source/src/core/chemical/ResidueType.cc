@@ -774,6 +774,8 @@ ResidueType::add_property( std::string const & property )
 		is_charged_ = true;
 	} else if ( property == "AROMATIC" ) {
 		is_aromatic_ = true;
+	} else if ( property == "COARSE" ) {
+		is_coarse_ = true; //currently only for RNA
 	} else if ( property == "DNA" ) {
 		is_DNA_ = true;
 		is_NA_ = true;
