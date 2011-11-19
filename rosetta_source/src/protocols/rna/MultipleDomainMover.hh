@@ -19,9 +19,10 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/rna/MultipleDomainMover.fwd.hh>
-#include <protocols/rna/AllowInsert.fwd.hh>
+#include <protocols/rna/AllowInsert.hh>
 #include <protocols/moves/RigidBodyMover.hh>
 #include <protocols/coarse_rna/CoarseRNA_LoopCloser.fwd.hh>
+#include <protocols/coarse_rna/CoarseRNA_LoopCloser.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
 
