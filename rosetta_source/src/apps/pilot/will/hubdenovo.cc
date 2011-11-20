@@ -122,8 +122,6 @@ void register_options() {
 }
 static core::io::silent::SilentFileData sfd;
 
-#define MULT 5.0
-
 static basic::Tracer tr("hubdenovo");
 
 
@@ -206,14 +204,16 @@ Strings getline(std::istream & in) {
 	while(iss >> s) v.push_back(s);
 	return v;
 }
-struct DCST {
+struct DCST {	
 	string atm1,atm2;
 	Size rsd1,rsd2;
 	Real d,sd;
+	DCST() : atm1(""),atm2(""),rsd1(0),rsd2(0),d(0),sd(0) {}
 	DCST( string _atm1, Size _rsd1, string _atm2, Size _rsd2, Real _d, Real _sd ) : atm1(_atm1), rsd1(_rsd1), atm2(_atm2), rsd2(_rsd2), d(_d), sd(_sd) {}
 };
 struct CST {
 	int tplt,grp,dres1,tres1,dres2,tres2;
+	CST() : tplt(0),grp(0),dres1(0),tres1(0),dres2(0),tres2(0) {}
 	CST(int _tplt, int _grp, int a, int b, int c, int d) : tplt(_tplt),grp(_grp),dres1(a),tres1(b),dres2(c),tres2(d) {}
 };
 std::ostream & operator<<(std::ostream & out, CST const & c) {
@@ -225,6 +225,8 @@ typedef utility::vector1<CST> CSTs;
 // fixed SS
 struct ConstraintConfig {
 	Size nres,nsub,nhub;
+	Real CSTSDMULT;
+	string fname;
 	vector1<char> ss;
 	std::map<string,Sizes> ssmap;
 	std::map<Size,Strings> seq;
@@ -232,20 +234,26 @@ struct ConstraintConfig {
 	vector1<PoseOP> templates_fa,templates_cen;
 	vector1<std::map<Size,Size> > template_map;
 	vector1<Size> template_sc,template_sc_resi;
-	vector1<CST> cst_sc,cst_bb,cst_ex;
+	vector1<CST> cst_sc,cst_bb;
 	vector1<DCST> dcst;
 	core::chemical::ResidueTypeSetCAP crs,frs;
-	ConstraintConfig() {
+	virtual ~ConstraintConfig() {}
+	ConstraintConfig() 
+	: nres(0),nsub(0),nhub(0),CSTSDMULT(1),fname("NONE"),ss(0),templates_fname(0),templates_fa(0),templates_cen(0),template_sc(0),template_sc_resi(0),cst_sc(0),cst_bb(0),dcst(0)
+	{
 		init();
 	}
-	ConstraintConfig(string cfgfile) {
+	ConstraintConfig(string cfgfile)
+ 	: nres(0),nsub(0),nhub(0),CSTSDMULT(1),fname("NONE"),ss(0),templates_fname(0),templates_fa(0),templates_cen(0),template_sc(0),template_sc_resi(0),cst_sc(0),cst_bb(0),dcst(0)
+	{
+		tr << "reading config file: " << cfgfile << endl;
+		fname = cfgfile;
 		init();
 		parse_config_file(cfgfile);
 		show_cst_grids(tr);
 		show_sequence(tr);
 	}
 	void init() {
-		nsub = 0;
 		frs = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );
 		crs = core::chemical::ChemicalManager::get_instance()->residue_type_set( "centroid" );
 	}
@@ -269,7 +277,7 @@ struct ConstraintConfig {
 	}
 	void show_sequence(std::ostream & out = tr) const {
 		for(Size i = 1; i <= nres; ++i) {
-			tr << I(4,i);
+			tr << I(4,i) << " " << ss[i];
 			if(seq.count(i)==1) {
 				for(Size j = 1; j <= seq.find(i)->second.size(); ++j) tr << " " << seq.find(i)->second[j];
 			} else {
@@ -285,18 +293,6 @@ struct ConstraintConfig {
 		for(Size i = 1; i <= templates_fname.size(); ++i) {
 			ObjexxFCL::FArray2D<char> grid(templates_fa[i]->n_residue(),ss.size(),'.');
 			int X=0,Y=0;
-			for(CSTs::const_iterator ic = cst_ex.begin(); ic != cst_ex.end(); ++ic) {
-				if(ic->tplt==i) {
-					grid(ic->tres1,ic->dres2) = ALPHA[ic->grp];
-					grid(ic->tres2,ic->dres1) = ALPHA[ic->grp];
-					grid(ic->tres1,ic->dres1) = '=';
-					grid(ic->tres2,ic->dres2) = '=';
-					X = max(X,ic->tres1+3);
-					X = max(X,ic->tres2+3);
-					Y = max(Y,ic->dres1+3);
-					Y = max(Y,ic->dres2+3);
-				}
-			}
 			for(CSTs::const_iterator ic = cst_bb.begin(); ic != cst_bb.end(); ++ic) {
 				if(ic->tplt==i) {
 					grid(ic->tres1,ic->dres2) = alpha[ic->grp];
@@ -420,19 +416,23 @@ struct ConstraintConfig {
 	void parse_config_file(std::istream & in) {
 		string op,op2,val;
 		while(true) {
-			//tr << "ROOT peak: " << (char)in.peek() << endl;
+			tr << "ROOT peak: " << (char)in.peek() << endl;
 			if(!(read_ignore_comments(in,op))) break;
 			if("SUBUNITS"==op) {
-				read_ignore_comments(in,nhub);
-				read_ignore_comments(in,nsub);
-				//tr << "SUBUNITS: " << nsub << endl;
+				if(!read_ignore_comments(in,nhub)) utility_exit_with_message("error in SUBUNITS HERE");
+				if(!read_ignore_comments(in,nsub)) utility_exit_with_message("error in SUBUNITS "+str(nhub)+" HERE");
+				tr << "SUBUNITS: " << nsub << endl;
+			} else
+			if("CSTSDMULT"==op) {
+				if(!read_ignore_comments(in,CSTSDMULT)) utility_exit_with_message("error in CSTSDMULT HERE");
+				tr << "CSTSDMULT: " << CSTSDMULT << endl;
 			} else
 			if("SECSTRUCT"==op) {
 				if(!nsub) utility_exit_with_message("SUBUNITS not set before SECSTRUCT");
 				string ssstr;
 				read_ignore_comments(in,ssstr);
 				for(Size is = 0; is < ssstr.size(); ++is) {
-					if(ssstr[is]!='H'&&ssstr[is]!='E'&&ssstr[is]!='L'&&ssstr[is]!='*') {
+					if(ssstr[is]!='H'&&ssstr[is]!='E'&&ssstr[is]!='L'&&ssstr[is]!='_') {
 						utility_exit_with_message("parse_config_file: bad SECSTRUCT: "+ssstr.substr(is,1)+", "+ssstr);
 					}
 				}
@@ -444,7 +444,7 @@ struct ConstraintConfig {
 				}
 				tr << "SECSTRUCT " << ss.size() << endl;
 				{ // make ssmap
-					std::map<char,Size> nss; nss['H']=0; nss['E']=0; nss['L']=0; nss['*']=0;
+					std::map<char,Size> nss; nss['H']=0; nss['E']=0; nss['L']=0; nss['_']=0;
 					char prev = '@';
 					Size ssst = 0;
 					string symbol;
@@ -610,26 +610,6 @@ struct ConstraintConfig {
 										cst_bb.push_back(CST(templates_fname.size(),bbgrp,dres[i],tres[i],dres[j],tres[j]));
 									}
 								}
-							} else if("DISTANCES"==op2) {
-								Sizes tres1 = parse_residues(getline(in),false);
-								Sizes tres2 = parse_residues(getline(in),false);
-								Sizes dres1,dres2;
-								for(Sizes::const_iterator i = tres1.begin(); i != tres1.end(); ++i) {
-									if(template_map.back().count(*i)==0) utility_exit_with_message("DISTANCES: template "+tpdb+" residue "+str(*i)+" not mapped to design residue!");
-									Size dri = template_map.back()[*i];
-									dres1.push_back(dri);
-								}
-								for(Sizes::const_iterator i = tres2.begin(); i != tres2.end(); ++i) {
-									if(template_map.back().count(*i)==0) utility_exit_with_message("DISTANCES: template "+tpdb+" residue "+str(*i)+" not mapped to design residue!");
-									Size dri = template_map.back()[*i];
-									dres2.push_back(dri);
-								}
-								exgrp++;
-								for(Size i = 1; i <= tres1.size(); ++i) {
-									for(Size j = 1; j <= tres2.size(); ++j) {
-										cst_ex.push_back(CST(templates_fname.size(),exgrp,dres1[i],tres1[i],dres2[j],tres2[j]));
-									}
-								}
 							} else {
 								utility_exit_with_message("parse_config_file: don't understand TEMPLATE CMD: '"+op2+"'");
 							}
@@ -642,10 +622,10 @@ struct ConstraintConfig {
 					break;
 			}
 		}
-		for(Size i = 1; i <= templates_fa.size(); ++i) {
-			templates_fa[i]->dump_pdb("TEMPLATE_FA__"+str(i)+".pdb");
-			templates_fa[i]->dump_pdb("TEMPLATE_CEN_"+str(i)+".pdb");			
-		}
+		// for(Size i = 1; i <= templates_fa.size(); ++i) {
+		// 	templates_fa[i]->dump_pdb("TEMPLATE_FA__"+str(i)+".pdb");
+		// 	templates_fa[i]->dump_pdb("TEMPLATE_CEN_"+str(i)+".pdb");			
+		// }
 	}
 
 	void apply_bb_csts(Pose & p, Size ssep=0) const {
@@ -661,8 +641,8 @@ struct ConstraintConfig {
 					Real d = t.residue(i->tres1).xyz(anames[an1]).distance( t.residue(i->tres2).xyz(anames[an2]) );
 					AtomID id1( p.residue(i->dres1).atom_index(anames[an1]), i->dres1 );
 					AtomID id2( p.residue(i->dres2).atom_index(anames[an2]), i->dres2 );			
-					add_sym_cst( p, id1, id2, d, MULT*sqrt(d) );
-					// p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT*sqrt(d)) ) );
+					add_sym_cst( p, id1, id2, d, CSTSDMULT*sqrt(d) );
+					// p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,CSTSDMULT*sqrt(d)) ) );
 				}
 			}
 			// {
@@ -670,46 +650,16 @@ struct ConstraintConfig {
 			// 	AtomID id1( p.residue(i->dres1).atom_index("H"), i->dres1 );
 			// 	AtomID id2( p.residue(i->dres2).atom_index("O"), i->dres2 );			
 			// 	//tr << "constraint: " << ssep << " " << i->dres1 << ",H " << i->dres2 << ",O " << d << endl;
-			// 	p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT*sqrt(d)) ) );
+			// 	p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,CSTSDMULT*sqrt(d)) ) );
 			// }
 			// {
 			// 	Real d = t.residue(i->tres1).xyz("O").distance( t.residue(i->tres2).xyz("H") );
 			// 	AtomID id1( p.residue(i->dres1).atom_index("O"), i->dres1 );
 			// 	AtomID id2( p.residue(i->dres2).atom_index("H"), i->dres2 );			
 			// 	//tr << "constraint: " << ssep << " " << i->dres1 << ",O " << i->dres2 << ",H " << d << endl;
-			// 	p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT*sqrt(d)) ) );
+			// 	p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,CSTSDMULT*sqrt(d)) ) );
 			// }
 		}
-		for(CSTs::const_iterator i = cst_ex.begin(); i != cst_ex.end(); ++i) {
-			//tr << "apply ex cst " << ssep << " " << i->dres1-i->dres2 << "   " << *i << endl;
-			if(ssep && (hub_seq_sep(i->dres1,i->dres2) != ssep) ) continue;
-			Pose & t(*templates_cen[i->tplt]);
-			for(Size an1 = 1; an1 <= anames.size(); ++an1) {
-				if(!p.residue(i->dres1).has(anames[an1]) || !t.residue(i->tres1).has(anames[an1])) continue;
-				for(Size an2 = 1; an2 <= anames.size(); ++an2) {
-					if(!p.residue(i->dres2).has(anames[an2]) || !t.residue(i->tres2).has(anames[an2])) continue;
-					Real d = t.residue(i->tres1).xyz(anames[an1]).distance( t.residue(i->tres2).xyz(anames[an2]) );
-					AtomID id1( p.residue(i->dres1).atom_index(anames[an1]), i->dres1 );
-					AtomID id2( p.residue(i->dres2).atom_index(anames[an2]), i->dres2 );			
-					add_sym_cst( p, id1, id2, d, MULT*sqrt(d) );
-					//p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT*sqrt(d)) ) );
-				}
-			}
-			// {
-			// 	Real d = t.residue(i->tres1).xyz("H").distance( t.residue(i->tres2).xyz("O") );
-			// 	AtomID id1( p.residue(i->dres1).atom_index("H"), i->dres1 );
-			// 	AtomID id2( p.residue(i->dres2).atom_index("O"), i->dres2 );			
-			// 	//tr << "constraint: " << ssep << " " << i->dres1 << ",H " << i->dres2 << ",O " << d << endl;
-			// 	p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT*sqrt(d)) ) );
-			// }
-			// {
-			// 	Real d = t.residue(i->tres1).xyz("O").distance( t.residue(i->tres2).xyz("H") );
-			// 	AtomID id1( p.residue(i->dres1).atom_index("O"), i->dres1 );
-			// 	AtomID id2( p.residue(i->dres2).atom_index("H"), i->dres2 );			
-			// 	//tr << "constraint: " << ssep << " " << i->dres1 << ",O " << i->dres2 << ",H " << d << endl;
-			// 	p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT*sqrt(d)) ) );
-			// }
-		}		
 	}
 	void apply_dcsts(Pose & p, Size ssep=0) const {
 		using namespace core::scoring::constraints;
@@ -738,14 +688,14 @@ struct ConstraintConfig {
 					Real d = t.residue(i->tres1).xyz(anames[an1]).distance( t.residue(i->tres2).xyz(anames[an2]) );
 					AtomID id1( p.residue(i->dres1).atom_index(anames[an1]), i->dres1 );
 					AtomID id2( p.residue(i->dres2).atom_index(anames[an2]), i->dres2 );			
-					add_sym_cst( p, id1, id2, d, MULT*sqrt(d) );
+					add_sym_cst( p, id1, id2, d, CSTSDMULT*sqrt(d) );
 				}
 			}
 			// Real d = t.residue(i->tres1).xyz("CEN").distance( t.residue(i->tres2).xyz("CEN") );
 			// AtomID id1( p.residue(i->dres1).atom_index("CEN"), i->dres1 );
 			// AtomID id2( p.residue(i->dres2).atom_index("CEN"), i->dres2 );			
 			// //tr << "constraint: " << ssep << " " << i->dres1 << ",CEN " << i->dres2 << ",CEN " << d << endl;
-			// p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT*sqrt(d)) ) );
+			// p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,CSTSDMULT*sqrt(d)) ) );
 		}
 		apply_bb_csts(p,ssep);
 		apply_dcsts(p,ssep);
@@ -769,8 +719,8 @@ struct ConstraintConfig {
 					AtomID id1( p.residue(i->dres1).atom_index(aname1), i->dres1 );
 					AtomID id2( p.residue(i->dres2).atom_index(aname2), i->dres2 );
 					//tr << "constraint: " << ssep << " " << i->dres1 << "," << aname1 << " " << i->dres2 << "," << aname2 << " " << d << endl;
-					add_sym_cst( p, id1, id2, d, MULT/2.0*sqrt(d) );
-					p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,MULT/2.0*sqrt(d)) ) );
+					add_sym_cst( p, id1, id2, d, CSTSDMULT/2.0*sqrt(d) );
+					p.add_constraint( new AtomPairConstraint( id1, id2, new HarmonicFunc(d,CSTSDMULT/2.0*sqrt(d)) ) );
 				}
 			}
 		}
@@ -788,13 +738,23 @@ struct ConstraintConfig {
 		for(Size i = 2; i <= nres; ++i) {
 			if(seq.count(i)) {
 				Strings const & choices( seq.find(i)->second );
-				s += choices[ (Size)std::ceil( numeric::random::uniform()*((Real)choices.size()) ) ];
+				string tmp = choices[ (Size)std::ceil( numeric::random::uniform()*((Real)choices.size()) ) ];
+				//tr << i << " " << tmp << endl;
+				if(tmp.size() != 1) utility_exit_with_message("sequence is bad: '"+tmp+"'");
+				s += tmp;
 			} else {
-				if(ss[i]=='H') s += "L";
-				if(ss[i]=='E') s += "V";
-				if(ss[i]=='L') s += "G";								
+				if(ss[i]=='_') s += "G";
+				else if(ss[i]=='H') s += "L";
+				else if(ss[i]=='E') s += "V";
+				else if(ss[i]=='L') s += "G";
+				else utility_exit_with_message("bad ss "+ss[i]);
+				//tr << i << " " << "LVG" << endl;
 			}
 		}
+		if( s.size() != nres ) {
+			utility_exit_with_message("particular sequence doesn't match length of ss");
+		}
+		tr << "pick sequence: " << s << endl;
 		return s;
 	}
 };
@@ -805,7 +765,8 @@ struct HubDenovo {
 	ConstraintConfig cfg;
 	ScoreFunctionOP sf3,sfsym,sfasym,sfsymnocst;
 	protocols::moves::MoverOP rlxcst,rlxnocst,des,fragins3,fraginsL,fragins,cenmin;
-	HubDenovo(std::string cstcfgfile): cfg(cstcfgfile)
+	virtual ~HubDenovo() {}
+	HubDenovo(std::string cstcfgfile) : cfg(cstcfgfile)
 	{
 		using namespace core::scoring;
 		sf3 = new symmetry::SymmetricScoreFunction(ScoreFunctionFactory::create_score_function("score4_smooth"));
@@ -848,11 +809,11 @@ struct HubDenovo {
 		Pose p(hub);
 		core::pose::remove_upper_terminus_type_from_pose_residue(p,1);
 
-		string seq = cfg.pick_sequence();
+		string tmpseq = cfg.pick_sequence();
 		// tr << "start sequence " << seq << endl;
 		for(Size ir = 2; ir <= cfg.nres; ++ir) {
 			core::conformation::ResidueOP tmp = core::conformation::ResidueFactory::create_residue(
-				*p.residue(1).residue_type_set().aa_map(core::chemical::aa_from_oneletter_code(seq[ir-1]))[1] );
+				*p.residue(1).residue_type_set().aa_map(core::chemical::aa_from_oneletter_code(tmpseq[ir-1]))[1] );
 			tmp->seqpos(ir);
 			tmp->chain(1);
 			p.append_residue_by_bond( *tmp, true );
@@ -935,7 +896,7 @@ struct HubDenovo {
 		using namespace core::scoring;
 		for(int iter = 1; iter < NITER; ++iter) {
 			Pose tmp = make_start_pose();
-			string fn = option[OptionKeys::out::file::o]() + "/" + cfg.ssstr() +"_"+ str(uniform()).substr(2,8) + ".pdb.gz";
+			string fn = option[OptionKeys::out::file::o]() + "/" + utility::file_basename(cfg.fname) +"_"+ str(uniform()).substr(2,8) + ".pdb.gz";
 			
 			cen_fold(tmp);
 

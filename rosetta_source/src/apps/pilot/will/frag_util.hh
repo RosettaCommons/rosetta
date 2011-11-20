@@ -68,28 +68,31 @@ core::fragment::FragSetOP make_frag_set(std::string ss, std::map<string, vector1
 	for( Size i = 1; i <= (Size)stop; ++i ) {
 		string ss3 = ss.substr(i-1,3);
 		bool mkframe = true;
-		for(Size j = 0; j < ss3.size(); ++j) if(ss3[j]!='H'&&ss3[j]!='E'&&ss3[j]!='L'&&ss3[j]!='*') mkframe = false;
+		for(Size j = 0; j < ss3.size(); ++j) if(ss3[j]!='H'&&ss3[j]!='E'&&ss3[j]!='L'&&ss3[j]!='_') mkframe = false;
 		if(!mkframe) utility_exit_with_message("oaisnrt");
 		FrameOP frame = new Frame(i,3);
 		vector1<char> ss0,ss1,ss2;
-		if('*'==ss3[0]) { ss0.push_back('H'); ss0.push_back('E'); ss0.push_back('L'); } else ss0.push_back(ss3[0]);
-		if('*'==ss3[1]) { ss1.push_back('H'); ss1.push_back('E'); ss1.push_back('L'); } else ss1.push_back(ss3[1]);
-		if('*'==ss3[2]) { ss2.push_back('H'); ss2.push_back('E'); ss2.push_back('L'); } else ss2.push_back(ss3[2]);				
+		if('_'==ss3[0]) { ss0.push_back('H'); ss0.push_back('E'); ss0.push_back('L'); } else ss0.push_back(ss3[0]);
+		if('_'==ss3[1]) { ss1.push_back('H'); ss1.push_back('E'); ss1.push_back('L'); } else ss1.push_back(ss3[1]);
+		if('_'==ss3[2]) { ss2.push_back('H'); ss2.push_back('E'); ss2.push_back('L'); } else ss2.push_back(ss3[2]);				
+		int nfrag = 0;
 		for( Size j = 1; j <= ss0.size(); ++j ) {
 		for( Size k = 1; k <= ss1.size(); ++k ) {
 		for( Size l = 1; l <= ss2.size(); ++l ) {
 			string ss=""; ss+=ss0[j]; ss+=ss1[k]; ss+=ss2[l];
 			//cout << "adding ss " << ss << " '" << ss0[j] << "' '" << ss1[k] << "' '" << ss2[l] << "'" << std::endl;
 			vector1<FragDataOP>::iterator beg = fds[ss].begin();
-			vector1<FragDataOP>::iterator end = fds[ss].end();
+			vector1<FragDataOP>::iterator end = fds[ss].end();			
 			for( vector1<FragDataOP>::iterator fi = beg; fi != end; ++fi ) {
 				frame->add_fragment(*fi);
+				nfrag++;
 			}
 		}}}
 		frags->add(frame);
 		//coutcout << "make frag " << i << ": " << ss3 << std::endl;
+		//cout << ss3 << " " << nfrag << " fragments" << endl;
 	}
-	if(frags->size() == 0) return NULL;
+	if(frags->size() == 0) utility_exit_with_message("no fragments!!!");
 	return frags;
 }
 
