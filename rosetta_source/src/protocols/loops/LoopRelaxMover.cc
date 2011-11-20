@@ -1305,11 +1305,20 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 			}
 			if ( debug ) pose.dump_pdb(curr_job_tag + "_after_refine.pdb");
 			checkpoints_.checkpoint( pose, curr_job_tag, "refine", true);
+
 			// need to get the chainbreak score before the cutpoint variants are removed
-			setPoseExtraScores(
-				pose, "final_chainbreak",
-				pose.energies().total_energies()[ core::scoring::chainbreak ]
-			);
+
+			if ( option[ OptionKeys::loops::kic_use_linear_chainbreak ]() ){
+				setPoseExtraScores(
+													 pose, "final_chainbreak",
+													 pose.energies().total_energies()[ core::scoring::linear_chainbreak ]
+													 );
+			} else {
+				setPoseExtraScores(
+													 pose, "final_chainbreak",
+													 pose.energies().total_energies()[ core::scoring::chainbreak ]
+													 );
+			}
 		}
 
 		checkpoints_.debug( curr_job_tag, "refine", (*fa_scorefxn_)( pose ) );
@@ -1462,6 +1471,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 	if (fullatom_output) final_score = (*fa_scorefxn_)(pose);  // may include constraint score
 	else                 final_score = (*cen_scorefxn_)(pose); // may include constraint score
+
 
 	core::pose::setPoseExtraScores(
 		pose, std::string("final_looprelax_score"), final_score

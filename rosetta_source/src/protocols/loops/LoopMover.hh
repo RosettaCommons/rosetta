@@ -153,6 +153,9 @@ private: // data
 
 }; // class LoopMover
 
+void
+loops_set_chainbreak_weight( core::scoring::ScoreFunctionOP scorefxn, core::Size const round = 1 );
+
 } //namespace loops
 } //namespace protocols
 

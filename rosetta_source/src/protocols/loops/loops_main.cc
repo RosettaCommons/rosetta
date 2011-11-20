@@ -715,6 +715,9 @@ loops_set_move_map(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
+	bool const allow_omega_move = basic::options::option[ OptionKeys::loops::allow_omega_move ].user();
+	bool const allow_takeoff_torsion_move = basic::options::option[ OptionKeys::loops::allow_takeoff_torsion_move ].user();
+
 	// allow chi to move
 	mm.set_bb( false );
 	mm.set_chi( false );
@@ -722,11 +725,19 @@ loops_set_move_map(
 	// allow phi/psi in loops to move
 	for( Loops::const_iterator it=loops.begin(), it_end=loops.end();
 			 it != it_end; ++it ) {
+
 		for( Size i=it->start(); i<=it->stop(); ++i ) {
 			mm.set_bb(i, true);
-			mm.set(TorsionID(i,BB,3), false); // omega is fixed
+			if ( !allow_omega_move ) mm.set(TorsionID(i,BB,3), false); // omega is fixed by default
 			mm.set_chi(i, true); // chi of loop residues
 		}
+
+ 		if ( allow_takeoff_torsion_move ) {
+ 			mm.set( TorsionID( it->start()-1, BB, 2 ), true );
+ 			if ( allow_omega_move ) mm.set( TorsionID( it->start()-1, BB, 3 ), true );
+ 			mm.set( TorsionID( it->stop()+1, BB, 1 ), true );
+ 		}
+
 	}
 	// set chi move map based on the input allow_sc array, which is filled based on fix_natsc info
 	for ( Size i = 1; i <= allow_sc_move.size(); ++i ) {
@@ -740,6 +751,8 @@ loops_set_move_map(
 			mm.set_jump( i, false );
 		}
 	}
+
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -758,21 +771,33 @@ set_move_map_for_centroid_loop(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
+	bool const allow_omega_move = basic::options::option[ OptionKeys::loops::allow_omega_move ].user();
+	bool const allow_takeoff_torsion_move = basic::options::option[ OptionKeys::loops::allow_takeoff_torsion_move ].user();
+
 	mm.set_bb( false );
 	mm.set_chi( false );
 	mm.set_jump( false );
 	// allow phi/psi in loops to move
 	for( Size i=loop.start(); i<=loop.stop(); ++i ) {
 		mm.set_bb(i, true);
-		mm.set( TorsionID( i, BB, 3 ), false ); // omega is fixed
+		if ( !allow_omega_move ) mm.set( TorsionID( i, BB, 3 ), false ); // omega is fixed
 		mm.set_chi(i, true); // chi of loop residues
 	}
+
+	if ( allow_takeoff_torsion_move ) {
+		mm.set( TorsionID( loop.start()-1, BB, 2 ), true );
+		if ( allow_omega_move ) mm.set( TorsionID( loop.start()-1, BB, 3 ), true );
+		mm.set( TorsionID( loop.stop()+1, BB, 1 ), true );
+	}
+
 	// chu in case we have ligand attached in fold tree and they need to move. Assuming that
 	// loop jumps come first followed by lig jumps.
 	if (basic::options::option[ OptionKeys::loops::allow_lig_move ].user() ){
 		mm.set_jump( true );
 		mm.set_jump( 1, false ); //jump for the single loop
 	}
+
+
 }
 
 

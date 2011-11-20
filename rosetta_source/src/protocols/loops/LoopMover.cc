@@ -27,6 +27,9 @@
 
 #include <protocols/checkpoint/CheckPointer.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/loops.OptionKeys.gen.hh>
+
 //Utility Headers
 
 /// ObjexxFCL headers
@@ -128,6 +131,18 @@ LoopMover::set_loops_from_pose_observer_cache( core::pose::Pose const & pose ){
 	}
 	else{
 		utility_exit_with_message("trying to set loops from observer cache even though no cache was detected in the pose");
+	}
+}
+
+// Used by both LoopMover_Refine_KIC and LoopMover_Perturb_KIC
+void
+loops_set_chainbreak_weight( core::scoring::ScoreFunctionOP scorefxn, Size const round ){
+	bool const use_linear_chainbreak( basic::options::option[basic::options::OptionKeys::loops::kic_use_linear_chainbreak]() );
+	if ( use_linear_chainbreak ){
+		scorefxn->set_weight( core::scoring::linear_chainbreak, float( round ) * 150.0 / 3.0 );
+		scorefxn->set_weight( core::scoring::chainbreak, 0.0 );
+	} else { // default behavior.
+		scorefxn->set_weight( core::scoring::chainbreak, float(round) * 10.0 / 3.0 );
 	}
 }
 

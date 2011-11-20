@@ -181,7 +181,6 @@ LoopResult LoopMover_Perturb_KIC::model_loop(
 		native_pose = pose;
 	}
 
-
 	Size const loop_begin( loop.start() ), loop_end( loop.stop() ), loop_cut( loop.cut() );
 	Size const loop_size( loop_end - loop_begin + 1 );
 	runtime_assert( loop.is_terminal( pose ) || pose.fold_tree().is_cutpoint( loop_cut ) );
@@ -255,18 +254,18 @@ LoopResult LoopMover_Perturb_KIC::model_loop(
 	tr << "remodel init temp: " << init_temp << std::endl;
 	tr << "remodel final temp: " << final_temp << std::endl;
 
-
 	// perform the initial perturbation
 	// setup the kinematic mover
 	//protocols::moves::KinematicMover myKinematicMover( temperature );
 	protocols::moves::KinematicMover myKinematicMover;
 	protocols::moves::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber =
 		new protocols::moves::kinematic_closure::TorsionSamplingKinematicPerturber( &myKinematicMover );
-	perturber->set_vary_ca_bond_angles( true );
+	perturber->set_vary_ca_bond_angles( ! option[ OptionKeys::loops::fix_ca_bond_angles ]() );
 	myKinematicMover.set_perturber( perturber );
 
 	myKinematicMover.set_vary_bondangles( true );
 	//myKinematicMover.set_vary_bondangles( false );  // trying without varying angles
+
 	myKinematicMover.set_sample_nonpivot_torsions(
 												  option[ OptionKeys::loops::nonpivot_torsion_sampling ]());
 	myKinematicMover.set_rama_check( true );
@@ -296,6 +295,7 @@ LoopResult LoopMover_Perturb_KIC::model_loop(
 			}
 			nits++;
 		}
+
 		if (!myKinematicMover.last_move_succeeded()) {
 			tr.Error << "[WARNING] Failed to build loop with kinematic Mover during initial kinematic perturbation after " << nits << " trials: " << loop << std::endl;
 			set_last_move_status(protocols::moves::FAIL_RETRY);
@@ -305,6 +305,7 @@ LoopResult LoopMover_Perturb_KIC::model_loop(
 		(*scorefxn_)(pose);
 		minimizer->run( pose, mm_one_loop, *scorefxn_, options );
 		tr << "loop rmsd after initial kinematic perturbation:" << loop_rmsd( pose, native_pose, one_loop_loops ) << std::endl;
+
 	}
 	else {
 		tr << "not performing initial kinematic perturbation" << std::endl;
@@ -588,8 +589,11 @@ void LoopMover_Refine_KIC::apply(
 
 	//scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
 	//scorefxn->set_weight( chainbreak, 1.0 ); // confirm that chainbreak weight is set
+
 	scorefxn->set_weight( chainbreak, 1.0*10.0/3.0 ); // confirm that chainbreak weight is set
 	min_scorefxn->set_weight( chainbreak, 1.0*10.0/3.0 ); // confirm that chainbreak weight is set
+	//	loops_set_chainbreak_weight( scorefxn_, 1 );
+	//	loops_set_chainbreak_weight( min_scorefxn, 1 ); // otherwise chainbreak opens!
 	//scorefxn->set_weight(core::scoring::mm_bend, 1.0);
 
 
@@ -658,7 +662,7 @@ void LoopMover_Refine_KIC::apply(
 		perturber->set_sample_vicinity( true );
 		perturber->set_degree_vicinity( option[ OptionKeys::loops::vicinity_degree ]() );
 	}
-	perturber->set_vary_ca_bond_angles( true );
+	perturber->set_vary_ca_bond_angles(  ! option[OptionKeys::loops::fix_ca_bond_angles ]()  );
 	myKinematicMover.set_perturber( perturber );
 
 	myKinematicMover.set_vary_bondangles( true );
@@ -715,10 +719,13 @@ void LoopMover_Refine_KIC::apply(
 		loop_outfile << "ENDMDL" << std::endl;
 	}
 
+
 	for (int i=1; i<=outer_cycles; ++i) {
 		// increase CHAINBREAK weight and update monte carlo
 		scorefxn->set_weight( chainbreak, float(i)*10.0/3.0 );
 		min_scorefxn->set_weight( chainbreak, float(i)*10.0/3.0 );
+		//loops_set_chainbreak_weight( scorefxn_, i );
+		//loops_set_chainbreak_weight( min_scorefxn, i );
 		//scorefxn->set_weight( chainbreak, float(i) );
 		mc.score_function( *scorefxn );
 		// recover low
