@@ -95,7 +95,7 @@ LoopMover_Perturb_KIC::LoopMover_Perturb_KIC(
 ) : IndependentLoopMover( loops_in )
 {
 	scorefxn_ = get_cen_scorefxn();
-	scorefxn_->set_weight( core::scoring::chainbreak, 1.0*10.0/3.0);
+	loops_set_chainbreak_weight( scorefxn_, 1 );
 
 	protocols::moves::Mover::type("LoopMover_Perturb_KIC");
 	set_default_settings();
@@ -111,7 +111,7 @@ LoopMover_Perturb_KIC::LoopMover_Perturb_KIC(
 		scorefxn_ = scorefxn;
 	}else{
 		scorefxn_ = get_cen_scorefxn();
-		scorefxn_->set_weight( core::scoring::chainbreak, 1.0*10.0/3.0);
+ 		loops_set_chainbreak_weight( scorefxn_, 1 );
 	}
 	protocols::moves::Mover::type("LoopMover_Perturb_KIC");
 	set_default_settings();
@@ -590,10 +590,10 @@ void LoopMover_Refine_KIC::apply(
 	//scoring::ScoreFunctionOP scorefxn( ScoreFunctionFactory::create_score_function(STANDARD_WTS, SCORE12_PATCH) );
 	//scorefxn->set_weight( chainbreak, 1.0 ); // confirm that chainbreak weight is set
 
-	scorefxn->set_weight( chainbreak, 1.0*10.0/3.0 ); // confirm that chainbreak weight is set
-	min_scorefxn->set_weight( chainbreak, 1.0*10.0/3.0 ); // confirm that chainbreak weight is set
-	//	loops_set_chainbreak_weight( scorefxn_, 1 );
-	//	loops_set_chainbreak_weight( min_scorefxn, 1 ); // otherwise chainbreak opens!
+	//	scorefxn->set_weight( chainbreak, 1.0*10.0/3.0 ); // confirm that chainbreak weight is set
+	//	min_scorefxn->set_weight( chainbreak, 1.0*10.0/3.0 ); // confirm that chainbreak weight is set
+	loops_set_chainbreak_weight( scorefxn_, 1 );
+	loops_set_chainbreak_weight( min_scorefxn, 1 );
 	//scorefxn->set_weight(core::scoring::mm_bend, 1.0);
 
 
@@ -722,10 +722,10 @@ void LoopMover_Refine_KIC::apply(
 
 	for (int i=1; i<=outer_cycles; ++i) {
 		// increase CHAINBREAK weight and update monte carlo
-		scorefxn->set_weight( chainbreak, float(i)*10.0/3.0 );
-		min_scorefxn->set_weight( chainbreak, float(i)*10.0/3.0 );
-		//loops_set_chainbreak_weight( scorefxn_, i );
-		//loops_set_chainbreak_weight( min_scorefxn, i );
+		//scorefxn->set_weight( chainbreak, float(i)*10.0/3.0 );
+		//min_scorefxn->set_weight( chainbreak, float(i)*10.0/3.0 );
+		loops_set_chainbreak_weight( scorefxn_, i );
+		loops_set_chainbreak_weight( min_scorefxn, i );
 		//scorefxn->set_weight( chainbreak, float(i) );
 		mc.score_function( *scorefxn );
 		// recover low

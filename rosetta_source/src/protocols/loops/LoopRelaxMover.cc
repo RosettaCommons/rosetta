@@ -1500,7 +1500,7 @@ void LoopRelaxMover::set_defaults_() {
 
 	// use score4L by default (will be symm if needed)
 	cen_scorefxn_ = get_cen_scorefxn();
-	cen_scorefxn_->set_weight( core::scoring::chainbreak, 1.0*10.0/3.0 );
+ 	loops_set_chainbreak_weight(  cen_scorefxn_, 1 );
 
 	// get cmd line scorefxn by default (will be symm if needed)
 	fa_scorefxn_ = get_fa_scorefxn();
@@ -1525,7 +1525,8 @@ LoopRelaxMover::parse_my_tag( TagPtr const tag, DataMap &data, protocols::filter
 
 	fa_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data, "score12" ) );
 	cen_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data, "score4L" ) );
-	cen_scorefxn_->set_weight( core::scoring::chainbreak, 10.0 / 3.0 );
+	//cen_scorefxn_->set_weight( core::scoring::chainbreak, 10.0 / 3.0 );
+ 	loops_set_chainbreak_weight(  cen_scorefxn_, 1 );
 
 	utility::vector1< std::string > const loops_vec( utility::string_split( tag->getOption< std::string >( "loops" ), ',' ) );
 
