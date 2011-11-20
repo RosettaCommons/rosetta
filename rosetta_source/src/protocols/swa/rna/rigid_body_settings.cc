@@ -27,6 +27,9 @@
 #include <fstream>
 #include <sstream>
 #include <ObjexxFCL/format.hh>
+
+#include <numeric/xyz.functions.hh>
+
 #include <set>
 
 using namespace core;

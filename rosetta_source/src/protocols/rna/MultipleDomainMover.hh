@@ -17,8 +17,8 @@
 #ifndef INCLUDED_protocols_rna_MultipleDomainMover_HH
 #define INCLUDED_protocols_rna_MultipleDomainMover_HH
 
-#include <protocols/moves/Mover.hh>
 #include <protocols/rna/MultipleDomainMover.fwd.hh>
+#include <protocols/moves/Mover.hh>
 #include <protocols/rna/AllowInsert.hh>
 #include <protocols/moves/RigidBodyMover.hh>
 #include <protocols/coarse_rna/CoarseRNA_LoopCloser.fwd.hh>

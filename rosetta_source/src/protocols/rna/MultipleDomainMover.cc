@@ -34,6 +34,8 @@
 
 #include <numeric/random/random.hh>
 
+#include <numeric/xyz.functions.hh>
+
 // External library headers
 
 
