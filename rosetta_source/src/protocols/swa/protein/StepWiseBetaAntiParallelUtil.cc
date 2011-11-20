@@ -24,7 +24,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/io/pdb/pose_io.hh>
-#include <core/io/silent/BinaryProteinSilentStruct.cc>
+#include <core/io/silent/BinaryProteinSilentStruct.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/pose/util.hh>
