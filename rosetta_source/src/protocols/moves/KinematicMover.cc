@@ -490,9 +490,8 @@ void KinematicMover::apply( core::pose::Pose & pose )
 				continue;
 			}
 			// place the solution into the pose and bump check+eventual filters
-			// set the torions
+			// set the torsions
 			perturber_->set_pose_after_closure( pose, t_ang[pos[i]], b_ang[pos[i]], b_len[pos[i]], true );
-
 
 			//now check if the pose passes all the filters
 			if( do_hardsphere_bump_check_ && !perform_bump_check(pose, start_res_, end_res_) ){

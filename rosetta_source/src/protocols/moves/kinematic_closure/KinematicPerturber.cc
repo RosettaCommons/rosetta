@@ -10,7 +10,7 @@
 /// @file   protocols/moves/kinematic_closure/KinematicPerturber.cc
 /// @brief  implementations for KinematicPerturbers used by the kinematic mover
 /// @author Florian Richter, floric@u.washington.edu, march 2009
-/// @author
+/// @author Rhiju Das, rhiju@stanford.edu, 2011 -- options of cis/trans prolines, and turn off ca bond geometry variation.
 
 //Unit headers
 #include <protocols/moves/kinematic_closure/KinematicPerturber.hh>
@@ -19,6 +19,8 @@
 #include <protocols/moves/KinematicMover.hh>
 
 // Rosetta Headers
+#include <core/chemical/AA.hh>
+
 #include <core/pose/Pose.hh>
 
 #include <core/kinematics/AtomTree.hh>
@@ -73,6 +75,7 @@ KinematicPerturber::set_pose_after_closure(
 
 		pose.set_phi( start + res, torsions[ (3*(res+1)) + 1 ] );
 		pose.set_psi( start + res, torsions[ (3*(res+1)) + 2 ] );
+		if ( basic::options::option[ basic::options::OptionKeys::loops::sample_omega_at_pre_prolines ]() ) pose.set_omega( start + res, torsions[ (3*(res+1)) + 3 ] );
 
 	}
 } //set_pose_after_closure
@@ -86,6 +89,7 @@ TorsionSamplingKinematicPerturber::TorsionSamplingKinematicPerturber( KinematicM
 		vary_ca_bond_angles_(false),
 		sample_vicinity_(false),
 		degree_vicinity_(1.0 ),
+		sample_omega_for_pre_prolines_( basic::options::option[ basic::options::OptionKeys::loops::sample_omega_at_pre_prolines ]() ),
 		rama_( core::scoring::ScoringManager::get_instance()->get_Ramachandran() )
 { set_kinmover( kinmover_in ); }
 
@@ -115,7 +119,10 @@ TorsionSamplingKinematicPerturber::perturb_chain(
 		}
 	}
 
+
+
 	core::Size tor_end = torsions.size() - 3;
+
 	for( core::Size i=4, cur_res = kinmover_->start_res(); i<= tor_end; cur_res++ ){
 		//if(mm) TR << "current residue " << cur_res << "mm reports " << mm->get_bb(cur_res) << std::endl;
 
@@ -131,12 +138,35 @@ TorsionSamplingKinematicPerturber::perturb_chain(
 
 			torsions[i++]=rama_phi; // phi
 			torsions[i++]=rama_psi; // psi
+
 			i++; // leave omega alone
 
 		} else {
 			i += 3; //ensure i indexing increases
 		}
+
 	}
+
+	if (  sample_omega_for_pre_prolines_ && !sample_vicinity_ ) {
+		// sample omegas. all omegas before prolines are assumed to be fair game. Note that we're not using move-map, which is phi/psi-specific.
+
+		static const core::Real OMEGA_MEAN( 179.8 );
+
+		for( core::Size i=4, cur_res = kinmover_->start_res(); i<= tor_end; cur_res++ ){
+
+			if ( pose.aa( cur_res+1 ) == core::chemical::aa_pro ) {
+
+				i++; //phi
+				i++; //psi
+				torsions[i++] = ( static_cast<int>( RG.uniform()*2 ) ? OMEGA_MEAN : 0.0 );  // flip a coin -- either 179.8 (trans) or 0.0 (cis)
+
+			} else {
+				i += 3;
+			}
+		}
+
+	}
+
 
 } //perturb_chain
 
@@ -147,10 +177,11 @@ TorsionSamplingKinematicPerturber::set_pose_after_closure(
 	utility::vector1<core::Real> const & torsions,
  	utility::vector1<core::Real> const & bond_ang,
 	utility::vector1<core::Real> const & bond_len,
-	bool closure_successful
+	bool closure_successful // what is this used for?
 ) const
 {
 
+	//	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful, sample_omega_for_pre_prolines_ );
 	parent::set_pose_after_closure( pose, torsions, bond_ang, bond_len, closure_successful );
 
 	if( vary_ca_bond_angles_ ){

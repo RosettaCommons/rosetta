@@ -164,6 +164,7 @@ private:
 	bool vary_ca_bond_angles_;
 	bool sample_vicinity_;
 	core::Real degree_vicinity_;
+	bool sample_omega_for_pre_prolines_;
 
 	core::scoring::Ramachandran const & rama_;
 
