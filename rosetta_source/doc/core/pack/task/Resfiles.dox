@@ -142,11 +142,11 @@ the PackerTask class.
 @code
  - ALLAA ................ allow all 20 amino acids INCLUDING the cystein amino acid (same as ALLAAwc)
  - ALLAAwc .............. allow all 20 amino acids ( default )
- - ALLAAxc .............. allow all amino acids except cystein
+ - ALLAAxc .............. allow all amino acids except cysteine
  - POLAR ................ allow only canonical polar amino acids
  - APOLAR ............... allow only canonical non polar amino acids
- - NOTAA <list of AAs> .. disallow only the specified amino acids ( use one letter codes )
- - PIKAA <list of AAs> .. allow only the specified amino acids ( use one letter codes )
+ - NOTAA <list of AAs> .. disallow only the specified amino acids ( use one letter codes, undelimited like ACFYRT )
+ - PIKAA <list of AAs> .. allow only the specified amino acids ( use one letter codes, undelimited like ACFYRT )
  - NATAA ................ allow only the natural amino acid
  - NATRO ................ preserve the input rotamer (do not pack at all)
  - EMPTY ................ disallow all canonical amino acids ( for use with non canonicals )
