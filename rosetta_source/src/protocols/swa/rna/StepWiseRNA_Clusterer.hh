@@ -54,8 +54,7 @@ namespace rna {
 		void
 		set_cluster_mode( std::string const & cluster_mode);
 
-		void
-		set_input_pose_data_list(utility::vector1 <pose_data_struct2> const & input_pose_data_list);
+		// Undefinded, commenting out to fix PyRosetta build  void set_input_pose_data_list(utility::vector1 <pose_data_struct2> const & input_pose_data_list);
 
 		void
 		create_cluster_residue_list(utility::vector1< core::Size > const & cluster_res_seq_num_list,

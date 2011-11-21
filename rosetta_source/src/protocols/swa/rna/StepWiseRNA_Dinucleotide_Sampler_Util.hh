@@ -50,8 +50,8 @@ struct Anchor_ribose_stub{
 };
 
 //Should make sure that alpha and gamma lies in the [-Pi:Pi] range.
-struct Euler_angles{ 
-	core::Real z; 
+struct Euler_angles{
+	core::Real z;
 	core::Real alpha; //phi
 	core::Real beta; //theta
 	core::Real gamma; //psi
@@ -69,15 +69,15 @@ struct Base_bin{
 };
 
 
-struct 
+struct
 compare_base_bin{
 
 	//The expression comp(a,b), where comp is an object of this comparison class and a and b are key values, shall return true if a is to be placed at an earlier position than b in a strict weak ordering operation
 
-  bool 
+  bool
 	operator() (Base_bin const & first , Base_bin const & second) const {
-		
-		if(first.centroid_x != second.centroid_x) return (first.centroid_x<second.centroid_x); //x 
+
+		if(first.centroid_x != second.centroid_x) return (first.centroid_x<second.centroid_x); //x
 		if(first.centroid_y != second.centroid_y) return (first.centroid_y<second.centroid_y); //y
 		if(first.centroid_z != second.centroid_z) return (first.centroid_z<second.centroid_z) ; //z
 		if(first.euler_alpha != second.euler_alpha) return (first.euler_alpha < second.euler_alpha);
@@ -89,26 +89,26 @@ compare_base_bin{
 
 };
 
-struct 
+struct
 compare_int_pair{
 
 	//The expression comp(a,b), where comp is an object of this comparison class and a and b are key values, shall return true if a is to be placed at an earlier position than b in a strict weak ordering operation
 
 
-  bool 
+  bool
 	operator() (std::pair<int, int> const & pair_one , std::pair<int, int> const & pair_two) const {
-		
-		if(pair_one.first != pair_two.first) return (pair_one.first<pair_two.first); 
-		if(pair_one.second != pair_two.second) return (pair_one.second<pair_two.second); 
+
+		if(pair_one.first != pair_two.first) return (pair_one.first<pair_two.first);
+		if(pair_one.second != pair_two.second) return (pair_one.second<pair_two.second);
 
 		return false; //Equality case.
 	}
 
 };
 
-struct 
+struct
 compare_test{
-  bool 
+  bool
 	operator() (core::Real const & first, core::Real const & second) const {
 		return first< second;
 	}
@@ -126,7 +126,7 @@ Convert_base_centroid_to_anchor_ribose_coord_system( numeric::xyzVector<core::Re
 
 numeric::xyzMatrix< core::Real >
 Convert_base_coordinate_matrix_to_anchor_ribose_coord_system(numeric::xyzMatrix< core::Real > const & base_coordinate_matrix, Anchor_ribose_stub const & anchor_ribose_stub);
-	
+
 Euler_angles
 Get_euler_angles( numeric::xyzMatrix< core::Real > const & base_coordinate_matrix_in_anchor_ribose_coord_system);
 
@@ -139,11 +139,9 @@ DOF_bin_size(std::string const & DOF);
 void
 Analyze_base_bin_map(std::map<Base_bin , int , compare_base_bin> const & base_bin_map, std::string const foldername);
 
-void
-Analyze_base_bin_map(std::map<Base_bin , int , compare_base_bin> const & base_bin_map, std::string const & DOF_one, std::string const & DOF_two);
+// Undefinded, commenting out to fix PyRosetta build  void Analyze_base_bin_map(std::map<Base_bin , int , compare_base_bin> const & base_bin_map, std::string const & DOF_one, std::string const & DOF_two);
 
-void
-Analyze_base_bin_map_old(std::map<Base_bin , int , compare_base_bin> const & base_bin_map, bool const Is_dinucleotide);
+// Undefinded, commenting out to fix PyRosetta build  void Analyze_base_bin_map_old(std::map<Base_bin , int , compare_base_bin> const & base_bin_map, bool const Is_dinucleotide);
 
 void
 Sample_base_test();

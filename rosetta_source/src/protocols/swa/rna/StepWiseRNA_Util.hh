@@ -71,7 +71,7 @@ void sort_seq_num_list(utility::vector1<core::Size> & seq_num_list);
 
 void Output_seq_num_list(std::string const tag, utility::vector1<core::Size> const & seq_num_list, core::Size const spacing=40);
 
-bool seq_num_list_sort_citeria(core::Size seq_num_1, Residue_info seq_num_2);
+// Undefinded, commenting out to fix PyRosetta build  bool seq_num_list_sort_citeria(core::Size seq_num_1, Residue_info seq_num_2);
 
 void
 Sort_pair_list(utility::vector1< std::pair<core::Size, core::Size> > pair_list);

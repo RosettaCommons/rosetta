@@ -63,8 +63,7 @@ public:
 	void
 	choose_least_perturb_solution();
 
-	void
-	choose_random_solution();
+	// Undefinded, commenting out to fix PyRosetta build  void choose_random_solution();
 
 	void
 	get_all_solutions( pose::Pose & pose,
