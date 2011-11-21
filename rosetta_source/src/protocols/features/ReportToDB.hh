@@ -100,11 +100,7 @@ public:
 	parse_cache_size_tag_item(
 		utility::tag::TagPtr const tag);
 
-	void
-	parse_feature_tag(
-		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & data,
-		core::pose::Pose const & pose );
+	// Undefinded, commenting out to fix PyRosetta build  void parse_feature_tag(utility::tag::TagPtr const tag, protocols::moves::DataMap & data, core::pose::Pose const & pose );
 
 	virtual
 	void
