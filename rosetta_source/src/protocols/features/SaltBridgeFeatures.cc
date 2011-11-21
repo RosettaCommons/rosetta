@@ -68,6 +68,8 @@ using numeric::dihedral_radians;
 using numeric::sphericalVector;
 using numeric::xyz_to_spherical;
 using numeric::constants::r::pi;
+using numeric::constants::r::pi_over_2;
+using numeric::constants::r::pi_over_180;
 using utility::vector1;
 using utility::sql_database::sessionOP;
 using cppdb::statement;
@@ -157,7 +159,7 @@ SaltBridgeFeatures::report_features(
 		"	hbond_sites AS acc, residues AS don\n"
 		"WHERE\n"
 		"	don.struct_id = ? AND acc.struct_id = ? AND\n"
-		" (don.name3 = 'AMO' OR don.name3 = 'LYS' OR don.name3 = 'HIS') AND\n"
+		" (don.name3 = 'ARG' OR don.name3 = 'LYS' OR don.name3 = 'HIS') AND\n"
 		"	(acc.HBChemType = 'hbacc_CXA' OR acc.HBChemType = 'hbacc_CXL');\n";
 	statement hbond_stmt(basic::database::safely_prepare_statement(hbond_string,db_session));
 	hbond_stmt.bind(1,struct_id);
@@ -169,6 +171,7 @@ SaltBridgeFeatures::report_features(
 	Stub don_frame;
 	sphericalVector<Real> local_o;
 	Angle psi, theta;
+	Length rho;
 	std::string salt_bridge_string = "INSERT INTO salt_bridges VALUES (?,?,?,?,?,?,?)";
 	statement salt_bridge_statement(basic::database::safely_prepare_statement(salt_bridge_string,db_session));
 
@@ -185,7 +188,8 @@ SaltBridgeFeatures::report_features(
 			assert(d.atom_name(9) == " NZ ");
 			n = d.atom(9).xyz();
 			c = d.atom(9).xyz();
-			if(c.distance(o) > distance_cutoff_) continue;
+			rho = c.distance(o);
+			if(rho > distance_cutoff_) continue;
 
 			assert(d.atom_name(7) == " CD ");
 			bb = d.atom(7).xyz();
@@ -202,19 +206,21 @@ SaltBridgeFeatures::report_features(
 
 			assert(d.atom_name(10) == " NE2");
 			c = (n + d.atom(10).xyz())/2;
-			if(c.distance(o) > distance_cutoff_) continue;
+			rho = c.distance(o);
+			if(rho > distance_cutoff_) continue;
 
 			assert(d.atom_name(6) == " CG ");
 			b = d.atom(6).xyz();
 			don_frame.from_four_points(c,c,b,n);
-			local_o =	xyz_to_spherical(don_frame.global2local(o));
-			psi = local_o.phi();
-			theta = local_o.theta();
+			local_o = xyz_to_spherical(don_frame.global2local(o));
+			psi = local_o.phi()*pi_over_180;
+			theta = local_o.theta()*pi_over_180 - pi_over_2;
 			break;
 		case aa_arg:
 			assert(d.atom_name(9) == " CZ ");
 			c = d.atom(9).xyz();
-			if(c.distance(o) > distance_cutoff_) continue;
+			rho = c.distance(o);
+			if(rho > distance_cutoff_) continue;
 
 			{
 				assert(d.atom_name(8) == " NE ");
@@ -235,9 +241,9 @@ SaltBridgeFeatures::report_features(
 			b = d.atom(8).xyz();
 
 			don_frame.from_four_points(c,c,b,n);
-			local_o =	xyz_to_spherical(don_frame.global2local(o));
-			psi = local_o.phi();
-			theta = local_o.theta();
+			local_o = xyz_to_spherical(don_frame.global2local(o));
+			psi = local_o.phi()*pi_over_180;
+			theta = local_o.theta()*pi_over_180 - pi_over_2;
 			break;
 		default:
 			stringstream err_msg;
@@ -249,8 +255,7 @@ SaltBridgeFeatures::report_features(
 		PointPosition const & ob = a.atom(a.atom_base(acc_atmNum)).xyz();
 		PointPosition const & obb = a.atom(a.atom_base(a.atom_base(acc_atmNum))).xyz();
 		Angle const hb_chi(dihedral_radians(obb, ob, o, n));
-		string const orbital((hb_chi < pi/2 && hb_chi > -pi/2) ? "syn" : "anti");
-		Length const rho(c.distance(o));
+		string const orbital((hb_chi < pi_over_2 && hb_chi > -pi_over_2) ? "syn" : "anti");
 
 		salt_bridge_statement.bind(1,struct_id);
 		salt_bridge_statement.bind(2,don_resNum);
