@@ -255,7 +255,7 @@ SaltBridgeFeatures::report_features(
 		PointPosition const & ob = a.atom(a.atom_base(acc_atmNum)).xyz();
 		PointPosition const & obb = a.atom(a.atom_base(a.atom_base(acc_atmNum))).xyz();
 		Angle const hb_chi(dihedral_radians(obb, ob, o, n));
-		string const orbital((hb_chi < pi_over_2 && hb_chi > -pi_over_2) ? "syn" : "anti");
+		string const orbital((hb_chi < pi_over_2 && hb_chi > -pi_over_2) ? "anti" : "syn");
 
 		salt_bridge_statement.bind(1,struct_id);
 		salt_bridge_statement.bind(2,don_resNum);
