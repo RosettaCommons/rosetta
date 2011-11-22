@@ -21,6 +21,7 @@
 
 // Project headers
 #include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
@@ -117,7 +118,7 @@ static basic::Tracer TR("core.scoring.CartesianBondedEnergy");
 static const Real K_ANGLE=450.0;
 static const Real K_BOND=150.0;
 static const Real K_TORSION=100.0;
-static const Real K_TORSION_PROTON=15.0;  // proton chi
+static const Real K_TORSION_PROTON=30.0;  // proton chi
 
 //////////////////////
 /// EnergyMethod Creator
@@ -546,6 +547,10 @@ CartesianBondedEnergy::residue_pair_energy(
 	// bail out if the residues aren't bonded
 	if (!rsd1.is_bonded(rsd2)) return;
 
+	//fpd chainbreak variants also mess things up
+	//fpd check for chainbreaks
+	if ( pose.fold_tree().is_cutpoint( std::min( rsd1.seqpos(), rsd2.seqpos() ) ) ) return;
+
 	Real energy = 0;
 
 	// get residue types
@@ -949,6 +954,9 @@ CartesianBondedEnergy::eval_atom_derivative(
 		chemical::ResidueType const & neighb_restype( pose.residue_type( ii_neighb ) );
 		Size const neighb_atom    = neighb_restype.residue_connection( neighb_resconn ).atomno();
 
+		//fpd chainbreak variants also mess things up ... explicitly check for chainbreaks
+		if ( pose.fold_tree().is_cutpoint( std::min( neighb_res.seqpos(), res.seqpos() ) ) ) continue;
+
 		// lookup Ktheta and theta0
 		Real Ktheta, theta0;
 		db_angle_->lookup( res.type(), -ii_resconn, ii_pair.key1(), ii_pair.key2(), Ktheta, theta0 );
@@ -996,6 +1004,9 @@ CartesianBondedEnergy::eval_atom_derivative(
 		conformation::Residue const & neighb_res( pose.residue( ii_neighb ));
 		chemical::ResidueType const & neighb_restype( pose.residue_type( ii_neighb ) );
 		Size const neighb_atom1    = neighb_restype.residue_connection( neighb_resconn ).atomno();
+
+		//fpd chainbreak variants also mess things up ... explicitly check for chainbreaks
+		if ( pose.fold_tree().is_cutpoint( std::min( neighb_res.seqpos(), res.seqpos() ) ) ) continue;
 
 		utility::vector1< chemical::two_atom_set > const & neighb_atoms_wi1(
 			neighb_restype.atoms_within_one_bond_of_a_residue_connection( neighb_resconn ));
@@ -1050,6 +1061,9 @@ CartesianBondedEnergy::eval_atom_derivative(
 		// check for vrt
 		//if ( restype.atom_type(atomno).is_virtual() || neighb_restype.atom_type(neighb_atom1).is_virtual() )
 		//	continue;
+
+		//fpd chainbreak variants also mess things up ... explicitly check for chainbreaks
+		if ( pose.fold_tree().is_cutpoint( std::min( neighb_res.seqpos(), res.seqpos() ) ) ) continue;
 
 		// lookup Kd and d0
 		Real Kd, d0;
