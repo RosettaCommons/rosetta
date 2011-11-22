@@ -102,8 +102,8 @@ SmoothCenPairEnergy::residue_pair_energy(
 	EnergyMap & emap
 ) const {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd1.has_variant_type( "REPLONLY" ) || rsd2.has_variant_type( "REPLONLY" ) )
-			return;
+	if ( rsd1.has_variant_type( "REPLONLY" ) || rsd2.has_variant_type( "REPLONLY" ) ) return;
+	if ( rsd1.aa() > core::chemical::num_canonical_aas || rsd2.aa() > core::chemical::num_canonical_aas ) return;
 
 	/// assumes centroids are being used
 	conformation::Atom const & cen1 ( rsd1.atom( rsd1.nbr_atom() ) ), cen2 (rsd2.atom( rsd2.nbr_atom() ) );
@@ -134,8 +134,8 @@ SmoothCenPairEnergy::eval_residue_pair_derivatives(
 		utility::vector1< DerivVectorPair > & r1_atom_derivs,
 		utility::vector1< DerivVectorPair > & r2_atom_derivs
 	) const {
-	if ( rsd1.has_variant_type( "REPLONLY" ) || rsd2.has_variant_type( "REPLONLY" ) )
-			return;
+	if ( rsd1.has_variant_type( "REPLONLY" ) || rsd2.has_variant_type( "REPLONLY" ) ) return;
+	if ( rsd1.aa() > core::chemical::num_canonical_aas || rsd2.aa() > core::chemical::num_canonical_aas ) return;
 
 	Real weight1 = weights[ cen_pair_smooth ];
 	Real weight2 = weights[ cenpack_smooth ];

@@ -104,6 +104,8 @@ EnvEnergy::residue_energy(
 	if ( rsd.has_variant_type( "REPLONLY" ) ){
 			return;
 	}
+	if(rsd.aa()==core::chemical::aa_unk) return;
+	
 	Real env_score( 0.0 ), cb_score6( 0.0 ), cb_score12( 0.0 ), cb_score( 0.0 );
 
 	potential_.evaluate_env_and_cbeta_scores( pose, rsd,

@@ -98,9 +98,9 @@ SmoothEnvEnergy::residue_energy(
 	EnergyMap & emap
 ) const {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
-	if ( rsd.has_variant_type( "REPLONLY" ) ){
-			return;
-	}
+	if ( rsd.has_variant_type( "REPLONLY" ) ) return;
+	if ( rsd.aa() > core::chemical::num_canonical_aas ) return;
+
 	Real env_score( 0.0 ), cb_score6( 0.0 ), cb_score12( 0.0 ), cb_score( 0.0 );
 
 	potential_.evaluate_env_and_cbeta_scores( pose, rsd, env_score, cb_score6, cb_score12 );
@@ -124,9 +124,9 @@ SmoothEnvEnergy::eval_residue_derivatives(
 	EnergyMap const & weights,
 	utility::vector1< DerivVectorPair > & atom_derivs
 ) const {
-	if ( rsd.has_variant_type( "REPLONLY" ) ) {
-			return;
-	}
+	if ( rsd.has_variant_type( "REPLONLY" ) ) return;
+	if ( rsd.aa() > core::chemical::num_canonical_aas ) return;
+	
 
 	Real weight_env = weights[ cen_pair_smooth ];
 	Real weight_cbeta = weights[ cenpack_smooth ];

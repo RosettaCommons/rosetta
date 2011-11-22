@@ -112,6 +112,8 @@ CenPairEnergy::residue_pair_energy(
 	if ( rsd1.has_variant_type( "REPLONLY" ) || rsd2.has_variant_type( "REPLONLY" ) ){
 			return;
 	}
+	if(rsd1.aa()==core::chemical::aa_unk) return;
+	if(rsd2.aa()==core::chemical::aa_unk) return;	
 
 	/// assumes centroids are being used
 	conformation::Atom const & cen1 ( rsd1.atom( rsd1.nbr_atom() ) ), cen2 (rsd2.atom( rsd2.nbr_atom() ) );
