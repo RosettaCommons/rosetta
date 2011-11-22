@@ -86,9 +86,11 @@ core::Real calc_median(
 class SuperDeviationMover : public protocols::moves::Mover {
 public:
 	SuperDeviationMover(
-		core::pose::Pose const & native_pose
+		core::pose::Pose const & native_pose,
+		bool superimpose = true
 	) :
 		Mover("SuperDev"),
+		superimpose_(superimpose),
 		native_pose_( native_pose ),
 		deviations_( native_pose.total_residue(), vector1< Real >() )
 	{}
@@ -109,7 +111,9 @@ public:
 		} else {
 			runtime_assert( pose.sequence() == native_pose_.sequence() );
 
-			core::scoring::calpha_superimpose_pose( pose, native_pose_ );
+			if ( superimpose_ ) {
+				core::scoring::calpha_superimpose_pose( pose, native_pose_ );
+			}
 
 			string const tag( core::pose::tag_from_pose(pose) );
 			pose_tags_.push_back(tag);
@@ -190,6 +194,7 @@ public:
 	} // print_stats
 
 private:
+	bool superimpose_;
 	core::pose::Pose const & native_pose_;
 	utility::vector1< std::string > pose_tags_;
 	utility::vector1< utility::vector1< core::Real > > deviations_;

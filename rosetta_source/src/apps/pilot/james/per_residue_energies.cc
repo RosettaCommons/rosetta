@@ -35,8 +35,36 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/james.OptionKeys.gen.hh>
 
 #include <string>
+
+void all_pair_energies(
+	core::pose::Pose & pose,
+	core::scoring::ScoreFunctionOP scorefxn,
+	utility::vector1< utility::vector1< core::Real > > & pairwise_energies
+) {
+	runtime_assert( pairwise_energies.size() == pose.total_residue() );
+	runtime_assert( pairwise_energies.front().size() == pose.total_residue() );
+
+	scorefxn->score(pose);
+	utility::vector1< bool > exclude_mask( pose.total_residue(), true );
+	for ( unsigned ii = 1; ii <= pose.total_residue(); ++ii ) {
+	for ( unsigned jj = ii+1; jj <= pose.total_residue(); ++jj ) {
+		if ( scorefxn->are_they_neighbors( pose, ii, jj ) ) {
+			utility::vector1< bool > mask = exclude_mask;
+			//std::cout << "calculating pairwise energy for " << ii << "," << jj << std::endl;
+			mask[ii] = false;
+			mask[jj] = false;
+			core::Real const total = scorefxn->get_sub_score( pose, mask );
+			pairwise_energies[ii][jj] = total;
+			pairwise_energies[jj][ii] = total;
+		}
+	}
+	}
+}
+
+
 
 int
 main( int argc, char* argv [] ) {
@@ -76,26 +104,46 @@ main( int argc, char* argv [] ) {
 		(*scorefxn)(current_pose);
 		EnergyMap weights( current_pose.energies().weights() );
 
-		for ( Size jj = 1; jj <= current_pose.total_residue(); ++jj ) {
-			EnergyMap rsd_energies(
-				weights * current_pose.energies().residue_total_energies(jj)
-			);
+		if ( option[ james::debug ]() ) {
+			using utility::vector1;
+			vector1< vector1< core::Real > > pair_energies( current_pose.total_residue(),
+				vector1< Real > (current_pose.total_residue(), 0.0
+			) );
+			all_pair_energies(current_pose,scorefxn,pair_energies);
 
-			SilentStructOP ss( new ScoreFileSilentStruct );
-			ss->decoy_tag( "residue_" + string_of(jj) );
-			ss->add_string_value( "pose_id", core::pose::tag_from_pose(current_pose) );
-			Real total(0);
-			for ( int ii = 1; ii <= n_score_types; ++ii ) {
-				if ( weights[ ScoreType(ii) ] != 0.0 ) {
-					Real const value( rsd_energies[ ScoreType(ii) ] );
-					std::string const scorename( name_from_score_type( ScoreType(ii) ) );
-					total += value;
-					ss->add_energy( scorename, value );
+			for ( unsigned ii = 1; ii <= current_pose.total_residue(); ++ii ) {
+			for ( unsigned jj = ii+1; jj <= current_pose.total_residue(); ++jj ) {
+				if ( pair_energies[ii][jj] > 0 ) {
+					 SilentStructOP ss( new ScoreFileSilentStruct );
+					 ss->decoy_tag( "residue_" + string_of(ii) + "_" + string_of(jj) );
+					 ss->add_string_value( "pose_id", core::pose::tag_from_pose(current_pose) );
+					 ss->add_energy( "score", pair_energies[ii][jj] );
+					 sfd.write_silent_struct( *ss, option[ out::file::silent ]() );
 				}
-			} // for n_score_types
-			ss->add_energy( "score", total );
-			sfd.write_silent_struct( *ss, option[ out::file::silent ]() );
-		} // for current_pose.total_residue()
+			}
+			}
+		} else {
+			for ( Size jj = 1; jj <= current_pose.total_residue(); ++jj ) {
+				EnergyMap rsd_energies(
+					weights * current_pose.energies().residue_total_energies(jj)
+				);
+
+				SilentStructOP ss( new ScoreFileSilentStruct );
+				ss->decoy_tag( "residue_" + string_of(jj) );
+				ss->add_string_value( "pose_id", core::pose::tag_from_pose(current_pose) );
+				Real total(0);
+				for ( int ii = 1; ii <= n_score_types; ++ii ) {
+					if ( weights[ ScoreType(ii) ] != 0.0 ) {
+						Real const value( rsd_energies[ ScoreType(ii) ] );
+						std::string const scorename( name_from_score_type( ScoreType(ii) ) );
+						total += value;
+						ss->add_energy( scorename, value );
+					}
+				} // for n_score_types
+				ss->add_energy( "score", total );
+				sfd.write_silent_struct( *ss, option[ out::file::silent ]() );
+			} // for current_pose.total_residue()
+		}
 	} // while ( input.has_another_pose() )
 
 	return 0;
