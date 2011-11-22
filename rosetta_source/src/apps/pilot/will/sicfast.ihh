@@ -1,0 +1,205 @@
+inline Real sqr(Real x) { return x*x; }
+
+Real
+sicfast(
+	vector1<Vecf> & pa,
+	vector1<Vecf> & pb,
+	vector1<Vecf> & cba,
+	vector1<Vecf> & cbb,
+//Vec ori,
+	Real & cbcount,
+	bool debug = false
+) {
+	Real const CONTACT_D2 = sqr(basic::options::option[basic::options::OptionKeys::cxdock::contact_dis]());
+	Real const BIN        =     basic::options::option[basic::options::OptionKeys::cxdock::  clash_dis]() /2.0;
+
+	// get points, rotated ro ori is 0,0,1, might already be done
+	// Mat rot = Mat::identity();
+	// if		 ( ori.dot(Vec(0,0,1)) < -0.99999 ) rot = rotation_matrix( Vec(1,0,0).cross(ori), -acos(Vec(0,0,1).dot(ori)) );
+	// else if( ori.dot(Vec(0,0,1)) <	0.99999 ) rot = rotation_matrix( Vec(0,0,1).cross(ori), -acos(Vec(0,0,1).dot(ori)) );
+	// if( rot != Mat::identity() ) {
+	//	 for(vector1<Vec>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
+	//	 for(vector1<Vec>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
+	// }
+
+	// get bounds for plane hashes
+	Real xmx1=-9e9,xmn1=9e9,ymx1=-9e9,ymn1=9e9,xmx=-9e9,xmn=9e9,ymx=-9e9,ymn=9e9;
+	for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+		xmx1 = max(xmx1,ia->x()); xmn1 = min(xmn1,ia->x());
+		ymx1 = max(ymx1,ia->y()); ymn1 = min(ymn1,ia->y());
+	}
+	for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+		xmx = max(xmx,ib->x()); xmn = min(xmn,ib->x());
+		ymx = max(ymx,ib->y()); ymn = min(ymn,ib->y());
+	}
+	xmx = min(xmx,xmx1); xmn = max(xmn,xmn1);
+	ymx = min(ymx,ymx1); ymn = max(ymn,ymn1);
+	
+	
+	int xlb = (int)floor(xmn/BIN)-2; int xub = (int)ceil(xmx/BIN)+2; // one extra on each side for correctness,
+	int ylb = (int)floor(ymn/BIN)-2; int yub = (int)ceil(ymx/BIN)+2; // and one extra for outside atoms
+	
+	// TR << "BOUNDS " << xmn << " " << xmx << " " << ymn << " " << ymx << std::endl;
+	// TR << "BOUNDS " << xlb << " " << xub << " " << ylb << " " << yub << std::endl;
+	
+	// insert points into hashes
+	int const xsize = xub-xlb+1;
+	int const ysize = yub-ylb+1;
+	ObjexxFCL::FArray2D<Vecf> ha(xsize,ysize,Vecf(0,0,-9e9)),hb(xsize,ysize,Vecf(0,0,9e9));
+	for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+	  // int const ix = min(xsize,max(1,(int)ceil(ia->x()/BIN)-xlb));
+	  // int const iy = min(ysize,max(1,(int)ceil(ia->y()/BIN)-ylb));
+	  int const ix = (int)ceil(ia->x()/BIN)-xlb;
+	  int const iy = (int)ceil(ia->y()/BIN)-ylb;
+	  if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+	  if( ha(ix,iy).z() < ia->z() ) ha(ix,iy) = *ia;
+	}
+	for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+	  // int const ix = min(xsize,max(1,(int)ceil(ib->x()/BIN)-xlb));
+	  // int const iy = min(ysize,max(1,(int)ceil(ib->y()/BIN)-ylb));
+	  int const ix = (int)ceil(ib->x()/BIN)-xlb;
+	  int const iy = (int)ceil(ib->y()/BIN)-ylb;
+	  if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
+	  if( hb(ix,iy).z() > ib->z() ) hb(ix,iy) = *ib;
+	}
+	
+	// check hashes for min dis
+	int imna=0,jmna=0,imnb=0,jmnb=0;
+	Real mindis = 9e9;
+	for(int i = 1; i <= xsize; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+	  for(int j = 1; j <= ysize; ++j) {
+	 	 for(int k = -2; k <= 2; ++k) {
+	 		 if(i+k < 1 || i+k > xsize) continue;
+	 		 for(int l = -2; l <= 2; ++l) {
+	 			 if(j+l < 1 || j+l > ysize) continue;
+	 			 Real const xa = ha(i	,j	).x();
+	 			 Real const ya = ha(i	,j	).y();
+	 			 Real const xb = hb(i+k,j+l).x();
+	 			 Real const yb = hb(i+k,j+l).y();
+	 			 Real const d2 = (xa-xb)*(xa-xb) + (ya-yb)*(ya-yb);
+	
+	 			 if( d2 < BIN*BIN*4.0 ) {
+	 				 Real dz = hb(i+k,j+l).z() - ha(i,j).z() - sqrt(BIN*BIN*4.0-d2);
+	 				 if( dz < mindis ) {
+	 					 mindis = dz;
+	 					 imna = i;
+	 					 jmna = j;
+	 					 imnb = i+k;
+	 					 jmnb = j+l;
+	 				 }
+	 			 }
+	 		 }
+	 	 }
+	  }
+	}
+	
+	// {
+	//	utility::io::ozstream out("cba.pdb");
+	//	for(vector1<Vec>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
+	//		Vec viz = (*ia) + (mindis*ori);
+	//		out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' << "VIZ"<<' '<<"A"<<I(4,100)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+	//	}
+	//	out.close();
+	// }
+	// {
+	//	utility::io::ozstream out("cbb.pdb");
+	//	for(vector1<Vec>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
+	//		Vec viz = (*ib);
+	//		out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' << "VIZ"<<' '<<"B"<<I(4,100)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+	//	}
+	//	out.close();
+	// }
+	
+	cbcount = 0.0;
+	// utility::io::ozstream out("cb8.pdb");
+	// TR << "CB0 " << cbcount << std::endl;
+	for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
+	  for(vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
+	 	 if( ib->distance_squared( (*ia) + (mindis*Vecf(0,0,1)) ) < CONTACT_D2 ) {
+	 		 cbcount += 1.0;
+	 		 // Vec viz = (*ia) + (mindis*ori);
+	 		 // out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' <<	"VIZ"<<' '<<"A"<<I(4,100)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+	 		 // viz = *ib;
+	 		 // out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' <<	"VIZ"<<' '<<"B"<<I(4,100)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+	 	 }
+	  }
+	}
+	// out.close();
+	// TR << "CB1 " << cbcount << std::endl;
+	
+	// // rotate points back -- needed iff pa/pb come by reference
+	//rot = rot.transposed();
+	// if( rot != Mat::identity() ) {
+	//	for(vector1<Vec>::iterator ia = pa.begin(); ia != pa.end(); ++ia) *ia = rot*(*ia);
+	//	for(vector1<Vec>::iterator ib = pb.begin(); ib != pb.end(); ++ib) *ib = rot*(*ib);
+	// }
+	
+	// uncomment this to get hashes in local space
+	// rot = Mat::identity();
+	// ori = Vec(0,0,1);
+	
+	// if(debug){
+	//	 {
+	//		 utility::io::ozstream out("hasha.pdb");
+	//		 for(int i = 2; i <= xsize-1; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+	//			 for(int j = 2; j <= ysize-1; ++j) {
+	//				 Vec viz = rot*ha(i,j) + mindis*ori;
+	//				 if(viz.z() < -9e8 || 9e8 < viz.z()) continue;
+	//				 out<<"HETATM"<<I(5,1000+i)<<' '<<"VIZ "<<' ' << "VIZ"<<' '<<"B"<<I(4,100+j)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+	//			 }
+	//		 }
+	//		 Vec viz = rot*ha(imna,jmna) + mindis*ori;
+	//		 out<<"HETATM"<<I(5,1000+imna)<<' '<<"MIN "<<' ' <<	"MIN"<<' '<<"B"<<I(4,100+jmna)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+	//		 out.close();
+	//	 }
+	//	 {
+	//		 utility::io::ozstream out("hashb.pdb");
+	//		 for(int i = 2; i <= xsize-1; ++i) { // skip 1 and N because they contain outside atoms (faster than clashcheck?)
+	//			 for(int j = 2; j <= ysize-1; ++j) {
+	//				 Vec viz = rot*hb(i,j);
+	//				 if(viz.z() < -9e8 || 9e8 < viz.z()) continue;
+	//				 out<<"HETATM"<<I(5,1000+i)<<' '<<"VIZ "<<' ' << "VIZ"<<' '<<"C"<<I(4,100+j)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+	//			 }
+	//		 }
+	//		 Vec viz = rot*hb(imnb,jmnb);
+	//		 out<<"HETATM"<<I(5,1000+imnb)<<' '<<"MIN "<<' ' <<	"MIN"<<' '<<"C"<<I(4,100+jmnb)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
+	//		 out.close();
+	//	 }
+	// }
+	
+	return mindis;
+}
+
+// Real sicfast(
+//								Pose const & a,
+//								Pose const & b,
+//								Vec ori_in,
+//								int & cbcount
+//								) {
+//	 // get points, rotated ro ori is 0,0,1
+//	 vector1<Vec> pa,pb;
+//	 vector1<Vec> cba,cbb;
+//	 Vec ori = ori_in.normalized();
+//	 Mat rot = Mat::identity();
+//	 if		 ( ori.dot(Vec(0,0,1)) < -0.999 ) rot = rotation_matrix( Vec(1,0,0).cross(ori), -acos(Vec(0,0,1).dot(ori)) );
+//	 else if( ori.dot(Vec(0,0,1)) <	0.999 ) rot = rotation_matrix( Vec(0,0,1).cross(ori), -acos(Vec(0,0,1).dot(ori)) );
+//	 for(int i = 1; i <= (int)a.n_residue(); ++i) {
+//		 if(a.residue(i).name3()=="GLY") {
+//			 cba.push_back(rot*Vec(a.residue(i).xyz(2)));
+//			 for(int j = 1; j <= 4; ++j) pa.push_back(rot*Vec(a.residue(i).xyz(j)));
+//		 } else {
+//			 cba.push_back(rot*Vec(a.residue(i).xyz(5)));
+//			 for(int j = 1; j <= 5; ++j) pa.push_back(rot*Vec(a.residue(i).xyz(j)));
+//		 }
+//	 }
+//	 for(int i = 1; i <= (int)b.n_residue(); ++i) {
+//		 if(b.residue(i).name3()=="GLY") {
+//			 cbb.push_back(rot*Vec(b.residue(i).xyz(2)));
+//			 for(int j = 1; j <= 4; ++j) pb.push_back(rot*Vec(b.residue(i).xyz(j)));
+//		 } else {
+//			 cbb.push_back(rot*Vec(b.residue(i).xyz(5)));
+//			 for(int j = 1; j <= 5; ++j) pb.push_back(rot*Vec(b.residue(i).xyz(j)));
+//		 }
+//	 }
+//	 return sicfast( pa, pb, cba, cbb, Vec(0,0,1), cbcount );
+// }

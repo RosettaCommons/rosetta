@@ -1,16 +1,6 @@
-// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
-// vi: set ts=2 noet:
-//
-// This file is part of the Rosetta software suite and is made available under license.
-// The Rosetta software is developed by the contributing members of the Rosetta Commons consortium.
-// (C) 199x-2009 Rosetta Commons participating institutions and developers.
-// For more information, see http://www.rosettacommons.org/.
-
-/// @file /src/apps/pilat/will/genmatch.cc
-/// @brief ???
-
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/option_macros.hh>
 #include <basic/options/keys/smhybrid.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/matdes.OptionKeys.gen.hh>
@@ -87,19 +77,21 @@
 
 
 OPT_1GRP_KEY( Integer      , cxdock, sphere       )
-OPT_1GRP_KEY( IntegerVector, cxdock, syms         )
 OPT_1GRP_KEY( Real         , cxdock, clash_dis    )
 OPT_1GRP_KEY( Real         , cxdock, contact_dis  )
 //OPT_1GRP_KEY( Real         , cxdock, num_contacts )
+OPT_1GRP_KEY( Boolean      , cxdock, dump  )
+
 void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	OPT( in::file::s );
-	NEW_OPT( cxdock::syms	 ,"CX symmitries", utility::vector1< Size >() );
+	//NEW_OPT( cxdock::syms	 ,"CX symmitries", utility::vector1< Size >() );
 	NEW_OPT( cxdock::clash_dis   ,"min acceptable contact dis", 3.6 );
 	NEW_OPT( cxdock::contact_dis ,"max acceptable contact dis", 6.0 );	
 	//NEW_OPT( cxdock::num_contacts ,"required no. contacts", 20.0 );
 	NEW_OPT( cxdock::sphere       ,"sph points", 8192 );
+	NEW_OPT( cxdock::dump         ,"", false );	
 }
 
 
@@ -180,21 +172,21 @@ vector1<Size> design(Pose & p, Size nmono) {
   vector1< bool > aac(20,false);
   aac[core::chemical::aa_ala] = true;
   //aac[core::chemical::aa_cys] = true;
-  aac[core::chemical::aa_asp] = true;
-  aac[core::chemical::aa_glu] = true;
+  //aac[core::chemical::aa_asp] = true;
+  //aac[core::chemical::aa_glu] = true;
   aac[core::chemical::aa_phe] = true;
   //aac[core::chemical::aa_gly] = true;
-  aac[core::chemical::aa_his] = true;
+  //aac[core::chemical::aa_his] = true;
   aac[core::chemical::aa_ile] = true;
-  aac[core::chemical::aa_lys] = true;
+  //aac[core::chemical::aa_lys] = true;
   aac[core::chemical::aa_leu] = true;
   aac[core::chemical::aa_met] = true;
-  aac[core::chemical::aa_asn] = true;
+  //aac[core::chemical::aa_asn] = true;
   //aac[core::chemical::aa_pro] = true;
   //aac[core::chemical::aa_gln] = true;
-  aac[core::chemical::aa_arg] = true;
-  aac[core::chemical::aa_ser] = true;
-  aac[core::chemical::aa_thr] = true;
+  //aac[core::chemical::aa_arg] = true;
+  //aac[core::chemical::aa_ser] = true;
+  //aac[core::chemical::aa_thr] = true;
   aac[core::chemical::aa_val] = true;
   aac[core::chemical::aa_trp] = true;
   aac[core::chemical::aa_tyr] = true;
@@ -213,9 +205,9 @@ vector1<Size> design(Pose & p, Size nmono) {
       Real d = p.xyz(AtomID(5,ir)).distance( p.xyz(AtomID(5,jr)) );
       closestcb = min(closestcb,d);
     }
-    if(closestcb < 11.0) {
+    if(closestcb < 9.0) {
       iface[ir] = 2;
-    } else if(closestcb < 13.0) {
+    } else if(closestcb < 12.0) {
       iface[ir] = 1;
     }
   }
@@ -330,11 +322,10 @@ Real get_ddg(Pose p, Size nmono, vector1<Size> const & iface) {
 
 
 
-void cxdock_design(Pose const init, std::string const & fn, vector1<xyzVector<double> > const & ssamp, int iss, int irt, int ic) {
+void cxdock_design(Pose const init, std::string const & fn, vector1<xyzVector<double> > const & ssamp, int iss, int irt, int ic, Real cbc) {
   using namespace basic::options;
 
-  vector1<double> asamp; asamp.reserve(115);
-  for(Real i = 0; i < 180; ++i) asamp.push_back(i);
+  vector1<double> asamp; for(Real i = 0; i < 180; ++i) asamp.push_back(i);
 
   vector1<Vecf> bb0tmp,cb0tmp;
   for(int ir = 1; ir <= init.n_residue(); ++ir) {
@@ -350,12 +341,7 @@ void cxdock_design(Pose const init, std::string const & fn, vector1<xyzVector<do
   vector1<Vecf> const bb0(bb0tmp);
   vector1<Vecf> const cb0(cb0tmp);
 
-  Matf Rsym;
-  if(2==ic) Rsym = rotation_matrix_degrees(Vec(1,0,0),180.0);
-  if(3==ic) Rsym = rotation_matrix_degrees(Vec(1,0,0),120.0);
-  if(4==ic) Rsym = rotation_matrix_degrees(Vec(1,0,0), 90.0);
-  if(5==ic) Rsym = rotation_matrix_degrees(Vec(1,0,0), 72.0);
-  if(6==ic) Rsym = rotation_matrix_degrees(Vec(1,0,0), 60.0);
+  Matf Rsym = rotation_matrix_degrees(Vec(1,0,0),360.0/(Real)ic);
 
   if(iss > ssamp.size()) utility_exit_with_message("bad iss");
   if(irt > asamp.size()) utility_exit_with_message("bad irt");
@@ -371,8 +357,8 @@ void cxdock_design(Pose const init, std::string const & fn, vector1<xyzVector<do
   vector1<Vecf> cb2 = cb1;
   for(vector1<Vecf>::iterator i = bb2.begin(); i != bb2.end(); ++i) *i = Rsym*(*i);
   for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = Rsym*(*i);
-  int cbc;
-  Real t = sicfast(bb1,bb2,cb1,cb2,cbc);
+  Real cbctmp;
+  Real t = sicfast(bb1,bb2,cb1,cb2,cbctmp);
 
   Pose p(init);
   rot_pose(p,R);
@@ -384,6 +370,14 @@ void cxdock_design(Pose const init, std::string const & fn, vector1<xyzVector<do
   //trans_pose(q,-cen);
 
   core::pose::symmetry::make_symmetric_pose(p);
+
+	if(option[OptionKeys::cxdock::dump]()) {
+		p.dump_pdb(option[OptionKeys::out::file::o]()+"/"+utility::file_basename(fn)+"_"+str(ic)+"_"+str(iss)+"_"+str(irt)+".pdb.gz");
+	}
+	if( fabs(cbc-cbctmp) > 0.1 ) utility_exit_with_message("cb counts disagree!!! "+str(cbctmp)+" should be "+str(cbc));
+	if(option[OptionKeys::cxdock::dump]()) {
+		return;
+	}
 
   for(int ir = 1; ir <= 1*init.n_residue(); ++ir) {
     if(!p.residue(ir).is_protein()) continue;
@@ -413,7 +407,7 @@ void cxdock_design(Pose const init, std::string const & fn, vector1<xyzVector<do
 
   core::scoring::getScoreFunction()->score(p);
 
-  string tag = fn+"_"+str(ic)+"_"+str(iss)+"_"+str(irt);
+  string tag = utility::file_basename(fn)+"_"+str(ic)+"_"+str(iss)+"_"+str(irt);
 
   // Create a scorefile struct, add custom metrics to it
   core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
@@ -438,9 +432,11 @@ void cxdock_design(Pose const init, std::string const & fn, vector1<xyzVector<do
 
 
 int main(int argc, char *argv[]) {
+  using namespace basic::options;
+
 	register_options();
   core::init(argc,argv);
-  using namespace basic::options;
+
   Size const NSS = basic::options::option[basic::options::OptionKeys::cxdock::sphere]();
   vector1<xyzVector<double> > ssamp(NSS); {
     izstream is;
@@ -455,13 +451,11 @@ int main(int argc, char *argv[]) {
 
   utility::io::izstream res(option[OptionKeys::in::file::l]()[1]);
   string dummy,fn;
-  int iss,ic,nss,irt,cbc;
+	int iss,ic,nss,irt;
+	Real cbc;
   while(res >> dummy >> fn >> ic >> iss >> nss >> irt >> cbc) {
-    fn = utility::file_basename(fn);
     TR <<" "<< fn <<" "<< iss <<" "<< ic <<" "<< nss <<" "<< irt <<" "<< cbc << endl;
-
-		option[OptionKeys::symmetry_definiton]("input/C6.sym");
-
+		option[OptionKeys::symmetry::symmetry_definition]("input/sym/C"+str(ic)+".sym");
     if(NSS != nss) utility_exit_with_message("wrong ssamp!!!");
     Pose pnat;
 		pose_from_pdb(pnat,fn);
@@ -474,7 +468,7 @@ int main(int argc, char *argv[]) {
       if(pnat.residue(ir).is_upper_terminus()) remove_upper_terminus_type_from_pose_residue(pnat,ir);//goto cont1;
     } goto done1; cont1: TR << "skipping " << fn << std::endl; continue; done1:
 
-    cxdock_design(pnat,fn,ssamp,iss,irt,ic);
+    cxdock_design(pnat,fn,ssamp,iss,irt,ic,cbc);
   }
 
 
