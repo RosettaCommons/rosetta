@@ -30,12 +30,8 @@
 #include <protocols/moves/Mover.hh>
 
 // Package headers
-#include <protocols/medal/MedalAbinitioMover.hh>
 #include <protocols/medal/MedalExchangeMover.hh>
 #include <protocols/medal/MedalMover.hh>
-
-#include <utility/vector1.hh>
-
 
 namespace protocols {
 namespace medal {
@@ -88,11 +84,6 @@ void* Medal_main(void*) {
   check_required_common();
   check_required_cm();
   return graphics_main(new MedalMover());
-}
-
-void* MedalAbinitio_main(void*) {
-  check_required_common();
-  return graphics_main(new MedalAbinitioMover());
 }
 
 void* MedalExchange_main(void*) {

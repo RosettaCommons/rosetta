@@ -22,9 +22,6 @@ void* Medal_main(void*);
 /// @brief Entry point for MedalExchange protocol
 void* MedalExchange_main(void*);
 
-/// @brief Entry point for MedalAbinitio protocol
-void* MedalAbinitio_main(void*);
-
 }  // namespace medal
 }  // namespace protocols
 

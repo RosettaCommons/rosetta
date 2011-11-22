@@ -48,7 +48,6 @@ sources = {
 	"pilot/cmiles" : [
                 #"helix_rotate",
 		"medal",
-		"medal_abinitio",
 		"medal_exchange",
 		"nonlocal_abinitio",
                 #"sheet_translate",

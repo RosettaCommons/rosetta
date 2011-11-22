@@ -37,7 +37,6 @@
 #include <protocols/ddg/ddG_main.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingApplication.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingMover.hh>
-// AUTO-REMOVED #include <protocols/moves/BBGaussianMover.hh>
 #include <protocols/frag_picker/nonlocal/NonlocalFragsMain.hh>
 
 #ifdef BOINC
@@ -57,7 +56,6 @@
 #endif
 #endif
 
-
 #ifdef BOINC
 #include <core/pose/Pose.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -66,17 +64,11 @@
 #endif
 
 #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/after_opts.hh>
-
 #include <utility/exit.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
 
 // option key includes
-
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/boinc.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>
 
 #include <protocols/checkpoint/Checkpoint.hh>
@@ -199,11 +191,9 @@ main( int argc, char * argv [] )
 		if ( option[ run::protocol ]() == "abrelax" ) {
 			protocols::abinitio::AbrelaxApplication abrelax;
 			abrelax.run();
-		}	
-			else if ( option[ run::protocol ]() == "symdock" ) {
+		}	else if ( option[ run::protocol ]() == "symdock" ) {
       protocols::symmetric_docking::SymDock_main();
-    }
-			else if ( option[ run::protocol ]() == "broker" ) {
+    }	else if ( option[ run::protocol ]() == "broker" ) {
 			protocols::abinitio::Broker_main();
 		}	else if ( option[ run::protocol ]() == "loophash" ) {
 			protocols::loophash::loophash_main();
@@ -219,8 +209,6 @@ main( int argc, char * argv [] )
 			protocols::nonlocal::NonlocalAbinitio_main(NULL);
 		} else if ( option[ run::protocol ]() == "medal" ) {
 			protocols::medal::Medal_main(NULL);
-		} else if ( option[ run::protocol ]() == "medal_abinitio" ) {
-			protocols::medal::MedalAbinitio_main(NULL);
 		} else if ( option[ run::protocol ]() == "medal_exchange" ) {
 			protocols::medal::MedalExchange_main(NULL);
 		} else if ( option[ run::protocol ]() == "rbsegmentrelax" ) {
@@ -255,7 +243,6 @@ main( int argc, char * argv [] )
 
 	// ideally these would be called in the dtor but the way we have the singleton pattern set up the dtors don't get
 	// called
-
 	protocols::boinc::Boinc::worker_finish_summary( protocols::boinc::Boinc::decoy_count() + 2 , protocols::boinc::Boinc::decoy_count() + 2 , 2 );
 	protocols::boinc::Boinc::worker_shutdown(); // Does not return.
 	utility_exit_with_message( "reached end of minirosetta::main() after worker_shutdown(); " );
@@ -281,7 +268,6 @@ main( int argc, char * argv [] )
  * begin with WinMain, so this just makes WinMain() process the command line
  * and then invoke main()
  */
-
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst,
 									 LPSTR Args, int WinMode)
 {
