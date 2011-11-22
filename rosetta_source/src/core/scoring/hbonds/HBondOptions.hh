@@ -106,6 +106,14 @@ public:
 
 	///
 	bool
+	ignore_water_hb_env_dep() const;
+
+	///
+	void
+	ignore_water_hb_env_dep( bool const setting );
+
+	///
+	bool
 	decompose_bb_hb_into_pair_energies() const;
 
 	///
@@ -169,6 +177,7 @@ private:
 	bool use_hb_env_dep_DNA_;
 	bool smooth_hb_env_dep_;
   bool bb_donor_acceptor_check_;
+  bool ignore_water_hb_env_dep_;
 	bool decompose_bb_hb_into_pair_energies_;
 	std::string params_database_tag_;
 	bool use_incorrect_deriv_;

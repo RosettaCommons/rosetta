@@ -49,6 +49,7 @@ HBondOptions::HBondOptions( std::string params_db_tag ):
 	use_hb_env_dep_ ( true ),
 	use_hb_env_dep_DNA_( true ),
 	smooth_hb_env_dep_( true ),
+	ignore_water_hb_env_dep_( false ),
 	bb_donor_acceptor_check_( true ),
 	decompose_bb_hb_into_pair_energies_( false ),
 	params_database_tag_(params_db_tag),
@@ -73,6 +74,7 @@ HBondOptions::HBondOptions():
 	use_hb_env_dep_ ( true ),
 	use_hb_env_dep_DNA_( true ),
 	smooth_hb_env_dep_( true ),
+	ignore_water_hb_env_dep_( false ),
 	bb_donor_acceptor_check_( true ),
 	decompose_bb_hb_into_pair_energies_( false ),
 	params_database_tag_("standard_params"),
@@ -196,6 +198,20 @@ HBondOptions::smooth_hb_env_dep( bool const setting )
 
 ///
 bool
+HBondOptions::ignore_water_hb_env_dep() const
+{
+	return ignore_water_hb_env_dep_;
+}
+
+///
+void
+HBondOptions::ignore_water_hb_env_dep( bool const setting )
+{
+	ignore_water_hb_env_dep_ = setting;
+}
+
+///
+bool
 HBondOptions::decompose_bb_hb_into_pair_energies() const
 {
 	return decompose_bb_hb_into_pair_energies_;
@@ -283,6 +299,7 @@ operator==( HBondOptions const & a, HBondOptions const & b )
 		( a.use_hb_env_dep_ == b.use_hb_env_dep_ ) &&
 		( a.use_hb_env_dep_DNA_ == b.use_hb_env_dep_DNA_ ) &&
 		( a.smooth_hb_env_dep_ == b.smooth_hb_env_dep_ ) &&
+		( a.ignore_water_hb_env_dep_ == b.ignore_water_hb_env_dep_ ) &&
 		( a.bb_donor_acceptor_check_ == b.bb_donor_acceptor_check_ ) &&
 		( a.decompose_bb_hb_into_pair_energies_ == b.decompose_bb_hb_into_pair_energies_ ) &&
 		( a.params_database_tag_ == b.params_database_tag_ ) &&
@@ -317,6 +334,8 @@ HBondOptions::show( std::ostream & out ) const
 		<<( use_hb_env_dep_DNA_ ? "true" : "false" ) << std::endl;
 	out <<"HBondOptions::show: smooth_hb_env_dep: "
 		<<( smooth_hb_env_dep_ ? "true" : "false " ) << std::endl;
+	out <<"HBondOptions::show: ignore_water_hb_env_dep: "
+		<<( ignore_water_hb_env_dep_ ? "true" : "false " ) << std::endl;
 	out <<"HBondOptions::show: bb_donor_acceptor_check: "
 		<<( bb_donor_acceptor_check_ ? "true" : "false " ) << std::endl;
 	out <<"HBondOptions::show: decompose_bb_hb_into_pair_energies: "
