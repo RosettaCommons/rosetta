@@ -90,6 +90,7 @@ ProteinInterfaceDesignOperation::apply( core::pose::Pose const & pose, core::pac
 
 	DesignAroundOperation dao1, dao2;
 	dao1.design_shell( interface_distance_cutoff_ ); dao2.design_shell( interface_distance_cutoff_ );
+	dao1.repack_on( false ); dao2.repack_on( false ); // residues outside design shell should not repack
 	for( core::Size resi = 1; resi <= pose.total_residue(); ++resi ){
 		if( resi <= pose.conformation().chain_end( jump() ) ){
 			dao1.include_residue( resi );

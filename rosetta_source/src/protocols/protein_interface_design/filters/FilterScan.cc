@@ -238,6 +238,7 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 			 protocols::toolbox::task_operations::DesignAroundOperationOP dao = new protocols::toolbox::task_operations::DesignAroundOperation;///restrict repacking to 8.0A around target res to save time
 			 dao->design_shell( 8.0 );
 			 dao->include_residue( resi );
+			 dao->repack_on( false );
 			 mut_res->push_back( dao );
     	 PackerTaskOP mutate_residue = mut_res->create_task_and_apply_taskoperations( pose );
     	 mutate_residue->initialize_from_command_line().or_include_current( true );
