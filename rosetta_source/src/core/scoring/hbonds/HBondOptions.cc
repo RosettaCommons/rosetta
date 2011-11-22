@@ -113,6 +113,7 @@ HBondOptions::operator=( HBondOptions const & src )
 	use_hb_env_dep_ = src.use_hb_env_dep_;
 	use_hb_env_dep_DNA_ = src.use_hb_env_dep_DNA_;
 	smooth_hb_env_dep_ = src.smooth_hb_env_dep_;
+	ignore_water_hb_env_dep_ = src.ignore_water_hb_env_dep_;
   bb_donor_acceptor_check_ = src.bb_donor_acceptor_check_;
 	decompose_bb_hb_into_pair_energies_ = src.decompose_bb_hb_into_pair_energies_;
 	params_database_tag_ = src.params_database_tag_;
