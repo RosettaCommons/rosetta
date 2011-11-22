@@ -239,12 +239,12 @@ struct ConstraintConfig {
 	core::chemical::ResidueTypeSetCAP crs,frs;
 	virtual ~ConstraintConfig() {}
 	ConstraintConfig() 
-	: nres(0),nsub(0),nhub(0),CSTSDMULT(1),fname("NONE"),ss(0),templates_fname(0),templates_fa(0),templates_cen(0),template_sc(0),template_sc_resi(0),cst_sc(0),cst_bb(0),dcst(0)
+	: nres(0),nsub(0),nhub(0),CSTSDMULT(1),fname("NONE"),ss(0),templates_fname(0),templates_fa(0),templates_cen(0),template_sc(0),template_sc_resi(0),cst_sc(0),cst_bb(0),dcst(0),crs(NULL),frs(NULL)
 	{
 		init();
 	}
 	ConstraintConfig(string cfgfile)
- 	: nres(0),nsub(0),nhub(0),CSTSDMULT(1),fname("NONE"),ss(0),templates_fname(0),templates_fa(0),templates_cen(0),template_sc(0),template_sc_resi(0),cst_sc(0),cst_bb(0),dcst(0)
+ 	: nres(0),nsub(0),nhub(0),CSTSDMULT(1),fname("NONE"),ss(0),templates_fname(0),templates_fa(0),templates_cen(0),template_sc(0),template_sc_resi(0),cst_sc(0),cst_bb(0),dcst(0),crs(NULL),frs(NULL)
 	{
 		tr << "reading config file: " << cfgfile << endl;
 		fname = cfgfile;
@@ -475,6 +475,7 @@ struct ConstraintConfig {
 						}
 						// tr << endl;
 					}
+					vector1<std::pair<string,Sizes> > toadd;
 					for(std::map<string,Sizes >::const_iterator i = ssmap.begin(); i != ssmap.end(); ++i) {
 						if(i->second.size() == 0) utility_exit_with_message("ssmap of 0 size! "+i->first);
 						if(i->second.size() == 1) continue;
@@ -482,12 +483,13 @@ struct ConstraintConfig {
 						int bk = i->second.back();
 						for(int j = 1; j < 10; ++j) {
 							string symbol = i->first + str(-j);
-							if( fr - j >= 1         ) ssmap[symbol] = Sizes(1,fr-j);
+							if( fr - j >= 1         ) toadd.push_back(std::pair<string,Sizes>(symbol,Sizes(1,fr-j)));
 							symbol = i->first + "+" + str( j);
-							if( bk + j <= nres*nsub ) ssmap[symbol] = Sizes(1,bk+j);
+							if( bk + j <= nres*nsub ) toadd.push_back(std::pair<string,Sizes>(symbol,Sizes(1,bk+j)));
 						}
 					}
-					// for(std::map<string,Sizes >::const_iterator i = ssmap.begin(); i != ssmap.end(); ++i) {
+					for(Size i = 1; i <= toadd.size(); ++i) ssmap[toadd[i].first] = toadd[i].second;
+					// for(std::map<string,Sizes >::CONST_iterator i = ssmap.begin(); i != ssmap.end(); ++i) {
 					// 	tr << "SSMAP " << i->first << " " << i->second.front() << "-" << i->second.back() << endl;
 					// }
 					// utility_exit_with_message("debug");
@@ -766,7 +768,8 @@ struct HubDenovo {
 	ScoreFunctionOP sf3,sfsym,sfasym,sfsymnocst;
 	protocols::moves::MoverOP rlxcst,rlxnocst,des,fragins3,fraginsL,fragins,cenmin;
 	virtual ~HubDenovo() {}
-	HubDenovo(std::string cstcfgfile) : cfg(cstcfgfile)
+	HubDenovo(std::string cstcfgfile) : cfg(cstcfgfile),sf3(NULL),sfsym(NULL),sfasym(NULL),sfsymnocst(NULL),rlxcst(NULL),rlxnocst(NULL),
+		                                  des(NULL),fragins3(NULL),fraginsL(NULL),fragins(NULL),cenmin(NULL)
 	{
 		using namespace core::scoring;
 		sf3 = new symmetry::SymmetricScoreFunction(ScoreFunctionFactory::create_score_function("score4_smooth"));
@@ -841,7 +844,7 @@ struct HubDenovo {
 		
 	}
 
-	void cen_fold(Pose & p) {
+	bool cen_fold(Pose & p) {
 		Real temp = 2.0;
 		Pose last_cor_ori = p;
 		for(Size icst = 1; icst <= 2*cfg.nres; ++icst) {
@@ -853,6 +856,7 @@ struct HubDenovo {
 			if(icst%5==0) {
 				tr << "cen min" << endl;
 				cenmin->apply(p);
+				//if( option[OptionKeys::hub_cen_energy_cut]()*4.0 < sf3->score(p) ) return false;
 			}
 			if( center_of_geom(p).z() < 0.0 ) p = last_cor_ori;
 			else                              last_cor_ori = p;
@@ -867,8 +871,10 @@ struct HubDenovo {
 			protocols::moves::RepeatMover( new protocols::moves::TrialMover( fragins, mc ), 600 ).apply( p );
 			mc->reset( p );
 			cenmin->apply(p);
+			//if( option[OptionKeys::hub_cen_energy_cut]()*4.0 < sf3->score(p) ) return false;
 			tr << i << " fin " << sf3->score(p) << endl;
 		}
+		return true;
 	}
 	
 	void min_as_poly_ala(Pose & p, ScoreFunctionOP sf) {
@@ -898,7 +904,7 @@ struct HubDenovo {
 			Pose tmp = make_start_pose();
 			string fn = option[OptionKeys::out::file::o]() + "/" + utility::file_basename(cfg.fname) +"_"+ str(uniform()).substr(2,8) + ".pdb.gz";
 			
-			cen_fold(tmp);
+			if(!cen_fold(tmp)) continue;
 
 			{
 				core::io::silent::SilentStructOP ss_out( new core::io::silent::ScoreFileSilentStruct );
