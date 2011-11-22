@@ -34,9 +34,9 @@
 
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //for addding constraints if demanded by user
 #include <core/chemical/ChemicalManager.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
-#include <basic/datacache/CacheableString.hh>
+// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
+// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
+// AUTO-REMOVED #include <basic/datacache/CacheableString.hh>
 
 // Utility Headers
 

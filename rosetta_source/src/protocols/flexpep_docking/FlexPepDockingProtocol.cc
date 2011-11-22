@@ -25,7 +25,7 @@
 #include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -46,14 +46,14 @@
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 // note constraints are relevant for currently commented out code
-#include <core/scoring/constraints/AtomPairConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
@@ -62,7 +62,7 @@
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <numeric/angle.functions.hh>
-#include <protocols/basic_moves/FragmentMover.hh>
+// AUTO-REMOVED #include <protocols/basic_moves/FragmentMover.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -80,7 +80,7 @@
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/LoopRelaxMover.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/moves/PyMolMover.hh>
+// AUTO-REMOVED #include <protocols/moves/PyMolMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/file/FileName.hh>
 #include <utility/tag/Tag.hh>

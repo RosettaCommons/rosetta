@@ -39,10 +39,8 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <list>
 
 namespace protocols {
 namespace evaluation {

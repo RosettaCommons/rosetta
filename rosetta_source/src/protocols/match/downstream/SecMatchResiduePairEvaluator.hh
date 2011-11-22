@@ -29,11 +29,8 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <list>
-// AUTO-REMOVED #include <string>
 
 namespace protocols {
 namespace match {

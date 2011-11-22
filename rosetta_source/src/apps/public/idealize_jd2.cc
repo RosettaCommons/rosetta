@@ -17,7 +17,7 @@
 #include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <utility/excn/Exceptions.hh>
+// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 #include <basic/options/option.hh>
 #include <devel/init.hh>
 
@@ -32,6 +32,8 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <utility/excn/EXCN_Base.hh>
 
 OPT_KEY( Real, atom_pair_constraint_weight )
 OPT_KEY( Real, coordinate_constraint_weight )

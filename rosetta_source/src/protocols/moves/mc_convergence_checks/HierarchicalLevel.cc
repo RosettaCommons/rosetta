@@ -3,12 +3,12 @@
 #include <protocols/moves/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
 #include <protocols/toolbox/DecoySetEvaluation.hh>
@@ -18,7 +18,7 @@
 #include <utility/file/PathName.hh>
 #include <utility/exit.hh>
 #include <utility/file/file_sys_util.hh>
-#include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <basic/prof.hh>
 
 #include <set>
@@ -41,6 +41,8 @@
 
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/kinematics/Jump.hh>
 
 //this is actually only for debugging
 #ifdef USEMPI

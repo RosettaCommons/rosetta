@@ -16,7 +16,7 @@
 #include <core/pose/datacache/cacheable_observers.hh>
 
 // Package headers
-#include <basic/datacache/BasicDataCache.hh>
+// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 
@@ -32,8 +32,9 @@
 
 #include <utility/vector1.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
+//Auto Headers
+#define foreach BOOST_FOREACH
 namespace core {
 namespace pose {
 namespace datacache {

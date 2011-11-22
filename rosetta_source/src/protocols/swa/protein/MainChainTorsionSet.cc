@@ -18,21 +18,24 @@
 
 //////////////////////////////////
 #include <core/types.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/io/silent/BinaryProteinSilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
-#include <core/pose/util.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.tmpl.hh>
 
-#include <numeric/angle.functions.hh>
-#include <numeric/xyz.functions.hh>
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/angle.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 
 #include <string>
+
+//Auto Headers
+#include <utility/vector1.hh>
 
 
 using core::Real;

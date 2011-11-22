@@ -30,6 +30,8 @@
 #include <core/id/DOF_ID_Range.fwd.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/id/TorsionID_Range.fwd.hh>
 
 namespace protocols {
 namespace moves {

@@ -42,12 +42,11 @@
 
 //pba membrane specific initialization
 #include <core/scoring/Membrane_FAPotential.hh>
-#include <core/scoring/MembraneTopology.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
+// AUTO-REMOVED #include <core/scoring/MembraneTopology.hh>
+// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
 //#include <core/scoring/ScoringManager.hh>
-// Auto-header: duplicate removed #include <core/scoring/TenANeighborGraph.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>

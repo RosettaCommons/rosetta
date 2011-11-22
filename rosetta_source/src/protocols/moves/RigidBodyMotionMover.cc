@@ -25,7 +25,7 @@
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyzVector.io.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 
 // Project headers
 #include <core/id/NamedAtomID.hh>
@@ -38,10 +38,13 @@
 // Package headers
 #include <protocols/moves/Mover.hh>
 
+//Auto Headers
+#include <utility/vector1.hh>
 #ifdef WIN32
 	#define _USE_MATH_DEFINES
 	#include <math.h>
 #endif
+
 
 namespace protocols {
 namespace moves {

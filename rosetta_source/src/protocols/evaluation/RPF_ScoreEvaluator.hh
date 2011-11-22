@@ -41,6 +41,9 @@
 #include <protocols/noesy_assign/CrossPeakList.fwd.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+
+
 
 // AUTO-REMOVED #include <utility/vector1.hh>
 

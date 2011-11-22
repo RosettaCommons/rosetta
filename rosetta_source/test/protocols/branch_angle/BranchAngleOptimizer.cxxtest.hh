@@ -43,6 +43,7 @@
 #include <core/chemical/AtomType.hh>
 #include <core/id/AtomID_Mask.hh>
 #include <core/kinematics/AtomPointer.hh>
+#include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/DomainMap.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>

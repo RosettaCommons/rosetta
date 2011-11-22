@@ -40,7 +40,7 @@
 // STL headers
 #include <list>
 
-#include <core/chemical/Adduct.hh>
+// AUTO-REMOVED #include <core/chemical/Adduct.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
@@ -52,6 +52,8 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <map>
 
+//Auto Headers
+#include <core/chemical/Adduct.fwd.hh>
 #ifdef PYROSETTA
 	#include <core/chemical/ResidueType.hh>
 #endif

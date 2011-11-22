@@ -11,7 +11,7 @@
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
@@ -28,14 +28,14 @@
 #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/util.hh>
 // AUTO-REMOVED #include <core/io/silent/ScoreFileSilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 #include <core/pack/optimizeH.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 // AUTO-REMOVED #include <core/pose/annotated_sequence.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
@@ -46,7 +46,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 // AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <basic/Tracer.hh>
-#include <numeric/model_quality/rms.hh>
+// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
@@ -70,9 +70,13 @@
 #include <core/pose/util.hh>
 #include <protocols/moves/MoverStatistics.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <apps/pilot/will/will_util.ihh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
+#include <apps/pilot/will/will_util.ihh>
+
 
 using numeric::conversions::radians;
 

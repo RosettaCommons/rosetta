@@ -15,7 +15,6 @@
 #include <core/chemical/Element.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <utility/exit.hh>
 
 namespace core {
 namespace chemical {

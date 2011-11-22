@@ -17,8 +17,8 @@
 
 #include <utility/pointer/owning_ptr.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
+//Auto Headers
 namespace core {
 namespace scoring {
 

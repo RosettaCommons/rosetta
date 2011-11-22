@@ -25,8 +25,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <core/sequence/SequenceAlignment.fwd.hh>
-// AUTO-REMOVED #include <iostream>
-
 
 namespace core {
 namespace sequence {

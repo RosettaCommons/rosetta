@@ -13,8 +13,8 @@
 // AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/import_pose.hh>

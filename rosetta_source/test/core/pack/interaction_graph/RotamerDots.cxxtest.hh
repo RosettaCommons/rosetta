@@ -39,7 +39,6 @@
 #include <test/UTracer.hh>
 
 //Auto Headers
-// Auto-header: duplicate removed #include <core/import_pose/import_pose.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/ubyte.hh>
 

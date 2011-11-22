@@ -31,7 +31,6 @@
 #include <string>
 
 // Utility headers
-// Auto-header: duplicate removed #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/jd2.OptionKeys.gen.hh>

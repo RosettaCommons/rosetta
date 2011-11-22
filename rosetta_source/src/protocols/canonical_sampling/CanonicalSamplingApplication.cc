@@ -22,27 +22,26 @@
 #include <protocols/moves/BackrubMover.hh>
 #include <protocols/moves/BBConRotMover.hh>
 #include <core/kinematics/MoveMap.hh>
-// Auto-header: duplicate removed #include <core/kinematics/MoveMap.hh>
 
 #include <protocols/jd2/NoOutputJobOutputter.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/MPIFileBufJobDistributor.hh>
+// AUTO-REMOVED #include <protocols/jd2/MPIFileBufJobDistributor.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingMover.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingMover.fwd.hh>
 #include <protocols/moves/SidechainMover.hh>
 #include <protocols/moves/SidechainMCMover.hh>
-#include <protocols/moves/mc_convergence_checks/MPIBPool_ConvergenceCheck.hh>
-#include <protocols/moves/mc_convergence_checks/MPIPool_ConvergenceCheck.hh>
+// AUTO-REMOVED #include <protocols/moves/mc_convergence_checks/MPIBPool_ConvergenceCheck.hh>
+// AUTO-REMOVED #include <protocols/moves/mc_convergence_checks/MPIPool_ConvergenceCheck.hh>
 #include <protocols/moves/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 
-#include <protocols/moves/mc_convergence_checks/MPIHPool_ConvergenceCheck.hh>
+// AUTO-REMOVED #include <protocols/moves/mc_convergence_checks/MPIHPool_ConvergenceCheck.hh>
 
-#include <core/pack/task/ResfileReader.hh>
+// AUTO-REMOVED #include <core/pack/task/ResfileReader.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask_.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask_.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <basic/options/option.hh>

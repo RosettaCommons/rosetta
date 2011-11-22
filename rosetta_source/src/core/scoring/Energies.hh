@@ -23,7 +23,7 @@
 #include <core/scoring/ContextGraph.fwd.hh>
 #include <core/scoring/ContextGraphTypes.hh>
 #include <core/scoring/EnergiesCacheableDataType.hh>
-#include <core/scoring/EnergyGraph.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/LREnergyContainer.fwd.hh>
 #include <core/scoring/methods/Methods.hh>
@@ -59,7 +59,8 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
-
+//Auto Headers
+#include <core/scoring/EnergyGraph.fwd.hh>
 namespace core {
 namespace scoring {
 

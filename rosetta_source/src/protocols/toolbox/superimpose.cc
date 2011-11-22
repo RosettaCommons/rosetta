@@ -19,7 +19,7 @@
 #include <core/pose/Pose.hh>
 
 #include <core/types.hh>
-#include <ObjexxFCL/FArray3D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 // ObjexxFCL Headers

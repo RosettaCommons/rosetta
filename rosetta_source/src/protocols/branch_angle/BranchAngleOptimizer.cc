@@ -45,6 +45,8 @@
 
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/kinematics/AtomTree.hh>
 
 using namespace core;
 using namespace core::scoring::mm;

@@ -54,7 +54,6 @@
 // ObjexxFCL Headers
 
 // C++ headers
-// AUTO-REMOVED #include <fstream>
 
 
 static basic::Tracer tr_control("protocols.topology_broker.PseudocontactShiftEnergyController");

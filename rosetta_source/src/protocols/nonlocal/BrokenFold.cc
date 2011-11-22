@@ -20,7 +20,7 @@
 #include <string>
 
 // External headers
-#include <boost/format.hpp>
+// AUTO-REMOVED #include <boost/format.hpp>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -54,6 +54,11 @@
 #include <protocols/nonlocal/PolicyFactory.hh>
 #include <protocols/nonlocal/SingleFragmentMover.hh>
 #include <protocols/nonlocal/util.hh>
+
+//Auto Headers
+#include <utility/vector1.hh>
+
+// APL -- needed? #include <utility/vector1.hh>
 
 namespace protocols {
 namespace nonlocal {

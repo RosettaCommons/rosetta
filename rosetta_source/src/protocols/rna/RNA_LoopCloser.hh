@@ -30,7 +30,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <vector>
 
 namespace protocols {
 namespace rna {

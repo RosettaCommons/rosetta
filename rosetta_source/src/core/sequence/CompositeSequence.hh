@@ -26,8 +26,8 @@
 // AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/exit.hh>
 
+//Auto Headers
 namespace core {
 namespace sequence {
 

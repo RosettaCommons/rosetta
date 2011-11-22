@@ -29,6 +29,11 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <boost/foreach.hpp>
+
+//Auto Headers
+#include <core/conformation/Conformation.hh>
+#include <core/pose/Pose.hh>
+
 #define foreach BOOST_FOREACH
 
 namespace protocols {

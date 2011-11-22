@@ -25,11 +25,11 @@
 #include <core/pose/Pose.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <numeric/interpolation/spline/Interpolator.hh>
-#include <numeric/interpolation/spline/SplineGenerator.hh>
+// AUTO-REMOVED #include <numeric/interpolation/spline/SplineGenerator.hh>
 
 // Options
 #include <basic/options/option.hh>

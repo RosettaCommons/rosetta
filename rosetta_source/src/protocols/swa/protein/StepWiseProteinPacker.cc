@@ -20,10 +20,11 @@
 #include <protocols/swa/PoseFilter.hh>
 
 //////////////////////////////////
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/RT.hh>
 #include <core/types.hh>
+#include <core/graph/Graph.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -31,15 +32,16 @@
 #include <core/pack/rotamer_trials.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/pose/util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.tmpl.hh>
+#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Ramachandran.hh>
+// AUTO-REMOVED #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/Energies.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/id/DOF_ID.hh>
+// AUTO-REMOVED #include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <basic/Tracer.hh>
@@ -48,16 +50,26 @@
 #include <protocols/moves/GreenPacker.hh>
 #include <protocols/moves/GreenPacker.fwd.hh>
 
-#include <numeric/angle.functions.hh>
+// AUTO-REMOVED #include <numeric/angle.functions.hh>
 
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
 #include <utility/exit.hh>
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
 
 #include <string>
+
+//Auto Headers
+#include <core/conformation/Residue.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+//Auto using namespaces
+namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
+//Auto using namespaces end
+
 
 using namespace core;
 using core::Real;

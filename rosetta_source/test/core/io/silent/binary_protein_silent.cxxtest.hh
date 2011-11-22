@@ -36,7 +36,6 @@
 // AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 //Auto Headers
-// Auto-header: duplicate removed #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/EnergyNames.fwd.hh>
 #include <utility/vector1.hh>
 

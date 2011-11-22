@@ -18,7 +18,7 @@
 
 // Package Headers
 #include <basic/Tracer.hh>
-#include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 #include <utility/tag/Tag.hh>
 
 // Project Headers
@@ -33,6 +33,8 @@
 // C++ Headers
 #include <sstream>
 
+//Auto Headers
+#include <utility/vector1.hh>
 
 
 

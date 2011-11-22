@@ -24,7 +24,6 @@
 // ObjexxFCL Headers
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 namespace core {
 namespace pack {

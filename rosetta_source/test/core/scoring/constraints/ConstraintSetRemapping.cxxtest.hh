@@ -21,7 +21,7 @@
 #include <core/conformation/Residue.hh>
 
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/tree/Atom.hh>
@@ -51,6 +51,11 @@
 //Auto Headers
 #include <core/chemical/VariantType.hh>
 #include <core/id/SequenceMapping.hh>
+#include <core/kinematics/AtomPointer.fwd.hh>
+#include <core/kinematics/AtomWithDOFChange.fwd.hh>
+#include <core/kinematics/ResidueCoordinateChangeList.fwd.hh>
+#include <core/scoring/constraints/CircularHarmonicFunc.fwd.hh>
+#include <core/scoring/constraints/ResidueTypeConstraint.fwd.hh>
 #include <utility/vector1.hh>
 
 

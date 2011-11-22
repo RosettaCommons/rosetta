@@ -16,10 +16,10 @@
 #include <core/scoring/methods/CenHBEnergyCreator.hh>
 #include <core/scoring/CenHBPotential.hh>
 
-#include <core/scoring/AtomVDW.hh>
+// AUTO-REMOVED #include <core/scoring/AtomVDW.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 // AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 // AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 // AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFactory.hh>
@@ -40,7 +40,8 @@
 
 #include <utility/vector1.hh>
 
-
+//Auto Headers
+#include <core/scoring/EnergyMap.hh>
 
 namespace core {
 namespace scoring {

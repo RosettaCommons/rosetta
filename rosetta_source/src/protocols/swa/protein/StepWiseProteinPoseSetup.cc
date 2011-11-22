@@ -27,25 +27,28 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueSelector.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
-#include <numeric/xyz.functions.hh>
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 
 #include <utility/vector1.hh>
 
 #include <list>
+
+//Auto Headers
+#include <core/id/AtomID.hh>
 
 using namespace core;
 using core::Real;

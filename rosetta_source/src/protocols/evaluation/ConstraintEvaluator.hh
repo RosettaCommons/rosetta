@@ -47,10 +47,8 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <list>
 
 #ifdef WIN32
 	#include <core/scoring/constraints/Constraint.hh>

@@ -18,7 +18,7 @@
 #include <core/pose/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
 
 
 // Platform Headers
@@ -39,7 +39,6 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Basic Headers
-// Auto-header: duplicate removed #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
 

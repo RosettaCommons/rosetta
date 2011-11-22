@@ -26,20 +26,16 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/operation/OperateOnCertainResidues.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
 #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
 #include <protocols/toolbox/task_operations/PreventResiduesFromRepackingOperation.hh>
 #include <protocols/toolbox/task_operations/RestrictResiduesToRepackingOperation.hh>
-// Auto-header: duplicate removed #include <core/pack/task/operation/NoRepackDisulfides.hh>
-// Auto-header: duplicate removed #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/operation/ResLvlTaskOperations.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 
 
 //#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
-// Auto-header: duplicate removed #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
-// Auto-header: duplicate removed #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
 
 #include <core/pack/pack_rotamers.hh>
 #include <core/types.hh>
@@ -50,7 +46,6 @@
 #define foreach BOOST_FOREACH/////////
 
 #include <basic/Tracer.hh>
-// Auto-header: duplicate removed #include <protocols/moves/DataMap.hh>
 #include <core/kinematics/MoveMap.hh>
 
 // Project headers

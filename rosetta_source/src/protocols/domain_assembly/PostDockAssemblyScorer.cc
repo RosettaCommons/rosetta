@@ -25,9 +25,9 @@
 // AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 // AUTO-REMOVED #include <core/fragment/FragSet.hh>
 // AUTO-REMOVED #include <core/fragment/FragSet.fwd.hh>
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
@@ -62,9 +62,6 @@
 
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/keys/cm.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/loops.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 namespace protocols {
 namespace domain_assembly {

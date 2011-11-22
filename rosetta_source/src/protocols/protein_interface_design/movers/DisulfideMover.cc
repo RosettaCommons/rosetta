@@ -33,12 +33,10 @@
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-// Auto-header: duplicate removed #include <core/pack/pack_rotamers.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-// Auto-header: duplicate removed #include <core/scoring/Energies.hh>
 
 #include <core/util/disulfide_util.hh>
 

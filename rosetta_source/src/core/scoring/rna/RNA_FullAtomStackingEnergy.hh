@@ -26,6 +26,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 //Auto Headers
+#include <utility/vector1.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 
 

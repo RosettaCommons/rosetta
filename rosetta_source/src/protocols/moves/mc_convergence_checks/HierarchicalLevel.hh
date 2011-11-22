@@ -12,8 +12,8 @@
 
 #include <utility/vector1.hh>
 #include <list>
-// AUTO-REMOVED #include <set>
 
+//Auto Headers
 namespace protocols {
 namespace moves {
 namespace mc_convergence_checks {

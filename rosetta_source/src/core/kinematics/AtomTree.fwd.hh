@@ -20,7 +20,6 @@
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 
-
 namespace core {
 namespace kinematics {
 

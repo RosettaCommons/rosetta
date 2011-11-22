@@ -19,7 +19,7 @@
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 // Project Headers
@@ -35,7 +35,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 
-#include <core/scoring/EnergyGraph.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/Methods.hh>
 
@@ -49,6 +49,8 @@
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <ObjexxFCL/FArray2D.hh>
 
 namespace core {
 namespace pack {

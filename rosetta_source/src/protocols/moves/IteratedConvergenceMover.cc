@@ -15,12 +15,12 @@
 #include <protocols/moves/IteratedConvergenceMover.hh>
 #include <protocols/moves/IteratedConvergenceMoverCreator.hh>
 
-#include <protocols/moves/DataMap.hh>
-#include <protocols/rosetta_scripts/util.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.hh>
 
-#include <core/pose/Pose.hh>
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 
 // Utility Headers

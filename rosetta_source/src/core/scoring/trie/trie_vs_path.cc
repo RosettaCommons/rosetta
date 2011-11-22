@@ -21,10 +21,8 @@
 #include <core/types.hh>
 
 // STL Headers
-#include <iostream>
 
 // Utility Headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 namespace core {
 namespace scoring {

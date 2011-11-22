@@ -25,7 +25,6 @@
 
 
 // Utility Headers
-// AUTO-REMOVED #include <core/types.hh>
 
 namespace devel {
 namespace denovo_protein_design {

@@ -16,41 +16,46 @@
 
 //////////////////////////////////
 #include <protocols/swa/protein/StepWiseProteinCCD_Closer.hh>
-#include <protocols/swa/protein/StepWiseProteinUtil.hh>
+// AUTO-REMOVED #include <protocols/swa/protein/StepWiseProteinUtil.hh>
 #include <protocols/swa/StepWiseJobParameters.hh>
-#include <protocols/swa/InputStreamWithResidueInfo.hh>
+// AUTO-REMOVED #include <protocols/swa/InputStreamWithResidueInfo.hh>
 
 //////////////////////////////////
 #include <core/types.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/TorsionID.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
+// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/rms_util.tmpl.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Ramachandran.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.tmpl.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/Ramachandran.hh>
 #include <basic/Tracer.hh>
 #include <core/kinematics/Jump.hh>
 
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/ccd_closure.hh>
 
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
 #include <utility/exit.hh>
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
 
 #include <string>
+
+//Auto Headers
+#include <core/chemical/ResidueType.hh>
+#include <protocols/swa/StepWisePoseSampleGenerator.hh>
+#include <utility/vector1.hh>
+
 
 using namespace core;
 using core::Real;

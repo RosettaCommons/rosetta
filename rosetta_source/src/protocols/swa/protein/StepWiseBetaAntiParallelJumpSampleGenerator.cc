@@ -20,15 +20,20 @@
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <basic/database/open.hh>
 
-#include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 
 #include <iostream>
 #include <string>
+
+//Auto Headers
+#include <utility/vector1.hh>
+#include <utility/io/mpistream.hh>
+
 
 
 using namespace core;

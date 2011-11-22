@@ -21,7 +21,7 @@
 #include <core/types.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/conformation/util.hh>
+// AUTO-REMOVED #include <core/conformation/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/TorsionID.hh>
@@ -39,7 +39,7 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
 #include <protocols/moves/kinematic_closure/bridgeObjects.hh>
-#include <protocols/moves/kinematic_closure/kinematic_closure_helpers.hh>
+// AUTO-REMOVED #include <protocols/moves/kinematic_closure/kinematic_closure_helpers.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.hh>

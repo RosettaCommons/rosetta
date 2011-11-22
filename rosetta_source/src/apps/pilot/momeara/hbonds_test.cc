@@ -20,7 +20,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
 // AUTO-REMOVED #include <core/pack/pack_rotamers.hh>

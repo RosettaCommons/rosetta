@@ -16,7 +16,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 

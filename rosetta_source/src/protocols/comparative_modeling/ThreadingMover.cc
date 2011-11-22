@@ -68,6 +68,8 @@
 
 #include <core/util/SwitchResidueTypeSet.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 
 namespace protocols {
 namespace comparative_modeling {

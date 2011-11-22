@@ -39,7 +39,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/EnergyGraph.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/geometric_solvation/DatabaseOccSolEne.hh>

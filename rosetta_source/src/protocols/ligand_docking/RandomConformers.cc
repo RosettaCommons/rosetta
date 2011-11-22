@@ -21,7 +21,7 @@
 #include <protocols/ligand_docking/RandomConformersCreator.hh>
 
 #include <protocols/ligand_docking/RandomConformerMover.hh>
-#include <protocols/ligand_docking/UnconstrainedTorsionsMover.hh>
+// AUTO-REMOVED #include <protocols/ligand_docking/UnconstrainedTorsionsMover.hh>
 
 #include <core/pose/util.hh>
 

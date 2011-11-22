@@ -27,8 +27,9 @@
 #include <core/pose/util.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 static basic::Tracer TR("antibody");
 

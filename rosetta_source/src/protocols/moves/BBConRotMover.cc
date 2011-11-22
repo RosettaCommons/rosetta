@@ -11,14 +11,14 @@
 #include <protocols/moves/BBConRotMover.hh>
 //core
 #include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/util.hh>
+// AUTO-REMOVED #include <core/conformation/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <basic/basic.hh>
@@ -28,9 +28,9 @@
 #include <basic/options/keys/bbg.OptionKeys.gen.hh>
 
 // AUTO-REMOVED #include <core/id/DOF_ID_Range.hh>
-#include <core/kinematics/AtomTree.hh>
+// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
 // AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/tree/Atom.hh>
+// AUTO-REMOVED #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/Stub.hh>
 
 //util

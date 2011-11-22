@@ -22,7 +22,10 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
-#include <core/id/TorsionID.hh>
+// AUTO-REMOVED #include <core/id/TorsionID.hh>
+
+//Auto Headers
+#include <core/id/TorsionID.fwd.hh>
 
 namespace protocols {
 namespace swa {

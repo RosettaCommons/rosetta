@@ -24,19 +24,19 @@
 #include <protocols/noesy_assign/PeakCalibrator.hh>
 #include <protocols/noesy_assign/ResonanceList.hh>
 #include <protocols/noesy_assign/PeakFileFormat.hh>
-#include <protocols/noesy_assign/DistanceScoreMover.hh>
+// AUTO-REMOVED #include <protocols/noesy_assign/DistanceScoreMover.hh>
 
 // Project Headers
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/scoring/constraints/AmbiguousNMRConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRConstraint.hh>
 #include <core/id/Exceptions.hh>
-#include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh> // REQUIRED FOR WINDOWS
 
 // for switching residue type set to centroid
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 // for error output
 #include <core/chemical/ResidueType.hh>
@@ -48,12 +48,18 @@
 //// C++ headers
 // AUTO-REMOVED #include <math.h> //for isnan
 
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/file/FileName.hh>
 
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/Jump.hh>
+#include <protocols/noesy_assign/PeakAssignment.hh>
+
 
 
 static basic::Tracer tr("protocols.noesy_assign.crosspeaks");

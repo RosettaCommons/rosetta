@@ -18,7 +18,7 @@
 #include <core/sequence/L1ScoringScheme.hh>
 
 #include <utility/exit.hh>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <string>
 
 #include <complex>

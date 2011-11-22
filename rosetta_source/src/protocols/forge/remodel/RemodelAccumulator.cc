@@ -35,8 +35,6 @@
 // AUTO-REMOVED #include <protocols/forge/build/BuildInstruction.hh> // REQUIRED FOR WINDOWS
 
 #include <utility/vector1.hh>
-// Auto-header: duplicate removed #include <core/import_pose/import_pose.hh>
-
 
 // numeric headers
 

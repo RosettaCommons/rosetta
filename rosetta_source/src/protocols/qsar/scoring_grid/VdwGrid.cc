@@ -12,13 +12,13 @@
 
 #include <protocols/qsar/scoring_grid/VdwGrid.hh>
 #include <protocols/qsar/scoring_grid/VdwGridCreator.hh>
-#include <protocols/qsar/qsarMap.hh>
+// AUTO-REMOVED #include <protocols/qsar/qsarMap.hh>
 #include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>
-#include <core/conformation/AtomGraph.hh>
-#include <core/conformation/find_neighbors.hh>
+// AUTO-REMOVED #include <core/conformation/AtomGraph.hh>
+// AUTO-REMOVED #include <core/conformation/find_neighbors.hh>
 #include <basic/database/open.hh>
 #include <numeric/interpolation/util.hh>
 #include <utility/tag/Tag.hh>

@@ -29,8 +29,6 @@
 
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
 //#include <utility/pointer/ReferenceCount.hh>

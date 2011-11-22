@@ -31,6 +31,8 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1A.hh>
 
+//Auto Headers
+#include <core/scoring/EnergyGraph.hh>
 
 namespace core {
 namespace pack {

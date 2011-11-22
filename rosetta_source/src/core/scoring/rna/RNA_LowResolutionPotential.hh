@@ -32,7 +32,6 @@
 #include <core/scoring/EnergyMap.fwd.hh> //for EnergyMap
 
 // Project headers
-// Auto-header: duplicate removed #include <core/scoring/rna/RNA_BaseDoubletClasses.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <core/kinematics/Stub.hh>

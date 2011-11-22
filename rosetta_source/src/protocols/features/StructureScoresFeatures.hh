@@ -21,7 +21,6 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
-// Auto-header: duplicate removed #include <core/pose/Pose.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>

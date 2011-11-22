@@ -15,7 +15,7 @@
 #include <protocols/toolbox/superimpose.hh>
 #include <protocols/loops/Loops.hh>
 
-#include <core/init.hh>
+// AUTO-REMOVED #include <core/init.hh>
 #include <core/io/silent/SilentFileData.hh>
 //#include <core/io/silent/SilentStructFactory.hh>
 

@@ -27,7 +27,6 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <utility/tag/Tag.hh>
 
-// Auto-header: duplicate removed #include <core/pack/task/PackerTask.hh> // REQUIRED FOR WINDOWS
 
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <utility/vector0.hh>

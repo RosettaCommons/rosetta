@@ -30,9 +30,6 @@
 #include <utility/vector1.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <map>
-// AUTO-REMOVED #include <set>
-// AUTO-REMOVED #include <string>
 
 namespace protocols {
 namespace motifs {

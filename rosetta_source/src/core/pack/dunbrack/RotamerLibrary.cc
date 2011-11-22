@@ -20,7 +20,7 @@
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.tmpl.hh>
+#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.tmpl.hh>
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.hh>

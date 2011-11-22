@@ -24,7 +24,7 @@
 // Project Headers (protocols)
 #include <protocols/dna/DnaDesignDef.hh>
 #include <protocols/dna/DnaInterfaceFinder.hh>
-#include <protocols/dna/RestrictDesignToProteinDNAInterface.hh>
+// AUTO-REMOVED #include <protocols/dna/RestrictDesignToProteinDNAInterface.hh>
 #include <protocols/dna/util.hh>
 #include <protocols/moves/MinMover.hh>
 
@@ -43,7 +43,7 @@
 // AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
@@ -51,7 +51,7 @@
 // AUTO-REMOVED #include <core/scoring/dna/setup.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/rms_util.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
@@ -59,12 +59,12 @@
 #include <core/chemical/VariantType.hh>
 
 #include <protocols/toolbox/rotamer_set_operations/SpecialRotamerRotSetOps.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pose/util.hh>
 
 // Utility Headers
 #include <utility/io/ozstream.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 #include <utility/file/file_sys_util.hh>
 
 #include <numeric/xyzVector.hh>

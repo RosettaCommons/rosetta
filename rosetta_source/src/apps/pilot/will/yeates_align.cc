@@ -13,7 +13,7 @@
 
 #include <core/id/AtomID_Map.hh>
 #include <core/init.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/conformation/Residue.hh>
@@ -41,8 +41,12 @@
 #include <basic/Tracer.hh>
 
 #include <core/import_pose/import_pose.hh>
-#include <apps/pilot/will/will_util.ihh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
+#include <apps/pilot/will/will_util.ihh>
+
 
 static basic::Tracer TR("yeates_align");
 

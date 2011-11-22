@@ -67,6 +67,8 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 static basic::Tracer TR("protocols.moves.GraftMover");
 static basic::Tracer TRO("protocols.moves.GraftOneMover");
 

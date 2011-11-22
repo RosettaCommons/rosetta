@@ -20,8 +20,10 @@
 #include <protocols/swa/StepWiseUtil.hh>
 //////////////////////////////////
 #include <core/types.hh>
+#include <core/id/AtomID.hh>
+#include <core/id/AtomID_Map.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -33,24 +35,33 @@
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
-#include <core/pack/pack_rotamers.hh>
+// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
-#include <core/scoring/rms_util.tmpl.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 //////////////////////////////////////
 #include <numeric/conversions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh> // APL TEMP
 
 #include <iostream>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <sstream>
 #include <ObjexxFCL/format.hh>
 #include <set>
+
+#include <core/kinematics/MoveMap.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/scoring/rms_util.hh>
+#include <numeric/angle.functions.hh>
 
 using namespace core;
 

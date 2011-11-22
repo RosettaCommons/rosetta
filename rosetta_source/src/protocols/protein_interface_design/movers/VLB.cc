@@ -29,7 +29,7 @@
 #include <protocols/forge/build/SegmentRebuild.hh>
 #include <protocols/forge/build/SegmentSwap.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/kinematics/MoveMap.hh>

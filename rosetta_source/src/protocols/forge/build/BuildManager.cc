@@ -29,7 +29,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
@@ -55,7 +55,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <iterator>
 
 
 namespace protocols {

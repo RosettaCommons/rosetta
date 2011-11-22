@@ -43,8 +43,8 @@
 
 #include <basic/options/option.hh>
 
-#include <core/id/AtomID.hh>
-#include <core/id/AtomID_Map.hh>
+// AUTO-REMOVED #include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>

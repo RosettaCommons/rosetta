@@ -20,39 +20,46 @@
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 
 #include <core/pose/annotated_sequence.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/rotamer_trials.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/scoring/rna/RNA_TorsionPotential.hh>
-#include <core/scoring/rms_util.tmpl.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.fwd.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <core/io/silent/BinaryRNASilentStruct.hh>
+// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
+// AUTO-REMOVED #include <core/scoring/rna/RNA_TorsionPotential.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.tmpl.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
 //////////////////////////////////////#include <set>
 #include <numeric/conversions.hh>
+#include <numeric/xyz.functions.hh> // APL TEMP
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
-#include <ObjexxFCL/string.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
+
+//Auto Headers
+#include <core/id/AtomID.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 #define PI 3.14159265
 //#define centroid_bin_size 2

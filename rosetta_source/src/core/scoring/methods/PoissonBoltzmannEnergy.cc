@@ -18,7 +18,7 @@
 
 // Package Headers
 #include <core/scoring/PoissonBoltzmannPotential.hh>
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/OneToAllEnergyContainer.hh>
 #include <core/scoring/Energies.hh>
@@ -29,8 +29,8 @@
 #include <core/conformation/Residue.hh>
 
 // Utility headers
-#include <ObjexxFCL/format.hh>
-#include <numeric/conversions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <basic/Tracer.hh>
 
 // option

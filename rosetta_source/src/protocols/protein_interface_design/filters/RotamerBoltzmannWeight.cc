@@ -20,15 +20,15 @@
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/RigidBodyMover.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
-#include <protocols/moves/MakePolyXMover.hh>
+// AUTO-REMOVED #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
+// AUTO-REMOVED #include <protocols/moves/MakePolyXMover.hh>
 #include <protocols/flxbb/SelectResiduesByLayer.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/rotamer_set/RotamerSets.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <protocols/toolbox/pose_metric_calculators/RotamerBoltzCalculator.hh>
@@ -40,8 +40,7 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/graph/Graph.hh>
 #include <core/pack/pack_rotamers.hh>
-#include <core/optimization/MinimizerOptions.hh>
-// Auto-header: duplicate removed #include <core/chemical/AA.hh>
+// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 #include <core/scoring/Energies.hh>
 
 // Neil headers 110621
@@ -52,7 +51,8 @@
 
 #include <utility/vector0.hh>
 
-
+//Auto Headers
+#include <core/scoring/EnergyGraph.hh>
 namespace protocols {
 namespace protein_interface_design{
 namespace filters {

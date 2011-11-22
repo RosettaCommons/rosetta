@@ -21,18 +21,17 @@
 #include <core/scoring/electron_density/util.hh>
 
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <core/chemical/AA.hh>
 #include <numeric/xyzVector.hh>
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 
-// Auto-header: duplicate removed #include <core/id/AtomID.hh>
 // AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/conformation/Residue.hh>
 
@@ -44,7 +43,6 @@
 // AUTO-REMOVED #include <protocols/moves/symmetry/SymMinMover.hh>
 // AUTO-REMOVED #include <protocols/geometry/RB_geometry.hh>
 
-// Auto-header: duplicate removed #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>

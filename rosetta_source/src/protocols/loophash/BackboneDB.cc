@@ -14,7 +14,7 @@
 #include <protocols/loophash/BackboneDB.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/RT.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>

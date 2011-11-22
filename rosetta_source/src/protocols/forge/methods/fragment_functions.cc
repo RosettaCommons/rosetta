@@ -20,6 +20,8 @@
 
 #include <core/fragment/FrameIterator.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
 #ifdef WIN32
 #include <core/fragment/FragID.hh>
 #endif

@@ -46,7 +46,6 @@
 #include <core/graph/Graph.hh>
 #define foreach BOOST_FOREACH
 #include <protocols/moves/MoverStatus.hh>
-// Auto-header: duplicate removed #include <core/graph/Graph.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

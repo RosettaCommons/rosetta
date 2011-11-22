@@ -6,19 +6,18 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/MonteCarlo.hh>
+// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/RigidBodyMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/moves/SwitchResidueTypeSetMover.hh>
 
 #include <protocols/relax/util.hh>
-#include <utility/excn/Exceptions.hh>
+// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 
 #include <devel/init.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/ThreadingJob.hh>
-// Auto-header: duplicate removed #include <protocols/viewer/viewers.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/electron_density/util.hh>
 #include <protocols/loops/loops_main.hh>
@@ -26,19 +25,18 @@
 #include <protocols/loops/LoopMover.fwd.hh>
 #include <protocols/loops/LoopMover.hh>
 #include <protocols/loops/LoopMover_QuickCCD.hh>
-#include <protocols/loops/LoopMover_CCD.hh>
-#include <protocols/loops/LoopMover_KIC.hh>
-#include <protocols/loops/LoopMoverFactory.hh>
+// AUTO-REMOVED #include <protocols/loops/LoopMover_CCD.hh>
+// AUTO-REMOVED #include <protocols/loops/LoopMover_KIC.hh>
+// AUTO-REMOVED #include <protocols/loops/LoopMoverFactory.hh>
 #include <protocols/loops/LoopRelaxMover.hh>
 
 #include <protocols/relax/RelaxProtocolBase.hh>
-// Auto-header: duplicate removed #include <protocols/relax/util.hh>
 
 #include <protocols/rbsegment_moves/AutoRBRelaxMover.hh>
 #include <protocols/rbsegment_moves/util.hh>
 
-#include <protocols/comparative_modeling/util.hh>
-#include <protocols/comparative_modeling/ThreadingMover.hh>
+// AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
+// AUTO-REMOVED #include <protocols/comparative_modeling/ThreadingMover.hh>
 
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
@@ -46,14 +44,14 @@
 #include <core/pose/util.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
+// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/electron_density/ElectronDensity.hh>
+// AUTO-REMOVED #include <core/scoring/electron_density/ElectronDensity.hh>
 #include <core/scoring/electron_density/util.hh>
-#include <core/scoring/constraints/CoordinateConstraint.hh>
-#include <core/scoring/constraints/BoundConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/constraints/util.hh>
 
 #include <core/fragment/Frame.hh>
@@ -64,27 +62,27 @@
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/pack_rotamers.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
+// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
 
 
 #include <core/sequence/Sequence.hh>
-#include <core/sequence/SWAligner.hh>
+// AUTO-REMOVED #include <core/sequence/SWAligner.hh>
 #include <core/sequence/ScoringScheme.fwd.hh>
-#include <core/sequence/SimpleScoringScheme.hh>
+// AUTO-REMOVED #include <core/sequence/SimpleScoringScheme.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
-#include <core/sequence/util.hh>
+// AUTO-REMOVED #include <core/sequence/util.hh>
 
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 #include <protocols/moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Residue.functions.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.functions.hh>
 
 // #include <devel/Gaussian/BBGaussianMover.hh>
 
@@ -113,6 +111,15 @@
 #include <protocols/rbsegment_moves/RBSegment.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <platform/types.hh>
+#include <core/id/DOF_ID_Range.hh>
+#include <core/id/TorsionID_Range.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <protocols/comparative_modeling/AlignmentSet.fwd.hh>
+#include <utility/excn/EXCN_Base.hh>
+
 
 
 OPT_1GRP_KEY(Integer, MR, max_gaplength_to_model)

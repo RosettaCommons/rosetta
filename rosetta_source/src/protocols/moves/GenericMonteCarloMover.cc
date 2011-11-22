@@ -21,7 +21,7 @@
 
 // C/C++ headers
 #include <iostream>
-#include <iterator>
+// AUTO-REMOVED #include <iterator>
 #include <string>
 
 // External headers

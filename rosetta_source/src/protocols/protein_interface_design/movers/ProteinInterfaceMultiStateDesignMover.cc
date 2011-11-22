@@ -16,11 +16,11 @@
 #include <protocols/protein_interface_design/movers/ProteinInterfaceMultiStateDesignMoverCreator.hh>
 
 // Project headers
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 #include <protocols/dna/PDBOutput.hh>
 #include <protocols/moves/RigidBodyMover.hh>
-#include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>
+// AUTO-REMOVED #include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>
 #include <protocols/multistate_design/MultiStatePacker.hh>
 #include <protocols/multistate_design/PackingState.hh>
 #include <protocols/multistate_design/PartitionAggregateFunction.hh>
@@ -28,8 +28,8 @@
 #include <protocols/moves/DataMap.hh>
 #include <protocols/protein_interface_design/dock_design_filters.hh>
 
-#include <core/chemical/ResidueSelector.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/options/option.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -40,11 +40,11 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/exit.hh>
-#include <utility/string_util.hh> // string_split
+// AUTO-REMOVED #include <utility/string_util.hh> // string_split
 #include <utility/tag/Tag.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH

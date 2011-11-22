@@ -10,12 +10,12 @@
 /// @brief docks trimer center and pentamer center together
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.hh>

@@ -15,7 +15,7 @@
 // Package Headers
 
 // Project Headers
-#include <core/io/silent/SilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
 
 // Utility headers

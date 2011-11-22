@@ -34,7 +34,6 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/Energies.hh>
-// Auto-header: duplicate removed #include <core/scoring/ScoringManager.hh>
 
 /// Utility headers
 #include <utility/string_util.hh>

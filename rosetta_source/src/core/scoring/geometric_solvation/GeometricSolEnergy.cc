@@ -24,7 +24,7 @@
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/hbonds/HBondEnergy.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondEnergy.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/constants.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -49,6 +49,8 @@
 #include <utility/options/StringVectorOption.hh>
 #include <ObjexxFCL/FArray3D.hh>
 
+//Auto Headers
+#include <core/scoring/EnergyGraph.hh>
 
 static basic::Tracer tr( "core.scoring.geometric_solvation.GeomtricSolEnergy" );
 

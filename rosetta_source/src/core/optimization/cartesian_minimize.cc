@@ -16,7 +16,7 @@
 #include <core/optimization/cartesian_minimize.hh>
 
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
@@ -27,7 +27,7 @@
 #include <core/optimization/NumericalDerivCheckResult.hh>
 
 // Project headers
-#include <core/kinematics/AtomTree.hh>
+// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/DerivVectorPair.hh>

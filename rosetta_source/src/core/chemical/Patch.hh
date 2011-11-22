@@ -26,7 +26,6 @@
 
 
 // Project headers
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // Utility headers
 // Commented by inclean daemon #include <utility/vector1.hh>

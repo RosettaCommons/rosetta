@@ -36,7 +36,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <utility/utility.functions.hh>
 
 // just for debugging
 //#include <ObjexxFCL/format.hh>

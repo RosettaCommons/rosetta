@@ -17,7 +17,7 @@
 #include <devel/inv_kin_lig_loop_design/ResID.hh>
 #include <devel/inv_kin_lig_loop_design/std_extra.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/Conformation.hh>
 
@@ -27,6 +27,8 @@
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
+//Auto Headers
+#include <core/kinematics/FoldTree.hh>
 
 namespace devel {
 

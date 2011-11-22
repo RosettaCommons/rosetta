@@ -29,7 +29,7 @@
 
 #include <core/scoring/constraints/BackboneStubConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -57,8 +57,7 @@
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <protocols/protein_interface_design/design_utils.hh>
-// Auto-header: duplicate removed #include <protocols/protein_interface_design/movers/PlaceStubMover.hh>
-#include <protocols/protein_interface_design/util.hh>
+// AUTO-REMOVED #include <protocols/protein_interface_design/util.hh>
 #include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
 
@@ -79,6 +78,8 @@
 #include <numeric/NumericTraits.hh>
 #include <basic/Tracer.hh>
 
+//Auto Headers
+#include <core/kinematics/FoldTree.hh>
 using namespace core::scoring;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceStubMover" );

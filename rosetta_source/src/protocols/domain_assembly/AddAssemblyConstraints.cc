@@ -27,7 +27,6 @@
 // AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/conformation/Conformation.hh>
-// Auto-header: duplicate removed #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 // AUTO-REMOVED #include <core/pose/util.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
@@ -44,7 +43,6 @@
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 
 
-// Auto-header: duplicate removed #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/moves/ScoreMover.hh>
 // AUTO-REMOVED #include <protocols/moves/CompositionMover.hh>
 // AUTO-REMOVED #include <protocols/moves/ConstraintSetMover.hh>

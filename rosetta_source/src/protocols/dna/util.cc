@@ -18,7 +18,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/graph/Graph.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>

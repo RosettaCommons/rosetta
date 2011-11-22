@@ -32,7 +32,7 @@
 
 #include <basic/Tracer.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 // option key includes
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -54,8 +54,6 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-
-
 using namespace ObjexxFCL::fmt;
 
 using basic::T;

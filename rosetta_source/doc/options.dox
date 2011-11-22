@@ -7868,6 +7868,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-sample_omega_at_pre_prolines</b> \<Boolean\><dt>
+<dd>Sample omega in KIC loop sampling</dd><br>
+<dd>Default: false</dd><br>
+</dl>
+<dl>
 <dt><b>-allow_omega_move</b> \<Boolean\><dt>
 <dd>Allow loop omega to minimize during loop modeling</dd><br>
 <dd>Default: false</dd><br>

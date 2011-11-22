@@ -29,6 +29,8 @@
 #include <core/pose/util.hh>
 #include <fstream>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 using basic::T;
 using basic::Error;
 using basic::Warning;

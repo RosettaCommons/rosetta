@@ -41,10 +41,8 @@
 
 
 // Package Headers
-// AUTO-REMOVED #include <core/fragment/FrameIterator.hh>
 
 // std Headers
-// AUTO-REMOVED #include <iterator>
 
 /* Just a mad thought: with fragments becoming ever more "Residue" like one might want to use the
 	 packer to choose a combination of good fragments instead of makeing independent choices.

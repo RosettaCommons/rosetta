@@ -17,8 +17,8 @@
 #include <core/pack/scmin/SCMinMinimizerMap.hh>
 
 // Package Headers
-#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
-#include <core/pack/rotamer_set/RotamerSets.fwd.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pack/scmin/AtomTreeCollection.hh>
 
 // Project Headers

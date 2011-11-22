@@ -34,10 +34,10 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/io/silent/BinaryProteinSilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/silent.fwd.hh>
-#include <core/io/silent/SilentStructFactory.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 
 #include <core/io/silent/SilentStruct.hh>
 #include <numeric/random/random.hh>

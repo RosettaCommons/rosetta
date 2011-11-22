@@ -51,6 +51,11 @@
 #include <core/optimization/MinimizerMap.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/FoldTree.hh>
+
+
 
 using basic::T;
 using basic::Error;

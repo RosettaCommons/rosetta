@@ -23,12 +23,12 @@
 #include <core/types.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 
 #include <basic/Tracer.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/scoring/rms_util.hh>
@@ -36,12 +36,11 @@
 
 #include <protocols/comparative_modeling/AlignmentClustering.hh>
 
-#include <protocols/comparative_modeling/util.hh>
+// AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
 #include <protocols/comparative_modeling/coord_util.hh>
 #include <protocols/comparative_modeling/PartialThreadingMover.hh>
 
 //utilities
-// Auto-header: duplicate removed #include <utility/io/ozstream.hh>
 
 // option key includes
 #include <basic/options/option.hh>

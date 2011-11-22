@@ -29,7 +29,6 @@
 #include <basic/datacache/BasicDataCache.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/database/open.hh>
-// Auto-header: duplicate removed #include <basic/datacache/BasicDataCache.hh>
 #include <core/id/CacheableAtomID_MapVector.hh>
 #include <basic/options/option.hh>
 
@@ -38,7 +37,6 @@
 // AUTO-REMOVED #include <basic/prof.hh>
 
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
-// Auto-header: duplicate removed #include <basic/options/option.hh>
 
 //numeric headers
 #include <numeric/numeric.functions.hh>
@@ -56,6 +54,8 @@
 #include <core/pose/util.hh>
 #include <core/scoring/EnergyMap.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 
 namespace core {
 namespace scoring {

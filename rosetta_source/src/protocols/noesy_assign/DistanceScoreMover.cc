@@ -24,7 +24,7 @@
 #include <core/id/Exceptions.hh>
 // Project Headers
 #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
-#include <core/scoring/constraints/AmbiguousNMRConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRConstraint.hh>
 // Utility headers
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>

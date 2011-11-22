@@ -62,10 +62,7 @@
 
 // C++ headers
 #include <cstdlib>
-// Auto-header: duplicate removed #include <fstream>
-// Auto-header: duplicate removed #include <iostream>
 #include <string>
-// Auto-header: duplicate removed #include <sstream>
 #include <protocols/moves/ddGMover.hh>
 #include <protocols/ddg/ddG_main.hh>
 

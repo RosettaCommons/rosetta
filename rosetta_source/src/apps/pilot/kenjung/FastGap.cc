@@ -32,7 +32,7 @@
 // AUTO-REMOVED #include <core/conformation/Conformation.hh>
 // AUTO-REMOVED #include <core/conformation/util.hh>
 #include <core/chemical/util.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 // AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.hh>

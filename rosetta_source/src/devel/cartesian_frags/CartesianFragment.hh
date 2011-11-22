@@ -36,9 +36,7 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 namespace devel {
 namespace cartesian_frags {

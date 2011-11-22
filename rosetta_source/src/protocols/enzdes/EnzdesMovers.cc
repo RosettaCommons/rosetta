@@ -24,7 +24,7 @@
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/toolbox/pose_manipulation.hh>
 #include <protocols/ligand_docking/ligand_functions.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <utility/tag/Tag.hh>
 

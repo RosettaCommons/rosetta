@@ -39,7 +39,6 @@
 
 //utility headers
 #include <utility/vector1.hh>
-// Auto-header: duplicate removed #include <utility/exit.hh>
 
 #ifdef NATCL
 #define WIN32

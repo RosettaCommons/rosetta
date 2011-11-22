@@ -15,7 +15,7 @@
 // AUTO-REMOVED #include <core/init.hh>
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-#include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <core/id/AtomID.hh>
 // AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 // AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 #include <core/pose/Pose.hh>

@@ -22,12 +22,12 @@
 
 #include <core/pose/util.hh>
 #include <protocols/qsar/scoring_grid/GridManager.hh>
-#include <protocols/qsar/qsarMap.hh>
+// AUTO-REMOVED #include <protocols/qsar/qsarMap.hh>
 #include <protocols/moves/RigidBodyMover.hh>
 #include <protocols/geometry/RB_geometry.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/random/random.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -36,6 +36,8 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/pose/Pose.hh>
 //#include <utility/string_util.hh>
 
 namespace protocols {

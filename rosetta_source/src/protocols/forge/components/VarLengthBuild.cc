@@ -63,6 +63,8 @@
 
 #include <core/fragment/FrameIterator.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
+
+//Auto Headers
 #ifdef WIN32
 #include <core/fragment/FragID.hh>
 #endif

@@ -17,6 +17,10 @@
 // Project headers
 #include <protocols/loops/Loop.hh>
 
+//Auto Headers
+#include <utility/vector1.hh>
+
+
 namespace {
 
 using namespace protocols::loops;

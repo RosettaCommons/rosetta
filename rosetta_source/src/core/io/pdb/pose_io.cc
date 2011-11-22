@@ -21,15 +21,15 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/AtomType.hh>
-#include <core/chemical/orbitals/OrbitalType.hh>
+// AUTO-REMOVED #include <core/chemical/orbitals/OrbitalType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/Energies.hh>
 
 
@@ -44,12 +44,17 @@
 
 // Utility headers
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 // AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
 #include <utility/vector1.hh>
 #include <boost/foreach.hpp>
+
+//Auto Headers
+#include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/tree/Atom.hh>
+
 #define foreach BOOST_FOREACH
 
 //Auto using namespaces

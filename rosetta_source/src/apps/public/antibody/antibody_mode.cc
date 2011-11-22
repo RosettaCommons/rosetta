@@ -12,7 +12,7 @@
 /// @file Aroop Sircar ( aroopsircar@yahoo.com )
 /// @brief
 
-#include <protocols/jd2/JobDistributor.hh>
+// AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
 // AUTO-REMOVED #include <protocols/jd2/Job.hh>
 // AUTO-REMOVED #include <protocols/jd2/JobOutputter.hh>
 

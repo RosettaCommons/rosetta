@@ -28,7 +28,6 @@
 
 #include <utility/vector1.hh>
 
-// AUTO-REMOVED #include <sys/types.h>
 
 
 // REQUIRED FOR WINDOWS

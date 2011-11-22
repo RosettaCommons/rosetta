@@ -28,20 +28,20 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/abinitio.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/jumps.OptionKeys.gen.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/nonlocal.OptionKeys.gen.hh>
 #include <basic/options/keys/rigid.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <numeric/interpolate.hh>
 #include <numeric/prob_util.hh>
 #include <utility/vector1.hh>
 
 // Project headers
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/import_pose/import_pose.hh>
@@ -76,6 +76,8 @@
 // Package headers
 #include <protocols/medal/util.hh>
 
+//Auto Headers
+#include <core/chemical/ChemicalManager.fwd.hh>
 namespace protocols {
 namespace medal {
 

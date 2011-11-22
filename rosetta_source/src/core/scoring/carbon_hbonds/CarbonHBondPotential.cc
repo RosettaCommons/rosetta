@@ -34,8 +34,6 @@
 // AUTO-REMOVED #include <numeric/xyz.io.hh>
 
 #include <core/scoring/interpolation_util.hh>
-// Auto-header: duplicate removed #include <basic/options/keys/score.OptionKeys.gen.hh>
-// Auto-header: duplicate removed #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 
 #include <utility/vector1.hh>

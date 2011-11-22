@@ -17,7 +17,7 @@
 
 // Package headers
 #include <core/pose/Pose.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -34,6 +34,11 @@
 #include <boost/foreach.hpp>
 
 #include <utility/vector0.hh>
+
+//Auto Headers
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/Jump.hh>
+
 
 #define foreach BOOST_FOREACH
 

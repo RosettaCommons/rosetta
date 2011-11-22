@@ -18,21 +18,20 @@
 #define INCLUDED_protocols_rna_RNA_AnalyticLoopCloser_HH
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/rna/AllowInsert.fwd.hh>
+// AUTO-REMOVED #include <protocols/rna/AllowInsert.fwd.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/kinematics/tree/Atom.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/tree/Atom.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
-#include <ObjexxFCL/FArray1D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
 //// C++ headers
 // AUTO-REMOVED #include <cstdlib>
 #include <string>
 
-// AUTO-REMOVED #include <vector>
 using namespace core;
 
 namespace protocols {

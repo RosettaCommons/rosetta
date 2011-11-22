@@ -61,6 +61,8 @@
 #include <limits>
 #include <string>
 
+//Auto Headers
+#include <execinfo.h>
 
 //#include "wobble.h"
 

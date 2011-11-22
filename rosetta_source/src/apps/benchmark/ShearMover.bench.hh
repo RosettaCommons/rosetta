@@ -24,6 +24,8 @@
 #include <apps/benchmark/benchmark.hh>
 
 #include <utility/vector1.hh>
+
+//Auto Headers
 //#include <platform/types.hh>
 //#include <core/types.hh>
 //#include <core/chemical/AA.hh>

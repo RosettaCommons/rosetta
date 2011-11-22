@@ -90,7 +90,6 @@
 #include <iostream>
 #include <sstream>
 
-// AUTO-REMOVED #include <protocols/motifs/MotifHit.hh>
 
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS

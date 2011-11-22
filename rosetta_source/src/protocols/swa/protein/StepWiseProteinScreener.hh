@@ -18,7 +18,7 @@
 #define INCLUDED_protocols_swa_SWA_Screener_HH
 
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
@@ -30,6 +30,8 @@
 #include <string>
 #include <map>
 
+//Auto Headers
+#include <core/id/TorsionID.fwd.hh>
 namespace protocols {
 namespace swa {
 namespace protein {

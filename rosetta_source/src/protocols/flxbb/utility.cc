@@ -22,7 +22,7 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/SS_Info.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/dssp/Dssp.hh>

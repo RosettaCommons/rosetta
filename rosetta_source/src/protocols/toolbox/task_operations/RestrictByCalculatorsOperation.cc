@@ -32,7 +32,6 @@
 
 
 // C++ Headers
-// AUTO-REMOVED #include <set>
 
 using basic::Error;
 using basic::Warning;

@@ -24,7 +24,6 @@
 #include <fstream>
 #include <map>
 
-// AUTO-REMOVED #include <vector>
 
 using namespace core;
 

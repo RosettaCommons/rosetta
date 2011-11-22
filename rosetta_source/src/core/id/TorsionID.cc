@@ -15,10 +15,8 @@
 // Unit headers
 #include <core/id/TorsionID.hh>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <ostream>
 
 
 namespace core {

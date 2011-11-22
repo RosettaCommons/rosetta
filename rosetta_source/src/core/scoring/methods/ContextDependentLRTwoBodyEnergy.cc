@@ -22,11 +22,8 @@
 
 
 // Project Headers
-// AUTO-REMOVED #include <core/conformation/RotamerSetBase.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
 namespace core {
 namespace scoring {

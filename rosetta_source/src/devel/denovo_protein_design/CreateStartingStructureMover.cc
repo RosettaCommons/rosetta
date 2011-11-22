@@ -42,7 +42,6 @@
 // AUTO-REMOVED #include <core/sequence/Sequence.hh>// getting sequence from pose
 // AUTO-REMOVED #include <core/sequence/util.hh>
 
-// Auto-header: duplicate removed #include <protocols/abinitio/AbrelaxApplication.hh>
 #include <protocols/abinitio/ClassicAbinitio.hh>
 // AUTO-REMOVED #include <protocols/abinitio/FoldConstraints.hh>
 #include <protocols/basic_moves/FragmentMover.hh>

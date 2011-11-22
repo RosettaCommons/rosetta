@@ -26,7 +26,6 @@
 #include <utility/io/ozstream.fwd.hh>
 
 // Utility headers
-// Auto-header: duplicate removed #include <utility/io/ozstream.fwd.hh>
 
 // ObjexxFCL headers
 // AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>

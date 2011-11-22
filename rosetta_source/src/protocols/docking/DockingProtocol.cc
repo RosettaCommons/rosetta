@@ -31,44 +31,44 @@
 #include <protocols/docking/DockMinMover.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
 #include <protocols/docking/DockingHighResLegacy.hh>
-#include <protocols/docking/SidechainMinMover.hh>
+// AUTO-REMOVED #include <protocols/docking/SidechainMinMover.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/docking/DockingProtocolCreator.hh> // Support the scriptor
 
 // Project Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
 
-#include <core/io/pdb/pose_io.hh>
-#include <core/io/pdb/file_data.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/file_data.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
 
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/operation/ResFilters.hh> // ResidueLacksProperty
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/operation/NoRepackDisulfides.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/ResFilters.hh> // ResidueLacksProperty
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <protocols/toolbox/task_operations/InterfaceTaskOperation.hh>
-#include <core/pack/task/operation/ResLvlTaskOperations.hh> // PreventRepackingRLT
-#include <core/pack/task/operation/OperateOnCertainResidues.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperations.hh> // PreventRepackingRLT
+// AUTO-REMOVED #include <core/pack/task/operation/OperateOnCertainResidues.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
-#include <protocols/scoring/InterchainPotential.hh>
+// AUTO-REMOVED #include <protocols/scoring/InterchainPotential.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/ScoreMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+// AUTO-REMOVED #include <protocols/moves/ScoreMover.hh>
+// AUTO-REMOVED #include <protocols/moves/RigidBodyMover.hh>
 #include <protocols/moves/RepackSidechainsMover.hh>
-#include <protocols/moves/PackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
 #include <protocols/moves/ReturnSidechainMover.hh>
-#include <protocols/moves/RotamerTrialsMinMover.hh>
+// AUTO-REMOVED #include <protocols/moves/RotamerTrialsMinMover.hh>
 #include <protocols/moves/SwitchResidueTypeSetMover.hh>
 //#include <protocols/moves/MoverContainer.hh>
 
@@ -77,11 +77,11 @@
 #include <protocols/ScoreMap.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
-#include <protocols/protein_interface_design/dock_design_filters.hh>
+// AUTO-REMOVED #include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // Utility Headers
-#include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <utility/file/FileName.hh>
 #include <utility/tools/make_vector1.hh>
 #include <utility/tag/Tag.hh> // REQUIRED FOR WINDOWS

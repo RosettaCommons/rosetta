@@ -27,6 +27,8 @@
 // Package headers
 #include <protocols/moves/Mover.hh>
 
+//Auto Headers
+#include <utility/vector1.hh>
 namespace protocols {
 namespace moves {
 

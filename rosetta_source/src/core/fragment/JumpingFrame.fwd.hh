@@ -21,14 +21,7 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
-// AUTO-REMOVED #include <core/fragment/Frame.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/ConstantLengthFragSet.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/FragCache.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/FragData.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/FragSet.fwd.hh>
-// AUTO-REMOVED #include <core/fragment/SingleResidueFragData.fwd.hh>
 
 
 namespace core {

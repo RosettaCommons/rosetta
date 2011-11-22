@@ -21,7 +21,6 @@
 
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
 
 namespace core {

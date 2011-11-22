@@ -51,6 +51,8 @@
 #include <core/pose/util.hh>
 #include <core/scoring/EnergyMap.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 
 namespace core {
 namespace scoring {

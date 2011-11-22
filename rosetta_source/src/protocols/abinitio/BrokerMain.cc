@@ -17,7 +17,7 @@
 #include <protocols/abinitio/AbrelaxMover.hh>
 
 // Project Headers
-#include <core/scoring/constraints/ConstraintSet.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
 #include <core/scoring/constraints/BoundConstraint.hh>

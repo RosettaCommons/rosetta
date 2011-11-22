@@ -19,9 +19,7 @@
 // AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 #include <numeric/xyzVector.hh>
 
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
-// AUTO-REMOVED #include <vector>
 
 namespace protocols {
 namespace viewer {

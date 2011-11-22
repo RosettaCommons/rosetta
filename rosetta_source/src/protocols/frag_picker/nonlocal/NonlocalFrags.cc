@@ -28,7 +28,7 @@
 #include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
@@ -66,6 +66,8 @@
 #include <core/kinematics/MoveMap.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/conformation/Conformation.hh>
 
 static numeric::random::RandomGenerator RG(10420);  // Magic Number
 

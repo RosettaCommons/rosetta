@@ -1,3 +1,4 @@
+
 //Auto using namespaces
 //Auto using namespaces end
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-

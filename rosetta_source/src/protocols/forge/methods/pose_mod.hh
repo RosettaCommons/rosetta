@@ -25,6 +25,7 @@
 #include <core/id/AtomID.fwd.hh>
 #include <core/pose/Pose.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.fwd.hh>
@@ -373,8 +374,8 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
-
-
+#include <core/pose/util.tmpl.hh>
+#include <execinfo.h>
 
 namespace protocols {
 namespace forge {

@@ -28,8 +28,9 @@
 
 #include <core/id/DOF_ID_Map.hh>
 #include <utility/vector1.hh>
-// Auto-header: duplicate removed #include <core/pose/util.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 
 namespace core {
 namespace optimization {

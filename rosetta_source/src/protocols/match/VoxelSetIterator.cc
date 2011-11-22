@@ -20,7 +20,6 @@
 #include <utility/FixedSizeLexicographicalIterator.tmpl.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <fstream>
 
 namespace protocols {
 namespace match {

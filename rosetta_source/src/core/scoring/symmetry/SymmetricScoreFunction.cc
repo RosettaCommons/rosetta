@@ -45,7 +45,6 @@
 
 // Symmetry extras
 // AUTO-REMOVED #include <core/conformation/RotamerSetBase.hh> // TMP HACK
-// Auto-header: duplicate removed #include <core/scoring/hbonds/HBondSet.hh> //TMP HACK
 #include <core/scoring/EnvPairPotential.hh>
 #include <basic/datacache/CacheableData.hh> //TMP HACK
 //#include <core/scoring/symmetry/NBListCache.hh>
@@ -58,6 +57,8 @@
 
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/scoring/EnergyGraph.hh>
 
 namespace core {
 namespace scoring {

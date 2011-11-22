@@ -23,7 +23,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <cassert>
 
 namespace core {
 namespace scoring {

@@ -16,7 +16,7 @@
 
 // Rosetta Headers
 #include <basic/datacache/CacheableStringFloatMap.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/id/types.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/Pose.hh>
@@ -47,6 +47,8 @@
 #include <utility/vector1.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 using basic::T;
 using basic::Error;
 using basic::Warning;

@@ -34,7 +34,6 @@
 // ObjexxFCL Headers
 
 // Utility headers
-// Auto-header: duplicate removed #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
 
 // Boost Headers

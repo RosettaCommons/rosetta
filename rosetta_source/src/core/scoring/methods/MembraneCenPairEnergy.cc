@@ -20,7 +20,6 @@
 
 // Package headers
 #include <core/scoring/MembranePotential.hh>
-// Auto-header: duplicate removed #include <core/scoring/MembranePotential.hh>
 #include <core/scoring/ScoringManager.hh>
 // AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 

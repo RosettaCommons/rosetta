@@ -33,13 +33,11 @@
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <core/conformation/Conformation.hh>
-// Auto-header: duplicate removed #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/moves/MinMover.hh>
 #include <basic/options/option.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/moves/RigidBodyMover.hh>
-// Auto-header: duplicate removed #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <utility/vector0.hh>

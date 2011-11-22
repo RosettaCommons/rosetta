@@ -36,7 +36,6 @@
 // AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
 
 #include <core/conformation/Residue.hh>
-// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 
 #include <basic/prof.hh> // should this guy go into utilities?
 #include <basic/Tracer.hh>

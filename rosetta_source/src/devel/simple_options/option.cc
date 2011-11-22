@@ -19,7 +19,6 @@
 #endif
 
 
-// AUTO-REMOVED #include <ctime>
 
 
 using namespace std;

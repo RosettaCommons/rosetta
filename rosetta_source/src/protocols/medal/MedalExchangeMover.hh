@@ -26,6 +26,9 @@
 // Package headers
 #include <protocols/medal/MedalMover.hh>
 
+// Utility headers
+#include <utility/vector1.hh>
+
 namespace protocols {
 namespace medal {
 

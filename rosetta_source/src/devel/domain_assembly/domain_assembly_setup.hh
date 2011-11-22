@@ -12,7 +12,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <string>
 
 // a class to hold information about the domains that will be assembled together
 // in addition to the coordinates of the domains it holds the linker sequences

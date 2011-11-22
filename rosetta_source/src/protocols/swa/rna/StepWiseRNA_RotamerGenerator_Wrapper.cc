@@ -24,8 +24,8 @@
 //////////////////////////////////
 
 #include <core/id/TorsionID.hh>
-#include <core/pose/Pose.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
 #include <basic/Tracer.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
@@ -33,6 +33,11 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <string>
+
+//Auto Headers
+#include <core/chemical/ResidueType.hh>
+#include <utility/vector1.hh>
+
 
 using namespace core;
 using core::Real;

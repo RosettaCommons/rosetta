@@ -44,7 +44,6 @@
 	#include <core/optimization/DOF_Node.hh>
 #endif
 
-
 namespace core {
 namespace optimization {
 namespace symmetry {

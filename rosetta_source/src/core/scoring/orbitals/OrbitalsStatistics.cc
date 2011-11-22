@@ -64,9 +64,6 @@
 //option headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/orbitals.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/packing.OptionKeys.gen.hh>
-
 
 
 namespace core{

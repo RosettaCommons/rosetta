@@ -36,7 +36,7 @@
 // Unit Headers
 #include <protocols/sparta/Sparta.hh>
 #include <protocols/sparta/SpartaUtil.hh>
-#include <protocols/sparta/util.hh>
+// AUTO-REMOVED #include <protocols/sparta/util.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -50,15 +50,15 @@
 //// C++ headers
 #include <cstdlib>
 #include <string>
-#include <cmath>
+// AUTO-REMOVED #include <cmath>
 
 #ifdef WIN32
 #include <direct.h>
 #include <ctime>
 #else
-#include <dirent.h>
-#include <sys/stat.h>
-#include <sys/timeb.h>
+// AUTO-REMOVED #include <dirent.h>
+// AUTO-REMOVED #include <sys/stat.h>
+// AUTO-REMOVED #include <sys/timeb.h>
 #endif
 
 
@@ -67,7 +67,6 @@
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 #include <basic/database/open.hh>
 
-// AUTO-REMOVED #include <stdio.h>
 
 namespace protocols {
 namespace sparta {

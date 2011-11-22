@@ -36,7 +36,6 @@
 // AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
 #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
-// Auto-header: duplicate removed #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 // C++ Headers
 #include <set>

@@ -26,16 +26,16 @@
 #include <protocols/docking/SidechainMinMover.hh>
 
 // Project headers
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <protocols/jd2/JobOutputter.hh>
-#include <protocols/jd2/JobDistributor.hh>
+// AUTO-REMOVED #include <protocols/jd2/JobOutputter.hh>
+// AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
 
 #include <protocols/moves/ConformerSwitchMover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -54,6 +54,11 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/chemical/ChemicalManager.fwd.hh>
+#include <protocols/jd2/JobDistributor.fwd.hh>
+
 
 
 using basic::T;

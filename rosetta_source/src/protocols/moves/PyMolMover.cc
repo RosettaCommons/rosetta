@@ -18,11 +18,11 @@
 
 //#ifndef WIN_PYROSETTA  // CL compiler got horribly confused if our numeric header got included after <winsock2.h>
 
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/scoring/Energies.hh>
 
@@ -38,6 +38,8 @@
 
 #include <utility/PyAssert.hh>
 
+//Auto Headers
+#include <numeric/random/uniform.hh>
 //#endif
 
 //#include <cstdlib.h>

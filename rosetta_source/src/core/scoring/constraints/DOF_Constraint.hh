@@ -28,7 +28,6 @@
 
 
 // C++ Headers
-// AUTO-REMOVED #include <sstream>
 
 namespace core {
 namespace scoring {

@@ -29,7 +29,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
 
 
 // Utility headers

@@ -29,7 +29,7 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/TorsionID.hh>
-#include <core/kinematics/AtomTree.hh>
+// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 // AUTO-REMOVED #include <core/pose/annotated_sequence.hh>
@@ -90,6 +90,11 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/conformation/Conformation.hh>
+#include <core/kinematics/FoldTree.hh>
+
 
 using namespace core;
 using basic::T;

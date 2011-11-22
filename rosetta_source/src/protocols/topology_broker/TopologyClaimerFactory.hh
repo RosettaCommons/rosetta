@@ -22,8 +22,8 @@
 
 // C/C++ headers
 #include <map>
-// AUTO-REMOVED #include <string>
 
+//Auto Headers
 namespace protocols {
 namespace topology_broker {
 

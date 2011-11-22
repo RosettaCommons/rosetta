@@ -32,7 +32,7 @@
 // Core Headers
 #include <core/conformation/Residue.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/util.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>

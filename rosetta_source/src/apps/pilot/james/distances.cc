@@ -14,8 +14,8 @@
 #include <protocols/viewer/viewers.hh>
 
 
-#include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/hbonds.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -28,20 +28,20 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
+// AUTO-REMOVED #include <basic/options/after_opts.hh>
 
 #include <basic/database/open.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <numeric/xyzVector.hh>
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <apps/pilot/james/james_util.hh>
 

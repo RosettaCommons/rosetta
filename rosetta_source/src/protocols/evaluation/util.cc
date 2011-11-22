@@ -33,7 +33,7 @@
 #include <protocols/evaluation/ConstraintEvaluator.hh>
 #include <protocols/evaluation/CombinedConstraintEvaluator.hh>
 #include <protocols/evaluation/ChemicalShiftEvaluator.hh>
-#include <protocols/evaluation/RPF_ScoreEvaluator.hh>
+// AUTO-REMOVED #include <protocols/evaluation/RPF_ScoreEvaluator.hh>
 #include <protocols/evaluation/CamShiftEvaluator.hh>
 #include <protocols/evaluation/PalesEvaluator.hh>
 #include <protocols/evaluation/PredictedBurialEvaluator.hh>
@@ -49,7 +49,7 @@
 
 #include <core/io/silent/silent.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

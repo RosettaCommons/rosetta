@@ -23,7 +23,7 @@
 // AUTO-REMOVED #include <core/scoring/Energies.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/database/open.hh>
@@ -35,104 +35,11 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 //Auto Headers
-#include <platform/types.hh>
-#include <core/types.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/AtomType.hh>
-#include <core/chemical/ResidueType.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/signals/XYZEvent.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
-#include <core/id/DOF_ID.fwd.hh>
-#include <core/id/NamedAtomID.fwd.hh>
-#include <core/id/NamedStubID.fwd.hh>
-#include <core/id/TorsionID.fwd.hh>
-#include <core/kinematics/AtomTree.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
-#include <core/kinematics/Jump.fwd.hh>
-#include <core/kinematics/Stub.fwd.hh>
-#include <core/pose/PDBInfo.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/pose/datacache/ObserverCache.fwd.hh>
-#include <core/pose/metrics/PoseMetricContainer.fwd.hh>
-#include <core/pose/signals/ConformationEvent.fwd.hh>
-#include <core/pose/signals/DestructionEvent.fwd.hh>
-#include <core/pose/signals/EnergyEvent.fwd.hh>
-#include <core/pose/signals/GeneralEvent.fwd.hh>
-#include <core/scoring/Energies.fwd.hh>
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/constraints/Constraint.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/scoring/constraints/Func.fwd.hh>
 #include <utility/OrderedTuple.hh>
-#include <utility/down_cast.hh>
-#include <utility/exit.hh>
 #include <utility/fixedsizearray1.hh>
-#include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
-#include <utility/vectorL.hh>
-#include <utility/vectorL_Selector.hh>
-#include <utility/vectorL_bool.hh>
-#include <utility/pointer/ReferenceCount.fwd.hh>
-#include <utility/pointer/ReferenceCount.hh>
-#include <utility/pointer/access_ptr.fwd.hh>
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.functions.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/signals/BufferedSignalHub.fwd.hh>
-#include <utility/signals/BufferedSignalHub.hh>
-#include <utility/signals/Link.fwd.hh>
-#include <utility/signals/Link.hh>
-#include <utility/signals/LinkUnit.fwd.hh>
-#include <utility/signals/LinkUnit.hh>
-#include <utility/signals/SignalHub.fwd.hh>
-#include <utility/signals/SignalHub.hh>
-#include <numeric/numeric.functions.hh>
-#include <numeric/sphericalVector.fwd.hh>
-#include <numeric/trig.functions.hh>
-#include <numeric/xyz.functions.fwd.hh>
-#include <numeric/xyzMatrix.fwd.hh>
-#include <numeric/xyzVector.fwd.hh>
-#include <numeric/xyzVector.hh>
-#include <ObjexxFCL/FArray1D.fwd.hh>
-#include <ObjexxFCL/FArray2D.fwd.hh>
-#include <ObjexxFCL/TypeTraits.hh>
-#include <ObjexxFCL/string.functions.hh>
-#include <algorithm>
-#include <cassert>
-#include <cmath>
-#include <cstddef>
-#include <cstdio>
-#include <cstdlib>
-#include <fstream>
-#include <iomanip>
-#include <iosfwd>
-#include <iostream>
-#include <istream>
-#include <limits>
-#include <list>
-#include <map>
-#include <ostream>
-#include <set>
-#include <sstream>
-#include <string>
-#include <utility>
-#include <vector>
-#include <basic/MetricValue.fwd.hh>
-#include <basic/Tracer.fwd.hh>
-#include <basic/datacache/BasicDataCache.fwd.hh>
-#include <basic/datacache/CacheableData.fwd.hh>
 #include <basic/datacache/CacheableData.hh>
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
-
-//Auto Headers
-
 
 // Numeric headers
 //#include <numeric/deriv/distance_deriv.hh>

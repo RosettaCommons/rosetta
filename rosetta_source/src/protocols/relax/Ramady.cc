@@ -23,7 +23,7 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
@@ -37,6 +37,8 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/kinematics/Jump.hh>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

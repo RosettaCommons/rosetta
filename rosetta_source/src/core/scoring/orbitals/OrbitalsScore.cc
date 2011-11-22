@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 #include <core/pose/Pose.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/scoring/DerivVectorPair.hh>
 
 #include <core/scoring/orbitals/OrbitalsLookup.hh>
@@ -25,9 +25,9 @@
 #include <core/conformation/Residue.hh>
 
 #include <core/scoring/ScoringManager.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/orbitals/OrbitalType.hh>
-#include <core/scoring/ContextGraphTypes.hh>
+// AUTO-REMOVED #include <core/scoring/ContextGraphTypes.hh>
 
 #include <core/scoring/EnergyMap.hh>
 #include <basic/Tracer.hh>

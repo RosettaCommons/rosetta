@@ -19,11 +19,13 @@
 #include <core/types.hh>
 
 #include <iostream>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <sstream>
 #include <ObjexxFCL/format.hh>
-#include <set>
+// AUTO-REMOVED #include <set>
 
+//Auto Headers
+#include <utility/vector1.hh>
 using namespace core;
 
 namespace protocols {

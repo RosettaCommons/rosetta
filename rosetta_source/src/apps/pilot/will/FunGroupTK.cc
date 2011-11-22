@@ -10,11 +10,11 @@
 /// @brief ???
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 //#include <basic/options/keys/smhybrid.OptionKeys.gen.hh>
 //#include <basic/options/keys/willmatch.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -24,42 +24,42 @@
 #include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/init.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/graph/Graph.hh>
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/optimizeH.hh>
+// AUTO-REMOVED #include <core/pack/optimizeH.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/symmetry/util.hh>
+// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
-#include <core/scoring/constraints/AngleConstraint.hh>
-#include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AngleConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/scoring/constraints/MultiConstraint.hh>
-#include <core/scoring/constraints/util.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
-#include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/rms_util.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/MultiConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
+// AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-#include <numeric/model_quality/rms.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
+// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
 #include <numeric/random/random.hh>
 #include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
@@ -67,27 +67,59 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/basic_moves/FragmentMover.hh>
-#include <protocols/moves/kinematic_closure/bridgeObjects.hh>
-#include <protocols/moves/kinematic_closure/kinematic_closure_helpers.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/symmetry/SymMinMover.hh>
-#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/moves/TrialMover.hh>
+// AUTO-REMOVED #include <protocols/basic_moves/FragmentMover.hh>
+// AUTO-REMOVED #include <protocols/moves/kinematic_closure/bridgeObjects.hh>
+// AUTO-REMOVED #include <protocols/moves/kinematic_closure/kinematic_closure_helpers.hh>
+// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SymMinMover.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SymPackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <sstream>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
-#include <apps/pilot/will/will_util.ihh>
-#include <apps/pilot/will/mynamespaces.ihh>
 
 // AUTO-REMOVED #include <time.h>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <platform/types.hh>
+#include <core/pose/util.tmpl.hh>
+#include <protocols/moves/MoverStatistics.hh>
+#include <apps/pilot/will/will_util.ihh>
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <complex>
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+#include <execinfo.h>
+#include <iomanip>
+#include <iosfwd>
+#include <iostream>
+#include <istream>
+#include <limits>
+#include <list>
+#include <map>
+#include <ostream>
+#include <set>
+#include <string>
+#include <utility>
+#include <vector>
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+#include <boost/functional/hash.hpp>
+
+//Auto using namespaces
+namespace std { } using namespace std; // AUTO USING NS
+namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
+namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+//Auto using namespaces end
 
 using core::kinematics::Stub;
 using protocols::scoring::ImplicitFastClashCheck;

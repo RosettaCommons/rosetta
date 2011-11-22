@@ -17,7 +17,7 @@
 // Project Headers
 #include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
@@ -26,7 +26,7 @@
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/types.hh>
 
 // Basic Headers

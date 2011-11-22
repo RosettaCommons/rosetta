@@ -47,15 +47,12 @@
 #include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
-// Auto-header: duplicate removed #include <core/pack/task/TaskFactory.hh>
 // Utility Headers
 #include <utility/exit.hh>
 
 // Unit Headers
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/BasicFilters.hh>
-// Auto-header: duplicate removed #include <protocols/protein_interface_design/movers/PlaceStubMover.hh>
-// Auto-header: duplicate removed #include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>

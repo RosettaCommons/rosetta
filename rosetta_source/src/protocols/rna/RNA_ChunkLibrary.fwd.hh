@@ -20,9 +20,6 @@
 #include <utility/pointer/owning_ptr.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <map>
-// AUTO-REMOVED #include <vector>
 
 namespace protocols{
 namespace rna{

@@ -19,9 +19,6 @@
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/conformation/Atom.hh>
-
-// AUTO-REMOVED #include <ObjexxFCL/FArray1A.hh>
 
 
 namespace core {

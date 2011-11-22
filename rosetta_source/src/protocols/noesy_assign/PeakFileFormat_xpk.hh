@@ -25,6 +25,8 @@
 // #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
+
+//Auto Headers
 // #include <numeric/numeric.functions.hh>
 // #include <basic/prof.hh>
 //#include <basic/Tracer.hh>
@@ -34,10 +36,6 @@
 //#include <basic/options/keys/templates.OptionKeys.gen.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <list>
-// AUTO-REMOVED #include <map>
 
 namespace protocols {
 namespace noesy_assign {

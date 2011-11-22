@@ -16,7 +16,7 @@
 
 //Package headers
 
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 #include <basic/options/option.hh>
 

@@ -19,11 +19,11 @@
 // Unit headers
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/signals/ConnectionEvent.hh>
-#include <core/conformation/signals/GeneralEvent.hh>
-#include <core/conformation/signals/IdentityEvent.hh>
-#include <core/conformation/signals/LengthEvent.hh>
-#include <core/conformation/signals/XYZEvent.hh>
+// AUTO-REMOVED #include <core/conformation/signals/ConnectionEvent.hh>
+// AUTO-REMOVED #include <core/conformation/signals/GeneralEvent.hh>
+// AUTO-REMOVED #include <core/conformation/signals/IdentityEvent.hh>
+// AUTO-REMOVED #include <core/conformation/signals/LengthEvent.hh>
+// AUTO-REMOVED #include <core/conformation/signals/XYZEvent.hh>
 
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
@@ -35,8 +35,8 @@
 // AUTO-REMOVED #include <core/id/AtomID_Mask.hh>
 #include <core/id/DOF_ID.hh>
 // AUTO-REMOVED #include <core/id/TorsionID.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/AtomTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/Jump.hh>
 // AUTO-REMOVED #include <core/kinematics/DomainMap.hh>
 
@@ -55,8 +55,20 @@
 
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
-#include <core/kinematics/tree/Atom.hh>
+// AUTO-REMOVED #include <core/kinematics/tree/Atom.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/conformation/signals/ConnectionEvent.fwd.hh>
+#include <core/conformation/signals/GeneralEvent.fwd.hh>
+#include <core/conformation/signals/IdentityEvent.fwd.hh>
+#include <core/conformation/signals/LengthEvent.fwd.hh>
+#include <core/conformation/signals/XYZEvent.fwd.hh>
+#include <core/id/AtomID_Mask.fwd.hh>
+#include <core/kinematics/AtomTree.fwd.hh>
+#include <core/kinematics/DomainMap.fwd.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
+
 
 
 namespace core {
@@ -87,6 +99,10 @@ public: // typedefs
 	typedef core::conformation::signals::LengthEvent LengthEvent;
 	typedef core::conformation::signals::XYZEvent XYZEvent;
 
+  // Mirroring typedefs in AtomTree.hh to avoid it's #inclusion.
+	// for fragment insertions
+  typedef std::map< id::AtomID, Vector > FragXYZ;
+  typedef std::map< id::StubID, kinematics::RT > FragRT;
 
 public:
 
@@ -530,8 +546,8 @@ public:
 	void
 	insert_fragment(
 		id::StubID const & instub_id,
-		AtomTree::FragRT const & outstub_transforms,
-		AtomTree::FragXYZ const & frag_xyz
+		FragRT const & outstub_transforms,
+		FragXYZ const & frag_xyz
 	);
 
 	/// @brief Returns the torsion angle defined by  <atom[1-4]>

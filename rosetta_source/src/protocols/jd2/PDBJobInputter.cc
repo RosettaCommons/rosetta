@@ -34,8 +34,6 @@
 
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 static basic::Tracer TR("protocols.jd2.PDBJobInputter");
 

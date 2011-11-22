@@ -24,7 +24,7 @@
 
 // Objexx Headers
 // AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/ubyte.hh>
+// AUTO-REMOVED #include <ObjexxFCL/ubyte.hh>
 
 // Numeric headers
 // AUTO-REMOVED #include <numeric/xyzVector.hh>

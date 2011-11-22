@@ -61,11 +61,12 @@
 
 // ObjexxFCL headers
 #include <ObjexxFCL/format.hh>
-// Auto-header: duplicate removed #include <ObjexxFCL/string.functions.hh>
 
 #include <core/chemical/VariantType.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/kinematics/FoldTree.hh>
 namespace protocols {
 namespace idealize {
 

@@ -38,7 +38,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <string>
 
 namespace protocols {
 namespace optimize_weights {

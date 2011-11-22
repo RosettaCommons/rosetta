@@ -26,7 +26,6 @@
 
 
 // Project headers
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 
 namespace core {

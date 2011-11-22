@@ -44,8 +44,9 @@
 
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/conformation/Conformation.hh>
 
-// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 //// C++ headers
 

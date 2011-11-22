@@ -24,7 +24,7 @@
 
 
 // Project Headers
-#include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.hh>
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/Func.hh>
 
@@ -44,7 +44,8 @@
 
 #include <core/scoring/constraints/Func.fwd.hh>
 
-
+//Auto Headers
+#include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.fwd.hh>
 namespace protocols {
 namespace noesy_assign {
 

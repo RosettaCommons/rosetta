@@ -25,7 +25,7 @@
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/scoring/constraints/util.hh>
-#include <core/scoring/electron_density/util.hh>
+// AUTO-REMOVED #include <core/scoring/electron_density/util.hh>
 #include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/moves/SuperimposeMover.hh>
 #include <protocols/moves/ConstraintSetMover.hh>

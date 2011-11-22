@@ -22,7 +22,7 @@
 #include <core/id/AtomID.hh>
 #include <core/kinematics/Stub.hh>
 
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 // AUTO-REMOVED #include <core/id/NamedStubID.hh>
 
 // C++ Headers
@@ -31,9 +31,13 @@
 
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/Jump.hh>
+
+
 
 //#include <map>
-// AUTO-REMOVED #include <utility>
 
 namespace core {
 namespace scoring {

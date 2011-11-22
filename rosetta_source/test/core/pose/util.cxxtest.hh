@@ -23,7 +23,7 @@
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
 

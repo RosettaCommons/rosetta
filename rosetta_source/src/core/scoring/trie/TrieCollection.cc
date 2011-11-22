@@ -18,7 +18,6 @@
 #include <core/scoring/trie/RotamerTrieBase.hh>
 
 // STL Headers
-// AUTO-REMOVED #include <algorithm>
 
 namespace core {
 namespace scoring {

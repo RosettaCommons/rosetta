@@ -33,8 +33,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <sstream>
-// AUTO-REMOVED #include <string>
 
 
 namespace core {

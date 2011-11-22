@@ -16,15 +16,15 @@
 // Unit headers
 #include <core/scoring/methods/CustomAtomPairEnergy.hh>
 #include <core/scoring/methods/CustomAtomPairEnergyCreator.hh>
-#include <core/scoring/methods/util.hh>
+// AUTO-REMOVED #include <core/scoring/methods/util.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Package headers
-#include <core/scoring/PairEPotential.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/ContextGraphTypes.hh>
+// AUTO-REMOVED #include <core/scoring/PairEPotential.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
+// AUTO-REMOVED #include <core/scoring/ContextGraphTypes.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 // Project headers
@@ -41,7 +41,7 @@
 #include <istream>
 
 #include <core/id/AtomID.hh>
-#include <ObjexxFCL/FArray2D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>

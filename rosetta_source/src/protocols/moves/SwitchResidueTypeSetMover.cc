@@ -24,7 +24,7 @@ using basic::Warning;
 static basic::Tracer TR("protocols.moves.SwitchResidueTypeSetMover");
 #include <utility/tag/Tag.hh>
 
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/util/SwitchResidueTypeSet.hh>

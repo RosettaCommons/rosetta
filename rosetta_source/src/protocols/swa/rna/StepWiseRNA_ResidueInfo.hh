@@ -22,7 +22,6 @@
 #include <string>
 #include <map>
 
-
 namespace protocols {
 namespace swa {
 namespace rna {
@@ -34,7 +33,7 @@ namespace rna {
 
 	void
 	Output_residue_struct(Residue_info const & residue);
-	
+
 
 	std::string
 	Get_one_letter_name(std::string const & three_letter_name);
@@ -43,7 +42,7 @@ namespace rna {
 	get_max_seq_num_from_res_map(std::map< core::Size, core::Size > const & my_map);
 
 
-	void	
+	void
 	output_res_map(std::map< core::Size, core::Size > const & my_map, core::Size const max_seq_num);
 
 	void
@@ -51,7 +50,7 @@ namespace rna {
 
 	void
 	Output_residue_list(utility::vector1<Residue_info> residue_list);
-	
+
 	utility::vector1< Residue_info >
 	Get_residue_list_from_fasta(std::string const full_fasta_sequence);
 
@@ -60,16 +59,16 @@ namespace rna {
 
 	bool
 	Contain_residue_at_seq_num(core::Size seq_num, utility::vector1 <Residue_info> const & residue_list);
-	
+
 	utility::vector1 < utility::vector1 <Residue_info> >
 	Create_strand_list(utility::vector1 <Residue_info> const & residue_list);
-	
+
 	utility::vector1 <Residue_info>
 	Set_Difference(utility::vector1 <Residue_info> const & residue_list_1, utility::vector1 <Residue_info> const & residue_list_2);
 
 	utility::vector1 <Residue_info>
 	Set_Union(utility::vector1 <Residue_info> const & residue_list_1, utility::vector1 <Residue_info> const & residue_list_2);
-	
+
 	bool
 	residue_list_sort_citeria(Residue_info residue_info_1, Residue_info residue_info_2);
 

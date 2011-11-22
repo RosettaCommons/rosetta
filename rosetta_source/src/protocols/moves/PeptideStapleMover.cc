@@ -62,8 +62,9 @@ static basic::Tracer TR( "protocols.moves.PeptideStapleMover" );
 
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/kinematics/FoldTree.hh>
 
-// AUTO-REMOVED #include <fstream>
 
 // ObjexxFCL Headers
 

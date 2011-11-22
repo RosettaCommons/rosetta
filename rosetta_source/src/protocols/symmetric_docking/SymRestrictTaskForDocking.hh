@@ -25,7 +25,6 @@
 
 
 // Symmetry
-// AUTO-REMOVED #include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
 
 namespace protocols {
 namespace symmetric_docking {

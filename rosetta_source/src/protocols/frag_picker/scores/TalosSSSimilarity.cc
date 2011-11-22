@@ -24,7 +24,7 @@
 
 #include <core/fragment/SecondaryStructure.hh>
 
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 
 // option key includes
 // AUTO-REMOVED #include <core/init.hh>

@@ -17,7 +17,7 @@
 #include <protocols/match/downstream/LigandConformer.hh>
 
 /// Package headers
-#include <protocols/match/BumpGrid.hh>
+// AUTO-REMOVED #include <protocols/match/BumpGrid.hh>
 
 // Project headers
 #include <core/chemical/AtomType.hh>

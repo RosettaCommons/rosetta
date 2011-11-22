@@ -15,7 +15,7 @@
 #include <protocols/seeded_abinitio/SeededAbinitio_util.hh>
 
 // Package Headers
-#include <protocols/protein_interface_design/dock_design_filters.hh>
+// AUTO-REMOVED #include <protocols/protein_interface_design/dock_design_filters.hh>
 
 // Project Headers
 // AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
@@ -26,15 +26,12 @@
 // AUTO-REMOVED #include <core/conformation/Conformation.hh>
 
 //#include <core/conformation/Conformation.hh>
-// Auto-header: duplicate removed #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 
-// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 //#include <core/conformation/ResidueFactory.hh>
-// Auto-header: duplicate removed #include <core/kinematics/FoldTree.hh>
 
 
 #include <core/id/SequenceMapping.hh>
@@ -42,14 +39,11 @@
 #include <core/pose/datacache/cacheable_observers.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 
-// Auto-header: duplicate removed #include <core/types.hh>
 #include <basic/Tracer.hh>
 
-// Auto-header: duplicate removed #include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
 
 // AUTO-REMOVED #include <core/pose/util.hh>
-// Auto-header: duplicate removed #include <core/pose/PDBInfo.hh>
 
 // AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/option.hh>
@@ -57,23 +51,13 @@
 // AUTO-REMOVED #include <core/import_pose/import_pose.hh>
 // AUTO-REMOVED #include <core/init.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-// Auto-header: duplicate removed #include <core/pose/Pose.hh>
-// Auto-header: duplicate removed #include <core/pose/util.hh>
 // AUTO-REMOVED #include <core/scoring/rms_util.hh>
 
-// Auto-header: duplicate removed #include <core/conformation/Conformation.hh>
-// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
-// Auto-header: duplicate removed #include <core/chemical/ResidueSelector.hh>
-// Auto-header: duplicate removed #include <core/chemical/ResidueTypeSet.fwd.hh>
 
 // AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
-// Auto-header: duplicate removed #include <core/kinematics/FoldTree.hh>
-// Auto-header: duplicate removed #include <core/types.hh>
 #include <core/kinematics/MoveMap.hh>
 
-// Auto-header: duplicate removed #include <core/pose/util.hh>
-// Auto-header: duplicate removed #include <core/pose/PDBInfo.hh>
 
 #include <core/kinematics/Jump.hh>
 #include <utility/vector0.hh>

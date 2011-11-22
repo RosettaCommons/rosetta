@@ -45,7 +45,6 @@
 // C++ headers
 #include <iostream>
 
-// AUTO-REMOVED #include <iomanip>
 
 namespace protocols{
 namespace scoring{

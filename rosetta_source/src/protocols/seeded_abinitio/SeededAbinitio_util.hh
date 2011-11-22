@@ -33,19 +33,15 @@
 
 // C++ headers
 // AUTO-REMOVED #include <string>
-// Auto-header: duplicate removed #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <core/kinematics/FoldTree.fwd.hh>
 
 #include <utility/vector1.hh>
 
-// Auto-header: duplicate removed #include <core/types.hh>
 //#include <core/scoring/constraints/Constraint.fwd.hh>
 
 // Utility Headers
-// Auto-header: duplicate removed #include <utility/vector1.fwd.hh>
 
 // C++ headers
-// Auto-header: duplicate removed #include <string>
 
 namespace protocols {
 namespace seeded_abinitio {

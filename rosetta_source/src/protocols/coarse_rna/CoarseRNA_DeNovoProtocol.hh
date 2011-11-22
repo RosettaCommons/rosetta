@@ -18,7 +18,7 @@
 #define INCLUDED_protocols_rna_RNA_DeNovoProtocol_HH
 
 #include <core/types.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
@@ -34,16 +34,13 @@
 #include <utility/vector1.hh>
 
 //Oooh.
-#include <ObjexxFCL/FArray1D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
 //// C++ headers
-#include <cstdlib>
+// AUTO-REMOVED #include <cstdlib>
 #include <string>
 
 //Auto Headers
-#include <core/io/silent/silent.fwd.hh>
-
-
 namespace protocols {
 namespace coarse_rna {
 

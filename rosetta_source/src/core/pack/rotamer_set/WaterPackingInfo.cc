@@ -19,7 +19,6 @@
 #include <core/pack/rotamer_set/WaterPackingInfo.hh>
 
 // utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 namespace core {
 namespace pack {

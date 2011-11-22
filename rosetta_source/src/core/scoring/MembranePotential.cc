@@ -35,7 +35,7 @@
 
 //symmetry
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>

@@ -44,10 +44,9 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
 
+//Auto Headers
 // Numeric headers
-
 // Objexx headers
 
 // C++ headers

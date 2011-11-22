@@ -23,7 +23,7 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 // AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/ContextGraphTypes.hh>
 

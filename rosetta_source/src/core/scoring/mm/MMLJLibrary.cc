@@ -32,8 +32,8 @@
 // C++ headers
 #include <string>
 #include <map>
-// AUTO-REMOVED #include <iostream>
 
+//Auto Headers
 namespace core {
 namespace scoring {
 namespace mm {

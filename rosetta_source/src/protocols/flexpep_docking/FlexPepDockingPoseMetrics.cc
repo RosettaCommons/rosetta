@@ -25,7 +25,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
-#include <core/scoring/constraints/util.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>

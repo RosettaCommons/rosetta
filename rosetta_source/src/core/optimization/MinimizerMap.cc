@@ -21,7 +21,6 @@
 // AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 // AUTO-REMOVED #include <core/id/DOF_ID_Mask.hh>
 #include <core/pose/Pose.hh>
-// Auto-header: duplicate removed #include <core/pose/util.hh>
 
 // Numeric headers
 // #include <numeric/all.fwd.hh>
@@ -45,10 +44,10 @@
 #include <cstdlib>
 
 #include <utility/vector1.hh>
-// Auto-header: duplicate removed #include <core/pose/util.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 
-// AUTO-REMOVED #include <cstdio>
 
 
 namespace core {

@@ -53,13 +53,13 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/conformation/Conformation.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/PackerTask_.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask_.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
@@ -81,24 +81,24 @@
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/ReturnSidechainMover.hh>
+// AUTO-REMOVED #include <protocols/moves/ReturnSidechainMover.hh>
 #include <protocols/moves/TaskAwareMinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/RigidBodyMover.hh>
 #include <protocols/moves/BackboneMover.hh>
-#include <protocols/moves/KinematicMover.hh>
+// AUTO-REMOVED #include <protocols/moves/KinematicMover.hh>
 
-#include <protocols/loops/Loops.hh>
-#include <protocols/loops/KinematicWrapper.hh>
-#include <protocols/loops/CcdLoopClosureMover.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.hh>
+// AUTO-REMOVED #include <protocols/loops/KinematicWrapper.hh>
+// AUTO-REMOVED #include <protocols/loops/CcdLoopClosureMover.hh>
 
-#include <protocols/loops/loops_main.hh>
+// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 
 #include <protocols/geometry/RB_geometry.hh>
-#include <protocols/docking/DockingProtocol.hh>
+// AUTO-REMOVED #include <protocols/docking/DockingProtocol.hh>
 
-#include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
+// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
@@ -117,7 +117,6 @@
 // Utility headers
 #include <core/init.hh>
 // AUTO-REMOVED #include <basic/options/util.hh>
-// Auto-header: duplicate removed #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 // AUTO-REMOVED #include <basic/prof.hh>
@@ -135,6 +134,8 @@
 #include <utility/vector0.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
+//Auto Headers
+#include <protocols/loops/Loops.fwd.hh>
 
 // Namespaces
 using namespace core;

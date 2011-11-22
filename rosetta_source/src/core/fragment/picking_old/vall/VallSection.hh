@@ -25,7 +25,6 @@
 
 
 // utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 
 namespace core {

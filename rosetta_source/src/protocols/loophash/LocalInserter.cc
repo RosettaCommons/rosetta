@@ -31,6 +31,8 @@
 
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/pose/Pose.hh>
 
 
 

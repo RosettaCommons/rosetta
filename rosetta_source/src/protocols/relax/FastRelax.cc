@@ -138,7 +138,7 @@ endrepeat
 #include <core/io/silent/SilentStruct.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/util.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
@@ -171,7 +171,6 @@ endrepeat
 #include <utility/tag/Tag.hh>
 
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
-// Auto-header: duplicate removed #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <numeric/random/random.fwd.hh>
 

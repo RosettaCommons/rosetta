@@ -18,17 +18,17 @@
 
 // Package Headers
 #include <core/scoring/disulfides/DisulfideAtomIndices.hh>
-#include <core/scoring/EnergyMap.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/CircularHarmonicFunc.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/CircularHarmonicFunc.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/XYZ_Func.hh>
 #include <basic/database/open.hh>
 
 // Project Headers
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Utility Headers
 #include <numeric/xyz.functions.hh>

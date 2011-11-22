@@ -20,7 +20,7 @@
 #include <basic/database/sql_utils.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>

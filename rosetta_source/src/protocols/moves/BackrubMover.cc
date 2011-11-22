@@ -18,7 +18,7 @@
 // Protocols Headers
 #include <protocols/moves/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/ThermodynamicObserver.hh> // needed for Windows build
+// AUTO-REMOVED #include <protocols/moves/ThermodynamicObserver.hh> // needed for Windows build
 #include <protocols/rosetta_scripts/util.hh>
 
 // Core Headers

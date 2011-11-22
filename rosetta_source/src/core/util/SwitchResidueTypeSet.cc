@@ -18,7 +18,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/util.hh>
 
@@ -44,6 +44,11 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/Jump.hh>
+
 
 
 

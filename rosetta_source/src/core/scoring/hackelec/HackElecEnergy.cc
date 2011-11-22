@@ -30,7 +30,6 @@
 #include <core/scoring/etable/count_pair/CountPairNone.hh>
 #include <core/scoring/etable/count_pair/CountPairAll.hh>
 #include <core/scoring/etable/count_pair/types.hh>
-// Auto-header: duplicate removed #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/NeighborList.tmpl.hh>
 #include <core/scoring/MinimizationData.hh>
 #include <core/scoring/ResidueNeighborList.hh>

@@ -16,9 +16,12 @@
 //////////////////////////////////
 #include <protocols/swa/StepWiseDoNothingSampleGenerator.hh>
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
-#include <utility/exit.hh>
-#include <ObjexxFCL/string.functions.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <utility/exit.hh>
+// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
+
+//Auto Headers
+#include <utility/vector1.hh>
 
 using namespace core;
 

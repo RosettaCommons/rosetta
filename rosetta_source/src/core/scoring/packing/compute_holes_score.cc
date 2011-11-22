@@ -39,7 +39,8 @@
 #ifndef NATCL
 #include <pstream.h>
 
-// Auto-header: duplicate removed #include <core/pose/util.hh>
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 
 #endif
 #endif

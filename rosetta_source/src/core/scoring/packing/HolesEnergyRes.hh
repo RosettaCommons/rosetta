@@ -35,7 +35,6 @@
 #include <ObjexxFCL/char.functions.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/Fmath.hh>
 
 
 // Utility headers

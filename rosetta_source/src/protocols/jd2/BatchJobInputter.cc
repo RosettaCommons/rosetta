@@ -33,8 +33,6 @@
 #include <string>
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 static basic::Tracer tr("protocols.jd2.BatchJobInputter");
 

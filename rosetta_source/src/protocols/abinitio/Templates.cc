@@ -22,7 +22,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 // AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/id/AtomID.hh>
@@ -60,7 +60,6 @@
 // AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
-// Auto-header: duplicate removed #include <numeric/random/random.hh>
 
 // C++ headers
 #include <cstdlib>

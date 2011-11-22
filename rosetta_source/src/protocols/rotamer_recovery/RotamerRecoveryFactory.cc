@@ -21,13 +21,13 @@
 
 // Package Headers
 #include <basic/Tracer.hh>
-#include <protocols/moves/Mover.hh>
-#include <utility/tag/Tag.hh>
-#include <utility/sql_database/DatabaseSessionManager.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <utility/tag/Tag.hh>
+// AUTO-REMOVED #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Project Headers
-#include <core/scoring/ScoreFunction.hh>
-#include <protocols/jobdist/Jobs.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 
 // Boost Headers
@@ -37,6 +37,10 @@
 // C++ Headers
 #include <string>
 #include <sstream>
+
+//Auto Headers
+#include <utility/exit.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace rotamer_recovery {

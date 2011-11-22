@@ -55,9 +55,8 @@
 // AUTO-REMOVED #include <iostream>
 // AUTO-REMOVED #include <iomanip>
 #include <fstream>
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <sstream>
 
+//Auto Headers
 namespace core{
 namespace scoring{
 namespace orbitals{

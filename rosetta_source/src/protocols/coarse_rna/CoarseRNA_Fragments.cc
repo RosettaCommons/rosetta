@@ -21,17 +21,17 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/MiniPose.hh>
 #include <core/pose/util.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray3D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -48,10 +48,7 @@
 #include <sstream>
 
 //Auto Headers
-#include <core/id/TorsionID.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/Jump.hh>
-#include <utility/options/keys/BooleanOptionKey.hh>
+#include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 
 

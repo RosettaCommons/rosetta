@@ -37,11 +37,12 @@
 // C++ Headers
 #include <iostream>
 
-#include <core/chemical/AtomTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
 #include <utility/vector1.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
+//Auto Headers
+#define foreach BOOST_FOREACH
 namespace core {
 namespace conformation {
 

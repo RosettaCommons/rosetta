@@ -18,20 +18,19 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <basic/Tracer.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <protocols/loops/loops_main.hh>
 #include <core/scoring/Energies.hh>
 
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <protocols/rbsegment_moves/AutoRBRelaxMover.hh>
 // AUTO-REMOVED #include <protocols/rbsegment_moves/RBSegmentRelax.hh>
 #include <protocols/rbsegment_moves/RBSegmentMover.hh>
 #include <protocols/rbsegment_moves/RBSegment.hh>
 #include <protocols/rbsegment_moves/util.hh>
-// Auto-header: duplicate removed #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/ccd_closure.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -63,8 +62,6 @@
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/io/silent/SilentStruct.hh>
 #include <basic/options/option.hh>
-// Auto-header: duplicate removed #include <protocols/rbsegment_moves/RBSegment.hh>
-// Auto-header: duplicate removed #include <protocols/moves/SwitchResidueTypeSetMover.hh>
 #include <core/fragment/FragSet.hh>
 #include <protocols/basic_moves/FragmentMover.hh>
 #include <numeric/random/random.hh>

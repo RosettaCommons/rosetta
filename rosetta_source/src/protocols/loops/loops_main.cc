@@ -38,7 +38,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/id/TorsionID.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/option.hh>
@@ -88,6 +88,8 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 
 
 

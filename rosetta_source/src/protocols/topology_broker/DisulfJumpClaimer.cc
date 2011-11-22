@@ -23,7 +23,7 @@
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/fragment/FragSet.hh>
-#include <core/fragment/FragID.hh>
+// AUTO-REMOVED #include <core/fragment/FragID.hh>
 #include <core/fragment/OrderedFragSet.hh>
 #include <core/fragment/FrameList.hh>
 // AUTO-REMOVED #include <core/fragment/FragmentIO.hh>
@@ -51,7 +51,6 @@
 //#include <basic/options/option.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <fstream>
 
 // option key includes
 

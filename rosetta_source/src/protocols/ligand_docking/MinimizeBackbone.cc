@@ -52,6 +52,8 @@ using basic::Warning;
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/kinematics/tree/Atom.hh>
 
 namespace protocols {
 namespace ligand_docking {

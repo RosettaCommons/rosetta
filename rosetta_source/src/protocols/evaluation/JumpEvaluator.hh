@@ -35,7 +35,6 @@
 
 #include <core/io/silent/silent.fwd.hh>
 
-// Auto-header: duplicate removed #include <core/id/AtomID.hh>
 
 
 // ObjexxFCL Headers
@@ -46,10 +45,8 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <list>
 
 namespace protocols {
 namespace evaluation {

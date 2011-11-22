@@ -61,12 +61,11 @@
 // C++ headers
 #include <string>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 // option key includes
 
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/cm.OptionKeys.gen.hh>
 
-// Auto-header: duplicate removed #include <core/pose/util.hh>
 
 namespace protocols {
 namespace comparative_modeling {

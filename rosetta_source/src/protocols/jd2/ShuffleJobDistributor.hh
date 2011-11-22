@@ -19,7 +19,6 @@
 
 // Package headers
 #include <protocols/jd2/JobDistributor.hh>
-// Auto-header: duplicate removed #include <protocols/jd2/FileSystemJobDistributor.hh>
 #include <protocols/jd2/Job.fwd.hh>
 // AUTO-REMOVED #include <protocols/jd2/JobDistributorFactory.hh>
 

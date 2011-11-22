@@ -19,7 +19,6 @@
 
 #include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
-// Auto-header: duplicate removed #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 // AUTO-REMOVED #include <devel/InvKinLigLoopDesign/Cloner.hh>

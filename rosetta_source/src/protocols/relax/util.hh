@@ -29,8 +29,6 @@
 
 
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
-// AUTO-REMOVED #include <string>
 
 
 namespace protocols {

@@ -16,7 +16,7 @@
 #include <basic/options/keys/matdes.OptionKeys.gen.hh>
 //#include <basic/options/keys/willmatch.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -27,7 +27,7 @@
 // AUTO-REMOVED #include <core/conformation/symmetry/SymDof.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/init.hh>
 #include <core/id/SequenceMapping.hh>
@@ -37,14 +37,14 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
-#include <core/pack/optimizeH.hh>
+// AUTO-REMOVED #include <core/pack/optimizeH.hh>
 #include <core/pack/make_symmetric_task.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
@@ -53,24 +53,24 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/constraints/XYZ_Func.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/rms_util.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/packing/compute_holes_score.hh>
-#include <core/util/SwitchResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/util/SwitchResidueTypeSet.hh>
 #include <numeric/conversions.hh>
-#include <numeric/model_quality/rms.hh>
+// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
 #include <numeric/random/random.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/moves/symmetry/SymMinMover.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SymMinMover.hh>
 #include <protocols/moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <sstream>
@@ -79,13 +79,16 @@
 // #include <devel/init.hh>
 
 // #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
-#include <apps/pilot/will/will_util.ihh>
-#include <apps/pilot/will/mynamespaces.ihh>
 
 #include <sys/stat.h>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
+#include <apps/pilot/will/mynamespaces.ihh>
+#include <apps/pilot/will/will_util.ihh>
 
 
 

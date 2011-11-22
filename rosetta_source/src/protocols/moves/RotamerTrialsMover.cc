@@ -38,7 +38,7 @@
 
 // Utility Headers
 #include <basic/Tracer.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>

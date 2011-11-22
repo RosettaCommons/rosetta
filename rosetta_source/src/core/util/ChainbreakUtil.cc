@@ -18,6 +18,9 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/util/kinematics_util.hh>
 
+//Auto Headers
+#include <utility/vector1.hh>
+
 namespace core {
 namespace util {
 

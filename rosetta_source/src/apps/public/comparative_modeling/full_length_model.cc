@@ -34,7 +34,7 @@
 #include <core/import_pose/PDBSilentStruct.hh>
 
 #include <core/io/pdb/pose_io.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/scoring/ScoreFunction.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 

@@ -41,7 +41,7 @@
 #include <protocols/scoring/methods/pcs2/PcsDataCenter.hh>
 #include <protocols/scoring/methods/pcs2/PcsInputCenterManager.hh>
 #include <protocols/scoring/methods/pcs2/PcsTensor.hh>
-#include <protocols/scoring/methods/pcs2/GridSearchIterator.hh>
+// AUTO-REMOVED #include <protocols/scoring/methods/pcs2/GridSearchIterator.hh>
 #include <protocols/scoring/methods/pcs2/GridSearchIteratorCA.hh>
 #include <protocols/scoring/methods/pcs2/TensorsOptimizer.hh>
 #include <protocols/scoring/methods/pcs2/TensorsOptimizerSvd.hh>

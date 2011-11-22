@@ -13,7 +13,7 @@
 /// @author Daniel J. Mandell
 
 // C++ headers
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <cmath>
 // Utility headers
 // AUTO-REMOVED #include <utility/vector1.hh>

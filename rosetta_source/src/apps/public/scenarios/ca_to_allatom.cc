@@ -131,6 +131,8 @@ static basic::Tracer TZ("pilot_apps::ca_to_allatom");
 #include <protocols/rbsegment_moves/RBSegment.hh>
 #include <numeric/xyzVector.io.hh>
 
+//Auto Headers
+#include <core/kinematics/FoldTree.hh>
 
 // add options
 OPT_1GRP_KEY( Real, ca_to_allatom, frag_randomness )

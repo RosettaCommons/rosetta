@@ -28,6 +28,8 @@
 
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/conformation/Conformation.hh>
 
 static basic::Tracer TR("core.scoring.constraints.SiteConstraint");
 

@@ -15,7 +15,7 @@
 #include <core/pack/annealer/FixbbCoupledRotamerSimAnnealer.hh>
 
 // Package Headers
-#include <core/pack/rotamer_set/RotamerSets.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
@@ -42,6 +42,8 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/pack/rotamer_set/FixbbRotamerSets.hh>
 
 using namespace ObjexxFCL;
 static numeric::random::RandomGenerator FBBCRSA_RG(63556); // <- Magic number, do not change it!!!

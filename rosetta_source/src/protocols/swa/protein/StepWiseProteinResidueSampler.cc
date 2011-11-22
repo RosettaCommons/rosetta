@@ -18,7 +18,7 @@
 #include <protocols/swa/protein/StepWiseProteinUtil.hh>
 
 //////////////////////////////////
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/RT.hh>
 #include <core/types.hh>
@@ -30,10 +30,11 @@
 #include <core/pose/Pose.hh>
 
 #include <core/pose/util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.tmpl.hh>
+#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/Ramachandran.hh>
+// AUTO-REMOVED #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/Energies.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
@@ -46,16 +47,26 @@
 #include <protocols/moves/GreenPacker.hh>
 #include <protocols/moves/GreenPacker.fwd.hh>
 
-#include <numeric/angle.functions.hh>
+// AUTO-REMOVED #include <numeric/angle.functions.hh>
 
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
 #include <utility/exit.hh>
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
 
 #include <string>
+
+//Auto Headers
+#include <core/id/TorsionID.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
+//Auto using namespaces
+namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
+//Auto using namespaces end
+
 
 using namespace core;
 using core::Real;

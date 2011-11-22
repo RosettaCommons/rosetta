@@ -25,9 +25,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <iosfwd>
 
-// AUTO-REMOVED #include <basic/OStream.fwd.hh>
 
 
 

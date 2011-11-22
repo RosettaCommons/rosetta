@@ -20,7 +20,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/types.hh>
 #include <utility/vector1.fwd.hh>
-#include <string>
+// AUTO-REMOVED #include <string>
 
 namespace protocols {
 namespace swa {

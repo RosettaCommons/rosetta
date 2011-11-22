@@ -13,16 +13,16 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-#ifndef INCLUDED_protocols_STEPWISE_ROTAMER_GENERATOR_FWD_HH
-#define INCLUDED_protocols_STEPWISE_ROTAMER_GENERATOR_FWD_HH
+#ifndef INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGenerator_FWD_HH
+#define INCLUDED_protocols_swa_rna_StepWiseRNA_RotamerGenerator_FWD_HH
 
 namespace protocols{
 namespace swa{
 namespace rna{
 
-	class StepWiseRNA_RotamerGenerator;
-	typedef utility::pointer::owning_ptr< StepWiseRNA_RotamerGenerator > StepWiseRNA_RotamerGeneratorOP;
-	typedef utility::pointer::owning_ptr< StepWiseRNA_RotamerGenerator const > StepWiseRNA_RotamerGeneratorCOP;
+class StepWiseRNA_RotamerGenerator;
+typedef utility::pointer::owning_ptr< StepWiseRNA_RotamerGenerator > StepWiseRNA_RotamerGeneratorOP;
+typedef utility::pointer::owning_ptr< StepWiseRNA_RotamerGenerator const > StepWiseRNA_RotamerGeneratorCOP;
 
 }
 }

@@ -15,7 +15,6 @@
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 
 // Package headers
-// AUTO-REMOVED #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 
 namespace core {
 namespace pack {

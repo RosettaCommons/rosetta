@@ -56,7 +56,6 @@
 #include <utility/io/ozstream.hh>
 #include <utility/io/util.hh>
 #include <basic/Tracer.hh>
-// Auto-header: duplicate removed #include <basic/options/option.hh>
 
 
 //// C++ headers

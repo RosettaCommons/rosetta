@@ -15,7 +15,7 @@
 
 // unit headers
 #include <protocols/forge/remodel/RemodelDesignMover.hh>
-#include <protocols/forge/remodel/RemodelMover.hh>
+// AUTO-REMOVED #include <protocols/forge/remodel/RemodelMover.hh>
 #include <protocols/forge/methods/util.hh>
 
 // package headers
@@ -29,7 +29,7 @@
 #include <core/conformation/util.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <basic/options/option.hh>

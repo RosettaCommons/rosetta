@@ -29,8 +29,6 @@
 
 
 // Utility headers
-// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 // C++
 

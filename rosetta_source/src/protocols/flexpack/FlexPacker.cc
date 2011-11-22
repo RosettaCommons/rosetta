@@ -36,7 +36,6 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-// Auto-header: duplicate removed #include <core/fragment/Frame.hh>
 
 // tracer
 #include <basic/Tracer.hh>

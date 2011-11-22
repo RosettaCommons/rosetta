@@ -25,12 +25,12 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/AtomType.hh>  // for is_virtual()
-#include <core/chemical/util.hh>  // for is_virtual()
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>  // for is_virtual()
+// AUTO-REMOVED #include <core/chemical/util.hh>  // for is_virtual()
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AA.hh>
 #include <core/id/DOF_ID.hh>
-#include <core/id/TorsionID.hh>
+// AUTO-REMOVED #include <core/id/TorsionID.hh>
 
 #include <core/scoring/PeptideBondedEnergyContainer.hh>
 #include <core/scoring/Energies.hh>

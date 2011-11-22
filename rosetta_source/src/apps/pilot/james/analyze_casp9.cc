@@ -16,9 +16,9 @@
 #include <core/pose/Pose.hh>
 
 #include <basic/options/option.hh>
-#include <basic/database/open.hh>
+// AUTO-REMOVED #include <basic/database/open.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
@@ -43,8 +43,6 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
-
-
 char
 torsion2big_bin(
 	float const phi,

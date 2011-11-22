@@ -32,8 +32,10 @@
 // C++ headers
 #include <algorithm>
 #include <ostream>
-#include <functional>
+// AUTO-REMOVED #include <functional>
 
+//Auto Headers
+#include <utility/vector1.hh>
 ///////////////////////////////////////////////////////////////////////////////
 namespace protocols {
 namespace loops {

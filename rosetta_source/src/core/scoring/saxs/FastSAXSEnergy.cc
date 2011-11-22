@@ -15,7 +15,7 @@
 #include <core/scoring/saxs/FastSAXSEnergy.hh>
 
 // Unit headers
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
@@ -42,7 +42,7 @@
 // AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
-#include <basic/datacache/BasicDataCache.hh>
+// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
 // AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
 
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
@@ -64,8 +64,9 @@
 
 #include <core/scoring/saxs/FastSAXSEnergyCreator.hh>
 #include <utility/vector1.hh>
-//#include <core/import_pose/import_pose.hh>
 
+//Auto Headers
+//#include <core/import_pose/import_pose.hh>
 namespace core {
 namespace scoring {
 namespace saxs {

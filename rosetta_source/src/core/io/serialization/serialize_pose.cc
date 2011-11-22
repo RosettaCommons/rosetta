@@ -31,7 +31,8 @@
 #include <utility/vector1.hh>
 #include <sstream>
 
-
+//Auto Headers
+#include <core/kinematics/FoldTree.hh>
 
 #define THROW_EXCEPTION(X) {std::cerr << "OVERFLOW ERROR: " <<  X;return;}
 

@@ -26,7 +26,6 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
 
 

@@ -46,6 +46,8 @@
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/sequence/DerivedSequenceMapping.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 namespace core {
 namespace sequence {
 

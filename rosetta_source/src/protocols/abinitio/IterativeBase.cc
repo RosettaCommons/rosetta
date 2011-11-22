@@ -24,7 +24,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -100,7 +100,6 @@
 // Utility headers
 #include <basic/options/option_macros.hh>
 #include <numeric/random/random_permutation.hh>
-// Auto-header: duplicate removed #include <numeric/random/random.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>

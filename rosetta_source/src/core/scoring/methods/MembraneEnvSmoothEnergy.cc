@@ -20,7 +20,7 @@
 #include <core/chemical/AA.hh>
 #include <core/conformation/Atom.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/TwelveANeighborGraph.hh>
 #include <core/scoring/ContextGraphTypes.hh>
 #include <core/scoring/MembranePotential.hh>

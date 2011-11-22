@@ -34,7 +34,6 @@
 //#include <basic/options/option.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <fstream>
 
 // option key includes
 

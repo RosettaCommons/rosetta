@@ -20,6 +20,8 @@
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 
+//Auto Headers
+#include <utility/vector1.hh>
 
 using namespace core;
 

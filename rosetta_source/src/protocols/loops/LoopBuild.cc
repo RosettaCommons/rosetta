@@ -72,7 +72,6 @@
 // AUTO-REMOVED #include <core/kinematics/visualize.hh>
 
 #include <core/fragment/FragSet.hh>
-// Auto-header: duplicate removed #include <core/fragment/ConstantLengthFragSet.hh>
 // AUTO-REMOVED #include <protocols/abinitio/AbrelaxApplication.hh>
 // AUTO-REMOVED #include <protocols/abinitio/ClassicAbinitio.hh>
 #include <utility/exit.hh>
@@ -81,7 +80,6 @@
 #include <core/scoring/electron_density/util.hh>
 
 #include <protocols/evaluation/PoseEvaluator.hh>
-// Auto-header: duplicate removed #include <protocols/evaluation/RmsdEvaluator.hh>
 #include <protocols/evaluation/util.hh>
 
 // AUTO-REMOVED #include <protocols/checkpoint/CheckPointer.hh>
@@ -99,7 +97,6 @@
 #endif
 
 //silly using/typedef
-// Auto-header: duplicate removed #include <basic/Tracer.hh>
 
 // option key includes
 

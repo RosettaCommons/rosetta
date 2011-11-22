@@ -24,7 +24,6 @@
 #include <apps/benchmark/benchmark.hh>
 #include <apps/benchmark/init_util.hh>
 
-// Auto-header: duplicate removed #include <core/pose/Pose.hh>
 
 #include <utility/vector1.hh>
 

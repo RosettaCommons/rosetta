@@ -14,9 +14,9 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <basic/options/util.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <basic/Tracer.hh>
-#include <protocols/viewer/viewers.hh>
+// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -85,6 +85,8 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/vector0.hh>
 
+//Auto Headers
+#include <protocols/viewer/GraphicsState.hh>
 
 
 

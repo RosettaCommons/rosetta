@@ -20,7 +20,43 @@
 // AUTO-REMOVED #include <basic/Tracer.hh>
 
 //Auto Headers
+#include <platform/types.hh>
+#include <core/types.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <protocols/filters/Filter.fwd.hh>
+#include <protocols/jobdist/Jobs.fwd.hh>
+#include <protocols/moves/DataMap.fwd.hh>
+#include <protocols/moves/Mover.fwd.hh>
+#include <protocols/moves/Mover.hh>
+#include <protocols/moves/MoverStatus.hh>
+#include <protocols/moves/ScoreMover.fwd.hh>
+#include <utility/down_cast.hh>
+#include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
+#include <utility/vector1_bool.hh>
+#include <utility/vectorL.fwd.hh>
+#include <utility/vectorL.hh>
+#include <utility/vectorL_Selector.hh>
+#include <utility/vectorL_bool.hh>
+#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/access_ptr.fwd.hh>
+#include <utility/pointer/access_ptr.hh>
+#include <utility/pointer/owning_ptr.functions.hh>
+#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <numeric/xyzVector.fwd.hh>
+#include <algorithm>
+#include <cassert>
+#include <cstddef>
+#include <iosfwd>
+#include <limits>
+#include <list>
+#include <map>
+#include <string>
+#include <vector>
 
 
 using namespace core;

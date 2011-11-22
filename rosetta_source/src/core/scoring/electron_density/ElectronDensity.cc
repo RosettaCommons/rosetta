@@ -61,6 +61,8 @@
 #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/scoring/EnergyGraph.hh>
 #ifndef WIN32
 	#include <pthread.h>
 #endif

@@ -28,7 +28,6 @@
 
 
 // C++ headers
-// AUTO-REMOVED #include <set>
 
 
 namespace core {

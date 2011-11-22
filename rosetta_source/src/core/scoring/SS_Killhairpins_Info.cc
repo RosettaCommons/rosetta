@@ -16,13 +16,13 @@
 #include <core/scoring/SS_Killhairpins_Info.hh>
 
 /// Package headers
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <ObjexxFCL/format.hh>
 
 // Numeric Headers
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 
 // utility headers
 #include <basic/Tracer.hh>
@@ -42,6 +42,8 @@
 
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <numeric/random/random.fwd.hh>
 
 namespace core {
 namespace scoring {

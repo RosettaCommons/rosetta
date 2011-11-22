@@ -16,8 +16,8 @@
 
 // Rosetta Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/BasicDataCache.hh>
+// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
+// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
 
 #include <core/types.hh>
 
@@ -44,8 +44,8 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/random/random.hh>
 #include <numeric/conversions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
+//Auto Headers
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
 //Auto using namespaces end

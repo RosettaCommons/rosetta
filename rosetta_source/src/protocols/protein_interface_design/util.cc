@@ -21,13 +21,13 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBPoseMap.hh>
-#include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDBPoseMap.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/XYZ_Func.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

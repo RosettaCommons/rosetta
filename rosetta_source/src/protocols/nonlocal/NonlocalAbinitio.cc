@@ -22,22 +22,22 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
-#include <basic/options/keys/cm.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/nonlocal.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // Project headers
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FragSet.hh>
-#include <core/fragment/util.hh>
+// AUTO-REMOVED #include <core/fragment/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 // AUTO-REMOVED #include <core/sequence/util.hh>
@@ -57,6 +57,12 @@
 #include <protocols/nonlocal/util.hh>
 
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/chemical/ChemicalManager.fwd.hh>
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/Jump.hh>
+
 
 
 namespace protocols {

@@ -36,7 +36,7 @@
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/util.hh>
+// AUTO-REMOVED #include <core/kinematics/util.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
@@ -69,7 +69,7 @@
 #include <protocols/toolbox/pose_metric_calculators/InterfaceSasaDefinitionCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
+// AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 #include <protocols/moves/InterfaceAnalyzerMover.hh>
 
 // Numeric Headers
@@ -96,6 +96,8 @@
 
 #include <utility/vector0.hh>
 
+//Auto Headers
+#include <core/kinematics/AtomTree.hh>
 
 //local options
 basic::options::FileOptionKey const UBQpdb("UBQpdb");

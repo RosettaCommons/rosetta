@@ -16,7 +16,7 @@
 
 // Project Headers
 #include <basic/Tracer.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>

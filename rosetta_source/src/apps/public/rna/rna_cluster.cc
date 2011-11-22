@@ -13,7 +13,7 @@
 
 // libRosetta headers
 #include <core/types.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/sequence/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
@@ -36,6 +36,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 
+//Auto Headers
+#include <core/chemical/ResidueType.hh>
 
 using namespace protocols;
 using namespace core;

@@ -63,6 +63,8 @@
 #include <limits>
 #include <string>
 
+//Auto Headers
+#include <execinfo.h>
 
 
 // util_interpolate Function Declarations

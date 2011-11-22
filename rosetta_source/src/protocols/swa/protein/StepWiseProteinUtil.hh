@@ -21,10 +21,13 @@
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
-#include <core/io/silent/SilentFileData.hh> // needed for default initialization of SilentFileDataOP
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh> // needed for default initialization of SilentFileDataOP
 #include <core/types.hh>
 #include <core/fragment/ConstantLengthFragSet.fwd.hh>
-#include <string>
+// AUTO-REMOVED #include <string>
+
+//Auto Headers
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace swa {

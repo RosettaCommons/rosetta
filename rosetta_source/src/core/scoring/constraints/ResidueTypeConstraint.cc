@@ -30,6 +30,11 @@
 #include <core/scoring/constraints/XYZ_Func.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/id/AtomID.hh>
+#include <core/pose/Pose.hh>
+
+
 
 namespace core {
 namespace scoring {

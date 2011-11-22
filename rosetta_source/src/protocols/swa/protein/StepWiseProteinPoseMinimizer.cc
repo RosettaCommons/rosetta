@@ -28,8 +28,8 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
-#include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
@@ -39,11 +39,13 @@
 #include <ObjexxFCL/format.hh>
 
 //#include <utility/basic_sys_util.hh>
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
 
 
 #include <string>
 
+//Auto Headers
+#include <utility/vector1.hh>
 using namespace core;
 using core::Real;
 using ObjexxFCL::fmt::F;

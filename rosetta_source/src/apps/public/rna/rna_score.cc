@@ -13,7 +13,7 @@
 
 // libRosetta headers
 #include <core/types.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -21,13 +21,13 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
 #include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
+// AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <protocols/viewer/viewers.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <devel/init.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>

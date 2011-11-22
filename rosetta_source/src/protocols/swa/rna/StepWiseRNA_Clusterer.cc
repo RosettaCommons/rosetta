@@ -23,7 +23,7 @@
 //#include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.tmpl.hh>
 
 
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
@@ -36,26 +36,30 @@
 #include <basic/Tracer.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/BinaryRNASilentStruct.hh>
 
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/AtomType.hh> //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType Oct 14, 2009
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh> //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType Oct 14, 2009
 
-#include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/string.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/exit.hh>
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
 
 #include <string>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <map>
 #include <core/io/pdb/pose_io.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
+
+//Auto Headers
+#include <core/scoring/rms_util.hh>
+#include <utility/vector1.hh>
+
 //#include <utility/io/ozstream.hh>
 //#include <utility/io/izstream.hh>
 //#include <basic/basic.hh>

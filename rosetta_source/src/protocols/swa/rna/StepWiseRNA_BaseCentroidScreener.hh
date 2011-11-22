@@ -30,7 +30,10 @@
 
 
 #include <string>
-#include <map>
+
+//Auto Headers
+// APL -- needed? #include <map>
+
 
 namespace protocols {
 namespace swa {

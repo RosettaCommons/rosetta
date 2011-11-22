@@ -25,18 +25,16 @@
 #include <core/id/DOF_ID.hh>
 #include <core/sequence/SequenceAlignment.hh>
 #include <protocols/comparative_modeling/util.hh>
-#include <core/kinematics/Exceptions.hh>
+// AUTO-REMOVED #include <core/kinematics/Exceptions.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/ThreadingJob.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/import_pose/import_pose.hh>
 #include <basic/options/option.hh>
-// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-// Auto-header: duplicate removed #include <basic/options/option.hh>
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
@@ -51,6 +49,12 @@
 
 #include <protocols/jd2/Job.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/tree/Atom.hh>
+
 
 
 static basic::Tracer tr("protocols.topo_broker", basic::t_info);

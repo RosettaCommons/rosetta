@@ -18,12 +18,12 @@
 #include <protocols/moves/MetricRecorderCreator.hh>
 
 // Other project headers or inline function headers
-#include <core/io/raw_data/ScoreStruct.hh>
+// AUTO-REMOVED #include <core/io/raw_data/ScoreStruct.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <protocols/moves/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/ThermodynamicMover.hh>  // required for Windows build
+// AUTO-REMOVED #include <protocols/moves/ThermodynamicMover.hh>  // required for Windows build
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/tag/Tag.hh>
 

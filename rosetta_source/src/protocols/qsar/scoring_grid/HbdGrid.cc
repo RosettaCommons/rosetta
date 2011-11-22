@@ -12,7 +12,7 @@
 
 #include <protocols/qsar/scoring_grid/HbdGrid.hh>
 #include <protocols/qsar/scoring_grid/HbdGridCreator.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AtomType.hh>
 #include <utility/tag/Tag.hh>

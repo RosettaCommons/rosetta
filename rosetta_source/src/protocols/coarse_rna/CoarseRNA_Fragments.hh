@@ -15,7 +15,7 @@
 
 #include <protocols/rna/RNA_Fragments.hh>
 #include <protocols/rna/AllowInsert.fwd.hh>
-#include <protocols/rna/RNA_MatchType.hh>
+// AUTO-REMOVED #include <protocols/rna/RNA_MatchType.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/MiniPose.hh>
 #include <core/types.hh>

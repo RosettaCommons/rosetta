@@ -10,17 +10,17 @@
 /// @brief ???
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/match.OptionKeys.gen.hh>
-#include <basic/options/keys/willmatch.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/willmatch.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/init.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -30,16 +30,16 @@
 #include <core/pack/packer_neighbors.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
-#include <core/pack/optimizeH.hh>
-#include <core/pack/dunbrack/RotamerLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
+// AUTO-REMOVED #include <core/pack/optimizeH.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/symmetry/util.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
@@ -48,7 +48,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-#include <core/scoring/constraints/DihedralConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
@@ -62,10 +62,10 @@
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/kinematic_closure/bridgeObjects.hh>
-#include <protocols/moves/kinematic_closure/kinematic_closure_helpers.hh>
+// AUTO-REMOVED #include <protocols/moves/kinematic_closure/kinematic_closure_helpers.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
 
 
 
@@ -73,10 +73,49 @@
 // #include <devel/init.hh>
 
 // #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
-#include <apps/pilot/will/will_util.ihh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <platform/types.hh>
+#include <core/pose/util.tmpl.hh>
+#include <apps/pilot/will/will_util.ihh>
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <complex>
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+#include <execinfo.h>
+#include <fstream>
+#include <iomanip>
+#include <iosfwd>
+#include <iostream>
+#include <istream>
+#include <limits>
+#include <list>
+#include <map>
+#include <ostream>
+#include <set>
+#include <string>
+#include <typeinfo>
+#include <utility>
+#include <vector>
+#include <boost/algorithm/string/erase.hpp>
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+#include <boost/functional/hash.hpp>
+#include <boost/unordered/unordered_map.hpp>
+#include <zlib/zlib.h>
+#include <zlib/zutil.h>
+
+//Auto using namespaces
+namespace std { } using namespace std; // AUTO USING NS
+namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
+namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+//Auto using namespaces end
 
 
 using core::Real;

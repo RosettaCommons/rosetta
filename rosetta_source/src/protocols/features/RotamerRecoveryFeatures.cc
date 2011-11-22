@@ -19,8 +19,8 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pack/task/operation/TaskOperationFactory.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/rotamer_recovery/RotamerRecovery.hh>
@@ -46,6 +46,11 @@
 
 #include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
+
+//Auto Headers
+#include <core/pack/task/operation/TaskOperations.fwd.hh>
+#include <protocols/rotamer_recovery/RRComparer.hh>
+
 
 
 namespace protocols{

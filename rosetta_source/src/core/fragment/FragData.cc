@@ -34,7 +34,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <utility/assert.hh>
 
 namespace core {
 namespace fragment {

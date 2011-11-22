@@ -41,17 +41,16 @@
 #include <string>
 // AUTO-REMOVED #include <cmath>
 
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 
 #ifdef WIN32
 #include <direct.h>
 #else
 #include <dirent.h>
 #include <sys/stat.h>
-// AUTO-REMOVED #include <sys/timeb.h>
-#endif
-// AUTO-REMOVED #include <stdio.h> // BR 11/2010: required for sprintf in some systems. The actual solution would be to remove sprintf and use streaming instead
 
+//Auto Headers
+#endif
 static basic::Tracer tr("protocols.sparta");
 
 namespace protocols {

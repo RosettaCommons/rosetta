@@ -64,8 +64,8 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
-#include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
 
 
 static basic::Tracer tr("protocols.features.FeaturesReporterTests.cxxtest");

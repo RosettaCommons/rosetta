@@ -20,7 +20,7 @@
 #include <core/pose/datacache/cacheable_observers.hh>
 #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <core/pose/PDBInfo.hh>
 

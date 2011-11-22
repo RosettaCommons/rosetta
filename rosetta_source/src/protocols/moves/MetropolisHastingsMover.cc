@@ -19,7 +19,7 @@
 
 // protocols headers
 #include <protocols/moves/BackrubMover.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
@@ -33,7 +33,7 @@
 
 // core headers
 #include <core/kinematics/MoveMap.hh>
-#include <basic/options/option_macros.hh>
+// AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -55,6 +55,8 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <basic/options/option.hh>
 
 // C++ Headers
 

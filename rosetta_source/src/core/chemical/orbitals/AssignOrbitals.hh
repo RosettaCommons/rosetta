@@ -13,7 +13,10 @@
 #include <numeric/xyzVector.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <utility/vector1.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
+
+//Auto Headers
+#include <core/chemical/AtomType.fwd.hh>
 
 
 namespace core{

@@ -18,12 +18,12 @@
 #define INCLUDED_protocols_determinants_HH
 
 #include <core/types.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.fwd.hh>
 #include <utility/vector1.hh>
-#include <numeric/xyzMatrix.hh>
-#include <numeric/xyzVector.hh>
-#include <string>
-#include <map>
+// AUTO-REMOVED #include <numeric/xyzMatrix.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.hh>
+// AUTO-REMOVED #include <string>
+// AUTO-REMOVED #include <map>
 
 using namespace core;
 

@@ -16,7 +16,7 @@
 #include <protocols/enzdes/EnzdesFlexBBProtocol.hh>
 #include <protocols/enzdes/EnzdesCacheableObserver.hh>
 #include <protocols/enzdes/EnzdesLoopsFile.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
+// AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/enzdes/enzdes_util.hh>
 #include <protocols/flexpack/rotamer_set/FlexbbRotamerSets.hh>
 #include <protocols/flexpack/FlexPacker.hh>

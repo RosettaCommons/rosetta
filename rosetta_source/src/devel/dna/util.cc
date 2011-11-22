@@ -76,6 +76,8 @@ typedef numeric::xyzVector< core::Real > xyzVec;
 #include <numeric/random/random.fwd.hh>
 #include <ObjexxFCL/format.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 
 using namespace core;
 using namespace conformation;

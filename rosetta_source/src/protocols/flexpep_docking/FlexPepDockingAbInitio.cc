@@ -24,11 +24,11 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/util.hh>
+// AUTO-REMOVED #include <core/conformation/util.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/fragment/FragmentIO.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/fragment/FragmentIO.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
@@ -52,7 +52,7 @@
 #include <protocols/moves/TrialMover.hh>
 #include <utility/exit.hh>
 #include <string>
-#include <cstdio>
+// AUTO-REMOVED #include <cstdio>
 #include  <math.h>
 
 #include <utility/vector0.hh>

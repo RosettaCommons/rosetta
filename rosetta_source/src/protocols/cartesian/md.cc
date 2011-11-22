@@ -29,7 +29,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
-#include <core/kinematics/AtomTree.hh>
+// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
 // AUTO-REMOVED #include <core/kinematics/DomainMap.hh>
 
 // Project headers
@@ -44,9 +44,8 @@
 // AUTO-REMOVED #include <core/io/pdb/file_data.hh>
 
 // // ObjexxFCL headers
-#include <ObjexxFCL/FArray2D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/string.functions.hh>
-// Auto-header: duplicate removed #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
 
 // // Numeric headers

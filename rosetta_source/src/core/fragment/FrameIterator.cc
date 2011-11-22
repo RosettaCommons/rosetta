@@ -33,7 +33,6 @@
 
 
 // std Headers
-// AUTO-REMOVED #include <iterator>
 
 /*
 Might change the FrameIterator to return FrameOP instead of Frame&...

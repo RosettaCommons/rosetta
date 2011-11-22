@@ -19,7 +19,7 @@
 #include <protocols/relax/MiniRelax.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/scoring/MembraneTopology.hh> //pba
 #include <basic/datacache/BasicDataCache.hh> //pba

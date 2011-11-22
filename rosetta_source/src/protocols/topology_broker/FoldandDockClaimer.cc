@@ -25,7 +25,7 @@
 
 // Utility header
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <numeric/random/random.hh>
 
@@ -39,6 +39,8 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/kinematics/FoldTree.hh>
 
 // Project Headers
 

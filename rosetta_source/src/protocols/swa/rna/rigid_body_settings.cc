@@ -19,18 +19,21 @@
 
 //////////////////////////////////
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <numeric/xyzVector.hh>
+#include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <utility/tools/make_vector1.hh>
 #include <iostream>
-#include <fstream>
+// AUTO-REMOVED #include <fstream>
 #include <sstream>
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
-#include <numeric/xyz.functions.hh>
 
-#include <set>
+// AUTO-REMOVED #include <set>
+
+//Auto Headers
+#include <utility/vector1.hh>
 
 using namespace core;
 

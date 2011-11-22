@@ -34,7 +34,6 @@
 // AUTO-REMOVED #include <basic/options/after_opts.hh>
 // AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
 
-// Auto-header: duplicate removed #include <core/io/pdb/pose_io.hh>
 
 #include <numeric/random/random.hh>
 
@@ -55,9 +54,7 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <sstream>
 
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 numeric::random::RandomGenerator RG(15431); // <- Magic number, do not change it!!!
 

@@ -25,7 +25,6 @@
 #include <utility/vector1.hh>
 
 
-// Auto-header: duplicate removed #include <basic/Tracer.hh>
 
 namespace core {
 namespace io {

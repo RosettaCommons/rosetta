@@ -24,12 +24,12 @@
 
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/util.hh>
+// AUTO-REMOVED #include <core/conformation/util.hh>
 
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 
-#include <core/optimization/AtomTreeMinimizer.hh>
-#include <core/optimization/MinimizerOptions.hh>
+// AUTO-REMOVED #include <core/optimization/AtomTreeMinimizer.hh>
+// AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -49,7 +49,7 @@
 
 // symmetry
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -64,6 +64,9 @@
 
 //Auto Headers
 #include <core/chemical/AtomType.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 
 // // C++ Headers

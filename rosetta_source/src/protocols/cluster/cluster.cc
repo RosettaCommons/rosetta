@@ -12,12 +12,11 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
-// Auto-header: duplicate removed #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>

@@ -18,7 +18,7 @@
 // AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 // AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/ProteinSilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 // AUTO-REMOVED #include <core/pose/util.hh>
@@ -31,7 +31,6 @@
 #include <core/scoring/constraints/util.hh>
 // AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>
-// Auto-header: duplicate removed #include <core/pose/util.hh>
 // AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -48,6 +47,8 @@
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/kinematics/Jump.hh>
 
 
 #if defined(WIN32) || defined(__CYGWIN__)

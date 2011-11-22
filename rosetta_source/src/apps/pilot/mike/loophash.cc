@@ -11,9 +11,9 @@
 /// @file Mike Tyka
 /// @brief
 
-// MPI headers
+//MPI headers typically have to go first
 #ifdef USEMPI
-#include <mpi.h> //keep this first
+#include <mpi.h>
 #endif
 
 // libRosetta headers
@@ -21,7 +21,7 @@
 #include <protocols/frag_picker/VallChunk.hh>
 #include <protocols/frag_picker/VallProvider.hh>
 
-#include <boost/cstdint.hpp>
+// AUTO-REMOVED #include <boost/cstdint.hpp>
 #include <boost/unordered_map.hpp>
 #include <core/chemical/ResidueTypeSet.hh>
 
@@ -94,7 +94,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <protocols/jobdist/Jobs.hh>
+// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
 #include <utility/vector1.hh>
 #include <utility/excn/EXCN_Base.hh>
 

@@ -38,9 +38,8 @@
 #include <boost/unordered_map.hpp>
 
 #include <algorithm> // std::copy
-// AUTO-REMOVED #include <iostream>
-// AUTO-REMOVED #include <set>
 
+//Auto Headers
 namespace protocols {
 namespace genetic_algorithm {
 

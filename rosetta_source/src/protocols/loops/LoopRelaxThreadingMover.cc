@@ -17,11 +17,11 @@
 #include <protocols/loops/LoopRelaxThreadingMover.hh>
 
 #include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/electron_density/util.hh>
+// AUTO-REMOVED #include <protocols/electron_density/util.hh>
 
 #include <core/fragment/FragSet.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>

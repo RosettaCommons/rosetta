@@ -36,7 +36,7 @@
 #include <utility/tag/Tag.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <protocols/hotspot_hashing/HotspotStubSet.hh> /// <--- you gotta go
+// AUTO-REMOVED #include <protocols/hotspot_hashing/HotspotStubSet.hh> /// <--- you gotta go
 #include <protocols/hotspot_hashing/HotspotStub.hh> /// <--- you gotta go
 //#include <protocols/forge/build/BuildInstruction.hh>
 //#include <protocols/flxbb/FlxbbDesign.hh>
@@ -46,7 +46,7 @@
 //#include <protocols/moves/ConstraintSetMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverFactory.hh>
-#include <protocols/moves/StructureRestrictor.hh>
+// AUTO-REMOVED #include <protocols/moves/StructureRestrictor.hh>
 #include <protocols/moves/ParsedProtocol.hh>
 #include <protocols/moves/NullMover.hh>
 /// #include <protocols/protein_interface_design/movers/SetupHotspotConstraintsMover.hh>
@@ -70,7 +70,7 @@
 //#include <protocols/enzdes/EnzFilters.hh>
 
 // constraint types
-#include <core/scoring/constraints/ConstraintIO.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <protocols/constraints_additional/SequenceProfileConstraint.hh> /// <--- you gotta go
 #include <core/sequence/SequenceProfile.hh> // to pass NULL pointer for constraint prototype
 #include <core/pack/dunbrack/RotamerConstraint.hh>

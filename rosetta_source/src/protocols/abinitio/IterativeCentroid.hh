@@ -54,8 +54,9 @@
 //#include <string>
 
 #include <utility/vector1.hh>
-//#include <core/scoring/constraints/Constraint.hh>
 
+//Auto Headers
+//#include <core/scoring/constraints/Constraint.hh>
 
 
 namespace protocols {

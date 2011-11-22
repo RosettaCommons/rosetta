@@ -13,14 +13,14 @@
 
 // Unit headers
 #include <protocols/viewer/viewers.hh>
-#include <protocols/viewer/triangleIterator.hh>
-#include <protocols/viewer/ConformationViewer.hh>
-#include <protocols/viewer/ConformationViewer.fwd.hh>
+// AUTO-REMOVED #include <protocols/viewer/triangleIterator.hh>
+// AUTO-REMOVED #include <protocols/viewer/ConformationViewer.hh>
+// AUTO-REMOVED #include <protocols/viewer/ConformationViewer.fwd.hh>
 
 #include <protocols/viewer/SilentObserver.hh>
 #include <protocols/viewer/SilentObserver.fwd.hh>
 #include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
 
 // Package headers
 #include <protocols/moves/MonteCarlo.hh>
@@ -29,15 +29,15 @@
 
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 
-#include <core/scoring/electron_density/ElectronDensity.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <core/scoring/electron_density/ElectronDensity.hh>
+// AUTO-REMOVED #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 // Project headers
-#include <ObjexxFCL/string.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 #ifdef GL_GRAPHICS
 #include <protocols/viewer/triangleIterator.hh> //should not be auto-removed!! needed for graphics!
@@ -49,7 +49,8 @@
 #include <core/chemical/AtomTypeSet.hh>
 #endif
 
-// C++ Headers
+// Utility headers
+#include <utility/vector1.hh>
 
 // GLUT
 #if defined GL_GRAPHICS || defined BOINC_GRAPHICS
@@ -59,7 +60,8 @@
 #elif _WIN32
 #include <glut/glut.h>
 #else
-#include "GL/glut.h"
+// AUTO-REMOVED #include "GL/glut.h"
+
 
 #endif
 

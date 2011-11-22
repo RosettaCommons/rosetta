@@ -27,11 +27,6 @@
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
 
-#include <string>
-#include <map>
-
-
-
 #ifdef WIN32
 	#include <core/id/TorsionID.hh>
 #endif

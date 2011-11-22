@@ -17,7 +17,7 @@
 #include <core/io/silent/SilentFileData.hh>
 // AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -25,7 +25,6 @@
 // AUTO-REMOVED #include <core/io/raw_data/DisulfideFile.hh>
 // AUTO-REMOVED #include <core/scoring/ResidualDipolarCoupling.hh>
 
-// Auto-header: duplicate removed #include <core/pose/Pose.hh>
 
 
 // AUTO-REMOVED #include <basic/prof.hh>
@@ -57,6 +56,11 @@ using basic::mem_tr;
 
 #include <utility/vector1.hh>
 #include <boost/algorithm/string/erase.hpp>
+
+//Auto Headers
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/Jump.hh>
+
 
 //
 OPT_1GRP_KEY( Integer, iterative, pool_size )

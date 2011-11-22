@@ -13,10 +13,10 @@
 #include <protocols/toolbox/task_operations/DesignAroundOperation.hh>
 #include <core/pose/PDBInfo.hh>
 #include <fstream>
-#include <utility/file/FileName.hh>
+// AUTO-REMOVED #include <utility/file/FileName.hh>
 #include <iostream>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/option_macros.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/option_macros.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
@@ -34,7 +34,6 @@
 #include <core/chemical/ResidueType.hh>
 #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
-// Auto-header: duplicate removed #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/jd2/util.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
@@ -44,6 +43,8 @@
 #include <protocols/jd2/Job.hh>
 #include <utility/vector0.hh>
 
+//Auto Headers
+#include <basic/options/keys/OptionKeys.hh>
 
 namespace protocols {
 namespace protein_interface_design{

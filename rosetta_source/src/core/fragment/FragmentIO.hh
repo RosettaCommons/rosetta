@@ -28,8 +28,8 @@
 // C/C++
 // AUTO-REMOVED #include <iostream>
 #include <map>
-// AUTO-REMOVED #include <string>
 
+//Auto Headers
 namespace core {
 namespace fragment {
 

@@ -21,7 +21,7 @@
 #include <core/scoring/MembraneTopology.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/Energies.hh> //pba
+// AUTO-REMOVED #include <core/scoring/Energies.hh> //pba
 #include <core/scoring/methods/EnergyMethodOptions.hh> //pba
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/etable/Etable.hh>

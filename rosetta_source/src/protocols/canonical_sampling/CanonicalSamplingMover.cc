@@ -1,6 +1,6 @@
 #include <protocols/canonical_sampling/CanonicalSamplingMover.hh>
-#include <protocols/moves/SidechainMover.hh>
-#include <protocols/moves/SidechainMover.fwd.hh>
+// AUTO-REMOVED #include <protocols/moves/SidechainMover.hh>
+// AUTO-REMOVED #include <protocols/moves/SidechainMover.fwd.hh>
 #include <protocols/jd2/util.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -16,9 +16,11 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/mc_convergence_checks/Pool_ConvergenceCheck.hh>
+#ifdef USEMPI
 #include <protocols/moves/mc_convergence_checks/MPIBPool_ConvergenceCheck.hh>
 #include <protocols/moves/mc_convergence_checks/MPIHPool_ConvergenceCheck.hh>
 #include <protocols/moves/mc_convergence_checks/MPIPool_ConvergenceCheck.hh>
+#endif
 #include <protocols/moves/mc_convergence_checks/HPool.hh>
 #include <protocols/moves/mc_convergence_checks/HierarchicalLevel.hh>
 
@@ -30,7 +32,7 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/mc.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <basic/options/keys/canonical_sampling.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
@@ -38,9 +40,9 @@
 #include <utility/file/PathName.hh>
 #include <utility/file/gzip_util.hh>
 
-#include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
+// AUTO-REMOVED #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
 #include <core/scoring/methods/RG_Energy_Fast.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
@@ -66,6 +68,9 @@
 #include <protocols/jd2/Job.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/pack/task/PackerTask.fwd.hh>
 
 
 // REQUIRED FOR WINDOWS

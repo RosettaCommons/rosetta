@@ -49,7 +49,7 @@
 
 // C++ headers
 #include <sstream>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 
 #include <utility/vector1.hh>
 

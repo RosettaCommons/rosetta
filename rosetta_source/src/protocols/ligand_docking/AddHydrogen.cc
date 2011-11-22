@@ -13,14 +13,14 @@
 /// @Gordon Lemmon
 
 #include <protocols/ligand_docking/AddHydrogen.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 
 
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/moves/MinMover.hh>
 // AUTO-REMOVED #include <protocols/jd2/Job.hh>
 
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.hh>
 
 // AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
@@ -33,11 +33,11 @@
 
 #include <core/types.hh>
 // AUTO-REMOVED #include <basic/prof.hh>
-#include <core/scoring/ScoreType.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreType.hh>
 
 #include <basic/Tracer.hh>
 
-#include <ObjexxFCL/FArray1D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
@@ -59,6 +59,12 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <numeric/random/random.hh>
+
+//Auto Headers
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/Jump.hh>
+#include <core/pose/Pose.hh>
+
 
 namespace protocols {
 namespace ligand_docking {

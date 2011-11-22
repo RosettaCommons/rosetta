@@ -22,7 +22,7 @@
 // Utility headers
 //#include <core/util/Tracer.hh>
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 #include <basic/MetricValue.hh>
 
 

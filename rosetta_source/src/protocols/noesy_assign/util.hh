@@ -31,13 +31,9 @@
 // Utility headers
 // AUTO-REMOVED #include <utility/exit.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/pointer/ReferenceCount.hh>
 
+//Auto Headers
 //// C++ headers
-// AUTO-REMOVED #include <cstdlib>
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <list>
-// AUTO-REMOVED #include <map>
 
 namespace protocols {
 namespace noesy_assign {

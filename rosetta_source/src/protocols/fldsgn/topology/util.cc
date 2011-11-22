@@ -28,7 +28,7 @@
 #include <core/scoring/sasa.hh>
 
 // utility headers
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 #include <utility/exit.hh>
 
 // C++ headers
@@ -41,7 +41,8 @@
 
 #include <utility/vector1.hh>
 
-
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 static basic::Tracer TR( "protocols.topology.util" );
 
 using namespace core;

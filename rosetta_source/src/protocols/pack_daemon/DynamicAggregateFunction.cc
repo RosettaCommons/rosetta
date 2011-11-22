@@ -21,14 +21,14 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/Tracer.hh>
 #include <protocols/optimize_weights/Arithmetic.hh>
 #include <protocols/multistate_design/MultiStatePacker.hh>
-#include <protocols/multistate_design/SingleState.hh>  // REQUIRED FOR WINDOWS (APL NOTE: why?)
+// AUTO-REMOVED #include <protocols/multistate_design/SingleState.hh>  // REQUIRED FOR WINDOWS (APL NOTE: why?)
 
 // Utility headers
 #include <utility/exit.hh>

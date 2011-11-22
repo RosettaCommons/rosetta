@@ -14,7 +14,7 @@
 #define INCLUDED_protocols_rotamer_recovery_RotamerRecovery_hh
 
 // Unit Headers
-#include <protocols/moves/Mover.fwd.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/rotamer_recovery/RotamerRecovery.fwd.hh>
 #include <protocols/rotamer_recovery/RRComparer.fwd.hh>
 #include <protocols/rotamer_recovery/RRProtocol.fwd.hh>
@@ -22,7 +22,7 @@
 
 // Project Headers
 #include <core/types.hh>
-#include <core/conformation/Residue.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>

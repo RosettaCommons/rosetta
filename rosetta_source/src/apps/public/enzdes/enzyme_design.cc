@@ -16,7 +16,7 @@
 #include <protocols/enzdes/EnzdesFlexBBProtocol.hh>
 //#include <devel/enzdes/EnzdesRemodelProtocol.hh>
 #include <protocols/enzdes/enzdes_util.hh>
-#include <protocols/enzdes/EnzdesMovers.hh>
+// AUTO-REMOVED #include <protocols/enzdes/EnzdesMovers.hh>
 #include <protocols/enzdes/EnzFilters.hh>
 
 #include <devel/init.hh>

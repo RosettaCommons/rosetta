@@ -32,8 +32,8 @@
 
 // C++ Headers
 #include <set>
-// AUTO-REMOVED #include <string>
 
+//Auto Headers
 #ifdef WIN32
 	#include <protocols/motifs/MotifHit.hh>
 #endif

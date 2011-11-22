@@ -23,19 +23,19 @@
 #include <protocols/wum/MPI_WorkUnitManager.hh>
 #include <protocols/wum/SilentStructStore.hh>
 #include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStructFactory.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <basic/Tracer.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 
-#include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
-#include <core/import_pose/pose_stream/util.hh>
+// AUTO-REMOVED #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
+// AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/wum.OptionKeys.gen.hh>
 /// ObjexxFCL headers

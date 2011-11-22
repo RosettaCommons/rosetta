@@ -28,34 +28,34 @@
 
 //////////////////////////////////
 #include <core/types.hh>
-#include <core/pack/pack_rotamers.hh>
+// AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
+// AUTO-REMOVED #include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
 #include <basic/Tracer.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/BinaryRNASilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/BinaryRNASilentStruct.hh>
 
-#include <core/scoring/EnergyGraph.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 
 #include <core/id/TorsionID.hh>
-#include <core/id/AtomID.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/chemical/VariantType.hh>
-#include <core/chemical/util.hh>
-#include <core/chemical/AtomType.hh> //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType Oct 14, 2009
+// AUTO-REMOVED #include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh> //Need this to prevent the compiling error: invalid use of incomplete type 'const struct core::chemical::AtomType Oct 14, 2009
 #include <protocols/rna/RNA_LoopCloser.hh>
 #include <core/io/pdb/pose_io.hh>
 
@@ -63,20 +63,25 @@
 #include <protocols/moves/GreenPacker.hh>
 #include <protocols/moves/GreenPacker.fwd.hh>
 
+// AUTO-REMOVED #include <numeric/xyz.functions.hh> // APL TEMP
 
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/exit.hh>
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
 
 #include <string>
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include <math.h>
-#include <stdlib.h>
+// AUTO-REMOVED #include <math.h>
+// AUTO-REMOVED #include <stdlib.h>
 
+//Auto Headers
+#include <core/scoring/rms_util.hh>
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
 
 using namespace core;
 using core::Real;

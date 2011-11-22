@@ -28,22 +28,18 @@
 
 // Utility Headers
 #include <core/conformation/Residue.hh>
-// Auto-header: duplicate removed #include <core/init.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/PDBInfo.hh>
-#include <basic/Tracer.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/conformation/Conformation.hh>
 // AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/after_opts.hh>
 
-// Auto-header: duplicate removed #include <basic/options/option_macros.hh>
 #include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
-// Auto-header: duplicate removed #include <numeric/conversions.hh>
 
 #include <utility/vector1.hh>
 // AUTO-REMOVED #include <utility/io/ozstream.hh>

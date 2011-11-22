@@ -17,8 +17,8 @@
 #include <basic/Tracer.hh>
 
 #include <core/chemical/util.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/scoring/rms_util.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 
 #include <basic/options/option.hh>
 
@@ -35,7 +35,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/pose/annotated_sequence.hh>
 
 #include <core/io/silent/SilentStruct.hh>
@@ -68,6 +68,11 @@
 
 #include <core/import_pose/import_pose.hh>
 #include <utility/io/ozstream.hh>
+
+//Auto Headers
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/Jump.hh>
+
 
 std::map< std::string, core::pose::Pose >
 poses_from_cmd_line(

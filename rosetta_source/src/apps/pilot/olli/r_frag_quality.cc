@@ -36,7 +36,7 @@
 
 #include <core/scoring/rms_util.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/pose/Pose.hh>
 #include <devel/init.hh>
@@ -73,6 +73,8 @@
 #include <numeric/xyz.functions.hh>
 #include <ObjexxFCL/format.hh>
 
+//Auto Headers
+#include <core/kinematics/AtomTree.hh>
 
 
 static basic::Tracer tr("main");

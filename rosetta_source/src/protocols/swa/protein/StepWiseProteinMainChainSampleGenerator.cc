@@ -20,6 +20,9 @@
 #include <core/pose/Pose.hh>
 #include <utility/exit.hh>
 
+//Auto Headers
+#include <utility/vector1.hh>
+
 using namespace core;
 
 namespace protocols {

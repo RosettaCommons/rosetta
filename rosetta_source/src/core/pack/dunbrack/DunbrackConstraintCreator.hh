@@ -20,7 +20,6 @@
 #include <core/scoring/constraints/Constraint.fwd.hh>
 
 // c++ headers
-// AUTO-REMOVED #include <string>
 
 namespace core {
 namespace pack {

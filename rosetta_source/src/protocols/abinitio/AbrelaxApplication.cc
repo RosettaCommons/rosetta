@@ -102,8 +102,6 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/util.hh>
-// Auto-header: duplicate removed #include <core/pose/datacache/CacheableDataType.hh>
-// Auto-header: duplicate removed #include <basic/datacache/BasicDataCache.hh>
 #include <basic/MetricValue.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
@@ -155,9 +153,7 @@
 #include <protocols/loops/SlidingWindowLoopClosure.hh>
 #include <protocols/loops/WidthFirstSlidingWindowLoopClosure.hh>
 #include <protocols/loops/FASelectSlidingWindowLoopClosure.hh>
-// Auto-header: duplicate removed #include <protocols/loops/Loops.hh>
 #include <protocols/loops/LoopMover.hh>
-// Auto-header: duplicate removed #include <protocols/loops/util.hh>
 #include <protocols/loops/Exceptions.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/RGFilter.hh>
@@ -200,9 +196,6 @@
 #include <protocols/relax/util.hh>
 #include <utility/vector0.hh>
 #include <ObjexxFCL/format.hh>
-
-//Auto Headers
-
 
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS

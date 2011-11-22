@@ -27,7 +27,7 @@
 #include <protocols/topology_broker/LoopFragmentClaimer.hh>
 #include <protocols/topology_broker/CutBiasClaimer.hh>
 #include <core/fragment/SecondaryStructure.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <basic/options/option.hh>
@@ -50,9 +50,8 @@
 #include <protocols/topology_broker/weights/SmoothFragWeight.hh>
 #include <utility/vector1.hh>
 #include <basic/options/keys/broker.OptionKeys.gen.hh>
-// Auto-header: duplicate removed #include <basic/options/keys/broker.OptionKeys.gen.hh>
-// Auto-header: duplicate removed #include <basic/options/option.hh>
 
+//Auto Headers
 static basic::Tracer tr("protocols.topo_broker",basic::t_info);
 
 namespace protocols {

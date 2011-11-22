@@ -23,7 +23,6 @@
 
 
 // C++ headers
-// AUTO-REMOVED #include <string>
 
 
 namespace core {

@@ -16,7 +16,7 @@
 
 
 // Unit Headers
-#include <protocols/loops/util.hh>
+// AUTO-REMOVED #include <protocols/loops/util.hh>
 
 // Package Headers
 #include <protocols/loops/Loops.hh>
@@ -58,7 +58,6 @@
 
 // AUTO-REMOVED #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/keys/loops.OptionKeys.gen.hh>
-// Auto-header: duplicate removed #include <protocols/loops/loops_main.hh>
 
 // ObjexxFCL Headers
 // AUTO-REMOVED #include <ObjexxFCL/format.hh>

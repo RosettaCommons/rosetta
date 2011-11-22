@@ -14,7 +14,7 @@
 
 #include <protocols/frag_picker/VallChunk.hh>
 #include <protocols/frag_picker/VallResidue.hh>
-#include <protocols/frag_picker/VallProvider.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/VallProvider.hh>
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #ifdef WIN32
 #include <protocols/frag_picker/FragmentPicker.hh>
@@ -37,14 +37,13 @@
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/pose/Pose.hh>
+
 
 // C++
-// AUTO-REMOVED #include <math.h>
-// AUTO-REMOVED #include <stdio.h>
-// AUTO-REMOVED #include <string.h>
 
 // Boost
-// AUTO-REMOVED #include <boost/algorithm/string.hpp>
 
 namespace protocols {
 namespace frag_picker {

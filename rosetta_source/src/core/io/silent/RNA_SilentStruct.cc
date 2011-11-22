@@ -18,7 +18,7 @@
 #include <cstdlib>
 // AUTO-REMOVED #include <fstream>
 #include <iostream>
-#include <utility>
+// AUTO-REMOVED #include <utility>
 #include <vector>
 // AUTO-REMOVED #include <list>
 #include <string>

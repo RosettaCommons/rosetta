@@ -32,7 +32,6 @@
 
 
 // C++ Headers
-// AUTO-REMOVED #include <vector>
 
 
 namespace protocols {

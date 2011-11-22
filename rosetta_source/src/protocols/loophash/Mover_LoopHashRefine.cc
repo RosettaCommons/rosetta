@@ -21,7 +21,7 @@
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/pose/util.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/RT.hh>
@@ -78,7 +78,7 @@
 
 #include <iostream>
 #include <string>
-#include <cstdio>
+// AUTO-REMOVED #include <cstdio>
 
 // option key includes
 // AUTO-REMOVED #include <basic/options/keys/broker.OptionKeys.gen.hh>

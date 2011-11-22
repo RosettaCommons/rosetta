@@ -18,8 +18,8 @@
 
 #include <protocols/scoring/Interface.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/ResfileReader.hh>
@@ -41,8 +41,8 @@
 #include <numeric/random/random.hh>
 #include <basic/options/option.hh>
 
-#include <core/scoring/constraints/HarmonicFunc.hh>
-#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/HarmonicFunc.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <utility/tag/Tag.hh>
 
 // Utility Headers
@@ -69,6 +69,8 @@ using namespace core;
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
+//Auto Headers
+#include <core/kinematics/FoldTree.hh>
 #define foreach BOOST_FOREACH
 
 

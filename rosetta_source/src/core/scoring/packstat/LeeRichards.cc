@@ -31,6 +31,8 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/Fmath.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 //Auto using namespaces end

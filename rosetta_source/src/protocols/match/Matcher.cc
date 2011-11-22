@@ -32,8 +32,8 @@
 #include <protocols/match/downstream/RigidLigandBuilder.hh>
 #include <protocols/match/downstream/SecondaryMatcherToDownstreamResidue.hh>
 #include <protocols/match/downstream/SecondaryMatcherToUpstreamResidue.hh>
-#include <protocols/match/downstream/GeometrySecMatchRPE.hh>
-#include <protocols/match/downstream/ScoringSecMatchRPE.hh>
+// AUTO-REMOVED #include <protocols/match/downstream/GeometrySecMatchRPE.hh>
+// AUTO-REMOVED #include <protocols/match/downstream/ScoringSecMatchRPE.hh>
 #include <protocols/match/downstream/SecMatchEvaluatorFactory.hh>
 
 #include <protocols/match/output/MatchProcessor.hh>
@@ -55,7 +55,7 @@
 
 #include <basic/Tracer.hh>
 
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.hh>
 // AUTO-REMOVED #include <core/pack/dunbrack/SemiRotamericSingleResidueDunbrackLibrary.tmpl.hh>
@@ -77,6 +77,8 @@
 
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <protocols/match/downstream/SecMatchResiduePairEvaluator.hh>
 
 namespace protocols {
 namespace match {

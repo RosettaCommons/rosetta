@@ -16,7 +16,7 @@
 
 // core headers
 #include <core/types.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>

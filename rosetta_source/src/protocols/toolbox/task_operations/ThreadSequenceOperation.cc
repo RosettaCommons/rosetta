@@ -18,7 +18,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 
-#include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 // Utility Headers
@@ -30,7 +30,6 @@
 
 #include <utility/vector0.hh>
 
-// Auto-header: duplicate removed #include <core/pack/task/operation/TaskOperations.hh>
 
 using basic::Error;
 using basic::Warning;

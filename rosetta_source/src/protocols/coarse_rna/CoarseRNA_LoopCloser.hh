@@ -32,7 +32,6 @@
 // AUTO-REMOVED #include <cstdlib>
 #include <string>
 
-// AUTO-REMOVED #include <vector>
 
 namespace protocols {
 namespace coarse_rna {

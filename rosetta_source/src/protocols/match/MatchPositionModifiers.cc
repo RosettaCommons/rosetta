@@ -19,7 +19,7 @@
 #include <protocols/match/MatcherTask.hh>
 
 //project headers
-#include <core/id/AtomID.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <core/id/AtomID.hh> // REQUIRED FOR WINDOWS
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>

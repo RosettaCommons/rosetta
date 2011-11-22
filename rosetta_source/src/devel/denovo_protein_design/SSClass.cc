@@ -25,9 +25,7 @@
 #include <numeric/random/random.fwd.hh>
 #include <basic/Tracer.hh>
 
-// AUTO-REMOVED #include <utility/string_util.hh>
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 namespace devel{
 namespace denovo_protein_design{

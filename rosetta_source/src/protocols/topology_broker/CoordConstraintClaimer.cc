@@ -60,6 +60,8 @@
 #include <core/scoring/constraints/FuncFactory.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <ObjexxFCL/FArray2D.hh>
 
 // option key includes
 

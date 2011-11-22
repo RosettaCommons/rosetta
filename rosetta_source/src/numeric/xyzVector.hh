@@ -2323,5 +2323,4 @@ not_equal_length( xyzVector< T > const & a, xyzVector< T > const & b );
 
 } // namespace numeric
 
-
 #endif // INCLUDED_numeric_xyzVector_HH

@@ -16,7 +16,6 @@
 #include <core/id/TorsionID_Range.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <ostream>
 
 
 namespace core {

@@ -26,7 +26,7 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/scoring/dssp/Dssp.hh>
+// AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/EnergyMap.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>

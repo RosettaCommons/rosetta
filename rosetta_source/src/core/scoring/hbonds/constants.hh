@@ -21,10 +21,8 @@
 #include <core/types.hh>
 
 // Numeric Headers
-// AUTO-REMOVED #include <numeric/constants.hh>
 
 // ObjexxFCL Headers
-// AUTO-REMOVED #include <ObjexxFCL/FArray2D.fwd.hh>
 
 
 

@@ -23,13 +23,13 @@
 #include <numeric/xyzVector.hh>
 #include <core/id/TorsionID.hh>
 #include <core/types.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/io/silent/SilentFileData.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.fwd.hh>
 #include <utility/vector1.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/GreenPacker.fwd.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/moves/GreenPacker.fwd.hh>
 #include <string>
-#include <map>
+// AUTO-REMOVED #include <map>
 
 
 typedef  numeric::xyzMatrix< core::Real > Matrix;

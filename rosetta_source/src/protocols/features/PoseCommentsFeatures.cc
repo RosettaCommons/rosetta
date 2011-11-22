@@ -20,7 +20,7 @@
 // Platform Headers
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 
 // Utility Headers

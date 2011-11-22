@@ -24,7 +24,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/docking/DockingProtocol.hh>
+// AUTO-REMOVED #include <protocols/docking/DockingProtocol.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
@@ -56,6 +56,9 @@
 #include <core/scoring/constraints/Constraint.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/kinematics/FoldTree.hh>
 
 using namespace protocols::protein_interface_design;
 

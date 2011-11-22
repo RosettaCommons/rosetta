@@ -19,14 +19,13 @@
 // Package headers
 
 // Project headers
-#include <protocols/loops/KinematicWrapper.hh>
-#include <protocols/moves/KinematicMover.hh>
+// AUTO-REMOVED #include <protocols/loops/KinematicWrapper.hh>
+// AUTO-REMOVED #include <protocols/moves/KinematicMover.hh>
 #include <protocols/loops/LoopMover_CCD.hh>
-#include <protocols/loops/LoopMover_QuickCCD.hh>
+// AUTO-REMOVED #include <protocols/loops/LoopMover_QuickCCD.hh>
 #include <protocols/loops/LoopMover_KIC.hh>
 #include <protocols/loops/loops_main.hh> // for various loop utility fxns
 #include <protocols/loops/Loops.hh>
-// Auto-header: duplicate removed #include <protocols/loops/LoopMover_KIC.hh>
 
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>

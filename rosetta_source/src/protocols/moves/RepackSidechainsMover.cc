@@ -43,6 +43,8 @@
 #include <utility/options/BooleanVectorOption.hh>
 #include <basic/Tracer.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 
 namespace protocols {
 namespace moves {

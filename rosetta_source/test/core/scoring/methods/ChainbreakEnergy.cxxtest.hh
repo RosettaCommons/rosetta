@@ -25,12 +25,12 @@
 #include <test/util/pdb1ubq.hh>
 #include <test/core/init_util.hh>
 
-#include <core/id/DOF_ID.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID.hh>
 // AUTO-REMOVED #include <core/id/TorsionID.hh>
 #include <core/chemical/VariantType.hh>
 
 #include <core/kinematics/FoldTree.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>

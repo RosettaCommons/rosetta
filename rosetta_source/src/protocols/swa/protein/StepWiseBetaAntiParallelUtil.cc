@@ -18,12 +18,12 @@
 #include <protocols/swa/StepWiseUtil.hh>
 #include <protocols/swa/StepWiseClusterer.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/id/NamedAtomID.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/io/silent/BinaryProteinSilentStruct.hh>
 #include <core/pose/Pose.hh>
 
@@ -36,14 +36,14 @@
 
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/after_opts.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <numeric/xyz.functions.hh>
 
@@ -51,6 +51,11 @@
 
 #include <iostream>
 #include <string>
+
+//Auto Headers
+#include <core/io/silent/SilentFileData.hh>
+#include <utility/vector1.hh>
+
 
 
 using namespace core;

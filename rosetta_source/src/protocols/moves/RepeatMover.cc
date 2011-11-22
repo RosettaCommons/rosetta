@@ -22,7 +22,6 @@
 // Project headers
 
 // tracer
-// AUTO-REMOVED #include <basic/Tracer.hh>
 
 // C++ Headers
 

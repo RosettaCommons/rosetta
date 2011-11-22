@@ -20,7 +20,6 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <basic/options/keys/packstat.OptionKeys.gen.hh>
-// Auto-header: duplicate removed #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
@@ -55,6 +54,8 @@
 #include <numeric/random/random.fwd.hh>
 #include <ObjexxFCL/format.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 //Auto using namespaces end

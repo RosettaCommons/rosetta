@@ -31,12 +31,18 @@
 #include <map>
 #include <core/chemical/AA.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <numeric/angle.functions.hh> // Need this to prevent the compiling error: 'principal_angle_degrees' is not a member of 'numeric' Oct 14, 2009
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <numeric/angle.functions.hh> // Need this to prevent the compiling error: 'principal_angle_degrees' is not a member of 'numeric' Oct 14, 2009
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <set>
+
+//Auto Headers
+#include <core/conformation/Residue.fwd.hh>
+#include <core/id/AtomID.fwd.hh>
+#include <core/id/AtomID_Map.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 
 
 typedef  numeric::xyzMatrix< core::Real > Matrix;

@@ -1,4 +1,4 @@
-#include <protocols/jobdist/standard_mains.hh>
+// AUTO-REMOVED #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/jobdist/not_universal_main.hh>
 #include <protocols/moves/Mover.hh>
 

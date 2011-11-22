@@ -33,8 +33,9 @@
 #include <protocols/docking/DockingHighRes.fwd.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
-// option key includes
 
+//Auto Headers
+// option key includes
 #ifdef WIN32
 	#include <core/pack/task/operation/TaskOperation.hh>
 #endif

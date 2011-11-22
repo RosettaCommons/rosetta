@@ -23,7 +23,7 @@
 #include <protocols/swa/protein/StepWiseProteinUtil.hh>
 
 //////////////////////////////////
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
 //////////////////////////////////////////////
@@ -42,15 +42,15 @@
 
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.hh>
-#include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
-#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
+// AUTO-REMOVED #include <core/import_pose/pose_stream/PoseInputStream.hh>
+// AUTO-REMOVED #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
+// AUTO-REMOVED #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <basic/Tracer.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <basic/database/open.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <basic/database/open.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/scoring/rms_util.tmpl.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.tmpl.hh>
 
 // RNA stuff
 #include <protocols/rna/RNA_ProtocolUtil.hh>
@@ -59,14 +59,19 @@
 
 #include <ObjexxFCL/FArray1D.hh>
 
+
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray2D.hh>
-////////////////////////////////////////
-#include <utility/exit.hh>
-#include <time.h>
 
+
+#include <utility/exit.hh>
+
+// AUTO-REMOVED #include <time.h>
 #include <string>
 
+//Auto Headers
+#include <core/scoring/rms_util.hh>
+#include <utility/vector1.hh>
 using namespace core;
 using core::Real;
 

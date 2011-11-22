@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file /src/apps/pilot/chrisk/rotamer_analysis.cc
-/// @brief  
+/// @brief
 
 //core library
 #include <core/init.hh>
@@ -154,8 +154,8 @@ set_pose_occ_and_bfac(
 		Residue rsd( pose.residue( seqpos ) );
 		for( Size ii = 1; ii <= rsd.natoms(); ++ii ){
 			if( rsd.atom_is_hydrogen( ii ) ) continue;
-			pose.pdb_info()->occupancy( seqpos, ii, native_pose.pdb_info()->occupancy( seqpos, ii ) ); 
-			pose.pdb_info()->temperature( seqpos, ii, native_pose.pdb_info()->temperature( seqpos, ii ) ); 
+			pose.pdb_info()->occupancy( seqpos, ii, native_pose.pdb_info()->occupancy( seqpos, ii ) );
+			pose.pdb_info()->temperature( seqpos, ii, native_pose.pdb_info()->temperature( seqpos, ii ) );
 		}
 	}
 }
@@ -218,7 +218,7 @@ calc_lk_burial_for_single_atom(
 		conformation::Residue const & rsd1,
 		pose::Pose const & pose
 		)
-{ 
+{
 
 
 	PROF_START( util::CALC_LK_BURIAL_FOR_SINGLE_ATOM );
@@ -517,7 +517,7 @@ get_sc_automorphic_rmsd(
 	Residue rsd( pose.residue( seqpos ) );
 	Residue native_rsd( ref_pose.residue( seqpos ) );
 
-	Real sc_rmsd( scoring::automorphic_rmsd( pose.residue( seqpos ), ref_pose.residue( seqpos ), false /*superpose*/ ) );	
+	Real sc_rmsd( scoring::automorphic_rmsd( pose.residue( seqpos ), ref_pose.residue( seqpos ), false /*superpose*/ ) );
 	return sc_rmsd;
 }
 
@@ -619,7 +619,7 @@ res_lvl_analysis(
 	//extra data
 	Real total_score( pose.energies().residue_total_energies( seqpos ).dot( scorefxn->weights() ) );
 	Real sc_auto_rmsd_nat( 0 );
-	Real sc_auto_rmsd_min( 0 );	
+	Real sc_auto_rmsd_min( 0 );
 	if( do_sc_rmsd ){
 		sc_auto_rmsd_nat = get_sc_automorphic_rmsd( pose, native_pose, seqpos );
 	}
@@ -641,7 +641,7 @@ res_lvl_analysis(
 	fa_dun_dev *= fa_dun_wt;
 	std::string rotbin_str( "" );
 	for( Size i_rotvec = 1; i_rotvec <= 4; ++i_rotvec ){
-		if( i_rotvec <= rotvec.size() ) rotbin_str += ( string_of( rotvec[ i_rotvec ] ) ); 
+		if( i_rotvec <= rotvec.size() ) rotbin_str += ( string_of( rotvec[ i_rotvec ] ) );
 		else rotbin_str += "0";
 	}
 
@@ -727,7 +727,7 @@ get_res_data_ss(
 	Real rotbin_val( 0 );
 	Size n_rotbins( 4 );
 	for( Size i_rotvec = 1; i_rotvec <= n_rotbins; ++i_rotvec ){
-		if( i_rotvec <= rotvec.size() ) rotbin_val += ( ( rotvec[ i_rotvec ] + 1 ) * std::pow( 10.0, static_cast< Real >( 4 - i_rotvec ) ) ); 
+		if( i_rotvec <= rotvec.size() ) rotbin_val += ( ( rotvec[ i_rotvec ] + 1 ) * std::pow( 10.0, static_cast< Real >( 4 - i_rotvec ) ) );
 		else rotbin_val += std::pow( 10.0, static_cast< Real >( 4 - i_rotvec ) );
 	}
 	ss->add_energy( "rotbin", static_cast< Real >( rotbin_val ) );
@@ -756,7 +756,7 @@ get_res_data_ss(
 
 }
 
-//minimizes sidechains 
+//minimizes sidechains
 void
 minimize_all_sidechains(
 		Pose & pose,
@@ -798,8 +798,8 @@ minimize_sidechain(
 	( *scorefxn )( pose );
 
 	kinematics::MoveMapOP mm( new kinematics::MoveMap );
-	mm->set_chi( false );				
-	mm->set_chi( seqpos, true );				
+	mm->set_chi( false );
+	mm->set_chi( seqpos, true );
 	MinMoverOP min_mover( new MinMover( mm, scorefxn, "dfpmin", 0.001, true ) );
 	min_mover->apply( pose );
 
@@ -961,7 +961,7 @@ RotamerAnalysis()
 		pose_from_pdb( native_pose, native_pdbname );
 		if( option[ edensity::mapfile ].user() ) core::scoring::calpha_superimpose_pose( native_pose, pose );
 	}
-	set_pose_occ_and_bfac( pose, native_pose );		
+	set_pose_occ_and_bfac( pose, native_pose );
 
 	scorefxn->score( pose );
 	scorefxn->score( native_pose );
@@ -987,7 +987,7 @@ RotamerAnalysis()
 	//use resfile to note residues to analyze...
 	Pose start_pose( pose );
 	if( option[ packing::resfile ].user() ) task_factory->push_back( new core::pack::task::operation::ReadResfile );
-	else task_factory->push_back( new core::pack::task::operation::RestrictToRepacking() ); 
+	else task_factory->push_back( new core::pack::task::operation::RestrictToRepacking() );
 	core::pack::task::PackerTaskOP packer_task( task_factory->create_task_and_apply_taskoperations( pose ) );
 	//each residue
 	for( Size seqpos = 1; seqpos <= pose.total_residue(); ++seqpos ){
@@ -1065,10 +1065,10 @@ RotamerAnalysis()
 
 			/*
 			//dump struct if passes score, rmsd diff filter
-			//TODO: don't calc autormsd twice 
+			//TODO: don't calc autormsd twice
 			if( min_pose.energies().residue_total_energies( seqpos ).dot( scorefxn->weights() ) - pose.energies().residue_total_energies( seqpos ).dot( scorefxn->weights() ) > option[ rot_anl::score_tol ]
 			&& get_sc_automorphic_rmsd( pose, native_pose, seqpos ) > option[ rot_anl::rmsd_tol ] ){
-			//dump pdb if given flag 
+			//dump pdb if given flag
 			if( option[ rot_anl::dump_pdb ] ) pose.dump_scored_pdb( pdbname_out, *scorefxn );
 			}
 			 */

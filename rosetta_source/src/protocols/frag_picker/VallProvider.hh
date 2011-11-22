@@ -32,7 +32,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <string>
 
 namespace protocols {
 namespace frag_picker {

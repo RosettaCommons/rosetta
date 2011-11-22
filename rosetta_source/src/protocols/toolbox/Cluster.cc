@@ -23,7 +23,6 @@
 
 #include <utility/vector1.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 namespace protocols {
 namespace toolbox {

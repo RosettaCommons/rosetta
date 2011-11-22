@@ -17,7 +17,6 @@
 // Unit headers
 #include <protocols/scoring/InterchainPotential.hh>
 #include <protocols/scoring/InterfaceInfo.hh>
-// Auto-header: duplicate removed #include <protocols/scoring/InterfaceInfo.hh>
 
 #include <core/scoring/AtomVDW.hh>
 #include <core/scoring/EnvPairPotential.hh>
@@ -32,7 +31,7 @@
 // AUTO-REMOVED #include <core/chemical/VariantType.hh>
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <basic/database/open.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>

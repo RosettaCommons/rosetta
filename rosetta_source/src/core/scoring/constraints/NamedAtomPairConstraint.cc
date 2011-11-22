@@ -26,7 +26,6 @@
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <core/id/Exceptions.hh>
 
 // Utility Headers
@@ -36,6 +35,8 @@
 #include <core/scoring/constraints/XYZ_Func.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/id/types.hh>
 
 static basic::Tracer tr("core.io.constraints");
 

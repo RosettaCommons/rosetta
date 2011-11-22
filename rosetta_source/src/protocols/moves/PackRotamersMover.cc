@@ -16,7 +16,7 @@
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/PackRotamersMoverCreator.hh>
 
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
@@ -24,7 +24,7 @@
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/ScoreFunction.hh>

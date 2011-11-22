@@ -36,6 +36,8 @@
 #include <core/pose/util.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 
 
 using namespace core;

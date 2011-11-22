@@ -20,7 +20,6 @@
 
 #define foreach BOOST_FOREACH
 
-// AUTO-REMOVED #include <utility/assert.hh>
 
 namespace protocols {
 namespace ligand_docking {

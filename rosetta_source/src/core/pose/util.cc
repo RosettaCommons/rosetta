@@ -27,7 +27,7 @@
 #include <basic/datacache/CacheableStringMap.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
 #include <ObjexxFCL/string.functions.hh>
@@ -35,7 +35,7 @@
 #include <utility/exit.hh>
 
 // Project headers
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -44,7 +44,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/util.hh>
 #include <core/id/DOF_ID_Map.hh>
-#include <core/id/DOF_ID_Mask.hh>
+// AUTO-REMOVED #include <core/id/DOF_ID_Mask.hh>
 #include <core/id/Exceptions.hh>
 #include <core/id/NamedStubID.hh>
 #include <core/id/NamedAtomID.hh>
@@ -57,12 +57,14 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/datacache/PositionConservedResiduesStore.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 #include <core/conformation/Residue.hh>
 
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 
 namespace core {
 namespace pose {

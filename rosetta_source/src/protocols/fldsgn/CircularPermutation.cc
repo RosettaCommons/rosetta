@@ -22,20 +22,19 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueSelector.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
 #include <core/conformation/ResidueFactory.hh>
 
 #include <basic/Tracer.hh>
 
 #include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 #include <protocols/forge/build/SegmentSwap.hh>
 #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/build/Interval.hh>
-// Auto-header: duplicate removed #include <protocols/forge/build/SegmentSwap.hh>
 // AUTO-REMOVED #include <protocols/forge/build/SegmentRebuild.hh>
 
 #include <protocols/forge/methods/fold_tree_functions.hh>
@@ -46,8 +45,8 @@
 #include <protocols/forge/build/SegmentRebuild.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-// Auto-header: duplicate removed #include <core/pose/util.hh>
 
+//Auto Headers
 //#include <protocols/moves/DataMap.hh>
 
 

@@ -39,8 +39,9 @@
 #include <protocols/evaluation/util.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
-static basic::Tracer tr("protocols.evalution.RMSD");
 
+//Auto Headers
+static basic::Tracer tr("protocols.evalution.RMSD");
 namespace protocols {
 namespace evaluation {
 using namespace core;

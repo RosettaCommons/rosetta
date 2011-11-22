@@ -12,20 +12,20 @@
 /// @author Aroop Sircar ( aroopsircar@yahoo.com )
 
 
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
-#include <core/fragment/FragSet.hh>
-#include <core/fragment/FragData.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentStructFactory.hh>
+// AUTO-REMOVED #include <core/fragment/FragSet.hh>
+// AUTO-REMOVED #include <core/fragment/FragData.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <basic/options/keys/antibody.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/antibody.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -40,7 +40,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>
 // AUTO-REMOVED #include <protocols/scoring/InterchainPotential.hh>
 #include <core/scoring/rms_util.tmpl.hh>
@@ -86,6 +86,8 @@ using namespace ObjexxFCL::fmt;
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/chemical/ChemicalManager.fwd.hh>
 
 using basic::T;
 using basic::Error;

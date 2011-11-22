@@ -18,7 +18,7 @@
 #include <protocols/ligand_docking/grid_functions.hh>
 #include <protocols/geometry/RB_geometry.hh>
 #include <protocols/moves/RigidBodyMover.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
@@ -27,7 +27,7 @@
 #include <core/scoring/rms_util.tmpl.hh>
 
 #include <protocols/qsar/scoring_grid/GridManager.hh>
-#include <protocols/qsar/qsarMap.hh>
+// AUTO-REMOVED #include <protocols/qsar/qsarMap.hh>
 
 // Utility Headers
 #include <numeric/random/random.hh>
@@ -39,8 +39,9 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-#define foreach BOOST_FOREACH
 
+//Auto Headers
+#define foreach BOOST_FOREACH
 using basic::T;
 using basic::Error;
 using basic::Warning;

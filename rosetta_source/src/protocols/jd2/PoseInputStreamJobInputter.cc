@@ -16,7 +16,7 @@
 #include <protocols/jd2/InnerJob.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/chemical/util.hh>
@@ -31,6 +31,11 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <string>
+
+//Auto Headers
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/Jump.hh>
+
 
 static basic::Tracer tr("protocols.jd2.PoseInputStreamJobInputter");
 

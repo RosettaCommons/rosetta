@@ -51,7 +51,6 @@
 // AUTO-REMOVED #include <utility/io/ozstream.hh>
 // AUTO-REMOVED #include <utility/io/util.hh>
 #include <basic/Tracer.hh>
-// Auto-header: duplicate removed #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/keys/OptionKeys.hh>
 
 

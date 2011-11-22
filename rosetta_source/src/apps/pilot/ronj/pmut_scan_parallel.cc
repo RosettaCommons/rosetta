@@ -27,7 +27,6 @@
 
 #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
-// Auto-header: duplicate removed #include <basic/options/util.hh>
 
 #include <utility/file/file_sys_util.hh>
 

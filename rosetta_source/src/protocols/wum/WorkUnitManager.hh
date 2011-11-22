@@ -25,7 +25,6 @@
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/moves/MoverList.hh>
 #include <protocols/wum/SilentStructStore.hh>
-// Auto-header: duplicate removed #include <utility/pointer/ReferenceCount.hh>
 
 #include <string>
 #include <vector>

@@ -38,7 +38,6 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // AUTO-REMOVED #include <basic/options/util.hh>
-// Auto-header: duplicate removed #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/after_opts.hh>
 // AUTO-REMOVED #include <basic/options/option_macros.hh>
 

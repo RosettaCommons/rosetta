@@ -19,7 +19,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.fwd.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
 
 #include <utility/vector1.hh>

@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/orbitals/AssignOrbitals.hh>
-#include <core/chemical/orbitals/OrbitalType.hh>
+// AUTO-REMOVED #include <core/chemical/orbitals/OrbitalType.hh>
 #include <map>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
@@ -16,8 +16,8 @@
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 #include <numeric/xyz.functions.hh>
-#include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <numeric/conversions.hh>
 #include <numeric/constants.hh>

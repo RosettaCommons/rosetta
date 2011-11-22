@@ -18,7 +18,6 @@
 //#include <numeric/interpolation/spline/Interpolator.hh>
 #include <numeric/interpolation/spline/SplineGenerator.hh>
 
-// Auto-header: duplicate removed #include <core/chemical/AA.hh>
 #include <core/types.hh>
 
 #include <utility/vector1.hh>

@@ -21,7 +21,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
-#include <protocols/filters/Filter.hh>
+// AUTO-REMOVED #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.hh>
 // Parser headers
 #include <protocols/moves/DataMap.fwd.hh>

@@ -25,9 +25,7 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 namespace protocols{
 namespace toolbox {

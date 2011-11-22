@@ -21,9 +21,12 @@
 #include <protocols/swa/PoseFilter.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <core/id/AtomID.hh>
+// AUTO-REMOVED #include <core/id/AtomID.hh>
 #include <utility/vector1.hh>
 #include <map>
+
+//Auto Headers
+#include <core/id/AtomID.fwd.hh>
 
 namespace protocols {
 namespace swa {

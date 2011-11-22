@@ -31,8 +31,6 @@
 
 // C++ header
 #include <cassert>
-// AUTO-REMOVED #include <iostream>
-
 
 namespace core {
 namespace id {

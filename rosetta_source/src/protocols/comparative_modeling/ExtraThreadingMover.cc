@@ -11,7 +11,7 @@
 /// @brief method declarations for ExtraThreadingMover.
 /// @author James Thompson
 
-#include <protocols/comparative_modeling/util.hh>
+// AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
 #include <protocols/comparative_modeling/ExtraThreadingMover.hh>
 
 #include <core/types.hh>
@@ -53,8 +53,9 @@
 // AUTO-REMOVED #include <basic/options/keys/cm.OptionKeys.gen.hh>
 
 #include <basic/options/keys/OptionKeys.hh>
-// Auto-header: duplicate removed #include <core/pose/util.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 
 namespace protocols {
 namespace comparative_modeling {

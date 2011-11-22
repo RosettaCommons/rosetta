@@ -23,10 +23,12 @@
 #include <protocols/pack_daemon/EntityCorrespondence.hh>
 
 // Project headers
-#include <protocols/multistate_design/SingleState.hh>  // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <protocols/multistate_design/SingleState.hh>  // REQUIRED FOR WINDOWS
 #include <core/chemical/ChemicalManager.fwd.hh>
 
+#ifdef USEMPI
 #include <core/io/pdb/pose_io.hh>
+#endif
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>

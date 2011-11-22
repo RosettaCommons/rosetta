@@ -30,6 +30,7 @@
 #include <ObjexxFCL/FArray2A.hh>
 #include <list>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/Adduct.fwd.hh>
@@ -381,6 +382,9 @@
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>
 #include <boost/unordered/unordered_map.hpp>
+
+//Auto Headers
+#include <execinfo.h>
 #define foreach BOOST_FOREACH
 
 

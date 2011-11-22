@@ -17,16 +17,16 @@
 #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/VirtualCoordinate.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/VirtualCoordinate.hh>
 #include <core/scoring/symmetry/SymmetricEnergies.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/chemical/AA.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/kinematics/MoveMap.hh>
 

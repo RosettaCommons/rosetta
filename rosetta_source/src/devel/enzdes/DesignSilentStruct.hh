@@ -46,7 +46,6 @@
 
 #include <utility/vector1.hh>
 
-// AUTO-REMOVED #include <set>
 
 //#include <map>
 //#include <algorithm>

@@ -16,7 +16,7 @@
 #include <core/chemical/util.hh>
 
 // Package Headers
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 // Project Headers

@@ -32,7 +32,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // option key includes
 

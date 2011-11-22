@@ -20,7 +20,7 @@
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 
 // Project headers

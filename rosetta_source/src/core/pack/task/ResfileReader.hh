@@ -38,7 +38,6 @@
 #include <map>
 #include <string>
 
-// Auto-header: duplicate removed #include <utility/vector1.hh>
 
 
 namespace core {

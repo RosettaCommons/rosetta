@@ -21,6 +21,8 @@
 
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 
 
 int main (int argc, char *argv[])

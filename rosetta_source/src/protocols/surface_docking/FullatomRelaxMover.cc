@@ -28,7 +28,6 @@
 #include <protocols/docking/DockingHighRes.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
 // AUTO-REMOVED #include <protocols/docking/DockFilters.hh> // get error if you did not include
-// Auto-header: duplicate removed #include <protocols/docking/DockingHighRes.hh>
 #include <protocols/moves/RigidBodyMover.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
@@ -54,7 +53,6 @@
 // C++ Headers
 #include <utility/exit.hh>
 // AUTO-REMOVED #include <basic/prof.hh>
-// Auto-header: duplicate removed #include <basic/Tracer.hh>
 
 // AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 

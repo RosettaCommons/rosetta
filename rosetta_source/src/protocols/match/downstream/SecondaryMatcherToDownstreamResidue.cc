@@ -26,8 +26,8 @@
 #include <protocols/match/downstream/DownstreamAlgorithm.hh>
 #include <protocols/match/downstream/DownstreamBuilder.hh>
 #include <protocols/match/downstream/LigandConformer.hh>
-#include <protocols/match/downstream/LigandConformerBuilder.hh>
-#include <protocols/match/downstream/RigidLigandBuilder.hh>
+// AUTO-REMOVED #include <protocols/match/downstream/LigandConformerBuilder.hh>
+// AUTO-REMOVED #include <protocols/match/downstream/RigidLigandBuilder.hh>
 #include <protocols/match/downstream/SecMatchResiduePairEvaluator.hh>
 #include <protocols/match/downstream/SecondaryMatcherToUpstreamResidue.hh>
 #include <protocols/match/upstream/ScaffoldBuildPoint.hh>

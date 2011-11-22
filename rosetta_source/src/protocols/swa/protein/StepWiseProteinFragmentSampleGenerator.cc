@@ -21,12 +21,14 @@
 #include <core/fragment/FrameList.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
-#include <core/fragment/FragmentIO.hh>
+// AUTO-REMOVED #include <core/fragment/FragmentIO.hh>
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 #include <utility/exit.hh>
 
+//Auto Headers
+#include <utility/vector1.hh>
 
 using namespace core;
 

@@ -27,7 +27,6 @@
 //#include <core/pose/PDBInfo.fwd.hh>
 #include <core/types.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 namespace core {
 namespace conformation {

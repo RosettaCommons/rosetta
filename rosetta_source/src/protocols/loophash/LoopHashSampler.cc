@@ -24,7 +24,7 @@
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <utility/string_util.hh>
-#include <utility/sort_predicates.hh>
+// AUTO-REMOVED #include <utility/sort_predicates.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>

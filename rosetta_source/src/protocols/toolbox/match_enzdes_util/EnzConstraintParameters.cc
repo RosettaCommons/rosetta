@@ -46,7 +46,6 @@
 #include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh> //needed for clean residue type modification
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
-// Auto-header: duplicate removed #include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh>
 #include <core/scoring/ScoreFunction.hh> //scoring ambiguous constraints
 #include <core/id/AtomID.hh>
 #include <core/pose/Remarks.hh> //reading remarks
@@ -57,7 +56,7 @@
 #include <numeric/constants.hh>
 
 // Utility Headers
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 #include <iostream>
 #include <string>
 #include <sstream>

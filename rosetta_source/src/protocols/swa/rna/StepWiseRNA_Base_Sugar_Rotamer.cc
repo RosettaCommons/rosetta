@@ -16,16 +16,19 @@
 //////////////////////////////////
 #include <protocols/swa/rna/StepWiseRNA_Base_Sugar_Rotamer.hh>
 #include <core/id/TorsionID.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
 #include <basic/Tracer.hh>
 
-#include <ObjexxFCL/FArray1D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 #include <string>
+
+//Auto Headers
+#include <utility/vector1.hh>
 
 using namespace core;
 using core::Real;

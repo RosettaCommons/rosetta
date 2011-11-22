@@ -112,7 +112,6 @@
 
 */
 
-// Auto-header: duplicate removed #include <cstdlib>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/types.hh>

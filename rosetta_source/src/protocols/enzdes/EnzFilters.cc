@@ -41,7 +41,7 @@
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreTypeManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/types.hh>

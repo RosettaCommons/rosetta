@@ -22,6 +22,9 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
+//Auto Headers
+#include <utility/vector1.hh>
+
 namespace protocols {
 namespace swa {
 

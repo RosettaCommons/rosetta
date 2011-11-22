@@ -14,19 +14,19 @@
 #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
 // AUTO-REMOVED #include <numeric/xyz.io.hh>
-#include <ObjexxFCL/FArray2D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
@@ -35,6 +35,11 @@
 // AUTO-REMOVED #include <utility/io/ozstream.hh>
 
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/conformation/Conformation.hh>
+#include <core/kinematics/AtomTree.hh>
+
 
 
 static basic::Tracer TR("protocols.kinmatchFunGroupTK");

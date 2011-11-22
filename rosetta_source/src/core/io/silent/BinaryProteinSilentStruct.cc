@@ -30,7 +30,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <basic/Tracer.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <core/scoring/Energies.hh>
 
@@ -54,14 +54,13 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
-// Auto-header: duplicate removed #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 #include <numeric/model_quality/rms.hh>
 
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymDof.hh>

@@ -22,6 +22,9 @@
 #include <utility/exit.hh>
 #include <ObjexxFCL/string.functions.hh>
 
+//Auto Headers
+#include <utility/vector1.hh>
+
 using namespace core;
 
 namespace protocols {

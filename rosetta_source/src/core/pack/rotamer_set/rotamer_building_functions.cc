@@ -29,7 +29,6 @@
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueMatcher.hh>
-// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 
 #include <core/kinematics/Stub.hh>
@@ -58,16 +57,13 @@
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/scoring/ScoreFunction.hh>
 // AUTO-REMOVED #include <core/scoring/methods/Methods.hh>
-#include <core/scoring/rna/RNA_TorsionPotential.hh>
+// AUTO-REMOVED #include <core/scoring/rna/RNA_TorsionPotential.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
-// Auto-header: duplicate removed #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <basic/prof.hh> // profiling
 
-// Auto-header: duplicate removed #include <core/graph/Graph.hh>
-// Auto-header: duplicate removed #include <core/pose/Pose.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
@@ -83,7 +79,6 @@
 // AUTO-REMOVED #include <utility/utility.functions.hh>
 
 #include <numeric/constants.hh>
-// Auto-header: duplicate removed #include <numeric/xyz.functions.hh>
 
 // ObjexxFCL Headers
 // AUTO-REMOVED #include <ObjexxFCL/FArray2.hh>
@@ -99,6 +94,8 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray3D.hh>
 
+//Auto Headers
+#include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
 
 
 namespace core {

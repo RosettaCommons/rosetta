@@ -14,7 +14,7 @@
 #include <protocols/loops/LoopMover.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
 #include <core/pose/datacache/ObserverCache.hh>

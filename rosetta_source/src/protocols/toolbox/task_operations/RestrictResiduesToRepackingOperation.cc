@@ -16,9 +16,9 @@
 #include <protocols/toolbox/task_operations/RestrictResiduesToRepackingOperationCreator.hh>
 
 // Project Headers
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
-#include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
 
@@ -26,7 +26,7 @@
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
 
 #include <boost/foreach.hpp>
@@ -38,6 +38,13 @@
 #include <utility/string_util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/conformation/Residue.hh>
+#include <core/id/types.hh>
+#include <core/kinematics/Jump.hh>
+#include <boost/functional/hash.hpp>
+
 
 
 using basic::Error;

@@ -15,7 +15,7 @@
 #include <devel/init.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>

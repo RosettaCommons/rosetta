@@ -10,20 +10,20 @@
 /// @brief ???
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 //#include <basic/options/keys/smhybrid.OptionKeys.gen.hh>
 //#include <basic/options/keys/willmatch.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/symmetry/SymDof.hh>
-#include <core/conformation/symmetry/SymmData.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymDof.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/import_pose/import_pose.hh>
@@ -79,13 +79,15 @@
 #include <sstream>
 // AUTO-REMOVED #include <utility/io/izstream.hh>
 // AUTO-REMOVED #include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
-#include <apps/pilot/will/will_util.ihh>
-#include <apps/pilot/will/mynamespaces.ihh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 #include <protocols/moves/MoverStatistics.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
+#include <apps/pilot/will/will_util.ihh>
 
 
 using core::kinematics::Stub;

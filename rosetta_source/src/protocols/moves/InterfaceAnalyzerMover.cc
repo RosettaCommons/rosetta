@@ -24,17 +24,17 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-#include <core/scoring/hbonds/hbonds.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 //#include <core/scoring/Energies.hh>
 //#include <core/scoring/EnergyMap.hh>
-#include <core/chemical/ChemicalManager.hh> //for centroid switch
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh> //for centroid switch
 
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
 
 #include <core/pose/Pose.hh>
@@ -52,7 +52,7 @@
 
 #include <basic/MetricValue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <protocols/moves/MutateResidue.hh>
+// AUTO-REMOVED #include <protocols/moves/MutateResidue.hh>
 #include <protocols/toolbox/pose_metric_calculators/SasaCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/InterfaceSasaDefinitionCalculator.hh>
@@ -93,7 +93,8 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-
+//Auto Headers
+#include <core/chemical/ChemicalManager.fwd.hh>
 using basic::T;
 using basic::Error;
 using basic::Warning;

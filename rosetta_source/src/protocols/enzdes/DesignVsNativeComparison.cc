@@ -17,7 +17,7 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
 //#include <core/pose/metrics/PoseMetricCalculatorBase.fwd.hh>
 #include <core/scoring/Energies.hh>
@@ -29,7 +29,7 @@
 
 // Utility Headers
 // AUTO-REMOVED #include <utility/io/izstream.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <basic/Tracer.hh>
 

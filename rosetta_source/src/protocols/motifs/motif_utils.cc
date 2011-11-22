@@ -22,24 +22,24 @@
 
 // Project Headers (protocols)
 #include <protocols/dna/DnaDesignDef.hh>
-#include <protocols/dna/DnaInterfaceFinder.hh>
+// AUTO-REMOVED #include <protocols/dna/DnaInterfaceFinder.hh>
 #include <protocols/dna/util.hh>
 #include <protocols/loops/Loops.hh>
 
 // Project Headers
-#include <core/chemical/automorphism.hh>
+// AUTO-REMOVED #include <core/chemical/automorphism.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueSelector.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.functions.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/ResidueMatcher.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueMatcher.hh>
 #include <core/graph/Graph.hh>
 #include <core/id/AtomID.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/RT.hh>
 #include <core/pack/pack_rotamers.hh>
@@ -74,13 +74,13 @@
 #include <utility/vector0.hh>
 
 // Numeric Headers
-#include <numeric/model_quality/rms.hh>
+// AUTO-REMOVED #include <numeric/model_quality/rms.hh>
 #include <numeric/xyzVector.hh>
-#include <numeric/xyz.functions.hh>
-#include <ObjexxFCL/FArray2D.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 
 // C++ Headers
-#include <cctype>
+// AUTO-REMOVED #include <cctype>
 
 // Option Key Includes
 #include <basic/options/option.hh>

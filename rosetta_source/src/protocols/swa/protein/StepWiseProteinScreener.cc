@@ -22,9 +22,8 @@
 
 //////////////////////////////////
 #include <core/types.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
@@ -34,7 +33,6 @@
 
 #include <core/util/SwitchResidueTypeSet.hh>
 
-#include <core/util/SwitchResidueTypeSet.hh>
 
 #include <core/pose/annotated_sequence.hh>
 
@@ -51,14 +49,17 @@
 
 #include <core/scoring/dssp/Dssp.hh>
 
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
 #include <utility/exit.hh>
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
 
 #include <string>
+
+//Auto Headers
+#include <utility/vector1.hh>
 
 using namespace core;
 using core::Real;

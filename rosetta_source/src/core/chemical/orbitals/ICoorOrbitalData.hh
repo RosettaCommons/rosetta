@@ -49,6 +49,8 @@
 
 #include <core/types.hh>
 #include <string>
+
+//Auto Headers
 #ifndef INCLUDED_core_chemical_orbitals_ICoorOrbitalData_hh
 #define INCLUDED_core_chemical_orbitals_ICoorOrbitalData_hh
 

@@ -30,10 +30,8 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 // C++
-// AUTO-REMOVED #include <string>
 
 namespace core {
 namespace scoring {

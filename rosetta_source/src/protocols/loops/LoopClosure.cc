@@ -50,7 +50,6 @@
 // AUTO-REMOVED #include <core/scoring/rms_util.hh>
 
 //numeric headers
-// Auto-header: duplicate removed #include <numeric/random/random.hh>
 
 //// C++ headers
 #include <cstdlib>
@@ -60,7 +59,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <fstream>
 
 namespace protocols {
 namespace loops {

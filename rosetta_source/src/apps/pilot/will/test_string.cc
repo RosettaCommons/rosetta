@@ -14,12 +14,12 @@
 // libRosetta headers
 //#include <basic/options/option.hh>
 
+// Utility headers
 #include <utility/string_util.hh>
-
-#include <iostream>
-
 #include <utility/vector1.hh>
 
+// C++ headers
+#include <iostream>
 
 int
 main (int argc, char *argv[])

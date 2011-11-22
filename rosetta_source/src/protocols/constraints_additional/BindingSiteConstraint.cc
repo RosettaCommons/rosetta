@@ -21,7 +21,7 @@
 #include <core/scoring/EnergyMap.hh>
 
 // Project headers
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/id/AtomID.hh>
 // AUTO-REMOVED #include <core/id/NamedAtomID.hh>
@@ -41,6 +41,11 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
+
+//Auto Headers
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/Jump.hh>
+
 
 
 static basic::Tracer tr("core.io.constraints");

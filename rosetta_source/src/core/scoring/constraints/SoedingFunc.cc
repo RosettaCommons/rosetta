@@ -11,7 +11,7 @@
 /// @brief Definition for functions used in definition of constraints.
 /// @author James Thompson
 
-#include <numeric/util.hh>
+// AUTO-REMOVED #include <numeric/util.hh>
 
 #include <core/scoring/constraints/SoedingFunc.hh>
 #include <core/scoring/constraints/util.hh>
@@ -23,6 +23,9 @@
 #include <iostream>
 
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <cmath>
 
 
 namespace core {

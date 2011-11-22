@@ -15,8 +15,8 @@
 #include <protocols/moves/BBGaussianMover.hh>
 //core
 #include <core/chemical/AtomType.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <basic/basic.hh>

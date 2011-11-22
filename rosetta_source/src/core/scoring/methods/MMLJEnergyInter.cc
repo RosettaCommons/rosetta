@@ -57,7 +57,6 @@
 #include <core/scoring/etable/etrie/TrieCountPairAll.hh>
 // AUTO-REMOVED #include <core/scoring/etable/etrie/TrieCountPairNone.hh>
 
-// Auto-header: duplicate removed #include <core/conformation/RotamerSetBase.hh>
 //#include <core/pack/rotamer_set/RotamerSetFactory.hh>
 
 // Numeric headers

@@ -55,8 +55,9 @@
 #include <utility/vector1.hh>
 #include <numeric/conversions.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
+//Auto Headers
+#define foreach BOOST_FOREACH
 static numeric::random::RandomGenerator RG(43135);
 static basic::Tracer TR("protocols.moves.KinematicMover");
 

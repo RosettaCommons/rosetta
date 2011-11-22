@@ -21,9 +21,9 @@
 #include <protocols/enzdes/EnzdesCacheableObserver.hh>
 
 // Project Headers
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/Residue.hh>
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -45,6 +45,8 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <boost/functional/hash.hpp>
 
 using namespace core;
 using namespace core::scoring;

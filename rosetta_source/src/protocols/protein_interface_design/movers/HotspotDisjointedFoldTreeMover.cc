@@ -31,7 +31,7 @@
 #include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>
 //#include <core/pose/Pose.hh>
 
-#include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/moves/DataMap.hh>
@@ -40,7 +40,7 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <basic/Tracer.hh>
 
 

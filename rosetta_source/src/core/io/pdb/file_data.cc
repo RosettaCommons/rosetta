@@ -28,7 +28,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/AtomType.hh>
-#include <core/chemical/orbitals/OrbitalType.hh>
+// AUTO-REMOVED #include <core/chemical/orbitals/OrbitalType.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -56,7 +56,6 @@
 #include <ObjexxFCL/format.hh>
 
 // option key includes
-// Auto-header: duplicate removed #include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -67,6 +66,8 @@
 #include <core/pose/util.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 namespace core {
 namespace io {
 namespace pdb {

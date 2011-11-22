@@ -23,10 +23,10 @@
 // Project Headers
 #include <core/types.hh>
 #include <basic/options/option.hh>
-#include <core/pose/Pose.hh>
-#include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <basic/Tracer.hh>
-#include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -39,6 +39,8 @@
 #include <ostream>
 #include <string>
 
+//Auto Headers
+#include <protocols/moves/Mover.fwd.hh>
 namespace protocols {
 namespace rotamer_recovery {
 

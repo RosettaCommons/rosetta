@@ -28,6 +28,8 @@
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 
 namespace devel {
 namespace cartesian_frags {

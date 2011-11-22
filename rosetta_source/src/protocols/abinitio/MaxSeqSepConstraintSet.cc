@@ -32,7 +32,6 @@
 #include <core/scoring/constraints/Constraint.fwd.hh>
 /*
 #include <core/scoring/ScoreFunction.fwd.hh>
-// Auto-header: duplicate removed #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 */
@@ -63,8 +62,6 @@
 
 #include <core/id/SequenceMapping.hh>
 #include <core/kinematics/FoldTree.hh>
-// Auto-header: duplicate removed #include <core/scoring/EnergyMap.fwd.hh>
-// Auto-header: duplicate removed #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
 
 

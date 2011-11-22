@@ -14,8 +14,8 @@
 /// @author Bryan Der
 
 
-#include <devel/metal_interface/AddMetalSiteConstraints.hh>
-#include <devel/metal_interface/FindClosestAtom.hh>
+// AUTO-REMOVED #include <devel/metal_interface/AddMetalSiteConstraints.hh>
+// AUTO-REMOVED #include <devel/metal_interface/FindClosestAtom.hh>
 #include <devel/metal_interface/MatchGrafter.hh>
 #include <devel/metal_interface/MetalSiteResidue.hh>
 #include <devel/metal_interface/ParseMetalSite.hh>

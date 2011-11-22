@@ -26,7 +26,6 @@
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/conformation/ResidueMatcher.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
-// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.functions.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/scoring/LREnergyContainer.hh>
@@ -39,7 +38,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyMap.hh>
 
-#include <core/scoring/EnergyGraph.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 //#include <core/scoring/ScoringManager.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>

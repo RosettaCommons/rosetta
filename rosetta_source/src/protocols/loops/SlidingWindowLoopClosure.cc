@@ -69,7 +69,6 @@
 #include <utility/io/ozstream.hh>
 
 //numeric headers
-// Auto-header: duplicate removed #include <numeric/random/random.hh>
 
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FrameIterator.hh>

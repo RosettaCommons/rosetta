@@ -29,15 +29,15 @@
 #include <protocols/moves/RigidBodyMover.hh>
 #include <protocols/rna/AllowInsert.hh>
 
+// Utility headers
+#include <utility/vector1.hh>
+
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 
+// Numeric headers
 #include <numeric/random/random.hh>
-
 #include <numeric/xyz.functions.hh>
-
-// External library headers
-
 
 //C++ headers
 #include <vector>

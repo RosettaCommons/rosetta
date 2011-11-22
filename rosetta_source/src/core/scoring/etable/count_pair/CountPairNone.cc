@@ -13,8 +13,8 @@
 
 
 #include <core/scoring/etable/count_pair/CountPairNone.hh>
-// AUTO-REMOVED #include <core/scoring/etable/atom_pair_energy_inline.hh>
 
+//Auto Headers
 namespace core {
 namespace scoring {
 namespace etable {

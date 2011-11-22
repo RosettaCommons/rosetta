@@ -18,7 +18,7 @@
 // AUTO-REMOVED #include <protocols/frag_picker/scores/FragmentCrmsd.hh>
 // AUTO-REMOVED #include <protocols/frag_picker/scores/FragmentScoreManager.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
-#include <protocols/frag_picker/FragmentPicker.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/FragmentPicker.hh>
 
 // option key includes
 // AUTO-REMOVED #include <core/init.hh>
@@ -50,6 +50,13 @@
 
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/pose/Pose.hh>
+//Auto using namespaces
+namespace std { } using namespace std; // AUTO USING NS
+//Auto using namespaces end
+
 
 
 namespace protocols {

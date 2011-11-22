@@ -27,7 +27,7 @@
 
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
 #include <protocols/moves/Mover.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/dunbrack/RotamerConstraint.hh>

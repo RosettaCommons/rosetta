@@ -29,7 +29,7 @@
 
 // C++ headers
 #include <string>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <basic/Tracer.hh>
 #include <core/conformation/Conformation.hh>
@@ -39,7 +39,6 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.hh> 
-// Auto-header: duplicate removed #include <protocols/rosetta_scripts/util.hh>
 
 //loops
 #include <protocols/loops/Loop.hh>

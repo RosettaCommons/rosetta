@@ -21,7 +21,6 @@
 // Package Headers
 #include <protocols/topology_broker/DofClaim.hh>
 #include <protocols/moves/symmetry/SetupForFibrilMover.hh>
-// Auto-header: duplicate removed #include <protocols/moves/symmetry/SetupForFibrilMover.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
@@ -45,6 +44,8 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/kinematics/FoldTree.hh>
 
 static basic::Tracer tr("protocols.topo_broker.fibril_modeling",basic::t_info);
 static numeric::random::RandomGenerator RG(332483344);

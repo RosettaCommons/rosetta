@@ -13,7 +13,7 @@
 
 
 // Unit headers
-#include <core/scoring/methods/util.hh>
+// AUTO-REMOVED #include <core/scoring/methods/util.hh>
 #include <core/scoring/methods/SmoothCenPairEnergy.hh>
 #include <core/scoring/methods/SmoothCenPairEnergyCreator.hh>
 

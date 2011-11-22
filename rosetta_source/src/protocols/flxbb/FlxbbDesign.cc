@@ -40,7 +40,7 @@
 
 // option key includes
 #include <basic/options/keys/flxbb.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/relax.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/vector1.hh>

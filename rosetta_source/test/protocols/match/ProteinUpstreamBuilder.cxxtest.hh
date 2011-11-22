@@ -42,7 +42,6 @@
 #include <sstream>
 
 //Auto Headers
-// Auto-header: duplicate removed #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <protocols/match/BumpGrid.hh>
 #include <protocols/match/Hit.hh>
 #include <utility/vector1.hh>

@@ -12,21 +12,21 @@
 #include <protocols/kinmatch/FunGroupTK.hh>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 //#include <basic/options/keys/smhybrid.OptionKeys.gen.hh>
 //#include <basic/options/keys/willmatch.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/graph/Graph.hh>
 #include <core/pack/packer_neighbors.hh>
@@ -52,11 +52,13 @@
 // AUTO-REMOVED #include <utility/io/izstream.hh>
 // AUTO-REMOVED #include <utility/io/ozstream.hh>
 
-#include <apps/pilot/will/will_util.ihh>
-
 // AUTO-REMOVED #include <time.h>
 
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
+#include <apps/pilot/will/will_util.ihh>
 
 
 using namespace protocols::kinmatch;

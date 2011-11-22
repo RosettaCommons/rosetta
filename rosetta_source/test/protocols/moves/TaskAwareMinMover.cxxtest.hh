@@ -20,7 +20,7 @@
 // Utilities
 #include <core/types.hh>
 
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
 #include <core/kinematics/MoveMap.hh>

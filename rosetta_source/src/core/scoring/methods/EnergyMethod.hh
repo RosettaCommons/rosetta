@@ -44,7 +44,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 
 namespace core {

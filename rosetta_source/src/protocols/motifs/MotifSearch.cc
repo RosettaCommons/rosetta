@@ -24,7 +24,7 @@
 // Project Headers (protocols)
 #include <protocols/dna/DnaDesignDef.hh>
 #include <protocols/dna/DnaInterfaceFinder.hh>
-#include <protocols/dna/RestrictDesignToProteinDNAInterface.hh>
+// AUTO-REMOVED #include <protocols/dna/RestrictDesignToProteinDNAInterface.hh>
 #include <protocols/dna/util.hh>
 #include <protocols/moves/MinMover.hh>
 
@@ -40,7 +40,7 @@
 // AUTO-REMOVED #include <core/pack/task/TaskFactory.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/CoordinateConstraint.hh>
@@ -56,7 +56,7 @@
 
 // Utility Headers
 #include <utility/io/ozstream.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <numeric/xyzVector.hh>
 

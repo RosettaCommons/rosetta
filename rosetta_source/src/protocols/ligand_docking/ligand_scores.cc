@@ -51,8 +51,9 @@
 #include <sstream>
 
 #include <utility/vector1.hh>
-#define foreach BOOST_FOREACH
 
+//Auto Headers
+#define foreach BOOST_FOREACH
 namespace protocols {
 namespace ligand_docking {
 

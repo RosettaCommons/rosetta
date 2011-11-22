@@ -36,7 +36,6 @@
 namespace protocols {
 namespace rna {
 
-// Auto-header: duplicate removed #include <utility/pointer/owning_ptr.hh>
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 class RNA_DataReader : public utility::pointer::ReferenceCount {

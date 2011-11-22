@@ -29,7 +29,7 @@
 #include <string>
 #include <vector>
 
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/kinematics/Jump.hh>
 
 

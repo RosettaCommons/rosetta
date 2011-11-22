@@ -20,34 +20,33 @@
 
 #include <protocols/loophash/MPI_LoopHashRefine.hh>
 #include <protocols/loophash/MPI_LoopHashRefine_Emperor.hh>
-#include <protocols/loophash/WorkUnit_LoopHash.hh>
-#include <protocols/wum/WorkUnit_BatchRelax.hh>
+// AUTO-REMOVED #include <protocols/loophash/WorkUnit_LoopHash.hh>
+// AUTO-REMOVED #include <protocols/wum/WorkUnit_BatchRelax.hh>
 #include <protocols/wum/WorkUnitBase.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/pose/util.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
-#include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
-#include <core/import_pose/pose_stream/util.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <core/io/silent/SilentStructFactory.hh>
+// AUTO-REMOVED #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
+// AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/ProteinSilentStruct.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
 #include <protocols/wum/SilentStructStore.hh>
 #include <ObjexxFCL/format.hh>
 /// ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>
-// Auto-header: duplicate removed #include <ObjexxFCL/format.hh>
 
 #include <numeric/random/random.hh>
 

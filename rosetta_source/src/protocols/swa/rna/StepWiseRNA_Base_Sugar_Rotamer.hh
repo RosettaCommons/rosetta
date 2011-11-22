@@ -17,7 +17,7 @@
 #define INCLUDED_protocols_swa_SWA_RNA_Base_Sugar_Rotamer_HH
 
 #include <protocols/swa/rna/StepWiseRNA_Classes.hh>
-#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator.fwd.hh>
+// AUTO-REMOVED #include <protocols/swa/rna/StepWiseRNA_RotamerGenerator.fwd.hh>
 #include <protocols/swa/rna/StepWiseRNA_Base_Sugar_Rotamer.fwd.hh>
 //#include <protocols/swa/rna/StepWiseRNA_RotamerGenerator.hh>
 
@@ -29,7 +29,7 @@
 #include <core/scoring/rna/RNA_FittedTorsionInfo.hh>
 
 #include <string>
-#include <map>
+// AUTO-REMOVED #include <map>
 
 namespace protocols {
 namespace swa {

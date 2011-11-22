@@ -39,7 +39,6 @@
 
 
 // C++ Headers
-// AUTO-REMOVED #include <string>
 
 namespace protocols{
 namespace anchored_design{

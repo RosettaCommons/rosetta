@@ -43,7 +43,7 @@
 
 #include <protocols/ScoreMap.hh>
 // AUTO-REMOVED #include <protocols/jobdist/standard_mains.hh>
-#include <protocols/evaluation/RmsdEvaluator.hh>
+// AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/loops/util.hh>
 #include <protocols/loops/Loops.hh>

@@ -13,7 +13,7 @@
 // Unit headers
 #include <protocols/moves/symmetry/fibril_util.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 // AUTO-REMOVED #include <core/conformation/symmetry/SymDof.hh>
 #include <core/id/AtomID_Map.hh>
@@ -34,7 +34,6 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
-// Auto-header: duplicate removed #include <core/id/AtomID.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <numeric/random/random.hh>
 
@@ -53,7 +52,8 @@
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
-
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 //namespaces
 using namespace core;
 using namespace core::conformation;

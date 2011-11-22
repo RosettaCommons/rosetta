@@ -31,6 +31,8 @@
 
 #include <core/kinematics/Jump.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
 		
 namespace protocols {
 namespace loophash {

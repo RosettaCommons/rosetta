@@ -16,7 +16,7 @@
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/options/keys/orbitals.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/orbitals.OptionKeys.gen.hh>
 
 #include <core/scoring/carbon_hbonds/CarbonHBondPotential.hh>
 #include <core/scoring/PairEPotential.hh>

@@ -47,7 +47,6 @@
 
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS

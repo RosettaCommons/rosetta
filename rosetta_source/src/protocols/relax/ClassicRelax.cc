@@ -15,14 +15,14 @@
 
 #include <protocols/relax/ClassicRelax.hh>
 
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
 #include <core/io/pdb/pose_io.hh>
 
@@ -45,7 +45,7 @@
 
 // Symmetry
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
@@ -55,7 +55,7 @@
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 #include <protocols/basic_moves/GunnCost.hh>
-#include <protocols/loops/Loops.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <protocols/ScoreMap.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>

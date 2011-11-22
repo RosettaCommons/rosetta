@@ -18,7 +18,7 @@
 #include <devel/init.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/util.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -32,7 +32,6 @@
 #include <numeric/xyzVector.hh>
 
 #include <core/id/AtomID_Map.hh>
-#include <core/io/pdb/pose_io.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
@@ -45,6 +44,8 @@
 #include <fstream>
 #include <algorithm>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 class SuperDeviationMover;
 typedef utility::pointer::owning_ptr< SuperDeviationMover > SuperDeviationMoverOP;
 using core::Size;

@@ -13,9 +13,9 @@
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-#include <protocols/protein_interface_design/dock_design_filters.hh>
-#include <protocols/moves/Mover.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/protein_interface_design/dock_design_filters.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/task/TaskFactory.hh>

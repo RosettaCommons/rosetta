@@ -19,18 +19,17 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/kinematics/tree/Atom.hh>
+// AUTO-REMOVED #include <core/kinematics/tree/Atom.hh>
 
 #include <core/chemical/AA.hh>
 #include <core/types.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/pack_rotamers.hh>
-// Auto-header: duplicate removed #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>

@@ -29,23 +29,23 @@
 #include <core/types.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/conformation/signals/GeneralEvent.hh>
+// AUTO-REMOVED #include <core/conformation/signals/GeneralEvent.hh>
 #include <core/id/AtomID.hh>
 // AUTO-REMOVED #include <core/id/AtomID_Mask.hh>
 // AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
-#include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/optimization/types.hh>
 #include <core/optimization/Minimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/optimization/MinimizerMap.hh>
-#include <core/optimization/AtomTreeMultifunc.hh>
-#include <core/optimization/SingleResidueMultifunc.hh>
+// AUTO-REMOVED #include <core/optimization/MinimizerMap.hh>
+// AUTO-REMOVED #include <core/optimization/AtomTreeMultifunc.hh>
+// AUTO-REMOVED #include <core/optimization/SingleResidueMultifunc.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/ScoreFunction.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>

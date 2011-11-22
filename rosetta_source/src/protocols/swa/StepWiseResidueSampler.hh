@@ -28,6 +28,9 @@
 #include <string>
 #include <map>
 
+//Auto Headers
+
+
 namespace protocols {
 namespace swa {
 

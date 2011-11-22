@@ -69,7 +69,6 @@
 #include <core/chemical/AtomICoor.fwd.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/chemical/AtomType.fwd.hh>
-// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
@@ -83,7 +82,6 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/VariantType.fwd.hh>
-// AUTO-REMOVED #include <core/chemical/types.hh>
 #include <core/chemical/orbitals/ICoorOrbitalData.hh>
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
@@ -106,7 +104,6 @@
 #include <core/conformation/signals/XYZEvent.fwd.hh>
 #include <core/conformation/signals/XYZEvent.hh>
 #include <core/conformation/symmetry/SymDof.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymSlideInfo.fwd.hh>
 #include <core/conformation/symmetry/SymSlideInfo.hh>
 #include <core/conformation/symmetry/SymmData.fwd.hh>
@@ -119,7 +116,6 @@
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/DOF_ID_Map.fwd.hh>
-// AUTO-REMOVED #include <core/id/DOF_ID_Map.hh>
 #include <core/id/DOF_ID_Mask.fwd.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/NamedAtomID.hh>
@@ -127,7 +123,6 @@
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/types.hh>
-//#include <core/io/silent/ProteinSilentStruct.tmpl.hh>
 #include <core/io/silent/SilentEnergy.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
@@ -155,6 +150,7 @@
 #include <core/pose/PDBInfo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/annotated_sequence.hh>
+#include <core/pose/util.tmpl.hh>
 #include <core/pose/datacache/ObserverCache.fwd.hh>
 #include <core/pose/metrics/PoseMetricContainer.fwd.hh>
 #include <core/pose/signals/ConformationEvent.fwd.hh>
@@ -169,8 +165,6 @@
 #include <utility/Bound.fwd.hh>
 #include <utility/Bound.hh>
 #include <utility/down_cast.hh>
-// AUTO-REMOVED #include <utility/stream_util.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 #include <utility/vector0_bool.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
@@ -183,7 +177,6 @@
 #include <utility/file/FileName.hh>
 #include <utility/file/PathName.fwd.hh>
 #include <utility/file/PathName.hh>
-// AUTO-REMOVED #include <utility/io/mpistream.hh>
 #include <utility/keys/AutoKey.fwd.hh>
 #include <utility/keys/AutoKey.hh>
 #include <utility/keys/Key.fwd.hh>
@@ -300,16 +293,11 @@
 #include <utility/signals/PausableSignalHub.hh>
 #include <utility/signals/SignalHub.fwd.hh>
 #include <utility/signals/SignalHub.hh>
-// AUTO-REMOVED #include <numeric/NumericTraits.hh>
-// AUTO-REMOVED #include <numeric/constants.hh>
-// AUTO-REMOVED #include <numeric/conversions.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/sphericalVector.fwd.hh>
-// AUTO-REMOVED #include <numeric/sphericalVector.hh>
 #include <numeric/trig.functions.hh>
 #include <numeric/types.hh>
 #include <numeric/xyz.functions.fwd.hh>
-// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.fwd.hh>
@@ -373,26 +361,19 @@
 #include <complex>
 #include <cstddef>
 #include <cstdio>
+#include <execinfo.h>
 #include <iomanip>
-// AUTO-REMOVED #include <ios>
 #include <iosfwd>
 #include <istream>
 #include <limits>
 #include <ostream>
 #include <set>
 #include <time.h>
-// AUTO-REMOVED #include <typeinfo>
 #include <basic/MetricValue.fwd.hh>
 #include <basic/Tracer.fwd.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
-// AUTO-REMOVED #include <basic/datacache/BasicDataCache.hh>
-// AUTO-REMOVED #include <basic/datacache/CacheableData.fwd.hh>
-// AUTO-REMOVED #include <basic/datacache/CacheableData.hh>
-// AUTO-REMOVED #include <basic/datacache/DataCache.fwd.hh>
-// AUTO-REMOVED #include <basic/datacache/DataCache.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/functional/hash.hpp>

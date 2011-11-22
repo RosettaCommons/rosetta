@@ -28,7 +28,7 @@
 #include <protocols/basic_moves/FragmentMover.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
-#include <core/fragment/FragSet.hh>
+// AUTO-REMOVED #include <core/fragment/FragSet.hh>
 
 // utility headers
 #include <utility/vector1.hh>

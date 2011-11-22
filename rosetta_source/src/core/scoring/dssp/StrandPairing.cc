@@ -47,6 +47,7 @@
 #include <core/scoring/dssp/PairingsList.hh>
 #include <utility/vector1.hh>
 
+
 static basic::Tracer tr("core.scoring.dssp");
 
 using core::Real;

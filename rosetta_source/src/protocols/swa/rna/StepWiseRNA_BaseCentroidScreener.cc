@@ -16,7 +16,7 @@
 //////////////////////////////////
 #include <protocols/swa/rna/StepWiseRNA_BaseCentroidScreener.hh>
 #include <core/conformation/Residue.hh>
-#include <core/id/TorsionID.hh>
+// AUTO-REMOVED #include <core/id/TorsionID.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
@@ -28,7 +28,12 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
+// AUTO-REMOVED #include <numeric/xyz.functions.hh> // APL TEMP
+
 #include <string>
+
+//Auto Headers
+#include <utility/vector1.hh>
 
 using namespace core;
 using core::Real;

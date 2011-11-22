@@ -19,8 +19,8 @@
 #include <core/scoring/carbon_hbonds/CarbonHBondEnergyCreator.hh>
 
 // Package headers
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/carbon_hbonds/CarbonHBondPotential.hh>
@@ -50,9 +50,9 @@
 #include <utility/vector1.hh>
 #include <boost/bind.hpp>
 
+//Auto Headers
+#include <core/scoring/EnergyMap.hh>
 
-// AUTO-REMOVED #include <numeric/xyz.io.hh>
-// AUTO-REMOVED #include <numeric/deriv/angle_deriv.hh>
 
 static basic::Tracer tr( "core.scoring.carbon_hbonds.CarbonHBondEnergy" );
 

@@ -36,7 +36,7 @@
 // Package headers
 #include <protocols/scoring/methods/pcs2/PcsTensor.hh>
 #include <protocols/scoring/methods/pcs2/PcsInputLine.hh>
-#include <protocols/scoring/methods/pcs2/PcsInputCenter.hh>
+// AUTO-REMOVED #include <protocols/scoring/methods/pcs2/PcsInputCenter.hh>
 
 // Project headers
 #include <basic/Tracer.hh>

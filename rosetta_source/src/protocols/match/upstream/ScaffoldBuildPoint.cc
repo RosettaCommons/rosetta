@@ -23,14 +23,10 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <protocols/match/upstream/UpstreamBuilder.hh>
 
 // Project headers
-// AUTO-REMOVED #include <core/conformation/Residue.hh>
-// AUTO-REMOVED #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 
 // Numeric headers
-// AUTO-REMOVED #include <numeric/HomogeneousTransform.hh>
 
 namespace protocols {
 namespace match {

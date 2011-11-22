@@ -31,8 +31,9 @@
 #include <utility/vector1.hh>
 #include <cmath>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
+//Auto Headers
+#define foreach BOOST_FOREACH
 namespace protocols{
 namespace toolbox {
 namespace pose_metric_calculators {

@@ -20,14 +20,14 @@
 // Project Headers (protocols)
 #include <protocols/dna/DnaInterfaceFinder.hh>
 // AUTO-REMOVED #include <protocols/dna/DnaInterfacePacker.hh>
-#include <protocols/dna/PDBOutput.hh>
+// AUTO-REMOVED #include <protocols/dna/PDBOutput.hh>
 // AUTO-REMOVED #include <protocols/dna/RestrictDesignToProteinDNAInterface.hh>
 // AUTO-REMOVED #include <protocols/dna/util.hh>
 #include <protocols/motifs/motif_utils.hh>
 #include <protocols/motifs/MotifDnaPacker.hh>
 
 // Project Headers
-#include <core/chemical/ResidueType.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/import_pose/import_pose.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>

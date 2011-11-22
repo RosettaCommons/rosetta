@@ -25,7 +25,6 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 
-// AUTO-REMOVED #include <string>
 
 namespace core {
 namespace pack {

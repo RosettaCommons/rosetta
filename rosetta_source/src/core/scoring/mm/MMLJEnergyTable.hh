@@ -31,8 +31,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <map>
 
 namespace core {
 namespace scoring {

@@ -39,6 +39,8 @@
 
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/scoring/EnergyGraph.hh>
 
 
 using namespace core;

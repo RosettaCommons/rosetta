@@ -51,13 +51,13 @@
 //#include <protocols/moves/MonteCarlo.hh>
 //#include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/toolbox/pose_manipulation.hh>
-#include <protocols/viewer/viewers.hh>
+// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/MatcherMover.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh> //debug
+// AUTO-REMOVED #include <core/conformation/Conformation.hh> //debug
 #include <core/fragment/util.hh>
 #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
@@ -93,6 +93,13 @@
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <platform/types.hh>
+#include <core/graph/Graph.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <utility/string_util.hh>
+
 
 
 namespace devel{

@@ -25,9 +25,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 // Utility headers
-// AUTO-REMOVED #include <numeric/random/random.hh>
 //#include <numeric/random.functions.hh>
-// AUTO-REMOVED #include <basic/prof.hh>
 
 static basic::Tracer tr("core.constraints.BoundFunc",basic::t_info);
 

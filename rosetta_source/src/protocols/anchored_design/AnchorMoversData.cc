@@ -17,7 +17,7 @@
 #include <protocols/anchored_design/Anchor.hh>
 
 // Project Headers
-#include <core/fragment/FragID.hh>  // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <core/fragment/FragID.hh>  // REQUIRED FOR WINDOWS
 
 #include <protocols/loops/Loops.hh>
 
@@ -26,8 +26,8 @@
 #include <core/id/types.hh> //used for movemap to set omega angle false
 
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBPoseMap.hh>
-#include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDBPoseMap.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 
 #include <core/chemical/ResidueType.hh>

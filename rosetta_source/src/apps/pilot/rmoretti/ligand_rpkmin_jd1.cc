@@ -48,7 +48,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
 //////////////////////////////////////////////////////////////////////////////
 class LigandRepackMinimizeProtocol; // fwd declaration

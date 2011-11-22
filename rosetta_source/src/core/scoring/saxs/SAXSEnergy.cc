@@ -29,8 +29,8 @@
 #include <core/pose/Pose.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/id/NamedAtomID.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/io/pdb/file_data.hh>
 
 #include <numeric/interpolation/spline/Interpolator.hh>
@@ -56,8 +56,9 @@
 #include <string>
 
 #include <utility/vector1.hh>
-//#include <core/import_pose/import_pose.hh>
 
+//Auto Headers
+//#include <core/import_pose/import_pose.hh>
 
 namespace core {
 namespace scoring {

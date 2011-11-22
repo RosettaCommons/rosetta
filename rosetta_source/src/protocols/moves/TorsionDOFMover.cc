@@ -35,6 +35,8 @@
 
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/kinematics/AtomTree.hh>
 
 using basic::Error;
 using basic::Warning;

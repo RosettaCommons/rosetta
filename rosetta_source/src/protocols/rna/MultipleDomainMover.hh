@@ -34,7 +34,6 @@
 // AUTO-REMOVED #include <cstdlib>
 #include <string>
 
-// AUTO-REMOVED #include <vector>
 
 using core::Size;
 using core::Real;

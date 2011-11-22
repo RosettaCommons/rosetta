@@ -34,8 +34,56 @@
 // AUTO-REMOVED #include <numeric/conversions.hh>
 
 //Auto Headers
+#include <platform/types.hh>
+#include <core/conformation/Conformation.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/id/AtomID.fwd.hh>
+#include <core/id/AtomID.hh>
+#include <core/id/SequenceMapping.fwd.hh>
+#include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/EnergyMap.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreType.hh>
+#include <core/scoring/constraints/AtomPairConstraint.fwd.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
+#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/FourPointsFunc.fwd.hh>
+#include <core/scoring/constraints/Func.fwd.hh>
+#include <core/scoring/constraints/Func.hh>
+#include <core/scoring/constraints/FuncFactory.fwd.hh>
+#include <core/scoring/constraints/HarmonicFunc.fwd.hh>
+#include <core/scoring/constraints/XYZ_Func.fwd.hh>
+#include <utility/down_cast.hh>
+#include <utility/exit.hh>
+#include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
+#include <utility/vector1_bool.hh>
+#include <utility/vectorL.fwd.hh>
+#include <utility/vectorL.hh>
+#include <utility/vectorL_Selector.hh>
+#include <utility/vectorL_bool.hh>
+#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/access_ptr.fwd.hh>
+#include <utility/pointer/access_ptr.hh>
+#include <utility/pointer/owning_ptr.functions.hh>
+#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
+#include <numeric/xyzVector.fwd.hh>
+#include <numeric/random/random.fwd.hh>
+#include <algorithm>
+#include <cassert>
+#include <cstddef>
+#include <iosfwd>
+#include <iostream>
+#include <limits>
+#include <ostream>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <basic/Tracer.fwd.hh>
 
 
 using basic::T;

@@ -30,11 +30,11 @@
 // Core Headers
 #include <core/chemical/ResidueType.hh>
 // AUTO-REMOVED #include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/id/DOF_ID_Range.hh>
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
 #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/util.hh>
@@ -59,7 +59,7 @@
 
 // Numeric Headers
 #include <numeric/random/random.hh>
-#include <numeric/MultiDimensionalHistogram.hh>
+// AUTO-REMOVED #include <numeric/MultiDimensionalHistogram.hh>
 
 // Platform Headers
 #include <platform/types.hh>
@@ -72,13 +72,13 @@
 #include <basic/options/keys/backrub.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-#include <core/chemical/AtomType.hh>
-#include <core/graph/Graph.fwd.hh>
-#include <core/id/TorsionID_Range.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/graph/Graph.fwd.hh>
+// AUTO-REMOVED #include <core/id/TorsionID_Range.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-#include <protocols/moves/MoverStatistics.hh>
+// AUTO-REMOVED #include <protocols/moves/MoverStatistics.hh>
 #include <utility/vector0.hh>
 #include <utility/keys/Key3Vector.hh>
 

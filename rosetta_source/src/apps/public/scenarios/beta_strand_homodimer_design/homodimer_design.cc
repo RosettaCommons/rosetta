@@ -17,7 +17,7 @@
 #include <devel/init.hh>
 
 //core headers
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
@@ -29,19 +29,19 @@
 #include <core/pack/task/TaskFactory.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionInfo.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/Constraints.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/Constraints.hh>
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <core/scoring/ScoreType.hh>
 
@@ -51,44 +51,43 @@
 #include <basic/Tracer.hh>
 
 //protocols
-#include <protocols/moves/MoverContainer.hh>
+// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
+// AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
-#include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
-#include <protocols/moves/MutateResidue.hh>
+// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
+// AUTO-REMOVED #include <protocols/moves/MutateResidue.hh>
 #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
 #include <protocols/protein_interface_design/movers/SaveAndRetrieveSidechains.hh>
-#include <protocols/protein_interface_design/movers/ddG.hh>
 #include <protocols/protein_interface_design/movers/ddG.hh>
 //#include <protocols/moves/PymolMover.hh>
 //symmetry
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
 #include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/moves/symmetry/SymmetricRMSMover.hh>
-#include <protocols/moves/symmetry/SymRotamerTrialsMover.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SymmetricRMSMover.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SymRotamerTrialsMover.hh>
 #include <protocols/moves/symmetry/SymMinMover.hh>
 #include <protocols/moves/symmetry/SymPackRotamersMover.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-#include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 //JD2
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/jd2/JobOutputter.hh>
+// AUTO-REMOVED #include <protocols/jd2/JobOutputter.hh>
 
 
 // option key includes
-#include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -97,8 +96,10 @@
 #include <sstream>
 #include <iostream>
 #include <string>
-#include <stdlib.h>
+// AUTO-REMOVED #include <stdlib.h>
 
+//Auto Headers
+#include <utility/vector0.hh>
 using basic::Error;
 using basic::Warning;
 static basic::Tracer TR("apps.public.beta_strand_homodimer_design.homodimer_design");

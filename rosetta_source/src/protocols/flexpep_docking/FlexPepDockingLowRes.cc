@@ -20,7 +20,7 @@
 #include <protocols/flexpep_docking/FlexPepDockingLowRes.hh>
 
 #include <core/types.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/option.hh>
@@ -46,6 +46,8 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/chemical/ChemicalManager.fwd.hh>
 
 using namespace protocols::flexpep_docking;
 

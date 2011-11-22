@@ -23,19 +23,19 @@
 #include <basic/options/option.hh>
 
 #include <core/types.hh>
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 
 #include <basic/Tracer.hh>
 
-#include <utility/file/file_sys_util.hh>
+// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 #include <utility/assert.hh>
 
 // option key includes
 
 #include <core/conformation/Residue.hh>
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <basic/options/keys/docking.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/chemical/ResidueSelector.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <utility/tag/Tag.hh>
@@ -44,6 +44,11 @@
 #include <utility/vector1.hh>
 #include <numeric/random/random.hh>
 #include <boost/foreach.hpp>
+
+//Auto Headers
+#include <core/conformation/Conformation.hh>
+#include <core/pose/Pose.hh>
+
 #define foreach BOOST_FOREACH
 
 namespace protocols {

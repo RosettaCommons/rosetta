@@ -46,24 +46,24 @@
 #include <core/pose/Pose.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/constants.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 
 //protocol headers
-#include <protocols/moves/MinMover.hh>
-#include <protocols/moves/MonteCarlo.hh>
-#include <protocols/geometry/RB_geometry.hh>
+// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
+// AUTO-REMOVED #include <protocols/geometry/RB_geometry.hh>
 
 
 // Utility headers

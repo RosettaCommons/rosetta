@@ -17,16 +17,13 @@
 #include <protocols/forge/remodel/RemodelDesignMover.hh>
 #include <protocols/forge/remodel/RemodelWorkingSet.hh>
 #include <basic/Tracer.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-// Auto-header: duplicate removed #include <core/conformation/ResidueFactory.hh>
-// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
-// Auto-header: duplicate removed #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <utility/vector1.hh>
 #include <core/scoring/ScoreFunction.hh>

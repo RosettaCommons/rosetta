@@ -25,6 +25,8 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
+//Auto Headers
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace rotamer_recovery {

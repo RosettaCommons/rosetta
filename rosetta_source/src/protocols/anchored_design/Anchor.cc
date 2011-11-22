@@ -16,7 +16,7 @@
 #include <protocols/anchored_design/Anchor.hh>
 
 // Project Headers
-#include <protocols/loops/Loops.hh>
+// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBPoseMap.hh>

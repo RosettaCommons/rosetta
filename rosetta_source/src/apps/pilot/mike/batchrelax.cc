@@ -14,7 +14,7 @@
 // libRosetta headers
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/frag_picker/VallChunk.hh>
-#include <protocols/frag_picker/VallProvider.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/VallProvider.hh>
 
 #include <utility/pointer/owning_ptr.hh>
 // AUTO-REMOVED #include <boost/cstdint.hpp>
@@ -80,7 +80,6 @@
 #include <basic/options/keys/batch_relax.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
-// Auto-header: duplicate removed #include <core/pose/Pose.hh>
 #include <utility/vector1.hh>
 
 

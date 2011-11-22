@@ -204,7 +204,6 @@ using basic::Warning;
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
-// Auto-header: duplicate removed #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
@@ -214,9 +213,6 @@ using basic::Warning;
 #include <core/scoring/ScoringManager.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
-//Auto Headers
-
 
 
 #ifdef UNICODE

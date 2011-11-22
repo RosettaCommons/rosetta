@@ -22,7 +22,7 @@
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.hh>
 #include <core/scoring/rna/RNA_RawBaseBaseInfo.fwd.hh>
 #include <core/scoring/rna/RNA_DataInfo.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
@@ -33,7 +33,6 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/constraints/FadeFunc.hh>
-// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.hh>

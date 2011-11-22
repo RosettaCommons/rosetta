@@ -24,7 +24,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/filters/Filter.hh>
-// Auto-header: duplicate removed #include <core/conformation/Conformation.hh>
 
 
 // Utility headers
@@ -36,7 +35,6 @@
 // C++ Headers
 #include <map>
 
-// Auto-header: duplicate removed #include <basic/Tracer.hh>
 
 #include <core/pose/util.hh>
 #include <utility/vector1.hh>

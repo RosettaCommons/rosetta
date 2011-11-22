@@ -18,13 +18,13 @@
 #include <cmath>
 
 // Unit headers
-#include <core/scoring/methods/util.hh>
+// AUTO-REMOVED #include <core/scoring/methods/util.hh>
 #include <core/scoring/methods/pHEnergy.hh>
 #include <core/scoring/methods/pHEnergyCreator.hh>
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreType.hh>
 

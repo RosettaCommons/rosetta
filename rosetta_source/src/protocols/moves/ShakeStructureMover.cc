@@ -56,31 +56,21 @@
 
 // C++ headers
 #include <cstdlib>
-// Auto-header: duplicate removed #include <fstream>
-// Auto-header: duplicate removed #include <iostream>
 #include <string>
-// Auto-header: duplicate removed #include <sstream>
 
 #include <basic/Tracer.hh>
 
-// Auto-header: duplicate removed #include <core/types.hh>
 
-// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
-// Auto-header: duplicate removed #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-// Auto-header: duplicate removed #include <core/conformation/ResidueFactory.hh>
 
 // AUTO-REMOVED #include <core/scoring/sasa.hh>
 #include <core/scoring/rms_util.hh>
 //#include <core/scoring/ScoringManager.hh>
-// Auto-header: duplicate removed #include <core/scoring/ScoreFunction.hh>
-// Auto-header: duplicate removed #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/Constraints.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-// Auto-header: duplicate removed #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/Func.hh>
 // AUTO-REMOVED #include <core/id/AtomID_Map.hh>
@@ -89,36 +79,20 @@
 #include <core/id/DOF_ID.hh>
 // AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/Jump.hh>
-// Auto-header: duplicate removed #include <core/kinematics/MoveMap.hh>
 
-// Auto-header: duplicate removed #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
 // AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 
-// Auto-header: duplicate removed #include <core/init.hh>
 
-// Auto-header: duplicate removed #include <basic/options/util.hh>
 // AUTO-REMOVED #include <basic/options/option.hh>
-// Auto-header: duplicate removed #include <basic/options/after_opts.hh>
-// Auto-header: duplicate removed #include <basic/options/keys/OptionKeys.hh>
 
 // AUTO-REMOVED #include <basic/basic.hh>
-// Auto-header: duplicate removed #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <basic/database/open.hh>
-// Auto-header: duplicate removed #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 // AUTO-REMOVED #include <core/io/silent/ProteinSilentStruct.hh>
 
-// Auto-header: duplicate removed #include <core/pack/pack_rotamers.hh>
 // AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
-// Auto-header: duplicate removed #include <core/pack/task/PackerTask.hh>
-// Auto-header: duplicate removed #include <core/pack/task/TaskFactory.hh>
-// Auto-header: duplicate removed #include <core/kinematics/MoveMap.hh>
-// Auto-header: duplicate removed #include <core/optimization/AtomTreeMinimizer.hh>
-// Auto-header: duplicate removed #include <core/optimization/MinimizerOptions.hh>
 // AUTO-REMOVED #include <core/io/silent/silent.fwd.hh>
-// Auto-header: duplicate removed #include <core/io/silent/ProteinSilentStruct.hh>
-// Auto-header: duplicate removed #include <core/io/silent/SilentFileData.hh>
 
 //protocols
 #include <protocols/moves/ShakeStructureMover.hh>
@@ -133,16 +107,12 @@
 // AUTO-REMOVED #include <utility/file/FileName.hh>
 #include <utility/vector1.hh>
 // AUTO-REMOVED #include <utility/io/ozstream.hh>
-// Auto-header: duplicate removed #include <basic/Tracer.hh>
 // AUTO-REMOVED #include <time.h>
 using basic::T;
 using basic::Warning;
 using basic::Error;
 
 // C++ headers
-// Auto-header: duplicate removed #include <fstream>
-// Auto-header: duplicate removed #include <iostream>
-// Auto-header: duplicate removed #include <string>
 
 #include <utility/vector0.hh>
 

@@ -75,6 +75,8 @@
 #include <numeric/xyz.functions.hh>
 #include <ObjexxFCL/format.hh>
 
+//Auto Headers
+#include <core/scoring/EnergyGraph.hh>
 //Auto using namespaces
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
 //Auto using namespaces end

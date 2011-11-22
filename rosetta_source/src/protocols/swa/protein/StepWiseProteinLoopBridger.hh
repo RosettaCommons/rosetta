@@ -19,12 +19,17 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/Ramachandran.hh>
-#include <core/id/TorsionID.hh>
+// AUTO-REMOVED #include <core/id/TorsionID.hh>
 #include <protocols/swa/StepWiseJobParameters.fwd.hh>
-#include <protocols/swa/StepWisePoseSampleGenerator.hh>
+// AUTO-REMOVED #include <protocols/swa/StepWisePoseSampleGenerator.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/loops/Loop.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/id/TorsionID.fwd.hh>
+#include <protocols/swa/StepWisePoseSampleGenerator.fwd.hh>
+
 
 namespace protocols {
 namespace swa {

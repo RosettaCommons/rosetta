@@ -41,6 +41,8 @@
 #include <protocols/qsar/qsarMap.hh>
 #include <utility/vector0.hh>
 
+//Auto Headers
+#include <boost/bind.hpp>
 
 namespace protocols {
 namespace qsar {

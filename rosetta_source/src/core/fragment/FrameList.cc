@@ -18,7 +18,7 @@
 #include <core/fragment/FrameList.hh>
 
 // Package Headers
-#include <core/fragment/FragData.hh>
+// AUTO-REMOVED #include <core/fragment/FragData.hh>
 #include <core/fragment/Frame.hh>
 
 // Project Headers

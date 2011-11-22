@@ -28,7 +28,41 @@
 // AUTO-REMOVED #include <numeric/random/random.hh>
 
 //Auto Headers
+#include <platform/types.hh>
+#include <core/types.hh>
+#include <core/conformation/signals/LengthEvent.fwd.hh>
+#include <core/id/SequenceMapping.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/sequence/DerivedSequenceMapping.fwd.hh>
+#include <core/sequence/ScoringScheme.fwd.hh>
+#include <core/sequence/SequenceAlignment.fwd.hh>
+#include <utility/down_cast.hh>
+#include <utility/exit.hh>
+#include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
+#include <utility/vector1_bool.hh>
+#include <utility/vectorL.fwd.hh>
+#include <utility/vectorL.hh>
+#include <utility/vectorL_Selector.hh>
+#include <utility/vectorL_bool.hh>
+#include <utility/file/FileName.fwd.hh>
+#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/access_ptr.fwd.hh>
+#include <utility/pointer/access_ptr.hh>
+#include <utility/pointer/owning_ptr.functions.hh>
+#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
+#include <numeric/xyzVector.fwd.hh>
+#include <algorithm>
+#include <cassert>
+#include <cstddef>
+#include <iosfwd>
+#include <limits>
+#include <map>
+#include <string>
+#include <vector>
+#include <boost/functional/hash.hpp>
 
 
 

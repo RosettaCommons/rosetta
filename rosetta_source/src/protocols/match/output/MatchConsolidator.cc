@@ -30,7 +30,7 @@
 
 // C++ headers
 #include <algorithm>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

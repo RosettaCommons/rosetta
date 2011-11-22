@@ -25,7 +25,7 @@
 // Package Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -62,6 +62,8 @@
 #include <core/chemical/VariantType.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/kinematics/tree/Atom.hh>
 //Auto using namespaces
 namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
 namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS

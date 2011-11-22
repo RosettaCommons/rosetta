@@ -19,7 +19,7 @@
 
 #include <core/chemical/AA.hh>
 
-#include <basic/database/open.hh>
+// AUTO-REMOVED #include <basic/database/open.hh>
 
 #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/after_opts.hh>

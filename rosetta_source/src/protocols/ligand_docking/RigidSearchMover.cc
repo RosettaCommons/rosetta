@@ -31,7 +31,6 @@
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>
 #endif
-// AUTO-REMOVED #include <ctime>
 
 static basic::Tracer TR("protocols.ligand_docking.RigidSearchMover", basic::t_debug);
 static numeric::random::RandomGenerator mc_RG(32900); // <- Magic number, do not change it!!!

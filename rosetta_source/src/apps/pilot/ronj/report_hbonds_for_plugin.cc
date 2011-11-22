@@ -14,8 +14,8 @@
 #include <core/chemical/AtomType.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/option.hh>
 
@@ -24,9 +24,9 @@
 
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
-#include <core/scoring/hbonds/hbonds_geom.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/types.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/CacheableString.hh>
@@ -35,8 +35,8 @@
 
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/MinMover.hh>
-#include <protocols/relax/FastRelax.hh>
+// AUTO-REMOVED #include <protocols/moves/MinMover.hh>
+// AUTO-REMOVED #include <protocols/relax/FastRelax.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
 
@@ -55,11 +55,16 @@
 #include <string>
 #include <sstream>
 #include <boost/algorithm/string.hpp>  // for string split
-#include <boost/algorithm/string/detail/classification.hpp>  // for is_any_of
+// AUTO-REMOVED #include <boost/algorithm/string/detail/classification.hpp>  // for is_any_of
 
 // option keys includes
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
+
+//Auto Headers
+#include <protocols/moves/Mover.hh>
+#include <utility/vector1.hh>
+
 
 // namespaces
 using namespace core;

@@ -31,9 +31,10 @@
 #include <core/pose/Pose.hh>
 
 // Package headers
-#include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 
+//Auto Headers
+#include <protocols/moves/MonteCarlo.fwd.hh>
 namespace protocols {
 namespace moves {
 

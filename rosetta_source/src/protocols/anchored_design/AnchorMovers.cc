@@ -15,7 +15,7 @@
 #include <protocols/anchored_design/AnchorMovers.hh>
 
 // Package Headers
-#include <protocols/anchored_design/Anchor.hh>
+// AUTO-REMOVED #include <protocols/anchored_design/Anchor.hh>
 #include <protocols/anchored_design/AnchorMoversData.hh>
 #include <protocols/moves/LoopAnalyzerMover.hh>
 #include <protocols/moves/InterfaceAnalyzerMover.hh>
@@ -37,12 +37,12 @@
 
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 
 //needed for a benchmarking thing
 #include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
-#include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
-#include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
+// AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
+// AUTO-REMOVED #include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>

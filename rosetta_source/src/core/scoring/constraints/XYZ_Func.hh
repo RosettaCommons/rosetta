@@ -23,7 +23,6 @@
 #include <core/id/AtomID.fwd.hh>
 
 //Utility Headers
-// AUTO-REMOVED #include <numeric/xyzVector.hh>
 
 // C++ Headers
 

@@ -24,15 +24,16 @@
 #include <core/types.hh>
 #include <numeric/random/random_permutation.hh>
 
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/kinematics/Jump.hh>
 #include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
+//Auto Headers
+#define foreach BOOST_FOREACH
 using basic::T;
 using basic::Error;
 using basic::Warning;

@@ -12,14 +12,14 @@
 
 // Unit headers
 #include <core/pack/make_symmetric_task.hh>
-#include <core/conformation/symmetry/SymmData.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/VirtualCoordinate.hh>
 // AUTO-REMOVED #include <core/scoring/symmetry/SymmetricEnergies.hh>
 // AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/pose/Pose.hh>
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <core/chemical/AA.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 // AUTO-REMOVED #include <core/chemical/VariantType.hh>
@@ -37,7 +37,7 @@
 // AUTO-REMOVED #include <numeric/xyzTriple.hh>
 
 // Package Headers
-#include <core/kinematics/Edge.hh>
+// AUTO-REMOVED #include <core/kinematics/Edge.hh>
 #include <core/pose/symmetry/util.hh>
 
 // AUTO-REMOVED #include <core/pose/PDBInfo.hh>
@@ -45,8 +45,8 @@
 // AUTO-REMOVED #include <basic/Tracer.hh>
 
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
-#include <ObjexxFCL/FArray2D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray2D.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyz.functions.hh>

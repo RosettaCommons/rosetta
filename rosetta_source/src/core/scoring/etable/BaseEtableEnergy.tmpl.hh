@@ -79,6 +79,7 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -533,11 +534,9 @@
 #include <boost/pool/detail/mutex.hpp>
 #include <boost/pool/poolfwd.hpp>
 #include <boost/unordered_map.hpp>
+#include <core/pose/util.tmpl.hh>
+#include <execinfo.h>
 
-
-
-
-// Numeric headers
 
 namespace core {
 namespace scoring {

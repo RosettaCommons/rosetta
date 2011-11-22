@@ -25,8 +25,8 @@
 #include <core/types.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 
+//Auto Headers
 namespace protocols {
 namespace nonlocal {
 

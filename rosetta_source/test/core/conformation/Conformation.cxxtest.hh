@@ -51,6 +51,7 @@
 #include <core/id/AtomID_Mask.hh>
 #include <core/kinematics/AtomPointer.hh>
 #include <core/kinematics/DomainMap.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <utility/vector1.hh>
 #include <utility/io/all.fwd.hh>
 #include <utility/io/icstream.fwd.hh>

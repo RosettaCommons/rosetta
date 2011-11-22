@@ -22,6 +22,9 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/swa/StepWisePoseSampleGenerator.fwd.hh>
 
+//Auto Headers
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace swa {

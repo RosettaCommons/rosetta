@@ -29,8 +29,9 @@
 #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
+//Auto Headers
+#define foreach BOOST_FOREACH
 namespace protocols {
 namespace ligand_docking {
 

@@ -16,7 +16,7 @@
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
-#include <core/scoring/electron_density/util.hh>
+// AUTO-REMOVED #include <core/scoring/electron_density/util.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -28,14 +28,14 @@
 // Symmetry
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <protocols/moves/symmetry/SymMinMover.hh>
 #include <protocols/geometry/RB_geometry.hh>
 
 
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

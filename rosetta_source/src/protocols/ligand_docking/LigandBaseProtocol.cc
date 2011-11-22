@@ -74,6 +74,11 @@
 #include <core/pose/util.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/kinematics/tree/Atom.hh>
+#include <core/scoring/EnergyGraph.hh>
+
+
 
 
 namespace protocols {

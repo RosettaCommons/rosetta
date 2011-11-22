@@ -16,8 +16,8 @@
 
 // Project headers
 #include <core/graph/Graph.hh>
-#include <core/conformation/PointGraph.hh>
-#include <core/conformation/find_neighbors.hh>
+// AUTO-REMOVED #include <core/conformation/PointGraph.hh>
+// AUTO-REMOVED #include <core/conformation/find_neighbors.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 
@@ -31,7 +31,7 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
-#include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
 
 #include <utility/vector1.hh>
 

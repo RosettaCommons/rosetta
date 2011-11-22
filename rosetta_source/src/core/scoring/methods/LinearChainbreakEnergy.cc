@@ -17,11 +17,11 @@
 #include <core/scoring/methods/chainbreak_util.hh>
 #include <core/scoring/methods/LinearChainbreakEnergy.hh>
 #include <core/scoring/methods/LinearChainbreakEnergyCreator.hh>
-#include <boost/unordered/unordered_set.hpp>
+// AUTO-REMOVED #include <boost/unordered/unordered_set.hpp>
 
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
@@ -40,6 +40,11 @@
 // AUTO-REMOVED #include <iterator>
 
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/tree/Atom.hh>
+
 
 
 

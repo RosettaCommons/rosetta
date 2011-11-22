@@ -26,7 +26,7 @@
 #include <protocols/frag_picker/quota/QuotaCollector.hh>
 #include <protocols/frag_picker/quota/ABEGO_SS_Config.hh>
 #include <protocols/frag_picker/quota/ABEGO_SS_Pool.hh>
-#include <protocols/frag_picker/quota/SecondaryStructurePool.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/quota/SecondaryStructurePool.hh>
 #include <protocols/frag_picker/BoundedCollector.hh>
 #include <protocols/frag_picker/PdbIdChunkFilter.hh>
 #include <protocols/frag_picker/BestTotalScoreSelector.hh>
@@ -34,16 +34,16 @@
 #include <protocols/frag_picker/scores/FragmentScoringMethod.hh>
 #include <protocols/frag_picker/scores/FragmentScoreManager.hh>
 #include <protocols/frag_picker/scores/SecondarySimilarity.hh>
-#include <protocols/frag_picker/scores/PartialSecondarySimilarity.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/scores/PartialSecondarySimilarity.hh>
 #include <protocols/frag_picker/scores/ProfileScoreL1.hh>
 #include <protocols/frag_picker/scores/RamaScore.hh>
 #include <protocols/frag_picker/scores/CSScore.hh>
 #include <protocols/frag_picker/scores/ABEGO_SS_Score.hh>
 #include <protocols/frag_picker/scores/TorsionBinSimilarity.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.hh>
-#include <protocols/frag_picker/TorsionBinIO.hh>
+// AUTO-REMOVED #include <protocols/frag_picker/TorsionBinIO.hh>
 
-#include <core/fragment/FragID.hh> // required for windows build
+// AUTO-REMOVED #include <core/fragment/FragID.hh> // required for windows build
 #include <core/fragment/SecondaryStructure.hh>
 
 #include <core/io/silent/SilentFileData.hh>

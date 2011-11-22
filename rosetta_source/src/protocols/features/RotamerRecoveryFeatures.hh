@@ -17,8 +17,8 @@
 // Unit Headers
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/RotamerRecoveryFeatures.fwd.hh>
-#include <protocols/rotamer_recovery/RRProtocol.hh>
-#include <protocols/rotamer_recovery/RRComparer.hh>
+// AUTO-REMOVED #include <protocols/rotamer_recovery/RRProtocol.hh>
+// AUTO-REMOVED #include <protocols/rotamer_recovery/RRComparer.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -33,6 +33,11 @@
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <protocols/rotamer_recovery/RRComparer.fwd.hh>
+#include <protocols/rotamer_recovery/RRProtocol.fwd.hh>
+
 
 
 namespace protocols{

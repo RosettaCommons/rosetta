@@ -69,7 +69,7 @@
 #include <core/chemical/ChemicalManager.hh>
 
 // AUTO-REMOVED #include <core/scoring/etable/Etable.hh>
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 // AUTO-REMOVED #include <core/scoring/Ramachandran.hh>
@@ -77,7 +77,7 @@
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
-#include <core/scoring/hbonds/hbonds_geom.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/hbonds_geom.hh>
 // AUTO-REMOVED #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 
 #include <core/pack/rotamer_trials.hh>
@@ -92,7 +92,7 @@
 // AUTO-REMOVED #include <core/kinematics/util.hh>
 #include <core/id/AtomID_Map.hh>
 
-#include <core/scoring/mm/MMTorsionLibrary.fwd.hh>
+// AUTO-REMOVED #include <core/scoring/mm/MMTorsionLibrary.fwd.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -139,10 +139,11 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
-// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <utility/vector0.hh>
 #include <numeric/xyz.functions.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 
 
 

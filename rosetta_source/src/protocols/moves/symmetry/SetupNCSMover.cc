@@ -14,17 +14,17 @@
 #include <protocols/moves/symmetry/SetupNCSMoverCreator.hh>
 #include <protocols/moves/symmetry/SetupNCSMover.hh>
 
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
-#include <core/pose/symmetry/util.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/scoring/constraints/DihedralPairConstraint.hh>
 #include <core/scoring/constraints/TopOutFunc.hh>

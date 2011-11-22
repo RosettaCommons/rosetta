@@ -16,9 +16,14 @@
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <protocols/rosetta_scripts/util.hh>
+
+//Auto Headers
+#include <utility/vector0.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace protein_interface_design{

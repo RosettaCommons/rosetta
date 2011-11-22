@@ -20,6 +20,8 @@
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 #include <utility/vector1.fwd.hh>
 #include <map>
+
+//Auto Headers
 namespace protocols {
 namespace frag_picker {
 

@@ -20,7 +20,7 @@
 ///			-s hotspot.stubs -target target.pdb --> hotspot density list
 
 #include <devel/init.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 // AUTO-REMOVED #include <core/conformation/Interface.hh>
@@ -29,7 +29,6 @@
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-// Auto-header: duplicate removed #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>

@@ -38,7 +38,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/branch_angle/BranchAngleOptimizer.hh>
-#include <protocols/viewer/viewers.hh>
+// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/SidechainMover.hh>
 #include <basic/options/option.hh>
 #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
@@ -79,6 +79,8 @@
 #include <utility/vector0.hh>
 #include <utility/keys/Key3Vector.hh>
 
+//Auto Headers
+#include <core/kinematics/FoldTree.hh>
 #define foreach BOOST_FOREACH
 
 namespace protocols {

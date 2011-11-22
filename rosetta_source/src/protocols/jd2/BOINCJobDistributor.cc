@@ -14,7 +14,7 @@
 // Project headers
 // This has to come before boinc.hh or we get this error on VC++
 // '_read' : is not a member of 'std::basic_istream<_Elem,_Traits>'
-#include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
 
 #ifdef BOINC
 	#include <protocols/boinc/boinc.hh>

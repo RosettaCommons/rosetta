@@ -36,7 +36,6 @@
 #include <utility/vector1.hh>
 
 
-// Auto-header: duplicate removed #include <core/pose/Pose.hh> ///TODO why can't I do a .fwd?
 
 ///////////////////////////////////////////////////////////////////////
 

@@ -21,16 +21,18 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/types.hh>
-#include <core/id/TorsionID.hh>
+// AUTO-REMOVED #include <core/id/TorsionID.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <utility/vector1.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/GreenPacker.fwd.hh>
-#include <protocols/swa/protein/MainChainTorsionSet.hh> // should make a .fwd.hh probably
+// AUTO-REMOVED #include <protocols/swa/protein/MainChainTorsionSet.hh> // should make a .fwd.hh probably
 #include <string>
 #include <map>
 
+//Auto Headers
+#include <core/id/TorsionID.fwd.hh>
 namespace protocols {
 namespace swa {
 namespace protein {

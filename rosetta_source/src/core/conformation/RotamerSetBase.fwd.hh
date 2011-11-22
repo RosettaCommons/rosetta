@@ -18,8 +18,8 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-// AUTO-REMOVED #include <utility/vector1.fwd.hh>
 
+//Auto Headers
 namespace core {
 namespace conformation {
 

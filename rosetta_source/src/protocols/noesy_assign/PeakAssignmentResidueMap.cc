@@ -28,9 +28,9 @@
 
 
 // Utility headers
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 // #include <utility/excn/Exceptions.hh>
 // #include <utility/vector1.fwd.hh>
 // #include <utility/pointer/ReferenceCount.hh>
@@ -49,6 +49,9 @@
 
 #include <protocols/noesy_assign/CrossPeak.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <cmath>
 
 
 

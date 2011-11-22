@@ -14,12 +14,12 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/conformation/util.hh>
+// AUTO-REMOVED #include <core/conformation/util.hh>
 // AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/AA.hh>
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 //parsing
 #include <utility/tag/Tag.hh>
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>

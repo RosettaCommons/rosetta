@@ -33,7 +33,7 @@
 #include <ObjexxFCL/FArray1A.fwd.hh>
 
 //// C++ headers
-#include <cstdlib> //required by GCC 4.3.2
+// AUTO-REMOVED #include <cstdlib> //required by GCC 4.3.2
 #include <string>
 
 namespace core {

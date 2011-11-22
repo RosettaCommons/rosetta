@@ -32,7 +32,7 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
-#include <utility/excn/Exceptions.hh>
+// AUTO-REMOVED #include <utility/excn/Exceptions.hh>
 
 
 // C++ Headers
@@ -40,7 +40,8 @@
 
 #include <protocols/jd2/Job.hh>
 
-
+//Auto Headers
+#include <utility/excn/EXCN_Base.hh>
 namespace protocols{
 namespace features{
 

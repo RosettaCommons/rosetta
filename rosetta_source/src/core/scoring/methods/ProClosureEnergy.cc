@@ -19,11 +19,11 @@
 #include <core/scoring/DerivVectorPair.hh>
 //#include <core/scoring/ScoringManager.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/DihedralConstraint.hh>
-#include <core/scoring/constraints/HarmonicFunc.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/HarmonicFunc.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
 // Utility headers
 #include <numeric/constants.hh>

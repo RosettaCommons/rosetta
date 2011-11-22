@@ -20,18 +20,18 @@
 // Core Headers
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
-#include <core/pack/dunbrack/DunbrackRotamer.hh>
-#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
-#include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <core/pack/task/operation/TaskOperations.hh>
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/DunbrackRotamer.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
-#include <basic/basic.hh>
+// AUTO-REMOVED #include <basic/basic.hh>
 #include <core/pack/interaction_graph/SimpleInteractionGraph.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/MetropolisHastingsMover.hh>
@@ -49,19 +49,20 @@
 // AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
 // AUTO-REMOVED #include <core/scoring/Energies.hh>
 
-// Auto-header: duplicate removed #include <basic/Tracer.hh>
 
 // C++ Headers
 #include <ostream>
 #include <sstream>
 // AUTO-REMOVED #include <fstream>
-#include <utility/fixedsizearray1.hh>
+// AUTO-REMOVED #include <utility/fixedsizearray1.hh>
 
 #include <protocols/jobdist/Jobs.hh>
 #include <utility/string_util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/pack/task/operation/TaskOperation.hh>
 
 #ifdef WIN_PYROSETTA
 	#include <protocols/moves/ThermodynamicObserver.hh>

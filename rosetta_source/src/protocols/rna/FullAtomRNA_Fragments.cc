@@ -22,7 +22,7 @@
 #include <protocols/rna/RNA_ProtocolUtil.hh> // for compare_RNA_char, compare_RNA_secstruct
 
 #include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/rna/RNA_Util.hh>
 #include <core/id/TorsionID.hh>

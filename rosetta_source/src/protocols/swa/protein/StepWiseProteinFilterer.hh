@@ -24,6 +24,9 @@
 
 #include <map>
 
+//Auto Headers
+#include <utility/vector1.hh>
+
 namespace protocols {
 namespace swa {
 namespace protein {

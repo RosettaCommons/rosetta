@@ -64,7 +64,6 @@
 #include <protocols/moves/RepeatMover.hh>
 //for resfile reading
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-// Auto-header: duplicate removed #include <basic/options/option.hh>
 
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
@@ -88,7 +87,6 @@
 
 #include <basic/Tracer.hh>
 
-// Auto-header: duplicate removed #include <core/pack/task/PackerTask.hh>
 using basic::T;
 
 // option key includes
@@ -100,7 +98,6 @@ using basic::T;
 #include <utility/vector1.hh>
 
 
-// Auto-header: duplicate removed #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 using basic::Error;
 using basic::Warning;

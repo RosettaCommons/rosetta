@@ -36,6 +36,8 @@
 #include <core/graph/UpperEdgeGraph.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/scoring/EnergyGraph.hh>
 
 namespace core {
 namespace pack {

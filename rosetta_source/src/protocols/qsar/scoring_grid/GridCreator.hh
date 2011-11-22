@@ -19,7 +19,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/tag/Tag.fwd.hh>
 
-#include <string>
 
 namespace protocols {
 namespace qsar {

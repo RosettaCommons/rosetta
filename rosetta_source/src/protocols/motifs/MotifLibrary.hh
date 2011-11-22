@@ -30,8 +30,8 @@
 
 // C++ Headers
 #include <iosfwd>
-// AUTO-REMOVED #include <string>
 
+//Auto Headers
 namespace protocols {
 namespace motifs {
 

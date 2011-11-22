@@ -23,12 +23,6 @@
 
 #include <utility/vector0_bool.hh>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
-
 
 namespace core {
 namespace pack {

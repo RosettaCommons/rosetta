@@ -14,7 +14,7 @@
 #include <protocols/jd2/archive/EvaluatedArchive.hh>
 #include <protocols/jd2/archive/ArchiveManager.hh>
 
-#include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>

@@ -17,7 +17,7 @@
 #include <protocols/toolbox/pose_metric_calculators/FragQualCalculator.hh>
 
 // Project Headers
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 #include <basic/MetricValue.hh>
 #include <core/pose/Pose.hh>
@@ -39,12 +39,15 @@
 #include <cmath>
 #include <ObjexxFCL/format.hh>
 
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/id/types.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <utility/vector0.hh>
+
+//Auto Headers
+#include <core/chemical/ChemicalManager.fwd.hh>
 
 
 static basic::Tracer TR("protocols.toolbox.PoseMetricCalculators.FragQualCalculator");

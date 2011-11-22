@@ -17,11 +17,11 @@
 // Core Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <core/scoring/ScoreType.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/scoring/EnergyMap.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/constraints/XYZ_Func.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
@@ -36,11 +36,8 @@
 
 // Utility Headers
 #include <algorithm>
-// Auto-header: duplicate removed #include <iostream>
 #include <iomanip>
-// Auto-header: duplicate removed #include <fstream>
 #include <ostream>
-// Auto-header: duplicate removed #include <string>
 #include <sstream>
 #include <cmath>
 #include <map>
@@ -48,6 +45,8 @@
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
+//Auto Headers
+#include <numeric/random/random.fwd.hh>
 
 namespace protocols {
 namespace pockets {

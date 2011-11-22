@@ -15,7 +15,7 @@
 #include <core/pose/Pose.hh>
 #include <core/chemical/AA.hh>
 #include <core/types.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 
 #include <basic/Tracer.hh>
 
@@ -31,6 +31,8 @@
 
 #include <core/pack/task/PackerTask.hh>
 
+//Auto Headers
+#include <core/conformation/Residue.hh>
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.InterfaceRecapitulationMover" );
 

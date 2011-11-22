@@ -28,20 +28,19 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh> //reading remarks
 #include <core/pose/PDBPoseMap.hh> //for PDB-info-to-resid functionality
-#include <core/io/pdb/file_data.hh> //reading remarks
+// AUTO-REMOVED #include <core/io/pdb/file_data.hh> //reading remarks
 //MSA
 //#include <core/sequence/SequenceProfile.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 #include <core/scoring/ScoreFunction.hh> //scoring ambiguous constraints
 #include <core/scoring/constraints/Constraint.hh>
-// Auto-header: duplicate removed #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/Constraints.hh>
 //#include <core/scoring/constraints/ResidueTypeConstraint.hh>
 
-#include <core/pack/task/PackerTask.hh> //favor_native_res
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh> //favor_native_res
 #include <basic/options/option.hh> //options
 
 // Utility Headers

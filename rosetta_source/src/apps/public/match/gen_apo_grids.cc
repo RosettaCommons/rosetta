@@ -29,18 +29,18 @@
 #include <core/init.hh>
 #include <core/types.hh>
 #include <core/io/pdb/file_data.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/pose/Pose.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/MMAtomTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/AtomVDW.hh>
+// AUTO-REMOVED #include <core/scoring/AtomVDW.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
@@ -68,7 +68,6 @@
 #include <core/scoring/EnergyMap.hh>
 // AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 // AUTO-REMOVED #include <core/scoring/TenANeighborGraph.hh>
-// Auto-header: duplicate removed #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/etable/Etable.hh>
 
 #include <core/import_pose/import_pose.hh>

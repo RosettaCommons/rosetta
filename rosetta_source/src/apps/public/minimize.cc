@@ -12,8 +12,8 @@
 
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <core/pose/datacache/CacheableDataType.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/datacache/CacheableDataType.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/pose/util.hh>
 // AUTO-REMOVED #include <core/pack/dunbrack/DunbrackRotamer.hh>
 // AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>
@@ -21,7 +21,6 @@
 // AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
 // AUTO-REMOVED #include <core/scoring/Energies.hh>
 // AUTO-REMOVED #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
-// Auto-header: duplicate removed #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>

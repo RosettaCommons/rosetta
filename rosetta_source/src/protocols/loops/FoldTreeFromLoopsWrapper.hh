@@ -21,6 +21,9 @@
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/loops/Loops.hh>
 
+//Auto Headers
+#include <utility/vector1.hh>
+
 namespace protocols {
 namespace loops {
 

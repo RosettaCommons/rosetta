@@ -25,14 +25,14 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.hh>
-#include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 // AUTO-REMOVED #include <core/chemical/residue_io.hh>
 #include <core/kinematics/FoldTree.hh>
 
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 
 // option key includes
 #include <basic/options/option.hh>
@@ -57,16 +57,12 @@
 #include <core/io/pdb/file_data.hh>
 
 #include <basic/Tracer.hh>
-// Auto-header: duplicate removed #include <basic/options/option.hh>
 
 #include <ObjexxFCL/string.functions.hh>
 
 // option key includes
 
-// Auto-header: duplicate removed #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
-// Auto-header: duplicate removed #include <basic/options/keys/in.OptionKeys.gen.hh>
-// Auto-header: duplicate removed #include <basic/options/keys/out.OptionKeys.gen.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -76,8 +72,9 @@
 
 #include <utility/vector1.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
+//Auto Headers
+#define foreach BOOST_FOREACH
 /// A temporary copy of the pose_from_pdb code from the demo directory.
 /// Will be phased out in favor of file_data routines soon.
 ///

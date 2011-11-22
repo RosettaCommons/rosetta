@@ -21,14 +21,13 @@
 // Project headers
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/pose/symmetry/util.hh>
+// AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
 // AUTO-REMOVED #include <core/id/AtomID_Mask.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MinimizerMapBase.hh>
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
-// Auto-header: duplicate removed #include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 
@@ -39,8 +38,9 @@
 #include <core/scoring/DerivVectorPair.hh>
 #include <utility/vector1.hh>
 #include <utility/options/BooleanVectorOption.hh>
-// Auto-header: duplicate removed #include <core/pose/util.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 
 namespace core {
 namespace optimization {

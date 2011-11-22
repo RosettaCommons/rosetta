@@ -18,7 +18,7 @@
 #include <core/sequence/DPScoringScheme.hh>
 
 #include <utility/exit.hh>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <string>
 
 // AUTO-REMOVED #include <complex>

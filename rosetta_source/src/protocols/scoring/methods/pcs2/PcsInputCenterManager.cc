@@ -49,7 +49,7 @@
 // Objexx headers
 
 // C++ headers
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 
 #include <utility/vector1.hh>
 

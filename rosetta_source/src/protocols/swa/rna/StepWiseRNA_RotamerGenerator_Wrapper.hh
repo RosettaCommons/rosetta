@@ -30,7 +30,7 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 #include <string>
-#include <map>
+// AUTO-REMOVED #include <map>
 
 
 

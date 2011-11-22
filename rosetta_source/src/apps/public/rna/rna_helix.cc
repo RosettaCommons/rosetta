@@ -12,32 +12,31 @@
 
 // libRosetta headers
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/rna/RNA_Util.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
-#include <core/scoring/constraints/ConstraintIO.hh>
+// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
 
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
-// Auto-header: duplicate removed #include <core/scoring/rms_util.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
 
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
-#include <core/io/silent/RNA_SilentStruct.hh>
-#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
+// AUTO-REMOVED #include <core/io/silent/RNA_SilentStruct.hh>
+// AUTO-REMOVED #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
@@ -73,8 +72,8 @@
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 
+//Auto Headers
 using namespace core;
 using namespace protocols;
 using namespace basic::options::OptionKeys;

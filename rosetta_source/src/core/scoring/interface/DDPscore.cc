@@ -14,23 +14,21 @@
 #include <core/scoring/interface/DDPscore.hh>
 #include <core/scoring/interface/DDPscoreCreator.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/ContextGraphTypes.hh>
-#include <numeric/constants.hh>
+// AUTO-REMOVED #include <core/scoring/ContextGraphTypes.hh>
+// AUTO-REMOVED #include <numeric/constants.hh>
 
 #include <core/conformation/Residue.hh>
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/scoring/EnergyMap.hh>
 
 
 #include <core/kinematics/Jump.hh>
-// Auto-header: duplicate removed #include <core/scoring/EnergyMap.hh>
-
 
 namespace core{
 namespace scoring{

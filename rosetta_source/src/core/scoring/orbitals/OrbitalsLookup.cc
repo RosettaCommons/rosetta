@@ -10,7 +10,7 @@
 
 
 
-#include <core/scoring/rna/RNA_Util.hh>
+// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/interpolation/spline/Bicubic_spline.hh>
@@ -25,10 +25,6 @@
 // AUTO-REMOVED #include <core/scoring/orbitals/OrbitalsScoreCreator.hh>
 // AUTO-REMOVED #include <core/chemical/orbitals/OrbitalTypeMapper.hh>
 #include <basic/database/open.hh>
-// AUTO-REMOVED #include <map>
-// AUTO-REMOVED #include <basic/options/option.hh>
-// AUTO-REMOVED #include <basic/options/keys/orbitals.OptionKeys.gen.hh>
-
 
 
 namespace core{

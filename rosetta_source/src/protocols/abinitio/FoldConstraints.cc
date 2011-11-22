@@ -51,7 +51,6 @@
 
 // option key includes
 
-// Auto-header: duplicate removed #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
 #include <core/fragment/FragSet.hh>
 #include <core/kinematics/MoveMap.hh>

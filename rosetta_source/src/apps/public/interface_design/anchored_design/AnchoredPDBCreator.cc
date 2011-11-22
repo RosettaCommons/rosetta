@@ -16,7 +16,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/PDBPoseMap.hh>
 #include <core/pose/PDBInfo.hh>
 

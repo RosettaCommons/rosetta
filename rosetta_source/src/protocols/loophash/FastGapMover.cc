@@ -33,7 +33,7 @@
 #include <utility/exit.hh>
 // AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 // AUTO-REMOVED #include <core/conformation/util.hh>
 // AUTO-REMOVED #include <core/chemical/util.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
@@ -49,6 +49,11 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <utility/vector1.hh>
 #include <basic/options/keys/OptionKeys.hh>
+
+//Auto Headers
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Jump.hh>
+
 
 
 namespace protocols {

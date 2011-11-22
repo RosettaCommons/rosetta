@@ -29,7 +29,6 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>
 #include <core/types.hh>
-#include <core/io/silent/SilentStruct.fwd.hh>
 
 #include <map>
 

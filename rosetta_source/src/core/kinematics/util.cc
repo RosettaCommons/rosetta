@@ -16,7 +16,7 @@
 //#include <core/kinematics/tree/IntraResidueStubJumpAtom.hh>
 // Package headers
 // AUTO-REMOVED #include <core/id/DOF_ID_Mask.hh>
-#include <core/kinematics/constants.hh>
+// AUTO-REMOVED #include <core/kinematics/constants.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/tree/JumpAtom.hh>

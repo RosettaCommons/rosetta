@@ -17,7 +17,7 @@
 
 // Package headers
 #include <core/scoring/EnergyMap.hh>
-#include <core/scoring/methods/EnergyMethodOptions.hh>
+// AUTO-REMOVED #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
 #include <core/chemical/AA.hh>

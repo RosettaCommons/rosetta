@@ -31,7 +31,7 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <string>
 #include <map>
 // AUTO-REMOVED #include <math.h>

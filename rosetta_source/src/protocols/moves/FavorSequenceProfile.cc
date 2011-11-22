@@ -17,7 +17,7 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
-#include <core/id/AtomID.hh> // needed for Windows build
+// AUTO-REMOVED #include <core/id/AtomID.hh> // needed for Windows build
 #include <core/import_pose/import_pose.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/SequenceProfile.hh>

@@ -11,19 +11,19 @@
 /// @author Aroop Sircar ( aroopsircar@yahoo.com )
 
 
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueSelector.hh>
 
 #include <core/chemical/VariantType.hh>
 #include <core/fragment/FragData.hh>
-#include <core/fragment/FragID.hh>
+// AUTO-REMOVED #include <core/fragment/FragID.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/Frame.hh>
-#include <core/fragment/FrameIterator.hh>
+// AUTO-REMOVED #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/FrameList.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/io/silent/SilentStruct.hh>
-#include <core/io/silent/SilentStructFactory.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <basic/options/option.hh>

@@ -28,7 +28,7 @@
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 // AUTO-REMOVED #include <core/conformation/Residue.functions.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.fwd.hh>
@@ -53,6 +53,11 @@
 // AUTO-REMOVED #include <math.h>
 
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Jump.hh>
+
 
 
 // Cuda headers

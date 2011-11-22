@@ -32,7 +32,6 @@
 #include <core/graph/Graph.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <boost/foreach.hpp>
-// Auto-header: duplicate removed #include <core/graph/Graph.hh>
 #define foreach BOOST_FOREACH
 #include <basic/Tracer.hh>
 #include <protocols/moves/DataMap.hh>

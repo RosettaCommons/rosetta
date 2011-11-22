@@ -24,7 +24,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // c++ headers
-#include <string>
 
 namespace core {
 namespace scoring {

@@ -24,7 +24,6 @@
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/scoring/etable/count_pair/CountPairFactory.hh>
 #include <core/scoring/etable/count_pair/types.hh>
-// Auto-header: duplicate removed #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>

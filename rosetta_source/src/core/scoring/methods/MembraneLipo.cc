@@ -45,7 +45,6 @@
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
 
-// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 
 //#include <basic/prof.hh>
 //#include <utility/exit.hh>

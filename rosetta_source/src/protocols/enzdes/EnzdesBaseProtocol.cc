@@ -32,12 +32,12 @@
 //project headers
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/file_data.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -59,7 +59,7 @@
 #include <protocols/toolbox/pose_manipulation.hh>
 
 #include <protocols/moves/MinMover.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <utility/io/izstream.hh>
 

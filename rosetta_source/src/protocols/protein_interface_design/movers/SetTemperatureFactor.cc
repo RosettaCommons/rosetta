@@ -17,7 +17,7 @@
 
 // Package headers
 #include <core/pose/Pose.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.fwd.hh>
@@ -30,6 +30,8 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/kinematics/Jump.hh>
 
 namespace protocols {
 namespace protein_interface_design {

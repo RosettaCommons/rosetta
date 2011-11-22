@@ -36,11 +36,7 @@
 
 #include <utility/vector1.hh>
 
-
-
-
-
-
+//Auto Headers
 OPT_1GRP_KEY( Real, noesy_weights, chemshift )
 //OPT_1GRP_KEY( Real, noesy_weights, network_high )
 

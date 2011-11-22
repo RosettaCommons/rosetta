@@ -24,16 +24,14 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
-// Auto-header: duplicate removed #include <core/io/silent/SilentStruct.hh>
 // AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 // AUTO-REMOVED #include <core/optimization/MinimizerOptions.hh>
-// Auto-header: duplicate removed #include <utility/pointer/ReferenceCount.hh>
 #include <utility/exit.hh>
 #include <string>
 #include <vector>
-// AUTO-REMOVED #include <iostream>
 
+//Auto Headers
 namespace protocols {
 namespace wum {
 

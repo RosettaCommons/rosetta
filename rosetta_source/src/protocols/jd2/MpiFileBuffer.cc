@@ -15,7 +15,9 @@
 #include <iostream>
 #include <utility/io/mpistream.hh>
 #include <utility/exit.hh>
+#ifdef USEMPI
 #include <utility/file/file_sys_util.hh>
+#endif
 
 #include <basic/Tracer.hh>
 #include <basic/MemTracer.hh>

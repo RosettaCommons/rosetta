@@ -27,9 +27,7 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
-// AUTO-REMOVED #include <set>
 
 namespace protocols{
 namespace toolbox {

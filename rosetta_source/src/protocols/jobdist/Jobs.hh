@@ -24,7 +24,6 @@
 #include <map>
 #include <sstream>
 
-// AUTO-REMOVED #include <string>
 
 namespace protocols {
 namespace jobdist {

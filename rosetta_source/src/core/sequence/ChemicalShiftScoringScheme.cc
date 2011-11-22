@@ -18,7 +18,7 @@
 #include <core/sequence/ChemicalShiftScoringScheme.hh>
 
 #include <utility/exit.hh>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <string>
 
 #include <complex>

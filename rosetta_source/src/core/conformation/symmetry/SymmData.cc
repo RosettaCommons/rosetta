@@ -20,7 +20,7 @@
 #include <core/conformation/symmetry/SymDof.hh>
 
 // Project headers
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <basic/Tracer.hh>
 
 // Numeric headers
@@ -36,6 +36,8 @@
 #include <utility/vector1.hh>
 #include <fstream>
 
+//Auto Headers
+#include <core/kinematics/Jump.hh>
 
 // @details: This data structure contains all data necessary to generate a
 // symmetrical system, score it and move it. It is used to initialize the

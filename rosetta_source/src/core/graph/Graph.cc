@@ -73,11 +73,6 @@
 #include <boost/pool/pool.hpp>
 #include <boost/pool/poolfwd.hpp>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
-
 
 using namespace ObjexxFCL;
 

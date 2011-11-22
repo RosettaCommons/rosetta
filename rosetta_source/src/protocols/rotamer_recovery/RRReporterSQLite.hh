@@ -26,8 +26,9 @@
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <string>
 // C++ Headers
-#include <iostream>
 
 
 namespace protocols {

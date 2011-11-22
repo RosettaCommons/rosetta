@@ -16,19 +16,19 @@
 
 #include <core/types.hh>
 
-#include <basic/database/open.hh>
+// AUTO-REMOVED #include <basic/database/open.hh>
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueMatcher.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueMatcher.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ResidueSelector.hh>
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 #include <protocols/scoring/Interface.hh> //added ek for interface ddgs
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionFactory.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -45,11 +45,10 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
-// Auto-header: duplicate removed #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/scoring/constraints/Func.hh>
 
-#include <core/id/AtomID_Map.hh>
+// AUTO-REMOVED #include <core/id/AtomID_Map.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
 
@@ -85,7 +84,6 @@
 // AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 //new includes for rotamer constraints
-// Auto-header: duplicate removed #include <core/scoring/Energies.hh>
 // AUTO-REMOVED #include <core/pack/dunbrack/RotamerConstraint.hh>
 // AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibrary.hh>
 // AUTO-REMOVED #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
@@ -93,10 +91,7 @@
 
 // C++ headers
 #include <cstdlib>
-// Auto-header: duplicate removed #include <fstream>
-// Auto-header: duplicate removed #include <iostream>
 #include <string>
-// Auto-header: duplicate removed #include <sstream>
 #include <sys/stat.h>
 
 #include <basic/Tracer.hh>

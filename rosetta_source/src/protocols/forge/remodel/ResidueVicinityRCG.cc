@@ -35,8 +35,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <protocols/enzdes/MatchConstraintFileInfo.hh>
-// AUTO-REMOVED #include <protocols/enzdes/EnzConstraintParameters.hh>
 
 
 static basic::Tracer tr( "protocols.forge.remodel.ResidueVicinityRCG" );

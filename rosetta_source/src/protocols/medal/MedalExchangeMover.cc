@@ -30,7 +30,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -41,6 +41,13 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/nonlocal/StarTreeBuilder.hh>
 #include <protocols/nonlocal/util.hh>
+
+//Auto Headers
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Jump.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace medal {

@@ -14,11 +14,11 @@
 
 #include <protocols/rna/RNA_HelixAssembler.hh>
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <utility/vector1.hh>
-#include <utility/io/izstream.hh>
-#include <core/sequence/Sequence.fwd.hh>
-#include <core/sequence/util.hh>
+// AUTO-REMOVED #include <utility/io/izstream.hh>
+// AUTO-REMOVED #include <core/sequence/Sequence.fwd.hh>
+// AUTO-REMOVED #include <core/sequence/util.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 
@@ -38,7 +38,6 @@
 #include <protocols/rna/RNA_ProtocolUtil.hh>
 
 //Minimizer stuff
-// Auto-header: duplicate removed #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <numeric/xyzVector.hh>

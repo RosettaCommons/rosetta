@@ -31,20 +31,20 @@
 #include <protocols/rna/RNA_DataReader.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/coarse_rna/CoarseRNA_LoopCloser.hh>
-#include <core/chemical/ChemicalManager.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/scoring/rna/RNA_Util.hh>
+// AUTO-REMOVED #include <core/scoring/rna/RNA_Util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 #include <basic/database/open.hh>
-#include <core/io/silent/RNA_SilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -52,7 +52,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <utility/file/file_sys_util.hh>
-#include <time.h>
+// AUTO-REMOVED #include <time.h>
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -73,7 +73,7 @@
 #endif
 
 //Auto Headers
-#include <ObjexxFCL/string.functions.hh>
+#include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
 using namespace ObjexxFCL::fmt; // AUTO USING NS

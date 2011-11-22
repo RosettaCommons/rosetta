@@ -33,7 +33,6 @@
 // AUTO-REMOVED #include <basic/Tracer.hh>
 
 //Auto Headers
-// Auto-header: duplicate removed #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
 
 

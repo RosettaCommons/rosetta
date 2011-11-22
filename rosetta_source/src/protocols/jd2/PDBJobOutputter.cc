@@ -16,12 +16,12 @@
 #include <protocols/jd2/Job.hh>
 
 ///Project headers
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 //#include <core/pose/datacache/CacheableDataType.hh>
 #include <core/io/pdb/pose_io.hh>
-#include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyMap.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyMap.hh>
 
 //#include <basic/datacache/CacheableStringFloatMap.hh>
 //#include <basic/datacache/BasicDataCache.hh>

@@ -55,7 +55,6 @@
 // AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 //#include <protocols/moves/BackboneMover.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-// Auto-header: duplicate removed #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // AUTO-REMOVED #include <basic/prof.hh> // profiling

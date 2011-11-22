@@ -34,7 +34,6 @@
 
 #include <ObjexxFCL/FArray2.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 
 namespace core {
 namespace pack {

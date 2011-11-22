@@ -55,7 +55,7 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/util/SwitchResidueTypeSet.hh>

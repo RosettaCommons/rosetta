@@ -19,17 +19,19 @@
 
 // Platform Headers
 #include <basic/Tracer.hh>
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/min_pack.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 // C++ Headers
 #include <string>
 
+//Auto Headers
+#include <utility/vector1.hh>
 using std::string;
 using core::Size;
 using core::pack::min_pack;

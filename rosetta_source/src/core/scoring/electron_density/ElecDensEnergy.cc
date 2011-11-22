@@ -21,7 +21,7 @@
 #include <core/conformation/Atom.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/EnergyGraph.hh>
+// AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ContextGraphTypes.hh>
 #include <core/scoring/OneToAllEnergyContainer.hh>
 #include <numeric/xyz.functions.hh>

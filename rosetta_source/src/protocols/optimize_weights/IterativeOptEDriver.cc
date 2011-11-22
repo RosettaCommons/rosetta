@@ -27,7 +27,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
-#include <core/scoring/hbonds/HBondSet.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/UnfoldedStatePotential.hh>
@@ -56,7 +56,7 @@
 
 #include <core/kinematics/FoldTree.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/scoring/mm/MMTorsionLibrary.fwd.hh>
 

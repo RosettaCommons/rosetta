@@ -15,8 +15,8 @@
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
 #include <utility/file/FileName.hh>
-#include <utility/file/file_sys_util.hh>
-#include <utility/io/ozstream.hh>
+// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
+// AUTO-REMOVED #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 
 #include <core/types.hh>
@@ -27,20 +27,19 @@
 //#include <core/util/SwitchResidueTypeSet.hh>
 
 #include <basic/Tracer.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/id/SequenceMapping.hh>
 //#include <core/io/silent/SilentStruct.hh>
 //#include <core/io/silent/SilentFileData.hh>
 //#include <core/io/silent/ScoreFileSilentStruct.hh>
 
-// Auto-header: duplicate removed #include <core/id/SequenceMapping.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/SequenceAlignment.hh>
 
@@ -57,10 +56,10 @@
 
 #include <core/kinematics/FoldTree.hh>
 
-#include <protocols/comparative_modeling/util.hh>
-#include <protocols/comparative_modeling/coord_util.hh>
+// AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
+// AUTO-REMOVED #include <protocols/comparative_modeling/coord_util.hh>
 #include <protocols/comparative_modeling/ThreadingMover.hh>
-#include <protocols/comparative_modeling/PartialThreadingMover.hh>
+// AUTO-REMOVED #include <protocols/comparative_modeling/PartialThreadingMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MissingDensityToJumpMover.hh>
 #include <protocols/moves/MissingDensityToJumpMover.fwd.hh>
@@ -68,9 +67,6 @@
 #include <protocols/relax/cst_util.hh>
 
 //utilities
-// Auto-header: duplicate removed #include <utility/file/FileName.hh>
-// Auto-header: duplicate removed #include <utility/io/izstream.hh>
-// Auto-header: duplicate removed #include <utility/io/ozstream.hh>
 #include <utility/options/keys/FileOptionKey.fwd.hh>
 #include <utility/options/keys/FileOptionKey.hh>
 #include <utility/options/keys/FileVectorOptionKey.fwd.hh>

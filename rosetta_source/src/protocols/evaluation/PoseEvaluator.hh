@@ -43,7 +43,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <utility/exit.hh>
 
 namespace protocols {
 namespace evaluation {

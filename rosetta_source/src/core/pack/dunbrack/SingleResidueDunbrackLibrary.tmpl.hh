@@ -71,10 +71,8 @@
 #include <map>
 #include <ostream>
 
-// AUTO-REMOVED #include <fstream>
 
 // Boost Headers
-// AUTO-REMOVED #include <boost/cstdint.hpp>
 
 namespace core {
 namespace pack {

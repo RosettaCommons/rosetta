@@ -25,7 +25,7 @@
 #include <core/conformation/Conformation.hh>
 
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
 
@@ -38,7 +38,7 @@
 
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/kinematics/util.hh>
+// AUTO-REMOVED #include <core/kinematics/util.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
@@ -49,7 +49,7 @@
 #include <protocols/jd2/Job.hh>
 
 #include <protocols/loops/Loops.hh>
-#include <protocols/loops/loops_main.hh>
+// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 
 //movers
 #include <protocols/moves/MonteCarlo.hh>
@@ -58,7 +58,7 @@
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
 #include <protocols/moves/RotamerTrialsMover.hh>
 #include <protocols/moves/TaskAwareMinMover.hh>
-#include <protocols/moves/OutputMovers.hh> //pdbdumpmover
+// AUTO-REMOVED #include <protocols/moves/OutputMovers.hh> //pdbdumpmover
 #include <protocols/moves/TorsionDOFMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
 #include <protocols/moves/KinematicMover.hh>
@@ -97,6 +97,8 @@
 
 #include <utility/vector0.hh>
 
+//Auto Headers
+#include <core/kinematics/AtomTree.hh>
 
 //local options
 basic::options::FileOptionKey const UBQpdb("UBQpdb");

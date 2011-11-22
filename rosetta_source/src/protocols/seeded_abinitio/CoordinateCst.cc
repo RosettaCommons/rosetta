@@ -19,27 +19,24 @@
 #include <protocols/seeded_abinitio/CoordinateCst.hh>
 #include <protocols/seeded_abinitio/CoordinateCstCreator.hh>
 
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/Func.hh>
 #include <core/scoring/constraints/Func.fwd.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 #include <numeric/xyzVector.hh>
 
 #include <core/scoring/constraints/HarmonicFunc.hh>
 #include <core/types.hh>
-// Auto-header: duplicate removed #include <core/conformation/Conformation.hh>
-// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/string_util.hh>
 #include <boost/foreach.hpp>
-// Auto-header: duplicate removed #include <core/types.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <utility/tag/Tag.hh>
 // C++ headers
 // AUTO-REMOVED #include <fstream>
@@ -49,12 +46,10 @@
 #define foreach BOOST_FOREACH
 
 #include <basic/Tracer.hh>
-// Auto-header: duplicate removed #include <protocols/moves/DataMap.hh>
 #include <utility/vector1.hh>
 
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/pose/PDBInfo.hh>
-// Auto-header: duplicate removed #include <utility/tag/Tag.hh>
 
 //pose
 // AUTO-REMOVED #include <core/pose/util.hh>
@@ -63,12 +58,14 @@
 
 
 //constraints
-// Auto-header: duplicate removed #include <core/scoring/constraints/ConstraintSet.hh>
-// Auto-header: duplicate removed #include <core/scoring/constraints/Func.hh>
-// Auto-header: duplicate removed #include <core/scoring/constraints/ConstraintSet.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
 
 #include <utility/vector0.hh>
+
+//Auto Headers
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/Jump.hh>
+
 
 
 namespace protocols {

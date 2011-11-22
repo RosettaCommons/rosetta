@@ -14,10 +14,10 @@
 #include <protocols/match/downstream/ScoringSecMatchRPE.hh>
 
 // Package headers
-#include <stdio.h>
+// AUTO-REMOVED #include <stdio.h>
 
 // Project headers
-#include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
+// AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -48,7 +48,6 @@
 #include <utility/io/ozstream.hh>
 // AUTO-REMOVED #include <time.h>
 // AUTO-REMOVED #include <stdlib.h>
-// Auto-header: duplicate removed #include <stdio.h>
 // AUTO-REMOVED #include <core/io/pdb/file_data.hh>
 #include <basic/Tracer.hh>
 

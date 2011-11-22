@@ -44,8 +44,8 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
-// AUTO-REMOVED #include <ObjexxFCL/FArray4D.hh>
 
+//Auto Headers
 // C++
 
 namespace core {

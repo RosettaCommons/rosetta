@@ -18,7 +18,7 @@
 #include <protocols/features/Report.fwd.hh>
 
 // Package Headers
-#include <protocols/features/FeaturesReporter.hh>
+// AUTO-REMOVED #include <protocols/features/FeaturesReporter.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -30,6 +30,8 @@
 
 #include <utility/pointer/ReferenceCount.hh>
 
+//Auto Headers
+#include <protocols/features/FeaturesReporter.fwd.hh>
 
 namespace protocols{
 namespace features{

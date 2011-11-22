@@ -58,7 +58,9 @@
 // C++ Headers
 #include <map>
 
-#include <iostream>
+//Auto Headers
+#include <string>
+
 
 
 namespace protocols {

@@ -23,9 +23,9 @@
 #include <vector>
 
 // External headers
-#include <boost/format.hpp>
+// AUTO-REMOVED #include <boost/format.hpp>
 #include <boost/algorithm/string/join.hpp>
-#include <boost/math/distributions/normal.hpp>
+// AUTO-REMOVED #include <boost/math/distributions/normal.hpp>
 
 // Package headers
 #include <core/scoring/constraints/Constraint.hh>
@@ -45,7 +45,6 @@
 #include <core/scoring/methods/TwoBodyEnergy.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
-// Auto-header: duplicate removed #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/LREnergyContainer.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParam.hh>
@@ -57,7 +56,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/pose/Pose.hh>
 
 /// Utility headers
@@ -72,6 +71,8 @@
 #include <core/id/DOF_ID.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/scoring/EnergyGraph.hh>
 
 static basic::Tracer tr("core.scoring");
 

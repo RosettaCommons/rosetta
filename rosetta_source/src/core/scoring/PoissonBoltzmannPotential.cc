@@ -14,7 +14,7 @@
 // basic
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
@@ -22,8 +22,8 @@
 #include <core/scoring/PoissonBoltzmannPotential.hh>
 
 // Package Headers
-#include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/electron_density/util.hh>
 #include <core/chemical/ResidueType.hh>
 
@@ -45,7 +45,6 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
-// Auto-header: duplicate removed #include <utility/io/izstream.hh>
 #include <algorithm>
 
 #include <core/chemical/AtomType.hh>

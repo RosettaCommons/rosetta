@@ -25,7 +25,7 @@
 #include <core/pose/Pose.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <core/kinematics/FoldTree.hh>
+// AUTO-REMOVED #include <core/kinematics/FoldTree.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/OutputMovers.hh>
@@ -33,7 +33,6 @@
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 
-// Auto-header: duplicate removed #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymDof.hh>
 #include <core/pose/symmetry/util.hh>
@@ -48,7 +47,6 @@
 //Utility Headers
 // AUTO-REMOVED #include <numeric/conversions.hh>
 
-// Auto-header: duplicate removed #include <basic/options/option.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
 #include <numeric/trig.functions.hh>

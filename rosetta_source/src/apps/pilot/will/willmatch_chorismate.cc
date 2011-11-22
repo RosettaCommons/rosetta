@@ -13,11 +13,11 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/willmatch.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/Tracer.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/import_pose/import_pose.hh>
@@ -27,23 +27,23 @@
 #include <core/pack/optimizeH.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
+// AUTO-REMOVED #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/rms_util.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <core/scoring/ScoringManager.hh>
-#include <core/io/silent/ScoreFileSilentStruct.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/io/silent/ScoreFileSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyz.io.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <sstream>
@@ -52,9 +52,13 @@
 // #include <devel/init.hh>
 
 // #include <core/scoring/constraints/LocalCoordinateConstraint.hh>
-#include <apps/pilot/will/will_util.ihh>
 
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <platform/types.hh>
+#include <core/pose/util.tmpl.hh>
+#include <apps/pilot/will/will_util.ihh>
 
 
 using core::Real;

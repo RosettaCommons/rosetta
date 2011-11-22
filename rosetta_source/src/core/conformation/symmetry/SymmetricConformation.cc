@@ -22,6 +22,8 @@
 #include <core/id/TorsionID.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/kinematics/FoldTree.hh>
 
 
 namespace core {

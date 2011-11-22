@@ -18,6 +18,20 @@
 #include <protocols/nonlocal/Region.hh>
 
 //Auto Headers
+#include <platform/types.hh>
+#include <core/types.hh>
+#include <protocols/nonlocal/Region.fwd.hh>
+#include <utility/down_cast.hh>
+#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/owning_ptr.functions.hh>
+#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
+#include <numeric/xyzVector.fwd.hh>
+#include <cassert>
+#include <cstddef>
+#include <iosfwd>
+#include <limits>
 
 
 namespace {

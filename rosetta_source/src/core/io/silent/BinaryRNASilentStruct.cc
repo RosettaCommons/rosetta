@@ -20,15 +20,15 @@
 #include <iostream>
 #include <utility>
 #include <vector>
-#include <list>
+// AUTO-REMOVED #include <list>
 #include <string>
 #include <map>
 #include <sstream>
 
 // mini headers
 // AUTO-REMOVED #include <ObjexxFCL/format.hh>
-#include <ObjexxFCL/char.functions.hh>
-#include <ObjexxFCL/string.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/char.functions.hh>
+// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 // AUTO-REMOVED #include <utility/io/izstream.hh>
 // AUTO-REMOVED #include <utility/io/ozstream.hh>
@@ -45,7 +45,7 @@
 #include <core/io/silent/SharedSilentData.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
 #include <core/io/silent/Binary_Util.hh>
-#include <basic/options/option.hh>
+// AUTO-REMOVED #include <basic/options/option.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 
@@ -61,12 +61,14 @@
 
 
 // option key includes
-#include <basic/options/keys/in.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <basic/options/keys/OptionKeys.hh>
 
 
 

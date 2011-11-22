@@ -24,7 +24,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <list>
 
 namespace core {
 namespace pose {

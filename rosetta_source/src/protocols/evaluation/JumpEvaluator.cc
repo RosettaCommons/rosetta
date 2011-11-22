@@ -38,6 +38,12 @@
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
 
+//Auto Headers
+#include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/tree/Atom.hh>
+
+
 // C++ headers
 
 

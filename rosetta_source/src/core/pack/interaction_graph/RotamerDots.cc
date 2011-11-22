@@ -22,7 +22,6 @@
 #include <core/types.hh>
 
 
-// Auto-header: duplicate removed #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
 
 // ObjexxFCL Headers
@@ -33,7 +32,7 @@
 // Numeric Headers
 #include <numeric/constants.hh> // pi
 #include <numeric/xyzVector.hh> // to get distance
-#include <numeric/xyzVector.io.hh>
+// AUTO-REMOVED #include <numeric/xyzVector.io.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>

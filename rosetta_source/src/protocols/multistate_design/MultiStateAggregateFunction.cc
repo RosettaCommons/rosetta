@@ -15,7 +15,7 @@
 #include <protocols/multistate_design/MultiStateAggregateFunction.hh>
 
 #include <core/types.hh>
-#include <core/pose/Pose.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <core/pose/Pose.hh> // REQUIRED FOR WINDOWS
 
 // Utility Headers
 #include <utility/pointer/ReferenceCount.hh>

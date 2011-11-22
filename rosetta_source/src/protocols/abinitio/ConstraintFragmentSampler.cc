@@ -49,7 +49,6 @@
 
 // Auto Headers
 #include <core/kinematics/ShortestPathInFoldTree.hh>
-// Auto-header: duplicate removed #include <core/scoring/ScoreFunction.hh>
 #include <protocols/abinitio/MaxSeqSepConstraintSet.hh>
 // AUTO-REMOVED #include <utility/io/mpistream.hh>
 

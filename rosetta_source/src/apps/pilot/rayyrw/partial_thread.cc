@@ -33,7 +33,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/pose/annotated_sequence.hh>
 
 #include <protocols/comparative_modeling/PartialThreadingMover.hh>
@@ -58,8 +58,11 @@
 // AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 #include <core/import_pose/import_pose.hh>
-// AUTO-REMOVED #include <utility/io/ozstream.hh>
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
+
+//Auto Headers
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/Jump.hh>
+
 
 std::map< std::string, core::pose::Pose >
 poses_from_cmd_line(

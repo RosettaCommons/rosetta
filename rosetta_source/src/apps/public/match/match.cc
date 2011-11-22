@@ -21,8 +21,8 @@
 #include <core/chemical/ResidueTypeSet.hh>
 
 #include <core/id/AtomID.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/file_data.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/util.hh>
@@ -43,14 +43,9 @@
 #include <protocols/match/output/ProcessorFactory.hh>
 #include <protocols/match/output/MatchProcessor.hh>
 
-// Auto-header: duplicate removed #include <core/chemical/ChemicalManager.hh>
-// Auto-header: duplicate removed #include <core/chemical/ResidueTypeSet.hh>
 
-// Auto-header: duplicate removed #include <core/io/pdb/pose_io.hh>
 // AUTO-REMOVED #include <core/io/pdb/pdb_dynamic_reader.hh>
-// Auto-header: duplicate removed #include <core/io/pdb/file_data.hh>
 
-// Auto-header: duplicate removed #include <core/pose/Pose.hh>
 
 // AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh>

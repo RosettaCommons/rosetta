@@ -18,7 +18,7 @@
 #include <mpi.h> //keep this first
 #endif
 
-#include <utility/assert.hh> //MPI_ONLY macro
+// AUTO-REMOVED #include <utility/assert.hh> //MPI_ONLY macro
 
 #include <protocols/wum/MPI_WorkUnitManager.hh>
 #include <protocols/wum/MPI_WorkUnitManager_Slave.hh>

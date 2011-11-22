@@ -20,7 +20,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/conformation/Residue.hh>
-#include <boost/foreach.hpp>
+// AUTO-REMOVED #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 
 // Rosetta Headers
@@ -50,7 +50,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 
@@ -68,7 +68,6 @@
 
 // option key includes
 
-// Auto-header: duplicate removed #include <basic/options/option.hh>
 #include <basic/options/keys/MonteCarlo.OptionKeys.gen.hh>
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 

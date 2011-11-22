@@ -69,7 +69,6 @@
 #include <protocols/moves/RepeatMover.hh>
 //for resfile reading
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-// Auto-header: duplicate removed #include <basic/options/option.hh>
 
 // AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>

@@ -19,7 +19,12 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <core/kinematics/Stub.hh>
+// AUTO-REMOVED #include <core/kinematics/Stub.hh>
+
+//Auto Headers
+#include <core/kinematics/Stub.fwd.hh>
+#include <utility/vector1.hh>
+
 
 using namespace::core;
 

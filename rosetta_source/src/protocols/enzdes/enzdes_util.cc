@@ -42,11 +42,11 @@
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <basic/Tracer.hh>
-#include <core/scoring/dssp/Dssp.hh>
-#include <protocols/ligand_docking/LigandBaseProtocol.hh>
-#include <core/scoring/constraints/BoundConstraint.hh>
+// AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
+// AUTO-REMOVED #include <protocols/ligand_docking/LigandBaseProtocol.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/BoundConstraint.hh>
 #include <core/scoring/Energies.hh>
-#include <core/scoring/constraints/ConstraintSet.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
@@ -68,6 +68,8 @@
 #include <core/pose/util.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/id/AtomID.hh>
 
 namespace protocols {
 namespace enzdes {

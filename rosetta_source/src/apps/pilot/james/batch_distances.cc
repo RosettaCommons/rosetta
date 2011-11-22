@@ -19,7 +19,7 @@
 #include <core/types.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/util.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 #include <core/import_pose/pose_stream/util.hh>

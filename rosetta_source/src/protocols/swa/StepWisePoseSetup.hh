@@ -20,7 +20,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
+// AUTO-REMOVED #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID_Map.hh>
 #include <protocols/swa/StepWiseJobParameters.fwd.hh>

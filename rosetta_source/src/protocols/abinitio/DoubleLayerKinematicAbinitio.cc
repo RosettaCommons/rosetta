@@ -52,7 +52,6 @@
 // AUTO-REMOVED #include <utility/io/ozstream.hh>
 // AUTO-REMOVED #include <utility/io/util.hh>
 #include <basic/Tracer.hh>
-// Auto-header: duplicate removed #include <basic/options/option.hh>
 
 
 //// C++ headers

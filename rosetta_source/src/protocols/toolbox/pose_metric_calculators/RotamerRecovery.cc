@@ -67,7 +67,6 @@
 #include <protocols/toolbox/pose_metric_calculators/RotamerRecovery.hh>
 
 // option key includes
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 
 

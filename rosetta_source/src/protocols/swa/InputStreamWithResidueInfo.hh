@@ -21,7 +21,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>

@@ -15,13 +15,13 @@
 
 // Rosetta Headers
 #include <basic/datacache/CacheableStringFloatMap.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/id/types.hh>
+// AUTO-REMOVED #include <core/id/types.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 // AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
@@ -46,6 +46,11 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/kinematics/Jump.hh>
+#include <basic/datacache/BasicDataCache.hh>
+
 
 using basic::T;
 using basic::Error;

@@ -17,7 +17,7 @@
 #include <core/conformation/Conformation.hh>
 
 #include <core/pose/Pose.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/PDBPoseMap.hh>
 #include <core/pose/PDBInfo.hh>
 
@@ -30,11 +30,11 @@
 #include <core/fragment/ConstantLengthFragSet.hh>
 
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/PackerTask.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
+// AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictToNeighborhoodOperation.hh>
 
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 
@@ -78,7 +78,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
-// Auto-header: duplicate removed #include <core/chemical/ChemicalManager.fwd.hh>
 #include <protocols/moves/MoverStatistics.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

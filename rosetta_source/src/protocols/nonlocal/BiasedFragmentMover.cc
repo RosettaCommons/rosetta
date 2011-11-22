@@ -23,7 +23,7 @@
 
 // Utility headers
 #include <numeric/prob_util.hh>
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 
@@ -42,6 +42,8 @@
 #include <core/fragment/FrameIteratorWorker_.hh>
 #include <protocols/jobdist/Jobs.hh>
 
+//Auto Headers
+#include <numeric/random/random.fwd.hh>
 
 namespace protocols {
 namespace nonlocal {

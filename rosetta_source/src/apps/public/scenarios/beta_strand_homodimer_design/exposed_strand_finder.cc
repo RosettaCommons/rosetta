@@ -26,7 +26,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionInfo.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/rms_util.hh>
@@ -36,7 +36,7 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
-#include <core/scoring/hbonds/HBondOptions.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
 //#include <core/scoring/etable/BaseEtableEnergy.tmpl.hh>
@@ -47,7 +47,7 @@
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/id/AtomID_Mask.hh>
+// AUTO-REMOVED #include <core/id/AtomID_Mask.hh>
 
 //Numeric headers
 #include <numeric/xyzVector.hh>
@@ -57,18 +57,18 @@
 #include <basic/Tracer.hh>
 
 //Protocols headers
-#include <protocols/moves/MoverContainer.hh>
+// AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/StructureRestrictor.hh>
 #include <protocols/toolbox/pose_metric_calculators/SasaCalculator.hh>
 
 //protocols JD2
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/jd2/Job.hh>
+// AUTO-REMOVED #include <protocols/jd2/Job.hh>
 
 // option key includes
-#include <basic/options/util.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
@@ -76,9 +76,14 @@
 #include <sstream>
 #include <iostream>
 #include <string>
-#include <stdlib.h>
+// AUTO-REMOVED #include <stdlib.h>
 #include <math.h>
 #include <utility>
+
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
+#include <utility/vector0.hh>
+
 
 
 static basic::Tracer TR("apps.public.beta_strand_homodimer_design.exposed_strand_finder");

@@ -28,7 +28,6 @@
 #include <utility/string_util.hh>
 
 // Basic headers
-// Auto-header: duplicate removed #include <basic/Tracer.hh>
 
 // Boost Headers
 #include <boost/foreach.hpp>

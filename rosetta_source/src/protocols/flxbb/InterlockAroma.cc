@@ -17,7 +17,7 @@
 
 #include <protocols/fldsgn/filters/InterlockingAromaFilter.hh>
 
-#include <core/chemical/ChemicalManager.fwd.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -46,7 +46,8 @@
 #include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 
-
+//Auto Headers
+#include <core/graph/Graph.hh>
 static basic::Tracer TR("protocols.flxbb.InterlockAroma");
 
 namespace protocols{

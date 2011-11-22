@@ -27,7 +27,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/scoring/ScoreFunctionInfo.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunctionInfo.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>

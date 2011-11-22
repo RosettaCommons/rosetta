@@ -18,7 +18,6 @@
 #include <core/types.hh>
 
 // C++ Headers
-// AUTO-REMOVED #include <ostream>
 
 namespace core {
 namespace scoring {

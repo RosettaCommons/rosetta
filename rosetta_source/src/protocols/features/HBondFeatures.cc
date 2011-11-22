@@ -36,7 +36,7 @@
 #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/etable/EtableEnergy.hh>
-#include <core/scoring/hbonds/hbonds.hh>
+// AUTO-REMOVED #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/hbonds_geom.hh>
 #include <core/scoring/hbonds/HBondTypeManager.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
@@ -66,6 +66,8 @@
 
 #include <utility/vector0.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 
 namespace protocols{
 namespace features{

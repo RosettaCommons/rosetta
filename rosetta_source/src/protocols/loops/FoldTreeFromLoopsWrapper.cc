@@ -26,6 +26,9 @@
 #include <utility/vector1.hh>
 #include <protocols/loops/util.hh>
 
+//Auto Headers
+#include <utility/vector0.hh>
+
 namespace protocols {
 namespace loops {
 

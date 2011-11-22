@@ -47,7 +47,6 @@
 #include <cstdlib>
 #include <string>
 
-// Auto-header: duplicate removed #include <core/pose/util.hh>
 
 namespace protocols {
 namespace jumping {

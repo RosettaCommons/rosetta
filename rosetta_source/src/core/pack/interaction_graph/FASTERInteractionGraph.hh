@@ -32,7 +32,6 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray2A.hh>
 
-// AUTO-REMOVED #include <ObjexxFCL/FArray3D.hh>
 
 namespace core {
 namespace pack {

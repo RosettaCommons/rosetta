@@ -28,7 +28,7 @@
 
 //#include <core/conformation/symmetry/SymmetryInfo.hh>
 //#include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 // Project Headers
@@ -44,17 +44,17 @@
 #include <core/optimization/Minimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
-#include <core/optimization/DOF_Node.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <core/optimization/DOF_Node.hh> // REQUIRED FOR WINDOWS
 
 // util
 #include <basic/Tracer.hh>
 
 /// ObjexxFCL
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 // Numeric
 #include <numeric/random/random.hh>
-#include <numeric/xyz.functions.hh>
+// AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
 // option key includes
 #include <basic/options/option.hh>

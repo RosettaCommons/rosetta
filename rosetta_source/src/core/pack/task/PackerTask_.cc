@@ -22,7 +22,7 @@
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
-#include <core/pack/task/ResfileReader.hh>
+// AUTO-REMOVED #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/IGEdgeReweightContainer.hh>
 
 //Project Headers

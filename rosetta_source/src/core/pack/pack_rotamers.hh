@@ -39,10 +39,8 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <string>
 // #include <vector>
 
-// AUTO-REMOVED #include <utility>
 
 namespace core {
 namespace pack {

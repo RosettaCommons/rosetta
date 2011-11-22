@@ -29,13 +29,8 @@
 
 
 
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 //Objexx headers
-// AUTO-REMOVED #include <ObjexxFCL/format.hh>
-// AUTO-REMOVED #include <ObjexxFCL/char.functions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <ObjexxFCL/Fmath.hh>
 
 
 // Utility headers

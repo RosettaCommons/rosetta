@@ -28,10 +28,8 @@
 
 
 // Utility headers
-// AUTO-REMOVED #include <utility/vector1.hh>
 
 //// C++ headers
-// AUTO-REMOVED #include <string>
 
 namespace protocols {
 namespace toolbox {

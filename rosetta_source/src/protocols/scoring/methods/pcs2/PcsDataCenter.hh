@@ -49,7 +49,6 @@
 // ObjexxFCL headers
 
 // c++ headers
-// AUTO-REMOVED #include <iostream>
 
 #ifdef WIN32
 	#include <protocols/scoring/methods/pcs2/PcsInputLine.hh>

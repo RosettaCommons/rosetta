@@ -36,10 +36,9 @@
 
 //// C++ headers
 // AUTO-REMOVED #include <cstdlib>
-#include <string>
-// AUTO-REMOVED #include <list>
-// AUTO-REMOVED #include <map>
+// AUTO-REMOVED #include <string>
 
+//Auto Headers
 namespace protocols {
 namespace noesy_assign {
 

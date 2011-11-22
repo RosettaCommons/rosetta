@@ -15,7 +15,7 @@
 #include <core/pack/annealer/MultiCoolAnnealer.hh>
 
 /// Package headers
-#include <core/pack/rotamer_set/RotamerSets.hh>
+// AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
 // AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -36,6 +36,8 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/pack/rotamer_set/FixbbRotamerSets.hh>
 #ifdef WIN32
 #include <ctime>
 #endif

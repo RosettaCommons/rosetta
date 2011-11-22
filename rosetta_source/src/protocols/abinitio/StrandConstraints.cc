@@ -68,7 +68,6 @@
 // AUTO-REMOVED #include <utility/io/ozstream.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
-// Auto-header: duplicate removed #include <numeric/random/random.hh>
 
 // C++ headers
 #include <cstdlib>

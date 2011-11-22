@@ -31,8 +31,8 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/kinematics/AtomTree.hh>
-#include <core/kinematics/tree/Atom.hh>
+// AUTO-REMOVED #include <core/kinematics/AtomTree.hh>
+// AUTO-REMOVED #include <core/kinematics/tree/Atom.hh>
 #include <core/conformation/Residue.hh>
 
 // ObjexxFCL Headers

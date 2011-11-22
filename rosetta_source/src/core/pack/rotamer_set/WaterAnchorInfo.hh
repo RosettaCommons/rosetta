@@ -24,7 +24,6 @@
 #include <utility/pointer/ReferenceCount.hh>
 
 // C++
-// AUTO-REMOVED #include <string>
 
 namespace core {
 namespace pack {

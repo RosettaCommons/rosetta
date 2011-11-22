@@ -28,12 +28,11 @@
 #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <core/pose/Pose.hh>
-// Auto-header: duplicate removed #include <core/scoring/Energies.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
@@ -45,7 +44,6 @@
 #include <protocols/jd2/JobDistributor.hh>
 
 
-// Auto-header: duplicate removed #include <protocols/moves/RigidBodyMover.hh>
 #include <protocols/moves/DataMap.hh>
 
 #include <ObjexxFCL/format.hh>
@@ -60,7 +58,8 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 
-
+//Auto Headers
+#include <boost/functional/hash.hpp>
 namespace protocols {
 namespace protein_interface_design {
 namespace movers {

@@ -70,7 +70,6 @@
 #include <basic/options/keys/ddg.OptionKeys.gen.hh>
 
 #include <core/chemical/ResidueType.hh>
-// Auto-header: duplicate removed #include <core/import_pose/import_pose.hh>
 #include <utility/vector0.hh>
 
 

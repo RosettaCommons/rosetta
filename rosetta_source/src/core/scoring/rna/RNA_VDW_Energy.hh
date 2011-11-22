@@ -29,7 +29,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <map>
 
 // Utility headers
 

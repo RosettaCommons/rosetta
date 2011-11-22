@@ -39,12 +39,6 @@
 #include <core/chemical/AA.hh>
 #include <numeric/xyzVector.hh>
 
-// Auto-header: duplicate removed #include <core/scoring/ScoreFunction.hh>
-// Auto-header: duplicate removed #include <core/scoring/ScoreFunctionFactory.hh>
-// Auto-header: duplicate removed #include <core/scoring/ScoreTypeManager.hh>
-// Auto-header: duplicate removed #include <core/scoring/ScoreType.hh>
-// Auto-header: duplicate removed #include <core/scoring/methods/EnergyMethodOptions.hh>
-// Auto-header: duplicate removed #include <protocols/moves/Mover.hh>
 
 // Unit Headers
 #include <protocols/protein_interface_design/dock_design_filters.hh>

@@ -23,6 +23,10 @@
 // Project headers
 #include <test/core/init_util.hh>
 
+//Auto Headers
+#include <utility/vector1.hh>
+
+
 using core::kinematics::FoldTree;
 using core::pose::Pose;
 

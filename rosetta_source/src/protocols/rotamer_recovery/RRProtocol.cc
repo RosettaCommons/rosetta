@@ -16,12 +16,12 @@
 #include <protocols/rotamer_recovery/RRReporter.hh>
 
 // Project Headers
-#include <core/chemical/ResidueType.hh>
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueType.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 
 // C++ Headers
-#include <string>
+// AUTO-REMOVED #include <string>
 
 #include <utility/vector1.hh>
 

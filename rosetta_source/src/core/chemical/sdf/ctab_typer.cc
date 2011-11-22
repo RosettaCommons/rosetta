@@ -12,7 +12,7 @@
 /// @brief
 /// @author Robert Carroll
 
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/chemical/sdf/ctab_typer.hh>
 #include <core/chemical/AtomType.hh>
 // AUTO-REMOVED #include <utility/string_util.hh>
@@ -23,7 +23,7 @@
 #include <vector>
 #include <algorithm>
 #include <map>
-#include <sstream>
+// AUTO-REMOVED #include <sstream>
 // AUTO-REMOVED #include <cstring>
 // AUTO-REMOVED #include <stdlib.h>
 

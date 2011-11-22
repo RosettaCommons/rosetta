@@ -24,9 +24,9 @@
 
 // project headers
 #include <core/conformation/Residue.hh>
-#include <core/chemical/ChemicalManager.fwd.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/VariantType.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.fwd.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/VariantType.hh>
 #include <core/id/TorsionID.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -34,8 +34,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/Energies.hh>
-#include <core/conformation/symmetry/util.hh>
-// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/Tracer.hh>
@@ -71,6 +70,11 @@
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <boost/lexical_cast.hpp>
+
+//Auto Headers
+#include <core/conformation/Conformation.hh>
+#include <utility/string_util.hh>
+
 
 namespace protocols {
 namespace forge {

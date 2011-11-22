@@ -21,11 +21,11 @@
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/signals/LengthEvent.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/signals/LengthEvent.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/SequenceMapping.fwd.hh>
-#include <core/id/SequenceMapping.hh>
+// AUTO-REMOVED #include <core/id/SequenceMapping.hh>
 #include <core/kinematics/ShortestPathInFoldTree.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
@@ -74,12 +74,6 @@
 #include <sstream>
 #include <string>
 #include <vector>
-
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
 
 
 namespace core {

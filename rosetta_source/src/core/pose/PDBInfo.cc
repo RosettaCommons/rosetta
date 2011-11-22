@@ -36,6 +36,8 @@
 #include <utility/vector0.hh>
 #include <ObjexxFCL/format.hh>
 
+//Auto Headers
+#include <core/conformation/signals/ConnectionEvent.hh>
 //using namespace ObjexxFCL;
 using namespace ObjexxFCL::fmt;
 

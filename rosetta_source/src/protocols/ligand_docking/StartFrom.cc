@@ -34,8 +34,9 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
+//Auto Headers
+#define foreach BOOST_FOREACH
 using basic::T;
 using basic::Error;
 using basic::Warning;

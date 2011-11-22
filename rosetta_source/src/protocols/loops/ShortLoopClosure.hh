@@ -26,7 +26,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 
 namespace protocols {

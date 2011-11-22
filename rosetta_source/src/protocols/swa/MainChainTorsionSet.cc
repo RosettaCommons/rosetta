@@ -19,7 +19,7 @@
 //////////////////////////////////
 #include <core/types.hh>
 
-#include <core/io/silent/BinaryProteinSilentStruct.hh>
+// AUTO-REMOVED #include <core/io/silent/BinaryProteinSilentStruct.hh>
 // AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 // AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
@@ -37,6 +37,11 @@
 #include <core/id/types.hh>
 #include <utility/vector1.hh>
 #include <utility/io/mpistream.hh>
+
+//Auto Headers
+#include <core/kinematics/Jump.hh>
+#include <core/pose/Pose.fwd.hh>
+
 
 
 

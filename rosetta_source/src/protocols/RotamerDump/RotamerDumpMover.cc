@@ -13,12 +13,12 @@
 #include <typeinfo>
 
 #include <protocols/RotamerDump/RotamerDumpMover.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 #include <core/pack/interaction_graph/PrecomputedPairEnergiesInteractionGraph.hh>
 #include <core/pack/interaction_graph/InteractionGraphFactory.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
-#include <core/pack/interaction_graph/PDInteractionGraph.hh>
+// AUTO-REMOVED #include <core/pack/interaction_graph/PDInteractionGraph.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -30,8 +30,8 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/conformation/Residue.hh>
 
-#include <core/io/pdb/pose_io.hh>
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/rotamerdump.OptionKeys.gen.hh>

@@ -25,12 +25,11 @@
 // AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/rms_util.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <basic/options/option.hh>
 
 #include <core/pose/Pose.hh>
-// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 
 // AUTO-REMOVED #include <basic/prof.hh>
 #include <utility/exit.hh>

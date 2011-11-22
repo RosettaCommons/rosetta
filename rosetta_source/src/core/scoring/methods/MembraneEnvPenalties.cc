@@ -31,7 +31,6 @@
 //#include <basic/options/keys/OptionKeys.hh>
 
 // AUTO-REMOVED #include <core/pose/Pose.hh>
-// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>

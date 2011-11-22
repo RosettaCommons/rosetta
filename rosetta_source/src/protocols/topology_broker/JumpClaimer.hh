@@ -48,7 +48,6 @@
 
 //// C++ headers
 //#include <fstream>
-// AUTO-REMOVED #include <istream>
 
 
 // option key includes

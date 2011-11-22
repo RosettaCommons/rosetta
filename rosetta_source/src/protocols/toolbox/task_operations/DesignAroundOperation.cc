@@ -27,7 +27,7 @@
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
-#include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 // AUTO-REMOVED #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
@@ -37,7 +37,6 @@
 // AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 // AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
 // AUTO-REMOVED #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
-// Auto-header: duplicate removed #include <core/pack/task/operation/TaskOperations.hh>
 
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
@@ -46,6 +45,11 @@
 #include <set>
 
 #include <utility/vector0.hh>
+
+//Auto Headers
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/Jump.hh>
+
 
 
 using basic::Error;

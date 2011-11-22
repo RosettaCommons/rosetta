@@ -22,6 +22,9 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/swa/PoseFilter.fwd.hh>
 
+//Auto Headers
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace swa {

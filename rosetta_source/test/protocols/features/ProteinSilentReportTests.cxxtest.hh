@@ -25,7 +25,7 @@
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -42,6 +42,8 @@
 #include <sstream>
 
 //Auto Headers
+#include <core/conformation/Conformation.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <utility/vector1.hh>
 
 

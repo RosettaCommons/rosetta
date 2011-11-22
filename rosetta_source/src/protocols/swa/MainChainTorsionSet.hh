@@ -20,6 +20,9 @@
 #include <utility/pointer/ReferenceCount.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+
 // AUTO-REMOVED #include <string>
 
 namespace protocols {

@@ -29,9 +29,11 @@
 // AUTO-REMOVED #include <numeric/interpolation/Histogram.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-#include <core/kinematics/RT.hh>
+// AUTO-REMOVED #include <core/kinematics/RT.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/kinematics/RT.fwd.hh>
 namespace core {
 namespace scoring {
 namespace disulfides {

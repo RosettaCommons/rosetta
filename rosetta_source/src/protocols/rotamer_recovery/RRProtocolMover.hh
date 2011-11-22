@@ -23,9 +23,15 @@
 #include <protocols/rotamer_recovery/RRReporter.fwd.hh>
 
 // Platform Headers
-#include <protocols/moves/Mover.hh>
+// AUTO-REMOVED #include <protocols/moves/Mover.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+
+//Auto Headers
+#include <core/types.hh>
+#include <protocols/moves/Mover.fwd.hh>
+#include <utility/vector1.hh>
+
 
 namespace protocols {
 namespace rotamer_recovery {

@@ -27,8 +27,8 @@
 #include <core/chemical/AA.hh>
 
 #include <utility/vector1.hh>
-// Auto-header: duplicate removed #include <core/pack/task/TaskFactory.fwd.hh>
 
+//Auto Headers
 // Unit headers
 
 namespace protocols {

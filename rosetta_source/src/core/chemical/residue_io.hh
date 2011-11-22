@@ -25,10 +25,10 @@
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
-//#include <core/chemical/CSDAtomTypeSet.fwd.hh>
-// Auto-header: duplicate removed #include <core/chemical/ResidueTypeSet.fwd.hh>
 
-#include <string>
+//Auto Headers
+//#include <core/chemical/CSDAtomTypeSet.fwd.hh>
+
 
 // Utility headers
 

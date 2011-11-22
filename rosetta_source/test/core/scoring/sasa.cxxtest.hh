@@ -17,7 +17,7 @@
 // Unit headers
 #include <core/scoring/sasa.hh>
 
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/id/AtomID_Map.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>

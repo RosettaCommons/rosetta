@@ -22,7 +22,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/datacache/BasicDataCache.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
@@ -75,7 +75,6 @@
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
-// Auto-header: duplicate removed #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 #include <utility/file/FileName.hh>

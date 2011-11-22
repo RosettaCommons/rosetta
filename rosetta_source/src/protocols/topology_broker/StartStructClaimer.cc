@@ -49,7 +49,6 @@
 
 
 //// C++ headers
-// AUTO-REMOVED #include <fstream>
 
 static numeric::random::RandomGenerator RG(199234234);
 

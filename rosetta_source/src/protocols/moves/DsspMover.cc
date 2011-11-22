@@ -23,7 +23,6 @@
 
 // Parser headers
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
-// Auto-header: duplicate removed #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/filters/Filter.hh>
 // AUTO-REMOVED #include <utility/tag/Tag.hh>  // REQUIRED FOR WINDOWS
 

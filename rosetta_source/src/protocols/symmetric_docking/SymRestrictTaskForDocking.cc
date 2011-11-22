@@ -20,7 +20,7 @@
 // AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/SymmetryInfo.hh>
 // AUTO-REMOVED #include <core/pose/symmetry/util.hh>
-#include <core/conformation/symmetry/util.hh>
+// AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
 #include <protocols/scoring/Interface.hh>

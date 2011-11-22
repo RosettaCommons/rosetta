@@ -23,7 +23,6 @@
 #include <core/conformation/Residue.hh>
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
-// Auto-header: duplicate removed #include <basic/Tracer.hh>
 #include <core/scoring/Energies.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
@@ -44,7 +43,9 @@
 #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/ReferenceCount.hh>
+#ifdef USEMPI
 #include <utility/string_util.hh>
+#endif
 
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>

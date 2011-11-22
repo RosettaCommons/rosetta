@@ -25,10 +25,10 @@
 // Utility headers
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-//#include <utility/integer_mapping.hh>
 
+//Auto Headers
+//#include <utility/integer_mapping.hh>
 // C++
-// AUTO-REMOVED #include <fstream>
 
 
 namespace core {

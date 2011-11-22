@@ -19,23 +19,22 @@
 #include <protocols/swa/rna/StepWiseRNA_Util.hh>
 
 //////////////////////////////////
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/scoring/Energies.hh>
+// AUTO-REMOVED #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/rna/RNA_CentroidInfo.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/BinaryRNASilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/kinematics/Stub.hh>
-#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/scoring/rms_util.tmpl.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.tmpl.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/hbonds.hh>
@@ -48,11 +47,14 @@
 #include <numeric/conversions.hh>
 #include <protocols/rna/RNA_BasePairClassifier.hh>
 
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 #include <list>
 #include <iostream>
+
+//Auto Headers
+#include <core/id/AtomID.hh>
 
 using namespace core;
 using core::Real;

@@ -53,6 +53,49 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
+#include <platform/types.hh>
+#include <core/types.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
+#include <core/optimization/AtomTreeMinimizer.fwd.hh>
+#include <core/optimization/MinimizerOptions.fwd.hh>
+#include <core/optimization/NumericalDerivCheckResult.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreType.hh>
+#include <core/scoring/SecondaryStructureWeights.hh>
+#include <core/scoring/hbonds/HBondOptions.fwd.hh>
+#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
+#include <core/scoring/mm/MMBondAngleResidueTypeParamSet.fwd.hh>
+#include <utility/down_cast.hh>
+#include <utility/vector1.fwd.hh>
+#include <utility/vector1_bool.hh>
+#include <utility/vectorL.fwd.hh>
+#include <utility/vectorL.hh>
+#include <utility/vectorL_Selector.hh>
+#include <utility/vectorL_bool.hh>
+#include <utility/pointer/ReferenceCount.fwd.hh>
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/pointer/access_ptr.fwd.hh>
+#include <utility/pointer/access_ptr.hh>
+#include <utility/pointer/owning_ptr.functions.hh>
+#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
+#include <numeric/xyzVector.fwd.hh>
+#include <algorithm>
+#include <cassert>
+#include <cstddef>
+#include <iosfwd>
+#include <iostream>
+#include <limits>
+#include <map>
+#include <string>
+#include <vector>
+
+//Auto using namespaces
+namespace std { } using namespace std; // AUTO USING NS
+namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
+namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+//Auto using namespaces end
 
 
 using namespace core;

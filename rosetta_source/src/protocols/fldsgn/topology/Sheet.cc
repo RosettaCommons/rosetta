@@ -34,6 +34,8 @@
 #include <utility/vector1.hh>
 #include <utility/options/IntegerVectorOption.hh>
 
+//Auto Headers
+#include <core/pose/util.tmpl.hh>
 
 #define PI 3.141592
 

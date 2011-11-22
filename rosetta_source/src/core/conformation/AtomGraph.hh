@@ -21,8 +21,8 @@
 #include <core/conformation/Conformation.fwd.hh>
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <iostream>
 
+//Auto Headers
 namespace core {
 namespace conformation {
 

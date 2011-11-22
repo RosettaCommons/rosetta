@@ -14,8 +14,8 @@
 #include <core/types.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/DerivedSequenceMapping.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/signals/LengthEvent.hh>
+// AUTO-REMOVED #include <core/conformation/Conformation.hh>
+// AUTO-REMOVED #include <core/conformation/signals/LengthEvent.hh>
 // AUTO-REMOVED #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 // AUTO-REMOVED #include <core/kinematics/AtomWithDOFChange.hh>
@@ -26,6 +26,15 @@
 // AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/Jump.hh>
+
+//Auto using namespaces
+namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
+//Auto using namespaces end
+
 
 
 namespace core {

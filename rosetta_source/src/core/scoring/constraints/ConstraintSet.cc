@@ -35,6 +35,11 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <core/conformation/signals/ConnectionEvent.hh>
+#include <core/conformation/signals/LengthEvent.hh>
+
+
 
 
 

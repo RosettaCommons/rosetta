@@ -30,7 +30,6 @@
 
 
 // Utility Headers
-// AUTO-REMOVED #include <core/types.hh>
 
 namespace protocols {
 namespace moves {

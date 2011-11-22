@@ -18,7 +18,7 @@
 #include <basic/Tracer.hh>
 #include <core/conformation/Conformation.hh>
 
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/sequence/util.hh>
 #include <core/id/SequenceMapping.hh>
 

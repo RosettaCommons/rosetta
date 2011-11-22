@@ -61,7 +61,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <fstream>
 
 namespace protocols {
 namespace loops {

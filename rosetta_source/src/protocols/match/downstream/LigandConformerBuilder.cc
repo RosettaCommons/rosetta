@@ -25,12 +25,12 @@
 // Project headers
 #include <core/chemical/AtomType.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/util.hh>
+// AUTO-REMOVED #include <core/conformation/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 #include <core/pack/dunbrack/SingleLigandRotamerLibrary.hh>
 

@@ -31,7 +31,7 @@
 
 // C++ Headers
 #include <algorithm>
-#include <iostream>
+// AUTO-REMOVED #include <iostream>
 #include <list>
 #include <sstream>
 #include <string>

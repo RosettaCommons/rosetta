@@ -33,7 +33,7 @@
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/scoring/ScoreType.hh>
 #include <basic/Tracer.hh>
-#include <ObjexxFCL/format.hh>
+// AUTO-REMOVED #include <ObjexxFCL/format.hh>
 
 //pba membrane specific hbond
 #include <core/scoring/Membrane_FAPotential.hh>

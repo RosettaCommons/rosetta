@@ -14,14 +14,14 @@
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <basic/prof.hh>
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/prof.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/ResidueTypeSet.hh>
-#include <core/scoring/rms_util.hh>
-#include <numeric/random/random.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.hh>
+// AUTO-REMOVED #include <numeric/random/random.hh>
 
 #include <core/import_pose/pose_stream/util.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
@@ -34,6 +34,8 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
+//Auto Headers
+#include <numeric/random/random.fwd.hh>
 utility::vector1< unsigned int >
 get_dm(
 	core::pose::Pose & pose,

@@ -46,9 +46,6 @@
 //Auto Headers
 #include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
-#include <utility/keys/Key2Tuple.hh>
-#include <utility/keys/Key3Tuple.hh>
-#include <utility/keys/Key4Tuple.hh>
 
 using namespace core;
 using namespace core::pose;

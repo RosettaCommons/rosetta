@@ -12,7 +12,7 @@
 /// @author James Thompson
 
 #include <core/types.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 
 #include <core/scoring/rms_util.hh>
@@ -24,6 +24,8 @@
 
 #include <string>
 
+//Auto Headers
+#include <core/conformation/Residue.hh>
 namespace protocols  {
 namespace evaluation {
 

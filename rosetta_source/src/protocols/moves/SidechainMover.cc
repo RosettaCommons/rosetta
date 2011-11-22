@@ -32,7 +32,7 @@
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
-#include <core/scoring/ScoringManager.hh>
+// AUTO-REMOVED #include <core/scoring/ScoringManager.hh>
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <basic/basic.hh>
@@ -40,7 +40,7 @@
 
 // Numeric Headers
 #include <numeric/angle.functions.hh>
-#include <numeric/constants.hh>
+// AUTO-REMOVED #include <numeric/constants.hh>
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
 

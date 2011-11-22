@@ -18,7 +18,12 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
-#include <utility/options/StringVectorOption.hh>
+// AUTO-REMOVED #include <utility/options/StringVectorOption.hh>
+
+//Auto Headers
+#include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/FoldTree.hh>
+
 
 
 

@@ -21,16 +21,16 @@
 #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/build/SegmentInsert.hh>
 #include <protocols/forge/components/VarLengthBuild.hh>
-#include <protocols/forge/methods/chainbreak_eval.hh>
+// AUTO-REMOVED #include <protocols/forge/methods/chainbreak_eval.hh>
 #include <protocols/forge/methods/pose_mod.hh>
-#include <protocols/forge/methods/util.hh>
-#include <protocols/fldsgn/topology/HSSTriplet.hh> // REQUIRED FOR WINDOWS
+// AUTO-REMOVED #include <protocols/forge/methods/util.hh>
+// AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh> // REQUIRED FOR WINDOWS
 
 // project headers
 #include <basic/Tracer.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
@@ -43,18 +43,12 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
-// Auto-header: duplicate removed #include <protocols/forge/build/BuildInstruction.hh>
-// Auto-header: duplicate removed #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/constraints/NtoC_RCG.hh>
 #include <protocols/forge/constraints/ConstraintFileRCG.hh>
 #include <protocols/forge/constraints/SheetConstraintsRCG.hh>
-// Auto-header: duplicate removed #include <protocols/forge/components/VarLengthBuild.hh>
 #include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
-#include <protocols/forge/remodel/RemodelLoopMover.hh>
-// Auto-header: duplicate removed #include <protocols/forge/build/SegmentInsert.hh>
+// AUTO-REMOVED #include <protocols/forge/remodel/RemodelLoopMover.hh>
 #include <protocols/forge/build/SegmentRebuild.hh>
-// Auto-header: duplicate removed #include <protocols/forge/methods/pose_mod.hh>
-// Auto-header: duplicate removed #include <protocols/fldsgn/BluePrint.hh>
 
 #include <protocols/moves/DataMap.hh>
 #include <protocols/toolbox/pose_manipulation.hh>

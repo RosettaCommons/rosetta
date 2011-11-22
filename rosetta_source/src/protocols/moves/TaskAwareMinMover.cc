@@ -25,17 +25,17 @@
 
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pack/task/operation/TaskOperation.hh>
+// AUTO-REMOVED #include <core/pack/task/operation/TaskOperation.hh>
 
 #include <protocols/moves/MinMover.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 
 #include <protocols/jobdist/Jobs.hh>

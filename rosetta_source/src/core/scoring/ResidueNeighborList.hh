@@ -31,8 +31,8 @@
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/vector1.hh>
-// AUTO-REMOVED #include <utility/in_place_list.hh>
 
+//Auto Headers
 namespace core {
 namespace scoring {
 

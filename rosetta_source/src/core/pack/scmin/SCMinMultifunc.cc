@@ -15,7 +15,7 @@
 #include <core/pack/scmin/SCMinMultifunc.hh>
 
 // Package Headers
-#include <core/pack/scmin/AtomTreeCollection.hh>
+// AUTO-REMOVED #include <core/pack/scmin/AtomTreeCollection.hh>
 #include <core/pack/scmin/SCMinMinimizerMap.hh>
 
 // Project Headers

@@ -15,7 +15,7 @@
 
 
 // Unit headers
-#include <protocols/scoring/InterchainPotential.hh>
+// AUTO-REMOVED #include <protocols/scoring/InterchainPotential.hh>
 
 // AUTO-REMOVED #include <core/scoring/AtomVDW.hh>
 #include <core/scoring/EnvPairPotential.hh>

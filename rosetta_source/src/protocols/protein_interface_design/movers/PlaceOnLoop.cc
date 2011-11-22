@@ -22,12 +22,11 @@
 #include <core/scoring/constraints/Constraint.hh>
 #include <utility/string_util.hh>
 #include <basic/Tracer.hh>
-// Auto-header: duplicate removed #include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/kinematics/Jump.hh>
 #include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
-#include <basic/options/keys/hotspot.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/hotspot.OptionKeys.gen.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/moves/DataMap.hh>
@@ -55,6 +54,10 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/options/IntegerVectorOption.hh>
+
+//Auto Headers
+#include <core/kinematics/FoldTree.hh>
+#include <basic/options/keys/OptionKeys.hh>
 
 
 static numeric::random::RandomGenerator RG( 14071789 );

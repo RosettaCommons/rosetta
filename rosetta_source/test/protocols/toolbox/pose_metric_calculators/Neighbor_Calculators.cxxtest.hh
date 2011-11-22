@@ -38,6 +38,11 @@
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
+#include <core/pose/metrics/PoseMetricCalculatorBase.fwd.hh>
+#include <core/pose/metrics/PoseMetricCalculatorBase.hh>
+#include <protocols/toolbox/pose_metric_calculators/InterGroupNeighborsCalculator.fwd.hh>
+#include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.fwd.hh>
+#include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.fwd.hh>
 #include <utility/vector1.hh>
 
 

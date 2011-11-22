@@ -20,21 +20,21 @@
 #include <protocols/frag_picker/VallChunk.hh>
 #include <protocols/frag_picker/VallProvider.hh>
 
-#include <boost/cstdint.hpp>
+// AUTO-REMOVED #include <boost/cstdint.hpp>
 #include <boost/unordered_map.hpp>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/util.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/RT.hh>
-#include <core/import_pose/pose_stream/util.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
-#include <core/conformation/ResidueFactory.hh>
-#include <core/scoring/constraints/util.hh>
+// AUTO-REMOVED #include <core/conformation/ResidueFactory.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
@@ -63,8 +63,6 @@
 
 #include <protocols/moves/Mover.fwd.hh>
 #include <utility/vector1.hh>
-// Auto-header: duplicate removed #include <core/pose/Pose.hh>
-
 
 #if defined(WIN32) || defined(__CYGWIN__)
 	#include <ctime>

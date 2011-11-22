@@ -39,7 +39,6 @@
 
 //JD headers
 #include <protocols/jd2/JobDistributor.hh>
-// Auto-header: duplicate removed #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/jd2/JobOutputter.hh>
 // AUTO-REMOVED #include <protocols/jd2/Job.hh>
 

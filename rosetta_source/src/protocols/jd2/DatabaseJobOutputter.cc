@@ -14,14 +14,14 @@
 
 #include <protocols/jd2/DatabaseJobOutputter.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/jd2/util.hh>
+// AUTO-REMOVED #include <protocols/jd2/util.hh>
 
 // Project Headers
 #include <protocols/features/ProteinSilentReport.hh>
 
 // Platform Headers
-#include <core/pose/Pose.hh>
-#include <core/scoring/ScoreFunction.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/util.hh>
 
 ///Utility headers
@@ -41,6 +41,8 @@
 // C++ Headers
 #include <string>
 
+//Auto Headers
+#include <core/scoring/ScoreFunction.fwd.hh>
 static basic::Tracer tr("protocols.jd2.DatabaseJobOutputter");
 
 namespace protocols {

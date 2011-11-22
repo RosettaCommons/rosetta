@@ -15,13 +15,18 @@
 
 #include <core/optimization/Multifunc.hh>
 #include <protocols/qsar/qsarOptFunc.fwd.hh>
-#include <basic/database/sql_utils.hh>
-#include <numeric/roc_curve.fwd.hh>
+// AUTO-REMOVED #include <basic/database/sql_utils.hh>
+// AUTO-REMOVED #include <numeric/roc_curve.fwd.hh>
 //external headers
 #include <cppdb/frontend.h>
 
 #include <map>
 #include <list>
+
+//Auto Headers
+#include <utility/vector1.hh>
+#include <utility/sql_database/DatabaseSessionManager.fwd.hh>
+
 
 namespace protocols {
 namespace qsar {

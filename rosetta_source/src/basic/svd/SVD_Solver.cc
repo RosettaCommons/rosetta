@@ -115,6 +115,8 @@
 #include <string>
 #include <vector>
 
+//Auto Headers
+#include <execinfo.h>
 
 namespace basic{
 namespace svd{

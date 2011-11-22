@@ -18,7 +18,7 @@
 #include <protocols/swa/InputStreamWithResidueInfo.hh>
 
 //////////////////////////////////
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
@@ -27,11 +27,11 @@
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
-#include <protocols/swa/StepWisePoseSetup.hh>
+// AUTO-REMOVED #include <protocols/swa/StepWisePoseSetup.hh>
 
 #include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/util.hh>
+// AUTO-REMOVED #include <basic/options/after_opts.hh>
+// AUTO-REMOVED #include <basic/options/util.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/swa.OptionKeys.gen.hh>
 
@@ -41,6 +41,9 @@
 
 #include <utility/exit.hh>
 #include <string>
+
+//Auto Headers
+#include <utility/vector1.hh>
 
 using namespace core;
 using core::Real;

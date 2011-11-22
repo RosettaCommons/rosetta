@@ -13,14 +13,14 @@
 
 
 #include <devel/metal_interface/MatchGrafter.hh>
-#include <devel/metal_interface/FindClosestAtom.hh> // find closest atom to zinc
+// AUTO-REMOVED #include <devel/metal_interface/FindClosestAtom.hh> // find closest atom to zinc
 
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh> //for changing the HIS tautomer
 #include <core/chemical/ResidueType.hh> //for CYZ residue
 #include <core/chemical/AtomType.hh>
-#include <core/chemical/ResidueSelector.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
 #include <core/chemical/ChemicalManager.hh> //CENTROID, FA_STANDARD
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh> //create HIS of proper tautomer

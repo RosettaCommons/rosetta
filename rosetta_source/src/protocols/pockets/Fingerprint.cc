@@ -24,16 +24,16 @@
 #include <numeric/constants.hh>
 #include <protocols/pockets/Fingerprint.hh>
 #include <protocols/pockets/PocketGrid.hh>
-#include <core/init.hh>
+// AUTO-REMOVED #include <core/init.hh>
 
 // Core Headers
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/fingerprint.OptionKeys.gen.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
@@ -45,7 +45,8 @@
 
 #include <utility/vector1.hh>
 
-
+//Auto Headers
+#include <numeric/random/random.fwd.hh>
 
 
 // Utility Headers

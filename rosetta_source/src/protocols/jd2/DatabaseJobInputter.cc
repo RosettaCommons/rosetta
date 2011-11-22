@@ -24,7 +24,7 @@
 // AUTO-REMOVED #include <basic/options/keys/mysql.OptionKeys.gen.hh>
 #include <basic/database/sql_utils.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
@@ -48,6 +48,11 @@
 
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/features/ProteinSilentReport.hh>
+
+//Auto Headers
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/Jump.hh>
+
 
 
 static basic::Tracer tr("protocols.jd2.DatabaseJobInputter");

@@ -20,10 +20,10 @@
 #include <core/scoring/ScoreType.hh>
 //Package headers
 
-#include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
 //#include <core/scoring/ScoringManager.hh>
 // AUTO-REMOVED #include <core/scoring/EnergyGraph.hh>
-#include <core/pose/Pose.hh>
+// AUTO-REMOVED #include <core/pose/Pose.hh>
 //#include <core/pose/datacache/CacheableDataType.hh>
 
 //numeric headers
@@ -32,7 +32,7 @@
 #include <numeric/xyzVector.hh>
 // AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
-#include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 
 //utility headers
 #include <utility/vector1.hh>
@@ -44,7 +44,7 @@
 #include <ObjexxFCL/string.functions.hh>
 // AUTO-REMOVED #include <ObjexxFCL/Fmath.hh>
 
-#include <utility/io/ozstream.hh> //for dump_weights
+// AUTO-REMOVED #include <utility/io/ozstream.hh> //for dump_weights
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/rdc.OptionKeys.gen.hh>

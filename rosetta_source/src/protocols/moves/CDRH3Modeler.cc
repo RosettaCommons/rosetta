@@ -24,7 +24,7 @@
 #include <core/fragment/FragSet.hh>
 // AUTO-REMOVED #include <core/id/AtomID_Map.Pose.hh>
 #include <core/id/types.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/FoldTree.hh>
 // AUTO-REMOVED #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/util.hh>

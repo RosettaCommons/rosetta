@@ -32,7 +32,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/pack/task/PackerTask.fwd.hh>
+// AUTO-REMOVED #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 

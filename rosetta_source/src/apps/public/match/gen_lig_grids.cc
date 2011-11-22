@@ -21,15 +21,15 @@
 
 #include <core/init.hh>
 #include <core/types.hh>
-#include <core/io/pdb/file_data.hh>
-#include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/io/pdb/file_data.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 
 #include <core/pose/Pose.hh>
 
-#include <core/chemical/ChemicalManager.hh>
-#include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/MMAtomTypeSet.hh>
-#include <core/chemical/ResidueTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/AtomTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/MMAtomTypeSet.hh>
+// AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 
 #include <basic/options/option.hh>

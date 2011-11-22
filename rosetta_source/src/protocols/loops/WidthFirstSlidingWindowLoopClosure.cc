@@ -60,11 +60,8 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <numeric/random/random.hh>
-// Auto-header: duplicate removed #include <basic/Tracer.hh>
 
 //numeric headers
-// Auto-header: duplicate removed #include <numeric/random/random.hh>
 
 
 static basic::Tracer tr("protocols.loops");

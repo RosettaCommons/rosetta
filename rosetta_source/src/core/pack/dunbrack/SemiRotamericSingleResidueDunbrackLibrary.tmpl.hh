@@ -44,6 +44,7 @@
 // Boost Headers
 #include <boost/cstdint.hpp>
 
+//Auto Headers
 #include <platform/types.hh>
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -406,6 +407,8 @@
 #include <boost/pool/poolfwd.hpp>
 #include <zlib/zlib.h>
 #include <zlib/zutil.h>
+#include <execinfo.h>
+
 
 
 namespace core {

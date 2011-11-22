@@ -20,7 +20,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
-#include <core/scoring/packstat/compute_sasa.hh>
+// AUTO-REMOVED #include <core/scoring/packstat/compute_sasa.hh>
 #include <basic/MetricValue.hh>
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <protocols/toolbox/pose_metric_calculators/FragQualCalculator.hh>

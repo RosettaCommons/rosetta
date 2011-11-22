@@ -15,11 +15,11 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <utility/vector1.hh>
-#include <utility/string_util.hh>
-#include <utility/file/file_sys_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 
 #include <core/io/pdb/pose_io.hh>
-#include <basic/database/open.hh>
+// AUTO-REMOVED #include <basic/database/open.hh>
 #include <devel/init.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
@@ -27,12 +27,12 @@
 
 #include <core/sequence/util.hh>
 
-#include <core/import_pose/pose_stream/util.hh>
-#include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
+// AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
+// AUTO-REMOVED #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/ChemicalManager.hh>
+// AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 #include <protocols/comparative_modeling/util.hh>
 
@@ -48,9 +48,11 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/james.OptionKeys.gen.hh>
 
+//Auto Headers
+#include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 utility::vector1< int > calculate_burial(
 	core::pose::Pose & mypose,
 	core::Real const dist_cutoff

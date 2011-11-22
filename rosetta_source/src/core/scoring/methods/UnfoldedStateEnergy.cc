@@ -21,7 +21,6 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/UnfoldedStatePotential.hh>
 #include <core/scoring/ScoringManager.hh>
-// Auto-header: duplicate removed #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <basic/Tracer.hh>
 
 // Project headers

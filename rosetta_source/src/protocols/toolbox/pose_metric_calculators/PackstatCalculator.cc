@@ -16,7 +16,7 @@
 #include <core/scoring/packstat/compute_sasa.hh>
 
 #include <core/chemical/ResidueType.hh>
-#include <core/pose/metrics/CalculatorFactory.hh>
+// AUTO-REMOVED #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <protocols/toolbox/PoseMetricCalculators/NumberHBondsCalculator.hh>
 // AUTO-REMOVED #include <protocols/toolbox/PoseMetricCalculators/SasaCalculator.hh>

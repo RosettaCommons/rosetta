@@ -9,32 +9,25 @@
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
 //test
-#include <core/pose/PDBPoseMap.hh>
-#include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDBPoseMap.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <protocols/forge/remodel/RemodelWorkingSet.hh>
 //#include <devel/remodel/helpMenu.hh>
 
 //for DSSP
-#include <core/scoring/dssp/Dssp.hh>
+// AUTO-REMOVED #include <core/scoring/dssp/Dssp.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
-// AUTO-REMOVED #include <basic/options/keys/in.OptionKeys.gen.hh>
-// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 
 //fragset
 //#include <core/fragment/OrderedFragSet.hh>
 
-// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
-
-// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
-
 #include <core/chemical/ResidueType.hh>
  // for switch typeset
 
 // for yab managers
-// AUTO-REMOVED #include <protocols/forge/components/VarLengthBuild.hh>
 #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/build/Interval.hh>
 #include <protocols/forge/methods/util.hh>
@@ -47,9 +40,6 @@
 #include <core/pack/task/ResfileReader.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-// Auto-header: duplicate removed #include <protocols/forge/components/VarLengthBuild.hh>
-
-// AUTO-REMOVED #include <protocols/loops/LoopMover_QuickCCD_Moves.hh>
 /*
 //yab headers
 #include "AtomPoint.hh"
@@ -60,7 +50,7 @@
 #include "ccd_functions.hh"
 */
 // ObjexxFCL Headers
-#include <ObjexxFCL/FArray1D.hh>
+// AUTO-REMOVED #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 //#include <ObjexxFCL/FArray3D.hh>
 //#include <ObjexxFCL/FArray4D.hh>
@@ -91,7 +81,7 @@
 // AUTO-REMOVED #include <utility/file/file_sys_util.hh>
 #include <utility/vector1.hh>
 
-#include <core/chemical/AtomType.hh>
+// AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/fragment/ConstantLengthFragSet.fwd.hh>
 #include <core/fragment/Frame.fwd.hh>
 #include <core/fragment/OrderedFragSet.fwd.hh>

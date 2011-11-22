@@ -23,7 +23,6 @@
 #include <core/types.hh>
 #include <utility/vector1_bool.hh>
 
-// AUTO-REMOVED #include <string>
 
 namespace protocols {
 namespace frag_picker {

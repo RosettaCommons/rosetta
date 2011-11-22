@@ -21,7 +21,6 @@
 // External Headers
 #include <cppdb/frontend.h>
 #include <utility/exit.hh>
-#include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
 
 #include <utility/vector1.hh>

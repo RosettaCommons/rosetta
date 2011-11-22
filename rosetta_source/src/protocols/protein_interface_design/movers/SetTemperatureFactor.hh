@@ -21,7 +21,6 @@
 
 #include <utility/vector1.hh>
 
-// Auto-header: duplicate removed #include <protocols/filters/Filter.fwd.hh>
 
 namespace protocols {
 namespace protein_interface_design {

@@ -17,23 +17,23 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/id/AtomID.hh>
-#include <core/chemical/util.hh>
+// AUTO-REMOVED #include <core/chemical/util.hh>
 #include <core/chemical/VariantType.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/PDBInfo.hh>
+// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
-#include <core/io/pdb/pose_io.hh>
-#include <core/scoring/constraints/util.hh>
+// AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+// AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 #include <core/import_pose/import_pose.hh>
 
 #include <core/optimization/MinimizerOptions.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/SaneMinMover.hh>
-#include <protocols/moves/CompositionMover.hh>
-#include <protocols/moves/ConstraintSetMover.hh>
+// AUTO-REMOVED #include <protocols/moves/CompositionMover.hh>
+// AUTO-REMOVED #include <protocols/moves/ConstraintSetMover.hh>
 
 #include <core/scoring/rms_util.hh>
 
@@ -41,7 +41,7 @@
 #include <iostream>
 #include <string>
 
-#include <basic/Tracer.hh>
+// AUTO-REMOVED #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 
@@ -49,9 +49,9 @@
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/james.OptionKeys.gen.hh>
-#include <basic/options/keys/docking.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/run.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/docking.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/constraints.OptionKeys.gen.hh>
+// AUTO-REMOVED #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
 class SetupMover : public protocols::moves::Mover {

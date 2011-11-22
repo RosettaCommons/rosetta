@@ -40,12 +40,8 @@
 
 
 // C++
-// AUTO-REMOVED #include <math.h>
-// AUTO-REMOVED #include <stdio.h>
-// AUTO-REMOVED #include <string.h>
 
 // Boost
-// AUTO-REMOVED #include <boost/algorithm/string.hpp>
 
 namespace protocols {
 namespace frag_picker {

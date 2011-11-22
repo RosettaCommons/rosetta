@@ -18,7 +18,7 @@
 #define INCLUDED_protocols_swa_SWA_Dinucleotide_Sampler_Util_HH
 
 
-#include <protocols/swa/rna/StepWiseRNA_Dinucleotide_Sampler_Util.hh>
+//#include <protocols/swa/rna/StepWiseRNA_Dinucleotide_Sampler_Util.hh>
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
@@ -27,14 +27,17 @@
 #include <numeric/xyzVector.hh>
 #include <string>
 #include <map>
-#include <core/chemical/AA.hh>
+// AUTO-REMOVED #include <core/chemical/AA.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
-#include <core/io/silent/SilentFileData.hh>
-#include <numeric/angle.functions.hh> // Need this to prevent the compiling error: 'principal_angle_degrees' is not a member of 'numeric' Oct 14, 2009
-#include <core/kinematics/MoveMap.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/conformation/Residue.hh>
-#include <set>
+// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
+// AUTO-REMOVED #include <numeric/angle.functions.hh> // Need this to prevent the compiling error: 'principal_angle_degrees' is not a member of 'numeric' Oct 14, 2009
+// AUTO-REMOVED #include <core/kinematics/MoveMap.hh>
+// AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
+// AUTO-REMOVED #include <core/conformation/Residue.hh>
+// AUTO-REMOVED #include <set>
+
+//Auto Headers
+#include <core/conformation/Residue.fwd.hh>
 
 typedef  numeric::xyzMatrix< core::Real > Matrix;
 

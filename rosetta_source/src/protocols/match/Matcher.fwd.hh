@@ -21,7 +21,6 @@
 #include <utility/pointer/owning_ptr.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <list>
 
 namespace protocols {
 namespace match {

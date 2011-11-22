@@ -19,7 +19,7 @@
 // Project headers
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+// AUTO-REMOVED #include <core/pose/util.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>
 
@@ -33,6 +33,11 @@
 #include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <core/conformation/Residue.hh>
+#include <core/kinematics/Jump.hh>
+
 
 
 namespace protocols {

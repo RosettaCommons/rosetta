@@ -32,7 +32,7 @@
 #include <numeric/xyzVector.hh>
 // AUTO-REMOVED #include <numeric/xyz.functions.hh>
 
-#include <core/id/NamedAtomID.hh>
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 
 //utility headers
 #include <utility/vector1.hh>

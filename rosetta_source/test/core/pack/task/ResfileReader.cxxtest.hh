@@ -38,7 +38,6 @@
 
 //Auto Headers
 #include <core/chemical/ResidueType.hh>
-// Auto-header: duplicate removed #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>

@@ -19,7 +19,7 @@
 #include <protocols/ligand_docking/grid_functions.hh>
 #include <protocols/geometry/RB_geometry.hh>
 #include <protocols/moves/RigidBodyMover.hh>
-#include <protocols/moves/DataMap.hh>
+// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 
@@ -36,6 +36,8 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.io.hh>
 
+//Auto Headers
+#include <core/pose/Pose.hh>
 using basic::T;
 using basic::Error;
 using basic::Warning;

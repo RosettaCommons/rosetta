@@ -42,7 +42,6 @@
 
 // option key includes
 
-// Auto-header: duplicate removed #include <basic/options/option.hh>
 // AUTO-REMOVED #include <basic/options/keys/loops.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>

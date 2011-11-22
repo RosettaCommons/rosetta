@@ -29,7 +29,7 @@
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
-#include <utility/string_util.hh>
+// AUTO-REMOVED #include <utility/string_util.hh>
 
 // Scripter Headers
 #include <utility/tag/Tag.hh>

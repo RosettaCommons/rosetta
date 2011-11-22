@@ -33,7 +33,6 @@
 #include <utility/vector1.hh>
 
 
-// AUTO-REMOVED #include <utility>
 
 namespace protocols {
 namespace multistate_design {
