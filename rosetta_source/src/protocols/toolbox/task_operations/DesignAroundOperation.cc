@@ -61,8 +61,8 @@ using namespace std;
 
 DesignAroundOperation::DesignAroundOperation() :
 	design_shell_( 8.0 ),
-	string_resnums_( "" ),
-	repack_on_( true )
+	repack_shell_( 8.0 ),
+	string_resnums_( "" )
 {
 	resid_.clear();
 }
@@ -86,51 +86,53 @@ DesignAroundOperation::apply( core::pose::Pose const & pose, core::pack::task::P
 {
 	using namespace core::pack::task::operation;
 
+
+	runtime_assert( repack_shell() >= design_shell() );
 	set< core::Size > focus_residues;// all of the residues that were input (notice that the method is const, so I can't change resid_)
 	focus_residues.clear();
 	focus_residues.insert( resid_.begin(), resid_.end() );
 	set< core::Size > const res_vec( protocols::rosetta_scripts::get_resnum_list( string_resnums_, pose ) );
 	focus_residues.insert( res_vec.begin(), res_vec.end() );
 
-	TR.Debug<<"Design will be allowed around the following residues (others will be allowed to repack only): ";
-	foreach( core::Size const res, focus_residues )
-		TR.Debug<<res<<", ";
-	TR.Debug<<std::endl;
-
-	utility::vector1< core::Size > residues;
-	residues.clear();
+		utility::vector1< core::Size > packing_residues, prevent_repacking_residues;
+	packing_residues.clear(); prevent_repacking_residues.clear();
 	for( core::Size i=1; i<=pose.total_residue(); ++i ){
 		bool allow_design( false );
+		bool allow_packing( false );
 		foreach( core::Size const res, focus_residues ){
 			core::Real const distance( pose.residue( i ).xyz( pose.residue( i ).nbr_atom() ).distance( pose.residue( res ).xyz( pose.residue( res ).nbr_atom() )) );
-			if( distance <= design_shell_ ){
+			if( distance <= design_shell() ){
 				allow_design = true;
 				break;
 			}// fi distance
-		}//foreach res
-		if( !allow_design )
-			residues.push_back( i );
+		} //foreach res
+		if( allow_design ) continue;
+		foreach( core::Size const res, focus_residues ){
+			core::Real const distance( pose.residue( i ).xyz( pose.residue( i ).nbr_atom() ).distance( pose.residue( res ).xyz( pose.residue( res ).nbr_atom() )) );
+			if( distance <= repack_shell() ){
+				allow_packing = true;
+				break;
+			}// fi distance
+		} //foreach res
+		if( allow_packing ) packing_residues.push_back( i );
+		else prevent_repacking_residues.push_back( i );
 	}//for i
 
-	if( residues.size() ){
-		TR.Debug<<"The following residues will be repacked only: ";
-		foreach( core::Size const res, residues )
-			TR.Debug<<res<<", ";
-		TR.Debug<<std::endl;
-		OperateOnCertainResidues oocr;
-		if( repack_on() )
-			oocr.op( new RestrictToRepackingRLT );
-		else
-			oocr.op( new PreventRepackingRLT );
-		oocr.residue_indices( residues );
-		oocr.apply( pose, task );
-	}
+	OperateOnCertainResidues oocr_repacking, oocr_prevent_repacking;
+	oocr_repacking.op( new RestrictToRepackingRLT );
+	oocr_repacking.residue_indices( packing_residues );
+	oocr_repacking.apply( pose, task );
+	oocr_prevent_repacking.op( new PreventRepackingRLT );
+	oocr_prevent_repacking.residue_indices( prevent_repacking_residues );
+	oocr_prevent_repacking.apply( pose, task );
 }
 
 void
 DesignAroundOperation::design_shell( core::Real const radius )
 {
 	design_shell_ = radius;
+	if( radius >= repack_shell() )
+		repack_shell( radius );
 }
 
 void
@@ -144,21 +146,9 @@ DesignAroundOperation::parse_tag( TagPtr tag )
 {
 	string_resnums_ = tag->getOption< std::string >( "resnums" );// these are kept in memory until the pose is available (at apply time)
   design_shell( tag->getOption< core::Real >( "design_shell", 8.0 ) );
-	repack_on( tag->getOption< bool >( "repack_on", 1 ) );
+	repack_shell( tag->getOption< core::Real >( "repack_shell", 8.0 ));
+	runtime_assert( design_shell() <= repack_shell() );
 }
-
-void
-DesignAroundOperation::repack_on( bool const repack_on )
-{
-	repack_on_ = repack_on;
-}
-
-bool
-DesignAroundOperation::repack_on() const
-{
-	return repack_on_;
-}
-
 } //namespace protocols
 } //namespace toolbox
 } //namespace task_operations
