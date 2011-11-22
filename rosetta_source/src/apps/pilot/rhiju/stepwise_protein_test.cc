@@ -14,8 +14,8 @@
 // libRosetta headers
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
-#include <core/scoring/dunbrack/SingleResidueDunbrackLibrary.hh>
-#include <core/scoring/dunbrack/DunbrackRotamer.hh>
+//#include <core/scoring/dunbrack/SingleResidueDunbrackLibrary.hh>
+//#include <core/scoring/dunbrack/DunbrackRotamer.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/hbonds/hbonds.hh>
@@ -56,7 +56,6 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/RT.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/id/AtomID_Map.Pose.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/DOF_ID.hh>
@@ -112,22 +111,24 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
 
-#include <core/options/option.hh>
-#include <core/options/after_opts.hh>
-#include <core/options/util.hh>
-#include <core/options/option_macros.hh>
+#include <basic/options/option.hh>
+#include <basic/options/after_opts.hh>
+#include <basic/options/util.hh>
+#include <basic/options/option_macros.hh>
 #include <core/pose/Pose.hh>
+
+#include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/io/pose_stream/ExtendedPoseInputStream.hh>
-#include <core/io/pose_stream/PoseInputStream.fwd.hh>
-#include <core/io/pose_stream/PDBPoseInputStream.hh>
-#include <core/io/pose_stream/SilentFilePoseInputStream.hh>
-#include <core/util/datacache/BasicDataCache.hh>
-#include <core/util/datacache/CacheableString.hh>
-#include <core/util/basic.hh>
-#include <core/io/database/open.hh>
+#include <core/import_pose/pose_stream/ExtendedPoseInputStream.hh>
+#include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
+#include <core/import_pose/pose_stream/PDBPoseInputStream.hh>
+#include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
+#include <basic/datacache/BasicDataCache.hh>
+#include <basic/datacache/CacheableString.hh>
+#include <basic/basic.hh>
+#include <basic/database/open.hh>
 #include <core/init.hh>
 #include <core/io/pdb/pose_io.hh>
 
@@ -164,24 +165,24 @@
 
 //silly using/typedef
 
-#include <core/util/Tracer.hh>
-using core::util::T;
+#include <basic/Tracer.hh>
+using basic::T;
 
 // option key includes
 
-#include <core/options/keys/out.OptionKeys.gen.hh>
-#include <core/options/keys/in.OptionKeys.gen.hh>
-#include <core/options/keys/swa.OptionKeys.gen.hh>
-#include <core/options/keys/score.OptionKeys.gen.hh>
-#include <core/options/keys/cluster.OptionKeys.gen.hh>
+#include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
+#include <basic/options/keys/swa.OptionKeys.gen.hh>
+#include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/cluster.OptionKeys.gen.hh>
 
 
-using core::util::Error;
-using core::util::Warning;
+using basic::Error;
+using basic::Warning;
 
 using namespace core;
 using namespace protocols;
-using namespace core::options::OptionKeys;
+using namespace basic::options::OptionKeys;
 
 using utility::vector1;
 
@@ -263,8 +264,8 @@ enable_sampling_of_loop_takeoff( protocols::swa::StepWisePoseSampleGeneratorOP &
 void
 rebuild_test(){
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::conformation;
 	using namespace core::kinematics;
@@ -296,7 +297,7 @@ rebuild_test(){
 	if (option[ in::file::native ].user() ) {
 		native_pose = PoseOP( new Pose );
 		std::string native_pdb_file  = option[ in::file::native ];
-		io::pdb::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
+		import_pose::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
 		if ( option[ dump ]() ) native_pose->dump_pdb("full_native.pdb");
 	}
 
@@ -570,8 +571,8 @@ rebuild_test(){
 void
 cluster_outfile_test(){
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace protocols::swa;
 
 	utility::vector1< std::string > const silent_files_in( option[ in::file::silent ]() );
@@ -614,8 +615,8 @@ enable_sampling_of_loop_takeoff( protocols::swa::StepWisePoseSampleGeneratorOP &
 																 protocols::swa::StepWiseJobParametersOP job_parameters,
 																 pose::Pose & pose ) {
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace protocols::swa;
 	using namespace protocols::swa::protein;
 
@@ -648,12 +649,12 @@ enable_sampling_of_loop_takeoff( protocols::swa::StepWisePoseSampleGeneratorOP &
 void
 combine_loops_test(){
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::kinematics;
 	using namespace core::scoring;
-	using namespace core::io::pose_stream;
+	using namespace core::import_pose::pose_stream;
 	using namespace core::io::pdb;
 	using namespace core::id;
 	using namespace core::pose;
@@ -666,7 +667,7 @@ combine_loops_test(){
 	if ( start_pdb_file.size() == 0 ) utility_exit_with_message( "Must provide -start_pdb" );
 
 	Pose pose;
-	pose_from_pdb( pose, *rsd_set, start_pdb_file );
+	import_pose::pose_from_pdb( pose, *rsd_set, start_pdb_file );
 	Size const nres = pose.total_residue();
 	//	std::cout << pose.annotated_sequence();
 	//	pose.dump_pdb( "input_pose.pdb" );
@@ -710,7 +711,7 @@ combine_loops_test(){
 
 		// // copy_dofs. Cross your fingers!
 		Pose import_pose;
-		pose_from_pdb( import_pose, *rsd_set, infiles[ n ] );
+		import_pose::pose_from_pdb( import_pose, *rsd_set, infiles[ n ] );
 		Size const working_nres =  import_pose.total_residue();
 
 		Size const loop_start = all_loop_boundaries[n].first;
@@ -774,33 +775,33 @@ combine_loops_test(){
 				}
 
 				atom_id_map[ AtomID( j, loop_start + i )  ] =
-					AtomID( NamedAtomID( name, working_loop_start + i ), import_pose  );
+					AtomID( core::pose::named_atom_id_to_atom_id( NamedAtomID( name, working_loop_start + i ), import_pose  ));
 			}
 		}
 
 		if ( !loop_start_is_after_cutpoint ){
 			std::cout << "adding special atoms for " << loop_start - 1 << std::endl;
-			atom_id_map[ AtomID( NamedAtomID( " N  ", loop_start-1 ), pose)  ] =
-				AtomID( NamedAtomID( " N  ", working_loop_start-1 ), import_pose );
-			atom_id_map[ AtomID( NamedAtomID( " O  ", loop_start-1 ), pose)  ] =
-				AtomID( NamedAtomID( " O  ", working_loop_start-1 ), import_pose );
-			atom_id_map[ AtomID( NamedAtomID( " CA ", loop_start-1 ), pose)  ] =
-				AtomID( NamedAtomID( " CA ", working_loop_start-1 ), import_pose );
-			atom_id_map[ AtomID( NamedAtomID( " C  ", loop_start-1 ), pose)  ] =
-				AtomID( NamedAtomID( " C  ", working_loop_start-1 ), import_pose );
+			atom_id_map[ AtomID( core::pose::named_atom_id_to_atom_id( NamedAtomID( " N  ", loop_start-1 ), pose))  ] =
+				AtomID( core::pose::named_atom_id_to_atom_id( NamedAtomID( " N  ", working_loop_start-1 ), import_pose ));
+			atom_id_map[ AtomID( core::pose::named_atom_id_to_atom_id( NamedAtomID( " O  ", loop_start-1 ), pose))  ] =
+				AtomID( core::pose::named_atom_id_to_atom_id( NamedAtomID( " O  ", working_loop_start-1 ), import_pose ));
+			atom_id_map[ AtomID( core::pose::named_atom_id_to_atom_id( NamedAtomID( " CA ", loop_start-1 ), pose))  ] =
+				AtomID( core::pose::named_atom_id_to_atom_id( NamedAtomID( " CA ", working_loop_start-1 ), import_pose ));
+			atom_id_map[ AtomID( core::pose::named_atom_id_to_atom_id( NamedAtomID( " C  ", loop_start-1 ), pose))  ] =
+				AtomID( core::pose::named_atom_id_to_atom_id( NamedAtomID( " C  ", working_loop_start-1 ), import_pose ));
 		}
 		if ( !loop_end_is_before_cutpoint ){
 			std::cout << "adding special atoms for " << loop_end+1 << std::endl;
 			if ( pose.residue_type( loop_end+1).has( " H  " ) ){
-				atom_id_map[ AtomID( NamedAtomID( " H  ", loop_end+1 ), pose)  ] =
-					AtomID( NamedAtomID( " H  ", working_loop_end+1 ), import_pose );
+				atom_id_map[ AtomID( core::pose::named_atom_id_to_atom_id( NamedAtomID( " H  ", loop_end+1 ), pose))  ] =
+					AtomID( core::pose::named_atom_id_to_atom_id( NamedAtomID( " H  ", working_loop_end+1 ), import_pose ));
 			}
-			atom_id_map[ AtomID( NamedAtomID( " N  ", loop_end+1 ), pose)  ] =
-				AtomID( NamedAtomID( " N  ", working_loop_end+1 ), import_pose );
-			atom_id_map[ AtomID( NamedAtomID( " CA ", loop_end+1 ), pose)  ] =
-				AtomID( NamedAtomID( " CA ", working_loop_end+1 ), import_pose );
-			atom_id_map[ AtomID( NamedAtomID( " C  ", loop_end+1 ), pose)  ] =
-				AtomID( NamedAtomID( " C  ", working_loop_end+1 ), import_pose );
+			atom_id_map[ AtomID( core::pose::named_atom_id_to_atom_id( NamedAtomID( " N  ", loop_end+1 ), pose))  ] =
+				AtomID( core::pose::named_atom_id_to_atom_id( NamedAtomID( " N  ", working_loop_end+1 ), import_pose ));
+			atom_id_map[ AtomID( core::pose::named_atom_id_to_atom_id( NamedAtomID( " CA ", loop_end+1 ), pose))  ] =
+				AtomID( core::pose::named_atom_id_to_atom_id( NamedAtomID( " CA ", working_loop_end+1 ), import_pose ));
+			atom_id_map[ AtomID( core::pose::named_atom_id_to_atom_id( NamedAtomID( " C  ", loop_end+1 ), pose))  ] =
+				AtomID( core::pose::named_atom_id_to_atom_id( NamedAtomID( " C  ", working_loop_end+1 ), import_pose ));
 		}
 
 		//		pose.dump_pdb( "before_copy_dofs.pdb" );
@@ -839,12 +840,12 @@ combine_loops_test(){
 void
 big_bins_test(){
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::chemical;
 	using namespace core::kinematics;
 	using namespace core::scoring;
-	using namespace core::io::pose_stream;
+	using namespace core::import_pose::pose_stream;
 	using namespace core::io::pdb;
 	using namespace core::id;
 	using namespace core::pose;
@@ -854,7 +855,7 @@ big_bins_test(){
 	ResidueTypeSetCAP rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 	std::string start_pdb_file  = option[ in::file::s ]()[1];
 	Pose pose;
-	pose_from_pdb( pose, *rsd_set, start_pdb_file );
+	import_pose::pose_from_pdb( pose, *rsd_set, start_pdb_file );
 
 	StepWiseJobParametersOP dummy_parameters( new StepWiseJobParameters );
 	StepWiseProteinScreener screener( dummy_parameters );
@@ -885,7 +886,7 @@ void*
 my_main( void* )
 {
 
-	using namespace core::options;
+	using namespace basic::options;
 
 	if ( option[ cluster_test ] ){
 		cluster_outfile_test();
@@ -908,7 +909,7 @@ my_main( void* )
 int
 main( int argc, char * argv [] )
 {
-	using namespace core::options;
+	using namespace basic::options;
 
 	utility::vector1< Size > blank_size_vector;
 	utility::vector1< std::string > blank_string_vector;
