@@ -98,22 +98,8 @@ fill_hbond_set(
 
 	// loop over all nbr-pairs
 	for ( Size res1 = 1; res1 <= pose.total_residue(); ++res1 ) {
-
+		int const nb1 = tenA_neighbor_graph.get_node( res1 )->num_neighbors_counting_self_static();
 		conformation::Residue const & rsd1( pose.residue( res1 ) );
-
-		int nb1 = tenA_neighbor_graph.get_node( res1 )->num_neighbors_counting_self_static();
-		//option to exclude water from nbr count
-		if( hbond_set.hbond_options().ignore_water_hb_env_dep() ){
-			nb1 = 0;
-			for ( graph::Graph::EdgeListConstIter
-					ir  = tenA_neighbor_graph.get_node( res1 )->const_edge_list_begin(),
-					ire = tenA_neighbor_graph.get_node( res1 )->const_edge_list_end();
-					ir != ire; ++ir ){
-				Size nbr( (*ir)->get_other_ind( res1 ) ); 
-				if( pose.residue( nbr ).name1() == 'w' ) continue;
-				++nb1;
-			}
-		}
 
 		for ( graph::Graph::EdgeListConstIter
 				iru = energy_graph.get_node(res1)->const_upper_edge_list_begin(),
@@ -125,19 +111,7 @@ fill_hbond_set(
 			conformation::Residue const & rsd2( pose.residue( res2 ) );
 			if ( hbond_set.hbond_options().exclude_DNA_DNA() && rsd1.is_DNA() && rsd2.is_DNA() ) continue;
 
-			int nb2 = tenA_neighbor_graph.get_node( res2 )->num_neighbors_counting_self_static();
-			//option to exclude water from nbr count
-			if( hbond_set.hbond_options().ignore_water_hb_env_dep() ){
-				nb2 = 0;
-				for ( graph::Graph::EdgeListConstIter
-						ir  = tenA_neighbor_graph.get_node( res2 )->const_edge_list_begin(),
-						ire = tenA_neighbor_graph.get_node( res2 )->const_edge_list_end();
-						ir != ire; ++ir ){
-					Size nbr( (*ir)->get_other_ind( res2 ) ); 
-					if( pose.residue( nbr ).name1() == 'w' ) continue;
-					++nb2;
-				}
-			}
+			int const nb2 = tenA_neighbor_graph.get_node( res2 )->num_neighbors_counting_self_static();
 
 			//pba membrane specific hbond
 			if ( hbond_set.hbond_options().Mbhbond() ) {
