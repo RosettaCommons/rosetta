@@ -3921,7 +3921,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option(  'collect_clustered_top', 'Integer', desc='take the best N from each cluster', default = '1'),
 		Option(  'dr_cycles', 'Integer', desc='number of design-refine cycles to use', default = '3'),
 		Option(  'two_chain_tree', 'Integer', desc='label the start of the second chain'),
-                Option(  'repeat_structuer', 'Integer', desc='build identical repeats this many times', default='1'),
+                Option(  'repeat_structure', 'Integer', desc='build identical repeats this many times', default='1'),
 		Option_Group( 'domainFusion',
                 Option(  'insert_segment_from_pdb', 'File', desc='segment pdb file to be inserted [insert pdb file name].', default=''),
                         #Option(  'rigid_segment_in_refinement', 'Boolean', desc=' rigid segment in refinement.'),

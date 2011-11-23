@@ -213,7 +213,7 @@ namespace remodel { BooleanOptionKey const cluster_on_entire_pose( "remodel:clus
 namespace remodel { IntegerOptionKey const collect_clustered_top( "remodel:collect_clustered_top" );  }
 namespace remodel { IntegerOptionKey const dr_cycles( "remodel:dr_cycles" );  }
 namespace remodel { IntegerOptionKey const two_chain_tree( "remodel:two_chain_tree" );  }
-namespace remodel { IntegerOptionKey const repeat_structuer( "remodel:repeat_structuer" );  }
+namespace remodel { IntegerOptionKey const repeat_structure( "remodel:repeat_structure" );  }
 namespace remodel { namespace domainFusion { BooleanOptionKey const domainFusion( "remodel:domainFusion" );  } }
 namespace remodel { namespace domainFusion { FileOptionKey const insert_segment_from_pdb( "remodel:domainFusion:insert_segment_from_pdb" );  } }
 namespace remodel { RealOptionKey const vdw( "remodel:vdw" );  }
