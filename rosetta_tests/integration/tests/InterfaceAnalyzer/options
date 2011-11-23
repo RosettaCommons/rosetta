@@ -1,4 +1,4 @@
--s 1brs.pdb
+-s ../docking_full_protocol/input/1brs.pdb
 
 #-resfile resfile
 

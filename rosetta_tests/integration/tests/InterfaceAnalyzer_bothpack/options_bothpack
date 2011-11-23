@@ -1,11 +1,11 @@
--s 1brs.pdb
+-s ../docking_full_protocol/input/1brs.pdb
 
 #-resfile resfile
 
 #-tracer_data_print
 -pack_input
-#-pack_separated
+-pack_separated
 #-add_regular_scores_to_scorefile
 #-use_resfile
 
--out:file:score_only prepack.sc
+-out:file:score_only bothpack.sc
