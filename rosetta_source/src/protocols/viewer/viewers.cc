@@ -13,9 +13,6 @@
 
 // Unit headers
 #include <protocols/viewer/viewers.hh>
-// AUTO-REMOVED #include <protocols/viewer/triangleIterator.hh>
-// AUTO-REMOVED #include <protocols/viewer/ConformationViewer.hh>
-// AUTO-REMOVED #include <protocols/viewer/ConformationViewer.fwd.hh>
 
 #include <protocols/viewer/SilentObserver.hh>
 #include <protocols/viewer/SilentObserver.fwd.hh>
@@ -33,13 +30,14 @@
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>
 
-// AUTO-REMOVED #include <core/scoring/electron_density/ElectronDensity.hh>
-// AUTO-REMOVED #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 // Project headers
 // AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 
 #ifdef GL_GRAPHICS
+#include <protocols/viewer/triangleIterator.hh>
+#include <protocols/viewer/ConformationViewer.hh>
+#include <protocols/viewer/ConformationViewer.fwd.hh>
 #include <protocols/viewer/triangleIterator.hh> //should not be auto-removed!! needed for graphics!
 #include <protocols/viewer/ConformationViewer.hh>  //should not be auto-removed!! needed for graphics!
 #include <protocols/viewer/ConformationViewer.fwd.hh>  //should not be auto-removed!! needed for graphics!
@@ -47,6 +45,8 @@
 #include <core/chemical/ResidueTypeSet.hh>   //should not be auto-removed!! needed for graphics!
 #include <core/chemical/ChemicalManager.hh>  //should not be auto-removed!! needed for graphics!
 #include <core/chemical/AtomTypeSet.hh>
+#include <core/scoring/electron_density/ElectronDensity.hh>
+#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #endif
 
 // Utility headers

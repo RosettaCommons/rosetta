@@ -23,6 +23,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/signals/ConnectionEvent.hh>
 #include <core/conformation/signals/XYZEvent.hh>
+#include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/tree/Atom.hh>
 
 #include <core/types.hh>
 

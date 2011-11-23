@@ -51,7 +51,9 @@
 //#include <protocols/moves/MonteCarlo.hh>
 //#include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/toolbox/pose_manipulation.hh>
-// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
+#if defined GL_GRAPHICS
+ #include <protocols/viewer/viewers.hh>
+#endif
 #include <protocols/moves/MatcherMover.hh>
 
 #include <core/chemical/ChemicalManager.hh>

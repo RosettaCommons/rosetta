@@ -52,7 +52,9 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/WhileMover.hh>
 
-// AUTO-REMOVED #include <protocols/viewer/viewers.hh>
+#ifdef GL_GRAPHICS
+#include <protocols/viewer/viewers.hh>
+#endif
 
 // AUTO-REMOVED #include <protocols/checkpoint/Checkpoint.hh>
 // AUTO-REMOVED #include <protocols/jumping/MembraneJump.hh>
