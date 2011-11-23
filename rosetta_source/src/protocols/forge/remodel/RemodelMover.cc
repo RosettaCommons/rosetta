@@ -465,7 +465,18 @@ if (working_model.manager.size()!= 0){
 	if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
 		//turning on the res_type_linking constraint weight for designs
 		fullatom_sfx_->set_weight( core::scoring::atom_pair_constraint, 1.0);
-		fullatom_sfx_->set_weight( core::scoring::res_type_linking_constraint, 10.0);
+		fullatom_sfx_->set_weight( core::scoring::res_type_linking_constraint, 0.3);
+		//fullatom_sfx_->set_weight( core::scoring::fa_dun, 0);
+//		fullatom_sfx_->set_weight( core::scoring::fa_sol, 0);
+//		fullatom_sfx_->set_weight( core::scoring::fa_pair, 0);
+//		fullatom_sfx_->set_weight( core::scoring::hbond_sc, 0);
+//		fullatom_sfx_->set_weight( core::scoring::hbond_sc, 0);
+//		fullatom_sfx_->set_weight( core::scoring::fa_intra_rep, 0);
+//		fullatom_sfx_->set_weight( core::scoring::rama, 0);
+//		fullatom_sfx_->set_weight( core::scoring::hbond_bb_sc, 0);
+//		fullatom_sfx_->set_weight( core::scoring::p_aa_pp, 0);
+//		fullatom_sfx_->set_weight( core::scoring::ref, 10);
+
 	}
 
 	RemodelDesignMover designMover(remodel_data, working_model, fullatom_sfx_);
@@ -639,6 +650,7 @@ if (working_model.manager.size()!= 0){
 		{
 			designMover.set_state("finish");
 			designMover.apply(*(*it));
+
 		}
 
 		if ( basic::options::option[basic::options::OptionKeys::remodel::run_confirmation].user()){
@@ -891,7 +903,7 @@ bool RemodelMover::design_refine_seq_relax(
   sfx->set_weight(core::scoring::coordinate_constraint, 1.0 );
   sfx->set_weight(core::scoring::atom_pair_constraint, 1.0 );
   sfx->set_weight(core::scoring::angle_constraint, 1.0 );
-  sfx->set_weight(core::scoring::dihedral_constraint, 1.0 );
+  sfx->set_weight(core::scoring::dihedral_constraint, 10.0 );
   sfx->set_weight(core::scoring::res_type_constraint, 1.0);
   sfx->set_weight(core::scoring::res_type_linking_constraint, 1.0);
 	protocols::relax::FastRelax relaxMover(sfx);

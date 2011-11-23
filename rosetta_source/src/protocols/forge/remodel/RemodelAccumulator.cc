@@ -223,13 +223,16 @@ core::Size RemodelAccumulator::recover_checkpoint()
 
 					// ResidueTypeLinkingConstraints
 					Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structuer];
+					Size count=0;
 					Real bonus = 10;
 					Size segment_length = (dummyPose.n_residue())/repeat_number;
 					for (Size rep = 1; rep < repeat_number; rep++ ){ // from 1 since first segment don't need self-linking
 						for (Size res = 1; res <= segment_length; res++){
 							dummyPose.add_constraint( new ResidueTypeLinkingConstraint(dummyPose, res, res+(segment_length*rep), bonus));
+							count++;
 						}
 					}
+					std::cout << "linking " << count << " residue pairs" << std::endl;
 				}
 
 				this->apply(dummyPose);

@@ -16,6 +16,7 @@
 // unit headers
 #include <protocols/forge/remodel/RemodelDesignMover.hh>
 // AUTO-REMOVED #include <protocols/forge/remodel/RemodelMover.hh>
+#include <protocols/forge/remodel/RemodelRotamerLinks.hh>
 #include <protocols/forge/methods/util.hh>
 
 // package headers
@@ -135,7 +136,7 @@ RemodelDesignMover::RemodelDesignMover(RemodelData const & remodel_data, Remodel
 
 void RemodelDesignMover::apply( Pose & pose )
 {
-
+	using namespace basic::options;
   if ( basic::options::option[basic::options::OptionKeys::remodel::design::no_design].user() ){
 		TR << "bypassing design due to invokation of -no_design" << std::endl;
 		return;
@@ -182,6 +183,11 @@ void RemodelDesignMover::apply( Pose & pose )
 		//reduce_task(pose, working_model_.task, true, true, true);
 	}
 
+	if (option[ OptionKeys::remodel::repeat_structuer].user()){
+		//make rotamer links
+		RemodelRotamerLinksOP  linkOP = new RemodelRotamerLinks;
+		linkOP->apply(pose, *working_model_.task);
+	}
 /*
 	//mode4_packertask(pose);
 	//mode5_packertask(pose);
@@ -203,8 +209,10 @@ void RemodelDesignMover::apply( Pose & pose )
 	*/
 	//debug
 //TR <<  *working_model_.task << std::endl;
+//	score_fxn_->show(TR, pose);
 	core::pack::pack_rotamers(pose, *score_fxn_ , working_model_.task);
 	score_fxn_->show(TR, pose);
+	TR<< std::endl;
 // pose.dump_pdb("junkCheck.pdb");
 //	core::pack::pack_rotamers(pose, *scorefxn , working_model_.task);
 //	core::pack::pack_rotamers(pose, *scorefxn , working_model_.task);

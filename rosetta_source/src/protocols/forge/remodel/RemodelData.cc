@@ -135,12 +135,24 @@ protocols::forge::remodel::RemodelData::getLoopsToBuildFromFile()
 	oss << "NATRO" << std::endl; // preseve non designed to starting rotamer
 	oss << "start" << std::endl; // mark start for resfile parser
 
-	int index = 1;
+	// first getting the total line in the file, needed for repeat Resfile
+	// processing
+	int index = 0;
+	while (getline( data, line)){
+		index++;
+	}
+	int length = index;
+
+	//reset file and counter
+	data.clear();
+	data.seek_beg();
+	index =1;
+
 	bool mark_start = false;
 	while (getline( data, line)){
 		std::istringstream line_stream(line);
 		std::vector<std::string> split_info;
-	std::ostringstream oss_switch; // for detecting design info
+		std::ostringstream oss_switch; // for detecting design info
 		this->splitString(line_stream.str(), " ", split_info);
 
 		// skip comment lines
@@ -243,20 +255,29 @@ protocols::forge::remodel::RemodelData::getLoopsToBuildFromFile()
 			}
 			oss << std::endl;
 
+			// process repeats, pretty dangerous, as this only hacks the resfile string
+			// but not making duplicates in the blueprint held by RemodelData
+			if (option[ OptionKeys::remodel::repeat_structuer].user()){
+				for (int rep = 1; rep< option[ OptionKeys::remodel::repeat_structuer ]; rep++){
+					oss << line.index + length*rep << " _ " ;
+					for (int i = 3; i< (int)split_info.size();  i++){
+									if (split_info[i].substr(0,3) != "CST"){
+										oss << split_info[i] << " " ;
+									}
+					}
+					oss << std::endl;
+				}
+			}
+
 			//find out that there's info other than CST and turn on manual modes
 			if (oss_switch.str() != ""){
-				TR_REMODEL << "oss_switch: " << oss_switch.str() << std::endl;
+				//TR_REMODEL << "oss_switch: " << oss_switch.str() << std::endl;
 					has_design_info_ = true;
 			}
 
 
-			std::cout << "DEBUG parsed STRING " << oss.str() << std::endl;
+	//		std::cout << "DEBUG parsed STRING " << oss.str() << std::endl;
 			this->parsed_string_for_resfile = oss.str();
-			if (option[ OptionKeys::remodel::repeat_structuer].user()){
-				for (int i = 1; i<= option[ OptionKeys::remodel::repeat_structuer ]; i++){
-					this->parsed_string_for_resfile.append(this->parsed_string_for_resfile);
-				}
-			}
 
 			//TR_REMODEL << "manual design overwrite position: " << line.index << std::endl;
 			//this->design_mode = 3; //default manual mode
@@ -299,6 +320,9 @@ protocols::forge::remodel::RemodelData::getLoopsToBuildFromFile()
 		}
 		this->blueprint.push_back(line);
 	}
+
+	std::cout << "manual design info" << std::endl << this->parsed_string_for_resfile << std::endl;
+
 
 	if ( has_design_info_ ){
 		design_mode = 3;

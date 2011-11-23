@@ -21,6 +21,7 @@
 
 #include <protocols/dna/RestrictDesignToProteinDNAInterfaceCreator.hh>
 #include <protocols/dna/WatsonCrickRotamerCouplingsCreator.hh>
+#include <protocols/forge/remodel/RemodelRotamerLinksCreator.hh>
 #include <protocols/protein_interface_design/movers/FavorNativeResiduePreCycleCreator.hh>
 #include <protocols/protein_interface_design/movers/FavorNonNativeResiduePreCycleCreator.hh>
 #include <protocols/toolbox/task_operations/SeqprofConsensusOperationCreator.hh>
@@ -357,6 +358,7 @@ using namespace core::pack::task::operation;
 
 static TaskOperationRegistrator< protocols::dna::RestrictDesignToProteinDNAInterfaceCreator > RestrictDesignToProteinDNAInterfaceCreator_registrator;
 static TaskOperationRegistrator< protocols::dna::WatsonCrickRotamerCouplingsCreator > WatsonCrickRotamerCouplingsCreator_registrator;
+static TaskOperationRegistrator< protocols::forge::remodel::RemodelRotamerLinksCreator > RemodelRotamerLinksCreator_registrator;
 static TaskOperationRegistrator< protocols::enzdes::AddLigandMotifRotamersOperationCreator > AddLigandMotifRotamersOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::SeqprofConsensusOperationCreator > SeqprofConsensusOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::JointSequenceOperationCreator > JointSequenceOperationCreator_registrator;
