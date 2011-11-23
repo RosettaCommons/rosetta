@@ -46,6 +46,7 @@ public:
 	DesignAroundOperation();
 
 	void design_shell( core::Real const radius );
+	core::Real design_shell() const{ return design_shell_; }
 	void include_residue( core::Size const resid );
 
 	virtual ~DesignAroundOperation();
@@ -58,14 +59,17 @@ public:
 
 	virtual void parse_tag( TagPtr );
 
-	bool repack_on() const;
-	void repack_on( bool const repack_on );
+	void repack_shell( core::Real const repack_shell) {
+		repack_shell_ = repack_shell;
+		if( repack_shell <= design_shell() )
+			design_shell_ = repack_shell;
+	}
+	core::Real repack_shell() const{ return repack_shell_; }
 
 private:
-	core::Real design_shell_;
+	core::Real design_shell_, repack_shell_; //dflt 8 and 8
 	std::set< core::Size > resid_; // accessible at all times
 	std::string string_resnums_; // this can only be parsed at apply time, when the pose is available
-	bool repack_on_; // dflt true; do we leave all non-designed positions as repack or prevent repacking?
 };
 
 } //namespace protocols
