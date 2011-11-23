@@ -34,6 +34,8 @@ cd %(workdir)s
     | egrep -vf ../../ignore_list \
     > log.default
 
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
 #
 # After that, do whatever you want.
 # It's nice to test that the executable exists first, to ensure the test actually runs:
