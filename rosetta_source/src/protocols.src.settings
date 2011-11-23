@@ -489,6 +489,7 @@ sources = {
 		"RemodelWorkingSet",
 		"RemodelMover",
 		"RemodelDesignMover",
+		"RemodelRotamerLinks",
 	],
 
 	"protocols/frags" : [

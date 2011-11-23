@@ -14,6 +14,7 @@
 #define INCLUDED_protocols_forge_remodel_RemodelRotamerLinksCreator_hh
 
 #include <core/pack/task/operation/TaskOperationCreator.hh>
+#include <string>
 
 namespace protocols {
 namespace forge {

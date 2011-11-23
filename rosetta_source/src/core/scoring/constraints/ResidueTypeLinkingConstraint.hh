@@ -95,12 +95,6 @@ public:
 	score( XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
 	
 	virtual
-	Real
-	score(
-										conformation::Conformation const & conformation
-		  ) const;
-
-	virtual
 	void
 	fill_f1_f2(
 		AtomID const & atom,

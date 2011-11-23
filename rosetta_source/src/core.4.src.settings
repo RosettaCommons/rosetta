@@ -48,6 +48,7 @@ sources = {
 		"AnnealerFactory",
 		"FASTERAnnealer",
 		"FixbbCoupledRotamerSimAnnealer",
+		"FixbbLinkingRotamerSimAnnealer",
 		"FixbbSimAnnealer",
 		"MultiCoolAnnealer",
 		"RotamerAssigningAnnealer",

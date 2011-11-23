@@ -126,17 +126,6 @@ ResidueTypeLinkingConstraint::atom( Size const index ) const
 	return atom_ids_[index];
 }
 
-	Real
-	ResidueTypeLinkingConstraint::score(
-								  conformation::Conformation const & conformation
-								  ) const {
-//		std::cout << "res_type_linking_cst " << seqpos1_ << " " << seqpos2_ << std::endl;
-
-		if (conformation.aa(seqpos1_) == conformation.aa(seqpos2_)){
-			return bonus_;
-		}
-	}
-
 /*
 ConstraintOP
 ResidueTypeLinkingConstraint::remap_resid( core::id::SequenceMapping const &seqmap ) const
