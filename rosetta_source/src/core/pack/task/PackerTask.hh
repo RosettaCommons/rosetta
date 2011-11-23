@@ -21,6 +21,7 @@
 // Package Headers
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.fwd.hh>
+#include <core/pack/rotamer_set/RotamerLinks.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 #include <core/pack/task/IGEdgeReweightContainer.fwd.hh>
 
@@ -227,6 +228,8 @@ class PackerTask : public utility::pointer::ReferenceCount
 public:
 	typedef chemical::AA AA;
 	typedef rotamer_set::RotamerCouplingsCOP RotamerCouplingsCOP;
+	typedef rotamer_set::RotamerLinksCOP RotamerLinksCOP;
+
 
 public:
 	virtual ~PackerTask() = 0;
@@ -338,6 +341,19 @@ public:
 	virtual
 	void
 	rotamer_couplings( RotamerCouplingsCOP setting ) = 0;
+
+	virtual
+	bool
+	rotamer_links_exist() const = 0;
+
+	virtual
+	RotamerLinksCOP
+	rotamer_links() const = 0;
+
+	virtual
+	void
+	rotamer_links( RotamerLinksCOP setting ) = 0;
+
 
 	virtual
 	IGEdgeReweightContainerCOP

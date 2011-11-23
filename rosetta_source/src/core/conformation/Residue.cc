@@ -216,6 +216,29 @@ bool Residue::connections_match( Residue const & other ) const
 	return true;
 }
 
+bool
+Residue::is_similar_rotamer( Residue const & other ) const
+	
+{
+
+	utility::vector1< Real > this_chi = chi_;
+	utility::vector1< Real > other_chi = other.chi();
+	bool match = true;
+	if (chi_.size() != other_chi.size() || rsd_type_.aa() != other.aa()){
+		return false;
+	}
+	else {
+		for (Size i = 1; i<= chi_.size(); i++){
+				if ( std::abs( this_chi[i] - other_chi[i]) >= 5){
+					match = false;
+				}
+		}
+	}
+	return match;
+}
+
+
+
 void
 Residue::copy_residue_connections( Residue const & src_rsd )
 {

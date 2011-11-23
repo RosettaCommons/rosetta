@@ -93,6 +93,12 @@ public:
 	virtual
 	void
 	score( XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const;
+	
+	virtual
+	Real
+	score(
+										conformation::Conformation const & conformation
+		  ) const;
 
 	virtual
 	void

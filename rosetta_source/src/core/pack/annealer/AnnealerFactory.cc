@@ -17,9 +17,11 @@
 /// Package headers
 #include <core/pack/annealer/FixbbSimAnnealer.hh>
 #include <core/pack/annealer/FixbbCoupledRotamerSimAnnealer.hh>
+#include <core/pack/annealer/FixbbLinkingRotamerSimAnnealer.hh>
 #include <core/pack/annealer/MultiCoolAnnealer.hh>
 
 #include <core/pack/rotamer_set/RotamerCouplings.hh>
+#include <core/pack/rotamer_set/RotamerLinks.hh>
 #include <core/pack/rotamer_set/FixbbRotamerSets.hh>
 #include <core/pack/interaction_graph/InteractionGraphBase.hh>
 
@@ -57,6 +59,12 @@ AnnealerFactory::create_annealer(
 			rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, ig,
 			rotamer_sets, current_rot_index, calc_rot_freq, rot_freq,
 			task->rotamer_couplings() );
+	} else if ( task->rotamer_links_exist() ){
+		TR.Debug << "Creating FixbbLinkingRotamerSimAnnealer" << std::endl;
+		return new FixbbLinkingRotamerSimAnnealer(
+			rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, ig,
+			rotamer_sets, current_rot_index, calc_rot_freq, rot_freq,
+			task->rotamer_links() );
 	} else if ( task->multi_cool_annealer() ) {
 		TR.Debug << "Creating MultiCoolAnnealer" << std::endl;
 		return new MultiCoolAnnealer(

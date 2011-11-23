@@ -36,6 +36,7 @@ static basic::Tracer TR("core.scoring.constraints.ResidueTypeLinkingConstraint")
 
 ResidueTypeLinkingConstraint::ResidueTypeLinkingConstraint():
 			Constraint( core::scoring::res_type_linking_constraint )
+
 {}
 
 ResidueTypeLinkingConstraint::ResidueTypeLinkingConstraint(
@@ -45,6 +46,7 @@ ResidueTypeLinkingConstraint::ResidueTypeLinkingConstraint(
 	core::Real bonus
 ):
 	Constraint( core::scoring::res_type_linking_constraint ),
+
 	seqpos1_( seqpos1 ),
 	seqpos2_( seqpos2 ),
 	rsd1_type_name3_( pose.residue_type( seqpos1 ).name3() ),
@@ -73,6 +75,7 @@ ResidueTypeLinkingConstraint::ResidueTypeLinkingConstraint(
 	core::Real bonus
 ):
 	Constraint( core::scoring::res_type_linking_constraint ),
+
 	seqpos1_( seqpos1 ),
 	seqpos2_( seqpos2 ),
 	rsd1_type_name3_( AA1name ),
@@ -98,6 +101,8 @@ ResidueTypeLinkingConstraint::clone() const
 Size
 ResidueTypeLinkingConstraint::natoms() const
 {
+//	std::cout << "res_type_linking_cst n_atom() " << atom_ids_.size() << std::endl;
+
 	return atom_ids_.size();
 }
 
@@ -116,8 +121,21 @@ ResidueTypeLinkingConstraint::show( std::ostream & out ) const {
 id::AtomID const &
 ResidueTypeLinkingConstraint::atom( Size const index ) const
 {
+//	std::cout << "res_type_linking_cst atom() " << std::endl;
+
 	return atom_ids_[index];
 }
+
+	Real
+	ResidueTypeLinkingConstraint::score(
+								  conformation::Conformation const & conformation
+								  ) const {
+//		std::cout << "res_type_linking_cst " << seqpos1_ << " " << seqpos2_ << std::endl;
+
+		if (conformation.aa(seqpos1_) == conformation.aa(seqpos2_)){
+			return bonus_;
+		}
+	}
 
 /*
 ConstraintOP
@@ -190,13 +208,16 @@ void
 ResidueTypeLinkingConstraint::score( XYZ_Func const & xyz_func, EnergyMap const & weights, EnergyMap & emap ) const
 {
 	Real const weight(weights[ this->score_type() ] );
+//	std::cout << "res_type_linking_cst weight " << weight << std::endl;
+
 	if( weight == 0 ) return; // what's the point?
 
 	conformation::Residue const & rsd1( xyz_func.residue(seqpos1_) );
 	conformation::Residue const & rsd2( xyz_func.residue(seqpos2_) );
-	if( rsd1.type().name3() == rsd2.type().name3() )
-		emap[ this->score_type() ] -= bonus_;
-	// no match, don't adjust score
+	if( rsd1.aa() != rsd2.aa() ){
+		emap[ this->score_type() ] += bonus_;
+	//std::cout << "res_type_linking_cst " << seqpos1_ << " " << seqpos2_ << " aa1 " << rsd1.type().name3() << " aa2 " << rsd2.type().name3() << " " << emap[ this->score_type() ] << std::endl;
+	}// no match, don't adjust score
 }
 
 

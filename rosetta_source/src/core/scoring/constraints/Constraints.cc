@@ -167,7 +167,7 @@ Constraints::energy(
 	for ( ConstraintCOPs::const_iterator it=constraints_.begin(), ite = constraints_.end(); it != ite; ++it ) {
 		Constraint const & cst( **it );
 		cst.score( xyz_func, weights, emap );
-//		cst.show( std::cout );
+		//cst.show( std::cout );
 	}
 }
 

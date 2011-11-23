@@ -21,6 +21,7 @@
 // Package Headers
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.hh>
+#include <core/pack/rotamer_set/RotamerLinks.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
 // AUTO-REMOVED #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/task/IGEdgeReweightContainer.hh>
@@ -1270,7 +1271,7 @@ PackerTask_::initialize_extra_rotamer_flags_from_command_line()
 
 void PackerTask_::or_multi_cool_annealer( bool setting )
 {
-	if ( ! rotamer_couplings_ ) {
+	if ( ! (rotamer_couplings_ || rotamer_links_) ) {
 		multi_cool_annealer_ |= setting;
 	}
 }
@@ -1411,6 +1412,31 @@ void
 PackerTask_::rotamer_couplings( PackerTask::RotamerCouplingsCOP setting )
 {
 	rotamer_couplings_ = setting;
+	if ( setting ) {
+		multi_cool_annealer_ = false;
+	}
+}
+
+///@brief is there at RotamerLinks object to worry about? (for repeat linking
+//equivalent positions, etc)
+bool
+PackerTask_::rotamer_links_exist() const
+{
+	return ( rotamer_links_() != 0 );
+}
+
+///@brief const accessor for the RotamerCouplings object
+PackerTask::RotamerLinksCOP
+PackerTask_::rotamer_links() const
+{
+	return rotamer_links_();
+}
+
+///@brief setter for the RotamerCouplings object
+void
+PackerTask_::rotamer_links( PackerTask::RotamerLinksCOP setting )
+{
+	rotamer_links_ = setting;
 	if ( setting ) {
 		multi_cool_annealer_ = false;
 	}

@@ -1642,6 +1642,24 @@ public:
 		return rsd_type_.is_lower_terminus();
 	}
 
+	/// @brief Returns true if the chi angles of another residue all fall within 5 deg
+	bool
+	is_similar_rotamer( Residue const & other ) const;
+
+	/// @brief Returns true if the aa residue types are the same
+	bool
+	is_similar_aa( Residue const & other ) const
+	{
+
+		if (rsd_type_.aa() != other.aa()){
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
+
+
 	/// @brief Returns true if the residue has  <property>
 	/// Generic property access -- SLOW!!!!!
 	bool

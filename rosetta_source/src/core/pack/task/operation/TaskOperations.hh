@@ -26,6 +26,7 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/pack/task/ResfileReader.fwd.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.fwd.hh>
+#include <core/pack/rotamer_set/RotamerLinks.fwd.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.fwd.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/types.hh>
@@ -311,6 +312,33 @@ private:
 	rotamer_set::RotamerCouplingsCOP rotamer_couplings_;
 };
 
+	
+class SetRotamerLinks : public TaskOperation
+{
+public:
+	typedef TaskOperation parent;
+	
+public:
+	SetRotamerLinks();
+	SetRotamerLinks(SetRotamerLinks const & );
+	virtual ~SetRotamerLinks();
+	SetRotamerLinks const & operator = ( SetRotamerLinks const & );
+	
+	virtual TaskOperationOP clone() const;
+	
+	virtual
+	void
+	apply( pose::Pose const &, PackerTask & ) const;
+	
+	void
+	set_links( rotamer_set::RotamerLinksOP links );
+	
+	
+private:
+	rotamer_set::RotamerLinksCOP rotamer_links_;
+};
+	
+	
 ///@brief when a PackerTask is created by the Factory, the RotamerOperation will be given to it
 class AppendRotamer : public TaskOperation
 {

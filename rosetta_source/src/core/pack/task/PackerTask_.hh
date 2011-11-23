@@ -550,6 +550,23 @@ public:
 	void
 	rotamer_couplings( RotamerCouplingsCOP setting );
 
+	///@brief is there at RotamerLinks object to worry about? (for repeat linking
+	//of equivalent residues, etc)
+	virtual
+	bool
+	rotamer_links_exist() const;
+
+	///@brief const accessor for the RotamerLinks object
+	virtual
+	RotamerLinksCOP
+	rotamer_links() const;
+
+	///@brief setter for the RotamerLinks object
+	virtual
+	void
+	rotamer_links( RotamerLinksCOP setting );
+
+
 	///@brief accesor for residue residue weight map
 	virtual
 	IGEdgeReweightContainerCOP
@@ -641,6 +658,9 @@ private:
 
 	// pbhack temporary -- usually null pointer
 	RotamerCouplingsCOP rotamer_couplings_;
+
+	// psh hack, just like the pbhack above
+	RotamerLinksCOP rotamer_links_;
 
 	// rhiju -- some options that need to be sent to the annealer
 	Real low_temp_;

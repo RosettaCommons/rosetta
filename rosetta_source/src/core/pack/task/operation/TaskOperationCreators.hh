@@ -68,6 +68,13 @@ public:
 	virtual TaskOperationOP create_task_operation() const;
 	virtual std::string keyname() const { return "SetRotamerCouplings"; }
 };
+	
+class SetRotamerLinksCreator : public TaskOperationCreator {
+public:
+	virtual TaskOperationOP create_task_operation() const;
+	virtual std::string keyname() const { return "SetRotamerLinks"; }
+};
+
 
 class ReadResfileCreator : public TaskOperationCreator {
 public:

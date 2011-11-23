@@ -20,6 +20,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.hh>
+#include <core/pack/rotamer_set/RotamerLinks.hh>
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/pose/Pose.hh>
@@ -624,6 +625,49 @@ void
 SetRotamerCouplings::set_couplings( rotamer_set::RotamerCouplingsOP couplings )
 {
 	rotamer_couplings_ = couplings;
+}
+
+/// BEGIN SetRotamerLinks
+
+SetRotamerLinks::SetRotamerLinks()
+{}
+
+SetRotamerLinks::~SetRotamerLinks()
+{}
+
+SetRotamerLinks::SetRotamerLinks( SetRotamerLinks const & src )
+:
+	parent(),
+	rotamer_links_( src.rotamer_links_ )
+{}
+
+SetRotamerLinks const &
+SetRotamerLinks::operator = ( SetRotamerLinks const & rhs )
+{
+	rotamer_links_ = rhs.rotamer_links_;
+	return *this;
+}
+
+TaskOperationOP SetRotamerLinksCreator::create_task_operation() const
+{
+	return new SetRotamerLinks;
+}
+
+TaskOperationOP SetRotamerLinks::clone() const
+{
+	return new SetRotamerLinks( *this );
+}
+
+void
+SetRotamerLinks::apply( pose::Pose const &, PackerTask & task ) const
+{
+	task.rotamer_links( rotamer_links_ );
+}
+
+void
+SetRotamerLinks::set_links( rotamer_set::RotamerLinksOP links )
+{
+	rotamer_links_ = links;
 }
 
 /// BEGIN AppendRotamer
