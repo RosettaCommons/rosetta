@@ -611,7 +611,8 @@ return "StepWisePoseSetup";
 		// Hey, this has to happen after the variants are figured out!!!
 		cst_set_ = ConstraintIO::get_instance()->read_constraints( cst_file_, new ConstraintSet, full_pose );
 		core::scoring::ScoreFunctionOP scorefxn = new core::scoring::ScoreFunction;
-		scorefxn->set_weight( core::scoring::atom_pair_constraint, 1 );
+		scorefxn->set_weight( core::scoring::atom_pair_constraint, 1.0 );
+		scorefxn->set_weight( core::scoring::coordinate_constraint, 1.0 );
 		full_pose.constraint_set( cst_set_ );
 		(*scorefxn)( full_pose );
 

@@ -131,8 +131,9 @@ ConstraintOP CoordinateConstraint::remapped_clone( pose::Pose const& src, pose::
 	}
 
 	//get AtomIDs for target pose
-	id::AtomID id1( named_atom_id_to_atom_id( atom1, dest ) );
-	id::AtomID id2( named_atom_id_to_atom_id( atom2, dest ) );
+	id::AtomID id1( named_atom_id_to_atom_id( atom1, dest, false /*raise exception*/ ) );
+	id::AtomID id2( named_atom_id_to_atom_id( atom2, dest, false /*raise exception*/ ) );
+
 	if ( id1.valid() && id2.valid() ) {
 		return new CoordinateConstraint( id1, id2, xyz_target_, func_, score_type() );
 	} else {
