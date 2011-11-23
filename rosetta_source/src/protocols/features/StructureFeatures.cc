@@ -100,8 +100,9 @@ StructureFeatures::report_features(
 	sessionOP db_session
 ){
 	std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
+	std::string output_tag(protocols::jd2::JobDistributor::get_instance()->current_output_name());
 	return report_features(
-		pose, relevant_residues, protocol_id, db_session, find_tag(pose),input_tag);
+		pose, relevant_residues, protocol_id, db_session, output_tag ,input_tag);
 }
 
 Size
@@ -113,8 +114,9 @@ StructureFeatures::report_features(
 	sessionOP db_session
 ){
 	std::string input_tag(protocols::jd2::JobDistributor::get_instance()->current_job()->input_tag());
+	std::string output_tag(protocols::jd2::JobDistributor::get_instance()->current_output_name());
 	return report_features(
-		pose, relevant_residues, struct_id, protocol_id, db_session, find_tag(pose),input_tag);
+		pose, relevant_residues, struct_id, protocol_id, db_session, output_tag,input_tag);
 }
 
 

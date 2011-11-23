@@ -26,10 +26,12 @@
 
 // AUTO-REMOVED #include <core/chemical/AtomType.hh>
 #include <core/kinematics/Jump.hh>
+#include <core/pose/util.hh>
 #include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
+
 #include <boost/foreach.hpp>
 
 //Auto Headers
@@ -126,12 +128,35 @@ CompoundTranslate::parse_my_tag(
 	}
 
 	foreach(utility::tag::TagPtr tag, tag->getTags()){
-		std::string name= tag->getName();
-		if( name != "Translate")
-			utility_exit_with_message("CompoundTranslate only takes Translate movers");
-		TranslateOP translate = new Translate();
-		translate->parse_my_tag(tag, datamap, filters, movers, pose);
-		translates_.push_back(translate);
+		std::string const name= tag->getName();
+		if( name == "Translate"){
+			TranslateOP translate = new Translate();
+			translate->parse_my_tag(tag, datamap, filters, movers, pose);
+			translates_.push_back(translate);
+		}
+		else if( name == "Translates"){
+			if ( ! tag->hasOption("chain") ) utility_exit_with_message("'Translate' mover requires chain tag");
+			if ( ! tag->hasOption("distribution") ) utility_exit_with_message("'Translate' mover requires distribution tag");
+			if ( ! tag->hasOption("angstroms") ) utility_exit_with_message("'Translate' mover requires angstroms tag");
+			if ( ! tag->hasOption("cycles") ) utility_exit_with_message("'Translate' mover requires cycles tag");
+
+			std::string const chain = tag->getOption<std::string>("chain");
+			utility::vector1<core::Size> chain_ids = core::pose::get_chain_ids_from_chain(chain, pose);
+
+			foreach(core::Size chain_id, chain_ids){
+				Translate_info translate_info;
+				translate_info.chain_id= chain_id;
+				translate_info.jump_id = core::pose::get_jump_id_from_chain_id(chain_id, pose);
+				std::string distribution_str= tag->getOption<std::string>("distribution");
+				translate_info.distribution= get_distribution(distribution_str);
+				translate_info.angstroms = tag->getOption<core::Real>("angstroms");
+				translate_info.cycles = tag->getOption<core::Size>("cycles");
+				translates_.push_back(new Translate(translate_info));
+			}
+		}
+		else{
+			utility_exit_with_message("CompoundTranslate only takes Translate or Translates child tags");
+		}
 	}
 }
 

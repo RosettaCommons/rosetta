@@ -68,6 +68,7 @@ class Rotate: public protocols::moves::Mover
 {
 public:
 	Rotate();
+	Rotate(Rotate_info rotate_info);
 	virtual ~Rotate();
 	Rotate(Rotate const & that);
 

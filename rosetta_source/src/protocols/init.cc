@@ -194,6 +194,7 @@
 #include <protocols/ligand_docking/TransformCreator.hh>
 #include <protocols/ligand_docking/CompoundTranslateCreator.hh>
 #include <protocols/ligand_docking/RotateCreator.hh>
+#include <protocols/ligand_docking/RotatesCreator.hh>
 #include <protocols/ligand_docking/StartFromCreator.hh>
 #include <protocols/ligand_docking/RandomConformersCreator.hh>
 #include <protocols/ligand_docking/SlideTogetherCreator.hh>
@@ -496,6 +497,7 @@ static MoverRegistrator< ligand_docking::TranslateCreator > reg_TranslateCreator
 static MoverRegistrator< ligand_docking::TransformCreator > reg_TransformCreator;
 static MoverRegistrator< ligand_docking::CompoundTranslateCreator > reg_CompoundTranslateCreator;
 static MoverRegistrator< ligand_docking::RotateCreator > reg_RotateCreator;
+static MoverRegistrator< ligand_docking::RotatesCreator > reg_RotatesCreator;
 static MoverRegistrator< ligand_docking::StartFromCreator > reg_StartFromCreator;
 static MoverRegistrator< ligand_docking::RandomConformersCreator > reg_RandomConformersCreator;
 static MoverRegistrator< ligand_docking::SlideTogetherCreator > reg_SlideTogetherCreator;

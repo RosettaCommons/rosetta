@@ -7,30 +7,37 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/ligand_docking/CompoundTranslate.hh
+/// @file   core/pack/task/ResfileReader.hh
+/// @brief  header of classes for resfile options
 /// @author Gordon Lemmon
 
-#ifndef INCLUDED_protocols_ligand_docking_CompoundTranslate_hh
-#define INCLUDED_protocols_ligand_docking_CompoundTranslate_hh
+#ifndef INCLUDED_protocols_ligand_docking_Rotates_hh
+#define INCLUDED_protocols_ligand_docking_Rotates_hh
 
 // Unit Headers
-#include <protocols/ligand_docking/Translate.fwd.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/ligand_docking/Rotates.fwd.hh>
+#include <protocols/ligand_docking/Rotate.fwd.hh>
 
+//// Scripter Headers
+#include <utility/tag/Tag.fwd.hh>
+#include <protocols/moves/DataMap.fwd.hh>
+#include <protocols/filters/Filter.fwd.hh>
+
+//// Project Headers
 #include <utility/vector1.hh>
-
 
 ///////////////////////////////////////////////////////////////////////
 
 namespace protocols {
 namespace ligand_docking {
 
-class CompoundTranslate : public protocols::moves::Mover
+class Rotates: public protocols::moves::Mover
 {
 public:
-	CompoundTranslate();
-	virtual ~CompoundTranslate();
-	CompoundTranslate(CompoundTranslate const & that);
+	Rotates();
+	virtual ~Rotates();
+	Rotates(Rotates const & that);
 
 	virtual protocols::moves::MoverOP clone() const;
 	virtual protocols::moves::MoverOP fresh_instance() const;
@@ -38,19 +45,18 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagPtr const tag,
-		protocols::moves::DataMap & datamap,
-		protocols::filters::Filters_map const & filters,
-		protocols::moves::Movers_map const & movers,
-		core::pose::Pose const & pose
+		protocols::moves::DataMap &,
+		protocols::filters::Filters_map const &,
+		protocols::moves::Movers_map const &,
+		core::pose::Pose const &
 	);
 
 	void apply(core::pose::Pose & pose);
 
 private:
-	TranslateOPs translates_;
-	bool randomize_order_;
-	bool allow_overlap_;
+	RotateOPs rotates_;
 };
+
 
 } //namespace ligand_docking
 } //namespace protocols

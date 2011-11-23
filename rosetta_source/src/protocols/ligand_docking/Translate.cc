@@ -72,6 +72,13 @@ Translate::Translate():
 		chain_ids_to_exclude_()
 {}
 
+Translate::Translate(Translate_info translate_info):
+		//utility::pointer::ReferenceCount(),
+		Mover("Translate"),
+		translate_info_(translate_info),
+		chain_ids_to_exclude_()
+{}
+
 Translate::Translate(Translate const & that):
 		//utility::pointer::ReferenceCount(),
 		protocols::moves::Mover( that ),
@@ -100,7 +107,7 @@ Translate::parse_my_tag(
 		protocols::moves::DataMap & data_map,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & /*pose*/
+		core::pose::Pose const & pose
 )
 {
 	if ( tag->getName() != "Translate" ){
@@ -111,35 +118,31 @@ Translate::parse_my_tag(
 	if ( ! tag->hasOption("angstroms") ) utility_exit_with_message("'Translate' mover requires angstroms tag");
 	if ( ! tag->hasOption("cycles") ) utility_exit_with_message("'Translate' mover requires cycles tag");
 
-	translate_info_.chain = tag->getOption<std::string>("chain");
-	{
-		std::string distribution_str= tag->getOption<std::string>("distribution");
-		translate_info_.distribution= get_distribution(distribution_str);
-	}
+	std::string chain = tag->getOption<std::string>("chain");
+	translate_info_.chain_id = core::pose::get_chain_id_from_chain(chain, pose);
+	translate_info_.jump_id = core::pose::get_jump_id_from_chain_id(translate_info_.chain_id, pose);
+	std::string distribution_str= tag->getOption<std::string>("distribution");
+	translate_info_.distribution= get_distribution(distribution_str);
 	translate_info_.angstroms = tag->getOption<core::Real>("angstroms");
 	translate_info_.cycles = tag->getOption<core::Size>("cycles");
 }
 
 void Translate::apply(core::pose::Pose & pose) {
-	assert(translate_info_.chain.size() == 1);// do the user check in parse_flags. Later remove this requirement
-
-	core::Size const chain_id = core::pose::get_chain_id_from_chain(translate_info_.chain, pose);
-	core::Size const jump_id = core::pose::get_jump_id_from_chain_id(chain_id, pose);
-	core::Size const begin(pose.conformation().chain_begin(chain_id));
+	core::Size const begin(pose.conformation().chain_begin(translate_info_.chain_id));
 
 	{// add this Translate's chain conditionally (for use with CompoundTranslate)
 		utility::vector1<core::Size>::iterator found=
-				find(chain_ids_to_exclude_.begin(), chain_ids_to_exclude_.end(), chain_id);
+				find(chain_ids_to_exclude_.begin(), chain_ids_to_exclude_.end(), translate_info_.chain_id);
 		if( found ==  chain_ids_to_exclude_.end()	)
-				chain_ids_to_exclude_.push_back(chain_id);
+				chain_ids_to_exclude_.push_back(translate_info_.chain_id);
 	}
-	core::Vector const center = protocols::geometry::downstream_centroid_by_jump(pose, jump_id);
+	core::Vector const center = protocols::geometry::downstream_centroid_by_jump(pose, translate_info_.jump_id);
 
 	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();
 	if(grid_manager->size() == 0)
 	{
 		utility::pointer::owning_ptr<core::grid::CartGrid<int> > const grid = make_atr_rep_grid_without_ligands(pose, center, chain_ids_to_exclude_);
-		translate_ligand(grid, jump_id, pose);// move ligand to a random point in binding pocket
+		translate_ligand(grid, translate_info_.jump_id, pose);// move ligand to a random point in binding pocket
 	}else
 	{
 		//TODO refactor qsar map so it works properly
@@ -155,7 +158,7 @@ void Translate::apply(core::pose::Pose & pose) {
 		*/
 		grid_manager->initialize_all_grids(center);
 		grid_manager->update_grids(pose,center);
-		translate_ligand(jump_id,pose,begin);
+		translate_ligand(translate_info_.jump_id,pose,begin);
 	}
 }
 
@@ -252,8 +255,7 @@ void Translate::translate_ligand(core::Size const jump_id,core::pose::Pose & pos
 
 core::Size
 Translate::get_chain_id(core::pose::Pose const & pose){
-	core::Size chain_id = core::pose::get_chain_id_from_chain(translate_info_.chain, pose);
-	return chain_id;
+	return translate_info_.chain_id;
 }
 
 void

@@ -190,6 +190,7 @@ Options = Option_Group( '',
 			Option( 'fullatom', 'Boolean', default = 'false', desc = "Enable full-atom input of PDB or centroid structures"),
   		Option( 'centroid_input', 'Boolean', default = 'false', desc = "why input in the name twice ? in:file:centroid_input Enable centroid inputs of PDBs"),
    		Option( 'centroid', 'Boolean', default = 'false', desc = "Enable centroid inputs of PDBs"),
+   		Option( 'treat_residues_in_these_chains_as_separate_chemical_entities', 'String', default = ' ', desc = "Create a chemical jump for each residue in these chains (String of 1-letter chain IDs)"),
 			Option( 'residue_type_set', 'String', desc = 'ResidueTypeSet for input files', default = 'fa_standard' ),
 
    		Option( 'pca',     'File',   desc='compute PCA projections',     default='' ),

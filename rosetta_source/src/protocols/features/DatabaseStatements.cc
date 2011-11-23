@@ -252,7 +252,7 @@ cppdb::statement get_highest_score_from_score_data_statement(
 			"FROM\n"
 			"	structure_scores\n"
 			"WHERE\n"
-			"	structure.score_type_id = ?\n"
+			"	structure_scores.score_type_id = ?\n"
 			"ORDER BY\n"
 			"	structure_scores.score_value DESC\n"
 			"LIMIT 1;";

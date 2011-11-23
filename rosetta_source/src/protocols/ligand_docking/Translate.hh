@@ -45,17 +45,19 @@ namespace ligand_docking {
 struct Translate_info{ // including default values
 
 public:
-	std::string chain;
+	core::Size chain_id;
+	core::Size jump_id;
 	Distribution distribution;
 	core::Real angstroms;
 	core::Size cycles;
-	Translate_info(): chain(""), distribution(Uniform), angstroms(0), cycles(0){};
+	Translate_info(): chain_id(0), jump_id(0), distribution(Uniform), angstroms(0), cycles(0){};
 };
 
 class Translate : public protocols::moves::Mover
 {
 public:
 	Translate();
+	Translate(Translate_info translate_info);
 	virtual ~Translate();
 	Translate(Translate const & that);
 

@@ -2073,20 +2073,33 @@ get_chain_id_from_chain(std::string const & chain, core::pose::Pose const & pose
 	assert(chain.size()==1);// chain is one char
 	char chain_char= chain[0];
 	return get_chain_id_from_chain(chain_char, pose);
-
 }
 
 core::Size
 get_chain_id_from_chain(char const & chain, core::pose::Pose const & pose){
+	utility::vector1<core::Size> chain_ids = get_chain_ids_from_chain(chain, pose);
+	assert(chain_ids.size() == 1);
+	return chain_ids[1];
+}
+
+utility::vector1<core::Size>
+get_chain_ids_from_chain(std::string const & chain, core::pose::Pose const & pose){
+	assert(chain.size()==1);// chain is one char
+	char chain_char= chain[0];
+	return get_chain_ids_from_chain(chain_char, pose);
+
+}
+
+utility::vector1<core::Size>
+get_chain_ids_from_chain(char const & chain, core::pose::Pose const & pose){
+	utility::vector1<core::Size> chain_ids;
 	for(core::Size i=1; i <= pose.conformation().num_chains(); i++){
 		char this_char= get_chain_from_chain_id(i, pose);
 		if(this_char == chain){
-			return i;
+			chain_ids.push_back(i);
 		}
 	}
-	basic::Error() << "the user-specified '"<< chain<<"' chain is not found" << std::endl;
-	utility_exit();
-	return 0;// this will never happen
+	return chain_ids;
 }
 
 core::Size

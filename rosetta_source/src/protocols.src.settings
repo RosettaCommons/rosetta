@@ -690,6 +690,7 @@ sources = {
 		"CompoundTranslate",
 		"RandomConformers",
 		"Rotate",
+		"Rotates",
 		"StartFrom",
 		"UnconstrainedTorsionsMover",
 	],

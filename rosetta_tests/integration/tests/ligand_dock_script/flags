@@ -3,11 +3,11 @@
  -rng mt19937
 -in
  -file
-  -s inputs/7cpa_7cpa_input.pdb
+  -s inputs/7cpa_input.pdb.gz
   -extra_res_fa inputs/7cpa.params inputs/ZN1.params
+  -treat_residues_in_these_chains_as_separate_chemical_entities WZ
 -out
  -file
- #-atom_tree_diff atom_tree_diff.out
  -overwrite	
 -packing
  -no_optH

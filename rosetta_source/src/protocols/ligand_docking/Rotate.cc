@@ -92,6 +92,9 @@ const & Ligand_info::get_residues() const{
 Rotate::Rotate(): Mover("Rotate")
 {}
 
+Rotate::Rotate(Rotate_info rotate_info): Mover("Rotate"), rotate_info_(rotate_info)
+{}
+
 Rotate::Rotate(Rotate const & that):
 		//utility::pointer::ReferenceCount(),
 		protocols::moves::Mover( that ),
@@ -119,7 +122,7 @@ Rotate::parse_my_tag(
 		protocols::moves::DataMap & data_map,
 		protocols::filters::Filters_map const & /*filters*/,
 		protocols::moves::Movers_map const & /*movers*/,
-		core::pose::Pose const & /*pose*/
+		core::pose::Pose const & pose
 )
 {
 	if ( tag->getName() != "Rotate" ){
@@ -131,18 +134,15 @@ Rotate::parse_my_tag(
 	if ( ! tag->hasOption("cycles") ) utility_exit_with_message("'Rotate' mover requires 'cycles' tag");
 
 	rotate_info_.chain = tag->getOption<std::string>("chain");
-	{
-		std::string distribution_str= tag->getOption<std::string>("distribution");
-		rotate_info_.distribution= get_distribution(distribution_str);
-	}
+	rotate_info_.chain_id= core::pose::get_chain_id_from_chain(rotate_info_.chain, pose);
+	rotate_info_.jump_id= core::pose::get_jump_id_from_chain_id(rotate_info_.chain_id, pose);
+	std::string distribution_str= tag->getOption<std::string>("distribution");
+	rotate_info_.distribution= get_distribution(distribution_str);
 	rotate_info_.degrees = tag->getOption<core::Size>("degrees");
 	rotate_info_.cycles = tag->getOption<core::Size>("cycles");
 }
 
 void Rotate::apply(core::pose::Pose & pose){
-	rotate_info_.chain_id= core::pose::get_chain_id_from_chain(rotate_info_.chain, pose);
-	rotate_info_.jump_id= core::pose::get_jump_id_from_chain_id(rotate_info_.chain_id, pose);
-
 	core::Vector const center = protocols::geometry::downstream_centroid_by_jump(pose, rotate_info_.jump_id);
 
 	qsar::scoring_grid::GridManager* grid_manager = qsar::scoring_grid::GridManager::get_instance();

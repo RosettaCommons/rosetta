@@ -71,6 +71,7 @@ namespace in { namespace file { FileVectorOptionKey const boinc_wu_zip( "in:file
 namespace in { namespace file { BooleanOptionKey const fullatom( "in:file:fullatom" );  } }
 namespace in { namespace file { BooleanOptionKey const centroid_input( "in:file:centroid_input" );  } }
 namespace in { namespace file { BooleanOptionKey const centroid( "in:file:centroid" );  } }
+namespace in { namespace file { StringOptionKey const treat_residues_in_these_chains_as_separate_chemical_entities( "in:file:treat_residues_in_these_chains_as_separate_chemical_entities" );  } }
 namespace in { namespace file { StringOptionKey const residue_type_set( "in:file:residue_type_set" );  } }
 namespace in { namespace file { FileOptionKey const pca( "in:file:pca" );  } }
 namespace in { namespace file { RealOptionKey const silent_energy_cut( "in:file:silent_energy_cut" );  } }
@@ -580,4 +581,3 @@ namespace abinitio { BooleanOptionKey const only_stage1( "abinitio:only_stage1" 
 namespace abinitio { RealOptionKey const end_bias( "abinitio:end_bias" );  }
 namespace abinitio { IntegerOptionKey const symmetry_residue( "abinitio:symmetry_residue" );  }
 namespace abinitio { RealOptionKey const vdw_weight_stage1( "abinitio:vdw_weight_stage1" );  }
-namespace abinitio { BooleanOptionKey const override_vdw_all_stages( "abinitio:override_vdw_all_stages" );  }

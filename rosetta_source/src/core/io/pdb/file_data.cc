@@ -606,14 +606,21 @@ build_pose_as_is1(
 	utility::vector1<numeric::xyzVector<Real> > UA_coords;
 	utility::vector1<core::Real> UA_temps;
 
+	std::string chains_whose_residues_are_separate_chemical_entities =
+			basic::options::option[ basic::options::OptionKeys::in::file::treat_residues_in_these_chains_as_separate_chemical_entities].user_or("");
+	std::string::const_iterator const entities_begin = chains_whose_residues_are_separate_chemical_entities.begin();
+	std::string::const_iterator const entities_end = chains_whose_residues_are_separate_chemical_entities.end();
+
 	for ( int i=1; i<= nres_pdb; ++i ) {
 		ResidueInformation const & rinfo = rinfos[i];
 		std::string const & pdb_name = rinfo.resName;
 		std::string const & resid = rinfo.resid;
+		char chainID = rinfo.chainID;
 
 		runtime_assert( resid.size() == 6 );
-		bool const same_chain_prev = ( i > 1        && rinfo.chainID == rinfos[i-1].chainID && rinfo.terCount == rinfos[i-1].terCount );
-		bool const same_chain_next = ( i < nres_pdb && rinfo.chainID == rinfos[i+1].chainID && rinfo.terCount == rinfos[i+1].terCount );
+		bool const separate_chemical_entity = find(entities_begin, entities_end, chainID ) !=  entities_end;
+		bool const same_chain_prev = ( i > 1        && chainID == rinfos[i-1].chainID && rinfo.terCount == rinfos[i-1].terCount && !separate_chemical_entity);
+		bool const same_chain_next = ( i < nres_pdb && chainID == rinfos[i+1].chainID && rinfo.terCount == rinfos[i+1].terCount && !separate_chemical_entity);
 		bool const is_lower_terminus( i == 1 || rinfos.empty() || !same_chain_prev );
 		bool const is_upper_terminus( i == nres_pdb || !same_chain_next );
 

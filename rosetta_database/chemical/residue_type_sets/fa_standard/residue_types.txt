@@ -42,12 +42,15 @@ residue_types/nucleic/GUA.params
 
 ## Metal Ion Types
 residue_types/metal_ions/CA.params
+residue_types/metal_ions/CD.params
+residue_types/metal_ions/CO.params
 residue_types/metal_ions/FE.params
 residue_types/metal_ions/FE2.params
 residue_types/metal_ions/K.params
 residue_types/metal_ions/MG.params
 residue_types/metal_ions/MN.params
 residue_types/metal_ions/NA.params
+residue_types/metal_ions/NI.params
 residue_types/metal_ions/ZN.params
 
 ## Mineral Surface 
@@ -91,8 +94,8 @@ residue_types/staple/08B.params
 #residue_types/sidechain_conjugation/LYX.params
 
 ## Water Types
-#residue_types/water/TP3.params
-#residue_types/water/TP5.params
+residue_types/water/TP3.params
+residue_types/water/TP5.params
 
 ## D-CAA Types
 #residue_types/d-caa/DALA.params
@@ -241,7 +244,7 @@ residue_types/staple/08B.params
 #residue_types/d-ncaa/d-trifluoro-leucine.params
 
 ## L-NCAA Types
-#residue_types/l-ncaa/ABA.params
+residue_types/l-ncaa/ABA.params
 #residue_types/l-ncaa/APA.params
 residue_types/l-ncaa/HLU.params
 #residue_types/l-ncaa/HPR.params

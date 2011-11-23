@@ -76,6 +76,7 @@ namespace in { namespace file { extern FileVectorOptionKey const boinc_wu_zip; }
 namespace in { namespace file { extern BooleanOptionKey const fullatom; } }
 namespace in { namespace file { extern BooleanOptionKey const centroid_input; } }
 namespace in { namespace file { extern BooleanOptionKey const centroid; } }
+namespace in { namespace file { extern StringOptionKey const treat_residues_in_these_chains_as_separate_chemical_entities; } }
 namespace in { namespace file { extern StringOptionKey const residue_type_set; } }
 namespace in { namespace file { extern FileOptionKey const pca; } }
 namespace in { namespace file { extern RealOptionKey const silent_energy_cut; } }

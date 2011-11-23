@@ -153,7 +153,7 @@ FeaturesReporter::find_tag(
 			name = static_cast< basic::datacache::CacheableString const & >
 				(pose.data().get(core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG)).str();
 		} else {
-			name = JobDistributor::get_instance()->current_job()->input_tag();
+			name = JobDistributor::get_instance()->current_output_name();
 		}
 	}
 	return name;

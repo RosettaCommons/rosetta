@@ -334,6 +334,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-treat_residues_in_these_chains_as_separate_chemical_entities</b> \<String\><dt>
+<dd>Create a chemical jump for each residue in these chains (String of 1-letter chain IDs)</dd><br>
+<dd>Default: " "</dd><br>
+</dl>
+<dl>
 <dt><b>-residue_type_set</b> \<String\><dt>
 <dd>ResidueTypeSet for input files</dd><br>
 <dd>Default: "fa_standard"</dd><br>
