@@ -3,8 +3,8 @@
 #-extra_res_fa /scratch/smlewis/minirosetta_database/chemical/residue_type_sets/fa_standard/residue_types/sidechain_conjugation/CYX.params /scratch/smlewis/minirosetta_database/chemical/residue_type_sets/fa_standard/residue_types/sidechain_conjugation/LYX.params
 
 
--UBQpdb 1UBQ.pdb.gz
--GTPasepdb 5P21_repacked.pdb.gz
+-UBQpdb ../UBQ_Gp_CYX-Cterm/1UBQ.pdb.gz
+-GTPasepdb ../UBQ_Gp_CYX-Cterm/5P21_repacked.pdb.gz
 -GTPase_residue 147
 
 -nstruct 1
