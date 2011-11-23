@@ -38,6 +38,7 @@
 #include <core/id/AtomID_Map.hh>
 // AUTO-REMOVED #include <core/id/NamedAtomID.hh>
 // AUTO-REMOVED #include <core/scoring/rms_util.tmpl.hh>
+#include <core/pose/util.tmpl.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/AtomPairConstraint.hh>
