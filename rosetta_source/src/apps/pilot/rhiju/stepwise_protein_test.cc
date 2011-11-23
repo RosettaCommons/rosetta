@@ -543,6 +543,8 @@ rebuild_test(){
 	PoseList minimize_pose_list = stepwise_clusterer.clustered_pose_list();
 	StepWiseProteinPoseMinimizer stepwise_pose_minimizer( minimize_pose_list, moving_residues );
 	ScoreFunctionOP minimize_scorefxn( core::scoring::getScoreFunction() );
+	if (minimize_scorefxn->get_weight( atom_pair_constraint ) == 0.0) minimize_scorefxn->set_weight( atom_pair_constraint, 1.0 ); //go ahead and turn these on
+	if (minimize_scorefxn->get_weight( coordinate_constraint) == 0.0) minimize_scorefxn->set_weight( coordinate_constraint, 1.0 ); // go ahead and turn these on
 	check_scorefxn_has_constraint_terms_if_pose_has_constraints( pose, minimize_scorefxn );
 	minimize_scorefxn->set_weight( linear_chainbreak, 150.0 );
 	stepwise_pose_minimizer.set_scorefxn( minimize_scorefxn );
