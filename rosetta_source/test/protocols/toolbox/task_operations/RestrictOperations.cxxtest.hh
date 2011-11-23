@@ -145,9 +145,8 @@ public:
 		using namespace core::pack::task;
 		using protocols::toolbox::task_operations::RestrictToInterfaceVectorOperation;
 		TaskFactory RTIVO_factory;
-		//these are the default values but hard code anyway
+		//these are the default values but hard code anyway, test for chain #s
 		RTIVO_factory.push_back( new RestrictToInterfaceVectorOperation(1,2,10,5.5,75,9.0) );
-
 		//run
 		test::UTracer UT_RTIVO("protocols/toolbox/task_operations/RestrictToInterfaceVectorOperation.u");
 		//this call returns PackerTaskOP; we are dumping the ptask to utracer

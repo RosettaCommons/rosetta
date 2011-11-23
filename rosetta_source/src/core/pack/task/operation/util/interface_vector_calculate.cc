@@ -253,7 +253,7 @@ bool any_atoms_within_cutoff(core::conformation::Residue & res1,
 	//if there is a CB atom itterate through all the side chain atms in res 1
 	if ( res1.type().has("CB") ){
 		//itterate over res1 sidechain atoms
-		for( conformation::Atoms::const_iterator res1atm = res1.sidechainAtoms_begin(); res1atm <= res1.heavyAtoms_end(); ++res1atm ){
+		for( conformation::Atoms::const_iterator res1atm = res1.sidechainAtoms_begin(); res1atm != res1.heavyAtoms_end(); ++res1atm ){
 			//itterate over res2 all atoms
 			for( conformation::Atoms::const_iterator res2atm = res2.atom_begin(); res2atm != res2.heavyAtoms_end(); ++res2atm ){
 				if ( (*res1atm).xyz().distance_squared( (*res2atm).xyz() )  < cutoff_squared){
