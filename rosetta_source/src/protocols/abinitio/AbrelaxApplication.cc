@@ -1406,7 +1406,7 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 	// ---------------------------------------------------------------------------------------------------------------
 	// initialize pose
 	generate_extended_pose( extended_pose, sequence_ );
-	
+
 	// apply a mover which calculates only repulsive energy on designate residues
 	protocols::moves::RepulsiveOnlyMover replonly;
 	replonly.apply( extended_pose );
@@ -1741,6 +1741,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
+	using namespace core::scoring::constraints;
 	using protocols::jobdist::BasicJob;
 	using protocols::jobdist::BasicJobOP;
 	using protocols::jobdist::PlainSilentFileJobDistributor;
@@ -1890,7 +1891,15 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 			if ( !fold_pose.is_fullatom() ) {
 				pose::Pose const centroid_pose ( fold_pose );
 				ResolutionSwitcher res_switch( centroid_pose, false, true, true );
+
+				if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) 	 res_switch.set_map_cst_from_centroid_to_fa( false ); //will override any attempt to map centroid constraints to full-atom constraints -- use user-defined file instead!
+
 				res_switch.apply( fold_pose );
+
+				if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) 	{
+					ConstraintSetOP cstset_ = ConstraintIO::get_instance()->read_constraints( get_cst_fa_file_option(), new ConstraintSet, fold_pose );
+					fold_pose.constraint_set( cstset_ );
+				}
 			}
 
 			if( option[ basic::options::OptionKeys::abinitio::close_loops_by_idealizing ]() ){

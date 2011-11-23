@@ -64,6 +64,9 @@ public:
 		scorefxn_fa_ = scorefxn_fa;
 	}
 
+	void set_map_cst_from_centroid_to_fa( bool const setting ){ map_cst_from_centroid_to_fa_ = setting; }
+
+
 private:
 	///@brief true if apply() method is called on centroid pose
 	bool apply_to_centroid_;
@@ -83,6 +86,8 @@ private:
 
 	///@brief repack sidechains at moved positions and x positions to left and right
 	Size repack_buffer_;
+
+	bool map_cst_from_centroid_to_fa_;
 
 };
 

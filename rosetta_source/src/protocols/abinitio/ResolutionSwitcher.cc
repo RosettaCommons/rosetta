@@ -49,7 +49,6 @@
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
-// AUTO-REMOVED #include <basic/options/option.hh>
 // Utility Headers
 // AUTO-REMOVED #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
@@ -123,7 +122,8 @@ ResolutionSwitcher::ResolutionSwitcher(
 		init_fa_( pose.is_fullatom() ),
 		start_centroid_( start_centroid ),
 		scorefxn_fa_( NULL ),
-		repack_buffer_( 0 )
+		repack_buffer_( 0 ),
+		map_cst_from_centroid_to_fa_( true )
 {}
 
 //@brief return the pose to start the simulation  -- based on the flags it will be centroid or full-atom
@@ -183,12 +183,14 @@ void ResolutionSwitcher::apply( pose::Pose &pose ) {
 		taskstd->restrict_to_residues( needToRepack );
 	}
 	if ( !init_pose().is_fullatom() ) {
-		//&& basic::options::option[ basic::options::OptionKeys::residues::patch_selectors ].user()
-		//		&& basic::options::option[ basic::options::OptionKeys::residues::patch_selectors ]()[ 1 ] == "CENTROID_HA" ) {
-		//		tr.Warning << "[ WARNING ] ResolutionSwitcher cannot copy constraints if CENTROID_HA is selected... HA has other atom-number... " << std::endl
-		//							 << "clean way would be to make the constraint set independent of numbers as in Templates.cc " << std::endl;
-		//		utility_exit_with_message("[ WARNING ] ResolutionSwitcher cannot copy constraints if CENTROID_HA is selected.");
-		pose.constraint_set( init_pose().constraint_set()->remapped_clone( init_pose(), pose ) );
+		if ( map_cst_from_centroid_to_fa_ ) {
+			//&& basic::options::option[ basic::options::OptionKeys::residues::patch_selectors ].user()
+			//		&& basic::options::option[ basic::options::OptionKeys::residues::patch_selectors ]()[ 1 ] == "CENTROID_HA" ) {
+			//		tr.Warning << "[ WARNING ] ResolutionSwitcher cannot copy constraints if CENTROID_HA is selected... HA has other atom-number... " << std::endl
+			//							 << "clean way would be to make the constraint set independent of numbers as in Templates.cc " << std::endl;
+			//		utility_exit_with_message("[ WARNING ] ResolutionSwitcher cannot copy constraints if CENTROID_HA is selected.");
+			pose.constraint_set( init_pose().constraint_set()->remapped_clone( init_pose(), pose ) );
+		}
 	} else {
 		pose.constraint_set( init_pose().constraint_set()->clone() );
 	}
