@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/apps/pilot/smlewis/UBQ_E2.cc
+/// @file   src/apps/pilot/smlewis/UBQ_UBQ_E2.cc
 /// @brief  this application is a one-shot for modeling the thioester bond between UBQ and an E2
 /// @author Steven Lewis
 
@@ -102,7 +102,7 @@ basic::options::RealOptionKey const scorefilter("scorefilter");
 //tracers
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("apps.pilot.smlewis.UBQ_E2");
+static basic::Tracer TR("apps.pilot.smlewis.UBQ_UBQ_E2");
 
 class UBQ_E2Mover : public protocols::moves::Mover {
 private: //enum for atomID vector

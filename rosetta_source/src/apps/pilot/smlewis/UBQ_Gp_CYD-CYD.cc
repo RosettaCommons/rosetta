@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/apps/pilot/smlewis/UBQ_Gp_disulfide.cc
+/// @file   src/apps/pilot/smlewis/UBQ_Gp_CYD-CYD.cc
 /// @brief  this application is a one-shot for modeling a ubiquitinated G-protein; this version uses a nonnatural cysteine to ubiquitin linkage (derived from the parent UBQ_E2 protocol)
 /// @author Steven Lewis
 
@@ -110,7 +110,7 @@ basic::options::IntegerOptionKey const n_tail_res("n_tail_res");
 //tracers
 using basic::Error;
 using basic::Warning;
-static basic::Tracer TR("apps.pilot.smlewis.UBQ_Gp_disulfide");
+static basic::Tracer TR("apps.pilot.smlewis.UBQ_Gp_CYD-CYD");
 
 class UBQ_GTPase_disulfide_Mover : public protocols::moves::Mover {
 public:
