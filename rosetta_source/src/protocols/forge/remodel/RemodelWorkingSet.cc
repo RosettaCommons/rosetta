@@ -158,7 +158,7 @@ protocols::forge::remodel::WorkingRemodelSet::workingSetGen(
 	this->ss = data.dssp_updated_ss;
 
 	//this is purely experimental for matching fragment set
-	if (option[ OptionKeys::remodel::repeat_structuer].user()){
+	if (option[ OptionKeys::remodel::repeat_structure].user()){
 		this->ss.append(this->ss);
 	} else {
 		this->ss.append("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");

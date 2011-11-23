@@ -293,7 +293,7 @@ void VarLengthBuild::apply( Pose & pose ) {
 		}
 	}
 	// REPEAT: used for fragment picking and others
-  if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structuer].user()) {
+  if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
 		core::chemical::ResidueTypeSet const & rsd_set = (pose.residue(1).residue_type_set());
 		core::conformation::ResidueOP new_rsd( core::conformation::ResidueFactory::create_residue( rsd_set.name_map("ALA") ) );
 		pose.conformation().safely_append_polymer_residue_after_seqpos(* new_rsd,pose.total_residue(), true);
@@ -314,8 +314,8 @@ void VarLengthBuild::apply( Pose & pose ) {
 		}
 	}
 
-  if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structuer].user()) {
-	  if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structuer] == 1){
+  if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
+	  if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure] == 1){
 		  // do nothing
 	  } else {
 		//remove the added residue
@@ -439,7 +439,7 @@ bool VarLengthBuild::centroid_build(
 
 		Size n_cuts = count_cutpoints( pose, interval.left, interval.right );
 
-		if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structuer].user()) {
+		if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
 			interval.right = interval.right+1; // pad interval to include the extra shadow residue in pose
 			}
 		TR << "VLB count_cutpoints " << n_cuts << " interval.left " << interval.left << " interval.right " << interval.right << std::endl;
@@ -451,7 +451,7 @@ bool VarLengthBuild::centroid_build(
 		//if ( n_cuts > 0 ) { // loop model region
 		if (interval.left != 1 && interval.right != pose.n_residue()){ //internal loop
 			Size cutpoint = 0;
-			//if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structuer].user()) {
+			//if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user()) {
 			//	cutpoint = find_cutpoint( pose, interval.left, interval.right-1 );
 //}
 			//else {
@@ -468,7 +468,7 @@ bool VarLengthBuild::centroid_build(
 			}
 		} else if ( n_cuts == 0 ) { // fragment only region
 
-			if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structuer].user())	{
+			if (basic::options::option[basic::options::OptionKeys::remodel::repeat_structure].user())	{
 				loops.add_loop( Loop( interval.left, interval.right, 0, 0.0, true ) );//pick additional frame for connection to repeats
 			}else{
 			loops.add_loop( Loop( interval.left, interval.right, 0, 0.0, true ) );

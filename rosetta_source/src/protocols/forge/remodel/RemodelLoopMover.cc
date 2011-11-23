@@ -236,14 +236,14 @@ void RemodelLoopMover::repeat_generation_with_additional_residue(Pose &pose, Pos
 
 	core::pose::Pose non_terminal_pose(pose);
 
-  if (option[ OptionKeys::remodel::repeat_structuer].user()){
+  if (option[ OptionKeys::remodel::repeat_structure].user()){
 
 	//remove the extra tail from pose, but still use the pose with tail to build
 		non_terminal_pose.conformation().delete_residue_slow(pose.total_residue());
 		repeat_pose=non_terminal_pose;
     core::pose::remove_lower_terminus_type_from_pose_residue(non_terminal_pose, 1);
 
-    Size repeatFactor = option[ OptionKeys::remodel::repeat_structuer];
+    Size repeatFactor = option[ OptionKeys::remodel::repeat_structure];
     Size count = 1;
     while ( repeatFactor !=1){ // the argument should be total number of copies
       for (Size rsd = 1; rsd <= non_terminal_pose.total_residue(); rsd++){
@@ -292,11 +292,11 @@ void RemodelLoopMover::repeat_generation(Pose &pose, Pose & repeat_pose)
 
 	core::pose::Pose non_terminal_pose(pose);
 	//core::pose::Pose repeat_pose;
-  if (option[ OptionKeys::remodel::repeat_structuer].user()){
+  if (option[ OptionKeys::remodel::repeat_structure].user()){
 		repeat_pose=non_terminal_pose;
   	core::pose::remove_lower_terminus_type_from_pose_residue(non_terminal_pose, 1);
 
-    Size repeatFactor = option[ OptionKeys::remodel::repeat_structuer];
+    Size repeatFactor = option[ OptionKeys::remodel::repeat_structure];
     Size count = 1;
     while ( repeatFactor !=1){ // the argument should be total number of copies
       for (Size rsd = 1; rsd <= non_terminal_pose.total_residue(); rsd++){
@@ -377,7 +377,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	} else {
 			sealed_ft = fold_tree_from_pose( pose, pose.fold_tree().root(), MoveMap() ); // used during structure accumulation
 	}
-	if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 			repeat_generation_with_additional_residue(pose, repeat_pose_);
 
 			//take care of constraints:
@@ -393,7 +393,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			}
 
 			// ResidueTypeLinkingConstraints
-			Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structuer];
+			Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structure];
 			Real bonus = 10;
 			//std::cout << "RESIDUETYPELINKING CST" << std::endl;
 		  Size segment_length = (repeat_pose_.n_residue())/repeat_number;
@@ -439,8 +439,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	sfxOP->set_weight( core::scoring::linear_chainbreak, 0.0 );
 
 	//REPEAT TEST
-	if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
-		sfxOP->set_weight(core::scoring::atom_pair_constraint, 1.0 * basic::options::option[ OptionKeys::remodel::repeat_structuer] );
+	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+		sfxOP->set_weight(core::scoring::atom_pair_constraint, 1.0 * basic::options::option[ OptionKeys::remodel::repeat_structure] );
 		}
 
 	// randomize loops
@@ -454,7 +454,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 	// setup monte carlo
 	Real const temp = temperature_;
 	MonteCarlo mc( *sfxOP, temp ); // init without pose
-	if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 				(*sfxOP)(repeat_pose_);
 	      mc.reset(repeat_pose_);
 	}
@@ -490,8 +490,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			pose_prime->fold_tree( sealed_ft );
 
 			//this is for scoring in repeat context
-			if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
-					repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structuer]);
+			if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+					repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
 					(*sfxOP)(repeat_pose_);
 					accumulator.insert( std::make_pair( repeat_pose_.energies().total_energy(), pose_prime ) );
 			}	else {
@@ -505,8 +505,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			// now randomize the loops again for a new starting point
 			if ( attempt < allowed_closure_attempts_ ) {
 				randomize_stage( pose );
-				if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
-					repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structuer]);
+				if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+					repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
 					(*sfxOP)(repeat_pose_);
 					mc.reset( repeat_pose_ );
 				} else{
@@ -518,8 +518,8 @@ void RemodelLoopMover::apply( Pose & pose ) {
 			// loop before cycling again, otherwise too easy for the trajectory to
 			// get trapped.
 			insert_random_smallestmer_per_loop( pose, true );
-			if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
-				repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structuer]);
+			if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+				repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
 					(*sfxOP)(repeat_pose_);
 				mc.reset( repeat_pose_ );
 			} else{
@@ -540,9 +540,9 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 	// return the best structure if available, otherwise mark failure
 	if ( !accumulator.empty() ) {
-		if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 				pose = *( accumulator.begin()->second );
-				repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structuer]);
+				repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
 				(*sfxOP)(repeat_pose_);
 				pose = repeat_pose_;
 		} else {
@@ -554,7 +554,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 		set_last_move_status( protocols::moves::FAIL_RETRY );
 	}
 
-	if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 		//do nothing?
 	} else {
 	// set original topology
@@ -651,9 +651,9 @@ void RemodelLoopMover::insert_random_smallestmer_per_loop(
 
 	for ( FragmentMoverOPs::iterator i = frag_movers.begin(), ie = frag_movers.end(); i != ie; ++i ) {
 		(*i)->apply( pose );
-		if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 			//Pose temp_pose(pose);
-			repeat_propagation(pose, repeat_pose_,  basic::options::option[ OptionKeys::remodel::repeat_structuer]);
+			repeat_propagation(pose, repeat_pose_,  basic::options::option[ OptionKeys::remodel::repeat_structure]);
 			//pose = temp_pose;
 		}
 	}
@@ -708,8 +708,8 @@ void RemodelLoopMover::simultaneous_stage(
 }
 	// add cutpoint variants
 	add_cutpoint_variants( pose );
-	if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
-		repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structuer]);
+	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+		repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
 		mc.reset(repeat_pose_);
 	}	else{
 	mc.reset( pose );
@@ -745,9 +745,9 @@ void RemodelLoopMover::simultaneous_stage(
 		mc.score_function( *sfxOP );
 
 		// recover low
-		if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 			Size copy_size =0;
-		  if (basic::options::option[ OptionKeys::remodel::repeat_structuer] == 1){
+		  if (basic::options::option[ OptionKeys::remodel::repeat_structure] == 1){
 				copy_size = pose.total_residue()-1;
 			} else {
 				copy_size = pose.total_residue();
@@ -769,9 +769,9 @@ void RemodelLoopMover::simultaneous_stage(
 				random_permutation( frag_movers.begin(), frag_movers.end(), RG );
 				for ( FragmentMoverOPs::iterator i = frag_movers.begin(), ie = frag_movers.end(); i != ie; ++i ) {
 					(*i)->apply( pose );
-					if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+					if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 						//Pose temp_pose(pose);
-						repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structuer]);
+						repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
 						mc.boltzmann( repeat_pose_, "simul_frag" );
 						//pose=temp_pose;
 					}else {
@@ -787,9 +787,9 @@ void RemodelLoopMover::simultaneous_stage(
 						if (!option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
 							ccd_moves( 10, pose, movemap, (int)l->start(), (int)l->stop(), (int)l->cut() );
 						}
-						if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+						if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 							//Pose temp_pose(pose);
-							repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structuer]);
+							repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
 							mc.boltzmann( repeat_pose_, "ccd_move" );
 						//	pose=temp_pose;
 						}else {
@@ -804,9 +804,9 @@ void RemodelLoopMover::simultaneous_stage(
 	} // outer_cycles
 
 	// recover low
-	if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 			Size copy_size =0;
-		  if (basic::options::option[ OptionKeys::remodel::repeat_structuer] == 1){
+		  if (basic::options::option[ OptionKeys::remodel::repeat_structure] == 1){
 				copy_size = pose.total_residue()-1;
 			} else {
 				copy_size = pose.total_residue();
@@ -826,7 +826,7 @@ void RemodelLoopMover::simultaneous_stage(
 //	mc.score_function().show_line_headers( TR );
 //	TR << std::endl;
 
-  if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+  if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 //		mc.score_function().show_line( TR, repeat_pose_ );
 		mc.score_function().show( TR, repeat_pose_ );
 //		repeat_pose_.dump_scored_pdb("checkRepeat1.pdb", mc.score_function());
@@ -912,8 +912,8 @@ void RemodelLoopMover::independent_stage(
 
 		// add cutpoint variants
 		add_cutpoint_variants( pose );
-		if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
-			repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structuer]);
+		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+			repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
 			mc.reset(repeat_pose_);
 		}	else{
 		mc.reset( pose );
@@ -937,9 +937,9 @@ void RemodelLoopMover::independent_stage(
 			mc.score_function( *sfxOP );
 
 			// recover low
-			if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+			if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 			Size copy_size =0;
-		  if (basic::options::option[ OptionKeys::remodel::repeat_structuer] == 1){
+		  if (basic::options::option[ OptionKeys::remodel::repeat_structure] == 1){
 				copy_size = pose.total_residue()-1;
 			} else {
 				copy_size = pose.total_residue();
@@ -960,9 +960,9 @@ void RemodelLoopMover::independent_stage(
 					random_permutation( frag_movers.begin(), frag_movers.end(), RG );
 					for ( FragmentMoverOPs::iterator i = frag_movers.begin(), ie = frag_movers.end(); i != ie; ++i ) {
 						(*i)->apply( pose );
-						if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+						if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 							//Pose temp_pose(pose);
-							repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structuer]);
+							repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
 							mc.boltzmann( repeat_pose_, "frag" );
 							//pose=temp_pose;
 						}else {
@@ -973,9 +973,9 @@ void RemodelLoopMover::independent_stage(
 					if (!option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
 						ccd_moves( 10, pose, movemap, (int)loop.start(), (int)loop.stop(), (int)loop.cut() );
 					}
-					if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+					if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 					//	Pose temp_pose(pose);
-						repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structuer]);
+						repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
 						mc.boltzmann( repeat_pose_, "ccd_move" );
 					//	pose=temp_pose;
 					}else {
@@ -988,9 +988,9 @@ void RemodelLoopMover::independent_stage(
 		} // outer_cycles
 
 		// recover low
-		if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 			Size copy_size =0;
-		  if (basic::options::option[ OptionKeys::remodel::repeat_structuer] == 1){
+		  if (basic::options::option[ OptionKeys::remodel::repeat_structure] == 1){
 				copy_size = pose.total_residue()-1;
 			} else {
 				copy_size = pose.total_residue();
@@ -1009,7 +1009,7 @@ void RemodelLoopMover::independent_stage(
 	//	mc.score_function().show_line_headers( TR );
 //	TR << std::endl;
 
-		if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 	//		mc.score_function().show_line( TR, repeat_pose_ );
 			mc.score_function().show( TR, repeat_pose_ );
 	//	repeat_pose_.dump_scored_pdb("checkRepeat2.pdb", mc.score_function());
@@ -1121,8 +1121,8 @@ void RemodelLoopMover::boost_closure_stage(
 		}
 		// add cutpoint variants
 		add_cutpoint_variants( pose );
-		if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
-			repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structuer]);
+		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
+			repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
 			mc.reset(repeat_pose_);
 		}	else{
 			mc.reset( pose );
@@ -1161,9 +1161,9 @@ void RemodelLoopMover::boost_closure_stage(
 					random_permutation( frag1_movers.begin(), frag1_movers.end(), RG );
 					for ( FragmentMoverOPs::iterator i = frag1_movers.begin(), ie = frag1_movers.end(); i != ie; ++i ) {
 						(*i)->apply( pose );
-						if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+						if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 						//	Pose temp_pose(pose);
-							repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structuer]);
+							repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
 							mc.boltzmann( repeat_pose_, "frag1" );
 						//	pose=temp_pose;
 						}
@@ -1176,9 +1176,9 @@ void RemodelLoopMover::boost_closure_stage(
 	      	if (!option[OptionKeys::remodel::RemodelLoopMover::bypass_closure].user()){
 						ccd_moves( 10, pose, movemap, (int)loop.start(), (int)loop.stop(), (int)loop.cut() );
 					}
-					if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+					if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 						//Pose temp_pose(pose);
-						repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structuer]);
+						repeat_propagation(pose, repeat_pose_, basic::options::option[ OptionKeys::remodel::repeat_structure]);
 						mc.boltzmann( repeat_pose_, "frag1" );
 						//pose=temp_pose;
 					} else {
@@ -1190,9 +1190,9 @@ void RemodelLoopMover::boost_closure_stage(
 		} // outer_cycles
 
 		// recover low
-		if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 			Size copy_size =0;
-		  if (basic::options::option[ OptionKeys::remodel::repeat_structuer] == 1){
+		  if (basic::options::option[ OptionKeys::remodel::repeat_structure] == 1){
 				copy_size = pose.total_residue()-1;
 			} else {
 				copy_size = pose.total_residue();
@@ -1212,7 +1212,7 @@ void RemodelLoopMover::boost_closure_stage(
 	//	mc.score_function().show_line_headers( TR );
 //		TR << std::endl;
 
-		if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 	//		mc.score_function().show_line( TR, repeat_pose_ );
 			mc.score_function().show( TR, repeat_pose_ );
 	//	repeat_pose_.dump_scored_pdb("checkRepeat3.pdb", mc.score_function());

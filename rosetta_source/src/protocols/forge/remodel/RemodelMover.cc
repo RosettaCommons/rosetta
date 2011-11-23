@@ -462,7 +462,7 @@ if (working_model.manager.size()!= 0){
   }
 
 */
-	if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 		//turning on the res_type_linking constraint weight for designs
 		fullatom_sfx_->set_weight( core::scoring::atom_pair_constraint, 1.0);
 		fullatom_sfx_->set_weight( core::scoring::res_type_linking_constraint, 0.3);
@@ -486,7 +486,7 @@ if (working_model.manager.size()!= 0){
 		//cache the modified pose first for REPEAT
 		Pose cached_modified_pose;
 
-		if (option[ OptionKeys::remodel::repeat_structuer].user()) {
+		if (option[ OptionKeys::remodel::repeat_structure].user()) {
 			cached_modified_pose = pose;
 		}
 
@@ -501,7 +501,7 @@ if (working_model.manager.size()!= 0){
 			}
 		}
 
-		if (option[ OptionKeys::remodel::repeat_structuer].user()) {
+		if (option[ OptionKeys::remodel::repeat_structure].user()) {
 			//should fold this pose to match just the first segment of a repeat, and that will be used for next round of building
 			for (Size res = 1; res <= cached_modified_pose.n_residue(); res++){
 				cached_modified_pose.set_phi(res, pose.phi(res));
@@ -514,7 +514,7 @@ if (working_model.manager.size()!= 0){
 /*
 		//extract the constraint currently in Pose for later Recycling
 		ConstraintSetOP cst_set_post_built;
-		if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 
 		// at this stage it should hold generic cstfile and res_type_linking
 		// constraints
@@ -600,7 +600,7 @@ if (working_model.manager.size()!= 0){
 			accumulator.write_checkpoint(num_traj-i-prev_checkpoint);
 		}
 		//restore foldtree
-		if (option[ OptionKeys::remodel::repeat_structuer].user()) {
+		if (option[ OptionKeys::remodel::repeat_structure].user()) {
 		//reset the pose to monomer
 			pose = cached_modified_pose;
 
@@ -823,7 +823,7 @@ bool RemodelMover::centroid_build(
 		// scoring
 		pose.energies().clear();
 
-		if (option[ OptionKeys::remodel::repeat_structuer].user()) {
+		if (option[ OptionKeys::remodel::repeat_structure].user()) {
 			RemodelLoopMover RLM;
 			Pose bufferPose(modified_archive_pose);
 			RLM.repeat_generation( bufferPose, modified_archive_pose );
@@ -890,7 +890,7 @@ bool RemodelMover::design_refine_seq_relax(
 	// collect loops
 	Loops loops = intervals_to_loops( loop_intervals.begin(), loop_intervals.end() );
 
-  if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+  if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 		//do nothing
 	} else {
 		protocols::forge::methods::fill_non_loop_cst_set(pose, loops);
@@ -910,7 +910,7 @@ bool RemodelMover::design_refine_seq_relax(
 
 
 	ConstraintSetOP cst_set_post_built;
-	if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 
 	// at this stage it should hold generic cstfile and res_type_linking
 	// constraints
@@ -918,10 +918,10 @@ bool RemodelMover::design_refine_seq_relax(
 	}
 
 	protocols::moves::symmetry::SetupNCSMover setup_ncs;
-	if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 				//Dihedral (NCS) Constraints, need to be updated each mutation cycle for sidechain symmetry
 
-				Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structuer];
+				Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structure];
 				Size segment_length = (pose.n_residue())/repeat_number;
 
 
@@ -952,7 +952,7 @@ bool RemodelMover::design_refine_seq_relax(
 		designMover.apply(pose);
 
 		//update dihedral constraint for repeat structures
-		if (basic::options::option[ OptionKeys::remodel::repeat_structuer].user()){
+		if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 			setup_ncs.apply(pose);
 		}
 

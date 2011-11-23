@@ -215,14 +215,14 @@ core::Size RemodelAccumulator::recover_checkpoint()
 				//from the start.  Build constraints are set in RemodelLoopMover, a bit
 				//different from everything else
 
-				if (option[ OptionKeys::remodel::repeat_structuer].user()){
+				if (option[ OptionKeys::remodel::repeat_structure].user()){
 					if (option[ OptionKeys::constraints::cst_file ].user()){
 						protocols::moves::ConstraintSetMoverOP repeat_constraint = new protocols::moves::ConstraintSetMover();
 						repeat_constraint->apply( dummyPose );
 					}
 
 					// ResidueTypeLinkingConstraints
-					Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structuer];
+					Size repeat_number = basic::options::option[ OptionKeys::remodel::repeat_structure];
 					Size count=0;
 					Real bonus = 10;
 					Size segment_length = (dummyPose.n_residue())/repeat_number;

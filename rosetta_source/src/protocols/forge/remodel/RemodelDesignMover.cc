@@ -95,8 +95,8 @@ RemodelDesignMover::RemodelDesignMover(RemodelData const & remodel_data, Remodel
 //	    TR << *i <<  " UUP in DesignMover" <<  std::endl;
  // }
 
-	if (option[ OptionKeys::remodel::repeat_structuer].user()){
-		Size repeatCount = option[ OptionKeys::remodel::repeat_structuer];
+	if (option[ OptionKeys::remodel::repeat_structure].user()){
+		Size repeatCount = option[ OptionKeys::remodel::repeat_structure];
 		for (int rep = 0; rep < repeatCount ; rep++){
 			for (std::set< core::Size >::iterator it = uup.begin(); it != uup.end(); ++it){
 			//DEBUG
@@ -183,7 +183,7 @@ void RemodelDesignMover::apply( Pose & pose )
 		//reduce_task(pose, working_model_.task, true, true, true);
 	}
 
-	if (option[ OptionKeys::remodel::repeat_structuer].user()){
+	if (option[ OptionKeys::remodel::repeat_structure].user()){
 		//make rotamer links
 		RemodelRotamerLinksOP  linkOP = new RemodelRotamerLinks;
 		linkOP->apply(pose, *working_model_.task);
