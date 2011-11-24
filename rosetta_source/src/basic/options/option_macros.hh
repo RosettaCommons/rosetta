@@ -155,6 +155,7 @@
   basic::options::option.add( basic::options::OptionKeys::akey , help ).def( adef ); \
   OPT( akey )
 
+// option macros for Vector options with multiple default values...
 #define NEW_OPT2(akey,help,adef,adef2)																				\
   basic::options::option.add( basic::options::OptionKeys::akey , help ).def( adef ).def( adef2 ); \
   OPT( akey )
