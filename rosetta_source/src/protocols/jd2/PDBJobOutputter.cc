@@ -66,7 +66,7 @@ protocols::jd2::PDBJobOutputter::PDBJobOutputter()
 	if ( option[ out::pdb_gz ] ) {
 		extension_ = ".pdb.gz";
 	}
-    
+
     if ( option[ out::path::pdb ].user() ) {
         path_ = option[ out::path::pdb ]().path();
     }else{
@@ -86,7 +86,7 @@ void protocols::jd2::PDBJobOutputter::final_pose(
     using namespace basic::options::OptionKeys;
 	using basic::options::option;
 	TR.Debug << "PDBJobOutputter::final_pose" << std::endl;
-	
+
     utility::io::ozstream out( path_ + extended_name(job) );
 	if ( !out.good() ) utility_exit_with_message( "Unable to open file: " + path_ + extended_name(job) + "\n" );
 	dump_pose(job, pose, out);
@@ -97,7 +97,9 @@ void protocols::jd2::PDBJobOutputter::final_pose(
 void protocols::jd2::PDBJobOutputter::other_pose(
 	JobCOP job,
 	core::pose::Pose const & pose,
-	std::string const & tag
+	std::string const & tag,
+	int copy_count, /*default -1 */
+	bool score_only /*default false*/
 ){
 	TR.Debug << "PDBJobOutputter::other_pose" << std::endl;
 	runtime_assert( !tag.empty() ); //else you'll overwrite your pdb when the job finishes

@@ -72,12 +72,14 @@ static basic::Tracer TR("protocols.jd2.JobDistributor");
 ///end parser interface, start Job Distributor interface/////////////
 void output_intermediate_pose(
 	core::pose::Pose const & pose,
-	std::string const & stage_tag
+	std::string const & stage_tag,
+	int copy_count,
+	bool score_only
 ) {
   protocols::jd2::JobDistributor* jd
   	= protocols::jd2::JobDistributor::get_instance();
   if ( jd && jd->job_outputter() && jd->current_job() ) {
-    jd->job_outputter()->other_pose( jd->current_job(), pose, stage_tag );
+    jd->job_outputter()->other_pose( jd->current_job(), pose, stage_tag, copy_count, score_only );
   } else {
     TR.Warning << "can't output intermediate pose if not running with  jobdistributor ( jd2 / 2008 )" << std::endl;
   }

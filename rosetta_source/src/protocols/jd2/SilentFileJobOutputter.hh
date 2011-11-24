@@ -61,7 +61,7 @@ public:
 	/// structure in a combined centroid/fullatom protocol.
 	/// --->these go to file silent_filename+tag
   virtual
-  void other_pose( JobCOP job, core::pose::Pose const & pose, std::string const & tag );
+  void other_pose( JobCOP job, core::pose::Pose const & pose, std::string const & tag, int copy_count = -1, bool score_only = false );
 
   /////////////////////////////////state of output functions/////////////////////////////////
 
@@ -104,7 +104,8 @@ protected:
 		utility::file::FileName const & filename,
 		JobCOP job,
 		core::pose::Pose const & pose,
-		bool bWriteScoreOnly
+		bool bWriteScoreOnly,
+		int copy_count = -1 /* if 0 or positive attach as postfix to job-tag ONLY used in other_pose output*/
 	);
 
 private: // methods

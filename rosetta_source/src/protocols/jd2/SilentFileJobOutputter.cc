@@ -137,10 +137,9 @@ void SilentFileJobOutputter::set_defaults() {
 
 	bWriteNoStructures_ = false;
 
-	if( option[ OptionKeys::out::file::scorefile ].user() ){
+	if ( option[ OptionKeys::out::file::scorefile ].user() ){
 		write_separate_scorefile_ = true;
-	}
-	else write_separate_scorefile_ = false;
+	}	else write_separate_scorefile_ = false;
 }
 
 void SilentFileJobOutputter::read_done_jobs() {
@@ -185,20 +184,35 @@ void SilentFileJobOutputter::final_pose(
 void SilentFileJobOutputter::other_pose(
 	JobCOP job,
 	core::pose::Pose const & pose,
-	std::string const & tag
+	std::string const & tag,
+	int copy_count, /*default -1 */
+	bool score_only /*default false*/
 ) {
 	utility::file::FileName filename( silent_file_ );
 	filename.base( silent_file_.base() +"_"+ tag );
+
+	core::io::silent::SilentStructOP ss;
 	if ( bWriteIntermediateFiles_ ) {
-		dump_pose( filename, job, pose, !bWriteIntermediateStructures_ );
+		ss=dump_pose( filename, job, pose, !bWriteIntermediateStructures_ || score_only , copy_count );
 	}
+
+	if ( write_separate_scorefile_ && ss ) {
+		//write here to avoid 2x evaluated for same structure
+		core::io::silent::SilentFileData sfd;
+		utility::file::FileName filename( scorefile_name() );
+		filename.base( scorefile_name().base() +"_"+ tag );
+		sfd.write_silent_struct( *ss, filename, true );
+	}
+
+
 }
 
 core::io::silent::SilentStructOP SilentFileJobOutputter::dump_pose(
 	utility::file::FileName const & filename,
 	JobCOP job,
 	core::pose::Pose const & pose_in,
-	bool bWriteScoreOnly
+	bool bWriteScoreOnly,
+	int copy_count
 ) {
 	PROF_START( basic::JD2_SILENT_OUTPUTTER );
 	core::io::silent::SilentFileData sfd;
@@ -211,12 +225,14 @@ core::io::silent::SilentStructOP SilentFileJobOutputter::dump_pose(
 		ss = core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( pose_in );
 	}
 
-	std::string tag( output_name( job ) );
-	ss->fill_struct( pose_in, tag );
+	std::ostringstream tag;
+	tag << output_name( job );
+	if ( copy_count>=0 ) tag << '_' << std::setfill('0') << std::setw(8) << copy_count;
+	ss->fill_struct( pose_in, tag.str() );
 	add_job_data_to_ss( ss, job );
 
 	core::pose::Pose pose( pose_in );
-	evaluate( pose, tag, *ss );
+	evaluate( pose, tag.str(), *ss );
 
 
 	add_silent_struct( ss, filename );

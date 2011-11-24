@@ -58,7 +58,7 @@ public:
 
 	///@brief this function is intended for saving mid-protocol poses; for example the final centroid structure in a combined centroid/fullatom protocol.
 	virtual
-	void other_pose( JobCOP job, core::pose::Pose const & pose, std::string const & tag ) = 0;
+	void other_pose( JobCOP job, core::pose::Pose const & pose, std::string const & tag, int copy_count = -1, bool score_only = false ) = 0;
 
 	/////////////////////////////////state of output functions/////////////////////////////////
 

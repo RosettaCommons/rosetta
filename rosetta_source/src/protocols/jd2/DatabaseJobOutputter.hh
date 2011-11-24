@@ -77,7 +77,10 @@ public:
   void other_pose(
 		JobCOP job,
 		core::pose::Pose const & pose,
-		std::string const & tag );
+		std::string const & tag,
+		int copy_count = -1,
+		bool score_only = false
+	);
 
 	/// @brief this function is not used for output, but it belongs here
 	/// since it needs to check the same output locations as the class

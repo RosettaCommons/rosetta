@@ -126,7 +126,9 @@ void DatabaseJobOutputter::final_pose(
 void DatabaseJobOutputter::other_pose(
 	JobCOP,
 	core::pose::Pose const & pose,
-	std::string const & tag
+	std::string const & tag,
+	int copy_count, /*default -1 */
+	bool score_only /*default false*/
 ) {
 
 	sessionOP db_session(basic::database::get_db_session(database_fname_));

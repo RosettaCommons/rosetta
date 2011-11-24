@@ -32,7 +32,10 @@ namespace protocols {
 namespace jd2 {
 
 ///@brief writes pose to intermediate-scorefile using current Job and JobOutputter ..
-void output_intermediate_pose( core::pose::Pose const& pose, std::string const& stage_tag );
+///@detail copy count is used if multiple poses with same job-tag are written as for instance into a trajectory.
+///  -1 indicates no copy count
+///  >=0 copy_count will be attached as zerofilled postfix to job-tag
+void output_intermediate_pose( core::pose::Pose const& pose, std::string const& stage_tag, int copy_count = -1, bool score_only = false );
 
 ///@brief gets used output name of pose
 /// ask jd for current-job ---> ask jobOutputter for name of this job
