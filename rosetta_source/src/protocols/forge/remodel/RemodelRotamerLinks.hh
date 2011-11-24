@@ -13,7 +13,7 @@
 //multiple sidechain substitutions in the sim annealing process
 
 #ifndef INCLUDED_protocols_forge_RemodelRotamerLinks_hh
-#define INCLUDED_protocols_dna_RemodelRotamerLinks_hh
+#define INCLUDED_protocols_forge_RemodelRotamerLinks_hh
 
 #include <protocols/forge/remodel/RemodelRotamerLinks.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
