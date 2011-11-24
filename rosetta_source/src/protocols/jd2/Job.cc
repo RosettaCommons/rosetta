@@ -91,7 +91,7 @@ void Job::add_string_string_pair( std::string const & string1, std::string const
 
 ///@brief add a string/real pair
 void Job::add_string_real_pair( std::string const & string_in, core::Real const real_in ){
-	string_real_pairs_.push_back(std::make_pair(string_in, real_in));
+	string_real_pairs_[ string_in ] = real_in;
 }
 
 ///@brief return a COP to the input pose

@@ -28,6 +28,7 @@
 //C++ headers
 #include <string>
 #include <list>
+#include <map>
 
 #include <utility/vector1.hh>
 
@@ -48,7 +49,7 @@ public:
 	/// TODO these should be maps rather than lists.
 	typedef std::list< std::string > Strings;
 	typedef std::list< std::pair< std::string, std::string > > StringStringPairs;
-	typedef std::list< std::pair< std::string, core::Real > > StringRealPairs;
+	typedef std::map< std::string, core::Real > StringRealPairs;
 
 	Job( InnerJobOP inner_job, core::Size nstruct_index );
 
