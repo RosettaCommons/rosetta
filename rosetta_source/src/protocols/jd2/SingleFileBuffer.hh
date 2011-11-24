@@ -68,6 +68,7 @@ private:
 class WriteFileSFB : public SingleFileBuffer {
 public:
 	typedef SingleFileBuffer Base;
+	virtual ~WriteFileSFB();
 	WriteFileSFB( std::string const & filename, core::Size channel, bool append, core::Size& status );
 	virtual void write_lines( LineBuffer const & );
 	virtual void block( core::Size slave );

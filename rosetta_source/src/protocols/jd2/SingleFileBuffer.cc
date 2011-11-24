@@ -102,12 +102,18 @@ WriteFileSFB::WriteFileSFB( std::string const& filename, core::Size channel, boo
 	}	else {
 		//		out_.open( filename.c_str() );
 		out_.open( filename );
-		if ( !out_.good() ) status = MPI_FAIL;
+		if ( out_.good() ) status = MPI_SUCCESS_NEW;
 	}
+}
+
+WriteFileSFB::~WriteFileSFB() {
+	out_.close();
 }
 
 void WriteFileSFB::write_lines( LineBuffer const& buf ) {
 	copy( buf.begin(), buf.end(), std::ostream_iterator< std::string>( out_ ) );
+	copy( buf.begin(), buf.end(), std::ostream_iterator< std::string>( tr.Debug ) );
+	tr.Debug << std::endl;
 }
 
 void WriteFileSFB::block( core::Size slave ) {

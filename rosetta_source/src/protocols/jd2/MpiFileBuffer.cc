@@ -22,6 +22,7 @@
 #include <basic/Tracer.hh>
 #include <basic/MemTracer.hh>
 // AUTO-REMOVED #include <iterator>
+ #include <ctime>
 
 #include <protocols/jd2/SingleFileBuffer.hh>
 #include <utility/vector1.hh>
@@ -37,12 +38,20 @@ static basic::Tracer tr("protocols.jd2.MpiFileBuffer");
 using basic::mem_tr;
 
 MpiFileBuffer::MpiFileBuffer( Size file_buf_rank )
-	: buffer_rank_( file_buf_rank ), last_channel_( 0 ), bSlaveCanOpenFile_( true ),bKeepFilesAlive_( true )  {
+	: buffer_rank_( file_buf_rank ),
+		last_channel_( 0 ),
+		bSlaveCanOpenFile_( true ),
+		bKeepFilesAlive_( true ),
+		seconds_to_keep_files_alive_( 100 ) {
+
+	if ( seconds_to_keep_files_alive_<=0 ) bKeepFilesAlive_ = false;
+	last_garbage_collection_ = time(NULL);
 #ifdef USEMPI
 	int my_rank;
 	MPI_Comm_rank (MPI_COMM_WORLD, &my_rank );/* get current process id */
 	my_rank_ = my_rank;
 #endif
+
 }
 
 Size const MPI_WIND_DOWN( 1001 );
@@ -66,6 +75,35 @@ MpiFileBuffer::~MpiFileBuffer() {
 	while ( blocked_files_.size() ) {
 		release_file( blocked_files_.front() );
 	}
+	garbage_collection();
+}
+
+void MpiFileBuffer::garbage_collection() {
+	time_t const now( time(NULL) );
+	//tr.Debug << "last garbage collection " << now-lasg_garbage_collection_ " seconds ago" << std::endl;
+	if ( now-last_garbage_collection_ < 30 ) return;
+	tr.Debug << "garbage collection active..." << std::endl;
+	for ( GarbageList::iterator it=garbage_collector_.begin(); it!=garbage_collector_.end(); ) {
+		GarbageList::iterator to_erase( it );
+		++it;
+		tr.Debug << "marked " << to_erase->first << " " << now-to_erase->second << " seconds ago." << std::endl;
+		if ( now-to_erase->second > seconds_to_keep_files_alive_ ) {
+			int channel( to_erase->first );
+			SingleFileBufferOP buf = open_buffers_[ channel ];
+			runtime_assert( buf ); //writing to open file ?
+			if ( !buf->has_open_slaves() ) {
+				tr.Debug << "channel "<< channel
+								 << " has no more open slaves... and has not been touched again --- close via garbage collector" << std::endl;
+				close_file( channel );
+				mem_tr << "closed_channel" << std::endl;
+				garbage_collector_.erase( to_erase );
+			} else {
+				tr.Debug << "channel " << to_erase->first << " has still open slaves ... not closed" << std::endl;
+				it->second = now;
+			}
+		}
+	}
+	last_garbage_collection_ = now;
 }
 
 void MpiFileBuffer::run() {
@@ -118,6 +156,7 @@ void MpiFileBuffer::run() {
 		} else {
 			utility_exit_with_message( "unknown msg-id received in MpiFileBuffer.cc");
 		}
+		garbage_collection();
   }
 #endif
 }
@@ -302,7 +341,8 @@ void MpiFileBuffer::flush_channel( Size slave, Size channel_id ) {
 }
 
 void MpiFileBuffer::close_channel( Size slave, Size channel_id ) {
-	tr.Debug << "close channel for slave " << slave << " channel: " << channel_id << std::endl;
+	tr.Debug << "close channel "<< channel_id <<" for slave " << slave
+					 << " currently " << open_buffers_.size() << " open buffers" << std::endl;
 	SingleFileBufferOP buf = open_buffers_[ channel_id ];
 	runtime_assert( buf ); //writing to open file ?
 	buf->close( slave );
@@ -310,7 +350,11 @@ void MpiFileBuffer::close_channel( Size slave, Size channel_id ) {
 		tr.Debug << "channel has no more open slaves... close completely now" << std::endl;
 		close_file( channel_id );
 		mem_tr << "closed_channel" << std::endl;
+	} else {
+		tr.Debug << "mark channel " << channel_id << " for closing in " << seconds_to_keep_files_alive_ << std::endl;
+		garbage_collector_[ channel_id ]=time(NULL);
 	}
+	tr.Debug << "currently " << open_buffers_.size() << " open buffers" << std::endl;
 }
 
 bool MpiFileBuffer::close_file( std::string filename ) {

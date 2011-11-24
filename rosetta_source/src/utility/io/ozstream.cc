@@ -42,20 +42,20 @@ ozstream::open_append_if_existed( std::string const& filename_a, std::stringstre
 #ifdef USEMPI
 		//		std::cout << "MPI_Reroute " << (bMPI_reroute_stream_ ? " active " : " not-active ") << std::endl;
 	if ( bMPI_reroute_stream_ ) { // this is switched via call to static function enable_MPI_reroute()
-			mpi_stream_p_ = new mpi_stream::mpi_ostream( filename_a, mpi_FileBuf_master_rank_, preprinted_header, true );
-			if ( ( !mpi_stream_p_ ) || ( !( *mpi_stream_p_ ) ) ) {
-				compression_ = NONE;
-			} else 	compression_ = UNCOMPRESSED;
-			return;
-		}
+		mpi_stream_p_ = new mpi_stream::mpi_ostream( filename_a, mpi_FileBuf_master_rank_, preprinted_header, true );
+		if ( ( !mpi_stream_p_ ) || ( !( *mpi_stream_p_ ) ) ) {
+			compression_ = NONE;
+		} else 	compression_ = UNCOMPRESSED;
+		return;
+	}
 #endif
 
-		if ( !utility::file::file_exists( filename_a ) ) {
-			open( filename_a );
-			if ( good() ) (*this) << preprinted_header.str();
-		} else {
-			open_append( filename_a );
-		}
+	if ( !utility::file::file_exists( filename_a ) ) {
+		open( filename_a );
+		if ( good() ) (*this) << preprinted_header.str();
+	} else {
+		open_append( filename_a );
+	}
 }
 
 /// @brief Open a file
@@ -74,9 +74,9 @@ ozstream::open(
 
 	#ifdef NATCL
 		utility::Inline_File_Provider *provider = utility::Inline_File_Provider::get_instance();
-		
+
 		if(!provider->get_ostream( filename_a , &file_provider_stream )){
-			 std::cerr << "Cannot find inline file: " << filename_a << std::endl;	
+			 std::cerr << "Cannot find inline file: " << filename_a << std::endl;
 			 file_provider_stream = &bad_stream;
 			 file_provider_stream->setstate( ios_base::failbit | ios_base::badbit );
 		}
@@ -93,7 +93,7 @@ ozstream::open(
 		//		std::cout << "MPI_Reroute " << (bMPI_reroute_stream_ ? " active " : " not-active ") << std::endl;
 		if ( bMPI_reroute_stream_ ) {
 			std::stringstream no_header;
-			mpi_stream_p_ = new mpi_stream::mpi_ostream( filename_, mpi_FileBuf_master_rank_, no_header );
+			mpi_stream_p_ = new mpi_stream::mpi_ostream( filename_, mpi_FileBuf_master_rank_, no_header, open_mode & ios::app );
 			if ( ( !mpi_stream_p_ ) || ( !( *mpi_stream_p_ ) ) ) {
 				compression_ = NONE;
 			} else {

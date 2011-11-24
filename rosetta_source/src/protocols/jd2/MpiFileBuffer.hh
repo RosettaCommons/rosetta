@@ -45,6 +45,8 @@ namespace jd2 {
 class MpiFileBuffer { //this has to be singleton...
 	typedef std::map< std::string, core::Size > Filenames;
 	typedef std::map< int, SingleFileBufferOP > Buffers;
+	typedef std::pair< time_t, int > TimeStampedChannel;
+	typedef std::map< int, time_t > GarbageList;
 public:
 	MpiFileBuffer( core::Size file_buf_rank_ );
 	virtual ~MpiFileBuffer();
@@ -69,6 +71,7 @@ public:
 	void set_SlaveCanOpenFile( bool setting = true ) {
 		bSlaveCanOpenFile_ = setting ;
 	}
+	void garbage_collection();
 
 protected:
 	virtual SingleFileBufferOP generate_new_channel( std::string const& filename, core::Size channel, bool append, core::Size& status ) = 0;
@@ -83,8 +86,10 @@ private:
 	// dormant files will never be closed...
 	bool bSlaveCanOpenFile_;
 	bool bKeepFilesAlive_; //don't close files when no slaves want to write... probably speed up because not always reading from start
+	time_t seconds_to_keep_files_alive_;
 	bool bStop_;
-
+	GarbageList garbage_collector_;
+	time_t last_garbage_collection_;
 	std::list< std::string > blocked_files_;
 };
 
