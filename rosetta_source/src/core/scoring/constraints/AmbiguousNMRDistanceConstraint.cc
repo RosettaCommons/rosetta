@@ -155,7 +155,7 @@ void parse_NMR_name( std::string name, core::Size res, AmbiguousNMRDistanceConst
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HD2", res ), pose ) );
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HD2", res ), pose ) );
 		if ( aa == aa_leu ) atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "3HD2", res ), pose ) );
-	} else if ( name == "QQD" && aa == aa_leu ) {
+	} else if ( ( name == "QQD" || name == "QD" ) && aa == aa_leu ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HD2", res ), pose ) );
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HD2", res ), pose ) );
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "3HD2", res ), pose ) );
@@ -318,6 +318,25 @@ void parse_NMR_name( std::string name, core::Size res, AmbiguousNMRDistanceConst
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HE2", res ), pose ) );
 	} else if ( name == "HE22" ) {
 		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HE2", res ), pose ) );
+	} else if ( name == "HH11" ) {
+		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HH1", res ), pose ) );
+	} else if ( name == "HH12" ) {
+		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HH1", res ), pose ) );
+	} else if ( name == "HH21" ) {
+		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HH2", res ), pose ) );
+	} else if ( name == "HH22" ) {
+		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HH2", res ), pose ) );
+	} else if ( (name == "HH1" || name == "QH1" ) && aa == aa_arg ) {
+		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HH1", res ), pose ) );
+		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HH1", res ), pose ) );
+	} else if ( (name == "HH2" || name == "QH2" ) && aa == aa_arg ) {
+		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HH2", res ), pose ) );
+		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HH2", res ), pose ) );
+	} else if ( (name == "HH" || name == "QQH" ) && aa == aa_arg ) {
+		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HH1", res ), pose ) );
+		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HH1", res ), pose ) );
+		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "1HH2", res ), pose ) );
+		atoms.push_back( named_atom_id_to_atom_id( NamedAtomID( "2HH2", res ), pose ) );
 	} else {
 		tr.Trace << "adding " << id::NamedAtomID( name, res ) << " "
 						 << pose.residue_type( res ).name3() << std::endl;
