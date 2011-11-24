@@ -34,7 +34,9 @@
 // C++ headers
 #include <cassert>
 #include <cmath>
-
+#ifdef GL_GRAPHICS
+	#include <numeric/xyz.functions.hh>
+#endif
 
 namespace numeric {
 
