@@ -26,8 +26,8 @@
 // mini headers
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-
 #include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/sequence/AnnotatedSequence.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -141,7 +141,7 @@ namespace silent {
 		}
 
 		/// @brief returns the sequence associated with this SilentStruct.
-		std::string sequence() const {
+		core::sequence::AnnotatedSequence const& sequence() const {
 			return sequence_;
 		}
 
@@ -156,7 +156,7 @@ namespace silent {
 		}
 
 		/// @brief sets the sequence for this SilentStruct.
-		void sequence( std::string sequence ) {
+		void sequence( core::sequence::AnnotatedSequence const& sequence ) {
 			sequence_ = sequence;
 		}
 
@@ -271,11 +271,23 @@ namespace silent {
 
 		virtual core::Size mem_footprint() const { return 0; }
 
+	protected:
+
+		///@ brief helper to detect fullatom input
+		// performs logical operation on fullatom and not_defined:
+		// if residue is patched we cannot tell -- no change to fullatom and not_defined
+		// if residue is not patched and is protein we do the following:
+		// if it has 7 or 8 atoms -- no change to fullatom and not_defined
+		// otherwise: well_defined = true;
+		// if this residue has > 8 atoms: fullatom = true
+		// if this residue has <= 6 atoms: fullatom = false
+		void detect_fullatom( core::Size pos, core::Size natoms, bool &fullatom, bool& well_defined );
+
 	private:
 		bool strict_column_mode_;
 		Size nres_;
 		std::string decoy_tag_;
-		std::string sequence_;
+		core::sequence::AnnotatedSequence sequence_;
 
 		// output-related data
 		std::map< std::string, std::string > silent_comments_;

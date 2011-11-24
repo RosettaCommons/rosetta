@@ -315,7 +315,6 @@ utility::vector1< SequenceAlignment > read_aln(
 	}
 	tr.Debug << "read " << retval.size() << " alignments from file " << filename
 		<< " with format " << format << "." << std::endl;
-
 	return retval;
 }
 
@@ -349,8 +348,12 @@ utility::vector1< SequenceAlignment > read_general_aln(
 			current->add_sequence( new_seq );
 		}
 	} // while
-	if ( current->size() > 0 ) alignments.push_back( *current );
-
+	if ( current->size() > 0 ) {
+		if ( tr.Trace.visible() ) {
+			tr.Trace << "have read alignment\n" << *current << std::endl;
+		}
+		alignments.push_back( *current );
+	}
 	return alignments;
 } // read_general_aln
 

@@ -24,6 +24,7 @@
 #include <core/sequence/Sequence.fwd.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/sequence/SequenceAlignment.hh>
+#include <core/sequence/AnnotatedSequence.hh>
 
 // AUTO-REMOVED #include <numeric/random/random.hh>
 
@@ -76,8 +77,30 @@ SequenceUtilTests() {}
 
 // Shared initialization goes here.
 void setUp() {
-	core_init();
+	core_init_with_additional_options("-mute core.io.pdb");
 }
+
+void test_annotated_sequence() {
+	using core::Size;
+	using namespace core::sequence;
+
+	AnnotatedSequence seq1( "L[LEU_p:NtermProteinFull]KHSISKSGFKQ[GLN_p:CtermProteinFull]M[MET_p:NtermProteinFull]ESKRNKNIRVTTPKRHIDIH[HIS_p:CtermProteinFull]");
+	std::string control_sequence( "LKHSISKSGFKQMESKRNKNIRVTTPKRHIDIH" );
+
+	TR.Info << seq1 << std::endl;
+	TR.Info << seq1.one_letter_sequence() << std::endl;
+
+	TS_ASSERT_EQUALS( seq1.one_letter_sequence(), control_sequence );
+	TS_ASSERT( seq1.is_patched( 1 ) );
+	TS_ASSERT( !seq1.is_patched( 5 ) );
+	TS_ASSERT( seq1.is_patched( 12 ) );
+	TS_ASSERT( seq1.is_patched( 13 ) );
+	TS_ASSERT( !seq1.is_patched( 14 ) );
+	TS_ASSERT_EQUALS( seq1.patch_str( 12 ), "GLN_p:CtermProteinFull" );
+	TS_ASSERT_EQUALS( seq1.patch_str( 1 ), "LEU_p:NtermProteinFull" );
+	TS_ASSERT_EQUALS( seq1.one_letter( 12 ), 'Q' );
+}
+
 
 void test_naive_alignment() {
 	using core::Size;

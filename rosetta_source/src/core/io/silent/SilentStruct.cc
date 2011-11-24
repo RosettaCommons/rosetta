@@ -59,6 +59,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreTypeManager.hh>
 
+
 //#ifdef BOINC
 //#include <protocols/boinc/boinc.hh>
 //#endif
@@ -69,6 +70,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
+#include <core/sequence/AnnotatedSequence.hh>
+
 #include <ObjexxFCL/format.hh>
 
 
@@ -772,6 +775,9 @@ std::string SilentStruct::scoreline_prefix() const {
 
 std::string
 SilentStruct::one_letter_sequence() const {
+	return sequence().one_letter_sequence();
+}
+/*
 	//using core::pose::annotated_to_oneletter_sequence;
 	//return core::pose::annotated_to_oneletter_sequence( sequence () );
 	std::string annotated_seq = sequence();
@@ -795,6 +801,36 @@ SilentStruct::one_letter_sequence() const {
 	}
 	runtime_assert( ! in_bracket );
 	return sequence;
+}
+*/
+
+///@ brief helper to detect fullatom input
+///@ detail
+//* removing dependendence from input flag -in:file:Fullatom which made no sense, since reading inconsistent
+//* will break anyhow... moreover the test was wrong before: GLY and ALA have 7 or 10 atoms respectively.
+// strategy to dectet fullatom-ness now:
+//   look only at unpatched residues -- check for protein...
+//      (no modification in annotated sequence )
+//
+//       centroid: GLY 6 atoms, all others 7 atoms
+//          centroid_HA patch: +1 (without showing up as "patched" residue in annotated sequence... )
+//    -> natoms>=9 on unpatched proteins residue should indicate fullatom
+//  if it remains unclear --> use the cmd-line flag to determine fullatom-ness...
+//
+void SilentStruct::detect_fullatom( core::Size pos, core::Size natoms, bool& fullatom, bool& well_defined ) {
+	if ( sequence().is_patched( pos ) ) return;
+	if ( sequence().aa( pos ) > core::chemical::num_canonical_aas ) return;
+	//	if ( well_defined ) return; // no more checks necessary
+	//okay an unpatched regular aminoacid
+	if ( natoms <= 6 ) {
+		well_defined=true;
+		fullatom=false;
+		tr.Debug << "found less than 7 atoms on " << sequence().one_letter( pos ) << " switch to centroid mode" << std::endl;
+	} else if ( natoms>=9 ) {
+		tr.Debug << "found " << natoms << " atoms (more than 8) on " << sequence().one_letter( pos ) << " switch to fullatom mode" << std::endl;
+		well_defined=true;
+		fullatom=true;
+	}
 }
 
 } // namespace silent

@@ -26,14 +26,15 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <core/io/silent/SilentFileData.hh>
-// AUTO-REMOVED #include <core/io/silent/BinaryProteinSilentStruct.hh>
+#include <core/io/silent/BinaryProteinSilentStruct.hh>
+
 #include <core/pose/Pose.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 // AUTO-REMOVED #include <numeric/random/random.hh>
-// AUTO-REMOVED #include <utility/file/file_sys_util.hh>
+#include <utility/file/file_sys_util.hh>
 
 //Auto Headers
 #include <core/io/silent/EnergyNames.fwd.hh>
@@ -45,14 +46,14 @@ static basic::Tracer TR("test.core.io.silent.protein_silent");
 
 using namespace core;
 
-class Binary_Protein_Silent_File_Tests : public CxxTest::TestSuite
-{
+class BinaryProteinSilentTests : public CxxTest::TestSuite {
+
 public:
-	Binary_Protein_Silent_File_Tests() {};
+	BinaryProteinSilentTests() {};
 
 	// Shared initialization goes here.
 	void setUp() {
-		core_init_with_additional_options( "-in::file::silent_struct_type binary -in::file::fullatom" );
+		core_init_with_additional_options( "-mute core.io.pdb -mute core.conformation -in::file::fullatom" );
 
 		// Residue definitions can't be supplied on the command line b/c
 		// the ResidueTypeSet is already initialized.
@@ -73,8 +74,47 @@ public:
 	}
 
 
-void test_save_and_restore()
-{
+	void test_save_and_restore_centroid() {
+		using namespace core::chemical;
+		ResidueTypeSetCAP	cen_rsd_set =
+			core::chemical::ChemicalManager::get_instance()->residue_type_set(
+				"centroid"
+			);
+		pose::Pose ref_pose, restored_pose;
+		core::import_pose::pose_from_pdb( ref_pose, *cen_rsd_set, "core/io/bin_silentfile_test.pdb");
+		double rms_threshold = 1e-2;
+		double score_threshold = 1e-1;
+		TS_ASSERT( !ref_pose.is_fullatom() );
+		// Read the ProteinSilentStruct from the silent-file
+		core::io::silent::SilentFileData sfd;
+		std::string const silent_outfile( "core/io/bin_silentfile_centroid.out" ); // read file w/ non-ideal geometry
+
+		core::io::silent::BinaryProteinSilentStruct pss( ref_pose, "tag" );
+		sfd.write_silent_struct( pss, silent_outfile );
+
+		sfd.read_file(silent_outfile);
+		TS_ASSERT( sfd.size() > 0 );
+		core::io::silent::SilentFileData::iterator iter = sfd.begin();
+		iter->fill_pose( restored_pose );
+		TS_ASSERT( !restored_pose.is_fullatom() );
+		// test rms difference
+		Real rms_to_restored = scoring::CA_rmsd( ref_pose, restored_pose );
+		TR << "RMS error from centroid save/restore: " << rms_to_restored << std::endl;
+		TS_ASSERT( rms_to_restored < rms_threshold );
+
+		// test score13 difference
+		core::scoring::ScoreFunctionOP scorefxn =
+			core::scoring::ScoreFunctionFactory::create_score_function( "score3" );
+		Real score_ref = (*scorefxn)(ref_pose);
+		Real score_restored = (*scorefxn)(restored_pose);
+		Real score_del = std::fabs( score_restored - score_ref );
+		TR << "Score difference: " << score_del << std::endl;
+		TS_ASSERT( score_del < score_threshold );
+		utility::file::file_delete( silent_outfile );
+	}
+
+	void test_save_and_restore()
+	{
 	double rms_threshold = 1e-2;
 	double score_threshold = 1e-1;
 
@@ -82,10 +122,13 @@ void test_save_and_restore()
 	core::chemical::ResidueTypeSetCAP rsd =
 			core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD );
 	core::import_pose::pose_from_pdb( ref_pose, *rsd, std::string("core/io/bin_silentfile_test.pdb"));
-
-	// Read the ProteinSilentStruct from the silent-file
+	std::string const silent_outfile( "core/io/bin_silentfile_test.out" ); // read file w/ non-ideal geometry
 	core::io::silent::SilentFileData sfd;
-	sfd.read_file( "core/io/bin_silentfile_test.out" ); // read file w/ non-ideal geometry
+	core::io::silent::BinaryProteinSilentStruct pss( ref_pose, "tag" );
+	sfd.write_silent_struct( pss, silent_outfile );
+	// Read the ProteinSilentStruct from the silent-file
+
+	sfd.read_file( silent_outfile );
 	TS_ASSERT( sfd.size() > 0 );
 	core::io::silent::SilentFileData::iterator iter = sfd.begin();
 	iter->fill_pose( restored_pose, *rsd );
@@ -103,6 +146,7 @@ void test_save_and_restore()
 	Real score_del = std::fabs( score_restored - score_ref );
 	TR << "Score difference: " << score_del << std::endl;
 	TS_ASSERT( score_del < score_threshold );
+	utility::file::file_delete( silent_outfile );
 
 }
 

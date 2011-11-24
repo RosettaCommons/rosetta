@@ -51,7 +51,6 @@ public:
 		bool fa = false
 	) : fullatom_( fa )
 	{
-		fullatom_ = true;
 		bJumps_use_IntraResStub_ = false;
 		symminfo_ = new core::conformation::symmetry::SymmetryInfo();
 		symminfo_->set_use_symmetry(false);

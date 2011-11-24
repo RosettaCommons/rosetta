@@ -81,24 +81,32 @@ static basic::Tracer TR("test.core.io.silent.protein_silent");
 
 using namespace core;
 
-class ProteinSilentStructTests : public CxxTest::TestSuite {
+class ProteinSilentTests : public CxxTest::TestSuite {
 public:
-	ProteinSilentStructTests() {}
+	ProteinSilentTests() {}
 
 	// shared data
 	pose::PoseOP start_pose;
 	core::chemical::ResidueTypeSetCAP	rsd_set;
 
+	pose::PoseOP centroid_pose_;
+	core::chemical::ResidueTypeSetCAP	cen_rsd_set_;
+
 	// Shared initialization goes here.
 	void setUp() {
-		core_init();
+		core_init_with_additional_options( "-mute core.io.pdb -mute core.conformation");
 
-		start_pose = core::import_pose::pose_from_pdb("core/io/test_in_idealized.pdb");
-		
 		rsd_set =
 			core::chemical::ChemicalManager::get_instance()->residue_type_set(
 				"fa_standard"
 			);
+		cen_rsd_set_ =
+			core::chemical::ChemicalManager::get_instance()->residue_type_set(
+				"centroid"
+			);
+		start_pose = core::import_pose::pose_from_pdb("core/io/test_in_idealized.pdb");
+		centroid_pose_ = core::import_pose::pose_from_pdb(*cen_rsd_set_, "core/io/test_in_idealized.pdb");
+
 	}
 
 	// Shared finalization goes here.
@@ -354,4 +362,57 @@ public:
 		get_comment(pose,"comment",retval);
 		TS_ASSERT_EQUALS( ss->get_comment("comment"), retval );
 	}
-}; // ProteinSilentStructTests
+
+void test_save_and_restore_centroid() {
+		using namespace core::io::silent;
+
+		// configuration information for tests
+		double const RMS_ERROR( 1e-3 );
+		double const CHI_ERROR( 1e-2 );
+		double const BB_ERROR ( 1e-2 );
+		std::string const silent_outfile( "test.silent_centroid.out" );
+		pose::Pose restored_pose;
+
+		utility::file::file_delete( silent_outfile );
+
+		core::io::silent::SilentFileData sfd;
+
+		core::io::silent::ProteinSilentStruct pss( *centroid_pose_, "tag", true );
+		sfd.write_silent_struct( pss, silent_outfile );
+
+		TS_ASSERT( !(centroid_pose_->is_fullatom()) );
+		sfd.read_file( silent_outfile );
+		core::io::silent::SilentFileData::iterator iter = sfd.begin();
+		TS_ASSERT( iter->decoy_tag() == "tag" );
+		iter->fill_pose( restored_pose );
+
+		TS_ASSERT( !restored_pose.is_fullatom() )
+		TS_ASSERT( centroid_pose_->total_residue() == restored_pose.total_residue() );
+		for ( Size seqpos = 1; seqpos <= restored_pose.total_residue(); ++seqpos ) {
+			TS_ASSERT_DELTA(
+				centroid_pose_->phi( seqpos ), restored_pose.phi( seqpos ),
+				BB_ERROR
+			);
+			TS_ASSERT_DELTA(
+				centroid_pose_->psi( seqpos ), restored_pose.psi( seqpos ),
+				BB_ERROR
+			);
+			TS_ASSERT_DELTA(
+				centroid_pose_->omega( seqpos ), restored_pose.omega( seqpos ),
+				BB_ERROR
+			);
+		}
+
+		core::io::silent::ProteinSilentStruct original( *centroid_pose_, "start", false );
+		original.fill_pose( *centroid_pose_ );
+
+		Real rms_to_restored = scoring::CA_rmsd( *centroid_pose_, restored_pose );
+		TR << "RMS error from save/restore: " << rms_to_restored << std::endl;
+		TS_ASSERT( rms_to_restored < RMS_ERROR );
+
+		utility::file::file_delete( silent_outfile );
+	} // test_save_and_restore
+
+
+
+}; // ProteinSilentTests

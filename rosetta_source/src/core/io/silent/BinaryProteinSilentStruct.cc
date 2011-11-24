@@ -90,7 +90,7 @@ BinaryProteinSilentStruct::BinaryProteinSilentStruct( Size const nres_in )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	fullatom_    = option[ in::file::fullatom ]();
+	fullatom_    = false;
 	bJumps_use_IntraResStub_ = false;
 	nres  ( nres_in );
 	resize( nres_in );
@@ -103,7 +103,7 @@ BinaryProteinSilentStruct::BinaryProteinSilentStruct()
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	fullatom_    = option[ in::file::fullatom ]();
+	fullatom_    = false;
 	bJumps_use_IntraResStub_ = false;
 	nres( 0 );
 	decoy_tag( "empty" );
@@ -305,6 +305,8 @@ bool BinaryProteinSilentStruct::init_from_lines(
 
 	int currpos = 1;
 	bool bitflip = false;
+	fullatom_ = false; //start with fullatom_ false and update to true as soon as a residue with too many atoms is read...
+	bool fullatom_well_defined = false;
 	for ( utility::vector1< std::string >::const_iterator end = lines.end();
 				iter != end; ++iter ) {
 		std::string tag;
@@ -437,7 +439,7 @@ bool BinaryProteinSilentStruct::init_from_lines(
 					swap4_aligned ( (void*) &(atm_buff[1][0]) , 3*natoms );
 				}
 			}
-			if ( natoms > 10 && !(option[ in::file::fullatom ].user() ) ) fullatom_ = true;
+			detect_fullatom( currpos, natoms, fullatom_, fullatom_well_defined );
 			atm_coords_[currpos].resize( natoms ); // allocate space for coords
 			for (int j=1; j<=natoms; ++j) {
 				atm_coords_[currpos][j] = atm_buff[j];
@@ -479,7 +481,7 @@ bool BinaryProteinSilentStruct::init_from_lines(
 	}
 
 	//tr.Debug << "(TEX) FOLD TREE: " << fold_tree();
-
+	if ( !fullatom_well_defined ) fullatom_ = option[ in::file::fullatom ]();
 	return true;
 } // init_from_lines
 
