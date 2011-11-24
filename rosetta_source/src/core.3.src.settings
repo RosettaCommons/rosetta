@@ -469,6 +469,7 @@ sources = {
 
 	"core/sequence" : [
 		"util",
+                "AnnotatedSequence",
 		"DP_Matrix",
 		"Aligner",
 		"NWAligner",
