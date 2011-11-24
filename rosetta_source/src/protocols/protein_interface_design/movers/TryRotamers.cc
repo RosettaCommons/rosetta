@@ -131,31 +131,30 @@ TryRotamers::apply ( pose::Pose & pose )
 
 	pose.update_residue_neighbors();
 
- if( !rotset_ || rotset_->num_rotamers() == 0 )
-  {
-	PackerTaskOP ptask( TaskFactory::create_packer_task( pose ) );
-	ptask->set_bump_check( clash_check_ );
+ if ( !rotset_ || rotset_->num_rotamers() == 0 ) {
+	 PackerTaskOP ptask( TaskFactory::create_packer_task( pose ) );
+	 ptask->set_bump_check( clash_check_ );
 
-	ResidueLevelTask & restask( ptask->nonconst_residue_task( resnum_ ) );
-	graph::GraphOP packer_graph = new graph::Graph( pose.total_residue() );
-		  restask.or_ex1( true );
-      restask.or_ex2( true );
-      restask.or_ex3( true );
-      restask.or_ex4( true );
-			if( explosion_ > 0 ) restask.or_ex1_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
-			if( explosion_ > 1	) restask.or_ex2_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
-			if( explosion_ > 2	) restask.or_ex3_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
-			if( explosion_ > 3	) restask.or_ex4_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
-			restask.or_include_current( true );
+	 ResidueLevelTask & restask( ptask->nonconst_residue_task( resnum_ ) );
+	 graph::GraphOP packer_graph = new graph::Graph( pose.total_residue() );
+	 restask.or_ex1( true );
+	 restask.or_ex2( true );
+	 restask.or_ex3( true );
+	 restask.or_ex4( true );
+	 if( explosion_ > 0 ) restask.or_ex1_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
+	 if( explosion_ > 1	) restask.or_ex2_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
+	 if( explosion_ > 2	) restask.or_ex3_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
+	 if( explosion_ > 3	) restask.or_ex4_sample_level(core::pack::task::EX_FOUR_HALF_STEP_STDDEVS);
+	 restask.or_include_current( true );
 
 	 restask.restrict_to_repacking();
-	RotamerSetFactory rsf;
-	rotset_ = rsf.create_rotamer_set( res_ );
+	 RotamerSetFactory rsf;
+	 rotset_ = rsf.create_rotamer_set( res_ );
 
-	rotset_->set_resid( resnum_ );
-	rotset_->build_rotamers( pose, *scorefxn_, *ptask, packer_graph, false );
-	rotamer_it_ = rotset_->begin();
-	TR<<"building rotamer set of " <<rotset_->num_rotamers()<< " different rotamers ...\n";
+	 rotset_->set_resid( resnum_ );
+	 rotset_->build_rotamers( pose, *scorefxn_, *ptask, packer_graph, false );
+	 rotamer_it_ = rotset_->begin();
+	 TR<<"building rotamer set of " <<rotset_->num_rotamers()<< " different rotamers ...\n";
 
 	}//end building rotamer set
 
