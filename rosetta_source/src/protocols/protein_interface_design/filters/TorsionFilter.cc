@@ -49,7 +49,9 @@ Torsion::apply(core::pose::Pose const & pose ) const
 			if( torsion() == "phi" || torsion() == "" )
 				TR<<" phi "<<pose.phi( i )<<'\t';
 			if( torsion() == "psi" || torsion() == "" )
-				TR<<" psi "<<pose.psi( i )<<std::endl;
+				TR<<" psi "<<pose.psi( i )<<'\t';
+			if( torsion() == "omega" || torsion() == "" )
+				TR<<" omega "<<pose.omega( i )<<std::endl;
 		}
 		return true;
 	}
@@ -77,6 +79,7 @@ Torsion::compute( core::pose::Pose const & p ) const{
 	if( resnum() > 0 ){
 		if( torsion() == "phi" ) return p.phi( resnum() );
 		if( torsion() == "psi" ) return p.psi( resnum() );
+		if( torsion() == "omega" ) return p.omega( resnum() );
 	}
 }
 

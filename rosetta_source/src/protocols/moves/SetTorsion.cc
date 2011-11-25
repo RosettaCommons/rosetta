@@ -80,12 +80,17 @@ SetTorsion::SetTorsion() :
 void SetTorsion::apply( Pose & pose ) {
 	runtime_assert( resnum() > 0 );
 	runtime_assert( resnum() <= pose.total_residue() );
-	runtime_assert( torsion_name() == "phi" || torsion_name() == "psi" );
+	runtime_assert( torsion_name() == "omega"  || torsion_name() == "phi" || torsion_name() == "psi" );
 
 	if( torsion_name() == "phi" )
 		pose.set_phi( resnum(), angle() );
 	else if( torsion_name() == "psi" )
 		pose.set_psi( resnum(), angle() );
+	else if( torsion_name() == "omega" )
+		pose.set_omega( resnum(), angle() );
+
+	TR<<"Set "<<resnum()<<"'s "<<torsion_name()<<" to "<<angle()<<std::endl;
+	pose.update_residue_neighbors();
 }
 
 std::string
