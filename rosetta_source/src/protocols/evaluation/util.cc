@@ -111,6 +111,7 @@ void register_options() {
 	OPT( evaluation::pool );
 	OPT( evaluation::constraints );
 	OPT( in::file::native );
+	OPT( evaluation::chemical_shifts );
 }
 
 void invert_include_residues( Size nres, core::scoring::ResidueSelectionVector const& include_list, core::scoring::ResidueSelectionVector& exclude_list ) {

@@ -262,7 +262,7 @@ public:
 	Real  nrchi_probability() const { assert( nrchi_sample_ ); return nrchi_probability_; }
 
 	void  assign_random_chi( utility::vector1< Real > & chi_angles, numeric::random::RandomGenerator & RG, core::Real factor=1.0) const;
-	Real  chi_probability( utility::vector1< Real > const & chi_angles ) const;
+	Real  chi_probability( utility::vector1< Real > const & chi_angles, core::Real factor=1.0 ) const;
 
 private:
 	bool  nrchi_sample_; /// Does this sample describe a semi-rotameric residue?

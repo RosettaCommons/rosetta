@@ -12,6 +12,10 @@ sources = {
         "init",
     ],
 
+    "devel/coupled_sidechains" : [
+        "CoupledSidechainProtocol2",
+    ],
+
 	"devel/cartesian_frags" : [
 		"SafeID",
 		"CartesianFragment",

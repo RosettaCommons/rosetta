@@ -387,7 +387,7 @@ DockingProtocol::init_from_options()
 	// Defaults to 0
 	if( option[ OptionKeys::constraints::cst_weight ].user() ) {
 		set_cst_weight(option[ OptionKeys::constraints::cst_weight ]());
-    }
+	}
 
 	// Defaults to false
 	set_use_constraints( option[ OptionKeys::constraints::cst_file ].user() );

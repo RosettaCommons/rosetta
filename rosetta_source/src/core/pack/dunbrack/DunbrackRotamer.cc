@@ -54,6 +54,7 @@
 // AUTO-REMOVED #include <fstream>
 
 #include <basic/Tracer.hh>
+#include <basic/basic.hh>
 
 #include <core/chemical/ResidueType.hh>
 #include <utility/vector1.hh>
@@ -336,7 +337,7 @@ void
 DunbrackRotamerSampleData::assign_random_chi(
 	utility::vector1< Real > & chi_angles,
 	numeric::random::RandomGenerator & RG,
-	core::Real factor //yuan, 02/06/10, this factor is for generating dunbrack distribution at different temperature, default = 1
+	core::Real temperature /* scale distributions like a temperature,  default 1.0 = is xray temperature */
 ) const
 {
 	assert( chi_angles.size() >= nchi() );
@@ -346,23 +347,24 @@ DunbrackRotamerSampleData::assign_random_chi(
 			// nonrotameric chi angles not currently supported
 			assert( false );
 		} else {
-			chi_angles[ ii ] = chi_mean_[ii] + RG.gaussian() * chi_sd_[ii] * factor;
+			chi_angles[ ii ] = basic::periodic_range( chi_mean_[ii] + RG.gaussian() * chi_sd_[ii] * temperature, 360.0 );
 		}
 	}
 
 	// set any remaining chi uniformly (proton chi)
 	for ( core::Size ii = nchi()+1; ii <= chi_angles.size(); ++ii ) {
-		chi_angles[ ii ] = RG.uniform()*360.0 - 180.0;
+		chi_angles[ ii ] = basic::periodic_range( RG.uniform()*360.0 - 180.0, 360.0 );
 	}
 }
 
 Real
 DunbrackRotamerSampleData::chi_probability(
-	utility::vector1< Real > const & chi_angles
+  utility::vector1< Real > const & chi_angles,
+	core::Real temperature /* scale distributions like a temperature, default 1.0 = is xray temperature */
 ) const
 {
 	assert( chi_angles.size() >= nchi() );
-
+	Real const norm_gauss( std::sqrt( numeric::constants::r::pi_2 ) );
 	Real prob(1);
 
 	for ( Size ii = 1; ii <= nchi(); ++ii ) {
@@ -372,8 +374,9 @@ DunbrackRotamerSampleData::chi_probability(
 		} else {
 			// Gaussian function with area 1 for rotameric angles
 			Real const angle_diff( chi_mean_[ii] - numeric::nearest_angle_degrees( chi_angles[ii], chi_mean_[ii] ) );
-			Real const variance( chi_sd_[ii]*chi_sd_[ii] );
-			prob *= std::exp( -(angle_diff*angle_diff)/(2*variance) ) / std::sqrt( numeric::constants::r::pi_2*variance ) ;
+			Real const sd ( chi_sd_[ii] * temperature );
+			Real const variance( sd*sd );
+			prob *= std::exp( -(angle_diff*angle_diff)/(2*variance) ) / sd / norm_gauss;
 		}
 	}
 

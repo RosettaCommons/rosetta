@@ -592,6 +592,11 @@ public: // Properties
 		short_description_ = sd;
 	}
 
+	inline void	description(std::string const & sd )
+	{
+		description_ = sd;
+	}
+
 
 	/// @brief Legal or inactive default value?
 	inline
