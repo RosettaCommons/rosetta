@@ -83,6 +83,7 @@ public:
 	Mover( std::string const & type_name );
 
 	Mover( Mover const & other );
+	Mover& operator=( Mover const& other );
 
 
 	virtual core::Real last_proposal_density_ratio() {return 1;} //ek added 2/25/10

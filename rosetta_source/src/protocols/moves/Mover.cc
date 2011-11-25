@@ -25,6 +25,7 @@
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 // AUTO-REMOVED #include <utility/tag/Tag.hh>  // REQUIRED FOR WINDOWS
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
+#include <protocols/jobdist/Jobs.hh>
 
 // tracer
 #include <basic/Tracer.hh>
@@ -77,8 +78,23 @@ Mover::Mover( Mover const & other ) :
 	current_tag_( other.current_tag_ ),
 	input_pose_(other.input_pose_),
 	native_pose_(other.native_pose_),
-	last_status_( other.last_status_ )
+	last_status_( other.last_status_ ),
+	current_job_( other.current_job_ )
 {}
+
+
+///@brief assignment operator
+Mover& Mover::operator=( Mover const & rhs ) {
+	//abort self-assignment
+	if (this == &rhs) return *this;
+	type_ = rhs.type_;
+	current_tag_ = rhs.current_tag_;
+	input_pose_ = rhs.input_pose_;
+	native_pose_ = rhs.native_pose_;
+	last_status_ = rhs.last_status_;
+	current_job_ = rhs.current_job_;
+	return *this;
+}
 
 PoseCOP
 Mover::get_input_pose() const { return input_pose_; }
