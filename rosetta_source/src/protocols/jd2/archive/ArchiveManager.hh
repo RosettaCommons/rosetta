@@ -198,7 +198,7 @@ public:
 public:
 	static void register_options();
 
-  void go();
+  void go( ArchiveBaseOP );
 
 	Batch& start_new_batch( core::io::silent::SilentStructOPs const& start_decoys );
 	Batch& start_new_batch();

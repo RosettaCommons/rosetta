@@ -66,7 +66,7 @@ public:
 		FINISHED //keep last
 	};
 
-	IterativeBase( jd2::archive::ArchiveManagerAP ptr, std::string name );
+	IterativeBase(std::string name );
 	~IterativeBase();
 
 	///@brief archive is finished when at last stage

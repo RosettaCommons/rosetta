@@ -81,8 +81,8 @@ namespace protocols {
 namespace abinitio {
 using namespace jd2::archive;
 
-IterativeFullatom::IterativeFullatom( jd2::archive::ArchiveManagerAP ptr )
-	: IterativeBase( ptr, "fullatom_pool" )
+IterativeFullatom::IterativeFullatom()
+	: IterativeBase( "fullatom_pool" )
 {
 	set_stage( LAST_CENTROID_START );
 	set_finish_stage( FINISHED );

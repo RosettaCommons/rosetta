@@ -68,10 +68,9 @@ void protocols::abinitio::IterativeAbrelax::register_options() {
 	ArchiveManager::register_options();
 }
 
-IterativeAbrelax::IterativeAbrelax( jd2::archive::ArchiveManagerAP ptr )
-	: Parent( ptr, "abstract" ),
-		centroid_archive_( ptr, &fullatom_archive_ ),
-		fullatom_archive_( ptr ),
+IterativeAbrelax::IterativeAbrelax()
+	: Parent( "abstract" ),
+		centroid_archive_(&fullatom_archive_ ),
 		fullatom_( false )
 {
 	fullatom_ = option[ iterative::fullatom ];

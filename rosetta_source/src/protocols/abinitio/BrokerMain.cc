@@ -20,12 +20,15 @@
 // AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/NamedAtomPairConstraint.hh>
+
 #include <core/scoring/constraints/BoundConstraint.hh>
 #include <protocols/constraints_additional/AdditionalConstraintCreators.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <core/scoring/constraints/FuncFactory.hh>
 
-//numeric headers
+//archive headers
+#include <protocols/abinitio/IterativeAbrelax.hh>
+#include <protocols/jd2/archive/MPIArchiveJobDistributor.hh>
 // AUTO-REMOVED #include <numeric/random/random.hh>
 
 // Utility headers
@@ -209,6 +212,11 @@ void common_setup() {
 void Broker_main() {
 	common_setup();
 	AbrelaxMoverOP m = new AbrelaxMover();
+	protocols::jd2::JobDistributor* jd2( protocols::jd2::JobDistributor::get_instance() );
+	protocols::jd2::archive::MPIArchiveJobDistributor* archive_jd = dynamic_cast< protocols::jd2::archive::MPIArchiveJobDistributor* >( jd2 );
+	if ( archive_jd ) {
+		archive_jd->set_archive( new IterativeAbrelax );
+	}
 	protocols::jd2::JobDistributor::get_instance()->go(m);
 }
 

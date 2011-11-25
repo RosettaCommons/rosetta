@@ -66,6 +66,7 @@ public:
 
 	///@brief Constructor  and Destructor
 	EvaluatedArchive( ArchiveManagerAP ptr );
+	EvaluatedArchive();
 	~EvaluatedArchive();
 
 	///@brief Archive specific options

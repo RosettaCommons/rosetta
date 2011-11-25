@@ -16,6 +16,7 @@
 
 // Unit headers
 #include <protocols/jd2/archive/MPIArchiveJobDistributor.fwd.hh>
+#include <protocols/jd2/archive/ArchiveBase.hh>
 #include <protocols/jd2/MPIFileBufJobDistributor.hh>
 // Package headers
 #include <protocols/jd2/JobDistributor.hh>
@@ -128,6 +129,9 @@ public:
 	void
 	go( protocols::moves::MoverOP mover );
 
+	void
+	set_archive( archive::ArchiveBaseOP );
+
 protected:
 	///@brief triggered in slave if new batch_ID comes in.
 	virtual void batch_underflow();
@@ -190,6 +194,9 @@ private:
 
 	///@brief unsent notifications
 	std::deque< CompletionMessage > pending_notifications_;
+
+
+	ArchiveBaseOP theArchive_;
 };
 
 } //archive

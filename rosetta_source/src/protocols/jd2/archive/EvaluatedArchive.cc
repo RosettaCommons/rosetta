@@ -86,6 +86,18 @@ using namespace core::io::silent;
 
 EvaluatedArchive::~EvaluatedArchive() {}
 
+
+EvaluatedArchive::EvaluatedArchive()
+	: scorefxn_( NULL ),
+		b_evaluate_incoming_decoys_( !basic::options::option[ basic::options::OptionKeys::iterative::evaluate_only_on_slaves ]() ), ///yields bottleneck on BG
+		rdc_data_( NULL ),
+		cst_data_( NULL ),
+		cst_fa_data_( NULL )
+{
+	runtime_assert( options_registered_ );
+	setup_default_evaluators();
+}
+
 EvaluatedArchive::EvaluatedArchive( ArchiveManagerAP ptr )
 	: ArchiveBase( ptr ),
 		scorefxn_( NULL ),

@@ -47,7 +47,7 @@ class IterativeFullatom : public IterativeBase {
 public:
 	static void register_options();
 
-  IterativeFullatom( jd2::archive::ArchiveManagerAP ptr );
+  IterativeFullatom();
 	virtual bool ready_for_batch() const;
 
 	virtual void generate_batch();

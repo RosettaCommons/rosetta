@@ -16,7 +16,6 @@
 #endif
 
 //testing memory
-#include <protocols/abinitio/AbrelaxMover.hh>
 
 // Unit headers
 #include <protocols/jd2/archive/MPIArchiveJobDistributor.hh>
@@ -86,6 +85,10 @@ MPIArchiveJobDistributor::MPIArchiveJobDistributor() :
 	}
 }
 
+void
+MPIArchiveJobDistributor::set_archive( ArchiveBaseOP archive ) {
+	theArchive_ = archive;
+}
 ///@brief dummy for master/slave version -- start the appropriate process depending on rank()
 void
 MPIArchiveJobDistributor::go( protocols::moves::MoverOP mover )
@@ -106,13 +109,13 @@ MPIArchiveJobDistributor::go( protocols::moves::MoverOP mover )
 		/// Archive
 		tr.Warning << "Archive starts... " << std::endl;
 		archive::ArchiveManager archive( archive_rank(), master_rank(), file_buf_rank() );
-		archive.go();
+		runtime_assert( theArchive_ );
+		archive.go( theArchive_ );
 		tr.Warning << "send STOP to FileBuffer " << std::endl;
 		protocols::jd2::WriteOut_MpiFileBuffer buffer( file_buf_rank() );
 		buffer.stop();
 	} else if( rank() >= min_client_rank() ){
 		/// Slave/Runner/Worker
-		mover = new abinitio::AbrelaxMover();
 		slave_go( mover );
   }
 

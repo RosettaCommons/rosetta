@@ -59,6 +59,7 @@ namespace archive {
 class AbstractArchiveBase : public utility::pointer::ReferenceCount {
 public:
 	AbstractArchiveBase( ArchiveManagerAP ptr ) : manager_( ptr ), name_( "archive" ) {};
+	AbstractArchiveBase() : manager_( NULL ), name_( "archive" ) {};
 
 	///@brief is archive converged ?
 	virtual bool finished() const = 0;
@@ -99,6 +100,10 @@ public:
 		return *manager_;
 	}
 
+	void set_manager( ArchiveManagerAP manager ) {
+		manager_=manager;
+	}
+
 private:
 	ArchiveManagerAP manager_;
 	std::string name_;
@@ -116,7 +121,7 @@ protected:
 	static std::string const TAG_IN_FILE;//( "tag_in_file" );
 	static std::string const SOURCE_FILE;//( "source_file" );
 public:
-	ArchiveBase( ArchiveManagerAP ptr );
+	ArchiveBase( ArchiveManagerAP ptr=NULL );
 	~ArchiveBase();
 	static void register_options();
 	virtual bool finished() const { return true; };

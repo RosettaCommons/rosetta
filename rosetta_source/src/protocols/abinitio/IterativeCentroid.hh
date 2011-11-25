@@ -65,8 +65,8 @@ namespace abinitio {
 class IterativeCentroid : public IterativeBase {
 	typedef IterativeBase Parent;
 public:
-  IterativeCentroid( jd2::archive::ArchiveManagerAP ptr, IterativeFullatom* fullatom_pool_ptr ) :
-		IterativeBase( ptr, "centroid_pool" ),
+  IterativeCentroid(IterativeFullatom* fullatom_pool_ptr ) :
+		IterativeBase( "centroid_pool" ),
 		fullatom_pool_ptr_( fullatom_pool_ptr ) {};
 
 	virtual void gen_evaluation_output( jd2::archive::Batch& batch, bool fullatom = false );

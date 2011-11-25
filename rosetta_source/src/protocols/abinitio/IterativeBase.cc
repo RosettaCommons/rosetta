@@ -227,8 +227,8 @@ static numeric::random::RandomGenerator RG(42089);  // <- rg needed for CEN2FULL
 
 using namespace jd2::archive;
 
-IterativeBase::IterativeBase( jd2::archive::ArchiveManagerAP ptr, std::string name )
-	: EvaluatedArchive( ptr ),
+IterativeBase::IterativeBase(std::string name )
+	: EvaluatedArchive(),
 		scored_core_initialized_( false ),
 		super_quick_relax_of_centroids_( false ),
 		stage_( ENUMERATION ),

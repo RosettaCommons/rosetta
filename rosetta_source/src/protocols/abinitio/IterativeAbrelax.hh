@@ -67,7 +67,7 @@ class IterativeAbrelax : public IterativeBase {
 	//AbstractArchiveBase Parent;
 public:
 
-  IterativeAbrelax( jd2::archive::ArchiveManagerAP ptr );
+  IterativeAbrelax();
 
   virtual bool finished() const;
 	//  virtual bool ready_for_batch() const;

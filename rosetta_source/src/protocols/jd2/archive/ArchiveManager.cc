@@ -277,10 +277,11 @@ core::Size ArchiveManager::unfinished_batches() const {
 }
 
 void
-ArchiveManager::go()
+ArchiveManager::go( ArchiveBaseOP archive )
 {
 	tr.Debug << "starting ArchiveManager ..." << archive_rank_ << " " << jd_master_rank_ << " " << file_buf_rank_ << std::endl;
-	theArchive_ = new abinitio::IterativeAbrelax( this );
+	theArchive_ = archive;
+	theArchive_->set_manager( this );
 	mem_tr << "initialized IterativeAbrelax" << std::endl;
 	try {
 		if ( !restore_archive() ) {
