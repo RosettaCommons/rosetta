@@ -61,12 +61,12 @@ public:
 		utility::vector1< std::string > params_files;
 		ResidueTypeSetCAP const_residue_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		ResidueTypeSet & residue_set = const_cast< ResidueTypeSet & >(*const_residue_set);
-		if(!residue_set.has_name("GTP")) params_files.push_back("core/io/GTP.params");
-		residue_set.read_files(params_files,
-			ChemicalManager::get_instance()->atom_type_set( FA_STANDARD ),
-			ChemicalManager::get_instance()->element_set( FA_STANDARD ),
-			ChemicalManager::get_instance()->mm_atom_type_set( FA_STANDARD ),
-			ChemicalManager::get_instance()->orbital_type_set(FA_STANDARD));
+		//		if(!residue_set.has_name("GTP")) params_files.push_back("core/io/GTP.params");
+		//		residue_set.read_files(params_files,
+		//	ChemicalManager::get_instance()->atom_type_set( FA_STANDARD ),
+		//	ChemicalManager::get_instance()->element_set( FA_STANDARD ),
+		//	ChemicalManager::get_instance()->mm_atom_type_set( FA_STANDARD ),
+		//	ChemicalManager::get_instance()->orbital_type_set(FA_STANDARD));
 	}
 
 	// Shared finalization goes here.
@@ -145,8 +145,13 @@ public:
 	Real score_restored = (*scorefxn)(restored_pose);
 	Real score_del = std::fabs( score_restored - score_ref );
 	TR << "Score difference: " << score_del << std::endl;
+	if ( score_del > score_threshold ) {
+		restored_pose.dump_pdb( "restored_pose_wrong_score.pdb" );
+		ref_pose.dump_pdb( "ref_pose_wrong_score.pdb" );
+	}
 	TS_ASSERT( score_del < score_threshold );
-	utility::file::file_delete( silent_outfile );
+
+	//	utility::file::file_delete( silent_outfile );
 
 }
 
