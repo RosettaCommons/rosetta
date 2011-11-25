@@ -100,6 +100,7 @@ namespace protein {
 		use_green_packer_( false ),
 		use_packer_instead_of_rotamer_trials_( false ),
 		pack_at_neighbors_only_( true ),
+		rescore_only_( false ),
 		silent_file_( "" ),
 		sfd_( new core::io::silent::SilentFileData),
 		sample_generator_( sample_generator )
@@ -169,7 +170,7 @@ return "StepWiseProteinPacker";
 
 			 if ( pose.is_fullatom() || ( k % 100 == 0 ) ) print_tag( tag, k );
 
-			 if ( pose.is_fullatom() ){
+			 if ( pose.is_fullatom() && !rescore_only_ ){
 				 if ( use_green_packer_ ) {
 					 green_packer_->apply( pose );
 				 } else {

@@ -200,6 +200,7 @@ OPT_KEY( Boolean, repack )
 OPT_KEY( Boolean, rebuild )
 OPT_KEY( Boolean, cluster_test )
 OPT_KEY( Boolean, cluster_by_all_atom_rmsd )
+OPT_KEY( Boolean, calc_rms )
 OPT_KEY( Boolean, filter_native_big_bins )
 OPT_KEY( Boolean, rename_tags )
 OPT_KEY( Boolean, n_terminus )
@@ -216,6 +217,7 @@ OPT_KEY( Boolean, sample_beta )
 OPT_KEY( Boolean, generate_beta_database )
 OPT_KEY( Boolean, combine_loops )
 OPT_KEY( Boolean, skip_minimize )
+OPT_KEY( Boolean, rescore_only )
 //OPT_KEY( Real, filter_rmsd )
 OPT_KEY( Real, score_diff_cut )
 OPT_KEY( Real, centroid_score_diff_cut )
@@ -504,6 +506,7 @@ rebuild_test(){
 	stepwise_packer.set_use_green_packer( option[ use_green_packer ]() );
 	stepwise_packer.set_use_packer_instead_of_rotamer_trials( option[ use_packer_instead_of_rotamer_trials ]() );
 	stepwise_packer.set_calc_rms_res( job_parameters->working_calc_rms_res() ); // used for calculating rmsds to native.
+	stepwise_packer.set_rescore_only( option[ rescore_only ]() );
 
 	stepwise_packer.apply( pose );
 
@@ -524,6 +527,7 @@ rebuild_test(){
 	stepwise_clusterer.set_calc_rms_res( moving_residues );
 	if (full_optimize) stepwise_clusterer.set_force_align( true );
 	Real cluster_radius( 0.1 );
+	if ( option[rescore_only]() ) cluster_radius = 0.0; // no clustering will actually happen
 	if ( option[ OptionKeys::cluster::radius ].user() ) cluster_radius = option[ OptionKeys::cluster::radius ]();
 	stepwise_clusterer.set_cluster_radius( cluster_radius	);
 
@@ -554,6 +558,7 @@ rebuild_test(){
 	stepwise_pose_minimizer.set_calc_rms_res( job_parameters->working_calc_rms_res() ); // used for calculating rmsds to native.
 	stepwise_pose_minimizer.set_fixed_res( job_parameters->working_fixed_res() );
 	stepwise_pose_minimizer.set_move_takeoff_torsions( !option[ disable_sampling_of_loop_takeoff ]() );
+	stepwise_pose_minimizer.set_rescore_only( option[ rescore_only ]() );
 	if ( option[ min_type ].user() )	stepwise_pose_minimizer.set_min_type( option[ min_type ]() );
 	if ( option[ min_tolerance ].user() ) stepwise_pose_minimizer.set_min_tolerance( option[ min_tolerance ]() );
 
@@ -606,6 +611,44 @@ cluster_outfile_test(){
 
 	std::string const silent_file_out( option[ out::file::silent  ]() );
 	stepwise_clusterer.output_silent_file( silent_file_out );
+
+}
+
+
+///////////////////////////////////////////////////////////////
+void
+calc_rms_test(){
+
+	using namespace core::options;
+	using namespace core::options::OptionKeys;
+	using namespace core::io::silent;
+	using namespace core::io::pose_stream;
+	using namespace core::pose;
+	using namespace protocols::swa;
+	using namespace protocols::swa::protein;
+	using namespace core::chemical;
+
+	PoseOP pose_op,native_pose;
+	ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
+	utility::vector1< std::string > const silent_files_in( option[ in::file::silent ]() );
+	SilentFilePoseInputStreamOP input = new SilentFilePoseInputStream( silent_files_in );
+	native_pose = PoseOP( new Pose );
+	std::string native_pdb_file  = option[ in::file::native ];
+	io::pdb::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
+	std::string const silent_file_out( option[ out::file::silent  ]() );
+	core::io::silent::SilentFileDataOP sfd_dummy;
+	utility::vector1< Size > const calc_rms_res_ = option[ calc_rms_res ]();
+
+	while ( input->has_another_pose() ) {
+
+		PoseOP pose_op( new Pose );
+		core::io::silent::SilentStructOP silent_struct( input->next_struct() );
+		silent_struct->fill_pose( *pose_op );
+		output_silent_struct( *pose_op, native_pose, silent_file_out, silent_struct->decoy_tag(),
+													sfd_dummy, calc_rms_res_	);
+
+	}
+
 
 }
 
@@ -898,6 +941,8 @@ my_main( void* )
 		combine_loops_test();
 	} else if ( option[ big_bins ] ){
 		big_bins_test();
+	} else if ( option[ calc_rms ] ){
+		calc_rms_test();
 	}	else {
 		rebuild_test();
 	}
@@ -919,6 +964,7 @@ main( int argc, char * argv [] )
 	//Uh, options?
 	NEW_OPT( rebuild, "rebuild", false );
 	NEW_OPT( cluster_test, "cluster", false );
+	NEW_OPT( calc_rms, "calculate rms for input silent file", false );
 	NEW_OPT( cluster_by_all_atom_rmsd, "cluster by all atom rmsd", false );
 	NEW_OPT( centroid_output, "output centroid structure during screening", false );
 	NEW_OPT( n_sample, "number of samples per torsion angle", 18 );
@@ -937,6 +983,7 @@ main( int argc, char * argv [] )
 	NEW_OPT( min_type, "Minimizer type", "dfpmin_armijo_nonmonotone" );
 	NEW_OPT( min_tolerance, "Minimizer tolerance", 0.000025 );
 	NEW_OPT( start_pdb, "For combine_loops, parent pdb", "" );
+	NEW_OPT( rescore_only, "skip packing,clustering,minimizing -- just get scores & rmsds", false );
 	NEW_OPT( no_sample_junction, "disable sampling of residue at junction inherited from start pose", false );
 	NEW_OPT( add_peptide_plane, "Include N-acetylation and C-methylamidation caps at termini", false );
 	NEW_OPT( ghost_loops, "Virtualize loops in centroid screening", false );

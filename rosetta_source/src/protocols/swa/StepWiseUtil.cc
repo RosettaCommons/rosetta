@@ -305,6 +305,26 @@ namespace swa {
 														pose::Pose const & ref_pose,
 														utility::vector1< core::Size > const & superimpose_res ){
 
+		std::map< core::Size, core::Size > res_map;
+
+ 		if( ref_pose.sequence()!=mod_pose.sequence() ){
+ 			utility_exit_with_message( "ref_pose.sequence()!=mod_pose.sequence()");
+ 		}
+
+ 		for ( Size seq_num = 1; seq_num <= mod_pose.total_residue(); ++seq_num ) {
+			if ( !Contain_seq_num(seq_num, superimpose_res ) ) continue;
+			res_map[ seq_num ] = seq_num;
+		}
+
+		return create_alignment_id_map( mod_pose, ref_pose, res_map );
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ 	id::AtomID_Map< id::AtomID >
+ 	create_alignment_id_map(	pose::Pose & mod_pose,
+														pose::Pose const & ref_pose,
+														std::map< core::Size, core::Size > res_map ){
+
  		using namespace chemical;
  		using namespace protocols::swa::protein;
  		using namespace protocols::swa::rna;
@@ -313,19 +333,13 @@ namespace swa {
  		AtomID_Map< AtomID > atom_ID_map;
  		pose::initialize_atomid_map( atom_ID_map, mod_pose, BOGUS_ATOM_ID );
 
- 		if( ref_pose.sequence()!=mod_pose.sequence() ){
- 			utility_exit_with_message( "ref_pose.sequence()!=mod_pose.sequence()");
- 		}
-
  		for ( Size seq_num = 1; seq_num <= mod_pose.total_residue(); ++seq_num ) {
 
- 			if ( !Contain_seq_num(seq_num, superimpose_res ) ) continue;
-
-			if ( mod_pose.residue( seq_num ).is_RNA() ) {
+			if ( mod_pose.residue( seq_num ).is_RNA() && res_map.find( seq_num ) != res_map.end() && res_map[ seq_num ] > 0) {
 				// Parin please update this function!!! Can't we just superimpose over C4*?
-				setup_suite_atom_id_map( mod_pose, ref_pose, seq_num, false /*Is_prepend*/, atom_ID_map);
+				setup_suite_atom_id_map( mod_pose, ref_pose, seq_num,  res_map[ seq_num ],  false /*Is_prepend*/, atom_ID_map);
 			} else if ( mod_pose.residue( seq_num ).is_protein() ){ // superimpose over CA.
-				setup_protein_backbone_atom_id_map( mod_pose, ref_pose, seq_num, atom_ID_map); // This will just superimpose over C-alphas.
+				setup_protein_backbone_atom_id_map( mod_pose, ref_pose, seq_num, res_map[ seq_num ], atom_ID_map); // This will superimpose over N, C-alpha, C
 			}
 
  		}

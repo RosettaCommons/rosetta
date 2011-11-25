@@ -87,6 +87,10 @@ namespace swa {
  	create_alignment_id_map(	pose::Pose & mod_pose, pose::Pose const & ref_pose,
 														utility::vector1< Size > const & superimpose_res );
 
+ 	id::AtomID_Map< id::AtomID >
+ 	create_alignment_id_map(	pose::Pose & mod_pose,
+														pose::Pose const & ref_pose,
+														std::map< core::Size, core::Size > res_map );
 
 	utility::vector1< Size > const
 	convert_to_working_res( utility::vector1< Size > const & res_vector,

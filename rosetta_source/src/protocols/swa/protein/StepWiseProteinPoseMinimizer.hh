@@ -62,6 +62,9 @@ namespace protein {
 		void
 		set_move_takeoff_torsions( bool const value ){ move_takeoff_torsions_ = value; }
 
+    void
+		set_rescore_only( bool const & setting ){ rescore_only_ = setting; }
+
 		//		void
 		//		set_constraint_set( core::scoring::constraints::ConstraintSetOP const & cst_set );
 
@@ -82,6 +85,7 @@ namespace protein {
     utility::vector1< core::Size > fixed_res_;
     utility::vector1< core::Size > calc_rms_res_;
 		bool move_takeoff_torsions_;
+		bool rescore_only_;
     std::string silent_file_;
 
 		core::scoring::ScoreFunctionOP fa_scorefxn_;

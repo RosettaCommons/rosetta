@@ -62,6 +62,7 @@ namespace protein {
     pose_list_( pose_list ),
     moving_residues_( moving_residues ),
 		move_takeoff_torsions_( true ),
+		rescore_only_( false ),
 		silent_file_( "" ),
     fa_scorefxn_( core::scoring::getScoreFunction() ),
 		min_type_( "dfpmin_armijo_nonmonotone" ), // used to be dfpmin
@@ -133,28 +134,32 @@ namespace protein {
 			mm = mm_start;
 			let_neighboring_chis_minimize( mm, pose );
 
-			// One minimize with loose coordinate tethers to make sure the pose doesn't blow up.
-			core::scoring::constraints::add_coordinate_constraints( pose );
-			if ( fa_scorefxn_->has_zero_weight( coordinate_constraint) ) fa_scorefxn_->set_weight( coordinate_constraint, 1.0 );
-      minimizer.run( pose, mm, *fa_scorefxn_, options );
+			if ( !rescore_only_ ){
 
-			// Now a regular minimize.
-			pose.constraint_set( cst_set ); // return original constraints (no added coordinate constraints)
-			fa_scorefxn_->set_weight( coordinate_constraint, original_coordinate_cst_weight );
-
-			// for poses with chainbreaks, do an initial minimization with a weak linear_chainbreak term. (anneal it in.)
-			if ( pose_has_chainbreak( pose ) ){
-
-				Real const linear_chainbreak_weight_original = fa_scorefxn_->get_weight( linear_chainbreak );
-				if ( linear_chainbreak_weight_original < 20.0 ) std::cout << "WARNING!! Your linear_chainbreak weight is " << F(8,3,linear_chainbreak_weight_original ) << ", which is less than recommended (20.0) " << std::endl;
-
-				fa_scorefxn_->set_weight( linear_chainbreak, linear_chainbreak_weight_original * 0.25 );
+				// One minimize with loose coordinate tethers to make sure the pose doesn't blow up.
+				core::scoring::constraints::add_coordinate_constraints( pose );
+				if ( fa_scorefxn_->has_zero_weight( coordinate_constraint) ) fa_scorefxn_->set_weight( coordinate_constraint, 1.0 );
 				minimizer.run( pose, mm, *fa_scorefxn_, options );
-				fa_scorefxn_->set_weight( linear_chainbreak, linear_chainbreak_weight_original );
+
+				// Now a regular minimize.
+				pose.constraint_set( cst_set ); // return original constraints (no added coordinate constraints)
+				fa_scorefxn_->set_weight( coordinate_constraint, original_coordinate_cst_weight );
+
+				// for poses with chainbreaks, do an initial minimization with a weak linear_chainbreak term. (anneal it in.)
+				if ( pose_has_chainbreak( pose ) ){
+
+					Real const linear_chainbreak_weight_original = fa_scorefxn_->get_weight( linear_chainbreak );
+					if ( linear_chainbreak_weight_original < 20.0 ) std::cout << "WARNING!! Your linear_chainbreak weight is " << F(8,3,linear_chainbreak_weight_original ) << ", which is less than recommended (20.0) " << std::endl;
+
+					fa_scorefxn_->set_weight( linear_chainbreak, linear_chainbreak_weight_original * 0.25 );
+					minimizer.run( pose, mm, *fa_scorefxn_, options );
+					fa_scorefxn_->set_weight( linear_chainbreak, linear_chainbreak_weight_original );
+				}
+
+
+				minimizer.run( pose, mm, *fa_scorefxn_, options );
+
 			}
-
-
-			minimizer.run( pose, mm, *fa_scorefxn_, options );
 
 			setPoseExtraScores( pose, "score_orig", score_original );
       std::string const & tag( iter->first );

@@ -67,6 +67,9 @@ namespace protein {
     void
 		set_use_packer_instead_of_rotamer_trials( bool const & setting );
 
+    void
+		set_rescore_only( bool const & setting ){ rescore_only_ = setting; }
+
     void set_calc_rms_res( utility::vector1< core::Size > const & calc_rms_res );
 
 		core::io::silent::SilentFileDataOP & silent_file_data();
@@ -112,6 +115,7 @@ namespace protein {
 		bool use_green_packer_;
 		bool use_packer_instead_of_rotamer_trials_;
 		bool pack_at_neighbors_only_;
+		bool rescore_only_;
 		core::pack::task::PackerTaskOP pack_task_;
 		core::pose::PoseOP pose_init_;
 

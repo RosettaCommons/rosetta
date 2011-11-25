@@ -62,6 +62,9 @@ setup_suite_atom_id_map(core::conformation::Residue const & rsd_1, core::conform
 void
 setup_suite_atom_id_map(core::pose::Pose const & pose_1, core::pose::Pose const & pose_2, core::Size const base_res, bool Is_prepend, core::id::AtomID_Map< core::id::AtomID > & atom_ID_map);
 
+void
+setup_suite_atom_id_map(core::pose::Pose const & pose_1, core::pose::Pose const & pose_2, core::Size const base_res, core::Size const base_res2, bool Is_prepend, core::id::AtomID_Map< core::id::AtomID > & atom_ID_map);
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void

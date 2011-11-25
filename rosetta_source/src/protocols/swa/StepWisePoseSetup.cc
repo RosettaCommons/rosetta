@@ -689,18 +689,24 @@ return "StepWisePoseSetup";
 
 		if (dump_) pose.dump_pdb( "before_copy_dofs.pdb" );
 
+ 		// go ahead and align pose to this first input. If native or align_pose is specified, we will realign again later...
+ 		bool align_pose_to_import_pose( true );
+ 		if (get_native_pose() || align_file_.size() > 0 ) align_pose_to_import_pose = false; // will happen later in align_poses()
+
 		for ( Size i = 1; i <= input_streams_with_residue_info_.size(); i++ ){
 
 			InputStreamWithResidueInfoOP & stream = input_streams_with_residue_info_[ i ];
 			stream->set_full_to_sub( job_parameters_->full_to_sub() );
 			stream->set_rsd_set( rsd_set_ );
 
-			stream->copy_next_pose_segment( pose, import_pose, true /*check_sequence_matches*/ );
+ 			stream->copy_next_pose_segment( pose, import_pose, true /*check_sequence_matches*/, align_pose_to_import_pose );
 
 			save_phi_psi_offsets( import_pose,  stream->input_res(), stream->slice_res() );
 
 			if (dump_) pose.dump_pdb( "after_copy_dofs"+ObjexxFCL::string_of(i)+".pdb" );
 			if (dump_) import_pose.dump_pdb( "import"+ObjexxFCL::string_of(i)+".pdb" );
+
+ 			if ( i > 1) align_pose_to_import_pose = false;
 
 		}
 

@@ -232,9 +232,9 @@ ConstraintIO::read_cst_coordinates(
 		FuncOP aFunc = func_factory_.func_types_[ func_type ]->clone();
 		aFunc->read_data( line_stream );
 
-		if ( tr.Debug.visible() ) {
+		//		if ( tr.Debug.visible() ) {
 			aFunc->show_definition( std::cout ); std::cout<<std::endl;
-		}
+			//		}
 
 		Vector transform( x, y, z );
 		cst_set.add_constraint( new CoordinateConstraint( atom1, atom2, transform, aFunc ) );

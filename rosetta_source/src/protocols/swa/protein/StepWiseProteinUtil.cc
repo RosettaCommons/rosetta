@@ -204,34 +204,47 @@ namespace protein {
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////
  	void
- 	setup_protein_backbone_atom_id_map( core::pose::Pose const & pose_1,
-																			core::pose::Pose const & pose_2,
-																			Size const base_res,
-																			core::id::AtomID_Map< core::id::AtomID > & atom_ID_map){
+  	setup_protein_backbone_atom_id_map( core::pose::Pose const & pose_1,
+  																			core::pose::Pose const & pose_2,
+  																			Size const base_res,
+  																			core::id::AtomID_Map< core::id::AtomID > & atom_ID_map){
+ 		setup_protein_backbone_atom_id_map( pose_1, pose_2, base_res, atom_ID_map );
+ 	}
+
+ 	//////////////////////////////////////////////////////////////////////////////////////////////////
+  	void
+  	setup_protein_backbone_atom_id_map( core::pose::Pose const & pose_1,
+ 																			core::pose::Pose const & pose_2,
+ 																			Size const base_res,
+ 																			Size const base_res2,
+ 																			core::id::AtomID_Map< core::id::AtomID > & atom_ID_map){
 
 		using namespace core::id;
 
+ 		if( base_res == 0 ) return;
+ 		if( base_res2 == 0 ) return;
+
 		if ( !pose_1.residue_type( base_res ).is_protein() ) return;
-		if ( !pose_2.residue_type( base_res ).is_protein() ) return;
+		if ( !pose_2.residue_type( base_res2 ).is_protein() ) return;
 
 		if ( pose_1.residue_type( base_res ).has_variant_type( "VIRTUAL_RESIDUE" ) ) return;
-		if ( pose_2.residue_type( base_res ).has_variant_type( "VIRTUAL_RESIDUE" ) ) return;
+		if ( pose_2.residue_type( base_res2 ).has_variant_type( "VIRTUAL_RESIDUE" ) ) return;
 
 		{
 			AtomID atom1(  core::pose::named_atom_id_to_atom_id( NamedAtomID( " CA ", base_res ), pose_1 ));
-			AtomID atom2(  core::pose::named_atom_id_to_atom_id( NamedAtomID( " CA ", base_res ), pose_2 ));
+			AtomID atom2(  core::pose::named_atom_id_to_atom_id( NamedAtomID( " CA ", base_res2 ), pose_2 ));
 			atom_ID_map.set( atom1, atom2 );
 		}
 
 		{
 			AtomID atom1(  core::pose::named_atom_id_to_atom_id( NamedAtomID( " C  ", base_res ), pose_1 ));
-			AtomID atom2(  core::pose::named_atom_id_to_atom_id( NamedAtomID( " C  ", base_res ), pose_2 ));
+			AtomID atom2(  core::pose::named_atom_id_to_atom_id( NamedAtomID( " C  ", base_res2 ), pose_2 ));
 			atom_ID_map.set( atom1, atom2 );
 		}
 
 		{
 			AtomID atom1(  core::pose::named_atom_id_to_atom_id( NamedAtomID( " N  ", base_res ), pose_1 ));
-			AtomID atom2(  core::pose::named_atom_id_to_atom_id( NamedAtomID( " N  ", base_res ), pose_2 ));
+			AtomID atom2(  core::pose::named_atom_id_to_atom_id( NamedAtomID( " N  ", base_res2 ), pose_2 ));
 			atom_ID_map.set( atom1, atom2 );
 		}
 

@@ -80,7 +80,8 @@ namespace swa {
 
 		void copy_next_pose_segment( core::pose::Pose & pose,
 																 core::pose::Pose & import_pose,
-																 bool const check_sequence_matches );
+																 bool const check_sequence_matches,
+																 bool const align_pose_to_import_pose = false );
 
 		void set_backbone_only( bool const setting );
 

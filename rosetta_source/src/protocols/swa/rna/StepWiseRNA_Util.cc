@@ -126,17 +126,26 @@ namespace rna {
  			if(rsd_2.atom_type(atomno_2).name()=="VIRT") continue; //Check for virtual atoms
 
  			id::AtomID const id1( atomno_1, res_num);
- 			id::AtomID const id2( atomno_2, res_num);
+ 			id::AtomID const id2( atomno_2, rsd_2.seqpos() - rsd_1.seqpos() + res_num);
  			atom_ID_map.set( id1, id2 );
 
  		}
 
  	}
 
- 	//Virtual types mess up numbering...This will make sure that numbering is correct.
+	////////
  	void
  	setup_suite_atom_id_map(pose::Pose const & pose_1, pose::Pose const & pose_2, Size const base_res, bool Is_prepend, id::AtomID_Map< id::AtomID > & atom_ID_map){
+		setup_suite_atom_id_map( pose_1, pose_2, base_res, base_res, Is_prepend, atom_ID_map );
+	}
 
+ 	//Virtual types mess up numbering...This will make sure that numbering is correct.
+ 	void
+ 	setup_suite_atom_id_map(pose::Pose const & pose_1, pose::Pose const & pose_2, Size const base_res, Size const base_res2, bool Is_prepend, id::AtomID_Map< id::AtomID > & atom_ID_map){
+
+
+		if( base_res == 0 )  return;
+		if( base_res2 == 0 ) return;
 
  		std::set<std::string> special_atom_set;
  		std::set<std::string>::iterator it;
@@ -152,16 +161,17 @@ namespace rna {
 
 
  		conformation::Residue const & base_rsd_1=pose_1.residue(base_res);
- 		conformation::Residue const & base_rsd_2=pose_2.residue(base_res);
+ 		conformation::Residue const & base_rsd_2=pose_2.residue(base_res2);
 
  		setup_suite_atom_id_map(base_rsd_1, base_rsd_2, base_res, special_atom_set, "exclude_special_atoms", atom_ID_map);
 
  		if(Is_prepend){
 
  			Size const upper_suite_res=base_res+1;
-
  			conformation::Residue const & base_rsd_1=pose_1.residue(upper_suite_res);
- 			conformation::Residue const & base_rsd_2=pose_2.residue(upper_suite_res);
+
+			Size const upper_suite_res2 = base_res2 + 1;
+ 			conformation::Residue const & base_rsd_2=pose_2.residue(upper_suite_res2);
 
  			setup_suite_atom_id_map(base_rsd_1, base_rsd_2, upper_suite_res, special_atom_set, "only_special_atoms", atom_ID_map);
 
