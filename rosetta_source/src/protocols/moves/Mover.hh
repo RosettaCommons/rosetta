@@ -27,7 +27,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
-// AUTO-REMOVED #include <protocols/jobdist/Jobs.hh>
+#include <protocols/jobdist/Jobs.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 // ObjexxFCL Headers
 

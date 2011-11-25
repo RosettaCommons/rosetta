@@ -24,6 +24,7 @@
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
+#include <protocols/jd2/Job.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
