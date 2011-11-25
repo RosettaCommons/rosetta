@@ -584,6 +584,15 @@ settings = {
         },
     },
 
+    "gcc, macos, mpi" : {
+        "appends" : {
+            "defines"       : [ "USEMPI" ],
+        },
+        "overrides" : {
+            "cc"            : "mpicc",
+            "cxx"           : "mpicxx",
+        },
+    },
     # This target is somewhat sketchy in its implementation.
     # It ought to be done as a separate executable.
     # XXX: Deprecated.  If it isn't used within a certain time frame
