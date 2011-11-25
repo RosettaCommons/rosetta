@@ -20,38 +20,33 @@
 // Project forward headers
 #include <protocols/moves/TrajectoryRecorder.fwd.hh>
 
-
 // Project headers
 #include <protocols/moves/ThermodynamicObserver.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <utility/io/ozstream.hh>
 
+#include <utility/io/ozstream.hh>
+#include <utility/vector1.hh>
 
 // External library headers
-
 
 // C++ headers
 #include <string>
 
-#include <utility/vector1.hh>
-
-
-
 // Operating system headers
 
-
 // Forward declarations
-
 
 namespace protocols {
 namespace moves {
 
-
-	/// @brief
+/// @brief
 class TrajectoryRecorder : public ThermodynamicObserver {
 public:
+	/// @brief Associates relevant options with the TemperedDocking class
+	static void register_options();
+
 	/// @brief Constructor
 	TrajectoryRecorder();
 
@@ -61,25 +56,15 @@ public:
 	/// @brief Copy constructor
 	TrajectoryRecorder( TrajectoryRecorder const & );
 
-	/// @brief operator=
+private:
+	//assignment not allowed
 	TrajectoryRecorder&
 	operator=( TrajectoryRecorder const & );
 
-	virtual
-	MoverOP
-	clone() const;
+public:
+	virtual	std::string	get_name() const;
 
-	virtual
-	MoverOP
-	fresh_instance() const;
-
-	virtual
-	std::string
-	get_name() const;
-
-	virtual
-	void
-	parse_my_tag(
+	virtual	void parse_my_tag(
 		utility::tag::TagPtr const tag,
 		protocols::moves::DataMap & data,
 		protocols::filters::Filters_map const & filters,
@@ -87,88 +72,74 @@ public:
 		core::pose::Pose const & pose
 	);
 
-	std::string const &
-	file_name() const
-	{
+	std::string const &	file_name() const {
 		return file_name_;
 	}
 
-	void
-	file_name(
-		std::string const & file_name
-	)
-	{
+	void file_name( std::string const & file_name )	{
 		file_name_ = file_name;
 	}
 
-	core::Size
-	stride() const
-	{
+	std::string const& current_output_name() const {
+		return current_output_name_;
+	}
+
+	core::Size model_count() const {
+		return model_count_;
+	}
+
+	core::Size step_count() const {
+		return step_count_;
+	}
+
+	core::Size stride() const {
 		return stride_;
 	}
 
-	void
-	stride(
-		core::Size stride
-	)
-	{
+	bool cumulate() const {
+		return cumulate_;
+	}
+
+	void stride( core::Size stride ) {
 		stride_ = stride;
 	}
 
-	void
-	reset(
-		protocols::moves::MonteCarlo const & mc
+	void reset(
+		protocols::moves::MonteCarlo const& mc
 	);
 
-	void
-	update_after_boltzmann(
+	void update_after_boltzmann(
 		core::pose::Pose const & pose
 	);
 
-	void
-	update_after_boltzmann(
-		protocols::moves::MonteCarlo const & mc
+	void update_after_boltzmann(
+		protocols::moves::MonteCarlo const& mc
 	);
 
-	virtual
-	void
-	apply(
-		core::pose::Pose & pose
-	);
+	virtual void apply( core::pose::Pose& pose );
 
-	virtual
-	void
-	initialize_simulation(
+	virtual void initialize_simulation(
 		core::pose::Pose & pose,
 		protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
-	virtual
-	void
-	observe_after_metropolis(
+	virtual	void observe_after_metropolis(
 		protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
-	virtual
-	void
-	finalize_simulation(
-		core::pose::Pose & pose,
-		protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
-	);
+protected:
+
+	virtual void 	write_model( core::pose::Pose const & pose ) = 0;
 
 private:
-
-	void
-	write_model(
-		core::pose::Pose const & pose
-	);
-
-	std::string file_name_;
 	core::Size stride_;
 	core::Size model_count_;
 	core::Size step_count_;
-	utility::io::ozstream trajectory_stream_;
+	std::string file_name_;
+	std::string current_output_name_;
+	bool cumulate_;
 
+	static bool options_registered_;
 }; // TrajectoryRecorder
 
 

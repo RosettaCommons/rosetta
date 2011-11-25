@@ -13,7 +13,7 @@
 
 // Unit Headers
 #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/moves/mc_convergence_checks/util.hh>
+#include <protocols/moves/TrialCounter.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -70,9 +70,7 @@ MonteCarlo::MonteCarlo( MonteCarlo const & src ) :
 	quench_temp_( src.quench_temp_ ),
 	last_accept_( src.last_accept_ ),
 	mc_accepted_( src.mc_accepted_ ),
-	trial_counter_( src.trial_counter_ ),
-	accept_counter_( src.accept_counter_ ),
-	energy_drop_counter_( src.energy_drop_counter_ ),
+	counter_( src.counter_ ),
 	update_boinc_( src.update_boinc_ ),
 	total_score_of_last_considered_pose_( src.total_score_of_last_considered_pose_ ),
 	last_accepted_score_( src.last_accepted_score_ ),
@@ -199,43 +197,18 @@ MonteCarlo::show_scores() const
 void
 MonteCarlo::reset_counters()
 {
-	trial_counter_.clear();
-	accept_counter_.clear();
-	energy_drop_counter_.clear();
+	counter_.reset();
 }
 
 ///@detail return number of trials since last reset
 core::Size
 MonteCarlo::total_trials() const {
-	Size ntrials( 0 );
-	for ( std::map< std::string, int >::const_iterator
-					it=trial_counter_.begin(); it != trial_counter_.end(); ++it ) {
-		ntrials += it->second;
-	}
-	return ntrials;
+	counter_.total_trials();
 }
 /////////////////////////////////////////////////////////////////////////////
 void
-MonteCarlo::show_counters() const
-{
-	for ( std::map< std::string, int >::const_iterator
-					it=trial_counter_.begin(); it != trial_counter_.end(); ++it ) {
-		std::string const & tag( it->first );
-		int const ntrials( it->second );
-		if  (accept_counter_.count( tag )){
-			int const accepts( accept_counter_.find( tag )->second );
-			core::Real const energy_drop( energy_drop_counter_.find( tag )->second );
-			TR << A( 16, tag ) <<
-				" trials= " << I( 6, ntrials ) << "; " <<
-				" accepts= " << F( 6, 4, core::Real( accepts )/ntrials ) << "; " <<
-				" energy_drop/trial= " << F( 9, 5, core::Real( energy_drop ) / ntrials )<<
-				std::endl;
-		} else {
-			TR << A( 16, tag ) <<
-				" trials= " << I( 6, ntrials ) <<
-				" NO ACCEPTS." << std::endl;
-		} // else
-	} // for
+MonteCarlo::show_counters() const {
+	counter_.show();
 }
 
 
@@ -385,12 +358,12 @@ MonteCarlo::boltzmann(
 		}
 	}
 
-	++trial_counter_[ move_type ];
+	counter_.count_trial( move_type );
 
 
 #ifdef BOINC_GRAPHICS
 	if( update_boinc_ )
-		boinc::Boinc::update_mc_trial_info( trial_counter_[ move_type ], move_type );
+		boinc::Boinc::update_mc_trial_info( counter_.trial( move_type ), move_type );
 #endif
 
 	Real const boltz_factor = ( last_accepted_score() - score ) / temperature_ + inner_score_temperature_delta;
@@ -423,8 +396,8 @@ MonteCarlo::boltzmann(
 	// these are useful but cost a little time to get
 	/// Now handled automatically.  score_function_->accumulate_residue_total_energies( pose );
 
-	++accept_counter_[ move_type ];
-	energy_drop_counter_[ move_type ] += score - last_accepted_score();
+	counter_.count_accepted( move_type );
+	counter_.count_energy_drop( move_type, score - last_accepted_score() );
 	PROF_START( basic::MC_ACCEPT );
 	*last_accepted_pose_ = pose;
 	last_accepted_score_ = score;
@@ -467,7 +440,7 @@ MonteCarlo::boltzmann(
 	Real const score( last_accepted_score_ + score_delta );
 	total_score_of_last_considered_pose_ = score; // save this for the TrialMover so that it may keep statistics.
 
-	++trial_counter_[ move_type ];
+	counter_.count_trial( move_type );
 
 	Real const boltz_factor = ( last_accepted_score() - score ) / temperature_;
 	Real const probability = std::exp( std::min (40.0, std::max(-40.0,boltz_factor)) ) * proposal_density_ratio;
@@ -492,8 +465,8 @@ MonteCarlo::boltzmann(
 		mc_accepted_ = MCA_accepted_score_beat_last; // energy is lower than last_accepted
 	}
 
-	++accept_counter_[ move_type ];
-	energy_drop_counter_[ move_type ] += score - last_accepted_score();
+	counter_.count_accepted( move_type );
+	counter_.count_energy_drop( move_type, score - last_accepted_score() );
 	PROF_START( basic::MC_ACCEPT );
 	last_accepted_score_ = score;
 

@@ -17,6 +17,7 @@
 // Unit Headers
 #include <protocols/moves/MetropolisHastingsMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
+#include <protocols/moves/TemperatureController.hh>
 
 // Project Headers
 #include <protocols/moves/MonteCarlo.fwd.hh>
@@ -94,8 +95,16 @@ public:
 		MonteCarloOP monte_carlo
 	);
 
+	void
+	set_tempering(
+		TemperatureControllerOP
+	);
+
+	TemperatureControllerCOP
+	tempering() const;
+
 	core::Size
-	ntrials() const;
+	ntrials() const { return ntrials_; }
 
 	void
 	set_ntrials(
@@ -116,7 +125,7 @@ public:
 	ThermodynamicMoverOP
 	random_mover();
 
-	void
+	virtual void
 	add_mover(
 		ThermodynamicMoverOP mover,
 		core::Real weight
@@ -159,6 +168,33 @@ public:
 		ThermodynamicObserverOP observer
 	);
 
+	ThermodynamicMover const&
+	last_move() const;
+
+	bool
+	last_accepted() const {
+		return last_accepted_;
+	}
+
+
+protected:
+
+	TemperatureControllerOP const&
+	tempering() { return tempering_; }
+
+	void wind_down_simulation( core::pose::Pose& pose);
+	void prepare_simulation( core::pose::Pose& pose);
+
+	void set_last_accepted( bool setting ) {
+		last_accepted_ = setting;
+	}
+
+	void set_last_move( ThermodynamicMoverOP setting );
+
+	typedef utility::vector1< ThermodynamicObserverOP > ObserverList;
+	ObserverList const& observers() { return observers_; }
+
+	MonteCarlo& nonconst_monte_carlo();
 private:
 
 	MonteCarloOP monte_carlo_;
@@ -168,6 +204,14 @@ private:
 	numeric::random::WeightedSampler weighted_sampler_;
 	utility::vector1< ThermodynamicObserverOP > observers_;
 	std::string output_name_;
+	TemperatureControllerOP tempering_;
+
+	///some status is necessary for the observers
+	ThermodynamicMoverOP last_move_;
+	bool last_accepted_;
+
+	//internal book keeping
+	bool output_name_from_job_distributor_;
 
 }; //end MetropolisHastingsMover
 

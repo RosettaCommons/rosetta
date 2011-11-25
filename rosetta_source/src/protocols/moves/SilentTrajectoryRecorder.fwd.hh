@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/moves/TrajectoryRecorder.fwd.hh
+/// @file   protocols/moves/SilentTrajectoryRecorder.fwd.hh
 ///
-/// @brief  Forward declarations for class TrajectoryRecorder.
+/// @brief  Forward declarations for class SilentTrajectoryRecorder.
 /// @author
 
 //  Note:   Uncomment lines beginning with "---" if you need
 //          smart pointers.
 
 
-#ifndef INCLUDED_protocols_moves_TrajectoryRecorder_fwd_hh
-#define INCLUDED_protocols_moves_TrajectoryRecorder_fwd_hh
+#ifndef INCLUDED_protocols_moves_SilentTrajectoryRecorder_fwd_hh
+#define INCLUDED_protocols_moves_SilentTrajectoryRecorder_fwd_hh
 
 
 // External library headers
@@ -36,19 +36,20 @@ namespace moves {
 
 
 // Forward declarations
-class TrajectoryRecorder;
+class SilentTrajectoryRecorder;
 
 
 // Typedefs
-typedef utility::pointer::owning_ptr< TrajectoryRecorder > TrajectoryRecorderOP;
+//typedef utility::pointer::access_ptr< SilentTrajectoryRecorder > SilentTrajectoryRecorderAP;
+typedef utility::pointer::owning_ptr< SilentTrajectoryRecorder > SilentTrajectoryRecorderOP;
 
 
 // Smart pointer required functions
-// --- void owning_ptr_acquire(TrajectoryRecorder *);
-// --- void owning_ptr_release(TrajectoryRecorder *);
+// --- void owning_ptr_acquire(SilentTrajectoryRecorder *);
+// --- void owning_ptr_release(SilentTrajectoryRecorder *);
 
 } // namespace moves
 } // namespace protocols
 
 
-#endif // INCLUDED_protocols_moves_TrajectoryRecorder_FWD_HH
+#endif // INCLUDED_protocols_moves_SilentTrajectoryRecorder_FWD_HH

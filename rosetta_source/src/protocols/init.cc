@@ -177,7 +177,8 @@
 #include <protocols/moves/BackrubMoverCreator.hh>
 #include <protocols/moves/SidechainMoverCreator.hh>
 #include <protocols/moves/BackrubSidechainMoverCreator.hh>
-#include <protocols/moves/TrajectoryRecorderCreator.hh>
+#include <protocols/moves/SilentTrajectoryRecorderCreator.hh>
+#include <protocols/moves/PDBTrajectoryRecorderCreator.hh>
 #include <protocols/moves/MetricRecorderCreator.hh>
 #include <protocols/moves/RotamerTrialsMinMoverCreator.hh>
 #include <protocols/moves/FavorSequenceProfileCreator.hh>
@@ -470,7 +471,8 @@ static MoverRegistrator< moves::ShearMoverCreator > reg_ShearMoverCreator;
 static MoverRegistrator< moves::BackrubMoverCreator > reg_BackrubMoverCreator;
 static MoverRegistrator< moves::SidechainMoverCreator > reg_SidechainMoverCreator;
 static MoverRegistrator< moves::BackrubSidechainMoverCreator > reg_BackrubSidechainMoverCreator;
-static MoverRegistrator< moves::TrajectoryRecorderCreator > reg_TrajectoryRecorderCreator;
+static MoverRegistrator< moves::SilentTrajectoryRecorderCreator > reg_SilentTrajectoryRecorderCreator;
+static MoverRegistrator< moves::PDBTrajectoryRecorderCreator > reg_PDBTrajectoryRecorderCreator;
 static MoverRegistrator< moves::MetricRecorderCreator > reg_MetricRecorderCreator;
 static MoverRegistrator< moves::RotamerTrialsMoverCreator > reg_RotamerTrialsMoverCreator;
 static MoverRegistrator< moves::RotamerTrialsMinMoverCreator > reg_RotamerTrialsMinMoverCreator;

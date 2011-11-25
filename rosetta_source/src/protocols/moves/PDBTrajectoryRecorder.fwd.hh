@@ -16,13 +16,13 @@
 //          smart pointers.
 
 
-#ifndef INCLUDED_protocols_moves_TrajectoryRecorder_fwd_hh
-#define INCLUDED_protocols_moves_TrajectoryRecorder_fwd_hh
+#ifndef INCLUDED_protocols_moves_PDBTrajectoryRecorder_fwd_hh
+#define INCLUDED_protocols_moves_PDBTrajectoryRecorder_fwd_hh
 
 
 // External library headers
 // --- #include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
+// --- #include <utility/pointer/owning_ptr.hh>
 
 
 // C++ headers
@@ -36,19 +36,20 @@ namespace moves {
 
 
 // Forward declarations
-class TrajectoryRecorder;
+class PDBTrajectoryRecorder;
 
 
 // Typedefs
-typedef utility::pointer::owning_ptr< TrajectoryRecorder > TrajectoryRecorderOP;
+// --- typedef utility::pointer::access_ptr< PDBTrajectoryRecorder > PDBTrajectoryRecorderAP;
+// --- typedef utility::pointer::owning_ptr< PDBTrajectoryRecorder > PDBTrajectoryRecorderOP;
 
 
 // Smart pointer required functions
-// --- void owning_ptr_acquire(TrajectoryRecorder *);
-// --- void owning_ptr_release(TrajectoryRecorder *);
+// --- void owning_ptr_acquire(PDBTrajectoryRecorder *);
+// --- void owning_ptr_release(PDBTrajectoryRecorder *);
 
 } // namespace moves
 } // namespace protocols
 
 
-#endif // INCLUDED_protocols_moves_TrajectoryRecorder_FWD_HH
+#endif // INCLUDED_protocols_moves_PDBTrajectoryRecorder_FWD_HH

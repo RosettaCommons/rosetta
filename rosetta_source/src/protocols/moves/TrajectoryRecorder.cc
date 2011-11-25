@@ -15,7 +15,6 @@
 
 // Unit header or inline function header
 #include <protocols/moves/TrajectoryRecorder.hh>
-#include <protocols/moves/TrajectoryRecorderCreator.hh>
 
 // Other project headers or inline function headers
 #include <core/io/raw_data/ScoreStruct.hh>
@@ -27,44 +26,54 @@
 #include <protocols/ScoreMap.hh>
 #include <utility/tag/Tag.hh>
 
+// just for tracer output
+#include <protocols/jd2/Job.hh>
+#include <protocols/jd2/util.hh>
 // External library headers
 
 // C++ headers
 #include <iomanip>
+#include <basic/options/option_macros.hh>
+#include <basic/Tracer.hh>
 
-#include <protocols/jobdist/Jobs.hh>
+static basic::Tracer tr( "protocols.moves.TrajectoryRecorder" );
+
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
-
 // Operating system headers
 
-// Forward declarations
+OPT_1GRP_KEY( Integer, trajectory, stride )
+OPT_1GRP_KEY( Boolean, trajectory, cumulate )
+
+bool protocols::moves::TrajectoryRecorder::options_registered_( false );
+
+void protocols::moves::TrajectoryRecorder::register_options() {
+  using namespace basic::options;
+  using namespace OptionKeys;
+  if ( options_registered_ ) return;
+  options_registered_ = true;
+	NEW_OPT( trajectory::stride, "how often should a snapshot be written to the trajectory", 1 );
+	NEW_OPT( trajectory::cumulate, "write all decoys into the same trajectory file", false );
+}
 
 
 namespace protocols {
 namespace moves {
 
-std::string
-TrajectoryRecorderCreator::keyname() const {
-	return TrajectoryRecorderCreator::mover_name();
-}
-
-protocols::moves::MoverOP
-TrajectoryRecorderCreator::create_mover() const {
-	return new TrajectoryRecorder;
-}
-
-std::string
-TrajectoryRecorderCreator::mover_name() {
-	return "TrajectoryRecorder";
-}
-
 TrajectoryRecorder::TrajectoryRecorder() :
 	stride_(1),
 	model_count_(0),
-	step_count_(0)
-{}
+	step_count_(0),
+	cumulate_( false )
+{
+  using namespace basic::options;
+  using namespace OptionKeys;
+	if ( options_registered_ ) {
+		stride_ = option[ OptionKeys::trajectory::stride ]();
+		cumulate_ = option[ OptionKeys::trajectory::cumulate ]();
+	}
+	file_name_ = "traj";
+}
 
 TrajectoryRecorder::~TrajectoryRecorder()
 {}
@@ -76,7 +85,8 @@ TrajectoryRecorder::TrajectoryRecorder(
 	stride_(other.stride_),
 	model_count_(other.model_count_),
 	step_count_(other.step_count_),
-	file_name_(other.file_name_)
+	file_name_(other.file_name_),
+	cumulate_( other.cumulate_ )
 {}
 
 TrajectoryRecorder&
@@ -84,19 +94,7 @@ TrajectoryRecorder::operator=( TrajectoryRecorder const & /* other */ )
 {
 	// assignment not allowed
 	runtime_assert(false);
-	return * this;
-}
-
-MoverOP
-TrajectoryRecorder::clone() const
-{
-	return new TrajectoryRecorder( *this );
-}
-
-MoverOP
-TrajectoryRecorder::fresh_instance() const
-{
-	return new TrajectoryRecorder;
+	return *this;
 }
 
 std::string
@@ -115,48 +113,19 @@ TrajectoryRecorder::parse_my_tag(
 )
 {
 	stride_ = tag->getOption< core::Size >( "stride", 100 );
-	file_name_ = tag->getOption< std::string >( "filename", "traj.pdb" );
+	file_name_ = tag->getOption< std::string >( "filename", "traj" );
+	cumulate_= tag->getOption< bool > ("cumulate", false );
 }
 
 void
-TrajectoryRecorder::write_model(
-	core::pose::Pose const & pose
-)
-{
-	if (trajectory_stream_.filename() == "") trajectory_stream_.open(file_name_);
-
-	std::map < std::string, core::Real > score_map;
-	std::map < std::string, std::string > string_map;
-	protocols::ScoreMap::score_map_from_scored_pose(score_map, pose);
-	core::io::raw_data::ScoreStruct score_struct;
-
-	trajectory_stream_ << "MODEL     " << std::setw(4) << model_count_ << std::endl;
-	trajectory_stream_ << "REMARK  99 " << step_count_ << std::endl;
-	trajectory_stream_ << "REMARK  98 " << pose.energies().total_energy() << std::endl;
-	trajectory_stream_ << "REMARK  97 ";
-	score_struct.print_header(trajectory_stream_, score_map, string_map, false);
-	trajectory_stream_ << "REMARK  97 ";
-	score_struct.print_scores(trajectory_stream_, score_map, string_map);
-
-	pose.dump_pdb(trajectory_stream_);
-	trajectory_stream_ << "ENDMDL" << std::endl;
-}
-
-void
-TrajectoryRecorder::reset(
-	protocols::moves::MonteCarlo const & mc
-)
-{
+TrajectoryRecorder::reset( protocols::moves::MonteCarlo const & mc ) {
 	model_count_ = 0;
 	step_count_ = 0;
-	write_model(mc.last_accepted_pose());
+	//	write_model(mc.last_accepted_pose()); //why writing this model ? can fuck up score file
 }
 
 void
-TrajectoryRecorder::update_after_boltzmann(
-	core::pose::Pose const & pose
-)
-{
+TrajectoryRecorder::update_after_boltzmann(	core::pose::Pose const & pose ) {
 	++step_count_;
 
 	if (step_count_ % stride_ == 0) {
@@ -166,38 +135,32 @@ TrajectoryRecorder::update_after_boltzmann(
 }
 
 void
-TrajectoryRecorder::update_after_boltzmann(
-	protocols::moves::MonteCarlo const & mc
-)
-{
+TrajectoryRecorder::update_after_boltzmann(	protocols::moves::MonteCarlo const & mc ) {
 	update_after_boltzmann(mc.last_accepted_pose());
 }
 
 void
-TrajectoryRecorder::apply(
-	core::pose::Pose & pose
-)
-{
+TrajectoryRecorder::apply( core::pose::Pose & pose ) {
 	update_after_boltzmann(pose);
 }
 
 void
 TrajectoryRecorder::initialize_simulation(
-	core::pose::Pose & pose,
-	protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
-)
+  core::pose::Pose & pose,
+	protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover )
 {
-	std::string original_file_name(file_name());
-
-	if (metropolis_hastings_mover.output_name() != "") {
+	cumulate_ = false;
+	if ( !cumulate_ && metropolis_hastings_mover.output_name() != "" ) {
 		std::ostringstream filename;
-		filename << metropolis_hastings_mover.output_name() << "_" << file_name();
-		file_name(filename.str());
+		current_output_name_ = metropolis_hastings_mover.output_name();
+		tr.Info << "obtained output name " << current_output_name_ << " from MetropolisHastings Object" << std::endl;
+	} else {
+		current_output_name_ = file_name();
+		tr.Info << "no output name obtained because " << ( cumulate_ ? " cumulate-mode " : " not available " ) << std::endl;
 	}
-
 	reset(*(metropolis_hastings_mover.monte_carlo()));
-
-	file_name(original_file_name);
+	tr.Info << std::setprecision( 3 );
+	tr.Debug << std::setprecision( 3 );
 }
 
 void
@@ -205,18 +168,23 @@ TrajectoryRecorder::observe_after_metropolis(
 	protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
 )
 {
+	MonteCarlo const& mc( *(metropolis_hastings_mover.monte_carlo()) );
+	Pose const& pose( mc.last_accepted_pose() );
+	if (step_count_ % std::max(stride_,(core::Size)500) == 0) {
+		if ( tr.Info.visible() ) {
+			jd2::JobOP job( jd2::get_current_job() ) ;
+			tr.Info << step_count_ << " E=" << pose.energies().total_energy();
+			//output what is in job-object (e.g. temperature )
+			for ( jd2::Job::StringRealPairs::const_iterator it( job->output_string_real_pairs_begin()), end(job->output_string_real_pairs_end()); it != end; ++it ) {
+				tr.Info << " " << it->first << "=" << it->second;
+			}
+			tr.Info << std::endl;
+		}
+		mc.show_counters();
+	}
 	update_after_boltzmann(*(metropolis_hastings_mover.monte_carlo()));
-}
 
-void
-TrajectoryRecorder::finalize_simulation(
-	core::pose::Pose & pose,
-	protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
-)
-{
-	trajectory_stream_.close();
 }
-
 
 } // namespace moves
 } // namespace protocols

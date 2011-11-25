@@ -22,6 +22,8 @@
 // unit headers
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MonteCarloStatus.hh>
+#include <protocols/moves/TrialCounter.hh>
+// AUTO-REMOVED #include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
 
 // package headers
 #include <core/pose/Pose.fwd.hh>
@@ -570,9 +572,7 @@ private:
 	MCA mc_accepted_;
 
 	/// @brief diagnostics
-	std::map< std::string, int > trial_counter_;
-	std::map< std::string, int > accept_counter_;
-	std::map< std::string, core::Real > energy_drop_counter_;
+	TrialCounter counter_;
 
 	bool update_boinc_;
 

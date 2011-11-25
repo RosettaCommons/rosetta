@@ -16,7 +16,7 @@
 			<Small sampling_weight=0.1/>
 			<Shear sampling_weight=0.1/>
 			<Sidechain sampling_weight=0.3 task_operations=rtrp,preserve_cb prob_uniform=0.1 prob_withinrot=0.2/>
-			<TrajectoryRecorder/>
+			<PDBTrajectoryRecorder/>
 		</MetropolisHastings>
         </MOVERS>
         <APPLY_TO_POSE>
