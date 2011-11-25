@@ -237,7 +237,8 @@ public:
 
 	void trans_magnitude( core::Real const magnitude ) { trans_mag_ = magnitude; }
 
-
+	void add_jump( core::Size );
+	void clear_jumps();
 private:
 	/// perturbation magnitudes (rotational and translational)
 	core::Real rot_mag_;

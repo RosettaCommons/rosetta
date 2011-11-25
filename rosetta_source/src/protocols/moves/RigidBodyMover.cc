@@ -328,6 +328,13 @@ RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover(
 
 RigidBodyPerturbNoCenterMover::~RigidBodyPerturbNoCenterMover() {}
 
+void RigidBodyPerturbNoCenterMover::add_jump( core::Size jump_id ) {
+	movable_jumps_.push_back( jump_id );
+}
+
+void RigidBodyPerturbNoCenterMover::clear_jumps() {
+	movable_jumps_.clear();
+}
 
 void RigidBodyPerturbNoCenterMover::apply( core::pose::Pose & pose )
 {
