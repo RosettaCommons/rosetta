@@ -74,7 +74,7 @@ static basic::Tracer tr("main");
 using namespace core;
 using namespace protocols;
 using namespace abinitio;
-using namespace jumping;
+
 using namespace pose;
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
