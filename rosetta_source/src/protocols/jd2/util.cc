@@ -213,10 +213,11 @@ MPI_Comm const& current_mpi_comm() {
 			return mpi_jd->current_mpi_comm();
 		}
 	}
-	///does this really make sense to get to this point...
-	/// let's break the code here... instead of returning MPI_COMM_WORLD
-	runtime_assert( false );
-	return MPI_COMM_WORLD
+	//return MPI_COMM_WORLD; //causes warning: returning reference to temporary
+	//workaround to avoid warning ( MPI_COMM_WORLD is actually a macro )
+	static MPI_Comm my_mpi_comm_world = MPI_COMM_NULL;
+	MPI_Comm_dup( MPI_COMM_WORLD, &my_mpi_comm_world );
+	return my_mpi_comm_world;
 }
 #endif
 
