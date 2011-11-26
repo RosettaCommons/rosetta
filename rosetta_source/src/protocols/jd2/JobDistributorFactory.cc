@@ -22,6 +22,7 @@
 #include <protocols/jd2/MPIWorkPartitionJobDistributor.hh>
 #include <protocols/jd2/MPIWorkPoolJobDistributor.hh>
 #include <protocols/jd2/MPIFileBufJobDistributor.hh>
+#include <protocols/jd2/MPIMultiCommJobDistributor.hh>
 #include <protocols/jd2/archive/MPIArchiveJobDistributor.hh>
 
 #include <protocols/jd2/PDBJobInputter.hh>
@@ -81,14 +82,16 @@ using namespace basic::options::OptionKeys;
 JobDistributor *
 JobDistributorFactory::create_job_distributor() {
 #ifdef USEMPI
-	int npes_;
-	MPI_Comm_size( MPI_COMM_WORLD, ( int* )( &npes_ ) );
+	int n_rank_;
+	MPI_Comm_size( MPI_COMM_WORLD, ( int* )( &n_rank_ ) );
 
-	if ( npes_ > 3 && option[ OptionKeys::run::archive ] ) return new archive::MPIArchiveJobDistributor;
-	if ( npes_ > 2 && option[ OptionKeys::jd2::mpi_work_partition_job_distributor ].value() == true ) {
+	if ( n_rank_ > 3 && option[ OptionKeys::run::archive ] ) return new archive::MPIArchiveJobDistributor;
+	if ( n_rank_ > 2 && option[ OptionKeys::jd2::mpi_work_partition_job_distributor ].value() == true ) {
 		return new MPIWorkPartitionJobDistributor;
 	} else {
-
+		if ( n_rank_ > 2 && option[ OptionKeys::run::n_replica ]() > 1 ) {
+			return new MPIMultiCommJobDistributor( option[ OptionKeys::run::n_replica ]() );
+		}
 		///NOTE: MPIFileBufJobDistributor has not been tested with PDB-Outputter. No idea if this works.
 		/// according to wishes of the community the check in the lines below is turned off.
 		/// if you see that MPI and PDB output is not working: you have a couple of options:
@@ -105,12 +108,12 @@ JobDistributorFactory::create_job_distributor() {
 		///to hack around a bug...
 
 		///NOTE: the option jd2:mpi_filebuf_jobdistributor is now true by default, according to exchange on minirosetta list Nov 2010. (OL)
-		if ( npes_ > 2 && option[ out::file::silent ].user() &&
+		if ( n_rank_ > 2 && option[ out::file::silent ].user() &&
 			( option[ OptionKeys::jd2::mpi_file_buf_job_distributor ].value() == true
 				|| option[ OptionKeys::jd2::mpi_filebuf_jobdistributor ].value() == true ) ) {
 			return new MPIFileBufJobDistributor;
 		} else {
-			if ( npes_ > 1 ) return new MPIWorkPoolJobDistributor;
+			if ( n_rank_ > 1 ) return new MPIWorkPoolJobDistributor;
 		}
 	}
 #endif

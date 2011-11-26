@@ -1557,6 +1557,11 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>Default: false</dd><br>
 </dl>
 <dl>
+<dt><b>-n_replica</b> \<Integer\><dt>
+<dd>run MPIMultiCommJobDistributor with n_replica processes per job</dd><br>
+<dd>Default: 1</dd><br>
+</dl>
+<dl>
 <dt><b>-shuffle</b> \<Boolean\><dt>
 <dd>Shuffle job order</dd><br>
 <dd>Default: false</dd><br>
@@ -9537,7 +9542,7 @@ Mini rosetta command line option descriptions. <i>(This is automatically generat
 <dd>label the start of the second chain</dd><br>
 </dl>
 <dl>
-<dt><b>-repeat_structuer</b> \<Integer\><dt>
+<dt><b>-repeat_structure</b> \<Integer\><dt>
 <dd>build identical repeats this many times</dd><br>
 <dd>Default: 1</dd><br>
 </dl>

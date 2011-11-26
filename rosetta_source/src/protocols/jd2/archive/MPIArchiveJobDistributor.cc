@@ -116,7 +116,7 @@ MPIArchiveJobDistributor::go( protocols::moves::MoverOP mover )
 		buffer.stop();
 	} else if( rank() >= min_client_rank() ){
 		/// Slave/Runner/Worker
-		slave_go( mover );
+		go_main( mover );
   }
 
 	// ideally these would be called in the dtor but the way we have the singleton pattern set up the dtors don't get

@@ -25,6 +25,7 @@ namespace run { extern BooleanOptionKey const run; }
 namespace run { extern FileVectorOptionKey const batches; }
 namespace run { extern BooleanOptionKey const no_prof_info_in_silentout; }
 namespace run { extern BooleanOptionKey const archive; }
+namespace run { extern IntegerOptionKey const n_replica; }
 namespace run { extern BooleanOptionKey const shuffle; }
 namespace run { extern IntegerOptionKey const n_cycles; }
 namespace run { extern IntegerOptionKey const repeat; }

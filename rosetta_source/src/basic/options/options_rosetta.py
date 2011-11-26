@@ -702,6 +702,8 @@ Options = Option_Group( '',
 		##			  default='false'
 		##),
 		Option( 'archive', 'Boolean', desc='run MPIArchiveJobDistributor', default='false' ),
+		Option( 'n_replica', 'Integer', desc='run MPIMultiCommJobDistributor with n_replica processes per job', default='1' ),
+
 		Option( 'shuffle', 'Boolean',
 			desc='Shuffle job order',
 			legal=['true','false'], default='false'
@@ -776,10 +778,6 @@ Options = Option_Group( '',
 			desc="Wait a random amount of 0..N seconds before doing anything at all. Useful for cluster job staggering.",
 			default='0'
 			),
-		##Option( 'random_crash', 'Integer',
-		##       desc="CAUION: This will *RANDOMLY* abort mini somewhere in the program. The larger the number the less likley this is to happen. The point of abortion is in ScoreFunction().  This option is used to catch errors that occur only with checkpointing. Obviously (duh!) this option is false  (0) by default.",
-		##				 default='0'
-		##),
 		Option( 'timer', 'Boolean',
 			desc="write out time per decoy in minutes in scorefile",
 			),

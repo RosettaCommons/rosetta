@@ -324,6 +324,7 @@ namespace run { BooleanOptionKey const run( "run" );  }
 namespace run { FileVectorOptionKey const batches( "run:batches" );  }
 namespace run { BooleanOptionKey const no_prof_info_in_silentout( "run:no_prof_info_in_silentout" );  }
 namespace run { BooleanOptionKey const archive( "run:archive" );  }
+namespace run { IntegerOptionKey const n_replica( "run:n_replica" );  }
 namespace run { BooleanOptionKey const shuffle( "run:shuffle" );  }
 namespace run { IntegerOptionKey const n_cycles( "run:n_cycles" );  }
 namespace run { IntegerOptionKey const repeat( "run:repeat" );  }

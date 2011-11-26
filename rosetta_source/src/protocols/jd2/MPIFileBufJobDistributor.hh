@@ -127,56 +127,40 @@ protected:
 	virtual bool next_batch();
 
   ///@brief Handles the receiving of job requests and the sending of job ids to and from slaves
-  void
-  master_go( protocols::moves::MoverOP mover );
-
-  ///@brief Proceeds to the parent class go_main() as usual
-  void
-  slave_go( protocols::moves::MoverOP mover );
+  void master_go( protocols::moves::MoverOP mover );
 
   ///@brief Always returns zero, simply increments next_job_to_assign_ to the next job that should be run based
   ///on what has been completeted and the overwrite flags
-  core::Size
-  master_get_new_job_id();
+  core::Size master_get_new_job_id();
 
   ///@brief requests, receives, and returns a new job id from the master node or returns the current job id if the
   ///repeat_job_ flag is set to true
-  core::Size
-  slave_get_new_job_id();
+  core::Size slave_get_new_job_id();
 
   ///@brief This should never be called as this is handled internally by the slave nodes, it utility_exits
-  void
-  master_mark_current_job_id_for_repetition();
+  void master_mark_current_job_id_for_repetition();
 
   ///@brief Sets the repeat_job_ flag to true
-  void
-  slave_mark_current_job_id_for_repetition();
+  void slave_mark_current_job_id_for_repetition();
 
   ///@brief Simply increments next_job_to_assign_ to the next job that should be run based on what has been
   ///completed and if the input job tag of the job marked as having bad input
-  void
-  master_remove_bad_inputs_from_job_list();
+  void master_remove_bad_inputs_from_job_list();
 
   ///@brief Sends a message to the head node that contains the id of a job that had bad input
-  void
-  slave_remove_bad_inputs_from_job_list();
+  void slave_remove_bad_inputs_from_job_list();
 
 	///@brief This should never be called as this is handled internally by the slave nodes, it utility_exits
-	void
-	master_job_succeeded(core::pose::Pose & pose);
+	void master_job_succeeded(core::pose::Pose & pose);
 
 	///@brief Sends a message to the head node upon successful job completion to avoid output interleaving
-	void
-	slave_job_succeeded(core::pose::Pose & pose);
+	void slave_job_succeeded(core::pose::Pose & pose);
 
 	///@brief send a message to master
-	void
-	slave_to_master( core::Size tag );
+	void slave_to_master( core::Size tag );
 
 	///@brief called by master to send and by slave to receive job
-	void
-	send_job_to_slave( core::Size slave_rank );
-
+	void send_job_to_slave( core::Size slave_rank );
 
 	///@brief return rank of this process
 	core::Size rank() const {
@@ -193,12 +177,15 @@ protected:
 		return file_buf_rank_;
 	}
 
-	/**
-	///@brief return rank of first worker process (there might be more dedicated processes, e.g., ArchiveManager...)
-	core::Size min_client_rank() const {
-		return min_client_rank_;
+	///@brief how many processes --- this includes dedicated processes
+	core::Size number_of_processors() {
+		return n_rank_;
 	}
-	**/ //ek moved from protected to public
+
+	///@brief how many processes --- this includes dedicated processes
+	core::Size n_rank() {
+		return n_rank_;
+	}
 
 	///@brief marks job as completed in joblist
 	virtual void mark_job_as_completed( core::Size job_id, core::Size batch_id, core::Real run_time );
@@ -210,15 +197,10 @@ protected:
 	/// ADD_BATCH signal by sending QUEUE_EMPTY to the ArchiveManager...
 	void eat_signal( core::Size signal, int source );
 
-	///@brief how many processes --- this includes dedicated processes
-	core::Size number_of_processors() {
-		return npes_;
-	}
-
 private:
 
   ///@brief total number of processing elements
-	core::Size npes_;
+	core::Size n_rank_;
 
   ///@brief rank of the "local" instance
 	core::Size rank_;

@@ -65,7 +65,7 @@ using namespace basic::options::OptionKeys;
 ///which processor it is in MPI land.
 MPIFileBufJobDistributor::MPIFileBufJobDistributor() :
 	JobDistributor(),
-	npes_( 1 ),
+	n_rank_( 1 ),
 	rank_( 0 ),
 	slave_current_job_id_( 0 ),
 	slave_current_batch_id_( 0 ),
@@ -77,10 +77,10 @@ MPIFileBufJobDistributor::MPIFileBufJobDistributor() :
 	min_client_rank_( 2 )
 {
 
-  // set npes and rank based on whether we are using MPI or not
+  // set n_rank_ and rank based on whether we are using MPI or not
 #ifdef USEMPI
 	MPI_Comm_rank( MPI_COMM_WORLD, ( int* )( &rank_ ) );
-	MPI_Comm_size( MPI_COMM_WORLD, ( int* )( &npes_ ) );
+	MPI_Comm_size( MPI_COMM_WORLD, ( int* )( &n_rank_ ) );
 #else
 	utility_exit_with_message( "ERROR ERROR ERROR: The MPIFileBufJobDistributor will not work unless you have compiled using extras=mpi" );
 #endif
@@ -95,7 +95,7 @@ MPIFileBufJobDistributor::MPIFileBufJobDistributor(
 	bool start_empty
 ) :
 	JobDistributor( start_empty /*call empty c'tor*/ ),
-	npes_( 1 ),
+	n_rank_( 1 ),
 	rank_( 0 ),
 	slave_current_job_id_( 0 ),
 	slave_current_batch_id_( 0 ),
@@ -107,12 +107,12 @@ MPIFileBufJobDistributor::MPIFileBufJobDistributor(
 	min_client_rank_( min_client_rank )
 {
 
-	// set npes and rank based on whether we are using MPI or not
+	// set n_rank_ and rank based on whether we are using MPI or not
 #ifdef USEMPI
-	//npes_ = MPI::COMM_WORLD.Get_size();
+	//n_rank_ = MPI::COMM_WORLD.Get_size();
 	//rank_ = MPI::COMM_WORLD.Get_rank();
 	MPI_Comm_rank( MPI_COMM_WORLD, ( int* )( &rank_ ) );
-	MPI_Comm_size( MPI_COMM_WORLD, ( int* )( &npes_ ) );
+	MPI_Comm_size( MPI_COMM_WORLD, ( int* )( &n_rank_ ) );
 #else
 	utility_exit_with_message( "ERROR ERROR ERROR: The MPIFileBufJobDistributor will not work unless you have compiled using extras=mpi" );
 #endif
@@ -124,27 +124,20 @@ MPIFileBufJobDistributor::MPIFileBufJobDistributor(
 MPIFileBufJobDistributor::~MPIFileBufJobDistributor()
 {}
 
-
 void
-MPIFileBufJobDistributor::go( protocols::moves::MoverOP mover )
-{
+MPIFileBufJobDistributor::go( protocols::moves::MoverOP mover ) {
 	utility::io::ozstream::enable_MPI_reroute( min_client_rank_, file_buf_rank_ );
+	protocols::jd2::WriteOut_MpiFileBuffer buffer( file_buf_rank_ );
+	buffer.run(); //returns immediately if not buffer_rank
 	if ( rank_ == master_rank_ ) {
 		tr.Debug << "Master JD starts" << std::endl;
 		master_go( mover );
 		tr.Debug << "send STOP to FileBuffer " << std::endl;
-		protocols::jd2::WriteOut_MpiFileBuffer buffer( file_buf_rank_ );
 		buffer.stop(); //this communicates to the file_buf_rank_ that it has to stop the run() loop.
-	} else {
-		{
-			protocols::jd2::WriteOut_MpiFileBuffer buffer( file_buf_rank_ );
-			buffer.run(); //returns for all client-nodes immediately.
-		}
-		if ( rank_ >= min_client_rank_ ) {
-			slave_go( mover );
+	} else if ( rank_ >= min_client_rank_ ) {
+			go_main( mover );
 			tr.Debug << "Slave JD finished!" << std::endl;
-		}
-  }
+	}
 
 	// ideally these would be called in the dtor but the way we have the singleton pattern set up the dtors don't get
 	// called
@@ -284,7 +277,7 @@ MPIFileBufJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	n_nodes_left_to_spin_down_ = option[ OptionKeys::jd2::mpi_nowait_for_remaining_jobs ]() ? 0 : ( npes_ - min_client_rank_ );
+	n_nodes_left_to_spin_down_ = option[ OptionKeys::jd2::mpi_nowait_for_remaining_jobs ]() ? 0 : ( n_rank_ - min_client_rank_ );
 
 	// Job Distribution Loop  --- receive message and process -- repeat
 	while ( current_job_id() || jobs_returned_ < jobs_assigned_ || n_nodes_left_to_spin_down_ ) {
@@ -314,14 +307,6 @@ MPIFileBufJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 	}
 
 #endif
-}
-
-void
-MPIFileBufJobDistributor::slave_go( protocols::moves::MoverOP mover )
-{
-	runtime_assert( !( rank_ == master_rank_ ) );
-	go_main( mover );
-	tr.Debug << "slave node " << rank_ << " finished job" << std::endl;
 }
 
 ///@brief dummy for master/slave version

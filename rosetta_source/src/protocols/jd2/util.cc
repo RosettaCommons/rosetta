@@ -12,9 +12,15 @@
 /// @author Oliver Lange
 
 // Unit Headers
+
+#ifdef USEMPI
+#include <mpi.h>
+#endif
+
 #include <protocols/jd2/util.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/MPIMultiCommJobDistributor.hh>
 #include <protocols/jd2/JobInputter.hh>
 #include <protocols/jd2/JobOutputter.hh>
 #include <protocols/jd2/Job.hh>
@@ -76,8 +82,8 @@ void output_intermediate_pose(
 	int copy_count,
 	bool score_only
 ) {
-  protocols::jd2::JobDistributor* jd
-  	= protocols::jd2::JobDistributor::get_instance();
+  JobDistributor* jd
+  	= JobDistributor::get_instance();
   if ( jd && jd->job_outputter() && jd->current_job() ) {
     jd->job_outputter()->other_pose( jd->current_job(), pose, stage_tag, copy_count, score_only );
   } else {
@@ -86,16 +92,16 @@ void output_intermediate_pose(
 }
 
 std::string current_output_name() {
-	protocols::jd2::JobDistributor* jd
-  	= protocols::jd2::JobDistributor::get_instance();
+	JobDistributor* jd
+  	= JobDistributor::get_instance();
 	if ( jd && jd->job_outputter() && jd->current_job() ) {
 		return jd->job_outputter()->output_name( jd->current_job() );
 	} else return "NoTag";
 }
 
 bool jd2_used() {
-	protocols::jd2::JobDistributor* jd
-  	= protocols::jd2::JobDistributor::get_instance();
+	JobDistributor* jd
+  	= JobDistributor::get_instance();
 	return ( jd && jd->job_outputter() && jd->current_job() != JD2_BOGUS_JOB );
 }
 
@@ -105,8 +111,8 @@ write_score_tracer( core::pose::Pose const& pose_in, std::string tracer_point ) 
 
 	if ( !tr_score.visible() ) return;
 
-	protocols::jd2::JobDistributor* jd
-	 = protocols::jd2::JobDistributor::get_instance();
+	JobDistributor* jd
+	 = JobDistributor::get_instance();
 
   if ( !jd || !jd->job_outputter()) {
     tr_score.Warning << "can't output intermediate pose if not running with  jobdistributor ( jd2 / 2008 )" << std::endl;
@@ -135,8 +141,8 @@ write_score_tracer( core::pose::Pose const& pose_in, std::string tracer_point ) 
 }
 
 JobOP get_current_job() {
-	protocols::jd2::JobDistributor* jd
-  	= protocols::jd2::JobDistributor::get_instance();
+	JobDistributor* jd
+  	= JobDistributor::get_instance();
 	if ( jd && jd->job_inputter() ) {
 		return jd->current_job();
 	}
@@ -144,8 +150,8 @@ JobOP get_current_job() {
 }
 
 core::pose::PoseCOP get_current_jobs_starting_pose() {
-	protocols::jd2::JobDistributor* jd
-  	= protocols::jd2::JobDistributor::get_instance();
+	JobDistributor* jd
+  	= JobDistributor::get_instance();
 	core::pose::PoseCOP pose( NULL );
 	if ( jd && jd->job_outputter() && jd->job_inputter() && jd->current_job() ) {
 		JobOP job = jd->current_job();
@@ -193,8 +199,26 @@ void set_native_in_mover( protocols::moves::Mover &mover ){
 		core::import_pose::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
 		mover.set_native_pose( native_pose );
 	}
-
 }
+
+
+#ifdef USEMPI
+///@brief returns communicator defined by the JobDistributor or MPI_COMM_WORLD
+MPI_Comm const& current_mpi_comm() {
+	JobDistributor* jd
+		= JobDistributor::get_instance();
+	if ( jd ) {
+		MPIMultiCommJobDistributor* mpi_jd = dynamic_cast< MPIMultiCommJobDistributor* >( jd );
+		if ( mpi_jd ) {
+			return mpi_jd->current_mpi_comm();
+		}
+	}
+	///does this really make sense to get to this point...
+	/// let's break the code here... instead of returning MPI_COMM_WORLD
+	runtime_assert( false );
+	return MPI_COMM_WORLD
+}
+#endif
 
 
 } // jd2

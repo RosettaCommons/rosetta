@@ -15,6 +15,10 @@
 #ifndef INCLUDED_protocols_jd2_util_hh
 #define INCLUDED_protocols_jd2_util_hh
 
+#ifdef USEMPI
+#include <mpi.h>
+#endif
+
 #include <core/pose/Pose.fwd.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
@@ -26,6 +30,7 @@
 #ifdef WIN32
 #include <string>
 #endif
+
 
 
 namespace protocols {
@@ -56,6 +61,11 @@ void set_native_in_mover( protocols::moves::Mover &mover );
 
 void
 write_score_tracer( core::pose::Pose const& pose_in, std::string tag );
+
+#ifdef USEMPI
+///@brief returns communicator defined by the JobDistributor or MPI_COMM_WORLD
+MPI_Comm const& current_mpi_comm();
+#endif
 
 }
 }

@@ -109,7 +109,7 @@ void MpiFileBuffer::garbage_collection() {
 void MpiFileBuffer::run() {
 #ifdef USEMPI
 	tr.Debug << "MpiFileBuffer " << (( my_rank_ != buffer_rank_ ) ? "not" : "" ) <<  " started on node " << my_rank_ << std::endl;
-  if (my_rank_ != buffer_rank_ ) return;
+  if ( my_rank_ != buffer_rank_ ) return;
 	MPI_Status stat;
 	bStop_ = false; //this might be changed from some where via msg.
   while( !bStop_ ) {
