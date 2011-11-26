@@ -14,7 +14,7 @@
 // Unit headers
 #include <protocols/seeded_abinitio/SeedSetupMover.hh>
 #include <protocols/seeded_abinitio/SeedSetupMoverCreator.hh>
-// AUTO-REMOVED #include <protocols/seeded_abinitio/SeededAbinitio_util.hh>
+#include <protocols/seeded_abinitio/SeededAbinitio_util.hh>
 
 //#include <protocols/protein_interface_design/util.hh>
 //#include <utility/string_util.hh>
@@ -26,14 +26,13 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/TaskOperations.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/OperateOnCertainResidues.hh>
+//#include <core/pack/task/operation/TaskOperations.hh>
+//#include <core/pack/task/operation/OperateOnCertainResidues.hh>
 #include <protocols/toolbox/task_operations/RestrictChainToRepackingOperation.hh>
 #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperation.hh>
 #include <protocols/toolbox/task_operations/PreventResiduesFromRepackingOperation.hh>
 #include <protocols/toolbox/task_operations/RestrictResiduesToRepackingOperation.hh>
-// AUTO-REMOVED #include <core/pack/task/operation/ResLvlTaskOperations.hh>
-
+//#include <core/pack/task/operation/ResLvlTaskOperations.hh>
 
 //#include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 
@@ -67,8 +66,6 @@ namespace protocols {
 	namespace seeded_abinitio {
 		
 		using namespace core;
-//		using namespace scoring::constraints;	
-//		using namespace protocols::moves;
 		
 		static basic::Tracer TR( "protocols.seeded_abinitio.SeedSetupMover" );
 		
@@ -294,27 +291,6 @@ void define_movemap_chains(
 }	//end define movemap
 
 ///adjustment since parse time specified residues are different numbered than run time residues
-protocols::loops::Loops 
-parse_seeds( 
-			pose::Pose & pose,
-			utility::vector1 < std::pair < std::string, std::string > > seed_vector){
-	
-	protocols::loops::Loops tmpseed;
-	
-		for( Size iter = 1 ; iter <= seed_vector.size() ; ++ iter ){
-			TR.Debug<<"sanity check, seed_vector[iter].first " <<seed_vector[iter].first <<std::endl; ////////////
-			core::Size const begin = protocols::rosetta_scripts::parse_resnum( seed_vector[iter].first, pose ) ;
-			core::Size const end   = protocols::rosetta_scripts::parse_resnum( seed_vector[iter].second, pose );
-			//runtime_assert( end > begin );
-			//runtime_assert( begin>=1);
-			//runtime_assert( end<=pose.total_residue() );
-			tmpseed.add_loop( begin , end , 0, 0, false );
-	}
-	TR.Debug<<"runtime parsed: "<< tmpseed <<std::endl;
-	return tmpseed;
-}//end parse seeds
-		
-///adjustment since parse time specified residues are different numbered than run time residues
 utility::vector1< core::Size > 
 adjust_des_residues( pose::Pose & pose,
 							 std::string design_residues ){
@@ -345,7 +321,6 @@ SeedSetupMover::apply( core::pose::Pose & pose ){
 	all_seeds_ = parse_seeds( pose , seed_vector_ );
 	designable_residues_motif = adjust_des_residues( pose , design_res_);
 	utility::vector1 <Size> norepack_residues = adjust_des_residues( pose, norepack_res_ );
-	
 	
 	/// 2. set movemap
 	define_movemap_chains( pose , movemap_ , all_seeds_, chi_chain1_, chi_chain2_ );

@@ -18,38 +18,52 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.fwd.hh>
-// AUTO-REMOVED #include <core/pack/task/TaskFactory.fwd.hh>
+#include <protocols/moves/DataMap.fwd.hh>
+#include <protocols/rosetta_scripts/util.hh>
+//#include <core/pack/task/TaskFactory.fwd.hh>
 //#include <core/pack/task/operation/TaskOperation.fwd.hh>
 //#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-
+//#include <protocols/loops/Loop.hh>
+#include <protocols/loops/Loops.hh>
+#include <protocols/loops/Loops.fwd.hh>
+#include <protocols/loops/loops_main.hh>
+//#include <protocols/loops/loops_main.hh>
+//#include <protocols/loops/util.hh>
+/////#include <protocols/loops/Loops.hh>
+//#include <protocols/loops/LoopMover.fwd.hh>
+//#include <protocols/loops/LoopMover.hh>
 
 
 
 // Utillity Headers
-// AUTO-REMOVED #include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ headers
-// AUTO-REMOVED #include <string>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.fwd.hh>
-
-#include <utility/vector1.hh>
-
+#include <string>
+#include <core/pose/Pose.fwd.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
+#include <core/types.hh>
 //#include <core/scoring/constraints/Constraint.fwd.hh>
 
 // Utility Headers
+#include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
 
 // C++ headers
+#include <string>
 
 namespace protocols {
 namespace seeded_abinitio {
 
+/// for runtime parsing of seeds
+protocols::loops::Loops parse_seeds(	core::pose::Pose const & pose, utility::vector1 < std::pair < std::string, std::string > > seed_vector);
+
+/// to readjust the move map after length changes
 void adjust_mm_to_length( core::pose::Pose const & pose, core::kinematics::MoveMapOP & mm );
-
-
-void combine_two_poses( core::pose::Pose & design_pose , core::pose::PoseOP target_chain );
+		
+void combine_two_poses( core::pose::Pose & design_pose , core::pose::PoseOP & target_chain );
 
 
 }
