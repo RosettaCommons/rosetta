@@ -6,9 +6,8 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-///
+//
 /// @file protocols/seeded_abinitio/CAcstGenerator.hh
-/// @brief Bruno Correia's CA cst generator
 /// @author Eva-Maria Strauch (evas01@u.washington.edu)
 
 #ifndef INCLUDED_protocols_seeded_abinitio_CAcstGenerator_hh
@@ -23,7 +22,6 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <utility/vector1.hh>
@@ -57,42 +55,47 @@ class CAcstGenerator : public protocols::moves::Mover {
  private:
   core::scoring::constraints::ConstraintSetOP ca_cst_;
 
-  ///determines whether constraints for the areas should be which will be "replaced" by the seeds
+  /// determines whether constraints for the areas should be which will be "replaced" by the seeds
   bool add_cst_seed_;
 
-  ///container for the cutpoints, since there shouldnt be constraints between two cutpoints
+  /// container for the cutpoints, since there shouldnt be constraints to cutpoints
   utility::vector1< core::Size > cut_points_;
 
-  ///stddeviation for the harmonic CA constraints
+	/// container with residues from seeds that should have constraints 
+	utility::vector1< core::Size > seed_exceptions_;
+
+  /// stddeviation for the harmonic CA constraints
   core::Real stddev_;
 
-  ///container that has the seed information
+  /// container that has the seed information
   protocols::loops::Loops all_seeds_;
 
-  ///area for which no constraints should be derrived
+  /// residues for which no constraints should be derrived
   protocols::loops::Loops clear_seeds_;
 
-  ///user specified which chain to gather the constraints from
+  /// user specified which chain to gather the constraints from
   core::Size from_chain_;
 
-  ///user specified to which chain of the input chain is applied to
+  /// user specified to which chain of the input chain is applied to
   core::Size to_chain_;
 
   ///user specified a template
   bool template_presence_;
 
-  ///template pdb
+  /// template pdb
   core::pose::PoseOP template_pdb_;
 
-  ///the chain/pose that the user actually wants to read the constraints from
+  /// the chain/pose that the user actually wants to read the constraints from
   core::pose::PoseOP curr_pose_;
 
-  ///replace constraints or add onto them
+  /// replace constraints or add onto them
   bool replace_;
 
-  //core::pose::PoseOP target_chain;
   /// sequence separation after which the pair constraints are added
   core::Size seq_separation_;
+	
+	/// distance separation
+	core::Real distance_cutoff_;
 };
 
 }

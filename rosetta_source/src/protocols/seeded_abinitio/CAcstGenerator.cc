@@ -6,31 +6,24 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-
-
+//
 /// @file 
 /// @author Eva-Maria Strauch (evas01@u.washington.edu)
-/// @brief based on Bruno's CA cst generator
 // Unit headers
 #include <protocols/seeded_abinitio/CAcstGenerator.hh>
 #include <protocols/seeded_abinitio/CAcstGeneratorCreator.hh>
-
-//#include <protocols/protein_interface_design/util.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <boost/foreach.hpp>
-
 #include <core/types.hh>
 
 #define foreach BOOST_FOREACH
 
 #include <basic/Tracer.hh>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <utility/vector1.hh>
+#include <utility/string_util.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 #include <utility/tag/Tag.hh>
 
 //Auto Headers
@@ -51,7 +44,6 @@ using namespace scoring::constraints;
 using namespace protocols::moves;
 	
 static basic::Tracer TR( "protocols.seeded_abinitio.CAcstGenerator" );
-//static basic::Tracer TR_debug( "DEBUG.CAcstGenerator" );
 	
 	std::string
 	CAcstGeneratorCreator::keyname() const
@@ -76,24 +68,23 @@ static basic::Tracer TR( "protocols.seeded_abinitio.CAcstGenerator" );
 	protocols::moves::Mover( CAcstGeneratorCreator::mover_name() )
 	{
 		stddev_ = 3.0;
+		seed_exceptions_.clear();
+		distance_cutoff_ = 6;
 	}
 	
 	
 bool 
-is_cut(	utility::vector1<core::Size> & cut_points,
+is_part(	utility::vector1<core::Size> & cut_points,
 				core::Size & residue){
-	
-	bool res_cut = false;
-	
-	for ( core::Size it = cut_points[1]; it <= cut_points[ cut_points.size() ]; it++ ){
-		if (it == residue)
-			res_cut = true; 
+		bool res_cut = false;
+		for( Size i = 1; i <= cut_points.size(); ++i ){
+			if ( cut_points[i] == residue)
+				res_cut = true; 
 		}
 	return res_cut;
 }
 
-
-///this is still not bulletproof the numbering of the actual seeds in case it is either the template used or the input	
+///this method will get de-convoluted soon....
 void add_dist_constraints( 					
 						 				pose::Pose & pose,
 									 	pose::PoseOP & pose_of_int,
@@ -102,15 +93,17 @@ void add_dist_constraints(
 										protocols::loops::Loops & seeds,// referring to template if one is given! or just individual chain numbering
 										protocols::loops::Loops & clear_area,
 									 	utility::vector1< core::Size > cut_points,
+										utility::vector1< core::Size > seed_exceptions,
 										bool add_cst_seed,
 					 					core::Real stddev,
-										core::Size seq_separation
+										core::Size seq_separation,
+										core::Real distance_cutoff
 										){
 	
 	using namespace scoring::constraints;
 	using namespace id;
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
+	//using namespace basic::options;
+	//using namespace basic::options::OptionKeys;
 	
 	TR<<"stddev for harmonic constraints: " << stddev <<std::endl;
 	
@@ -127,13 +120,11 @@ void add_dist_constraints(
 	
 	//adjust cutpoints first to relevant numbering
 	for( Size i = 1 ; i <= cut_points.size(); ++i ){
-		TR.Debug <<"old cutpoint: "<< cut_points[i] <<std::endl;
+		TR.Debug <<"rosetta numbering: cutpoint: "<< cut_points[i] <<std::endl;
 		cut_points[i] = cut_points[i] - (start_relevant_chain -1);
-		TR.Debug<<"adjusted cutpoint: "<< cut_points[i] <<std::endl;
+		TR.Debug <<"adjusted cutpoint: "<< cut_points[i] <<std::endl;
 	}
 	
-	TR.Debug  << "adjustied cutpoints:" << std::endl;
-
   for( Size i=1;i<=cut_points.size(); i++) {
     TR <<"cutpoints: " << cut_points[i] << std::endl;
   }
@@ -141,13 +132,19 @@ void add_dist_constraints(
 
 	for ( Size pos = 1; pos <= pose_of_int->total_residue(); pos++ ) {
 			for (Size pos_2 = 1; pos_2 <=pose_of_int->total_residue(); pos_2++   ){
-				
-				//if residues are part of the loop, set to true					
-				bool res_is_loop = seeds.is_loop_residue( pos );
-				bool res2_is_loop = seeds.is_loop_residue( pos_2 );
-				
-				//std::cout<<"pos "<< pos <<" "<< res_is_loop << ", pos2: "<<" "<<pos_2 <<" " << res2_is_loop <<std::endl;
-				
+
+        bool res_is_loop = false;
+        bool res2_is_loop = false;
+
+				if( !is_part( seed_exceptions, pos) ){	
+					//if residues are part of the loop, set to true					
+					res_is_loop = seeds.is_loop_residue( pos );
+				}
+
+				if( !is_part( seed_exceptions, pos_2 ) ){
+					res2_is_loop = seeds.is_loop_residue( pos_2 );
+				}
+
 				bool cut_point_pos = false;
 				bool cut_point_pos_2 = false;
 				bool res_cst_free = false;
@@ -166,9 +163,9 @@ void add_dist_constraints(
 				}
 				
 				//mark cut points
-				if ( cut_points.size() != 0 ) {
-					cut_point_pos = is_cut(cut_points, pos );
-					cut_point_pos_2 = is_cut(cut_points, pos_2 );
+				if ( cut_points.size() > 1 ) {
+					cut_point_pos = is_part(cut_points, pos );
+					cut_point_pos_2 = is_part(cut_points, pos_2 );
 				}
 				
 				//avoiding doubling of constraints
@@ -183,23 +180,23 @@ void add_dist_constraints(
 				if ( seq_sep >= seq_separation  ){
 					if ( !res_is_loop && !res2_is_loop ) {
 						if( !cut_point_pos && !cut_point_pos_2 ){
-							//if ( !res_is_loop_neighbor && !res2_is_loop_neighbor) {
 							
 							if (!res_cst_free){
 		 						core::conformation::Residue res_pos = pose_of_int->residue(pos);
 								core::conformation::Residue res_pos_2 = pose_of_int->residue(pos_2);
 								
 								Real const distance_ca( res_pos.xyz( res_pos.atom_index("CA") ).distance( res_pos_2.xyz( res_pos_2.atom_index("CA") )));
-								TR.Debug <<"template: " << pos_2 <<" "<< pos << " "<<distance_ca <<std::endl;
+								TR.Debug  <<"distance contraints for: " << pos_2 <<" "<< pos << " "<<distance_ca <<std::endl;
 								TR.Debug <<"updated: "<<pos_2 + start_relevant_chain -1 <<" " << pos + start_relevant_chain - 1<< " " <<distance_ca << std::endl;
 								
-								//need to adjust numbering to the current input pose!
-								core::conformation::Residue res_in_pose = pose.residue( pos + start_relevant_chain - 1 );
-								core::conformation::Residue res_in_pose2= pose.residue( pos_2 + start_relevant_chain - 1);
+								if( distance_ca > distance_cutoff ){
+									//adjust numbering to the current input pose!
+									core::conformation::Residue res_in_pose = pose.residue( pos + start_relevant_chain - 1 );
+									core::conformation::Residue res_in_pose2= pose.residue( pos_2 + start_relevant_chain - 1);
 								
-								cst->add_constraint( new AtomPairConstraint ( AtomID(res_in_pose.atom_index("CA"), pos + start_relevant_chain - 1), AtomID(res_in_pose2.atom_index("CA"),pos_2 + start_relevant_chain - 1), new HarmonicFunc( distance_ca, stddev ) ) );
+									cst->add_constraint( new AtomPairConstraint ( AtomID(res_in_pose.atom_index("CA"), pos + start_relevant_chain - 1), AtomID(res_in_pose2.atom_index("CA"),pos_2 + start_relevant_chain - 1), new HarmonicFunc( distance_ca, stddev ) ) );
 								}
-							//}
+								}
 						}
 					}
 				}//end seq_sep
@@ -207,7 +204,6 @@ void add_dist_constraints(
 		}
 }
 
-	
 void
 CAcstGenerator::apply( pose::Pose & pose ){
 
@@ -216,7 +212,7 @@ CAcstGenerator::apply( pose::Pose & pose ){
 	utility::vector1< Size > cutpoints = pose.fold_tree().cutpoints();
   
 	for( Size i=1;i<=cutpoints.size(); i++) {
-    TR.Debug<<"cutpoints: " << cutpoints[i] << std::endl;
+    TR.Debug <<"cutpoints: " << cutpoints[i] << std::endl;
   }
 
 	TR.Debug << "foldtree: " << pose.fold_tree();
@@ -264,7 +260,7 @@ CAcstGenerator::apply( pose::Pose & pose ){
 	}
 
 	
-	add_dist_constraints( pose, donor_poseOP , start_recipient_chain , ca_cst_, all_seeds_ , clear_seeds_ , cutpoints, add_cst_seed_ , stddev_, seq_separation_ );
+	add_dist_constraints( pose, donor_poseOP , start_recipient_chain , ca_cst_, all_seeds_ , clear_seeds_ , cutpoints, seed_exceptions_, add_cst_seed_ , stddev_, seq_separation_, distance_cutoff_);
 	
 	if( replace_ ){
 		TR<<"replacing all constraints with newly generated constraint set" <<std::endl;
@@ -274,8 +270,6 @@ CAcstGenerator::apply( pose::Pose & pose ){
 		utility_exit_with_message("ADDing new constraints to pose, is currently not supported, try just replacing"); //<<std::endl;
 	}
 	TR.flush();
-	//pose.dump_pdb("constraints.pdb");
-
 }
 	
 std::string
@@ -296,10 +290,11 @@ CAcstGenerator::parse_my_tag( TagPtr const tag,
 	/// the constraints can be either derrived from a chain of the input pose or from a template pose
 	/// If a template pose is provided, the constraints will be derrived from that pdb, defaulting to chain 1 of it
 	/// otherwise, the user can specify for which chain of the input pose constraints will be derrived
-	/// alternatively, the user can specify for which chain of the input pdb constraints shoudl be derrived
 	/// currently it only allows one chain at a time or all chains....
-	
-	stddev_ = tag->getOption<core::Real>( "stddev", 3.0);/// this needs to be in an constructor too
+
+	template_presence_ = false;
+
+	stddev_ = tag->getOption<core::Real>( "stddev", 3.0);
 	
 	TR<<"setting constraint standard deviation to "<< stddev_<< std::endl;
 	
@@ -317,6 +312,18 @@ CAcstGenerator::parse_my_tag( TagPtr const tag,
 	
 	seq_separation_ = tag->getOption< core::Size >( "seq_separation", 6 );
 
+	distance_cutoff_ = tag->getOption< core::Real >("distance", 6.0 );
+
+  if( tag->hasOption( "add_seed_residues" ) ){
+		std::string residues_string = tag->getOption< std::string > ("add_seed_residues" );
+    utility::vector1< std::string > const residue_keys( utility::string_split( residues_string, ',' ) );
+    foreach( std::string const key, residue_keys ){
+			Size const res( utility::string2int( key ) );
+      TR  << "add constraints to residues  within seed, residue: "<< key <<std::endl;
+      seed_exceptions_.push_back( res );
+   }
+	}
+ 
 	//parsing branch tags
 	utility::vector0< TagPtr > const branch_tags( tag->getTags() );
 	
