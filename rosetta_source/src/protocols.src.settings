@@ -1288,7 +1288,11 @@ sources = {
                 "SeededAbinitio_util",
                 "SwapSegment",
                 "SeedSetupMover",
-                "CoordinateCst"
+                "CoordinateCst",
+                "SeedFoldTree",
+                "GrowPeptides",
+                "CloseFold",
+                "DefineMovableLoops"
         ],
 
 	"protocols/toolbox" : [

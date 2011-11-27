@@ -221,6 +221,11 @@
 #include <protocols/seeded_abinitio/SeedSetupMoverCreator.hh>
 #include <protocols/seeded_abinitio/SwapSegmentCreator.hh>
 #include <protocols/seeded_abinitio/CoordinateCstCreator.hh>
+#include <protocols/seeded_abinitio/SeedFoldTreeCreator.hh>
+#include <protocols/seeded_abinitio/GrowPeptidesCreator.hh>
+#include <protocols/seeded_abinitio/CloseFoldCreator.hh>
+#include <protocols/seeded_abinitio/DefineMovableLoopsCreator.hh>
+
 // Filter creators
 #include <protocols/filters/FilterFactory.hh>
 
@@ -521,6 +526,10 @@ static MoverRegistrator< seeded_abinitio::CAcstGeneratorCreator > CAcstGenerator
 static MoverRegistrator< seeded_abinitio::SeedSetupMoverCreator > SeedSetupMoverCreator;
 static MoverRegistrator< seeded_abinitio::SwapSegmentCreator > SwapSegmentCreator;
 static MoverRegistrator< seeded_abinitio::CoordinateCstCreator > CoordinateCstCreator;
+static MoverRegistrator< seeded_abinitio::SeedFoldTreeCreator > SeedFoldTreeCreator;
+static MoverRegistrator< seeded_abinitio::GrowPeptidesCreator > GrowPeptidesCreator;
+static MoverRegistrator< seeded_abinitio::CloseFoldCreator > CloseFoldCreator;
+static MoverRegistrator< seeded_abinitio::DefineMovableLoopsCreator > DefineMovableLoopsCreator;
 
 using namespace filters;
 
