@@ -13,7 +13,7 @@
 #ifndef INCLUDED_protocols_seeded_abinitio_DefineMovableLoops_hh
 #define INCLUDED_protocols_seeded_abinitio_DefineMovableLoops_hh
 
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>

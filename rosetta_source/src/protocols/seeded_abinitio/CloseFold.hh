@@ -16,18 +16,18 @@
 #define INCLUDED_protocols_seeded_abinitio_CloseFold_hh
 
 
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <utility/string_util.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <utility/vector1.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/scoring/ScoreFunction.hh>
 #include <core/fragment/FragData.hh>
-#include <core/fragment/FragSet.fwd.hh>
+#include <core/fragment/FragSet.hh>
+#include <core/fragment/Frame.hh>
 
 #include <boost/unordered/unordered_map.hpp>
 
