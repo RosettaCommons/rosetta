@@ -2,10 +2,10 @@ inline Real sqr(Real x) { return x*x; }
 
 Real
 sicfast(
-	vector1<Vecf> & pa,
-	vector1<Vecf> & pb,
-	vector1<Vecf> & cba,
-	vector1<Vecf> & cbb,
+	vector1<Vec> & pa,
+	vector1<Vec> & pb,
+	vector1<Vec> & cba,
+	vector1<Vec> & cbb,
 //Vec ori,
 	Real & cbcount,
 	bool debug = false
@@ -24,11 +24,11 @@ sicfast(
 
 	// get bounds for plane hashes
 	Real xmx1=-9e9,xmn1=9e9,ymx1=-9e9,ymn1=9e9,xmx=-9e9,xmn=9e9,ymx=-9e9,ymn=9e9;
-	for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+	for(vector1<Vec>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
 		xmx1 = max(xmx1,ia->x()); xmn1 = min(xmn1,ia->x());
 		ymx1 = max(ymx1,ia->y()); ymn1 = min(ymn1,ia->y());
 	}
-	for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+	for(vector1<Vec>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
 		xmx = max(xmx,ib->x()); xmn = min(xmn,ib->x());
 		ymx = max(ymx,ib->y()); ymn = min(ymn,ib->y());
 	}
@@ -45,8 +45,8 @@ sicfast(
 	// insert points into hashes
 	int const xsize = xub-xlb+1;
 	int const ysize = yub-ylb+1;
-	ObjexxFCL::FArray2D<Vecf> ha(xsize,ysize,Vecf(0,0,-9e9)),hb(xsize,ysize,Vecf(0,0,9e9));
-	for(vector1<Vecf>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
+	ObjexxFCL::FArray2D<Vec> ha(xsize,ysize,Vec(0,0,-9e9)),hb(xsize,ysize,Vec(0,0,9e9));
+	for(vector1<Vec>::const_iterator ia = pa.begin(); ia != pa.end(); ++ia) {
 	  // int const ix = min(xsize,max(1,(int)ceil(ia->x()/BIN)-xlb));
 	  // int const iy = min(ysize,max(1,(int)ceil(ia->y()/BIN)-ylb));
 	  int const ix = (int)ceil(ia->x()/BIN)-xlb;
@@ -54,7 +54,7 @@ sicfast(
 	  if( ix < 1 || ix > xsize || iy < 1 || iy > ysize ) continue;
 	  if( ha(ix,iy).z() < ia->z() ) ha(ix,iy) = *ia;
 	}
-	for(vector1<Vecf>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
+	for(vector1<Vec>::const_iterator ib = pb.begin(); ib != pb.end(); ++ib) {
 	  // int const ix = min(xsize,max(1,(int)ceil(ib->x()/BIN)-xlb));
 	  // int const iy = min(ysize,max(1,(int)ceil(ib->y()/BIN)-ylb));
 	  int const ix = (int)ceil(ib->x()/BIN)-xlb;
@@ -113,9 +113,9 @@ sicfast(
 	cbcount = 0.0;
 	// utility::io::ozstream out("cb8.pdb");
 	// TR << "CB0 " << cbcount << std::endl;
-	for(vector1<Vecf>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
-	  for(vector1<Vecf>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
-	 	 if( ib->distance_squared( (*ia) + (mindis*Vecf(0,0,1)) ) < CONTACT_D2 ) {
+	for(vector1<Vec>::const_iterator ia = cba.begin(); ia != cba.end(); ++ia) {
+	  for(vector1<Vec>::const_iterator ib = cbb.begin(); ib != cbb.end(); ++ib) {
+	 	 if( ib->distance_squared( (*ia) + (mindis*Vec(0,0,1)) ) < CONTACT_D2 ) {
 	 		 cbcount += 1.0;
 	 		 // Vec viz = (*ia) + (mindis*ori);
 	 		 // out<<"HETATM"<<I(5,1000)<<' '<<"VIZ "<<' ' <<	"VIZ"<<' '<<"A"<<I(4,100)<<"		"<<F(8,3,viz.x())<<F(8,3,viz.y())<<F(8,3,viz.z())<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';

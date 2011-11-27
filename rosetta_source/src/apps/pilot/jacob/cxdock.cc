@@ -50,7 +50,7 @@ void register_options() {
 }
 
 
-typedef numeric::xyzVector<Real> Vecf;
+typedef numeric::xyzVector<Real> Vec;
 typedef numeric::xyzMatrix<Real> Matf;
 using core::id::AtomID;
 using basic::options::option;
@@ -92,7 +92,6 @@ struct Hit {
 };
 bool cmp(Hit i,Hit j) { return i.cbc > j.cbc; }
 
-
 void dock(Pose const init, std::string const & fn, vector1<Vec> const & ssamp) {
 	using namespace basic::options;
 	
@@ -100,7 +99,7 @@ void dock(Pose const init, std::string const & fn, vector1<Vec> const & ssamp) {
 	if(syms.size()==0) utility_exit_with_message("you must specify cbdock::syms");
 	vector1<Real> asamp; for(Real i = 0; i < 180; ++i) asamp.push_back(i); // just 0-179
 	// set up n-ca-c-o-cb ord arrays
-	vector1<Vecf> bb0tmp,cb0tmp;
+	vector1<Vec> bb0tmp,cb0tmp;
 	for(int ir = 1; ir <= init.n_residue(); ++ir) {
 		if(!init.residue(ir).is_protein()) continue;
 		for(int ia = 1; ia <= ((init.residue(ir).has("CB"))?5:4); ++ia) {
@@ -111,8 +110,8 @@ void dock(Pose const init, std::string const & fn, vector1<Vec> const & ssamp) {
 			else													 cb0tmp.push_back(init.xyz(AtomID(4,ir)));
 		}
 	}
-	vector1<Vecf> const bb0(bb0tmp);
-	vector1<Vecf> const cb0(cb0tmp);
+	vector1<Vec> const bb0(bb0tmp);
+	vector1<Vec> const cb0(cb0tmp);
 
 	vector1<Matf> Rsym(syms.size());
 	for(Size ic = 1; ic <= syms.size(); ++ic) Rsym[ic] = rotation_matrix_degrees(Vec(1,0,0),360.0/(Real)syms[ic]);
@@ -134,16 +133,16 @@ void dock(Pose const init, std::string const & fn, vector1<Vec> const & ssamp) {
 			Real const rot = asamp[irt];
 			Matf const R = rotation_matrix_degrees(axs,rot);
 
-			vector1<Vecf> bb1 = bb0;
-			vector1<Vecf> cb1 = cb0;
-			for(vector1<Vecf>::iterator i = bb1.begin(); i != bb1.end(); ++i) *i = R*(*i);
-			for(vector1<Vecf>::iterator i = cb1.begin(); i != cb1.end(); ++i) *i = R*(*i);
+			vector1<Vec> bb1 = bb0;
+			vector1<Vec> cb1 = cb0;
+			for(vector1<Vec>::iterator i = bb1.begin(); i != bb1.end(); ++i) *i = R*(*i);
+			for(vector1<Vec>::iterator i = cb1.begin(); i != cb1.end(); ++i) *i = R*(*i);
 
 			for(int ic = 1; ic <= syms.size(); ic++) {
-				vector1<Vecf> bb2 = bb1;
-				vector1<Vecf> cb2 = cb1;
-				for(vector1<Vecf>::iterator i = bb2.begin(); i != bb2.end(); ++i) *i = Rsym[ic]*(*i);
-				for(vector1<Vecf>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = Rsym[ic]*(*i);
+				vector1<Vec> bb2 = bb1;
+				vector1<Vec> cb2 = cb1;
+				for(vector1<Vec>::iterator i = bb2.begin(); i != bb2.end(); ++i) *i = Rsym[ic]*(*i);
+				for(vector1<Vec>::iterator i = cb2.begin(); i != cb2.end(); ++i) *i = Rsym[ic]*(*i);
 				Real cbc;
 				Real t = sicfast(bb1,bb2,cb1,cb2,cbc);
 				if(cbc >= basic::options::option[basic::options::OptionKeys::cxdock::num_contacts]()) {
@@ -157,16 +156,17 @@ void dock(Pose const init, std::string const & fn, vector1<Vec> const & ssamp) {
 					hits[ic].push_back(h);
 
 					if( option[OptionKeys::out::file::o].user() || option[OptionKeys::cxdock::dumpfirst] ) {	
-						string tag = utility::file_basename(fn)+"_"+str(syms[ic])+"_"+str(iss)+"_"+str(basic::options::option[basic::options::OptionKeys::cxdock::sphere]())+"_"+str(irt)+"_"+str(cbc);
+						string tag = utility::file_basename(fn)+"_C"+str(syms[ic])+"_"+str(iss)+"_"+str(basic::options::option[basic::options::OptionKeys::cxdock::sphere]())+"_"+str(irt)+"_"+str(cbc);
 						{
 							option[OptionKeys::symmetry::symmetry_definition]("input/sym/C"+str(syms[ic])+".sym");							
 						  Pose p(init);
 						  rot_pose(p,ssamp[iss],asamp[irt]);
 						  trans_pose(p,Vec(0,0,t));
-						  Vec cen = Vec(0,t/2.0/tan(36.0*numeric::constants::d::pi/180.0),t/2.0);
+						  Vec cen = Vec(0,t/2.0/tan( numeric::constants::d::pi / (Real)syms[ic] ),t/2.0);
 						  trans_pose(p,-cen);
-						  core::pose::symmetry::make_symmetric_pose(p);
-							p.dump_pdb(option[OptionKeys::out::file::o]+"/"+tag+"_sym.pdb.gz");
+							rot_pose(p,Vec(0,1,0),90.0); // align sym Z
+						  //core::pose::symmetry::make_symmetric_pose(p);
+							p.dump_pdb(option[OptionKeys::out::file::o]+"/"+tag+"_aln_mono.pdb.gz");
 						}
 						// {
 						// 	Pose p(init),q(init);
