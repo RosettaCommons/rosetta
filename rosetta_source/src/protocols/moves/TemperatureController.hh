@@ -17,7 +17,7 @@
 
 /// @file /protocols/moves/MetropolisHastingsMover.hh
 /// @brief
-/// @author
+/// @author Oliver Lange ( oliver.lange@tum.de )
 
 #ifndef INCLUDED_protocols_moves_TemperatureController_hh
 #define INCLUDED_protocols_moves_TemperatureController_hh

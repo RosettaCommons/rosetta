@@ -11,17 +11,16 @@
 /// @brief
 /// @author  Oliver Lange ( oliver.lange@tum.de )
 
-#ifndef INCLUDED_protocols_moves_SimulatedTempering_hh
-#define INCLUDED_protocols_moves_SimulatedTempering_hh
+#ifndef INCLUDED_protocols_moves_TemperingBase_hh
+#define INCLUDED_protocols_moves_TemperingBase_hh
 
 // Unit Headers
-#include <protocols/moves/SimulatedTempering.fwd.hh>
-#include <protocols/moves/TemperingBase.hh>
-
+#include <protocols/moves/TemperingBase.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Project Headers
 #include <protocols/moves/MonteCarlo.fwd.hh>
+#include <protocols/moves/TemperatureController.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/random/WeightedSampler.hh>
 #include <protocols/jd2/Job.fwd.hh>
@@ -34,13 +33,13 @@ namespace protocols {
 namespace moves {
 
 ///@details
-class SimulatedTempering : public TemperingBase {
-	typedef TemperingBase Parent;
+class TemperingBase : public TemperatureController {
+
 public:
 
-	SimulatedTempering();
+	TemperingBase();
 
-	SimulatedTempering( SimulatedTempering const& );
+	TemperingBase( TemperingBase const& );
 
 	virtual
 	void apply( core::pose::Pose& ) {};
@@ -48,13 +47,6 @@ public:
 	virtual
 	std::string
 	get_name() const;
-
-	MoverOP
-	clone() const;
-
-	virtual
-	MoverOP
-	fresh_instance() const;
 
 	virtual
 	void
@@ -65,11 +57,6 @@ public:
 		Movers_map const & movers,
 		core::pose::Pose const & pose
 	);
-
-	/// @brief execute the temperatur move ( called by observer_after_metropolis )
-	/// returns the current temperatur in kT.
-	core::Real
-	temperature_move( core::Real score);
 
 	/// @brief callback executed before any Monte Carlo trials
 	virtual void
@@ -83,8 +70,26 @@ public:
 		protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
+	/// @brief return current_temperature (in monte-carlo object)
+	core::Real temperature() const;
+
+	///@brief  return temperature of a certain level
+	core::Real temperature( core::Size level ) const;
+
+	core::Size temperature_level() const {
+		return current_temp_;
+	}
+
+	MonteCarloCOP
+	monte_carlo() const;
+
 	void
-	finalize_simulation( std::string const& output_name );
+	set_monte_carlo(
+		MonteCarloOP monte_carlo
+	);
+
+	/// @brief callback executed after all Monte Carlo trials
+	core::Size n_temp_levels() const;
 
 protected:
 	void set_defaults();
@@ -93,12 +98,6 @@ protected:
 	virtual
 	void init_from_options();
 
-	/// @brief update weights based on current counts
-	void reweight();
-
-	/// @brief reset the raw counts per state (not the weighted ones) to 0
-	void reset_raw_counter();
-
 	/// @brief initialize temperatures and weights from file, return false if IO error occurrs
 	virtual
 	bool initialize_from_file( std::string const& filename );
@@ -106,34 +105,64 @@ protected:
 	virtual
 	void write_to_file( std::string const& file_in, std::string const& output_name, utility::vector1< core::Real > const& wcounts );
 
-/// ------------------ register cmdline options ---------------------------
+	bool check_temp_consistency();
 
+	bool time_for_temp_move() {
+		return ++temp_trial_count_ % temperature_stride_ == 0;
+	}
+/// ------------------ register cmdline options ---------------------------
 private:
 	static bool options_registered_;
 
 public:
 	static void register_options();
+protected:
+
+	core::Size current_temp() {
+		return current_temp_;
+	}
+
+	void set_temperatures( utility::vector1< core::Real > const& );
+
+	void set_current_temp( core::Real new_temp );
+
+ 	bool stats_line_output() const {
+		return stats_line_output_;
+	}
+ 	bool stats_silent_output() const {
+		return stats_silent_output_;
+	}
+	std::string const& stats_file() const {
+		return stats_file_;
+	}
 
 /// ---------------- member variables --------------------------
-
 private:
+	MonteCarloOP monte_carlo_;
+	utility::vector1< core::Real > temperatures_;
 	utility::vector1< core::Real > weights_;
 	utility::vector1< core::Size > counts_;
 	utility::vector1< core::Real > weighted_counts_;
-	core::Size total_count_;
+	core::Size current_temp_;
+	core::Size temp_trial_count_;
 
+	// always trust contents of "current_temp_" instead of looking for temperature in monte_carlo_
+	bool trust_current_temp_;
 
-	core::Real score_offset_;
+	bool stats_line_output_;
+	bool stats_silent_output_;
+	std::string stats_file_;
 
-	core::Real self_transition_;
-	// allows jumps to any temperature in single step
-	bool temperature_jumps_;
-	// reweight after X steps -- 0 for now reweighting
-	core::Size reweight_stride_;
+	//job object to report on temperatures
+	protocols::jd2::JobOP job_;
 
-}; //end SimulatedTempering
+	/// if not initialized when simulations starts call init_from_options()
+	bool instance_initialized_;
+
+	core::Size temperature_stride_;
+}; //end TemperingBase
 
 } //namespace moves
 } //namespace protocols
 
-#endif //INCLUDED_protocols_moves_SimulatedTempering_HH
+#endif //INCLUDED_protocols_moves_TemperingBase_HH

@@ -38,6 +38,7 @@
 #include <protocols/moves/RigidBodyMover.hh>
 #include <protocols/moves/MetropolisHastingsMover.hh>
 #include <protocols/moves/SimulatedTempering.hh>
+#include <protocols/moves/ParallelTempering.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/SilentTrajectoryRecorder.hh>
 
@@ -79,11 +80,13 @@ void protocols::docking::TemperedDocking::register_options() {
   if ( options_registered_ ) return;
   options_registered_ = true;
 	moves::SimulatedTempering::register_options();
+	moves::ParallelTempering::register_options();
 	moves::SilentTrajectoryRecorder::register_options();
 	OPT( docking::partners );
 	OPT( score::patch );
 	OPT( constraints::cst_file );
 	OPT( run::n_cycles );
+	OPT( run::n_replica );
 	OPT( rigid::translation );
 	OPT( rigid::rotation );
 }
@@ -344,7 +347,7 @@ void TemperedDocking::setup_objects()
 	// stores the sequence of the previous pose, so that the TemperedDocking can re setup the fold tree
 	previous_sequence_ = "";
 
-	fold_tree_ = core::kinematics::FoldTree(); // apl NOTE: was NULL, but fold_tree_ is not a pointer.
+	fold_tree_ = core::kinematics::FoldTree();
 
 	// Residue movers
 	to_centroid_ = new protocols::moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
@@ -353,7 +356,7 @@ void TemperedDocking::setup_objects()
 
 	sampler_ = new moves::MetropolisHastingsMover();
 	rb_mover_ = new moves::RigidBodyPerturbNoCenterMover();
-	simulated_tempering_ = new moves::SimulatedTempering();
+
 	rb_mover_->rot_magnitude( rigid_rot_mag_ );
 	rb_mover_->trans_magnitude( rigid_trans_mag_ );
 
@@ -361,10 +364,10 @@ void TemperedDocking::setup_objects()
 
 	sampler_->set_monte_carlo( mc_object );
 	sampler_->set_ntrials( n_cycles_ );
-	simulated_tempering_->set_monte_carlo( mc_object );
+	tempering_->set_monte_carlo( mc_object );
 
 	sampler_->add_mover( rb_mover_, 1.0 );
-	sampler_->add_observer( simulated_tempering_ );
+	sampler_->set_tempering( tempering_ );
 	sampler_->add_observer( new moves::SilentTrajectoryRecorder );
 	sync_objects_with_flags();
 }
@@ -427,6 +430,13 @@ TemperedDocking::init_from_options()
 
 	rigid_rot_mag_ = option[ OptionKeys::rigid::rotation ]();
 	rigid_trans_mag_ = option[ OptionKeys::rigid::translation ]();
+
+	if ( option[ OptionKeys::run::n_replica ]() > 1 ) {
+		tempering_ = new moves::ParallelTempering();
+	} else {
+		tempering_ = new moves::SimulatedTempering();
+	}
+
 }
 
 

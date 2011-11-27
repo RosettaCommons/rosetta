@@ -9,7 +9,7 @@
 
 /// @file protocols/moves/SimulatedTemperingMover.cc
 /// @brief SimulatedTempering methods implemented
-/// @author
+/// @author Oliver Lange ( oliver.lange@tum.de )
 
 
 // Unit Headers
@@ -58,17 +58,9 @@
 #include <cmath>
 
 // cmd-line options
-OPT_2GRP_KEY( File, tempering, temp, file )
-OPT_2GRP_KEY( Integer, tempering, temp, levels )
-OPT_2GRP_KEY( Real, tempering, temp, low )
-OPT_2GRP_KEY( Real, tempering, temp, high )
-OPT_2GRP_KEY( Real, tempering, temp, offset )
-OPT_2GRP_KEY( RealVector, tempering, temp, range )
 OPT_2GRP_KEY( Integer, tempering, reweight, stride )
-OPT_2GRP_KEY( File, tempering, stats, file )
-OPT_2GRP_KEY( Boolean, tempering, stats, silent )
-OPT_2GRP_KEY( Boolean, tempering, stats, line_output )
 OPT_2GRP_KEY( Boolean, tempering, temp, jump )
+OPT_2GRP_KEY( Real, tempering, temp, offset )
 
 using basic::T;
 using basic::Error;
@@ -84,18 +76,10 @@ bool protocols::moves::SimulatedTempering::options_registered_( false );
 void protocols::moves::SimulatedTempering::register_options() {
 	if ( !options_registered_ ) {
 		options_registered_ = true;
-		NEW_OPT( tempering::temp::file, "file with temperature definitions for simulated tempering, including weights and counts","" );
-		NEW_OPT( tempering::temp::levels, "how many temp-levels, superseeded by -tempering::temp::file",10 );
-		NEW_OPT( tempering::temp::range, "min and max temperature, superseeded by -tempering::temp::file", 0 );
-		NEW_OPT( tempering::temp::high, "min and max temperature, superseeded by -tempering::temperatures or -tempering::temp::range", 3.0 );
-		NEW_OPT( tempering::temp::low, "min and max temperature, superseeded by -tempering::temperatures or -tempering::temp::range", 0.5 );
+		TemperingBase::register_options();
 		NEW_OPT( tempering::temp::offset, "offset for score (effectively scales all weights)", 40 );
-		NEW_OPT( tempering::temp::jump, "if true we can jump to any temperature instead of +/- 1 level", false );
-
-		NEW_OPT( tempering::stats::file, "filename (postfix) for output of tempering statistics (i.e, counts) <job>_.tempering.stats", "tempering.stats" );
-		NEW_OPT( tempering::stats::silent, "write all tempering information as lines into a single file -- similar to silent format", false );
-		NEW_OPT( tempering::stats::line_output, "choose line-output as in silent mode, even when using individual files", false );
 		NEW_OPT( tempering::reweight::stride, "every X trials update the weights distribution - 0 for no reweighting", 0 );
+		NEW_OPT( tempering::temp::jump, "if true we can jump to any temperature instead of +/- 1 level", false );
 	}
 }
 
@@ -120,25 +104,18 @@ SimulatedTemperingCreator::mover_name() {
 
 SimulatedTempering::SimulatedTempering() {
 	set_defaults();
-	init_from_options();
 }
 
 SimulatedTempering::SimulatedTempering(	SimulatedTempering const & other ) :
-	TemperatureController(other)
+	TemperingBase(other)
 {
-	temperatures_=other.temperatures_ ;
 	weights_=other.weights_ ;
 	counts_=other.counts_ ;
 	weighted_counts_=other.weighted_counts_ ;
-	current_temp_=other.current_temp_ ;
-	monte_carlo_=other.monte_carlo_ ;
-	trust_current_temp_=other.trust_current_temp_ ;
-	score_offset_=other.score_offset_;
 	self_transition_=other.self_transition_;
-	stats_line_output_=other.stats_line_output_;
+	score_offset_=other.score_offset_;
 }
 
-Size SimulatedTempering::n_temp_levels() const { return temperatures_.size(); }
 /// @brief callback executed before any Monte Carlo trials
 /// use to fill count_ with 0
 void
@@ -149,17 +126,17 @@ SimulatedTempering::reset_raw_counter() {
 
 void
 SimulatedTempering::initialize_simulation() {
+	Parent::initialize_simulation();
 	total_count_ = 0;
 	reset_raw_counter();
-	current_temp_=temperatures_.size();
-	monte_carlo_->set_temperature( temperatures_[ current_temp_ ] );
-	if ( jd2::jd2_used() ) {
-		job_ = jd2::get_current_job();
-	}
 	tr.Debug << std::setprecision(2);
-	if ( job_ ) {
-		job_->add_string_real_pair( "temperature", monte_carlo_->temperature() );
-		job_->add_string_real_pair( "temp_level", current_temp_ );
+	if ( weights_.size() != n_temp_levels() ) {
+		weights_.clear();
+		weighted_counts_.clear();
+		for ( Size ct=0; ct< n_temp_levels(); ++ct ) {
+			weights_.push_back( 1.0 );
+			weighted_counts_.push_back( 0 );
+		}
 	}
 }
 
@@ -179,41 +156,31 @@ SimulatedTempering::reweight() {
 }
 
 void
-SimulatedTempering::finalize_simulation( std::string const& output_name ) {
-	reweight();
-	write_to_file( stats_file_, output_name, weighted_counts_ );
-	reset_raw_counter();
-	job_ = NULL;
-}
-
-
-void
 SimulatedTempering::finalize_simulation(
 	pose::Pose& pose,
-	protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
+	protocols::moves::MetropolisHastingsMover const & mhm
 ) {
-	finalize_simulation( metropolis_hastings_mover.output_name() );
+	finalize_simulation( mhm.output_name() );
+	Parent::finalize_simulation( pose, mhm );
+}
+
+void
+SimulatedTempering::finalize_simulation( std::string const& output_name ) {
+	reweight();
+	write_to_file( stats_file(), output_name, weighted_counts_ );
+	reset_raw_counter();
+
 }
 
 core::Real
 SimulatedTempering::temperature_move( core::Real score ) {
-	//we can trust our current temp variable or get it from MonteCarlo object
-	if ( !trust_current_temp_ ) {
-		current_temp_=1;
-		Real const mc_temp( monte_carlo_->temperature() );
-		for (	utility::vector1< Real >::const_iterator it = temperatures_.begin();
-					it != temperatures_.end(); ++it ) {
-			if ( *it > mc_temp ) break;
-			++current_temp_;
-		}
-		if ( current_temp_ > temperatures_.size() ) current_temp_ = temperatures_.size();
-	} //if trusted
-
+	check_temp_consistency();
+	if ( !time_for_temp_move() ) return temperature();
 		//temperature increase, decrease or wait?
-	Size new_temp( current_temp_ );
-
+	Size new_temp( current_temp() );
+	Size const nlevels( n_temp_levels() );
 	if ( temperature_jumps_ ) {
-		new_temp=RG.random_range( 1, temperatures_.size() );
+		new_temp=RG.random_range( 1, nlevels );
 	} else {
 		Real const r1( RG.uniform() );
 		if ( r1 > 0.5+self_transition_*0.5 ) {
@@ -222,59 +189,31 @@ SimulatedTempering::temperature_move( core::Real score ) {
 			--new_temp;
 		}
 	}
-	if ( new_temp > temperatures_.size() ) new_temp = temperatures_.size();
+	if ( new_temp > nlevels ) new_temp = nlevels;
 	if ( new_temp < 1 ) new_temp = 1;
 
 	//make the decision based on score and temperature ratio
-	Real real_temp( temperatures_[ current_temp_ ] );
-	if ( new_temp!=current_temp_ ) {
-		Real const prefac( weights_[ new_temp ]/weights_[ current_temp_ ] );
+	Real real_temp( temperature() );
+	if ( new_temp!=current_temp() ) {
+		Real const prefac( weights_[ new_temp ]/weights_[ current_temp() ] );
 		Real const temp_ratio =
-			( temperatures_[ current_temp_ ] - temperatures_[ new_temp ] ) / ( temperatures_[ current_temp_ ] * temperatures_[ new_temp ] );
+			(temperature() - temperature( new_temp ))/(temperature() * temperature( new_temp ));
 		if ( RG.uniform() < std::min( 1.0, prefac*std::exp(-(score+score_offset_)*temp_ratio) )) {
-			current_temp_ = new_temp;
-			real_temp = temperatures_[ current_temp_ ];
-			monte_carlo_->set_temperature( real_temp );
-			tr.Debug << "set new temperature to level " << current_temp_ << " T=" << temperatures_[ current_temp_ ] << std::endl;
-			if ( job_ ) {
-				job_->add_string_real_pair( "temperature", real_temp );
-				job_->add_string_real_pair( "temp_level", current_temp_ );
-			}
+			set_current_temp( new_temp );
+			real_temp = temperature();
+			tr.Debug << "set new temperature to level " << new_temp << " T=" << real_temp << std::endl;
 		}
 	}
-	++counts_[ current_temp_ ];
+	++counts_[ current_temp() ];
 	++total_count_;
-	if ( total_count_ % reweight_stride_ == 0 ) {
+	if ( reweight_stride_ > 0 && total_count_ % reweight_stride_ == 0 ) {
 		reweight();
-		write_to_file( stats_file_, jd2::current_output_name(), weighted_counts_ );
+		write_to_file( stats_file(), jd2::current_output_name(), weighted_counts_ );
 		reset_raw_counter();
 	}
 	return real_temp;
 }
 
-
-core::Real
-SimulatedTempering::temperature() const {
-	return monte_carlo_->temperature();
-}
-
-core::Real
-SimulatedTempering::temperature( Size level ) const {
-	return temperatures_[ level ];
-}
-
-protocols::moves::MonteCarloCOP
-SimulatedTempering::monte_carlo() const {
-	return monte_carlo_;
-}
-
-void
-SimulatedTempering::set_monte_carlo(
-	protocols::moves::MonteCarloOP monte_carlo
-)
-{
-	monte_carlo_ = monte_carlo;
-}
 
 std::string
 SimulatedTempering::get_name() const
@@ -304,18 +243,10 @@ SimulatedTempering::parse_my_tag(
 )
 {}
 
-
 /// handling of options including command-line
 void SimulatedTempering::set_defaults() {
-
-	//are we the only object controlling temperature in the MC object ?!
-	trust_current_temp_ = true;
-
-	//how often will no temperature jump occur
 	self_transition_ = 0.0;
-
 	score_offset_ = 40;
-
 }
 
 /// @brief Assigns user specified values to primitive members using command line options
@@ -323,44 +254,16 @@ void SimulatedTempering::init_from_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core;
-	score_offset_ = option[ tempering::temp::offset ]();
-
-	bool success( false );
-	if ( option[ tempering::temp::file ].user() ) {
-		success=initialize_from_file( option[ tempering::temp::file ]() );
-		if ( !success ) tr.Info << "cannot read temperatures from file, will initialize from options... " << std::endl;
-	}
-	if ( !success ) {
-		Real temp_high, temp_low;
-		if ( option[ tempering::temp::range ].user() ) {
-			temp_low=option[ tempering::temp::range ]().front();
-			temp_high=option[ tempering::temp::range ]().back();
-		} else {
-			temp_low=option[ tempering::temp::low ]();
-			temp_high=option[ tempering::temp::high ]();
-		}
-		Size const n_levels( option[ tempering::temp::levels ]() );
-		runtime_assert( n_levels >= 2 )
-			Real const temp_step ( (temp_high-temp_low)/(n_levels-1) );
-		tr.Info << "initializing temperatures from " << temp_low << " to " << temp_high << " with " << n_levels << " levels." << std::endl;
-		for ( Size ct=0; ct<n_levels; ++ct ) {
-			temperatures_.push_back( temp_low+ct*temp_step );
-			weights_.push_back( 1.0 );
-			weighted_counts_.push_back( 0 );
-		}
-	}
+	tr.Debug << "initialize from options..." << std::endl;
+	Parent::init_from_options();
 	temperature_jumps_ = option[ tempering::temp::jump ]();
-
-	stats_file_ = option[ tempering::stats::file ]();
-	stats_silent_output_ =  option[ tempering::stats::silent ]();
-	stats_line_output_ =  option[ tempering::stats::line_output ]() || stats_silent_output_;
-
 	reweight_stride_ = option[ tempering::reweight::stride ]();
+	score_offset_ = option[ tempering::temp::offset ]();
 }
 
 bool SimulatedTempering::initialize_from_file( std::string const& filename ) {
-	temperatures_.resize( 0 );
-	weights_.resize( 0 );
+	utility::vector1< core::Real > temperatures;
+	weights_.clear();
 
 	utility::io::izstream in( filename );
 	if ( !in.good() ) {
@@ -396,7 +299,7 @@ bool SimulatedTempering::initialize_from_file( std::string const& filename ) {
 	if ( line_format ) {
 		for ( Size ct=1; ct <= n_levels; ++ct ) {
 			line_stream >> temp >> weight >> wcount >> count;
-			temperatures_.push_back( temp );
+			temperatures.push_back( temp );
 			weights_.push_back( weight );
 			weighted_counts_.push_back( wcount );
 			//ignore the counts
@@ -424,10 +327,11 @@ bool SimulatedTempering::initialize_from_file( std::string const& filename ) {
 		if ( !line_stream.good() ) {
 			wcount=1;
 		}
-		temperatures_.push_back( temp );
+		temperatures.push_back( temp );
 		weights_.push_back( weight );
 		weighted_counts_.push_back( wcount );
 	}
+	set_temperatures( temperatures );
 	return true; //succesfully initialized
 }
 
@@ -435,27 +339,27 @@ void SimulatedTempering::write_to_file( std::string const& file_in, std::string 
 
 	//either write all these things to a single file, or write to <jobname>.file_in
 	std::string file;
-	if ( stats_silent_output_ ) {
+	if ( stats_silent_output() ) {
 		file=file_in;
 	} else {
 		file=output_name+"."+file_in;
 	}
 
 	//open file
-	utility::io::ozstream out( file, stats_line_output_ ? std::ios::app : std::ios::out );
+	utility::io::ozstream out( file, stats_line_output() ? std::ios::app : std::ios::out );
 
 	//write
-	if ( stats_line_output_ ) { //line format
+	if ( stats_line_output() ) { //line format
 		out << "TEMPERING " << n_temp_levels() << " " << score_offset_ << " " << total_count_;
 		for ( Size i=1; i <= n_temp_levels(); ++i ) {
-			out << " " << temperatures_[ i ] << " " << weights_[ i ] << " " << wcounts[ i ] << " " << counts_[ i ];
+			out << " " << temperature( i ) << " " << weights_[ i ] << " " << wcounts[ i ] << " " << counts_[ i ];
 		}
 		out << " " << output_name << std::endl;
 	} else { //table format
 		out << std::setw( 10 );
 		out << "TEMPERING_TABLE " << n_temp_levels() << " " << score_offset_ << " " << " " << total_count_ << " " << output_name << std::endl;
 		for ( Size i=1; i <= n_temp_levels(); ++i ) {
-			out << temperatures_[ i ] << " " << weights_[ i ] << " " << wcounts[ i ] << " " << counts_[ i ] << std::endl;
+			out << temperature( i ) << " " << weights_[ i ] << " " << wcounts[ i ] << " " << counts_[ i ] << std::endl;
 		}
 	}
 }

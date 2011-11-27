@@ -149,7 +149,6 @@ TrajectoryRecorder::initialize_simulation(
   core::pose::Pose & pose,
 	protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover )
 {
-	cumulate_ = false;
 	if ( !cumulate_ && metropolis_hastings_mover.output_name() != "" ) {
 		std::ostringstream filename;
 		current_output_name_ = metropolis_hastings_mover.output_name();

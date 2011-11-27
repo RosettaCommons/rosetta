@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   /protocols/moves/SimulatedTempering.fwd.hh
+/// @file   /protocols/moves/TemperingBase.fwd.hh
 /// @brief
 /// @author Oliver Lange oliver.lange@tum.de
 
-#ifndef INCLUDED_protocols_moves_SimulatedTempering_fwd_hh
-#define INCLUDED_protocols_moves_SimulatedTempering_fwd_hh
+#ifndef INCLUDED_protocols_moves_TemperingBase_fwd_hh
+#define INCLUDED_protocols_moves_TemperingBase_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -20,14 +20,14 @@ namespace protocols {
 namespace moves {
 
 // Forward
-class SimulatedTempering;
+class TemperingBase;
 
-typedef utility::pointer::owning_ptr< SimulatedTempering > SimulatedTemperingOP;
-typedef utility::pointer::owning_ptr< SimulatedTempering const > SimulatedTemperingCOP;
+typedef utility::pointer::owning_ptr< TemperingBase > TemperingBaseOP;
+typedef utility::pointer::owning_ptr< TemperingBase const > TemperingBaseCOP;
 
 } // namespace moves
 } // namespace protocols
 
 
-#endif // INCLUDED_protocols_moves_SimulatedTempering_FWD_HH
+#endif // INCLUDED_protocols_moves_TemperingBase_FWD_HH
 

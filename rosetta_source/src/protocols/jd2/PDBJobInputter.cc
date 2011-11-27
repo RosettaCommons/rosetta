@@ -50,7 +50,7 @@ protocols::jd2::PDBJobInputter::~PDBJobInputter(){}
 void protocols::jd2::PDBJobInputter::pose_from_job( core::pose::Pose & pose, JobOP job){
 	TR << "PDBJobInputter::pose_from_job" << std::endl;
 
-	if( !job->inner_job()->get_pose() ){
+	if( true || !job->inner_job()->get_pose() ){
 		core::import_pose::pose_from_pdb( pose, job->input_tag() );
 		load_pose_into_job(pose, job);
 		TR << "filling pose from PDB " << job->input_tag() << std::endl;

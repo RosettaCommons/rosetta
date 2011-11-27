@@ -30,7 +30,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/RigidBodyMover.fwd.hh>
 #include <protocols/moves/MetropolisHastingsMover.fwd.hh>
-#include <protocols/moves/SimulatedTempering.fwd.hh>
+#include <protocols/moves/TemperingBase.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
 
@@ -176,7 +176,7 @@ private:
 	protocols::moves::MoverOP docking_constraint_;
 
 	protocols::moves::RigidBodyPerturbNoCenterMoverOP rb_mover_;
-	protocols::moves::SimulatedTemperingOP simulated_tempering_;
+	protocols::moves::TemperingBaseOP tempering_;
 	protocols::moves::MetropolisHastingsMoverOP sampler_;
 	//if side-chains are to be taken from specified pdb file... it is set here...
 	std::string recover_sidechains_filename_;

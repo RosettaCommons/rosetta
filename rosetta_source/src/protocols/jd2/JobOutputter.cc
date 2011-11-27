@@ -19,6 +19,7 @@
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobInputter.fwd.hh>
+#include <protocols/jd2/util.hh>
 
 // Project headers
 #include <protocols/evaluation/util.hh>
@@ -106,7 +107,6 @@ std::string JobOutputter::affixed_numbered_name( JobCOP job ){
 	if ( ! option[ out::no_nstruct_label ] || job->nstruct_index() != 1 ) {
 		oss << '_' << std::setfill('0') << std::setw(nstruct_width) << job->nstruct_index();
 	}
-
 	return oss.str();
 }
 

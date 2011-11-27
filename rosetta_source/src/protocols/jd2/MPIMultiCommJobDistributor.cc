@@ -67,6 +67,7 @@ MPIMultiCommJobDistributor::MPIMultiCommJobDistributor( core::Size sub_size ) {
 
 void MPIMultiCommJobDistributor::setup_sub_communicators( Size sub_size ) {
 	n_comm_ = n_rank() / sub_size;
+	set_n_worker( n_comm_ );
 #ifdef USEMPI
 	if ( n_comm_ < 1 ) {
 		tr.Error << "requested sub-communicators of size " << sub_size << " but only " << n_rank() << " processes are available " << std::endl;
@@ -94,7 +95,7 @@ void MPIMultiCommJobDistributor::setup_sub_communicators( Size sub_size ) {
 		MPI_Comm_create( MPI_COMM_WORLD, mpi_groups_[ i_comm ], &(mpi_communicators_[ i_comm ]) );
 	}
 
-	runtime_assert( rank() < min_client_rank() || communicator_handle_ );
+	runtime_assert( rank() < min_client_rank() || communicator_handle_ && communicator_handle_ <= mpi_communicators_.size() );
 	if ( rank() >= min_client_rank() ) {
 		MPI_Comm_rank( mpi_communicators_[ communicator_handle_ ], &sub_rank_ );
 	} else {
@@ -124,9 +125,26 @@ MPIMultiCommJobDistributor::get_new_job_id() {
 	return 0;
 }
 
+///@brief dummy for master/slave version
+void
+MPIMultiCommJobDistributor::job_succeeded(core::pose::Pose &pose, core::Real run_time) {
+	if ( sub_rank() <= 0 ) {
+			Parent::job_succeeded( pose, run_time);
+  }
+}
+
+///@brief dummy for master/slave version
+void
+MPIMultiCommJobDistributor::job_failed(core::pose::Pose &pose, bool retry ) {
+	if ( sub_rank() <= 0 ) {
+			Parent::job_failed( pose, retry);
+  }
+}
+
 #ifdef USEMPI
 MPI_Comm const& MPIMultiCommJobDistributor::current_mpi_comm() {
 	runtime_assert( communicator_handle_ );
+	runtime_assert( communicator_handle_ <= mpi_communicators_.size() );
 	return mpi_communicators_[ communicator_handle_ ];
 }
 #endif

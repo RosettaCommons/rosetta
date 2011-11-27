@@ -187,6 +187,16 @@ protected:
 		return n_rank_;
 	}
 
+	///@brief how many workers --- important to keep track during spin-down process
+	core::Size n_worker() {
+		return n_worker_;
+	}
+
+	///@brief how many workers --- important to keep track during spin-down process
+	void set_n_worker( core::Size setting ) {
+	  n_worker_=setting;
+	}
+
 	///@brief marks job as completed in joblist
 	virtual void mark_job_as_completed( core::Size job_id, core::Size batch_id, core::Real run_time );
 
@@ -201,6 +211,8 @@ private:
 
   ///@brief total number of processing elements
 	core::Size n_rank_;
+
+	core::Size n_worker_;
 
   ///@brief rank of the "local" instance
 	core::Size rank_;

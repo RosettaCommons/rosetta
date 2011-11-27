@@ -9,7 +9,7 @@
 
 /// @file protocols/moves/SidechainMoverBase.cc
 /// @brief implementation of PerturbChiSidechainMover class and functions
-/// @author Colin A. Smith (colin.smith@ucsf.edu)
+/// @author Oliver Lange ( oliver.lange@tum.de )
 
 
 #include <protocols/moves/PerturbChiSidechainMover.hh>

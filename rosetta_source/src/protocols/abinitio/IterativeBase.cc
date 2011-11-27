@@ -20,6 +20,12 @@
 // Package Headers
 #include <protocols/noesy_assign/NoesyModule.hh>
 #include <protocols/noesy_assign/NoesyModule.impl.hh>
+
+// to test broker setup-file
+#include <protocols/topology_broker/TopologyBroker.hh>
+#include <protocols/topology_broker/util.hh>
+#include <basic/options/keys/broker.OptionKeys.gen.hh>
+
 // Project Headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
@@ -587,6 +593,7 @@ void IterativeBase::generate_batch() {
 	gen_evaluation_output( batch, result_is_fullatom );
 	mem_tr.Debug << "evaluation output" << std::endl;
 
+	test_broker_settings( batch );
 	manager().finalize_batch( batch );
 
 
@@ -602,6 +609,8 @@ void IterativeBase::generate_batch() {
 
 		harvest_batch.set_intermediate_structs( false ); //otherwise the intermediate (centroid) structures will be scored by score_13_envhb
 		gen_evaluation_output( harvest_batch, true /*fullatom*/ );
+
+		test_broker_settings( batch );
 		manager().finalize_batch( harvest_batch );
 	}
 
@@ -611,6 +620,8 @@ void IterativeBase::generate_batch() {
 	mem_tr << "IterativeBase::generated_batch " << std::endl;
 	//now it is best time to do this... JobQueue is definitely filled up....
 	reassign_noesy_data( batch );
+
+
 }
 
 void IterativeBase::idle() {
@@ -1767,6 +1778,26 @@ void IterativeBase::collect_alternative_decoys( SilentStructs primary_decoys, st
 	if ( output_decoys.size() != primary_decoys.size() ) {
 		tr.Warning << "[WARNING] why do we have a different number of decoys in pool and start_decoys ? " << std::endl;
 	}
+}
+
+void
+IterativeBase::test_broker_settings( Batch const& batch ) {
+	tr.Debug << "test broker settings...." << std::endl;
+	OptionCollection vanilla_options( option );
+  option.load_options_from_file( batch.flag_file() );
+	try {
+		topology_broker::TopologyBrokerOP topology_broker = new topology_broker::TopologyBroker();
+		topology_broker::add_cmdline_claims( *topology_broker );
+		tr.Debug << "setting of broker::setup  ";
+		utility::vector1< std::string > files( option[ OptionKeys::broker::setup ]() );
+		std::copy( files.begin(), files.end(), std::ostream_iterator<std::string>( tr.Debug, " "));
+	} catch ( utility::excn::EXCN_Exception &excn ) {  // clean up options and rethrow
+		tr.Error << "[ERROR] problems with broker setup in " << batch.all_broker_files() << " aborting... " << std::endl;
+		// excn.show( tr.Error );
+		option = vanilla_options;
+		throw ( EXCN_Archive( batch.all_broker_files() + " contains errors: " + excn.msg() ) );
+	}
+	option = vanilla_options;
 }
 
 

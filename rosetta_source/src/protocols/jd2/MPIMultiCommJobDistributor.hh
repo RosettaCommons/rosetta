@@ -57,9 +57,13 @@ protected:
 public:
 
 	///@brief dummy for master/slave version
-  virtual
-  core::Size
-  get_new_job_id();
+  virtual core::Size get_new_job_id();
+
+	///@brief overloaded to suppress message from higher-rank replicas
+	virtual	void job_succeeded(core::pose::Pose & pose, core::Real run_time);
+
+	///@brief overloaded to suppress message from higher-rank replicas
+	virtual	void job_failed( core::pose::Pose & pose, bool );
 
   #ifdef USEMPI
 	///@brief return current communicator ( or MPI_COMM_WORLD ).
@@ -69,6 +73,10 @@ public:
 	/// access via utility function jd2::current_mpi_comm()
 	MPI_Comm const& current_mpi_comm();
 	#endif
+
+	core::Size sub_rank() {
+		return sub_rank_;
+	}
 
   friend class JobDistributorFactory; //ctor access
 

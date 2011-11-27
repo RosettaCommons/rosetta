@@ -243,8 +243,6 @@ protected:
 
 	bool restore_archive();
 
-	void test_broker_settings( Batch const& batch );
-
   friend class JobDistributorFactory; //ctor access
 private:
 

@@ -159,6 +159,7 @@ void SilentFileJobOutputter::read_done_jobs() {
 void SilentFileJobOutputter::final_pose(
 	JobCOP job, core::pose::Pose const & pose
 ) {
+
 	core::io::silent::SilentStructOP ss =
 		dump_pose( silent_file_, job, pose,  bWriteNoStructures_ /*this is always false */ /* bWriteScoresOnly */);
 
@@ -227,7 +228,13 @@ core::io::silent::SilentStructOP SilentFileJobOutputter::dump_pose(
 
 	std::ostringstream tag;
 	tag << output_name( job );
-	if ( copy_count>=0 ) tag << '_' << std::setfill('0') << std::setw(8) << copy_count;
+	if ( copy_count>=0 ) {
+		int const rank( current_replica() );
+		if ( rank >= 0 ) {
+			tag << "_" << std::setfill('0') << std::setw(3) << rank;
+		}
+		tag << '_' << std::setfill('0') << std::setw(8) << copy_count;
+	}
 	ss->fill_struct( pose_in, tag.str() );
 	add_job_data_to_ss( ss, job );
 

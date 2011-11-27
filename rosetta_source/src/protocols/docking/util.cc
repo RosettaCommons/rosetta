@@ -52,6 +52,7 @@ setup_foldtree( core::pose::Pose & pose, std::string const partner_chainID, Dock
 	//TR.Debug << "Get the jump point for jump " << rb_jump_ << "............." << std::endl;
 
 	core::pose::PDBInfoCOP pdb_info = pose.pdb_info();
+	runtime_assert( pdb_info );
 	char second_chain = '_';
 	Size cutpoint = 0;
 

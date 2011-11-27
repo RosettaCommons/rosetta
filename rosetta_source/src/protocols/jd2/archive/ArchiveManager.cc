@@ -25,9 +25,6 @@
 // Package headers
 #include <protocols/jd2/MpiFileBuffer.hh>
 
-// to test setup-file
-#include <protocols/topology_broker/TopologyBroker.hh>
-#include <protocols/topology_broker/util.hh>
 
 //for factory
 #include <protocols/abinitio/IterativeAbrelax.hh>
@@ -829,16 +826,6 @@ ArchiveManager::finalize_batch( Batch& new_batch, bool reread ) {
 	flag_out << "-broker:setup " << new_batch.all_broker_files() << std::endl;
 
 	if ( new_batch.intermediate_structs() ) flag_out << "-run:intermediate_structures" << std::endl;
-	if ( !reread ) {
-		try {
-			test_broker_settings( new_batch );
-		} catch ( utility::excn::EXCN_Msg_Exception &excn ) {
-			tr.Error << "[ERROR] problems with broker setup in " << new_batch.all_broker_files() << " aborting... " << std::endl;
-			// excn.show( tr.Error );
-			batches_.pop_back();
-			throw ( EXCN_Archive( new_batch.all_broker_files() + " contains errors: " + excn.msg() ) );
-		}
-	}
 
 	if ( !reread ) {
 		new_batch.write_info_file();
@@ -855,23 +842,6 @@ ArchiveManager::finalize_batch( Batch& new_batch, bool reread ) {
 
 }
 
-void
-ArchiveManager::test_broker_settings( Batch const& batch ) {
-	tr.Debug << "test broker settings...." << std::endl;
-	OptionCollection vanilla_options( option );
-  option.load_options_from_file( batch.flag_file() );
-	try {
-		topology_broker::TopologyBrokerOP topology_broker = new topology_broker::TopologyBroker();
-		topology_broker::add_cmdline_claims( *topology_broker );
-		tr.Debug << "setting of broker::setup  ";
-		utility::vector1< std::string > files( option[ OptionKeys::broker::setup ]() );
-		std::copy( files.begin(), files.end(), std::ostream_iterator<std::string>( tr.Debug, " "));
-	} catch ( utility::excn::EXCN_Exception &excn ) {  // clean up options and rethrow
-		option = vanilla_options;
-		throw; //rethrow exception
-	}
-	option = vanilla_options;
-}
 
 void
 ArchiveManager::save_archive() {

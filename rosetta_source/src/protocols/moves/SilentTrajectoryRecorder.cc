@@ -115,8 +115,7 @@ SilentTrajectoryRecorder::parse_my_tag(
 void
 SilentTrajectoryRecorder::write_model(
 	core::pose::Pose const & pose
-)
-{
+) {
 	runtime_assert( jd2::jd2_used() );
 	core::Size mc = model_count();
 	jd2::output_intermediate_pose( pose, current_output_name(), mc,  ( mc % score_stride_ ) != 0 && mc > 1 ); //write always first a structure

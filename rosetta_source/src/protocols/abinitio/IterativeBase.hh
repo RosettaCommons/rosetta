@@ -194,9 +194,10 @@ protected:
 		return chemshift_column_;
 	}
 
-
+	void test_broker_settings( jd2::archive::Batch const& batch );
 
 private:
+
 	void collect_alternative_decoys( SilentStructs primary_decoys, std::string alternative_decoy_file, SilentStructVector& output_decoys );
 
 	///@brief what is the expected lowest acceptance ratio at the current stage ?

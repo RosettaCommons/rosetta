@@ -81,6 +81,7 @@ MPIFileBufJobDistributor::MPIFileBufJobDistributor() :
 #ifdef USEMPI
 	MPI_Comm_rank( MPI_COMM_WORLD, ( int* )( &rank_ ) );
 	MPI_Comm_size( MPI_COMM_WORLD, ( int* )( &n_rank_ ) );
+	n_worker_ = n_rank_ - min_client_rank_;
 #else
 	utility_exit_with_message( "ERROR ERROR ERROR: The MPIFileBufJobDistributor will not work unless you have compiled using extras=mpi" );
 #endif
@@ -113,6 +114,7 @@ MPIFileBufJobDistributor::MPIFileBufJobDistributor(
 	//rank_ = MPI::COMM_WORLD.Get_rank();
 	MPI_Comm_rank( MPI_COMM_WORLD, ( int* )( &rank_ ) );
 	MPI_Comm_size( MPI_COMM_WORLD, ( int* )( &n_rank_ ) );
+	n_worker_ = n_rank_ - min_client_rank_;
 #else
 	utility_exit_with_message( "ERROR ERROR ERROR: The MPIFileBufJobDistributor will not work unless you have compiled using extras=mpi" );
 #endif
@@ -129,6 +131,7 @@ MPIFileBufJobDistributor::go( protocols::moves::MoverOP mover ) {
 	utility::io::ozstream::enable_MPI_reroute( min_client_rank_, file_buf_rank_ );
 	protocols::jd2::WriteOut_MpiFileBuffer buffer( file_buf_rank_ );
 	buffer.run(); //returns immediately if not buffer_rank
+	tr.Debug << "finished call to buffer.run()" << std::endl;
 	if ( rank_ == master_rank_ ) {
 		tr.Debug << "Master JD starts" << std::endl;
 		master_go( mover );
@@ -277,11 +280,12 @@ MPIFileBufJobDistributor::master_go( protocols::moves::MoverOP /*mover*/ )
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	n_nodes_left_to_spin_down_ = option[ OptionKeys::jd2::mpi_nowait_for_remaining_jobs ]() ? 0 : ( n_rank_ - min_client_rank_ );
+	n_nodes_left_to_spin_down_ = option[ OptionKeys::jd2::mpi_nowait_for_remaining_jobs ]() ? 0 : ( n_worker() );
 
 	// Job Distribution Loop  --- receive message and process -- repeat
 	while ( current_job_id() || jobs_returned_ < jobs_assigned_ || n_nodes_left_to_spin_down_ ) {
-
+		tr.Debug << "current_job_id: " << current_job_id() << " jobs_returned " << jobs_returned_
+						 << " jobs_assigned_ " << jobs_assigned_ << " nodes_to_spin_down " << n_nodes_left_to_spin_down_ << std::endl;
 		//receive message
 		tr.Debug << "Master Node: Waiting for job requests..." << std::endl;
 		MPI_Recv( &mpi_buf, mpi_size, MPI_INT, MPI_ANY_SOURCE, MPI_JOB_DIST_TAG, MPI_COMM_WORLD, &status);

@@ -67,6 +67,10 @@ write_score_tracer( core::pose::Pose const& pose_in, std::string tag );
 MPI_Comm const& current_mpi_comm();
 #endif
 
+///@brief returns -1 if no replicas (i.e., multiple processes per job )
+/// otherwise it returns the sub-rank of the process within the job
+int current_replica();
+
 }
 }
 

@@ -8,20 +8,24 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @file /protocols/moves/MetropolisHastingsMover.hh
-/// @brief
-/// @author  Oliver Lange ( oliver.lange@tum.de )
+/// @brief Implement replica exchange in the MetropolisHastingsMover Framework.
+/// @author Oliver Lange ( oliver.lange@tum.de )
 
-#ifndef INCLUDED_protocols_moves_SimulatedTempering_hh
-#define INCLUDED_protocols_moves_SimulatedTempering_hh
+#ifndef INCLUDED_protocols_moves_ParallelTempering_hh
+#define INCLUDED_protocols_moves_ParallelTempering_hh
+
+#ifdef USEMPI
+#include <mpi.h> //keep first
+#endif
 
 // Unit Headers
-#include <protocols/moves/SimulatedTempering.fwd.hh>
+#include <protocols/moves/ParallelTempering.fwd.hh>
 #include <protocols/moves/TemperingBase.hh>
-
 #include <protocols/moves/Mover.hh>
 
 // Project Headers
 #include <protocols/moves/MonteCarlo.fwd.hh>
+#include <protocols/moves/TemperatureController.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/random/WeightedSampler.hh>
 #include <protocols/jd2/Job.fwd.hh>
@@ -29,18 +33,24 @@
 // Utility Headers
 #include <core/types.hh>
 #include <utility/vector1.hh>
+#include <utility/vector0.hh>
 
 namespace protocols {
 namespace moves {
 
 ///@details
-class SimulatedTempering : public TemperingBase {
+class ParallelTempering : public TemperingBase {
 	typedef TemperingBase Parent;
 public:
 
-	SimulatedTempering();
+	ParallelTempering();
 
-	SimulatedTempering( SimulatedTempering const& );
+	//important d'tor to delete some C-style arrays
+	~ParallelTempering();
+
+	ParallelTempering( ParallelTempering const& );
+
+	ParallelTempering& operator=( ParallelTempering const& );
 
 	virtual
 	void apply( core::pose::Pose& ) {};
@@ -83,29 +93,29 @@ public:
 		protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
-	void
-	finalize_simulation( std::string const& output_name );
-
 protected:
 	void set_defaults();
-
 	/// @brief Assigns user specified values to primitive members using command line options
-	virtual
 	void init_from_options();
 
-	/// @brief update weights based on current counts
-	void reweight();
+#ifdef USEMPI
+	MPI_Comm const& mpi_comm() const {
+		return mpi_comm_;
+	}
 
-	/// @brief reset the raw counts per state (not the weighted ones) to 0
-	void reset_raw_counter();
+	void set_mpi_comm( MPI_Comm const& );
 
-	/// @brief initialize temperatures and weights from file, return false if IO error occurrs
-	virtual
-	bool initialize_from_file( std::string const& filename );
+#endif
 
-	virtual
-	void write_to_file( std::string const& file_in, std::string const& output_name, utility::vector1< core::Real > const& wcounts );
+	int rank() {
+		return rank_;
+	}
 
+private:
+	void deallocate_buffers();
+	void allocate_buffers( core::Size );
+	void setup_exchange_schedule( Size nlevels );
+	void shuffle_temperatures( double *energies );
 /// ------------------ register cmdline options ---------------------------
 
 private:
@@ -117,23 +127,24 @@ public:
 /// ---------------- member variables --------------------------
 
 private:
-	utility::vector1< core::Real > weights_;
-	utility::vector1< core::Size > counts_;
-	utility::vector1< core::Real > weighted_counts_;
-	core::Size total_count_;
+#ifdef USEMPI
+	MPI_Comm mpi_comm_;
+#endif
+// rank within mpi_comm_
+	int rank_;
+	typedef utility::vector1<std::pair<int, int> > ExchangeSchedule;
+	utility::vector0< ExchangeSchedule > exchange_schedules_;
+	core::Size last_exchange_schedule_;
+	// C-style arrays for communication in MPI
+	double *last_energies_;
+	int *rank2tlevel_;
+	int *tlevel2rank_;
 
 
-	core::Real score_offset_;
 
-	core::Real self_transition_;
-	// allows jumps to any temperature in single step
-	bool temperature_jumps_;
-	// reweight after X steps -- 0 for now reweighting
-	core::Size reweight_stride_;
-
-}; //end SimulatedTempering
+}; //end ParallelTempering
 
 } //namespace moves
 } //namespace protocols
 
-#endif //INCLUDED_protocols_moves_SimulatedTempering_HH
+#endif //INCLUDED_protocols_moves_ParallelTempering_HH
