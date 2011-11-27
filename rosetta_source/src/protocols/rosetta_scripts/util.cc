@@ -9,7 +9,8 @@
 
 /// @file protocols/RosettaScripts/util.cc
 /// @brief Utility functions useful in RosettaScripts.
-/// @author Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu), Rocco Moretti (rmoretti@u.washington.edu)
+/// @authors Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu), 
+///					Rocco Moretti (rmoretti@u.washington.edu), Eva-Maria Strauch (evas01@uw.edu)
 
 // Unit Headers
 #include <protocols/rosetta_scripts/util.hh>
@@ -251,6 +252,53 @@ parse_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap
   return new_task_factory;
 }
 
+
+///option to add or refer to a Taskfactory through the datamap, similar to how to add/refer to movemap OPs (EMS)
+core::pack::task::TaskFactoryOP
+parse_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap & data, core::pack::task::TaskFactoryOP & task_factory /*, bool const reset_taskfactory */)
+{
+  using namespace core::pack::task;
+  using namespace core::pack::task::operation;
+
+  if ( tag->hasOption("task_factory" ) ){
+    std::string const name( tag->getOption< std::string >("task_factory") );
+    TR <<"taskfacotry name: " << name << std::endl;
+
+    if( data.has( "TaskFactory", name ) ){
+       task_factory = data.get< TaskFactory *>( "TaskFactory", name );
+      TR<<"found helper task_factory: "<< name <<" for mover: "<<tag->getName()<< std::endl;
+    }
+
+  else{ // ( !data.has( "TaskFactory", name ) ){
+      std::string tf_string = "TaskFactory";
+      task_factory = new TaskFactory;
+      data.add( tf_string , name , task_factory );
+      TR<<"adding new TaskFactory to the datamap: "<< name  <<std::endl;
+    }
+  }
+
+  if ( ! tag->hasOption("task_operations") ) return task_factory;
+
+  std::string const t_o_val( tag->getOption<std::string>("task_operations") );
+  typedef utility::vector1< std::string > StringVec;
+  StringVec const t_o_keys( utility::string_split( t_o_val, ',' ) );
+  TR<<"Adding the following task operations to mover "<<tag->getName()<<" called "<<tag->getOption<std::string>( "name", "no_name" )<<":\n";
+
+  for ( StringVec::const_iterator t_o_key( t_o_keys.begin() ), end( t_o_keys.end() );
+     t_o_key != end; ++t_o_key ) {
+
+    if ( data.has( "task_operations", *t_o_key ) ) {
+      task_factory->push_back( data.get< TaskOperation * >( "task_operations", *t_o_key ) );
+      TR<<*t_o_key<<' ';
+    }
+    else {
+      utility_exit_with_message("TaskOperation " + *t_o_key + " not found in DataMap.");
+    }
+  }
+  TR<<std::endl;
+  return task_factory;
+}
+
 utility::vector1< core::pack::task::operation::TaskOperationOP >
 get_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data )
 {
@@ -273,6 +321,8 @@ get_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap c
 	}
 	return task_operations;
 }
+
+
 
 /// @details Utility function to find a scorefunction from parser-provided data. This is essentially a shameless
 /// copy of Justin's PackRotamersMover::parse_score_function.

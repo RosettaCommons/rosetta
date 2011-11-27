@@ -9,7 +9,7 @@
 
 /// @file src/protocols/RosettaScripts/util.hh
 /// @brief Utility functions useful in RosettaScripts.
-/// @author Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu), Rocco Moretti (rmoretti@u.washington.edu)
+/// @author Sarel Fleishman (sarelf@u.washington.edu), Jacob Corn (jecorn@u.washington.edu), Rocco Moretti (rmoretti@u.washington.edu), Eva-Maria Strauch (evas01@uw.edu)
 
 #ifndef INCLUDED_protocols_rosetta_scripts_util_hh
 #define INCLUDED_protocols_rosetta_scripts_util_hh
@@ -72,6 +72,11 @@ get_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap c
 
 core::pack::task::TaskFactoryOP
 parse_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data );
+
+/// allows the transfer of whole taskfactories on the datamap. This way a "base" taskfactory can be created, transferred on the datamap, and 
+/// individual mover's specific taskoperations can be added on top
+core::pack::task::TaskFactoryOP
+parse_task_operations( utility::tag::TagPtr const tag, protocols::moves::DataMap /*const*/ & data, core::pack::task::TaskFactoryOP & task_factory );
 
 core::scoring::ScoreFunctionOP
 parse_score_function( utility::tag::TagPtr const tag, protocols::moves::DataMap const & data, std::string const dflt_key="score12" );
