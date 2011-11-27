@@ -138,6 +138,7 @@ public: // class-wide methods
 		core::pose::Pose & pose,
 		core::chemical::ResidueTypeSet const & residue_set
 	);
+	virtual void fill_pose(	core::pose::Pose&	);
 
 	core::io::silent::SilentStructOP next_struct();
 

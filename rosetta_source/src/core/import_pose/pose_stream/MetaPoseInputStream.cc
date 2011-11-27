@@ -76,6 +76,18 @@ void MetaPoseInputStream::fill_pose(
 	input_streams_[ current_index_ ]->fill_pose( pose, residue_set );
 }
 
+void MetaPoseInputStream::fill_pose(
+	core::pose::Pose & pose
+) {
+	// check to make sure that we have more poses!
+	if ( !has_another_pose() ) {
+		utility_exit_with_message( "MetaPoseInputStream: called fill_pose, but I have no more Poses!" );
+	}
+
+	// (*current_input_stream_)->fill_pose( pose, residue_set );
+	input_streams_[ current_index_ ]->fill_pose( pose );
+}
+
 } // pose_stream
 } // import_pose
 } // core

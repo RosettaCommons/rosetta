@@ -85,6 +85,26 @@ void PDBPoseInputStream::fill_pose(
 	preprocess_pose( pose );
 }
 
+void PDBPoseInputStream::fill_pose(
+	core::pose::Pose & pose
+) {
+	// check to make sure that we have more poses!
+	if ( !has_another_pose() ) {
+		utility_exit_with_message(
+			"PDBPoseInputStream: called fill_pose, but I have no more Poses!"
+		);
+	}
+
+	core::import_pose::pose_from_pdb( pose, *current_position_ );
+	// set up a tag using input filename.
+	pose.data().set(
+		core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,
+		new basic::datacache::CacheableString( *current_position_ )
+	);
+	++current_position_;
+	preprocess_pose( pose );
+}
+
 utility::vector1< core::pose::Pose > PDBPoseInputStream::get_all_poses(
 	core::chemical::ResidueTypeSet const & residue_set
 ) {

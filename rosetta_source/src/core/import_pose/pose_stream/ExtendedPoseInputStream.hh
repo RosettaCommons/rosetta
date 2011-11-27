@@ -46,6 +46,7 @@ public:
 		core::pose::Pose & pose,
 		core::chemical::ResidueTypeSet const & residue_set
 	);
+	virtual void fill_pose(	core::pose::Pose&	);
 
 private:
 	std::string seq_;

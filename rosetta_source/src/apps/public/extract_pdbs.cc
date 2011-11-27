@@ -92,10 +92,12 @@ main( int argc, char* argv [] ) {
 
 	basic::Tracer tr( "extract_pdbs" );
 
-	core::chemical::ResidueTypeSetCAP rsd_set = ChemicalManager::get_instance()->residue_type_set(
-		option[ out::file::residue_type_set ]()
-	);
-
+	core::chemical::ResidueTypeSetCAP rsd_set( NULL );
+	if ( 	option[ out::file::residue_type_set ].user() ) {
+		rsd_set = ChemicalManager::get_instance()->residue_type_set(
+					option[ out::file::residue_type_set ]()
+		);
+	}
 	PoseInputStreamOP input;
 	if ( option[ in::file::silent ].user() ) {
 		if ( option[ in::file::tags ].user() ) {
@@ -128,8 +130,11 @@ main( int argc, char* argv [] ) {
     if ( core::pose::symmetry::is_symmetric( pose ) ) {
       core::pose::symmetry::make_asymmetric_pose( pose );
     }
-
-		input->fill_pose( pose, *rsd_set );
+		if ( rsd_set ) {
+			input->fill_pose( pose, *rsd_set );
+		} else {
+			input->fill_pose( pose );
+		}
 
 		// make sure the parent/template name gets included in the REMARK line of the PDB
 		using std::map;

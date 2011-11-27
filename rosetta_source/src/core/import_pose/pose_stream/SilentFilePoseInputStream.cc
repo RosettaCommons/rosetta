@@ -154,6 +154,39 @@ void SilentFilePoseInputStream::fill_pose(
 	++current_position_;
 } // fill_pose
 
+void SilentFilePoseInputStream::fill_pose(
+	core::pose::Pose & pose
+) {
+	// check to make sure that we have more poses!
+	if ( !has_another_pose() ) {
+		utility_exit_with_message(
+			"SilentFilePoseInputStream: called fill_pose, but I have no more Poses!"
+		);
+	}
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	if ( option[ run::debug ]() ) {
+		core::Real debug_rmsd = current_position_->get_debug_rmsd();
+		tr.Debug << "RMSD to original coordinates for tag "
+			<< current_position_->decoy_tag() << " = " << debug_rmsd << std::endl;
+	}
+
+	current_position_->fill_pose( pose );
+	// set up a tag using decoy_tag from SilentStruct
+	pose.data().set(
+		core::pose::datacache::CacheableDataType::JOBDIST_OUTPUT_TAG,
+		new basic::datacache::CacheableString( current_position_->decoy_tag() )
+	);
+	tr.Debug << "decoy_tag() == " << current_position_->decoy_tag() << std::endl;
+
+	core::pose::setPoseExtraScores( pose, "silent_score", current_position_->get_energy( "score" ) );
+
+	preprocess_pose( pose );
+
+	++current_position_;
+} // fill_pose
+
 
 
 core::io::silent::SilentStructOP
