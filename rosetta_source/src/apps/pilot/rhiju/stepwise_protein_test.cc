@@ -619,10 +619,10 @@ cluster_outfile_test(){
 void
 calc_rms_test(){
 
-	using namespace core::options;
-	using namespace core::options::OptionKeys;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	using namespace core::io::silent;
-	using namespace core::io::pose_stream;
+	using namespace core::import_pose::pose_stream;
 	using namespace core::pose;
 	using namespace protocols::swa;
 	using namespace protocols::swa::protein;
@@ -634,7 +634,7 @@ calc_rms_test(){
 	SilentFilePoseInputStreamOP input = new SilentFilePoseInputStream( silent_files_in );
 	native_pose = PoseOP( new Pose );
 	std::string native_pdb_file  = option[ in::file::native ];
-	io::pdb::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
+	import_pose::pose_from_pdb( *native_pose, *rsd_set, native_pdb_file );
 	std::string const silent_file_out( option[ out::file::silent  ]() );
 	core::io::silent::SilentFileDataOP sfd_dummy;
 	utility::vector1< Size > const calc_rms_res_ = option[ calc_rms_res ]();
