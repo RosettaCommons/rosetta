@@ -2317,11 +2317,7 @@ ResidueType::set_ncaa_rotlib_n_bin_per_rot( utility::vector1<Size> n_bins_per_ro
 bool
 ResidueType::is_virtual( Size const & atomno ) const
 {
-	// This is intended as a *temporary* (as of 5-Nov-2011) stopgap to allow for non-fa_standard atom type sets
-	// to preserve their current virtual checking behavior.
-	// Eventually the atom is virtual check should go through AtomType::is_virtual() to use properties for virtual
-	// determination - please change this function and update the database appropriately when it is safe to do so.
-	return ( atom_type( atomno ).name() == "VIRT" );
+	return ( atom_type( atomno ).is_virtual() );
 }
 
 /// @brief  Check if residue is 'VIRTUAL_RESIDUE'

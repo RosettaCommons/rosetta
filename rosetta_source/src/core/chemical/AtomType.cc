@@ -63,9 +63,7 @@ Real const MAX_CHEMICAL_BOND_TO_HYDROGEN_LENGTH = { 1.35 };
 ///@brief is atom type virtual?
 bool AtomType::is_virtual() const
 {
-	if ( ! atom_is_virtual_ && name_ == "VIRT" ) {
-		basic::Warning() << "WARNING: An atom is virtual by its name, but not by its properties -- Treating it as non-virtual!" << std::endl;
-	}	
+	assert( (name_ == "VIRT") ? atom_is_virtual_ : true ); // Raise an error if an atom type named VIRT is not virtual.
   return (atom_is_virtual_);
 }
 

@@ -23,6 +23,7 @@
 #include <core/kinematics/Stub.hh>
 #include <basic/basic.hh>
 #include <basic/Tracer.hh>
+#include <core/chemical/AtomType.hh>
 
 // ObjexxFCL headers
 // AUTO-REMOVED #include <ObjexxFCL/ObjexxFCL.hh>
@@ -1103,8 +1104,7 @@ std::ostream & operator << ( std::ostream & os, Atom const & atom )
 bool
 Residue::is_virtual( Size const & atomno ) const
 {
-	//assert( atom_type_set().atom_type_index( "VIRT" )  == atom_type_set().n_atomtypes() );
-	return rsd_type_.is_virtual(atomno);
+	return rsd_type_.atom_type( atomno ).is_virtual();
 }
 
 } // conformation
