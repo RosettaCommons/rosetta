@@ -34,7 +34,7 @@ namespace moves {
 
 ///@details
 class TemperingBase : public TemperatureController {
-
+	typedef TemperatureController Parent;
 public:
 
 	TemperingBase();
@@ -110,12 +110,7 @@ protected:
 	bool time_for_temp_move() {
 		return ++temp_trial_count_ % temperature_stride_ == 0;
 	}
-/// ------------------ register cmdline options ---------------------------
-private:
-	static bool options_registered_;
 
-public:
-	static void register_options();
 protected:
 
 	core::Size current_temp() {
@@ -136,30 +131,47 @@ protected:
 		return stats_file_;
 	}
 
+	void generate_temp_range( core::Real temp_low, core::Real temp_high, core::Size n_levels );
+
+/// ------------------ register cmdline options ---------------------------
+private:
+	static bool options_registered_;
+
+public:
+	static void register_options();
+
 /// ---------------- member variables --------------------------
 private:
-	MonteCarloOP monte_carlo_;
+	///---  configurables... -----
+	//temperature levels
 	utility::vector1< core::Real > temperatures_;
-	utility::vector1< core::Real > weights_;
-	utility::vector1< core::Size > counts_;
-	utility::vector1< core::Real > weighted_counts_;
-	core::Size current_temp_;
-	core::Size temp_trial_count_;
 
-	// always trust contents of "current_temp_" instead of looking for temperature in monte_carlo_
+	//attempt frequency for temperature moves
+	core::Size temperature_stride_;
+
+	//if false look for current temperature in monte_carlo_ at each move (default true)
 	bool trust_current_temp_;
 
+	//how should statistics output be written -- common options read by child-classes
 	bool stats_line_output_;
 	bool stats_silent_output_;
 	std::string stats_file_;
 
+	///---- automatically configured and state... -----
+	//is set when added to MetropolisHastingsMover
+	MonteCarloOP monte_carlo_;
+
 	//job object to report on temperatures
 	protocols::jd2::JobOP job_;
 
-	/// if not initialized when simulations starts call init_from_options()
+	//if not initialized when simulations starts call init_from_options()
 	bool instance_initialized_;
 
-	core::Size temperature_stride_;
+	//current temperature level
+	core::Size current_temp_;
+
+	//counting calls to temp_moves (-->temperature_stride_)
+	core::Size temp_trial_count_;
 }; //end TemperingBase
 
 } //namespace moves

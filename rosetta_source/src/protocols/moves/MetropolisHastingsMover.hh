@@ -197,18 +197,21 @@ protected:
 	MonteCarlo& nonconst_monte_carlo();
 private:
 
+	///configurables...
 	MonteCarloOP monte_carlo_;
 	core::Size ntrials_;
-	core::Size trial_;
-	utility::vector1< ThermodynamicMoverOP > movers_;
-	numeric::random::WeightedSampler weighted_sampler_;
-	utility::vector1< ThermodynamicObserverOP > observers_;
 	std::string output_name_;
+	utility::vector1< ThermodynamicMoverOP > movers_;
+	utility::vector1< ThermodynamicObserverOP > observers_;
 	TemperatureControllerOP tempering_;
+
+	//helper
+	numeric::random::WeightedSampler weighted_sampler_;
 
 	///some status is necessary for the observers
 	ThermodynamicMoverOP last_move_;
 	bool last_accepted_;
+	core::Size trial_;
 
 	//internal book keeping
 	bool output_name_from_job_distributor_;

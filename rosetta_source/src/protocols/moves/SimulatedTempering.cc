@@ -109,11 +109,12 @@ SimulatedTempering::SimulatedTempering() {
 SimulatedTempering::SimulatedTempering(	SimulatedTempering const & other ) :
 	TemperingBase(other)
 {
-	weights_=other.weights_ ;
-	counts_=other.counts_ ;
-	weighted_counts_=other.weighted_counts_ ;
-	self_transition_=other.self_transition_;
-	score_offset_=other.score_offset_;
+	self_transition_ = other.self_transition_;
+	score_offset_ = other.score_offset_;
+	weights_ = other.weights_ ;
+	counts_ = other.counts_ ;
+	weighted_counts_ = other.weighted_counts_ ;
+
 }
 
 /// @brief callback executed before any Monte Carlo trials
@@ -133,7 +134,7 @@ SimulatedTempering::initialize_simulation() {
 	if ( weights_.size() != n_temp_levels() ) {
 		weights_.clear();
 		weighted_counts_.clear();
-		for ( Size ct=0; ct< n_temp_levels(); ++ct ) {
+		for ( Size ct = 0; ct < n_temp_levels(); ++ct ) {
 			weights_.push_back( 1.0 );
 			weighted_counts_.push_back( 0 );
 		}
@@ -142,15 +143,15 @@ SimulatedTempering::initialize_simulation() {
 
 void
 SimulatedTempering::reweight() {
-	for ( Size i=1; i <= counts_.size(); ++i ) {
-		weighted_counts_[ i ]+=1.0*counts_[ i ]/weights_[ i ];
+	for ( Size i = 1; i <= counts_.size(); ++i ) {
+		weighted_counts_[ i ] += 1.0 * counts_[ i ] / weights_[ i ];
 	}
 	//update weights...
-	for ( Size i=1; i<=weights_.size(); ++i ) {
-		weights_[i] = 1.0/weighted_counts_[i];
+	for ( Size i = 1; i <= weights_.size(); ++i ) {
+		weights_[i] = 1.0 / weighted_counts_[i];
 	}
 	Real const norm_w ( weights_.back() ); //and normalize by last element...
-	for ( Size i=1; i<=weights_.size(); ++i ) {
+	for ( Size i = 1; i <= weights_.size(); ++i ) {
 		weights_[i] /= norm_w;
 	}
 }
@@ -240,8 +241,13 @@ SimulatedTempering::parse_my_tag(
 	protocols::filters::Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
 	pose::Pose const & pose
-)
-{}
+) {
+	Parent::parse_my_tag( tag, data, filters, movers, pose );
+	//simple options
+	score_offset_ = tag->getOption< Real >( "score_offset", 40.0 );
+	temperature_jumps_ = tag->getOption< bool >( "temperature_jumps", false );
+	reweight_stride_ = tag->getOption< Size >( "reweight_stride", false );
+}
 
 /// handling of options including command-line
 void SimulatedTempering::set_defaults() {

@@ -100,8 +100,7 @@ namespace docking {
 
 //// ----------------------------------- BEGIN CONSTRUCTORS --------------------------------------------------
 // Constructors
-TemperedDocking::TemperedDocking()
-{
+TemperedDocking::TemperedDocking() {
 	init( utility::tools::make_vector1<core::SSize>(1), NULL, NULL);
 }
 
@@ -109,8 +108,7 @@ void TemperedDocking::init(
 	DockJumps const movable_jumps,
 	core::scoring::ScoreFunctionCOP docking_score_low,
 	core::scoring::ScoreFunctionCOP docking_score_high
-)
-{
+) {
 	Mover::type( "TemperedDocking" );
 	movable_jumps_ = movable_jumps;
 	docking_scorefxn_low_ = docking_score_low;

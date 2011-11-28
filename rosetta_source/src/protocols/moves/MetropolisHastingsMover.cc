@@ -75,7 +75,7 @@ MetropolisHastingsMoverCreator::keyname() const {
 	return MetropolisHastingsMoverCreator::mover_name();
 }
 
-protocols::moves::MoverOP
+MoverOP
 MetropolisHastingsMoverCreator::create_mover() const {
 	return new MetropolisHastingsMover;
 }
@@ -96,18 +96,18 @@ MetropolisHastingsMover::MetropolisHastingsMover(
 ) :
 	//utility::pointer::ReferenceCount(),
 	Mover(metropolis_hastings_mover),
-	monte_carlo_( new protocols::moves::MonteCarlo(*metropolis_hastings_mover.monte_carlo_) ),
+	monte_carlo_( new MonteCarlo(*metropolis_hastings_mover.monte_carlo_) ),
 	ntrials_(metropolis_hastings_mover.ntrials_),
-	trial_(metropolis_hastings_mover.trial_),
+	output_name_(metropolis_hastings_mover.output_name_),
 	weighted_sampler_(metropolis_hastings_mover.weighted_sampler_),
-	output_name_(metropolis_hastings_mover.output_name_)
+	trial_(metropolis_hastings_mover.trial_)
 {
 	for (core::Size i = 1; i <= metropolis_hastings_mover.movers_.size(); ++i) {
-		movers_.push_back(reinterpret_cast<protocols::moves::ThermodynamicMover *>(metropolis_hastings_mover.movers_[i]->clone()()));
+		movers_.push_back(reinterpret_cast<ThermodynamicMover *>(metropolis_hastings_mover.movers_[i]->clone()()));
 	}
 
 	for (core::Size i = 1; i <= metropolis_hastings_mover.observers_.size(); ++i) {
-		observers_.push_back(reinterpret_cast<protocols::moves::ThermodynamicObserver *>(metropolis_hastings_mover.observers_[i]->clone()()));
+		observers_.push_back(reinterpret_cast<ThermodynamicObserver *>(metropolis_hastings_mover.observers_[i]->clone()()));
 	}
 }
 
@@ -159,7 +159,7 @@ MetropolisHastingsMover::apply( core::pose::Pose& pose ) {
 
 	for (trial_ = 1; trial_ <= ntrials_; ++trial_) {
 
-		protocols::moves::ThermodynamicMoverOP mover(random_mover());
+		ThermodynamicMoverOP mover(random_mover());
 		mover->apply(pose);
 		bool accepted = monte_carlo_->boltzmann(
          pose,
@@ -207,13 +207,13 @@ MetropolisHastingsMover::get_name() const
 	return "MetropolisHastingsMover";
 }
 
-protocols::moves::MoverOP
+MoverOP
 MetropolisHastingsMover::clone() const
 {
 	return new MetropolisHastingsMover(*this);
 }
 
-protocols::moves::MoverOP
+MoverOP
 MetropolisHastingsMover::fresh_instance() const
 {
 	return new MetropolisHastingsMover;
@@ -228,31 +228,25 @@ MetropolisHastingsMover::reinitialize_for_new_input() const { return false; }
 void
 MetropolisHastingsMover::parse_my_tag(
 	utility::tag::TagPtr const tag,
-	protocols::moves::DataMap & data,
+	DataMap & data,
 	protocols::filters::Filters_map const & filters,
-	protocols::moves::Movers_map const & movers,
+	Movers_map const & movers,
 	core::pose::Pose const & pose
-)
-{
-	core::Real const temperature(tag->getOption< core::Real >( "temperature", 0.6 ) );
+) {
+	///ntrials
 	ntrials_ = tag->getOption< core::Size >( "trials", ntrials_ );
 
+	//monte-carlo
 	core::scoring::ScoreFunctionOP score_fxn(protocols::rosetta_scripts::parse_score_function(tag, data));
+	core::Real const temperature(tag->getOption< core::Real >( "temperature", 0.6 ) );
+	monte_carlo_ = new MonteCarlo(*score_fxn, temperature);
 
-	monte_carlo_ = new protocols::moves::MonteCarlo(*score_fxn, temperature);
-
-	protocols::moves::MoverFactory *mover_factory(protocols::moves::MoverFactory::get_instance());
-
+	//add movers and observers
 	utility::vector0< utility::tag::TagPtr > const subtags( tag->getTags() );
-
 	for( utility::vector0< utility::tag::TagPtr >::const_iterator subtag_it = subtags.begin(); subtag_it != subtags.end(); ++subtag_it ) {
-
 		TagPtr const subtag = *subtag_it;
-
-		protocols::moves::MoverOP mover;
-
-		if (subtag->getName() == "Add") {
-
+		MoverOP mover;
+		if (subtag->getName() == "Add") { //add existing mover
 			std::string mover_name = subtag->getOption<std::string>( "mover_name", "null" );
 			Movers_map::const_iterator mover_iter( movers.find( mover_name ) );
 			if ( mover_iter == movers.end() ) {
@@ -260,39 +254,44 @@ MetropolisHastingsMover::parse_my_tag(
 				utility_exit();
 			}
 			mover = mover_iter->second;
-
-		} else {
-
+		} else { //generate new mover
+			MoverFactory *mover_factory(MoverFactory::get_instance());
 			mover = mover_factory->newMover(subtag, data, filters, movers, pose);
 		}
 
-		protocols::moves::ThermodynamicMoverCOP thermomover( dynamic_cast<protocols::moves::ThermodynamicMover *>(mover()) );
-		protocols::moves::ThermodynamicObserverCOP thermoobserver( dynamic_cast<protocols::moves::ThermodynamicObserver *>(mover()) );
-
-		if (thermomover) {
+		//figure out if ThermodynamicMover or ThermodynamicObserver
+		if ( dynamic_cast<ThermodynamicMover *>(mover() )) { //its a mover
 			core::Real const weight( subtag->getOption< core::Real >( "sampling_weight", 1 ) );
-			add_mover( reinterpret_cast<protocols::moves::ThermodynamicMover *>(thermomover->clone()()), weight);
-		} else if (thermoobserver) {
-			add_observer( reinterpret_cast<protocols::moves::ThermodynamicObserver *>(thermoobserver->clone()()));
-		} else {
+			add_mover( reinterpret_cast<ThermodynamicMover *>( mover->clone()() ), weight);
+		} else if ( dynamic_cast<ThermodynamicObserver *>(mover()) ) { //its an observer
+			//it might also be a tempering module...
+			if ( dynamic_cast< TemperatureController* >( mover() ) ) { // it is a temperature controller
+				if ( tempering_ ) {
+					utility_exit_with_message( "cannot define two TemperatureControllers" );
+				}
+				set_tempering( reinterpret_cast< TemperatureController* >( mover->clone()() ) );
+			} else {  //no just an plain old observer
+				add_observer( reinterpret_cast<ThermodynamicObserver *>( mover->clone()()));
+			}
+		} else { //its something different
 			TR << "Mover is not a ThermodynamicMover or ThermodynamicObserver for XML tag:\n" << subtag << std::endl;
 			utility_exit();
 		}
 	}
 }
 
-protocols::moves::MonteCarloCOP
+MonteCarloCOP
 MetropolisHastingsMover::monte_carlo() const {
 	return monte_carlo_;
 }
 
-protocols::moves::MonteCarlo& MetropolisHastingsMover::nonconst_monte_carlo() {
+MonteCarlo& MetropolisHastingsMover::nonconst_monte_carlo() {
 	return *monte_carlo_;
 }
 
 void
 MetropolisHastingsMover::set_monte_carlo(
-	protocols::moves::MonteCarloOP monte_carlo
+	MonteCarloOP monte_carlo
 )
 {
 	monte_carlo_ = monte_carlo;
@@ -349,7 +348,7 @@ MetropolisHastingsMover::last_move() const {
 	return *last_move_;
 }
 
-protocols::moves::ThermodynamicMoverOP
+ThermodynamicMoverOP
 MetropolisHastingsMover::random_mover()
 {
 	return movers_[weighted_sampler_.random_sample(RG)];
@@ -357,7 +356,7 @@ MetropolisHastingsMover::random_mover()
 
 void
 MetropolisHastingsMover::add_mover(
-	protocols::moves::ThermodynamicMoverOP mover,
+	ThermodynamicMoverOP mover,
 	core::Real weight
 )
 {
@@ -373,7 +372,7 @@ MetropolisHastingsMover::add_backrub_mover(
 {
 	if (!weight) return;
 
-	protocols::moves::BackrubMoverOP backrub_mover(new protocols::moves::BackrubMover);
+	BackrubMoverOP backrub_mover(new BackrubMover);
 	backrub_mover->branchopt().read_database();
 
 	add_mover(backrub_mover, weight);
@@ -389,7 +388,7 @@ MetropolisHastingsMover::add_small_mover(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	protocols::moves::SmallMoverOP small_mover(new protocols::moves::SmallMover);
+	SmallMoverOP small_mover(new SmallMover);
 	small_mover->nmoves(1);
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 	if (utility::file::file_exists(option[ in::file::movemap ])) {
@@ -412,7 +411,7 @@ MetropolisHastingsMover::add_shear_mover(
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	protocols::moves::ShearMoverOP shear_mover(new protocols::moves::ShearMover);
+	ShearMoverOP shear_mover(new ShearMover);
 	shear_mover->nmoves(1);
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 	if (utility::file::file_exists(option[ in::file::movemap ])) {
@@ -447,7 +446,7 @@ MetropolisHastingsMover::add_sidechain_mover(
 	}
 	if (preserve_cbeta) main_task_factory->push_back( new core::pack::task::operation::PreserveCBeta );
 
-	protocols::moves::SidechainMoverOP sidechain_mover(new protocols::moves::SidechainMover);
+	SidechainMoverOP sidechain_mover(new SidechainMover);
 	sidechain_mover->set_task_factory(main_task_factory);
 	sidechain_mover->set_prob_uniform(prob_uniform);
 	sidechain_mover->set_prob_withinrot(prob_withinrot);
@@ -478,7 +477,7 @@ MetropolisHastingsMover::add_sidechain_mc_mover(
 	}
 	if (preserve_cbeta) main_task_factory->push_back( new core::pack::task::operation::PreserveCBeta );
 
-	protocols::moves::SidechainMCMoverOP sidechain_mc_mover(new protocols::moves::SidechainMCMover);
+	SidechainMCMoverOP sidechain_mc_mover(new SidechainMCMover);
 	sidechain_mc_mover->set_task_factory(main_task_factory);
 	sidechain_mc_mover->set_prob_uniform(prob_uniform);
 	sidechain_mc_mover->set_prob_withinrot(prob_withinrot);
@@ -490,7 +489,7 @@ MetropolisHastingsMover::add_sidechain_mc_mover(
 
 void
 MetropolisHastingsMover::add_observer(
-	protocols::moves::ThermodynamicObserverOP observer
+	ThermodynamicObserverOP observer
 )
 {
 	observers_.push_back(observer);

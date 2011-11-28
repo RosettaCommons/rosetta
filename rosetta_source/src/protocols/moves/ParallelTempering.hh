@@ -140,8 +140,6 @@ private:
 	int *rank2tlevel_;
 	int *tlevel2rank_;
 
-
-
 }; //end ParallelTempering
 
 } //namespace moves

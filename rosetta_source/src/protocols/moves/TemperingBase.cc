@@ -106,16 +106,18 @@ TemperingBase::TemperingBase() :
 TemperingBase::TemperingBase(	TemperingBase const & other ) :
 	TemperatureController(other)
 {
-	temperatures_=other.temperatures_ ;
-	weights_=other.weights_ ;
-	counts_=other.counts_ ;
-	weighted_counts_=other.weighted_counts_ ;
-	current_temp_=other.current_temp_ ;
-	monte_carlo_=other.monte_carlo_ ;
-	trust_current_temp_=other.trust_current_temp_ ;
+	temperatures_ = other.temperatures_;
+	temperature_stride_ = other.temperature_stride_;
+	trust_current_temp_ = other.trust_current_temp_ ;
+	stats_line_output_ = other.stats_line_output_;
+	stats_silent_output_ = other.stats_silent_output_;
+	stats_file_ = other.stats_file_;
 
-
-	stats_line_output_=other.stats_line_output_;
+	monte_carlo_ = other.monte_carlo_;
+	job_ = other.job_;
+	instance_initialized_ = other.instance_initialized_;
+	current_temp_ = other.current_temp_;
+	temp_trial_count_ = other.temp_trial_count_;
 }
 
 Size TemperingBase::n_temp_levels() const { return temperatures_.size(); }
@@ -158,8 +160,30 @@ TemperingBase::parse_my_tag(
 	protocols::filters::Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
 	pose::Pose const & pose
-)
-{}
+) {
+	init_from_options();
+	Parent::parse_my_tag( tag, data, filters, movers, pose );
+	//figure out temperatures...
+	std::string temp_file = tag->getOption< std::string >( "temp_file", "" );
+	bool success( false );
+	if ( temp_file.size() ) {
+		success=initialize_from_file( temp_file );
+		if ( !success ) tr.Info << "cannot read temperatures from file, will initialize from options... " << std::endl;
+	}
+	if ( !success ) {
+		Real temp_low = tag->getOption< Real >( "temp_low", 0.6 );
+		Real temp_high = tag->getOption< Real >( "temp_high", 3.0 );
+		Size temp_levels = tag->getOption< Size >( "temp_levels", 10 );
+		generate_temp_range( temp_low, temp_high, temp_levels );
+	}
+
+	//simple options
+	temperature_stride_ = tag->getOption< Size >( "temp_stride", 10 );
+	trust_current_temp_ = tag->getOption< bool >( "trust_crurrent_temp", true );
+	stats_line_output_ = tag->getOption< bool >( "stats_line_output", false );
+	stats_silent_output_ = tag->getOption< bool >( "stats_silent_output", false );
+	stats_file_ = tag->getOption< std::string >( "stats_file", "" );
+}
 
 
 /// handling of options including command-line
@@ -230,23 +254,23 @@ void TemperingBase::init_from_options() {
 			temp_high=option[ tempering::temp::high ]();
 		}
 		Size const n_levels( option[ tempering::temp::levels ]() );
-		runtime_assert( n_levels >= 2 )
-			Real const temp_step ( (temp_high-temp_low)/(n_levels-1) );
-		tr.Info << "initializing temperatures from " << temp_low << " to " << temp_high << " with " << n_levels << " levels." << std::endl;
-		for ( Size ct=0; ct<n_levels; ++ct ) {
-			temperatures_.push_back( temp_low+ct*temp_step );
-			weights_.push_back( 1.0 );
-			weighted_counts_.push_back( 0 );
-		}
+		generate_temp_range( temp_low, temp_high, n_levels );
 	}
-
 	stats_file_ = option[ tempering::stats::file ]();
 	stats_silent_output_ =  option[ tempering::stats::silent ]();
 	stats_line_output_ =  option[ tempering::stats::line_output ]() || stats_silent_output_;
-
 	temperature_stride_ = option[ tempering::stride ]();
-
 	instance_initialized_ = true;
+}
+
+void TemperingBase::generate_temp_range( Real temp_low, Real temp_high, Size n_levels ) {
+	temperatures_.clear();
+	runtime_assert( n_levels >= 2 );
+	Real const temp_step ( (temp_high-temp_low)/(n_levels-1) );
+	tr.Info << "initializing temperatures from " << temp_low << " to " << temp_high << " with " << n_levels << " levels." << std::endl;
+	for ( Size ct=0; ct<n_levels; ++ct ) {
+		temperatures_.push_back( temp_low+ct*temp_step );
+	}
 }
 
 bool TemperingBase::initialize_from_file( std::string const& filename ) {
@@ -336,12 +360,12 @@ void TemperingBase::write_to_file( std::string const& file_in, std::string const
 	}
 }
 
-void TemperingBase::set_temperatures( utility::vector1< core::Real > const& temps ) {
+void TemperingBase::set_temperatures( utility::vector1< Real > const& temps ) {
 	temperatures_ = temps;
 	set_current_temp( temps.size() );
 }
 
-void TemperingBase::set_current_temp( core::Real new_temp ) {
+void TemperingBase::set_current_temp( Real new_temp ) {
 	current_temp_ = new_temp;
 	Real real_temp = temperatures_[ current_temp_ ];
 	monte_carlo_->set_temperature( real_temp );

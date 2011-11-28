@@ -117,19 +117,26 @@ public:
 /// ---------------- member variables --------------------------
 
 private:
+
+	/// --- configurables ----
+	// add to score -- can help to get effective weights closer to 1
+	core::Real score_offset_;
+
+	// how likely is a self-transition in temperature moves
+	core::Real self_transition_; //not in options currently --- probably useless
+
+	// allows jumps to any temperature in single step
+	bool temperature_jumps_;
+
+	// reweight after X steps -- 0 for now reweighting
+	core::Size reweight_stride_;
+
+	/// ---- state -----
 	utility::vector1< core::Real > weights_;
 	utility::vector1< core::Size > counts_;
 	utility::vector1< core::Real > weighted_counts_;
 	core::Size total_count_;
 
-
-	core::Real score_offset_;
-
-	core::Real self_transition_;
-	// allows jumps to any temperature in single step
-	bool temperature_jumps_;
-	// reweight after X steps -- 0 for now reweighting
-	core::Size reweight_stride_;
 
 }; //end SimulatedTempering
 

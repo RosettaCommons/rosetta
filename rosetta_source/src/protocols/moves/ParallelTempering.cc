@@ -280,8 +280,9 @@ ParallelTempering::parse_my_tag(
 	protocols::filters::Filters_map const & filters,
 	protocols::moves::Movers_map const & movers,
 	pose::Pose const & pose
-)
-{}
+) {
+	Parent::parse_my_tag( tag, data, filters, movers, pose );
+}
 
 
 /// handling of options including command-line
