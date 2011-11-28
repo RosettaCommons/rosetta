@@ -270,7 +270,6 @@ RigidBodyPerturbNoCenterMover::parse_my_tag(
 	 protocols::moves::Movers_map const &movers,
 	 core::pose::Pose const &pose
 ) {
-	RigidBodyMover::parse_my_tag( tag, data, filters, movers, pose );
 	rot_mag_ = tag->getOption< core::Real >( "rot_mag", 0.1 );
 	trans_mag_ = tag->getOption< core::Real >( "trans_mag", 0.4 );
 }
@@ -290,6 +289,9 @@ RigidBodyPerturbNoCenterMoverCreator::mover_name() {
 	return "RigidBodyPerturbNoCenter";
 }
 
+MoverOP RigidBodyPerturbNoCenterMover::clone() const {
+	return new RigidBodyPerturbNoCenterMover(*this);
+}
 
 RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover() :
 	Parent(),
@@ -366,10 +368,13 @@ void RigidBodyPerturbNoCenterMover::clear_jumps() {
 void RigidBodyPerturbNoCenterMover::apply( core::pose::Pose & pose )
 {
 	// set baseclass rb_jump_ randomly from list of movable jumps
-	if( movable_jumps_.size() > 1 ) {
+	if ( movable_jumps_.size() > 1 ) {
 		rb_jump_ = numeric::random::random_element( movable_jumps_ );
+	} else if ( movable_jumps_.size() == 1 ) {
+		rb_jump_ = movable_jumps_[1];
+	} else {
+		rb_jump_ = 1;
 	}
-	else { rb_jump_ = movable_jumps_[1]; }
 
 	TR.Debug << "Set movable jump# " << rb_jump_ << std::endl;
 	core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );

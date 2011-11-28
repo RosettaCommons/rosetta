@@ -101,6 +101,9 @@ ParallelTempering::ParallelTempering() :
 	rank2tlevel_( NULL ),
 	tlevel2rank_( NULL )
 {
+#ifndef USEMPI
+	utility_exit_with_message( "ParallelTempering requires MPI build" );
+#endif
 #ifdef USEMPI
 	mpi_comm_ = MPI_COMM_NULL;
 #endif
@@ -115,6 +118,9 @@ ParallelTempering::ParallelTempering(	ParallelTempering const & other ) :
 	rank2tlevel_( NULL ),
 	tlevel2rank_( NULL )
 {
+#ifndef USEMPI
+	utility_exit_with_message( "ParallelTempering requires MPI build" );
+#endif
 #ifdef USEMPI
 	set_mpi_comm( other.mpi_comm() );
 #endif
@@ -221,7 +227,6 @@ ParallelTempering::temperature_move( core::Real score ) {
 	int new_tlevel;
 	MPI_Scatter(rank2tlevel_, 1, MPI_INT, &new_tlevel, 1, MPI_INT, 0, mpi_comm() );
 	set_current_temp( new_tlevel );
-
 #endif
 }
 

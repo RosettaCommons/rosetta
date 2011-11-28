@@ -272,7 +272,7 @@ MetropolisHastingsMover::parse_my_tag(
 				}
 				set_tempering( reinterpret_cast< TemperatureController* >( mover->clone()() ) );
 			} else {  //no just an plain old observer
-				add_observer( reinterpret_cast<ThermodynamicObserver *>( mover->clone()()));
+				add_observer( reinterpret_cast<ThermodynamicObserver *>( mover->clone()() ) );
 			}
 		} else { //its something different
 			TR << "Mover is not a ThermodynamicMover or ThermodynamicObserver for XML tag:\n" << subtag << std::endl;

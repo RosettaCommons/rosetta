@@ -80,7 +80,7 @@ public:
 	//	void set_movable_jumps( DockJumps const& setting ){ movable_jumps_ = setting; }
 	//	void add_jump( core::SSize const jump_number ){ movable_jumps_.push_back( int( jump_number ) ); }
 
-	void show( std::ostream & out=std::cout );
+	void show( std::ostream & out=std::cout ) const;
 	friend std::ostream & operator<<(std::ostream& out, const DockSetupMover & dp );
 
 	// function for the parser with lots of accessors

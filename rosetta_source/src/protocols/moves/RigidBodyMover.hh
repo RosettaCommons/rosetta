@@ -247,6 +247,9 @@ public:
 
 	void add_jump( core::Size );
 	void clear_jumps();
+
+	virtual	MoverOP clone() const;
+
 protected:
 	/// perturbation magnitudes (rotational and translational)
 	core::Real rot_mag_;

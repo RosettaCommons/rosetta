@@ -486,6 +486,7 @@ static MoverRegistrator< moves::SidechainMoverCreator > reg_SidechainMoverCreato
 static MoverRegistrator< moves::BackrubSidechainMoverCreator > reg_BackrubSidechainMoverCreator;
 static MoverRegistrator< moves::SilentTrajectoryRecorderCreator > reg_SilentTrajectoryRecorderCreator;
 static MoverRegistrator< moves::PDBTrajectoryRecorderCreator > reg_PDBTrajectoryRecorderCreator;
+
 static MoverRegistrator< moves::MetricRecorderCreator > reg_MetricRecorderCreator;
 static MoverRegistrator< moves::RotamerTrialsMoverCreator > reg_RotamerTrialsMoverCreator;
 static MoverRegistrator< moves::RotamerTrialsMinMoverCreator > reg_RotamerTrialsMinMoverCreator;

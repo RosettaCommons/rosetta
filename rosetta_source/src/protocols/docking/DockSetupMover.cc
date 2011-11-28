@@ -80,15 +80,16 @@ DockSetupMover & DockSetupMover::operator=( DockSetupMover const & rhs ) {
 
 void DockSetupMover::copy(DockSetupMover & lhs, DockSetupMover const & rhs) {
 	lhs.partners_ = rhs.partners_;
-	//	lhs.previous_sequence_ = rhs.previous_sequence_;
-	//	lhs.movable_jumps_ = rhs.movable_jumps_;
+	lhs.rb_mover_ = rhs.rb_mover_;
+	lhs.movable_jumps_ = rhs.movable_jumps_;
 }
 
 //// ----------------------------------- END CONSTRUCTORS --------------------------------------------------
 void
 DockSetupMover::apply( pose::Pose & pose ) {
 	docking::setup_foldtree( pose, partners_, movable_jumps_ );
-	rb_mover_->clear_jumps();
+	runtime_assert( rb_mover_ );
+	rb_mover_->clear_jumps(); //this doesn't work because of cloning --- have to communicate via data-map !
 	for ( Size i=1; i<=pose.num_jump(); ++i ) {
 		// should honor movemap or movable_jumps_ here...
 		rb_mover_->add_jump( i );
@@ -106,21 +107,24 @@ DockSetupMover::apply( pose::Pose & pose ) {
 
 /// @details  Show the complete setup of the docking protocol
 void
-DockSetupMover::show( std::ostream & out ) {
-	out << *this;
-}
-
-std::ostream & operator<<(std::ostream& out, const DockSetupMover & dp )
-{
+DockSetupMover::show( std::ostream & out ) const {
 	using namespace ObjexxFCL::fmt;
-
-	// All output will be 80 characters - 80 is a nice number, don't you think?
+// All output will be 80 characters - 80 is a nice number, don't you think?
 	std::string line_marker = "///";
 	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
 	out << line_marker << A( 47, "Rosetta 3 DockSetupMover" ) << space( 27 ) << line_marker << std::endl;
 	out << line_marker << space( 74 ) << line_marker << std::endl;
+	out << line_marker << A( 47, "partners: ") << A(10, partners_ ) << space(14) << line_marker << std::endl;
+	if ( movable_jumps_.size() ) {
+		out << line_marker << A( 47, "movable jumps: " ) << movable_jumps_.front() << space( 26 ) << line_marker<< std::endl;
+	}
 	// Close the box I have drawn
 	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
+}
+
+std::ostream & operator<<(std::ostream& out, const DockSetupMover & dp ) {
+
+	dp.show( out );
 	return out;
 }
 

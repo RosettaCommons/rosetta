@@ -45,8 +45,6 @@ setup_foldtree( core::pose::Pose & pose, std::string const partner_chainID, Dock
 {
 
 	using namespace core;
-	//using namespace basic::options;
-	runtime_assert( movable_jumps.size() > 0 );
 
 	// identify the chainIDs for partner1 and partner2
 	//TR.Debug << "Get the jump point for jump " << rb_jump_ << "............." << std::endl;
@@ -60,8 +58,11 @@ setup_foldtree( core::pose::Pose & pose, std::string const partner_chainID, Dock
 	FoldTree f( pose.fold_tree() );
 
 	// identify cutpoint for first movable jump
-	if ( partner_chainID == "_"){//chains not specified
-		if (f.num_jump()){	//if a jump exists, use first jump for cutpoint
+	if ( partner_chainID == "_") {//chains not specified
+		if ( f.num_jump() ){	//if a jump exists, use first jump for cutpoint
+			//using namespace basic::options;
+			runtime_assert( movable_jumps.size() > 0 );
+
 			Size const min_moving_jump = *(std::min_element( movable_jumps.begin(), movable_jumps.end() )); //dereference iterator returned by min_element
 			cutpoint = f.cutpoint_by_jump( min_moving_jump );
 		} else {	//otherwise use second chain. this should never happen! docking with <1 jump makes no sense.
@@ -69,19 +70,19 @@ setup_foldtree( core::pose::Pose & pose, std::string const partner_chainID, Dock
 		}
 	}
 	else {//chains specified only works with two-body docking
-		for (Size i=1; i<=partner_chainID.length()-1; i++){ //identify second chain from input partner_chainID
+		for ( Size i=1; i<=partner_chainID.length()-1; i++ ) { //identify second chain from input partner_chainID
 			if (partner_chainID[i-1] == '_') second_chain = partner_chainID[i];
 		}
 		for ( Size i=2; i<= pose.total_residue(); ++i ) {
-			if(pdb_info->chain( i ) == second_chain){ //identify cutpoint corresponding to second chain in partner_chainID
+			if ( pdb_info->chain( i ) == second_chain ) { //identify cutpoint corresponding to second chain in partner_chainID
 				cutpoint = i-1;
 				break;
 			}
 		}
 		// Specifying chains overrides movable_jumps
-		for (Size i=1; i<=f.num_jump(); ++i){
+		for (Size i=1; i<=f.num_jump(); ++i) {
 			Size const current_cutpoint = f.cutpoint_by_jump(i);
-			if( current_cutpoint  == cutpoint){
+			if( current_cutpoint  == cutpoint ) {
 				movable_jumps.clear();
 				movable_jumps.push_back( i );
 			}
