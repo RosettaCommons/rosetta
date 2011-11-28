@@ -71,7 +71,16 @@ static basic::Tracer TR( "protocols.seeded_abinitio.CAcstGenerator" );
 		seed_exceptions_.clear();
 		distance_cutoff_ = 6;
 	}
-	
+
+protocols::moves::MoverOP
+CAcstGenerator::clone() const {
+  return( protocols::moves::MoverOP( new CAcstGenerator( *this ) ) );
+}
+
+protocols::moves::MoverOP
+CAcstGenerator::fresh_instance() const {
+  return protocols::moves::MoverOP( new CAcstGenerator );
+}	
 	
 bool 
 is_part(	utility::vector1<core::Size> & cut_points,

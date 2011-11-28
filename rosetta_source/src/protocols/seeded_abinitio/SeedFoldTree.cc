@@ -111,7 +111,16 @@ namespace protocols{
   		folding_verteces_.clear();
 
 	}
-		
+
+protocols::moves::MoverOP
+SeedFoldTree::clone() const {
+  return( protocols::moves::MoverOP( new SeedFoldTree( *this ) ) );
+}
+
+protocols::moves::MoverOP
+SeedFoldTree::fresh_instance() const {
+  return protocols::moves::MoverOP( new SeedFoldTree );
+}		
 		
 void
 SeedFoldTree::fold_tree( core::kinematics::FoldTreeOP ft ) { 

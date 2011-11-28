@@ -6,17 +6,15 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-
-
+//
 /// @file protocols/seeded_abinitio/CloseFold.cc
-/// @brief 
 /// @author Eva-Maria Strauch (evas01@u.washington.edu)
 
 #ifndef INCLUDED_protocols_seeded_abinitio_CloseFold_hh
 #define INCLUDED_protocols_seeded_abinitio_CloseFold_hh
 
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
@@ -24,9 +22,9 @@
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <utility/vector1.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/fragment/FragData.hh>
-#include <core/fragment/FragSet.hh>
+#include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/Frame.hh>
 
 #include <boost/unordered/unordered_map.hpp>
@@ -43,8 +41,8 @@ namespace protocols {
 			virtual ~CloseFold();
 			void apply( core::pose::Pose & pose );
 			virtual std::string get_name() const;
-			protocols::moves::MoverOP clone() const { return( protocols::moves::MoverOP( new CloseFold( *this ) ) ); }
-			protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new CloseFold ); }
+		  virtual protocols::moves::MoverOP clone() const;
+  		virtual protocols::moves::MoverOP fresh_instance() const;
 			
 			void parse_my_tag(  utility::tag::TagPtr const tag,
 							  					protocols::moves::DataMap &,

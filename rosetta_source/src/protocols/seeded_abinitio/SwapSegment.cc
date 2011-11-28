@@ -26,10 +26,8 @@
 //other
 #include <protocols/rosetta_scripts/util.hh>
 
-
 // C++ headers
 #include <string>
-// AUTO-REMOVED #include <utility/string_util.hh>
 
 #include <basic/Tracer.hh>
 #include <core/conformation/Conformation.hh>
@@ -43,13 +41,10 @@
 //loops
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.fwd.hh>
-// AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 
 //util
 #include <utility/vector1.hh>
-//#include <set>
 #include <boost/foreach.hpp>
-
 #include <utility/vector0.hh>
 
 
@@ -89,6 +84,16 @@ namespace protocols {
 			protocols::moves::Mover( SwapSegmentCreator::mover_name() ){
 			previously_grown_ = false;
 		}
+
+protocols::moves::MoverOP
+SwapSegment::clone() const {
+  return( protocols::moves::MoverOP( new SwapSegment( *this ) ) );
+}
+
+protocols::moves::MoverOP
+SwapSegment::fresh_instance() const {
+  return protocols::moves::MoverOP( new SwapSegment );
+}
 		
 void 
 SwapSegment::copying_side_chains(
@@ -130,12 +135,12 @@ SwapSegment::swap_segment(
 	for ( Size pos = 1; pos <= pose.total_residue(); ++pos ) {
 		TR.Debug<<"iterating through pose: " <<pos << std::endl;
 		if ( seeds.is_loop_residue( pos ) ) {
-			TR.Debug<<"pos "<< pos <<std::endl;
+			TR.Debug <<"pos "<< pos <<std::endl;
 			++offsetres ;
-			TR.Debug<<"offsetres " << offsetres <<std::endl;
+			TR.Debug <<"offsetres " << offsetres <<std::endl;
 			
 			pose.replace_residue( pos, swap_segment->residue( offsetres ), true);
-			TR << "After Swap loop Residue  " << offsetres << std::endl;
+			TR.Debug << "After Swap loop Residue  " << offsetres << std::endl;
 
 		}
 	}

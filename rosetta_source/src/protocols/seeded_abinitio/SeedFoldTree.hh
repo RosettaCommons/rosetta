@@ -20,9 +20,9 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/string_util.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/Loops.hh>
@@ -42,8 +42,8 @@ public:
 	core::kinematics::FoldTreeOP fold_tree() const;
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const { return( protocols::moves::MoverOP( new SeedFoldTree( *this ) ) ); }
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new SeedFoldTree ); }
+  virtual protocols::moves::MoverOP clone() const;
+  virtual protocols::moves::MoverOP fresh_instance() const;
 	
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	void scorefxn( core::scoring::ScoreFunctionOP scorefxn );	

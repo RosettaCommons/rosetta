@@ -102,8 +102,22 @@ namespace protocols {
 		{}
 		
 		GrowPeptides::~GrowPeptides() {}
-		
-		
+
+protocols::moves::MoverOP
+GrowPeptides::clone() const {
+  return( protocols::moves::MoverOP( new GrowPeptides( *this ) ) );
+}
+
+protocols::moves::MoverOP
+GrowPeptides::fresh_instance() const {
+  return protocols::moves::MoverOP( new GrowPeptides );
+}		
+
+bool		
+GrowPeptides::ddg(){
+	return ddg_;
+}
+
 void 
 GrowPeptides::append_residues_nterminally ( Size seq_register, Size res_pos, Size stop, std::string & nat_seq , pose::Pose & target_seeds ){
 	TR<<" ---- growing N-terminal stretch from residues: "<<res_pos <<" to " <<stop <<"----------" << std::endl;
@@ -264,7 +278,7 @@ void GrowPeptides::apply (core::pose::Pose & pose ){
 			TR<<"generate a foldtree through SeedFoldTree, and get cutpoints" << std::endl;
 			core::pose::PoseOP tmp_seed_target_poseOP = new core::pose::Pose( pose );
 			protocols::seeded_abinitio::SeedFoldTree seed_ft_generator;
-			seed_ft_generator.ddg_based( true );
+			seed_ft_generator.ddg_based( ddg() );
 			seed_ft_generator.scorefxn( scorefxn_ ); 
 			seed_foldtree_ = seed_ft_generator.set_foldtree( *template_pdb_ , tmp_seed_target_poseOP , all_seeds_, true );
 			verteces_ = seed_ft_generator.get_folding_verteces();
@@ -386,6 +400,8 @@ GrowPeptides::parse_my_tag(
 	TR<<"scoring with following scorefunction: " << *scorefxn_ <<std::endl;
 	
 	fetch_foldtree = tag->getOption< bool >( "SeedFoldTree", 0 );
+
+	ddg_ = tag->getOption< bool >( "ddg_based", 0 );
 
 	//add_chainbreakterm_ = tag->getOption< bool >( "add_chainbreakterm", 1 );
 	

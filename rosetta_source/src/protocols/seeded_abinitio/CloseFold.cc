@@ -127,6 +127,16 @@ namespace protocols {
 			//frag3_ = new core::fragment::ConstantLengthFragSet( *frag3 );
       //frag9_ = new core::fragment::ConstantLengthFragSet( *frag9 );
 		}
+
+protocols::moves::MoverOP
+CloseFold::clone() const {
+  return( protocols::moves::MoverOP( new CloseFold( *this ) ) );
+}
+
+protocols::moves::MoverOP
+CloseFold::fresh_instance() const {
+  return protocols::moves::MoverOP( new CloseFold );
+}
 			
 bool 
 CloseFold::chainbreakweights(){

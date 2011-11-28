@@ -20,12 +20,6 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-// AUTO-REMOVED #include <core/kinematics/FoldTree.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Residue.fwd.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-// AUTO-REMOVED #include <utility/string_util.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.fwd.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {
@@ -41,15 +35,15 @@ public:
 										
 				void apply( core::pose::Pose & pose );
 				virtual std::string get_name() const;
-				
+				virtual protocols::moves::MoverOP clone() const;
+        virtual protocols::moves::MoverOP fresh_instance() const;
+			
 				void parse_my_tag( utility::tag::TagPtr const tag,
 								  protocols::moves::DataMap &,
 								  protocols::filters::Filters_map const &,
 								  protocols::moves::Movers_map const &,
 								  core::pose::Pose const & );
 							
-				protocols::moves::MoverOP clone() const { return( protocols::moves::MoverOP( new CoordinateCst( *this ) ) ); }
-				protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new CoordinateCst ); }
 				virtual ~CoordinateCst();
 	
 				private:

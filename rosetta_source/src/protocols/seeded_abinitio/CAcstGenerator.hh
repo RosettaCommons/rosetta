@@ -35,20 +35,17 @@ class CAcstGenerator : public protocols::moves::Mover {
 
   CAcstGenerator();
 
-  // undefined, commenting out to fix PyRosetta build  bool is_seed  ( protocols::loops::Loops & loops, core::Size & residue );
-
   void apply( core::pose::Pose & pose );
 
   virtual std::string get_name() const;
+  virtual protocols::moves::MoverOP clone() const;
+  virtual protocols::moves::MoverOP fresh_instance() const;
 
   void parse_my_tag( utility::tag::TagPtr const tag,
                      protocols::moves::DataMap &,
                      protocols::filters::Filters_map const &,
                      protocols::moves::Movers_map const &,
                      core::pose::Pose const & );
-
-  protocols::moves::MoverOP clone() const { return( protocols::moves::MoverOP( new CAcstGenerator( *this ) ) ); }
-  protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new CAcstGenerator ); }
 
   virtual ~CAcstGenerator();
 

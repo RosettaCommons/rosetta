@@ -13,16 +13,16 @@
 #ifndef INCLUDED_protocols_seeded_abinitio_GrowPeptides_hh
 #define INCLUDED_protocols_seeded_abinitio_GrowPeptides_hh
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <utility/string_util.hh>
-#include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <utility/vector1.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/id/SequenceMapping.fwd.hh>
 #include <set>
 
@@ -37,9 +37,8 @@ public:
 	virtual ~GrowPeptides();
 	void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-	protocols::moves::MoverOP clone() const { return( protocols::moves::MoverOP( new GrowPeptides( *this ) ) ); }
-	protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new GrowPeptides ); }
-
+  virtual protocols::moves::MoverOP clone() const;
+  virtual protocols::moves::MoverOP fresh_instance() const;
 			
 	void parse_my_tag( 		  utility::tag::TagPtr const tag,
 							  protocols::moves::DataMap &,
@@ -50,8 +49,10 @@ public:
 	void add_chainbreakterm( bool ac );
 	
 	bool add_chainbreakterm();
+
+	bool ddg();
 			
-		private: ///functions
+private: ///functions
 	
 	void append_residues_nterminally (	
 									  core::Size seq_register,
@@ -95,7 +96,8 @@ public:
 			bool all_ala_N;
 			bool all_ala_C;
 			//bool add_chainbreakterm_;
-			
+
+			bool ddg_;			
 			/// template pose to derrive a sequence from
 			core::pose::PoseOP template_pdb_;
 			bool template_presence;

@@ -6,7 +6,7 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
-
+//
 /// @file protocols/seeded_abinitio/SeedSetupMover
 /// @author Eva-Maria Strauch (evas01@u.washington.edu)
 
@@ -14,15 +14,14 @@
 #define INCLUDED_protocols_seeded_abinitio_SeedSetupMover_hh
 
 #include <core/types.hh>
-// AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-#include <core/pack/task/PackerTask.hh>
-#include <core/pack/task/TaskFactory.hh>
-#include <core/scoring/ScoreFunction.hh>
-#include <core/kinematics/MoveMap.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pack/task/TaskFactory.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <utility/vector1.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/Loops.hh>
@@ -37,10 +36,10 @@ class SeedSetupMover : public protocols::moves::Mover {
   SeedSetupMover();
   virtual ~SeedSetupMover();
   void apply( core::pose::Pose & pose );
-  virtual std::string get_name() const;
 
-  protocols::moves::MoverOP clone() const { return( protocols::moves::MoverOP( new SeedSetupMover( *this ) ) ); }
-  protocols::moves::MoverOP fresh_instance() const { return protocols::moves::MoverOP( new SeedSetupMover ); }
+  virtual std::string get_name() const;
+  virtual protocols::moves::MoverOP clone() const;
+  virtual protocols::moves::MoverOP fresh_instance() const;
 
   void parse_my_tag( utility::tag::TagPtr const tag,
                      protocols::moves::DataMap &,

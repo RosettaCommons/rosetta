@@ -19,13 +19,10 @@
 #include <protocols/seeded_abinitio/CoordinateCst.hh>
 #include <protocols/seeded_abinitio/CoordinateCstCreator.hh>
 
-// AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/Func.hh>
 #include <core/scoring/constraints/Func.fwd.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
-// AUTO-REMOVED #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 #include <numeric/xyzVector.hh>
@@ -36,10 +33,8 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/string_util.hh>
 #include <boost/foreach.hpp>
-// AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <utility/tag/Tag.hh>
 // C++ headers
-// AUTO-REMOVED #include <fstream>
 #include <iostream>
 #include <string>
 
@@ -49,23 +44,15 @@
 #include <utility/vector1.hh>
 
 #include <core/pose/Pose.hh>
-// AUTO-REMOVED #include <core/pose/PDBInfo.hh>
 
 //pose
-// AUTO-REMOVED #include <core/pose/util.hh>
 #include <core/pose/Pose.fwd.hh>
-// AUTO-REMOVED #include <core/import_pose/import_pose.hh>
-
-
-//constraints
-// AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
 
 #include <utility/vector0.hh>
 
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Jump.hh>
-
 
 
 namespace protocols {
@@ -108,6 +95,16 @@ namespace protocols {
 			jump_ = 0; 
 			atom_id_ = "CA"; 
 		}	
+
+protocols::moves::MoverOP
+CoordinateCst::clone() const {
+  return( protocols::moves::MoverOP( new CoordinateCst( *this ) ) );
+}
+
+protocols::moves::MoverOP
+CoordinateCst::fresh_instance() const {
+  return protocols::moves::MoverOP( new CoordinateCst );
+}
 		
 ///parse residues at run time, in case there was a lenght change
 void parse_spans(	pose::Pose & pose,
