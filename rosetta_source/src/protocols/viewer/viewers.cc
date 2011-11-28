@@ -60,9 +60,7 @@
 #elif _WIN32
 #include <glut/glut.h>
 #else
-// AUTO-REMOVED #include "GL/glut.h"
-
-
+#include "GL/glut.h"
 #endif
 
 #endif
