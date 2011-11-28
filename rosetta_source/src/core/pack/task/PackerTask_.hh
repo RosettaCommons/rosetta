@@ -672,6 +672,8 @@ private:
 
 };
 
+//NOTE: parse_resfile is now an independent function in ResfileReader.hh, not a member function of the PackerTask hierarchy
+
 } //namespace task
 } //namespace pack
 } //namespace core
