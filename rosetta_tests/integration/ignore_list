@@ -10,4 +10,4 @@ core.init: 'RNG device' seed mode, using
 TIMING
 core.init.random: RandomGenerator:init: Normal mode, seed=
 version
-Warning: Unable to locate database file Dunbrack08.lib.bin
+Warning: Unable to locate database file Dunbrack[0-9]+.lib.bin
