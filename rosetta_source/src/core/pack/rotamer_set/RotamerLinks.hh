@@ -17,10 +17,12 @@
 
 #include <core/pack/rotamer_set/RotamerLinks.fwd.hh>
 
-//Auto Headers
-#include <utility/vector1_bool.hh>
-#include <utility/vector1.hh>
+// Project Headers
+#include <core/types.hh>
+
 // utility headers
+#include <utility/pointer/ReferenceCount.hh>
+#include <utility/vector1.hh>
 
 namespace core {
 namespace pack {
@@ -35,27 +37,27 @@ public:
 	{
 		links_.resize(res);
 	}
-		
+
 	utility::vector1< Size >
 	get_equiv( Size const index ) const
 	{
 		if (index <= links_.size())
 		return links_[index];
-		
+
 	}
-	
+
 	void
 	set_equiv( Size const rs1, Size const rs2 )
 	{
 		links_[rs1].push_back(rs2);
 	}
-	
+
 	void
 	set_equiv( Size const rs1, utility::vector1<int>  list)
 	{
 		links_[rs1] = list;
 	}
-	
+
 	bool
 	has (Size index) const
 	{
@@ -66,7 +68,7 @@ public:
 			return false;
 		}
 	}
-	
+
 
 private:
 
