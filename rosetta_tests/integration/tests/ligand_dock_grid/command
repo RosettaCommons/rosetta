@@ -4,5 +4,7 @@ cd %(workdir)s
     | egrep -vf ../../ignore_list \
     > log
 
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
+
 #removes unwanted versioning info from atom_tree_diff file
 sed -i.bak '/version/d' atom_tree_diff.out; rm atom_tree_diff.out.bak

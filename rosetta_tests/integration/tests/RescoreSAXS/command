@@ -32,5 +32,7 @@ cd %(workdir)s
 #%(bin)s/RescoreSAXS.%(binext)s @flags -database %(database)s -nodelay  2>&1 \
 #    | egrep -vf ../../ignore_list \
 #    > log_SAXS
-
+#
+#test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
+#
 #head -3 default.out | tail -2 >> log_SAXS

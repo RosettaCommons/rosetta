@@ -34,9 +34,13 @@
 #	| egrep -vf ../../ignore_list \
 #	> log_db_output_01
 #
+#test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
+#
 #%(bin)s/rosetta_scripts.%(binext)s @flags_02 -database %(database)s  2>&1 \
 #	| egrep -vf ../../ignore_list \
 #	> log_db_output_02
+#
+#test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so (i.e. Tell testing system if Rosetta died.)
 #
 #full_db="features_IntegrationTest.db3"
 #part_dbs=${full_db}_*
