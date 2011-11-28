@@ -124,6 +124,8 @@ AtomType::set_property(
 		is_donor_ = setting;
 	} else if ( property == "POLAR_HYDROGEN" ) {
 		is_polar_hydrogen_ = setting;
+	} else if(property == "AROMATIC"){
+		is_aromatic_ = setting;
 	} else if ( property == "H2O" ) {
 		is_h2o_ = setting;
 	} else if (property == "ORBITALS"){ //is the atom type orbital? defined in atom_properties.txt

@@ -79,7 +79,7 @@ public:
 		is_donor_( false ),
 		is_polar_hydrogen_( false ),
 		is_h2o_( name_in == "HOH" ),
-		is_aromatic_( name_in == "aroC" || name_in == "Ntrp" || name_in == "Nhis" || name_in == "Oaro" ), //this will only work for fa_standard -- generalize?
+		is_aromatic_( false ),
 		atom_has_orbitals_(false),
 		atom_is_virtual_(false),
 		hybridization_( UNKNOWN_HYBRID )
