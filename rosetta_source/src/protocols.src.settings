@@ -188,6 +188,7 @@ sources = {
 		"util",
 		"DockingHighResLegacy",
                 "TemperedDocking",
+                "DockSetupMover",
 	],
 	"protocols/docking/stateless" : [
 		"SaneDockingProtocol",

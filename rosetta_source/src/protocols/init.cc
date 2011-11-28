@@ -173,15 +173,19 @@
 #include <protocols/moves/TaskAwareMinMoverCreator.hh>
 #include <protocols/moves/RotamerRecoveryMoverCreator.hh>
 #include <protocols/moves/MetropolisHastingsMoverCreator.hh>
+#include <protocols/moves/SilentTrajectoryRecorderCreator.hh>
+#include <protocols/moves/PDBTrajectoryRecorderCreator.hh>
+#include <protocols/moves/ParallelTemperingCreator.hh>
+#include <protocols/moves/SimulatedTemperingCreator.hh>
 #include <protocols/moves/BackboneMoverCreator.hh>
 #include <protocols/moves/BackrubMoverCreator.hh>
 #include <protocols/moves/SidechainMoverCreator.hh>
 #include <protocols/moves/BackrubSidechainMoverCreator.hh>
-#include <protocols/moves/SilentTrajectoryRecorderCreator.hh>
-#include <protocols/moves/PDBTrajectoryRecorderCreator.hh>
 #include <protocols/moves/MetricRecorderCreator.hh>
 #include <protocols/moves/RotamerTrialsMinMoverCreator.hh>
 #include <protocols/moves/FavorSequenceProfileCreator.hh>
+#include <protocols/docking/DockSetupMoverCreator.hh>
+#include <protocols/moves/RigidBodyMoverCreator.hh>
 #include <protocols/relax/FastRelaxCreator.hh>
 #include <protocols/dna/SeparateDnaFromNonDnaCreator.hh>
 #include <protocols/dna/DnaInterfaceMinMoverCreator.hh>
@@ -471,6 +475,10 @@ static MoverRegistrator< moves::SidechainMCMoverCreator > reg_SidechainMCMoverCr
 static MoverRegistrator< moves::TaskAwareMinMoverCreator > reg_TaskAwareMinMoverCreator;
 static MoverRegistrator< moves::RotamerRecoveryMoverCreator > reg_RotamerRecoveryMoverCreator;
 static MoverRegistrator< moves::MetropolisHastingsMoverCreator > reg_MetropolisHastingsMoverCreator;
+static MoverRegistrator< moves::ParallelTemperingCreator > reg_ParallelTemperingCreator;
+static MoverRegistrator< moves::SimulatedTemperingCreator > reg_SimulatedTemperingCreator;
+
+
 static MoverRegistrator< moves::SmallMoverCreator > reg_SmallMoverCreator;
 static MoverRegistrator< moves::ShearMoverCreator > reg_ShearMoverCreator;
 static MoverRegistrator< moves::BackrubMoverCreator > reg_BackrubMoverCreator;
@@ -482,6 +490,10 @@ static MoverRegistrator< moves::MetricRecorderCreator > reg_MetricRecorderCreato
 static MoverRegistrator< moves::RotamerTrialsMoverCreator > reg_RotamerTrialsMoverCreator;
 static MoverRegistrator< moves::RotamerTrialsMinMoverCreator > reg_RotamerTrialsMinMoverCreator;
 static MoverRegistrator< moves::FavorSequenceProfileCreator > reg_FavorSequenceProfileCreator;
+
+static MoverRegistrator< moves::RigidBodyPerturbNoCenterMoverCreator > reg_RigidBodyPerturbNoCenterMoverCreator;
+
+
 static MoverRegistrator< flexpep_docking::FlexPepDockingProtocolCreator > reg_FlexPepDockingProtocolCreator;
 static MoverRegistrator< moves::ExtendedPoseMoverCreator > reg_ExtendedPoseMoverCreator;
 static MoverRegistrator< nonlocal::SingleFragmentMoverCreator > reg_SingleFragmentMoverCreator;
@@ -519,6 +531,7 @@ static MoverRegistrator< loops::LoopRelaxMoverCreator > reg_LoopRelaxMoverCreato
 static MoverRegistrator< loops::FoldTreeFromLoopsCreator > reg_FoldTreeFromLoops_Creator;
 static MoverRegistrator< rosetta_scripts::SavePoseMoverCreator > SavePoseMoverCreator;
 static MoverRegistrator< loophash::LoopHashMoverWrapperCreator > reg_LoopHashMoverWrapperCreator;
+static MoverRegistrator< docking::DockSetupMoverCreator > reg_DockSetupMoverCreator;
 static MoverRegistrator< docking::DockingProtocolCreator > DockingProtocolCreator;
 static MoverRegistrator< moves::RollMoverCreator > reg_RollMoverCreator;
 static MoverRegistrator< qsar::RenderGridsToKinemageCreator> reg_RenderGridsToKinemageCreator;

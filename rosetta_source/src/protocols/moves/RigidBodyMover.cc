@@ -16,7 +16,7 @@
 /// @author Monica Berrondo
 
 #include <protocols/moves/RigidBodyMover.hh>
-
+#include <protocols/moves/RigidBodyMoverCreator.hh>
 // Package headers
 #include <protocols/geometry/RB_geometry.hh>
 
@@ -28,6 +28,7 @@
 //#include <core/scoring/ScoringManager.hh>
 #include <core/kinematics/MoveMap.hh>
 // AUTO-REMOVED #include <basic/basic.hh>
+#include <utility/tag/Tag.hh>
 
 // Random number generator
 // AUTO-REMOVED #include <numeric/xyzVector.io.hh>
@@ -90,6 +91,8 @@ RigidBodyMover::RigidBodyMover( RigidBodyMover const & src ) :
 	dir_( src.dir_ ),
 	rot_center_( src.rot_center_ )
 {}
+
+
 
 RigidBodyPerturbMover::RigidBodyPerturbMover(
 		int const rb_jump_in,
@@ -259,8 +262,37 @@ void RigidBodyPerturbMover::rot_center( core::Vector const /*rot_center_in*/ )
 	utility_exit_with_message("Rotation point is automatically determined ONLY");
 }
 
+void
+RigidBodyPerturbNoCenterMover::parse_my_tag(
+   utility::tag::TagPtr const tag,
+	 protocols::moves::DataMap& data,
+	 protocols::filters::Filters_map const &filters,
+	 protocols::moves::Movers_map const &movers,
+	 core::pose::Pose const &pose
+) {
+	RigidBodyMover::parse_my_tag( tag, data, filters, movers, pose );
+	rot_mag_ = tag->getOption< core::Real >( "rot_mag", 0.1 );
+	trans_mag_ = tag->getOption< core::Real >( "trans_mag", 0.4 );
+}
+
+std::string
+RigidBodyPerturbNoCenterMoverCreator::keyname() const {
+	return RigidBodyPerturbNoCenterMoverCreator::mover_name();
+}
+
+protocols::moves::MoverOP
+RigidBodyPerturbNoCenterMoverCreator::create_mover() const {
+	return new RigidBodyPerturbNoCenterMover;
+}
+
+std::string
+RigidBodyPerturbNoCenterMoverCreator::mover_name() {
+	return "RigidBodyPerturbNoCenter";
+}
+
+
 RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover() :
-	parent(),
+	Parent(),
 	rot_mag_( 3.0 ),
 	trans_mag_( 8.0 )
 {
@@ -271,16 +303,11 @@ RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover(
 	int const rb_jump_in,
 	core::Real const rot_mag_in,
 	core::Real const trans_mag_in
-):
-	RigidBodyMover( rb_jump_in ),
-	rot_mag_( rot_mag_in ),
-	trans_mag_( trans_mag_in )
+) :	RigidBodyMover(),
+		rot_mag_( rot_mag_in ),
+		trans_mag_( trans_mag_in )
 {
 	movable_jumps_.push_back( rb_jump_in );
-
-	TRBM.Debug << "rb_jump " << rb_jump_in << std::endl;
-	TRBM.Debug << "rot_mag " << rot_mag_in << std::endl;
-	TRBM.Debug << "trans_mag " << trans_mag_in << std::endl;
 	Mover::type( "RigidBodyPerturbNoCenter" );
 }
 
@@ -320,7 +347,7 @@ RigidBodyPerturbNoCenterMover::RigidBodyPerturbNoCenterMover(
 	RigidBodyPerturbNoCenterMover const & src
 ) :
 	//utility::pointer::ReferenceCount(),
-	parent( src ),
+	Parent( src ),
 	rot_mag_( src.rot_mag_ ),
 	trans_mag_( src.trans_mag_ ),
 	movable_jumps_( src.movable_jumps_ )

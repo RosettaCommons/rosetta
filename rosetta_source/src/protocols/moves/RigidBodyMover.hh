@@ -178,6 +178,9 @@ public:
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
 
+
+
+
 	void rot_magnitude( core::Real const magnitude ) { rot_mag_ = magnitude; }
 
 	void trans_magnitude( core::Real const magnitude ) { trans_mag_ = magnitude; }
@@ -203,9 +206,7 @@ private:
 ///		chosen at apply time, NOT at construction time! This is done to simplify
 ///		docking with more than one active jump.
 class RigidBodyPerturbNoCenterMover : public RigidBodyMover{
-public:
-	typedef RigidBodyMover parent;
-
+	typedef RigidBodyMover Parent;
 public:
 	// default constructor
 	RigidBodyPerturbNoCenterMover();
@@ -227,22 +228,30 @@ public:
 		Direction dir_in
 	);
 
+// function for the parser with lots of accessors
+	void parse_my_tag(
+			 utility::tag::TagPtr const tag,
+			 protocols::moves::DataMap &,
+			 protocols::filters::Filters_map const &,
+			 protocols::moves::Movers_map const &,
+			 core::pose::Pose const &
+	);
+
 	RigidBodyPerturbNoCenterMover( RigidBodyPerturbNoCenterMover const & src );
 	virtual ~RigidBodyPerturbNoCenterMover();
 
 	virtual void apply( core::pose::Pose & pose );
 	virtual std::string get_name() const;
-
 	void rot_magnitude( core::Real const magnitude ) { rot_mag_ = magnitude; }
-
 	void trans_magnitude( core::Real const magnitude ) { trans_mag_ = magnitude; }
 
 	void add_jump( core::Size );
 	void clear_jumps();
-private:
+protected:
 	/// perturbation magnitudes (rotational and translational)
 	core::Real rot_mag_;
 	core::Real trans_mag_;
+private:
 	utility::vector1< core::Size > movable_jumps_;
 };
 

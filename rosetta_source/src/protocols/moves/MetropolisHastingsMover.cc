@@ -237,6 +237,7 @@ MetropolisHastingsMover::parse_my_tag(
 	ntrials_ = tag->getOption< core::Size >( "trials", ntrials_ );
 
 	//monte-carlo
+	//read tag scorefxn
 	core::scoring::ScoreFunctionOP score_fxn(protocols::rosetta_scripts::parse_score_function(tag, data));
 	core::Real const temperature(tag->getOption< core::Real >( "temperature", 0.6 ) );
 	monte_carlo_ = new MonteCarlo(*score_fxn, temperature);
