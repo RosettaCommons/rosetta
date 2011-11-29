@@ -139,12 +139,12 @@ SeedFoldTree::scorefxn() const{
 
 bool
 SeedFoldTree::ddg_based(){
-	return anchor_specified_;
+	return ddg_based_;
 }
 
 void
 SeedFoldTree::ddg_based( bool ddgb ){
-	anchor_specified_ = ddgb;
+	ddg_based_ = ddgb;
 }
 
 
