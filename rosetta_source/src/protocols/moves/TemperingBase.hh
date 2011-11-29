@@ -119,7 +119,7 @@ protected:
 
 	void set_temperatures( utility::vector1< core::Real > const& );
 
-	void set_current_temp( core::Real new_temp );
+	void set_current_temp( core::Size new_temp );
 
  	bool stats_line_output() const {
 		return stats_line_output_;

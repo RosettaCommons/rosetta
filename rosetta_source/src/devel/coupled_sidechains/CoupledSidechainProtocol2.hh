@@ -104,7 +104,7 @@ private:
 	core::Real prob_withinrot_;
 	core::Real prob_pert_chi_;
 	core::Real pert_magnitude_;
-	core::Real ntrials_;
+	core::Size ntrials_;
 	core::Size stride_;
 	protocols::moves::MetropolisHastingsMoverOP sampler_;
 	static bool options_registered_;

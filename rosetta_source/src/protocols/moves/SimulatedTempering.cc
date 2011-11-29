@@ -122,7 +122,7 @@ SimulatedTempering::SimulatedTempering(	SimulatedTempering const & other ) :
 void
 SimulatedTempering::reset_raw_counter() {
 	counts_.resize( 0 );
-	counts_.assign( n_temp_levels(), 1.0 ); //initialize with 1 to avoid div by zero...
+	counts_.assign( n_temp_levels(), 1 ); //initialize with 1 to avoid div by zero...
 }
 
 void

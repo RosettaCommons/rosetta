@@ -365,7 +365,7 @@ void TemperingBase::set_temperatures( utility::vector1< Real > const& temps ) {
 	set_current_temp( temps.size() );
 }
 
-void TemperingBase::set_current_temp( Real new_temp ) {
+void TemperingBase::set_current_temp( Size new_temp ) {
 	current_temp_ = new_temp;
 	Real real_temp = temperatures_[ current_temp_ ];
 	monte_carlo_->set_temperature( real_temp );
