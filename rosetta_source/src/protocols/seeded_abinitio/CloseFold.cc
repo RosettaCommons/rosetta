@@ -483,9 +483,9 @@ CloseFold::parse_my_tag(
     TR<<"read in a template pdb with " <<template_pdb_->total_residue() <<"residues"<<std::endl;
     //template_presence_ = true;
 		core::scoring::dssp::Dssp dssp( *template_pdb_ );	
-    dssp.insert_ss_into_pose( *template_pdb_ );		//???
+    dssp.insert_ss_into_pose( *template_pdb_ );	
     for( core::Size res = 1 ;  res <= template_pdb_->total_residue(); ++res ) secstructure_ += template_pdb_->secstruct( res );
-      secstructure_ = template_pdb_->secstruct();  //why is this not working???
+      secstructure_ = template_pdb_->secstruct();  
     	TR << secstructure_ << std::endl;
   }
 

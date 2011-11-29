@@ -60,8 +60,8 @@ public:
 	
 	
 	core::kinematics::FoldTreeOP set_foldtree( 
-												core::pose::Pose & template_pose, 
-												core::pose::PoseOP & seed_target_chain, 
+												core::pose::PoseOP & seed_target_chain,
+												std::string secstr, 
 												protocols::loops::Loops & loops,
 												bool protein_not_folded_yet );
 
@@ -104,7 +104,7 @@ private:
 
 	//utility::vector1<core::Size> manual_jumps;
 	utility::vector1< std::pair< Size, Size > > manual_jump_pairs_;
-	core::pose::PoseOP seed_pdb_;
+	core::pose::PoseOP template_pdb_;
 	core::pose::PoseOP target_chain_;
 	core::pose::PoseOP seeds_only_;
 	core::pose::PoseOP only_seeds_chain_;

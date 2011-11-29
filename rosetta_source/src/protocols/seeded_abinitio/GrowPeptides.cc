@@ -12,8 +12,8 @@
 
 #include <protocols/seeded_abinitio/GrowPeptides.hh>
 #include <protocols/seeded_abinitio/GrowPeptidesCreator.hh>
+#include <protocols/seeded_abinitio/SeedFoldTree.fwd.hh>
 #include <protocols/seeded_abinitio/SeedFoldTree.hh>
-
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -21,7 +21,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Conformation.hh>
-
+#include <core/scoring/dssp/Dssp.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 #include <core/pose/datacache/cacheable_observers.hh>
@@ -277,11 +277,15 @@ void GrowPeptides::apply (core::pose::Pose & pose ){
 		if( fetch_foldtree ){
 			TR<<"generate a foldtree through SeedFoldTree, and get cutpoints" << std::endl;
 			core::pose::PoseOP tmp_seed_target_poseOP = new core::pose::Pose( pose );
-			protocols::seeded_abinitio::SeedFoldTree seed_ft_generator;
-			seed_ft_generator.ddg_based( ddg() );
-			seed_ft_generator.scorefxn( scorefxn_ ); 
-			seed_foldtree_ = seed_ft_generator.set_foldtree( *template_pdb_ , tmp_seed_target_poseOP , all_seeds_, true );
-			verteces_ = seed_ft_generator.get_folding_verteces();
+			SeedFoldTreeOP seed_ft_generator = new SeedFoldTree();
+			seed_ft_generator->ddg_based( ddg() );
+			seed_ft_generator->scorefxn( scorefxn_ );
+			core::scoring::dssp::Dssp dssp( *template_pdb_ );
+    	dssp.insert_ss_into_pose( *template_pdb_ ); 
+			std::string secstr_template = template_pdb_->secstruct();
+std::cout << "sec str for template: " << secstr_template << std::endl; 
+			seed_foldtree_ = seed_ft_generator->set_foldtree( /**template_pdb_ ,*/ tmp_seed_target_poseOP, secstr_template, all_seeds_, true );
+			verteces_ = seed_ft_generator->get_folding_verteces();
 			TR.Debug<<"verteces for folding: " <<std::endl;
 			cutpoints = seed_foldtree_->cutpoints();
 		
