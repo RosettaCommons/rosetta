@@ -76,7 +76,7 @@
 #include <sys/stat.h>
 
 
-OPT_1GRP_KEY( Integer      , cxdock, sphere       )
+OPT_1GRP_KEY( Integer      , cxdock, sphere       ) // 12872 32672 78032 8192
 OPT_1GRP_KEY( Real         , cxdock, clash_dis    )
 OPT_1GRP_KEY( Real         , cxdock, contact_dis  )
 //OPT_1GRP_KEY( Real         , cxdock, num_contacts )
@@ -164,7 +164,7 @@ average_degree (Pose const &pose, Size nmono, vector1<Size> mutalyze_pos, Real d
 
 
 
-vector1<Size> design(Pose & p, Size nmono) {
+vector1<Size> design(Pose & p, Size nmono, Size nsym) {
   using namespace core::pack::task;
   ScoreFunctionOP sf = core::scoring::getScoreFunction();
   PackerTaskOP task = TaskFactory::create_packer_task(p);
@@ -199,7 +199,7 @@ vector1<Size> design(Pose & p, Size nmono) {
     }
     if( !p.residue(ir).is_protein()  ) continue;
     Real closestcb = 9e9;
-    for( Size jr = nmono+1; jr <= 5*nmono; ++jr) {
+    for( Size jr = nmono+1; jr <= nsym*nmono; ++jr) {
       if( p.residue(jr).name3()=="GLY" ) continue;
       if( !p.residue(jr).is_protein()  ) continue;
       Real d = p.xyz(AtomID(5,ir)).distance( p.xyz(AtomID(5,jr)) );
@@ -365,7 +365,7 @@ void cxdock_design(Pose const init, std::string const & fn, vector1<xyzVector<do
   //Pose q(p);
   //rot_pose(q,Rsym);
   trans_pose(p,Vec(0,0,t));
-  Vec cen = Vec(0,t/2.0/tan(36.0*numeric::constants::d::pi/180.0),t/2.0);
+  Vec cen = Vec(0,t/2.0/tan( numeric::constants::d::pi / (Real)ic ),t/2.0);
   trans_pose(p,-cen);
   //trans_pose(q,-cen);
 
@@ -394,7 +394,7 @@ void cxdock_design(Pose const init, std::string const & fn, vector1<xyzVector<do
     }
   }
 
-  vector1<Size> iface = design(p,init.n_residue());
+  vector1<Size> iface = design(p,init.n_residue(),ic);
 
   // Calculate the surface area and surface complementarity for the interface
   Real int_area = 0; Real sc = 0;
