@@ -15,6 +15,14 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
+#include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/JobDistributorFactory.hh>
+#include <protocols/jd2/util.hh>
+#include <protocols/jd2/JobOutputter.hh>
+#include <protocols/jd2/SilentFileJobOutputter.hh>
+
+#include <utility/excn/Exceptions.hh>
+#include <utility/exit.hh>
 
 // C++ headers
 #include <fstream>
@@ -26,6 +34,9 @@
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/util.hh>
+#include <core/pose/Pose.hh>
+#include <core/id/AtomID.hh>
+#include <numeric/xyzVector.hh>
 
 using namespace core;
 using namespace fragment;
@@ -43,38 +54,43 @@ public:
 	/// 	empty constructor fills values with the values
 	///		read in from the commandline
 	SimpleCstMover( Size length) :
-		Mover()
+		Mover(),
+		length_( length )
 	{
 		Mover::type( "SimpleCstMover" );
-		dist_matrix = new Real[length * length * 100];
-		for( Size i=0; i < length*length; i ++ ) dist_matrix[i] = 0;
+		distmin_matrix = new Real[length * length ];
+		distmax_matrix = new Real[length * length ];
+		for( Size i=0; i < length*length; i ++ ) distmin_matrix[i] = 1000000.0;
+		for( Size i=0; i < length*length; i ++ ) distmax_matrix[i] = 0;
 	}
 
 
 	~SimpleCstMover(){
-		delete [] dist_matrix;
-		delete [] dist2_matrix;
-
+		delete [] distmin_matrix;
+		delete [] distmax_matrix;
 	}
 
 	virtual void apply( pose::Pose & pose );
 	virtual void test_move( pose::Pose & pose ){apply(pose);}
+ 	virtual std::string get_name() const { return "MyMover"; }
 
 	void write( const std::string &filename );
 
 
 private:  //  Data
 
-	inline void set_dist(Size i, Size j, Real value ){    dist_matrix[j  *length + i ] = value; }
-	inline void add_dist(Size i, Size j, Real value ){    dist_matrix[j  *length + i ] += value; }
-	Real        get_dist(Size i, Size j ) const { return  dist_matrix[j  *length + i ]; }
-	inline void add_dist2(Size i, Size j, Real value ){   dist2_matrix[j *length + i ] += value; }
-	Real        get_dist2(Size i, Size j ) const { return dist2_matrix[j *length + i ]; }
+	inline void set_distmin(Size i, Size j, Real value ){    distmin_matrix[j  *length + i ] = value; }
+	inline void add_distmin(Size i, Size j, Real value ){    distmin_matrix[j  *length + i ] += value; }
+	Real        get_distmin(Size i, Size j ) const { return  distmin_matrix[j  *length + i ]; }
+	
+	inline void set_distmax(Size i, Size j, Real value ){    distmax_matrix[j  *length + i ] = value; }
+	inline void add_distmax(Size i, Size j, Real value ){   distmax_matrix[j *length + i ] += value; }
+	Real        get_distmax(Size i, Size j ) const { return distmax_matrix[j *length + i ]; }
 
-	Size length;
+	Size length_;
 
-	Real   *dist_matrix;
-	Real  *dist2_matrix;
+	Real  *distmin_matrix;
+	Real  *distmax_matrix;
 
 };
 
@@ -92,26 +108,33 @@ void SimpleCstMover::apply( pose::Pose & pose )
 	for( Size i = 1;  i < pose.total_residue(); i ++ ){
 		for( Size j = i+3;  j < pose.total_residue(); j ++ ){
 			Real dist;
-			std::cout << "C " << count << " I " << i << " J " << j << " D " << dist << std::endl;
- 			dist = numeric::distance( pose.xyz(  core::id::AtomID( 3, i ) ) , pose.xyz(  core::id::AtomID( 3, j  ) ) );
-			add_dist(i,j,dist);
-			add_dist2(i,j,dist*dist );
-			std::cout << "C " << count << " I " << i << " J " << j << " D " << dist << std::endl;
+ 			dist = pose.xyz(  core::id::AtomID( 3, i ) ).distance( pose.xyz(  core::id::AtomID( 3, j  ) ) );
+			if ( dist < get_distmin( i, j ) ) set_distmin( i, j, dist );
+			if ( dist > get_distmax( i, j ) ) set_distmax( i, j, dist );
+			std::cout << "C " << count << " I " << i << " J " << j << " D " << distmin << std::endl;
 		}
 	}
  count++;
-
-
 
 }
 
 void SimpleCstMover::write( const std::string &filename )
 {
+  Real dist_limit = 12;
+	for( Size i = 1;  i < pose.total_residue(); i ++ ){
+		for( Size j = i+3;  j < pose.total_residue(); j ++ ){
+			
+			if( get_distmax( i, j ) < 12 ){
+				if( get_distmax( i, j ) > get_distmin( i, j ) ) { std::cerr "ASSERTION"; }
 
-	// first calculate the mean.
 
-
-
+			}
+			
+			if ( dist < get_distmin( i, j ) ) set_distmin( i, j, dist );
+			if ( dist > get_distmax( i, j ) ) set_distmax( i, j, dist );
+			std::cout << "C " << count << " I " << i << " J " << j << " D " << distmin << std::endl;
+		}
+	}
 
 
 }
@@ -132,10 +155,15 @@ main( int argc, char * argv [] )
 	SequenceMoverOP seqmov = new SequenceMover;
 	seqmov->add_mover( capture3mers );
 	MoverOP mover = seqmov;
- 	protocols::jd2::JobDistributor::get_instance()->go( *seqmov );
-
-
-
+	using namespace protocols::jd2;
+	try{
+		JobDistributor::get_instance()->go( mover );
+	} catch ( utility::excn::EXCN_Base& excn ) {
+		std::cerr << "Exception: " << std::endl;
+		excn.show( std::cerr );
+		std::cout << "Exception: " << std::endl;
+		excn.show( std::cout ); //so its also seen in a >LOG file
+	}
 	return 0;
 }
 
