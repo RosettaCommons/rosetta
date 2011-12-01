@@ -17,7 +17,7 @@
 
 // Package headers
 #include <protocols/protein_interface_design/design_utils.hh>
-#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
 
 // Project headers
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
@@ -30,6 +30,10 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <protocols/simple_moves/DesignRepackMover.hh>
+
 
 
 namespace protocols {
@@ -66,7 +70,7 @@ RepackMinimize::clone() const {
 }
 
 RepackMinimize::RepackMinimize() :
-	DesignRepackMover( RepackMinimizeCreator::mover_name() )
+	simple_moves::DesignRepackMover( RepackMinimizeCreator::mover_name() )
 {
 	min_rb_set_ = min_bb_set_ = min_sc_set_ = false;
 	optimize_foldtree_ = true;
@@ -82,7 +86,7 @@ RepackMinimize::RepackMinimize(
 	core::Real const interface_distance_cutoff/*=8.0*/,
 	bool const repack_non_ala/*=true*/
 ) :
-	DesignRepackMover( RepackMinimizeCreator::mover_name() )
+	simple_moves::DesignRepackMover( RepackMinimizeCreator::mover_name() )
 {
 	repack_partner2_ = repack_partner2;
 	repack_partner1_ = repack_partner1;
@@ -119,7 +123,7 @@ RepackMinimize::apply( pose::Pose & pose )
 	allowed_aas_[ chemical::aa_pro ] = false;
 
 if ( symmetry_ ) {
-    protocols::moves::symmetry::SetupForSymmetryMoverOP setup_mover = new protocols::moves::symmetry::SetupForSymmetryMover;
+    protocols::symmetric_docking::SetupForSymmetryMoverOP setup_mover = new protocols::symmetric_docking::SetupForSymmetryMover;
 		setup_mover->apply( pose );
 	}
 
@@ -147,7 +151,7 @@ void
 RepackMinimize::parse_my_tag( TagPtr const tag, DataMap & data, protocols::filters::Filters_map const &filters, Movers_map const & movers, core::pose::Pose const & pose )
 {
 	TR<<"repack minimize mover with the following parameters:"<<std::endl;
-	DesignRepackMover::parse_my_tag( tag, data, filters, movers, pose );
+	simple_moves::DesignRepackMover::parse_my_tag( tag, data, filters, movers, pose );
 }
 
 } //movers

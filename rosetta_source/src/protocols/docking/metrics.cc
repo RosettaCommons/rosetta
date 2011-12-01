@@ -39,6 +39,10 @@
 
 #include <protocols/docking/metrics.hh>
 
+//Auto Headers
+#include <protocols/simple_filters/DdgFilter.hh>
+
+
 static basic::Tracer TR("protocols.docking.DockingProtocol.metrics");
 
 using namespace core;
@@ -76,7 +80,7 @@ calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::Sco
 		/*
 		 Real const threshold = 100000; // dummy threshold
 		 Size const repeats = 3;
-		 protocols::protein_interface_design::DdgFilter ddg = protocols::protein_interface_design::DdgFilter( threshold, docking_scorefxn, rb_jump, repeats );
+		 protocols::simple_filters::DdgFilter ddg = protocols::simple_filters::DdgFilter( threshold, docking_scorefxn, rb_jump, repeats );
 		 interaction_energy += ddg.compute( pose );
 		 */
 		core::pose::Pose unbound_pose = complex_pose;

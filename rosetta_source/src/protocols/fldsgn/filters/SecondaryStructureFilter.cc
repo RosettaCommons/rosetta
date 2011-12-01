@@ -17,7 +17,7 @@
 #include <protocols/fldsgn/filters/SecondaryStructureFilterCreator.hh>
 
 // Project Headers
-#include <protocols/fldsgn/BluePrint.hh>
+#include <protocols/jd2/parser/BluePrint.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/util/ABEGOManager.hh>
@@ -142,7 +142,7 @@ SecondaryStructureFilter::parse_my_tag(
 	Movers_map const &,
 	Pose const & )
 {
-	using protocols::fldsgn::BluePrint;
+	using protocols::jd2::parser::BluePrint;
 
  	filtered_ss_ = tag->getOption<String>( "ss", "" );
 

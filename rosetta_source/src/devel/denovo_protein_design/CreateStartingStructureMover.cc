@@ -44,9 +44,9 @@
 
 #include <protocols/abinitio/ClassicAbinitio.hh>
 // AUTO-REMOVED #include <protocols/abinitio/FoldConstraints.hh>
-#include <protocols/basic_moves/FragmentMover.hh>
-#include <protocols/basic_moves/SmoothFragmentMover.hh>
-#include <protocols/basic_moves/GunnCost.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/simple_moves/SmoothFragmentMover.hh>
+#include <protocols/simple_moves/GunnCost.hh>
 
 // AUTO-REMOVED #include <protocols/loops/loops_main.hh> //for getting ss from dssp
 
@@ -270,7 +270,7 @@ void CreateStartingStructureMover::apply( core::pose::Pose & pose ){
 		shear_mover->angle_max( 'L', 10.0 );
 
 
-		protocols::basic_moves::SmoothFragmentMoverOP smooth_frag_mover ( new protocols::basic_moves::SmoothFragmentMover( fragset3mer, movemap, new protocols::basic_moves::GunnCost ) );
+		protocols::simple_moves::SmoothFragmentMoverOP smooth_frag_mover ( new protocols::simple_moves::SmoothFragmentMover( fragset3mer, movemap, new protocols::simple_moves::GunnCost ) );
 
 
 		protocols::moves::RandomMoverOP Moveset = new protocols::moves::RandomMover();

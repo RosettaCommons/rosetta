@@ -40,7 +40,7 @@
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/OrderedFragSet.hh>
 
-//#include <protocols/basic_moves/FragmentMover.hh>
+//#include <protocols/simple_moves/FragmentMover.hh>
 #include <core/fragment/SecondaryStructure.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
 // AUTO-REMOVED #include <protocols/evaluation/ConstraintEvaluator.hh>
@@ -55,7 +55,7 @@
 #include <string>
 // AUTO-REMOVED #include <vector>
 
-#include <protocols/evaluation/ConstraintEvaluator.fwd.hh>
+#include <protocols/constraints_additional/ConstraintEvaluator.fwd.hh>
 #include <protocols/loops/Loop.hh>
 #include <utility/vector1.hh>
 
@@ -267,7 +267,7 @@ protected:
 
 	evaluation::MetaPoseEvaluatorOP evaluator_;
 
-	evaluation::ConstraintEvaluatorOP filter_cst_;
+	constraints_additional::ConstraintEvaluatorOP filter_cst_;
 	core::Real filter_cst_weight_;
 
 };

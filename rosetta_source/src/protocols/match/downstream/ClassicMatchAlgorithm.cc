@@ -238,7 +238,7 @@ ClassicMatchAlgorithm::n_possible_hits_per_upstream_conformation() const
 	Size total = 0;
 	for ( Size ii = 1; ii <= n_external_samplers(); ++ii ) {
 		Size iitotal = 1;
-		ExternalGeomSampler const & exsampler( external_samplers_[ ii ] );
+		toolbox::match_enzdes_util::ExternalGeomSampler const & exsampler( external_samplers_[ ii ] );
 
 		iitotal *= exsampler.n_tor_U3D1_samples();
 		iitotal *= exsampler.n_ang_U2D1_samples();
@@ -263,12 +263,12 @@ ClassicMatchAlgorithm::build_from_three_coords(
 	core::conformation::Residue const & upstream_residue
 ) const
 {
-
+	using namespace toolbox::match_enzdes_util;
 	Vector coord1( upstream_residue.xyz( launch_atom( which_external_sampler, 1 )));
 	Vector coord2( upstream_residue.xyz( launch_atom( which_external_sampler, 2 )));
 	Vector coord3( upstream_residue.xyz( launch_atom( which_external_sampler, 3 )));
 
-	ExternalGeomSampler const & exsampler( external_samplers_[ which_external_sampler ] );
+	toolbox::match_enzdes_util::ExternalGeomSampler const & exsampler( external_samplers_[ which_external_sampler ] );
 
 	DownstreamBuilderCOP dsbuilder( dsbuilders_[ which_external_sampler ] );
 
@@ -396,7 +396,7 @@ void ClassicMatchAlgorithm::set_residue_type( core::chemical::ResidueTypeCAP res
 /// @details Precompute transforms for the external geom sampler as it is added
 /// so that the transforms are ready when build() is called.
 void ClassicMatchAlgorithm::add_external_geom_sampler(
-	ExternalGeomSampler const & sampler,
+	toolbox::match_enzdes_util::ExternalGeomSampler const & sampler,
 	Size const exgeom_id,
 	std::string const & atom1,
 	std::string const & atom2,
@@ -430,7 +430,7 @@ void ClassicMatchAlgorithm::add_external_geom_sampler(
 	exgeom_ids_.push_back( exgeom_id );
 
 	/// initialize the external sampler transforms
-	ExternalGeomSampler & samp( external_samplers_[ external_samplers_.size() ] );
+	toolbox::match_enzdes_util::ExternalGeomSampler & samp( external_samplers_[ external_samplers_.size() ] );
 	samp.set_dis_D1D2(   dsbuilder->atom1_atom2_distance() );
 	samp.set_dis_D2D3(   dsbuilder->atom2_atom3_distance() );
 	samp.set_ang_D1D2D3( dsbuilder->atom1_atom2_atom3_angle() );

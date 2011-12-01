@@ -71,8 +71,8 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/symmetry/SymMinMover.hh>
-#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/toolbox/SwitchResidueTypeSet.hh>
 #include <sstream>
 #include <utility/excn/Exceptions.hh>
@@ -209,7 +209,7 @@ void design_homodimer(Pose & pose, ScoreFunctionOP sf, vector1<Size> const & mat
 	
 	// pose.dump_pdb("test.pdb");
 	// if(uniform() > 0.2) std::exit(-1);
-	protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );		
+	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );		
 	repack.apply(pose);		
 	
 	// cleanup 2

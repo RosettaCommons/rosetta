@@ -37,7 +37,7 @@
 
 // AUTO-REMOVED
 
-#include <protocols/basic_moves/FragmentMover.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
 
@@ -119,8 +119,8 @@ void LoopClosure::init() {
 	}
 	set_movemap( loop_movemap );
 
-  basic_moves::ClassicFragmentMoverOP ptr;
-  frag_mover_ = ptr = new basic_moves::ClassicFragmentMover( fragset_, movemap_ );
+  simple_moves::ClassicFragmentMoverOP ptr;
+  frag_mover_ = ptr = new simple_moves::ClassicFragmentMover( fragset_, movemap_ );
   ptr->enable_end_bias_check( false ); //uniform sampling
 	ptr->set_check_ss( false );
 	if ( bEnableCcdMoves_ ) {

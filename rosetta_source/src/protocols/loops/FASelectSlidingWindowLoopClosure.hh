@@ -38,7 +38,7 @@
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/OrderedFragSet.hh>
 
-//#include <protocols/basic_moves/FragmentMover.hh>
+//#include <protocols/simple_moves/FragmentMover.hh>
 //#include <core/fragment/SecondaryStructure.hh>
 //#include <protocols/evaluation/PoseEvaluator.hh>
 // AUTO-REMOVED #include <protocols/evaluation/ConstraintEvaluator.hh>

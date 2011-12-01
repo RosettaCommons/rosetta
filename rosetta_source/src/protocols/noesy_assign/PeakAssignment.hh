@@ -42,7 +42,7 @@
 // AUTO-REMOVED #include <list>
 #include <map>
 
-#include <core/scoring/constraints/Func.fwd.hh>
+#include <core/scoring/constraints/Func.hh>
 
 //Auto Headers
 #include <core/scoring/constraints/AmbiguousNMRDistanceConstraint.fwd.hh>

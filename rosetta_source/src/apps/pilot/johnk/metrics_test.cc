@@ -16,7 +16,7 @@
 #include <core/pose/Pose.hh>
 #include <basic/MetricValue.hh>
 
-#include <protocols/moves/ScoreMover.hh>
+#include <protocols/simple_moves/ScoreMover.hh>
 
 //#include <basic/options/util.hh>
 //#include <basic/options/after_opts.hh>
@@ -121,7 +121,7 @@ main( int argc, char * argv [] )
 
 	// Setup for scoring/repacking
 	std::cout << "JK About to score the pose" << std::endl;
-	protocols::moves::ScoreMover *score_mover = new protocols::moves::ScoreMover;
+	protocols::simple_moves::ScoreMover *score_mover = new protocols::simple_moves::ScoreMover;
 	score_mover->apply( pose );
 	Real score = pose.energies().total_energy();
 	std::cout << "JK Total score is: " << score << std::endl;

@@ -17,7 +17,7 @@
 
 #include <test/core/init_util.hh>
 
-#include <protocols/basic_moves/FragmentMover.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreType.hh>
@@ -102,7 +102,7 @@
 #include <core/scoring/Energies.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <protocols/basic_moves/FragmentMover.fwd.hh>
+#include <protocols/simple_moves/FragmentMover.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
@@ -207,7 +207,7 @@ using namespace core;
 using namespace fragment;
 
 
-static basic::Tracer tr("protocols.basic_moves.FragmentMover.cxxtest", basic::t_info );
+static basic::Tracer tr("protocols.simple_moves.FragmentMover.cxxtest", basic::t_info );
 
 class FragmentMoverTest : public CxxTest::TestSuite
 {
@@ -243,7 +243,7 @@ void FragmentMoverTest::test_mover() {
   using namespace pose;
   using namespace fragment;
   using namespace protocols;
-  using namespace basic_moves;
+  using namespace simple_moves;
   using namespace scoring;
   kinematics::MoveMapOP movemap ( new kinematics::MoveMap ); //dummy ( functionality not used yet )
   //Size len (3);
@@ -268,7 +268,7 @@ void FragmentMoverTest::test_steal() {
   using namespace pose;
   using namespace fragment;
   using namespace protocols;
-  using namespace basic_moves;
+  using namespace simple_moves;
   using namespace scoring;
 
 	for ( FrameIterator it = fragset3mer_->begin(), eit = fragset3mer_->end(); it!=eit; ++it ){
@@ -287,7 +287,7 @@ void FragmentMoverTest::test_proposed_ss() {
   using namespace pose;
   using namespace fragment;
   using namespace protocols;
-  using namespace basic_moves;
+  using namespace simple_moves;
   using namespace scoring;
 
 
@@ -342,7 +342,7 @@ void FragmentMoverTest::test_ss_check() {
   using namespace pose;
   using namespace fragment;
   using namespace protocols;
-  using namespace basic_moves;
+  using namespace simple_moves;
   using namespace scoring;
 
 	std::string const proposed_ss( pose_.secstruct() ); // full ss-string from pose
@@ -367,7 +367,7 @@ void FragmentMoverTest::test_window_start() {
   using namespace pose;
   using namespace fragment;
   using namespace protocols;
-  using namespace basic_moves;
+  using namespace simple_moves;
   using namespace scoring;
 
   // test if all insertable positions are chosen

@@ -1,4 +1,9 @@
 // -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+/bin/bash: //: is a directory
+/bin/bash: tab-width:2: command not found
+/bin/bash: indent-tabs-mode:t: command not found
+/bin/bash: show-trailing-whitespace:t: command not found
+/bin/bash: rm-trailing-spaces:t: command not found
 // vi: set ts=2 noet:
 //
 // (c) Copyright Rosetta Commons Member Institutions.
@@ -54,14 +59,14 @@
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
-#include <protocols/moves/ScoreMover.hh>
+#include <protocols/simple_moves/ScoreMover.hh>
 
 #include <core/scoring/packstat/types.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 #include <core/scoring/packstat/packing_score_params.hh>
 #include <core/scoring/packstat/AtomRadiusMap.hh>
 #include <core/scoring/packstat/SimplePDB.hh>
-#include <protocols/moves/AddCavitiesMover.hh>
+#include <protocols/simple_moves/AddCavitiesMover.hh>
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.hh>
@@ -129,8 +134,8 @@ test_suck_res( std::string fname ) {
 	sfstd->set_weight( suck , 0.0 );
 	sfstd->set_weight( coordinate_constraint, 0.0 );
 	// std::cerr << *sf << std::endl;
-	moves::AddCavitiesMover add_cav(50,1.0,150,3.0);
-	moves::AddCavitiesMover rem_cav(0);
+	simple_moves::AddCavitiesMover add_cav(50,1.0,150,3.0);
+	simple_moves::AddCavitiesMover rem_cav(0);
 
 	core::Real ps = compute_packing_score(pose,0);
 	std::cerr << "SC " << I(2,-1) << " "

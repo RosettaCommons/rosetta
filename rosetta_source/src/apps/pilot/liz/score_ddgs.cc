@@ -141,9 +141,9 @@ calc_ddg(utility::vector1<pose::Pose> mut, utility::vector1<pose::Pose> wt,
 	bool average_lowest_x = false;
 	int input_avg_lowest = 0;
 	core::Size avg_lowest = 0;
-	if(basic::options::option[ddg::lowest_x_decoys].user()){
+	if(basic::options::option[OptionKeys::ddg::lowest_x_decoys].user()){
 		average_lowest_x = true;
-		input_avg_lowest = basic::options::option[ddg::lowest_x_decoys]();
+		input_avg_lowest = basic::options::option[OptionKeys::ddg::lowest_x_decoys]();
 		if( input_avg_lowest  <= 0){
 			std::cerr << "ERROR you need to specify a value > 0 for OPTION: ddg::lowest_x_decoys\nsetting avg_lowest to arbitrary value of 10" << std::endl;
 			avg_lowest = 10;
@@ -532,13 +532,13 @@ main(int argc, char* argv []){
 
 	bool mean, min;
 
-	if(basic::options::option[ddg::mean].user()){
-		mean = basic::options::option[ddg::mean]();
+	if(basic::options::option[OptionKeys::ddg::mean].user()){
+		mean = basic::options::option[OptionKeys::ddg::mean]();
 	}else{
 		mean = false;
 	}
-	if(basic::options::option[ddg::min].user()){
-		min = basic::options::option[ddg::min]();
+	if(basic::options::option[OptionKeys::ddg::min].user()){
+		min = basic::options::option[OptionKeys::ddg::min]();
 	}else{
 		min = false;
 	}
@@ -570,7 +570,7 @@ main(int argc, char* argv []){
 			header_printed=true;
 			print_header(mut[1],sfxn,outfile);
 		}
-		if(!basic::options::option[ddg::print_per_res_diff]()){
+		if(!basic::options::option[OptionKeys::ddg::print_per_res_diff]()){
 			print_ddgs(ddgs,mut,wt,
 								 experimental_value,
 								 outfile);

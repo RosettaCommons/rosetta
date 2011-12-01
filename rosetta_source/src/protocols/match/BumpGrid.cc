@@ -364,7 +364,7 @@ Bool3DGrid::or_by_box_liberal(
 }
 
 /// Accessors
-Bin3D Bool3DGrid::dimsizes() const {
+Bool3DGrid::Bin3D Bool3DGrid::dimsizes() const {
 	return dimsizes_;
 }
 
@@ -775,7 +775,7 @@ Bool3DGrid::index_and_mask_for_bin( Bin3D const & bin ) const
 	return std::make_pair( index, mask );
 }
 
-Bin3D
+Bool3DGrid::Bin3D
 Bool3DGrid::bin_for_point( Vector const & point ) const
 {
 	assert( bb_.contains( point ) );

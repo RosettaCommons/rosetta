@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @author Ken Jung
-/// @brief 
+/// @brief
 //	Takes as input an index and offset and returns the corresponding frag in a pdb
 //	OR a bin key and returns the pdbs of all the frags in the bin
 //	should take only one loopsize
@@ -28,7 +28,7 @@
 #include <core/pose/Pose.hh>
 
 #include <core/io/pdb/file_data.hh>
-#include <protocols/match/SixDHasher.hh>
+#include <numeric/geometry/hashing/SixDHasher.hh>
 
 
 using basic::T;
@@ -46,14 +46,14 @@ main( int argc, char * argv [] )
 {
 	// initialize core
 	core::init(argc, argv);
-	utility::vector1 < std::string > pdblist;	
+	utility::vector1 < std::string > pdblist;
 	pdblist = option[lh::symfragrm::pdblist]();
 	if ( pdblist.size() == 0 ) {
-				 TR << "pdblist empty" << std::endl;	
+				 TR << "pdblist empty" << std::endl;
 					return 1;
 	}
 	// Set up hash bins that mimic loophash
-	
+
 	core::Size loop_size = 10;
 
 	TR.Info << "Setting up hash_: Size:  " << loop_size << std::endl;

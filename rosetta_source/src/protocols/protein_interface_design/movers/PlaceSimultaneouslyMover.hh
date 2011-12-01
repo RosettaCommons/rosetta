@@ -26,7 +26,6 @@
 // C++ headers
 
 // Unit headers
-#include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <protocols/hotspot_hashing/HotspotStub.hh>
 #include <protocols/moves/DataMap.fwd.hh>
@@ -36,6 +35,10 @@
 
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <protocols/simple_moves/DesignRepackMover.hh>
+
+
 
 namespace protocols {
 namespace protein_interface_design {
@@ -43,17 +46,17 @@ namespace movers {
 
 /// @brief choose a stub based on mc sampling, and place it on the pose.
 /// Iterates over stubs until one matches criteria.
-class PlaceSimultaneouslyMover : public DesignRepackMover
+class PlaceSimultaneouslyMover : public simple_moves::DesignRepackMover
 {
 public:
 	typedef std::pair< protocols::hotspot_hashing::HotspotStubSetOP, std::pair< protocols::hotspot_hashing::HotspotStubOP, core::Size > > StubSetStubPos;
-	typedef std::pair< protocols::protein_interface_design::movers::DesignRepackMoverOP, core::Real > MoverRealPair;
+	typedef std::pair< protocols::simple_moves::DesignRepackMoverOP, core::Real > MoverRealPair;
 public:
 	// used to define pairs of design/repack movers with an associated bool that
 	// determines whether to use the stub-based foldtree with cuts etc., or to
 	// use the default foldtree
-	typedef std::pair< DesignRepackMoverOP, bool > DesignMoverFoldTreePair;
-	typedef std::pair< DesignRepackMoverOP, core::Real > DesignMoverRealPair;
+	typedef std::pair< simple_moves::DesignRepackMoverOP, bool > DesignMoverFoldTreePair;
+	typedef std::pair< simple_moves::DesignRepackMoverOP, core::Real > DesignMoverRealPair;
 	/// ResidueAuction is keyed by energy => we select the residue,stub,stubset combination with the best energy for each stubset,stub combination
 	typedef std::pair< protocols::hotspot_hashing::HotspotStubSetOP, protocols::hotspot_hashing::HotspotStubOP > StubsetStubPair;
 	typedef std::pair< core::Real, std::pair< core::Size, StubsetStubPair > > ResidueAuctionItem;

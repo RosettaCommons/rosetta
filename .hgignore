@@ -10,6 +10,10 @@ syntax: glob
 *~
 \#*\#
 *.cmake
+*.project
+*.cproject
+*.xcodeproj
+*.pbxproj
 
 rosetta_source/.svn
 rosetta_source/CMakeFiles
@@ -25,10 +29,18 @@ rosetta_source/build_release
 rosetta_soruce/build_debug
 rosetta_source/tools/build/user.settings
 rosetta_source/tools/build/user.options
-rosetta_source/cmake/build_staticmpi/*
 rosetta_source/cmake/build_branch/*
 rosetta_source/cmake/build_branchdebug/*
+rosetta_source/cmake/build_debug/*
+rosetta_source/cmake/build_native_client/*
+rosetta_source/cmake/build_release/*
+rosetta_source/cmake/build_sharedmpi/*
+rosetta_source/cmake/build_staticmpi/*
+rosetta_source/cmake/build_staticmpi_bluegene/*
+rosetta_source/cmake/build_staticmpi_bluegene_xlc/*
 rosetta_source/.unit_test_results.yaml
+rosetta_source/xcode/Rosetta.xcodeproj/project.pbxproj
 rosetta_tests/integration/new/
 rosetta_tests/integration/ref/
-
+rosetta_database/Dunbrack02.lib.bin
+rosetta_database/Dunbrack08.lib.bin

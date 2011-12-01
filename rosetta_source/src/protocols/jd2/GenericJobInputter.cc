@@ -13,6 +13,7 @@
 
 // Unit headers
 #include <protocols/jd2/GenericJobInputter.hh>
+#include <protocols/jd2/GenericJobInputterCreator.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerJob.hh>
 
@@ -94,6 +95,18 @@ void protocols::jd2::GenericJobInputter::fill_jobs( Jobs & jobs ){
 /// @return Always <em>POSE</em>.
 JobInputterInputSource::Enum GenericJobInputter::input_source() const {
   return JobInputterInputSource::POSE;
+}
+
+//CREATOR SECTION
+std::string
+GenericJobInputterCreator::keyname() const
+{
+	return "GenericJobInputter";
+}
+
+protocols::jd2::JobInputterOP
+GenericJobInputterCreator::create_JobInputter() const {
+	return new GenericJobInputter;
 }
 
 }//jd2

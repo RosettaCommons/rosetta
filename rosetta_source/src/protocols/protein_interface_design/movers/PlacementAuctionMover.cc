@@ -31,7 +31,6 @@
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 // Unit Headers
 #include <protocols/filters/Filter.hh>
-#include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 #include <protocols/protein_interface_design/movers/PlaceUtils.hh>
 
 #include <core/conformation/Conformation.hh>
@@ -41,7 +40,6 @@
 
 
 // Unit Headers
-#include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <basic/Tracer.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -52,6 +50,11 @@
 
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <protocols/simple_filters/ScoreTypeFilter.hh>
+#include <protocols/simple_moves/DesignRepackMover.hh>
+
 
 
 #define foreach BOOST_FOREACH
@@ -85,7 +88,7 @@ PlacementAuctionMoverCreator::mover_name()
 }
 
 PlacementAuctionMover::PlacementAuctionMover() :
-	DesignRepackMover( PlacementAuctionMoverCreator::mover_name() )
+	simple_moves::DesignRepackMover( PlacementAuctionMoverCreator::mover_name() )
 {}
 
 PlacementAuctionMover::~PlacementAuctionMover() {}
@@ -156,7 +159,7 @@ PlacementAuctionMover::apply( core::pose::Pose & pose )
 	ScoreFunctionOP only_stub_scorefxn = new ScoreFunction;
 	only_stub_scorefxn->reset();
 	only_stub_scorefxn->set_weight( backbone_stub_constraint, 1.0 );
-	ScoreTypeFilter const stf( only_stub_scorefxn, backbone_stub_constraint, 1.0 );
+	simple_filters::ScoreTypeFilter const stf( only_stub_scorefxn, backbone_stub_constraint, 1.0 );
 
 	ScoreFunctionCOP score12( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ));
 	core::Size fixed_res(1);

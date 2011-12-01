@@ -37,7 +37,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/fragment/FragSet.hh>
-#include <protocols/basic_moves/FragmentMover.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
@@ -159,7 +159,7 @@ LoopResult LoopMover_Perturb_CCD::model_loop(
 	using namespace optimization;
 	using namespace basic::options;
 	using namespace core::kinematics;
-	using namespace protocols::basic_moves;
+	using namespace protocols::simple_moves;
 
 	bool const verbose( true );
 	bool const local_debug( false );

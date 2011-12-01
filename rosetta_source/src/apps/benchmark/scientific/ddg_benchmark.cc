@@ -305,23 +305,23 @@ main( int argc, char * argv [] )
 	utility::vector1<Real> wt_averaged_score_components; // to be filled in and averaged later
 
 
-	std::string weight_file = option[ ddg::weight_file ]();
+	std::string weight_file = option[ OptionKeys::ddg::weight_file ]();
 	ScoreFunctionOP score_structure_scorefxn(ScoreFunctionFactory::create_score_function(weight_file));
 
-	Size num_iterations = option[ ddg::iterations ]();
+	Size num_iterations = option[ OptionKeys::ddg::iterations ]();
 	//initialize output options.
 	//debug output?
-	bool debug_output = option[ ddg::debug_output ]();
+	bool debug_output = option[ OptionKeys::ddg::debug_output ]();
 	if(debug_output){
 		std::cout << "weights being used: " <<
 			score_structure_scorefxn->weights() << "\n";
 	}
 
 	//dump repacked pdbs?
-	bool dump_pdbs = option[ ddg::dump_pdbs ]();
+	bool dump_pdbs = option[ OptionKeys::ddg::dump_pdbs ]();
 
 	//output ddgs into what file?
-	std::string ddg_out = option[ ddg::out ]();
+	std::string ddg_out = option[ OptionKeys::ddg::out ]();
 	std::ofstream ddg_output(ddg_out.c_str(), std::ios_base::app);
 	if(!ddg_output){
 		std::cout << "having trouble opening output file for dumping predicted ddgs"

@@ -18,7 +18,7 @@
 #include <protocols/flxbb/utility.hh>
 
 // Package headers
-#include <protocols/fldsgn/BluePrint.hh>
+#include <protocols/jd2/parser/BluePrint.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
@@ -54,7 +54,7 @@ typedef core::Size Size;
 typedef core::Real Real;
 typedef std::string String;
 typedef core::pose::Pose Pose;
-typedef protocols::fldsgn::BluePrintOP BluePrintOP;
+typedef protocols::jd2::parser::BluePrintOP BluePrintOP;
 typedef core::scoring::constraints::ConstraintOPs ConstraintOPs;
 
 ConstraintOPs

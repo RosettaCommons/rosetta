@@ -70,9 +70,9 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/moves/symmetry/SymMinMover.hh>
-#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
@@ -244,7 +244,7 @@ vector1<Size> design(Pose & p, Size nmono) {
   p.add_constraints( res_cst );
 	
   core::pack::make_symmetric_PackerTask(p,task);
-  protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
+  protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
   repack.apply(p);
 
   // cleanup 2
@@ -279,7 +279,7 @@ void repack(Pose & p, Size nmono, vector1<Size> const & iface) {
     }
   }
   core::pack::make_symmetric_PackerTask(p,task);
-  protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
+  protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
   repack.apply(p);
 }
 
@@ -297,7 +297,7 @@ minimize(Pose & pose,  utility::vector1<Size> const & iface) {
 		movemap->set_chi(*i,true);
 	}
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
-	protocols::moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 	m.apply(pose);
 }
 

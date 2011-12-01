@@ -36,7 +36,7 @@
 #include <core/fragment/IndependentBBTorsionSRFD.hh>
 #include <core/fragment/picking_old/vall/util.hh>
 
-#include <protocols/fldsgn/BluePrint.hh>
+#include <protocols/jd2/parser/BluePrint.hh>
 // AUTO-REMOVED #include <protocols/fldsgn/topology/HSSTriplet.hh> // REQUIRED FOR WINDOWS
 
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
@@ -112,7 +112,7 @@ FragmentReader::parse_tag( TagPtr const & tag )
 		// read from blueprint
 		String const blueprint( tag->getOption<String>( "blueprint", "" ) );
 		if( blueprint != "" ){
-			blueprint_ = new protocols::fldsgn::BluePrint( blueprint );
+			blueprint_ = new protocols::jd2::parser::BluePrint( blueprint );
 			ss_ = blueprint_->secstruct();
 		}
 

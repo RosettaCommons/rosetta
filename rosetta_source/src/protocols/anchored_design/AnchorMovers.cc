@@ -58,16 +58,16 @@
 
 #include <protocols/moves/Mover.fwd.hh> //MoverOP
 #include <protocols/moves/BackboneMover.hh> //SmallMover
-#include <protocols/basic_moves/FragmentMover.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/SwitchResidueTypeSetMover.hh> //typeset swapping
-#include <protocols/moves/KinematicMover.hh>
-#include <protocols/loops/KinematicWrapper.hh>
-#include <protocols/moves/kinematic_closure/KinematicPerturber.hh>
+#include <protocols/loops/kinematic_closure/KinematicMover.hh>
+#include <protocols/loops/kinematic_closure/KinematicWrapper.hh>
+#include <protocols/loops/kinematic_closure/KinematicPerturber.hh>
 #include <protocols/loops/CcdLoopClosureMover.hh>
 #include <protocols/moves/ReturnSidechainMover.hh>
 #include <protocols/moves/TaskAwareMinMover.hh>
@@ -874,9 +874,9 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 		//option 3: kinematic; no perturbation or closure needed
 		if( internal && !perturb_KIC_off_){
 			//make kinematic mover
-			using protocols::moves::KinematicMoverOP;
-			using protocols::moves::KinematicMoverCAP;
-			using protocols::moves::KinematicMover;
+			using protocols::loops::kinematic_closure::KinematicMoverOP;
+			using protocols::loops::kinematic_closure::KinematicMoverCAP;
+			using protocols::loops::kinematic_closure::KinematicMover;
 			KinematicMoverOP kin_mover( new KinematicMover() );//temperature, default 0.8
 			KinematicMoverCAP kin_mover_cap(*kin_mover);
 			kin_mover->set_temperature( perturb_temp_ );
@@ -888,14 +888,14 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 			kin_mover->set_idealize_loop_first( false );
 
 			//make kinematic perturber
-			using protocols::moves::kinematic_closure::TorsionSamplingKinematicPerturber;
-			using protocols::moves::kinematic_closure::KinematicPerturberOP;
+			using protocols::loops::kinematic_closure::TorsionSamplingKinematicPerturber;
+			using protocols::loops::kinematic_closure::KinematicPerturberOP;
 			KinematicPerturberOP TsamplingKP( new TorsionSamplingKinematicPerturber(kin_mover_cap));
 			TsamplingKP->set_movemap(interface_->movemap_cen(i));
 			kin_mover->set_perturber(TsamplingKP);
 
-			using protocols::loops::KinematicWrapperOP;
-			using protocols::loops::KinematicWrapper;
+			using protocols::loops::kinematic_closure::KinematicWrapperOP;
+			using protocols::loops::kinematic_closure::KinematicWrapper;
 			KinematicWrapperOP kin_wrapper( new KinematicWrapper(kin_mover, interface_->loop(i)));
 			kin_wrapper->respect_this_movemap(interface_->movemap_cen(i));
 			oneloop_random->add_mover(kin_wrapper, 1);
@@ -919,8 +919,8 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 			else {
 				/*T_perturb << "For loop start " << loop_start << " end " << loop_end
 					<< " fragments exist; preferring fragments over small moves" << std::endl;*/
-				using protocols::basic_moves::ClassicFragmentMover;
-				protocols::basic_moves::ClassicFragmentMoverOP frag_mover = new ClassicFragmentMover(interface_->get_frags(), interface_->movemap_cen(i));
+				using protocols::simple_moves::ClassicFragmentMover;
+				protocols::simple_moves::ClassicFragmentMoverOP frag_mover = new ClassicFragmentMover(interface_->get_frags(), interface_->movemap_cen(i));
 				frag_mover->enable_end_bias_check(false);
 				perturb_mover = frag_mover;
 				T_perturb << "creating fragment-based perturbation for loop " << loop_start << " " << loop_end << std::endl;
@@ -1234,9 +1234,9 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 		//option 3: kinematic; no perturbation or closure needed
 		if( internal && !refine_KIC_off_){
 			//make kinematic mover
-			using protocols::moves::KinematicMoverOP;
-			using protocols::moves::KinematicMoverCAP;
-			using protocols::moves::KinematicMover;
+			using protocols::loops::kinematic_closure::KinematicMoverOP;
+			using protocols::loops::kinematic_closure::KinematicMoverCAP;
+			using protocols::loops::kinematic_closure::KinematicMover;
 			KinematicMoverOP kin_mover( new KinematicMover() );//temperature, default 0.8
 			KinematicMoverCAP kin_mover_cap(*kin_mover);
 			kin_mover->set_temperature( refine_temp_ );
@@ -1248,16 +1248,16 @@ void AnchoredRefineMover::apply( core::pose::Pose & pose )
 			kin_mover->set_idealize_loop_first( false );
 
 			//make kinematic perturber
-			using protocols::moves::kinematic_closure::TorsionSamplingKinematicPerturber;
-			using protocols::moves::kinematic_closure::TorsionSamplingKinematicPerturberOP;
+			using protocols::loops::kinematic_closure::TorsionSamplingKinematicPerturber;
+			using protocols::loops::kinematic_closure::TorsionSamplingKinematicPerturberOP;
 			TorsionSamplingKinematicPerturberOP TsamplingKP( new TorsionSamplingKinematicPerturber(kin_mover_cap));
 			TsamplingKP->set_movemap(interface_->movemap_fa(i));
 			TsamplingKP->set_sample_vicinity( vicinity_sampling_ );
 			TsamplingKP->set_degree_vicinity( vicinity_degree_ );
 			kin_mover->set_perturber(TsamplingKP);
 
-			using protocols::loops::KinematicWrapperOP;
-			using protocols::loops::KinematicWrapper;
+			using protocols::loops::kinematic_closure::KinematicWrapperOP;
+			using protocols::loops::kinematic_closure::KinematicWrapper;
 			KinematicWrapperOP kin_wrapper( new KinematicWrapper(kin_mover, interface_->loop(i)));
 			kin_wrapper->respect_this_movemap(interface_->movemap_fa(i));
 			oneloop_random->add_mover(kin_wrapper, 1);

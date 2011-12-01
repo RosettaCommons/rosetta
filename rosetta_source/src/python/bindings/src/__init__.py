@@ -39,7 +39,7 @@ import core.pose
 
 
 import protocols
-import protocols.basic_moves
+import protocols.simple_moves
 import protocols.moves
 import protocols.jumping
 import protocols.jd2.archive
@@ -80,7 +80,7 @@ from rosetta.core.pack.task import *
 from rosetta.core.pack.task.operation import *
 
 from rosetta.protocols.moves import *
-from rosetta.protocols.basic_moves import *
+from rosetta.protocols.simple_moves import *
 from rosetta.protocols.abinitio import *
 from rosetta.protocols.docking import *
 from rosetta.protocols.loops import *

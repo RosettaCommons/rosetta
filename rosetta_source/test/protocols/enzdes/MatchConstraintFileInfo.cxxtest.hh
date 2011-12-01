@@ -41,7 +41,7 @@
 //#include <core/scoring/constraints/BoundConstraint.hh> //need function in this file
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //function for reading cstfiles
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
-#include <protocols/match/downstream/ExternalGeomSampler.hh>
+#include <protocols/toolbox/match_enzdes_util/ExternalGeomSampler.hh>
 
 
 //minimization stuff

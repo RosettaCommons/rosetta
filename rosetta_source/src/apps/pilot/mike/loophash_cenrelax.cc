@@ -53,7 +53,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/match/Hit.fwd.hh>
 #include <protocols/match/Hit.hh>
-#include <protocols/match/SixDHasher.hh>
+#include <numeric/geometry/hashing/SixDHasher.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
 #include <protocols/topology_broker/util.hh>
@@ -162,20 +162,20 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 	core::io::silent::SilentStructOP last_best;
 
   for(int round = 1; round <= option[ OptionKeys::lh::rounds ]; round ++ ){
-  
+
 		LoopHashSampler  lsampler( library_, simple_inserter );
-		
-		core::Size random_start = 1 + rand() % (pose.total_residue() - 10 ); 
-		core::Size random_end = random_start = std::min( int(random_start + 4), int(pose.total_residue() - 5) ); 	
-		lsampler.set_start_res( random_start ); 
-		lsampler.set_stop_res ( random_end ); 
-		lsampler.set_max_nstruct( 20 ); 
+
+		core::Size random_start = 1 + rand() % (pose.total_residue() - 10 );
+		core::Size random_end = random_start = std::min( int(random_start + 4), int(pose.total_residue() - 5) );
+		lsampler.set_start_res( random_start );
+		lsampler.set_stop_res ( random_end );
+		lsampler.set_max_nstruct( 20 );
 
 		lsampler.set_min_bbrms( 20.0   );
 		lsampler.set_max_bbrms( 1400.0 );
 		lsampler.set_min_rms( 0.5 );
 		lsampler.set_max_rms( 4.0 );
-    
+
 		static int casecount = 0;
     core::pose::Pose opose = pose;
     std::vector< core::io::silent::SilentStructOP > lib_structs;
@@ -214,18 +214,18 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
     } else {
       utility_exit_with_message("This app requires specifying the -in:file:native flag.");
     }
-    
+
 		core::pose::Pose ref_pose;
     if( option[ lh::refstruct].user() ){
       core::import_pose::pose_from_pdb( ref_pose, option[ lh::refstruct ]() );
-    } 
+    }
 
 
     core::Real bestcenscore = MAXIMAL_FLOAT;
     core::Size bestcenindex = 0;
- 
+
  		if( select_lib_structs.size() == 0 ) continue;
-		
+
 		if( last_best ) {
 			select_lib_structs.push_back( last_best );
 		}
@@ -233,14 +233,14 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 		for( core::Size h = 0; h < select_lib_structs.size(); h++){
       core::pose::Pose rpose;
       select_lib_structs[h]->fill_pose( rpose );
-		
+
    		core::Real refrms = 0;
 			if( option[ lh::refstruct].user()) {
 			 	refrms = scoring::CA_rmsd( ref_pose, rpose );
 			}
 		  core::Real rms_factor =  5.0;
 			core::Real decoy_score = select_lib_structs[h]->get_energy("censcore") + refrms * rms_factor;
-          
+
 			select_lib_structs[h]->add_energy( "refrms",     refrms,      1.0 );
 			select_lib_structs[h]->add_energy( "comb_score", decoy_score, 1.0 );
 			std::cout << "refrms: " << refrms << "  Energy: " << decoy_score << std::endl;
@@ -253,7 +253,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 		std::cout << "Best:" << "  Energy: " << bestcenscore << std::endl;
 
 
-	
+
     if((  option[ OptionKeys::lh::write_centroid_structs ]() ) ||
        (  option[ OptionKeys::lh::centroid_only ]() )){
 
@@ -276,7 +276,7 @@ LoopHashRelax_Sampler::apply( core::pose::Pose& pose )
 			}
 
     }
-		
+
 		/// In centroid cleanup mode this is IT
 		if( option[ OptionKeys::lh::centroid_only ]() ){
       select_lib_structs[bestcenindex]->fill_pose( pose );

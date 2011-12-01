@@ -8,7 +8,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   protocols/moves/kinematic_closure/TorsionSamplingKinematicPerturber.cxxtest.hh
+/// @file   protocols/loops/kinematic_closure/TorsionSamplingKinematicPerturber.cxxtest.hh
 /// @brief  test for TorsionSamplingKinematicPerturber
 /// @author Steven Lewis
 
@@ -21,8 +21,8 @@
 #include <test/util/pose_funcs.hh>
 
 // Unit header
-#include <protocols/moves/KinematicMover.hh>
-#include <protocols/moves/kinematic_closure/KinematicPerturber.hh>
+#include <protocols/loops/kinematic_closure/KinematicMover.hh>
+#include <protocols/loops/kinematic_closure/KinematicPerturber.hh>
 // AUTO-REMOVED #include <protocols/loops/KinematicWrapper.hh>
 
 // project headers
@@ -49,9 +49,9 @@ class TorsionSamplingKinematicPerturberTests : public CxxTest::TestSuite {
 	core::Size start, end, middle, nres;
 	utility::vector1<core::Real> torsions;
 
-	protocols::moves::KinematicMoverOP kin_mover;
-	protocols::moves::KinematicMoverCAP kin_mover_cap;
-	protocols::moves::kinematic_closure::TorsionSamplingKinematicPerturberOP TsamplingKP;
+	protocols::loops::kinematic_closure::KinematicMoverOP kin_mover;
+	protocols::loops::kinematic_closure::KinematicMoverCAP kin_mover_cap;
+	protocols::loops::kinematic_closure::TorsionSamplingKinematicPerturberOP TsamplingKP;
 
 public:
 
@@ -74,10 +74,10 @@ public:
  			torsions.push_back(pose.omega(i));
 		}
 
-		kin_mover = new protocols::moves::KinematicMover();
+		kin_mover = new protocols::loops::kinematic_closure::KinematicMover();
 		kin_mover_cap = *kin_mover;
 
-		TsamplingKP = new protocols::moves::kinematic_closure::TorsionSamplingKinematicPerturber(kin_mover_cap);
+		TsamplingKP = new protocols::loops::kinematic_closure::TorsionSamplingKinematicPerturber(kin_mover_cap);
 		kin_mover->set_perturber(TsamplingKP);
 	}
 

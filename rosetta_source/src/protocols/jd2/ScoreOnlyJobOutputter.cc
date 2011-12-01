@@ -11,6 +11,7 @@
 /// @author Sam DeLuca
 
 #include <protocols/jd2/ScoreOnlyJobOutputter.hh>
+#include <protocols/jd2/ScoreOnlyJobOutputterCreator.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
@@ -52,6 +53,18 @@ bool ScoreOnlyJobOutputter::job_has_completed(JobCOP)
 std::string ScoreOnlyJobOutputter::output_name(JobCOP job)
 {
 	return affixed_numbered_name(job);
+}
+
+//CREATOR SECTION
+std::string
+ScoreOnlyJobOutputterCreator::keyname() const
+{
+        return "ScoreOnlyJobOutputter";
+}
+
+protocols::jd2::JobOutputterOP
+ScoreOnlyJobOutputterCreator::create_JobOutputter() const {
+        return new ScoreOnlyJobOutputter;
 }
 
 }

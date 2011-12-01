@@ -28,7 +28,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/fragment/FragSet.hh>
 // AUTO-REMOVED #include <core/fragment/FrameList.hh>
-// AUTO-REMOVED #include <protocols/basic_moves/FragmentMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/jumping/JumpSetup.hh>
 #include <protocols/abinitio/TemplateJumpSetup.hh>
 #include <protocols/abinitio/PairingStatistics.hh>

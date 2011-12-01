@@ -13,6 +13,7 @@
 
 ///Unit headers
 #include <protocols/jd2/AtomTreeDiffJobInputter.hh>
+#include <protocols/jd2/AtomTreeDiffJobInputterCreator.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerJob.hh>
 
@@ -172,6 +173,18 @@ JobInputterInputSource::Enum AtomTreeDiffJobInputter::input_source() const {
 utility::vector1< core::pose::PoseOP > const &
 AtomTreeDiffJobInputter::all_ref_poses() const {
 	return atom_tree_diff_.all_ref_poses();
+}
+
+//CREATOR SECTION
+std::string
+AtomTreeDiffJobInputterCreator::keyname() const
+{
+	return "AtomTreeDiffJobInputter";
+}
+
+protocols::jd2::JobInputterOP
+AtomTreeDiffJobInputterCreator::create_JobInputter() const {
+	return new AtomTreeDiffJobInputter;
 }
 
 } // jd2

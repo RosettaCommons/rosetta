@@ -24,7 +24,7 @@
 // AUTO-REMOVED #include <core/id/SequenceMapping.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/sequence/SequenceAlignment.fwd.hh>
-#include <protocols/jd2/ThreadingJob.fwd.hh>
+#include <protocols/comparative_modeling/ThreadingJob.fwd.hh>
 // AUTO-REMOVED #include <protocols/loops/Loop.hh>
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
@@ -66,7 +66,7 @@ void decompose(core::Size min_chunk_sz,
 void emit_intermediate(const core::pose::Pose& pose, const std::string& file);
 
 /// @brief Retrieves the current job from the JobDistributor
-protocols::jd2::ThreadingJob const * const current_job();
+protocols::comparative_modeling::ThreadingJob const * const current_job();
 
 /// @brief Extract secondary structure chunks from the pose, using multiple secondary structure types
 /// this function requires that the pose object already have secstruct information

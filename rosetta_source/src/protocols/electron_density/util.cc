@@ -30,7 +30,7 @@
 #include <core/pose/symmetry/util.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
-#include <protocols/moves/symmetry/SymMinMover.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/geometry/RB_geometry.hh>
 
 
@@ -345,7 +345,7 @@ core::Real dockPoseIntoMap( core::pose::Pose & pose, std::string align_in /* =""
 			core::scoring::ScoreFunctionOP symmscorefxn_dens = new core::scoring::symmetry::SymmetricScoreFunction( scorefxn_dens );
 
 			core::pose::symmetry::make_symmetric_movemap( pose, *rbmm );
-			moves::MoverOP min_mover = new moves::symmetry::SymMinMover( rbmm, symmscorefxn_dens,  "dfpmin_armijo_nonmonotone", 1e-5, true );
+			moves::MoverOP min_mover = new simple_moves::symmetry::SymMinMover( rbmm, symmscorefxn_dens,  "dfpmin_armijo_nonmonotone", 1e-5, true );
 
 			bool densInMinimizer = core::scoring::electron_density::getDensityMap().getUseDensityInMinimizer();
 			core::scoring::electron_density::getDensityMap().setUseDensityInMinimizer( true );

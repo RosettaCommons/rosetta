@@ -212,14 +212,14 @@ void emit_intermediate(const core::pose::Pose& pose,
     core::io::pdb::dump_pdb(pose, filename);
 }
 
-protocols::jd2::ThreadingJob const * const current_job() {
+protocols::comparative_modeling::ThreadingJob const * const current_job() {
   using protocols::jd2::InnerJobCOP;
   using protocols::jd2::JobDistributor;
-  using protocols::jd2::ThreadingJob;
+  using protocols::comparative_modeling::ThreadingJob;
 
   JobDistributor* jd2 = JobDistributor::get_instance();
   InnerJobCOP inner = jd2->current_job()->inner_job();
-  return (ThreadingJob const * const) inner();
+  return (protocols::comparative_modeling::ThreadingJob const * const) inner();
 }
 
 /// @brief Extract secondary structure chunks from the secondary structure

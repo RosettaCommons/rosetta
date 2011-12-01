@@ -17,7 +17,6 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pack/pack_rotamers.hh>
-#include <protocols/protein_interface_design/dock_design_filters.hh>
 
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
@@ -30,6 +29,10 @@
 #include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <protocols/simple_filters/ScoreTypeFilter.hh>
+
 
 
 namespace protocols {
@@ -110,7 +113,7 @@ BindingStrainFilter::compute( core::pose::Pose const & p ) const{
 	PackerTaskOP pack = task_factory()->create_task_and_apply_taskoperations( p );
 	pack->restrict_to_repacking();
 	pack->initialize_from_command_line();
-	protocols::protein_interface_design::ScoreTypeFilter const stf( scorefxn(), core::scoring::total_score, 0.0 );
+	protocols::simple_filters::ScoreTypeFilter const stf( scorefxn(), core::scoring::total_score, 0.0 );
 	core::pose::Pose pose( p );
 	unbind( pose );
 	core::Real const energy_before_pack( stf.compute( pose ));

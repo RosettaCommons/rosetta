@@ -27,7 +27,6 @@
 #include <protocols/match/downstream/ClassicMatchAlgorithm.hh>
 #include <protocols/match/downstream/DownstreamAlgorithm.hh>
 #include <protocols/match/downstream/DownstreamBuilder.hh>
-#include <protocols/match/downstream/ExternalGeomSampler.hh>
 #include <protocols/match/downstream/LigandConformerBuilder.hh>
 #include <protocols/match/downstream/RigidLigandBuilder.hh>
 #include <protocols/match/downstream/SecondaryMatcherToDownstreamResidue.hh>
@@ -49,6 +48,7 @@
 // Project headers
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
+#include <protocols/toolbox/match_enzdes_util/ExternalGeomSampler.hh>
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
 
 #include <core/pose/Pose.hh>
@@ -248,7 +248,7 @@ void Matcher::add_external_geometry_samples_for_constraint(
 	core::chemical::ResidueTypeCAP restype,
 	utility::vector1< std::string >  const & upstream_launch_atoms,
 	utility::vector1< core::id::AtomID > const & downstream_3atoms,
-	downstream::ExternalGeomSampler const & exgeom,
+	toolbox::match_enzdes_util::ExternalGeomSampler const & exgeom,
 	Size const exgeom_id,
 	bool enumerate_ligand_rotamers /* = false */,
 	bool catalytic_bond /*= false */
@@ -1012,7 +1012,7 @@ void Matcher::initialize_from_file(
 				Size const upstream_id = jj_mcfis[ kk ]->upstream_res();
 				Size const downstream_id = jj_mcfis[ kk ]->downstream_res();
 
-				downstream::ExternalGeomSamplerCOP exgs;
+				toolbox::match_enzdes_util::ExternalGeomSamplerCOP exgs;
 				if ( !secondary_matching ) {
 					exgs = jj_mcfis[ kk ]->create_exgs();
 					if ( exgs.get() == 0 ) {
@@ -2446,10 +2446,10 @@ Matcher::process_matches_all_hit_combos_for_hit_subsets(
 					continue;
 				}
 
-				Bin6D lower_halfbin_spanned( 1 );
+				numeric::geometry::hashing::Bin6D lower_halfbin_spanned( 1 );
 				for ( Size jj = 1; jj <= n_geometric_constraints_; ++jj ) {
 					if ( ! geomcst_is_upstream_only_[ jj ] ) {
-						Bin6D hit_halfbin = hit_hasher.binner( ii ).halfbin6( m[ jj ].second() );
+						numeric::geometry::hashing::Bin6D hit_halfbin = hit_hasher.binner( ii ).halfbin6( m[ jj ].second() );
 						for ( Size kk = 1; kk <= 6; ++kk ) {
 							lower_halfbin_spanned[ kk ] *= hit_halfbin[ kk ]; // once it goes to zero, it stays at zero.
 						}

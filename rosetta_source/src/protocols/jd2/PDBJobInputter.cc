@@ -13,6 +13,7 @@
 
 ///Unit headers
 #include <protocols/jd2/PDBJobInputter.hh>
+#include <protocols/jd2/PDBJobInputterCreator.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerJob.hh>
 
@@ -86,6 +87,18 @@ void protocols::jd2::PDBJobInputter::fill_jobs( Jobs & jobs ){
 /// @return Always <em>PDB_FILE</em>.
 JobInputterInputSource::Enum PDBJobInputter::input_source() const {
 	return JobInputterInputSource::PDB_FILE;
+}
+
+//CREATOR SECTION
+std::string
+PDBJobInputterCreator::keyname() const
+{
+	return "PDBJobInputter";
+}
+
+protocols::jd2::JobInputterOP
+PDBJobInputterCreator::create_JobInputter() const {
+	return new PDBJobInputter;
 }
 
 }//jd2

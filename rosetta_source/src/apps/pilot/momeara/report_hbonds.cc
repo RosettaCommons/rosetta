@@ -61,7 +61,7 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MinMover.hh>
-#include <protocols/moves/ShakeStructureMover.hh>
+#include <protocols/simple_moves/ShakeStructureMover.hh>
 #include <protocols/relax_protocols.hh>
 // utility headers
 #include <utility/io/izstream.hh>

@@ -47,8 +47,6 @@ namespace evaluation {
 ///@brief register cmd-line options relevant for evaluators...
 void register_options();
 
-void read_common_evaluator_options( MetaPoseEvaluator& );
-
 //@detail find residues that don't have missing density
 void find_existing_residues(  core::pose::PoseCOP pose, std::string tag, core::scoring::ResidueSelection& selection );
 void invert_include_residues( core::Size nres, core::scoring::ResidueSelectionVector const& include_list, core::scoring::ResidueSelectionVector& exclude_list );

@@ -52,8 +52,8 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/ccd_closure.hh>
 #include <protocols/loops/CcdLoopClosureMover.hh>
-#include <protocols/moves/kinematic_closure/bridgeObjects.hh>
-#include <protocols/moves/kinematic_closure/kinematic_closure_helpers.hh>
+#include <numeric/kinematic_closure/bridgeObjects.hh>
+#include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/BinaryProteinSilentStruct.hh>
@@ -304,7 +304,7 @@ fill_chainTORS_info( pose::Pose const & pose,
 					 Size const & end_res_,
 					 bool const verbose = true ) {
 
-	using namespace protocols::moves::kinematic_closure;
+	using namespace numeric::kinematic_closure;
 
 	if ( verbose ) std::cout << "About to run chainTORS" << std::endl;
 
@@ -339,7 +339,7 @@ KIC_loop_close( pose::Pose & pose,
 
 	using namespace core::kinematics;
 	using namespace protocols::loops;
-	using namespace protocols::moves::kinematic_closure;
+	using namespace numeric::kinematic_closure;
 
 	if ( verbose ) std::cout << "About to kick off KIC!" << std::endl;
 	///// kinematic loop close.

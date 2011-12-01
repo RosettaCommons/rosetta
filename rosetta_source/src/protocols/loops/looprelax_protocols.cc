@@ -44,8 +44,8 @@
 #include <protocols/loops/ccd_closure.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/LoopMover_CCD.hh>
-#include <protocols/basic_moves/FragmentMover.hh>
-#include <protocols/basic_moves/FragmentMover.fwd.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/simple_moves/FragmentMover.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/fragment/FragSet.hh>
 #include <basic/Tracer.hh>
@@ -426,7 +426,7 @@ void LoopRebuild::build_loop_with_ccd_closure(
 	using namespace kinematics;
 	using namespace scoring;
 	using namespace optimization;
-	using namespace protocols::basic_moves;
+	using namespace protocols::simple_moves;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace numeric::random;

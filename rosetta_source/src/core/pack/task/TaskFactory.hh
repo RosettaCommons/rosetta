@@ -19,7 +19,7 @@
 #include <core/types.hh>
 
 // Package Headers
-#include <core/pack/task/PackerTask.fwd.hh>
+#include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 
 // Project Headers

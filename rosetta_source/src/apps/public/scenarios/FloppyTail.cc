@@ -44,7 +44,7 @@
 
 //movers
 #include <protocols/moves/BackboneMover.hh> //SmallMover
-#include <protocols/basic_moves/FragmentMover.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
 #include <protocols/moves/PackRotamersMover.hh>
@@ -418,8 +418,8 @@ public:
 		//backbone_mover_cen->add_mover(shear_mover_cen, 1.0); //not yet
 
 		if(fragset3mer_){ //if we have fragments
-			using protocols::basic_moves::ClassicFragmentMover;
-			protocols::basic_moves::ClassicFragmentMoverOP frag_mover = new ClassicFragmentMover(fragset3mer_, movemap_);
+			using protocols::simple_moves::ClassicFragmentMover;
+			protocols::simple_moves::ClassicFragmentMoverOP frag_mover = new ClassicFragmentMover(fragset3mer_, movemap_);
 			frag_mover->enable_end_bias_check(false);
 			backbone_mover_cen->add_mover(frag_mover, 0.5);
 		}

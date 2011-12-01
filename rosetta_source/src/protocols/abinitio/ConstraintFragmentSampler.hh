@@ -35,7 +35,7 @@
 #include <string>
 #include <vector>
 
-#include <protocols/abinitio/MaxSeqSepConstraintSet.fwd.hh>
+#include <protocols/constraints_additional/MaxSeqSepConstraintSet.fwd.hh>
 #include <utility/vector1.hh>
 
 namespace protocols {
@@ -163,7 +163,7 @@ protected:
     max_seq_sep_fudge_ = setting;
   }
 
-  MaxSeqSepConstraintSet const& constraints() {
+	constraints_additional::MaxSeqSepConstraintSet const& constraints() {
     return *constraints_;
   }
 
@@ -183,7 +183,7 @@ private:
   core::Real
   evaluate_constraint_energy( core::pose::Pose& pose, core::scoring::ScoreFunction const& ) const;
 
-  MaxSeqSepConstraintSetOP constraints_;
+	constraints_additional::MaxSeqSepConstraintSetOP constraints_;
   core::Real constraint_weight_;
 
   bool bMinTrial_;

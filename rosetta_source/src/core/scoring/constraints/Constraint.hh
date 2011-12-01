@@ -40,7 +40,8 @@
 // AUTO-REMOVED #include <ostream>
 
 #include <core/id/AtomID.fwd.hh>
-#include <core/id/SequenceMapping.fwd.hh>
+// #include <core/id/SequenceMapping.fwd.hh> Commented by Brian Weitzner to fix compilation
+#include <core/id/SequenceMapping.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/constraints/XYZ_Func.fwd.hh>
 #include <utility/vector1.hh>

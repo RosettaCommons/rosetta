@@ -12,15 +12,15 @@
 
 // Unit Headers
 #include <protocols/topology_broker/FibrilModelingClaimer.hh>
-#include <protocols/moves/symmetry/SymFoldandDockRbTrialMover.hh>
-#include <protocols/moves/symmetry/SymFoldandDockSlideTrialMover.hh>
+#include <protocols/symmetric_docking/SymFoldandDockRbTrialMover.hh>
+#include <protocols/symmetric_docking/SymFoldandDockSlideTrialMover.hh>
 #include <protocols/symmetric_docking/SymDockingInitialPerturbation.hh>
-#include <protocols/moves/symmetry/SymFoldandDockMoveRbJumpMover.hh>
+#include <protocols/symmetric_docking/SymFoldandDockMoveRbJumpMover.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.hh>
 
 // Package Headers
 #include <protocols/topology_broker/DofClaim.hh>
-#include <protocols/moves/symmetry/SetupForFibrilMover.hh>
+#include <protocols/fibril/SetupForFibrilMover.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/fold_and_dock.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
@@ -106,7 +106,7 @@ FibrilModelingClaimer::make_fibril( pose::Pose & pose )
 
 	// Setup symmetry if we have not already done it
 	if ( !core::pose::symmetry::is_symmetric( pose ) ) {
-		protocols::moves::symmetry::SetupForFibrilMoverOP setup_mover = new protocols::moves::symmetry::SetupForFibrilMover;
+		protocols::fibril::SetupForFibrilMoverOP setup_mover = new protocols::fibril::SetupForFibrilMover;
 		if( bAlign_ ) {
 		  setup_mover->align( pose, input_pose_ , rigid_core_, input_rigid_core_ );
 		}
@@ -134,16 +134,16 @@ FibrilModelingClaimer::add_mover(
 	core::Real move_anchor_weight(1.0), rb_weight, slide_weight;
 
 	if( option( move_anchor_points ).user() ) {
-		moves::MoverOP move_anchor_mover =	new moves::symmetry::SymFoldandDockMoveRbJumpMover;
+		moves::MoverOP move_anchor_mover =	new symmetric_docking::SymFoldandDockMoveRbJumpMover;
 		random_mover.add_mover( move_anchor_mover, move_anchor_weight );
 	}
 
 	rb_weight = option( rigid_body_frequency );
-	moves::MoverOP rb_trial_mover =	new moves::symmetry::SymFoldandDockRbTrialMover( &scorefxn );
+	moves::MoverOP rb_trial_mover =	new symmetric_docking::SymFoldandDockRbTrialMover( &scorefxn );
 	random_mover.add_mover( rb_trial_mover, rb_weight );
 
 	slide_weight = option( slide_contact_frequency );
-	moves::MoverOP slide_mover = new moves::symmetry::SymFoldandDockSlideTrialMover;
+	moves::MoverOP slide_mover = new symmetric_docking::SymFoldandDockSlideTrialMover;
   random_mover.add_mover( slide_mover, slide_weight );
 
 }

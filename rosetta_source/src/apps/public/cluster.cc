@@ -12,7 +12,7 @@
 
 
 // libRosetta headers
-#include <protocols/moves/ScoreMover.hh>
+#include <protocols/simple_moves/ScoreMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -79,7 +79,7 @@ main( int argc, char * argv [] ) {
 	option.add_relevant( OptionKeys::cluster::remove_highest_energy_member );
 	option.add_relevant( OptionKeys::cluster::limit_dist_matrix            );
 	option.add_relevant( OptionKeys::cluster::make_ensemble_cst            );
-	ScoreMover::register_options();
+	simple_moves::ScoreMover::register_options();
 
 	// initialize core
 	devel::init(argc, argv);

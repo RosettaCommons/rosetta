@@ -22,7 +22,7 @@
 
 // Package headers
 #include <protocols/match/downstream/DownstreamBuilder.hh>
-#include <protocols/match/downstream/LigandConformer.fwd.hh>
+#include <protocols/toolbox/match_enzdes_util/LigandConformer.fwd.hh>
 #include <protocols/match/BumpGrid.fwd.hh>
 // AUTO-REMOVED #include <protocols/match/Hit.hh>
 
@@ -45,7 +45,7 @@
 #include <utility/vector1.hh>
 
 #ifdef WIN32
-	#include <protocols/match/downstream/LigandConformer.hh>
+	#include <protocols/toolbox/match_enzdes_util/LigandConformer.hh>
 #endif
 
 
@@ -208,7 +208,7 @@ public:
 	void ignore_h_collisions( bool setting );
 
   virtual
-  LigandConformerOP
+  toolbox::match_enzdes_util::LigandConformerOP
 	get_lig_conformers(core::Size conf_id) const;
 
 //  virtual
@@ -273,7 +273,7 @@ private:
 	Real rmsd_unique_cutoff_;
 	utility::vector1< utility::vector1< Size > >     conformer_group_indices_;
 	utility::vector1< Size > conformer_group_for_conformer_;
-	utility::vector1< LigandConformerOP >                     lig_conformers_;
+	utility::vector1< toolbox::match_enzdes_util::LigandConformerOP >                     lig_conformers_;
 
 	/// Detect collision between the upstream residue (sidechain?!) conformation and the atoms of the
 	/// downstream residue

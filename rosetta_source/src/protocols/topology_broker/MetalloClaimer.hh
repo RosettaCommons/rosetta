@@ -64,8 +64,8 @@ class MetalloClaimer : public SequenceClaimer, public JumpClaimer {
 public:
 	MetalloClaimer(); //for factory
 	~MetalloClaimer() {};
-	//MetalloClaimer( basic_moves::FragmentMoverOP, std::string mover_tag, weights::AbinitioMoverWeightOP weight );
-	//MetalloClaimer( basic_moves::FragmentMoverOP );
+	//MetalloClaimer( simple_moves::FragmentMoverOP, std::string mover_tag, weights::AbinitioMoverWeightOP weight );
+	//MetalloClaimer( simple_moves::FragmentMoverOP );
 
 	virtual TopologyClaimerOP clone() const {
 		return new MetalloClaimer( *this );
@@ -106,7 +106,7 @@ public:
 
 	virtual void add_constraints( core::pose::Pose& /*pose*/ );
 
-	//void set_mover( basic_moves::FragmentMoverOP mover ) {
+	//void set_mover( simple_moves::FragmentMoverOP mover ) {
 	//		mover_ = mover;
 	//	}
 
@@ -127,7 +127,7 @@ protected:
 	virtual bool read_tag( std::string tag, std::istream& );
 	virtual void init_after_reading();
 
-// 	basic_moves::FragmentMover const& mover() const {
+// 	simple_moves::FragmentMover const& mover() const {
 // 		return *mover_;
 // 	}
 

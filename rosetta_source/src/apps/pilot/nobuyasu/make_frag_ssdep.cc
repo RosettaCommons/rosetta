@@ -16,7 +16,7 @@
 
 // Project headers
 #include <core/types.hh>
-#include <protocols/fldsgn/BluePrint.hh>
+#include <protocols/jd2/parser/BluePrint.hh>
 #include <protocols/forge/build/Interval.hh>
 
 #include <core/pose/Pose.hh>
@@ -160,7 +160,7 @@ main( int argc, char * argv [] )
 
 	if( option[ blueprint ].user() ){
 		// read secondary structure from blueprint
-		protocols::fldsgn::BluePrintOP blue = new protocols::fldsgn::BluePrint( option[ blueprint ] );
+		protocols::jd2::parser::BluePrintOP blue = new protocols::jd2::parser::BluePrint( option[ blueprint ] );
 		naa = blue->total_residue();
 		ss = blue->secstruct();
 		if( option[ use_abego ].user() ) {

@@ -20,7 +20,10 @@
 #include <protocols/match/MatchSet.fwd.hh>
 
 // Package headers
-#include <protocols/match/SixDHasher.hh>
+#include <protocols/match/Hit.fwd.hh>
+
+//numeric headers
+#include <numeric/geometry/hashing/SixDHasher.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -57,8 +60,9 @@ public:
 	typedef core::Size                               Size;
 	typedef core::Vector                             Vector;
 	typedef numeric::geometry::BoundingBox< Vector > BoundingBox;
+	typedef numeric::geometry::hashing::Real3        Real3;
 	typedef utility::vector1< std::list< Hit const * > >     MatchSet;
-	typedef boost::unordered_map< boost::uint64_t, MatchSet, bin_index_hasher > HitHash;
+	typedef boost::unordered_map< boost::uint64_t, MatchSet, numeric::geometry::hashing::bin_index_hasher > HitHash;
 
 public:
 	HitHasher();
@@ -104,7 +108,7 @@ public:
 	HitHash::const_iterator
 	hit_hash_end( Size which_hash_map ) const;
 
-	SixDCoordinateBinner const &
+	numeric::geometry::hashing::SixDCoordinateBinner const &
 	binner( Size which_hash_map ) const {
 		return * hit_hashes_[ which_hash_map ].first;
 	}
@@ -120,7 +124,7 @@ private:
 	utility::fixedsizearray1< Real, 3 > euler_bin_widths_;
 	Size n_geometric_constraints_per_match_;
 
-	utility::vector1< std::pair< SixDCoordinateBinnerOP, HitHash > > hit_hashes_;
+	utility::vector1< std::pair< numeric::geometry::hashing::SixDCoordinateBinnerOP, HitHash > > hit_hashes_;
 
 };
 
@@ -133,10 +137,11 @@ public:
 	typedef core::Size                               Size;
 	typedef core::Vector                             Vector;
 	typedef numeric::geometry::BoundingBox< Vector > BoundingBox;
+	typedef numeric::geometry::hashing::Bin6D        Bin6D;
 
 	typedef std::list< Hit const * >                                                 HitPtrList;
 	typedef std::list< std::pair< core::Size, Hit const * > >                        HitIndexList;
-	typedef boost::unordered_map< boost::uint64_t, HitIndexList, bin_index_hasher >  HitHash;
+	typedef boost::unordered_map< boost::uint64_t, HitIndexList, numeric::geometry::hashing::bin_index_hasher >  HitHash;
 
 public:
 	HitNeighborFinder();
@@ -208,7 +213,7 @@ private:
 		Bin6D const & query_halfbin,
 		Bin6D const & nb_halfbin,
 		Bin6D const & nbbin,
-		utility::FixedSizeLexicographicalIterator< 6 > const & halfbin_lex	
+		utility::FixedSizeLexicographicalIterator< 6 > const & halfbin_lex
 	) const;
 
 
@@ -223,7 +228,7 @@ private:
 
 	HitIndexList all_hits_;
 
-	SixDCoordinateBinnerOP binner_;
+	numeric::geometry::hashing::SixDCoordinateBinnerOP binner_;
 	HitHash hash_;
 };
 
@@ -235,9 +240,10 @@ public:
 	typedef core::Size                               Size;
 	typedef core::Vector                             Vector;
 	typedef numeric::geometry::BoundingBox< Vector > BoundingBox;
+	typedef numeric::geometry::hashing::Bin6D        Bin6D;
 
 	typedef utility::vector1< Size >                                              HitCounts;
-	typedef boost::unordered_map< boost::uint64_t, HitCounts, bin_index_hasher >  HitHash;
+	typedef boost::unordered_map< boost::uint64_t, HitCounts, numeric::geometry::hashing::bin_index_hasher >  HitHash;
 
 public:
 	MatchCounter();
@@ -304,7 +310,7 @@ private:
 		Bin6D const & query_halfbin,
 		Bin6D const & nb_halfbin,
 		Bin6D const & nbbin,
-		utility::FixedSizeLexicographicalIterator< 6 > const & halfbin_lex	
+		utility::FixedSizeLexicographicalIterator< 6 > const & halfbin_lex
 	) const;
 	*/
 
@@ -318,15 +324,15 @@ private:
 	utility::fixedsizearray1< Real, 3 > xyz_bin_widths_;
 	utility::fixedsizearray1< Real, 3 > euler_bin_widths_;
 
-	SixDCoordinateBinnerOP binner_;
+	numeric::geometry::hashing::SixDCoordinateBinnerOP binner_;
 	HitHash hash_;
 };
 
 /// @brief Increment the euler angles and then wrap them into their appropriate ranges
-Real3
+numeric::geometry::hashing::Real3
 advance_euler_angles(
-	Real3 const & orig_angles,
-	Real3 const & offsets
+	numeric::geometry::hashing::Real3 const & orig_angles,
+	numeric::geometry::hashing::Real3 const & offsets
 );
 
 

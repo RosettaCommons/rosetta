@@ -37,6 +37,7 @@
 // AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/pose/util.hh>
 #include <protocols/evaluation/RmsdEvaluator.hh>
+#include <protocols/evaluation/EvaluatorFactory.hh>
 // AUTO-REMOVED #include <core/fragment/FragmentIO.hh>
 // AUTO-REMOVED #include <numeric/random/random.hh>
 // AUTO-REMOVED #include <numeric/random/random_permutation.hh>
@@ -63,7 +64,7 @@
 // AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 
-#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 // AUTO-REMOVED #include <core/fragment/ConstantLengthFragSet.hh>
@@ -181,7 +182,7 @@ LoopRelax_main( bool boinc_mode ) {
 
 	// symmetrize start pose & loopfile
 	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-			protocols::moves::symmetry::SetupForSymmetryMover pre_mover;
+			protocols::symmetric_docking::SetupForSymmetryMover pre_mover;
 			pre_mover.apply( start_pose );
 	}
 
@@ -221,7 +222,7 @@ LoopRelax_main( bool boinc_mode ) {
 	}
 
 	evaluation::MetaPoseEvaluatorOP evaluator = new evaluation::MetaPoseEvaluator;
-	evaluation::read_common_evaluator_options(*evaluator);
+	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator);
 	evaluator->add_evaluation(
 		new evaluation::SelectRmsdEvaluator( native_pose, "_native" )
 	);

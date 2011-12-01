@@ -25,7 +25,7 @@
 #include <protocols/docking/DockingProtocol.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
-#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
 #include <core/pack/task/TaskFactory.hh>
 // AUTO-REMOVED #include <core/pack/task/PackerTask.hh>
 #include <utility/string_util.hh>
@@ -81,7 +81,7 @@ DockAndRetrieveSidechains::apply( core::pose::Pose & pose )
 {
 	// If the pose is not symmetric, then make it so
 	if ( symmetry_ ) {
-		protocols::moves::symmetry::SetupForSymmetryMoverOP setup_mover = new protocols::moves::symmetry::SetupForSymmetryMover;
+		protocols::symmetric_docking::SetupForSymmetryMoverOP setup_mover = new protocols::symmetric_docking::SetupForSymmetryMover;
 		setup_mover->apply( pose );
 	}
 

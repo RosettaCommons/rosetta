@@ -20,9 +20,9 @@
 #include <protocols/enzdes/enzdes_util.hh>
 //#include <protocols/enzdes/SecondaryMatchProtocol.hh> //for secmatch
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh> //for secmatch
-#include <protocols/enzdes/EnzdesLoopsFile.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzdesLoopsFile.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzCstTemplateRes.hh>
-#include <protocols/enzdes/EnzdesCacheableObserver.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 //#include <protocols/enzdes/EnzConstraintIO.hh>
 
@@ -36,7 +36,7 @@
 #include <protocols/forge/constraints/InverseRotamersRCG.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //unnecessary include
 // AUTO-REMOVED #include <protocols/moves/BackrubMover.hh> //unnecessary include
-// AUTO-REMOVED #include <protocols/moves/KinematicMover.hh> //unnecessary include
+// AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicMover.hh> //unnecessary include
 // AUTO-REMOVED #include <protocols/moves/MinMover.hh> //unnecessary include
 
 //#include <protocols/enzdes/EnzdesBaseProtocol.hh>
@@ -54,7 +54,7 @@
 #if defined GL_GRAPHICS
  #include <protocols/viewer/viewers.hh>
 #endif
-#include <protocols/moves/MatcherMover.hh>
+#include <protocols/match/MatcherMover.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -905,7 +905,7 @@ EnzdesRemodelMover::translate_res_interactions_to_rvinfos(
 	core::Size const targ_pos,
 	core::Size const example_loop_seqpos,
 	core::chemical::ResidueTypeSetCAP restype_set,
-	protocols::enzdes::ResInteractions const & res_ints
+	protocols::toolbox::match_enzdes_util::ResInteractions const & res_ints
 )
 {
 	core::Real dummy_val(0.0);
@@ -1057,7 +1057,7 @@ EnzdesRemodelMover::secmatch_after_remodel(
 
 		if( cst_params->missing_in_pose( pose ) ) {
 			core::Size present_template( cst_params->get_missing_template_other_res( pose )->param_index() );
-			core::Size present_seqpos( protocols::enzdes::get_enzdes_observer( pose )->cst_cache()->param_cache( i )->template_res_cache( present_template )->seqpos_map_begin()->first );
+			core::Size present_seqpos( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( i )->template_res_cache( present_template )->seqpos_map_begin()->first );
 			if( !ligres ){
 				ligres = &(pose.residue( present_seqpos ));
 				break;
@@ -1066,8 +1066,8 @@ EnzdesRemodelMover::secmatch_after_remodel(
 	}
 	if( !ligres || !(ligres->type().is_ligand()) ) ligres = new core::conformation::Residue( *(cstio->mcfi_list( 1 )->mcfi( 1 )->allowed_restypes( 1 )[1]), true );
 
-	protocols::enzdes::get_enzdes_observer( pose )->set_cst_cache( NULL ); //wipe this out for now, matcher will overwrite
-	protocols::moves::MatcherMoverOP matcher_mover = new protocols::moves::MatcherMover();
+	protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( NULL ); //wipe this out for now, matcher will overwrite
+	protocols::match::MatcherMoverOP matcher_mover = new protocols::match::MatcherMover();
 
 	//generate the positions
 	utility::vector1< core::Size > match_positions;
@@ -1112,6 +1112,7 @@ EnzdesRemodelMover::setup_rcgs(
 	if( ! basic::options::option[ basic::options::OptionKeys::enzdes::enz_loops_file ].user() ) return;
 
 	using namespace protocols::enzdes;
+	using namespace protocols::toolbox::match_enzdes_util;
 
 	core::chemical::ResidueTypeSetCAP centroid_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::CENTROID );
 
@@ -1135,11 +1136,11 @@ EnzdesRemodelMover::setup_rcgs(
 		//which residue of the desired block are we interested in?
 		if( cst_targ->resA() == true ){
 			targ_template = cstio->enz_cst_params( cst_targ->cst_block() )->resA();
-			targ_template_cache = get_enzdes_observer( pose )->cst_cache()->param_cache( cst_targ->cst_block() )->template_res_cache( 1 );
+			targ_template_cache = protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_targ->cst_block() )->template_res_cache( 1 );
 		}
 		else{
 			targ_template = cstio->enz_cst_params( cst_targ->cst_block() )->resB();
-			targ_template_cache = get_enzdes_observer( pose )->cst_cache()->param_cache( cst_targ->cst_block() )->template_res_cache( 1 );
+			targ_template_cache = protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_targ->cst_block() )->template_res_cache( 1 );
 		}
 
 		//loop over all positions that the targ residue is at
@@ -1207,7 +1208,7 @@ EnzdesRemodelMover::create_target_inverse_rotamers(
 		if( cst_params->missing_in_pose( pose ) ) {
 			tr << "Building inverse rotamers for missing MatchConstraint " << i << "...   " << std::endl;
 			core::Size param_index( cst_params->get_missing_template_other_res( pose )->param_index() );
-			protocols::toolbox::match_enzdes_util::EnzCstTemplateResCacheCOP temp_res_cache( protocols::enzdes::get_enzdes_observer( pose )->cst_cache()->param_cache( i )->template_res_cache( param_index ) );
+			protocols::toolbox::match_enzdes_util::EnzCstTemplateResCacheCOP temp_res_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( i )->template_res_cache( param_index ) );
 			if( temp_res_cache->seqpos_map_size() != 1 ){
 				utility_exit_with_message("When trying to build inverse rotamers in enzdes remodel, !=1 target residues were found to be saved in the cst cache");
 			}
@@ -1225,7 +1226,7 @@ EnzdesRemodelMover::create_target_inverse_rotamers(
 		//otherwise we have to check whether a catalytic position happens to be in the flex_region
 		//i.e. a preexisting catalytic interaction is being remodeled
 		else{
-			protocols::toolbox::match_enzdes_util::EnzdesCstParamCacheOP param_cache( protocols::enzdes::get_enzdes_observer( pose )->cst_cache()->param_cache( i ) );
+			protocols::toolbox::match_enzdes_util::EnzdesCstParamCacheOP param_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( i ) );
 			runtime_assert( param_cache->template_res_cache_size() == 2 );
 
 			for( core::Size template_res = 1; template_res <= param_cache->template_res_cache_size(); ++template_res ){

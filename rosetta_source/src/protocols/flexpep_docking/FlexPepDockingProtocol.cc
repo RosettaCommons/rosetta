@@ -62,7 +62,7 @@
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <numeric/angle.functions.hh>
-// AUTO-REMOVED #include <protocols/basic_moves/FragmentMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>

@@ -166,8 +166,8 @@ endrepeat
 #include <core/pose/symmetry/util.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
-#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/moves/symmetry/SymMinMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <utility/tag/Tag.hh>
 
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
@@ -424,7 +424,7 @@ void FastRelax::do_minimize(
 
   moves::MinMoverOP min_mover;
   if ( core::pose::symmetry::is_symmetric( pose ) )  {
-    min_mover = new moves::symmetry::SymMinMover( local_movemap, local_scorefxn, min_type_, tolerance, true );
+    min_mover = new simple_moves::symmetry::SymMinMover( local_movemap, local_scorefxn, min_type_, tolerance, true );
   } else {
     min_mover = new moves::MinMover( local_movemap, local_scorefxn, min_type_, tolerance, true );
   }
@@ -512,7 +512,7 @@ void FastRelax::apply( core::pose::Pose & pose ){
 
 	// If symmmetric pose then create a symmeteric rotamers mover
 	if ( core::pose::symmetry::is_symmetric( pose ) )  {
-    pack_full_repack_ = new moves::symmetry::SymPackRotamersMover( local_scorefxn, task_ );
+    pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover( local_scorefxn, task_ );
 	}
 	(*local_scorefxn)( pose );
 
@@ -1013,7 +1013,7 @@ void FastRelax::batch_apply(  std::vector < SilentStructOP > & input_structs ){
 			task_->or_include_current( true );
 			pack_full_repack_ = new moves::PackRotamersMover( local_scorefxn, task_ );
 			if ( core::pose::symmetry::is_symmetric( pose ) )  {
-				pack_full_repack_ = new moves::symmetry::SymPackRotamersMover( local_scorefxn, task_ );
+				pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover( local_scorefxn, task_ );
 			}
 			(*local_scorefxn)( pose );
 

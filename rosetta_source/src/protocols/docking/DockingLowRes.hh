@@ -26,7 +26,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
-#include <protocols/moves/ConformerSwitchMover.fwd.hh>
+#include <protocols/docking/ConformerSwitchMover.fwd.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -109,8 +109,8 @@ private:
 	protocols::moves::MonteCarloOP mc_;
 	protocols::moves::SequenceMoverOP docking_lowres_protocol_;
 	protocols::moves::RigidBodyPerturbNoCenterMoverOP rb_mover_;
-	protocols::moves::ConformerSwitchMoverOP ensemble1_mover_;
-	protocols::moves::ConformerSwitchMoverOP ensemble2_mover_;
+	protocols::docking::ConformerSwitchMoverOP ensemble1_mover_;
+	protocols::docking::ConformerSwitchMoverOP ensemble2_mover_;
 
 	bool flags_and_objects_are_in_sync_;
 	bool first_apply_with_current_setup_;

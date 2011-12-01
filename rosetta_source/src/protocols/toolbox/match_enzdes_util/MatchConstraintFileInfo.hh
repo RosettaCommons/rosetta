@@ -22,7 +22,7 @@
 
 // Package headers
 #include <protocols/toolbox/match_enzdes_util/EnzCstTemplateRes.hh>
-#include <protocols/match/downstream/ExternalGeomSampler.fwd.hh>
+#include <protocols/toolbox/match_enzdes_util/ExternalGeomSampler.fwd.hh>
 
 // Project headers
 #include <core/chemical/ResidueType.fwd.hh>
@@ -259,7 +259,7 @@ public: //geometric sample accessors
 
 	/// @brief returns ExternalGeomSampler only if the user has specified all six degrees of freedom,
 	/// otherwise null pointer is returned
-	protocols::match::downstream::ExternalGeomSamplerCOP
+	ExternalGeomSamplerCOP
 	create_exgs() const;
 
 public: //mutators

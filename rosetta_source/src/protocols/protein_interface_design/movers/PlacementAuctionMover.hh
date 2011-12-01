@@ -18,7 +18,6 @@
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 // AUTO-REMOVED #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 // AUTO-REMOVED #include <protocols/hotspot_hashing/HotspotStub.hh>
 #include <protocols/moves/DataMap.fwd.hh>
@@ -36,12 +35,16 @@
 #include <protocols/hotspot_hashing/HotspotStub.fwd.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.fwd.hh>
 
+//Auto Headers
+#include <protocols/simple_moves/DesignRepackMover.hh>
+
+
 
 namespace protocols {
 namespace protein_interface_design {
 namespace movers {
 
-class PlacementAuctionMover : public DesignRepackMover
+class PlacementAuctionMover : public simple_moves::DesignRepackMover
 {
 public:
 	typedef std::pair< protocols::hotspot_hashing::HotspotStubSetOP, std::pair< protocols::hotspot_hashing::HotspotStubOP, core::Size > > StubSetStubPos;

@@ -8,11 +8,11 @@
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
 /// @author Ken Jung
-/// @brief 
+/// @brief
 /// testing sixdtree functions, probably will convert this to a unit test later
 
 #include <basic/Tracer.hh>
-#include <protocols/match/SixDHasher.hh>
+#include <numeric/geometry/hashing/SixDHasher.hh>
 #include <protocols/match/Hit.hh>
 // C++ headers
 #include <core/init.hh>

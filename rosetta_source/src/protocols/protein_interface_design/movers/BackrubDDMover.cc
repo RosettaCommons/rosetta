@@ -81,6 +81,7 @@
 
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
+#include <protocols/simple_moves/DesignRepackMover.hh>
 #define foreach BOOST_FOREACH
 
 namespace protocols {
@@ -111,7 +112,7 @@ BackrubDDMoverCreator::mover_name()
 }
 
 BackrubDDMover::BackrubDDMover() :
-	DesignRepackMover( "BackrubDD" ),
+	simple_moves::DesignRepackMover( "BackrubDD" ),
 	backrub_partner1_( false ),
 	backrub_partner2_( true ),
 	interface_distance_cutoff_( 8.0 ),
@@ -142,7 +143,7 @@ BackrubDDMover::BackrubDDMover
 	core::Real const sidechain_move_prob,
 	std::vector<core::Size> const & residues
 )
-		: DesignRepackMover( "Backrub" )
+		: simple_moves::DesignRepackMover( "Backrub" )
 {
 	core::Real const mm_bend_weight( 1.0 );
 

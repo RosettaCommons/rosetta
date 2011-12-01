@@ -63,7 +63,7 @@
 // C++ headers
 #include <cstdlib>
 #include <string>
-#include <protocols/moves/ddGMover.hh>
+#include <protocols/ddg/ddGMover.hh>
 #include <protocols/ddg/ddG_main.hh>
 
 #include <basic/Tracer.hh>
@@ -190,56 +190,56 @@ ddG_main()
   pose::Pose pose;
   core::import_pose::pose_from_pdb( pose, basic::options::start_file() ); // gets filename from -s option
 
-  std::string weight_file = option[ ddg::weight_file ]();
+  std::string weight_file = option[ OptionKeys::ddg::weight_file ]();
   basic::options::option[ score::fa_max_dis ](9.0); //set fa_max_dis before scorefunction is created!
   ScoreFunctionOP score_structure_scorefxn(ScoreFunctionFactory::create_score_function(weight_file));
 
   ScoreFunctionOP minimize_sfxn;
-  if(basic::options::option[ddg::minimization_scorefunction].user() && basic::options::option[ddg::minimization_patch].user()){
-    minimize_sfxn=ScoreFunctionFactory::create_score_function(basic::options::option[ddg::minimization_scorefunction](),
-									      basic::options::option[ddg::minimization_patch]());
-  }else if(basic::options::option[ddg::minimization_scorefunction].user()){
-    minimize_sfxn=ScoreFunctionFactory::create_score_function(basic::options::option[ddg::minimization_scorefunction]());
+  if(basic::options::option[OptionKeys::ddg::minimization_scorefunction].user() && basic::options::option[OptionKeys::ddg::minimization_patch].user()){
+    minimize_sfxn=ScoreFunctionFactory::create_score_function(basic::options::option[OptionKeys::ddg::minimization_scorefunction](),
+									      basic::options::option[OptionKeys::ddg::minimization_patch]());
+  }else if(basic::options::option[OptionKeys::ddg::minimization_scorefunction].user()){
+    minimize_sfxn=ScoreFunctionFactory::create_score_function(basic::options::option[OptionKeys::ddg::minimization_scorefunction]());
   }else{
     minimize_sfxn=ScoreFunctionFactory::create_score_function(basic::database::full_name("scoring/weights/standard.wts"),
 							      basic::database::full_name("scoring/weights/score12.wts_patch"));
   }
 
-  int num_iterations = option[ ddg::iterations ]();
+  int num_iterations = option[ OptionKeys::ddg::iterations ]();
   bool opt_nbrs = false;
   double cutoff = -1;
-  if(basic::options::option[ ddg::opt_radius].user()){
+  if(basic::options::option[ OptionKeys::ddg::opt_radius].user()){
     opt_nbrs = true;
-    cutoff = basic::options::option[ ddg::opt_radius ]();
-  }else if(basic::options::option[ddg::local_opt_only]()){
+    cutoff = basic::options::option[ OptionKeys::ddg::opt_radius ]();
+  }else if(basic::options::option[OptionKeys::ddg::local_opt_only]()){
     opt_nbrs = true;
     cutoff = 8.0; //default cutoff
   }
 
   //initialize output options.
   //debug output?
-  bool debug_output = option[ ddg::debug_output ]();
+  bool debug_output = option[ OptionKeys::ddg::debug_output ]();
   if(debug_output){
     TR << "weights being used: " <<
       score_structure_scorefxn->weights() << "\n";
   }
 
   //dump repacked pdbs?
-  bool dump_pdbs = option[ ddg::dump_pdbs ]();
+  bool dump_pdbs = option[ OptionKeys::ddg::dump_pdbs ]();
 
   //output ddgs into what file?
-  std::string ddg_out = option[ ddg::out ]();
+  std::string ddg_out = option[ OptionKeys::ddg::out ]();
 
 
   //interface mode?
-  bool interface_ddg = option[ ddg::interface_ddg ]();
+  bool interface_ddg = option[ OptionKeys::ddg::interface_ddg ]();
 
   //minimize after repacking?
-  bool min_cst = option[ddg::min_cst]();
+  bool min_cst = option[OptionKeys::ddg::min_cst]();
 
   //take mean or min energy as predicted ddg?
-  bool mean = option[ddg::mean]();
-  bool min = option[ddg::min]();
+  bool mean = option[OptionKeys::ddg::mean]();
+  bool min = option[OptionKeys::ddg::min]();
 
   ObjexxFCL::FArray2D<double> wt_scores(20,num_iterations);
 
@@ -251,9 +251,9 @@ ddG_main()
   utility::vector1<ddgs> mutant_averaged_score_components;
   utility::vector1<std::string> delta_delta_G_label;
 
-  ddGMover get_wt_score(score_structure_scorefxn,minimize_sfxn,all_unk);
+  ddg::ddGMover get_wt_score(score_structure_scorefxn,minimize_sfxn,all_unk);
 
-  if(basic::options::option[ddg::mut_only].user() && basic::options::option[ddg::mut_only]()){
+  if(basic::options::option[OptionKeys::ddg::mut_only].user() && basic::options::option[OptionKeys::ddg::mut_only]()){
 
   }else{
 
@@ -274,14 +274,14 @@ ddG_main()
       wt_averaged_score_components=get_wt_score.get_wt_averaged_score_components();
     }
 
-    if(basic::options::option[ddg::wt_only].user() && basic::options::option[ddg::wt_only]()){
+    if(basic::options::option[OptionKeys::ddg::wt_only].user() && basic::options::option[OptionKeys::ddg::wt_only]()){
       std::cout <<  "optimizing only wt structure. exiting" << std::endl;
       return 1; //early exit
     }
   }
-  if(option[ ddg::mut_file ].user()){//check if mutfile is specified
+  if(option[ OptionKeys::ddg::mut_file ].user()){//check if mutfile is specified
     TR << "reading in mutfile" << std::endl;
-    std::string filename = option[ddg::mut_file]();
+    std::string filename = option[OptionKeys::ddg::mut_file]();
     utility::vector1<mutations> res_to_mut;
     read_in_mutations(res_to_mut, filename,pose);
     TR << "size of res_to_mut is: " << res_to_mut.size() << std::endl;
@@ -295,12 +295,12 @@ ddG_main()
 	}
       }
       if(mutation_defined){
-	ddGMover point_mutation(score_structure_scorefxn,minimize_sfxn,residues_to_mutate);
+	ddg::ddGMover point_mutation(score_structure_scorefxn,minimize_sfxn,residues_to_mutate);
 	point_mutation.set_min_cst(min_cst);
 	point_mutation.set_min(min);
 	point_mutation.set_mean(mean);
 	if(!opt_nbrs && get_wt_score.is_wt_calc_complete() &&
-	   !(basic::options::option[ddg::mut_only].user() && basic::options::option[ddg::mut_only]())){
+	   !(basic::options::option[OptionKeys::ddg::mut_only].user() && basic::options::option[OptionKeys::ddg::mut_only]())){
 	  TR << "testing if wt calc is complete. should be complete!" << std::endl;
 	  point_mutation.wt_score_components(get_wt_score.wt_score_components());
 	}
@@ -344,7 +344,7 @@ ddG_main()
 	  utility::vector1<core::chemical::AA> residues_to_mutate(pose.total_residue(),core::chemical::aa_unk);
 	  residues_to_mutate[i]=((*aa_iter)->aa());
 	  if(residues_to_mutate[i] != core::chemical::aa_unk){
-	    ddGMover point_mutation(score_structure_scorefxn,minimize_sfxn,residues_to_mutate);
+	    ddg::ddGMover point_mutation(score_structure_scorefxn,minimize_sfxn,residues_to_mutate);
 	    point_mutation.set_min_cst(min_cst);
 	    point_mutation.set_min(min);
 	    point_mutation.set_mean(mean);
@@ -413,7 +413,7 @@ ddG_main()
 	  core::chemical::AA curr_aa = (core::chemical::AA)j;
 	  if(curr_aa != pose.aa(i) && (pose.aa(i) != aa_unk)/*this hopefully will never happen?*/ ){
 	    residues_to_mutate[i]=curr_aa;
-	    ddGMover interface_mutation(score_structure_scorefxn,minimize_sfxn,residues_to_mutate);
+	    ddg::ddGMover interface_mutation(score_structure_scorefxn,minimize_sfxn,residues_to_mutate);
 	    interface_mutation.set_min_cst(min_cst);
 	    interface_mutation.is_interface_ddg(interface_ddg);
 	    interface_mutation.set_min(min);

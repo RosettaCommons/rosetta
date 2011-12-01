@@ -19,9 +19,9 @@
 //package headers
 #include <protocols/enzdes/AddorRemoveCsts.hh>
 #include <protocols/enzdes/EnzdesTaskOperations.hh>
-#include <protocols/enzdes/EnzdesCacheableObserver.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
-#include <protocols/enzdes/EnzdesSeqRecoveryCache.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzdesSeqRecoveryCache.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2Operation.hh>
 #include <protocols/enzdes/enzdes_util.hh>
@@ -222,7 +222,7 @@ EnzdesBaseProtocol::catalytic_res( core::pose::Pose const & pose ) const
 {
 	using namespace core;
 	utility::vector1< Size > to_return;
-	protocols::enzdes::EnzdesCacheableObserverCOP enz_obs( get_enzdes_observer( pose ) ); // get_enzdes_observer() for const pose can return NULL
+	protocols::toolbox::match_enzdes_util::EnzdesCacheableObserverCOP enz_obs( toolbox::match_enzdes_util::get_enzdes_observer( pose ) ); // toolbox::match_enzdes_util::get_enzdes_observer() for const pose can return NULL
 	if( enz_obs ) {
 		toolbox::match_enzdes_util::EnzdesCstCacheCOP cstcache (enz_obs->cst_cache() );
 		if( cstcache ) to_return = cstcache->enzcst_io()->ordered_constrained_positions( pose );
@@ -315,7 +315,7 @@ EnzdesBaseProtocol::create_enzdes_pack_task(
 		taskfactory.push_back( new ProteinLigandInterfaceUpweighter() );
 		taskfactory.push_back( new toolbox::task_operations::LimitAromaChi2Operation() );
 	}
-	if( get_enzdes_observer( pose ) ){
+	if( toolbox::match_enzdes_util::get_enzdes_observer( pose ) ){
 		taskfactory.push_back( new AddRigidBodyLigandConfs() );
 	}
 	if( basic::options::option[basic::options::OptionKeys::enzdes::detect_design_interface].user() ){
@@ -344,9 +344,9 @@ EnzdesBaseProtocol::setup_sequence_recovery_cache(
 	//Initiate sequence recovery cache in the enzdes observer
 	//Set wt sequence at the same time. That is the first and only time
 	//that the wt sequence gets initiated
-  if ( ! get_enzdes_observer( pose ) -> get_seq_recovery_cache() ){
-    get_enzdes_observer( pose ) -> set_seq_recovery_cache( new EnzdesSeqRecoveryCache );
-  	get_enzdes_observer( pose ) -> get_seq_recovery_cache() -> set_sequence( pose );
+  if ( ! toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> get_seq_recovery_cache() ){
+    toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> set_seq_recovery_cache( new toolbox::match_enzdes_util:: EnzdesSeqRecoveryCache );
+  	toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> get_seq_recovery_cache() -> set_sequence( pose );
   }
 
   //keep track of what residues we are designing
@@ -357,7 +357,7 @@ EnzdesBaseProtocol::setup_sequence_recovery_cache(
 		}
 	}
 	//update or initiate what residues are designed in the EnzdesSeqRecoveryCache
-	get_enzdes_observer( pose ) -> get_seq_recovery_cache()
+	toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> get_seq_recovery_cache()
 		-> set_designable_residues( designing_residues );
 }
 
@@ -488,7 +488,7 @@ EnzdesBaseProtocol::enzdes_pack(
 	if( pack_unconstrained ) remove_enzdes_constraints( pose, true );
 
 	if( favor_native ){
-		get_enzdes_observer( pose )->setup_favor_native_constraints( pose, task, *(this->get_native_pose()) );
+		toolbox::match_enzdes_util::get_enzdes_observer( pose )->setup_favor_native_constraints( pose, task, *(this->get_native_pose()) );
 	}
 
 	core::pack::task::PackerTaskCOP usetask = task;
@@ -514,7 +514,7 @@ EnzdesBaseProtocol::enzdes_pack(
 
 
 	if( basic::options::option[basic::options::OptionKeys::enzdes::favor_native_res].user() && favor_native){
-		get_enzdes_observer( pose )->remove_favor_native_constraints( pose );
+		toolbox::match_enzdes_util::get_enzdes_observer( pose )->remove_favor_native_constraints( pose );
 	}
 
 	if( pack_unconstrained) add_pregenerated_enzdes_constraints( pose );
