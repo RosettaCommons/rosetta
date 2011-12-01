@@ -28,7 +28,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/dssp/Dssp.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/fldsgn/BluePrint.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
 #include <protocols/fldsgn/topology/HelixPairing.hh>
@@ -38,7 +38,7 @@
 #include <protocols/fldsgn/potentials/sspot/NatbiasHelixPairPotential.hh>
 
 #include <protocols/moves/DataMap.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 
 #include <utility/tag/Tag.hh>
 // C++ headers
@@ -242,8 +242,8 @@ void SetSecStructEnergies::apply( Pose & pose )
 
 	using core::conformation::symmetry::SymmetricConformation;
 	using core::pose::symmetry::is_symmetric;
-	using protocols::symmetric_docking::SetupForSymmetryMover;
-	using protocols::symmetric_docking::SetupForSymmetryMoverOP;
+	using protocols::moves::symmetry::SetupForSymmetryMover;
+	using protocols::moves::symmetry::SetupForSymmetryMoverOP;
 
 	if( loaded_ ) return;
 

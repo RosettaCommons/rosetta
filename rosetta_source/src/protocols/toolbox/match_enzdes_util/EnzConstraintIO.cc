@@ -19,7 +19,7 @@
 //#include <protocols/constraints_additional/SequenceProfileConstraint.hh> //msa
 #include <protocols/toolbox/match_enzdes_util/EnzCstTemplateRes.hh>
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
+#include <protocols/enzdes/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 
 // Project headers
@@ -198,7 +198,7 @@ EnzConstraintIO::process_pdb_header(
 
 
 	core::pose::PDBPoseMap PDB_map( pose.pdb_info()->pdb2pose() );
-	EnzdesCstCacheOP cst_cache = protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache();
+	EnzdesCstCacheOP cst_cache = protocols::enzdes::get_enzdes_observer( pose )->cst_cache();
 
 	std::set< Size > found_cst_blocks;
 
@@ -385,15 +385,15 @@ EnzConstraintIO::add_constraints_to_pose(
 ) const
 {
 	//tmp hack
-	EnzdesCstCacheOP cst_cache = protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache();
-	if( !cst_cache ) protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( new EnzdesCstCache( this, cst_pairs_.size() ) );
+	EnzdesCstCacheOP cst_cache = protocols::enzdes::get_enzdes_observer( pose )->cst_cache();
+	if( !cst_cache ) protocols::enzdes::get_enzdes_observer( pose )->set_cst_cache( new EnzdesCstCache( this, cst_pairs_.size() ) );
 	//tmp hack over
 
 	//in case this function gets called twice, we remove constraints from the pose
 	remove_constraints_from_pose( pose, false, false );
 
 	//new
-	protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( new EnzdesCstCache( this, cst_pairs_.size() ) );
+	protocols::enzdes::get_enzdes_observer( pose )->set_cst_cache( new EnzdesCstCache( this, cst_pairs_.size() ) );
 
 	process_pdb_header( pose, accept_blocks_missing_header );
 
@@ -428,7 +428,7 @@ EnzConstraintIO::add_constraints_to_pose_for_block_without_clearing_and_header_p
 	//std::cerr << "about to add " << num_to_add << " constraints for block " << cst_block << " to pose." << std::endl;
 	//debug shit over
 
-	EnzdesCstParamCacheOP param_cache = protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block );
+	EnzdesCstParamCacheOP param_cache = protocols::enzdes::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block );
 	using namespace core::scoring::constraints;
 	ConstraintCOPs tmp = pose.add_constraints( param_cache->active_pose_constraints() );
 	param_cache->set_active_pose_constraints( tmp );
@@ -443,7 +443,7 @@ EnzConstraintIO::remove_constraints_from_pose(
 		bool const fail_on_constraints_missing
 ) const
 {
-	EnzdesCstCacheOP cst_cache = protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache();
+	EnzdesCstCacheOP cst_cache = protocols::enzdes::get_enzdes_observer( pose )->cst_cache();
 	if( !cst_cache ) return;
 	//std::cerr << "removing constraints from pose" << std::endl;
 	//need to do this in decreasing fashion in case several constraints are covalent
@@ -464,7 +464,7 @@ EnzConstraintIO::remove_constraints_from_pose_for_block(
 {
 
 	bool constraints_found(false);
-	EnzdesCstParamCacheOP param_cache = protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block );
+	EnzdesCstParamCacheOP param_cache = protocols::enzdes::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block );
 	if( pose.remove_constraints( param_cache->active_pose_constraints(), true )  ){
 
 		constraints_found = true;
@@ -495,7 +495,7 @@ EnzConstraintIO::remove_position_from_template_res_for_block(
 	core::Size pos,
 	core::Size cst_block ) const
 {
-	protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block )->remove_seqpos_from_template_res( pos );
+	protocols::enzdes::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block )->remove_seqpos_from_template_res( pos );
 }
 
 void
@@ -503,7 +503,7 @@ EnzConstraintIO::remove_position_from_template_res(
 	core::pose::Pose & pose,
 	core::Size pos ) const
 {
-	EnzdesCstCacheCOP cst_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache() );
+	EnzdesCstCacheCOP cst_cache( protocols::enzdes::get_enzdes_observer( pose )->cst_cache() );
 	if( !cst_cache ) return;
 
 	for( core::Size i =1; i <= cst_pairs_.size(); ++i){
@@ -520,7 +520,7 @@ EnzConstraintIO::add_pregenerated_constraints_to_pose(
 
 	using namespace core::scoring::constraints;
 	//some precautions to avoid segfaults
-	EnzdesCstCacheOP cst_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache() );
+	EnzdesCstCacheOP cst_cache( protocols::enzdes::get_enzdes_observer( pose )->cst_cache() );
 	if( !cst_cache ){
 		tr << "Notice: trying to add pregenerated enzdes constraints even though no constraints have been generated, function will have no effect... " << std::endl;
 		return;
@@ -574,7 +574,7 @@ EnzConstraintIO::contains_position(
 	core::pose::Pose const & pose,
 	core::Size const seqpos ) const
 {
-	protocols::toolbox::match_enzdes_util::EnzdesCacheableObserverCOP enz_obs( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose ) );
+	protocols::enzdes::EnzdesCacheableObserverCOP enz_obs( protocols::enzdes::get_enzdes_observer( pose ) );
 	if( !enz_obs ) return false; // get_enzdes_observer() can return NULL for const pose
 	EnzdesCstCacheCOP cst_cache( enz_obs->cst_cache() );
 	if( !cst_cache ) return false;
@@ -591,7 +591,7 @@ EnzConstraintIO::is_backbone_only_cst(
 {
 
 	bool to_return(false);
-	protocols::toolbox::match_enzdes_util::EnzdesCacheableObserverCOP enz_obs( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose ) );
+	protocols::enzdes::EnzdesCacheableObserverCOP enz_obs( protocols::enzdes::get_enzdes_observer( pose ) );
 	if( !enz_obs ) return false; // get_enzdes_observer() can return NULL for const pose
 	EnzdesCstCacheCOP cst_cache( enz_obs->cst_cache() );
 	if( !cst_cache ) return false;
@@ -632,7 +632,7 @@ EnzConstraintIO::allowed_res_name3_at_position(
 {
 
 	utility::vector1< std::string > to_return;
-	if( !protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache() ) return to_return;
+	if( !protocols::enzdes::get_enzdes_observer( pose )->cst_cache() ) return to_return;
 
 	std::set< std::string > found;
 
@@ -694,7 +694,7 @@ EnzConstraintIO::set_position_for_missing_res_in_parameter_block(
 
 	runtime_assert( cst_block <= cst_pairs_.size() );
 
-	protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block )->set_position_for_missing_res( respos );
+	protocols::enzdes::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block )->set_position_for_missing_res( respos );
 }
 
 void
@@ -703,7 +703,7 @@ EnzConstraintIO::clear_active_pose_constraints_for_block(
 	core::Size cst_block
 ) const{
 	runtime_assert( cst_block <= cst_pairs_.size() );
-	protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block)->clear_active_pose_constraints();
+	protocols::enzdes::get_enzdes_observer( pose )->cst_cache()->param_cache( cst_block)->clear_active_pose_constraints();
 }
 
 
@@ -842,7 +842,7 @@ EnzConstraintIO::ordered_constrained_positions( core::pose::Pose const & pose ) 
 	using namespace core;
 	//utility::vector1< Size > found_protein_positions;
 	//utility::vector1< Size > found_lig_positions;
-	protocols::toolbox::match_enzdes_util::EnzdesCacheableObserverCOP enz_obs( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose ) );
+	protocols::enzdes::EnzdesCacheableObserverCOP enz_obs( protocols::enzdes::get_enzdes_observer( pose ) );
 	if( !enz_obs ) return utility::vector1< Size > (); // get_enzdes_observer() can return NULL for const pose
 	EnzdesCstCacheCOP cst_cache( enz_obs->cst_cache() );
 	if( !cst_cache ) return utility::vector1< Size > ();

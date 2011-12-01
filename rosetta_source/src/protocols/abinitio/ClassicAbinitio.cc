@@ -19,10 +19,10 @@
 
 // Unit Headers
 #include <protocols/abinitio/ClassicAbinitio.hh>
-#include <protocols/simple_moves/SymmetricFragmentMover.hh>
+#include <protocols/basic_moves/SymmetricFragmentMover.hh>
 
 // Package Headers
-#include <protocols/simple_moves/GunnCost.hh>
+#include <protocols/basic_moves/GunnCost.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -135,9 +135,9 @@ bool contains_stageid( utility::vector1< ClassicAbinitio::StageID > vec, Classic
 /// small(stage2/stage3/stage4)
 /// smooth_small ( stage3/stage4)
 ClassicAbinitio::ClassicAbinitio(
-	simple_moves::FragmentMoverOP brute_move_small,
-	simple_moves::FragmentMoverOP brute_move_large,
-	simple_moves::FragmentMoverOP smooth_move_small,
+	basic_moves::FragmentMoverOP brute_move_small,
+	basic_moves::FragmentMoverOP brute_move_large,
+	basic_moves::FragmentMoverOP smooth_move_small,
 	int  /*dummy otherwise the two constructors are ambiguous */
 ) :
 	brute_move_small_( brute_move_small ),
@@ -166,16 +166,16 @@ ClassicAbinitio::ClassicAbinitio(
 	BaseClass::type( "ClassicAbinitio" );
 	get_checkpoints().set_type("ClassicAbinitio");
 	using namespace basic::options;
-	simple_moves::ClassicFragmentMoverOP bms, bml, sms;
-	using simple_moves::ClassicFragmentMover;
-	using simple_moves::SymmetricFragmentMover;
-	using simple_moves::SmoothFragmentMover;
-	using simple_moves::SmoothSymmetricFragmentMover;
-	using simple_moves::GunnCost;
+	basic_moves::ClassicFragmentMoverOP bms, bml, sms;
+	using basic_moves::ClassicFragmentMover;
+	using basic_moves::SymmetricFragmentMover;
+	using basic_moves::SmoothFragmentMover;
+	using basic_moves::SmoothSymmetricFragmentMover;
+	using basic_moves::GunnCost;
 	if ( option[ OptionKeys::abinitio::log_frags ].user() ) {
 		if ( !option[ OptionKeys::abinitio::debug ] ) utility_exit_with_message( "apply option abinitio::log_frags always together with abinitio::debug!!!");
-		bms  = new simple_moves::LoggedFragmentMover( fragset_small, movemap );
-		bml  = new simple_moves::LoggedFragmentMover( fragset_large, movemap );
+		bms  = new basic_moves::LoggedFragmentMover( fragset_small, movemap );
+		bml  = new basic_moves::LoggedFragmentMover( fragset_large, movemap );
 		sms  = new SmoothFragmentMover( fragset_small, movemap, new GunnCost );
 	} else if ( option[ OptionKeys::abinitio::symmetry_residue ].user() ) {
 		Size const sr (  option[ OptionKeys::abinitio::symmetry_residue ] );
@@ -521,19 +521,19 @@ ClassicAbinitio::get_name() const {
 }
 
 //@brief return FramgentMover for smooth_small fragment insertions (i.e., stage4 moves)
-simple_moves::FragmentMoverOP
+basic_moves::FragmentMoverOP
 ClassicAbinitio::smooth_move_small() {
 	return smooth_move_small_;
 }
 
 //@brief return FragmentMover for small fragment insertions ( i.e., stage3/4 moves )
-simple_moves::FragmentMoverOP
+basic_moves::FragmentMoverOP
 ClassicAbinitio::brute_move_small() {
 	return brute_move_small_;
 }
 
 //@brief return FragmentMover for large fragment insertions (i.e., stage1/2 moves )
-simple_moves::FragmentMoverOP
+basic_moves::FragmentMoverOP
 ClassicAbinitio::brute_move_large() {
 	return brute_move_large_;
 }
@@ -552,9 +552,9 @@ ClassicAbinitio::set_movemap( core::kinematics::MoveMapCOP mm )
 //@brief set new instances of FragmentMovers
 void
 ClassicAbinitio::set_moves(
-	simple_moves::FragmentMoverOP brute_move_small,
-	simple_moves::FragmentMoverOP brute_move_large,
-	simple_moves::FragmentMoverOP smooth_move_small
+	basic_moves::FragmentMoverOP brute_move_small,
+	basic_moves::FragmentMoverOP brute_move_large,
+	basic_moves::FragmentMoverOP smooth_move_small
 )
 {
 	smooth_move_small_ = smooth_move_small;
@@ -1196,7 +1196,7 @@ void ClassicAbinitio::output_debug_structure( core::pose::Pose & pose, std::stri
 	if ( option[ basic::options::OptionKeys::abinitio::log_frags ].user() ) {
 		std::string filename = prefix + "_" + get_current_tag() + "_" + std::string( option[ basic::options::OptionKeys::abinitio::log_frags ]() );
 		utility::io::ozstream output( filename );
-		simple_moves::LoggedFragmentMover& log_frag = dynamic_cast< simple_moves::LoggedFragmentMover& > (*brute_move_large_);
+		basic_moves::LoggedFragmentMover& log_frag = dynamic_cast< basic_moves::LoggedFragmentMover& > (*brute_move_large_);
 		log_frag.show( output );
 		log_frag.clear();
 	}

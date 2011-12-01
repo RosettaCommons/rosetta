@@ -30,7 +30,7 @@
 
 #include <protocols/docking/DockingEnsemble.hh>
 
-#include <protocols/docking/ConformerSwitchMover.hh>
+#include <protocols/moves/ConformerSwitchMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/moves/OutputMovers.hh>
@@ -179,12 +179,12 @@ void DockingLowRes::set_scorefxn( core::scoring::ScoreFunctionCOP scorefxn )
 
 void DockingLowRes::set_ensemble1( DockingEnsembleOP ensemble1 )
 {
-	if ( ensemble1 ) ensemble1_mover_ = new protocols::docking::ConformerSwitchMover( ensemble1 );
+	if ( ensemble1 ) ensemble1_mover_ = new protocols::moves::ConformerSwitchMover( ensemble1 );
 }
 
 void DockingLowRes::set_ensemble2( DockingEnsembleOP ensemble2 )
 {
-	if ( ensemble2 ) ensemble2_mover_= new protocols::docking::ConformerSwitchMover( ensemble2 );
+	if ( ensemble2 ) ensemble2_mover_= new protocols::moves::ConformerSwitchMover( ensemble2 );
 }
 
 void DockingLowRes::finalize_setup( core::pose::Pose & pose){

@@ -12,15 +12,15 @@
 
 // Unit Headers
 #include <protocols/topology_broker/FoldandDockClaimer.hh>
-#include <protocols/symmetric_docking/SymFoldandDockRbTrialMover.hh>
-#include <protocols/symmetric_docking/SymFoldandDockSlideTrialMover.hh>
+#include <protocols/moves/symmetry/SymFoldandDockRbTrialMover.hh>
+#include <protocols/moves/symmetry/SymFoldandDockSlideTrialMover.hh>
 #include <protocols/symmetric_docking/SymDockingInitialPerturbation.hh>
-#include <protocols/symmetric_docking/SymFoldandDockMoveRbJumpMover.hh>
+#include <protocols/moves/symmetry/SymFoldandDockMoveRbJumpMover.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.hh>
 
 // Package Headers
 #include <protocols/topology_broker/DofClaim.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 #include <basic/Tracer.hh>
 
 // Utility header
@@ -87,11 +87,11 @@ FoldandDockClaimer::add_mover(
 {
 	using namespace basic::options;
 
-	moves::MoverOP move_anchor_mover =	new symmetric_docking::SymFoldandDockMoveRbJumpMover;
+	moves::MoverOP move_anchor_mover =	new moves::symmetry::SymFoldandDockMoveRbJumpMover;
 	moves::MoverOP rb_trial_mover =	(stageID==abinitio::STAGE_4) ?
-		new symmetric_docking::SymFoldandDockRbTrialMover( &scorefxn, true ) :
-		new symmetric_docking::SymFoldandDockRbTrialMover( &scorefxn );  // smooth RB moves in stage 4
-	moves::MoverOP slide_mover = new symmetric_docking::SymFoldandDockSlideTrialMover;
+		new moves::symmetry::SymFoldandDockRbTrialMover( &scorefxn, true ) :
+		new moves::symmetry::SymFoldandDockRbTrialMover( &scorefxn );  // smooth RB moves in stage 4
+	moves::MoverOP slide_mover = new moves::symmetry::SymFoldandDockSlideTrialMover;
 	core::Real move_anchor_weight(1.0),
 	           rb_weight(option[ OptionKeys::fold_and_dock::rigid_body_frequency ]()),
 	           slide_weight(option[ OptionKeys::fold_and_dock::slide_contact_frequency ]());
@@ -110,8 +110,8 @@ void FoldandDockClaimer::initialize_dofs(
 
 	// Setup symmetry if we have nit already done it
 	// slide chains into contact
-	protocols::symmetric_docking::SetupForSymmetryMoverOP setup_mover = new
-		protocols::symmetric_docking::SetupForSymmetryMover;
+	protocols::moves::symmetry::SetupForSymmetryMoverOP setup_mover = new
+		protocols::moves::symmetry::SetupForSymmetryMover;
 	setup_mover->slide_into_contact(true);
 	if ( !core::pose::symmetry::is_symmetric( pose ) ) {
 		setup_mover->apply( pose ); // calls SymDockingInitialPerturbation

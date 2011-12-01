@@ -20,7 +20,7 @@
 // Project headers
 #include <protocols/scoring/Interface.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <core/pack/task/PackerTask.hh>
+#include <core/pack/task/PackerTask.fwd.hh>
 
 #include <protocols/moves/MinMover.fwd.hh>
 

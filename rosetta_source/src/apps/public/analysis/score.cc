@@ -12,8 +12,8 @@
 
 
 // libRosetta headers
-#include <protocols/simple_moves/ScoreMover.hh>
-#include <protocols/simple_moves/TailsScoreMover.hh>
+#include <protocols/moves/ScoreMover.hh>
+#include <protocols/moves/TailsScoreMover.hh>
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 
 #include <protocols/jobdist/standard_mains.hh>
@@ -34,8 +34,8 @@
 #include <core/scoring/ScoreFunctionFactory.hh> // getScoreFunction
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/electron_density/util.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/SuperimposeMover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/moves/SuperimposeMover.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <utility/file/FileName.hh>
@@ -91,17 +91,17 @@ main( int argc, char * argv [] )
 	using namespace basic::options::OptionKeys;
 	using namespace utility::file;
 
-	simple_moves::ScoreMover::register_options();
+	ScoreMover::register_options();
 	protocols::jobdist::register_options_universal_main();
-	option.add_relevant( in::file::fullatom );
-	option.add_relevant( relax::fast );
+  option.add_relevant( in::file::fullatom );
+  option.add_relevant( relax::fast );
 	option.add( score_app::linmin, "Do a quick round of linmin before reporting the score" );
-	option.add_relevant( score_app::linmin );
-	option.add_relevant( out::output                  );
-	option.add_relevant( out::nooutput                );
-	option.add_relevant( in::file::fullatom           );
-	option.add_relevant( rescore::verbose             );
-	option.add_relevant( in::file::repair_sidechains  );
+  option.add_relevant( score_app::linmin );
+  option.add_relevant( out::output                  );
+  option.add_relevant( out::nooutput                );
+  option.add_relevant( in::file::fullatom           );
+  option.add_relevant( rescore::verbose             );
+  option.add_relevant( in::file::repair_sidechains  );
 	option.add( score_app::superimpose_to_native, "superimpose structure to native" );
 
 
@@ -176,14 +176,14 @@ main( int argc, char * argv [] )
 
 	// create a ScoreMover
 
-	simple_moves::ScoreMover* scoretmp;
+	ScoreMover* scoretmp;
 	if( option[ krassk::tail_mode])
 	   {
-			scoretmp = new simple_moves::TailsScoreMover(sfxn);
+			scoretmp = new moves::TailsScoreMover(sfxn);
 	   }
 	   else
 	   {
-			scoretmp = new simple_moves::ScoreMover(sfxn);
+			scoretmp = new moves::ScoreMover(sfxn);
 	   }
 
 	if(  option[ rescore::verbose ] )	{
@@ -242,7 +242,7 @@ main( int argc, char * argv [] )
 	// set pose for symmetry
 	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 		protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-		seqmov->add_mover( new protocols::symmetric_docking::SetupForSymmetryMover );
+		seqmov->add_mover( new protocols::moves::symmetry::SetupForSymmetryMover );
 		seqmov->add_mover( mover );
 		mover = seqmov;
 	}
@@ -255,7 +255,7 @@ main( int argc, char * argv [] )
 			core::pose::Pose native;
 			core::import_pose::pose_from_pdb( native, option[ basic::options::OptionKeys::in::file::native ] );
 			protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-			seqmov->add_mover( new protocols::simple_moves::SuperimposeMover( native ) );
+			seqmov->add_mover( new protocols::moves::SuperimposeMover( native ) );
 			seqmov->add_mover( mover );
 			mover = seqmov;
 		}

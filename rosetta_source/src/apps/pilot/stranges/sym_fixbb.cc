@@ -29,9 +29,9 @@
 #include <protocols/moves/Mover.hh>
 
 //symmetry
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/moves/symmetry/SymMinMover.hh>
+#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 
 //JD2
@@ -116,7 +116,7 @@ void SymFixbbMover::setup_task_mm(core::pose::Pose & pose, core::pack::task::Tas
 
 //apply
 void SymFixbbMover::apply( core::pose::Pose & pose ) {
-  using namespace protocols::simple_moves::symmetry;
+  using namespace protocols::moves::symmetry;
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
 

@@ -29,11 +29,11 @@
 //protocols library (Movers)
 #include <protocols/moves/MinPackMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/TaskAwareMinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 
 //utilities
 #include <protocols/jd2/JobDistributor.hh>
@@ -102,7 +102,7 @@ main( int argc, char * argv [] )
 
 	// Use the symmetric packer if necessary
 	if ( option[ symmetry::symmetry_definition ].user() ) {
-		pack_mover = new protocols::simple_moves::symmetry::SymPackRotamersMover;
+		pack_mover = new protocols::moves::symmetry::SymPackRotamersMover;
 	}
 
 	pack_mover->task_factory( main_task_factory );
@@ -113,7 +113,7 @@ main( int argc, char * argv [] )
 
 	// make symmetric pose if necessary
 	if ( option[ symmetry::symmetry_definition ].user() )  {
-	    seq_mover->add_mover( new protocols::symmetric_docking::SetupForSymmetryMover );
+	    seq_mover->add_mover( new protocols::moves::symmetry::SetupForSymmetryMover );
 	}
 
 	if ( option[ min_pack ] || option[ stochastic_pack ] ) {

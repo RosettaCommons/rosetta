@@ -16,6 +16,7 @@
 #ifndef INCLUDED_protocols_toolbox_pose_metric_calculators_RotamerBoltzCalculator_hh
 #define INCLUDED_protocols_toolbox_pose_metric_calculators_RotamerBoltzCalculator_hh
 #include <protocols/toolbox/pose_metric_calculators/RotamerBoltzCalculator.fwd.hh>
+#include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MinMover.fwd.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
@@ -34,10 +35,6 @@
 
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/vector1.hh>
-
-//Auto Headers
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
-
 
 
 
@@ -68,7 +65,7 @@ protected:
   core::Real computeBoltzSum(core::Real init_score, utility::vector1<core::Real> scores);
   protocols::moves::MinMoverOP init_minmover(core::pose::Pose& pose, core::Size resi, bool unbound, core::pack::task::PackerTaskOP  task);
   core::pack::task::PackerTaskOP init_task(core::pose::Pose& pose, core::Size resi);
-  protocols::simple_filters::ScoreTypeFilter stf(){
+  protocols::protein_interface_design::ScoreTypeFilter stf(){
     return stf_;
   }
   void temperature(core::Real temp){
@@ -97,7 +94,7 @@ private:
 	//core::kinematics::MoveMapOP mm_;
 	//protocols::moves::MinMover min_mover_;
   core::Real temperature_;
-  protocols::simple_filters::ScoreTypeFilter const stf_;
+  protocols::protein_interface_design::ScoreTypeFilter const stf_;
   utility::vector1<core::Real>all_boltz_;
   core::pack::rotamer_set::RotamerSetOP rotset_;
 

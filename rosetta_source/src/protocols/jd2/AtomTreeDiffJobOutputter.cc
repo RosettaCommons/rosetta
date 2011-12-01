@@ -13,7 +13,6 @@
 
 ///Unit headers
 #include <protocols/jd2/AtomTreeDiffJobOutputter.hh>
-#include <protocols/jd2/AtomTreeDiffJobOutputterCreator.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/Job.fwd.hh>
 
@@ -211,18 +210,6 @@ AtomTreeDiffJobOutputter::use_input_for_ref(bool use_input) {
 	// Reset reference tag, in case we're changing course midstream
 	last_ref_tag_ = "";
 	use_input_ = use_input;
-}
-
-//CREATOR SECTION
-std::string
-AtomTreeDiffJobOutputterCreator::keyname() const
-{
-        return "AtomTreeDiffJobOutputter";
-}
-
-protocols::jd2::JobOutputterOP
-AtomTreeDiffJobOutputterCreator::create_JobOutputter() const {
-        return new AtomTreeDiffJobOutputter;
 }
 
 }//jd2

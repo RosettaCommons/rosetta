@@ -29,12 +29,10 @@
 #include <vector>
 #include <map>
 
-#include <protocols/frag_picker/VallChunk.hh>
+#include <protocols/frag_picker/VallChunk.fwd.hh>
+#include <protocols/match/SixDHasher.fwd.hh>
 #include <utility/vector1.hh>
 #include <numeric/geometry/BoundingBox.fwd.hh>
-
-//numeric headers
-#include <numeric/geometry/hashing/SixDHasher.fwd.hh>
 
 
 namespace protocols {
@@ -46,7 +44,7 @@ T sqr( T a){ return a*a; }
 
 const core::Real MAXIMAL_FLOAT = 100000000.0;
 
-typedef boost::unordered_multimap< boost::uint64_t, core::Size , numeric::geometry::hashing::bin_index_hasher >   BackboneIndexMap;
+typedef boost::unordered_multimap< boost::uint64_t, core::Size , protocols::match::bin_index_hasher >   BackboneIndexMap;
 typedef numeric::geometry::BoundingBox< core::Vector > BoundingBox;
 const int HASH_POSITION_GRID_BASE= 5;
 

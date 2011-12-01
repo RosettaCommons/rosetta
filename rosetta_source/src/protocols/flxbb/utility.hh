@@ -20,7 +20,7 @@
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 
-#include <protocols/jd2/parser/BluePrint.fwd.hh>
+#include <protocols/fldsgn/BluePrint.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -30,7 +30,7 @@ namespace flxbb {
 
 typedef core::Real Real;
 typedef core::pose::Pose Pose;
-typedef protocols::jd2::parser::BluePrintOP BluePrintOP;
+typedef protocols::fldsgn::BluePrintOP BluePrintOP;
 typedef core::scoring::constraints::ConstraintOPs ConstraintOPs;
 
 /// @brief constrain hydrogen bonds in beta sheet  ( not used )

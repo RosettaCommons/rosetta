@@ -44,10 +44,10 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 // Symmetry Headers
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh> //create symmetric homodimer from input monomer via symmetry:symmetry_definition option
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh> //create symmetric homodimer from input monomer via symmetry:symmetry_definition option
+#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/moves/symmetry/SymRotamerTrialsMover.hh>
+#include <protocols/moves/symmetry/SymMinMover.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/conformation/symmetry/util.hh>
 //Constraint Headers
@@ -151,7 +151,7 @@ public:
   setup ( Pose & pose ) {
     //pose.dump_pdb("initial_mono_pose.pdb");
 
-    protocols::symmetric_docking::SetupForSymmetryMoverOP make_monomeric_input_pose_symmetrical = new protocols::symmetric_docking::SetupForSymmetryMover(); // according to symm definition file included as an option
+    protocols::moves::symmetry::SetupForSymmetryMoverOP make_monomeric_input_pose_symmetrical = new protocols::moves::symmetry::SetupForSymmetryMover(); // according to symm definition file included as an option
     make_monomeric_input_pose_symmetrical->apply( pose );
 
     //pose.dump_pdb("initial_symm_pose.pdb");
@@ -319,7 +319,7 @@ public:
   //setup
   virtual void
   setup_movers() {
-    using namespace protocols::simple_moves::symmetry;
+    using namespace protocols::moves::symmetry;
 
     TR << "Generating sym rottrials mover..." << std::endl;
     sym_rottrials_mover_ = new SymRotamerTrialsMover;
@@ -508,11 +508,11 @@ private:
   core::kinematics::MoveMapOP sc_move_map_;
   core::kinematics::MoveMapOP sc_bb_move_map_;
 
-  protocols::simple_moves::symmetry::SymPackRotamersMoverOP sym_pack_mover_;
-  protocols::simple_moves::symmetry::SymRotamerTrialsMoverOP sym_rottrials_mover_;
-  protocols::simple_moves::symmetry::SymMinMoverOP softrep_min_mover_;
-  protocols::simple_moves::symmetry::SymMinMoverOP score12_sc_min_mover_;
-  protocols::simple_moves::symmetry::SymMinMoverOP score12_sc_bb_min_mover_;
+  protocols::moves::symmetry::SymPackRotamersMoverOP sym_pack_mover_;
+  protocols::moves::symmetry::SymRotamerTrialsMoverOP sym_rottrials_mover_;
+  protocols::moves::symmetry::SymMinMoverOP softrep_min_mover_;
+  protocols::moves::symmetry::SymMinMoverOP score12_sc_min_mover_;
+  protocols::moves::symmetry::SymMinMoverOP score12_sc_bb_min_mover_;
   protocols::moves::MonteCarloOP mc_;
   protocols::anchored_design::InterfaceAnalyzerMoverOP interface_analyzer_;
 

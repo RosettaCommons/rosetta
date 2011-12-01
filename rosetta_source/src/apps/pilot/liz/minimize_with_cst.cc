@@ -174,7 +174,7 @@ setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff
 	//create constraints for all residues
 	//type: HARMONIC
 	//static float const CA_cutoff(9.0);
-	if(!basic::options::option[OptionKeys::ddg::sc_min_only]()){
+	if(!basic::options::option[ddg::sc_min_only]()){
 	int nres = pose.total_residue();
 	if(basic::options::option[basic::options::OptionKeys::constraints::cst_file].user()){
 		core::scoring::constraints::ConstraintSetOP cstset(new
@@ -198,7 +198,7 @@ setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff
 		}
 	}
 
-	s.set_weight(atom_pair_constraint, basic::options::option[OptionKeys::ddg::constraint_weight]());
+	s.set_weight(atom_pair_constraint, basic::options::option[ddg::constraint_weight]());
 	}
 }
 
@@ -207,8 +207,8 @@ void
 minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_tag){
 	using namespace basic::options;
 
-	std::string out_pdb_prefix = basic::options::option[OptionKeys::ddg::out_pdb_prefix ]();
-	std::string output_directory = basic::options::option[OptionKeys::ddg::output_dir]();
+	std::string out_pdb_prefix = basic::options::option[ddg::out_pdb_prefix ]();
+	std::string output_directory = basic::options::option[ddg::output_dir]();
 
 	//silent file capabilities
 	bool write_silent_file = false;
@@ -234,14 +234,14 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_t
 		core::kinematics::MoveMap mm;
 		mm.set_bb(true);
 		mm.set_chi(true);
-		if(basic::options::option[OptionKeys::ddg::sc_min_only]()){
+		if(basic::options::option[ddg::sc_min_only]()){
 			minimizer_tol = 0.0001;
 			mm.set_bb(false);
 		}
 		s.show(std::cout, p);
 
 
-		if(basic::options::option[OptionKeys::ddg::ramp_repulsive]()){
+		if(basic::options::option[ddg::ramp_repulsive]()){
 			//set scorefxn fa_rep to 1/10 of original weight and then minimize
 			ScoreFunction one_tenth_orig(s);
 			reduce_fa_rep(0.1,one_tenth_orig);
@@ -262,7 +262,7 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_t
 
 		min_struc.run(p,mm,s,options);
 
-		if(basic::options::option[OptionKeys::ddg::initial_repack]()){
+		if(basic::options::option[ddg::initial_repack]()){
 			//repack
 		std::cout << "repacking" << std::endl;
 			ScoreFunctionOP spack = ScoreFunctionFactory::create_score_function("soft_rep_design.wts");
@@ -297,13 +297,13 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_t
 void
 optimize_pose(pose::Pose & p, ScoreFunctionOP scorefxn,std::string output_tag){
 	Real cst_tol;
-	if(basic::options::option[OptionKeys::ddg::harmonic_ca_tether].user()){
-		cst_tol = basic::options::option[ OptionKeys::ddg::harmonic_ca_tether ]();
+	if(basic::options::option[ddg::harmonic_ca_tether].user()){
+		cst_tol = basic::options::option[ ddg::harmonic_ca_tether ]();
 	}else{
 		cst_tol = 0.5;
 	}
-	if(!basic::options::option[OptionKeys::ddg::no_constraints].user() || //flag not present
-		 !basic::options::option[OptionKeys::ddg::no_constraints]()){ //flag set to false
+	if(!basic::options::option[ddg::no_constraints].user() || //flag not present
+		 !basic::options::option[ddg::no_constraints]()){ //flag set to false
 		setup_ca_constraints(p,(*scorefxn),9.0,cst_tol);
 	}
 	minimize_with_constraints(p, (*scorefxn),output_tag);
@@ -385,7 +385,7 @@ main( int argc, char* argv [] )
 			tags_done = out_sfd.tags();
 		}
 	}
-	std::string prefix = basic::options::option[OptionKeys::ddg::out_pdb_prefix ]();
+	std::string prefix = basic::options::option[ddg::out_pdb_prefix ]();
 	for(unsigned int f=1; f<=files.size();f++){
 		pose::Pose pose;
 		std::cout << "examining file: " << files[f] << std::endl;

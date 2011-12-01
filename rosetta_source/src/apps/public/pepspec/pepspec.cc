@@ -38,7 +38,7 @@
  #include <protocols/moves/PackRotamersMover.hh>
  #include <protocols/moves/RotamerTrialsMover.hh>
  #include <protocols/moves/RepeatMover.hh>
- #include <protocols/simple_moves/FragmentMover.hh>
+ #include <protocols/basic_moves/FragmentMover.hh>
 
  #include <protocols/viewer/viewers.hh>
 
@@ -1142,7 +1142,7 @@ gen_pep_bb_sequential(
 			//get frags
 			Size const nfrags( this_build_loop );
 			core::fragment::FragSetCOP fragset( make_1mer_frags( pep_begin, pep_end, this_input_seq, nfrags ) );
-			protocols::simple_moves::ClassicFragmentMover frag_mover( fragset, mm_frag );
+			protocols::basic_moves::ClassicFragmentMover frag_mover( fragset, mm_frag );
 
 			for ( Size build_loop_inner = 1; build_loop_inner <= this_build_loop; ++build_loop_inner ) {
 /*

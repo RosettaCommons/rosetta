@@ -46,7 +46,7 @@
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/util/kinematics_util.hh>
-#include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh>
+#include <protocols/abinitio/MaxSeqSepConstraintSet.hh>
 #include <protocols/moves/RationalMonteCarlo.hh>
 
 // Package headers
@@ -172,8 +172,8 @@ void BrokenFold::apply(core::pose::Pose& pose) {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::scoring::constraints::ConstraintSetOP;
-  using protocols::constraints_additional::MaxSeqSepConstraintSet;
-  using protocols::constraints_additional::MaxSeqSepConstraintSetOP;
+  using protocols::abinitio::MaxSeqSepConstraintSet;
+  using protocols::abinitio::MaxSeqSepConstraintSetOP;
 
   // Add applicable cutpoint variants and constraints
   core::util::add_cutpoint_variants(&pose);

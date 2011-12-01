@@ -6,7 +6,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <devel/init.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
 #include <core/pose/symmetry/util.hh>
@@ -37,7 +37,7 @@ public:
 void*
 my_main( void* ) {
 	using namespace protocols::moves;
-	using namespace protocols::simple_moves::symmetry;
+	using namespace protocols::moves::symmetry;
 
 	SequenceMoverOP seq( new SequenceMover() );
 	seq->add_mover( new SetupForSymmetryMover() );

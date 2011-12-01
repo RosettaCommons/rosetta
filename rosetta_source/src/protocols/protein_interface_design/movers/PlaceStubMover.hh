@@ -31,14 +31,11 @@
 // C++ headers
 
 // Unit headers
+#include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <utility/vector1.hh>
-
-//Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
-
 
 
 namespace protocols {
@@ -47,14 +44,14 @@ namespace movers {
 
 /// @brief choose a stub based on mc sampling, and place it on the pose.
 /// Iterates over stubs until one matches criteria.
-class PlaceStubMover : public simple_moves::DesignRepackMover
+class PlaceStubMover : public DesignRepackMover
 {
 public:
 	// used to define pairs of design/repack movers with an associated bool that
 	// determines whether to use the stub-based foldtree with cuts etc., or to
 	// use the default foldtree
-	typedef std::pair< simple_moves::DesignRepackMoverOP, bool > DesignMoverFoldTreePair;
-	typedef std::pair< simple_moves::DesignRepackMoverOP, core::Real > DesignMoverRealPair;
+	typedef std::pair< DesignRepackMoverOP, bool > DesignMoverFoldTreePair;
+	typedef std::pair< DesignRepackMoverOP, core::Real > DesignMoverRealPair;
 public:
 	PlaceStubMover();
 

@@ -21,15 +21,15 @@
 
 //protocols library (Movers)
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/TaskAwareMinMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/electron_density/util.hh>
 
 #include <core/scoring/electron_density/util.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/moves/symmetry/SymMinMover.hh>
 
 //utilities
 #include <protocols/jd2/JobDistributor.hh>
@@ -69,7 +69,7 @@ main( int argc, char * argv [] )
 
 	// Use the symmetric packer if necessary
 	if ( option[ symmetry::symmetry_definition ].user() ) {
-		pack_mover = new protocols::simple_moves::symmetry::SymPackRotamersMover;
+		pack_mover = new protocols::moves::symmetry::SymPackRotamersMover;
 	}
 
 	pack_mover->task_factory( main_task_factory );
@@ -80,7 +80,7 @@ main( int argc, char * argv [] )
 
 	// make symmetric pose if necessary
 	if ( option[ symmetry::symmetry_definition ].user() )  {
-	    seq_mover->add_mover( new protocols::symmetric_docking::SetupForSymmetryMover );
+	    seq_mover->add_mover( new protocols::moves::symmetry::SetupForSymmetryMover );
 	}
 
 	// set pose for density scoring if a map was input
@@ -119,7 +119,7 @@ main( int argc, char * argv [] )
 		movemap->set_bb(true);
 		movemap->set_chi(true);
 		movemap->set_jump(true);
-		protocols::simple_moves::symmetry::SymMinMoverOP min_mover = new protocols::simple_moves::symmetry::SymMinMover(
+		protocols::moves::symmetry::SymMinMoverOP min_mover = new protocols::moves::symmetry::SymMinMover(
 			movemap, score_fxn, "dfpmin_armijo_nonmonotone", 0.01, true );
 		seq_mover->add_mover( min_mover );
 	}

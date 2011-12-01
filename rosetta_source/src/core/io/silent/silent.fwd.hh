@@ -51,7 +51,6 @@ typedef utility::pointer::owning_ptr< EnergyNames > EnergyNamesOP;
 typedef utility::pointer::owning_ptr< SimpleSequenceData > SimpleSequenceDataOP;
 
 typedef utility::pointer::owning_ptr< SilentStruct > SilentStructOP;
-typedef utility::pointer::owning_ptr< SilentStruct const > SilentStructCOP;
 typedef utility::pointer::owning_ptr< ProteinSilentStruct > ProteinSilentStructOP;
 typedef utility::pointer::owning_ptr< BinaryProteinSilentStruct > BinaryProteinSilentStructOP;
 typedef utility::pointer::owning_ptr< RNA_SilentStruct > RNA_SilentStructOP;

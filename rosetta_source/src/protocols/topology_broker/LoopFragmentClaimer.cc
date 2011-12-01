@@ -24,7 +24,7 @@
 //#include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
 
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/basic_moves/FragmentMover.hh>
 
 // ObjexxFCL Headers
 
@@ -53,7 +53,7 @@ namespace topology_broker {
 using namespace core;
 
 LoopFragmentClaimer::LoopFragmentClaimer( fragment::FragSetOP frags ) :
-	FragmentClaimer( new simple_moves::ClassicFragmentMover( frags, new kinematics::MoveMap ),
+	FragmentClaimer( new basic_moves::ClassicFragmentMover( frags, new kinematics::MoveMap ),
 		"Loops", new weights::ConstAbinitioMoverWeight( 0.0 ) )
 {
  	runtime_assert( frags );

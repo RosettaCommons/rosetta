@@ -13,7 +13,6 @@
 
 ///Unit headers
 #include <protocols/protein_interface_design/ParserJobInputter.hh>
-#include <protocols/protein_interface_design/ParserJobInputterCreator.hh>
 #include <protocols/protein_interface_design/read_patchdock.hh>
 #include <protocols/jd2/Job.hh>
 
@@ -64,18 +63,6 @@ ParserJobInputter::pose_from_job( core::pose::Pose & pose, JobOP job){
 	std::string input_tag( job->input_tag() );
 	pd_reader.read_poses( pose, input_tag );
 	load_pose_into_job(pose, job);
-}
-
-//CREATOR SECTION
-std::string
-ParserJobInputterCreator::keyname() const
-{
-        return "ParserJobInputter";
-}
-
-protocols::jd2::JobInputterOP
-ParserJobInputterCreator::create_JobInputter() const {
-        return new ParserJobInputter;
 }
 
 }//protein_interface_design

@@ -44,6 +44,7 @@
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/moves/DataMap.hh>
 #include <utility/tag/Tag.hh>
+#include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
 // Utility Headers
@@ -65,10 +66,6 @@
 #include <algorithm>
 
 #include <utility/vector0.hh>
-
-//Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
-
 
 
 using namespace core::scoring;
@@ -310,7 +307,7 @@ generate_taskfactory_and_add_task_awareness( utility::tag::TagPtr const tag, Mov
 		std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( mover_name ));
 		bool const mover_found( find_mover != movers.end() );
 		if( mover_found ){
-			simple_moves::DesignRepackMoverOP drOP = dynamic_cast< simple_moves::DesignRepackMover * >( find_mover->second.get() );
+			DesignRepackMoverOP drOP = dynamic_cast< DesignRepackMover * >( find_mover->second.get() );
 			if( drOP ){// don't do anything with non-DesignRepackMovers
 				TR<<"Setting the task factory of mover "<<find_mover->first<<" to be aware of PlaceSimultaneously's rotamer and sidechain choices.\n";
 				drOP->task_factory( task_factory );

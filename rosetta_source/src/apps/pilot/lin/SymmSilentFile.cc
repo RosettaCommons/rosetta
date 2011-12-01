@@ -54,7 +54,7 @@
 // AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
 // AUTO-REMOVED #include <core/pack/rotamer_trials.hh>
 // AUTO-REMOVED #include <protocols/moves/PackRotamersMover.fwd.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SymPackRotamersMover.hh>
 // AUTO-REMOVED #include <protocols/moves/Mover.hh>
 
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>

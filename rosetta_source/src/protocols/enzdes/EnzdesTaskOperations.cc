@@ -23,7 +23,7 @@
 #include <protocols/enzdes/AddLigandMotifRotamersOperationCreator.hh>
 
 #include <protocols/enzdes/enzdes_util.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
+#include <protocols/enzdes/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 
@@ -98,7 +98,7 @@ SetCatalyticResPackBehavior::apply(
 	PackerTask & task ) const
 {
 
-	toolbox::match_enzdes_util::EnzdesCacheableObserverCOP enz_obs( toolbox::match_enzdes_util::get_enzdes_observer( pose ) );
+	EnzdesCacheableObserverCOP enz_obs( get_enzdes_observer( pose ) );
 	if( !enz_obs) return;
 	toolbox::match_enzdes_util::EnzdesCstCacheCOP cst_cache( enz_obs->cst_cache() );
 	if( !cst_cache ) return;
@@ -756,7 +756,7 @@ AddRigidBodyLigandConfs::apply(
 {
 
 	//std::cout << "starting apply func of AddRigidBodyLigandConfs" << std::endl;
-	toolbox::match_enzdes_util::EnzdesCacheableObserverCOP enz_obs( toolbox::match_enzdes_util::get_enzdes_observer( pose ) );
+	EnzdesCacheableObserverCOP enz_obs( get_enzdes_observer( pose ) );
 	if( !enz_obs ) return;
 	//std::cout << "non zero observer given ";
 

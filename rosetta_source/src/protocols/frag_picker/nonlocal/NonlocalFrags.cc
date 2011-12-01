@@ -35,6 +35,7 @@
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/util.hh>
+#include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/Job.hh>
@@ -67,7 +68,6 @@
 
 //Auto Headers
 #include <core/conformation/Conformation.hh>
-#include <protocols/simple_filters/DdgFilter.hh>
 
 static numeric::random::RandomGenerator RG(10420);  // Magic Number
 
@@ -457,7 +457,7 @@ void NonlocalFrags::apply(pose::Pose& pose) {
 					Real relaxed_score = (*scorefxn)( relax_sub_pose );
 
 					// DDG of relaxed fragment pair
-					protocols::simple_filters::DdgFilter ddg = protocols::simple_filters::DdgFilter( 1000, scorefxn, 1, 5);
+					protocols::protein_interface_design::DdgFilter ddg = protocols::protein_interface_design::DdgFilter( 1000, scorefxn, 1, 5);
 					Real relaxed_ddg_score = ddg.compute( relax_sub_pose );
 					if (relaxed_ddg_score >= max_ddg_score_) {  // DDG FILTER VALUE
 						write_checkpoint( output_name + tag, "" );

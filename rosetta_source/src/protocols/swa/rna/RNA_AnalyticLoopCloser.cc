@@ -36,7 +36,7 @@
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
-#include <numeric/kinematic_closure/bridgeObjects.hh>
+#include <protocols/moves/kinematic_closure/bridgeObjects.hh>
 // AUTO-REMOVED #include <protocols/moves/kinematic_closure/kinematic_closure_helpers.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
@@ -91,8 +91,7 @@ bool
 RNA_AnalyticLoopCloser::close_at_cutpoint( core::pose::Pose & pose ){
 
 	using namespace core::kinematics;
-//	using namespace numeric::kinematic_closure;
-	using namespace numeric::kinematic_closure;	
+	using namespace protocols::moves::kinematic_closure;
 
 	///// kinematic loop close.
 	// Following copied from, e.g., KinematicMover.cc.  Need to elaborate for terminal residues!
@@ -531,7 +530,7 @@ RNA_AnalyticLoopCloser::fill_chainTORS(
 							 utility::vector1<Real> & db_len) const {
 
 	using namespace core::kinematics;
-	using namespace numeric::kinematic_closure;
+	using namespace protocols::moves::kinematic_closure;
 
 	utility::vector1<utility::vector1<Real> > Q0 (3);
 	utility::vector1<Real> R0 (3);

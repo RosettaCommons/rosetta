@@ -17,10 +17,10 @@
 
 // package headers
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
+#include <protocols/enzdes/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <protocols/enzdes/EnzdesMovers.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesSeqRecoveryCache.hh>
+#include <protocols/enzdes/EnzdesSeqRecoveryCache.hh>
 #include <protocols/enzdes/enzdes_util.hh>
 
 // Project Headers
@@ -818,7 +818,7 @@ EnzdesScorefileFilter::examine_pose(
 	//ligand out of the pose will crash. for now, let's make a copy
 	//of the pose and remove the cst cache from it
 	core::pose::Pose calc_pose = pose;
-	toolbox::match_enzdes_util::get_enzdes_observer( calc_pose )->set_cst_cache( NULL );
+	get_enzdes_observer( calc_pose )->set_cst_cache( NULL );
 	(*sfxn_)( calc_pose );
 
 	if( pose.observer_cache().has( core::pose::datacache::CacheableObserverType::SPECIAL_SEGMENTS_OBSERVER) ){
@@ -871,8 +871,8 @@ EnzdesScorefileFilter::examine_pose(
 				calc_pose.metric( calc_it->first, calc_it->second, mval_size );
 				calc_value = mval_size.value();
 			} else if (calc_it->first == "seq_recovery") {
-				if ( toolbox::match_enzdes_util::get_enzdes_observer( calc_pose ) -> get_seq_recovery_cache() ) {
-					calc_value = toolbox::match_enzdes_util::get_enzdes_observer( calc_pose ) -> get_seq_recovery_cache() -> sequence_recovery( calc_pose );
+				if ( get_enzdes_observer( calc_pose ) -> get_seq_recovery_cache() ) {
+					calc_value = get_enzdes_observer( calc_pose ) -> get_seq_recovery_cache() -> sequence_recovery( calc_pose );
 				} else {
 					calc_value= 0.0;
 				}

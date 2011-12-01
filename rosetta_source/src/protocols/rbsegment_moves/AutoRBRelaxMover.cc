@@ -63,7 +63,7 @@
 // AUTO-REMOVED #include <core/io/silent/SilentStruct.hh>
 #include <basic/options/option.hh>
 #include <core/fragment/FragSet.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/basic_moves/FragmentMover.hh>
 #include <numeric/random/random.hh>
 
 // C++ headers
@@ -186,11 +186,11 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 		pose = start_pose;
 
 		// setup fragment movers
-		utility::vector1< protocols::simple_moves::FragmentMoverOP > fragmover;
+		utility::vector1< protocols::basic_moves::FragmentMoverOP > fragmover;
 		for ( utility::vector1< core::fragment::FragSetOP >::const_iterator
 					it = frag_libs_.begin(), it_end = frag_libs_.end();
 					it != it_end; it++ ) {
-			protocols::simple_moves::ClassicFragmentMover *cfm = new protocols::simple_moves::ClassicFragmentMover( *it, movemap_ );
+			protocols::basic_moves::ClassicFragmentMover *cfm = new protocols::basic_moves::ClassicFragmentMover( *it, movemap_ );
 			cfm->set_check_ss( false );
 			cfm->enable_end_bias_check( false );
 			fragmover.push_back( cfm );
@@ -211,7 +211,7 @@ AutoRBMover::apply( core::pose::Pose & pose ) {
 		protocols::moves::RandomMover random_move;
 
 		// loop fragment insertion
-		for ( std::vector< protocols::simple_moves::FragmentMoverOP >::const_iterator
+		for ( std::vector< protocols::basic_moves::FragmentMoverOP >::const_iterator
 				it = fragmover.begin(),it_end = fragmover.end(); it != it_end; it++ )
 			random_move.add_mover(*it, rb_chunks_.size());
 

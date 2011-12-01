@@ -198,9 +198,6 @@ protected:
 
 private:
 
-	///@brief score a pose with Pool-Scoring function (adds necessary data to pose (RDC, constraints,  etc ) )
-	virtual void score( core::pose::Pose& pose ) const;
-
 	void collect_alternative_decoys( SilentStructs primary_decoys, std::string alternative_decoy_file, SilentStructVector& output_decoys );
 
 	///@brief what is the expected lowest acceptance ratio at the current stage ?
@@ -291,10 +288,6 @@ private:
 	std::string chemshift_column_;
 	bool bDoBetaJumping_;
 
-	///@brief cache some of the experimental data so we don't reload from file for each evaluation
-	mutable core::scoring::ResidualDipolarCouplingOP rdc_data_; //need to cache this to avoid reading RDC file each time...
-	mutable core::scoring::constraints::ConstraintSetOP cst_data_;
-	mutable core::scoring::constraints::ConstraintSetOP cst_fa_data_;
 
 	/// ------------------ register cmdline options ---------------------------
 

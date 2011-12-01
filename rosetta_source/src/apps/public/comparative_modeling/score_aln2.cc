@@ -42,7 +42,7 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/ScoreFileSilentStruct.hh>
 
-#include <protocols/comparative_modeling/Align_RmsdEvaluator.hh>
+#include <protocols/evaluation/Align_RmsdEvaluator.hh>
 #include <protocols/comparative_modeling/PartialThreadingMover.hh>
 
 #include <utility/exit.hh>
@@ -186,7 +186,7 @@ main( int argc, char* argv [] ) {
 	using core::pose::PoseOP;
 	using utility::vector1;
 	using core::import_pose::pose_from_pdb;
-	using protocols::comparative_modeling::Align_RmsdEvaluator;
+	using protocols::evaluation::Align_RmsdEvaluator;
 	using core::pose::make_pose_from_sequence;
 	using protocols::comparative_modeling::PartialThreadingMover;
 

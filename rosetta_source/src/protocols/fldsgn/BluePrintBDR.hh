@@ -24,7 +24,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/dssp/Dssp.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/jd2/parser/BluePrint.fwd.hh>
+#include <protocols/fldsgn/BluePrint.fwd.hh>
 #include <protocols/forge/build/BuildInstruction.fwd.hh>
 #include <protocols/forge/build/BuildManager.hh>
 #include <protocols/forge/components/VarLengthBuild.fwd.hh>
@@ -66,8 +66,8 @@ public: // typedefs
 	typedef core::scoring::ScoreFunction ScoreFunction;
 	typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;
 
-	typedef protocols::jd2::parser::BluePrint BluePrint;
-	typedef protocols::jd2::parser::BluePrintOP BluePrintOP;
+	typedef protocols::fldsgn::BluePrint BluePrint;
+	typedef protocols::fldsgn::BluePrintOP BluePrintOP;
 	typedef protocols::forge::build::BuildInstructionOP BuildInstructionOP;
 	typedef protocols::forge::build::BuildManager BuildManager;
 	typedef protocols::forge::build::Interval Interval;

@@ -29,7 +29,7 @@
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 #include <core/fragment/util.hh>
-#include <protocols/simple_moves/ShakeStructureMover.hh>
+#include <protocols/moves/ShakeStructureMover.hh>
 
 
 using basic::T;

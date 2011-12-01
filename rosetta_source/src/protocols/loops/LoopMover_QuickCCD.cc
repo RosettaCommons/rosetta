@@ -34,7 +34,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/fragment/FragSet.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/basic_moves/FragmentMover.hh>
 
 #include <core/pose/symmetry/util.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
@@ -141,7 +141,7 @@ LoopResult LoopMover_Perturb_QuickCCD::model_loop(
 	using namespace kinematics;
 	using namespace scoring;
 	using namespace optimization;
-	using namespace protocols::simple_moves;
+	using namespace protocols::basic_moves;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace numeric::random;

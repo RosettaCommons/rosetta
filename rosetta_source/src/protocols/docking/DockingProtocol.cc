@@ -62,7 +62,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/ScoreMover.hh>
+// AUTO-REMOVED #include <protocols/moves/ScoreMover.hh>
 // AUTO-REMOVED #include <protocols/moves/RigidBodyMover.hh>
 #include <protocols/moves/RepackSidechainsMover.hh>
 // AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
@@ -77,6 +77,7 @@
 #include <protocols/ScoreMap.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>
+// AUTO-REMOVED #include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // Utility Headers

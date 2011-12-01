@@ -56,8 +56,7 @@
 // AUTO-REMOVED #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
 // AUTO-REMOVED #include <core/import_pose/pose_stream/util.hh>
 
-// XRW-REMOVE #include <protocols/jumping/util.hh>
-#include <core/scoring/dssp/Dssp.hh>
+#include <protocols/jumping/util.hh>
 
 #include <utility/vector1.hh>
 
@@ -102,8 +101,7 @@ char RotamerRecovery::torsion2big_bin(
 }
 
 utility::vector1< char > RotamerRecovery::get_ss( core::pose::Pose & pose ) {
-	core::scoring::dssp::Dssp dssp(pose);
-	dssp.insert_ss_into_pose(pose);
+	protocols::jumping::assign_ss_dssp( pose );
 
 	utility::vector1< char > ss( pose.total_residue(), 'L' );
 	for ( core::Size ii = 1; ii <= pose.total_residue(); ++ii ) {

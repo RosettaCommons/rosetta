@@ -30,7 +30,7 @@
 #include <core/pose/util.hh>
 // #include <core/kinematics/MoveMap.hh>
 // #include <core/fragment/FragSet.hh>
-// #include <protocols/simple_moves/FragmentMover.hh>
+// #include <protocols/basic_moves/FragmentMover.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueType.hh>

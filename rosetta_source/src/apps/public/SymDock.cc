@@ -11,7 +11,7 @@
 
 // libRosetta headers
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
-// AUTO-REMOVED #include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 
 
@@ -33,7 +33,7 @@
 #include <basic/Tracer.hh>
 
 #include <protocols/jd2/JobInputter.fwd.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.fwd.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -50,6 +50,7 @@ int
 main( int argc, char * argv [] )
 {
 	using namespace protocols::symmetric_docking;
+	using namespace protocols::moves::symmetry;
 	using namespace protocols::jd2;
 
 	// initialize core

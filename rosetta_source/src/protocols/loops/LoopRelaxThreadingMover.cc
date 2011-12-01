@@ -16,7 +16,7 @@
 #include <protocols/loops/LoopRelaxMover.hh>
 #include <protocols/loops/LoopRelaxThreadingMover.hh>
 
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 // AUTO-REMOVED #include <protocols/electron_density/util.hh>
 
 #include <core/fragment/FragSet.hh>
@@ -47,7 +47,7 @@
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/comparative_modeling/ThreadingJob.hh>
+#include <protocols/jd2/ThreadingJob.hh>
 // AUTO-REMOVED #include <protocols/jd2/MultiThreadingJob.hh>
 
 #include <protocols/comparative_modeling/util.hh>
@@ -86,7 +86,7 @@ void LoopRelaxThreadingMover::apply( core::pose::Pose & pose ) {
 	using core::Size;
 	basic::Tracer tr("protocols.threading");
 	// looprelax
-	protocols::comparative_modeling::ThreadingJobCOP job = dynamic_cast< protocols::comparative_modeling::ThreadingJob const * >(
+	ThreadingJobCOP job = dynamic_cast< ThreadingJob const * >(
 		JobDistributor::get_instance()->current_job()->inner_job().get()
 	);
 	if ( !job ) {
@@ -104,7 +104,7 @@ void LoopRelaxThreadingMover::apply( core::pose::Pose & pose ) {
 
 	// setup for symmetry
 	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-		protocols::symmetric_docking::SetupForSymmetryMover pre_mover;
+		protocols::moves::symmetry::SetupForSymmetryMover pre_mover;
 		pre_mover.apply( pose );
 	}
 

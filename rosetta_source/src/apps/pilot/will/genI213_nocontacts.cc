@@ -69,9 +69,9 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SymMinMover.hh>
+#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
@@ -892,7 +892,7 @@ void design_1comp(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
 
   if( core::pose::symmetry::is_symmetric(pose) ) {
     core::pack::make_symmetric_PackerTask(pose,task);
-    protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+    protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
     repack.apply(pose);
   } else {
     protocols::moves::PackRotamersMover repack( sf, task );
@@ -916,7 +916,7 @@ void design_1comp(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
 
   // if( core::pose::symmetry::is_symmetric(pose) ) {
   //  core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
-  //  protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+  //  protocols::moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
   //  m.apply(pose);
   // } else {
   //  protocols::moves::MinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
@@ -955,7 +955,7 @@ void repack_iface(Pose & p, ScoreFunctionOP sf, Size Ntri, vector1<bool> & iface
 
   if( core::pose::symmetry::is_symmetric(p) ) {
     core::pack::make_symmetric_PackerTask(p,task);
-    protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+    protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
     repack.apply(p);
   } else {
     protocols::moves::PackRotamersMover repack( sf, task );

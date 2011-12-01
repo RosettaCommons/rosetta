@@ -79,7 +79,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
-#include <protocols/evaluation/EvaluatorFactory.hh>
+#include <protocols/evaluation/util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/file/file_sys_util.hh>
@@ -381,7 +381,7 @@ int universal_main(
 
 
 		evaluation::MetaPoseEvaluatorOP evaluator = new evaluation::MetaPoseEvaluator;
-		evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator);
+		evaluation::read_common_evaluator_options(*evaluator);
 
 		BasicJobOP curr_job, prev_job;
 		int curr_nstruct, num_structures_processed = 0;

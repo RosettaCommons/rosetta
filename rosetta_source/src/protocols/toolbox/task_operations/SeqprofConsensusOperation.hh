@@ -25,7 +25,7 @@
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/sequence/SequenceProfile.fwd.hh>
 #include <core/types.hh>
-#include <core/io/ddg/PositionDdGInfo.fwd.hh>
+#include <protocols/ddg/ddGData.fwd.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
@@ -139,7 +139,7 @@ public:
 
 private:
 	std::string ddG_predictions_filename_;
-	std::map< core::Size, core::io::PositionDdGInfo::PositionDdGInfoOP > position_ddGs_;
+	std::map< core::Size, ddG::PositionDdGInfoOP > position_ddGs_;
 	core::Real conservation_cutoff_; //how freqeunt a residue must be in the sequence profile to count as conserved
 	core::Real ddG_cutoff_; //how favorable the ddG at a position has to be for the residue to be considered untouchable
 	bool verbose_; //spit out information about untouchable residues

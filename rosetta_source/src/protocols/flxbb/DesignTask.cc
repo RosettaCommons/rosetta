@@ -17,7 +17,7 @@
 
 // Package Headers
 //#include <protocols/flxbb/DesignLayerOperation.hh>
-#include <protocols/flxbb/LayerDesignOperation.hh>
+#include <protocols/toolbox/task_operations/LayerDesignOperation.hh>
 #include <protocols/flxbb/FilterStructs.hh>
 
 // Project Headers
@@ -231,8 +231,8 @@ void DesignTask_Layer::setup( pose::Pose const & pose, pack::task::PackerTaskOP 
 	operation::InitializeFromCommandlineOP cmop = new operation::InitializeFromCommandline;
 	cmop->apply( pose, *task );
 	//DesignLayerOperationOP op = new DesignLayerOperation( dsgn_core_, dsgn_boundary_, dsgn_surface_ );
-	protocols::flxbb::LayerDesignOperationOP op
-		= new protocols::flxbb::LayerDesignOperation( dsgn_core_, dsgn_boundary_, dsgn_surface_ );
+	protocols::toolbox::task_operations::LayerDesignOperationOP op
+		= new protocols::toolbox::task_operations::LayerDesignOperation( dsgn_core_, dsgn_boundary_, dsgn_surface_ );
 
 	if( resfile() != "" ){
 		TR << "Resfile is applied, except for the positions of AUTO " << std::endl;

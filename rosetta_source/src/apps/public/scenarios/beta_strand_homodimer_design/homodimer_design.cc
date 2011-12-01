@@ -60,15 +60,15 @@
 // AUTO-REMOVED #include <protocols/moves/MutateResidue.hh>
 #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
 #include <protocols/protein_interface_design/movers/SaveAndRetrieveSidechains.hh>
-#include <protocols/simple_moves/ddG.hh>
+#include <protocols/protein_interface_design/movers/ddG.hh>
 //#include <protocols/moves/PymolMover.hh>
 //symmetry
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymmetricRMSMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SymmetricRMSMover.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SymRotamerTrialsMover.hh>
+#include <protocols/moves/symmetry/SymMinMover.hh>
+#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 // AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
@@ -225,14 +225,14 @@ void HDdesignMover::cloak_and_setup( pose::Pose & pose ){
 		zero_vector.push_back(0.0);
 		basic::options::option[ OptionKeys::symmetry::perturb_rigid_body_dofs ].value(zero_vector);
 		//setup apply
-		protocols::symmetric_docking::SetupForSymmetryMoverOP setup_mover = new protocols::symmetric_docking::SetupForSymmetryMover;
+		protocols::moves::symmetry::SetupForSymmetryMoverOP setup_mover = new protocols::moves::symmetry::SetupForSymmetryMover;
 		setup_mover->apply(pose);
 		//uncloak
 		basic::options::option[ OptionKeys::symmetry::perturb_rigid_body_dofs ].value(pert_mags);
 	}
 	else{
 		//setup apply
-		protocols::symmetric_docking::SetupForSymmetryMoverOP setup_mover = new protocols::symmetric_docking::SetupForSymmetryMover;
+		protocols::moves::symmetry::SetupForSymmetryMoverOP setup_mover = new protocols::moves::symmetry::SetupForSymmetryMover;
 		setup_mover->apply(pose);
 	}
 
@@ -351,10 +351,10 @@ void HDdesignMover::sym_repack_minimize( pose::Pose & pose ){
 // 	}	//end the movemap creation
 
 
-	protocols::simple_moves::symmetry::SymMinMoverOP sym_minmover = new protocols::simple_moves::symmetry::SymMinMover(mm, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.001, true /*use_nblist*/ );
+	protocols::moves::symmetry::SymMinMoverOP sym_minmover = new protocols::moves::symmetry::SymMinMover(mm, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.001, true /*use_nblist*/ );
 
 	task_design_ = tf_design_->create_task_and_apply_taskoperations( pose );
-  protocols::simple_moves::symmetry::SymPackRotamersMoverOP sym_pack_design = new protocols::simple_moves::symmetry::SymPackRotamersMover(scorefxn_, task_design_);
+  protocols::moves::symmetry::SymPackRotamersMoverOP sym_pack_design = new protocols::moves::symmetry::SymPackRotamersMover(scorefxn_, task_design_);
 
 	TR<< "Monomer total residues: "<< monomer_nres_ << " Repacked/Designed residues: "
 		<< task_design_->num_to_be_packed() / 2 << std::endl;
@@ -507,7 +507,7 @@ void HDdesignMover::apply (pose::Pose & pose ) {
 		//fill task factory with these restrictions
 		tf_nataa->push_back( repack_op );
 		PackerTaskOP task_nataa = tf_nataa->create_task_and_apply_taskoperations( pose );
-		protocols::simple_moves::symmetry::SymPackRotamersMoverOP sym_pack_nataa = new protocols::simple_moves::symmetry::SymPackRotamersMover(scorefxn_, task_nataa);
+		protocols::moves::symmetry::SymPackRotamersMoverOP sym_pack_nataa = new protocols::moves::symmetry::SymPackRotamersMover(scorefxn_, task_nataa);
 		sym_pack_nataa->apply( pose );
 		TR << "Default SCORE after all NATAA repack: " << (*scorefxn_)(pose) << std::endl;
 		//JobDistributor::get_instance()->job_outputter()->other_pose( job_me, pose, "nataarepack_");
@@ -531,7 +531,7 @@ void HDdesignMover::apply (pose::Pose & pose ) {
 	//final minimization step
 	kinematics::MoveMapOP mm = new kinematics::MoveMap;
  	mm->set_bb( true ); mm->set_chi( true ); mm->set_jump( true );
-	protocols::simple_moves::symmetry::SymMinMoverOP sym_minmover_final = new protocols::simple_moves::symmetry::SymMinMover( mm, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
+	protocols::moves::symmetry::SymMinMoverOP sym_minmover_final = new protocols::moves::symmetry::SymMinMover( mm, scorefxn_, option[ OptionKeys::run::min_type ].value(), 0.01, true /*use_nblist*/ );
 	sym_minmover_final->apply(pose);
 	TR << "Final minimization  SCORE:" <<  (* scorefxn_ )(pose) << std::endl;
 
@@ -546,7 +546,7 @@ void HDdesignMover::apply (pose::Pose & pose ) {
  	}
 
 	//find ddg
-	protocols::simple_moves::ddGOP ddG_mover = new protocols::simple_moves::ddG( scorefxn_, 1 /*jump*/, true /*symmetric*/ );
+	protocols::protein_interface_design::movers::ddGOP ddG_mover = new protocols::protein_interface_design::movers::ddG( scorefxn_, 1 /*jump*/, true /*symmetric*/ );
 	ddG_mover->calculate(pose);
 	core::Real ddgvalue = ddG_mover->sum_ddG();
 	//some dirty filtering

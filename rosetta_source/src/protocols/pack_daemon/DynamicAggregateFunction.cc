@@ -26,7 +26,7 @@
 #include <core/scoring/ScoreFunction.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <basic/Tracer.hh>
-#include <numeric/expression_parser/Arithmetic.hh>
+#include <protocols/optimize_weights/Arithmetic.hh>
 #include <protocols/multistate_design/MultiStatePacker.hh>
 // AUTO-REMOVED #include <protocols/multistate_design/SingleState.hh>  // REQUIRED FOR WINDOWS (APL NOTE: why?)
 
@@ -53,9 +53,9 @@ namespace pack_daemon {
 
 static basic::Tracer TR( "protocols.pack_daemon.DynamicAggregateFunction" );
 
-using namespace numeric::expression_parser;
+using namespace protocols::optimize_weights;
 
-///// class VectorExpression : public Expression
+///// class VectorExpression : public protocols::optimize_weights::Expression
 
 VectorExpression::VectorExpression( std::string const & name ) : parent(), name_( name ) {}
 VectorExpression::~VectorExpression() {}
@@ -391,7 +391,7 @@ VMinBy::active_variables() const
 
 }
 
-/////// class PowExpression : public BinaryExpression
+/////// class PowExpression : public protocols::optimize_weights::BinaryExpression
 
 PowExpression::PowExpression( ExpressionCOP base, ExpressionCOP exponent ) : parent( base, exponent ) {}
 PowExpression::~PowExpression() {}
@@ -409,7 +409,7 @@ PowExpression::differentiate( std::string const & ) const
 	return 0;
 }
 
-/////// class ExpExpression : public UnaryExpression
+/////// class ExpExpression : public protocols::optimize_weights::UnaryExpression
 
 ExpExpression::ExpExpression( ExpressionCOP ex ) : parent( ex ) {}
 ExpExpression::~ExpExpression() {}
@@ -428,7 +428,7 @@ ExpExpression::differentiate( std::string const & ) const
 }
 
 
-/////// class LnExpression : public UnaryExpression
+/////// class LnExpression : public protocols::optimize_weights::UnaryExpression
 
 LnExpression::LnExpression( ExpressionCOP ex ) : parent( ex ) {}
 LnExpression::~LnExpression() {}
@@ -475,7 +475,7 @@ InSetExpression::differentiate( std::string const & ) const
 }
 
 
-/////// class VectorExpressionCreator : public ExpressionCreator
+/////// class VectorExpressionCreator : public protocols::optimize_weights::ExpressionCreator
 
 VectorExpressionCreator::VectorExpressionCreator( DynamicAggregateFunction const & owner ) : owner_( owner ) {}
 VectorExpressionCreator::~VectorExpressionCreator() {}
@@ -768,47 +768,47 @@ DynamicAggregateFunction::function_expression(
 		if ( args.size() != 3 ) {
 			throw utility::excn::EXCN_Msg_Exception( "ite expression construction requested with nargs != 3. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new ITEExpression( args[ 1 ], args[ 2 ], args[ 3 ] );
+		return new protocols::optimize_weights::ITEExpression( args[ 1 ], args[ 2 ], args[ 3 ] );
 	} else if ( fname == "abs" ) {
 		if ( args.size() != 1 ) {
 			throw utility::excn::EXCN_Msg_Exception( "abs expression construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new AbsoluteValueExpression( args[ 1 ] );
+		return new protocols::optimize_weights::AbsoluteValueExpression( args[ 1 ] );
 	} else if ( fname == "gt" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "gt expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new GT_Expression( args[ 1 ], args[ 2 ] );
+		return new protocols::optimize_weights::GT_Expression( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "lt" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "lt expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new LT_Expression( args[ 1 ], args[ 2 ] );
+		return new protocols::optimize_weights::LT_Expression( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "gte" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "gte expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new GTE_Expression( args[ 1 ], args[ 2 ] );
+		return new protocols::optimize_weights::GTE_Expression( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "lte" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "lte expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new LTE_Expression( args[ 1 ], args[ 2 ] );
+		return new protocols::optimize_weights::LTE_Expression( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "and" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "and expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new AndExpression( args[ 1 ], args[ 2 ] );
+		return new protocols::optimize_weights::AndExpression( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "or" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "or expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new OrExpression( args[ 1 ], args[ 2 ] );
+		return new protocols::optimize_weights::OrExpression( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "not" ) {
 		if ( args.size() != 1 ) {
 			throw utility::excn::EXCN_Msg_Exception( "not expression construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new NotExpression( args[ 1 ] );
+		return new protocols::optimize_weights::NotExpression( args[ 1 ] );
 	}
 	throw utility::excn::EXCN_Msg_Exception( "Unrecognized function requested of DynamicAggregateFunction: " + fname );
 	return 0;
@@ -831,6 +831,7 @@ DynamicAggregateFunction::state_name( Size state_index ) const
 
 void DynamicAggregateFunction::read_all_variables_from_input_file( std::istream & input )
 {
+	using namespace protocols::optimize_weights;
 
 	initialize_scanner();
 
@@ -2492,7 +2493,7 @@ EntityFuncExpressionCreator::~EntityFuncExpressionCreator()
 
 ExpressionCOP
 EntityFuncExpressionCreator::handle_variable_expression(
-	ArithmeticASTValue const & node
+	protocols::optimize_weights::ArithmeticASTValue const & node
 )
 {
 	return owner_.variable_expression( node );
@@ -2500,7 +2501,7 @@ EntityFuncExpressionCreator::handle_variable_expression(
 
 ExpressionCOP
 EntityFuncExpressionCreator::handle_function_expression(
-	FunctionTokenCOP function,
+	protocols::optimize_weights::FunctionTokenCOP function,
 	utility::vector1< ExpressionCOP > const & args
 )
 {
@@ -2581,7 +2582,7 @@ EntityFunc::evaluate( Entity const & entity, bool verbose )
 }
 
 ExpressionCOP
-EntityFunc::variable_expression( ArithmeticASTValue const & var_node ) const
+EntityFunc::variable_expression( protocols::optimize_weights::ArithmeticASTValue const & var_node ) const
 {
 	if ( var_node.is_literal() ) {
 		utility_exit_with_message( "Error in EntityFunc::variable_expression; non-variable (literal) node recieved" +
@@ -2602,15 +2603,15 @@ EntityFunc::variable_expression( ArithmeticASTValue const & var_node ) const
 
 ExpressionCOP
 EntityFunc::function_expression(
-	FunctionTokenCOP function,
+	protocols::optimize_weights::FunctionTokenCOP function,
 	utility::vector1< ExpressionCOP > const & args
 ) const
 {
 	std::string const fname = function->name();
 	if ( fname == "max" ) {
-		return new MaxExpression( args[ 1 ], args[ 2 ] );
+		return new protocols::optimize_weights::MaxExpression( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "min" ) {
-		return new MinExpression( args[ 1 ], args[ 2 ] );
+		return new protocols::optimize_weights::MinExpression( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "exp" ) {
 		if ( args.size() != 1 ) {
 			throw utility::excn::EXCN_Msg_Exception( "exp expression construction requested with more than one argument: " + utility::to_string( args.size() )  );
@@ -2630,52 +2631,52 @@ EntityFunc::function_expression(
 		if ( args.size() != 3 ) {
 			throw utility::excn::EXCN_Msg_Exception( "ite expression construction requested with nargs != 3. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new ITEExpression( args[ 1 ], args[ 2 ], args[ 3 ] );
+		return new protocols::optimize_weights::ITEExpression( args[ 1 ], args[ 2 ], args[ 3 ] );
 	} else if ( fname == "abs" ) {
 		if ( args.size() != 1 ) {
 			throw utility::excn::EXCN_Msg_Exception( "abs expression construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new AbsoluteValueExpression( args[ 1 ] );
+		return new protocols::optimize_weights::AbsoluteValueExpression( args[ 1 ] );
 	} else if ( fname == "gt" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "gt expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new GT_Expression( args[ 1 ], args[ 2 ] );
+		return new protocols::optimize_weights::GT_Expression( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "lt" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "lt expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new LT_Expression( args[ 1 ], args[ 2 ] );
+		return new protocols::optimize_weights::LT_Expression( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "gte" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "gte expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new GTE_Expression( args[ 1 ], args[ 2 ] );
+		return new protocols::optimize_weights::GTE_Expression( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "lte" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "lte expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new LTE_Expression( args[ 1 ], args[ 2 ] );
+		return new protocols::optimize_weights::LTE_Expression( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "eq" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "eq expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new EqualsExpression( args[ 1 ], args[ 2 ] );
+		return new protocols::optimize_weights::EqualsExpression( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "and" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "and expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new AndExpression( args[ 1 ], args[ 2 ] );
+		return new protocols::optimize_weights::AndExpression( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "or" ) {
 		if ( args.size() != 2 ) {
 			throw utility::excn::EXCN_Msg_Exception( "or expression construction requested with nargs != 2. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new OrExpression( args[ 1 ], args[ 2 ] );
+		return new protocols::optimize_weights::OrExpression( args[ 1 ], args[ 2 ] );
 	} else if ( fname == "not" ) {
 		if ( args.size() != 1 ) {
 			throw utility::excn::EXCN_Msg_Exception( "not expression construction requested with nargs != 1. Nargs= " + utility::to_string( args.size() )  );
 		}
-		return new NotExpression( args[ 1 ] );
+		return new protocols::optimize_weights::NotExpression( args[ 1 ] );
 	}
 
 	throw utility::excn::EXCN_Msg_Exception( "Unable to find function with name " + fname + " in"

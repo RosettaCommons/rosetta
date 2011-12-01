@@ -26,7 +26,7 @@
 
 
 // libRosetta headers
-// AUTO-REMOVED #include <protocols/simple_moves/ScoreMover.hh>
+// AUTO-REMOVED #include <protocols/moves/ScoreMover.hh>
 
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/conformation/Residue.hh>

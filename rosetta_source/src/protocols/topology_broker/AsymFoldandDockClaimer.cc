@@ -12,9 +12,9 @@
 
 // Unit Headers
 #include <protocols/topology_broker/AsymFoldandDockClaimer.hh>
-#include <protocols/simple_moves/asym_fold_and_dock/AsymFoldandDockRbTrialMover.hh>
+#include <protocols/moves/asym_fold_and_dock/AsymFoldandDockRbTrialMover.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
-#include <protocols/simple_moves/asym_fold_and_dock/AsymFoldandDockMoveRbJumpMover.hh>
+#include <protocols/moves/asym_fold_and_dock/AsymFoldandDockMoveRbJumpMover.hh>
 
 // Package Headers
 #include <protocols/topology_broker/DofClaim.hh>
@@ -88,12 +88,11 @@ AsymFoldandDockClaimer::add_mover(
 {
 	using namespace basic::options;
 	using namespace protocols::loops;
-	using namespace protocols::simple_moves;
 
-	moves::MoverOP move_anchor_mover =  new simple_moves::asym_fold_and_dock::AsymFoldandDockMoveRbJumpMover( chain_break_res_ );
+	moves::MoverOP move_anchor_mover =  new moves::asym_fold_and_dock::AsymFoldandDockMoveRbJumpMover( chain_break_res_ );
 	moves::MoverOP rb_trial_mover =	(stageID==abinitio::STAGE_4) ?
-		new simple_moves::asym_fold_and_dock::AsymFoldandDockRbTrialMover( &scorefxn, true ) :
-		new simple_moves::asym_fold_and_dock::AsymFoldandDockRbTrialMover( &scorefxn );  // smooth RB moves in stage 4
+		new moves::asym_fold_and_dock::AsymFoldandDockRbTrialMover( &scorefxn, true ) :
+		new moves::asym_fold_and_dock::AsymFoldandDockRbTrialMover( &scorefxn );  // smooth RB moves in stage 4
 	moves::MoverOP slide_mover = new protocols::docking::DockingSlideIntoContact( docking_jump_ );
 	core::Real move_anchor_weight(1.0),
 	           rb_weight(option[ OptionKeys::fold_and_dock::rigid_body_frequency ]()),

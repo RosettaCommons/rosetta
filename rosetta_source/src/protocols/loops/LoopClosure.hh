@@ -38,7 +38,7 @@
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/Frame.hh>
 
-#include <protocols/simple_moves/FragmentMover.fwd.hh>
+#include <protocols/basic_moves/FragmentMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
@@ -186,7 +186,7 @@ protected:
   core::Size nr_fragments_; //outer_cycles;
   core::Size cycles_; // trials per fragments
 
-  simple_moves::FragmentMoverOP frag_mover_;
+  basic_moves::FragmentMoverOP frag_mover_;
   moves::MoverOP ccd_mover_;
 
   core::fragment::FragSetCOP fragset_;

@@ -41,7 +41,7 @@
 #include <protocols/loops/CcdLoopClosureMover.hh>
 #include <protocols/moves/BackboneMover.hh> //23
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
-#include <protocols/loops/kinematic_closure/KinematicMover.hh>
+#include <protocols/moves/KinematicMover.hh>
 #include <protocols/moves/kinematic_closure/KinematicPerturber.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <numeric/random/random.hh>
@@ -77,7 +77,7 @@
 #include <protocols/frag_picker/BestTotalScoreSelector.hh>
 #include <protocols/frag_picker/DiversifyCrmsdByClustering.hh>
 #include <protocols/frag_picker/scores/FragmentScoringMethod.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/basic_moves/FragmentMover.hh>
 #include <protocols/loops/ccd_closure.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>

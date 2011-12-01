@@ -16,6 +16,7 @@
 #include <protocols/forge/remodel/RemodelMover.hh>
 #include <protocols/forge/remodel/RemodelLoopMover.hh>
 #include <protocols/forge/remodel/RemodelEnzdesCstModule.fwd.hh>
+#include <protocols/protein_interface_design/dock_design_filters.hh>
 
 // package headers
 #include <protocols/forge/build/BuildInstruction.hh>
@@ -25,7 +26,7 @@
 #include <protocols/forge/methods/chainbreak_eval.hh>
 #include <protocols/forge/methods/pose_mod.hh>
 #include <protocols/forge/methods/util.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
+#include <protocols/enzdes/EnzdesCacheableObserver.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 // AUTO-REMOVED #include <core/pack/pack_rotamers.hh>
@@ -35,7 +36,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 // AUTO-REMOVED #include <core/pose/symmetry/util.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 // project headers
@@ -62,7 +63,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/Constraint.hh>
-#include <protocols/simple_moves/symmetry/SetupNCSMover.hh> //dihedral constraint
+#include <protocols/moves/symmetry/SetupNCSMover.hh> //dihedral constraint
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -101,10 +102,6 @@
 #include <protocols/moves/PackRotamersMover.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
-//Auto Headers
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
-
 
 namespace protocols {
 namespace forge {
@@ -305,7 +302,7 @@ void RemodelMover::apply( Pose & pose ) {
 	using protocols::toolbox::pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator;
 	using protocols::toolbox::pose_metric_calculators::NeighborhoodByDistanceCalculator;
 	using namespace core::scoring;
-	using namespace protocols::simple_filters;
+	using namespace protocols::protein_interface_design;
 	using namespace basic::options;
 	using namespace core::scoring::constraints;
 
@@ -387,11 +384,11 @@ if (working_model.manager.size()!= 0){
 	//testArc=pose;
 	manager_ = working_model.manager;
 	core::pose::renumber_pdbinfo_based_on_conf_chains(
-		pose,
-		true ,  // fix chain
-		true, // start_from_existing_numbering
-		false, // keep_insertion_code
-		false // rotate_chain_id
+																												pose,
+																												true ,  // fix chain
+																												true, // start_from_existing_numbering
+																												false, // keep_insertion_code
+																												false // rotate_chain_id
 	);
 
 }
@@ -422,7 +419,7 @@ if (working_model.manager.size()!= 0){
 
 	//initialize symmetry
   if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-      protocols::symmetric_docking::SetupForSymmetryMover pre_mover;
+      protocols::moves::symmetry::SetupForSymmetryMover pre_mover;
       pre_mover.apply( pose );
 			// Remodel assumes chain ID is ' '
 			core::pose::PDBInfoOP pdb_info ( pose.pdb_info() );
@@ -537,7 +534,7 @@ if (working_model.manager.size()!= 0){
 			//safety
 			pose.remove_constraints();
 			//wipe out cst_cache
-			protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> set_cst_cache( NULL );
+			protocols::enzdes::get_enzdes_observer( pose ) -> set_cst_cache( NULL );
 			//wipe out observer too
 			pose.observer_cache().set( core::pose::datacache::CacheableObserverType::ENZDES_OBSERVER, NULL , false);
 
@@ -920,7 +917,7 @@ bool RemodelMover::design_refine_seq_relax(
 		cst_set_post_built = new ConstraintSet( *pose.constraint_set() );
 	}
 
-	protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
+	protocols::moves::symmetry::SetupNCSMover setup_ncs;
 	if (basic::options::option[ OptionKeys::remodel::repeat_structure].user()){
 				//Dihedral (NCS) Constraints, need to be updated each mutation cycle for sidechain symmetry
 

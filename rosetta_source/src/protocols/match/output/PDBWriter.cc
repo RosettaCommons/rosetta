@@ -32,7 +32,7 @@
 
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/enzdes/enzdes_util.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
+#include <protocols/enzdes/EnzdesCacheableObserver.hh>
 
 // Utility headers
 #include <utility/string_util.hh>
@@ -735,7 +735,7 @@ PoseMatchOutputWriter::insert_match_into_pose(
 			if( additional_lig_confs.size() > 99 ) break;
 		}
 		if( additional_lig_confs.size() > 1 ){
-			protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_rigid_body_confs_for_lig( pose.total_residue(), additional_lig_confs );
+			protocols::enzdes::get_enzdes_observer( pose )->set_rigid_body_confs_for_lig( pose.total_residue(), additional_lig_confs );
 		}
 	}
 	else utility_exit_with_message("PoseMatchOutputWriter not set up to put a downstream pose containing more than one ligand into the upstream pose");

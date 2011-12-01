@@ -30,7 +30,7 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzCstTemplateRes.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
+#include <protocols/enzdes/EnzdesCacheableObserver.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 // AUTO-REMOVED #include <protocols/forge/build/BuildInstruction.hh> // REQUIRED FOR WINDOWS
 
@@ -64,11 +64,12 @@ RemodelEnzdesCstModule::apply(core::pose::Pose & pose)
     enable_constraint_scoreterms(scorefxn_);
 
 		//tmp hack -- from florian for cstcashe observer initialization
-		toolbox::match_enzdes_util::EnzdesCstCacheOP cst_cache = toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache();
+	  using namespace protocols::enzdes;
+		EnzdesCstCacheOP cst_cache = get_enzdes_observer( pose )->cst_cache();
 		if( !cst_cache ) {
 			TR << "cst_cache nonexistant; make new instance." << std::endl;
-			toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( new EnzdesCstCache( this, cst_pairs_.size() ) );
-			cst_cache = toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache();
+			get_enzdes_observer( pose )->set_cst_cache( new EnzdesCstCache( this, cst_pairs_.size() ) );
+			cst_cache = get_enzdes_observer( pose )->cst_cache();
 		}
 		//tmp hack over
 
@@ -119,6 +120,8 @@ RemodelEnzdesCstModule::enable_constraint_scoreterms(core::scoring::ScoreFunctio
 
 void
 RemodelEnzdesCstModule::blueprint_cst_definition(core::pose::Pose & pose ){
+
+	using namespace protocols::enzdes;
 
 	utility::vector1<core::Size> cstblock;
 	utility::vector1<std::string> role;

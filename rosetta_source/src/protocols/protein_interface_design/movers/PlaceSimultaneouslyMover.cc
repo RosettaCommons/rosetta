@@ -60,9 +60,11 @@
 // Unit Headers
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/BasicFilters.hh>
+#include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <protocols/protein_interface_design/design_utils.hh>
 #include <protocols/protein_interface_design/movers/PlaceUtils.hh>
 #include <protocols/protein_interface_design/util.hh>
+#include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
@@ -78,12 +80,6 @@
 #include <core/pose/util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
-//Auto Headers
-#include <protocols/simple_filters/EnergyPerResidueFilter.hh>
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
-#include <protocols/simple_moves/DesignRepackMover.hh>
-
 
 #define foreach BOOST_FOREACH
 
@@ -131,7 +127,7 @@ bool
 PlaceSimultaneouslyMover::minimize_no_bb( core::pose::Pose & pose ) const {
 
 	core::scoring::ScoreFunctionCOP stub_scorefxn( make_stub_scorefxn() );
-	simple_filters::ScoreTypeFilter const stf( stub_scorefxn, backbone_stub_constraint, 1.0 );
+	ScoreTypeFilter const stf( stub_scorefxn, backbone_stub_constraint, 1.0 );
 	core::Real const before_min( stf.compute( pose ) );
 	if( before_min >= -0.0001 ){
 		TR<<"bb_cst evalutes to 0. Failing";
@@ -165,7 +161,7 @@ PlaceSimultaneouslyMover::minimize_all( core::pose::Pose & pose, core::Size cons
 		foreach( MoverRealPair const curr, minimization_movers_ ){
 			using namespace core::scoring;
 
-			simple_moves::DesignRepackMoverOP const curr_mover( curr.first );
+			DesignRepackMoverOP const curr_mover( curr.first );
 			core::Real const bb_cst_weight( curr.second );
 			TR<<"applying mover: "<<curr_mover->get_name()<<'\n';
 			//restricting movers for stub minimization
@@ -312,7 +308,7 @@ PlaceSimultaneouslyMover::pair_sets_with_positions( core::pose::Pose & pose )
 		HotspotStubSetOP stubset( stubset_pos_pair.first );
 		HotspotStubCOP stub( stubset_pos_pair.second.first );
 		using namespace protocols::filters;
-		simple_filters::EnergyPerResidueFilter total_energy_filter( pos, score12, total_score, stub_energy_threshold_ );
+		EnergyPerResidueFilter total_energy_filter( pos, score12, total_score, stub_energy_threshold_ );
 		bool const pass_tot_energy( total_energy_filter.apply( pose ) );
 		protocols::filters::FilterOP modified_filter( stub_set_filters_[ stubset ]->clone() );
 		protocols::moves::modify_ResId_based_object( modified_filter, pos );
@@ -410,7 +406,7 @@ PlaceSimultaneouslyMover::design( core::pose::Pose & pose )
 	saved_coord_constraints_ = remove_coordinate_constraints_from_pose( pose );
 	foreach( MoverRealPair const mover_coord_cst, design_movers_ ){//design movers
 		core::Real const sdev( mover_coord_cst.second );
-		simple_moves::DesignRepackMoverOP mover( mover_coord_cst.first );
+		DesignRepackMoverOP mover( mover_coord_cst.first );
 		TR<<"applying design mover "<<mover->get_name()<<'\n';
 		if( sdev >= 0 ){//use constraints
 			core::Size const before_refresh( pose.constraint_set()->get_all_constraints().size() );
@@ -556,12 +552,12 @@ PlaceSimultaneouslyMover::parse_my_tag( TagPtr const tag,
 				std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( stub_mover_name ));
 				bool const stub_mover_found( find_mover != movers.end() );
 				if( stub_mover_found ){
-					simple_moves::DesignRepackMoverOP drSOP = dynamic_cast< simple_moves::DesignRepackMover * >( find_mover->second->clone().get() );
+					DesignRepackMoverOP drSOP = dynamic_cast< DesignRepackMover * >( find_mover->second->clone().get() );
 					if( !drSOP ){
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drSOP );
 					}//done cast check
-					minimization_movers_.push_back( std::make_pair< simple_moves::DesignRepackMoverOP, Real >( drSOP, bb_stub_constraint_weight) );
+					minimization_movers_.push_back( std::make_pair< DesignRepackMoverOP, Real >( drSOP, bb_stub_constraint_weight) );
 					TR<<"added stub minimize mover "<<stub_mover_name<<" to minimize towards the stub. Using this weight for the bb stub constraints: "<< bb_stub_constraint_weight<<'\n';
 				}
 			}
@@ -576,12 +572,12 @@ PlaceSimultaneouslyMover::parse_my_tag( TagPtr const tag,
 				std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( mover_name ));
 				bool const mover_found( find_mover != movers.end() );
 				if( mover_found ){
-					simple_moves::DesignRepackMoverOP drOP = dynamic_cast< simple_moves::DesignRepackMover * >( find_mover->second.get() );
+					DesignRepackMoverOP drOP = dynamic_cast< DesignRepackMover * >( find_mover->second.get() );
 					if( !drOP ){
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drOP );
 					}
-					design_movers_.push_back( std::make_pair< simple_moves::DesignRepackMoverOP, core::Real >( drOP, ( apply_coord_constraints ? coord_cst_std : -1 ) ) );
+					design_movers_.push_back( std::make_pair< DesignRepackMoverOP, core::Real >( drOP, ( apply_coord_constraints ? coord_cst_std : -1 ) ) );
 					TR<<"added design mover "<<mover_name<<" to place simultaneously ";
 					if( apply_coord_constraints )
 						TR<<"with with std "<< coord_cst_std<< '\n';
@@ -667,7 +663,7 @@ PlaceSimultaneouslyMover::parse_my_tag( TagPtr const tag,
 }
 
 PlaceSimultaneouslyMover::PlaceSimultaneouslyMover() :
-	simple_moves::DesignRepackMover( PlaceSimultaneouslyMoverCreator::mover_name() )
+	DesignRepackMover( PlaceSimultaneouslyMoverCreator::mover_name() )
 {
 	residue_level_tasks_for_placed_hotspots_ = new core::pack::task::TaskFactory;//watch out! Never allocate a new task factory for this guy after parsing has been done, b/c in parsing all task aware movers will be watching it through their task_factory_
 //	user_defined_auction_ = false;

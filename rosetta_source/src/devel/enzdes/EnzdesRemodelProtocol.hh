@@ -123,7 +123,7 @@ public:
 		core::Size const targ_pos,
 		core::Size const example_loop_seqpos,
 		core::chemical::ResidueTypeSetCAP restype_set,
-		protocols::toolbox::match_enzdes_util::ResInteractions const & res_ints
+		protocols::enzdes::ResInteractions const & res_ints
 	);
 
   void

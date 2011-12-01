@@ -33,7 +33,7 @@
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/moves/symmetry/SymMinMover.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
@@ -106,7 +106,7 @@ void SymSidechainMinMover::set_default_options()
 		movemap_->set_chi( true );
 		}
 	scorefxn_ = core::scoring::ScoreFunctionFactory::create_score_function("standard");
-	minmover_ = new simple_moves::symmetry::SymMinMover(movemap_, scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/  );
+	minmover_ = new moves::symmetry::SymMinMover(movemap_, scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true/*nblist*/, false/*deriv_check*/  );
 }
 
 std::string

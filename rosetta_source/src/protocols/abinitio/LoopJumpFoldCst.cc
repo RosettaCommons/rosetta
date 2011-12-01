@@ -42,7 +42,7 @@
 // AUTO-REMOVED #include <core/conformation/util.hh> //idealize
 
 #include <protocols/loops/util.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/basic_moves/FragmentMover.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -132,7 +132,7 @@ bool LoopJumpFoldCst::parse_jump_def( KinematicControlOP current_kinematics, kin
       // flexible_part.switch_movemap( *movemap, id::BB, true ); this line seems redundant here
     }
     jump_frags = jump_def_->generate_jump_frags( current_jumps, *movemap );
-    simple_moves::ClassicFragmentMoverOP jump_mover = new protocols::simple_moves::ClassicFragmentMover( jump_frags, movemap );
+    basic_moves::ClassicFragmentMoverOP jump_mover = new protocols::basic_moves::ClassicFragmentMover( jump_frags, movemap );
     jump_mover->type( "JumpMoves" );
     jump_mover->set_check_ss( false ); // this doesn't make sense with jump fragments
     jump_mover->enable_end_bias_check( false ); //no sense for discontinuous fragments

@@ -21,7 +21,7 @@
 #include <protocols/jumping/JumpSetup.hh>
 #include <protocols/jumping/JumpSample.hh> //for diagnosis output
 #include <protocols/abinitio/ResolutionSwitcher.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/basic_moves/FragmentMover.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -40,7 +40,7 @@
 #include <core/kinematics/MoveMap.hh>
 
 #include <protocols/moves/BackboneMover.hh>
-#include <protocols/simple_moves/WobbleMover.hh>
+#include <protocols/basic_moves/WobbleMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 // AUTO-REMOVED #include <protocols/moves/RepeatMover.hh>
 
@@ -54,7 +54,7 @@
 // AUTO-REMOVED #include <protocols/evaluation/ScoreEvaluator.hh>
 #include <protocols/evaluation/JumpEvaluator.hh>
 // AUTO-REMOVED #include <protocols/evaluation/EvaluatedTrialMover.hh>
-#include <protocols/constraints_additional/ConstraintEvaluator.hh>
+#include <protocols/evaluation/ConstraintEvaluator.hh>
 
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/SkipViolFunc.hh>
@@ -95,7 +95,7 @@
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameList.hh>
 #include <core/io/silent/ProteinSilentStruct.tmpl.hh>
-#include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh>
+#include <protocols/abinitio/MaxSeqSepConstraintSet.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <utility/vector0.hh>
@@ -152,9 +152,9 @@ KinematicAbinitio::~KinematicAbinitio() {}
 
 //@detail c'stor
 KinematicAbinitio::KinematicAbinitio(
-	simple_moves::FragmentMoverOP brute_move_small,
-	simple_moves::FragmentMoverOP brute_move_large,
-	simple_moves::FragmentMoverOP smooth_move_small,
+	basic_moves::FragmentMoverOP brute_move_small,
+	basic_moves::FragmentMoverOP brute_move_large,
+	basic_moves::FragmentMoverOP smooth_move_small,
 	int dummy /* otherwise the two constructors are ambigous */
 ) :
 	FoldConstraints ( brute_move_small, brute_move_large, smooth_move_small, dummy ),
@@ -363,8 +363,8 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 														true /*with Torsion*/,
 														*jump_frags
 				);
-			using namespace protocols::simple_moves;
-			simple_moves::ClassicFragmentMoverOP jump_mover = new ClassicFragmentMover( jump_frags, kinematics().movemap_ptr() );
+			using namespace protocols::basic_moves;
+			basic_moves::ClassicFragmentMoverOP jump_mover = new ClassicFragmentMover( jump_frags, kinematics().movemap_ptr() );
 			jump_mover->type( "JumpMoves" );
 			jump_mover->set_check_ss( false ); // this doesn't make sense with jump fragments
 			jump_mover->enable_end_bias_check( false ); //no sense for discontinuous fragments
@@ -426,7 +426,7 @@ KinematicAbinitio::apply( core::pose::Pose& pose ) {
 
 	ConstraintCOPs skipped_list;
 	if ( pose.constraint_set()->has_residue_pair_constraints() ) {
-		evaluator()->add_evaluation( new constraints_additional::ConstraintEvaluator( "total_cst", *pose.constraint_set() ) );
+		evaluator()->add_evaluation( new evaluation::ConstraintEvaluator( "total_cst", *pose.constraint_set() ) );
 		if ( option[ fold_cst::constraint_skip_rate ].user() ) {
 			orig_constraints = pose.constraint_set()->clone();
 			Real const skip_rate( option[ fold_cst::constraint_skip_rate ]() );
@@ -545,7 +545,7 @@ KinematicAbinitio::get_name() const {
 }
 
 moves::MoverOP KinematicAbinitio::create_jump_moves( moves::MoverOP std_mover ) {
-  simple_moves::FragmentMoverOP jump_mover = kinematics().jump_mover();
+  basic_moves::FragmentMoverOP jump_mover = kinematics().jump_mover();
 	if ( !jump_mover ) return std_mover;
 
   moves::RandomMoverOP combi_move ( new moves::RandomMover );
@@ -593,9 +593,9 @@ moves::MoverOP KinematicAbinitio::create_bb_moves(
   if ( !option[ jumps::no_wobble ]() ) {
     // and why not throwing in a wobble ?!
     if ( bLargeWobble ) {
-      cycle->add_mover( new simple_moves::WobbleMover( brute_move_large()->fragments(), movemap() ) );
+      cycle->add_mover( new basic_moves::WobbleMover( brute_move_large()->fragments(), movemap() ) );
     } else {
-      cycle->add_mover( new simple_moves::WobbleMover( brute_move_small()->fragments(), movemap() ) );
+      cycle->add_mover( new basic_moves::WobbleMover( brute_move_small()->fragments(), movemap() ) );
     }
   }
   return cycle;
@@ -683,8 +683,8 @@ JumpingFoldConstraintsWrapper::apply( core::pose::Pose& pose ) {
 
 	core::fragment::FragSetOP jump_frags;
 	jump_frags = jump_def_->generate_jump_frags( current_jumps, *new_movemap );
-	using namespace protocols::simple_moves;
-	simple_moves::ClassicFragmentMoverOP jump_mover = new ClassicFragmentMover( jump_frags, new_movemap );
+	using namespace protocols::basic_moves;
+	basic_moves::ClassicFragmentMoverOP jump_mover = new ClassicFragmentMover( jump_frags, new_movemap );
 	jump_mover->type( "JumpMoves" );
 	jump_mover->set_check_ss( false ); // this doesn't make sense with jump fragments
 	jump_mover->enable_end_bias_check( false ); //no sense for discontinuous fragments
@@ -718,9 +718,9 @@ JumpingFoldConstraintsWrapper::get_name() const {
 
 //@detail c'stor
 JumpingFoldConstraintsWrapper::JumpingFoldConstraintsWrapper(
-	simple_moves::FragmentMoverOP brute_move_small,
-	simple_moves::FragmentMoverOP brute_move_large,
-	simple_moves::FragmentMoverOP smooth_move_small,
+	basic_moves::FragmentMoverOP brute_move_small,
+	basic_moves::FragmentMoverOP brute_move_large,
+	basic_moves::FragmentMoverOP smooth_move_small,
 	jumping::BaseJumpSetupOP jump_def,
 	int dummy /* otherwise the two constructors are ambigous */
 ) : KinematicAbinitio ( brute_move_small, brute_move_large, smooth_move_small, dummy ),

@@ -16,7 +16,7 @@
 
 // AUTO-REMOVED #include <protocols/enzdes/EnzdesFixBBProtocol.hh>
 #include <protocols/enzdes/EnzdesBaseProtocol.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
+#include <protocols/enzdes/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/enzdes/EnzdesTaskOperations.hh>
@@ -102,7 +102,7 @@ PredesignPerturbMover::set_docking_pose(
 	core::pose::Pose &pose,
 	core::pack::task::PackerTaskCOP task )
 {
-	toolbox::match_enzdes_util::EnzdesCstCacheOP cst_cache( toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache() );
+	toolbox::match_enzdes_util::EnzdesCstCacheOP cst_cache( get_enzdes_observer( pose )->cst_cache() );
 
 	for(core::Size i = 1, i_end = pose.total_residue(); i <= i_end; ++i) {
 		if( task -> design_residue(i) && !(cst_cache && cst_cache->contains_position(i)) )
@@ -431,7 +431,7 @@ RepackLigandSiteWithoutLigandMover::apply(
 		if( enzcst_io_->contains_position( pose, lig_seqpos_ ) ){
 			enzcst_io_->remove_position_from_template_res( pose, lig_seqpos_ );
 			//for now we'll wipe out the cst cache
-			toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( NULL );
+			get_enzdes_observer( pose )->set_cst_cache( NULL );
 		}
 	}
 	pose.conformation().delete_residue_slow( lig_seqpos_ );

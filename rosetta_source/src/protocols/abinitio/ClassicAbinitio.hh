@@ -27,7 +27,7 @@
 // AUTO-REMOVED #include <core/io/silent/SilentFileData.fwd.hh>
 // AUTO-REMOVED #include <core/io/silent/SilentStructFactory.hh>
 
-#include <protocols/simple_moves/FragmentMover.fwd.hh>
+#include <protocols/basic_moves/FragmentMover.fwd.hh>
 // AUTO-REMOVED #include <protocols/abinitio/SmoothFragmentMover.fwd.hh>
 
 #include <core/types.hh>
@@ -131,9 +131,9 @@ public:
 	///@brief This constructor does not work -- Fix it before using it.
 	// constructor: supply mover classes for Fragment Moves
 	ClassicAbinitio(
-		simple_moves::FragmentMoverOP brute_move_small,
-		simple_moves::FragmentMoverOP brute_move_large,
-		simple_moves::FragmentMoverOP smooth_move_small,
+		basic_moves::FragmentMoverOP brute_move_small,
+		basic_moves::FragmentMoverOP brute_move_large,
+		basic_moves::FragmentMoverOP smooth_move_small,
 		int  /*dummy otherwise the two constructors are ambiguous */
 	);
 
@@ -165,13 +165,13 @@ public:
 	virtual std::string get_name() const;
 
 	//@brief return FramgentMover for smooth_small fragment insertions (i.e., stage4 moves)
-	simple_moves::FragmentMoverOP smooth_move_small();
+	basic_moves::FragmentMoverOP smooth_move_small();
 
 	//@brief return FragmentMover for small fragment insertions ( i.e., stage3/4 moves )
-	simple_moves::FragmentMoverOP brute_move_small();
+	basic_moves::FragmentMoverOP brute_move_small();
 
 	//@brief return FragmentMover for large fragment insertions (i.e., stage1/2 moves )
-	simple_moves::FragmentMoverOP brute_move_large();
+	basic_moves::FragmentMoverOP brute_move_large();
 
 	//@brief change the movemap ( is propagated to mover-objects )
 	//@detail overload if your extension stores additional moves as member variables
@@ -182,9 +182,9 @@ public:
 
 	//@brief set new instances of FragmentMovers
 	void set_moves (
-		simple_moves::FragmentMoverOP brute_move_small,
-		simple_moves::FragmentMoverOP brute_move_large,
-		simple_moves::FragmentMoverOP smooth_move_small
+		basic_moves::FragmentMoverOP brute_move_small,
+		basic_moves::FragmentMoverOP brute_move_large,
+		basic_moves::FragmentMoverOP smooth_move_small
 	);
 
 	//@brief set new monte-carlo object
@@ -424,9 +424,9 @@ private:
 	moves::MonteCarloOP mc_;
 
 	// Large and small Fragments
-	simple_moves::FragmentMoverOP brute_move_small_;
-	simple_moves::FragmentMoverOP brute_move_large_;
-	simple_moves::FragmentMoverOP smooth_move_small_;
+	basic_moves::FragmentMoverOP brute_move_small_;
+	basic_moves::FragmentMoverOP brute_move_large_;
+	basic_moves::FragmentMoverOP smooth_move_small_;
 
 	// TrialMovers
 	moves::TrialMoverOP trial_large_;

@@ -37,7 +37,7 @@
 // AUTO-REMOVED #include <protocols/jd2/JobOutputter.hh>
 // AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
 
-#include <protocols/docking/ConformerSwitchMover.hh>
+#include <protocols/moves/ConformerSwitchMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RigidBodyMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
@@ -176,12 +176,12 @@ void DockingEnsemblePrepackProtocol::finalize_setup( pose::Pose & pose ) {
 void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 {
 	finalize_setup(pose);
-	protocols::docking::ConformerSwitchMoverOP switch_mover;
+	protocols::moves::ConformerSwitchMoverOP switch_mover;
 	core::pose::Pose starting_pose;
 
 	starting_pose = pose;
 
-	switch_mover = new protocols::docking::ConformerSwitchMover( ensemble1_ );
+	switch_mover = new protocols::moves::ConformerSwitchMover( ensemble1_ );
 	for ( Size i=1; i<=ensemble1_->size(); ++i ) {
 		protocols::moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 		to_centroid.apply( pose );
@@ -210,7 +210,7 @@ void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 
 	// reset to starting pose
 	pose = starting_pose;
-	switch_mover = new protocols::docking::ConformerSwitchMover( ensemble2_ );
+	switch_mover = new protocols::moves::ConformerSwitchMover( ensemble2_ );
 	for ( Size i=1; i<=ensemble2_->size(); ++i ) {
 		protocols::moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 		to_centroid.apply( pose );

@@ -26,6 +26,7 @@
 #include <protocols/multistate_design/PartitionAggregateFunction.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/DataMap.hh>
+#include <protocols/protein_interface_design/dock_design_filters.hh>
 
 // AUTO-REMOVED #include <core/chemical/ResidueSelector.hh>
 // AUTO-REMOVED #include <core/chemical/ResidueTypeSet.hh>
@@ -59,10 +60,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
-
-//Auto Headers
-#include <protocols/simple_filters/EnergyPerResidueFilter.hh>
-
 
 namespace protocols {
 namespace protein_interface_design {
@@ -193,7 +190,7 @@ ProteinInterfaceMultiStateDesignMover::restrict_sequence_profile(
 	using utility::vector1;
 	using std::list;
 	using std::vector;
-	using protocols::simple_filters::EnergyPerResidueFilter;
+	using protocols::protein_interface_design::EnergyPerResidueFilter;
 	using core::scoring::fa_rep;
 
 	unsigned long const seq_space_before( sequence_space( ptask ) );

@@ -59,7 +59,7 @@
 #include <core/util/ChainbreakUtil.hh>
 #include <core/util/kinematics_util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
-#include <protocols/comparative_modeling/ThreadingJob.hh>
+#include <protocols/jd2/ThreadingJob.hh>
 #include <protocols/loops/LoopRelaxMover.hh>
 #include <protocols/loops/LoopRelaxThreadingMover.hh>
 #include <protocols/loops/Loops.hh>
@@ -173,7 +173,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
   using core::pose::PoseOP;
   using core::scoring::ScoreFunctionOP;
   using core::sequence::SequenceAlignment;
-  using protocols::comparative_modeling::ThreadingJob;
+  using protocols::jd2::ThreadingJob;
   using protocols::loops::LoopRelaxThreadingMover;
   using protocols::loops::Loops;
   using namespace protocols::moves;

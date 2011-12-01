@@ -73,7 +73,7 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/abinitio/AbrelaxMover.hh>
 #include <protocols/abinitio/ClassicAbinitio.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/basic_moves/FragmentMover.hh>
 #include <protocols/electron_density/util.hh>
 #include <protocols/flxbb/FlxbbDesign.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -82,9 +82,9 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/RigidBodyMover.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/moves/symmetry/SymMinMover.hh>
+#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/symmetric_docking/SymDockingInitialPerturbation.hh>
@@ -103,7 +103,7 @@ using core::conformation::symmetry::SymmDataOP;
 using core::conformation::symmetry::SymmetryInfo;
 using core::conformation::symmetry::SymmetryInfoOP;
 using core::pose::symmetry::make_symmetric_pose;
-using protocols::simple_moves::symmetry::SymMinMover;
+using protocols::moves::symmetry::SymMinMover;
 
 
 OPT_KEY( String, hub_sequence )
@@ -178,7 +178,7 @@ static core::io::silent::SilentFileData sfd;
 // 	  	movemap->set_bb(true);
 // 	  	movemap->set_chi(true);
 // 	  	core::pose::symmetry::make_symmetric_movemap(p,*movemap);
-// 	//	protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
+// 	//	protocols::moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
 
 
 // 		// get frags
@@ -192,8 +192,8 @@ static core::io::silent::SilentFileData sfd;
 // 			1, //nr_copies
 // 			option[ OptionKeys::frags::annotate ]
 // 		).read_data( option[ OptionKeys::in::file::frag3 ] );
-// 		fragmove9 = new protocols::simple_moves::ClassicFragmentMover(frags9,movemap);
-// 		fragmove3 = new protocols::simple_moves::ClassicFragmentMover(frags3,movemap);
+// 		fragmove9 = new protocols::basic_moves::ClassicFragmentMover(frags9,movemap);
+// 		fragmove3 = new protocols::basic_moves::ClassicFragmentMover(frags3,movemap);
 
 
 // 		init = p;
@@ -434,7 +434,7 @@ int main(int argc, char *argv[]) {
   	movemap->set_bb(true);
   	movemap->set_chi(true);
   	core::pose::symmetry::make_symmetric_movemap(p,*movemap);
-//	protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
+//	protocols::moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
 
 
 	// get frags
@@ -448,8 +448,8 @@ int main(int argc, char *argv[]) {
 		1, //nr_copies
 		option[ OptionKeys::frags::annotate ]
 	).read_data( option[ OptionKeys::in::file::frag3 ] );
-	protocols::moves::MoverOP fragmove9 = new protocols::simple_moves::ClassicFragmentMover(frags9,movemap);
-	protocols::moves::MoverOP fragmove3 = new protocols::simple_moves::ClassicFragmentMover(frags3,movemap);
+	protocols::moves::MoverOP fragmove9 = new protocols::basic_moves::ClassicFragmentMover(frags9,movemap);
+	protocols::moves::MoverOP fragmove3 = new protocols::basic_moves::ClassicFragmentMover(frags3,movemap);
 
 
 	Pose init(p);
@@ -538,7 +538,7 @@ int main(int argc, char *argv[]) {
 	// 			// 	p.set_psi(1,uniform()*360.0);
 	// 			// 	p.set_omega(1,170.0+uniform()*20.0);
 	// 			// }
-	// 		 	//  protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
+	// 		 	//  protocols::moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
 	// 			if(1==ippo) tmp.set_phi  (ir,tmp.phi  (ir)+10.0);
 	// 			if(2==ippo) tmp.set_psi  (ir,tmp.psi  (ir)+10.0);
 	// 			if(3==ippo) tmp.set_omega(ir,tmp.omega(ir)+10.0);

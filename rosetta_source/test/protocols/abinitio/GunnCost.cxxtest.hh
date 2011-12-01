@@ -50,7 +50,7 @@
 // AUTO-REMOVED #include <ObjexxFCL/string.functions.hh>
 // AUTO-REMOVED #include <numeric/random.functions.hh>
 
-#include <protocols/simple_moves/GunnCost.hh>
+#include <protocols/basic_moves/GunnCost.hh>
 
 //Auto Headers
 #include <platform/types.hh>
@@ -115,10 +115,10 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <protocols/simple_moves/FragmentMover.fwd.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
-#include <protocols/simple_moves/SmoothFragmentMover.fwd.hh>
-#include <protocols/simple_moves/SmoothFragmentMover.hh>
+#include <protocols/basic_moves/FragmentMover.fwd.hh>
+#include <protocols/basic_moves/FragmentMover.hh>
+#include <protocols/basic_moves/SmoothFragmentMover.fwd.hh>
+#include <protocols/basic_moves/SmoothFragmentMover.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/jobdist/Jobs.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
@@ -229,7 +229,7 @@ void GunnCostTest::test_cost() {
 	using namespace pose;
 	using namespace fragment;
 	using namespace protocols;
-	using namespace simple_moves;
+	using namespace basic_moves;
 	kinematics::MoveMap movemap; //dummy ( functionality not used yet )
 	//Size len (3);
 	ConstantLengthFragSet& fragset=*fragset3mer_;

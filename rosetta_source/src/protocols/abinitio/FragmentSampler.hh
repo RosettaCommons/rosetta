@@ -30,7 +30,7 @@
 //#include <core/io/silent/SilentFileData.fwd.hh>
 //#include <core/io/silent/SilentStructFactory.hh>
 
-// AUTO-REMOVED #include <protocols/simple_moves/FragmentMover.fwd.hh>
+// AUTO-REMOVED #include <protocols/basic_moves/FragmentMover.fwd.hh>
 #include <protocols/topology_broker/TopologyBroker.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/checkpoint/CheckPointer.hh>

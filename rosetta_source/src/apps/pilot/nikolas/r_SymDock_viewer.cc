@@ -11,7 +11,7 @@
 
 // libRosetta headers
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 
 
@@ -63,7 +63,7 @@ void *
 SymDock_main_local( void *)
 {
 	using namespace protocols::symmetric_docking;
-	using namespace protocols::simple_moves::symmetry;
+	using namespace protocols::moves::symmetry;
 	using namespace protocols::jd2;
 
 	SetupForSymmetryMoverOP setup_mover = new SetupForSymmetryMover;

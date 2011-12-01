@@ -21,10 +21,10 @@
 
 #include <protocols/enzdes/EnzdesBaseProtocol.hh>
 // AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesLoopsFile.hh>
+#include <protocols/enzdes/EnzdesLoopsFile.hh>
 
 #include <protocols/moves/BackrubMover.fwd.hh>
-#include <protocols/loops/kinematic_closure/KinematicMover.fwd.hh>
+#include <protocols/moves/KinematicMover.fwd.hh>
 #include <protocols/moves/MinMover.fwd.hh>
 
 #include <core/pose/Pose.hh> /// Replace pack_region_ala_pose_ with a PoseOP to remove this header
@@ -95,7 +95,7 @@ public:
 		core::Size region ) const{
 		return flex_regions_[ region ]; }
 
-	toolbox::match_enzdes_util::EnzdesLoopsFileCOP
+	EnzdesLoopsFileCOP
 	enz_loops_file() const {
 		return enz_loops_file_; }
 
@@ -158,7 +158,7 @@ protected:
 
 private:
 
-	toolbox::match_enzdes_util::EnzdesLoopsFileCOP enz_loops_file_;
+	EnzdesLoopsFileCOP enz_loops_file_;
 
 	utility::vector1< core::Size > fragment_counters_;
 
@@ -166,7 +166,7 @@ private:
 	utility::vector1< core::Real > native_fragment_bb_energies_;
 
 	protocols::moves::BackrubMoverOP brub_mover_;
-	protocols::loops::kinematic_closure::KinematicMoverOP kinematic_mover_;
+	protocols::moves::KinematicMoverOP kinematic_mover_;
 
 	core::Real mc_kt_low_, mc_kt_high_;
 	core::Size brub_min_atoms_;
@@ -221,7 +221,7 @@ public:
 	core::Size remodel_max_length() const{
 		return remodel_max_length_; }
 
-	toolbox::match_enzdes_util::EnzdesLoopInfoCOP
+	EnzdesLoopInfoCOP
 	enz_loop_info() const;
 
 	core::Size

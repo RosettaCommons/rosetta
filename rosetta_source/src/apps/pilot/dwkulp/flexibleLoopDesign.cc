@@ -41,7 +41,7 @@
 #include <protocols/loops/CcdLoopClosureMover.hh>
 #include <protocols/moves/BackboneMover.hh> //23
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
-#include <protocols/loops/kinematic_closure/KinematicMover.hh>
+#include <protocols/moves/KinematicMover.hh>
 #include <protocols/moves/kinematic_closure/KinematicPerturber.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <numeric/random/random.hh>
@@ -78,7 +78,7 @@
 
 #include <core/fragment/ConstantLengthFragSet.hh>
 
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/basic_moves/FragmentMover.hh>
 #include <protocols/loops/ccd_closure.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -591,14 +591,14 @@ void setup_fragment_mover(core::pose::Pose &_pose,    protocols::loops::Loop &_l
   // Setup a fragment mover
   vector<protocols::moves::MoverOP> multipleSizeMovers;
 
-  using protocols::simple_moves::ClassicFragmentMover;
+  using protocols::basic_moves::ClassicFragmentMover;
 
-  protocols::simple_moves::ClassicFragmentMoverOP fragMover3  = new ClassicFragmentMover(fragSets[1],moveMapFrags3);
+  protocols::basic_moves::ClassicFragmentMoverOP fragMover3  = new ClassicFragmentMover(fragSets[1],moveMapFrags3);
   fragMover3->enable_end_bias_check(false);
   multipleSizeMovers.push_back(fragMover3);
 
   if (sequence.size() > 9){
-    protocols::simple_moves::ClassicFragmentMoverOP fragMover9  = new ClassicFragmentMover(fragSets[2],moveMapFrags9);
+    protocols::basic_moves::ClassicFragmentMoverOP fragMover9  = new ClassicFragmentMover(fragSets[2],moveMapFrags9);
     fragMover9->enable_end_bias_check(false);
     multipleSizeMovers.push_back(fragMover9);
   }

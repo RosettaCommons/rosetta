@@ -27,7 +27,7 @@
 #include <core/fragment/OrderedFragSet.hh>
 #include <core/fragment/FrameList.hh>
 // AUTO-REMOVED #include <core/fragment/FragmentIO.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/basic_moves/FragmentMover.hh>
 // AUTO-REMOVED #include <protocols/jumping/JumpSetup.hh>
 #include <core/fragment/JumpingFrame.hh>
 // AUTO-REMOVED #include <core/fragment/BBTorsionSRFD.hh>
@@ -88,8 +88,8 @@ void DisulfJumpClaimer::new_decoy() {
  	core::fragment::FragSetOP jump_frags = new core::fragment::OrderedFragSet;
  	jump_frags->add( all_frames_ );
 
-	simple_moves::ClassicFragmentMoverOP mover;
-  mover = new simple_moves::ClassicFragmentMover( jump_frags, movemap_ );
+	basic_moves::ClassicFragmentMoverOP mover;
+  mover = new basic_moves::ClassicFragmentMover( jump_frags, movemap_ );
 	mover->type( mover_tag() );
   mover->set_check_ss( false ); // this doesn't make sense with jump fragments
 	mover->enable_end_bias_check( false ); //no sense for discontinuous fragments
@@ -116,7 +116,7 @@ void DisulfJumpClaimer::new_decoy( core::pose::Pose const& pose ) {
 
 void DisulfJumpClaimer::initialize_dofs( core::pose::Pose& pose, DofClaims const& init_dofs, DofClaims& failed_to_init ) {
 
-	//init_mover_ = new simple_moves::ClassicFragmentMover( jump_frags, movemap_ );
+	//init_mover_ = new basic_moves::ClassicFragmentMover( jump_frags, movemap_ );
 	//init_mover_->type( mover_tag() );
  	//init_mover_->set_check_ss( false ); // this doesn't make sense with jump fragments
  	//init_mover_->enable_end_bias_check( false ); //no sense for discontinuous fragments
@@ -135,7 +135,7 @@ void DisulfJumpClaimer::initialize_dofs( core::pose::Pose& pose, DofClaims const
 
 	//need to copy coords and jumps --- if chunks were idealized no problem .... but non-idealized stuff ?
 // 	if ( init_mover_ ) {
-// 		simple_moves::FragmentMoverOP frag_mover = get_frag_mover_ptr();
+// 		basic_moves::FragmentMoverOP frag_mover = get_frag_mover_ptr();
 // 		set_mover( init_mover_ );
 // 		FragmentClaimer::initialize_dofs( pose, init_dofs, failed_to_init );
 // 		set_mover( frag_mover );

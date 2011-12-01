@@ -21,7 +21,7 @@
 // AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/util.hh>
 
-#include <protocols/fibril/fibril_util.hh>
+#include <protocols/moves/symmetry/fibril_util.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -217,7 +217,7 @@ SymmAbRelaxTest()
   using namespace conformation::symmetry;
   using namespace chemical;
   using namespace protocols::moves;
-  using namespace protocols::simple_moves::symmetry;
+  using namespace protocols::moves::symmetry;
 
   // make extended chain
   Pose extended_pose;
@@ -245,7 +245,7 @@ SymmAbRelaxTest()
 
   // set up the symmetric pose
   Pose start_pose = extended_pose;
-  protocols::fibril::make_symmetric_fibril( start_pose );
+  make_symmetric_fibril( start_pose );
   TR << "Pose Secondary Structure " << start_pose.secstruct() << std::endl;
 
   // set up the centroid stuff

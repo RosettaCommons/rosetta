@@ -17,7 +17,7 @@
 #include <protocols/fldsgn/filters/HelixKinkFilterCreator.hh>
 
 // Package Headers
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/fldsgn/BluePrint.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/fldsgn/topology/util.hh>
 
@@ -139,7 +139,7 @@ HelixKinkFilter::parse_my_tag(
 	// secondary strucuture info
 	String const blueprint = tag->getOption<String>( "blueprint", "" );
 	if( blueprint != "" ) {
-		protocols::jd2::parser::BluePrint blue( blueprint );
+		protocols::fldsgn::BluePrint blue( blueprint );
 		secstruct_ = blue.secstruct();
 	}
 }

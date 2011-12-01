@@ -106,7 +106,7 @@ protected:
 private:
 	jumping::BaseJumpSetupOP jump_def_;
 	jumping::JumpSample current_jumps_;
-	simple_moves::ClassicFragmentMoverOP init_mover_;
+	basic_moves::ClassicFragmentMoverOP init_mover_;
 	bool bKeepJumpsFromInputPose_;
 	core::pose::Pose input_pose_;
 	bool discard_jumps_;

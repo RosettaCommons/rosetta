@@ -499,9 +499,6 @@ sources = {
 		"BasicSequenceCreators",
 	],
 
-	"core/io/ddg" : [
-		"PositionDdGInfo",
-	],
 
 	"core/io/pdb" : [
 		"file_data",

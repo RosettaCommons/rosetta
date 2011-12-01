@@ -21,16 +21,13 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
+#include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.fwd.hh>
-#include <protocols/loops/kinematic_closure/KinematicMover.fwd.hh>
+#include <protocols/moves/KinematicMover.fwd.hh>
 #include <utility/vector1.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/vector1.hh>
-
-//Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
-
 
 
 namespace protocols {
@@ -38,7 +35,7 @@ namespace protein_interface_design {
 namespace movers {
 
 
-class PlaceOnLoop : public simple_moves::DesignRepackMover
+class PlaceOnLoop : public DesignRepackMover
 {
 public:
 	PlaceOnLoop();
@@ -62,7 +59,7 @@ private:
 	core::Size host_chain_;
 	protocols::hotspot_hashing::HotspotStubSetOP stub_set_;
 	bool minimize_toward_stub_;
-	protocols::loops::kinematic_closure::KinematicMoverOP kinematic_mover_;
+	protocols::moves::KinematicMoverOP kinematic_mover_;
 };
 
 } // movers

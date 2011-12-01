@@ -22,7 +22,7 @@
 
 // AUTO-REMOVED #include <utility/vector1.hh>
 
-#include <core/sequence/SequenceCoupling.hh>
+#include <core/sequence/SequenceCoupling.fwd.hh>
 #include <utility/vector1.hh>
 
 

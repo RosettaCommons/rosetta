@@ -39,7 +39,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <protocols/protein_interface_design/movers/TryRotamers.hh>
-#include <protocols/simple_filters/EnergyPerResidueFilter.hh>
+#include <protocols/protein_interface_design/dock_design_filters.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
@@ -119,7 +119,7 @@ int main( int argc, char * argv [] )
 	//Iterate through all possible rotamers
 	scoring::ScoreFunctionOP sfxn = scoring::getScoreFunction();
 
-	protocols::simple_filters::EnergyPerResidueFilter energy_filter(
+	protocols::protein_interface_design::EnergyPerResidueFilter energy_filter(
 		target, sfxn, score_type, energy_threshold );
 //	protocols::protein_interface_design::movers::TryRotamers rot_mover(
 //		target, *sfxn, 1/*explosion*/, 0 /*no jumps*/ );

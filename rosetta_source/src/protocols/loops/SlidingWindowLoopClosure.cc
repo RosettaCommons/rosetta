@@ -72,7 +72,7 @@
 
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FrameIterator.hh>
-#include <protocols/constraints_additional/ConstraintEvaluator.hh>
+#include <protocols/evaluation/ConstraintEvaluator.hh>
 #include <protocols/jobdist/Jobs.hh>
 #include <utility/vector1.hh>
 
@@ -256,7 +256,7 @@ SlidingWindowLoopClosure::setup_frag_scorefxn( scoring::ScoreFunction& scorefxn 
 	}
 	tr.Debug << " is there a filter_cst_ evaluator?.. " << std::endl;
 	if ( !filter_cst_ && option[ OptionKeys::fast_loops::filter_cst_file ].user() ) {
-		filter_cst_ = new constraints_additional::ConstraintEvaluator( "filter_loops", option[ OptionKeys::fast_loops::filter_cst_file ]() );
+		filter_cst_ = new evaluation::ConstraintEvaluator( "filter_loops", option[ OptionKeys::fast_loops::filter_cst_file ]() );
 		filter_cst_weight_ = option[ OptionKeys::fast_loops::filter_cst_weight ]();
 	}
 }

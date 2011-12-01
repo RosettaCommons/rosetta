@@ -19,13 +19,10 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
+#include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 
 #include <utility/vector1.hh>
-
-//Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
-
 
 
 namespace protocols {
@@ -33,7 +30,7 @@ namespace protein_interface_design {
 namespace movers {
 
 /// @brief One round of design/repacking followed by interface sc/bb and rigid-body minimization
-class RepackMinimize : public simple_moves::DesignRepackMover
+class RepackMinimize : public DesignRepackMover
 {
 public:
 	typedef core::pose::Pose Pose;

@@ -42,7 +42,7 @@
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/basic_moves/FragmentMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>

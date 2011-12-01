@@ -17,8 +17,8 @@
 // AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-//#include <core/scoring/constraints/ConstraintIO.hh>
-//#include <core/scoring/constraints/util.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
+#include <core/scoring/constraints/util.hh>
 #include <core/scoring/Energies.hh>
 
 #include <core/pose/Pose.hh>
@@ -26,8 +26,8 @@
 
 // AUTO-REMOVED #include <protocols/evaluation/ConstraintEvaluator.hh>
 #include <protocols/evaluation/ScoreEvaluator.hh>
-#include <protocols/evaluation/EvaluatorFactory.hh>
-//#include <protocols/jumping/JumpSample.hh>
+#include <protocols/evaluation/util.hh>
+#include <protocols/jumping/JumpSample.hh>
 
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
@@ -47,8 +47,8 @@
 // AUTO-REMOVED #include <basic/options/keys/jumps.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
-//#include <core/scoring/ResidualDipolarCoupling.hh>
-//#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/ResidualDipolarCoupling.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
 #include <utility/vector1.hh>
 
 
@@ -89,7 +89,10 @@ EvaluatedArchive::~EvaluatedArchive() {}
 
 EvaluatedArchive::EvaluatedArchive()
 	: scorefxn_( NULL ),
-		b_evaluate_incoming_decoys_( !basic::options::option[ basic::options::OptionKeys::iterative::evaluate_only_on_slaves ]() ) ///yields bottleneck on BG
+		b_evaluate_incoming_decoys_( !basic::options::option[ basic::options::OptionKeys::iterative::evaluate_only_on_slaves ]() ), ///yields bottleneck on BG
+		rdc_data_( NULL ),
+		cst_data_( NULL ),
+		cst_fa_data_( NULL )
 {
 	runtime_assert( options_registered_ );
 	setup_default_evaluators();
@@ -98,7 +101,10 @@ EvaluatedArchive::EvaluatedArchive()
 EvaluatedArchive::EvaluatedArchive( ArchiveManagerAP ptr )
 	: ArchiveBase( ptr ),
 		scorefxn_( NULL ),
-		b_evaluate_incoming_decoys_( !basic::options::option[ basic::options::OptionKeys::iterative::evaluate_only_on_slaves ]() ) ///yields bottleneck on BG
+		b_evaluate_incoming_decoys_( !basic::options::option[ basic::options::OptionKeys::iterative::evaluate_only_on_slaves ]() ), ///yields bottleneck on BG
+		rdc_data_( NULL ),
+		cst_data_( NULL ),
+		cst_fa_data_( NULL )
 {
 	runtime_assert( options_registered_ );
 	setup_default_evaluators();
@@ -244,6 +250,76 @@ Real EvaluatedArchive::select_score( SilentStructOP evaluated_decoy ) {
 	return sum;
 }
 
+///@detail before we can apply score-fxn we have to add extra data: RDC, NOES, (not supported yet: PCS, ... )
+void EvaluatedArchive::score( pose::Pose& pose ) const {
+	runtime_assert( scorefxn_ );
+
+	//to speed up things we cache the RDC data in the archive
+	if ( basic::options::option[ basic::options::OptionKeys::in::file::rdc ].user() ) {
+		if ( !rdc_data_ ) rdc_data_ = new core::scoring::ResidualDipolarCoupling;
+		core::scoring::store_RDC_in_pose( rdc_data_, pose );
+	}
+
+	//set fullatom or centroid constraints
+	// remove cutpoints from pose used to setup the constraint-set--> at least we will not have higher atom-indices than
+	// in standard residues (which causes seg-faults, down the line.. ). Some constraints will be slightly messed up... but can't be that bad...
+	tr.Trace << "checking for constraints when rescoring" << std::endl;
+	using namespace core::scoring::constraints;
+	bool const fullatom( pose.is_fullatom() );
+	core::pose::Pose cutfree_pose( pose );
+	protocols::jumping::JumpSample jumps( pose.fold_tree() );
+	jumps.remove_chainbreaks( cutfree_pose );
+
+	if ( !fullatom && basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user() ) {
+		if ( !cst_data_ ) {
+			std::string filename( core::scoring::constraints::get_cst_file_option() );
+			tr.Info << "read centroid constraint set " << filename << std::endl;
+			cst_data_ = ConstraintIO::get_instance()->read_constraints( filename, new ConstraintSet, cutfree_pose );
+		}
+		pose.constraint_set( cst_data_ );
+	} else if ( fullatom ) {
+		if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_file ].user() ) {
+			if ( !cst_fa_data_ ) {
+				std::string filename( core::scoring::constraints::get_cst_fa_file_option() );
+				tr.Info << "read fullatom constraint set " << filename << std::endl;
+				cst_fa_data_ = ConstraintIO::get_instance()->read_constraints( filename, new ConstraintSet, cutfree_pose );
+			}
+		} else if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user() ) {
+			if ( !cst_fa_data_ ) {
+				std::string const filename( core::scoring::constraints::get_cst_file_option() );
+				tr.Info << "read centroid constraint set " << filename  << " for fullatom " << std::endl;
+				cst_fa_data_ = ConstraintIO::get_instance()->read_constraints( filename, new ConstraintSet, cutfree_pose );
+			}
+		}
+		if ( cst_fa_data_ ) cutfree_pose.constraint_set( cst_fa_data_ );
+	} //fullatom
+
+	core::pose::Pose chainbreak_pose( pose );
+	jumping::JumpSample js( pose.fold_tree() );
+	js.add_chainbreaks( chainbreak_pose );
+	scoring::ScoreFunction chainbreaks_scfxn;
+	scoring::ScoreFunction scorefxn( *scorefxn_ );
+	chainbreaks_scfxn.set_weight(  scoring::linear_chainbreak, scorefxn.get_weight(  scoring::linear_chainbreak ) );
+	chainbreaks_scfxn.set_weight(  scoring::overlap_chainbreak, scorefxn.get_weight(  scoring::overlap_chainbreak ) );
+	chainbreaks_scfxn.set_weight(  scoring::chainbreak, scorefxn.get_weight(  scoring::chainbreak ) );
+	scorefxn.set_weight(  scoring::linear_chainbreak, 0);
+	scorefxn.set_weight(  scoring::overlap_chainbreak, 0);
+	scorefxn.set_weight(  scoring::chainbreak, 0);
+	//mjo commenting out 'val' because it is unused and causes a warning
+	//core::Real val = scorefxn( cutfree_pose );
+	//mjo commenting out 'chains' because it is unused and causes a warning
+	//core::Real chains = chainbreaks_scfxn( chainbreak_pose );
+	//score
+	(*scorefxn_)( pose ); //get the weights into the pose
+	pose.energies().total_energies() = cutfree_pose.energies().total_energies();
+	pose.energies().total_energies()[ scoring::linear_chainbreak ] = chainbreak_pose.energies().total_energies()[ scoring::linear_chainbreak ];
+	pose.energies().total_energies()[ scoring::overlap_chainbreak ] = chainbreak_pose.energies().total_energies()[ scoring::overlap_chainbreak ];
+	pose.energies().total_energies()[ scoring::chainbreak ] = chainbreak_pose.energies().total_energies()[ scoring::chainbreak ];
+	if ( tr.Trace.visible() ) {
+		scorefxn_->show( tr.Trace, pose );
+	}
+}
+
 
 ///@detail restore archive and sort
 bool EvaluatedArchive::restore_from_file() {
@@ -336,16 +412,10 @@ void EvaluatedArchive::set_scorefxn( core::scoring::ScoreFunctionOP scorefxn ) {
 	scores_are_clean_ = false;
 }
 
-core::scoring::ScoreFunction const &
-EvaluatedArchive::scorefxn() const {
-	runtime_assert( scorefxn_ );
-	return *scorefxn_;
-}
-
 void EvaluatedArchive::setup_default_evaluators() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	//using namespace scoring::constraints;
+	using namespace scoring::constraints;
 // 	if ( evaluate_local() && option[ constraints::cst_file ].user() ) {
 // 		std::string filename( option[ constraints::cst_file ]()[ 1 ] );
 // 		evaluation::PoseEvaluatorOP ev_cst ( new evaluation::ConstraintEvaluator( "cmdline", filename ) );
@@ -359,7 +429,7 @@ void EvaluatedArchive::setup_default_evaluators() {
 	}
 
 	evaluation::MetaPoseEvaluator cmdline_evals;
-	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(cmdline_evals);
+	evaluation::read_common_evaluator_options( cmdline_evals );
 	for ( evaluation::MetaPoseEvaluator::EvaluatorList::const_iterator it = cmdline_evals.evaluators().begin();
 				it != cmdline_evals.evaluators().end(); ++it ) {
  		add_evaluation( *it );

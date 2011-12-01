@@ -97,7 +97,7 @@
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/id/NamedStubID.fwd.hh>
-#include <core/id/SequenceMapping.fwd.hh> 
+#include <core/id/SequenceMapping.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/types.hh>
 #include <core/kinematics/AtomPointer.fwd.hh>

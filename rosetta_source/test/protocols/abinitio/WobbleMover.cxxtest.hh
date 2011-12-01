@@ -17,9 +17,9 @@
 
 #include <test/core/init_util.hh>
 
-#include <protocols/simple_moves/WobbleMover.hh>
+#include <protocols/basic_moves/WobbleMover.hh>
 
-#include <protocols/simple_moves/GunnCost.hh>
+#include <protocols/basic_moves/GunnCost.hh>
 // AUTO-REMOVED #include <protocols/moves/MinMover.hh>
 // AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 
@@ -58,7 +58,7 @@ using namespace core;
 using namespace fragment;
 
 
-static basic::Tracer Debug("protocols.simple_moves.WobbleMover.cxxtest", basic::t_debug );
+static basic::Tracer Debug("protocols.basic_moves.WobbleMover.cxxtest", basic::t_debug );
 
 class WobbleMoverTest : public CxxTest::TestSuite
 {
@@ -91,7 +91,7 @@ void WobbleMoverTest::test_wobble() {
 	using namespace pose;
 	using namespace fragment;
 	using namespace protocols;
-	using namespace simple_moves;
+	using namespace basic_moves;
 	using namespace scoring;
 	kinematics::MoveMapOP movemap ( new kinematics::MoveMap ); //dummy ( functionality not used yet )
 	//Size len (3);
@@ -102,7 +102,7 @@ void WobbleMoverTest::test_wobble() {
 	//	TS_ASSERT( !movemap->get_bb( ii ) );
 	//}
 	Pose pose = pose_;
-	protocols::simple_moves::WobbleMover wobbles( fragset3mer_, movemap, new GunnCost( 7.0 ) );
+	protocols::basic_moves::WobbleMover wobbles( fragset3mer_, movemap, new GunnCost( 7.0 ) );
 	//	moves::TrialMover wobble_min_trial
 
 #if 0

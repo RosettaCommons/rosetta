@@ -14,7 +14,6 @@
 #include <protocols/jd2/PoseInputStreamJobInputter.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerJob.hh>
-#include <protocols/jd2/PoseInputStreamJobInputterCreator.hh>
 
 #include <core/pose/Pose.hh>
 // AUTO-REMOVED #include <core/pose/util.hh>
@@ -94,18 +93,6 @@ void PoseInputStreamJobInputter::fill_jobs( Jobs & jobs ) {
 
 JobInputterInputSource::Enum PoseInputStreamJobInputter::input_source() const {
 	return JobInputterInputSource::UNKNOWN;
-}
-
-//CREATOR SECTION
-std::string
-PoseInputStreamJobInputterCreator::keyname() const
-{
-        return "PoseInputStreamJobInputter";
-}
-
-protocols::jd2::JobInputterOP
-PoseInputStreamJobInputterCreator::create_JobInputter() const {
-        return new PoseInputStreamJobInputter;
 }
 
 } // jd2

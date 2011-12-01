@@ -28,7 +28,7 @@
 // AUTO-REMOVED #include <protocols/abinitio/KinematicAbinitio.hh>
 #include <protocols/jumping/JumpSetup.hh>
 
-#include <protocols/simple_moves/FragmentMover.fwd.hh>
+#include <protocols/basic_moves/FragmentMover.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -60,9 +60,9 @@ class JumpingFoldConstraints : public FoldConstraints {
   typedef FoldConstraints Parent;
 public:
   JumpingFoldConstraints(
-			 simple_moves::FragmentMoverOP brute_move_small,
-			 simple_moves::FragmentMoverOP brute_move_large,
-			 simple_moves::FragmentMoverOP smooth_move_small,
+			 basic_moves::FragmentMoverOP brute_move_small,
+			 basic_moves::FragmentMoverOP brute_move_large,
+			 basic_moves::FragmentMoverOP smooth_move_small,
 			 jumping::BaseJumpSetupOP jump_def,
 			 int dummy /* otherwise the two constructors are ambigous */
   );

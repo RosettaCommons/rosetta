@@ -27,7 +27,7 @@
 #include <protocols/match/downstream/ActiveSiteGrid.fwd.hh>
 #include <protocols/match/downstream/RigidLigandBuilder.fwd.hh>
 #include <protocols/match/downstream/LigandConformerBuilder.fwd.hh>
-#include <protocols/toolbox/match_enzdes_util/LigandConformer.fwd.hh>
+#include <protocols/match/downstream/LigandConformer.fwd.hh>
 
 // Project headers
 #include <core/types.hh>
@@ -180,7 +180,7 @@ public:
 	) const = 0;
 
   virtual
-  toolbox::match_enzdes_util::LigandConformerOP
+  LigandConformerOP
 	get_lig_conformers(core::Size conf_id) const = 0;
 
 //  virtual

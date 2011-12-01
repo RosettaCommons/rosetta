@@ -16,8 +16,7 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <protocols/match/Hit.hh>
-#include <protocols/toolbox/match_enzdes_util/LigandConformer.hh>
+#include <protocols/match/downstream/LigandConformer.hh>
 
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -45,8 +44,7 @@
 
 
 using namespace protocols::match;
-//using namespace protocols::match::downstream;
-using namespace protocols::toolbox::match_enzdes_util;
+using namespace protocols::match::downstream;
 
 
 // --------------- Test Class --------------- //
@@ -159,7 +157,7 @@ class LigandConformerTests : public CxxTest::TestSuite {
 		for ( Size ii = 1; ii <= carbaryl_pose.residue(1).natoms(); ++ii ) atomids[ ii ] = core::id::AtomID( ii, 1 );
 		utility::vector1< Vector > coords( carbaryl_pose.residue(1).natoms()  );
 
-		ligconf->coordinates_from_orientation( hit.second(), atomids, coords );
+		ligconf->coordinates_from_hit( hit, atomids, coords );
 		for ( Size ii = 1; ii <= carbaryl_pose.residue(1).natoms(); ++ii ) {
 			TS_ASSERT( coords[ ii ].distance( carbaryl_pose.residue(1).xyz( ii ) ) < 1e-6 );
 			//std::cout << coords[ ii ].x() << " " << coords[ ii ].y() << " " << coords[ ii ].z() << " vs ";
@@ -193,7 +191,7 @@ class LigandConformerTests : public CxxTest::TestSuite {
 		hit2.second()[ 5 ] = euler2( 2 );
 		hit2.second()[ 6 ] = euler2( 3 );
 
-		ligconf->coordinates_from_orientation( hit2.second(), atomids, coords );
+		ligconf->coordinates_from_hit( hit2, atomids, coords );
 		for ( Size ii = 1; ii <= carbaryl_pose.residue(1).natoms(); ++ii ) {
 			TS_ASSERT( coords[ ii ].distance( rotated_coords[ ii ] ) < 1e-6 );
 			//std::cout << coords[ ii ].x() << " " << coords[ ii ].y() << " " << coords[ ii ].z() << " vs ";

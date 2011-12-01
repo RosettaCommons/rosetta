@@ -20,7 +20,7 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/fldsgn/topology/HelixPairing.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/fldsgn/BluePrint.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -260,7 +260,7 @@ HelixPairingFilter::parse_my_tag(
 	Movers_map const &,
 	Pose const & )
 {
-	using protocols::jd2::parser::BluePrint;
+	using protocols::fldsgn::BluePrint;
 
 	// set filtered helix_pairings
   String const hpairs = tag->getOption<String>( "helix_pairings", "" );

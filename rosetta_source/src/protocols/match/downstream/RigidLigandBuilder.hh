@@ -22,7 +22,7 @@
 
 // Package headers
 #include <protocols/match/downstream/DownstreamBuilder.hh>
-#include <protocols/toolbox/match_enzdes_util/LigandConformer.fwd.hh>
+#include <protocols/match/downstream/LigandConformer.fwd.hh>
 #include <protocols/match/BumpGrid.fwd.hh>
 // AUTO-REMOVED #include <protocols/match/Hit.hh>
 
@@ -167,7 +167,7 @@ public:
 	n_possible_hits_per_at3frame() const;
 
 	virtual
-	toolbox::match_enzdes_util::LigandConformerOP
+	LigandConformerOP
 	get_lig_conformers(core::Size conf_id) const;
 
 //	virtual
@@ -245,7 +245,7 @@ private:
 	utility::vector1< Size >  non_collision_detection_atoms_reqd_in_active_site_;
 
 	//LigandConformerOP lig_conformer_;
-	utility::vector1< toolbox::match_enzdes_util::LigandConformerOP >	lig_conformers_;
+	utility::vector1< LigandConformerOP >	lig_conformers_;
 
 	/// Detect collision between the upstream residue (sidechain?!) conformation and the atoms of the
 	/// downstream residue

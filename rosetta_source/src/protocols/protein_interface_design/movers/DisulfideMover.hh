@@ -13,6 +13,7 @@
 
 #ifndef INCLUDED_protocols_protein_interface_design_movers_DisulfideMover_hh
 #define INCLUDED_protocols_protein_interface_design_movers_DisulfideMover_hh
+#include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -32,10 +33,6 @@
 #include <core/scoring/disulfides/CentroidDisulfidePotential.fwd.hh>
 #include <utility/vector1.hh>
 
-//Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
-
-
 
 // Unit headers
 
@@ -44,10 +41,10 @@ namespace protein_interface_design {
 namespace movers {
 
 
-class DisulfideMover : public protocols::simple_moves::DesignRepackMover
+class DisulfideMover : public protocols::protein_interface_design::movers::DesignRepackMover
 {
 private:
-	typedef protocols::simple_moves::DesignRepackMover parent;
+	typedef protocols::protein_interface_design::movers::DesignRepackMover parent;
 public:
 	///@brief default ctor
 	DisulfideMover();

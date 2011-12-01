@@ -20,21 +20,17 @@
 #include <protocols/match/OccupiedSpaceHash.fwd.hh>
 
 // Package headers
+#include <protocols/match/SixDHasher.hh>
 #include <protocols/match/BumpGrid.fwd.hh>
-
-// project headers
-#include <core/types.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
 #include <numeric/geometry/BoundingBox.hh>
-#include <numeric/geometry/hashing/SixDHasher.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
 #include <utility/fixedsizearray1.hh>
 // AUTO-REMOVED #include <utility/vector1.hh>
-
 
 /// Boost headers
 // AUTO-REMOVED #include <boost/cstdint.hpp>
@@ -80,10 +76,7 @@ public:
 	typedef core::Size                               Size;
 	typedef core::Vector                             Vector;
 	typedef numeric::geometry::BoundingBox< Vector > BoundingBox;
-	typedef numeric::geometry::hashing::Real6        Real6;
-	typedef numeric::geometry::hashing::Size3        Size3;
-	typedef numeric::geometry::hashing::Real3        Real3;
-	typedef boost::unordered_map< boost::uint64_t, boost::uint64_t, numeric::geometry::hashing::bin_index_hasher > ActiveVoxelSet;
+	typedef boost::unordered_map< boost::uint64_t, boost::uint64_t, bin_index_hasher > ActiveVoxelSet;
 
 public:
 	OccupiedSpaceHash();
@@ -147,7 +140,7 @@ private:
 	bitmask_for_position( Size pos ) const;
 
 	boost::uint64_t
-	calc_bin_index( numeric::geometry::hashing::Bin6D const & bin ) const;
+	calc_bin_index( Bin6D const & bin ) const;
 
 private:
 

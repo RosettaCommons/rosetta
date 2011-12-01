@@ -65,8 +65,8 @@
 #include <protocols/idealize/idealize.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/loops/Loop.hh>
-#include <numeric/kinematic_closure/bridgeObjects.hh>
-#include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
+#include <protocols/moves/kinematic_closure/bridgeObjects.hh>
+#include <protocols/moves/kinematic_closure/kinematic_closure_helpers.hh>
 
 #include <protocols/rna/AllowInsert.hh>
 #include <protocols/rna/MultipleDomainMover.hh>

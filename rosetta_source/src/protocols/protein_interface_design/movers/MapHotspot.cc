@@ -17,6 +17,7 @@
 #include <protocols/protein_interface_design/movers/MapHotspotCreator.hh>
 
 // Package headers
+#include <protocols/protein_interface_design/dock_design_filters.hh>
 
 // Project headers
 #include <core/kinematics/Edge.hh>
@@ -52,10 +53,6 @@
 #include <core/pose/util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
-//Auto Headers
-#include <protocols/simple_filters/ScoreTypeFilter.hh>
-
 
 
 namespace protocols {
@@ -223,7 +220,7 @@ MapHotspot::GenerateMap( core::pose::Pose const & start_pose, core::pose::Pose &
 		core::pose::Pose best_pose;
 		core::Real lowest_energy( 100000 );
 		ScoreFunctionCOP score12( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
-		simple_filters::ScoreTypeFilter const pose_total_score( score12, total_score, 100/*threshold*/ );
+		ScoreTypeFilter const pose_total_score( score12, total_score, 100/*threshold*/ );
 		for( Rotamers::const_iterator rot_it = rotset->begin(); rot_it!=rotset->end(); ++rot_it ){
 			TR<<"Current rotamer: "<<curr_rotamer_num++<<'\n';
 			core::conformation::ResidueCOP rot( *rot_it );

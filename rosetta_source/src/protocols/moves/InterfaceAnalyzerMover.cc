@@ -61,6 +61,7 @@
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/InterGroupNeighborsCalculator.hh>
 #include <protocols/toolbox/task_operations/RestrictByCalculatorsOperation.hh>
+//#include <protocols/protein_interface_design/dock_design_filters.hh>
 
 #include <core/scoring/packstat/compute_sasa.hh>
 // AUTO-REMOVED #include <protocols/moves/PackStatMover.hh>

@@ -18,12 +18,9 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/moves/DataMap.fwd.hh>
+#include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 
 #include <utility/vector1.hh>
-
-//Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
-
 
 // C++ headers
 
@@ -31,7 +28,7 @@ namespace protocols {
 namespace protein_interface_design {
 namespace movers {
 
-class BackrubDDMover : public simple_moves::DesignRepackMover
+class BackrubDDMover : public DesignRepackMover
 {
 public:
 	typedef core::scoring::ScoreFunctionCOP ScoreFunctionCOP;

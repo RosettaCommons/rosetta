@@ -51,10 +51,10 @@
 #include <basic/Tracer.hh>
 
 //SYMMETRY
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh> //create symmetric homodimer from input monomer via symmetry:symmetry_definition option
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh> //create symmetric homodimer from input monomer via symmetry:symmetry_definition option
+#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/moves/symmetry/SymRotamerTrialsMover.hh>
+#include <protocols/moves/symmetry/SymMinMover.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/SymmetricConformation.hh>
@@ -140,7 +140,7 @@ public:
 		pdbname_base_ = pdbfilename.base();
 
 		// make symmetric pose according to symm definition file included as an option
-		protocols::symmetric_docking::SetupForSymmetryMoverOP make_monomeric_input_pose_symmetrical = new protocols::symmetric_docking::SetupForSymmetryMover();
+		protocols::moves::symmetry::SetupForSymmetryMoverOP make_monomeric_input_pose_symmetrical = new protocols::moves::symmetry::SetupForSymmetryMover();
 		make_monomeric_input_pose_symmetrical->apply( pose );
 
 		pose.dump_pdb("sym.pdb");
@@ -239,7 +239,7 @@ public:
 
 		//MOVERS --> sym_pack_mover
 		TR << "Generating sym pack mover..." << std::endl;
-		sym_pack_mover_ = new protocols::simple_moves::symmetry::SymPackRotamersMover;
+		sym_pack_mover_ = new protocols::moves::symmetry::SymPackRotamersMover;
 		sym_pack_mover_->task_factory( taskfactory_ );
 		sym_pack_mover_->score_function( fa_metal_scorefxn_ );
 
@@ -260,9 +260,9 @@ public:
 		movemap_->set_jump( true ); //first and second jumps are to zinc from chain A
 
 
-		sym_minmover_sc_ = new protocols::simple_moves::symmetry::SymMinMover( movemap_sc_, fa_metal_scorefxn_, "dfpmin_armijo", 0.01, true );
-		sym_minmover_bb_ = new protocols::simple_moves::symmetry::SymMinMover( movemap_bb_, fa_metal_scorefxn_, "dfpmin_armijo", 0.01, true );
-		sym_minmover_ = new protocols::simple_moves::symmetry::SymMinMover( movemap_, fa_metal_scorefxn_, "dfpmin_armijo", 0.01, true );
+		sym_minmover_sc_ = new protocols::moves::symmetry::SymMinMover( movemap_sc_, fa_metal_scorefxn_, "dfpmin_armijo", 0.01, true );
+		sym_minmover_bb_ = new protocols::moves::symmetry::SymMinMover( movemap_bb_, fa_metal_scorefxn_, "dfpmin_armijo", 0.01, true );
+		sym_minmover_ = new protocols::moves::symmetry::SymMinMover( movemap_, fa_metal_scorefxn_, "dfpmin_armijo", 0.01, true );
 
 
 
@@ -356,10 +356,10 @@ private:
 	core::scoring::ScoreFunctionOP fa_metal_scorefxn_;
   core::scoring::symmetry::SymmetricScoreFunctionOP fa_metal_sym_scorefxn_;
 
-  protocols::simple_moves::symmetry::SymPackRotamersMoverOP sym_pack_mover_;
-  protocols::simple_moves::symmetry::SymMinMoverOP sym_minmover_;
-  protocols::simple_moves::symmetry::SymMinMoverOP sym_minmover_sc_;
-  protocols::simple_moves::symmetry::SymMinMoverOP sym_minmover_bb_;
+  protocols::moves::symmetry::SymPackRotamersMoverOP sym_pack_mover_;
+  protocols::moves::symmetry::SymMinMoverOP sym_minmover_;
+  protocols::moves::symmetry::SymMinMoverOP sym_minmover_sc_;
+  protocols::moves::symmetry::SymMinMoverOP sym_minmover_bb_;
 
 	core::kinematics::MoveMapOP movemap_;
 	core::kinematics::MoveMapOP movemap_sc_;

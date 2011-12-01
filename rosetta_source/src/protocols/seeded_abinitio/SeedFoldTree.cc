@@ -22,35 +22,39 @@
 #include <numeric/xyzVector.hh>
 #include <protocols/moves/DataMap.hh> 
 //Auto Headers
-#include <core/types.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/VariantType.hh>
-#include <core/import_pose/import_pose.hh>
 #include <core/pose/PDBInfo.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
+
+#include <core/types.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/Tag.hh>
+#include <protocols/rosetta_scripts/util.hh>
+#include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
+#include <protocols/filters/Filter.hh>
+#include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/filters/Filter.hh>
+#include <protocols/moves/DataMap.hh>
+#include <basic/Tracer.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/moves/DataMap.hh>
+
 #include <protocols/protein_interface_design/util.hh>
-#include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
-#include <protocols/rosetta_scripts/util.hh>
-#include <protocols/simple_filters/DdgFilter.hh>
-#include <utility/vector1.hh>
-#include <utility/tag/Tag.fwd.hh>
-#include <utility/tag/Tag.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/import_pose/import_pose.hh>
+#include <core/pose/util.hh>
 #include <numeric/random/random.hh>
-#include <set>
+
+#include <utility/vector1.hh>
 #include <string>
 #include <utility>
-#include <basic/Tracer.hh>
+#include <set>
+
+#include <core/pose/util.hh>
 #include <boost/foreach.hpp>
-#include <protocols/simple_filters/AlaScan.hh>
 
 #define foreach BOOST_FOREACH
 
@@ -287,13 +291,13 @@ SeedFoldTree::best_by_ala_scan( Size start, Size end, pose::PoseOP & ts_pose ){
 	//runtime_assert( end <= ts_pose->total_residue() );
 	TR << "tspose: " << ts_pose->total_residue() <<std::endl;
 	TR <<"----------alanine scanning to identify the best jump atom in seed  ------------"<<std::endl;
-	protocols::simple_filters::AlaScan ala_scan;
+	protocols::protein_interface_design::AlaScan ala_scan;
 	ala_scan.repack( 0 );
 	ala_scan.repeats( 1 );
 	ala_scan.jump( 1 );
 	ala_scan.scorefxn( scorefxn() );
 
-	protocols::simple_filters::DdgFilter ddg_filter( 100/*ddg_threshold*/, scorefxn(), 1 /*jump*/, 1 /*repeats*/ );
+	protocols::protein_interface_design::DdgFilter ddg_filter( 100/*ddg_threshold*/, scorefxn(), 1 /*jump*/, 1 /*repeats*/ );
 	core::Real orig_dG(0.0);
 	core::Real lowest_dG = 1000000;
 	Size lowest_res = 0;

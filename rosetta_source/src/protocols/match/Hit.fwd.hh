@@ -21,7 +21,6 @@
 
 // Numeric headers
 #include <numeric/kdtree/WrappedPrimitive.hh>
-#include <numeric/geometry/hashing/SixDHasher.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/ReferenceCount.hh>
@@ -38,9 +37,10 @@
 namespace protocols {
 namespace match {
 
-typedef numeric::geometry::hashing::Size3 Size3;
-typedef numeric::geometry::hashing::Size4 Size4;
-typedef numeric::geometry::hashing::Real6 Real6;
+typedef utility::fixedsizearray1< core::Size, 3 > Size3;
+typedef utility::fixedsizearray1< core::Size, 4 > Size4;
+typedef utility::fixedsizearray1< core::Real, 6 > Real6;
+
 
 /// A hit is defined as the integer representation of the upstream partner,
 /// the integer representation of the downstream partner's internal geometry,

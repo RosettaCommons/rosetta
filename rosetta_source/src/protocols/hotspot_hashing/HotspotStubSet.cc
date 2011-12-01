@@ -63,6 +63,7 @@
 #include <core/scoring/constraints/AmbiguousConstraint.hh>
 // AUTO-REMOVED #include <core/scoring/constraints/XYZ_Func.hh>
 #include <core/scoring/rms_util.hh>
+#include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/BasicFilters.hh>
 
@@ -102,7 +103,6 @@
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
-#include <protocols/simple_filters/DdgFilter.hh>
 #include <utility/vector0.hh>
 #include <basic/options/option.hh>
 
@@ -1146,7 +1146,7 @@ core::Size HotspotStubSet::stub_offset() {
 
 /// @brief utility function to calculate interaction energy for a single residue
 core::Real HotspotStubSet::get_residue_score_ ( core::pose::Pose const & pose, core::scoring::ScoreFunctionCOP scorefxn, Size const seqpos) {
-	protocols::simple_filters::DdgFilter const ddg( 100/*ddg_threshold*/, scorefxn, 1 /*jump__number*/, 3 /*repeats*/ );
+	protocols::protein_interface_design::DdgFilter const ddg( 100/*ddg_threshold*/, scorefxn, 1 /*jump__number*/, 3 /*repeats*/ );
 	/*(*scorefxn)(pose);
 	core::Real weighted_fa_atr = pose.energies().residue_total_energies( placed_seqpos )[core::scoring::fa_atr] * scorefxn->weights()[core::scoring::fa_atr];
 	core::Real weighted_fa_rep = pose.energies().residue_total_energies( placed_seqpos )[core::scoring::fa_rep] * scorefxn->weights()[core::scoring::fa_rep];

@@ -16,7 +16,7 @@
 #include <protocols/loops/LoopMover.hh>
 #include <protocols/loops/LoopMover_QuickCCD_Moves.hh>
 #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicMover.hh>
+// AUTO-REMOVED #include <protocols/moves/KinematicMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <core/conformation/Residue.hh>
 //
@@ -41,7 +41,7 @@
 #include <core/scoring/ScoreFunction.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/fragment/FragSet.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/basic_moves/FragmentMover.hh>
 
 #include <core/pose/symmetry/util.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
@@ -122,7 +122,7 @@ LoopResult LoopMover_Perturb_QuickCCD_Moves::model_loop(
 	using namespace kinematics;
 	using namespace scoring;
 	using namespace optimization;
-	using namespace protocols::simple_moves;
+	using namespace protocols::basic_moves;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace numeric::random;

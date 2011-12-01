@@ -19,29 +19,6 @@
 #include <core/pack/task/operation/TaskOperationRegistrator.hh>
 #include <protocols/moves/MoverFactory.hh>
 
-//evaluator creators
-#include <protocols/comparative_modeling/AlignRmsdTargetEvaluatorCreator.hh>
-#include <protocols/constraints_additional/ConstraintEvaluatorCreator.hh>
-#include <protocols/constraints_additional/CombinedConstraintEvaluatorCreator.hh>
-#include <protocols/evaluation/EvaluatorFactory.hh>
-#include <protocols/evaluation/RmsdTargetEvaluatorCreator.hh>
-#include <protocols/evaluation/PredictedBurialFnEvaluatorCreator.hh>
-#include <protocols/evaluation/StructureSimilarityEvaluatorCreator.hh>
-#include <protocols/evaluation/JScoreEvaluatorCreator.hh>
-#include <protocols/evaluation/ContactMapEvaluatorCreator.hh>
-#include <protocols/evaluation/NativeEvaluatorCreator.hh>
-#include <protocols/evaluation/PoolEvaluatorCreator.hh>
-#include <protocols/evaluation/RmsdEvaluatorCreator.hh>
-#include <protocols/evaluation/RdcTargetEvaluatorCreator.hh>
-#include <protocols/evaluation/RdcSelectEvaluatorCreator.hh>
-#include <protocols/evaluation/RdcEvaluatorCreator.hh>
-#include <protocols/evaluation/CamShiftEvaluatorCreator.hh>
-#include <protocols/evaluation/PalesEvaluatorCreator.hh>
-#include <protocols/evaluation/ExtraScoreEvaluatorCreator.hh>
-#include <protocols/evaluation/JumpNrEvaluatorCreator.hh>
-#include <protocols/sparta/ChemicalShiftEvaluatorCreator.hh>
-
-
 #include <protocols/dna/RestrictDesignToProteinDNAInterfaceCreator.hh>
 #include <protocols/dna/WatsonCrickRotamerCouplingsCreator.hh>
 #include <protocols/forge/remodel/RemodelRotamerLinksCreator.hh>
@@ -50,8 +27,7 @@
 #include <protocols/toolbox/task_operations/SeqprofConsensusOperationCreator.hh>
 #include <protocols/toolbox/task_operations/JointSequenceOperationCreator.hh>
 #include <protocols/toolbox/task_operations/LimitAromaChi2OperationCreator.hh>
-#include <protocols/flxbb/LayerDesignOperationCreator.hh>
-
+#include <protocols/toolbox/task_operations/LayerDesignOperationCreator.hh>
 #include <protocols/toolbox/task_operations/PreventChainFromRepackingOperationCreator.hh>
 #include <protocols/toolbox/task_operations/PreventResiduesFromRepackingOperationCreator.hh>
 #include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperationCreator.hh>
@@ -71,7 +47,6 @@
 #include <protocols/enzdes/ProteinLigandInterfaceUpweighterOperationCreator.hh>
 #include <protocols/enzdes/AddRigidBodyLigandConfsCreator.hh>
 #include <protocols/enzdes/SetCatalyticResPackBehaviorCreator.hh>
-#include <protocols/flxbb/LayerDesignOperationCreator.hh>
 #include <protocols/flexpep_docking/FlexPepDockingProtocolCreator.hh>
 
 #include <protocols/fldsgn/potentials/sspot/NatbiasSecondaryStructureEnergyCreator.hh>
@@ -162,21 +137,11 @@
 #include <protocols/protein_interface_design/movers/PlacementAuctionMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/PlacementMinimizationMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/VLBCreator.hh>
-#include <protocols/simple_moves/ddGCreator.hh>
+#include <protocols/protein_interface_design/movers/ddGCreator.hh>
 #include <protocols/protein_interface_design/movers/BackrubDDMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/PrepackMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/SpinMoverCreator.hh>
 #include <protocols/protein_interface_design/movers/LoopMoverFromCommandLineCreator.hh>
-#include <protocols/simple_filters/ScoreTypeFilterCreator.hh>
-#include <protocols/simple_filters/InterfaceSasaFilterCreator.hh>
-#include <protocols/simple_filters/NeighborTypeFilterCreator.hh>
-#include <protocols/simple_filters/ResidueBurialFilterCreator.hh>
-#include <protocols/simple_filters/ResidueDistanceFilterCreator.hh>
-#include <protocols/simple_filters/EnergyPerResidueFilterCreator.hh>
-#include <protocols/simple_filters/BuriedUnsatHbondFilterCreator.hh>
-#include <protocols/simple_filters/DdgFilterCreator.hh>
-#include <protocols/simple_filters/AlaScanCreator.hh>
-#include <protocols/simple_filters/TerminusDistanceFilterCreator.hh>
 #include <protocols/flxbb/FlxbbDesignCreator.hh>
 #include <protocols/flxbb/InterlockAromaCreator.hh>
 #include <protocols/fldsgn/BluePrintBDRCreator.hh>
@@ -184,22 +149,22 @@
 #include <protocols/fldsgn/potentials/SetSecStructEnergiesCreator.hh>
 #include <protocols/fldsgn/potentials/SetAACompositionPotentialCreator.hh>
 #include <protocols/forge/remodel/RemodelLoopMoverCreator.hh>
-#include <protocols/match/MatcherMoverCreator.hh>
 #include <protocols/moves/IfMoverCreator.hh>
 #include <protocols/moves/IteratedConvergenceMoverCreator.hh>
 #include <protocols/moves/MutateResidueCreator.hh>
 #include <protocols/moves/SetTorsionCreator.hh>
 #include <protocols/moves/DsspMoverCreator.hh>
+#include <protocols/moves/MatcherMoverCreator.hh>
 #include <protocols/moves/MakePolyXMoverCreator.hh>
 #include <protocols/moves/MinMoverCreator.hh>
 #include <protocols/moves/SaneMinMoverCreator.hh>
 #include <protocols/moves/MinPackMoverCreator.hh>
-#include <protocols/simple_moves/ScoreMoverCreator.hh>
+#include <protocols/moves/ScoreMoverCreator.hh>
 #include <protocols/moves/ConsensusDesignMoverCreator.hh>
 #include <protocols/moves/ConstraintSetMoverCreator.hh>
 #include <protocols/moves/PackRotamersMoverCreator.hh>
 #include <protocols/moves/RotamerTrialsMoverCreator.hh>
-#include <protocols/docking/ConformerSwitchMoverCreator.hh>
+#include <protocols/moves/ConformerSwitchMoverCreator.hh>
 #include <protocols/moves/SwitchResidueTypeSetMoverCreator.hh>
 #include <protocols/moves/GenericMonteCarloMoverCreator.hh>
 #include <protocols/moves/MonteCarloTestCreator.hh>
@@ -243,13 +208,11 @@
 #include <protocols/ligand_docking/HighResDockerCreator.hh>
 #include <protocols/ligand_docking/FinalMinimizerCreator.hh>
 #include <protocols/ligand_docking/InterfaceScoreCalculatorCreator.hh>
-#include <protocols/simple_moves/symmetry/SetupNCSMoverCreator.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMoverCreator.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMoverCreator.hh>
-#include <protocols/simple_moves/symmetry/SymRotamerTrialsMoverCreator.hh>
-#include <protocols/simple_moves/symmetry/SymMinMoverCreator.hh>
-#include <protocols/simple_moves/LoadUnboundRotMoverCreator.hh>
-#include <protocols/simple_moves/SequenceProfileMoverCreator.hh>
+#include <protocols/moves/symmetry/SetupNCSMoverCreator.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMoverCreator.hh>
+#include <protocols/moves/symmetry/SymPackRotamersMoverCreator.hh>
+#include <protocols/moves/symmetry/SymRotamerTrialsMoverCreator.hh>
+#include <protocols/moves/symmetry/SymMinMoverCreator.hh>
 #include <protocols/electron_density/SetupForDensityScoringMoverCreator.hh>
 #include <protocols/loops/LoopMover_CCDCreator.hh>
 #include <protocols/loops/LoopRelaxMoverCreator.hh>
@@ -271,7 +234,7 @@
 #include <protocols/filters/FilterFactory.hh>
 
 #include <protocols/enzdes/EnzFilterCreators.hh>
-#include <protocols/protein_interface_design/filters/HbondsToResidueFilterCreator.hh>
+#include <protocols/protein_interface_design/dock_design_filter_creators.hh>
 #include <protocols/protein_interface_design/filters/InterfaceHolesFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/DesignableResiduesFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/RmsdFilterCreator.hh>
@@ -323,7 +286,6 @@
 // DataLoader creators
 #include <protocols/jd2/parser/DataLoaderFactory.hh>
 #include <protocols/jd2/parser/StandardLoaderCreators.hh>
-#include <protocols/qsar/scoring_grid/ScoringGridLoaderCreator.hh>
 #include <protocols/ligand_docking/LigandDockingLoaderCreators.hh>
 
 #include <core/scoring/methods/EnergyMethodRegisterer.hh>
@@ -336,35 +298,10 @@
 #include <protocols/scoring/methods/InterchainPairEnergyCreator.hh>
 #include <protocols/scoring/methods/saxs/PDDFEnergyCreator.hh>
 
-//JobInputterCreator includes
-#include <protocols/jd2/JobInputterFactory.hh>
-#include <protocols/jd2/PDBJobInputterCreator.hh>
-#include <protocols/jd2/PoseInputStreamJobInputterCreator.hh>
-#include <protocols/features/DatabaseJobInputterCreator.hh>
-#include <protocols/enzdes/EnzdesJobInputterCreator.hh>
-#include <protocols/protein_interface_design/ParserJobInputterCreator.hh>
-#include <protocols/jd2/GenericJobInputterCreator.hh>
-#include <protocols/jd2/LazySilentFileJobInputterCreator.hh>
-#include <protocols/jd2/SilentFileJobInputterCreator.hh>
-#include <protocols/comparative_modeling/ThreadingJobInputterCreator.hh>
-#include <protocols/jd2/AtomTreeDiffJobInputterCreator.hh>
 #include <core/pack/task/operation/TaskOperationFactory.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
-
-//JobOutputterCreator includes
-#include <protocols/jd2/JobOutputterFactory.hh>
-#include <protocols/jd2/PDBJobOutputterCreator.hh>
-#include <protocols/jd2/SilentFileJobOutputterCreator.hh>
-#include <protocols/jd2/AtomTreeDiffJobOutputterCreator.hh>
-#include <protocols/jd2/NoOutputJobOutputterCreator.hh>
-#include <protocols/jd2/ScoreOnlyJobOutputterCreator.hh>
-#include <protocols/enzdes/EnzdesJobOutputterCreator.hh>
-#include <protocols/features/DatabaseJobOutputterCreator.hh>
-
-//Auto Headers
-#include <protocols/simple_filters/ResiduesInInterfaceFilterCreator.hh>
 
 
 namespace protocols {
@@ -385,29 +322,6 @@ static core::scoring::constraints::ConstraintRegistrator< protocols::constraints
 static core::scoring::constraints::ConstraintRegistrator< protocols::constraints_additional::SequenceCoupling1BDConstraintCreator > SequenceCoupling1BDConstraintCreator_registrator;
 static core::scoring::constraints::ConstraintRegistrator< protocols::constraints_additional::BindingSiteConstraintCreator > BindingSiteConstraintCreator_registrator;
 static core::scoring::constraints::ConstraintRegistrator< protocols::constraints_additional::PocketConstraintCreator > PocketConstraintCreator_registrator;
-
-
-//evaluator creators
-static protocols::evaluation::EvaluatorRegistrator<protocols::comparative_modeling::AlignRmsdTargetEvaluatorCreator> AlignRmsdTargetEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::constraints_additional::ConstraintEvaluatorCreator> ConstraintEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::constraints_additional::CombinedConstraintEvaluatorCreator> CombinedConstraintEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::PredictedBurialFnEvaluatorCreator> PredictedBurialFnEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::RmsdTargetEvaluatorCreator> RmsdTargetEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::StructureSimilarityEvaluatorCreator> StructureSimilarityEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::JScoreEvaluatorCreator> JScoreEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::ContactMapEvaluatorCreator> ContactMapEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::NativeEvaluatorCreator> NativeEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::PoolEvaluatorCreator> PoolEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::RmsdEvaluatorCreator> RmsdEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::RdcTargetEvaluatorCreator> RdcTargetEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::RdcSelectEvaluatorCreator> RdcSelectEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::RdcEvaluatorCreator> RdcEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::CamShiftEvaluatorCreator> CamShiftEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::PalesEvaluatorCreator> PalesEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::ExtraScoreEvaluatorCreator> ExtraScoreEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::JumpNrEvaluatorCreator> JumpNrEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::sparta::ChemicalShiftEvaluatorCreator> ChemicalShiftEvaluatorCreator_registrator;
-
 
 
 using namespace protocols::features;
@@ -460,7 +374,7 @@ static TaskOperationRegistrator< protocols::toolbox::task_operations::SeqprofCon
 static TaskOperationRegistrator< protocols::toolbox::task_operations::JointSequenceOperationCreator > JointSequenceOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictConservedLowDdgOperationCreator > RestrictConservedLowDdgOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::LimitAromaChi2OperationCreator > LimitAromaChi2OperationCreator_registrator;
-static TaskOperationRegistrator< protocols::flxbb::LayerDesignOperationCreator > LayerDesignOperationCreator_registrator;
+static TaskOperationRegistrator< protocols::toolbox::task_operations::LayerDesignOperationCreator > LayerDesignOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::PreventChainFromRepackingOperationCreator > PreventChainFromRepackingOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::PreventResiduesFromRepackingOperationCreator > PreventResiduesFromRepackingOperationCreator_registrator;
 static TaskOperationRegistrator< protocols::toolbox::task_operations::ProteinInterfaceDesignOperationCreator > ProteinInterfaceDesignOperationCreator_registrator;
@@ -529,7 +443,7 @@ static MoverRegistrator< protein_interface_design::movers::BackrubDDMoverCreator
 static MoverRegistrator< protein_interface_design::movers::PrepackMoverCreator > reg_PrepackMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::SpinMoverCreator > reg_SpinMoverCreator;
 static MoverRegistrator< protein_interface_design::movers::HotspotDisjointedFoldTreeMoverCreator > reg_HotsotDisjointedFoldTreeMoverCreator;
-static MoverRegistrator< protocols::simple_moves::ddGCreator> reg_ddGCreator;
+static MoverRegistrator< protein_interface_design::movers::ddGCreator> reg_ddGCreator;
 static MoverRegistrator< protein_interface_design::movers::LoopMoverFromCommandLineCreator > reg_LoopMoverFromCommandLine;
 static MoverRegistrator< flxbb::FlxbbDesignCreator > reg_FlxbbDesignCreator;
 static MoverRegistrator< flxbb::InterlockAromaCreator > reg_InterlockAromaCreator;
@@ -538,21 +452,21 @@ static MoverRegistrator< fldsgn::CircularPermutationCreator > reg_CircularPermut
 static MoverRegistrator< fldsgn::potentials::SetSecStructEnergiesCreator > reg_SetSecStructEnergiesCreator;
 static MoverRegistrator< fldsgn::potentials::SetAACompositionPotentialCreator > reg_AACompositionPotentialCreator;
 static MoverRegistrator< forge::remodel::RemodelLoopMoverCreator > reg_RemodelLoopMoverCreator;
-static MoverRegistrator< match::MatcherMoverCreator > reg_MatcherMoverCreator;
 static MoverRegistrator< moves::IfMoverCreator > reg_IfMoverCreator;
 static MoverRegistrator< moves::IteratedConvergenceMoverCreator > reg_IteratedConvergenceMoverCreator;
 static MoverRegistrator< moves::MutateResidueCreator > reg_MutateResidueCreator;
 static MoverRegistrator< moves::SetTorsionCreator > reg_SetTorsionCreator;
 static MoverRegistrator< moves::DsspMoverCreator > reg_DsspMoverCreator;
 static MoverRegistrator< moves::MakePolyXMoverCreator > reg_MakePolyXMoverCreator;
+static MoverRegistrator< moves::MatcherMoverCreator > reg_MatcherMoverCreator;
 static MoverRegistrator< moves::MinMoverCreator > reg_MinMoverCreator;
 static MoverRegistrator< moves::SaneMinMoverCreator > reg_SaneMinMoverCreator;
 static MoverRegistrator< moves::MinPackMoverCreator > reg_MinPackMoverCreator;
-static MoverRegistrator< simple_moves::ScoreMoverCreator > reg_ScoreMoverCreator;
+static MoverRegistrator< moves::ScoreMoverCreator > reg_ScoreMoverCreator;
 static MoverRegistrator< moves::ConsensusDesignMoverCreator > reg_ConsensusDesignMoverCreator;
 static MoverRegistrator< moves::ConstraintSetMoverCreator > reg_ConstraintSetMoverCreator;
 static MoverRegistrator< moves::PackRotamersMoverCreator > reg_PackRotamersMoverCreator;
-static MoverRegistrator< docking::ConformerSwitchMoverCreator > reg_ConformerSwitchMoverCreator;
+static MoverRegistrator< moves::ConformerSwitchMoverCreator > reg_ConformerSwitchMoverCreator;
 static MoverRegistrator< moves::SwitchResidueTypeSetMoverCreator > reg_SwitchResidueTypeSetMoverCreator;
 static MoverRegistrator< moves::GenericMonteCarloMoverCreator > reg_GenericMonteCarloMoverCreator;
 static MoverRegistrator< moves::MonteCarloTestCreator > reg_MonteCarloTestCreator;
@@ -592,14 +506,12 @@ static MoverRegistrator< dna::DnaInterfaceMultiStateDesignCreator > reg_DnaInter
 static MoverRegistrator< dna::DesignProteinBackboneAroundDNACreator > reg_DesignProteinBackboneAroundDNACreator;
 static MoverRegistrator< motifs::MotifDnaPackerCreator > reg_MotifDnaPackerCreator;
 static MoverRegistrator< electron_density::SetupForDensityScoringMoverCreator > reg_SetupForDensityScoringMoverCreator;
-static MoverRegistrator< simple_moves::symmetry::SetupNCSMoverCreator > reg_SetupNCSMoverCreator;
-static MoverRegistrator< protocols::symmetric_docking::SetupForSymmetryMoverCreator > reg_SetupForSymmetryMoverCreator;
-static MoverRegistrator< symmetric_docking::ExtractAsymmetricUnitMoverCreator > reg_ExtractAsymmetricUnitMoverCreator;
-static MoverRegistrator< simple_moves::symmetry::SymPackRotamersMoverCreator > reg_SymPackRotamersMoverCreator;
-static MoverRegistrator< simple_moves::symmetry::SymRotamerTrialsMoverCreator > reg_SymRotamerTrialsMoverCreator;
-static MoverRegistrator< simple_moves::symmetry::SymMinMoverCreator > reg_SymMinMoverCreator;
-static MoverRegistrator< simple_moves::LoadUnboundRotMoverCreator > reg_LoadUnboundRotMoverCreator;
-static MoverRegistrator< simple_moves::SequenceProfileMoverCreator > reg_SequenceProfileMoverCreator;
+static MoverRegistrator< moves::symmetry::SetupNCSMoverCreator > reg_SetupNCSMoverCreator;
+static MoverRegistrator< moves::symmetry::SetupForSymmetryMoverCreator > reg_SetupForSymmetryMoverCreator;
+static MoverRegistrator< moves::symmetry::ExtractAsymmetricUnitMoverCreator > reg_ExtractAsymmetricUnitMoverCreator;
+static MoverRegistrator< moves::symmetry::SymPackRotamersMoverCreator > reg_SymPackRotamersMoverCreator;
+static MoverRegistrator< moves::symmetry::SymRotamerTrialsMoverCreator > reg_SymRotamerTrialsMoverCreator;
+static MoverRegistrator< moves::symmetry::SymMinMoverCreator > reg_SymMinMoverCreator;
 static MoverRegistrator< ligand_docking::LigandDesignCreator > reg_LigandDesignCreator;
 static MoverRegistrator< ligand_docking::GrowLigandCreator > reg_GrowLigandCreator;
 static MoverRegistrator< ligand_docking::AddHydrogensCreator > reg_AddHydrogensCreator;
@@ -668,10 +580,10 @@ static FilterRegistrator< protocols::fldsgn::filters::NcontactsFilterCreator > r
 static FilterRegistrator< protocols::fldsgn::filters::SecondaryStructureFilterCreator > reg_SecondaryStructureFilterCreator;
 static FilterRegistrator< protocols::fldsgn::filters::ParallelBetaPairingPreferenceFilterCreator > reg_ParallelBetaPairingPreferenceFilterCreator;
 static FilterRegistrator< protocols::fldsgn::filters::SheetTopologyFilterCreator > reg_SheetTopologyFilterCreator;
-static FilterRegistrator< protocols::simple_filters::AlaScanFilterCreator > reg_AlaScanFilterCreator;
-static FilterRegistrator< protocols::simple_filters::BuriedUnsatHbondFilterCreator > reg_BuriedUnsatHbondFilterCreator;
-static FilterRegistrator< protocols::simple_filters::DdgFilterCreator > reg_DdgFilterCreator;
-static FilterRegistrator< protocols::simple_filters::EnergyPerResidueFilterCreator > reg_EnergyPerResidueFilterCreator;
+static FilterRegistrator< protocols::protein_interface_design::AlaScanFilterCreator > reg_AlaScanFilterCreator;
+static FilterRegistrator< protocols::protein_interface_design::BuriedUnsatHbondFilterCreator > reg_BuriedUnsatHbondFilterCreator;
+static FilterRegistrator< protocols::protein_interface_design::DdgFilterCreator > reg_DdgFilterCreator;
+static FilterRegistrator< protocols::protein_interface_design::EnergyPerResidueFilterCreator > reg_EnergyPerResidueFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::DesignableResiduesFilterCreator > reg_DesignableResiduesFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::DisulfideFilterCreator > reg_DisulfideFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::InterfaceHolesFilterCreator > reg_InterfaceHolesFilterCreator;
@@ -686,15 +598,14 @@ static FilterRegistrator< protocols::protein_interface_design::filters::FilterSc
 static FilterRegistrator< protocols::protein_interface_design::filters::RotamerBoltzmannWeightFilterCreator > reg_RotamerBoltzmannWeightFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::SequenceRecoveryFilterCreator > reg_SequenceRecoveryFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::StubScoreFilterCreator > reg_StubScoreFilterCreator;
-static FilterRegistrator< protocols::protein_interface_design::filters::HbondsToResidueFilterCreator > reg_HbondsToResidueFilterCreator;
-static FilterRegistrator< protocols::simple_filters::InterfaceSasaFilterCreator > reg_InterfaceSasaFilterCreator;
-static FilterRegistrator< protocols::simple_filters::NeighborTypeFilterCreator > reg_NeighborTypeFilterCreator;
-static FilterRegistrator< protocols::simple_filters::ResidueBurialFilterCreator > reg_ResidueBurialFilterCreator;
-static FilterRegistrator< protocols::simple_filters::ResidueDistanceFilterCreator > reg_ResidueDistanceFilterCreator;
-static FilterRegistrator< protocols::simple_filters::ResiduesInInterfaceFilterCreator > reg_ResiduesInInterfaceFilterCreator;
-static FilterRegistrator< protocols::simple_filters::ScoreTypeFilterCreator > reg_ScoreTypeFilterCreator;
-static FilterRegistrator< protocols::simple_filters::TerminusDistanceFilterCreator > reg_TerminusDistanceFilterCreator;
-
+static FilterRegistrator< protocols::protein_interface_design::HbondsToResidueFilterCreator > reg_HbondsToResidueFilterCreator;
+static FilterRegistrator< protocols::protein_interface_design::InterfaceSasaFilterCreator > reg_InterfaceSasaFilterCreator;
+static FilterRegistrator< protocols::protein_interface_design::NeighborTypeFilterCreator > reg_NeighborTypeFilterCreator;
+static FilterRegistrator< protocols::protein_interface_design::ResidueBurialFilterCreator > reg_ResidueBurialFilterCreator;
+static FilterRegistrator< protocols::protein_interface_design::ResidueDistanceFilterCreator > reg_ResidueDistanceFilterCreator;
+static FilterRegistrator< protocols::protein_interface_design::ResiduesInInterfaceFilterCreator > reg_ResiduesInInterfaceFilterCreator;
+static FilterRegistrator< protocols::protein_interface_design::ScoreTypeFilterCreator > reg_ScoreTypeFilterCreator;
+static FilterRegistrator< protocols::protein_interface_design::TerminusDistanceFilterCreator > reg_TerminusDistanceFilterCreator;
 
 using namespace qsar::scoring_grid;
 static GridRegistrator<AtrGridCreator> reg_AtrGridCreator;
@@ -707,33 +618,12 @@ static GridRegistrator<VdwGridCreator> reg_VdwGridCreator;
 using namespace jd2::parser;
 static DataLoaderRegistrator< ScoreFunctionLoaderCreator > reg_ScoreFunctionLoaderCreator;
 static DataLoaderRegistrator< TaskOperationLoaderCreator > reg_TaskOperationLoaderCreator;
-static DataLoaderRegistrator< protocols::qsar::scoring_grid::ScoringGridLoaderCreator > reg_ScoringGridLoaderCreator;
+static DataLoaderRegistrator< ScoringGridLoaderCreator > reg_ScoringGridLoaderCreator;
 static DataLoaderRegistrator< FragSetLoaderCreator > reg_FragSetLoaderCreator;
 static DataLoaderRegistrator< MonteCarloLoaderCreator > reg_MonteCarloLoaderCreator;
 static DataLoaderRegistrator< ligand_docking::InterfaceBuilderLoaderCreator > reg_InterfaceBuilderLoaderCreator;
 static DataLoaderRegistrator< ligand_docking::MoveMapBuilderLoaderCreator > reg_MoveMapBuilderLoaderCreator;
 static DataLoaderRegistrator< ligand_docking::LigandAreaLoaderCreator > reg_LigandAreaLoaderCreator;
-
-//JobInputterFactory section
-using namespace jd2;
-static JobInputterRegistrator< enzdes::EnzdesJobInputterCreator > reg_EnzdesJobInputterCreator;
-static JobInputterRegistrator< protein_interface_design::ParserJobInputterCreator > reg_ParserJobInputterCreator;
-static JobInputterRegistrator< PDBJobInputterCreator > reg_PDBJobInputterCreator;
-static JobInputterRegistrator< LazySilentFileJobInputterCreator > reg_LazySilentFileJobInputterCreator;
-static JobInputterRegistrator< SilentFileJobInputterCreator > reg_SilentFileJobInputterCreator;
-static JobInputterRegistrator< AtomTreeDiffJobInputterCreator > reg_AtomTreeDiffJobInputterCreator;
-static JobInputterRegistrator< comparative_modeling::ThreadingJobInputterCreator > reg_ThreadingJobInputterCreator;
-static JobInputterRegistrator< features::DatabaseJobInputterCreator > reg_DatabaseJobInputterCreator;
-static JobInputterRegistrator< GenericJobInputterCreator > reg_GenericJobInputterCreator;
-
-//JobOutputterFactory section
-static JobOutputterRegistrator< PDBJobOutputterCreator > reg_PDBJobOutputterCreator;
-static JobOutputterRegistrator< SilentFileJobOutputterCreator > reg_SilentFileJobOutputterCreator;
-static JobOutputterRegistrator< AtomTreeDiffJobOutputterCreator > reg_AtomTreeDiffJobOutputterCreator;
-static JobOutputterRegistrator< NoOutputJobOutputterCreator > reg_NoOutputJobOutputterCreator;
-static JobOutputterRegistrator< ScoreOnlyJobOutputterCreator > reg_ScoreOnlyJobOutputterCreator;
-static JobOutputterRegistrator< enzdes::EnzdesJobOutputterCreator > reg_EnzdesJobOutputterCreator;
-static JobOutputterRegistrator< features::DatabaseJobOutputterCreator > reg_DatabaseJobOutputterCreator;
 
 void init( int argc, char * argv [] )
 {

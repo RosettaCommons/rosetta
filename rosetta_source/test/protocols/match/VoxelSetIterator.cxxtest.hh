@@ -48,7 +48,6 @@ class VoxelSetIteratorTests : public CxxTest::TestSuite {
 		typedef core::Real   Real;
 		typedef numeric::geometry::BoundingBox< Vector > BoundingBox;
 		typedef protocols::match::Real6 Real6;
-	  typedef numeric::geometry::hashing::Real3 Real3;
 
 	private:
 		Vector lower;
@@ -106,7 +105,7 @@ class VoxelSetIteratorTests : public CxxTest::TestSuite {
 		VoxelSetIterator voxiter( bb, n_xyz_bins, n_euler_bins, xyz_bin_widths,
 			euler_bin_widths, xyz_bin_halfwidths, euler_bin_halfwidths, p );
 
-		numeric::geometry::hashing::Bin6D bin; Size pos;
+		Bin6D bin; Size pos;
 		voxiter.get_bin_and_pos( bin, pos );
 		//std::cout << "Vox: bin=";
 		//for ( Size ii = 1; ii <= 6; ++ii ) std::cout << " " << bin[ ii ];
@@ -158,7 +157,7 @@ class VoxelSetIteratorTests : public CxxTest::TestSuite {
 		for ( Size ii = 1; ii <= 64; ++ii ) {
 			TS_ASSERT( ! voxiter.at_end() );
 
-			numeric::geometry::hashing::Bin6D bin; Size pos;
+			Bin6D bin; Size pos;
 			voxiter.get_bin_and_pos( bin, pos );
 
 			TS_ASSERT( pos == ii );
@@ -181,7 +180,7 @@ class VoxelSetIteratorTests : public CxxTest::TestSuite {
 
 		for ( Size ii = 1; ii <= 7; ++ii ) ++voxiter;
 
-		numeric::geometry::hashing::Bin6D bin; Size pos;
+		Bin6D bin; Size pos;
 		voxiter.get_bin_and_pos( bin, pos );
 
 
@@ -217,7 +216,7 @@ class VoxelSetIteratorTests : public CxxTest::TestSuite {
 
 		for ( Size ii = 1; ii <= 15; ++ii ) ++voxiter;
 
-		numeric::geometry::hashing::Bin6D bin; Size pos;
+		Bin6D bin; Size pos;
 		voxiter.get_bin_and_pos( bin, pos );
 
 		TS_ASSERT( bin[ 1 ] == 2 );
@@ -252,7 +251,7 @@ class VoxelSetIteratorTests : public CxxTest::TestSuite {
 
 		for ( Size ii = 1; ii <= 31; ++ii ) ++voxiter;
 
-		numeric::geometry::hashing::Bin6D bin; Size pos;
+		Bin6D bin; Size pos;
 		voxiter.get_bin_and_pos( bin, pos );
 
 		TS_ASSERT( bin[ 1 ] == 4 );
@@ -275,7 +274,7 @@ class VoxelSetIteratorTests : public CxxTest::TestSuite {
 		VoxelSetIterator voxiter( bb, n_xyz_bins, n_euler_bins, xyz_bin_widths,
 			euler_bin_widths, xyz_bin_halfwidths, euler_bin_halfwidths, p );
 
-		numeric::geometry::hashing::Bin6D bin; Size pos;
+		Bin6D bin; Size pos;
 		voxiter.get_bin_and_pos( bin, pos );
 
 		TS_ASSERT( bin[ 1 ] == 1 );
@@ -316,7 +315,7 @@ class VoxelSetIteratorTests : public CxxTest::TestSuite {
 		VoxelSetIterator voxiter( bb, n_xyz_bins, n_euler_bins, xyz_bin_widths,
 			euler_bin_widths, xyz_bin_halfwidths, euler_bin_halfwidths, p );
 
-		numeric::geometry::hashing::Bin6D bin; Size pos;
+		Bin6D bin; Size pos;
 		voxiter.get_bin_and_pos( bin, pos );
 
 		TS_ASSERT( bin[ 1 ] == 1 );
@@ -364,7 +363,7 @@ class VoxelSetIteratorTests : public CxxTest::TestSuite {
 		VoxelSetIterator voxiter2( bb, n_xyz_bins, n_euler_bins, xyz_bin_widths,
 			euler_bin_widths, xyz_bin_halfwidths, euler_bin_halfwidths, p2 );
 
-		numeric::geometry::hashing::Bin6D bin; Size pos;
+		Bin6D bin; Size pos;
 		voxiter1.get_bin_and_pos( bin, pos );
 
 		/// state 0
@@ -535,7 +534,7 @@ class VoxelSetIteratorTests : public CxxTest::TestSuite {
 		VoxelSetIterator voxiter2( bb, n_xyz_bins, n_euler_bins, xyz_bin_widths,
 			euler_bin_widths, xyz_bin_halfwidths, euler_bin_halfwidths, p2 );
 
-		numeric::geometry::hashing::Bin6D bin; Size pos;
+		Bin6D bin; Size pos;
 		voxiter1.get_bin_and_pos( bin, pos );
 
 		/// state 0

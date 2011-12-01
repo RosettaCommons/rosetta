@@ -19,8 +19,8 @@
 // Package headers
 
 // Project headers
-#include <protocols/loops/kinematic_closure/KinematicWrapper.hh>
-#include <protocols/loops/kinematic_closure/KinematicMover.hh>
+#include <protocols/loops/KinematicWrapper.hh>
+#include <protocols/moves/KinematicMover.hh>
 #include <protocols/loops/LoopMover_CCD.hh>
 // AUTO-REMOVED #include <protocols/loops/LoopMover_QuickCCD.hh>
 #include <protocols/loops/LoopMover_KIC.hh>
@@ -79,10 +79,6 @@
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
-//Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
-
-
 
 
 namespace protocols {
@@ -118,7 +114,7 @@ LoopRemodel::clone() const {
 }
 
 LoopRemodel::LoopRemodel() :
-	simple_moves::DesignRepackMover( LoopRemodelCreator::mover_name() )
+	DesignRepackMover( LoopRemodelCreator::mover_name() )
 {}
 
 LoopRemodel::LoopRemodel(
@@ -138,7 +134,7 @@ LoopRemodel::LoopRemodel(
 	core::fragment::FragSetOP frag3,
 	core::fragment::FragSetOP frag9
 ) :
-	simple_moves::DesignRepackMover( LoopRemodelCreator::mover_name() ),
+	DesignRepackMover( LoopRemodelCreator::mover_name() ),
 	protocol_( protocol ),
 	loop_start_( loop_start ),
 	loop_end_( loop_end ),
@@ -202,7 +198,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 							// make a temporary loop/loops set to use in this scope
 							Loop loop( *it );
 
-							loops::kinematic_closure::KinematicMoverOP kinmover = new loops::kinematic_closure::KinematicMover;
+							KinematicMoverOP kinmover = new KinematicMover;
 							if( perturb_ ) kinmover->set_idealize_loop_first( true );
 							core::Size const cycles = 100;
 							kinmover->set_temperature( mc_kt );
@@ -211,7 +207,7 @@ LoopRemodel::apply( core::pose::Pose & pose )
 							kinmover->set_sample_nonpivot_torsions( true );
 							kinmover->set_rama_check( true );
 
-							protocols::loops::kinematic_closure::KinematicWrapper kinwrapper( kinmover, loop, cycles );
+							protocols::loops::KinematicWrapper kinwrapper( kinmover, loop, cycles );
 							kinwrapper.apply( pose );
 						} // for all loops
 						inner_mc.boltzmann( pose );

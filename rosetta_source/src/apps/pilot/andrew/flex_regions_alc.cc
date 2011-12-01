@@ -15,7 +15,7 @@
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/jobdist/standard_mains.hh>
 
-#include <protocols/loops/kinematic_closure/KinematicMover.hh>
+#include <protocols/moves/KinematicMover.hh>
 
 #include <utility/string_util.hh>
 
@@ -32,7 +32,7 @@ int main( int argc, char * argv [] )
 	pose::Pose pose;
 	core::import_pose::pose_from_pdb( pose, input_jobs[ 1 ]->input_tag() );
 
-	protocols::loops::kinematic_closure::KinematicMover myKinematicMover( 0.6 );
+	protocols::moves::KinematicMover myKinematicMover( 0.6 );
 	myKinematicMover.set_rama_check( true );
 	// DJM: debug seeing if this is causing problems with the loopmodel extend loops
 	//myKinematicMover.set_idealize_loop_first( true ); // start without any native angles or lengths

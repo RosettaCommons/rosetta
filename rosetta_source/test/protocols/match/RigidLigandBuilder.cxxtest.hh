@@ -24,8 +24,6 @@
 #include <protocols/match/upstream/OriginalScaffoldBuildPoint.hh>
 #include <protocols/match/output/WriteUpstreamCoordinateKineamge.hh>
 
-#include <protocols/toolbox/match_enzdes_util/ExternalGeomSampler.hh>
-
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
@@ -57,7 +55,6 @@ using namespace protocols::match;
 using namespace protocols::match::downstream;
 using namespace protocols::match::output;
 using namespace protocols::match::upstream;
-using namespace protocols::toolbox::match_enzdes_util;
 
 
 // --------------- Test Class --------------- //

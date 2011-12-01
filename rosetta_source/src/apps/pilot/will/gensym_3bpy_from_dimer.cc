@@ -76,9 +76,9 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/moves/symmetry/SymMinMover.hh>
+#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
@@ -265,7 +265,7 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
 
     // Actually perform design.
     core::pack::make_symmetric_PackerTask(pose, task);
-    protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
+    protocols::moves::MoverOP packer = new protocols::moves::symmetry::SymPackRotamersMover(sf, task);
     packer->apply(pose);
 
     pose.remove_constraints( res_cst );
@@ -328,7 +328,7 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
   movemap->set_bb(true);
   movemap->set_chi(true);
   core::pose::symmetry::make_symmetric_movemap(pose,*movemap);
-  protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+  protocols::moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
   pose.remove_constraints();
   //sf->show(pose);
   //pose.dump_pdb("test.pdb");
@@ -396,7 +396,7 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
 
   // Actually perform design.
   core::pack::make_symmetric_PackerTask(pose, task);
-  protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
+  protocols::moves::MoverOP packer = new protocols::moves::symmetry::SymPackRotamersMover(sf, task);
   packer->apply(pose);
 
   pose.remove_constraints( res_cst );
@@ -443,7 +443,7 @@ void refine(Pose & pose, Size ibpy, Size dsub) {
                                               AtomID(pose.residue(ibpy).atom_index("NN1"),ibpy+2*sym_info->num_independent_residues()),
                                               new HarmonicFunc(1.570796,0.1) ) );
   }
-  protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+  protocols::moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
   pose.remove_constraints();
 
 }
@@ -491,7 +491,7 @@ void repack(Pose & pose, Size ibpy, Size dsub) {
 
   // Actually perform design.
   core::pack::make_symmetric_PackerTask(pose, task);
-  protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
+  protocols::moves::MoverOP packer = new protocols::moves::symmetry::SymPackRotamersMover(sf, task);
   packer->apply(pose);
 
 }

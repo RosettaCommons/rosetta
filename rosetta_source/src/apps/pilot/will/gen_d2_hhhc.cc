@@ -66,13 +66,13 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <protocols/simple_moves/FragmentMover.hh>
-#include <numeric/kinematic_closure/bridgeObjects.hh>
-// AUTO-REMOVED #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
+// AUTO-REMOVED #include <protocols/basic_moves/FragmentMover.hh>
+#include <protocols/moves/kinematic_closure/bridgeObjects.hh>
+// AUTO-REMOVED #include <protocols/moves/kinematic_closure/kinematic_closure_helpers.hh>
 // AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/moves/symmetry/SymMinMover.hh>
+#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
 // AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <sstream>
@@ -157,7 +157,7 @@ void repack(Pose & pose, Size nres, ScoreFunctionOP sf) {
     }
   }
   // TR << *task << std::endl;
-  protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+  protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
   repack.apply(pose);
 }
 
@@ -244,7 +244,7 @@ void design(Pose & pose, Size nres, ScoreFunctionOP sf) {
   }
   TR << *task << std::endl;
 
-  protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
+  protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
   repack.apply(pose);
 }
 
@@ -262,7 +262,7 @@ void minimize(Pose & pose, Size nres, Size , ScoreFunctionOP sf, int bb=0) {
 
   core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
 
-  protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+  protocols::moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 
   m.apply(pose);
 
@@ -532,7 +532,7 @@ Real ik_his_clamp(Pose & pose,
   order [1]=1; order [2]=2; order [3]=3;
   pivots[1]=5, pivots[2]=8, pivots[3]=11;
 
-  using namespace numeric::kinematic_closure;
+  using namespace protocols::moves::kinematic_closure;
   chainTORS(atoms.size(), vecs2vv(atoms), dt_ang, db_ang, db_len, R0, Q0);
 
   db_ang[ 7] = 161.2;
@@ -553,7 +553,7 @@ Real ik_his_clamp(Pose & pose,
         bridgeObjects(vecs2vv(atoms), dt_ang, db_ang, db_len, pivots, order, t_ang, b_ang, b_len, nsol);
         for(int isol = 1; isol <= nsol; isol++) {
           utility::vector1<utility::vector1<core::Real> > vv_atm_out;
-          numeric::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,vv_atm_out);
+          protocols::moves::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,vv_atm_out);
           Vecs apos = vv2vecs(vv_atm_out);
           bool clash = false;
           for( Size i = 1; i <= atoms.size(); ++i ) {

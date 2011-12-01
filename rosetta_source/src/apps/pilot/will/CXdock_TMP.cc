@@ -67,9 +67,9 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/moves/symmetry/SymMinMover.hh>
+#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>

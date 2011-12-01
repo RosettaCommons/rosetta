@@ -70,7 +70,6 @@ using basic::Error;
 using basic::Warning;
 static basic::Tracer TR("protocols.optimize_weights.OptEMultifunc");
 
-using namespace numeric::expression_parser;
 //#undef NDEBUG
 
 
@@ -638,7 +637,7 @@ WrapperOptEMultifunc::WrapperOptEMultifunc(
 			ast_expression.parse( *tokens );
 
 			active_variables_this_dependent_dof_.clear();
-			numeric::expression_parser::ExpressionCOP derived_dof_expression = expression_creator.create_expression_tree( ast_expression );
+			ExpressionCOP derived_dof_expression = expression_creator.create_expression_tree( ast_expression );
 
 			Size derived_dof_index = optEmultifunc_dof_order_[ dof_name ];
 			optE_dof_expressions_[ derived_dof_index ] = derived_dof_expression;
@@ -690,12 +689,12 @@ WrapperOptEMultifunc::WrapperOptEMultifunc(
 	real_dof_deriviative_expressions_.resize( n_real_dofs_ );
 
 	for ( Size ii = 1; ii <= optE_dof_expressions_.size(); ++ii ) {
-		numeric::expression_parser::ExpressionCOP iiexp = optE_dof_expressions_[ ii ];
+		ExpressionCOP iiexp = optE_dof_expressions_[ ii ];
 		for ( std::set< std::string >::const_iterator
 				variter = active_variables_[ ii ].begin(),
 				variter_end = active_variables_[ ii ].end();
 				variter != variter_end; ++variter ) {
-			numeric::expression_parser::ExpressionCOP iiexp_dvar = iiexp->differentiate( *variter );
+			ExpressionCOP iiexp_dvar = iiexp->differentiate( *variter );
 			if ( iiexp_dvar == 0 ) {
 				utility_exit_with_message( "Error constructing parital derivative for '" +
 					name_from_score_type( free_score_list[ ii ] ) +
@@ -742,7 +741,7 @@ WrapperOptEMultifunc::dfunc(
 	multifunc_->dfunc( optEvars, dmultifunc_dvars );
 
 	for ( Size ii = 1; ii <= real_dof_deriviative_expressions_.size(); ++ii ) {
-		for ( std::list< std::pair< Size, numeric::expression_parser::ExpressionCOP > >::const_iterator
+		for ( std::list< std::pair< Size, ExpressionCOP > >::const_iterator
 				iter = real_dof_deriviative_expressions_[ ii ].begin(),
 				iter_end = real_dof_deriviative_expressions_[ ii ].end();
 				iter != iter_end; ++iter ) {
@@ -800,7 +799,7 @@ WrapperOptEMultifunc::print_dofs(
 }
 
 
-numeric::expression_parser::VariableExpressionOP
+VariableExpressionOP
 WrapperOptEMultifunc::register_variable_expression( std::string varname )
 {
 	if ( valid_variable_names_.find( varname ) != valid_variable_names_.end() ) {
@@ -862,12 +861,12 @@ WrapperOptEMultifunc::set_multifunc( OptEMultifuncOP multifunc )
 }
 
 OptEVariableExpression::OptEVariableExpression(std::string const & name ) :
-	numeric::expression_parser::VariableExpression( name ),
+	VariableExpression( name ),
 	id_( 0 )
 {}
 
 OptEVariableExpression::OptEVariableExpression(std::string const & name, core::Real value ) :
-	numeric::expression_parser::VariableExpression( name, value ),
+	VariableExpression( name, value ),
 	id_( 0 )
 {}
 
@@ -895,16 +894,16 @@ WrappedOptEExpressionCreator::WrappedOptEExpressionCreator(
 
 WrappedOptEExpressionCreator::~WrappedOptEExpressionCreator() {}
 
-numeric::expression_parser::ExpressionCOP
+ExpressionCOP
 WrappedOptEExpressionCreator::handle_variable_expression( ArithmeticASTValue const & node )
 {
 	return multifunc_->register_variable_expression( node.variable_name() );
 }
 
-numeric::expression_parser::ExpressionCOP
+ExpressionCOP
 WrappedOptEExpressionCreator::handle_function_expression(
 	FunctionTokenCOP function,
-	utility::vector1< numeric::expression_parser::ExpressionCOP > const & /*args*/
+	utility::vector1< ExpressionCOP > const & /*args*/
 )
 {
 	utility_exit_with_message( "WrappedOptEExpressionCreator cannot process function " + function->name() );

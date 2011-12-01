@@ -37,8 +37,8 @@ core::Size
 advance_to_neighbor_bin(
 	Real6 orig_point,
 	Real6 steps, // 0 if no step, non-zero if some real step
-	numeric::geometry::hashing::SixDCoordinateBinner const & binner,
-	numeric::geometry::hashing::Bin6D & next_bin
+	SixDCoordinateBinner const & binner,
+	Bin6D & next_bin
 );
 
 
@@ -143,7 +143,7 @@ HitHasher::initialize()
 
 		BoundingBox bb( xyz_lower, bb_.upper() );
 
-		hit_hashes_[ count ].first = new numeric::geometry::hashing::SixDCoordinateBinner( bb, euler_offsets, bin_widths );
+		hit_hashes_[ count ].first = new SixDCoordinateBinner( bb, euler_offsets, bin_widths );
 		++lex;
 		++count;
 	}
@@ -301,7 +301,7 @@ void HitNeighborFinder::add_hits( std::list< Hit > const & hitlist )
 		all_hits_.push_back( std::make_pair( count_hits, & ( *iter ) ));
 	}
 	hash_hits();
-}
+}	
 
 void HitNeighborFinder::add_hits( HitPtrList const & /*hitptrlist*/ )
 {}
@@ -321,7 +321,7 @@ HitNeighborFinder::initialize()
 	bin_widths[ 1 ] = xyz_bin_widths_[ 1 ];   bin_widths[ 2 ] = xyz_bin_widths_[ 2 ];   bin_widths[ 3 ] = xyz_bin_widths_[ 3 ];
 	bin_widths[ 4 ] = euler_bin_widths_[ 1 ]; bin_widths[ 5 ] = euler_bin_widths_[ 2 ]; bin_widths[ 6 ] = euler_bin_widths_[ 3 ];
 
-	binner_ = new numeric::geometry::hashing::SixDCoordinateBinner( bb_, euler_offsets, bin_widths );
+	binner_ = new SixDCoordinateBinner( bb_, euler_offsets, bin_widths );
 
 }
 
@@ -339,7 +339,7 @@ HitNeighborFinder::connected_components() const
 	for ( Size ii = 5; ii >= 1; --ii ) twopows[ ii ] = twopows[ ii + 1 ] * 2;
 
 	//typedef fixedsizearray1< boost::uint64_t, 2 > halfbin_index_touple; // pos1 = bin index; pos2 = halfbin subindex
-	//typedef utility::OrderedTuple<
+	//typedef utility::OrderedTuple< 
 
 	utility::vector1< bool > visited_halfbins( 64, false );
 
@@ -371,7 +371,7 @@ HitNeighborFinder::connected_components() const
 			Size query_halfbin_index = 1;
 			for ( Size ii = 1; ii <= 6; ++ii ) if ( query_halfbin[ ii ] == 1 ) query_halfbin_index += twopows[ ii ];
 
-			// only explore the neighbor halfbins
+			// only explore the neighbor halfbins 
 			if ( visited_halfbins[ query_halfbin_index ] ) continue;
 			visited_halfbins[ query_halfbin_index ] = true;
 
@@ -410,10 +410,10 @@ HitNeighborFinder::connected_components() const
 
 			} // end while ( !halfbin_lex.at_end() )
 
-
+			
 		}
 
-
+			
 	}
 
 	/*for ( HitIndexList::const_iterator iter = all_hits_.begin(), iter_end = all_hits_.end();
@@ -470,7 +470,7 @@ HitNeighborFinder::connected_components() const
 			ds_representatives_to_setnos[ ii ] = count_set;
 		}
 	}
-
+	
 	utility::vector1< HitPtrList > hit_ccs( nccs );
 	for (HitIndexList::const_iterator iter = all_hits_.begin(), iter_end = all_hits_.end();
 			iter != iter_end; ++iter ) {
@@ -603,7 +603,7 @@ HitNeighborFinder::within_reach(
 	Bin6D const & query_halfbin,
 	Bin6D const & nb_halfbin,
 	Bin6D const & nbbin,
-	utility::FixedSizeLexicographicalIterator< 6 > const & halfbin_lex
+	utility::FixedSizeLexicographicalIterator< 6 > const & halfbin_lex	
 ) const
 {
 	Size const NEIGHBOR_BIN = 2; // 1 will denote "stay in the same bin; 2 will denote look in the neighbor bin"
@@ -712,7 +712,7 @@ void MatchCounter::add_hits( Size geomcst_id, std::list< Hit > const & hitlist )
 			hash_iter->second[ geomcst_id ] += 1;
 		}
 	}
-}
+}	
 
 void MatchCounter::add_hits( Size geomcst_id, std::list< Hit const * > const & hitlist )
 {
@@ -749,7 +749,7 @@ MatchCounter::initialize()
 
 	for ( Size ii = 1; ii <=6; ++ii ) bin_widths[ ii ] *= 0.5;
 
-	binner_ = new numeric::geometry::hashing::SixDCoordinateBinner( bb_, euler_offsets, bin_widths );
+	binner_ = new SixDCoordinateBinner( bb_, euler_offsets, bin_widths );
 
 }
 
@@ -851,10 +851,10 @@ MatchCounter::count_n_matches() const
 				for ( Size ii = 3; ii <= n_geom_csts_; ++ii ) {
 					comp_lex.set_position_from_index( lex[ ii-1 ] );
 					for ( Size jj = 1; jj <= 6; ++jj ) {
-						/// 3 ways in which the halfbin for geomcst ii at dimension jj is within range of a match.
+						/// 3 ways in which the halfbin for geomcst ii at dimension jj is within range of a match. 
 						if ( comp_lex[ jj ] == 2 ) continue; // 1. It's in the center.
 						if ( outer_corner[ jj ] == 2 ) { outer_corner[ jj ] = comp_lex[ jj ]; continue; } // 2. It's defined a new outer-edge
-						if ( comp_lex[ jj ] == outer_corner[ jj ] ) continue; // 3. It's
+						if ( comp_lex[ jj ] == outer_corner[ jj ] ) continue; // 3. It's 
 
 						out_of_range = true;
 						lex.continue_at_dimension( ii-1 );
@@ -899,15 +899,15 @@ core::Size
 advance_to_neighbor_bin(
 	Real6 orig_point,
 	Real6 steps, // 0 if no step, non-zero if some real step
-	numeric::geometry::hashing::SixDCoordinateBinner const & binner,
-	numeric::geometry::hashing::Bin6D & next_bin
+	SixDCoordinateBinner const & binner,
+	Bin6D & next_bin
 )
 {
 	using namespace core;
 
-	numeric::geometry::hashing::Real6 alt_point( orig_point );
-	numeric::geometry::hashing::Real3 orig_euler( 0.0 );
-	numeric::geometry::hashing::Real3 euler_offsets( 0.0 );
+	Real6 alt_point( orig_point );
+	Real3 orig_euler( 0.0 );
+	Real3 euler_offsets( 0.0 );
 	for ( Size ii = 1; ii <= 3; ++ii ) {
 		alt_point[ ii ] += steps[ ii ];
 		euler_offsets[ ii ] = steps[ ii + 3 ];
@@ -916,7 +916,7 @@ advance_to_neighbor_bin(
 
 	/// are we in range? -- return out-of-range index for advancing the lex if so
 	for ( Size ii = 1; ii <= 3; ++ii ) {
-		if ( binner.bounding_box().lower()( ii ) > alt_point[ ii ] ||
+		if ( binner.bounding_box().lower()( ii ) > alt_point[ ii ] || 
 				binner.bounding_box().upper()( ii ) < alt_point[ ii ] ) {
 			return ii;
 		}
@@ -924,7 +924,7 @@ advance_to_neighbor_bin(
 	/// ok -- we're good!
 
 	/// Complicated logic in advancing the euler angles; defer to another function
-	numeric::geometry::hashing::Real3 new_euler = advance_euler_angles( orig_euler, euler_offsets );
+	Real3 new_euler = advance_euler_angles( orig_euler, euler_offsets );
 	for ( Size ii = 1; ii <= 3; ++ii ) {
 		alt_point[ ii + 3 ] = new_euler[ ii ];
 	}
@@ -939,22 +939,22 @@ advance_to_neighbor_bin(
 /// them back into their appropriate ranges ([0,360) for phi/psi, [0..180] for theta)
 /// as necessary.
 /// Requirements: orig_angles[ i ] + offsets[ i ] < 520 (360) && > -360 (-180) for phi/psi (theta).
-numeric::geometry::hashing::Real3
+Real3
 advance_euler_angles(
-	numeric::geometry::hashing::Real3 const & orig_angles,
-	numeric::geometry::hashing::Real3 const & offsets
+	Real3 const & orig_angles,
+	Real3 const & offsets
 )
 {
 	using core::Size;
 
-	numeric::geometry::hashing::Real3 new_euler_angles( orig_angles );
+	Real3 new_euler_angles( orig_angles );
 	for ( Size ii = 1; ii <= 3; ++ii ) new_euler_angles[ ii ] += offsets[ ii ];
 
 	if ( new_euler_angles[ 3 ] < 0 || new_euler_angles[ 3 ] > 180 ) {
 		/// 1st handle theta wrapping.
 		if ( new_euler_angles[ 3 ] < 0 ) {
 			new_euler_angles[ 3 ] *= -1.0; // wrap the angle back to positive values
-		} else { // new_euler_angles[ 3 ] > 180
+		} else { // new_euler_angles[ 3 ] > 180			
 			assert( new_euler_angles[ 3 ] < 360 );
 			new_euler_angles[ 3 ] = 360 - new_euler_angles[ 3 ]; // 182 wraps to 178...
 		}

@@ -35,7 +35,7 @@
 
 #include <core/pose/Pose.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
 #include <protocols/loops/Loops.hh>
@@ -302,7 +302,7 @@ RelaxProtocolBase::get_task_factory() const
 		task->initialize_from_command_line().restrict_to_repacking().restrict_to_residues(allow_repack);
 		task->or_include_current( true );
 		if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )  {
-			full_repack = new simple_moves::symmetry::SymPackRotamersMover( disulf_score_only, task );
+			full_repack = new moves::symmetry::SymPackRotamersMover( disulf_score_only, task );
 		} else {
 			full_repack = new moves::PackRotamersMover( disulf_score_only, task );
 		}

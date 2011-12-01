@@ -29,7 +29,7 @@
 #include <protocols/match/downstream/ActiveSiteGrid.fwd.hh>
 #include <protocols/match/downstream/DownstreamAlgorithm.fwd.hh>
 #include <protocols/match/downstream/DownstreamBuilder.fwd.hh>
-#include <protocols/toolbox/match_enzdes_util/ExternalGeomSampler.fwd.hh>
+#include <protocols/match/downstream/ExternalGeomSampler.fwd.hh>
 
 #include <protocols/match/upstream/ProteinUpstreamBuilder.fwd.hh>
 #include <protocols/match/upstream/ScaffoldBuildPoint.fwd.hh>
@@ -70,7 +70,7 @@
 #include <protocols/match/BumpGrid.hh>
 #include <protocols/match/downstream/DownstreamAlgorithm.hh>
 #include <protocols/match/downstream/DownstreamBuilder.hh>
-#include <protocols/toolbox/match_enzdes_util/ExternalGeomSampler.hh>
+#include <protocols/match/downstream/ExternalGeomSampler.hh>
 #include <protocols/match/output/MatchProcessor.hh>
 #include <protocols/match/upstream/ProteinUpstreamBuilder.hh>
 #include <protocols/match/upstream/ScaffoldBuildPoint.hh>
@@ -227,7 +227,7 @@ public:
 		core::chemical::ResidueTypeCAP restype,
 		utility::vector1< std::string >  const & upstream_launch_atoms,
 		utility::vector1< core::id::AtomID > const & downstream_3atoms,
-		toolbox::match_enzdes_util::ExternalGeomSampler const & exgeom,
+		downstream::ExternalGeomSampler const & exgeom,
 		Size const exgeom_id,
 		bool enumerate_ligand_rotamers = false,
 		bool catalytic_bond = false

@@ -1,5 +1,4 @@
 # -*- mode:python;indent-tabs-mode:nil;show-trailing-whitespace:t; -*-
-
 #
 # Project settings for rosetta sources
 # (c) Copyright Rosetta Commons Member Institutions.
@@ -14,22 +13,20 @@ sources = {
 		"Protocol",
 		"ScoreMap",
 	],
-	"protocols/medal" : [
-			"MedalExchangeMover",
-			"MedalMain",
-			"MedalMover",
-			"util",
-	],
+        "protocols/medal" : [
+            "MedalExchangeMover",
+            "MedalMain",
+            "MedalMover",
+            "util",
+        ],
 	"protocols/nonlocal" : [
-		"BiasedFragmentMover",
+                "BiasedFragmentMover",
 		"BrokenFold",
 		"Chunk",
 		"NonlocalAbinitio",
 		"NonlocalAbinitioMain",
 		"PolicyFactory",
 		"Region",
-        "HelixRotate",
-        "SheetTranslate",
 		"SimpleTreeBuilder",
 		"SingleFragmentMover",
 		"SingleFragmentMoverCreator",
@@ -58,6 +55,7 @@ sources = {
 		"KinematicControl",
 		"KinematicTaskControl",
 		"LoopJumpFoldCst",
+		"MaxSeqSepConstraintSet",
 		"MembraneAbinitio",
 		"PairingStatistics",
 		"ResolutionSwitcher",
@@ -77,8 +75,6 @@ sources = {
 		"Sparta",
 		"SpartaUtil",
 		"ANN",
-		"ChemicalShiftEvaluator",
-		"ChemicalShiftEvaluatorCreator",
 		"GDB",
 		"PDB",
 		"util",
@@ -87,8 +83,6 @@ sources = {
 	"protocols/antibody" : [
 		"AntibodyClass",
 		"AntibodyModeler",
-		"CDRH3Modeler",
-		"GraftMover",
 		"Ubiquitin_E2C_Modeler",
 	],
 
@@ -113,18 +107,15 @@ sources = {
 	],
 
 	"protocols/coarse_rna" : [
-								 "CoarseRNA_DeNovoProtocol",
-								 "CoarseRNA_Fragments",
-								 "CoarseRNA_LoopCloser",
-								 ],
+                 "CoarseRNA_DeNovoProtocol",
+                 "CoarseRNA_Fragments",
+                 "CoarseRNA_LoopCloser",
+                 ],
 
 	"protocols/comparative_modeling" : [
 		"cm_main",
 		"AlignmentClustering",
 		"AlignmentSet",
-		"Align_RmsdEvaluator",
-		"Align_RotamerEvaluator",
-		"AlignRmsdTargetEvaluatorCreator",
 		"IgnoreSubsetConstraintSet",
 		"ThreadingMover",
 		"ExtraThreadingMover",
@@ -135,8 +126,6 @@ sources = {
 		"StealLigandMover",
 		"StealSideChainsMover",
 		"RecoverSideChainsMover",
-                "ThreadingJob",
-                "ThreadingJobInputter",
 	],
 
 	"protocols/comparative_modeling/features" : [
@@ -149,11 +138,6 @@ sources = {
 	"protocols/constraints_additional" : [
 		"AmbiguousMultiConstraint",
 		"AdditionalConstraintCreators",
-                "ConstraintEvaluator",
-                "ConstraintEvaluatorCreator",
-                "CombinedConstraintEvaluator",
-		"CombinedConstraintEvaluatorCreator",
-		"MaxSeqSepConstraintSet",
 		"SequenceProfileConstraint",
 		"SequenceCouplingConstraint",
 		"SequenceCoupling1BDConstraint",
@@ -168,7 +152,6 @@ sources = {
 	"protocols/ddg" : [
 		"ddGData",
 		"ddG_main",
-		"ddGMover",
 	],
 
 	"protocols/dna" : [
@@ -206,15 +189,9 @@ sources = {
 		"DockingHighResLegacy",
                 "TemperedDocking",
                 "DockSetupMover",
-		"ConformerSwitchMover",
 	],
 	"protocols/docking/stateless" : [
 		"SaneDockingProtocol",
-	],
-
-	"protocols/fibril" : [
-		"fibril_util",
-		"SetupForFibrilMover",
 	],
 
 	"protocols/surface_docking" : [
@@ -238,17 +215,19 @@ sources = {
 		"enzdes_util",
 		"BackboneSampler",
 		"EnzdesBaseProtocol",
+		"EnzdesCacheableObserver",
 		"EnzdesFixBBProtocol",
 		"EnzdesFlexBBProtocol",
+		"EnzdesLoopsFile",
 		"EnzdesMovers",
+		"EnzdesSeqRecoveryCache",
 		"EnzdesTaskOperations",
 		"ModifyStoredLigandRBConfsMovers",
 		"SecondaryMatchProtocol",
 		"AddorRemoveCsts",
 		"EnzRepackMinimize",
-		"EnzFilters",
-		"EnzdesJobInputter",
-		"EnzdesJobOutputter",
+		"EnzFilters"
+
 	],
 
 	"protocols/electron_density" : [
@@ -257,29 +236,16 @@ sources = {
 	],
 
 	"protocols/evaluation" : [
-		"EvaluatorFactory",
-		"RmsdTargetEvaluatorCreator",
-		"PredictedBurialFnEvaluatorCreator",
-		"StructureSimilarityEvaluatorCreator",
-		"JScoreEvaluatorCreator",
-		"ContactMapEvaluatorCreator",
-		"NativeEvaluatorCreator",
-		"PoolEvaluatorCreator",
-		"RmsdEvaluatorCreator",
-		"RdcTargetEvaluatorCreator",
-		"RdcSelectEvaluatorCreator",
-		"RdcEvaluatorCreator",
-		"CamShiftEvaluatorCreator",
-		"PalesEvaluatorCreator",
-		"ExtraScoreEvaluatorCreator",
-		"JumpNrEvaluatorCreator",
 		"PredictedBurialEvaluator",
 		"ContactMapEvaluator",
 		"JScoreEvaluator",
 		"StructuralSimilarityEvaluator",
 		"BatchNrEvaluator",
+		"ChemicalShiftEvaluator",
 		"CamShiftEvaluator",
 		"PalesEvaluator" ,
+		"ConstraintEvaluator",
+		"CombinedConstraintEvaluator",
 		"EvaluatedTrialMover",
 		"ExternalEvaluator",
 		"JumpEvaluator",
@@ -292,10 +258,12 @@ sources = {
 #		"RPF_ScoreEvaluator",
 		"util",
 		"AlignEvaluator",
+		"Align_RmsdEvaluator",
+		"Align_RotamerEvaluator",
 	],
 
 	#"protocols/fast_sc_mover" : [
-	# "SimpleInteractionGraph",
+	#	"SimpleInteractionGraph",
 	#],
 
 	"protocols/filters" : [
@@ -326,9 +294,7 @@ sources = {
 		"AtomAtomPairFeaturesCreator",
 		"DatabaseFilters",
 		"DatabaseStatements",
-		"DatabaseJobInputter",
-		"DatabaseJobOutputter",
-                "Report",
+		"Report",
 		"ReportToDB",
 		"FeaturesReporter",
 		"FeaturesReporterFactory",
@@ -340,7 +306,7 @@ sources = {
 		"HBondParameterFeaturesCreator",
 		"JobDataFeatures",
 		"JobDataFeaturesCreator",
-                "OrbitalsFeatures",
+		"OrbitalsFeatures",
 		"OrbitalsFeaturesCreator",
 		"PairFeatures",
 		"PairFeaturesCreator",
@@ -389,25 +355,25 @@ sources = {
 
 	"protocols/fldsgn" : [
 		"BluePrintBDR",
+		"BluePrint",
 		"CircularPermutation",
-		"SheetConstraintsRCG",
 	],
 
-			 "protocols/fldsgn/potentials" : [
-								"SetSecStructEnergies",
-								"AACompositionEnergy",
-								"SetAACompositionPotential",
+       "protocols/fldsgn/potentials" : [
+                "SetSecStructEnergies",
+                "AACompositionEnergy",
+                "SetAACompositionPotential",
 	],
 
-				"protocols/fldsgn/potentials/sspot" : [
-								"NatbiasSecondaryStructureEnergy",
-								"NatbiasHelixPairPotential",
-								"NatbiasHelicesSheetPotential",
-								"NatbiasStrandPairPotential",
-								"HSPairPotential",
-								"SSPairPotential",
-								"util",
-				],
+      	"protocols/fldsgn/potentials/sspot" : [
+                "NatbiasSecondaryStructureEnergy",
+                "NatbiasHelixPairPotential",
+                "NatbiasHelicesSheetPotential",
+                "NatbiasStrandPairPotential",
+                "HSPairPotential",
+                "SSPairPotential",
+                "util",
+        ],
 
 	"protocols/fldsgn/topology" : [
 		"BB_Pos",
@@ -478,8 +444,7 @@ sources = {
 		"FilterStructs",
 		"FlxbbDesign",
 		"FlxbbDesign_main",
-        "InterlockAroma",
-		"LayerDesignOperation",		
+                "InterlockAroma",
 		"SelectResiduesByLayer",
 		"utility",
 	],
@@ -504,6 +469,7 @@ sources = {
 	"protocols/forge/constraints" : [
 		"ConstraintFileRCG",
 		"NtoC_RCG",
+		"SheetConstraintsRCG",
 		"InverseRotamersRCG",
 	],
 
@@ -560,7 +526,10 @@ sources = {
 		"AtomTreeDiffJobOutputter",
 		"BatchJobInputter",
 		"BOINCJobDistributor",
-                "DockDesignParser",
+		"DatabaseJobInputter",
+		"DatabaseJobOutputter",
+		"DockDesignParser",
+		"EnzdesJobOutputter",
 #		"EvaluatedJobOutputter",
 		"FileJobOutputter",
 		"FileSystemJobDistributor",
@@ -568,16 +537,13 @@ sources = {
 		"Job",
 		"LazySilentFileJobInputter",
 		"InnerJob",
-                "InnerMultiThreadingJob",
+		"ThreadingJob",
+		"InnerMultiThreadingJob",
 		"MultiThreadingJob",
 		"JobDistributorFactory",
 		"JobDistributor",
 		"JobInputter",
-                "JobInputterFactory",
-                "JobInputterCreator",
-                "JobOutputter",
-                "JobOutputterFactory",
-                "JobOutputterCreator",
+		"JobOutputter",
 		"MPIWorkPartitionJobDistributor",
 		"MPIWorkPoolJobDistributor",
 		"MPIFileBufJobDistributor",
@@ -591,11 +557,11 @@ sources = {
 		"SilentFileJobInputter",
 		"SilentFileJobOutputter",
 		"SingleFileBuffer",
-                "util",
-		"NoOutputJobOutputterCreator",
+		"ThreadingJobInputter",
+		"EnzdesJobInputter",
+		"util",
 	],
 	"protocols/jd2/parser" : [
-		"BluePrint",
 		"DataLoader",
 		"DataLoaderCreator",
 		"DataLoaderFactory",
@@ -603,14 +569,15 @@ sources = {
 		"FragSetLoader",
 		"MonteCarloLoader",
 		"ScoreFunctionLoader",
-                "TaskOperationLoader",
+		"ScoringGridLoader",
+		"TaskOperationLoader",
 	],
 	"protocols/scoring" : [
 		"ResidualDipolarCouplingRigidSegments",
 		"Interface",
 		"InterfaceInfo",
 		"InterchainPotential",
-								"ImplicitFastClashCheck",
+                "ImplicitFastClashCheck",
 	],
 	"protocols/scoring/methods" : [
 		"ResidualDipolarCouplingEnergyRigidSegments",
@@ -655,20 +622,6 @@ sources = {
 		"PDDFEnergy"
 	],
 
-	"protocols/simple_filters" : [
-		"AlaScan",
-		"BuriedUnsatHbondFilter",
-		"DdgFilter",
-		"EnergyPerResidueFilter",
-		"InterfaceSasaFilter",
-		"NeighborTypeFilter",
-		"ScoreTypeFilter",
-		"ResidueBurialFilter",
-		"ResidueDistanceFilter",
-		"ResiduesInInterfaceFilter",
-		"TerminusDistanceFilter"
-	],
-
 	"protocols/jd2/archive" : [
 		"ArchiveManager",
 		"ArchiveBase",
@@ -701,9 +654,9 @@ sources = {
 		"util",
 	],
 
-				"protocols/kinmatch" : [
+        "protocols/kinmatch" : [
 		"FunGroupTK",
-				],
+        ],
 
 	"protocols/ligand_docking" : [
 		"AddHydrogen",
@@ -768,6 +721,7 @@ sources = {
 		"WorkUnitBase",
 		"WorkUnitList",
 		"WorkUnitManager",
+		"WorkUnit_BatchRelax",
 		"MPI_WorkUnitManager",
 		"MPI_WorkUnitManager_Slave",
 	],
@@ -784,7 +738,7 @@ sources = {
 		"MPI_LoopHashRefine_Master",
 		"Mover_LoopHashRefine",
 		"LoopHashMoverWrapper",
-		"FastGapMover",
+    "FastGapMover",
 	],
 
 	"protocols/loops" : [
@@ -792,6 +746,7 @@ sources = {
 		"CcdLoopClosureMover",
 		"FASelectSlidingWindowLoopClosure",
 		"FoldTreeFromLoopsWrapper",
+		"KinematicWrapper",
 		"LoopBuild",
 		"Loop",
 		"Loops",
@@ -821,11 +776,11 @@ sources = {
 		"BumpGrid",
 		"Hit",
 		"Matcher",
-		"MatcherMover",
 		"MatcherTask",
 		"MatchPositionModifiers",
 		"MatchSet",
 		"OccupiedSpaceHash",
+		"SixDHasher",
 		"VoxelSetIterator",
 	],
 
@@ -835,7 +790,9 @@ sources = {
 		"DownstreamAlgorithm",
 		"DownstreamBuilder",
 		"SecMatchEvaluatorFactory",
+		"ExternalGeomSampler",
 		"GeometrySecMatchRPE",
+		"LigandConformer",
 		"LigandConformerBuilder",
 		"RigidLigandBuilder",
 		"SecMatchResiduePairEvaluator",
@@ -889,21 +846,12 @@ sources = {
 		"SingleMotif",
 	],
 
-	"protocols/simple_moves" : [
-		"ddG",
-		"DesignRepackMover",
-		"AddCavitiesMover",
+	"protocols/basic_moves" : [
 		"FragmentMover",
-                "LoadUnboundRotMover",
 		"SmoothFragmentMover",
 		"SymmetricFragmentMover",
 		"GunnCost",
-		"ScoreMover",
-		"SequenceProfileMover",
-        "ShakeStructureMover",
-		"TailsScoreMover",
 		"WobbleMover",
-		"SuperimposeMover",
 	],
 
 	"protocols/canonical_sampling" : [
@@ -912,6 +860,7 @@ sources = {
 	],
 
 	"protocols/moves" : [
+		"AddCavitiesMover",
 		"BackboneMover",
 		"BackrubMover",
 		"BackrubSidechainMover",
@@ -919,30 +868,37 @@ sources = {
 		"BBGaussianMover",
 		"BBConRotMover",
 		"BoolMover",
+		"CDRH3Modeler",
 		"CompositionMover",
 		#"CanonicalSamplingMover",
+		"ConformerSwitchMover",
 		"ConsensusDesignMover",
 		"ConstraintSetMover",
 		"CyclicMover",
 		"DataMap",
+		"ddGMover",
 		"DOFHistogramRecorder",
 		"DsspMover",
 		"DME_FilterMover",
-								"ExtendedPoseMover",
-								"ExtendedPoseMoverCreator",
+                "ExtendedPoseMover",
+                "ExtendedPoseMoverCreator",
 		"FilterMover",
 		"FavorSequenceProfile",
 		"GenericMonteCarloMover",
+                "HelixRotate",
 		"MetricRecorder",
 		"MonteCarloTest",
 		"MonteCarloRecover",
+		"GraftMover",
 		"GreenPacker",
 		"IfMover",
 		"InterfaceAnalyzerMover",
 		"IteratedConvergenceMover",
-								"ConstrainToIdealMover",
+                "ConstrainToIdealMover",
 		"JumpOutMover",
+		"KinematicMover",
 		"LoopAnalyzerMover",
+		"MatcherMover",
 		"MakePolyXMover",
 		"MinMover",
 		"SaneMinMover",
@@ -951,11 +907,11 @@ sources = {
 		"ReplicaExchangeMC",
 		"MetropolisHastingsMover",
 		"SidechainMetropolisHastingsMover",
-								"TemperatureController",
-								"SimulatedTempering",
-								"TemperingBase",
-								"ParallelTempering",
-								"TrialCounterObserver",
+                "TemperatureController",
+                "SimulatedTempering",
+                "TemperingBase",
+                "ParallelTempering",
+                "TrialCounterObserver",
 		"MinPackMover",
 		"Mover",
 		"MoverList",
@@ -976,30 +932,36 @@ sources = {
 		"ProlineFixMover",
 		"PyMolMover",
 		"RampingMover",
-								"RationalMonteCarlo",
+                "RationalMonteCarlo",
 		"RepeatMover",
 		"ResId",
 		"ReturnSidechainMover",
-								"RepackSidechainsMover",
+                "RepackSidechainsMover",
 		"RepulsiveOnlyMover",
 		"rigid_body_moves",
 		"RigidBodyMover",
-								"RigidBodyMotionMover",
+                "RigidBodyMotionMover",
 		"RollMover",
 		"RotamerRecoveryMover",
 		"RotamerTrialsMover",
 		"RotamerTrialsMinMover",
 		"RotateJumpAxisMover",
+		"ScoreMover",
 		"SetReturningPackRotamersMover",
 		"SetTorsion",
-                "StructureRestrictor",
+		"ShakeStructureMover",
+                "SheetTranslate",
+		"StructureRestrictor",
 		"SidechainMover",
 		"SidechainMCMover",
 		"SidechainMoverBase",
 		"PerturbChiSidechainMover",
 		"PerturbRotamerSidechainMover",
 		"JumpRotamerSidechainMover",
+
+		"SuperimposeMover",
 		"SwitchResidueTypeSetMover",
+		"TailsScoreMover",
 		"TaskAwareMinMover",
 		"ThermodynamicMover",
 		"ThermodynamicObserver",
@@ -1008,21 +970,23 @@ sources = {
 		"SilentTrajectoryRecorder",
 		"PDBTrajectoryRecorder",
 		"TrialMover",
-        "TrialCounter",
-        "MultiTemperatureTrialCounter",
+                "TrialCounter",
+                "MultiTemperatureTrialCounter",
 		"util",
 		"WhileMover",
 	],
 
-	"protocols/simple_moves/asym_fold_and_dock" : [
+	"protocols/moves/asym_fold_and_dock" : [
 		"AsymFoldandDockMoveRbJumpMover",
 		"AsymFoldandDockRbTrialMover",
 	],
 
-	"protocols/loops/kinematic_closure" : [
-		"KinematicMover",
-		"KinematicPerturber",
-		"KinematicWrapper",
+	"protocols/moves/kinematic_closure" : [
+		"bridgeObjects",
+		"dixon",
+		"sturm",
+		"kinematic_closure_helpers",
+		"KinematicPerturber"
 	],
 
 	"protocols/moves/mc_convergence_checks" : [
@@ -1036,8 +1000,14 @@ sources = {
 		"util",
 	],
 
-	"protocols/simple_moves/symmetry" : [
+	"protocols/moves/symmetry" : [
+		"fibril_util",
 		"SetupNCSMover",
+		"SetupForFibrilMover",
+		"SetupForSymmetryMover",
+		"SymFoldandDockRbTrialMover",
+		"SymFoldandDockSlideTrialMover",
+		"SymFoldandDockMoveRbJumpMover",
 		"SymmetricRMSMover",
 		"SymMinMover",
 		"SymPackRotamersMover",
@@ -1068,7 +1038,7 @@ sources = {
 		"ResonanceList",
 		"PeakFileFormat",
 		"PeakFileFormat_Sparky",
-								"PeakFileFormat_xpk",
+                "PeakFileFormat_xpk",
 		"DistanceScoreMover",
 		"PeakAssignmentParameters",
 		"PeakCalibrator",
@@ -1078,6 +1048,7 @@ sources = {
 		"util",
 	],
 	"protocols/optimize_weights" : [
+		"Arithmetic",
 		"DGBindOptEData",
 		"DDGBindOptEData",
 		"IterativeOptEDriver",
@@ -1086,13 +1057,15 @@ sources = {
 		"PNatLigPoseOptEData",
 		"NestedEnergyTermOptEData",
 	],
-				"protocols/pmut_scan" : [
-								"PointMutScanDriver",
-								"Mutant",
-				],
+        "protocols/pmut_scan" : [
+                "PointMutScanDriver",
+                "Mutant",
+        ],
 	"protocols/protein_interface_design" : [
 		"DockDesignFilterFactory",
 		"design_utils",
+		"dock_design_filters",
+		"parse_filters",
 		"read_patchdock",
 		"ParserJobInputter",
 		"ReportPSSMDifference",
@@ -1107,7 +1080,6 @@ sources = {
 		"DeltaFilter",
 		"DesignableResiduesFilter",
 		"FilterScan",
-		"HbondsToResidueFilter",
 		"InterfaceHolesFilter",
 		"RelativePoseFilter",
 		"RmsdFilter",
@@ -1123,7 +1095,9 @@ sources = {
 		"BestHotspotCstMover",
 		"BackrubDDMover",
 		"BuildAlaPose",
+		"ddG",
 		"DesignMinimizeHbonds",
+		"DesignRepackMover",
 		"DisulfideMover",
 		"DockAndRetrieveSidechains",
 		"DomainAssembly",
@@ -1177,8 +1151,7 @@ sources = {
 		"RepGrid",
 		"VdwGrid",
 		"GridFactory",
-		"GridCreator",
-                "ScoringGridLoader",
+		"GridCreator"
 	],
 
 	"protocols/rbsegment_moves" : [
@@ -1200,7 +1173,6 @@ sources = {
 		"FastRelax",
 		"Ramady",
 		"MiniRelax",
-		"WorkUnit_BatchRelax",
 	],
 
 	"protocols/rna" : [
@@ -1229,9 +1201,9 @@ sources = {
 		"util",
 	],
 
-				"protocols/RotamerDump" : [
-								"RotamerDumpMover",
-				],
+        "protocols/RotamerDump" : [
+                "RotamerDumpMover",
+        ],
 
 	"protocols/rotamer_recovery" : [
 		"RotamerRecovery",
@@ -1254,52 +1226,52 @@ sources = {
 	],
 
 	"protocols/swa" : [
-								 "InputStreamWithResidueInfo",
-								 "PoseFilter_RMSD_Screen",
-								 "RigidBodySampler",
-								 "StepWiseClusterer",
-								 "StepWiseCombineSampleGenerator",
-								 "StepWiseDoNothingSampleGenerator",
-								 "StepWiseJobParameters",
-								 "StepWiseIdentitySampleGenerator",
-								 "StepWisePoseCombineSampleGenerator",
-								 "StepWisePoseSetup",
-								 "StepWiseUtil"
-								 ],
+                 "InputStreamWithResidueInfo",
+                 "PoseFilter_RMSD_Screen",
+                 "RigidBodySampler",
+                 "StepWiseClusterer",
+                 "StepWiseCombineSampleGenerator",
+                 "StepWiseDoNothingSampleGenerator",
+                 "StepWiseJobParameters",
+                 "StepWiseIdentitySampleGenerator",
+                 "StepWisePoseCombineSampleGenerator",
+                 "StepWisePoseSetup",
+                 "StepWiseUtil"
+                 ],
 
 	"protocols/swa/protein" : [
 		"MainChainTorsionSet",
-								"StepWiseBetaAntiParallelJumpSampleGenerator",
-								"StepWiseBetaAntiParallelUtil",
+                "StepWiseBetaAntiParallelJumpSampleGenerator",
+                "StepWiseBetaAntiParallelUtil",
 		"StepWiseProteinCCD_Closer",
 		"StepWiseProteinFilterer",
-								"StepWiseProteinFragmentSampleGenerator",
-								"StepWiseProteinJumpSampleGenerator",
-								"StepWiseProteinMainChainSampleGenerator",
+                "StepWiseProteinFragmentSampleGenerator",
+                "StepWiseProteinJumpSampleGenerator",
+                "StepWiseProteinMainChainSampleGenerator",
 		"StepWiseProteinLoopBridger",
 		"StepWiseProteinPacker",
 		"StepWiseProteinPoseMinimizer",
 		"StepWiseProteinPoseSetup",
 		"StepWiseProteinResidueSampler",
-								"StepWiseProteinScreener",
+                "StepWiseProteinScreener",
 		"StepWiseProteinUtil",
 	],
 
 	"protocols/swa/rna" : [
-								"determinants",
-								"rigid_body_settings",
+                "determinants",
+                "rigid_body_settings",
 		"StepWiseRNA_BaseCentroidScreener",
-								"StepWiseRNA_Clusterer",
+                "StepWiseRNA_Clusterer",
 		"StepWiseRNA_Minimizer",
 		"StepWiseRNA_ResidueInfo",
 		"StepWiseRNA_ResidueSampler",
 		"StepWiseRNA_RotamerGenerator",
 		"StepWiseRNA_RotamerGenerator_Wrapper",
-								"StepWiseRNA_Base_Sugar_Rotamer",
+                "StepWiseRNA_Base_Sugar_Rotamer",
 		"StepWiseRNA_Util",
-								"StepWiseRNA_Dinucleotide_Sampler_Util",
-								"RNA_AnalyticLoopCloser",
-								"RNA_LoopCloseSampler"
+                "StepWiseRNA_Dinucleotide_Sampler_Util",
+                "RNA_AnalyticLoopCloser",
+                "RNA_LoopCloseSampler"
 	],
 
 	"protocols/symmetric_docking" : [
@@ -1310,29 +1282,25 @@ sources = {
 		"SymDockingHiRes",
 		"SymRestrictTaskForDocking",
 		"SymSidechainMinMover",
-		"SetupForSymmetryMover",
-    "SymFoldandDockRbTrialMover",
-		"SymFoldandDockSlideTrialMover",
-		"SymFoldandDockMoveRbJumpMover",
 	],
 
-				"protocols/seeded_abinitio" : [
-								"CAcstGenerator",
-								"SeededAbinitio_util",
-								"SwapSegment",
-								"SeedSetupMover",
-								"CoordinateCst",
-								"SeedFoldTree",
-								"GrowPeptides",
-								"CloseFold",
-								"DefineMovableLoops"
-				],
+        "protocols/seeded_abinitio" : [
+                "CAcstGenerator",
+                "SeededAbinitio_util",
+                "SwapSegment",
+                "SeedSetupMover",
+                "CoordinateCst",
+                "SeedFoldTree",
+                "GrowPeptides",
+                "CloseFold",
+                "DefineMovableLoops"
+        ],
 
 	"protocols/toolbox" : [
 		"Cluster",
 		"DecoySetEvaluation",
 		"KCluster",
-		"IGEdgeReweighters",
+	 	"IGEdgeReweighters",
 		"InteratomicVarianceMatrix",
 		"pose_manipulation",
 		"superimpose",
@@ -1341,13 +1309,8 @@ sources = {
 	"protocols/toolbox/match_enzdes_util" : [
 		"EnzConstraintParameters",
 		"EnzConstraintIO",
-		"EnzCstTemplateRes",
-		"EnzdesCacheableObserver",
-		"EnzdesLoopsFile",
-		"EnzdesSeqRecoveryCache",
 		"EnzdesCstCache",
-                "ExternalGeomSampler",
-		"LigandConformer",
+		"EnzCstTemplateRes",
 		"MatchConstraintFileInfo"
 	],
 
@@ -1385,6 +1348,7 @@ sources = {
 
 	"protocols/toolbox/task_operations" : [
 		"DesignAroundOperation",
+		"LayerDesignOperation",
 		"LimitAromaChi2Operation",
 		"ReadResfileFromDB",
 		"RestrictByCalculatorsOperation",
@@ -1553,5 +1517,5 @@ sources = {
 
 include_path = [ ]
 library_path = [ ]
-libraries		 = [ ]
-subprojects	 = [ "core.5","core.4","core.3","core.2","core.1" ,"basic","numeric", "utility", "ObjexxFCL", "z" ,"sqlite3", "cppdb"]
+libraries    = [ ]
+subprojects  = [ "core.5","core.4","core.3","core.2","core.1" ,"basic","numeric", "utility", "ObjexxFCL", "z" ,"sqlite3", "cppdb"]

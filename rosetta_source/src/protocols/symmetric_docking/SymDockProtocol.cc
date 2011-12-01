@@ -44,7 +44,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/relax/util.hh>
 
@@ -64,7 +64,7 @@
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 
 #include <protocols/moves/RigidBodyMover.hh>
-#include <protocols/simple_moves/ScoreMover.hh>
+#include <protocols/moves/ScoreMover.hh>
 #include <protocols/moves/ReturnSidechainMover.hh>
 
 #include <protocols/viewer/viewers.hh>
@@ -93,7 +93,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
@@ -108,7 +108,7 @@ using namespace ObjexxFCL;
 static basic::Tracer TR("protocols.symmetric_docking.SymDockProtocol");
 
 void SymDock_main() {
-	using namespace protocols::simple_moves::symmetry;
+	using namespace protocols::moves::symmetry;
   SetupForSymmetryMoverOP setup_mover = new SetupForSymmetryMover;
   SymDockProtocolOP dock_mover = new SymDockProtocol;
   protocols::moves::SequenceMoverOP seq_mover = new protocols::moves::SequenceMover;
@@ -586,7 +586,7 @@ SymDockProtocol::recover_sidechains( core::pose::Pose & pose, const core::pose::
 		//tf->push_back( new SymRestrictTaskForDocking( docking_score_pack_, true, 1000 ) );
 		tf->push_back( new RestrictToInterface( 1 ) );
 
-		protocols::moves::PackRotamersMoverOP dock_pack = new protocols::simple_moves::symmetry::SymPackRotamersMover(docking_score_pack_);
+		PackRotamersMoverOP dock_pack = new symmetry::SymPackRotamersMover(docking_score_pack_);
 		dock_pack->task_factory( tf );
 		dock_pack->apply( pose );
 
@@ -765,7 +765,7 @@ SymDockProtocol::apply( pose::Pose & pose )
 
 		if( option[OptionKeys::packing::resfile].user() ) tf->push_back( new ReadResfile );
 
-			simple_moves::symmetry::SymPackRotamersMover pack( docking_scorefxn );
+			moves::symmetry::SymPackRotamersMover pack( docking_scorefxn );
 			pack.task_factory( tf );
 			pack.apply( pose );
 			// run high resolution docking
@@ -937,14 +937,14 @@ SymDockProtocol::score_only( core::pose::Pose & pose )
 	using namespace moves;
 	if ( fullatom_ ) {
 		core::scoring::ScoreFunctionOP high_score = new core::scoring::symmetry::SymmetricScoreFunction( *docking_score_high_ );
-		simple_moves::ScoreMover score_and_exit( high_score ) ;
+		ScoreMover score_and_exit( high_score ) ;
 		score_and_exit.insert_rms( calc_rms( pose) );
 		score_and_exit.apply( pose );
 	} else {
 		SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 		to_centroid.apply( pose );
 		core::scoring::ScoreFunctionOP low_score = new core::scoring::symmetry::SymmetricScoreFunction( *docking_score_low_ );
-		simple_moves::ScoreMover score_and_exit( low_score );
+		ScoreMover score_and_exit( low_score );
 		score_and_exit.insert_rms( calc_rms( pose ) );
 		score_and_exit.apply( pose );
 	}

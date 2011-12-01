@@ -25,7 +25,7 @@
 
 // Package Headers
 #include <protocols/abinitio/ResolutionSwitcher.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/basic_moves/FragmentMover.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>

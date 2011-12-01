@@ -45,6 +45,7 @@
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/util.hh>
+#include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <protocols/evaluation/RmsdEvaluator.hh>
 #include <protocols/moves/PackRotamersMover.hh>
 
@@ -66,10 +67,6 @@
 
 #include <sstream>
 #include <fstream>
-
-//Auto Headers
-#include <protocols/simple_filters/DdgFilter.hh>
-
 
 
 
@@ -197,7 +194,7 @@ void MyScoreMover::apply( core::pose::Pose& pose ) {
 	core::pose::setPoseExtraScores( pose, "nlf_rlx", relaxed_score );
 
 	// DDG of relaxed fragment pair
-	protocols::simple_filters::DdgFilter ddg = protocols::simple_filters::DdgFilter( 1000, sfxn_, 1, 5);
+	protocols::protein_interface_design::DdgFilter ddg = protocols::protein_interface_design::DdgFilter( 1000, sfxn_, 1, 5);
 	Real relaxed_ddg_score = ddg.compute( relax_sub_pose );
 	core::pose::setPoseExtraScores( pose, "nlf_ddg", relaxed_ddg_score );
 

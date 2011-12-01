@@ -9,7 +9,7 @@
 // AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/RigidBodyMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/moves/SwitchResidueTypeSetMover.hh>
 
 #include <protocols/relax/util.hh>
@@ -17,7 +17,7 @@
 
 #include <devel/init.hh>
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/comparative_modeling/ThreadingJob.hh>
+#include <protocols/jd2/ThreadingJob.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/electron_density/util.hh>
 #include <protocols/loops/loops_main.hh>
@@ -78,7 +78,7 @@
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
 // AUTO-REMOVED #include <protocols/moves/MinMover.hh>
 
 #include <core/conformation/Residue.hh>
@@ -207,7 +207,7 @@ public:
 		taskstd->restrict_to_residues(needToRepack);
 
 		if ( core::pose::symmetry::is_symmetric( pose ) ) {
-			protocols::simple_moves::symmetry::SymPackRotamersMover pack1( fa_scorefxn_, taskstd );
+			protocols::moves::symmetry::SymPackRotamersMover pack1( fa_scorefxn_, taskstd );
 			pack1.apply( pose );
 		} else {
 			protocols::moves::PackRotamersMover pack1( fa_scorefxn_, taskstd );
@@ -451,7 +451,7 @@ public:
 		using namespace basic::options::OptionKeys;
 
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-			protocols::symmetric_docking::SetupForSymmetryMover pre_mover;
+			protocols::moves::symmetry::SetupForSymmetryMover pre_mover;
 			pre_mover.apply( pose );
 		} else {
 			core::pose::addVirtualResAsRoot( pose );
@@ -498,7 +498,7 @@ public:
 
 		// setup for symmetry
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-			protocols::symmetric_docking::SetupForSymmetryMover pre_mover;
+			protocols::moves::symmetry::SetupForSymmetryMover pre_mover;
 			pre_mover.apply( pose );
 		} else {
 			core::pose::addVirtualResAsRoot( pose );
@@ -558,7 +558,7 @@ public:
 		protocols::moves::SwitchResidueTypeSetMover to_centroid("centroid");
 		protocols::moves::SwitchResidueTypeSetMover to_fullatom("fa_standard");
 
-		protocols::comparative_modeling::ThreadingJobCOP job = dynamic_cast< protocols::comparative_modeling::ThreadingJob const*  >(
+		ThreadingJobCOP job = dynamic_cast< ThreadingJob const*  >(
 			JobDistributor::get_instance()->current_job()->inner_job().get() );
 		if ( !job ) {
 			utility_exit_with_message(
@@ -583,7 +583,7 @@ public:
 
 		// setup for symmetry
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-			protocols::symmetric_docking::SetupForSymmetryMover pre_mover;
+			protocols::moves::symmetry::SetupForSymmetryMover pre_mover;
 			pre_mover.apply( pose );
 		} else {
 			core::pose::addVirtualResAsRoot( pose );
@@ -635,8 +635,9 @@ public:
 		using namespace basic::options::OptionKeys;
 		using namespace core::fragment;
 		using namespace utility::file;
-		protocols::comparative_modeling::ThreadingJobCOP job = dynamic_cast< protocols::comparative_modeling::ThreadingJob const*  >(
-		  JobDistributor::get_instance()->current_job()->inner_job().get() );
+
+		ThreadingJobCOP job = dynamic_cast< ThreadingJob const*  >(
+			JobDistributor::get_instance()->current_job()->inner_job().get() );
 		if ( !job ) {
 			utility_exit_with_message(
 				"CORE ERROR: You must use the ThreadingJobInputter with the LoopRelaxThreadingMover "

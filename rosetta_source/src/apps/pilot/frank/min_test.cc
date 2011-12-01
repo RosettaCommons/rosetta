@@ -33,7 +33,7 @@
 #include <basic/basic.hh>
 #include <basic/database/open.hh>
 #include <core/init.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/electron_density/util.hh>
 #include <protocols/moves/MoverContainer.hh>
 
@@ -123,7 +123,7 @@ main( int argc, char * argv [] )
 		
 
 	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
-		protocols::symmetric_docking::SetupForSymmetryMoverOP symm( new protocols::symmetric_docking::SetupForSymmetryMover );
+		protocols::moves::symmetry::SetupForSymmetryMoverOP symm( new protocols::moves::symmetry::SetupForSymmetryMover );
 		symm->apply( *pose );
 		core::pose::symmetry::make_symmetric_movemap( *pose, mm );
 	}

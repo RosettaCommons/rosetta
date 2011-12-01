@@ -21,19 +21,6 @@ sources = {
                 "prob_util",
 		"util",
 	],
-	"numeric/expression_parser" : [
-		"Arithmetic",
-	],
-	"numeric/kinematic_closure" : [
-		"bridgeObjects",
-		"dixon",
-		#"kic_jacobian",
-		"kinematic_closure_helpers",
-		"sturm",
-	],
-	"numeric/geometry/hashing" : [
-		"SixDHasher",
-	],
 	"numeric/random" : [
 		"random",
 		"WeightedSampler",

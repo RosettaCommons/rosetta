@@ -34,7 +34,7 @@
 
 #include <core/scoring/ScoreFunction.hh>
 
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/basic_moves/FragmentMover.hh>
 #include <protocols/jumping/util.hh>
 // AUTO-REMOVED #include <protocols/jumping/PairingLibrary.hh>
 
@@ -139,14 +139,14 @@ KinematicControl::movemap() const {
 }
 
 //return a jump-Mover for jumps that you want to be sampled
-simple_moves::FragmentMoverOP
+basic_moves::FragmentMoverOP
 KinematicControl::jump_mover() const {
  return jump_mover_;
 }
 
 //return a jump-Mover for jumps that you want to be sampled
 void
-KinematicControl::set_jump_mover( simple_moves::FragmentMoverOP jm ) {
+KinematicControl::set_jump_mover( basic_moves::FragmentMoverOP jm ) {
  jump_mover_ = jm;
 	if ( jump_mover_ && movemap_ ) jump_mover_->set_movemap( movemap_ );
 }

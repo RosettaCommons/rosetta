@@ -18,10 +18,9 @@
 
 // Package headers
 #include <protocols/match/VoxelSetIterator.hh>
+#include <protocols/match/SixDHasher.hh>
 #include <protocols/match/BumpGrid.hh>
 
-//numeric headers
-#include <numeric/geometry/hashing/SixDHasher.hh>
 
 // Utility headers
 // AUTO-REMOVED #include <utility/LexicographicalIterator.hh>
@@ -146,7 +145,7 @@ OccupiedSpaceHash::insert_hit_geometry( Real6 const & geom )
 	VoxelSetIterator voxiter( bb_, n_xyz_bins_, n_euler_bins_, xyz_bin_widths_,
 		euler_bin_widths_, xyz_bin_halfwidths_, euler_bin_halfwidths_, geom );
 
-	numeric::geometry::hashing::Bin6D bin;
+	Bin6D bin;
 	Size pos;
 	boost::uint64_t bin_index;
 	while ( ! voxiter.at_end() ) {
@@ -210,7 +209,7 @@ OccupiedSpaceHash::note_hit_geometry( Real6 const & geom )
 	VoxelSetIterator voxiter( bb_, n_xyz_bins_, n_euler_bins_, xyz_bin_widths_,
 		euler_bin_widths_, xyz_bin_halfwidths_, euler_bin_halfwidths_, geom );
 
-	numeric::geometry::hashing::Bin6D bin;
+	Bin6D bin;
 	Size pos;
 	boost::uint64_t bin_index;
 	while ( ! voxiter.at_end() ) {
@@ -249,7 +248,7 @@ OccupiedSpaceHash::match_possible_for_hit_geometry( Real6 const & geom ) const
 	VoxelSetIterator voxiter( bb_, n_xyz_bins_, n_euler_bins_, xyz_bin_widths_,
 		euler_bin_widths_, xyz_bin_halfwidths_, euler_bin_halfwidths_, geom );
 
-	numeric::geometry::hashing::Bin6D bin;
+	Bin6D bin;
 	Size pos;
 	boost::uint64_t bin_index;
 	while ( ! voxiter.at_end() ) {
@@ -449,7 +448,7 @@ OccupiedSpaceHash::bitmask_for_position( Size pos ) const {
 }
 
 boost::uint64_t
-OccupiedSpaceHash::calc_bin_index(  numeric::geometry::hashing::Bin6D const & bin ) const
+OccupiedSpaceHash::calc_bin_index( Bin6D const & bin ) const
 {
 	boost::uint64_t index( 0 );
 	for ( Size ii = 1; ii <= 6; ++ii ) {

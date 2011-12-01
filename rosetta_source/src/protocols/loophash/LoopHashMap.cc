@@ -42,14 +42,13 @@
 #include <numeric/HomogeneousTransform.hh>
 #include <protocols/match/Hit.fwd.hh>
 // AUTO-REMOVED #include <protocols/match/Hit.hh>
+#include <protocols/match/SixDHasher.hh>
 // AUTO-REMOVED #include <protocols/moves/Mover.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/exit.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/pointer/owning_ptr.hh>
-
 #include <numeric/angle.functions.hh>
-#include <numeric/geometry/hashing/SixDHasher.hh>
 
 // C++ headers
 #include <cstdio>
@@ -171,7 +170,7 @@ bool get_rt_over_leap( const core::pose::Pose& orig_pose, core::Size ir, core::S
 			if (last_cut!=0) f.add_edge( 1, last_cut+1, jump_num++);
 		}
 	}
-	for (core::Size i=nres+1; i<=pose.total_residue(); ++i)
+	for (core::Size i=nres+1; i<=pose.total_residue(); ++i) 
 		f.add_edge( 1, i, jump_num++ );  // additional jumps
 
 	core::Size theroot = 1;
@@ -287,7 +286,7 @@ bool get_rt_over_leap_fast( core::pose::Pose& pose, core::Size ir, core::Size jr
 			if (last_cut!=0) f.add_edge( 1, last_cut+1, jump_num++);
 		}
 	}
-	for (core::Size i=nres+1; i<=pose.total_residue(); ++i)
+	for (core::Size i=nres+1; i<=pose.total_residue(); ++i) 
 		f.add_edge( 1, i, jump_num++ );  // additional jumps
 
 	core::Size theroot = 1;
@@ -350,12 +349,12 @@ LoopHashMap::setup( core::Size loop_size)
 
 	TR.Info << "Setting up hash_: Size:  " << loop_size << std::endl;
 
-	BoundingBox bounding_box( core::Vector(
+	BoundingBox bounding_box( core::Vector( 
 				-HASH_POSITION_GRID_BASE*(int)loop_size,
 				-HASH_POSITION_GRID_BASE*(int)loop_size,
 				-HASH_POSITION_GRID_BASE*(int)loop_size
 				),
-			core::Vector(
+			core::Vector( 
 				HASH_POSITION_GRID_BASE*(int)loop_size,
 				HASH_POSITION_GRID_BASE*(int)loop_size,
 				HASH_POSITION_GRID_BASE*(int)loop_size
@@ -386,7 +385,7 @@ LoopHashMap::setup( core::Size loop_size)
 	bin_widths[5] = angle_multiplier*loop_size;
 	bin_widths[6] = angle_multiplier*loop_size;
 
-	hash_ = new numeric::geometry::hashing::SixDCoordinateBinner( bounding_box, euler_offsets, bin_widths );
+	hash_ = new protocols::match::SixDCoordinateBinner( bounding_box, euler_offsets, bin_widths );
 	// initialize the radial tree
 	hash_->tree_init(option[lh::max_radius]());
 }

@@ -15,7 +15,7 @@
 /// @author Nobuyasu Koga
 
 // Package headers
-#include <protocols/jd2/parser/BluePrint.hh>
+#include <protocols/fldsgn/BluePrint.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/fldsgn/topology/BB_Pos.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
@@ -94,8 +94,8 @@ class PairDistance : public protocols::moves::Mover {
 public: // typedef
 
 
-	typedef protocols::jd2::parser::BluePrint BluePrint;
-	typedef protocols::jd2::parser::BluePrintOP BluePrintOP;
+	typedef protocols::fldsgn::BluePrint BluePrint;
+	typedef protocols::fldsgn::BluePrintOP BluePrintOP;
 	typedef protocols::fldsgn::topology::SS_Info2 SS_Info2;
 	typedef protocols::fldsgn::topology::SS_Info2_OP SS_Info2_OP;
 
@@ -318,7 +318,7 @@ public: // apply
 private: // data
 
 	protocols::fldsgn::topology::SS_Info2_OP ssinfo_;
-	protocols::jd2::parser::BluePrintOP blueprint_;
+	protocols::fldsgn::BluePrintOP blueprint_;
 	std::ofstream output_;
 	bool ssinput_;
 

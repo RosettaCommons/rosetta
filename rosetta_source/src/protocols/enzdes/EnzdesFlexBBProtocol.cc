@@ -14,8 +14,8 @@
 
 
 #include <protocols/enzdes/EnzdesFlexBBProtocol.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesLoopsFile.hh>
+#include <protocols/enzdes/EnzdesCacheableObserver.hh>
+#include <protocols/enzdes/EnzdesLoopsFile.hh>
 // AUTO-REMOVED #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/enzdes/enzdes_util.hh>
 #include <protocols/flexpack/rotamer_set/FlexbbRotamerSets.hh>
@@ -58,7 +58,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 // AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/MinMover.hh>
-#include <protocols/loops/kinematic_closure/KinematicMover.hh>
+#include <protocols/moves/KinematicMover.hh>
 #include <protocols/toolbox/pose_manipulation.hh>
 #include <protocols/toolbox/IGEdgeReweighters.hh>
 // AUTO-REMOVED #include <core/scoring/TwelveANeighborGraph.hh>
@@ -92,7 +92,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/util.hh>
-#include <protocols/loops/kinematic_closure/KinematicPerturber.hh>
+#include <protocols/moves/kinematic_closure/KinematicPerturber.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -127,7 +127,7 @@ EnzdesFlexBBProtocol::EnzdesFlexBBProtocol()
 	/*
 	if( basic::options::option[ basic::options::OptionKeys::enzdes::enz_loops_file ].user() ){
 
-		enz_loops_file_ = new toolbox::match_enzdes_util::EnzdesLoopsFile();
+		enz_loops_file_ = new EnzdesLoopsFile();
 
 		if( !enz_loops_file_->read_loops_file( basic::options::option[ basic::options::OptionKeys::enzdes::enz_loops_file ] ) ){
 			utility_exit_with_message("Reading enzdes loops file failed");
@@ -166,7 +166,7 @@ EnzdesFlexBBProtocol::apply(
 	//	brub_mover_ = new protocols::moves::BackrubMover();
 	//	brub_mover_->set_native_pose( & pose );
 	//}
-	//kinematic_mover_ = new protocols::loops::kinematic_closure::KinematicMover();
+	//kinematic_mover_ = new protocols::moves::KinematicMover();
 
 	pack_region_ala_pose_ = pose;
 
@@ -518,10 +518,10 @@ EnzdesFlexBBProtocol::determine_flexible_regions(
 	tr << "Determining regions to be treated as flexible... " << std::endl;
 
 	//is there an enzdes loops file?
-	if( toolbox::match_enzdes_util::get_enzdes_observer( pose ) && toolbox::match_enzdes_util::get_enzdes_observer( pose )->enzdes_loops_file() ) enz_loops_file_ = toolbox::match_enzdes_util::get_enzdes_observer( pose )->enzdes_loops_file();
+	if( get_enzdes_observer( pose ) && get_enzdes_observer( pose )->enzdes_loops_file() ) enz_loops_file_ = get_enzdes_observer( pose )->enzdes_loops_file();
 	else if( !enz_loops_file_ && basic::options::option[ basic::options::OptionKeys::enzdes::enz_loops_file ].user() ){
 
-		toolbox::match_enzdes_util::EnzdesLoopsFileOP loops_file = new toolbox::match_enzdes_util::EnzdesLoopsFile();
+		EnzdesLoopsFileOP loops_file = new EnzdesLoopsFile();
 
 		if( !loops_file->read_loops_file( basic::options::option[ basic::options::OptionKeys::enzdes::enz_loops_file ] ) ){
 			utility_exit_with_message("Reading enzdes loops file failed");
@@ -675,7 +675,7 @@ EnzdesFlexBBProtocol::generate_ensemble_for_region(
 		brub_mover_ = new protocols::moves::BackrubMover();
 		//brub_mover_->set_native_pose( & pose );
 	}
-	kinematic_mover_ = new protocols::loops::kinematic_closure::KinematicMover();
+	kinematic_mover_ = new protocols::moves::KinematicMover();
 
 	(*reduced_scorefxn())( pose );
 
@@ -714,7 +714,7 @@ EnzdesFlexBBProtocol::generate_ensemble_for_region(
 
 	kinematic_mover_->set_pivots(rbegin, rmid, rend);
 
-	protocols::loops::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber = new protocols::loops::kinematic_closure::TorsionSamplingKinematicPerturber( &(*kinematic_mover_) );
+	protocols::moves::kinematic_closure::TorsionSamplingKinematicPerturberOP perturber = new protocols::moves::kinematic_closure::TorsionSamplingKinematicPerturber( &(*kinematic_mover_) );
 
 	if ( basic::options::option[ basic::options::OptionKeys::enzdes::kic_loop_sampling ] ) {
 
@@ -1385,10 +1385,10 @@ EnzdesFlexibleRegion::contains_catalytic_res() const
 	return false;
 }
 
-toolbox::match_enzdes_util::EnzdesLoopInfoCOP
+EnzdesLoopInfoCOP
 EnzdesFlexibleRegion::enz_loop_info() const
 {
-	toolbox::match_enzdes_util::EnzdesLoopsFileCOP loop_file = enzdes_protocol_->enz_loops_file();
+	EnzdesLoopsFileCOP loop_file = enzdes_protocol_->enz_loops_file();
 
 	if( !loop_file ){
 		utility_exit_with_message("no enzdes loops file was read, but the info therein requested." );

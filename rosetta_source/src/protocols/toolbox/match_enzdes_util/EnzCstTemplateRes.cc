@@ -18,7 +18,7 @@
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
+#include <protocols/enzdes/EnzdesCacheableObserver.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
@@ -245,7 +245,7 @@ void EnzCstTemplateRes::show_params() const
 void EnzCstTemplateRes::get_pose_data(core::pose::Pose & pose) const {
 
   using namespace core::chemical;
-	EnzCstTemplateResCacheOP template_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( enz_io_param_->cst_block() )->template_res_cache( param_index_ ) );
+	EnzCstTemplateResCacheOP template_cache( protocols::enzdes::get_enzdes_observer( pose )->cst_cache()->param_cache( enz_io_param_->cst_block() )->template_res_cache( param_index_ ) );
 
    //first check whether we actually have a residue to process new
   if(template_cache->seqpos_map_.size() == 0){
@@ -310,7 +310,7 @@ EnzCstTemplateResAtomsCOP
 EnzCstTemplateRes::get_template_atoms_at_pos( core::pose::Pose const & pose, core::Size seqpos ) const
 {
 
-	EnzCstTemplateResCacheCOP template_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( enz_io_param_->cst_block() )->template_res_cache( param_index_ ) );
+	EnzCstTemplateResCacheCOP template_cache( protocols::enzdes::get_enzdes_observer( pose )->cst_cache()->param_cache( enz_io_param_->cst_block() )->template_res_cache( param_index_ ) );
 
 	std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator at_it = template_cache->seqpos_map_.find( seqpos );
 
@@ -324,7 +324,7 @@ EnzCstTemplateRes::get_template_atoms_at_pos( core::pose::Pose const & pose, cor
 bool
 EnzCstTemplateRes::find_in_pose_if_missing_from_header( core::pose::Pose & pose)
 {
-	EnzCstTemplateResCacheOP template_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( enz_io_param_->cst_block() )->template_res_cache( param_index_ ) );
+	EnzCstTemplateResCacheOP template_cache( protocols::enzdes::get_enzdes_observer( pose )->cst_cache()->param_cache( enz_io_param_->cst_block() )->template_res_cache( param_index_ ) );
 	//there are three strategies to find a residue that wasn't mentioned in the PDB REMARKs
 	//1. if it was given externally, i.e. through a 'seqpos' entry in the cst file or
 	// through being speficially set through the accessor function
@@ -360,7 +360,7 @@ EnzCstTemplateRes::find_in_pose_if_missing_from_header( core::pose::Pose & pose)
 		else{
 			corresponding_res = enz_io_param_->enz_io()->enz_cst_params( corresponding_res_block_ )->resB();
 		}
-		EnzCstTemplateResCacheCOP corresponding_res_cache( protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( corresponding_res->enz_io_param_->cst_block() )->template_res_cache( corresponding_res->param_index_ ) );
+		EnzCstTemplateResCacheCOP corresponding_res_cache( protocols::enzdes::get_enzdes_observer( pose )->cst_cache()->param_cache( corresponding_res->enz_io_param_->cst_block() )->template_res_cache( corresponding_res->param_index_ ) );
 
 		//found the right template residue, now get the positions in the pose where it is
 		for( std::map< Size, EnzCstTemplateResAtomsOP >::const_iterator pos_it = corresponding_res_cache->seqpos_map_begin();

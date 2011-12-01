@@ -21,7 +21,7 @@
 #include <protocols/match/BumpGrid.hh>
 #include <protocols/match/OccupiedSpaceHash.hh>
 #include <protocols/match/downstream/ActiveSiteGrid.hh>
-#include <protocols/toolbox/match_enzdes_util/LigandConformer.hh>
+#include <protocols/match/downstream/LigandConformer.hh>
 
 // Project headers
 #include <core/conformation/Residue.hh>
@@ -70,7 +70,7 @@ RigidLigandBuilder::RigidLigandBuilder( RigidLigandBuilder const & other ) :
 	min_sep_d2_from_upstream_atoms_( other.min_sep_d2_from_upstream_atoms_ )
 {
   for ( Size ii = 1; ii <= lig_conformers_.size(); ++ii ) {
-    lig_conformers_[ ii ] = new toolbox::match_enzdes_util::LigandConformer( * other.lig_conformers_[ ii ] );
+    lig_conformers_[ ii ] = new LigandConformer( * other.lig_conformers_[ ii ] );
   }
 }
 
@@ -325,7 +325,7 @@ RigidLigandBuilder::coordinates_from_hit(
 		assert( atom_indices[ ii ].rsd() == 1 );
 		atom_coords[ ii ] = global_frame * points_in_global_orintation_frame_[ atom_indices[ ii ].atomno() ];
 	}*/
-	lig_conformers_[1]->coordinates_from_orientation( hit.second(), atom_indices, atom_coords );
+	lig_conformers_[1]->coordinates_from_hit( hit, atom_indices, atom_coords );
 }
 
 
@@ -394,7 +394,7 @@ RigidLigandBuilder::initialize_from_residue(
 		atom_radii_[ ii ] = probe_radius_for_atom_type( residue.atom( ii ).type() );
 	}
 
-	lig_conformers_.push_back( new toolbox::match_enzdes_util::LigandConformer );
+	lig_conformers_.push_back( new LigandConformer );
 	lig_conformers_[1]->ignore_h_collisions( ignore_h_collisions_ );
 	lig_conformers_[1]->initialize_from_residue( atom1, atom2, atom3,
 		orientation_atom1, orientation_atom2, orientation_atom3, residue );
@@ -608,7 +608,7 @@ RigidLigandBuilder::initialize_upstream_nonbonded_min_separation_d2()
 
 }
 
-toolbox::match_enzdes_util::LigandConformerOP
+LigandConformerOP
 RigidLigandBuilder::get_lig_conformers(core::Size conf_id) const
 {
  return lig_conformers_[ conf_id ];

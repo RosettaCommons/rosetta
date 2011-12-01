@@ -66,8 +66,8 @@
 #include <protocols/docking/util.hh>
 #include <protocols/jobdist/not_universal_main.hh>
 #include <protocols/moves/Mover.hh>
-//#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-//#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+//#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
+//#include <protocols/moves/symmetry/SymMinMover.hh>
 #include <protocols/viewer/viewers.hh>
 #include <sstream>
 #include <string>

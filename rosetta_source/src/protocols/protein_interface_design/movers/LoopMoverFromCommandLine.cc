@@ -19,8 +19,8 @@
 // Package headers
 
 // Project headers
-// AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicWrapper.hh>
-// AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicMover.hh>
+// AUTO-REMOVED #include <protocols/loops/KinematicWrapper.hh>
+// AUTO-REMOVED #include <protocols/moves/KinematicMover.hh>
 #include <protocols/loops/LoopMover_CCD.hh>
 // AUTO-REMOVED #include <protocols/loops/LoopMover_QuickCCD.hh>
 #include <protocols/loops/LoopMover_KIC.hh>
@@ -80,10 +80,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-//Auto Headers
-#include <protocols/simple_moves/DesignRepackMover.hh>
-
-
 
 namespace protocols {
 namespace protein_interface_design {
@@ -120,7 +116,7 @@ LoopMoverFromCommandLine::clone() const
 
 //call on empty constructor
 LoopMoverFromCommandLine::LoopMoverFromCommandLine() :
-	simple_moves::DesignRepackMover( LoopMoverFromCommandLineCreator::mover_name() )
+	DesignRepackMover( LoopMoverFromCommandLineCreator::mover_name() )
 {
 	design(false);
 }
@@ -136,7 +132,7 @@ LoopMoverFromCommandLine::LoopMoverFromCommandLine(
 		std::string const loop_file_name,
 		protocols::loops::LoopsCOP loops
 		) :
-		simple_moves::DesignRepackMover ( LoopMoverFromCommandLineCreator::mover_name()),
+		DesignRepackMover ( LoopMoverFromCommandLineCreator::mover_name()),
 		protocol_ ( protocol ),
 		perturb_( perturb),
 		refine_(refine)

@@ -61,7 +61,7 @@
 #include <protocols/moves/TaskAwareMinMover.hh>
 #include <protocols/moves/TorsionDOFMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/basic_moves/FragmentMover.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 
@@ -548,8 +548,8 @@ public:
 		// 		}
 
 		///////////////////////////////////fragments////////////////////////////////////////////////
-		using protocols::simple_moves::ClassicFragmentMover;
-		using protocols::simple_moves::ClassicFragmentMoverOP;
+		using protocols::basic_moves::ClassicFragmentMover;
+		using protocols::basic_moves::ClassicFragmentMoverOP;
 		add_frag_mover(random_mover); //adds hinge fragment mover, if appropriate
 
 		ClassicFragmentMoverOP frag_mover_tail = new ClassicFragmentMover(fragset3mer_ubq_tail_, movemap_);

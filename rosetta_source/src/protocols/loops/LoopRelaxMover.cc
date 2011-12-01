@@ -57,7 +57,7 @@
 #include <protocols/comparative_modeling/util.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
 #include <protocols/evaluation/RmsdEvaluator.hh>
-#include <protocols/evaluation/EvaluatorFactory.hh>
+#include <protocols/evaluation/util.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/loops/LoopMover_CCD.hh>
 #include <protocols/loops/LoopMoverFactory.hh>
@@ -81,7 +81,7 @@
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
@@ -232,7 +232,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	}
 
 	evaluation::MetaPoseEvaluatorOP evaluator = new evaluation::MetaPoseEvaluator;
-	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator);
+	evaluation::read_common_evaluator_options(*evaluator);
 	evaluator->add_evaluation(
 		new evaluation::SelectRmsdEvaluator( native_pose, "_native" )
 	);
@@ -746,7 +746,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 
 			//fpd symmetrize this
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {
-				simple_moves::symmetry::SymPackRotamersMover pack1( fa_scorefxn_, taskstd );
+				moves::symmetry::SymPackRotamersMover pack1( fa_scorefxn_, taskstd );
 				pack1.apply( pose );
 
 				core::optimization::symmetry::SymAtomTreeMinimizer mzr;

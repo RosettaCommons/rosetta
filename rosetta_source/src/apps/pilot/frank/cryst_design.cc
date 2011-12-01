@@ -49,12 +49,12 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
 #include <protocols/electron_density/util.hh>
 #include <protocols/docking/util.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/moves/symmetry/SymMinMover.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/protein_interface_design/movers/ddG.hh>
@@ -270,7 +270,7 @@ design(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, bool 
 
 	// Actually perform design.
 	make_symmetric_PackerTask(pose, task);
-	protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
+	protocols::moves::MoverOP packer = new protocols::moves::symmetry::SymPackRotamersMover(sf, task);
 	packer->apply(pose);
 }
 
@@ -305,7 +305,7 @@ repack(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos) {
 
   // Actually repack.
   make_symmetric_PackerTask(pose, task);
-  protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
+  protocols::moves::MoverOP packer = new protocols::moves::symmetry::SymPackRotamersMover(sf, task);
   packer->apply(pose);
 }
 
@@ -327,7 +327,7 @@ minimize(Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> design_pos, boo
 	
 	// Make MoveMap symmetric, apply it to minimize the pose
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
-	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+	protocols::moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 	m.apply(pose);
 }
 
@@ -623,7 +623,7 @@ public:
 void*
 my_main( void* ) {
 	using namespace protocols::moves;
-	using namespace protocols::simple_moves::symmetry;
+	using namespace protocols::moves::symmetry;
 
 	SequenceMoverOP seq( new SequenceMover() );
 	seq->add_mover( new SetupForSymmetryMover() );

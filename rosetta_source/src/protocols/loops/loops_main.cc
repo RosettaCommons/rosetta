@@ -21,7 +21,7 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 //#include <protocols/moves/BackboneMover.hh>
-// AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicMover.hh>
+// AUTO-REMOVED #include <protocols/moves/KinematicMover.hh>
 // AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/viewer/viewers.hh>
 

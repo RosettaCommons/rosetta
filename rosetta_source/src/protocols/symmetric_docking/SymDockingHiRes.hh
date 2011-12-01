@@ -29,9 +29,9 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>
-#include <protocols/simple_moves/symmetry/SymPackRotamersMover.fwd.hh>
-#include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.fwd.hh>
-#include <protocols/simple_moves/symmetry/SymMinMover.fwd.hh>
+#include <protocols/moves/symmetry/SymPackRotamersMover.fwd.hh>
+#include <protocols/moves/symmetry/SymRotamerTrialsMover.fwd.hh>
+#include <protocols/moves/symmetry/SymMinMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 // AUTO-REMOVED #include <protocols/loops/Loops.fwd.hh>
 
@@ -116,11 +116,11 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 	core::scoring::ScoreFunctionCOP scorefxn_pack_;
 	core::kinematics::MoveMapOP movemap_;
-	simple_moves::symmetry::SymMinMoverOP min_mover_;
+	moves::symmetry::SymMinMoverOP min_mover_;
 	moves::SequenceMoverOP docking_highres_protocol_mover_;
 	moves::MonteCarloOP mc_;
-	simple_moves::symmetry::SymPackRotamersMoverOP pack_interface_repack_;
-	simple_moves::symmetry::SymRotamerTrialsMoverOP pack_rottrial_;
+	moves::symmetry::SymPackRotamersMoverOP pack_interface_repack_;
+	moves::symmetry::SymRotamerTrialsMoverOP pack_rottrial_;
 
 	// docking
 	core::Real trans_magnitude_, rot_magnitude_;

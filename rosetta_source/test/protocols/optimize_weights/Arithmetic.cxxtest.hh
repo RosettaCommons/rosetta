@@ -17,7 +17,7 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit headers
-#include <numeric/expression_parser/Arithmetic.hh>
+#include <protocols/optimize_weights/Arithmetic.hh>
 
 /// C++ headers
 // AUTO-REMOVED #include <iostream>
@@ -25,7 +25,7 @@
 //Auto Headers
 
 
-using namespace numeric::expression_parser;
+using namespace protocols::optimize_weights;
 
 
 // --------------- Test Class --------------- //

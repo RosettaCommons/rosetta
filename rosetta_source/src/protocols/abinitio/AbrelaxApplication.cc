@@ -76,7 +76,7 @@
 #include <protocols/abinitio/TemplateJumpSetup.hh>
 #include <protocols/abinitio/PairingStatistics.hh>
 #include <protocols/abinitio/StrandConstraints.hh>
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/basic_moves/FragmentMover.hh>
 #include <protocols/Protocol.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/jumping/SheetBuilder.hh>
@@ -89,7 +89,6 @@
 #include <protocols/jumping/util.hh>
 #include <protocols/jumping/MembraneJump.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
-#include <protocols/evaluation/EvaluatorFactory.hh>
 #include <protocols/evaluation/PCA.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -148,7 +147,7 @@
 #include <protocols/evaluation/JumpEvaluator.hh>
 #include <protocols/evaluation/TimeEvaluator.hh>
 #include <protocols/evaluation/PoseMetricEvaluator.hh>
-#include <protocols/constraints_additional/ConstraintEvaluator.hh>
+#include <protocols/evaluation/ConstraintEvaluator.hh>
 #include <protocols/evaluation/util.hh>
 // AUTO-REMOVED #include <protocols/evaluation/ChemicalShiftEvaluator.hh>
 #include <protocols/loops/SlidingWindowLoopClosure.hh>
@@ -434,7 +433,7 @@ AbrelaxApplication::AbrelaxApplication( AbrelaxApplication const & src ) :
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///@detail add a PoseEvaluator derived instance for decoy-processing
-void AbrelaxApplication::add_evaluation( evaluation::PoseEvaluatorOP eval ) {
+void AbrelaxApplication::add_evaluation( PoseEvaluatorOP eval ) {
 	evaluator_->add_evaluation( eval );
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -492,7 +491,7 @@ void AbrelaxApplication::setup() {
 	setup_templates();
 
 	//add command-line evaluator stuff
-	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator_);
+	evaluation::read_common_evaluator_options( *evaluator_ );
 
 	core::pose::metrics::PoseMetricCalculatorOP
 		clash_calculator = new protocols::toolbox::pose_metric_calculators::ClashCountCalculator( 2.0 );
@@ -675,7 +674,7 @@ void AbrelaxApplication::add_constraints( pose::Pose & pose ) {
 					utility_exit_with_message(" strand_constraint nees a topology info: either via templates or -topology_file ");
 			}
 			cstset_->add_constraints( my_strand_cst );
-			add_evaluation( new constraints_additional::ConstraintEvaluator( "strand", my_strand_cst ) );
+			add_evaluation( new evaluation::ConstraintEvaluator( "strand", my_strand_cst ) );
 
 			if ( native_pose_ ) {//just a temporary hack to test the StrandConstraint
 				pose::Pose test_pose = *native_pose_;
@@ -720,7 +719,7 @@ void AbrelaxApplication::add_constraints( pose::Pose & pose ) {
 		Size const neval ( option[ constraints::evaluate_max_seq_sep ]().size() );
 		for ( Size i = 1; i<= neval; i++ ) {
 			Size const seq_sep( option[ constraints::evaluate_max_seq_sep ]()[ i ] );
-			add_evaluation( new constraints_additional::ConstraintEvaluator( "seq_sep_"+utility::to_string( seq_sep) , *cstset_, 1, seq_sep ) );
+			add_evaluation( new evaluation::ConstraintEvaluator( "seq_sep_"+utility::to_string( seq_sep) , *cstset_, 1, seq_sep ) );
 		}
 	}
 
@@ -734,7 +733,7 @@ public:
 		core::kinematics::MoveMapCOP movemap
 	) : ClassicAbinitio( fragset_large, fragset_large, movemap ) {};
 
-	Stage1Sampler( protocols::simple_moves::FragmentMoverOP brute_move_large	)
+	Stage1Sampler( protocols::basic_moves::FragmentMoverOP brute_move_large	)
 	: ClassicAbinitio( brute_move_large, brute_move_large, brute_move_large, 1 /*dummy*/ ) {};
 
 	virtual void apply( core::pose::Pose &pose );

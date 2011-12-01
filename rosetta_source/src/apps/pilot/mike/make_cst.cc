@@ -12,7 +12,7 @@
 
 
 // libRosetta headers
-#include <protocols/simple_moves/ScoreMover.hh>
+#include <protocols/moves/ScoreMover.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/util.hh>

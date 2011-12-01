@@ -137,7 +137,6 @@
 #include <protocols/evaluation/PoseMetricEvaluator.hh>
 #include <protocols/evaluation/ConstraintEvaluator.hh>
 #include <protocols/evaluation/util.hh>
-#include <protocols/evaluation/EvaluationFactory.hh>
 
 #include <protocols/loops/SlidingWindowLoopClosure.hh>
 #include <protocols/loops/ShortLoopClosure.hh>
@@ -551,7 +550,7 @@ void JumpSpecificAbrelax::setup() {
 	} // if ( native_pose_ )
 
 	//add command-line evaluator stuff
-	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator);
+	evaluation::read_common_evaluator_options( evaluator_ );
 
 	core::pose::metrics::PoseMetricCalculatorOP
 		clash_calculator = new protocols::toolbox::pose_metric_calculators::ClashCountCalculator( 2.0 );

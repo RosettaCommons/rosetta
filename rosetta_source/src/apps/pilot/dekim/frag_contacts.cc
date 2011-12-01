@@ -33,6 +33,7 @@
 //#include <protocols/loops/util.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/relax/util.hh>
+#include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <protocols/docking/types.hh>
 #include <protocols/docking/metrics.hh>
 
@@ -74,10 +75,6 @@
 #include <list>
 
 #include <math.h>
-
-//Auto Headers
-#include <protocols/simple_filters/DdgFilter.hh>
-
 
 // option key includes
 
@@ -453,7 +450,7 @@ public:
 
 			// DDG!
 			// might want to try  calc_interaction_energy in docking/metrics.cc
-			protocols::simple_filters::DdgFilter ddg = protocols::simple_filters::DdgFilter( 1000, scorefxn, 1, 5);
+			protocols::protein_interface_design::DdgFilter ddg = protocols::protein_interface_design::DdgFilter( 1000, scorefxn, 1, 5);
 			core::Real ddgval = ddg.compute( fpose );
 			//core::Real ddgval_startpose = ddg.compute( startpose );
 

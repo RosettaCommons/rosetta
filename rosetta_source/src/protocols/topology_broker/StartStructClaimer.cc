@@ -31,7 +31,7 @@
 #include <core/fragment/FragData.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 
-#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/basic_moves/FragmentMover.hh>
 
 // ObjexxFCL Headers
 
@@ -111,7 +111,7 @@ void StartStructClaimer::generate_init_frags( core::pose::Pose const& pose ) {
 	using namespace fragment;
 	ConstantLengthFragSetOP fragset = new ConstantLengthFragSet( 1 );
 	steal_frag_set_from_pose( pose, *fragset, new FragData( new BBTorsionSRFD, 1 ), start_region );
-	simple_moves::ClassicFragmentMoverOP mover = new simple_moves::ClassicFragmentMover( fragset );
+	basic_moves::ClassicFragmentMoverOP mover = new basic_moves::ClassicFragmentMover( fragset );
 	mover->set_check_ss( false ); /* not good if we want to initialize from 1mer fragments */
 	set_mover( mover );
 

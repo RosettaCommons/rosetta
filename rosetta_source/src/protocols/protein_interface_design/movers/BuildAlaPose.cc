@@ -16,6 +16,7 @@
 #include <protocols/protein_interface_design/movers/BuildAlaPoseCreator.hh>
 
 // Package headers
+#include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // AUTO-REMOVED #include <core/pose/Pose.hh>
@@ -36,7 +37,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/id/types.hh>
 #include <core/kinematics/Jump.hh>
-#include <protocols/simple_moves/DesignRepackMover.hh>
 
 
 
@@ -68,13 +68,13 @@ BuildAlaPoseCreator::mover_name()
 	return "build_Ala_pose";
 }
 
-BuildAlaPose::BuildAlaPose() : simple_moves::DesignRepackMover( BuildAlaPoseCreator::mover_name() ) {}
+BuildAlaPose::BuildAlaPose() : DesignRepackMover( BuildAlaPoseCreator::mover_name() ) {}
 BuildAlaPose::BuildAlaPose(
 	bool const partner1,
 	bool const partner2,
 	core::Real interface_distance_cutoff
 ) :
-	simple_moves::DesignRepackMover( BuildAlaPoseCreator::mover_name() )
+	DesignRepackMover( BuildAlaPoseCreator::mover_name() )
 {
 	repack_partner1_=design_partner1_=partner1;
 	repack_partner2_=design_partner2_=partner2;

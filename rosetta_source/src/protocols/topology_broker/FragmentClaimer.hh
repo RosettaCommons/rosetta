@@ -26,7 +26,7 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <protocols/simple_moves/FragmentMover.fwd.hh>
+#include <protocols/basic_moves/FragmentMover.fwd.hh>
 #include <protocols/loops/Loops.hh>
 
 // ObjexxFCL Headers
@@ -49,8 +49,8 @@ class FragmentClaimer : public virtual TopologyClaimer {
 	typedef TopologyClaimer Parent;
 public:
 	FragmentClaimer(); //for factory
-	FragmentClaimer( simple_moves::FragmentMoverOP, std::string mover_tag, weights::AbinitioMoverWeightOP weight );
-	FragmentClaimer( simple_moves::FragmentMoverOP );
+	FragmentClaimer( basic_moves::FragmentMoverOP, std::string mover_tag, weights::AbinitioMoverWeightOP weight );
+	FragmentClaimer( basic_moves::FragmentMoverOP );
 	FragmentClaimer( FragmentClaimer const & src );
 
 	~FragmentClaimer();
@@ -77,7 +77,7 @@ public:
 		return "FragmentClaimer";
 	}
 
-	void set_mover( simple_moves::FragmentMoverOP mover );
+	void set_mover( basic_moves::FragmentMoverOP mover );
 
 	void set_mover_tag( std::string const& str );
 
@@ -95,12 +95,12 @@ public:
 
 
 protected:
-	simple_moves::FragmentMover const & mover() const {
+	basic_moves::FragmentMover const & mover() const {
 		if ( !mover_ ) throw( utility::excn::EXCN_NullPointer( "mover_ is NULL in FragmentClaimer::mover()" ) );
 		return *mover_;
 	}
 
-	simple_moves::FragmentMoverOP get_frag_mover_ptr();
+	basic_moves::FragmentMoverOP get_frag_mover_ptr();
 
 	void set_claim_right( DofClaim::ClaimRight setting ) {
 		claim_right_ = setting;
@@ -114,7 +114,7 @@ protected:
 
 private:
 
-	simple_moves::FragmentMoverOP mover_;
+	basic_moves::FragmentMoverOP mover_;
 	std::string mover_tag_;
 
 	//if false the initialize_dofs routine won't do anything -- but also not report the dof as failed-to initialized

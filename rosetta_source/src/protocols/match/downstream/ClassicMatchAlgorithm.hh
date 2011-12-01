@@ -24,7 +24,7 @@
 #include <protocols/match/downstream/ActiveSiteGrid.fwd.hh>
 #include <protocols/match/downstream/DownstreamAlgorithm.hh>
 #include <protocols/match/downstream/DownstreamBuilder.fwd.hh>
-#include <protocols/toolbox/match_enzdes_util/ExternalGeomSampler.hh>
+#include <protocols/match/downstream/ExternalGeomSampler.hh>
 // AUTO-REMOVED #include <protocols/match/Hit.hh>
 
 // Project headers
@@ -138,7 +138,7 @@ public:
 	void set_residue_type( core::chemical::ResidueTypeCAP restype );
 
 	void add_external_geom_sampler(
-		toolbox::match_enzdes_util::ExternalGeomSampler const & sampler,
+		ExternalGeomSampler const & sampler,
 		Size const exgeom_id,
 		std::string const & atom1,
 		std::string const & atom2,
@@ -156,7 +156,7 @@ public:
 		return *restype_;
 	}
 
-	toolbox::match_enzdes_util::ExternalGeomSampler const &
+	ExternalGeomSampler const &
 	external_sampler( Size external_geom_id ) const
 	{
 		return external_samplers_[ external_geom_id ];
@@ -175,7 +175,7 @@ public:
 private:
 	core::chemical::ResidueTypeCAP  restype_;
 
-	utility::vector1< toolbox::match_enzdes_util::ExternalGeomSampler > external_samplers_;
+	utility::vector1< ExternalGeomSampler > external_samplers_;
 	utility::vector1< utility::fixedsizearray1< Size, 3 > > launch_points_;
 	utility::vector1< DownstreamBuilderCOP > dsbuilders_;
 	utility::vector1< Size > exgeom_ids_;

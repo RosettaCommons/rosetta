@@ -8,8 +8,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   test/protocols/match/OccupiedSpaceHash.cxxtest.hh
-/// @brief
+/// @file   test/protocols/match/Hasher.cxxtest.hh
+/// @brief  test suite for protocols::match::SixDHasher
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 
@@ -46,14 +46,14 @@ class OccupiedSpaceHashTests : public CxxTest::TestSuite {
 		typedef core::Real   Real;
 		typedef numeric::geometry::BoundingBox< Vector > BoundingBox;
 		typedef numeric::HomogeneousTransform< Real >    HTReal;
-	  typedef numeric::geometry::hashing::Real6 Real6;
+		typedef protocols::match::Real6 Real6;
 
 	private:
 		Vector lower;
 		Vector upper;
 		BoundingBox bb;
 
-		numeric::geometry::hashing::Real6 pA, pB, pC, pD, pE, pF, pG, pH, pI, pJ;
+		Real6 pA, pB, pC, pD, pE, pF, pG, pH, pI, pJ;
 
 	public:
 

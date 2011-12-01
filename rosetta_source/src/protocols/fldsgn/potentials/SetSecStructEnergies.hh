@@ -26,7 +26,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/jd2/parser/BluePrint.fwd.hh>
+#include <protocols/fldsgn/BluePrint.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // C++ headers
@@ -64,8 +64,8 @@ public: // typedefs
 	typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;
 
 	typedef protocols::moves::MoverOP MoverOP;
-	typedef protocols::jd2::parser::BluePrint BluePrint;
-	typedef protocols::jd2::parser::BluePrintOP BluePrintOP;
+	typedef protocols::fldsgn::BluePrint BluePrint;
+	typedef protocols::fldsgn::BluePrintOP BluePrintOP;
 
   typedef core::conformation::symmetry::SymmetryInfoOP SymmetryInfoOP;
 

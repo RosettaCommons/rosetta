@@ -26,8 +26,14 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/pose/Pose.hh>
 
+// AUTO-REMOVED #include <core/id/NamedAtomID.hh>
+
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
+
+// Utility headers
+// AUTO-REMOVED #include <basic/Tracer.hh>
+// AUTO-REMOVED #include <core/scoring/rms_util.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
@@ -36,6 +42,9 @@
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/tree/Atom.hh>
+
+
+// C++ headers
 
 
 namespace protocols {

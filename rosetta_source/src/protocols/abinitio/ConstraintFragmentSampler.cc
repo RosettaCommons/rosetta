@@ -49,7 +49,7 @@
 
 // Auto Headers
 #include <core/kinematics/ShortestPathInFoldTree.hh>
-#include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh>
+#include <protocols/abinitio/MaxSeqSepConstraintSet.hh>
 // AUTO-REMOVED #include <utility/io/mpistream.hh>
 
 #include <utility/vector1.hh>
@@ -362,7 +362,7 @@ void ConstraintFragmentSampler::apply(core::pose::Pose& pose) {
 	orig_constraints = pose.constraint_set()->clone();
 
   // initialize a MaxSeqSepConstraintSet with the current set of constraints
-	constraints_ = new constraints_additional::MaxSeqSepConstraintSet(*orig_constraints, pose.fold_tree());
+	constraints_ = new MaxSeqSepConstraintSet(*orig_constraints, pose.fold_tree());
 	constraints_->set_max_seq_sep(pose.total_residue()); // so it is prepared for stage4.
 
   // replace <pose>'s ConstraintSet with our newly initialized MaxSeqSepConstraintSet
