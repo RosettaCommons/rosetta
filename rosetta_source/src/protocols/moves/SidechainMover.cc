@@ -123,7 +123,7 @@ SidechainMover::SidechainMover(
 	SidechainMover const & mover
 ) :
 	//utility::pointer::ReferenceCount(),
-	ThermodynamicMover(mover),
+	protocols::canonical_sampling::ThermodynamicMover(mover),
 	rotamer_library_(mover.rotamer_library_),
 	packed_residues_(mover.packed_residues_),
 	residue_packed_(mover.residue_packed_),
@@ -229,7 +229,7 @@ SidechainMover::init_task(
 void
 SidechainMover::initialize_simulation(
 	core::pose::Pose & pose,
-	protocols::moves::MetropolisHastingsMover const & /*metropolis_hastings_mover*/
+	protocols::canonical_sampling::MetropolisHastingsMover const & /*metropolis_hastings_mover*/
 )
 {
 	idealize_sidechains(pose);

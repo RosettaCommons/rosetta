@@ -68,7 +68,7 @@ scorefxn.set_weight(core.scoring.hbond_lr_bb, 1.0)
 scorefxn.set_weight(core.scoring.hbond_bb_sc, 1.0)
 scorefxn.set_weight(core.scoring.hbond_sc, 1.0)
 
-#switch = SwitchResidueTypeSetMover("centroid")
+#switch = protocols::simple_moves::SwitchResidueTypeSetMover("centroid")
 #switch.apply(pose)
 #scorefxn = create_score_function("score3")
 

@@ -20,7 +20,7 @@
 //#include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/RigidBodyMover.hh>
+// AUTO-REMOVED #include <protocols/rigid/RigidBodyMover.hh>
 
 // AUTO-REMOVED #include <core/conformation/symmetry/SymDof.hh>
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
@@ -36,7 +36,7 @@
 
 #include <core/conformation/symmetry/SymDof.fwd.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.fwd.hh>
-#include <protocols/moves/RigidBodyMover.fwd.hh>
+#include <protocols/rigid/RigidBodyMover.fwd.hh>
 
 
 namespace protocols {
@@ -175,7 +175,7 @@ namespace symmetric_docking {
 			core::Real rg( core::pose::Pose const & pose );
 			
 			//fpd will the mover compress or expand the system?
-			bool dofmover_compresses( core::pose::Pose & pose, protocols::moves::RigidBodyDofTransMover & dofmover );
+			bool dofmover_compresses( core::pose::Pose & pose, protocols::rigid::RigidBodyDofTransMover & dofmover );
 
 		private:
 			std::map< Size, core::conformation::symmetry::SymDof > dofs_;

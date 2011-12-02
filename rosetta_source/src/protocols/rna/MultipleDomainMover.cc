@@ -26,7 +26,7 @@
 #include <basic/Tracer.hh>
 
 #include <protocols/coarse_rna/CoarseRNA_LoopCloser.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rna/AllowInsert.hh>
 
 // Utility headers
@@ -182,11 +182,11 @@ void MultipleDomainMover::setup_jump_numbers_and_partner( pose::Pose const & pos
 			jump_numbers_.push_back( n );
 
 			if ( i == virt_res ) {
-				//partner.push_back( partner_downstream );
-				partner_.push_back( partner_upstream );
+				//partner.push_back( rigid::partner_downstream );
+				partner_.push_back( rigid::partner_upstream );
 			} else {
-				partner_.push_back( partner_downstream );
-				//partner.push_back( partner_upstream );
+				partner_.push_back( rigid::partner_downstream );
+				//partner.push_back( rigid::partner_upstream );
 			}
 		}
 	}
@@ -214,7 +214,7 @@ MultipleDomainMover::randomize_orientations( pose::Pose & pose ) {
 	using namespace protocols::moves;
 
 	for ( Size n = 1; n<= num_domains_; n++ ){
-		RigidBodyRandomizeMover rb( pose, jump_numbers_[ n ], partner_[ n ] );
+		rigid::RigidBodyRandomizeMover rb( pose, jump_numbers_[ n ], partner_[ n ] );
 		rb.apply( pose );
 	}
 
@@ -301,7 +301,7 @@ MultipleDomainMover::initialize_rigid_body_movers(){
 
 	std::cout << "NUM_DOMAINS: " << num_domains_ << std::endl;
 	for ( Size n = 1; n <= num_domains_; n++ ){
-		rb_movers_.push_back( new RigidBodyPerturbMover( jump_numbers_[ n ],
+		rb_movers_.push_back( new rigid::RigidBodyPerturbMover( jump_numbers_[ n ],
 																										 rot_mag_, trans_mag_,
 																										 partner_[ n ], ok_for_centroid_calculation_ ) );
 	}

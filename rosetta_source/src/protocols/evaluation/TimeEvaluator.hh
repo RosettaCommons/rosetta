@@ -44,7 +44,7 @@ namespace protocols {
 namespace evaluation {
 
 
-class TimeEvaluator : public SingleValuePoseEvaluator< core::Real > {
+class TimeEvaluator : public evaluation::SingleValuePoseEvaluator< core::Real > {
 public:
   TimeEvaluator( std::string const& tag = "");
 

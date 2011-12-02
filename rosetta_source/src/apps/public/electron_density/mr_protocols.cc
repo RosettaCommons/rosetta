@@ -7,10 +7,10 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
 // AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <protocols/relax/util.hh>
 // AUTO-REMOVED #include <utility/excn/Exceptions.hh>
@@ -28,12 +28,12 @@
 // AUTO-REMOVED #include <protocols/loops/LoopMover_CCD.hh>
 // AUTO-REMOVED #include <protocols/loops/LoopMover_KIC.hh>
 // AUTO-REMOVED #include <protocols/loops/LoopMoverFactory.hh>
-#include <protocols/loops/LoopRelaxMover.hh>
+#include <protocols/comparative_modeling/LoopRelaxMover.hh>
 
 #include <protocols/relax/RelaxProtocolBase.hh>
 
-#include <protocols/rbsegment_moves/AutoRBRelaxMover.hh>
-#include <protocols/rbsegment_moves/util.hh>
+#include <protocols/rigid/AutoRBRelaxMover.hh>
+#include <protocols/rigid/util.hh>
 
 // AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
 // AUTO-REMOVED #include <protocols/comparative_modeling/ThreadingMover.hh>
@@ -108,7 +108,7 @@
 
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/jd2/Job.hh>
-#include <protocols/rbsegment_moves/RBSegment.hh>
+#include <protocols/rigid/RBSegment.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -240,7 +240,7 @@ public:
 		}
 
 		// now call the kinematic loop sampler
-		LoopRelaxMoverOP lr_mover( new LoopRelaxMover );
+		protocols::comparative_modeling::LoopRelaxMoverOP lr_mover( new protocols::comparative_modeling::LoopRelaxMover );
 		lr_mover->scorefxns( cen_scorefxn_, fadens_scorefxn_ );   // centroid threading doesn't use density score
 		lr_mover->loops( loops );
 		lr_mover->remodel( "perturb_kic" );
@@ -253,7 +253,7 @@ public:
 		remove_cutpoint_variants( pose );
 
 		// to fullatom
-		protocols::moves::SwitchResidueTypeSetMover to_fullatom("fa_standard");
+		protocols::simple_moves::SwitchResidueTypeSetMover to_fullatom("fa_standard");
 		to_fullatom.apply(pose);
 
 		// finally, cartesian relax
@@ -402,7 +402,7 @@ public:
 			new_loops[i].set_stop( new_invmapping[new_loops[i].stop()] );
 
 			//fpd
-			if (new_invmapping[new_loops[i].start()] == new_invmapping[new_loops[i].stop()] 
+			if (new_invmapping[new_loops[i].start()] == new_invmapping[new_loops[i].stop()]
 			    && new_invmapping[new_loops[i].start()] != 0
 			    && new_invmapping[new_loops[i].stop()] != 0 ) {
 				if (new_invmapping[new_loops[i].start()] != 1)
@@ -440,7 +440,7 @@ public:
 		using namespace protocols::moves;
 		using namespace core::pack::task;
 
-		MoverOP autorb( new protocols::rbsegment_moves::AutoRBMover );
+		MoverOP autorb( new protocols::rigid::AutoRBMover );
 		autorb->apply( pose );
 	}
 
@@ -460,12 +460,12 @@ public:
 		// optionally set "smart" foldtree
 		// TO DO symmetric version
 		if ( option[ MR::smart_foldtree ].user() ) {
-			using namespace protocols::rbsegment_moves;
+			using namespace protocols::rigid;
 			utility::vector1< RBSegment > rigid_segs, rb_chunks;
 			utility::vector1< core::Size > jumps;
 			protocols::loops::Loops loops;
 			core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap();
-	
+
 			guess_rbsegs_from_pose( pose, rigid_segs, rb_chunks, loops );
 			jumps = setup_pose_rbsegs_keep_loops( pose,  rigid_segs , loops,  movemap );
 		}
@@ -526,7 +526,7 @@ public:
 		to_rebuild.choose_cutpoints( pose );
 
 		// now do loopbuilding
-		LoopRelaxMoverOP lr_mover( new LoopRelaxMover );
+		protocols::comparative_modeling::LoopRelaxMoverOP lr_mover( new protocols::comparative_modeling::LoopRelaxMover );
 		lr_mover->loops( to_rebuild );
 		lr_mover->scorefxns( cendens_scorefxn_, fadens_scorefxn_ );
 		lr_mover->frag_libs( frag_libs_ );
@@ -555,8 +555,8 @@ public:
 
 		bool debug = option[ OptionKeys::MR::debug ]();
 
-		protocols::moves::SwitchResidueTypeSetMover to_centroid("centroid");
-		protocols::moves::SwitchResidueTypeSetMover to_fullatom("fa_standard");
+		protocols::simple_moves::SwitchResidueTypeSetMover to_centroid("centroid");
+		protocols::simple_moves::SwitchResidueTypeSetMover to_fullatom("fa_standard");
 
 		protocols::comparative_modeling::ThreadingJobCOP job = dynamic_cast< protocols::comparative_modeling::ThreadingJob const*  >(
 			JobDistributor::get_instance()->current_job()->inner_job().get() );
@@ -605,7 +605,7 @@ public:
 			// fastrelax only
 			apply_relax( pose );
 		} else {
-			LoopRelaxMoverOP lr_mover( new LoopRelaxMover );
+		  protocols::comparative_modeling::LoopRelaxMoverOP lr_mover( new protocols::comparative_modeling::LoopRelaxMover );
 			lr_mover->scorefxns( cen_scorefxn_, fadens_scorefxn_ );   // centroid threading doesn't use density score
 			lr_mover->frag_libs( frag_libs_ );
 			lr_mover->loops( my_loops );

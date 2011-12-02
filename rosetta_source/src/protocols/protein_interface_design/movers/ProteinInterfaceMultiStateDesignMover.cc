@@ -19,7 +19,7 @@
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/import_pose/import_pose.hh>
 #include <protocols/dna/PDBOutput.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 // AUTO-REMOVED #include <protocols/toolbox/task_operations/ProteinInterfaceDesignOperation.hh>
 #include <protocols/multistate_design/MultiStatePacker.hh>
 #include <protocols/multistate_design/PackingState.hh>
@@ -146,7 +146,7 @@ ProteinInterfaceMultiStateDesignMover::~ProteinInterfaceMultiStateDesignMover(){
 void
 part_complex( core::pose::PoseOP pose, core::Size const rb_jump ){
 	using namespace protocols::moves;
-	RigidBodyTransMoverOP translate( new RigidBodyTransMover( *pose, rb_jump ) );
+	rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( *pose, rb_jump ) );
 	translate->step_size( 1000.0 );
 	translate->apply( *pose );
 }

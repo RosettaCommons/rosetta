@@ -23,7 +23,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/SidechainMover.hh>
-#include <protocols/moves/PDBTrajectoryRecorder.hh>
+#include <protocols/canonical_sampling/PDBTrajectoryRecorder.hh>
 #include <protocols/viewer/viewers.hh>
 
 // Core Headers
@@ -426,7 +426,7 @@ my_main( void* )
 			// reset the Monte Carlo object
 			mc.reset(*pose);
 
-			protocols::moves::PDBTrajectoryRecorder trajectory;
+			protocols::canonical_sampling::PDBTrajectoryRecorder trajectory;
 			if (option[ backrub::trajectory ]) {
 				trajectory.file_name(output_tag + "_traj.pdb" + (option[ backrub::trajectory_gz ] ? ".gz" : ""));
 				trajectory.stride(option[ backrub::trajectory_stride ]);

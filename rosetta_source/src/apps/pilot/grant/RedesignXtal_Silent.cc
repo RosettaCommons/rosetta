@@ -32,7 +32,7 @@
 
 #include <protocols/evaluation/RmsdEvaluator.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
-#include <protocols/moves/PackStatMover.hh>
+#include <protocols/analysis/PackStatMover.hh>
 
 #include <core/chemical/AA.hh>
 

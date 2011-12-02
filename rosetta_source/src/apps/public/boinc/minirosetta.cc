@@ -27,7 +27,7 @@
 #include <protocols/medal/MedalMain.hh>
 #include <protocols/nonlocal/NonlocalAbinitioMain.hh>
 #include <protocols/symmetric_docking/SymDockProtocol.hh>
-#include <protocols/rbsegment_moves/RBSegmentRelax_main.hh>
+#include <protocols/rigid/RBSegmentRelax_main.hh>
 #include <protocols/loops/LoopBuild.hh>
 #include <protocols/loophash/Mover_LoopHashRefine.hh>
 #include <protocols/abinitio/vs_test.hh>
@@ -37,7 +37,7 @@
 #include <protocols/ddg/ddG_main.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingApplication.hh>
 #include <protocols/canonical_sampling/CanonicalSamplingMover.hh>
-#include <protocols/frag_picker/nonlocal/NonlocalFragsMain.hh>
+#include <protocols/nonlocal/frag_picker/NonlocalFragsMain.hh>
 
 #ifdef BOINC
 #include <protocols/boinc/boinc.hh>
@@ -100,7 +100,7 @@ main( int argc, char * argv [] )
 	protocols::abinitio::IterativeAbrelax::register_options();
 	protocols::jd2::archive::ArchiveManager::register_options();
 	//protocols::canonical_sampling::register_options();
-	protocols::moves::CanonicalSamplingMover::register_options();
+	protocols::canonical_sampling::CanonicalSamplingMover::register_options();
 
 
 #ifdef BOINC // BOINC STUFF
@@ -227,7 +227,7 @@ main( int argc, char * argv [] )
 		} else if ( option[run::protocol]() == "canonical_sampling") {
 			protocols::canonical_sampling::canonical_sampling_main();
 		} else if ( option[run::protocol]() == "nonlocal_frags") {
-			protocols::frag_picker::nonlocal::NonlocalFrags_main();
+			protocols::nonlocal::frag_picker::NonlocalFrags_main();
 		}
 		else {
 			utility_exit_with_message(

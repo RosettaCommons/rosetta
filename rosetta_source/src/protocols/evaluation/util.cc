@@ -21,19 +21,8 @@
 // Package Headers
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
-#include <protocols/evaluation/RmsdEvaluator.hh>
-#include <protocols/evaluation/StructuralSimilarityEvaluator.hh>
-#include <protocols/evaluation/RDC_Evaluator.hh>
-#include <protocols/evaluation/ScoreEvaluator.hh>
-#include <protocols/evaluation/JScoreEvaluator.hh>
-#include <protocols/evaluation/ContactMapEvaluator.hh>
-#include <protocols/evaluation/JumpEvaluator.hh>
-#include <protocols/evaluation/CamShiftEvaluator.hh>
-#include <protocols/evaluation/PalesEvaluator.hh>
-#include <protocols/evaluation/PredictedBurialEvaluator.hh>
-#include <protocols/loops/Loops.hh>
 #include <core/scoring/constraints/util.hh>
-#include <protocols/moves/mc_convergence_checks/Pool_ConvergenceCheck.hh>
+#include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 
 // Project Headers
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>
@@ -164,64 +153,6 @@ void evaluate_pose( core::pose::Pose& pose, PoseEvaluator& eval, std::ostream& o
 }
 
 
-void define_scorable_core_from_secondary_structure(
-   core::fragment::SecondaryStructure const& ss_def,
-	 protocols::loops::Loops& scored_core )
-{
-	using namespace core;
-	using namespace basic::options;
-	//	Size const max_loop_size( 3 );
-	//	Size const max_short_helix( 5 );
-	Size const max_loop_size( option[ OptionKeys::evaluation::score_sscore_maxloop ]() );
-	Size const max_short_helix( option[ OptionKeys::evaluation::score_sscore_short_helix ]() );
-
-	//find residues that are part of a short helix -- less than or equal to 5 residues
-	utility::vector1< bool > short_helix( ss_def.total_residue(), false );
-
-	//selection of loop definitions...
-	//these loops define regions that are scored. Add all loops that are 4 residues or longer.
-	//subsequently add also helices that have fewer than 6 residues if they terminated a long loop (>=4)
-	loops::Loops unscored_loops;
-
-	for ( Size pos=1; pos <= ss_def.total_residue(); pos++ ) {
-
-		//detect loops
-		if ( ss_def.loop_fraction( pos ) > 0.1 ) {
-			//go to end of loop
-			Size lpos = 1;
-			for ( ; ( lpos+pos <= ss_def.total_residue() ) && ( ss_def.loop_fraction( pos+lpos ) > 0.1); ++lpos ) {}
-			if ( lpos > max_loop_size ) { //this loop has 4 or more residues
-				unscored_loops.add_loop( pos, pos+lpos-1 );
-			}
-			pos+=lpos-1;
-		} // have found a loop
-
-		// look for short helices and store in short_helix
-		if ( ss_def.helix_fraction( pos ) > 0.1 ) {
-			Size hpos = 1;
-			for ( ; ( hpos+pos <= ss_def.total_residue() ) && ( ss_def.helix_fraction( pos+hpos ) > 0.1); ++hpos ) {}
-			if ( hpos <= max_short_helix   ) { //this helix has 5 or fewer residues
-				for ( Size ipos = 0; ipos < hpos; ++ipos ) {
-					short_helix[ pos+ipos] = true;
-				}
-			}
-		}
-
-		//finished parsing secondary structure definition
-	}
-
-	//elongate loops if they are terminated by a short helix
-	loops::Loops removed_short_helices( unscored_loops );
-	for ( loops::Loops::const_iterator it=unscored_loops.begin(); it != unscored_loops.end(); ++it ) {
-		Size npos( it->stop() + 1 );
-		while ( short_helix[ npos ] ) {
-			removed_short_helices.add_loop( npos-1, npos );
-			npos++;
-		}
-	}
-
-	scored_core =	removed_short_helices.invert( ss_def.total_residue() );
-}
 
 
 }

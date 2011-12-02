@@ -24,7 +24,7 @@
 // AUTO-REMOVED #include "core/scoring/packstat/packing_score_params.hh"
 
 #include <protocols/jobdist/standard_mains.hh>
-#include <protocols/moves/PackStatMover.hh>
+#include <protocols/analysis/PackStatMover.hh>
 
 #include <devel/init.hh>
 #include "core/types.hh"
@@ -337,7 +337,7 @@ int main (int argc, char *argv[]) {
 
 	if( option[ in::file::silent ].user() ) {
 
-		protocols::moves::PackStatMover m;
+		protocols::analysis::PackStatMover m;
 		protocols::jobdist::universal_main(m);
 
 	} else {

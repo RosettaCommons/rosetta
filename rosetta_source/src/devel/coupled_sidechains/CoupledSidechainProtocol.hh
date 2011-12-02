@@ -21,8 +21,8 @@
 // Unit Headers
 #include <protocols/moves/SidechainMover.hh>
 
-#include <protocols/moves/SimulatedTemperingObserver.hh>
-#include <protocols/moves/MultiTemperatureTrialCounter.hh>
+#include <protocols/canonical_sampling/SimulatedTemperingObserver.hh>
+#include <protocols/canonical_sampling/MultiTemperatureTrialCounter.hh>
 
 #include <core/pack/interaction_graph/SimpleInteractionGraph.hh>
 
@@ -131,7 +131,7 @@ public:
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
-		protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 private:
@@ -180,8 +180,8 @@ private:
 
 	utility::io::ozstream rotamer_stream_;
 
-	protocols::moves::SimulatedTemperingObserverOP tempering_;
-	protocols::moves::MultiTemperatureTrialCounter counters_;
+	protocols::canonical_sampling::SimulatedTemperingObserverOP tempering_;
+	protocols::canonical_sampling::MultiTemperatureTrialCounter counters_;
 
 	static bool options_registered_;
 }; //CoupledSidechainProtocol

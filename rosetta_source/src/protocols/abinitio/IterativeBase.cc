@@ -66,11 +66,12 @@
 // AUTO-REMOVED #include <core/scoring/constraints/util.hh>
 
 #include <protocols/abinitio/PairingStatistics.hh>
-#include <protocols/evaluation/JumpEvaluator.hh>
-#include <protocols/evaluation/RmsdEvaluator.hh>
-#include <protocols/evaluation/ScoreEvaluator.hh>
 #include <protocols/constraints_additional/ConstraintEvaluator.hh>
+#include <protocols/simple_filters/JumpEvaluator.hh>
+#include <protocols/simple_filters/RmsdEvaluator.hh>
+#include <protocols/simple_filters/ScoreEvaluator.hh>
 #include <protocols/evaluation/util.hh>
+#include <protocols/loops/util.hh>
 #include <basic/Tracer.hh>
 #include <basic/MemTracer.hh>
 
@@ -961,7 +962,7 @@ void IterativeBase::gen_resample_fragments( Batch& batch ) {
 			// obtain secondary structure from fragments
 			core::fragment::SecondaryStructure ss_def( frags_9mer, true /*no JustUseCentralResidue */ );
 			//	utility::vector1< bool > loop( ss_def.total_residue(),false );
-			evaluation::define_scorable_core_from_secondary_structure( ss_def, scored_core_ );
+			loops::define_scorable_core_from_secondary_structure( ss_def, scored_core_ );
 		}
 		rescore = true;
 	}
@@ -1319,11 +1320,11 @@ void IterativeBase::set_scored_core() {
 			std::string fa_score = option[ iterative::fa_score ]();
 			core::scoring::ScoreFunctionOP fa_scfxn( NULL );
 			fa_scfxn = core::scoring::ScoreFunctionFactory::create_score_function( fa_score );
-			add_evaluation( new evaluation::TruncatedScoreEvaluator( "score_fa", selection, fa_scfxn, true /*fullname*/ ), option[ iterative::fullatom_after_quickrelax_weight ]() );
+			add_evaluation( new simple_filters::TruncatedScoreEvaluator( "score_fa", selection, fa_scfxn, true /*fullname*/ ), option[ iterative::fullatom_after_quickrelax_weight ]() );
 
 		}
 		set_scorefxn( scfxn );
-		add_evaluation( new evaluation::TruncatedScoreEvaluator( "_final", selection, scfxn ), 1.0 );
+		add_evaluation( new simple_filters::TruncatedScoreEvaluator( "_final", selection, scfxn ), 1.0 );
 
 
 		rescore();
@@ -1594,8 +1595,8 @@ void IterativeBase::compute_cores() {
 void IterativeBase::add_core_evaluator( loops::Loops const& core, std::string const& core_tag ) {
 	utility::vector1< Size> selection;
 	core.get_residues( selection );
-	if ( reference_pose_ ) add_evaluation( new evaluation::SelectRmsdEvaluator( reference_pose_, selection, core_tag ) );
-	add_evaluation( new evaluation::TruncatedScoreEvaluator( core_tag, selection ) );
+	if ( reference_pose_ ) add_evaluation( new simple_filters::SelectRmsdEvaluator( reference_pose_, selection, core_tag ) );
+	add_evaluation( new simple_filters::TruncatedScoreEvaluator( core_tag, selection ) );
 	core.write_loops_to_file( name()+"/"+core_tag+".rigid", "RIGID" ); //so we have them for other evaluations
 }
 
@@ -1674,7 +1675,7 @@ void IterativeBase::save_status( std::ostream& os ) const {
 
 void IterativeBase::setup_default_evaluators() {
 	Parent::setup_default_evaluators();
-	add_evaluation( new evaluation::JumpNrEvaluator );
+	add_evaluation( new simple_filters::JumpNrEvaluator );
 }
 
 
@@ -1876,6 +1877,30 @@ IterativeBase::test_broker_settings( Batch const& batch ) {
 		throw ( EXCN_Archive( batch.all_broker_files() + " contains errors: " + excn.msg() ) );
 	}
 	option = vanilla_options;
+}
+
+
+///@detail load decoys into archive from -archive:input_pool or so
+void IterativeBase::init_from_decoy_set( core::io::silent::SilentFileData const& sfd ) {
+	//make bogus batch that contains init-file
+
+	//if non-local evaluation we need to add score_final to decoys --- switch temporarily to local evaluation
+	bool b_old_eval_state( evaluate_local() );
+	if ( !b_old_eval_state ) {
+		tr.Debug << "switch to local evaluation for reading of initial pool" << std::endl;
+		set_evaluate_local( true );//set this temporarily
+		add_evaluation( new simple_filters::ScoreEvaluator( "_final", scorefxn_non_const() ), 1.0 );
+	}
+
+	//read decoys and evaluate
+	ArchiveBase::init_from_decoy_set( sfd );
+
+	//switch back to non-local evaluation if applicable
+	if ( !b_old_eval_state ) {
+		remove_evaluation( "score_final" );
+		set_weight( "score_final", 1.0 );
+		set_evaluate_local( b_old_eval_state );
+	}
 }
 
 

@@ -45,7 +45,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/relax/util.hh>
 
 #include <protocols/filters/SAXSScoreFilter.hh>
@@ -63,7 +63,7 @@
 #include <core/pack/task/operation/ResFilters.hh> // ResidueLacksProperty
 #include <protocols/toolbox/task_operations/RestrictToInterface.hh>
 
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_moves/ScoreMover.hh>
 #include <protocols/moves/ReturnSidechainMover.hh>
 
@@ -347,8 +347,8 @@ SymDockProtocol::apply( pose::Pose & pose )
 	}
 
 	// Residue movers
-	SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
-	SwitchResidueTypeSetMover to_all_atom( core::chemical::FA_STANDARD );
+	simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
+	simple_moves::SwitchResidueTypeSetMover to_all_atom( core::chemical::FA_STANDARD );
 	ReturnSidechainMover recover_sidechains( *get_input_pose());
 
 	core::scoring::ScoreFunctionOP docking_scorefxn;
@@ -635,8 +635,8 @@ SymDockProtocol::apply( pose::Pose & pose )
 	}
 
 	// Residue movers
-	SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
-	SwitchResidueTypeSetMover to_all_atom( core::chemical::FA_STANDARD );
+	simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
+	simple_moves::SwitchResidueTypeSetMover to_all_atom( core::chemical::FA_STANDARD );
 
 	core::scoring::ScoreFunctionOP docking_scorefxn;
 
@@ -860,7 +860,7 @@ SymDockProtocol::calc_interaction_energy( core::pose::Pose & pose ){
         dynamic_cast<SymmetricConformation & > ( pose.conformation()) );
 
 	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
-	moves::RigidBodyDofSeqTransMoverOP translate_away ( new moves::RigidBodyDofSeqTransMover( dofs ) );
+	rigid::RigidBodyDofSeqTransMoverOP translate_away ( new rigid::RigidBodyDofSeqTransMover( dofs ) );
 	translate_away->step_size( trans_magnitude );
 
 	if ( fullatom_ ){
@@ -941,7 +941,7 @@ SymDockProtocol::score_only( core::pose::Pose & pose )
 		score_and_exit.insert_rms( calc_rms( pose) );
 		score_and_exit.apply( pose );
 	} else {
-		SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
+		simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 		to_centroid.apply( pose );
 		core::scoring::ScoreFunctionOP low_score = new core::scoring::symmetry::SymmetricScoreFunction( *docking_score_low_ );
 		simple_moves::ScoreMover score_and_exit( low_score );

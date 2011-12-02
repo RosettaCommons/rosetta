@@ -25,7 +25,7 @@
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/SidechainMover.hh>
 #include <protocols/moves/SidechainMCMover.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/moves/TrajectoryRecorder.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/moves/PyMolMover.hh>
@@ -63,8 +63,8 @@
 #include <core/scoring/methods/RG_Energy_Fast.hh>
 
 //Backbone Gaussian Mover
-#include <protocols/moves/BBGaussianMover.hh>
-#include <protocols/moves/BBConRotMover.hh>
+#include <protocols/simple_moves/BBGaussianMover.hh>
+#include <protocols/simple_moves/BBConRotMover.hh>
 
 // Utility Headers
 #include <utility/io/ozstream.hh>
@@ -362,10 +362,10 @@ my_main( void* )
 	if ( option[ mc::sm_angle_max ].user() ) smallmover.angle_max(option[ mc::sm_angle_max ]);
 
 	//setup the BBGMover
-	protocols::moves::BBG8T3AMover bbgmover;
+	protocols::simple_moves::BBG8T3AMover bbgmover;
 
 	//setup the ConRotMover
-	protocols::moves::BBConRotMover bbcrmover;
+	protocols::simple_moves::BBConRotMover bbcrmover;
 
 	//setup Movemap
 	if ( option[ mc::movemap ].user() ) {
@@ -385,8 +385,8 @@ my_main( void* )
 	sidechainmover.set_preserve_detailed_balance(option[ mc::detailed_balance ]);
 
 	//setup switch mover
-	protocols::moves::SwitchResidueTypeSetMover to_centroid("centroid");
-	protocols::moves::SwitchResidueTypeSetMover to_fullatom("fa_standard");
+	protocols::simple_moves::SwitchResidueTypeSetMover to_centroid("centroid");
+	protocols::simple_moves::SwitchResidueTypeSetMover to_fullatom("fa_standard");
 
 	//setup MPI
 	int rank=0;

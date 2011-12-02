@@ -52,11 +52,11 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <protocols/moves/DataMap.hh>
-#include <protocols/moves/MetropolisHastingsMover.hh>
-#include <protocols/moves/SidechainMetropolisHastingsMover.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
+#include <protocols/canonical_sampling/SidechainMetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/SilentTrajectoryRecorder.hh>
-#include <protocols/moves/SimulatedTempering.hh>
+#include <protocols/canonical_sampling/SilentTrajectoryRecorder.hh>
+#include <protocols/canonical_sampling/SimulatedTempering.hh>
 #include <protocols/moves/PerturbRotamerSidechainMover.hh>
 #include <protocols/moves/JumpRotamerSidechainMover.hh>
 #include <protocols/moves/PerturbChiSidechainMover.hh>
@@ -83,7 +83,7 @@
 #include <utility/fixedsizearray1.hh>
 
 #ifdef WIN_PYROSETTA
-	#include <protocols/moves/ThermodynamicObserver.hh>
+	#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
 #endif
 
 
@@ -110,10 +110,10 @@ void devel::coupled_sidechains::CoupledSidechainProtocol::register_options() {
   using namespace OptionKeys;
   if ( options_registered_ ) return;
   options_registered_ = true;
-	protocols::moves::SimulatedTempering::register_options();
-	protocols::moves::SilentTrajectoryRecorder::register_options();
-	//	protocols::moves::SilentTrajectoryRecorder::register_options();
-	//protocols::moves::SilentTrajectoryRecorder::register_options();
+	protocols::canonical_sampling::SimulatedTempering::register_options();
+	protocols::canonical_sampling::SilentTrajectoryRecorder::register_options();
+	//	protocols::canonical_sampling::SilentTrajectoryRecorder::register_options();
+	//protocols::canonical_sampling::SilentTrajectoryRecorder::register_options();
 	OPT( score::weights );
 	OPT( score::patch );
 	OPT( run::n_cycles );
@@ -189,14 +189,14 @@ CoupledSidechainProtocol::setup_objects() {
 	core::pack::task::TaskFactoryOP task_factory( new core::pack::task::TaskFactory );
 	task_factory->push_back( new core::pack::task::operation::RestrictToRepacking );
 
-	SimulatedTemperingOP tempering  = new protocols::moves::SimulatedTempering();
+	protocols::canonical_sampling::SimulatedTemperingOP tempering  = new protocols::canonical_sampling::SimulatedTempering();
 	moves::MonteCarloOP mc_object = new moves::MonteCarlo( *scorefunction, 0.6 );
 	tempering->set_monte_carlo( mc_object );
 
-	sampler_ = new SidechainMetropolisHastingsMover( stride_ );
+	sampler_ = new protocols::canonical_sampling::SidechainMetropolisHastingsMover( stride_ );
 	sampler_->set_monte_carlo( mc_object );
 	sampler_->set_tempering( tempering );
-	sampler_->add_observer( new SilentTrajectoryRecorder );
+	sampler_->add_observer( new protocols::canonical_sampling::SilentTrajectoryRecorder );
 	sampler_->add_observer( new TrialCounterObserver );
 	sampler_->set_ntrials( ntrials_ );
 	if ( prob_withinrot_ > 0.0 ) {

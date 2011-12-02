@@ -10,7 +10,7 @@
 /// @author Sarel Fleishman (sarelf@uw.edu)
 #include <protocols/protein_interface_design/filters/RelativePoseFilter.hh>
 #include <protocols/protein_interface_design/filters/RelativePoseFilterCreator.hh>
-// AUTO-REMOVED #include <protocols/moves/RigidBodyMover.hh>
+// AUTO-REMOVED #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/TaskFactory.hh>

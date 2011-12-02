@@ -58,7 +58,7 @@ static numeric::random::RandomGenerator RG(90);
 using namespace core;
 
 //constructor
-BackboneMover::BackboneMover() : ThermodynamicMover(), temperature_( 0.5 ), nmoves_( 1 ), preserve_detailed_balance_(false) {
+BackboneMover::BackboneMover() : protocols::canonical_sampling::ThermodynamicMover(), temperature_( 0.5 ), nmoves_( 1 ), preserve_detailed_balance_(false) {
 		Mover::type( "BackboneMoverBase" );
 		core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 		movemap->set_bb( true ); // allow all backbone residues to move
@@ -72,7 +72,7 @@ BackboneMover::BackboneMover(
 		core::kinematics::MoveMapOP movemap_in,
 		core::Real temperature_in,
 		core::Size nmoves_in
-	) : ThermodynamicMover(), movemap_( movemap_in ), temperature_( temperature_in), nmoves_( nmoves_in ), preserve_detailed_balance_(false)
+	) : protocols::canonical_sampling::ThermodynamicMover(), movemap_( movemap_in ), temperature_( temperature_in), nmoves_( nmoves_in ), preserve_detailed_balance_(false)
 	{
 		Mover::type( "BackboneMoverBase" );
 		// set default values for angle_max since it is not passed in

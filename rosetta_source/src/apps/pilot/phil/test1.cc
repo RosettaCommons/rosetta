@@ -33,7 +33,7 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/OutputMovers.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 //#include <protocols/moves/rigid_body_moves.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
@@ -2105,7 +2105,7 @@ rb_test()
 	start_pose.fold_tree( f1 );
 
 	// forward rotation
-	moves::RigidBodyPerturbMoverOP rb_mover = new RigidBodyPerturbMover(
+	rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover(
 			1 /*jump_num*/, 5.0 /*rot*/, 0.0 /*trans*/ );
 	moves::PDBDumpMoverOP dumper= new PDBDumpMover( "tmp_fwd_rotation_" );
 	moves::SequenceMoverOP sequencer ( new SequenceMover );

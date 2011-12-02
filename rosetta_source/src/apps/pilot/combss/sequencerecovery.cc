@@ -56,7 +56,7 @@
 #include <protocols/toolbox/pose_metric_calculators/CatPiCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/PiPiCalculator.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
-#include <protocols/moves/PackStatMover.hh>
+#include <protocols/analysis/PackStatMover.hh>
 
 
 // Option keys

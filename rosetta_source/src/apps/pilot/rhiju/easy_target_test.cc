@@ -1950,7 +1950,7 @@ cst_relax_test()
 
 	// Basic set up
 	bool const score_only = option[ run::score_only ]();
-	protocols::evaluation::RmsdEvaluator rmsd_evaluator( native_pose_op );
+	protocols::simple_filters::RmsdEvaluator rmsd_evaluator( native_pose_op );
 	rmsd_evaluator.report_gdt_components( true );
 	core::io::silent::SilentFileData silent_file_data;
 	BinaryProteinSilentStruct s;
@@ -1990,7 +1990,7 @@ cst_relax_test()
   			relax_protocol.apply( pose );
 			}
 
-			//		setPoseExtraScores( pose, "rms",   protocols::evaluation::native_CA_rmsd(native_pose, pose ) );
+			//		setPoseExtraScores( pose, "rms",   protocols::simple_filters::native_CA_rmsd(native_pose, pose ) );
 
 			std::string out_file_tag =   "S_"+lead_zero_string_of( n, 4 );
 			if ( score_only ) out_file_tag = start_files[j];

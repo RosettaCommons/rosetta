@@ -20,7 +20,7 @@
 // Unit headers
 #include <protocols/protein_interface_design/movers/BackrubDDMover.hh>
 #include <protocols/protein_interface_design/movers/BackrubDDMoverCreator.hh>
-#include <protocols/moves/BBGaussianMover.hh>
+#include <protocols/simple_moves/BBGaussianMover.hh>
 
 // Package headers
 #include <protocols/moves/BackboneMover.hh>
@@ -205,7 +205,7 @@ BackrubDDMover::apply( Pose & pose )
 	protocols::moves::BackrubMover backrub_mover;
 	protocols::moves::SidechainMover sidechain_mover;
 	protocols::moves::SmallMover smallmover;
-	protocols::moves::BBG8T3AMover bbg8t3amover;
+	protocols::simple_moves::BBG8T3AMover bbg8t3amover;
 
 	smallmover.nmoves( 1 );
 	bbg8t3amover.factorA( 0.5 ); // values suggested by Yuan

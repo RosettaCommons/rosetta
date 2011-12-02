@@ -33,7 +33,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/RotamerTrialsMinMover.hh>
 
@@ -160,7 +160,7 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 
 	//Move each partners away from the others
 	for( DockJumps::const_iterator jump = movable_jumps().begin() ; jump != movable_jumps().end() ; ++jump ) {
-		RigidBodyTransMoverOP translate_away( new RigidBodyTransMover(pose, *jump) );
+	  rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover(pose, *jump) );
 		translate_away->step_size( trans_magnitude_ );
 		translate_away->apply(pose);
 	}
@@ -172,7 +172,7 @@ void DockingPrepackProtocol::apply( core::pose::Pose & pose )
 
 	//bringing the packed structures together
 	for(  DockJumps::const_iterator jump= movable_jumps().begin() ; jump != movable_jumps().end(); ++jump ) {
-		RigidBodyTransMoverOP translate_back ( new RigidBodyTransMover(pose, *jump) );
+		rigid::RigidBodyTransMoverOP translate_back ( new rigid::RigidBodyTransMover(pose, *jump) );
 		translate_back->step_size( trans_magnitude_ );
 		translate_back->trans_axis().negate();
 		translate_back->apply(pose);

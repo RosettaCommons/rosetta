@@ -17,7 +17,7 @@
 #include <iomanip>
 
 // Protocol Headers
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/BackrubMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
@@ -136,7 +136,7 @@ main( int argc, char * argv [] )
 
 	// rb_jump = rigid_backbone - changes the distance between the backbones of the molecules
 	Size const rb_jump = 1;
-	protocols::moves::RigidBodyTransMover trans_mover( unbound_input_pose, rb_jump );
+	protocols::rigid::RigidBodyTransMover trans_mover( unbound_input_pose, rb_jump );
 	trans_mover.trans_axis( trans_mover.trans_axis() );
 	trans_mover.step_size(unbound_dist);
 	trans_mover.apply( unbound_input_pose );

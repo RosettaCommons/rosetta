@@ -39,7 +39,7 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/ConstraintSetMover.fwd.hh>
 #include <protocols/moves/ReturnSidechainMover.fwd.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.fwd.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.fwd.hh>
 //#include <protocols/moves/MoverContainer.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
@@ -161,7 +161,7 @@ public:
 	core::pack::task::TaskFactory const & task_factory() { return *init_task_factory_; }
 
 	//getters for const access to movers and data of docking protocol
-	protocols::moves::SwitchResidueTypeSetMoverCOP to_centroid() const;
+	protocols::simple_moves::SwitchResidueTypeSetMoverCOP to_centroid() const;
 	protocols::moves::MoverCOP to_all_atom() const;
 	protocols::docking::DockingLowResCOP docking_lowres_mover() const;
 	protocols::docking::DockingHighResCOP docking_highres_mover() const;
@@ -242,7 +242,7 @@ private:
 	protocols::docking::DockingInitialPerturbationOP perturber_;
 
 	// atom set switch movers
-	protocols::moves::SwitchResidueTypeSetMoverOP to_centroid_;
+	protocols::simple_moves::SwitchResidueTypeSetMoverOP to_centroid_;
 	protocols::moves::MoverOP to_all_atom_;
 
 	// ensemble objects

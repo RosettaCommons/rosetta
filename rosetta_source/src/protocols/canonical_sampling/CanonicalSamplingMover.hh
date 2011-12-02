@@ -12,16 +12,16 @@
 /// @author
 /// @author
 
-#ifndef INCLUDED_protocols_moves_CanonicalSamplingMover_HH
-#define INCLUDED_protocols_moves_CanonicalSamplingMover_HH
+#ifndef INCLUDED_protocols_canonical_sampling_CanonicalSamplingMover_HH
+#define INCLUDED_protocols_canonical_sampling_CanonicalSamplingMover_HH
 
-// AUTO-REMOVED #include <protocols/moves/CanonicalSamplingMover.fwd.hh>
+// AUTO-REMOVED #include <protocols/canonical_sampling/CanonicalSamplingMover.fwd.hh>
 
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/Pose.hh>
 
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/mc_convergence_checks/Pool_ConvergenceCheck.hh>
+#include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 
 // AUTO-REMOVED #include <protocols/loops/Loop.hh>
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
@@ -36,7 +36,7 @@
 
 
 namespace protocols {
-namespace moves {
+namespace canonical_sampling {
 
 using namespace core;
 
@@ -46,13 +46,13 @@ class CanonicalSamplingMover: public moves::Mover{
 public:
 	static void register_options();
 
-  CanonicalSamplingMover();
+	CanonicalSamplingMover();
 
-  CanonicalSamplingMover(core::scoring::ScoreFunctionOP sfxn,
-												 mc_convergence_checks::Pool_RMSD_OP ptr,
+	CanonicalSamplingMover(core::scoring::ScoreFunctionOP sfxn,
+												 protocols::canonical_sampling::mc_convergence_checks::Pool_RMSD_OP ptr,
 												 int ntrial);
 
-  void add_mover(MoverOP m,core::Real weight);
+  void add_mover(protocols::moves::MoverOP m,core::Real weight);
 
 	std::string get_ABGEO_string( core::pose::Pose & pose, protocols::loops::Loops & loop);
 
@@ -86,7 +86,7 @@ public:
 
 	void output_only_cluster_transitions(bool truefalse);
 
-  void set_poolrmsd(mc_convergence_checks::Pool_RMSD_OP ptr);
+  void set_poolrmsd(protocols::canonical_sampling::mc_convergence_checks::Pool_RMSD_OP ptr);
 
   virtual void apply(core::pose::Pose & pose);
 	virtual std::string get_name() const;
@@ -113,10 +113,10 @@ private:
 
 	void setup_constraints(core::pose::Pose & pose);
 
-  MonteCarloOP mc_;
+  protocols::moves::MonteCarloOP mc_;
   core::scoring::ScoreFunctionOP sfxn_;
   moves::RandomMoverOP randmove_;
-  mc_convergence_checks::Pool_RMSD_OP pool_rms_;
+  protocols::canonical_sampling::mc_convergence_checks::Pool_RMSD_OP pool_rms_;
 
   core::Size interval_posedump_;
   core::Size interval_transitiondump_;
@@ -140,4 +140,4 @@ private:
 }
 }
 
-#endif //  INCLUDED_protocols_moves_CanonicalSamplingMover_HH
+#endif //  INCLUDED_protocols_canonical_sampling_CanonicalSamplingMover_HH

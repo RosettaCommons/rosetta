@@ -20,7 +20,7 @@
 
 // Unit headers
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 
@@ -54,7 +54,7 @@ namespace protocols {
 namespace enzdes {
 
 
-class PredesignPerturbMover : public protocols::moves::RigidBodyPerturbMover
+class PredesignPerturbMover : public protocols::rigid::RigidBodyPerturbMover
 {
 
 public:

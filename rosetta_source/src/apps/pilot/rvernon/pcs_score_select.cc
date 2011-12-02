@@ -122,7 +122,7 @@ using namespace pose;
 using namespace conformation;
 
 
-void invert_exclude_residues( Size nres, utility::vector1<int> const& exclude_list, protocols::evaluation::ResidueSelection& residue_selection ) {
+void invert_exclude_residues( Size nres, utility::vector1<int> const& exclude_list, protocols::simple_filters::ResidueSelection& residue_selection ) {
 
 	residue_selection.clear();
 
@@ -256,7 +256,7 @@ main( int argc, char* argv [] )
 		outfile << "WINDOW T_" << count << " " << pcs << " ";
 
 		if ( option[ in::file::native ].user() ) {
-			protocols::evaluation::ResidueSelection residues;
+			protocols::simple_filters::ResidueSelection residues;
 			invert_exclude_residues( native_pose.total_residue(), vec_exclude, residues );
 			core::Real rmsd = core::scoring::CA_rmsd( pose, native_pose, residues );
 			core::Real gdtmm = core::scoring::CA_gdtmm( pose, native_pose, residues );

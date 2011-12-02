@@ -20,7 +20,7 @@
 #include <protocols/rna/MultipleDomainMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rna/AllowInsert.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/coarse_rna/CoarseRNA_LoopCloser.fwd.hh>
 #include <protocols/coarse_rna/CoarseRNA_LoopCloser.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -110,9 +110,9 @@ private:
 	Size num_domains_;
 	protocols::coarse_rna::CoarseRNA_LoopCloserOP rna_loop_closer_; //Later can make this a "general" loop closer.
 	utility::vector1< int > jump_numbers_;
-	utility::vector1< protocols::moves::Partner > partner_;
+	utility::vector1< protocols::rigid::Partner > partner_;
 	utility::vector1< bool > ok_for_centroid_calculation_;
-	utility::vector1< protocols::moves::RigidBodyPerturbMoverOP > rb_movers_;
+	utility::vector1< protocols::rigid::RigidBodyPerturbMoverOP > rb_movers_;
 
 }; // class MultipleDomainMover
 

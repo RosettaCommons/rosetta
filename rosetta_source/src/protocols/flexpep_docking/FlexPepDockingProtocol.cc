@@ -73,12 +73,12 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
 #include <protocols/moves/RotamerTrialsMinMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/LoopRelaxMover.hh>
+#include <protocols/comparative_modeling/LoopRelaxMover.hh>
 #include <protocols/viewer/viewers.hh>
 // AUTO-REMOVED #include <protocols/moves/PyMolMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -208,7 +208,7 @@ void FlexPepDockingProtocol::set_default()
 	// Loop modeling options
 	// NOTE: most LoopRelax options are initiated automatically from cmd-line
 	// TODO: should refine be set to default? we want to guarantee a full-atom output
-	loop_relax_mover_ = new protocols::loops::LoopRelaxMover();
+	loop_relax_mover_ = new protocols::comparative_modeling::LoopRelaxMover();
 	loop_relax_mover_->fa_scorefxn(scorefxn_); // TODO: for now we do not touch the centroid part...
 	loop_relax_mover_->remodel("no"); // remodel only in centroid part, if at all? // TODO: rethink this
 	loop_relax_mover_->relax("no"); // We don't want structure relaxation by all means // TODO: inform user
@@ -456,9 +456,9 @@ FlexPepDockingProtocol::prepack_only(
 
 	//set up translate-by-axis movers
 	Real trans_magnitude = 1000;
-	RigidBodyTransMoverOP translate_away ( new RigidBodyTransMover( pose, rb_jump_ ) );
+	rigid::RigidBodyTransMoverOP translate_away ( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
 	translate_away->step_size( trans_magnitude );
-	RigidBodyTransMoverOP translate_back ( new RigidBodyTransMover( pose, rb_jump_ ) );
+	rigid::RigidBodyTransMoverOP translate_back ( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
 	translate_back->step_size( trans_magnitude );
 	translate_back->trans_axis().negate();
 
@@ -539,7 +539,7 @@ FlexPepDockingProtocol::random_rb_pert(
 		float new_score;
 		core::pose::Pose tmpPose;
 		// TODO: sepearate rotation and translation flags
-		RigidBodyPerturbMoverOP rb_mover = new RigidBodyPerturbMover(
+		rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover(
 							 rb_jump_ /*jump_num*/,
 							 flags_.rb_rot_size /*rot*/,
 							 flags_.rb_trans_size /*trans*/ );
@@ -787,7 +787,7 @@ FlexPepDockingProtocol::rigidbody_monte_carlo_minimize(
   int n_accepted = 0; // diagnostic counter
   const float rt_energycut = 0.05; // TODO: tune param
 
-	moves::RigidBodyPerturbMover rb_mover(
+	rigid::RigidBodyPerturbMover rb_mover(
 		rb_jump_, rot_magnitude, trans_magnitude );
 	moves::RotamerTrialsMover interface_rottrial(scorefxn_, interface_tf_);
 	moves::EnergyCutRotamerTrialsMover rottrial_ecut(scorefxn_, allprotein_tf_, mc, rt_energycut);
@@ -1147,7 +1147,7 @@ FlexPepDockingProtocol::addLowResStatistics
 	// Score statistics are added to current job
 	protocols::jd2::JobOP cur_job( JobDistributor::get_instance()->current_job() );
 	// switch residue set to centroid if necessary
-	protocols::moves::SwitchResidueTypeSetMover
+	protocols::simple_moves::SwitchResidueTypeSetMover
 		to_centroid_mover( core::chemical::CENTROID );
   pose::Pose start_pose_CEN = start_pose;
 	pose::Pose pose_after_lowres_CEN = pose_after_lowres;
@@ -1236,7 +1236,7 @@ FlexPepDockingProtocol::storeJobStatistics
 	FArray1D_bool native_interface_residues ( native_pose.total_residue(), false );
 	markNativeInterface(superpos_partner, native_interface_residues);
 
-	
+
 
 	// start pose statistics:
 	using core::scoring::rmsd_no_super_subset;
@@ -1380,7 +1380,7 @@ void FlexPepDockingProtocol::parse_my_tag(
 	flags_.peptide_loop_model = tag->getOption<bool>( "peptide_loop_model", flags_.peptide_loop_model) ;
 	flags_.smove_angle_range =tag->getOption<float> ( "smove_angle_range", flags_.smove_angle_range) ;
 	flags_.design_peptide = tag->getOption<bool>( "design_peptide", flags_.design_peptide) ;
-	flags_.backrub_opt = tag->getOption<bool>( "backrub_opt", flags_.backrub_opt) ;	
+	flags_.backrub_opt = tag->getOption<bool>( "backrub_opt", flags_.backrub_opt) ;
 	flags_.boost_fa_atr = tag->getOption<bool>( "boost_fa_atr", flags_.boost_fa_atr) ;
 	flags_.ramp_fa_rep = tag->getOption<bool>( "ramp_fa_rep", flags_.ramp_fa_rep) ;
 	flags_.ramp_rama = tag->getOption<bool>( "ramp_rama", flags_.ramp_rama) ;

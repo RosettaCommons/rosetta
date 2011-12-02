@@ -40,7 +40,7 @@
 #include <core/io/silent/ProteinSilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 
-#include <protocols/evaluation/RmsdEvaluator.hh>
+#include <protocols/simple_filters/RmsdEvaluator.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>
@@ -182,7 +182,7 @@ main( int argc, char* argv[] )
 		core::Real cst_score = emap[ atom_pair_constraint ];
 		score = score - cst_score;
 		if ( option[ in::file::native ].user() ) {
-			core::Real rmsd	 = protocols::evaluation::native_CA_rmsd( pose, native_pose );
+			core::Real rmsd	 = protocols::simple_filters::native_CA_rmsd( pose, native_pose );
 			core::Real gdtmm = core::scoring::CA_gdtmm ( pose, native_pose );
 			int maxsub_nres	 = core::scoring::CA_maxsub( pose, native_pose );
 			output 	<< iter->decoy_tag()

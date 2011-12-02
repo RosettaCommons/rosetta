@@ -20,7 +20,7 @@
 #include <utility/tag/Tag.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/docking/DockingProtocol.hh>
 #include <protocols/rosetta_scripts/util.hh>
@@ -102,7 +102,7 @@ DockAndRetrieveSidechains::apply( core::pose::Pose & pose )
 	}
 
 	if( low_res_protocol_only_ ) {
-		protocols::moves::SwitchResidueTypeSetMover to_all_atom( core::chemical::FA_STANDARD );
+		protocols::simple_moves::SwitchResidueTypeSetMover to_all_atom( core::chemical::FA_STANDARD );
 		protocols::moves::ReturnSidechainMover recover_sidechains( *saved_pose );
 		to_all_atom.apply( pose );
 		recover_sidechains.apply( pose );

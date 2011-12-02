@@ -11,7 +11,7 @@
 /// @author James Thompson
 
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/loops/LoopRelaxThreadingMover.hh>
+#include <protocols/comparative_modeling/LoopRelaxThreadingMover.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
@@ -23,8 +23,8 @@ namespace protocols  {
 namespace comparative_modeling {
 
 void cm_main() {
-	using protocols::loops::LoopRelaxThreadingMover;
-	using protocols::loops::LoopRelaxThreadingMoverOP;
+	using protocols::comparative_modeling::LoopRelaxThreadingMover;
+	using protocols::comparative_modeling::LoopRelaxThreadingMoverOP;
 
 	// initialization
 	LoopRelaxThreadingMoverOP lrt = new LoopRelaxThreadingMover();

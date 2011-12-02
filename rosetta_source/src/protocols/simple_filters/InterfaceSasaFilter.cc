@@ -17,7 +17,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AtomType.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <basic/MetricValue.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>
@@ -130,7 +130,7 @@ InterfaceSasaFilter::compute( core::pose::Pose const & pose ) const {
 	using namespace protocols::moves;
 
 	core::pose::Pose split_pose( pose );
-	RigidBodyTransMoverOP translate( new RigidBodyTransMover( split_pose, jump() ) );
+	rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( split_pose, jump() ) );
 	translate->step_size( 1000.0 );
 	translate->apply( split_pose );
 

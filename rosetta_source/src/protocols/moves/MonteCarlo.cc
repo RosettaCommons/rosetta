@@ -35,7 +35,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/mc.OptionKeys.gen.hh>
 
-#include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
+#include <protocols/moves/MonteCarloExceptionConverge.hh>
 #include <utility/vector1.hh>
 
 
@@ -623,14 +623,14 @@ MonteCarlo::autotemp_accept()
 void
 MonteCarlo::evaluate_convergence_checks( core::pose::Pose const& pose, bool reject, bool /*final*/ ) {
 	if ( !reject || numeric::mod( last_check_++, check_frequency_ ) == 0 ) {
-		for ( utility::vector1< mc_convergence_checks::ConvergenceCheckOP >::iterator it = convergence_checks_.begin(); it != convergence_checks_.end(); ++it ) {
+		for ( utility::vector1< moves::MonteCarloExceptionConvergeOP >::iterator it = convergence_checks_.begin(); it != convergence_checks_.end(); ++it ) {
 			(**it)( pose, *this, reject );
 		}
 	}
 }
 
 void
-MonteCarlo::push_back( mc_convergence_checks::ConvergenceCheckOP check ) {
+MonteCarlo::push_back( moves::MonteCarloExceptionConvergeOP check ) {
 	convergence_checks_.push_back( check );
 }
 

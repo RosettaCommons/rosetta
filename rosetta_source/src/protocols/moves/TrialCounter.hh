@@ -15,13 +15,13 @@
 #define INCLUDED_protocols_moves_TrialCounter_hh
 
 // Unit Headers
-#include <protocols/moves/SimulatedTempering.fwd.hh>
+#include <protocols/canonical_sampling/SimulatedTempering.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Project Headers
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <protocols/moves/ThermodynamicMover.hh>
-#include <protocols/moves/ThermodynamicObserver.hh>
+#include <protocols/canonical_sampling/ThermodynamicMover.hh>
+#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <numeric/random/WeightedSampler.hh>
 #include <protocols/jd2/Job.fwd.hh>

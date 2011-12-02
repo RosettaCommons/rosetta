@@ -60,13 +60,13 @@
 #include <core/util/kinematics_util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
-#include <protocols/loops/LoopRelaxMover.hh>
-#include <protocols/loops/LoopRelaxThreadingMover.hh>
+#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/comparative_modeling/LoopRelaxThreadingMover.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/BackboneMover.hh>
 #include <protocols/moves/CyclicMover.hh>
 #include <protocols/moves/RationalMonteCarlo.hh>
-#include <protocols/moves/RigidBodyMotionMover.hh>
+#include <protocols/rigid/RigidBodyMotionMover.hh>
 #include <protocols/nonlocal/BiasedFragmentMover.hh>
 #include <protocols/nonlocal/Policy.hh>
 #include <protocols/nonlocal/PolicyFactory.hh>
@@ -174,7 +174,7 @@ void MedalMover::apply(core::pose::Pose& pose) {
   using core::scoring::ScoreFunctionOP;
   using core::sequence::SequenceAlignment;
   using protocols::comparative_modeling::ThreadingJob;
-  using protocols::loops::LoopRelaxThreadingMover;
+  using protocols::comparative_modeling::LoopRelaxThreadingMover;
   using protocols::loops::Loops;
   using namespace protocols::moves;
   using namespace protocols::nonlocal;
@@ -250,7 +250,7 @@ void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
   using namespace basic::options::OptionKeys;
   using core::kinematics::FoldTree;
   using core::util::ChainbreakUtil;
-  using protocols::loops::LoopRelaxMover;
+  using protocols::comparative_modeling::LoopRelaxMover;
   using protocols::loops::Loops;
   assert(pose);
 
@@ -259,7 +259,7 @@ void MedalMover::do_loop_closure(core::pose::Pose* pose) const {
 
   // Choose chainbreaks automatically
   Loops empty;
-  LoopRelaxMover closure;
+	protocols::comparative_modeling::LoopRelaxMover closure;
   closure.remodel("quick_ccd");
   closure.intermedrelax("no");
   closure.refine("no");
@@ -372,7 +372,7 @@ protocols::moves::MoverOP MedalMover::create_fragment_and_rigid_mover(
   using namespace protocols::nonlocal;
 
   CyclicMoverOP meta = new CyclicMover();
-  meta->enqueue(new RigidBodyMotionMover(pose.fold_tree()));
+  meta->enqueue(new rigid::RigidBodyMotionMover(pose.fold_tree()));
   meta->enqueue(new BiasedFragmentMover(fragments,
                                         PolicyFactory::get_policy(policy, fragments, library_size),
                                         probs));

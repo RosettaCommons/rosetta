@@ -21,7 +21,7 @@
 #include <devel/metal_interface/ParseMetalSite.hh>
 #include <devel/init.hh>
 
-#include <protocols/moves/InterfaceAnalyzerMover.hh>
+#include <protocols/analysis/InterfaceAnalyzerMover.hh>
 #include <protocols/moves/RollMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -249,7 +249,7 @@ public:
   setup_filter_clashes() {
     using namespace core::scoring;
     scorefunction_ = core::scoring::ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH );
-    interface_analyzer_ = new protocols::moves::InterfaceAnalyzerMover( 3, false, scorefunction_ ); // zinc1 and zinc2 get jumps 1 and 2, chain B gets jump 3
+    interface_analyzer_ = new protocols::analysis::InterfaceAnalyzerMover( 3, false, scorefunction_ ); // zinc1 and zinc2 get jumps 1 and 2, chain B gets jump 3
   }
 
 
@@ -418,7 +418,7 @@ private:
   utility::vector1< devel::metal_interface::MetalSiteResidueOP > msr_1_;
   utility::vector1< devel::metal_interface::MetalSiteResidueOP > msr_2_;
 
-  protocols::moves::InterfaceAnalyzerMoverOP interface_analyzer_;
+  protocols::analysis::InterfaceAnalyzerMoverOP interface_analyzer_;
   core::scoring::ScoreFunctionOP scorefunction_;
 
 };

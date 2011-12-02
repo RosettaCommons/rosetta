@@ -18,7 +18,7 @@
 #include <core/pose/Pose.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/Mover.fwd.hh> //Movers_map
 #include <core/scoring/Energies.hh>
@@ -50,7 +50,7 @@ InterfaceHolesFilter::compute( core::pose::Pose const & pose ) const
 	Real const bound_holes( copy_pose.energies().total_energies()[ ScoreType( holes_decoy ) ]);
 	TR.Debug << "Bound holes: " << bound_holes << std::endl;
 
-	protocols::moves::RigidBodyTransMoverOP translate( new protocols::moves::RigidBodyTransMover( copy_pose, rb_jump_ ) );
+	protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( copy_pose, rb_jump_ ) );
 	translate->step_size( 1000.0 );
 	translate->apply( copy_pose );
 	(*sfxn)( copy_pose );

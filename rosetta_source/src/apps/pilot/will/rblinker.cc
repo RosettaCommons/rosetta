@@ -47,7 +47,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/viewer/viewers.hh>
 #include <sstream>

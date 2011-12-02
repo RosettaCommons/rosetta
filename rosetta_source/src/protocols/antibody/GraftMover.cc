@@ -54,7 +54,7 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/ReturnSidechainMover.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <utility/exit.hh>
 
@@ -186,8 +186,8 @@ void GraftMover::apply( pose::Pose & pose_in )
 		pose::Pose saved_sidechains( pose_in );
 
 		// generating centroids for residues devoid of sidechains
-		SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
-		SwitchResidueTypeSetMover to_full_atom( chemical::FA_STANDARD );
+		simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
+		simple_moves::SwitchResidueTypeSetMover to_full_atom( chemical::FA_STANDARD );
 		to_centroid.apply( pose_in );
 		to_full_atom.apply( pose_in );
 		//recover sidechains from starting structures
@@ -499,8 +499,8 @@ void CloseOneMover::apply( pose::Pose & pose_in ) {
 	Real cter_separation=peptide_C.distance(peptide_N);
 
 	// switching to centroid mode
-	SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
-	SwitchResidueTypeSetMover to_full_atom( chemical::FA_STANDARD );
+	simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
+	simple_moves::SwitchResidueTypeSetMover to_full_atom( chemical::FA_STANDARD );
 
 	bool repack_flag( false );
 	if( ( nter_separation > allowed_separation_ ) ||

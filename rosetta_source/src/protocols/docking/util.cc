@@ -20,7 +20,7 @@
 #include <protocols/scoring/Interface.hh>
 #include <core/types.hh>
 #include <core/pose/PDBInfo.hh>
-#include <protocols/geometry/RB_geometry.hh>
+#include <protocols/rigid/RB_geometry.hh>
 #include <basic/Tracer.hh>
 
 #include <protocols/scoring/InterfaceInfo.hh>

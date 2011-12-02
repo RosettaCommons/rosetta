@@ -49,7 +49,7 @@
 #include <protocols/moves/MoverContainer.hh> //Sequence Mover
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh> //typeset swapping
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh> //typeset swapping
 #include <protocols/moves/ReturnSidechainMover.hh>
 #include <protocols/moves/TaskAwareMinMover.hh>
 #include <protocols/moves/OutputMovers.hh> //pdbdumpmover
@@ -387,7 +387,7 @@ public:
 
 		core::pose::Pose const saved_input_pose( pose ); //used to return sidechains later
 
-		protocols::moves::SwitchResidueTypeSetMover typeset_swap(core::chemical::CENTROID);
+		protocols::simple_moves::SwitchResidueTypeSetMover typeset_swap(core::chemical::CENTROID);
 		typeset_swap.apply( pose );
 		//centroid score
 		TR << "centroid score of starting PDB: " << (*centroid_scorefunction_)(pose) << std::endl;

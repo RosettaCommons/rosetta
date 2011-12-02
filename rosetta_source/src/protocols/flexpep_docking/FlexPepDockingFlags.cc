@@ -24,7 +24,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
-#include <protocols/geometry/RB_geometry.hh>
+#include <protocols/rigid/RB_geometry.hh>
 #include <utility/exit.hh>
 
 #include <iostream>

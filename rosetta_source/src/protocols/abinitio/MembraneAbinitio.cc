@@ -1136,12 +1136,12 @@ public:
 /// convergence check in stage3 cycles
 /// @detail
 /// calls of operator ( pose ) compare the
-class ConvergenceCheck;
-typedef  utility::pointer::owning_ptr< ConvergenceCheck >  ConvergenceCheckOP;
+class MonteCarloExceptionConverge;
+typedef  utility::pointer::owning_ptr< MonteCarloExceptionConverge >  MonteCarloExceptionConvergeOP;
 
-class ConvergenceCheck : public moves::PoseCondition {
+class MonteCarloExceptionConverge : public moves::PoseCondition {
 public:
-	ConvergenceCheck() : bInit_( false ), ct_( 0 ) {};
+	MonteCarloExceptionConverge() : bInit_( false ), ct_( 0 ) {};
 	void reset() { ct_ = 0; bInit_ = false; };
 	void set_trials( moves::TrialMoverOP trin ) {
 		trials_ = trin;
@@ -1158,14 +1158,14 @@ private:
 };
 
 // keep going --> return true
-bool ConvergenceCheck::operator() ( const core::pose::Pose & pose ) {
+bool MonteCarloExceptionConverge::operator() ( const core::pose::Pose & pose ) {
 	if ( !bInit_ ) {
 		bInit_ = true;
 		very_old_pose_ = pose;
 		return true;
 	}
 	assert( trials_ );
-	tr.Trace << "TrialCounter in ConvergenceCheck: " << trials_->num_accepts() << std::endl;
+	tr.Trace << "TrialCounter in MonteCarloExceptionConverge: " << trials_->num_accepts() << std::endl;
  	if ( numeric::mod(trials_->num_accepts(),100) != 0 ) return true;
 	if ( (Size) trials_->num_accepts() <= last_move_ ) return true;
 	last_move_ = trials_->num_accepts();
@@ -1316,9 +1316,9 @@ int MembraneAbinitio::do_stage2_cycles( pose::Pose &pose ) {
 	  nloop2 = 5;
 	  }
 
-	  ConvergenceCheckOP convergence_checker ( NULL );
+	  MonteCarloExceptionConvergeOP convergence_checker ( NULL );
 	  if ( !option[ basic::options::OptionKeys::abinitio::skip_convergence_check ] ) {
-	  convergence_checker = new ConvergenceCheck;
+	  convergence_checker = new MonteCarloExceptionConverge;
 	  }
 	  */
 	 Size cycles=stage3_cycles();
@@ -1396,9 +1396,9 @@ int MembraneAbinitio::do_stage3b_cycles( pose::Pose &pose ) {
 		nloop2 = 5;
 	}
 
-	ConvergenceCheckOP convergence_checker ( NULL );
+	MonteCarloExceptionConvergeOP convergence_checker ( NULL );
 	if ( !option[ basic::options::OptionKeys::abinitio::skip_convergence_check ] ) {
-		convergence_checker = new ConvergenceCheck;
+		convergence_checker = new MonteCarloExceptionConverge;
 	}
  */Size cycles=stage3_cycles();
 	//if(get_tmh_inserted(pose)==1) {

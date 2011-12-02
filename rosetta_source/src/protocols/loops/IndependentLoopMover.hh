@@ -15,6 +15,8 @@
 #ifndef INCLUDED_protocols_loops_IndependentLoopMover_hh
 #define INCLUDED_protocols_loops_IndependentLoopMover_hh
 
+#include <protocols/loops/IndependentLoopMover.fwd.hh>
+
 #include <protocols/loops/LoopMover.hh>
 
 #include <core/types.hh>

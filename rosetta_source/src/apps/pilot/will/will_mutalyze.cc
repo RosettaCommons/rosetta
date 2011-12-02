@@ -80,7 +80,7 @@
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <protocols/protein_interface_design/movers/ddG.hh>
 #include <protocols/toolbox/pose_metric_calculators/RotamerBoltzCalculator.hh>
-#include <protocols/protein_interface_design/filters/RotamerBoltzmannWeight.hh>
+#include <protocols/simple_filters/RotamerBoltzmannWeight.hh>
 #include <core/pack/task/ResfileReader.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
@@ -547,7 +547,7 @@ void
 	    // Calculate the Boltzmann probability for the rotamer at each designed position
 			if (option[matdes::mutalyze::calc_rot_boltz]() == 1) {
 		    for(Size ipos = 1; ipos <= mutalyze_pos.size(); ++ipos) {
-					protocols::protein_interface_design::filters::RotamerBoltzmannWeight rbc = protocols::protein_interface_design::filters::RotamerBoltzmannWeight();
+					protocols::simple_filters::RotamerBoltzmannWeight rbc = protocols::simple_filters::RotamerBoltzmannWeight();
 					rbc.scorefxn(score12);
 			    Real rot_boltz = rbc.compute_Boltzmann_weight(unbound_pose, mutalyze_pos[ipos]);
 		      std::cout << fn << " " << mutalyze_ids[ipos] << mutalyze_pos[ipos] << " has a rot_boltz of: " << rot_boltz << std::endl;

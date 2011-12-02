@@ -66,7 +66,7 @@ using namespace ObjexxFCL::fmt;
 #include <protocols/antibody/AntibodyClass.hh>
 #include <protocols/antibody/AntibodyModeler.hh>
 #include <protocols/docking/SidechainMinMover.hh>
-#include <protocols/geometry/RB_geometry.hh>
+#include <protocols/rigid/RB_geometry.hh>
 //#include <protocols/evaluation/PoseEvaluator.hh>
 //#include <protocols/evaluation/RmsdEvaluator.hh>
 // AUTO-REMOVED #include <protocols/jd2/JobDistributor.hh>
@@ -84,7 +84,7 @@ using namespace ObjexxFCL::fmt;
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
 #include <protocols/moves/RotamerTrialsMinMover.hh>
 #include <protocols/moves/TrialMover.hh>
@@ -781,8 +781,8 @@ AntibodyModeler::snugfit_MC_min (
 				"dfpmin_armijo_nonmonotone", minimization_threshold, nb_list );
 
 	//set up rigid body movers
-	RigidBodyPerturbMoverOP rb_perturb=new RigidBodyPerturbMover(pose_in,
-		*cdr_dock_map, 2.0, 0.1 , moves::partner_downstream, true );
+	rigid::RigidBodyPerturbMoverOP rb_perturb=new rigid::RigidBodyPerturbMover(pose_in,
+		*cdr_dock_map, 2.0, 0.1 , rigid::partner_downstream, true );
 
 	setup_packer_task( pose_in );
 	//set up sidechain movers for rigid body jump and loop & neighbors
@@ -880,8 +880,8 @@ AntibodyModeler::snugfit_mcm_protocol(
 																			 min_threshold, nb_list );
 
 	//set up rigid body movers
-	RigidBodyPerturbMoverOP rb_perturb = new RigidBodyPerturbMover( pose_in,
-		*cdr_dock_map, rot_mag, trans_mag, partner_downstream, true );
+	rigid::RigidBodyPerturbMoverOP rb_perturb = new rigid::RigidBodyPerturbMover( pose_in,
+		*cdr_dock_map, rot_mag, trans_mag, rigid::partner_downstream, true );
 
 	setup_packer_task( pose_in );
 	//set up sidechain movers for rigid body jump and loop & neighbors

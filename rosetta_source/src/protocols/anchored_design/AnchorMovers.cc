@@ -17,8 +17,8 @@
 // Package Headers
 // AUTO-REMOVED #include <protocols/anchored_design/Anchor.hh>
 #include <protocols/anchored_design/AnchorMoversData.hh>
-#include <protocols/moves/LoopAnalyzerMover.hh>
-#include <protocols/moves/InterfaceAnalyzerMover.hh>
+#include <protocols/analysis/LoopAnalyzerMover.hh>
+#include <protocols/analysis/InterfaceAnalyzerMover.hh>
 #include <protocols/loops/Loops.hh>
 
 // Project Headers
@@ -64,7 +64,7 @@
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh> //typeset swapping
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh> //typeset swapping
 #include <protocols/loops/kinematic_closure/KinematicMover.hh>
 #include <protocols/loops/kinematic_closure/KinematicWrapper.hh>
 #include <protocols/loops/kinematic_closure/KinematicPerturber.hh>
@@ -169,7 +169,7 @@ AnchoredDesignMover::AnchoredDesignMover( protocols::anchored_design::AnchorMove
 	Mover(),
 	interface_( interface_in ),
 	RMSD_only_this_pose_( 0 ),
-	IAM_( new protocols::moves::InterfaceAnalyzerMover(ANCHOR_TARGET) ),
+	IAM_( new protocols::analysis::InterfaceAnalyzerMover(ANCHOR_TARGET) ),
 	rmsd_(false),
 	RMSD_only_this_(EMPTY_STRING),
 	delete_interface_native_sidechains_(false),
@@ -191,7 +191,7 @@ AnchoredDesignMover::AnchoredDesignMover( protocols::anchored_design::AnchorMove
 AnchoredDesignMover::AnchoredDesignMover() :
 	interface_( 0 ), //NULL pointer
 	RMSD_only_this_pose_( 0 ),
-	IAM_( new protocols::moves::InterfaceAnalyzerMover(ANCHOR_TARGET) ),
+	IAM_( new protocols::analysis::InterfaceAnalyzerMover(ANCHOR_TARGET) ),
 	rmsd_(false),
 	RMSD_only_this_(EMPTY_STRING),
 	delete_interface_native_sidechains_(false),
@@ -314,7 +314,7 @@ void AnchoredDesignMover::apply( core::pose::Pose & pose )
 		anchor_refine.apply( pose );
 
 		//post-processing
-		protocols::moves::LoopAnalyzerMover LAM( interface_->loops());
+		protocols::analysis::LoopAnalyzerMover LAM( interface_->loops());
 		LAM.apply( pose );
 
 		//load sequence into Job output
@@ -828,7 +828,7 @@ void AnchoredPerturbMover::apply( core::pose::Pose & pose )
 	(*(interface_->get_fullatom_scorefunction())).show( T_perturb, pose );
 	T_perturb << std::flush; //show doesn't flush the buffer
 
-	protocols::moves::SwitchResidueTypeSetMover typeset_swap(core::chemical::CENTROID);
+	protocols::simple_moves::SwitchResidueTypeSetMover typeset_swap(core::chemical::CENTROID);
 	typeset_swap.apply( pose );
 	if(debug_) posecopy = new core::pose::Pose( pose );
 

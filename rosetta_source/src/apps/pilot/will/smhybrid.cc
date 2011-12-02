@@ -83,7 +83,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
@@ -746,7 +746,7 @@ struct PoseWrap : public ReferenceCount {
 		
 		// if( !option[basic::options::OptionKeys::smhybrid::refine]() ) {
 		// 	TR << "POSEWRAP set symm dofs" << std::endl;
-		// 	protocols::moves::RigidBodyDofSeqRandomizeMover symsetup(dofs);
+		// 	protocols::rigid::RigidBodyDofSeqRandomizeMover symsetup(dofs);
 		// 	symsetup.apply(pose);
 		// 	// for(Size i = 1; i <= 3; ++i)	change_floating_sc_geometry(pose,floating_scs_[i],nres);
 		// 	// for(Size i = 1; i <= 2; ++i)	change_floating_sc_geometry(pose,floating_scs_[i],nres);

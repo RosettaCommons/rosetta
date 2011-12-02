@@ -18,7 +18,7 @@
 
 //Package Headers
 #include <protocols/docking/util.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 //Project Headers
 #include <core/pose/Pose.hh>
@@ -152,7 +152,7 @@ DockSetupMover::parse_my_tag(
 		set_partners(partners);
 	}
 	moves::MoverOP mover = rosetta_scripts::parse_mover( tag->getOption< std::string >( "rb_mover", "null" ), movers );
-	rb_mover_ = dynamic_cast< moves::RigidBodyPerturbNoCenterMover* >( mover() );
+	rb_mover_ = dynamic_cast< rigid::RigidBodyPerturbNoCenterMover* >( mover() );
 	if ( !rb_mover_ ) {
 		utility_exit_with_message( "DockSetupMover requires an rb_mover argument" );
 	}

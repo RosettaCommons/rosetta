@@ -25,7 +25,7 @@
 #include <core/conformation/Residue.hh>
 
 #include <protocols/moves/ReturnSidechainMover.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 // AUTO-REMOVED #include <core/chemical/ChemicalManager.hh> //CENTROID, FA_STANDARD
 
@@ -65,7 +65,7 @@ public:
 
 		core::pose::Pose const posecopy(pose);
 		protocols::moves::ReturnSidechainMover RSmover(pose);
-		protocols::moves::SwitchResidueTypeSetMover res_mover(core::chemical::CENTROID);
+		protocols::simple_moves::SwitchResidueTypeSetMover res_mover(core::chemical::CENTROID);
 
 		res_mover.apply( pose ); //now in centroid mode
 		//check that the pose was centroidized correctly

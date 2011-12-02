@@ -36,7 +36,7 @@
 // AUTO-REMOVED
 // AUTO-REMOVED #include <core/scoring/rms_util.hh>
 #include <core/pose/util.hh>
-#include <protocols/evaluation/RmsdEvaluator.hh>
+#include <protocols/simple_filters/RmsdEvaluator.hh>
 #include <protocols/evaluation/EvaluatorFactory.hh>
 // AUTO-REMOVED #include <core/fragment/FragmentIO.hh>
 // AUTO-REMOVED #include <numeric/random/random.hh>
@@ -108,7 +108,7 @@
 // AUTO-REMOVED #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
-#include <protocols/loops/LoopRelaxMover.hh>
+#include <protocols/comparative_modeling/LoopRelaxMover.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
@@ -224,7 +224,7 @@ LoopRelax_main( bool boinc_mode ) {
 	evaluation::MetaPoseEvaluatorOP evaluator = new evaluation::MetaPoseEvaluator;
 	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator);
 	evaluator->add_evaluation(
-		new evaluation::SelectRmsdEvaluator( native_pose, "_native" )
+		new simple_filters::SelectRmsdEvaluator( native_pose, "_native" )
 	);
 
 	// job distributor initialization
@@ -264,7 +264,7 @@ LoopRelax_main( bool boinc_mode ) {
 
 		pose = start_pose;
 
-		LoopRelaxMover mover;
+		comparative_modeling::LoopRelaxMover mover;
 		mover.frag_libs( frag_libs );
 		mover.loops( my_loops );
 		mover.relax( relax );

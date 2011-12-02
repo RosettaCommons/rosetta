@@ -24,7 +24,7 @@
 #include <protocols/enzdes/BackboneSamplerCreator.hh>
 #include <protocols/enzdes/EnzdesTaskOperations.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/moves/BBGaussianMover.hh>
+#include <protocols/simple_moves/BBGaussianMover.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -158,7 +158,7 @@ BackboneSampler::apply( Pose & pose )
 	protocols::loops::add_cutpoint_variants( pose );
 	TR << "Modified fold tree: " << pose.fold_tree() << std::endl;
 
-	protocols::moves::BBG8T3AMover bbg8t3amover;
+	protocols::simple_moves::BBG8T3AMover bbg8t3amover;
 	bbg8t3amover.movemap( movemap );
 	bbg8t3amover.factorA( 0.5 ); // values suggested by Yuan
 	bbg8t3amover.factorB( 10.0 );

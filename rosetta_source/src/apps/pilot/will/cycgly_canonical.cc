@@ -55,9 +55,9 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/MPIFileBufJobDistributor.hh>
 #include <protocols/jd2/NoOutputJobOutputter.hh>
-#include <protocols/moves/BBGaussianMover.hh>
-#include <protocols/moves/CanonicalSamplingMover.fwd.hh>
-#include <protocols/moves/CanonicalSamplingMover.hh>
+#include <protocols/simple_moves/BBGaussianMover.hh>
+#include <protocols/canonical_sampling/CanonicalSamplingMover.fwd.hh>
+#include <protocols/canonical_sampling/CanonicalSamplingMover.hh>
 #include <protocols/moves/mc_convergence_checks/MPIBPool_ConvergenceCheck.hh>
 #include <protocols/moves/mc_convergence_checks/MPIHPool_ConvergenceCheck.hh>
 #include <protocols/moves/mc_convergence_checks/MPIPool_ConvergenceCheck.hh>
@@ -238,7 +238,7 @@ int main( int argc, char * argv [] ) {
 	NEW_OPT(probabilities::no_jd2_output, "do not write to silent-file specified by -out:file:silent", false );
 	NEW_OPT(probabilities::use_hierarchical_clustering, "use the HierarchicalLevel class",false);
 	NEW_OPT(probabilities::hierarchical_max_cache_size, "set the max-cache size of the hierarchy", 100);
-	protocols::moves::CanonicalSamplingMover::register_options();
+	protocols::canonical_sampling::CanonicalSamplingMover::register_options();
 	BBG8T3AMover::register_options();
 	devel::init(argc,argv);
 
@@ -263,8 +263,8 @@ int main( int argc, char * argv [] ) {
 
 	// liz stuff
 	core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
-	//protocols::moves::CanonicalSamplingMoverOP csm(new CanonicalSamplingMover(sfxn,pool_ptr,1000));
-	protocols::moves::CanonicalSamplingMoverOP csm(new CanonicalSamplingMover);
+	//protocols::canonical_sampling::CanonicalSamplingMoverOP csm(new protocols::canonical_sampling::CanonicalSamplingMover(sfxn,pool_ptr,1000));
+	protocols::canonical_sampling::CanonicalSamplingMoverOP csm(new CanonicalSamplingMover);
 	csm->set_scorefunction(sfxn);
 	csm->use_hierarchical_clustering(true);
 

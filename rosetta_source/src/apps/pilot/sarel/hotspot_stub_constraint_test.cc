@@ -34,7 +34,7 @@
 //#include <protocols/hotspot_hashing/HotspotHashingConstraints.hh>
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/MinMover.hh>
 // AUTO-REMOVED #include <protocols/docking/DockingProtocol.hh>
 
@@ -112,12 +112,12 @@ void run_test() {
 
 	// move the chains apart
 	core::Size const rb_move_jump = 1; // use the first jump as the one between partners
-//	protocols::moves::RigidBodyTransMover trans_mover( pose, rb_move_jump );
-//	protocols::moves::RigidBodyTransMover trans_mover( pose, rb_move_jump );
+//	protocols::rigid::RigidBodyTransMover trans_mover( pose, rb_move_jump );
+//	protocols::rigid::RigidBodyTransMover trans_mover( pose, rb_move_jump );
 //	trans_mover.trans_axis( trans_mover.trans_axis() );
 //	trans_mover.step_size(unbound_dist);
 //	trans_mover.apply( pose );
-	protocols::moves::RigidBodyPerturbMover rb_pert( rb_move_jump, 15,  3 );
+	protocols::rigid::RigidBodyPerturbMover rb_pert( rb_move_jump, 15,  3 );
 	rb_pert.apply( pose );
 	(*scorefxn)(pose);
 	scorefxn->show( std::cout, pose );

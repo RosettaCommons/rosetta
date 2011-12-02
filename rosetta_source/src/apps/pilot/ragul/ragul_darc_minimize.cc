@@ -43,8 +43,8 @@
 #include <core/scoring/Energies.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/after_opts.hh>
-#include <protocols/moves/RigidBodyMover.hh>
-#include <protocols/geometry/RB_geometry.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/rigid/RB_geometry.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -219,7 +219,7 @@ int main( int argc, char * argv [] ) {
 	unbound_pose = native_pose;
 	core::Real const unbound_dist = 40.;
 	Size const rb_jump = 1; // use the first jump as the one between partners
-	protocols::moves::RigidBodyTransMover trans_mover( unbound_pose, rb_jump );
+	protocols::rigid::RigidBodyTransMover trans_mover( unbound_pose, rb_jump );
   trans_mover.trans_axis( trans_mover.trans_axis() );
   trans_mover.step_size(unbound_dist);
   trans_mover.apply( unbound_pose );

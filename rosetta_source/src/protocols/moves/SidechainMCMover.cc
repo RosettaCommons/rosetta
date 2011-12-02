@@ -34,7 +34,7 @@
 // AUTO-REMOVED #include <basic/basic.hh>
 #include <core/pack/interaction_graph/SimpleInteractionGraph.hh>
 #include <protocols/moves/DataMap.hh>
-#include <protocols/moves/MetropolisHastingsMover.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
 #include <core/scoring/ScoreFunction.hh>
@@ -65,7 +65,7 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 
 #ifdef WIN_PYROSETTA
-	#include <protocols/moves/ThermodynamicObserver.hh>
+	#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
 #endif
 
 
@@ -397,7 +397,7 @@ SidechainMCMover::parse_my_tag( utility::tag::TagPtr const tag, protocols::moves
 void
 SidechainMCMover::initialize_simulation(
 	core::pose::Pose & pose,
-	protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 )
 {
 	SidechainMover::initialize_simulation(pose, metropolis_hastings_mover);

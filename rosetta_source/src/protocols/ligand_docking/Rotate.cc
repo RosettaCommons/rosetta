@@ -16,8 +16,8 @@
 #include <protocols/ligand_docking/RotateCreator.hh>
 
 #include <protocols/ligand_docking/grid_functions.hh>
-#include <protocols/geometry/RB_geometry.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RB_geometry.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
@@ -174,12 +174,12 @@ void Rotate::rotate_ligand(
 ) {
 	if(rotate_info_.degrees == 0) return;
 
-	protocols::moves::RigidBodyMoverOP mover;
+	protocols::rigid::RigidBodyMoverOP mover;
 	if(rotate_info_.distribution == Uniform){
-		mover= new protocols::moves::RigidBodyRandomizeMover( pose, rotate_info_.jump_id, protocols::moves::partner_downstream, rotate_info_.degrees, rotate_info_.degrees);
+		mover= new protocols::rigid::RigidBodyRandomizeMover( pose, rotate_info_.jump_id, protocols::rigid::partner_downstream, rotate_info_.degrees, rotate_info_.degrees);
 	}
 	else if(rotate_info_.distribution == Gaussian){
-		mover= new protocols::moves::RigidBodyPerturbMover ( rotate_info_.jump_id, rotate_info_.degrees, 0 /*translate*/);
+		mover= new protocols::rigid::RigidBodyPerturbMover ( rotate_info_.jump_id, rotate_info_.degrees, 0 /*translate*/);
 	}
 	core::Size chain_begin = pose.conformation().chain_begin(rotate_info_.chain_id);
 
@@ -201,12 +201,12 @@ void Rotate::rotate_ligand(core::pose::Pose & pose)
 {
 	if(rotate_info_.degrees == 0) return;
 
-	protocols::moves::RigidBodyMoverOP mover;
+	protocols::rigid::RigidBodyMoverOP mover;
 	if(rotate_info_.distribution == Uniform){
-		mover= new protocols::moves::RigidBodyRandomizeMover( pose, rotate_info_.jump_id, protocols::moves::partner_downstream, rotate_info_.degrees, rotate_info_.degrees);
+		mover= new protocols::rigid::RigidBodyRandomizeMover( pose, rotate_info_.jump_id, protocols::rigid::partner_downstream, rotate_info_.degrees, rotate_info_.degrees);
 	}
 	else if(rotate_info_.distribution == Gaussian){
-		mover= new protocols::moves::RigidBodyPerturbMover ( rotate_info_.jump_id, rotate_info_.degrees, 0 /*translate*/);
+		mover= new protocols::rigid::RigidBodyPerturbMover ( rotate_info_.jump_id, rotate_info_.degrees, 0 /*translate*/);
 	}
 	//core::Size chain_begin = pose.conformation().chain_begin(rotate_info_.chain_id);
 
@@ -215,7 +215,7 @@ void Rotate::rotate_ligand(core::pose::Pose & pose)
 utility::vector1< Ligand_info>
 Rotate::create_random_rotations(
 		utility::pointer::owning_ptr<core::grid::CartGrid<int> > const & grid,
-		protocols::moves::RigidBodyMoverOP const mover,
+		protocols::rigid::RigidBodyMoverOP const mover,
 		core::Size const begin,
 		core::pose::Pose & pose
 )const{
@@ -245,7 +245,7 @@ Rotate::create_random_rotations(
 
 Ligand_info Rotate::create_random_rotation(
 		utility::pointer::owning_ptr<core::grid::CartGrid<int> > const & grid,
-		protocols::moves::RigidBodyMoverOP const mover,
+		protocols::rigid::RigidBodyMoverOP const mover,
 		core::Vector const center,
 		core::Size const begin,
 		core::Size const end,
@@ -273,7 +273,7 @@ void add_ligand_conditionally(
 }
 
 void apply_rotate(
-		protocols::moves::RigidBodyMoverOP mover,
+		protocols::rigid::RigidBodyMoverOP mover,
 		core::pose::Pose & pose,
 		core::Vector const & center
 ){

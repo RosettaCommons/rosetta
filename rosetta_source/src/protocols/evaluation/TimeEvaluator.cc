@@ -43,7 +43,7 @@ namespace evaluation {
 
 
 TimeEvaluator::TimeEvaluator( std::string const& tag )
-  : SingleValuePoseEvaluator< core::Real > ("time"+tag)
+  : evaluation::SingleValuePoseEvaluator< core::Real > ("time"+tag)
 {
   reset();
 }

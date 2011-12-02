@@ -18,7 +18,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/types.hh>
-#include <protocols/protein_interface_design/filters/RotamerBoltzmannWeight.hh>
+#include <protocols/simple_filters/RotamerBoltzmannWeight.hh>
 #include <protocols/moves/DataMap.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <utility/vector1.hh>
@@ -52,7 +52,7 @@ using core::scoring::ScoreFunctionOP;
  using protocols::filters::Filters_map;
  using protocols::moves::DataMap;
  using protocols::moves::Movers_map;
- using protocols::protein_interface_design::filters::RotamerBoltzmannWeight;
+ using protocols::simple_filters::RotamerBoltzmannWeight;
  using utility::sql_database::sessionOP;
  using utility::vector1;
  using utility::tag::TagPtr;

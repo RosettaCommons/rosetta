@@ -86,7 +86,7 @@ public:
 			TS_ASSERT_DELTA( 0.0, start_score, score_eps );
 			MoverOP random_conf = new RandomConformerMover(ligres);
 			int score_went_up = 0;
-			int const num_trials = 100;
+			int const num_trials = 10;
 			for(int i = 0; i < num_trials; ++i) {
 				// Operating on a copy of the pose is significant because the constraints get cloned.
 				core::pose::Pose pose_copy(pose);
@@ -98,7 +98,7 @@ public:
 				if(new_score > start_score + 1.0) score_went_up += 1;
 			}
 			TR << "Constraint score increased on " << score_went_up << " out of " << num_trials << " random trials." << std::endl;
-			TS_ASSERT( score_went_up > (95*num_trials)/100 );
+			TS_ASSERT( score_went_up > (9*num_trials)/10 );
 		}
 
 		{
@@ -114,7 +114,7 @@ public:
 			restraints.push_back( lig_restraints );
 			MoverOP better_random_conf = new UnconstrainedTorsionsMover( random_conf, restraints );
 			int score_went_up = 0;
-			int const num_trials = 100;
+			int const num_trials = 10;
 			for(int i = 0; i < num_trials; ++i) {
 				// Operating on a copy of the pose is significant because the constraints get cloned.
 				core::pose::Pose pose_copy(pose);

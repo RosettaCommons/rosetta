@@ -62,7 +62,7 @@
 // AUTO-REMOVED #include <protocols/moves/OutputMovers.hh>
 #include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
 // AUTO-REMOVED #include <protocols/moves/RotamerTrialsMinMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
 // AUTO-REMOVED #include <protocols/moves/ChangeFoldTreeMover.hh>
@@ -414,7 +414,7 @@ void SymDockingHiRes::set_dock_mcm_protocol( core::pose::Pose & pose ) {
   std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 
 	//set up rigid body movers
-	RigidBodyDofSeqPerturbMoverOP rb_perturb = new RigidBodyDofSeqPerturbMover( dofs , rot_magnitude_, trans_magnitude_ );
+	rigid::RigidBodyDofSeqPerturbMoverOP rb_perturb = new rigid::RigidBodyDofSeqPerturbMover( dofs , rot_magnitude_, trans_magnitude_ );
 
 	//set up minimizer movers
 	moves::MinMoverOP min_mover = new simple_moves::symmetry::SymMinMover( movemap_, scorefxn_, min_type_, min_tolerance_, nb_list_ );
@@ -611,8 +611,8 @@ void SymDockingHiRes::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 	TR << "::::::::::::::::::DOCK_PPK:::::::::::::::::::" << std::endl;
 
 	//set up translate-by-axis movers
-	RigidBodyDofSeqTransMoverOP translate_away( new RigidBodyDofSeqTransMover( dofs ) );
-	RigidBodyDofSeqTransMoverOP translate_back( new RigidBodyDofSeqTransMover( dofs ) );
+	rigid::RigidBodyDofSeqTransMoverOP translate_away( new rigid::RigidBodyDofSeqTransMover( dofs ) );
+	rigid::RigidBodyDofSeqTransMoverOP translate_back( new rigid::RigidBodyDofSeqTransMover( dofs ) );
 	translate_away->step_size( 1000 );
 	translate_back->step_size( -1000 );
 

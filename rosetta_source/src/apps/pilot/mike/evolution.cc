@@ -116,7 +116,7 @@ void readPoseAndData_PDB(
 	pad.rms = -1;
 	pad.silent_index = -1;
 	if ( havenative ) {
-		pad.rms = protocols::evaluation::native_CA_rmsd( *native_pose, pad.pose );
+		pad.rms = protocols::simple_filters::native_CA_rmsd( *native_pose, pad.pose );
 	}
 }
 
@@ -137,7 +137,7 @@ void readPoseAndData_SILENT(
 	pad.rms = -1;
 	pad.silent_index = -1;
 	if ( havenative ) {
-		pad.rms = protocols::evaluation::native_CA_rmsd( *native_pose, pad.pose );
+		pad.rms = protocols::simple_filters::native_CA_rmsd( *native_pose, pad.pose );
 	}
 }
 

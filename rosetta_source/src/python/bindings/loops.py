@@ -39,8 +39,8 @@ mover_3mer = ClassicFragmentMover(fragset3mer,movemap)
 ccd_closure = CcdLoopClosureMover(my_loop, movemap)
 
 #centroid/fullatom conversion movers
-to_centroid = SwitchResidueTypeSetMover('centroid')
-to_fullatom = SwitchResidueTypeSetMover('fa_standard')
+to_centroid = protocols::simple_moves::SwitchResidueTypeSetMover('centroid')
+to_fullatom = protocols::simple_moves::SwitchResidueTypeSetMover('fa_standard')
 recover_sidechains = ReturnSidechainMover(starting_p)
 
 #set up sidechain packer movers

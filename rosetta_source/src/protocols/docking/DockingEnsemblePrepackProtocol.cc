@@ -39,10 +39,10 @@
 
 #include <protocols/docking/ConformerSwitchMover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/RotamerTrialsMinMover.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
@@ -183,20 +183,20 @@ void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 
 	switch_mover = new protocols::docking::ConformerSwitchMover( ensemble1_ );
 	for ( Size i=1; i<=ensemble1_->size(); ++i ) {
-		protocols::moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
+		protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 		to_centroid.apply( pose );
 		switch_mover->switch_conformer( pose, i );
 
 		//Move each partners away from the others
 		for( DockJumps::const_iterator jump = movable_jumps().begin() ; jump != movable_jumps().end() ; ++jump ) {
-			RigidBodyTransMoverOP translate_away( new RigidBodyTransMover(pose, *jump) );
+			rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover(pose, *jump) );
 			translate_away->step_size( trans_magnitude_ );
 			translate_away->apply(pose);
 		}
 		ensemble1_->calculate_lowres_ref_energy( pose );
 		//bringing the packed structures together
 		for(  DockJumps::const_iterator jump= movable_jumps().begin() ; jump != movable_jumps().end(); ++jump ) {
-			RigidBodyTransMoverOP translate_back ( new RigidBodyTransMover(pose, *jump) );
+			rigid::RigidBodyTransMoverOP translate_back ( new rigid::RigidBodyTransMover(pose, *jump) );
 			translate_back->step_size( trans_magnitude_ );
 			translate_back->trans_axis().negate();
 			translate_back->apply(pose);
@@ -212,21 +212,21 @@ void DockingEnsemblePrepackProtocol::apply( core::pose::Pose & pose )
 	pose = starting_pose;
 	switch_mover = new protocols::docking::ConformerSwitchMover( ensemble2_ );
 	for ( Size i=1; i<=ensemble2_->size(); ++i ) {
-		protocols::moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
+		protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 		to_centroid.apply( pose );
 
 		switch_mover->switch_conformer( pose, i );
 
 		//Move each partners away from the others
 		for( DockJumps::const_iterator jump = movable_jumps().begin() ; jump != movable_jumps().end() ; ++jump ) {
-			RigidBodyTransMoverOP translate_away( new RigidBodyTransMover(pose, *jump) );
+			rigid::RigidBodyTransMoverOP translate_away( new rigid::RigidBodyTransMover(pose, *jump) );
 			translate_away->step_size( trans_magnitude_ );
 			translate_away->apply(pose);
 		}
 		ensemble2_->calculate_lowres_ref_energy( pose );
 		//bringing the packed structures together
 		for(  DockJumps::const_iterator jump= movable_jumps().begin() ; jump != movable_jumps().end(); ++jump ) {
-			RigidBodyTransMoverOP translate_back ( new RigidBodyTransMover(pose, *jump) );
+			rigid::RigidBodyTransMoverOP translate_back ( new rigid::RigidBodyTransMover(pose, *jump) );
 			translate_back->step_size( trans_magnitude_ );
 			translate_back->trans_axis().negate();
 			translate_back->apply(pose);

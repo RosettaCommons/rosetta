@@ -135,7 +135,7 @@
 /// Must have this after BOINC stuff to avoid windows build error
 #include <protocols/abinitio/ClassicAbinitio.hh>
 #include <protocols/abinitio/AbrelaxApplication.hh>
-#include <protocols/rbsegment_moves/RBSegmentRelax_main.hh>
+#include <protocols/rigid/RBSegmentRelax_main.hh>
 #include <protocols/loops/LoopBuild.hh>
 #include <protocols/relax_protocols.hh>
 #include <protocols/ligand_docking/ligand_dock_impl.hh>>

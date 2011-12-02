@@ -46,12 +46,12 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
-#include <protocols/moves/BBGaussianMover.hh>
+#include <protocols/simple_moves/BBGaussianMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/scoring/methods/ImplicitClashEnergy.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
@@ -395,7 +395,7 @@ void* doit(void*) {
 	else if( "simplegaussian30" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.n_residue(),30.0); TR << "bb_samp_method bbg30"   << std::endl; }
 	else if( "simplegaussian60" == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.n_residue(),60.0); TR << "bb_samp_method bbg60"   << std::endl; }
 	else if( "uniform"          == bb_samp_method ) { bbmove = new SimpleBBMover(1,lnk.n_residue(), 9e6); TR << "bb_samp_method uniform" << std::endl; }
-	else if( "bbg8t3a"          == bb_samp_method ) { bbmove = new protocols::moves::BBG8T3AMover();      TR << "bb_samp_method bbg8t3a" << std::endl; }
+	else if( "bbg8t3a"          == bb_samp_method ) { bbmove = new protocols::simple_moves::BBG8T3AMover();      TR << "bb_samp_method bbg8t3a" << std::endl; }
 	else if( "jump"             == bb_samp_method ) {
 		TR << "bb_samp_method jump" << std::endl;
 		FoldTree ft = lnk.fold_tree();
@@ -408,7 +408,7 @@ void* doit(void*) {
 			ft.tree_from_jumps_and_cuts( lnk.n_residue(), 1, jump_point, cuts );
 			lnk.fold_tree(ft);
 		}
-		bbmove = new RigidBodyPerturbMover(1, 10.0, 1.0);
+		bbmove = new rigid::RigidBodyPerturbMover(1, 10.0, 1.0);
 	}
 	else utility_exit_with_message("unknown option value for -rblinker:bb_samp_methd");
 

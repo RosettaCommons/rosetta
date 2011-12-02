@@ -55,7 +55,7 @@
 // AUTO-REMOVED #include <protocols/moves/PyMolMover.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
 // AUTO-REMOVED #include <protocols/moves/RotamerTrialsMinMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 
 //for resfile reading
@@ -271,7 +271,7 @@ void DockMCMCycle::init_mc(core::pose::Pose & pose)
 ////	TrialMoverOP scmin_trial = new TrialMover( scmin_mover, mc_ );
 //
 //	//set up rigid body movers
-//	RigidBodyPerturbMoverOP rb_perturb = new RigidBodyPerturbMover( pose, *movemap_, rot_magnitude_, trans_magnitude_ , partner_downstream, true );
+//	rigid::RigidBodyPerturbMoverOP rb_perturb = new rigid::RigidBodyPerturbMover( pose, *movemap_, rot_magnitude_, trans_magnitude_ , rigid::partner_downstream, true );
 //
 //	//set up sidechain movers for each movable jump
 //	tf_->push_back( new RestrictToInterface( movable_jumps_ ) );
@@ -328,7 +328,7 @@ void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 //	TrialMoverOP scmin_trial = new TrialMover( scmin_mover, mc_ );
 
 	//set up rigid body movers
-	RigidBodyPerturbMoverOP rb_mover = new RigidBodyPerturbMover( pose, *movemap_, rot_magnitude_, trans_magnitude_ , partner_downstream, true );
+	rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover( pose, *movemap_, rot_magnitude_, trans_magnitude_ , rigid::partner_downstream, true );
 
 	//set up sidechain movers for each movable jump
 //	tf_->push_back( new RestrictToInterface( movable_jumps_ ) );   //JQX: temporarly commented out this, because I commented out the Legacy code for this for testing
@@ -391,7 +391,7 @@ void DockMCMCycle::setup_protocol( core::pose::Pose & pose ) {
 
 
 	//JQX: set up rigid body movers
-	RigidBodyPerturbMoverOP rb_mover = new RigidBodyPerturbMover( pose, *movemap_, rot_magnitude_, trans_magnitude_ , partner_downstream, true );
+	rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover( pose, *movemap_, rot_magnitude_, trans_magnitude_ , rigid::partner_downstream, true );
 
 
 	//set up sidechain movers for each movable jump

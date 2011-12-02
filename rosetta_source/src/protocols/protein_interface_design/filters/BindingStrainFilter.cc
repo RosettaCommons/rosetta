@@ -10,7 +10,7 @@
 /// @author Sarel Fleishman (sarelf@uw.edu)
 #include <protocols/protein_interface_design/filters/BindingStrainFilter.hh>
 #include <protocols/protein_interface_design/filters/BindingStrainFilterCreator.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -100,7 +100,7 @@ BindingStrainFilter::apply(core::pose::Pose const & pose ) const
 
 void
 BindingStrainFilter::unbind( core::pose::Pose & pose ) const{
-	protocols::moves::RigidBodyTransMover rbtm( pose, jump() );
+	protocols::rigid::RigidBodyTransMover rbtm( pose, jump() );
 	rbtm.step_size( 10000.0 );
 	rbtm.apply( pose );
 }

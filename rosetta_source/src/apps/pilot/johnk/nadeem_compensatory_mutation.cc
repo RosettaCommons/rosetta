@@ -16,7 +16,7 @@
 #include <iostream>
 #include <iomanip>
 
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 #include <core/init.hh>
 #include <core/chemical/AA.hh>
@@ -166,7 +166,7 @@ main( int argc, char * argv [] )
 			mut_NGFunbound = mut_NGFbound;
 			core::Real const unbound_dist = 40.;
 			Size const rb_jump = 1; // use the first jump as the one between partners
-			protocols::moves::RigidBodyTransMover wt_trans_mover( mut_NGFunbound, rb_jump );
+			protocols::rigid::RigidBodyTransMover wt_trans_mover( mut_NGFunbound, rb_jump );
 			wt_trans_mover.trans_axis( wt_trans_mover.trans_axis() );
 			wt_trans_mover.step_size(unbound_dist);
 			wt_trans_mover.apply( mut_NGFunbound );

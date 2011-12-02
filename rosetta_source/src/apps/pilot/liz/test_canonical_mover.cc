@@ -15,7 +15,7 @@
 //
 
 #include <protocols/canonical_sampling/CanonicalSamplingApplication.hh>
-#include <protocols/moves/CanonicalSamplingMover.hh>
+#include <protocols/canonical_sampling/CanonicalSamplingMover.hh>
 #include <devel/init.hh>
 
 
@@ -26,7 +26,7 @@
 int
 main( int argc, char * argv [] ){
 
-	protocols::moves::CanonicalSamplingMover::register_options();
+	protocols::canonical_sampling::CanonicalSamplingMover::register_options();
 
 	devel::init(argc, argv);
 

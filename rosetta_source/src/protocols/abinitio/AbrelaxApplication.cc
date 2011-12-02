@@ -144,11 +144,11 @@
 #include <core/scoring/MembraneTopology.hh>
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
-#include <protocols/evaluation/RmsdEvaluator.hh>
-#include <protocols/evaluation/JumpEvaluator.hh>
+#include <protocols/simple_filters/RmsdEvaluator.hh>
+#include <protocols/simple_filters/JumpEvaluator.hh>
 #include <protocols/evaluation/TimeEvaluator.hh>
-#include <protocols/evaluation/PoseMetricEvaluator.hh>
 #include <protocols/constraints_additional/ConstraintEvaluator.hh>
+#include <protocols/simple_filters/PoseMetricEvaluator.hh>
 #include <protocols/evaluation/util.hh>
 // AUTO-REMOVED #include <protocols/evaluation/ChemicalShiftEvaluator.hh>
 #include <protocols/loops/SlidingWindowLoopClosure.hh>
@@ -160,7 +160,7 @@
 #include <protocols/filters/RGFilter.hh>
 #include <protocols/filters/COFilter.hh>
 #include <protocols/filters/SheetFilter.hh>
-#include <protocols/filters/PDDFScoreFilter.hh>
+#include <protocols/simple_filters/PDDFScoreFilter.hh>
 #include <protocols/filters/SAXSScoreFilter.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <protocols/moves/RepulsiveOnlyMover.hh>
@@ -497,8 +497,8 @@ void AbrelaxApplication::setup() {
 	core::pose::metrics::PoseMetricCalculatorOP
 		clash_calculator = new protocols::toolbox::pose_metric_calculators::ClashCountCalculator( 2.0 );
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "clashes", clash_calculator );
-	add_evaluation( new evaluation::PoseMetricEvaluator<core::Size>( "clashes", "total" ) );
-	add_evaluation( new evaluation::PoseMetricEvaluator<core::Size>( "clashes", "bb" ) );
+	add_evaluation( new simple_filters::PoseMetricEvaluator<core::Size>( "clashes", "total" ) );
+	add_evaluation( new simple_filters::PoseMetricEvaluator<core::Size>( "clashes", "bb" ) );
 
 	if ( option[ constraints::viol ]() ) add_evaluation( new ShowViolation );
 	if ( option[ constraints::compute_total_dist_cst ] ) add_evaluation( new ComputeTotalDistCst );
@@ -625,7 +625,7 @@ void AbrelaxApplication::process_decoy(
 		evaluation::MetaPoseEvaluator eval_jumps;
 		native_pose_->fold_tree( pose.fold_tree() );
 		for ( Size nj = 1; nj<= pose.num_jump(); ++nj ) {
-			eval_jumps.add_evaluation( new evaluation::JumpEvaluator( *native_pose_, nj) );
+			eval_jumps.add_evaluation( new simple_filters::JumpEvaluator( *native_pose_, nj) );
 		}
 		eval_jumps.apply( pose, tag, pss );
 	}
@@ -820,7 +820,7 @@ void AbrelaxApplication::do_rerun() {
 				scorefxn->set_weight( core::scoring::overlap_chainbreak, 1.0 );
 
 				if ( option[ OptionKeys::abinitio::close_loops ] ) {
-					add_evaluation( new RmsdEvaluator( new pose::Pose( pose ), std::string("closure"), option[ OptionKeys::abinitio::bGDT ]() ) );
+					add_evaluation( new simple_filters::RmsdEvaluator( new pose::Pose( pose ), std::string("closure"), option[ OptionKeys::abinitio::bGDT ]() ) );
 					close_loops( pose, scorefxn, tag );
 				}
 
@@ -855,7 +855,7 @@ void AbrelaxApplication::do_rerun() {
 		scorefxn->set_weight( core::scoring::overlap_chainbreak, 1.0 );
 
 		if ( option[ OptionKeys::abinitio::close_loops ] ) { //otherwise the column (needed for non-native decoys) doesn't show up in score-file
-			add_evaluation( new RmsdEvaluator( new pose::Pose( *native_pose_ ), std::string("closure"), option[ OptionKeys::abinitio::bGDT ]() ) );
+			add_evaluation( new simple_filters::RmsdEvaluator( new pose::Pose( *native_pose_ ), std::string("closure"), option[ OptionKeys::abinitio::bGDT ]() ) );
 		}
 
 		process_decoy( *native_pose_, *scorefxn,  "NATIVE", *ss );
@@ -1001,7 +1001,7 @@ void AbrelaxApplication::do_distributed_rerun() {
 
 		bool loop_closure_failed( false );
 		if ( option[ OptionKeys::abinitio::close_loops ] ) {
-			add_evaluation( new RmsdEvaluator( new pose::Pose( pose ), std::string("closure"), option[ OptionKeys::abinitio::bGDT ]() ) );
+			add_evaluation( new simple_filters::RmsdEvaluator( new pose::Pose( pose ), std::string("closure"), option[ OptionKeys::abinitio::bGDT ]() ) );
 			loop_closure_failed = !close_loops( pose, centroid_scorefxn, tag );
 		}
 
@@ -1377,7 +1377,7 @@ void AbrelaxApplication::setup_templates() {
 
 	if ( jump_def_ ) {
 		//yields columns named nrjumps
-		add_evaluation( new evaluation::JumpNrEvaluator );
+		add_evaluation( new simple_filters::JumpNrEvaluator );
 	}
 }
 
@@ -1684,7 +1684,7 @@ bool AbrelaxApplication::check_filters( core::pose::Pose & pose ) {
 	if( ( option[basic::options::OptionKeys::filters::set_pddf_filter ].user() ) &&
 	    ( option[basic::options::OptionKeys::score::saxs::ref_pddf ].user() ) ) {
 
-	    protocols::filters::PDDFScoreFilterOP pddf_filter = new protocols::filters::PDDFScoreFilter();
+	    protocols::simple_filters::PDDFScoreFilterOP pddf_filter = new protocols::simple_filters::PDDFScoreFilter();
 	    bool flag = pddf_filter->apply(pose);
 	    core::pose::setPoseExtraScores( pose, "pddf_score", pddf_filter->recent_score());
 	    if( ! flag ) return false;	// We need this flag because filter's score must be set before this if statement

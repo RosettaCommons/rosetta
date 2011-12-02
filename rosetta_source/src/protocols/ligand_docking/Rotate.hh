@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_ligand_docking_Rotate_hh
 
 // Unit Headers
-#include <protocols/moves/RigidBodyMover.fwd.hh>
+#include <protocols/rigid/RigidBodyMover.fwd.hh>
 #include <protocols/ligand_docking/DistributionMap.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -97,19 +97,19 @@ private:
 	///@brief  These should have repulsive and attractive scores under the threshold
 	utility::vector1< Ligand_info> create_random_rotations(
 			utility::pointer::owning_ptr<core::grid::CartGrid<int> > const & grid,
-			protocols::moves::RigidBodyMoverOP const mover,
+			protocols::rigid::RigidBodyMoverOP const mover,
 			core::Size const begin,
 			core::pose::Pose & pose
 	)const;
 
 //	utility::vector1<Ligand_info> create_random_rotations(
-//			protocols::moves::RigidBodyMoverOP const ,
+//			protocols::rigid::RigidBodyMoverOP const ,
 //			core::Size const begin,
 //			core::pose::Pose & pose) const;
 
 	Ligand_info create_random_rotation(
 			utility::pointer::owning_ptr<core::grid::CartGrid<int> > const & grid,
-			protocols::moves::RigidBodyMoverOP const mover,
+			protocols::rigid::RigidBodyMoverOP const mover,
 			core::Vector const center,
 			core::Size const begin,
 			core::Size const end,
@@ -117,7 +117,7 @@ private:
 	) const;
 /*
 	Ligand_info create_random_rotation(
-			protocols::moves::RigidBodyMoverOP const mover,
+			protocols::rigid::RigidBodyMoverOP const mover,
 			core::Vector const center,
 			core::Size const begin,
 			core::Size const end,
@@ -140,7 +140,7 @@ bool check_RMSD(
 );
 
 void apply_rotate(
-		protocols::moves::RigidBodyMoverOP mover,
+		protocols::rigid::RigidBodyMoverOP mover,
 		core::pose::Pose & pose,
 		core::Vector const & center
 );

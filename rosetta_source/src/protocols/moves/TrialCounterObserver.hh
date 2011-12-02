@@ -18,9 +18,9 @@
 //#include <protocols/moves/TrialCounterObserver.fwd.hh>
 
 // Project Headers
-#include <protocols/moves/MetropolisHastingsMover.fwd.hh>
-#include <protocols/moves/ThermodynamicObserver.hh>
-#include <protocols/moves/MultiTemperatureTrialCounter.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
+#include <protocols/canonical_sampling/ThermodynamicObserver.hh>
+#include <protocols/canonical_sampling/MultiTemperatureTrialCounter.hh>
 #include <core/id/DOF_ID_Range.hh>
 #include <core/id/TorsionID_Range.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -33,7 +33,7 @@ namespace protocols {
 namespace moves {
 
 ///@details
-class TrialCounterObserver : public ThermodynamicObserver {
+class TrialCounterObserver : public protocols::canonical_sampling::ThermodynamicObserver {
 
 public:
 
@@ -49,14 +49,14 @@ public:
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
-		protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 	/// @brief callback executed after the Metropolis criterion is evaluated
 	virtual
 	void
 	observe_after_metropolis(
-		protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 	/// @brief callback executed after all Monte Carlo trials
@@ -64,7 +64,7 @@ public:
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,
-		protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 	/// @brief return false here if a valid pose is not required for "observe"
@@ -74,7 +74,7 @@ public:
 	requires_pose() { return false; }
 
 private:
-	MultiTemperatureTrialCounter counters_;
+	protocols::canonical_sampling::MultiTemperatureTrialCounter counters_;
 }; //end TrialCounterObserver
 
 } //namespace moves

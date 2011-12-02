@@ -46,8 +46,8 @@
 
 #include <protocols/docking/DockingProtocol.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
-#include <protocols/moves/RigidBodyMover.hh>
-#include <protocols/geometry/RB_geometry.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/rigid/RB_geometry.hh>
 
 
 #include <protocols/cluster/APCluster.hh>
@@ -759,16 +759,16 @@ void HotspotStubSet::fill( core::pose::Pose const & reference_pose, core::scorin
 
 			//(*scorefxn)(pose);
 			if( target_resnum_ && target_distance_ ) { // randomize residue and translate target_distance
-				protocols::moves::RigidBodyPerturbMover pert( jump_number, 0, target_distance_ );
-				protocols::moves::RigidBodyRandomizeMover rand2( pose, jump_number, protocols::moves::partner_downstream );
+				protocols::rigid::RigidBodyPerturbMover pert( jump_number, 0, target_distance_ );
+				protocols::rigid::RigidBodyRandomizeMover rand2( pose, jump_number, protocols::rigid::partner_downstream );
 				protocols::docking::FaDockingSlideIntoContact slide_together( jump_number );
 				pert.apply( pose );
 				rand2.apply( pose );
 				slide_together.apply( pose );
 			}
 			else { // manually do -randomize1/2 (without commandline flags)
-				protocols::moves::RigidBodyRandomizeMover rand1( pose, jump_number, protocols::moves::partner_upstream );
-				protocols::moves::RigidBodyRandomizeMover rand2( pose, jump_number, protocols::moves::partner_downstream );
+				protocols::rigid::RigidBodyRandomizeMover rand1( pose, jump_number, protocols::rigid::partner_upstream );
+				protocols::rigid::RigidBodyRandomizeMover rand2( pose, jump_number, protocols::rigid::partner_downstream );
 				protocols::docking::FaDockingSlideIntoContact slide_together( jump_number );
 				rand1.apply( pose );
 				rand2.apply( pose );
@@ -1080,7 +1080,7 @@ void HotspotStubSet::create_hotspot_after_pose(core::pose::Pose & pose, std::str
 	}
 
 	// move hotspots slightly off current location, in case we started precisely on another residue (target_res case)
-	protocols::moves::RigidBodyTransMover trans_mover( pose, pose.num_jump() );
+	protocols::rigid::RigidBodyTransMover trans_mover( pose, pose.num_jump() );
 	//trans_mover.trans_axis( trans_mover.trans_axis() );
 	trans_mover.step_size(1e-5);
 	trans_mover.apply( pose );
@@ -1501,7 +1501,7 @@ HotspotStubSet::prepare_hashing_packer_task_(
 void HotspotStubSet::generate_unbound_pose_( core::pose::Pose & pose ) {
 	core::Real const unbound_dist = 40.;
 	Size const rb_jump = 1; // use the first jump as the one between partners
-	protocols::moves::RigidBodyTransMover trans_mover( pose, rb_jump );
+	protocols::rigid::RigidBodyTransMover trans_mover( pose, rb_jump );
 	trans_mover.trans_axis( trans_mover.trans_axis() );
 	trans_mover.step_size(unbound_dist);
 	trans_mover.apply( pose );

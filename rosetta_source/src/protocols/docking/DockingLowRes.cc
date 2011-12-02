@@ -34,7 +34,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/moves/OutputMovers.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -190,7 +190,7 @@ void DockingLowRes::set_ensemble2( DockingEnsembleOP ensemble2 )
 void DockingLowRes::finalize_setup( core::pose::Pose & pose){
 	using namespace moves;
 
-	rb_mover_ = new RigidBodyPerturbNoCenterMover( pose, *movemap_, rot_magnitude_, trans_magnitude_, protocols::moves::n2c );
+	rb_mover_ = new rigid::RigidBodyPerturbNoCenterMover( pose, *movemap_, rot_magnitude_, trans_magnitude_, protocols::rigid::n2c );
 
 	docking_lowres_protocol_ = new SequenceMover;
 	docking_lowres_protocol_->add_mover( rb_mover_ );

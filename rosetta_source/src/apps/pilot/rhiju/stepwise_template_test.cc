@@ -59,7 +59,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 //StepWise!
 #include <protocols/swa/StepWiseClusterer.hh>

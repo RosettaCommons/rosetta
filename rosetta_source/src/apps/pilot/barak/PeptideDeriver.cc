@@ -50,7 +50,7 @@
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/VariantType.hh>
@@ -236,8 +236,8 @@ Real calculateInterfaceScore ( core::pose::Pose & pose, core::scoring::ScoreFunc
     core::pose::Pose unbound_pose = pose;
     float trans_magnitude = 1000; // 1000A
     Size rb_jump = 1;     //rigid-body jump number is assumed to be 1 - this will work for two monomers.
-		protocols::moves::RigidBodyTransMoverOP translate_away ( 
-		                new protocols::moves::RigidBodyTransMover( unbound_pose, rb_jump ) );
+		protocols::rigid::RigidBodyTransMoverOP translate_away ( 
+		                new protocols::rigid::RigidBodyTransMover( unbound_pose, rb_jump ) );
 		translate_away->step_size( trans_magnitude );
 
 		//calculate scores

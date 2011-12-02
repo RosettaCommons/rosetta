@@ -23,7 +23,7 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MonteCarloStatus.hh>
 #include <protocols/moves/TrialCounter.hh>
-// AUTO-REMOVED #include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
+// AUTO-REMOVED #include <protocols/moves/MonteCarloExceptionConverge.hh>
 
 // package headers
 #include <core/pose/Pose.fwd.hh>
@@ -38,12 +38,12 @@
 #include <map>
 // AUTO-REMOVED #include <string>
 
-#include <protocols/moves/mc_convergence_checks/ConvergenceCheck.fwd.hh>
+#include <protocols/moves/MonteCarloExceptionConverge.fwd.hh>
 #include <utility/vector1.hh>
 #include <string>
 
 #ifdef WIN32
-	#include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
+	#include <protocols/moves/MonteCarloExceptionConverge.hh>
 #endif
 
 
@@ -522,7 +522,7 @@ public:
 
 
 	/// no brief for now
-	void push_back( mc_convergence_checks::ConvergenceCheckOP );
+	void push_back( moves::MonteCarloExceptionConvergeOP );
 	/////////////////////////////////////////////////////////////////////////////
 	// private methods
 private:
@@ -582,7 +582,7 @@ private:
 
 	Size heat_after_cycles_;
 
-	utility::vector1< mc_convergence_checks::ConvergenceCheckOP > convergence_checks_;
+	utility::vector1< moves::MonteCarloExceptionConvergeOP > convergence_checks_;
 	Size last_check_;
 	Size check_frequency_;
 };

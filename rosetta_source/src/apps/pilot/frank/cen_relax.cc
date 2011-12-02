@@ -10,7 +10,7 @@
 #include <protocols/moves/PackRotamersMover.hh>
 
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
@@ -111,7 +111,7 @@ my_main( void* ) {
 
 	SequenceMoverOP seq( new SequenceMover() );
 	seq->add_mover( new protocols::symmetric_docking::SetupForSymmetryMover() );
-	seq->add_mover( new protocols::moves::SwitchResidueTypeSetMover("centroid") );
+	seq->add_mover( new protocols::simple_moves::SwitchResidueTypeSetMover("centroid") );
 	seq->add_mover( new CenRelaxMover() );
 
 	try{

@@ -71,7 +71,7 @@
 #include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
-#include <protocols/moves/InterfaceAnalyzerMover.hh>
+#include <protocols/analysis/InterfaceAnalyzerMover.hh>
 
 // Numeric Headers
 #include <numeric/conversions.hh>
@@ -123,7 +123,7 @@ public:
 		loop_(), //we want default ctor
 		atomIDs(8, core::id::BOGUS_ATOM_ID ),
 		InterfaceSasaDefinition_("InterfaceSasaDefinition_" + 1),
-		IAM_(new protocols::moves::InterfaceAnalyzerMover)
+		IAM_(new protocols::analysis::InterfaceAnalyzerMover)
 	{
 		//set up fullatom scorefunction
 		using namespace core::scoring;
@@ -623,7 +623,7 @@ private:
 
 	std::string const InterfaceSasaDefinition_; //calculator name
 
-	protocols::moves::InterfaceAnalyzerMoverOP IAM_;
+	protocols::analysis::InterfaceAnalyzerMoverOP IAM_;
 
 };
 

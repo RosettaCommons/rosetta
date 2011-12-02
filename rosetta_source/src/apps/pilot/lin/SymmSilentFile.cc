@@ -31,7 +31,7 @@
 #include <core/conformation/symmetry/SymmData.fwd.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-// AUTO-REMOVED #include <protocols/moves/RigidBodyMover.hh>
+// AUTO-REMOVED #include <protocols/rigid/RigidBodyMover.hh>
 // AUTO-REMOVED #include <protocols/moves/Mover.fwd.hh>
 // AUTO-REMOVED #include <protocols/abinitio/AbrelaxApplication.hh>
 #include <protocols/loops/loops_main.hh>

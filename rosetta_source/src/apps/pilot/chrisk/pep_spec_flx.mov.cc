@@ -31,7 +31,7 @@
  #include <protocols/moves/Mover.hh>
  #include <protocols/moves/MoverContainer.hh>
  #include <protocols/moves/OutputMovers.hh>
- #include <protocols/moves/RigidBodyMover.hh>
+ #include <protocols/rigid/RigidBodyMover.hh>
  // #include <protocols/moves/rigid_body_moves.hh>
  #include <protocols/moves/TrialMover.hh>
  #include <protocols/moves/PackRotamersMover.hh>
@@ -1098,7 +1098,7 @@ refine_fa_pep_bb(
 	mm->set_bb( is_pep );
 	mm->set_chi( is_pep );
 
-	moves::RigidBodyPerturbMoverOP rb_mover = new RigidBodyPerturbMover( pep_jump, 0.1, 0.0 );
+	rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover( pep_jump, 0.1, 0.0 );
 	rb_mover->apply( pose );
 
 	SmallMoverOP rep_small_mover( new SmallMover( mm, 2.0, 10 ) );
@@ -1391,7 +1391,7 @@ RunPepSpec()
 		( *cen_scorefxn )( pose );
 
 		MonteCarloOP mc_rb ( new MonteCarlo( pose, *cen_scorefxn, 1.0 ) );
-		moves::RigidBodyPerturbMoverOP rb_mover = new RigidBodyPerturbMover( pep_jump, 1.0, 0.1 );
+		rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover( pep_jump, 1.0, 0.1 );
 		TrialMoverOP rb_trial = new TrialMover( rb_mover, mc_rb );
 		for( Size ii = 1; ii <= 10; ++ii ){
 			rb_trial->apply( pose );
@@ -1703,7 +1703,7 @@ RunPepSpec()
 					backrub_mover->optimize_branch_angles( pose );
 				}
 
-				moves::RigidBodyPerturbMoverOP rb_mover = new RigidBodyPerturbMover( pep_jump, 0.1, 0.0 );
+				rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover( pep_jump, 0.1, 0.0 );
 
 /*
 				//setup sidechain mover

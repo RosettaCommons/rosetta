@@ -16,8 +16,8 @@
 #include <protocols/ligand_docking/CompoundTranslateCreator.hh>
 #include <protocols/ligand_docking/Translate.hh>
 // AUTO-REMOVED #include <protocols/ligand_docking/grid_functions.hh>
-// AUTO-REMOVED #include <protocols/geometry/RB_geometry.hh>
-// AUTO-REMOVED #include <protocols/moves/RigidBodyMover.hh>
+// AUTO-REMOVED #include <protocols/rigid/RB_geometry.hh>
+// AUTO-REMOVED #include <protocols/rigid/RigidBodyMover.hh>
 
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>

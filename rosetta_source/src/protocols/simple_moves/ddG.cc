@@ -39,7 +39,7 @@
 #include <numeric/xyzVector.hh>
 #include <protocols/simple_moves/ddG.hh>
 #include <protocols/simple_moves/ddGCreator.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
 
@@ -287,7 +287,7 @@ ddG::calculate( pose::Pose const & pose_in )
 	{
 		fill_per_residue_energy_vector(pose, bound_per_residue_energies_);
 	}
-	RigidBodyTransMoverOP translate( new RigidBodyTransMover( pose, rb_jump_ ) );
+	rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose, rb_jump_ ) );
 	translate->step_size( 1000.0 );
 	translate->apply( pose );
 	pack::pack_rotamers( pose, *scorefxn_, task_ );
@@ -335,7 +335,7 @@ ddG::symm_ddG( pose::Pose const & pose_in )
 	{
 		fill_per_residue_energy_vector(pose, bound_per_residue_energies_);
 	}
-	RigidBodyDofSeqTransMoverOP translate( new RigidBodyDofSeqTransMover( dofs ) );
+	rigid::RigidBodyDofSeqTransMoverOP translate( new rigid::RigidBodyDofSeqTransMover( dofs ) );
 	translate->step_size( 1000.0 );
 	translate->apply( pose );
 	pack::symmetric_pack_rotamers( pose, *scorefxn_, task_ );
@@ -358,7 +358,7 @@ ddG::no_repack_ddG(Pose const & pose_in)
 	{
 		fill_per_residue_energy_vector(pose, bound_per_residue_energies_);
 	}
-	moves::RigidBodyTransMoverOP translate( new moves::RigidBodyTransMover( pose,rb_jump_ ) );
+	rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( pose,rb_jump_ ) );
 	translate->step_size( 1000.0 );
 	translate->apply( pose );
 	(*scorefxn_)( pose );

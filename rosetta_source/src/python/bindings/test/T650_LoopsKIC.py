@@ -53,8 +53,8 @@ print "setting up movers"
 kic_mover = KinematicMover()
 
 #centroid/fullatom conversion movers
-to_centroid = SwitchResidueTypeSetMover( 'centroid' )
-to_fullatom = SwitchResidueTypeSetMover( 'fa_standard' )
+to_centroid = protocols::simple_moves::SwitchResidueTypeSetMover( 'centroid' )
+to_fullatom = protocols::simple_moves::SwitchResidueTypeSetMover( 'fa_standard' )
 recover_sidechains = ReturnSidechainMover( starting_p )
 
 #set up sidechain packer movers

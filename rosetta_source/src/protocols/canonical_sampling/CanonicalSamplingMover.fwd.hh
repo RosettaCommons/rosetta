@@ -12,13 +12,13 @@
 /// @author
 /// @author
 
-#ifndef INCLUDED_protocols_moves_CanonicalSamplingMover_fwd_hh
-#define INCLUDED_protocols_moves_CanonicalSamplingMover_fwd_hh
+#ifndef INCLUDED_protocols_canonical_sampling_CanonicalSamplingMover_fwd_hh
+#define INCLUDED_protocols_canonical_sampling_CanonicalSamplingMover_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
-namespace moves {
+namespace canonical_sampling {
 
 class CanonicalSamplingMover;
 typedef utility::pointer::owning_ptr< CanonicalSamplingMover > CanonicalSamplingMoverOP;

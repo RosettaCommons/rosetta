@@ -37,12 +37,12 @@
 #include <protocols/jobdist/Jobs.fwd.hh>
 #include <protocols/moves/BackboneMover.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-#include <protocols/moves/MetropolisHastingsMover.fwd.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
-#include <protocols/moves/ThermodynamicMover.fwd.hh>
-#include <protocols/moves/ThermodynamicMover.hh>
+#include <protocols/canonical_sampling/ThermodynamicMover.fwd.hh>
+#include <protocols/canonical_sampling/ThermodynamicMover.hh>
 #include <utility/down_cast.hh>
 #include <utility/exit.hh>
 #include <utility/vector1.fwd.hh>

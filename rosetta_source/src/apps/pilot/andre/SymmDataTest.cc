@@ -19,7 +19,7 @@
 // AUTO-REMOVED #include <core/scoring/symmetry/SymmetricEnergies.fwd.hh>
 // AUTO-REMOVED #include <protocols/symmetric_docking/SymDockProtocol.hh>
 //#include <protocols/symmetric_docking/SymDockProtocol.fwd.hh>
-//#include <protocols/moves/RigidBodyMover.hh>
+//#include <protocols/rigid/RigidBodyMover.hh>
 // AUTO-REMOVED #include <protocols/moves/Mover.fwd.hh>
 
 #include <basic/options/util.hh>//option.hh>
@@ -110,7 +110,7 @@ SymmDataTest()
 
   	std::map< Size, SymDof > dofs ( symm_conf->Symmetry_Info().get_dofs() );
   	pack::symmetric_pack_rotamers( pose, *scorefxn_sym, packer_task);
-//  protocols::moves::RigidBodySymDofRandomTransMover mover( dofs );
+//  protocols::rigid::RigidBodySymDofRandomTransMover mover( dofs );
 
 	pose.dump_pdb("before_dofmover.pdb");
   for ( int i = 1; i <= 250; ++i ) {
@@ -168,7 +168,7 @@ kinematics::MoveMap mm;
 
 		scorefxn_sym->show(std::cout, pose );
 
-//		protocols::moves::RigidBodySymDofPerturbMoverOP rb_mover = new protocols::moves::RigidBodySymDofPerturbMover( 1 , dof, 3, 8 );
+//		protocols::rigid::RigidBodySymDofPerturbMoverOP rb_mover = new protocols::rigid::RigidBodySymDofPerturbMover( 1 , dof, 3, 8 );
 	//	protocols::symmetry::SymmTranslateMoverOP trnsMoverOP( new protocols::symmetry::SymmTranslateMover() );
 //		rb_mover->apply( pose );
 

@@ -10,7 +10,7 @@
 /// @author Sarel Fleishman (sarelf@uw.edu)
 #include <protocols/protein_interface_design/filters/DeltaFilter.hh>
 #include <protocols/protein_interface_design/filters/DeltaFilterCreator.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 #include <core/pose/Pose.hh>
@@ -144,7 +144,7 @@ DeltaFilter::apply(core::pose::Pose const & pose ) const
 void
 DeltaFilter::unbind( core::pose::Pose & pose ) const{
 	if( !unbound() ) return;
-	protocols::moves::RigidBodyTransMover rbtm( pose, jump() );
+	protocols::rigid::RigidBodyTransMover rbtm( pose, jump() );
 	rbtm.step_size( 10000.0 );
 	rbtm.apply( pose );
 }

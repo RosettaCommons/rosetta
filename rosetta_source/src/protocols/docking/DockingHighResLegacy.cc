@@ -57,7 +57,7 @@
 // AUTO-REMOVED #include <protocols/moves/OutputMovers.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
 #include <protocols/moves/RotamerTrialsMinMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
 #include <protocols/moves/ChangeFoldTreeMover.hh>
@@ -427,7 +427,7 @@ void DockingHighResLegacy::set_dock_mcm_protocol( core::pose::Pose & pose ) {
 	moves::MinMoverOP min_mover = new moves::MinMover( movemap_, scorefxn(), min_type_, min_tolerance_, nb_list_ );
 
 	//set up rigid body movers
-	RigidBodyPerturbMoverOP rb_perturb = new RigidBodyPerturbMover( pose, *movemap_, rot_magnitude_, trans_magnitude_ , partner_downstream, true );
+	rigid::RigidBodyPerturbMoverOP rb_perturb = new rigid::RigidBodyPerturbMover( pose, *movemap_, rot_magnitude_, trans_magnitude_ , rigid::partner_downstream, true );
 
 	//set up sidechain movers for each movable jump
 
@@ -592,18 +592,18 @@ void DockingHighResLegacy::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 
 	//set up translate-by-axis movers
 	Real trans_magnitude = 1000;
-	utility::vector1< RigidBodyTransMoverOP > trans_away_vec;
+	utility::vector1< rigid::RigidBodyTransMoverOP > trans_away_vec;
 	for( DockJumps::const_iterator it = movable_jumps().begin(); it != movable_jumps().end(); ++it ) {
 		core::Size const rb_jump = *it;
-		RigidBodyTransMoverOP translate_away ( new RigidBodyTransMover( pose, rb_jump ) );
+		rigid::RigidBodyTransMoverOP translate_away ( new rigid::RigidBodyTransMover( pose, rb_jump ) );
 		translate_away->step_size( trans_magnitude );
 		trans_away_vec.push_back( translate_away );
 	}
 
-	utility::vector1< RigidBodyTransMoverOP > trans_back_vec;
+	utility::vector1< rigid::RigidBodyTransMoverOP > trans_back_vec;
 	for( DockJumps::const_iterator it = movable_jumps().begin(); it != movable_jumps().end(); ++it ) {
 		core::Size const rb_jump = *it;
-		RigidBodyTransMoverOP translate_back ( new RigidBodyTransMover( pose, rb_jump ) );
+		rigid::RigidBodyTransMoverOP translate_back ( new rigid::RigidBodyTransMover( pose, rb_jump ) );
 		translate_back->step_size( trans_magnitude );
 		translate_back->trans_axis().negate();
 		trans_back_vec.push_back( translate_back );
@@ -618,13 +618,13 @@ void DockingHighResLegacy::set_dock_ppk_protocol( core::pose::Pose & pose ) {
 	// set up protocol
 	docking_highres_protocol_mover_ = new SequenceMover;
 	if ( sc_min() ) docking_highres_protocol_mover_->add_mover( scmin_mover );
-	for( utility::vector1< RigidBodyTransMoverOP >::iterator it = trans_away_vec.begin(); it != trans_back_vec.end(); ++it ) {
+	for( utility::vector1< rigid::RigidBodyTransMoverOP >::iterator it = trans_away_vec.begin(); it != trans_back_vec.end(); ++it ) {
 		docking_highres_protocol_mover_->add_mover( *it );
 	}
 	docking_highres_protocol_mover_->add_mover( prepack_full_repack );
 	if ( rt_min() ) docking_highres_protocol_mover_->add_mover( rtmin_mover );
 	if ( sc_min() ) docking_highres_protocol_mover_->add_mover( scmin_mover );
-	for( utility::vector1< RigidBodyTransMoverOP >::iterator it = trans_back_vec.begin(); it != trans_back_vec.end(); ++it ) {
+	for( utility::vector1< rigid::RigidBodyTransMoverOP >::iterator it = trans_back_vec.begin(); it != trans_back_vec.end(); ++it ) {
 		docking_highres_protocol_mover_->add_mover( *it );
 	}
 }

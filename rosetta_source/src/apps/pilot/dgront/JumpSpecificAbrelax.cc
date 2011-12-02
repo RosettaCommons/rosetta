@@ -556,8 +556,8 @@ void JumpSpecificAbrelax::setup() {
 	core::pose::metrics::PoseMetricCalculatorOP
 		clash_calculator = new protocols::toolbox::pose_metric_calculators::ClashCountCalculator( 2.0 );
 	core::pose::metrics::CalculatorFactory::Instance().register_calculator( "clashes", clash_calculator );
-	add_evaluation( new evaluation::PoseMetricEvaluator<core::Size>( "clashes", "total" ) );
-	add_evaluation( new evaluation::PoseMetricEvaluator<core::Size>( "clashes", "bb" ) );
+	add_evaluation( new simple_filters::PoseMetricEvaluator<core::Size>( "clashes", "total" ) );
+	add_evaluation( new simple_filters::PoseMetricEvaluator<core::Size>( "clashes", "bb" ) );
 
 	if ( option[ viol ]() ) add_evaluation( new ShowViolation );
 	if ( option[ constraints::compute_total_dist_cst ] ) add_evaluation( new ComputeTotalDistCst );
@@ -668,7 +668,7 @@ void JumpSpecificAbrelax::process_decoy(
 		evaluation::MetaPoseEvaluator eval_jumps;
 		native_pose_->fold_tree( pose.fold_tree() );
 		for ( Size nj = 1; nj<= pose.num_jump(); ++nj ) {
-			eval_jumps.add_evaluation( new evaluation::JumpEvaluator( *native_pose_, nj) );
+			eval_jumps.add_evaluation( new simple_filters::JumpEvaluator( *native_pose_, nj) );
 		}
 		eval_jumps.apply( pose, tag, pss );
 	}

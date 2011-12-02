@@ -17,7 +17,7 @@
 #include <iomanip>
 
 // Protocol Headers
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 // Core Headers
 #include <core/conformation/Residue.hh>
@@ -96,7 +96,7 @@ main( int argc, char * argv [] )
 	// rb_jump = rigid_backbone - changes the distance between the backbones of the molecules
   //   based upon the pdb file - so DON'T change numbers
 	Size const rb_jump = 1;
-	protocols::moves::RigidBodyTransMover trans_mover( unbound_pose_native, rb_jump );
+	protocols::rigid::RigidBodyTransMover trans_mover( unbound_pose_native, rb_jump );
 	trans_mover.trans_axis( trans_mover.trans_axis() );
 	trans_mover.step_size(unbound_dist);
 	trans_mover.apply( unbound_pose_native );

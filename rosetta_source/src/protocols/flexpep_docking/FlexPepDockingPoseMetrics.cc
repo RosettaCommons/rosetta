@@ -31,7 +31,7 @@
 #include <basic/Tracer.hh>
 #include <basic/MetricValue.hh>
 #include <core/types.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/toolbox/pose_metric_calculators/NumberHBondsCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/SasaCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/PackstatCalculator.hh>
@@ -276,7 +276,7 @@ FlexPepDockingPoseMetrics::calc_interface_metrics( core::pose::Pose & pose, Size
  		//////// calculate interface score ////////
 		core::pose::Pose unbound_pose = pose;
 		float trans_magnitude = 1000;
-		moves::RigidBodyTransMoverOP translate_away ( new moves::RigidBodyTransMover( unbound_pose, rb_jump ) );
+		rigid::RigidBodyTransMoverOP translate_away ( new rigid::RigidBodyTransMover( unbound_pose, rb_jump ) );
 		translate_away->step_size( trans_magnitude );
 
 		float bound_energy = (*scorefxn_no_cst)( unbound_pose );

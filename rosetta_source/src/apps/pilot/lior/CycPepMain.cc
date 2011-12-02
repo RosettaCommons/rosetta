@@ -13,8 +13,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <basic/options/util.hh>//option.hh>
-#include <protocols/loops/LoopRelaxMover.fwd.hh>
-#include <protocols/loops/LoopRelaxMover.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <numeric/random/random.hh>
 #include <protocols/loops/Loops.hh>

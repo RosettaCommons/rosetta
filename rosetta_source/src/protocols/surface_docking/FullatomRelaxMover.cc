@@ -28,7 +28,7 @@
 #include <protocols/docking/DockingHighRes.hh>
 #include <protocols/docking/DockMCMProtocol.hh>
 // AUTO-REMOVED #include <protocols/docking/DockFilters.hh> // get error if you did not include
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
@@ -232,10 +232,10 @@ for ( Size j = 1; j <=upper_limit; ++j ){ // Original is 5
         // Random Orient the Partner (make sure this is the peptide)
         TR<<"RigidBodyRandomizeMover"<<std::endl;
         Size rb_jump_=pose.num_jump(); //default value
-        RigidBodyRandomizeMover rmover( pose, rb_jump_, partner_upstream );
+        rigid::RigidBodyRandomizeMover rmover( pose, rb_jump_, rigid::partner_upstream );
         rmover.apply( pose );
         //Axis Spin
-        RigidBodySpinMover smover( rb_jump_ );
+	rigid::RigidBodySpinMover smover( rb_jump_ );
         smover.apply( pose );
         // SurfaceOrient Mover
         surface_docking::SurfaceOrientMoverOP sf=

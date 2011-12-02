@@ -80,7 +80,7 @@
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <protocols/protein_interface_design/movers/ddG.hh>
 #include <protocols/toolbox/pose_metric_calculators/RotamerBoltzCalculator.hh>
-#include <protocols/protein_interface_design/filters/RotamerBoltzmannWeight.hh>
+#include <protocols/simple_filters/RotamerBoltzmannWeight.hh>
 #include <core/pack/task/ResfileReader.hh>
 //Auto Headers
 

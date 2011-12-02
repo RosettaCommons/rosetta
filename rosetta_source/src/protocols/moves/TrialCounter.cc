@@ -13,7 +13,7 @@
 
 // Unit Headers
 #include <protocols/moves/TrialCounter.hh>
-// AUTO-REMOVED #include <protocols/moves/mc_convergence_checks/util.hh>
+// AUTO-REMOVED #include <protocols/canonical_sampling/mc_convergence_checks/util.hh>
 
 
 // ObjexxFCL Headers

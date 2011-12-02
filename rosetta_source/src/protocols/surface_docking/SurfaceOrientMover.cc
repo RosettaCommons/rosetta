@@ -24,8 +24,8 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/geometry/RB_geometry.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RB_geometry.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/surface_docking/SurfaceParameters.fwd.hh>
 #include <protocols/surface_docking/SurfaceParameters.hh>
 
@@ -164,7 +164,7 @@ void SurfaceOrientMover::apply(pose::Pose & pose){
     // New_ProteinCentroid
     Real trans_magnitude=ProteinCG.distance(NewProteinCG);
     // Moves trans_magnitude distance along the trans_axis
-    RigidBodyTransMoverOP TransMover( new RigidBodyTransMover(pose,rb_jump));
+    rigid::RigidBodyTransMoverOP TransMover( new rigid::RigidBodyTransMover(pose,rb_jump));
     TransMover->trans_axis(NewProteinCG-ProteinCG);
     TransMover->step_size( trans_magnitude );
     TransMover->apply(pose);

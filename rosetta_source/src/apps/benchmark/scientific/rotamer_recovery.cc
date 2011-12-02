@@ -15,7 +15,7 @@
 
 // Unit Headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/moves/RotamerRecoveryMover.hh>
+#include <protocols/rotamer_recovery/RotamerRecoveryMover.hh>
 #include <protocols/rotamer_recovery/RotamerRecovery.hh>
 #include <protocols/rotamer_recovery/RotamerRecoveryFactory.hh>
 
@@ -57,8 +57,8 @@ using core::scoring::ScoreFunctionOP;
 using devel::init;
 using protocols::rotamer_recovery::RotamerRecoveryOP;
 using protocols::rotamer_recovery::RotamerRecoveryFactory;
-using protocols::moves::RotamerRecoveryMover;
-using protocols::moves::RotamerRecoveryMoverOP;
+using protocols::rotamer_recovery::RotamerRecoveryMover;
+using protocols::rotamer_recovery::RotamerRecoveryMoverOP;
 using protocols::jd2::JobDistributor;
 using utility::excn::EXCN_Base;
 

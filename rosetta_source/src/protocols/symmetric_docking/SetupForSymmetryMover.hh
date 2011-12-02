@@ -44,7 +44,7 @@ public:
 	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new SetupForSymmetryMover( *this ) ) ); }
 
 	virtual void apply( core::pose::Pose & pose );
-	virtual void parse_my_tag( 
+	virtual void parse_my_tag(
 			utility::tag::TagPtr const tag,
 			moves::DataMap &data,
 			filters::Filters_map const &filters,
@@ -75,7 +75,7 @@ public:
 	moves::MoverOP clone() const { return( protocols::moves::MoverOP( new ExtractAsymmetricUnitMover( *this ) ) ); }
 
 	virtual void apply( core::pose::Pose & pose );
-	virtual void parse_my_tag( 
+	virtual void parse_my_tag(
 			utility::tag::TagPtr const tag,
 			moves::DataMap &data,
 			filters::Filters_map const &filters,

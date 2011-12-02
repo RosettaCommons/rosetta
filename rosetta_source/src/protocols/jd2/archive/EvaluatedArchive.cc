@@ -14,7 +14,7 @@
 #include <protocols/jd2/archive/EvaluatedArchive.hh>
 #include <protocols/jd2/archive/ArchiveManager.hh>
 
-// AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileData.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 //#include <core/scoring/constraints/ConstraintIO.hh>
@@ -24,10 +24,8 @@
 #include <core/pose/Pose.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
-// AUTO-REMOVED #include <protocols/evaluation/ConstraintEvaluator.hh>
-#include <protocols/evaluation/ScoreEvaluator.hh>
 #include <protocols/evaluation/EvaluatorFactory.hh>
-//#include <protocols/jumping/JumpSample.hh>
+#include <protocols/evaluation/PoseEvaluator.hh>
 
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
@@ -342,6 +340,12 @@ EvaluatedArchive::scorefxn() const {
 	return *scorefxn_;
 }
 
+core::scoring::ScoreFunctionOP
+EvaluatedArchive::scorefxn_non_const() {
+	runtime_assert( scorefxn_ );
+	return scorefxn_;
+}
+
 void EvaluatedArchive::setup_default_evaluators() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -367,30 +371,6 @@ void EvaluatedArchive::setup_default_evaluators() {
 }
 
 /* =================== end maintenance of evaluators and weights ====================== */
-
-///@detail load decoys into archive from -archive:input_pool or so
-void EvaluatedArchive::init_from_decoy_set( core::io::silent::SilentFileData const& sfd ) {
-	//make bogus batch that contains init-file
-
-	//if non-local evaluation we need to add score_final to decoys --- switch temporarily to local evaluation
-	bool b_old_eval_state( evaluate_local() );
-	if ( !b_old_eval_state ) {
-		tr.Debug << "switch to local evaluation for reading of initial pool" << std::endl;
-		set_evaluate_local( true );//set this temporarily
-		add_evaluation( new evaluation::ScoreEvaluator( "_final", scorefxn_ ), 1.0 );
-	}
-
-	//read decoys and evaluate
-	ArchiveBase::init_from_decoy_set( sfd );
-
-	//switch back to non-local evaluation if applicable
-	if ( !b_old_eval_state ) {
-		remove_evaluation( "score_final" );
-		set_weight( "score_final", 1.0 );
-		set_evaluate_local( b_old_eval_state );
-	}
-}
-
 
 
 }//archive

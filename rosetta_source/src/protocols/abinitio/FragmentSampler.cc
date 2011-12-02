@@ -28,7 +28,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
-#include <protocols/moves/mc_convergence_checks/util.hh>
+#include <protocols/canonical_sampling/mc_convergence_checks/util.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/jd2/util.hh>
 #include <protocols/moves/TrialMover.hh>
@@ -51,7 +51,7 @@
 #include <string>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
+#include <protocols/moves/MonteCarloExceptionConverge.hh>
 #include <utility/vector1.hh>
 
 static basic::Tracer tr("protocols.abinitio");
@@ -200,7 +200,7 @@ void FragmentSampler::apply( pose::Pose & pose ) {
 		tr.Info <<  "   Finished Abinitio                                                 \n";
 		tr.Info <<  std::endl;
 		topology_broker().apply_filter( pose, END_ABINITIO, 1 );
-	} catch ( mc_convergence_checks::EXCN_Converged& excn ) {
+	} catch ( moves::EXCN_Converged& excn ) {
 		//		Size last_stage( STAGE_4 );
 		//		while( contains_stageid( skip_stages_, last_stage ) ) --last_stage;
 		mc().recover_low( pose );
@@ -231,7 +231,7 @@ void FragmentSampler::set_default_mc(
  	scoring::ScoreFunction const & scorefxn
 ) {
 	set_mc( new moves::MonteCarlo( scorefxn, temperature_ ) );
-	moves::mc_convergence_checks::setup_convergence_checks_from_cmdline( *mc_ );
+	canonical_sampling::mc_convergence_checks::setup_convergence_checks_from_cmdline( *mc_ );
 }
 
 //@detail sets Monto-Carlo object

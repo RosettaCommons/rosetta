@@ -28,9 +28,9 @@
 #include <core/kinematics/FoldTree.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/RigidBodyMover.fwd.hh>
-#include <protocols/moves/MetropolisHastingsMover.fwd.hh>
-#include <protocols/moves/TemperingBase.fwd.hh>
+#include <protocols/rigid/RigidBodyMover.fwd.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
+#include <protocols/canonical_sampling/TemperingBase.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
 
@@ -98,7 +98,7 @@ protected:
 private:
 	/// --- configurables -----
 	std::string partners_;
-	protocols::moves::RigidBodyPerturbNoCenterMoverOP rb_mover_;
+	protocols::rigid::RigidBodyPerturbNoCenterMoverOP rb_mover_;
 	DockJumps movable_jumps_; //vector1_int
 
 	/// --- state ----

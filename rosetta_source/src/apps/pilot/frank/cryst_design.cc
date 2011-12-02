@@ -48,7 +48,7 @@
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/viewer/viewers.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
 #include <protocols/electron_density/util.hh>
 #include <protocols/docking/util.hh>
@@ -442,7 +442,7 @@ public:
 			com += xyzs[i];
 		com /= (core::Real)natoms;
 
-		protocols::moves::MoverOP tocentroid( new protocols::moves::SwitchResidueTypeSetMover("centroid") );
+		protocols::moves::MoverOP tocentroid( new protocols::simple_moves::SwitchResidueTypeSetMover("centroid") );
 
 		core::io::silent::SilentFileData sfd;	
 

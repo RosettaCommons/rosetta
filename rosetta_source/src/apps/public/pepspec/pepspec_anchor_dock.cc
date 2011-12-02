@@ -28,7 +28,7 @@
  #include <protocols/moves/Mover.hh>
  #include <protocols/moves/MoverContainer.hh>
  #include <protocols/moves/OutputMovers.hh>
- #include <protocols/moves/RigidBodyMover.hh>
+ #include <protocols/rigid/RigidBodyMover.hh>
  // #include <protocols/moves/rigid_body_moves.hh>
  #include <protocols/moves/TrialMover.hh>
  #include <protocols/moves/PackRotamersMover.hh>
@@ -1083,7 +1083,7 @@ run_pep_prep()
 			MonteCarloOP mc_dock ( new MonteCarlo( pose, *scorefxn, 0.8 ) );
 			vector1< bool > check_clash( pose.total_residue(), false );
 			check_clash[ pep_anchor ] = true;
-			moves::RigidBodyPerturbNoCenterMoverOP rb_mover = new RigidBodyPerturbNoCenterMover( pep_jump, 2.5, 0.25 );
+			rigid::RigidBodyPerturbNoCenterMoverOP rb_mover = new rigid::RigidBodyPerturbNoCenterMover( pep_jump, 2.5, 0.25 );
 			rb_mover->apply( pose );
 			mc_dock->boltzmann( pose );
 

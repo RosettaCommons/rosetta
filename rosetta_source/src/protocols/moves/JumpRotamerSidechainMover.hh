@@ -20,8 +20,8 @@
 #include <protocols/moves/PerturbRotamerSidechainMover.hh>
 
 // Protocols Headers
-#include <protocols/moves/MetropolisHastingsMover.fwd.hh>
-#include <protocols/moves/ThermodynamicMover.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
+#include <protocols/canonical_sampling/ThermodynamicMover.hh>
 
 // Core Headers
 #include <core/pack/task/TaskFactory.fwd.hh>

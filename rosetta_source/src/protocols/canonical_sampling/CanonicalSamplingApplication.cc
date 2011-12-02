@@ -18,9 +18,9 @@
 //
 #include <protocols/canonical_sampling/CanonicalSamplingApplication.hh>
 //#include <devel/Gaussian/BBGaussianMover.hh>
-#include <protocols/moves/BBGaussianMover.hh>
+#include <protocols/simple_moves/BBGaussianMover.hh>
 #include <protocols/moves/BackrubMover.hh>
-#include <protocols/moves/BBConRotMover.hh>
+#include <protocols/simple_moves/BBConRotMover.hh>
 #include <core/kinematics/MoveMap.hh>
 
 #include <protocols/jd2/NoOutputJobOutputter.hh>
@@ -30,11 +30,11 @@
 #include <protocols/canonical_sampling/CanonicalSamplingMover.fwd.hh>
 #include <protocols/moves/SidechainMover.hh>
 #include <protocols/moves/SidechainMCMover.hh>
-// AUTO-REMOVED #include <protocols/moves/mc_convergence_checks/MPIBPool_ConvergenceCheck.hh>
-// AUTO-REMOVED #include <protocols/moves/mc_convergence_checks/MPIPool_ConvergenceCheck.hh>
-#include <protocols/moves/mc_convergence_checks/Pool_ConvergenceCheck.hh>
+// AUTO-REMOVED #include <protocols/canonical_sampling/mc_convergence_checks/MPIBPool_ConvergenceCheck.hh>
+// AUTO-REMOVED #include <protocols/canonical_sampling/mc_convergence_checks/MPIPool_ConvergenceCheck.hh>
+#include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 
-// AUTO-REMOVED #include <protocols/moves/mc_convergence_checks/MPIHPool_ConvergenceCheck.hh>
+// AUTO-REMOVED #include <protocols/canonical_sampling/mc_convergence_checks/MPIHPool_ConvergenceCheck.hh>
 
 // AUTO-REMOVED #include <core/pack/task/ResfileReader.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -105,8 +105,8 @@ canonical_sampling_main(){
 	if( use_hierarchy ) {}
 
   core::scoring::ScoreFunctionOP sfxn = core::scoring::getScoreFunction();
-  //protocols::moves::CanonicalSamplingMoverOP csm(new CanonicalSamplingMover(sfxn,pool_ptr,1000));
-	protocols::moves::CanonicalSamplingMoverOP csm(new CanonicalSamplingMover);
+  //protocols::canonical_sampling::CanonicalSamplingMoverOP csm(new protocols::canonical_sampling::CanonicalSamplingMover(sfxn,pool_ptr,1000));
+	protocols::canonical_sampling::CanonicalSamplingMoverOP csm(new CanonicalSamplingMover);
 		csm->set_scorefunction(sfxn);
 
 	if( !use_fast_sc_moves ){
@@ -157,7 +157,7 @@ canonical_sampling_main(){
 		movemap->set_bb( true );
 		movemap->set_chi( true );
 	}
-	BBG8T3AMoverOP bbg8t3mover = new BBG8T3AMover();
+	simple_moves::BBG8T3AMoverOP bbg8t3mover = new simple_moves::BBG8T3AMover();
 	bbg8t3mover->movemap(movemap);
 	tr << "probability of executing bbg move: " << (options::option[options::OptionKeys::canonical_sampling::probabilities::localbb]*
 																									(1-options::option[options::OptionKeys::canonical_sampling::probabilities::backrub]-options::option[options::OptionKeys::canonical_sampling::probabilities::conrot]())) << std::endl;
@@ -166,7 +166,7 @@ canonical_sampling_main(){
 
 	//setup conrot mover
 	if( options::option[options::OptionKeys::canonical_sampling::probabilities::conrot]() > 0 ) {
-		BBConRotMoverOP conrotmover = new BBConRotMover();
+		simple_moves::BBConRotMoverOP conrotmover = new simple_moves::BBConRotMover();
 		conrotmover->movemap( movemap );
 		csm->add_mover( conrotmover, options::option[options::OptionKeys::canonical_sampling::probabilities::localbb]*options::option[options::OptionKeys::canonical_sampling::probabilities::conrot]());
 	}

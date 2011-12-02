@@ -79,7 +79,7 @@
 
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/MinPackMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/MinMover.hh>
 
 #include <utility/io/izstream.hh>
@@ -1776,7 +1776,7 @@ IterativeOptEDriver::score_ligand_interface( core::scoring::ScoreFunction const 
 	// For the interface score:
 	int const jump_id = pose.num_jump();
 	core::pose::Pose split_pose( pose ); // make a copy
-	protocols::moves::RigidBodyTransMover trans_mover( split_pose, jump_id );
+	protocols::rigid::RigidBodyTransMover trans_mover( split_pose, jump_id );
 	// Default direction is to move centroids apart
 	trans_mover.step_size(500); // make sure they're fully separated!
 	trans_mover.apply( split_pose );

@@ -62,7 +62,7 @@ using namespace ObjexxFCL::fmt;
 #include <protocols/antibody/Ubiquitin_E2C_Modeler.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
 // AUTO-REMOVED #include <protocols/docking/DockingLowRes.hh>
-#include <protocols/geometry/RB_geometry.hh>
+#include <protocols/rigid/RB_geometry.hh>
 // AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 #include <protocols/moves/BackboneMover.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
@@ -72,10 +72,10 @@ using namespace ObjexxFCL::fmt;
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/ReturnSidechainMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
 #include <protocols/moves/RotamerTrialsMinMover.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/ScoreMap.hh>
 
@@ -665,8 +665,8 @@ namespace ub_e2c {
 			setup_move_maps();
 
 			// Residue movers
-			moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
-			moves::SwitchResidueTypeSetMover to_all_atom( chemical::FA_STANDARD );
+			protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
+			protocols::simple_moves::SwitchResidueTypeSetMover to_all_atom( chemical::FA_STANDARD );
 			moves::ReturnSidechainMover recover_sidechains( start_pose);
 
 			// centroid mode
@@ -1098,7 +1098,7 @@ namespace ub_e2c {
 			}
 
 			pose_in.copy_segment( ub_size, k48r, e2_end_ + 1, 1 );
-			moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
+			protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
 			to_centroid.apply( pose_in );
 			pose_in.copy_segment( ub_size, d77, k48r_end_ + 1, 1 );
 			to_centroid.apply( pose_in );
@@ -1131,7 +1131,7 @@ namespace ub_e2c {
 			Size nres = k48r_trim_end_;
 			setup_simple_fold_tree( jumppoint1, cutpoint, jumppoint2, nres, e2_k48r);
 
-			moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
+			protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
 			to_centroid.apply( e2_k48r );
 
 			// make starting perturbations based on command-line flags
@@ -1139,11 +1139,11 @@ namespace ub_e2c {
 				DockingInitialPerturbation( e2_k48r_jump_,true/*slide into contact*/));
 			// pose_in.dump_pdb( "pre.pdb" );
 			if( higher_d77_pert_mode_ && k48r_swap_ ) {
-				RigidBodyPerturbMover mover( e2_k48r_jump_,
+				rigid::RigidBodyPerturbMover mover( e2_k48r_jump_,
 																		 15, // rot magnitude
 																		 5 ); // trans magnitude
 				mover.apply( e2_k48r );
-				RigidBodySpinMover spin( e2_k48r_jump_ );
+				rigid::RigidBodySpinMover spin( e2_k48r_jump_ );
 				spin.apply( e2_k48r );
 				DockingSlideIntoContact slide( e2_k48r_jump_ );
 				slide.apply( e2_k48r );
@@ -1153,8 +1153,8 @@ namespace ub_e2c {
 
 			{
 				// dock movers
-				RigidBodyPerturbNoCenterMoverOP dock_e2_mono_ub( new
-					RigidBodyPerturbNoCenterMover( e2_k48r_jump_, 10.0, // rot_magnitude
+				rigid::RigidBodyPerturbNoCenterMoverOP dock_e2_mono_ub( new
+					rigid::RigidBodyPerturbNoCenterMover( e2_k48r_jump_, 10.0, // rot_magnitude
 																				 1.0 ) ); // trans_magnitude_
 				MonteCarloOP mc;
 				mc = new moves::MonteCarlo( e2_k48r, *dock_lowres_scorefxn_,
@@ -1178,11 +1178,11 @@ namespace ub_e2c {
 			nres = d77_trim_end_;
 			setup_simple_fold_tree( jumppoint1, cutpoint, jumppoint2, nres, pose_in);
 			if( higher_d77_pert_mode_ && !k48r_swap_ ) {
-				RigidBodyPerturbMover mover( e2_k48r_jump_,
+				rigid::RigidBodyPerturbMover mover( e2_k48r_jump_,
 																		 15, // rot magnitude
 																		 5 ); // trans magnitude
 				mover.apply( pose_in );
-				RigidBodySpinMover spin( e2_k48r_jump_ );
+				rigid::RigidBodySpinMover spin( e2_k48r_jump_ );
 				spin.apply( pose_in );
 				DockingSlideIntoContact slide( e2_k48r_jump_ );
 				slide.apply( pose_in );
@@ -1191,8 +1191,8 @@ namespace ub_e2c {
 				init_e2_mono_ub_dock->apply( pose_in );
 			{
 				// dock movers
-				RigidBodyPerturbNoCenterMoverOP dock_e2_mono_ub( new
-					RigidBodyPerturbNoCenterMover( e2_k48r_jump_, 10.0, // rot_magnitude
+				rigid::RigidBodyPerturbNoCenterMoverOP dock_e2_mono_ub(
+					new	rigid::RigidBodyPerturbNoCenterMover( e2_k48r_jump_, 10.0, // rot_magnitude
 																				 1.0 ) ); // trans_magnitude_
 
 				setup_complex_fold_tree( pose_in, true );
@@ -1275,7 +1275,7 @@ namespace ub_e2c {
 			e2_d77.copy_segment( ub_trim_size, pose_in, e2_end_ + 1,
 													 k48r_trim_end_ + 1 );
 
-			moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
+			protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
 			to_centroid.apply( e2_d77 );
 
 			pose_in.copy_segment( ub_trim_size,e2_k48r, k48r_trim_end_+1, e2_end_+1);
@@ -1411,11 +1411,11 @@ namespace ub_e2c {
 
 			// movers
 			// dock movers
-			RigidBodyPerturbNoCenterMoverOP dock_e2_k48r( new
-        RigidBodyPerturbNoCenterMover( e2_k48r_jump_, 5.0, // rot_magnitude
+			rigid::RigidBodyPerturbNoCenterMoverOP dock_e2_k48r(
+				new rigid::RigidBodyPerturbNoCenterMover( e2_k48r_jump_, 5.0, // rot_magnitude
 																			 0.7 ) ); // trans_magnitude_
-			RigidBodyPerturbNoCenterMoverOP dock_k48r_d77( new
-        RigidBodyPerturbNoCenterMover( e2_d77_jump_, 5.0, // rot_magnitude
+			rigid::RigidBodyPerturbNoCenterMoverOP dock_k48r_d77(
+				new	rigid::RigidBodyPerturbNoCenterMover( e2_d77_jump_, 5.0, // rot_magnitude
 																			 0.7 ) ); // trans_magnitude_
 
 			RandomMoverOP docker( new RandomMover() );
@@ -1554,11 +1554,11 @@ namespace ub_e2c {
 			// set up rigid body movers
 			Real trans_magnitude = 0.1; // default high-res docking values
 			Real rot_magnitude = 5.0; // default high-res docking values
-			RigidBodyPerturbMoverOP k48r_perturb = new RigidBodyPerturbMover(
- 			  e2_k48r_jump_, rot_magnitude, trans_magnitude , partner_downstream,
+			rigid::RigidBodyPerturbMoverOP k48r_perturb = new rigid::RigidBodyPerturbMover(
+ 			  e2_k48r_jump_, rot_magnitude, trans_magnitude , rigid::partner_downstream,
 				  true );
-			RigidBodyPerturbMoverOP d77_perturb = new RigidBodyPerturbMover(
- 			  e2_d77_jump_, rot_magnitude, trans_magnitude, partner_downstream,
+			rigid::RigidBodyPerturbMoverOP d77_perturb = new rigid::RigidBodyPerturbMover(
+ 			  e2_d77_jump_, rot_magnitude, trans_magnitude, rigid::partner_downstream,
 				  true );
 
 			RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover(
@@ -1832,18 +1832,18 @@ namespace ub_e2c {
 			Real trans_magnitude = 1000;
 			if( dimer ) {
 				set_e2g2_diubi_fold_tree( complex_pose );
-				moves::RigidBodyTransMoverOP translate_away_diubi (
-				  new moves::RigidBodyTransMover( complex_pose, 1 ) );
+				rigid::RigidBodyTransMoverOP translate_away_diubi (
+				  new rigid::RigidBodyTransMover( complex_pose, 1 ) );
 				translate_away_diubi->step_size( trans_magnitude );
 				separate->add_mover( translate_away_diubi );
 			}
 			else {
 				setup_complex_fold_tree( complex_pose );
-				moves::RigidBodyTransMoverOP translate_away_k48r (
-					new moves::RigidBodyTransMover( complex_pose, e2_k48r_jump_ ) );
+				rigid::RigidBodyTransMoverOP translate_away_k48r (
+					new rigid::RigidBodyTransMover( complex_pose, e2_k48r_jump_ ) );
 				translate_away_k48r->step_size( trans_magnitude );
-				moves::RigidBodyTransMoverOP translate_away_d77 (
-				  new moves::RigidBodyTransMover( complex_pose, e2_d77_jump_ ) );
+				rigid::RigidBodyTransMoverOP translate_away_d77 (
+				  new rigid::RigidBodyTransMover( complex_pose, e2_d77_jump_ ) );
 				translate_away_d77->step_size( 0.00 - trans_magnitude );
 				separate->add_mover( translate_away_k48r );
 				separate->add_mover( translate_away_d77 );
@@ -2188,8 +2188,8 @@ namespace ub_e2c {
 			pose::Pose start_pose;
 			start_pose = pose_in;
 
-			moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
-			moves::SwitchResidueTypeSetMover to_all_atom( chemical::FA_STANDARD );
+			protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
+			protocols::simple_moves::SwitchResidueTypeSetMover to_all_atom( chemical::FA_STANDARD );
 			moves::ReturnSidechainMover recover_sidechains( start_pose);
 
 			Real score( 0.00 );
@@ -2224,8 +2224,8 @@ namespace ub_e2c {
 			set_e2g2_diubi_fold_tree( start_pose );
 
 			Real trans_magnitude = 1000;
-			moves::RigidBodyTransMoverOP translate_away_diubi (
-				new moves::RigidBodyTransMover( start_pose, 1 ) );
+			rigid::RigidBodyTransMoverOP translate_away_diubi (
+				new rigid::RigidBodyTransMover( start_pose, 1 ) );
 			translate_away_diubi->step_size( trans_magnitude );
 
 			Real bound_energy = ( *dockfa_score )( start_pose );
@@ -2469,8 +2469,8 @@ namespace ub_e2c {
 			monoub_setup_move_maps();
 
 			// Residue movers
-			moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
-			moves::SwitchResidueTypeSetMover to_all_atom( chemical::FA_STANDARD );
+			protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
+			protocols::simple_moves::SwitchResidueTypeSetMover to_all_atom( chemical::FA_STANDARD );
 			moves::ReturnSidechainMover recover_sidechains( start_pose);
 
 			// centroid mode
@@ -2730,7 +2730,7 @@ namespace ub_e2c {
 
 			TR << "UBI Mono Ubi First Perturbation" << std::endl;
 
-			moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
+			protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
 			to_centroid.apply( pose_in );
 
 			// make starting perturbations based on command-line flags
@@ -2740,8 +2740,8 @@ namespace ub_e2c {
 			init_e2_mono_ub_dock->apply( pose_in );
 
 			// dock movers
-			RigidBodyPerturbNoCenterMoverOP dock_e2_mono_ub( new
-				RigidBodyPerturbNoCenterMover( 1 , 10.0, // rot_magnitude
+			rigid::RigidBodyPerturbNoCenterMoverOP dock_e2_mono_ub( new
+				rigid::RigidBodyPerturbNoCenterMover( 1 , 10.0, // rot_magnitude
 																			 1.0 ) ); // trans_magnitude_
 
 			protocols::scoring::InterfaceInfoOP one_interface = new protocols::scoring::InterfaceInfo( 1 );
@@ -2826,8 +2826,8 @@ namespace ub_e2c {
 
 			// movers
 			// dock movers
-			RigidBodyPerturbNoCenterMoverOP dock_e2_monoub( new
-        RigidBodyPerturbNoCenterMover( 1, 5.0, // rot_magnitude
+			rigid::RigidBodyPerturbNoCenterMoverOP dock_e2_monoub( new
+        rigid::RigidBodyPerturbNoCenterMover( 1, 5.0, // rot_magnitude
 																			 0.7 ) ); // trans_magnitude_
 
 			RandomMoverOP docker( new RandomMover() );
@@ -2932,8 +2932,8 @@ namespace ub_e2c {
 			// set up rigid body movers
 			Real trans_magnitude = 0.1; // default high-res docking values
 			Real rot_magnitude = 5.0; // default high-res docking values
-			RigidBodyPerturbMoverOP monoub_perturb = new RigidBodyPerturbMover(
- 			  1, rot_magnitude, trans_magnitude , partner_downstream,
+			rigid::RigidBodyPerturbMoverOP monoub_perturb = new rigid::RigidBodyPerturbMover(
+ 			  1, rot_magnitude, trans_magnitude , rigid::partner_downstream,
 				  true );
 			RotamerTrialsMoverOP pack_rottrial = new RotamerTrialsMover(
 				pack_scorefxn_, tf_ );
@@ -3042,8 +3042,8 @@ namespace ub_e2c {
 			Real trans_magnitude = 1000;
 
 			monoub_fold_tree( complex_pose );
-			moves::RigidBodyTransMoverOP translate_away_ubi (
-				new moves::RigidBodyTransMover( complex_pose, 1 ) );
+			rigid::RigidBodyTransMoverOP translate_away_ubi (
+				new rigid::RigidBodyTransMover( complex_pose, 1 ) );
 			translate_away_ubi->step_size( trans_magnitude );
 			separate->add_mover( translate_away_ubi );
 

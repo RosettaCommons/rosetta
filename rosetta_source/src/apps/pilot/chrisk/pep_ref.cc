@@ -31,7 +31,7 @@
  #include <protocols/moves/Mover.hh>
  #include <protocols/moves/MoverContainer.hh>
  #include <protocols/moves/OutputMovers.hh>
- #include <protocols/moves/RigidBodyMover.hh>
+ #include <protocols/rigid/RigidBodyMover.hh>
  // #include <protocols/moves/rigid_body_moves.hh>
  #include <protocols/moves/TrialMover.hh>
  #include <protocols/moves/PackRotamersMover.hh>

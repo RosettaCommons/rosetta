@@ -18,7 +18,7 @@
 #include <protocols/moves/BackrubSidechainMover.fwd.hh>
 
 // Project Headers
-#include <protocols/moves/ThermodynamicMover.hh>
+#include <protocols/canonical_sampling/ThermodynamicMover.hh>
 // AUTO-REMOVED #include <protocols/moves/BackrubMover.hh>
 // AUTO-REMOVED #include <protocols/moves/SidechainMover.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -41,7 +41,7 @@ namespace protocols {
 namespace moves {
 
 ///@details
-class BackrubSidechainMover : public protocols::moves::ThermodynamicMover {
+class BackrubSidechainMover : public protocols::canonical_sampling::ThermodynamicMover {
 
 public:
 
@@ -87,7 +87,7 @@ public:
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
-		protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 	virtual
@@ -100,14 +100,14 @@ public:
 	virtual
 	void
 	observe_after_metropolis(
-		protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 	virtual
 	void
 	finalize_simulation(
 		core::pose::Pose & pose,
-		protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 	utility::vector1<core::Size> const &

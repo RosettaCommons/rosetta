@@ -13,7 +13,7 @@
 #include <iostream>
 #include <iomanip>
 
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 #include <devel/init.hh>
 #include <core/io/pdb/pose_io.hh>
@@ -74,7 +74,7 @@ main( int argc, char * argv [] )
 	unbound_pose = bound_pose;
 	core::Real const unbound_dist = 40.;
 	Size const rb_jump = 1; // use the first jump as the one between partners
-	protocols::moves::RigidBodyTransMover trans_mover( unbound_pose, rb_jump );
+	protocols::rigid::RigidBodyTransMover trans_mover( unbound_pose, rb_jump );
 	trans_mover.trans_axis( trans_mover.trans_axis() );
 	trans_mover.step_size(unbound_dist);
 	trans_mover.apply( unbound_pose );

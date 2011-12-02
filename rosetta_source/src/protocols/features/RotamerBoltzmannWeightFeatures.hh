@@ -34,7 +34,7 @@
 #include <string>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/protein_interface_design/filters/RotamerBoltzmannWeight.fwd.hh>
+#include <protocols/simple_filters/RotamerBoltzmannWeight.fwd.hh>
 #include <utility/vector1.hh>
 
 
@@ -79,7 +79,7 @@ public:
 		utility::sql_database::sessionOP db_session);
 
 private:
-	protocols::protein_interface_design::filters::RotamerBoltzmannWeightFilterOP rotamer_boltzmann_weight_;
+	protocols::simple_filters::RotamerBoltzmannWeightFilterOP rotamer_boltzmann_weight_;
 
 };
 

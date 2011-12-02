@@ -28,7 +28,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/types.hh>
 
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/docking/DockFilters.hh>
 #include <protocols/docking/DockingEnsemble.hh>
 #include <protocols/scoring/Interface.hh>
@@ -186,7 +186,7 @@ void ConformerSwitchMover::switch_conformer(
 {
 	core::pose::Pose new_conf = ensemble_->get_conformer(conf_num);
 
-	moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
+	protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 	to_centroid.apply( new_conf );
 
 	(*(ensemble_->scorefxn_low()))(pose);

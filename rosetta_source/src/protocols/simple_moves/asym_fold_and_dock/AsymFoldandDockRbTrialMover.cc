@@ -12,7 +12,7 @@
 
 // Unit headers
 #include <protocols/simple_moves/asym_fold_and_dock/AsymFoldandDockRbTrialMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 // AUTO-REMOVED #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -131,8 +131,10 @@ AsymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 	movemap->set_jump( true );
 
 	//set up mover for docking
-	protocols::moves::RigidBodyPerturbMover rb_perturb = protocols::moves::RigidBodyPerturbMover( pose,
-																														*movemap, rot_mag_trial, trans_mag_trial, partner_downstream, false );
+	protocols::rigid::RigidBodyPerturbMover rb_perturb =
+		protocols::rigid::RigidBodyPerturbMover(
+			pose,	*movemap, rot_mag_trial, trans_mag_trial,
+			rigid::partner_downstream, false );
 
 	for ( Size i = 1; i <= rigid_body_cycles_; ++i ) {
 		rb_perturb.apply( pose );

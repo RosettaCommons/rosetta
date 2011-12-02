@@ -26,7 +26,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/loops/LoopRelaxMover.fwd.hh>
+#include <protocols/comparative_modeling/LoopRelaxMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MinMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
@@ -152,7 +152,7 @@ private:
 	moves::MinMoverOP minimizer_;
 
 	// loop mover for modeling loop closure // TODO: this is a wrapper, use the loop modeller directly
-	protocols::loops::LoopRelaxMoverOP loop_relax_mover_;
+	protocols::comparative_modeling::LoopRelaxMoverOP loop_relax_mover_;
 
         // set of fragments from a fragment library
 	core::fragment::ConstantLengthFragSetOP fragset3mer_;

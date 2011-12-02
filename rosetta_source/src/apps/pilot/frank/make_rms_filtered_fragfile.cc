@@ -23,7 +23,7 @@
 #include <core/fragment/FragmentIO.hh>
 
 #include <core/kinematics/FoldTree.hh>
-#include <protocols/rbsegment_moves/RMSVallData.hh>
+#include <protocols/frags/RMSVallData.hh>
 
 #include <core/chemical/ChemicalManager.hh>
 
@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
 	std::string input_seq = native_pose.sequence();
 
 	// load vall
-	protocols::rbsegment_Moves::RMSVallData rms_vall( option[ OptionKeys::loops::vall_file ] );
+	protocols::frags::RMSVallData rms_vall( option[ OptionKeys::loops::vall_file ] );
 	ConstantLengthFragSet frags3(3),frags9(9);
 
 	// for each 3 mer get a frame

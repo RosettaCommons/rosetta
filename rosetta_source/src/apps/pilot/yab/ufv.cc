@@ -391,7 +391,7 @@ void * graphics_main( void * ) {
 	using namespace basic::options::OptionKeys;
 	using core::Size;
 	using basic::options::option;
-	using protocols::evaluation::PoseMetricEvaluator;
+	using protocols::simple_filters::PoseMetricEvaluator;
 	using protocols::forge::build::Interval;
 	using protocols::forge::build::SegmentRebuild;
 	using protocols::forge::components::BDR;

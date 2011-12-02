@@ -23,8 +23,8 @@
 #include <core/pose/util.hh>
 #include <protocols/qsar/scoring_grid/GridManager.hh>
 // AUTO-REMOVED #include <protocols/qsar/qsarMap.hh>
-#include <protocols/moves/RigidBodyMover.hh>
-#include <protocols/geometry/RB_geometry.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/rigid/RB_geometry.hh>
 #include <numeric/numeric.functions.hh>
 #include <numeric/random/random.hh>
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
@@ -241,8 +241,8 @@ void Transform::transform_ligand(core::pose::Pose & pose)
 		return;
 	}
 
-	protocols::moves::RigidBodyMoverOP mover;
-	mover = new protocols::moves::RigidBodyPerturbMover(transform_info_.jump_id,transform_info_.angle,transform_info_.move_distance);
+	protocols::rigid::RigidBodyMoverOP mover;
+	mover = new protocols::rigid::RigidBodyPerturbMover(transform_info_.jump_id,transform_info_.angle,transform_info_.move_distance);
 	//core::Size chain_begin = pose.conformation().chain_begin(transform_info_.chain_id);
 
 	mover->apply(pose);

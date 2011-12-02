@@ -40,15 +40,14 @@
 #include <core/conformation/Residue.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <basic/options/util.hh>//option.hh>
-#include <protocols/loops/LoopRelaxMover.fwd.hh>
-#include <protocols/loops/LoopRelaxMover.hh>
+#include <protocols/comparative_modeling/LoopRelaxMover.fwd.hh>
+#include <protocols/comparative_modeling/LoopRelaxMover.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <numeric/random/random.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/util/disulfide_util.hh>
-#include <protocols/loops/LoopRelaxMover.fwd.hh>
 #include <devel/init.hh>
 #include <core/scoring/rms_util.hh>
 #include <protocols/loops/loops_main.hh>
@@ -95,7 +94,7 @@ private:
 	Real scoreNoConstraint(pose::Pose& workpose);
 	core::scoring::constraints::ConstraintSetOP createDihedralConstraint(pose::Pose& workpose);
 	void modelSSLoop(Size startCys, Size endCys, pose::Pose& workpose);
-	protocols::loops::LoopRelaxMover _loop_relax_mover;
+	protocols::comparative_modeling::LoopRelaxMover _loop_relax_mover;
 	core::scoring::ScoreFunctionOP _scorefxn;
 	pack::task::PackerTaskOP _packTask;
 	//prevents repacking of disulfides bonds

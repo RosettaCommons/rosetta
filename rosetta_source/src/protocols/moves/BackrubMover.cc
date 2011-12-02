@@ -16,9 +16,9 @@
 #include <protocols/moves/BackrubMoverCreator.hh>
 
 // Protocols Headers
-#include <protocols/moves/MetropolisHastingsMover.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/moves/ThermodynamicObserver.hh> // needed for Windows build
+// AUTO-REMOVED #include <protocols/canonical_sampling/ThermodynamicObserver.hh> // needed for Windows build
 #include <protocols/rosetta_scripts/util.hh>
 
 // Core Headers
@@ -109,7 +109,7 @@ BackrubMover::BackrubMover(
 	BackrubMover const & mover
 ) :
 	//utility::pointer::ReferenceCount(),
-	ThermodynamicMover(mover),
+	protocols::canonical_sampling::ThermodynamicMover(mover),
 	segments_(mover.segments_),
 	branchopt_(mover.branchopt_),
 	bond_angle_map_(mover.bond_angle_map_),
@@ -194,7 +194,7 @@ BackrubMover::parse_my_tag(
 void
 BackrubMover::initialize_simulation(
 	core::pose::Pose & pose,
-	protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 )
 {
 	if ( ! branchopt_.initialized() ) branchopt_.read_database();

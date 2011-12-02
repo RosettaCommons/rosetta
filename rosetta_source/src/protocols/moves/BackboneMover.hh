@@ -19,7 +19,7 @@
 #include <protocols/moves/BackboneMover.fwd.hh>
 
 // Package headers
-#include <protocols/moves/ThermodynamicMover.hh>
+#include <protocols/canonical_sampling/ThermodynamicMover.hh>
 
 #include <core/types.hh>
 
@@ -51,7 +51,7 @@ namespace moves {
 /// of bb moves (small, shear, wobble, etc.).
 /// @todo change this to some kind of 'protocol' so the MC is managed separately from
 /// conformational moves
-class BackboneMover : public ThermodynamicMover {
+class BackboneMover : public protocols::canonical_sampling::ThermodynamicMover {
 
 public:
 	typedef core::Real Real;

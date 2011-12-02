@@ -63,7 +63,7 @@
 //protocol headers
 // AUTO-REMOVED #include <protocols/moves/MinMover.hh>
 // AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/geometry/RB_geometry.hh>
+// AUTO-REMOVED #include <protocols/rigid/RB_geometry.hh>
 
 
 // Utility headers

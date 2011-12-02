@@ -18,7 +18,7 @@
 // Unit Headers
 #include <protocols/moves/SidechainMover.hh>
 #include <protocols/moves/SidechainMCMover.fwd.hh>
-#include <protocols/moves/MetropolisHastingsMover.fwd.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
 #include <core/pack/interaction_graph/SimpleInteractionGraph.fwd.hh>
 
 // Protocols Headers
@@ -137,7 +137,7 @@ public:
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
-		protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 	virtual
@@ -162,7 +162,7 @@ public:
 	}
 
 	virtual
-	protocols::moves::MetropolisHastingsMoverAP
+	protocols::canonical_sampling::MetropolisHastingsMoverAP
 	metropolis_hastings_mover()
 	{
 		return metropolis_hastings_mover_;
@@ -171,7 +171,7 @@ public:
 	virtual
 	void
 	set_metropolis_hastings_mover(
-		protocols::moves::MetropolisHastingsMoverAP metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMoverAP metropolis_hastings_mover
 	)
 	{
 		metropolis_hastings_mover_ = metropolis_hastings_mover;
@@ -204,7 +204,7 @@ private:
 	core::Real current_ntrial_;
 	core::Real score_pre_apply_;
 	core::Real score_post_apply_;
-	protocols::moves::MetropolisHastingsMoverAP metropolis_hastings_mover_;
+	protocols::canonical_sampling::MetropolisHastingsMoverAP metropolis_hastings_mover_;
 
 }; //SidechainMCMover
 

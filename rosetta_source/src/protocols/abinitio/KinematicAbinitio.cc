@@ -50,11 +50,8 @@
 #include <protocols/loops/SlidingWindowLoopClosure.hh>
 #include <protocols/loops/Exceptions.hh>
 
-// AUTO-REMOVED #include <protocols/evaluation/RmsdEvaluator.hh>
-// AUTO-REMOVED #include <protocols/evaluation/ScoreEvaluator.hh>
-#include <protocols/evaluation/JumpEvaluator.hh>
-// AUTO-REMOVED #include <protocols/evaluation/EvaluatedTrialMover.hh>
 #include <protocols/constraints_additional/ConstraintEvaluator.hh>
+#include <protocols/simple_filters/JumpEvaluator.hh>
 
 #include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/SkipViolFunc.hh>
@@ -299,7 +296,7 @@ KinematicAbinitio::dump_jump_log( core::pose::Pose& pose, std::string const& fil
 				<< RJ(10, pss.get_energy ( "score" ) ) << " ";
     out << RJ(5, kinematics().sampling_fold_tree().num_jump() ) << " ";
 		for ( Size i = 1; i<=kinematics().sampling_fold_tree().num_jump(); i++ )  {
-			out << RJ(10, evaluation::JumpEvaluator( native_pose, i ).apply( pose ) ) << " ";
+			out << RJ(10, simple_filters::JumpEvaluator( native_pose, i ).apply( pose ) ) << " ";
 		}
 		out << jumping::JumpSample( pose.fold_tree() ) << " " << std::endl;
   }

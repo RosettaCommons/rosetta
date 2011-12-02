@@ -31,7 +31,7 @@
  #include <protocols/moves/Mover.hh>
  #include <protocols/moves/MoverContainer.hh>
  #include <protocols/moves/OutputMovers.hh>
- #include <protocols/moves/RigidBodyMover.hh>
+ #include <protocols/rigid/RigidBodyMover.hh>
  // #include <protocols/moves/rigid_body_moves.hh>
  #include <protocols/moves/TrialMover.hh>
  #include <protocols/moves/PackRotamersMover.hh>
@@ -1060,7 +1060,7 @@ RunPepSpec()
 		//set foldtree in the pose//
 		pose.fold_tree( f );
 
-//		moves::RigidBodyPerturbMoverOP rb_mover = new RigidBodyPerturbMover( pep_jump, 5.0, 0.0 );
+//		rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover( pep_jump, 5.0, 0.0 );
 //		rb_mover->apply( pose );
 
 		//remove pep_anchor termini

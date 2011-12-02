@@ -18,7 +18,7 @@
 
 // protocols headers
 #include <protocols/jd2/JobDistributor.hh>
-#include <protocols/moves/MetropolisHastingsMover.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 
 // core headers
@@ -69,7 +69,7 @@ main( int argc, char * argv [] )
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	protocols::moves::MetropolisHastingsMoverOP metropolis_hastings_mover(new protocols::moves::MetropolisHastingsMover);
+	protocols::canonical_sampling::MetropolisHastingsMoverOP metropolis_hastings_mover(new protocols::canonical_sampling::MetropolisHastingsMover);
 
 	core::scoring::ScoreFunctionOP score_fxn(core::scoring::getScoreFunction());
 	protocols::moves::MonteCarloOP monte_carlo(new protocols::moves::MonteCarlo(*score_fxn, option[ mh::kt ]));

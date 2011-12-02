@@ -37,7 +37,7 @@
 #include <protocols/moves/MinMover.hh>
 #include <basic/options/option.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 #include <core/pose/Pose.hh>
 #include <utility/vector0.hh>
@@ -159,10 +159,10 @@ void PrepackMover::apply( pose::Pose & pose )
 	}
 
 	// separate any bound partners
-	protocols::moves::RigidBodyTransMoverOP translate;
+	protocols::rigid::RigidBodyTransMoverOP translate;
 	if( (jump_num_ > 0) && (pose.conformation().num_chains() > 1) ) {
 		TR<<"Translating along jump #"<<jump_num_<<std::endl;
-		translate = new protocols::moves::RigidBodyTransMover( pose, jump_num_ ) ;
+		translate = new protocols::rigid::RigidBodyTransMover( pose, jump_num_ ) ;
 		translate->step_size( 1000.0 );
 		translate->apply( pose );
 	}

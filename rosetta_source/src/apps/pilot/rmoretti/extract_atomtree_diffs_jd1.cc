@@ -44,7 +44,7 @@
 
 // AUTO-REMOVED #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //for addding constraints if demanded by user
-// AUTO-REMOVED #include <protocols/geometry/RB_geometry.hh>
+// AUTO-REMOVED #include <protocols/rigid/RB_geometry.hh>
 #include <protocols/jobdist/Jobs.hh>
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
@@ -53,7 +53,7 @@
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 // AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/RigidBodyMover.hh>
+// AUTO-REMOVED #include <protocols/rigid/RigidBodyMover.hh>
 // AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 
 

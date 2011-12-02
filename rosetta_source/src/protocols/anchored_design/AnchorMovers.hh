@@ -18,7 +18,7 @@
 #include <protocols/anchored_design/AnchorMovers.fwd.hh>
 #include <protocols/anchored_design/AnchorMoversData.fwd.hh>
 // AUTO-REMOVED #include <protocols/anchored_design/Anchor.fwd.hh>
-#include <protocols/moves/InterfaceAnalyzerMover.fwd.hh>
+#include <protocols/analysis/InterfaceAnalyzerMover.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -133,7 +133,7 @@ private:
 	///@details used for RMSD comparisons with RMSD_only_this mode
 	core::pose::PoseCOP RMSD_only_this_pose_;
 
-	protocols::moves::InterfaceAnalyzerMoverOP IAM_;
+	protocols::analysis::InterfaceAnalyzerMoverOP IAM_;
 
 	//option system replacement
 	//benchmarking mode options

@@ -34,7 +34,7 @@
 #include <protocols/moves/MoverContainer.hh>
 // AUTO-REMOVED #include <protocols/moves/OutputMovers.hh>
 // AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
-// AUTO-REMOVED #include <protocols/moves/PackStatMover.hh>
+// AUTO-REMOVED #include <protocols/analysis/PackStatMover.hh>
 // AUTO-REMOVED #include <protocols/moves/rigid_body_moves.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>

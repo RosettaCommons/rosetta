@@ -16,7 +16,7 @@
 #include <protocols/qsar/scoring_grid/GridManager.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/util.hh>
-#include <protocols/geometry/RB_geometry.hh>
+#include <protocols/rigid/RB_geometry.hh>
 #include <basic/Tracer.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <utility/tag/Tag.hh>

@@ -31,7 +31,7 @@
 #include <core/kinematics/Edge.hh>
 #include <core/kinematics/MoveMap.hh>
 
-#include <protocols/moves/RotateJumpAxisMover.hh>
+#include <protocols/rigid/RotateJumpAxisMover.hh>
 #include <protocols/moves/SidechainMover.hh>
 #include <protocols/moves/MoverContainer.hh> //Random, Sequence Mover
 #include <protocols/moves/TaskAwareMinMover.hh>
@@ -132,7 +132,7 @@ void MetalInterfaceDesignMover::apply( core::pose::Pose & pose ){
 
 	//////////////////////make RotateJumpAxisMover///////////////////////////
 	//passing no angle settings means that it will make random rotations
-	protocols::moves::RotateJumpAxisMoverOP RJAmover(new protocols::moves::RotateJumpAxisMover(metal_to_mobile_.label()));
+	protocols::rigid::RotateJumpAxisMoverOP RJAmover(new protocols::rigid::RotateJumpAxisMover(metal_to_mobile_.label()));
 
 	//////////////////////make SidechainMover and its task///////////////////////
 	//hand-make a PackerTask for SidechainMover.  A task that is "design nowhere, pack at one position" won't work if

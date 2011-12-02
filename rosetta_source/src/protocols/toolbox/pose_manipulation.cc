@@ -40,7 +40,7 @@
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/BackboneMover.hh>
 #include <protocols/moves/ReturnSidechainMover.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh> //typeset swapping
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh> //typeset swapping
 
 #include <protocols/moves/MonteCarlo.hh>
 
@@ -362,7 +362,7 @@ insert_pose_into_pose(
 	}
 
 	//centroidize the pose before we do stuff to it - sidechains are expensive and unnecessary
-	protocols::moves::SwitchResidueTypeSetMover typeset_swap(core::chemical::CENTROID);
+	protocols::simple_moves::SwitchResidueTypeSetMover typeset_swap(core::chemical::CENTROID);
 	protocols::moves::ReturnSidechainMover return_sidechains( combined );
 	typeset_swap.apply( combined );
 

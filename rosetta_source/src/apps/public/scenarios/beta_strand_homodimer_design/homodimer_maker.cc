@@ -61,7 +61,7 @@
 // AUTO-REMOVED #include <core/scoring/etable/Etable.hh>
 
 //protocols
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/RollMover.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/StructureRestrictor.hh>
@@ -384,7 +384,7 @@ void HDmakerMover::apply (pose::Pose & pose ) {
 			Real anti_dist (6.0); //distance to move 2 CA atoms apart (largest for antiparallel seen)
 			Real parl_dist (5.5); //similar number for parallel sheetsm
 
-			moves::RigidBodyTransMoverOP push_apart_mover(new moves::RigidBodyTransMover);
+			rigid::RigidBodyTransMoverOP push_apart_mover(new rigid::RigidBodyTransMover);
 			//figure out which way to push
 			//check if the center residue is in bb:bb hbonds (lame way but will do for now)
 			TR << "C-O vector on center res is" << CO_plane_vector << ",  ";
@@ -428,7 +428,7 @@ void HDmakerMover::apply (pose::Pose & pose ) {
 			TR<<"Number of RB steps to search: "<< numsteps << std::endl;
 
 			//now set up for searching along strand
-			moves::RigidBodyTransMoverOP sheet_trans_mover(new moves::RigidBodyTransMover);
+			rigid::RigidBodyTransMoverOP sheet_trans_mover(new rigid::RigidBodyTransMover);
 			//quick bump to line up parallel sheet
 			sheet_trans_mover->trans_axis(parl_vector * (-1));
 			sheet_trans_mover->step_size(3.6); //aprox only

@@ -62,7 +62,7 @@
 
 // AUTO-REMOVED #include <core/scoring/sasa.hh>
 #include <core/scoring/rms_util.hh>
-#include <protocols/evaluation/RmsdEvaluator.hh>
+#include <protocols/simple_filters/RmsdEvaluator.hh>
 #include <protocols/evaluation/util.hh>
 #include <core/scoring/Energies.hh>
 //#include <core/scoring/ScoringManager.hh>
@@ -123,7 +123,7 @@ using namespace core;
 using namespace pose;
 using namespace conformation;
 
-void invert_exclude_residues( Size nres, utility::vector1<int> const& exclude_list, protocols::evaluation::ResidueSelection& residue_selection ) {
+void invert_exclude_residues( Size nres, utility::vector1<int> const& exclude_list, protocols::simple_filters::ResidueSelection& residue_selection ) {
 
 	residue_selection.clear();
 
@@ -279,7 +279,7 @@ main( int argc, char* argv [] )
 			}
 
 			if ( option[ in::file::native ].user() ) {
-				protocols::evaluation::ResidueSelection residues;
+				protocols::simple_filters::ResidueSelection residues;
 				invert_exclude_residues( native_pose.total_residue(), vec_exclude, residues );
 				core::Real rmsd = core::scoring::CA_rmsd( pose, native_pose, residues );
 

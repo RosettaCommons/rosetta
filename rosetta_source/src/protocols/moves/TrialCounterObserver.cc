@@ -15,7 +15,7 @@
 // Unit Headers
 #include <protocols/moves/TrialCounterObserver.hh>
 
-#include <protocols/moves/MetropolisHastingsMover.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 // Package Headers
 
 // Project Headers
@@ -37,7 +37,7 @@ namespace moves {
 
 ///@brief
 TrialCounterObserver::TrialCounterObserver(
-) : ThermodynamicObserver()
+) : protocols::canonical_sampling::ThermodynamicObserver()
 {
 	Mover::type( "TrialCounterObserver" );
 }
@@ -51,7 +51,7 @@ std::string TrialCounterObserver::get_name() const {
 void
 TrialCounterObserver::initialize_simulation(
 	core::pose::Pose & /*pose*/,
-	protocols::moves::MetropolisHastingsMover const& mhm /*metropolis_hastings_mover*/
+	protocols::canonical_sampling::MetropolisHastingsMover const& mhm /*metropolis_hastings_mover*/
 )
 {
 	counters_.set_temperature_observer( mhm.tempering() );
@@ -61,7 +61,7 @@ TrialCounterObserver::initialize_simulation(
 	/// @brief callback executed after the Metropolis criterion is evaluated
 void
 TrialCounterObserver::observe_after_metropolis(
-		protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 ) {
 	std::string const& move_type( metropolis_hastings_mover.last_move().type() );
 	counters_.count_trial( move_type );
@@ -73,7 +73,7 @@ TrialCounterObserver::observe_after_metropolis(
 void
 TrialCounterObserver::finalize_simulation(
 	core::pose::Pose & /*pose*/,
-	protocols::moves::MetropolisHastingsMover const &mhm /*metropolis_hastings_mover*/
+	protocols::canonical_sampling::MetropolisHastingsMover const &mhm /*metropolis_hastings_mover*/
 )
 {
 	counters_.show( tr.Info );

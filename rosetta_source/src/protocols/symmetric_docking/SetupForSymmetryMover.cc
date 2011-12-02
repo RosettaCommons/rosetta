@@ -109,12 +109,12 @@ SetupForSymmetryMover::apply( core::pose::Pose & pose )
 	symdock->apply( pose );
 }
 
-void SetupForSymmetryMover::parse_my_tag( 
+void SetupForSymmetryMover::parse_my_tag(
 			utility::tag::TagPtr const tag,
 			moves::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,
 			moves::Movers_map const & /*movers*/,
-			core::pose::Pose const & /*pose*/ ) { 
+			core::pose::Pose const & /*pose*/ ) {
 	symmdef_file_ = tag->getOption<std::string>("definition", "");
 }
 
@@ -141,7 +141,7 @@ ExtractAsymmetricUnitMover::apply( core::pose::Pose & pose )
 	pose = pose_asu;
 }
 
-void ExtractAsymmetricUnitMover::parse_my_tag( 
+void ExtractAsymmetricUnitMover::parse_my_tag(
 			utility::tag::TagPtr const tag,
 			moves::DataMap & /*data*/,
 			filters::Filters_map const & /*filters*/,

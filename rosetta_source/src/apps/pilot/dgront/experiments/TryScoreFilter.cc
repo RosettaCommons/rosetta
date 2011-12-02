@@ -12,7 +12,7 @@
 
 #include <protocols/abinitio/AbrelaxApplication.hh>
 #include <protocols/abinitio/ClassicAbinitio.hh>
-#include <protocols/filters/PDDFScoreFilter.hh>
+#include <protocols/simple_filters/PDDFScoreFilter.hh>
 
 #include <devel/init.hh>
 
@@ -88,7 +88,7 @@ public:
 	using namespace basic::options::OptionKeys;
 	using namespace std;
 
-	the_filter_ = new protocols::filters::PDDFScoreFilter();
+	the_filter_ = new protocols::simple_filters::PDDFScoreFilter();
 
 //------------- set up sampling  -----------------
 	movemap_ = new core::kinematics::MoveMap();
@@ -135,7 +135,7 @@ public:
 
 private:
     protocols::abinitio::ClassicAbinitioOP abinitio_;
-    protocols::filters::PDDFScoreFilterOP the_filter_;
+    protocols::simple_filters::PDDFScoreFilterOP the_filter_;
     std::string sequence_;
     core::pose::Pose cen_pose_;
     core::kinematics::MoveMapOP  movemap_;

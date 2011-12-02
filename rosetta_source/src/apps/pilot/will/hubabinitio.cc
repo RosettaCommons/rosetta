@@ -81,7 +81,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>

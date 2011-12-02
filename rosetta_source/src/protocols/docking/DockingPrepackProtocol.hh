@@ -30,7 +30,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <protocols/moves/MoverContainer.fwd.hh>
-#include <protocols/moves/RigidBodyMover.fwd.hh>
+#include <protocols/rigid/RigidBodyMover.fwd.hh>
 #include <protocols/moves/PackRotamersMover.fwd.hh>
 #include <protocols/moves/RotamerTrialsMinMover.fwd.hh>
 
@@ -65,8 +65,8 @@ public:
 
 private:
 	// add @brief for members
-	utility::vector1< RigidBodyTransMoverOP > trans_away_vec_;
-	utility::vector1< RigidBodyTransMoverOP > trans_back_vec_;
+	utility::vector1< rigid::RigidBodyTransMoverOP > trans_away_vec_;
+	utility::vector1< rigid::RigidBodyTransMoverOP > trans_back_vec_;
 
 	core::Real trans_magnitude_;
 

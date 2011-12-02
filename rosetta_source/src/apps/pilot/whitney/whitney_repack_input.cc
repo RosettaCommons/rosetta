@@ -16,7 +16,7 @@
 #include <iostream>
 #include <iomanip>
 
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 #include <core/init.hh>
 #include <core/io/pdb/pose_io.hh>

@@ -333,11 +333,11 @@ void checked_steal_fragment( Frame& frame, pose::Pose const& pose ) {
 // 			core::import_pose::pose_from_pdb( *rmsd_pose, rmsd_target[ ct ] );
 // 			std::string tag("");
 // 			if ( rmsd_col_name.size() >= ct ) tag = rmsd_col_name[ ct ];
-// 			evaluator.add_evaluation( new protocols::evaluation::SelectRmsdEvaluator( rmsd_pose, tag ) );
+// 			evaluator.add_evaluation( new protocols::simple_filters::SelectRmsdEvaluator( rmsd_pose, tag ) );
 // 		}
 // 	}
 // 	if ( option[ OptionKeys::evaluation::chemical_shifts ].user() ) {
-// 		evaluator.add_evaluation( new protocols::evaluation::ChemicalShiftEvaluator( "cs_score", option[  OptionKeys::evaluation::chemical_shifts ]() ) );
+// 		evaluator.add_evaluation( new protocols::simple_filters::ChemicalShiftEvaluator( "cs_score", option[  OptionKeys::evaluation::chemical_shifts ]() ) );
 // 	}
 
 

@@ -37,7 +37,7 @@
 // AUTO-REMOVED #include <core/scoring/constraints/BoundConstraint.hh> //need function in this file
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh> //function for reading cstfiles
 #include <protocols/enzdes/EnzdesMovers.hh> // for testing rot_center
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 //minimization stuff
 // AUTO-REMOVED #include <core/kinematics/MoveMap.hh>

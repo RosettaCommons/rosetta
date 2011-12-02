@@ -63,13 +63,13 @@
 
 #include <protocols/moves/MonteCarlo.hh>
 // AUTO-REMOVED #include <protocols/simple_moves/ScoreMover.hh>
-// AUTO-REMOVED #include <protocols/moves/RigidBodyMover.hh>
+// AUTO-REMOVED #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/RepackSidechainsMover.hh>
 // AUTO-REMOVED #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
 #include <protocols/moves/ReturnSidechainMover.hh>
 // AUTO-REMOVED #include <protocols/moves/RotamerTrialsMinMover.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 //#include <protocols/moves/MoverContainer.hh>
 
 #include <protocols/moves/DataMap.hh>
@@ -262,11 +262,11 @@ void DockingProtocol::setup_objects()
 	docking_highres_mover_ = NULL;
 
 	// Residue movers
-	to_centroid_ = new protocols::moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
+	to_centroid_ = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
 
 	//generate to_all_atom mover: 	to_all_atom_ =
 	protocols::moves::SequenceMoverOP to_all_atom_and_repack = new protocols::moves::SequenceMover;
-	to_all_atom_and_repack->add_mover( new protocols::moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) );
+	to_all_atom_and_repack->add_mover( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::FA_STANDARD ) );
 	to_all_atom_and_repack->add_mover( new protocols::moves::RepackSidechainsMover( docking_scorefxn_pack_ ) );
 	to_all_atom_=to_all_atom_and_repack;
 
@@ -633,7 +633,7 @@ void DockingProtocol::initForEqualOperatorAndCopyConstructor(DockingProtocol & l
 	if(rhs.docking_highres_mover_){
 		lhs.docking_highres_mover_ = static_cast< DockingHighRes * >( rhs.docking_highres_mover_->clone()() );
 	}
-	lhs.to_centroid_ = static_cast< protocols::moves::SwitchResidueTypeSetMover * >( rhs.to_centroid_->clone()() );
+	lhs.to_centroid_ = static_cast< protocols::simple_moves::SwitchResidueTypeSetMover * >( rhs.to_centroid_->clone()() );
 	lhs.to_all_atom_ = rhs.to_all_atom_->clone();
 	if(rhs.ensemble1_){
 		lhs.ensemble1_ = new protocols::docking::DockingEnsemble( *(rhs.ensemble1_) );
@@ -993,7 +993,7 @@ DockingProtocol::apply( pose::Pose & pose )
 
 
 //getters for const access to movers and data of docking protocol
-protocols::moves::SwitchResidueTypeSetMoverCOP DockingProtocol::to_centroid() const {
+protocols::simple_moves::SwitchResidueTypeSetMoverCOP DockingProtocol::to_centroid() const {
 	return to_centroid_;
 }
 protocols::moves::MoverCOP DockingProtocol::to_all_atom() const{

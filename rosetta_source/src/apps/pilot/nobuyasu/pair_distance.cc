@@ -20,7 +20,7 @@
 #include <protocols/fldsgn/topology/BB_Pos.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <basic/MetricValue.hh>
-#include <protocols/toolbox/pose_metric_calculators/NcontactsCalculator.hh>
+#include <protocols/fldsgn/NcontactsCalculator.hh>
 
 // Project headers
 #include <core/chemical/AA.hh>
@@ -270,7 +270,7 @@ public: // apply
 		}
 
 		core::pose::metrics::CalculatorFactory::Instance().remove_calculator( "ncontact" );
-		protocols::toolbox::pose_metric_calculators::NcontactsCalculator ncon;
+		protocols::fldsgn::NcontactsCalculator ncon;
 		ncon.contact_distance( cutoff );
 		ncon.ignore_loops( true );
 		ncon.ignore_same_sselement( true );

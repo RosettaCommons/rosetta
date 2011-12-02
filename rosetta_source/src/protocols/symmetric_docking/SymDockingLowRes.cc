@@ -29,7 +29,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/OutputMovers.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 
@@ -153,7 +153,7 @@ void SymDockingLowRes::set_default_protocol( pose::Pose & pose ){
 
   std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
 
-	rb_mover_ = new RigidBodyDofSeqPerturbMover( dofs , rot_magnitude_, trans_magnitude_ );
+	rb_mover_ = new rigid::RigidBodyDofSeqPerturbMover( dofs , rot_magnitude_, trans_magnitude_ );
 
 	docking_lowres_protocol_ = new SequenceMover;
 	docking_lowres_protocol_->add_mover( rb_mover_ );

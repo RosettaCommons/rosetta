@@ -88,7 +88,7 @@ PredesignPerturbMoverCreator::mover_name()
 //-------------PredesignPerturbMover-----------------//
 
 PredesignPerturbMover::PredesignPerturbMover():
-	protocols::moves::RigidBodyPerturbMover()
+	protocols::rigid::RigidBodyPerturbMover()
 {
 	trans_magnitude(basic::options::option[basic::options::OptionKeys::enzdes::trans_magnitude]);
 	rot_magnitude(basic::options::option[basic::options::OptionKeys::enzdes::rot_magnitude]);
@@ -449,7 +449,7 @@ void
 RepackLigandSiteWithoutLigandMover::separate_protein_and_ligand(
 	core::pose::Pose & pose ) const
 {
-	protocols::moves::RigidBodyTransMover trans_mover( pose, pose.fold_tree().get_jump_that_builds_residue( lig_seqpos_ ) );
+	protocols::rigid::RigidBodyTransMover trans_mover( pose, pose.fold_tree().get_jump_that_builds_residue( lig_seqpos_ ) );
 	trans_mover.step_size( 666 );
 	trans_mover.apply( pose );
 }

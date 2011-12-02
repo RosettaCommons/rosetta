@@ -13,7 +13,7 @@
 // Unit headers
 #include <protocols/symmetric_docking/SymFoldandDockMoveRbJumpMover.hh>
 #include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
-// AUTO-REMOVED #include <protocols/moves/RigidBodyMover.hh>
+// AUTO-REMOVED #include <protocols/rigid/RigidBodyMover.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunctionFactory.hh>
 // AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>

@@ -29,7 +29,7 @@
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 // AUTO-REMOVED #include <core/id/SequenceMapping.hh>
-// AUTO-REMOVED #include <protocols/moves/RigidBodyMover.hh>
+// AUTO-REMOVED #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/Mover.fwd.hh>
 // AUTO-REMOVED #include <protocols/abinitio/AbrelaxApplication.hh>
 #include <protocols/loops/loops_main.hh>

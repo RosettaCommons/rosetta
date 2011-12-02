@@ -16,7 +16,7 @@
 
 // Rosetta Headers
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/symmetry/SymmetricScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -119,7 +119,7 @@ void SymDockingInitialPerturbation::apply( core::pose::Pose & pose )
 	TR << "Reading options..." << std::endl;
 	if( option[ OptionKeys::symmetry::initialize_rigid_body_dofs ]() ) {
 		TR << "initialize_rigid_body_dofs: true" << std::endl;
-		RigidBodyDofSeqRandomizeMover mover( dofs );
+		rigid::RigidBodyDofSeqRandomizeMover mover( dofs );
 		mover.apply( pose );
 	}
 
@@ -129,7 +129,7 @@ void SymDockingInitialPerturbation::apply( core::pose::Pose & pose )
 		/// rotation magnitude and the second value is the translational value
 		utility::vector1< Real > pert_mags = option[ OptionKeys::symmetry::perturb_rigid_body_dofs ]();
 		TR << "option[ symmetry::perturb_rigid_body_dofs ]() rot=" << pert_mags[rot] << "  trans=" << pert_mags[trans] << std::endl;
-		RigidBodyDofSeqPerturbMover mover( dofs, pert_mags[rot], pert_mags[trans] );
+		rigid::RigidBodyDofSeqPerturbMover mover( dofs, pert_mags[rot], pert_mags[trans] );
 		mover.apply( pose );
 	}
 	// DO NOT do this for e.g. ligand docking
@@ -192,7 +192,7 @@ void SymDockingSlideIntoContact::apply( core::pose::Pose & pose )
 
 	Size num_slide_moves(1);
 	std::map< Size, SymDof > dofs ( symm_conf.Symmetry_Info()->get_dofs() );
-	RigidBodyDofRandomTransMover mover( dofs );
+	rigid::RigidBodyDofRandomTransMover mover( dofs );
 	( *scorefxn_ )( pose );
 	TR.Debug << "score " << pose.energies().total_energies()[ scoring::interchain_vdw ]  << std::endl;
 	TR.Debug << "sliding into contact" << std::endl;
@@ -261,7 +261,7 @@ void FaSymDockingSlideTogether::apply( core::pose::Pose & pose )
 	(*scorefxn_)( pose );
 	core::Real const initial_fa_rep = pose.energies().total_energies()[ fa_rep ];
 	bool are_touching = false;
-	moves::RigidBodyDofSeqTransMover trans_mover( dofs );
+	rigid::RigidBodyDofSeqTransMover trans_mover( dofs );
 
 	//int i=1;
 	// Take 2A steps till clash, then back apart one step.  Now you're within 2A of touching.
@@ -381,7 +381,7 @@ void SymmetrySlider::setup( core::pose::Pose & pose )
 			std::map< Size, core::conformation::symmetry::SymDof >::iterator dof_iterator;
 
 			dof_iterator = dofs.find( ( *i_it).first );
-			RigidBodyDofTransMover dofmover( (*dof_iterator).second, (*i_it).first, step_size() );
+			rigid::RigidBodyDofTransMover dofmover( (*dof_iterator).second, (*i_it).first, step_size() );
 			InvertJump_[ (*i_it).first ]=!dofmover_compresses( pose, dofmover );
 		}
   }
@@ -431,7 +431,7 @@ void SymmetrySlider::slide_away( core::pose::Pose & pose )
 			std::map< Size, core::conformation::symmetry::SymDof > dofs = symm_conf.Symmetry_Info()->get_dofs();
 			std::map< Size, core::conformation::symmetry::SymDof >::iterator dof_iterator;
 			dof_iterator = dofs.find( ( *it).first );
-			RigidBodyDofTransMover dofmover( (*dof_iterator).second, (*it).first, step_size() );
+			rigid::RigidBodyDofTransMover dofmover( (*dof_iterator).second, (*it).first, step_size() );
 			if (!InvertJump_[ (*it).first ]) {
 				dofmover.trans_axis().negate();
 			}
@@ -592,7 +592,7 @@ void SymmetrySlider::slide(core::pose::Pose & pose)
 				assert( dof_iterator != dofs.end() );
 
 				// slide along the current jump
-				RigidBodyDofTransMover dofmover( dof, SymmetrySlider::get_current_jump(), SymmetrySlider::step_size() );
+				rigid::RigidBodyDofTransMover dofmover( dof, SymmetrySlider::get_current_jump(), SymmetrySlider::step_size() );
 				//fpd pick slide direction
 				if ( InvertJump_[ (*dof_iterator).first ]) {
 					dofmover.trans_axis().negate();
@@ -602,7 +602,7 @@ void SymmetrySlider::slide(core::pose::Pose & pose)
 
 		dof_iterator = dofs.find(SymmetrySlider::get_current_jump() );
 		core::conformation::symmetry::SymDof dof ( (*dof_iterator).second );
-		RigidBodyDofTransMover dofmover( dof, SymmetrySlider::get_current_jump(), SymmetrySlider::step_size() );
+		rigid::RigidBodyDofTransMover dofmover( dof, SymmetrySlider::get_current_jump(), SymmetrySlider::step_size() );
 		if (!reset_slide_) {
 			for ( core::Real step=step_size()/8; step<=step_size(); step *=2 ) {
 				dofmover.step_size(step);
@@ -672,7 +672,7 @@ core::Real SymmetrySlider::rg( core::pose::Pose const & pose )
 	return std::sqrt( rg/cas.size() );
 }
 
-bool SymmetrySlider::dofmover_compresses( core::pose::Pose & pose, protocols::moves::RigidBodyDofTransMover & dofmover )
+bool SymmetrySlider::dofmover_compresses( core::pose::Pose & pose, protocols::rigid::RigidBodyDofTransMover & dofmover )
 {
 	core::Real radius_before = rg(pose);
 	dofmover.apply(pose);

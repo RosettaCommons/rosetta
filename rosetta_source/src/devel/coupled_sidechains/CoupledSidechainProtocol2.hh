@@ -21,9 +21,9 @@
 // Unit Headers
 #include <protocols/moves/SidechainMover.hh>
 
-#include <protocols/moves/SimulatedTempering.hh>
-#include <protocols/moves/MultiTemperatureTrialCounter.hh>
-#include <protocols/moves/MetropolisHastingsMover.hh>
+#include <protocols/canonical_sampling/SimulatedTempering.hh>
+#include <protocols/canonical_sampling/MultiTemperatureTrialCounter.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 
 #include <core/pack/interaction_graph/SimpleInteractionGraph.hh>
 
@@ -106,7 +106,7 @@ private:
 	core::Real pert_magnitude_;
 	core::Size ntrials_;
 	core::Size stride_;
-	protocols::moves::MetropolisHastingsMoverOP sampler_;
+	protocols::canonical_sampling::MetropolisHastingsMoverOP sampler_;
 	static bool options_registered_;
 }; //CoupledSidechainProtocol
 

@@ -438,7 +438,7 @@ initialize_rigid_body_sampler( utility::vector1< Size > const & moving_res1,
 
 	// Hey is it necessary to input centroid?
 	// Also, are axes necessary? The code basically assumes these are the origin and the identity matrix.
-	RigidBodySamplerOP rigid_body_sampler = new RigidBodySampler( moving_res1, moving_res2 );
+	rigid::RigidBodySamplerOP rigid_body_sampler = new rigid::RigidSampler( moving_res1, moving_res2 );
 
 	//////////////////////////////////////////////////////////////
 	// Initialize from command line.
@@ -681,7 +681,7 @@ define_states_test(){
 	utility::vector1< Size > moving_res1, moving_res2;
 	initialize_base_pair( pose, moving_res1, moving_res2 );
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
-	RigidBodySamplerOP rigid_body_sampler = initialize_rigid_body_sampler( moving_res1, moving_res2 );
+	rigid::RigidBodySamplerOP rigid_body_sampler = initialize_rigid_body_sampler( moving_res1, moving_res2 );
 
 	///////////////////////////////////////////////
 	// Rigid body sample. Keep track of total number of states so that we can extract a Kd
@@ -885,7 +885,7 @@ base_doublet_rmsd_test(){
 	utility::vector1< Size > moving_res1, moving_res2;
 	initialize_base_pair( pose, moving_res1, moving_res2 );
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
-	RigidBodySamplerOP rigid_body_sampler = initialize_rigid_body_sampler( moving_res1, moving_res2 );
+	rigid::RigidBodySamplerOP rigid_body_sampler = initialize_rigid_body_sampler( moving_res1, moving_res2 );
 
 	Pose pose1 = pose;
 	Pose pose2 = pose;
@@ -1046,7 +1046,7 @@ cluster_rigid_body_settings_test(){
 	// output CLUSTERED list, and silent files.
 	// output silent file that has representative poses.
 	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 400, 400 );
-	RigidBodySamplerOP rigid_body_sampler = initialize_rigid_body_sampler( moving_res1, moving_res2 );
+	rigid::RigidBodySamplerOP rigid_body_sampler = initialize_rigid_body_sampler( moving_res1, moving_res2 );
 	SilentFileData sfd;
 	ozstream out( outfile );
 	Pose pose_start = pose;
@@ -1115,7 +1115,7 @@ finely_sample_base_pair_test(){
 	Pose pose_start = pose;
 
 	// set up rigid body sampler
-	RigidBodySamplerOP rigid_body_sampler = initialize_rigid_body_sampler( moving_res1, moving_res2 );
+	rigid::RigidBodySamplerOP rigid_body_sampler = initialize_rigid_body_sampler( moving_res1, moving_res2 );
 
 	Real const box_size      = option[ box_radius ]();
 	Real const xyz_increment = option[ xyz_sample ]();
@@ -1358,7 +1358,7 @@ setup_two_base_pair_pose( pose::Pose & pose ){
 	std::cout << "Reading rigid body settings from " << infile_reference << std::endl;
 	read_rigid_body_settings( infile_reference, reference_rigid_body_settings );
 
-	RigidBodySamplerOP rigid_body_sampler = initialize_rigid_body_sampler( strand1_res, strand2_res );
+	rigid::RigidBodySamplerOP rigid_body_sampler = initialize_rigid_body_sampler( strand1_res, strand2_res );
 	utility::vector1< Real > const & rbs = reference_rigid_body_settings[ option[ fixed_pair_state_number ]() ];
 	rigid_body_sampler->apply_rigid_body_settings( pose, pose, rbs[1],rbs[2],rbs[3],rbs[4],rbs[5],rbs[6] );
 

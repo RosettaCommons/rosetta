@@ -33,7 +33,7 @@
  #include <protocols/moves/Mover.hh>
  #include <protocols/moves/MoverContainer.hh>
  #include <protocols/moves/OutputMovers.hh>
- #include <protocols/moves/RigidBodyMover.hh>
+ #include <protocols/rigid/RigidBodyMover.hh>
  // #include <protocols/moves/rigid_body_moves.hh>
  #include <protocols/moves/TrialMover.hh>
  #include <protocols/moves/PackRotamersMover.hh>
@@ -947,7 +947,7 @@ refine_fa_pep_bb(
 	mm->set_bb( is_pep );
 	mm->set_chi( pep_anchor, true );
 
-	moves::RigidBodyPerturbMoverOP rb_mover = new RigidBodyPerturbMover( pep_jump, 0.1, 0.0 );
+	rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover( pep_jump, 0.1, 0.0 );
 	rb_mover->apply( pose );
 
 	SmallMoverOP rep_small_mover( new SmallMover( mm, 2.0, 10 ) );

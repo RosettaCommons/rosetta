@@ -85,7 +85,7 @@
 #include <protocols/moves/TaskAwareMinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/BackboneMover.hh>
 // AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicMover.hh>
 
@@ -95,7 +95,7 @@
 
 // AUTO-REMOVED #include <protocols/loops/loops_main.hh>
 
-#include <protocols/geometry/RB_geometry.hh>
+#include <protocols/rigid/RB_geometry.hh>
 // AUTO-REMOVED #include <protocols/docking/DockingProtocol.hh>
 
 // AUTO-REMOVED #include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>
@@ -306,7 +306,7 @@ DougsDockDesignMinimizeMagicMover::apply(
 
 	// create a rigid body mover to move the peptide around in the pocket
 	TR << "Setting up docking movers..." << std::endl;
-	moves::RigidBodyPerturbMoverOP pert_dock_rbpm( new moves::RigidBodyPerturbMover(1, option[ dddm::pert_dock_rot_mag].value(),  option[ dddm::pert_dock_trans_mag].value()) );
+	rigid::RigidBodyPerturbMoverOP pert_dock_rbpm( new rigid::RigidBodyPerturbMover(1, option[ dddm::pert_dock_rot_mag].value(),  option[ dddm::pert_dock_trans_mag].value()) );
 	//pert_dock_rbpm->rot_magnitude( option[ dddm::pert_dock_rot_mag].value() );
 	//pert_dock_rbpm->trans_magnitude( option[ dddm::pert_dock_trans_mag].value() );
 
@@ -627,7 +627,7 @@ DougsDockDesignMinimizeMagicMover::apply(
 		hbond_ener_sum_complex = complex_emap[ hbond_sr_bb ] + complex_emap[ hbond_lr_bb ] + complex_emap[ hbond_bb_sc ] + complex_emap[ hbond_sc ];
 
 		// seperate designed chain from other chains
-		protocols::moves::RigidBodyTransMoverOP translate( new protocols::moves::RigidBodyTransMover( pose, 1 ) ); // HARDCODED JUMP NUMBER
+		protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( pose, 1 ) ); // HARDCODED JUMP NUMBER
 		translate->step_size( 1000.0 );
 		translate->apply( stats_pose );
 

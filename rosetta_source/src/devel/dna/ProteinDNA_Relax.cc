@@ -46,7 +46,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/TrialMover.hh>
-#include <protocols/moves/rigid_body_moves.hh>
+#include <protocols/rigid/rigid_body_moves.hh>
 #include <protocols/moves/RepeatMover.hh>
 
 // ObjexxFCL Headers
@@ -102,7 +102,7 @@ setup_MCM_trial(
 void
 RB_Mover::apply( core::pose::Pose & pose )
 {
-	moved_jump_ = protocols::moves::gaussian_jump_move( pose, *mm_, trans_mag_, rot_mag_ );
+	moved_jump_ = protocols::rigid::gaussian_jump_move( pose, *mm_, trans_mag_, rot_mag_ );
 }
 
 std::string

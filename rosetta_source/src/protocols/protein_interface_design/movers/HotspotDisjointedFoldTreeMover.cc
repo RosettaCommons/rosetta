@@ -35,7 +35,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/moves/DataMap.hh>
-#include <protocols/protein_interface_design/filters/RotamerBoltzmannWeight.hh>
+#include <protocols/simple_filters/RotamerBoltzmannWeight.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
@@ -165,7 +165,7 @@ HotspotDisjointedFoldTreeMover::apply( core::pose::Pose & pose )
 	tf->push_back( pido );
 
 	if( ddG_threshold() <= 100 ){
-		protocols::protein_interface_design::filters::RotamerBoltzmannWeight rbw;
+		protocols::simple_filters::RotamerBoltzmannWeight rbw;
 		rbw.ddG_threshold( ddG_threshold() );
 		rbw.scorefxn( scorefxn() );
 		rbw.repacking_radius( interface_radius() );

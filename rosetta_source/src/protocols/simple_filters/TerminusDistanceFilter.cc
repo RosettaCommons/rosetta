@@ -41,7 +41,7 @@
 #include <map>
 #include <numeric/random/random.hh>
 #include <protocols/moves/DataMap.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/scoring/Interface.hh>
 #include <protocols/simple_filters/DdgFilter.hh>

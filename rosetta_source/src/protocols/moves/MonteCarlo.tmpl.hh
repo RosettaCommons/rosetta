@@ -50,8 +50,8 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/MonteCarloStatus.hh>
-#include <protocols/moves/mc_convergence_checks/ConvergenceCheck.fwd.hh>
-#include <protocols/moves/mc_convergence_checks/ConvergenceCheck.hh>
+#include <protocols/moves/MonteCarloExceptionConverge.fwd.hh>
+#include <protocols/moves/MonteCarloExceptionConverge.hh>
 #include <utility/down_cast.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>

@@ -15,14 +15,14 @@
 
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/mc_convergence_checks/Pool_ConvergenceCheck.hh>
+#include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 #ifdef USEMPI
-#include <protocols/moves/mc_convergence_checks/MPIBPool_ConvergenceCheck.hh>
-#include <protocols/moves/mc_convergence_checks/MPIHPool_ConvergenceCheck.hh>
-#include <protocols/moves/mc_convergence_checks/MPIPool_ConvergenceCheck.hh>
+#include <protocols/canonical_sampling/mc_convergence_checks/MPIBPool_ConvergenceCheck.hh>
+#include <protocols/canonical_sampling/mc_convergence_checks/MPIHPool_ConvergenceCheck.hh>
+#include <protocols/canonical_sampling/mc_convergence_checks/MPIPool_ConvergenceCheck.hh>
 #endif
-#include <protocols/moves/mc_convergence_checks/HPool.hh>
-#include <protocols/moves/mc_convergence_checks/HierarchicalLevel.hh>
+#include <protocols/canonical_sampling/mc_convergence_checks/HPool.hh>
+#include <protocols/canonical_sampling/mc_convergence_checks/HierarchicalLevel.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
@@ -103,11 +103,11 @@
 //OPT_1GRP_KEY(Boolean,sampling,use_xtc_format)
 
 namespace protocols{
-namespace moves {
+namespace canonical_sampling {
 
-static basic::Tracer tr("protocols.moves.CanonicalSamplingMover");
+static basic::Tracer tr("protocols.canonical_sampling.CanonicalSamplingMover");
 
-bool protocols::moves::CanonicalSamplingMover::options_registered_( false );
+bool protocols::canonical_sampling::CanonicalSamplingMover::options_registered_( false );
 
 void CanonicalSamplingMover::register_options() {
   using namespace protocols::moves;
@@ -163,7 +163,7 @@ CanonicalSamplingMover::CanonicalSamplingMover():
   Mover("CanonicalSamplingMover"),
   mc_(),
   sfxn_(),
-  randmove_(new RandomMover()),
+  randmove_(new protocols::moves::RandomMover()),
   pool_rms_(),
   interval_posedump_(100),
   interval_transitiondump_(100),
@@ -181,13 +181,13 @@ CanonicalSamplingMover::CanonicalSamplingMover():
 
 CanonicalSamplingMover::CanonicalSamplingMover(
   core::scoring::ScoreFunctionOP sfxn,
-  mc_convergence_checks::Pool_RMSD_OP ptr,
+  protocols::canonical_sampling::mc_convergence_checks::Pool_RMSD_OP ptr,
   int ntrial
 ):
   Mover("CanonicalSamplingMover"),
-  mc_(new MonteCarlo( *sfxn, basic::options::option[ basic::options::OptionKeys::canonical_sampling::sampling::mc_kt ]() ) ),
+  mc_(new protocols::moves::MonteCarlo( *sfxn, basic::options::option[ basic::options::OptionKeys::canonical_sampling::sampling::mc_kt ]() ) ),
   sfxn_(sfxn),
-  randmove_(new RandomMover()),
+  randmove_(new protocols::moves::RandomMover()),
   pool_rms_(ptr),
   interval_posedump_(1000),
   interval_transitiondump_(100),
@@ -211,16 +211,16 @@ void CanonicalSamplingMover::set_defaults_from_cmdline() {
 
   runtime_assert( options_registered_ );
 
-  ntrials( option[ canonical_sampling::sampling::ntrials ] );
-  detailed_balance( !option[ canonical_sampling::sampling::no_detailed_balance ] );
-  output_only_cluster_transitions( option[ canonical_sampling::sampling::output_only_cluster_transitions ] );
-  set_interval_pose_dump( option[ canonical_sampling::sampling::interval_pose_dump ] );
-  set_interval_data_dump( option[ canonical_sampling::sampling::interval_data_dump ] );
-  transition_threshold_ = option[ canonical_sampling::sampling::transition_threshold ]();
+  ntrials( option[ basic::options::OptionKeys::canonical_sampling::sampling::ntrials ] );
+  detailed_balance( !option[ basic::options::OptionKeys::canonical_sampling::sampling::no_detailed_balance ] );
+  output_only_cluster_transitions( option[ basic::options::OptionKeys::canonical_sampling::sampling::output_only_cluster_transitions ] );
+  set_interval_pose_dump( option[ basic::options::OptionKeys::canonical_sampling::sampling::interval_pose_dump ] );
+  set_interval_data_dump( option[ basic::options::OptionKeys::canonical_sampling::sampling::interval_data_dump ] );
+  transition_threshold_ = option[ basic::options::OptionKeys::canonical_sampling::sampling::transition_threshold ]();
   ramp_temperature_ = false;
   //ramp_temperature_ = option[ canonical_sampling::sampling::ramp_temperature ]();
-  save_loops_only_ =  option[ canonical_sampling::sampling::save_loops_only ]();
-  dump_loops_only_ =  option[ canonical_sampling::sampling::dump_loops_only ]();
+  save_loops_only_ =  option[ basic::options::OptionKeys::canonical_sampling::sampling::save_loops_only ]();
+  dump_loops_only_ =  option[ basic::options::OptionKeys::canonical_sampling::sampling::dump_loops_only ]();
 	
   //if in boinc mode, you need to alter the outputs
   if( option[ run::protocol ].user() && option[run::protocol]() == "canonical_sampling") {
@@ -231,7 +231,7 @@ void CanonicalSamplingMover::set_defaults_from_cmdline() {
 
 void
 CanonicalSamplingMover::add_mover(
-  MoverOP m,
+  protocols::moves::MoverOP m,
   core::Real probability
 ) {
   randmove_->add_mover( m, probability);
@@ -288,7 +288,7 @@ CanonicalSamplingMover::periodic_range(
 void CanonicalSamplingMover::ntrials(int ntrials) {ntrials_ = ntrials;}
 
 void CanonicalSamplingMover::set_temp(core::Real temperature) {
-  mc_ = new MonteCarlo(*sfxn_, temperature);
+  mc_ = new protocols::moves::MonteCarlo(*sfxn_, temperature);
   temperature_ = temperature;
 }
 
@@ -308,7 +308,7 @@ void CanonicalSamplingMover::use_MPI_bcast(bool truefalse) {MPI_bcast_ = truefal
 void CanonicalSamplingMover::use_hierarchical_clustering(bool truefalse) {use_hierarchical_clustering_ = truefalse;}
 
 
-void CanonicalSamplingMover::set_poolrmsd(mc_convergence_checks::Pool_RMSD_OP ptr){
+void CanonicalSamplingMover::set_poolrmsd(protocols::canonical_sampling::mc_convergence_checks::Pool_RMSD_OP ptr){
   pool_rms_ = ptr;
 }
 
@@ -472,7 +472,7 @@ CanonicalSamplingMover::apply(Pose & pose){
   MPI_Comm_size( MPI_COMM_WORLD, ( int* )( &n_nodes ) );
 
   if( MPI_synchronize_pools_  && MPI_bcast_ ){
-    mc_convergence_checks::MPIBPool_RMSD* mpi_pool_rms = dynamic_cast <mc_convergence_checks::MPIBPool_RMSD *> (&(*pool_rms_));
+    protocols::canonical_sampling::mc_convergence_checks::MPIBPool_RMSD* mpi_pool_rms = dynamic_cast <protocols::canonical_sampling::mc_convergence_checks::MPIBPool_RMSD *> (&(*pool_rms_));
     mpi_pool_rms->set_discovered_out( (option[ canonical_sampling::out::new_structures ]()).name() );
     if( mpi_pool_rms ){
       mpi_pool_rms->set_transition_threshold( transition_threshold_ );
@@ -484,7 +484,7 @@ CanonicalSamplingMover::apply(Pose & pose){
     }
   }else if( MPI_synchronize_pools_  ){
     if( !use_hierarchical_clustering_ ) {
-      mc_convergence_checks::MPIPool_RMSD* mpi_pool_rms = dynamic_cast <mc_convergence_checks::MPIPool_RMSD *> (&(*pool_rms_));
+      protocols::canonical_sampling::mc_convergence_checks::MPIPool_RMSD* mpi_pool_rms = dynamic_cast <protocols::canonical_sampling::mc_convergence_checks::MPIPool_RMSD *> (&(*pool_rms_));
       mpi_pool_rms->set_discovered_out( (option[ canonical_sampling::out::new_structures ]()).name() );
       if( mpi_pool_rms ){
 	mpi_pool_rms->set_transition_threshold( transition_threshold_ );
@@ -496,7 +496,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 	utility_exit_with_message("cast to MPIPool_RMSD failed! fatal error!");
       }
     } else {
-      mc_convergence_checks::MPIHPool_RMSD* mpi_pool_rms = dynamic_cast <mc_convergence_checks::MPIHPool_RMSD *> (&(*pool_rms_));
+      protocols::canonical_sampling::mc_convergence_checks::MPIHPool_RMSD* mpi_pool_rms = dynamic_cast <protocols::canonical_sampling::mc_convergence_checks::MPIHPool_RMSD *> (&(*pool_rms_));
       mpi_pool_rms->set_discovered_out( (option[ canonical_sampling::out::new_structures ]()).name() );
       if( mpi_pool_rms ){
 	mpi_pool_rms->set_transition_threshold( transition_threshold_ );
@@ -524,7 +524,7 @@ CanonicalSamplingMover::apply(Pose & pose){
   }
 
   core::Size nr_jobs( protocols::jd2::JobDistributor::get_instance()->total_nr_jobs() );
-  core::Size nr_dirs( nr_jobs / option[ canonical_sampling::sampling::max_files_per_dir ]() + 1 );
+  core::Size nr_dirs( nr_jobs / option[ basic::options::OptionKeys::canonical_sampling::sampling::max_files_per_dir ]() + 1 );
 
   //exceptional use of ofstream to write directly to directory in MPI mode -- short-cutting the MPI-Filebuffer
   std::ofstream transition_file;
@@ -604,9 +604,9 @@ CanonicalSamplingMover::apply(Pose & pose){
   bool constrain_structure = false;
 
   if( ramp_temperature_ ){
-    mc_ = new MonteCarlo( *sfxn_, starting_temp );
+    mc_ = new protocols::moves::MonteCarlo( *sfxn_, starting_temp );
   }else{
-    mc_ = new MonteCarlo( *sfxn_, ending_temp );
+    mc_ = new protocols::moves::MonteCarlo( *sfxn_, ending_temp );
   }
 
   /**
@@ -704,7 +704,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 	core::Size new_level_start = 0;
 	if( use_hierarchical_clustering_ ) {
 	  if( !MPI_synchronize_pools_ ) {
-	    mc_convergence_checks::HierarchicalLevel* hpool_ptr = dynamic_cast<mc_convergence_checks::HierarchicalLevel * > (&(*pool_rms_));
+	    protocols::canonical_sampling::mc_convergence_checks::HierarchicalLevel* hpool_ptr = dynamic_cast<protocols::canonical_sampling::mc_convergence_checks::HierarchicalLevel * > (&(*pool_rms_));
 	    utility::vector1< core::Size > address(hpool_ptr->nlevels(), 0 );
 	    utility::vector1< core::Real > rms_to_cluster(hpool_ptr->nlevels(), 0.0);
 	    if( save_loops_only_ && loops.num_loop() > 0 ) {
@@ -715,7 +715,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 	    }else {
 	      hpool_ptr->evaluate( pose, cluster_center, rms_to_cluster, address );
 	    }
-	    mc_convergence_checks::HierarchicalLevelOP level_n = hpool_ptr;
+	    protocols::canonical_sampling::mc_convergence_checks::HierarchicalLevelOP level_n = hpool_ptr;
 	    bool above_threshold = false;
 	    for( core::Size ii = 1; ii <= rms_to_cluster.size(); ii++ ) {
 	      if( rms_to_cluster[ ii ] > level_n->radius() ) {
@@ -735,7 +735,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 	    }
 	  } else { //use hierarchy and use MPI-synching
 #ifdef USEMPI
-	    mc_convergence_checks::MPIHPool_RMSD* hpool_ptr = dynamic_cast<mc_convergence_checks::MPIHPool_RMSD * > (&(*pool_rms_));
+	    protocols::canonical_sampling::mc_convergence_checks::MPIHPool_RMSD* hpool_ptr = dynamic_cast<protocols::canonical_sampling::mc_convergence_checks::MPIHPool_RMSD * > (&(*pool_rms_));
 	    runtime_assert( hpool_ptr != 0 );
 	    if( save_loops_only_ && loops.num_loop() > 0 ){
 	      for( loops::Loops::const_iterator itr = loops.begin(); itr != loops.end(); itr++ ) {

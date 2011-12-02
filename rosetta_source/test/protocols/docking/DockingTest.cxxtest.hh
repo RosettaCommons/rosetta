@@ -27,9 +27,9 @@
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 // project headers
 #include <core/types.hh>
@@ -89,7 +89,7 @@ public:
 
 		centroid_pose = fullatom_pose;
 
-		protocols::moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
+		protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 		to_centroid.apply(centroid_pose);
 	}
 
@@ -131,7 +131,7 @@ public:
 		UT << multichain_pose.fold_tree() << std::endl;
 
 		UT << "Testing interface-dependant scoring for multichain docking..."<<std::endl;
-		protocols::moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
+		protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
 		to_centroid.apply(multichain_pose);
 		//scorefxn_low = core::scoring::ScoreFunctionFactory::create_score_function( "interchain_cen" ) ;
 		scorefxn_low->show(UT, multichain_pose);
@@ -236,7 +236,7 @@ public:
 		DockingSlideIntoContact slide( rb_jump );
 
 
-		protocols::moves::RigidBodyTransMoverOP trans_mover = new protocols::moves::RigidBodyTransMover(centroid_pose, rb_jump);
+		protocols::rigid::RigidBodyTransMoverOP trans_mover = new protocols::rigid::RigidBodyTransMover(centroid_pose, rb_jump);
 		trans_mover->step_size(10.26);
 		trans_mover->apply(centroid_pose);
 		slide.apply( centroid_pose );
@@ -279,7 +279,7 @@ public:
 		TS_ASSERT( dockerprot1->to_all_atom() != dockerprot2->to_all_atom() );
 		TS_ASSERT( dockerprot1->docking_highres_mover() != dockerprot2->docking_highres_mover() );
 		TS_ASSERT( dockerprot1->perturber() != dockerprot2->perturber() );
-		TS_ASSERT( dynamic_cast< protocols::moves::SwitchResidueTypeSetMover const * > ( dockerprot2->to_centroid()() ) );
+		TS_ASSERT( dynamic_cast< protocols::simple_moves::SwitchResidueTypeSetMover const * > ( dockerprot2->to_centroid()() ) );
 	}
 };
 

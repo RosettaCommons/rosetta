@@ -13,7 +13,7 @@
 /// @author Steven Lewis, Bryan Der, Ben Stranges
 
 // Unit Headers
-#include <protocols/moves/InterfaceAnalyzerMover.hh>
+#include <protocols/analysis/InterfaceAnalyzerMover.hh>
 
 // Project Headers
 #include <protocols/jd2/JobDistributor.hh>
@@ -73,7 +73,7 @@ public:
   void assign_IA_mover(core::pose::Pose & pose);
 
 private:
-  protocols::moves::InterfaceAnalyzerMoverOP IAM_;
+  protocols::analysis::InterfaceAnalyzerMoverOP IAM_;
 	core::scoring::ScoreFunctionOP scorefxn_;
 };
 
@@ -99,7 +99,7 @@ void IAMover::assign_IA_mover(core::pose::Pose & pose){
 		}
 
 		core::Size const interface_jump = basic::options::option[ jumpnum ].value();
-		IAM_ = new protocols::moves::InterfaceAnalyzerMover(
+		IAM_ = new protocols::analysis::InterfaceAnalyzerMover(
 																														 interface_jump,
 																														 tracer,
 																														 scorefxn_,
@@ -128,7 +128,7 @@ void IAMover::assign_IA_mover(core::pose::Pose & pose){
     }
     TR << "these will be moved together." << std::endl;
 
-    IAM_ = new protocols::moves::InterfaceAnalyzerMover(
+    IAM_ = new protocols::analysis::InterfaceAnalyzerMover(
 																														 fixed_chains,
 																														 tracer,
 																														 scorefxn_,

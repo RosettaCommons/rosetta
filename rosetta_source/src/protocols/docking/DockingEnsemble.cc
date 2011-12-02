@@ -30,7 +30,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/ReturnSidechainMover.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 
 // Random number generator
@@ -160,7 +160,7 @@ void DockingEnsemble::calculate_lowres_ref_energy( core::pose::Pose & pose )
 void DockingEnsemble::calculate_highres_ref_energy( core::Size conf_num )
 {
 	core::pose::Pose conformer = ensemble_list_[conf_num];
-	protocols::moves::SwitchResidueTypeSetMover to_fullatom( core::chemical::FA_STANDARD );
+	protocols::simple_moves::SwitchResidueTypeSetMover to_fullatom( core::chemical::FA_STANDARD );
 	to_fullatom.apply( conformer );
 
 	pack_operations_->apply( conformer );

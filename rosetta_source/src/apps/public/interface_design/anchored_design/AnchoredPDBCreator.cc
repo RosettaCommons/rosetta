@@ -12,7 +12,7 @@
 /// @author Steven Lewis
 
 // Unit Headers
-#include <protocols/moves/LoopAnalyzerMover.hh>
+#include <protocols/analysis/LoopAnalyzerMover.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -43,8 +43,6 @@
 #include <core/import_pose/import_pose.hh>
 
 #include <utility/vector1.hh>
-
-
 
 using basic::T;
 using basic::Error;
@@ -140,7 +138,7 @@ public:
 		//check on the loop quality
 		protocols::loops::Loops loops;
 		loops.add_loop(insert_loop_start, loop_end, insert_point);
-		protocols::moves::LoopAnalyzerMover LAM(loops);
+		protocols::analysis::LoopAnalyzerMover LAM(loops);
 		LAM.apply(combined);
 
 		using namespace protocols::jd2;

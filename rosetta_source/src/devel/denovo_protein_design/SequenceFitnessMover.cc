@@ -38,7 +38,7 @@
 
 
 // AUTO-REMOVED #include <protocols/relax_protocols.hh>
-// AUTO-REMOVED #include <protocols/moves/PackStatMover.hh>
+// AUTO-REMOVED #include <protocols/analysis/PackStatMover.hh>
 
 #include <basic/options/option.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
@@ -110,7 +110,7 @@ void SequenceFitnessMover::apply( core::pose::Pose & pose ){
 		std::cout << " Grant Scores "<< score <<" "<< RMSD_testpose_opose << " " << packing_score << std::endl;
 
 
-  //		protocols::moves::PackStatMover packstats();
+  //		protocols::analysis::PackStatMover packstats();
 	//		packstats.apply( testpose  );
 
 

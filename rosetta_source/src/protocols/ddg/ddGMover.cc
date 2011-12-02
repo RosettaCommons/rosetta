@@ -74,7 +74,7 @@
 #include <numeric/random/random.hh>
 // AUTO-REMOVED #include <core/pack/task/ResfileReader.hh>
 
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 #include <fstream>
 #include <iostream>
@@ -382,7 +382,8 @@ ddGMover::calculate_interface_unbound_energy(
 	using namespace core::pack;
 	//from sarel. thank you!
 	int const rb_jump(1);
-	RigidBodyTransMoverOP separate_partners( new RigidBodyTransMover(p,rb_jump));
+	rigid::RigidBodyTransMoverOP separate_partners(
+		new rigid::RigidBodyTransMover(p,rb_jump));
 	separate_partners->step_size(1000.0);
 	separate_partners->apply(p);
 	core::pack::pack_rotamers(p,(*s),pt);

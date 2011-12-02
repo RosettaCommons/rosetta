@@ -30,7 +30,7 @@
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/RigidBodyMover.fwd.hh>
+#include <protocols/rigid/RigidBodyMover.fwd.hh>
 // AUTO-REMOVED #include <protocols/filters/Filter.hh>
 // AUTO-REMOVED #include <protocols/filters/ScoreCutoffFilter.hh>
 
@@ -108,7 +108,7 @@ private:
 	core::kinematics::MoveMapOP movemap_;
 	protocols::moves::MonteCarloOP mc_;
 	protocols::moves::SequenceMoverOP docking_lowres_protocol_;
-	protocols::moves::RigidBodyPerturbNoCenterMoverOP rb_mover_;
+	protocols::rigid::RigidBodyPerturbNoCenterMoverOP rb_mover_;
 	protocols::docking::ConformerSwitchMoverOP ensemble1_mover_;
 	protocols::docking::ConformerSwitchMoverOP ensemble2_mover_;
 

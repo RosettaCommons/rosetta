@@ -28,9 +28,9 @@
 #include <core/kinematics/FoldTree.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/RigidBodyMover.fwd.hh>
-#include <protocols/moves/MetropolisHastingsMover.fwd.hh>
-#include <protocols/moves/TemperingBase.fwd.hh>
+#include <protocols/rigid/RigidBodyMover.fwd.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
+#include <protocols/canonical_sampling/TemperingBase.fwd.hh>
 
 #include <utility/tag/Tag.fwd.hh>
 
@@ -175,9 +175,9 @@ private:
 	// constraint set mover
 	protocols::moves::MoverOP docking_constraint_;
 
-	protocols::moves::RigidBodyPerturbNoCenterMoverOP rb_mover_;
-	protocols::moves::TemperingBaseOP tempering_;
-	protocols::moves::MetropolisHastingsMoverOP sampler_;
+	protocols::rigid::RigidBodyPerturbNoCenterMoverOP rb_mover_;
+	protocols::canonical_sampling::TemperingBaseOP tempering_;
+	protocols::canonical_sampling::MetropolisHastingsMoverOP sampler_;
 	//if side-chains are to be taken from specified pdb file... it is set here...
 	std::string recover_sidechains_filename_;
 

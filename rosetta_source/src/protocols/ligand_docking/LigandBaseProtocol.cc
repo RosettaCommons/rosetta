@@ -52,8 +52,8 @@
 
 #include <protocols/loops/Loop.hh>
 // AUTO-REMOVED #include <protocols/loops/loops_main.hh>
-#include <protocols/geometry/RB_geometry.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RB_geometry.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 #include <ObjexxFCL/FArray1D.hh>
 //#include <ObjexxFCL/FArray1.io.hh>
@@ -394,7 +394,7 @@ void LigandBaseProtocol::move_ligand_to_desired_centroid(
 	core::Vector const trans_vec = desired_centroid - ligand_centroid;
 	core::Real const trans_len = trans_vec.length();
 	if(trans_len > 1e-3) { // otherwise we get NaNs
-		protocols::moves::RigidBodyTransMover mover( pose, jump_id);
+		protocols::rigid::RigidBodyTransMover mover( pose, jump_id);
 		mover.step_size(trans_len);
 		mover.trans_axis(trans_vec);
 		mover.apply(pose);

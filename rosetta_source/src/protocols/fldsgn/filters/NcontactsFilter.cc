@@ -17,7 +17,7 @@
 #include <protocols/fldsgn/filters/NcontactsFilterCreator.hh>
 
 // Package Headers
-#include <protocols/toolbox/pose_metric_calculators/NcontactsCalculator.hh>
+#include <protocols/fldsgn/NcontactsCalculator.hh>
 
 // Project Headers
 #include <basic/MetricValue.hh>
@@ -103,7 +103,6 @@ NcontactsFilter::compute( Pose const & pose ) const
 
 	basic::MetricValue< Real > ncontact;
 
-	using namespace protocols::toolbox::pose_metric_calculators;
 	NcontactsCalculator calc_ncon;
 	calc_ncon.get( report_type_, ncontact, pose );
 

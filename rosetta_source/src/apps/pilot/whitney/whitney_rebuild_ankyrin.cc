@@ -17,7 +17,7 @@
 #include <iomanip>
 
 // Protocol Headers
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 // Core Headers
 #include <core/conformation/Residue.hh>

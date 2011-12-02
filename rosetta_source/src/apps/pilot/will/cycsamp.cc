@@ -59,9 +59,9 @@
 #include <protocols/jd2/MPIFileBufJobDistributor.hh>
 #include <protocols/jd2/NoOutputJobOutputter.hh>
 #include <protocols/moves/BackrubMover.hh>
-#include <protocols/moves/BBGaussianMover.hh>
-#include <protocols/moves/CanonicalSamplingMover.fwd.hh>
-#include <protocols/moves/CanonicalSamplingMover.hh>
+#include <protocols/simple_moves/BBGaussianMover.hh>
+#include <protocols/canonical_sampling/CanonicalSamplingMover.fwd.hh>
+#include <protocols/canonical_sampling/CanonicalSamplingMover.hh>
 #include <protocols/moves/mc_convergence_checks/MPIBPool_ConvergenceCheck.hh>
 #include <protocols/moves/mc_convergence_checks/MPIHPool_ConvergenceCheck.hh>
 #include <protocols/moves/mc_convergence_checks/MPIPool_ConvergenceCheck.hh>
@@ -184,7 +184,7 @@ void bb_sample(Pose & pose, ScoreFunctionOP sf, Size niter) {
 }
 
 void BBG8T3A_sample(Pose & pose, ScoreFunctionOP sf, Size niter, Real temp = 2.0) {
-	protocols::moves::BBG8T3AMoverOP bbmove = new protocols::moves::BBG8T3AMover();
+	protocols::simple_moves::BBG8T3AMoverOP bbmove = new protocols::simple_moves::BBG8T3AMover();
 	protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *sf, temp );
 	mc->set_autotemp( true, temp );
 	mc->set_temperature(temp);
@@ -472,7 +472,7 @@ void* doit(void*) {
 	protocols::moves::MoverOP bbmove;
 	Real temp = option[cyclic::temperature]();
 	TR << "using bb gaussian moves, lowering chainbreak weight!!!" << std::endl;
-	bbmove = new MoveThenFixH(new protocols::moves::BBG8T3AMover(),sffa);
+	bbmove = new MoveThenFixH(new protocols::simple_moves::BBG8T3AMover(),sffa);
 
 	protocols::moves::MonteCarloOP mc = new protocols::moves::MonteCarlo( pose, *sffa, temp );
 	utility::vector1<Real> temps; temps.push_back(2.0); temps.push_back(4.0); temps.push_back(8.0); temps.push_back(16.0); temps.push_back(32.0);
@@ -582,7 +582,7 @@ int main( int argc, char * argv [] ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	protocols::moves::BBG8T3AMover::register_options();
+	protocols::simple_moves::BBG8T3AMover::register_options();
 	core::init(argc,argv);
 
 	void* (*func)(void*) = &doit;

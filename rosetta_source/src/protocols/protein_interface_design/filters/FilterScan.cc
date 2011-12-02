@@ -37,7 +37,7 @@
 #include <protocols/jd2/util.hh>
 #include <boost/foreach.hpp>
 #define foreach BOOST_FOREACH
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 
 #include <protocols/jd2/Job.hh>
@@ -179,7 +179,7 @@ FilterScanFilter::task_factory( core::pack::task::TaskFactoryOP task_factory )
 void
 FilterScanFilter::unbind( core::pose::Pose & pose ) const{
 	if( !unbound() ) return;
-	protocols::moves::RigidBodyTransMover rbtm( pose, jump() );
+	protocols::rigid::RigidBodyTransMover rbtm( pose, jump() );
 	rbtm.step_size( 10000.0 );
 	rbtm.apply( pose );
 }

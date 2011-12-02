@@ -9,12 +9,12 @@
 #include <protocols/moves/PackRotamersMover.hh>
 
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <protocols/idealize/IdealizeMover.hh>
-#include <protocols/rbsegment_moves/util.hh>
+#include <protocols/rigid/util.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -364,7 +364,7 @@ public:
 		core::kinematics::MoveMap mm;
 		mm.set_bb  ( true ); mm.set_chi ( true ); mm.set_jump( true );
 
-		protocols::moves::MoverOP tocen = new protocols::moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
+		protocols::moves::MoverOP tocen = new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID );
 		tocen->apply( pose );
 
 		core::Real max_cart = lowres_scorefxn_->get_weight( core::scoring::cart_bonded );
@@ -651,7 +651,7 @@ my_main( void* ) {
 	using namespace basic::options::OptionKeys;
 
 	SequenceMoverOP seq( new SequenceMover() );
-	//seq->add_mover( new protocols::moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
+	//seq->add_mover( new protocols::simple_moves::SwitchResidueTypeSetMover( core::chemical::CENTROID ) );
 	seq->add_mover( new protocols::moves::ConstraintSetMover() );
 	seq->add_mover( new CustomMover() );
 

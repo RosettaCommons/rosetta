@@ -13,7 +13,7 @@
 // Unit headers
 #include <protocols/symmetric_docking/SymFoldandDockRbTrialMover.hh>
 #include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -136,8 +136,8 @@ SymFoldandDockRbTrialMover::apply( core::pose::Pose & pose )
 	protocols::moves::MonteCarloOP monteCarlo_ = new protocols::moves::MonteCarlo(pose, *scorefxn_, 2.0 );
 
 	//set up mover for docking
-	protocols::moves::RigidBodyDofSeqPerturbMover rb_perturb =
-		protocols::moves::RigidBodyDofSeqPerturbMover( dofs , rot_mag_trial, trans_mag_trial );
+	protocols::rigid::RigidBodyDofSeqPerturbMover rb_perturb =
+		protocols::rigid::RigidBodyDofSeqPerturbMover( dofs , rot_mag_trial, trans_mag_trial );
 
 	if ( option[ OptionKeys::fold_and_dock::rotate_anchor_to_x ].user() ) {
 		core::pose::symmetry::rotate_anchor_to_x_axis( pose );

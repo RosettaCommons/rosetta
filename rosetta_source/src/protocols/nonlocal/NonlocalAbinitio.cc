@@ -44,8 +44,8 @@
 #include <core/util/SwitchResidueTypeSet.hh>
 // AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
-#include <protocols/loops/LoopRelaxMover.hh>
-#include <protocols/loops/LoopRelaxThreadingMover.hh>
+#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/comparative_modeling/LoopRelaxThreadingMover.hh>
 #include <protocols/loops/Loops.hh>
 // AUTO-REMOVED #include <protocols/loops/util.hh>
 #include <protocols/relax/FastRelax.hh>
@@ -134,7 +134,7 @@ core::kinematics::MoveMapOP NonlocalAbinitio::make_movemap(const core::kinematic
 void NonlocalAbinitio::build_partial_model(core::pose::Pose* pose) const {
   assert(pose);
 
-  protocols::loops::LoopRelaxThreadingMover closure;
+  protocols::comparative_modeling::LoopRelaxThreadingMover closure;
   closure.setup();
   closure.apply(*pose);
 
@@ -145,7 +145,7 @@ void NonlocalAbinitio::loop_closure(core::pose::Pose* pose) const {
   using namespace basic::options;
   using namespace basic::options::OptionKeys;
   using core::kinematics::FoldTree;
-  using protocols::loops::LoopRelaxMover;
+  using protocols::comparative_modeling::LoopRelaxMover;
   using protocols::loops::Loops;
   assert(pose);
 

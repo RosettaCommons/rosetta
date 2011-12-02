@@ -16,7 +16,7 @@
 #include <iostream>
 #include <iomanip>
 
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 #include <core/init.hh>
 #include <core/chemical/AA.hh>
@@ -102,7 +102,7 @@ main( int argc, char * argv [] )
 	for ( core::Size j=1; j <= wt_pose.num_jump(); ++j) {
 		unbound_poses[j] = wt_pose;
 		core::Real const unbound_dist = 40.;
-		protocols::moves::RigidBodyTransMover wt_trans_mover( wt_pose, j );
+		protocols::rigid::RigidBodyTransMover wt_trans_mover( wt_pose, j );
 		wt_trans_mover.trans_axis( wt_trans_mover.trans_axis() );
 		wt_trans_mover.step_size(unbound_dist);
 		wt_trans_mover.apply( unbound_poses[j] );

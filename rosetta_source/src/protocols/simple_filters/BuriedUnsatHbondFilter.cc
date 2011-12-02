@@ -19,7 +19,7 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/MetricValue.hh>
@@ -95,7 +95,7 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 	core::pose::Pose unbound( bound );
 	if( jump_num_ ) {
 		core::Real const unbound_dist = 1000.0;
-		protocols::moves::RigidBodyTransMover trans_mover( unbound, jump_num_ );
+		protocols::rigid::RigidBodyTransMover trans_mover( unbound, jump_num_ );
 		trans_mover.trans_axis( trans_mover.trans_axis() );
 		trans_mover.step_size(unbound_dist);
 		trans_mover.apply( unbound );

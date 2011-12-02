@@ -37,7 +37,7 @@
 #include <core/util/kinematics_util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
-#include <protocols/loops/LoopRelaxThreadingMover.hh>
+#include <protocols/comparative_modeling/LoopRelaxThreadingMover.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/nonlocal/StarTreeBuilder.hh>
 #include <protocols/nonlocal/util.hh>
@@ -63,7 +63,7 @@ void MedalExchangeMover::apply(core::pose::Pose& pose) {
   using core::scoring::ScoreFunctionOP;
   using core::scoring::methods::EnergyMethodOptions;
   using protocols::comparative_modeling::ThreadingJob;
-  using protocols::loops::LoopRelaxThreadingMover;
+  using protocols::comparative_modeling::LoopRelaxThreadingMover;
   using protocols::loops::Loops;
   using namespace protocols::moves;
   using namespace protocols::nonlocal;

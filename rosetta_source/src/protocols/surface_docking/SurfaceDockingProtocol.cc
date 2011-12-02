@@ -32,7 +32,7 @@
 #include <protocols/moves/MinMover.fwd.hh>
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/PyMolMover.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/surface_docking/SurfaceParameters.fwd.hh>
 #include <protocols/surface_docking/SurfaceParameters.hh>
 #include <protocols/jd2/JobDistributor.hh>
@@ -103,8 +103,8 @@ void SurfaceDockingProtocol::apply(pose::Pose & pose){
 	// Setting up the foldTree
 	setupFoldTree(pose);
 
-	SwitchResidueTypeSetMover to_centroid("centroid");
-	SwitchResidueTypeSetMover to_all_atom( "fa_standard" );
+	simple_moves::SwitchResidueTypeSetMover to_centroid("centroid");
+	simple_moves::SwitchResidueTypeSetMover to_all_atom( "fa_standard" );
 
 	//Applying surfaceOrient Mover
 	surface_docking::SurfaceOrientMoverOP sf=

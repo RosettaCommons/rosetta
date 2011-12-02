@@ -4,7 +4,7 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/relax/util.hh>
 #include <utility/excn/Exceptions.hh>
 
@@ -17,7 +17,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
-#include <protocols/moves/BBGaussianMover.hh>
+#include <protocols/simple_moves/BBGaussianMover.hh>
 
 //options
 #include <basic/options/option.hh>
@@ -61,7 +61,7 @@ public:
 
 
 	void apply( Pose & pose ) {
-		protocols::moves::SwitchResidueTypeSetMover to_centroid("centroid");
+		protocols::simple_moves::SwitchResidueTypeSetMover to_centroid("centroid");
 		core::Size n_res = pose.n_residue();
 	
 		//mc
@@ -71,7 +71,7 @@ public:
 	
 		protocols::viewer::add_monte_carlo_viewer(mc, "Gaussian", 600, 600);
 	
-		protocols::moves::BBG8T3AMover bbg8t3amover;
+		protocols::simple_moves::BBG8T3AMover bbg8t3amover;
 
 		//ref pose
 		core::pose::Pose ref_pose(pose);
@@ -105,7 +105,7 @@ my_main( void* ) {
 	SequenceMoverOP seq( new SequenceMover() );
 	//seq->add_mover( new symmetry::SetupForSymmetryMover() );
 	seq->add_mover( new BBGWrapperMover() );
-	seq->add_mover( new SwitchResidueTypeSetMover("fa_standard") );
+	seq->add_mover( new protocols::simple_moves::SwitchResidueTypeSetMover("fa_standard") );
 	protocols::relax::RelaxProtocolBaseOP fa_rlx( protocols::relax::generate_relax_from_cmd() );
 	seq->add_mover( fa_rlx );
 

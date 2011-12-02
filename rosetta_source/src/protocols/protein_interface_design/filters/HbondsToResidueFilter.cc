@@ -33,7 +33,7 @@
 #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/ScoreType.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
 //#include <protocols/moves/ResidueMover.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>

@@ -37,7 +37,7 @@
 
 //#include <protocols/relax_protocols.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
-#include <protocols/geometry/RB_geometry.hh>
+#include <protocols/rigid/RB_geometry.hh>
 #include <protocols/ligand_docking/grid_functions.hh>
 #include <protocols/ligand_docking/ligand_functions.hh>
 #include <protocols/ligand_docking/LigandBaseProtocol.hh>
@@ -50,7 +50,7 @@
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/JumpOutMover.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
@@ -348,7 +348,7 @@ LigandDockProtocol::classic_protocol(
 	PackerTaskOP rottrials_task = make_packer_task(pose, jump_id, sc_interface_padding_, rottrials_all_rsds_, ligand_protonation_);
 
 	// Rigid body exploration
-	MoverOP simple_rigbod = new RigidBodyPerturbMover( jump_id, numeric::conversions::degrees(0.05), 0.1);
+	MoverOP simple_rigbod = new rigid::RigidBodyPerturbMover( jump_id, numeric::conversions::degrees(0.05), 0.1);
 
 	for( core::Size cycle = 1; cycle <= num_cycles; ++cycle ) {
 		// RotamerTrialsMover actually asks for a non-const OP to scorefxn, sadly.
@@ -785,7 +785,7 @@ LigandDockProtocol::append_ligand_docking_scores(
 		core::Real const together_score = (*scorefxn)( *after_unbound );
 		EnergyMap const together_energies = after_unbound->energies().total_energies();
 		core::Real const initial_fa_rep = after_unbound->energies().total_energies()[ fa_rep ];
-		protocols::moves::RigidBodyTransMover trans_mover( *after_unbound, jump_id );
+		protocols::rigid::RigidBodyTransMover trans_mover( *after_unbound, jump_id );
 		trans_mover.trans_axis( trans_mover.trans_axis().negate() ); // now move together
 		trans_mover.step_size(1);
 		trans_mover.apply( *after_unbound );

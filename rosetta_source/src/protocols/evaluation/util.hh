@@ -26,7 +26,6 @@
 
 // Package Headers
 // AUTO-REMOVED #include <core/fragment/SecondaryStructure.hh>
-// AUTO-REMOVED #include <protocols/loops/Loops.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -37,7 +36,6 @@
 #include <list>
 
 #include <core/fragment/SecondaryStructure.fwd.hh>
-#include <protocols/loops/Loops.fwd.hh>
 #include <utility/vector1.hh>
 
 
@@ -52,9 +50,6 @@ void find_existing_residues(  core::pose::PoseCOP pose, std::string tag, core::s
 void invert_include_residues( core::Size nres, core::scoring::ResidueSelectionVector const& include_list, core::scoring::ResidueSelectionVector& exclude_list );
 void evaluate_pose( core::pose::Pose& pose, PoseEvaluator& eval, std::ostream& );
 
-// this function will return a bunch of "loops" that refer to residues that are considered part of the core:
-// not scored are loops with 4 or more residues, short helices (<=5) that terminate a loop are not scored, too
-void define_scorable_core_from_secondary_structure( core::fragment::SecondaryStructure const&, protocols::loops::Loops& score_core );
 
 }
 }

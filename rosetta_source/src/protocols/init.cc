@@ -24,23 +24,23 @@
 #include <protocols/constraints_additional/ConstraintEvaluatorCreator.hh>
 #include <protocols/constraints_additional/CombinedConstraintEvaluatorCreator.hh>
 #include <protocols/evaluation/EvaluatorFactory.hh>
-#include <protocols/evaluation/RmsdTargetEvaluatorCreator.hh>
-#include <protocols/evaluation/PredictedBurialFnEvaluatorCreator.hh>
-#include <protocols/evaluation/StructureSimilarityEvaluatorCreator.hh>
-#include <protocols/evaluation/JScoreEvaluatorCreator.hh>
-#include <protocols/evaluation/ContactMapEvaluatorCreator.hh>
-#include <protocols/evaluation/NativeEvaluatorCreator.hh>
-#include <protocols/evaluation/PoolEvaluatorCreator.hh>
-#include <protocols/evaluation/RmsdEvaluatorCreator.hh>
-#include <protocols/evaluation/RdcTargetEvaluatorCreator.hh>
-#include <protocols/evaluation/RdcSelectEvaluatorCreator.hh>
-#include <protocols/evaluation/RdcEvaluatorCreator.hh>
-#include <protocols/evaluation/CamShiftEvaluatorCreator.hh>
-#include <protocols/evaluation/PalesEvaluatorCreator.hh>
-#include <protocols/evaluation/ExtraScoreEvaluatorCreator.hh>
-#include <protocols/evaluation/JumpNrEvaluatorCreator.hh>
 #include <protocols/sparta/ChemicalShiftEvaluatorCreator.hh>
-
+#include <protocols/simple_filters/RmsdTargetEvaluatorCreator.hh>
+#include <protocols/simple_filters/PredictedBurialFnEvaluatorCreator.hh>
+#include <protocols/simple_filters/StructureSimilarityEvaluatorCreator.hh>
+#include <protocols/simple_filters/JScoreEvaluatorCreator.hh>
+#include <protocols/simple_filters/ContactMapEvaluatorCreator.hh>
+#include <protocols/simple_filters/NativeEvaluatorCreator.hh>
+#include <protocols/simple_filters/PoolEvaluatorCreator.hh>
+#include <protocols/simple_filters/RmsdEvaluatorCreator.hh>
+#include <protocols/simple_filters/RdcTargetEvaluatorCreator.hh>
+#include <protocols/simple_filters/RdcSelectEvaluatorCreator.hh>
+#include <protocols/simple_filters/RdcEvaluatorCreator.hh>
+#include <protocols/simple_filters/CamShiftEvaluatorCreator.hh>
+#include <protocols/simple_filters/PalesEvaluatorCreator.hh>
+#include <protocols/sparta/ChemicalShiftEvaluatorCreator.hh>
+#include <protocols/simple_filters/ExtraScoreEvaluatorCreator.hh>
+#include <protocols/simple_filters/JumpNrEvaluatorCreator.hh>
 
 #include <protocols/dna/RestrictDesignToProteinDNAInterfaceCreator.hh>
 #include <protocols/dna/WatsonCrickRotamerCouplingsCreator.hh>
@@ -119,7 +119,7 @@
 
 
 /// Mover creators
-#include <protocols/moves/InterfaceAnalyzerMoverCreator.hh>
+#include <protocols/analysis/InterfaceAnalyzerMoverCreator.hh>
 #include <protocols/contact_map/ContactMapCreator.hh>
 #include <protocols/enzdes/AddOrRemoveMatchCstsCreator.hh>
 #include <protocols/enzdes/BackboneSamplerCreator.hh>
@@ -200,27 +200,27 @@
 #include <protocols/moves/PackRotamersMoverCreator.hh>
 #include <protocols/moves/RotamerTrialsMoverCreator.hh>
 #include <protocols/docking/ConformerSwitchMoverCreator.hh>
-#include <protocols/moves/SwitchResidueTypeSetMoverCreator.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMoverCreator.hh>
 #include <protocols/moves/GenericMonteCarloMoverCreator.hh>
 #include <protocols/moves/MonteCarloTestCreator.hh>
 #include <protocols/moves/MonteCarloRecoverCreator.hh>
 #include <protocols/moves/SidechainMCMoverCreator.hh>
 #include <protocols/moves/TaskAwareMinMoverCreator.hh>
-#include <protocols/moves/RotamerRecoveryMoverCreator.hh>
-#include <protocols/moves/MetropolisHastingsMoverCreator.hh>
-#include <protocols/moves/SilentTrajectoryRecorderCreator.hh>
-#include <protocols/moves/PDBTrajectoryRecorderCreator.hh>
-#include <protocols/moves/ParallelTemperingCreator.hh>
-#include <protocols/moves/SimulatedTemperingCreator.hh>
+#include <protocols/rotamer_recovery/RotamerRecoveryMoverCreator.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMoverCreator.hh>
+#include <protocols/canonical_sampling/SilentTrajectoryRecorderCreator.hh>
+#include <protocols/canonical_sampling/PDBTrajectoryRecorderCreator.hh>
+#include <protocols/canonical_sampling/ParallelTemperingCreator.hh>
+#include <protocols/canonical_sampling/SimulatedTemperingCreator.hh>
 #include <protocols/moves/BackboneMoverCreator.hh>
 #include <protocols/moves/BackrubMoverCreator.hh>
 #include <protocols/moves/SidechainMoverCreator.hh>
 #include <protocols/moves/BackrubSidechainMoverCreator.hh>
-#include <protocols/moves/MetricRecorderCreator.hh>
+#include <protocols/canonical_sampling/MetricRecorderCreator.hh>
 #include <protocols/moves/RotamerTrialsMinMoverCreator.hh>
 #include <protocols/moves/FavorSequenceProfileCreator.hh>
 #include <protocols/docking/DockSetupMoverCreator.hh>
-#include <protocols/moves/RigidBodyMoverCreator.hh>
+#include <protocols/rigid/RigidBodyMoverCreator.hh>
 #include <protocols/relax/FastRelaxCreator.hh>
 #include <protocols/dna/SeparateDnaFromNonDnaCreator.hh>
 #include <protocols/dna/DnaInterfaceMinMoverCreator.hh>
@@ -252,7 +252,7 @@
 #include <protocols/simple_moves/SequenceProfileMoverCreator.hh>
 #include <protocols/electron_density/SetupForDensityScoringMoverCreator.hh>
 #include <protocols/loops/LoopMover_CCDCreator.hh>
-#include <protocols/loops/LoopRelaxMoverCreator.hh>
+#include <protocols/comparative_modeling/LoopRelaxMoverCreator.hh>
 #include <protocols/loops/FoldTreeFromLoopsWrapperCreator.hh>
 #include <protocols/rosetta_scripts/SavePoseMoverCreator.hh>
 #include <protocols/loophash/LoopHashMoverWrapperCreator.hh>
@@ -282,7 +282,8 @@
 #include <protocols/protein_interface_design/filters/AverageDegreeFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/BoltzmannFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/FilterScanCreator.hh>
-#include <protocols/protein_interface_design/filters/RotamerBoltzmannWeightFilterCreator.hh>
+#include <protocols/simple_filters/RotamerBoltzmannWeightFilterCreator.hh>
+#include <protocols/simple_filters/ConservedPosMutationFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/DisulfideFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/StubScoreFilterCreator.hh>
 #include <protocols/protein_interface_design/filters/SequenceRecoveryFilterCreator.hh>
@@ -291,7 +292,6 @@
 #include <protocols/filters/HolesFilterCreator.hh>
 #include <protocols/filters/PackStatFilterCreator.hh>
 #include <protocols/filters/BasicFilterCreators.hh>
-#include <protocols/filters/ConservedPosMutationFilterCreator.hh>
 #include <protocols/filters/ContingentFilterCreator.hh>
 // AUTO-REMOVED #include <protocols/filters/RGFilterCreator.hh>
 #include <protocols/filters/ScoreCutoffFilterCreator.hh>
@@ -387,27 +387,25 @@ static core::scoring::constraints::ConstraintRegistrator< protocols::constraints
 static core::scoring::constraints::ConstraintRegistrator< protocols::constraints_additional::PocketConstraintCreator > PocketConstraintCreator_registrator;
 
 
-//evaluator creators
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::RmsdTargetEvaluatorCreator> RmsdTargetEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::PredictedBurialFnEvaluatorCreator> PredictedBurialFnEvaluatorCreator_registrator;
 static protocols::evaluation::EvaluatorRegistrator<protocols::comparative_modeling::AlignRmsdTargetEvaluatorCreator> AlignRmsdTargetEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::StructureSimilarityEvaluatorCreator> StructureSimilarityEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::JScoreEvaluatorCreator> JScoreEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::ContactMapEvaluatorCreator> ContactMapEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::NativeEvaluatorCreator> NativeEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::PoolEvaluatorCreator> PoolEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::RmsdEvaluatorCreator> RmsdEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::RdcTargetEvaluatorCreator> RdcTargetEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::RdcSelectEvaluatorCreator> RdcSelectEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::RdcEvaluatorCreator> RdcEvaluatorCreator_registrator;
 static protocols::evaluation::EvaluatorRegistrator<protocols::constraints_additional::ConstraintEvaluatorCreator> ConstraintEvaluatorCreator_registrator;
 static protocols::evaluation::EvaluatorRegistrator<protocols::constraints_additional::CombinedConstraintEvaluatorCreator> CombinedConstraintEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::PredictedBurialFnEvaluatorCreator> PredictedBurialFnEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::RmsdTargetEvaluatorCreator> RmsdTargetEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::StructureSimilarityEvaluatorCreator> StructureSimilarityEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::JScoreEvaluatorCreator> JScoreEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::ContactMapEvaluatorCreator> ContactMapEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::NativeEvaluatorCreator> NativeEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::PoolEvaluatorCreator> PoolEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::RmsdEvaluatorCreator> RmsdEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::RdcTargetEvaluatorCreator> RdcTargetEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::RdcSelectEvaluatorCreator> RdcSelectEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::RdcEvaluatorCreator> RdcEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::CamShiftEvaluatorCreator> CamShiftEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::PalesEvaluatorCreator> PalesEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::ExtraScoreEvaluatorCreator> ExtraScoreEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::evaluation::JumpNrEvaluatorCreator> JumpNrEvaluatorCreator_registrator;
-static protocols::evaluation::EvaluatorRegistrator<protocols::sparta::ChemicalShiftEvaluatorCreator> ChemicalShiftEvaluatorCreator_registrator;
-
+	static protocols::evaluation::EvaluatorRegistrator<protocols::sparta::ChemicalShiftEvaluatorCreator> ChemicalShiftEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::CamShiftEvaluatorCreator> CamShiftEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::PalesEvaluatorCreator> PalesEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::ExtraScoreEvaluatorCreator> ExtraScoreEvaluatorCreator_registrator;
+static protocols::evaluation::EvaluatorRegistrator<protocols::simple_filters::JumpNrEvaluatorCreator> JumpNrEvaluatorCreator_registrator;
 
 
 using namespace protocols::features;
@@ -483,7 +481,7 @@ static TaskOperationRegistrator< protocols::toolbox::task_operations::RestrictTo
 
 using namespace moves;
 
-static MoverRegistrator< protocols::moves::InterfaceAnalyzerMoverCreator > reg_InterfaceAnalyzerMoverCreator;
+static MoverRegistrator< protocols::analysis::InterfaceAnalyzerMoverCreator > reg_InterfaceAnalyzerMoverCreator;
 static MoverRegistrator< protocols::contact_map::ContactMapCreator> reg_ContactMapCreator;
 static MoverRegistrator< enzdes::AddOrRemoveMatchCstsCreator > reg_AddOrRemoveMatchCstsCreator;
 static MoverRegistrator< enzdes::BackboneSamplerCreator > reg_BackboneSamplerCreator;
@@ -553,16 +551,16 @@ static MoverRegistrator< moves::ConsensusDesignMoverCreator > reg_ConsensusDesig
 static MoverRegistrator< moves::ConstraintSetMoverCreator > reg_ConstraintSetMoverCreator;
 static MoverRegistrator< moves::PackRotamersMoverCreator > reg_PackRotamersMoverCreator;
 static MoverRegistrator< docking::ConformerSwitchMoverCreator > reg_ConformerSwitchMoverCreator;
-static MoverRegistrator< moves::SwitchResidueTypeSetMoverCreator > reg_SwitchResidueTypeSetMoverCreator;
+static MoverRegistrator< protocols::simple_moves::SwitchResidueTypeSetMoverCreator > reg_SwitchResidueTypeSetMoverCreator;
 static MoverRegistrator< moves::GenericMonteCarloMoverCreator > reg_GenericMonteCarloMoverCreator;
 static MoverRegistrator< moves::MonteCarloTestCreator > reg_MonteCarloTestCreator;
 static MoverRegistrator< moves::MonteCarloRecoverCreator > reg_GenericMonteCarloRecoverCreator;
 static MoverRegistrator< moves::SidechainMCMoverCreator > reg_SidechainMCMoverCreator;
 static MoverRegistrator< moves::TaskAwareMinMoverCreator > reg_TaskAwareMinMoverCreator;
-static MoverRegistrator< moves::RotamerRecoveryMoverCreator > reg_RotamerRecoveryMoverCreator;
-static MoverRegistrator< moves::MetropolisHastingsMoverCreator > reg_MetropolisHastingsMoverCreator;
-static MoverRegistrator< moves::ParallelTemperingCreator > reg_ParallelTemperingCreator;
-static MoverRegistrator< moves::SimulatedTemperingCreator > reg_SimulatedTemperingCreator;
+static MoverRegistrator< rotamer_recovery::RotamerRecoveryMoverCreator > reg_RotamerRecoveryMoverCreator;
+static MoverRegistrator< canonical_sampling::MetropolisHastingsMoverCreator > reg_MetropolisHastingsMoverCreator;
+static MoverRegistrator< canonical_sampling::ParallelTemperingCreator > reg_ParallelTemperingCreator;
+static MoverRegistrator< canonical_sampling::SimulatedTemperingCreator > reg_SimulatedTemperingCreator;
 
 
 static MoverRegistrator< moves::SmallMoverCreator > reg_SmallMoverCreator;
@@ -570,15 +568,15 @@ static MoverRegistrator< moves::ShearMoverCreator > reg_ShearMoverCreator;
 static MoverRegistrator< moves::BackrubMoverCreator > reg_BackrubMoverCreator;
 static MoverRegistrator< moves::SidechainMoverCreator > reg_SidechainMoverCreator;
 static MoverRegistrator< moves::BackrubSidechainMoverCreator > reg_BackrubSidechainMoverCreator;
-static MoverRegistrator< moves::SilentTrajectoryRecorderCreator > reg_SilentTrajectoryRecorderCreator;
-static MoverRegistrator< moves::PDBTrajectoryRecorderCreator > reg_PDBTrajectoryRecorderCreator;
+static MoverRegistrator< protocols::canonical_sampling::SilentTrajectoryRecorderCreator > reg_SilentTrajectoryRecorderCreator;
+static MoverRegistrator< protocols::canonical_sampling::PDBTrajectoryRecorderCreator > reg_PDBTrajectoryRecorderCreator;
 
-static MoverRegistrator< moves::MetricRecorderCreator > reg_MetricRecorderCreator;
+static MoverRegistrator< protocols::canonical_sampling::MetricRecorderCreator > reg_MetricRecorderCreator;
 static MoverRegistrator< moves::RotamerTrialsMoverCreator > reg_RotamerTrialsMoverCreator;
 static MoverRegistrator< moves::RotamerTrialsMinMoverCreator > reg_RotamerTrialsMinMoverCreator;
 static MoverRegistrator< moves::FavorSequenceProfileCreator > reg_FavorSequenceProfileCreator;
 
-static MoverRegistrator< moves::RigidBodyPerturbNoCenterMoverCreator > reg_RigidBodyPerturbNoCenterMoverCreator;
+static MoverRegistrator< rigid::RigidBodyPerturbNoCenterMoverCreator > reg_RigidBodyPerturbNoCenterMoverCreator;
 
 
 static MoverRegistrator< flexpep_docking::FlexPepDockingProtocolCreator > reg_FlexPepDockingProtocolCreator;
@@ -616,7 +614,7 @@ static MoverRegistrator< ligand_docking::HighResDockerCreator > reg_HighResDocke
 static MoverRegistrator< ligand_docking::FinalMinimizerCreator > reg_FinalMinimizerCreator;
 static MoverRegistrator< ligand_docking::InterfaceScoreCalculatorCreator > reg_InterfaceScoreCalculatorCreator;
 static MoverRegistrator< loops::LoopMover_Refine_CCDCreator > reg_LoopMover_Refine_CCDCreator;
-static MoverRegistrator< loops::LoopRelaxMoverCreator > reg_LoopRelaxMoverCreator;
+static MoverRegistrator< comparative_modeling::LoopRelaxMoverCreator > reg_LoopRelaxMoverCreator;
 static MoverRegistrator< loops::FoldTreeFromLoopsCreator > reg_FoldTreeFromLoops_Creator;
 static MoverRegistrator< rosetta_scripts::SavePoseMoverCreator > SavePoseMoverCreator;
 static MoverRegistrator< loophash::LoopHashMoverWrapperCreator > reg_LoopHashMoverWrapperCreator;
@@ -649,7 +647,6 @@ static FilterRegistrator< protocols::ligand_docking::CompleteConnectionsFilterCr
 static FilterRegistrator< protocols::ligand_docking::HeavyAtomFilterCreator > reg_HeavyAtomFilterCreator;
 static FilterRegistrator< protocols::filters::CombinedFilterCreator > reg_CombinedFilterCreator;
 static FilterRegistrator< protocols::filters::CompoundFilterCreator > reg_CompoundFilterCreator;
-static FilterRegistrator< protocols::filters::ConservedPosMutationFilterCreator > reg_ConservedPosMutationFilterCreator;
 static FilterRegistrator< protocols::filters::ContingentFilterCreator > reg_ContingentFilterCreator;
 static FilterRegistrator< protocols::filters::FalseFilterCreator > reg_FalseFilterCreator;
 static FilterRegistrator< protocols::filters::HolesFilterCreator > reg_HolesFilterCreator;
@@ -670,6 +667,7 @@ static FilterRegistrator< protocols::fldsgn::filters::ParallelBetaPairingPrefere
 static FilterRegistrator< protocols::fldsgn::filters::SheetTopologyFilterCreator > reg_SheetTopologyFilterCreator;
 static FilterRegistrator< protocols::simple_filters::AlaScanFilterCreator > reg_AlaScanFilterCreator;
 static FilterRegistrator< protocols::simple_filters::BuriedUnsatHbondFilterCreator > reg_BuriedUnsatHbondFilterCreator;
+static FilterRegistrator< protocols::simple_filters::ConservedPosMutationFilterCreator > reg_ConservedPosMutationFilterCreator;
 static FilterRegistrator< protocols::simple_filters::DdgFilterCreator > reg_DdgFilterCreator;
 static FilterRegistrator< protocols::simple_filters::EnergyPerResidueFilterCreator > reg_EnergyPerResidueFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::DesignableResiduesFilterCreator > reg_DesignableResiduesFilterCreator;
@@ -683,7 +681,7 @@ static FilterRegistrator< protocols::protein_interface_design::filters::TorsionC
 static FilterRegistrator< protocols::protein_interface_design::filters::RelativePoseFilterCreator > reg_RelativePoseFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::BindingStrainFilterCreator > reg_BindingStrainFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::FilterScanFilterCreator > reg_FilterScanFilterCreator;
-static FilterRegistrator< protocols::protein_interface_design::filters::RotamerBoltzmannWeightFilterCreator > reg_RotamerBoltzmannWeightFilterCreator;
+static FilterRegistrator< protocols::simple_filters::RotamerBoltzmannWeightFilterCreator > reg_RotamerBoltzmannWeightFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::SequenceRecoveryFilterCreator > reg_SequenceRecoveryFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::StubScoreFilterCreator > reg_StubScoreFilterCreator;
 static FilterRegistrator< protocols::protein_interface_design::filters::HbondsToResidueFilterCreator > reg_HbondsToResidueFilterCreator;

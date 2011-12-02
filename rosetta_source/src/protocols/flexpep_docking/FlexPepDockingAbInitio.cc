@@ -40,15 +40,15 @@
 #include <basic/Tracer.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/loops/LoopRelaxMover.hh>
+#include <protocols/comparative_modeling/LoopRelaxMover.hh>
 #include <protocols/moves/BackboneMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/moves/ReturnSidechainMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <utility/exit.hh>
 #include <string>
@@ -93,7 +93,7 @@ FlexPepDockingAbInitio::FlexPepDockingAbInitio
   // Loop modeling options
   // NOTE: most LoopRelax options are initiated automatically from cmd-line
   // TODO: LoopRelaxMover is a wrapper, perhaps user the LoopModel class explicitly
-  loop_relax_mover_ = new protocols::loops::LoopRelaxMover();
+  loop_relax_mover_ = new protocols::comparative_modeling::LoopRelaxMover();
   // loop_relax_mover_->centroid_scorefxn(scorefxn_); // TODO: we need a chain brteak score here, so let's leave it for modeller default?
   loop_relax_mover_->refine("no"); // centroid modeling only
   loop_relax_mover_->relax("no"); // centroid modeling only
@@ -160,7 +160,7 @@ FlexPepDockingAbInitio::to_centroid
   if(!pose.is_fullatom())
     return;
   TR.Debug << "Switching to centroid" << std::endl;
-  protocols::moves::SwitchResidueTypeSetMover
+  protocols::simple_moves::SwitchResidueTypeSetMover
     to_centroid_mover( core::chemical::CENTROID );
   to_centroid_mover.apply(pose);
 }
@@ -174,7 +174,7 @@ FlexPepDockingAbInitio::to_allatom
 ( core::pose::Pose & pose, core::pose::Pose& referencePose ) const
 {
   runtime_assert(referencePose.is_fullatom());
-  //  protocols::moves::SwitchResidueTypeSetMover
+  //  protocols::simple_moves::SwitchResidueTypeSetMover
   //to_all_atom_mover( core::chemical::FA_STANDARD );
   protocols::moves::ReturnSidechainMover
     recover_sidechains( referencePose );
@@ -294,8 +294,8 @@ FlexPepDockingAbInitio::rigidbody_monte_carlo
   using namespace protocols::moves;
 
   // set up monte-carlo trial moves
-  RigidBodyPerturbNoCenterMoverOP rb_mover =
-    new RigidBodyPerturbNoCenterMover(
+  rigid::RigidBodyPerturbNoCenterMoverOP rb_mover =
+    new rigid::RigidBodyPerturbNoCenterMover(
       rb_jump_, rot_magnitude, trans_magnitude );
   TrialMoverOP mc_trial = new TrialMover( rb_mover, mc_ );
   mc_trial->keep_stats_type( accept_reject ); // track stats (for acceptance rate)
@@ -373,7 +373,7 @@ FlexPepDockingAbInitio::get_name() const {
 }
 
 // convert all pSer residues to Asp for low-res part, and save list of pSers to pSer_positions
-void 
+void
 FlexPepDockingAbInitio::convertPSERtoASP(core::pose::Pose& pose, std::set<int>& pSer_positions)
 {
 	using namespace core::chemical;
@@ -394,7 +394,7 @@ FlexPepDockingAbInitio::convertPSERtoASP(core::pose::Pose& pose, std::set<int>& 
 
 
 // convert all pSer residues to Glu for low-res part, and save list of pSers to pSer_positions
-void 
+void
 FlexPepDockingAbInitio::convertPSERtoGLU(core::pose::Pose& pose, std::set<int>& pSer_positions)
 {
 	using namespace core::chemical;
@@ -429,5 +429,5 @@ FlexPepDockingAbInitio::restorePSER(core::pose::Pose& pose, std::set<int> const&
       ResidueOP pSer( ResidueFactory::create_residue( centroid_set->name_map("SER") ) );
       pose.replace_residue( resid, *pSer, true );
       core::pose::add_variant_type_to_pose_residue( pose , core::chemical::PHOSPHORYLATION, resid );
-    }	
+    }
 }

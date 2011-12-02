@@ -16,7 +16,7 @@ dock_p = pose_from_pdb("test/data/test_dock.pdb")
 dock_jump = 1
 #DockingProtocol().setup_foldtree(dock_p)
 
-to_centroid = SwitchResidueTypeSetMover('centroid')
+to_centroid = protocols::simple_moves::SwitchResidueTypeSetMover('centroid')
 
 jmp_arr = utility.vector1_int()
 #jmp_arr = utility.vector1_ulong()

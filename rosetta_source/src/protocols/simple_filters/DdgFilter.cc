@@ -31,7 +31,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <protocols/simple_moves/ddG.hh>
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 namespace protocols {
 namespace simple_filters {
@@ -148,7 +148,7 @@ DdgFilter::compute( core::pose::Pose const & pose ) const {
 
 		simple_filters::ScoreTypeFilter const stf( scorefxn_, core::scoring::total_score, 10000/*threshold*/ );
 		core::pose::Pose split_pose( pose );
-		moves::RigidBodyTransMoverOP translate( new moves::RigidBodyTransMover( split_pose, rb_jump_ ) );
+		rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( split_pose, rb_jump_ ) );
 		translate->step_size( 1000.0 );
 		translate->apply( split_pose );
 		core::Real const bound_energy( stf.compute( pose ));

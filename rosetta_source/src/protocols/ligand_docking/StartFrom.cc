@@ -16,8 +16,8 @@
 #include <protocols/ligand_docking/StartFrom.hh>
 #include <protocols/ligand_docking/StartFromCreator.hh>
 
-#include <protocols/geometry/RB_geometry.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RB_geometry.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 // Utility Headers
 #include <numeric/random/random.hh>
@@ -158,7 +158,7 @@ move_ligand_to_desired_centroid(
 	core::Vector const trans_vec = desired_centroid - ligand_centroid;
 	core::Real const trans_len = trans_vec.length();
 	if (trans_len > 1e-3) { // otherwise we get NaNs
-		protocols::moves::RigidBodyTransMover mover(pose, jump_id);
+		protocols::rigid::RigidBodyTransMover mover(pose, jump_id);
 		mover.step_size(trans_len);
 		mover.trans_axis(trans_vec);
 		mover.apply(pose);

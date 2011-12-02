@@ -37,8 +37,8 @@
 #include <core/conformation/util.hh>
 #include <core/io/pdb/pose_io.hh>
 #include <basic/options/util.hh>//option.hh>
-#include <protocols/loops/LoopRelaxMover.fwd.hh>
-#include <protocols/loops/LoopRelaxMover.hh>
+#include <protocols/comparative_modeling/LoopRelaxMover.fwd.hh>
+#include <protocols/comparative_modeling/LoopRelaxMover.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <numeric/random/random.hh>
 #include <protocols/loops/Loops.hh>
@@ -114,7 +114,7 @@ std::string int2string(int n){
 }
 
 void modelSSLoop(Size startCys, Size endCys, pose::Pose& workpose, core::scoring::ScoreFunctionOP scorefxn){
-	protocols::loops::LoopRelaxMover loop_relax_mover;
+	protocols::comparative_modeling::LoopRelaxMover loop_relax_mover;
 	utility::vector1< std::pair<Size, Size> > dss;
 	std::pair<Size,Size> bond(startCys,endCys);
 	dss.push_back(bond);
@@ -292,7 +292,7 @@ void packRotamers( pose::Pose& workpose, core::scoring::ScoreFunctionOP scorefxn
 }
 
 void writeScores(pose::Pose& workpose, pose::Pose& nativePose, const std::string filename, Real score) {
-	Real rmsd = protocols::evaluation::native_CA_rmsd(nativePose,workpose);
+	Real rmsd = protocols::simple_filters::native_CA_rmsd(nativePose,workpose);
 	std::ofstream writer("scorefile.out",std::ios::app);
 	writer<<filename<<"\t"<<score<<"\t"<<rmsd<<std::endl;
 	writer.close();

@@ -22,7 +22,7 @@
 #include <protocols/jumping/SameStrand.hh>
 #include <protocols/jumping/PairingLibrary.hh>
 
-#include <protocols/evaluation/JumpEvaluator.hh>
+#include <protocols/simple_filters/JumpEvaluator.hh>
 
 // project headers
 #include <core/kinematics/MoveMap.hh>
@@ -371,7 +371,7 @@ void JumpingTest::test_SheetBuilder() {
 }
 
 Real check_jump( pose::Pose& pose, pose::Pose const& native, Size jump_nr ) {
-	protocols::evaluation::JumpEvaluator eval( native, jump_nr );
+	protocols::simple_filters::JumpEvaluator eval( native, jump_nr );
 	return eval.apply( pose );
 }
 

@@ -12,6 +12,8 @@
 /// @brief
 /// @author Ian W. Davis
 
+// IS THIS DEPRECATED? IS IT USED ANYWHERE?
+
 
 #include <protocols/ligand_docking/RigidSearchMover.hh>
 
@@ -21,7 +23,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
-#include <protocols/geometry/RB_geometry.hh>
+#include <protocols/rigid/RB_geometry.hh>
 #include <numeric/random/random.hh>
 
 #include <cmath>

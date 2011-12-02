@@ -91,7 +91,7 @@
 //test
 // AUTO-REMOVED #include <protocols/protein_interface_design/movers/DockAndRetrieveSidechains.hh>
 // AUTO-REMOVED #include <protocols/moves/ReturnSidechainMover.hh>
-// AUTO-REMOVED #include <protocols/moves/SwitchResidueTypeSetMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 // C++ headers
 #include <utility>
@@ -414,7 +414,7 @@ if (working_model.manager.size()!= 0){
 //	pose.update_residue_neighbors();
 //	pose.dump_pdb("testArcRestore3.pdb");
 	//testArc.dump_pdb("testArcRestoreSrc3.pdb");
-	//protocols::moves::SwitchResidueTypeSetMover to_all_atom( core::chemical::FA_STANDARD);
+	//protocols::simple_moves::SwitchResidueTypeSetMover to_all_atom( core::chemical::FA_STANDARD);
 	//protocols::moves::ReturnSidechainMover recover_sidechains( testArc);
 	//to_all_atom.apply(pose);
 	//recover_sidechains.apply(pose);

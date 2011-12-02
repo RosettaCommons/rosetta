@@ -77,6 +77,9 @@ public:
 		finish_stage_ = setting;
 	}
 
+	///@brief overloaded to make input decoys appear the same as decoys coming from batches
+	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& sfd );
+
 	///@brief we are always ready to generate a new batch
 	virtual bool ready_for_batch() const { return true; };
 

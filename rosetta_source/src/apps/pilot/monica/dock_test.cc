@@ -40,7 +40,7 @@
 
 // AUTO-REMOVED #include <basic/database/open.hh>
 
-#include <protocols/geometry/RB_geometry.hh>
+#include <protocols/rigid/RB_geometry.hh>
 
 #include <core/io/pdb/pdb_dynamic_reader.hh>
 #include <core/io/pdb/file_data.hh>

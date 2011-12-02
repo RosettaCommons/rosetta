@@ -34,7 +34,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 
 // option key includes
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 	}
 	///  Randomly Perturb with a default rotational magnitude of 3.0 and a translational
 	///  magnitude of 8.0; You can change this with constructor args.
-	protocols::moves::RigidBodyPerturbMover mover;
+	protocols::rigid::RigidBodyPerturbMover mover;
 	mover.apply(pose);
 	{
 		const std::string output("output.pdb");

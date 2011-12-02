@@ -59,7 +59,7 @@
 #include <protocols/loops/kinematic_closure/KinematicMover.hh>
 #include <protocols/loops/kinematic_closure/KinematicWrapper.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/RotateJumpAxisMover.hh>
+#include <protocols/rigid/RotateJumpAxisMover.hh>
 #include <protocols/moves/SidechainMover.hh>
 
 #include <basic/MetricValue.hh>
@@ -67,7 +67,7 @@
 #include <protocols/toolbox/pose_metric_calculators/InterfaceSasaDefinitionCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
-#include <protocols/moves/InterfaceAnalyzerMover.hh>
+#include <protocols/analysis/InterfaceAnalyzerMover.hh>
 
 // Numeric Headers
 #include <numeric/conversions.hh>
@@ -469,7 +469,7 @@ public:
 		}
 
 		//////////////////////////////RotateJumpAxisMover for second ubiquitin//////////////////////
-		protocols::moves::RotateJumpAxisMoverOP RJAmover(new protocols::moves::RotateJumpAxisMover(1));
+		protocols::rigid::RotateJumpAxisMoverOP RJAmover(new protocols::moves::RotateJumpAxisMover(1));
 		backbone_mover->add_mover(RJAmover, 1);
 
 

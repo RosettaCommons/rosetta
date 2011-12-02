@@ -17,8 +17,8 @@
 
 #include <protocols/ligand_docking/RandomConformerMover.hh>
 #include <protocols/ligand_docking/grid_functions.hh>
-#include <protocols/geometry/RB_geometry.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RB_geometry.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 // AUTO-REMOVED #include <protocols/moves/DataMap.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
@@ -170,14 +170,14 @@ void Translate::translate_ligand(
 	if(translate_info_.angstroms < 0) utility_exit_with_message("cannot have a negative translation value");
 	if(translate_info_.angstroms == 0) return;
 
-	protocols::moves::RigidBodyMoverOP mover;
+	protocols::rigid::RigidBodyMoverOP mover;
 	if(translate_info_.distribution == Uniform){
 		translate_tracer.Debug<< "making a uniform translator of up to "<< translate_info_.angstroms<<" angstroms"<< std::endl;
-		mover= new protocols::moves::UniformSphereTransMover( jump_id, translate_info_.angstroms);
+		mover= new protocols::rigid::UniformSphereTransMover( jump_id, translate_info_.angstroms);
 	}
 	else if(translate_info_.distribution == Gaussian){
 		translate_tracer.Debug<< "making a Gaussian translator of up to "<< translate_info_.angstroms<<" angstroms";
-		mover= new protocols::moves::RigidBodyPerturbMover ( jump_id, 0 /*rotation*/, translate_info_.angstroms);
+		mover= new protocols::rigid::RigidBodyPerturbMover ( jump_id, 0 /*rotation*/, translate_info_.angstroms);
 	}
 
 	core::pose::Pose const orig_pose(pose);
@@ -209,14 +209,14 @@ void Translate::translate_ligand(core::Size const jump_id,core::pose::Pose & pos
 
 	core::conformation::Residue const & residue(pose.residue(residue_id));
 
-	protocols::moves::RigidBodyMoverOP translate_mover;
+	protocols::rigid::RigidBodyMoverOP translate_mover;
 	if(translate_info_.distribution == Uniform){
 		translate_tracer.Debug<< "making a uniform translator of up to "<< translate_info_.angstroms<<" angstroms"<< std::endl;
-		translate_mover= new protocols::moves::UniformSphereTransMover( jump_id, translate_info_.angstroms);
+		translate_mover= new protocols::rigid::UniformSphereTransMover( jump_id, translate_info_.angstroms);
 	}
 	else if(translate_info_.distribution == Gaussian){
 		translate_tracer.Debug<< "making a Gaussian translator of up to "<< translate_info_.angstroms<<" angstroms";
-		translate_mover= new protocols::moves::RigidBodyPerturbMover ( jump_id, 0 /*rotation*/, translate_info_.angstroms);
+		translate_mover= new protocols::rigid::RigidBodyPerturbMover ( jump_id, 0 /*rotation*/, translate_info_.angstroms);
 	}
 
 	RandomConformerMoverOP conformer_mover = new RandomConformerMover(residue_id);

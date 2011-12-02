@@ -48,7 +48,7 @@
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 // AUTO-REMOVED #include <core/io/silent/RNA_SilentStruct.hh>
 // AUTO-REMOVED #include <core/io/silent/SilentFileData.hh>
@@ -307,9 +307,9 @@ create_random_pose( pose::Pose & pose ){
 
 	using namespace protocols::moves;
 
-	Partner p( partner_downstream );
+	Partner p( rigid::partner_downstream );
 	if ( options::option[ capri15 ] ) p = partner_upstream; //Ooops, need RNA before protein/SAM.
-	RigidBodyRandomizeMover mover( pose, 1 /* rb_jump_*/ ,  p );
+	rigid::RigidBodyRandomizeMover mover( pose, 1 /* rb_jump_*/ ,  p );
 	mover.apply( pose );
 
 	//Translate to origin.
@@ -320,7 +320,7 @@ create_random_pose( pose::Pose & pose ){
 	// Keep jump atoms close, within some Gaussian sphere.
 	Real trans_sigma = 4.0;
 	if ( options::option[capri15] ) trans_sigma = 3.0;
-	//	RigidBodyPerturbMoverOP rb_mover = new RigidBodyPerturbMover(
+	//	rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover(
 	//																															 pose, 1 /*jump_num*/, 0.0 /*rot*/, trans_sigma );
 	//	rb_mover->apply( pose );
 	using namespace numeric::random;
@@ -510,7 +510,7 @@ rna_protein_rb_test(){
 		if (option[ dump_the_pdb] ) dump_pdb( pose, tag + ".pdb" );
 	}
 
-	//	RigidBodyPerturbMoverOP rb_mover = new RigidBodyPerturbMover(
+	//	rigid::RigidBodyPerturbMoverOP rb_mover = new rigid::RigidBodyPerturbMover(
 	//			pose, 1 /*jump_num*/, 60.0 /*rot*/, 0.0 /*trans*/ );
 	//	rb_mover->apply( pose );
 	//	dump_pdb( pose, "perturb.pdb" );

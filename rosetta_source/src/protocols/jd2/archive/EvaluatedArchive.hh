@@ -90,7 +90,7 @@ public:
 	virtual void read_structures( core::io::silent::SilentFileData&, Batch const& batch );
 
 	///@brief overloaded to make input decoys appear the same as decoys coming from batches
-	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& sfd );
+	virtual void init_from_decoy_set( core::io::silent::SilentFileData const& sfd ) = 0;
 
 protected:
 
@@ -132,6 +132,9 @@ protected:
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn_ );
 
 	core::scoring::ScoreFunction const & scorefxn() const;
+
+protected:
+	core::scoring::ScoreFunctionOP scorefxn_non_const();
 
 private:
 

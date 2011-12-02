@@ -20,7 +20,7 @@
 
 // Rosetta Headers
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -213,12 +213,12 @@ DockingInitialPerturbation::apply_body(core::pose::Pose & pose, core::Size jump_
 
 	if( randomize1_ ) {
 		TR << "randomize1: true" << std::endl;
-		RigidBodyRandomizeMover mover( pose, jump_number, partner_upstream );
+		rigid::RigidBodyRandomizeMover mover( pose, jump_number, rigid::partner_upstream );
 		mover.apply( pose );
 	}
 	if( randomize2_ ) {
 		TR << "randomize2: true" << std::endl;
-		RigidBodyRandomizeMover mover( pose, jump_number, partner_downstream );
+		rigid::RigidBodyRandomizeMover mover( pose, jump_number, rigid::partner_downstream );
 		mover.apply( pose );
 	}
 	if( if_dock_pert_ ) {
@@ -236,21 +236,21 @@ DockingInitialPerturbation::apply_body(core::pose::Pose & pose, core::Size jump_
 		//TR << "option[ docking::rotational ]()" << rot << "\n";
 		//TR << "option[ docking::parallel ]()" << trans << "\n";
 		TR << "option[ docking::dock_pert ]()" << pert_mags[rot] << ' ' << pert_mags[trans] << std::endl;
-		RigidBodyPerturbMoverOP mover;
-		if (center_at_interface_) mover = new RigidBodyPerturbMover( jump_number, pert_mags[rot], pert_mags[trans], partner_downstream, true );
-		else mover = new RigidBodyPerturbMover( jump_number, pert_mags[rot], pert_mags[trans] );
+		rigid::RigidBodyPerturbMoverOP mover;
+		if (center_at_interface_) mover = new rigid::RigidBodyPerturbMover( jump_number, pert_mags[rot], pert_mags[trans], rigid::partner_downstream, true );
+		else mover = new rigid::RigidBodyPerturbMover( jump_number, pert_mags[rot], pert_mags[trans] );
 		mover->apply( pose );
 	}
 
 	if( if_uniform_trans_ ) {
 		core::Real mag( uniform_trans_ );
 		TR << "uniform_trans: " << mag << std::endl;
-		UniformSphereTransMover mover( jump_number, mag );
+		rigid::UniformSphereTransMover mover( jump_number, mag );
 		mover.apply( pose );
 	}
 	if( spin_ ) {
 		TR << "axis_spin: true" << std::endl;
-		RigidBodySpinMover mover( jump_number );
+		rigid::RigidBodySpinMover mover( jump_number );
 		mover.apply( pose );
 	}
 	// DO NOT do this for e.g. ligand docking
@@ -296,7 +296,7 @@ void DockingSlideIntoContact::apply( core::pose::Pose & pose )
 {
 	using namespace moves;
 
-	RigidBodyTransMover mover( pose, rb_jump_ );
+	rigid::RigidBodyTransMover mover( pose, rb_jump_ );
 	( *scorefxn_ )( pose );
 
 	TR << "sliding into contact" << std::endl;
@@ -374,7 +374,7 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 	(*scorefxn_)( pose );
 	core::Real const initial_fa_rep = pose.energies().total_energies()[ fa_rep ];
 	bool are_touching = false;
-	moves::RigidBodyTransMover trans_mover( pose, rb_jump_ );
+	rigid::RigidBodyTransMover trans_mover( pose, rb_jump_ );
 
 	//int i=1;
 	// Take 2A steps till clash, then back apart one step.  Now you're within 2A of touching.

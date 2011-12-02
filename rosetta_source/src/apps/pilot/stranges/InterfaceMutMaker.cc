@@ -43,7 +43,7 @@
 
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/SetReturningPackRotamersMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborhoodByDistanceCalculator.hh>
 
 #include <basic/options/util.hh>
@@ -199,7 +199,7 @@ pose::Pose split_chains( core::pose::Pose & pose, scoring::ScoreFunctionOP & sco
 
 	pose::Pose copy(pose);
 
-	protocols::moves::RigidBodyTransMoverOP translate( new protocols::moves::RigidBodyTransMover( copy, jump ) );
+	protocols::rigid::RigidBodyTransMoverOP translate( new protocols::rigid::RigidBodyTransMover( copy, jump ) );
 	translate->step_size( 300.0 );
 	translate->apply( copy );
 

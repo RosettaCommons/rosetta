@@ -29,7 +29,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/ScoreType.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/simple_filters/ScoreTypeFilter.hh>
 #include <utility/tag/Tag.hh>
 //#include <protocols/moves/ResidueMover.hh>

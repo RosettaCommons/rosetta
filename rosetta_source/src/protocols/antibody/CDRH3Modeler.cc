@@ -63,7 +63,7 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/ReturnSidechainMover.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
@@ -189,8 +189,8 @@ void CDRH3Modeler::apply( pose::Pose & pose_in )
 	simple_one_loop_fold_tree( antibody_in_.Fv, cdr_h3 );
 
 	// switching to centroid mode
-	SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
-	SwitchResidueTypeSetMover to_full_atom( chemical::FA_STANDARD );
+	simple_moves::SwitchResidueTypeSetMover to_centroid( chemical::CENTROID );
+	simple_moves::SwitchResidueTypeSetMover to_full_atom( chemical::FA_STANDARD );
 
 	// Building centroid mode loop
 	if( apply_centroid_mode_ ) {

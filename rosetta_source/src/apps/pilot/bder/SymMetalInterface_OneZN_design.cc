@@ -22,7 +22,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/toolbox/pose_metric_calculators/InterfaceNeighborDefinitionCalculator.hh>
 #include <protocols/toolbox/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
 #include <protocols/toolbox/task_operations/RestrictToInterfaceOperation.hh>

@@ -38,7 +38,7 @@
 // #include <core/scoring/ScoreType.hh>
 // //#include <core/kinematics/MoveMap.hh>
 // #include <core/types.hh>
-// #include <core/scoring/rms_util.hh> //for ConvergenceCheck
+// #include <core/scoring/rms_util.hh> //for MonteCarloExceptionConverge
 // //#include <core/pack/task/PackerTask.fwd.hh>
 // #include <core/scoring/constraints/ConstraintSet.hh>
 // //only needed because of temporary output_debug_structure ...

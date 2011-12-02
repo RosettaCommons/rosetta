@@ -25,7 +25,7 @@
 
 // Project headers
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
@@ -98,7 +98,7 @@ void SlideIntoSurface::apply( core::pose::Pose & pose )
 	// Just to get surfaceparameters working!
 	surface_docking::SurfaceParametersOP surfaceParams=
 									new surface_docking::SurfaceParameters();
-	RigidBodyTransMoverOP mover( new RigidBodyTransMover(pose,rb_jump_));
+	rigid::RigidBodyTransMoverOP mover( new rigid::RigidBodyTransMover(pose,rb_jump_));
 	//TR<<"SlideAxis Vector:"<<surfaceParams.slideaxis<<std::endl;
 	mover->trans_axis(-1*surfaceParams->slideaxis);
 	( *scorefxn_ )( pose );
@@ -187,14 +187,14 @@ void FaSlideIntoSurface::apply( core::pose::Pose & pose )
 	//					( pose.data().get_ptr( SURFACE_PARAMS )() ));
 	surface_docking::SurfaceParametersOP surfaceParams=
 									new surface_docking::SurfaceParameters();
-	RigidBodyTransMoverOP trans_mover( new RigidBodyTransMover(pose,rb_jump_));
+	rigid::RigidBodyTransMoverOP trans_mover( new rigid::RigidBodyTransMover(pose,rb_jump_));
 	TR<<"SlideAxis Vector:"<<surfaceParams->slideaxis<<std::endl;
 	trans_mover->trans_axis(-1*surfaceParams->slideaxis);
 
 	(*scorefxn_)( pose );
 	core::Real const initial_fa_rep = pose.energies().total_energies()[ fa_rep ];
 	bool are_touching = false;
-	//moves::RigidBodyTransMover trans_mover( pose, rb_jump_ );
+	//rigid::RigidBodyTransMover trans_mover( pose, rb_jump_ );
 
 	//int i=1;
 	// Take 2A steps till clash, then back apart one step.  Now you're within 2A of touching.

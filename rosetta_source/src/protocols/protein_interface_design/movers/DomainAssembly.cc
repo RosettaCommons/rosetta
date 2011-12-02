@@ -27,7 +27,7 @@
 #include <protocols/abinitio/ClassicAbinitio.hh>
 #include <protocols/moves/ReturnSidechainMover.hh>
 #include <protocols/abinitio/AbrelaxApplication.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -134,8 +134,8 @@ DomainAssembly::apply( core::pose::Pose & pose )
 	}
 */
 	core::scoring::ScoreFunctionCOP scorefxn( ScoreFunctionFactory::create_score_function( STANDARD_WTS, SCORE12_PATCH ) );
-	protocols::moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
-	protocols::moves::SwitchResidueTypeSetMover to_fullatom( core::chemical::FA_STANDARD );
+	protocols::simple_moves::SwitchResidueTypeSetMover to_centroid( core::chemical::CENTROID );
+	protocols::simple_moves::SwitchResidueTypeSetMover to_fullatom( core::chemical::FA_STANDARD );
 	to_centroid.apply( pose );
 	protocols::abinitio::AbrelaxApplication abrelax_app;
 	do {

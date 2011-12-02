@@ -91,7 +91,7 @@
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 // AUTO-REMOVED #include <protocols/moves/RepeatMover.hh>
-// AUTO-REMOVED #include <protocols/moves/RigidBodyMover.hh>
+// AUTO-REMOVED #include <protocols/rigid/RigidBodyMover.hh>
 // AUTO-REMOVED #include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
 #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>

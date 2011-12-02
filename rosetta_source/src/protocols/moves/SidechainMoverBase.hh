@@ -19,8 +19,8 @@
 #include <protocols/moves/SidechainMoverBase.fwd.hh>
 
 // Protocols Headers
-#include <protocols/moves/MetropolisHastingsMover.fwd.hh>
-#include <protocols/moves/ThermodynamicMover.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.fwd.hh>
+#include <protocols/canonical_sampling/ThermodynamicMover.hh>
 
 // Core Headers
 #include <core/pack/task/TaskFactory.fwd.hh>
@@ -44,7 +44,7 @@ namespace protocols {
 namespace moves {
 
 /// @brief class for non-discrete side chain sampling using Dunbrack rotamer probabilities/distributions
-class SidechainMoverBase : public ThermodynamicMover {
+class SidechainMoverBase : public protocols::canonical_sampling::ThermodynamicMover {
 
 public:
 //
@@ -84,7 +84,7 @@ public:
 	void
 	initialize_simulation(
 		core::pose::Pose &pose,
-		protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
+		protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 	);
 
 	virtual core::conformation::ResidueOP

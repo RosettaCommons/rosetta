@@ -32,7 +32,7 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/MinMover.hh>
 
 // numeric headers
@@ -372,7 +372,7 @@ DiversifyStoredRBConfs::diversify_all_confs(
 	core::pose::Pose mod_pose = pose;
 	Size natoms( confs[1]->natoms() );
 	Size seqpos( confs[1]->seqpos() );
-	protocols::moves::RigidBodyPerturbMover simple_rigbod( mod_pose.fold_tree().get_jump_that_builds_residue( confs[1]->seqpos() ), numeric::conversions::degrees(0.05), min_rms_);
+	protocols::rigid::RigidBodyPerturbMover simple_rigbod( mod_pose.fold_tree().get_jump_that_builds_residue( confs[1]->seqpos() ), numeric::conversions::degrees(0.05), min_rms_);
 
 	for( Size i = 1; i <= max_trials_; ++i ){
 		utility::vector1< Real > min_dist( closest_orient_atoms_msd( pose, confs ) );

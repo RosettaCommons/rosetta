@@ -50,7 +50,7 @@
 //protocol headers
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/geometry/RB_geometry.hh>
+#include <protocols/rigid/RB_geometry.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>

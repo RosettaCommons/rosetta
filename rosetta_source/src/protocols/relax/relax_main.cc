@@ -107,13 +107,13 @@ Relax_main( bool ) {
 
 	// superimpose input model to the native structure or to a supplied PDB file
 	if ( option[ OptionKeys::relax::superimpose_to_file ].user() ||
-	     option[ OptionKeys::relax::superimpose_to_native ].user() 
+	     option[ OptionKeys::relax::superimpose_to_native ].user()
 	 ) {
 			core::pose::Pose ref_pose;
 			std::string ref_filename;
 			if(  option[ OptionKeys::relax::superimpose_to_file ].user() ) ref_filename = option[ basic::options::OptionKeys::relax::superimpose_to_file ]();
 			if(  option[ OptionKeys::relax::superimpose_to_native ].user() ) ref_filename =  option[ basic::options::OptionKeys::in::file::native ]();
-			core::import_pose::pose_from_pdb( ref_pose, ref_filename ); 
+			core::import_pose::pose_from_pdb( ref_pose, ref_filename );
 			protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
 			protocols::simple_moves::SuperimposeMover *sm  =  new protocols::simple_moves::SuperimposeMover;
 			sm->set_reference_pose( ref_pose );

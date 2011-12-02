@@ -7,11 +7,11 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/MonteCarlo.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
-#include <protocols/moves/SwitchResidueTypeSetMover.hh>
-#include <protocols/rbsegment_moves/AutoRBRelaxMover.hh>
+#include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
+#include <protocols/rigid/AutoRBRelaxMover.hh>
 
 #include <protocols/relax/util.hh>
 #include <utility/excn/Exceptions.hh>

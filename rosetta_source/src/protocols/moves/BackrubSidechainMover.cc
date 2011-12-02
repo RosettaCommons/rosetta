@@ -21,9 +21,9 @@
 // Project Headers
 #include <protocols/moves/BackrubSegment.hh>
 #include <protocols/moves/DataMap.hh>
-#include <protocols/moves/MetropolisHastingsMover.hh>
+#include <protocols/canonical_sampling/MetropolisHastingsMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
-// AUTO-REMOVED #include <protocols/moves/ThermodynamicObserver.hh> // needed for Windows build
+// AUTO-REMOVED #include <protocols/canonical_sampling/ThermodynamicObserver.hh> // needed for Windows build
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
@@ -84,7 +84,7 @@ BackrubSidechainMoverCreator::mover_name() {
 
 BackrubSidechainMover::BackrubSidechainMover(
 ) :
-	ThermodynamicMover(),
+	protocols::canonical_sampling::ThermodynamicMover(),
 	backrub_mover_(new protocols::moves::BackrubMover),
 	sidechain_mover_(new protocols::moves::SidechainMover),
 	record_statistics_(false),
@@ -98,7 +98,7 @@ BackrubSidechainMover::BackrubSidechainMover(
 	BackrubSidechainMover const & mover
 ) :
 	//utility::pointer::ReferenceCount(),
-	ThermodynamicMover(mover),
+	protocols::canonical_sampling::ThermodynamicMover(mover),
 	valid_segments_(mover.valid_segments_),
 	last_valid_segment_index_(mover.last_valid_segment_index_),
 	last_chi1_pre_(mover.last_chi1_pre_),
@@ -222,7 +222,7 @@ BackrubSidechainMover::update_segments(
 void
 BackrubSidechainMover::initialize_simulation(
 	core::pose::Pose & pose,
-	protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 )
 {
 	if (!(valid_segments_.size() && backrub_mover_->get_input_pose() && backrub_mover_->get_input_pose()->fold_tree() == pose.fold_tree())) {
@@ -264,7 +264,7 @@ BackrubSidechainMover::apply(
 
 void
 BackrubSidechainMover::observe_after_metropolis(
-	protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 )
 {
 	if (record_statistics_) record_histograms(metropolis_hastings_mover.monte_carlo()->mc_accepted());
@@ -273,7 +273,7 @@ BackrubSidechainMover::observe_after_metropolis(
 void
 BackrubSidechainMover::finalize_simulation(
 	core::pose::Pose & /*pose*/,
-	protocols::moves::MetropolisHastingsMover const & metropolis_hastings_mover
+	protocols::canonical_sampling::MetropolisHastingsMover const & metropolis_hastings_mover
 )
 {
 	if (record_statistics_) {

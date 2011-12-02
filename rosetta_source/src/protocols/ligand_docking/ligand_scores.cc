@@ -15,8 +15,8 @@
 #include <protocols/ligand_docking/ligand_scores.hh>
 #include <core/pose/util.hh>
 
-#include <protocols/moves/RigidBodyMover.hh>
-#include <protocols/geometry/RB_geometry.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/rigid/RB_geometry.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
 #include <protocols/moves/Mover.hh>
@@ -77,7 +77,7 @@ append_interface_deltas(
 	core::Real const together_score = (*scorefxn)( *after_copy );
 	core::scoring::EnergyMap const together_energies = after_copy->energies().total_energies();
 	core::Real const initial_fa_rep = after_copy->energies().total_energies()[ core::scoring::fa_rep ];
-	protocols::moves::RigidBodyTransMover trans_mover( *after_copy, jump_id );
+	protocols::rigid::RigidBodyTransMover trans_mover( *after_copy, jump_id );
 	trans_mover.trans_axis( trans_mover.trans_axis().negate() ); // now move together
 	trans_mover.step_size(1);
 	trans_mover.apply( *after_copy );

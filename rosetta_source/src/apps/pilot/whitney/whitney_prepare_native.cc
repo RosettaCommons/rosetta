@@ -35,8 +35,8 @@
 #include <basic/Tracer.hh>
 #include <core/scoring/Energies.hh>
 
-#include <protocols/moves/RigidBodyMover.hh>
-#include <protocols/geometry/RB_geometry.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
+#include <protocols/rigid/RB_geometry.hh>
 
 
 // Utility Headers

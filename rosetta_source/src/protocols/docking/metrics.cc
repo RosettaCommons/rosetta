@@ -29,7 +29,7 @@
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 #include <ObjexxFCL/FArray1D.fwd.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <basic/Tracer.hh>
@@ -85,7 +85,7 @@ calc_interaction_energy( const core::pose::Pose & pose, const core::scoring::Sco
 		 */
 		core::pose::Pose unbound_pose = complex_pose;
 		Real trans_magnitude = 1000;
-		moves::RigidBodyTransMoverOP translate_away ( new moves::RigidBodyTransMover( unbound_pose, rb_jump ) );
+		rigid::RigidBodyTransMoverOP translate_away ( new rigid::RigidBodyTransMover( unbound_pose, rb_jump ) );
 		translate_away->step_size( trans_magnitude );
 		translate_away->apply( unbound_pose );
 

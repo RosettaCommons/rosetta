@@ -27,7 +27,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/PackRotamersMover.hh>
 #include <protocols/moves/RotamerTrialsMover.hh>
-#include <protocols/moves/RigidBodyMover.hh>
+#include <protocols/rigid/RigidBodyMover.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
 // AUTO-REMOVED #include <core/conformation/Conformation.hh>
@@ -395,7 +395,7 @@ HighResDocker::create_rigid_body_movers(core::pose::Pose const & pose) const{
 		LigandAreaOP const ligand_area = ligand_area_pair.second;
 		core::Real const & angstroms= ligand_area->high_res_angstroms_;
 		core::Real const & degrees= ligand_area->high_res_degrees_;
-		protocols::moves::MoverOP rigid_body_mover= new protocols::moves::RigidBodyPerturbMover( jump_id, degrees, angstroms);
+		protocols::moves::MoverOP rigid_body_mover= new protocols::rigid::RigidBodyPerturbMover( jump_id, degrees, angstroms);
 		rigid_body_movers.push_back(rigid_body_mover);
 	}
 	return rigid_body_movers;
