@@ -15,7 +15,7 @@
 #include <protocols/protein_interface_design/util.hh>
 
 // Package Headers
-#include <protocols/protein_interface_design/dock_design_filters.hh>
+
 
 // Project Headers
 #include <core/kinematics/FoldTree.hh>
@@ -44,6 +44,10 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
+
+//Auto Headers
+#include <protocols/simple_filters/EnergyPerResidueFilter.hh>
+
 
 static basic::Tracer TR( "protocols.protein_interface_design.util" );
 
@@ -214,7 +218,7 @@ find_lowest_constraint_energy_residue( core::pose::Pose const & pose, core::Size
 	lowest_energy = 100000.0;
 	for( core::Size i=pose.conformation().chain_begin( chain ); i<=pose.conformation().chain_end( chain ); ++i ){
 		using namespace core::scoring;
-		EnergyPerResidueFilter const eprf( i, scorefxn, backbone_stub_constraint, 10000.0/*dummy threshold*/ );
+		simple_filters::EnergyPerResidueFilter const eprf( i, scorefxn, backbone_stub_constraint, 10000.0/*dummy threshold*/ );
 		core::Real const curr_energy( eprf.compute( pose ) );
 		if( curr_energy<=lowest_energy ){
 			lowest_energy = curr_energy;

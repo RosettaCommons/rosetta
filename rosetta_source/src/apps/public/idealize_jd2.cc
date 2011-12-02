@@ -14,7 +14,7 @@
 // AUTO-REMOVED #include <protocols/idealize/idealize.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <protocols/idealize/IdealizeMover.fwd.hh>
-#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/jd2/JobDistributor.hh>
 // AUTO-REMOVED #include <utility/excn/Exceptions.hh>
@@ -49,7 +49,7 @@ int main( int argc, char * argv [] ) {
 	using namespace protocols::idealize;
 	using namespace protocols::jd2;
   using namespace protocols::moves;
-  using namespace protocols::moves::symmetry;
+  using namespace protocols::symmetric_docking;
 	using namespace basic::options;
   using namespace basic::options::OptionKeys;
 

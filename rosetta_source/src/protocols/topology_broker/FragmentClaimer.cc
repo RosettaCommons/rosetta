@@ -27,7 +27,7 @@
 #include <utility/exit.hh>
 
 #include <core/fragment/FragSet.hh>
-#include <protocols/basic_moves/FragmentMover.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
 
 // ObjexxFCL Headers
 
@@ -64,7 +64,7 @@ FragmentClaimer::FragmentClaimer() :
 	movemap_ = new kinematics::MoveMap;
 }
 
-FragmentClaimer::FragmentClaimer( basic_moves::FragmentMoverOP mover, std::string tag, weights::AbinitioMoverWeightOP weight ) :
+FragmentClaimer::FragmentClaimer( simple_moves::FragmentMoverOP mover, std::string tag, weights::AbinitioMoverWeightOP weight ) :
 	TopologyClaimer( weight ),
 	mover_( mover ),
 	mover_tag_( tag ),
@@ -74,7 +74,7 @@ FragmentClaimer::FragmentClaimer( basic_moves::FragmentMoverOP mover, std::strin
 	movemap_ = new kinematics::MoveMap;
 }
 
-FragmentClaimer::FragmentClaimer( basic_moves::FragmentMoverOP mover ) :
+FragmentClaimer::FragmentClaimer( simple_moves::FragmentMoverOP mover ) :
 	mover_( mover )
 {
 	if ( mover_) mover_tag_ = mover_->type();
@@ -158,7 +158,7 @@ bool FragmentClaimer::accept_declined_claim( DofClaim const& was_declined ) {
 	return true; // full tolerance here ---
 }
 
-void FragmentClaimer::set_mover( basic_moves::FragmentMoverOP mover ) {
+void FragmentClaimer::set_mover( simple_moves::FragmentMoverOP mover ) {
 	mover_ = mover;
 }
 
@@ -168,7 +168,7 @@ void FragmentClaimer::set_mover_tag( std::string const& str ) {
 }
 
 
-basic_moves::FragmentMoverOP FragmentClaimer::get_frag_mover_ptr() {
+simple_moves::FragmentMoverOP FragmentClaimer::get_frag_mover_ptr() {
 	return mover_;
 }
 

@@ -15,7 +15,7 @@
 #include <test/UMoverTest.hh>
 
 // Unit headers
-#include <protocols/moves/ScoreMover.hh>
+#include <protocols/simple_moves/ScoreMover.hh>
 
 // AUTO-REMOVED #include <basic/Tracer.hh>
 
@@ -30,7 +30,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverStatus.hh>
-#include <protocols/moves/ScoreMover.fwd.hh>
+#include <protocols/simple_moves/ScoreMover.fwd.hh>
 #include <utility/down_cast.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/vector1.hh>
@@ -79,7 +79,7 @@ public:
 	void test_Score12() {
 		std::cout << "Start All Scoring tests" << "\n";
 		core_init_with_additional_options( "-score:patch score12 -out:output" );
-		one_mover_test(__FILE__, __LINE__, new ScoreMover,
+		one_mover_test(__FILE__, __LINE__, new protocols::simple_moves::ScoreMover,
 						 "protocols/moves/test_in.pdb", "protocols/moves/score12.pdb",
 						 0, "protocols/moves/score12.u", "protocols");
 		std::cout << "End Scoring -score:patch score12 test" << "\n";

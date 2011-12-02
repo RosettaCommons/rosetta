@@ -29,8 +29,8 @@
 // AUTO-REMOVED #include <numeric/xyz.io.hh>
 #include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/format.hh>
-#include <protocols/moves/kinematic_closure/bridgeObjects.hh>
-#include <protocols/moves/kinematic_closure/kinematic_closure_helpers.hh>
+#include <numeric/kinematic_closure/bridgeObjects.hh>
+#include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 
 #include <sstream>
 #include <utility/vector1.hh>
@@ -70,7 +70,7 @@ vector1<reals> vecs2vv(vecs const & v) {
 
 
 void test_bridgeObjects() {
-	using namespace protocols::moves::kinematic_closure;
+	using namespace numeric::kinematic_closure;
 	// input arguments
 	int N=8;
 	utility::vector1<Real> t_ang0 (N), b_ang0 (N), b_len0 (N), dt (N), db (N), da (N);
@@ -239,7 +239,7 @@ void test_kc() {
 	using numeric::random::RG;
 	using core::id::AtomID;
 	using core::pose::Pose;
-	using namespace protocols::moves::kinematic_closure;
+	using namespace numeric::kinematic_closure;
 	using basic::options::option;
 	using namespace basic::options::OptionKeys;
 
@@ -303,7 +303,7 @@ void test_kc() {
 
 	for(int isol = 1; isol <= nsol; isol++) {
 		utility::vector1<utility::vector1<core::Real> > atm_out;
-		protocols::moves::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,atm_out);
+		numeric::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,atm_out);
 		utility::io::ozstream out("test_"+ObjexxFCL::string_of(isol)+".pdb");
 		for(Size i = 1; i <= atm_out.size(); ++i) {
 			using namespace ObjexxFCL::fmt;
@@ -382,7 +382,7 @@ void test_kc2() {
 	// 	out.close();
 	// }
 
-	protocols::moves::kinematic_closure::chainTORS(atoms.size(), vecs2vv(atoms), dt, da, db, R0, Q0);
+	numeric::kinematic_closure::chainTORS(atoms.size(), vecs2vv(atoms), dt, da, db, R0, Q0);
 	// for(int i = 1; i <= 3; i++) {
 	// 	R0[i]    = 0.0;
 	// 	Q0[i][1] = 0.0;
@@ -404,13 +404,13 @@ void test_kc2() {
 	// db[5] = 3.89;
 	// da[5] = 109.5;
 
-	protocols::moves::kinematic_closure::bridgeObjects( vecs2vv(atoms), dt, da, db, pivots, order, t_ang, b_ang, b_len, nsol );
+	numeric::kinematic_closure::bridgeObjects( vecs2vv(atoms), dt, da, db, pivots, order, t_ang, b_ang, b_len, nsol );
 
 	TR << "nsol " << nsol << std::endl;
 
 	for(int isol = 1; isol <= nsol; isol++) {
 		utility::vector1<utility::vector1<core::Real> > atm_out;
-		protocols::moves::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,atm_out);
+		numeric::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,atm_out);
 		utility::io::ozstream out("test2_"+ObjexxFCL::string_of(isol)+".pdb");
 			using namespace ObjexxFCL::fmt;
 			out<<"ATOM  "<<I(5, 1)<<' '<<"  N "<<' '<<"ALA"<<' '<<"A"<<I(4,1)<<"    "<<F(8,3,atm_out[ 1][1])<<F(8,3,atm_out[ 1][2])<<F(8,3,atm_out[ 1][3])<<F(6,2,1.0)<<F(6,2,1.0)<<'\n';
@@ -451,6 +451,6 @@ void test_kc2() {
 
 int main (int argc, char *argv[]) {
   core::init(argc,argv);
-	//	protocols::moves::kinematic_closure::test_bridgeObjects();
+	//	numeric::kinematic_closure::test_bridgeObjects();
 	test_kc();
 }

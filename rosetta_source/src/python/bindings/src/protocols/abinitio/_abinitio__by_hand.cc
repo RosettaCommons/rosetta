@@ -6,23 +6,23 @@
 #include "boost/python.hpp"
 
 
-#include <protocols/basic_moves/FragmentMover.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 
 namespace bp = boost::python;
 
 
-protocols::basic_moves::ClassicFragmentMoverOP create_ClassicFragmentMover(core::fragment::FragSet const & fragset,
+protocols::simple_moves::ClassicFragmentMoverOP create_ClassicFragmentMover(core::fragment::FragSet const & fragset,
 																		core::kinematics::MoveMap const & movemap)
 {
-	return new protocols::basic_moves::ClassicFragmentMover(fragset.clone(), new core::kinematics::MoveMap(movemap));
+	return new protocols::simple_moves::ClassicFragmentMover(fragset.clone(), new core::kinematics::MoveMap(movemap));
 }
 
-protocols::basic_moves::ClassicFragmentMoverOP create_ClassicFragmentMover_CL(core::fragment::ConstantLengthFragSet const & fragset,
+protocols::simple_moves::ClassicFragmentMoverOP create_ClassicFragmentMover_CL(core::fragment::ConstantLengthFragSet const & fragset,
 																		core::kinematics::MoveMap const & movemap)
 {
-	return new protocols::basic_moves::ClassicFragmentMover(fragset.clone(), new core::kinematics::MoveMap(movemap));
+	return new protocols::simple_moves::ClassicFragmentMover(fragset.clone(), new core::kinematics::MoveMap(movemap));
 }
 
 

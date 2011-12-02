@@ -18,7 +18,7 @@
 //package headers
 #include <protocols/enzdes/enzdes_util.hh>
 #include <protocols/enzdes/EnzdesBaseProtocol.hh>
-#include <protocols/enzdes/EnzdesCacheableObserver.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 
 // Project Headers
 // AUTO-REMOVED #include <core/chemical/ResidueType.hh>
@@ -211,7 +211,7 @@ EnzRepackMinimize::minimize_in_stages(
 void
 EnzRepackMinimize::ensure_scofx_cstfication(core::pose::Pose const & pose )
 {
-	EnzdesCacheableObserverCOP enzobs(get_enzdes_observer( pose ) );
+	toolbox::match_enzdes_util::EnzdesCacheableObserverCOP enzobs(toolbox::match_enzdes_util::get_enzdes_observer( pose ) );
 	if( !enzobs ) return;
 
 	if (enzobs->cst_cache() ){ // Make sure scorefunction has cst terms if constraints (seem to ) exist

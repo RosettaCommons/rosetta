@@ -113,9 +113,6 @@ sources = {
 		#"nadeem_find_destabilizing_mutation",
 		#"nadeem_compensatory_mutation",
 	],
-	"pilot/jorg" : [
-		#"create_contactmap"
-	],
 	"pilot/jstev" : [
 		#"collect_features",
 	],

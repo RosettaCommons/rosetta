@@ -49,8 +49,8 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/kinematic_closure/bridgeObjects.hh>
-#include <protocols/moves/kinematic_closure/kinematic_closure_helpers.hh>
+#include <numeric/kinematic_closure/bridgeObjects.hh>
+#include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
@@ -145,7 +145,7 @@ void ik_arg_glu_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
   order [1]=1; order [2]=2; order [3]=3;
   pivots[1]=5, pivots[2]=8, pivots[3]=11;
 
-  using namespace protocols::moves::kinematic_closure;
+  using namespace numeric::kinematic_closure;
   chainTORS(atoms.size(), vecs2vv(atoms), dt_ang, db_ang, db_len, R0, Q0);
 
   core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib1 = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue(rsd1).type() );
@@ -168,7 +168,7 @@ void ik_arg_glu_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
         if( fabs(phidiff) > 10.0 ) continue;
 
         utility::vector1<utility::vector1<core::Real> > vv_atm_out;
-        protocols::moves::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,vv_atm_out);
+        numeric::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,vv_atm_out);
         Vecs apos = vv2vecs(vv_atm_out);
 
         bool clash = false;
@@ -262,7 +262,7 @@ void ik_arg_glu_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
   order [1]=1; order [2]=2; order [3]=3;
   pivots[1]=5, pivots[2]=8, pivots[3]=11;
 
-  using namespace protocols::moves::kinematic_closure;
+  using namespace numeric::kinematic_closure;
   chainTORS(atoms.size(), vecs2vv(atoms), dt_ang, db_ang, db_len, R0, Q0);
 
   core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib1 = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue(rsd1).type() );
@@ -286,7 +286,7 @@ void ik_arg_glu_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
         if( fabs(phidiff) > 10.0 ) continue;
 
         utility::vector1<utility::vector1<core::Real> > vv_atm_out;
-        protocols::moves::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,vv_atm_out);
+        numeric::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,vv_atm_out);
         Vecs apos = vv2vecs(vv_atm_out);
 
         bool clash = false;
@@ -409,7 +409,7 @@ void ik_arg_asp_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
   order [1]=1; order [2]=2; order [3]=3;
   pivots[1]=5, pivots[2]=8, pivots[3]=11;
 
-  using namespace protocols::moves::kinematic_closure;
+  using namespace numeric::kinematic_closure;
   chainTORS(atoms.size(), vecs2vv(atoms), dt_ang, db_ang, db_len, R0, Q0);
 
   core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib1 = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue(rsd1).type() );
@@ -436,7 +436,7 @@ void ik_arg_asp_frnt(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
         if( fabs(ph2diff) > 13.0 ) continue;
 
         utility::vector1<utility::vector1<core::Real> > vv_atm_out;
-        protocols::moves::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,vv_atm_out);
+        numeric::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,vv_atm_out);
         Vecs apos = vv2vecs(vv_atm_out);
 
         bool clash = false;
@@ -554,7 +554,7 @@ void ik_arg_asp_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
 
   order [1]=1; order [2]=2; order [3]=3;
   pivots[1]=5, pivots[2]=8, pivots[3]=11;
-  protocols::moves::kinematic_closure::chainTORS(atoms.size(), vecs2vv(atoms), dt_ang, db_ang, db_len, R0, Q0);
+  numeric::kinematic_closure::chainTORS(atoms.size(), vecs2vv(atoms), dt_ang, db_ang, db_len, R0, Q0);
   core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib1 = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue(rsd1).type() );
   core::pack::dunbrack::SingleResidueRotamerLibraryCAP dunlib2 = core::pack::dunbrack::RotamerLibrary::get_instance().get_rsd_library( pose.residue(rsd2).type() );
   core::pack::dunbrack::RotamerLibraryScratchSpace scratch;
@@ -568,14 +568,14 @@ void ik_arg_asp_side(Pose & pose, Size rsd1, Size rsd2, ImplicitFastClashCheck &
   Size count = 0;
   for(Size ichi2 = 3; ichi2 <= 360; ichi2 += 10) {
     dt_ang[6] = (Real)ichi2;
-    protocols::moves::kinematic_closure::bridgeObjects(vecs2vv(atoms), dt_ang, db_ang, db_len, pivots, order, t_ang, b_ang, b_len, nsol);
+    numeric::kinematic_closure::bridgeObjects(vecs2vv(atoms), dt_ang, db_ang, db_len, pivots, order, t_ang, b_ang, b_len, nsol);
     if(nsol==0) break;
     for(int isol = 1; isol <= nsol; isol++) {
       Real phidiff = phitgt-t_ang[isol][ 4]; while(phidiff < -180.0) phidiff+=360.0; while(phidiff > 180.0) phidiff-=360.0;
       if( fabs(phidiff) > 13.0 ) continue;
 
       utility::vector1<utility::vector1<core::Real> > vv_atm_out;
-      protocols::moves::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,vv_atm_out);
+      numeric::kinematic_closure::chainXYZ(atoms.size(),b_len[isol],b_ang[isol],t_ang[isol],false,R0,Q0,vv_atm_out);
       Vecs apos = vv2vecs(vv_atm_out);
 
       bool clash = false;

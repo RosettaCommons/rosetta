@@ -18,7 +18,6 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 #include <protocols/moves/DataMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
@@ -29,6 +28,10 @@
 #include <protocols/hotspot_hashing/HotspotStubSet.fwd.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <protocols/simple_moves/DesignRepackMover.hh>
+
+
 
 namespace protocols {
 namespace protein_interface_design {
@@ -36,7 +39,7 @@ namespace movers {
 
 /// @brief a simple rb-minimization in a bb-stub constraint biased forcefield.
 /// Note that this mover is dependent on a placement mover for setting its stubsets
-class PlacementMinimizationMover : public DesignRepackMover
+class PlacementMinimizationMover : public simple_moves::DesignRepackMover
 {
 public:
 	typedef std::pair< protocols::hotspot_hashing::HotspotStubSetOP, std::pair< protocols::hotspot_hashing::HotspotStubOP, core::Size > > StubSetStubPos;

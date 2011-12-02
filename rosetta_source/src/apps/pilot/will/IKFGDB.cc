@@ -67,13 +67,13 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <protocols/basic_moves/FragmentMover.hh>
-// AUTO-REMOVED #include <protocols/moves/kinematic_closure/bridgeObjects.hh>
-// AUTO-REMOVED #include <protocols/moves/kinematic_closure/kinematic_closure_helpers.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/FragmentMover.hh>
+// AUTO-REMOVED #include <numeric/kinematic_closure/bridgeObjects.hh>
+// AUTO-REMOVED #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 // AUTO-REMOVED #include <protocols/moves/MonteCarlo.hh>
 // AUTO-REMOVED #include <protocols/moves/Mover.hh>
-// AUTO-REMOVED #include <protocols/moves/symmetry/SymMinMover.hh>
-// AUTO-REMOVED #include <protocols/moves/symmetry/SymPackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymMinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 // AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <sstream>

@@ -16,7 +16,6 @@
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
-#include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/DataMap.hh>
 #include <basic/Tracer.hh>
@@ -36,6 +35,10 @@
 #include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <protocols/simple_filters/ScoreTypeFilter.hh>
+
 
 
 namespace protocols {
@@ -78,7 +81,7 @@ StubScoreFilter::compute( core::pose::Pose const & in_pose ) const{
 	dummy_min.cb_force( cb_force_ );
 	dummy_min.refresh_bbstub_constraints( pose );
 
-	protocols::protein_interface_design::ScoreTypeFilter const stf( stub_scorefxn, core::scoring::backbone_stub_constraint, 1.0 );
+	protocols::simple_filters::ScoreTypeFilter const stf( stub_scorefxn, core::scoring::backbone_stub_constraint, 1.0 );
 	core::Real const stub_score( stf.compute( pose ) );
 	return( stub_score );
 }

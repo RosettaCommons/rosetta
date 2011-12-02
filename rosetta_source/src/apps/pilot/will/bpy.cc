@@ -64,15 +64,15 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/basic_moves/FragmentMover.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/flxbb/FlxbbDesign.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/symmetry/SymMinMover.hh>
-#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
@@ -292,7 +292,7 @@ void design(PoseWrap & pw, ScoreFunctionOP sf) {
 	for(Size i = 1; i <= task->total_residue(); ++i) {
 		task->nonconst_residue_task(i).restrict_absent_canonical_aas(aas);
 	}
-	protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(pose);
 
 
@@ -303,7 +303,7 @@ void minimize(PoseWrap & pw, ScoreFunctionOP sf) {
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 	movemap->set_chi(true);
 	movemap->set_bb(true);
-	protocols::moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-8, true );
+	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-8, true );
 	m.apply(pose);
 }
 

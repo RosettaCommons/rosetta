@@ -38,12 +38,12 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/Tracer.hh>
-#include <protocols/basic_moves/FragmentMover.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/loops/ccd_closure.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/moves/DataMap.hh>
 #include <protocols/moves/MonteCarlo.hh>
-//#include <protocols/moves/symmetry/SetupNCSMover.hh>
+//#include <protocols/simple_moves/symmetry/SetupNCSMover.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
@@ -409,7 +409,7 @@ void RemodelLoopMover::apply( Pose & pose ) {
 
 			//Dihedral (NCS) Constraints
 			//std::cout << "NCS CST" << std::endl;
-			protocols::moves::symmetry::SetupNCSMover setup_ncs;
+			protocols::simple_moves::symmetry::SetupNCSMover setup_ncs;
 		  for (Size rep = 1; rep < repeat_number; rep++){ // from 1 since first segment don't need self-linking
 				std::stringstream targetSS;
 				targetSS << 1+(segment_length*rep) << "-" << segment_length + (segment_length*rep);
@@ -1049,7 +1049,7 @@ void RemodelLoopMover::boost_closure_stage(
 	// ccd when the total number of cycles reached 100.  In addition, the
 	// chainbreak weight continued to increment until it reached 50 (at total
 	// cycle 100).
-	using protocols::basic_moves::ClassicFragmentMover;
+	using protocols::simple_moves::ClassicFragmentMover;
 
 	using protocols::forge::methods::linear_chainbreak;
 	using protocols::loops::add_cutpoint_variants;
@@ -1310,7 +1310,7 @@ RemodelLoopMover::create_fragment_movers(
 	Size const largest_frag_size
 )
 {
-	using protocols::basic_moves::ClassicFragmentMover;
+	using protocols::simple_moves::ClassicFragmentMover;
 
 	FragmentMoverOPs frag_movers;
 	for ( FragSetOPs::const_iterator f = fragsets_.begin(), fe = fragsets_.end(); f != fe; ++f ) {
@@ -1338,7 +1338,7 @@ void RemodelLoopMover::create_fragment_movers(
 	FragmentMoverOPs & frag_movers,
 	Size const largest_frag_size
 ) {
-	using protocols::basic_moves::ClassicFragmentMover;
+	using protocols::simple_moves::ClassicFragmentMover;
 
 	for ( FragSetOPs::const_iterator f = fragsets_.begin(), fe = fragsets_.end(); f != fe; ++f ) {
 

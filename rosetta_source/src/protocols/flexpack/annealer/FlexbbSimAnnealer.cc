@@ -45,7 +45,7 @@ namespace protocols {
 namespace flexpack {
 namespace annealer {
 
-numeric::random::RandomGenerator RG(62458); // <- Magic number, do not change it!!!
+static numeric::random::RandomGenerator RG(62458); // <- Magic number, do not change it!!!
 
 basic::Tracer TR("protocols.flexpack.annealer.FlexbbSimAnnealer");
 

@@ -40,8 +40,8 @@
 #include <protocols/loops/LoopMover_KIC.hh>
 // AUTO-REMOVED #include <protocols/loops/util.hh>
 #include <protocols/loops/loopfinder.hh>
-#include <protocols/moves/KinematicMover.hh>
-#include <protocols/loops/KinematicWrapper.hh>
+#include <protocols/loops/kinematic_closure/KinematicMover.hh>
+#include <protocols/loops/kinematic_closure/KinematicWrapper.hh>
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
@@ -168,11 +168,11 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 			}
 
 			/*
-			 protocols::moves::KinematicMoverOP kin_moverOP( new protocols::moves::KinematicMover(2.0));
+			 protocols::loops::kinematic_closure::KinematicMoverOP kin_moverOP( new protocols::loops::kinematic_closure::KinematicMover(2.0));
 			 kin_moverOP->set_vary_bondangles( true );
 			 for( protocols::loops::Loops::const_iterator it= loops.begin(), it_end=loops.end();
 					it != it_end; ++it ){
-				 protocols::loops::KinematicWrapper kinwrapper( kin_moverOP, *it , 100);
+				 protocols::loops::kinematic_closure::KinematicWrapper kinwrapper( kin_moverOP, *it , 100);
 
 				 protocols::moves::MoverOP moverop; // need this to pass kinwrapper to TrialMover
 				 moverop = kinwrapper;
@@ -235,12 +235,12 @@ void DesignRelaxMover::apply( core::pose::Pose & pose )
 	// i should do this in a monte carlo setting
 	// now that we have a sequence we like - we may want to optimize the loop conformation
 	  if( option[ OptionKeys::DenovoProteinDesign::optimize_loops ].user() ){
-		  protocols::moves::KinematicMoverOP kin_moverOP( new protocols::moves::KinematicMover());
+		  protocols::loops::kinematic_closure::KinematicMoverOP kin_moverOP( new protocols::loops::kinematic_closure::KinematicMover());
 		  kin_moverOP->set_vary_bondangles( true );
 		  kin_moverOP->set_temperature( 2.0 );
 		  for( protocols::loops::Loops::const_iterator it= loops.begin(), it_end=loops.end();
 				 it != it_end; ++it ){
-			  protocols::loops::KinematicWrapper kinwrapper( kin_moverOP, *it , 1000);
+			  protocols::loops::kinematic_closure::KinematicWrapper kinwrapper( kin_moverOP, *it , 1000);
 			  kinwrapper.apply(pose);
 		  }
 	  }

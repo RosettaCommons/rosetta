@@ -62,7 +62,7 @@
 
 #include <basic/Tracer.hh>
 
-numeric::random::RandomGenerator RG(15431); // <- Magic number, do not change it!!!
+numeric::random::RandomGenerator RG(154313929); // <- Magic number, do not change it!!!
 
 #include <core/types.hh>
 
@@ -197,7 +197,7 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s){
 		mm.set_bb(false);
 	}
 	mm.set_chi(true);
-	if(basic::options::option[ddg::ramp_repulsive]()){
+	if(basic::options::option[OptionKeys::ddg::ramp_repulsive]()){
 		ScoreFunction one_tenth_orig(s);
 		reduce_fa_rep(0.1,one_tenth_orig);
 		min_struc.run(p,mm,one_tenth_orig,options);
@@ -224,7 +224,7 @@ setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff
 			}
 		}
 	}
-	s.set_weight(atom_pair_constraint, basic::options::option[ddg::constraint_weight]());
+	s.set_weight(atom_pair_constraint, basic::options::option[OptionKeys::ddg::constraint_weight]());
 }
 
 
@@ -253,7 +253,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 
 	core::Size nmoves = (core::Size)p.total_residue()/4; //number of moves for each move type
 
-	bool BACKBONE_MOVEMENT = !basic::options::option[ddg::no_bb_movement]();
+	bool BACKBONE_MOVEMENT = !basic::options::option[OptionKeys::ddg::no_bb_movement]();
 	core::Size nrounds = 1000;
 	if(!BACKBONE_MOVEMENT){
 		nrounds = 100;
@@ -336,7 +336,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 		curr << ns;
 
 		struct stat stFileInfo;
-		int file_stat = stat((basic::options::option[ddg::last_accepted_pose_dir]()+"lowest."+curr.str()+".pdb").c_str(),
+		int file_stat = stat((basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"lowest."+curr.str()+".pdb").c_str(),
 												 &stFileInfo);
 		if(file_stat != 0 || !output_pdbs || ((silent_file_name.compare("") != 0) && !out_sfd.has_tag("lowest."+curr.str()))){ //file doesn't exist or file can exist and output_pdbs set to false
 
@@ -376,7 +376,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 			//mc->show_counters();
 
 			if(!write_silent_file){
-				core::io::pdb::dump_pdb(mc->lowest_score_pose(), basic::options::option[ddg::last_accepted_pose_dir]()+"lowest."+curr.str()+".pdb");
+				core::io::pdb::dump_pdb(mc->lowest_score_pose(), basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"lowest."+curr.str()+".pdb");
 			}else{
 				core::io::silent::BinaryProteinSilentStruct bss(mc->lowest_score_pose(),"lowest."+curr.str());
 				out_sfd.write_silent_struct(bss,silent_file_name,false);
@@ -384,7 +384,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 
 			pose::Pose lowest_score_pose = mc->lowest_score_pose();
 
-			if(basic::options::option[ddg::min_with_cst]()){
+			if(basic::options::option[OptionKeys::ddg::min_with_cst]()){
 				ScoreFunctionOP s = ScoreFunctionFactory::create_score_function(basic::database::full_name( "scoring/weights/standard.wts"), basic::database::full_name( "scoring/weights/score12.wts_patch"));
 
 				lowest_score_pose.remove_constraints((lowest_score_pose.constraint_set())->get_all_constraints());
@@ -401,7 +401,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 
 		} //if(file_stat != 0){
 		else{
-			std::cout << "file:  " << (basic::options::option[ddg::last_accepted_pose_dir]()+"lowest."+curr.str()+".pdb") << " already exists, skipping to next iteration" << std::endl;
+			std::cout << "file:  " << (basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"lowest."+curr.str()+".pdb") << " already exists, skipping to next iteration" << std::endl;
 		}
 		time_t time_per_decoy_finish = time(NULL);
 		std::cout << "time to finish decoy " << (time_per_decoy_finish-time_per_decoy) << std::endl;
@@ -420,7 +420,7 @@ create_ensemble(pose::Pose & p, ScoreFunctionOP s, std::string output_tag){
 	using namespace moves;
 
 	core::Real temperature=0;
-	temperature = basic::options::option[ddg::temperature]();
+	temperature = basic::options::option[OptionKeys::ddg::temperature]();
 	double avg_ca_rmsd = run_mc(p,s,temperature,basic::options::option[out::nstruct](),output_tag,true);
 }
 
@@ -438,7 +438,7 @@ main( int argc, char* argv [] )
 	using namespace core::scoring::constraints;
 	// options, random initialization. MAKE SURE THIS COMES BEFORE OPTIONS
 	devel::init( argc, argv );
-	Real cst_tol = basic::options::option[ ddg::harmonic_ca_tether ]();
+	Real cst_tol = basic::options::option[ OptionKeys::ddg::harmonic_ca_tether ]();
 	pose::Pose pose;
 
 	ScoreFunctionOP scorefxn( new ScoreFunction());

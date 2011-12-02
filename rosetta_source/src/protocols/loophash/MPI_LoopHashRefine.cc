@@ -20,7 +20,7 @@
 
 #include <protocols/loophash/MPI_LoopHashRefine.hh>
 #include <protocols/loophash/WorkUnit_LoopHash.hh>
-#include <protocols/wum/WorkUnit_BatchRelax.hh>
+#include <protocols/relax/WorkUnit_BatchRelax.hh>
 #include <protocols/wum/WorkUnitBase.hh>
 #include <protocols/wum/SilentStructStore.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>

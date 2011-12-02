@@ -25,7 +25,7 @@
 #include <protocols/match/OccupiedSpaceHash.hh>
 #include <protocols/match/downstream/DownstreamAlgorithm.hh>
 #include <protocols/match/downstream/DownstreamBuilder.hh>
-#include <protocols/match/downstream/LigandConformer.hh>
+#include <protocols/toolbox/match_enzdes_util/LigandConformer.hh>
 // AUTO-REMOVED #include <protocols/match/downstream/LigandConformerBuilder.hh>
 // AUTO-REMOVED #include <protocols/match/downstream/RigidLigandBuilder.hh>
 #include <protocols/match/downstream/SecMatchResiduePairEvaluator.hh>
@@ -438,7 +438,7 @@ SecondaryMatcherToDownstreamResidue::prepare_for_hit_generation_for_geomcst(
 		}
 	}
 
-  LigandConformer lig_confs =  LigandConformer( * get_dsbuilder()->get_lig_conformers( 1 ) );
+  toolbox::match_enzdes_util::LigandConformer lig_confs =  toolbox::match_enzdes_util::LigandConformer( * get_dsbuilder()->get_lig_conformers( 1 ) );
 	utility::vector1< core::id::AtomID > downstream_atoms_for_clash_checking;
 
   for ( Size natoms_ds = 1; natoms_ds <= lig_confs.n_collision_check_atoms(); ++natoms_ds ) {

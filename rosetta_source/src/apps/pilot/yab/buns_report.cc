@@ -22,7 +22,7 @@
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
-#include <protocols/moves/ScoreMover.hh>
+#include <protocols/simple_moves/ScoreMover.hh>
 #include <protocols/toolbox/pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 
 // utility headers
@@ -60,8 +60,8 @@ class BUNS_Output : public protocols::moves::Mover {
 int main( int argc, char * argv [] ) {
 	using core::pose::metrics::CalculatorFactory;
 	using core::scoring::ScoreFunctionOP;
-	using protocols::moves::ScoreMover;
-	using protocols::moves::ScoreMoverOP;
+	using protocols::simple_moves::ScoreMover;
+	using protocols::simple_moves::ScoreMoverOP;
 	using protocols::jd2::JobDistributor;
 	using protocols::moves::SequenceMover;
 	using protocols::moves::SequenceMoverOP;

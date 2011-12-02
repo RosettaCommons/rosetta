@@ -16,7 +16,6 @@
 #include <protocols/protein_interface_design/movers/InterfaceRecapitulationMoverCreator.hh>
 
 // Package headers
-#include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 #include <protocols/protein_interface_design/ReportPSSMDifference.hh>
 #include <protocols/moves/PackRotamersMover.hh>
 
@@ -47,6 +46,10 @@
 #include <protocols/jobdist/Jobs.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <protocols/simple_moves/DesignRepackMover.hh>
+
 
 
 using namespace core;
@@ -161,7 +164,7 @@ InterfaceRecapitulationMover::parse_my_tag( utility::tag::TagPtr const tag, prot
 	std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( mover_name ));
 	bool const mover_found( find_mover != movers.end() );
 	if( mover_found ){
-		design_mover_ = dynamic_cast< DesignRepackMover * >( find_mover->second() );
+		design_mover_ = dynamic_cast< simple_moves::DesignRepackMover * >( find_mover->second() );
 		if( !design_mover_ ){
 			design_mover2_ = dynamic_cast< protocols::moves::PackRotamersMover * >( find_mover->second() );
 			if( !design_mover2_ )

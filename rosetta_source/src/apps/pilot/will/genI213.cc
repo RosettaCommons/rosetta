@@ -59,9 +59,9 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/moves/symmetry/SymMinMover.hh>
-#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <sstream>
 // AUTO-REMOVED #include <utility/io/izstream.hh>
@@ -758,7 +758,7 @@ void design(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
   if( worig == 0.0 ) sf->set_weight(core::scoring::res_type_constraint,1.0);
   utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
 
-  protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
+  protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
   repack.apply(pose);
 
   // REMOVE SER NOT HBONDED ACROSS IFACE
@@ -775,7 +775,7 @@ void design(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
 	movemap->set_chi(true);
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
 
-	protocols::moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 	m.apply(pose);
 	//TR << "done" << std::endl;
 
@@ -817,7 +817,7 @@ void repack_iface(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
 
   }
 
-  protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
+  protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
   repack.apply(pose);
 
 }
@@ -845,7 +845,7 @@ void repack_all(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
     }
   }
 
-  protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
+  protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
   repack.apply(pose);
 
 	core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
@@ -853,7 +853,7 @@ void repack_all(Pose & pose, ScoreFunctionOP sf, Size Ntri ){
 	movemap->set_bb(false);
 	movemap->set_chi(true);
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
-	protocols::moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 	m.apply(pose);
 
 

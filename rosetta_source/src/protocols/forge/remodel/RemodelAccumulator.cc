@@ -26,7 +26,6 @@
 #include <protocols/moves/ConstraintSetMover.hh>
 #include <core/scoring/constraints/ResidueTypeLinkingConstraint.hh>
 #include <basic/options/option.hh>
-#include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <fstream>
 #include <sys/stat.h>
 // AUTO-REMOVED #include <ObjexxFCL/format.hh>
@@ -35,6 +34,10 @@
 // AUTO-REMOVED #include <protocols/forge/build/BuildInstruction.hh> // REQUIRED FOR WINDOWS
 
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <protocols/simple_filters/ScoreTypeFilter.hh>
+
 
 // numeric headers
 
@@ -89,7 +92,7 @@ RemodelAccumulator::MoverOP RemodelAccumulator::fresh_instance() {
 
 void RemodelAccumulator::apply( Pose & pose ){
 	using namespace core::scoring;
-	using namespace protocols::protein_interface_design;
+	using namespace protocols::simple_filters;
 	using namespace basic::options;
 
 //make the object's own collection of poses
@@ -178,7 +181,7 @@ core::Size RemodelAccumulator::recover_checkpoint()
 		using namespace core::scoring;
 		using namespace core::scoring::constraints;
 		using core::import_pose::pose_from_pdb;
-		using namespace protocols::protein_interface_design;
+		using namespace protocols::simple_filters;
 		using namespace basic::options;
 
 		//if reading checkpoint, make sure there's no info stored

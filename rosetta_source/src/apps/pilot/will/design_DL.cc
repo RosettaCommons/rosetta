@@ -55,9 +55,9 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-// AUTO-REMOVED #include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
-// AUTO-REMOVED #include <protocols/moves/symmetry/SymMinMover.hh>
-// AUTO-REMOVED #include <protocols/moves/symmetry/SymPackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymMinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/scoring/ImplicitFastClashCheck.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>

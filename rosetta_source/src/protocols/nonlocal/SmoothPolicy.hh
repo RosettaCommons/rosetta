@@ -18,7 +18,7 @@
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/fragment/Frame.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <protocols/basic_moves/GunnCost.hh>
+#include <protocols/simple_moves/GunnCost.hh>
 
 // Package headers
 #include <protocols/nonlocal/Policy.hh>
@@ -33,7 +33,7 @@ namespace nonlocal {
 /// that, when applied to the pose, minimizes total distortion ("smooth move").
 class SmoothPolicy : public Policy {
   typedef core::fragment::FragSetCOP FragSetCOP;
-  typedef protocols::basic_moves::GunnCost GunnCost;
+  typedef protocols::simple_moves::GunnCost GunnCost;
 
  public:
 

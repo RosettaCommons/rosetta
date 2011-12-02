@@ -38,20 +38,12 @@ public:
 	virtual std::string keyname() const;
 };
 
-class ScoringGridLoaderCreator : public DataLoaderCreator
-{
-public:
-	virtual DataLoaderOP create_loader() const;
-	virtual std::string keyname() const;
-};
-
 class FragSetLoaderCreator : public DataLoaderCreator
 {
 public:
 	virtual DataLoaderOP create_loader() const;
 	virtual std::string keyname() const;
 };
-
 
 class MonteCarloLoaderCreator : public DataLoaderCreator
 {

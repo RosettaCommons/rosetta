@@ -71,7 +71,7 @@ BannedFiles = ['utility/PyHelper.hh', 'utility/keys', 'utility/options', 'utilit
     'utility/vectorL.hh', # problem with friend 'swap' functions, definition need to me moved out of class
     'numeric/kdtree/WrappedType.hh', # Duplicate class name!
 
-    #'protocols/basic_moves/SymmetricFragmentMover.hh', # Somthing with linking/clang (gcc work fine)
+    #'protocols/simple_moves/SymmetricFragmentMover.hh', # Somthing with linking/clang (gcc work fine)
 
 
 

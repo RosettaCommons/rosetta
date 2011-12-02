@@ -52,8 +52,8 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/abinitio/FragmentMover.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/symmetry/SymMinMover.hh>
-#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
@@ -473,7 +473,7 @@ void repack(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	// 		// task->nonconst_residue_task(i).or_ex1_sample_level(EX_FOUR_HALF_STEP_STDDEVS);
 	// 	}
 	// }
-	protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(cc);
 }
 
@@ -497,7 +497,7 @@ void design_target(core::pose::Pose & cc, ScoreFunctionOP sf) {
 		}
 	}
 	task->or_include_current(true);
-	protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(cc);
 }
 
@@ -512,7 +512,7 @@ void design_all(core::pose::Pose & cc, ScoreFunctionOP sf) {
 			// task->nonconst_residue_task(i).or_ex1_sample_level(EX_FOUR_HALF_STEP_STDDEVS);
 		}
 	}
-	protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(cc);
 }
 
@@ -534,7 +534,7 @@ void design_FILV(core::pose::Pose & cc, ScoreFunctionOP sf) {
 		}
 	}
 	task->or_include_current(true);
-	protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(cc);
 }
 
@@ -557,7 +557,7 @@ void design_AFILV(core::pose::Pose & cc, ScoreFunctionOP sf) {
 		}
 	}
 	task->or_include_current(true);
-	protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(cc);
 }
 
@@ -577,7 +577,7 @@ void design_AL(core::pose::Pose & cc, ScoreFunctionOP sf) {
 		}
 	}
 	task->or_include_current(true);
-	protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(cc);
 }
 
@@ -601,7 +601,7 @@ void design_FILVEK(core::pose::Pose & cc, ScoreFunctionOP sf) {
 		}
 	}
 	task->or_include_current(true);
-	protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(cc);
 }
 
@@ -626,14 +626,14 @@ void design_AFILVEK(core::pose::Pose & cc, ScoreFunctionOP sf) {
 		}
 	}
 	task->or_include_current(true);
-	protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
+	protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
 	repack.apply(cc);
 }
 
 
 void minimize(core::pose::Pose & cc, ScoreFunctionOP sf) {
 	core::kinematics::MoveMapOP movemap = make_move_map(cc);
-	protocols::moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-2, true );
+	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-2, true );
 	m.apply(cc);
 }
 
@@ -1115,7 +1115,7 @@ main( int argc, char * argv [] )
 	using namespace scoring;
 	using namespace protocols;
 	using namespace moves;
-	using namespace moves::symmetry;
+	using namespace simple_moves::symmetry;
 	using namespace core::pack::task;
 	using namespace ObjexxFCL::fmt;
 	using namespace id;

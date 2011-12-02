@@ -64,8 +64,8 @@
 #include <protocols/docking/util.hh>
 #include <protocols/jobdist/not_universal_main.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/moves/symmetry/SymMinMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
 #include <protocols/viewer/viewers.hh>
 #include <sstream>
 #include <string>
@@ -191,7 +191,7 @@ design(core::pose::Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> desig
 
   // Actually perform design.
 	make_symmetric_PackerTask(pose, task);
-	protocols::moves::MoverOP packer = new protocols::moves::symmetry::SymPackRotamersMover(sf, task);
+	protocols::moves::MoverOP packer = new protocols::simple_moves::symmetry::SymPackRotamersMover(sf, task);
 	packer->apply(pose);
 
 }
@@ -216,7 +216,7 @@ minimize(core::pose::Pose & pose, ScoreFunctionOP sf, utility::vector1<Size> des
 	// Make MoveMap symmetric, apply it to minimize the pose
 	core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
 	// print_movemap( *movemap );
-	protocols::moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
 	m.apply(pose);
 }
 

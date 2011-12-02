@@ -22,9 +22,7 @@
 namespace protocols {
 namespace ddG {
 
-class PositionDdGInfo;
-typedef utility::pointer::owning_ptr< PositionDdGInfo > PositionDdGInfoOP;
-typedef utility::pointer::owning_ptr< PositionDdGInfo const >PositionDdGInfoCOP;
+class ddGData;
 
 } // ddG
 } // protocols

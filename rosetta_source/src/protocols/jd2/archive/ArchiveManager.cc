@@ -27,7 +27,7 @@
 
 
 //for factory
-#include <protocols/abinitio/IterativeAbrelax.hh>
+//#include <protocols/abinitio/IterativeAbrelax.hh>
 
 // Utility headers
 #include <basic/Tracer.hh>
@@ -73,7 +73,7 @@
 //Auto Headers
 #include <protocols/checkpoint/CheckPointer.hh>
 #include <protocols/jobdist/Jobs.hh>
-#include <protocols/noesy_assign/CrossPeak.hh>
+//#include <protocols/noesy_assign/CrossPeak.hh>
 #include <utility/vector1.hh>
 #include <boost/bind.hpp>
 

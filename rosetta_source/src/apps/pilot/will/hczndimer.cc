@@ -54,8 +54,8 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/moves/symmetry/SymMinMover.hh>
-#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 
@@ -271,7 +271,7 @@ utility_exit_with_message("NOT DONE CODING!!!!!!!");
   utility::vector1< core::scoring::constraints::ConstraintCOP > res_cst = add_favor_native_cst(pose);
   pose.add_constraints( res_cst );
 
-  protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
+  protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
   repack.apply(pose);
 
   // cleanup 2
@@ -285,7 +285,7 @@ utility_exit_with_message("NOT DONE CODING!!!!!!!");
   movemap->set_jump(true);
   movemap->set_bb(true);
   movemap->set_chi(true);
-  protocols::moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
+  protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(pose);
 
 
 
@@ -510,7 +510,7 @@ void dock(Pose init, std::string const & fn) {
 
         //sf->show(q);
         //q.dump_pdb("test0.pdb");
-        protocols::moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-3, true, false, false ).apply(q);
+        protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-3, true, false, false ).apply(q);
         sf->show(q);
         //q.dump_pdb("test1.pdb");
         //utility_exit_with_message("aorsitn");

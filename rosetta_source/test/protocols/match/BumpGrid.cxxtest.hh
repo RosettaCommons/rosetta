@@ -211,7 +211,7 @@ class BumpGridTests : public CxxTest::TestSuite {
 		Bool3DGrid bool3d;
 		bool3d.set_bounding_box( bb_ );
 
-		Bin3D bin;
+		numeric::geometry::hashing::Bin3D bin;
 		bin[ 1 ] = 2;
 		bin[ 2 ] = 2;
 		bin[ 3 ] = 3;
@@ -232,7 +232,7 @@ class BumpGridTests : public CxxTest::TestSuite {
 		bool3d.set_bin_width( 0.5 );
 		bool3d.set_bounding_box( bb_ );
 
-		Bin3D bin;
+		numeric::geometry::hashing::Bin3D bin;
 		bin[ 1 ] = 4;
 		bin[ 2 ] = 4;
 		bin[ 3 ] = 6;
@@ -289,8 +289,8 @@ class BumpGridTests : public CxxTest::TestSuite {
 		bool3d1.set_bin_width( 0.25 );
 		bool3d1.set_bounding_box( bb_ );
 
-		Bin3D ndims = bool3d1.dimsizes();
-		Bin3D bin;
+		numeric::geometry::hashing::Bin3D ndims = bool3d1.dimsizes();
+		numeric::geometry::hashing::Bin3D bin;
 
 		/// Grid should start out empty
 		for ( Size ii = 0; ii < ndims[ 1 ]; ++ii ) {
@@ -360,8 +360,8 @@ class BumpGridTests : public CxxTest::TestSuite {
 		bool3d1.set_bin_width( 1.0 );
 		bool3d1.set_bounding_box( bb_ );
 
-		Bin3D ndims = bool3d1.dimsizes();
-		Bin3D bin;
+		numeric::geometry::hashing::Bin3D ndims = bool3d1.dimsizes();
+		numeric::geometry::hashing::Bin3D bin;
 
 		/// Grid should start out empty
 		for ( Size ii = 0; ii < ndims[ 1 ]; ++ii ) {

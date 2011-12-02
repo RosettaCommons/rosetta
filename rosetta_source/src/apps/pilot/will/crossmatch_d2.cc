@@ -70,8 +70,8 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/PackRotamersMover.hh>
-#include <protocols/moves/symmetry/SymMinMover.hh>
-#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/toolbox/SwitchResidueTypeSet.hh>
 #include <sstream>
 #include <utility/excn/Exceptions.hh>
@@ -225,7 +225,7 @@ void minimize(Pose & pose, ScoreFunctionOP sf, vector1<Size> matchres) {
         movemap->set_jump(i,true);
       }
     }
-    protocols::moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
+    protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
     m.apply(pose);
   } else {
     protocols::moves::MinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false );
@@ -331,7 +331,7 @@ void design(Pose & pose, ScoreFunctionOP sf, Size end_of_prot_1, vector1<Size> c
   // pose.dump_pdb("test.pdb");
   // if(uniform() > 0.2) std::exit(-1);
   if(core::pose::symmetry::is_symmetric(pose)) {
-    protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
+    protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
     repack.apply(pose);
   } else {
     protocols::moves::PackRotamersMover repack( sf, task );
@@ -356,7 +356,7 @@ void repack(Pose & pose, ScoreFunctionOP sf, Size /*end_of_prot_1*/, vector1<Siz
     }
   }
   if(core::pose::symmetry::is_symmetric(pose)) {
-    protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
+    protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
     repack.apply(pose);
   } else {
     protocols::moves::PackRotamersMover repack( sf, task );
@@ -444,7 +444,7 @@ void design_homodimer(Pose & pose, ScoreFunctionOP sf, vector1<Size> const & mat
   // pose.dump_pdb("test.pdb");
   // if(uniform() > 0.2) std::exit(-1);
   if(core::pose::symmetry::is_symmetric(pose)) {
-    protocols::moves::symmetry::SymPackRotamersMover repack( sf, task );
+    protocols::simple_moves::symmetry::SymPackRotamersMover repack( sf, task );
     repack.apply(pose);
   } else {
     protocols::moves::PackRotamersMover repack( sf, task );

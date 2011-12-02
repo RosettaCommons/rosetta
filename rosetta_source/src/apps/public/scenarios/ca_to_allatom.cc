@@ -95,6 +95,7 @@
 // AUTO-REMOVED #include <protocols/relax_protocols.hh>
 #include <utility/options/OptionCollection.hh>
 #include <protocols/evaluation/RmsdEvaluator.hh>
+#include <protocols/evaluation/EvaluatorFactory.hh>
 #include <protocols/viewer/viewers.hh>
 //#include <protocols/moves/BackboneMover.hh>
 
@@ -210,7 +211,7 @@ ca_to_allatom_main( void * )
 	std::string filename( option[ OptionKeys::RBSegmentRelax::rb_file ]().name() );
 
 	evaluation::MetaPoseEvaluatorOP evaluator = new evaluation::MetaPoseEvaluator;
-	evaluation::read_common_evaluator_options(*evaluator);
+	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluator);
 	evaluator->add_evaluation( new evaluation::SelectRmsdEvaluator( native_pose, "_native" ) );
 
 	utility::vector1< protocols::jobdist::BasicJobOP > input_jobs = protocols::jobdist::load_s_and_l();

@@ -19,6 +19,7 @@
 
 
 #include <protocols/jd2/SilentFileJobOutputter.hh>
+#include <protocols/jd2/SilentFileJobOutputterCreator.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/util.hh>
 
@@ -318,6 +319,18 @@ SilentFileJobOutputter::set_silent_file_name( utility::file::FileName name ){
 void
 SilentFileJobOutputter::set_write_separate_scorefile( bool write_separate_scorefile ){
 	write_separate_scorefile_ = write_separate_scorefile;
+}
+
+//CREATOR SECTION
+std::string
+SilentFileJobOutputterCreator::keyname() const
+{
+        return "SilentFileJobOutputter";
+}
+
+protocols::jd2::JobOutputterOP
+SilentFileJobOutputterCreator::create_JobOutputter() const {
+        return new SilentFileJobOutputter;
 }
 
 } //jd2

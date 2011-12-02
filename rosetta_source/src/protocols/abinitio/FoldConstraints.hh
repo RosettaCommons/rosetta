@@ -25,12 +25,12 @@
 #include <protocols/abinitio/FoldConstraints.fwd.hh>
 
 // Package Headers
-#include <protocols/basic_moves/FragmentMover.fwd.hh>
+#include <protocols/simple_moves/FragmentMover.fwd.hh>
 // AUTO-REMOVED #include <protocols/abinitio/SmoothFragmentMover.fwd.hh>
-//#include <protocols/basic_moves/GunnCost.fwd.hh>
+//#include <protocols/simple_moves/GunnCost.fwd.hh>
 #include <protocols/abinitio/ClassicAbinitio.hh>
 //#include <protocols/abinitio/ConstraintFragmentMover.fwd.hh>
-// AUTO-REMOVED #include <protocols/abinitio/MaxSeqSepConstraintSet.hh>
+#include <protocols/constraints_additional/MaxSeqSepConstraintSet.fwd.hh>
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
@@ -61,7 +61,7 @@
 // AUTO-REMOVED #include <cstdlib>
 #include <string>
 
-#include <protocols/abinitio/MaxSeqSepConstraintSet.fwd.hh>
+#include <protocols/constraints_additional/MaxSeqSepConstraintSet.fwd.hh>
 #include <protocols/moves/MinMover.fwd.hh>
 #include <utility/vector1.hh>
 
@@ -87,9 +87,9 @@ public:
 public:
 	///@brief c'stor from Movers
 	FoldConstraints(
-		basic_moves::FragmentMoverOP brute_move_small,
-		basic_moves::FragmentMoverOP brute_move_large,
-		basic_moves::FragmentMoverOP smooth_move_small,
+		simple_moves::FragmentMoverOP brute_move_small,
+		simple_moves::FragmentMoverOP brute_move_large,
+		simple_moves::FragmentMoverOP smooth_move_small,
 		int dummy /* otherwise the two constructors are ambigous */
 	);
 
@@ -162,7 +162,7 @@ protected:
     max_seq_sep_fudge_ = setting;
   }
 
-  MaxSeqSepConstraintSet const& constraints() {
+  constraints_additional::MaxSeqSepConstraintSet const& constraints() {
     return *constraints_;
   }
 
@@ -192,7 +192,7 @@ private:
 
   protocols::moves::MinMoverOP min_move_;
 
-  MaxSeqSepConstraintSetOP constraints_;
+  constraints_additional::MaxSeqSepConstraintSetOP constraints_;
   core::Real constraint_weight_;
 
   bool bMinTrial_;

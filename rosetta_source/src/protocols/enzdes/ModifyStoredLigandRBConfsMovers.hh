@@ -18,7 +18,7 @@
 //unit headers
 #include <protocols/enzdes/ModifyStoredLigandRBConfsMovers.fwd.hh>
 #include <protocols/moves/Mover.hh>
-//#include <protocols/enzdes/EnzdesCacheableObserver.fwd.hh>
+//#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.fwd.hh>
 //#include <core/pose/datacache/CacheableObserver.hh>
 
 //package headers

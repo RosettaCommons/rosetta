@@ -26,7 +26,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/optimize_weights/Arithmetic.hh>
+#include <numeric/expression_parser/Arithmetic.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
@@ -44,12 +44,12 @@
 namespace protocols {
 namespace pack_daemon {
 
-class VectorExpression : public protocols::optimize_weights::Expression
+class VectorExpression : public numeric::expression_parser::Expression
 {
 public:
-	typedef protocols::optimize_weights::Expression    parent;
+	typedef numeric::expression_parser::Expression    parent;
 	typedef utility::vector1< core::Real >             values;
-	typedef protocols::optimize_weights::ExpressionCOP ExpressionCOP;
+	typedef numeric::expression_parser::ExpressionCOP ExpressionCOP;
 
 public:
 	VectorExpression( std::string const & name );
@@ -64,7 +64,7 @@ public:
 	/// @brief DO NOT CALL THIS FUNCTION.  Vector expressions cannot
 	/// be differentiated.
 	virtual
-	ExpressionCOP
+	numeric::expression_parser::ExpressionCOP
 	differentiate( std::string const & varname ) const;
 
 	virtual
@@ -92,7 +92,7 @@ class VariableVectorExpression : public VectorExpression
 {
 public:
 	typedef VectorExpression parent;
-	typedef utility::vector1< protocols::optimize_weights::VariableExpressionCOP > VariableExpressions;
+	typedef utility::vector1< numeric::expression_parser::VariableExpressionCOP > VariableExpressions;
 
 public:
 	VariableVectorExpression( std::string const & name, VariableExpressions const & vars );
@@ -125,9 +125,9 @@ class IterativeVectorExpression : public VectorExpression
 {
 public:
 	typedef VectorExpression parent;
-	typedef protocols::optimize_weights::ArithmeticASTExpression ArithmeticASTExpression;
-	typedef protocols::optimize_weights::VariableExpressionOP    VariableExpressionOP;
-	typedef protocols::optimize_weights::VariableExpressionCOP   VariableExpressionCOP;
+	typedef numeric::expression_parser::ArithmeticASTExpression ArithmeticASTExpression;
+	typedef numeric::expression_parser::VariableExpressionOP     VariableExpressionOP;
+	typedef numeric::expression_parser::VariableExpressionCOP    VariableExpressionCOP;
 public:
 	IterativeVectorExpression( std::string const & name );
 	~IterativeVectorExpression();
@@ -146,7 +146,7 @@ public:
 	core::Size
 	size() const;
 
-	VariableExpressionCOP
+	numeric::expression_parser::VariableExpressionCOP
 	local_variable( std::string const & varname ) const;
 
 	virtual
@@ -165,12 +165,12 @@ private:
 	ExpressionCOP expression_;
 };
 
-class VectorFunction : public protocols::optimize_weights::UnaryExpression
+class VectorFunction : public numeric::expression_parser::UnaryExpression
 {
 public:
-	typedef protocols::optimize_weights::UnaryExpression parent;
-	typedef protocols::optimize_weights::ExpressionCOP   ExpressionCOP;
-	typedef utility::vector1< core::Size >               ArgIndices;
+	typedef numeric::expression_parser::UnaryExpression parent;
+	typedef numeric::expression_parser::ExpressionCOP   ExpressionCOP;
+	typedef utility::vector1< core::Size >              ArgIndices;
 
 public:
 
@@ -184,12 +184,12 @@ private:
 	VectorExpressionCOP vec_ex_;
 };
 
-class VectorFunction2 : public protocols::optimize_weights::BinaryExpression
+class VectorFunction2 : public numeric::expression_parser::BinaryExpression
 {
 public:
-	typedef protocols::optimize_weights::BinaryExpression parent;
-	typedef protocols::optimize_weights::ExpressionCOP    ExpressionCOP;
-	typedef utility::vector1< core::Size >                ArgIndices;
+	typedef numeric::expression_parser::BinaryExpression parent;
+	typedef numeric::expression_parser::ExpressionCOP    ExpressionCOP;
+	typedef utility::vector1< core::Size >               ArgIndices;
 
 public:
 
@@ -221,7 +221,7 @@ public:
 	operator() () const;
 
 	virtual
-	ExpressionCOP
+	numeric::expression_parser::ExpressionCOP
 	differentiate( std::string const & varname ) const;
 
 	virtual
@@ -245,7 +245,7 @@ public:
 	operator() () const;
 
 	virtual
-	ExpressionCOP
+	numeric::expression_parser::ExpressionCOP
 	differentiate( std::string const & varname ) const;
 
 	virtual
@@ -271,7 +271,7 @@ public:
 	operator() () const;
 
 	virtual
-	ExpressionCOP
+	numeric::expression_parser::ExpressionCOP
 	differentiate( std::string const & varname ) const;
 
 	virtual
@@ -297,7 +297,7 @@ public:
 	operator() () const;
 
 	virtual
-	ExpressionCOP
+	numeric::expression_parser::ExpressionCOP
 	differentiate( std::string const & varname ) const;
 
 	virtual
@@ -306,11 +306,11 @@ public:
 
 };
 
-class PowExpression : public protocols::optimize_weights::BinaryExpression
+class PowExpression : public numeric::expression_parser::BinaryExpression
 {
 public:
-	typedef protocols::optimize_weights::BinaryExpression parent;
-	typedef protocols::optimize_weights::ExpressionCOP    ExpressionCOP;
+	typedef numeric::expression_parser::BinaryExpression parent;
+	typedef numeric::expression_parser::ExpressionCOP    ExpressionCOP;
 
 public:
 	PowExpression( ExpressionCOP base, ExpressionCOP exponent );
@@ -326,11 +326,11 @@ public:
 
 };
 
-class ExpExpression : public protocols::optimize_weights::UnaryExpression
+class ExpExpression : public numeric::expression_parser::UnaryExpression
 {
 public:
-	typedef protocols::optimize_weights::UnaryExpression parent;
-	typedef protocols::optimize_weights::ExpressionCOP   ExpressionCOP;
+	typedef numeric::expression_parser::UnaryExpression parent;
+	typedef numeric::expression_parser::ExpressionCOP   ExpressionCOP;
 
 public:
 	ExpExpression( ExpressionCOP ex );
@@ -346,11 +346,11 @@ public:
 
 };
 
-class LnExpression : public protocols::optimize_weights::UnaryExpression
+class LnExpression : public numeric::expression_parser::UnaryExpression
 {
 public:
-	typedef protocols::optimize_weights::UnaryExpression parent;
-	typedef protocols::optimize_weights::ExpressionCOP   ExpressionCOP;
+	typedef numeric::expression_parser::UnaryExpression parent;
+	typedef numeric::expression_parser::ExpressionCOP   ExpressionCOP;
 
 public:
 	LnExpression( ExpressionCOP ex );
@@ -369,11 +369,11 @@ public:
 
 /// @brief Returns "true" if the expression ex evaluates to one
 /// of a set of indicated values.
-class InSetExpression : public protocols::optimize_weights::UnaryExpression
+class InSetExpression : public numeric::expression_parser::UnaryExpression
 {
 public:
-	typedef protocols::optimize_weights::UnaryExpression parent;
-	typedef protocols::optimize_weights::ExpressionCOP   ExpressionCOP;
+	typedef numeric::expression_parser::UnaryExpression parent;
+	typedef numeric::expression_parser::ExpressionCOP   ExpressionCOP;
 
 public:
 	InSetExpression( ExpressionCOP ex );
@@ -397,11 +397,11 @@ private:
 /// expression were a variable, but defers to the root expression for
 /// questions of deriviatives and which variables are active
 /// (this is not a real variable).
-class SurrogateVariableExpression : public protocols::optimize_weights::VariableExpression
+class SurrogateVariableExpression : public numeric::expression_parser::VariableExpression
 {
 public:
-	typedef protocols::optimize_weights::VariableExpression parent;
-	typedef protocols::optimize_weights::ExpressionCOP      ExpressionCOP;
+	typedef numeric::expression_parser::VariableExpression parent;
+	typedef numeric::expression_parser::ExpressionCOP      ExpressionCOP;
 public:
 	SurrogateVariableExpression( std::string const & );
 	SurrogateVariableExpression( std::string const & , core::Real value );
@@ -423,11 +423,11 @@ private:
 };
 
 
-class VectorExpressionCreator : public protocols::optimize_weights::ExpressionCreator
+class VectorExpressionCreator : public numeric::expression_parser::ExpressionCreator
 {
 public:
-	typedef protocols::optimize_weights::ExpressionCreator parent;
-	typedef protocols::optimize_weights::ExpressionCOP     ExpressionCOP;
+	typedef numeric::expression_parser::ExpressionCreator parent;
+	typedef numeric::expression_parser::ExpressionCOP     ExpressionCOP;
 public:
 	VectorExpressionCreator( DynamicAggregateFunction const & owner );
 	virtual ~VectorExpressionCreator();
@@ -437,16 +437,16 @@ public:
 	/// as one of their function argument
 	//virtual
 	//void
-	//visit( protocols::optimize_weights::ArithmeticASTFunction const & );
+	//visit( numeric::expression_parser::ArithmeticASTFunction const & );
 
 	virtual
 	ExpressionCOP
-	handle_variable_expression( protocols::optimize_weights::ArithmeticASTValue const & );
+	handle_variable_expression( numeric::expression_parser::ArithmeticASTValue const & );
 
 	virtual
 	ExpressionCOP
 	handle_function_expression(
-		protocols::optimize_weights::FunctionTokenCOP function,
+		numeric::expression_parser::FunctionTokenCOP function,
 		utility::vector1< ExpressionCOP > const & args
 	);
 
@@ -470,15 +470,15 @@ public:
 
 	typedef protocols::genetic_algorithm::Entity           Entity;
 
-	typedef protocols::optimize_weights::Expression    Expression;
-	typedef protocols::optimize_weights::ExpressionOP  ExpressionOP;
-	typedef protocols::optimize_weights::ExpressionCOP ExpressionCOP;
+	typedef numeric::expression_parser::Expression    Expression;
+	typedef numeric::expression_parser::ExpressionOP  ExpressionOP;
+	typedef numeric::expression_parser::ExpressionCOP ExpressionCOP;
 
-	typedef protocols::optimize_weights::VariableExpression    VariableExpression;
-	typedef protocols::optimize_weights::VariableExpressionOP  VariableExpressionOP;
-	typedef protocols::optimize_weights::VariableExpressionCOP VariableExpressionCOP;
+	typedef numeric::expression_parser::VariableExpression    VariableExpression;
+	typedef numeric::expression_parser::VariableExpressionOP  VariableExpressionOP;
+	typedef numeric::expression_parser::VariableExpressionCOP VariableExpressionCOP;
 
-	typedef protocols::optimize_weights::ArithmeticASTExpressionOP ArithmeticASTExpressionOP;
+	typedef numeric::expression_parser::ArithmeticASTExpressionOP ArithmeticASTExpressionOP;
 
 	typedef utility::vector1< core::Real >   ExpressionValues;
 	typedef core::Size                       Size;
@@ -499,11 +499,11 @@ public:
 	void initialize_from_input_file( DaemonSetOP daemon_set, std::istream & input );
 
 	ExpressionCOP
-	variable_expression( protocols::optimize_weights::ArithmeticASTValue const & ) const;
+	variable_expression( numeric::expression_parser::ArithmeticASTValue const & ) const;
 
 	ExpressionCOP
 	function_expression(
-		protocols::optimize_weights::FunctionTokenCOP function,
+		numeric::expression_parser::FunctionTokenCOP function,
 		utility::vector1< ExpressionCOP > const & args
 	) const;
 
@@ -736,7 +736,7 @@ private:
 	//utility::vector1< utility::vector1< VariableExpressionOP > > npd_properties_for_states_;
 	utility::vector1< VariableExpressionOP > variable_expressions_;
 
-	protocols::optimize_weights::ArithmeticScannerOP scanner_;
+	numeric::expression_parser::ArithmeticScannerOP scanner_;
 
 	std::list< VectorFunctionOP > vfuncs_;
 	std::list< std::pair< Size, std::string > > expression_evaluation_order_by_name_; // first == 1 for scalar, 2 for vector, second = name
@@ -790,23 +790,23 @@ private:
 };
 
 
-class EntityFuncExpressionCreator : public protocols::optimize_weights::ExpressionCreator
+class EntityFuncExpressionCreator : public numeric::expression_parser::ExpressionCreator
 {
 public:
-	typedef protocols::optimize_weights::ExpressionCreator parent;
-	typedef protocols::optimize_weights::ExpressionCOP     ExpressionCOP;
+	typedef numeric::expression_parser::ExpressionCreator parent;
+	typedef numeric::expression_parser::ExpressionCOP     ExpressionCOP;
 public:
 	EntityFuncExpressionCreator( EntityFunc const & owner );
 	virtual ~EntityFuncExpressionCreator();
 
 	virtual
 	ExpressionCOP
-	handle_variable_expression( protocols::optimize_weights::ArithmeticASTValue const & );
+	handle_variable_expression( numeric::expression_parser::ArithmeticASTValue const & );
 
 	virtual
 	ExpressionCOP
 	handle_function_expression(
-		protocols::optimize_weights::FunctionTokenCOP function,
+		numeric::expression_parser::FunctionTokenCOP function,
 		utility::vector1< ExpressionCOP > const & args
 	);
 
@@ -823,15 +823,15 @@ public:
 
 	typedef protocols::genetic_algorithm::Entity           Entity;
 
-	typedef protocols::optimize_weights::Expression    Expression;
-	typedef protocols::optimize_weights::ExpressionOP  ExpressionOP;
-	typedef protocols::optimize_weights::ExpressionCOP ExpressionCOP;
+	typedef numeric::expression_parser::Expression    Expression;
+	typedef numeric::expression_parser::ExpressionOP  ExpressionOP;
+	typedef numeric::expression_parser::ExpressionCOP ExpressionCOP;
 
-	typedef protocols::optimize_weights::VariableExpression    VariableExpression;
-	typedef protocols::optimize_weights::VariableExpressionOP  VariableExpressionOP;
-	typedef protocols::optimize_weights::VariableExpressionCOP VariableExpressionCOP;
+	typedef numeric::expression_parser::VariableExpression    VariableExpression;
+	typedef numeric::expression_parser::VariableExpressionOP  VariableExpressionOP;
+	typedef numeric::expression_parser::VariableExpressionCOP VariableExpressionCOP;
 
-	typedef protocols::optimize_weights::ArithmeticASTExpressionOP ArithmeticASTExpressionOP;
+	typedef numeric::expression_parser::ArithmeticASTExpressionOP ArithmeticASTExpressionOP;
 
 	typedef core::Size Size;
 
@@ -847,11 +847,11 @@ public:
 	evaluate( Entity const & entity, bool verbose = false );
 
 	ExpressionCOP
-	variable_expression( protocols::optimize_weights::ArithmeticASTValue const & ) const;
+	variable_expression( numeric::expression_parser::ArithmeticASTValue const & ) const;
 
 	ExpressionCOP
 	function_expression(
-		protocols::optimize_weights::FunctionTokenCOP function,
+		numeric::expression_parser::FunctionTokenCOP function,
 		utility::vector1< ExpressionCOP > const & args
 	) const;
 
@@ -916,7 +916,7 @@ private:
 
 	ExpressionCOP score_expression_;
 
-	protocols::optimize_weights::ArithmeticScannerOP scanner_;
+	numeric::expression_parser::ArithmeticScannerOP scanner_;
 	/// Function names may not be used as variable names.
 	std::set< std::string > function_names_;
 	/// This set represents strings that may not be used as variable names

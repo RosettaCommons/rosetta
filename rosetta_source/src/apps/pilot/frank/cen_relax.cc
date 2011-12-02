@@ -13,7 +13,7 @@
 #include <protocols/moves/SwitchResidueTypeSetMover.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
+#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
 
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -110,7 +110,7 @@ my_main( void* ) {
 	using namespace protocols::moves;
 
 	SequenceMoverOP seq( new SequenceMover() );
-	seq->add_mover( new protocols::moves::symmetry::SetupForSymmetryMover() );
+	seq->add_mover( new protocols::symmetric_docking::SetupForSymmetryMover() );
 	seq->add_mover( new protocols::moves::SwitchResidueTypeSetMover("centroid") );
 	seq->add_mover( new CenRelaxMover() );
 

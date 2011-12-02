@@ -25,26 +25,11 @@
 #include <protocols/jd2/MPIMultiCommJobDistributor.hh>
 #include <protocols/jd2/archive/MPIArchiveJobDistributor.hh>
 
-#include <protocols/jd2/PDBJobInputter.hh>
-#include <protocols/jd2/GenericJobInputter.hh>
-#include <protocols/jd2/SilentFileJobInputter.hh>
-#include <protocols/jd2/LazySilentFileJobInputter.hh>
-#include <protocols/jd2/ThreadingJobInputter.hh>
-#include <protocols/jd2/DatabaseJobInputter.hh>
-#include <protocols/jd2/PoseInputStreamJobInputter.hh>
+#include <protocols/jd2/JobInputterFactory.hh>
 
-#include <protocols/jd2/PDBJobOutputter.hh>
-#include <protocols/jd2/SilentFileJobOutputter.hh>
-#include <protocols/jd2/AtomTreeDiffJobOutputter.hh>
-#include <protocols/jd2/AtomTreeDiffJobInputter.hh>
-#include <protocols/jd2/NoOutputJobOutputter.hh>
-#include <protocols/jd2/ScoreOnlyJobOutputter.hh>
-#include <protocols/jd2/EnzdesJobOutputter.hh>
-#include <protocols/jd2/DatabaseJobOutputter.hh>
+#include <protocols/jd2/JobOutputterFactory.hh>
 
 #include <protocols/jd2/DockDesignParser.hh>
-#include <protocols/protein_interface_design/ParserJobInputter.hh>
-#include <protocols/jd2/EnzdesJobInputter.hh>
 
 #include <basic/options/option.hh>
 // option key includes
@@ -61,6 +46,7 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
+
 //Haiku is classy
 #ifdef BOINC
 #ifdef USEMPI
@@ -145,89 +131,21 @@ JobDistributorFactory::create_job_distributor() {
 /// other stuff doesn't have to go home, but it can't live here ...
 JobInputterOP
 JobDistributorFactory::create_job_inputter() {
-	if ( option[ basic::options::OptionKeys::jd2::pose_input_stream ]() ) {
-		return new PoseInputStreamJobInputter;
-	}
-
-	if ( option[ in::file::s ].user() || option[ in::file::l ].user() || option[ in::file::list ].user() ) {
-		if ( option[ basic::options::OptionKeys::enzdes::parser_read_cloud_pdb ].user() ) return new EnzdesJobInputter;
-		if ( option[ basic::options::OptionKeys::jd2::dd_parser ].user() && option[ basic::options::OptionKeys::parser::patchdock ].user() )
-			return new protocols::protein_interface_design::ParserJobInputter;
-		else
-			return new PDBJobInputter; //SML override until we have other child classes
-// 		//if ( option[ in::file::zip ] ) {
-// 		//	return new GzippedPDBJobInputter; // unnecessary since the izstream handles this seamlessly
-// 		//} else {
-// 			return new PDBJobInputter;
-// 		//}
- 	} else if ( option[ in::file::silent ].user() ) {
-		if ( option[ OptionKeys::jd2::lazy_silent_file_reader ].user() ){
-			return new LazySilentFileJobInputter;
-		} else {
-			return new SilentFileJobInputter;
-		}
- 	} else if (option[in::file::atom_tree_diff].user() ){
- 			return new AtomTreeDiffJobInputter;
- 	} else if ( option[ in::file::template_pdb ].user() || option[ in::file::template_silent ].user() ) {
-		return new ThreadingJobInputter;
-	} else if (option[in::use_database].user() ){
-		return new DatabaseJobInputter;
-	} else {
-		// abinitio doesn't start with a pdb or silent file, it starts with a fasta!
-		// That's missing the point of the jd2 - code for making a new Pose should
-		// in one place! The logic for making a pose from a sequence could live
-		// in it's own JobDistributor, so that you could run abinitio fragment
-		// assembly on Poses that aren't necessarily extended.
-		return new GenericJobInputter; //handles -nstruct alone
-	}
+	return protocols::jd2::JobInputterFactory::get_instance()->get_new_JobInputter();
 }
 
 /// @details this function handles the runtime + compiletime determination of
 /// which JobOutputter to use
 JobOutputterOP
 JobDistributorFactory::create_job_outputter() {
-
-	if ( option[ out::file::silent ].user()  ) {
-		return new SilentFileJobOutputter;
-	} else if (option[out::file::atom_tree_diff].user() ){
-		return new AtomTreeDiffJobOutputter;
-	}else if (option[out::file::score_only].user()) {
-		return new ScoreOnlyJobOutputter;
-	} else if ( option[ basic::options::OptionKeys::jd2::no_output ].value() || option[ out::nooutput ] ){
-		return new NoOutputJobOutputter;
-	} else if ( option[ basic::options::OptionKeys::jd2::enzdes_out].user() ){
-		return new EnzdesJobOutputter;
-	} else if ( option[ basic::options::OptionKeys::out::use_database].user() ){
-		return new DatabaseJobOutputter;
-	}	else {
-		return new PDBJobOutputter;
-	}
-	return new PDBJobOutputter; //SML override until we have other child classes
+	return protocols::jd2::JobOutputterFactory::get_instance()->get_new_JobOutputter();
 }
 
 /// @details this function handles the runtime + compiletime determination of
 /// which JobOutputter to use
 JobOutputterOP
 JobDistributorFactory::create_job_outputter( JobOutputterOP default_jobout ) {
-
-	if ( option[ out::file::silent ].user()  ) {
-		return new SilentFileJobOutputter;
-	} else if (option[out::pdb].user() ){
-		return new PDBJobOutputter;
-	} else if (option[out::file::atom_tree_diff].user() ){
-		return new AtomTreeDiffJobOutputter;
-	}else if (option[out::file::score_only].user()) {
-		return new ScoreOnlyJobOutputter;
-	} else if ( option[ basic::options::OptionKeys::jd2::no_output ].value() || option[ out::nooutput ] ){
-		return new NoOutputJobOutputter;
-	} else if ( option[ basic::options::OptionKeys::jd2::enzdes_out].user() ){
-		return new EnzdesJobOutputter;
-	} else if ( option[ basic::options::OptionKeys::out::use_database].user() ){
-		return new DatabaseJobOutputter;
-	}	else {
-		return default_jobout;
-	}
-	return default_jobout; //SML override until we have other child classes
+	return protocols::jd2::JobOutputterFactory::get_instance()->get_new_JobOutputter( default_jobout );
 }
 
 /// @details this function handles the determination of which Parser is required

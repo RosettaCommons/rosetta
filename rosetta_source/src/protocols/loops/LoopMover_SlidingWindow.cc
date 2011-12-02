@@ -50,7 +50,7 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 #include <core/pose/util.hh>
-#include <protocols/basic_moves/FragmentMover.fwd.hh>
+#include <protocols/simple_moves/FragmentMover.fwd.hh>
 #include <utility/vector1.hh>
 
 
@@ -100,7 +100,7 @@ LoopResult LoopMover_SlidingWindow::model_loop(
 ){
 	using namespace kinematics;
 	using namespace scoring;
-	using namespace protocols::basic_moves;
+	using namespace protocols::simple_moves;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace numeric::random;

@@ -232,17 +232,42 @@ rm -r ref/; ./integration.py    # create reference results using only default se
             if options.daemon:
                 msg = "FAIL %s #####" % test
 
-                for diff in proc.stdout.readlines():
-                    msg += "~ %s" % diff.strip()
-                    full_log_msg += "     %s\n" % diff.strip()
+                if options.fulldiff:
+                    for diff in proc.stdout.readlines():
+                        msg += "~ %s" % diff.strip()
+                        full_log_msg += "     %s\n" % diff.strip()
+                else :
+                    lines = proc.stdout.readlines()
+                    for line in lines :
+                        cols = line.split()
+                        if len(cols) < 4 :
+                            msg += "~ %s" % diff.strip()
+                            full_log_msg += "     %s\n" % diff.strip()
+                        else:
+                            msg += "~ nonempty diff %s %s\n" % ( cols[1], cols[3].strip() )
+                            full_log_msg += "     nonempty diff %s %s\n" %  ( cols[1], cols[3].strip() )
                 msg += "#####"
 
             else:
                 msg = "FAIL %s\n" % test
-                for diff in proc.stdout.readlines():
-                    msg += "     %s\n" % diff.strip()
-                    full_log_msg += "     %s\n" % diff.strip()
+                #for diff in proc.stdout.readlines():
+                #    msg += "     %s\n" % diff.strip()
+                #    full_log_msg += "     %s\n" % diff.strip()
 
+                if options.fulldiff:
+                    for diff in proc.stdout.readlines():
+                        msg += "~ %s" % diff.strip()
+                        full_log_msg += "     %s\n" % diff.strip()
+                else :
+                    lines = proc.stdout.readlines()
+                    for line in lines :
+                        cols = line.split()
+                        if len(cols) < 4 :
+                            msg += "    %s" % diff.strip()
+                            full_log_msg += "     %s\n" % diff.strip()
+                        else:
+                            msg += "    nonempty diff %s %s\n" % ( cols[1], cols[3].strip() )
+                            full_log_msg += "     nonempty diff %s %s\n" %  ( cols[1], cols[3].strip() )
             full_log_msg += '\n'
 
             result = proc.wait()

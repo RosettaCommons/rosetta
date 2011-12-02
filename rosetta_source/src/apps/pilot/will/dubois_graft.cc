@@ -55,8 +55,8 @@
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
-#include <protocols/moves/symmetry/SymMinMover.hh>
-#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 #include <sstream>
 #include <utility/io/izstream.hh>
@@ -115,7 +115,7 @@ void minimize(core::pose::Pose & pose, ScoreFunctionOP sf) {
 	movemap->set_bb(false);
 	movemap->set_bb(1,true);
 	movemap->set_chi(1,true);
-	protocols::moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true );
+	protocols::simple_moves::symmetry::SymMinMover m( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true );
 	m.apply(pose);
 }
 

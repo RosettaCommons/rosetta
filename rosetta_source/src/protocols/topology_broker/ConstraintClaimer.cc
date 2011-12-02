@@ -27,7 +27,7 @@
 #include <protocols/loops/Loops.hh>
 // #include <core/kinematics/MoveMap.hh>
 // #include <core/fragment/FragSet.hh>
-// #include <protocols/basic_moves/FragmentMover.hh>
+// #include <protocols/simple_moves/FragmentMover.hh>
 
 
 #include <core/id/Exceptions.hh>

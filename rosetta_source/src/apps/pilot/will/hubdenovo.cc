@@ -65,7 +65,7 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
-#include <protocols/basic_moves/FragmentMover.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/electron_density/util.hh>
 #include <protocols/flxbb/FlxbbDesign.hh>
 #include <protocols/relax/FastRelax.hh>
@@ -75,9 +75,9 @@
 #include <protocols/moves/MoverContainer.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/RigidBodyMover.hh>
-#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/moves/symmetry/SymMinMover.hh>
-#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/symmetric_docking/SymDockingInitialPerturbation.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
@@ -96,7 +96,7 @@ using core::conformation::symmetry::SymmDataOP;
 using core::conformation::symmetry::SymmetryInfo;
 using core::conformation::symmetry::SymmetryInfoOP;
 using core::pose::symmetry::make_symmetric_pose;
-using protocols::moves::symmetry::SymMinMover;
+using protocols::simple_moves::symmetry::SymMinMover;
 using protocols::moves::MoverOP;
 using core::scoring::constraints::ConstraintOP;
 using core::id::NamedAtomID;
@@ -787,8 +787,8 @@ struct HubDenovo {
 		core::fragment::FragSetOP frags3 = make_frag_set(cfg.ss,fds);
 		core::fragment::FragSetOP fragsl = make_frag_set(cfg.ssstr().substr(0,6),fds);
 
-		fragins3  = new protocols::basic_moves::ClassicFragmentMover(frags3);
-		fraginsL  = new protocols::basic_moves::ClassicFragmentMover(fragsl);
+		fragins3  = new protocols::simple_moves::ClassicFragmentMover(frags3);
+		fraginsL  = new protocols::simple_moves::ClassicFragmentMover(fragsl);
 		{
 		  	protocols::moves::RandomMoverOP tmp = new protocols::moves::RandomMover;
 		  	tmp->add_mover(fragins3,0.5);
@@ -803,7 +803,7 @@ struct HubDenovo {
 	  	movemap->set_jump(false);
 	  	movemap->set_bb(true);
 	  	movemap->set_chi(true);
-		cenmin = new protocols::moves::symmetry::SymMinMover( movemap, sf3, "dfpmin_armijo_nonmonotone", 1e-3, true, false, false );
+		cenmin = new protocols::simple_moves::symmetry::SymMinMover( movemap, sf3, "dfpmin_armijo_nonmonotone", 1e-3, true, false, false );
 
 		hub = *core::import_pose::pose_from_pdb(*rtsfa,"input/CHC_HUB_FA.pdb");
 
@@ -893,7 +893,7 @@ struct HubDenovo {
 	  	movemap->set_jump(false);
 	  	movemap->set_bb(true);
 	  	movemap->set_chi(true);
-		protocols::moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
+		protocols::simple_moves::symmetry::SymMinMover( movemap, sf, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
 		sf->set_weight(core::scoring::atom_pair_constraint,1.0);
 		sf->set_weight(core::scoring::    angle_constraint,1.0);
 	}
@@ -933,7 +933,7 @@ struct HubDenovo {
 					core::kinematics::MoveMapOP movemap = new core::kinematics::MoveMap;
 				  	movemap->set_jump(false); movemap->set_bb(true); movemap->set_chi(true);
 					rlxcst->apply(tmp); // no cst
-					// protocols::moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(tmp);
+					// protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(tmp);
 					sfsym->set_weight(core::scoring::atom_pair_constraint,1.0);
 					sfsym->set_weight(core::scoring::    angle_constraint,1.0);
 					// min_as_poly_ala(tmp,sfsym,hocsts,cfg.nres);
@@ -1041,7 +1041,7 @@ int main(int argc, char *argv[]) {
 	// 			// 	p.set_psi(1,uniform()*360.0);
 	// 			// 	p.set_omega(1,170.0+uniform()*20.0);
 	// 			// }
-	// 		 	//  protocols::moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
+	// 		 	//  protocols::simple_moves::symmetry::SymMinMover( movemap, sfsym, "dfpmin_armijo_nonmonotone", 1e-5, true, false, false ).apply(p);
 	// 			if(1==ippo) tmp.set_phi  (ir,tmp.phi  (ir)+10.0);
 	// 			if(2==ippo) tmp.set_psi  (ir,tmp.psi  (ir)+10.0);
 	// 			if(3==ippo) tmp.set_omega(ir,tmp.omega(ir)+10.0);

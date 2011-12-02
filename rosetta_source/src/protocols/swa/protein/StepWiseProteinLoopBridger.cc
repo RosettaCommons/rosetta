@@ -40,7 +40,7 @@
 #include <core/kinematics/Jump.hh>
 
 #include <protocols/loops/Loop.hh>
-#include <protocols/moves/kinematic_closure/bridgeObjects.hh>
+#include <numeric/kinematic_closure/bridgeObjects.hh>
 // AUTO-REMOVED #include <protocols/moves/kinematic_closure/kinematic_closure_helpers.hh>
 
 #include <ObjexxFCL/format.hh>
@@ -331,7 +331,7 @@ return "StepWiseProteinLoopBridger";
 					 Size const & start_res_ ,
 					 Size const & end_res_ ) const {
 
-		using namespace protocols::moves::kinematic_closure;
+		using namespace numeric::kinematic_closure;
 
 		if ( verbose_ ) std::cout << "About to run chainTORS" << std::endl;
 		Size ind = 1;
@@ -362,7 +362,7 @@ return "StepWiseProteinLoopBridger";
 
 		using namespace core::kinematics;
 		using namespace protocols::loops;
-		using namespace protocols::moves::kinematic_closure;
+		using namespace numeric::kinematic_closure;
 
 		///// kinematic loop close.
 		// Following copied from, e.g., KinematicMover.cc.  Need to elaborate for terminal residues!
@@ -442,7 +442,7 @@ return "StepWiseProteinLoopBridger";
 																											 utility::vector1< Size > const & pivots,
 																											 utility::vector1< Size > const & order ){
 
-		using namespace protocols::moves::kinematic_closure;
+		using namespace numeric::kinematic_closure;
 		if ( offset == 2 ){
 			/* hardwired!! -- check cis-omega at residue before bridge residue (offset = 0 ),
 				 and at bridge residue ( offset = 1 ), and that's it */

@@ -16,7 +16,7 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 
-#include <protocols/match/downstream/ExternalGeomSampler.hh>
+#include <protocols/toolbox/match_enzdes_util/ExternalGeomSampler.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -32,9 +32,9 @@
 #include <utility/vector1.hh>
 
 
-using namespace protocols::match;
-using namespace protocols::match::downstream;
-
+//using namespace protocols::match;
+//using namespace protocols::match::downstream;
+using namespace protocols::toolbox::match_enzdes_util;
 
 // --------------- Test Class --------------- //
 

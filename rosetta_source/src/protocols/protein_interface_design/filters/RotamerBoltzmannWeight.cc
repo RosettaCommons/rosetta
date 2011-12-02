@@ -30,7 +30,6 @@
 #include <core/pack/rotamer_set/RotamerSet.hh>
 // AUTO-REMOVED #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
-#include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <protocols/toolbox/pose_metric_calculators/RotamerBoltzCalculator.hh>
 #include <protocols/moves/MinMover.hh>
 #include <utility/vector1.hh>
@@ -47,12 +46,15 @@
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pack/make_symmetric_task.hh>
-#include <protocols/moves/symmetry/SymMinMover.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
 
 #include <utility/vector0.hh>
 
 //Auto Headers
 #include <core/scoring/EnergyGraph.hh>
+#include <protocols/simple_filters/DdgFilter.hh>
+#include <protocols/simple_filters/ScoreTypeFilter.hh>
+#include <protocols/simple_filters/AlaScan.hh>
 namespace protocols {
 namespace protein_interface_design{
 namespace filters {
@@ -178,7 +180,7 @@ RotamerBoltzmannWeight::first_pass_ala_scan( core::pose::Pose const & pose ) con
 	TR<<"----------First pass alanine scanning to identify hot spot residues------------"<<std::endl;
 	utility::vector1< core::Size > hotspot_residues;
 	hotspot_residues.clear();
-	protocols::protein_interface_design::AlaScan ala_scan;
+	protocols::simple_filters::AlaScan ala_scan;
 	ala_scan.repack( repack() );
 	if( repack() )
 		ala_scan.repeats( 3 );
@@ -193,7 +195,7 @@ RotamerBoltzmannWeight::first_pass_ala_scan( core::pose::Pose const & pose ) con
 		TR<<"All energy calculations will be computed subject to no repacking in the bound and unboud states (dG)";
 	core::Real orig_ddG(0.0);
 	if( !skip_ala_scan() ){
-		protocols::protein_interface_design::DdgFilter ddg_filter( 100/*ddg_threshold*/, scorefxn(), jump, 1 /*repeats*/ );
+		protocols::simple_filters::DdgFilter ddg_filter( 100/*ddg_threshold*/, scorefxn(), jump, 1 /*repeats*/ );
 		ddg_filter.repack( repack() );
 		orig_ddG = ddg_filter.compute( pose );
 		TR<<"\nOriginal complex ddG "<<orig_ddG<<std::endl;
@@ -312,7 +314,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	if (core::pose::symmetry::is_symmetric(pose)) {
 		core::pack::make_symmetric_PackerTask(pose, task); // NK 110621
 	}
-	protocols::protein_interface_design::ScoreTypeFilter const stf( scorefxn_, core::scoring::total_score, 0 );
+	protocols::simple_filters::ScoreTypeFilter const stf( scorefxn_, core::scoring::total_score, 0 );
 
 	core::kinematics::MoveMapOP mm = new core::kinematics::MoveMap;
 	if (core::pose::symmetry::is_symmetric(pose)) {
@@ -337,7 +339,7 @@ RotamerBoltzmannWeight::compute_Boltzmann_weight( core::pose::Pose const & const
 	core::pack::pack_rotamers( pose, *scorefxn_, task );
 	protocols::moves::MoverOP min_mover;
 	if (core::pose::symmetry::is_symmetric(pose)) {
-		min_mover = new protocols::moves::symmetry::SymMinMover( mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true, false, false ); // NK 110621
+		min_mover = new protocols::simple_moves::symmetry::SymMinMover( mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true, false, false ); // NK 110621
 	} else {
 		min_mover = new protocols::moves::MinMover( mm, scorefxn_, "dfpmin_armijo_nonmonotone", 0.01, true, false, false ); // NK 110621
 	}
@@ -540,7 +542,7 @@ RotamerBoltzmannWeight::type(std::string const & s)
 core::Real
 RotamerBoltzmannWeight::compute_modified_ddG( core::pose::Pose const & pose, std::ostream & out ) const
 {
-	protocols::protein_interface_design::DdgFilter ddg_filter( 100/*ddg_threshold*/, scorefxn(), rb_jump(), repack() ? 3 : 1 /*repeats*/ );
+	protocols::simple_filters::DdgFilter ddg_filter( 100/*ddg_threshold*/, scorefxn(), rb_jump(), repack() ? 3 : 1 /*repeats*/ );
 	ddg_filter.repack( repack() );
 
 	core::Real const ddG_in( ddg_filter.compute( pose ) );

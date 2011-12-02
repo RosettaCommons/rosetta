@@ -43,7 +43,7 @@
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 
 
-// AUTO-REMOVED #include <protocols/moves/ScoreMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/ScoreMover.hh>
 // AUTO-REMOVED #include <protocols/moves/CompositionMover.hh>
 // AUTO-REMOVED #include <protocols/moves/ConstraintSetMover.hh>
 

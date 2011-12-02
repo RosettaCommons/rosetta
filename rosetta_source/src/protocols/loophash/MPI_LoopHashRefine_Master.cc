@@ -21,7 +21,7 @@
 #include <protocols/loophash/MPI_LoopHashRefine.hh>
 #include <protocols/loophash/MPI_LoopHashRefine_Master.hh>
 #include <protocols/loophash/WorkUnit_LoopHash.hh>
-#include <protocols/wum/WorkUnit_BatchRelax.hh>
+#include <protocols/relax/WorkUnit_BatchRelax.hh>
 #include <protocols/wum/WorkUnitBase.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
 #include <core/pose/util.hh>
@@ -327,7 +327,7 @@ MPI_LoopHashRefine_Master::add_relax_batch( SilentStructStore &start_decoys ){
 	core::Size batchrelax_batchsize_ = (start_decoys.size() / chunks) + 1;
 	core::Size dcount=0;
 	while( dcount < start_decoys.size() ){
-		WorkUnit_BatchRelaxOP new_wu = new WorkUnit_BatchRelax_and_PostRescore();
+		protocols::relax::WorkUnit_BatchRelaxOP new_wu = new protocols::relax::WorkUnit_BatchRelax_and_PostRescore();
 		new_wu->set_wu_type("batchrelax");
 		core::Size lcount=0;
 

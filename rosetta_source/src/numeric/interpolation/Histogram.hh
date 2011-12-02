@@ -90,7 +90,7 @@ using numeric::Real;
  *      bin number          |    1    |    2    |      ...       |    n    |
  *
  * @tparam X The range of the function. Should support the operations expected
- *           of real types. Examples: core::Real, float, double
+ *           of real types. Examples: numeric::Real, float, double
  * @tparam Y The domain of the function. Should support the operations expected
  *           of real types.
  */

@@ -12,7 +12,7 @@
 /// @author Nobuyasu Koga ( nobuyasu@uw.edu ),  Yih-En Andrew Ban (yab@u.washington.edu)
 
 // unit headers
-#include <protocols/fldsgn/BluePrint.hh>
+#include <protocols/jd2/parser/BluePrint.hh>
 #include <protocols/fldsgn/BluePrintBDR.hh>
 #include <protocols/fldsgn/BluePrintBDRCreator.hh>
 
@@ -45,7 +45,7 @@
 
 #include <protocols/forge/constraints/NtoC_RCG.hh>
 #include <protocols/forge/constraints/ConstraintFileRCG.hh>
-#include <protocols/forge/constraints/SheetConstraintsRCG.hh>
+#include <protocols/fldsgn/SheetConstraintsRCG.hh>
 #include <protocols/forge/remodel/RemodelConstraintGenerator.hh>
 // AUTO-REMOVED #include <protocols/forge/remodel/RemodelLoopMover.hh>
 #include <protocols/forge/build/SegmentRebuild.hh>
@@ -467,8 +467,8 @@ bool BluePrintBDR::centroid_build(
 	using protocols::forge::constraints::NtoC_RCGOP;
 	using protocols::forge::constraints::ConstraintFileRCG;
 	using protocols::forge::constraints::ConstraintFileRCGOP;
-	using protocols::forge::constraints::SheetConstraintsRCG;
-	using protocols::forge::constraints::SheetConstraintsRCGOP;
+	//using protocols::forge::constraints::SheetConstraintsRCG;
+	//using protocols::forge::constraints::SheetConstraintsRCGOP;
 
 	using protocols::toolbox::pose_manipulation::construct_poly_XXX_pose;
 

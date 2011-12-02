@@ -16,12 +16,14 @@
 #ifndef INCLUDED_core_io_silent_SilentStruct_hh
 #define INCLUDED_core_io_silent_SilentStruct_hh
 
-#include <core/io/silent/SilentStruct.fwd.hh>
+#include <core/io/silent/SilentStruct.hh>
 
 // unit headers
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentEnergy.hh>
 // AUTO-REMOVED #include <core/io/silent/SilentFileData.fwd.hh>
+
+#include <core/io/silent/SilentFileData.hh>
 
 // mini headers
 #include <core/types.hh>

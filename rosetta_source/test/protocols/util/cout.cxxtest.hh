@@ -27,7 +27,7 @@
 #include <core/types.hh>
 
 #include <core/scoring/ScoreFunction.hh>
-#include <protocols/moves/ScoreMover.hh>
+#include <protocols/simple_moves/ScoreMover.hh>
 #include <protocols/moves/BackboneMover.hh>
 
 // Package Headers
@@ -86,7 +86,7 @@ public:
 		scorefxn.set_weight(scoring::fa_atr, 1.0 );
 		scorefxn( pose );
 
-		{ protocols::moves::ScoreMover sm;  sm.test_move(pose); }
+		{ protocols::simple_moves::ScoreMover sm;  sm.test_move(pose); }
 		{ protocols::moves::SmallMover sm;  sm.test_move(pose); }
 		{ protocols::moves::ShearMover sm;  sm.test_move(pose); }
 

@@ -58,8 +58,8 @@
 // AUTO-REMOVED #include <protocols/moves/TrialMover.hh>
 // AUTO-REMOVED #include <protocols/moves/MoverContainer.hh>
 // AUTO-REMOVED #include <protocols/moves/RepeatMover.hh>
-// AUTO-REMOVED #include <protocols/moves/symmetry/SymMinMover.hh>
-// AUTO-REMOVED #include <protocols/moves/symmetry/SymPackRotamersMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymMinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
 // AUTO-REMOVED #include <protocols/symmetric_docking/SymDockingLowRes.hh>
 #include <sstream>
 // AUTO-REMOVED #include <utility/io/izstream.hh>

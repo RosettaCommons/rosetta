@@ -14,11 +14,11 @@
 
 // Unit headers
 #include <protocols/toolbox/match_enzdes_util/MatchConstraintFileInfo.hh>
-#include <protocols/toolbox/match_enzdes_util/EnzCstTemplateRes.hh>
 
 //package headers
-#include <protocols/match/downstream/ExternalGeomSampler.hh>
-#include <protocols/match/downstream/LigandConformer.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzCstTemplateRes.hh>
+#include <protocols/toolbox/match_enzdes_util/ExternalGeomSampler.hh>
+#include <protocols/toolbox/match_enzdes_util/LigandConformer.hh>
 #include <protocols/enzdes/enzdes_util.hh>
 
 //#include <protocols/enzdes/EnzConstraintIO.hh>
@@ -535,7 +535,7 @@ MatchConstraintFileInfo::inverse_rotamers_against_residue(
 	bool const flip_exgs_upstream_downstream_samples
 ) const
 {
-	using namespace protocols::match::downstream;
+	//using namespace protocols::match::downstream;
 
 	std::list< core::conformation::ResidueCOP > to_return;
 
@@ -653,11 +653,11 @@ MatchConstraintFileInfo::process_algorithm_info(
 
 
 
-protocols::match::downstream::ExternalGeomSamplerCOP
+ExternalGeomSamplerCOP
 MatchConstraintFileInfo::create_exgs() const
 {
 
-	protocols::match::downstream::ExternalGeomSamplerOP exgs = new protocols::match::downstream::ExternalGeomSampler();
+	ExternalGeomSamplerOP exgs = new ExternalGeomSampler();
 
 	utility::vector1< std::string > tags_undefined_gsi;
 

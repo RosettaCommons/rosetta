@@ -12,7 +12,6 @@
 
 #ifndef INCLUDED_protocols_protein_interface_design_movers_DesignMinimizeHbonds_hh
 #define INCLUDED_protocols_protein_interface_design_movers_DesignMinimizeHbonds_hh
-#include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
@@ -22,6 +21,10 @@
 
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <protocols/simple_moves/DesignRepackMover.hh>
+
+
 
 namespace protocols {
 namespace protein_interface_design {
@@ -30,7 +33,7 @@ namespace movers {
 /// @brief used to design a protein to hbond preferentially to a set of target residues on the partner.
 /// Hbonds involving backbone or sidechain on the target can be counted, and whether to design donors or
 /// acceptors can also be defined.
-class DesignMinimizeHbonds : public DesignRepackMover
+class DesignMinimizeHbonds : public simple_moves::DesignRepackMover
 {
 public:
 	typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;

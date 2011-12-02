@@ -26,8 +26,8 @@
 
 #include <core/scoring/constraints/util.hh>
 // AUTO-REMOVED #include <core/scoring/electron_density/util.hh>
-#include <protocols/moves/symmetry/SetupForSymmetryMover.hh>
-#include <protocols/moves/SuperimposeMover.hh>
+#include <protocols/symmetric_docking/SetupForSymmetryMover.hh>
+#include <protocols/simple_moves/SuperimposeMover.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
 
 
@@ -100,7 +100,7 @@ Relax_main( bool ) {
 	//   to avoid adding extra VRTs
 	if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 			protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-	    seqmov->add_mover( new protocols::moves::symmetry::SetupForSymmetryMover );
+	    seqmov->add_mover( new protocols::symmetric_docking::SetupForSymmetryMover );
 	    seqmov->add_mover( protocol );
 	    protocol = seqmov;
 	}
@@ -115,7 +115,7 @@ Relax_main( bool ) {
 			if(  option[ OptionKeys::relax::superimpose_to_native ].user() ) ref_filename =  option[ basic::options::OptionKeys::in::file::native ]();
 			core::import_pose::pose_from_pdb( ref_pose, ref_filename ); 
 			protocols::moves::SequenceMoverOP seqmov = new protocols::moves::SequenceMover;
-			protocols::moves::SuperimposeMover *sm  =  new protocols::moves::SuperimposeMover;
+			protocols::simple_moves::SuperimposeMover *sm  =  new protocols::simple_moves::SuperimposeMover;
 			sm->set_reference_pose( ref_pose );
 			seqmov->add_mover( sm );
 			seqmov->add_mover( protocol );

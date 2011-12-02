@@ -55,10 +55,8 @@
 // Unit Headers
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/BasicFilters.hh>
-#include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <protocols/protein_interface_design/design_utils.hh>
 // AUTO-REMOVED #include <protocols/protein_interface_design/util.hh>
-#include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 #include <protocols/protein_interface_design/movers/BuildAlaPose.hh>
 
 #include <numeric/random/random.hh>
@@ -80,6 +78,9 @@
 
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
+#include <protocols/simple_filters/EnergyPerResidueFilter.hh>
+#include <protocols/simple_filters/ScoreTypeFilter.hh>
+#include <protocols/simple_moves/DesignRepackMover.hh>
 using namespace core::scoring;
 
 static basic::Tracer TR( "protocols.protein_interface_design.movers.PlaceStubMover" );
@@ -113,7 +114,7 @@ PlaceStubMoverCreator::mover_name()
 }
 
 PlaceStubMover::PlaceStubMover() :
-	DesignRepackMover( PlaceStubMoverCreator::mover_name() ),
+	simple_moves::DesignRepackMover( PlaceStubMoverCreator::mover_name() ),
 	score_threshold_( 0.0 ),
 	host_chain_( 2 ),
 	stub_set_( NULL ),
@@ -150,7 +151,7 @@ PlaceStubMover::PlaceStubMover(
 	bool const triage_positions/*=true*/,
 	core::Real stub_energy_threshold /*= 1.0*/
 ) :
-	DesignRepackMover( PlaceStubMoverCreator::mover_name() ),
+	simple_moves::DesignRepackMover( PlaceStubMoverCreator::mover_name() ),
 	score_threshold_( score_threshold ),
 	host_chain_( host_chain ),
 	hurry_(hurry),
@@ -365,7 +366,7 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 	//by constraints. There are no explicit checks in the code for this and
 	//it is up to the user to make sure that all's well...
 
-	ScoreTypeFilter const stf( stub_scorefxn, backbone_stub_constraint, 1.0 );
+	simple_filters::ScoreTypeFilter const stf( stub_scorefxn, backbone_stub_constraint, 1.0 );
 	core::Real const before_min( stf.compute( pose ) );
 	if( before_min >= -0.0001 ){
 		if( stub() != NULL ){
@@ -402,7 +403,7 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 		(*stub_scorefxn )( pose ); //to update values
 
 		//minimizing stub using user-defined movers or a default minimization (rb and sc of placed stubs)
-		typedef std::pair< DesignRepackMoverOP, core::Real > DesignMoverRealPair;
+		typedef std::pair< simple_moves::DesignRepackMoverOP, core::Real > DesignMoverRealPair;
 		if ( stub_minimize_movers_.size() ){
 			TR<<"entering movers for stub minimization....\n";
 			//minimize rb and sc of previous place
@@ -410,7 +411,7 @@ PlaceStubMover::StubMinimize( core::pose::Pose & pose, protocols::hotspot_hashin
 			MinimizeInterface( pose, stub_scorefxn, no_min/*bb*/, sc_min, min_rb()/*rb*/, false /*optimize foldtree*/, no_targets, true/*simultaneous optimization*/);
 			//starting mover list
 			for( utility::vector1< DesignMoverRealPair >::const_iterator it=stub_minimize_movers_.begin(); it!=stub_minimize_movers_.end(); ++it ){
-				DesignRepackMoverOP const curr_mover( it->first );
+				simple_moves::DesignRepackMoverOP const curr_mover( it->first );
 				core::Real const bb_cst_weight( it->second );
 				TR<<"applying mover: "<<curr_mover->get_name()<<'\n';
 				//restricting movers for stub minimization
@@ -665,7 +666,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 
 			TR << "Trying host position " << res << std::endl;
 
-			protocols::filters::FilterCOP rep_filter = new EnergyPerResidueFilter(
+			protocols::filters::FilterCOP rep_filter = new simple_filters::EnergyPerResidueFilter(
 				res, soft_rep, core::scoring::fa_rep, 20.0 );
 			stub_set_->filter( rep_filter );
 			stub->set_filter( rep_filter );
@@ -745,7 +746,7 @@ PlaceStubMover::apply( core::pose::Pose & pose )
 				TR_debug <<"DEBUG: before remove coord constraints we had "<<before_remove<<" constraints. after: "<<after_remove<<std::endl;
 
 				// this is to make sure that nothing awful has happened during stub-based minimization.
-				protocols::filters::FilterCOP total_energy_filter = new EnergyPerResidueFilter( res, scorefxn, core::scoring::total_score, stub_energy_threshold_ );
+				protocols::filters::FilterCOP total_energy_filter = new simple_filters::EnergyPerResidueFilter( res, scorefxn, core::scoring::total_score, stub_energy_threshold_ );
 				bool const interface_energy_pass( total_energy_filter->apply( pose ) );
 				if( interface_energy_pass ){
 					//If a subsequent placement fails, try placing the stub on another position or
@@ -1058,12 +1059,12 @@ PlaceStubMover::parse_my_tag( TagPtr const tag,
 				std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( stub_mover_name ));
 				bool const stub_mover_found( find_mover != movers.end() );
 				if( stub_mover_found ){
-					DesignRepackMoverOP drSOP = dynamic_cast< DesignRepackMover * >( find_mover->second->clone().get() );
+					simple_moves::DesignRepackMoverOP drSOP = dynamic_cast< simple_moves::DesignRepackMover * >( find_mover->second->clone().get() );
 					if( !drSOP ){
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drSOP );
 					}//done cast check
-					stub_minimize_movers_.push_back( std::make_pair< DesignRepackMoverOP, Real >( drSOP, bb_stub_constraint_weight) );
+					stub_minimize_movers_.push_back( std::make_pair< simple_moves::DesignRepackMoverOP, Real >( drSOP, bb_stub_constraint_weight) );
 					TR<<"added stub minimize mover "<<stub_mover_name<<" to minimize towards the stub. Using this weight for the bb stub constraints: "<< bb_stub_constraint_weight<<'\n';
 				}
 			}
@@ -1079,12 +1080,12 @@ PlaceStubMover::parse_my_tag( TagPtr const tag,
 				std::map< std::string const, MoverOP >::const_iterator find_mover( movers.find( mover_name ));
 				bool const mover_found( find_mover != movers.end() );
 				if( mover_found ){
-					DesignRepackMoverOP drOP = dynamic_cast< DesignRepackMover * >( find_mover->second->clone().get() );
+					simple_moves::DesignRepackMoverOP drOP = dynamic_cast< simple_moves::DesignRepackMover * >( find_mover->second->clone().get() );
 					if( !drOP ){
 						TR<<"dynamic cast failed in tag "<<tag<<". Make sure that the mover is derived from DesignRepackMover"<<std::endl;
 						runtime_assert( drOP );
 					}
-					design_movers_.push_back( std::make_pair< DesignRepackMoverOP, bool >( drOP, apply_coord_constraints ) );
+					design_movers_.push_back( std::make_pair< simple_moves::DesignRepackMoverOP, bool >( drOP, apply_coord_constraints ) );
 					coord_cst_std_.push_back( coord_cst_std );
 					TR<<"added design mover "<<mover_name<<" to place stub with apply_coord_constraints switched to "<< apply_coord_constraints<<" with std "<< coord_cst_std<< " and hurry=" << hurry_ << '\n';
 				}

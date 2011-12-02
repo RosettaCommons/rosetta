@@ -26,9 +26,10 @@
 #include <devel/loop_grids/LoopGrid.fwd.hh>
 
 #include <protocols/match/BumpGrid.fwd.hh>
-#include <protocols/match/SixDHasher.fwd.hh>
 #include <utility/vector1.hh>
+
 #include <numeric/geometry/BoundingBox.fwd.hh>
+#include <numeric/geometry/hashing/SixDHasher.fwd.hh>
 
 
 namespace protocols {
@@ -38,6 +39,7 @@ class LoopGrid : public utility::pointer::ReferenceCount
 {
 public:
 	typedef numeric::geometry::BoundingBox< core::Vector > BoundingBox;
+	typedef numeric::geometry::hashing::Bin3D Bin3D;
 	typedef core::Vector Vector;
 	typedef core::Real Real;
 	typedef core::Size Size;

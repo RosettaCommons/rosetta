@@ -67,8 +67,8 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/ccd_closure.hh>
 #include <protocols/loops/CcdLoopClosureMover.hh>
-#include <protocols/moves/kinematic_closure/bridgeObjects.hh>
-#include <protocols/moves/kinematic_closure/kinematic_closure_helpers.hh>
+#include <numeric/kinematic_closure/bridgeObjects.hh>
+#include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 
 //clustering
 #include <protocols/cluster/cluster.hh>
@@ -218,7 +218,7 @@ loop_closure_test(){
 	using namespace core::pack;
 	using namespace protocols::swa;
 	using namespace protocols::loops;
-	using namespace protocols::moves::kinematic_closure;
+	using namespace numeric::kinematic_closure;
 
 	//////////////////////
 	// POSE SETUP

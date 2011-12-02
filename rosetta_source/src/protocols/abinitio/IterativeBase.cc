@@ -31,6 +31,11 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 // AUTO-REMOVED #include <core/io/pdb/pose_io.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/ResidualDipolarCoupling.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/ConstraintIO.hh>
+#include <core/scoring/constraints/util.hh>
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -64,7 +69,7 @@
 #include <protocols/evaluation/JumpEvaluator.hh>
 #include <protocols/evaluation/RmsdEvaluator.hh>
 #include <protocols/evaluation/ScoreEvaluator.hh>
-#include <protocols/evaluation/ConstraintEvaluator.hh>
+#include <protocols/constraints_additional/ConstraintEvaluator.hh>
 #include <protocols/evaluation/util.hh>
 #include <basic/Tracer.hh>
 #include <basic/MemTracer.hh>
@@ -257,7 +262,10 @@ IterativeBase::IterativeBase(std::string name )
 		noesy_assign_float_cycle_( 1.0 ), //changed OCT 20th 2010 ... start only in generation 3 of STAGE2_RESAMPLE with cyana-cycle 2
 		first_noesy_cst_file_( "n/a" ),
 		first_noesy_fa_cst_file_ ("n/a" ),
-		bCombineNoesyCst_( true )
+		bCombineNoesyCst_( true ),
+		rdc_data_( NULL ),
+		cst_data_( NULL ),
+		cst_fa_data_( NULL )
 {
 	using namespace ObjexxFCL;
 	mem_tr << "IterativeBase CStor-Start" << std::endl;
@@ -1292,7 +1300,7 @@ void IterativeBase::set_scored_core() {
 				tr.Error << "why is the noesy_autoassign_cst weight 0 ? set it to 5" << std::endl;
 				weight = 5.0;
 			}
-			add_evaluation( new evaluation::ConstraintEvaluator( "noesy_autoassign_cst", cst_file ), weight );
+			add_evaluation( new constraints_additional::ConstraintEvaluator( "noesy_autoassign_cst", cst_file ), weight );
 		}
 
 		if ( super_quick_relax_of_centroids_ ) {
@@ -1723,6 +1731,76 @@ void IterativeBase::cluster() {
 	mem_tr << "IterativeBase cluster-end" << std::endl;
 }
 
+
+
+///@detail before we can apply score-fxn we have to add extra data: RDC, NOES, (not supported yet: PCS, ... )
+void IterativeBase::score( pose::Pose & pose ) const {
+
+	//to speed up things we cache the RDC data in the archive
+	if ( basic::options::option[ basic::options::OptionKeys::in::file::rdc ].user() ) {
+		if ( !rdc_data_ ) rdc_data_ = new core::scoring::ResidualDipolarCoupling;
+		core::scoring::store_RDC_in_pose( rdc_data_, pose );
+	}
+
+	//set fullatom or centroid constraints
+	// remove cutpoints from pose used to setup the constraint-set--> at least we will not have higher atom-indices than
+	// in standard residues (which causes seg-faults, down the line.. ). Some constraints will be slightly messed up... but can't be that bad...
+	tr.Trace << "checking for constraints when rescoring" << std::endl;
+	using namespace core::scoring::constraints;
+	bool const fullatom( pose.is_fullatom() );
+	core::pose::Pose cutfree_pose( pose );
+	protocols::jumping::JumpSample jumps( pose.fold_tree() );
+	jumps.remove_chainbreaks( cutfree_pose );
+
+	if ( !fullatom && basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user() ) {
+		if ( !cst_data_ ) {
+			std::string filename( core::scoring::constraints::get_cst_file_option() );
+			tr.Info << "read centroid constraint set " << filename << std::endl;
+			cst_data_ = ConstraintIO::get_instance()->read_constraints( filename, new ConstraintSet, cutfree_pose );
+		}
+		pose.constraint_set( cst_data_ );
+	} else if ( fullatom ) {
+		if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_file ].user() ) {
+			if ( !cst_fa_data_ ) {
+				std::string filename( core::scoring::constraints::get_cst_fa_file_option() );
+				tr.Info << "read fullatom constraint set " << filename << std::endl;
+				cst_fa_data_ = ConstraintIO::get_instance()->read_constraints( filename, new ConstraintSet, cutfree_pose );
+			}
+		} else if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user() ) {
+			if ( !cst_fa_data_ ) {
+				std::string const filename( core::scoring::constraints::get_cst_file_option() );
+				tr.Info << "read centroid constraint set " << filename  << " for fullatom " << std::endl;
+				cst_fa_data_ = ConstraintIO::get_instance()->read_constraints( filename, new ConstraintSet, cutfree_pose );
+			}
+		}
+		if ( cst_fa_data_ ) cutfree_pose.constraint_set( cst_fa_data_ );
+	} //fullatom
+
+	core::pose::Pose chainbreak_pose( pose );
+	jumping::JumpSample js( pose.fold_tree() );
+	js.add_chainbreaks( chainbreak_pose );
+	scoring::ScoreFunction chainbreaks_scfxn;
+	scoring::ScoreFunction no_chainbreak_scorefxn( scorefxn() );
+	chainbreaks_scfxn.set_weight(  scoring::linear_chainbreak, no_chainbreak_scorefxn.get_weight(  scoring::linear_chainbreak ) );
+	chainbreaks_scfxn.set_weight(  scoring::overlap_chainbreak, no_chainbreak_scorefxn.get_weight(  scoring::overlap_chainbreak ) );
+	chainbreaks_scfxn.set_weight(  scoring::chainbreak, no_chainbreak_scorefxn.get_weight(  scoring::chainbreak ) );
+	no_chainbreak_scorefxn.set_weight(  scoring::linear_chainbreak, 0);
+	no_chainbreak_scorefxn.set_weight(  scoring::overlap_chainbreak, 0);
+	no_chainbreak_scorefxn.set_weight(  scoring::chainbreak, 0);
+	//mjo commenting out 'val' because it is unused and causes a warning
+	//core::Real val = scorefxn( cutfree_pose );
+	//mjo commenting out 'chains' because it is unused and causes a warning
+	//core::Real chains = chainbreaks_scfxn( chainbreak_pose );
+	//score
+	scorefxn()( pose ); //get the weights into the pose
+	pose.energies().total_energies() = cutfree_pose.energies().total_energies();
+	pose.energies().total_energies()[ scoring::linear_chainbreak ] = chainbreak_pose.energies().total_energies()[ scoring::linear_chainbreak ];
+	pose.energies().total_energies()[ scoring::overlap_chainbreak ] = chainbreak_pose.energies().total_energies()[ scoring::overlap_chainbreak ];
+	pose.energies().total_energies()[ scoring::chainbreak ] = chainbreak_pose.energies().total_energies()[ scoring::chainbreak ];
+	if ( tr.Trace.visible() ) {
+		scorefxn().show( tr.Trace, pose );
+	}
+}
 
 
 /// Helper functions

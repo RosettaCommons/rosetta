@@ -18,8 +18,8 @@
 
 // Unit Headers
 #include <protocols/abinitio/MembraneAbinitio.hh>
-// AUTO-REMOVED #include <protocols/basic_moves/SymmetricFragmentMover.hh>
-#include <protocols/basic_moves/GunnCost.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/SymmetricFragmentMover.hh>
+#include <protocols/simple_moves/GunnCost.hh>
 
 // Package Headers
 
@@ -149,10 +149,10 @@ namespace abinitio {
 /// small(stage2/stage3/stage4)
 /// smooth_small ( stage3/stage4)
 MembraneAbinitio::MembraneAbinitio(
-	basic_moves::FragmentMoverOP brute_move_small,
-    basic_moves::FragmentMoverOP brute_move_small_top25,
-	basic_moves::FragmentMoverOP brute_move_large,
-	basic_moves::FragmentMoverOP smooth_move_small,
+	simple_moves::FragmentMoverOP brute_move_small,
+    simple_moves::FragmentMoverOP brute_move_small_top25,
+	simple_moves::FragmentMoverOP brute_move_large,
+	simple_moves::FragmentMoverOP smooth_move_small,
 	int  /*dummy otherwise the two constructors are ambiguous */
 ) :
 	brute_move_small_( brute_move_small ),
@@ -181,7 +181,7 @@ MembraneAbinitio::MembraneAbinitio(
 {
 	BaseClass::type( "MembraneAbinitio" );
 	using namespace basic::options;
-	basic_moves::ClassicFragmentMoverOP bms, bms25, bml, sms;
+	simple_moves::ClassicFragmentMoverOP bms, bms25, bml, sms;
 /*	if ( option[ OptionKeys::abinitio::log_frags_2 ].user() ) {
 		if ( !option[ OptionKeys::abinitio::debug ] ) utility_exit_with_message( "apply option abinitio::log_frags always together with abinitio::debug!!!");
 		bms  = new LoggedFragmentMover( fragset_small, movemap );
@@ -194,7 +194,7 @@ MembraneAbinitio::MembraneAbinitio(
 		sms = new SmoothSymmetricFragmentMover( fragset_small, movemap, new GunnCost, sr );
 	} else { */
 
-		using namespace protocols::basic_moves;
+		using namespace protocols::simple_moves;
 	  bms25  = new ClassicFragmentMover( fragset_small_top25, movemap );
     bms  = new ClassicFragmentMover( fragset_small, movemap );
 	  bml  = new ClassicFragmentMover( fragset_large, movemap );
@@ -475,7 +475,7 @@ void MembraneAbinitio::apply( pose::Pose & pose ) {
 
 
 //@brief return FramgentMover for smooth_small fragment insertions (i.e., stage4 moves)
-basic_moves::FragmentMoverOP
+simple_moves::FragmentMoverOP
 MembraneAbinitio::smooth_move_small() {
 	return smooth_move_small_;
 }
@@ -486,18 +486,18 @@ MembraneAbinitio::get_name() const {
 }
 
 //@brief return FragmentMover for small fragment insertions ( i.e., stage3/4 moves )
-basic_moves::FragmentMoverOP
+simple_moves::FragmentMoverOP
 MembraneAbinitio::brute_move_small() {
 	return brute_move_small_;
 }
 
-basic_moves::FragmentMoverOP
+simple_moves::FragmentMoverOP
 MembraneAbinitio::brute_move_small_top25() {
 	return brute_move_small_top25_;
 }
 
 //@brief return FragmentMover for large fragment insertions (i.e., stage1/2 moves )
-basic_moves::FragmentMoverOP
+simple_moves::FragmentMoverOP
 MembraneAbinitio::brute_move_large() {
 	return brute_move_large_;
 }
@@ -517,9 +517,9 @@ MembraneAbinitio::set_movemap( core::kinematics::MoveMapCOP mm )
 //@brief set new instances of FragmentMovers
 void
 MembraneAbinitio::set_moves(
-	basic_moves::FragmentMoverOP brute_move_small,
-	basic_moves::FragmentMoverOP brute_move_large,
-	basic_moves::FragmentMoverOP smooth_move_small
+	simple_moves::FragmentMoverOP brute_move_small,
+	simple_moves::FragmentMoverOP brute_move_large,
+	simple_moves::FragmentMoverOP smooth_move_small
 )
 {
 	smooth_move_small_ = smooth_move_small;

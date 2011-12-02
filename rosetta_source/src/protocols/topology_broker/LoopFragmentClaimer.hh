@@ -27,7 +27,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
 //#include <core/fragment/LoopFragSet.hh>
-// AUTO-REMOVED #include <protocols/basic_moves/FragmentMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/FragmentMover.hh>
 
 // ObjexxFCL Headers
 

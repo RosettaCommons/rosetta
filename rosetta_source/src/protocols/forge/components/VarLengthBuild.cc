@@ -16,7 +16,7 @@
 #include <protocols/forge/components/VarLengthBuild.hh>
 #include <protocols/forge/remodel/RemodelEnzdesCstModule.fwd.hh>
 #include <protocols/forge/remodel/RemodelEnzdesCstModule.hh>
-#include <protocols/enzdes/EnzdesCacheableObserver.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <core/pose/datacache/ObserverCache.hh>
 #include <core/pose/datacache/CacheableObserverType.hh>
@@ -517,7 +517,7 @@ bool VarLengthBuild::centroid_build(
 		//safety
 		pose.remove_constraints();
 		//wipe out cst_cache
-		protocols::enzdes::get_enzdes_observer( pose ) -> set_cst_cache( NULL );
+		protocols::toolbox::match_enzdes_util::get_enzdes_observer( pose ) -> set_cst_cache( NULL );
 		//wipe out observer too
 		pose.observer_cache().set( core::pose::datacache::CacheableObserverType::ENZDES_OBSERVER, NULL , false);
 

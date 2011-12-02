@@ -41,7 +41,7 @@
 
 #include <core/chemical/ChemicalManager.hh>
 
-#include <protocols/basic_moves/FragmentMover.fwd.hh>
+#include <protocols/simple_moves/FragmentMover.fwd.hh>
 
 
 #include <protocols/moves/MonteCarlo.hh>

@@ -16,7 +16,7 @@
 
 // Unit Headers
 #include <protocols/jd2/parser/FragmentReader.fwd.hh>
-#include <protocols/fldsgn/BluePrint.fwd.hh>
+#include <protocols/jd2/parser/BluePrint.fwd.hh>
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
@@ -116,7 +116,7 @@ private:
 	bool use_abego_;
 
 	/// @brief blueprint
-	protocols::fldsgn::BluePrintOP blueprint_;
+	protocols::jd2::parser::BluePrintOP blueprint_;
 
 };
 

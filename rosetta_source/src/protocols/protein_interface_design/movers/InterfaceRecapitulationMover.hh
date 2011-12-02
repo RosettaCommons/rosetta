@@ -16,7 +16,6 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/protein_interface_design/movers/DesignRepackMover.fwd.hh>
 #include <protocols/moves/PackRotamersMover.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
@@ -26,6 +25,10 @@
 #include <string>
 
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <protocols/simple_moves/DesignRepackMover.hh>
+
 
 
 // Unit headers
@@ -49,7 +52,7 @@ public:
 	virtual ~InterfaceRecapitulationMover();
 private:
 	core::pose::PoseOP saved_pose_;
-	DesignRepackMoverOP design_mover_;
+	simple_moves::DesignRepackMoverOP design_mover_;
 	protocols::moves::PackRotamersMoverOP design_mover2_;//ugly adaptation for the PackRotamers baseclass
 	bool pssm_;
 };

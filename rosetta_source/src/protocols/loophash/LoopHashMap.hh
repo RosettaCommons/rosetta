@@ -17,17 +17,20 @@
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/match/Hit.fwd.hh>
 // AUTO-REMOVED #include <protocols/match/Hit.hh>
-#include <protocols/match/SixDHasher.hh>
+//#include <protocols/match/SixDHasher.hh>
 #include <boost/unordered_map.hpp>
 // AUTO-REMOVED #include <boost/cstdint.hpp>
 // AUTO-REMOVED #include <numeric/HomogeneousTransform.hh>
 #include <utility/pointer/ReferenceCount.hh>
 #include <protocols/loophash/BackboneDB.hh>
 
+#include <numeric/geometry/hashing/SixDHasher.hh>
+
 #include <string>
 #include <vector>
 #include <map>
 
+#include <utility/exit.hh>
 #include <utility/vector1.hh>
 
 
@@ -122,7 +125,7 @@ public:
 
 		/// @brief Append to a bucket of vectors in the appropriate bin, radial lookup by transform
 		void radial_lookup( core::Size radius,  protocols::match::Real6 transform, std::vector < core::Size > &result );
-		
+
 		/// @brief Append to a bucket of vectors in the appropriate bin, lookup by bin index
         /// Using core::Size instead of boost::uinst64_t
 		void lookup( core::Size index, std::vector < core::Size > &result );
@@ -132,7 +135,7 @@ public:
 
     /// @brief Returns a hashmap key given a member of a bucket
     /// Don't think boost implements this, have to manually look it up
-        const boost::uint64_t return_key( core::Size bb_index ); 
+        const boost::uint64_t return_key( core::Size bb_index );
 
     /// @brief Query the loopsize of this LoopHashMap
 		inline core::Size get_loop_size() const { return loop_size_; }
@@ -163,7 +166,7 @@ public:
 
     /// @brief  A class that will take a 6D rigid body transform and turn it into a serial hashbin
     /// number for hashing. THis is the actual hash so to speak.
-    protocols::match::SixDCoordinateBinnerOP  hash_;
+	  numeric::geometry::hashing::SixDCoordinateBinnerOP  hash_;
 
     /// @brief The actual Boost-based hashmap
     BackboneIndexMap                          backbone_index_map_;

@@ -18,9 +18,9 @@
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/util.hh>
-#include <protocols/basic_moves/FragmentMover.hh>
-#include <protocols/basic_moves/SmoothFragmentMover.hh>
-#include <protocols/basic_moves/GunnCost.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
+#include <protocols/simple_moves/SmoothFragmentMover.hh>
+#include <protocols/simple_moves/GunnCost.hh>
 #include <protocols/topology_broker/FragmentClaimer.hh>
 #include <protocols/topology_broker/SequenceClaimer.hh>
 #include <protocols/topology_broker/ConstraintClaimer.hh>
@@ -161,9 +161,9 @@ void add_claims_from_file( TopologyBroker& broker, std::string const& file , Cmd
 void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	using basic_moves::ClassicFragmentMover;
-	using basic_moves::SmoothFragmentMover;
-	using basic_moves::GunnCost;
+	using simple_moves::ClassicFragmentMover;
+	using simple_moves::SmoothFragmentMover;
+	using simple_moves::GunnCost;
 	using weights::LargeFragWeight;
 	using weights::SmallFragWeight;
 	using weights::SmoothFragWeight;
@@ -186,7 +186,7 @@ void add_cmdline_claims( TopologyBroker& broker, bool const do_I_need_frags ) {
 		}
 	}
 
-	basic_moves::ClassicFragmentMoverOP bms, bml, sms;
+	simple_moves::ClassicFragmentMoverOP bms, bml, sms;
 	broker.add(new FragmentClaimer(bml = new ClassicFragmentMover(cmdline_data.frags_large), "LargeFrags", new LargeFragWeight));
 	broker.add(new FragmentClaimer(bms = new ClassicFragmentMover(cmdline_data.frags_small), "SmallFrags", new SmallFragWeight));
 	broker.add(new FragmentClaimer(sms = new SmoothFragmentMover (cmdline_data.frags_small, /*dummy -*/ new GunnCost), "SmoothFrags", new SmoothFragWeight));

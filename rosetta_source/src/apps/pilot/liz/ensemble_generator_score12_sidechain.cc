@@ -62,7 +62,7 @@
 
 #include <basic/Tracer.hh>
 
-numeric::random::RandomGenerator RG(15431); // <- Magic number, do not change it!!!
+numeric::random::RandomGenerator RG(1345675431); // <- Magic number, do not change it!!!
 
 #include <core/types.hh>
 
@@ -200,9 +200,9 @@ minimize_with_constraints(pose::Pose & p, ScoreFunction & s,std::string output_t
 
 
 //	s.show(std::cout, p);
-	std::string out_pdb_prefix = basic::options::option[ddg::out_pdb_prefix ]();
+	std::string out_pdb_prefix = basic::options::option[OptionKeys::ddg::out_pdb_prefix ]();
 
-	if(basic::options::option[ddg::ramp_repulsive]()){
+	if(basic::options::option[OptionKeys::ddg::ramp_repulsive]()){
 		//set scorefxn fa_rep to 1/10 of original weight and then minimize
 		ScoreFunction one_tenth_orig(s);
 		reduce_fa_rep(0.1,one_tenth_orig);
@@ -248,7 +248,7 @@ setup_ca_constraints(pose::Pose & pose, ScoreFunction & s, float const CA_cutoff
 		}
 	}
 
-	s.set_weight(atom_pair_constraint, basic::options::option[ddg::constraint_weight]());
+	s.set_weight(atom_pair_constraint, basic::options::option[OptionKeys::ddg::constraint_weight]());
 
 }
 
@@ -335,7 +335,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 		curr << ns;
 
 		struct stat stFileInfo;
-		int file_stat = stat((basic::options::option[ddg::last_accepted_pose_dir]()+"lowest."+curr.str()+".pdb").c_str(),
+		int file_stat = stat((basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"lowest."+curr.str()+".pdb").c_str(),
 												 &stFileInfo);
 		if(file_stat != 0 || !output_pdbs){ //file doesn't exist or file can exist and output_pdbs set to false
 
@@ -356,7 +356,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 
 
 			if(output_pdbs){
-				core::io::pdb::dump_pdb(last_accepted, basic::options::option[ddg::last_accepted_pose_dir]()+"last_accepted_high_temp."+curr.str()+".pdb");
+				core::io::pdb::dump_pdb(last_accepted, basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"last_accepted_high_temp."+curr.str()+".pdb");
 			}
 
 			mc->reset_counters();
@@ -379,21 +379,21 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 			std::cout << "end show monte-carlo stats" << std::endl;
 
 			if(true){
-				core::io::pdb::dump_pdb(mc->last_accepted_pose(), basic::options::option[ddg::last_accepted_pose_dir]()+"last_accepted."+curr.str()+".pdb");
-				core::io::pdb::dump_pdb(mc->lowest_score_pose(), basic::options::option[ddg::last_accepted_pose_dir]()+"lowest."+curr.str()+".pdb");
+				core::io::pdb::dump_pdb(mc->last_accepted_pose(), basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"last_accepted."+curr.str()+".pdb");
+				core::io::pdb::dump_pdb(mc->lowest_score_pose(), basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"lowest."+curr.str()+".pdb");
 			}
 			pose::Pose lowest_score_pose = mc->lowest_score_pose();
 			std::cout << "CA rmsd from start being stored: " << core::scoring::CA_rmsd(lowest_score_pose,init_pose) << std::endl;
-			if(basic::options::option[ddg::min_with_cst]()){
+			if(basic::options::option[OptionKeys::ddg::min_with_cst]()){
 				//std::cout << "min score" << std::endl;
-				ScoreFunctionOP s = ScoreFunctionFactory::create_score_function( option[ddg::min_cst_weights]);
+				ScoreFunctionOP s = ScoreFunctionFactory::create_score_function( option[OptionKeys::ddg::min_cst_weights]);
 
 				//new constraints based on latest structure
 				setup_ca_constraints(lowest_score_pose, (*s), 9.0, 0.5);
 				ConstraintSetCOP cs = lowest_score_pose.constraint_set();
 				cs->show_definition(std::cout,lowest_score_pose);
 
-				minimize_with_constraints(lowest_score_pose, (*s),basic::options::option[ddg::last_accepted_pose_dir]()+(output_tag + "." + curr.str()));
+				minimize_with_constraints(lowest_score_pose, (*s),basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+(output_tag + "." + curr.str()));
 							std::cout << "CA rmsd from start being stored: " << core::scoring::CA_rmsd(lowest_score_pose,init_pose) << std::endl;
 				CA_rmsd_from_start.push_back(core::scoring::CA_rmsd(lowest_score_pose,init_pose));
 				//std::cout << "min score" << std::endl;
@@ -407,7 +407,7 @@ run_mc(pose::Pose & p, ScoreFunctionOP s,
 			}
 		} //if(file_stat != 0){
 		else{
-			std::cout << "file:  " << (basic::options::option[ddg::last_accepted_pose_dir]()+"lowest."+curr.str()+".pdb") << " already exists, skipping to next iteration" << std::endl;
+			std::cout << "file:  " << (basic::options::option[OptionKeys::ddg::last_accepted_pose_dir]()+"lowest."+curr.str()+".pdb") << " already exists, skipping to next iteration" << std::endl;
 		}
 	}
 	double ca_sum=0;
@@ -450,13 +450,13 @@ create_ensemble(pose::Pose & p, ScoreFunctionOP s, std::string output_tag){
 
 	core::Real temperature=0;
 
-	if(basic::options::option[ddg::ens_variation].user()){
+	if(basic::options::option[OptionKeys::ddg::ens_variation].user()){
 		//set temperature based on what kind of diversity you want  to see in your ensemble.
-		core::Real avg_ca_rmsd = basic::options::option[ddg::ens_variation]();
+		core::Real avg_ca_rmsd = basic::options::option[OptionKeys::ddg::ens_variation]();
 		std::cout << "setting temperature based on ensemble variation" << std::endl;
 		temperature = set_temp_based_on_ens_diversity(p,s,avg_ca_rmsd);
-	}else if(basic::options::option[ddg::temperature].user()){
-		temperature = basic::options::option[ddg::temperature]();
+	}else if(basic::options::option[OptionKeys::ddg::temperature].user()){
+		temperature = basic::options::option[OptionKeys::ddg::temperature]();
 	}
 	double avg_ca_rmsd = run_mc(p,s,temperature,basic::options::option[out::nstruct](),output_tag,true);
 //	std::cout << "average production run CA-rmsd to start: " << avg_ca_rmsd << std::endl;
@@ -477,7 +477,7 @@ main( int argc, char* argv [] )
 	// options, random initialization. MAKE SURE THIS COMES BEFORE OPTIONS
 	devel::init( argc, argv );
 	//tolerance for constraints; defaults to 2.0
-	Real cst_tol = basic::options::option[ ddg::harmonic_ca_tether ]();
+	Real cst_tol = basic::options::option[ OptionKeys::ddg::harmonic_ca_tether ]();
 
 	//	basic::options::option[run::dont_randomize_missing_coords](true);
 	//gone?

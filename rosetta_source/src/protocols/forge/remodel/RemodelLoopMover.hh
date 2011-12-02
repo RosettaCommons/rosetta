@@ -25,7 +25,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <protocols/basic_moves/FragmentMover.fwd.hh>
+#include <protocols/simple_moves/FragmentMover.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <core/fragment/FragSet.hh>
@@ -69,8 +69,8 @@ public: // typedefs
 	typedef core::scoring::ScoreFunction ScoreFunction;
 	typedef core::scoring::ScoreFunctionOP ScoreFunctionOP;
 
-	typedef protocols::basic_moves::ClassicFragmentMoverOP ClassicFragmentMoverOP;
-	typedef protocols::basic_moves::FragmentMoverOP FragmentMoverOP;
+	typedef protocols::simple_moves::ClassicFragmentMoverOP ClassicFragmentMoverOP;
+	typedef protocols::simple_moves::FragmentMoverOP FragmentMoverOP;
 	typedef protocols::loops::Loop Loop;
 	typedef protocols::loops::Loops Loops;
 	typedef protocols::moves::MonteCarlo MonteCarlo;

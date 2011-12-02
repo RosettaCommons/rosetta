@@ -29,7 +29,7 @@
 #include <core/fragment/OrderedFragSet.hh>
 #include <core/fragment/FrameList.hh>
 // AUTO-REMOVED #include <core/fragment/FragmentIO.hh>
-#include <protocols/basic_moves/FragmentMover.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/jumping/JumpSetup.hh>
 
 
@@ -110,7 +110,7 @@ void JumpClaimer::new_decoy( core::pose::Pose const& pose ) {
 void JumpClaimer::initialize_dofs( core::pose::Pose& pose, DofClaims const& init_dofs, DofClaims& failed_to_init ) {
 	//need to copy coords and jumps --- if chunks were idealized no problem .... but non-idealized stuff ?
 	if ( init_mover_ ) {
-		basic_moves::FragmentMoverOP frag_mover = get_frag_mover_ptr();
+		simple_moves::FragmentMoverOP frag_mover = get_frag_mover_ptr();
 		set_mover( init_mover_ );
 		FragmentClaimer::initialize_dofs( pose, init_dofs, failed_to_init );
 		set_mover( frag_mover );
@@ -179,7 +179,7 @@ void JumpClaimer::init_jumps() {
 		core::fragment::FragSetOP jump_frags = new core::fragment::OrderedFragSet;
 		jump_frags->add( jump_frames );
 
-		init_mover_ = new basic_moves::ClassicFragmentMover( jump_frags, movemap_ );
+		init_mover_ = new simple_moves::ClassicFragmentMover( jump_frags, movemap_ );
 		init_mover_->type( mover_tag() );
 		init_mover_->set_check_ss( false ); // this doesn't make sense with jump fragments
 		init_mover_->enable_end_bias_check( false ); //no sense for discontinuous fragments
@@ -200,7 +200,7 @@ void JumpClaimer::generate_claims( DofClaims& new_claims ) {
 	if ( jump_def_ ) {
 		jump_frags = jump_def_->generate_jump_frags( current_jumps_, *movemap_ );
 
-		basic_moves::ClassicFragmentMoverOP jump_mover = new basic_moves::ClassicFragmentMover( jump_frags, movemap_ );
+		simple_moves::ClassicFragmentMoverOP jump_mover = new simple_moves::ClassicFragmentMover( jump_frags, movemap_ );
 		jump_mover->type( mover_tag() );
 		jump_mover->set_check_ss( false ); // this doesn't make sense with jump fragments
 		jump_mover->enable_end_bias_check( false ); //no sense for discontinuous fragments

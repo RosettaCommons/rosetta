@@ -19,12 +19,13 @@
 #include <protocols/match/VoxelSetIterator.fwd.hh>
 
 // Package headers
-#include <protocols/match/SixDHasher.fwd.hh>
+//#include <protocols/match/SixDHasher.fwd.hh>
 #include <protocols/match/Hit.fwd.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
 #include <numeric/geometry/BoundingBox.hh>
+#include <numeric/geometry/hashing/SixDHasher.fwd.hh>
 
 // Utility headers
 #include <utility/fixedsizearray1.hh>
@@ -48,6 +49,9 @@ public:
 	typedef core::Real Real;
 	typedef core::Vector                             Vector;
 	typedef numeric::geometry::BoundingBox< Vector > BoundingBox;
+	typedef numeric::geometry::hashing::Real3        Real3;
+	typedef numeric::geometry::hashing::Size6        Size6;
+	typedef numeric::geometry::hashing::Bin6D        Bin6D;
 
 public:
 	VoxelSetIterator(

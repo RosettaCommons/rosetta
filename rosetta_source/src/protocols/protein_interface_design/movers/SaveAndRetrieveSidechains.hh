@@ -21,9 +21,11 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/moves/DataMap.fwd.hh>
-#include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
-
 #include <utility/vector1.hh>
+
+//Auto Headers
+#include <protocols/simple_moves/DesignRepackMover.hh>
+
 
 
 namespace protocols {
@@ -36,7 +38,7 @@ namespace movers {
 /// that saved pose. Notice, that only ALA positions will be replaced, so this is meant to work strictly along with
 /// BuildAlaPose moves. This way, if in the design process an interface residue is designed, that will not be reverted
 /// to w/t
-class SaveAndRetrieveSidechains : public DesignRepackMover
+class SaveAndRetrieveSidechains : public simple_moves::DesignRepackMover
 {
 public:
 	typedef core::pose::Pose Pose;

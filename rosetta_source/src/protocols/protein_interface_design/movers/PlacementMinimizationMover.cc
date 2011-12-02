@@ -35,7 +35,6 @@
 #include <basic/options/keys/hotspot.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 // Unit Headers
-#include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 
 #include <core/conformation/Conformation.hh>
 #include <core/id/AtomID.hh>
@@ -59,6 +58,7 @@
 
 //Auto Headers
 #include <core/kinematics/FoldTree.hh>
+#include <protocols/simple_moves/DesignRepackMover.hh>
 
 using namespace protocols::protein_interface_design;
 
@@ -238,7 +238,7 @@ PlacementMinimizationMover::fresh_instance() const {
 PlacementMinimizationMover::~PlacementMinimizationMover(){}
 
 PlacementMinimizationMover::PlacementMinimizationMover() :
-	DesignRepackMover( PlacementMinimizationMoverCreator::mover_name() ),
+	simple_moves::DesignRepackMover( PlacementMinimizationMoverCreator::mover_name() ),
 	host_chain_( 2 ),
 	cb_force_( 0.0 )
 {}

@@ -49,7 +49,7 @@
 
 
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/ScoreMover.hh>
+#include <protocols/simple_moves/ScoreMover.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <protocols/moves/ConstraintSetMover.hh>
 

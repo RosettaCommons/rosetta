@@ -87,10 +87,10 @@
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/RigidBodyMover.hh>
 #include <protocols/moves/BackboneMover.hh>
-// AUTO-REMOVED #include <protocols/moves/KinematicMover.hh>
+// AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicMover.hh>
 
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
-// AUTO-REMOVED #include <protocols/loops/KinematicWrapper.hh>
+// AUTO-REMOVED #include <protocols/loops/kinematic_closure/KinematicWrapper.hh>
 // AUTO-REMOVED #include <protocols/loops/CcdLoopClosureMover.hh>
 
 // AUTO-REMOVED #include <protocols/loops/loops_main.hh>

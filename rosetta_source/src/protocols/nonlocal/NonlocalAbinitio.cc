@@ -43,7 +43,7 @@
 // AUTO-REMOVED #include <core/sequence/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 // AUTO-REMOVED #include <protocols/comparative_modeling/util.hh>
-#include <protocols/jd2/ThreadingJob.hh>
+#include <protocols/comparative_modeling/ThreadingJob.hh>
 #include <protocols/loops/LoopRelaxMover.hh>
 #include <protocols/loops/LoopRelaxThreadingMover.hh>
 #include <protocols/loops/Loops.hh>
@@ -81,7 +81,7 @@ NonlocalAbinitio::NonlocalAbinitio() {
 }
 
 void NonlocalAbinitio::apply(core::pose::Pose& pose) {
-  using protocols::jd2::ThreadingJob;
+  using protocols::comparative_modeling::ThreadingJob;
   using protocols::loops::Loops;
 
   ThreadingJob const * const job = current_job();

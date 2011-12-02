@@ -46,6 +46,10 @@
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
 
+//Auto Headers
+#include <protocols/simple_moves/DesignRepackMover.hh>
+
+
 
 
 namespace protocols {
@@ -74,7 +78,7 @@ LoopFinderCreator::mover_name()
 }
 
 LoopFinder::LoopFinder() :
-	DesignRepackMover( LoopFinderCreator::mover_name() )
+	simple_moves::DesignRepackMover( LoopFinderCreator::mover_name() )
 {}
 
 LoopFinder::LoopFinder(
@@ -89,7 +93,7 @@ LoopFinder::LoopFinder(
 	core::Real const iface_cutoff,
 	protocols::loops::LoopsOP loops
 ) :
-	DesignRepackMover( LoopFinderCreator::mover_name() ),
+	simple_moves::DesignRepackMover( LoopFinderCreator::mover_name() ),
 	interface_(interface),
 	ch1_(ch1),
 	ch2_(ch2),

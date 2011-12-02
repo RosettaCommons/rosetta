@@ -18,7 +18,6 @@
 #include <protocols/moves/DataMap.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
-#include <protocols/protein_interface_design/movers/DesignRepackMover.hh>
 #include <core/types.hh>
 // AUTO-REMOVED #include <core/scoring/ScoreFunction.hh>
 #include <core/fragment/FragSet.fwd.hh>
@@ -30,11 +29,15 @@
 #include <protocols/loops/Loops.fwd.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <protocols/simple_moves/DesignRepackMover.hh>
+
+
 namespace protocols {
 namespace protein_interface_design {
 namespace movers {
 
-class LoopRemodel : public DesignRepackMover
+class LoopRemodel : public simple_moves::DesignRepackMover
 {
 public:
 	LoopRemodel();

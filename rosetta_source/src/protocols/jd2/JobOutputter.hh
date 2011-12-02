@@ -16,6 +16,7 @@
 #define INCLUDED_protocols_jd2_JobOutputter_hh
 
 //unit headers
+#include <protocols/jd2/JobOutputter.fwd.hh>
 #include <protocols/jd2/Job.fwd.hh>
 #ifdef WIN32
 #include <protocols/jd2/Job.hh> // WIN32 INCLUDE

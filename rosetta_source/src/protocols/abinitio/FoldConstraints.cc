@@ -18,8 +18,8 @@
 #include <protocols/abinitio/FoldConstraints.hh>
 
 // Package headers
-// AUTO-REMOVED #include <protocols/basic_moves/GunnCost.hh>
-// AUTO-REMOVED #include <protocols/basic_moves/ConstraintFragmentMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/GunnCost.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/ConstraintFragmentMover.hh>
 
 // Project Headers
 #include <core/pose/Pose.hh>
@@ -28,6 +28,8 @@
 #include <core/types.hh>
 #include <core/scoring/ScoreType.hh>
 // AUTO-REMOVED #include <core/kinematics/ShortestPathInFoldTree.hh>
+
+#include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh>
 
 // ObjexxFCL Headers
 
@@ -54,8 +56,8 @@
 
 #include <core/fragment/FragSet.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <protocols/abinitio/MaxSeqSepConstraintSet.hh>
-#include <protocols/basic_moves/FragmentMover.hh>
+#include <protocols/constraints_additional/MaxSeqSepConstraintSet.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/TrialMover.hh>
@@ -96,9 +98,9 @@ using namespace core;
 
 ///@brief c'stor from Movers
 FoldConstraints::FoldConstraints(
-	 basic_moves::FragmentMoverOP brute_move_small,
-	 basic_moves::FragmentMoverOP brute_move_large,
-	 basic_moves::FragmentMoverOP smooth_move_small,
+	 simple_moves::FragmentMoverOP brute_move_small,
+	 simple_moves::FragmentMoverOP brute_move_large,
+	 simple_moves::FragmentMoverOP smooth_move_small,
 	 int dummy /* otherwise the two constructors are ambigous */
 ) : ClassicAbinitio( brute_move_small, brute_move_large, smooth_move_small, dummy ),
 			constraint_weight_( 1.0 ), run_( 0 )
@@ -121,7 +123,7 @@ FoldConstraints::FoldConstraints(
 
 /// @details SHALLOW copy.
 FoldConstraints::FoldConstraints( FoldConstraints const & src ) :
-	//utility::pointer::ReferenceCount(), 
+	//utility::pointer::ReferenceCount(),
 	Parent( src )
 {
 	min_move_ = src.min_move_;
@@ -360,7 +362,7 @@ FoldConstraints::apply( core::pose::Pose & pose ) {
 	if ( !bIgnoreSequenceSeparation() ) {
 		tr.Debug << "introduce MaxSeqSep Filter for constraints \n";
 		orig_constraints = pose.constraint_set()->clone();
-		constraints_ = new MaxSeqSepConstraintSet( *orig_constraints, pose.fold_tree() );
+		constraints_ = new constraints_additional::MaxSeqSepConstraintSet( *orig_constraints, pose.fold_tree() );
 		constraints_->set_max_seq_sep( pose.total_residue() ); // so it is prepared for stage4.
 		pose.constraint_set( constraints_ );
 	}

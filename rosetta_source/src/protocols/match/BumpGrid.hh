@@ -20,7 +20,6 @@
 #include <protocols/match/BumpGrid.fwd.hh>
 
 // Package headers
-#include <protocols/match/SixDHasher.fwd.hh> // typedefs for Bin3D.
 
 // Project headers
 #include <core/types.hh>
@@ -36,6 +35,7 @@
 // Numeric headers
 #include <numeric/xyzVector.hh>
 #include <numeric/geometry/BoundingBox.hh>
+#include <numeric/geometry/hashing/SixDHasher.fwd.hh> // typedefs for Bin3D.
 
 // C++ headers
 // AUTO-REMOVED #include <list>
@@ -55,6 +55,7 @@ public:
 	typedef core::Real   Real;
 	typedef core::Vector Vector;
 	typedef numeric::geometry::BoundingBox< core::Vector > BoundingBox;
+	typedef numeric::geometry::hashing::Bin3D Bin3D;
 	typedef utility::fixedsizearray1< Vector, 8 > CornerPoints;
 	typedef std::pair< Bool3DGrid::Size, unsigned char > index_mask_pair;
 
@@ -203,6 +204,7 @@ class BumpGrid : public utility::pointer::ReferenceCount
 {
 public:
 	typedef Bool3DGrid::BoundingBox          BoundingBox;
+	typedef Bool3DGrid::Bin3D                Bin3D;
 	typedef Bool3DGrid::Vector               Vector;
 	typedef std::pair< Vector, core::Real >  Sphere;
 	typedef core::Real                       Real;
@@ -345,6 +347,7 @@ public:
 	typedef core::Real   Real;
 	typedef core::Size   Size;
 	typedef core::Vector Vector;
+	typedef numeric::geometry::hashing::Bin3D Bin3D;
 
 public:
 	Bool3DGridKinemageWriter();

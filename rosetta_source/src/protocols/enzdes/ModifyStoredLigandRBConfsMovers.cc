@@ -17,7 +17,7 @@
 #include <protocols/enzdes/ModifyStoredLigandRBConfsMovers.hh>
 
 //package headers
-#include <protocols/enzdes/EnzdesCacheableObserver.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 
 //project headers
 //#include <core/conformation/Conformation.hh>
@@ -117,7 +117,7 @@ ModifyStoredRBConfs::RBConfLists
 ModifyStoredRBConfs::get_rigid_body_confs( core::pose::Pose const & pose ) const
 {
 	RBConfLists to_return;
-	EnzdesCacheableObserverCOP enz_obs( get_enzdes_observer( pose ) ); //get_enzdes_observer with const pose can return NULL
+	toolbox::match_enzdes_util::EnzdesCacheableObserverCOP enz_obs( toolbox::match_enzdes_util::get_enzdes_observer( pose ) ); //toolbox::match_enzdes_util::get_enzdes_observer with const pose can return NULL
 	if ( !enz_obs ) return to_return;
 	std::map< core::Size, utility::vector1< core::conformation::ResidueCOP > > const & rb_confs( enz_obs->lig_rigid_body_confs() );
 	for( std::map< core::Size, utility::vector1< core::conformation::ResidueCOP > >::const_iterator map_it = rb_confs.begin(); map_it != rb_confs.end(); ++map_it ){
@@ -143,7 +143,7 @@ ModifyStoredRBConfs::set_rigid_body_confs_for_seqpos(
 	core::pose::Pose & pose
 ) const
 {
-	get_enzdes_observer( pose )->set_rigid_body_confs_for_lig( seqpos, confs );
+	toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_rigid_body_confs_for_lig( seqpos, confs );
 }
 
 GenerateStoredRBConfs::GenerateStoredRBConfs(

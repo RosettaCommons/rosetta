@@ -16,7 +16,7 @@
 
 #include <protocols/enzdes/SecondaryMatchProtocol.hh>
 #include <protocols/enzdes/EnzdesBaseProtocol.hh>
-#include <protocols/enzdes/EnzdesCacheableObserver.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzCstTemplateRes.hh>
@@ -232,7 +232,7 @@ SecondaryMatchProtocol::add_enz_cst_interaction_to_pose(
 	utility::vector1< core::Size > target_residues;
 
 	tr.Info << "Trying to add interaction of pose residue(s) ";
-	for( std::map< Size, toolbox::match_enzdes_util::EnzCstTemplateResAtomsOP >::const_iterator pos_it = get_enzdes_observer( pose )->cst_cache()->param_cache( params->cst_block() )->template_res_cache( present_template->param_index() )->seqpos_map_begin(), pos_end = get_enzdes_observer( pose )->cst_cache()->param_cache( params->cst_block() )->template_res_cache( present_template->param_index() )->seqpos_map_end();
+	for( std::map< Size, toolbox::match_enzdes_util::EnzCstTemplateResAtomsOP >::const_iterator pos_it = toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( params->cst_block() )->template_res_cache( present_template->param_index() )->seqpos_map_begin(), pos_end = toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache()->param_cache( params->cst_block() )->template_res_cache( present_template->param_index() )->seqpos_map_end();
 			 pos_it != pos_end; ++pos_it ){
 		target_residues.push_back( pos_it->first );
 		tr.Info << pose.residue_type( pos_it->first ).name() << " " << pos_it->first << ", ";
@@ -642,7 +642,7 @@ PoseFoundResiduesCombination::construct_and_dump_outpose(
 
 		utility::vector1< core::Size > other_positions;
 		toolbox::match_enzdes_util::EnzCstTemplateResCOP other_template( match_params[i]->get_missing_template_other_res( outpose ) );
-		toolbox::match_enzdes_util::EnzCstTemplateResCacheCOP other_template_cache( get_enzdes_observer( outpose )->cst_cache()->param_cache( match_params[i]->cst_block() )->template_res_cache( other_template->param_index() ) );
+		toolbox::match_enzdes_util::EnzCstTemplateResCacheCOP other_template_cache( toolbox::match_enzdes_util::get_enzdes_observer( outpose )->cst_cache()->param_cache( match_params[i]->cst_block() )->template_res_cache( other_template->param_index() ) );
 
 		for( std::map< Size, toolbox::match_enzdes_util::EnzCstTemplateResAtomsOP >::const_iterator pos_it = other_template_cache->seqpos_map_begin(), pos_end = other_template_cache->seqpos_map_end();
 				 pos_it != pos_end; ++pos_it ){

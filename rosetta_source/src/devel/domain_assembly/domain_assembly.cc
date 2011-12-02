@@ -47,7 +47,7 @@
 
 #include <core/scoring/TenANeighborGraph.hh>
 
-#include <protocols/basic_moves/FragmentMover.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
 // Headers for RNA
 #include <protocols/rna/FullAtomRNA_Fragments.hh>
@@ -223,7 +223,7 @@ optimize_linkers_centroid_mode(
 	//// STAGE 1 /////
 	TrialMoverOP centroid_trial_mover = NULL;
 	if ( fragset3mer ) {
-		protocols::basic_moves::FragmentMoverOP frag_mover = new protocols::basic_moves::ClassicFragmentMover(fragset3mer, mm);
+		protocols::simple_moves::FragmentMoverOP frag_mover = new protocols::simple_moves::ClassicFragmentMover(fragset3mer, mm);
 		centroid_trial_mover = new TrialMover( frag_mover, mc );
 	} else {
 		// if no fragments, use coarse small moves

@@ -24,7 +24,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/FrameList.hh>
-#include <protocols/basic_moves/FragmentMover.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 // AUTO-REMOVED #include <protocols/jumping/JumpSetup.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
@@ -78,7 +78,7 @@ void TemplateFragmentClaimer::read_config_file( std::string const& file ) {
 	fragment::FragSetOP fragset_large = new fragment::ConstantLengthFragSet( frag_size_ );
 	Size nr = templates_->pick_frags( *fragset_large, new fragment::FragData( new fragment::BBTorsionSRFD, frag_size_ ) );
 	tr.Info << nr << " " << fragset_large->max_frag_length() << "mer fragments picked from homolog structures" << std::endl;
-	set_mover( new basic_moves::ClassicFragmentMover( fragset_large ) );
+	set_mover( new simple_moves::ClassicFragmentMover( fragset_large ) );
 }
 
 bool TemplateFragmentClaimer::read_tag( std::string tag, std::istream& is ) {

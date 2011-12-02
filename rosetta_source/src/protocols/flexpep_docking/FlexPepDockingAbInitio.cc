@@ -38,7 +38,7 @@
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <basic/Tracer.hh>
-#include <protocols/basic_moves/FragmentMover.hh>
+#include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/LoopRelaxMover.hh>
 #include <protocols/moves/BackboneMover.hh>
@@ -190,7 +190,7 @@ FlexPepDockingAbInitio::torsions_monte_carlo
   double& acceptance_rate )
 {
   using namespace protocols::moves;
-  using namespace protocols::basic_moves;
+  using namespace protocols::simple_moves;
 
   // setup sub-moves
   moves::SmallMoverOP small_mover =

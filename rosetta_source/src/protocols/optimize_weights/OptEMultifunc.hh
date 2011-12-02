@@ -19,7 +19,7 @@
 #include <protocols/optimize_weights/OptEMultifunc.fwd.hh>
 
 // Package headers
-#include <protocols/optimize_weights/Arithmetic.hh>
+#include <numeric/expression_parser/Arithmetic.hh>
 // AUTO-REMOVED #include <protocols/optimize_weights/OptEData.hh>
 
 // Project headers
@@ -327,7 +327,7 @@ public:
 	void
 	print_dofs( Multivec const & vars, std::ostream & ostr ) const;
 
-	VariableExpressionOP
+	numeric::expression_parser::VariableExpressionOP
 	register_variable_expression( std::string varname );
 
 	void
@@ -366,12 +366,12 @@ private:
 
 	/// non-depdendent dofs are handled by VariableExpressions that map
 	/// from the real_dof id to the optE-percieved-dof id.
-	utility::vector1< ExpressionCOP > optE_dof_expressions_;
+	utility::vector1< numeric::expression_parser::ExpressionCOP > optE_dof_expressions_;
 
 	/// Which variables influence each optE-percieved-dofs?
 	utility::vector1< std::set< std::string > > active_variables_;
 	/// For each real dof, a list of each derivative expression and associated optE-percieved-dof id.
-	utility::vector1< std::list< std::pair< Size, ExpressionCOP > > > real_dof_deriviative_expressions_;
+	utility::vector1< std::list< std::pair< Size, numeric::expression_parser::ExpressionCOP > > > real_dof_deriviative_expressions_;
 
 	OptEMultifuncOP multifunc_;
 	Size n_new_dofs_;
@@ -379,7 +379,7 @@ private:
 
 };
 
-class OptEVariableExpression : public VariableExpression
+class OptEVariableExpression : public numeric::expression_parser::VariableExpression
 {
 public:
 	OptEVariableExpression( std::string const & name );
@@ -394,7 +394,7 @@ private:
 };
 
 
-class WrappedOptEExpressionCreator : public ExpressionCreator
+class WrappedOptEExpressionCreator : public numeric::expression_parser::ExpressionCreator
 {
 public:
 	WrappedOptEExpressionCreator();
@@ -402,14 +402,14 @@ public:
 	virtual ~WrappedOptEExpressionCreator();
 
 	virtual
-	ExpressionCOP
-	handle_variable_expression( ArithmeticASTValue const & );
+	numeric::expression_parser::ExpressionCOP
+	handle_variable_expression( numeric::expression_parser::ArithmeticASTValue const & );
 
 	virtual
-	ExpressionCOP
+	numeric::expression_parser::ExpressionCOP
 	handle_function_expression(
-		FunctionTokenCOP function,
-		utility::vector1< ExpressionCOP > const & args
+		numeric::expression_parser::FunctionTokenCOP function,
+		utility::vector1< numeric::expression_parser::ExpressionCOP > const & args
 	);
 
 	void

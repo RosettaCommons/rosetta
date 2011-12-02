@@ -33,6 +33,10 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
+//Auto Headers
+#include <protocols/simple_moves/DesignRepackMover.hh>
+
+
 
 namespace protocols {
 namespace protein_interface_design {
@@ -63,7 +67,7 @@ DesignMinimizeHbondsCreator::mover_name()
 }
 
 DesignMinimizeHbonds::DesignMinimizeHbonds() :
-	DesignRepackMover( DesignMinimizeHbondsCreator::mover_name() )
+	simple_moves::DesignRepackMover( DesignMinimizeHbondsCreator::mover_name() )
 {
 	min_rb_set_ = min_bb_set_ = min_sc_set_ = false;
 	optimize_foldtree_ = true;
@@ -83,7 +87,7 @@ DesignMinimizeHbonds::DesignMinimizeHbonds(
 	bool const repack_partner2/*=false*/,
 	bool const repack_non_ala/* = true*/
 ) :
-	DesignRepackMover( DesignMinimizeHbondsCreator::mover_name() )
+	simple_moves::DesignRepackMover( DesignMinimizeHbondsCreator::mover_name() )
 {
 	scorefxn_repack_ = scorefxn_repack->clone();
 	scorefxn_minimize_ = scorefxn_minimize->clone();
@@ -117,7 +121,7 @@ DesignMinimizeHbonds::DesignMinimizeHbonds(
 	bool const repack_partner2/*=false*/,
 	bool const repack_non_ala/*=true*/
 ) :
-	DesignRepackMover( DesignMinimizeHbondsCreator::mover_name() )
+	simple_moves::DesignRepackMover( DesignMinimizeHbondsCreator::mover_name() )
 {
 	  scorefxn_repack_ = scorefxn_repack;
 	  scorefxn_minimize_ = scorefxn_minimize;
@@ -277,7 +281,7 @@ DesignMinimizeHbonds::parse_my_tag( TagPtr const tag, DataMap & data, protocols:
 	hbond_energy_threshold_ = tag->getOption<core::Real>( "hbond_energy", -0.5 );
 	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_cutoff_distance", 8.0 );
 
-	DesignRepackMover::parse_my_tag( tag, data, filters, movers, pose );
+	simple_moves::DesignRepackMover::parse_my_tag( tag, data, filters, movers, pose );
 	using namespace core::scoring;
 
   // change the weights on the hbonding terms

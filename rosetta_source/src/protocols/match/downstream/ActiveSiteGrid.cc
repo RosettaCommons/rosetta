@@ -134,7 +134,7 @@ ActiveSiteGrid::initialize_from_gridlig_file( std::string const & fname )
 	reset_grid_bb_ = false;
 
 
-	Bin3D bin; bin[ 1 ] = 0; bin[ 2 ] = 0; bin[ 3 ] = 0;
+	numeric::geometry::hashing::Bin3D bin; bin[ 1 ] = 0; bin[ 2 ] = 0; bin[ 3 ] = 0;
 	std::string line;
 	std::istringstream line_stream;
 	Size occupied;

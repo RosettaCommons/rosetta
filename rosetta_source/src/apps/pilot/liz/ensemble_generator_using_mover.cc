@@ -81,7 +81,7 @@
 #include <protocols/moves/TrialMover.hh>
 #include <protocols/moves/RepeatMover.hh>
 #include <protocols/moves/Mover.hh>
-#include <protocols/moves/ShakeStructureMover.hh>
+#include <protocols/simple_moves/ShakeStructureMover.hh>
 
 #include <utility/file/FileName.hh>
 #include <utility/vector1.hh>

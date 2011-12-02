@@ -40,7 +40,7 @@
 // AUTO-REMOVED #include <core/pose/symmetry/util.hh>
 // AUTO-REMOVED #include <core/conformation/symmetry/util.hh>
 
-// AUTO-REMOVED #include <protocols/moves/symmetry/SymMinMover.hh>
+// AUTO-REMOVED #include <protocols/simple_moves/symmetry/SymMinMover.hh>
 // AUTO-REMOVED #include <protocols/geometry/RB_geometry.hh>
 
 #include <core/pose/util.hh>

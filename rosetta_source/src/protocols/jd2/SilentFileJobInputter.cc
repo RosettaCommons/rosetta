@@ -13,6 +13,7 @@
 
 ///Unit headers
 #include <protocols/jd2/SilentFileJobInputter.hh>
+#include <protocols/jd2/SilentFileJobInputterCreator.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/InnerJob.hh>
 
@@ -176,6 +177,18 @@ void protocols::jd2::SilentFileJobInputter::fill_jobs( Jobs & jobs ){
 /// @return Always <em>SILENT_FILE</em>.
 JobInputterInputSource::Enum SilentFileJobInputter::input_source() const {
 	return JobInputterInputSource::SILENT_FILE;
+}
+
+//CREATOR SECTION
+std::string
+SilentFileJobInputterCreator::keyname() const
+{
+	return "SilentFileJobInputter";
+}
+
+protocols::jd2::JobInputterOP
+SilentFileJobInputterCreator::create_JobInputter() const {
+	return new SilentFileJobInputter;
 }
 
 } // jd2

@@ -57,7 +57,7 @@
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <protocols/match/Hit.fwd.hh>
 // AUTO-REMOVED #include <protocols/match/Hit.hh>
-#include <protocols/match/SixDHasher.hh>
+#include <numeric/geometry/hashing/SixDHasher.hh>
 #include <protocols/moves/Mover.hh>
 // AUTO-REMOVED #include <protocols/topology_broker/TopologyBroker.hh>
 // AUTO-REMOVED #include <protocols/topology_broker/util.hh>

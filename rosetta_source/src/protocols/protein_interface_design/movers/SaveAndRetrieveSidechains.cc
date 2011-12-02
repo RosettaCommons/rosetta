@@ -28,6 +28,7 @@
 
 //Auto Headers
 #include <core/pose/util.hh>
+#include <protocols/simple_moves/DesignRepackMover.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
@@ -61,7 +62,7 @@ SaveAndRetrieveSidechainsCreator::mover_name()
 }
 
 SaveAndRetrieveSidechains::SaveAndRetrieveSidechains() :
-	DesignRepackMover( SaveAndRetrieveSidechainsCreator::mover_name() )
+	simple_moves::DesignRepackMover( SaveAndRetrieveSidechainsCreator::mover_name() )
 {
 	allsc_ = false; // default
 	jumpid_ = 1; //default
@@ -74,7 +75,7 @@ SaveAndRetrieveSidechains::SaveAndRetrieveSidechains(
 	bool const ensure_variant_matching /*=false*/,
 	core::Size const jumpid /*=1*/
 ) :
-	DesignRepackMover( SaveAndRetrieveSidechainsCreator::mover_name() ),
+	simple_moves::DesignRepackMover( SaveAndRetrieveSidechainsCreator::mover_name() ),
 	allsc_( allsc ),
 	ensure_variant_matching_(ensure_variant_matching),
 	jumpid_( jumpid )

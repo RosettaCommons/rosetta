@@ -15,7 +15,7 @@
 /// @author Nobuyasu Koga
 
 // Package headers
-#include <protocols/fldsgn/BluePrint.hh>
+#include <protocols/jd2/parser/BluePrint.hh>
 #include <core/util/ABEGOManager.hh>
 #include <protocols/fldsgn/topology/SheetFoldTypeManager.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>
@@ -104,8 +104,8 @@ void ThisApplication::register_options() {
 class PickBAB : public protocols::moves::Mover {
 public: // typedef
 
-	typedef protocols::fldsgn::BluePrint BluePrint;
-	typedef protocols::fldsgn::BluePrintOP BluePrintOP;
+	typedef protocols::jd2::parser::BluePrint BluePrint;
+	typedef protocols::jd2::parser::BluePrintOP BluePrintOP;
 	typedef protocols::fldsgn::topology::SS_Info2 SS_Info2;
 	typedef protocols::fldsgn::topology::SS_Info2_OP SS_Info2_OP;
 	typedef protocols::fldsgn::topology::StrandCOP StrandCOP;

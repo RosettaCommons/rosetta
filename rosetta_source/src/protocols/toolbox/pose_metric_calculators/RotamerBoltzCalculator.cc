@@ -20,7 +20,6 @@
 #include <core/pose/Pose.hh>
 #include <core/types.hh>
 // AUTO-REMOVED #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/protein_interface_design/dock_design_filters.hh>
 #include <protocols/moves/MinMover.hh>
 #include <protocols/moves/PackRotamersMoverLazy.hh>
 #include <protocols/moves/PackRotamersMover.hh>
@@ -33,6 +32,7 @@
 #include <boost/foreach.hpp>
 
 //Auto Headers
+#include <protocols/simple_filters/ScoreTypeFilter.hh>
 #define foreach BOOST_FOREACH
 namespace protocols{
 namespace toolbox {
@@ -73,7 +73,7 @@ namespace pose_metric_calculators {
     task->set_bump_check(false);
     pmover.task(task);
     pmover.call_setup(pose);
-    protocols::protein_interface_design::ScoreTypeFilter stf( scorefxn_, core::scoring::total_score, 0 );
+    protocols::simple_filters::ScoreTypeFilter stf( scorefxn_, core::scoring::total_score, 0 );
     //std::cout<<" in rotamer boltz done with call_setup "<<resi<<std::endl;
     pmover.apply(pose);//what happens if setup and apply are called with different poses?
 	  min_mover->apply( pose );

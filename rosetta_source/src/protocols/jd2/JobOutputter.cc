@@ -22,7 +22,7 @@
 #include <protocols/jd2/util.hh>
 
 // Project headers
-#include <protocols/evaluation/util.hh>
+#include <protocols/evaluation/EvaluatorFactory.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
 
 // Utility headers
@@ -49,7 +49,7 @@ namespace protocols {
 namespace jd2 {
 
 JobOutputter::JobOutputter() : evaluators_(new protocols::evaluation::PoseEvaluators()) {
-	protocols::evaluation::read_common_evaluator_options( *evaluators_ );
+	evaluation::EvaluatorFactory::get_instance()->add_all_evaluators(*evaluators_);
 	basic::mem_tr << "JobOutputter CSTOR" << std::endl;
 }
 

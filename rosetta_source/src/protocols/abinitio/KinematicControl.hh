@@ -43,7 +43,7 @@
 
 // AUTO-REMOVED #include <core/fragment/FrameList.fwd.hh>
 
-#include <protocols/basic_moves/FragmentMover.fwd.hh>
+#include <protocols/simple_moves/FragmentMover.fwd.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
@@ -124,10 +124,10 @@ public:
 	core::kinematics::MoveMap const& movemap() const;
 
 	//return a jump-Mover for jumps that you want to be sampled
-	basic_moves::FragmentMoverOP jump_mover() const;
+	simple_moves::FragmentMoverOP jump_mover() const;
 
 	//return a jump-Mover for jumps that you want to be sampled
-	void set_jump_mover( basic_moves::FragmentMoverOP jm );
+	void set_jump_mover( simple_moves::FragmentMoverOP jm );
 
 	virtual void add_score_weights( core::scoring::ScoreFunction&, core::Real /*progress*/ ) const {};
 
@@ -146,7 +146,7 @@ private:
   core::kinematics::FoldTree sampling_fold_tree_;
   core::kinematics::FoldTree final_fold_tree_;
 
-  basic_moves::FragmentMoverOP jump_mover_;
+  simple_moves::FragmentMoverOP jump_mover_;
 
 // 	loops::Loops rigid_;
 };

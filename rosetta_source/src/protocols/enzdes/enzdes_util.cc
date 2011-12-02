@@ -15,7 +15,7 @@
 // Unit headers
 #include <protocols/enzdes/enzdes_util.hh>
 
-#include <protocols/enzdes/EnzdesCacheableObserver.hh>
+#include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintParameters.hh>
@@ -83,7 +83,7 @@ is_catalytic_seqpos(
 	core::Size const seqpos
 )
 {
-	EnzdesCacheableObserverCOP enz_obs( get_enzdes_observer( pose ) );
+	toolbox::match_enzdes_util::EnzdesCacheableObserverCOP enz_obs( toolbox::match_enzdes_util::get_enzdes_observer( pose ) );
 	if( !enz_obs) return false;
 	toolbox::match_enzdes_util::EnzdesCstCacheCOP cst_cache( enz_obs->cst_cache() );
 	if( !cst_cache ) return false;
@@ -101,7 +101,7 @@ catalytic_res( core::pose::Pose const & pose)
 	using namespace core;
 	utility::vector1< Size > to_return;
 
-	EnzdesCacheableObserverCOP enz_obs( get_enzdes_observer( pose ) );
+	toolbox::match_enzdes_util::EnzdesCacheableObserverCOP enz_obs( toolbox::match_enzdes_util::get_enzdes_observer( pose ) );
 	if( enz_obs ){
 		toolbox::match_enzdes_util::EnzdesCstCacheCOP cst_cache( enz_obs->cst_cache() );
 		if( cst_cache ) to_return = cst_cache->ordered_constrained_positions( pose );
@@ -157,7 +157,7 @@ read_pose_from_pdb(
 	core::import_pose::pose_from_pdb( input_poses, filename );
 	runtime_assert( input_poses.size() > 0 );
 	pose = input_poses[1];
-	EnzdesCacheableObserverOP enz_obs( get_enzdes_observer( pose ) );
+	toolbox::match_enzdes_util::EnzdesCacheableObserverOP enz_obs( toolbox::match_enzdes_util::get_enzdes_observer( pose ) );
 
 	//now the basic pose is ready. let's see if there are any additional ligands
 	//in multimodel pdbs
@@ -443,7 +443,7 @@ recreate_task(
 toolbox::match_enzdes_util::EnzConstraintIOCOP
 get_enzcst_io( core::pose::Pose const & pose )
 {
-	EnzdesCacheableObserverCOP enz_obs( get_enzdes_observer( pose ) );
+	toolbox::match_enzdes_util::EnzdesCacheableObserverCOP enz_obs( toolbox::match_enzdes_util::get_enzdes_observer( pose ) );
 	if( !enz_obs ) return NULL;
 	toolbox::match_enzdes_util::EnzdesCstCacheCOP enzcache( enz_obs->cst_cache() );
 	if( !enzcache ) return NULL;
@@ -480,7 +480,7 @@ create_remark_headers_from_cstcache(
 	core::pose::Remarks remarks( pose.pdb_info()->remarks() );
 	core::pose::Remarks newremarks;
 
-	toolbox::match_enzdes_util::EnzdesCstCacheCOP cstcache( get_enzdes_observer( pose )->cst_cache() );
+	toolbox::match_enzdes_util::EnzdesCstCacheCOP cstcache( toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache() );
 
 	if( cstcache ){
 
@@ -789,10 +789,10 @@ scorefxn_update_from_options(core::scoring::ScoreFunctionOP scorefxn){
 void
 remove_all_enzdes_constraints( core::pose::Pose & pose )
 {
-	protocols::toolbox::match_enzdes_util::EnzdesCstCacheOP cst_cache( get_enzdes_observer( pose )->cst_cache() );
+	protocols::toolbox::match_enzdes_util::EnzdesCstCacheOP cst_cache( toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache() );
 	if( !cst_cache ) return;
 	cst_cache->enzcst_io()->remove_constraints_from_pose( pose, false, false );
-	get_enzdes_observer( pose )->set_cst_cache( NULL );
+	toolbox::match_enzdes_util::get_enzdes_observer( pose )->set_cst_cache( NULL );
 }
 
 void
@@ -825,7 +825,7 @@ get_resnum_from_cstid( std::string const& cstid, core::pose::Pose const &pose)
         core::Size cstnum;
         ss >> cstnum;
 				//tr << "Cstid " <<cstid <<" parsed as template:"<< templ <<" and cstnum: "<< cstnum<<std::endl;
-        protocols::toolbox::match_enzdes_util::EnzdesCstCacheCOP cst_cache( get_enzdes_observer( pose )->cst_cache() );
+        protocols::toolbox::match_enzdes_util::EnzdesCstCacheCOP cst_cache( toolbox::match_enzdes_util::get_enzdes_observer( pose )->cst_cache() );
         runtime_assert( cst_cache );
 				runtime_assert( cstnum <= cst_cache->ncsts());
 				bool found (false);

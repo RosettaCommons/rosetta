@@ -49,12 +49,12 @@
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <protocols/moves/symmetry/SymMinMover.hh>
-#include <protocols/moves/symmetry/SymPackRotamersMover.hh>
-#include <protocols/moves/symmetry/SymRotamerTrialsMover.hh>
+#include <protocols/simple_moves/symmetry/SymMinMover.hh>
+#include <protocols/simple_moves/symmetry/SymPackRotamersMover.hh>
+#include <protocols/simple_moves/symmetry/SymRotamerTrialsMover.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 
-#include <protocols/basic_moves/GunnCost.hh>
+#include <protocols/simple_moves/GunnCost.hh>
 // AUTO-REMOVED #include <protocols/loops/Loops.hh>
 #include <protocols/ScoreMap.hh>
 #include <basic/options/option.hh>
@@ -63,7 +63,7 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/datacache/DiagnosticData.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
-#include <protocols/basic_moves/WobbleMover.hh>
+#include <protocols/simple_moves/WobbleMover.hh>
 
 
 // ObjexxFCL Headers
@@ -308,7 +308,7 @@ void ClassicRelax::set_tolerance( core::Real new_tolerance ){
 void ClassicRelax::set_default_minimizer() {
 	// options for minimizer
 	if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )  {
-		min_mover_ = new moves::symmetry::SymMinMover( get_movemap(), get_scorefxn(), min_type, min_tolerance, nb_list );
+		min_mover_ = new simple_moves::symmetry::SymMinMover( get_movemap(), get_scorefxn(), min_type, min_tolerance, nb_list );
 	} else {
 		min_mover_ = new moves::MinMover( get_movemap(), get_scorefxn(), min_type, min_tolerance, nb_list );
 	}
@@ -364,7 +364,7 @@ void ClassicRelax::set_default_moveset_phase2()
 		std::string frag3_file  = basic::options::option[ basic::options::OptionKeys::in::file::frag3 ]();
 		core::fragment::ConstantLengthFragSetOP fragset3mer = new core::fragment::ConstantLengthFragSet( 3 );
 		fragset3mer->read_fragment_file( frag3_file );
-		protocols::basic_moves::WobbleMoverOP wobble_mover( new protocols::basic_moves::WobbleMover( fragset3mer, get_movemap(), new protocols::basic_moves::GunnCost  ) );
+		protocols::simple_moves::WobbleMoverOP wobble_mover( new protocols::simple_moves::WobbleMover( fragset3mer, get_movemap(), new protocols::simple_moves::GunnCost  ) );
 
 		moveset_phase2_temp ->add_mover( wobble_mover );
 		moveset_phase2_temp ->add_mover( wobble_mover );
@@ -441,7 +441,7 @@ void ClassicRelax::check_default_full_repacker( core::pose::Pose & pose, core::k
 		task_->initialize_from_command_line().restrict_to_repacking().restrict_to_residues(allow_repack);
 		task_->or_include_current( true );
 		if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )  {
-			pack_full_repack_ = new moves::symmetry::SymPackRotamersMover( get_scorefxn(), task_ );
+			pack_full_repack_ = new simple_moves::symmetry::SymPackRotamersMover( get_scorefxn(), task_ );
 		} else {
 			pack_full_repack_ = new moves::PackRotamersMover( get_scorefxn(), task_ );
 		}
@@ -486,7 +486,7 @@ void ClassicRelax::check_default_rottrial( core::pose::Pose & pose, core::kinema
 		(*get_scorefxn())( pose );
 		/// Now handled automatically.  scorefxn_->accumulate_residue_total_energies( pose ); // fix this
 		if ( basic::options::option[ basic::options::OptionKeys::symmetry::symmetry_definition ].user() )  {
-			pack_rottrial_ = new moves::symmetry::SymEnergyCutRotamerTrialsMover( get_scorefxn(), *task_, mc_, energycut );
+			pack_rottrial_ = new simple_moves::symmetry::SymEnergyCutRotamerTrialsMover( get_scorefxn(), *task_, mc_, energycut );
 		 } else {
 			pack_rottrial_ = new moves::EnergyCutRotamerTrialsMover( get_scorefxn(), *task_, mc_, energycut );
 		}

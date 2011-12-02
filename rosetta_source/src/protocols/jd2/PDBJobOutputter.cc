@@ -13,6 +13,7 @@
 
 ///Unit headers
 #include <protocols/jd2/PDBJobOutputter.hh>
+#include <protocols/jd2/PDBJobOutputterCreator.hh>
 #include <protocols/jd2/Job.hh>
 
 ///Project headers
@@ -221,6 +222,17 @@ void protocols::jd2::PDBJobOutputter::extract_data_from_Job( JobCOP job, utility
 // 	return;
 // }
 
+//CREATOR SECTION
+std::string
+PDBJobOutputterCreator::keyname() const
+{
+        return "PDBJobOutputter";
+}
+
+protocols::jd2::JobOutputterOP
+PDBJobOutputterCreator::create_JobOutputter() const {
+        return new PDBJobOutputter;
+}
 
 }//jd2
 }//protocols
